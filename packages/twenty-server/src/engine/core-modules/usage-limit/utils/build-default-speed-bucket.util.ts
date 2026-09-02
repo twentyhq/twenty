@@ -23,13 +23,21 @@ export const buildDefaultSpeedBucket = ({
   operationType: UsageOperationType;
 }): SpeedBucketRequest | null => {
   const isCrossWorkspace = speedLimitDefault.counterScope === 'crossWorkspace';
+  const isIdentifiedAcrossWorkspaces = spender.spenderType === 'application';
   const universalIdentifier = getApplicationUniversalIdentifier(authContext);
 
-  if (isCrossWorkspace && !isDefined(universalIdentifier)) {
+  if (
+    isCrossWorkspace &&
+    isIdentifiedAcrossWorkspaces &&
+    !isDefined(universalIdentifier)
+  ) {
     return null;
   }
 
-  const spenderId = isCrossWorkspace ? universalIdentifier : null;
+  const spenderId =
+    isCrossWorkspace && isIdentifiedAcrossWorkspaces
+      ? universalIdentifier
+      : null;
 
   return {
     key: buildSpeedBucketKey({

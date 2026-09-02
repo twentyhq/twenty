@@ -62,6 +62,13 @@ export const validateUsageLimitAgainstDefinition = (
         UsageLimitExceptionCode.LIMIT_INVALID,
       );
     }
+
+    if (input.meter !== 'quantity') {
+      throw new UsageLimitException(
+        'A speed limit counts requests, so it is metered on quantity',
+        UsageLimitExceptionCode.LIMIT_INVALID,
+      );
+    }
   }
 
   if (input.limitKind === 'quota') {

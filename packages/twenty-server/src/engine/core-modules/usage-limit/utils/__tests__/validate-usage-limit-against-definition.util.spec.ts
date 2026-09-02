@@ -12,7 +12,7 @@ const validSpeedLimit: UpsertUsageLimitInput = {
   limitKind: 'speed',
   periodCount: 60,
   periodUnit: 'second',
-  meter: 'creditsUsedMicro',
+  meter: 'quantity',
   limitValueType: 'absolute',
   limitValue: 100,
 };
@@ -81,6 +81,19 @@ describe('validateUsageLimitAgainstDefinition', () => {
       validateUsageLimitAgainstDefinition({
         ...validSpeedLimit,
         periodUnit: 'billingPeriod',
+      }),
+    ).toThrow(
+      expect.objectContaining({
+        code: UsageLimitExceptionCode.LIMIT_INVALID,
+      }),
+    );
+  });
+
+  it('rejects a speed limit metered on credits', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validSpeedLimit,
+        meter: 'creditsUsedMicro',
       }),
     ).toThrow(
       expect.objectContaining({

@@ -42,7 +42,7 @@ const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
   limitKind: 'speed',
   periodCount: 60,
   periodUnit: 'second',
-  meter: 'creditsUsedMicro',
+  meter: 'quantity',
   limitValueType: 'absolute',
   limitValue: 100,
   burstValue: null,
@@ -52,12 +52,14 @@ const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
 const buildBuckets = ({
   authContext,
   limits = [],
+  speedLimitDefaults = SPEED_LIMIT_DEFAULTS,
 }: {
   authContext: WorkspaceAuthContext;
   limits?: FlatUsageLimit[];
+  speedLimitDefaults?: SpeedLimitDefault[];
 }) =>
   buildSpeedBuckets({
-    speedLimitDefaults: SPEED_LIMIT_DEFAULTS,
+    speedLimitDefaults,
     limits,
     authContext,
     resourceType: UsageResourceType.API,
@@ -132,6 +134,66 @@ describe('buildSpeedBuckets with no limits configured', () => {
 
   it('leaves a system request alone', () => {
     expect(buildBuckets({ authContext: systemContext })).toEqual([]);
+  });
+});
+
+describe('buildSpeedBuckets for a spender no application identifies', () => {
+  const WORKSPACE_DEFAULTS: SpeedLimitDefault[] = [
+    {
+      spenderType: 'workspace',
+      counterScope: 'crossWorkspace',
+      maxTokens: 14,
+      windowMs: 10_000,
+      isOverridable: true,
+    },
+  ];
+
+  it('meters a system sender against one counter across every workspace', () => {
+    expect(
+      buildBuckets({
+        authContext: systemContext,
+        speedLimitDefaults: WORKSPACE_DEFAULTS,
+      }),
+    ).toEqual([
+      expect.objectContaining({
+        key: '{server}:speed:API:API_REQUEST:workspace:-:10',
+        refillPerWindow: 14,
+        spenderType: 'workspace',
+        spenderId: null,
+      }),
+    ]);
+  });
+
+  it('meters a user request against that same counter', () => {
+    const [bucket] = buildBuckets({
+      authContext: userContext,
+      speedLimitDefaults: WORKSPACE_DEFAULTS,
+    });
+
+    expect(bucket.key).toBe('{server}:speed:API:API_REQUEST:workspace:-:10');
+  });
+
+  it('still drops an application bucket when no application identifies the caller', () => {
+    const unidentifiedApplicationContext = {
+      type: 'application',
+      workspace,
+      application: { id: 'app-1' },
+    } as WorkspaceAuthContext;
+
+    expect(
+      buildBuckets({
+        authContext: unidentifiedApplicationContext,
+        speedLimitDefaults: [
+          {
+            spenderType: 'application',
+            counterScope: 'crossWorkspace',
+            maxTokens: 500,
+            windowMs: 60_000,
+            isOverridable: false,
+          },
+        ],
+      }),
+    ).toEqual([]);
   });
 });
 
