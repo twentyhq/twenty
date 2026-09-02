@@ -13,3 +13,6 @@ export const SLACK_USER_LINKS_MATCH_ROUTE_PATH = '/slack-user-links/match';
 
 export const SLACK_USER_LINKS_UNLINKED_ROUTE_PATH =
   '/slack-user-links/unlinked';
+
+export const SLACK_USER_LINKS_CONNECTION_STATUS_ROUTE_PATH =
+  '/slack-user-links/connection-status';
