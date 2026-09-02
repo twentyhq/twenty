@@ -1,0 +1,138 @@
+import { isUndefined } from '@sniptt/guards';
+import { useRef, useState } from 'react';
+import { ColorSample } from 'twenty-ui/data-display';
+import { DEFAULT_COLOR_LABELS } from 'twenty-ui/navigation';
+import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
+
+import { FloatingMenu } from 'src/front-components/components/FloatingMenu';
+import { SettingsSelectControl } from 'src/front-components/components/SettingsSelectControl';
+import { ThemeColorPickerMenu } from 'src/front-components/components/ThemeColorPickerMenu';
+import {
+  getNextActiveOptionIndex,
+  type SettingsSelectNavigationKey,
+} from 'src/front-components/utils/get-next-active-option-index.util';
+
+// The control is capped at 120px, where "Custom hex" ellipsises to "Custom …".
+const CUSTOM_CONTROL_LABEL = 'Custom';
+const CUSTOM_OPTION_VALUE = 'custom';
+const FALLBACK_SWATCH_COLOR_NAME: ThemeColor = 'gray';
+const TILE_BACKGROUND_LISTBOX_ID = 'call-recorder-tile-background';
+
+type TileBackgroundOption = ThemeColor | typeof CUSTOM_OPTION_VALUE;
+
+const TILE_BACKGROUND_OPTIONS: TileBackgroundOption[] = [
+  ...MAIN_COLOR_NAMES,
+  CUSTOM_OPTION_VALUE,
+];
+
+const getTileBackgroundOptionId = (option: TileBackgroundOption) =>
+  `${TILE_BACKGROUND_LISTBOX_ID}-option-${option}`;
+
+type TileBackgroundControlProps = {
+  swatchColor: string;
+  selectedColor: ThemeColor | undefined;
+  isCustomSelected: boolean;
+  disabled: boolean;
+  onSelectColor: (color: ThemeColor) => void;
+  onSelectCustom: () => void;
+};
+
+export const TileBackgroundControl = ({
+  swatchColor,
+  selectedColor,
+  isCustomSelected,
+  disabled,
+  onSelectColor,
+  onSelectCustom,
+}: TileBackgroundControlProps) => {
+  const anchorRef = useRef<HTMLDivElement | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeOptionIndex, setActiveOptionIndex] = useState(0);
+
+  const label = isUndefined(selectedColor)
+    ? CUSTOM_CONTROL_LABEL
+    : (DEFAULT_COLOR_LABELS[selectedColor] ?? selectedColor);
+
+  const selectedOption: TileBackgroundOption = isCustomSelected
+    ? CUSTOM_OPTION_VALUE
+    : (selectedColor ?? FALLBACK_SWATCH_COLOR_NAME);
+
+  const handleMenuToggle = () => {
+    if (!isMenuOpen) {
+      setActiveOptionIndex(
+        Math.max(TILE_BACKGROUND_OPTIONS.indexOf(selectedOption), 0),
+      );
+    }
+
+    setIsMenuOpen((isOpen) => !isOpen);
+  };
+  const handleMenuClose = () => setIsMenuOpen(false);
+
+  const handleNavigate = (key: SettingsSelectNavigationKey) => {
+    setActiveOptionIndex((currentIndex) =>
+      getNextActiveOptionIndex({
+        key,
+        currentIndex,
+        optionCount: TILE_BACKGROUND_OPTIONS.length,
+      }),
+    );
+  };
+
+  const handleSelectActive = () => {
+    const activeOption = TILE_BACKGROUND_OPTIONS[activeOptionIndex];
+
+    if (activeOption === CUSTOM_OPTION_VALUE) {
+      onSelectCustom();
+    } else if (activeOption) {
+      onSelectColor(activeOption);
+    }
+
+    handleMenuClose();
+  };
+
+  return (
+    <div ref={anchorRef}>
+      <SettingsSelectControl
+        label={label}
+        ariaLabel="Tile background"
+        disabled={disabled}
+        listboxId={TILE_BACKGROUND_LISTBOX_ID}
+        activeDescendantId={getTileBackgroundOptionId(
+          TILE_BACKGROUND_OPTIONS[activeOptionIndex] ?? CUSTOM_OPTION_VALUE,
+        )}
+        isExpanded={isMenuOpen}
+        onNavigate={handleNavigate}
+        onSelectActive={handleSelectActive}
+        onEscape={handleMenuClose}
+        adornment={
+          <ColorSample
+            colorName={selectedColor ?? FALLBACK_SWATCH_COLOR_NAME}
+            color={swatchColor}
+          />
+        }
+        onClick={handleMenuToggle}
+      />
+      {isMenuOpen && (
+        <FloatingMenu anchorRef={anchorRef} onClose={handleMenuClose}>
+          <ThemeColorPickerMenu
+            listboxId={TILE_BACKGROUND_LISTBOX_ID}
+            selectedColor={selectedColor}
+            isCustomSelected={isCustomSelected}
+            activeOption={
+              TILE_BACKGROUND_OPTIONS[activeOptionIndex] ?? CUSTOM_OPTION_VALUE
+            }
+            getOptionId={getTileBackgroundOptionId}
+            onSelectColor={(color) => {
+              onSelectColor(color);
+              handleMenuClose();
+            }}
+            onSelectCustom={() => {
+              onSelectCustom();
+              handleMenuClose();
+            }}
+          />
+        </FloatingMenu>
+      )}
+    </div>
+  );
+};
