@@ -12,7 +12,11 @@ const FrontComponentRenderer = lazy(() =>
 
 const StyledRendererContainer = styled.div`
   display: flex;
-  min-height: 400px;
+  width: 100%;
+`;
+
+const StyledSkeletonContainer = styled.div`
+  height: 400px;
   width: 100%;
 `;
 
@@ -23,13 +27,19 @@ type SettingsApplicationCustomSettingsSectionProps = {
 export const SettingsApplicationCustomSettingsSection = ({
   frontComponentId,
 }: SettingsApplicationCustomSettingsSectionProps) => {
+  const skeletonFallback = (
+    <StyledSkeletonContainer>
+      <FrontComponentSkeletonLoader />
+    </StyledSkeletonContainer>
+  );
+
   return (
     <Section>
       <StyledRendererContainer>
-        <Suspense fallback={<FrontComponentSkeletonLoader />}>
+        <Suspense fallback={skeletonFallback}>
           <FrontComponentRenderer
             frontComponentId={frontComponentId}
-            loadingFallback={<FrontComponentSkeletonLoader />}
+            loadingFallback={skeletonFallback}
           />
         </Suspense>
       </StyledRendererContainer>
