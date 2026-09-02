@@ -246,17 +246,17 @@ export class ConnectedAccountMetadataService {
       `WorkspaceId: ${workspaceId} Deleting connected account ${id} with ${messageChannels.length} message channel(s) and ${calendarChannels.length} calendar channel(s)`,
     );
 
-    await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
-
-    await this.repository.delete({ id, workspaceId });
-
     if (isDefined(connectedAccount.connectionProviderId)) {
-      await this.connectionProviderLifecycleHookService.dispatchOnDisconnect({
+      await this.connectionProviderLifecycleHookService.runOnDisconnect({
         connectionProviderId: connectedAccount.connectionProviderId,
         workspaceId,
         connectedAccountId: id,
       });
     }
+
+    await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
+
+    await this.repository.delete({ id, workspaceId });
 
     this.workspaceEventEmitter.emitCustomBatchEvent<MessageChannelDeletedEvent>(
       MESSAGE_CHANNEL_DELETED_EVENT,
