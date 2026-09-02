@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type FlatLogicFunctionMaps } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function-maps.type';
@@ -63,10 +63,10 @@ export class LogicFunctionPrebuiltConversionService {
         },
       );
 
-    const flatApplication = this.findConvertibleFlatApplication({
-      applicationId,
+    const flatApplication = findActiveFlatApplicationById(
       flatApplicationMaps,
-    });
+      applicationId,
+    );
 
     if (!isDefined(flatApplication)) {
       this.logger.warn(
@@ -130,10 +130,10 @@ export class LogicFunctionPrebuiltConversionService {
     flatLogicFunctionMaps: FlatLogicFunctionMaps;
     flatApplicationMaps: FlatApplicationCacheMaps;
   }): FlatLogicFunction[] {
-    const flatApplication = this.findConvertibleFlatApplication({
-      applicationId,
+    const flatApplication = findActiveFlatApplicationById(
       flatApplicationMaps,
-    });
+      applicationId,
+    );
 
     if (!isDefined(flatApplication)) {
       return [];
@@ -157,21 +157,5 @@ export class LogicFunctionPrebuiltConversionService {
             applicationSourceType: flatApplication.sourceType,
           }),
       );
-  }
-
-  private findConvertibleFlatApplication({
-    applicationId,
-    flatApplicationMaps,
-  }: {
-    applicationId: string;
-    flatApplicationMaps: FlatApplicationCacheMaps;
-  }): FlatApplication | undefined {
-    const flatApplication = flatApplicationMaps.byId[applicationId];
-
-    if (!isDefined(flatApplication) || isDefined(flatApplication.deletedAt)) {
-      return undefined;
-    }
-
-    return flatApplication;
   }
 }
