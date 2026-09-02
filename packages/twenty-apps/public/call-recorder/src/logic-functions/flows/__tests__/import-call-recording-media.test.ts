@@ -3,7 +3,7 @@ import { PassThrough, Readable } from 'node:stream';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-video-field-universal-identifier';
+import { CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { importCallRecordingMedia } from 'src/logic-functions/flows/import-call-recording-media.util';
 
 const mutationMock = vi.hoisted(() => vi.fn());

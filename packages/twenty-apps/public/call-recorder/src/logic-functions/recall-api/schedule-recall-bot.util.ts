@@ -13,6 +13,7 @@ import {
 } from 'src/logic-functions/recall-api/extract-recall-bot-id.util';
 import { computeRecallBotDetectionActivateAfterSeconds } from 'src/logic-functions/domain/compute-recall-bot-detection-activate-after-seconds.util';
 import { getRecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
+import { getRecallBotChatConfig } from 'src/logic-functions/recall-api/get-recall-bot-chat-config.util';
 import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-api-request.util';
 import { computeMaximumJoinAt } from 'src/logic-functions/recall-api/compute-maximum-join-at.utils';
 
@@ -52,6 +53,7 @@ export const scheduleRecallBot = async ({
       }),
     botName: configResult.config.botName,
   });
+  const chat = getRecallBotChatConfig();
 
   const result = await recallBotApiRequest<RecallBotResponse>({
     config: configResult.config,
@@ -63,6 +65,7 @@ export const scheduleRecallBot = async ({
       join_at: effectiveJoinAt,
       bot_name: configResult.config.botName,
       automatic_leave: automaticLeave,
+      ...(isUndefined(chat) ? {} : { chat }),
       ...(isUndefined(automaticVideoOutput)
         ? {}
         : { automatic_video_output: automaticVideoOutput }),

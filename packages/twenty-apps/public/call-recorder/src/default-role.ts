@@ -5,7 +5,7 @@ import {
 } from 'twenty-sdk/define';
 
 import { APP_DISPLAY_NAME } from 'src/constants/app-display-name';
-import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/constants/default-role-universal-identifier';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
 export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
