@@ -1,4 +1,5 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'src/utils/is-defined';
 
 import { type CallRecordingSyncFields } from 'src/logic-functions/types/call-recording-sync-fields.type';
 
@@ -19,7 +20,7 @@ const doesCallRecordingExist = async ({
     },
   });
 
-  return queryResult.callRecordings?.edges?.[0]?.node !== undefined;
+  return isDefined(queryResult.callRecordings?.edges?.[0]?.node);
 };
 
 const updateCallRecording = async ({
