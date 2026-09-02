@@ -7,7 +7,10 @@ const MAX_PAGES = 25;
 
 export const listLinkedSlackUserIds = async (
   client: CoreApiClient,
-  { slackTeamId }: { slackTeamId: string },
+  {
+    slackTeamId,
+    slackUserIds,
+  }: { slackTeamId: string; slackUserIds?: string[] },
 ): Promise<Set<string>> => {
   const linkedSlackUserIds = new Set<string>();
 
@@ -17,7 +20,12 @@ export const listLinkedSlackUserIds = async (
     const queryResult = await client.query({
       slackUserLinks: {
         __args: {
-          filter: { slackTeamId: { eq: slackTeamId } },
+          filter: {
+            slackTeamId: { eq: slackTeamId },
+            ...(isDefined(slackUserIds)
+              ? { slackUserId: { in: slackUserIds } }
+              : {}),
+          },
           first: LINKS_PER_PAGE,
           ...(isDefined(after) ? { after } : {}),
         },
