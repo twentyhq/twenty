@@ -1,17 +1,15 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-
-export const getPageLayoutIdFromContext = ({
-  objectNameSingular,
+export const getPageLayoutIdFromContext = <TDashboardPageLayoutId>({
+  isDashboardContext,
   dashboardPageLayoutId,
   currentPageLayoutId,
   recordPageLayoutId,
 }: {
-  objectNameSingular: string;
-  dashboardPageLayoutId: string | null | undefined;
+  isDashboardContext: boolean;
+  dashboardPageLayoutId: TDashboardPageLayoutId;
   currentPageLayoutId: string | null;
   recordPageLayoutId: string | undefined;
 }) => {
-  return objectNameSingular === CoreObjectNameSingular.Dashboard
+  return isDashboardContext
     ? (dashboardPageLayoutId ?? currentPageLayoutId)
     : (recordPageLayoutId ?? null);
 };

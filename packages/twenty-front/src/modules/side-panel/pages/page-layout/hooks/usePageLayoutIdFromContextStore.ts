@@ -11,6 +11,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const usePageLayoutIdFromContextStore = () => {
@@ -65,6 +66,9 @@ export const usePageLayoutIdFromContextStore = () => {
     throw new Error('Only one record should be selected');
   }
 
+  const isDashboardContext =
+    objectMetadataItem.nameSingular === CoreObjectNameSingular.Dashboard;
+
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
   const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
 
@@ -76,15 +80,11 @@ export const usePageLayoutIdFromContextStore = () => {
   const pageLayoutId = isDefined(pageLayoutContext)
     ? pageLayoutContext.pageLayoutId
     : getPageLayoutIdFromContext({
-        objectNameSingular: objectMetadataItem.nameSingular,
+        isDashboardContext,
         dashboardPageLayoutId: recordStore?.pageLayoutId,
         currentPageLayoutId,
         recordPageLayoutId: recordPageLayout?.id,
       });
-
-  if (!isDefined(pageLayoutId)) {
-    throw new Error('Page layout ID is not defined');
-  }
 
   return {
     pageLayoutId,

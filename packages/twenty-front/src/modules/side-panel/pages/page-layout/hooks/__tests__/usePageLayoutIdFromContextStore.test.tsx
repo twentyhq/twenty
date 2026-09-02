@@ -13,13 +13,12 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const DASHBOARD_ID = 'dashboard-id';
-const DASHBOARD_PAGE_LAYOUT_ID = 'dashboard-page-layout-id';
 const COMPANY_OBJECT_METADATA_ID = 'company-object-metadata-id';
 const dashboardObjectMetadataItem =
   getMockObjectMetadataItemOrThrow('dashboard');
 
 describe('usePageLayoutIdFromContextStore', () => {
-  it('keeps the page layout context captured by the side panel during a main route transition', () => {
+  it('keeps a null page layout context captured by the side panel during a main route transition', () => {
     const MetadataWrapper = getJestMetadataAndApolloMocksWrapper({
       apolloMocks: [],
       onInitializeJotaiStore: (store) => {
@@ -42,7 +41,7 @@ describe('usePageLayoutIdFromContextStore', () => {
             pageIcon: IconTable,
             pageId: 'side-panel-page-id',
             pageLayoutContext: {
-              pageLayoutId: DASHBOARD_PAGE_LAYOUT_ID,
+              pageLayoutId: null,
               recordId: DASHBOARD_ID,
               objectMetadataItemId: dashboardObjectMetadataItem.id,
               objectNameSingular: 'dashboard',
@@ -75,7 +74,7 @@ describe('usePageLayoutIdFromContextStore', () => {
     });
 
     expect(result.current).toEqual({
-      pageLayoutId: DASHBOARD_PAGE_LAYOUT_ID,
+      pageLayoutId: null,
       recordId: DASHBOARD_ID,
       objectMetadataItemId: dashboardObjectMetadataItem.id,
       objectNameSingular: 'dashboard',

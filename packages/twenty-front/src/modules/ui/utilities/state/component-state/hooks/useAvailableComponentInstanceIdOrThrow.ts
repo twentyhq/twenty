@@ -12,11 +12,13 @@ export const useAvailableComponentInstanceIdOrThrow = <
   const instanceStateContext = useComponentInstanceStateContext(Context);
 
   const instanceIdFromContext = instanceStateContext?.instanceId;
-  const availableInstanceId = isNonEmptyString(instanceIdFromProps)
-    ? instanceIdFromProps
-    : (instanceIdFromContext ?? '');
-  const scopedInstanceId =
-    useWorkspaceSurfaceScopedComponentInstanceId(availableInstanceId);
+  const scopedInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
+    instanceIdFromContext ?? '',
+  );
+
+  if (isNonEmptyString(instanceIdFromProps)) {
+    return instanceIdFromProps;
+  }
 
   if (isNonEmptyString(scopedInstanceId)) {
     return scopedInstanceId;
