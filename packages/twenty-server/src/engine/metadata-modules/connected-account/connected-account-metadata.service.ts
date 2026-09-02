@@ -66,7 +66,11 @@ export class ConnectedAccountMetadataService {
     }
 
     const sharedConnectedAccounts = await this.repository.find({
-      where: { id: In(additionalSharedAccountIds), workspaceId },
+      where: {
+        id: In(additionalSharedAccountIds),
+        workspaceId,
+        visibility: 'workspace',
+      },
     });
 
     return [...ownConnectedAccounts, ...sharedConnectedAccounts];

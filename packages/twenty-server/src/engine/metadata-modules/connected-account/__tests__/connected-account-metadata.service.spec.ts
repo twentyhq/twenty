@@ -8,6 +8,7 @@ import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/con
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { In } from 'typeorm';
 
 describe('ConnectedAccountMetadataService', () => {
   let service: ConnectedAccountMetadataService;
@@ -71,6 +72,14 @@ describe('ConnectedAccountMetadataService', () => {
       });
 
       expect(result).toEqual([ownAccount]);
+      expect(connectedAccountRepository.find).toHaveBeenCalledTimes(2);
+      expect(connectedAccountRepository.find).toHaveBeenNthCalledWith(1, {
+        where: { userWorkspaceId, workspaceId },
+      });
+      expect(connectedAccountRepository.find).toHaveBeenNthCalledWith(2, {
+        where: { workspaceId, visibility: 'workspace' },
+        select: ['id'],
+      });
     });
 
     it('includes workspace-shared accounts alongside the own accounts', async () => {
@@ -85,9 +94,17 @@ describe('ConnectedAccountMetadataService', () => {
       });
 
       expect(result).toEqual([ownAccount, sharedAccount]);
+      expect(connectedAccountRepository.find).toHaveBeenCalledTimes(3);
+      expect(connectedAccountRepository.find).toHaveBeenNthCalledWith(3, {
+        where: {
+          id: In([sharedAccount.id]),
+          workspaceId,
+          visibility: 'workspace',
+        },
+      });
     });
 
-    it('does not duplicate an account that is both own and shared', async () => {
+    it('does not duplicate an account that is both own and shared, and skips the third query', async () => {
       connectedAccountRepository.find
         .mockResolvedValueOnce([ownAccount])
         .mockResolvedValueOnce([{ id: ownAccount.id }]);
@@ -98,6 +115,7 @@ describe('ConnectedAccountMetadataService', () => {
       });
 
       expect(result).toEqual([ownAccount]);
+      expect(connectedAccountRepository.find).toHaveBeenCalledTimes(2);
     });
   });
 });
