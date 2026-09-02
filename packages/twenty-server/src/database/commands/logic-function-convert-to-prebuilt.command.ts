@@ -13,6 +13,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
+import { LOGIC_FUNCTION_PREBUILT_CONVERSION_ENQUEUE_BATCH_SIZE } from 'src/engine/metadata-modules/logic-function/constants/logic-function-prebuilt-conversion-batch-size.constant';
 import { LOGIC_FUNCTION_PREBUILT_CONVERSION_JOB_PRIORITY } from 'src/engine/metadata-modules/logic-function/constants/logic-function-prebuilt-conversion-job-priority.constant';
 import { LOGIC_FUNCTION_PREBUILT_CONVERSION_RETRY_LIMIT } from 'src/engine/metadata-modules/logic-function/constants/logic-function-prebuilt-conversion-retry-limit.constant';
 import {
@@ -107,18 +108,26 @@ export class LogicFunctionConvertToPrebuiltCommand extends WorkspaceCommandRunne
       return;
     }
 
-    await this.messageQueueService.bulkAdd<ConvertApplicationLogicFunctionsToPrebuiltJobData>(
-      ConvertApplicationLogicFunctionsToPrebuiltJob.name,
-      applicationIdsToConvert.map((applicationId) => ({
-        workspaceId,
-        applicationId,
-      })),
-      {
-        priority: LOGIC_FUNCTION_PREBUILT_CONVERSION_JOB_PRIORITY,
-        retryLimit: LOGIC_FUNCTION_PREBUILT_CONVERSION_RETRY_LIMIT,
-        backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
-      },
-    );
+    for (
+      let batchStart = 0;
+      batchStart < applicationIdsToConvert.length;
+      batchStart += LOGIC_FUNCTION_PREBUILT_CONVERSION_ENQUEUE_BATCH_SIZE
+    ) {
+      await this.messageQueueService.bulkAdd<ConvertApplicationLogicFunctionsToPrebuiltJobData>(
+        ConvertApplicationLogicFunctionsToPrebuiltJob.name,
+        applicationIdsToConvert
+          .slice(
+            batchStart,
+            batchStart + LOGIC_FUNCTION_PREBUILT_CONVERSION_ENQUEUE_BATCH_SIZE,
+          )
+          .map((applicationId) => ({ workspaceId, applicationId })),
+        {
+          priority: LOGIC_FUNCTION_PREBUILT_CONVERSION_JOB_PRIORITY,
+          retryLimit: LOGIC_FUNCTION_PREBUILT_CONVERSION_RETRY_LIMIT,
+          backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+        },
+      );
+    }
 
     if (options.verbose) {
       this.logger.log(
