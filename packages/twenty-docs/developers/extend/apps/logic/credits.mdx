@@ -126,7 +126,7 @@ Notes:
 
 ## Checking before you spend
 
-A workspace can run out of credits. Your app is not stopped when that happens, but some of the platform's own work is: AI calls and outbound email are refused once the balance is gone. So an app that does expensive work first and calls `runAgent` at the end will fail late, on a call it did not write.
+A workspace can run out of credits. Your app is not stopped when that happens, but some of the platform's own work is. `runAgent` returns an error instead of running, and the other AI entry points refuse outright. So an app that does its expensive work first and calls the platform at the end can fail late, on a call it did not write.
 
 Ask first:
 
@@ -147,7 +147,7 @@ Notes:
 - It answers whether the workspace may spend, not how much it has left. Your app does not see the balance or the plan.
 - It fails open. If the check times out or the server is unreachable it reports credits available, so an infrastructure hiccup does not stop your app. Treat it as a hint worth honouring, not as an authorization decision.
 - It is a snapshot. Credits can run out between the check and the work.
-- Not everything the platform does is gated on credits today. Workflow runs are not, so a `false` here does not mean every downstream call will fail.
+- The gate is not applied uniformly. Workflow runs are not credit-gated, and neither is every outbound email path, so a `false` here tells you the workspace is out of credits rather than predicting exactly which calls will fail.
 
 ## Telling people what it costs
 
