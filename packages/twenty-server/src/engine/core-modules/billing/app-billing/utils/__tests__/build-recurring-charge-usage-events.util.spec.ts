@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildRecurringChargeUsageEvents } from 'src/engine/core-modules/billing/app-billing/utils/build-recurring-charge-usage-events.util';
-import { type DueRecurringCharge } from 'src/engine/core-modules/billing/app-billing/utils/collect-due-recurring-charges.util';
+import { type DeclaredRecurringCharge } from 'src/engine/core-modules/billing/app-billing/utils/collect-declared-recurring-charges.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -9,7 +9,7 @@ import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 const APPLICATION_ID = '20202020-1111-0000-0000-000000000001';
 const PERIOD_START = new Date('2026-08-01T00:00:00.000Z');
 
-const FLAT_CHARGE: DueRecurringCharge = {
+const FLAT_CHARGE: DeclaredRecurringCharge = {
   applicationId: APPLICATION_ID,
   chargeKey: 'platformFee',
   charge: {
@@ -19,7 +19,7 @@ const FLAT_CHARGE: DueRecurringCharge = {
   },
 };
 
-const SEAT_CHARGE: DueRecurringCharge = {
+const SEAT_CHARGE: DeclaredRecurringCharge = {
   applicationId: APPLICATION_ID,
   chargeKey: 'seat',
   charge: {

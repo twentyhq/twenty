@@ -3,6 +3,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { buildRecurringChargeUsageEvents } from 'src/engine/core-modules/billing/app-billing/utils/build-recurring-charge-usage-events.util';
+import { collectDeclaredRecurringCharges } from 'src/engine/core-modules/billing/app-billing/utils/collect-declared-recurring-charges.util';
 import { collectDueRecurringCharges } from 'src/engine/core-modules/billing/app-billing/utils/collect-due-recurring-charges.util';
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
@@ -53,6 +54,16 @@ export class ApplicationRecurringChargeService {
 
     const periodStart = currentBillingSubscription.currentPeriodStart;
 
+    const declaredCharges = collectDeclaredRecurringCharges({
+      flatApplicationMaps,
+    });
+
+    // Reading what the period already carries costs a ClickHouse query per
+    // workspace per day, so it waits until an app actually declares something.
+    if (declaredCharges.length === 0) {
+      return 0;
+    }
+
     const alreadyChargedKeys =
       await this.usageAnalyticsService.getChargedRecurringKeys({
         workspaceId,
@@ -60,7 +71,7 @@ export class ApplicationRecurringChargeService {
       });
 
     const dueCharges = collectDueRecurringCharges({
-      flatApplicationMaps,
+      declaredCharges,
       alreadyChargedKeys,
     });
 

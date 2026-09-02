@@ -1,13 +1,13 @@
 /* @license Enterprise */
 
-import { type DueRecurringCharge } from 'src/engine/core-modules/billing/app-billing/utils/collect-due-recurring-charges.util';
+import { type DeclaredRecurringCharge } from 'src/engine/core-modules/billing/app-billing/utils/collect-declared-recurring-charges.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
 
 type BuildRecurringChargeUsageEventsParams = {
-  dueCharges: DueRecurringCharge[];
+  dueCharges: DeclaredRecurringCharge[];
   workspaceMemberCount: number;
   periodStart: Date;
 };
