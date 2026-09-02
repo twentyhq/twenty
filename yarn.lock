@@ -18262,17 +18262,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@smithy/util-stream@npm:^4.5.10":
-  version: 4.6.3
-  resolution: "@smithy/util-stream@npm:4.6.3"
-  dependencies:
-    "@smithy/core": "npm:^3.24.3"
-    tslib: "npm:^2.6.2"
-  checksum: 10c0/7a0ab21330e6bc8a8ff85747c860fd917df4696735e19a858fa00550068af3f0b9705c429e46db56e8ec14b80f741f4efb64a178980d8f6312985920902c402d
-  languageName: node
-  linkType: hard
-
-"@smithy/util-stream@npm:^4.5.16":
+"@smithy/util-stream@npm:4.5.16, @smithy/util-stream@npm:^4.5.16":
   version: 4.5.16
   resolution: "@smithy/util-stream@npm:4.5.16"
   dependencies:
@@ -18285,6 +18275,16 @@ __metadata:
     "@smithy/util-utf8": "npm:^4.2.1"
     tslib: "npm:^2.6.2"
   checksum: 10c0/266fbed834b0d6d1daccaf89eb24cab93feb6d2ee904689ceaf5cd15c9e9170f4f46632ab5dc630bc09dd8a3465d7e72aeda43f4b4150f4eebf21f00027ed015
+  languageName: node
+  linkType: hard
+
+"@smithy/util-stream@npm:^4.5.10":
+  version: 4.6.3
+  resolution: "@smithy/util-stream@npm:4.6.3"
+  dependencies:
+    "@smithy/core": "npm:^3.24.3"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/7a0ab21330e6bc8a8ff85747c860fd917df4696735e19a858fa00550068af3f0b9705c429e46db56e8ec14b80f741f4efb64a178980d8f6312985920902c402d
   languageName: node
   linkType: hard
 
@@ -49804,6 +49804,7 @@ __metadata:
     "@sentry/nestjs": "npm:^10.59.0"
     "@sentry/node": "npm:^10.59.0"
     "@sentry/profiling-node": "npm:^10.59.0"
+    "@smithy/util-stream": "npm:4.5.16"
     "@sniptt/guards": "npm:0.2.0"
     "@swc/cli": "npm:^0.8.1"
     "@swc/core": "npm:^1.15.11"
