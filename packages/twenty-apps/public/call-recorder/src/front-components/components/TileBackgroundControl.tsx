@@ -20,7 +20,9 @@ const TILE_BACKGROUND_LISTBOX_ID = 'call-recorder-tile-background';
 
 type TileBackgroundOption = ThemeColor | typeof CUSTOM_OPTION_VALUE;
 
-const TILE_BACKGROUND_OPTIONS: TileBackgroundOption[] = [
+// Built lazily: the SDK manifest extractor loads this module with twenty-ui
+// mocked, so module-scope iteration over MAIN_COLOR_NAMES would throw.
+const getTileBackgroundOptions = (): TileBackgroundOption[] => [
   ...MAIN_COLOR_NAMES,
   CUSTOM_OPTION_VALUE,
 ];
@@ -49,6 +51,8 @@ export const TileBackgroundControl = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeOptionIndex, setActiveOptionIndex] = useState(0);
 
+  const tileBackgroundOptions = getTileBackgroundOptions();
+
   const label = isUndefined(selectedColor)
     ? CUSTOM_CONTROL_LABEL
     : (DEFAULT_COLOR_LABELS[selectedColor] ?? selectedColor);
@@ -60,7 +64,7 @@ export const TileBackgroundControl = ({
   const handleMenuToggle = () => {
     if (!isMenuOpen) {
       setActiveOptionIndex(
-        Math.max(TILE_BACKGROUND_OPTIONS.indexOf(selectedOption), 0),
+        Math.max(tileBackgroundOptions.indexOf(selectedOption), 0),
       );
     }
 
@@ -73,13 +77,13 @@ export const TileBackgroundControl = ({
       getNextActiveOptionIndex({
         key,
         currentIndex,
-        optionCount: TILE_BACKGROUND_OPTIONS.length,
+        optionCount: tileBackgroundOptions.length,
       }),
     );
   };
 
   const handleSelectActive = () => {
-    const activeOption = TILE_BACKGROUND_OPTIONS[activeOptionIndex];
+    const activeOption = tileBackgroundOptions[activeOptionIndex];
 
     if (activeOption === CUSTOM_OPTION_VALUE) {
       onSelectCustom();
@@ -98,7 +102,7 @@ export const TileBackgroundControl = ({
         disabled={disabled}
         listboxId={TILE_BACKGROUND_LISTBOX_ID}
         activeDescendantId={getTileBackgroundOptionId(
-          TILE_BACKGROUND_OPTIONS[activeOptionIndex] ?? CUSTOM_OPTION_VALUE,
+          tileBackgroundOptions[activeOptionIndex] ?? CUSTOM_OPTION_VALUE,
         )}
         isExpanded={isMenuOpen}
         onNavigate={handleNavigate}
@@ -119,7 +123,7 @@ export const TileBackgroundControl = ({
             selectedColor={selectedColor}
             isCustomSelected={isCustomSelected}
             activeOption={
-              TILE_BACKGROUND_OPTIONS[activeOptionIndex] ?? CUSTOM_OPTION_VALUE
+              tileBackgroundOptions[activeOptionIndex] ?? CUSTOM_OPTION_VALUE
             }
             getOptionId={getTileBackgroundOptionId}
             onSelectColor={(color) => {
