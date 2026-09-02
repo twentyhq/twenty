@@ -1,8 +1,10 @@
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { type PageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/types/PageLayoutSidePanelPage';
+import { getPageLayoutSidePanelContext } from '@/side-panel/pages/page-layout/utils/getPageLayoutSidePanelContext';
 import { getPageLayoutIcon } from '@/side-panel/pages/page-layout/utils/getPageLayoutIcon';
 import { getPageLayoutPageTitle } from '@/side-panel/pages/page-layout/utils/getPageLayoutPageTitle';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
@@ -16,8 +18,9 @@ type NavigatePageLayoutSidePanelProps = {
 };
 
 export const useNavigatePageLayoutSidePanel = () => {
+  const store = useStore();
   const { navigateSidePanel } = useNavigateSidePanel();
-  const pageLayoutContext = usePageLayoutIdFromContextStore();
+  const workspaceSurface = useWorkspaceSurface();
 
   const navigatePageLayoutSidePanel = useCallback(
     ({
@@ -27,6 +30,14 @@ export const useNavigatePageLayoutSidePanel = () => {
       focusTitleInput = false,
       resetNavigationStack = false,
     }: NavigatePageLayoutSidePanelProps) => {
+      const pageLayoutContext = getPageLayoutSidePanelContext({
+        store,
+        sidePanelPageInstanceId:
+          workspaceSurface.type === 'side-panel'
+            ? workspaceSurface.instanceId
+            : undefined,
+      });
+
       navigateSidePanel({
         page: sidePanelPage,
         pageTitle: isDefined(pageTitle)
@@ -37,10 +48,15 @@ export const useNavigatePageLayoutSidePanel = () => {
           : getPageLayoutIcon(sidePanelPage),
         focusTitleInput,
         resetNavigationStack,
-        pageLayoutContext,
+        ...(isDefined(pageLayoutContext) ? { pageLayoutContext } : {}),
       });
     },
-    [navigateSidePanel, pageLayoutContext],
+    [
+      navigateSidePanel,
+      store,
+      workspaceSurface.instanceId,
+      workspaceSurface.type,
+    ],
   );
 
   return {

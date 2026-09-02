@@ -48,10 +48,14 @@ export const SidePanelRouter = () => {
   const hasSingleTargetedRecord =
     contextStoreTargetedRecordsRule.mode === 'selection' &&
     contextStoreTargetedRecordsRule.selectedRecordIds.length === 1;
+  const hasPageLayoutContext = isDefined(
+    currentNavigationItem?.pageLayoutContext,
+  );
 
   const shouldSkipPageLayoutPage =
     isDefined(sidePanelPage) &&
     isPageLayoutSidePanelPage(sidePanelPage) &&
+    !hasPageLayoutContext &&
     (!isDefined(contextStoreCurrentObjectMetadataItemId) ||
       !hasSingleTargetedRecord);
 
