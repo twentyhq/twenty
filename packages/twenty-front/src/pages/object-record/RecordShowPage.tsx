@@ -19,6 +19,7 @@ import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { CoreWorkflowVersionPreviewActions } from '@/object-core/workflows/versions/components/CoreWorkflowVersionPreviewActions';
 import { RecordShowPageHeader } from '~/pages/object-record/RecordShowPageHeader';
 import { RecordShowPageTitle } from '~/pages/object-record/RecordShowPageTitle';
 
@@ -108,6 +109,10 @@ const RecordShowPageContent = ({
             >
               {!isInSidePanel && (
                 <>
+                  <CoreWorkflowVersionPreviewActions
+                    objectNameSingular={objectNameSingular}
+                    objectRecordId={objectRecordId}
+                  />
                   <RecordShowCommandMenu />
                   {!isLayoutCustomizationModeEnabled && (
                     <SidePanelToggleButton />
