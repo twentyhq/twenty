@@ -62,7 +62,7 @@ export type { RunAgentInput, RunAgentResult } from 'twenty-shared/application';
 
 export { enqueueJob } from '@/sdk/logic-function/jobs/enqueue-job';
 export { enqueueJobs } from '@/sdk/logic-function/jobs/enqueue-jobs';
-export { getJobStatus } from '@/sdk/logic-function/jobs/get-job-status';
+export { getJobs } from '@/sdk/logic-function/jobs/get-jobs';
 export type {
   EnqueueJobInput,
   EnqueueJobItem,

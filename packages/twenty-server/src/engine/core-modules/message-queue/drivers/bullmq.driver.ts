@@ -429,27 +429,38 @@ export class BullMQDriver
     return addedJobs.map((job) => job.id).filter(isDefined);
   }
 
-  async getJob<T extends MessageQueueJobData>(
+  async getJobs<T extends MessageQueueJobData>(
     queueName: MessageQueue,
-    jobId: string,
-  ): Promise<QueueJobDetails<T> | null> {
+    jobIds: string[],
+  ): Promise<QueueJobDetails<T>[]> {
     if (!this.queueMap[queueName]) {
       throw new Error(
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
       );
     }
 
+    const jobs = await Promise.all(
+      jobIds.map((jobId) => this.getJobDetails<T>(queueName, jobId)),
+    );
+
+    return jobs.filter(isDefined);
+  }
+
+  private async getJobDetails<T extends MessageQueueJobData>(
+    queueName: MessageQueue,
+    jobId: string,
+  ): Promise<QueueJobDetails<T> | undefined> {
     const job = await this.queueMap[queueName].getJob(jobId);
 
     if (!isDefined(job) || !isDefined(job.id)) {
-      return null;
+      return undefined;
     }
 
     const state = await job.getState();
 
     // BullMQ reports 'unknown' for a job whose record was evicted by retention
     if (state === 'unknown') {
-      return null;
+      return undefined;
     }
 
     return {

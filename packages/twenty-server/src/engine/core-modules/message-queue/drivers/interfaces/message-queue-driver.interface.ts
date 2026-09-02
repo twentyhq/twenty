@@ -53,10 +53,10 @@ export interface MessageQueueDriver {
   getInFlightJobs?<T extends MessageQueueJobData>(
     queueName: MessageQueue,
   ): Promise<InFlightQueueJob<T>[]>;
-  getJob?<T extends MessageQueueJobData>(
+  getJobs?<T extends MessageQueueJobData>(
     queueName: MessageQueue,
-    jobId: string,
-  ): Promise<QueueJobDetails<T> | null>;
+    jobIds: string[],
+  ): Promise<QueueJobDetails<T>[]>;
 }
 
 export type QueueJobToAdd<T extends MessageQueueJobData> = {

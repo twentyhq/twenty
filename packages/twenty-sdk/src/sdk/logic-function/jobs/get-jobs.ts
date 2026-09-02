@@ -1,12 +1,12 @@
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { type JobStatusResult } from 'twenty-shared/application';
 
-export const getJobStatus = async (jobId: string): Promise<JobStatusResult> => {
+export const getJobs = async (jobIds: string[]): Promise<JobStatusResult[]> => {
   const client = new MetadataApiClient();
 
-  const { jobStatus: result } = await client.query({
-    jobStatus: {
-      __args: { jobId },
+  const { getJobs: result } = await client.query({
+    getJobs: {
+      __args: { jobIds },
       jobId: true,
       state: true,
       attemptsMade: true,

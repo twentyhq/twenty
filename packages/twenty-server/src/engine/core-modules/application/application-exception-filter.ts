@@ -26,7 +26,6 @@ export class ApplicationExceptionFilter implements ExceptionFilter {
       case ApplicationExceptionCode.APP_NOT_INSTALLED:
       case ApplicationExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
       case ApplicationExceptionCode.FRONT_COMPONENT_NOT_FOUND:
-      case ApplicationExceptionCode.JOB_NOT_FOUND:
         throw new NotFoundError(exception);
       case ApplicationExceptionCode.FORBIDDEN:
         throw new ForbiddenError(exception);

@@ -1792,7 +1792,6 @@ export type EnqueueJobsInput = {
   delayMs?: InputMaybe<Scalars['Int']['input']>;
   jobs?: InputMaybe<Array<EnqueueJobItemInput>>;
   logicFunctionUniversalIdentifier: Scalars['String']['input'];
-  payloads?: InputMaybe<Array<Scalars['JSON']['input']>>;
   retryLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -4828,6 +4827,7 @@ export type Query = {
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
   getEmailingDomains: Array<EmailingDomain>;
   getInviteSuggestions: Array<InviteSuggestion>;
+  getJobs: Array<JobStatus>;
   getLogicFunctionSourceCode?: Maybe<Scalars['String']['output']>;
   getPageLayout?: Maybe<PageLayout>;
   getPageLayoutTab: PageLayoutTab;
@@ -4860,7 +4860,6 @@ export type Query = {
   getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDto;
   githubClaimAuthorizationUrl: Scalars['String']['output'];
   isApplicationStopped: Scalars['Boolean']['output'];
-  jobStatus: JobStatus;
   lineChartData: LineChartData;
   listPlans: Array<BillingPlan>;
   messageSuppressions: MessageSuppressionList;
@@ -5101,6 +5100,11 @@ export type QueryGetConnectedImapSmtpCaldavAccountArgs = {
 };
 
 
+export type QueryGetJobsArgs = {
+  jobIds: Array<Scalars['String']['input']>;
+};
+
+
 export type QueryGetLogicFunctionSourceCodeArgs = {
   input: LogicFunctionIdInput;
 };
@@ -5235,11 +5239,6 @@ export type QueryGithubClaimAuthorizationUrlArgs = {
 
 export type QueryIsApplicationStoppedArgs = {
   applicationUniversalIdentifier: Scalars['String']['input'];
-};
-
-
-export type QueryJobStatusArgs = {
-  jobId: Scalars['String']['input'];
 };
 
 

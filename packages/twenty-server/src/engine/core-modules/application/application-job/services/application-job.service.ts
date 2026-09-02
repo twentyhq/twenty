@@ -139,33 +139,28 @@ export class ApplicationJobService {
     };
   }
 
-  async getJobStatus({
+  async getJobs({
     workspaceId,
-    jobId,
+    jobIds,
   }: {
     workspaceId: string;
-    jobId: string;
-  }): Promise<JobStatusDTO> {
-    const job = await this.messageQueueService.getJob(
-      buildQueueJobId({ workspaceId, jobId }),
+    jobIds: string[];
+  }): Promise<JobStatusDTO[]> {
+    const jobs = await this.messageQueueService.getJobs(
+      jobIds.map((jobId) => buildQueueJobId({ workspaceId, jobId })),
     );
 
-    if (!isDefined(job)) {
-      throw new ApplicationException(
-        `Job ${jobId} not found`,
-        ApplicationExceptionCode.JOB_NOT_FOUND,
-      );
-    }
+    const queueJobIdPrefix = buildQueueJobId({ workspaceId, jobId: '' });
 
-    return {
-      jobId,
+    return jobs.map((job) => ({
+      jobId: job.id.slice(queueJobIdPrefix.length),
       state: bullMQToJobStateEnum[job.state],
       attemptsMade: job.attemptsMade,
       failedReason: job.failedReason,
       enqueuedAt: job.timestamp,
       startedAt: job.processedOn,
       finishedAt: job.finishedOn,
-    };
+    }));
   }
 
   private getJobItems(input: EnqueueJobsInputDTO): EnqueueJobItem[] {

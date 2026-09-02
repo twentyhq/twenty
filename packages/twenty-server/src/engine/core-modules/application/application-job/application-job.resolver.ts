@@ -52,15 +52,15 @@ export class ApplicationJobResolver {
     });
   }
 
-  @Query(() => JobStatusDTO)
-  async jobStatus(
-    @AuthApplication() _application: FlatApplication,
+  @Query(() => [JobStatusDTO])
+  async getJobs(
+    @AuthApplication() application: FlatApplication,
     @AuthWorkspace() workspace: FlatWorkspace,
-    @Args('jobId') jobId: string,
-  ): Promise<JobStatusDTO> {
-    return this.applicationJobService.getJobStatus({
+    @Args('jobIds', { type: () => [String] }) jobIds: string[],
+  ): Promise<JobStatusDTO[]> {
+    return this.applicationJobService.getJobs({
       workspaceId: workspace.id,
-      jobId,
+      jobIds,
     });
   }
 

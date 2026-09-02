@@ -81,9 +81,9 @@ const ENQUEUE_JOBS = gql`
   }
 `;
 
-const JOB_STATUS = gql`
-  query JobStatus($jobId: String!) {
-    jobStatus(jobId: $jobId) {
+const GET_JOBS = gql`
+  query GetJobs($jobIds: [String!]!) {
+    getJobs(jobIds: $jobIds) {
       jobId
       state
       attemptsMade
@@ -437,25 +437,26 @@ describe('enqueueJob (e2e)', () => {
     await waitForAllJobsToFinish();
 
     const statusResponse = await makeMetadataAPIRequest(
-      { query: JOB_STATUS, variables: { jobId } },
+      { query: GET_JOBS, variables: { jobIds: [jobId] } },
       customApplicationToken,
     );
 
     expect(statusResponse.body.errors).toBeUndefined();
-    expect(statusResponse.body.data.jobStatus).toMatchObject({
+    expect(statusResponse.body.data.getJobs).toHaveLength(1);
+    expect(statusResponse.body.data.getJobs[0]).toMatchObject({
       jobId,
       state: 'COMPLETED',
     });
   });
 
-  it('rejects a status read for an unknown job id', async () => {
+  it('omits unknown job ids instead of failing the whole read', async () => {
     const response = await makeMetadataAPIRequest(
-      { query: JOB_STATUS, variables: { jobId: uuidv4() } },
+      { query: GET_JOBS, variables: { jobIds: [uuidv4()] } },
       customApplicationToken,
     );
 
-    expect(response.body.errors).toBeDefined();
-    expect(response.body.errors[0].message).toContain('not found');
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.getJobs).toEqual([]);
   });
 
   it('rejects a batch that sets both payloads and jobs', async () => {

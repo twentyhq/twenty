@@ -7355,12 +7355,12 @@ export default {
                     ]
                 }
             ],
-            "jobStatus": [
+            "getJobs": [
                 360,
                 {
-                    "jobId": [
+                    "jobIds": [
                         1,
-                        "String!"
+                        "[String!]!"
                     ]
                 }
             ],

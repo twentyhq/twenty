@@ -48,14 +48,14 @@ export class MessageQueueService {
     return this.driver.bulkAdd(this.queueName, jobName, jobs, options);
   }
 
-  getJob<T extends MessageQueueJobData>(
-    jobId: string,
-  ): Promise<QueueJobDetails<T> | null> {
-    if (typeof this.driver.getJob !== 'function') {
-      return Promise.resolve(null);
+  getJobs<T extends MessageQueueJobData>(
+    jobIds: string[],
+  ): Promise<QueueJobDetails<T>[]> {
+    if (typeof this.driver.getJobs !== 'function') {
+      return Promise.resolve([]);
     }
 
-    return this.driver.getJob(this.queueName, jobId);
+    return this.driver.getJobs(this.queueName, jobIds);
   }
 
   getInFlightJobs<T extends MessageQueueJobData>(): Promise<

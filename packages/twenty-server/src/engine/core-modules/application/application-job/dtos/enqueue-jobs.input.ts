@@ -36,7 +36,10 @@ export class EnqueueJobsInputDTO implements EnqueueJobsInput {
   @ArrayMinSize(1)
   @ArrayMaxSize(MAX_JOBS_PER_ENQUEUE)
   @IsOptional()
-  @Field(() => [GraphQLJSON], { nullable: true })
+  @Field(() => [GraphQLJSON], {
+    nullable: true,
+    deprecationReason: 'Use jobs instead.',
+  })
   payloads?: Record<string, unknown>[];
 
   @ValidateNested({ each: true })

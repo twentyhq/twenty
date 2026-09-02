@@ -31,27 +31,29 @@ await enqueueJobs({
 Each run receives its payload as the handler argument, exactly like any other trigger. The target must belong to the **same application** as the caller — enqueuing another app's function is rejected with `Logic function not found` and nothing is enqueued. A single call accepts up to `200` payloads.
 
 <Note>
-`enqueueJobs` returns as soon as the jobs are accepted, not when they have run. It does not return the targets' results — have each target write what it produces to the [key-value store](/developers/extend/apps/logic/key-value-store) or to a workspace record if you need to read it back. To find out whether a run finished, poll its [job status](#poll-a-job).
+`enqueueJobs` returns as soon as the jobs are accepted, not when they have run. It does not return the targets' results — have each target write what it produces to the [key-value store](/developers/extend/apps/logic/key-value-store) or to a workspace record if you need to read it back. To find out whether a run finished, poll its [job status](#poll-jobs).
 </Note>
 
 <Note>
-The older `enqueueJob` helper, which enqueues a single job per call, is deprecated. Use `enqueueJobs` with a one-element `payloads` list instead.
+The older `enqueueJob` helper, which enqueues a single job per call, is deprecated. Use `enqueueJobs` with a one-element `jobs` list instead. The `payloads` argument is deprecated too — pass `jobs` instead, which takes the same payload per run and lets you name each one.
 </Note>
 
-## Poll a job
+## Poll jobs
 
-`enqueueJobs` returns one `jobId` per enqueued run, in the same order as the payloads. `getJobStatus` reads back where a run got to.
+`enqueueJobs` returns one `jobId` per enqueued run, in the same order as the jobs you passed. `getJobs` reads back where those runs got to, in one call.
 
 ```ts
-import { enqueueJobs, getJobStatus } from 'twenty-sdk/logic-function';
+import { enqueueJobs, getJobs } from 'twenty-sdk/logic-function';
 
 const { jobIds } = await enqueueJobs({
   logicFunctionUniversalIdentifier: ENRICH_COMPANY,
-  payloads: [{ companyId: 'abc' }],
+  jobs: [{ payload: { companyId: 'abc' } }],
 });
 
-const status = await getJobStatus(jobIds[0]);
+const statuses = await getJobs(jobIds);
 ```
+
+Each entry carries the id you asked for:
 
 | Field | What it holds |
 |-------|---------------|
@@ -63,13 +65,15 @@ const status = await getJobStatus(jobIds[0]);
 | `startedAt` | When a worker picked it up, `null` while it is still waiting. |
 | `finishedAt` | When it completed or failed, `null` while it is still running. |
 
-`COMPLETED` and `FAILED` are the terminal states. A poll loop should also give up on its own after a bounded number of attempts rather than waiting forever, since a run is only readable for as long as the queue retains it: 4 hours after completing, 7 days after failing, and in both cases only the most recent 1000 jobs in that state. Past that, `getJobStatus` reports that the job is not found — which is not the same answer as "it never ran".
+`COMPLETED` and `FAILED` are the terminal states. A poll loop should also give up on its own after a bounded number of attempts rather than waiting forever, since a run is only readable for as long as the queue retains it: 4 hours after completing, 7 days after failing, and in both cases only the most recent 1000 jobs in that state.
+
+`getJobs` returns only the jobs it still holds, so an id that has been evicted — or never existed — is simply absent from the result rather than erroring the whole batch. Compare what you get back against what you asked for to spot those, and treat a missing id as "no longer known", which is not the same answer as "it never ran".
 
 Statuses are scoped to the workspace the call is made from, so one workspace can never read another workspace's job.
 
 ## Choose your own job id
 
-Pass `jobs` instead of `payloads` to name each run yourself. The id you pass is the one `getJobStatus` takes, so a caller can poll a job without having to store what `enqueueJobs` returned.
+Pass `jobs` instead of `payloads` to name each run yourself. The id you pass is the one `getJobs` takes, so a caller can poll a job without having to store what `enqueueJobs` returned.
 
 ```ts
 await enqueueJobs({
@@ -80,7 +84,7 @@ await enqueueJobs({
 
 An id is at most 128 characters of letters, digits, `_`, `.` or `-`. Pass either `payloads` or `jobs`, never both. When you omit `jobId`, Twenty generates one.
 
-A job id is also an idempotency key: enqueuing an id that the queue still holds is accepted but does **not** start a second run, and `getJobStatus` keeps reporting the first one. This makes a retried enqueue safe. Two caveats: the guarantee only lasts as long as the job is retained, so the same id can start a fresh run once the original has been evicted, and ids are shared by every app in a workspace, so prefix yours if a collision would matter.
+A `jobId` is also an idempotency key: enqueuing an id that the queue still holds is accepted but does **not** start a second run, and `getJobs` keeps reporting the first one. This makes a retried enqueue safe. Two caveats: the guarantee only lasts as long as the job is retained, so the same id can start a fresh run once the original has been evicted, and ids are shared by every app in a workspace, so prefix yours if a collision would matter.
 
 ## Job options
 

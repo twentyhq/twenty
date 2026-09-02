@@ -3544,7 +3544,7 @@ type Query {
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   minimalMetadata: MinimalMetadata!
   appKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): AppKeyValue
-  jobStatus(jobId: String!): JobStatus!
+  getJobs(jobIds: [String!]!): [JobStatus!]!
   appConnections(filter: ListAppConnectionsInput): [AppConnection!]!
   appConnection(id: ID!): AppConnection!
   findWorkspaceAiStats: WorkspaceAiStats!
@@ -5052,7 +5052,7 @@ input EnqueueJobInput {
 
 input EnqueueJobsInput {
   logicFunctionUniversalIdentifier: String!
-  payloads: [JSON!]
+  payloads: [JSON!] @deprecated(reason: "Use jobs instead.")
   jobs: [EnqueueJobItemInput!]
   retryLimit: Int
   delayMs: Int
