@@ -70,14 +70,6 @@ export class WebhookSubscriptionRenewalCronJob {
     WEBHOOK_SUBSCRIPTION_RENEWAL_CRON_PATTERN,
   )
   async handle(): Promise<void> {
-    if (
-      !this.twentyConfigService.get(
-        'IS_CONNECTED_ACCOUNT_WEBHOOK_SUBSCRIPTION_ENABLED',
-      )
-    ) {
-      return;
-    }
-
     const activeWorkspaces = await this.workspaceRepository.find({
       where: { activationStatus: WorkspaceActivationStatus.ACTIVE },
       select: { id: true },
@@ -91,22 +83,30 @@ export class WebhookSubscriptionRenewalCronJob {
       return;
     }
 
+    const isSubscriptionCreationEnabled = this.twentyConfigService.get(
+      'IS_CONNECTED_ACCOUNT_WEBHOOK_SUBSCRIPTION_ENABLED',
+    );
+
     const [
       expiringMessageChannels,
       expiringCalendarChannels,
       missingMessageChannels,
       missingCalendarChannels,
     ] = await Promise.all([
-      this.findExpiringSubscriptions(
+      this.findRenewableSubscriptions(
         this.messageChannelRepository,
         activeWorkspaceIds,
       ),
-      this.findExpiringSubscriptions(
+      this.findRenewableSubscriptions(
         this.calendarChannelRepository,
         activeWorkspaceIds,
       ),
-      this.findMessageChannelsMissingSubscription(activeWorkspaceIds),
-      this.findCalendarChannelsMissingSubscription(activeWorkspaceIds),
+      isSubscriptionCreationEnabled
+        ? this.findMessageChannelsMissingSubscription(activeWorkspaceIds)
+        : Promise.resolve([]),
+      isSubscriptionCreationEnabled
+        ? this.findCalendarChannelsMissingSubscription(activeWorkspaceIds)
+        : Promise.resolve([]),
     ]);
 
     const staleChannels: StaleChannelToEnqueue[] = [
@@ -157,20 +157,28 @@ export class WebhookSubscriptionRenewalCronJob {
     };
   }
 
-  private findExpiringSubscriptions<
+  private findRenewableSubscriptions<
     TChannel extends WebhookSubscribableChannel,
   >(
     repository: Repository<TChannel>,
     activeWorkspaceIds: string[],
   ): Promise<StaleChannel[]> {
+    const scope = this.buildStaleChannelScope(activeWorkspaceIds);
+
     const options: FindManyOptions<WebhookSubscribableChannel> = {
-      where: {
-        ...this.buildStaleChannelScope(activeWorkspaceIds),
-        webhookSubscriptionStatus: WebhookSubscriptionStatus.ACTIVE,
-        webhookSubscriptionExpiresAt: LessThanOrEqual(
-          new Date(Date.now() + WEBHOOK_SUBSCRIPTION_RENEWAL_BUFFER_MS),
-        ),
-      },
+      where: [
+        {
+          ...scope,
+          webhookSubscriptionStatus: WebhookSubscriptionStatus.ACTIVE,
+          webhookSubscriptionExpiresAt: LessThanOrEqual(
+            new Date(Date.now() + WEBHOOK_SUBSCRIPTION_RENEWAL_BUFFER_MS),
+          ),
+        },
+        {
+          ...scope,
+          webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
+        },
+      ],
       select: { id: true, workspaceId: true },
     };
 
@@ -188,10 +196,6 @@ export class WebhookSubscriptionRenewalCronJob {
           ...scope,
           webhookSubscriptionStatus: IsNull(),
           syncStage: Not(MessageChannelSyncStage.PENDING_CONFIGURATION),
-        },
-        {
-          ...scope,
-          webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
         },
         {
           ...scope,
@@ -215,10 +219,6 @@ export class WebhookSubscriptionRenewalCronJob {
           ...scope,
           webhookSubscriptionStatus: IsNull(),
           syncStage: Not(CalendarChannelSyncStage.PENDING_CONFIGURATION),
-        },
-        {
-          ...scope,
-          webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
         },
         {
           ...scope,
