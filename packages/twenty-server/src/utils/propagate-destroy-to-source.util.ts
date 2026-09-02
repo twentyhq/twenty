@@ -11,6 +11,7 @@ export const propagateDestroyToSource = <TStream extends Readable>(
     const source = (stream as ReadableWithSource).source;
 
     if (isDefined(source) && !source.destroyed && !source.readableEnded) {
+      source.on('error', () => {});
       source.destroy();
     }
   });

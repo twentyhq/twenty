@@ -5,6 +5,19 @@ import { ChecksumStream } from '@smithy/util-stream';
 
 import { propagateDestroyToSource } from 'src/utils/propagate-destroy-to-source.util';
 
+jest.useRealTimers();
+
+const onceWithin = (stream: Readable, event: string) =>
+  Promise.race([
+    once(stream, event),
+    new Promise((_resolve, reject) =>
+      setTimeout(
+        () => reject(new Error(`${event} not emitted within 1s`)),
+        1000,
+      ).unref(),
+    ),
+  ]);
+
 describe('propagateDestroyToSource', () => {
   it('returns the same stream instance', () => {
     const stream = new PassThrough();
@@ -19,7 +32,7 @@ describe('propagateDestroyToSource', () => {
     wrapper.source = source;
 
     propagateDestroyToSource(wrapper).destroy();
-    await once(source, 'close');
+    await onceWithin(source, 'close');
 
     expect(source.destroyed).toBe(true);
   });
@@ -31,10 +44,10 @@ describe('propagateDestroyToSource', () => {
     wrapper.source = source;
     source.resume();
     source.end();
-    await once(source, 'end');
+    await onceWithin(source, 'end');
 
     propagateDestroyToSource(wrapper).destroy();
-    await once(wrapper, 'close');
+    await onceWithin(wrapper, 'close');
 
     expect(source.readableEnded).toBe(true);
     expect(source.destroyed).toBe(false);
@@ -44,7 +57,7 @@ describe('propagateDestroyToSource', () => {
     const stream = new PassThrough();
 
     propagateDestroyToSource(stream).destroy();
-    await once(stream, 'close');
+    await onceWithin(stream, 'close');
 
     expect(stream.destroyed).toBe(true);
   });
@@ -63,7 +76,7 @@ describe('propagateDestroyToSource', () => {
     });
 
     propagateDestroyToSource(wrapper).destroy();
-    await once(source, 'close');
+    await onceWithin(source, 'close');
 
     expect(source.destroyed).toBe(true);
   });
