@@ -350,13 +350,22 @@ describe('FindRecords workflow action with relation-traversal filter (e2e)', () 
 
     const result = workflowRun?.state?.stepInfos?.[findRecordsStepId!]
       ?.result as
-      | { all?: Array<{ id: string }>; totalCount?: number | string }
+      | {
+          all?: Array<{ id: string; companyId: string | null }>;
+          totalCount?: number | string;
+        }
       | undefined;
 
-    const returnedIds = (result?.all ?? []).map((record) => record.id);
+    const returnedRecords = result?.all;
 
-    expect(returnedIds).not.toContain(TEST_PERSON_AIRBNB_1_ID);
-    expect(returnedIds).not.toContain(TEST_PERSON_AIRBNB_2_ID);
-    expect(returnedIds).not.toContain(TEST_PERSON_STRIPE_1_ID);
+    expect(Array.isArray(returnedRecords)).toBe(true);
+    expect(Number.isFinite(Number(result?.totalCount))).toBe(true);
+
+    const returnedCompanyIds = (returnedRecords ?? []).map(
+      (record) => record.companyId,
+    );
+
+    expect(returnedCompanyIds).not.toContain(TEST_COMPANY_AIRBNB_ID);
+    expect(returnedCompanyIds).not.toContain(TEST_COMPANY_STRIPE_ID);
   });
 });
