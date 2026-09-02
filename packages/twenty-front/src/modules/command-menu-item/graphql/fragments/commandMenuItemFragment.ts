@@ -22,14 +22,12 @@ export const COMMAND_MENU_ITEM_FRAGMENT = gql`
       ... on PathCommandMenuItemPayload {
         path
       }
-      ... on ObjectMetadataCommandMenuItemPayload {
-        objectMetadataItemId
-      }
     }
     hotKeys
     conditionalAvailabilityExpression
     availabilityType
     availabilityObjectMetadataId
+    navigationTargetObjectMetadataId
     pageLayoutId
     isActive
   }
