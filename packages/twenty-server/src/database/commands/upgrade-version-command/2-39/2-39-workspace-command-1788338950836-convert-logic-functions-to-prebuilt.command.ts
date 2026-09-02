@@ -5,7 +5,7 @@ import { Command } from 'nest-commander';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource, type QueryRunner } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -15,6 +15,8 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -67,18 +69,16 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
       );
     }
 
-    const allFlatEntityMaps =
+    const { flatLogicFunctionMaps, flatApplicationMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        { workspaceId },
-      );
-
-    const { flatApplicationMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        { workspaceId, flatMapsKeys: ['flatApplicationMaps'] },
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps', 'flatApplicationMaps'],
+        },
       );
 
     const conversionTargets = this.findLogicFunctionsToConvert({
-      flatLogicFunctionMaps: allFlatEntityMaps.flatLogicFunctionMaps,
+      flatLogicFunctionMaps,
       flatApplicationMaps,
     });
 
@@ -97,7 +97,8 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
     const convertedCount = await this.convertLogicFunctionsInBatches({
       conversionTargets,
       workspaceId,
-      allFlatEntityMaps,
+      allFlatEntityMaps:
+        this.buildLogicFunctionOnlyFlatEntityMaps(flatLogicFunctionMaps),
     });
 
     if (convertedCount > 0) {
@@ -124,44 +125,35 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
       conversionTargets,
       LOGIC_FUNCTION_PREBUILT_CONVERSION_BATCH_SIZE,
     )) {
-      const queryRunner = this.coreDataSource.createQueryRunner();
+      const results = await Promise.allSettled(
+        batch.map((conversionTarget) =>
+          this.convertLogicFunctionToPrebuilt({
+            conversionTarget,
+            workspaceId,
+            allFlatEntityMaps,
+          }),
+        ),
+      );
 
-      await queryRunner.connect();
+      results.forEach((result, batchIndex) => {
+        if (result.status === 'fulfilled') {
+          convertedCount += 1;
 
-      try {
-        const results = await Promise.allSettled(
-          batch.map((conversionTarget) =>
-            this.convertLogicFunctionToPrebuilt({
-              conversionTarget,
-              workspaceId,
-              allFlatEntityMaps,
-              queryRunner,
-            }),
-          ),
+          return;
+        }
+
+        const { flatLogicFunction } = batch[batchIndex];
+
+        failedLogicFunctionIds.push(flatLogicFunction.id);
+
+        this.logger.error(
+          `Failed to convert logic function '${flatLogicFunction.id}' on workspace ${workspaceId}: ${
+            result.reason instanceof Error
+              ? result.reason.message
+              : String(result.reason)
+          }`,
         );
-
-        results.forEach((result, batchIndex) => {
-          if (result.status === 'fulfilled') {
-            convertedCount += 1;
-
-            return;
-          }
-
-          const { flatLogicFunction } = batch[batchIndex];
-
-          failedLogicFunctionIds.push(flatLogicFunction.id);
-
-          this.logger.error(
-            `Failed to convert logic function '${flatLogicFunction.id}' on workspace ${workspaceId}: ${
-              result.reason instanceof Error
-                ? result.reason.message
-                : String(result.reason)
-            }`,
-          );
-        });
-      } finally {
-        await queryRunner.release();
-      }
+      });
     }
 
     this.logger.log(
@@ -178,31 +170,58 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
     conversionTarget: { flatLogicFunction, flatApplication },
     workspaceId,
     allFlatEntityMaps,
-    queryRunner,
   }: {
     conversionTarget: LogicFunctionConversionTarget;
     workspaceId: string;
     allFlatEntityMaps: AllFlatEntityMaps;
-    queryRunner: QueryRunner;
   }): Promise<void> {
-    await this.updateLogicFunctionActionHandlerService.executeForMetadata({
-      queryRunner,
-      workspaceId,
-      allFlatEntityMaps,
-      flatApplication,
-      action: {
-        type: 'update',
-        metadataName: 'logicFunction',
-        universalIdentifier: flatLogicFunction.universalIdentifier,
-        update: { executionMode: LogicFunctionExecutionMode.PREBUILT },
-      },
-      flatAction: {
-        type: 'update',
-        metadataName: 'logicFunction',
-        entityId: flatLogicFunction.id,
-        update: { executionMode: LogicFunctionExecutionMode.PREBUILT },
-      },
-    });
+    const queryRunner = this.coreDataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await this.updateLogicFunctionActionHandlerService.executeForMetadata({
+        queryRunner,
+        workspaceId,
+        allFlatEntityMaps,
+        flatApplication,
+        action: {
+          type: 'update',
+          metadataName: 'logicFunction',
+          universalIdentifier: flatLogicFunction.universalIdentifier,
+          update: { executionMode: LogicFunctionExecutionMode.PREBUILT },
+        },
+        flatAction: {
+          type: 'update',
+          metadataName: 'logicFunction',
+          entityId: flatLogicFunction.id,
+          update: { executionMode: LogicFunctionExecutionMode.PREBUILT },
+        },
+      });
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  private buildLogicFunctionOnlyFlatEntityMaps(
+    flatLogicFunctionMaps: FlatLogicFunctionMaps,
+  ): AllFlatEntityMaps {
+    const emptyFlatEntityMaps = ALL_FLAT_ENTITY_MAPS_PROPERTIES.reduce(
+      (flatEntityMaps, flatEntityMapsKey) => ({
+        ...flatEntityMaps,
+        [flatEntityMapsKey]: createEmptyFlatEntityMaps(),
+      }),
+      {} as AllFlatEntityMaps,
+    );
+
+    return { ...emptyFlatEntityMaps, flatLogicFunctionMaps };
   }
 
   private findLogicFunctionsToConvert({
