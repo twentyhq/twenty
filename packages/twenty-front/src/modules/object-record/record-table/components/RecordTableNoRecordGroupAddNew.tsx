@@ -74,11 +74,24 @@ export const RecordTableNoRecordGroupAddNew = () => {
     ],
   );
 
-  const { startRecordCreation, shouldOpenRecordCreationForm } =
-    useStartRecordCreation({
-      objectMetadataItem,
-      onCreateRecord: handleCreateRecord,
-    });
+  const {
+    startRecordCreation,
+    shouldOpenRecordCreationForm,
+    pendingRecordInput,
+    recordCreationFormKey,
+  } = useStartRecordCreation({
+    objectMetadataItem,
+    onCreateRecord: handleCreateRecord,
+  });
+
+  const recordCreationFormModal = shouldOpenRecordCreationForm ? (
+    <RecordCreationFormModal
+      key={recordCreationFormKey}
+      objectMetadataItem={objectMetadataItem}
+      initialDraftRecord={pendingRecordInput}
+      onSubmit={handleCreateRecord}
+    />
+  ) : null;
 
   if (isRecordTableCellsNonEditable) {
     return null;
@@ -99,27 +112,25 @@ export const RecordTableNoRecordGroupAddNew = () => {
 
   if (isDefined(nestedRelationCreateThrough)) {
     return (
-      <RecordTableWidgetNestedRelationAddNewRow
-        dropdownId={`${recordTableId}-nested-relation-add-new`}
-        nestedRelationCreateThrough={nestedRelationCreateThrough}
-        onRelationRecordSelected={(relationRecordId) =>
-          startRecordCreation({
-            [nestedRelationCreateThrough.nestedRelationJoinColumnName]:
-              relationRecordId,
-          })
-        }
-      />
+      <>
+        {recordCreationFormModal}
+        <RecordTableWidgetNestedRelationAddNewRow
+          dropdownId={`${recordTableId}-nested-relation-add-new`}
+          nestedRelationCreateThrough={nestedRelationCreateThrough}
+          onRelationRecordSelected={(relationRecordId) =>
+            startRecordCreation({
+              [nestedRelationCreateThrough.nestedRelationJoinColumnName]:
+                relationRecordId,
+            })
+          }
+        />
+      </>
     );
   }
 
   return (
     <>
-      {shouldOpenRecordCreationForm && (
-        <RecordCreationFormModal
-          objectMetadataItem={objectMetadataItem}
-          onSubmit={handleCreateRecord}
-        />
-      )}
+      {recordCreationFormModal}
       <RecordTableActionRow
         onClick={() => startRecordCreation()}
         LeftIcon={IconPlus}

@@ -23,16 +23,20 @@ const StyledFooter = styled.div`
 
 type RecordCreationFormModalProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
+  initialDraftRecord?: Partial<ObjectRecord>;
   onSubmit: (draftRecord: Partial<ObjectRecord>) => void;
 };
 
 export const RecordCreationFormModal = ({
   objectMetadataItem,
+  initialDraftRecord,
   onSubmit,
 }: RecordCreationFormModalProps) => {
   const { t } = useLingui();
   const { closeModal } = useModal();
-  const [draftRecord, setDraftRecord] = useState<Partial<ObjectRecord>>({});
+  const [draftRecord, setDraftRecord] = useState<Record<string, JsonValue>>(
+    (initialDraftRecord ?? {}) as Record<string, JsonValue>,
+  );
 
   const { recordFormFieldMetadataItems } = useRecordFormFieldMetadataItems({
     objectMetadataItem,
@@ -45,13 +49,20 @@ export const RecordCreationFormModal = ({
     }));
   };
 
+  const handleFieldValueClear = (gqlFieldName: string) => {
+    setDraftRecord((previousDraftRecord) => ({
+      ...previousDraftRecord,
+      [gqlFieldName]: null,
+    }));
+  };
+
   const handleCancelClick = () => {
     closeModal(RECORD_CREATION_FORM_MODAL_ID);
   };
 
   const handleCreateClick = () => {
     closeModal(RECORD_CREATION_FORM_MODAL_ID);
-    onSubmit(draftRecord);
+    onSubmit(draftRecord as Partial<ObjectRecord>);
   };
 
   return (
@@ -73,6 +84,7 @@ export const RecordCreationFormModal = ({
         fieldMetadataItems={recordFormFieldMetadataItems}
         draftRecord={draftRecord}
         onFieldValueChange={handleFieldValueChange}
+        onFieldValueClear={handleFieldValueClear}
       />
       <StyledFooter>
         <Button title={t`Cancel`} onClick={handleCancelClick} />
