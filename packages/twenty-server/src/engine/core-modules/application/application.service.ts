@@ -679,9 +679,6 @@ export class ApplicationService {
     });
   }
 
-  // Single conditional write: the operation that flips the state away from
-  // `expectedState` owns the application until it writes a terminal state, so
-  // concurrent install/upgrade/uninstall requests cannot interleave.
   async transitionState({
     applicationId,
     universalIdentifier,

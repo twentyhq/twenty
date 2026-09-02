@@ -30,8 +30,6 @@ export const useRedirectOnApplicationUninstalled = ({
         return;
       }
 
-      // A transient lookup failure must not bounce the visitor off the page:
-      // only a lookup answering NOT_FOUND confirms the row is really gone.
       const lookupError = await refetch().then(
         () => null,
         (error: unknown) => error,

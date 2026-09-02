@@ -780,8 +780,6 @@ export class ApplicationInstallService {
     const { existingApplication } = params;
 
     if (isDefined(existingApplication)) {
-      // A row claimed before the package was resolved carries the registration
-      // name and logo, so the manifest values only land here.
       if (
         existingApplication.state === ApplicationState.INSTALLING &&
         (existingApplication.name !== params.name ||

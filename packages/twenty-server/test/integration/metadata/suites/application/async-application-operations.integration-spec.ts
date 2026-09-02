@@ -11,8 +11,6 @@ import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/m
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { v4 as uuidv4 } from 'uuid';
 
-// The install pipeline runs cache-lock retries with real delays, so fake timers
-// would hang it, and the worker jobs it enqueues have to run for real.
 jest.setTimeout(180000);
 
 const APP_UNIVERSAL_IDENTIFIER = uuidv4();

@@ -408,8 +408,6 @@ export class ApplicationSyncService {
     const isStateClaimedByCaller =
       hasPreClaimedState && application.state === ApplicationState.UNINSTALLING;
 
-    // An install rollback tears down a row still in INSTALLING, which no
-    // completed operation owns, so it has no lifecycle to claim.
     const ownsLifecycle =
       application.state === ApplicationState.INSTALLED ||
       isStateClaimedByCaller;

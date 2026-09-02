@@ -34,8 +34,6 @@ export const useFollowApplicationInstallation = () => {
     );
 
     if (!isDefined(application)) {
-      // The row only disappears once it has been claimed, so its absence before
-      // any transitional read means the claim event has not arrived yet.
       if (!hasSeenTransitionalState) {
         return;
       }
@@ -54,8 +52,6 @@ export const useFollowApplicationInstallation = () => {
       return;
     }
 
-    // A row that is INSTALLED but still carries the version we claimed can be a
-    // pre-claim snapshot, so only a moved-on row counts as settled.
     const hasSettled =
       hasSeenTransitionalState ||
       application.version !== claimedApplication.version;

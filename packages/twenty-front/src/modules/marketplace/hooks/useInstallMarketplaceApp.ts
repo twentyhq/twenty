@@ -49,8 +49,6 @@ export const useInstallMarketplaceApp = () => {
 
       return result.data?.installApplicationAsync ?? null;
     } catch (error) {
-      // A duplicate request loses the state gate. When the operation already
-      // running is the one the user asked for, follow it instead of failing.
       if (isApplicationOperationInProgressError(error)) {
         const ongoingInstall = findOngoingInstall(
           variables.universalIdentifier,

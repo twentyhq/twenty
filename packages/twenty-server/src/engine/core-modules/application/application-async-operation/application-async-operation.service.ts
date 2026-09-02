@@ -350,8 +350,6 @@ export class ApplicationAsyncOperationService {
         state: ApplicationState.INSTALLING,
       });
     } catch (error) {
-      // Concurrent fresh installs have no row to gate on, so the partial unique
-      // index on (universalIdentifier, workspaceId) arbitrates instead.
       if (isUniqueViolationError(error)) {
         throw new ApplicationException(
           `Application ${appRegistration.universalIdentifier} is already being installed in workspace ${workspaceId}`,

@@ -177,8 +177,6 @@ export const SettingsApplicationDetails = () => {
         variables: { universalIdentifier: application.universalIdentifier },
       });
     } catch (error) {
-      // The uninstall the conflict names is the one the user asked for, so the
-      // page keeps following the row instead of reporting a failure.
       if (!isApplicationOperationInProgressError(error)) {
         enqueueErrorSnackBar({ message: t`Error uninstalling application.` });
       }

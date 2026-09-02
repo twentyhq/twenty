@@ -23,8 +23,6 @@ export const useUpgradeApplication = () => {
 
       return true;
     } catch (error) {
-      // An upgrade is already running on this application, which is what the
-      // user asked for.
       if (isApplicationOperationInProgressError(error)) {
         return true;
       }

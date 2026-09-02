@@ -3,9 +3,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { isDefined } from 'twenty-shared/utils';
 import { type ApplicationState } from '~/generated-metadata/graphql';
 
-// The store is maintained by broadcast events, so it carries the live lifecycle
-// state while the page queries still hold the row as it was when they ran, and
-// it holds a row a fresh install has only just claimed.
 export const useApplicationLifecycleState = ({
   applicationId,
   universalIdentifier,
