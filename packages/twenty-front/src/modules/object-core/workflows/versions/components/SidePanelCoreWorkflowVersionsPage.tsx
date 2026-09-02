@@ -7,11 +7,20 @@ import { usePreviewWorkflowVersion } from '@/object-core/workflows/versions/hook
 import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledError = styled.div`
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.md};
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+`;
 
 export const SidePanelCoreWorkflowVersionsPage = () => {
   const { t } = useLingui();
   const workflowId = useSidePanelWorkflowIdOrThrow();
-  const { coreWorkflowVersions, loading } = useCoreWorkflowVersions(workflowId);
+  const { coreWorkflowVersions, loading, error } =
+    useCoreWorkflowVersions(workflowId);
   const { previewedWorkflowVersion, previewWorkflowVersion } =
     usePreviewWorkflowVersion(workflowId);
 
@@ -19,8 +28,15 @@ export const SidePanelCoreWorkflowVersionsPage = () => {
     <SidePanelList
       selectableItemIds={coreWorkflowVersions.map(({ id }) => id)}
       loading={loading}
-      noResults={!loading && coreWorkflowVersions.length === 0}
+      noResults={
+        !loading && !isDefined(error) && coreWorkflowVersions.length === 0
+      }
     >
+      {isDefined(error) && (
+        <SidePanelGroup heading={t`Versions`}>
+          <StyledError>{t`Could not load versions.`}</StyledError>
+        </SidePanelGroup>
+      )}
       <SidePanelGroup heading={t`Date`}>
         {coreWorkflowVersions.map((coreWorkflowVersion) => (
           <CoreWorkflowVersionsListItem

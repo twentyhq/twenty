@@ -32,9 +32,21 @@ export const usePreviewWorkflowVersion = (workflowId: string) => {
     setPreviewedWorkflowVersion(null);
   };
 
+  const cancelWorkflowVersionPreviewIfStillOn = (
+    coreWorkflowVersionId: string,
+  ) => {
+    setPreviewedWorkflowVersion((currentPreviewedWorkflowVersion) =>
+      currentPreviewedWorkflowVersion?.coreWorkflowVersionId ===
+      coreWorkflowVersionId
+        ? null
+        : currentPreviewedWorkflowVersion,
+    );
+  };
+
   return {
     previewedWorkflowVersion,
     previewWorkflowVersion,
     cancelWorkflowVersionPreview,
+    cancelWorkflowVersionPreviewIfStillOn,
   };
 };

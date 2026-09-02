@@ -11,7 +11,7 @@ import { CoreWorkflowVersionStatus } from '~/generated/graphql';
 export const useRestoreWorkflowVersionAsDraft = (workflowId: string) => {
   const { t } = useLingui();
   const [isRestoring, setIsRestoring] = useState(false);
-  const { previewedWorkflowVersion, cancelWorkflowVersionPreview } =
+  const { previewedWorkflowVersion, cancelWorkflowVersionPreviewIfStillOn } =
     usePreviewWorkflowVersion(workflowId);
   const { coreWorkflowVersions, refetchCoreWorkflowVersions } =
     useCoreWorkflowVersions(workflowId);
@@ -29,6 +29,9 @@ export const useRestoreWorkflowVersionAsDraft = (workflowId: string) => {
       return;
     }
 
+    const restoredWorkflowVersionId =
+      previewedWorkflowVersion.coreWorkflowVersionId;
+
     setIsRestoring(true);
 
     try {
@@ -39,7 +42,7 @@ export const useRestoreWorkflowVersionAsDraft = (workflowId: string) => {
       });
 
       await refetchCoreWorkflowVersions();
-      cancelWorkflowVersionPreview();
+      cancelWorkflowVersionPreviewIfStillOn(restoredWorkflowVersionId);
     } catch {
       enqueueErrorSnackBar({
         message: t`Could not restore this version as draft.`,

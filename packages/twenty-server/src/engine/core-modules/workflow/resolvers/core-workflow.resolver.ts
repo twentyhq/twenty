@@ -50,11 +50,11 @@ export class CoreWorkflowResolver {
   @Query(() => [CoreWorkflowVersionDTO])
   async coreWorkflowVersions(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Args() { workflowId }: CoreWorkflowVersionsArgs,
+    @Args() { workspaceWorkflowId }: CoreWorkflowVersionsArgs,
   ): Promise<CoreWorkflowVersionDTO[]> {
-    return this.coreWorkflowVersionListService.findManyByWorkflowId({
+    return this.coreWorkflowVersionListService.findManyByWorkspaceWorkflowId({
       workspaceId,
-      workflowId,
+      workspaceWorkflowId,
     });
   }
 }
