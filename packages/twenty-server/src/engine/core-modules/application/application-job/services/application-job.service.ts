@@ -12,6 +12,7 @@ import { bullMQToJobStateEnum } from 'src/engine/core-modules/message-queue/enum
 import {
   ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
   ENQUEUE_JOB_PRIORITY,
+  MAX_JOBS_PER_STATUS_READ,
 } from 'src/engine/core-modules/application/application-job/constants/enqueue-job.constant';
 import { type EnqueueJobInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-job.input';
 import { type EnqueueJobsInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-jobs.input';
@@ -146,6 +147,13 @@ export class ApplicationJobService {
     workspaceId: string;
     jobIds: string[];
   }): Promise<JobStatusDTO[]> {
+    if (jobIds.length > MAX_JOBS_PER_STATUS_READ) {
+      throw new ApplicationException(
+        `Cannot read more than ${MAX_JOBS_PER_STATUS_READ} jobs at once`,
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const jobsByQueueJobId = await this.messageQueueService.getJobs(
       jobIds.map((jobId) => buildQueueJobId({ workspaceId, jobId })),
     );

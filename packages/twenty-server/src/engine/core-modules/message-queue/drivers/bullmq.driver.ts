@@ -432,7 +432,7 @@ export class BullMQDriver
   async getJobs<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     jobIds: string[],
-  ): Promise<Record<string, QueueJobDetails<T>>> {
+  ): Promise<Partial<Record<string, QueueJobDetails<T>>>> {
     if (!this.queueMap[queueName]) {
       throw new Error(
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,

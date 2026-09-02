@@ -12,3 +12,5 @@ export const MAX_JOBS_PER_ENQUEUE = 200;
 export const ENQUEUE_JOB_ID_MIN_LENGTH = 1;
 export const ENQUEUE_JOB_ID_MAX_LENGTH = 128;
 export const ENQUEUE_JOB_ID_PATTERN = /^[\w.-]+$/;
+
+export const MAX_JOBS_PER_STATUS_READ = 200;

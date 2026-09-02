@@ -56,7 +56,7 @@ export interface MessageQueueDriver {
   getJobs?<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     jobIds: string[],
-  ): Promise<Record<string, QueueJobDetails<T>>>;
+  ): Promise<Partial<Record<string, QueueJobDetails<T>>>>;
 }
 
 export type QueueJobToAdd<T extends MessageQueueJobData> = {

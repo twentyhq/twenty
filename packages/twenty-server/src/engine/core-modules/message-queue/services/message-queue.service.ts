@@ -50,7 +50,7 @@ export class MessageQueueService {
 
   getJobs<T extends MessageQueueJobData>(
     jobIds: string[],
-  ): Promise<Record<string, QueueJobDetails<T>>> {
+  ): Promise<Partial<Record<string, QueueJobDetails<T>>>> {
     if (typeof this.driver.getJobs !== 'function') {
       return Promise.resolve({});
     }
