@@ -110,7 +110,7 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
     }
 
     // Both land in the same per-application usage breakdown, keyed by name.
-    if (isDefined(billableOperations[chargeName])) {
+    if (Object.prototype.hasOwnProperty.call(billableOperations, chargeName)) {
       errors.push(
         `"${chargeName}" is declared both as a recurring charge and as a billable operation. Give them distinct names.`,
       );

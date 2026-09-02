@@ -112,7 +112,14 @@ export class AppBillingService {
     );
     // Undefined until the upgrade that adds the column has run.
     const billableOperations = application?.billing?.operations ?? {};
-    const billableOperation = billableOperations[charge.operation];
+    // Own-property only: an operation named `constructor` or `__proto__` would
+    // otherwise resolve to an inherited value and charge under no category.
+    const billableOperation = Object.prototype.hasOwnProperty.call(
+      billableOperations,
+      charge.operation,
+    )
+      ? billableOperations[charge.operation]
+      : undefined;
 
     if (!isDefined(billableOperation)) {
       throw new BadRequestException(

@@ -1,8 +1,10 @@
 /* @license Enterprise */
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { Injectable } from '@nestjs/common';
 
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
@@ -186,7 +188,7 @@ export class UsageAnalyticsService {
         AND resourceType = {appResourceType:String}
         AND resourceId != ''
         ${hasOperationTypes ? 'AND operationType IN ({operationTypes:Array(String)})' : ''}
-        ${isDefined(userWorkspaceId) ? 'AND userWorkspaceId = {userWorkspaceId:String}' : ''}
+        ${isNonEmptyString(userWorkspaceId) ? 'AND userWorkspaceId = {userWorkspaceId:String}' : ''}
       GROUP BY resourceId, operation
       ORDER BY creditsUsedMicro DESC
       LIMIT ${BREAKDOWN_QUERY_LIMIT}
@@ -202,7 +204,7 @@ export class UsageAnalyticsService {
       declaredOperationKeys,
       declaredOperationKeySeparator: DECLARED_OPERATION_KEY_SEPARATOR,
       ...(hasOperationTypes ? { operationTypes } : {}),
-      ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
+      ...(isNonEmptyString(userWorkspaceId) ? { userWorkspaceId } : {}),
     });
 
     return rows.map((row) => ({

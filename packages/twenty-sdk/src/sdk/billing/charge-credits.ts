@@ -1,4 +1,7 @@
-import { DEFAULT_API_URL_NAME } from 'twenty-shared/application';
+import {
+  DEFAULT_API_URL_NAME,
+  type UsageOperationTypeValue,
+} from 'twenty-shared/application';
 
 import { getApplicationAccessToken } from '@/sdk/utils/get-application-access-token';
 
@@ -21,7 +24,7 @@ export type ChargeCreditsParams = {
   | {
       // For applications that declare no billable operations: name the
       // platform billing category directly, unlabelled.
-      operationType: string;
+      operationType: UsageOperationTypeValue;
       operation?: never;
       resourceContext?: string;
     }
