@@ -1158,7 +1158,9 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
-      expect(mockCopyToClipboardWithoutSuccessSnackBar).toHaveBeenCalledTimes(1);
+      expect(mockCopyToClipboardWithoutSuccessSnackBar).toHaveBeenCalledTimes(
+        1,
+      );
       expect(mockCopyToClipboardWithoutSuccessSnackBar).toHaveBeenCalledWith(
         'first',
       );
@@ -1188,7 +1190,9 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
-      expect(mockCopyToClipboardWithoutSuccessSnackBar).toHaveBeenCalledTimes(2);
+      expect(mockCopyToClipboardWithoutSuccessSnackBar).toHaveBeenCalledTimes(
+        2,
+      );
       expect(mockCopyToClipboardWithoutSuccessSnackBar).toHaveBeenNthCalledWith(
         1,
         'first',
