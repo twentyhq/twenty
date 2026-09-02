@@ -355,6 +355,22 @@ Developer Support`);
     expect(result).toBe('> The entire forwarded body.');
   });
 
+  it('should strip a bare blockquote quote that carries no header line', () => {
+    const result = extractMessageBodyText({
+      html: '<div>My actual reply.</div><blockquote type="cite"><p>The older message body.</p></blockquote>',
+    });
+
+    expect(result).toBe('My actual reply.');
+  });
+
+  it('should strip plain text quoting that carries no header line', () => {
+    const result = extractMessageBodyText({
+      text: 'My actual reply.\n\n> The older message body.\n> More of it.',
+    });
+
+    expect(result).toBe('My actual reply.');
+  });
+
   it('should strip an Outlook desktop From block', () => {
     const result = extractMessageBodyText({
       html: '<p class="MsoNormal">My actual reply.</p><p class="MsoNormal">&nbsp;</p><p class="MsoNormal"><b>From:</b> Bob &lt;bob@example.com&gt;<br><b>Sent:</b> Monday, August 4, 2026 09:14<br><b>Subject:</b> RE: hi</p><p class="MsoNormal">&nbsp;</p><p class="MsoNormal">The older message body.</p>',
@@ -366,6 +382,14 @@ Developer Support`);
   it('should strip an Outlook Web From block separated by empty divs', () => {
     const result = extractMessageBodyText({
       html: '<div>My actual reply.</div><div><br></div><div>From: Bob &lt;bob@example.com&gt;</div><div>Sent: Monday, August 4, 2026</div><div><br></div><div>The older message body.</div>',
+    });
+
+    expect(result).toBe('My actual reply.');
+  });
+
+  it('should strip a From block that has no blank line before it', () => {
+    const result = extractMessageBodyText({
+      html: '<div>My actual reply.</div><div>From: Bob &lt;bob@example.com&gt;</div><div>Date: Monday, August 4, 2026</div><div>The older message body.</div>',
     });
 
     expect(result).toBe('My actual reply.');
