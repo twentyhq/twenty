@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { type TooltipPosition } from '@ui/surfaces/AppTooltip/AppTooltip';
 import { OverflowingTextWithTooltip } from '@ui/surfaces/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 import { clsx } from 'clsx';
 import { isDefined } from '@ui/utilities/utils/isDefined';
@@ -31,6 +32,7 @@ export type ChipProps = {
   clickable?: boolean;
   label: string;
   tooltipLabel?: string;
+  tooltipPlace?: TooltipPosition;
   alwaysShowTooltip?: boolean;
   isLabelHidden?: boolean;
   isBold?: boolean;
@@ -72,6 +74,7 @@ export const Chip = ({
   size = ChipSize.Small,
   label,
   tooltipLabel,
+  tooltipPlace,
   alwaysShowTooltip = false,
   isLabelHidden = false,
   isBold = false,
@@ -136,6 +139,7 @@ export const Chip = ({
           size={size}
           text={label}
           tooltipContent={tooltipLabel}
+          tooltipPlace={tooltipPlace}
           alwaysShowTooltip={alwaysShowTooltip}
         />
       ) : !forceEmptyText && !isLabelHidden ? (
