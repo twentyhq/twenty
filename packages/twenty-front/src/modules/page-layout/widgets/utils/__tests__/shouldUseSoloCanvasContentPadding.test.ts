@@ -20,10 +20,10 @@ describe('shouldUseSoloCanvasContentPadding', () => {
     ).toBe(false);
   });
 
-  it('returns false for a stacked presentation on a CANVAS tab', () => {
+  it('returns false for a stack presentation on a CANVAS tab', () => {
     expect(
       shouldUseSoloCanvasContentPadding({
-        presentation: 'stacked',
+        presentation: 'stack',
         layoutMode: PageLayoutTabLayoutMode.CANVAS,
       }),
     ).toBe(false);
