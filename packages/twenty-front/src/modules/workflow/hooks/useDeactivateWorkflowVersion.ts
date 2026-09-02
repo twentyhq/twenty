@@ -1,3 +1,4 @@
+import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useMutation } from '@apollo/client/react';
 
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
@@ -17,7 +18,6 @@ import {
 } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  GetCoreWorkflowVersionsDocument,
   type DeactivateWorkflowVersionMutation,
   type DeactivateWorkflowVersionMutationVariables,
 } from '~/generated/graphql';
@@ -127,9 +127,7 @@ export const useDeactivateWorkflowVersion = () => {
       },
     });
 
-    await apolloCoreClient.refetchQueries({
-      include: [GetCoreWorkflowVersionsDocument],
-    });
+    await invalidateCoreWorkflowVersions(apolloCoreClient);
   };
 
   return { deactivateWorkflowVersion };

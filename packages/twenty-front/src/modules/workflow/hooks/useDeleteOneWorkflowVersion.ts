@@ -1,3 +1,4 @@
+import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useCallback } from 'react';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -8,7 +9,6 @@ import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordF
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type Workflow, type WorkflowVersion } from '@/workflow/types/Workflow';
-import { GetCoreWorkflowVersionsDocument } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useDeleteOneWorkflowVersion = () => {
@@ -102,9 +102,7 @@ export const useDeleteOneWorkflowVersion = () => {
     await deleteOneRecord(workflowVersionId);
     handleUpdate(workflowVersionId);
 
-    await apolloCoreClient.refetchQueries({
-      include: [GetCoreWorkflowVersionsDocument],
-    });
+    await invalidateCoreWorkflowVersions(apolloCoreClient);
   };
 
   return { deleteOneWorkflowVersion };

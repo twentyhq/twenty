@@ -13,8 +13,7 @@ export const useRestoreWorkflowVersionAsDraft = (workflowId: string) => {
   const [isRestoring, setIsRestoring] = useState(false);
   const { previewedWorkflowVersion, cancelWorkflowVersionPreviewIfStillOn } =
     usePreviewWorkflowVersion(workflowId);
-  const { coreWorkflowVersions, refetchCoreWorkflowVersions } =
-    useCoreWorkflowVersions(workflowId);
+  const { coreWorkflowVersions } = useCoreWorkflowVersions(workflowId);
   const { createDraftFromWorkflowVersion } =
     useCreateDraftFromWorkflowVersion();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -41,7 +40,6 @@ export const useRestoreWorkflowVersionAsDraft = (workflowId: string) => {
           previewedWorkflowVersion.workspaceWorkflowVersionId,
       });
 
-      await refetchCoreWorkflowVersions();
       cancelWorkflowVersionPreviewIfStillOn(restoredWorkflowVersionId);
     } catch {
       enqueueErrorSnackBar({
