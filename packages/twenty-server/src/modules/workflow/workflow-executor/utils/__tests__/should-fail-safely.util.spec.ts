@@ -147,7 +147,9 @@ describe('shouldFailSafely', () => {
     expect(result).toBe(false);
   });
   it('should return false when the FAILED_SAFELY parent continued on failure', () => {
-    const parent = createMockCodeStep('parent', ['child'], true);
+    const parent = createMockCodeStep('parent', ['child'], {
+      continueOnFailure: true,
+    });
     const childStep = createMockCodeStep('child');
     const steps = [parent, childStep];
 
@@ -163,7 +165,9 @@ describe('shouldFailSafely', () => {
   });
 
   it('should return true when a continuing parent is joined by a cascaded FAILED_SAFELY parent', () => {
-    const continuingParent = createMockCodeStep('parent1', ['child'], true);
+    const continuingParent = createMockCodeStep('parent1', ['child'], {
+      continueOnFailure: true,
+    });
     const cascadedParent = createMockCodeStep('parent2', ['child']);
     const childStep = createMockCodeStep('child');
     const steps = [continuingParent, cascadedParent, childStep];

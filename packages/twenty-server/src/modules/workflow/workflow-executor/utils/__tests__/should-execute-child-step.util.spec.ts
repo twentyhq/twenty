@@ -561,7 +561,9 @@ describe('shouldExecuteChildStep', () => {
     const continuingParent = createMockCodeStep(
       'continuing-parent',
       [CHILD_STEP_ID],
-      true,
+      {
+        continueOnFailure: true,
+      },
     );
 
     const result = shouldExecuteChildStep({
@@ -599,7 +601,9 @@ describe('shouldExecuteChildStep', () => {
     const continuingParent = createMockCodeStep(
       'continuing-parent',
       [CHILD_STEP_ID],
-      true,
+      {
+        continueOnFailure: true,
+      },
     );
 
     const result = shouldExecuteChildStep({
@@ -617,7 +621,9 @@ describe('shouldExecuteChildStep', () => {
     const continuingParent = createMockCodeStep(
       'continuing-parent',
       [CHILD_STEP_ID],
-      true,
+      {
+        continueOnFailure: true,
+      },
     );
     const skippedParent = createMockCodeStep('skipped-parent', [CHILD_STEP_ID]);
 
@@ -640,7 +646,9 @@ describe('shouldExecuteChildStep', () => {
     const continuingParent = createMockCodeStep(
       'continuing-parent',
       [CHILD_STEP_ID],
-      true,
+      {
+        continueOnFailure: true,
+      },
     );
     const runningParent = createMockCodeStep('running-parent', [CHILD_STEP_ID]);
 

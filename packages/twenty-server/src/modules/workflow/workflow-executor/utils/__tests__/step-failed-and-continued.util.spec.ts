@@ -8,7 +8,9 @@ import { stepFailedAndContinued } from 'src/modules/workflow/workflow-executor/u
 
 describe('stepFailedAndContinued', () => {
   it('should return true when the step failed on its own and continues on failure', () => {
-    const step = createMockCodeStep('step-1', [], true);
+    const step = createMockCodeStep('step-1', [], {
+      continueOnFailure: true,
+    });
 
     const result = stepFailedAndContinued({
       step,
@@ -34,7 +36,9 @@ describe('stepFailedAndContinued', () => {
   });
 
   it('should return false when the step was failed safely by cascade', () => {
-    const step = createMockCodeStep('step-1', [], true);
+    const step = createMockCodeStep('step-1', [], {
+      continueOnFailure: true,
+    });
 
     const result = stepFailedAndContinued({
       step,
@@ -47,7 +51,9 @@ describe('stepFailedAndContinued', () => {
   });
 
   it('should return false when the step is not failed safely', () => {
-    const step = createMockCodeStep('step-1', [], true);
+    const step = createMockCodeStep('step-1', [], {
+      continueOnFailure: true,
+    });
 
     const result = stepFailedAndContinued({
       step,
@@ -60,7 +66,9 @@ describe('stepFailedAndContinued', () => {
   });
 
   it('should return false when the step has not been reached', () => {
-    const step = createMockCodeStep('step-1', [], true);
+    const step = createMockCodeStep('step-1', [], {
+      continueOnFailure: true,
+    });
 
     const result = stepFailedAndContinued({ step, stepInfos: {} });
 
@@ -72,7 +80,7 @@ describe('stepFailedAndContinued', () => {
       'step-1',
       [{ id: 'branch-1', nextStepIds: ['step-2'] }],
       [],
-      true,
+      { continueOnFailure: true },
     );
 
     const result = stepFailedAndContinued({

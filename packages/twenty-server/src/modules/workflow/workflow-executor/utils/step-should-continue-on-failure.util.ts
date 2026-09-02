@@ -3,4 +3,4 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/work
 
 export const stepShouldContinueOnFailure = (step: WorkflowAction): boolean =>
   !isWorkflowIfElseAction(step) &&
-  step.settings.errorHandlingOptions?.continueOnFailure?.value === true;
+  step.settings.errorHandlingOptions.continueOnFailure.value;

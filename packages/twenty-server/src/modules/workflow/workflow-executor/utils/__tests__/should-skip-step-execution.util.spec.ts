@@ -339,7 +339,9 @@ describe('shouldSkipStepExecution', () => {
 
   it('should return false when a parent failed and continues on failure', () => {
     const steps = [
-      createMockCodeStep('step-1', ['step-3'], true),
+      createMockCodeStep('step-1', ['step-3'], {
+        continueOnFailure: true,
+      }),
       createMockCodeStep('step-2', ['step-3']),
       createMockCodeStep('step-3', []),
     ];

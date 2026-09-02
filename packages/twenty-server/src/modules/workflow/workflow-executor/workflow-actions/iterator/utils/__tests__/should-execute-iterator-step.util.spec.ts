@@ -244,7 +244,9 @@ describe('shouldExecuteIteratorStep', () => {
     it('should return true when a loop step failed and continues on failure, even without the iteration flag', () => {
       const iteratorStep = createMockIteratorStep('iterator-1', [], ['step-1']);
       const steps = [
-        createMockCodeStep('step-1', ['iterator-1'], true),
+        createMockCodeStep('step-1', ['iterator-1'], {
+          continueOnFailure: true,
+        }),
         iteratorStep,
       ];
       const stepInfos = {
