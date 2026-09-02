@@ -4,7 +4,7 @@ import { readBodyAsText } from 'src/modules/messaging/message-import-manager/uti
 import { sanitizeString } from 'src/modules/messaging/message-import-manager/utils/sanitize-string.util';
 import { stripQuotedHistory } from 'src/modules/messaging/message-import-manager/utils/strip-quoted-history.util';
 
-export const extractMessageBodyText = (body: MessageBody): string => {
+export const extractMessageTextWithoutQuotedHistory = (body: MessageBody): string => {
   const bodyAsText = readBodyAsText(body);
   const withoutQuotedHistory = stripQuotedHistory(bodyAsText);
   const withoutNullCharacters = sanitizeString(withoutQuotedHistory);

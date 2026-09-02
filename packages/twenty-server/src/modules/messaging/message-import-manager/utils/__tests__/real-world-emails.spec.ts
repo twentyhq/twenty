@@ -1,15 +1,15 @@
-import { extractMessageBodyText } from 'src/modules/messaging/message-import-manager/utils/extract-message-body-text.util';
+import { extractMessageTextWithoutQuotedHistory } from 'src/modules/messaging/message-import-manager/utils/extract-message-text-without-quoted-history.util';
 
 import { PRODUCTION_EMAILS } from './production-emails.fixture';
 
 const REAL_TAG =
   /<\/?(div|span|p|br|table|tbody|tr|td|a|img|b|i|u|strong|em|ul|ol|li|blockquote|font|h[1-6]|style|script|html|body|head|meta)[\s/>]/i;
 
-describe('extractMessageBodyText on redacted production emails', () => {
+describe('extractMessageTextWithoutQuotedHistory on redacted production emails', () => {
   describe.each(PRODUCTION_EMAILS.map((email) => [email.name, email] as const))(
     '%s',
     (_name, email) => {
-      const output = extractMessageBodyText({
+      const output = extractMessageTextWithoutQuotedHistory({
         html: email.html,
         text: email.text,
       });

@@ -1,4 +1,4 @@
-import { extractMessageBodyText } from 'src/modules/messaging/message-import-manager/utils/extract-message-body-text.util';
+import { extractMessageTextWithoutQuotedHistory } from 'src/modules/messaging/message-import-manager/utils/extract-message-text-without-quoted-history.util';
 
 const REPLY = 'Reply body kept';
 const QUOTED = 'Quoted body removed';
@@ -113,7 +113,7 @@ const PLAIN_TEXT_CLIENT_QUOTES: [string, string][] = [
 describe('quoted history per email client', () => {
   describe.each(CLIENT_QUOTES)('%s', (_client, html) => {
     it('should keep the reply and drop the quote', () => {
-      const result = extractMessageBodyText({ html });
+      const result = extractMessageTextWithoutQuotedHistory({ html });
 
       expect(result).toContain(REPLY);
       expect(result).not.toContain(QUOTED);
@@ -122,7 +122,7 @@ describe('quoted history per email client', () => {
 
   describe.each(PLAIN_TEXT_CLIENT_QUOTES)('%s', (_client, text) => {
     it('should keep the reply and drop the quote', () => {
-      const result = extractMessageBodyText({ text });
+      const result = extractMessageTextWithoutQuotedHistory({ text });
 
       expect(result).toContain(REPLY);
       expect(result).not.toContain(QUOTED);

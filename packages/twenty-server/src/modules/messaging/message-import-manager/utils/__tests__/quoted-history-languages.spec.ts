@@ -1,4 +1,4 @@
-import { extractMessageBodyText } from 'src/modules/messaging/message-import-manager/utils/extract-message-body-text.util';
+import { extractMessageTextWithoutQuotedHistory } from 'src/modules/messaging/message-import-manager/utils/extract-message-text-without-quoted-history.util';
 
 const REPLY = 'Reply body kept';
 const QUOTED = 'Quoted body removed';
@@ -259,7 +259,7 @@ describe('quoted history across languages', () => {
     ATTRIBUTION_CASES.map((c) => [c.language, c.attribution] as const),
   )('attribution line in %s', (_language, attribution) => {
     it('should cut the quote in a plain text body', () => {
-      const result = extractMessageBodyText({
+      const result = extractMessageTextWithoutQuotedHistory({
         text: `${REPLY}\n\n${attribution}\n\n> ${QUOTED}`,
       });
 
@@ -268,7 +268,7 @@ describe('quoted history across languages', () => {
     });
 
     it('should cut the quote in an html body', () => {
-      const result = extractMessageBodyText({
+      const result = extractMessageTextWithoutQuotedHistory({
         html: `<div>${REPLY}</div><div>${attribution}</div><blockquote><div>${QUOTED}</div></blockquote>`,
       });
 
@@ -283,7 +283,7 @@ describe('quoted history across languages', () => {
     ),
   )('header block in %s', (_language, headerBlock) => {
     it('should cut the quote', () => {
-      const result = extractMessageBodyText({
+      const result = extractMessageTextWithoutQuotedHistory({
         text: `${REPLY}\n\n${headerBlock.join('\n')}\n\n${QUOTED}`,
       });
 
@@ -296,7 +296,7 @@ describe('quoted history across languages', () => {
     'original message banner in %s',
     (_language, banner) => {
       it('should cut the quote', () => {
-        const result = extractMessageBodyText({
+        const result = extractMessageTextWithoutQuotedHistory({
           text: `${REPLY}\n\n${banner}\nFrom: Bob <bob@example.com>\n\n${QUOTED}`,
         });
 
@@ -310,12 +310,16 @@ describe('quoted history across languages', () => {
     const message =
       'I already wrote the summary and sent it to finance yesterday.';
 
-    expect(extractMessageBodyText({ text: message })).toBe(message);
+    expect(extractMessageTextWithoutQuotedHistory({ text: message })).toBe(
+      message,
+    );
   });
 
   it('should keep non latin prose that contains no quote header', () => {
     const message = '会議の資料を送ります。よろしくお願いします。';
 
-    expect(extractMessageBodyText({ text: message })).toBe(message);
+    expect(extractMessageTextWithoutQuotedHistory({ text: message })).toBe(
+      message,
+    );
   });
 });

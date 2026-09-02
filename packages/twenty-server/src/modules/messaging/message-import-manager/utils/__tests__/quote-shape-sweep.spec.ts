@@ -1,4 +1,4 @@
-import { extractMessageBodyText } from 'src/modules/messaging/message-import-manager/utils/extract-message-body-text.util';
+import { extractMessageTextWithoutQuotedHistory } from 'src/modules/messaging/message-import-manager/utils/extract-message-text-without-quoted-history.util';
 
 const REPLY = 'ZZREPLY';
 const TAIL = 'ZZTAIL';
@@ -271,7 +271,7 @@ describe('quote shape sweep', () => {
 
     const leaking = cases.filter((dimensions) => {
       const expectation = expectationFor(dimensions);
-      const output = extractMessageBodyText(render(dimensions));
+      const output = extractMessageTextWithoutQuotedHistory(render(dimensions));
 
       return !expectation.quoted && output.includes(QUOTED);
     });
