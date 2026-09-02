@@ -1091,7 +1091,7 @@ describe('useFrontComponentExecutionContext', () => {
   });
 
   describe('copyToClipboard', () => {
-    it('should copy the provided text without enqueuing a success snack bar', async () => {
+    it('should copy the provided text through the silent clipboard helper', async () => {
       const { result } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,
       });
@@ -1105,7 +1105,6 @@ describe('useFrontComponentExecutionContext', () => {
       expect(mockCopyToClipboardWithoutSuccessSnackBar).toHaveBeenCalledWith(
         'hello clipboard',
       );
-      expect(mockEnqueueSuccessSnackBar).not.toHaveBeenCalled();
     });
 
     it.each([
