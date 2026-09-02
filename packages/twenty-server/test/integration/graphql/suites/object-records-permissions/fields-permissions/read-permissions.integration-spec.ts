@@ -537,7 +537,8 @@ describe('Field permissions restrictions', () => {
       gqlFields: 'edges { node { id jobTitle } }',
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response =
+      await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
     expectNoGraphQLErrors(response);
 
