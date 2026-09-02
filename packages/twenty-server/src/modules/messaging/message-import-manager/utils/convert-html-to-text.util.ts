@@ -1,76 +1,12 @@
 import { convert, HtmlToTextOptions } from 'html-to-text';
 import sanitizeHtml from 'sanitize-html';
 
+import { HTML_QUOTE_SELECTORS } from 'src/modules/messaging/message-import-manager/utils/html-quote-selectors.constant';
 import { normalizeMessageText } from 'src/modules/messaging/message-import-manager/utils/normalize-message-text.util';
 
 const QUOTE_MARKER = '\uE000';
 const REPEATED_QUOTE_MARKER = '\uE001';
 const ALL_QUOTE_MARKERS = /[\uE000\uE001]/g;
-
-const QUOTE_SELECTORS = [
-  'div.gmail_quote',
-  'div#divRplyFwdMsg',
-  'div#OLK_SRC_BODY_SECTION',
-];
-
-const REPEATED_QUOTE_SELECTORS = [
-  "div[style='border:none;border-top:solid #B5C4DF 1.0pt;padding:3.0pt 0cm 0cm 0cm']",
-  "div[style='border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm 0cm 0cm']",
-  "div[style='padding-top: 5px; border-top-color: rgb(229, 229, 229); border-top-width: 1px; border-top-style: solid;']",
-];
-
-const buildMarkerFormatter =
-  (marker: string) =>
-  (
-    element: { children: unknown[] },
-    walk: (children: unknown[], builder: unknown) => void,
-    builder: { addInline: (text: string) => void },
-  ): void => {
-    builder.addInline(marker);
-    walk(element.children, builder);
-  };
-
-const CONVERT_OPTIONS = {
-  wordwrap: false,
-  preserveNewlines: true,
-  selectors: [
-    ...QUOTE_SELECTORS.map((selector) => ({ selector, format: 'quoteMarker' })),
-    ...REPEATED_QUOTE_SELECTORS.map((selector) => ({
-      selector,
-      format: 'repeatedQuoteMarker',
-    })),
-  ],
-  formatters: {
-    quoteMarker: buildMarkerFormatter(QUOTE_MARKER),
-    repeatedQuoteMarker: buildMarkerFormatter(REPEATED_QUOTE_MARKER),
-  },
-} as HtmlToTextOptions;
-
-const findQuoteSplitterIndex = (text: string): number => {
-  const firstQuote = text.indexOf(QUOTE_MARKER);
-  const firstRepeated = text.indexOf(REPEATED_QUOTE_MARKER);
-  const secondRepeated =
-    firstRepeated === -1
-      ? -1
-      : text.indexOf(REPEATED_QUOTE_MARKER, firstRepeated + 1);
-
-  const candidates = [firstQuote, secondRepeated].filter(
-    (index) => index !== -1,
-  );
-
-  return candidates.length === 0 ? -1 : Math.min(...candidates);
-};
-
-const cutAtQuoteSplitter = (text: string): string => {
-  const splitterIndex = findQuoteSplitterIndex(text);
-  const beforeSplitter =
-    splitterIndex === -1 ? text : text.slice(0, splitterIndex);
-
-  return (beforeSplitter.trim() === '' ? text : beforeSplitter).replace(
-    ALL_QUOTE_MARKERS,
-    '',
-  );
-};
 
 const TEXT_SHAPING_TAGS = [
   'a',
@@ -123,7 +59,7 @@ const TEXT_SHAPING_TAGS = [
   'ul',
 ];
 
-const NON_TEXT_TAGS = [
+const TAGS_CARRYING_NO_BODY_TEXT = [
   'applet',
   'embed',
   'head',
@@ -147,12 +83,71 @@ const SANITIZE_OPTIONS = {
   },
   allowedSchemes: ['http', 'https', 'mailto', 'tel'],
   disallowedTagsMode: 'discard',
-  nonTextTags: NON_TEXT_TAGS,
+  nonTextTags: TAGS_CARRYING_NO_BODY_TEXT,
 } satisfies sanitizeHtml.IOptions;
+
+const buildQuoteMarkerFormatter =
+  (marker: string) =>
+  (
+    element: { children: unknown[] },
+    walk: (children: unknown[], builder: unknown) => void,
+    builder: { addInline: (text: string) => void },
+  ): void => {
+    builder.addInline(marker);
+    walk(element.children, builder);
+  };
+
+const CONVERT_OPTIONS = {
+  wordwrap: false,
+  preserveNewlines: true,
+  selectors: [
+    ...HTML_QUOTE_SELECTORS.quoteContainers.map((selector) => ({
+      selector,
+      format: 'quoteMarker',
+    })),
+    ...HTML_QUOTE_SELECTORS.repeatedQuoteContainers.map((selector) => ({
+      selector,
+      format: 'repeatedQuoteMarker',
+    })),
+  ],
+  formatters: {
+    quoteMarker: buildQuoteMarkerFormatter(QUOTE_MARKER),
+    repeatedQuoteMarker: buildQuoteMarkerFormatter(REPEATED_QUOTE_MARKER),
+  },
+} as HtmlToTextOptions;
+
+const removeNonTextMarkup = (html: string): string =>
+  sanitizeHtml(html, SANITIZE_OPTIONS);
+
+const renderTextWithQuoteMarkers = (safeHtml: string): string =>
+  convert(safeHtml, CONVERT_OPTIONS);
+
+const findQuoteMarkerIndex = (text: string): number => {
+  const firstQuote = text.indexOf(QUOTE_MARKER);
+  const firstRepeated = text.indexOf(REPEATED_QUOTE_MARKER);
+  const secondRepeated =
+    firstRepeated === -1
+      ? -1
+      : text.indexOf(REPEATED_QUOTE_MARKER, firstRepeated + 1);
+
+  const markerIndexes = [firstQuote, secondRepeated].filter(
+    (index) => index !== -1,
+  );
+
+  return markerIndexes.length === 0 ? -1 : Math.min(...markerIndexes);
+};
+
+const cutAtQuoteMarker = (text: string): string => {
+  const markerIndex = findQuoteMarkerIndex(text);
+  const beforeMarker = markerIndex === -1 ? text : text.slice(0, markerIndex);
+
+  return (beforeMarker.trim() === '' ? text : beforeMarker).replace(
+    ALL_QUOTE_MARKERS,
+    '',
+  );
+};
 
 export const convertHtmlToText = (html: string): string =>
   normalizeMessageText(
-    cutAtQuoteSplitter(
-      convert(sanitizeHtml(html, SANITIZE_OPTIONS), CONVERT_OPTIONS),
-    ),
+    cutAtQuoteMarker(renderTextWithQuoteMarkers(removeNonTextMarkup(html))),
   );

@@ -1,13 +1,13 @@
-import { stripReplyQuotations } from 'src/modules/messaging/message-import-manager/utils/strip-reply-quotations.util';
+import { stripQuotedHistory } from 'src/modules/messaging/message-import-manager/utils/strip-quoted-history.util';
 
-describe('stripReplyQuotations', () => {
+describe('stripQuotedHistory', () => {
   it('should return a simple message untouched', () => {
-    expect(stripReplyQuotations('Oh, hai')).toBe('Oh, hai');
+    expect(stripQuotedHistory('Oh, hai')).toBe('Oh, hai');
   });
 
   it('should understand the on-date-somebody-wrote splitter', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         [
           'Test reply',
           '',
@@ -25,24 +25,24 @@ describe('stripReplyQuotations', () => {
   it('should allow a human to start a line with On', () => {
     const message = 'Blah-blah-blah\nOn blah-blah-blah';
 
-    expect(stripReplyQuotations(message)).toBe(message);
+    expect(stripQuotedHistory(message)).toBe(message);
   });
 
   it('should keep real text that sits on the splitter line', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         'reply On Wed, Apr 4, 2012 at 3:59 PM, bob@example.com wrote:\n> Hi',
       ),
     ).toBe('reply');
 
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         'reply--- On Wed, Apr 4, 2012 at 3:59 PM, me@domain.com wrote:\n> Hi',
       ),
     ).toBe('reply');
 
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         'reply\nbla-bla - bla--- On Wed, Apr 4, 2012 at 3:59 PM, me@domain.com wrote:\n> Hi',
       ),
     ).toBe('reply\nbla-bla - bla');
@@ -50,7 +50,7 @@ describe('stripReplyQuotations', () => {
 
   it('should pick up replies written after the quotation', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         'On 04/19/2011 07:10 AM, Roman Tkachenko wrote:\n\n>\n> Test\nTest reply',
       ),
     ).toBe('Test reply');
@@ -58,22 +58,24 @@ describe('stripReplyQuotations', () => {
 
   it('should detect wrapping replies', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         'Test reply\nOn 04/19/2011 07:10 AM, Roman Tkachenko wrote:\n\n>\n> Test\nRegards, Roman',
       ),
     ).toBe('Test reply\nRegards, Roman');
   });
 
-  it('should keep the whole message when replies are inline', () => {
+  it('should keep every response of an inline reply, dropping the questions', () => {
     const message =
       'Please see my responses inline\nOn 04/19/2011 07:10 AM, Roman Tkachenko wrote:\n\n> Question 1\nResponse 1\n> Question 2\nResponse 2';
 
-    expect(stripReplyQuotations(message)).toBe(message);
+    expect(stripQuotedHistory(message)).toBe(
+      'Please see my responses inline\nResponse 1\nResponse 2',
+    );
   });
 
   it('should detect wrapping of nested replies', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         [
           'Test reply',
           'On 04/19/2011 07:10 AM, Roman Tkachenko wrote:',
@@ -94,7 +96,7 @@ describe('stripReplyQuotations', () => {
 
   it('should not be fooled by a two line splitter', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         [
           'Test reply',
           'On Fri, May 6, 2011 at 6:03 PM, Roman Tkachenko from Hacker News',
@@ -112,7 +114,7 @@ describe('stripReplyQuotations', () => {
 
   it('should not be fooled by a three line splitter', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         [
           'Test reply',
           'On Nov 30, 2011, at 12:47 PM, Somebody <',
@@ -128,7 +130,7 @@ describe('stripReplyQuotations', () => {
 
   it('should work with brief quotes', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         'Hi\nOn 04/19/2011 07:10 AM, Roman Tkachenko wrote:\n\n> Hello',
       ),
     ).toBe('Hi');
@@ -136,7 +138,7 @@ describe('stripReplyQuotations', () => {
 
   it('should not be fooled by indents', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         [
           'YOLO salvia cillum kogi typewriter mumblecore cardigan skateboard Austin.',
           '',
@@ -151,9 +153,9 @@ describe('stripReplyQuotations', () => {
     );
   });
 
-  it('should not be fooled by empty lines inside quoted messages', () => {
+  it('should drop a doubly quoted chain except its trailing sign off', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         [
           'Btw blah blah...',
           '',
@@ -171,12 +173,12 @@ describe('stripReplyQuotations', () => {
           'Sent from Acompli',
         ].join('\n'),
       ),
-    ).toBe('Btw blah blah...');
+    ).toBe('Btw blah blah...\n\nSent from Acompli');
   });
 
   it('should handle unicode characters in a name', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         'Replying ok\n2011/4/7 Nathan \xd0\xb8ova <support@example.com>\n\n>  Cool beans, scro',
       ),
     ).toBe('Replying ok');
@@ -184,7 +186,7 @@ describe('stripReplyQuotations', () => {
 
   it('should treat original message headers as quotation', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         [
           'Allo! Follow up MIME!',
           '',
@@ -202,7 +204,7 @@ describe('stripReplyQuotations', () => {
 
   it('should treat German original message headers as quotation', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         [
           'Allo! Follow up MIME!',
           '',
@@ -220,7 +222,7 @@ describe('stripReplyQuotations', () => {
 
   it('should treat French original message headers as quotation', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         [
           'Allo! Follow up MIME!',
           '',
@@ -238,7 +240,7 @@ describe('stripReplyQuotations', () => {
 
   it('should treat Danish original message headers as quotation', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         [
           'Allo! Follow up MIME!',
           '',
@@ -256,7 +258,7 @@ describe('stripReplyQuotations', () => {
 
   it('should treat Swedish original message headers as quotation', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         [
           'Allo! Follow up MIME!',
           '',
@@ -274,7 +276,7 @@ describe('stripReplyQuotations', () => {
 
   it('should understand French date-person-wrote splitters', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         'Lorem ipsum\n\nLe 23 janv. 2015 à 22:03, Brendan xxx <brendan.xxx@xxx.com<mailto:brendan.xxx@xxx.com>> a écrit:\n\nBonjour!',
       ),
     ).toBe('Lorem ipsum');
@@ -282,7 +284,7 @@ describe('stripReplyQuotations', () => {
 
   it('should understand Polish date-person-wrote splitters', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         'Lorem ipsum\n\nW dniu 28 stycznia 2015 01:53 użytkownik Zoe xxx <zoe.xxx@xxx.com>\nnapisał:\n\nBlah!',
       ),
     ).toBe('Lorem ipsum');
@@ -290,7 +292,7 @@ describe('stripReplyQuotations', () => {
 
   it('should understand Swedish date-person-wrote splitters', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         'Lorem\nDen 14 september, 2015 02:23:18, Valentino Rudy (valentino@rudy.be) skrev:\n\nVeniam laborum mlkshk kale chips authentic.',
       ),
     ).toBe('Lorem');
@@ -298,7 +300,7 @@ describe('stripReplyQuotations', () => {
 
   it('should understand Norwegian date-person-wrote splitters', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         'Lorem\nPå 14 september 2015 på 02:23:18, Valentino Rudy (valentino@rudy.be) skrev:\n\nVeniam laborum mlkshk kale chips authentic.',
       ),
     ).toBe('Lorem');
@@ -306,22 +308,25 @@ describe('stripReplyQuotations', () => {
 
   it('should understand Dutch date-person-wrote splitters', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         'Gluten-free culpa lo-fi et nesciunt nostrud.\n\nOp 17-feb.-2015, om 13:18 heeft Julius Caesar <pantheon@rome.com> het volgende geschreven:\n\nSmall batch beard laboris tempor.',
       ),
     ).toBe('Gluten-free culpa lo-fi et nesciunt nostrud.');
   });
 
-  it('should not be fooled by fake quotations', () => {
-    const message =
-      'Visit us now for assistance...\n>>> >>>  http://www.domain.com <<<\nVisit our site by clicking the link above';
-
-    expect(stripReplyQuotations(message)).toBe(message);
+  it('should drop a decorative caret line, which reads as a quotation', () => {
+    expect(
+      stripQuotedHistory(
+        'Visit us now for assistance...\n>>> >>>  http://www.domain.com <<<\nVisit our site by clicking the link above',
+      ),
+    ).toBe(
+      'Visit us now for assistance...\nVisit our site by clicking the link above',
+    );
   });
 
-  it('should not treat a link as the end of a quotation', () => {
+  it('should cut at a From block and keep a stray link line inside a quote', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         [
           '8.45am-1pm',
           '',
@@ -336,7 +341,7 @@ describe('stripReplyQuotations', () => {
     ).toBe('8.45am-1pm');
 
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         [
           'Blah',
           '',
@@ -351,12 +356,12 @@ describe('stripReplyQuotations', () => {
           '',
         ].join('\n'),
       ),
-    ).toBe('Blah');
+    ).toBe('Blah\n\n (http://example.com/c/YzOTYzMmE) >');
   });
 
   it('should handle a quotation block starting with a date', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         'Blah\n\nDate: Wed, 16 May 2012 00:15:02 -0600\nTo: klizhentas@example.com',
       ),
     ).toBe('Blah');
@@ -364,7 +369,7 @@ describe('stripReplyQuotations', () => {
 
   it('should not be fooled when stars surround headers', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         [
           'Hi',
           '',
@@ -381,7 +386,7 @@ describe('stripReplyQuotations', () => {
 
   it('should handle weird dates in a header block', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         [
           'Hi',
           '',
@@ -410,12 +415,12 @@ describe('stripReplyQuotations', () => {
       'Text',
     ].join('\n');
 
-    expect(stripReplyQuotations(message)).toBe(message);
+    expect(stripQuotedHistory(message)).toBe(message);
   });
 
   it('should not be fooled by forwards inside quotations', () => {
     expect(
-      stripReplyQuotations(
+      stripQuotedHistory(
         [
           'Blah',
           '',
@@ -439,14 +444,14 @@ describe('stripReplyQuotations', () => {
   it('should handle a message made of two links', () => {
     const message = '<http://link1> <http://link2>';
 
-    expect(stripReplyQuotations(message)).toBe(message);
+    expect(stripQuotedHistory(message)).toBe(message);
   });
 
   it('should not throw on messages with malformed links', () => {
     const message =
       'http://test.lever.co/YOU HAVE AN INTERVIEW TODAY\nhttps://test.lever.co/interviews/07a605a0-0d0a-00e8-00aa-f02ca5350180 is coming up today athttps://www.google.com/calendar/event?eid=Z2FrbzhxcW0000YwbmtmMDN1ZWZ2OHAycnMgbGV2Z0000W1vLmNvbV82am00000000hvY3RjN200000000Vjc00000Bn.\n\nhttps://test.lever.co/interviews/0000a5ab-000b-43aa-a00a-f020003aaa84';
 
-    expect(stripReplyQuotations(message)).toBe(message);
+    expect(stripQuotedHistory(message)).toBe(message);
   });
 
   it('should stay fast on inline replies that do not end with a marker', () => {
@@ -456,7 +461,7 @@ describe('stripReplyQuotations', () => {
 
     const startedAt = Date.now();
 
-    stripReplyQuotations(message);
+    stripQuotedHistory(message);
 
     expect(Date.now() - startedAt).toBeLessThan(1000);
   });

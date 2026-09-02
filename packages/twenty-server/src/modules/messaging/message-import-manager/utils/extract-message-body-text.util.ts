@@ -1,26 +1,30 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { convertHtmlToText } from 'src/modules/messaging/message-import-manager/utils/convert-html-to-text.util';
-import { extractTextWithoutReplyQuotations } from 'src/modules/messaging/message-import-manager/utils/extract-text-without-reply-quotations.util';
 import { normalizeMessageText } from 'src/modules/messaging/message-import-manager/utils/normalize-message-text.util';
 import { sanitizeString } from 'src/modules/messaging/message-import-manager/utils/sanitize-string.util';
+import { stripQuotedHistory } from 'src/modules/messaging/message-import-manager/utils/strip-quoted-history.util';
 
-export const extractMessageBodyText = ({
-  text,
-  html,
-}: {
+type MessageBody = {
   text?: string | null;
   html?: string | null;
-}): string => {
-  const candidate = isNonEmptyString(text)
-    ? text
-    : isNonEmptyString(html)
-      ? convertHtmlToText(html)
-      : '';
+};
 
-  const textWithoutReplyQuotations =
-    extractTextWithoutReplyQuotations(candidate);
-  const sanitizedText = sanitizeString(textWithoutReplyQuotations);
+const readBodyAsText = ({ text, html }: MessageBody): string => {
+  if (isNonEmptyString(text)) {
+    return text;
+  }
 
-  return normalizeMessageText(sanitizedText);
+  if (isNonEmptyString(html)) {
+    return convertHtmlToText(html);
+  }
+
+  return '';
+};
+
+export const extractMessageBodyText = (body: MessageBody): string => {
+  const bodyAsText = readBodyAsText(body);
+  const withoutQuotedHistory = stripQuotedHistory(bodyAsText);
+
+  return normalizeMessageText(sanitizeString(withoutQuotedHistory));
 };
