@@ -34,7 +34,6 @@ import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/con
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
-import { getWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import {
   AggregateOperations,
   AxisNameDisplay,
@@ -87,12 +86,6 @@ const WIDGET_ID_ONE_TO_MANY_RELATION = 'widget-one-to-many-relation-field';
 const WIDGET_ID_CATALOG = 'catalog-widget';
 const TAB_ID_OVERVIEW = 'tab-overview';
 const SIDE_PANEL_INSTANCE_ID = 'widget-side-panel';
-const SIDE_PANEL_PAGE_LAYOUT_INSTANCE_ID =
-  getWorkspaceSurfaceScopedComponentInstanceId({
-    componentInstanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-    surfaceType: 'side-panel',
-    surfaceInstanceId: SIDE_PANEL_INSTANCE_ID,
-  });
 
 const mockPersonRecord: ObjectRecord = {
   __typename: 'Person',
@@ -1492,13 +1485,13 @@ export const InSidePanel: Story = {
     );
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
-        instanceId: SIDE_PANEL_PAGE_LAYOUT_INSTANCE_ID,
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
       }),
       sidePanelPageLayoutData,
     );
     jotaiStore.set(
       pageLayoutDraftComponentState.atomFamily({
-        instanceId: SIDE_PANEL_PAGE_LAYOUT_INSTANCE_ID,
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
       }),
       sidePanelPageLayoutData,
     );

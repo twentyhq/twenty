@@ -30,6 +30,7 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { findByProperty } from 'twenty-shared/utils';
 import { IconX, useIcons } from 'twenty-ui/icon';
@@ -152,14 +153,17 @@ export const ObjectSortDropdownButton = () => {
     ...hiddenFieldMetadataItemsSorted.map((item) => item.id),
   ];
 
+  const scopedObjectSortDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(OBJECT_SORT_DROPDOWN_ID);
+
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    OBJECT_SORT_DROPDOWN_ID,
+    scopedObjectSortDropdownId,
   );
 
   const setSelectedItemId = useSetAtomComponentState(
     selectedItemIdComponentState,
-    OBJECT_SORT_DROPDOWN_ID,
+    scopedObjectSortDropdownId,
   );
 
   const shouldShowHiddenFields = hiddenFieldMetadataItemsSorted.length > 0;

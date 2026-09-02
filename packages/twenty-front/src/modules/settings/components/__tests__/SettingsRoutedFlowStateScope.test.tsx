@@ -41,6 +41,8 @@ const ScopedStateProbe = ({
 }: {
   name: 'main' | 'panel' | 'panel-second';
 }) => {
+  const modalId = useWorkspaceSurfaceScopedComponentInstanceId(MODAL_ID);
+  const dropdownId = useWorkspaceSurfaceScopedComponentInstanceId(DROPDOWN_ID);
   const tableId = useWorkspaceSurfaceScopedComponentInstanceId('role-table');
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
@@ -60,12 +62,12 @@ const ScopedStateProbe = ({
   );
   const isModalOpened = useAtomComponentStateValue(
     isModalOpenedComponentState,
-    MODAL_ID,
+    modalId,
   );
   const { openModal, toggleModal } = useModal();
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
-    DROPDOWN_ID,
+    dropdownId,
   );
   const { openDropdown } = useOpenDropdown();
   const sortedFieldByTable = useAtomFamilyStateValue(

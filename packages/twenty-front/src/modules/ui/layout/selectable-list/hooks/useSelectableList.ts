@@ -4,13 +4,18 @@ import { useStore } from 'jotai';
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSelectableList = (instanceId?: string) => {
-  const selectableListInstanceId = useAvailableComponentInstanceIdOrThrow(
-    SelectableListComponentInstanceContext,
-    instanceId,
+  const unscopedSelectableListInstanceId =
+    useAvailableComponentInstanceIdOrThrow(
+      SelectableListComponentInstanceContext,
+      instanceId,
+    );
+  const selectableListInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
+    unscopedSelectableListInstanceId,
   );
 
   const store = useStore();

@@ -24,6 +24,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -103,9 +104,12 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     }
   }, [hiddenRecordGroupIds, currentContentId, onContentChange]);
 
+  const scopedObjectOptionsDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(OBJECT_OPTIONS_DROPDOWN_ID);
+
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    OBJECT_OPTIONS_DROPDOWN_ID,
+    scopedObjectOptionsDropdownId,
   );
 
   const selectableItemIdArray = [
