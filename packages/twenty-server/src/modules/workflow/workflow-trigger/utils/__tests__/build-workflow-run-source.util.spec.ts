@@ -12,6 +12,12 @@ describe('buildWorkflowRunSource', () => {
     });
   });
 
+  it('should trim the name it uses', () => {
+    expect(buildWorkflowRunSource('  Send invoice  ').name).toBe(
+      'Send invoice',
+    );
+  });
+
   it('should fall back to the default name when there is none', () => {
     for (const workflowName of [null, undefined, '', '   ']) {
       expect(buildWorkflowRunSource(workflowName).name).toBe('Workflow');

@@ -100,7 +100,6 @@ export class WorkflowTriggerJob {
     if (coreWorkflowVersion.status !== CoreWorkflowVersionStatus.ACTIVE) {
       this.logger.error(
         `Core workflow version ${coreWorkflowVersionId} is not active in workspace ${workspaceId}`,
-        WorkflowTriggerExceptionCode.INTERNAL_ERROR,
       );
       this.exceptionHandlerService.captureExceptions([
         new Error(
