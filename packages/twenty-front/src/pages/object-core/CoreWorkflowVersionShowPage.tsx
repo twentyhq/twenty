@@ -4,6 +4,7 @@ import { Tag } from 'twenty-ui/data-display';
 
 import { CoreWorkflowVersionCard } from '@/object-core/workflows/versions/components/CoreWorkflowVersionCard';
 import { CoreWorkflowVersionRestoreButton } from '@/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton';
+import { CoreWorkflowVersionSeeWorkflowButton } from '@/object-core/workflows/versions/components/CoreWorkflowVersionSeeWorkflowButton';
 import { CORE_WORKFLOW_VERSION_STATUS_TAG_PROPS } from '@/object-core/workflows/versions/constants/CoreWorkflowVersionStatusTagProps';
 import { useCoreWorkflowVersion } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersion';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
@@ -43,10 +44,15 @@ export const CoreWorkflowVersionShowPage = ({
             actionButton={
               <>
                 {isDefined(coreWorkflowVersion) && (
-                  <CoreWorkflowVersionRestoreButton
-                    workflowId={coreWorkflowVersion.workspaceWorkflowId}
-                    workspaceWorkflowVersionId={workspaceWorkflowVersionId}
-                  />
+                  <>
+                    <CoreWorkflowVersionSeeWorkflowButton
+                      workflowId={coreWorkflowVersion.workspaceWorkflowId}
+                    />
+                    <CoreWorkflowVersionRestoreButton
+                      workflowId={coreWorkflowVersion.workspaceWorkflowId}
+                      workspaceWorkflowVersionId={workspaceWorkflowVersionId}
+                    />
+                  </>
                 )}
                 {!isInSidePanel && <SidePanelToggleButton />}
               </>

@@ -1,10 +1,12 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { useCoreWorkflowVersions } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersions';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
 import { CoreWorkflowVersionStatus } from '~/generated/graphql';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useRestoreCoreWorkflowVersionAsDraft = ({
   workflowId,
@@ -19,6 +21,7 @@ export const useRestoreCoreWorkflowVersionAsDraft = ({
   const { createDraftFromWorkflowVersion } =
     useCreateDraftFromWorkflowVersion();
   const { enqueueErrorSnackBar } = useSnackBar();
+  const navigate = useNavigateApp();
 
   const hasExistingDraft = coreWorkflowVersions.some(
     (coreWorkflowVersion) =>
@@ -36,6 +39,11 @@ export const useRestoreCoreWorkflowVersionAsDraft = ({
       await createDraftFromWorkflowVersion({
         workflowId,
         workflowVersionIdToCopy: workspaceWorkflowVersionId,
+      });
+
+      navigate(AppPath.RecordShowPage, {
+        objectNameSingular: CoreObjectNameSingular.Workflow,
+        objectRecordId: workflowId,
       });
     } catch {
       enqueueErrorSnackBar({
