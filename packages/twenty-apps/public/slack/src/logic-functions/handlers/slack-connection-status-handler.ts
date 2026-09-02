@@ -61,12 +61,24 @@ export const slackConnectionStatusHandler =
       return { success: true, isConnected: true };
     }
 
-    const [claimedWorkspaceId, currentWorkspaceId, rosterMatchOutcome] =
+    const [claimLookup, currentWorkspaceId, rosterMatchOutcome] =
       await Promise.all([
-        findClaimedWorkspaceId(installedTeamId),
+        findClaimedWorkspaceId(installedTeamId).then(
+          (claimedWorkspaceId) => ({
+            hasFailed: false as const,
+            claimedWorkspaceId,
+          }),
+          () => ({ hasFailed: true as const }),
+        ),
         fetchCurrentWorkspaceId(),
         readSlackRosterMatchOutcome(),
       ]);
+
+    if (claimLookup.hasFailed) {
+      return { success: true, isConnected: true };
+    }
+
+    const { claimedWorkspaceId } = claimLookup;
 
     if (!isDefined(claimedWorkspaceId)) {
       return {

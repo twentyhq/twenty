@@ -109,6 +109,17 @@ describe('slackConnectionStatusHandler', () => {
     });
   });
 
+  it('should stay quiet when the claim lookup fails transiently', async () => {
+    vi.mocked(findClaimedWorkspaceId).mockRejectedValue(
+      new Error('kv unavailable'),
+    );
+
+    await expect(slackConnectionStatusHandler()).resolves.toEqual({
+      success: true,
+      isConnected: true,
+    });
+  });
+
   it('should report an unclaimed team', async () => {
     vi.mocked(findClaimedWorkspaceId).mockResolvedValue(null);
 
