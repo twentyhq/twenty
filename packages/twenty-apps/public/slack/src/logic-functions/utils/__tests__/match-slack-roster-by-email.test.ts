@@ -8,12 +8,12 @@ const {
   coreApiClientMock,
   findWorkspaceMemberIdsByEmailsMock,
   listLinkedSlackUserIdsMock,
-  persistSlackUserLinkMock,
+  linkSlackRosterCandidatesMock,
 } = vi.hoisted(() => ({
   coreApiClientMock: vi.fn(),
   findWorkspaceMemberIdsByEmailsMock: vi.fn(),
   listLinkedSlackUserIdsMock: vi.fn(),
-  persistSlackUserLinkMock: vi.fn(),
+  linkSlackRosterCandidatesMock: vi.fn(),
 }));
 
 vi.mock('twenty-client-sdk/core', () => ({
@@ -28,8 +28,8 @@ vi.mock('src/logic-functions/data/list-linked-slack-user-ids', () => ({
   listLinkedSlackUserIds: listLinkedSlackUserIdsMock,
 }));
 
-vi.mock('src/logic-functions/utils/persist-slack-user-link', () => ({
-  persistSlackUserLink: persistSlackUserLinkMock,
+vi.mock('src/logic-functions/utils/link-slack-roster-candidates', () => ({
+  linkSlackRosterCandidates: linkSlackRosterCandidatesMock,
 }));
 
 const SLACK_TEAM_ID = 'T-installed';
@@ -60,6 +60,9 @@ const fullMember = ({
   profile: { email, display_name: displayName },
 });
 
+const linkedCandidates = () =>
+  linkSlackRosterCandidatesMock.mock.calls[0][1].candidates;
+
 describe('matchSlackRosterByEmail', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -68,7 +71,12 @@ describe('matchSlackRosterByEmail', () => {
       ambiguousEmailCount: 0,
     });
     listLinkedSlackUserIdsMock.mockResolvedValue(new Set());
-    persistSlackUserLinkMock.mockResolvedValue('link-new');
+    linkSlackRosterCandidatesMock.mockImplementation(
+      async (_client, { candidates }) => ({
+        linkedCount: candidates.length,
+        failedCount: 0,
+      }),
+    );
   });
 
   it('should link a roster member whose email matches a workspace member', async () => {
@@ -79,16 +87,19 @@ describe('matchSlackRosterByEmail', () => {
       slackTeamId: SLACK_TEAM_ID,
     });
 
-    expect(persistSlackUserLinkMock).toHaveBeenCalledWith(expect.anything(), {
-      existingLink: undefined,
-      isSameMemberRelink: false,
-      slackTeamId: SLACK_TEAM_ID,
-      slackUserId: 'U1',
-      workspaceMemberId: 'member-ada',
-      name: 'Ada',
-      source: 'AUTO',
-      consentState: 'ACTIVE',
-    });
+    expect(linkSlackRosterCandidatesMock).toHaveBeenCalledWith(
+      expect.anything(),
+      {
+        slackTeamId: SLACK_TEAM_ID,
+        candidates: [
+          {
+            slackUserId: 'U1',
+            workspaceMemberId: 'member-ada',
+            displayName: 'Ada',
+          },
+        ],
+      },
+    );
     expect(summary).toEqual({
       linkedCount: 1,
       alreadyLinkedCount: 0,
@@ -120,7 +131,7 @@ describe('matchSlackRosterByEmail', () => {
       slackTeamId: SLACK_TEAM_ID,
     });
 
-    expect(persistSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(linkedCandidates()).toEqual([]);
     expect(summary).toEqual({
       linkedCount: 0,
       alreadyLinkedCount: 1,
@@ -139,7 +150,7 @@ describe('matchSlackRosterByEmail', () => {
       slackTeamId: SLACK_TEAM_ID,
     });
 
-    expect(persistSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(linkedCandidates()).toEqual([]);
     expect(summary.unmatchedCount).toBe(1);
   });
 
@@ -154,7 +165,7 @@ describe('matchSlackRosterByEmail', () => {
       slackTeamId: SLACK_TEAM_ID,
     });
 
-    expect(persistSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(linkedCandidates()).toEqual([]);
     expect(summary.unmatchedCount).toBe(1);
   });
 
@@ -169,7 +180,7 @@ describe('matchSlackRosterByEmail', () => {
       slackTeamId: SLACK_TEAM_ID,
     });
 
-    expect(persistSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(linkedCandidates()).toEqual([]);
     expect(summary.unmatchedCount).toBe(1);
   });
 
@@ -184,7 +195,7 @@ describe('matchSlackRosterByEmail', () => {
       slackTeamId: SLACK_TEAM_ID,
     });
 
-    expect(persistSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(linkedCandidates()).toEqual([]);
     expect(summary.unmatchedCount).toBe(1);
   });
 
@@ -240,7 +251,7 @@ describe('matchSlackRosterByEmail', () => {
       slackTeamId: SLACK_TEAM_ID,
     });
 
-    expect(persistSlackUserLinkMock).toHaveBeenCalledTimes(2);
+    expect(linkedCandidates()).toHaveLength(2);
     expect(summary).toEqual({
       linkedCount: 2,
       alreadyLinkedCount: 1,
@@ -249,31 +260,6 @@ describe('matchSlackRosterByEmail', () => {
       failedCount: 0,
       isRosterTruncated: false,
     });
-  });
-
-  it('should keep linking after one candidate fails and count the failure', async () => {
-    findWorkspaceMemberIdsByEmailsMock.mockResolvedValue({
-      workspaceMemberIdByEmail: new Map([
-        ['ada@twenty.com', 'member-ada'],
-        ['grace@twenty.com', 'member-grace'],
-      ]),
-      ambiguousEmailCount: 0,
-    });
-    persistSlackUserLinkMock
-      .mockRejectedValueOnce(new Error('write failed'))
-      .mockResolvedValueOnce('link-new');
-
-    const summary = await matchSlackRosterByEmail({
-      slackClient: buildSlackClient([
-        fullMember({ id: 'U1', email: 'ada@twenty.com' }),
-        fullMember({ id: 'U2', email: 'grace@twenty.com' }),
-      ]),
-      slackTeamId: SLACK_TEAM_ID,
-    });
-
-    expect(persistSlackUserLinkMock).toHaveBeenCalledTimes(2);
-    expect(summary.linkedCount).toBe(1);
-    expect(summary.failedCount).toBe(1);
   });
 
   it('should report truncation when the roster exceeds the page cap', async () => {
