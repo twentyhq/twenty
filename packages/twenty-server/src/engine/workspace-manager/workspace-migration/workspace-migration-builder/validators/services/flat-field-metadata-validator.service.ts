@@ -141,7 +141,11 @@ export class FlatFieldMetadataValidatorService {
       });
     }
 
-    if (isDefined(flatEntityUpdate.isSearchable)) {
+    // Presence check, not isDefined: an explicit `isSearchable: null` merges
+    // into the flat entity and reads as false downstream (the side-effect
+    // handler deletes the backing row), so it must go through the same
+    // validation as an explicit false — notably the label-identifier guard.
+    if (flatEntityUpdate.isSearchable !== undefined) {
       validationResult.errors.push(
         ...validateSearchableFlatFieldMetadata({
           flatFieldMetadataToValidate,
@@ -384,6 +388,27 @@ export class FlatFieldMetadataValidatorService {
           buildOptions,
         }),
       );
+
+      // System builds declare searchable state consistently with the rows
+      // they provision (e.g. junction objects whose label identifier is the
+      // id field), and a label identifier is searchable by definition, so
+      // only user-driven creation of a non-label searchable field needs
+      // validating here.
+      if (
+        flatFieldMetadataToValidate.isSearchable === true &&
+        !buildOptions.isSystemBuild &&
+        parentFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier !==
+          flatFieldMetadataToValidate.universalIdentifier
+      ) {
+        validationResult.errors.push(
+          ...validateSearchableFlatFieldMetadata({
+            flatFieldMetadataToValidate,
+            flatObjectMetadata: parentFlatObjectMetadata,
+            flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
+            skipTsVectorCheck: true,
+          }),
+        );
+      }
     }
 
     if (

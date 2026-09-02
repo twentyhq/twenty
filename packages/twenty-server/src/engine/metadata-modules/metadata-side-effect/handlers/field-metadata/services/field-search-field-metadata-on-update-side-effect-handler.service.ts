@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { buildFlatSearchFieldMetadataForField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/build-flat-search-field-metadata-for-field.util';
 import { findTsVectorFlatFieldMetadataForObject } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/find-ts-vector-flat-field-metadata-for-object.util';
+import { getPendingFlatSearchFieldMetadataCreatesForObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/get-pending-flat-search-field-metadata-creates-for-object.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
@@ -23,6 +24,7 @@ export class FieldSearchFieldMetadataOnUpdateSideEffectHandlerService extends Me
 ) {
   buildSideEffects({
     flatEntity: flatFieldMetadata,
+    allFlatEntityOperationRecordByMetadataName,
     relatedFlatEntityMaps,
   }: BuildSideEffectsArgs<'fieldMetadata'>): MetadataSideEffectResult {
     const existingFlatFieldMetadata =
@@ -52,6 +54,7 @@ export class FieldSearchFieldMetadataOnUpdateSideEffectHandlerService extends Me
 
     return this.buildCreateOperations({
       flatFieldMetadata,
+      allFlatEntityOperationRecordByMetadataName,
       relatedFlatEntityMaps,
     });
   }
@@ -98,9 +101,11 @@ export class FieldSearchFieldMetadataOnUpdateSideEffectHandlerService extends Me
 
   private buildCreateOperations({
     flatFieldMetadata,
+    allFlatEntityOperationRecordByMetadataName,
     relatedFlatEntityMaps,
   }: {
     flatFieldMetadata: BuildSideEffectsArgs<'fieldMetadata'>['flatEntity'];
+    allFlatEntityOperationRecordByMetadataName: BuildSideEffectsArgs<'fieldMetadata'>['allFlatEntityOperationRecordByMetadataName'];
     relatedFlatEntityMaps: BuildSideEffectsArgs<'fieldMetadata'>['relatedFlatEntityMaps'];
   }): MetadataSideEffectResult {
     const existingFlatObjectMetadata =
@@ -131,8 +136,15 @@ export class FieldSearchFieldMetadataOnUpdateSideEffectHandlerService extends Me
         )
         .filter(isDefined);
 
+    const pendingSearchFieldMetadatas =
+      getPendingFlatSearchFieldMetadataCreatesForObject({
+        objectMetadataUniversalIdentifier:
+          existingFlatObjectMetadata.universalIdentifier,
+        allFlatEntityOperationRecordByMetadataName,
+      });
+
     const position =
-      existingSearchFieldMetadatas.reduce(
+      [...existingSearchFieldMetadatas, ...pendingSearchFieldMetadatas].reduce(
         (maxPosition, searchFieldMetadata) =>
           Math.max(maxPosition, searchFieldMetadata.position),
         -1,

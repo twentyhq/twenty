@@ -13,6 +13,7 @@ export const validateSearchableFlatFieldMetadata = ({
   flatFieldMetadataToValidate,
   flatObjectMetadata,
   flatFieldMetadataMaps,
+  skipTsVectorCheck = false,
 }: {
   flatFieldMetadataToValidate: UniversalFlatFieldMetadata;
   flatObjectMetadata: Pick<
@@ -22,6 +23,10 @@ export const validateSearchableFlatFieldMetadata = ({
     | 'labelIdentifierFieldMetadataUniversalIdentifier'
   >;
   flatFieldMetadataMaps: MetadataUniversalFlatEntityMaps<'fieldMetadata'>;
+  // On field creation the object's TS_VECTOR field can be created in the same
+  // batch (object-create side effect), so its absence from the optimistic maps
+  // is not a user error there; the create side-effect handler no-ops safely.
+  skipTsVectorCheck?: boolean;
 }): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
 
@@ -68,6 +73,10 @@ export const validateSearchableFlatFieldMetadata = ({
       userFriendlyMessage: msg`Enable search on this object before adding searchable fields`,
     });
 
+    return errors;
+  }
+
+  if (skipTsVectorCheck) {
     return errors;
   }
 

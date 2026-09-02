@@ -101,6 +101,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             now,
             objectLabelIdentifierFieldMetadataUniversalIdentifier:
               objectManifest.labelIdentifierFieldMetadataUniversalIdentifier,
+            objectIsSearchable: flatObjectMetadata.isSearchable,
           },
         );
 
@@ -121,6 +122,10 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           allUniversalFlatEntityMaps.flatObjectMetadataMaps
             .byUniversalIdentifier[fieldManifest.objectUniversalIdentifier]
             ?.labelIdentifierFieldMetadataUniversalIdentifier,
+        objectIsSearchable:
+          allUniversalFlatEntityMaps.flatObjectMetadataMaps
+            .byUniversalIdentifier[fieldManifest.objectUniversalIdentifier]
+            ?.isSearchable,
       });
 
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({

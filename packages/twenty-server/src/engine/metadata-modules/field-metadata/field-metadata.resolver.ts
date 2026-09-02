@@ -48,6 +48,7 @@ import { applyMetadataFilterToQueryBuilder } from 'src/engine/metadata-modules/p
 import { findManyWithCursorPagination } from 'src/engine/metadata-modules/pagination/utils/find-many-with-cursor-pagination.util';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
+import { SearchableFieldMetadataIdsService } from 'src/engine/metadata-modules/flat-search-field-metadata/services/searchable-field-metadata-ids.service';
 import { UniqueFieldMetadataIdsService } from 'src/engine/metadata-modules/index-metadata/services/unique-field-metadata-ids.service';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
@@ -74,6 +75,7 @@ export class FieldMetadataResolver {
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly uniqueFieldMetadataIdsService: UniqueFieldMetadataIdsService,
+    private readonly searchableFieldMetadataIdsService: SearchableFieldMetadataIdsService,
   ) {}
 
   @UseGuards(NoPermissionGuard)
@@ -109,8 +111,11 @@ export class FieldMetadataResolver {
       alias: 'fieldMetadata',
       paging,
     });
-    const uniqueFieldMetadataIds =
-      await this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId);
+    const [uniqueFieldMetadataIds, searchableFieldMetadataIds] =
+      await Promise.all([
+        this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
+        this.searchableFieldMetadataIdsService.getForWorkspace(workspaceId),
+      ]);
 
     return {
       ...connection,
@@ -119,6 +124,7 @@ export class FieldMetadataResolver {
         node: fromFieldMetadataEntityToFieldMetadataDto(
           edge.node,
           uniqueFieldMetadataIds,
+          searchableFieldMetadataIds,
         ),
       })),
     };
@@ -144,12 +150,16 @@ export class FieldMetadataResolver {
       );
     }
 
-    const uniqueFieldMetadataIds =
-      await this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId);
+    const [uniqueFieldMetadataIds, searchableFieldMetadataIds] =
+      await Promise.all([
+        this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
+        this.searchableFieldMetadataIdsService.getForWorkspace(workspaceId),
+      ]);
 
     return fromFieldMetadataEntityToFieldMetadataDto(
       fieldMetadata,
       uniqueFieldMetadataIds,
+      searchableFieldMetadataIds,
     );
   }
 

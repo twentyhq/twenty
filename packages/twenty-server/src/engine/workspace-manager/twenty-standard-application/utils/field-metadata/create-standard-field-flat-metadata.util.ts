@@ -72,6 +72,8 @@ export const createStandardFieldFlatMetadata = <
   const fieldIds = standardObjectMetadataRelatedEntityIds[objectName].fields;
 
   const name = fieldName.toString();
+  const searchFields: ReadonlyArray<{ name: string }> =
+    SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME[objectName];
 
   return {
     id: fieldIds[fieldName].id,
@@ -92,9 +94,7 @@ export const createStandardFieldFlatMetadata = <
     // Mirrors the searchFieldMetadata rows the standard application declares
     // for this object. Both sides must agree or every sync would diff
     // isSearchable and delete the rows it just created.
-    isSearchable: (
-      SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME[objectName] as { name: string }[]
-    ).some((searchField) => searchField.name === name),
+    isSearchable: searchFields.some((searchField) => searchField.name === name),
     isUIEditable,
     writability:
       name in PARTIAL_SYSTEM_FLAT_FIELD_METADATAS

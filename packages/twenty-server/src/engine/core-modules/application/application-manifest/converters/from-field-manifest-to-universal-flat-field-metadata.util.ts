@@ -57,6 +57,7 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
   applicationUniversalIdentifier,
   now,
   objectLabelIdentifierFieldMetadataUniversalIdentifier,
+  objectIsSearchable,
 }: {
   fieldManifest: FieldManifest & {
     objectUniversalIdentifier: string;
@@ -64,6 +65,7 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
   applicationUniversalIdentifier: string;
   now: string;
   objectLabelIdentifierFieldMetadataUniversalIdentifier?: string | null;
+  objectIsSearchable?: boolean;
 }): UniversalFlatFieldMetadata => {
   const {
     relationTargetFieldMetadataUniversalIdentifier,
@@ -99,12 +101,15 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     isNullable: fieldManifest.isNullable ?? true,
     isUnique: fieldManifest.isUnique ?? false,
     // The object-create side effect provisions a searchFieldMetadata row for
-    // the label identifier, so the manifest must declare it searchable by
-    // default or every re-sync would diff isSearchable and drop that row.
+    // the label identifier of searchable objects, so the manifest must declare
+    // it searchable by default or every re-sync would diff isSearchable and
+    // drop that row. A non-searchable object gets no row, so its label must
+    // not default to searchable or the sync would fail validation.
     isSearchable:
       fieldManifest.isSearchable ??
-      fieldManifest.universalIdentifier ===
-        objectLabelIdentifierFieldMetadataUniversalIdentifier,
+      ((objectIsSearchable ?? true) &&
+        fieldManifest.universalIdentifier ===
+          objectLabelIdentifierFieldMetadataUniversalIdentifier),
     isLabelSyncedWithName: false,
     morphId:
       fieldManifest.type === FieldMetadataType.MORPH_RELATION

@@ -1,13 +1,15 @@
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
-// isUnique is derived from IndexMetadata rather than stored on the field
-// entity; callers that need an accurate value (e.g. the REST controller)
-// pass the precomputed Set<fieldMetadataId>. Callers in pure-entity
-// contexts that don't care about uniqueness can omit it.
+// isUnique and isSearchable are derived from IndexMetadata and
+// SearchFieldMetadata rather than stored on the field entity; callers that
+// need accurate values (e.g. the REST controller) pass the precomputed
+// Set<fieldMetadataId>s. Callers in pure-entity contexts that don't care
+// about them can omit the sets.
 export const fromFieldMetadataEntityToFieldMetadataDto = (
   entity: FieldMetadataEntity,
   uniqueFieldMetadataIds?: ReadonlySet<string>,
+  searchableFieldMetadataIds?: ReadonlySet<string>,
 ): FieldMetadataDTO => ({
   id: entity.id,
   universalIdentifier: entity.universalIdentifier,
@@ -24,6 +26,7 @@ export const fromFieldMetadataEntityToFieldMetadataDto = (
   isUIReadOnly: !entity.isUIEditable,
   isNullable: entity.isNullable ?? false,
   isUnique: uniqueFieldMetadataIds?.has(entity.id) ?? false,
+  isSearchable: searchableFieldMetadataIds?.has(entity.id) ?? false,
   defaultValue: entity.defaultValue ?? undefined,
   options: entity.options ?? undefined,
   settings: entity.settings ?? undefined,

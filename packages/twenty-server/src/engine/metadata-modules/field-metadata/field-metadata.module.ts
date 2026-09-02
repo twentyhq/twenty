@@ -16,6 +16,7 @@ import { FieldMetadataToolsFactory } from 'src/engine/metadata-modules/field-met
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FlatFieldMetadataModule } from 'src/engine/metadata-modules/flat-field-metadata/flat-field-metadata.module';
 import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/index-metadata.module';
+import { SearchFieldMetadataModule } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -50,6 +51,7 @@ import { FieldMetadataEntity } from './field-metadata.entity';
     WorkspaceMigrationModule,
     FlatFieldMetadataModule,
     IndexMetadataModule,
+    SearchFieldMetadataModule,
     WorkspaceCacheModule,
   ],
   controllers: [FieldMetadataController],

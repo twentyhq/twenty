@@ -18,12 +18,14 @@ const buildArgs = ({
   existingIsSearchable,
   fieldSearchFieldMetadataUniversalIdentifiers = [],
   objectSearchFieldMetadatas = {},
+  pendingSearchFieldMetadataCreates = {},
   hasTsVectorField = true,
 }: {
   isSearchable: boolean;
   existingIsSearchable: boolean;
   fieldSearchFieldMetadataUniversalIdentifiers?: string[];
   objectSearchFieldMetadatas?: Record<string, { position: number }>;
+  pendingSearchFieldMetadataCreates?: Record<string, { position: number }>;
   hasTsVectorField?: boolean;
 }): BuildSideEffectsArgs<'fieldMetadata'> =>
   ({
@@ -35,7 +37,25 @@ const buildArgs = ({
       type: FieldMetadataType.TEXT,
       isSearchable,
     },
-    allFlatEntityOperationRecordByMetadataName: {},
+    allFlatEntityOperationRecordByMetadataName: {
+      searchFieldMetadata: {
+        flatEntityToCreate: Object.fromEntries(
+          Object.entries(pendingSearchFieldMetadataCreates).map(
+            ([universalIdentifier, { position }]) => [
+              universalIdentifier,
+              {
+                universalIdentifier,
+                position,
+                objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+                fieldMetadataUniversalIdentifier: universalIdentifier,
+              },
+            ],
+          ),
+        ),
+        flatEntityToUpdate: {},
+        flatEntityToDelete: {},
+      },
+    },
     relatedFlatEntityMaps: {
       flatFieldMetadataMaps: {
         byUniversalIdentifier: {
@@ -128,6 +148,36 @@ describe('FieldSearchFieldMetadataOnUpdateSideEffectHandlerService', () => {
       position: 5,
       isSystemSideEffect: false,
     });
+  });
+
+  // Handlers in one batch all read the same pre-batch maps, so rows created
+  // by sibling side effects only exist in the operation record; ignoring them
+  // would hand out the same position twice.
+  it('should append after rows already created earlier in the same batch', () => {
+    const result = handler.buildSideEffects(
+      buildArgs({
+        isSearchable: true,
+        existingIsSearchable: false,
+        objectSearchFieldMetadatas: {
+          [EXISTING_SEARCH_FIELD_METADATA_UNIVERSAL_IDENTIFIER]: {
+            position: 4,
+          },
+        },
+        pendingSearchFieldMetadataCreates: {
+          'f1f2f3f4-f5f6-4000-8000-000000000009': { position: 5 },
+        },
+      }),
+    );
+
+    if (result.status !== 'success') {
+      throw new Error('expected success');
+    }
+
+    expect(
+      Object.values(
+        result.operations.searchFieldMetadata?.flatEntityToCreate ?? {},
+      )[0],
+    ).toMatchObject({ position: 6 });
   });
 
   it('should create the row at position 0 when the object has no search field yet', () => {
