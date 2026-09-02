@@ -1,14 +1,11 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { computeRecordFormFieldMetadataItems } from '@/object-record/record-form/utils/computeRecordFormFieldMetadataItems';
-import { type PageLayout } from '@/page-layout/types/PageLayout';
 import {
   PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 
-const buildFieldMetadataItem = (id: string, name: string) =>
-  ({ id, name }) as FieldMetadataItem;
+const buildFieldMetadataItem = (id: string, name: string) => ({ id, name });
 
 const buildFormFieldWidget = ({
   fieldMetadataId,
@@ -20,32 +17,33 @@ const buildFormFieldWidget = ({
   index: number;
   isActive?: boolean;
   type?: WidgetType;
-}) =>
-  ({
-    id: `widget-${fieldMetadataId}`,
-    isActive,
-    type,
-    position: {
-      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-      index,
-    },
-    configuration: {
-      configurationType: WidgetConfigurationType.FORM_FIELD,
-      fieldMetadataId,
-    },
-  }) as never;
+}) => ({
+  id: `widget-${fieldMetadataId}`,
+  isActive,
+  type,
+  position: {
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    index,
+  },
+  configuration: {
+    configurationType: WidgetConfigurationType.FORM_FIELD,
+    fieldMetadataId,
+  },
+});
 
 const buildPageLayout = (
-  tabs: { position: number; isActive?: boolean; widgets: unknown[] }[],
-) =>
-  ({
-    tabs: tabs.map((tab, tabIndex) => ({
-      id: `tab-${tabIndex}`,
-      isActive: tab.isActive ?? true,
-      position: tab.position,
-      widgets: tab.widgets,
-    })),
-  }) as unknown as PageLayout;
+  tabs: {
+    position: number;
+    isActive?: boolean;
+    widgets: ReturnType<typeof buildFormFieldWidget>[];
+  }[],
+) => ({
+  tabs: tabs.map((tab) => ({
+    isActive: tab.isActive ?? true,
+    position: tab.position,
+    widgets: tab.widgets,
+  })),
+});
 
 const NAME_FIELD = buildFieldMetadataItem('field-name', 'name');
 const CODE_FIELD = buildFieldMetadataItem('field-code', 'code');

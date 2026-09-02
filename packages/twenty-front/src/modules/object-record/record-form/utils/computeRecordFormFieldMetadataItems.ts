@@ -1,5 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type PageLayout } from '@/page-layout/types/PageLayout';
+import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -8,7 +8,18 @@ import {
   WidgetType,
 } from '~/generated-metadata/graphql';
 
-const getVerticalListIndex = (pageLayoutWidget: PageLayoutWidget): number => {
+type RecordFormWidget = Pick<
+  PageLayoutWidget,
+  'isActive' | 'type' | 'position' | 'configuration'
+>;
+
+type RecordFormTab = Pick<PageLayoutTab, 'isActive' | 'position'> & {
+  widgets?: RecordFormWidget[] | null;
+};
+
+type RecordFormLayout = { tabs: RecordFormTab[] };
+
+const getVerticalListIndex = (pageLayoutWidget: RecordFormWidget): number => {
   const { position } = pageLayoutWidget;
 
   return isDefined(position) &&
@@ -19,7 +30,7 @@ const getVerticalListIndex = (pageLayoutWidget: PageLayoutWidget): number => {
 };
 
 const getFormFieldMetadataId = (
-  pageLayoutWidget: PageLayoutWidget,
+  pageLayoutWidget: RecordFormWidget,
 ): string | undefined => {
   const { configuration } = pageLayoutWidget;
 
@@ -29,13 +40,15 @@ const getFormFieldMetadataId = (
     : undefined;
 };
 
-export const computeRecordFormFieldMetadataItems = ({
+export const computeRecordFormFieldMetadataItems = <
+  TFieldMetadataItem extends Pick<FieldMetadataItem, 'id'>,
+>({
   recordFormPageLayout,
   fieldMetadataItems,
 }: {
-  recordFormPageLayout: PageLayout;
-  fieldMetadataItems: FieldMetadataItem[];
-}): FieldMetadataItem[] => {
+  recordFormPageLayout: RecordFormLayout;
+  fieldMetadataItems: TFieldMetadataItem[];
+}): TFieldMetadataItem[] => {
   const fieldMetadataItemById = new Map(
     fieldMetadataItems.map((fieldMetadataItem) => [
       fieldMetadataItem.id,
