@@ -1,4 +1,4 @@
-import { Command, Option } from 'nest-commander';
+import { Command } from 'nest-commander';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 
@@ -17,8 +17,6 @@ import { LogicFunctionPrebuiltConversionService } from 'src/engine/metadata-modu
     'Convert packaged application logic functions from LIVE to PREBUILT execution mode. Idempotent.',
 })
 export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspaceCommandRunner {
-  private shouldUpdateFeatureFlag = false;
-
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly featureFlagService: FeatureFlagService,
@@ -27,32 +25,19 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
     super(workspaceIteratorService);
   }
 
-  @Option({
-    flags: '--update-feature-flag',
-    description: `Enable ${FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED} on every processed workspace instead of skipping the ones that do not have it`,
-    required: false,
-  })
-  parseUpdateFeatureFlag(): boolean {
-    this.shouldUpdateFeatureFlag = true;
-
-    return true;
-  }
-
   override async runOnWorkspace({
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
     const dryRun = options.dryRun ?? false;
 
+    // Enabling is skipped when already on: enableFeatureFlags invalidates and
+    // recomputes the workspace cache, which is wasteful across every workspace
     const isPrebuiltModeEnabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED,
         workspaceId,
       );
-
-    if (!isPrebuiltModeEnabled && !this.shouldUpdateFeatureFlag) {
-      return;
-    }
 
     if (!isPrebuiltModeEnabled && !dryRun) {
       await this.featureFlagService.enableFeatureFlags(
@@ -72,7 +57,7 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
 
     if (dryRun) {
       this.logger.log(
-        `Would convert logic functions of ${applicationIdsToConvert.length} application(s) on workspace ${workspaceId}`,
+        `Would enable ${FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED} and convert logic functions of ${applicationIdsToConvert.length} application(s) on workspace ${workspaceId}`,
       );
 
       return;
