@@ -6,6 +6,7 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { findOneObjectMetadataWithSearchFieldMetadataList } from 'test/integration/metadata/suites/object-metadata/utils/find-one-object-metadata-with-search-field-metadata-list.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
@@ -239,8 +240,10 @@ describe('Field metadata isSearchable toggling', () => {
     });
 
     expect(errors).toBeDefined();
-    expect(errors[0].message).toContain(
-      'Label identifier field cannot be removed from search',
+    const [firstError] = errors;
+
+    expect(firstError).toMatchSnapshot(
+      extractRecordIdsAndDatesAsExpectAny(firstError),
     );
   });
 
@@ -265,8 +268,10 @@ describe('Field metadata isSearchable toggling', () => {
     });
 
     expect(errors).toBeDefined();
-    expect(errors[0].message).toContain(
-      'Label identifier field cannot be removed from search',
+    const [firstError] = errors;
+
+    expect(firstError).toMatchSnapshot(
+      extractRecordIdsAndDatesAsExpectAny(firstError),
     );
   });
 
@@ -281,7 +286,11 @@ describe('Field metadata isSearchable toggling', () => {
     });
 
     expect(errors).toBeDefined();
-    expect(errors[0].message).toContain('not supported for search');
-    expect(errors[0].extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
+    const [firstError] = errors;
+
+    expect(firstError).toMatchSnapshot(
+      extractRecordIdsAndDatesAsExpectAny(firstError),
+    );
+    expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
   });
 });
