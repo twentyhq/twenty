@@ -52,7 +52,9 @@ export const useInstallMarketplaceApp = () => {
       // A duplicate request loses the state gate. When the operation already
       // running is the one the user asked for, follow it instead of failing.
       if (isApplicationOperationInProgressError(error)) {
-        const ongoingInstall = findOngoingInstall(variables.universalIdentifier);
+        const ongoingInstall = findOngoingInstall(
+          variables.universalIdentifier,
+        );
 
         if (isDefined(ongoingInstall)) {
           return ongoingInstall;

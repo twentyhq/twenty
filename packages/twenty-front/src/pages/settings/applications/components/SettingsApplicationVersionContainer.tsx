@@ -8,7 +8,10 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCircleDot, IconUpload, IconVersions } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
-import { ApplicationState, type Application } from '~/generated-metadata/graphql';
+import {
+  ApplicationState,
+  type Application,
+} from '~/generated-metadata/graphql';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 
