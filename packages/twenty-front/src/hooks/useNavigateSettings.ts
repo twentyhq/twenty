@@ -26,7 +26,7 @@ export const useNavigateSettings = () => {
 
       if (
         workspaceSurface.type === 'main' ||
-        (options?.surface === 'main' && !workspaceSurface.ownsRouteLocation)
+        !workspaceSurface.ownsRouteLocation
       ) {
         openSettingsMenu();
       }

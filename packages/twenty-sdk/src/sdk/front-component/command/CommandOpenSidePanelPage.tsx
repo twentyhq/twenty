@@ -1,11 +1,11 @@
 import {
+  type AppPath,
   openSidePanelPage,
   type OpenSidePanelPageParams,
   unmountFrontComponent,
   useFrontComponentId,
 } from '@/sdk/front-component';
 import { useEffect, useState } from 'react';
-import { type AppPath } from 'twenty-shared/types';
 
 export type CommandOpenSidePanelPageProps<T extends AppPath = AppPath> =
   OpenSidePanelPageParams<T>;

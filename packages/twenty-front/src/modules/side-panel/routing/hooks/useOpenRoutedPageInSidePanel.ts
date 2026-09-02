@@ -7,10 +7,11 @@ import { v4 } from 'uuid';
 
 import { useWorkspaceRouteObjects } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
-import { isSidePanelRoutedLocation } from '@/side-panel/routing/utils/isSidePanelRoutedLocation';
+import { isWorkspaceLocationAvailableOnSurface } from '@/app/routing/utils/isWorkspaceLocationAvailableOnSurface';
 import { toSidePanelLocation } from '@/side-panel/routing/utils/toSidePanelLocation';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { releaseRemovedRoutedFlowStateScopes } from '@/side-panel/routing/utils/releaseRemovedRoutedFlowStateScopes';
+import { isSafeInternalPath } from '@/ui/navigation/utils/isSafeInternalPath';
 
 export const useOpenRoutedPageInSidePanel = () => {
   const store = useStore();
@@ -33,13 +34,19 @@ export const useOpenRoutedPageInSidePanel = () => {
       replaceCurrent?: boolean;
       routedFlowStateScopeId?: string;
     }) => {
-      if (!path.startsWith('/') || path.startsWith('//')) {
+      if (!isSafeInternalPath(path)) {
         return null;
       }
 
       let routedLocation = toSidePanelLocation(path, state);
 
-      if (!isSidePanelRoutedLocation(routeObjects, routedLocation)) {
+      if (
+        !isWorkspaceLocationAvailableOnSurface(
+          routeObjects,
+          'side-panel',
+          routedLocation,
+        )
+      ) {
         return null;
       }
 
