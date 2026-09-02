@@ -178,10 +178,10 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
   }): Promise<void> {
     const queryRunner = this.coreDataSource.createQueryRunner();
 
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
     try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
       await this.updateLogicFunctionActionHandlerService.executeForMetadata({
         queryRunner,
         workspaceId,
@@ -203,7 +203,9 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
 
       await queryRunner.commitTransaction();
     } catch (error) {
-      await queryRunner.rollbackTransaction();
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+      }
 
       throw error;
     } finally {
