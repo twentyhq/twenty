@@ -7,24 +7,12 @@ export const SlackTable = styled.div`
   width: 100%;
 `;
 
-export const SlackTableRow = styled.div<{
-  gridTemplateColumns: string;
-  isHoverable?: boolean;
-}>`
+export const SlackTableRow = styled.div<{ gridTemplateColumns: string }>`
   align-items: center;
   border-radius: ${() => themeCssVariables.border.radius.md};
   display: grid;
   grid-template-columns: ${({ gridTemplateColumns }) => gridTemplateColumns};
-  transition: background-color
-    calc(${() => themeCssVariables.animation.duration.normal} * 1s);
   width: 100%;
-
-  &:hover {
-    background-color: ${({ isHoverable }) =>
-      isHoverable
-        ? themeCssVariables.background.transparent.light
-        : 'transparent'};
-  }
 `;
 
 export const SlackTableHeader = styled.div<{ align?: 'left' | 'right' }>`

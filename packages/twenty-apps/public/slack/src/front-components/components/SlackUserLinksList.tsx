@@ -159,7 +159,6 @@ export const SlackUserLinksList = ({
             <SlackTableRow
               key={slackUserLink.id}
               gridTemplateColumns={LINKS_GRID_TEMPLATE_COLUMNS}
-              isHoverable
             >
               <SlackTableCell>
                 <StyledIdentity>
