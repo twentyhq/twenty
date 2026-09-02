@@ -7,6 +7,7 @@ const buildVariable = (
   overrides: Partial<CallRecorderApplicationVariable> = {},
 ): CallRecorderApplicationVariable => ({
   key: 'CALL_RECORDER_NAME',
+  label: 'Recorder name',
   value: '',
   description: '',
   isSecret: false,
