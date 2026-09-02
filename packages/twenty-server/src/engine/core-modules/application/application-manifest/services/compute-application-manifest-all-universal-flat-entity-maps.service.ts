@@ -55,18 +55,24 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
   compute({
     manifest,
     ownerFlatApplication,
+    fromAllFlatEntityMaps,
+    isLogicFunctionPrebuiltModeEnabled,
     now,
     workspaceId,
   }: {
     manifest: Manifest;
     ownerFlatApplication: FlatApplication;
+    fromAllFlatEntityMaps: AllFlatEntityMaps;
+    isLogicFunctionPrebuiltModeEnabled: boolean;
     now: string;
     workspaceId: string;
   }): AllFlatEntityMaps {
     const allUniversalFlatEntityMaps = createEmptyAllFlatEntityMaps();
 
-    const { universalIdentifier: applicationUniversalIdentifier } =
-      ownerFlatApplication;
+    const {
+      universalIdentifier: applicationUniversalIdentifier,
+      sourceType: applicationSourceType,
+    } = ownerFlatApplication;
 
     for (const objectManifest of manifest.objects) {
       const flatObjectMetadata =
@@ -194,6 +200,10 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           fromLogicFunctionManifestToUniversalFlatLogicFunction({
             logicFunctionManifest,
             applicationUniversalIdentifier,
+            applicationSourceType,
+            existingFlatLogicFunctionMaps:
+              fromAllFlatEntityMaps.flatLogicFunctionMaps,
+            isPrebuiltModeEnabled: isLogicFunctionPrebuiltModeEnabled,
             now,
           }),
         universalFlatEntityMapsToMutate:
@@ -506,27 +516,32 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
 
       for (const pageLayoutTabManifest of pageLayoutManifest.tabs ?? []) {
+        const pageLayoutTab =
+          fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
+            pageLayoutTabManifest,
+            pageLayoutUniversalIdentifier:
+              pageLayoutManifest.universalIdentifier,
+            pageLayoutType: pageLayoutManifest.type,
+            applicationUniversalIdentifier,
+            now,
+          });
+
         addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-          universalFlatEntity:
-            fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
-              pageLayoutTabManifest,
-              pageLayoutUniversalIdentifier:
-                pageLayoutManifest.universalIdentifier,
-              pageLayoutType: pageLayoutManifest.type,
-              applicationUniversalIdentifier,
-              now,
-            }),
+          universalFlatEntity: pageLayoutTab,
           universalFlatEntityMapsToMutate:
             allUniversalFlatEntityMaps.flatPageLayoutTabMaps,
         });
 
-        for (const pageLayoutWidgetManifest of pageLayoutTabManifest.widgets ??
-          []) {
+        for (const [widgetIndex, pageLayoutWidgetManifest] of (
+          pageLayoutTabManifest.widgets ?? []
+        ).entries()) {
           addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow(
             {
               universalFlatEntity:
                 fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
                   pageLayoutWidgetManifest,
+                  pageLayoutTabLayoutMode: pageLayoutTab.layoutMode,
+                  widgetIndex,
                   pageLayoutTabUniversalIdentifier:
                     pageLayoutTabManifest.universalIdentifier,
                   applicationUniversalIdentifier,
@@ -553,26 +568,31 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           pageLayoutTabManifest.pageLayoutUniversalIdentifier,
       );
 
+      const pageLayoutTab =
+        fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
+          pageLayoutTabManifest,
+          pageLayoutUniversalIdentifier:
+            pageLayoutTabManifest.pageLayoutUniversalIdentifier,
+          pageLayoutType: referencedPageLayoutManifest?.type,
+          applicationUniversalIdentifier,
+          now,
+        });
+
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-        universalFlatEntity:
-          fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
-            pageLayoutTabManifest,
-            pageLayoutUniversalIdentifier:
-              pageLayoutTabManifest.pageLayoutUniversalIdentifier,
-            pageLayoutType: referencedPageLayoutManifest?.type,
-            applicationUniversalIdentifier,
-            now,
-          }),
+        universalFlatEntity: pageLayoutTab,
         universalFlatEntityMapsToMutate:
           allUniversalFlatEntityMaps.flatPageLayoutTabMaps,
       });
 
-      for (const pageLayoutWidgetManifest of pageLayoutTabManifest.widgets ??
-        []) {
+      for (const [widgetIndex, pageLayoutWidgetManifest] of (
+        pageLayoutTabManifest.widgets ?? []
+      ).entries()) {
         addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
           universalFlatEntity:
             fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
               pageLayoutWidgetManifest,
+              pageLayoutTabLayoutMode: pageLayoutTab.layoutMode,
+              widgetIndex,
               pageLayoutTabUniversalIdentifier:
                 pageLayoutTabManifest.universalIdentifier,
               applicationUniversalIdentifier,
@@ -611,6 +631,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
               { workspaceId },
             ),
             description: applicationVariableManifest.description,
+            label: applicationVariableManifest.label,
             isSecret,
             isDeprecated: applicationVariableManifest.isDeprecated,
             type,

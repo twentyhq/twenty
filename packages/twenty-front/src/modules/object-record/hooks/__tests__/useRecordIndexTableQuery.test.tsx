@@ -57,6 +57,19 @@ const mocks: MockedResponse[] = [
                   extension
                   url
                 }
+                caredForPets {
+                  edges {
+                    node {
+                      __typename
+                      id
+                      pet {
+                        __typename
+                        id
+                        name
+                      }
+                    }
+                  }
+                }
                 createdAt
                 deletedAt
                 id
@@ -78,6 +91,27 @@ const mocks: MockedResponse[] = [
                   }
                 }
                 position
+                previousCompanies {
+                  edges {
+                    node {
+                      __typename
+                      company {
+                        __typename
+                        domainName {
+                          primaryLinkUrl
+                          primaryLinkLabel
+                          secondaryLinks {
+                            label
+                            url
+                          }
+                        }
+                        id
+                        name
+                      }
+                      id
+                    }
+                  }
+                }
                 taskTargets {
                   edges {
                     node {

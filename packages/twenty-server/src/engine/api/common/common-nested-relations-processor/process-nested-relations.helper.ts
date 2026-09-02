@@ -24,15 +24,14 @@ import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-b
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import {
   buildFieldMapsFromFlatObjectMetadata,
   type FieldMapsForObject,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace-data-source';
-import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
@@ -43,7 +42,7 @@ const NESTED_RELATION_QUERY_MAX_CONCURRENCY = 4;
 
 type ProcessNestedRelationsArgs<T extends ObjectRecord = ObjectRecord> = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   parentObjectMetadataItem: FlatObjectMetadata;
   parentObjectRecords: T[];
   // oxlint-disable-next-line typescript/no-explicit-any
@@ -54,26 +53,20 @@ type ProcessNestedRelationsArgs<T extends ObjectRecord = ObjectRecord> = {
   authContext: WorkspaceAuthContext;
   useReplica?: boolean;
   rolePermissionConfig?: RolePermissionConfig;
+  repository?: WorkspaceRepository;
   // oxlint-disable-next-line typescript/no-explicit-any
   selectedFields: Record<string, any>;
 };
 
 @Injectable()
 export class ProcessNestedRelationsHelper {
-  constructor(
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-  ) {}
+  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
   public async processNestedRelations<T extends ObjectRecord = ObjectRecord>(
     args: ProcessNestedRelationsArgs<T>,
   ): Promise<void> {
-    const dataSource = this.workspaceDataSourceService.getDataSource({
-      useReplica: args.useReplica ?? false,
-    });
-
     await this.processNestedRelationsWithLimiter(
       args,
-      dataSource,
       createConcurrencyLimiter(NESTED_RELATION_QUERY_MAX_CONCURRENCY),
     );
   }
@@ -93,9 +86,9 @@ export class ProcessNestedRelationsHelper {
       authContext,
       useReplica = false,
       rolePermissionConfig,
+      repository,
       selectedFields,
     }: ProcessNestedRelationsArgs<T>,
-    dataSource: WorkspaceDataSource,
     relationQueryLimiter: ConcurrencyLimiter,
   ): Promise<void> {
     const processRelationTasks = Object.entries(relations).map(
@@ -112,8 +105,8 @@ export class ProcessNestedRelationsHelper {
           limit,
           authContext,
           useReplica,
-          dataSource,
           rolePermissionConfig,
+          repository,
           relationQueryLimiter,
           selectedFields:
             selectedFields[sourceFieldName] instanceof Object
@@ -137,13 +130,13 @@ export class ProcessNestedRelationsHelper {
     limit,
     authContext,
     useReplica,
-    dataSource,
     rolePermissionConfig,
+    repository,
     relationQueryLimiter,
     selectedFields,
   }: {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     parentObjectMetadataItem: FlatObjectMetadata;
     parentObjectRecords: T[];
     // oxlint-disable-next-line typescript/no-explicit-any
@@ -154,8 +147,8 @@ export class ProcessNestedRelationsHelper {
     limit: number;
     authContext: WorkspaceAuthContext;
     useReplica: boolean;
-    dataSource: WorkspaceDataSource;
     rolePermissionConfig?: RolePermissionConfig;
+    repository?: WorkspaceRepository;
     relationQueryLimiter: ConcurrencyLimiter;
     selectedFields: Record<string, unknown>;
   }): Promise<void> {
@@ -204,10 +197,13 @@ export class ProcessNestedRelationsHelper {
         fieldMaps,
       });
 
-    const targetObjectRepository = dataSource.getRepository(
-      targetObjectMetadata.nameSingular,
-      rolePermissionConfig,
-    );
+    const targetObjectRepository = repository
+      ? repository.getRepositoryForObjectMetadataId(targetObjectMetadata.id)
+      : this.workspaceOrmManager.getRepository(
+          targetObjectMetadata.nameSingular,
+          rolePermissionConfig,
+          { useReplica },
+        );
 
     const targetObjectNameSingular = targetObjectMetadata.nameSingular;
 
@@ -316,9 +312,9 @@ export class ProcessNestedRelationsHelper {
           authContext,
           useReplica,
           rolePermissionConfig,
+          repository,
           selectedFields,
         },
-        dataSource,
         relationQueryLimiter,
       );
     }
@@ -332,7 +328,7 @@ export class ProcessNestedRelationsHelper {
     fieldMaps,
   }: {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     parentObjectMetadataItem: FlatObjectMetadata;
     sourceFieldName: string;
     fieldMaps: FieldMapsForObject;

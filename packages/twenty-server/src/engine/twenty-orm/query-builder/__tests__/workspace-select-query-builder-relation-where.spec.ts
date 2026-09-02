@@ -121,9 +121,7 @@ describe('WorkspaceSelectQueryBuilder relation-keyed where', () => {
       .where({ people: { name: Equal('Twenty') } });
 
     expect(
-      queryBuilder.expressionMap.joinAttributes.map(
-        (joinAttribute) => joinAttribute.alias.name,
-      ),
+      queryBuilder.getJoinAliases().map((joinAlias) => joinAlias.name),
     ).toContain('person_people_filter');
     expect(
       queryBuilder.getJoinedTableShape('person_people_filter')?.nameSingular,

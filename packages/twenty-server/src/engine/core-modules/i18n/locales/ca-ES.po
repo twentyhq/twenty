@@ -1601,12 +1601,6 @@ msgstr "La vista de calendari ha de tenir un camp de calendari"
 msgid "Calendar view must have a calendar layout"
 msgstr "La vista de calendari ha de tenir un disseny de calendari"
 
-#. js-lingui-id: D9pZ2l
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-msgid "Calendar widget views only support the month layout"
-msgstr "Les visualitzacions del giny de calendari només admeten la disposició mensual"
-
 #. js-lingui-id: 0U7DBn
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -2397,12 +2391,14 @@ msgid "Contradicting field permissions have been detected on a relation field."
 msgstr "S'han detectat permisos de camp contradictoris en un camp de relació."
 
 #. js-lingui-id: X/ryFh
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Core workflow id"
 msgstr "Id del flux de treball principal"
 
 #. js-lingui-id: WkctC4
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Core workflow version id"
@@ -4092,6 +4088,7 @@ msgstr "No s'ha trobat el fitxer a l'arxiu del client de l'SDK."
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 #: src/engine/core-modules/file/file.exception.ts
+#: src/engine/core-modules/file/files-field/services/files-field.service.ts
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "File not found."
 msgstr "Fitxer no trobat."
@@ -8160,12 +8157,14 @@ msgid "Recurring Event ID"
 msgstr "ID d'esdeveniment recurrent"
 
 #. js-lingui-id: zEHtXk
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reference to the core workflow row"
 msgstr "Referència a la fila del flux de treball principal"
 
 #. js-lingui-id: avBuTv
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reference to the core workflowVersion row"
@@ -9843,7 +9842,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "L'extensió del fitxer no coincideix amb el contingut del fitxer. Comproveu que el fitxer no estigui malmès i que tingui l'extensió correcta."
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "El fitxer encara no s'ha carregat. Carrega'l abans de confirmar."
 
@@ -9851,6 +9850,11 @@ msgstr "El fitxer encara no s'ha carregat. Carrega'l abans de confirmar."
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The file is empty or exceeds the maximum allowed size."
 msgstr "El fitxer està buit o supera la mida màxima permesa."
+
+#. js-lingui-id: 2hrpBa
+#: src/engine/core-modules/file/files-field/services/files-field.service.ts
+msgid "The file upload has not been completed. Please retry the upload."
+msgstr "La càrrega del fitxer no s'ha completat. Torneu a provar de carregar-lo."
 
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -10054,7 +10058,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "El tema de baixa sota el qual s'ha enviat aquesta campanya"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "El fitxer carregat no coincideix amb la mida declarada. Torna a intentar la càrrega."
@@ -10346,7 +10350,7 @@ msgid "This field references an object that could not be found"
 msgstr "Aquest camp fa referència a un objecte que no s'ha pogut trobar"
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "Aquest format de fitxer no és compatible."
 
@@ -10428,11 +10432,6 @@ msgstr "Aquest permís d'objecte ja està assignat al rol"
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This operation is not allowed."
 msgstr "Aquesta operació no està permesa."
-
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-schema.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "Aquesta operació no està permesa. Si us plau, prova un enfocament diferent o contacta amb el suport si necessites ajuda."
 
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts

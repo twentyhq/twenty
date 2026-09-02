@@ -36,7 +36,6 @@ const PageLayoutTestEditModeProvider = ({
   return (
     <LayoutRenderingProvider
       value={{
-        isInSidePanel: false,
         targetRecordIdentifier: undefined,
         layoutType: resolvedLayoutType,
       }}

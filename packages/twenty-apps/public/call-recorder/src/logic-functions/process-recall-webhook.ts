@@ -1,15 +1,21 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
-import { PROCESS_RECALL_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/process-recall-webhook-logic-function-universal-identifier';
+import { PROCESS_RECALL_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { handleRecallWebhook } from 'src/logic-functions/flows/handle-recall-webhook.util';
 import { type RecallWebhookBody } from 'src/logic-functions/recall-api/parse-recall-webhook-event.util';
+import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
 
-export const processRecallWebhookHandler = (body: RecallWebhookBody) =>
-  handleRecallWebhook({
-    client: new CoreApiClient(),
-    body,
-  });
+export const processRecallWebhookHandler = async (body: RecallWebhookBody) => {
+  try {
+    return await handleRecallWebhook({
+      client: new CoreApiClient(),
+      body,
+    });
+  } catch (error) {
+    throw buildRetryableStepFailure('Recall webhook processing', error);
+  }
+};
 
 export default defineLogicFunction({
   universalIdentifier:

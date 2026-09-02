@@ -4,6 +4,9 @@ import {
   definePageLayout,
 } from 'twenty-sdk/define';
 
+import { APPLICATIONS_ON_OPPORTUNITY_FIELD_ID } from 'src/modules/application/objects/application.object';
+import { APPLICATIONS_WIDGET_VIEW_UNIVERSAL_IDENTIFIER } from 'src/modules/application/views/applications-widget.view';
+
 const OPPORTUNITY_RECORD_PAGE_FIELDS_VIEW_ID =
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.views
     .opportunityRecordPageFields.universalIdentifier;
@@ -32,6 +35,21 @@ export default definePageLayout({
           configuration: {
             configurationType: 'FIELDS',
             viewUniversalIdentifier: OPPORTUNITY_RECORD_PAGE_FIELDS_VIEW_ID,
+          },
+        },
+        {
+          universalIdentifier: '6d634c81-c1a5-4c8d-9e96-c4bd049327f1',
+          title: 'Partners',
+          type: 'FIELD',
+          configuration: {
+            configurationType: 'FIELD',
+            // A FIELD widget in TABLE mode is the only configuration scoped to the parent
+            // record; a RECORD_TABLE widget would list every Application in the workspace.
+            // Both ids below are typed `string` instead of being renamed to
+            // `...UniversalIdentifier`, but the sync resolves them as universal identifiers.
+            fieldMetadataId: APPLICATIONS_ON_OPPORTUNITY_FIELD_ID,
+            fieldDisplayMode: 'TABLE',
+            viewId: APPLICATIONS_WIDGET_VIEW_UNIVERSAL_IDENTIFIER,
           },
         },
       ],

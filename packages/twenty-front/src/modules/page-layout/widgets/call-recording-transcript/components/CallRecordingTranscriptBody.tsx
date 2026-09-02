@@ -1,6 +1,6 @@
-import { CallRecordingWidgetEmptyStateDisplay } from '@/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetEmptyStateDisplay';
-import { CallRecordingWidgetForbiddenDisplay } from '@/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetForbiddenDisplay';
-import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
+import { CallRecordingWidgetEmptyStateDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetEmptyStateDisplay';
+import { CallRecordingWidgetForbiddenDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetForbiddenDisplay';
+import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
 import { CallRecordingTranscriptContent } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptContent';
 import { CallRecordingVideoPlayer } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer';
 import { CallRecordingTranscriptPlaybackEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptPlaybackEffect';
@@ -23,13 +23,13 @@ const StyledRecordingLayout = styled.div`
 `;
 
 type CallRecordingTranscriptBodyProps = {
-  callRecording: CalendarEventCallRecordingCandidate | undefined;
+  callRecording: WidgetCallRecordingCandidate | undefined;
   transcriptEntries: CallRecordingParsedTranscriptEntry[] | undefined;
   videoFileUrl: string | undefined;
   loading: boolean;
   error: Error | undefined;
   restriction: WidgetAccessDenialInfo | undefined;
-  refetchCallRecording: () => Promise<unknown>;
+  refetchCallRecording: () => Promise<void>;
 };
 
 export const CallRecordingTranscriptBody = ({
@@ -65,7 +65,7 @@ export const CallRecordingTranscriptBody = ({
   if (!isDefined(callRecording)) {
     return (
       <CallRecordingWidgetEmptyStateDisplay
-        animatedPlaceholderType="noMatchRecord"
+        animatedPlaceholderType="noCallRecording"
         title={t`No Call Recording`}
         subTitle={t`No call recording exists for this calendar event yet.`}
       />

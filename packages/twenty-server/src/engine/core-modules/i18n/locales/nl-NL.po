@@ -1601,12 +1601,6 @@ msgstr "Kalenderweergave moet een kalenderveld hebben"
 msgid "Calendar view must have a calendar layout"
 msgstr "Kalenderweergave moet een kalenderindeling hebben"
 
-#. js-lingui-id: D9pZ2l
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-msgid "Calendar widget views only support the month layout"
-msgstr "Agenda-widgetweergaven ondersteunen alleen de maandweergave"
-
 #. js-lingui-id: 0U7DBn
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -2397,12 +2391,14 @@ msgid "Contradicting field permissions have been detected on a relation field."
 msgstr "Tegenstrijdige veldrechten zijn gedetecteerd op een relatieveld."
 
 #. js-lingui-id: X/ryFh
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Core workflow id"
 msgstr "Core workflow-id"
 
 #. js-lingui-id: WkctC4
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Core workflow version id"
@@ -4092,6 +4088,7 @@ msgstr "Bestand niet gevonden in SDK-clientarchief."
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 #: src/engine/core-modules/file/file.exception.ts
+#: src/engine/core-modules/file/files-field/services/files-field.service.ts
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "File not found."
 msgstr "Bestand niet gevonden."
@@ -8160,12 +8157,14 @@ msgid "Recurring Event ID"
 msgstr "ID van terugkerende gebeurtenis"
 
 #. js-lingui-id: zEHtXk
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reference to the core workflow row"
 msgstr "Referentie naar de core workflow-rij"
 
 #. js-lingui-id: avBuTv
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reference to the core workflowVersion row"
@@ -9843,7 +9842,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "De bestandsextensie komt niet overeen met de inhoud van het bestand. Controleer of je bestand niet beschadigd is en de juiste extensie heeft."
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "Het bestand is nog niet geüpload. Upload het voordat je bevestigt."
 
@@ -9851,6 +9850,11 @@ msgstr "Het bestand is nog niet geüpload. Upload het voordat je bevestigt."
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The file is empty or exceeds the maximum allowed size."
 msgstr "Het bestand is leeg of overschrijdt de maximaal toegestane grootte."
+
+#. js-lingui-id: 2hrpBa
+#: src/engine/core-modules/file/files-field/services/files-field.service.ts
+msgid "The file upload has not been completed. Please retry the upload."
+msgstr "Het uploaden van het bestand is niet voltooid. Probeer de upload opnieuw."
 
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -10054,7 +10058,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "Het afmeldingsthema waaronder deze campagne is verzonden"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "Het geüploade bestand komt niet overeen met de opgegeven grootte. Probeer de upload opnieuw."
@@ -10346,7 +10350,7 @@ msgid "This field references an object that could not be found"
 msgstr "Dit veld verwijst naar een object dat niet kon worden gevonden"
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "Dit bestandsformaat wordt niet ondersteund."
 
@@ -10428,11 +10432,6 @@ msgstr "Deze objectmachtiging is al ingesteld voor de rol"
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This operation is not allowed."
 msgstr "Deze bewerking is niet toegestaan."
-
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-schema.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "Deze operatie is niet toegestaan. Probeer een andere methode of neem contact op met de ondersteuning als je hulp nodig hebt."
 
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts

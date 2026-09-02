@@ -7,21 +7,16 @@ import { expect, within } from 'storybook/test';
 
 import { SidePanelTopBar } from '@/side-panel/components/SidePanelTopBar';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
-import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import {
+  type SidePanelNavigationStackItem,
+  sidePanelNavigationStackState,
+} from '@/side-panel/states/sidePanelNavigationStackState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconDotsVertical } from 'twenty-ui/icon';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-
-type SidePanelNavigationStackItem = {
-  page: SidePanelPages;
-  pageTitle: string;
-  pageIcon: typeof IconDotsVertical;
-  pageId: string;
-};
 
 const ROOT_PAGE: SidePanelNavigationStackItem = {
   page: SidePanelPages.CommandMenuDisplay,
@@ -41,10 +36,7 @@ const createSidePanelDecorator = (
   navigationStack: SidePanelNavigationStackItem[],
 ): Decorator => {
   return (Story) => {
-    const currentPage = navigationStack[navigationStack.length - 1];
-
     jotaiStore.set(isSidePanelOpenedState.atom, true);
-    jotaiStore.set(sidePanelPageState.atom, currentPage.page);
     jotaiStore.set(sidePanelNavigationStackState.atom, navigationStack);
 
     return <Story />;

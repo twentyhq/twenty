@@ -7,16 +7,15 @@ import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/p
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { WIDGET_TYPES_WITH_ALWAYS_VISIBLE_SOLO_HEADER } from '@/page-layout/widgets/constants/WidgetTypesWithAlwaysVisibleSoloHeader';
 import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermissions';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
-import { widgetHasHeaderCountComponentFamilySelector } from '@/page-layout/widgets/states/selectors/widgetHasHeaderCountComponentFamilySelector';
 import { getWidgetCardVariant } from '@/page-layout/widgets/utils/getWidgetCardVariant';
+import { getWidgetHeaderActionDefinition } from '@/page-layout/widgets/utils/getWidgetHeaderActionDefinition';
 import { useOpenWidgetSettingsInSidePanel } from '@/side-panel/hooks/useOpenWidgetSettingsInSidePanel';
-import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { type MouseEvent } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { WidgetType } from '~/generated-metadata/graphql';
 
 export const useWidgetRendererState = (widget: PageLayoutWidget) => {
@@ -60,17 +59,10 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
   const hideHeaderInViewMode =
     isHeaderHiddenInViewMode && !isPageLayoutInEditMode;
 
-  const hasWidgetHeaderCount = useAtomComponentFamilySelectorValue(
-    widgetHasHeaderCountComponentFamilySelector,
-    widget.id,
-  );
-
-  const hasWidgetHeaderInfo =
-    hasWidgetHeaderCount ||
-    WIDGET_TYPES_WITH_ALWAYS_VISIBLE_SOLO_HEADER.includes(widget.type);
+  const hasHeaderAction = isDefined(getWidgetHeaderActionDefinition(widget));
 
   const showHeader =
-    presentation === 'solo' ? hasWidgetHeaderInfo : !hideHeaderInViewMode;
+    presentation === 'solo' ? hasHeaderAction : !hideHeaderInViewMode;
 
   const handleClick = () => {
     openWidgetSettingsInSidePanel({

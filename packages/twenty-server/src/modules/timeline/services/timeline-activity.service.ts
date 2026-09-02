@@ -9,9 +9,8 @@ import { In } from 'typeorm';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -23,22 +22,26 @@ import {
   type TimelineActivityTypeResolver,
 } from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
 import { TimelineActivityTargetQueryService } from 'src/modules/timeline/services/timeline-activity-target-query.service';
-import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { type ResolvedTimelineActivityTarget } from 'src/modules/timeline/types/resolved-timeline-activity-target.type';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
 import { type TimelineActivityRuleAction } from 'src/modules/timeline/types/timeline-activity-rule-action.type';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
+import { buildLinkedTimelineActivityHappensAtSyncUpdates } from 'src/modules/timeline/utils/build-linked-timeline-activity-happens-at-sync-updates.util';
 import { resolveLinkedRecordCachedName } from 'src/modules/timeline/utils/resolve-linked-record-cached-name.util';
-import { resolveTimelineActivityHappensAt } from 'src/modules/timeline/utils/resolve-timeline-activity-happens-at.util';
+import {
+  resolveLinkedTimelineActivityHappensAt,
+  resolveTimelineActivityHappensAt,
+} from 'src/modules/timeline/utils/resolve-timeline-activity-happens-at.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { doesTimelineActivityLinkChange } from 'src/modules/timeline/utils/does-timeline-activity-link-change.util';
+import { doesObjectRecordEventChangeFields } from 'src/modules/timeline/utils/does-object-record-event-change-fields.util';
 import { resolveTimelineActivityRuleAction } from 'src/modules/timeline/utils/resolve-timeline-activity-rule-action.util';
+import { resolveTimelineActivityTypeForRule } from 'src/modules/timeline/utils/resolve-timeline-activity-type-for-rule.util';
 
 type BuildPayloadsForRuleArgs = {
   rule: TimelineActivityRule;
   events: ObjectRecordBaseEvent[];
   action: DatabaseEventAction;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   resolveTimelineActivityType: TimelineActivityTypeResolver;
 };
 
@@ -101,7 +104,6 @@ const buildLinkedPayload = ({
 @Injectable()
 export class TimelineActivityService {
   constructor(
-    @InjectObjectMetadataRepository(TimelineActivityWorkspaceEntity)
     private readonly timelineActivityRepository: TimelineActivityRepository,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly timelineActivityRoutingPlanService: TimelineActivityRoutingPlanService,
@@ -171,6 +173,19 @@ export class TimelineActivityService {
       }, buildSystemAuthContext(workspaceId))
     ).flat();
 
+    if (action === 'updated') {
+      await this.timelineActivityRepository.updateLinkedTimelineActivitiesHappensAt(
+        {
+          workspaceId,
+          updates: buildLinkedTimelineActivityHappensAtSyncUpdates({
+            rules: sourceRules,
+            events: eventsWithoutPositionDiff,
+            resolveTimelineActivityType,
+          }),
+        },
+      );
+    }
+
     if (payloads.length === 0) {
       return;
     }
@@ -217,25 +232,6 @@ export class TimelineActivityService {
     );
   }
 
-  private resolveTimelineActivityTypeForRule({
-    rule,
-    ruleAction,
-    resolveTimelineActivityType,
-  }: {
-    rule: TimelineActivityRule;
-    ruleAction: TimelineActivityRuleAction;
-    resolveTimelineActivityType: TimelineActivityTypeResolver;
-  }): ResolvedTimelineActivityType | undefined {
-    return (
-      rule.timelineActivityType ??
-      resolveTimelineActivityType({
-        action: ruleAction,
-        objectUniversalIdentifier:
-          rule.sourceFlatObjectMetadata.universalIdentifier,
-      })
-    );
-  }
-
   private async buildPayloadsForSourceRule({
     rule,
     events,
@@ -254,7 +250,7 @@ export class TimelineActivityService {
       return [];
     }
 
-    const timelineActivityType = this.resolveTimelineActivityTypeForRule({
+    const timelineActivityType = resolveTimelineActivityTypeForRule({
       rule,
       ruleAction,
       resolveTimelineActivityType,
@@ -270,9 +266,9 @@ export class TimelineActivityService {
           rule.targetShape.kind !== 'DIRECT_RELATION' ||
           action !== 'updated' ||
           ruleAction === 'updated' ||
-          doesTimelineActivityLinkChange({
+          doesObjectRecordEventChangeFields({
             event,
-            joinColumnNames: rule.targetShape.targetJoinColumns.map(
+            fieldNames: rule.targetShape.targetJoinColumns.map(
               ({ joinColumnName }) => joinColumnName,
             ),
           }),
@@ -338,7 +334,12 @@ export class TimelineActivityService {
               record,
               flatFieldMetadataMaps,
             }),
-            happensAt: resolveTimelineActivityHappensAt(event),
+            happensAt: resolveLinkedTimelineActivityHappensAt({
+              event,
+              ruleAction,
+              happensAtFieldName: rule.happensAtFieldName,
+              sourceRecord: record,
+            }),
             properties: event.properties,
           }),
         ];
@@ -366,7 +367,12 @@ export class TimelineActivityService {
             record: event.properties.after as ObjectRecord | undefined,
             flatFieldMetadataMaps,
           }),
-          happensAt: resolveTimelineActivityHappensAt(event),
+          happensAt: resolveLinkedTimelineActivityHappensAt({
+            event,
+            ruleAction,
+            happensAtFieldName: rule.happensAtFieldName,
+            sourceRecord: event.properties.after as ObjectRecord | undefined,
+          }),
           properties: event.properties,
         }),
       ),
@@ -391,7 +397,7 @@ export class TimelineActivityService {
       return [];
     }
 
-    const timelineActivityType = this.resolveTimelineActivityTypeForRule({
+    const timelineActivityType = resolveTimelineActivityTypeForRule({
       rule,
       ruleAction,
       resolveTimelineActivityType,
@@ -408,9 +414,9 @@ export class TimelineActivityService {
       .filter(
         (event) =>
           action !== 'updated' ||
-          doesTimelineActivityLinkChange({
+          doesObjectRecordEventChangeFields({
             event,
-            joinColumnNames: [
+            fieldNames: [
               targetShape.junctionSourceJoinColumnName,
               ...targetShape.targetJoinColumns.map(
                 ({ joinColumnName }) => joinColumnName,
@@ -458,8 +464,10 @@ export class TimelineActivityService {
 
     // The junction event is the semantic fact; this enrichment read can race
     // the transaction that created the linked record.
-    return eventsWithJunctionRecord.map(({ event, target, sourceRecordId }) =>
-      buildLinkedPayload({
+    return eventsWithJunctionRecord.map(({ event, target, sourceRecordId }) => {
+      const sourceRecord = sourceRecordsByRecordId.get(sourceRecordId);
+
+      return buildLinkedPayload({
         rule,
         timelineActivityType,
         target,
@@ -467,13 +475,18 @@ export class TimelineActivityService {
         linkedRecordId: sourceRecordId,
         linkedRecordCachedName: resolveLinkedRecordCachedName({
           rule,
-          record: sourceRecordsByRecordId.get(sourceRecordId),
+          record: sourceRecord,
           flatFieldMetadataMaps,
         }),
-        happensAt: resolveTimelineActivityHappensAt(event),
+        happensAt: resolveLinkedTimelineActivityHappensAt({
+          event,
+          ruleAction,
+          happensAtFieldName: rule.happensAtFieldName,
+          sourceRecord,
+        }),
         properties: {},
-      }),
-    );
+      });
+    });
   }
 
   private async enrichEventsWithWorkspaceMemberId({
@@ -518,7 +531,7 @@ export class TimelineActivityService {
   }: {
     events: ObjectRecordBaseEvent[];
     objectMetadata: FlatObjectMetadata;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }): ObjectRecordBaseEvent[] {
     const someEventHasDiff = events.some((event) =>
       isDefined(event.properties.diff),

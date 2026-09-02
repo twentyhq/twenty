@@ -534,6 +534,19 @@
         "supportsReasoning": true
       },
       {
+        "name": "claude-fable-5-1",
+        "label": "Claude Fable 5.1",
+        "modelFamily": "CLAUDE",
+        "inputCostPerMillionTokens": 10,
+        "outputCostPerMillionTokens": 50,
+        "cachedInputCostPerMillionTokens": 0.25,
+        "cacheCreationCostPerMillionTokens": 12.5,
+        "contextWindowTokens": 1000000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true
+      },
+      {
         "name": "claude-sonnet-5",
         "label": "Claude Sonnet 5",
         "modelFamily": "CLAUDE",
@@ -782,17 +795,6 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "audio", "video", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gemini-robotics-er-1.6-preview",
-        "label": "Gemini Robotics-ER 1.6 Preview",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 1,
-        "outputCostPerMillionTokens": 5,
-        "contextWindowTokens": 131072,
-        "maxOutputTokens": 65536,
-        "modalities": ["image", "video", "audio"],
         "supportsReasoning": true
       },
       {

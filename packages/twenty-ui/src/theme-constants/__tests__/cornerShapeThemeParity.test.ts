@@ -89,9 +89,9 @@ describe.each(['theme-light.css', 'theme-dark.css'])(
       },
     );
 
-    it('applies corner-shape universally with the --t-corner-shape opt-out', () => {
+    it('uses K 2.2 universally while preserving the --t-corner-shape opt-out', () => {
       expect(squircleBlock).toContain(
-        'corner-shape: var(--t-corner-shape, squircle);',
+        'corner-shape: var(--t-corner-shape, superellipse(2.2));',
       );
     });
 

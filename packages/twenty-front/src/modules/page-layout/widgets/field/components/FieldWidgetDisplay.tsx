@@ -100,10 +100,7 @@ export const FieldWidgetDisplay = ({
                     }),
                   isFieldFromStandardApplication:
                     getIsMetadataItemFromStandardApplication(fieldMetadataItem),
-                  fieldMetadataItem: {
-                    id: fieldMetadataItem.id,
-                    isUIEditable: fieldMetadataItem.isUIEditable ?? true,
-                  },
+                  fieldMetadataItem,
                   fieldDefinition,
                   objectPermissionsByObjectMetadataId,
                 }),

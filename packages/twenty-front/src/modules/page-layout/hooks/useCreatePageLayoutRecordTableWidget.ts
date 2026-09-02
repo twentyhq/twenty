@@ -18,7 +18,11 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
-import { WidgetType } from '~/generated-metadata/graphql';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 
 export const useCreatePageLayoutRecordTableWidget = (
   pageLayoutIdFromProps?: string,
@@ -73,17 +77,21 @@ export const useCreatePageLayoutRecordTableWidget = (
         minimumSize,
       );
 
+      const pageLayoutDraft = store.get(pageLayoutDraftState);
+
       const newWidget = createDefaultRecordTableWidget({
         id: widgetId,
         pageLayoutTabId: activeTabId,
         title: objectMetadata?.labelPlural ?? 'Record Table',
-        gridPosition: {
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.GRID,
           row: position.y,
           column: position.x,
           rowSpan: position.h,
           columnSpan: position.w,
         },
         objectMetadataId: objectMetadata?.id,
+        isUIEditable: pageLayoutDraft.type === PageLayoutType.RECORD_PAGE,
       });
 
       const newLayout = {

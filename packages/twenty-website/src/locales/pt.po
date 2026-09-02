@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-25 12:14\n"
+"PO-Revision-Date: 2026-08-28 16:20\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1488,6 +1488,11 @@ msgstr "Benjamin Reynolds"
 msgid "Bertrams"
 msgstr "Bertrams"
 
+#. js-lingui-id: CrZWSz
+#: src/partner-application/partner-application-copy.ts
+msgid "Best proof first: a live Twenty instance URL, a public repo, or a YouTube link. Loom, Drive and file links are accepted but slower to review."
+msgstr "Melhor comprovante primeiro: uma URL de instância ativa do Twenty, um repositório público ou um link do YouTube. Links do Loom, Drive e de arquivos são aceitos, mas demoram mais para serem analisados."
+
 #. js-lingui-id: BSmDFu
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Better sorted kanban boards"
@@ -1760,6 +1765,11 @@ msgstr "República Centro-Africana 🇨🇫"
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "Certification, plus a directory profile your clients can verify. The best partners also receive client briefs matched to their scope."
 msgstr "Certificação, além de um perfil no diretório que seus clientes podem verificar. Os melhores parceiros também recebem resumos de clientes compatíveis com seu escopo."
+
+#. js-lingui-id: 4W4gsr
+#: src/sections/partner-hero/PartnerLeadHero.tsx
+msgid "Certified partners who set up your CRM to match how your company works, from the migration to the custom apps."
+msgstr "Parceiros certificados que configuram seu CRM para corresponder à forma como sua empresa trabalha, da migração aos aplicativos personalizados."
 
 #. js-lingui-id: iI3Dq9
 #: src/partner-application/data/partner-country-options.ts
@@ -3726,8 +3736,8 @@ msgid "Get certified as a Twenty partner: a vetted badge, a directory profile yo
 msgstr "Obtenha a certificação como Parceiro Twenty: um selo validado, um perfil no diretório que seus clientes podem consultar e resumos de clientes compatíveis para os melhores parceiros."
 
 #. js-lingui-id: b+jRGN
+#: src/sections/partner-lead/PartnerDirectoryPanel.tsx
 #: src/sections/partner-hero/PartnerLeadHero.tsx
-#: src/partners-marketplace/MarketplaceMatchCard.tsx
 #: src/client-brief/ClientBriefModal.tsx
 msgid "Get matched"
 msgstr "Receber correspondência"
@@ -3897,6 +3907,11 @@ msgstr "Ocultar alterações"
 #: src/partner-application/data/partner-language-options.ts
 msgid "Hindi"
 msgstr "Hindi"
+
+#. js-lingui-id: 6NGgln
+#: src/sections/partner-hero/PartnerLeadHero.tsx
+msgid "Hire the people who *build on Twenty*"
+msgstr "Contrate as pessoas que *desenvolvem no Twenty*"
 
 #. js-lingui-id: qfSbUb
 #: src/case-studies/case-study-stories.ts
@@ -4688,11 +4703,6 @@ msgstr "Como qualquer objeto normal, adicione alguns campos personalizados às s
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Link field"
 msgstr "Campo Link"
-
-#. js-lingui-id: YOe6r4
-#: src/partner-application/partner-application-copy.ts
-msgid "Link that shows the work (Loom, GitHub, Notion, Drive, public write-up…). No public workspace? Share a short Loom."
-msgstr "Link que mostra o trabalho (Loom, GitHub, Notion, Drive, artigo público etc.). Não tem um workspace público? Compartilhe um Loom curto."
 
 #. js-lingui-id: gggTBm
 #: src/sections/footer/footer.data.ts
@@ -6924,11 +6934,6 @@ msgstr "Competências"
 msgid "Skip for now"
 msgstr "Pular por enquanto"
 
-#. js-lingui-id: BXjtWS
-#: src/sections/partner-hero/PartnerLeadHero.tsx
-msgid "Skip the browsing. Describe your project and we connect you with a certified Twenty partner who fits it."
-msgstr "Não perca tempo pesquisando. Descreva seu projeto e conectaremos você a um Parceiro Twenty certificado adequado a ele."
-
 #. js-lingui-id: t6ComU
 #: src/sections/feature-cards/FeatureCards.tsx
 msgid "Skip the clunky UX that always comes with custom."
@@ -7175,8 +7180,8 @@ msgid "Subdomain (yourco.twenty.com)"
 msgstr "Subdomínio (yourco.twenty.com)"
 
 #. js-lingui-id: 578pU6
-#: src/partners-marketplace/PartnerProfileCtas.tsx
-#: src/partners-marketplace/MarketplaceBriefPrompt.tsx
+#: src/app/[locale]/(site)/partners/page.tsx
+#: src/app/[locale]/(site)/partners/profile/[slug]/page.tsx
 msgid "Submit a brief"
 msgstr "Enviar um briefing"
 
@@ -7215,6 +7220,11 @@ msgstr "Acréscimo de plano de sucesso"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Sudan 🇸🇩"
 msgstr "Sudão 🇸🇩"
+
+#. js-lingui-id: 388eZi
+#: src/partners-marketplace/marketplace-copy.ts
+msgid "Super partner"
+msgstr "Super parceiro"
 
 #. js-lingui-id: XYLcNv
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -7380,11 +7390,6 @@ msgstr "Diga-nos o que você precisa e encontre um Parceiro Twenty certificado e
 #: src/partners-marketplace/MarketplaceBriefPrompt.tsx
 msgid "Tell us what you need and we'll match you with a certified Twenty partner."
 msgstr "Conte-nos o que você precisa e nós o conectaremos a um parceiro Twenty certificado."
-
-#. js-lingui-id: 7CRTri
-#: src/sections/partner-hero/PartnerLeadHero.tsx
-msgid "Tell us what you need, we match you in *48 hours*"
-msgstr "Diga-nos o que você precisa e encontraremos a opção ideal em *48 horas*"
 
 #. js-lingui-id: Hevu8X
 #: src/app-preview/terminal/TerminalToggle.tsx

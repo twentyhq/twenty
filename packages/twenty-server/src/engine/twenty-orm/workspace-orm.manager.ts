@@ -26,27 +26,42 @@ export class WorkspaceOrmManager {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
-  getRepository<T extends ObjectLiteral>(
+  getRepository<T extends ObjectLiteral = ObjectRecord>(
     workspaceEntity: Type<T>,
     permissionOptions?: RolePermissionConfig,
+    repositoryOptions?: {
+      useReplica?: boolean;
+      shouldSkipEventEmission?: boolean;
+    },
   ): WorkspaceRepository<T>;
 
-  getRepository<T extends ObjectLiteral>(
+  getRepository<T extends ObjectLiteral = ObjectRecord>(
     objectMetadataName: string,
     permissionOptions?: RolePermissionConfig,
+    repositoryOptions?: {
+      useReplica?: boolean;
+      shouldSkipEventEmission?: boolean;
+    },
   ): WorkspaceRepository<T>;
 
-  getRepository<T extends ObjectLiteral>(
+  getRepository<T extends ObjectLiteral = ObjectRecord>(
     workspaceEntityOrObjectMetadataName: Type<T> | string,
     permissionOptions?: RolePermissionConfig,
+    repositoryOptions?: {
+      useReplica?: boolean;
+      shouldSkipEventEmission?: boolean;
+    },
   ): WorkspaceRepository<T> {
     const objectMetadataName = this.resolveObjectMetadataName(
       workspaceEntityOrObjectMetadataName,
     );
 
     return this.workspaceDataSourceService
-      .getDataSource({ useReplica: false })
-      .getRepository<T>(objectMetadataName, permissionOptions);
+      .getDataSource({ useReplica: repositoryOptions?.useReplica ?? false })
+      .getRepository<T>(objectMetadataName, permissionOptions, {
+        shouldSkipEventEmission:
+          repositoryOptions?.shouldSkipEventEmission ?? false,
+      });
   }
 
   private resolveObjectMetadataName<T extends ObjectLiteral>(
@@ -66,20 +81,7 @@ export class WorkspaceOrmManager {
   ): Promise<T> {
     return this.workspaceDataSourceService
       .getDataSource({ useReplica: false })
-      .transaction((transactionScope) =>
-        work({
-          getRepository: <T extends ObjectLiteral = ObjectRecord>(
-            objectMetadataName: string,
-            rolePermissionConfig?: RolePermissionConfig,
-          ): WorkspaceRepository<T> =>
-            transactionScope.getRepository(
-              objectMetadataName,
-              rolePermissionConfig,
-            ) as unknown as WorkspaceRepository<T>,
-          executeRawQuery: (sql, parameters) =>
-            transactionScope.executeRawQuery(sql, parameters),
-        }),
-      );
+      .transaction(work);
   }
 
   async executeInWorkspaceContext<T>(
@@ -102,7 +104,7 @@ export class WorkspaceOrmManager {
 
     const {
       flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
+      flatFieldMetadataMapsOrm,
       flatIndexMaps,
       featureFlagsMap,
       rolesPermissions: permissionsPerRoleId,
@@ -112,7 +114,7 @@ export class WorkspaceOrmManager {
       flatRowLevelPermissionPredicateGroupMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
-      'flatFieldMetadataMaps',
+      'flatFieldMetadataMapsOrm',
       'flatIndexMaps',
       'featureFlagsMap',
       'rolesPermissions',
@@ -128,7 +130,7 @@ export class WorkspaceOrmManager {
     return {
       authContext,
       flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
+      flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
       flatIndexMaps,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
@@ -145,10 +147,10 @@ export class WorkspaceOrmManager {
   ): Promise<ORMWorkspaceContext> {
     const workspaceId = authContext.workspace.id;
 
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+    const { flatObjectMetadataMaps, flatFieldMetadataMapsOrm } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
-        'flatFieldMetadataMaps',
+        'flatFieldMetadataMapsOrm',
       ]);
 
     const { idByNameSingular: objectIdByNameSingular } =
@@ -157,7 +159,7 @@ export class WorkspaceOrmManager {
     return {
       authContext,
       flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
+      flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
       flatIndexMaps: {
         byUniversalIdentifier: {},
         universalIdentifierById: {},

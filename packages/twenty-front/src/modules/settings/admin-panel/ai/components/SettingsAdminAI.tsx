@@ -18,6 +18,7 @@ import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModelsTable';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminAiProviderListCard } from '@/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard';
+import { useCustomAiProviderAccess } from '@/settings/admin-panel/ai/hooks/useCustomAiProviderAccess';
 import { AI_PROVIDER_SOURCE } from '@/settings/admin-panel/ai/constants/AiProviderSource';
 import { SET_ADMIN_AI_MODEL_RECOMMENDED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelRecommended';
 import { SET_ADMIN_AI_MODELS_RECOMMENDED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelsRecommended';
@@ -68,6 +69,11 @@ export const SettingsAdminAI = () => {
   const hasEnterpriseAccess =
     isBillingEnabled ||
     currentWorkspace?.hasValidEnterpriseValidityToken === true;
+  const {
+    hasAccess: hasCustomAiProviderAccess,
+    gateDescription: customAiProviderGateDescription,
+    tooltipContent: customAiProviderTooltipContent,
+  } = useCustomAiProviderAccess();
   const [usagePeriod, setUsagePeriod] = useState<PeriodPreset>('30d');
   const periodOptions = getPeriodOptions();
   const usageDates = getPeriodDates(usagePeriod);
@@ -201,13 +207,25 @@ export const SettingsAdminAI = () => {
         <H2Title
           title={t`Custom Providers`}
           description={t`Add custom endpoints, private gateways, or additional regions.`}
-          adornment={<OrganizationAdornment />}
+          adornment={
+            <OrganizationAdornment
+              tooltipContent={customAiProviderTooltipContent}
+            />
+          }
         />
 
         <SettingsAdminAiProviderListCard
           providers={customProviders}
-          showAddButton
+          showAddButton={hasCustomAiProviderAccess}
         />
+
+        {!hasCustomAiProviderAccess && (
+          <SettingsEnterpriseFeatureGateCard
+            title={t`Organization feature`}
+            description={customAiProviderGateDescription}
+            buttonTitle={t`Activate`}
+          />
+        )}
       </Section>
 
       {availableModelOptions.length > 0 && (

@@ -1,7 +1,7 @@
 import { ObjectOpenRecordIn } from 'twenty-shared/types';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { buildFieldMetadataItemFromMarketplaceField } from '@/settings/applications/utils/buildFieldMetadataItemFromMarketplaceField';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
@@ -12,7 +12,6 @@ import { t } from '@lingui/core/macro';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
-  type ObjectFieldManifest,
   type ObjectManifest,
   type RoleManifest,
 } from 'twenty-shared/application';
@@ -22,7 +21,6 @@ import {
 } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const SYSTEM_PERMISSION_FLAG_BY_UNIVERSAL_IDENTIFIER = Object.fromEntries(
   Object.entries(SystemPermissionFlag).map(([key, uuid]) => [
@@ -144,34 +142,6 @@ const buildSyntheticRole = (
     }),
   ),
 });
-
-const buildFieldMetadataItemFromMarketplaceField = (
-  field: ObjectFieldManifest,
-): FieldMetadataItem => {
-  const now = new Date().toISOString();
-  const universalIdentifier = field.universalIdentifier ?? uuidv4();
-
-  return {
-    id: universalIdentifier,
-    universalIdentifier,
-    name: field.name,
-    label: field.label,
-    type: (field.type as FieldMetadataType) ?? FieldMetadataType.TEXT,
-    description: field.description ?? '',
-    icon: field.icon ?? 'IconField',
-    isActive: true,
-    isSystem: false,
-    isNullable: true,
-    isUnique: false,
-    isUIEditable: true,
-    createdAt: now,
-    updatedAt: now,
-    defaultValue: null,
-    options: null,
-    relation: null,
-    settings: null,
-  };
-};
 
 const buildObjectMetadataItemsFromMarketplaceApp = (
   defaultRole: RoleManifest,

@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { WidgetType } from 'twenty-shared/types';
 import { findActiveFlatFieldMetadataById } from 'src/engine/metadata-modules/page-layout-widget/utils/find-active-flat-field-metadata-by-id.util';
 import { isChartReferencingFieldInConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-referencing-field-in-configuration.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -113,7 +113,7 @@ export const createGetDashboardTool = (
                   id: w.id,
                   title: w.title,
                   type: w.type,
-                  gridPosition: w.gridPosition,
+                  position: w.position,
                   objectMetadataId: w.objectMetadataId,
                   configuration: w.configuration,
                 };
@@ -183,7 +183,7 @@ export const createGetDashboardTool = (
                 id: w.id,
                 title: w.title,
                 type: w.type,
-                gridPosition: w.gridPosition,
+                position: w.position,
                 objectMetadataId: w.objectMetadataId,
                 configuration: enrichedConfiguration,
               };

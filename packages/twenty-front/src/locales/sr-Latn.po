@@ -1731,11 +1731,6 @@ msgstr "Afrikans"
 msgid "After a set amount of time"
 msgstr "Posle određenog vremenskog perioda"
 
-#. js-lingui-id: YPnvqG
-#: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
-msgid "After or equal"
-msgstr "Posle ili jednako"
-
 #. js-lingui-id: fcYF58
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -1991,7 +1986,6 @@ msgstr "Sve registracije aplikacija na platformi, uključujući osirotele aplika
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventRow.tsx
-#: src/modules/object-record/record-calendar/time-grid/components/RecordCalendarTimeGrid.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "All day"
 msgstr "Ceo dan"
@@ -3117,11 +3111,6 @@ msgstr "BCC"
 msgid "Because this workflow is not using a manual trigger, the form will not open on top of the interface. To fill it, open the corresponding workflow run and complete the form there."
 msgstr "Pošto ovaj radni tok ne koristi ručni okidač, obrazac se neće otvoriti iznad interfejsa. Da biste ga popunili, otvorite odgovarajuće izvršavanje radnog toka i tamo ga popunite."
 
-#. js-lingui-id: EmSrGB
-#: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
-msgid "Before"
-msgstr "Pre"
-
 #. js-lingui-id: +MqoSu
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
 #: src/modules/settings/admin-panel/utils/getUpgradeHealthStatusBadge.ts
@@ -3539,14 +3528,19 @@ msgid "Call recorder"
 msgstr "Snimač poziva"
 
 #. js-lingui-id: ahn0Ti
-#: src/modules/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
+#: src/modules/page-layout/widgets/call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
 msgid "Call recording is not available in this workspace."
 msgstr "Snimanje poziva nije dostupno u ovom radnom prostoru."
 
 #. js-lingui-id: z9jSP/
-#: src/modules/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
+#: src/modules/page-layout/widgets/call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
 msgid "Call Recording Unavailable"
 msgstr "Snimanje poziva nije dostupno"
+
+#. js-lingui-id: 81EMVN
+#: src/modules/page-layout/widgets/call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
+msgid "Call recordings are not available on this record."
+msgstr "Snimci poziva nisu dostupni u ovom zapisu."
 
 #. js-lingui-id: +Kx1Id
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -5341,13 +5335,6 @@ msgstr "Kreiraj profil"
 msgid "Create record"
 msgstr "Kreiraj zapis"
 
-#. js-lingui-id: 8ETbKP
-#. placeholder {0}: cardDate.toLocaleString(undefined, { dateStyle: 'full', })
-#. placeholder {1}: cardTime.toLocaleString(undefined, { timeStyle: 'short' })
-#: src/modules/object-record/record-calendar/components/RecordCalendarAddNew.tsx
-msgid "Create record on {0} at {1}"
-msgstr "Kreiraj zapis dana {0} u {1}"
-
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
 #: src/modules/side-panel/hooks/useOpenCreateRelatedRecordInSidePanel.ts
@@ -6026,7 +6013,6 @@ msgid "Date"
 msgstr "Datum"
 
 #. js-lingui-id: QIIAIQ
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarDateFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -6035,13 +6021,6 @@ msgstr "Datum"
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Date field"
 msgstr "Polje za datum"
-
-#. js-lingui-id: rMlHl2
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarDateFieldsContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
-msgid "Date fields"
-msgstr "Polja za datum"
 
 #. js-lingui-id: Lhd0oQ
 #: src/modules/settings/experience/components/DateTimeSettingsDateFormatSelect.tsx
@@ -7543,13 +7522,6 @@ msgstr "Rotacija ključeva za šifrovanje"
 msgid "End date"
 msgstr "Datum završetka"
 
-#. js-lingui-id: DqIce1
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarDateFieldsContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
-#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
-msgid "End date field"
-msgstr "Polje za datum završetka"
-
 #. js-lingui-id: Fqu/aC
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 msgid "End date must be after start date."
@@ -8591,8 +8563,7 @@ msgid "Failed to merge records. Please try again."
 msgstr "Spajanje zapisa nije uspelo. Pokušajte ponovo."
 
 #. js-lingui-id: DvNGzq
-#: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarMonthDndKit.ts
-#: src/modules/object-record/record-calendar/week/components/RecordCalendarWeekDragDropContext.tsx
+#: src/modules/object-record/record-calendar/hooks/useRecordCalendarDndKit.ts
 msgid "Failed to move record"
 msgstr "Nije uspelo pomeranje zapisa"
 
@@ -13790,8 +13761,6 @@ msgstr "Opcije čvora"
 
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarDateFieldsContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -13810,7 +13779,6 @@ msgstr "Opcije čvora"
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/WidgetViewLayoutSettingsRows.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
-#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -13833,7 +13801,6 @@ msgid "Not available for default view"
 msgstr "Nije dostupno u podrazumevanom pregledu"
 
 #. js-lingui-id: 0qBE9S
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -15841,7 +15808,6 @@ msgid "Relation type"
 msgstr "Tip relacije"
 
 #. js-lingui-id: g87L9j
-#: src/modules/activities/inline-cell/components/ActivityTargetsInlineCell.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Relations"
 msgstr "Relacije"
@@ -16850,7 +16816,6 @@ msgstr "metapodaci polja za pretragu"
 
 #. js-lingui-id: 7taA9j
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
@@ -18005,8 +17970,6 @@ msgid "Something went wrong while loading logs. Please try again."
 msgstr "Nešto je pošlo naopako prilikom učitavanja logova. Pokušajte ponovo."
 
 #. js-lingui-id: yHwG3y
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/settings/components/SettingsCard.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx

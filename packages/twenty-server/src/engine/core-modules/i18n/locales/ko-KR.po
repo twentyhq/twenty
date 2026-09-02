@@ -1601,12 +1601,6 @@ msgstr "캘린더 뷰에는 캘린더 필드가 있어야 합니다."
 msgid "Calendar view must have a calendar layout"
 msgstr "캘린더 뷰에는 캘린더 레이아웃이 있어야 합니다."
 
-#. js-lingui-id: D9pZ2l
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-msgid "Calendar widget views only support the month layout"
-msgstr "캘린더 위젯 뷰는 월 레이아웃만 지원합니다"
-
 #. js-lingui-id: 0U7DBn
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -2397,12 +2391,14 @@ msgid "Contradicting field permissions have been detected on a relation field."
 msgstr "관련 필드에서 상충되는 필드 권한이 감지되었습니다."
 
 #. js-lingui-id: X/ryFh
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Core workflow id"
 msgstr "코어 워크플로 ID"
 
 #. js-lingui-id: WkctC4
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Core workflow version id"
@@ -4092,6 +4088,7 @@ msgstr "SDK 클라이언트 아카이브에서 파일을 찾을 수 없습니다
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 #: src/engine/core-modules/file/file.exception.ts
+#: src/engine/core-modules/file/files-field/services/files-field.service.ts
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "File not found."
 msgstr "파일을 찾을 수 없음."
@@ -8160,12 +8157,14 @@ msgid "Recurring Event ID"
 msgstr "반복 이벤트 ID"
 
 #. js-lingui-id: zEHtXk
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reference to the core workflow row"
 msgstr "코어 워크플로 행에 대한 참조"
 
 #. js-lingui-id: avBuTv
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reference to the core workflowVersion row"
@@ -9843,7 +9842,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "파일 확장자가 파일 내용과 일치하지 않습니다. 파일이 손상되지 않았고 올바른 확장자를 사용하고 있는지 확인하세요."
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "파일이 아직 업로드되지 않았습니다. 확인하기 전에 파일을 업로드하세요."
 
@@ -9851,6 +9850,11 @@ msgstr "파일이 아직 업로드되지 않았습니다. 확인하기 전에 �
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The file is empty or exceeds the maximum allowed size."
 msgstr "파일이 비어 있거나 허용된 최대 크기를 초과했습니다."
+
+#. js-lingui-id: 2hrpBa
+#: src/engine/core-modules/file/files-field/services/files-field.service.ts
+msgid "The file upload has not been completed. Please retry the upload."
+msgstr "파일 업로드가 완료되지 않았습니다. 다시 업로드해 주세요."
 
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -10054,7 +10058,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "이 캠페인이 전송된 수신 거부 주제"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "업로드된 파일이 선언된 크기와 일치하지 않습니다. 다시 업로드해 주세요."
@@ -10346,7 +10350,7 @@ msgid "This field references an object that could not be found"
 msgstr "이 필드는 찾을 수 없는 객체를 참조합니다."
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "이 파일 형식은 지원되지 않습니다."
 
@@ -10428,11 +10432,6 @@ msgstr "이 객체 권한은 이미 해당 역할에 설정되어 있습니다"
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This operation is not allowed."
 msgstr "이 작업은 허용되지 않습니다."
-
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-schema.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "이 작업은 허용되지 않습니다. 다른 방법을 시도하든지 지원팀에 문의하십시오."
 
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts

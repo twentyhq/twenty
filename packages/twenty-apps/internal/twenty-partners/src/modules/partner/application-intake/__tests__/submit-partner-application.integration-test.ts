@@ -12,7 +12,9 @@ process.env.PARTNER_APPLICATION_SECRET = TEST_SECRET;
 
 const client = new CoreApiClient();
 
-const baseInput = (overrides: Partial<SubmitPartnerApplicationInput> = {}): SubmitPartnerApplicationInput => ({
+const baseInput = (
+  overrides: Partial<SubmitPartnerApplicationInput> = {},
+): SubmitPartnerApplicationInput => ({
   firstName: 'Ada',
   lastName: 'Lovelace',
   email: 'ada.test@example.com',
@@ -31,17 +33,25 @@ const createdCompanyIds: string[] = [];
 
 async function cleanup(): Promise<void> {
   for (const id of createdPartnerIds.splice(0)) {
-    await client.mutation({ destroyPartner: { __args: { id }, id: true } }).catch(() => {});
+    await client
+      .mutation({ destroyPartner: { __args: { id }, id: true } })
+      .catch(() => {});
   }
   for (const id of createdPersonIds.splice(0)) {
-    await client.mutation({ destroyPerson: { __args: { id }, id: true } }).catch(() => {});
+    await client
+      .mutation({ destroyPerson: { __args: { id }, id: true } })
+      .catch(() => {});
   }
   for (const id of createdCompanyIds.splice(0)) {
-    await client.mutation({ destroyCompany: { __args: { id }, id: true } }).catch(() => {});
+    await client
+      .mutation({ destroyCompany: { __args: { id }, id: true } })
+      .catch(() => {});
   }
 }
 
-async function trackCreated(result: SubmitPartnerApplicationResult): Promise<void> {
+async function trackCreated(
+  result: SubmitPartnerApplicationResult,
+): Promise<void> {
   if (!result.ok) return;
   createdPartnerIds.push(result.partnerId);
   const fetched = await client.query({
@@ -55,11 +65,14 @@ async function trackCreated(result: SubmitPartnerApplicationResult): Promise<voi
   const node = fetched.partner;
   if (!node) return;
   if (node.company) createdCompanyIds.push(node.company.id);
-  for (const edge of node.persons?.edges ?? []) createdPersonIds.push(edge.node.id);
+  for (const edge of node.persons?.edges ?? [])
+    createdPersonIds.push(edge.node.id);
 }
 
 beforeAll(async () => {
-  await client.query({ partners: { __args: { first: 1 }, edges: { node: { id: true } } } });
+  await client.query({
+    partners: { __args: { first: 1 }, edges: { node: { id: true } } },
+  });
 });
 
 afterEach(async () => {
@@ -68,7 +81,10 @@ afterEach(async () => {
 
 describe('submit-partner-application handler — auth', () => {
   it('returns unauthorized when the x-application-secret header is missing', async () => {
-    const result = await handler({ body: baseInput({ email: 'noauth@example.com' }), headers: {} });
+    const result = await handler({
+      body: baseInput({ email: 'noauth@example.com' }),
+      headers: {},
+    });
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.reason).toBe('unauthorized');
@@ -87,7 +103,14 @@ describe('submit-partner-application handler — auth', () => {
 
 describe('submit-partner-application handler — upsert', () => {
   it('creates Company, Person, and Partner on first submission and returns created: true', async () => {
-    const result = await handler(authedEvent(baseInput({ email: 'create.case@example.com', companyName: 'YC Agency' })));
+    const result = await handler(
+      authedEvent(
+        baseInput({
+          email: 'create.case@example.com',
+          companyName: 'YC Agency',
+        }),
+      ),
+    );
     await trackCreated(result);
 
     expect(result.ok).toBe(true);
@@ -102,17 +125,25 @@ describe('submit-partner-application handler — upsert', () => {
         name: true,
         slug: true,
         validationStage: true,
-        reviewed: true,
+        superPartner: true,
         partnerTier: true,
         company: { id: true, name: true },
-        persons: { edges: { node: { id: true, name: { firstName: true, lastName: true }, emails: { primaryEmail: true } } } },
+        persons: {
+          edges: {
+            node: {
+              id: true,
+              name: { firstName: true, lastName: true },
+              emails: { primaryEmail: true },
+            },
+          },
+        },
       },
     });
     const node = partner.partner;
     expect(node?.name).toBe('YC Agency');
     expect(node?.slug).toBe('yc-agency');
     expect(node?.validationStage).toBe('APPLICATION');
-    expect(node?.reviewed).toBe(false);
+    expect(node?.superPartner).toBe(false);
     expect(node?.partnerTier).toBe('NEW');
     expect(node?.company?.name).toBe('YC Agency');
     expect(node?.persons?.edges).toHaveLength(1);
@@ -133,7 +164,12 @@ describe('submit-partner-application handler — upsert', () => {
     const submittedVariant = 'https://www.Reuse-Domain-Case.example.com/';
     const created = await client.mutation({
       createCompany: {
-        __args: { data: { name: 'Pre-existing Co', domainName: { primaryLinkUrl: storedDomain } } },
+        __args: {
+          data: {
+            name: 'Pre-existing Co',
+            domainName: { primaryLinkUrl: storedDomain },
+          },
+        },
         id: true,
       },
     });
@@ -169,7 +205,11 @@ describe('submit-partner-application handler — upsert', () => {
   });
 
   it('returns created: false and updates fields on resubmission for the same email', async () => {
-    const first = await handler(authedEvent(baseInput({ email: 'update.case@example.com', city: 'London' })));
+    const first = await handler(
+      authedEvent(
+        baseInput({ email: 'update.case@example.com', city: 'London' }),
+      ),
+    );
     await trackCreated(first);
     expect(first.ok).toBe(true);
     if (!first.ok) return;
@@ -204,11 +244,16 @@ describe('submit-partner-application handler — upsert', () => {
     expect(node?.city).toBe('Paris');
     expect(node?.partnerScope).toEqual(['ADVISORY', 'SOLUTIONING']);
     expect(node?.typeOfTeam).toBe('SOLO');
-    expect(node?.hourlyRate).toEqual({ amountMicros: 175_000_000, currencyCode: 'USD' });
+    expect(node?.hourlyRate).toEqual({
+      amountMicros: 175_000_000,
+      currencyCode: 'USD',
+    });
   });
 
-  it('preserves staff-owned columns (validationStage, reviewed) on resubmission', async () => {
-    const first = await handler(authedEvent(baseInput({ email: 'staff.preserve@example.com' })));
+  it('preserves staff-owned columns (validationStage, superPartner) on resubmission', async () => {
+    const first = await handler(
+      authedEvent(baseInput({ email: 'staff.preserve@example.com' })),
+    );
     await trackCreated(first);
     expect(first.ok).toBe(true);
     if (!first.ok) return;
@@ -217,13 +262,17 @@ describe('submit-partner-application handler — upsert', () => {
       updatePartner: {
         __args: {
           id: first.partnerId,
-          data: { validationStage: 'VALIDATED', reviewed: true },
+          data: { validationStage: 'VALIDATED', superPartner: true },
         },
         id: true,
       },
     });
 
-    const second = await handler(authedEvent(baseInput({ email: 'staff.preserve@example.com', city: 'Berlin' })));
+    const second = await handler(
+      authedEvent(
+        baseInput({ email: 'staff.preserve@example.com', city: 'Berlin' }),
+      ),
+    );
     expect(second.ok).toBe(true);
     if (!second.ok) return;
 
@@ -231,13 +280,13 @@ describe('submit-partner-application handler — upsert', () => {
       partner: {
         __args: { filter: { id: { eq: second.partnerId } } },
         validationStage: true,
-        reviewed: true,
+        superPartner: true,
         city: true,
       },
     });
     const node = partner.partner;
     expect(node?.validationStage).toBe('VALIDATED');
-    expect(node?.reviewed).toBe(true);
+    expect(node?.superPartner).toBe(true);
     expect(node?.city).toBe('Berlin');
   });
 
@@ -271,7 +320,9 @@ describe('submit-partner-application handler — upsert', () => {
 
   it('rejects a legacy scope value as invalid_input', async () => {
     const result = await handler(
-      authedEvent(baseInput({ email: 'legacy@example.com', partnerScope: ['APPS'] })),
+      authedEvent(
+        baseInput({ email: 'legacy@example.com', partnerScope: ['APPS'] }),
+      ),
     );
     expect(result.ok).toBe(false);
     if (result.ok) return;
@@ -290,7 +341,8 @@ describe('submit-partner-application handler — upsert', () => {
           companyName: 'Experience Create Co',
           twentyExperience: ['CUSTOM_APPS', 'DATA_MODELS', 'WORKFLOWS'],
           twentyExperienceNotes,
-          twentyExperienceProofLink: 'https://www.loom.com/share/experience-create',
+          twentyExperienceProofLink:
+            'https://www.loom.com/share/experience-create',
         }),
       ),
     );
@@ -334,7 +386,8 @@ describe('submit-partner-application handler — upsert', () => {
           email: 'experience.update@example.com',
           twentyExperience: ['FRONT_COMPONENTS', 'WORKFLOWS'],
           twentyExperienceNotes,
-          twentyExperienceProofLink: 'https://github.com/example/twenty-case-study',
+          twentyExperienceProofLink:
+            'https://github.com/example/twenty-case-study',
         }),
       ),
     );

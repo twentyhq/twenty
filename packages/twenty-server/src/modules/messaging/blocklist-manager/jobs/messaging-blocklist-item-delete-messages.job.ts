@@ -68,6 +68,10 @@ export class BlocklistItemDeleteMessagesJob {
           (acc, blocklistItem) => {
             const { handle, workspaceMemberId } = blocklistItem;
 
+            if (!isDefined(workspaceMemberId)) {
+              return acc;
+            }
+
             if (!acc.has(workspaceMemberId)) {
               acc.set(workspaceMemberId, []);
             }

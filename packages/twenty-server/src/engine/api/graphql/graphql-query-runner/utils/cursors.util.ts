@@ -14,7 +14,7 @@ import {
   resolveOrderByLeaves,
 } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export interface CursorData {
@@ -46,7 +46,7 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
   order: ObjectRecordOrderBy | undefined;
   flatObjectMetadata: FlatObjectMetadata;
   flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   // Sort values read from the scan's raw rows by the find-many runner: they
   // carry the exact SQL values (NULLs included) the continuation must mirror.
   // Falling back to the formatted record covers callers without them (e.g.

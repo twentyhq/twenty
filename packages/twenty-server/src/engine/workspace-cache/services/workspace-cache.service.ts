@@ -5,9 +5,12 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { DiscoveryService, Reflector } from '@nestjs/core';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import * as Sentry from '@sentry/node';
 import crypto from 'crypto';
+
+import { DataSource } from 'typeorm';
 
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
@@ -18,7 +21,6 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
-import { WorkspaceCacheMetricsService } from 'src/engine/workspace-cache/services/workspace-cache-metrics.service';
 import {
   WORKSPACE_CACHE_KEY,
   WORKSPACE_CACHE_OPTIONS,
@@ -28,6 +30,8 @@ import {
   WorkspaceCacheException,
   WorkspaceCacheExceptionCode,
 } from 'src/engine/workspace-cache/exceptions/workspace-cache.exception';
+import { WorkspaceCacheMetricsService } from 'src/engine/workspace-cache/services/workspace-cache-metrics.service';
+import { WorkspaceCacheRowsBatchLoader } from 'src/engine/workspace-cache/services/workspace-cache-rows-batch-loader';
 import {
   WorkspaceCacheKeyName,
   type WorkspaceCacheDataMap,
@@ -64,6 +68,7 @@ const MIN_IDLE_BEFORE_PACKING_MS = 60 * 1000;
 const MAX_LOCAL_ENTRIES_BY_KEY_NAME = new Map<string, number>([
   ['ORMEntityMetadatas', 128],
   ['flatFieldMetadataMaps', 256],
+  ['flatFieldMetadataMapsOrm', 512],
 ]);
 type CacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];
 type StoredCacheDataType = WorkspaceCacheStoredDataMap[WorkspaceCacheKeyName];
@@ -106,6 +111,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
     private readonly cacheStorage: CacheStorageService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     private readonly discoveryService: DiscoveryService,
     private readonly reflector: Reflector,
     private readonly cacheMetricsService: WorkspaceCacheMetricsService,
@@ -282,6 +289,12 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     return combineCacheHashes(
       { ...cachedHashes, ...recomputedHashes },
       cacheKeyNames,
+    );
+  }
+
+  private collectRowsRequirements(cacheKeyNames: WorkspaceCacheKeyName[]) {
+    return cacheKeyNames.map(
+      (keyName) => this.getProviderOrThrow(keyName).rowsRequirement,
     );
   }
 
@@ -508,6 +521,13 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       return result;
     }
 
+    const rowsBatchLoader = new WorkspaceCacheRowsBatchLoader(
+      this.coreDataSource,
+      workspaceId,
+    );
+
+    await rowsBatchLoader.loadRows(this.collectRowsRequirements(cacheKeyNames));
+
     const computePromises = cacheKeyNames.map(async (keyName) => {
       const provider = this.getProviderOrThrow(keyName);
       const isLocalDataOnly = this.localDataOnlyKeys.has(keyName);
@@ -525,7 +545,11 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
               'cache.local_data_only': isLocalDataOnly,
             },
           },
-          () => provider.computeForCache(workspaceId),
+          () =>
+            provider.computeForCache({
+              workspaceId,
+              rows: rowsBatchLoader.readRows(provider.rowsRequirement),
+            }),
         );
 
         if (hashResolution.strategy === 'mint') {
@@ -548,7 +572,25 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       }
     });
 
-    const computed = await Promise.all(computePromises);
+    const settledComputes = await Promise.allSettled(computePromises);
+    const { computed, computeFailures } = settledComputes.reduce<{
+      computed: Awaited<(typeof computePromises)[number]>[];
+      computeFailures: { keyName: WorkspaceCacheKeyName; reason: unknown }[];
+    }>(
+      (acc, settled, index) => {
+        if (settled.status === 'fulfilled') {
+          acc.computed.push(settled.value);
+        } else {
+          acc.computeFailures.push({
+            keyName: cacheKeyNames[index],
+            reason: settled.reason,
+          });
+        }
+
+        return acc;
+      },
+      { computed: [], computeFailures: [] },
+    );
 
     const redisEntries: Array<{
       key: string;
@@ -602,6 +644,15 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           this.cacheStorage.setIfAbsent(key, value, bootstrapHashTtlMs),
         ),
       );
+    }
+
+    if (computeFailures.length > 0) {
+      computeFailures.forEach(({ keyName, reason }) =>
+        this.logger.error(
+          `Failed to compute cache key '${keyName}': ${reason}`,
+        ),
+      );
+      throw computeFailures[0].reason;
     }
 
     return result;

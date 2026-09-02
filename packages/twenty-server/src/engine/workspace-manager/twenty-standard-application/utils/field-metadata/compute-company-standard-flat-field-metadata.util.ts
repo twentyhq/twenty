@@ -174,6 +174,7 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       isUnique: true,
       settings: {
         maxNumberOfValues: 1,
+        type: 'domain',
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -439,7 +440,6 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       ),
       icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.taskTarget
         .icon,
-      isUIEditable: false,
       isNullable: true,
       targetObjectName: 'taskTarget',
       targetFieldName: 'targetCompany',
@@ -471,13 +471,70 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       ),
       icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.noteTarget
         .icon,
-      isUIEditable: false,
       isNullable: true,
       targetObjectName: 'noteTarget',
       targetFieldName: 'targetCompany',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  calendarEventTargets: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'calendarEventTargets',
+      isSystemSideEffect: true,
+      label: i18nLabel(
+        msg({ message: `Calendar events`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Calendar events tied to the company`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconCalendar',
+      isUIEditable: false,
+      isNullable: true,
+      targetObjectName: 'calendarEventTarget',
+      targetFieldName: 'targetCompany',
+      settings: { relationType: RelationType.ONE_TO_MANY },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  messageThreadTargets: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'messageThreadTargets',
+      isSystemSideEffect: true,
+      label: i18nLabel(
+        msg({ message: `Emails`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Message threads tied to the company`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconMail',
+      isUIEditable: false,
+      isNullable: true,
+      targetObjectName: 'messageThreadTarget',
+      targetFieldName: 'targetCompany',
+      settings: { relationType: RelationType.ONE_TO_MANY },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

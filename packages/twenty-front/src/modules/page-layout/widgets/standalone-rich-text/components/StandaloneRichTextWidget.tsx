@@ -42,7 +42,7 @@ export const StandaloneRichTextWidget = ({
   const currentBody = configuration?.body?.blocknote ?? '';
 
   const isThisWidgetBeingEdited = pageLayoutEditingWidgetId === widget.id;
-  const isEditable = isPageLayoutInEditMode && isThisWidgetBeingEdited;
+  const isEditable = isPageLayoutInEditMode;
 
   return (
     <StyledContainer
@@ -57,6 +57,7 @@ export const StandaloneRichTextWidget = ({
           widget={widget}
           currentBody={currentBody}
           isEditable={isEditable}
+          shouldFocus={isEditable && isThisWidgetBeingEdited}
           containerElement={containerElementRef.current}
         />
       </ScrollWrapper>

@@ -1,3 +1,4 @@
+import { RECORD_TABLE_CELL_DISPLAY_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableCellDisplayClassName';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { type Ref } from 'react';
@@ -44,6 +45,7 @@ export const RecordTableCellDisplayContainer = ({
   placeholderForEmptyCell,
 }: React.PropsWithChildren<EditableCellDisplayContainerProps>) => (
   <StyledOuterContainer
+    className={RECORD_TABLE_CELL_DISPLAY_CLASS_NAME}
     data-testid={
       focus ? 'editable-cell-focus-mode' : 'editable-cell-display-mode'
     }

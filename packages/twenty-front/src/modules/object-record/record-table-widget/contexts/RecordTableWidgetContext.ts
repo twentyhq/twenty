@@ -1,5 +1,6 @@
-import { type RecordGqlOperationFilter } from 'twenty-shared/types';
+import { type AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { createContext } from 'react';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
 // Creating a record in a nested relation widget requires picking the related
 // record to create through: the created record's join column has to point at
@@ -17,6 +18,18 @@ export type RecordTableWidgetContextValue = {
   pageLayoutId?: string;
   widgetId: string;
   nestedRelationCreateThrough?: RecordTableWidgetNestedRelationCreateThrough;
+  updateViewDraftField: (
+    viewFieldId: string,
+    update: {
+      aggregateOperation?: AggregateOperations | null;
+      size?: number;
+    },
+  ) => void;
+  updateViewDraft: (update: {
+    kanbanAggregateOperation?: AggregateOperations | null;
+    kanbanAggregateOperationFieldMetadataId?: string | null;
+    kanbanColumnWidth?: number | null;
+  }) => void;
 };
 
 export const RecordTableWidgetContext =
