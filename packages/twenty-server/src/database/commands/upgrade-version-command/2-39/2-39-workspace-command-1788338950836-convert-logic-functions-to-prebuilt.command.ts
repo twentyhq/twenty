@@ -195,12 +195,10 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
       return [];
     }
 
-    const updatedAt = new Date().toISOString();
     const convertedFlatLogicFunctions = flatLogicFunctionsToConvert.map(
       (flatLogicFunction) => ({
         ...flatLogicFunction,
         executionMode: LogicFunctionExecutionMode.PREBUILT,
-        updatedAt,
       }),
     );
 
