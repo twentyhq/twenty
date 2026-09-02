@@ -1,5 +1,6 @@
 import { StepStatus, WorkflowActionType } from 'twenty-shared/workflow';
 
+import { createMockCodeStep } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { shouldExecuteChildStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-child-step.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
@@ -551,6 +552,108 @@ describe('shouldExecuteChildStep', () => {
       childStepId: CHILD_STEP_ID,
       parentSteps: manyParentSteps,
       stepInfos,
+    });
+
+    expect(result).toBe(false);
+  });
+
+  it('should return true when the only parent failed and continues on failure', () => {
+    const continuingParent = createMockCodeStep(
+      'continuing-parent',
+      [CHILD_STEP_ID],
+      true,
+    );
+
+    const result = shouldExecuteChildStep({
+      childStepId: CHILD_STEP_ID,
+      parentSteps: [continuingParent],
+      stepInfos: {
+        'continuing-parent': {
+          status: StepStatus.FAILED_SAFELY,
+          error: 'some error',
+        },
+      },
+    });
+
+    expect(result).toBe(true);
+  });
+
+  it('should return false when the only parent failed safely without continuing on failure', () => {
+    const parent = createMockCodeStep('plain-parent', [CHILD_STEP_ID]);
+
+    const result = shouldExecuteChildStep({
+      childStepId: CHILD_STEP_ID,
+      parentSteps: [parent],
+      stepInfos: {
+        'plain-parent': {
+          status: StepStatus.FAILED_SAFELY,
+          error: 'some error',
+        },
+      },
+    });
+
+    expect(result).toBe(false);
+  });
+
+  it('should return false when a continuing parent was failed safely by cascade', () => {
+    const continuingParent = createMockCodeStep(
+      'continuing-parent',
+      [CHILD_STEP_ID],
+      true,
+    );
+
+    const result = shouldExecuteChildStep({
+      childStepId: CHILD_STEP_ID,
+      parentSteps: [continuingParent],
+      stepInfos: {
+        'continuing-parent': { status: StepStatus.FAILED_SAFELY },
+      },
+    });
+
+    expect(result).toBe(false);
+  });
+
+  it('should return true when one parent continued on failure and the other is skipped', () => {
+    const continuingParent = createMockCodeStep(
+      'continuing-parent',
+      [CHILD_STEP_ID],
+      true,
+    );
+    const skippedParent = createMockCodeStep('skipped-parent', [CHILD_STEP_ID]);
+
+    const result = shouldExecuteChildStep({
+      childStepId: CHILD_STEP_ID,
+      parentSteps: [continuingParent, skippedParent],
+      stepInfos: {
+        'continuing-parent': {
+          status: StepStatus.FAILED_SAFELY,
+          error: 'some error',
+        },
+        'skipped-parent': { status: StepStatus.SKIPPED },
+      },
+    });
+
+    expect(result).toBe(true);
+  });
+
+  it('should return false when one parent continued on failure and the other is still running', () => {
+    const continuingParent = createMockCodeStep(
+      'continuing-parent',
+      [CHILD_STEP_ID],
+      true,
+    );
+    const runningParent = createMockCodeStep('running-parent', [CHILD_STEP_ID]);
+
+    const result = shouldExecuteChildStep({
+      childStepId: CHILD_STEP_ID,
+      parentSteps: [continuingParent, runningParent],
+      stepInfos: {
+        'continuing-parent': {
+          status: StepStatus.FAILED_SAFELY,
+          error: 'some error',
+        },
+        'running-parent': { status: StepStatus.RUNNING },
+      },
     });
 
     expect(result).toBe(false);
