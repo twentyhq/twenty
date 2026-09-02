@@ -1,7 +1,8 @@
-import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
+import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
 import { type QuotaConsumptionRow } from 'src/engine/core-modules/usage-limit/types/quota-consumption-row.type';
 import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
 const buildRow = (
   overrides: Partial<QuotaConsumptionRow>,
@@ -15,11 +16,15 @@ const buildRow = (
   ...overrides,
 });
 
-const buildCounter = (overrides: Partial<QuotaCounter>): QuotaCounter => ({
+const buildCounter = (
+  overrides: Partial<LimitQuotaCounter>,
+): LimitQuotaCounter => ({
+  kind: 'limit',
   key: 'counter-key',
   limitValue: 1_000,
   meter: 'creditsUsedMicro',
-  periodUnit: 'billingPeriod',
+  resourceType: UsageResourceType.AI,
+  periodUnit: 'month',
   periodStart: new Date('2026-08-01T00:00:00.000Z'),
   periodEnd: new Date('2026-09-01T00:00:00.000Z'),
   spenderType: 'workspace',

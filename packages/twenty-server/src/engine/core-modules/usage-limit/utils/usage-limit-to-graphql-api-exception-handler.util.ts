@@ -28,6 +28,7 @@ export const usageLimitToGraphqlApiExceptionHandler = (
     {
       ...commonExtensions,
       limitKind: exhaustedScope.limitKind,
+      exhaustedKind: exhaustedScope.exhaustedKind,
       limit: exhaustedScope.limitValue,
       remaining: exhaustedScope.remaining,
       periodCount: exhaustedScope.periodCount,
@@ -36,7 +37,7 @@ export const usageLimitToGraphqlApiExceptionHandler = (
       scope: {
         spenderType: exhaustedScope.spenderType,
         spenderId: exhaustedScope.spenderId,
-        operationType: exhaustedScope.operationType || null,
+        operationType: exhaustedScope.operationType,
       },
     },
   );

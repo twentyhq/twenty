@@ -15,6 +15,7 @@ const buildExhaustedScope = (
 ): ExhaustedScope => ({
   resourceType: UsageResourceType.API,
   limitKind: 'speed',
+  exhaustedKind: 'limit',
   spenderType: 'apiKey',
   spenderId: 'key-1',
   operationType: UsageOperationType.API_REQUEST,
@@ -55,6 +56,7 @@ describe('usageLimitToRestApiExceptionHandler', () => {
       error: 'RATE_LIMITED',
       messages: ['Rate limit exceeded for apiKey: 3 requests per 60s.'],
       limitKind: 'speed',
+      exhaustedKind: 'limit',
       scope: {
         spenderType: 'apiKey',
         spenderId: 'key-1',

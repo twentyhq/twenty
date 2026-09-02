@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type LanguageModelUsage } from 'ai';
 
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -28,6 +29,7 @@ export class AiBillingService {
     private readonly usageRecorderService: UsageRecorderService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
+    private readonly billingUsageService: BillingUsageService,
   ) {}
 
   async assertAiExecutionAllowed({
@@ -39,6 +41,8 @@ export class AiBillingService {
     operationType: UsageOperationType;
     spenders: UsageSpenders;
   }): Promise<void> {
+    await this.billingUsageService.assertSubscriptionActive(workspaceId);
+
     await this.usageLimitQuotaService.assertQuotaNotExhausted({
       workspaceId,
       resourceType: UsageResourceType.AI,

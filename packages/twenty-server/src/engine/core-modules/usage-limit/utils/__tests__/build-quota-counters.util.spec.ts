@@ -3,9 +3,9 @@ import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/bu
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
-const BILLING_PERIOD = {
-  periodStart: new Date('2026-08-15T09:00:00.000Z'),
-  periodEnd: new Date('2026-09-15T09:00:00.000Z'),
+const MONTH_PERIOD = {
+  periodStart: new Date('2026-08-01T00:00:00.000Z'),
+  periodEnd: new Date('2026-09-01T00:00:00.000Z'),
 };
 
 const WEEK_PERIOD = {
@@ -21,29 +21,21 @@ const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
   spenderId: '',
   limitKind: 'quota',
   periodCount: 1,
-  periodUnit: 'billingPeriod',
+  periodUnit: 'month',
   meter: 'creditsUsedMicro',
-  limitValueType: 'absolute',
   limitValue: 1_000_000,
   burstValue: null,
   ...overrides,
 });
 
-const buildCounters = ({
-  limits,
-  allowanceMicro = null,
-}: {
-  limits: FlatUsageLimit[];
-  allowanceMicro?: number | null;
-}) =>
+const buildCounters = ({ limits }: { limits: FlatUsageLimit[] }) =>
   buildQuotaCounters({
     limits,
     usageSpenders: { userWorkspaceId: 'user-1' },
     workspaceId: 'workspace-1',
     resourceType: UsageResourceType.AI,
     operationType: UsageOperationType.AI_CHAT_TOKEN,
-    periodByUnit: { billingPeriod: BILLING_PERIOD, week: WEEK_PERIOD },
-    allowanceMicro,
+    periodByUnit: { month: MONTH_PERIOD, week: WEEK_PERIOD },
   });
 
 describe('buildQuotaCounters', () => {
@@ -54,12 +46,14 @@ describe('buildQuotaCounters', () => {
 
     expect(counters).toEqual([
       {
-        key: `{workspace-1}:quota:AI:AI_CHAT_TOKEN:workspace:-:creditsUsedMicro:billingPeriod:${BILLING_PERIOD.periodStart.getTime()}`,
+        kind: 'limit',
+        key: `{workspace-1}:quota:AI:AI_CHAT_TOKEN:workspace:-:creditsUsedMicro:month:${MONTH_PERIOD.periodStart.getTime()}`,
         limitValue: 1_000_000,
         meter: 'creditsUsedMicro',
-        periodUnit: 'billingPeriod',
-        periodStart: BILLING_PERIOD.periodStart,
-        periodEnd: BILLING_PERIOD.periodEnd,
+        resourceType: UsageResourceType.AI,
+        periodUnit: 'month',
+        periodStart: MONTH_PERIOD.periodStart,
+        periodEnd: MONTH_PERIOD.periodEnd,
         spenderType: 'workspace',
         spenderId: null,
         operationType: UsageOperationType.AI_CHAT_TOKEN,
@@ -76,7 +70,7 @@ describe('buildQuotaCounters', () => {
     });
 
     expect(counters.map((counter) => counter.periodStart)).toEqual([
-      BILLING_PERIOD.periodStart,
+      MONTH_PERIOD.periodStart,
       WEEK_PERIOD.periodStart,
     ]);
   });
@@ -119,24 +113,6 @@ describe('buildQuotaCounters', () => {
       'userWorkspace',
       'workspace',
     ]);
-  });
-
-  it('resolves a percent limit against the allowance', () => {
-    const counters = buildCounters({
-      limits: [buildLimit({ limitValueType: 'percent', limitValue: 5_000 })],
-      allowanceMicro: 2_000_000,
-    });
-
-    expect(counters[0].limitValue).toBe(1_000_000);
-  });
-
-  it('skips a percent limit when no allowance exists', () => {
-    const counters = buildCounters({
-      limits: [buildLimit({ limitValueType: 'percent', limitValue: 5_000 })],
-      allowanceMicro: null,
-    });
-
-    expect(counters).toEqual([]);
   });
 
   it('skips a limit whose period was not resolved', () => {

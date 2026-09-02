@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
-import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
+import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
 import { type QuotaConsumptionRow } from 'src/engine/core-modules/usage-limit/types/quota-consumption-row.type';
 
 const spenderColumnMatches = (
@@ -12,7 +12,7 @@ const spenderColumnMatches = (
 
 const rowMatchesCounter = (
   row: QuotaConsumptionRow,
-  counter: QuotaCounter,
+  counter: LimitQuotaCounter,
 ): boolean => {
   if (
     counter.operationType !== UsageOperationType.ALL &&
@@ -44,7 +44,7 @@ export const computeQuotaConsumed = ({
   counter,
 }: {
   rows: QuotaConsumptionRow[];
-  counter: QuotaCounter;
+  counter: LimitQuotaCounter;
 }): number =>
   rows
     .filter((row) => rowMatchesCounter(row, counter))

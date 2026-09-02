@@ -35,10 +35,11 @@ export const buildUsageLimitHttpException = (
       error: getUsageLimitErrorCode(error.code),
       messages: [error.message],
       limitKind: exhaustedScope.limitKind,
+      exhaustedKind: exhaustedScope.exhaustedKind,
       scope: {
         spenderType: exhaustedScope.spenderType,
         spenderId: exhaustedScope.spenderId,
-        operationType: exhaustedScope.operationType || null,
+        operationType: exhaustedScope.operationType,
       },
       limit: exhaustedScope.limitValue,
       remaining: exhaustedScope.remaining,

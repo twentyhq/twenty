@@ -19,6 +19,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { AiRestApiExceptionFilter } from 'src/engine/metadata-modules/ai/filters/ai-api-exception.filter';
+import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { GenerateTextInput } from 'src/engine/metadata-modules/ai/ai-generate-text/dtos/generate-text.input';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
@@ -31,6 +32,7 @@ import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/p
   PermissionsRestApiExceptionFilter,
   AiRestApiExceptionFilter,
   UsageLimitRestApiExceptionFilter,
+  BillingRestApiExceptionFilter,
   RestApiExceptionFilter,
 )
 export class AiGenerateTextController {

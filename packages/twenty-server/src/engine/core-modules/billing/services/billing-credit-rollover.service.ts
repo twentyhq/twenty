@@ -9,14 +9,14 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
-import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { buildBillingCreditStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-credit-state-lock-key.util';
 import { computeCarryForwardGrants } from 'src/engine/core-modules/billing/utils/compute-carry-forward-grants.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 
-export type ProcessRolloverParams = {
+type ProcessRolloverParams = {
   workspaceId: string;
   closingPeriodStart: Date;
   closingPeriodEnd: Date;
@@ -35,7 +35,7 @@ export class BillingCreditRolloverService {
   constructor(
     private readonly billingUsageService: BillingUsageService,
     private readonly billingCreditGrantService: BillingCreditGrantService,
-    private readonly billingCreditService: BillingCreditService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly cacheLockService: CacheLockService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
@@ -116,14 +116,8 @@ export class BillingCreditRolloverService {
       periodEnd: closingPeriodEnd,
     });
 
-    let carriedForwardMicro = 0;
-    let hasReplayedGrant = false;
-
-    // Writes the grants directly rather than through grantCredits: the cache,
-    // cap flag and workspace cache only need refreshing once for the whole
-    // transition, and this runs inside a Stripe webhook.
     for (const carryForwardGrant of carryForwardGrants) {
-      const grant = await this.billingCreditGrantService.createGrant({
+      await this.billingCreditGrantService.createGrant({
         workspaceId,
         amountMicro: carryForwardGrant.amountMicro,
         type: carryForwardGrant.type,
@@ -138,37 +132,11 @@ export class BillingCreditRolloverService {
           sourceGrantId: carryForwardGrant.sourceGrantId,
         }),
       });
-
-      if (isDefined(grant)) {
-        carriedForwardMicro += grant.amountMicro;
-      } else {
-        hasReplayedGrant = true;
-      }
     }
 
-    // A replay only tells us the rows already exist, not whether the delivery
-    // that wrote them got as far as the counter. Stripe also redelivers events
-    // it already handled successfully, and rebuilding then would throw away a
-    // correct warm counter and recompute it from ClickHouse, crediting back
-    // whatever usage has not been ingested yet. So the transition records under
-    // adjustmentKey that it moved the counter, and the refresh rebuilds only
-    // when that record is absent.
-    //
-    // Runs unconditionally: closing the old grants moves the balance on its
-    // own, so a period where everything was spent still needs the refresh.
-    await this.billingCreditService.refreshWorkspaceCreditState({
-      workspaceId,
-      availableDeltaMicro: carriedForwardMicro,
-      isReplay: hasReplayedGrant,
-      adjustmentKey: buildRolloverAdjustmentKey(nextPeriodStart),
-    });
+    await this.usageLimitQuotaService.dropAllowanceCounter(workspaceId);
   }
 }
-
-// Scopes the completion marker to one period transition, so only a redelivery
-// of that transition can see it.
-const buildRolloverAdjustmentKey = (nextPeriodStart: Date): string =>
-  `rollover:${nextPeriodStart.toISOString()}`;
 
 // Stripe redelivers webhooks, so the whole transition has to be replayable.
 const buildCarryForwardIdempotencyKey = ({

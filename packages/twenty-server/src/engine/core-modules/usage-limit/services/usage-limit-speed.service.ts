@@ -66,6 +66,7 @@ export class UsageLimitSpeedService {
         exhaustedScope: {
           resourceType,
           limitKind: 'speed',
+          exhaustedKind: 'limit',
           spenderType: outcome.exhausted.spenderType,
           spenderId: outcome.exhausted.spenderId,
           operationType,

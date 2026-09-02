@@ -5,19 +5,15 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { type UpsertUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/upsert-usage-limit.input';
 import {
   UsageLimitException,
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
-import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
 import { validateUsageLimitAgainstDefinition } from 'src/engine/core-modules/usage-limit/utils/validate-usage-limit-against-definition.util';
-import { UsagePeriodService } from 'src/engine/core-modules/usage/services/usage-period.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -41,9 +37,7 @@ export class UsageLimitService {
     @InjectWorkspaceScopedRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: WorkspaceScopedRepository<LogicFunctionEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly usagePeriodService: UsagePeriodService,
-    @InjectCacheStorage(CacheStorageNamespace.EngineUsageLimit)
-    private readonly cacheStorage: CacheStorageService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
 
   async findAll(workspaceId: string): Promise<UsageLimitEntity[]> {
@@ -83,7 +77,6 @@ export class UsageLimitService {
       {
         workspaceId,
         ...scope,
-        limitValueType: input.limitValueType,
         limitValue: input.limitValue,
         burstValue: input.burstValue ?? null,
       },
@@ -101,7 +94,7 @@ export class UsageLimitService {
       },
     );
 
-    await this.dropCurrentQuotaCounter({ workspaceId, usageLimit });
+    await this.usageLimitQuotaService.dropLimitCounter(usageLimit);
 
     return usageLimit;
   }
@@ -133,45 +126,9 @@ export class UsageLimitService {
       'usageLimits',
     ]);
 
-    await this.dropCurrentQuotaCounter({ workspaceId, usageLimit });
+    await this.usageLimitQuotaService.dropLimitCounter(usageLimit);
 
     return true;
-  }
-
-  // A warmed counter carries the budget it was created with; a changed or
-  // removed limit must not keep enforcing through the stale counter until the
-  // period rolls over.
-  private async dropCurrentQuotaCounter({
-    workspaceId,
-    usageLimit,
-  }: {
-    workspaceId: string;
-    usageLimit: UsageLimitEntity;
-  }): Promise<void> {
-    if (
-      usageLimit.limitKind !== 'quota' ||
-      usageLimit.periodUnit === 'second'
-    ) {
-      return;
-    }
-
-    const period = await this.usagePeriodService.getCurrentPeriod({
-      workspaceId,
-      periodUnit: usageLimit.periodUnit,
-    });
-
-    await this.cacheStorage.del(
-      buildQuotaCounterKey({
-        workspaceId,
-        resourceType: usageLimit.resourceType,
-        operationType: usageLimit.operationType,
-        spenderType: usageLimit.spenderType,
-        spenderId: usageLimit.spenderId,
-        meter: usageLimit.meter,
-        periodUnit: usageLimit.periodUnit,
-        periodStart: period.periodStart,
-      }),
-    );
   }
 
   private async validateSpenderBelongsToWorkspace({

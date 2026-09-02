@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
@@ -33,6 +34,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     RecordCRUDActionModule,
     FormActionModule,
     BillingModule,
+    UsageLimitModule,
     WorkspaceCacheModule,
     FilterActionModule,
     IfElseActionModule,

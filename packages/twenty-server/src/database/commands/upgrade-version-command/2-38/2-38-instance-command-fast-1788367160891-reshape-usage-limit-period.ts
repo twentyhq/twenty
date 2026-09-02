@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.38.0', 1788276005420)
+@RegisteredInstanceCommand('2.38.0', 1788367160891)
 export class ReshapeUsageLimitPeriodFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -28,6 +28,9 @@ export class ReshapeUsageLimitPeriodFastInstanceCommand implements FastInstanceC
       `ALTER TABLE "core"."usageLimit" ALTER COLUMN "meter" DROP DEFAULT`,
     );
     await queryRunner.query(
+      `ALTER TABLE "core"."usageLimit" DROP COLUMN "limitValueType"`,
+    );
+    await queryRunner.query(
       `ALTER TABLE "core"."usageLimit" ADD CONSTRAINT "UQ_USAGE_LIMIT_SCOPE" UNIQUE ("workspaceId", "resourceType", "operationType", "spenderType", "spenderId", "limitKind", "periodCount", "periodUnit", "meter")`,
     );
   }
@@ -38,6 +41,9 @@ export class ReshapeUsageLimitPeriodFastInstanceCommand implements FastInstanceC
     );
     await queryRunner.query(
       `DELETE FROM "core"."usageLimit" WHERE "limitKind" = 'quota'`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."usageLimit" ADD COLUMN "limitValueType" character varying NOT NULL DEFAULT 'absolute'`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."usageLimit" DROP COLUMN "periodUnit"`,

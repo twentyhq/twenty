@@ -56,13 +56,6 @@ export const validateUsageLimitAgainstDefinition = (
       );
     }
 
-    if (input.limitValueType === 'percent') {
-      throw new UsageLimitException(
-        'A speed limit cannot be a percentage',
-        UsageLimitExceptionCode.LIMIT_INVALID,
-      );
-    }
-
     if (input.meter !== 'quantity') {
       throw new UsageLimitException(
         'A speed limit counts requests, so it is metered on quantity',
@@ -74,7 +67,7 @@ export const validateUsageLimitAgainstDefinition = (
   if (input.limitKind === 'quota') {
     if (input.periodUnit === 'second') {
       throw new UsageLimitException(
-        'A quota anchors to a calendar or billing period, not a rolling window',
+        'A quota anchors to a calendar period, not a rolling window',
         UsageLimitExceptionCode.LIMIT_INVALID,
       );
     }
@@ -109,25 +102,6 @@ export const validateUsageLimitAgainstDefinition = (
     ) {
       throw new UsageLimitException(
         'A quantity quota needs an operation: only credits aggregate across operations',
-        UsageLimitExceptionCode.LIMIT_INVALID,
-      );
-    }
-  }
-
-  if (input.limitValueType === 'percent') {
-    if (input.limitValue < 1 || input.limitValue > 10000) {
-      throw new UsageLimitException(
-        'A percent limit is expressed in basis points, between 1 and 10000',
-        UsageLimitExceptionCode.LIMIT_INVALID,
-      );
-    }
-
-    if (
-      input.periodUnit !== 'billingPeriod' ||
-      input.meter !== 'creditsUsedMicro'
-    ) {
-      throw new UsageLimitException(
-        'A percent limit is a share of the credit allowance, which covers the billing period',
         UsageLimitExceptionCode.LIMIT_INVALID,
       );
     }

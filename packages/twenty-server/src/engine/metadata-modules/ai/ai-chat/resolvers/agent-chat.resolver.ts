@@ -43,6 +43,7 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+import { BillingGraphqlApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-graphql-api-exception.filter';
 import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -50,7 +51,10 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 
 @UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.AI))
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)
-@UseFilters(UsageLimitGraphqlApiExceptionFilter)
+@UseFilters(
+  UsageLimitGraphqlApiExceptionFilter,
+  BillingGraphqlApiExceptionFilter,
+)
 @MetadataResolver(() => AgentChatThreadDTO)
 export class AgentChatResolver {
   constructor(

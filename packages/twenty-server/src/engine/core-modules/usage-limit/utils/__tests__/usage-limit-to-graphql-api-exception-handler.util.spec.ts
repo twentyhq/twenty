@@ -17,6 +17,7 @@ const buildExhaustedScope = (
 ): ExhaustedScope => ({
   resourceType: UsageResourceType.API,
   limitKind: 'speed',
+  exhaustedKind: 'limit',
   spenderType: 'apiKey',
   spenderId: 'key-1',
   operationType: UsageOperationType.API_REQUEST,
@@ -62,6 +63,7 @@ describe('usageLimitToGraphqlApiExceptionHandler', () => {
 
     expect(error.extensions).toMatchObject({
       limitKind: 'speed',
+      exhaustedKind: 'limit',
       limit: 3,
       remaining: 0,
       periodCount: 60,

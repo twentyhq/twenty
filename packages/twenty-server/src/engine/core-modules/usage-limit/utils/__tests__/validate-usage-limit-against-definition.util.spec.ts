@@ -13,7 +13,6 @@ const validSpeedLimit: UpsertUsageLimitInput = {
   periodCount: 60,
   periodUnit: 'second',
   meter: 'quantity',
-  limitValueType: 'absolute',
   limitValue: 100,
 };
 
@@ -24,10 +23,9 @@ const validQuotaLimit: UpsertUsageLimitInput = {
   spenderId: null,
   limitKind: 'quota',
   periodCount: 1,
-  periodUnit: 'billingPeriod',
+  periodUnit: 'month',
   meter: 'creditsUsedMicro',
-  limitValueType: 'percent',
-  limitValue: 9900,
+  limitValue: 1_000_000,
 };
 
 describe('validateUsageLimitAgainstDefinition', () => {
@@ -80,7 +78,7 @@ describe('validateUsageLimitAgainstDefinition', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
         ...validSpeedLimit,
-        periodUnit: 'billingPeriod',
+        periodUnit: 'month',
       }),
     ).toThrow(
       expect.objectContaining({
@@ -138,7 +136,7 @@ describe('validateUsageLimitAgainstDefinition', () => {
     ).not.toThrow();
   });
 
-  it('accepts a percent quota on the workspace', () => {
+  it('accepts a monthly credit quota on the workspace', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition(validQuotaLimit),
     ).not.toThrow();
@@ -180,55 +178,14 @@ describe('validateUsageLimitAgainstDefinition', () => {
     );
   });
 
-  it('rejects a percent speed limit', () => {
-    expect(() =>
-      validateUsageLimitAgainstDefinition({
-        ...validSpeedLimit,
-        limitValueType: 'percent',
-        limitValue: 5000,
-      }),
-    ).toThrow(
-      expect.objectContaining({
-        code: UsageLimitExceptionCode.LIMIT_INVALID,
-      }),
-    );
-  });
-
-  it('rejects a percent value outside basis points', () => {
-    expect(() =>
-      validateUsageLimitAgainstDefinition({
-        ...validQuotaLimit,
-        limitValue: 10001,
-      }),
-    ).toThrow(
-      expect.objectContaining({
-        code: UsageLimitExceptionCode.LIMIT_INVALID,
-      }),
-    );
-  });
-
   it('accepts an absolute weekly quota', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
         ...validQuotaLimit,
         periodUnit: 'week',
-        limitValueType: 'absolute',
         limitValue: 5_000_000,
       }),
     ).not.toThrow();
-  });
-
-  it('rejects a percent quota outside the billing period', () => {
-    expect(() =>
-      validateUsageLimitAgainstDefinition({
-        ...validQuotaLimit,
-        periodUnit: 'week',
-      }),
-    ).toThrow(
-      expect.objectContaining({
-        code: UsageLimitExceptionCode.LIMIT_INVALID,
-      }),
-    );
   });
 
   it('rejects a quota spanning several periods', () => {
@@ -236,7 +193,6 @@ describe('validateUsageLimitAgainstDefinition', () => {
       validateUsageLimitAgainstDefinition({
         ...validQuotaLimit,
         periodUnit: 'week',
-        limitValueType: 'absolute',
         periodCount: 2,
       }),
     ).toThrow(
@@ -251,7 +207,6 @@ describe('validateUsageLimitAgainstDefinition', () => {
       validateUsageLimitAgainstDefinition({
         ...validQuotaLimit,
         meter: 'quantity',
-        limitValueType: 'absolute',
         limitValue: 1_000_000,
       }),
     ).not.toThrow();
@@ -263,7 +218,6 @@ describe('validateUsageLimitAgainstDefinition', () => {
         ...validQuotaLimit,
         operationType: UsageOperationType.ALL,
         meter: 'quantity',
-        limitValueType: 'absolute',
         limitValue: 1_000_000,
       }),
     ).toThrow(
