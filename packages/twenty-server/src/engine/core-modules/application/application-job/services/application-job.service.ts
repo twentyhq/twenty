@@ -146,21 +146,29 @@ export class ApplicationJobService {
     workspaceId: string;
     jobIds: string[];
   }): Promise<JobStatusDTO[]> {
-    const jobs = await this.messageQueueService.getJobs(
+    const jobsByQueueJobId = await this.messageQueueService.getJobs(
       jobIds.map((jobId) => buildQueueJobId({ workspaceId, jobId })),
     );
 
-    const queueJobIdPrefix = buildQueueJobId({ workspaceId, jobId: '' });
+    return jobIds.flatMap((jobId) => {
+      const job = jobsByQueueJobId[buildQueueJobId({ workspaceId, jobId })];
 
-    return jobs.map((job) => ({
-      jobId: job.id.slice(queueJobIdPrefix.length),
-      state: bullMQToJobStateEnum[job.state],
-      attemptsMade: job.attemptsMade,
-      failedReason: job.failedReason,
-      enqueuedAt: job.timestamp,
-      startedAt: job.processedOn,
-      finishedAt: job.finishedOn,
-    }));
+      if (!isDefined(job)) {
+        return [];
+      }
+
+      return [
+        {
+          jobId,
+          state: bullMQToJobStateEnum[job.state],
+          attemptsMade: job.attemptsMade,
+          failedReason: job.failedReason,
+          enqueuedAt: job.timestamp,
+          startedAt: job.processedOn,
+          finishedAt: job.finishedOn,
+        },
+      ];
+    });
   }
 
   private getJobItems(input: EnqueueJobsInputDTO): EnqueueJobItem[] {
