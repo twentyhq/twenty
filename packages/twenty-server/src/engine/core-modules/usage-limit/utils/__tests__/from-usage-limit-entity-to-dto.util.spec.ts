@@ -24,9 +24,9 @@ const buildEntity = (overrides: Partial<UsageLimitEntity>): UsageLimitEntity =>
   }) as UsageLimitEntity;
 
 describe('fromUsageLimitEntityToDto', () => {
-  it('exposes the every-spender limit with an empty spender id', () => {
+  it('exposes the every-spender rule with a null spender id', () => {
     expect(fromUsageLimitEntityToDto(buildEntity({ spenderId: '' }))).toEqual(
-      expect.objectContaining({ spenderId: '' }),
+      expect.objectContaining({ spenderId: null }),
     );
   });
 

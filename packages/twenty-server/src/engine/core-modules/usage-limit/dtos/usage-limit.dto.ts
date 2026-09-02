@@ -25,8 +25,8 @@ export class UsageLimitDTO {
   @Field(() => String)
   spenderType: SpenderType;
 
-  @Field(() => String)
-  spenderId: string;
+  @Field(() => String, { nullable: true })
+  spenderId: string | null;
 
   @Field(() => String)
   limitKind: LimitKind;
