@@ -38,6 +38,31 @@ const toSlackUserLinkDraft = ({
   consentState: SLACK_USER_LINK_CONSENT_STATE.ACTIVE,
 });
 
+const splitCandidatesTheBatchAlreadyWrote = async (
+  client: CoreApiClient,
+  {
+    candidates,
+    slackTeamId,
+  }: { candidates: SlackRosterMatchCandidate[]; slackTeamId: string },
+): Promise<{
+  writtenCount: number;
+  unwrittenCandidates: SlackRosterMatchCandidate[];
+}> => {
+  const alreadyLinkedSlackUserIds = await listLinkedSlackUserIds(client, {
+    slackTeamId,
+    slackUserIds: candidates.map((candidate) => candidate.slackUserId),
+  });
+
+  const unwrittenCandidates = candidates.filter(
+    (candidate) => !alreadyLinkedSlackUserIds.has(candidate.slackUserId),
+  );
+
+  return {
+    writtenCount: candidates.length - unwrittenCandidates.length,
+    unwrittenCandidates,
+  };
+};
+
 const linkCandidatesOneByOne = async (
   client: CoreApiClient,
   {
@@ -45,19 +70,15 @@ const linkCandidatesOneByOne = async (
     slackTeamId,
   }: { candidates: SlackRosterMatchCandidate[]; slackTeamId: string },
 ): Promise<SlackRosterLinkOutcome> => {
-  const alreadyLinkedSlackUserIds = await listLinkedSlackUserIds(client, {
-    slackTeamId,
-    slackUserIds: candidates.map((candidate) => candidate.slackUserId),
-  });
+  const { writtenCount, unwrittenCandidates } =
+    await splitCandidatesTheBatchAlreadyWrote(client, {
+      candidates,
+      slackTeamId,
+    });
 
   const outcomes: boolean[] = [];
 
-  for (const candidate of candidates) {
-    if (alreadyLinkedSlackUserIds.has(candidate.slackUserId)) {
-      outcomes.push(true);
-      continue;
-    }
-
+  for (const candidate of unwrittenCandidates) {
     try {
       await persistSlackUserLink(client, {
         existingLink: undefined,
@@ -79,7 +100,7 @@ const linkCandidatesOneByOne = async (
   }
 
   return {
-    linkedCount: outcomes.filter((isLinked) => isLinked).length,
+    linkedCount: writtenCount + outcomes.filter((isLinked) => isLinked).length,
     failedCount: outcomes.filter((isLinked) => !isLinked).length,
   };
 };
@@ -134,9 +155,15 @@ export const linkSlackRosterCandidates = async (
           `[slack] roster match gave up on ${batchCandidates.length} candidates after repeated batch failures: ${toErrorMessage(error)}`,
         );
 
+        const { writtenCount, unwrittenCandidates } =
+          await splitCandidatesTheBatchAlreadyWrote(client, {
+            candidates: batchCandidates,
+            slackTeamId,
+          });
+
         batchOutcomes.push({
-          linkedCount: 0,
-          failedCount: batchCandidates.length,
+          linkedCount: writtenCount,
+          failedCount: unwrittenCandidates.length,
         });
         continue;
       }

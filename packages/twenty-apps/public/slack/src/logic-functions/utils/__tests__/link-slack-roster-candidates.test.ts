@@ -202,6 +202,28 @@ describe('linkSlackRosterCandidates', () => {
     expect(outcome).toEqual({ linkedCount: 400, failedCount: 0 });
   });
 
+  it('should count rows a given-up batch already wrote as linked', async () => {
+    createSlackUserLinksMock.mockRejectedValue(new Error('batch failed'));
+    persistSlackUserLinkMock.mockRejectedValue(new Error('write failed'));
+    listLinkedSlackUserIdsMock.mockImplementation(
+      async (_client, { slackUserIds }) =>
+        new Set(
+          slackUserIds.filter((slackUserId: string) => slackUserId === 'U399'),
+        ),
+    );
+
+    const candidates = Array.from({ length: 400 }, (_, index) =>
+      candidate(`U${index}`),
+    );
+
+    const outcome = await linkSlackRosterCandidates(client, {
+      candidates,
+      slackTeamId: SLACK_TEAM_ID,
+    });
+
+    expect(outcome).toEqual({ linkedCount: 1, failedCount: 399 });
+  });
+
   it('should never upsert, so a declined or manual link is never overwritten', async () => {
     await linkSlackRosterCandidates(client, {
       candidates: [candidate('U1')],
