@@ -9,11 +9,13 @@ import { type Manifest } from 'twenty-shared/application';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
+import { AppOAuthRevokeService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-revoke.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const PROVIDER_NAME = 'fathom';
+const REFRESHED_ACCESS_TOKEN = 'enc:v2:refreshed-by-hook';
 
 const buildManifestWithConnectionProvider = ({
   appId,
@@ -91,6 +93,7 @@ describe('Connected account deletion runs the on-disconnect hook', () => {
   let logicFunctionId: string;
   let connectedAccountId: string;
   let executeSpy: jest.SpyInstance;
+  let revokeSpy: jest.SpyInstance;
   let connectedAccountCountDuringHook: number | undefined;
 
   const syncTestApplication = ({
@@ -156,11 +159,25 @@ describe('Connected account deletion runs the on-disconnect hook', () => {
     // polls the job queues with real setTimeout calls.
     jest.useRealTimers();
 
+    revokeSpy = jest
+      .spyOn(
+        getAppProviderByClassName<AppOAuthRevokeService>(
+          'AppOAuthRevokeService',
+        ),
+        'revokeIfApp',
+      )
+      .mockResolvedValue(undefined);
+
+    // Stands in for the token refresh getConnection performs inside a hook.
     executeSpy = jest
       .spyOn(logicFunctionExecutorService, 'execute')
       .mockImplementation(async () => {
         connectedAccountCountDuringHook =
           await countConnectedAccounts(connectedAccountId);
+        await globalThis.testDataSource.query(
+          `UPDATE core."connectedAccount" SET "accessToken" = $1 WHERE id = $2`,
+          [REFRESHED_ACCESS_TOKEN, connectedAccountId],
+        );
 
         return {
           data: {},
@@ -174,6 +191,7 @@ describe('Connected account deletion runs the on-disconnect hook', () => {
 
   afterEach(async () => {
     executeSpy.mockRestore();
+    revokeSpy.mockRestore();
 
     await globalThis.testDataSource.query(
       `DELETE FROM core."connectedAccount" WHERE id = $1`,
@@ -184,7 +202,7 @@ describe('Connected account deletion runs the on-disconnect hook', () => {
     });
   });
 
-  it('executes the hook while the connected account still exists, then deletes it', async () => {
+  it('executes the hook while the connected account still exists, revokes the tokens it left behind, then deletes it', async () => {
     await syncTestApplication({ withOnDisconnectHook: true });
     await insertAppConnectedAccount();
     const [provider] = await findConnectionProvidersByApplication(appId);
@@ -203,6 +221,12 @@ describe('Connected account deletion runs the on-disconnect hook', () => {
       }),
     );
     expect(connectedAccountCountDuringHook).toBe(1);
+    expect(revokeSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: connectedAccountId,
+        accessToken: REFRESHED_ACCESS_TOKEN,
+      }),
+    );
     expect(await countConnectedAccounts(connectedAccountId)).toBe(0);
   }, 60000);
 

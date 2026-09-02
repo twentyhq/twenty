@@ -254,7 +254,10 @@ export class ConnectedAccountMetadataService {
       });
     }
 
-    await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
+    // The hook may have refreshed the tokens through getConnection.
+    await this.appOAuthRevokeService.revokeIfApp(
+      await this.repository.findOneOrFail({ where: { id, workspaceId } }),
+    );
 
     await this.repository.delete({ id, workspaceId });
 
