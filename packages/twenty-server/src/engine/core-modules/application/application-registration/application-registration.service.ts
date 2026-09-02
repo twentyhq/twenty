@@ -133,7 +133,7 @@ export class ApplicationRegistrationService {
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
   ) {}
 
-  private async broadcastApplicationRegistrationUpdatedById(
+  async broadcastApplicationRegistrationUpdatedById(
     applicationRegistrationId: string,
     registrationBeforeUpdate?: ApplicationRegistrationEntity,
   ): Promise<void> {
