@@ -25,12 +25,12 @@ export function IsValidServerUrlForMultiWorkspace(
           }
 
           try {
-           const hostname = new URL(value).hostname;
+            const hostname = new URL(value).hostname;
 
-             return isIP(hostname.replace(/^\[|\]$/g, '')) === 0;
-         } catch {
-             return false;
-         }
+            return isIP(hostname.replace(/^\[|\]$/g, '')) === 0;
+          } catch {
+            return false;
+          }
         },
 
         defaultMessage() {
