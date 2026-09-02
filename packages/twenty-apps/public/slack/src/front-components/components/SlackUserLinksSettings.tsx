@@ -157,29 +157,24 @@ export const SlackUserLinksSettings = () => {
     }
   };
 
-  if (isPermissionLoading || isConnectionStatusLoading) {
+  if (isConnectionStatusLoading || !isSlackConnected) {
+    return null;
+  }
+
+  if (isPermissionLoading) {
     return <StyledCenteredState>Loading Slack user links…</StyledCenteredState>;
   }
 
-  const shouldShowLinksSection = isSlackConnected || slackUserLinks.length > 0;
-
   return (
     <StyledContainer>
-      {!isSlackConnected && (
-        <Callout
-          variant="info"
-          title="Slack is not connected"
-          description="Connect Slack to link accounts to workspace members. Existing links are kept and apply again once Slack reconnects."
-        />
-      )}
-      {!canManage && isSlackConnected && (
+      {!canManage && (
         <Callout
           variant="warning"
           title="You need the roles permission"
           description="Only members with the roles permission can create or change Slack user links. You can review the existing links below."
         />
       )}
-      {canManage && isSlackConnected && (
+      {canManage && (
         <Section>
           <H2Title
             title="Unlinked Slack users"
@@ -213,31 +208,28 @@ export const SlackUserLinksSettings = () => {
           </StyledMatchAction>
         </Section>
       )}
-      {shouldShowLinksSection && (
-        <Section>
-          <H2Title
-            title="Slack user links"
-            description="Each link maps a Slack account to the workspace member whose permissions the assistant borrows."
+      <Section>
+        <H2Title
+          title="Slack user links"
+          description="Each link maps a Slack account to the workspace member whose permissions the assistant borrows."
+        />
+        {isSlackUserLinksLoading && slackUserLinks.length === 0 ? (
+          <StyledCenteredState>Loading links…</StyledCenteredState>
+        ) : isDefined(errorMessage) ? (
+          <StyledCenteredState>{errorMessage}</StyledCenteredState>
+        ) : (
+          <SlackUserLinksList
+            slackUserLinks={slackUserLinks}
+            canManage={canManage}
+            hasMore={hasMoreSlackUserLinks}
+            onRemove={handleRemove}
+            onResend={handleResend}
+            removingLinkId={removingLinkId}
+            resendingLinkId={resendingLinkId}
           />
-          {isSlackUserLinksLoading && slackUserLinks.length === 0 ? (
-            <StyledCenteredState>Loading links…</StyledCenteredState>
-          ) : isDefined(errorMessage) ? (
-            <StyledCenteredState>{errorMessage}</StyledCenteredState>
-          ) : (
-            <SlackUserLinksList
-              slackUserLinks={slackUserLinks}
-              canManage={canManage}
-              hasMore={hasMoreSlackUserLinks}
-              onRemove={handleRemove}
-              onResend={handleResend}
-              removingLinkId={removingLinkId}
-              resendingLinkId={resendingLinkId}
-            />
-          )}
-        </Section>
-      )}
+        )}
+      </Section>
       {canManage &&
-        isSlackConnected &&
         (isManualFormOpen ? (
           <SlackUserLinkForm
             existingLinks={slackUserLinks}
