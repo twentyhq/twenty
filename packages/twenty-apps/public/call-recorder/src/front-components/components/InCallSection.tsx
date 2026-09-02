@@ -81,22 +81,14 @@ export const InCallSection = ({
       />
       <StyledSettingsSectionStack>
         <StyledSettingsCard>
-          <SettingsOptionCardContentToggle
-            Icon={CALL_RECORDER_RECORDING_NOTICE_ROW.Icon}
-            title={CALL_RECORDER_RECORDING_NOTICE_ROW.title}
-            description={CALL_RECORDER_RECORDING_NOTICE_ROW.description}
-            divider
-            checked={isNoticeEnabled}
-            onChange={handleNoticeEnabledChange}
-          />
-          {CALL_RECORDER_TIMING_ROWS.map((row, rowIndex) => (
+          {CALL_RECORDER_TIMING_ROWS.map((row) => (
             <TimingCounterRow
               key={row.variableKey}
               variableKey={row.variableKey}
               title={row.title}
               description={row.description}
               Icon={row.Icon}
-              divider={rowIndex < CALL_RECORDER_TIMING_ROWS.length - 1}
+              divider
               persistedValue={getApplicationVariableValue({
                 applicationVariables,
                 variableKey: row.variableKey,
@@ -105,6 +97,13 @@ export const InCallSection = ({
               onDraftValueChange={onDraftValueChange}
             />
           ))}
+          <SettingsOptionCardContentToggle
+            Icon={CALL_RECORDER_RECORDING_NOTICE_ROW.Icon}
+            title={CALL_RECORDER_RECORDING_NOTICE_ROW.title}
+            description={CALL_RECORDER_RECORDING_NOTICE_ROW.description}
+            checked={isNoticeEnabled}
+            onChange={handleNoticeEnabledChange}
+          />
         </StyledSettingsCard>
         <StyledDimmable $dimmed={!isNoticeEnabled}>
           <LabelledSettingsField
