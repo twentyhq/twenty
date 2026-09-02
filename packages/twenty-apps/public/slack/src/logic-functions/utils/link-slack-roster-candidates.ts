@@ -14,9 +14,6 @@ import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util'
 
 const CANDIDATES_PER_CREATE = 200;
 
-// One batch of one-at-a-time retries is enough to isolate a single bad row. A
-// second failing batch means something systemic, where retrying every remaining
-// candidate would only spend the runner's budget without linking anyone.
 const MAX_FALLBACK_CANDIDATES = CANDIDATES_PER_CREATE;
 
 type SlackRosterLinkOutcome = {
