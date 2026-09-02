@@ -20,10 +20,13 @@ export class UsagePeriodService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  async getCurrentPeriod(
-    workspaceId: string,
-    periodUnit: AnchoredPeriodUnit = 'billingPeriod',
-  ): Promise<UsagePeriod> {
+  async getCurrentPeriod({
+    workspaceId,
+    periodUnit = 'billingPeriod',
+  }: {
+    workspaceId: string;
+    periodUnit?: AnchoredPeriodUnit;
+  }): Promise<UsagePeriod> {
     const now = new Date();
 
     switch (periodUnit) {

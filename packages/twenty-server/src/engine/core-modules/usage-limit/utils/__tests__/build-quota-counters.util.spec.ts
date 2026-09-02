@@ -54,7 +54,7 @@ describe('buildQuotaCounters', () => {
 
     expect(counters).toEqual([
       {
-        key: `{workspace-1}:quota:AI:AI_CHAT_TOKEN:workspace:-:billingPeriod:${BILLING_PERIOD.periodStart.getTime()}`,
+        key: `{workspace-1}:quota:AI:AI_CHAT_TOKEN:workspace:-:creditsUsedMicro:billingPeriod:${BILLING_PERIOD.periodStart.getTime()}`,
         limitValue: 1_000_000,
         meter: 'creditsUsedMicro',
         periodUnit: 'billingPeriod',

@@ -11,6 +11,10 @@ import {
   createClient,
 } from '@clickhouse/client';
 
+import {
+  ClickHouseException,
+  ClickHouseExceptionCode,
+} from 'src/database/clickhouse/clickhouse.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type ClickHouseInsertOptions = {
@@ -212,7 +216,10 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
     params?: Record<string, any>,
   ): Promise<T[]> {
     if (!this.mainClient) {
-      throw new Error('ClickHouse client is not available');
+      throw new ClickHouseException(
+        'ClickHouse client is not available',
+        ClickHouseExceptionCode.CLIENT_NOT_AVAILABLE,
+      );
     }
 
     const resultSet = await this.mainClient.query({

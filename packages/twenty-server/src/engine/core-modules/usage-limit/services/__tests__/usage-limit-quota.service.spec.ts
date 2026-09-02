@@ -110,7 +110,7 @@ describe('UsageLimitQuotaService', () => {
     cacheStorage.runScript.mockResolvedValue([]);
     clickHouseService.selectOrThrow.mockResolvedValue([]);
     usagePeriodService.getCurrentPeriod.mockImplementation(
-      async (_workspaceId: string, periodUnit = 'billingPeriod') =>
+      async ({ periodUnit = 'billingPeriod' }: { periodUnit?: string }) =>
         periodUnit === 'week' ? WEEK_PERIOD : BILLING_PERIOD,
     );
     billingService.isBillingEnabled.mockReturnValue(false);
@@ -170,7 +170,18 @@ describe('UsageLimitQuotaService', () => {
   });
 
   it('warms a cold billing-period counter by stamped period and denies when spent', async () => {
-    setLimits([buildLimit({ limitValue: 100 })]);
+    billingService.isBillingEnabled.mockReturnValue(true);
+    workspaceCacheService.getOrRecompute.mockResolvedValue({
+      usageLimits: {
+        byResourceType: {
+          [UsageResourceType.AI]: [buildLimit({ limitValue: 100 })],
+        },
+      },
+      currentBillingSubscription: {
+        currentPeriodStart: BILLING_PERIOD.periodStart,
+        currentPeriodEnd: BILLING_PERIOD.periodEnd,
+      },
+    });
     cacheStorage.mget.mockResolvedValue([undefined]);
     clickHouseService.selectOrThrow.mockResolvedValue([
       {
@@ -191,6 +202,17 @@ describe('UsageLimitQuotaService', () => {
     expect(cacheStorage.mset).toHaveBeenCalledWith([
       expect.objectContaining({ value: -50 }),
     ]);
+  });
+
+  it('warms a billing-period counter by timestamp range when no subscription anchors it', async () => {
+    setLimits([buildLimit({})]);
+    cacheStorage.mget.mockResolvedValue([undefined]);
+
+    await expect(assertCanConsume()).resolves.toBeUndefined();
+    expect(clickHouseService.selectOrThrow).toHaveBeenCalledWith(
+      expect.stringContaining('timestamp >= {periodStart:DateTime64(3)}'),
+      expect.anything(),
+    );
   });
 
   it('warms a calendar counter by timestamp range', async () => {

@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
+import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -126,7 +127,7 @@ export class UsageLimitQuotaService {
         remainings,
       });
     } catch (error) {
-      return this.admitOnFailure(error);
+      return this.admitOnFailure({ error, workspaceId: args.workspaceId });
     }
   }
 
@@ -159,7 +160,7 @@ export class UsageLimitQuotaService {
         remainings,
       });
     } catch (error) {
-      return this.admitOnFailure(error);
+      return this.admitOnFailure({ error, workspaceId: args.workspaceId });
     }
   }
 
@@ -203,7 +204,7 @@ export class UsageLimitQuotaService {
   }: QuotaConsumeArgs): Promise<ExhaustedScope> {
     const [allowanceMicro, period] = await Promise.all([
       this.getAllowanceMicro(workspaceId),
-      this.usagePeriodService.getCurrentPeriod(workspaceId),
+      this.usagePeriodService.getCurrentPeriod({ workspaceId }),
     ]);
 
     return {
@@ -229,7 +230,13 @@ export class UsageLimitQuotaService {
     );
   }
 
-  private admitOnFailure(error: unknown): null {
+  private admitOnFailure({
+    error,
+    workspaceId,
+  }: {
+    error: unknown;
+    workspaceId: string;
+  }): null {
     if (
       error instanceof WorkspaceCacheException ||
       error instanceof UsageLimitException
@@ -238,7 +245,7 @@ export class UsageLimitQuotaService {
     }
 
     this.logger.error(
-      `Usage quota enforcement degraded: ${error instanceof Error ? error.message : 'unknown error'}`,
+      `Usage quota enforcement degraded for workspace ${workspaceId}: ${error instanceof Error ? error.message : 'unknown error'}`,
     );
 
     return null;
@@ -312,7 +319,7 @@ export class UsageLimitQuotaService {
 
     const periods = await Promise.all(
       periodUnits.map((periodUnit) =>
-        this.usagePeriodService.getCurrentPeriod(workspaceId, periodUnit),
+        this.usagePeriodService.getCurrentPeriod({ workspaceId, periodUnit }),
       ),
     );
 
@@ -465,10 +472,15 @@ export class UsageLimitQuotaService {
     resourceType: UsageResourceType;
     counter: QuotaCounter;
   }): Promise<QuotaConsumptionRow[]> {
-    const periodCondition =
-      counter.periodUnit === 'billingPeriod'
-        ? 'periodStart = {periodStart:DateTime64(3)}'
-        : 'timestamp >= {periodStart:DateTime64(3)} AND timestamp < {periodEnd:DateTime64(3)}';
+    // Usage events only carry a periodStart stamp when a billing subscription
+    // anchors the period; the calendar-month fallback must match by timestamp.
+    const isBillingAnchored =
+      counter.periodUnit === 'billingPeriod' &&
+      (await this.hasBillingPeriodAnchor(workspaceId));
+
+    const periodCondition = isBillingAnchored
+      ? 'periodStart = {periodStart:DateTime64(3)}'
+      : 'timestamp >= {periodStart:DateTime64(3)} AND timestamp < {periodEnd:DateTime64(3)}';
 
     return this.clickHouseService.selectOrThrow<QuotaConsumptionRow>(
       `SELECT operationType, userWorkspaceId, apiKeyId, applicationId,
@@ -486,6 +498,19 @@ export class UsageLimitQuotaService {
         periodEnd: formatDateTimeForClickHouse(counter.periodEnd),
       },
     );
+  }
+
+  private async hasBillingPeriodAnchor(workspaceId: string): Promise<boolean> {
+    if (!this.billingService.isBillingEnabled()) {
+      return false;
+    }
+
+    const { currentBillingSubscription } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'currentBillingSubscription',
+      ]);
+
+    return currentBillingSubscription !== NO_BILLING_SUBSCRIPTION;
   }
 
   private async getPoolAvailability(
