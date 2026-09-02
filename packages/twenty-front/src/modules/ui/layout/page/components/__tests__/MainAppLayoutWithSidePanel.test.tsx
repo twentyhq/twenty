@@ -11,25 +11,32 @@ import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObj
 import { getWorkspaceRouteObjectsForSurface } from '@/app/routing/utils/getWorkspaceRouteObjectsForSurface';
 import { MainAppLayoutWithSidePanel } from '@/ui/layout/page/components/MainAppLayoutWithSidePanel';
 
-const mountedProviders = { current: 0, max: 0 };
+const mockProviderStats = { current: 0, max: 0 };
+const mockSeenParams: Record<string, string | undefined>[] = [];
 
-jest.mock('@/context-store/components/RouteContextStoreProvider', () => ({
-  RouteContextStoreProvider: () => {
-    useEffect(() => {
-      mountedProviders.current += 1;
-      mountedProviders.max = Math.max(
-        mountedProviders.max,
-        mountedProviders.current,
-      );
+jest.mock('@/context-store/components/RouteContextStoreProvider', () => {
+  const { useParams } = jest.requireActual('react-router-dom');
 
-      return () => {
-        mountedProviders.current -= 1;
-      };
-    }, []);
+  return {
+    RouteContextStoreProvider: () => {
+      mockSeenParams.push(useParams());
 
-    return null;
-  },
-}));
+      useEffect(() => {
+        mockProviderStats.current += 1;
+        mockProviderStats.max = Math.max(
+          mockProviderStats.max,
+          mockProviderStats.current,
+        );
+
+        return () => {
+          mockProviderStats.current -= 1;
+        };
+      }, []);
+
+      return null;
+    },
+  };
+});
 
 jest.mock('@/side-panel/components/SidePanelForDesktop', () => ({
   SidePanelForDesktop: () => null,
@@ -90,6 +97,9 @@ describe('MainAppLayoutWithSidePanel', () => {
     );
 
     expect(await screen.findByText('record index page')).toBeInTheDocument();
+    // Hosted above the routes, the provider still reads the matched leaf's
+    // params: react-router shares one params object across a matched branch.
+    expect(mockSeenParams.at(-1)?.objectNamePlural).toBe('companies');
 
     act(() => {
       navigateRef.current?.('/settings/profile');
@@ -99,6 +109,7 @@ describe('MainAppLayoutWithSidePanel', () => {
       expect(screen.getByText('settings page')).toBeInTheDocument();
     });
 
-    expect(mountedProviders.max).toBe(1);
+    expect(mockSeenParams.at(-1)?.objectNamePlural).toBeUndefined();
+    expect(mockProviderStats.max).toBe(1);
   });
 });
