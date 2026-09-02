@@ -31,11 +31,20 @@ const CACHE_DURATION_BUCKETS_SECONDS = [
 const STATS_TTL_MS = 5_000;
 const SIZE_REFRESH_MS = 5 * 60 * 1000;
 const SIZE_STARTUP_DELAY_MS = 30 * 1000;
-// Sized off the hot path every SIZE_REFRESH_MS. 50 keeps the extrapolated byte
-// estimate accurate enough to tell a cache-dominated heap from one that is not;
-// the byte-heavy providers are entry-capped well under this, so they get sized
-// in full.
+// Sampled off the hot path every SIZE_REFRESH_MS. 50 bounds the walk for
+// high-count, low-byte providers; the byte-heavy providers are sized in full via
+// SIZE_IN_FULL_PROVIDERS so the estimate is exact where it dominates the heap.
 const SIZE_SAMPLE_PER_PROVIDER = 50;
+// Byte-heavy providers (ORM / field-metadata graphs, ~MB each) are entry-capped
+// in WorkspaceCacheService, so every entry is sized rather than extrapolated from
+// a sample — extrapolating the largest, highest-variance entries is what made the
+// estimate untrustworthy. Their caps (<=512) bound the walk and packed versions
+// are sized for free, so the added cost stays small and off the hot path.
+const SIZE_IN_FULL_PROVIDERS = new Set([
+  'ORMEntityMetadatas',
+  'flatFieldMetadataMaps',
+  'flatFieldMetadataMapsOrm',
+]);
 const SIZE_WALK_NODE_CAP = 300_000;
 const MEMORY_REPORT_INTERVAL_MS = 60 * 1000;
 const BYTES_PER_MEGABYTE = 1024 * 1024;
@@ -121,9 +130,10 @@ export class WorkspaceCacheMetricsService {
     }
   }
 
-  // Diagnostic: correlate process/V8 memory with the cache's own size in one log
-  // line so we can tell whether the metadata cache tracks the heap climb to OOM
-  // (retained, old-space) versus per-job allocation spikes (transient, new-space).
+  // TODO: diagnostic only — remove once the worker OOM root cause is confirmed.
+  // Correlates process/V8 memory with the cache's own size in one log line so we
+  // can tell whether the metadata cache tracks the heap climb to OOM (retained,
+  // old-space) versus per-job allocation spikes (transient, new-space).
   private scheduleMemoryReport(): void {
     const report = (): void => {
       const memoryUsage = process.memoryUsage();
@@ -148,7 +158,7 @@ export class WorkspaceCacheMetricsService {
           `externalMB=${toMegabytes(memoryUsage.external)} ` +
           `oldSpaceMB=${toMegabytes(oldSpaceUsedBytes)} ` +
           `newSpaceMB=${toMegabytes(newSpaceUsedBytes)} ` +
-          `cacheEntries=${this.getStats().entries} ` +
+          `cacheEntries=${this.localCache?.size ?? 0} ` +
           `cacheBytesEstimateMB=${toMegabytes(this.cacheSizeTotalBytes)} ` +
           `top=${topProviders}`,
       );
@@ -262,7 +272,12 @@ export class WorkspaceCacheMetricsService {
 
       stats.count += 1;
 
-      if (stats.sampled < SIZE_SAMPLE_PER_PROVIDER && entry.versions.size > 0) {
+      const sizeEveryEntry = SIZE_IN_FULL_PROVIDERS.has(keyName);
+
+      if (
+        (sizeEveryEntry || stats.sampled < SIZE_SAMPLE_PER_PROVIDER) &&
+        entry.versions.size > 0
+      ) {
         // Size every retained version, not just the latest — stale versions still occupy heap.
         let entryBytes = 0;
 

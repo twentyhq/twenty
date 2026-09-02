@@ -161,8 +161,9 @@ export class ParticipantTargetReconciliationService {
       transactionScope,
     );
 
-    // Diagnostic: size what one reconcile loads and how much heap it retains,
-    // to confirm whether this path (added in #24778) drives worker memory.
+    // TODO: diagnostic only — remove once the worker OOM root cause is confirmed.
+    // Size what one reconcile loads and how much heap it retains, to confirm
+    // whether this path (added in #24778) drives worker memory.
     const heapUsedBeforeBytes = process.memoryUsage().heapUsed;
     let messagesLoaded = 0;
     let participantsLoaded = 0;

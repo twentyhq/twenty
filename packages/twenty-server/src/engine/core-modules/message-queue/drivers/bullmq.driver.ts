@@ -210,8 +210,9 @@ export class BullMQDriver
 
           // TODO: Correctly support for job.id
           const timeStart = performance.now();
-          // Diagnostic: attribute heap growth to job types to tell whether
-          // per-job allocations (e.g. thread reconciliation) drive the OOM loop.
+          // TODO: diagnostic only — remove once the worker OOM root cause is
+          // confirmed. Attribute heap growth to job types, including jobs that
+          // throw under memory pressure (logged from the finally below).
           const heapUsedBeforeBytes = process.memoryUsage().heapUsed;
           const workspaceId = job.data?.workspaceId;
           const workspaceSuffix = workspaceId
@@ -221,24 +222,30 @@ export class BullMQDriver
           this.logger.log(
             `Processing job ${job.id} with name ${job.name} on queue ${queueName}${workspaceSuffix}`,
           );
-          await handler({
-            data: job.data,
-            id: job.id ?? '',
-            name: job.name,
-            retryLimit: Math.max(0, (job.opts.attempts ?? 1) - 1),
-            updateData: (data) => job.updateData(data),
-            abortSignal,
-          });
-          const timeEnd = performance.now();
-          const executionTime = timeEnd - timeStart;
-          const heapUsedAfterBytes = process.memoryUsage().heapUsed;
-          const heapDeltaMegabytes =
-            (heapUsedAfterBytes - heapUsedBeforeBytes) / BYTES_PER_MEGABYTE;
-          const heapUsedMegabytes = heapUsedAfterBytes / BYTES_PER_MEGABYTE;
 
-          this.logger.log(
-            `Job ${job.id} with name ${job.name} processed on queue ${queueName} in ${executionTime.toFixed(2)}ms${workspaceSuffix} heapDeltaMB=${heapDeltaMegabytes.toFixed(1)} heapUsedMB=${heapUsedMegabytes.toFixed(0)}`,
-          );
+          let jobSucceeded = false;
+
+          try {
+            await handler({
+              data: job.data,
+              id: job.id ?? '',
+              name: job.name,
+              retryLimit: Math.max(0, (job.opts.attempts ?? 1) - 1),
+              updateData: (data) => job.updateData(data),
+              abortSignal,
+            });
+            jobSucceeded = true;
+          } finally {
+            const executionTime = performance.now() - timeStart;
+            const heapUsedAfterBytes = process.memoryUsage().heapUsed;
+            const heapDeltaMegabytes =
+              (heapUsedAfterBytes - heapUsedBeforeBytes) / BYTES_PER_MEGABYTE;
+            const heapUsedMegabytes = heapUsedAfterBytes / BYTES_PER_MEGABYTE;
+
+            this.logger.log(
+              `Job ${job.id} with name ${job.name} ${jobSucceeded ? 'processed' : 'failed'} on queue ${queueName} in ${executionTime.toFixed(2)}ms${workspaceSuffix} heapDeltaMB=${heapDeltaMegabytes.toFixed(1)} heapUsedMB=${heapUsedMegabytes.toFixed(0)}`,
+            );
+          }
         }),
       workerOptions,
     );
