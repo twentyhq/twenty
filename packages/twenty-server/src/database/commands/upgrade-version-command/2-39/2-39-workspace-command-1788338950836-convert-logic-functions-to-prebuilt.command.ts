@@ -6,12 +6,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { LOGIC_FUNCTION_PREBUILT_CONVERSION_BATCH_SIZE } from 'src/database/commands/upgrade-version-command/2-39/constants/convert-logic-functions-to-prebuilt-batch-size.constant';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { LOGIC_FUNCTION_PREBUILT_CONVERSION_BATCH_SIZE } from 'src/engine/metadata-modules/logic-function/constants/logic-function-prebuilt-conversion-batch-size.constant';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type FlatLogicFunctionMaps } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function-maps.type';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
@@ -56,8 +56,26 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
       );
     }
 
-    const applicationIdsToConvert =
-      await this.findApplicationIdsToConvert(workspaceId);
+    // Read once per workspace rather than per application: the conversions are
+    // disjoint by application, so a single snapshot stays correct for all of them
+    const { flatLogicFunctionMaps, flatApplicationMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps', 'flatApplicationMaps'],
+        },
+      );
+
+    const applicationIdsToConvert = Object.keys(
+      flatLogicFunctionMaps.universalIdentifiersByApplicationId,
+    ).filter(
+      (applicationId) =>
+        this.findLogicFunctionsToConvert({
+          applicationId,
+          flatLogicFunctionMaps,
+          flatApplicationMaps,
+        }).length > 0,
+    );
 
     if (applicationIdsToConvert.length === 0) {
       return;
@@ -74,15 +92,21 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
     await this.convertApplicationsInBatches({
       applicationIds: applicationIdsToConvert,
       workspaceId,
+      flatLogicFunctionMaps,
+      flatApplicationMaps,
     });
   }
 
   private async convertApplicationsInBatches({
     applicationIds,
     workspaceId,
+    flatLogicFunctionMaps,
+    flatApplicationMaps,
   }: {
     applicationIds: string[];
     workspaceId: string;
+    flatLogicFunctionMaps: FlatLogicFunctionMaps;
+    flatApplicationMaps: FlatApplicationCacheMaps;
   }): Promise<void> {
     let convertedLogicFunctionCount = 0;
     const failedApplicationIds: string[] = [];
@@ -102,6 +126,8 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
           this.convertApplicationLogicFunctionsToPrebuilt({
             workspaceId,
             applicationId,
+            flatLogicFunctionMaps,
+            flatApplicationMaps,
           }),
         ),
       );
@@ -135,44 +161,17 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
     );
   }
 
-  private async findApplicationIdsToConvert(
-    workspaceId: string,
-  ): Promise<string[]> {
-    const { flatLogicFunctionMaps, flatApplicationMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps', 'flatApplicationMaps'],
-        },
-      );
-
-    return Object.keys(
-      flatLogicFunctionMaps.universalIdentifiersByApplicationId,
-    ).filter(
-      (applicationId) =>
-        this.findLogicFunctionsToConvert({
-          applicationId,
-          flatLogicFunctionMaps,
-          flatApplicationMaps,
-        }).length > 0,
-    );
-  }
-
   private async convertApplicationLogicFunctionsToPrebuilt({
     workspaceId,
     applicationId,
+    flatLogicFunctionMaps,
+    flatApplicationMaps,
   }: {
     workspaceId: string;
     applicationId: string;
+    flatLogicFunctionMaps: FlatLogicFunctionMaps;
+    flatApplicationMaps: FlatApplicationCacheMaps;
   }): Promise<FlatLogicFunction[]> {
-    const { flatLogicFunctionMaps, flatApplicationMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps', 'flatApplicationMaps'],
-        },
-      );
-
     const flatApplication = findActiveFlatApplicationById(
       flatApplicationMaps,
       applicationId,
