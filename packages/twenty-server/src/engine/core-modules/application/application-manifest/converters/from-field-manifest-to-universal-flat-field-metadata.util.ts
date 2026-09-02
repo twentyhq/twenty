@@ -100,16 +100,20 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     writability: fieldManifest.writability ?? MetadataWritability.OPEN,
     isNullable: fieldManifest.isNullable ?? true,
     isUnique: fieldManifest.isUnique ?? false,
-    // The object-create side effect provisions a searchFieldMetadata row for
-    // the label identifier of searchable objects, so the manifest must declare
-    // it searchable by default or every re-sync would diff isSearchable and
-    // drop that row. A non-searchable object gets no row, so its label must
-    // not default to searchable or the sync would fail validation.
+    // Tri-state: an explicit manifest value wins; the label identifier of a
+    // searchable object defaults to true (the object-create side effect
+    // provisions its row, so both sides must agree or every re-sync would
+    // diff isSearchable and drop that row); anything else resolves to null,
+    // meaning unspecified — the sync comparison preserves the workspace's
+    // current state instead of force-reverting it, which is what keeps a
+    // relabel additive (the previous label identifier stays searchable).
     isSearchable:
       fieldManifest.isSearchable ??
       ((objectIsSearchable ?? true) &&
-        fieldManifest.universalIdentifier ===
-          objectLabelIdentifierFieldMetadataUniversalIdentifier),
+      fieldManifest.universalIdentifier ===
+        objectLabelIdentifierFieldMetadataUniversalIdentifier
+        ? true
+        : null),
     isLabelSyncedWithName: false,
     morphId:
       fieldManifest.type === FieldMetadataType.MORPH_RELATION
