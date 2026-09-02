@@ -8,9 +8,9 @@ import {
 } from 'src/logic-functions/constants/slack-connection-health';
 import { fetchCurrentWorkspaceId } from 'src/logic-functions/utils/fetch-current-workspace-id';
 import { findClaimedWorkspaceId } from 'src/logic-functions/utils/find-claimed-workspace-id';
+import { getSlackApiErrorCode } from 'src/logic-functions/utils/get-slack-api-error-code';
 import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
 import { readSlackRosterMatchOutcome } from 'src/logic-functions/utils/read-slack-roster-match-outcome';
-import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 const SLACK_AUTH_ERROR_CODES = [
   'invalid_auth',
@@ -44,9 +44,12 @@ export const slackConnectionStatusHandler =
 
       installedTeamId = authResult.team_id;
     } catch (error) {
-      const errorMessage = toErrorMessage(error);
+      const slackErrorCode = getSlackApiErrorCode(error);
 
-      if (SLACK_AUTH_ERROR_CODES.some((code) => errorMessage.includes(code))) {
+      if (
+        isNonEmptyString(slackErrorCode) &&
+        SLACK_AUTH_ERROR_CODES.includes(slackErrorCode)
+      ) {
         return {
           success: true,
           isConnected: true,
@@ -88,10 +91,15 @@ export const slackConnectionStatusHandler =
       };
     }
 
-    if (
-      isNonEmptyString(currentWorkspaceId) &&
-      claimedWorkspaceId !== currentWorkspaceId
-    ) {
+    if (!isNonEmptyString(currentWorkspaceId)) {
+      return {
+        success: true,
+        isConnected: true,
+        hasRosterMatchFailed: rosterMatchOutcome?.isSuccessful === false,
+      };
+    }
+
+    if (claimedWorkspaceId !== currentWorkspaceId) {
       return {
         success: true,
         isConnected: true,

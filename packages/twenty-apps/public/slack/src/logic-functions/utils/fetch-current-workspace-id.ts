@@ -1,6 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
+
 export const fetchCurrentWorkspaceId = async (): Promise<
   string | undefined
 > => {
@@ -14,7 +16,7 @@ export const fetchCurrentWorkspaceId = async (): Promise<
     return isNonEmptyString(workspaceId) ? workspaceId : undefined;
   } catch (error) {
     console.warn(
-      `[slack] failed to read the current workspace id: ${error instanceof Error ? error.message : String(error)}`,
+      `[slack] failed to read the current workspace id: ${toErrorMessage(error)}`,
     );
 
     return undefined;

@@ -80,7 +80,9 @@ describe('slackConnectionStatusHandler', () => {
 
   it('should report a rejected token', async () => {
     authTest.mockRejectedValue(
-      new Error('An API error occurred: invalid_auth'),
+      Object.assign(new Error('An API error occurred: invalid_auth'), {
+        data: { ok: false, error: 'invalid_auth' },
+      }),
     );
 
     await expect(slackConnectionStatusHandler()).resolves.toEqual({
@@ -130,14 +132,13 @@ describe('slackConnectionStatusHandler', () => {
     });
   });
 
-  it('should stay quiet when the current workspace id is unknown', async () => {
+  it('should not claim any health when the current workspace id is unknown', async () => {
     vi.mocked(fetchCurrentWorkspaceId).mockResolvedValue(undefined);
     vi.mocked(findClaimedWorkspaceId).mockResolvedValue('workspace-2');
 
     await expect(slackConnectionStatusHandler()).resolves.toEqual({
       success: true,
       isConnected: true,
-      connectionHealth: 'ok',
       hasRosterMatchFailed: false,
     });
   });
