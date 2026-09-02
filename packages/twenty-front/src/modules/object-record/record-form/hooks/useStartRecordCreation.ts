@@ -1,10 +1,9 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { RECORD_CREATION_FORM_MODAL_ID } from '@/object-record/record-form/components/RecordCreationFormModal';
 import { useRecordFormFieldMetadataItems } from '@/object-record/record-form/hooks/useRecordFormFieldMetadataItems';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useCallback, useState } from 'react';
+import { useCallback, useId, useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -17,6 +16,10 @@ export const useStartRecordCreation = ({
   onCreateRecord: (recordInput?: Partial<ObjectRecord>) => Promise<void>;
 }) => {
   const { openModal } = useModal();
+
+  // Several record tables can share one page layout, so a module-level modal id
+  // would open every mounted form at once.
+  const recordCreationFormModalId = `record-creation-form-modal-${useId()}`;
 
   const [pendingRecordInput, setPendingRecordInput] = useState<
     Partial<ObjectRecord> | undefined
@@ -44,17 +47,23 @@ export const useStartRecordCreation = ({
         // A new key remounts the modal, which is what discards the previous
         // draft and every field input's own internal value.
         setRecordCreationFormKey(v4());
-        openModal(RECORD_CREATION_FORM_MODAL_ID);
+        openModal(recordCreationFormModalId);
 
         return;
       }
 
       await onCreateRecord(recordInput);
     },
-    [onCreateRecord, openModal, shouldOpenRecordCreationForm],
+    [
+      onCreateRecord,
+      openModal,
+      recordCreationFormModalId,
+      shouldOpenRecordCreationForm,
+    ],
   );
 
   return {
+    recordCreationFormModalId,
     startRecordCreation,
     shouldOpenRecordCreationForm,
     pendingRecordInput,

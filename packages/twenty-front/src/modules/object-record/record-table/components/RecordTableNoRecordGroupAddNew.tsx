@@ -75,6 +75,7 @@ export const RecordTableNoRecordGroupAddNew = () => {
   );
 
   const {
+    recordCreationFormModalId,
     startRecordCreation,
     shouldOpenRecordCreationForm,
     pendingRecordInput,
@@ -87,6 +88,7 @@ export const RecordTableNoRecordGroupAddNew = () => {
   const recordCreationFormModal = shouldOpenRecordCreationForm ? (
     <RecordCreationFormModal
       key={recordCreationFormKey}
+      modalInstanceId={recordCreationFormModalId}
       objectMetadataItem={objectMetadataItem}
       initialDraftRecord={pendingRecordInput}
       onSubmit={handleCreateRecord}

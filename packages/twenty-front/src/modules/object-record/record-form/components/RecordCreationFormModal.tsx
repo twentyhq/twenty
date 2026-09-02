@@ -12,8 +12,6 @@ import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
 
-export const RECORD_CREATION_FORM_MODAL_ID = 'record-creation-form-modal';
-
 const StyledFooter = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
@@ -22,12 +20,14 @@ const StyledFooter = styled.div`
 `;
 
 type RecordCreationFormModalProps = {
+  modalInstanceId: string;
   objectMetadataItem: EnrichedObjectMetadataItem;
   initialDraftRecord?: Partial<ObjectRecord>;
   onSubmit: (draftRecord: Partial<ObjectRecord>) => void;
 };
 
 export const RecordCreationFormModal = ({
+  modalInstanceId,
   objectMetadataItem,
   initialDraftRecord,
   onSubmit,
@@ -57,17 +57,17 @@ export const RecordCreationFormModal = ({
   };
 
   const handleCancelClick = () => {
-    closeModal(RECORD_CREATION_FORM_MODAL_ID);
+    closeModal(modalInstanceId);
   };
 
   const handleCreateClick = () => {
-    closeModal(RECORD_CREATION_FORM_MODAL_ID);
+    closeModal(modalInstanceId);
     onSubmit(draftRecord);
   };
 
   return (
     <ModalStatefulWrapper
-      modalInstanceId={RECORD_CREATION_FORM_MODAL_ID}
+      modalInstanceId={modalInstanceId}
       isClosable={true}
       padding="large"
       overlay="dark"
