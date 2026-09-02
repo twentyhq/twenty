@@ -1,4 +1,5 @@
 import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay';
+import { useRefetchOnApplicationRegistrationChange } from '@/applications/hooks/useRefetchOnApplicationRegistrationChange';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
@@ -16,7 +17,7 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useContext, useState } from 'react';
-import { useDebounce } from 'use-debounce';
+import { useDebounce, useDebouncedCallback } from 'use-debounce';
 import {
   assertUnreachable,
   getSettingsPath,
@@ -53,6 +54,7 @@ const StyledShowMoreContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[2]};
 `;
 
+const REGISTRATION_REFETCH_DEBOUNCE_MS = 500;
 const TABLE_GRID = '1fr 100px 100px 100px 40px';
 const TABLE_GRID_MOBILE = '3fr 3fr 1fr 1fr 40px';
 const PAGE_SIZE = 25;
@@ -83,7 +85,7 @@ export const SettingsAdminApps = () => {
     boolean | undefined
   >(undefined);
 
-  const { data, loading, fetchMore } = useQuery(
+  const { data, loading, fetchMore, refetch } = useQuery(
     FindAllApplicationRegistrationsDocument,
     {
       client: apolloAdminClient,
@@ -100,6 +102,21 @@ export const SettingsAdminApps = () => {
       },
     },
   );
+
+  const registrationsCount =
+    data?.findAllApplicationRegistrations.registrations.length ?? 0;
+
+  const refetchRegistrations = useDebouncedCallback(() => {
+    if (registrationsCount > PAGE_SIZE) {
+      return;
+    }
+
+    refetch();
+  }, REGISTRATION_REFETCH_DEBOUNCE_MS);
+
+  useRefetchOnApplicationRegistrationChange({
+    refetch: refetchRegistrations,
+  });
 
   const toggleSourceTypeFilter = (
     sourceType: ApplicationRegistrationSourceType,

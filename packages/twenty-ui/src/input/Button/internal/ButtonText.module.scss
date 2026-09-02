@@ -12,21 +12,25 @@ $base-transition-timing: 300ms;
 .text {
   clip-path: inset(0 0 0 0);
   overflow: hidden;
+  padding-right: 0;
   transform: none;
   transition:
     transform $base-transition-timing ease,
-    clip-path $base-transition-timing ease;
+    clip-path $base-transition-timing ease,
+    padding-right $base-transition-timing ease;
   transition-delay: $base-transition-timing * 0.25;
   white-space: nowrap;
 
   &[data-loading] {
     clip-path: inset(0 var(--t-spacing-12) 0 0);
+    padding-right: var(--t-spacing-12);
     transform: translateX(var(--t-spacing-7));
     transition-delay: 0ms;
   }
 
   &[data-loading][data-has-icon] {
     clip-path: inset(0 var(--t-spacing-6) 0 0);
+    padding-right: var(--t-spacing-6);
     transform: translateX(var(--t-spacing-3));
   }
 }

@@ -14,6 +14,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { useRefetchOnApplicationLifecycleSettled } from '@/applications/hooks/useRefetchOnApplicationLifecycleSettled';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -57,7 +58,7 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
 
   const applicationRegistrationId = registration.id;
 
-  const { data, loading, error, fetchMore } = useQuery(
+  const { data, loading, error, fetchMore, refetch } = useQuery(
     FindAdminApplicationRegistrationInstalledWorkspacesDocument,
     {
       client: apolloAdminClient,
@@ -70,6 +71,8 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
       skip: !applicationRegistrationId,
     },
   );
+
+  useRefetchOnApplicationLifecycleSettled({ refetch });
 
   const result = data?.findAdminApplicationRegistrationInstalledWorkspaces;
   const workspaces = result?.workspaces ?? [];

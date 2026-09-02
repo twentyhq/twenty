@@ -10,6 +10,7 @@ import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 import { FindAdminApplicationRegistrationStatsDocument } from '~/generated-admin/graphql';
 import { useQuery } from '@apollo/client/react';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { useRefetchOnApplicationLifecycleSettled } from '@/applications/hooks/useRefetchOnApplicationLifecycleSettled';
 
 export const SettingsApplicationRegistrationInstallStats = ({
   registration,
@@ -21,11 +22,16 @@ export const SettingsApplicationRegistrationInstallStats = ({
 
   const applicationRegistrationId = registration.id;
 
-  const { data } = useQuery(FindAdminApplicationRegistrationStatsDocument, {
-    client: apolloAdminClient,
-    variables: { id: applicationRegistrationId },
-    skip: !applicationRegistrationId,
-  });
+  const { data, refetch } = useQuery(
+    FindAdminApplicationRegistrationStatsDocument,
+    {
+      client: apolloAdminClient,
+      variables: { id: applicationRegistrationId },
+      skip: !applicationRegistrationId,
+    },
+  );
+
+  useRefetchOnApplicationLifecycleSettled({ refetch });
 
   const stats = data?.findAdminApplicationRegistrationStats;
 
