@@ -6,6 +6,18 @@ import { QUOTE_HEADER_PATTERNS } from 'src/modules/messaging/message-import-mana
 const QUOTE_HEADER_WINDOW_LINES = 4;
 const CARET_LINE = /^\s*>/;
 const BARE_LINK_LINE = /\(https?:\/\//;
+const SPACE_STUFFED_LINE = /^ (>|From )/;
+const CARET_LINES_MAKING_A_QUOTE = 3;
+
+// RFC 3676 has senders prefix a space to any line opening with ">" or "From ".
+const removeSpaceStuffing = (text: string): string =>
+  text
+    .split('\n')
+    .map((line) => (SPACE_STUFFED_LINE.test(line) ? line.slice(1) : line))
+    .join('\n');
+
+const countCaretLines = (lines: string[]): number =>
+  lines.filter((line) => CARET_LINE.test(line)).length;
 
 const removeCaretQuotedFragments = (text: string): string => {
   const withoutQuotations = new EmailReplyParser()
@@ -49,13 +61,23 @@ const splitTrailingAttribution = (line: string): string[] => {
   return [line.slice(0, attribution.index), line.slice(attribution.index)];
 };
 
-const isQuoteHeaderAt = (lines: string[], index: number): boolean =>
-  QUOTE_HEADER_PATTERNS.headerField.test(lines[index]) ||
-  QUOTE_HEADER_PATTERNS.originalMessageBanner.test(lines[index]) ||
-  QUOTE_HEADER_PATTERNS.datePersonAttribution.test(lines[index]) ||
-  QUOTE_HEADER_PATTERNS.wroteAttribution.test(
-    lines.slice(index, index + QUOTE_HEADER_WINDOW_LINES).join('\n'),
+const withoutCaretPrefix = (line: string): string =>
+  line.replace(/^\s*>+ ?/, '');
+
+const isQuoteHeaderAt = (lines: string[], index: number): boolean => {
+  const line = withoutCaretPrefix(lines[index]);
+  const window = lines
+    .slice(index, index + QUOTE_HEADER_WINDOW_LINES)
+    .map(withoutCaretPrefix)
+    .join('\n');
+
+  return (
+    QUOTE_HEADER_PATTERNS.headerField.test(line) ||
+    QUOTE_HEADER_PATTERNS.originalMessageBanner.test(line) ||
+    QUOTE_HEADER_PATTERNS.datePersonAttribution.test(line) ||
+    QUOTE_HEADER_PATTERNS.wroteAttribution.test(window)
   );
+};
 
 const findQuoteHeaderIndex = (lines: string[]): number => {
   for (let index = 0; index < lines.length; index++) {
@@ -99,7 +121,8 @@ const endsInsideCaretQuoting = (lines: string[]): boolean => {
   return lastWrittenLine !== undefined && CARET_LINE.test(lastWrittenLine);
 };
 
-export const stripQuotedHistory = (text: string): string => {
+export const stripQuotedHistory = (rawText: string): string => {
+  const text = removeSpaceStuffing(rawText);
   const lines = maskWrappedLinks(text)
     .split('\n')
     .flatMap(splitTrailingAttribution);
@@ -111,7 +134,8 @@ export const stripQuotedHistory = (text: string): string => {
   const quoteHeaderIndex = findQuoteHeaderIndex(lines);
 
   if (quoteHeaderIndex === -1) {
-    return endsInsideCaretQuoting(lines)
+    return endsInsideCaretQuoting(lines) ||
+      countCaretLines(lines) >= CARET_LINES_MAKING_A_QUOTE
       ? removeCaretQuotedFragments(text).trim()
       : text.trim();
   }

@@ -4,9 +4,12 @@ import sanitizeHtml from 'sanitize-html';
 import { HTML_QUOTE_SELECTORS } from 'src/modules/messaging/message-import-manager/utils/html-quote-selectors.constant';
 import { normalizeMessageText } from 'src/modules/messaging/message-import-manager/utils/normalize-message-text.util';
 
-const QUOTE_MARKER = '\uE000';
-const REPEATED_QUOTE_MARKER = '\uE001';
-const ALL_QUOTE_MARKERS = /[\uE000\uE001]/g;
+const QUOTE_OPEN = '\uE000';
+const QUOTE_CLOSE = '\uE001';
+const SPLITTER = '\uE002';
+const REPEATED_SPLITTER = '\uE003';
+const ALL_MARKERS = /[\uE000\uE001\uE002\uE003]/g;
+const QUOTED_CONTAINER = /\uE000[\s\S]*?\uE001/g;
 
 const TEXT_SHAPING_TAGS = [
   'a',
@@ -86,7 +89,17 @@ const SANITIZE_OPTIONS = {
   nonTextTags: TAGS_CARRYING_NO_BODY_TEXT,
 } satisfies sanitizeHtml.IOptions;
 
-const buildQuoteMarkerFormatter =
+const wrapQuoteContainer = (
+  element: { children: unknown[] },
+  walk: (children: unknown[], builder: unknown) => void,
+  builder: { addInline: (text: string) => void },
+): void => {
+  builder.addInline(QUOTE_OPEN);
+  walk(element.children, builder);
+  builder.addInline(QUOTE_CLOSE);
+};
+
+const buildSplitterFormatter =
   (marker: string) =>
   (
     element: { children: unknown[] },
@@ -103,16 +116,21 @@ const CONVERT_OPTIONS = {
   selectors: [
     ...HTML_QUOTE_SELECTORS.quoteContainers.map((selector) => ({
       selector,
-      format: 'quoteMarker',
+      format: 'quoteContainer',
     })),
-    ...HTML_QUOTE_SELECTORS.repeatedQuoteContainers.map((selector) => ({
+    ...HTML_QUOTE_SELECTORS.quoteSplitters.map((selector) => ({
       selector,
-      format: 'repeatedQuoteMarker',
+      format: 'quoteSplitter',
+    })),
+    ...HTML_QUOTE_SELECTORS.repeatedQuoteSplitters.map((selector) => ({
+      selector,
+      format: 'repeatedQuoteSplitter',
     })),
   ],
   formatters: {
-    quoteMarker: buildQuoteMarkerFormatter(QUOTE_MARKER),
-    repeatedQuoteMarker: buildQuoteMarkerFormatter(REPEATED_QUOTE_MARKER),
+    quoteContainer: wrapQuoteContainer,
+    quoteSplitter: buildSplitterFormatter(SPLITTER),
+    repeatedQuoteSplitter: buildSplitterFormatter(REPEATED_SPLITTER),
   },
 } as HtmlToTextOptions;
 
@@ -122,32 +140,43 @@ const removeNonTextMarkup = (html: string): string =>
 const renderTextWithQuoteMarkers = (safeHtml: string): string =>
   convert(safeHtml, CONVERT_OPTIONS);
 
-const findQuoteMarkerIndex = (text: string): number => {
-  const firstQuote = text.indexOf(QUOTE_MARKER);
-  const firstRepeated = text.indexOf(REPEATED_QUOTE_MARKER);
+const removeQuoteContainers = (text: string): string => {
+  const withoutContainers = text.replace(QUOTED_CONTAINER, '');
+
+  return withoutContainers.replace(ALL_MARKERS, '').trim() === ''
+    ? text
+    : withoutContainers;
+};
+
+const findSplitterIndex = (text: string): number => {
+  const firstSplitter = text.indexOf(SPLITTER);
+  const firstRepeated = text.indexOf(REPEATED_SPLITTER);
   const secondRepeated =
     firstRepeated === -1
       ? -1
-      : text.indexOf(REPEATED_QUOTE_MARKER, firstRepeated + 1);
+      : text.indexOf(REPEATED_SPLITTER, firstRepeated + 1);
 
-  const markerIndexes = [firstQuote, secondRepeated].filter(
+  const splitterIndexes = [firstSplitter, secondRepeated].filter(
     (index) => index !== -1,
   );
 
-  return markerIndexes.length === 0 ? -1 : Math.min(...markerIndexes);
+  return splitterIndexes.length === 0 ? -1 : Math.min(...splitterIndexes);
 };
 
-const cutAtQuoteMarker = (text: string): string => {
-  const markerIndex = findQuoteMarkerIndex(text);
-  const beforeMarker = markerIndex === -1 ? text : text.slice(0, markerIndex);
+const cutAtSplitter = (text: string): string => {
+  const splitterIndex = findSplitterIndex(text);
+  const beforeSplitter =
+    splitterIndex === -1 ? text : text.slice(0, splitterIndex);
 
-  return (beforeMarker.trim() === '' ? text : beforeMarker).replace(
-    ALL_QUOTE_MARKERS,
-    '',
-  );
+  return beforeSplitter.replace(ALL_MARKERS, '').trim() === ''
+    ? text
+    : beforeSplitter;
 };
+
+const removeQuotedMarkup = (text: string): string =>
+  cutAtSplitter(removeQuoteContainers(text)).replace(ALL_MARKERS, '');
 
 export const convertHtmlToText = (html: string): string =>
   normalizeMessageText(
-    cutAtQuoteMarker(renderTextWithQuoteMarkers(removeNonTextMarkup(html))),
+    removeQuotedMarkup(renderTextWithQuoteMarkers(removeNonTextMarkup(html))),
   );

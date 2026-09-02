@@ -355,6 +355,46 @@ Developer Support`);
     expect(result).toBe('> The entire forwarded body.');
   });
 
+  it('should keep a signature written after a gmail quote', () => {
+    const result = extractMessageBodyText({
+      html: '<div>Sounds good.</div><div class="gmail_quote"><div>On Mon Bob wrote:</div><div>can we move it?</div></div><div>Regards, me</div>',
+    });
+
+    expect(result).toBe('Sounds good.\n\nRegards, me');
+  });
+
+  it('should keep a disclaimer written after an Outlook for Mac quote', () => {
+    const result = extractMessageBodyText({
+      html: '<div>Sounds good.</div><div id="OLK_SRC_BODY_SECTION"><div>can we move it?</div></div><div>Confidentiality notice</div>',
+    });
+
+    expect(result).toBe('Sounds good.\n\nConfidentiality notice');
+  });
+
+  it('should strip space stuffed quoting, which RFC 3676 senders emit', () => {
+    const result = extractMessageBodyText({
+      text: 'Sounds good.\n\n > can we move it?\n > next week?',
+    });
+
+    expect(result).toBe('Sounds good.');
+  });
+
+  it('should strip a quote whose attribution is itself quoted', () => {
+    const result = extractMessageBodyText({
+      text: 'Sounds good.\n\n> On Mon, Aug 4, 2026 at 9:14 AM Bob <bob@example.com> wrote:\n> can we move it?\n\nRegards, me',
+    });
+
+    expect(result).toBe('Sounds good.\nRegards, me');
+  });
+
+  it('should strip a German attribution, which names the sender after the verb', () => {
+    const result = extractMessageBodyText({
+      text: 'Sounds good.\n\nAm 04.08.2026 um 09:14 schrieb Bob <bob@example.com>:\ncan we move it?\n\nRegards, me',
+    });
+
+    expect(result).toBe('Sounds good.');
+  });
+
   it('should strip a bare blockquote quote that carries no header line', () => {
     const result = extractMessageBodyText({
       html: '<div>My actual reply.</div><blockquote type="cite"><p>The older message body.</p></blockquote>',

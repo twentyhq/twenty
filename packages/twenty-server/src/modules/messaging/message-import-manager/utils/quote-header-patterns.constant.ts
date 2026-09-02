@@ -68,7 +68,7 @@ export const QUOTE_HEADER_PATTERNS = {
   ),
   forwardedBanner: /^\s*-{2,}\s*Forwarded message\s*-{2,}/i,
   wroteAttribution: new RegExp(
-    `^\\s*-*\\s*(${WROTE_OPENERS})\\s[\\s\\S]{0,300}?(${WROTE_VERBS})\\s?(?::|-{2,})`,
+    `^\\s*-*\\s*(${WROTE_OPENERS})\\s[\\s\\S]{0,300}?(${WROTE_VERBS})[^\\n]{0,120}?(?::|-{2,})\\s*(?:\\n|$)`,
     'i',
   ),
   wroteAttributionEndingLine: new RegExp(
