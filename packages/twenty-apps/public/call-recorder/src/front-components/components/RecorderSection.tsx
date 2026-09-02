@@ -1,7 +1,6 @@
 import { isUndefined } from '@sniptt/guards';
 import { useId, useState } from 'react';
 import { Section } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { H2Title } from 'twenty-ui/typography';
 
@@ -10,6 +9,7 @@ import { LabelledSettingsField } from 'src/front-components/components/LabelledS
 import { SettingsOptionCardContentSelect } from 'src/front-components/components/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentToggle } from 'src/front-components/components/SettingsOptionCardContentToggle';
 import { StyledDimmable } from 'src/front-components/components/StyledDimmable';
+import { StyledSettingsCard } from 'src/front-components/components/StyledSettingsCard';
 import { StyledSettingsSectionStack } from 'src/front-components/components/StyledSettingsSectionStack';
 import { StyledSettingsTextInput } from 'src/front-components/components/StyledSettingsTextInput';
 import { TileBackgroundControl } from 'src/front-components/components/TileBackgroundControl';
@@ -139,7 +139,7 @@ export const RecorderSection = ({
             onChange={(event) => handleNameChange(event.target.value)}
           />
         </LabelledSettingsField>
-        <Card rounded fullWidth>
+        <StyledSettingsCard>
           <SettingsOptionCardContentToggle
             Icon={CALL_RECORDER_USE_WORKSPACE_LOGO_ROW.Icon}
             title={CALL_RECORDER_USE_WORKSPACE_LOGO_ROW.title}
@@ -148,25 +148,22 @@ export const RecorderSection = ({
             checked={isWorkspaceLogoEnabled}
             onChange={handleWorkspaceLogoChange}
           />
-          <StyledDimmable $dimmed={!isWorkspaceLogoEnabled}>
-            <SettingsOptionCardContentSelect
-              Icon={CALL_RECORDER_TILE_BACKGROUND_ROW.Icon}
-              title={CALL_RECORDER_TILE_BACKGROUND_ROW.title}
-              description={CALL_RECORDER_TILE_BACKGROUND_ROW.description}
-            >
-              <TileBackgroundControl
-                swatchColor={swatchColor}
-                selectedColor={
-                  isCustomHexSelected ? undefined : selectedTileColor
-                }
-                isCustomSelected={isCustomHexSelected}
-                disabled={!isWorkspaceLogoEnabled}
-                onSelectColor={handleSelectTileColor}
-                onSelectCustom={() => setIsCustomHexOverride(true)}
-              />
-            </SettingsOptionCardContentSelect>
-          </StyledDimmable>
-        </Card>
+          <SettingsOptionCardContentSelect
+            Icon={CALL_RECORDER_TILE_BACKGROUND_ROW.Icon}
+            title={CALL_RECORDER_TILE_BACKGROUND_ROW.title}
+            description={CALL_RECORDER_TILE_BACKGROUND_ROW.description}
+            isDimmed={!isWorkspaceLogoEnabled}
+          >
+            <TileBackgroundControl
+              swatchColor={swatchColor}
+              selectedColor={isCustomHexSelected ? undefined : selectedTileColor}
+              isCustomSelected={isCustomHexSelected}
+              disabled={!isWorkspaceLogoEnabled}
+              onSelectColor={handleSelectTileColor}
+              onSelectCustom={() => setIsCustomHexOverride(true)}
+            />
+          </SettingsOptionCardContentSelect>
+        </StyledSettingsCard>
         {isCustomHexSelected && (
           <StyledDimmable $dimmed={!isWorkspaceLogoEnabled}>
             <LabelledSettingsField

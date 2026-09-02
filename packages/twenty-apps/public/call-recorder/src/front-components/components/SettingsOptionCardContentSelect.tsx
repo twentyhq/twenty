@@ -25,6 +25,7 @@ type SettingsOptionCardContentSelectProps = {
   title: React.ReactNode;
   description?: string;
   divider?: boolean;
+  isDimmed?: boolean;
   children?: React.ReactNode;
 };
 
@@ -33,10 +34,11 @@ export const SettingsOptionCardContentSelect = ({
   title,
   description,
   divider,
+  isDimmed = false,
   children,
 }: SettingsOptionCardContentSelectProps) => (
   <>
-    <StyledSettingsCardContent>
+    <StyledSettingsCardContent $isDimmed={isDimmed}>
       {Icon && (
         <StyledSettingsCardIcon>
           <SettingsOptionIconCustomizer Icon={Icon} />

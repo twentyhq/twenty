@@ -1,17 +1,12 @@
 import styled from '@emotion/styled';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-type StyledCardContentProps = {
-  $alignItems?: 'center' | 'flex-start';
-  $fullHeight?: boolean;
-};
-
-export const StyledSettingsCardContent = styled.div<StyledCardContentProps>`
-  align-items: ${({ $alignItems }) => $alignItems ?? 'center'};
+export const StyledSettingsCardContent = styled.div<{ $isDimmed?: boolean }>`
+  align-items: center;
   background-color: ${() => themeCssVariables.background.secondary};
   display: flex;
   gap: ${() => themeCssVariables.spacing[3]};
-  height: ${({ $fullHeight }) => ($fullHeight ? '100%' : 'auto')};
+  opacity: ${({ $isDimmed }) => ($isDimmed ? 0.72 : 1)};
   padding: ${() => themeCssVariables.spacing[4]};
 `;
 

@@ -1,12 +1,12 @@
 import { useId } from 'react';
 import { Section } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
 import { H2Title } from 'twenty-ui/typography';
 
 import { LabelledSettingsField } from 'src/front-components/components/LabelledSettingsField';
 import { SettingsOptionCardContentSelect } from 'src/front-components/components/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentToggle } from 'src/front-components/components/SettingsOptionCardContentToggle';
 import { StyledDimmable } from 'src/front-components/components/StyledDimmable';
+import { StyledSettingsCard } from 'src/front-components/components/StyledSettingsCard';
 import { StyledSettingsSectionStack } from 'src/front-components/components/StyledSettingsSectionStack';
 import { StyledSettingsTextArea } from 'src/front-components/components/StyledSettingsTextArea';
 import { TranscriptProviderControl } from 'src/front-components/components/TranscriptProviderControl';
@@ -106,7 +106,7 @@ export const TranscriptionSection = ({
         description="What happens to a recording once the call ends."
       />
       <StyledSettingsSectionStack>
-        <Card rounded fullWidth>
+        <StyledSettingsCard>
           <SettingsOptionCardContentSelect
             Icon={CALL_RECORDER_TRANSCRIPT_PROVIDER_ROW.Icon}
             title={CALL_RECORDER_TRANSCRIPT_PROVIDER_ROW.title}
@@ -126,7 +126,7 @@ export const TranscriptionSection = ({
             checked={isSummaryEnabled}
             onChange={handleSummaryEnabledChange}
           />
-        </Card>
+        </StyledSettingsCard>
         <StyledDimmable $dimmed={!isSummaryEnabled}>
           <LabelledSettingsField
             label={CALL_RECORDER_SUMMARY_PROMPT_FIELD.label}

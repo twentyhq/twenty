@@ -16,6 +16,7 @@ const StyledExternalContainer = styled.div`
 const StyledScrollableContainer = styled.div`
   box-sizing: border-box;
   display: flex;
+  min-height: 0;
   overflow-y: auto;
   scrollbar-color: ${() => themeCssVariables.border.color.medium} transparent;
   scrollbar-width: thin;
