@@ -29,6 +29,10 @@ const StyledName = styled.div`
   min-width: 0;
 `;
 
+const StyledNoEmail = styled.span`
+  color: ${() => themeCssVariables.font.color.tertiary};
+`;
+
 const StyledMemberCell = styled.div`
   align-items: center;
   display: flex;
@@ -105,13 +109,11 @@ export const UnlinkedSlackUserRow = ({
         </StyledIdentity>
       </SlackTableCell>
       <SlackTableCell>
-        <OverflowingTextWithTooltip
-          text={
-            isNonEmptyString(slackUser.email)
-              ? slackUser.email
-              : slackUser.slackUserId
-          }
-        />
+        {isNonEmptyString(slackUser.email) ? (
+          <OverflowingTextWithTooltip text={slackUser.email} />
+        ) : (
+          <StyledNoEmail>No confirmed email</StyledNoEmail>
+        )}
       </SlackTableCell>
       <SlackTableCell>
         <StyledMemberCell>
