@@ -9,10 +9,9 @@ import { collectSlackRosterMembers } from 'src/logic-functions/utils/collect-sla
 import { currentUserHasRolesPermission } from 'src/logic-functions/utils/current-user-has-roles-permission';
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
-import { getSlackRosterMemberDisplayName } from 'src/logic-functions/utils/get-slack-roster-member-display-name';
-import { getVouchedSlackRosterEmail } from 'src/logic-functions/utils/get-vouched-slack-roster-email';
 import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
+import { toSlackUserSearchOption } from 'src/logic-functions/utils/to-slack-user-search-option';
 
 const MAX_RESULTS = 10;
 const MAX_PAGES = 3;
@@ -82,15 +81,12 @@ export const slackSearchUsersHandler = async (
 
     return {
       success: true,
-      slackUsers: members.map((member) => ({
-        slackUserId: member.id,
-        slackTeamId: installedTeamId,
-        displayName: getSlackRosterMemberDisplayName(member),
-        email: getVouchedSlackRosterEmail({
+      slackUsers: members.map((member) =>
+        toSlackUserSearchOption({
           member,
           installedSlackTeamId: installedTeamId,
         }),
-      })),
+      ),
     };
   } catch (error) {
     return {

@@ -7,9 +7,8 @@ import { currentUserHasRolesPermission } from 'src/logic-functions/utils/current
 import { collectSlackRosterMembers } from 'src/logic-functions/utils/collect-slack-roster-members';
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
-import { getSlackRosterMemberDisplayName } from 'src/logic-functions/utils/get-slack-roster-member-display-name';
-import { getVouchedSlackRosterEmail } from 'src/logic-functions/utils/get-vouched-slack-roster-email';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
+import { toSlackUserSearchOption } from 'src/logic-functions/utils/to-slack-user-search-option';
 
 const MAX_UNLINKED_RESULTS = 20;
 
@@ -63,15 +62,12 @@ export const slackListUnlinkedUsersHandler =
 
       return {
         success: true,
-        slackUsers: members.map((member) => ({
-          slackUserId: member.id,
-          slackTeamId: installedTeamId,
-          displayName: getSlackRosterMemberDisplayName(member),
-          email: getVouchedSlackRosterEmail({
+        slackUsers: members.map((member) =>
+          toSlackUserSearchOption({
             member,
             installedSlackTeamId: installedTeamId,
           }),
-        })),
+        ),
         hasMore: isTruncated,
       };
     } catch (error) {
