@@ -10,6 +10,10 @@ type MessageBody = {
   html?: string | null;
 };
 
+// Clients that inline images also paste the Content-ID into the text
+// alternative, where it reads as [cid:image001.png@01DA...] noise.
+const INLINE_IMAGE_REFERENCE = /\[?\bcid:[^\s\]<>"']+\]?/gi;
+
 const readBodyAsText = ({ text, html }: MessageBody): string => {
   if (isNonEmptyString(text)) {
     return text;
@@ -23,7 +27,7 @@ const readBodyAsText = ({ text, html }: MessageBody): string => {
 };
 
 export const extractMessageBodyText = (body: MessageBody): string => {
-  const bodyAsText = readBodyAsText(body);
+  const bodyAsText = readBodyAsText(body).replace(INLINE_IMAGE_REFERENCE, '');
   const withoutQuotedHistory = stripQuotedHistory(bodyAsText);
 
   return normalizeMessageText(sanitizeString(withoutQuotedHistory));

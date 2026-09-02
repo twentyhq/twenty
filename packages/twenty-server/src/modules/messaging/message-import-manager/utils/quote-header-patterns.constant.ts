@@ -16,7 +16,41 @@ const HEADER_FIELD_NAMES = [
   'Gesendet',
   'Verzonden',
   'Enviado',
+  'Enviada em',
   'Inviato',
+  'Kimden',
+  'Gönderen',
+  'Gönderilen',
+  'Lähettäjä',
+  'Lähetetty',
+  'Feladó',
+  'Elküldve',
+  'Odesílatel',
+  'Expeditor',
+  'Nadawca',
+  'Απ[όο]',
+  'От',
+  'Кому',
+  'Тема',
+  'Отправлено',
+  'Дата',
+  'Від',
+  '差出人',
+  '送信者',
+  '送信日時',
+  '宛先',
+  '件名',
+  '发件人',
+  '收件人',
+  '主题',
+  '日期',
+  '寄件者',
+  '收件者',
+  '主旨',
+  '보낸\\s?사람',
+  '받는\\s?사람',
+  '제목',
+  '보낸\\s?날짜',
 ].join('|');
 
 const ORIGINAL_MESSAGE_TITLES = [
@@ -25,9 +59,23 @@ const ORIGINAL_MESSAGE_TITLES = [
   'Ursprüngliche Nachricht',
   'Antwort Nachricht',
   'Oprindelig meddelelse',
+  'Oprindelig Besked',
   "Message d'origine",
+  'Message original',
   'Mensaje original',
+  'Messaggio originale',
+  'Mensagem original',
   'Oorspronkelijk bericht',
+  'Ursprungligt meddelande',
+  'Opprinnelig melding',
+  'Alkuperäinen viesti',
+  'Wiadomość oryginalna',
+  'Orijinal ileti',
+  'Исходное сообщение',
+  '原始邮件',
+  '原始郵件',
+  '元のメッセージ',
+  '원본 메시지',
 ].join('|');
 
 const WROTE_OPENERS = [
@@ -40,8 +88,11 @@ const WROTE_OPENERS = [
   'Op',
   'Den',
   'På',
+  'Vào',
   'W dniu',
   'Dnia',
+  'В',
+  'Il giorno',
 ].join('|');
 
 const WROTE_VERBS = [
@@ -58,23 +109,48 @@ const WROTE_VERBS = [
   'skrev',
   'napisał',
   'pisze',
+  'kirjoitti',
+  'đã viết',
+  'yazdı',
+  'έγραψε',
+  'написал',
+  'писал',
+  'wrote',
 ].join('|');
 
+// Scripts that end an attribution with a fullwidth colon, and that do not open
+// the line with one of the latin keywords above.
+const LOCALIZED_ATTRIBUTION_LINES = [
+  /^\s*在[\s\S]{0,200}?写道[:：]\s*(?:\n|$)/,
+  /^\s*[^\n]{0,200}?於[\s\S]{0,80}?寫道[:：]\s*(?:\n|$)/,
+  /^\s*20\d{2}[\s\S]{0,200}?のメッセージ[:：]\s*(?:\n|$)/,
+  /^\s*[^\n]{0,200}?さん(?:は|が)[\s\S]{0,40}?書きました[:：]\s*(?:\n|$)/,
+  /^\s*20\d{2}[\s\S]{0,200}?작성[:：]\s*(?:\n|$)/,
+  /^\s*[^\n]{0,200}?님이\s[\s\S]{0,40}?작성했습니다[:：]\s*(?:\n|$)/,
+  /^\s*\S{2,4},\s\d{1,2}\s\S{3,12}\s20\d{2}\s?(?:г\.)?[\s\S]{0,120}?(?:написал|писал)(?:\(а\))?[:：]\s*(?:\n|$)/,
+  /^\s*\d{1,2}[./]\d{1,2}[./]\d{2,4}[\s\S]{0,120}?(?:пользователь|написал)[\s\S]{0,80}?[:：]\s*(?:\n|$)/,
+];
+
 export const QUOTE_HEADER_PATTERNS = {
-  headerField: new RegExp(`^\\s*[*]?(${HEADER_FIELD_NAMES})\\s?:[*]?\\s`, 'i'),
+  headerField: new RegExp(
+    `^\\s*[*]?(${HEADER_FIELD_NAMES})\\s?[:：][*]?(\\s|$)`,
+    'i',
+  ),
   originalMessageBanner: new RegExp(
     `^\\s*-{2,}\\s*(${ORIGINAL_MESSAGE_TITLES})\\s*-{2,}`,
     'i',
   ),
-  forwardedBanner: /^\s*-{2,}\s*Forwarded message\s*-{2,}/i,
+  forwardedBanner:
+    /^\s*-{2,}\s*(Forwarded message|Weitergeleitete Nachricht|Message transféré|Mensaje reenviado|Doorgestuurd bericht|Пересылаемое сообщение|転送されたメッセージ|已转发邮件)\s*-{2,}/i,
   wroteAttribution: new RegExp(
-    `^\\s*-*\\s*(${WROTE_OPENERS})\\s[\\s\\S]{0,300}?(${WROTE_VERBS})[^\\n]{0,120}?(?::|-{2,})\\s*(?:\\n|$)`,
+    `^\\s*-*\\s*(${WROTE_OPENERS})\\s[\\s\\S]{0,300}?(${WROTE_VERBS})[^\\n]{0,120}?(?:[:：]|-{2,})\\s*(?:\\n|$)`,
     'i',
   ),
   wroteAttributionEndingLine: new RegExp(
-    `-*\\s*\\b(${WROTE_OPENERS})\\s[^\\n]{0,200}?(${WROTE_VERBS})\\s?:\\s*-*$`,
+    `-*\\s*\\b(${WROTE_OPENERS})\\s[^\\n]{0,200}?(${WROTE_VERBS})\\s?[:：]\\s*-*$`,
     'i',
   ),
+  localizedAttributionLines: LOCALIZED_ATTRIBUTION_LINES,
   datePersonAttribution: /^\s*(\d+\/\d+\/\d+|\d+\.\d+\.\d+).*@/,
   wrappedLink: /<(https?:\/\/[^>]*)>/,
   maskedLink: /@@(https?:\/\/[^>@]*)@@/,

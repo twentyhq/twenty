@@ -75,7 +75,10 @@ const isQuoteHeaderAt = (lines: string[], index: number): boolean => {
     QUOTE_HEADER_PATTERNS.headerField.test(line) ||
     QUOTE_HEADER_PATTERNS.originalMessageBanner.test(line) ||
     QUOTE_HEADER_PATTERNS.datePersonAttribution.test(line) ||
-    QUOTE_HEADER_PATTERNS.wroteAttribution.test(window)
+    QUOTE_HEADER_PATTERNS.wroteAttribution.test(window) ||
+    QUOTE_HEADER_PATTERNS.localizedAttributionLines.some((pattern) =>
+      pattern.test(window),
+    )
   );
 };
 

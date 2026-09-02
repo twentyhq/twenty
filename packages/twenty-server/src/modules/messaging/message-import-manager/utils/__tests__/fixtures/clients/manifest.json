@@ -1,0 +1,98 @@
+[
+  {
+    "client": "ESP",
+    "slug": "esp",
+    "hasHtml": true,
+    "hasText": false,
+    "hasQuote": false,
+    "sizeKb": 2
+  },
+  {
+    "client": "Gmail",
+    "slug": "gmail",
+    "hasHtml": true,
+    "hasText": false,
+    "hasQuote": true,
+    "sizeKb": 1
+  },
+  {
+    "client": "HubSpot",
+    "slug": "hubspot",
+    "hasHtml": true,
+    "hasText": false,
+    "hasQuote": false,
+    "sizeKb": 18
+  },
+  {
+    "client": "IMAP:Apple Mail",
+    "slug": "imap-apple-mail",
+    "hasHtml": true,
+    "hasText": false,
+    "hasQuote": true,
+    "sizeKb": 11
+  },
+  {
+    "client": "IMAP:Gmail",
+    "slug": "imap-gmail",
+    "hasHtml": true,
+    "hasText": true,
+    "hasQuote": true,
+    "sizeKb": 13
+  },
+  {
+    "client": "IMAP:Outlook",
+    "slug": "imap-outlook",
+    "hasHtml": true,
+    "hasText": true,
+    "hasQuote": true,
+    "sizeKb": 6
+  },
+  {
+    "client": "IMAP:Thunderbird",
+    "slug": "imap-thunderbird",
+    "hasHtml": true,
+    "hasText": true,
+    "hasQuote": true,
+    "sizeKb": 35
+  },
+  {
+    "client": "K-9",
+    "slug": "k-9",
+    "hasHtml": true,
+    "hasText": true,
+    "hasQuote": true,
+    "sizeKb": 2
+  },
+  {
+    "client": "Notion Mail",
+    "slug": "notion-mail",
+    "hasHtml": true,
+    "hasText": false,
+    "hasQuote": false,
+    "sizeKb": 7
+  },
+  {
+    "client": "Outlook",
+    "slug": "outlook",
+    "hasHtml": true,
+    "hasText": false,
+    "hasQuote": true,
+    "sizeKb": 3
+  },
+  {
+    "client": "Spark",
+    "slug": "spark",
+    "hasHtml": true,
+    "hasText": false,
+    "hasQuote": false,
+    "sizeKb": 17
+  },
+  {
+    "client": "Zoho",
+    "slug": "zoho",
+    "hasHtml": true,
+    "hasText": false,
+    "hasQuote": false,
+    "sizeKb": 2
+  }
+]
