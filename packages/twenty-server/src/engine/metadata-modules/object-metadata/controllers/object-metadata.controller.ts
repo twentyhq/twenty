@@ -34,6 +34,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-field-metadata-dto.util';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
+import { SearchableFieldMetadataIdsService } from 'src/engine/metadata-modules/flat-search-field-metadata/services/searchable-field-metadata-ids.service';
 import { UniqueFieldMetadataIdsService } from 'src/engine/metadata-modules/index-metadata/services/unique-field-metadata-ids.service';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { type ObjectMetadataWithFieldsDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata-with-fields.dto';
@@ -80,6 +81,7 @@ export class ObjectMetadataController {
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly uniqueFieldMetadataIdsService: UniqueFieldMetadataIdsService,
+    private readonly searchableFieldMetadataIdsService: SearchableFieldMetadataIdsService,
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
@@ -95,18 +97,21 @@ export class ObjectMetadataController {
       request,
     });
 
-    const [fields, uniqueFieldMetadataIds] = await Promise.all([
-      this.findFieldsForObjectIds(
-        workspaceId,
-        items.map((object) => object.id),
-      ),
-      this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
-    ]);
+    const [fields, uniqueFieldMetadataIds, searchableFieldMetadataIds] =
+      await Promise.all([
+        this.findFieldsForObjectIds(
+          workspaceId,
+          items.map((object) => object.id),
+        ),
+        this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
+        this.searchableFieldMetadataIdsService.getForWorkspace(workspaceId),
+      ]);
 
     const data = await this.toObjectWithFieldsDtos({
       objects: items,
       fieldsByObjectId: fields,
       uniqueFieldMetadataIds,
+      searchableFieldMetadataIds,
       locale,
       workspaceId,
     });
@@ -139,17 +144,20 @@ export class ObjectMetadataController {
       );
     }
 
-    const [fields, uniqueFieldMetadataIds] = await Promise.all([
-      this.fieldMetadataRepository.find({
-        where: { objectMetadataId: object.id, workspaceId },
-      }),
-      this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
-    ]);
+    const [fields, uniqueFieldMetadataIds, searchableFieldMetadataIds] =
+      await Promise.all([
+        this.fieldMetadataRepository.find({
+          where: { objectMetadataId: object.id, workspaceId },
+        }),
+        this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
+        this.searchableFieldMetadataIdsService.getForWorkspace(workspaceId),
+      ]);
 
     const [result] = await this.toObjectWithFieldsDtos({
       objects: [object],
       fieldsByObjectId: new Map([[object.id, fields]]),
       uniqueFieldMetadataIds,
+      searchableFieldMetadataIds,
       locale,
       workspaceId,
     });
@@ -169,12 +177,14 @@ export class ObjectMetadataController {
       workspaceId,
     });
 
-    const [fields, uniqueFieldMetadataIds] = await Promise.all([
-      this.fieldMetadataRepository.find({
-        where: { objectMetadataId: flatObject.id, workspaceId },
-      }),
-      this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
-    ]);
+    const [fields, uniqueFieldMetadataIds, searchableFieldMetadataIds] =
+      await Promise.all([
+        this.fieldMetadataRepository.find({
+          where: { objectMetadataId: flatObject.id, workspaceId },
+        }),
+        this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
+        this.searchableFieldMetadataIdsService.getForWorkspace(workspaceId),
+      ]);
 
     const result: ObjectMetadataWithFieldsDTO = {
       ...fromFlatObjectMetadataToObjectMetadataDto(flatObject),
@@ -182,6 +192,7 @@ export class ObjectMetadataController {
         fromFieldMetadataEntityToFieldMetadataDto(
           field,
           uniqueFieldMetadataIds,
+          searchableFieldMetadataIds,
         ),
       ),
     };
@@ -240,12 +251,14 @@ export class ObjectMetadataController {
       workspaceId,
     });
 
-    const [fields, uniqueFieldMetadataIds] = await Promise.all([
-      this.fieldMetadataRepository.find({
-        where: { objectMetadataId: flatObject.id, workspaceId },
-      }),
-      this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
-    ]);
+    const [fields, uniqueFieldMetadataIds, searchableFieldMetadataIds] =
+      await Promise.all([
+        this.fieldMetadataRepository.find({
+          where: { objectMetadataId: flatObject.id, workspaceId },
+        }),
+        this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
+        this.searchableFieldMetadataIdsService.getForWorkspace(workspaceId),
+      ]);
 
     const result: ObjectMetadataWithFieldsDTO = {
       ...fromFlatObjectMetadataToObjectMetadataDto(flatObject),
@@ -253,6 +266,7 @@ export class ObjectMetadataController {
         fromFieldMetadataEntityToFieldMetadataDto(
           field,
           uniqueFieldMetadataIds,
+          searchableFieldMetadataIds,
         ),
       ),
     };
@@ -304,12 +318,14 @@ export class ObjectMetadataController {
     objects,
     fieldsByObjectId,
     uniqueFieldMetadataIds,
+    searchableFieldMetadataIds,
     locale,
     workspaceId,
   }: {
     objects: ObjectMetadataEntity[];
     fieldsByObjectId: Map<string, FieldMetadataEntity[]>;
     uniqueFieldMetadataIds: ReadonlySet<string>;
+    searchableFieldMetadataIds: ReadonlySet<string>;
     locale: keyof typeof APP_LOCALES | undefined;
     workspaceId: string;
   }): Promise<ObjectMetadataWithFieldsDTO[]> {
@@ -349,6 +365,7 @@ export class ObjectMetadataController {
         fromFieldMetadataEntityToFieldMetadataDto(
           field,
           uniqueFieldMetadataIds,
+          searchableFieldMetadataIds,
         ),
       ),
     }));

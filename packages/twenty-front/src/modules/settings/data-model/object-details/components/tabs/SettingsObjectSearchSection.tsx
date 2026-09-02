@@ -20,7 +20,6 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useMemo, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import {
@@ -69,35 +68,41 @@ const INDEXED_FIELDS_GRID_TEMPLATE_COLUMNS = 'minmax(0, 1fr) 148px 40px';
 
 const ADD_SEARCH_FIELD_DROPDOWN_ID = 'settings-object-add-search-field';
 
+// Rows derive from field.isSearchable, which the metadata store updates as
+// soon as the mutation resolves, so the section reacts immediately; the
+// searchFieldMetadata rows only provide the display order, with rows still
+// pending (freshly toggled on) appended at the end.
 const extractIndexedFields = (
   objectMetadataItem: EnrichedObjectMetadataItem,
 ): IndexedFieldEntry[] => {
-  const fieldById = new Map(
-    objectMetadataItem.fields.map((field) => [field.id, field]),
+  const positionByFieldMetadataId = new Map(
+    objectMetadataItem.searchFieldMetadatas.map((searchFieldMetadata) => [
+      searchFieldMetadata.fieldMetadataId,
+      searchFieldMetadata.position,
+    ]),
   );
 
-  return [...objectMetadataItem.searchFieldMetadatas]
-    .sort(
-      (searchFieldMetadataA, searchFieldMetadataB) =>
-        searchFieldMetadataA.position - searchFieldMetadataB.position,
+  return objectMetadataItem.fields
+    .filter(
+      (field) =>
+        field.isSearchable === true && field.name !== SEARCH_VECTOR_FIELD_NAME,
     )
-    .map((searchFieldMetadata) => {
-      const field = fieldById.get(searchFieldMetadata.fieldMetadataId);
-
-      if (!isDefined(field) || field.name === SEARCH_VECTOR_FIELD_NAME) {
-        return undefined;
-      }
-
-      return {
-        id: field.id,
-        label: field.label,
-        icon: field.icon,
-        fieldType: field.type,
-        isLabelIdentifier:
-          objectMetadataItem.labelIdentifierFieldMetadataId === field.id,
-      } satisfies IndexedFieldEntry;
-    })
-    .filter(isDefined);
+    .sort(
+      (fieldA, fieldB) =>
+        (positionByFieldMetadataId.get(fieldA.id) ?? Number.MAX_SAFE_INTEGER) -
+        (positionByFieldMetadataId.get(fieldB.id) ?? Number.MAX_SAFE_INTEGER),
+    )
+    .map(
+      (field) =>
+        ({
+          id: field.id,
+          label: field.label,
+          icon: field.icon,
+          fieldType: field.type,
+          isLabelIdentifier:
+            objectMetadataItem.labelIdentifierFieldMetadataId === field.id,
+        }) satisfies IndexedFieldEntry,
+    );
 };
 
 export const SettingsObjectSearchSection = ({
