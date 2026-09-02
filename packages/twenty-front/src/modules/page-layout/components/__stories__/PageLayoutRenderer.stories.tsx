@@ -265,7 +265,6 @@ const meta: Meta<typeof PageLayoutRenderer> = {
           <CoreClientProviderWrapper>
             <LayoutRenderingProvider
               value={{
-                isInSidePanel: false,
                 layoutType: PageLayoutType.DASHBOARD,
                 targetRecordIdentifier: {
                   targetObjectNameSingular: CoreObjectNameSingular.Dashboard,

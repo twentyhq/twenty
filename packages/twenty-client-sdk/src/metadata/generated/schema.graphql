@@ -515,6 +515,7 @@ type Application {
   logoFileId: UUID
   version: String
   universalIdentifier: String!
+  state: ApplicationState!
   packageJsonChecksum: String
   packageJsonFileId: UUID
   yarnLockChecksum: String
@@ -534,6 +535,13 @@ type Application {
   applicationVariables: [ApplicationVariable!]!
   applicationRegistration: ApplicationRegistrationSummary
   logoUrl: String
+}
+
+enum ApplicationState {
+  INSTALLING
+  INSTALLED
+  UPGRADING
+  UNINSTALLING
 }
 
 type TwoFactorAuthenticationMethodSummary {
@@ -926,6 +934,47 @@ type ApplicationRegistration {
   galleryImagesUrls: [String!]!
 }
 
+type UsageLimit {
+  id: UUID!
+  resourceType: UsageResourceType!
+  operationType: UsageOperationType!
+  spenderType: String!
+  spenderId: String!
+  limitKind: String!
+  windowSeconds: Int!
+  limitValueType: String!
+  limitValue: BigInt!
+  burstValue: BigInt
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum UsageResourceType {
+  AI
+  WORKFLOW
+  APP
+  STORAGE
+  API
+  LOGIC_FUNCTION
+  EMAIL
+}
+
+enum UsageOperationType {
+  AI_CHAT_TOKEN
+  AI_WORKFLOW_TOKEN
+  WORKFLOW_EXECUTION
+  CODE_EXECUTION
+  WEB_SEARCH
+  CALL_RECORDING
+  EMAIL_SEND
+  API_REQUEST
+}
+
+"""
+The `BigInt` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
 type SdkClientChecksums {
   core: String
   metadata: String!
@@ -993,6 +1042,7 @@ enum WidgetType {
   CALL_RECORDING_TRANSCRIPT
   MESSAGE_CAMPAIGN_BODY
   MESSAGE_CAMPAIGN_DETAILS
+  FORM_FIELD
 }
 
 union PageLayoutWidgetPosition = PageLayoutWidgetGridPosition | PageLayoutWidgetVerticalListPosition | PageLayoutWidgetCanvasPosition
@@ -1020,7 +1070,7 @@ type PageLayoutWidgetCanvasPosition {
   layoutMode: PageLayoutTabLayoutMode!
 }
 
-union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
+union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FormFieldConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
 
 type AggregateChartConfiguration {
   configurationType: WidgetConfigurationType!
@@ -1065,6 +1115,7 @@ enum WidgetConfigurationType {
   CALL_RECORDING_TRANSCRIPT
   MESSAGE_CAMPAIGN_BODY
   MESSAGE_CAMPAIGN_DETAILS
+  FORM_FIELD
 }
 
 """Format used to display the chart value"""
@@ -1254,6 +1305,7 @@ type FieldConfiguration {
   fieldDisplayMode: FieldDisplayMode!
   viewId: String
   nestedRelationFieldMetadataId: String
+  isUIEditable: Boolean
 }
 
 """Display mode for field configuration widgets"""
@@ -1274,6 +1326,11 @@ type FieldsConfiguration {
   viewId: String
   newFieldDefaultVisibility: Boolean
   shouldAllowUserToSeeHiddenFields: Boolean
+}
+
+type FormFieldConfiguration {
+  configurationType: WidgetConfigurationType!
+  fieldMetadataId: String!
 }
 
 type FilesConfiguration {
@@ -1300,6 +1357,7 @@ type RecordTableConfiguration {
   configurationType: WidgetConfigurationType!
   viewId: String
   recordLimit: Int
+  isUIEditable: Boolean
 }
 
 type WorkflowConfiguration {
@@ -1342,6 +1400,7 @@ type PageLayout {
   universalIdentifier: UUID!
   applicationId: UUID!
   isSystemSideEffect: Boolean!
+  isFirstTabPinned: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime
@@ -1352,6 +1411,7 @@ enum PageLayoutType {
   RECORD_PAGE
   DASHBOARD
   STANDALONE_PAGE
+  RECORD_FORM
 }
 
 type ApplicationConnectionProviderOAuthConfig {
@@ -1773,46 +1833,31 @@ type ConnectedAccountPublicDTO {
   connectionParameters: PublicImapSmtpCaldavConnectionParameters
 }
 
-type UsageLimit {
-  id: UUID!
-  resourceType: UsageResourceType!
-  operationType: UsageOperationType!
-  spenderType: String!
-  spenderId: String!
-  limitKind: String!
-  windowSeconds: Int!
-  limitValueType: String!
-  limitValue: BigInt!
-  burstValue: BigInt
-  createdAt: DateTime!
-  updatedAt: DateTime!
+type UsageBreakdownItem {
+  key: String!
+  label: String
+  creditsUsed: Float!
 }
 
-enum UsageResourceType {
-  AI
-  WORKFLOW
-  APP
-  STORAGE
-  API
-  LOGIC_FUNCTION
-  EMAIL
+type UsageTimeSeries {
+  date: String!
+  creditsUsed: Float!
 }
 
-enum UsageOperationType {
-  AI_CHAT_TOKEN
-  AI_WORKFLOW_TOKEN
-  WORKFLOW_EXECUTION
-  CODE_EXECUTION
-  WEB_SEARCH
-  CALL_RECORDING
-  EMAIL_SEND
-  API_REQUEST
+type UsageUserDaily {
+  userWorkspaceId: String!
+  dailyUsage: [UsageTimeSeries!]!
 }
 
-"""
-The `BigInt` scalar type represents non-fractional signed whole numeric values.
-"""
-scalar BigInt
+type UsageAnalytics {
+  usageByUser: [UsageBreakdownItem!]!
+  usageByOperationType: [UsageBreakdownItem!]!
+  usageByModel: [UsageBreakdownItem!]!
+  timeSeries: [UsageTimeSeries!]!
+  periodStart: DateTime!
+  periodEnd: DateTime!
+  userDailyUsage: UsageUserDaily
+}
 
 type FeatureFlag {
   key: FeatureFlagKey!
@@ -1825,7 +1870,6 @@ enum FeatureFlagKey {
   IS_JSON_FILTER_ENABLED
   IS_EMAIL_GROUP_ENABLED
   IS_JUNCTION_RELATIONS_ENABLED
-  IS_LIST_VIEW_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
   IS_WORKFLOW_VERSION_IN_CORE_ENABLED
@@ -1862,6 +1906,7 @@ type VersionDistributionEntry {
 
 type ApplicationRegistrationStats {
   activeInstalls: Int!
+  suspendedInstalls: Int!
   mostInstalledVersion: String
   versionDistribution: [VersionDistributionEntry!]!
 }
@@ -2043,12 +2088,6 @@ type ClientConfig {
   isOnboardingAiChatEnabled: Boolean!
   enterpriseInstanceType: String!
   maintenance: ClientConfigMaintenanceMode
-}
-
-type UsageBreakdownItem {
-  key: String!
-  label: String
-  creditsUsed: Float!
 }
 
 type ClaimableApplicationRegistration {
@@ -2581,26 +2620,6 @@ type StopImpersonation {
   canRestoreImpersonatorSession: Boolean!
 }
 
-type UsageTimeSeries {
-  date: String!
-  creditsUsed: Float!
-}
-
-type UsageUserDaily {
-  userWorkspaceId: String!
-  dailyUsage: [UsageTimeSeries!]!
-}
-
-type UsageAnalytics {
-  usageByUser: [UsageBreakdownItem!]!
-  usageByOperationType: [UsageBreakdownItem!]!
-  usageByModel: [UsageBreakdownItem!]!
-  timeSeries: [UsageTimeSeries!]!
-  periodStart: DateTime!
-  periodEnd: DateTime!
-  userDailyUsage: UsageUserDaily
-}
-
 type ApplicationAuthorization {
   id: UUID!
   applicationId: UUID!
@@ -2699,6 +2718,8 @@ type EmailingDomain {
   updatedAt: DateTime!
   domain: String!
   status: EmailingDomainStatus!
+  tenantStatus: EmailingDomainTenantStatus!
+  unsubscribeHostnameStatus: UnsubscribeHostnameStatus
   verificationRecords: [VerificationRecord!]
   verifiedAt: DateTime
 }
@@ -2708,6 +2729,18 @@ enum EmailingDomainStatus {
   VERIFIED
   FAILED
   TEMPORARY_FAILURE
+}
+
+enum EmailingDomainTenantStatus {
+  ACTIVE
+  PAUSED
+  SANDBOX
+}
+
+enum UnsubscribeHostnameStatus {
+  PENDING
+  ACTIVE
+  FAILED
 }
 
 type MessageChannel {
@@ -2792,25 +2825,25 @@ type CampaignAudiencePreviewDTO {
   totalMembers: Int!
   withoutEmail: Int!
   duplicateEmails: Int!
+  overCap: Int!
   globallyUnsubscribed: Int!
   topicUnsubscribed: Int!
   sendable: Int!
+}
+
+type CancelMessageCampaignOutputDTO {
+  campaignId: String!
+  canceledMessageCount: Int!
 }
 
 type SendEmailViaDomainOutput {
   messageId: String!
 }
 
-type CampaignSkippedRecipientsDTO {
-  noEmail: Int!
-  deduped: Int!
-  overCap: Int!
-}
-
 type SendMessageCampaignOutputDTO {
   campaignId: String!
   queuedCount: Int!
-  skipped: CampaignSkippedRecipientsDTO!
+  audience: CampaignAudiencePreviewDTO!
 }
 
 type MessageSuppression {
@@ -2963,6 +2996,7 @@ type ChannelSyncSuccess {
 type CreateCalendarEventOutput {
   success: Boolean!
   iCalUid: String
+  calendarEventId: String
   conferenceLink: String
   error: String
 }
@@ -3287,6 +3321,7 @@ enum MetadataTranslationProvenance {
 type TimelineActivityTypeEmitThrough {
   relationFieldUniversalIdentifier: UUID!
   triggerFieldUniversalIdentifiers: [UUID!]
+  happensAtFieldUniversalIdentifier: UUID
 }
 
 type TimelineActivityTypeEmit {
@@ -3386,6 +3421,7 @@ type Query {
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseCheckoutSession(billingInterval: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
+  getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   usageLimits: [UsageLimit!]!
   getViewFilterGroups(viewId: String): [ViewFilterGroup!]!
   getViewFilterGroup(id: String!): ViewFilterGroup
@@ -3510,12 +3546,19 @@ type Query {
   pieChartData(input: PieChartDataInput!): PieChartData!
   lineChartData(input: LineChartDataInput!): LineChartData!
   barChartData(input: BarChartDataInput!): BarChartData!
+  callRecordingIdForCalendarEvent(calendarEventId: UUID!): UUID
   getConnectedImapSmtpCaldavAccount(id: UUID!): ConnectedImapSmtpCaldavAccount!
   getAutoCompleteAddress(address: String!, token: String!, country: String, isFieldCity: Boolean): [AutocompleteResult!]!
   getAddressDetails(placeId: String!, token: String!): PlaceDetailsResult!
-  getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   findManyPublicDomains: [PublicDomain!]!
   currentUserApplicationAuthorizations: [ApplicationAuthorization!]!
+}
+
+input UsageAnalyticsInput {
+  periodStart: DateTime
+  periodEnd: DateTime
+  userWorkspaceId: String
+  operationTypes: [UsageOperationType!]
 }
 
 input GetApiKeyInput {
@@ -3612,13 +3655,6 @@ input LineChartDataInput {
 input BarChartDataInput {
   objectMetadataId: UUID!
   configuration: JSON!
-}
-
-input UsageAnalyticsInput {
-  periodStart: DateTime
-  periodEnd: DateTime
-  userWorkspaceId: String
-  operationTypes: [UsageOperationType!]
 }
 
 type Mutation {
@@ -3774,7 +3810,10 @@ type Mutation {
   removeRoleFromAgent(agentId: UUID!): Boolean!
   sendEmailViaEmailingDomain(input: SendEmailViaDomainInput!): SendEmailViaDomainOutput!
   sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
+  cancelMessageCampaign(input: CancelMessageCampaignInput!): CancelMessageCampaignOutputDTO!
   sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
+  createMessageSuppression(input: CreateMessageSuppressionInput!): MessageSuppression!
+  deleteMessageSuppression(id: UUID!): Boolean!
   createUnsubscribeTopic(input: CreateUnsubscribeTopicInput!): UnsubscribeTopic!
   updateUnsubscribeTopic(input: UpdateUnsubscribeTopicInput!): UnsubscribeTopic!
   deleteUnsubscribeTopic(id: String!): Boolean!
@@ -4315,6 +4354,7 @@ input UpdatePageLayoutWithTabsInput {
   name: String!
   type: PageLayoutType!
   objectMetadataId: UUID
+  isFirstTabPinned: Boolean
   tabs: [UpdatePageLayoutTabWithWidgetsInput!]!
 }
 
@@ -4847,12 +4887,21 @@ input SendMessageCampaignInput {
   campaignId: String!
 }
 
+input CancelMessageCampaignInput {
+  campaignId: String!
+}
+
 input SendMessageCampaignTestInput {
   toAddress: String!
   unsubscribeTopicId: String
   subject: String!
   body: String!
   fromAddress: String!
+}
+
+input CreateMessageSuppressionInput {
+  emailAddress: String!
+  unsubscribeTopicId: UUID
 }
 
 input CreateUnsubscribeTopicInput {

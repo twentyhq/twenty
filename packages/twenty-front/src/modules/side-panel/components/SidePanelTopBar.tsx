@@ -13,7 +13,6 @@ import { useHandleSidePanelBackspace } from '@/side-panel/hooks/useHandleSidePan
 import { useHandleSidePanelEscape } from '@/side-panel/hooks/useHandleSidePanelEscape';
 import { useSidePanelContextChips } from '@/side-panel/hooks/useSidePanelContextChips';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -25,6 +24,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useRef } from 'react';
 import { Key } from 'ts-key-enum';
+import { SidePanelPages } from 'twenty-shared/types';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -78,6 +78,31 @@ const StyledContentContainer = styled.div`
   overflow: hidden;
 `;
 
+const StyledHeaderTitleContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+
+  &:has([data-workspace-header-title-portal]:not(:empty))
+    > [data-routed-page-fallback-info] {
+    display: none;
+  }
+`;
+
+const StyledHeaderTitlePortal = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+`;
+
+const StyledHeaderActionsPortal = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
 const StyledRightControlsContainer = styled.div`
   align-items: center;
   display: flex;
@@ -85,7 +110,13 @@ const StyledRightControlsContainer = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-export const SidePanelTopBar = () => {
+export const SidePanelTopBar = ({
+  setHeaderTitlePortal,
+  setHeaderActionsPortal,
+}: {
+  setHeaderTitlePortal?: (element: HTMLElement | null) => void;
+  setHeaderActionsPortal?: (element: HTMLElement | null) => void;
+}) => {
   const [sidePanelSearch, setSidePanelSearch] =
     useAtomState(sidePanelSearchState);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -98,11 +129,11 @@ export const SidePanelTopBar = () => {
 
   const isMobile = useIsMobile();
 
-  const sidePanelPage = useAtomStateValue(sidePanelPageState);
-
   const sidePanelNavigationStack = useAtomStateValue(
     sidePanelNavigationStackState,
   );
+  const sidePanelPage =
+    sidePanelNavigationStack.at(-1)?.page ?? SidePanelPages.CommandMenuDisplay;
 
   const { theme } = useContext(ThemeContext);
 
@@ -197,8 +228,18 @@ export const SidePanelTopBar = () => {
             </motion.div>
           )}
         </AnimatePresence>
-        {lastChip && !COMMAND_MENU_SIDE_PANEL_PAGES.includes(sidePanelPage) && (
-          <SidePanelPageInfo pageChip={lastChip} />
+        {!COMMAND_MENU_SIDE_PANEL_PAGES.includes(sidePanelPage) && (
+          <StyledHeaderTitleContainer>
+            {lastChip && (
+              <div data-routed-page-fallback-info="">
+                <SidePanelPageInfo pageChip={lastChip} />
+              </div>
+            )}
+            <StyledHeaderTitlePortal
+              ref={setHeaderTitlePortal}
+              data-workspace-header-title-portal=""
+            />
+          </StyledHeaderTitleContainer>
         )}
         {COMMAND_MENU_SIDE_PANEL_PAGES.includes(sidePanelPage) && (
           <>
@@ -217,7 +258,10 @@ export const SidePanelTopBar = () => {
         )}
       </StyledContentContainer>
       <StyledRightControlsContainer>
-        <SidePanelTopBarRightCornerIcon />
+        <StyledHeaderActionsPortal ref={setHeaderActionsPortal} />
+        {sidePanelPage !== SidePanelPages.RoutedPage && (
+          <SidePanelTopBarRightCornerIcon />
+        )}
         <SidePanelExpandButton />
         {shouldHideCloseButton ? null : <SidePanelCloseButton />}
       </StyledRightControlsContainer>

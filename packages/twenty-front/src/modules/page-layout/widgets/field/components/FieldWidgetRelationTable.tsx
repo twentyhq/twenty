@@ -11,7 +11,7 @@ import { getFieldWidgetNestedRelationCreateThrough } from '@/page-layout/widgets
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
 import { resolveFieldWidgetNestedRelation } from '@/page-layout/widgets/field/utils/resolveFieldWidgetNestedRelation';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -45,13 +45,17 @@ export const FieldWidgetRelationTable = ({
 
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
-  const { isInSidePanel } = useLayoutRenderingContext();
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const viewId = isFieldWidget(widget)
     ? widget.configuration.viewId
     : undefined;
+  // Record page relation widget content defaults to editable, unlike dashboards.
+  const isUIEditable = isFieldWidget(widget)
+    ? (widget.configuration.isUIEditable ?? true)
+    : true;
   const nestedRelationFieldMetadataId = isFieldWidget(widget)
     ? widget.configuration.nestedRelationFieldMetadataId
     : undefined;
@@ -174,7 +178,7 @@ export const FieldWidgetRelationTable = ({
           objectMetadataId={tableObjectMetadataId}
           viewId={viewId}
           widgetId={widget.id}
-          isReadOnly={isPageLayoutInEditMode}
+          isUIEditable={!isPageLayoutInEditMode && isUIEditable}
           isEmptyStateHidden
           instanceIdSuffix={`${recordId}${isInSidePanel ? '-side-panel' : ''}`}
           nestedRelationCreateThrough={nestedRelationCreateThrough}

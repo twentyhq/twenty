@@ -247,6 +247,7 @@ export const STANDARD_OBJECT_FIELDS = {
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.blocklist,
     ),
     handle: { universalIdentifier: '20202020-eef3-44ed-aa32-4641d7fd4a3e' },
+    scope: { universalIdentifier: '20202020-1a5f-4c9e-9b3e-7d2a6f4c8e11' },
     workspaceMember: {
       universalIdentifier: '20202020-548d-4084-a947-fa20a39f7c06',
     },
@@ -560,6 +561,9 @@ export const STANDARD_OBJECT_FIELDS = {
     sentCount: {
       universalIdentifier: '2f333d2b-37b8-4ddc-ad0d-c07c6ce066ad',
     },
+    deliveredCount: {
+      universalIdentifier: 'f4ee1d33-7379-42fe-ad63-e023449baea6',
+    },
     failedCount: {
       universalIdentifier: 'd373fcd7-b1ce-4c77-8031-a5785c475028',
     },
@@ -568,6 +572,9 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     complainedCount: {
       universalIdentifier: '82842cfa-f12a-4bab-bbde-b2cf587d0406',
+    },
+    skippedCount: {
+      universalIdentifier: 'a1f4c6d2-5e8b-4a37-9c60-31b7f0d2a984',
     },
     unsubscribeTopicId: {
       universalIdentifier: '0648e7ad-1769-4ff6-a4d5-72da79ef169c',
@@ -766,9 +773,6 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     messageCampaign: {
       universalIdentifier: '77cff00b-a0ba-48d6-80de-0d5ccf14e45b',
-    },
-    deliveryStatus: {
-      universalIdentifier: '209254fa-2b89-429d-a72a-c401c4bd5a78',
     },
     isDraft: {
       universalIdentifier: '20202020-4d3a-4b6e-9c1f-2a5e7b9d0c34',

@@ -9,6 +9,7 @@ import {
   type TabContentProps,
 } from '@ui/input/TabButton/parts/TabContent';
 import { type ReactElement } from 'react';
+import { type To } from 'react-router-dom';
 
 import styles from './TabButton.module.scss';
 
@@ -19,7 +20,9 @@ type TabButtonProps = {
   id: string;
   active?: boolean;
   disabled?: boolean;
-  to?: string;
+  to?: To;
+  state?: unknown;
+  replace?: boolean;
   LeftIcon?: IconComponent;
   className?: string;
   title?: string;
@@ -30,6 +33,8 @@ type TabButtonProps = {
   contentSize?: 'sm' | 'md';
   disableTestId?: boolean;
   tooltipContent?: string;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 };
 
 export const TabButton = ({
@@ -37,6 +42,8 @@ export const TabButton = ({
   active,
   disabled,
   to,
+  state,
+  replace,
   LeftIcon,
   className,
   title,
@@ -47,6 +54,8 @@ export const TabButton = ({
   contentSize = 'sm',
   disableTestId = false,
   tooltipContent,
+  onMouseEnter,
+  onMouseLeave,
 }: TabButtonProps) => {
   const tabElementId = `tab-${id}`;
 
@@ -57,8 +66,12 @@ export const TabButton = ({
         active={active}
         disabled={disabled}
         to={to}
+        state={state}
+        replace={replace}
         className={className}
         onClick={onClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
       >
         <TabContent
           id={id}

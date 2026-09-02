@@ -15,7 +15,6 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
@@ -58,25 +57,15 @@ export const RelationOneToManyFieldInput = () => {
   const relationFieldDefinition =
     fieldDefinition as FieldDefinition<FieldRelationMetadata>;
 
-  const { updateJunctionRelationFromCell, isJunctionConfigValid } =
+  const { updateJunctionRelationFromCell, junctionConfig } =
     useUpdateJunctionRelationFromCell({
       fieldMetadataItem,
       fieldDefinition: relationFieldDefinition,
       recordId,
     });
 
-  const junctionConfig = isJunctionConfigValid
-    ? getJunctionConfig({
-        settings: fieldMetadataItem.settings,
-        relationObjectMetadataId:
-          relationFieldDefinition.metadata.relationObjectMetadataId,
-        relationTargetFieldMetadataId:
-          fieldMetadataItem.relation?.targetFieldMetadata.id,
-        sourceObjectMetadataId: objectMetadataItem.id,
-        objectMetadataItems,
-      })
-    : null;
-  const isJunctionRelation = isDefined(junctionConfig);
+  const isJunctionRelation = junctionConfig?.isValid === true;
+  const isInvalidJunctionRelation = junctionConfig?.isValid === false;
 
   const junctionTargetObjectMetadata = (() => {
     if (!junctionConfig || junctionConfig.isMorphRelation) {
@@ -255,13 +244,17 @@ export const RelationOneToManyFieldInput = () => {
       ? junctionTargetObjectMetadata.id
       : relationObjectMetadataItem.id;
 
+  if (isInvalidJunctionRelation) {
+    return null;
+  }
+
   return (
     <MultipleRecordPicker
       focusId={instanceId}
       componentInstanceId={instanceId}
       onSubmit={handleSubmit}
       onChange={(morphItem) => {
-        if (isJunctionRelation && isJunctionConfigValid) {
+        if (isJunctionRelation) {
           updateJunctionRelationFromCell({
             morphItem,
           });

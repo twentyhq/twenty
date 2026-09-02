@@ -16,6 +16,7 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { useLingui } from '@lingui/react/macro';
 import { createPortal } from 'react-dom';
+import { createPath, useLocation } from 'react-router-dom';
 import {
   IconChevronLeft,
   IconCircle,
@@ -32,6 +33,7 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const ObjectOptionsDropdownVisibilityContent = () => {
   const { t } = useLingui();
+  const location = useLocation();
   const { resetContent } = useObjectOptionsDropdown();
   const { currentView } = useGetCurrentViewOnly();
   const { updateCurrentView } = useUpdateCurrentView();
@@ -58,8 +60,11 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
   };
 
   const handleCopyLink = async () => {
-    const currentUrl = window.location.href;
-    await copyToClipboard(currentUrl, t`Link copied to clipboard`);
+    const canonicalViewUrl = new URL(
+      createPath(location),
+      window.location.origin,
+    ).toString();
+    await copyToClipboard(canonicalViewUrl, t`Link copied to clipboard`);
   };
 
   const currentVisibility = currentView?.visibility ?? ViewVisibility.WORKSPACE;

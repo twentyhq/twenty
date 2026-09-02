@@ -1,4 +1,3 @@
-import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
 import { PageLayoutContent } from '@/page-layout/components/PageLayoutContent';
 import { PageLayoutScrollResetEffect } from '@/page-layout/components/PageLayoutScrollResetEffect';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
@@ -7,6 +6,7 @@ import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/u
 import { getScrollWrapperInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getScrollWrapperInstanceIdFromPageLayoutAndRecord';
 import { getTabLayoutMode } from '@/page-layout/utils/getTabLayoutMode';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { styled } from '@linaria/react';
@@ -19,11 +19,10 @@ const StyledContainer = styled.div`
   background: var(--record-card-background-color);
   border-bottom-left-radius: 8px;
   border-right: 1px solid ${themeCssVariables.border.color.medium};
-  border-top-left-radius: 8px;
   box-sizing: border-box;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto 1fr;
+  grid-template-rows: minmax(0, 1fr);
   height: 100%;
 
   .page-layout-scroll-wrapper {
@@ -43,18 +42,18 @@ export const PageLayoutLeftPanel = ({
 }: PageLayoutLeftPanelProps) => {
   const { currentPageLayout } = useCurrentPageLayout();
   const targetRecordIdentifier = useTargetRecord();
-  const { isInSidePanel, layoutType } = useLayoutRenderingContext();
+  const { layoutType } = useLayoutRenderingContext();
   const pinnedTab = usePageLayoutTabWithVisibleWidgetsOrThrow(pinnedLeftTabId);
 
-  const scrollWrapperInstanceId =
+  const scrollWrapperInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
     getScrollWrapperInstanceIdFromPageLayoutAndRecord({
       pageLayoutId,
       layoutType,
       targetRecordIdentifier,
-      isInSidePanel,
       scrollWrapperArea: 'left-panel',
       pageLayoutTabId: pinnedLeftTabId,
-    });
+    }),
+  );
   if (currentPageLayout?.type !== PageLayoutType.RECORD_PAGE) {
     return null;
   }
@@ -71,12 +70,9 @@ export const PageLayoutLeftPanel = ({
         scrollWrapperInstanceId={scrollWrapperInstanceId}
         targetRecordId={targetRecordIdentifier.id}
       />
-      <SummaryCard
-        objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
-        objectRecordId={targetRecordIdentifier.id}
-        isInSidePanel={isInSidePanel}
-      />
 
+      {/* The pinned left panel is always a column of cards, even with a single
+          widget: solo presentation is a main-tab-area concept. */}
       <PageLayoutContentProvider
         value={{
           tabId: pinnedLeftTabId,

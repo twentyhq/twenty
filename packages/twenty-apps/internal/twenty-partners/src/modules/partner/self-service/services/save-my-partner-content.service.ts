@@ -75,14 +75,16 @@ export const saveMyPartnerContent = async (
     const plan = buildReconcilePlan(existingIds, parsed.data.caseStudies);
     if (!plan) return errorResponse('FORBIDDEN');
 
-    // A just-created row isn't owner-stamped by the trigger yet, so the caller's own re-read
-    // (RLS-scoped) can't see it. Return it optimistically from the input + new id.
+    // The re-read filters on partnerId, which the trigger stamps asynchronously, so a
+    // just-created row is usually still absent. Return it optimistically from input + new id.
     const createdRows: CaseStudyRow[] = [];
     for (const item of plan.toCreate) {
-      const created = await createPartnerContent(
-        client,
-        buildContentCreateData(item),
-      );
+      // partnerUser is the RLS predicate field, and the server exempts predicate fields from
+      // the field lock on insert only — so this locked field is writable here and nowhere else.
+      const created = await createPartnerContent(client, {
+        ...buildContentCreateData(item),
+        partnerUserId: resolved.workspaceMemberId,
+      });
       const newId = created.createPartnerContent?.id;
       if (newId !== undefined) {
         createdRows.push({

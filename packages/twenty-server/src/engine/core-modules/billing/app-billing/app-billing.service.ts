@@ -3,15 +3,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type ChargeDto } from 'src/engine/core-modules/billing/app-billing/dtos/charge.dto';
-import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
-import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
-import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 
 // Each operation type has one canonical counting unit — matches how
 // `ai-billing.service.ts` emits native usage events.
@@ -33,11 +28,7 @@ const USAGE_UNIT_BY_OPERATION_TYPE: Record<UsageOperationType, UsageUnit> = {
 export class AppBillingService {
   private readonly logger = new Logger(AppBillingService.name);
 
-  constructor(
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    private readonly billingService: BillingService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
-  ) {}
+  constructor(private readonly usageRecorderService: UsageRecorderService) {}
 
   async emitChargeEvent(params: {
     workspaceId: string;
@@ -53,36 +44,17 @@ export class AppBillingService {
         `${charge.creditsUsedMicro} micro-credits (${charge.quantity} ${unit}, ${charge.operationType})`,
     );
 
-    let periodStart: Date | undefined;
-
-    if (this.billingService.isBillingEnabled()) {
-      const { currentBillingSubscription } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'currentBillingSubscription',
-        ]);
-
-      periodStart =
-        currentBillingSubscription === NO_BILLING_SUBSCRIPTION
-          ? undefined
-          : currentBillingSubscription.currentPeriodStart;
-    }
-
-    this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
-      USAGE_RECORDED,
-      [
-        {
-          resourceType: UsageResourceType.APP,
-          operationType: charge.operationType,
-          creditsUsedMicro: charge.creditsUsedMicro,
-          quantity: charge.quantity,
-          unit,
-          resourceId: applicationId,
-          resourceContext: charge.resourceContext ?? null,
-          userWorkspaceId: userWorkspaceId ?? null,
-          periodStart,
-        },
-      ],
-      workspaceId,
-    );
+    await this.usageRecorderService.record(workspaceId, [
+      {
+        resourceType: UsageResourceType.APP,
+        operationType: charge.operationType,
+        creditsUsedMicro: charge.creditsUsedMicro,
+        quantity: charge.quantity,
+        unit,
+        resourceId: applicationId,
+        resourceContext: charge.resourceContext ?? null,
+        spenders: { userWorkspaceId, applicationId },
+      },
+    ]);
   }
 }

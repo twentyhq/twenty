@@ -18,6 +18,7 @@ describe('convertPageLayoutToTabLayouts', () => {
       applicationId: 'application-id-mock',
       name: 'Page Layout 1',
       type: PageLayoutType.RECORD_PAGE,
+      isFirstTabPinned: true,
       isSystemSideEffect: true,
       objectMetadataId: 'object-metadata-1',
       universalIdentifier: '20202020-0000-0000-0000-000000000001',
@@ -130,6 +131,7 @@ describe('convertPageLayoutToTabLayouts', () => {
       applicationId: 'application-id-mock',
       name: 'Page Layout 1',
       type: PageLayoutType.RECORD_PAGE,
+      isFirstTabPinned: true,
       isSystemSideEffect: true,
       objectMetadataId: 'object-metadata-1',
       universalIdentifier: '20202020-0000-0000-0000-000000000001',
@@ -180,7 +182,7 @@ describe('convertPageLayoutToTabLayouts', () => {
 
     const result = convertPageLayoutToTabLayouts(pageLayout);
 
-    expect(result['tab-1'].desktop[0]).toMatchObject({
+    expect(result['tab-1'].desktop![0]).toMatchObject({
       i: 'widget-no-grid-pos',
       x: 0,
       y: 0,
@@ -195,6 +197,7 @@ describe('convertPageLayoutToTabLayouts', () => {
       applicationId: 'application-id-mock',
       name: 'Page Layout 1',
       type: PageLayoutType.RECORD_PAGE,
+      isFirstTabPinned: true,
       isSystemSideEffect: true,
       objectMetadataId: 'object-metadata-1',
       universalIdentifier: '20202020-0000-0000-0000-000000000001',
@@ -251,7 +254,7 @@ describe('convertPageLayoutToTabLayouts', () => {
     const richTextMinSize =
       WIDGET_SIZES[WidgetType.STANDALONE_RICH_TEXT]!.minimum;
 
-    expect(result['tab-1'].desktop[0]).toMatchObject({
+    expect(result['tab-1'].desktop![0]).toMatchObject({
       i: 'rich-text-widget',
       minW: richTextMinSize.w,
       minH: richTextMinSize.h,
@@ -264,6 +267,7 @@ describe('convertPageLayoutToTabLayouts', () => {
       applicationId: 'application-id-mock',
       name: 'Page Layout 1',
       type: PageLayoutType.DASHBOARD,
+      isFirstTabPinned: true,
       isSystemSideEffect: false,
       objectMetadataId: null,
       universalIdentifier: '20202020-0000-0000-0000-000000000001',
@@ -319,7 +323,7 @@ describe('convertPageLayoutToTabLayouts', () => {
     const result = convertPageLayoutToTabLayouts(pageLayout);
     const iframeMinSize = WIDGET_SIZES[WidgetType.IFRAME]!.minimum;
 
-    expect(result['tab-1'].desktop[0]).toMatchObject({
+    expect(result['tab-1'].desktop![0]).toMatchObject({
       i: 'iframe-widget',
       minW: iframeMinSize.w,
       minH: iframeMinSize.h,

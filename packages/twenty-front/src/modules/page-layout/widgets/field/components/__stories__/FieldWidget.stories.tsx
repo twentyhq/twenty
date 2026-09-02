@@ -287,6 +287,7 @@ const createPageLayoutWithWidget = (
   id: PAGE_LAYOUT_TEST_INSTANCE_ID,
   name: 'Mock Page Layout',
   type: PageLayoutType.RECORD_PAGE,
+  isFirstTabPinned: true,
   isSystemSideEffect: true,
   objectMetadataId,
   universalIdentifier: '20202020-0000-0000-0000-000000000001',
@@ -396,7 +397,6 @@ const renderFieldWidgetStory = ({
           <PageLayoutTestWrapper store={jotaiStore}>
             <LayoutRenderingProvider
               value={{
-                isInSidePanel: false,
                 layoutType: PageLayoutType.RECORD_PAGE,
                 targetRecordIdentifier: {
                   id: targetRecord.id,
