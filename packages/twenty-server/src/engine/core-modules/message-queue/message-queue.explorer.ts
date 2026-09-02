@@ -13,6 +13,8 @@ import {
   type MessageQueueJob,
   type MessageQueueJobData,
 } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
+import { isDefined } from 'twenty-shared/utils';
+
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -105,10 +107,36 @@ export class MessageQueueExplorer implements OnModuleInit {
       this.handleProcessorGroupCollection(
         processorGroupCollection,
         messageQueueService,
-        MESSAGE_QUEUE_WORKER_CONFIG[queueName].workerOptions,
+        this.resolveWorkerOptions(queueName),
         queueName,
       );
     }
+  }
+
+  private resolveWorkerOptions(
+    queueName: MessageQueue,
+  ): MessageQueueWorkerOptions {
+    const { workerOptions, rateLimit } = MESSAGE_QUEUE_WORKER_CONFIG[queueName];
+
+    if (!isDefined(rateLimit)) {
+      return workerOptions;
+    }
+
+    return {
+      ...workerOptions,
+      limiter: {
+        max: Math.max(
+          1,
+          Math.floor(
+            this.twentyConfigService.get(rateLimit.maxConfigVariable) /
+              rateLimit.budgetUnitsPerJob,
+          ),
+        ),
+        durationMs: this.twentyConfigService.get(
+          rateLimit.durationMsConfigVariable,
+        ),
+      },
+    };
   }
 
   private warnAboutUnknownQueueNames(queueNames: string[]) {

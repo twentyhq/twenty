@@ -1,4 +1,6 @@
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
+import { type NumericConfigVariableKey } from 'src/engine/core-modules/twenty-config/types/numeric-config-variable-key.type';
+import { CAMPAIGN_SEND_BATCH_SIZE } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-batch-size.constant';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 // Single source of truth to pilot worker behavior per queue. Every value is
@@ -13,9 +15,16 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 // boundedShutdownDrain: on shutdown, abort still-active jobs after
 //   AI_STREAM_SHUTDOWN_DRAIN_MS instead of waiting for them to finish
 
+type MessageQueueRateLimitConfig = {
+  maxConfigVariable: NumericConfigVariableKey;
+  durationMsConfigVariable: NumericConfigVariableKey;
+  budgetUnitsPerJob: number;
+};
+
 export type MessageQueueWorkerConfig = {
   priority: number;
-  workerOptions: Required<MessageQueueWorkerOptions>;
+  rateLimit: MessageQueueRateLimitConfig | null;
+  workerOptions: Required<Omit<MessageQueueWorkerOptions, 'limiter'>>;
 };
 
 export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
@@ -24,6 +33,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
 > = {
   [MessageQueue.taskAssignedQueue]: {
     priority: 4,
+    rateLimit: null,
     workerOptions: {
       concurrency: 1,
       lockDuration: 30_000,
@@ -33,6 +43,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   },
   [MessageQueue.messagingQueue]: {
     priority: 2,
+    rateLimit: null,
     workerOptions: {
       concurrency: 1,
       lockDuration: 30_000,
@@ -42,6 +53,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   },
   [MessageQueue.webhookQueue]: {
     priority: 2,
+    rateLimit: null,
     workerOptions: {
       concurrency: 1,
       lockDuration: 30_000,
@@ -51,6 +63,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   },
   [MessageQueue.cronQueue]: {
     priority: 7,
+    rateLimit: null,
     workerOptions: {
       concurrency: 1,
       lockDuration: 30_000,
@@ -60,6 +73,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   },
   [MessageQueue.emailQueue]: {
     priority: 1,
+    rateLimit: null,
     workerOptions: {
       concurrency: 1,
       lockDuration: 30_000,
@@ -69,6 +83,21 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   },
   [MessageQueue.campaignQueue]: {
     priority: 6,
+    rateLimit: null,
+    workerOptions: {
+      concurrency: 10,
+      lockDuration: 30_000,
+      maxStalledCount: 1,
+      boundedShutdownDrain: false,
+    },
+  },
+  [MessageQueue.campaignSendQueue]: {
+    priority: 6,
+    rateLimit: {
+      maxConfigVariable: 'EMAIL_SEND_RATE_LIMITING_LIMIT',
+      durationMsConfigVariable: 'EMAIL_SEND_RATE_LIMITING_TTL_IN_MS',
+      budgetUnitsPerJob: CAMPAIGN_SEND_BATCH_SIZE,
+    },
     workerOptions: {
       concurrency: 10,
       lockDuration: 30_000,
@@ -78,6 +107,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   },
   [MessageQueue.calendarQueue]: {
     priority: 4,
+    rateLimit: null,
     workerOptions: {
       concurrency: 1,
       lockDuration: 30_000,
@@ -87,6 +117,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   },
   [MessageQueue.connectedAccountSyncWebhookQueue]: {
     priority: 1,
+    rateLimit: null,
     workerOptions: {
       concurrency: 5,
       lockDuration: 30_000,
@@ -96,6 +127,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   },
   [MessageQueue.contactCreationQueue]: {
     priority: 4,
+    rateLimit: null,
     workerOptions: {
       concurrency: 1,
       lockDuration: 30_000,
@@ -105,6 +137,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   },
   [MessageQueue.billingQueue]: {
     priority: 1,
+    rateLimit: null,
     workerOptions: {
       concurrency: 1,
       lockDuration: 30_000,
@@ -114,6 +147,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   },
   [MessageQueue.workspaceQueue]: {
     priority: 5,
+    rateLimit: null,
     workerOptions: {
       concurrency: 1,
       lockDuration: 30_000,
@@ -123,6 +157,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   },
   [MessageQueue.entityEventsToDbQueue]: {
     priority: 1,
+    rateLimit: null,
     workerOptions: {
       concurrency: 1,
       lockDuration: 30_000,
@@ -132,6 +167,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   },
   [MessageQueue.workflowQueue]: {
     priority: 2,
+    rateLimit: null,
     workerOptions: {
       concurrency: 1,
       lockDuration: 30_000,
@@ -141,6 +177,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   },
   [MessageQueue.delayedJobsQueue]: {
     priority: 3,
+    rateLimit: null,
     workerOptions: {
       concurrency: 1,
       lockDuration: 30_000,
@@ -150,6 +187,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   },
   [MessageQueue.deleteCascadeQueue]: {
     priority: 6,
+    rateLimit: null,
     workerOptions: {
       concurrency: 1,
       lockDuration: 30_000,
@@ -159,6 +197,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   },
   [MessageQueue.logicFunctionQueue]: {
     priority: 4,
+    rateLimit: null,
     workerOptions: {
       concurrency: 10,
       lockDuration: 30_000,
@@ -168,6 +207,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   },
   [MessageQueue.triggerQueue]: {
     priority: 5,
+    rateLimit: null,
     workerOptions: {
       concurrency: 1,
       lockDuration: 30_000,
@@ -177,6 +217,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   },
   [MessageQueue.aiQueue]: {
     priority: 5,
+    rateLimit: null,
     workerOptions: {
       concurrency: 1,
       lockDuration: 30_000,
@@ -186,6 +227,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   },
   [MessageQueue.aiStreamQueue]: {
     priority: 2,
+    rateLimit: null,
     workerOptions: {
       concurrency: 20,
       // 10 minutes: a stream job holds its lock for the whole stream duration

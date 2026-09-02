@@ -3,4 +3,5 @@ export interface MessageQueueWorkerOptions {
   lockDuration?: number;
   maxStalledCount?: number;
   boundedShutdownDrain?: boolean;
+  limiter?: { max: number; durationMs: number };
 }

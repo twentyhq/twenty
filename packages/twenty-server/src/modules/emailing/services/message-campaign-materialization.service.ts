@@ -1,6 +1,6 @@
 import { CAMPAIGN_SEND_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-limit.constant';
 import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-backoff.constant';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
 import { CAMPAIGN_DELIVERY_STATE } from 'src/engine/core-modules/emailing-domain/constants/campaign-delivery-state.constant';
@@ -13,11 +13,12 @@ import { v4 } from 'uuid';
 
 import {
   MATERIALIZE_CAMPAIGN_CHUNK_JOB,
-  SEND_CAMPAIGN_EMAIL_JOB,
+  SEND_CAMPAIGN_EMAIL_BATCH_JOB,
 } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import { CAMPAIGN_SEND_BATCH_SIZE } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-batch-size.constant';
 import { type MaterializeCampaignChunkJobData } from 'src/engine/core-modules/emailing-domain/types/materialize-campaign-chunk-job-data.type';
 import { type MaterializeCampaignJobData } from 'src/engine/core-modules/emailing-domain/types/materialize-campaign-job-data.type';
-import { type SendCampaignEmailJobData } from 'src/engine/core-modules/emailing-domain/types/send-campaign-email-job-data.type';
+import { type SendCampaignEmailBatchJobData } from 'src/engine/core-modules/emailing-domain/types/send-campaign-email-batch-job-data.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -56,6 +57,10 @@ type CampaignMessageRow = {
 
 @Injectable()
 export class MessageCampaignMaterializationService {
+  private readonly logger = new Logger(
+    MessageCampaignMaterializationService.name,
+  );
+
   constructor(
     @InjectWorkspaceScopedRepository(CampaignDeliveryEntity)
     private readonly campaignDeliveryRepository: WorkspaceScopedRepository<CampaignDeliveryEntity>,
@@ -63,6 +68,8 @@ export class MessageCampaignMaterializationService {
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     @InjectMessageQueue(MessageQueue.campaignQueue)
     private readonly messageQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.campaignSendQueue)
+    private readonly campaignSendQueueService: MessageQueueService,
   ) {}
 
   async processMaterializeJob({
@@ -335,17 +342,19 @@ export class MessageCampaignMaterializationService {
       return;
     }
 
-    await this.messageQueueService.bulkAdd<SendCampaignEmailJobData>(
-      SEND_CAMPAIGN_EMAIL_JOB,
-      recipients.map((recipient) => ({
+    await this.campaignSendQueueService.bulkAdd<SendCampaignEmailBatchJobData>(
+      SEND_CAMPAIGN_EMAIL_BATCH_JOB,
+      chunk(recipients, CAMPAIGN_SEND_BATCH_SIZE).map((batch) => ({
         data: {
           workspaceId,
           campaignId,
-          messageId: recipient.messageId,
-          personId: recipient.personId,
-          recipientEmail: recipient.email,
           emailingDomainId,
           userWorkspaceId,
+          recipients: batch.map((recipient) => ({
+            messageId: recipient.messageId,
+            personId: recipient.personId,
+            email: recipient.email,
+          })),
         },
       })),
       {

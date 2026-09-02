@@ -61,6 +61,8 @@ const SEND_SLOT_RETRY = {
 
 type SendSlotRefusal = { retryDelayMs: number; windowMs: number };
 
+const SKIP_EVENT_EMISSION = { shouldSkipEventEmission: true };
+
 @Injectable()
 export class MessageCampaignDeliveryService {
   private readonly logger = new Logger(MessageCampaignDeliveryService.name);
@@ -75,7 +77,7 @@ export class MessageCampaignDeliveryService {
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
     private readonly usageLimitSpeedService: UsageLimitSpeedService,
-    @InjectMessageQueue(MessageQueue.campaignQueue)
+    @InjectMessageQueue(MessageQueue.campaignSendQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
@@ -83,12 +85,6 @@ export class MessageCampaignDeliveryService {
     const { workspaceId, campaignId } = data;
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const campaign = await this.findRunningCampaign(campaignId);
-
-      if (!isDefined(campaign)) {
-        return;
-      }
-
       const isStillClaimable = await this.campaignDeliveryRepository.existsBy(
         workspaceId,
         {
@@ -114,9 +110,16 @@ export class MessageCampaignDeliveryService {
         }
       }
 
+      const campaign = await this.findRunningCampaign(campaignId);
+
+      if (!isDefined(campaign)) {
+        return;
+      }
+
       const messageRepository = this.workspaceOrmManager.getRepository(
         MessageWorkspaceEntity,
         { shouldBypassPermissionChecks: true },
+        SKIP_EVENT_EMISSION,
       );
 
       const sendContext = await this.loadSendContext({ data, campaign });
@@ -453,6 +456,7 @@ export class MessageCampaignDeliveryService {
     const associationRepository = this.workspaceOrmManager.getRepository(
       MessageChannelMessageAssociationWorkspaceEntity,
       { shouldBypassPermissionChecks: true },
+      SKIP_EVENT_EMISSION,
     );
 
     await associationRepository.update(
