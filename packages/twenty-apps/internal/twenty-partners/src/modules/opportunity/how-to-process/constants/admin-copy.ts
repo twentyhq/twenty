@@ -58,8 +58,8 @@ export const HOW_TO_PROCESS_STEPS: PlaybookStep[] = [
   {
     num: '05',
     heading: 'Intro',
-    body: 'After you name the partners, /twenty-partner-intro creates Invited rows and sets Intro Sent At. The app then turns Listed off.',
-    note: 'Do not send a second wave unless you mean to.',
+    body: 'After you name the partners, /twenty-partner-intro creates Invited rows and sets Intro Sent At. The app then turns Listed off. Turning Listed off removes the brief from Open Briefs, but applied and invited partners keep it in My Applications.',
+    note: 'Do not send a second wave unless you mean to. Unlisting is not a way to hide the brief from the partners who already applied.',
     skills: [PLAYBOOK_SKILL_INTRO],
   },
   {
