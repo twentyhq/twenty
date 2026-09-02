@@ -186,6 +186,17 @@ export class ApplicationJobService {
     }
 
     if (isDefined(input.jobs)) {
+      const callerSuppliedJobIds = input.jobs
+        .map((job) => job.jobId)
+        .filter(isDefined);
+
+      if (new Set(callerSuppliedJobIds).size !== callerSuppliedJobIds.length) {
+        throw new ApplicationException(
+          'Job ids must be unique within a batch',
+          ApplicationExceptionCode.INVALID_INPUT,
+        );
+      }
+
       return input.jobs;
     }
 
