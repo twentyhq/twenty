@@ -1,12 +1,16 @@
+import { type TabPresentation } from '@/page-layout/types/TabPresentations';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 type ShouldUseSoloCanvasContentPaddingParams = {
-  presentation: string;
+  presentation: TabPresentation;
   layoutMode: PageLayoutTabLayoutMode;
 };
 
 export const shouldUseSoloCanvasContentPadding = ({
   presentation,
   layoutMode,
-}: ShouldUseSoloCanvasContentPaddingParams): boolean =>
-  presentation === 'solo' && layoutMode === PageLayoutTabLayoutMode.CANVAS;
+}: ShouldUseSoloCanvasContentPaddingParams): boolean => {
+  return (
+    presentation === 'solo' && layoutMode === PageLayoutTabLayoutMode.CANVAS
+  );
+};
