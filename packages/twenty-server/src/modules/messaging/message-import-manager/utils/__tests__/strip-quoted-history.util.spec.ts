@@ -64,13 +64,11 @@ describe('stripQuotedHistory', () => {
     ).toBe('Test reply\nRegards, Roman');
   });
 
-  it('should keep every response of an inline reply, dropping the questions', () => {
+  it('should keep the whole message when replies are inline', () => {
     const message =
       'Please see my responses inline\nOn 04/19/2011 07:10 AM, Roman Tkachenko wrote:\n\n> Question 1\nResponse 1\n> Question 2\nResponse 2';
 
-    expect(stripQuotedHistory(message)).toBe(
-      'Please see my responses inline\nResponse 1\nResponse 2',
-    );
+    expect(stripQuotedHistory(message)).toBe(message);
   });
 
   it('should detect wrapping of nested replies', () => {
@@ -153,7 +151,7 @@ describe('stripQuotedHistory', () => {
     );
   });
 
-  it('should drop a doubly quoted chain except its trailing sign off', () => {
+  it('should not be fooled by empty lines inside quoted messages', () => {
     expect(
       stripQuotedHistory(
         [
@@ -173,7 +171,7 @@ describe('stripQuotedHistory', () => {
           'Sent from Acompli',
         ].join('\n'),
       ),
-    ).toBe('Btw blah blah...\n\nSent from Acompli');
+    ).toBe('Btw blah blah...');
   });
 
   it('should handle unicode characters in a name', () => {
@@ -314,17 +312,14 @@ describe('stripQuotedHistory', () => {
     ).toBe('Gluten-free culpa lo-fi et nesciunt nostrud.');
   });
 
-  it('should drop a decorative caret line, which reads as a quotation', () => {
-    expect(
-      stripQuotedHistory(
-        'Visit us now for assistance...\n>>> >>>  http://www.domain.com <<<\nVisit our site by clicking the link above',
-      ),
-    ).toBe(
-      'Visit us now for assistance...\nVisit our site by clicking the link above',
-    );
+  it('should not be fooled by fake quotations', () => {
+    const message =
+      'Visit us now for assistance...\n>>> >>>  http://www.domain.com <<<\nVisit our site by clicking the link above';
+
+    expect(stripQuotedHistory(message)).toBe(message);
   });
 
-  it('should cut at a From block and keep a stray link line inside a quote', () => {
+  it('should not treat a link as the end of a quotation', () => {
     expect(
       stripQuotedHistory(
         [
@@ -356,7 +351,7 @@ describe('stripQuotedHistory', () => {
           '',
         ].join('\n'),
       ),
-    ).toBe('Blah\n\n (http://example.com/c/YzOTYzMmE) >');
+    ).toBe('Blah');
   });
 
   it('should handle a quotation block starting with a date', () => {
