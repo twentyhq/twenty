@@ -49,12 +49,6 @@ export class ApplicationRecurringChargeService {
       return 0;
     }
 
-    // A MONTH charge on a yearly subscription would be raised once a year, not
-    // twelve times, so it is skipped rather than silently under-charged.
-    if (currentBillingSubscription.interval !== SubscriptionInterval.Month) {
-      return 0;
-    }
-
     const periodStart = currentBillingSubscription.currentPeriodStart;
 
     const { declaredCharges, rejectedCharges: malformedCharges } =
@@ -65,6 +59,18 @@ export class ApplicationRecurringChargeService {
     // Reading what the period already carries costs a ClickHouse query per
     // workspace per day, so it waits until an app actually declares something.
     if (declaredCharges.length === 0) {
+      return 0;
+    }
+
+    // A MONTH charge on a yearly subscription would be raised once a year, not
+    // twelve times, so it is skipped rather than silently under-charged. Only
+    // reached once an app actually declares one, so the workspaces this is said
+    // about are the ones running an app that expects to be paid and is not.
+    if (currentBillingSubscription.interval !== SubscriptionInterval.Month) {
+      this.logger.warn(
+        `Skipping ${declaredCharges.length} recurring app charge(s) for workspace ${workspaceId}: the workspace is on a ${currentBillingSubscription.interval} subscription and only MONTH charges can be raised`,
+      );
+
       return 0;
     }
 
