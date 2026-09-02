@@ -20,7 +20,7 @@ export function IsValidServerUrlForMultiWorkspace(
             IS_MULTIWORKSPACE_ENABLED?: boolean;
           };
 
-          if (!config.IS_MULTIWORKSPACE_ENABLED) {
+          if (String(config.IS_MULTIWORKSPACE_ENABLED) !== 'true') {
             return true;
           }
 
