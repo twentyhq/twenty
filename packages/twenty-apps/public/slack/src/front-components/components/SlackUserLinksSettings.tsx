@@ -22,6 +22,30 @@ import { useResendSlackUserLinkConsent } from 'src/front-components/hooks/use-re
 import { useSlackUserLinks } from 'src/front-components/hooks/use-slack-user-links';
 import { useUnlinkedSlackUsers } from 'src/front-components/hooks/use-unlinked-slack-users';
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
+import {
+  SLACK_CONNECTION_HEALTH,
+  type SlackConnectionHealth,
+} from 'src/logic-functions/constants/slack-connection-health';
+
+const CONNECTION_HEALTH_CALLOUTS: Partial<
+  Record<SlackConnectionHealth, { title: string; description: string }>
+> = {
+  [SLACK_CONNECTION_HEALTH.TOKEN_REJECTED]: {
+    title: 'Slack connection is no longer valid',
+    description:
+      'Slack rejected the stored credentials, so the assistant cannot read or send messages. Remove the Slack connection and add it again.',
+  },
+  [SLACK_CONNECTION_HEALTH.TEAM_CLAIMED_BY_ANOTHER_WORKSPACE]: {
+    title: 'Slack workspace already connected elsewhere',
+    description:
+      'This Slack workspace is registered to another Twenty workspace, so its messages are delivered there. Disconnect Slack in that workspace first, then remove the connection here and add it again.',
+  },
+  [SLACK_CONNECTION_HEALTH.TEAM_UNCLAIMED]: {
+    title: 'Slack connection needs to be registered again',
+    description:
+      'No Twenty workspace is registered for this Slack workspace, so its messages are not delivered anywhere. Remove the Slack connection and add it again.',
+  },
+};
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -64,7 +88,7 @@ const StyledCenteredState = styled.div`
 
 export const SlackUserLinksSettings = () => {
   const { canManage, isPermissionLoading } = useCanManageSlackUserLinks();
-  const { isSlackConnected, isConnectionStatusLoading } =
+  const { isSlackConnected, connectionHealth, isConnectionStatusLoading } =
     useSlackConnectionStatus();
   const {
     slackUserLinks,
@@ -159,6 +183,22 @@ export const SlackUserLinksSettings = () => {
 
   if (isConnectionStatusLoading || !isSlackConnected) {
     return null;
+  }
+
+  const connectionHealthCallout = isDefined(connectionHealth)
+    ? CONNECTION_HEALTH_CALLOUTS[connectionHealth]
+    : undefined;
+
+  if (isDefined(connectionHealthCallout)) {
+    return (
+      <StyledContainer>
+        <Callout
+          variant="error"
+          title={connectionHealthCallout.title}
+          description={connectionHealthCallout.description}
+        />
+      </StyledContainer>
+    );
   }
 
   if (isPermissionLoading) {
