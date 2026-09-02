@@ -2,6 +2,7 @@ import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTe
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
 import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
+import { type AdvancedTextEditorExtensionContext } from '@/advanced-text-editor/types/AdvancedTextEditorExtensionContext';
 import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
 import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
@@ -104,6 +105,7 @@ type FormAdvancedTextFieldInputProps = {
   enableFullScreen?: boolean;
   fullScreenBreadcrumbs?: BreadcrumbProps['links'];
   onEditorReady?: (editor: Editor | null) => void;
+  savedResponseSubject?: AdvancedTextEditorExtensionContext['savedResponseSubject'];
 };
 
 export const FormAdvancedTextFieldInput = ({
@@ -123,6 +125,7 @@ export const FormAdvancedTextFieldInput = ({
   enableFullScreen,
   fullScreenBreadcrumbs,
   onEditorReady,
+  savedResponseSubject,
 }: FormAdvancedTextFieldInputProps) => {
   const { chrome, minHeight: profileMinHeight } = profile;
 
@@ -163,6 +166,7 @@ export const FormAdvancedTextFieldInput = ({
     },
     onImageUpload,
     onImageUploadError,
+    savedResponseSubject,
   });
 
   useEffect(() => {

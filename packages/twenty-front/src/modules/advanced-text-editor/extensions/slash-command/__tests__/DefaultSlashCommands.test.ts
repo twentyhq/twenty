@@ -246,6 +246,22 @@ describe('DefaultSlashCommands', () => {
 
       expect(editor.isActive('bulletList')).toBe(true);
     });
+
+    it('should defer saved response insertion to a picker item', () => {
+      const savedResponseCommand = DEFAULT_SLASH_COMMANDS.find(
+        (command) => command.id === 'savedResponse',
+      );
+
+      editor.commands.setContent('<p>/saved</p>');
+
+      savedResponseCommand?.getOnSelect(editor, {
+        from: 1,
+        to: 7,
+      })();
+
+      expect(editor.getText()).toBe('/saved');
+      expect(savedResponseCommand?.PickerComponent).toBeDefined();
+    });
   });
 
   describe('Search keywords', () => {
@@ -273,6 +289,16 @@ describe('DefaultSlashCommands', () => {
 
       expect(bulletListCommand?.keywords.length).toBeGreaterThan(0);
       expect(orderedListCommand?.keywords.length).toBeGreaterThan(0);
+    });
+
+    it('should include all saved response aliases', () => {
+      const savedResponseCommand = DEFAULT_SLASH_COMMANDS.find(
+        (command) => command.id === 'savedResponse',
+      );
+
+      expect(
+        savedResponseCommand?.keywords.map((keyword) => keyword.message),
+      ).toEqual(['saved', 'response', 'template']);
     });
   });
 });

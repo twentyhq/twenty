@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client/react';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { DragDropProvider } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -190,6 +190,14 @@ export const EmailComposerFields = ({
 
   const areCcBccFieldsVisible = composerState.showCcBcc || isDraggingRecipients;
 
+  const savedResponseSubject = useMemo(
+    () => ({
+      getCurrentSubject: () => composerState.subject,
+      setSubject: composerState.setSubject,
+    }),
+    [composerState.subject, composerState.setSubject],
+  );
+
   return (
     <StyledFieldsContainer>
       <DragDropItemDndContext.Provider value={contextValues}>
@@ -267,7 +275,7 @@ export const EmailComposerFields = ({
               <StyledComposerTextInput
                 type="text"
                 aria-label={t`Subject`}
-                defaultValue={composerState.initialSubject}
+                value={composerState.subject}
                 onChange={(event) =>
                   composerState.setSubject(event.target.value)
                 }
@@ -288,6 +296,7 @@ export const EmailComposerFields = ({
           placeholder={t`Type something or press "/" to see commands`}
           profile={INLINE_EMAIL_BODY_EDITOR_PROFILE}
           onImageUpload={uploadEmailImage}
+          savedResponseSubject={savedResponseSubject}
         />
       </StyledBody>
       {(composerState.files.length > 0 || isDefined(onAttachFiles)) && (

@@ -1,4 +1,5 @@
 import { ADVANCED_TEXT_EDITOR_BLOCK_SLASH_COMMANDS } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockSlashCommands';
+import { SavedResponsePicker } from '@/advanced-text-editor/extensions/slash-command/SavedResponsePicker';
 import { type SlashCommandConfig } from '@/advanced-text-editor/extensions/slash-command/types/SlashCommandConfig';
 import { msg } from '@lingui/core/macro';
 import {
@@ -7,6 +8,7 @@ import {
   IconH3,
   IconList,
   IconListNumbers,
+  IconMessage,
   IconPilcrow,
 } from 'twenty-ui/icon';
 
@@ -82,8 +84,21 @@ const LIST_SLASH_COMMANDS: SlashCommandConfig[] = [
   },
 ];
 
+const SAVED_RESPONSE_SLASH_COMMAND: SlashCommandConfig = {
+  id: 'savedResponse',
+  title: msg`Saved Response`,
+  description: msg`Insert a reusable response`,
+  icon: IconMessage,
+  keywords: [msg`saved`, msg`response`, msg`template`],
+  getIsActive: () => false,
+  getIsVisible: (editor) => editor.can().insertContent?.('') ?? false,
+  getOnSelect: () => () => undefined,
+  PickerComponent: SavedResponsePicker,
+};
+
 export const DEFAULT_SLASH_COMMANDS: SlashCommandConfig[] = [
   ...TEXT_SLASH_COMMANDS,
+  SAVED_RESPONSE_SLASH_COMMAND,
   ...ADVANCED_TEXT_EDITOR_BLOCK_SLASH_COMMANDS,
   ...LIST_SLASH_COMMANDS,
 ];

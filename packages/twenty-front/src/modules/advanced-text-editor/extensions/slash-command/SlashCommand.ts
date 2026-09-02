@@ -9,6 +9,7 @@ import {
   type SlashCommandMenuProps,
 } from '@/advanced-text-editor/extensions/slash-command/SlashCommandMenu';
 import { type SlashCommandConfig } from '@/advanced-text-editor/extensions/slash-command/types/SlashCommandConfig';
+import { type SlashCommandPickerComponent } from '@/advanced-text-editor/extensions/slash-command/types/SlashCommandPickerComponent';
 import { createSuggestionRenderLifecycle } from '@/ui/suggestion/components/createSuggestionRenderLifecycle';
 
 export type SlashCommandItem = {
@@ -20,6 +21,8 @@ export type SlashCommandItem = {
   isActive?: () => boolean;
   isVisible?: () => boolean;
   command: (options: { editor: Editor; range: Range }) => void;
+  PickerComponent?: SlashCommandPickerComponent;
+  pickerQuery?: string;
 };
 
 const createSlashCommandItem = (
@@ -37,6 +40,7 @@ const createSlashCommandItem = (
     const onSelect = config.getOnSelect(ed, range);
     onSelect();
   },
+  PickerComponent: config.PickerComponent,
 });
 
 const filterVisibleItems = (items: SlashCommandItem[]): SlashCommandItem[] => {
@@ -59,16 +63,28 @@ const filterByQuery = (
   });
 };
 
-const buildItems = (editor: Editor, query: string): SlashCommandItem[] => {
+export const buildSlashCommandItems = (
+  editor: Editor,
+  query: string,
+): SlashCommandItem[] => {
+  const [commandQuery = '', ...pickerQueryParts] = query.trim().split(/\s+/);
+  const pickerQuery = pickerQueryParts.join(' ');
   const allItems = DEFAULT_SLASH_COMMANDS.map((config) =>
     createSlashCommandItem(config, editor),
   );
   const visibleItems = filterVisibleItems(allItems);
-  return filterByQuery(visibleItems, query);
+  return filterByQuery(visibleItems, commandQuery).map((item) => ({
+    ...item,
+    pickerQuery: item.PickerComponent ? pickerQuery : undefined,
+  }));
 };
 
 export type SlashCommandOptions = {
   suggestions: Omit<SuggestionOptions, 'editor'>;
+  savedResponseSubject?: {
+    getCurrentSubject: () => string;
+    setSubject: (subject: string) => void;
+  };
 };
 
 export const SlashCommand = Extension.create<SlashCommandOptions>({
@@ -88,7 +104,7 @@ export const SlashCommand = Extension.create<SlashCommandOptions>({
       Suggestion({
         editor: this.editor,
         ...this.options.suggestions,
-        items: ({ query, editor: ed }) => buildItems(ed, query),
+        items: ({ query, editor: ed }) => buildSlashCommandItems(ed, query),
         render: () =>
           createSuggestionRenderLifecycle<
             SlashCommandItem,
@@ -102,6 +118,7 @@ export const SlashCommand = Extension.create<SlashCommandOptions>({
                 editor,
                 range,
                 query,
+                savedResponseSubject: this.options.savedResponseSubject,
               }),
             },
             this.editor,

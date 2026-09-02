@@ -2,6 +2,8 @@ import { type MessageDescriptor } from '@lingui/core';
 import { type Editor, type Range } from '@tiptap/core';
 import { type IconComponent } from 'twenty-ui/icon';
 
+import { type SlashCommandPickerComponent } from '@/advanced-text-editor/extensions/slash-command/types/SlashCommandPickerComponent';
+
 export type SlashCommandConfig = {
   id: string;
   title: MessageDescriptor;
@@ -11,4 +13,5 @@ export type SlashCommandConfig = {
   getIsActive: (editor: Editor) => boolean;
   getIsVisible: (editor: Editor) => boolean;
   getOnSelect: (editor: Editor, range: Range) => () => void;
+  PickerComponent?: SlashCommandPickerComponent;
 };

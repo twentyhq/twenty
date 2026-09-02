@@ -6,7 +6,10 @@ import { ListKit } from '@tiptap/extension-list';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
 
-import { SlashCommand } from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
+import {
+  buildSlashCommandItems,
+  SlashCommand,
+} from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
 
 describe('SlashCommand', () => {
   let editor: Editor;
@@ -51,6 +54,21 @@ describe('SlashCommand', () => {
       editor.commands.insertContent('/head');
 
       expect(editor.getText()).toContain('head');
+    });
+
+    it.each([
+      ['saved market', 'market'],
+      ['template follow', 'follow'],
+      ['response pof', 'pof'],
+    ])('should pass the inline picker query from /%s', (query, pickerQuery) => {
+      const items = buildSlashCommandItems(editor, query);
+
+      expect(items).toEqual([
+        expect.objectContaining({
+          id: 'savedResponse',
+          pickerQuery,
+        }),
+      ]);
     });
   });
 

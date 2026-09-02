@@ -1,5 +1,6 @@
 import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
 import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
+import { type AdvancedTextEditorExtensionContext } from '@/advanced-text-editor/types/AdvancedTextEditorExtensionContext';
 import { buildAdvancedTextEditorExtensions } from '@/advanced-text-editor/utils/buildAdvancedTextEditorExtensions';
 import { deserializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/deserializeAdvancedTextEditorDocument';
 import { type Content } from '@tiptap/core';
@@ -19,6 +20,7 @@ type UseAdvancedTextEditorProps = {
   onImageUploadError?: (error: Error, file: File) => void;
   content?: Content;
   editorProps?: EditorOptions['editorProps'];
+  savedResponseSubject?: AdvancedTextEditorExtensionContext['savedResponseSubject'];
 };
 
 export const useAdvancedTextEditor = (
@@ -34,6 +36,7 @@ export const useAdvancedTextEditor = (
     onImageUploadError,
     content,
     editorProps,
+    savedResponseSubject,
   }: UseAdvancedTextEditorProps,
   dependencies?: DependencyList,
 ) => {
@@ -44,11 +47,19 @@ export const useAdvancedTextEditor = (
         context: {
           onImageUpload,
           onImageUploadError,
+          savedResponseSubject,
         },
         placeholder,
         readonly,
       }),
-    [profile, placeholder, onImageUpload, onImageUploadError, readonly],
+    [
+      profile,
+      placeholder,
+      onImageUpload,
+      onImageUploadError,
+      savedResponseSubject,
+      readonly,
+    ],
   );
 
   const getEditorContent = (): Content | undefined => {

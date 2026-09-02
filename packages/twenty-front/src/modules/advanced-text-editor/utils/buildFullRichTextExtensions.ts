@@ -24,7 +24,9 @@ export const buildFullRichTextExtensions = (
   Link.configure({ openOnClick: false }),
   ResizableImage,
   UploadImageExtension.configure(context),
-  SlashCommand,
+  SlashCommand.configure({
+    savedResponseSubject: context.savedResponseSubject,
+  }),
 ];
 
 export const buildFullRichTextWithVariableTagExtensions = (
