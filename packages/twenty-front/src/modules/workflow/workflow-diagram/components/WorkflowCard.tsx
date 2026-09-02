@@ -31,7 +31,9 @@ export const WorkflowCard = () => {
         }),
       }}
     >
-      <CoreWorkflowVersionPreviewEffect workflowId={targetRecord.id} />
+      {!isInSidePanel && (
+        <CoreWorkflowVersionPreviewEffect workflowId={targetRecord.id} />
+      )}
       {isDefined(previewedWorkflowVersionOnMainSurface) ? (
         <>
           <WorkflowVersionVisualizerEffect
