@@ -13,6 +13,37 @@ type SendMessageCampaignParams = {
   campaignId: string;
 };
 
+type CampaignAudienceOutcome = NonNullable<
+  SendMessageCampaignMutation['sendMessageCampaign']
+>['audience'];
+
+const buildSkipReasons = (audience: CampaignAudienceOutcome): string => {
+  const parts: string[] = [];
+
+  if (audience.withoutEmail > 0) {
+    parts.push(t`${audience.withoutEmail} without email`);
+  }
+  if (audience.duplicateEmails > 0) {
+    parts.push(t`${audience.duplicateEmails} duplicate`);
+  }
+  if (audience.hardSuppressed > 0) {
+    parts.push(t`${audience.hardSuppressed} bounced or complained`);
+  }
+  if (audience.globallyUnsubscribed > 0) {
+    parts.push(
+      t`${audience.globallyUnsubscribed} unsubscribed from everything`,
+    );
+  }
+  if (audience.topicUnsubscribed > 0) {
+    parts.push(t`${audience.topicUnsubscribed} opted out of this topic`);
+  }
+  if (audience.overCap > 0) {
+    parts.push(t`${audience.overCap} over the recipient limit`);
+  }
+
+  return parts.length > 0 ? parts.join(', ') : t`no eligible recipients`;
+};
+
 export const useSendMessageCampaign = () => {
   const [sendMessageCampaignMutation, { loading }] = useMutation<
     SendMessageCampaignMutation,
@@ -39,16 +70,17 @@ export const useSendMessageCampaign = () => {
 
       const { queuedCount, audience } = queued;
       const skippedCount = audience.totalMembers - audience.sendable;
+      const skipReasons = buildSkipReasons(audience);
 
       if (queuedCount === 0) {
         enqueueErrorSnackBar({
-          message: t`No recipients to send to (${skippedCount} skipped)`,
+          message: t`No recipients to send to (${skipReasons})`,
         });
       } else {
         enqueueSuccessSnackBar({
           message:
             skippedCount > 0
-              ? t`Campaign queued to ${queuedCount} recipient(s), ${skippedCount} skipped`
+              ? t`Campaign queued to ${queuedCount} recipient(s), ${skippedCount} skipped: ${skipReasons}`
               : t`Campaign queued to ${queuedCount} recipient(s)`,
         });
       }

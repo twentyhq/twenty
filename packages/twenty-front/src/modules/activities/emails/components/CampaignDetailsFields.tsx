@@ -47,7 +47,7 @@ const StyledHint = styled.div`
 `;
 
 type CampaignAudiencePreview = NonNullable<
-  ReturnType<typeof useCampaignAudiencePreview>
+  ReturnType<typeof useCampaignAudiencePreview>['audiencePreview']
 >;
 
 const buildAudienceHint = (preview: CampaignAudiencePreview): string => {
@@ -59,11 +59,17 @@ const buildAudienceHint = (preview: CampaignAudiencePreview): string => {
   if (preview.duplicateEmails > 0) {
     parts.push(t`${preview.duplicateEmails} duplicate`);
   }
+  if (preview.hardSuppressed > 0) {
+    parts.push(t`${preview.hardSuppressed} bounced or complained`);
+  }
   if (preview.globallyUnsubscribed > 0) {
     parts.push(t`${preview.globallyUnsubscribed} unsubscribed from everything`);
   }
   if (preview.topicUnsubscribed > 0) {
     parts.push(t`${preview.topicUnsubscribed} opted out of this topic`);
+  }
+  if (preview.overCap > 0) {
+    parts.push(t`${preview.overCap} over the recipient limit`);
   }
 
   if (parts.length === 0) {
@@ -105,10 +111,11 @@ export const CampaignDetailsFields = ({
     }
   };
 
-  const audiencePreview = useCampaignAudiencePreview({
-    listId: detailsState.listId,
-    unsubscribeTopicId: detailsState.unsubscribeTopicId,
-  });
+  const { audiencePreview, hasFailed: hasAudiencePreviewFailed } =
+    useCampaignAudiencePreview({
+      listId: detailsState.listId,
+      unsubscribeTopicId: detailsState.unsubscribeTopicId,
+    });
 
   const senderOptions: SelectOption<string>[] = channels
     .filter((channel) => channel.type === MessageChannelType.EMAIL_GROUP)
@@ -124,16 +131,30 @@ export const CampaignDetailsFields = ({
   );
 
   const hasTopicOptions = topicOptions.length > 0;
+  const hasSenderOptions = senderOptions.length > 0;
 
   return (
     <CampaignEnvelopeBox
       width={width}
       onBlur={() => detailsState.flush()}
       below={
-        (isDefined(audiencePreview) || hasTopicOptions) && (
+        (isDefined(audiencePreview) ||
+          hasAudiencePreviewFailed ||
+          !hasSenderOptions ||
+          hasTopicOptions) && (
           <StyledHints>
+            {!hasSenderOptions && (
+              <StyledHint>
+                {t`No sending address is available. Connect a verified sending domain in Settings before this campaign can go out.`}
+              </StyledHint>
+            )}
             {isDefined(audiencePreview) && (
               <StyledHint>{buildAudienceHint(audiencePreview)}</StyledHint>
+            )}
+            {hasAudiencePreviewFailed && (
+              <StyledHint>
+                {t`Could not load this list's audience, so the recipient count is unknown.`}
+              </StyledHint>
             )}
             {hasTopicOptions && (
               <StyledHint>

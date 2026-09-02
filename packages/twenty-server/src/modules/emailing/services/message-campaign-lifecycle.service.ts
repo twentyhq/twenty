@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
 import { CAMPAIGN_DELIVERY_STATE } from 'src/engine/core-modules/emailing-domain/constants/campaign-delivery-state.constant';
 import { CAMPAIGN_FAILURE_REASON } from 'src/engine/core-modules/emailing-domain/constants/campaign-failure-reason.constant';
+import { UNFINISHED_CAMPAIGN_DELIVERY_STATES } from 'src/engine/core-modules/emailing-domain/constants/unfinished-campaign-delivery-states.constant';
 import { CAMPAIGN_SKIP_REASON } from 'src/engine/core-modules/emailing-domain/constants/campaign-skip-reason.constant';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -179,10 +180,7 @@ export class MessageCampaignLifecycleService {
     const hasUnfinishedDelivery =
       await this.campaignDeliveryRepository.existsBy(workspaceId, {
         campaignId,
-        state: In([
-          CAMPAIGN_DELIVERY_STATE.QUEUED,
-          CAMPAIGN_DELIVERY_STATE.SENDING,
-        ]),
+        state: In(UNFINISHED_CAMPAIGN_DELIVERY_STATES),
       });
 
     if (hasUnfinishedDelivery) {
