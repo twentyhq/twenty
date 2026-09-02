@@ -63,22 +63,16 @@ const splitCandidatesTheBatchAlreadyWrote = async (
   };
 };
 
-const linkCandidatesOneByOne = async (
+const persistCandidatesOneByOne = async (
   client: CoreApiClient,
   {
     candidates,
     slackTeamId,
   }: { candidates: SlackRosterMatchCandidate[]; slackTeamId: string },
-): Promise<SlackRosterLinkOutcome> => {
-  const { writtenCount, unwrittenCandidates } =
-    await splitCandidatesTheBatchAlreadyWrote(client, {
-      candidates,
-      slackTeamId,
-    });
-
+): Promise<number> => {
   const outcomes: boolean[] = [];
 
-  for (const candidate of unwrittenCandidates) {
+  for (const candidate of candidates) {
     try {
       await persistSlackUserLink(client, {
         existingLink: undefined,
@@ -99,10 +93,51 @@ const linkCandidatesOneByOne = async (
     }
   }
 
-  return {
-    linkedCount: writtenCount + outcomes.filter((isLinked) => isLinked).length,
-    failedCount: outcomes.filter((isLinked) => !isLinked).length,
-  };
+  return outcomes.filter((isLinked) => isLinked).length;
+};
+
+const recoverFailedBatch = async (
+  client: CoreApiClient,
+  {
+    candidates,
+    slackTeamId,
+    canRetryOneByOne,
+  }: {
+    candidates: SlackRosterMatchCandidate[];
+    slackTeamId: string;
+    canRetryOneByOne: boolean;
+  },
+): Promise<SlackRosterLinkOutcome> => {
+  try {
+    const { writtenCount, unwrittenCandidates } =
+      await splitCandidatesTheBatchAlreadyWrote(client, {
+        candidates,
+        slackTeamId,
+      });
+
+    if (!canRetryOneByOne) {
+      return {
+        linkedCount: writtenCount,
+        failedCount: unwrittenCandidates.length,
+      };
+    }
+
+    const persistedCount = await persistCandidatesOneByOne(client, {
+      candidates: unwrittenCandidates,
+      slackTeamId,
+    });
+
+    return {
+      linkedCount: writtenCount + persistedCount,
+      failedCount: unwrittenCandidates.length - persistedCount,
+    };
+  } catch (error) {
+    console.warn(
+      `[slack] roster match could not reconcile a failed batch of ${candidates.length}: ${toErrorMessage(error)}`,
+    );
+
+    return { linkedCount: 0, failedCount: candidates.length };
+  }
 };
 
 export const linkSlackRosterCandidates = async (
@@ -150,34 +185,22 @@ export const linkSlackRosterCandidates = async (
         failedCount: 0,
       });
     } catch (error) {
-      if (remainingFallbackCandidates < batchCandidates.length) {
-        console.warn(
-          `[slack] roster match gave up on ${batchCandidates.length} candidates after repeated batch failures: ${toErrorMessage(error)}`,
-        );
-
-        const { writtenCount, unwrittenCandidates } =
-          await splitCandidatesTheBatchAlreadyWrote(client, {
-            candidates: batchCandidates,
-            slackTeamId,
-          });
-
-        batchOutcomes.push({
-          linkedCount: writtenCount,
-          failedCount: unwrittenCandidates.length,
-        });
-        continue;
-      }
-
       console.warn(
-        `[slack] roster match batch failed, linking one at a time: ${toErrorMessage(error)}`,
+        `[slack] roster match batch of ${batchCandidates.length} failed: ${toErrorMessage(error)}`,
       );
 
-      remainingFallbackCandidates -= batchCandidates.length;
+      const canRetryOneByOne =
+        remainingFallbackCandidates >= batchCandidates.length;
+
+      if (canRetryOneByOne) {
+        remainingFallbackCandidates -= batchCandidates.length;
+      }
 
       batchOutcomes.push(
-        await linkCandidatesOneByOne(client, {
+        await recoverFailedBatch(client, {
           candidates: batchCandidates,
           slackTeamId,
+          canRetryOneByOne,
         }),
       );
     }

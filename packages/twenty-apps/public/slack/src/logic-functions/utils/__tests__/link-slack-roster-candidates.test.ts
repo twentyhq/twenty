@@ -221,7 +221,26 @@ describe('linkSlackRosterCandidates', () => {
       slackTeamId: SLACK_TEAM_ID,
     });
 
+    expect(persistSlackUserLinkMock).toHaveBeenCalledTimes(200);
     expect(outcome).toEqual({ linkedCount: 1, failedCount: 399 });
+  });
+
+  it('should keep earlier batches when the reconciliation read fails', async () => {
+    createSlackUserLinksMock
+      .mockResolvedValueOnce(undefined)
+      .mockRejectedValueOnce(new Error('batch failed'));
+    listLinkedSlackUserIdsMock.mockRejectedValue(new Error('read failed'));
+
+    const candidates = Array.from({ length: 400 }, (_, index) =>
+      candidate(`U${index}`),
+    );
+
+    const outcome = await linkSlackRosterCandidates(client, {
+      candidates,
+      slackTeamId: SLACK_TEAM_ID,
+    });
+
+    expect(outcome).toEqual({ linkedCount: 200, failedCount: 200 });
   });
 
   it('should never upsert, so a declined or manual link is never overwritten', async () => {
