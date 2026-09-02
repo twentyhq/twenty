@@ -8,6 +8,7 @@ import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/e
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { UsageEventListener } from 'src/engine/core-modules/usage/listeners/usage-event.listener';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
+import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { UsageResolver } from 'src/engine/core-modules/usage/usage.resolver';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -22,7 +23,12 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     TypeOrmModule.forFeature([UserWorkspaceEntity]),
     WorkspaceCacheModule,
   ],
-  providers: [UsageResolver, UsageAnalyticsService, UsageEventListener],
-  exports: [UsageAnalyticsService],
+  providers: [
+    UsageResolver,
+    UsageAnalyticsService,
+    UsageRecorderService,
+    UsageEventListener,
+  ],
+  exports: [UsageAnalyticsService, UsageRecorderService],
 })
 export class UsageModule {}

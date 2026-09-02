@@ -144,6 +144,7 @@ export const SettingsLogicFunctionDetail = () => {
     !loading &&
     !applicationLoading && (
       <SettingsPageLayout
+        pageTitle={formValues.name}
         title={
           <SettingsLogicFunctionLabelContainer
             value={formValues.name}

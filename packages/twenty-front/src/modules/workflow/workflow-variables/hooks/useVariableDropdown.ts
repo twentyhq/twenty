@@ -1,3 +1,4 @@
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -9,21 +10,40 @@ import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/
 import { type LinkOutputSchema } from '@/workflow/workflow-variables/types/LinkOutputSchema';
 import { type FieldOutputSchemaV2 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
+import { type WorkflowVariableSearchResult } from '@/workflow/workflow-variables/types/WorkflowVariableSearchResult';
+import { type WorkflowVariableSelection } from '@/workflow/workflow-variables/types/WorkflowVariableSelection';
 import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
+import {
+  type BaseOutputSchemaV2,
+  type InputSchemaPropertyType,
+} from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/icon';
 import { isBaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isBaseOutputSchemaV2';
 import { isLinkOutputSchema } from '@/workflow/workflow-variables/types/guards/isLinkOutputSchema';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
+import { getWorkflowVariableSelectionFromSearchResult } from '@/workflow/workflow-variables/utils/getWorkflowVariableSelectionFromSearchResult';
+import { searchWorkflowVariables } from '@/workflow/workflow-variables/utils/searchWorkflowVariables';
 
 type UseVariableDropdownProps = {
   step: StepOutputSchemaV2;
-  onSelect: (value: string) => void;
+  initialPath?: string[];
+  onSelect: (selection: WorkflowVariableSelection) => void;
   onBack: () => void;
+  shouldDisplaySpecialItems?: boolean;
+  shouldDisplayRecordObjects?: boolean;
+  objectNameSingularsToSelect?: string[];
+};
+
+type VariableDropdownOption = {
+  isLeaf: boolean;
+  label?: string;
+  icon?: string;
+  type?: InputSchemaPropertyType;
+  value?: { toString: () => string } | null;
 };
 
 type UseVariableDropdownReturn = {
@@ -31,19 +51,26 @@ type UseVariableDropdownReturn = {
   searchInputValue: string;
   setSearchInputValue: (value: string) => void;
   handleSelectField: (key: string) => void;
+  isSearching: boolean;
+  searchResults: WorkflowVariableSearchResult[];
+  handleSelectSearchResult: (result: WorkflowVariableSearchResult) => void;
   goBack: () => void;
-  // TODO: fix typing here
-  filteredOptions: [string, any][];
+  options: Array<[string, VariableDropdownOption]>;
 };
 
 export const useVariableDropdown = ({
   step,
+  initialPath = [],
   onSelect,
   onBack,
+  shouldDisplaySpecialItems,
+  shouldDisplayRecordObjects,
+  objectNameSingularsToSelect,
 }: UseVariableDropdownProps): UseVariableDropdownReturn => {
   const { getIcon } = useIcons();
+  const { objectMetadataItems } = useObjectMetadataItems();
 
-  const [currentPath, setCurrentPath] = useState<string[]>([]);
+  const [currentPath, setCurrentPath] = useState<string[]>(initialPath);
   const [searchInputValue, setSearchInputValue] = useState('');
 
   const { openWorkflowEditStepInSidePanel } = useSidePanelWorkflowNavigation();
@@ -90,12 +117,14 @@ export const useVariableDropdown = ({
         setCurrentPath([...currentPath, key]);
         setSearchInputValue('');
       } else {
-        onSelect(
-          getVariableTemplateFromPath({
+        onSelect({
+          rawVariableName: getVariableTemplateFromPath({
             stepId: step.id,
             path: [...currentPath, key],
           }),
-        );
+          stepId: step.id,
+          isFullRecord: false,
+        });
       }
     };
 
@@ -146,6 +175,7 @@ export const useVariableDropdown = ({
   };
 
   const goBack = () => {
+    setSearchInputValue('');
     if (currentPath.length === 0) {
       onBack();
     } else {
@@ -156,13 +186,31 @@ export const useVariableDropdown = ({
   const displayedFields = getDisplayedSubStepFields();
   const options = displayedFields ? Object.entries(displayedFields) : [];
 
-  const filteredOptions = searchInputValue
-    ? options.filter(
-        ([_, value]) =>
-          value.label &&
-          value.label.toLowerCase().includes(searchInputValue.toLowerCase()),
-      )
-    : options;
+  const isSearching = searchInputValue.trim().length > 0;
+  const searchResults = searchWorkflowVariables({
+    steps: [step],
+    currentPath,
+    searchInputValue,
+    shouldDisplaySpecialItems,
+    shouldDisplayRecordObjects,
+    objectNameSingularsToSelect,
+    objectMetadataItems,
+  });
+
+  const handleSelectSearchResult = (result: WorkflowVariableSearchResult) => {
+    if (result.isLeaf) {
+      onSelect(getWorkflowVariableSelectionFromSearchResult(result));
+      return;
+    }
+
+    if (isLinkOutputSchema(getCurrentSubStepFromPath(step, currentPath))) {
+      handleSelectField('link');
+      return;
+    }
+
+    setCurrentPath(result.path);
+    setSearchInputValue('');
+  };
 
   return {
     currentPath,
@@ -170,6 +218,9 @@ export const useVariableDropdown = ({
     setSearchInputValue,
     handleSelectField,
     goBack,
-    filteredOptions,
+    options,
+    isSearching,
+    searchResults,
+    handleSelectSearchResult,
   };
 };

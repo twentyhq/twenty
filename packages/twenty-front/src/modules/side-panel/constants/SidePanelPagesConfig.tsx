@@ -1,6 +1,7 @@
 import { SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage';
 import { SidePanelCommandMenuItemEditPage } from '@/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage';
 import { SidePanelNavigationMenuItemEditPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage';
+import { SidePanelCoreWorkflowFiltersPage } from '@/object-core/workflows/components/SidePanelCoreWorkflowFiltersPage';
 import { SidePanelSettingsMetadataTranslationsPage } from '@/settings/translations/components/SidePanelSettingsMetadataTranslationsPage';
 import { SidePanelRoutedPage } from '@/side-panel/routing/components/SidePanelRoutedPage';
 import { SidePanelNewSidebarItemPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemPage';
@@ -99,4 +100,5 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
     <SidePanelSettingsMetadataTranslationsPage />,
   ],
   [SidePanelPages.RoutedPage, <SidePanelRoutedPage />],
+  [SidePanelPages.WorkflowCoreFilters, <SidePanelCoreWorkflowFiltersPage />],
 ]);

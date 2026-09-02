@@ -18,6 +18,7 @@ import {
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
@@ -78,6 +79,17 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
 
   @Column({ type: 'text', default: ApplicationRegistrationSourceType.LOCAL })
   sourceType: ApplicationRegistrationSourceType;
+
+  @Column({
+    nullable: false,
+    type: 'text',
+    default: ApplicationState.INSTALLED,
+  })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.38.0_AddStateToApplicationFastInstanceCommand_1788260646460',
+  })
+  state: ApplicationState;
 
   @Column({ nullable: false, type: 'text' })
   sourcePath: string;

@@ -202,7 +202,7 @@ describe('callRecordingIdForCalendarEvent (integration)', () => {
     );
   });
 
-  it('falls back to the earliest in-progress recording', async () => {
+  it('falls back to the earliest non-terminal recording', async () => {
     await global.testDataSource.query(
       `UPDATE "${TEST_SCHEMA_NAME}"."callRecording"
        SET status = $1

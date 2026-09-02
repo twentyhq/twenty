@@ -2,14 +2,10 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFilterGroupsComponentState';
 import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFiltersComponentState';
+import { buildEmptyStepFilter } from '@/workflow/workflow-steps/filters/utils/buildEmptyStepFilter';
 import { useStore } from 'jotai';
 import { useCallback, useContext } from 'react';
-import {
-  type StepFilter,
-  type StepFilterGroup,
-  StepLogicalOperator,
-  ViewFilterOperand,
-} from 'twenty-shared/types';
+import { type StepFilterGroup, StepLogicalOperator } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 export const useAddRootStepFilter = () => {
@@ -30,15 +26,10 @@ export const useAddRootStepFilter = () => {
       logicalOperator: StepLogicalOperator.AND,
     };
 
-    const newStepFilter: StepFilter = {
-      id: v4(),
-      type: 'unknown',
-      value: '',
-      operand: ViewFilterOperand.IS,
+    const newStepFilter = buildEmptyStepFilter({
       stepFilterGroupId: newStepFilterGroup.id,
-      stepOutputKey: '',
       positionInStepFilterGroup: 0,
-    };
+    });
 
     store.set(currentStepFilterGroups, [newStepFilterGroup]);
     store.set(currentStepFilters, [newStepFilter]);

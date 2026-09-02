@@ -13,6 +13,18 @@ import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsPro
 const SETTINGS_ROOT_PATH = AppPath.SettingsCatchAll.replace('/*', '');
 
 describe('workspace route objects', () => {
+  it('does not leak generated route IDs into the shared registry', () => {
+    const collectRouteIds = (
+      routes: ReturnType<typeof createWorkspaceRouteObjects>,
+    ): string[] =>
+      routes.flatMap((route) => [
+        ...(route.id === undefined ? [] : [route.id]),
+        ...collectRouteIds(route.children ?? []),
+      ]);
+
+    expect(collectRouteIds(createWorkspaceRouteObjects({}))).toEqual([]);
+  });
+
   it('can be embedded in a data router without route id collisions', () => {
     const router = createMemoryRouter([
       { children: createWorkspaceRouteObjects({}) },

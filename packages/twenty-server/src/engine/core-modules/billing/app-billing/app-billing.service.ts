@@ -8,16 +8,11 @@ import { type Repository } from 'typeorm';
 
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { type ChargeDto } from 'src/engine/core-modules/billing/app-billing/dtos/charge.dto';
-import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
-import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
-import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 
 // Each operation type has one canonical counting unit — matches how
 // `ai-billing.service.ts` emits native usage events.
@@ -42,8 +37,7 @@ export class AppBillingService {
   private readonly logger = new Logger(AppBillingService.name);
 
   constructor(
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    private readonly billingService: BillingService,
+    private readonly usageRecorderService: UsageRecorderService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
@@ -57,16 +51,14 @@ export class AppBillingService {
   }): Promise<void> {
     const { workspaceId, applicationId, userWorkspaceId, charge } = params;
 
-    const [operationType, attributedUserWorkspaceId, periodStart] =
-      await Promise.all([
-        this.resolveOperationType({ workspaceId, applicationId, charge }),
-        userWorkspaceId ??
-          this.findWorkspaceScopedUserWorkspaceId({
-            workspaceId,
-            userWorkspaceId: charge.userWorkspaceId,
-          }),
-        this.resolveBillingPeriodStart(workspaceId),
-      ]);
+    const [operationType, attributedUserWorkspaceId] = await Promise.all([
+      this.resolveOperationType({ workspaceId, applicationId, charge }),
+      userWorkspaceId ??
+        this.findWorkspaceScopedUserWorkspaceId({
+          workspaceId,
+          userWorkspaceId: charge.userWorkspaceId,
+        }),
+    ]);
 
     const unit = USAGE_UNIT_BY_OPERATION_TYPE[operationType];
 
@@ -75,23 +67,18 @@ export class AppBillingService {
         `${charge.creditsUsedMicro} micro-credits (${charge.quantity} ${unit}, ${operationType})`,
     );
 
-    this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
-      USAGE_RECORDED,
-      [
-        {
-          resourceType: UsageResourceType.APP,
-          operationType,
-          creditsUsedMicro: charge.creditsUsedMicro,
-          quantity: charge.quantity,
-          unit,
-          resourceId: applicationId,
-          resourceContext: charge.operation ?? charge.resourceContext ?? null,
-          userWorkspaceId: attributedUserWorkspaceId,
-          periodStart,
-        },
-      ],
-      workspaceId,
-    );
+    await this.usageRecorderService.record(workspaceId, [
+      {
+        resourceType: UsageResourceType.APP,
+        operationType,
+        creditsUsedMicro: charge.creditsUsedMicro,
+        quantity: charge.quantity,
+        unit,
+        resourceId: applicationId,
+        resourceContext: charge.operation ?? charge.resourceContext ?? null,
+        spenders: { userWorkspaceId: attributedUserWorkspaceId, applicationId },
+      },
+    ]);
   }
 
   private async resolveOperationType({
@@ -136,23 +123,6 @@ export class AppBillingService {
     // USAGE_OPERATION_TYPES from promising apps a category the platform does
     // not meter: a drifted value fails to compile here.
     return UsageOperationType[billableOperation.operationType];
-  }
-
-  private async resolveBillingPeriodStart(
-    workspaceId: string,
-  ): Promise<Date | undefined> {
-    if (!this.billingService.isBillingEnabled()) {
-      return undefined;
-    }
-
-    const { currentBillingSubscription } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'currentBillingSubscription',
-      ]);
-
-    return currentBillingSubscription === NO_BILLING_SUBSCRIPTION
-      ? undefined
-      : currentBillingSubscription.currentPeriodStart;
   }
 
   // Scoped to the token's workspace, so an app cannot attribute its spend to

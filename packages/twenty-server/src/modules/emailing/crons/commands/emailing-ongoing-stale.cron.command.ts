@@ -1,0 +1,31 @@
+import { EMAILING_ONGOING_STALE_CRON_PATTERN } from 'src/modules/emailing/constants/emailing-ongoing-stale-cron-pattern.constant';
+import { Command, CommandRunner } from 'nest-commander';
+
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { EmailingOngoingStaleCronJob } from 'src/modules/emailing/crons/jobs/emailing-ongoing-stale.cron.job';
+
+@Command({
+  name: 'cron:emailing:ongoing-stale',
+  description:
+    'Starts a cron job to reconcile message campaigns left in the sending status',
+})
+export class EmailingOngoingStaleCronCommand extends CommandRunner {
+  constructor(
+    @InjectMessageQueue(MessageQueue.cronQueue)
+    private readonly messageQueueService: MessageQueueService,
+  ) {
+    super();
+  }
+
+  async run(): Promise<void> {
+    await this.messageQueueService.addCron<undefined>({
+      jobName: EmailingOngoingStaleCronJob.name,
+      data: undefined,
+      options: {
+        repeat: { pattern: EMAILING_ONGOING_STALE_CRON_PATTERN },
+      },
+    });
+  }
+}

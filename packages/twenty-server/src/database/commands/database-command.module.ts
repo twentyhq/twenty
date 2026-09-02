@@ -37,6 +37,7 @@ import { UserSessionModule } from 'src/engine/core-modules/user-session/user-ses
 import { UpgradeStatusCommand } from 'src/engine/core-modules/upgrade/commands/upgrade-status.command';
 import { UpgradeModule } from 'src/engine/core-modules/upgrade/upgrade.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
@@ -53,6 +54,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
 import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-version/workspace-version.module';
 import { WebhookSubscriptionModule } from 'src/modules/connected-account/webhook-subscription-manager/webhook-subscription.module';
 import { CalendarEventImportManagerModule } from 'src/modules/calendar/calendar-event-import-manager/calendar-event-import-manager.module';
+import { EmailingModule } from 'src/modules/emailing/emailing.module';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 import { WorkflowRunQueueModule } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workflow-run-queue.module';
 import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.module';
@@ -66,6 +68,7 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
     MessagingImportManagerModule,
     CalendarEventImportManagerModule,
     WebhookSubscriptionModule,
+    EmailingModule,
     AutomatedTriggerModule,
     WorkflowCoreConsistencyModule,
     FileModule,
@@ -101,6 +104,7 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
     UpgradeModule,
     SecretEncryptionRotationModule,
     UserSessionModule,
+    EmailingDomainModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,
