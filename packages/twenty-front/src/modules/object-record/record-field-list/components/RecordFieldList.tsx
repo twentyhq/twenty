@@ -22,6 +22,7 @@ import { useRecordShowContainerActions } from '@/object-record/record-show/hooks
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -36,7 +37,7 @@ type RecordFieldListProps = {
 };
 
 export const RecordFieldList = ({
-  instanceId,
+  instanceId: instanceIdFromProps,
   objectNameSingular,
   objectRecordId,
   showDuplicatesSection = true,
@@ -44,6 +45,12 @@ export const RecordFieldList = ({
   excludeFieldMetadataIds = [],
   excludeCreatedAtAndUpdatedAt = true,
 }: RecordFieldListProps) => {
+  // Anchored portals look this id up in the DOM after resolving it through
+  // useAvailableComponentInstanceIdOrThrow, which surface-scopes it. Scoping it
+  // here keeps the rendered anchor ids and that lookup on the same string.
+  const instanceId =
+    useWorkspaceSurfaceScopedComponentInstanceId(instanceIdFromProps);
+
   const { recordLoading } = useRecordShowContainerData({
     objectRecordId,
   });

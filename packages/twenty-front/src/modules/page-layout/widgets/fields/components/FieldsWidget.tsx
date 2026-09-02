@@ -11,6 +11,7 @@ import { useFieldsWidgetGroupsForDisplay } from '@/page-layout/widgets/fields/ho
 import { useFieldsWidgetHiddenFieldsForDisplay } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetHiddenFieldsForDisplay';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -55,7 +56,12 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
   const targetRecord = useTargetRecord();
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
 
-  const instanceId = `fields-${widget.id}-${targetRecord.id}${isInSidePanel ? '-side-panel' : ''}`;
+  // Anchored portals look this id up in the DOM after resolving it through
+  // useAvailableComponentInstanceIdOrThrow, which surface-scopes it. Scoping it
+  // here keeps the rendered anchor ids and that lookup on the same string.
+  const instanceId = useWorkspaceSurfaceScopedComponentInstanceId(
+    `fields-${widget.id}-${targetRecord.id}`,
+  );
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetRecord.targetObjectNameSingular,
