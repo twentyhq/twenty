@@ -2,6 +2,8 @@ import { type Fathom } from 'fathom-typescript';
 import { kv } from 'twenty-sdk/logic-function';
 
 import { type FathomWebhookRegistration } from 'src/logic-functions/types/fathom-webhook-registration.type';
+import { deleteStaleFathomWebhook } from 'src/logic-functions/utils/delete-stale-fathom-webhook.util';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 export const storeFathomWebhookRegistration = async ({
   fathomClient,
@@ -30,10 +32,13 @@ export const storeFathomWebhookRegistration = async ({
     // recorded can never be found again: undo it before the retry creates
     // a second one against the same destination.
     try {
-      await fathomClient.deleteWebhook({ id: registration.webhookId });
-    } catch {
+      await deleteStaleFathomWebhook({
+        fathomClient,
+        webhookId: registration.webhookId,
+      });
+    } catch (deleteError) {
       console.error(
-        `[fathom] leaked webhook ${registration.webhookId} for connected account ${connectedAccountId}`,
+        `[fathom] leaked webhook ${registration.webhookId} for connected account ${connectedAccountId}: ${toErrorMessage(deleteError)}`,
       );
     }
 
