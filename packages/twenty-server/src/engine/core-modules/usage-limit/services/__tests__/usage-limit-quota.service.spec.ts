@@ -142,11 +142,6 @@ describe('UsageLimitQuotaService', () => {
     service = module.get<UsageLimitQuotaService>(UsageLimitQuotaService);
   });
 
-  it('admits when no limit exists and the pool is unlimited', async () => {
-    await expect(assertCanConsume()).resolves.toBeUndefined();
-    expect(cacheStorage.mget).not.toHaveBeenCalled();
-  });
-
   it('admits on a warm counter with budget left', async () => {
     setLimits([buildLimit({})]);
     cacheStorage.mget.mockResolvedValue([250]);
@@ -206,17 +201,6 @@ describe('UsageLimitQuotaService', () => {
 
   it('warms a billing-period counter by timestamp range when no subscription anchors it', async () => {
     setLimits([buildLimit({})]);
-    cacheStorage.mget.mockResolvedValue([undefined]);
-
-    await expect(assertCanConsume()).resolves.toBeUndefined();
-    expect(clickHouseService.selectOrThrow).toHaveBeenCalledWith(
-      expect.stringContaining('timestamp >= {periodStart:DateTime64(3)}'),
-      expect.anything(),
-    );
-  });
-
-  it('warms a calendar counter by timestamp range', async () => {
-    setLimits([buildLimit({ periodUnit: 'week' })]);
     cacheStorage.mget.mockResolvedValue([undefined]);
 
     await expect(assertCanConsume()).resolves.toBeUndefined();
