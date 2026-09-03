@@ -1,5 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import importCallRecordingMediaLogicFunction, {
+  importCallRecordingMediaHandler,
+} from 'src/logic-functions/import-call-recording-media';
 import importCallRecordingTranscriptLogicFunction, {
   importCallRecordingTranscriptHandler,
 } from 'src/logic-functions/import-call-recording-transcript';
@@ -18,7 +21,12 @@ vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: coreApiClientMock,
 }));
 
-describe('import-call-recording-transcript', () => {
+const VALID_PAYLOAD = {
+  callRecordingId: 'call-recording-1',
+  requestedAt: '2026-01-01T14:06:00.000Z',
+};
+
+describe('handleCallRecordingArtifactsImportJob', () => {
   beforeEach(() => {
     importCallRecordingArtifactsMock.mockReset();
     importCallRecordingArtifactsMock.mockResolvedValue({
@@ -30,41 +38,39 @@ describe('import-call-recording-transcript', () => {
     coreApiClientMock.mockReset();
   });
 
-  it('is configured as an enqueue-only import worker', () => {
-    expect(importCallRecordingTranscriptLogicFunction.success).toBe(true);
-    expect(importCallRecordingTranscriptLogicFunction.config).toEqual(
-      expect.objectContaining({
-        name: 'import-call-recording-transcript',
-        timeoutSeconds: 250,
-      }),
-    );
+  it('runs each entry point against its own artifact scope', async () => {
+    await importCallRecordingTranscriptHandler(VALID_PAYLOAD);
+    await importCallRecordingMediaHandler(VALID_PAYLOAD);
+
     expect(
-      importCallRecordingTranscriptLogicFunction.config,
-    ).not.toHaveProperty('httpRouteTriggerSettings');
+      importCallRecordingArtifactsMock.mock.calls.map(([call]) => call.scope),
+    ).toEqual(['transcript', 'media']);
   });
 
-  it('ignores payload-supplied provider ids', async () => {
-    const result = await importCallRecordingTranscriptHandler({
-      callRecordingId: 'call-recording-1',
-      requestedAt: '2026-01-01T14:06:00.000Z',
+  it('is reachable only from the queue, never over HTTP', () => {
+    expect(importCallRecordingTranscriptLogicFunction.config).not.toHaveProperty(
+      'httpRouteTriggerSettings',
+    );
+    expect(importCallRecordingMediaLogicFunction.config).not.toHaveProperty(
+      'httpRouteTriggerSettings',
+    );
+  });
+
+  it('drops provider ids supplied by the payload instead of forwarding them', async () => {
+    await importCallRecordingTranscriptHandler({
+      ...VALID_PAYLOAD,
       event: 'transcript.done',
       externalBotId: 'forged-bot-id',
       externalRecordingId: 'forged-recording-id',
       transcriptId: 'forged-transcript-id',
     });
 
-    expect(importCallRecordingArtifactsMock).toHaveBeenCalledWith({
-      client: coreApiClientMock.mock.instances[0],
-      request: {
-        callRecordingId: 'call-recording-1',
-        requestedAt: '2026-01-01T14:06:00.000Z',
-      },
-      scope: 'transcript',
-    });
-    expect(result).toEqual(expect.objectContaining({ status: 'imported' }));
+    expect(importCallRecordingArtifactsMock).toHaveBeenCalledWith(
+      expect.objectContaining({ request: VALID_PAYLOAD }),
+    );
   });
 
-  it('skips invalid import payloads without touching the worker flow', async () => {
+  it('skips a payload missing the fields needed to resolve the recording', async () => {
     const result = await importCallRecordingTranscriptHandler({
       requestedAt: '2026-01-01T14:06:00.000Z',
     });
@@ -84,10 +90,7 @@ describe('import-call-recording-transcript', () => {
     );
 
     await expect(
-      importCallRecordingTranscriptHandler({
-        callRecordingId: 'call-recording-1',
-        requestedAt: '2026-01-01T14:06:00.000Z',
-      }),
+      importCallRecordingMediaHandler(VALID_PAYLOAD),
     ).rejects.toMatchObject({
       name: 'RetryableLogicFunctionError',
       message: expect.stringContaining('Service unavailable'),
