@@ -127,9 +127,9 @@ describe('claimCallRecordingArtifactsImport', () => {
     expect(claimed).toBe(false);
   });
 
-  it('releases the lease of the given scope by clearing its timestamp', async () => {
+  it('releases the lease idempotently when the call recording no longer exists', async () => {
     mutationMock.mockResolvedValue({
-      updateCallRecording: { id: 'call-recording-1' },
+      updateCallRecordings: [],
     });
 
     await releaseCallRecordingArtifactsImportClaim(client, {
@@ -138,9 +138,9 @@ describe('claimCallRecordingArtifactsImport', () => {
     });
 
     expect(mutationMock).toHaveBeenCalledWith({
-      updateCallRecording: {
+      updateCallRecordings: {
         __args: {
-          id: 'call-recording-1',
+          filter: { id: { eq: 'call-recording-1' } },
           data: { transcriptImportClaimedAt: null },
         },
         id: true,

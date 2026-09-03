@@ -1,6 +1,5 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 import { type CallRecordingArtifactImportScope } from 'src/logic-functions/types/call-recording-artifact-scope.type';
 
 // Crash safety net: a lease older than this is reclaimable so a worker that died
@@ -61,8 +60,13 @@ export const releaseCallRecordingArtifactsImportClaim = async (
     scope: CallRecordingArtifactImportScope;
   },
 ): Promise<void> => {
-  await updateCallRecording(client, {
-    id: callRecordingId,
-    data: { [CLAIM_FIELD_BY_SCOPE[scope]]: null },
+  await client.mutation({
+    updateCallRecordings: {
+      __args: {
+        filter: { id: { eq: callRecordingId } },
+        data: { [CLAIM_FIELD_BY_SCOPE[scope]]: null },
+      },
+      id: true,
+    },
   });
 };
