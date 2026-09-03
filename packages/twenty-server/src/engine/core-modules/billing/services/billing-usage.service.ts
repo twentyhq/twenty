@@ -70,11 +70,16 @@ export class BillingUsageService {
       await this.getCachedCurrentBillingSubscription(workspaceId);
 
     if (currentBillingSubscription === NO_BILLING_SUBSCRIPTION) {
-      return 'NO_SUBSCRIPTION';
-    }
+      // The cached current subscription filters canceled rows out, so telling
+      // a canceled workspace from a never-subscribed one needs its own lookup.
+      const hasCanceledSubscription =
+        await this.billingSubscriptionService.hasCanceledSubscription(
+          workspaceId,
+        );
 
-    if (currentBillingSubscription.status === SubscriptionStatus.Canceled) {
-      return 'SUBSCRIPTION_CANCELED';
+      return hasCanceledSubscription
+        ? 'SUBSCRIPTION_CANCELED'
+        : 'NO_SUBSCRIPTION';
     }
 
     return null;
