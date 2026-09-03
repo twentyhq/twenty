@@ -1,4 +1,5 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
+import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
@@ -17,7 +18,7 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Chip, ChipVariant } from 'twenty-ui/data-display';
+import { ChipVariant, LinkChip } from 'twenty-ui/data-display';
 import { TooltipPosition } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -133,6 +134,8 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
 
   const openRecord = () => openRecordFromIndexView({ recordId });
 
+  const linkToRecord = getLinkToShowPage(objectNameSingular, recordStore);
+
   return (
     <StyledRowContainer
       role="button"
@@ -156,6 +159,7 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
             <RecordChip
               objectNameSingular={objectNameSingular}
               record={recordStore}
+              to={linkToRecord}
               variant={ChipVariant.Transparent}
               isBold
               onClick={openRecord}
@@ -175,8 +179,11 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
           ))}
           {hiddenFieldCount > 0 && (
             <StyledOverflowChipContainer>
-              <Chip
+              <LinkChip
                 label={`+${hiddenFieldCount}`}
+                to={linkToRecord}
+                onClick={openRecord}
+                triggerEvent="CLICK"
                 tooltipLabel={plural(hiddenFieldCount, {
                   one: '# more populated field available',
                   other: '# more populated fields available',
@@ -184,7 +191,6 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
                 tooltipPlace={TooltipPosition.Top}
                 alwaysShowTooltip
                 variant={ChipVariant.Highlighted}
-                clickable
               />
             </StyledOverflowChipContainer>
           )}

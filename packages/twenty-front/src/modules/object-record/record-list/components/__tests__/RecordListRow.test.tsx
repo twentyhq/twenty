@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type ReactNode } from 'react';
+import { MemoryRouter } from 'react-router-dom';
 
 import { RecordListRow } from '@/object-record/record-list/components/RecordListRow';
 
@@ -8,12 +9,15 @@ const mockVisibleRecordFields = Array.from({ length: 7 }, (_, index) => ({
   fieldMetadataItemId: `field-id-${index}`,
 }));
 
-const mockRecordStore = Object.fromEntries(
-  mockVisibleRecordFields.map((_, index) => [
-    `field${index}`,
-    `value-${index}`,
-  ]),
-);
+const mockRecordStore = {
+  id: 'record-id',
+  ...Object.fromEntries(
+    mockVisibleRecordFields.map((_, index) => [
+      `field${index}`,
+      `value-${index}`,
+    ]),
+  ),
+};
 
 const mockFieldDefinitionByFieldMetadataItemId = Object.fromEntries(
   mockVisibleRecordFields.map(({ fieldMetadataItemId }, index) => [
@@ -23,11 +27,19 @@ const mockFieldDefinitionByFieldMetadataItemId = Object.fromEntries(
 );
 
 let mockRecordListRowWidth = 10_000;
+const mockOpenRecordFromIndexView = jest.fn();
 
-jest.mock('@/object-record/components/RecordChip', () => ({
-  RecordChip: ({ isBold }: { isBold?: boolean }) => (
-    <span data-font-weight={isBold ? 'medium' : 'regular'}>Record label</span>
-  ),
+jest.mock('@/object-record/hooks/useRecordChipData', () => ({
+  useRecordChipData: () => ({
+    recordChipData: {
+      recordId: 'record-id',
+      name: 'Record label',
+      avatarType: 'rounded',
+      avatarUrl: '',
+      isLabelIdentifier: true,
+      objectNameSingular: 'company',
+    },
+  }),
 }));
 
 jest.mock(
@@ -62,10 +74,20 @@ jest.mock(
   '@/object-record/record-index/hooks/useOpenRecordFromIndexView',
   () => ({
     useOpenRecordFromIndexView: () => ({
-      openRecordFromIndexView: jest.fn(),
+      openRecordFromIndexView: mockOpenRecordFromIndexView,
     }),
   }),
 );
+
+jest.mock('@/object-record/record-index/hooks/useResolveOpenRecordIn', () => ({
+  useResolveOpenRecordIn: () => undefined,
+}));
+
+jest.mock('@/side-panel/hooks/useOpenRecordInSidePanel', () => ({
+  useOpenRecordInSidePanel: () => ({
+    openRecordInSidePanel: jest.fn(),
+  }),
+}));
 
 jest.mock('@/object-record/record-list/components/RecordListRowField', () => ({
   RecordListRowField: ({
@@ -99,13 +121,23 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue', () => ({
   useAtomFamilyStateValue: () => mockRecordStore,
 }));
 
+const renderRecordListRow = () =>
+  render(
+    <MemoryRouter
+      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+    >
+      <RecordListRow recordId="record-id" />
+    </MemoryRouter>,
+  );
+
 describe('RecordListRow', () => {
   beforeEach(() => {
     mockRecordListRowWidth = 10_000;
+    mockOpenRecordFromIndexView.mockClear();
   });
 
   it('renders every selected populated field without a six-field limit', () => {
-    render(<RecordListRow recordId="record-id" />);
+    renderRecordListRow();
 
     for (const { fieldMetadataItemId } of mockVisibleRecordFields) {
       expect(screen.getByText(fieldMetadataItemId)).toBeVisible();
@@ -115,12 +147,9 @@ describe('RecordListRow', () => {
   });
 
   it('uses medium weight for the record identifier', () => {
-    render(<RecordListRow recordId="record-id" />);
+    renderRecordListRow();
 
-    expect(screen.getByText('Record label')).toHaveAttribute(
-      'data-font-weight',
-      'medium',
-    );
+    expect(screen.getByTestId('chip').className).toContain('fontMedium');
   });
 
   it('shows a clickable overflow chip once fields no longer fit', async () => {
@@ -128,11 +157,12 @@ describe('RecordListRow', () => {
 
     mockRecordListRowWidth = 800;
 
-    render(<RecordListRow recordId="record-id" />);
+    renderRecordListRow();
 
+    const overflowChip = screen.getByRole('link', { name: '+1' });
     const overflowChipLabel = screen.getByText('+1');
 
-    expect(overflowChipLabel).toBeVisible();
+    expect(overflowChip).toBeVisible();
     expect(screen.queryByText('field-id-6')).not.toBeInTheDocument();
 
     await user.hover(overflowChipLabel);
@@ -140,5 +170,11 @@ describe('RecordListRow', () => {
     expect(
       await screen.findByText('1 more populated field available'),
     ).toBeVisible();
+
+    await user.click(overflowChip);
+
+    expect(mockOpenRecordFromIndexView).toHaveBeenCalledWith({
+      recordId: 'record-id',
+    });
   });
 });
