@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { buildFathomMeeting } from 'src/__tests__/utils/build-fathom-meeting.util';
 import { buildFathomMeetingPages } from 'src/__tests__/utils/build-fathom-meeting-pages.util';
+import { MAX_FATHOM_BACKFILL_PAGES } from 'src/constants/fathom.constant';
 import {
   FATHOM_BACKFILL_BATCH_UNIVERSAL_IDENTIFIER,
   FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
@@ -123,6 +124,7 @@ describe('fathomBackfillWorkerHandler', () => {
         connectedAccountId: 'connection-1',
         createdAfter: '2026-07-28T00:00:00.000Z',
         cursor: '1',
+        pageIndex: 1,
       },
       retryLimit: 3,
       delayMs: 20_000,
@@ -245,6 +247,36 @@ describe('fathomBackfillWorkerHandler', () => {
           FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
       ),
     ).toBe(false);
+  });
+
+  it('ends a cycling cursor chain at the page bound without failing the job', async () => {
+    sdkMocks.listMeetings.mockResolvedValue({
+      result: {
+        items: [buildFathomMeeting({ recordingId: 1 })],
+        limit: null,
+        nextCursor: 'a',
+      },
+    });
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    expect(
+      await fathomBackfillWorkerHandler({
+        connectedAccountId: 'connection-1',
+        createdAfter: '2026-08-20T00:00:00.000Z',
+        cursor: 'b',
+        pageIndex: MAX_FATHOM_BACKFILL_PAGES - 1,
+      }),
+    ).toEqual(expect.objectContaining({ hasMoreMeetings: false }));
+    expect(
+      enqueuedJobs().some(
+        (job) =>
+          job.logicFunctionUniversalIdentifier ===
+          FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
+      ),
+    ).toBe(false);
+    expect(console.error).toHaveBeenCalledWith(
+      expect.stringContaining('stopped after'),
+    );
   });
 
   it('fails so the job retries when a batch is not accepted by the queue', async () => {

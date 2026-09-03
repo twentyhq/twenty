@@ -5,6 +5,7 @@ import { isDefined } from 'src/utils/is-defined';
 
 import {
   FATHOM_BACKFILL_BATCH_SIZE,
+  MAX_FATHOM_BACKFILL_PAGES,
   MILLISECONDS_PER_DAY,
 } from 'src/constants/fathom.constant';
 import {
@@ -42,6 +43,7 @@ export const fathomBackfillWorkerHandler = async (
   }
 
   const createdAfter = getCreatedAfter(payload, Date.now());
+  const pageIndex = payload.pageIndex ?? 0;
   const connection = await getConnection(payload.connectedAccountId);
   const meetingPage = await listFathomMeetingPage({
     fathomClient: createFathomClient(connection.accessToken),
@@ -67,12 +69,20 @@ export const fathomBackfillWorkerHandler = async (
     });
   }
 
-  // A cursor equal to the one just consumed would re-enqueue this page forever.
+  // A cursor that repeats or cycles would chain this worker forever; the page
+  // bound is far above any real history and only exists to end such a chain.
   const hasMoreMeetings =
     isNonEmptyString(meetingPage.nextCursor) &&
     meetingPage.nextCursor !== payload.cursor;
+  const isPageBoundReached = pageIndex + 1 >= MAX_FATHOM_BACKFILL_PAGES;
 
-  if (hasMoreMeetings) {
+  if (hasMoreMeetings && isPageBoundReached) {
+    console.error(
+      `[fathom] backfill for connected account ${payload.connectedAccountId} stopped after ${MAX_FATHOM_BACKFILL_PAGES} pages with cursor ${meetingPage.nextCursor} still pending`,
+    );
+  }
+
+  if (hasMoreMeetings && !isPageBoundReached) {
     await enqueueFathomJobOrThrow({
       logicFunctionUniversalIdentifier:
         FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
@@ -80,6 +90,7 @@ export const fathomBackfillWorkerHandler = async (
         connectedAccountId: payload.connectedAccountId,
         createdAfter,
         cursor: meetingPage.nextCursor,
+        pageIndex: pageIndex + 1,
       },
       delayMs: continuationDelay,
     });
@@ -90,7 +101,7 @@ export const fathomBackfillWorkerHandler = async (
     createdAfter,
     discoveredMeetingCount: meetingPage.meetings.length,
     enqueuedBatchCount: meetingBatches.length,
-    hasMoreMeetings,
+    hasMoreMeetings: hasMoreMeetings && !isPageBoundReached,
   };
 };
 

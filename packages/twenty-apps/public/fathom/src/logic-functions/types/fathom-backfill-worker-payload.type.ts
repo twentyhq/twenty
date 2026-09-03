@@ -3,4 +3,5 @@ export type FathomBackfillWorkerPayload = {
   days?: number;
   createdAfter?: string;
   cursor?: string;
+  pageIndex?: number;
 };
