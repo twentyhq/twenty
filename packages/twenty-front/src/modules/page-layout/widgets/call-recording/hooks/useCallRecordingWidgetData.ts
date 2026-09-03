@@ -1,16 +1,21 @@
-import { useCallRecordingForSummary } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingForSummary';
+import { useCallRecordingForWidget } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingForWidget';
 import { useCallRecordingWidgetCount } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingWidgetCount';
 import { useSubscribeToCallRecordingWidgetUpdates } from '@/page-layout/widgets/call-recording/hooks/useSubscribeToCallRecordingWidgetUpdates';
+import { type CallRecordingWidgetKind } from '@/page-layout/widgets/call-recording/types/CallRecordingWidgetKind';
 import { useCallback } from 'react';
 
-export const useCallRecordingSummaryWidgetData = () => {
+export const useCallRecordingWidgetData = ({
+  kind,
+}: {
+  kind: CallRecordingWidgetKind;
+}) => {
   const {
     callRecording,
     loading: callRecordingLoading,
     error: callRecordingError,
     restriction,
     refetchCallRecording,
-  } = useCallRecordingForSummary();
+  } = useCallRecordingForWidget({ kind });
   const {
     callRecordingsCount,
     loading: callRecordingCountLoading,
