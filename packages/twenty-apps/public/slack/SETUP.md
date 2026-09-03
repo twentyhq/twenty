@@ -276,6 +276,11 @@ example `crm.example.com`. Apps created from the manifest have
 `<your-twenty-front-host>` preconfigured; replace it before pasting. Slack only
 sends `link_shared` events for registered domains.
 
+A workspace on a custom domain still serves its subdomain host, and links get
+copied from either, so register **both**: `crm.example.com` and
+`acme.twenty.com`. Previews resolve a link from either host and point the card
+back at the custom one; a host you leave unregistered simply never unfurls.
+
 The previews also need the `links:read` and `links:write` scopes and the
 `link_shared` and `entity_details_requested` subscriptions from the lists above.
 On an existing install, add them and reconnect (disconnect, then **Add

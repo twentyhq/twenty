@@ -24,22 +24,22 @@ type ParsedSlackLinkSharedEvent =
     }
   | { linkShared: null; skipReason: string };
 
-// Slack fires link_shared twice for the same link: once while it sits in the
-// composer, where there is no channel yet and only an unfurl id to answer
-// against, and again once the message is posted
+// Slack fires link_shared twice for the same link, naming which one it is in
+// `source`: once while it sits in the composer, where there is no channel yet
+// and only an unfurl id to answer against, and again once the message is posted
 const resolveSlackUnfurlTarget = (
   event: SlackInboundEvent,
 ): SlackUnfurlTarget | undefined => {
+  if (event.source === 'composer' && isNonEmptyString(event.unfurl_id)) {
+    return { source: 'composer', unfurlId: event.unfurl_id };
+  }
+
   if (isNonEmptyString(event.channel) && isNonEmptyString(event.message_ts)) {
     return {
       source: 'conversations_history',
       slackChannelId: event.channel,
       messageTimestamp: event.message_ts,
     };
-  }
-
-  if (event.source === 'composer' && isNonEmptyString(event.unfurl_id)) {
-    return { source: 'composer', unfurlId: event.unfurl_id };
   }
 
   return undefined;

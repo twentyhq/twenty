@@ -29,6 +29,30 @@ const buildPersonRecord = () => ({
   updatedAt: '2026-02-01T00:00:00.000Z',
 });
 
+const OPPORTUNITY_ID = '20202020-0713-4b29-8f43-3333e2f6a4b3';
+
+const buildOpportunityRecordLink = () => ({
+  sharedUrl: `${WORKSPACE_BASE_URL}/object/opportunity/${OPPORTUNITY_ID}`,
+  canonicalUrl: `${WORKSPACE_BASE_URL}/object/opportunity/${OPPORTUNITY_ID}`,
+  objectNameSingular: 'opportunity' as const,
+  recordId: OPPORTUNITY_ID,
+});
+
+const buildOpportunityRecord = () => ({
+  id: OPPORTUNITY_ID,
+  name: 'ACME renewal',
+  stage: 'NEW_CUSTOMER',
+  amount: { amountMicros: 1_500_000_000, currencyCode: 'USD' },
+  closeDate: '2026-03-01T00:00:00.000Z',
+  company: {
+    id: COMPANY_ID,
+    name: 'ACME',
+    domainName: { primaryLinkUrl: 'acme.dev' },
+  },
+  createdAt: '2026-01-01T00:00:00.000Z',
+  updatedAt: '2026-02-01T00:00:00.000Z',
+});
+
 describe('buildSlackRecordUnfurlEntity', () => {
   it('should build an item entity for a person card', () => {
     const entity = buildSlackRecordUnfurlEntity({
@@ -168,5 +192,30 @@ describe('buildSlackRecordUnfurlEntity', () => {
         workspaceBaseUrls: [WORKSPACE_BASE_URL],
       }),
     ).toBeUndefined();
+  });
+
+  it('should keep the deal amount off the channel-visible card', () => {
+    const entity = buildSlackRecordUnfurlEntity({
+      recordLink: buildOpportunityRecordLink(),
+      record: buildOpportunityRecord(),
+      workspaceBaseUrls: [WORKSPACE_BASE_URL],
+    });
+
+    expect(
+      entity?.entity_payload.custom_fields?.map((field) => field.key),
+    ).toEqual(['company', 'stage', 'closeDate']);
+  });
+
+  it('should add the deal amount to the flexpane', () => {
+    const entity = buildSlackRecordUnfurlEntity({
+      recordLink: buildOpportunityRecordLink(),
+      record: buildOpportunityRecord(),
+      workspaceBaseUrls: [WORKSPACE_BASE_URL],
+      includeDetails: true,
+    });
+
+    expect(
+      entity?.entity_payload.custom_fields?.map((field) => field.key),
+    ).toContain('amount');
   });
 });

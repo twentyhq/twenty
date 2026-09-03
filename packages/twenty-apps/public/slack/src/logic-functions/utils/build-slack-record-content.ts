@@ -157,11 +157,6 @@ const buildOpportunityContent = ({
         label: 'Stage',
         value: isDefined(stage) ? humanizeSelectValue(stage) : undefined,
       }),
-      buildSlackStringField({
-        key: 'amount',
-        label: 'Amount',
-        value: formatAmount(asRecord(record.amount)),
-      }),
       buildSlackTimestampField({
         key: 'closeDate',
         label: 'Close date',
@@ -169,6 +164,13 @@ const buildOpportunityContent = ({
       }),
       ...(includeDetails
         ? [
+            // deal value is as sensitive as a person's contact details, and the
+            // card reaches Slack Connect guests, so it stays in the flexpane
+            buildSlackStringField({
+              key: 'amount',
+              label: 'Amount',
+              value: formatAmount(asRecord(record.amount)),
+            }),
             isDefined(pointOfContactId) && isDefined(pointOfContactName)
               ? buildSlackRecordRefField({
                   key: 'pointOfContact',
