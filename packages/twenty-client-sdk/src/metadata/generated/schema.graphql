@@ -1847,6 +1847,7 @@ type ConnectedAccountPublicDTO {
   provider: String!
   lastCredentialsRefreshedAt: DateTime
   authFailedAt: DateTime
+  authFailedReason: String
   archivedAt: DateTime
   handleAliases: [String!]
   scopes: [String!]
@@ -2131,6 +2132,7 @@ type AppConnection {
   accessToken: String!
   scopes: [String!]!
   authFailedAt: String
+  authFailedReason: String
 }
 
 type ResendEmailVerificationToken {
@@ -3862,6 +3864,7 @@ type Mutation {
   deleteAppKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): Boolean!
   enqueueJob(input: EnqueueJobInput!): EnqueueJobResult! @deprecated(reason: "Use enqueueJobs instead.")
   enqueueJobs(input: EnqueueJobsInput!): EnqueueJobsResult!
+  reportAppConnectionAuthFailure(input: ReportAppConnectionAuthFailureInput!): Boolean!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
   retryChatMessage(threadId: UUID!, modelId: String): SendChatMessageResult!
@@ -5065,6 +5068,11 @@ input EnqueueJobsInput {
 input EnqueueJobItemInput {
   payload: JSON
   jobId: String
+}
+
+input ReportAppConnectionAuthFailureInput {
+  id: ID!
+  reason: String
 }
 
 input FileAttachmentInput {
