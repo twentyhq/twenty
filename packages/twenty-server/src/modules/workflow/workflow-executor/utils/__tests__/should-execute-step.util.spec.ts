@@ -509,20 +509,4 @@ describe('shouldExecuteStep', () => {
 
     expect(result).toBe(false);
   });
-  it('should return true for a step that is awaiting a retry even though it has been started', () => {
-    const retryingStep = createMockCodeStep('retrying-step', ['step-3']);
-
-    retryingStep.settings.errorHandlingOptions.retryOnFailure.value = true;
-
-    const result = shouldExecuteStep({
-      step: retryingStep,
-      steps: [retryingStep],
-      stepInfos: {
-        'retrying-step': { status: StepStatus.PENDING, error: 'some error' },
-      },
-      workflowRunStatus: WorkflowRunStatus.RUNNING,
-    });
-
-    expect(result).toBe(true);
-  });
 });

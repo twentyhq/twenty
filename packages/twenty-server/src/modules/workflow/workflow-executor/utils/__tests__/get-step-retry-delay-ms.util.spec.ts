@@ -46,6 +46,22 @@ describe('getStepRetryDelayMs', () => {
     expect(result).toBe(STEP_RETRY_DELAYS_MS[2]);
   });
 
+  it('should restart the budget after an iteration that did not end on a failed attempt', () => {
+    const result = getStepRetryDelayMs({
+      step: createStepWithRetry(),
+      stepInfo: {
+        status: StepStatus.RUNNING,
+        history: [
+          { status: StepStatus.FAILED, error: 'first' },
+          { status: StepStatus.FAILED, error: 'second' },
+          { status: StepStatus.FAILED_SAFELY, error: 'previous iteration' },
+        ],
+      },
+    });
+
+    expect(result).toBe(STEP_RETRY_DELAYS_MS[0]);
+  });
+
   it('should return undefined once every attempt has been used', () => {
     const result = getStepRetryDelayMs({
       step: createStepWithRetry(),
@@ -61,7 +77,7 @@ describe('getStepRetryDelayMs', () => {
     expect(result).toBeUndefined();
   });
 
-  it('should ignore history entries that carry no error', () => {
+  it('should ignore history entries that are not failed attempts', () => {
     const result = getStepRetryDelayMs({
       step: createStepWithRetry(),
       stepInfo: {

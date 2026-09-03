@@ -646,7 +646,7 @@ export class WorkflowExecutorWorkspaceService {
       {
         workspaceId,
         workflowRunId,
-        stepIdsToRetry: [stepId],
+        automaticRetryStepId: stepId,
       },
       { ...buildRunWorkflowJobOptions(workflowRunId), delay: retryDelayMs },
     );
