@@ -67,6 +67,7 @@ export const SlackUserLinksSettings = () => {
   const { canManage, isPermissionLoading } = useCanManageSlackUserLinks();
   const {
     isSlackConnected,
+    installedSlackTeamId,
     connectionHealth,
     hasRosterMatchFailed,
     isConnectionStatusLoading,
@@ -257,6 +258,7 @@ export const SlackUserLinksSettings = () => {
           <SlackUserLinksList
             slackUserLinks={slackUserLinks}
             canManage={canManage}
+            installedSlackTeamId={installedSlackTeamId}
             hasMore={hasMoreSlackUserLinks}
             onRemove={handleRemove}
             onResend={handleResend}

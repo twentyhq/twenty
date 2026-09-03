@@ -24,6 +24,7 @@ export type DevModeOrchestratorOptions = {
   debounceMs?: number;
   verbose?: boolean;
   force?: boolean;
+  inferDeletionFromMissingEntities?: boolean;
   interactive?: boolean;
   onExit?: (params: { code: number; message: string }) => void;
 };
@@ -83,6 +84,8 @@ export class DevModeOrchestrator {
       apiService,
       verbose: this.verbose,
       force: options.force ?? false,
+      inferDeletionFromMissingEntities:
+        options.inferDeletionFromMissingEntities ?? true,
       interactive: options.interactive ?? false,
       onExit: options.onExit,
     });

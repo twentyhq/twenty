@@ -92,12 +92,17 @@ export class ApplicationDevelopmentService {
   async syncApplication({
     manifest,
     dryRun,
+    inferDeletionFromMissingEntities,
     workspaceId,
   }: {
     manifest: ApplicationInput['manifest'];
     dryRun?: boolean;
+    inferDeletionFromMissingEntities?: boolean | null;
     workspaceId: string;
   }): Promise<WorkspaceMigrationDTO> {
+    const shouldInferDeletionFromMissingEntities =
+      inferDeletionFromMissingEntities !== false;
+
     await this.throttlePerApplication(
       manifest.application.universalIdentifier,
       workspaceId,
@@ -125,6 +130,8 @@ export class ApplicationDevelopmentService {
           workspaceId,
           manifest,
           dryRun: true,
+          inferDeletionFromMissingEntities:
+            shouldInferDeletionFromMissingEntities,
         });
 
       return {
@@ -135,7 +142,12 @@ export class ApplicationDevelopmentService {
     }
 
     return this.cacheLockService.withLock(
-      () => this.applyManifestSync(manifest, workspaceId),
+      () =>
+        this.applyManifestSync(
+          manifest,
+          workspaceId,
+          shouldInferDeletionFromMissingEntities,
+        ),
       `app-sync:${workspaceId}`,
       APP_SYNC_LOCK_OPTIONS,
     );
@@ -206,6 +218,7 @@ export class ApplicationDevelopmentService {
   private async applyManifestSync(
     manifest: ApplicationInput['manifest'],
     workspaceId: string,
+    inferDeletionFromMissingEntities: boolean,
   ): Promise<WorkspaceMigrationDTO> {
     const applicationRegistrationId = await this.findApplicationRegistrationId(
       manifest.application.universalIdentifier,
@@ -231,6 +244,7 @@ export class ApplicationDevelopmentService {
         manifest,
         applicationRegistrationId,
         application,
+        inferDeletionFromMissingEntities,
       });
 
     await this.syncRegistrationMetadata(

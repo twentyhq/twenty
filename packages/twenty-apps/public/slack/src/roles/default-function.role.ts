@@ -14,7 +14,7 @@ export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Twenty Slack tools role',
   description:
-    'Tools only forward requests to Slack using the configured connected account. Tracks assistant requests, links Slack accounts to workspace members (which needs read access on workspace members for the email match), and runs the assistant agent; wider CRM access is granted separately through the role assigned to the agent.',
+    'Tools only forward requests to Slack using the configured connected account. Tracks assistant requests, links Slack accounts to workspace members (which needs read access on workspace members for the email match), reads CRM records to render record link previews in Slack, and runs the assistant agent; write access to the CRM is granted separately through the role assigned to the agent.',
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
@@ -48,6 +48,21 @@ export default defineApplicationRole({
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     },
+    ...(
+      [
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note.universalIdentifier,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task.universalIdentifier,
+      ] as const
+    ).map((objectUniversalIdentifier) => ({
+      objectUniversalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: false,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    })),
   ],
   fieldPermissions: [],
   permissionFlagUniversalIdentifiers: [SystemPermissionFlag.AI],

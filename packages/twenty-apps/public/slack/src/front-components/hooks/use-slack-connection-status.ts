@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import { RestApiClient } from 'twenty-client-sdk/rest';
 
 import { SLACK_USER_LINKS_CONNECTION_STATUS_ROUTE_PATH } from 'src/constants/slack-user-links-route-path.constant';
+import { type ParsedSlackConnectionStatus } from 'src/front-components/types/parsed-slack-connection-status.type';
 import {
-  type ParsedSlackConnectionStatus,
+  DISCONNECTED_SLACK_CONNECTION_STATUS,
   parseSlackConnectionStatus,
 } from 'src/front-components/utils/parse-slack-connection-status.util';
 
@@ -11,14 +12,8 @@ type SlackConnectionStatusState = ParsedSlackConnectionStatus & {
   isConnectionStatusLoading: boolean;
 };
 
-const DISCONNECTED_STATUS: ParsedSlackConnectionStatus = {
-  isSlackConnected: false,
-  connectionHealth: undefined,
-  hasRosterMatchFailed: false,
-};
-
 const LOADING_STATE: SlackConnectionStatusState = {
-  ...DISCONNECTED_STATUS,
+  ...DISCONNECTED_SLACK_CONNECTION_STATUS,
   isConnectionStatusLoading: true,
 };
 
@@ -29,13 +24,21 @@ export const useSlackConnectionStatus = (): SlackConnectionStatusState => {
     let cancelled = false;
 
     const fetchConnectionStatus = async () => {
-      const status = await new RestApiClient()
-        .post(`/s${SLACK_USER_LINKS_CONNECTION_STATUS_ROUTE_PATH}`, {})
-        .then(parseSlackConnectionStatus)
-        .catch(() => DISCONNECTED_STATUS);
+      let connectionStatus: ParsedSlackConnectionStatus;
+
+      try {
+        const result = await new RestApiClient().post(
+          `/s${SLACK_USER_LINKS_CONNECTION_STATUS_ROUTE_PATH}`,
+          {},
+        );
+
+        connectionStatus = parseSlackConnectionStatus(result);
+      } catch {
+        connectionStatus = DISCONNECTED_SLACK_CONNECTION_STATUS;
+      }
 
       if (!cancelled) {
-        setState({ ...status, isConnectionStatusLoading: false });
+        setState({ ...connectionStatus, isConnectionStatusLoading: false });
       }
     };
 
