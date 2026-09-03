@@ -37,6 +37,8 @@ export { workflowCodeActionSchema } from './schemas/code-action-schema';
 export { workflowCodeActionSettingsSchema } from './schemas/code-action-settings-schema';
 export { workflowCreateCalendarEventActionSchema } from './schemas/create-calendar-event-action-schema';
 export { workflowCreateCalendarEventActionSettingsSchema } from './schemas/create-calendar-event-action-settings-schema';
+export { workflowCreateInboxItemActionSchema } from './schemas/create-inbox-item-action-schema';
+export { workflowCreateInboxItemActionSettingsSchema } from './schemas/create-inbox-item-action-settings-schema';
 export { workflowCreateRecordActionSchema } from './schemas/create-record-action-schema';
 export { workflowCreateRecordActionSettingsSchema } from './schemas/create-record-action-settings-schema';
 export { workflowCronTriggerSchema } from './schemas/cron-trigger-schema';

@@ -76,6 +76,9 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
   const isEmailGroupFeatureEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
   );
+  const isInboxFeatureEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_INBOX_ENABLED,
+  );
   return [
     {
       label: t`User`,
@@ -178,7 +181,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.WorkspaceCommunications,
           Icon: IconMessageCircle,
           isHidden:
-            !isEmailGroupFeatureEnabled ||
+            (!isEmailGroupFeatureEnabled && !isInboxFeatureEnabled) ||
             !permissionMap[PermissionFlagType.WORKSPACE],
         },
       ],

@@ -29,6 +29,9 @@ export enum AppPath {
   PageLayoutPage = '/page/:pageLayoutId',
   WorkflowCoreIndexPage = '/workflow-core',
 
+  InboxPage = '/inbox',
+  InboxSectionPage = '/inbox/:inboxSectionSlug',
+
   Settings = `settings`,
   SettingsCatchAll = `/${Settings}/*`,
   Developers = `developers`,

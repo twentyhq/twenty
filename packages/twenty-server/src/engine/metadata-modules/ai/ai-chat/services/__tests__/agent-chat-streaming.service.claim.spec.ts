@@ -64,6 +64,11 @@ describe('AgentChatStreamingService claim & reap', () => {
       { signFileByIdUrl: jest.fn() } as never,
       streamHeartbeatService as never,
       { incrementCounterBy: jest.fn() } as never,
+      {
+        onThreadCreated: jest.fn(),
+        onTurnCompleted: jest.fn(),
+        onThreadRemoved: jest.fn(),
+      } as never,
     );
 
     return {

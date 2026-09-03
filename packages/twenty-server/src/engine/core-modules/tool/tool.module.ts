@@ -5,6 +5,7 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
+import { InboxModule } from 'src/engine/core-modules/inbox/inbox.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { CreateCalendarEventTool } from 'src/engine/core-modules/tool/tools/calendar-tool/create-calendar-event-tool';
@@ -13,6 +14,7 @@ import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/dr
 import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
+import { CreateInboxItemTool } from 'src/engine/core-modules/tool/tools/inbox-tool/create-inbox-item-tool';
 import { NavigateAppTool } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool';
 import { ExtractJsonPathsTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/extract-json-paths-tool';
 import { SearchOutputTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/search-output-tool';
@@ -36,6 +38,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ApplicationModule,
     FeatureFlagModule,
     FileModule,
+    InboxModule,
     JwtModule,
     SecureHttpClientModule,
     ObjectMetadataModule,
@@ -48,6 +51,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     SendEmailTool,
     DraftEmailTool,
     CreateCalendarEventTool,
+    CreateInboxItemTool,
     EmailComposerService,
     SearchHelpCenterTool,
     CodeInterpreterTool,
@@ -62,6 +66,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     SendEmailTool,
     DraftEmailTool,
     CreateCalendarEventTool,
+    CreateInboxItemTool,
     EmailComposerService,
     SearchHelpCenterTool,
     CodeInterpreterTool,

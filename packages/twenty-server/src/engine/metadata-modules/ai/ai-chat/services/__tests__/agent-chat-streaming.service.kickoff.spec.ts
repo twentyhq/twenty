@@ -68,6 +68,11 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
       { signFileByIdUrl: jest.fn() } as never,
       streamHeartbeatService as never,
       metricsService as never,
+      {
+        onThreadCreated: jest.fn(),
+        onTurnCompleted: jest.fn(),
+        onThreadRemoved: jest.fn(),
+      } as never,
     );
 
     return {

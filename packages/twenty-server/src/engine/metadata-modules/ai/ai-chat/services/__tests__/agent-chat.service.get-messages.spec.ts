@@ -19,6 +19,11 @@ const buildService = () => {
     {} as never,
     {} as never,
     {} as never,
+    {
+      onThreadCreated: jest.fn(),
+      onTurnCompleted: jest.fn(),
+      onThreadRemoved: jest.fn(),
+    } as never,
   );
 
   return { service, messageRepository };

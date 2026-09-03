@@ -242,6 +242,18 @@ const SettingsCustomDomainPage = lazy(() =>
   ),
 );
 
+const SettingsInboxQueueNew = lazy(() =>
+  import('~/pages/settings/inbox/SettingsInboxQueueNew').then((module) => ({
+    default: module.SettingsInboxQueueNew,
+  })),
+);
+
+const SettingsInboxQueueEdit = lazy(() =>
+  import('~/pages/settings/inbox/SettingsInboxQueueEdit').then((module) => ({
+    default: module.SettingsInboxQueueEdit,
+  })),
+);
+
 const SettingsApiWebhooks = lazy(() =>
   import('~/pages/settings/api-webhooks/SettingsApiWebhooks').then(
     (module) => ({
@@ -919,6 +931,22 @@ const createSettingsRouteElements = ({
         path={SettingsPath.ObjectFieldEdit}
         element={<SettingsObjectFieldEdit />}
         handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
+      />
+    </Route>
+    <Route
+      element={
+        <SettingsProtectedRouteWrapper
+          settingsPermission={PermissionFlagType.WORKSPACE}
+        />
+      }
+    >
+      <Route
+        path={SettingsPath.InboxQueueNew}
+        element={<SettingsInboxQueueNew />}
+      />
+      <Route
+        path={SettingsPath.InboxQueueDetail}
+        element={<SettingsInboxQueueEdit />}
       />
     </Route>
     <Route

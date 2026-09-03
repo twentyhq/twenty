@@ -36,7 +36,8 @@ export const WorkflowDiagramStepNodeIcon = ({
         case 'HTTP_REQUEST':
         case 'SEND_EMAIL':
         case 'DRAFT_EMAIL':
-        case 'CREATE_CALENDAR_EVENT': {
+        case 'CREATE_CALENDAR_EVENT':
+        case 'CREATE_INBOX_ITEM': {
           return (
             <Icon
               size={theme.icon.size.md}
