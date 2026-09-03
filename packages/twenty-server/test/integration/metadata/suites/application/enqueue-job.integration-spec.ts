@@ -292,18 +292,23 @@ describe('enqueueJob (e2e)', () => {
   });
 
   afterAll(async () => {
-    await deleteLogicFunction({
-      input: { id: logicFunctionId },
-      expectToFail: false,
-    });
-    await deleteLogicFunction({
-      input: { id: retryableLogicFunctionId },
-      expectToFail: false,
-    });
-    await deleteLogicFunction({
-      input: { id: appendingLogicFunctionId },
-      expectToFail: false,
-    });
+    const teardownErrors: unknown[] = [];
+
+    for (const id of [
+      logicFunctionId,
+      retryableLogicFunctionId,
+      appendingLogicFunctionId,
+    ]) {
+      try {
+        await deleteLogicFunction({ input: { id }, expectToFail: false });
+      } catch (error) {
+        teardownErrors.push(error);
+      }
+    }
+
+    if (teardownErrors.length > 0) {
+      throw teardownErrors[0];
+    }
 
     if (isDefined(otherWorkspaceUserAccessToken)) {
       await deleteUser({ accessToken: otherWorkspaceUserAccessToken });
