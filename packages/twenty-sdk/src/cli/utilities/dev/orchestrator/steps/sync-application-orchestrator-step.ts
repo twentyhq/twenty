@@ -12,6 +12,7 @@ import {
   countDestructiveActions,
   hasDestructiveActions,
   NO_DELETE_HINT,
+  shouldShowNoDeleteHint,
 } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-plan';
 import { formatSyncActionsSummary } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
@@ -108,8 +109,11 @@ export class SyncApplicationOrchestratorStep {
       }
 
       if (
-        this.inferDeletionFromMissingEntities &&
-        planResult.data.actions.some((action) => action.type === 'delete')
+        shouldShowNoDeleteHint({
+          actions: planResult.data.actions,
+          inferDeletionFromMissingEntities:
+            this.inferDeletionFromMissingEntities,
+        })
       ) {
         events.push({ message: NO_DELETE_HINT, status: 'info' });
       }

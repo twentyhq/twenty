@@ -90,9 +90,10 @@ describe('keepWorkspaceOwnedProperties', () => {
       },
     });
 
-    expect(result.byUniversalIdentifier['skill-universal-identifier']).toEqual(
-      { ...shippedSkill, isActive: false },
-    );
+    expect(result.byUniversalIdentifier['skill-universal-identifier']).toEqual({
+      ...shippedSkill,
+      isActive: false,
+    });
   });
 
   it('should keep the creator of a view the workspace already has', () => {

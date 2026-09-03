@@ -236,6 +236,16 @@ const formatFooter = (counts: {
 export const NO_DELETE_HINT =
   'Entities missing from your source are destroyed by default. Re-run with --no-delete to keep them.';
 
+export const shouldShowNoDeleteHint = ({
+  actions,
+  inferDeletionFromMissingEntities,
+}: {
+  actions: SyncAction[] | undefined;
+  inferDeletionFromMissingEntities: boolean;
+}): boolean =>
+  inferDeletionFromMissingEntities &&
+  (actions ?? []).some((action) => action.type === 'delete');
+
 const formatDestructiveWarning = (actions: SyncAction[]): string => {
   const deletes = actions.filter(isDestructiveAction);
 
@@ -293,7 +303,12 @@ export const formatSyncActionsPlan = (
     formatFooter(counts),
   ];
 
-  if (counts.delete > 0 && options?.showNoDeleteHint === true) {
+  if (
+    shouldShowNoDeleteHint({
+      actions,
+      inferDeletionFromMissingEntities: options?.showNoDeleteHint ?? false,
+    })
+  ) {
     sections.push(chalk.dim(NO_DELETE_HINT));
   }
 
