@@ -154,7 +154,7 @@ Import them from `twenty-sdk/front-component`:
 - **`Command`** — Runs an async callback via the `execute` prop.
 - **`CommandLink`** — Navigates to an app path. Props: `to`, `params`, `queryParams`, `options`.
 - **`CommandModal`** — Opens a confirmation modal. If the user confirms, executes the `execute` callback. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-- **`CommandOpenSidePanelPage`** — Opens a side panel page. Props depend on `page` — e.g. `ViewRecord` takes `recordId` + `objectNameSingular` (plus an optional `tab` id to open the record on a specific tab), other pages take `pageTitle` + `pageIcon`.
+- **`CommandOpenSidePanelPage`** — Opens content in the side panel. Routed pages use the same typed `to`, `params`, and `queryParams` props as `CommandLink`, plus optional `hash`, `pageTitle`, and `resetNavigationStack` props. The workspace route registry decides whether the requested `AppPath` supports the side panel. `pageTitle` overrides the panel header title, while `resetNavigationStack` clears earlier panel pages before opening the route. Purpose-built panel tools use their own page-specific props.
 
 Here is a full example of a headless front component using `Command` to run an action from the command menu:
 
@@ -228,13 +228,13 @@ export default defineFrontComponent({
 });
 ```
 
-And an example using `CommandOpenSidePanelPage` to open the current record in the side panel on a specific tab. `tab` is a page layout tab id (default layouts use ids like `company-tab-emails` or `company-tab-timeline`; custom layouts use the tab's own id). If the id doesn't exist in the record's layout, the default tab opens instead:
+And an example using `CommandOpenSidePanelPage` to open the current record in the side panel on a specific tab. `hash` is a page layout tab id without the leading `#` (default layouts use ids like `company-tab-emails` or `company-tab-timeline`; custom layouts use the tab's own id). If the id doesn't exist in the record's layout, the default tab opens instead:
 
 ```tsx src/front-components/open-company-emails.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
+  AppPath,
   CommandOpenSidePanelPage,
-  SidePanelPages,
   useSelectedRecordIds,
 } from 'twenty-sdk/front-component';
 
@@ -248,10 +248,12 @@ const OpenCompanyEmails = () => {
 
   return (
     <CommandOpenSidePanelPage
-      page={SidePanelPages.ViewRecord}
-      recordId={recordId}
-      objectNameSingular="company"
-      tab="company-tab-emails"
+      to={AppPath.RecordShowPage}
+      params={{
+        objectNameSingular: 'company',
+        objectRecordId: recordId,
+      }}
+      hash="company-tab-emails"
       resetNavigationStack={false}
     />
   );

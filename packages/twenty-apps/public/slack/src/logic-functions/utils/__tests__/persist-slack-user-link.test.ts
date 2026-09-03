@@ -8,10 +8,12 @@ const {
   createSlackUserLinkMock,
   destroySlackUserLinkMock,
   updateSlackUserLinkMock,
+  findDeletedSlackUserLinkIdsMock,
 } = vi.hoisted(() => ({
   createSlackUserLinkMock: vi.fn(),
   destroySlackUserLinkMock: vi.fn(),
   updateSlackUserLinkMock: vi.fn(),
+  findDeletedSlackUserLinkIdsMock: vi.fn(),
 }));
 
 vi.mock('src/logic-functions/data/create-slack-user-link', () => ({
@@ -24,6 +26,10 @@ vi.mock('src/logic-functions/data/destroy-slack-user-link', () => ({
 
 vi.mock('src/logic-functions/data/update-slack-user-link', () => ({
   updateSlackUserLink: updateSlackUserLinkMock,
+}));
+
+vi.mock('src/logic-functions/data/find-deleted-slack-user-link-ids', () => ({
+  findDeletedSlackUserLinkIds: findDeletedSlackUserLinkIdsMock,
 }));
 
 const SLACK_TEAM_ID = 'T0INSTALLED';
@@ -60,6 +66,30 @@ describe('persistSlackUserLink', () => {
     createSlackUserLinkMock.mockResolvedValue('link-new');
     destroySlackUserLinkMock.mockResolvedValue(undefined);
     updateSlackUserLinkMock.mockResolvedValue(undefined);
+    findDeletedSlackUserLinkIdsMock.mockResolvedValue([]);
+  });
+
+  it('should destroy a soft-deleted ghost holding the tuple before creating', async () => {
+    findDeletedSlackUserLinkIdsMock.mockResolvedValue(['link-ghost']);
+
+    expect(await persist()).toBe('link-new');
+
+    expect(destroySlackUserLinkMock).toHaveBeenCalledWith(client, {
+      id: 'link-ghost',
+    });
+    expect(createSlackUserLinkMock).toHaveBeenCalledTimes(1);
+    expect(destroySlackUserLinkMock.mock.invocationCallOrder[0]).toBeLessThan(
+      createSlackUserLinkMock.mock.invocationCallOrder[0] ?? 0,
+    );
+  });
+
+  it('should not look for a ghost when replacing a live link', async () => {
+    expect(await persist({ existingLink })).toBe('link-new');
+
+    expect(findDeletedSlackUserLinkIdsMock).not.toHaveBeenCalled();
+    expect(destroySlackUserLinkMock).toHaveBeenCalledWith(client, {
+      id: existingLink.id,
+    });
   });
 
   it('should create a link when the Slack account has none', async () => {

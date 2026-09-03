@@ -25,14 +25,12 @@ const FIND_MANY_COMMAND_MENU_ITEMS_QUERY = `
         ... on PathCommandMenuItemPayload {
           path
         }
-        ... on ObjectMetadataCommandMenuItemPayload {
-          objectMetadataItemId
-        }
       }
       hotKeys
       conditionalAvailabilityExpression
       availabilityType
       availabilityObjectMetadataId
+      navigationTargetObjectMetadataId
       pageLayoutId
       isActive
     }

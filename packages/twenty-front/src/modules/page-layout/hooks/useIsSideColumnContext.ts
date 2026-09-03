@@ -1,5 +1,5 @@
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 type UseIsSideColumnContextReturn = {
@@ -10,7 +10,7 @@ type UseIsSideColumnContextReturn = {
 
 export const useIsSideColumnContext = (): UseIsSideColumnContextReturn => {
   const { isInPinnedTab } = useIsInPinnedTab();
-  const { isInSidePanel } = useLayoutRenderingContext();
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
   const isMobile = useIsMobile();
 
   return {

@@ -60,34 +60,6 @@ const TASK_PAGE_TABS = {
       },
     },
   },
-  timeline: {
-    universalIdentifier:
-      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.timeline
-        .universalIdentifier,
-    ...TAB_PROPS.timeline,
-    widgets: {
-      timeline: {
-        universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs
-            .timeline.widgets.timeline.universalIdentifier,
-        ...WIDGET_PROPS.timeline,
-      },
-    },
-  },
-  files: {
-    universalIdentifier:
-      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.files
-        .universalIdentifier,
-    ...TAB_PROPS.files,
-    widgets: {
-      files: {
-        universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.files
-            .widgets.files.universalIdentifier,
-        ...WIDGET_PROPS.files,
-      },
-    },
-  },
 } as const satisfies Record<string, StandardPageLayoutTabConfig>;
 
 export const STANDARD_TASK_PAGE_LAYOUT_CONFIG = {

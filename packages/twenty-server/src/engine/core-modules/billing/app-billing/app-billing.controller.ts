@@ -4,6 +4,7 @@ import {
   Body,
   Controller,
   ForbiddenException,
+  Get,
   HttpCode,
   HttpStatus,
   NotFoundException,
@@ -15,11 +16,13 @@ import {
 } from '@nestjs/common';
 
 import { Request } from 'express';
+import { type CreditAvailability } from 'twenty-shared/application';
 import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AppBillingService } from 'src/engine/core-modules/billing/app-billing/app-billing.service';
 import { ChargeDto } from 'src/engine/core-modules/billing/app-billing/dtos/charge.dto';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
@@ -36,9 +39,34 @@ const APP_BILLING_CHARGE_THROTTLE_TTL_MS = 60_000;
 export class AppBillingController {
   constructor(
     private readonly appBillingService: AppBillingService,
+    private readonly billingUsageService: BillingUsageService,
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
+
+  // Lets an app ask the question the platform already asks before AI, workflow
+  // and email work, so it can stop up front instead of failing partway through
+  // on a downstream call it did not write. Returns the verdict and a reason,
+  // never a balance: an app has no business reading what the workspace pays.
+  @Get('credits')
+  async credits(@Req() request: Request): Promise<CreditAvailability> {
+    if (!isDefined(request.application) || !isDefined(request.workspace)) {
+      throw new ForbiddenException(
+        'App billing endpoint requires an APPLICATION_ACCESS token.',
+      );
+    }
+
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      `${request.workspace.id}-${request.application.id}-app-billing-credits`,
+      1,
+      APP_BILLING_CHARGE_THROTTLE_LIMIT,
+      APP_BILLING_CHARGE_THROTTLE_TTL_MS,
+    );
+
+    return this.billingUsageService.getCreditAvailability({
+      workspaceId: request.workspace.id,
+    });
+  }
 
   @Post('charge')
   @HttpCode(HttpStatus.NO_CONTENT)

@@ -4,6 +4,7 @@ import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/stat
 import { makeTab } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
+import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
@@ -25,6 +26,7 @@ let mockIsInEditMode = true;
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
+  useLocation: () => ({ search: '', state: null }),
   useNavigate: () => mockNavigate,
 }));
 
@@ -173,18 +175,25 @@ const renderTabList = ({
   render(
     <Provider store={store}>
       <I18nProvider i18n={i18n}>
-        <PageLayoutComponentInstanceContext.Provider
-          value={{ instanceId: PAGE_LAYOUT_ID }}
+        <WorkspaceSurfaceContext.Provider
+          value={{
+            type: isInSidePanel ? 'side-panel' : 'main',
+            instanceId: isInSidePanel ? 'side-panel' : 'main',
+            ownsRouteLocation: !isInSidePanel,
+          }}
         >
-          <PageLayoutTabList
-            tabs={TABS}
-            componentInstanceId={TAB_LIST_ID}
-            pageLayoutType={pageLayoutType}
-            behaveAsLinks={behaveAsLinks}
-            isReorderEnabled
-            isInSidePanel={isInSidePanel}
-          />
-        </PageLayoutComponentInstanceContext.Provider>
+          <PageLayoutComponentInstanceContext.Provider
+            value={{ instanceId: PAGE_LAYOUT_ID }}
+          >
+            <PageLayoutTabList
+              tabs={TABS}
+              componentInstanceId={TAB_LIST_ID}
+              pageLayoutType={pageLayoutType}
+              behaveAsLinks={behaveAsLinks}
+              isReorderEnabled
+            />
+          </PageLayoutComponentInstanceContext.Provider>
+        </WorkspaceSurfaceContext.Provider>
       </I18nProvider>
     </Provider>,
   );
@@ -210,7 +219,10 @@ describe('PageLayoutTabList selection', () => {
         'aria-pressed',
         'true',
       );
-      expect(mockNavigate).toHaveBeenCalledWith(`#${title}`);
+      expect(mockNavigate).toHaveBeenCalledWith(
+        { search: '', hash: `#${title}` },
+        { replace: false, state: null },
+      );
       expect(mockOpenTabSettings).not.toHaveBeenCalled();
 
       await user.click(screen.getByRole('button', { name: title }));
@@ -266,7 +278,10 @@ describe('PageLayoutTabList selection', () => {
       .dblClick(screen.getByRole('button', { name: 'Notes' }));
 
     expect(mockNavigate).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).toHaveBeenCalledWith('#Notes');
+    expect(mockNavigate).toHaveBeenCalledWith(
+      { search: '', hash: '#Notes' },
+      { replace: false, state: null },
+    );
     expect(mockOpenTabSettings).toHaveBeenCalledTimes(1);
     expect(store.get(settingsTabAtom)).toBe('Notes');
   });
@@ -342,7 +357,10 @@ describe('PageLayoutTabList selection', () => {
       .setup()
       .click(screen.getByRole('button', { name: 'Files' }));
 
-    expect(mockNavigate).toHaveBeenCalledWith('#Files');
+    expect(mockNavigate).toHaveBeenCalledWith(
+      { search: '', hash: '#Files' },
+      { replace: false, state: null },
+    );
     expect(screen.getByRole('button', { name: 'Tasks' })).toHaveAttribute(
       'aria-pressed',
       'true',

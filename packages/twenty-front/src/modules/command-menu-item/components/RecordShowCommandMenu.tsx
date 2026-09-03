@@ -33,7 +33,6 @@ export const RecordShowCommandMenu = () => {
       {hasSelectedRecord && contextStoreCurrentObjectMetadataItemId && (
         <>
           <CommandMenuContextProvider
-            isInSidePanel={false}
             displayType="button"
             containerType={CommandMenuItemContainerType.ShowPageHeader}
             isInPreviewMode={isLayoutCustomizationModeEnabled}

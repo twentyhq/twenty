@@ -17,6 +17,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -27,6 +28,8 @@ import { FrontComponentEntity } from 'src/engine/metadata-modules/front-componen
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { serializeApplicationForBroadcast } from 'src/engine/core-modules/application/utils/serialize-application-for-broadcast.util';
+import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -59,6 +62,7 @@ export class ApplicationService {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectRepository(ApplicationVariableEntity)
     private readonly applicationVariableRepository: Repository<ApplicationVariableEntity>,
+    private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
   ) {}
 
   async findApplicationRoleId(
@@ -580,6 +584,42 @@ export class ApplicationService {
     }
   }
 
+  private async broadcastApplicationEvent({
+    type,
+    application,
+    updatedFields,
+  }: {
+    type: 'created' | 'updated' | 'deleted';
+    application: ApplicationEntity;
+    updatedFields?: string[];
+  }): Promise<void> {
+    const serializedApplication = serializeApplicationForBroadcast(application);
+
+    try {
+      await this.workspaceEventBroadcaster.broadcast({
+        workspaceId: application.workspaceId,
+        events: [
+          {
+            type,
+            entityName: 'application',
+            recordId: application.id,
+            properties: {
+              ...(isDefined(updatedFields) ? { updatedFields } : {}),
+              ...(type === 'deleted'
+                ? { before: serializedApplication }
+                : { after: serializedApplication }),
+            },
+          },
+        ],
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to broadcast ${type} event for application ${application.universalIdentifier} in workspace ${application.workspaceId}`,
+        error,
+      );
+    }
+  }
+
   async create(
     data: Partial<ApplicationEntity> & { workspaceId: string },
     queryRunner?: QueryRunner,
@@ -596,6 +636,11 @@ export class ApplicationService {
       'flatApplicationMaps',
     ]);
 
+    await this.broadcastApplicationEvent({
+      type: 'created',
+      application: savedApplication,
+    });
+
     return savedApplication;
   }
 
@@ -605,13 +650,18 @@ export class ApplicationService {
       workspaceId: string;
     },
   ): Promise<ApplicationEntity> {
-    await this.applicationRepository.update({ id }, data);
+    await this.applicationRepository.update(
+      { id, workspaceId: data.workspaceId },
+      data,
+    );
 
     await this.workspaceCacheService.invalidateAndRecompute(data.workspaceId, [
       'flatApplicationMaps',
     ]);
 
-    const updatedApplication = await this.findById(id);
+    const updatedApplication = await this.applicationRepository.findOne({
+      where: { id, workspaceId: data.workspaceId },
+    });
 
     if (!isDefined(updatedApplication)) {
       throw new ApplicationException(
@@ -620,7 +670,36 @@ export class ApplicationService {
       );
     }
 
+    await this.broadcastApplicationEvent({
+      type: 'updated',
+      application: updatedApplication,
+      updatedFields: Object.keys(data).filter(
+        (field) => field !== 'workspaceId',
+      ),
+    });
+
     return updatedApplication;
+  }
+
+  async revertStateToInstalledBestEffort({
+    applicationId,
+    universalIdentifier,
+    workspaceId,
+  }: {
+    applicationId: string;
+    universalIdentifier: string;
+    workspaceId: string;
+  }): Promise<void> {
+    try {
+      await this.update(applicationId, {
+        state: ApplicationState.INSTALLED,
+        workspaceId,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `State revert to INSTALLED did not complete for application ${universalIdentifier} in workspace ${workspaceId}, the row may or may not have been updated: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   }
 
   async delete(universalIdentifier: string, workspaceId: string) {
@@ -689,5 +768,10 @@ export class ApplicationService {
       workspaceId,
       ALL_FLAT_ENTITY_MAPS_PROPERTIES,
     );
+
+    await this.broadcastApplicationEvent({
+      type: 'deleted',
+      application,
+    });
   }
 }

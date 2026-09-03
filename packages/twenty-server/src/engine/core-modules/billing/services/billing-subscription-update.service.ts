@@ -37,8 +37,11 @@ import { getCurrentLicensedBillingSubscriptionItemOrThrow } from 'src/engine/cor
 import { getCurrentResourceCreditSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-resource-credit-subscription-item-or-throw.util';
 import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normalize-price-ref.utils';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 export type SubscriptionStripePrices = {
   licensedPriceId: string;
   seats: number;
@@ -61,6 +64,7 @@ export class BillingSubscriptionUpdateService {
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
     private readonly billingSubscriptionPhaseService: BillingSubscriptionPhaseService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   async changeResourceCreditPrice(
@@ -203,12 +207,17 @@ export class BillingSubscriptionUpdateService {
     const resourceCreditItem =
       getCurrentResourceCreditSubscriptionItemOrThrow(subscription);
 
+    const seats =
+      subscriptionUpdate.type === SubscriptionUpdateType.SEATS
+        ? subscriptionUpdate.newSeats
+        : await this.countWorkspaceMembers(workspaceId);
+
     const toUpdateCurrentPrices = await this.computeSubscriptionPricesUpdate(
       subscriptionUpdate,
       {
         licensedPriceId: licensedItem.stripePriceId,
         resourceCreditPriceId: resourceCreditItem.stripePriceId,
-        seats: licensedItem.quantity,
+        seats: seats > 0 ? seats : licensedItem.quantity,
       },
     );
 
@@ -332,6 +341,23 @@ export class BillingSubscriptionUpdateService {
     await this.billingSubscriptionService.syncSubscriptionToDatabase(
       subscription.workspaceId,
       subscription.stripeSubscriptionId,
+    );
+  }
+
+  private async countWorkspaceMembers(workspaceId: string): Promise<number> {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    return await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const workspaceMemberRepository =
+          this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        return await workspaceMemberRepository.count();
+      },
+      authContext,
     );
   }
 

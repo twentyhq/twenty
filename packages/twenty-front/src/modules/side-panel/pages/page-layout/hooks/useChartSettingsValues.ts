@@ -1,4 +1,4 @@
-import { doesFieldMetadataItemMatchFieldMetadataId } from '@/object-metadata/utils/doesFieldMetadataItemMatchFieldMetadataId';
+import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { CHART_NUMBER_FORMAT_DEFAULT } from '@/page-layout/widgets/graph/constants/ChartNumberFormatDefault';
 import { useGraphGroupBySortOptionLabels } from '@/side-panel/pages/page-layout/hooks/useGraphGroupBySortOptionLabels';
 import { useGraphXSortOptionLabels } from '@/side-panel/pages/page-layout/hooks/useGraphXSortOptionLabels';
@@ -54,14 +54,6 @@ export const useChartSettingsValues = ({
 
   const isPieChart = configuration.__typename === 'PieChartConfiguration';
 
-  const findGroupByField = (fieldMetadataId: string) =>
-    objectMetadataItem?.fields.find((fieldMetadataItem) =>
-      doesFieldMetadataItemMatchFieldMetadataId({
-        fieldMetadataItem,
-        fieldMetadataId,
-      }),
-    );
-
   let groupByFieldXId: string | undefined;
   let groupByFieldYId: string | undefined;
   let groupBySubFieldNameX: CompositeFieldSubFieldName | undefined;
@@ -85,11 +77,17 @@ export const useChartSettingsValues = ({
   }
 
   const groupByFieldX = isDefined(groupByFieldXId)
-    ? findGroupByField(groupByFieldXId)
+    ? findFieldMetadataItemByFieldMetadataId({
+        fieldMetadataItems: objectMetadataItem?.fields,
+        fieldMetadataId: groupByFieldXId,
+      })
     : undefined;
 
   const groupByFieldY = isDefined(groupByFieldYId)
-    ? findGroupByField(groupByFieldYId)
+    ? findFieldMetadataItemByFieldMetadataId({
+        fieldMetadataItems: objectMetadataItem?.fields,
+        fieldMetadataId: groupByFieldYId,
+      })
     : undefined;
 
   const groupBySubFieldNameXLabel =
@@ -210,7 +208,10 @@ export const useChartSettingsValues = ({
       }
       case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_PIE_CHART: {
         const pieChartGroupByField = isDefined(finalGroupByFieldYId)
-          ? findGroupByField(finalGroupByFieldYId)
+          ? findFieldMetadataItemByFieldMetadataId({
+              fieldMetadataItems: objectMetadataItem?.fields,
+              fieldMetadataId: finalGroupByFieldYId,
+            })
           : undefined;
         const pieChartGroupBySubFieldNameLabel =
           isDefined(finalGroupBySubFieldNameY) &&

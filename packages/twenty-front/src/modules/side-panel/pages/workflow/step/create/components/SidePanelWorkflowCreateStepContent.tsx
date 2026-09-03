@@ -85,7 +85,10 @@ export const SidePanelWorkflowCreateStepContent = () => {
         ? steps.find((step) => step.id === parentStepId)
         : undefined;
 
-    if (parentStep?.type === 'IF_ELSE') {
+    if (
+      parentStep?.type === 'IF_ELSE' &&
+      connectionOptions?.connectedStepType !== 'IF_ELSE'
+    ) {
       await handleIfElseParentStep({
         parentStep,
         createdStepId: createdStep.id,

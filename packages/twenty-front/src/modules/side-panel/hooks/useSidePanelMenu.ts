@@ -5,7 +5,6 @@ import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-i
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
-import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
@@ -46,7 +45,6 @@ export const useSidePanelMenu = () => {
       resetRecordIndexSelection();
     }
 
-    store.set(sidePanelNavigationStackState.atom, []);
     store.set(isSidePanelOpenedState.atom, false);
     store.set(isSidePanelClosingState.atom, true);
     closeAnyOpenDropdown();

@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import { type ApplicationBilling } from 'twenty-shared/application';
 import {
   Column,
   CreateDateColumn,
@@ -17,6 +18,7 @@ import {
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
@@ -78,6 +80,17 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'text', default: ApplicationRegistrationSourceType.LOCAL })
   sourceType: ApplicationRegistrationSourceType;
 
+  @Column({
+    nullable: false,
+    type: 'text',
+    default: ApplicationState.INSTALLED,
+  })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.38.0_AddStateToApplicationFastInstanceCommand_1788260646460',
+  })
+  state: ApplicationState;
+
   @Column({ nullable: false, type: 'text' })
   sourcePath: string;
 
@@ -103,6 +116,16 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
 
   @Column({ type: 'jsonb', nullable: false, default: {} })
   availablePackages: Record<string, string>;
+
+  // What the app declares it bills for: recurring charges the platform raises
+  // each period, and the operations it charges against, each with the billing
+  // category metered and the app-authored label shown for that spend.
+  @Column({ type: 'jsonb', nullable: false, default: {} })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.38.0_AddBillingToApplicationFastInstanceCommand_1788340843000',
+  })
+  billing: ApplicationBilling;
 
   @Column({ nullable: true, type: 'uuid' })
   logicFunctionLayerId: string | null;

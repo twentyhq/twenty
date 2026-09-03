@@ -13,7 +13,7 @@ import {
 import { CallRecordingStatus } from 'src/modules/call-recording/common/enums/call-recording-status.enum';
 import { type CallRecordingWorkspaceEntity } from 'src/modules/call-recording/standard-objects/call-recording.workspace-entity';
 
-const IN_PROGRESS_CALL_RECORDING_STATUSES: CallRecordingStatus[] = [
+const NON_TERMINAL_CALL_RECORDING_STATUSES: CallRecordingStatus[] = [
   CallRecordingStatus.SCHEDULED,
   CallRecordingStatus.JOINING,
   CallRecordingStatus.RECORDING,
@@ -81,14 +81,14 @@ export class CallRecordingService {
         (callRecording) =>
           callRecording.status === CallRecordingStatus.COMPLETED,
       );
-      const inProgressCallRecording = callRecordingsByCreation.find(
+      const nonTerminalCallRecording = callRecordingsByCreation.find(
         (callRecording) =>
-          IN_PROGRESS_CALL_RECORDING_STATUSES.includes(callRecording.status),
+          NON_TERMINAL_CALL_RECORDING_STATUSES.includes(callRecording.status),
       );
 
       return (
         completedCallRecording ??
-        inProgressCallRecording ??
+        nonTerminalCallRecording ??
         callRecordingsByCreation[0]
       )?.id;
     });

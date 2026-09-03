@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { createSlackUserLink } from 'src/logic-functions/data/create-slack-user-link';
 import { destroySlackUserLink } from 'src/logic-functions/data/destroy-slack-user-link';
+import { findDeletedSlackUserLinkIds } from 'src/logic-functions/data/find-deleted-slack-user-link-ids';
 import { updateSlackUserLink } from 'src/logic-functions/data/update-slack-user-link';
 import { type SlackUserLink } from 'src/logic-functions/types/slack-user-link.type';
 import { type SlackUserLinkConsentState } from 'src/logic-functions/types/slack-user-link-consent-state.type';
@@ -51,6 +52,15 @@ export const persistSlackUserLink = async (
 
   if (isDefined(existingLink)) {
     await destroySlackUserLink(client, { id: existingLink.id });
+  } else {
+    const [deletedLinkId] = await findDeletedSlackUserLinkIds(client, {
+      slackTeamId,
+      slackUserIds: [slackUserId],
+    });
+
+    if (isDefined(deletedLinkId)) {
+      await destroySlackUserLink(client, { id: deletedLinkId });
+    }
   }
 
   return createSlackUserLink(client, {

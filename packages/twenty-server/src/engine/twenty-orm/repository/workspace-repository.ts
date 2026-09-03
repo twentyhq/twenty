@@ -89,7 +89,7 @@ const MUTATION_EVENT_ACTIONS_BY_KIND: Record<
   update: [DatabaseEventAction.UPDATED, DatabaseEventAction.UPSERTED],
 };
 
-type WorkspaceRepositoryOptions = {
+type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
   tableShape: WorkspaceTableShape;
   flatObjectMetadata: FlatObjectMetadata;
   internalContext: WorkspaceInternalContext;
@@ -97,31 +97,37 @@ type WorkspaceRepositoryOptions = {
   executor: QueryExecutor;
   objectRecordsPermissions: ObjectsPermissions;
   shouldBypassPermissionChecks: boolean;
+  // Suppresses the CREATED/UPDATED/DELETED database events this repository
+  // would otherwise emit, and with them the snapshot SELECT that reads every
+  // written row back to build the event payload. Only for bulk system writes
+  // whose rows no subscriber cares about (campaign materialisation, backfills):
+  // webhooks, workflow triggers and timeline activities will NOT fire.
+  shouldSkipEventEmission: boolean;
   tableShapeByObjectMetadataId: (
     objectMetadataId: string,
   ) => WorkspaceTableShape;
   flatObjectMetadataByObjectMetadataId: (
     objectMetadataId: string,
   ) => FlatObjectMetadata;
-  getRepositoryForObjectMetadataId: (
+  getRepositoryForObjectMetadataId: <
+    Entity extends ObjectLiteral = ObjectRecord,
+  >(
     objectMetadataId: string,
-  ) => WorkspaceRepository;
+  ) => WorkspaceRepository<Entity>;
   isTransactional: boolean;
   runInNewTransaction: <T>(
-    work: (
-      transactionalRepository: WorkspaceRepository<ObjectLiteral>,
-    ) => Promise<T>,
+    work: (transactionalRepository: WorkspaceRepository<TEntity>) => Promise<T>,
   ) => Promise<T>;
 };
 
 export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   readonly objectRecordsPermissions: ObjectsPermissions;
 
-  private readonly options: WorkspaceRepositoryOptions;
+  private readonly options: WorkspaceRepositoryOptions<TEntity>;
 
   private _filesFieldSync?: FilesFieldSync;
 
-  constructor(options: WorkspaceRepositoryOptions) {
+  constructor(options: WorkspaceRepositoryOptions<TEntity>) {
     this.options = options;
     this.objectRecordsPermissions = options.objectRecordsPermissions;
   }
@@ -198,6 +204,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   get internalContext(): WorkspaceInternalContext {
     return this.options.internalContext;
+  }
+
+  getRepositoryForObjectMetadataId<Entity extends ObjectLiteral = ObjectRecord>(
+    objectMetadataId: string,
+  ): WorkspaceRepository<Entity> {
+    return this.options.getRepositoryForObjectMetadataId<Entity>(
+      objectMetadataId,
+    );
   }
 
   async find(options?: WorkspaceFindOptions): Promise<TEntity[]> {
@@ -671,7 +685,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   private runAtomically<T>(
-    work: (repository: WorkspaceRepository<ObjectLiteral>) => Promise<T>,
+    work: (repository: WorkspaceRepository<TEntity>) => Promise<T>,
   ): Promise<T> {
     return this.options.isTransactional
       ? work(this)
@@ -1048,11 +1062,13 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
       generatedMaps.push(...(result.generatedMaps as ObjectRecord[]));
 
-      const recordsAfterWrite = await this.buildIdsEventSnapshotQueryBuilder([
-        input.id,
-      ]).getMany<ObjectRecord>({
-        noFormatting: true,
-      });
+      const recordsAfterWrite = this.options.shouldSkipEventEmission
+        ? []
+        : await this.buildIdsEventSnapshotQueryBuilder([
+            input.id,
+          ]).getMany<ObjectRecord>({
+            noFormatting: true,
+          });
 
       recordsAfter.push(
         ...mergeReturnedUpdateTimestamps(
@@ -1140,7 +1156,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   private async emitCreateEvents(insertedIds: string[]): Promise<void> {
-    if (insertedIds.length === 0) {
+    if (insertedIds.length === 0 || this.options.shouldSkipEventEmission) {
       return;
     }
 
@@ -1302,7 +1318,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     const recordsAfterWrite =
-      kind === 'delete'
+      kind === 'delete' || this.options.shouldSkipEventEmission
         ? undefined
         : await eventSelectQueryBuilder.getMany<ObjectRecord>({
             noFormatting: true,
@@ -1413,6 +1429,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     recordsBefore: ObjectRecord[];
     recordsAfter?: ObjectRecord[];
   }): void {
+    if (this.options.shouldSkipEventEmission) {
+      return;
+    }
+
     const actions = MUTATION_EVENT_ACTIONS_BY_KIND[kind];
 
     const formattedBefore = this.formatResult<ObjectRecord[]>(recordsBefore);

@@ -1,4 +1,5 @@
 import { InformationBannerWrapper } from '@/information-banner/components/InformationBannerWrapper';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -99,6 +100,18 @@ const StyledBodyContent = styled.div`
   }
 `;
 
+const StyledSidePanelSurface = styled.div`
+  background: ${themeCssVariables.background.primary};
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  width: 100%;
+`;
+
 const StyledPrintHidden = styled.div`
   @media print {
     display: none;
@@ -111,20 +124,34 @@ export const PageCardLayout = ({
   children,
   showInformationBanner = true,
 }: PageCardLayoutProps) => {
+  const workspaceSurface = useWorkspaceSurface();
+  const shouldShowInformationBanner =
+    showInformationBanner && workspaceSurface.type === 'main';
+
+  const body = <StyledBodyContent>{children}</StyledBodyContent>;
+
+  if (workspaceSurface.type === 'side-panel') {
+    return (
+      <StyledSidePanelSurface data-page-surface="side-panel">
+        {header}
+        <StyledPrintHidden>{secondaryBar}</StyledPrintHidden>
+        {body}
+      </StyledSidePanelSurface>
+    );
+  }
+
   return (
-    <StyledRoot>
+    <StyledRoot data-page-surface="main">
       <StyledMainCardWrapper>
         <StyledCard>
+          {shouldShowInformationBanner && (
+            <StyledPrintHidden>
+              <InformationBannerWrapper />
+            </StyledPrintHidden>
+          )}
           <StyledPrintHidden>{header}</StyledPrintHidden>
           <StyledPrintHidden>{secondaryBar}</StyledPrintHidden>
-          <StyledBodyContent>
-            {showInformationBanner && (
-              <StyledPrintHidden>
-                <InformationBannerWrapper />
-              </StyledPrintHidden>
-            )}
-            {children}
-          </StyledBodyContent>
+          {body}
         </StyledCard>
       </StyledMainCardWrapper>
     </StyledRoot>

@@ -6,7 +6,7 @@ import { type PageLayoutAddTabStrategy } from '@/page-layout/types/PageLayoutAdd
 import { isReactivatableTab } from '@/page-layout/utils/isReactivatableTab';
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
@@ -35,7 +35,7 @@ export const usePageLayoutAddTabStrategy = ({
 
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
-  const { isInSidePanel } = useLayoutRenderingContext();
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
 
   const navigate = useNavigate();
 

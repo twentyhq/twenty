@@ -22,6 +22,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
@@ -60,11 +61,13 @@ export class ApplicationSyncService {
     manifest,
     applicationRegistrationId,
     dryRun = false,
+    inferDeletionFromMissingEntities = true,
   }: {
     workspaceId: string;
     manifest: Manifest;
     applicationRegistrationId?: string;
     dryRun?: boolean;
+    inferDeletionFromMissingEntities?: boolean;
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
@@ -90,6 +93,7 @@ export class ApplicationSyncService {
             workspaceId,
             ownerFlatApplication,
             dryRun,
+            inferDeletionFromMissingEntities,
           },
         );
     } catch (error) {
@@ -159,12 +163,14 @@ export class ApplicationSyncService {
       logoFileId: null,
       version: null,
       sourceType: ApplicationRegistrationSourceType.LOCAL,
+      state: ApplicationState.INSTALLED,
       sourcePath: manifest.application.universalIdentifier,
       packageJsonChecksum: null,
       packageJsonFileId: null,
       yarnLockChecksum: null,
       yarnLockFileId: null,
       availablePackages: {},
+      billing: manifest.application.billing ?? {},
       logicFunctionLayerId: null,
       defaultRoleId: null,
       defaultRole: null,
@@ -270,6 +276,7 @@ export class ApplicationSyncService {
         version: packageJson.version,
         packageJsonChecksum: manifest.application.packageJsonChecksum,
         yarnLockChecksum: manifest.application.yarnLockChecksum,
+        billing: manifest.application.billing ?? {},
         frontComponentSharedDependenciesChecksum,
         frontComponentSharedDependenciesBuiltPath,
         applicationRegistrationId: resolvedRegistrationId,
@@ -349,6 +356,47 @@ export class ApplicationSyncService {
       );
     }
 
+    const shouldTransitionState =
+      application.state === ApplicationState.INSTALLED;
+
+    try {
+      if (shouldTransitionState) {
+        await this.applicationService.update(application.id, {
+          state: ApplicationState.UNINSTALLING,
+          workspaceId,
+        });
+      }
+
+      return await this.runUninstall({
+        application,
+        workspaceId,
+        applicationUniversalIdentifier,
+        shouldRunUninstallHook,
+      });
+    } catch (error) {
+      if (shouldTransitionState) {
+        await this.applicationService.revertStateToInstalledBestEffort({
+          applicationId: application.id,
+          universalIdentifier: applicationUniversalIdentifier,
+          workspaceId,
+        });
+      }
+
+      throw error;
+    }
+  }
+
+  private async runUninstall({
+    application,
+    workspaceId,
+    applicationUniversalIdentifier,
+    shouldRunUninstallHook,
+  }: {
+    application: ApplicationEntity;
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+    shouldRunUninstallHook: boolean;
+  }): Promise<WorkspaceMigration> {
     if (shouldRunUninstallHook) {
       await this.applicationUninstallService.runUninstallHookBestEffort({
         application,

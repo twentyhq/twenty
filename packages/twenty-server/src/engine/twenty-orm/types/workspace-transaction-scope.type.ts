@@ -9,9 +9,11 @@ export type WorkspaceTransactionScope = {
   getRepository: <T extends ObjectLiteral = ObjectRecord>(
     objectMetadataName: string,
     rolePermissionConfig?: RolePermissionConfig,
+    repositoryOptions?: { shouldSkipEventEmission?: boolean },
   ) => WorkspaceRepository<T>;
   executeRawQuery: (
     sql: string,
     parameters?: unknown[],
   ) => Promise<Record<string, unknown>[]>;
+  afterCommit: (callback: () => void | Promise<void>) => void;
 };
