@@ -218,6 +218,14 @@ export class LambdaDriver implements LogicFunctionDriver {
 
       const duration = Date.now() - invokeFlowStart;
 
+      // AWS's reported billed duration is what the invocation actually costs;
+      // wall clock also counts network latency and cold starts. The log tail
+      // parse is best-effort, so fall back to wall clock when it is missing.
+      const awsBilledDuration = Number(awsBilledDurationMs ?? NaN);
+      const billedDurationMs = Number.isFinite(awsBilledDuration)
+        ? awsBilledDuration
+        : invokeDurationMs;
+
       this.logger.log(
         `[lambda-timing] fnId=${flatLogicFunction.id} executionMode=${executionMode} totalMs=${Date.now() - buildStart} buildExecutorMs=${buildExecutorMs} getBuiltCodeMs=${getBuiltCodeMs} payloadBytes=${Buffer.byteLength(payloadString, 'utf8')} invokeDurationMs=${invokeDurationMs} reportDurationMs=${reportDurationMs ?? 'n/a'} awsBilledDurationMs=${awsBilledDurationMs ?? 'n/a'} initDurationMs=${initDurationMs ?? 'n/a'} coldStart=${coldStart}`,
       );
@@ -226,7 +234,7 @@ export class LambdaDriver implements LogicFunctionDriver {
         return {
           data: null,
           duration,
-          billedDurationMs: invokeDurationMs,
+          billedDurationMs,
           status: LogicFunctionExecutionStatus.ERROR,
           error: parsedResult,
           logs,
@@ -237,7 +245,7 @@ export class LambdaDriver implements LogicFunctionDriver {
         data: parsedResult,
         logs,
         duration,
-        billedDurationMs: invokeDurationMs,
+        billedDurationMs,
         status: LogicFunctionExecutionStatus.SUCCESS,
       };
     } catch (error) {
