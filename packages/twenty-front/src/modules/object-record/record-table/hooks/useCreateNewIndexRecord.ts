@@ -77,12 +77,7 @@ export const useCreateNewIndexRecord = ({
     });
 
   const createNewIndexRecord = useCallback(
-    async (
-      recordInput?: Partial<ObjectRecord>,
-      options?: { shouldOpenLabelIdentifierInEditMode?: boolean },
-    ) => {
-      const shouldOpenLabelIdentifierInEditMode =
-        options?.shouldOpenLabelIdentifierInEditMode ?? true;
+    async (recordInput?: Partial<ObjectRecord>) => {
       const recordId = v4();
       const recordInputFromRLSPredicates = buildRecordInputFromRLSPredicates();
       const recordInputFromFilters = buildRecordInputFromFilters();
@@ -98,6 +93,17 @@ export const useCreateNewIndexRecord = ({
         ...mergedRecordInput,
       });
 
+      const labelIdentifierFieldMetadataItem =
+        getLabelIdentifierFieldMetadataItem(objectMetadataItem);
+
+      const shouldOpenLabelIdentifierInEditMode =
+        !isDefined(labelIdentifierFieldMetadataItem) ||
+        !isDefined(
+          recordInput?.[
+            getFieldMetadataItemGqlFieldName(labelIdentifierFieldMetadataItem)
+          ],
+        );
+
       if (workspaceSurface.type === 'side-panel') {
         openRecordInSidePanel({
           recordId,
@@ -112,9 +118,6 @@ export const useCreateNewIndexRecord = ({
           isNewRecord: shouldOpenLabelIdentifierInEditMode,
         });
       } else {
-        const labelIdentifierFieldMetadataItem =
-          getLabelIdentifierFieldMetadataItem(objectMetadataItem);
-
         if (
           shouldOpenLabelIdentifierInEditMode &&
           isDefined(labelIdentifierFieldMetadataItem)
