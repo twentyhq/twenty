@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { isConnectionHiddenFromRequestUser } from 'src/engine/core-modules/application/connection-provider/connections/utils/is-connection-hidden-from-request-user.util';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 type ReportAuthFailureArgs = {
@@ -48,12 +49,8 @@ export class ApplicationConnectionAuthFailureService {
       throw new NotFoundException(`Connection ${id} not found`);
     }
 
-    // Same privacy rule as reading a connection: a request-user can only act
-    // on their own user-visibility credentials.
     if (
-      isDefined(requestUserWorkspaceId) &&
-      account.visibility === 'user' &&
-      account.userWorkspaceId !== requestUserWorkspaceId
+      isConnectionHiddenFromRequestUser({ account, requestUserWorkspaceId })
     ) {
       throw new NotFoundException(`Connection ${id} not found`);
     }

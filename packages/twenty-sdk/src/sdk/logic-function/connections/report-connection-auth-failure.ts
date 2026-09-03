@@ -13,10 +13,13 @@ const REPORT_APP_CONNECTION_AUTH_FAILURE_MUTATION = `
 // row flips to "Reconnect needed" and `getConnection` starts throwing
 // `AppConnectionAuthFailedError`. The flag clears automatically when the
 // user reconnects.
-export const reportConnectionAuthFailure = async (
-  connectionId: string,
-  reason?: string,
-): Promise<void> => {
+export const reportConnectionAuthFailure = async ({
+  connectionId,
+  reason,
+}: {
+  connectionId: string;
+  reason?: string;
+}): Promise<void> => {
   await postGraphqlRequest<
     { input: { id: string; reason?: string } },
     { reportAppConnectionAuthFailure: boolean }

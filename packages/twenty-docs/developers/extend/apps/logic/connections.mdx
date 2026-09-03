@@ -240,10 +240,11 @@ The platform sets `authFailedAt` on its own only when an OAuth refresh fails. Pr
 ```ts
 import { reportConnectionAuthFailure } from 'twenty-sdk/logic-function';
 
-await reportConnectionAuthFailure(
-  connection.id,
-  'Slack rejected the stored token (invalid_auth). Reconnect to restore the integration.',
-);
+await reportConnectionAuthFailure({
+  connectionId: connection.id,
+  reason:
+    'Slack rejected the stored token (invalid_auth). Reconnect to restore the integration.',
+});
 ```
 
 This sets `authFailedAt` (and the optional reason, capped at 1000 characters) on the connection. The settings row flips to **Reconnect needed** with a Reconnect button, the detail page shows the reason, and `getConnection` starts throwing `AppConnectionAuthFailedError` for that row. The flag and reason clear automatically when the user reconnects.

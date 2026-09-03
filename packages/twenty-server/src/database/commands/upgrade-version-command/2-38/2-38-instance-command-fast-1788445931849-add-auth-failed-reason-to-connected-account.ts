@@ -7,7 +7,7 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 export class AddAuthFailedReasonToConnectedAccountFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."connectedAccount" ADD "authFailedReason" text',
+      'ALTER TABLE "core"."connectedAccount" ADD "authFailedReason" varchar',
     );
   }
 

@@ -67,7 +67,7 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'timestamptz', nullable: true })
   authFailedAt: Date | null;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
       '2.38.0_AddAuthFailedReasonToConnectedAccountFastInstanceCommand_1788445931849',

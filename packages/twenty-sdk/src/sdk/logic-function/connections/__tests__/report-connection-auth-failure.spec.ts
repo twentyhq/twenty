@@ -33,7 +33,10 @@ describe('reportConnectionAuthFailure', () => {
       ),
     );
 
-    await reportConnectionAuthFailure('c-1', 'Slack rejected the token');
+    await reportConnectionAuthFailure({
+      connectionId: 'c-1',
+      reason: 'Slack rejected the token',
+    });
 
     const [url, requestInit] = fetchSpy.mock.calls[0];
 
@@ -55,7 +58,7 @@ describe('reportConnectionAuthFailure', () => {
       ),
     );
 
-    await reportConnectionAuthFailure('c-2');
+    await reportConnectionAuthFailure({ connectionId: 'c-2' });
 
     const body = JSON.parse(String(fetchSpy.mock.calls[0][1]?.body));
 
@@ -70,8 +73,8 @@ describe('reportConnectionAuthFailure', () => {
       ),
     );
 
-    await expect(reportConnectionAuthFailure('c-3')).rejects.toThrow(
-      'Connection c-3 not found',
-    );
+    await expect(
+      reportConnectionAuthFailure({ connectionId: 'c-3' }),
+    ).rejects.toThrow('Connection c-3 not found');
   });
 });

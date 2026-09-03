@@ -8,6 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { type AppConnectionDto } from 'src/engine/core-modules/application/connection-provider/connections/dtos/app-connection.dto';
+import { isConnectionHiddenFromRequestUser } from 'src/engine/core-modules/application/connection-provider/connections/utils/is-connection-hidden-from-request-user.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { resolveWorkspaceMemberId } from 'src/engine/core-modules/user-workspace/utils/resolve-workspace-member-id.util';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -133,13 +134,8 @@ export class ApplicationConnectionsListService {
       throw new NotFoundException(`Connection ${id} not found`);
     }
 
-    // Same privacy rule as list(): a request-user can only see their own
-    // user-visibility credentials. Workspace-shared ones are visible to
-    // anyone in the workspace. Cron has no request user — sees all.
     if (
-      isDefined(requestUserWorkspaceId) &&
-      account.visibility === 'user' &&
-      account.userWorkspaceId !== requestUserWorkspaceId
+      isConnectionHiddenFromRequestUser({ account, requestUserWorkspaceId })
     ) {
       throw new NotFoundException(`Connection ${id} not found`);
     }
