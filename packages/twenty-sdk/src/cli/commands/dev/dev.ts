@@ -37,7 +37,9 @@ export class AppDevCommand {
     const { serverUp, authValid } = await apiService.validateAuth();
 
     if (serverUp && !authValid) {
-      await promptForReauthentication(ConfigService.getActiveRemote());
+      await promptForReauthentication({
+        remoteName: ConfigService.getActiveRemote(),
+      });
     }
   }
 

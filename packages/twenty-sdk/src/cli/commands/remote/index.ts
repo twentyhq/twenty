@@ -5,6 +5,7 @@ import { ApiService } from '@/cli/utilities/api/api-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { getConfigPath } from '@/cli/utilities/config/get-config-path';
 import { detectLocalServer } from '@/cli/utilities/server/detect-local-server';
+import { isNonEmptyString } from '@sniptt/guards';
 import chalk from 'chalk';
 import type { Command } from 'commander';
 import inquirer from 'inquirer';
@@ -12,11 +13,17 @@ import { normalizeUrl } from 'twenty-shared/utils';
 
 type AuthMethod = 'OAuth' | 'API key';
 
-const authenticate = async (
-  apiUrl: string,
-  apiKey?: string,
-  configPath?: string,
-): Promise<AuthMethod> => {
+type AuthenticateOptions = {
+  apiUrl: string;
+  apiKey?: string;
+  configPath?: string;
+};
+
+const authenticate = async ({
+  apiUrl,
+  apiKey,
+  configPath,
+}: AuthenticateOptions): Promise<AuthMethod> => {
   if (apiKey) {
     const result = await authLogin({ apiKey, apiUrl, configPath });
 
@@ -28,13 +35,13 @@ const authenticate = async (
     return 'API key';
   }
 
-  return runOAuthWithApiKeyFallback(apiUrl, configPath);
+  return runOAuthWithApiKeyFallback({ apiUrl, configPath });
 };
 
-const runOAuthWithApiKeyFallback = async (
-  apiUrl: string,
-  configPath?: string,
-): Promise<AuthMethod> => {
+const runOAuthWithApiKeyFallback = async ({
+  apiUrl,
+  configPath,
+}: Omit<AuthenticateOptions, 'apiKey'>): Promise<AuthMethod> => {
   console.log(chalk.gray('Opening browser for authentication...'));
 
   const oauthResult = await authLoginOAuth({ apiUrl, configPath });
@@ -81,18 +88,22 @@ const addAction = async (options: {
     console.warn(chalk.yellow('⚠ --api-url is deprecated. Use --url instead.'));
   }
   const configPath = options.test ? getConfigPath(true) : undefined;
-  const configService = new ConfigService(
-    configPath ? { configPath } : undefined,
-  );
+  const configService = new ConfigService({ configPath });
   const existingRemotes = await configService.getRemotes();
 
   if (options.as !== undefined && existingRemotes.includes(options.as)) {
     const config = await configService.getConfigForRemote(options.as);
     const overrideUrl = options.url ?? options.apiUrl;
-    const apiUrl = overrideUrl ? normalizeUrl(overrideUrl) : config.apiUrl;
+    const apiUrl = isNonEmptyString(overrideUrl)
+      ? normalizeUrl(overrideUrl)
+      : config.apiUrl;
 
     ConfigService.setActiveRemote(options.as);
-    const method = await authenticate(apiUrl, options.apiKey, configPath);
+    const method = await authenticate({
+      apiUrl,
+      apiKey: options.apiKey,
+      configPath,
+    });
 
     console.log(
       chalk.green(`✓ Re-authenticated "${options.as}" via ${method}.`),
@@ -151,7 +162,11 @@ const addAction = async (options: {
   const name = options.as ?? deriveRemoteName(serverUrl);
 
   ConfigService.setActiveRemote(name);
-  const method = await authenticate(serverUrl, options.apiKey, configPath);
+  const method = await authenticate({
+    apiUrl: serverUrl,
+    apiKey: options.apiKey,
+    configPath,
+  });
 
   console.log(
     chalk.green(`✓ Remote "${name}" added (${serverUrl}) via ${method}.`),

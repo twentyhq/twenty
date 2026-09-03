@@ -5,9 +5,15 @@ import { ConfigService } from '@/cli/utilities/config/config-service';
 
 export type ReauthOutcome = 'reauthenticated' | 'declined' | 'non-interactive';
 
-export const promptForReauthentication = async (
-  remoteName: string,
-): Promise<ReauthOutcome> => {
+export type PromptForReauthenticationOptions = {
+  remoteName: string;
+  configPath?: string;
+};
+
+export const promptForReauthentication = async ({
+  remoteName,
+  configPath,
+}: PromptForReauthenticationOptions): Promise<ReauthOutcome> => {
   if (!process.stdout.isTTY) {
     return 'non-interactive';
   }
@@ -25,10 +31,14 @@ export const promptForReauthentication = async (
     return 'declined';
   }
 
-  const configService = new ConfigService();
+  const configService = new ConfigService({ configPath });
   const { apiUrl } = await configService.getConfig();
 
-  const result = await authLoginOAuth({ apiUrl, remote: remoteName });
+  const result = await authLoginOAuth({
+    apiUrl,
+    remote: remoteName,
+    configPath,
+  });
 
   if (result.success) {
     console.log(chalk.green(`✓ Re-authenticated "${remoteName}".`));

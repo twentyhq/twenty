@@ -142,9 +142,9 @@ const innerAppDevOnce = async (
   }
 
   if (!validateAuth.authValid) {
-    const outcome = await promptForReauthentication(
-      ConfigService.getActiveRemote(),
-    );
+    const outcome = await promptForReauthentication({
+      remoteName: ConfigService.getActiveRemote(),
+    });
 
     if (outcome !== 'reauthenticated') {
       return {

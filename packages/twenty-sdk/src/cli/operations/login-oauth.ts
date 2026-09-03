@@ -30,9 +30,7 @@ const innerAuthLoginOAuth = async (
     ConfigService.setActiveRemote(remote);
   }
 
-  const configService = new ConfigService(
-    configPath ? { configPath } : undefined,
-  );
+  const configService = new ConfigService({ configPath });
 
   const discoveryUrl = `${apiUrl}/.well-known/oauth-authorization-server`;
 
@@ -117,6 +115,7 @@ const innerAuthLoginOAuth = async (
     const apiService = new ApiService({
       serverUrl: apiUrl,
       token: accessToken,
+      configPath,
     });
 
     const validateAuth = await apiService.validateAuth();

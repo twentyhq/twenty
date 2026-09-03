@@ -19,9 +19,7 @@ const innerAuthLogin = async (
     ConfigService.setActiveRemote(remote);
   }
 
-  const configService = new ConfigService(
-    configPath ? { configPath } : undefined,
-  );
+  const configService = new ConfigService({ configPath });
 
   await configService.setConfig({
     apiUrl,
@@ -31,7 +29,11 @@ const innerAuthLogin = async (
     twentyCLIRegistrationClientId: undefined,
   });
 
-  const apiService = new ApiService({ serverUrl: apiUrl, token: apiKey });
+  const apiService = new ApiService({
+    serverUrl: apiUrl,
+    token: apiKey,
+    configPath,
+  });
   const validateAuth = await apiService.validateAuth();
 
   if (!validateAuth.authValid) {

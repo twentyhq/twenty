@@ -15,6 +15,7 @@ type ApiServiceOptions = {
   serverUrl?: string;
   token?: string;
   skipAuth?: boolean;
+  configPath?: string;
 };
 
 export class ApiService {

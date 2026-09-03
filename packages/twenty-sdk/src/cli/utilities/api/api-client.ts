@@ -14,6 +14,7 @@ export class ApiClient {
   readonly client: AxiosInstance;
   readonly configService: ConfigService;
   private readonly tokenOverride?: string;
+  private readonly configPath?: string;
   readonly serverUrlOverride?: string;
   private reauthAttempted: boolean = false;
 
@@ -22,14 +23,17 @@ export class ApiClient {
     serverUrl?: string;
     token?: string;
     skipAuth?: boolean;
+    configPath?: string;
   }) {
     const {
       disableInterceptors = false,
       serverUrl,
       token,
       skipAuth = false,
+      configPath,
     } = options || {};
-    this.configService = new ConfigService();
+    this.configService = new ConfigService({ configPath });
+    this.configPath = configPath;
     this.tokenOverride = token;
     this.serverUrlOverride = serverUrl;
     this.client = axios.create();
@@ -125,7 +129,10 @@ export class ApiClient {
     const remoteName = ConfigService.getActiveRemote();
     console.error(`Authentication failed on remote "${remoteName}"`);
 
-    const outcome = await promptForReauthentication(remoteName);
+    const outcome = await promptForReauthentication({
+      remoteName,
+      configPath: this.configPath,
+    });
 
     if (outcome === 'reauthenticated') {
       const authToken = await this.resolveAuthToken();
