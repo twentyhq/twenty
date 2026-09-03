@@ -4,6 +4,7 @@ import { useMutation } from '@apollo/client/react';
 import { CANCEL_MESSAGE_CAMPAIGN } from '@/activities/emails/graphql/mutations/cancelMessageCampaign';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { plural, t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import {
   type CancelMessageCampaignMutation,
   type CancelMessageCampaignMutationVariables,
@@ -29,7 +30,7 @@ export const useCancelMessageCampaign = () => {
 
       const canceled = result.data?.cancelMessageCampaign;
 
-      if (!canceled) {
+      if (!isDefined(canceled)) {
         enqueueErrorSnackBar({ message: t`Failed to cancel campaign` });
 
         return false;
