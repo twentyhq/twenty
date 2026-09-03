@@ -136,7 +136,7 @@ export class InboxItemService {
       accessibleQueueIds,
     });
 
-    await this.inboxItemRepository.update(
+    const updateResult = await this.inboxItemRepository.update(
       workspaceId,
       this.buildWriteScope({
         inboxItem,
@@ -146,6 +146,13 @@ export class InboxItemService {
       // Database clock, since unread is this against lastEventAt
       { readAt: () => 'clock_timestamp()' },
     );
+
+    if (updateResult.affected === 0) {
+      throw new InboxException(
+        `Inbox item ${inboxItemId} changed since it was read`,
+        InboxExceptionCode.INBOX_ITEM_CHANGED,
+      );
+    }
 
     return this.findVisibleItemOrThrow({
       inboxItemId,

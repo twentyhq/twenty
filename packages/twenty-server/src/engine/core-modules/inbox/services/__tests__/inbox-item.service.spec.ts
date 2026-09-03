@@ -331,6 +331,17 @@ describe('InboxItemService', () => {
       expect(inboxItemRepository.update).not.toHaveBeenCalled();
     });
 
+    // The item can be handed to someone else between the read and the write
+    it('should report a lost write rather than a missing item', async () => {
+      // Prepare
+      inboxItemRepository.update.mockResolvedValue({ affected: 0 });
+
+      // Act & Assert
+      await expect(service.markRead(ownedItemArgs)).rejects.toMatchObject({
+        code: InboxExceptionCode.INBOX_ITEM_CHANGED,
+      });
+    });
+
     it('should only stamp readAt, leaving the event that ordered the list alone', async () => {
       // Act
       await service.markRead(ownedItemArgs);
