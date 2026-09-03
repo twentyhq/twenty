@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -40,7 +40,7 @@ export class InboxRouterService {
     private readonly featureFlagService: FeatureFlagService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   // The flag gates what accrues: creating items and seeding types. Updates to
@@ -284,7 +284,7 @@ export class InboxRouterService {
     address: InboxItemAddress;
     slotKey: string | null;
   }): Promise<InboxItemEntity> {
-    return this.inboxItemRepository.save(args.workspaceId, {
+    return this.inboxItemRepository.insertAndReturnOne(args.workspaceId, {
       inboxItemTypeId: inboxItemType.id,
       priority: args.priority ?? inboxItemType.defaultPriority,
       title: args.title ?? inboxItemType.label,
@@ -408,11 +408,10 @@ export class InboxRouterService {
     workspaceId: string;
     where?: FindOptionsWhere<WorkspaceMemberWorkspaceEntity>;
   }): Promise<WorkspaceMemberWorkspaceEntity[]> {
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const workspaceMemberRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspaceId,
+          this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
             'workspaceMember',
             { shouldBypassPermissionChecks: true },
           );

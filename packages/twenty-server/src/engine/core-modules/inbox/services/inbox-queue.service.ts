@@ -124,7 +124,7 @@ export class InboxQueueService {
     }
 
     try {
-      return await this.inboxQueueRepository.save(workspaceId, {
+      return await this.inboxQueueRepository.insertAndReturnOne(workspaceId, {
         name: 'Triage',
         slug: DEFAULT_INBOX_QUEUE_SLUG,
         icon: 'IconInbox',
@@ -186,7 +186,7 @@ export class InboxQueueService {
     icon?: string | null;
     roleIds: string[];
   }): Promise<InboxQueueEntity> {
-    const queue = await this.inboxQueueRepository.save(workspaceId, {
+    const queue = await this.inboxQueueRepository.insertAndReturnOne(workspaceId, {
       name,
       slug: await this.buildAvailableSlug({ workspaceId, name }),
       icon: icon ?? null,
@@ -300,7 +300,7 @@ export class InboxQueueService {
         return;
       }
 
-      await queueRoleRepository.saveMany(
+      await queueRoleRepository.insert(
         workspaceId,
         roleIds.map((roleId) => ({ queueId: queue.id, roleId })),
       );

@@ -13,7 +13,7 @@ import { InboxItemTypeService } from 'src/engine/core-modules/inbox/services/inb
 import { InboxQueueService } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
 import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
 // What Postgres actually raises through TypeORM when a partial unique index
@@ -83,7 +83,7 @@ describe('InboxRouterService', () => {
   const inboxItemRepository = {
     findOne: jest.fn(),
     findOneBy: jest.fn(),
-    save: jest.fn(),
+    insertAndReturnOne: jest.fn(),
     update: jest.fn(),
   };
 
@@ -107,8 +107,8 @@ describe('InboxRouterService', () => {
     find: jest.fn(),
   };
 
-  const globalWorkspaceOrmManager = {
-    getRepository: jest.fn().mockResolvedValue(workspaceMemberRepository),
+  const workspaceOrmManager = {
+    getRepository: jest.fn().mockReturnValue(workspaceMemberRepository),
     executeInWorkspaceContext: jest.fn((run: () => unknown) => run()),
   };
 
@@ -129,7 +129,7 @@ describe('InboxRouterService', () => {
     inboxItemRepository.findOne.mockResolvedValue(null);
     inboxItemRepository.findOneBy.mockResolvedValue(null);
     inboxItemRepository.update.mockResolvedValue({ affected: 1 });
-    inboxItemRepository.save.mockImplementation((_workspaceId, inboxItem) =>
+    inboxItemRepository.insertAndReturnOne.mockImplementation((_workspaceId, inboxItem) =>
       Promise.resolve({ id: INSERTED_ITEM_ID, ...inboxItem }),
     );
 
@@ -157,8 +157,8 @@ describe('InboxRouterService', () => {
           useValue: userWorkspaceRepository,
         },
         {
-          provide: GlobalWorkspaceOrmManager,
-          useValue: globalWorkspaceOrmManager,
+          provide: WorkspaceOrmManager,
+          useValue: workspaceOrmManager,
         },
       ],
     }).compile();
@@ -191,7 +191,7 @@ describe('InboxRouterService', () => {
       // Assert: no seeding, no lookup, no write
       expect(result).toBeNull();
       expect(inboxItemTypeService.findByKey).not.toHaveBeenCalled();
-      expect(inboxItemRepository.save).not.toHaveBeenCalled();
+      expect(inboxItemRepository.insertAndReturnOne).not.toHaveBeenCalled();
       expect(inboxItemRepository.update).not.toHaveBeenCalled();
     });
 
@@ -246,7 +246,7 @@ describe('InboxRouterService', () => {
       await expect(routeOrThrow).rejects.toMatchObject({
         code: InboxExceptionCode.INBOX_DISABLED,
       });
-      expect(inboxItemRepository.save).not.toHaveBeenCalled();
+      expect(inboxItemRepository.insertAndReturnOne).not.toHaveBeenCalled();
     });
 
     it('should throw when the item could not be written', async () => {
@@ -294,10 +294,10 @@ describe('InboxRouterService', () => {
       });
 
       // Assert
-      expect(inboxItemRepository.save).toHaveBeenCalledTimes(1);
+      expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledTimes(1);
       // The workspace scope is the repository's first argument, never a column
       // in the payload
-      expect(inboxItemRepository.save).toHaveBeenCalledWith(WORKSPACE_ID, {
+      expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(WORKSPACE_ID, {
         inboxItemTypeId: CONVERSATION_TYPE_ID,
         priority: InboxItemPriority.UPDATE,
         title: 'A message from Alice',
@@ -332,7 +332,7 @@ describe('InboxRouterService', () => {
       });
 
       // Assert
-      expect(inboxItemRepository.save).toHaveBeenCalledWith(
+      expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({
           slotKey: 'record:object-metadata-id:record-id',
@@ -366,7 +366,7 @@ describe('InboxRouterService', () => {
       });
 
       // Assert
-      expect(inboxItemRepository.save).toHaveBeenCalledWith(
+      expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({ slotKey: RUN_SLOT_KEY }),
       );
@@ -390,7 +390,7 @@ describe('InboxRouterService', () => {
       // Assert
       expect(inboxItemRepository.findOne).not.toHaveBeenCalled();
       expect(inboxItemRepository.update).not.toHaveBeenCalled();
-      expect(inboxItemRepository.save).toHaveBeenCalledWith(
+      expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({ slotKey: null }),
       );
@@ -419,7 +419,7 @@ describe('InboxRouterService', () => {
           slotKey: THREAD_SLOT_KEY,
         },
       });
-      expect(inboxItemRepository.save).not.toHaveBeenCalled();
+      expect(inboxItemRepository.insertAndReturnOne).not.toHaveBeenCalled();
       expect(inboxItemRepository.update).toHaveBeenCalledWith(
         WORKSPACE_ID,
         { id: EXISTING_ITEM_ID },
@@ -479,7 +479,7 @@ describe('InboxRouterService', () => {
       });
 
       // Assert
-      expect(inboxItemRepository.save).toHaveBeenCalledWith(
+      expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({ title: 'Conversation' }),
       );
@@ -533,7 +533,7 @@ describe('InboxRouterService', () => {
       // Prepare
       const concurrentItem = buildInboxItem({ id: 'concurrent-item-id' });
 
-      inboxItemRepository.save.mockImplementationOnce(() => {
+      inboxItemRepository.insertAndReturnOne.mockImplementationOnce(() => {
         // The other producer's row lands between our lookup and our insert
         inboxItemRepository.findOne.mockResolvedValue(concurrentItem);
 
@@ -550,7 +550,7 @@ describe('InboxRouterService', () => {
       });
 
       // Assert
-      expect(inboxItemRepository.save).toHaveBeenCalledTimes(1);
+      expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledTimes(1);
       expect(inboxItemRepository.update).toHaveBeenCalledWith(
         WORKSPACE_ID,
         { id: 'concurrent-item-id' },
@@ -561,7 +561,7 @@ describe('InboxRouterService', () => {
 
     it('should rethrow when the insert fails for a reason other than a unique violation', async () => {
       // Prepare
-      inboxItemRepository.save.mockRejectedValueOnce(
+      inboxItemRepository.insertAndReturnOne.mockRejectedValueOnce(
         new Error('connection lost'),
       );
 
@@ -579,7 +579,7 @@ describe('InboxRouterService', () => {
 
     it('should rethrow when the unique violation leaves no row behind', async () => {
       // Prepare
-      inboxItemRepository.save.mockRejectedValueOnce(buildUniqueViolation());
+      inboxItemRepository.insertAndReturnOne.mockRejectedValueOnce(buildUniqueViolation());
 
       // Act & Assert
       await expect(
@@ -608,7 +608,7 @@ describe('InboxRouterService', () => {
           subject: threadSubject,
         }),
       ).rejects.toThrow('Unknown inbox item type not_a_type');
-      expect(inboxItemRepository.save).not.toHaveBeenCalled();
+      expect(inboxItemRepository.insertAndReturnOne).not.toHaveBeenCalled();
     });
 
     // Work that no rule can address used to be dropped on the floor. It now
@@ -622,7 +622,7 @@ describe('InboxRouterService', () => {
       });
 
       // Assert
-      expect(inboxItemRepository.save).toHaveBeenCalledWith(
+      expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({
           queueId: TRIAGE_QUEUE_ID,
@@ -648,7 +648,7 @@ describe('InboxRouterService', () => {
       });
 
       // Assert
-      expect(inboxItemRepository.save).toHaveBeenCalledWith(
+      expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({ queueId: SUPPORT_QUEUE_ID }),
       );
@@ -671,7 +671,7 @@ describe('InboxRouterService', () => {
       });
 
       // Assert
-      expect(inboxItemRepository.save).toHaveBeenCalledWith(
+      expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({ queueId: SUPPORT_QUEUE_ID }),
       );
@@ -688,7 +688,7 @@ describe('InboxRouterService', () => {
 
       // Assert
       expect(inboxQueueService.findOrCreateDefaultQueue).not.toHaveBeenCalled();
-      expect(inboxItemRepository.save).toHaveBeenCalledWith(
+      expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({
           queueId: SUPPORT_QUEUE_ID,
@@ -729,7 +729,7 @@ describe('InboxRouterService', () => {
       });
 
       // Assert
-      expect(inboxItemRepository.save).toHaveBeenCalledWith(
+      expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({
           assigneeUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
@@ -809,7 +809,7 @@ describe('InboxRouterService', () => {
         { threadId: THREAD_ID },
         { title: 'A renamed conversation' },
       );
-      expect(inboxItemRepository.save).not.toHaveBeenCalled();
+      expect(inboxItemRepository.insertAndReturnOne).not.toHaveBeenCalled();
     });
   });
 

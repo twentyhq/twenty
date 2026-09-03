@@ -23,20 +23,20 @@ describe('InboxQueueService', () => {
   const inboxQueueRepository = {
     find: jest.fn(),
     findOne: jest.fn(),
-    save: jest.fn(),
+    insertAndReturnOne: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
   };
   const inboxQueueRoleRepository: {
     find: jest.Mock;
     findOne: jest.Mock;
-    saveMany: jest.Mock;
+    insert: jest.Mock;
     delete: jest.Mock;
     withManager: jest.Mock;
   } = {
     find: jest.fn(),
     findOne: jest.fn(),
-    saveMany: jest.fn(),
+    insert: jest.fn(),
     delete: jest.fn(),
     // Grant replacement runs in a transaction, which rebinds the repository to
     // that transaction's manager
@@ -68,7 +68,7 @@ describe('InboxQueueService', () => {
       slug: 'support',
       isDefault: false,
     });
-    inboxQueueRepository.save.mockImplementation((_workspaceId, queue) => ({
+    inboxQueueRepository.insertAndReturnOne.mockImplementation((_workspaceId, queue) => ({
       id: QUEUE_ID,
       ...queue,
     }));
@@ -123,7 +123,7 @@ describe('InboxQueueService', () => {
       });
 
       // Assert
-      expect(inboxQueueRepository.save).toHaveBeenCalledWith(
+      expect(inboxQueueRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({ slug: 'customer-support', isDefault: false }),
       );
@@ -145,7 +145,7 @@ describe('InboxQueueService', () => {
       });
 
       // Assert
-      expect(inboxQueueRepository.save).toHaveBeenCalledWith(
+      expect(inboxQueueRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({ slug: 'support-3' }),
       );
@@ -160,7 +160,7 @@ describe('InboxQueueService', () => {
       });
 
       // Assert
-      expect(inboxQueueRepository.save).toHaveBeenCalledWith(
+      expect(inboxQueueRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({ slug: 'inbox' }),
       );
@@ -182,7 +182,7 @@ describe('InboxQueueService', () => {
         WORKSPACE_ID,
         { queueId: QUEUE_ID },
       );
-      expect(inboxQueueRoleRepository.saveMany).toHaveBeenCalledWith(
+      expect(inboxQueueRoleRepository.insert).toHaveBeenCalledWith(
         WORKSPACE_ID,
         [
           { queueId: QUEUE_ID, roleId: ROLE_ID },
@@ -207,7 +207,7 @@ describe('InboxQueueService', () => {
       ).rejects.toMatchObject({
         code: InboxExceptionCode.UNKNOWN_INBOX_ROLE,
       });
-      expect(inboxQueueRoleRepository.saveMany).not.toHaveBeenCalled();
+      expect(inboxQueueRoleRepository.insert).not.toHaveBeenCalled();
     });
 
     it('should leave nobody with access when the list is emptied', async () => {
@@ -220,7 +220,7 @@ describe('InboxQueueService', () => {
 
       // Assert
       expect(inboxQueueRoleRepository.delete).toHaveBeenCalled();
-      expect(inboxQueueRoleRepository.saveMany).not.toHaveBeenCalled();
+      expect(inboxQueueRoleRepository.insert).not.toHaveBeenCalled();
     });
   });
 

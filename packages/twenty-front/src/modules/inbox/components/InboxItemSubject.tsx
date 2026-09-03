@@ -63,12 +63,10 @@ const InboxItemRecordSubject = ({
                 id: recordId,
                 targetObjectNameSingular: objectNameSingular,
               }}
-              isInSidePanel={false}
             />
             <RecordShowPageSSESubscribeEffect
               objectNameSingular={objectNameSingular}
               recordId={recordId}
-              queryScope="record-show"
             />
           </StyledSubject>
         </TimelineActivityContext.Provider>
