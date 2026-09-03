@@ -24,7 +24,7 @@ export const useSlackConnectionStatus = (): SlackConnectionStatusState => {
     let cancelled = false;
 
     const fetchConnectionStatus = async () => {
-      let connectionStatus = DISCONNECTED_SLACK_CONNECTION_STATUS;
+      let connectionStatus: ParsedSlackConnectionStatus;
 
       try {
         const result = await new RestApiClient().post(
