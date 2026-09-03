@@ -71,7 +71,7 @@ export class MessageCampaignDeliveryService {
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
     private readonly usageLimitSpeedService: UsageLimitSpeedService,
-    @InjectMessageQueue(MessageQueue.campaignSendQueue)
+    @InjectMessageQueue(MessageQueue.campaignQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
