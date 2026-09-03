@@ -8,6 +8,7 @@ import {
 } from 'twenty-shared/utils';
 import { type DataSource, type EntityManager, In } from 'typeorm';
 
+import { InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxQueueRoleEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue-role.entity';
 import { InboxQueueEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue.entity';
@@ -38,6 +39,8 @@ export class InboxQueueService {
     private readonly inboxQueueRoleRepository: WorkspaceScopedRepository<InboxQueueRoleEntity>,
     @InjectWorkspaceScopedRepository(InboxItemEntity)
     private readonly inboxItemRepository: WorkspaceScopedRepository<InboxItemEntity>,
+    @InjectWorkspaceScopedRepository(InboxItemTypeEntity)
+    private readonly inboxItemTypeRepository: WorkspaceScopedRepository<InboxItemTypeEntity>,
     @InjectWorkspaceScopedRepository(RoleEntity)
     private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
     private readonly userRoleService: UserRoleService,
@@ -332,6 +335,17 @@ export class InboxQueueService {
     // the queue is gone, rather than landing between the move and the delete
     // and being swept up by the cascade.
     await this.coreDataSource.transaction(async (manager) => {
+      // Detached before the queue lock, in the order a default-queue change
+      // takes its locks, so the two cannot wait on each other; the delete's
+      // own set-null cascade then finds nothing left to touch.
+      await this.inboxItemTypeRepository
+        .withManager(manager)
+        .update(
+          workspaceId,
+          { defaultQueueId: queue.id },
+          { defaultQueueId: null },
+        );
+
       await this.lockQueueOrThrow({ manager, workspaceId, queueId: queue.id });
 
       // A slot is unique per queue, so a moved item could collide with one
