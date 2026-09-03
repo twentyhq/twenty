@@ -17,6 +17,9 @@ const buildContext = ({
   i18nInstance: mockI18n,
   isStandardApp,
   applicationCatalog,
+  workspaceCustomApplicationUniversalIdentifier:
+    'workspace-custom-application-universal-identifier',
+  ownerApplicationUniversalIdentifier: undefined,
 });
 
 describe('resolveViewName', () => {

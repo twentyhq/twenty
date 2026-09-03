@@ -16,6 +16,9 @@ const buildI18nContext = () => ({
   i18nInstance: mockI18nInstance,
   isStandardApp: true,
   applicationCatalog: undefined,
+  workspaceCustomApplicationUniversalIdentifier:
+    'workspace-custom-application-universal-identifier',
+  ownerApplicationUniversalIdentifier: undefined,
 });
 
 const mockObjectMetadata = {

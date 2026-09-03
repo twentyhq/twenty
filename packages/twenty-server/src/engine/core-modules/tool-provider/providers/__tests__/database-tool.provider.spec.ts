@@ -1,6 +1,7 @@
 import { type ObjectPermissions } from 'twenty-shared/types';
 
 import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { type ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
@@ -111,10 +112,20 @@ describe('DatabaseToolProvider', () => {
       })),
     } as unknown as I18nService;
 
+    const applicationTranslationCatalogService = {
+      getApplicationAuthorIdentifiers: jest.fn().mockResolvedValue({
+        standardApplicationId: 'standard-application-id',
+        workspaceCustomApplicationUniversalIdentifier:
+          'workspace-custom-application-universal-identifier',
+        universalIdentifierByApplicationId: {},
+      }),
+    } as unknown as ApplicationTranslationCatalogService;
+
     const provider = new DatabaseToolProvider(
       workspaceCacheService,
       flatEntityMapsCacheService,
       i18nService,
+      applicationTranslationCatalogService,
     );
 
     return (await provider.generateDescriptors(

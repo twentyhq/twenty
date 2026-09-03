@@ -8,6 +8,9 @@ const i18nContext: EffectiveEntityI18nContext = {
   i18nInstance: { _: (messageId: string) => messageId },
   isStandardApp: false,
   applicationCatalog: undefined,
+  workspaceCustomApplicationUniversalIdentifier:
+    'workspace-custom-application-universal-identifier',
+  ownerApplicationUniversalIdentifier: undefined,
 };
 
 describe('resolveTranslatableProperties', () => {

@@ -1,18 +1,27 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { type TranslatableMetadataName } from 'twenty-shared/i18n';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
+import { type ApplicationAuthorIdentifiers } from 'src/engine/metadata-modules/application-translation-catalog/types/application-author-identifiers.type';
 import { resolveRegistrationIdByApplicationId } from 'src/engine/metadata-modules/application-translation-catalog/utils/resolve-registration-id-by-application-id.util';
 import { resolveTranslatableProperties } from 'src/engine/metadata-modules/application-translation-catalog/utils/resolve-translatable-properties.util';
-import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
 import { getTwentyStandardApplicationIdOrThrow } from 'src/engine/metadata-modules/utils/get-twenty-standard-application-id-or-throw.util';
+import { getWorkspaceCustomApplicationUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/utils/get-workspace-custom-application-universal-identifier-or-throw.util';
 
 export type ApplicationCatalogs = {
   standardApplicationId: string;
@@ -22,19 +31,53 @@ export type ApplicationCatalogs = {
 @Injectable()
 export class ApplicationTranslationCatalogService {
   constructor(
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
     private readonly i18nService: I18nService,
   ) {}
 
-  async getStandardApplicationId({
+  // The workspace custom application is only reachable through the workspace
+  // row; flat application maps carry no marker for it.
+  async getApplicationAuthorIdentifiers({
     workspaceId,
   }: {
     workspaceId: string;
-  }): Promise<string> {
-    return getTwentyStandardApplicationIdOrThrow(
-      await this.getFlatApplicationMaps({ workspaceId }),
-    );
+  }): Promise<ApplicationAuthorIdentifiers> {
+    const [flatApplicationMaps, workspace] = await Promise.all([
+      this.getFlatApplicationMaps({ workspaceId }),
+      this.workspaceRepository.findOne({
+        select: ['id', 'workspaceCustomApplicationId'],
+        where: { id: workspaceId },
+        withDeleted: true,
+      }),
+    ]);
+
+    if (!isDefined(workspace)) {
+      throw new ApplicationException(
+        `Could not find workspace ${workspaceId}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    return {
+      standardApplicationId:
+        getTwentyStandardApplicationIdOrThrow(flatApplicationMaps),
+      workspaceCustomApplicationUniversalIdentifier:
+        getWorkspaceCustomApplicationUniversalIdentifierOrThrow({
+          workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
+          flatApplicationMaps,
+        }),
+      universalIdentifierByApplicationId: Object.fromEntries(
+        Object.values(flatApplicationMaps.byId)
+          .filter(isDefined)
+          .map((flatApplication) => [
+            flatApplication.id,
+            flatApplication.universalIdentifier,
+          ]),
+      ),
+    };
   }
 
   // Batched on purpose: one flat-maps read and one fetch per distinct
@@ -122,9 +165,10 @@ export class ApplicationTranslationCatalogService {
     }
 
     const getI18nContext = this.toI18nContextResolver({
-      standardApplicationId: await loaders.standardApplicationIdLoader.load({
-        workspaceId,
-      }),
+      applicationAuthorIdentifiers:
+        await loaders.applicationAuthorIdentifiersLoader.load({
+          workspaceId,
+        }),
       catalogByApplicationId: new Map(
         isDefined(applicationId)
           ? [
@@ -156,15 +200,18 @@ export class ApplicationTranslationCatalogService {
   }): Promise<
     (applicationId: string | undefined) => EffectiveEntityI18nContext
   > {
-    const { standardApplicationId, catalogByApplicationId } =
-      await this.getCatalogs({
-        applicationIds,
-        locale: locale ?? SOURCE_LOCALE,
-        workspaceId,
-      });
+    const [applicationAuthorIdentifiers, { catalogByApplicationId }] =
+      await Promise.all([
+        this.getApplicationAuthorIdentifiers({ workspaceId }),
+        this.getCatalogs({
+          applicationIds,
+          locale: locale ?? SOURCE_LOCALE,
+          workspaceId,
+        }),
+      ]);
 
     return this.toI18nContextResolver({
-      standardApplicationId,
+      applicationAuthorIdentifiers,
       catalogByApplicationId,
       locale,
     });
@@ -173,11 +220,15 @@ export class ApplicationTranslationCatalogService {
   // The one place the context shape is built, so the loader-backed and
   // batched sources cannot drift apart.
   private toI18nContextResolver({
-    standardApplicationId,
+    applicationAuthorIdentifiers: {
+      standardApplicationId,
+      workspaceCustomApplicationUniversalIdentifier,
+      universalIdentifierByApplicationId,
+    },
     catalogByApplicationId,
     locale,
   }: {
-    standardApplicationId: string;
+    applicationAuthorIdentifiers: ApplicationAuthorIdentifiers;
     catalogByApplicationId: Map<string, Record<string, string> | undefined>;
     locale: keyof typeof APP_LOCALES | undefined;
   }): (applicationId: string | undefined) => EffectiveEntityI18nContext {
@@ -191,6 +242,10 @@ export class ApplicationTranslationCatalogService {
       isStandardApp: applicationId === standardApplicationId,
       applicationCatalog: isDefined(applicationId)
         ? catalogByApplicationId.get(applicationId)
+        : undefined,
+      workspaceCustomApplicationUniversalIdentifier,
+      ownerApplicationUniversalIdentifier: isDefined(applicationId)
+        ? universalIdentifierByApplicationId[applicationId]
         : undefined,
     });
   }
