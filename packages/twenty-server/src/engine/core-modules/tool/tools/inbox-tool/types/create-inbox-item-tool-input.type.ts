@@ -1,11 +1,7 @@
-import { type InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
+import { type z } from 'zod';
 
-export type CreateInboxItemToolInput = {
-  title: string;
-  preview?: string;
-  typeKey: string;
-  queueId?: string;
-  assigneeWorkspaceMemberId?: string;
-  priority?: InboxItemPriority;
-  slotKey?: string;
-};
+import { type CreateInboxItemToolInputZodSchema } from 'src/engine/core-modules/tool/tools/inbox-tool/inbox-tool.schema';
+
+export type CreateInboxItemToolInput = z.infer<
+  typeof CreateInboxItemToolInputZodSchema
+>;

@@ -62,9 +62,6 @@ export const InboxList = ({
     partitionInboxItemsByPriority(inboxItems);
   const hasNeedsActionSection =
     shouldSplitByPriority && needsActionItems.length > 0;
-  // Concatenating the priority buckets would bury a recent low priority item
-  // under an older one that needs action, so the flat path keeps the sort
-  const flatItems = shouldSplitByPriority ? otherItems : inboxItems;
 
   if (inboxItems.length === 0) {
     return loading ? (
@@ -105,7 +102,7 @@ export const InboxList = ({
           )}
         </>
       ) : (
-        renderRows(flatItems)
+        renderRows(inboxItems)
       )}
       {hasMoreItems && (
         <StyledLoadMore>

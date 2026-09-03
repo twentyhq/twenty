@@ -9,19 +9,25 @@ import { type InboxQueue } from '~/generated/graphql';
 
 // The shared inboxes this person can reach. Access is resolved server
 // side, so the navigation simply renders what comes back.
-export const useInboxQueues = () => {
+//
+// The navigation drawer is the one poller: it is always mounted, so a page
+// reading the same query gets the cache it keeps fresh instead of a second
+// timer.
+export const useInboxQueues = ({
+  isPolling = false,
+}: { isPolling?: boolean } = {}) => {
   const apolloCoreClient = useApolloCoreClient();
   const isInboxEnabled = useIsInboxEnabled();
 
-  const { data, loading } = useQuery<{ myInboxQueues: InboxQueue[] }>(
+  const { data } = useQuery<{ myInboxQueues: InboxQueue[] }>(
     GET_MY_INBOX_QUEUES,
     {
       client: apolloCoreClient,
-      pollInterval: INBOX_ITEMS_POLL_INTERVAL,
+      pollInterval: isPolling ? INBOX_ITEMS_POLL_INTERVAL : undefined,
       skipPollAttempt: shouldSkipInboxPoll,
       skip: !isInboxEnabled,
     },
   );
 
-  return { inboxQueues: data?.myInboxQueues ?? [], loading };
+  return { inboxQueues: data?.myInboxQueues ?? [] };
 };

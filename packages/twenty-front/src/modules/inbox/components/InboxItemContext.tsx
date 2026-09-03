@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { Tag } from 'twenty-ui/data-display';
 import { useIcons } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -36,15 +37,6 @@ const StyledPreview = styled.div`
   font-size: ${themeCssVariables.font.size.md};
 `;
 
-const StyledOutcome = styled.div`
-  align-self: flex-start;
-  background: ${themeCssVariables.background.transparent.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.xs};
-  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
-`;
-
 // What the item is, above whatever it is about. Only the focused page shows
 // this: the side panel shows the subject alone, because an inbox item's context
 // riding above an unrelated record is worse than no context at all.
@@ -68,7 +60,7 @@ export const InboxItemContext = ({ inboxItem }: { inboxItem: InboxItem }) => {
         <StyledPreview>{inboxItem.preview}</StyledPreview>
       )}
       {isDefined(inboxItem.outcome) && (
-        <StyledOutcome>{outcomeLabel ?? inboxItem.outcome}</StyledOutcome>
+        <Tag color="gray" text={outcomeLabel ?? inboxItem.outcome} />
       )}
       <InboxItemActions inboxItem={inboxItem} />
     </StyledContainer>

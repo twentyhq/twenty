@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatTab } from '@/ai/components/AiChatTab';
@@ -8,6 +7,7 @@ import { InboxItemThreadSubjectEffect } from '@/inbox/components/InboxItemThread
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { getInboxItemSubject } from '@/inbox/utils/getInboxItemSubject';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/components/PageLayoutRecordPageRenderer';
@@ -40,6 +40,9 @@ const InboxItemThreadSubject = ({ threadId }: { threadId: string }) => (
   </StyledSubject>
 );
 
+const getInboxItemRecordInstanceId = (recordId: string) =>
+  `inbox-item-record-${recordId}`;
+
 const InboxItemRecordSubject = ({
   recordId,
   objectNameSingular,
@@ -48,13 +51,13 @@ const InboxItemRecordSubject = ({
   objectNameSingular: string;
 }) => (
   <RecordComponentInstanceContextsWrapper
-    componentInstanceId={`inbox-item-record-${recordId}`}
+    componentInstanceId={getInboxItemRecordInstanceId(recordId)}
   >
     <ContextStoreComponentInstanceContext.Provider
-      value={{ instanceId: `inbox-item-record-${recordId}` }}
+      value={{ instanceId: getInboxItemRecordInstanceId(recordId) }}
     >
       <CommandMenuComponentInstanceContext.Provider
-        value={{ instanceId: `inbox-item-record-${recordId}` }}
+        value={{ instanceId: getInboxItemRecordInstanceId(recordId) }}
       >
         <TimelineActivityContext.Provider value={{ recordId }}>
           <StyledSubject>
@@ -84,19 +87,17 @@ export const InboxItemSubject = ({ inboxItem }: { inboxItem: InboxItem }) => {
     objectMetadataItemsByIdMapSelector,
   );
 
-  if (isDefined(inboxItem.threadId)) {
-    return <InboxItemThreadSubject threadId={inboxItem.threadId} />;
+  const subject = getInboxItemSubject(inboxItem, objectMetadataItemsByIdMap);
+
+  if (subject?.kind === 'thread') {
+    return <InboxItemThreadSubject threadId={subject.threadId} />;
   }
 
-  const objectMetadataItem = isDefined(inboxItem.subjectObjectMetadataId)
-    ? objectMetadataItemsByIdMap.get(inboxItem.subjectObjectMetadataId)
-    : undefined;
-
-  if (isDefined(objectMetadataItem) && isDefined(inboxItem.subjectRecordId)) {
+  if (subject?.kind === 'record') {
     return (
       <InboxItemRecordSubject
-        recordId={inboxItem.subjectRecordId}
-        objectNameSingular={objectMetadataItem.nameSingular}
+        recordId={subject.recordId}
+        objectNameSingular={subject.objectNameSingular}
       />
     );
   }

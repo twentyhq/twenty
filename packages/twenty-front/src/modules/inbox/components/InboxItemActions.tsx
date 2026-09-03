@@ -35,6 +35,9 @@ export const InboxItemActions = ({ inboxItem }: { inboxItem: InboxItem }) => {
 
   const isDone = inboxItem.scope === InboxItemScope.DONE;
 
+  const reportFailure = () =>
+    enqueueErrorSnackBar({ message: t`That could not be applied` });
+
   // Navigation actions are redundant here: the thing they would open is
   // already on screen underneath.
   const transitionActions = inboxItem.inboxItemType.actions.filter((action) =>
@@ -57,7 +60,7 @@ export const InboxItemActions = ({ inboxItem }: { inboxItem: InboxItem }) => {
               expectedVersion: inboxItem.version,
             });
           } catch {
-            enqueueErrorSnackBar({ message: t`That could not be applied` });
+            reportFailure();
 
             return;
           }
@@ -76,9 +79,7 @@ export const InboxItemActions = ({ inboxItem }: { inboxItem: InboxItem }) => {
             void reopenInboxItem({
               inboxItemId: inboxItem.id,
               expectedVersion: inboxItem.version,
-            }).catch(() =>
-              enqueueErrorSnackBar({ message: t`That could not be applied` }),
-            );
+            }).catch(reportFailure);
           }}
           size="small"
           title={t`Move to inbox`}
@@ -100,9 +101,7 @@ export const InboxItemActions = ({ inboxItem }: { inboxItem: InboxItem }) => {
                 inboxItemId: inboxItem.id,
                 actionKey: action.key,
                 expectedVersion: inboxItem.version,
-              }).catch(() =>
-                enqueueErrorSnackBar({ message: t`That could not be applied` }),
-              );
+              }).catch(reportFailure);
             }}
             size="small"
             title={action.label}

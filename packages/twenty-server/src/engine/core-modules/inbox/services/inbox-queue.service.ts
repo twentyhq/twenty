@@ -93,19 +93,12 @@ export class InboxQueueService {
     userWorkspaceId: string;
     slug: string;
   }): Promise<InboxQueueEntity | null> {
-    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
+    const queues = await this.findAccessibleQueues({
       workspaceId,
       userWorkspaceId,
     });
 
-    const grant = await this.inboxQueueRoleRepository.findOne(workspaceId, {
-      // The join is part of an authorization gate, so the queue carries the
-      // tenant predicate rather than inheriting it from the grant row
-      where: { roleId, queue: { slug, workspaceId } },
-      relations: { queue: true },
-    });
-
-    return grant?.queue ?? null;
+    return queues.find((queue) => queue.slug === slug) ?? null;
   }
 
   // Where work goes when no rule could address it. Created on demand rather
@@ -277,7 +270,7 @@ export class InboxQueueService {
     workspaceId: string;
     queueId: string;
     roleIds: string[];
-  }): Promise<void> {
+  }): Promise<InboxQueueEntity> {
     const queue = await this.findQueueOrThrow({ workspaceId, queueId });
 
     await this.assertRolesBelongToWorkspace({ workspaceId, roleIds });
@@ -318,6 +311,8 @@ export class InboxQueueService {
         roleIds.map((roleId) => ({ queueId: queue.id, roleId })),
       );
     });
+
+    return queue;
   }
 
   async findQueueOrThrow({

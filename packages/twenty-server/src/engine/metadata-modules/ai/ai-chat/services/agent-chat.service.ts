@@ -99,27 +99,28 @@ export class AgentChatService {
       },
     );
 
-    await this.workspaceEventBroadcaster.broadcast({
-      workspaceId,
-      events: [
-        {
-          type: 'created',
-          entityName: 'agentChatThread',
-          recordId: savedThread.id,
-          recipientUserWorkspaceIds: [userWorkspaceId],
-          properties: {
-            after: serializeThreadForBroadcast(savedThread, null),
+    await Promise.all([
+      this.workspaceEventBroadcaster.broadcast({
+        workspaceId,
+        events: [
+          {
+            type: 'created',
+            entityName: 'agentChatThread',
+            recordId: savedThread.id,
+            recipientUserWorkspaceIds: [userWorkspaceId],
+            properties: {
+              after: serializeThreadForBroadcast(savedThread, null),
+            },
           },
-        },
-      ],
-    });
-
-    await this.agentChatInboxService.onThreadCreated({
-      threadId: savedThread.id,
-      workspaceId,
-      userWorkspaceId,
-      title: savedThread.title ?? undefined,
-    });
+        ],
+      }),
+      this.agentChatInboxService.onThreadCreated({
+        threadId: savedThread.id,
+        workspaceId,
+        userWorkspaceId,
+        title: savedThread.title ?? undefined,
+      }),
+    ]);
 
     return savedThread;
   }

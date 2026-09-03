@@ -1,13 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { InjectRepository } from '@nestjs/typeorm';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type FindOptionsWhere, In, IsNull, Repository } from 'typeorm';
+import { IsNull } from 'typeorm';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
@@ -38,9 +34,7 @@ export class InboxRouterService {
     private readonly inboxItemTypeService: InboxItemTypeService,
     private readonly inboxQueueService: InboxQueueService,
     private readonly featureFlagService: FeatureFlagService,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly userWorkspaceService: UserWorkspaceService,
   ) {}
 
   // The flag gates what accrues: creating items and seeding types. Updates to
@@ -357,66 +351,23 @@ export class InboxRouterService {
     workspaceId: string;
     workspaceMemberId: string;
   }): Promise<string | null> {
-    const userIds = await this.findUserIdsOfWorkspaceMembers({
+    const workspaceMember = await this.userWorkspaceService.getWorkspaceMember({
+      workspaceMemberId,
       workspaceId,
-      workspaceMemberIds: [workspaceMemberId],
     });
 
-    if (userIds.length === 0) {
+    if (!isDefined(workspaceMember?.userId)) {
       return null;
     }
 
-    const userWorkspaces = await this.userWorkspaceRepository.find({
-      where: { userId: In(userIds), workspaceId },
-      select: { id: true },
-    });
-
-    const [userWorkspace] = userWorkspaces;
+    const userWorkspace =
+      await this.userWorkspaceService.getUserWorkspaceForUser({
+        userId: workspaceMember.userId,
+        workspaceId,
+        relations: [],
+      });
 
     return userWorkspace?.id ?? null;
-  }
-
-  private async findUserIdsOfWorkspaceMembers({
-    workspaceId,
-    workspaceMemberIds,
-  }: {
-    workspaceId: string;
-    workspaceMemberIds: string[];
-  }): Promise<string[]> {
-    const uniqueIds = [...new Set(workspaceMemberIds)];
-
-    if (uniqueIds.length === 0) {
-      return [];
-    }
-
-    const workspaceMembers = await this.findWorkspaceMembers({
-      workspaceId,
-      where: { id: In(uniqueIds) },
-    });
-
-    return workspaceMembers
-      .map((workspaceMember) => workspaceMember.userId)
-      .filter(isDefined);
-  }
-
-  // Workspace members live in the workspace schema, so reading them needs a
-  // workspace context the settings request does not carry on its own.
-  private async findWorkspaceMembers({
-    workspaceId,
-    where,
-  }: {
-    workspaceId: string;
-    where?: FindOptionsWhere<WorkspaceMemberWorkspaceEntity>;
-  }): Promise<WorkspaceMemberWorkspaceEntity[]> {
-    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workspaceMemberRepository =
-        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-          'workspaceMember',
-          { shouldBypassPermissionChecks: true },
-        );
-
-      return workspaceMemberRepository.find(isDefined(where) ? { where } : {});
-    }, buildSystemAuthContext(workspaceId));
   }
 
   // The inbox is never allowed to fail the subsystem that feeds it: a chat or

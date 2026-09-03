@@ -2,6 +2,7 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Int, Mutation, Query } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
@@ -34,6 +35,10 @@ import { toInboxItemTransition } from 'src/engine/core-modules/inbox/utils/to-in
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import {
+  FeatureFlagGuard,
+  RequireFeatureFlag,
+} from 'src/engine/guards/feature-flag.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -45,8 +50,14 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 // decided by assignment and queue access rather than by object permissions.
 @CoreResolver()
 @UsePipes(ResolverValidationPipe)
-@UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
+@UseGuards(
+  WorkspaceAuthGuard,
+  UserAuthGuard,
+  FeatureFlagGuard,
+  NoPermissionGuard,
+)
 @UseFilters(AuthGraphqlApiExceptionFilter, InboxGraphqlApiExceptionFilter)
+@RequireFeatureFlag(FeatureFlagKey.IS_INBOX_ENABLED)
 export class InboxItemResolver {
   constructor(
     private readonly inboxItemService: InboxItemService,
@@ -105,10 +116,10 @@ export class InboxItemResolver {
       inboxItemId,
       workspaceId,
       actorUserWorkspaceId: userWorkspaceId,
-      accessibleQueueIds: await this.inboxQueueService.findAccessibleQueueIds({
+      accessibleQueueIds: await this.findAccessibleQueueIds(
         workspaceId,
         userWorkspaceId,
-      }),
+      ),
     });
 
     return isDefined(inboxItem)
@@ -188,10 +199,10 @@ export class InboxItemResolver {
       inboxItemId,
       workspaceId,
       actorUserWorkspaceId: userWorkspaceId,
-      accessibleQueueIds: await this.inboxQueueService.findAccessibleQueueIds({
+      accessibleQueueIds: await this.findAccessibleQueueIds(
         workspaceId,
         userWorkspaceId,
-      }),
+      ),
     });
 
     return toInboxItemDto(inboxItem, new Date(), userWorkspaceId);
@@ -213,10 +224,10 @@ export class InboxItemResolver {
       inboxItemId,
       workspaceId,
       actorUserWorkspaceId: userWorkspaceId,
-      accessibleQueueIds: await this.inboxQueueService.findAccessibleQueueIds({
+      accessibleQueueIds: await this.findAccessibleQueueIds(
         workspaceId,
         userWorkspaceId,
-      }),
+      ),
       transition: toInboxItemTransition(transition),
       expectedVersion,
     });
@@ -241,16 +252,26 @@ export class InboxItemResolver {
       inboxItemId,
       workspaceId,
       actorUserWorkspaceId: userWorkspaceId,
-      accessibleQueueIds: await this.inboxQueueService.findAccessibleQueueIds({
+      accessibleQueueIds: await this.findAccessibleQueueIds(
         workspaceId,
         userWorkspaceId,
-      }),
+      ),
       actionKey,
       input: toInboxItemPayload(input),
       expectedVersion,
     });
 
     return toInboxItemDto(inboxItem, new Date(), userWorkspaceId);
+  }
+
+  private findAccessibleQueueIds(
+    workspaceId: string,
+    userWorkspaceId: string,
+  ): Promise<string[]> {
+    return this.inboxQueueService.findAccessibleQueueIds({
+      workspaceId,
+      userWorkspaceId,
+    });
   }
 
   // Reading a queue you do not belong to is indistinguishable from reading one

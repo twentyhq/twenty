@@ -55,6 +55,7 @@ const toInboxItemTypeSettingsDto = (
   SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
 )
 @UseFilters(AuthGraphqlApiExceptionFilter, InboxGraphqlApiExceptionFilter)
+@RequireFeatureFlag(FeatureFlagKey.IS_INBOX_ENABLED)
 export class InboxSettingsResolver {
   constructor(
     private readonly inboxQueueService: InboxQueueService,
@@ -62,7 +63,6 @@ export class InboxSettingsResolver {
   ) {}
 
   @Query(() => [InboxQueueSettingsDTO])
-  @RequireFeatureFlag(FeatureFlagKey.IS_INBOX_ENABLED)
   async inboxQueueSettings(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<InboxQueueSettingsDTO[]> {
@@ -79,23 +79,22 @@ export class InboxSettingsResolver {
   }
 
   @Mutation(() => InboxQueueSettingsDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_INBOX_ENABLED)
   async createInboxQueue(
     @Args('input') input: CreateInboxQueueInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<InboxQueueSettingsDTO> {
+    const roleIds = input.roleIds ?? [];
     const queue = await this.inboxQueueService.createQueue({
       workspaceId: workspace.id,
       name: input.name,
       icon: input.icon,
-      roleIds: input.roleIds ?? [],
+      roleIds,
     });
 
-    return this.readQueueSettings(workspace.id, queue);
+    return this.toDto(queue, roleIds);
   }
 
   @Mutation(() => InboxQueueSettingsDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_INBOX_ENABLED)
   async updateInboxQueue(
     @Args('input') input: UpdateInboxQueueInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -111,27 +110,20 @@ export class InboxSettingsResolver {
   }
 
   @Mutation(() => InboxQueueSettingsDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_INBOX_ENABLED)
   async setInboxQueueRoles(
     @Args('input') input: SetInboxQueueRolesInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<InboxQueueSettingsDTO> {
-    await this.inboxQueueService.setQueueRoles({
+    const queue = await this.inboxQueueService.setQueueRoles({
       workspaceId: workspace.id,
       queueId: input.queueId,
       roleIds: input.roleIds,
     });
 
-    const queue = await this.inboxQueueService.findQueueOrThrow({
-      workspaceId: workspace.id,
-      queueId: input.queueId,
-    });
-
-    return this.readQueueSettings(workspace.id, queue);
+    return this.toDto(queue, input.roleIds);
   }
 
   @Mutation(() => Boolean)
-  @RequireFeatureFlag(FeatureFlagKey.IS_INBOX_ENABLED)
   async deleteInboxQueue(
     @Args('queueId', { type: () => UUIDScalarType }) queueId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -145,7 +137,6 @@ export class InboxSettingsResolver {
   }
 
   @Query(() => [InboxItemTypeSettingsDTO])
-  @RequireFeatureFlag(FeatureFlagKey.IS_INBOX_ENABLED)
   async inboxItemTypeSettings(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<InboxItemTypeSettingsDTO[]> {
@@ -157,7 +148,6 @@ export class InboxSettingsResolver {
   }
 
   @Mutation(() => InboxItemTypeSettingsDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_INBOX_ENABLED)
   async setInboxItemTypeDefaultQueue(
     @Args('input') input: SetInboxItemTypeDefaultQueueInput,
     @AuthWorkspace() workspace: WorkspaceEntity,

@@ -285,7 +285,6 @@ export type InboxCounts = {
 
 export type InboxItem = {
   __typename?: 'InboxItem';
-  assigneeUserId?: Maybe<Scalars['UUID']['output']>;
   assigneeUserWorkspaceId?: Maybe<Scalars['UUID']['output']>;
   id: Scalars['UUID']['output'];
   inboxItemType: InboxItemType;

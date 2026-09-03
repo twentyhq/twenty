@@ -26,7 +26,7 @@ export const useInboxItems = (
   const isInboxEnabled = useIsInboxEnabled();
   const [limit, setLimit] = useState(INBOX_ITEMS_PAGE_SIZE);
 
-  const { data, loading, error, refetch } = useQuery<
+  const { data, loading, error } = useQuery<
     { myInboxItems: InboxItem[] },
     {
       scope?: InboxItemScope;
@@ -59,8 +59,6 @@ export const useInboxItems = (
     loadMoreItems,
     // Polling leaves loading false, but a scope change refetches with no data
     isInitialLoading: loading && !isDefined(data),
-    loading,
     error,
-    refetch,
   };
 };

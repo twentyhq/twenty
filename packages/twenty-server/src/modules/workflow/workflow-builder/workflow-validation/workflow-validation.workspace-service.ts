@@ -18,7 +18,6 @@ import {
 
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
-import { type BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { getPickRecordLoadBalanceConfigError } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-pick-record-load-balance-config-error.util';
 import {
@@ -26,6 +25,7 @@ import {
   type WorkflowLogicFunctionAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { hasWorkflowStepLevelOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/has-workflow-step-level-output-schema.util';
 import { buildMissingWorkflowOutputSchemaIssue } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/build-missing-workflow-output-schema-issue.util';
 import { validateWorkflowTriggerTypeRequirements } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-trigger-type-requirements.util';
@@ -35,6 +35,19 @@ import { validateWorkflowIteratorStep } from 'src/modules/workflow/workflow-buil
 import { validateWorkflowAiAgentStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-ai-agent-step.util';
 import { validateWorkflowLogicFunctionOutputSchemaMismatch } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-logic-function-output-schema-mismatch.util';
 import { WORKFLOW_RECORD_CRUD_ACTION_TYPES } from 'src/modules/workflow/workflow-builder/workflow-validation/constants/workflow-record-crud-action-types.constant';
+
+// Generic over the settings shape alone: constraining it to the full step
+// union makes the compiler expand every trigger and action variant against
+// every settings variant, which it refuses as too complex.
+const setStepOutputSchema = <
+  TStep extends { settings: { outputSchema?: OutputSchema } },
+>(
+  step: TStep,
+  outputSchema: OutputSchema,
+): TStep => ({
+  ...step,
+  settings: { ...step.settings, outputSchema },
+});
 
 const OBJECT_TARGETING_ACTION_TYPES = new Set<WorkflowActionType>([
   ...WORKFLOW_RECORD_CRUD_ACTION_TYPES,
@@ -183,18 +196,7 @@ export class WorkflowValidationWorkspaceService {
         return step;
       }
 
-      // Only the output schema changes. The copy goes through `unknown` because
-      // relating the step union to a settings shape multiplies every trigger
-      // and action variant by every settings variant, which the compiler
-      // refuses to represent.
-      const stepWithSettings = step as unknown as {
-        settings: BaseWorkflowActionSettings;
-      } & Record<string, unknown>;
-
-      return {
-        ...stepWithSettings,
-        settings: { ...stepWithSettings.settings, outputSchema: computedSchema },
-      } as unknown as TStep;
+      return setStepOutputSchema(step, computedSchema);
     } catch {
       // Output schema enrichment is best-effort: if it cannot be computed,
       // validation still runs against the step's existing settings rather

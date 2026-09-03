@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 import { useOpenAskAiThread } from '@/ai/hooks/useOpenAskAiThread';
 import { useInboxItemActions } from '@/inbox/hooks/useInboxItemActions';
 import { selectedInboxItemIdState } from '@/inbox/states/selectedInboxItemIdState';
+import { getInboxItemSubject } from '@/inbox/utils/getInboxItemSubject';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -32,23 +32,21 @@ export const useOpenInboxItemInSidePanel = (
 
       setSelectedInboxItemId(inboxItem.id);
 
-      if (isDefined(inboxItem.threadId)) {
-        openAskAiThread(inboxItem.threadId);
+      const subject = getInboxItemSubject(
+        inboxItem,
+        objectMetadataItemsByIdMap,
+      );
+
+      if (subject?.kind === 'thread') {
+        openAskAiThread(subject.threadId);
 
         return;
       }
 
-      const objectMetadataItem = isDefined(inboxItem.subjectObjectMetadataId)
-        ? objectMetadataItemsByIdMap.get(inboxItem.subjectObjectMetadataId)
-        : undefined;
-
-      if (
-        isDefined(objectMetadataItem) &&
-        isDefined(inboxItem.subjectRecordId)
-      ) {
+      if (subject?.kind === 'record') {
         openRecordInSidePanel({
-          recordId: inboxItem.subjectRecordId,
-          objectNameSingular: objectMetadataItem.nameSingular,
+          recordId: subject.recordId,
+          objectNameSingular: subject.objectNameSingular,
           resetNavigationStack: true,
         });
 

@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
+
 export const CreateInboxItemToolInputZodSchema = z.object({
   title: z.string().describe('What the item says in the inbox list, one line'),
   preview: z
@@ -25,7 +27,7 @@ export const CreateInboxItemToolInputZodSchema = z.object({
     )
     .optional(),
   priority: z
-    .enum(['NEEDS_ACTION', 'UPDATE'])
+    .nativeEnum(InboxItemPriority)
     .describe(
       'How the item sorts. Omit to use the default of its kind of work.',
     )

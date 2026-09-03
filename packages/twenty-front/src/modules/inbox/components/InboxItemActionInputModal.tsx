@@ -2,8 +2,10 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { Button } from 'twenty-ui/input';
+import { Button, Checkbox } from 'twenty-ui/input';
 
+import { TextArea } from '@/ui/input/components/TextArea';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { type InboxItemAction } from '~/generated/graphql';
 
 const StyledForm = styled.form`
@@ -16,34 +18,12 @@ const StyledForm = styled.form`
   padding: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledLabel = styled.label`
+const StyledCheckboxLabel = styled.label`
+  align-items: center;
   color: ${themeCssVariables.font.color.secondary};
   display: flex;
-  flex-direction: column;
   font-size: ${themeCssVariables.font.size.sm};
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledInput = styled.input`
-  background: ${themeCssVariables.background.primary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.primary};
-  font-family: inherit;
-  font-size: ${themeCssVariables.font.size.md};
-  padding: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledTextArea = styled.textarea`
-  background: ${themeCssVariables.background.primary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.primary};
-  font-family: inherit;
-  font-size: ${themeCssVariables.font.size.md};
-  min-height: 72px;
-  padding: ${themeCssVariables.spacing[2]};
-  resize: vertical;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledButtons = styled.div`
@@ -76,6 +56,9 @@ export const InboxItemActionInputModal = ({
     ),
   );
 
+  const setFieldValue = (key: string, value: string) =>
+    setInput((current) => ({ ...current, [key]: value }));
+
   const isMissingRequiredField = action.inputSchema.some(
     (field) => field.isRequired && (input[field.key] ?? '') === '',
   );
@@ -87,44 +70,37 @@ export const InboxItemActionInputModal = ({
         void onSubmit(input);
       }}
     >
-      {action.inputSchema.map((field) => (
-        <StyledLabel key={field.key}>
-          {field.label}
-          {field.type === 'BOOLEAN' ? (
-            <StyledInput
+      {action.inputSchema.map((field) =>
+        field.type === 'BOOLEAN' ? (
+          <StyledCheckboxLabel key={field.key}>
+            <Checkbox
               checked={input[field.key] === 'true'}
-              type="checkbox"
-              onChange={(event) =>
-                setInput((current) => ({
-                  ...current,
-                  [field.key]: String(event.target.checked),
-                }))
+              onCheckedChange={(value) =>
+                setFieldValue(field.key, String(value))
               }
             />
-          ) : field.type === 'LONG_TEXT' ? (
-            <StyledTextArea
-              value={input[field.key] ?? ''}
-              onChange={(event) =>
-                setInput((current) => ({
-                  ...current,
-                  [field.key]: event.target.value,
-                }))
-              }
-            />
-          ) : (
-            <StyledInput
-              type={field.type === 'NUMBER' ? 'number' : 'text'}
-              value={input[field.key] ?? ''}
-              onChange={(event) =>
-                setInput((current) => ({
-                  ...current,
-                  [field.key]: event.target.value,
-                }))
-              }
-            />
-          )}
-        </StyledLabel>
-      ))}
+            {field.label}
+          </StyledCheckboxLabel>
+        ) : field.type === 'LONG_TEXT' ? (
+          <TextArea
+            key={field.key}
+            textAreaId={`inbox-item-action-${action.key}-${field.key}`}
+            label={field.label}
+            minRows={3}
+            value={input[field.key] ?? ''}
+            onChange={(value) => setFieldValue(field.key, value)}
+          />
+        ) : (
+          <TextInput
+            key={field.key}
+            label={field.label}
+            type={field.type === 'NUMBER' ? 'number' : 'text'}
+            value={input[field.key] ?? ''}
+            onChange={(value) => setFieldValue(field.key, value)}
+            fullWidth
+          />
+        ),
+      )}
       <StyledButtons>
         <Button
           onClick={onCancel}

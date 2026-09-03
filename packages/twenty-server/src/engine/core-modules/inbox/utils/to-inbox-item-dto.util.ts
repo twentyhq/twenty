@@ -80,7 +80,6 @@ export const toInboxItemDto = (
     queueId: inboxItem.queueId,
     assigneeUserWorkspaceId: inboxItem.assigneeUserWorkspaceId,
     isAssignedToMe: inboxItem.assigneeUserWorkspaceId === actorUserWorkspaceId,
-    assigneeUserId: inboxItem.assigneeUserWorkspace?.userId ?? null,
     threadId: inboxItem.threadId,
     subjectObjectMetadataId: inboxItem.subjectObjectMetadataId,
     subjectRecordId: inboxItem.subjectRecordId,

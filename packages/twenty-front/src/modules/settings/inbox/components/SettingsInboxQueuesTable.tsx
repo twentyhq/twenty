@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -11,15 +11,10 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { getInboxQueuePath } from '@/inbox/utils/getInboxQueuePath';
 import { type InboxQueueSettings } from '~/generated/graphql';
 
 const INBOX_QUEUE_TABLE_GRID = '3fr 2fr 1fr';
-
-const StyledRow = styled(TableRow)`
-  &:hover {
-    background: ${themeCssVariables.background.transparent.lighter};
-  }
-`;
 
 const StyledName = styled.div`
   align-items: center;
@@ -58,10 +53,10 @@ export const SettingsInboxQueuesTable = ({
           const QueueIcon = getIcon(inboxQueue.icon);
           const roleLabels = inboxQueue.roleIds
             .map((roleId) => roles.find(({ id }) => id === roleId)?.label)
-            .filter((label) => label !== undefined);
+            .filter(isDefined);
 
           return (
-            <StyledRow
+            <TableRow
               key={inboxQueue.id}
               gridTemplateColumns={INBOX_QUEUE_TABLE_GRID}
               to={getSettingsPath(SettingsPath.InboxQueueDetail, {
@@ -75,14 +70,16 @@ export const SettingsInboxQueuesTable = ({
                 </StyledName>
               </TableCell>
               <TableCell>
-                <StyledAddress>/inbox/q/{inboxQueue.slug}</StyledAddress>
+                <StyledAddress>
+                  {getInboxQueuePath(inboxQueue.slug)}
+                </StyledAddress>
               </TableCell>
               <TableCell>
                 <StyledRoles>
                   {roleLabels.length === 0 ? t`Nobody` : roleLabels.join(', ')}
                 </StyledRoles>
               </TableCell>
-            </StyledRow>
+            </TableRow>
           );
         })}
       </TableBody>

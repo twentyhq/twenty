@@ -118,7 +118,7 @@ describe('InboxItemTypeService', () => {
       expect(result).toEqual(existingType);
     });
 
-    it('should return null when the key is still missing after seeding', async () => {
+    it('should not seed for a key that is not a standard type', async () => {
       // Prepare
       inboxItemTypeRepository.findOne.mockResolvedValue(null);
 
@@ -130,7 +130,8 @@ describe('InboxItemTypeService', () => {
 
       // Assert
       expect(result).toBeNull();
-      expect(inboxItemTypeRepository.findOne).toHaveBeenCalledTimes(2);
+      expect(inboxItemTypeRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(inboxItemTypeRepository.upsert).not.toHaveBeenCalled();
     });
   });
 

@@ -5,8 +5,6 @@ import { getSettingsPath } from 'twenty-shared/utils';
 
 import { LazyRoute } from '@/app/components/LazyRoute';
 import { DEFAULT_INBOX_SECTION } from '@/inbox/constants/DefaultInboxSection';
-import { INBOX_ITEM_PAGE_PATH } from '@/inbox/constants/InboxItemPagePath';
-import { INBOX_QUEUE_PAGE_PATH } from '@/inbox/constants/InboxQueuePagePath';
 import { getInboxSectionPath } from '@/inbox/utils/getInboxSectionPath';
 import {
   createSettingsRouteObjects,
@@ -153,7 +151,7 @@ export const createWorkspaceRouteObjects = ({
     // Static "q" outranks the item route's dynamic segments, so a shared inbox
     // is never mistaken for an item id.
     {
-      path: INBOX_QUEUE_PAGE_PATH,
+      path: AppPath.InboxQueuePage,
       element: (
         <LazyRoute>
           <InboxPage />
@@ -161,7 +159,7 @@ export const createWorkspaceRouteObjects = ({
       ),
     },
     {
-      path: INBOX_ITEM_PAGE_PATH,
+      path: AppPath.InboxItemPage,
       element: (
         <LazyRoute>
           <InboxItemPage />

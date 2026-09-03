@@ -11,7 +11,7 @@ export const useInboxCounts = (queueSlug?: string) => {
   const apolloCoreClient = useApolloCoreClient();
   const isInboxEnabled = useIsInboxEnabled();
 
-  const { data, loading, error } = useQuery<
+  const { data } = useQuery<
     { myInboxCounts: InboxCounts },
     { queueSlug?: string }
   >(GET_MY_INBOX_COUNTS, {
@@ -22,9 +22,5 @@ export const useInboxCounts = (queueSlug?: string) => {
     skip: !isInboxEnabled,
   });
 
-  return {
-    inboxCounts: data?.myInboxCounts ?? null,
-    loading,
-    error,
-  };
+  return { inboxCounts: data?.myInboxCounts ?? null };
 };

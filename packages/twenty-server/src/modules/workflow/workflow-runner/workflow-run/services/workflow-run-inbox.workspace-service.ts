@@ -6,11 +6,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { INBOX_ITEM_TYPE_KEY } from 'src/engine/core-modules/inbox/constants/standard-inbox-item-types.constant';
 import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 
 // The inbox addresses people by their core identity, while workflow runs record
 // the workspace member who started them, so this producer translates between
@@ -21,10 +18,8 @@ export class WorkflowRunInboxWorkspaceService {
 
   constructor(
     private readonly inboxRouterService: InboxRouterService,
-    private readonly userWorkspaceService: UserWorkspaceService,
     private readonly featureFlagService: FeatureFlagService,
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}
 
   // The lookups below run before the router does, so the flag is checked here
@@ -72,7 +67,10 @@ export class WorkflowRunInboxWorkspaceService {
     }
 
     const [userWorkspaceId, workflowRunObjectMetadataId] = await Promise.all([
-      this.resolveUserWorkspaceId({ workspaceId, workspaceMemberId }),
+      this.inboxRouterService.toUserWorkspaceId({
+        workspaceId,
+        workspaceMemberId,
+      }),
       this.resolveWorkflowRunObjectMetadataId(workspaceId),
     ]);
 
@@ -103,38 +101,21 @@ export class WorkflowRunInboxWorkspaceService {
     });
   }
 
+  // The metadata read throws when the object is missing; a run without a
+  // subject still deserves its inbox item.
   private async resolveWorkflowRunObjectMetadataId(
     workspaceId: string,
   ): Promise<string | null> {
-    const objectMetadata = await this.objectMetadataRepository.findOne({
-      where: { workspaceId, nameSingular: 'workflowRun' },
-    });
+    try {
+      const { flatObjectMetadata } =
+        await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
+          'workflowRun',
+          workspaceId,
+        );
 
-    return objectMetadata?.id ?? null;
-  }
-
-  private async resolveUserWorkspaceId({
-    workspaceId,
-    workspaceMemberId,
-  }: {
-    workspaceId: string;
-    workspaceMemberId: string;
-  }): Promise<string | null> {
-    const workspaceMember = await this.userWorkspaceService.getWorkspaceMember({
-      workspaceMemberId,
-      workspaceId,
-    });
-
-    if (!isDefined(workspaceMember?.userId)) {
+      return flatObjectMetadata.id;
+    } catch {
       return null;
     }
-
-    const userWorkspace =
-      await this.userWorkspaceService.getUserWorkspaceForUser({
-        userId: workspaceMember.userId,
-        workspaceId,
-      });
-
-    return userWorkspace?.id ?? null;
   }
 }

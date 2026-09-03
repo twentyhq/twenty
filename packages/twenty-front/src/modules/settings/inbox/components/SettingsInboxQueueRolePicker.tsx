@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { IconPlus, IconX, useIcons } from 'twenty-ui/icon';
 import { Button, LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -72,7 +73,7 @@ export const SettingsInboxQueueRolePicker = ({
 
   const selectedRoles = selectedRoleIds
     .map((roleId) => roles.find(({ id }) => id === roleId))
-    .filter((role) => role !== undefined);
+    .filter(isDefined);
 
   const availableRoles = roles
     .filter(

@@ -1,5 +1,4 @@
 import { Logger } from '@nestjs/common';
-import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { IsNull, QueryFailedError } from 'typeorm';
 import { Test, type TestingModule } from '@nestjs/testing';
@@ -12,8 +11,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { InboxItemTypeService } from 'src/engine/core-modules/inbox/services/inbox-item-type.service';
 import { InboxQueueService } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
 import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
 // What Postgres actually raises through TypeORM when a partial unique index
@@ -99,17 +97,9 @@ describe('InboxRouterService', () => {
     findOrCreateDefaultQueue: jest.fn(),
   };
 
-  const userWorkspaceRepository = {
-    find: jest.fn(),
-  };
-
-  const workspaceMemberRepository = {
-    find: jest.fn(),
-  };
-
-  const workspaceOrmManager = {
-    getRepository: jest.fn().mockReturnValue(workspaceMemberRepository),
-    executeInWorkspaceContext: jest.fn((run: () => unknown) => run()),
+  const userWorkspaceService = {
+    getWorkspaceMember: jest.fn(),
+    getUserWorkspaceForUser: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -124,8 +114,8 @@ describe('InboxRouterService', () => {
     inboxQueueService.findOrCreateDefaultQueue.mockResolvedValue({
       id: TRIAGE_QUEUE_ID,
     });
-    userWorkspaceRepository.find.mockResolvedValue([]);
-    workspaceMemberRepository.find.mockResolvedValue([]);
+    userWorkspaceService.getWorkspaceMember.mockResolvedValue(null);
+    userWorkspaceService.getUserWorkspaceForUser.mockResolvedValue(null);
     inboxItemRepository.findOne.mockResolvedValue(null);
     inboxItemRepository.findOneBy.mockResolvedValue(null);
     inboxItemRepository.update.mockResolvedValue({ affected: 1 });
@@ -154,12 +144,8 @@ describe('InboxRouterService', () => {
           useValue: featureFlagService,
         },
         {
-          provide: getRepositoryToken(UserWorkspaceEntity),
-          useValue: userWorkspaceRepository,
-        },
-        {
-          provide: WorkspaceOrmManager,
-          useValue: workspaceOrmManager,
+          provide: UserWorkspaceService,
+          useValue: userWorkspaceService,
         },
       ],
     }).compile();

@@ -12,7 +12,6 @@ import { useInboxQueues } from '@/inbox/hooks/useInboxQueues';
 import { useIsInboxEnabled } from '@/inbox/hooks/useIsInboxEnabled';
 import { getInboxQueuePath } from '@/inbox/utils/getInboxQueuePath';
 import { getInboxSectionPath } from '@/inbox/utils/getInboxSectionPath';
-import { isInboxSectionActive } from '@/inbox/utils/isInboxSectionActive';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
@@ -20,6 +19,7 @@ import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { InboxItemScope } from '~/generated/graphql';
+import { isMatchingPathname } from '~/utils/isMatchingPathname';
 
 // The collapsed drawer constrains its group to a narrow rail, which would clip
 // the nested rows while they animate open. Folder navigation opts out the same
@@ -35,7 +35,7 @@ export const NavigationDrawerInboxSection = () => {
   const location = useLocation();
   const isInboxEnabled = useIsInboxEnabled();
   const { inboxCounts } = useInboxCounts();
-  const { inboxQueues } = useInboxQueues();
+  const { inboxQueues } = useInboxQueues({ isPolling: true });
   const { getIcon } = useIcons();
 
   if (!isInboxEnabled) {
@@ -45,16 +45,16 @@ export const NavigationDrawerInboxSection = () => {
   const inboxPath = getInboxSectionPath(DEFAULT_INBOX_SECTION);
   // Snoozed and Done are somewhere you go once you are in the inbox, so they
   // stay out of the way until you are
-  const isInboxSurfaceActive = isInboxSectionActive({
-    pathname: location.pathname,
-    inboxSectionPath: AppPath.InboxPage,
-  });
+  const isInboxSurfaceActive = isMatchingPathname(
+    location.pathname,
+    `${AppPath.InboxPage}/*`,
+  );
   const selectedSubSectionIndex = INBOX_SUB_SECTIONS.findIndex(
     (inboxSubSection) =>
-      isInboxSectionActive({
-        pathname: location.pathname,
-        inboxSectionPath: getInboxSectionPath(inboxSubSection),
-      }),
+      isMatchingPathname(
+        location.pathname,
+        `${getInboxSectionPath(inboxSubSection)}/*`,
+      ),
   );
 
   return (
@@ -64,10 +64,7 @@ export const NavigationDrawerInboxSection = () => {
           label={t(DEFAULT_INBOX_SECTION.label)}
           Icon={DEFAULT_INBOX_SECTION.Icon}
           to={inboxPath}
-          active={isInboxSectionActive({
-            pathname: location.pathname,
-            inboxSectionPath: inboxPath,
-          })}
+          active={isMatchingPathname(location.pathname, `${inboxPath}/*`)}
           secondaryLabel={
             (inboxCounts?.unread ?? 0) > 0
               ? String(inboxCounts?.unread)
@@ -95,10 +92,10 @@ export const NavigationDrawerInboxSection = () => {
                   label={t(inboxSubSection.label)}
                   Icon={inboxSubSection.Icon}
                   to={subSectionPath}
-                  active={isInboxSectionActive({
-                    pathname: location.pathname,
-                    inboxSectionPath: subSectionPath,
-                  })}
+                  active={isMatchingPathname(
+                    location.pathname,
+                    `${subSectionPath}/*`,
+                  )}
                   subItemState={getNavigationSubItemLeftAdornment({
                     index,
                     arrayLength: INBOX_SUB_SECTIONS.length,
@@ -127,10 +124,7 @@ export const NavigationDrawerInboxSection = () => {
                 label={inboxQueue.name}
                 Icon={getIcon(inboxQueue.icon)}
                 to={queuePath}
-                active={isInboxSectionActive({
-                  pathname: location.pathname,
-                  inboxSectionPath: queuePath,
-                })}
+                active={isMatchingPathname(location.pathname, `${queuePath}/*`)}
                 secondaryLabel={
                   inboxQueue.unread > 0 ? String(inboxQueue.unread) : undefined
                 }

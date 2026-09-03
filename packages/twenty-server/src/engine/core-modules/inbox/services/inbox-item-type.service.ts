@@ -42,6 +42,12 @@ export class InboxItemTypeService {
       return existingType;
     }
 
+    // Only a standard key can be missing because seeding has not run; an
+    // unknown key would pay for a seed on every call and still return nothing
+    if (!STANDARD_INBOX_ITEM_TYPES.some((type) => type.key === key)) {
+      return null;
+    }
+
     // A workspace created before this feature, or one whose standard
     // application sync has not run yet, still gets a working inbox
     await this.seedStandardTypes({ workspaceId });
@@ -58,6 +64,23 @@ export class InboxItemTypeService {
   }: {
     workspaceId: string;
   }): Promise<InboxItemTypeEntity[]> {
+    const inboxItemTypes = await this.inboxItemTypeRepository.find(
+      workspaceId,
+      { where: { deletedAt: IsNull() }, order: { label: 'ASC' } },
+    );
+
+    const isEveryStandardTypePresent = STANDARD_INBOX_ITEM_TYPES.every(
+      (standardType) =>
+        inboxItemTypes.some(
+          (type) =>
+            type.universalIdentifier === standardType.universalIdentifier,
+        ),
+    );
+
+    if (isEveryStandardTypePresent) {
+      return inboxItemTypes;
+    }
+
     await this.seedStandardTypes({ workspaceId });
 
     return this.inboxItemTypeRepository.find(workspaceId, {

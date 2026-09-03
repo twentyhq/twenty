@@ -39,43 +39,28 @@ export const InboxListRowButtons = ({
         )
       : [];
 
+  const reportFailure = () =>
+    enqueueErrorSnackBar({ message: t`That could not be applied` });
+
   // Taking work out of a shared inbox is the one action that is about who owns
   // it rather than what it is, so it is offered before the type's own actions.
+  // Taking and giving back are the same transition with a different target.
   const isInQueue = isDefined(inboxItem.queueId);
-
-  const takeInboxItem = () =>
+  const toggleOwnership = () =>
     void assignInboxItem({
       inboxItemId: inboxItem.id,
+      ...(inboxItem.isAssignedToMe ? { toUserWorkspaceId: null } : {}),
       expectedVersion: inboxItem.version,
-    }).catch(() =>
-      enqueueErrorSnackBar({ message: t`That could not be applied` }),
-    );
-
-  const giveInboxItemBack = () =>
-    void assignInboxItem({
-      inboxItemId: inboxItem.id,
-      toUserWorkspaceId: null,
-      expectedVersion: inboxItem.version,
-    }).catch(() =>
-      enqueueErrorSnackBar({ message: t`That could not be applied` }),
-    );
+    }).catch(reportFailure);
 
   return (
     <StyledButtons>
-      {isInQueue && !inboxItem.isAssignedToMe && (
+      {isInQueue && (
         <Button
-          accent="blue"
-          onClick={takeInboxItem}
+          accent={inboxItem.isAssignedToMe ? 'default' : 'blue'}
+          onClick={toggleOwnership}
           size="small"
-          title={t`Take`}
-          variant="secondary"
-        />
-      )}
-      {isInQueue && inboxItem.isAssignedToMe && (
-        <Button
-          onClick={giveInboxItemBack}
-          size="small"
-          title={t`Give back`}
+          title={inboxItem.isAssignedToMe ? t`Give back` : t`Take`}
           variant="secondary"
         />
       )}
@@ -87,9 +72,7 @@ export const InboxListRowButtons = ({
               inboxItemId: inboxItem.id,
               actionKey: action.key,
               expectedVersion: inboxItem.version,
-            }).catch(() =>
-              enqueueErrorSnackBar({ message: t`That could not be applied` }),
-            )
+            }).catch(reportFailure)
           }
           size="small"
           title={action.label}

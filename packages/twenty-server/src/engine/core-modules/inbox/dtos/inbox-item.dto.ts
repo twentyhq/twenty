@@ -152,11 +152,6 @@ export class InboxItemDTO {
   @Field(() => Boolean)
   isAssignedToMe: boolean;
 
-  // The workspace member behind the assignee, so a shared list can show a face
-  // without the client resolving user workspaces itself.
-  @Field(() => UUIDScalarType, { nullable: true })
-  assigneeUserId: string | null;
-
   @Field(() => UUIDScalarType, { nullable: true })
   threadId: string | null;
 

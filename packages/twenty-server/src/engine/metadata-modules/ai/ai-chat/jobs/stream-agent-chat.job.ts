@@ -895,19 +895,20 @@ export class StreamAgentChatJob {
       return resolveSupersededTurnOutcome(outcome);
     }
 
-    await this.agentChatInboxService.onTurnCompleted({
-      threadId,
-      workspaceId,
-      userWorkspaceId,
-      hasPendingQuestion: isDefined(pendingQuestionPart),
-      preview: findFirstTextPart(responseMessage.parts),
-    });
-
-    await this.agentChatService.notifyThreadUsageUpdated({
-      threadId,
-      userWorkspaceId,
-      workspaceId,
-    });
+    await Promise.all([
+      this.agentChatInboxService.onTurnCompleted({
+        threadId,
+        workspaceId,
+        userWorkspaceId,
+        hasPendingQuestion: isDefined(pendingQuestionPart),
+        preview: findFirstTextPart(responseMessage.parts),
+      }),
+      this.agentChatService.notifyThreadUsageUpdated({
+        threadId,
+        userWorkspaceId,
+        workspaceId,
+      }),
+    ]);
 
     return outcome;
   }
