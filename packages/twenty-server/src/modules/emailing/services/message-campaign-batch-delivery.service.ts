@@ -44,6 +44,7 @@ import { buildCampaignBatchReplacements } from 'src/modules/emailing/utils/build
 import { buildCampaignDeliverySettleQuery } from 'src/modules/emailing/utils/build-campaign-delivery-settle-query.util';
 import { compileCampaignBatchTemplate } from 'src/modules/emailing/utils/compile-campaign-batch-template.util';
 import { computeSendSlotBackoffMs } from 'src/modules/emailing/utils/compute-send-slot-backoff-ms.util';
+import { resolveCampaignBatchSettlements } from 'src/modules/emailing/utils/resolve-campaign-batch-settlements.util';
 import { resolveCampaignSendFailure } from 'src/modules/emailing/utils/resolve-campaign-send-failure.util';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
@@ -384,7 +385,7 @@ export class MessageCampaignBatchDeliveryService {
 
     providerHandoff.hasHandedBatchToProvider = true;
 
-    const settlements = this.resolveBatchSettlements({
+    const settlements = resolveCampaignBatchSettlements({
       claimedRecipients,
       outcome,
     });
@@ -395,30 +396,25 @@ export class MessageCampaignBatchDeliveryService {
       settlements,
     });
 
-    const sentDeliveryIds = settlements
-      .filter(
-        (settlement) =>
-          settlement.state === CAMPAIGN_DELIVERY_STATE.SENT &&
-          settledDeliveryIds.has(settlement.deliveryId),
-      )
-      .map((settlement) => settlement.deliveryId);
+    const sentSettlements = settlements.filter(
+      (settlement) =>
+        settlement.state === CAMPAIGN_DELIVERY_STATE.SENT &&
+        settledDeliveryIds.has(settlement.deliveryId) &&
+        isDefined(settlement.providerMessageId),
+    );
 
-    for (const deliveryId of sentDeliveryIds) {
-      const providerMessageId = settlements.find(
-        (settlement) => settlement.deliveryId === deliveryId,
-      )?.providerMessageId;
-
-      if (!isDefined(providerMessageId)) {
-        continue;
-      }
-
+    for (const settlement of sentSettlements) {
       await this.recordSentMessage({
-        deliveryId,
-        providerMessageId,
+        deliveryId: settlement.deliveryId,
+        providerMessageId: settlement.providerMessageId ?? '',
         template,
-        replacements: replacementsByDeliveryId.get(deliveryId) ?? {},
+        replacements: replacementsByDeliveryId.get(settlement.deliveryId) ?? {},
       });
     }
+
+    const sentDeliveryIds = sentSettlements.map(
+      (settlement) => settlement.deliveryId,
+    );
 
     await this.emailBillingService
       .billSentEmails({
@@ -434,94 +430,6 @@ export class MessageCampaignBatchDeliveryService {
           }`,
         );
       });
-  }
-
-  private resolveBatchSettlements({
-    claimedRecipients,
-    outcome,
-  }: {
-    claimedRecipients: BatchRecipient[];
-    outcome: {
-      entries: {
-        recipientIndex: number;
-        messageId: string | null;
-        errorMessage: string | null;
-      }[];
-      suppressedRecipientIndexes: number[];
-    };
-  }): CampaignDeliverySettlement[] {
-    const settlementByDeliveryId = new Map<
-      string,
-      CampaignDeliverySettlement
-    >();
-
-    for (const recipientIndex of outcome.suppressedRecipientIndexes) {
-      const recipient = claimedRecipients[recipientIndex];
-
-      if (!isDefined(recipient)) {
-        continue;
-      }
-
-      settlementByDeliveryId.set(recipient.messageId, {
-        deliveryId: recipient.messageId,
-        state: CAMPAIGN_DELIVERY_STATE.SKIPPED,
-        skipReason: CAMPAIGN_SKIP_REASON.SUPPRESSED,
-        failureReason: null,
-        providerMessageId: null,
-        sentAt: null,
-      });
-    }
-
-    for (const entry of outcome.entries) {
-      const recipient = claimedRecipients[entry.recipientIndex];
-
-      if (!isDefined(recipient)) {
-        continue;
-      }
-
-      if (!isDefined(entry.messageId)) {
-        const { state, skipReason, failureReason } = resolveCampaignSendFailure(
-          new Error(entry.errorMessage ?? 'Provider rejected the destination'),
-        );
-
-        settlementByDeliveryId.set(recipient.messageId, {
-          deliveryId: recipient.messageId,
-          state,
-          skipReason,
-          failureReason,
-          providerMessageId: null,
-          sentAt: null,
-        });
-
-        continue;
-      }
-
-      settlementByDeliveryId.set(recipient.messageId, {
-        deliveryId: recipient.messageId,
-        state: CAMPAIGN_DELIVERY_STATE.SENT,
-        skipReason: null,
-        failureReason: null,
-        providerMessageId: entry.messageId,
-        sentAt: new Date(),
-      });
-    }
-
-    for (const recipient of claimedRecipients) {
-      if (settlementByDeliveryId.has(recipient.messageId)) {
-        continue;
-      }
-
-      settlementByDeliveryId.set(recipient.messageId, {
-        deliveryId: recipient.messageId,
-        state: CAMPAIGN_DELIVERY_STATE.FAILED,
-        skipReason: null,
-        failureReason: CAMPAIGN_FAILURE_REASON.UNKNOWN,
-        providerMessageId: null,
-        sentAt: null,
-      });
-    }
-
-    return [...settlementByDeliveryId.values()];
   }
 
   private async recordSentMessage({
