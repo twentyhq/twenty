@@ -21,11 +21,14 @@ export class AddDevelopmentOwnershipConstraintToApplicationFastInstanceCommand i
       `ALTER TABLE "core"."application" ADD "developmentWorkspaceId" uuid GENERATED ALWAYS AS (${DEVELOPMENT_WORKSPACE_ID_EXPRESSION}) STORED`,
     );
     // TypeORM compares generated column expressions against this table, keyed
-    // by the current database name.
+    // by the current database name. A single metadata row, not a backfill, so
+    // the lock concern behind the rule does not apply.
+    /* oxlint-disable twenty/no-data-mutation-in-fast-instance-command */
     await queryRunner.query(
       `INSERT INTO "core"."_typeorm_generated_columns_and_materialized_views"("database", "schema", "table", "type", "name", "value") VALUES (current_database(), 'core', 'application', 'GENERATED_COLUMN', 'developmentWorkspaceId', $1)`,
       [DEVELOPMENT_WORKSPACE_ID_EXPRESSION],
     );
+    /* oxlint-enable twenty/no-data-mutation-in-fast-instance-command */
     await queryRunner.query(
       `ALTER TABLE "core"."applicationRegistration" ADD CONSTRAINT "${UNIQUE_CONSTRAINT_NAME}" UNIQUE ("id", "workspaceId")`,
     );
