@@ -1,13 +1,19 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/constants/non-terminal-call-recording-statuses';
+import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
-export const updateCallRecordingMediaFailureReason = async (
+type CallRecordingStateUpdate = Pick<
+  CallRecordingUpdateFields,
+  'status' | 'callRecorderFailureReason'
+>;
+
+export const updateNonTerminalCallRecordingState = async (
   client: CoreApiClient,
   {
     callRecordingId,
-    failureReason,
-  }: { callRecordingId: string; failureReason: string },
+    data,
+  }: { callRecordingId: string; data: CallRecordingStateUpdate },
 ): Promise<boolean> => {
   const result = await client.mutation({
     updateCallRecordings: {
@@ -16,7 +22,7 @@ export const updateCallRecordingMediaFailureReason = async (
           id: { eq: callRecordingId },
           status: { in: NON_TERMINAL_CALL_RECORDING_STATUSES },
         },
-        data: { callRecorderFailureReason: failureReason },
+        data,
       },
       id: true,
     },

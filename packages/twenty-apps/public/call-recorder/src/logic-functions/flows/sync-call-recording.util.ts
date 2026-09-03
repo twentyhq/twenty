@@ -6,7 +6,7 @@ import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-ca
 import { isUnavailableCallRecordingStatus } from 'src/logic-functions/domain/is-unavailable-call-recording-status.util';
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
-import { updateCallRecordingMediaFailureReason } from 'src/logic-functions/data/update-call-recording-media-failure-reason.util';
+import { updateNonTerminalCallRecordingState } from 'src/logic-functions/data/update-non-terminal-call-recording-state.util';
 import { importCallRecordingMedia } from 'src/logic-functions/flows/import-call-recording-media.util';
 import { importCallRecordingTranscript } from 'src/logic-functions/flows/import-call-recording-transcript.util';
 import {
@@ -14,7 +14,7 @@ import {
   type RecallBotSyncState,
 } from 'src/logic-functions/recall-api/extract-recall-bot-sync-state.util';
 import { type RecallBotSnapshot } from 'src/logic-functions/recall-api/recall-bot-snapshot.type';
-import { type CallRecordingArtifactScope } from 'src/logic-functions/types/call-recording-artifact-scope.type';
+import { type CallRecordingArtifactImportScope } from 'src/logic-functions/types/call-recording-artifact-scope.type';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 
@@ -54,7 +54,7 @@ export const syncCallRecording = async ({
   // need not be re-derived from a bot snapshot they may not have.
   treatRecordingAsDone: boolean;
   requestedAt: string;
-  artifactScope: CallRecordingArtifactScope;
+  artifactScope: CallRecordingArtifactImportScope;
 }): Promise<SyncCallRecordingResult> => {
   const syncState = isUndefined(bot)
     ? undefined
@@ -85,7 +85,6 @@ export const syncCallRecording = async ({
 
   let requestedTranscript = false;
   let hasRetryableArtifactFailure = false;
-  let mediaImportFailureReason: string | undefined;
 
   if (isRecordingDone && !isUndefined(externalRecordingId)) {
     if (artifactScope !== 'media') {
@@ -98,8 +97,7 @@ export const syncCallRecording = async ({
       });
 
       requestedTranscript = transcriptImportResult.requestedTranscript;
-      hasRetryableArtifactFailure =
-        transcriptImportResult.hasRetryableFailure;
+      hasRetryableArtifactFailure = transcriptImportResult.hasRetryableFailure;
       updateData = { ...updateData, ...transcriptImportResult.updateData };
     }
 
@@ -113,38 +111,48 @@ export const syncCallRecording = async ({
 
       hasRetryableArtifactFailure =
         hasRetryableArtifactFailure || mediaImportResult.hasRetryableFailure;
-      const {
-        callRecorderFailureReason,
-        ...mediaImportUpdateWithoutFailureReason
-      } = resolveMediaImportUpdate({
-        mediaImportUpdate: mediaImportResult.updateData,
-        currentStatus: callRecording.status,
-        pendingStatus: updateData.status,
-      });
-
-      mediaImportFailureReason = callRecorderFailureReason ?? undefined;
-      updateData = { ...updateData, ...mediaImportUpdateWithoutFailureReason };
+      updateData = {
+        ...updateData,
+        ...resolveMediaImportUpdate({
+          mediaImportUpdate: mediaImportResult.updateData,
+          currentStatus: callRecording.status,
+          pendingStatus: updateData.status,
+        }),
+      };
     }
   }
 
+  const { status, callRecorderFailureReason, ...callRecordingProgressUpdate } =
+    updateData;
+  const callRecordingStateUpdate: Pick<
+    CallRecordingUpdateFields,
+    'status' | 'callRecorderFailureReason'
+  > = {
+    ...(isUndefined(status) ? {} : { status }),
+    ...(isUndefined(callRecorderFailureReason)
+      ? {}
+      : { callRecorderFailureReason }),
+  };
   let updated = false;
 
-  if (Object.keys(updateData).length > 0) {
+  if (Object.keys(callRecordingProgressUpdate).length > 0) {
     await updateCallRecording(client, {
       id: callRecording.id,
-      data: updateData,
+      data: callRecordingProgressUpdate,
     });
     updated = true;
   }
 
-  if (!isUndefined(mediaImportFailureReason)) {
-    const updatedMediaFailureReason =
-      await updateCallRecordingMediaFailureReason(client, {
+  if (Object.keys(callRecordingStateUpdate).length > 0) {
+    const updatedCallRecordingState = await updateNonTerminalCallRecordingState(
+      client,
+      {
         callRecordingId: callRecording.id,
-        failureReason: mediaImportFailureReason,
-      });
+        data: callRecordingStateUpdate,
+      },
+    );
 
-    updated = updated || updatedMediaFailureReason;
+    updated = updated || updatedCallRecordingState;
   }
 
   return { updated, requestedTranscript, hasRetryableArtifactFailure };

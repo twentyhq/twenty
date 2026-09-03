@@ -976,12 +976,14 @@ describe('handleRecallWebhook', () => {
     ]);
   });
 
-  it('throws when the artifact import enqueue fails so Svix redelivers', async () => {
-    enqueueArtifactImportMock.mockRejectedValue(
-      new Error(
-        'failed to enqueue artifact import for call recording call-recording-1',
-      ),
-    );
+  it('attempts both scoped enqueues before surfacing a failure for redelivery', async () => {
+    enqueueArtifactImportMock.mockImplementation(async ({ scope }) => {
+      if (scope === 'transcript') {
+        throw new Error(
+          'failed to enqueue artifact import for call recording call-recording-1',
+        );
+      }
+    });
     const client = new FakeCoreApiClient([
       {
         id: 'call-recording-1',
@@ -999,6 +1001,10 @@ describe('handleRecallWebhook', () => {
     ).rejects.toThrow(
       'failed to enqueue artifact import for call recording call-recording-1',
     );
+    expect(enqueueArtifactImportMock.mock.calls.map(([call]) => call)).toEqual([
+      { callRecordingId: 'call-recording-1', scope: 'transcript' },
+      { callRecordingId: 'call-recording-1', scope: 'media' },
+    ]);
   });
 
   it('queues redelivered done events without touching transcript APIs inline', async () => {

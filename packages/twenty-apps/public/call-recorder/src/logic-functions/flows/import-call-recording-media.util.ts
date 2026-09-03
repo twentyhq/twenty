@@ -22,7 +22,7 @@ type CallRecordingMediaUpdateFields = Pick<
   'audio' | 'video' | 'callRecorderFailureReason'
 >;
 
-export type ImportCallRecordingMediaResult = {
+type ImportCallRecordingMediaResult = {
   updateData: CallRecordingMediaUpdateFields;
   // Set when Recall published an artifact the app could not copy, not when it has none yet.
   hasRetryableFailure: boolean;

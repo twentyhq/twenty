@@ -1,11 +1,12 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { CALL_RECORDING_ARTIFACTS_IMPORT_CLAIM_TTL_MS } from 'src/logic-functions/constants/call-recording-artifacts-import-claim-ttl-ms';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 import { type CallRecordingArtifactImportScope } from 'src/logic-functions/types/call-recording-artifact-scope.type';
 
 // Crash safety net: a lease older than this is reclaimable so a worker that died
 // mid-import never blocks the recording forever. Normal runs release explicitly.
+const ARTIFACTS_IMPORT_CLAIM_TTL_MS = 10 * 60 * 1000;
+
 const CLAIM_FIELD_BY_SCOPE = {
   transcript: 'transcriptImportClaimedAt',
   media: 'artifactsImportClaimedAt',
@@ -28,7 +29,7 @@ export const claimCallRecordingArtifactsImport = async (
 ): Promise<boolean> => {
   const claimField = CLAIM_FIELD_BY_SCOPE[scope];
   const staleBefore = new Date(
-    now.getTime() - CALL_RECORDING_ARTIFACTS_IMPORT_CLAIM_TTL_MS,
+    now.getTime() - ARTIFACTS_IMPORT_CLAIM_TTL_MS,
   ).toISOString();
 
   const result = await client.mutation({

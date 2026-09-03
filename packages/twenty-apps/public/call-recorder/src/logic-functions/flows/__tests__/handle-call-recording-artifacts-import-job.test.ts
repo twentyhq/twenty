@@ -48,9 +48,9 @@ describe('handleCallRecordingArtifactsImportJob', () => {
   });
 
   it('is reachable only from the queue, never over HTTP', () => {
-    expect(importCallRecordingTranscriptLogicFunction.config).not.toHaveProperty(
-      'httpRouteTriggerSettings',
-    );
+    expect(
+      importCallRecordingTranscriptLogicFunction.config,
+    ).not.toHaveProperty('httpRouteTriggerSettings');
     expect(importCallRecordingMediaLogicFunction.config).not.toHaveProperty(
       'httpRouteTriggerSettings',
     );
@@ -66,9 +66,7 @@ describe('handleCallRecordingArtifactsImportJob', () => {
     });
 
     expect(importCallRecordingArtifactsMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        request: { ...VALID_PAYLOAD, leaseRetryCount: 0 },
-      }),
+      expect.objectContaining({ request: VALID_PAYLOAD }),
     );
   });
 

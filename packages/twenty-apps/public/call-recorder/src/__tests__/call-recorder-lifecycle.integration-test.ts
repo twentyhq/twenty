@@ -663,7 +663,6 @@ describe('call recorder app lifecycle (integration)', () => {
         'recall-recording-1',
       );
       expect(processedCallRecording.endedAt).toBeTruthy();
-      // recording.done hands media and transcript work to separate jobs.
       expect(recall.artifactImportRequests).toHaveLength(2);
       expect(recall.artifactImportRequests).toEqual([
         expect.objectContaining({ callRecordingId }),

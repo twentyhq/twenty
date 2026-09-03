@@ -1,4 +1,4 @@
-import { isNumber, isUndefined } from '@sniptt/guards';
+import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import {
@@ -20,12 +20,6 @@ export const handleCallRecordingArtifactsImportJob = async ({
   const body = asRecord(payload);
   const callRecordingId = getString(body?.callRecordingId);
   const requestedAt = getString(body?.requestedAt);
-  const leaseRetryCount =
-    isNumber(body?.leaseRetryCount) &&
-    Number.isSafeInteger(body.leaseRetryCount) &&
-    body.leaseRetryCount >= 0
-      ? body.leaseRetryCount
-      : 0;
 
   if (isUndefined(callRecordingId) || isUndefined(requestedAt)) {
     return {
@@ -39,7 +33,7 @@ export const handleCallRecordingArtifactsImportJob = async ({
   try {
     return await importCallRecordingArtifacts({
       client: new CoreApiClient(),
-      request: { callRecordingId, requestedAt, leaseRetryCount },
+      request: { callRecordingId, requestedAt },
       scope,
     });
   } catch (error) {

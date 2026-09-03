@@ -3,5 +3,4 @@
 export type CallRecordingArtifactsImportRequest = {
   callRecordingId: string;
   requestedAt: string;
-  leaseRetryCount: number;
 };
