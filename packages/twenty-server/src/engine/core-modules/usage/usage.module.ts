@@ -9,6 +9,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { UsageEventListener } from 'src/engine/core-modules/usage/listeners/usage-event.listener';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
+import { UsagePeriodService } from 'src/engine/core-modules/usage/services/usage-period.service';
 import { UsageResolver } from 'src/engine/core-modules/usage/usage.resolver';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -27,8 +28,9 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UsageResolver,
     UsageAnalyticsService,
     UsageRecorderService,
+    UsagePeriodService,
     UsageEventListener,
   ],
-  exports: [UsageAnalyticsService, UsageRecorderService],
+  exports: [UsageAnalyticsService, UsageRecorderService, UsagePeriodService],
 })
 export class UsageModule {}

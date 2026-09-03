@@ -11,6 +11,10 @@ import {
   createClient,
 } from '@clickhouse/client';
 
+import {
+  ClickHouseException,
+  ClickHouseExceptionCode,
+} from 'src/database/clickhouse/clickhouse.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type ClickHouseInsertOptions = {
@@ -204,6 +208,29 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
 
       return [];
     }
+  }
+
+  public async selectOrThrow<T>(
+    query: string,
+    // oxlint-disable-next-line typescript/no-explicit-any
+    params?: Record<string, any>,
+  ): Promise<T[]> {
+    if (!this.mainClient) {
+      throw new ClickHouseException(
+        'ClickHouse client is not available',
+        ClickHouseExceptionCode.CLIENT_NOT_AVAILABLE,
+      );
+    }
+
+    const resultSet = await this.mainClient.query({
+      query,
+      format: 'JSONEachRow',
+      query_params: params,
+    });
+
+    const result = await resultSet.json<T>();
+
+    return Array.isArray(result) ? result : [];
   }
 
   public async createDatabase(databaseName: string): Promise<boolean> {
