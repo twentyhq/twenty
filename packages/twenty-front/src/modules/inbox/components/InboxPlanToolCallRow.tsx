@@ -93,12 +93,14 @@ export const InboxPlanToolCallRow = ({
           <ToolIcon size={theme.icon.size.md} />
           {toolCall.label}
         </StyledToggle>
-        <LightIconButton
-          Icon={IconChevronDown}
-          accent="secondary"
-          aria-label={isExpanded ? t`Collapse` : t`Expand`}
-          onClick={onToggleExpanded}
-        />
+        <StyledChevron isExpanded={isExpanded}>
+          <LightIconButton
+            Icon={IconChevronDown}
+            accent="secondary"
+            aria-label={isExpanded ? t`Collapse` : t`Expand`}
+            onClick={onToggleExpanded}
+          />
+        </StyledChevron>
         {!hasRun && (
           <LightIconButton
             Icon={isRejected ? IconRepeat : IconX}

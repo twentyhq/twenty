@@ -211,10 +211,17 @@ export class InboxItemService {
     accessibleQueueIds: string[];
   }): FindOptionsWhere<InboxItemEntity> {
     // Someone who owns a queued item keeps writing through their ownership,
-    // so losing the queue role later does not silently drop their writes
+    // so losing the queue role later does not silently drop their writes.
+    // With no queue access at all the scope has to match nothing, and an
+    // empty IN list is not valid SQL, so a null queue stands in: the item is
+    // queued, so it can never match.
     return isDefined(inboxItem.queueId) &&
       inboxItem.assigneeUserWorkspaceId !== actorUserWorkspaceId
-      ? { id: inboxItem.id, queueId: In(accessibleQueueIds) }
+      ? {
+          id: inboxItem.id,
+          queueId:
+            accessibleQueueIds.length > 0 ? In(accessibleQueueIds) : IsNull(),
+        }
       : { id: inboxItem.id, assigneeUserWorkspaceId: actorUserWorkspaceId };
   }
 

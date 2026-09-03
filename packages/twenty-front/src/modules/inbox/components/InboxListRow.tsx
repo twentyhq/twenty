@@ -41,6 +41,7 @@ const StyledRow = styled.div<{ isSelected: boolean }>`
   border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   padding: ${themeCssVariables.spacing[2]} 6px;
+  position: relative;
 `;
 
 // The controls are siblings of this rather than descendants, so a nested
@@ -123,22 +124,20 @@ const StyledPreview = styled.div`
   white-space: nowrap;
 `;
 
-const StyledTrailing = styled.div`
-  align-items: center;
-  display: flex;
-  flex-shrink: 0;
-  height: 20px;
-  margin-left: auto;
-`;
-
 const StyledLastEventAt = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   flex-shrink: 0;
+  margin-left: auto;
 `;
 
+// Sits over the title line's trailing end, in the room the time leaves when
+// it hides, so the control is a sibling of the open target rather than a
+// button inside one
 const StyledButtonsSlot = styled.div`
   display: none;
-  flex-shrink: 0;
+  position: absolute;
+  right: 6px;
+  top: ${themeCssVariables.spacing[2]};
 `;
 
 type InboxListRowProps = {
@@ -197,14 +196,9 @@ export const InboxListRow = ({
             <StyledTitle isUnread={inboxItem.isUnread}>
               {inboxItem.title}
             </StyledTitle>
-            <StyledTrailing>
-              <StyledLastEventAt className="inbox-list-row-last-event-at">
-                {beautifyPastDateRelativeToNowShort(inboxItem.lastEventAt)}
-              </StyledLastEventAt>
-              <StyledButtonsSlot className="inbox-list-row-buttons">
-                <InboxListRowButtons inboxItem={inboxItem} />
-              </StyledButtonsSlot>
-            </StyledTrailing>
+            <StyledLastEventAt className="inbox-list-row-last-event-at">
+              {beautifyPastDateRelativeToNowShort(inboxItem.lastEventAt)}
+            </StyledLastEventAt>
           </StyledLine>
           {hasSecondLine && (
             <StyledSecondLine>
@@ -221,6 +215,9 @@ export const InboxListRow = ({
             </StyledSecondLine>
           )}
         </StyledOpenTarget>
+        <StyledButtonsSlot className="inbox-list-row-buttons">
+          <InboxListRowButtons inboxItem={inboxItem} />
+        </StyledButtonsSlot>
       </StyledRow>
     </StyledRowContainer>
   );

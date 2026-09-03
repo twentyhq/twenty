@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useEffect, useState } from 'react';
+import { useStore } from 'jotai';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,9 +17,12 @@ import { useInboxQueues } from '@/inbox/hooks/useInboxQueues';
 import { useOpenInboxItem } from '@/inbox/hooks/useOpenInboxItem';
 import { isInboxSplitViewOpenState } from '@/inbox/states/isInboxSplitViewOpenState';
 import { type InboxListLocation } from '@/inbox/types/InboxListLocation';
+import { collapseNavigationDrawerForInboxPanel } from '@/inbox/utils/collapseNavigationDrawerForInboxPanel';
+import { restoreNavigationDrawerAfterInboxPanel } from '@/inbox/utils/restoreNavigationDrawerAfterInboxPanel';
 import { findInboxSectionBySlug } from '@/inbox/utils/findInboxSectionBySlug';
 import { getRenderedInboxItemOrder } from '@/inbox/utils/getRenderedInboxItemOrder';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
@@ -74,15 +78,25 @@ const StyledErrorState = styled.div`
 `;
 
 // Raises the split view flag for as long as the page is mounted, so the drawer
-// and the side panel can make room for each other while it is up
+// and the side panel can make room for each other while it is up. A panel
+// already open on the way in pushes the drawer aside the same way, and leaving
+// the page hands the drawer back.
 const InboxSplitViewEffect = () => {
+  const store = useStore();
   const setIsInboxSplitViewOpen = useSetAtomState(isInboxSplitViewOpenState);
 
   useEffect(() => {
     setIsInboxSplitViewOpen(true);
 
-    return () => setIsInboxSplitViewOpen(false);
-  }, [setIsInboxSplitViewOpen]);
+    if (store.get(isSidePanelOpenedState.atom)) {
+      collapseNavigationDrawerForInboxPanel(store);
+    }
+
+    return () => {
+      setIsInboxSplitViewOpen(false);
+      restoreNavigationDrawerAfterInboxPanel(store);
+    };
+  }, [setIsInboxSplitViewOpen, store]);
 
   return null;
 };
@@ -114,9 +128,14 @@ export const InboxPage = () => {
   const inboxSection = findInboxSectionBySlug(inboxSectionSlug);
   const QueueIcon = getIcon(inboxQueue?.icon);
   const SectionIcon = isDefined(inboxQueueSlug) ? QueueIcon : inboxSection.Icon;
-  const inboxListLocation: InboxListLocation = isDefined(inboxQueueSlug)
-    ? { inboxQueueSlug }
-    : { inboxSectionSlug: inboxSection.slug };
+  const inboxSectionSlugToUse = inboxSection.slug;
+  const inboxListLocation = useMemo<InboxListLocation>(
+    () =>
+      isDefined(inboxQueueSlug)
+        ? { inboxQueueSlug }
+        : { inboxSectionSlug: inboxSectionSlugToUse },
+    [inboxQueueSlug, inboxSectionSlugToUse],
+  );
 
   const {
     isInboxEnabled,

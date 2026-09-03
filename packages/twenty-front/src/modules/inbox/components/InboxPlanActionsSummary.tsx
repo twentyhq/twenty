@@ -133,7 +133,9 @@ export const InboxPlanActionsSummary = ({
               >
                 <ToolIcon size={theme.icon.size.md} />
               </StyledIcon>
-              <StyledLabel isRejected={isRejected}>{toolCall.label}</StyledLabel>
+              <StyledLabel isRejected={isRejected}>
+                {toolCall.label}
+              </StyledLabel>
               {isNonEmptyString(statusLabel) && (
                 <StyledStatus
                   isFailure={toolCall.status === InboxItemToolCallStatus.FAILED}

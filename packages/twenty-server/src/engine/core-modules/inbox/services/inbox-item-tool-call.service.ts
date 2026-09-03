@@ -174,12 +174,28 @@ export class InboxItemToolCallService {
     // executing
     const [toolCallsAfterRun, inboxItemAfterRun] = await Promise.all([
       this.findToolCallsInOrder(workspaceId, inboxItemId),
-      this.inboxItemService.findVisibleItemOrThrow({
-        inboxItemId,
-        workspaceId,
-        actorUserWorkspaceId,
-        accessibleQueueIds,
-      }),
+      this.inboxItemService
+        .findVisibleItemOrThrow({
+          inboxItemId,
+          workspaceId,
+          actorUserWorkspaceId,
+          accessibleQueueIds,
+        })
+        .catch((error: unknown) => {
+          // Handed to someone else while the calls ran: they did run, so the
+          // caller hears that the item moved on rather than that it is gone
+          if (
+            error instanceof InboxException &&
+            error.code === InboxExceptionCode.INBOX_ITEM_NOT_FOUND
+          ) {
+            throw new InboxException(
+              `Inbox item ${inboxItemId} left the actor's view while its calls ran`,
+              InboxExceptionCode.INBOX_ITEM_CHANGED,
+            );
+          }
+
+          throw error;
+        }),
     ]);
 
     const hasFailure = toolCallsAfterRun.some(

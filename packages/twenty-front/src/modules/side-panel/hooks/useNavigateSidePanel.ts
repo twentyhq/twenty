@@ -5,7 +5,7 @@ import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUs
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { isInboxSplitViewOpenState } from '@/inbox/states/isInboxSplitViewOpenState';
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { collapseNavigationDrawerForInboxPanel } from '@/inbox/utils/collapseNavigationDrawerForInboxPanel';
 import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
 import {
   type SidePanelNavigationStackItem,
@@ -56,10 +56,8 @@ export const useNavigateSidePanel = () => {
     store.set(isSidePanelOpenedState.atom, true);
     store.set(hasUserSelectedSidePanelListItemState.atom, false);
 
-    // The inbox already splits the page in two; a panel beside it would make
-    // four columns with the drawer, so the drawer gives way
     if (store.get(isInboxSplitViewOpenState.atom)) {
-      store.set(isNavigationDrawerExpandedState.atom, false);
+      collapseNavigationDrawerForInboxPanel(store);
     }
   }, [
     sidePanelCloseAnimationCompleteCleanup,

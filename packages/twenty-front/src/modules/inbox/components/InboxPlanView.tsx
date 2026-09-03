@@ -154,19 +154,21 @@ export const InboxPlanView = ({ inboxItem }: { inboxItem: InboxItem }) => {
     );
   const [isRunning, setIsRunning] = useState(false);
   const [inFlightEditCount, setInFlightEditCount] = useState(0);
-  const [hasUnsavedEdit, setHasUnsavedEdit] = useState(false);
+  const [failedSaveToolCallIds, setFailedSaveToolCallIds] = useState<string[]>(
+    [],
+  );
 
   const reportFailure = () =>
     enqueueErrorSnackBar({ message: t`That could not be applied` });
 
   // A blur save or a skip still on the wire must land before the plan runs,
   // or the run could use the input from before the edit. A save that failed
-  // keeps the run blocked until a later save succeeds, since the editor still
-  // shows what the server never got; a skip landing in between says nothing
-  // about the input
+  // keeps the run blocked until that call saves again, since its editor still
+  // shows what the server never got; a skip, or a save on another call, says
+  // nothing about it
   const trackEdit = async (
     edit: () => Promise<unknown>,
-    { isInputSave }: { isInputSave: boolean },
+    { toolCallId, isInputSave }: { toolCallId: string; isInputSave: boolean },
   ) => {
     setInFlightEditCount((count) => count + 1);
 
@@ -174,11 +176,15 @@ export const InboxPlanView = ({ inboxItem }: { inboxItem: InboxItem }) => {
       await edit();
 
       if (isInputSave) {
-        setHasUnsavedEdit(false);
+        setFailedSaveToolCallIds((current) =>
+          current.filter((id) => id !== toolCallId),
+        );
       }
     } catch {
       if (isInputSave) {
-        setHasUnsavedEdit(true);
+        setFailedSaveToolCallIds((current) =>
+          current.includes(toolCallId) ? current : [...current, toolCallId],
+        );
       }
 
       reportFailure();
@@ -281,7 +287,7 @@ export const InboxPlanView = ({ inboxItem }: { inboxItem: InboxItem }) => {
                       inboxItemToolCallId: toolCall.id,
                       editedInput,
                     }),
-                  { isInputSave: true },
+                  { toolCallId: toolCall.id, isInputSave: true },
                 )
               }
               onToggleRejected={(isRejected) =>
@@ -291,7 +297,7 @@ export const InboxPlanView = ({ inboxItem }: { inboxItem: InboxItem }) => {
                       inboxItemToolCallId: toolCall.id,
                       isRejected,
                     }),
-                  { isInputSave: false },
+                  { toolCallId: toolCall.id, isInputSave: false },
                 )
               }
             />
@@ -342,7 +348,7 @@ export const InboxPlanView = ({ inboxItem }: { inboxItem: InboxItem }) => {
                 toolCalls.length === 0 ||
                 isRunning ||
                 inFlightEditCount > 0 ||
-                hasUnsavedEdit
+                failedSaveToolCallIds.length > 0
               }
               onClick={() => void runAll()}
               size="small"
