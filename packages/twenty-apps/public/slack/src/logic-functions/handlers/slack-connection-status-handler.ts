@@ -15,8 +15,6 @@ export const slackConnectionStatusHandler =
       return { success: true, isConnected: false };
     }
 
-    // A connection can exist while auth.test fails (revoked token, Slack
-    // outage); the team id is then unknown but the connection still is one.
     const installedSlackTeamId = await getInstalledSlackTeamId(
       slackClientResult.client,
     );

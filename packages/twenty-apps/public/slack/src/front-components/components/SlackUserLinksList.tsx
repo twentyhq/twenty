@@ -96,8 +96,6 @@ const CONSENT_COLORS: Record<SlackUserLinkConsentState, TagColor> = {
 
 const DISCONNECTED_WORKSPACE_LABEL = 'Slack workspace disconnected';
 
-// A link is only knowably foreign once Slack has confirmed which team is
-// installed; without that every row keeps its stored status.
 const isFromDisconnectedSlackWorkspace = ({
   slackUserLink,
   installedSlackTeamId,
