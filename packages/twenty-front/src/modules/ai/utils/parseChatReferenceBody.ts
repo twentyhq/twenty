@@ -8,10 +8,13 @@ type ParsedChatReferenceBody = ChatReferenceIdentity & { displayName: string };
 const isChatReferenceKind = (segment: string): segment is ChatReferenceKind =>
   Object.hasOwn(CHAT_REFERENCE_IDENTITY_SHAPE_BY_KIND, segment);
 
-const getChatReferenceIdentity = (
-  kind: ChatReferenceKind,
-  [firstSegment, secondSegment]: string[],
-): ChatReferenceIdentity => {
+const getChatReferenceIdentity = ({
+  kind,
+  segments: [firstSegment, secondSegment],
+}: {
+  kind: ChatReferenceKind;
+  segments: string[];
+}): ChatReferenceIdentity => {
   switch (kind) {
     case 'record':
       return {
@@ -40,10 +43,13 @@ const getChatReferenceIdentity = (
   }
 };
 
-const parseSegments = (
-  kind: ChatReferenceKind,
-  segments: string[],
-): ParsedChatReferenceBody | undefined => {
+const parseSegments = ({
+  kind,
+  segments,
+}: {
+  kind: ChatReferenceKind;
+  segments: string[];
+}): ParsedChatReferenceBody | undefined => {
   const shape = CHAT_REFERENCE_IDENTITY_SHAPE_BY_KIND[kind];
   const identitySegments = segments.slice(0, shape.length);
   const hasLabel = segments.length > shape.length;
@@ -56,7 +62,7 @@ const parseSegments = (
   }
 
   return {
-    ...getChatReferenceIdentity(kind, identitySegments),
+    ...getChatReferenceIdentity({ kind, segments: identitySegments }),
     displayName: segments.slice(shape.length).join(':'),
   };
 };
@@ -71,8 +77,8 @@ export const parseChatReferenceBody = (
   // retired or malformed marker, not a record of an object bearing that
   // name, so it must not fall through to the unprefixed record form.
   if (isChatReferenceKind(kindPrefix)) {
-    return parseSegments(kindPrefix, identityAndLabel);
+    return parseSegments({ kind: kindPrefix, segments: identityAndLabel });
   }
 
-  return parseSegments('record', segments);
+  return parseSegments({ kind: 'record', segments });
 };
