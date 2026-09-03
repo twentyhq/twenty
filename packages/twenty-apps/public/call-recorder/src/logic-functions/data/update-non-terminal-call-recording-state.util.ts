@@ -1,3 +1,4 @@
+import { isNonEmptyArray } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/constants/non-terminal-call-recording-statuses';
@@ -28,5 +29,5 @@ export const updateNonTerminalCallRecordingState = async (
     },
   });
 
-  return (updateResult.updateCallRecordings ?? []).length > 0;
+  return isNonEmptyArray(updateResult.updateCallRecordings);
 };
