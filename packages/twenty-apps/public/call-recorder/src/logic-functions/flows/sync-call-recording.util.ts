@@ -32,16 +32,12 @@ export type SyncableCallRecording = {
 export type SyncCallRecordingResult = {
   updated: boolean;
   requestedTranscript: boolean;
-  // Whatever succeeded is already persisted; this only says another delivery is
-  // worth attempting. The scheduled sweep ignores it and simply runs again.
   hasRetryableArtifactFailure: boolean;
 };
 
 // The single-record sync shared by webhook-driven imports and the scheduled
 // stale-recording sync. It trusts persisted Twenty data and a parsed Recall bot
-// snapshot, never provider ids supplied by a route caller. It imports and
-// persists its scope's artifacts; deciding whether that finished the recording
-// belongs to settleCallRecordingImport, which reads back what actually landed.
+// snapshot, never provider ids supplied by a route caller.
 export const syncCallRecording = async ({
   client,
   callRecording,

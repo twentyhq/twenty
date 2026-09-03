@@ -4,8 +4,7 @@ import { computeCallRecordingCharge } from 'src/logic-functions/domain/compute-c
 import { isUnavailableCallRecordingStatus } from 'src/logic-functions/domain/is-unavailable-call-recording-status.util';
 import { isCallRecordingImportComplete } from 'src/logic-functions/domain/is-call-recording-import-complete.util';
 
-// Judged from persisted state alone: an importing job only ever holds half the
-// answer, so a snapshot taken before its own write cannot decide this.
+// Takes persisted state: an importing job holds half the answer before its write.
 export const shouldCompleteCallRecordingImport = ({
   status,
   startedAt,

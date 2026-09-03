@@ -14,8 +14,7 @@ const CLAIM_FIELD_BY_SCOPE = {
 
 // Atomic per-recording, per-scope lease. The conditional update matches only when
 // no fresh lease is held, so exactly one of several concurrent webhook retries
-// claims that scope and performs its provider-facing work. Without it two passes
-// could both observe "no artifact yet" and both pay the provider for it.
+// claims that scope and performs its provider-facing work.
 export const claimCallRecordingArtifactsImport = async (
   client: CoreApiClient,
   {

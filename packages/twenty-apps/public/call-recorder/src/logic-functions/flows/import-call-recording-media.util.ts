@@ -24,9 +24,7 @@ type CallRecordingMediaUpdateFields = Pick<
 
 export type ImportCallRecordingMediaResult = {
   updateData: CallRecordingMediaUpdateFields;
-  // An artifact Recall published but the app could not copy. Distinct from one
-  // Recall has not published yet, which is normal on an early recording-done
-  // signal and must not burn a redelivery.
+  // Set when Recall published an artifact the app could not copy, not when it has none yet.
   hasRetryableFailure: boolean;
 };
 
@@ -103,8 +101,6 @@ export const importCallRecordingMedia = async ({
   for (const descriptor of MEDIA_ARTIFACT_DESCRIPTORS) {
     const { alreadyImported, url } = artifactStateByField[descriptor.field];
 
-    // A missing url means Recall has not published the artifact yet, so the next
-    // recording-done signal carries it; that is not a failure to redeliver for.
     if (alreadyImported || isUndefined(url)) {
       continue;
     }

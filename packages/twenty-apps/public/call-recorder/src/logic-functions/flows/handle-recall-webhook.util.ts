@@ -138,8 +138,6 @@ const handleRecallStatusEvent = async ({
       statusCode,
     })
   ) {
-    // Both halves start here; the transcript job requests the transcript while
-    // the media job streams video and audio, each under its own lease.
     await enqueueCallRecordingArtifactsImport({
       callRecordingId: callRecording.id,
       scope: 'transcript',

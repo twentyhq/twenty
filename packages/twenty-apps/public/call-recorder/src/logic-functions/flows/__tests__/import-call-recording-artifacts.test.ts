@@ -63,8 +63,6 @@ type CallRecordingNode = {
   video?: unknown;
 };
 
-// Applies writes to the stored node so a re-read observes them, which is what the
-// split transcript and media jobs rely on to decide which of them completes.
 class FakeCoreApiClient {
   mutations: Array<{ id: string; data: Record<string, unknown> }> = [];
 
@@ -447,8 +445,7 @@ describe('importCallRecordingArtifacts', () => {
     });
     const client = buildClient([callRecording]);
 
-    // The transcript lands while this media job is still uploading, so its own
-    // snapshot never sees a downloadable transcript.
+    // The transcript lands mid-upload, so this job's own snapshot never sees it.
     importCallRecordingMediaMock.mockImplementation(async () => {
       callRecording.transcript = [{ participant: { id: 1 }, words: [] }];
 

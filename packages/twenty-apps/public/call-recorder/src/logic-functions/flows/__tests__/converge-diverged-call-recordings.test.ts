@@ -54,8 +54,6 @@ const NOW = new Date('2026-06-10T12:00:00.000Z');
 
 type CallRecordingNode = Record<string, unknown>;
 
-// Writes are applied to the stored nodes so the completion read that follows a
-// sync sees them, which is how the real record decides it is finished.
 class FakeCoreApiClient {
   mutations: Array<{ id: string; data: Record<string, unknown> }> = [];
 
