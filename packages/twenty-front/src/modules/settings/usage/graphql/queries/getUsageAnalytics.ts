@@ -12,6 +12,11 @@ export const GET_USAGE_ANALYTICS = gql`
         key
         creditsUsed
       }
+      usageByApplication {
+        key
+        label
+        creditsUsed
+      }
       usageByModel {
         key
         creditsUsed

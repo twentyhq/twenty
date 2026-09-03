@@ -30,6 +30,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 type SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenuProps =
   {
@@ -89,9 +90,14 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectS
     const { advancedFilterFieldSelectDropdownId } =
       useAdvancedFilterFieldSelectDropdown(recordFilterId);
 
+    const scopedAdvancedFilterFieldSelectDropdownId =
+      useWorkspaceSurfaceScopedComponentInstanceId(
+        advancedFilterFieldSelectDropdownId,
+      );
+
     const selectedItemId = useAtomComponentStateValue(
       selectedItemIdComponentState,
-      advancedFilterFieldSelectDropdownId,
+      scopedAdvancedFilterFieldSelectDropdownId,
     );
 
     if (!isDefined(objectFilterDropdownSubMenuFieldType)) {

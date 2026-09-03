@@ -184,7 +184,7 @@ export class MessageCampaignMaterializationService {
 
     await this.messageQueueService.bulkAdd<MaterializeCampaignChunkJobData>(
       MATERIALIZE_CAMPAIGN_CHUNK_JOB,
-      chunks,
+      chunks.map((chunk) => ({ data: chunk })),
       { retryLimit: 3, backoff: CAMPAIGN_SEND_RETRY_BACKOFF },
     );
 
@@ -338,13 +338,15 @@ export class MessageCampaignMaterializationService {
     await this.messageQueueService.bulkAdd<SendCampaignEmailJobData>(
       SEND_CAMPAIGN_EMAIL_JOB,
       recipients.map((recipient) => ({
-        workspaceId,
-        campaignId,
-        messageId: recipient.messageId,
-        personId: recipient.personId,
-        recipientEmail: recipient.email,
-        emailingDomainId,
-        userWorkspaceId,
+        data: {
+          workspaceId,
+          campaignId,
+          messageId: recipient.messageId,
+          personId: recipient.personId,
+          recipientEmail: recipient.email,
+          emailingDomainId,
+          userWorkspaceId,
+        },
       })),
       {
         retryLimit: CAMPAIGN_SEND_RETRY_LIMIT,

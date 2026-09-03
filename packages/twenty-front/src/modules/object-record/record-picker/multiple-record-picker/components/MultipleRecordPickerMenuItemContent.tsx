@@ -17,6 +17,7 @@ import { Avatar } from 'twenty-ui/data-display';
 import { MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
 
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { type SearchRecord } from '~/generated/graphql';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -36,7 +37,9 @@ export const MultipleRecordPickerMenuItemContent = ({
   );
 
   const selectableListComponentInstanceId =
-    getMultipleRecordPickerSelectableListId(componentInstanceId);
+    useWorkspaceSurfaceScopedComponentInstanceId(
+      getMultipleRecordPickerSelectableListId(componentInstanceId),
+    );
 
   const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,

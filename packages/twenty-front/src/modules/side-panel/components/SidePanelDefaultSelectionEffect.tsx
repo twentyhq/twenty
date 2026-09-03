@@ -2,6 +2,7 @@ import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelS
 import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect } from 'react';
@@ -15,9 +16,13 @@ export const SidePanelDefaultSelectionEffect = ({
   const { setSelectedItemId } = useSelectableList(
     SIDE_PANEL_SELECTABLE_LIST_ID,
   );
+  const scopedSelectableListId = useWorkspaceSurfaceScopedComponentInstanceId(
+    SIDE_PANEL_SELECTABLE_LIST_ID,
+  );
+
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    SIDE_PANEL_SELECTABLE_LIST_ID,
+    scopedSelectableListId,
   );
 
   const hasUserSelectedSidePanelListItem = useAtomStateValue(

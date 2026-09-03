@@ -22,6 +22,7 @@ import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
 import { buildBillingCreditStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-credit-state-lock-key.util';
+import { isValidCreditAmountMicro } from 'src/engine/core-modules/billing/utils/is-valid-credit-amount-micro.util';
 import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -250,6 +251,18 @@ export class BillingUsageService {
     usedCredits: number;
     currentBillingSubscription?: CurrentBillingSubscription;
   }): Promise<number> {
+    // Callers derive this from durations and token counts, so clamp at the one
+    // place that writes the counter rather than trusting each of them.
+    const creditsToDecrement = isValidCreditAmountMicro(usedCredits)
+      ? usedCredits
+      : 0;
+
+    if (creditsToDecrement !== usedCredits) {
+      this.logger.error(
+        `Refusing to decrement ${usedCredits} credits for workspace ${workspaceId}; treating as 0`,
+      );
+    }
+
     const currentBillingSubscription =
       await this.resolveCurrentBillingSubscription({
         workspaceId,
@@ -277,9 +290,9 @@ export class BillingUsageService {
       ? await this.billingUsageCacheService.adjustAvailableCredits(
           workspaceId,
           currentPeriodStart,
-          -usedCredits,
+          -creditsToDecrement,
         )
-      : availableCredits - usedCredits;
+      : availableCredits - creditsToDecrement;
   }
 
   // Warming is a read of the ledger followed by a write of what it implies, so

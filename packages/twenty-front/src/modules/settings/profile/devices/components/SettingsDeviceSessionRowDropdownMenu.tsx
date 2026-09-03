@@ -9,23 +9,26 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { IconDotsVertical, IconLogout } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
-import { RevokeUserSessionDocument } from '~/generated-metadata/graphql';
+import {
+  CurrentUserSessionsDocument,
+  RevokeUserSessionDocument,
+} from '~/generated-metadata/graphql';
 
 type SettingsDeviceSessionRowDropdownMenuProps = {
   userSessionId: string;
-  onRevoked: () => void;
 };
 
 export const SettingsDeviceSessionRowDropdownMenu = ({
   userSessionId,
-  onRevoked,
 }: SettingsDeviceSessionRowDropdownMenuProps) => {
   const dropdownId = `settings-device-session-row-${userSessionId}`;
 
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const { closeDropdown } = useCloseDropdown();
 
-  const [revokeUserSession] = useMutation(RevokeUserSessionDocument);
+  const [revokeUserSession] = useMutation(RevokeUserSessionDocument, {
+    refetchQueries: [CurrentUserSessionsDocument],
+  });
 
   const handleRevokeSession = async () => {
     closeDropdown(dropdownId);
@@ -33,7 +36,6 @@ export const SettingsDeviceSessionRowDropdownMenu = ({
     try {
       await revokeUserSession({ variables: { userSessionId } });
       enqueueSuccessSnackBar({ message: t`Device logged out` });
-      onRevoked();
     } catch {
       enqueueErrorSnackBar({ message: t`Failed to log out this device` });
     }
