@@ -50,7 +50,7 @@ const DECLARED_ACTIONS: InboxItemAction[] = [
     key: 'reopenWithReason',
     label: 'Reopen',
     inputSchema: [
-      { key: 'reason', label: 'Reason', type: 'TEXT', required: true },
+      { key: 'reason', label: 'Reason', type: 'TEXT', isRequired: true },
     ],
     transition: { kind: 'REOPEN' },
   },
