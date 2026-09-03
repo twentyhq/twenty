@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -36,13 +36,15 @@ export class ApplicationConnectionAuthFailureService {
     id,
     reason,
   }: ReportAuthFailureArgs): Promise<void> {
+    const scopedWhere = {
+      id,
+      applicationId,
+      workspaceId,
+      provider: ConnectedAccountProvider.APP,
+    };
+
     const account = await this.connectedAccountRepository.findOne({
-      where: {
-        id,
-        applicationId,
-        workspaceId,
-        provider: ConnectedAccountProvider.APP,
-      },
+      where: scopedWhere,
     });
 
     if (!isDefined(account)) {
@@ -55,9 +57,31 @@ export class ApplicationConnectionAuthFailureService {
       throw new NotFoundException(`Connection ${id} not found`);
     }
 
-    await this.connectedAccountRepository.update(
-      { id: account.id, workspaceId },
+    // Guard against a reconnect racing this report: every reconnect bumps
+    // lastCredentialsRefreshedAt, so a report describing the pre-reconnect
+    // token matches zero rows instead of resurrecting a cleared failure.
+    const updateResult = await this.connectedAccountRepository.update(
+      {
+        ...scopedWhere,
+        lastCredentialsRefreshedAt: isDefined(
+          account.lastCredentialsRefreshedAt,
+        )
+          ? account.lastCredentialsRefreshedAt
+          : IsNull(),
+      },
       { authFailedAt: new Date(), authFailedReason: reason },
     );
+
+    if (updateResult.affected === 0) {
+      const currentAccount = await this.connectedAccountRepository.findOne({
+        where: scopedWhere,
+      });
+
+      if (!isDefined(currentAccount)) {
+        throw new NotFoundException(`Connection ${id} not found`);
+      }
+      // A reconnect superseded the report while it was in flight; the
+      // failure described the old credential, so dropping it is correct.
+    }
   }
 }
