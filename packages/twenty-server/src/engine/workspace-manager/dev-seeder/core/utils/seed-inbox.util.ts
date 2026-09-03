@@ -74,7 +74,9 @@ type SeededInboxItem = {
   isRead?: boolean;
   queueSeedName?: string;
   assignee?: 'me' | 'colleague';
-  subject?: { kind: 'thread'; which: 'default' | 'review' } | { kind: 'company'; companyId: string };
+  subject?:
+    | { kind: 'thread'; which: 'default' | 'review' }
+    | { kind: 'company'; companyId: string };
   payload?: Record<string, unknown>;
   cleared?: { hoursAgo: number; outcome?: string; resurfaceInHours?: number };
 };
@@ -112,7 +114,10 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
       "Step 'Create invoice' failed: the Stripe API key has expired. 3 invoices were not sent.",
     hoursAgo: 3,
     assignee: 'me',
-    payload: { workflowName: 'Sync invoices to Stripe', failedStep: 'Create invoice' },
+    payload: {
+      workflowName: 'Sync invoices to Stripe',
+      failedStep: 'Create invoice',
+    },
   },
   {
     seedName: 'meta-buying-committee',
@@ -129,7 +134,8 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'q4-pipeline-review',
     typeKey: INBOX_ITEM_TYPE_KEY.conversation,
     title: 'Prepare the Q4 pipeline review',
-    preview: 'Draft ready: three opportunities moved, two close dates pushed to November.',
+    preview:
+      'Draft ready: three opportunities moved, two close dates pushed to November.',
     priority: InboxItemPriority.UPDATE,
     hoursAgo: 26,
     isRead: true,
@@ -140,7 +146,8 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'review-cisco-onboarding-fee',
     typeKey: INBOX_ITEM_TYPE_KEY.approval,
     title: "Review Cisco's onboarding fee",
-    preview: 'A $5,000 onboarding invoice is ready to send once the fee is confirmed.',
+    preview:
+      'A $5,000 onboarding invoice is ready to send once the fee is confirmed.',
     hoursAgo: 8,
     isRead: true,
     assignee: 'me',
@@ -163,7 +170,8 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'salesforce-profile-update',
     typeKey: INBOX_ITEM_TYPE_KEY.conversation,
     title: "Update Salesforce's company profile",
-    preview: 'Industry, headcount and website were refreshed from the latest filing.',
+    preview:
+      'Industry, headcount and website were refreshed from the latest filing.',
     priority: InboxItemPriority.UPDATE,
     hoursAgo: 72,
     isRead: true,
@@ -228,7 +236,8 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'update-q4-pipeline',
     typeKey: INBOX_ITEM_TYPE_KEY.conversation,
     title: 'Update the Q4 pipeline',
-    preview: 'Three opportunity close dates and two amounts changed since the last review.',
+    preview:
+      'Three opportunity close dates and two amounts changed since the last review.',
     priority: InboxItemPriority.UPDATE,
     hoursAgo: 24,
     queueSeedName: DEFAULT_INBOX_QUEUE_SLUG,
@@ -315,8 +324,8 @@ export const seedInbox = async ({
         label: standardType.label,
         icon: standardType.icon,
         defaultPriority: standardType.defaultPriority,
-        actions: JSON.stringify(standardType.actions),
-        resolution: JSON.stringify(standardType.resolution ?? null),
+        actions: standardType.actions,
+        resolution: standardType.resolution ?? null,
       })),
     )
     .execute();
@@ -352,8 +361,21 @@ export const seedInbox = async ({
     )
     .execute();
 
-  // Triage is reachable by everyone once it exists; the shared inboxes are
-  // granted to the admin role, which the dev login holds.
+  // Triage is reachable by everyone once it exists. The shared inboxes are
+  // granted to the admin role and to whatever role the dev login holds, which
+  // is admin in the light seed and a restricted role in the full one.
+  const roleRows: { roleId: string }[] = await queryRunner.query(
+    `SELECT DISTINCT "roleId" FROM ${schemaName}."roleTarget"
+     WHERE "workspaceId" = $1 AND "userWorkspaceId" = $2`,
+    [workspaceId, people.me],
+  );
+  const grantedRoleIds = [
+    ...new Set([
+      inboxReferenceIds.adminRoleId,
+      ...roleRows.map((row) => row.roleId),
+    ]),
+  ];
+
   await queryRunner.manager
     .createQueryBuilder()
     .insert()
@@ -365,12 +387,17 @@ export const seedInbox = async ({
     ])
     .orIgnore()
     .values(
-      SEEDED_QUEUES.filter((queue) => !queue.isDefault).map((queue) => ({
-        id: generateSeedId(workspaceId, `inbox-queue-role-${queue.seedName}`),
-        workspaceId,
-        queueId: queueIdBySeedName[queue.seedName],
-        roleId: inboxReferenceIds.adminRoleId,
-      })),
+      SEEDED_QUEUES.filter((queue) => !queue.isDefault).flatMap((queue) =>
+        grantedRoleIds.map((roleId) => ({
+          id: generateSeedId(
+            workspaceId,
+            `inbox-queue-role-${queue.seedName}-${roleId}`,
+          ),
+          workspaceId,
+          queueId: queueIdBySeedName[queue.seedName],
+          roleId,
+        })),
+      ),
     )
     .execute();
 
@@ -451,12 +478,14 @@ export const seedInbox = async ({
           priority: item.priority ?? InboxItemPriority.NEEDS_ACTION,
           title: item.title,
           preview: item.preview,
-          payload: item.payload ? JSON.stringify(item.payload) : null,
+          payload: item.payload ?? null,
           lastEventAt,
           clearedAt,
           resurfaceAt:
             isCleared && item.cleared?.resurfaceInHours !== undefined
-              ? new Date(now.getTime() + item.cleared.resurfaceInHours * HOUR_IN_MS)
+              ? new Date(
+                  now.getTime() + item.cleared.resurfaceInHours * HOUR_IN_MS,
+                )
               : null,
           clearedByUserWorkspaceId: isCleared ? people.me : null,
           outcome: item.cleared?.outcome ?? null,
@@ -477,7 +506,10 @@ export const seedInbox = async ({
             : null,
           assigneeUserWorkspaceId,
           slotKey: `${item.typeKey}:${item.seedName}`,
-          createdAt: hoursAgo(now, Math.max(item.hoursAgo, item.cleared?.hoursAgo ?? 0)),
+          createdAt: hoursAgo(
+            now,
+            Math.max(item.hoursAgo, item.cleared?.hoursAgo ?? 0),
+          ),
           updatedAt: lastEventAt,
         };
       }),
