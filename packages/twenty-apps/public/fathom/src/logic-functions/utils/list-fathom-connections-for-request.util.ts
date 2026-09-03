@@ -14,11 +14,12 @@ export const listFathomConnectionsForRequest = async (
   context: Pick<LogicFunctionExecutionContext, 'userWorkspaceId'>,
 ): Promise<AppConnection[]> => {
   const connections = await listFathomConnections();
-  const requesterConnection = findConnectionForRequest(connections, context);
 
-  if (isDefined(requesterConnection)) {
-    return [requesterConnection];
+  if (context.userWorkspaceId === null) {
+    return connections;
   }
 
-  return context.userWorkspaceId === null ? connections : [];
+  const requesterConnection = findConnectionForRequest(connections, context);
+
+  return isDefined(requesterConnection) ? [requesterConnection] : [];
 };

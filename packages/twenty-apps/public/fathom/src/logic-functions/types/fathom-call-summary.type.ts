@@ -6,5 +6,5 @@ export type FathomCallSummary = {
   participants: string[];
   recordedBy: string;
   fathomUrl: string;
-  meetingUrl: string | null;
+  meetingUrl?: string;
 };

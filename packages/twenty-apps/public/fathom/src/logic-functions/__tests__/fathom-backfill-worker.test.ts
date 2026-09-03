@@ -222,6 +222,31 @@ describe('fathomBackfillWorkerHandler', () => {
     expect(enqueuedBatchJobs().map((job) => job.delayMs)).toEqual([0, 0]);
   });
 
+  it('stops instead of looping when Fathom hands back the cursor it just consumed', async () => {
+    sdkMocks.listMeetings.mockResolvedValue({
+      result: {
+        items: [buildFathomMeeting({ recordingId: 1 })],
+        limit: null,
+        nextCursor: 'stuck',
+      },
+    });
+
+    expect(
+      await fathomBackfillWorkerHandler({
+        connectedAccountId: 'connection-1',
+        createdAfter: '2026-08-20T00:00:00.000Z',
+        cursor: 'stuck',
+      }),
+    ).toEqual(expect.objectContaining({ hasMoreMeetings: false }));
+    expect(
+      enqueuedJobs().some(
+        (job) =>
+          job.logicFunctionUniversalIdentifier ===
+          FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
+      ),
+    ).toBe(false);
+  });
+
   it('fails so the job retries when a batch is not accepted by the queue', async () => {
     sdkMocks.listMeetings.mockImplementation(
       buildFathomMeetingPages([[buildFathomMeeting({ recordingId: 1 })]]),

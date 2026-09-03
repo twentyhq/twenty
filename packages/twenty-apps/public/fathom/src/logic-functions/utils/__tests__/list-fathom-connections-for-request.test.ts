@@ -49,8 +49,18 @@ describe('listFathomConnectionsForRequest', () => {
   });
 
   it('returns every connected account for a run with nobody behind it', async () => {
+    const sharedConnection = {
+      ...buildConnection('connection-shared', 'user-workspace-1'),
+      visibility: 'workspace',
+    };
+
+    sdkMocks.listConnections.mockResolvedValue([
+      sharedConnection,
+      ...CONNECTIONS,
+    ]);
+
     expect(
       await listFathomConnectionsForRequest({ userWorkspaceId: null }),
-    ).toEqual(CONNECTIONS);
+    ).toEqual([sharedConnection, ...CONNECTIONS]);
   });
 });

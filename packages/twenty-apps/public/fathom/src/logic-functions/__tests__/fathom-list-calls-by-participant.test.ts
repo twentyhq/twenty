@@ -81,7 +81,10 @@ describe('fathomListCallsByParticipantHandler', () => {
     mocks.listMeetings.mockImplementation(
       buildFathomMeetingPages([
         [
-          buildMeetingWith(1, '2026-08-18T10:00:00.000Z'),
+          {
+            ...buildMeetingWith(1, '2026-08-18T10:00:00.000Z'),
+            meetingUrl: null,
+          },
           buildFathomMeeting({
             recordingId: 2,
             inviteeEmails: ['someone@example.com'],
@@ -110,7 +113,7 @@ describe('fathomListCallsByParticipantHandler', () => {
           fathomUrl: 'https://fathom.video/calls/3',
           meetingUrl: 'https://meet.example.com/customer-call',
         },
-        expect.objectContaining({ recordingId: 1 }),
+        expect.not.objectContaining({ meetingUrl: expect.anything() }),
       ],
     });
   });

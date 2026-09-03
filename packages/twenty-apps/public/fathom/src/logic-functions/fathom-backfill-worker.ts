@@ -41,8 +41,7 @@ export const fathomBackfillWorkerHandler = async (
     throw new Error('Fathom backfill worker requires a connectedAccountId');
   }
 
-  const now = Date.now();
-  const createdAfter = getCreatedAfter(payload, now);
+  const createdAfter = getCreatedAfter(payload, Date.now());
   const connection = await getConnection(payload.connectedAccountId);
   const meetingPage = await listFathomMeetingPage({
     fathomClient: createFathomClient(connection.accessToken),
@@ -57,7 +56,6 @@ export const fathomBackfillWorkerHandler = async (
     await reserveFathomBackfillBatchSlots({
       connectedAccountId: payload.connectedAccountId,
       batchCount: meetingBatches.length,
-      now,
     });
 
   for (const [batchIndex, meetings] of meetingBatches.entries()) {
@@ -69,7 +67,10 @@ export const fathomBackfillWorkerHandler = async (
     });
   }
 
-  const hasMoreMeetings = isNonEmptyString(meetingPage.nextCursor);
+  // A cursor equal to the one just consumed would re-enqueue this page forever.
+  const hasMoreMeetings =
+    isNonEmptyString(meetingPage.nextCursor) &&
+    meetingPage.nextCursor !== payload.cursor;
 
   if (hasMoreMeetings) {
     await enqueueFathomJobOrThrow({

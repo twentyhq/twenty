@@ -21,5 +21,7 @@ export const mapFathomMeetingToCallSummary = (
     .filter(isNonEmptyString),
   recordedBy: meeting.recordedBy.email,
   fathomUrl: meeting.url,
-  meetingUrl: meeting.meetingUrl ?? null,
+  ...(isNonEmptyString(meeting.meetingUrl)
+    ? { meetingUrl: meeting.meetingUrl }
+    : {}),
 });

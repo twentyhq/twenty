@@ -13,12 +13,11 @@ type FathomBackfillSchedule = {
 export const reserveFathomBackfillBatchSlots = async ({
   connectedAccountId,
   batchCount,
-  now,
 }: {
   connectedAccountId: string;
   batchCount: number;
-  now: number;
 }): Promise<{ batchDelays: number[]; continuationDelay: number }> => {
+  const now = Date.now();
   const scheduleKey = getFathomBackfillScheduleKey(connectedAccountId);
   const existingSchedule = await kv.get<FathomBackfillSchedule>(scheduleKey);
   const scheduleStart = Math.max(
