@@ -20,7 +20,6 @@ import {
 } from 'src/front-components/constants/call-recorder-settings-layout.constant';
 import { THEME_COLOR_HEX } from 'src/front-components/constants/theme-color-hex.constant';
 import { useAutosaveApplicationVariable } from 'src/front-components/hooks/use-autosave-application-variable';
-import { type CallRecorderApplicationVariable } from 'src/front-components/types/call-recorder-application-variable.type';
 import { getApplicationVariableValue } from 'src/front-components/utils/get-application-variable-value.util';
 import { getNormalizedHexValue } from 'src/front-components/utils/get-normalized-hex-value.util';
 import { getThemeColorFromHex } from 'src/front-components/utils/get-theme-color-from-hex.util';
@@ -28,56 +27,42 @@ import { normalizeHexColor } from 'src/front-components/utils/normalize-hex-colo
 import { DEFAULT_CALL_RECORDER_BOT_IMAGE_BACKGROUND } from 'src/logic-functions/constants/default-call-recorder-bot-image-background';
 
 type RecorderSectionProps = {
-  applicationId: string | undefined;
-  applicationVariables: Pick<
-    CallRecorderApplicationVariable,
-    'key' | 'value'
-  >[];
+  frontComponentId: string;
 };
 
-export const RecorderSection = ({
-  applicationId,
-  applicationVariables,
-}: RecorderSectionProps) => {
+export const RecorderSection = ({ frontComponentId }: RecorderSectionProps) => {
   const nameInputId = useId();
   const hexInputId = useId();
   const [nameValue, setNameValue] = useState(() =>
-    getApplicationVariableValue({
-      applicationVariables,
-      variableKey: CALL_RECORDER_NAME_FIELD.variableKey,
-    }),
+    getApplicationVariableValue(CALL_RECORDER_NAME_FIELD.variableKey),
   );
   const [isWorkspaceLogoEnabled, setIsWorkspaceLogoEnabled] = useState(
     () =>
-      getApplicationVariableValue({
-        applicationVariables,
-        variableKey: CALL_RECORDER_USE_WORKSPACE_LOGO_ROW.variableKey,
-      }) === 'true',
+      getApplicationVariableValue(
+        CALL_RECORDER_USE_WORKSPACE_LOGO_ROW.variableKey,
+      ) === 'true',
   );
   const [tileBackgroundValue, setTileBackgroundValue] = useState(() =>
-    getApplicationVariableValue({
-      applicationVariables,
-      variableKey: CALL_RECORDER_TILE_BACKGROUND_ROW.variableKey,
-    }),
+    getApplicationVariableValue(CALL_RECORDER_TILE_BACKGROUND_ROW.variableKey),
   );
   const [isCustomHexOverride, setIsCustomHexOverride] = useState<
     boolean | undefined
   >(undefined);
 
   const { saveDebounced: saveNameDebounced } = useAutosaveApplicationVariable({
-    applicationId,
+    frontComponentId,
     variableKey: CALL_RECORDER_NAME_FIELD.variableKey,
   });
   const { saveImmediately: saveWorkspaceLogoImmediately } =
     useAutosaveApplicationVariable({
-      applicationId,
+      frontComponentId,
       variableKey: CALL_RECORDER_USE_WORKSPACE_LOGO_ROW.variableKey,
     });
   const {
     saveDebounced: saveTileBackgroundDebounced,
     saveImmediately: saveTileBackgroundImmediately,
   } = useAutosaveApplicationVariable({
-    applicationId,
+    frontComponentId,
     variableKey: CALL_RECORDER_TILE_BACKGROUND_ROW.variableKey,
   });
 

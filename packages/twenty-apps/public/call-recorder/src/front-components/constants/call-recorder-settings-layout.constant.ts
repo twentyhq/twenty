@@ -51,7 +51,8 @@ export const CALL_RECORDER_TIMING_ROWS: CallRecorderCounterRow[] = [
   {
     variableKey: CALL_RECORDER_JOIN_EARLY_MINUTES_ENV_VAR_NAME,
     title: 'Join before start',
-    description: 'Minutes before the scheduled start time. Set 0 to join on time.',
+    description:
+      'Minutes before the scheduled start time. Set 0 to join on time.',
     Icon: IconClockPlay,
   },
   {
@@ -114,8 +115,8 @@ export const CALL_RECORDER_SUMMARY_PROMPT_FIELD = {
   hint: 'Appended to the built-in prompt. Leave empty to use it alone.',
 };
 
-// Any variable the API returns that is not laid out above falls through to the
-// generic rows, so a new server-side variable never disappears from the tab.
+// Keep this list aligned with the app config so every application variable is
+// intentionally placed in the synchronous settings UI.
 export const CALL_RECORDER_MAPPED_VARIABLE_KEYS: string[] = [
   CALL_RECORDER_NAME_FIELD.variableKey,
   CALL_RECORDER_RECORDING_NOTICE_ROW.variableKey,

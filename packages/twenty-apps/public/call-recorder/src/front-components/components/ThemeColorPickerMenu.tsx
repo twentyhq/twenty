@@ -1,8 +1,6 @@
 import styled from '@emotion/styled';
-import {
-  DEFAULT_COLOR_LABELS,
-  MenuItemSelectColor,
-} from 'twenty-ui/navigation';
+import { ColorSample } from 'twenty-ui/data-display';
+import { DEFAULT_COLOR_LABELS } from 'twenty-ui/navigation';
 import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
 
 import { DropdownMenuItemsContainer } from 'src/front-components/components/DropdownMenuItemsContainer';
@@ -12,10 +10,6 @@ import { DropdownMenuSeparator } from 'src/front-components/components/DropdownM
 const StyledListbox = styled.div`
   min-height: 0;
   overflow-y: auto;
-  width: 100%;
-`;
-
-const StyledColorOption = styled.div`
   width: 100%;
 `;
 
@@ -41,21 +35,15 @@ export const ThemeColorPickerMenu = ({
   <StyledListbox id={listboxId} role="listbox" aria-label="Tile background">
     <DropdownMenuItemsContainer>
       {MAIN_COLOR_NAMES.map((colorName) => (
-        <StyledColorOption
+        <DropdownMenuOption
           key={colorName}
           id={getOptionId(colorName)}
-          role="option"
-          aria-selected={colorName === selectedColor}
-          tabIndex={-1}
-        >
-          <MenuItemSelectColor
-            color={colorName}
-            colorLabels={DEFAULT_COLOR_LABELS}
-            selected={colorName === selectedColor}
-            focused={colorName === activeOption}
-            onClick={() => onSelectColor(colorName)}
-          />
-        </StyledColorOption>
+          onSelect={() => onSelectColor(colorName)}
+          text={DEFAULT_COLOR_LABELS[colorName]}
+          selected={colorName === selectedColor}
+          isActive={colorName === activeOption}
+          LeftComponent={<ColorSample colorName={colorName} />}
+        />
       ))}
     </DropdownMenuItemsContainer>
     <DropdownMenuSeparator />

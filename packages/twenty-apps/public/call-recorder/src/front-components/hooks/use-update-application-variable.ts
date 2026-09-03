@@ -1,5 +1,6 @@
-import { isUndefined } from '@sniptt/guards';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+import { resolveCallRecorderApplicationId } from 'src/front-components/utils/resolve-call-recorder-application-id.util';
 
 type UpdateApplicationVariableParams = {
   variableKey: string;
@@ -13,17 +14,15 @@ type UpdateApplicationVariableState = {
 };
 
 export const useUpdateApplicationVariable = (
-  applicationId: string | undefined,
+  frontComponentId: string,
 ): UpdateApplicationVariableState => {
   const updateApplicationVariable = async ({
     variableKey,
     value,
   }: UpdateApplicationVariableParams): Promise<boolean> => {
-    if (isUndefined(applicationId)) {
-      return false;
-    }
-
     try {
+      const applicationId =
+        await resolveCallRecorderApplicationId(frontComponentId);
       const client = new MetadataApiClient();
 
       await client.mutation({

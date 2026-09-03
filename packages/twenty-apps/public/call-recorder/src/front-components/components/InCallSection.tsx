@@ -15,44 +15,34 @@ import {
   CALL_RECORDER_TIMING_ROWS,
 } from 'src/front-components/constants/call-recorder-settings-layout.constant';
 import { useAutosaveApplicationVariable } from 'src/front-components/hooks/use-autosave-application-variable';
-import { type CallRecorderApplicationVariable } from 'src/front-components/types/call-recorder-application-variable.type';
 import { getApplicationVariableValue } from 'src/front-components/utils/get-application-variable-value.util';
 
 type InCallSectionProps = {
-  applicationId: string | undefined;
-  applicationVariables: Pick<
-    CallRecorderApplicationVariable,
-    'key' | 'value'
-  >[];
+  frontComponentId: string;
 };
 
-export const InCallSection = ({
-  applicationId,
-  applicationVariables,
-}: InCallSectionProps) => {
+export const InCallSection = ({ frontComponentId }: InCallSectionProps) => {
   const noticeMessageInputId = useId();
   const [isNoticeEnabled, setIsNoticeEnabled] = useState(
     () =>
-      getApplicationVariableValue({
-        applicationVariables,
-        variableKey: CALL_RECORDER_RECORDING_NOTICE_ROW.variableKey,
-      }) === 'true',
+      getApplicationVariableValue(
+        CALL_RECORDER_RECORDING_NOTICE_ROW.variableKey,
+      ) === 'true',
   );
   const [noticeMessageValue, setNoticeMessageValue] = useState(() =>
-    getApplicationVariableValue({
-      applicationVariables,
-      variableKey: CALL_RECORDER_RECORDING_NOTICE_MESSAGE_FIELD.variableKey,
-    }),
+    getApplicationVariableValue(
+      CALL_RECORDER_RECORDING_NOTICE_MESSAGE_FIELD.variableKey,
+    ),
   );
 
   const { saveImmediately: saveNoticeEnabledImmediately } =
     useAutosaveApplicationVariable({
-      applicationId,
+      frontComponentId,
       variableKey: CALL_RECORDER_RECORDING_NOTICE_ROW.variableKey,
     });
   const { saveDebounced: saveNoticeMessageDebounced } =
     useAutosaveApplicationVariable({
-      applicationId,
+      frontComponentId,
       variableKey: CALL_RECORDER_RECORDING_NOTICE_MESSAGE_FIELD.variableKey,
     });
 
@@ -79,16 +69,13 @@ export const InCallSection = ({
           {CALL_RECORDER_TIMING_ROWS.map((row) => (
             <TimingCounterRow
               key={row.variableKey}
-              applicationId={applicationId}
+              frontComponentId={frontComponentId}
               variableKey={row.variableKey}
               title={row.title}
               description={row.description}
               Icon={row.Icon}
               divider
-              persistedValue={getApplicationVariableValue({
-                applicationVariables,
-                variableKey: row.variableKey,
-              })}
+              persistedValue={getApplicationVariableValue(row.variableKey)}
             />
           ))}
           <SettingsOptionCardContentToggle

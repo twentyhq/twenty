@@ -7,7 +7,7 @@ import { useAutosaveApplicationVariable } from 'src/front-components/hooks/use-a
 import { getNormalizedNumberValue } from 'src/front-components/utils/get-normalized-number-value.util';
 
 type TimingCounterRowProps = {
-  applicationId: string | undefined;
+  frontComponentId: string;
   variableKey: string;
   title: string;
   description: string;
@@ -17,7 +17,7 @@ type TimingCounterRowProps = {
 };
 
 export const TimingCounterRow = ({
-  applicationId,
+  frontComponentId,
   variableKey,
   title,
   description,
@@ -28,7 +28,7 @@ export const TimingCounterRow = ({
   const inputId = useId();
   const [inputValue, setInputValue] = useState(persistedValue);
   const { saveDebounced, saveImmediately } = useAutosaveApplicationVariable({
-    applicationId,
+    frontComponentId,
     variableKey,
   });
 

@@ -2,6 +2,7 @@ import { useId, useState } from 'react';
 import { Section } from 'twenty-ui/layout';
 import { H2Title } from 'twenty-ui/typography';
 
+import { CALL_RECORDER_TRANSCRIPT_PROVIDER_OPTIONS } from 'src/constants/call-recorder-transcript-provider-options';
 import { LabelledSettingsField } from 'src/front-components/components/LabelledSettingsField';
 import { SettingsOptionCardContentSelect } from 'src/front-components/components/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentToggle } from 'src/front-components/components/SettingsOptionCardContentToggle';
@@ -16,69 +17,54 @@ import {
   CALL_RECORDER_TRANSCRIPT_PROVIDER_ROW,
 } from 'src/front-components/constants/call-recorder-settings-layout.constant';
 import { useAutosaveApplicationVariable } from 'src/front-components/hooks/use-autosave-application-variable';
-import { type CallRecorderApplicationVariable } from 'src/front-components/types/call-recorder-application-variable.type';
 import { getApplicationVariableValue } from 'src/front-components/utils/get-application-variable-value.util';
 import { serializeRichTextMarkdown } from 'src/front-components/utils/serialize-rich-text-markdown.util';
 import { extractRichTextMarkdown } from 'src/logic-functions/utils/extract-rich-text-markdown.util';
 
 type TranscriptionSectionProps = {
-  applicationId: string | undefined;
-  applicationVariables: Pick<
-    CallRecorderApplicationVariable,
-    'key' | 'value' | 'options'
-  >[];
+  frontComponentId: string;
 };
 
 export const TranscriptionSection = ({
-  applicationId,
-  applicationVariables,
+  frontComponentId,
 }: TranscriptionSectionProps) => {
   const inputId = useId();
   const [providerValue, setProviderValue] = useState(() =>
-    getApplicationVariableValue({
-      applicationVariables,
-      variableKey: CALL_RECORDER_TRANSCRIPT_PROVIDER_ROW.variableKey,
-    }),
+    getApplicationVariableValue(
+      CALL_RECORDER_TRANSCRIPT_PROVIDER_ROW.variableKey,
+    ),
   );
   const [isSummaryEnabled, setIsSummaryEnabled] = useState(
     () =>
-      getApplicationVariableValue({
-        applicationVariables,
-        variableKey: CALL_RECORDER_SUMMARY_ENABLED_ROW.variableKey,
-      }) === 'true',
+      getApplicationVariableValue(
+        CALL_RECORDER_SUMMARY_ENABLED_ROW.variableKey,
+      ) === 'true',
   );
   const [promptMarkdown, setPromptMarkdown] = useState(
     () =>
       extractRichTextMarkdown(
-        getApplicationVariableValue({
-          applicationVariables,
-          variableKey: CALL_RECORDER_SUMMARY_PROMPT_FIELD.variableKey,
-        }),
+        getApplicationVariableValue(
+          CALL_RECORDER_SUMMARY_PROMPT_FIELD.variableKey,
+        ),
       ) ?? '',
   );
 
   const { saveImmediately: saveProviderImmediately } =
     useAutosaveApplicationVariable({
-      applicationId,
+      frontComponentId,
       variableKey: CALL_RECORDER_TRANSCRIPT_PROVIDER_ROW.variableKey,
     });
   const { saveImmediately: saveSummaryEnabledImmediately } =
     useAutosaveApplicationVariable({
-      applicationId,
+      frontComponentId,
       variableKey: CALL_RECORDER_SUMMARY_ENABLED_ROW.variableKey,
     });
   const { saveDebounced: savePromptDebounced } = useAutosaveApplicationVariable(
     {
-      applicationId,
+      frontComponentId,
       variableKey: CALL_RECORDER_SUMMARY_PROMPT_FIELD.variableKey,
     },
   );
-
-  const providerOptions =
-    applicationVariables.find(
-      (variable) =>
-        variable.key === CALL_RECORDER_TRANSCRIPT_PROVIDER_ROW.variableKey,
-    )?.options ?? [];
 
   const handleProviderChange = (value: string) => {
     setProviderValue(value);
@@ -113,7 +99,7 @@ export const TranscriptionSection = ({
           >
             <TranscriptProviderControl
               value={providerValue}
-              options={providerOptions}
+              options={CALL_RECORDER_TRANSCRIPT_PROVIDER_OPTIONS}
               onChange={handleProviderChange}
             />
           </SettingsOptionCardContentSelect>

@@ -7,7 +7,6 @@ import { SettingsSelectControl } from 'src/front-components/components/SettingsS
 import { SettingsSelectMenu } from 'src/front-components/components/SettingsSelectMenu';
 import { StyledSettingsSelectAnchor } from 'src/front-components/components/StyledSettingsSelectAnchor';
 import { EMPTY_OPTION_LABEL } from 'src/front-components/constants/empty-option-label.constant';
-import { type CallRecorderApplicationVariableOption } from 'src/front-components/types/call-recorder-application-variable.type';
 import {
   getNextActiveOptionIndex,
   type SettingsSelectNavigationKey,
@@ -27,7 +26,7 @@ const getTranscriptProviderOptionId = (index: number) =>
 
 type TranscriptProviderControlProps = {
   value: string;
-  options: CallRecorderApplicationVariableOption[];
+  options: { label: string; value: string }[];
   onChange: (value: string) => void;
 };
 

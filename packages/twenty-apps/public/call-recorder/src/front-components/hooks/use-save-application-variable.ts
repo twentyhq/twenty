@@ -7,11 +7,9 @@ type SaveApplicationVariableParams = {
   value: string;
 };
 
-export const useSaveApplicationVariable = (
-  applicationId: string | undefined,
-) => {
+export const useSaveApplicationVariable = (frontComponentId: string) => {
   const { updateApplicationVariable } =
-    useUpdateApplicationVariable(applicationId);
+    useUpdateApplicationVariable(frontComponentId);
 
   const saveApplicationVariable = async ({
     variableKey,
