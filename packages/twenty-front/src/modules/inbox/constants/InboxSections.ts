@@ -18,9 +18,9 @@ export type InboxSection = {
 
 export const INBOX_SECTIONS: InboxSection[] = [
   {
-    slug: 'all',
+    slug: 'open',
     scope: InboxItemScope.INBOX,
-    label: msg`Inbox`,
+    label: msg`Open`,
     Icon: IconInbox,
   },
   {

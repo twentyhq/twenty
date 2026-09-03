@@ -5,10 +5,12 @@ import {
   type IconComponent,
   IconComment,
   IconHome,
+  IconInbox,
   IconSettings,
 } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { useIsInboxEnabled } from '@/inbox/hooks/useIsInboxEnabled';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -102,6 +104,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
   const { theme } = useContext(ThemeContext);
 
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
+  const isInboxEnabled = useIsInboxEnabled();
   const activeNavigationDrawerMode = useActiveNavigationDrawerMode();
   const { switchNavigationDrawerMode } = useSwitchNavigationDrawerMode();
 
@@ -122,6 +125,15 @@ export const MainNavigationDrawerModeSwitcher = () => {
       label: t`Home`,
       mode: NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
     },
+    ...(isInboxEnabled
+      ? [
+          {
+            Icon: IconInbox,
+            label: t`Inbox`,
+            mode: NAVIGATION_DRAWER_TABS.INBOX,
+          },
+        ]
+      : []),
     ...(hasAiPermission
       ? [
           {
