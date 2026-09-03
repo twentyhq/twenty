@@ -93,6 +93,10 @@ export class SdkProviderFactoryService {
     this.providerInstances.clear();
   }
 
+  private createOpencodeHeaders(): Record<string, string> {
+    return { 'x-opencode-session': crypto.randomUUID() };
+  }
+
   private toProviderInstance(
     provider: unknown,
     sdkPackage: AiSdkPackage,
@@ -143,6 +147,7 @@ export class SdkProviderFactoryService {
     const provider = factory({
       ...(config.apiKey && { apiKey: config.apiKey }),
       ...(config.baseUrl && { baseURL: config.baseUrl }),
+      headers: this.createOpencodeHeaders(),
     });
 
     return this.toProviderInstance(provider, config.npm, (modelId: string) => {
@@ -158,6 +163,7 @@ export class SdkProviderFactoryService {
     const provider = createXai({
       ...(config.apiKey && { apiKey: config.apiKey }),
       ...(config.baseUrl && { baseURL: config.baseUrl }),
+      headers: this.createOpencodeHeaders(),
     });
 
     return this.toProviderInstance(provider, AI_SDK_XAI, (modelId: string) =>
@@ -214,6 +220,7 @@ export class SdkProviderFactoryService {
       name: config.name ?? 'openai-compatible',
       baseURL: config.baseUrl,
       ...(config.apiKey && { apiKey: config.apiKey }),
+      headers: this.createOpencodeHeaders(),
     });
 
     return this.toProviderInstance(
@@ -231,6 +238,7 @@ export class SdkProviderFactoryService {
     const provider = createAzure({
       baseURL: config.baseUrl,
       ...(config.apiKey && { apiKey: config.apiKey }),
+      headers: this.createOpencodeHeaders(),
     });
 
     return this.toProviderInstance(provider, AI_SDK_AZURE, (modelId: string) =>
