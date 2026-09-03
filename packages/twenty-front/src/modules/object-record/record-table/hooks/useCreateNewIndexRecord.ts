@@ -77,7 +77,12 @@ export const useCreateNewIndexRecord = ({
     });
 
   const createNewIndexRecord = useCallback(
-    async (recordInput?: Partial<ObjectRecord>) => {
+    async (
+      recordInput?: Partial<ObjectRecord>,
+      options?: { shouldOpenLabelIdentifierInEditMode?: boolean },
+    ) => {
+      const shouldOpenLabelIdentifierInEditMode =
+        options?.shouldOpenLabelIdentifierInEditMode ?? true;
       const recordId = v4();
       const recordInputFromRLSPredicates = buildRecordInputFromRLSPredicates();
       const recordInputFromFilters = buildRecordInputFromFilters();
@@ -97,20 +102,23 @@ export const useCreateNewIndexRecord = ({
         openRecordInSidePanel({
           recordId,
           objectNameSingular: objectMetadataItem.nameSingular,
-          isNewRecord: true,
+          isNewRecord: shouldOpenLabelIdentifierInEditMode,
           resetNavigationStack: false,
         });
       } else if (openRecordIn === OpenRecordIn.SIDE_PANEL) {
         openRecordInSidePanel({
           recordId,
           objectNameSingular: objectMetadataItem.nameSingular,
-          isNewRecord: true,
+          isNewRecord: shouldOpenLabelIdentifierInEditMode,
         });
       } else {
         const labelIdentifierFieldMetadataItem =
           getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
-        if (isDefined(labelIdentifierFieldMetadataItem)) {
+        if (
+          shouldOpenLabelIdentifierInEditMode &&
+          isDefined(labelIdentifierFieldMetadataItem)
+        ) {
           store.set(newRecordTitleCellToOpenState.atom, {
             recordId,
             fieldName: labelIdentifierFieldMetadataItem.name,

@@ -51,11 +51,17 @@ export const RecordTableNoRecordGroupAddNew = () => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const handleCreateRecord = useCallback(
-    async (recordInput?: Partial<ObjectRecord>) => {
-      const createdRecord = await createNewIndexRecord({
-        position: 'last',
-        ...recordInput,
-      });
+    async (
+      recordInput?: Partial<ObjectRecord>,
+      options?: { shouldOpenLabelIdentifierInEditMode?: boolean },
+    ) => {
+      const createdRecord = await createNewIndexRecord(
+        {
+          position: 'last',
+          ...recordInput,
+        },
+        options,
+      );
 
       upsertRecordsInStore({ partialRecords: [createdRecord] });
 
@@ -91,7 +97,11 @@ export const RecordTableNoRecordGroupAddNew = () => {
       modalInstanceId={recordCreationFormModalId}
       objectMetadataItem={objectMetadataItem}
       initialDraftRecord={pendingRecordInput}
-      onSubmit={handleCreateRecord}
+      onSubmit={(draftRecord) =>
+        handleCreateRecord(draftRecord, {
+          shouldOpenLabelIdentifierInEditMode: false,
+        })
+      }
     />
   ) : null;
 
