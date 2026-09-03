@@ -156,7 +156,6 @@ describe('validateUsageLimitAgainstDefinition', () => {
       validateUsageLimitAgainstDefinition({
         ...validQuotaLimit,
         periodUnit: 'second',
-        periodCount: 60,
       }),
     ).toThrow(
       expect.objectContaining({

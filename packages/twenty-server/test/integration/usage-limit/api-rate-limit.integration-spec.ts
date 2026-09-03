@@ -204,6 +204,7 @@ describe('API rate limiting', () => {
       expect(extensions).toMatchObject({
         code: 'RATE_LIMITED',
         limitKind: 'speed',
+        exhaustedKind: 'limit',
         limit: LIMIT_VALUE,
         remaining: 0,
         periodCount: WINDOW_SECONDS,
@@ -247,6 +248,7 @@ describe('API rate limiting', () => {
         statusCode: 429,
         error: 'RATE_LIMITED',
         limitKind: 'speed',
+        exhaustedKind: 'limit',
         limit: LIMIT_VALUE,
         remaining: 0,
         periodCount: WINDOW_SECONDS,
