@@ -3,9 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CoreWorkflowVersionsListItem } from '@/object-core/workflows/versions/components/CoreWorkflowVersionsListItem';
 import { useCoreWorkflowVersions } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersions';
-import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { useOpenCoreWorkflowVersionSidePanel } from '@/object-core/workflows/versions/hooks/useOpenCoreWorkflowVersionSidePanel';
 import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { styled } from '@linaria/react';
@@ -22,7 +21,8 @@ export const SidePanelCoreWorkflowVersionsPage = () => {
   const workflowId = useSidePanelWorkflowIdOrThrow();
   const { coreWorkflowVersions, loading, error } =
     useCoreWorkflowVersions(workflowId);
-  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
+  const { openCoreWorkflowVersionSidePanel } =
+    useOpenCoreWorkflowVersionSidePanel();
 
   const selectableCoreWorkflowVersionIds = coreWorkflowVersions
     .filter(({ workspaceWorkflowVersionId }) =>
@@ -59,9 +59,10 @@ export const SidePanelCoreWorkflowVersionsPage = () => {
                 return;
               }
 
-              openRecordInSidePanel({
-                objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
-                recordId: coreWorkflowVersion.workspaceWorkflowVersionId,
+              openCoreWorkflowVersionSidePanel({
+                workspaceWorkflowVersionId:
+                  coreWorkflowVersion.workspaceWorkflowVersionId,
+                pageTitle: coreWorkflowVersion.label,
               });
             }}
           />
