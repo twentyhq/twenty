@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull } from 'typeorm';
+import { IsNull, LessThan, Or } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
@@ -29,6 +29,10 @@ export const AGENT_PLAN_OUTCOME = {
   partial: 'PARTIAL',
   dismissed: 'DISMISSED',
 } as const;
+
+// A claim older than this belongs to a run that died between claiming and
+// finishing; the next run may take the call over rather than wait forever
+export const TOOL_CALL_CLAIM_TIMEOUT_MS = 10 * 60 * 1000;
 
 // The rows under a plan. Editing and rejecting are the person shaping the plan;
 // running it is one act over every row still standing, and it is what ends the
@@ -122,9 +126,16 @@ export class InboxItemToolCallService {
       );
     }
 
-    const proposedToolCalls = (
-      await this.findToolCallsInOrder(workspaceId, inboxItemId)
-    ).filter(
+    const toolCalls = await this.findToolCallsInOrder(workspaceId, inboxItemId);
+
+    if (toolCalls.length === 0) {
+      throw new InboxException(
+        `Inbox item ${inboxItemId} has no tool calls to run`,
+        InboxExceptionCode.INVALID_INBOX_ACTION,
+      );
+    }
+
+    const proposedToolCalls = toolCalls.filter(
       (toolCall) => toolCall.status === InboxItemToolCallStatus.PROPOSED,
     );
 
@@ -137,11 +148,7 @@ export class InboxItemToolCallService {
       // rather than running a later call while an earlier one is in progress
       const claim = await this.inboxItemToolCallRepository.update(
         workspaceId,
-        {
-          id: toolCall.id,
-          status: InboxItemToolCallStatus.PROPOSED,
-          resolvedAt: IsNull(),
-        },
+        { id: toolCall.id, ...buildClaimablePredicate() },
         {
           resolvedByUserWorkspaceId: actorUserWorkspaceId,
           resolvedAt: new Date(),
@@ -152,32 +159,11 @@ export class InboxItemToolCallService {
         break;
       }
 
-      // A throw from the executor is a failure like any other: the claimed
-      // row must not stay claimed, or the plan could never be run or edited
-      const result = await this.inboxToolCallExecutionService
-        .execute({
-          workspaceId,
-          actorUserWorkspaceId,
-          toolName: toolCall.toolName,
-          input: toolCall.editedInput ?? toolCall.proposedInput,
-        })
-        .catch((error: unknown) => ({
-          status: 'FAILED' as const,
-          error: error instanceof Error ? error.message : String(error),
-        }));
-
-      await this.inboxItemToolCallRepository.update(
+      await this.executeClaimedToolCall({
         workspaceId,
-        { id: toolCall.id },
-        {
-          status:
-            result.status === 'EXECUTED'
-              ? InboxItemToolCallStatus.EXECUTED
-              : InboxItemToolCallStatus.FAILED,
-          output: result.status === 'EXECUTED' ? result.output : null,
-          error: result.status === 'FAILED' ? result.error : null,
-        },
-      );
+        actorUserWorkspaceId,
+        inboxItemToolCallId: toolCall.id,
+      });
     }
 
     // Read back rather than trusting what was loaded before the loop: a skip,
@@ -225,6 +211,62 @@ export class InboxItemToolCallService {
     });
   }
 
+  // Runs on the row as it is after the claim, not as it was loaded before the
+  // loop, so an edit that landed in between is what executes. Whatever goes
+  // wrong from here lands on the row as a failure, so the claim never
+  // outlives the run.
+  private async executeClaimedToolCall({
+    workspaceId,
+    actorUserWorkspaceId,
+    inboxItemToolCallId,
+  }: {
+    workspaceId: string;
+    actorUserWorkspaceId: string;
+    inboxItemToolCallId: string;
+  }): Promise<void> {
+    const toolCall = await this.inboxItemToolCallRepository.findOne(
+      workspaceId,
+      { where: { id: inboxItemToolCallId } },
+    );
+
+    if (!isDefined(toolCall)) {
+      return;
+    }
+
+    const invalidKeys = findInvalidInputKeys(toolCall);
+
+    const result =
+      invalidKeys.length > 0
+        ? {
+            status: 'FAILED' as const,
+            error: `Invalid input for ${invalidKeys.join(', ')}`,
+          }
+        : await this.inboxToolCallExecutionService
+            .execute({
+              workspaceId,
+              actorUserWorkspaceId,
+              toolName: toolCall.toolName,
+              input: toolCall.editedInput ?? toolCall.proposedInput,
+            })
+            .catch((error: unknown) => ({
+              status: 'FAILED' as const,
+              error: error instanceof Error ? error.message : String(error),
+            }));
+
+    await this.inboxItemToolCallRepository.update(
+      workspaceId,
+      { id: toolCall.id },
+      {
+        status:
+          result.status === 'EXECUTED'
+            ? InboxItemToolCallStatus.EXECUTED
+            : InboxItemToolCallStatus.FAILED,
+        output: result.status === 'EXECUTED' ? result.output : null,
+        error: result.status === 'FAILED' ? result.error : null,
+      },
+    );
+  }
+
   private findToolCallsInOrder(
     workspaceId: string,
     inboxItemId: string,
@@ -239,21 +281,7 @@ export class InboxItemToolCallService {
   // satisfy the schema the producer declared
   private assertInputsMatchSchema(toolCalls: InboxItemToolCallEntity[]) {
     for (const toolCall of toolCalls) {
-      const input = (toolCall.editedInput ??
-        toolCall.proposedInput ??
-        {}) as Record<string, unknown>;
-
-      const invalidKeys = toolCall.inputSchema
-        .filter((field) => {
-          const value = input[field.key];
-
-          if (!isDefined(value) || value === '') {
-            return field.isRequired === true;
-          }
-
-          return !isValueOfFieldType(field.type, value);
-        })
-        .map((field) => field.key);
+      const invalidKeys = findInvalidInputKeys(toolCall);
 
       if (invalidKeys.length > 0) {
         throw new InboxException(
@@ -275,10 +303,9 @@ export class InboxItemToolCallService {
       workspaceId,
       {
         id: toolCall.id,
-        status: toolCall.status,
         ...(toolCall.status === InboxItemToolCallStatus.PROPOSED
-          ? { resolvedAt: IsNull() }
-          : {}),
+          ? buildClaimablePredicate()
+          : { status: toolCall.status }),
       },
       patch,
     );
@@ -292,7 +319,7 @@ export class InboxItemToolCallService {
   }
 
   // A call can only be shaped through an item the actor can see, and only
-  // while it has not run.
+  // while it is neither running nor run.
   private async findEditableToolCallOrThrow({
     workspaceId,
     actorUserWorkspaceId,
@@ -320,12 +347,8 @@ export class InboxItemToolCallService {
       accessibleQueueIds,
     });
 
-    const isRunning =
-      toolCall.status === InboxItemToolCallStatus.PROPOSED &&
-      isDefined(toolCall.resolvedAt);
-
     if (
-      isRunning ||
+      isToolCallRunning(toolCall) ||
       toolCall.status === InboxItemToolCallStatus.EXECUTED ||
       toolCall.status === InboxItemToolCallStatus.FAILED
     ) {
@@ -338,6 +361,38 @@ export class InboxItemToolCallService {
     return toolCall;
   }
 }
+
+const getClaimCutoff = () => new Date(Date.now() - TOOL_CALL_CLAIM_TIMEOUT_MS);
+
+// A proposed call nobody holds, or one whose holder has been gone long enough
+// to count as dead
+const buildClaimablePredicate = () => ({
+  status: InboxItemToolCallStatus.PROPOSED,
+  resolvedAt: Or(IsNull(), LessThan(getClaimCutoff())),
+});
+
+const isToolCallRunning = (toolCall: InboxItemToolCallEntity) =>
+  toolCall.status === InboxItemToolCallStatus.PROPOSED &&
+  isDefined(toolCall.resolvedAt) &&
+  toolCall.resolvedAt > getClaimCutoff();
+
+const findInvalidInputKeys = (toolCall: InboxItemToolCallEntity): string[] => {
+  const input = (toolCall.editedInput ??
+    toolCall.proposedInput ??
+    {}) as Record<string, unknown>;
+
+  return toolCall.inputSchema
+    .filter((field) => {
+      const value = input[field.key];
+
+      if (!isDefined(value) || value === '') {
+        return field.isRequired === true;
+      }
+
+      return !isValueOfFieldType(field.type, value);
+    })
+    .map((field) => field.key);
+};
 
 const isValueOfFieldType = (
   type: InboxItemFieldSchema['type'],

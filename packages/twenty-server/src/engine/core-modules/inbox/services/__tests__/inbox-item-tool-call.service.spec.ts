@@ -4,7 +4,10 @@ import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/
 import { InboxItemToolCallStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-tool-call-status.enum';
 import { InboxExceptionCode } from 'src/engine/core-modules/inbox/inbox.exception';
 import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
-import { InboxItemToolCallService } from 'src/engine/core-modules/inbox/services/inbox-item-tool-call.service';
+import {
+  InboxItemToolCallService,
+  TOOL_CALL_CLAIM_TIMEOUT_MS,
+} from 'src/engine/core-modules/inbox/services/inbox-item-tool-call.service';
 import { InboxToolCallExecutionService } from 'src/engine/core-modules/inbox/services/inbox-tool-call-execution.service';
 import { InboxTransitionService } from 'src/engine/core-modules/inbox/services/inbox-transition.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
@@ -49,7 +52,9 @@ describe('InboxItemToolCallService', () => {
     accessibleQueueIds: [],
   };
 
-  // The rows as read before the run, then as read back after it
+  // The rows as read before the run, then as read back after it. A claimed
+  // row is read again by id before it executes, from the pre-run set unless a
+  // test overrides it
   const givenToolCalls = (
     before: InboxItemToolCallEntity[],
     after: InboxItemToolCallEntity[],
@@ -57,6 +62,10 @@ describe('InboxItemToolCallService', () => {
     inboxItemToolCallRepository.find
       .mockResolvedValueOnce(before)
       .mockResolvedValueOnce(after);
+    inboxItemToolCallRepository.findOne.mockImplementation(
+      async (_workspaceId: string, options: { where: { id: string } }) =>
+        before.find((toolCall) => toolCall.id === options.where.id) ?? null,
+    );
   };
 
   beforeEach(async () => {
@@ -196,6 +205,42 @@ describe('InboxItemToolCallService', () => {
       ).toBeLessThan(
         inboxToolCallExecutionService.execute.mock.invocationCallOrder[0],
       );
+    });
+
+    // An edit that landed between the first read and the claim is what runs
+    it('should run the input as it is after the claim', async () => {
+      // Prepare
+      const first = buildToolCall({ id: 'first' });
+
+      givenToolCalls(
+        [first],
+        [{ ...first, status: InboxItemToolCallStatus.EXECUTED }],
+      );
+      inboxItemToolCallRepository.findOne.mockResolvedValue({
+        ...first,
+        editedInput: { to: 'late@example.com' },
+      });
+
+      // Act
+      await service.runAll({ ...actorArgs, inboxItemId: INBOX_ITEM_ID });
+
+      // Assert
+      expect(inboxToolCallExecutionService.execute).toHaveBeenCalledWith(
+        expect.objectContaining({ input: { to: 'late@example.com' } }),
+      );
+    });
+
+    it('should refuse to run a plan with no tool calls', async () => {
+      // Prepare
+      inboxItemToolCallRepository.find.mockResolvedValueOnce([]);
+
+      // Act & Assert
+      await expect(
+        service.runAll({ ...actorArgs, inboxItemId: INBOX_ITEM_ID }),
+      ).rejects.toMatchObject({
+        code: InboxExceptionCode.INVALID_INBOX_ACTION,
+      });
+      expect(inboxTransitionService.transition).not.toHaveBeenCalled();
     });
 
     // Losing a claim means another run is ahead in the plan; the later calls
@@ -441,6 +486,26 @@ describe('InboxItemToolCallService', () => {
         code: InboxExceptionCode.INBOX_ITEM_CHANGED,
       });
       expect(inboxItemToolCallRepository.update).not.toHaveBeenCalled();
+    });
+
+    // A claim left behind by a run that died is not a running call
+    it('should let a step with a stale claim be skipped', async () => {
+      // Prepare
+      inboxItemToolCallRepository.findOne.mockResolvedValue(
+        buildToolCall({
+          resolvedAt: new Date(Date.now() - 2 * TOOL_CALL_CLAIM_TIMEOUT_MS),
+        }),
+      );
+
+      // Act
+      const toolCall = await service.setRejected({
+        ...actorArgs,
+        inboxItemToolCallId: 'tool-call-id',
+        isRejected: true,
+      });
+
+      // Assert
+      expect(toolCall.status).toBe(InboxItemToolCallStatus.REJECTED);
     });
 
     it('should refuse to skip a step that already ran', async () => {
