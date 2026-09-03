@@ -1,12 +1,17 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import {
   CoreObjectNameSingular,
   MessageChannelType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { IconAlertTriangle, IconInfoCircle } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+
+import { formatNumber } from '~/utils/format/formatNumber';
 
 import {
   CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH,
@@ -34,27 +39,48 @@ const StyledSubjectInput = styled.input`
   width: 100%;
 `;
 
-const StyledHints = styled.div`
+const StyledWarning = styled.div`
+  align-items: flex-start;
+  color: ${themeCssVariables.font.color.secondary};
   display: flex;
-  flex-direction: column;
+  font-size: ${themeCssVariables.font.size.xs};
   gap: ${themeCssVariables.spacing[1]};
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 `;
 
-const StyledHint = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.xs};
+const StyledWarningIcon = styled(IconAlertTriangle)`
+  color: ${themeCssVariables.color.yellow};
+  flex-shrink: 0;
 `;
+
+const StyledRecipientCount = styled.span<{ $isMuted: boolean }>`
+  color: ${({ $isMuted }) =>
+    $isMuted
+      ? themeCssVariables.font.color.light
+      : themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  white-space: nowrap;
+`;
+
+const StyledTopicInfoIcon = styled(IconInfoCircle)`
+  color: ${themeCssVariables.font.color.light};
+  display: block;
+`;
+
+const RECIPIENT_COUNT_ANCHOR_ID = 'campaign-composer-recipient-count';
+const UNSUBSCRIBE_TOPIC_ANCHOR_ID = 'campaign-composer-unsubscribe-topic-info';
 
 type CampaignAudiencePreview = NonNullable<
   ReturnType<typeof useCampaignAudiencePreview>['audiencePreview']
 >;
 
-const buildAudienceHint = (preview: CampaignAudiencePreview): string => {
+const buildExcludedRecipientsBreakdown = (
+  preview: CampaignAudiencePreview,
+): string[] => {
   const parts: string[] = [];
 
   if (preview.withoutEmail > 0) {
-    parts.push(t`${preview.withoutEmail} without email`);
+    parts.push(t`${preview.withoutEmail} without an email address`);
   }
   if (preview.duplicateEmails > 0) {
     parts.push(t`${preview.duplicateEmails} duplicate`);
@@ -72,15 +98,7 @@ const buildAudienceHint = (preview: CampaignAudiencePreview): string => {
     parts.push(t`${preview.overCap} over the recipient limit`);
   }
 
-  if (parts.length === 0) {
-    return t`${preview.totalMembers} in this list`;
-  }
-
-  const breakdown = parts.join(', ');
-
-  // Without exclusions every member is sendable, so the count is only worth
-  // spelling out when the two differ.
-  return t`${preview.totalMembers} in this list, ${preview.sendable} sendable (${breakdown})`;
+  return parts;
 };
 
 type CampaignDetailsFieldsProps = {
@@ -92,6 +110,7 @@ export const CampaignDetailsFields = ({
   campaign,
   width,
 }: CampaignDetailsFieldsProps) => {
+  const { theme } = useContext(ThemeContext);
   const detailsState = useCampaignDetailsState({ campaign });
 
   const { channels } = useMyMessageChannels();
@@ -133,35 +152,21 @@ export const CampaignDetailsFields = ({
   const hasTopicOptions = topicOptions.length > 0;
   const hasSenderOptions = senderOptions.length > 0;
 
+  const excludedRecipientsBreakdown = isDefined(audiencePreview)
+    ? buildExcludedRecipientsBreakdown(audiencePreview)
+    : [];
+  const hasExcludedRecipients = excludedRecipientsBreakdown.length > 0;
+
   return (
     <CampaignEnvelopeBox
       width={width}
       onBlur={() => detailsState.flush()}
       below={
-        (isDefined(audiencePreview) ||
-          hasAudiencePreviewFailed ||
-          !hasSenderOptions ||
-          hasTopicOptions) && (
-          <StyledHints>
-            {!hasSenderOptions && (
-              <StyledHint>
-                {t`No sending address is available. Connect a verified sending domain in Settings before this campaign can go out.`}
-              </StyledHint>
-            )}
-            {isDefined(audiencePreview) && (
-              <StyledHint>{buildAudienceHint(audiencePreview)}</StyledHint>
-            )}
-            {hasAudiencePreviewFailed && (
-              <StyledHint>
-                {t`Could not load this list's audience, so the recipient count is unknown.`}
-              </StyledHint>
-            )}
-            {hasTopicOptions && (
-              <StyledHint>
-                {t`The unsubscribe topic this email belongs to. Recipients who opted out of it are skipped, and the unsubscribe link is scoped to it.`}
-              </StyledHint>
-            )}
-          </StyledHints>
+        !hasSenderOptions && (
+          <StyledWarning>
+            <StyledWarningIcon size={theme.icon.size.sm} />
+            {t`No sending address is available. Connect a verified sending domain in Settings before this campaign can go out.`}
+          </StyledWarning>
         )
       }
     >
@@ -181,6 +186,35 @@ export const CampaignDetailsFields = ({
       <ComposerFieldRow
         label={t`To`}
         labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
+        trailing={
+          <>
+            {hasAudiencePreviewFailed && (
+              <StyledRecipientCount $isMuted={true}>
+                {t`Count unavailable`}
+              </StyledRecipientCount>
+            )}
+            {isDefined(audiencePreview) && (
+              <StyledRecipientCount
+                id={RECIPIENT_COUNT_ANCHOR_ID}
+                $isMuted={false}
+              >
+                {hasExcludedRecipients
+                  ? t`${formatNumber(audiencePreview.sendable)} of ${formatNumber(audiencePreview.totalMembers)} recipients`
+                  : t`${formatNumber(audiencePreview.totalMembers)} recipients`}
+              </StyledRecipientCount>
+            )}
+            {hasExcludedRecipients && (
+              <AppTooltip
+                anchorSelect={`#${RECIPIENT_COUNT_ANCHOR_ID}`}
+                content={t`Skipped: ${excludedRecipientsBreakdown.join(', ')}`}
+                delay={TooltipDelay.shortDelay}
+                noArrow
+                place="bottom"
+                positionStrategy="fixed"
+              />
+            )}
+          </>
+        }
       >
         <FormSingleRecordPicker
           key={`list-${detailsState.draftResyncKey}`}
@@ -194,6 +228,22 @@ export const CampaignDetailsFields = ({
         <ComposerFieldRow
           label={t`Unsubscribe topic`}
           labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
+          trailing={
+            <>
+              <StyledTopicInfoIcon
+                id={UNSUBSCRIBE_TOPIC_ANCHOR_ID}
+                size={theme.icon.size.md}
+              />
+              <AppTooltip
+                anchorSelect={`#${UNSUBSCRIBE_TOPIC_ANCHOR_ID}`}
+                content={t`Recipients who opted out of this topic are skipped, and the unsubscribe link in this email is scoped to it.`}
+                delay={TooltipDelay.shortDelay}
+                noArrow
+                place="bottom"
+                positionStrategy="fixed"
+              />
+            </>
+          }
         >
           <Select
             dropdownId="campaign-composer-unsubscribe-topic"

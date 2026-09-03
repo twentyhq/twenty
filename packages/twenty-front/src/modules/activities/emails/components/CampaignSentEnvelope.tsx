@@ -1,10 +1,7 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  CoreObjectNameSingular,
-  MessageCampaignStatus,
-} from 'twenty-shared/types';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -30,46 +27,6 @@ const StyledEmptyValue = styled.span`
   color: ${themeCssVariables.font.color.light};
   font-size: ${themeCssVariables.font.size.md};
 `;
-
-const StyledResults = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.xs};
-`;
-
-const buildResultsSummary = (campaign: MessageCampaign): string => {
-  const parts: string[] = [t`${campaign.sentCount} sent`];
-
-  if (campaign.deliveredCount > 0) {
-    parts.push(t`${campaign.deliveredCount} delivered`);
-  }
-  if (campaign.failedCount > 0) {
-    parts.push(t`${campaign.failedCount} failed`);
-  }
-  if (campaign.skippedCount > 0) {
-    parts.push(t`${campaign.skippedCount} skipped`);
-  }
-  if (campaign.bouncedCount > 0) {
-    parts.push(t`${campaign.bouncedCount} bounced`);
-  }
-  if (campaign.complainedCount > 0) {
-    parts.push(t`${campaign.complainedCount} marked as spam`);
-  }
-
-  return parts.join(', ');
-};
-
-const buildStatusSummary = (campaign: MessageCampaign): string | null => {
-  switch (campaign.status) {
-    case MessageCampaignStatus.SENDING:
-      return t`Still sending.`;
-    case MessageCampaignStatus.SENT_WITH_ERRORS:
-      return t`Finished, but not every recipient was reached.`;
-    case MessageCampaignStatus.CANCELED:
-      return t`Canceled. Emails already handed to the provider still went out.`;
-    default:
-      return null;
-  }
-};
 
 type CampaignSentEnvelopeProps = {
   campaign: MessageCampaign;
@@ -123,18 +80,8 @@ export const CampaignSentEnvelope = ({
   const isTopicUnresolved =
     hasUnsubscribeTopic && !isDefined(unsubscribeTopic) && !areTopicsLoading;
 
-  const statusSummary = buildStatusSummary(campaign);
-
   return (
-    <CampaignEnvelopeBox
-      width={width}
-      below={
-        <StyledResults>
-          {buildResultsSummary(campaign)}
-          {isDefined(statusSummary) ? ` ${statusSummary}` : ''}
-        </StyledResults>
-      }
-    >
+    <CampaignEnvelopeBox width={width}>
       <ComposerFieldRow
         label={t`From`}
         labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}

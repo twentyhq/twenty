@@ -6,7 +6,9 @@ import { useSendMessageCampaign } from '@/activities/emails/hooks/useSendMessage
 import { HeadlessConfirmationModalEngineCommandEffect } from '@/command-menu-item/engine-command/components/HeadlessConfirmationModalEngineCommandEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { t } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
+
+import { formatNumber } from '~/utils/format/formatNumber';
 
 export const SendMessageCampaignSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
@@ -42,7 +44,10 @@ export const SendMessageCampaignSingleRecordCommand = () => {
   };
 
   const subtitle = isDefined(audiencePreview)
-    ? t`This sends to ${audiencePreview.sendable} recipient(s) and cannot be undone once it starts.`
+    ? plural(audiencePreview.sendable, {
+        one: `This sends to ${formatNumber(audiencePreview.sendable)} recipient and cannot be undone once it starts.`,
+        other: `This sends to ${formatNumber(audiencePreview.sendable)} recipients and cannot be undone once it starts.`,
+      })
     : t`This sends the campaign to everyone on its list and cannot be undone once it starts.`;
 
   return (
