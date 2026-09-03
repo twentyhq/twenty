@@ -17,7 +17,7 @@ import {
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
-import { SettingsPath } from 'twenty-shared/types';
+import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
@@ -937,6 +937,7 @@ const createSettingsRouteElements = ({
       element={
         <SettingsProtectedRouteWrapper
           settingsPermission={PermissionFlagType.WORKSPACE}
+          requiredFeatureFlag={FeatureFlagKey.IS_INBOX_ENABLED}
         />
       }
     >

@@ -7,5 +7,5 @@ import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-r
 // agree on a single row.
 export const isUniqueViolation = (error: unknown): boolean =>
   error instanceof QueryFailedError &&
-  (error as QueryFailedError & { code?: string }).code ===
-    POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION;
+  'code' in error &&
+  error.code === POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION;

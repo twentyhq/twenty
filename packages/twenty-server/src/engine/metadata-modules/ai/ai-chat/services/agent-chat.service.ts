@@ -1197,6 +1197,12 @@ export class AgentChatService {
       thread.userWorkspaceId,
     );
 
+    await this.agentChatInboxService.onThreadTitleChanged({
+      threadId,
+      workspaceId,
+      title,
+    });
+
     return title;
   }
 }

@@ -196,8 +196,8 @@ export class CreateInboxCoreTablesFastInstanceCommand
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DROP TABLE IF EXISTS "core"."inboxItem"`);
     await queryRunner.query(`DROP TABLE IF EXISTS "core"."inboxQueueRole"`);
-    await queryRunner.query(`DROP TABLE IF EXISTS "core"."inboxQueue"`);
     await queryRunner.query(`DROP TABLE IF EXISTS "core"."inboxItemType"`);
+    await queryRunner.query(`DROP TABLE IF EXISTS "core"."inboxQueue"`);
     await queryRunner.query(
       `DROP TYPE IF EXISTS "core"."inboxItem_priority_enum"`,
     );

@@ -56,8 +56,31 @@ export const InboxItemActionInputModal = ({
     ),
   );
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const setFieldValue = (key: string, value: string) =>
     setInput((current) => ({ ...current, [key]: value }));
+
+  // A cleared optional field is omitted rather than sent as an empty string,
+  // which a NUMBER field would reject
+  const buildSubmittedInput = () =>
+    Object.fromEntries(
+      Object.entries(input).filter(([, value]) => value !== ''),
+    );
+
+  const handleSubmit = async () => {
+    if (isSubmitting) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      await onSubmit(buildSubmittedInput());
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const isMissingRequiredField = action.inputSchema.some(
     (field) => field.isRequired && (input[field.key] ?? '') === '',
@@ -67,7 +90,7 @@ export const InboxItemActionInputModal = ({
     <StyledForm
       onSubmit={(event) => {
         event.preventDefault();
-        void onSubmit(input);
+        void handleSubmit();
       }}
     >
       {action.inputSchema.map((field) =>
@@ -111,7 +134,7 @@ export const InboxItemActionInputModal = ({
         />
         <Button
           accent="blue"
-          disabled={isMissingRequiredField}
+          disabled={isMissingRequiredField || isSubmitting}
           size="small"
           title={action.label}
           type="submit"

@@ -21,6 +21,8 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
+const MAX_SLUG_ATTEMPTS = 3;
+
 export const DEFAULT_INBOX_QUEUE_SLUG = 'triage';
 
 @Injectable()
@@ -55,11 +57,21 @@ export class InboxQueueService {
       userWorkspaceId,
     });
 
-    const grants = await this.inboxQueueRoleRepository.find(workspaceId, {
-      where: { roleId },
-    });
+    const [grants, defaultQueue] = await Promise.all([
+      this.inboxQueueRoleRepository.find(workspaceId, { where: { roleId } }),
+      this.inboxQueueRepository.findOne(workspaceId, {
+        where: { isDefault: true },
+      }),
+    ]);
 
-    return grants.map((grant) => grant.queueId);
+    // Triage catches work nothing else claimed, so it needs no grant: the
+    // whole workspace can reach it once it exists
+    return [
+      ...new Set([
+        ...grants.map((grant) => grant.queueId),
+        ...(isDefined(defaultQueue) ? [defaultQueue.id] : []),
+      ]),
+    ];
   }
 
   async findAccessibleQueues({
@@ -179,15 +191,14 @@ export class InboxQueueService {
     icon?: string | null;
     roleIds: string[];
   }): Promise<InboxQueueEntity> {
-    const queue = await this.inboxQueueRepository.insertAndReturnOne(
+    // Checked before the insert so a bad grant cannot leave an orphan queue
+    await this.assertRolesBelongToWorkspace({ workspaceId, roleIds });
+
+    const queue = await this.insertQueueWithAvailableSlug({
       workspaceId,
-      {
-        name,
-        slug: await this.buildAvailableSlug({ workspaceId, name }),
-        icon: icon ?? null,
-        isDefault: false,
-      },
-    );
+      name,
+      icon,
+    });
 
     await this.setQueueRoles({
       workspaceId,
@@ -196,6 +207,38 @@ export class InboxQueueService {
     });
 
     return queue;
+  }
+
+  // Two admins creating queues with the same name at once can both pick the
+  // same free slug; the unique index arbitrates and the loser tries the next.
+  private async insertQueueWithAvailableSlug({
+    workspaceId,
+    name,
+    icon,
+  }: {
+    workspaceId: string;
+    name: string;
+    icon?: string | null;
+  }): Promise<InboxQueueEntity> {
+    for (let attempt = 0; attempt < MAX_SLUG_ATTEMPTS; attempt += 1) {
+      try {
+        return await this.inboxQueueRepository.insertAndReturnOne(workspaceId, {
+          name,
+          slug: await this.buildAvailableSlug({ workspaceId, name }),
+          icon: icon ?? null,
+          isDefault: false,
+        });
+      } catch (error) {
+        if (!isUniqueViolation(error) || attempt === MAX_SLUG_ATTEMPTS - 1) {
+          throw error;
+        }
+      }
+    }
+
+    throw new InboxException(
+      `Could not find an available address for inbox queue ${name}`,
+      InboxExceptionCode.INTERNAL_SERVER_ERROR,
+    );
   }
 
   // The slug is not regenerated on rename: it is in the URL of every link and
@@ -248,16 +291,25 @@ export class InboxQueueService {
 
     const defaultQueue = await this.findOrCreateDefaultQueue({ workspaceId });
 
-    // A slot is unique per queue, so a moved item could collide with one triage
-    // already holds. It gives up its slot rather than its existence: the next
-    // event about the same subject opens a fresh slot wherever it now routes.
-    await this.inboxItemRepository.update(
-      workspaceId,
-      { queueId: queue.id },
-      { queueId: defaultQueue.id, slotKey: null },
-    );
+    // One transaction, so an item routed to the queue while it is going away
+    // is moved with the others rather than swept up by the cascade.
+    await this.coreDataSource.transaction(async (manager) => {
+      // A slot is unique per queue, so a moved item could collide with one
+      // triage already holds. It gives up its slot rather than its existence:
+      // the next event about the same subject opens a fresh slot wherever it
+      // now routes.
+      await this.inboxItemRepository
+        .withManager(manager)
+        .update(
+          workspaceId,
+          { queueId: queue.id },
+          { queueId: defaultQueue.id, slotKey: null },
+        );
 
-    await this.inboxQueueRepository.delete(workspaceId, { id: queue.id });
+      await this.inboxQueueRepository
+        .withManager(manager)
+        .delete(workspaceId, { id: queue.id });
+    });
   }
 
   // Which roles can reach this shared inbox. Granting access is a permission

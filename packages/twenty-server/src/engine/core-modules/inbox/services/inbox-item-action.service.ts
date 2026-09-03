@@ -180,7 +180,10 @@ export class InboxItemActionService {
       .find((field) => {
         const value = input?.[field.key];
 
-        return !isDefined(value) || value === '';
+        return (
+          !isDefined(value) ||
+          (typeof value === 'string' && value.trim() === '')
+        );
       });
 
     if (isDefined(missingField)) {

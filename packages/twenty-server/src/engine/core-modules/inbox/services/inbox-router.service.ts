@@ -256,7 +256,7 @@ export class InboxRouterService {
         priority: args.priority ?? inboxItemType.defaultPriority,
         ...(isDefined(args.title) ? { title: args.title } : {}),
         ...(isDefined(args.preview) ? { preview: args.preview } : {}),
-        ...(isDefined(args.payload) ? { payload: args.payload } : {}),
+        ...(args.payload !== undefined ? { payload: args.payload } : {}),
         lastEventAt: () => 'clock_timestamp()',
         version: () => '"version" + 1',
       },

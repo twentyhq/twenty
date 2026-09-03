@@ -24,7 +24,15 @@ export const useInboxItems = (
 ) => {
   const apolloCoreClient = useApolloCoreClient();
   const isInboxEnabled = useIsInboxEnabled();
-  const [limit, setLimit] = useState(INBOX_ITEMS_PAGE_SIZE);
+  // The grown page belongs to one view: switching section, queue or
+  // assignment starts again from the first page
+  const viewKey = `${scope ?? ''}|${queueSlug ?? ''}|${assignment ?? ''}`;
+  const [pagination, setPagination] = useState({
+    viewKey,
+    limit: INBOX_ITEMS_PAGE_SIZE,
+  });
+  const limit =
+    pagination.viewKey === viewKey ? pagination.limit : INBOX_ITEMS_PAGE_SIZE;
 
   const { data, loading, error } = useQuery<
     { myInboxItems: InboxItem[] },
@@ -49,7 +57,7 @@ export const useInboxItems = (
   const inboxItems = fetchedItems.slice(0, limit);
 
   const loadMoreItems = () => {
-    setLimit((currentLimit) => currentLimit + INBOX_ITEMS_PAGE_SIZE);
+    setPagination({ viewKey, limit: limit + INBOX_ITEMS_PAGE_SIZE });
   };
 
   return {

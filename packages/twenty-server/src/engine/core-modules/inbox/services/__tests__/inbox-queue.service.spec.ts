@@ -20,12 +20,20 @@ const USER_WORKSPACE_ID = 'user-workspace-id';
 describe('InboxQueueService', () => {
   let service: InboxQueueService;
 
-  const inboxQueueRepository = {
+  const inboxQueueRepository: {
+    find: jest.Mock;
+    findOne: jest.Mock;
+    insertAndReturnOne: jest.Mock;
+    update: jest.Mock;
+    delete: jest.Mock;
+    withManager: jest.Mock;
+  } = {
     find: jest.fn(),
     findOne: jest.fn(),
     insertAndReturnOne: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
+    withManager: jest.fn(() => inboxQueueRepository),
   };
   const inboxQueueRoleRepository: {
     find: jest.Mock;
@@ -42,7 +50,10 @@ describe('InboxQueueService', () => {
     // that transaction's manager
     withManager: jest.fn(() => inboxQueueRoleRepository),
   };
-  const inboxItemRepository = { update: jest.fn() };
+  const inboxItemRepository: { update: jest.Mock; withManager: jest.Mock } = {
+    update: jest.fn(),
+    withManager: jest.fn(() => inboxItemRepository),
+  };
   const roleRepository = { find: jest.fn() };
   const userRoleService = { getRoleIdForUserWorkspace: jest.fn() };
   const queueLockQueryBuilder = {
@@ -268,7 +279,10 @@ describe('InboxQueueService', () => {
       expect(queueIds).toEqual([QUEUE_ID, TRIAGE_QUEUE_ID]);
     });
 
-    it('should return nothing when the role has no shared inbox', async () => {
+    it('should return nothing when the role has no shared inbox and triage does not exist yet', async () => {
+      // Prepare
+      inboxQueueRepository.findOne.mockResolvedValue(null);
+
       // Act
       const queueIds = await service.findAccessibleQueueIds({
         workspaceId: WORKSPACE_ID,
@@ -277,6 +291,24 @@ describe('InboxQueueService', () => {
 
       // Assert
       expect(queueIds).toEqual([]);
+    });
+
+    // Triage catches work nothing else claimed, so it needs no grant
+    it('should include triage for everyone once it exists', async () => {
+      // Prepare
+      inboxQueueRepository.findOne.mockResolvedValue({
+        id: TRIAGE_QUEUE_ID,
+        isDefault: true,
+      });
+
+      // Act
+      const queueIds = await service.findAccessibleQueueIds({
+        workspaceId: WORKSPACE_ID,
+        userWorkspaceId: USER_WORKSPACE_ID,
+      });
+
+      // Assert
+      expect(queueIds).toEqual([TRIAGE_QUEUE_ID]);
     });
   });
 

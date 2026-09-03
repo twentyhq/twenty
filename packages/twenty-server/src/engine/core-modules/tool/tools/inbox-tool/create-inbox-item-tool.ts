@@ -12,6 +12,7 @@ import { type InboxPrincipalRef } from 'src/engine/core-modules/inbox/types/rout
 import { CreateInboxItemToolInputZodSchema } from 'src/engine/core-modules/tool/tools/inbox-tool/inbox-tool.schema';
 import { type CreateInboxItemToolInput } from 'src/engine/core-modules/tool/tools/inbox-tool/types/create-inbox-item-tool-input.type';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
+import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 
@@ -29,9 +30,23 @@ export class CreateInboxItemTool implements Tool {
   ) {}
 
   async execute(
-    parameters: CreateInboxItemToolInput,
+    rawParameters: ToolInput,
     context: ToolExecutionContext,
   ): Promise<ToolOutput> {
+    // Parsed here so the schema defaults apply however the tool was reached
+    const parseResult =
+      CreateInboxItemToolInputZodSchema.safeParse(rawParameters);
+
+    if (!parseResult.success) {
+      return {
+        success: false,
+        message: 'Invalid inbox item input',
+        error: parseResult.error.message,
+      };
+    }
+
+    const parameters = parseResult.data;
+
     try {
       const inboxItem = await this.inboxRouterService.routeOrThrow({
         workspaceId: context.workspaceId,

@@ -3,6 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxExceptionCode } from 'src/engine/core-modules/inbox/inbox.exception';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
 import { InboxTransitionService } from 'src/engine/core-modules/inbox/services/inbox-transition.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
@@ -47,7 +48,8 @@ const transitionArgs = {
 describe('InboxTransitionService', () => {
   let service: InboxTransitionService;
 
-  const inboxItemRepository = { update: jest.fn() };
+  const inboxItemRepository = { update: jest.fn(), findOneOrFail: jest.fn() };
+  const userWorkspaceService = { findById: jest.fn() };
   const inboxItemService = {
     findVisibleItemOrThrow: jest.fn(),
     buildWriteScope: jest.fn(),
@@ -66,6 +68,11 @@ describe('InboxTransitionService', () => {
 
     inboxItemRepository.update.mockResolvedValue({ affected: 1 });
     inboxItemService.findVisibleItemOrThrow.mockResolvedValue(buildInboxItem());
+    inboxItemRepository.findOneOrFail.mockResolvedValue(buildInboxItem());
+    userWorkspaceService.findById.mockResolvedValue({
+      id: 'someone-else',
+      workspaceId: WORKSPACE_ID,
+    });
     inboxItemService.buildWriteScope.mockReturnValue({
       id: INBOX_ITEM_ID,
       assigneeUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
@@ -79,6 +86,7 @@ describe('InboxTransitionService', () => {
           useValue: inboxItemRepository,
         },
         { provide: InboxItemService, useValue: inboxItemService },
+        { provide: UserWorkspaceService, useValue: userWorkspaceService },
       ],
     }).compile();
 
@@ -412,6 +420,26 @@ describe('InboxTransitionService', () => {
       ).rejects.toMatchObject({
         code: InboxExceptionCode.INVALID_INBOX_ACTION,
       });
+    });
+
+    it('should refuse a recipient who is not a member of this workspace', async () => {
+      // Prepare
+      inboxItemService.findVisibleItemOrThrow.mockResolvedValue(QUEUE_ITEM());
+      userWorkspaceService.findById.mockResolvedValue({
+        id: 'someone-else',
+        workspaceId: 'another-workspace-id',
+      });
+
+      // Act & Assert
+      await expect(
+        service.transition({
+          ...transitionArgs,
+          transition: { kind: 'ASSIGN', toUserWorkspaceId: 'someone-else' },
+        }),
+      ).rejects.toMatchObject({
+        code: InboxExceptionCode.UNKNOWN_INBOX_RECIPIENT,
+      });
+      expect(inboxItemRepository.update).not.toHaveBeenCalled();
     });
 
     it('should hand an item to someone else unread, since they have not seen it', async () => {

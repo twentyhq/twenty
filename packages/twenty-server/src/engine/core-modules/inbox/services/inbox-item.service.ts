@@ -203,7 +203,10 @@ export class InboxItemService {
     actorUserWorkspaceId: string;
     accessibleQueueIds: string[];
   }): FindOptionsWhere<InboxItemEntity> {
-    return isDefined(inboxItem.queueId)
+    // Someone who owns a queued item keeps writing through their ownership,
+    // so losing the queue role later does not silently drop their writes
+    return isDefined(inboxItem.queueId) &&
+      inboxItem.assigneeUserWorkspaceId !== actorUserWorkspaceId
       ? { id: inboxItem.id, queueId: In(accessibleQueueIds) }
       : { id: inboxItem.id, assigneeUserWorkspaceId: actorUserWorkspaceId };
   }

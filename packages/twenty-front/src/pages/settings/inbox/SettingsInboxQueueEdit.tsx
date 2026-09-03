@@ -20,11 +20,13 @@ import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRo
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 const DELETE_INBOX_QUEUE_MODAL_ID = 'delete-inbox-queue';
 
 export const SettingsInboxQueueEdit = () => {
   const { t } = useLingui();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const navigateSettings = useNavigateSettings();
   const { queueId } = useParams<{ queueId?: string }>();
   const { openModal } = useModal();
@@ -104,7 +106,16 @@ export const SettingsInboxQueueEdit = () => {
   };
 
   const handleDelete = async () => {
-    await deleteInboxQueue(inboxQueue.id);
+    try {
+      await deleteInboxQueue(inboxQueue.id);
+    } catch {
+      enqueueErrorSnackBar({
+        message: t`This shared inbox could not be deleted`,
+      });
+
+      return;
+    }
+
     goBack();
   };
 

@@ -28,9 +28,12 @@ export const InboxItemActions = ({ inboxItem }: { inboxItem: InboxItem }) => {
   const { enqueueErrorSnackBar } = useSnackBar();
   // Keyed by item, so switching selection while a form is open cannot submit
   // the old action against the new item
+  // The version is captured with the action so input typed against one
+  // version cannot be applied on top of a newer one that arrived meanwhile
   const [pendingAction, setPendingAction] = useState<{
     inboxItemId: string;
     action: InboxItemAction;
+    expectedVersion: number;
   } | null>(null);
 
   const isDone = inboxItem.scope === InboxItemScope.DONE;
@@ -57,7 +60,7 @@ export const InboxItemActions = ({ inboxItem }: { inboxItem: InboxItem }) => {
               inboxItemId: inboxItem.id,
               actionKey: pendingAction.action.key,
               input,
-              expectedVersion: inboxItem.version,
+              expectedVersion: pendingAction.expectedVersion,
             });
           } catch {
             reportFailure();
@@ -92,7 +95,11 @@ export const InboxItemActions = ({ inboxItem }: { inboxItem: InboxItem }) => {
             accent={action.isPrimary ? 'blue' : 'default'}
             onClick={() => {
               if (action.inputSchema.length > 0) {
-                setPendingAction({ inboxItemId: inboxItem.id, action });
+                setPendingAction({
+                  inboxItemId: inboxItem.id,
+                  action,
+                  expectedVersion: inboxItem.version,
+                });
 
                 return;
               }

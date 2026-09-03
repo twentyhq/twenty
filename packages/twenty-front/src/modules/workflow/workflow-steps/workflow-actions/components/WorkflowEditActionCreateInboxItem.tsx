@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { type JsonValue } from 'type-fest';
 import { type SelectOption } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
@@ -64,6 +64,7 @@ export const WorkflowEditActionCreateInboxItem = ({
         settings: {
           ...action.settings,
           input: {
+            ...action.settings.input,
             title: nextFormData.title,
             preview: nextFormData.preview,
             typeKey: nextFormData.typeKey,
@@ -76,6 +77,12 @@ export const WorkflowEditActionCreateInboxItem = ({
     },
     1_000,
   );
+
+  useEffect(() => {
+    return () => {
+      saveAction.flush();
+    };
+  }, [saveAction]);
 
   const handleFieldChange = (
     fieldName: keyof CreateInboxItemFormData,
@@ -130,7 +137,7 @@ export const WorkflowEditActionCreateInboxItem = ({
           options={typeOptions}
           defaultValue={formData.typeKey}
           onChange={(value) => handleFieldChange('typeKey', value ?? '')}
-          readonly={readonly}
+          readonly={readonly || typeOptions.length === 0}
         />
         <FormSelectFieldInput
           label={t`Assignee`}

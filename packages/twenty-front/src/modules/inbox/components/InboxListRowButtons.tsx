@@ -45,7 +45,8 @@ export const InboxListRowButtons = ({
   // Taking work out of a shared inbox is the one action that is about who owns
   // it rather than what it is, so it is offered before the type's own actions.
   // Taking and giving back are the same transition with a different target.
-  const isInQueue = isDefined(inboxItem.queueId);
+  const isInQueue =
+    isDefined(inboxItem.queueId) && inboxItem.scope !== InboxItemScope.DONE;
   const toggleOwnership = () =>
     void assignInboxItem({
       inboxItemId: inboxItem.id,

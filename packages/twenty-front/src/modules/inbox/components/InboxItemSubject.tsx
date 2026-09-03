@@ -8,9 +8,11 @@ import { TimelineActivityContext } from '@/activities/timeline-activities/contex
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { getInboxItemSubject } from '@/inbox/utils/getInboxItemSubject';
+import { useRecordShowPageResource } from '@/object-record/record-show/hooks/useRecordShowPageResource';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/components/PageLayoutRecordPageRenderer';
+import { RecordShowPageResourceEffect } from '@/object-record/record-show/components/RecordShowPageResourceEffect';
 import { RecordShowPageSSESubscribeEffect } from '@/object-record/record-show/components/RecordShowPageSSESubscribeEffect';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type InboxItem } from '~/generated/graphql';
@@ -49,34 +51,46 @@ const InboxItemRecordSubject = ({
 }: {
   recordId: string;
   objectNameSingular: string;
-}) => (
-  <RecordComponentInstanceContextsWrapper
-    componentInstanceId={getInboxItemRecordInstanceId(recordId)}
-  >
-    <ContextStoreComponentInstanceContext.Provider
-      value={{ instanceId: getInboxItemRecordInstanceId(recordId) }}
+}) => {
+  const { loading, record } = useRecordShowPageResource({
+    objectNameSingular,
+    recordId,
+  });
+
+  return (
+    <RecordComponentInstanceContextsWrapper
+      componentInstanceId={getInboxItemRecordInstanceId(recordId)}
     >
-      <CommandMenuComponentInstanceContext.Provider
+      <ContextStoreComponentInstanceContext.Provider
         value={{ instanceId: getInboxItemRecordInstanceId(recordId) }}
       >
-        <TimelineActivityContext.Provider value={{ recordId }}>
-          <StyledSubject>
-            <PageLayoutRecordPageRenderer
-              targetRecordIdentifier={{
-                id: recordId,
-                targetObjectNameSingular: objectNameSingular,
-              }}
-            />
-            <RecordShowPageSSESubscribeEffect
-              objectNameSingular={objectNameSingular}
-              recordId={recordId}
-            />
-          </StyledSubject>
-        </TimelineActivityContext.Provider>
-      </CommandMenuComponentInstanceContext.Provider>
-    </ContextStoreComponentInstanceContext.Provider>
-  </RecordComponentInstanceContextsWrapper>
-);
+        <CommandMenuComponentInstanceContext.Provider
+          value={{ instanceId: getInboxItemRecordInstanceId(recordId) }}
+        >
+          <TimelineActivityContext.Provider value={{ recordId }}>
+            <StyledSubject>
+              <RecordShowPageResourceEffect
+                loading={loading}
+                record={record}
+                recordId={recordId}
+              />
+              <PageLayoutRecordPageRenderer
+                targetRecordIdentifier={{
+                  id: recordId,
+                  targetObjectNameSingular: objectNameSingular,
+                }}
+              />
+              <RecordShowPageSSESubscribeEffect
+                objectNameSingular={objectNameSingular}
+                recordId={recordId}
+              />
+            </StyledSubject>
+          </TimelineActivityContext.Provider>
+        </CommandMenuComponentInstanceContext.Provider>
+      </ContextStoreComponentInstanceContext.Provider>
+    </RecordComponentInstanceContextsWrapper>
+  );
+};
 
 // The focused view owns the chrome and embeds whatever the item is about, so
 // every kind of work gets the same frame instead of each redirecting to its
