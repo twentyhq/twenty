@@ -120,6 +120,7 @@ The server serializes syncs per workspace to prevent this, but you should still 
 When something goes wrong, the metadata diff and named errors let you place the failure:
 
 - **Manifest build error** — the CLI fails before syncing (`MANIFEST_BUILD_FAILED`, `TYPECHECK_FAILED`); fix your app source.
+- **Registration ownership error** — the sync is refused because the app's `universalIdentifier` belongs to another workspace, or to no workspace at all; see [Registration ownership](/developers/extend/apps/operations/publishing#registration-ownership).
 - **Sync / migration error** — the build succeeds but applying the diff fails, naming the entity and `universalIdentifier`; fix the conflicting metadata.
 - **Dependencies size error** — the sync or install fails because the app's production `dependencies` are too large to install as a runtime layer (`LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED`); move packages your logic functions do not import at runtime (UI libraries, dev tooling) to `devDependencies`.
 - **App code runtime error** — the sync succeeds but your logic functions or components misbehave at runtime; check [function logs](/developers/extend/apps/operations/cli).

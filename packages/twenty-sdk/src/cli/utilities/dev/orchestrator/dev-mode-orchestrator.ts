@@ -14,6 +14,7 @@ import {
 } from '@/cli/utilities/dev/orchestrator/steps/start-watchers-orchestrator-step';
 import { SyncApplicationOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/sync-application-orchestrator-step';
 import { UploadFilesOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/upload-files-orchestrator-step';
+import { getGraphQLErrorMessage } from '@/cli/utilities/error/parse-server-error';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { emptyDir, ensureDir } from '@/cli/utilities/file/fs-utils';
 import path from 'path';
@@ -287,7 +288,9 @@ export class DevModeOrchestrator {
     if (!createResult.success || !createResult.data) {
       this.state.applyStepEvents([
         {
-          message: 'Failed to install development application',
+          message:
+            getGraphQLErrorMessage(createResult.error) ??
+            'Failed to install development application',
           status: 'error',
         },
         { message: JSON.stringify(createResult, null, 2), status: 'error' },

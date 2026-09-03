@@ -29,6 +29,14 @@ export const getGraphQLErrorSubCode = (error: unknown): string | undefined => {
   return asGraphQLErrorEntry(error)?.extensions?.subCode;
 };
 
+export const getGraphQLErrorMessage = (error: unknown): string | undefined => {
+  const message = asGraphQLErrorEntry(error)?.message;
+
+  return typeof message === 'string' && message.length > 0
+    ? message
+    : undefined;
+};
+
 export const hasGraphQLErrorSubCode = (
   error: unknown,
   subCode: string,
