@@ -1,8 +1,12 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
-import { useFrontComponentId } from 'twenty-sdk/front-component';
+import {
+  getApplicationVariable,
+  useFrontComponentId,
+} from 'twenty-sdk/front-component';
 
+import { CALL_RECORDER_MAPPED_VARIABLE_KEYS } from 'src/front-components/constants/call-recorder-settings-layout.constant';
 import { type CallRecorderApplicationVariable } from 'src/front-components/types/call-recorder-application-variable.type';
 import { shouldDisplayApplicationVariable } from 'src/front-components/utils/should-display-application-variable.util';
 import { toApplicationVariableOptions } from 'src/front-components/utils/to-application-variable-options.util';
@@ -16,25 +20,42 @@ type CallRecorderApplicationVariablesState = {
 
 const APPLICATION_VARIABLES_ERROR_MESSAGE = 'Please try again later.';
 
-const APPLICATION_VARIABLES_LOADING_STATE: CallRecorderApplicationVariablesState =
-  {
+const getInitialApplicationVariables = (): CallRecorderApplicationVariable[] =>
+  CALL_RECORDER_MAPPED_VARIABLE_KEYS.map((key) => ({
+    key,
+    label: '',
+    value: getApplicationVariable(key) ?? '',
+    description: '',
+    isSecret: false,
+    isDeprecated: false,
+    type: '',
+    options: null,
+  }));
+
+const getApplicationVariablesLoadingState =
+  (): CallRecorderApplicationVariablesState => ({
     applicationId: undefined,
-    applicationVariables: [],
+    applicationVariables: getInitialApplicationVariables(),
     isApplicationVariablesQueryLoading: true,
     errorMessage: undefined,
-  };
+  });
 
 export const useCallRecorderApplicationVariables =
   (): CallRecorderApplicationVariablesState => {
     const frontComponentId = useFrontComponentId();
     const [state, setState] = useState<CallRecorderApplicationVariablesState>(
-      APPLICATION_VARIABLES_LOADING_STATE,
+      getApplicationVariablesLoadingState,
     );
 
     useEffect(() => {
       const abortController = new AbortController();
 
-      setState(APPLICATION_VARIABLES_LOADING_STATE);
+      setState((currentState) => ({
+        ...currentState,
+        applicationId: undefined,
+        isApplicationVariablesQueryLoading: true,
+        errorMessage: undefined,
+      }));
 
       const fetchApplicationVariables = async () => {
         try {

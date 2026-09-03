@@ -7,7 +7,7 @@ import { useAutosaveApplicationVariable } from 'src/front-components/hooks/use-a
 import { getNormalizedNumberValue } from 'src/front-components/utils/get-normalized-number-value.util';
 
 type TimingCounterRowProps = {
-  applicationId: string;
+  applicationId: string | undefined;
   variableKey: string;
   title: string;
   description: string;

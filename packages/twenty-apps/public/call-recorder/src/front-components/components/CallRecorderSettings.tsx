@@ -22,9 +22,18 @@ import { useCallRecorderApplicationVariables } from 'src/front-components/hooks/
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
+  width: 100%;
+`;
+
+const StyledSettingsFieldset = styled.fieldset`
+  border: 0;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: ${() => themeCssVariables.spacing[8]};
+  margin: 0;
+  min-width: 0;
+  padding: 0;
   width: 100%;
 `;
 
@@ -51,11 +60,7 @@ export const CallRecorderSettings = () => {
 
   const colorScheme = useColorScheme();
 
-  if (isApplicationVariablesQueryLoading) {
-    return <StyledCenteredState>Loading settings…</StyledCenteredState>;
-  }
-
-  if (isUndefined(applicationId)) {
+  if (!isApplicationVariablesQueryLoading && isUndefined(applicationId)) {
     return <StyledCenteredState>{errorMessage}</StyledCenteredState>;
   }
 
@@ -76,35 +81,40 @@ export const CallRecorderSettings = () => {
       }}
     >
       <StyledContainer>
-        <RecorderSection
-          applicationId={applicationId}
-          applicationVariables={applicationVariables}
-        />
-        <InCallSection
-          applicationId={applicationId}
-          applicationVariables={applicationVariables}
-        />
-        <TranscriptionSection
-          applicationId={applicationId}
-          applicationVariables={applicationVariables}
-        />
-        {otherVariables.length > 0 && (
-          <Section>
-            <H2Title
-              title="Other"
-              description="Variables this app does not lay out explicitly."
-            />
-            <StyledSettingsSectionStack>
-              {otherVariables.map((variable) => (
-                <ApplicationVariableRow
-                  key={variable.key}
-                  applicationId={applicationId}
-                  variable={variable}
-                />
-              ))}
-            </StyledSettingsSectionStack>
-          </Section>
-        )}
+        <StyledSettingsFieldset
+          disabled={isApplicationVariablesQueryLoading}
+          aria-busy={isApplicationVariablesQueryLoading}
+        >
+          <RecorderSection
+            applicationId={applicationId}
+            applicationVariables={applicationVariables}
+          />
+          <InCallSection
+            applicationId={applicationId}
+            applicationVariables={applicationVariables}
+          />
+          <TranscriptionSection
+            applicationId={applicationId}
+            applicationVariables={applicationVariables}
+          />
+          {otherVariables.length > 0 && (
+            <Section>
+              <H2Title
+                title="Other"
+                description="Variables this app does not lay out explicitly."
+              />
+              <StyledSettingsSectionStack>
+                {otherVariables.map((variable) => (
+                  <ApplicationVariableRow
+                    key={variable.key}
+                    applicationId={applicationId}
+                    variable={variable}
+                  />
+                ))}
+              </StyledSettingsSectionStack>
+            </Section>
+          )}
+        </StyledSettingsFieldset>
       </StyledContainer>
     </ThemeContext.Provider>
   );

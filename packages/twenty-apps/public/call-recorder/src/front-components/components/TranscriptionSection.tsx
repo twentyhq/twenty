@@ -22,7 +22,7 @@ import { serializeRichTextMarkdown } from 'src/front-components/utils/serialize-
 import { extractRichTextMarkdown } from 'src/logic-functions/utils/extract-rich-text-markdown.util';
 
 type TranscriptionSectionProps = {
-  applicationId: string;
+  applicationId: string | undefined;
   applicationVariables: Pick<
     CallRecorderApplicationVariable,
     'key' | 'value' | 'options'

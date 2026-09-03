@@ -28,7 +28,7 @@ import { normalizeHexColor } from 'src/front-components/utils/normalize-hex-colo
 import { DEFAULT_CALL_RECORDER_BOT_IMAGE_BACKGROUND } from 'src/logic-functions/constants/default-call-recorder-bot-image-background';
 
 type RecorderSectionProps = {
-  applicationId: string;
+  applicationId: string | undefined;
   applicationVariables: Pick<
     CallRecorderApplicationVariable,
     'key' | 'value'

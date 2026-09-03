@@ -19,7 +19,7 @@ import { type CallRecorderApplicationVariable } from 'src/front-components/types
 import { getApplicationVariableValue } from 'src/front-components/utils/get-application-variable-value.util';
 
 type InCallSectionProps = {
-  applicationId: string;
+  applicationId: string | undefined;
   applicationVariables: Pick<
     CallRecorderApplicationVariable,
     'key' | 'value'

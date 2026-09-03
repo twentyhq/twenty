@@ -25,7 +25,7 @@ const StyledDescription = styled.span`
 `;
 
 type ApplicationVariableRowProps = {
-  applicationId: string;
+  applicationId: string | undefined;
   variable: CallRecorderApplicationVariable;
 };
 

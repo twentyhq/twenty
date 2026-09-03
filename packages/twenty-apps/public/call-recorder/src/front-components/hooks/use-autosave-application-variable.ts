@@ -7,7 +7,7 @@ import { useSaveApplicationVariable } from 'src/front-components/hooks/use-save-
 import { createApplicationVariableSaveQueue } from 'src/front-components/utils/create-application-variable-save-queue.util';
 
 type UseAutosaveApplicationVariableParams = {
-  applicationId: string;
+  applicationId: string | undefined;
   variableKey: string;
   onSaveSuccess?: (value: string) => void;
 };

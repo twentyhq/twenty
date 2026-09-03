@@ -112,7 +112,6 @@ export const TileBackgroundControl = ({
           <ColorSample
             colorName={selectedColor ?? FALLBACK_SWATCH_COLOR_NAME}
             color={swatchColor}
-            variant="circle"
           />
         }
         onClick={handleMenuToggle}
