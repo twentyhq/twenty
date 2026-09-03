@@ -1,6 +1,6 @@
 import { type SidePanelPages } from 'twenty-shared/types';
 
-export type LegacySidePanelPage =
+type LegacySidePanelPage =
   | SidePanelPages.ViewRecord
   | SidePanelPages.ViewRecords
   | SidePanelPages.Copilot;
