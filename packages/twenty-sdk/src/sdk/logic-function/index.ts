@@ -54,6 +54,7 @@ export { getConnection } from '@/sdk/logic-function/connections/get-connection';
 export { listConnections } from '@/sdk/logic-function/connections/list-connections';
 export type { ListConnectionsFilter } from '@/sdk/logic-function/connections/list-connections';
 export { findConnectionForRequest } from '@/sdk/logic-function/connections/find-connection-for-request';
+export { reportConnectionAuthFailure } from '@/sdk/logic-function/connections/report-connection-auth-failure';
 export { AppConnectionAuthFailedError } from '@/sdk/logic-function/connections/errors/app-connection-auth-failed.error';
 export type { AppConnection } from '@/sdk/logic-function/connections/types/app-connection.type';
 

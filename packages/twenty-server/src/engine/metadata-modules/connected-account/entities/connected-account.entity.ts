@@ -18,6 +18,7 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { type EncryptedImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
@@ -65,6 +66,13 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
 
   @Column({ type: 'timestamptz', nullable: true })
   authFailedAt: Date | null;
+
+  @Column({ type: 'text', nullable: true })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.38.0_AddAuthFailedReasonToConnectedAccountFastInstanceCommand_1788445931849',
+  })
+  authFailedReason: string | null;
 
   @Column({ type: 'timestamptz', nullable: true })
   archivedAt: Date | null;

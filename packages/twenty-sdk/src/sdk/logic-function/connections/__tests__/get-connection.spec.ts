@@ -25,6 +25,7 @@ const buildConnection = (
   accessToken: 'fresh',
   scopes: ['read'],
   authFailedAt: null,
+  authFailedReason: null,
   ...overrides,
 });
 

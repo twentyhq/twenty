@@ -135,6 +135,7 @@ export class ImapSmtpCalDavApiService {
           userWorkspaceId,
           workspaceId,
           authFailedAt: null,
+          authFailedReason: null,
           archivedAt: null,
         });
 

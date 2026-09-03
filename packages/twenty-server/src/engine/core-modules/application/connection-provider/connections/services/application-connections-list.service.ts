@@ -251,6 +251,7 @@ export class ApplicationConnectionsListService {
         }),
         scopes: account.scopes ?? provider.oauthConfig?.scopes ?? [],
         authFailedAt: account.authFailedAt?.toISOString() ?? null,
+        authFailedReason: account.authFailedReason,
       };
     } catch (error) {
       this.logger.warn(

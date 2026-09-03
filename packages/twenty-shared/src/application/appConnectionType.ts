@@ -37,7 +37,14 @@ export type AppConnection = {
   // token issuance (may be a subset of what the app requested).
   scopes: string[];
   // Set when the most recent refresh attempt failed permanently
-  // (4xx invalid_grant); the user must reconnect from the app's settings tab.
-  // Apps should surface this so users know to take action.
+  // (4xx invalid_grant), or when the app itself reported the credential dead
+  // via `reportConnectionAuthFailure` (providers whose tokens never refresh,
+  // e.g. Slack bot tokens, have no failing refresh to detect). The user must
+  // reconnect from the app's settings tab; apps should surface this so users
+  // know to take action.
   authFailedAt: string | null;
+  // Human-readable explanation for `authFailedAt`, when the reporter gave
+  // one. Shown on the connection row in settings next to the Reconnect
+  // button.
+  authFailedReason: string | null;
 };

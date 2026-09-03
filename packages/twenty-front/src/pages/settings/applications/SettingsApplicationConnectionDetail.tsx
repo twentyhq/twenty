@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -257,6 +258,13 @@ export const SettingsApplicationConnectionDetail = () => {
         key: 'authFailedAt',
         label: t`Auth failed at`,
         value: formatDateTime(connection.authFailedAt),
+      },
+      {
+        key: 'authFailedReason',
+        label: t`Auth failure reason`,
+        value: isNonEmptyString(connection.authFailedReason)
+          ? connection.authFailedReason
+          : '-',
       },
       {
         key: 'createdAt',

@@ -33,4 +33,7 @@ export class AppConnectionObjectDto implements AppConnection {
 
   @Field(() => String, { nullable: true })
   authFailedAt: string | null;
+
+  @Field(() => String, { nullable: true })
+  authFailedReason: string | null;
 }
