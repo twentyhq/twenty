@@ -3,9 +3,12 @@ import { useCallback } from 'react';
 
 import { EXECUTE_INBOX_ITEM_ACTION } from '@/inbox/graphql/mutations/executeInboxItemAction';
 import { MARK_INBOX_ITEM_READ } from '@/inbox/graphql/mutations/markInboxItemRead';
+import { RUN_INBOX_ITEM_TOOL_CALLS } from '@/inbox/graphql/mutations/runInboxItemToolCalls';
+import { SET_INBOX_ITEM_TOOL_CALL_REJECTED } from '@/inbox/graphql/mutations/setInboxItemToolCallRejected';
+import { UPDATE_INBOX_ITEM_TOOL_CALL_INPUT } from '@/inbox/graphql/mutations/updateInboxItemToolCallInput';
 import { TRANSITION_INBOX_ITEM } from '@/inbox/graphql/mutations/transitionInboxItem';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { type InboxItem } from '~/generated/graphql';
+import { type InboxItem, type InboxItemToolCall } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
 
 // A transition can move an item between scopes, so the list has to be re-read.
@@ -130,6 +133,68 @@ export const useInboxItemActions = () => {
     [transitionInboxItem],
   );
 
+  // A row edit is a plain field write: no scope changes, so no list refetch.
+  // The cache row is updated from the payload.
+  const [updateInboxItemToolCallInputMutation] = useMutation<
+    { updateInboxItemToolCallInput: Pick<InboxItemToolCall, 'id' | 'status' | 'editedInput'> },
+    { inboxItemToolCallId: string; editedInput: Record<string, unknown> }
+  >(UPDATE_INBOX_ITEM_TOOL_CALL_INPUT, { client: apolloCoreClient });
+
+  const [setInboxItemToolCallRejectedMutation] = useMutation<
+    { setInboxItemToolCallRejected: Pick<InboxItemToolCall, 'id' | 'status' | 'editedInput'> },
+    { inboxItemToolCallId: string; isRejected: boolean }
+  >(SET_INBOX_ITEM_TOOL_CALL_REJECTED, { client: apolloCoreClient });
+
+  const [runInboxItemToolCallsMutation] = useMutation<
+    { runInboxItemToolCalls: InboxItem },
+    { inboxItemId: string; expectedVersion?: number }
+  >(RUN_INBOX_ITEM_TOOL_CALLS, mutationOptions);
+
+  const updateInboxItemToolCallInput = useCallback(
+    async ({
+      inboxItemToolCallId,
+      editedInput,
+    }: {
+      inboxItemToolCallId: string;
+      editedInput: Record<string, unknown>;
+    }) => {
+      await updateInboxItemToolCallInputMutation({
+        variables: { inboxItemToolCallId, editedInput },
+      });
+    },
+    [updateInboxItemToolCallInputMutation],
+  );
+
+  const setInboxItemToolCallRejected = useCallback(
+    async ({
+      inboxItemToolCallId,
+      isRejected,
+    }: {
+      inboxItemToolCallId: string;
+      isRejected: boolean;
+    }) => {
+      await setInboxItemToolCallRejectedMutation({
+        variables: { inboxItemToolCallId, isRejected },
+      });
+    },
+    [setInboxItemToolCallRejectedMutation],
+  );
+
+  const runInboxItemToolCalls = useCallback(
+    async ({
+      inboxItemId,
+      expectedVersion,
+    }: {
+      inboxItemId: string;
+      expectedVersion?: number;
+    }) => {
+      await runInboxItemToolCallsMutation({
+        variables: { inboxItemId, expectedVersion },
+      });
+    },
+    [runInboxItemToolCallsMutation],
+  );
+
   const executeInboxItemAction = useCallback(
     async ({
       inboxItemId,
@@ -155,5 +220,8 @@ export const useInboxItemActions = () => {
     assignInboxItem,
     reopenInboxItem,
     executeInboxItemAction,
+    updateInboxItemToolCallInput,
+    setInboxItemToolCallRejected,
+    runInboxItemToolCalls,
   };
 };

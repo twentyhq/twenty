@@ -1,4 +1,5 @@
 import { type InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
+import { type InboxItemContext } from 'src/engine/core-modules/inbox/types/inbox-item-context.type';
 import { type InboxItemPayload } from 'src/engine/core-modules/inbox/types/inbox-item-payload.type';
 
 // What the work is about. `ownerUserWorkspaceId` is the subject saying who it
@@ -27,6 +28,8 @@ export type RouteInboxItemArgs = {
   title?: string;
   preview?: string;
   payload?: InboxItemPayload | null;
+  // Summary, source and entities, for producers that know more than a line
+  context?: InboxItemContext | null;
   subject?: InboxSubject;
   // The slot an item occupies for its target. Two upserts naming the same slot
   // are the same piece of work, so the second folds into the first instead of

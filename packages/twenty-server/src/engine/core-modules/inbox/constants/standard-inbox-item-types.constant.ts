@@ -7,6 +7,7 @@ export const INBOX_ITEM_TYPE_KEY = {
   agentQuestion: 'agent_question',
   workflowRunFailed: 'workflow_run_failed',
   approval: 'approval',
+  agentPlan: 'agent_plan',
 } as const;
 
 export type StandardInboxItemTypeKey =
@@ -145,6 +146,34 @@ export const STANDARD_INBOX_ITEM_TYPES: StandardInboxItemType[] = [
         label: 'Reject',
         inputSchema: [{ key: 'reason', label: 'Reason', type: 'TEXT' }],
         transition: { kind: 'CLEAR', outcome: 'REJECTED' },
+      },
+    ],
+  },
+  // The item carries the plan itself as tool call rows; running them is what
+  // ends it, so the declared controls are only the ways out that do not run.
+  {
+    universalIdentifier: '7c2f4a9e-6d1b-4e8f-9a3c-2b5d8e1f4a6c',
+    key: INBOX_ITEM_TYPE_KEY.agentPlan,
+    label: 'Plan from an agent',
+    icon: 'IconSparkles',
+    defaultPriority: InboxItemPriority.NEEDS_ACTION,
+    resolution: {
+      outcomes: [
+        { key: 'DONE', label: 'Done' },
+        { key: 'PARTIAL', label: 'Partially done' },
+        { key: 'DISMISSED', label: 'Dismissed' },
+      ],
+    },
+    actions: [
+      {
+        key: 'snooze',
+        label: 'Snooze for an hour',
+        transition: { kind: 'CLEAR', resurfaceInMinutes: 60 },
+      },
+      {
+        key: 'dismiss',
+        label: 'Dismiss',
+        transition: { kind: 'CLEAR', outcome: 'DISMISSED' },
       },
     ],
   },

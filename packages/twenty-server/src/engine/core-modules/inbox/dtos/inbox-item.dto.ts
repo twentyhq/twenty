@@ -3,6 +3,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 import GraphQLJSON from 'graphql-type-json';
 
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
+import { InboxItemToolCallStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-tool-call-status.enum';
 import { InboxItemScope } from 'src/engine/core-modules/inbox/enums/inbox-item-scope.enum';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -51,6 +52,45 @@ export class InboxItemOutcomeDTO {
 
   @Field(() => String)
   label: string;
+}
+
+@ObjectType('InboxItemToolCall')
+export class InboxItemToolCallDTO {
+  @Field(() => UUIDScalarType)
+  id: string;
+
+  @Field(() => Int)
+  position: number;
+
+  @Field(() => String)
+  toolName: string;
+
+  @Field(() => String)
+  label: string;
+
+  @Field(() => String, { nullable: true })
+  description: string | null;
+
+  @Field(() => String, { nullable: true })
+  icon: string | null;
+
+  @Field(() => InboxItemToolCallStatus)
+  status: InboxItemToolCallStatus;
+
+  @Field(() => [InboxItemFieldDTO])
+  inputSchema: InboxItemFieldDTO[];
+
+  @Field(() => GraphQLJSON)
+  proposedInput: Record<string, unknown>;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  editedInput: Record<string, unknown> | null;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  output: Record<string, unknown> | null;
+
+  @Field(() => String, { nullable: true })
+  error: string | null;
 }
 
 @ObjectType('InboxItemType')
@@ -128,6 +168,14 @@ export class InboxItemDTO {
 
   @Field(() => GraphQLJSON, { nullable: true })
   payload: Record<string, unknown> | null;
+
+  // Summary, source and entity graph when the producer had them
+  @Field(() => GraphQLJSON, { nullable: true })
+  context: Record<string, unknown> | null;
+
+  // The plan's rows, in order; empty for every type but a plan
+  @Field(() => [InboxItemToolCallDTO])
+  toolCalls: InboxItemToolCallDTO[];
 
   @Field(() => String, { nullable: true })
   outcome: string | null;

@@ -16,6 +16,26 @@ export const INBOX_ITEM_FRAGMENT = gql`
     threadId
     subjectObjectMetadataId
     subjectRecordId
+    context
+    toolCalls {
+      id
+      position
+      toolName
+      label
+      description
+      icon
+      status
+      inputSchema {
+        key
+        label
+        type
+        isRequired
+      }
+      proposedInput
+      editedInput
+      output
+      error
+    }
     inboxItemType {
       id
       key

@@ -13,6 +13,8 @@ import { LightIconButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxItemContext } from '@/inbox/components/InboxItemContext';
+import { InboxPlanView } from '@/inbox/components/InboxPlanView';
+import { AGENT_PLAN_INBOX_ITEM_TYPE_KEY } from '@/inbox/constants/AgentPlanInboxItemTypeKey';
 import { InboxItemMarkReadEffect } from '@/inbox/components/InboxItemMarkReadEffect';
 import { InboxItemSubject } from '@/inbox/components/InboxItemSubject';
 import { useInboxItem } from '@/inbox/hooks/useInboxItem';
@@ -75,6 +77,9 @@ export const InboxItemPage = () => {
     useInboxItemPagination({ inboxSection, inboxItemId });
 
   const isUnread = isDefined(inboxItem) && inboxItem.isUnread;
+  const isPlan =
+    isDefined(inboxItem) &&
+    inboxItem.inboxItemType.key === AGENT_PLAN_INBOX_ITEM_TYPE_KEY;
 
   if (!isInboxEnabled) {
     return <Navigate to={AppPath.Index} replace />;
@@ -150,10 +155,16 @@ export const InboxItemPage = () => {
           inboxItemId={inboxItemId}
           isUnread={isUnread}
         />
-        <StyledContext>
-          <InboxItemContext inboxItem={inboxItem} />
-        </StyledContext>
-        <InboxItemSubject inboxItem={inboxItem} />
+        {isPlan ? (
+          <InboxPlanView inboxItem={inboxItem} />
+        ) : (
+          <>
+            <StyledContext>
+              <InboxItemContext inboxItem={inboxItem} />
+            </StyledContext>
+            <InboxItemSubject inboxItem={inboxItem} />
+          </>
+        )}
       </StyledBody>
     </PageCardLayout>
   );

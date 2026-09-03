@@ -64,7 +64,7 @@ export class InboxItemService {
         ...this.buildReadScopeCriteria({ readScope, actorUserWorkspaceId }),
         ...buildInboxItemScopeCriteria(scope, now),
       },
-      relations: { inboxItemType: true },
+      relations: { inboxItemType: true, toolCalls: true },
       order: { lastEventAt: 'DESC' },
       // A non positive take reaches Postgres as "no limit", so the cap is
       // clamped at both ends rather than only at the top
@@ -180,7 +180,7 @@ export class InboxItemService {
           ? [{ id: inboxItemId, queueId: In(accessibleQueueIds) }]
           : []),
       ],
-      relations: { inboxItemType: true },
+      relations: { inboxItemType: true, toolCalls: true },
     });
   }
 

@@ -5,7 +5,9 @@ import {
   type InboxItemDTO,
   type InboxItemFieldDTO,
   type InboxItemOutcomeDTO,
+  type InboxItemToolCallDTO,
 } from 'src/engine/core-modules/inbox/dtos/inbox-item.dto';
+import { type InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
 import { type InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { type InboxItemAction } from 'src/engine/core-modules/inbox/types/inbox-item-action.type';
@@ -39,10 +41,32 @@ const toActionDto = (action: InboxItemAction): InboxItemActionDTO => ({
   inputSchema: (action.inputSchema ?? []).map(toFieldDto),
 });
 
+export const toInboxItemToolCallDto = (
+  toolCall: InboxItemToolCallEntity,
+): InboxItemToolCallDTO => ({
+  id: toolCall.id,
+  position: toolCall.position,
+  toolName: toolCall.toolName,
+  label: toolCall.label,
+  description: toolCall.description,
+  icon: toolCall.icon,
+  status: toolCall.status,
+  inputSchema: (toolCall.inputSchema ?? []).map(toFieldDto),
+  proposedInput: toolCall.proposedInput ?? {},
+  editedInput: toolCall.editedInput,
+  output: toolCall.output,
+  error: toolCall.error,
+});
+
 // Requires the type relation to be loaded, so a caller that forgot the join
-// fails at compile time rather than at render time.
-export type InboxItemWithType = Omit<InboxItemEntity, 'inboxItemType'> & {
+// fails at compile time rather than at render time. Tool calls are optional:
+// a producer's freshly inserted row has none to show.
+export type InboxItemWithType = Omit<
+  InboxItemEntity,
+  'inboxItemType' | 'toolCalls'
+> & {
   inboxItemType: InboxItemTypeEntity;
+  toolCalls?: InboxItemToolCallEntity[];
 };
 
 // `now` comes from the request rather than from here, so every item in one
@@ -74,6 +98,10 @@ export const toInboxItemDto = (
     title: inboxItem.title,
     preview: inboxItem.preview,
     payload: inboxItem.payload,
+    context: inboxItem.context,
+    toolCalls: [...(inboxItem.toolCalls ?? [])]
+      .sort((left, right) => left.position - right.position)
+      .map(toInboxItemToolCallDto),
     outcome: inboxItem.outcome,
     result: inboxItem.result,
     lastEventAt: inboxItem.lastEventAt,

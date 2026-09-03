@@ -284,6 +284,7 @@ export class InboxRouterService {
       title: args.title ?? inboxItemType.label,
       preview: args.preview ?? null,
       payload: args.payload ?? null,
+      context: args.context ?? null,
       queueId: address.kind === 'queue' ? address.queueId : null,
       assigneeUserWorkspaceId:
         address.kind === 'person' ? address.assigneeUserWorkspaceId : null,

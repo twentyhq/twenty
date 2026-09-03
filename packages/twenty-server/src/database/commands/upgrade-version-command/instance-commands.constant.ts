@@ -174,6 +174,7 @@ import { RenameEmailingDomainPermanentlySuspendedToSandboxFastInstanceCommand } 
 import { RelaxNavigationPayloadCheckFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788272351970-relax-navigation-payload-check';
 import { EraseObjectNavigationCommandMenuItemPayloadsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-slow-1788272351971-erase-object-navigation-command-menu-item-payloads';
 import { CreateInboxCoreTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788423091183-create-inbox-core-tables';
+import { AddInboxItemToolCallsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788435600000-add-inbox-item-tool-calls';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -350,4 +351,5 @@ export const INSTANCE_COMMANDS = [
   RelaxNavigationPayloadCheckFastInstanceCommand,
   EraseObjectNavigationCommandMenuItemPayloadsSlowInstanceCommand,
   CreateInboxCoreTablesFastInstanceCommand,
+  AddInboxItemToolCallsFastInstanceCommand,
 ];

@@ -105,7 +105,10 @@ export class InboxTransitionService {
     // personal item to someone else has just taken it out of the actor's view
     const updatedInboxItem = await this.inboxItemRepository.findOne(
       workspaceId,
-      { where: { id: inboxItemId }, relations: { inboxItemType: true } },
+      {
+        where: { id: inboxItemId },
+        relations: { inboxItemType: true, toolCalls: true },
+      },
     );
 
     if (!isDefined(updatedInboxItem)) {

@@ -6,6 +6,9 @@ import {
   type StandardInboxItemTypeKey,
 } from 'src/engine/core-modules/inbox/constants/standard-inbox-item-types.constant';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
+import { InboxItemToolCallStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-tool-call-status.enum';
+import { type InboxItemContext } from 'src/engine/core-modules/inbox/types/inbox-item-context.type';
+import { type InboxItemFieldSchema } from 'src/engine/core-modules/inbox/types/inbox-item-resolution.type';
 import { DEFAULT_INBOX_QUEUE_SLUG } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
 import {
   SEED_APPLE_WORKSPACE_ID,
@@ -20,6 +23,7 @@ const inboxItemTypeTableName = 'inboxItemType';
 const inboxQueueTableName = 'inboxQueue';
 const inboxQueueRoleTableName = 'inboxQueueRole';
 const inboxItemTableName = 'inboxItem';
+const inboxItemToolCallTableName = 'inboxItemToolCall';
 const agentChatThreadTableName = 'agentChatThread';
 
 const HOUR_IN_MS = 60 * 60 * 1000;
@@ -78,8 +82,492 @@ type SeededInboxItem = {
     | { kind: 'thread'; which: 'default' | 'review' }
     | { kind: 'company'; companyId: string };
   payload?: Record<string, unknown>;
+  context?: InboxItemContext;
+  toolCalls?: SeededToolCall[];
   cleared?: { hoursAgo: number; outcome?: string; resurfaceInHours?: number };
 };
+
+type SeededToolCall = {
+  toolName: string;
+  label: string;
+  description: string;
+  icon: string;
+  inputSchema: InboxItemFieldSchema[];
+  proposedInput: Record<string, unknown>;
+  status?: InboxItemToolCallStatus;
+};
+
+const EMAIL_INPUT_SCHEMA: InboxItemFieldSchema[] = [
+  { key: 'to', label: 'To', type: 'TEXT', isRequired: true },
+  { key: 'cc', label: 'Cc', type: 'TEXT' },
+  { key: 'subject', label: 'Subject', type: 'TEXT', isRequired: true },
+  { key: 'body', label: 'Body', type: 'LONG_TEXT', isRequired: true },
+];
+
+// Plans an agent proposed from incoming mail, the mockup's opening screen.
+// Each carries the context it was drawn from and the calls it wants to make.
+const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
+  {
+    seedName: 'plan-move-google-renewal-forward',
+    typeKey: INBOX_ITEM_TYPE_KEY.agentPlan,
+    title: "Move Google's renewal forward",
+    preview:
+      'Reply in Gmail, update the opportunity, add Paul to People and ping Julien.',
+    hoursAgo: 1,
+    assignee: 'me',
+    subject: { kind: 'company', companyId: COMPANY_DATA_SEED_IDS.ID_1 },
+    context: {
+      summary:
+        "Marie asked to confirm Google's renewal terms and introduced Paul as the new operations lead. The proposed steps keep the renewal moving and bring the new stakeholder into the CRM.",
+      source: {
+        kind: 'email',
+        label: 'Renewal terms + intro to Paul',
+        detail: 'Marie Dubois · 3 days ago',
+        excerpt:
+          'Hi, thanks for the call yesterday. Could you confirm the renewal terms for next year? Also adding Paul Berger who is taking over operations on our side.',
+        messageCount: 4,
+      },
+      entities: [
+        {
+          key: 'marie',
+          label: 'Marie Dubois',
+          subtitle: 'Existing Google contact',
+          kind: 'person',
+        },
+        {
+          key: 'paul',
+          label: 'Paul Berger',
+          subtitle: 'New operations lead',
+          kind: 'person',
+        },
+        {
+          key: 'google',
+          label: 'Google',
+          subtitle: 'Annual renewal · tier-2',
+          kind: 'company',
+          recordId: COMPANY_DATA_SEED_IDS.ID_1,
+        },
+      ],
+      edges: [
+        { from: 'marie', to: 'paul', label: 'intro' },
+        { from: 'paul', to: 'google', label: 'from' },
+      ],
+    },
+    toolCalls: [
+      {
+        toolName: 'send_email',
+        label: 'Send email',
+        description: 'Send Marie a reply confirming the renewal pricing.',
+        icon: 'IconMail',
+        inputSchema: EMAIL_INPUT_SCHEMA,
+        proposedInput: {
+          to: 'marie.dubois@google.com',
+          cc: 'joe.gebbia@google.com',
+          subject: 'Re: Renewal terms + intro to Paul',
+          body: 'Hi Marie,\n\nThanks for the quick follow-up. The renewal keeps your current terms for another 12 months, with the tier-2 volume you asked about billed at the same rate.\n\nGreat to have Paul in the loop, I have added him here.\n\nBest,\nTim',
+        },
+      },
+      {
+        toolName: 'update_opportunity',
+        label: 'Update opportunity',
+        description:
+          "Google's opportunity should reflect Marie's willingness to renew at tier-2.",
+        icon: 'IconTargetArrow',
+        inputSchema: [
+          { key: 'stage', label: 'Stage', type: 'TEXT', isRequired: true },
+          { key: 'amount', label: 'Amount', type: 'NUMBER' },
+          { key: 'closeDate', label: 'Close date', type: 'TEXT' },
+        ],
+        proposedInput: {
+          stage: 'PROPOSAL',
+          amount: 24000,
+          closeDate: '2026-10-15',
+        },
+      },
+      {
+        toolName: 'create_person',
+        label: 'Create record',
+        description:
+          'Paul should be created in People as Marie said he is the new head of Ops.',
+        icon: 'IconUserPlus',
+        inputSchema: [
+          {
+            key: 'firstName',
+            label: 'First name',
+            type: 'TEXT',
+            isRequired: true,
+          },
+          {
+            key: 'lastName',
+            label: 'Last name',
+            type: 'TEXT',
+            isRequired: true,
+          },
+          { key: 'email', label: 'Email', type: 'TEXT' },
+          { key: 'jobTitle', label: 'Job title', type: 'TEXT' },
+        ],
+        proposedInput: {
+          firstName: 'Paul',
+          lastName: 'Berger',
+          email: 'paul.berger@google.com',
+          jobTitle: 'Head of Operations',
+        },
+      },
+      {
+        toolName: 'send_slack_message',
+        label: 'Send Slack DM',
+        description:
+          'Julien is in charge of pricing, he is the one making the final decision.',
+        icon: 'IconMessageCircle',
+        inputSchema: [
+          { key: 'to', label: 'To', type: 'TEXT', isRequired: true },
+          {
+            key: 'message',
+            label: 'Message',
+            type: 'LONG_TEXT',
+            isRequired: true,
+          },
+        ],
+        proposedInput: {
+          to: '@julien',
+          message:
+            'Google confirmed the tier-2 renewal at the current rate. Can you sign off on the pricing before I send the invoice?',
+        },
+      },
+    ],
+  },
+  {
+    seedName: 'plan-invoice-microsoft-renewal',
+    typeKey: INBOX_ITEM_TYPE_KEY.agentPlan,
+    title: "Invoice Microsoft's annual renewal",
+    preview: 'Create a $24,000 invoice and email it to the billing contact.',
+    hoursAgo: 1.5,
+    assignee: 'me',
+    subject: { kind: 'company', companyId: COMPANY_DATA_SEED_IDS.ID_2 },
+    context: {
+      summary:
+        "Microsoft's renewal was signed last week. Billing asked for the invoice before the end of the month so it lands in this quarter.",
+      source: {
+        kind: 'email',
+        label: 'Renewal signed, invoice please',
+        detail: 'Anna Lee · yesterday',
+        excerpt:
+          'Signed copy attached. Could you send the invoice to ap@microsoft.com before the 30th?',
+        messageCount: 2,
+      },
+      entities: [
+        {
+          key: 'anna',
+          label: 'Anna Lee',
+          subtitle: 'Procurement',
+          kind: 'person',
+        },
+        {
+          key: 'microsoft',
+          label: 'Microsoft',
+          subtitle: 'Annual renewal',
+          kind: 'company',
+          recordId: COMPANY_DATA_SEED_IDS.ID_2,
+        },
+      ],
+      edges: [{ from: 'anna', to: 'microsoft', label: 'from' }],
+    },
+    toolCalls: [
+      {
+        toolName: 'create_invoice',
+        label: 'Create invoice',
+        description: 'A $24,000 invoice for the 12-month renewal.',
+        icon: 'IconCurrencyDollar',
+        inputSchema: [
+          { key: 'amount', label: 'Amount', type: 'NUMBER', isRequired: true },
+          { key: 'currency', label: 'Currency', type: 'TEXT' },
+          { key: 'dueInDays', label: 'Due in days', type: 'NUMBER' },
+        ],
+        proposedInput: { amount: 24000, currency: 'USD', dueInDays: 30 },
+      },
+      {
+        toolName: 'send_email',
+        label: 'Send email',
+        description: 'Send the invoice to accounts payable with Anna in copy.',
+        icon: 'IconMail',
+        inputSchema: EMAIL_INPUT_SCHEMA,
+        proposedInput: {
+          to: 'ap@microsoft.com',
+          cc: 'anna.lee@microsoft.com',
+          subject: 'Invoice for the 2027 renewal',
+          body: 'Hello,\n\nPlease find attached the invoice for the annual renewal, due in 30 days.\n\nThanks,\nTim',
+        },
+      },
+    ],
+  },
+  {
+    seedName: 'plan-create-meta-opportunity',
+    typeKey: INBOX_ITEM_TYPE_KEY.agentPlan,
+    title: 'Create an opportunity for Meta',
+    preview: 'Create a $45,000 expansion opportunity from the call notes.',
+    hoursAgo: 2,
+    assignee: 'me',
+    subject: { kind: 'company', companyId: COMPANY_DATA_SEED_IDS.ID_3 },
+    context: {
+      summary:
+        'On the call, Sarah said the ads team wants 45 more seats next quarter. Nothing tracks it yet.',
+      source: {
+        kind: 'call',
+        label: 'Call with Sarah Kim',
+        detail: '25 min · this morning',
+        excerpt:
+          'We are looking at another 45 seats for the ads team, probably Q1.',
+      },
+      entities: [
+        {
+          key: 'sarah',
+          label: 'Sarah Kim',
+          subtitle: 'Ads team lead',
+          kind: 'person',
+        },
+        {
+          key: 'meta',
+          label: 'Meta',
+          subtitle: 'Customer since 2024',
+          kind: 'company',
+          recordId: COMPANY_DATA_SEED_IDS.ID_3,
+        },
+      ],
+      edges: [{ from: 'sarah', to: 'meta', label: 'at' }],
+    },
+    toolCalls: [
+      {
+        toolName: 'create_opportunity',
+        label: 'Create opportunity',
+        description: 'A $45,000 expansion for 45 seats, closing next quarter.',
+        icon: 'IconTargetArrow',
+        inputSchema: [
+          { key: 'name', label: 'Name', type: 'TEXT', isRequired: true },
+          { key: 'amount', label: 'Amount', type: 'NUMBER' },
+          { key: 'stage', label: 'Stage', type: 'TEXT' },
+          { key: 'closeDate', label: 'Close date', type: 'TEXT' },
+        ],
+        proposedInput: {
+          name: 'Meta ads team expansion',
+          amount: 45000,
+          stage: 'NEW',
+          closeDate: '2027-01-31',
+        },
+      },
+      {
+        toolName: 'create_task',
+        label: 'Create task',
+        description: 'Follow up with Sarah once the seat count is confirmed.',
+        icon: 'IconCheckbox',
+        inputSchema: [
+          { key: 'title', label: 'Title', type: 'TEXT', isRequired: true },
+          { key: 'dueDate', label: 'Due date', type: 'TEXT' },
+        ],
+        proposedInput: {
+          title: 'Confirm seat count with Sarah',
+          dueDate: '2026-09-10',
+        },
+      },
+    ],
+  },
+  {
+    seedName: 'plan-schedule-demo-with-slb',
+    typeKey: INBOX_ITEM_TYPE_KEY.agentPlan,
+    title: 'Schedule a demo with SLB',
+    preview:
+      'Create a calendar event and send the invite to the buying committee.',
+    hoursAgo: 3,
+    assignee: 'me',
+    subject: { kind: 'company', companyId: COMPANY_DATA_SEED_IDS.ID_4 },
+    context: {
+      summary:
+        'Three people from SLB asked for a demo next week. The agent found a slot that works for everyone in the thread.',
+      source: {
+        kind: 'email',
+        label: 'Demo next week?',
+        detail: 'Omar Haddad · 2 days ago',
+        excerpt:
+          'Could we get a demo next Tuesday or Wednesday afternoon? Copying the two colleagues who will join.',
+        messageCount: 3,
+      },
+      entities: [
+        {
+          key: 'omar',
+          label: 'Omar Haddad',
+          subtitle: 'Champion',
+          kind: 'person',
+        },
+        {
+          key: 'slb',
+          label: 'SLB',
+          subtitle: 'Evaluation',
+          kind: 'company',
+          recordId: COMPANY_DATA_SEED_IDS.ID_4,
+        },
+      ],
+      edges: [{ from: 'omar', to: 'slb', label: 'at' }],
+    },
+    toolCalls: [
+      {
+        toolName: 'create_calendar_event',
+        label: 'Create event',
+        description: 'Wednesday 3pm, 45 minutes, with the three SLB attendees.',
+        icon: 'IconCalendarEvent',
+        inputSchema: [
+          { key: 'title', label: 'Title', type: 'TEXT', isRequired: true },
+          {
+            key: 'startsAt',
+            label: 'Starts at',
+            type: 'TEXT',
+            isRequired: true,
+          },
+          {
+            key: 'durationMinutes',
+            label: 'Duration (minutes)',
+            type: 'NUMBER',
+          },
+          { key: 'attendees', label: 'Attendees', type: 'TEXT' },
+        ],
+        proposedInput: {
+          title: 'Twenty demo for SLB',
+          startsAt: '2026-09-09T15:00:00+02:00',
+          durationMinutes: 45,
+          attendees: 'omar.haddad@slb.com, lea.martin@slb.com, k.osei@slb.com',
+        },
+      },
+      {
+        toolName: 'send_email',
+        label: 'Send email',
+        description: 'Confirm the slot and share the agenda.',
+        icon: 'IconMail',
+        inputSchema: EMAIL_INPUT_SCHEMA,
+        proposedInput: {
+          to: 'omar.haddad@slb.com',
+          cc: 'lea.martin@slb.com, k.osei@slb.com',
+          subject: 'Re: Demo next week?',
+          body: 'Hi Omar,\n\nWednesday at 3pm works on our side, invite is on its way. We will cover pipeline, automations and the API in 45 minutes.\n\nTalk soon,\nTim',
+        },
+      },
+    ],
+  },
+  {
+    seedName: 'plan-update-cisco-profile',
+    typeKey: INBOX_ITEM_TYPE_KEY.agentPlan,
+    title: "Update Cisco's company profile",
+    preview:
+      "Update Cisco's industry, headcount and website from the latest filing.",
+    priority: InboxItemPriority.UPDATE,
+    hoursAgo: 5,
+    isRead: true,
+    assignee: 'me',
+    subject: { kind: 'company', companyId: COMPANY_DATA_SEED_IDS.ID_5 },
+    context: {
+      summary:
+        "Cisco's annual report was published this week. Three fields on the company record are out of date.",
+      source: {
+        kind: 'record',
+        label: 'Cisco',
+        detail: 'Company record · last edited 4 months ago',
+      },
+      entities: [
+        {
+          key: 'cisco',
+          label: 'Cisco',
+          subtitle: 'Customer',
+          kind: 'company',
+          recordId: COMPANY_DATA_SEED_IDS.ID_5,
+        },
+      ],
+    },
+    toolCalls: [
+      {
+        toolName: 'update_company',
+        label: 'Update record',
+        description:
+          'Headcount 84,900, industry Networking, website cisco.com.',
+        icon: 'IconBuildingSkyscraper',
+        inputSchema: [
+          { key: 'employees', label: 'Employees', type: 'NUMBER' },
+          { key: 'industry', label: 'Industry', type: 'TEXT' },
+          { key: 'domainName', label: 'Website', type: 'TEXT' },
+        ],
+        proposedInput: {
+          employees: 84900,
+          industry: 'Networking',
+          domainName: 'cisco.com',
+        },
+      },
+    ],
+  },
+  {
+    seedName: 'plan-log-call-with-uber',
+    typeKey: INBOX_ITEM_TYPE_KEY.agentPlan,
+    title: 'Log the call with Uber',
+    preview: 'Save the call notes and move the opportunity to negotiation.',
+    priority: InboxItemPriority.UPDATE,
+    hoursAgo: 28,
+    isRead: true,
+    assignee: 'me',
+    subject: { kind: 'company', companyId: COMPANY_DATA_SEED_IDS.ID_6 },
+    context: {
+      summary:
+        'A 30 minute call with Uber covered pricing and the security questionnaire. Both are recorded in the notes below.',
+      source: {
+        kind: 'call',
+        label: 'Call with Dana Ruiz',
+        detail: '30 min · yesterday',
+        excerpt:
+          'Pricing is fine if we can get the SOC 2 report by the end of the month.',
+      },
+      entities: [
+        {
+          key: 'dana',
+          label: 'Dana Ruiz',
+          subtitle: 'Security lead',
+          kind: 'person',
+        },
+        {
+          key: 'uber',
+          label: 'Uber',
+          subtitle: 'Negotiation',
+          kind: 'company',
+          recordId: COMPANY_DATA_SEED_IDS.ID_6,
+        },
+      ],
+      edges: [{ from: 'dana', to: 'uber', label: 'at' }],
+    },
+    toolCalls: [
+      {
+        toolName: 'create_note',
+        label: 'Create note',
+        description:
+          'Call notes with the pricing agreement and the SOC 2 request.',
+        icon: 'IconNotes',
+        inputSchema: [
+          { key: 'title', label: 'Title', type: 'TEXT', isRequired: true },
+          { key: 'body', label: 'Body', type: 'LONG_TEXT', isRequired: true },
+        ],
+        proposedInput: {
+          title: 'Call with Dana Ruiz',
+          body: 'Pricing accepted at the proposed tier. Dana needs the SOC 2 report before the end of the month to close.',
+        },
+        status: InboxItemToolCallStatus.EXECUTED,
+      },
+      {
+        toolName: 'update_opportunity',
+        label: 'Update opportunity',
+        description: 'Move the Uber opportunity to negotiation.',
+        icon: 'IconTargetArrow',
+        inputSchema: [
+          { key: 'stage', label: 'Stage', type: 'TEXT', isRequired: true },
+        ],
+        proposedInput: { stage: 'NEGOTIATION' },
+        status: InboxItemToolCallStatus.EXECUTED,
+      },
+    ],
+    cleared: { hoursAgo: 27, outcome: 'DONE' },
+  },
+];
 
 // One of everything the inbox can show: unread and read, needs action and
 // update, personal and shared, snoozed, done, and an item a new event revived
@@ -465,7 +953,7 @@ export const seedInbox = async ({
     ])
     .orIgnore()
     .values(
-      SEEDED_INBOX_ITEMS.map((item) => {
+      [...SEEDED_PLAN_ITEMS, ...SEEDED_INBOX_ITEMS].map((item) => {
         const lastEventAt = hoursAgo(now, item.hoursAgo);
         const clearedAt = item.cleared
           ? hoursAgo(now, item.cleared.hoursAgo)
@@ -483,6 +971,7 @@ export const seedInbox = async ({
           title: item.title,
           preview: item.preview,
           payload: item.payload ?? null,
+          context: item.context ?? null,
           lastEventAt,
           clearedAt,
           resurfaceAt:
@@ -517,6 +1006,61 @@ export const seedInbox = async ({
           updatedAt: lastEventAt,
         };
       }),
+    )
+    .execute();
+
+  await queryRunner.manager
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.${inboxItemToolCallTableName}`, [
+      'id',
+      'workspaceId',
+      'inboxItemId',
+      'position',
+      'toolName',
+      'label',
+      'description',
+      'icon',
+      'inputSchema',
+      'proposedInput',
+      'status',
+      'output',
+      'resolvedByUserWorkspaceId',
+      'resolvedAt',
+    ])
+    .orIgnore()
+    .values(
+      SEEDED_PLAN_ITEMS.flatMap((item) =>
+        (item.toolCalls ?? []).map((toolCall, position) => {
+          const isExecuted =
+            toolCall.status === InboxItemToolCallStatus.EXECUTED;
+
+          return {
+            id: generateSeedId(
+              workspaceId,
+              `inbox-item-tool-call-${item.seedName}-${position}`,
+            ),
+            workspaceId,
+            inboxItemId: generateSeedId(
+              workspaceId,
+              `inbox-item-${item.seedName}`,
+            ),
+            position,
+            toolName: toolCall.toolName,
+            label: toolCall.label,
+            description: toolCall.description,
+            icon: toolCall.icon,
+            inputSchema: toolCall.inputSchema,
+            proposedInput: toolCall.proposedInput,
+            status: toolCall.status ?? InboxItemToolCallStatus.PROPOSED,
+            output: isExecuted ? toolCall.proposedInput : null,
+            resolvedByUserWorkspaceId: isExecuted ? people.me : null,
+            resolvedAt: isExecuted
+              ? hoursAgo(now, item.cleared?.hoursAgo ?? item.hoursAgo)
+              : null,
+          };
+        }),
+      ),
     )
     .execute();
 };

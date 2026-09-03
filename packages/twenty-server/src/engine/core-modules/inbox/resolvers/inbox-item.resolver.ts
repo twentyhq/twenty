@@ -12,6 +12,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import {
   InboxCountsDTO,
   InboxItemDTO,
+  InboxItemToolCallDTO,
   InboxQueueDTO,
 } from 'src/engine/core-modules/inbox/dtos/inbox-item.dto';
 import { InboxItemScope } from 'src/engine/core-modules/inbox/enums/inbox-item-scope.enum';
@@ -22,6 +23,7 @@ import {
   InboxExceptionCode,
 } from 'src/engine/core-modules/inbox/inbox.exception';
 import { InboxItemActionService } from 'src/engine/core-modules/inbox/services/inbox-item-action.service';
+import { InboxItemToolCallService } from 'src/engine/core-modules/inbox/services/inbox-item-tool-call.service';
 import {
   type InboxReadScope,
   InboxItemService,
@@ -29,7 +31,10 @@ import {
 import { InboxQueueService } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
 import { InboxTransitionService } from 'src/engine/core-modules/inbox/services/inbox-transition.service';
 import { TransitionInboxItemInput } from 'src/engine/core-modules/inbox/dtos/transition-inbox-item.input';
-import { toInboxItemDto } from 'src/engine/core-modules/inbox/utils/to-inbox-item-dto.util';
+import {
+  toInboxItemDto,
+  toInboxItemToolCallDto,
+} from 'src/engine/core-modules/inbox/utils/to-inbox-item-dto.util';
 import { toInboxItemPayload } from 'src/engine/core-modules/inbox/utils/to-inbox-item-payload.util';
 import { toInboxItemTransition } from 'src/engine/core-modules/inbox/utils/to-inbox-item-transition.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -64,6 +69,7 @@ export class InboxItemResolver {
     private readonly inboxItemActionService: InboxItemActionService,
     private readonly inboxQueueService: InboxQueueService,
     private readonly inboxTransitionService: InboxTransitionService,
+    private readonly inboxItemToolCallService: InboxItemToolCallService,
   ) {}
 
   @Query(() => [InboxItemDTO])
@@ -258,6 +264,75 @@ export class InboxItemResolver {
       ),
       actionKey,
       input: toInboxItemPayload(input),
+      expectedVersion,
+    });
+
+    return toInboxItemDto(inboxItem, new Date(), userWorkspaceId);
+  }
+
+  @Mutation(() => InboxItemToolCallDTO)
+  async updateInboxItemToolCallInput(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Args('inboxItemToolCallId', { type: () => UUIDScalarType })
+    inboxItemToolCallId: string,
+    @Args('editedInput', { type: () => GraphQLJSON })
+    editedInput: Record<string, unknown>,
+  ): Promise<InboxItemToolCallDTO> {
+    const toolCall = await this.inboxItemToolCallService.updateInput({
+      workspaceId,
+      actorUserWorkspaceId: userWorkspaceId,
+      accessibleQueueIds: await this.findAccessibleQueueIds(
+        workspaceId,
+        userWorkspaceId,
+      ),
+      inboxItemToolCallId,
+      editedInput: toInboxItemPayload(editedInput) ?? {},
+    });
+
+    return toInboxItemToolCallDto(toolCall);
+  }
+
+  @Mutation(() => InboxItemToolCallDTO)
+  async setInboxItemToolCallRejected(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Args('inboxItemToolCallId', { type: () => UUIDScalarType })
+    inboxItemToolCallId: string,
+    @Args('isRejected', { type: () => Boolean }) isRejected: boolean,
+  ): Promise<InboxItemToolCallDTO> {
+    const toolCall = await this.inboxItemToolCallService.setRejected({
+      workspaceId,
+      actorUserWorkspaceId: userWorkspaceId,
+      accessibleQueueIds: await this.findAccessibleQueueIds(
+        workspaceId,
+        userWorkspaceId,
+      ),
+      inboxItemToolCallId,
+      isRejected,
+    });
+
+    return toInboxItemToolCallDto(toolCall);
+  }
+
+  // Runs what is left of the plan and clears the item. The plan's own controls
+  // are the ways out that do not run anything.
+  @Mutation(() => InboxItemDTO)
+  async runInboxItemToolCalls(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Args('inboxItemId', { type: () => UUIDScalarType }) inboxItemId: string,
+    @Args('expectedVersion', { type: () => Int, nullable: true })
+    expectedVersion?: number,
+  ): Promise<InboxItemDTO> {
+    const inboxItem = await this.inboxItemToolCallService.runAll({
+      inboxItemId,
+      workspaceId,
+      actorUserWorkspaceId: userWorkspaceId,
+      accessibleQueueIds: await this.findAccessibleQueueIds(
+        workspaceId,
+        userWorkspaceId,
+      ),
       expectedVersion,
     });
 

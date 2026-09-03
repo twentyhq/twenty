@@ -103,6 +103,16 @@ const StyledTitle = styled.div<{ isUnread: boolean }>`
   white-space: nowrap;
 `;
 
+const StyledToolIcons = styled.div`
+  align-items: center;
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
+  flex-shrink: 0;
+  gap: 2px;
+`;
+
+const MAX_ROW_TOOL_ICONS = 4;
+
 const StyledPreview = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   max-width: ${INBOX_LIST_ROW_PREVIEW_MAX_WIDTH}px;
@@ -140,6 +150,9 @@ export const InboxListRow = ({
 
   const InboxItemIcon = getIcon(inboxItem.inboxItemType.icon);
   const needsAction = inboxItem.priority === InboxItemPriority.NEEDS_ACTION;
+  const toolIcons = inboxItem.toolCalls
+    .slice(0, MAX_ROW_TOOL_ICONS)
+    .map((toolCall) => ({ id: toolCall.id, Icon: getIcon(toolCall.icon) }));
 
   return (
     <StyledRowContainer>
@@ -169,6 +182,13 @@ export const InboxListRow = ({
               {inboxItem.title}
             </StyledTitle>
           </StyledTitleContainer>
+          {toolIcons.length > 0 && (
+            <StyledToolIcons>
+              {toolIcons.map(({ id, Icon }) => (
+                <Icon key={id} size={theme.icon.size.sm} />
+              ))}
+            </StyledToolIcons>
+          )}
           {isNonEmptyString(inboxItem.preview) && (
             <StyledPreview>{inboxItem.preview}</StyledPreview>
           )}

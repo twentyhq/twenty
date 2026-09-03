@@ -8,6 +8,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { CREATE_INBOX_CORE_TABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-38/create-inbox-core-tables-upgrade-command-name.constant';
@@ -21,6 +22,8 @@ import { type InboxItemPayload } from 'src/engine/core-modules/inbox/types/inbox
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
+import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
+import { type InboxItemContext } from 'src/engine/core-modules/inbox/types/inbox-item-context.type';
 
 // One thing asking for one person's attention. A conversation, a question from
 // an agent, an approval, a failed run: same row, different type.
@@ -102,6 +105,14 @@ export class InboxItemEntity {
 
   @Column({ nullable: true, type: 'jsonb' })
   payload: JsonbProperty<InboxItemPayload> | null;
+
+  // What the work is about, structured enough to draw: summary, source, the
+  // entities involved. Producers that only have a line of text leave it null.
+  @Column({ type: 'jsonb', nullable: true })
+  context: JsonbProperty<InboxItemContext> | null;
+
+  @OneToMany(() => InboxItemToolCallEntity, (toolCall) => toolCall.inboxItem)
+  toolCalls: EntityRelation<InboxItemToolCallEntity[]>;
 
   // Written by producers only. Also what the list is ordered by, so retitling
   // or reading an item cannot reorder it.
