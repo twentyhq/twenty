@@ -82,17 +82,17 @@ export class InboxItemToolCallService {
       inboxItemToolCallId,
     });
 
-    const status = isRejected
-      ? InboxItemToolCallStatus.REJECTED
-      : InboxItemToolCallStatus.PROPOSED;
-
-    await this.updateUnlessChanged(workspaceId, toolCall, {
-      status,
+    const patch = {
+      status: isRejected
+        ? InboxItemToolCallStatus.REJECTED
+        : InboxItemToolCallStatus.PROPOSED,
       resolvedByUserWorkspaceId: isRejected ? actorUserWorkspaceId : null,
       resolvedAt: isRejected ? new Date() : null,
-    });
+    };
 
-    return { ...toolCall, status };
+    await this.updateUnlessChanged(workspaceId, toolCall, patch);
+
+    return { ...toolCall, ...patch };
   }
 
   // Runs every call still proposed, in order, then clears the item with an
