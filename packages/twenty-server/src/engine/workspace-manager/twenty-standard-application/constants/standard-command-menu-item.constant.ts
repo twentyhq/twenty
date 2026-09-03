@@ -1030,7 +1030,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     icon: 'IconX',
     isPinned: true,
-    position: 70,
+    position: 71,
     shortLabel: i18nLabel(
       msg({ message: `Cancel`, context: 'commandMenuItem.shortLabel' }),
     ),

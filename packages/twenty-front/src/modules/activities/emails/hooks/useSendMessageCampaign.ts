@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/client/react';
 
 import { SEND_MESSAGE_CAMPAIGN } from '@/activities/emails/graphql/mutations/sendMessageCampaign';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { t } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
 import {
   type SendMessageCampaignMutation,
   type SendMessageCampaignMutationVariables,
@@ -24,7 +24,12 @@ const buildSkipReasons = (audience: CampaignAudienceOutcome): string => {
     parts.push(t`${audience.withoutEmail} without email`);
   }
   if (audience.duplicateEmails > 0) {
-    parts.push(t`${audience.duplicateEmails} duplicate`);
+    parts.push(
+      plural(audience.duplicateEmails, {
+        one: `${audience.duplicateEmails} duplicate`,
+        other: `${audience.duplicateEmails} duplicates`,
+      }),
+    );
   }
   if (audience.hardSuppressed > 0) {
     parts.push(t`${audience.hardSuppressed} bounced or complained`);
