@@ -47,8 +47,8 @@ export const InboxSnoozeDropdown = ({
   const { transitionInboxItem } = useInboxItemActions();
   const { enqueueErrorSnackBar } = useSnackBar();
   const { closeDropdown } = useCloseDropdown();
-  // The picker's value lives here between edits: a typed time must survive
-  // until a day is clicked or the moment is confirmed
+  // The picker's value lives here between edits: a day or a time picked is
+  // held until the moment is confirmed, so either can still be changed
   const [pickedDateTime, setPickedDateTime] =
     useState<Temporal.ZonedDateTime | null>(null);
 
@@ -114,7 +114,6 @@ export const InboxSnoozeDropdown = ({
                 date={pickedDateTime}
                 clearable={false}
                 onChange={setPickedDateTime}
-                onClose={snoozeUntilPicked}
               />
               <DropdownMenuSeparator />
               <DropdownMenuItemsContainer>

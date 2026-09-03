@@ -256,26 +256,39 @@ export class InboxRouterService {
     args: RouteInboxItemArgs;
     inboxItemType: InboxItemTypeEntity;
   }): Promise<InboxItemEntity | null> {
-    await this.inboxItemRepository.update(
-      args.workspaceId,
-      { id: existingItem.id },
-      {
-        inboxItemTypeId: inboxItemType.id,
-        priority: args.priority ?? inboxItemType.defaultPriority,
-        ...(isDefined(args.title) ? { title: args.title } : {}),
-        ...(isDefined(args.context) ? { context: args.context } : {}),
-        lastEventAt: () => 'clock_timestamp()',
-        version: () => '"version" + 1',
-      },
-    );
+    // One transaction for the event and the plan it carries, with the item
+    // locked first, so two plans folding at once take turns and neither can
+    // leave the event recorded without its calls
+    await this.coreDataSource.transaction(async (manager) => {
+      const inboxItemRepository = this.inboxItemRepository.withManager(manager);
 
-    if (isDefined(args.toolCalls)) {
-      await this.replaceProposedToolCalls({
-        workspaceId: args.workspaceId,
-        inboxItemId: existingItem.id,
-        toolCalls: args.toolCalls,
+      await inboxItemRepository.findOne(args.workspaceId, {
+        where: { id: existingItem.id },
+        lock: { mode: 'pessimistic_write' },
       });
-    }
+
+      await inboxItemRepository.update(
+        args.workspaceId,
+        { id: existingItem.id },
+        {
+          inboxItemTypeId: inboxItemType.id,
+          priority: args.priority ?? inboxItemType.defaultPriority,
+          ...(isDefined(args.title) ? { title: args.title } : {}),
+          ...(isDefined(args.context) ? { context: args.context } : {}),
+          lastEventAt: () => 'clock_timestamp()',
+          version: () => '"version" + 1',
+        },
+      );
+
+      if (isDefined(args.toolCalls)) {
+        await this.replaceProposedToolCalls({
+          manager,
+          workspaceId: args.workspaceId,
+          inboxItemId: existingItem.id,
+          toolCalls: args.toolCalls,
+        });
+      }
+    });
 
     return this.inboxItemRepository.findOneBy(args.workspaceId, {
       id: existingItem.id,
@@ -285,47 +298,40 @@ export class InboxRouterService {
   // A new plan for the same slot replaces what was still proposed and nobody
   // holds, and leaves what already ran, was skipped, or is running right now,
   // so the item keeps its history and a call in flight finishes on its row.
-  // The item is locked for the swap so two plans folding at once take turns
-  // instead of both surviving.
   private async replaceProposedToolCalls({
+    manager,
     workspaceId,
     inboxItemId,
     toolCalls,
   }: {
+    manager: EntityManager;
     workspaceId: string;
     inboxItemId: string;
     toolCalls: InboxItemToolCallDraft[];
   }): Promise<void> {
-    await this.coreDataSource.transaction(async (manager) => {
-      await this.inboxItemRepository.withManager(manager).findOne(workspaceId, {
-        where: { id: inboxItemId },
-        lock: { mode: 'pessimistic_write' },
-      });
+    const toolCallRepository =
+      this.inboxItemToolCallRepository.withManager(manager);
 
-      const toolCallRepository =
-        this.inboxItemToolCallRepository.withManager(manager);
+    await toolCallRepository.delete(workspaceId, {
+      inboxItemId,
+      ...buildClaimableToolCallPredicate(),
+    });
 
-      await toolCallRepository.delete(workspaceId, {
-        inboxItemId,
-        ...buildClaimableToolCallPredicate(),
-      });
+    const keptToolCalls = await toolCallRepository.find(workspaceId, {
+      where: { inboxItemId },
+      select: { position: true },
+    });
+    const firstPosition = keptToolCalls.reduce(
+      (max, toolCall) => Math.max(max, toolCall.position + 1),
+      0,
+    );
 
-      const keptToolCalls = await toolCallRepository.find(workspaceId, {
-        where: { inboxItemId },
-        select: { position: true },
-      });
-      const firstPosition = keptToolCalls.reduce(
-        (max, toolCall) => Math.max(max, toolCall.position + 1),
-        0,
-      );
-
-      await this.insertToolCalls({
-        manager,
-        workspaceId,
-        inboxItemId,
-        toolCalls,
-        firstPosition,
-      });
+    await this.insertToolCalls({
+      manager,
+      workspaceId,
+      inboxItemId,
+      toolCalls,
+      firstPosition,
     });
   }
 

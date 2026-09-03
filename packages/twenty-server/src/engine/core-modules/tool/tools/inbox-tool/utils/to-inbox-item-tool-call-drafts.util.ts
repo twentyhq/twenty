@@ -48,9 +48,10 @@ export const toInboxItemToolCallDrafts = (
     const proposedInput: InboxItemToolCallInput = Object.fromEntries(
       Object.entries(toolCall.input).filter(([, value]) => value !== null),
     );
+    const proposedKeys = Object.keys(proposedInput);
     const keys = [
-      ...Object.keys(proposedInput),
-      ...requiredKeys.filter((key) => !(key in proposedInput)),
+      ...proposedKeys,
+      ...new Set(requiredKeys.filter((key) => !proposedKeys.includes(key))),
     ];
 
     return {

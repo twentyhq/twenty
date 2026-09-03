@@ -37,7 +37,7 @@ describe('toInboxItemToolCallDrafts', () => {
         toolName: 'send_email',
         label: 'Send email',
         input: { to: 'marie@google.com', cc: null },
-        requiredInputKeys: ['to', 'body'],
+        requiredInputKeys: ['to', 'body', 'body'],
       },
     ]);
 

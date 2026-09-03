@@ -29,4 +29,4 @@ export const isToolCallHeldByClaim = (
 export const isToolCallRunning = (toolCall: InboxItemToolCallEntity) =>
   toolCall.status === InboxItemToolCallStatus.PROPOSED &&
   isDefined(toolCall.resolvedAt) &&
-  toolCall.resolvedAt > getClaimCutoff();
+  toolCall.resolvedAt >= getClaimCutoff();
