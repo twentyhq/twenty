@@ -30,8 +30,9 @@ export const syncFathomMeetingToCallRecording = async ({
     meeting,
   });
   const title = meeting.meetingTitle?.trim() || meeting.title.trim();
-  const isComplete =
-    transcriptEntries.length > 0 && isNonEmptyString(summaryMarkdown);
+  // Fathom exposes no pending state, so a summary still missing when we sync is
+  // one it never generated: waiting on it would strand the recording.
+  const isComplete = transcriptEntries.length > 0;
   const fields: CallRecordingSyncFields = {
     ...(isNonEmptyString(title) ? { title } : {}),
     status: isComplete ? 'COMPLETED' : 'PROCESSING',
