@@ -71,7 +71,7 @@ const ACTIVE_REGISTRATION = {
 
 const INITIAL_BACKFILL_JOB = {
   logicFunctionUniversalIdentifier: FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
-  payload: { connectedAccountId: 'connection-1', days: 7 },
+  payload: { connectedAccountId: 'connection-1', days: 31 },
   retryLimit: 3,
 };
 
@@ -113,7 +113,7 @@ describe('fathomRegisterConnectionHandler', () => {
     });
   });
 
-  it('starts the initial seven-day import once the registration is stored', async () => {
+  it('starts the initial import once the registration is stored', async () => {
     await fathomRegisterConnectionHandler(HOOK_PAYLOAD);
 
     expect(sdkMocks.enqueueJob).toHaveBeenCalledWith(INITIAL_BACKFILL_JOB);

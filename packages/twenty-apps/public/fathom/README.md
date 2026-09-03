@@ -8,7 +8,7 @@
 - Transcripts, summaries, and action items
 - Links to matching calendar events when the match is unambiguous
 - Automatic sync for new recordings
-- A seven-day import when a Fathom account is connected, and manual imports of
+- A 31-day import when a Fathom account is connected, and manual imports of
   older history
 - Workflow and AI actions to sync one recording or list recordings by
   participant
