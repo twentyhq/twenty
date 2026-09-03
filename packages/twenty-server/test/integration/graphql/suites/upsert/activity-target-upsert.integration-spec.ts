@@ -1,4 +1,5 @@
 import { randomUUID } from 'crypto';
+import { isDefined } from 'twenty-shared/utils';
 
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
@@ -79,7 +80,7 @@ describe('activity target upsert', () => {
 
       expect(findResponse.body.data.taskTargets.edges).toHaveLength(1);
     } finally {
-      if (taskTargetId) {
+      if (isDefined(taskTargetId)) {
         await makeGraphqlAPIRequest(
           destroyOneOperationFactory({
             objectMetadataSingularName: 'taskTarget',
