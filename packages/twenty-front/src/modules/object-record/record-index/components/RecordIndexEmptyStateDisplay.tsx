@@ -16,27 +16,27 @@ const StyledEmptyStateContainer = styled.div`
   width: 100%;
 `;
 
-type RecordListEmptyStateDisplayProps = {
+type RecordIndexEmptyStateDisplayProps = {
   animatedPlaceholderType: AnimatedPlaceholderType;
   title: string;
   subTitle: string;
   ButtonIcon?: IconComponent;
   buttonTitle?: string;
-  buttonIsDisabled?: boolean;
   onButtonClick?: () => void;
+  width?: number;
 };
 
-export const RecordListEmptyStateDisplay = ({
+export const RecordIndexEmptyStateDisplay = ({
   animatedPlaceholderType,
   title,
   subTitle,
   ButtonIcon,
   buttonTitle,
-  buttonIsDisabled = false,
   onButtonClick,
-}: RecordListEmptyStateDisplayProps) => (
+  width,
+}: RecordIndexEmptyStateDisplayProps) => (
   <StyledEmptyStateContainer>
-    <AnimatedPlaceholderEmptyContainer>
+    <AnimatedPlaceholderEmptyContainer width={width}>
       <AnimatedPlaceholder type={animatedPlaceholderType} />
       <AnimatedPlaceholderEmptyTextContainer>
         <AnimatedPlaceholderEmptyTitle>{title}</AnimatedPlaceholderEmptyTitle>
@@ -44,13 +44,12 @@ export const RecordListEmptyStateDisplay = ({
           {subTitle}
         </AnimatedPlaceholderEmptySubTitle>
       </AnimatedPlaceholderEmptyTextContainer>
-      {isDefined(buttonTitle) && (
+      {isDefined(onButtonClick) && (
         <Button
           Icon={ButtonIcon}
           title={buttonTitle}
           variant="secondary"
           onClick={onButtonClick}
-          disabled={buttonIsDisabled}
         />
       )}
     </AnimatedPlaceholderEmptyContainer>
