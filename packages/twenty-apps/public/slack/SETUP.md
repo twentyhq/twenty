@@ -247,12 +247,19 @@ It renders nothing until Slack is connected.
 
 Links made against a Slack workspace you are no longer connected to stay in
 that list, because they are the audit trail of who could borrow whose access
-and when. They cannot grant anything: a request is only ever matched against
-the installed Slack team, so a link from another team never fires. The list
-says so rather than hiding them, marking each such row **Slack workspace
-disconnected** instead of a live status, and offering no consent resend for
-it. Removing the row is the only way to drop it, and disconnecting a Slack
-workspace never does so on your behalf. If Slack does not confirm the
+and when. Disconnecting stops the app receiving that workspace's messages, so
+these links normally go quiet, but it does not revoke them. An email-matched
+link is inert either way, because email matching trusts only members of the
+installed workspace. A consented manual link is not: it is keyed on the
+sender's own Slack team, so it is still honoured if that person can reach the
+bot another way, such as through Slack Connect in the workspace you are
+connected to now. That is the same mechanism that makes manual links work for
+Slack Connect users in the first place.
+
+So the list marks these rows rather than hiding them, showing **Slack
+workspace disconnected** instead of a live status and offering no consent
+resend for them. Removing the row is what revokes the link, and disconnecting
+a Slack workspace never does so on your behalf. If Slack does not confirm the
 installed team when the section loads, every row keeps its stored status
 rather than being marked wrongly.
 

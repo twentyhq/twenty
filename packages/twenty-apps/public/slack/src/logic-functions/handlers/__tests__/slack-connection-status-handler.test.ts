@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { SLACK_CONNECTION_STATUS_TIMEOUT_MS } from 'src/logic-functions/constants/slack-connection-status-timeout-ms';
 import { slackConnectionStatusHandler } from 'src/logic-functions/handlers/slack-connection-status-handler';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 
@@ -29,6 +30,18 @@ describe('slackConnectionStatusHandler', () => {
       success: true,
       isConnected: true,
       installedSlackTeamId: 'T0INSTALLED',
+    });
+  });
+
+  it('should bound the Slack call so a hanging Slack cannot exhaust the route budget', async () => {
+    mockConnectedSlackClient();
+    authTestMock.mockResolvedValueOnce({ ok: true, team_id: 'T0INSTALLED' });
+
+    await slackConnectionStatusHandler();
+
+    expect(getSlackClient).toHaveBeenCalledWith({
+      timeout: SLACK_CONNECTION_STATUS_TIMEOUT_MS,
+      retryConfig: { retries: 0 },
     });
   });
 

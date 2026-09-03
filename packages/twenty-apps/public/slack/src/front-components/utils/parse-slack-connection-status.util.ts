@@ -1,11 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { type ParsedSlackConnectionStatus } from 'src/front-components/types/parsed-slack-connection-status.type';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
-
-export type ParsedSlackConnectionStatus = {
-  isSlackConnected: boolean;
-  installedSlackTeamId: string | undefined;
-};
 
 export const DISCONNECTED_SLACK_CONNECTION_STATUS: ParsedSlackConnectionStatus =
   {
