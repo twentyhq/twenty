@@ -3,7 +3,9 @@ import { useMutation } from '@apollo/client/react';
 
 import { SEND_MESSAGE_CAMPAIGN } from '@/activities/emails/graphql/mutations/sendMessageCampaign';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { plural, t } from '@lingui/core/macro';
+import { t } from '@lingui/core/macro';
+
+import { buildExcludedRecipientReasons } from '@/activities/emails/utils/buildExcludedRecipientReasons';
 import {
   type SendMessageCampaignMutation,
   type SendMessageCampaignMutationVariables,
@@ -17,37 +19,8 @@ type CampaignAudienceOutcome = NonNullable<
   SendMessageCampaignMutation['sendMessageCampaign']
 >['audience'];
 
-const buildSkipReasons = (audience: CampaignAudienceOutcome): string => {
-  const parts: string[] = [];
-
-  if (audience.withoutEmail > 0) {
-    parts.push(t`${audience.withoutEmail} without email`);
-  }
-  if (audience.duplicateEmails > 0) {
-    parts.push(
-      plural(audience.duplicateEmails, {
-        one: `${audience.duplicateEmails} duplicate`,
-        other: `${audience.duplicateEmails} duplicates`,
-      }),
-    );
-  }
-  if (audience.hardSuppressed > 0) {
-    parts.push(t`${audience.hardSuppressed} bounced or complained`);
-  }
-  if (audience.globallyUnsubscribed > 0) {
-    parts.push(
-      t`${audience.globallyUnsubscribed} unsubscribed from everything`,
-    );
-  }
-  if (audience.topicUnsubscribed > 0) {
-    parts.push(t`${audience.topicUnsubscribed} opted out of this topic`);
-  }
-  if (audience.overCap > 0) {
-    parts.push(t`${audience.overCap} over the recipient limit`);
-  }
-
-  return parts.length > 0 ? parts.join(', ') : t`no eligible recipients`;
-};
+const buildSkipReasons = (audience: CampaignAudienceOutcome): string =>
+  buildExcludedRecipientReasons(audience).join(', ');
 
 export const useSendMessageCampaign = () => {
   const [sendMessageCampaignMutation, { loading }] = useMutation<

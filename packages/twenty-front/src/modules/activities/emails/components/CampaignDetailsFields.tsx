@@ -19,6 +19,7 @@ import {
 } from '@/activities/emails/components/CampaignEnvelopeBox';
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { useCampaignAudiencePreview } from '@/activities/emails/hooks/useCampaignAudiencePreview';
+import { buildExcludedRecipientReasons } from '@/activities/emails/utils/buildExcludedRecipientReasons';
 import { useCampaignDetailsState } from '@/activities/emails/hooks/useCampaignDetailsState';
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
@@ -74,33 +75,6 @@ type CampaignAudiencePreview = NonNullable<
   ReturnType<typeof useCampaignAudiencePreview>['audiencePreview']
 >;
 
-const buildExcludedRecipientsBreakdown = (
-  preview: CampaignAudiencePreview,
-): string[] => {
-  const parts: string[] = [];
-
-  if (preview.withoutEmail > 0) {
-    parts.push(t`${preview.withoutEmail} without an email address`);
-  }
-  if (preview.duplicateEmails > 0) {
-    parts.push(t`${preview.duplicateEmails} duplicate`);
-  }
-  if (preview.hardSuppressed > 0) {
-    parts.push(t`${preview.hardSuppressed} bounced or complained`);
-  }
-  if (preview.globallyUnsubscribed > 0) {
-    parts.push(t`${preview.globallyUnsubscribed} unsubscribed from everything`);
-  }
-  if (preview.topicUnsubscribed > 0) {
-    parts.push(t`${preview.topicUnsubscribed} opted out of this topic`);
-  }
-  if (preview.overCap > 0) {
-    parts.push(t`${preview.overCap} over the recipient limit`);
-  }
-
-  return parts;
-};
-
 type CampaignDetailsFieldsProps = {
   campaign: MessageCampaign;
   width: string;
@@ -153,7 +127,7 @@ export const CampaignDetailsFields = ({
   const hasSenderOptions = senderOptions.length > 0;
 
   const excludedRecipientsBreakdown = isDefined(audiencePreview)
-    ? buildExcludedRecipientsBreakdown(audiencePreview)
+    ? buildExcludedRecipientReasons(audiencePreview)
     : [];
   const hasExcludedRecipients = excludedRecipientsBreakdown.length > 0;
 
