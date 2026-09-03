@@ -90,6 +90,7 @@ const APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT: (keyof ApplicationRegist
     'category',
     'websiteUrl',
     'aboutDescription',
+    'pricingDescription',
     'termsUrl',
     'emailSupport',
     'issueReportUrl',
@@ -480,7 +481,7 @@ export class ApplicationRegistrationService {
     };
   }
 
-  async findOneByUniversalIdentifier(
+  async findOneByUniversalIdentifierGlobal(
     universalIdentifier: string,
   ): Promise<ApplicationRegistrationEntity | null> {
     return this.applicationRegistrationRepository.findOne({
@@ -499,7 +500,7 @@ export class ApplicationRegistrationService {
     const universalIdentifier = input.universalIdentifier ?? v4();
 
     const existingByUid =
-      await this.findOneByUniversalIdentifier(universalIdentifier);
+      await this.findOneByUniversalIdentifierGlobal(universalIdentifier);
 
     if (existingByUid) {
       throw new ApplicationRegistrationException(
@@ -778,7 +779,7 @@ export class ApplicationRegistrationService {
       | 'manifest'
     >,
   ): Promise<void> {
-    const existing = await this.findOneByUniversalIdentifier(
+    const existing = await this.findOneByUniversalIdentifierGlobal(
       params.universalIdentifier,
     );
 
@@ -911,7 +912,7 @@ export class ApplicationRegistrationService {
   }
 
   async createCliRegistrationIfNotExists(): Promise<ApplicationRegistrationEntity | null> {
-    const existing = await this.findOneByUniversalIdentifier(
+    const existing = await this.findOneByUniversalIdentifierGlobal(
       TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
     );
 

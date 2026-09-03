@@ -25,6 +25,7 @@ import {
 } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-plan';
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
 import { getSyncErrorRecoveryHint } from '@/cli/utilities/error/get-sync-error-recovery-hint';
+import { getGraphQLErrorMessage } from '@/cli/utilities/error/parse-server-error';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
 import { runSafe } from '@/cli/utilities/run-safe';
@@ -40,6 +41,7 @@ export type AppDevOnceOptions = {
   verbose?: boolean;
   apply?: boolean;
   force?: boolean;
+  inferDeletionFromMissingEntities?: boolean;
   onProgress?: (message: string) => void;
   onPlan?: (text: string) => void;
   confirmApply?: (deleteCount: number) => Promise<boolean>;
@@ -119,6 +121,7 @@ const innerAppDevOnce = async (
     verbose = false,
     apply = true,
     force = false,
+    inferDeletionFromMissingEntities = true,
   } = options;
 
   onProgress?.('Checking server...');
@@ -230,13 +233,18 @@ const innerAppDevOnce = async (
 
     const planResult = await apiService.syncApplication(manifest, {
       dryRun: true,
+      inferDeletionFromMissingEntities,
     });
 
     if (!planResult.success) {
       return { success: false, error: buildSyncError(planResult, verbose) };
     }
 
-    onPlan?.(formatSyncActionsPlan(planResult.data.actions));
+    onPlan?.(
+      formatSyncActionsPlan(planResult.data.actions, {
+        showNoDeleteHint: inferDeletionFromMissingEntities,
+      }),
+    );
 
     return { success: true, data: makeData() };
   }
@@ -248,10 +256,15 @@ const innerAppDevOnce = async (
 
     const planResult = await apiService.syncApplication(manifest, {
       dryRun: true,
+      inferDeletionFromMissingEntities,
     });
 
     if (planResult.success) {
-      onPlan?.(formatSyncActionsPlan(planResult.data.actions));
+      onPlan?.(
+        formatSyncActionsPlan(planResult.data.actions, {
+          showNoDeleteHint: inferDeletionFromMissingEntities,
+        }),
+      );
       planRendered = true;
 
       if (hasDestructiveActions(planResult.data.actions)) {
@@ -297,7 +310,9 @@ const innerAppDevOnce = async (
       success: false,
       error: {
         code: APP_ERROR_CODES.SYNC_FAILED,
-        message: `Failed to install development application: ${serializeError(createDevAppResult.error)}`,
+        message:
+          getGraphQLErrorMessage(createDevAppResult.error) ??
+          `Failed to install development application: ${serializeError(createDevAppResult.error)}`,
       },
     };
   }
@@ -335,7 +350,9 @@ const innerAppDevOnce = async (
 
   onProgress?.('Syncing manifest...');
 
-  const syncResult = await apiService.syncApplication(manifest);
+  const syncResult = await apiService.syncApplication(manifest, {
+    inferDeletionFromMissingEntities,
+  });
 
   if (!syncResult.success) {
     return { success: false, error: buildSyncError(syncResult, verbose) };

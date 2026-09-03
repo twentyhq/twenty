@@ -132,8 +132,8 @@ export class ApplicationInstallService {
       isStateAlreadyTransitioned?: boolean;
     },
   ): Promise<boolean> {
-    // Re-read inside the lock so the authorization below cannot act on stale
-    // listing or ownership state.
+    // Re-read inside the lock so a concurrent tarball upload cannot make us
+    // resolve a stale package.
     const appRegistration = await this.appRegistrationRepository.findOne({
       where: { id: preLockAppRegistration.id },
     });
@@ -142,21 +142,6 @@ export class ApplicationInstallService {
       throw new ApplicationException(
         `Application registration with id ${preLockAppRegistration.id} not found`,
         ApplicationExceptionCode.APPLICATION_NOT_FOUND,
-      );
-    }
-
-    // Tarball registrations that are neither listed nor pre-installed are
-    // only installable by their owner workspace.
-    if (
-      appRegistration.sourceType ===
-        ApplicationRegistrationSourceType.TARBALL &&
-      !appRegistration.isListed &&
-      !appRegistration.isPreInstalled &&
-      appRegistration.ownerWorkspaceId !== params.workspaceId
-    ) {
-      throw new ApplicationException(
-        `Application registration ${appRegistration.universalIdentifier} is not available for this workspace`,
-        ApplicationExceptionCode.FORBIDDEN,
       );
     }
 

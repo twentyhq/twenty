@@ -170,11 +170,13 @@ export class ApplicationManifestMigrationService {
     workspaceId,
     ownerFlatApplication,
     dryRun = false,
+    inferDeletionFromMissingEntities = true,
   }: {
     manifest: Manifest;
     workspaceId: string;
     ownerFlatApplication: FlatApplication;
     dryRun?: boolean;
+    inferDeletionFromMissingEntities?: boolean;
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
@@ -222,7 +224,9 @@ export class ApplicationManifestMigrationService {
         toAllUniversalFlatEntityMaps,
         buildOptions: {
           isSystemBuild: false,
-          inferDeletionFromMissingEntities: true,
+          inferDeletionFromMissingEntities: inferDeletionFromMissingEntities
+            ? true
+            : undefined,
           applicationUniversalIdentifier:
             ownerFlatApplication.universalIdentifier,
         },

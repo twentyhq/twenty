@@ -21,10 +21,16 @@ import {
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
+// Sized off the page card header row beside it, so the rules read as one line
+// across both columns.
 const StyledSwitcher = styled.div`
   align-items: center;
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  border-top: 1px solid ${themeCssVariables.border.color.light};
+  box-sizing: border-box;
   display: flex;
   gap: ${themeCssVariables.spacing['0.5']};
+  height: ${themeCssVariables.spacing[10]};
 `;
 
 const StyledMode = styled.button<{ isActive: boolean }>`

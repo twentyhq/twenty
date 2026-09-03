@@ -13,6 +13,24 @@ Once your app is [built and tested locally](/developers/extend/apps/getting-star
 
 Both paths start from the same **build** step.
 
+## Registration ownership
+
+Publishing an app creates an **application registration**: the app's identity on the instance, shared by every workspace that installs it. It holds the app's marketplace entry, its OAuth client, and its server-side state — the `serverVariables` an operator configures and the `server`-scoped entries of the [key-value store](/developers/extend/apps/logic/key-value-store).
+
+A `universalIdentifier` is unique across the whole instance and a registration belongs to at most one workspace (its owner) — or none until it is claimed — so installing an app and developing one are two different rights:
+
+| Action | Requirement |
+|--------|-------------|
+| Installing an app | The app is listed on the marketplace, pre-installed by the operator, or its registration belongs to your workspace. |
+| Developing an app (`yarn twenty dev`, `apply`, `plan`) | The registration belongs to your workspace. |
+
+Syncing code and a manifest under an identifier is a claim of authorship, so being able to install an app never grants the right to publish code under its identity. A workspace that is not the owner is refused, whether the app is listed, pre-installed, or private.
+
+Two situations lead to that refusal:
+
+- **The identifier belongs to another workspace.** Change the `universalIdentifier` in your app config, which is the usual answer when you forked someone else's app. If you need to keep the identifier, the owning workspace has to transfer the registration to yours.
+- **The identifier belongs to no workspace.** Apps imported by the marketplace catalog sync start unowned. Claim yours through npm trusted publishing before developing on it.
+
 ## Building your app
 
 Run the build command to compile your app and generate a distribution-ready `manifest.json`:

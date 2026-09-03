@@ -21,6 +21,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { type IconComponent } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
@@ -47,7 +48,9 @@ export const SingleRecordPickerMenuItems = ({
     );
 
   const selectableListComponentInstanceId =
-    getSingleRecordPickerSelectableListId(recordPickerComponentInstanceId);
+    useWorkspaceSurfaceScopedComponentInstanceId(
+      getSingleRecordPickerSelectableListId(recordPickerComponentInstanceId),
+    );
 
   const { resetSelectedItem } = useSelectableList(
     selectableListComponentInstanceId,

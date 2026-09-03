@@ -14,6 +14,7 @@ import { H2Title } from 'twenty-ui/typography';
 import { SlackUserLinkForm } from 'src/front-components/components/SlackUserLinkForm';
 import { SlackUserLinksList } from 'src/front-components/components/SlackUserLinksList';
 import { UnlinkedSlackUsersList } from 'src/front-components/components/UnlinkedSlackUsersList';
+import { SLACK_CONNECTION_HEALTH_CALLOUTS } from 'src/front-components/constants/slack-connection-health-callouts.constant';
 import { useCanManageSlackUserLinks } from 'src/front-components/hooks/use-can-manage-slack-user-links';
 import { useMatchSlackUserLinks } from 'src/front-components/hooks/use-match-slack-user-links';
 import { useSlackConnectionStatus } from 'src/front-components/hooks/use-slack-connection-status';
@@ -64,8 +65,13 @@ const StyledCenteredState = styled.div`
 
 export const SlackUserLinksSettings = () => {
   const { canManage, isPermissionLoading } = useCanManageSlackUserLinks();
-  const { isSlackConnected, isConnectionStatusLoading } =
-    useSlackConnectionStatus();
+  const {
+    isSlackConnected,
+    installedSlackTeamId,
+    connectionHealth,
+    hasRosterMatchFailed,
+    isConnectionStatusLoading,
+  } = useSlackConnectionStatus();
   const {
     slackUserLinks,
     isSlackUserLinksLoading,
@@ -86,6 +92,9 @@ export const SlackUserLinksSettings = () => {
   const [matchSummary, setMatchSummary] = useState<string | undefined>(
     undefined,
   );
+  const [hasLastMatchRunFailed, setHasLastMatchRunFailed] = useState<
+    boolean | undefined
+  >(undefined);
   const [isManualFormOpen, setIsManualFormOpen] = useState(false);
 
   const handleLinkSaved = async () => {
@@ -102,6 +111,7 @@ export const SlackUserLinksSettings = () => {
 
     if (!result.success) {
       setMatchSummary(undefined);
+      setHasLastMatchRunFailed(true);
       enqueueSnackbar({
         message: isNonEmptyString(result.error) ? result.error : result.message,
         variant: 'error',
@@ -111,6 +121,7 @@ export const SlackUserLinksSettings = () => {
     }
 
     setMatchSummary(result.message);
+    setHasLastMatchRunFailed(result.failedCount > 0);
     await handleLinkSaved();
   };
 
@@ -161,9 +172,28 @@ export const SlackUserLinksSettings = () => {
     return null;
   }
 
+  const connectionHealthCallout = isDefined(connectionHealth)
+    ? SLACK_CONNECTION_HEALTH_CALLOUTS[connectionHealth]
+    : undefined;
+
+  if (isDefined(connectionHealthCallout)) {
+    return (
+      <StyledContainer>
+        <Callout
+          variant="error"
+          title={connectionHealthCallout.title}
+          description={connectionHealthCallout.description}
+        />
+      </StyledContainer>
+    );
+  }
+
   if (isPermissionLoading) {
     return <StyledCenteredState>Loading Slack user links…</StyledCenteredState>;
   }
+
+  const shouldWarnAboutRosterMatch =
+    canManage && (hasLastMatchRunFailed ?? hasRosterMatchFailed);
 
   return (
     <StyledContainer>
@@ -172,6 +202,13 @@ export const SlackUserLinksSettings = () => {
           variant="warning"
           title="You need the roles permission"
           description="Only members with the roles permission can create or change Slack user links. You can review the existing links below."
+        />
+      )}
+      {shouldWarnAboutRosterMatch && (
+        <Callout
+          variant="warning"
+          title="Email auto-link did not finish"
+          description="The last automatic email match failed before linking everyone. Press Auto-link by email below to run it again."
         />
       )}
       {canManage && (
@@ -221,6 +258,7 @@ export const SlackUserLinksSettings = () => {
           <SlackUserLinksList
             slackUserLinks={slackUserLinks}
             canManage={canManage}
+            installedSlackTeamId={installedSlackTeamId}
             hasMore={hasMoreSlackUserLinks}
             onRemove={handleRemove}
             onResend={handleResend}

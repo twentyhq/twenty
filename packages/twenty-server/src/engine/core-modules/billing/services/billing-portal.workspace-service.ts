@@ -369,7 +369,7 @@ export class BillingPortalWorkspaceService {
     };
   }
 
-  async computeBillingPortalSessionURLOrThrow(
+  async computeBillingPortalSessionUrlOrThrow(
     workspace: WorkspaceEntity,
     returnUrlPath?: string,
     forPaymentMethodUpdate?: boolean,
@@ -415,7 +415,7 @@ export class BillingPortalWorkspaceService {
     return session.url;
   }
 
-  async computeBillingPortalSessionURLForPaymentMethodUpdate(
+  async computeBillingPortalSessionUrlForPaymentMethodUpdate(
     workspace: WorkspaceEntity,
     stripeCustomerId: string,
     returnUrlPath?: string,
