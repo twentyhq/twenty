@@ -16,11 +16,9 @@ export const fathomDisconnectHandler = async (
   const registration = await kv.get<FathomWebhookRegistration>(registrationKey);
 
   if (isDefined(registration)) {
-    // Twenty runs onDisconnect after deleting the token, so retain the secret only
-    // to authenticate and acknowledge any Fathom deliveries still in flight.
-    // TODO(@ehconitin): once the release carrying twentyhq/twenty#25215 is out,
-    // pin engines.twenty to it, delete the Fathom webhook here with the still-valid
-    // token, delete this KV row, and drop the isActive state everywhere.
+    // Twenty runs onDisconnect after deleting the token, so the secret is kept only
+    // to acknowledge Fathom deliveries still in flight.
+    // TODO: delete the webhook here and drop isActive once the engine carries #25215.
     await kv.set(registrationKey, { ...registration, isActive: false });
   }
 
