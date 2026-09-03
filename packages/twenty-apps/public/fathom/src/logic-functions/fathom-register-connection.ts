@@ -1,6 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { getConnection, kv } from 'twenty-sdk/logic-function';
+import {
+  getConnection,
+  kv,
+  RetryableLogicFunctionError,
+} from 'twenty-sdk/logic-function';
 import { isDefined } from 'src/utils/is-defined';
 
 import { FATHOM_REGISTER_CONNECTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
@@ -11,7 +15,9 @@ import { deleteStaleFathomWebhook } from 'src/logic-functions/utils/delete-stale
 import { getFathomConnectionClaimKey } from 'src/logic-functions/utils/get-fathom-connection-claim-key.util';
 import { getFathomWebhookDestinationUrl } from 'src/logic-functions/utils/get-fathom-webhook-destination-url.util';
 import { getFathomWebhookRegistrationKey } from 'src/logic-functions/utils/get-fathom-webhook-registration-key.util';
+import { isTransientFathomError } from 'src/logic-functions/utils/is-transient-fathom-error.util';
 import { storeFathomWebhookRegistration } from 'src/logic-functions/utils/store-fathom-webhook-registration.util';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 export const fathomRegisterConnectionHandler = async (
   payload: FathomConnectionHookPayload,
@@ -51,20 +57,29 @@ export const fathomRegisterConnectionHandler = async (
     scope: 'SERVER',
   });
 
-  const webhook = await fathomClient.createWebhook({
-    destinationUrl: getFathomWebhookDestinationUrl({
-      apiUrl,
-      connectedAccountId: payload.connectedAccountId,
-    }),
-    triggeredFor: [
-      'my_recordings',
-      'my_shared_with_team_recordings',
-      'shared_team_recordings',
-    ],
-    includeTranscript: true,
-    includeSummary: true,
-    includeActionItems: true,
-  });
+  // Only RetryableLogicFunctionError makes the queue redeliver the hook.
+  const webhook = await fathomClient
+    .createWebhook({
+      destinationUrl: getFathomWebhookDestinationUrl({
+        apiUrl,
+        connectedAccountId: payload.connectedAccountId,
+      }),
+      triggeredFor: [
+        'my_recordings',
+        'my_shared_with_team_recordings',
+        'shared_team_recordings',
+      ],
+      includeTranscript: true,
+      includeSummary: true,
+      includeActionItems: true,
+    })
+    .catch((error: unknown) => {
+      if (isTransientFathomError(error)) {
+        throw new RetryableLogicFunctionError(toErrorMessage(error));
+      }
+
+      throw error;
+    });
 
   await storeFathomWebhookRegistration({
     fathomClient,

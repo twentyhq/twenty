@@ -1,6 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
+
 import { buildFathomNotFoundError } from 'src/__tests__/utils/build-fathom-not-found-error.util';
+import { buildFathomServerError } from 'src/__tests__/utils/build-fathom-server-error.util';
 
 const sdkMocks = vi.hoisted(() => ({
   createWebhook: vi.fn(),
@@ -14,7 +17,8 @@ vi.mock('twenty-sdk/define', () => ({
   defineLogicFunction: (config: unknown) => config,
 }));
 
-vi.mock('twenty-sdk/logic-function', () => ({
+vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('twenty-sdk/logic-function')>()),
   kv: { get: sdkMocks.kvGet, set: sdkMocks.kvSet },
   getConnection: sdkMocks.getConnection,
 }));
@@ -83,6 +87,22 @@ describe('fathomRegisterConnectionHandler', () => {
       secret: 'secret-1',
       isActive: true,
     });
+  });
+
+  it('asks the queue to retry when Fathom fails transiently', async () => {
+    sdkMocks.createWebhook.mockRejectedValue(buildFathomServerError());
+
+    await expect(
+      fathomRegisterConnectionHandler(HOOK_PAYLOAD),
+    ).rejects.toBeInstanceOf(RetryableLogicFunctionError);
+  });
+
+  it('surfaces a rejected webhook without retrying', async () => {
+    sdkMocks.createWebhook.mockRejectedValue(buildFathomNotFoundError());
+
+    await expect(
+      fathomRegisterConnectionHandler(HOOK_PAYLOAD),
+    ).rejects.not.toBeInstanceOf(RetryableLogicFunctionError);
   });
 
   it('deletes the webhook it just created when the registration cannot be stored', async () => {
