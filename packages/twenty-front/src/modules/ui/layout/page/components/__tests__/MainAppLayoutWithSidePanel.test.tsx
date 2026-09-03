@@ -84,11 +84,7 @@ const MainSurfaceRoutes = () =>
   ]);
 
 describe('MainAppLayoutWithSidePanel', () => {
-  // Switching between the app and settings sections keeps the page being left
-  // mounted while the next one animates in. If each page carried its own route
-  // context store provider, the stale one would keep writing the main store
-  // from a route that no longer matches the location, fighting the new one.
-  it('keeps a single route context store provider on the main surface across a section switch', async () => {
+  it('hosts one route context store provider that reads the matched leaf params', async () => {
     render(
       <MemoryRouter initialEntries={['/objects/companies']}>
         <NavigateProbeEffect />
