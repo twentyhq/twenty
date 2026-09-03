@@ -21,9 +21,8 @@ import {
 import { phonesFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/phonesFieldValueSchema';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { useContext } from 'react';
-import { isNonEmptyString } from '@sniptt/guards';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPhoneWithNonEmptyNumber } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
@@ -100,7 +99,7 @@ export const PhonesFieldInput = () => {
     const [nextPrimaryPhone, ...nextAdditionalPhones] = phones;
 
     const sanitizedAdditionalPhones = nextAdditionalPhones.filter(
-      (phone) => isDefined(phone) && isNonEmptyString(phone.number),
+      isPhoneWithNonEmptyNumber,
     );
 
     const nextValue: FieldPhonesValue = {

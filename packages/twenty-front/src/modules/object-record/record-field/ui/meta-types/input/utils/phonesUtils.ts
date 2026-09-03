@@ -1,6 +1,5 @@
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPhoneWithNonEmptyNumber } from 'twenty-shared/utils';
 
 export const createPhonesFromFieldValue = (fieldValue: FieldPhonesValue) => {
   return !isDefined(fieldValue)
@@ -16,9 +15,7 @@ export const createPhonesFromFieldValue = (fieldValue: FieldPhonesValue) => {
             }
           : null,
         ...(Array.isArray(fieldValue.additionalPhones)
-          ? fieldValue.additionalPhones.filter(
-              (phone) => isDefined(phone) && isNonEmptyString(phone.number),
-            )
+          ? fieldValue.additionalPhones.filter(isPhoneWithNonEmptyNumber)
           : []),
       ].filter(isDefined);
 };

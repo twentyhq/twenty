@@ -6,7 +6,11 @@ import { ExpandableList } from '@/ui/layout/expandable-list/components/Expandabl
 
 import { styled } from '@linaria/react';
 import { parsePhoneNumber } from 'libphonenumber-js';
-import { additionalPhoneSchema, isDefined } from 'twenty-shared/utils';
+import {
+  additionalPhoneSchema,
+  isDefined,
+  isPhoneWithNonEmptyNumber,
+} from 'twenty-shared/utils';
 import { RoundedLink } from 'twenty-ui/navigation';
 import { logError } from '~/utils/logError';
 
@@ -117,7 +121,7 @@ export const PhonesDisplay = ({
 };
 
 const additionalPhoneSchemaWithNonEmptyNumber = additionalPhoneSchema.refine(
-  (phone) => phone.number.length > 0,
+  isPhoneWithNonEmptyNumber,
 );
 
 const parseAdditionalPhonesArray = (additionalPhones: unknown[]) =>
