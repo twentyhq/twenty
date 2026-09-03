@@ -66,11 +66,13 @@ export const parseChatReferenceBody = (
 ): ParsedChatReferenceBody | undefined => {
   const segments = body.split(':');
   const [kindPrefix, ...identityAndLabel] = segments;
-  const prefixedReference = isChatReferenceKind(kindPrefix)
-    ? parseSegments(kindPrefix, identityAndLabel)
-    : undefined;
 
-  // The record prefix is optional, so a body no prefixed form accepts is
-  // still read as a record whose object is named after its first segment.
-  return prefixedReference ?? parseSegments('record', segments);
+  // A recognised prefix followed by an identity of the wrong shape is a
+  // retired or malformed marker, not a record of an object bearing that
+  // name, so it must not fall through to the unprefixed record form.
+  if (isChatReferenceKind(kindPrefix)) {
+    return parseSegments(kindPrefix, identityAndLabel);
+  }
+
+  return parseSegments('record', segments);
 };
