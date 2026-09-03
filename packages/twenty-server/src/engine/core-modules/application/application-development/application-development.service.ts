@@ -29,6 +29,7 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/service
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { type FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 
 const APP_SYNC_LOCK_OPTIONS = { ttl: 60_000, ms: 500, maxRetries: 120 };
 
@@ -59,8 +60,17 @@ export class ApplicationDevelopmentService {
   }): Promise<DevelopmentApplicationDTO> {
     await this.throttlePerApplication(universalIdentifier, workspaceId);
 
-    const applicationRegistrationId =
-      await this.findApplicationRegistrationId(universalIdentifier);
+    const applicationRegistration =
+      await this.findApplicationRegistration(universalIdentifier);
+
+    if (applicationRegistration.ownerWorkspaceId !== workspaceId) {
+      throw new ApplicationException(
+        !isDefined(applicationRegistration.ownerWorkspaceId)
+          ? 'Forbidden: application universalIdentifier is not owned.'
+          : 'Forbidden: application universalIdentifier already owned by another workspace.',
+        ApplicationExceptionCode.FORBIDDEN,
+      );
+    }
 
     const existing = await this.applicationService.findByUniversalIdentifier({
       universalIdentifier,
@@ -79,7 +89,7 @@ export class ApplicationDevelopmentService {
       name,
       sourcePath: universalIdentifier,
       sourceType: ApplicationRegistrationSourceType.LOCAL,
-      applicationRegistrationId,
+      applicationRegistrationId: applicationRegistration.id,
       workspaceId,
     });
 
@@ -207,7 +217,7 @@ export class ApplicationDevelopmentService {
     manifest: ApplicationInput['manifest'],
     workspaceId: string,
   ): Promise<WorkspaceMigrationDTO> {
-    const applicationRegistrationId = await this.findApplicationRegistrationId(
+    const applicationRegistration = await this.findApplicationRegistration(
       manifest.application.universalIdentifier,
     );
 
@@ -229,12 +239,12 @@ export class ApplicationDevelopmentService {
       await this.applicationManifestApplyService.applyManifestToWorkspace({
         workspaceId,
         manifest,
-        applicationRegistrationId,
+        applicationRegistrationId: applicationRegistration.id,
         application,
       });
 
     await this.syncRegistrationMetadata(
-      applicationRegistrationId,
+      applicationRegistration.id,
       manifest,
       workspaceId,
     );
@@ -258,9 +268,9 @@ export class ApplicationDevelopmentService {
     );
   }
 
-  private async findApplicationRegistrationId(
+  private async findApplicationRegistration(
     universalIdentifier: string,
-  ): Promise<string> {
+  ): Promise<ApplicationRegistrationEntity> {
     const existingRegistration =
       await this.applicationRegistrationService.findOneByUniversalIdentifier(
         universalIdentifier,
@@ -273,7 +283,7 @@ export class ApplicationDevelopmentService {
       );
     }
 
-    return existingRegistration.id;
+    return existingRegistration;
   }
 
   private async syncRegistrationMetadata(
