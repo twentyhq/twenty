@@ -40,6 +40,7 @@ export type AppDevOnceOptions = {
   verbose?: boolean;
   apply?: boolean;
   force?: boolean;
+  inferDeletionFromMissingEntities?: boolean;
   onProgress?: (message: string) => void;
   onPlan?: (text: string) => void;
   confirmApply?: (deleteCount: number) => Promise<boolean>;
@@ -119,6 +120,7 @@ const innerAppDevOnce = async (
     verbose = false,
     apply = true,
     force = false,
+    inferDeletionFromMissingEntities = true,
   } = options;
 
   onProgress?.('Checking server...');
@@ -230,13 +232,18 @@ const innerAppDevOnce = async (
 
     const planResult = await apiService.syncApplication(manifest, {
       dryRun: true,
+      inferDeletionFromMissingEntities,
     });
 
     if (!planResult.success) {
       return { success: false, error: buildSyncError(planResult, verbose) };
     }
 
-    onPlan?.(formatSyncActionsPlan(planResult.data.actions));
+    onPlan?.(
+      formatSyncActionsPlan(planResult.data.actions, {
+        showNoDeleteHint: inferDeletionFromMissingEntities,
+      }),
+    );
 
     return { success: true, data: makeData() };
   }
@@ -248,10 +255,15 @@ const innerAppDevOnce = async (
 
     const planResult = await apiService.syncApplication(manifest, {
       dryRun: true,
+      inferDeletionFromMissingEntities,
     });
 
     if (planResult.success) {
-      onPlan?.(formatSyncActionsPlan(planResult.data.actions));
+      onPlan?.(
+        formatSyncActionsPlan(planResult.data.actions, {
+          showNoDeleteHint: inferDeletionFromMissingEntities,
+        }),
+      );
       planRendered = true;
 
       if (hasDestructiveActions(planResult.data.actions)) {
@@ -335,7 +347,9 @@ const innerAppDevOnce = async (
 
   onProgress?.('Syncing manifest...');
 
-  const syncResult = await apiService.syncApplication(manifest);
+  const syncResult = await apiService.syncApplication(manifest, {
+    inferDeletionFromMissingEntities,
+  });
 
   if (!syncResult.success) {
     return { success: false, error: buildSyncError(syncResult, verbose) };

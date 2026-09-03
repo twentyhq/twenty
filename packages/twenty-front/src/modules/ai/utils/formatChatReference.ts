@@ -9,9 +9,5 @@ export const formatChatReference = (
     return formatRecordReference(reference);
   }
 
-  if (reference.kind === 'legacyFieldById') {
-    return `[[field:${getChatReferenceIdentitySegment(reference)}:${reference.displayName}]]`;
-  }
-
   return `[[${reference.kind}:${getChatReferenceIdentitySegment(reference)}:${reference.displayName}]]`;
 };

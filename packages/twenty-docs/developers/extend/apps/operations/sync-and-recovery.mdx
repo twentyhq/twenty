@@ -17,6 +17,7 @@ For day-to-day local iteration you almost always want `yarn twenty dev`. Deployi
 | Iterate locally with live sync | `yarn twenty dev` | Watches your files and syncs on every change. |
 | Sync once and exit (CI, scripts, hooks) | `yarn twenty apply` | One build + sync, then exits. Add `--force` to skip the destructive-change confirmation. |
 | Preview changes **without applying them** | `yarn twenty plan` | Computes and prints the diff; writes nothing. |
+| Sync without deleting anything | `yarn twenty apply --no-delete` | Creates and updates only: entities that exist in the workspace but not in your source are left alone. Also accepted by `plan` and `dev`. |
 | Remove the app from the workspace | `yarn twenty app:uninstall` | Add `--yes` to skip the prompt. |
 | Ship a tarball to a server | `yarn twenty app:publish --private` | Requires a **strictly higher** `package.json` version — see [Publishing](/developers/extend/apps/operations/publishing). |
 | Publish to the marketplace (npm) | `yarn twenty app:publish` | — |
@@ -53,6 +54,8 @@ This is your first diagnostic: it tells you exactly which objects, fields, and l
 
 Destructive changes (`to destroy`) are listed with what they drop (e.g. `objectMetadata "auditNote" — drops the table and all its rows`) and require interactive confirmation, or `--force` in scripts.
 
+A sync deletes every entity your app owns that your source no longer declares. When a plan contains destroys it says so and points at `--no-delete`, which makes the sync additive: creates and updates are applied, nothing missing from your source is deleted. Use it when your source is intentionally partial, for example while adopting an app that was built in the UI.
+
 When a sync fails on a single entity, the error names the offending entity and its `universalIdentifier`, for example:
 
 ```text
@@ -88,7 +91,7 @@ A plan:
 - Is useful before a risky change, when reviewing an AI-generated change, or in a script that should fail if an unexpected change is about to land.
 
 <Note>
-A plan only previews **metadata** changes, and it requires the app to have been synced at least once (so the workspace knows about it). If you run it against an app that was never synced, the server reports that the app is not installed — run `yarn twenty dev` once first.
+A plan only previews **metadata** changes. It also works for an app that was never synced: the server evaluates the manifest against an empty application, so the plan lists everything your source would create.
 </Note>
 
 ## Recovery ladder
