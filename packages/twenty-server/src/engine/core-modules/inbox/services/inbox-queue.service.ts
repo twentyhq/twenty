@@ -17,6 +17,10 @@ import {
 } from 'src/engine/core-modules/inbox/inbox.exception';
 import { isUniqueViolation } from 'src/engine/core-modules/inbox/utils/is-unique-violation.util';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -52,13 +56,12 @@ export class InboxQueueService {
     workspaceId: string;
     userWorkspaceId: string;
   }): Promise<string[]> {
-    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
-      workspaceId,
-      userWorkspaceId,
-    });
+    const roleId = await this.findRoleId({ workspaceId, userWorkspaceId });
 
     const [grants, defaultQueue] = await Promise.all([
-      this.inboxQueueRoleRepository.find(workspaceId, { where: { roleId } }),
+      isDefined(roleId)
+        ? this.inboxQueueRoleRepository.find(workspaceId, { where: { roleId } })
+        : [],
       this.inboxQueueRepository.findOne(workspaceId, {
         where: { isDefault: true },
       }),
@@ -72,6 +75,32 @@ export class InboxQueueService {
         ...(isDefined(defaultQueue) ? [defaultQueue.id] : []),
       ]),
     ];
+  }
+
+  // Someone with no role yet simply reaches no granted queue; that is not an
+  // error worth surfacing from every inbox read
+  private async findRoleId({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+  }): Promise<string | null> {
+    try {
+      return await this.userRoleService.getRoleIdForUserWorkspace({
+        workspaceId,
+        userWorkspaceId,
+      });
+    } catch (error) {
+      if (
+        error instanceof PermissionsException &&
+        error.code === PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE
+      ) {
+        return null;
+      }
+
+      throw error;
+    }
   }
 
   async findAccessibleQueues({
@@ -336,6 +365,7 @@ export class InboxQueueService {
         .select('queue.id')
         .from(InboxQueueEntity, 'queue')
         .where('queue.id = :queueId', { queueId: queue.id })
+        .andWhere('queue.workspaceId = :workspaceId', { workspaceId })
         .setLock('pessimistic_write')
         .getOne();
 
