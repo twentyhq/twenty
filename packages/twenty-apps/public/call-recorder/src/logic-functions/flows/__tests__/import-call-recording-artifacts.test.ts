@@ -11,6 +11,7 @@ const importCallRecordingMediaMock = vi.hoisted(() => vi.fn());
 const chargeCompletedCallRecordingMock = vi.hoisted(() => vi.fn());
 const claimArtifactsImportMock = vi.hoisted(() => vi.fn());
 const releaseArtifactsImportClaimMock = vi.hoisted(() => vi.fn());
+const enqueueArtifactsImportMock = vi.hoisted(() => vi.fn());
 
 vi.mock('src/logic-functions/recall-api/get-recall-bot.util', () => ({
   getRecallBot: getRecallBotMock,
@@ -47,6 +48,13 @@ vi.mock(
   () => ({
     claimCallRecordingArtifactsImport: claimArtifactsImportMock,
     releaseCallRecordingArtifactsImportClaim: releaseArtifactsImportClaimMock,
+  }),
+);
+
+vi.mock(
+  'src/logic-functions/data/enqueue-call-recording-artifacts-import.util',
+  () => ({
+    enqueueCallRecordingArtifactsImport: enqueueArtifactsImportMock,
   }),
 );
 
@@ -146,6 +154,7 @@ const buildProcessingCallRecording = (
 const buildRequest = () => ({
   callRecordingId: 'call-recording-1',
   requestedAt: '2026-01-01T14:06:00.000Z',
+  leaseRetryCount: 0,
 });
 
 describe('importCallRecordingArtifacts', () => {
@@ -180,6 +189,8 @@ describe('importCallRecordingArtifacts', () => {
     claimArtifactsImportMock.mockResolvedValue(true);
     releaseArtifactsImportClaimMock.mockReset();
     releaseArtifactsImportClaimMock.mockResolvedValue(undefined);
+    enqueueArtifactsImportMock.mockReset();
+    enqueueArtifactsImportMock.mockResolvedValue(undefined);
   });
 
   it('requests a transcript after a recording completion webhook without touching media', async () => {
@@ -592,6 +603,77 @@ describe('importCallRecordingArtifacts', () => {
     });
   });
 
+  it('preserves a transcript failure that lands while the media job is running', async () => {
+    const callRecording = buildProcessingCallRecording({
+      transcript: {
+        recallTranscriptId: 'recall-transcript-1',
+        status: 'PENDING',
+        requestedAt: '2026-01-01T14:06:00.000Z',
+      },
+    });
+    const client = buildClient([callRecording]);
+
+    importCallRecordingMediaMock.mockImplementation(async () => {
+      callRecording.status = 'FAILED';
+      callRecording.callRecorderFailureReason =
+        'transcript_failed:transcription_failed';
+
+      return {
+        updateData: {
+          video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
+          callRecorderFailureReason: 'audio_file_too_large',
+        },
+        hasRetryableFailure: false,
+      };
+    });
+
+    await importCallRecordingArtifacts({
+      client: client as unknown as CoreApiClient,
+      request: buildRequest(),
+      scope: 'media',
+    });
+
+    expect(callRecording.video).toEqual([
+      { fileId: 'file-video-1', label: 'video.mp4' },
+    ]);
+    expect(callRecording.callRecorderFailureReason).toBe(
+      'transcript_failed:transcription_failed',
+    );
+  });
+
+  it('settles persisted artifacts before surfacing a retryable import failure', async () => {
+    const callRecording = buildProcessingCallRecording({
+      transcript: [{ participant: { id: 1 }, words: [] }],
+    });
+    const client = buildClient([callRecording]);
+
+    importCallRecordingMediaMock.mockImplementation(async () => {
+      callRecording.audio = [{ fileId: 'file-audio-1', label: 'audio.mp3' }];
+
+      return {
+        updateData: {
+          video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
+        },
+        hasRetryableFailure: true,
+      };
+    });
+
+    await expect(
+      importCallRecordingArtifacts({
+        client: client as unknown as CoreApiClient,
+        request: buildRequest(),
+        scope: 'media',
+      }),
+    ).rejects.toThrow('Recall media artifacts');
+
+    expect(callRecording.status).toBe('COMPLETED');
+    expect(chargeCompletedCallRecordingMock).toHaveBeenCalledWith({
+      callRecordingId: 'call-recording-1',
+      startedAt: '2026-01-01T13:02:00.000Z',
+      endedAt: '2026-01-01T14:05:00.000Z',
+    });
+  });
+
   it('claims and releases the lease of its own scope only', async () => {
     const client = buildClient([buildProcessingCallRecording()]);
 
@@ -612,7 +694,7 @@ describe('importCallRecordingArtifacts', () => {
     );
   });
 
-  it('stands aside when another worker already holds the lease for this scope', async () => {
+  it('requeues a delivery that another worker blocks until after the lease expires', async () => {
     claimArtifactsImportMock.mockResolvedValue(false);
     const client = buildClient([buildProcessingCallRecording()]);
 
@@ -626,6 +708,35 @@ describe('importCallRecordingArtifacts', () => {
     expect(importCallRecordingMediaMock).not.toHaveBeenCalled();
     expect(releaseArtifactsImportClaimMock).not.toHaveBeenCalled();
     expect(client.mutations).toEqual([]);
+    expect(enqueueArtifactsImportMock).toHaveBeenCalledWith({
+      callRecordingId: 'call-recording-1',
+      scope: 'transcript',
+      requestedAt: '2026-01-01T14:06:00.000Z',
+      leaseRetryCount: 1,
+      delayMs: 60_000,
+    });
+    expect(result).toEqual({
+      status: 'requeued',
+      callRecordingId: 'call-recording-1',
+      scope: 'transcript',
+      leaseRetryCount: 1,
+    });
+  });
+
+  it('stops requeuing after the lease retry window', async () => {
+    claimArtifactsImportMock.mockResolvedValue(false);
+    const client = buildClient([buildProcessingCallRecording()]);
+
+    const result = await importCallRecordingArtifacts({
+      client: client as unknown as CoreApiClient,
+      request: {
+        ...buildRequest(),
+        leaseRetryCount: Number.MAX_SAFE_INTEGER,
+      },
+      scope: 'transcript',
+    });
+
+    expect(enqueueArtifactsImportMock).not.toHaveBeenCalled();
     expect(result).toEqual({
       status: 'skipped',
       callRecordingId: 'call-recording-1',

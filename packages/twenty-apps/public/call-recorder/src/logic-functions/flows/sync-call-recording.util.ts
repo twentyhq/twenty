@@ -6,6 +6,7 @@ import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-ca
 import { isUnavailableCallRecordingStatus } from 'src/logic-functions/domain/is-unavailable-call-recording-status.util';
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
+import { updateCallRecordingMediaFailureReason } from 'src/logic-functions/data/update-call-recording-media-failure-reason.util';
 import { importCallRecordingMedia } from 'src/logic-functions/flows/import-call-recording-media.util';
 import { importCallRecordingTranscript } from 'src/logic-functions/flows/import-call-recording-transcript.util';
 import {
@@ -84,6 +85,7 @@ export const syncCallRecording = async ({
 
   let requestedTranscript = false;
   let hasRetryableArtifactFailure = false;
+  let mediaImportFailureReason: string | undefined;
 
   if (isRecordingDone && !isUndefined(externalRecordingId)) {
     if (artifactScope !== 'media') {
@@ -111,27 +113,41 @@ export const syncCallRecording = async ({
 
       hasRetryableArtifactFailure =
         hasRetryableArtifactFailure || mediaImportResult.hasRetryableFailure;
-      updateData = {
-        ...updateData,
-        ...resolveMediaImportUpdate({
-          mediaImportUpdate: mediaImportResult.updateData,
-          currentStatus: callRecording.status,
-          pendingStatus: updateData.status,
-        }),
-      };
+      const {
+        callRecorderFailureReason,
+        ...mediaImportUpdateWithoutFailureReason
+      } = resolveMediaImportUpdate({
+        mediaImportUpdate: mediaImportResult.updateData,
+        currentStatus: callRecording.status,
+        pendingStatus: updateData.status,
+      });
+
+      mediaImportFailureReason = callRecorderFailureReason ?? undefined;
+      updateData = { ...updateData, ...mediaImportUpdateWithoutFailureReason };
     }
   }
 
-  if (Object.keys(updateData).length === 0) {
-    return { updated: false, requestedTranscript, hasRetryableArtifactFailure };
+  let updated = false;
+
+  if (Object.keys(updateData).length > 0) {
+    await updateCallRecording(client, {
+      id: callRecording.id,
+      data: updateData,
+    });
+    updated = true;
   }
 
-  await updateCallRecording(client, {
-    id: callRecording.id,
-    data: updateData,
-  });
+  if (!isUndefined(mediaImportFailureReason)) {
+    const updatedMediaFailureReason =
+      await updateCallRecordingMediaFailureReason(client, {
+        callRecordingId: callRecording.id,
+        failureReason: mediaImportFailureReason,
+      });
 
-  return { updated: true, requestedTranscript, hasRetryableArtifactFailure };
+    updated = updated || updatedMediaFailureReason;
+  }
+
+  return { updated, requestedTranscript, hasRetryableArtifactFailure };
 };
 
 const buildSyncStateFieldUpdates = ({

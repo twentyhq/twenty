@@ -59,7 +59,11 @@ class FakeCoreApiClient {
 
   constructor(private callRecordingNodes: CallRecordingNode[]) {}
 
-  async query(query: any): Promise<any> {
+  async query(query: {
+    callRecordings?: {
+      __args?: { filter?: { id?: { eq?: string } } };
+    };
+  }) {
     const requestedId = query.callRecordings?.__args?.filter?.id?.eq;
     const nodes =
       requestedId === undefined
@@ -518,8 +522,11 @@ describe('convergeDivergedCallRecordings', () => {
         id: 'call-recording-1',
         data: {
           audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
-          callRecorderFailureReason: 'video_file_too_large',
         },
+      },
+      {
+        id: 'call-recording-1',
+        data: { callRecorderFailureReason: 'video_file_too_large' },
       },
       {
         id: 'call-recording-1',

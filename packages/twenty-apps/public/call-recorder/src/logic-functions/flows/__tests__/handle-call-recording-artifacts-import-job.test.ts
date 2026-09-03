@@ -66,7 +66,9 @@ describe('handleCallRecordingArtifactsImportJob', () => {
     });
 
     expect(importCallRecordingArtifactsMock).toHaveBeenCalledWith(
-      expect.objectContaining({ request: VALID_PAYLOAD }),
+      expect.objectContaining({
+        request: { ...VALID_PAYLOAD, leaseRetryCount: 0 },
+      }),
     );
   });
 

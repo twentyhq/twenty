@@ -1,3 +1,5 @@
+import { isUndefined } from '@sniptt/guards';
+
 import {
   IMPORT_CALL_RECORDING_MEDIA_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   IMPORT_CALL_RECORDING_TRANSCRIPT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
@@ -9,22 +11,34 @@ const LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER_BY_SCOPE: Record<
   CallRecordingArtifactImportScope,
   string
 > = {
-  transcript: IMPORT_CALL_RECORDING_TRANSCRIPT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  transcript:
+    IMPORT_CALL_RECORDING_TRANSCRIPT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   media: IMPORT_CALL_RECORDING_MEDIA_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 };
 
 export const enqueueCallRecordingArtifactsImport = async ({
   callRecordingId,
   scope,
+  requestedAt,
+  leaseRetryCount,
+  delayMs,
 }: {
   callRecordingId: string;
   scope: CallRecordingArtifactImportScope;
+  requestedAt?: string;
+  leaseRetryCount?: number;
+  delayMs?: number;
 }): Promise<void> => {
   await enqueueLogicFunctionJobs({
     logicFunctionUniversalIdentifier:
       LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER_BY_SCOPE[scope],
     payloads: [
-      { callRecordingId, requestedAt: new Date().toISOString() },
+      {
+        callRecordingId,
+        requestedAt: requestedAt ?? new Date().toISOString(),
+        ...(isUndefined(leaseRetryCount) ? {} : { leaseRetryCount }),
+      },
     ],
+    ...(isUndefined(delayMs) ? {} : { delayMs }),
   });
 };

@@ -1,10 +1,12 @@
 import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { CALL_RECORDING_ARTIFACTS_IMPORT_CLAIM_TTL_MS } from 'src/logic-functions/constants/call-recording-artifacts-import-claim-ttl-ms';
 import {
   claimCallRecordingArtifactsImport,
   releaseCallRecordingArtifactsImportClaim,
 } from 'src/logic-functions/data/claim-call-recording-artifacts-import.util';
+import { enqueueCallRecordingArtifactsImport } from 'src/logic-functions/data/enqueue-call-recording-artifacts-import.util';
 import {
   findCallRecordingForArtifactsImport,
   type CallRecordingForArtifactsImport,
@@ -22,6 +24,12 @@ export type ImportCallRecordingArtifactsResult =
       callRecordingId: string;
       scope: CallRecordingArtifactImportScope;
       outcome: 'call-recording-artifacts-imported';
+    }
+  | {
+      status: 'requeued';
+      callRecordingId: string;
+      scope: CallRecordingArtifactImportScope;
+      leaseRetryCount: number;
     }
   | {
       status: 'skipped';
@@ -66,12 +74,11 @@ export const importCallRecordingArtifacts = async ({
   });
 
   if (!claimedImport) {
-    return {
-      status: 'skipped',
+    return requeueCallRecordingArtifactsImport({
       callRecordingId: callRecording.id,
+      request,
       scope,
-      reason: 'artifact import already in progress',
-    };
+    });
   }
 
   try {
@@ -85,16 +92,16 @@ export const importCallRecordingArtifacts = async ({
       artifactScope: scope,
     });
 
+    const completedImport = await settleCallRecordingImport(client, {
+      callRecordingId: callRecording.id,
+    });
+
     // A returned result counts as a successful run, so only a throw redelivers.
     if (syncResult.hasRetryableArtifactFailure) {
       throw new Error(
         `Recall ${scope} artifacts for call recording ${callRecording.id} could not be imported`,
       );
     }
-
-    const completedImport = await settleCallRecordingImport(client, {
-      callRecordingId: callRecording.id,
-    });
 
     if (!syncResult.updated && !completedImport) {
       return {
@@ -117,6 +124,53 @@ export const importCallRecordingArtifacts = async ({
       scope,
     });
   }
+};
+
+const ARTIFACTS_IMPORT_REQUEUE_DELAY_MS = 60 * 1000;
+const ARTIFACTS_IMPORT_MAX_LEASE_RETRY_COUNT =
+  Math.ceil(
+    CALL_RECORDING_ARTIFACTS_IMPORT_CLAIM_TTL_MS /
+      ARTIFACTS_IMPORT_REQUEUE_DELAY_MS,
+  ) + 1;
+
+const requeueCallRecordingArtifactsImport = async ({
+  callRecordingId,
+  request,
+  scope,
+}: {
+  callRecordingId: string;
+  request: CallRecordingArtifactsImportRequest;
+  scope: CallRecordingArtifactImportScope;
+}): Promise<ImportCallRecordingArtifactsResult> => {
+  const nextLeaseRetryCount = request.leaseRetryCount + 1;
+
+  if (nextLeaseRetryCount > ARTIFACTS_IMPORT_MAX_LEASE_RETRY_COUNT) {
+    console.warn(
+      `[call-recorder] ${scope} import for call recording ${callRecordingId} remained blocked through the lease retry window; leaving it to the reconcile sweep`,
+    );
+
+    return {
+      status: 'skipped',
+      callRecordingId,
+      scope,
+      reason: 'artifact import already in progress',
+    };
+  }
+
+  await enqueueCallRecordingArtifactsImport({
+    callRecordingId,
+    scope,
+    requestedAt: request.requestedAt,
+    leaseRetryCount: nextLeaseRetryCount,
+    delayMs: ARTIFACTS_IMPORT_REQUEUE_DELAY_MS,
+  });
+
+  return {
+    status: 'requeued',
+    callRecordingId,
+    scope,
+    leaseRetryCount: nextLeaseRetryCount,
+  };
 };
 
 const fetchRecallBotWhenRecordingIdMissing = async (
