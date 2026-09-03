@@ -1,4 +1,5 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { buildDraftPageLayoutWidget } from '@/page-layout/utils/buildDraftPageLayoutWidget';
 import {
   FieldDisplayMode,
   PageLayoutTabLayoutMode,
@@ -22,16 +23,11 @@ export const createDefaultFieldWidget = ({
   fieldDisplayMode?: FieldDisplayMode;
   objectMetadataId: string;
   positionIndex: number;
-}): PageLayoutWidget => {
-  return {
-    __typename: 'PageLayoutWidget',
+}): PageLayoutWidget =>
+  buildDraftPageLayoutWidget({
     id,
-    applicationId: '',
-    universalIdentifier: id,
-    isSystemSideEffect: false,
     pageLayoutTabId,
     title,
-    isActive: true,
     type: WidgetType.FIELD,
     configuration: {
       __typename: 'FieldConfiguration',
@@ -40,13 +36,8 @@ export const createDefaultFieldWidget = ({
       fieldDisplayMode,
     },
     position: {
-      __typename: 'PageLayoutWidgetVerticalListPosition',
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       index: positionIndex,
     },
-    objectMetadataId: objectMetadataId ?? null,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    deletedAt: null,
-  };
-};
+    objectMetadataId,
+  });
