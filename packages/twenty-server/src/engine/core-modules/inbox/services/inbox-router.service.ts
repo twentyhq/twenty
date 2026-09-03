@@ -262,10 +262,19 @@ export class InboxRouterService {
     await this.coreDataSource.transaction(async (manager) => {
       const inboxItemRepository = this.inboxItemRepository.withManager(manager);
 
-      await inboxItemRepository.findOne(args.workspaceId, {
+      const lockedItem = await inboxItemRepository.findOne(args.workspaceId, {
         where: { id: existingItem.id },
         lock: { mode: 'pessimistic_write' },
       });
+
+      // Gone between the slot lookup and the lock: the event has nowhere to
+      // land, and saying so beats a silent no-op that loses it
+      if (!isDefined(lockedItem)) {
+        throw new InboxException(
+          `Inbox item ${existingItem.id} went away while an event was folding into it`,
+          InboxExceptionCode.INBOX_ITEM_NOT_FOUND,
+        );
+      }
 
       await inboxItemRepository.update(
         args.workspaceId,
