@@ -92,6 +92,16 @@ export const importCallRecordingArtifacts = async ({
       artifactScope: scope,
     });
 
+    // Each artifact swallows its own provider failure so a partial import still
+    // persists. Raising it here is what makes the queue redeliver the job:
+    // returning a result counts as success and nothing would revisit the
+    // recording until the scheduled sweep.
+    if (syncResult.hasRetryableArtifactFailure) {
+      throw new Error(
+        `Recall ${scope} artifacts for call recording ${callRecording.id} could not be imported`,
+      );
+    }
+
     if (!syncResult.updated) {
       return {
         status: 'skipped',

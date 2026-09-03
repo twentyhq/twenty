@@ -22,6 +22,14 @@ type CallRecordingMediaUpdateFields = Pick<
   'audio' | 'video' | 'callRecorderFailureReason'
 >;
 
+export type ImportCallRecordingMediaResult = {
+  updateData: CallRecordingMediaUpdateFields;
+  // An artifact Recall published but the app could not copy. Distinct from one
+  // Recall has not published yet, which is normal on an early recording-done
+  // signal and must not burn a redelivery.
+  hasRetryableFailure: boolean;
+};
+
 type ImportMediaArtifactResult =
   | { outcome: 'imported'; files: CallRecordingMediaFile[] }
   | { outcome: 'too-large' }
@@ -67,9 +75,9 @@ export const importCallRecordingMedia = async ({
   externalRecordingId: string;
   hasAudio: boolean;
   hasVideo: boolean;
-}): Promise<CallRecordingMediaUpdateFields> => {
+}): Promise<ImportCallRecordingMediaResult> => {
   if (hasAudio && hasVideo) {
-    return {};
+    return { updateData: {}, hasRetryableFailure: false };
   }
 
   const recordingResult = await getRecallRecording({ externalRecordingId });
@@ -79,7 +87,7 @@ export const importCallRecordingMedia = async ({
       `[call-recorder] failed to fetch Recall recording ${externalRecordingId} while importing media for call recording ${callRecordingId}: ${recordingResult.errorMessage}`,
     );
 
-    return {};
+    return { updateData: {}, hasRetryableFailure: true };
   }
 
   const mediaUrls = extractRecallMediaUrls(recordingResult.recording);
@@ -90,10 +98,13 @@ export const importCallRecordingMedia = async ({
     video: { alreadyImported: hasVideo, url: mediaUrls.videoUrl },
     audio: { alreadyImported: hasAudio, url: mediaUrls.audioUrl },
   };
+  let hasRetryableFailure = false;
 
   for (const descriptor of MEDIA_ARTIFACT_DESCRIPTORS) {
     const { alreadyImported, url } = artifactStateByField[descriptor.field];
 
+    // A missing url means Recall has not published the artifact yet, so the next
+    // recording-done signal carries it; that is not a failure to redeliver for.
     if (alreadyImported || isUndefined(url)) {
       continue;
     }
@@ -115,13 +126,17 @@ export const importCallRecordingMedia = async ({
     if (importResult.outcome === 'too-large') {
       tooLargeFailureReasons.push(descriptor.tooLargeFailureReason);
     }
+
+    if (importResult.outcome === 'failed') {
+      hasRetryableFailure = true;
+    }
   }
 
   if (tooLargeFailureReasons.length > 0) {
     updateFields.callRecorderFailureReason = tooLargeFailureReasons.join(',');
   }
 
-  return updateFields;
+  return { updateData: updateFields, hasRetryableFailure };
 };
 
 const importMediaArtifact = async ({

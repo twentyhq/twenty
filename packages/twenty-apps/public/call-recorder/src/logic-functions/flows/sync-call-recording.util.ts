@@ -34,6 +34,9 @@ export type SyncableCallRecording = {
 export type SyncCallRecordingResult = {
   updated: boolean;
   requestedTranscript: boolean;
+  // Whatever succeeded is already persisted; this only says another delivery is
+  // worth attempting. The scheduled sweep ignores it and simply runs again.
+  hasRetryableArtifactFailure: boolean;
 };
 
 // The single-record sync shared by webhook-driven imports and the scheduled
@@ -84,6 +87,7 @@ export const syncCallRecording = async ({
   }
 
   let requestedTranscript = false;
+  let hasRetryableArtifactFailure = false;
 
   if (isRecordingDone && !isUndefined(externalRecordingId)) {
     if (artifactScope !== 'media') {
@@ -96,21 +100,25 @@ export const syncCallRecording = async ({
       });
 
       requestedTranscript = transcriptImportResult.requestedTranscript;
+      hasRetryableArtifactFailure =
+        transcriptImportResult.hasRetryableFailure;
       updateData = { ...updateData, ...transcriptImportResult.updateData };
     }
 
     if (artifactScope !== 'transcript') {
-      const mediaImportUpdate = await importCallRecordingMedia({
+      const mediaImportResult = await importCallRecordingMedia({
         callRecordingId: callRecording.id,
         externalRecordingId,
         hasAudio: isNonEmptyArray(callRecording.audio),
         hasVideo: isNonEmptyArray(callRecording.video),
       });
 
+      hasRetryableArtifactFailure =
+        hasRetryableArtifactFailure || mediaImportResult.hasRetryableFailure;
       updateData = {
         ...updateData,
         ...resolveMediaImportUpdate({
-          mediaImportUpdate,
+          mediaImportUpdate: mediaImportResult.updateData,
           currentStatus: callRecording.status,
           pendingStatus: updateData.status,
         }),
@@ -124,7 +132,7 @@ export const syncCallRecording = async ({
   });
 
   if (Object.keys(updateData).length === 0 && !completesImport) {
-    return { updated: false, requestedTranscript };
+    return { updated: false, requestedTranscript, hasRetryableArtifactFailure };
   }
 
   await persistCallRecordingProgress(client, {
@@ -140,7 +148,7 @@ export const syncCallRecording = async ({
     });
   }
 
-  return { updated: true, requestedTranscript };
+  return { updated: true, requestedTranscript, hasRetryableArtifactFailure };
 };
 
 const hasArtifactUpdate = (updateData: CallRecordingUpdateFields): boolean =>

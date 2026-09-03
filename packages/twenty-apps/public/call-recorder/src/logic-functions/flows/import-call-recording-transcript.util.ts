@@ -49,7 +49,7 @@ export const importCallRecordingTranscript = async ({
       `[call-recorder] failed to list Recall transcripts for recording ${externalRecordingId}: ${listResult.errorMessage}`,
     );
 
-    return buildEmptyTranscriptArtifactResult();
+    return buildEmptyTranscriptArtifactResult({ hasRetryableFailure: true });
   }
 
   const transcriptArtifact = selectRecallTranscriptArtifact(
@@ -75,7 +75,7 @@ export const importCallRecordingTranscript = async ({
         `[call-recorder] failed to request transcript for Recall recording ${externalRecordingId}: ${createResult.errorMessage}`,
       );
 
-      return buildEmptyTranscriptArtifactResult();
+      return buildEmptyTranscriptArtifactResult({ hasRetryableFailure: true });
     }
 
     return {
@@ -86,6 +86,7 @@ export const importCallRecordingTranscript = async ({
         }),
       },
       requestedTranscript: true,
+      hasRetryableFailure: false,
     };
   }
 
@@ -101,6 +102,7 @@ export const importCallRecordingTranscript = async ({
         subCode: transcriptArtifact.statusSubCode ?? null,
       }),
       requestedTranscript: false,
+      hasRetryableFailure: false,
     };
   }
 
@@ -125,6 +127,7 @@ export const importCallRecordingTranscript = async ({
         transcript: downloadResult.content as Record<string, unknown>,
       },
       requestedTranscript: false,
+      hasRetryableFailure: false,
     };
   }
 
@@ -136,6 +139,7 @@ export const importCallRecordingTranscript = async ({
         subCode: downloadResult.subCode,
       }),
       requestedTranscript: false,
+      hasRetryableFailure: false,
     };
   }
 
@@ -143,16 +147,20 @@ export const importCallRecordingTranscript = async ({
     console.warn(
       `[call-recorder] could not fill transcript for call recording ${callRecordingId}: ${downloadResult.errorMessage}`,
     );
+
+    return buildEmptyTranscriptArtifactResult({ hasRetryableFailure: true });
   }
 
   return buildEmptyTranscriptArtifactResult();
 };
 
-const buildEmptyTranscriptArtifactResult =
-  (): ImportCallRecordingTranscriptResult => ({
-    updateData: {},
-    requestedTranscript: false,
-  });
+const buildEmptyTranscriptArtifactResult = ({
+  hasRetryableFailure = false,
+}: { hasRetryableFailure?: boolean } = {}): ImportCallRecordingTranscriptResult => ({
+  updateData: {},
+  requestedTranscript: false,
+  hasRetryableFailure,
+});
 
 const selectRecallTranscriptArtifact = (
   transcripts: RecallTranscriptSummary[],

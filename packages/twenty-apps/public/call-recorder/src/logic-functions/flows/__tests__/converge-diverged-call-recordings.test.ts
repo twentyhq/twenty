@@ -134,9 +134,29 @@ describe('convergeDivergedCallRecordings', () => {
     downloadTranscriptMock.mockReset();
     downloadTranscriptMock.mockResolvedValue({ outcome: 'pending' });
     importCallRecordingMediaMock.mockReset();
-    importCallRecordingMediaMock.mockResolvedValue({});
+    importCallRecordingMediaMock.mockResolvedValue({
+      updateData: {},
+      hasRetryableFailure: false,
+    });
     chargeCompletedCallRecordingMock.mockReset();
     chargeCompletedCallRecordingMock.mockResolvedValue(undefined);
+  });
+
+  it('keeps sweeping instead of failing when media cannot be imported', async () => {
+    importCallRecordingMediaMock.mockResolvedValue({
+      updateData: {},
+      hasRetryableFailure: true,
+    });
+    const client = buildClient([
+      buildStuckRecordingNode({ status: 'PROCESSING' }),
+    ]);
+
+    const result = await convergeDivergedCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: new Date('2026-01-01T15:00:00.000Z'),
+    });
+
+    expect(result.candidateCount).toBe(1);
   });
 
   it('does not call Recall when there are no stale database candidates', async () => {
@@ -383,8 +403,11 @@ describe('convergeDivergedCallRecordings', () => {
       },
     });
     importCallRecordingMediaMock.mockResolvedValue({
-      audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
-      video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
+      updateData: {
+        audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+        video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
+      },
+      hasRetryableFailure: false,
     });
     const client = buildClient([
       buildStuckRecordingNode({
@@ -448,8 +471,11 @@ describe('convergeDivergedCallRecordings', () => {
       },
     });
     importCallRecordingMediaMock.mockResolvedValue({
-      audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
-      callRecorderFailureReason: 'video_file_too_large',
+      updateData: {
+        audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+        callRecorderFailureReason: 'video_file_too_large',
+      },
+      hasRetryableFailure: false,
     });
     const client = buildClient([
       buildStuckRecordingNode({
@@ -557,8 +583,11 @@ describe('convergeDivergedCallRecordings', () => {
       },
     });
     importCallRecordingMediaMock.mockResolvedValue({
-      audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
-      callRecorderFailureReason: 'video_file_too_large',
+      updateData: {
+        audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+        callRecorderFailureReason: 'video_file_too_large',
+      },
+      hasRetryableFailure: false,
     });
     const client = buildClient([
       buildStuckRecordingNode({

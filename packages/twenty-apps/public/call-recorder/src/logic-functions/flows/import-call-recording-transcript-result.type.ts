@@ -8,4 +8,8 @@ type CallRecordingTranscriptArtifactUpdateFields = Pick<
 export type ImportCallRecordingTranscriptResult = {
   updateData: CallRecordingTranscriptArtifactUpdateFields;
   requestedTranscript: boolean;
+  // A provider call that did not resolve the transcript one way or the other.
+  // Distinct from a transcript Recall is still working on, which is a normal
+  // no-op and must not burn a redelivery.
+  hasRetryableFailure: boolean;
 };
