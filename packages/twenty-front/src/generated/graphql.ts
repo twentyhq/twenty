@@ -1249,6 +1249,7 @@ export type SetInboxItemTypeDefaultQueueMutationVariables = Exact<{
 
 
 export type SetInboxItemTypeDefaultQueueMutation = { __typename?: 'Mutation', setInboxItemTypeDefaultQueue: { __typename?: 'InboxItemTypeSettings', id: any, key: string, label: string, icon?: string | null, defaultQueueId?: any | null } };
+
 export type WorkflowDiffFragmentFragment = { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null };
 
 export type ActivateWorkflowVersionMutationVariables = Exact<{
