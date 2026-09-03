@@ -5,8 +5,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
-import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
-import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
+import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
+import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import {
   BillingException,
@@ -22,6 +22,7 @@ import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
 import { buildBillingCreditStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-credit-state-lock-key.util';
+import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import {
@@ -147,7 +148,7 @@ export class BillingUsageService {
   ): Promise<BillingResourceCreditUsageDTO> {
     const [usedCredits, rolloverCredits] = await Promise.all([
       this.getCurrentPeriodCreditsUsed(workspaceId, periodStart),
-      this.billingCreditGrantService.getSpendableCreditsMicro(workspaceId),
+      this.billingCreditGrantService.getActiveCreditsMicro(workspaceId),
     ]);
 
     const grantedCredits =
@@ -196,7 +197,7 @@ export class BillingUsageService {
     const resourceUsageCap = this.getResourceUsageCap(subscription);
 
     const [creditBalance, usage] = await Promise.all([
-      this.billingCreditGrantService.getSpendableCreditsMicro(workspaceId),
+      this.billingCreditGrantService.getActiveCreditsMicro(workspaceId),
       this.getCurrentPeriodCreditsUsed(
         subscription.workspaceId,
         subscription.currentPeriodStart,
@@ -243,14 +244,17 @@ export class BillingUsageService {
   async decrementAvailableCreditsInCache({
     workspaceId,
     usedCredits,
+    currentBillingSubscription: providedCurrentBillingSubscription,
   }: {
     workspaceId: string;
     usedCredits: number;
+    currentBillingSubscription?: CurrentBillingSubscription;
   }): Promise<number> {
-    const { currentBillingSubscription } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'currentBillingSubscription',
-      ]);
+    const currentBillingSubscription =
+      await this.resolveCurrentBillingSubscription({
+        workspaceId,
+        providedCurrentBillingSubscription,
+      });
 
     if (currentBillingSubscription === NO_BILLING_SUBSCRIPTION) {
       return 0;
@@ -356,9 +360,13 @@ export class BillingUsageService {
     return { availableCredits, isCounterWarm: true };
   }
 
-  async getCreditAvailability(
-    workspaceId: string,
-  ): Promise<CreditAvailability> {
+  async getCreditAvailability({
+    workspaceId,
+    currentBillingSubscription: providedCurrentBillingSubscription,
+  }: {
+    workspaceId: string;
+    currentBillingSubscription?: CurrentBillingSubscription;
+  }): Promise<CreditAvailability> {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       return { hasAvailableCredits: true };
     }
@@ -375,10 +383,11 @@ export class BillingUsageService {
       return { hasAvailableCredits: false, reason: 'workspace-suspended' };
     }
 
-    const { currentBillingSubscription } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'currentBillingSubscription',
-      ]);
+    const currentBillingSubscription =
+      await this.resolveCurrentBillingSubscription({
+        workspaceId,
+        providedCurrentBillingSubscription,
+      });
 
     if (currentBillingSubscription === NO_BILLING_SUBSCRIPTION) {
       return { hasAvailableCredits: false, reason: 'no-subscription' };
@@ -398,8 +407,9 @@ export class BillingUsageService {
   }
 
   async hasAvailableCredits(workspaceId: string): Promise<boolean> {
-    const { hasAvailableCredits } =
-      await this.getCreditAvailability(workspaceId);
+    const { hasAvailableCredits } = await this.getCreditAvailability({
+      workspaceId,
+    });
 
     return hasAvailableCredits;
   }
@@ -479,5 +489,22 @@ export class BillingUsageService {
     );
 
     return usedMicro ?? 0;
+  }
+
+  async resolveCurrentBillingSubscription({
+    workspaceId,
+    providedCurrentBillingSubscription,
+  }: {
+    workspaceId: string;
+    providedCurrentBillingSubscription?: CurrentBillingSubscription;
+  }): Promise<CurrentBillingSubscription> {
+    return (
+      providedCurrentBillingSubscription ??
+      (
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'currentBillingSubscription',
+        ])
+      ).currentBillingSubscription
+    );
   }
 }

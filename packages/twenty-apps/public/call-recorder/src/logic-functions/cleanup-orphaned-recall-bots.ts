@@ -2,7 +2,6 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { CLEANUP_ORPHANED_RECALL_BOTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/cleanup-orphaned-recall-bots-logic-function-universal-identifier';
-import { CLEANUP_ORPHANED_RECALL_BOTS_CRON_PATTERN } from 'src/logic-functions/constants/cleanup-orphaned-recall-bots-cron-pattern';
 import {
   cleanupOrphanedRecallBots,
   type CleanupOrphanedRecallBotsResult,
@@ -41,10 +40,7 @@ export default defineLogicFunction({
     CLEANUP_ORPHANED_RECALL_BOTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'cleanup-orphaned-recall-bots',
   description:
-    'Daily cleanup that lists workspace Recall bots and cancels those no CallRecording request claims.',
+    'Lists workspace Recall bots and cancels those no CallRecording request claims.',
   timeoutSeconds: 250,
   handler: cleanupOrphanedRecallBotsHandler,
-  cronTriggerSettings: {
-    pattern: CLEANUP_ORPHANED_RECALL_BOTS_CRON_PATTERN,
-  },
 });

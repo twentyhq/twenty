@@ -1,4 +1,5 @@
 import { SystemPermissionFlag, defineRole } from 'twenty-sdk/define';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   CONTENT_FIELD_UNIVERSAL_IDENTIFIER,
   POST_CARD_UNIVERSAL_IDENTIFIER,
@@ -22,6 +23,14 @@ export default defineRole({
   objectPermissions: [
     {
       objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECTS.timelineActivity.universalIdentifier,
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,

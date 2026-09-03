@@ -25,7 +25,7 @@ import {
 } from 'src/engine/api/common/types/common-query-args.type';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
@@ -42,7 +42,6 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
     const {
       authContext,
       rolePermissionConfig,
-      workspaceDataSource,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatObjectMetadata,
@@ -104,10 +103,9 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
         >,
         limit: QUERY_MAX_RECORDS_FROM_RELATION,
         authContext,
-        workspaceDataSource,
         rolePermissionConfig,
         selectedFields: args.selectedFieldsResult.select,
-        ...this.getNestedRelationsReadPathOptions(queryRunnerContext),
+        ...this.getNestedRelationsReadPathOptions(),
       });
     }
 
@@ -139,7 +137,7 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
     queryResult: ObjectRecord,
     flatObjectMetadata: FlatObjectMetadata,
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     authContext: WorkspaceAuthContext,
   ): Promise<ObjectRecord> {
     return this.commonResultGettersService.processRecord(

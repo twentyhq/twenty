@@ -230,6 +230,53 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
+  calendarEventTarget: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'calendarEventTarget'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'calendarEventTarget',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.calendarEventTarget.universalIdentifier,
+        nameSingular: 'calendarEventTarget',
+        namePlural: 'calendarEventTargets',
+        labelSingular: i18nLabel(
+          msg({
+            message: `Calendar Event Target`,
+            context: 'objectMetadata.labelSingular',
+          }),
+        ),
+        labelPlural: i18nLabel(
+          msg({
+            message: `Calendar Event Targets`,
+            context: 'objectMetadata.labelPlural',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `A calendar event target`,
+            context: 'objectMetadata.description',
+          }),
+        ),
+        icon: 'IconCalendar',
+        isSystem: true,
+        isAuditLogged: false,
+        isUICreatable: false,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
   callRecording: ({
     now,
     workspaceId,
@@ -384,6 +431,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         ),
         icon: 'IconSend',
         isSystem: true,
+        isSearchable: true,
         isUICreatable: false,
         labelIdentifierFieldMetadataName: 'name',
       },
@@ -655,6 +703,53 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUICreatable: false,
         labelIdentifierFieldMetadataName: 'subject',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
+  messageThreadTarget: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'messageThreadTarget'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'messageThreadTarget',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.messageThreadTarget.universalIdentifier,
+        nameSingular: 'messageThreadTarget',
+        namePlural: 'messageThreadTargets',
+        labelSingular: i18nLabel(
+          msg({
+            message: `Message Thread Target`,
+            context: 'objectMetadata.labelSingular',
+          }),
+        ),
+        labelPlural: i18nLabel(
+          msg({
+            message: `Message Thread Targets`,
+            context: 'objectMetadata.labelPlural',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `A message thread target`,
+            context: 'objectMetadata.description',
+          }),
+        ),
+        icon: 'IconMessage',
+        isSystem: true,
+        isAuditLogged: false,
+        isUICreatable: false,
+        labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
       standardObjectMetadataRelatedEntityIds,
@@ -966,7 +1061,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
-        labelIdentifierFieldMetadataName: 'name',
+        labelIdentifierFieldMetadataName: 'linkedRecordCachedName',
       },
       workspaceId,
       standardObjectMetadataRelatedEntityIds,

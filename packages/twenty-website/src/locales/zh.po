@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-20 16:13\n"
+"PO-Revision-Date: 2026-08-28 16:20\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -72,6 +72,11 @@ msgstr "{labelText} 筛选器"
 #: src/partners-marketplace/FilterDropdown.tsx
 msgid "{labelText} filter, {0} selected"
 msgstr "{labelText} 筛选器，已选择 {0} 个"
+
+#. js-lingui-id: WWLSqV
+#: src/partners-marketplace/FilterBar.tsx
+msgid "{totalCount, plural, one {# certified partner ready to take on your project} other {# certified partners ready to take on your project}}"
+msgstr "{totalCount, plural, other {# 名认证合作伙伴已准备好承接您的项目}}"
 
 #. js-lingui-id: 0Qb9by
 #: src/case-studies/case-study-stories.ts
@@ -150,9 +155,11 @@ msgstr "+ 每组织每月 $7000"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid "+$75/user per month\n"
+msgid ""
+"+$75/user per month\n"
 "Switch to enterprise!"
-msgstr "+ 每用户每月 $75\n"
+msgstr ""
+"+ 每用户每月 $75\n"
 "切换到企业版！"
 
 #. js-lingui-id: iK+ikF
@@ -162,10 +169,12 @@ msgstr "+ 其他 1 万人"
 
 #. js-lingui-id: nRtVCK
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid "+20% of net spend\n"
+msgid ""
+"+20% of net spend\n"
 "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr "+ 净支出的 20%\n"
+msgstr ""
+"+ 净支出的 20%\n"
 "+ 每用户每月 $75\n"
 "切换到企业版！"
 
@@ -249,10 +258,12 @@ msgstr "$1,500 至 $3,500"
 
 #. js-lingui-id: 6inRXo
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid "$1/orchestration run/org\n"
+msgid ""
+"$1/orchestration run/org\n"
 "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr "$1/每次编排运行/每组织\n"
+msgstr ""
+"$1/每次编排运行/每组织\n"
 "+ 每用户每月 $75\n"
 "切换到企业版！"
 
@@ -480,9 +491,11 @@ msgstr "每分钟 100 次"
 
 #. js-lingui-id: uuKUqZ
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid "11 permissions\n"
+msgid ""
+"11 permissions\n"
 "groups"
-msgstr "11 个权限\n"
+msgstr ""
+"11 个权限\n"
 "组"
 
 #. js-lingui-id: 2szX5S
@@ -554,9 +567,11 @@ msgstr "3"
 
 #. js-lingui-id: BL47wE
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid "3 2 years contract\n"
+msgid ""
+"3 2 years contract\n"
 "-33% off"
-msgstr "3 个 2 年合约\n"
+msgstr ""
+"3 个 2 年合约\n"
 "立减 33%"
 
 #. js-lingui-id: /jgC+9
@@ -636,9 +651,11 @@ msgstr "为*行动迅速*的团队打造的 CRM"
 
 #. js-lingui-id: MXRINg
 #: src/case-studies/case-study-stories.ts
-msgid "A CRM that\n"
+msgid ""
+"A CRM that\n"
 "*grows* with you"
-msgstr "一个\n"
+msgstr ""
+"一个\n"
 "*能与你一同成长的* CRM"
 
 #. js-lingui-id: diWAWP
@@ -653,9 +670,11 @@ msgstr "一个能与你一同成长的 CRM | NetZero 与 Twenty"
 
 #. js-lingui-id: N3qsQD
 #: src/case-studies/case-study-stories.ts
-msgid "A CRM they\n"
+msgid ""
+"A CRM they\n"
 "*actually own*"
-msgstr "一个他们\n"
+msgstr ""
+"一个他们\n"
 "*真正拥有的* CRM"
 
 #. js-lingui-id: muZzEA
@@ -670,16 +689,20 @@ msgstr "一款定制 CRM 能让你的组织占得先机，*但构建它*会带�
 
 #. js-lingui-id: 4lAzBW
 #: src/sections/compare/compare-data.ts
-msgid "A feature-by-feature price check, with sources.\n"
+msgid ""
+"A feature-by-feature price check, with sources.\n"
 "Most of what HubSpot gates behind tiers is simply included in Twenty."
-msgstr "按功能逐项核对价格，并附来源说明。\n"
+msgstr ""
+"按功能逐项核对价格，并附来源说明。\n"
 "HubSpot 按套餐分级限制的大部分功能，在 Twenty 中都已直接包含。"
 
 #. js-lingui-id: eZ3I1t
 #: src/sections/compare/compare-data.ts
-msgid "A friendly price on the front page.\n"
+msgid ""
+"A friendly price on the front page.\n"
 "The caps show up after you sign."
-msgstr "首页上的价格看起来很友好。\n"
+msgstr ""
+"首页上的价格看起来很友好。\n"
 "但各种限制会在你签约之后才出现。"
 
 #. js-lingui-id: uNIo/j
@@ -714,9 +737,11 @@ msgstr "一个随时准备扩展的平台"
 
 #. js-lingui-id: vbJW8I
 #: src/case-studies/case-study-stories.ts
-msgid "A real estate agency on WhatsApp built a\n"
+msgid ""
+"A real estate agency on WhatsApp built a\n"
 "*CRM* around it"
-msgstr "一家在 WhatsApp 上运营的房地产中介围绕它打造了一套\n"
+msgstr ""
+"一家在 WhatsApp 上运营的房地产中介围绕它打造了一套\n"
 "*CRM*"
 
 #. js-lingui-id: hwoGni
@@ -954,6 +979,16 @@ msgstr "阿富汗 🇦🇫"
 #: src/partners-marketplace/served-geo-labels.ts
 msgid "Africa"
 msgstr "非洲"
+
+#. js-lingui-id: 7X/+39
+#: src/sections/faq/partner-faq.data.ts
+msgid "Agencies and freelancers apply through the Twenty partner program page, which lists the requirements and carries the application form."
+msgstr "代理机构和自由职业者可通过 Twenty 合作伙伴计划页面申请，该页面列出了要求并提供申请表。"
+
+#. js-lingui-id: CHjiD2
+#: src/sections/partner-lead/PartnerBecomeStrip.tsx
+msgid "Agencies and freelancers can apply to join the certified directory."
+msgstr "代理机构和自由职业者可以申请加入认证名录。"
 
 #. js-lingui-id: NmHsVh
 #: src/partner-application/data/partner-team-type-options.ts
@@ -1203,9 +1238,11 @@ msgstr "未找到应用 — Twenty"
 
 #. js-lingui-id: k8I7/G
 #: src/partner-application/partner-application-copy.ts
-msgid "Apply to build\n"
+msgid ""
+"Apply to build\n"
 "*the future of CRM*"
-msgstr "申请一起构建\n"
+msgstr ""
+"申请一起构建\n"
 "*CRM 的未来*"
 
 #. js-lingui-id: LJCDxT
@@ -1269,6 +1306,11 @@ msgstr "组装、迭代并适配一套稳健的 CRM，*可以快速灵活变通*
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Assign owners and due dates"
 msgstr "分配负责人和截止日期"
+
+#. js-lingui-id: eo0HU7
+#: src/sections/faq/become-partner-faq.data.ts
+msgid "At least one shipped Twenty implementation — customer or internal — with a link that shows the work. Solo freelancers and agencies both qualify."
+msgstr "至少有一个已上线的 Twenty 实施项目——客户项目或内部项目均可——并附上展示该项目成果的链接。个人自由职业者和代理机构均符合条件。"
 
 #. js-lingui-id: awzjg/
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1372,9 +1414,11 @@ msgstr "因为 Twenty 的 API 完全开放，我可以把它与我们技术栈�
 
 #. js-lingui-id: kWm0dC
 #: src/sections/partner-hero/PartnerHero.tsx
-msgid "Become\n"
+msgid ""
+"Become\n"
 "*our partner*"
-msgstr "成为\n"
+msgstr ""
+"成为\n"
 "*我们的合作伙伴*"
 
 #. js-lingui-id: PKMHNe
@@ -1384,6 +1428,7 @@ msgstr "成为天才！"
 
 #. js-lingui-id: 6ZCRfT
 #: src/sections/partner-signoff/PartnerSignoff.tsx
+#: src/sections/partner-lead/PartnerBecomeStrip.tsx
 #: src/sections/partner-hero/PartnerHero.tsx
 msgid "Become a partner"
 msgstr "成为合作伙伴"
@@ -1392,6 +1437,16 @@ msgstr "成为合作伙伴"
 #: src/platform/routing/static-website-routes.ts
 msgid "Become a Twenty Partner — Apply"
 msgstr "成为 Twenty 合作伙伴 — 立即申请"
+
+#. js-lingui-id: 8x+SS7
+#: src/platform/routing/static-website-routes.ts
+msgid "Become a Twenty Partner — Join the Open Source CRM Ecosystem"
+msgstr "成为 Twenty 合作伙伴 — 加入开源 CRM 生态系统⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠♀♀♀♀♀♀numerusform♀♀♀♀♀♀assistant to=analysis  天天中彩票app♀♀♀♀♀♀assistant analysis code♀♀♀♀♀♀numerusform♀♀♀♀♀♀assistant to=analysis  天天中彩票网站  天天众♀♀♀♀♀♀assistant출장샵’wini♀♀♀♀♀♀assistant to=analysis 娱乐平台招商天天啪ӡаны출장샵♀♀♀♀♀♀assistant to=analysis  大发快三走势图  彩神争霸assistant to=analysis  北京赛车女 py code: No, malformed due weird injection? Need output actual JSON all. Ensure no odd chars. Let's construct. Need need only JSON. 46 items. Count. Translate concisely. Use "
+
+#. js-lingui-id: r8MUXZ
+#: src/sections/faq/BecomePartnerFaq.tsx
+msgid "Becoming *a Twenty partner*"
+msgstr "成为 *Twenty 合作伙伴*"
 
 #. js-lingui-id: 83Wi6G
 #: src/sections/home-stepper/data/stepper.data.ts
@@ -1432,6 +1487,11 @@ msgstr "Benjamin Reynolds"
 #: src/sections/testimonials/partner-testimonials.data.ts
 msgid "Bertrams"
 msgstr "Bertrams"
+
+#. js-lingui-id: CrZWSz
+#: src/partner-application/partner-application-copy.ts
+msgid "Best proof first: a live Twenty instance URL, a public repo, or a YouTube link. Loom, Drive and file links are accepted but slower to review."
+msgstr "请优先提供最有力的证明：可访问的 Twenty 实例 URL、公开代码仓库或 YouTube 链接。也接受 Loom、Drive 和文件链接，但审核速度会更慢。"
 
 #. js-lingui-id: BSmDFu
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1505,13 +1565,14 @@ msgstr "巴西 🇧🇷"
 
 #. js-lingui-id: hKAV/O
 #: src/sections/pricing-engagement-band/PricingEngagementBand.tsx
+#: src/sections/partner-hero/BrowseDirectoryButton.tsx
 msgid "Browse partners"
 msgstr "浏览合作伙伴"
 
-#. js-lingui-id: bmk2dj
-#: src/platform/routing/static-website-routes.ts
-msgid "Browse Twenty's certified partners — the agencies and individuals who migrate, customise, host, and support the open source CRM across regions, languages, and deployment models."
-msgstr "浏览 Twenty 认证合作伙伴——这些代理机构和个人会在不同地区、不同语言和不同部署模式下，为这款开源 CRM 提供迁移、定制、托管与支持。"
+#. js-lingui-id: jkVxe+
+#: src/sections/partner-lead/PartnerDirectory.tsx
+msgid "Browse the *certified partners*"
+msgstr "浏览*认证合作伙伴*"
 
 #. js-lingui-id: VX4eI/
 #: src/partner-application/data/partner-country-options.ts
@@ -1603,6 +1664,11 @@ msgstr "被供应商锁定所伤后，AC&T 构建了一个他们真正拥有的 
 msgid "Burundi 🇧🇮"
 msgstr "布隆迪 🇧🇮"
 
+#. js-lingui-id: s61NQg
+#: src/sections/faq/become-partner-faq.data.ts
+msgid "Buyers submit a project brief with scope, timeline, and budget. We hand-pick the certified partners who fit and make the introduction within 48 hours."
+msgstr "买方提交包含范围、时间表和预算的项目简介。我们会精选合适的认证合作伙伴，并在 48 小时内为双方牵线。"
+
 #. js-lingui-id: L40Ae7
 #: src/partner-application/partner-application-copy.ts
 msgid "Calendar / booking link"
@@ -1622,6 +1688,11 @@ msgstr "柬埔寨 🇰🇭"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Cameroon 🇨🇲"
 msgstr "喀麦隆 🇨🇲"
+
+#. js-lingui-id: lhDlM3
+#: src/sections/faq/partner-faq.data.ts
+msgid "Can a partner run my migration?"
+msgstr "合作伙伴可以负责我的迁移吗？"
 
 #. js-lingui-id: wCALve
 #: src/sections/faq/faq.data.ts
@@ -1689,6 +1760,16 @@ msgstr "类别"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Central African Republic 🇨🇫"
 msgstr "中非共和国 🇨🇫"
+
+#. js-lingui-id: n6B8ue
+#: src/sections/faq/become-partner-faq.data.ts
+msgid "Certification, plus a directory profile your clients can verify. The best partners also receive client briefs matched to their scope."
+msgstr "认证，以及可供客户验证的目录资料。最优秀的合作伙伴还会收到与其服务范围相匹配的客户简介。"
+
+#. js-lingui-id: 4W4gsr
+#: src/sections/partner-hero/PartnerLeadHero.tsx
+msgid "Certified partners who set up your CRM to match how your company works, from the migration to the custom apps."
+msgstr "认证合作伙伴会根据贵公司的工作方式设置您的 CRM，涵盖从迁移到定制应用的各个环节。"
 
 #. js-lingui-id: iI3Dq9
 #: src/partner-application/data/partner-country-options.ts
@@ -1771,6 +1852,11 @@ msgstr "清除筛选条件"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Clearer dashboard numbers"
 msgstr "更清晰的仪表板数字"
+
+#. js-lingui-id: +W4YRD
+#: src/sections/faq/become-partner-faq.data.ts
+msgid "Click Become a partner and complete the short application: who you are, what you cover, and one real Twenty project with proof. We review every application against real, shipped work — acceptance is selective."
+msgstr "点击“成为合作伙伴”，并填写简短申请：您是谁、您提供哪些服务，以及一个附有证明的真实 Twenty 项目。我们会根据真实已交付的项目审核每份申请，因此录取具有选择性。"
 
 #. js-lingui-id: yz7wBu
 #: src/partners-marketplace/CaseStudyModal.tsx
@@ -2342,6 +2428,11 @@ msgstr "自定义布局"
 msgid "Custom objects"
 msgstr "自定义对象"
 
+#. js-lingui-id: 14p823
+#: src/sections/partner-lead/partner-services.data.ts
+msgid "Custom objects, workflows and apps built on the platform."
+msgstr "基于该平台构建的自定义对象、工作流和应用。"
+
 #. js-lingui-id: y5pLQH
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Custom sidebar"
@@ -2399,6 +2490,11 @@ msgstr "客户"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Customization"
 msgstr "自定义能力"
+
+#. js-lingui-id: hiB8fo
+#: src/sections/partner-lead/partner-services.data.ts
+msgid "Customization & apps"
+msgstr "自定义与应用"
 
 #. js-lingui-id: 4urq82
 #: src/sections/compare/compare-data.ts
@@ -2544,6 +2640,11 @@ msgstr "演示"
 msgid "Denmark 🇩🇰"
 msgstr "丹麦 🇩🇰"
 
+#. js-lingui-id: w9Q2vI
+#: src/sections/partner-lead/partner-services.data.ts
+msgid "Deploy, upgrade and operate Twenty on your own infrastructure."
+msgstr "在您自己的基础设施上部署、升级和运营 Twenty。"
+
 #. js-lingui-id: 59TXqJ
 #: src/partner-application/partner-application-copy.ts
 msgid "Describe a real Twenty project (customer or internal): who it was for, what you built, and how you used the areas you selected. Min. {TWENTY_EXPERIENCE_NOTES_MIN_LENGTH} characters."
@@ -2605,6 +2706,11 @@ msgstr "数字与信息总监，Elevate Consulting"
 msgid "Director, W3villa Technologies, Partner"
 msgstr "W3villa Technologies 董事、合作伙伴"
 
+#. js-lingui-id: GhgbAN
+#: src/sections/partner-lead/PartnerDirectory.tsx
+msgid "Directory"
+msgstr "目录"
+
 #. js-lingui-id: 30qcNY
 #: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
@@ -2642,6 +2748,16 @@ msgstr "吉布提 🇩🇯"
 msgid "Do I need a developer to customize Twenty?"
 msgstr "我需要开发者来定制 Twenty 吗？"
 
+#. js-lingui-id: ISZL/U
+#: src/sections/faq/partner-faq.data.ts
+msgid "Do partners support self-hosting?"
+msgstr "合作伙伴支持自托管吗？"
+
+#. js-lingui-id: xSh4Vw
+#: src/sections/faq/become-partner-faq.data.ts
+msgid "Does it cost anything?"
+msgstr "需要付费吗？"
+
 #. js-lingui-id: Zx22Ih
 #: src/sections/faq/faq.data.ts
 msgid "Does Twenty work with Claude, ChatGPT, and Cursor?"
@@ -2665,6 +2781,7 @@ msgstr "不要被别人的生态系统锁死。Twenty 的开发者体验就像�
 #. js-lingui-id: DPfwMq
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 #: src/partner-application/partner-application-copy.ts
+#: src/client-brief/client-brief-copy.ts
 msgid "Done"
 msgstr "完成"
 
@@ -3066,6 +3183,11 @@ msgstr "连培训资料都是值得庆祝的功能。"
 msgid "Every new release of Twenty, the #1 Open Source CRM, with changelogs, demos, and the highlights teams care about most."
 msgstr "Twenty 每一个新版本——排名第一的开源 CRM——都附带更新日志、演示，以及团队最关心的亮点。"
 
+#. js-lingui-id: xt/iek
+#: src/sections/faq/partner-faq.data.ts
+msgid "Every partner is certified by Twenty and reviewed on delivered projects, technical depth, and customer feedback before joining the directory."
+msgstr "每位合作伙伴在加入目录前，均须经过 Twenty 认证，并根据已交付项目、技术深度和客户反馈进行审核。"
+
 #. js-lingui-id: rkZTD7
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Every thread, on the right record."
@@ -3299,6 +3421,11 @@ msgstr "按类别筛选应用"
 msgid "Filter by Multi-Select"
 msgstr "按多选字段筛选"
 
+#. js-lingui-id: V5L7Y4
+#: src/sections/partner-lead/PartnerDirectory.tsx
+msgid "Filter by region, language, and specialty, then read a profile and book a call with the partner yourself."
+msgstr "按地区、语言和专长筛选，然后查看资料并自行预约与合作伙伴通话。"
+
 #. js-lingui-id: bOidm7
 #: src/partners-marketplace/FilterBar.tsx
 msgid "Filter partners"
@@ -3329,26 +3456,15 @@ msgstr "从 AI 聊天列表中筛选、归档和管理对话。"
 msgid "Filtered metrics from any object"
 msgstr "来自任意对象的筛选指标"
 
-#. js-lingui-id: sRUAXp
-#: src/platform/routing/static-website-routes.ts
-msgid "Find a certified Twenty partner to migrate, customise, and operate your open source CRM, or join the ecosystem and grow your practice with us."
-msgstr "寻找经过认证的 Twenty 合作伙伴，为你迁移、定制和运营你的开源 CRM，或者加入生态，与我们一起发展你的业务实践。"
-
-#. js-lingui-id: TJ7HQl
-#: src/sections/partner-signoff/PartnerSignoff.tsx
-#: src/sections/partner-hero/PartnerHero.tsx
-msgid "Find a partner"
-msgstr "查找合作伙伴"
-
 #. js-lingui-id: MD032e
 #: src/sections/menu/data/menu.ts
 msgid "Find a Twenty partner"
 msgstr "查找 Twenty 合作伙伴"
 
-#. js-lingui-id: S6CEQ9
+#. js-lingui-id: AwJQl7
 #: src/platform/routing/static-website-routes.ts
-msgid "Find a Twenty Partner — Open Source CRM Marketplace"
-msgstr "查找 Twenty 合作伙伴 — 开源 CRM 市场"
+msgid "Find a Twenty Partner — Certified Open Source CRM Experts"
+msgstr "寻找 Twenty 合作伙伴 — 认证开源 CRM 专家"
 
 #. js-lingui-id: RiVrPY
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3359,11 +3475,6 @@ msgstr "直接从应用市场查找并安装 People Data Labs、Last Contact 和
 #: src/sections/pricing-engagement-band/PricingEngagementBand.tsx
 msgid "Find the right partner to implement, customize, and tailor Twenty to your team."
 msgstr "找到合适的合作伙伴，为你的团队实施、定制并调优 Twenty。"
-
-#. js-lingui-id: 5asqas
-#: src/partners-marketplace/MarketplaceHeader.tsx
-msgid "Find your *Twenty partner*"
-msgstr "查找你的 *Twenty 合作伙伴*"
 
 #. js-lingui-id: 9V48qi
 #: src/partner-application/data/partner-country-options.ts
@@ -3392,9 +3503,11 @@ msgstr "灵活关系"
 
 #. js-lingui-id: HBJ0P5
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid "Flow\n"
+msgid ""
+"Flow\n"
 "orchestration"
-msgstr "流程\n"
+msgstr ""
+"流程\n"
 "编排"
 
 #. js-lingui-id: obrJBN
@@ -3465,6 +3578,11 @@ msgstr "创始人，Nine Dots Ventures"
 msgid "Founder, Wintactix"
 msgstr "创始人，Wintactix"
 
+#. js-lingui-id: iAVWWq
+#: src/sections/partner-lead/PartnerServicesExplainer.tsx
+msgid "Four kinds of work, delivered by teams that build on Twenty every day."
+msgstr "四类服务，由每天都在基于 Twenty 构建的团队交付。"
+
 #. js-lingui-id: 671GY5
 #: src/partner-application/data/partner-country-options.ts
 msgid "France 🇫🇷"
@@ -3504,9 +3622,11 @@ msgstr "从文档到开放 API"
 
 #. js-lingui-id: 2CtZ6T
 #: src/case-studies/case-study-stories.ts
-msgid "From Salesforce to\n"
+msgid ""
+"From Salesforce to\n"
 "*self-hosted Twenty*"
-msgstr "从 Salesforce 到\n"
+msgstr ""
+"从 Salesforce 到\n"
 "*自托管 Twenty*"
 
 #. js-lingui-id: kl+hEJ
@@ -3610,8 +3730,15 @@ msgstr "德语"
 msgid "Germany 🇩🇪"
 msgstr "德国 🇩🇪"
 
+#. js-lingui-id: WoPlNk
+#: src/sections/partner-hero/PartnerHero.tsx
+msgid "Get certified as a Twenty partner: a vetted badge, a directory profile your clients can check, and matched client briefs for the best partners."
+msgstr "获得 Twenty 合作伙伴认证：经过审核的徽章、供客户查验的目录资料，以及为最佳合作伙伴匹配的客户简介。"
+
 #. js-lingui-id: b+jRGN
-#: src/partners-marketplace/MarketplaceMatchCard.tsx
+#: src/sections/partner-lead/PartnerDirectoryPanel.tsx
+#: src/sections/partner-hero/PartnerLeadHero.tsx
+#: src/client-brief/ClientBriefModal.tsx
 msgid "Get matched"
 msgstr "获取匹配结果"
 
@@ -3781,6 +3908,11 @@ msgstr "隐藏更改"
 msgid "Hindi"
 msgstr "印地语"
 
+#. js-lingui-id: 6NGgln
+#: src/sections/partner-hero/PartnerLeadHero.tsx
+msgid "Hire the people who *build on Twenty*"
+msgstr "聘请*基于 Twenty 构建的*专业人士"
+
 #. js-lingui-id: qfSbUb
 #: src/case-studies/case-study-stories.ts
 msgid "His approach was unconventional. Instead of mapping fields manually, scripting transforms, and validating data step by step, he handed the job to agentic AI tools with a brief: where the data lives, the GitHub repo for the target platform, and the Railway deployment. Start, and only return if something breaks beyond a 70% confidence fix."
@@ -3848,6 +3980,31 @@ msgstr "AC&T Education Migration 和 Flycoder 如何用自托管 Twenty 替换�
 msgid "How Alternative Partners migrated from Salesforce to self-hosted Twenty using agentic AI in the implementation loop: fast migration, durable ownership."
 msgstr "Alternative Partners 如何在实施过程中使用 agentic AI，从 Salesforce 迁移到自托管 Twenty：快速迁移、持久所有权。"
 
+#. js-lingui-id: Xtipai
+#: src/sections/faq/partner-faq.data.ts
+msgid "How are partners vetted?"
+msgstr "如何审核合作伙伴？"
+
+#. js-lingui-id: rdK0XI
+#: src/sections/faq/become-partner-faq.data.ts
+msgid "How do client briefs reach me?"
+msgstr "客户简介如何发送给我？"
+
+#. js-lingui-id: YEWCmQ
+#: src/sections/faq/become-partner-faq.data.ts
+msgid "How do I apply?"
+msgstr "如何申请？"
+
+#. js-lingui-id: 8Cnrle
+#: src/sections/faq/partner-faq.data.ts
+msgid "How do I become a partner?"
+msgstr "如何成为合作伙伴？"
+
+#. js-lingui-id: eNrG1o
+#: src/sections/faq/partner-faq.data.ts
+msgid "How does matching work?"
+msgstr "匹配如何运作？"
+
 #. js-lingui-id: +MLOVo
 #: src/case-studies/case-study-stories.ts
 msgid "How Elevate Consulting moved off documents and spreadsheets to Twenty as the API-connected CRM at the center of their stack."
@@ -3875,9 +4032,11 @@ msgstr "Nine Dots Ventures 如何在每天 2,000+ 条 WhatsApp 消息之上，�
 
 #. js-lingui-id: 5sWcC0
 #: src/sections/case-study-promo/CaseStudyPromo.tsx
-msgid "How teams\n"
+msgid ""
+"How teams\n"
 "*built with Twenty*"
-msgstr "团队如何\n"
+msgstr ""
+"团队如何\n"
 "*基于 Twenty 构建*"
 
 #. js-lingui-id: Z3Cabh
@@ -4310,16 +4469,16 @@ msgstr "加入我们的生态系统，通过开源基础组件帮助企业掌控
 msgid "Join our growing partner ecosystem"
 msgstr "加入我们不断壮大的合作伙伴生态"
 
-#. js-lingui-id: VQIurp
-#: src/sections/partner-signoff/PartnerSignoff.tsx
-msgid "Join our partner ecosystem and help businesses take control of their CRM."
-msgstr "加入我们的合作伙伴生态系统，帮助企业掌控他们的 CRM。"
-
 #. js-lingui-id: m/pXki
 #: src/sections/customers-catalog-signoff/CustomersCatalogSignoff.tsx
 #: src/sections/case-study-detail/CustomersCaseStudySignoff.tsx
 msgid "Join the teams that chose to own their CRM. Start building with Twenty today."
 msgstr "加入那些选择拥有自己 CRM 的团队。马上开始使用 Twenty 构建吧。"
+
+#. js-lingui-id: DqW4G2
+#: src/platform/routing/static-website-routes.ts
+msgid "Join the Twenty partner ecosystem: implement, migrate, and support the #1 open source CRM, and grow your practice with the teams building it."
+msgstr "加入 Twenty 合作伙伴生态系统：实施、迁移并支持排名第一的开源 CRM，与打造它的团队共同发展您的业务。"
 
 #. js-lingui-id: QbxNys
 #: src/partner-application/data/partner-country-options.ts
@@ -4451,9 +4610,11 @@ msgstr "拉美地区（LATAM）"
 
 #. js-lingui-id: WvrtRi
 #: src/sections/releases-hero/ReleasesHero.tsx
-msgid "Latest\n"
+msgid ""
+"Latest\n"
 "*Releases*"
-msgstr "最新\n"
+msgstr ""
+"最新\n"
 "*版本发布*"
 
 #. js-lingui-id: 7OHfcc
@@ -4482,6 +4643,11 @@ msgstr "了解更多"
 #: src/apps-marketplace/AppCard.tsx
 msgid "Learn more about {0}"
 msgstr "了解有关 {0} 的更多信息"
+
+#. js-lingui-id: s7B7gx
+#: src/sections/partner-lead/PartnerBecomeStrip.tsx
+msgid "Learn more about the partner program"
+msgstr "了解有关合作伙伴计划的更多信息"
 
 #. js-lingui-id: wB0DGn
 #: src/partner-application/data/partner-country-options.ts
@@ -4537,11 +4703,6 @@ msgstr "与任何常规对象一样，给你的任务和公司添加一些自定
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Link field"
 msgstr "链接字段"
-
-#. js-lingui-id: YOe6r4
-#: src/partner-application/partner-application-copy.ts
-msgid "Link that shows the work (Loom, GitHub, Notion, Drive, public write-up…). No public workspace? Share a short Loom."
-msgstr "展示该工作的链接（Loom、GitHub、Notion、Drive、公开文档等）。没有公共工作区？请分享一个简短的 Loom。"
 
 #. js-lingui-id: gggTBm
 #: src/sections/footer/footer.data.ts
@@ -4623,6 +4784,7 @@ msgstr "正在加载表单…"
 
 #. js-lingui-id: Pwqkdw
 #: src/partner-application/PartnerApplicationModal.tsx
+#: src/client-brief/ClientBriefModal.tsx
 msgid "Loading…"
 msgstr "正在加载…"
 
@@ -4648,6 +4810,11 @@ msgstr "锁定"
 #: src/sections/menu/components/MenuDrawer.tsx
 msgid "Log in"
 msgstr "登录"
+
+#. js-lingui-id: LE5a4y
+#: src/sections/partner-hero/PartnerHero.tsx
+msgid "Looking to hire a partner?"
+msgstr "想聘请合作伙伴吗？"
 
 #. js-lingui-id: 8xX9yd
 #: src/sections/product-feature/TasksVisual/data/tasks.ts
@@ -4746,7 +4913,6 @@ msgid "Mar"
 msgstr "Mar"
 
 #. js-lingui-id: Zt5PUS
-#: src/partners-marketplace/MarketplaceHeader.tsx
 #: src/apps-marketplace/AppsMarketplaceHeader.tsx
 msgid "Marketplace"
 msgstr "市场"
@@ -4830,6 +4996,11 @@ msgstr "Microsoft o365 集成"
 #: src/sections/compare/compare-data.ts
 msgid "Middleware licensed separately"
 msgstr "中间件单独授权"
+
+#. js-lingui-id: u6h8ps
+#: src/sections/partner-lead/partner-services.data.ts
+msgid "Migration"
+msgstr "迁移"
 
 #. js-lingui-id: so04x6
 #: src/case-studies/case-study-stories.ts
@@ -4945,6 +5116,11 @@ msgstr "在打开记录前，浏览命令栏结果以查看重要字段。"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Move widgets between record page tabs with drag and drop, including directly onto an empty tab."
 msgstr "通过拖放在记录页面选项卡之间移动小组件，包括直接移至空选项卡。"
+
+#. js-lingui-id: iTpW7h
+#: src/sections/partner-lead/partner-services.data.ts
+msgid "Move your data out of Salesforce, HubSpot or spreadsheets."
+msgstr "将您的数据从 Salesforce、HubSpot 或电子表格中迁出。"
 
 #. js-lingui-id: EwJDrS
 #: src/partner-application/data/partner-country-options.ts
@@ -5178,6 +5354,11 @@ msgstr "不再租用别人的结构"
 msgid "No partners match your filters"
 msgstr "没有合作伙伴符合你的筛选条件"
 
+#. js-lingui-id: KoCaEV
+#: src/partners-marketplace/FilterBar.tsx
+msgid "No partners to show right now"
+msgstr "目前没有可显示的合作伙伴"
+
 #. js-lingui-id: nDjC8E
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "No session ID provided. Please complete the checkout first."
@@ -5188,6 +5369,11 @@ msgstr "未提供会话 ID。请先完成结账。"
 msgid "No-code"
 msgstr "无代码"
 
+#. js-lingui-id: rNCZhO
+#: src/sections/faq/become-partner-faq.data.ts
+msgid "No. Applying and being listed are free. You set your own rates and keep what you bill."
+msgstr "不收费。申请和列入目录均免费。您可自行设定费率，并保留您收取的全部费用。"
+
 #. js-lingui-id: SiZ/7E
 #: src/sections/faq/faq.data.ts
 msgid "No. Build custom objects, fields, views, and no-code workflows straight from Settings. Unlimited, no extra charge."
@@ -5195,9 +5381,11 @@ msgstr "不会。直接在 Settings 中构建自定义对象、字段、视图�
 
 #. js-lingui-id: 4yg7QV
 #: src/sections/compare/compare-data.ts
-msgid "Nobody buys Dynamics, they license it.\n"
+msgid ""
+"Nobody buys Dynamics, they license it.\n"
 "Here is what it costs once storage and add-ons land."
-msgstr "没有人“购买” Dynamics，只是获取其授权。\n"
+msgstr ""
+"没有人“购买” Dynamics，只是获取其授权。\n"
 "这是假如把存储和附加组件都算上的全部成本。"
 
 #. js-lingui-id: EVSOLf
@@ -5319,6 +5507,11 @@ msgstr "本页内容"
 #: src/sections/compare/CompareCostTable.tsx
 msgid "On Twenty"
 msgstr "在 Twenty 上"
+
+#. js-lingui-id: sRJVQ1
+#: src/sections/partner-lead/partner-services.data.ts
+msgid "Onboard your team and design your sales process."
+msgstr "让您的团队入门，并设计您的销售流程。"
 
 #. js-lingui-id: gukxZ5
 #: src/sections/compare/compare-data.ts
@@ -5865,6 +6058,12 @@ msgstr "2026 年 Q1"
 msgid "Qatar 🇶🇦"
 msgstr "卡塔尔 🇶🇦"
 
+#. js-lingui-id: enzGAL
+#: src/sections/faq/PartnerFaq.tsx
+#: src/sections/faq/BecomePartnerFaq.tsx
+msgid "Questions"
+msgstr "问题"
+
 #. js-lingui-id: OialmJ
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Quickly identify who created a given record and what was the origin of the creation, whether it was through a CSV import, an API, or manual input."
@@ -5879,6 +6078,11 @@ msgstr "按报价定价"
 #: src/partners-marketplace/PartnerRatesPanel.tsx
 msgid "Rates"
 msgstr "费率"
+
+#. js-lingui-id: F4EefJ
+#: src/sections/faq/partner-faq.data.ts
+msgid "Rates vary by partner and scope. Each partner profile lists their published rates, and you can compare before booking a call."
+msgstr "费率因合作伙伴和服务范围而异。每个合作伙伴资料页都会列出其公开费率，您可以在预约通话前进行比较。"
 
 #. js-lingui-id: zXRspj
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6439,9 +6643,11 @@ msgstr "安全审查与 DPA"
 
 #. js-lingui-id: nmVU/t
 #: src/sections/customers-hero/CustomersHero.tsx
-msgid "See how teams\n"
+msgid ""
+"See how teams\n"
 "build *on Twenty*"
-msgstr "看看各团队如何\n"
+msgstr ""
+"看看各团队如何\n"
 "在 *Twenty 之上构建*"
 
 #. js-lingui-id: aB+XpI
@@ -6522,6 +6728,11 @@ msgstr "自托管意味着 AC&T 不承担任何供应商风险：没有可能随
 msgid "Self-hosted means control"
 msgstr "自托管意味着掌控"
 
+#. js-lingui-id: L6yOTN
+#: src/sections/partner-lead/partner-services.data.ts
+msgid "Self-hosted operations"
+msgstr "自托管运营"
+
 #. js-lingui-id: WxVgfh
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Self-hosted workspaces can now track usage more cleanly with usage-based billing support."
@@ -6593,6 +6804,7 @@ msgid "Serbia 🇷🇸"
 msgstr "塞尔维亚 🇷🇸"
 
 #. js-lingui-id: MILoeL
+#: src/sections/partner-lead/PartnerServicesExplainer.tsx
 #: src/partners-marketplace/PartnerServices.tsx
 msgid "Services"
 msgstr "服务"
@@ -6606,6 +6818,11 @@ msgstr "塞舌尔 🇸🇨"
 #: src/sections/compare/compare-data.ts
 msgid "Shape records to your business"
 msgstr "按你的业务塑造记录模型"
+
+#. js-lingui-id: 3PvOYS
+#: src/sections/faq/partner-faq.data.ts
+msgid "Share a short brief on your project, timeline, and budget. We hand-pick certified partners who fit and introduce you within 48 hours."
+msgstr "分享关于您的项目、时间表和预算的简短简介。我们会精选合适的认证合作伙伴，并在 48 小时内为双方牵线。"
 
 #. js-lingui-id: vn7QMM
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6652,11 +6869,6 @@ msgstr "在仪表板小组件中将记录显示为分组表格、看板或日历
 msgid "Showing {visibleCount} of {totalCount} partners"
 msgstr "正在显示 {visibleCount} / {totalCount} 个合作伙伴"
 
-#. js-lingui-id: I89wN/
-#: src/partners-marketplace/FilterBar.tsx
-msgid "Showing all {totalCount} partners"
-msgstr "正在显示全部 {totalCount} 个合作伙伴"
-
 #. js-lingui-id: 9k9PMD
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Sidebar items"
@@ -6674,9 +6886,11 @@ msgstr "在一分钟内注册 Cloud 并开始你的 30 天试用。对于更大�
 
 #. js-lingui-id: qTFDyz
 #: src/sections/pricing-plans/PricingIntro.tsx
-msgid "Simple\n"
+msgid ""
+"Simple\n"
 "*Pricing*"
-msgstr "简单\n"
+msgstr ""
+"简单\n"
 "*定价*"
 
 #. js-lingui-id: 0eG5g+
@@ -6896,9 +7110,11 @@ msgstr "从今天起*更快行动。*"
 
 #. js-lingui-id: sBOFB0
 #: src/sections/pricing-plans/PricingIntro.tsx
-msgid "Start your free trial today\n"
+msgid ""
+"Start your free trial today\n"
 "without credit card."
-msgstr "今天就开始你的免费试用，\n"
+msgstr ""
+"今天就开始你的免费试用，\n"
 "无需信用卡。"
 
 #. js-lingui-id: ThcPyu
@@ -6964,8 +7180,8 @@ msgid "Subdomain (yourco.twenty.com)"
 msgstr "子域名（yourco.twenty.com）"
 
 #. js-lingui-id: 578pU6
-#: src/partners-marketplace/PartnerProfileCtas.tsx
-#: src/partners-marketplace/MarketplaceBriefPrompt.tsx
+#: src/app/[locale]/(site)/partners/page.tsx
+#: src/app/[locale]/(site)/partners/profile/[slug]/page.tsx
 msgid "Submit a brief"
 msgstr "提交概要"
 
@@ -7004,6 +7220,11 @@ msgstr "成功计划加价"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Sudan 🇸🇩"
 msgstr "苏丹 🇸🇩"
+
+#. js-lingui-id: 388eZi
+#: src/partners-marketplace/marketplace-copy.ts
+msgid "Super partner"
+msgstr "超级合作伙伴"
 
 #. js-lingui-id: XYLcNv
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -7153,10 +7374,17 @@ msgstr "告诉我们更多信息"
 
 #. js-lingui-id: YXuDx1
 #: src/client-brief/client-brief-copy.ts
-msgid "Tell us what you need\n"
+msgid ""
+"Tell us what you need\n"
 "*We'll find the right partner*"
-msgstr "告诉我们你的需求\n"
+msgstr ""
+"告诉我们你的需求\n"
 "*我们会为你找到合适的合作伙伴*"
+
+#. js-lingui-id: cgFMCg
+#: src/platform/routing/static-website-routes.ts
+msgid "Tell us what you need and get matched with a certified Twenty partner in 48 hours, or browse the directory of agencies and consultants who migrate, customise, and operate the open source CRM."
+msgstr "告诉我们您的需求，我们将在 48 小时内为您匹配认证 Twenty 合作伙伴；或者您也可以浏览代理机构和顾问目录，他们提供开源 CRM 的迁移、自定义和运营服务。"
 
 #. js-lingui-id: kjnQvE
 #: src/partners-marketplace/MarketplaceBriefPrompt.tsx
@@ -7339,9 +7567,11 @@ msgstr "关键决策是不从零开始构建一切。Twenty 覆盖了数据模�
 
 #. js-lingui-id: aa8o1y
 #: src/sections/compare/compare-data.ts
-msgid "The license is the cheap part.\n"
+msgid ""
+"The license is the cheap part.\n"
 "Here is what SAP Sales Cloud costs by the time it goes live."
-msgstr "许可证只是较小的一部分成本。\n"
+msgstr ""
+"许可证只是较小的一部分成本。\n"
 "这是 SAP Sales Cloud 在真正上线时的总成本。"
 
 #. js-lingui-id: gav9Hl
@@ -7356,9 +7586,11 @@ msgstr "项目明细逐项累加起来"
 
 #. js-lingui-id: DIMXNH
 #: src/sections/compare/compare-data.ts
-msgid "The list price is only the beginning.\n"
+msgid ""
+"The list price is only the beginning.\n"
 "Here is what the invoice looks like once a real team is on it."
-msgstr "标价只是开始。\n"
+msgstr ""
+"标价只是开始。\n"
 "当一支真实团队在使用时，发票看起来会是这样。"
 
 #. js-lingui-id: nf1NnD
@@ -7566,6 +7798,11 @@ msgstr "通过更新日志、亮点和最新功能演示来跟踪每次发布。
 msgid "Track relationships, manage pipelines, and take action quickly with an intuitive CRM that helps your team move faster from day one with confidence."
 msgstr "通过直观易用的 CRM 跟踪关系、管理销售管道并快速采取行动，从第一天起就帮助你的团队自信高效地推进。"
 
+#. js-lingui-id: OYcL1T
+#: src/sections/partner-lead/partner-services.data.ts
+msgid "Training & RevOps"
+msgstr "培训与 RevOps"
+
 #. js-lingui-id: MtCqjl
 #: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
@@ -7664,9 +7901,11 @@ msgstr "Twenty Apps 打开的是构建产品的大门，而不仅仅是做实施
 
 #. js-lingui-id: fZsVj6
 #: src/case-studies/case-study-stories.ts
-msgid "Twenty as the\n"
+msgid ""
+"Twenty as the\n"
 "*API backbone* of a go-to-market stack"
-msgstr "将 Twenty 作为市场拓展技术栈的\n"
+msgstr ""
+"将 Twenty 作为市场拓展技术栈的\n"
 "*API 支柱*"
 
 #. js-lingui-id: +w9xZW
@@ -7745,11 +7984,6 @@ msgstr "Twenty 让一切变得简单。界面干净、直观，使用体验就�
 msgid "Twenty partner ecosystem"
 msgstr "Twenty 合作伙伴生态系统"
 
-#. js-lingui-id: 4SJucz
-#: src/platform/routing/static-website-routes.ts
-msgid "Twenty Partners — Certified Open Source CRM Implementers"
-msgstr "Twenty 合作伙伴 — 认证的开源 CRM 实施方"
-
 #. js-lingui-id: vD7S1X
 #. placeholder {0}: LATEST_RELEASE.release
 #. placeholder {1}: LATEST_RELEASE.title
@@ -7826,11 +8060,6 @@ msgstr "Twenty vs SAP Sales Cloud"
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty vs SAP Sales Cloud Pricing — The Real Cost Compared"
 msgstr "Twenty 与 SAP Sales Cloud 定价对比 — 真实成本比较"
-
-#. js-lingui-id: abTOgp
-#: src/partners-marketplace/MarketplaceHeader.tsx
-msgid "Twenty's certified partners help teams migrate, customise, and operate the open source CRM across regions, languages, and deployment models. Browse profiles and book a call, or <0>tell us what you need</0> and we'll match you."
-msgstr "Twenty 认证合作伙伴帮助团队在不同区域、语言和部署模式下迁移、定制并运营这款开源 CRM。浏览合作伙伴资料并预约电话沟通，或者 <0>告诉我们你的需求</0>，我们会为你进行匹配。"
 
 #. js-lingui-id: tuvLv1
 #: src/platform/releases/ReleaseNotes.tsx
@@ -8163,10 +8392,20 @@ msgstr "W3villa Technologies 决定要彻底解决这个问题，不是用权宜
 msgid "W3villa used Twenty as a production-grade framework for the data model, permissions, authentication, and workflow engine they would otherwise have rebuilt themselves."
 msgstr "W3villa 将 Twenty 作为生产级框架，用于他们本来需要自行重建的数据模型、权限、身份验证和工作流引擎。"
 
+#. js-lingui-id: +uJeMJ
+#: src/sections/partner-lead/PartnerBecomeStrip.tsx
+msgid "Want to *offer* Twenty services?"
+msgstr "想要*提供* Twenty 服务吗？"
+
 #. js-lingui-id: k1Pevc
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "We are pleased to reopen the cloud subscription to everyone. No more waiting!"
 msgstr "我们很高兴重新向所有人开放云订阅。无需再等待！"
+
+#. js-lingui-id: CtEyix
+#: src/sections/partner-signoff/PartnerSignoff.tsx
+msgid "We certify real builders only. Every application is reviewed against a shipped Twenty project — send yours with proof."
+msgstr "我们只认证真正的构建者。每份申请都会根据一个已交付的 Twenty 项目进行审核 — 请提交您的项目及证明。"
 
 #. js-lingui-id: 8CHatv
 #: src/partner-application/partner-application-copy.ts
@@ -8198,15 +8437,15 @@ msgstr "我们提升了应用性能，使每个页面的加载时间缩短了超
 msgid "We have significantly enhanced our search performance, making it feel instantaneous when searching for records such as people, companies, or tasks."
 msgstr "我们大幅提升了搜索性能，在搜索人员、公司或任务等记录时，现在几乎是瞬时完成。"
 
+#. js-lingui-id: d4cXeX
+#: src/sections/faq/become-partner-faq.data.ts
+msgid "We review your delivered projects, technical depth, and customer feedback before you join the directory. Certified partners carry the badge on their profile."
+msgstr "在您加入目录前，我们会审核您已交付的项目、技术深度和客户反馈。认证合作伙伴的资料页会显示徽章。"
+
 #. js-lingui-id: l7iJRt
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "We started a major ⌘K revamp that now understands the context to display appropriate actions. For example, on a record page, you can add the record as a favorite, or if you select multiple records on an index, you can export them as a CSV."
 msgstr "我们启动了对 ⌘K 的重大重构，它现在能够理解上下文来展示合适的操作。例如，在记录页面上，你可以将该记录添加到收藏；在索引页上选择多条记录后，可以将它们导出为 CSV。"
-
-#. js-lingui-id: d5CWI6
-#: src/sections/partner-hero/PartnerHero.tsx
-msgid "We're building the #1 Open Source CRM, but we can't do it alone. Join our partner ecosystem and grow with us."
-msgstr "我们正在构建全球排名第 1 的开源 CRM，但我们无法单独完成这件事。加入我们的合作伙伴生态系统，与我们一同成长。"
 
 #. js-lingui-id: DFlq8J
 #: src/platform/releases/ReleaseNotes.tsx
@@ -8259,11 +8498,21 @@ msgstr "网站"
 msgid "Website or GitHub *"
 msgstr "网站或 GitHub *"
 
+#. js-lingui-id: KINqeH
+#: src/sections/partner-lead/PartnerServicesExplainer.tsx
+msgid "What a Twenty partner does"
+msgstr "Twenty 合作伙伴的工作内容"
+
 #. js-lingui-id: Lx0cVD
 #: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
 msgid "What an admin can do without writing code."
 msgstr "管理员无需写代码就能完成的工作。"
+
+#. js-lingui-id: va07TZ
+#: src/sections/faq/become-partner-faq.data.ts
+msgid "What are the requirements?"
+msgstr "有哪些要求？"
 
 #. js-lingui-id: Z34FQq
 #: src/case-studies/case-study-stories.ts
@@ -8275,6 +8524,16 @@ msgstr "让 Olivier 真正信服的是平台的灵活性以及未来发展方向
 msgid "What costs extra over there"
 msgstr "在那边哪些项目需要额外付费"
 
+#. js-lingui-id: iGY4LD
+#: src/sections/faq/become-partner-faq.data.ts
+msgid "What do I get as a partner?"
+msgstr "作为合作伙伴，我能获得什么？"
+
+#. js-lingui-id: VkIKlY
+#: src/sections/faq/partner-faq.data.ts
+msgid "What do partners charge?"
+msgstr "合作伙伴如何收费？"
+
 #. js-lingui-id: SMBgOd
 #: src/client-brief/client-brief-copy.ts
 msgid "What do you need help with? *"
@@ -8282,38 +8541,53 @@ msgstr "你需要什么方面的帮助？*"
 
 #. js-lingui-id: Gln6w3
 #: src/sections/compare/compare-data.ts
-msgid "What does\n"
+msgid ""
+"What does\n"
 "*Dynamics 365* really cost?"
-msgstr "*Dynamics 365* 的\n"
+msgstr ""
+"*Dynamics 365* 的\n"
 "真实成本是多少？"
 
 #. js-lingui-id: ndwi6c
 #: src/sections/compare/compare-data.ts
-msgid "What does\n"
+msgid ""
+"What does\n"
 "*HubSpot* really cost?"
-msgstr "*HubSpot* 的\n"
+msgstr ""
+"*HubSpot* 的\n"
 "真实成本是多少？"
 
 #. js-lingui-id: QSAZlS
 #: src/sections/compare/compare-data.ts
-msgid "What does\n"
+msgid ""
+"What does\n"
 "*Pipedrive* really cost?"
-msgstr "*Pipedrive* 的\n"
+msgstr ""
+"*Pipedrive* 的\n"
 "真实成本是多少？"
 
 #. js-lingui-id: rv6SWP
 #: src/sections/compare/compare-data.ts
-msgid "What does\n"
+msgid ""
+"What does\n"
 "*Salesforce* really cost?"
-msgstr "*Salesforce* 的\n"
+msgstr ""
+"*Salesforce* 的\n"
 "真实成本是多少？"
 
 #. js-lingui-id: mdVDDM
 #: src/sections/compare/compare-data.ts
-msgid "What does\n"
+msgid ""
+"What does\n"
 "*SAP Sales Cloud* really cost?"
-msgstr "*SAP Sales Cloud* 的\n"
+msgstr ""
+"*SAP Sales Cloud* 的\n"
 "真实成本是多少？"
+
+#. js-lingui-id: MIVJ8U
+#: src/sections/faq/become-partner-faq.data.ts
+msgid "What does certification involve?"
+msgstr "认证包括哪些内容？"
 
 #. js-lingui-id: phiBjc
 #: src/sections/faq/faq.data.ts
@@ -8398,9 +8672,11 @@ msgstr "当供应商拔掉插头"
 
 #. js-lingui-id: 8SbakK
 #: src/case-studies/case-study-stories.ts
-msgid "When your CRM is\n"
+msgid ""
+"When your CRM is\n"
 "*the product*"
-msgstr "当你的 CRM\n"
+msgstr ""
+"当你的 CRM\n"
 "*就是产品*"
 
 #. js-lingui-id: OQ41z8
@@ -8553,6 +8829,11 @@ msgstr "*真正被用起来*的工作流"
 msgid "Workflows that actually get used"
 msgstr "真正会被使用的工作流"
 
+#. js-lingui-id: k7EuGf
+#: src/sections/faq/PartnerFaq.tsx
+msgid "Working with *a Twenty partner*"
+msgstr "与 *Twenty 合作伙伴*合作"
+
 #. js-lingui-id: pmUArF
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -8643,6 +8924,16 @@ msgstr "可以。每个 Cloud 工作区都自带原生 MCP 服务器。通过 OA
 #: src/sections/faq/faq.data.ts
 msgid "Yes. Import your data via CSV, or use our API for 50,000+ records. Our partners can handle the full migration for you."
 msgstr "可以。通过 CSV 导入你的数据，或在超过 50,000 条记录时使用我们的 API。我们的合作伙伴可以为你处理完整迁移。"
+
+#. js-lingui-id: xsbHte
+#: src/sections/faq/partner-faq.data.ts
+msgid "Yes. Migration partners move your data out of Salesforce, HubSpot, or spreadsheets, and can own the full cutover for you."
+msgstr "可以。迁移合作伙伴可将您的数据从 Salesforce、HubSpot 或电子表格中迁出，并可为您负责整个切换过程。"
+
+#. js-lingui-id: DaIKN4
+#: src/sections/faq/partner-faq.data.ts
+msgid "Yes. Some partners specialise in deploying, upgrading, and operating self-hosted Twenty instances on your own infrastructure."
+msgstr "可以。一些合作伙伴专门在您自己的基础设施上部署、升级和运营自托管的 Twenty 实例。"
 
 #. js-lingui-id: 8m0eN9
 #: src/sections/faq/faq.data.ts
@@ -8823,4 +9114,3 @@ msgstr "津巴布韦 🇿🇼"
 #: src/app-preview/stage/TrafficLights.tsx
 msgid "Zoom"
 msgstr "缩放"
-

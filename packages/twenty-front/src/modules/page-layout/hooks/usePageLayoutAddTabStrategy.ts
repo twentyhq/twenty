@@ -1,13 +1,12 @@
 import { useCreatePageLayoutTab } from '@/page-layout/hooks/useCreatePageLayoutTab';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
-import { usePageLayoutTabsFilteredByFeatureFlags } from '@/page-layout/hooks/usePageLayoutTabsFilteredByFeatureFlags';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type PageLayoutAddTabStrategy } from '@/page-layout/types/PageLayoutAddTabStrategy';
 import { isReactivatableTab } from '@/page-layout/utils/isReactivatableTab';
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
@@ -23,8 +22,6 @@ export const usePageLayoutAddTabStrategy = ({
   tabListInstanceId: string;
 }): PageLayoutAddTabStrategy | undefined => {
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
-  const { featureFilteredPageLayoutTabs } =
-    usePageLayoutTabsFilteredByFeatureFlags();
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
   const { createPageLayoutTab } = useCreatePageLayoutTab({
@@ -38,7 +35,7 @@ export const usePageLayoutAddTabStrategy = ({
 
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
-  const { isInSidePanel } = useLayoutRenderingContext();
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
 
   const navigate = useNavigate();
 
@@ -49,11 +46,11 @@ export const usePageLayoutAddTabStrategy = ({
       navigate(`#${newTabId}`);
     }
 
-    setPageLayoutTabSettingsOpenTabId(newTabId);
     navigatePageLayoutSidePanel({
       sidePanelPage: SidePanelPages.PageLayoutTabSettings,
       focusTitleInput: true,
     });
+    setPageLayoutTabSettingsOpenTabId(newTabId);
   }, [
     createPageLayoutTab,
     isInSidePanel,
@@ -70,8 +67,7 @@ export const usePageLayoutAddTabStrategy = ({
     return undefined;
   }
 
-  const hasInactiveTabs =
-    featureFilteredPageLayoutTabs.some(isReactivatableTab);
+  const hasInactiveTabs = currentPageLayout.tabs.some(isReactivatableTab);
 
   const mode =
     currentPageLayout.type === PageLayoutType.RECORD_PAGE && hasInactiveTabs

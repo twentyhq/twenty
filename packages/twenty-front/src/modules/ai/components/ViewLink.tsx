@@ -1,5 +1,5 @@
 import { ChatReferenceChipDisplay } from '@/ai/components/ChatReferenceChipDisplay';
-import { useChatTargetNavigation } from '@/ai/hooks/useChatTargetNavigation';
+import { useChatReferenceTarget } from '@/ai/hooks/useChatReferenceTarget';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useViewById } from '@/views/hooks/useViewById';
@@ -7,7 +7,6 @@ import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme-constants';
-import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
 type ViewLinkProps = {
   viewId: string;
@@ -17,7 +16,6 @@ type ViewLinkProps = {
 export const ViewLink = ({ viewId, displayName }: ViewLinkProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
-  const { openViewTarget } = useChatTargetNavigation();
 
   const { view } = useViewById(viewId);
   const objectMetadataItemsByIdMap = useAtomStateValue(
@@ -28,28 +26,28 @@ export const ViewLink = ({ viewId, displayName }: ViewLinkProps) => {
     ? objectMetadataItemsByIdMap.get(view.objectMetadataId)
     : undefined;
 
+  const path =
+    isDefined(view) && isDefined(objectMetadataItem)
+      ? getAppPath(
+          AppPath.RecordIndexPage,
+          { objectNamePlural: objectMetadataItem.namePlural },
+          { viewId },
+        )
+      : undefined;
+
+  const { to, onClick } = useChatReferenceTarget(path);
+
   if (!isDefined(view) || !isDefined(objectMetadataItem)) {
     return <span>{displayName}</span>;
   }
 
   const Icon = getIcon(view.icon);
 
-  const handleOpenViewTarget = () => {
-    openViewTarget({
-      objectNameSingular: objectMetadataItem.nameSingular,
-      viewId,
-    });
-  };
-
   return (
     <ChatReferenceChipDisplay
       displayName={displayName}
-      to={getAppPath(
-        AppPath.RecordIndexPage,
-        { objectNamePlural: objectMetadataItem.namePlural },
-        { viewId },
-      )}
-      onClick={isCurrentPathAiChatPage() ? handleOpenViewTarget : undefined}
+      to={to}
+      onClick={onClick}
       leftComponent={
         <Icon size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
       }

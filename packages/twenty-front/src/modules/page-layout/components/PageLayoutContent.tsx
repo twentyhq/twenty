@@ -1,14 +1,15 @@
 import { PageLayoutGridLayout } from '@/page-layout/components/PageLayoutGridLayout';
-import { PageLayoutSoloViewer } from '@/page-layout/components/PageLayoutSoloViewer';
-import { PageLayoutVerticalListEditor } from '@/page-layout/components/PageLayoutVerticalListEditor';
-import { PageLayoutVerticalListViewer } from '@/page-layout/components/PageLayoutVerticalListViewer';
+import { PageLayoutVerticalList } from '@/page-layout/components/PageLayoutVerticalList';
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
-import { StandaloneWidgetPlaceholder } from '@/page-layout/widgets/components/StandaloneWidgetPlaceholder';
 import { RecordPageAddWidgetSection } from '@/page-layout/widgets/components/RecordPageAddWidgetSection';
+import { RecordPageWidgetInsertionSeparator } from '@/page-layout/widgets/components/RecordPageWidgetInsertionSeparator';
+import { StandaloneWidgetPlaceholder } from '@/page-layout/widgets/components/StandaloneWidgetPlaceholder';
+import { isViewportFillingWidgetType } from '@/page-layout/widgets/utils/isViewportFillingWidgetType';
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
@@ -22,11 +23,10 @@ const StyledEmptyStandalonePageContainer = styled.div`
 export const PageLayoutContent = () => {
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
-  const { tabId } = usePageLayoutContentContext();
+  const { layoutMode, tabId } = usePageLayoutContentContext();
 
   const activeTab = usePageLayoutTabWithVisibleWidgetsOrThrow(tabId);
-
-  const { layoutMode, presentation } = usePageLayoutContentContext();
+  const firstWidget = activeTab.widgets[0];
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
@@ -51,20 +51,30 @@ export const PageLayoutContent = () => {
     return <PageLayoutGridLayout tabId={tabId} />;
   }
 
-  // Edit mode always shows the stack structure, whatever the view-mode
-  // presentation is: every tab is edited through the same vertical-list editor.
-  if (isPageLayoutInEditMode && isRecordPageLayout) {
-    return (
-      <PageLayoutVerticalListEditor
-        widgets={activeTab.widgets}
-        trailingElement={<RecordPageAddWidgetSection />}
-      />
-    );
-  }
-
-  if (presentation === 'solo') {
-    return <PageLayoutSoloViewer widgets={activeTab.widgets} />;
-  }
-
-  return <PageLayoutVerticalListViewer widgets={activeTab.widgets} />;
+  return (
+    <PageLayoutVerticalList
+      isInEditMode={isPageLayoutInEditMode && isRecordPageLayout}
+      widgets={activeTab.widgets}
+      leadingElement={
+        isRecordPageLayout &&
+        isDefined(firstWidget) &&
+        isViewportFillingWidgetType(firstWidget.type) ? (
+          <RecordPageAddWidgetSection
+            insertionContext={{
+              targetWidgetId: firstWidget.id,
+              direction: 'above',
+            }}
+          />
+        ) : undefined
+      }
+      trailingElement={
+        isRecordPageLayout ? <RecordPageAddWidgetSection /> : undefined
+      }
+      renderWidgetSeparator={
+        isRecordPageLayout
+          ? (widget) => <RecordPageWidgetInsertionSeparator widget={widget} />
+          : undefined
+      }
+    />
+  );
 };

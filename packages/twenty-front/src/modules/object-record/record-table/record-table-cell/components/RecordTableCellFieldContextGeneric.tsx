@@ -6,9 +6,9 @@ import { type RecordField } from '@/object-record/record-field/types/RecordField
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-field/ui/utils/junction/getTargetObjectMetadataIdsFromField';
-import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
+import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
+import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
@@ -48,6 +48,7 @@ export const RecordTableCellFieldContextGeneric = ({
     useGetIsMetadataItemFromStandardApplication();
 
   let hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
+  let isInvalidJunctionRelation = false;
 
   // todo @guillim : adjust this to handle morph relations permissions display
   if (
@@ -64,18 +65,23 @@ export const RecordTableCellFieldContextGeneric = ({
 
     hasObjectReadPermissions = relationObjectPermissions.canReadObjectRecords;
 
-    if (
-      hasObjectReadPermissions &&
-      hasJunctionConfig(fieldDefinition.metadata.settings)
-    ) {
-      const junctionConfig = getJunctionConfig({
+    if (hasObjectReadPermissions) {
+      const junctionConfig = resolveJunctionConfig({
         settings: fieldDefinition.metadata.settings,
         relationObjectMetadataId,
+        relationTargetFieldMetadataId:
+          fieldDefinition.metadata.relationFieldMetadataId,
         sourceObjectMetadataId: objectMetadataItem.id,
         objectMetadataItems,
       });
 
       if (isDefined(junctionConfig)) {
+        isInvalidJunctionRelation = !isUsableJunctionConfig(junctionConfig);
+
+        if (isInvalidJunctionRelation) {
+          hasObjectReadPermissions = false;
+        }
+
         const targetObjectMetadataIds = junctionConfig.targetFields.flatMap(
           getTargetObjectMetadataIdsFromField,
         );
@@ -110,6 +116,7 @@ export const RecordTableCellFieldContextGeneric = ({
         displayedMaxRows: 1,
         isRecordFieldReadOnly:
           isRecordTableCellsNonEditable ||
+          isInvalidJunctionRelation ||
           isRecordFieldReadOnly({
             isRecordReadOnly: isRecordReadOnly ?? false,
             isSystemObject: objectMetadataItem.isSystem,

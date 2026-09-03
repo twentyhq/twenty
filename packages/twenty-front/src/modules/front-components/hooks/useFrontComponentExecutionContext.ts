@@ -38,6 +38,7 @@ import { useOpenComposeEmailInSidePanel } from '@/side-panel/hooks/useOpenCompos
 import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useOpenRichTextInSidePanel } from '@/side-panel/hooks/useOpenRichTextInSidePanel';
+import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { setRecordPageActiveTabId } from '@/page-layout/utils/setRecordPageActiveTabId';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
@@ -45,7 +46,12 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useStore } from 'jotai';
-import { assertUnreachable, CustomError, isDefined } from 'twenty-shared/utils';
+import {
+  assertUnreachable,
+  CustomError,
+  getAppPath,
+  isDefined,
+} from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -57,6 +63,40 @@ const FRONT_COMPONENT_CLIPBOARD_RATE_LIMIT_MS = 1000;
 const FRONT_COMPONENT_CLIPBOARD_PREVIEW_LENGTH = 30;
 
 const FRONT_COMPONENT_UPLOAD_FILE_NAME_MAX_LENGTH = 200;
+
+type OpenSidePanelPageParams = Parameters<
+  FrontComponentHostCommunicationApi['openSidePanelPage']
+>[0];
+
+type AskAiOpenSidePanelPageParams = Extract<
+  OpenSidePanelPageParams,
+  { page: SidePanelPages.AskAI }
+>;
+
+// Runtime-only compatibility for front components built with older SDKs.
+type LegacyOpenSidePanelPageParams =
+  | {
+      page: SidePanelPages.RoutedPage;
+      path: string;
+      pageTitle?: string;
+      resetNavigationStack?: boolean;
+    }
+  | {
+      page: SidePanelPages.ViewRecord;
+      recordId: string;
+      objectNameSingular: string;
+      tab?: string;
+      resetNavigationStack?: boolean;
+    }
+  | (Omit<AskAiOpenSidePanelPageParams, 'page'> & {
+      page: SidePanelPages.Copilot;
+    })
+  | {
+      page: SidePanelPages.ViewRecords;
+      pageTitle?: string;
+      pageIcon?: string;
+      shouldResetSearchState?: boolean;
+    };
 
 const sanitizeUploadFileName = (fileName: string, mimeType: string): string => {
   const withoutSeparators = fileName.replace(/[/\\\u0000-\u001f]/g, '').trim();
@@ -78,12 +118,14 @@ export const useFrontComponentExecutionContext = ({
   applicationId,
   commandMenuItemId,
   selectedRecordIds,
+  timelineActivityId,
   colorScheme,
 }: {
   frontComponentId: string;
   applicationId: string;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
+  timelineActivityId?: string;
   colorScheme: 'light' | 'dark';
 }): {
   executionContext: FrontComponentExecutionContext;
@@ -101,6 +143,7 @@ export const useFrontComponentExecutionContext = ({
   const { navigateSidePanel } = useNavigateSidePanel();
   const { openRecordInSidePanel: openRecordInSidePanelInternal } =
     useOpenRecordInSidePanel();
+  const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
   const { openRichTextInSidePanel } = useOpenRichTextInSidePanel();
   const { openComposeEmailInSidePanel } = useOpenComposeEmailInSidePanel();
   const { openFrontComponentInSidePanel } = useOpenFrontComponentInSidePanel();
@@ -162,7 +205,70 @@ export const useFrontComponentExecutionContext = ({
   };
 
   const openSidePanelPage: FrontComponentHostCommunicationApi['openSidePanelPage'] =
-    async (params) => {
+    async (params: OpenSidePanelPageParams | LegacyOpenSidePanelPageParams) => {
+      if ('to' in params) {
+        if (params.to.includes(':') && !isDefined(params.params)) {
+          throw new CustomError(
+            `Missing params for side-panel route: ${params.to}`,
+            'FRONT_COMPONENT_SIDE_PANEL_ROUTE_PARAMS_REQUIRED',
+          );
+        }
+
+        const path = getAppPath(
+          params.to,
+          params.params as never,
+          params.queryParams,
+        );
+        const pathWithHash = isNonEmptyString(params.hash)
+          ? `${path}#${encodeURIComponent(params.hash)}`
+          : path;
+        const pageId = openRoutedPageInSidePanel({
+          path: pathWithHash,
+          pageTitle: params.pageTitle,
+          resetNavigationStack: params.resetNavigationStack,
+        });
+
+        if (!isDefined(pageId)) {
+          throw new CustomError(
+            `Unsupported side-panel route: ${pathWithHash}`,
+            'FRONT_COMPONENT_UNSUPPORTED_SIDE_PANEL_ROUTE',
+          );
+        }
+
+        return;
+      }
+
+      if (params.page === SidePanelPages.RoutedPage) {
+        const pageId = openRoutedPageInSidePanel({
+          path: params.path,
+          pageTitle: params.pageTitle,
+          resetNavigationStack: params.resetNavigationStack,
+        });
+
+        if (!isDefined(pageId)) {
+          throw new CustomError(
+            `Unsupported side-panel route: ${params.path}`,
+            'FRONT_COMPONENT_UNSUPPORTED_SIDE_PANEL_ROUTE',
+          );
+        }
+
+        return;
+      }
+
+      if (params.page === SidePanelPages.ViewRecords) {
+        throw new CustomError(
+          'ViewRecords is no longer supported. Open AppPath.RecordIndexPage with typed params instead.',
+          'FRONT_COMPONENT_VIEW_RECORDS_UNSUPPORTED',
+        );
+      }
+
+      if (params.page === SidePanelPages.Copilot) {
+        return openSidePanelPage({
+          ...params,
+          page: SidePanelPages.AskAI,
+        });
+      }
+
       if (params.page === SidePanelPages.ViewRecord) {
         const { recordId, objectNameSingular, tab, resetNavigationStack } =
           params;
@@ -334,6 +440,7 @@ export const useFrontComponentExecutionContext = ({
     userId: currentUser?.id ?? null,
     recordId: selectedRecordIds?.length === 1 ? selectedRecordIds[0] : null,
     selectedRecordIds: selectedRecordIds ?? [],
+    timelineActivityId: timelineActivityId ?? null,
     colorScheme,
     // i18n.locale is a Lingui string; the host is always configured with the
     // APP_LOCALES set, so it is a valid AppLocale.

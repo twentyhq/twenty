@@ -6,45 +6,51 @@ icon: "layer-group"
 
 A logic function run is capped by its `timeoutSeconds` (900 seconds maximum). Anything that can't finish in that window — a full re-sync, a per-record fan-out, a third-party API that rate-limits you — has to be split into smaller runs.
 
-`enqueueJob` does exactly that: it asks the Twenty workers to run one of your app's logic functions later, in its own process, with its own timeout budget. The caller returns immediately.
+`enqueueJobs` does exactly that: it asks the Twenty workers to run one of your app's logic functions later, once per payload, each run in its own process with its own timeout budget. The caller returns immediately.
 
 ```text
-  ┌─────────────────┐  enqueueJob(...)   ┌──────────────┐   ┌────────────────────┐
+  ┌─────────────────┐  enqueueJobs(...)  ┌──────────────┐   ┌────────────────────┐
   │ Logic function  │ ─────────────────▶ │ Job queue    │──▶│ Logic function     │
   │ (returns now)   │                    │ (workers)    │   │ (fresh run/timeout)│
   └─────────────────┘                    └──────────────┘   └────────────────────┘
 ```
 
-## Enqueue a run
+## Enqueue runs
 
-Import `enqueueJob` from `twenty-sdk/logic-function` and point it at the `universalIdentifier` of the logic function you want to run.
+Import `enqueueJobs` from `twenty-sdk/logic-function`, point it at the `universalIdentifier` of the logic function to run, and pass one payload per run to enqueue.
 
 ```ts src/logic-functions/sync-all-contacts.ts
-import { enqueueJob } from 'twenty-sdk/logic-function';
+import { enqueueJobs } from 'twenty-sdk/logic-function';
 
-await enqueueJob({
+await enqueueJobs({
   logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
-  payload: { page: 1 },
+  payloads: [{ page: 1 }],
 });
 ```
 
-The target function receives `payload` as its handler argument, exactly like any other trigger. It must belong to the **same application** as the caller — enqueuing another app's function is rejected with `Logic function not found`.
+Each run receives its payload as the handler argument, exactly like any other trigger. The target must belong to the **same application** as the caller — enqueuing another app's function is rejected with `Logic function not found` and nothing is enqueued. A single call accepts up to `200` payloads.
 
 <Note>
-`enqueueJob` returns as soon as the job is accepted, not when it has run. It does not return the target's result — have the target write what it produces to the [key-value store](/developers/extend/apps/logic/key-value-store) or to a workspace record if you need to read it back.
+`enqueueJobs` returns as soon as the jobs are accepted, not when they have run. It does not return the targets' results — have each target write what it produces to the [key-value store](/developers/extend/apps/logic/key-value-store) or to a workspace record if you need to read it back.
+</Note>
+
+<Note>
+The older `enqueueJob` helper, which enqueues a single job per call, is deprecated. Use `enqueueJobs` with a one-element `payloads` list instead.
 </Note>
 
 ## Job options
 
+Options apply to every run in the batch.
+
 | Option | Default | Range | What it does |
 |--------|---------|-------|--------------|
 | `retryLimit` | `0` | `0`–`10` | Overall extra queue attempts. Application-requested retries are capped at `3`. Only raise this for handlers that are safe to run twice. |
-| `delayMs` | `0` | `0`–`604800000` (7 days) | Wait this long before the run becomes eligible. |
+| `delayMs` | `0` | `0`–`604800000` (7 days) | Wait this long before the runs become eligible. |
 
 ```ts
-await enqueueJob({
+await enqueueJobs({
   logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
-  payload: { page: 1 },
+  payloads: [{ page: 1 }],
   retryLimit: 3,
   delayMs: 60_000,
 });
@@ -96,7 +102,7 @@ The classic shape is a function that enqueues *itself* with the next cursor. Eac
 
 ```ts src/logic-functions/sync-contacts-page.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { enqueueJob } from 'twenty-sdk/logic-function';
+import { enqueueJobs } from 'twenty-sdk/logic-function';
 
 const SYNC_CONTACTS_PAGE = '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33';
 
@@ -106,9 +112,9 @@ const handler = async (params: { cursor?: string }) => {
   await importContacts(contacts);
 
   if (nextCursor) {
-    await enqueueJob({
+    await enqueueJobs({
       logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
-      payload: { cursor: nextCursor },
+      payloads: [{ cursor: nextCursor }],
       delayMs: 2_000,
     });
   }
@@ -126,20 +132,16 @@ export default defineLogicFunction({
 
 ## Fan out per record
 
-When the work is naturally per-item, enqueue one job per item and let the workers process them in parallel instead of looping inline.
+When the work is naturally per-item, enqueue one job per item in a single call and let the workers process them in parallel instead of looping inline.
 
 ```ts
 const companies = await listCompaniesToEnrich();
 
-await Promise.all(
-  companies.map((company) =>
-    enqueueJob({
-      logicFunctionUniversalIdentifier: ENRICH_COMPANY,
-      payload: { companyId: company.id },
-      retryLimit: 2,
-    }),
-  ),
-);
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+  payloads: companies.map((company) => ({ companyId: company.id })),
+  retryLimit: 2,
+});
 ```
 
 ## Good practice for long-running work
@@ -150,7 +152,7 @@ A run that tries to do everything is the failure mode — it hits the timeout, a
 
 ```ts src/logic-functions/enrich-companies-batch.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { enqueueJob, kv } from 'twenty-sdk/logic-function';
+import { enqueueJobs, kv } from 'twenty-sdk/logic-function';
 
 const ENRICH_COMPANIES_BATCH = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
 const CHUNK_SIZE = 50;
@@ -169,9 +171,9 @@ const handler = async (params: { offset?: number }) => {
   await kv.set('enrich:progress', { offset: offset + companies.length });
 
   if (companies.length === CHUNK_SIZE) {
-    await enqueueJob({
+    await enqueueJobs({
       logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
-      payload: { offset: offset + CHUNK_SIZE },
+      payloads: [{ offset: offset + CHUNK_SIZE }],
     });
   }
 

@@ -1,5 +1,4 @@
 import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
-import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
 import { useMemo } from 'react';
 
 export const useFieldWidgetEligibleFields = (objectNameSingular: string) => {
@@ -15,8 +14,11 @@ export const useFieldWidgetEligibleFields = (objectNameSingular: string) => {
   });
 
   return useMemo(() => {
+    const junctionFieldIds = new Set(
+      junctionRelationFieldMetadataItems.map(({ id }) => id),
+    );
     const eligibleInlineFields = inlineFieldMetadataItems.filter(
-      (field) => !isJunctionRelationField(field),
+      ({ id }) => !junctionFieldIds.has(id),
     );
 
     return [

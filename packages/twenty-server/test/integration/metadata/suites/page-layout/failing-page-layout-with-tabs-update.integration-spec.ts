@@ -14,15 +14,16 @@ import { updateOnePageLayoutWithTabsAndWidgets } from 'test/integration/metadata
 import {
   AggregateOperations,
   FieldMetadataType,
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
   ViewFilterOperand,
+  WidgetType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 
 describe('Page layout with tabs update should fail', () => {
   it('when updating a non-existent page layout', async () => {
@@ -48,7 +49,13 @@ describe('Page layout with tabs update should fail', () => {
                 title: 'Widget 1',
                 type: WidgetType.FIELDS,
                 objectMetadataId: null,
-                gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.GRID as const,
+                  row: 0,
+                  column: 0,
+                  rowSpan: 1,
+                  columnSpan: 1,
+                },
                 configuration: {
                   configurationType: WidgetConfigurationType.IFRAME,
                 },
@@ -190,7 +197,8 @@ describe('Page layout with tabs update should fail', () => {
               title: chartTitle,
               type: WidgetType.GRAPH,
               objectMetadataId: testFieldMetadataIds.objectMetadataId,
-              gridPosition: {
+              position: {
+                layoutMode: PageLayoutTabLayoutMode.GRID as const,
                 row: 0,
                 column: 0,
                 rowSpan: 1,

@@ -6,8 +6,8 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
-  TwentyORMException,
-  TwentyORMExceptionCode,
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 
@@ -85,7 +85,7 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
   } as any;
 
   describe('UPDATED action', () => {
-    it('should throw TwentyORMException when no matching before entity is found in array of beforeEntities', () => {
+    it('should throw TwentyOrmException when no matching before entity is found in array of beforeEntities', () => {
       const afterEntities = [
         {
           id: 'record-1',
@@ -119,11 +119,11 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
           recordsBefore: beforeEntities,
         });
       } catch (error) {
-        expect(error).toBeInstanceOf(TwentyORMException);
-        expect((error as TwentyORMException).code).toBe(
-          TwentyORMExceptionCode.ORM_EVENT_DATA_CORRUPTED,
+        expect(error).toBeInstanceOf(TwentyOrmException);
+        expect((error as TwentyOrmException).code).toBe(
+          TwentyOrmExceptionCode.ORM_EVENT_DATA_CORRUPTED,
         );
-        expect((error as TwentyORMException).message).toBe(
+        expect((error as TwentyOrmException).message).toBe(
           'Record mismatch detected while computing event data for UPDATED action',
         );
       }
@@ -182,61 +182,64 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
       expect(updateEvent2.properties?.after?.name).toBe('Jane Doe Updated');
     });
 
-    it('should include both relation field name and join column name in updatedFields', () => {
-      const companyField = createMockField({
-        id: 'company-id',
-        type: FieldMetadataType.RELATION,
-        name: 'company',
-        label: 'Company',
-        settings: {
-          relationType: RelationType.MANY_TO_ONE,
-          joinColumnName: 'companyId',
-        },
-      } as Parameters<typeof createMockField>[0]);
-
-      const flatFieldMetadataMapsWithRelation: FlatEntityMaps<FlatFieldMetadata> =
-        {
-          byUniversalIdentifier: {
-            'name-id': nameField,
-            'company-id': companyField,
+    it.each([FieldMetadataType.RELATION, FieldMetadataType.MORPH_RELATION])(
+      'should include both %s field name and join column name in updatedFields',
+      (fieldMetadataType) => {
+        const companyField = createMockField({
+          id: 'company-id',
+          type: fieldMetadataType,
+          name: 'company',
+          label: 'Company',
+          settings: {
+            relationType: RelationType.MANY_TO_ONE,
+            joinColumnName: 'companyId',
           },
-          universalIdentifierById: {
-            'name-id': 'name-id',
-            'company-id': 'company-id',
+        } as Parameters<typeof createMockField>[0]);
+
+        const flatFieldMetadataMapsWithRelation: FlatEntityMaps<FlatFieldMetadata> =
+          {
+            byUniversalIdentifier: {
+              'name-id': nameField,
+              'company-id': companyField,
+            },
+            universalIdentifierById: {
+              'name-id': 'name-id',
+              'company-id': 'company-id',
+            },
+            universalIdentifiersByApplicationId: {},
+          };
+
+        const flatObjectMetadataWithRelation = {
+          ...flatObjectMetadata,
+          fieldIds: ['name-id', 'company-id'],
+        } as FlatObjectMetadata;
+
+        const result = formatTwentyOrmEventToDatabaseBatchEvent({
+          action: DatabaseEventAction.UPDATED,
+          objectMetadataItem: flatObjectMetadataWithRelation,
+          flatFieldMetadataMaps: flatFieldMetadataMapsWithRelation,
+          workspaceId: mockWorkspaceId,
+          authContext: mockAuthContext,
+          recordsAfter: [{ id: 'record-1', companyId: 'new-company-id' }],
+          recordsBefore: [{ id: 'record-1', companyId: 'old-company-id' }],
+        });
+
+        const updateEvent = result?.events[0] as ObjectRecordUpdateEvent<{
+          id: string;
+          companyId: string;
+        }>;
+
+        expect(updateEvent.properties?.updatedFields).toEqual([
+          'company',
+          'companyId',
+        ]);
+        expect(updateEvent.properties?.diff).toEqual({
+          company: {
+            before: { id: 'old-company-id' },
+            after: { id: 'new-company-id' },
           },
-          universalIdentifiersByApplicationId: {},
-        };
-
-      const flatObjectMetadataWithRelation = {
-        ...flatObjectMetadata,
-        fieldIds: ['name-id', 'company-id'],
-      } as FlatObjectMetadata;
-
-      const result = formatTwentyOrmEventToDatabaseBatchEvent({
-        action: DatabaseEventAction.UPDATED,
-        objectMetadataItem: flatObjectMetadataWithRelation,
-        flatFieldMetadataMaps: flatFieldMetadataMapsWithRelation,
-        workspaceId: mockWorkspaceId,
-        authContext: mockAuthContext,
-        recordsAfter: [{ id: 'record-1', companyId: 'new-company-id' }],
-        recordsBefore: [{ id: 'record-1', companyId: 'old-company-id' }],
-      });
-
-      const updateEvent = result?.events[0] as ObjectRecordUpdateEvent<{
-        id: string;
-        companyId: string;
-      }>;
-
-      expect(updateEvent.properties?.updatedFields).toEqual([
-        'company',
-        'companyId',
-      ]);
-      expect(updateEvent.properties?.diff).toEqual({
-        company: {
-          before: { id: 'old-company-id' },
-          after: { id: 'new-company-id' },
-        },
-      });
-    });
+        });
+      },
+    );
   });
 });

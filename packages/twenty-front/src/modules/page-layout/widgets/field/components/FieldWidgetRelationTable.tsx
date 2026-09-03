@@ -5,15 +5,15 @@ import { type FieldRelationMetadata } from '@/object-record/record-field/ui/type
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { StyledWidgetTableOutline } from '@/page-layout/widgets/components/WidgetContentFrame';
 import { RecordTableWidgetRendererContent } from '@/page-layout/widgets/record-table/components/RecordTableWidgetRendererContent';
 import { getFieldWidgetNestedRelationCreateThrough } from '@/page-layout/widgets/field/utils/getFieldWidgetNestedRelationCreateThrough';
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
 import { resolveFieldWidgetNestedRelation } from '@/page-layout/widgets/field/utils/resolveFieldWidgetNestedRelation';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo } from 'react';
 import {
@@ -28,14 +28,8 @@ const FIELD_WIDGET_RELATION_TABLE_MAX_HEIGHT_IN_PX =
   (FIELD_WIDGET_RELATION_TABLE_MAX_VISIBLE_RECORDS + 2) *
   RECORD_TABLE_ROW_HEIGHT;
 
-const StyledContainer = styled.div`
-  border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  display: flex;
-  flex-direction: column;
+const StyledContainer = styled(StyledWidgetTableOutline)`
   max-height: ${FIELD_WIDGET_RELATION_TABLE_MAX_HEIGHT_IN_PX}px;
-  min-height: 0;
-  overflow: hidden;
 `;
 
 type FieldWidgetRelationTableProps = {
@@ -51,13 +45,17 @@ export const FieldWidgetRelationTable = ({
 
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
-  const { isInSidePanel } = useLayoutRenderingContext();
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const viewId = isFieldWidget(widget)
     ? widget.configuration.viewId
     : undefined;
+  // Record page relation widget content defaults to editable, unlike dashboards.
+  const isUIEditable = isFieldWidget(widget)
+    ? (widget.configuration.isUIEditable ?? true)
+    : true;
   const nestedRelationFieldMetadataId = isFieldWidget(widget)
     ? widget.configuration.nestedRelationFieldMetadataId
     : undefined;
@@ -180,7 +178,7 @@ export const FieldWidgetRelationTable = ({
           objectMetadataId={tableObjectMetadataId}
           viewId={viewId}
           widgetId={widget.id}
-          isReadOnly={isPageLayoutInEditMode}
+          isUIEditable={!isPageLayoutInEditMode && isUIEditable}
           isEmptyStateHidden
           instanceIdSuffix={`${recordId}${isInSidePanel ? '-side-panel' : ''}`}
           nestedRelationCreateThrough={nestedRelationCreateThrough}

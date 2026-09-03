@@ -6,8 +6,10 @@ import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
+import { setTestConnectedAccountHandleAliases } from 'test/integration/utils/set-test-connected-account-handle-aliases.util';
 
 const HANDLE = 'gmail-draft-email-action@apple.dev';
+const ALIAS = 'gmail-draft-email-action-alias@apple.dev';
 const RECIPIENTS = {
   to: 'to-recipient@example.com',
   cc: 'cc-recipient@example.com',
@@ -23,6 +25,10 @@ describe('DRAFT_EMAIL workflow action on Gmail (integration)', () => {
     channel = await connectMessagingAccount({
       provider: ConnectedAccountProvider.GOOGLE,
       handle: HANDLE,
+    });
+    await setTestConnectedAccountHandleAliases({
+      connectedAccountId: channel.connectedAccountId,
+      handleAliases: [ALIAS],
     });
   }, 60000);
 
@@ -79,5 +85,31 @@ describe('DRAFT_EMAIL workflow action on Gmail (integration)', () => {
         },
       ),
     ).toEqual([]);
+  }, 60000);
+
+  it('drafts from a verified alias configured on the step', async () => {
+    const subject = `Gmail workflow alias draft ${randomUUID()}`;
+
+    const workflowRun = await runWorkflowActionStep({
+      name: 'Gmail alias draft email workflow',
+      stepType: 'DRAFT_EMAIL',
+      input: {
+        connectedAccountId: channel.connectedAccountId,
+        fromHandle: ALIAS,
+        recipients: { to: RECIPIENTS.to, cc: '', bcc: '' },
+        subject,
+        body: '<p>Gmail workflow alias draft body</p>',
+      },
+    });
+
+    expect(workflowRun).toMatchObject({
+      status: 'COMPLETED',
+      stepStatus: 'SUCCESS',
+    });
+
+    const [{ raw }] = google.draftMessages.slice(-1);
+
+    expect(raw).toContain(`<${ALIAS}>`);
+    expect(google.sentMessages).toEqual([]);
   }, 60000);
 });

@@ -18,6 +18,10 @@ import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-man
 export class FlatCommandMenuItemValidatorService {
   public validateFlatCommandMenuItemCreation({
     flatEntityToValidate: flatCommandMenuItem,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatObjectMetadataMaps,
+      flatCommandMenuItemMaps: optimisticFlatCommandMenuItemMaps,
+    },
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.commandMenuItem
   >): FailedFlatEntityValidation<'commandMenuItem', 'create'> {
@@ -51,6 +55,28 @@ export class FlatCommandMenuItemValidatorService {
       frontComponentUniversalIdentifier:
         flatCommandMenuItem.frontComponentUniversalIdentifier,
       payload: flatCommandMenuItem.payload,
+      validationResult,
+    });
+
+    if (
+      isDefined(
+        findFlatEntityByUniversalIdentifier({
+          universalIdentifier: flatCommandMenuItem.universalIdentifier,
+          flatEntityMaps: optimisticFlatCommandMenuItemMaps,
+        }),
+      )
+    ) {
+      validationResult.errors.push({
+        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+        message: t`Command menu item with same universal identifier already exists`,
+        userFriendlyMessage: msg`Command menu item already exists`,
+      });
+    }
+
+    this.validateNavigationTarget({
+      navigationTargetObjectMetadataUniversalIdentifier:
+        flatCommandMenuItem.navigationTargetObjectMetadataUniversalIdentifier,
+      flatObjectMetadataMaps,
       validationResult,
     });
 
@@ -94,6 +120,7 @@ export class FlatCommandMenuItemValidatorService {
     flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatCommandMenuItemMaps: optimisticFlatCommandMenuItemMaps,
+      flatObjectMetadataMaps,
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.commandMenuItem
@@ -149,7 +176,50 @@ export class FlatCommandMenuItemValidatorService {
       validationResult,
     });
 
+    this.validateNavigationTarget({
+      navigationTargetObjectMetadataUniversalIdentifier:
+        flatEntityUpdate.navigationTargetObjectMetadataUniversalIdentifier !==
+        undefined
+          ? flatEntityUpdate.navigationTargetObjectMetadataUniversalIdentifier
+          : fromFlatCommandMenuItem.navigationTargetObjectMetadataUniversalIdentifier,
+      flatObjectMetadataMaps,
+      validationResult,
+    });
+
     return validationResult;
+  }
+
+  private validateNavigationTarget({
+    navigationTargetObjectMetadataUniversalIdentifier,
+    flatObjectMetadataMaps,
+    validationResult,
+  }: {
+    navigationTargetObjectMetadataUniversalIdentifier: string | null;
+    flatObjectMetadataMaps: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.commandMenuItem
+    >['optimisticFlatEntityMapsAndRelatedFlatEntityMaps']['flatObjectMetadataMaps'];
+    validationResult: FailedFlatEntityValidation<
+      'commandMenuItem',
+      'create' | 'update'
+    >;
+  }): void {
+    if (!isDefined(navigationTargetObjectMetadataUniversalIdentifier)) {
+      return;
+    }
+
+    const navigationTargetFlatObjectMetadata =
+      findFlatEntityByUniversalIdentifier({
+        universalIdentifier: navigationTargetObjectMetadataUniversalIdentifier,
+        flatEntityMaps: flatObjectMetadataMaps,
+      });
+
+    if (!isDefined(navigationTargetFlatObjectMetadata)) {
+      validationResult.errors.push({
+        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+        message: t`Navigation target object metadata not found`,
+        userFriendlyMessage: msg`Navigation target object not found`,
+      });
+    }
   }
 
   private validateEngineComponentKeyCoherence({

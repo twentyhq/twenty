@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
+import { AuthExceptionCode } from 'src/engine/core-modules/auth/auth.exception';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
@@ -33,6 +34,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 import { AuthResolver } from './auth.resolver';
@@ -46,8 +48,31 @@ import { TransientTokenService } from './token/services/transient-token.service'
 
 describe('AuthResolver', () => {
   let resolver: AuthResolver;
+  let appTokenRepository: { remove: jest.Mock };
+  let authService: {
+    checkAccessForSignIn: jest.Mock;
+    findWorkspaceForSignInUp: jest.Mock;
+    formatUserDataPayload: jest.Mock;
+    signInUp: jest.Mock;
+  };
+  let emailVerificationService: { sendVerificationEmail: jest.Mock };
+  let emailVerificationTokenService: {
+    validateEmailVerificationTokenOrThrow: jest.Mock;
+  };
+  let loginTokenService: { generateLoginToken: jest.Mock };
   let resetPasswordService: ResetPasswordService;
+  let signInUpService: { signUpOnNewWorkspace: jest.Mock };
   let throttlerService: ThrottlerService;
+  let userService: {
+    findUserByEmail: jest.Mock;
+    findUserByIdOrThrow: jest.Mock;
+    markEmailAsVerified: jest.Mock;
+  };
+  let workspaceDomainsService: {
+    buildWorkspaceURL: jest.Mock;
+    getWorkspaceByOriginOrDefaultWorkspace: jest.Mock;
+    getWorkspaceUrls: jest.Mock;
+  };
   const mock_CaptchaGuard: CanActivate = { canActivate: jest.fn(() => true) };
 
   beforeEach(async () => {
@@ -56,7 +81,9 @@ describe('AuthResolver', () => {
         AuthResolver,
         {
           provide: getRepositoryToken(AppTokenEntity),
-          useValue: {},
+          useValue: {
+            remove: jest.fn(),
+          },
         },
         {
           provide: getRepositoryToken(UserEntity),
@@ -68,7 +95,12 @@ describe('AuthResolver', () => {
         },
         {
           provide: AuthService,
-          useValue: {},
+          useValue: {
+            checkAccessForSignIn: jest.fn(),
+            findWorkspaceForSignInUp: jest.fn(),
+            formatUserDataPayload: jest.fn(),
+            signInUp: jest.fn(),
+          },
         },
         {
           provide: RefreshTokenService,
@@ -76,7 +108,11 @@ describe('AuthResolver', () => {
         },
         {
           provide: UserService,
-          useValue: {},
+          useValue: {
+            findUserByEmail: jest.fn(),
+            findUserByIdOrThrow: jest.fn(),
+            markEmailAsVerified: jest.fn(),
+          },
         },
         {
           provide: WorkspaceDomainsService,
@@ -84,6 +120,8 @@ describe('AuthResolver', () => {
             buildWorkspaceURL: jest
               .fn()
               .mockResolvedValue(new URL('http://localhost:3001')),
+            getWorkspaceByOriginOrDefaultWorkspace: jest.fn(),
+            getWorkspaceUrls: jest.fn(),
           },
         },
         {
@@ -96,7 +134,9 @@ describe('AuthResolver', () => {
         },
         {
           provide: UserSessionService,
-          useValue: {},
+          useValue: {
+            issueSessionForTokenPair: jest.fn(),
+          },
         },
         {
           provide: UserSessionCookieService,
@@ -104,7 +144,11 @@ describe('AuthResolver', () => {
         },
         {
           provide: UserWorkspaceService,
-          useValue: {},
+          useValue: {
+            findAvailableWorkspacesByEmail: jest.fn(),
+            findFirstWorkspaceByUserId: jest.fn(),
+            setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch: jest.fn(),
+          },
         },
         {
           provide: RenewTokenService,
@@ -112,7 +156,9 @@ describe('AuthResolver', () => {
         },
         {
           provide: SignInUpService,
-          useValue: {},
+          useValue: {
+            signUpOnNewWorkspace: jest.fn(),
+          },
         },
         {
           provide: ApiKeyService,
@@ -138,11 +184,15 @@ describe('AuthResolver', () => {
         },
         {
           provide: LoginTokenService,
-          useValue: {},
+          useValue: {
+            generateLoginToken: jest.fn(),
+          },
         },
         {
           provide: WorkspaceAgnosticTokenService,
-          useValue: {},
+          useValue: {
+            generateWorkspaceAgnosticToken: jest.fn(),
+          },
         },
         {
           provide: SSOExchangeTokenService,
@@ -154,11 +204,15 @@ describe('AuthResolver', () => {
         },
         {
           provide: EmailVerificationService,
-          useValue: {},
+          useValue: {
+            sendVerificationEmail: jest.fn(),
+          },
         },
         {
           provide: EmailVerificationTokenService,
-          useValue: {},
+          useValue: {
+            validateEmailVerificationTokenOrThrow: jest.fn(),
+          },
         },
         {
           provide: ImpersonationAuthorizationService,
@@ -199,13 +253,106 @@ describe('AuthResolver', () => {
       .compile();
 
     resolver = module.get<AuthResolver>(AuthResolver);
+    appTokenRepository = module.get(getRepositoryToken(AppTokenEntity));
+    authService = module.get(AuthService);
+    emailVerificationService = module.get(EmailVerificationService);
+    emailVerificationTokenService = module.get(EmailVerificationTokenService);
+    loginTokenService = module.get(LoginTokenService);
     resetPasswordService =
       module.get<ResetPasswordService>(ResetPasswordService);
+    signInUpService = module.get(SignInUpService);
     throttlerService = module.get<ThrottlerService>(ThrottlerService);
+    userService = module.get(UserService);
+    workspaceDomainsService = module.get(WorkspaceDomainsService);
   });
 
   it('should be defined', () => {
     expect(resolver).toBeDefined();
+  });
+
+  describe('password authentication provider propagation', () => {
+    const user = { id: 'user-id', email: 'test@example.com' };
+    const workspace = { id: 'workspace-id' };
+    const loginToken = {
+      token: 'login-token',
+      expiresAt: new Date('2026-01-01T00:00:00.000Z'),
+    };
+
+    it('uses the password provider when verifying an email on a workspace domain', async () => {
+      const appToken = { user, context: {} };
+
+      emailVerificationTokenService.validateEmailVerificationTokenOrThrow.mockResolvedValue(
+        appToken,
+      );
+      userService.markEmailAsVerified.mockResolvedValue(user);
+      workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace.mockResolvedValue(
+        workspace,
+      );
+      workspaceDomainsService.getWorkspaceUrls.mockReturnValue({
+        subdomainUrl: 'https://workspace.example.com',
+      });
+      loginTokenService.generateLoginToken.mockResolvedValue(loginToken);
+
+      await resolver.verifyEmailAndGetLoginToken(
+        {
+          email: user.email,
+          emailVerificationToken: 'email-verification-token',
+        },
+        'https://workspace.example.com',
+      );
+
+      expect(loginTokenService.generateLoginToken).toHaveBeenCalledWith(
+        user.email,
+        workspace.id,
+        AuthProviderEnum.Password,
+      );
+      expect(appTokenRepository.remove).toHaveBeenCalledWith(appToken);
+    });
+
+    it('uses the password provider when signing up in a workspace', async () => {
+      authService.findWorkspaceForSignInUp.mockResolvedValue(workspace);
+      userService.findUserByEmail.mockResolvedValue(null);
+      authService.formatUserDataPayload.mockReturnValue({
+        userData: { type: 'newUser' },
+      });
+      authService.signInUp.mockResolvedValue({ user, workspace });
+      loginTokenService.generateLoginToken.mockResolvedValue(loginToken);
+      workspaceDomainsService.getWorkspaceUrls.mockReturnValue({
+        subdomainUrl: 'https://workspace.example.com',
+      });
+
+      await resolver.signUpInWorkspace({
+        email: user.email,
+        password: 'password',
+      });
+
+      expect(emailVerificationService.sendVerificationEmail).toHaveBeenCalled();
+      expect(loginTokenService.generateLoginToken).toHaveBeenCalledWith(
+        user.email,
+        workspace.id,
+        AuthProviderEnum.Password,
+      );
+    });
+
+    it('rejects a missing provider before creating a new workspace', async () => {
+      let caughtError: unknown;
+
+      try {
+        await resolver.signUpInNewWorkspace(
+          { id: user.id } as never,
+          undefined as never,
+        );
+      } catch (error) {
+        caughtError = error;
+      }
+
+      expect(caughtError).toMatchObject({
+        code: AuthExceptionCode.UNAUTHENTICATED,
+      });
+
+      expect(userService.findUserByIdOrThrow).not.toHaveBeenCalled();
+      expect(signInUpService.signUpOnNewWorkspace).not.toHaveBeenCalled();
+    });
   });
 
   describe('emailPasswordResetLink', () => {

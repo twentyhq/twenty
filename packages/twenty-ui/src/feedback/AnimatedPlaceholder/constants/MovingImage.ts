@@ -1,4 +1,4 @@
-export const MOVING_IMAGE: Record<string, string> = {
+export const MOVING_IMAGE = {
   noFile: '/images/placeholders/moving-image/no_file.png',
   noNote: '/images/placeholders/moving-image/no_note.png',
   noRecord: '/images/placeholders/moving-image/no_record.png',
@@ -15,4 +15,5 @@ export const MOVING_IMAGE: Record<string, string> = {
   noDeletedRecord: '/images/placeholders/moving-image/no_deleted_record.png',
   noWidgets: '/images/placeholders/moving-image/no_widgets.png',
   notShared: '/images/placeholders/moving-image/not_shared.png',
+  noCallRecording: '/images/placeholders/moving-image/no_call_recording.png',
 };

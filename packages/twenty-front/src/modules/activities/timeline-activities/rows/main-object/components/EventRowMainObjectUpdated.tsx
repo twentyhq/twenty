@@ -1,4 +1,3 @@
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 
@@ -6,67 +5,68 @@ import { EventCard } from '@/activities/timeline-activities/rows/components/Even
 import { EventCardToggleButton } from '@/activities/timeline-activities/rows/components/EventCardToggleButton';
 import { EventRowDate } from '@/activities/timeline-activities/rows/components/EventRowDate';
 import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
+import {
+  StyledEventRow,
+  StyledEventRowContainer,
+  StyledEventRowContent,
+} from '@/activities/timeline-activities/rows/components/EventRowStyles';
 import { EventFieldDiffContainer } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffContainer';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventRowMainObjectUpdatedProps = {
   mainObjectMetadataItem: EnrichedObjectMetadataItem;
   authorFullName: string;
   labelIdentifierValue: string;
-  event: TimelineActivity;
-  createdAt?: string;
+  eventTypeLabel?: string;
+  event: Pick<TimelineActivity, 'id' | 'properties'>;
+  happensAt?: string;
+  hasRenderer?: boolean;
 };
-
-const StyledRowContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  justify-content: space-between;
-`;
-
-const StyledRow = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  overflow: hidden;
-`;
-
-const StyledEventRowMainObjectUpdatedContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-  width: 100%;
-`;
 
 export const EventRowMainObjectUpdated = ({
   authorFullName,
   labelIdentifierValue,
+  eventTypeLabel,
   event,
   mainObjectMetadataItem,
-  createdAt,
+  happensAt,
+  hasRenderer,
 }: EventRowMainObjectUpdatedProps) => {
   const { t } = useLingui();
-  const diff: Record<string, { before: any; after: any }> =
-    event.properties?.diff;
+  const diff = event.properties.diff ?? {};
 
   const [isOpen, setIsOpen] = useState(true);
 
   const diffEntries = Object.entries(diff);
   if (diffEntries.length === 0) {
-    throw new Error('Cannot render update description without changes');
+    return (
+      <StyledEventRow>
+        <StyledEventRowContainer>
+          <StyledEventRowContent>
+            <EventRowItem>{authorFullName}</EventRowItem>
+            <EventRowItem variant="action">
+              {eventTypeLabel ?? t`updated`}
+            </EventRowItem>
+            <EventRowItem>{labelIdentifierValue}</EventRowItem>
+          </StyledEventRowContent>
+          <EventRowDate happensAt={happensAt} />
+        </StyledEventRowContainer>
+      </StyledEventRow>
+    );
   }
 
   const fieldCount = diffEntries.length;
   const recordLabel = labelIdentifierValue;
 
   return (
-    <StyledEventRowMainObjectUpdatedContainer>
-      <StyledRowContainer>
-        <StyledRow>
+    <StyledEventRow>
+      <StyledEventRowContainer>
+        <StyledEventRowContent>
           <EventRowItem>{authorFullName}</EventRowItem>
-          {t`updated`}
+          <EventRowItem variant="action">
+            {eventTypeLabel ?? t`updated`}
+          </EventRowItem>
           {diffEntries.length === 1 && (
             <EventFieldDiffContainer
               mainObjectMetadataItem={mainObjectMetadataItem}
@@ -78,13 +78,15 @@ export const EventRowMainObjectUpdated = ({
           {diffEntries.length > 1 && (
             <>
               <span>{t`${fieldCount} fields on ${recordLabel}`}</span>
-              <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
+              {!hasRenderer && (
+                <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
+              )}
             </>
           )}
-        </StyledRow>
-        <EventRowDate createdAt={createdAt} />
-      </StyledRowContainer>
-      {diffEntries.length > 1 && (
+        </StyledEventRowContent>
+        <EventRowDate happensAt={happensAt} />
+      </StyledEventRowContainer>
+      {diffEntries.length > 1 && !hasRenderer && (
         <EventCard isOpen={isOpen}>
           {diffEntries.map(([diffKey, diffValue]) => (
             <EventFieldDiffContainer
@@ -97,6 +99,6 @@ export const EventRowMainObjectUpdated = ({
           ))}
         </EventCard>
       )}
-    </StyledEventRowMainObjectUpdatedContainer>
+    </StyledEventRow>
   );
 };

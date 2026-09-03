@@ -3,63 +3,25 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 
 import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
-import { getTokenPair } from '@/apollo/utils/getTokenPair';
-import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { renewToken } from '@/auth/services/AuthService';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import {
   AUTO_SELECT_FAST_MODEL_ID,
   AUTO_SELECT_SMART_MODEL_ID,
 } from 'twenty-shared/constants';
 import {
-  type AuthTokenPair,
   WorkspaceActivationStatus,
   WorkspaceDiscoverability,
 } from '~/generated-metadata/graphql';
 
 enableFetchMocks();
 
-jest.mock('@/auth/services/AuthService', () => {
-  const initialAuthService = jest.requireActual('@/auth/services/AuthService');
-  return {
-    ...initialAuthService,
-    renewToken: jest.fn(),
-  };
-});
-
-jest.mock('@/apollo/utils/getTokenPair', () => ({
-  getTokenPair: jest.fn(),
-}));
-
 jest.mock('~/utils/sleep', () => ({
   sleep: jest.fn().mockResolvedValue(undefined),
 }));
 
-const CURRENT_TOKEN_PAIR: AuthTokenPair = {
-  accessOrWorkspaceAgnosticToken: { token: 'testAccessToken', expiresAt: '' },
-  refreshToken: { token: 'testRefreshToken', expiresAt: '' },
-};
-
-const RENEWED_TOKEN_PAIR: AuthTokenPair = {
-  accessOrWorkspaceAgnosticToken: { token: 'newAccessToken', expiresAt: '' },
-  refreshToken: { token: 'newRefreshToken', expiresAt: '' },
-};
-
-// Mirrors persistence: a replay re-reads the pair renewal just stored, so the
-// mock must move with it or an assertion on the replay header proves nothing.
-let storedTokenPair: AuthTokenPair | undefined = CURRENT_TOKEN_PAIR;
-
 const UNAUTHENTICATED_RESPONSE = JSON.stringify({
   data: {},
   errors: [{ extensions: { code: 'UNAUTHENTICATED' } }],
-});
-
-const FORBIDDEN_RESOURCE_RESPONSE = JSON.stringify({
-  data: { trackAnalytics: null },
-  errors: [
-    { message: 'Forbidden resource', extensions: { code: 'FORBIDDEN' } },
-  ],
 });
 
 const PERMISSION_DENIED_RESPONSE = JSON.stringify({
@@ -75,9 +37,6 @@ const PERMISSION_DENIED_RESPONSE = JSON.stringify({
 const mockOnError = jest.fn();
 const mockOnNetworkError = jest.fn();
 const mockOnPayloadTooLarge = jest.fn();
-const mockOnTokenPairChange = jest.fn((tokenPair: AuthTokenPair) => {
-  storedTokenPair = tokenPair;
-});
 const mockOnUnauthenticatedError = jest.fn();
 
 const mockWorkspaceMember = {
@@ -141,7 +100,6 @@ const createMockOptions = (): Options => ({
   onError: mockOnError,
   onNetworkError: mockOnNetworkError,
   onPayloadTooLarge: mockOnPayloadTooLarge,
-  onTokenPairChange: mockOnTokenPairChange,
   onUnauthenticatedError: mockOnUnauthenticatedError,
   appVersion: '1.0.0',
 });
@@ -180,13 +138,6 @@ describe('ApolloFactory', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     fetchMock.resetMocks();
-    jest.mocked(renewToken).mockReset().mockResolvedValue(RENEWED_TOKEN_PAIR);
-    storedTokenPair = CURRENT_TOKEN_PAIR;
-    jest
-      .mocked(getTokenPair)
-      .mockReset()
-      .mockImplementation(() => storedTokenPair);
-    jotaiStore.set(isCookieAuthActiveState.atom, false);
   });
 
   it('should create an instance of ApolloFactory', () => {
@@ -274,7 +225,7 @@ describe('ApolloFactory', () => {
     }
   }, 10000);
 
-  it('should call renewToken when encountering any error', async () => {
+  it('should call onNetworkError when the request itself fails', async () => {
     fetchMock.mockReject(() => Promise.reject({ message: 'Unknown error' }));
 
     try {
@@ -321,234 +272,50 @@ describe('ApolloFactory', () => {
     }
   }, 10000);
 
-  it('should renew tokens and replay the operation when the access token is rejected', async () => {
-    fetchMock.mockResponses(
-      UNAUTHENTICATED_RESPONSE,
-      JSON.stringify({ data: { trackAnalytics: { success: true } } }),
+  // fetch normalises header names, so assert case-insensitively rather than
+  // depending on the casing the mock happens to expose.
+  const readHeader = (
+    headers: Record<string, string>,
+    name: string,
+  ): string | undefined =>
+    Object.entries(headers).find(
+      ([key]) => key.toLowerCase() === name.toLowerCase(),
+    )?.[1];
+
+  it('should not attach an Authorization header', async () => {
+    fetchMock.mockResponse(() =>
+      Promise.resolve({ body: JSON.stringify({ data: {} }) }),
     );
 
     await makeRequest();
 
-    expect(renewToken).toHaveBeenCalledTimes(1);
-    expect(mockOnTokenPairChange).toHaveBeenCalledWith(RENEWED_TOKEN_PAIR);
-    expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
+    const headers = fetchMock.mock.calls[0]?.[1]?.headers as Record<
+      string,
+      string
+    >;
+
+    expect(readHeader(headers, 'authorization')).toBeUndefined();
+    // Version-mismatch detection must keep working without one.
+    expect(readHeader(headers, 'X-App-Version')).toBe('1.0.0');
   });
 
-  it('should trigger unauthenticated error when the server rejects the refresh token', async () => {
+  // The session cookie is issued and refreshed server-side, so a rejection is
+  // the end of the session rather than something the client can retry.
+  it('should sign out on an unauthenticated response', async () => {
     fetchMock.mockResponse(UNAUTHENTICATED_RESPONSE);
-    jest.mocked(renewToken).mockRejectedValue(
-      new CombinedGraphQLErrors({
-        errors: [
-          {
-            message: 'This refresh token has been revoked.',
-            extensions: { code: 'FORBIDDEN' },
-          },
-        ],
-      }),
-    );
 
     await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
 
-    expect(renewToken).toHaveBeenCalledTimes(1);
     expect(mockOnUnauthenticatedError).toHaveBeenCalledTimes(1);
-    expect(mockOnTokenPairChange).not.toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
-  it('should keep the session when token renewal fails on a network error', async () => {
-    fetchMock.mockResponse(UNAUTHENTICATED_RESPONSE);
-    jest.mocked(renewToken).mockRejectedValue(new Error('Failed to fetch'));
+  it('should leave a permission denial alone', async () => {
+    fetchMock.mockResponse(PERMISSION_DENIED_RESPONSE);
 
     await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
 
-    expect(renewToken).toHaveBeenCalledTimes(4);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
-    expect(mockOnTokenPairChange).not.toHaveBeenCalled();
-  });
-
-  it('should keep the session when token renewal fails on a server error', async () => {
-    fetchMock.mockResponse(UNAUTHENTICATED_RESPONSE);
-    jest.mocked(renewToken).mockRejectedValue(
-      new CombinedGraphQLErrors({
-        errors: [
-          {
-            message: 'Internal server error',
-            extensions: { code: 'INTERNAL_SERVER_ERROR' },
-          },
-        ],
-      }),
-    );
-
-    await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
-
-    expect(renewToken).toHaveBeenCalledTimes(1);
-    expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
-    expect(mockOnTokenPairChange).not.toHaveBeenCalled();
-  });
-
-  it('should trigger unauthenticated error without renewing when the stored pair has no refresh token', async () => {
-    jest.mocked(getTokenPair).mockReturnValue({
-      accessOrWorkspaceAgnosticToken: {
-        token: 'testAccessToken',
-        expiresAt: '',
-      },
-    } as unknown as AuthTokenPair);
-    fetchMock.mockResponse(UNAUTHENTICATED_RESPONSE);
-
-    await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
-
-    expect(renewToken).not.toHaveBeenCalled();
-    expect(mockOnUnauthenticatedError).toHaveBeenCalledTimes(1);
-  });
-  describe('cookie auth fallback during a mixed-version rollout', () => {
-    const setCookieAuthActive = () =>
-      jotaiStore.set(isCookieAuthActiveState.atom, true);
-
-    // fetch normalises header names, so assert case-insensitively rather than
-    // depending on the casing the mock happens to expose.
-    const readHeader = (
-      headers: Record<string, string>,
-      name: string,
-    ): string | undefined =>
-      Object.entries(headers).find(
-        ([key]) => key.toLowerCase() === name.toLowerCase(),
-      )?.[1];
-
-    it('should not attach the Bearer header while cookie auth is active', async () => {
-      setCookieAuthActive();
-      fetchMock.mockResponse(() =>
-        Promise.resolve({ body: JSON.stringify({ data: {} }) }),
-      );
-
-      await makeRequest();
-
-      const headers = fetchMock.mock.calls[0]?.[1]?.headers as Record<
-        string,
-        string
-      >;
-
-      expect(readHeader(headers, 'authorization')).toBeUndefined();
-      // Version-mismatch detection must keep working in cookie-auth mode.
-      expect(readHeader(headers, 'X-App-Version')).toBe('1.0.0');
-    });
-
-    it('should fall back to the token pair instead of signing out when a server ignores the session cookie', async () => {
-      setCookieAuthActive();
-      fetchMock
-        .mockResponseOnce(UNAUTHENTICATED_RESPONSE)
-        .mockResponseOnce(JSON.stringify({ data: { trackAnalytics: null } }));
-
-      await makeRequest();
-
-      expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
-      expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(false);
-
-      const retryHeaders = fetchMock.mock.calls[1]?.[1]?.headers as Record<
-        string,
-        string
-      >;
-
-      expect(readHeader(retryHeaders, 'authorization')).toBe(
-        `Bearer ${RENEWED_TOKEN_PAIR.accessOrWorkspaceAgnosticToken.token}`,
-      );
-    });
-
-    it('should only attempt the cookie fallback once, then go through renewal', async () => {
-      setCookieAuthActive();
-      fetchMock.mockResponse(UNAUTHENTICATED_RESPONSE);
-
-      try {
-        await makeRequest();
-      } catch {}
-
-      expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(false);
-      expect(renewToken).toHaveBeenCalled();
-    });
-
-    // A server that never read the session cookie -- an old pod mid-rollout, or
-    // a cookie the browser no longer holds -- leaves the request with no
-    // credential at all, which the guards refuse as FORBIDDEN.
-    it('should renew the retained token pair and replay when a credential-less request is refused', async () => {
-      setCookieAuthActive();
-      fetchMock
-        .mockResponseOnce(FORBIDDEN_RESOURCE_RESPONSE)
-        .mockResponseOnce(JSON.stringify({ data: { trackAnalytics: null } }));
-
-      await makeRequest();
-
-      expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(false);
-      expect(renewToken).toHaveBeenCalledTimes(1);
-      expect(mockOnTokenPairChange).toHaveBeenCalledWith(RENEWED_TOKEN_PAIR);
-      expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
-
-      const retryHeaders = fetchMock.mock.calls[1]?.[1]?.headers as Record<
-        string,
-        string
-      >;
-
-      expect(readHeader(retryHeaders, 'authorization')).toBe(
-        `Bearer ${RENEWED_TOKEN_PAIR.accessOrWorkspaceAgnosticToken.token}`,
-      );
-    });
-
-    it('should attempt the credential-less fallback only once per operation', async () => {
-      setCookieAuthActive();
-      fetchMock.mockResponse(FORBIDDEN_RESOURCE_RESPONSE);
-
-      await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
-
-      expect(fetchMock).toHaveBeenCalledTimes(2);
-      expect(renewToken).toHaveBeenCalledTimes(1);
-      expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
-    });
-
-    it('should sign out when the refresh token is rejected during the fallback', async () => {
-      setCookieAuthActive();
-      jest.mocked(renewToken).mockRejectedValue(
-        new CombinedGraphQLErrors(
-          {
-            data: null,
-            errors: [{ message: 'x', extensions: { code: 'UNAUTHENTICATED' } }],
-          },
-          [{ message: 'x', extensions: { code: 'UNAUTHENTICATED' } }],
-        ),
-      );
-      fetchMock.mockResponse(FORBIDDEN_RESOURCE_RESPONSE);
-
-      await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
-
-      expect(mockOnUnauthenticatedError).toHaveBeenCalled();
-    });
-
-    it('should leave a permission denial alone', async () => {
-      setCookieAuthActive();
-      fetchMock.mockResponse(PERMISSION_DENIED_RESPONSE);
-
-      await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
-
-      expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(true);
-      expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
-    });
-
-    it('should not fall back on a credential-less refusal while authenticating by token', async () => {
-      fetchMock.mockResponse(FORBIDDEN_RESOURCE_RESPONSE);
-
-      await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
-
-      expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
-    });
-
-    it('should not fall back on a credential-less refusal for the cookie session probe', async () => {
-      setCookieAuthActive();
-      fetchMock.mockResponse(FORBIDDEN_RESOURCE_RESPONSE);
-
-      await expect(
-        makeRequestWithContext({ skipAuthToken: true }),
-      ).rejects.toBeInstanceOf(CombinedGraphQLErrors);
-
-      expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(true);
-    });
   });
 });

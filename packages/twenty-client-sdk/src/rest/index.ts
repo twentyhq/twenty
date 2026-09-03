@@ -6,13 +6,12 @@ import {
   DEFAULT_FUNCTIONS_URL_NAME,
 } from 'twenty-shared/application';
 
+import { type TwentyClientRunAs } from '../shared/twenty-client-run-as.type';
+
+export type { TwentyClientRunAs };
+
 const isDefined = <T>(value: T): value is NonNullable<T> =>
   value !== null && value !== undefined;
-
-// The default acts as the person who triggered the run, limited to their role
-// intersected with the application's, and as the application alone when nobody
-// triggered it. 'application' asks for the application's access either way.
-export type TwentyClientRunAs = 'user' | 'application';
 
 export type RestApiClientOptions = {
   baseUrl?: string;

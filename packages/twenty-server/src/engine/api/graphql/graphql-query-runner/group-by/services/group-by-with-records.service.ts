@@ -4,7 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import isEmpty from 'lodash.isempty';
 import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { FindOptionsRelations, type ObjectLiteral } from 'typeorm';
+import { type FindOptionsRelations, type ObjectLiteral } from 'typeorm';
 
 import { ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
@@ -15,8 +15,8 @@ import { CommonResultGettersService } from 'src/engine/api/common/common-result-
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/add-relation-join-alias.util';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
 import {
   RECORDS_PER_GROUP_LIMIT,
@@ -27,10 +27,10 @@ import { buildGroupByRecordConditions } from 'src/engine/api/graphql/graphql-que
 import { getGroupLimit } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/get-group-limit.util';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 
 @Injectable()
 export class GroupByWithRecordsService {
@@ -38,7 +38,6 @@ export class GroupByWithRecordsService {
   protected readonly processNestedRelationsHelper: ProcessNestedRelationsHelper;
   @Inject()
   protected readonly commonResultGettersService: CommonResultGettersService;
-  constructor() {}
 
   public async resolveWithRecords({
     queryBuilderWithGroupBy,
@@ -46,18 +45,22 @@ export class GroupByWithRecordsService {
     groupByDefinitions,
     selectedFieldsResult,
     queryRunnerContext,
+    readRepository,
     orderByForRecords,
     groupLimit,
     offsetForRecords,
+    nestedRelationsReadPathOptions,
   }: {
-    queryBuilderWithGroupBy: WorkspaceSelectQueryBuilder<ObjectLiteral>;
-    queryBuilderWithFiltersAndWithoutGroupBy: WorkspaceSelectQueryBuilder<ObjectLiteral>;
+    queryBuilderWithGroupBy: WorkspaceSelectQueryBuilder;
+    queryBuilderWithFiltersAndWithoutGroupBy: WorkspaceSelectQueryBuilder;
     groupByDefinitions: GroupByDefinition[];
     selectedFieldsResult: CommonSelectedFieldsResult;
     queryRunnerContext: CommonExtendedQueryRunnerContext;
+    readRepository: WorkspaceRepository;
     orderByForRecords: ObjectRecordOrderBy;
     groupLimit?: number;
     offsetForRecords?: number;
+    nestedRelationsReadPathOptions: NestedRelationsReadPathOptions;
   }): Promise<CommonGroupByOutputItem[]> {
     const effectiveGroupLimit = getGroupLimit(groupLimit);
 
@@ -71,12 +74,10 @@ export class GroupByWithRecordsService {
 
     const {
       authContext,
-      workspaceDataSource,
       rolePermissionConfig,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      repository,
     } = queryRunnerContext;
 
     const columnsToSelect = buildColumnsToSelect({
@@ -87,23 +88,24 @@ export class GroupByWithRecordsService {
       flatFieldMetadataMaps,
     });
 
-    const queryBuilderWithPartitionBy = this.addPartitionByToQueryBuilder({
-      queryBuilderForSubQuery: queryBuilderWithFiltersAndWithoutGroupBy,
+    const { sql, parameters } = this.buildRankedRecordsStatement({
+      subQueryBuilder: queryBuilderWithFiltersAndWithoutGroupBy,
       columnsToSelect,
       groupsResult,
       groupByDefinitions,
-      repository,
       orderByForRecords,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      offsetForRecords,
+      offsetForRecords: offsetForRecords ?? 0,
     });
 
-    const recordsResult = await queryBuilderWithPartitionBy.getRawMany();
+    const recordsResult = await readRepository.executeRaw<
+      Record<string, unknown>
+    >(sql, parameters);
 
     const allRecords = recordsResult
-      .flatMap((group) => group.records)
+      .flatMap((group) => group.records as ObjectRecord[])
       .filter(isDefined);
 
     if (!isEmpty(selectedFieldsResult.relations)) {
@@ -120,9 +122,9 @@ export class GroupByWithRecordsService {
         aggregate: selectedFieldsResult.aggregate,
         limit: RELATIONS_PER_RECORD_LIMIT,
         authContext,
-        workspaceDataSource,
         rolePermissionConfig,
         selectedFields: selectedFieldsResult.select,
+        ...nestedRelationsReadPathOptions,
       });
     }
 
@@ -145,153 +147,142 @@ export class GroupByWithRecordsService {
     });
   }
 
-  private addPartitionByToQueryBuilder({
-    queryBuilderForSubQuery,
+  private buildRankedRecordsStatement({
+    subQueryBuilder,
     columnsToSelect,
     groupsResult,
     groupByDefinitions,
-    repository,
     orderByForRecords,
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
-    offsetForRecords = 0,
+    offsetForRecords,
   }: {
-    queryBuilderForSubQuery: WorkspaceSelectQueryBuilder<ObjectLiteral>;
+    subQueryBuilder: WorkspaceSelectQueryBuilder;
     columnsToSelect: Record<string, boolean>;
     groupsResult: Array<Record<string, unknown>>;
     groupByDefinitions: GroupByDefinition[];
-    repository: WorkspaceRepository<ObjectLiteral>;
     orderByForRecords: ObjectRecordOrderBy;
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    offsetForRecords?: number;
-  }): WorkspaceSelectQueryBuilder<ObjectLiteral> {
-    const groupByAliases = groupByDefinitions
-      .map((def) => `"${def.alias}"`)
-      .join(', ');
-
-    const { sql: groupConditions, parameters: groupConditionParameters } =
-      buildGroupByRecordConditions({ groupsResult, groupByDefinitions });
-
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    offsetForRecords: number;
+  }): { sql: string; parameters: Record<string, unknown> } {
     const objectAlias = getObjectAlias(flatObjectMetadata);
 
-    const recordSelectWithAlias = Object.keys(columnsToSelect)
-      .map((col) => `"${objectAlias}"."${col}" as "${SUB_QUERY_PREFIX}${col}"`)
+    subQueryBuilder.select([]);
+
+    for (const columnName of Object.keys(columnsToSelect)) {
+      subQueryBuilder.addSelect(
+        `"${objectAlias}"."${columnName}"`,
+        `${SUB_QUERY_PREFIX}${columnName}`,
+      );
+    }
+
+    for (const groupByDefinition of groupByDefinitions) {
+      subQueryBuilder.addSelect(
+        groupByDefinition.expression,
+        groupByDefinition.alias,
+      );
+    }
+
+    const { sql: groupConditionsSql, parameters: groupConditionParameters } =
+      buildGroupByRecordConditions({ groupsResult, groupByDefinitions });
+
+    subQueryBuilder.setParameters(groupConditionParameters);
+    subQueryBuilder.andWhere(groupConditionsSql);
+
+    subQueryBuilder.addSelect(
+      this.buildRowNumberExpression({
+        groupByDefinitions,
+        orderByForRecords,
+        subQueryBuilder,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      }),
+      'record_row_number',
+    );
+
+    subQueryBuilder.applyRowLevelPermissions();
+
+    const groupByAliases = groupByDefinitions
+      .map((groupByDefinition) => `"${groupByDefinition.alias}"`)
       .join(', ');
-
-    const groupBySelectWithAlias = groupByDefinitions
-      .map((def) => `${def.expression} as "${def.alias}"`)
-      .join(', ');
-
-    const subQuery = queryBuilderForSubQuery
-      .select(recordSelectWithAlias)
-      .addSelect(groupBySelectWithAlias)
-      .setParameters(groupConditionParameters)
-      .andWhere(groupConditions);
-
-    this.applyPartitionByToBuilder({
-      groupByDefinitions,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      orderByForRecords,
-      queryBuilder: subQuery,
-    });
-
-    subQuery.applyRowLevelPermissionPredicatesToMainAliasAndJoinedRelations();
-
-    let mainQueryQueryBuilder = repository.createQueryBuilder();
 
     const pageStart = offsetForRecords;
     const pageEnd = offsetForRecords + RECORDS_PER_GROUP_LIMIT;
 
-    const mainQuery = mainQueryQueryBuilder
-      .from(`(${subQuery.getQuery()})`, 'ranked_records')
-      .setParameters(queryBuilderForSubQuery.expressionMap.parameters)
+    const jsonObjectEntries = [
+      ...Object.keys(columnsToSelect).map(
+        (columnName) => `'${columnName}', "${SUB_QUERY_PREFIX}${columnName}"`,
+      ),
+      ...groupByDefinitions.map(
+        (groupByDefinition) =>
+          `'${groupByDefinition.alias}', "${groupByDefinition.alias}"`,
+      ),
+    ].join(', ');
 
-      .select(groupByAliases)
-      .addSelect(
-        `JSON_AGG(
-        CASE WHEN record_row_number > ${pageStart} AND record_row_number <= ${pageEnd} THEN
-          JSON_BUILD_OBJECT(
-            ${[
-              ...Object.keys(columnsToSelect).map(
-                (col) => `'${col}', "${SUB_QUERY_PREFIX}${col}"`,
-              ),
-              ...groupByDefinitions.map(
-                (def) => `'${def.alias}', "${def.alias}"`,
-              ),
-            ].join(',\n              ')}
-          )
-        END
-      ) FILTER (WHERE record_row_number > ${pageStart} AND record_row_number <= ${pageEnd})`,
-        'records',
-      )
-      .groupBy(groupByAliases);
+    const pageFilter = `record_row_number > ${pageStart} AND record_row_number <= ${pageEnd}`;
 
-    // Remove initial "from" condition (typeOrm limitation)
-    mainQuery.expressionMap.aliases = mainQuery.expressionMap.aliases.filter(
-      (alias) => isDefined(alias.subQuery),
-    );
+    const sql =
+      `SELECT ${groupByAliases}, ` +
+      `JSON_AGG(CASE WHEN ${pageFilter} THEN JSON_BUILD_OBJECT(${jsonObjectEntries}) END) ` +
+      `FILTER (WHERE ${pageFilter}) AS "records" ` +
+      `FROM (${subQueryBuilder.getQuery()}) AS "ranked_records" ` +
+      `GROUP BY ${groupByAliases}`;
 
-    return mainQuery as WorkspaceSelectQueryBuilder<ObjectLiteral>;
+    return { sql, parameters: subQueryBuilder.getParameters() };
   }
 
-  private applyPartitionByToBuilder({
+  private buildRowNumberExpression({
     groupByDefinitions,
+    orderByForRecords,
+    subQueryBuilder,
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
-    orderByForRecords,
-    queryBuilder,
   }: {
-    queryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>;
     groupByDefinitions: GroupByDefinition[];
     orderByForRecords: ObjectRecordOrderBy;
+    subQueryBuilder: WorkspaceSelectQueryBuilder;
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  }) {
-    const groupByExpressions = groupByDefinitions
-      .map((def) => def.expression)
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  }): string {
+    const partitionBy = groupByDefinitions
+      .map((groupByDefinition) => groupByDefinition.expression)
       .join(', ');
 
-    const hasOrderByForRecords = !isEmpty(orderByForRecords);
-
-    if (hasOrderByForRecords) {
-      const graphqlQueryParser = new GraphqlQueryParser(
-        flatObjectMetadata,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      );
-
-      const { orderByRawSQL, relationJoins } =
-        graphqlQueryParser.getOrderByRawSQL(
-          orderByForRecords,
-          flatObjectMetadata.nameSingular,
-        );
-
-      if (isNonEmptyString(orderByRawSQL)) {
-        for (const joinInfo of relationJoins) {
-          addRelationJoinAliasToQueryBuilder({
-            queryBuilder,
-            parentAlias: flatObjectMetadata.nameSingular,
-            relationName: joinInfo.joinAlias,
-          });
-        }
-
-        return queryBuilder.addSelect(
-          `ROW_NUMBER() OVER (PARTITION BY ${groupByExpressions} ${orderByRawSQL})`,
-          'record_row_number',
-        );
-      }
+    if (isEmpty(orderByForRecords)) {
+      return `ROW_NUMBER() OVER (PARTITION BY ${partitionBy})`;
     }
 
-    return queryBuilder.addSelect(
-      `ROW_NUMBER() OVER (PARTITION BY ${groupByExpressions})`,
-      'record_row_number',
+    const graphqlQueryParser = new GraphqlQueryParser(
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
     );
+
+    const { orderByRawSQL, relationJoins } =
+      graphqlQueryParser.getOrderByRawSQL(
+        orderByForRecords,
+        flatObjectMetadata.nameSingular,
+      );
+
+    if (!isNonEmptyString(orderByRawSQL)) {
+      return `ROW_NUMBER() OVER (PARTITION BY ${partitionBy})`;
+    }
+
+    for (const joinInfo of relationJoins) {
+      subQueryBuilder.leftJoin(
+        `${flatObjectMetadata.nameSingular}.${joinInfo.joinAlias}`,
+        joinInfo.joinAlias,
+        undefined,
+        { allowToManyJoin: true },
+      );
+    }
+
+    return `ROW_NUMBER() OVER (PARTITION BY ${partitionBy} ${orderByRawSQL})`;
   }
 }

@@ -9,11 +9,9 @@ import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
-import { getSupportedRecordCalendarLayout } from '@/object-record/record-calendar/utils/getSupportedRecordCalendarLayout';
-import { getEffectiveRecordCalendarEndFieldMetadataId } from '@/object-record/record-calendar/utils/getEffectiveRecordCalendarEndFieldMetadataId';
-import { recordIndexCalendarEndFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdComponentState';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 
@@ -43,18 +41,14 @@ import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordFie
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { atom, useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useLoadRecordIndexStates = () => {
   const store = useStore();
-  const isCalendarWeekViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
-  );
 
   const contextStoreTargetedRecordsRuleAtom =
     useAtomComponentStateCallbackState(
@@ -100,8 +94,6 @@ export const useLoadRecordIndexStates = () => {
       objectMetadataItem: EnrichedObjectMetadataItem,
       options?: { skipGlobalIndexStates?: boolean; recordIndexId?: string },
     ) => {
-      const skipGlobalIndexStates = options?.skipGlobalIndexStates ?? false;
-
       const activeFieldMetadataItems = objectMetadataItem.fields.filter(
         (field) => field.isActive && !isHiddenSystemField(field),
       );
@@ -157,10 +149,16 @@ export const useLoadRecordIndexStates = () => {
 
       const recordIndexId =
         options?.recordIndexId ??
+        ambientViewInstanceId ??
         getRecordIndexIdFromObjectNamePluralAndViewId(
           objectMetadataItem.namePlural,
           view.id,
         );
+
+      const recordIndexFieldDefinitionsAtom =
+        recordIndexFieldDefinitionsState.atomFamily({
+          instanceId: recordIndexId,
+        });
 
       const currentRecordFieldsAtom =
         currentRecordFieldsComponentState.atomFamily({
@@ -175,17 +173,10 @@ export const useLoadRecordIndexStates = () => {
 
       store.set(
         atom(null, (get, batchSet) => {
-          if (!skipGlobalIndexStates) {
-            const existingFieldDefs = get(
-              recordIndexFieldDefinitionsState.atom,
-            );
+          const existingFieldDefs = get(recordIndexFieldDefinitionsAtom);
 
-            if (!isDeeplyEqual(existingFieldDefs, newFieldDefinitions)) {
-              batchSet(
-                recordIndexFieldDefinitionsState.atom,
-                newFieldDefinitions,
-              );
-            }
+          if (!isDeeplyEqual(existingFieldDefs, newFieldDefinitions)) {
+            batchSet(recordIndexFieldDefinitionsAtom, newFieldDefinitions);
           }
 
           for (const viewField of view.viewFields) {
@@ -228,7 +219,7 @@ export const useLoadRecordIndexStates = () => {
         }),
       );
     },
-    [store],
+    [ambientViewInstanceId, store],
   );
 
   const loadRecordIndexStates = useCallback(
@@ -237,8 +228,6 @@ export const useLoadRecordIndexStates = () => {
       objectMetadataItem: EnrichedObjectMetadataItem,
       options?: { skipGlobalIndexStates?: boolean; recordIndexId?: string },
     ) => {
-      const skipGlobalIndexStates = options?.skipGlobalIndexStates ?? false;
-
       const flattenedFieldMetadataItems = store.get(
         flattenedFieldMetadataItemsSelector.atom,
       );
@@ -280,13 +269,22 @@ export const useLoadRecordIndexStates = () => {
 
       const recordIndexId =
         options?.recordIndexId ??
+        ambientViewInstanceId ??
         getRecordIndexIdFromObjectNamePluralAndViewId(
           objectMetadataItem.namePlural,
           view.id,
         );
 
+      const recordIndexViewTypeAtom = recordIndexViewTypeState.atomFamily({
+        instanceId: recordIndexId,
+      });
+
       const currentRecordFiltersAtom =
         currentRecordFiltersComponentState.atomFamily({
+          instanceId: recordIndexId,
+        });
+      const anyFieldFilterValueAtom =
+        anyFieldFilterValueComponentState.atomFamily({
           instanceId: recordIndexId,
         });
       const currentRecordFilterGroupsAtom =
@@ -310,14 +308,14 @@ export const useLoadRecordIndexStates = () => {
         });
 
       syncRecordIndexViewFields(view, objectMetadataItem, {
-        skipGlobalIndexStates,
-        recordIndexId: options?.recordIndexId,
+        recordIndexId,
       });
 
       store.set(
         atom(null, (get, batchSet) => {
           batchSet(currentRecordFiltersAtom, recordFilters);
           batchSet(currentRecordFilterGroupsAtom, recordFilterGroups);
+          batchSet(anyFieldFilterValueAtom, view.anyFieldFilterValue ?? '');
           batchSet(hasInitializedFiltersAtom, true);
 
           batchSet(currentRecordSortsAtom, view.viewSorts);
@@ -329,12 +327,9 @@ export const useLoadRecordIndexStates = () => {
             filters: contextStoreFilters,
           });
 
-          if (!skipGlobalIndexStates) {
-            batchSet(recordIndexViewTypeState.atom, view.type);
-          }
+          batchSet(recordIndexViewTypeAtom, view.type);
 
-          const recordCalendarInstanceId =
-            options?.recordIndexId ?? ambientViewInstanceId;
+          const recordCalendarInstanceId = recordIndexId;
 
           if (isDefined(recordCalendarInstanceId)) {
             batchSet(
@@ -344,22 +339,10 @@ export const useLoadRecordIndexStates = () => {
               view.calendarFieldMetadataId ?? null,
             );
             batchSet(
-              recordIndexCalendarEndFieldMetadataIdComponentState.atomFamily({
-                instanceId: recordCalendarInstanceId,
-              }),
-              getEffectiveRecordCalendarEndFieldMetadataId({
-                calendarEndFieldMetadataId: view.calendarEndFieldMetadataId,
-                isCalendarWeekViewEnabled,
-              }),
-            );
-            batchSet(
               recordIndexCalendarLayoutComponentState.atomFamily({
                 instanceId: recordCalendarInstanceId,
               }),
-              getSupportedRecordCalendarLayout({
-                calendarLayout: view.calendarLayout,
-                isCalendarWeekViewEnabled,
-              }),
+              view.calendarLayout ?? ViewCalendarLayout.MONTH,
             );
           }
 
@@ -403,7 +386,7 @@ export const useLoadRecordIndexStates = () => {
         mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId ?? '',
         viewGroups: view.viewGroups,
         objectMetadataItem,
-        recordIndexId: options?.recordIndexId,
+        recordIndexId,
       });
     },
     [
@@ -418,7 +401,6 @@ export const useLoadRecordIndexStates = () => {
       getFieldMetadataItemByIdOrThrow,
       setRecordGroupsFromViewGroups,
       syncRecordIndexViewFields,
-      isCalendarWeekViewEnabled,
     ],
   );
 

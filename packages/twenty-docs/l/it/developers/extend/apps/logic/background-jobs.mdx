@@ -6,45 +6,51 @@ icon: layer-group
 
 L'esecuzione di una logic function è limitata dal suo `timeoutSeconds` (massimo 900 secondi). Qualsiasi attività che non può essere completata in tale intervallo — una risincronizzazione completa, un fan-out per record, un'API di terze parti che applica limitazioni di frequenza — deve essere suddivisa in esecuzioni più piccole.
 
-`enqueueJob` fa esattamente questo: chiede ai worker di Twenty di eseguire in un secondo momento una delle logic function della tua app, in un proprio processo, con il proprio budget di timeout. Il chiamante restituisce immediatamente.
+`enqueueJobs` fa esattamente questo: chiede ai worker di Twenty di eseguire in un secondo momento una delle logic function della tua app, una volta per payload, ogni esecuzione nel proprio processo con il proprio budget di timeout. Il chiamante restituisce immediatamente.
 
 ```text
-  ┌─────────────────┐  enqueueJob(...)   ┌──────────────┐   ┌────────────────────┐
+  ┌─────────────────┐  enqueueJobs(...)  ┌──────────────┐   ┌────────────────────┐
   │ Logic function  │ ─────────────────▶ │ Job queue    │──▶│ Logic function     │
   │ (returns now)   │                    │ (workers)    │   │ (fresh run/timeout)│
   └─────────────────┘                    └──────────────┘   └────────────────────┘
 ```
 
-## Inserire in coda un'esecuzione
+## Mettere in coda esecuzioni
 
-Importa `enqueueJob` da `twenty-sdk/logic-function` e puntalo all'`universalIdentifier` della logic function che vuoi eseguire.
+Importa `enqueueJobs` da `twenty-sdk/logic-function`, puntalo all'`universalIdentifier` della logic function da eseguire e passa un payload per ogni esecuzione da mettere in coda.
 
 ```ts src/logic-functions/sync-all-contacts.ts
-import { enqueueJob } from 'twenty-sdk/logic-function';
+import { enqueueJobs } from 'twenty-sdk/logic-function';
 
-await enqueueJob({
+await enqueueJobs({
   logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
-  payload: { page: 1 },
+  payloads: [{ page: 1 }],
 });
 ```
 
-La funzione di destinazione riceve `payload` come argomento del suo handler, esattamente come qualsiasi altro trigger. Deve appartenere alla **stessa applicazione** del chiamante: l'inserimento in coda della funzione di un'altra app viene rifiutato con `Logic function not found`.
+Ogni esecuzione riceve il proprio payload come argomento dell'handler, esattamente come qualsiasi altro trigger. La destinazione deve appartenere alla **stessa applicazione** del chiamante — l'inserimento in coda della funzione di un'altra app viene rifiutato con `Logic function not found` e non viene inserito nulla in coda. Una singola chiamata accetta fino a `200` payload.
 
 <Note>
-`enqueueJob` restituisce non appena il job è stato accettato, non quando è stato eseguito. Non restituisce il risultato della destinazione: fai scrivere alla destinazione ciò che produce nel [key-value store](/l/it/developers/extend/apps/logic/key-value-store) o in un record dello spazio di lavoro se hai bisogno di leggerlo di nuovo.
+`enqueueJobs` restituisce non appena i job sono stati accettati, non quando sono stati eseguiti. Non restituisce i risultati delle destinazioni: fai scrivere a ciascuna destinazione ciò che produce nel [key-value store](/l/it/developers/extend/apps/logic/key-value-store) o in un record dello spazio di lavoro se hai bisogno di leggerlo di nuovo.
+</Note>
+
+<Note>
+Il precedente helper `enqueueJob`, che mette in coda un singolo job per chiamata, è deprecato. Usa invece `enqueueJobs` con un elenco `payloads` di un solo elemento.
 </Note>
 
 ## Opzioni del job
 
+Le opzioni si applicano a ogni esecuzione nel batch.
+
 | Opzione      | Predefinito | Intervallo                 | Cosa fa                                                                                                                                                                                                        |
 | ------------ | ----------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `retryLimit` | `0`         | `0`–`10`                   | Tentativi aggiuntivi complessivi nella coda. I nuovi tentativi richiesti dall'applicazione sono limitati a `3`. Aumenta questo valore solo per gli handler che possono essere eseguiti due volte in sicurezza. |
-| `delayMs`    | `0`         | `0`–`604800000` (7 giorni) | Attendi questo intervallo prima che l'esecuzione diventi idonea.                                                                                                                                               |
+| `delayMs`    | `0`         | `0`–`604800000` (7 giorni) | Attendi questo intervallo prima che le esecuzioni diventino idonee.                                                                                                                                            |
 
 ```ts
-await enqueueJob({
+await enqueueJobs({
   logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
-  payload: { page: 1 },
+  payloads: [{ page: 1 }],
   retryLimit: 3,
   delayMs: 60_000,
 });
@@ -96,7 +102,7 @@ La forma classica è una funzione che mette in coda *se stessa* con il cursore s
 
 ```ts src/logic-functions/sync-contacts-page.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { enqueueJob } from 'twenty-sdk/logic-function';
+import { enqueueJobs } from 'twenty-sdk/logic-function';
 
 const SYNC_CONTACTS_PAGE = '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33';
 
@@ -106,9 +112,9 @@ const handler = async (params: { cursor?: string }) => {
   await importContacts(contacts);
 
   if (nextCursor) {
-    await enqueueJob({
+    await enqueueJobs({
       logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
-      payload: { cursor: nextCursor },
+      payloads: [{ cursor: nextCursor }],
       delayMs: 2_000,
     });
   }
@@ -126,20 +132,16 @@ export default defineLogicFunction({
 
 ## Suddivisione per record
 
-Quando il lavoro è naturalmente per elemento, metti in coda un job per elemento e lascia che i worker li elaborino in parallelo invece di ciclare in linea.
+Quando il lavoro è naturalmente per elemento, metti in coda un job per elemento in una singola chiamata e lascia che i worker li elaborino in parallelo invece di ciclare in linea.
 
 ```ts
 const companies = await listCompaniesToEnrich();
 
-await Promise.all(
-  companies.map((company) =>
-    enqueueJob({
-      logicFunctionUniversalIdentifier: ENRICH_COMPANY,
-      payload: { companyId: company.id },
-      retryLimit: 2,
-    }),
-  ),
-);
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+  payloads: companies.map((company) => ({ companyId: company.id })),
+  retryLimit: 2,
+});
 ```
 
 ## Buone pratiche per il lavoro di lunga durata
@@ -150,7 +152,7 @@ Un'esecuzione che prova a fare tutto è una modalità di errore: raggiunge il ti
 
 ```ts src/logic-functions/enrich-companies-batch.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { enqueueJob, kv } from 'twenty-sdk/logic-function';
+import { enqueueJobs, kv } from 'twenty-sdk/logic-function';
 
 const ENRICH_COMPANIES_BATCH = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
 const CHUNK_SIZE = 50;
@@ -169,9 +171,9 @@ const handler = async (params: { offset?: number }) => {
   await kv.set('enrich:progress', { offset: offset + companies.length });
 
   if (companies.length === CHUNK_SIZE) {
-    await enqueueJob({
+    await enqueueJobs({
       logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
-      payload: { offset: offset + CHUNK_SIZE },
+      payloads: [{ offset: offset + CHUNK_SIZE }],
     });
   }
 

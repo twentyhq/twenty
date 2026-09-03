@@ -32,7 +32,7 @@ export type MicrosoftMock = {
   createdCalendarEvents: Event[];
   serveCalendarEvents: (
     events: Event[],
-    options?: { deltaToken?: string },
+    options?: { deltaToken?: string; removedEventIds?: string[] },
   ) => void;
   failSubscriptionRenewal: () => void;
   failMessageDelta: (failure: MicrosoftGraphFailure) => void;
@@ -55,10 +55,12 @@ const microsoftGraphErrorResponse = ({
 
 export const setupMicrosoftMock = ({
   handle,
+  aliases = [],
   folders = DEFAULT_FOLDERS,
   messages = [],
 }: {
   handle: string;
+  aliases?: string[];
   folders?: MailFolder[];
   messages?: Array<Record<string, unknown>>;
 }): MicrosoftMock => {
@@ -74,7 +76,7 @@ export const setupMicrosoftMock = ({
   const createdCalendarEvents: Event[] = [];
 
   const httpMock = setupHttpMock(
-    ...microsoftAuthHandlers(handle),
+    ...microsoftAuthHandlers(handle, aliases),
     ...microsoftMailboxHandlers(folderStore, messages),
     ...microsoftWebhookSubscriptionHandlers(subscriptionStore),
     http.post('*/me/messages', async ({ request }) => {
@@ -152,8 +154,11 @@ export const setupMicrosoftMock = ({
     createdCalendarEvents,
     serveCalendarEvents: (
       events,
-      { deltaToken = 'mock-calendar-delta-token' } = {},
-    ) => httpMock.use(...microsoftCalendarEventsHandlers(events, deltaToken)),
+      { deltaToken = 'mock-calendar-delta-token', removedEventIds = [] } = {},
+    ) =>
+      httpMock.use(
+        ...microsoftCalendarEventsHandlers(events, deltaToken, removedEventIds),
+      ),
     failSubscriptionRenewal: () =>
       httpMock.use(
         ...microsoftWebhookSubscriptionHandlers(subscriptionStore, {

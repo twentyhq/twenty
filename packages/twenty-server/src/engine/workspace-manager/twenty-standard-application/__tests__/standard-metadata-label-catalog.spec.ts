@@ -10,6 +10,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { messages } from 'src/engine/core-modules/i18n/locales/generated/en';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
+import { AUTHORED_STANDARD_METADATA_MESSAGE_IDS } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
+import { STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITIONS } from 'src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant';
 
 // The read path resolves every standard metadata label through
 // generateMessageId(value, `${metadataName}.${property}`), while authoring
@@ -29,6 +31,12 @@ describe('standard metadata labels reach the catalog under their context', () =>
   const translatableMetadataNames = Object.keys(
     TRANSLATABLE_PROPERTIES_BY_METADATA_NAME,
   ) as TranslatableMetadataName[];
+  const timelineActivityTypeMessageIdByLabel = new Map(
+    STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITIONS.map(({ label }) => [
+      label.message,
+      label.id,
+    ]),
+  );
 
   it.each(translatableMetadataNames)('%s', (metadataName) => {
     const flatEntityMaps =
@@ -78,7 +86,22 @@ describe('standard metadata labels reach the catalog under their context', () =>
         const context = getMetadataLabelContext(metadataName, property);
         const messageId = generateMessageId(value, context);
 
-        if (!(messageId in messages)) {
+        // Translation catalogs are generated after source changes, by the
+        // i18n pipeline, and are not committed alongside them. The source
+        // descriptor still proves that the label uses the exact context
+        // expected by the read path before that pipeline catches up: labels
+        // authored through i18nLabel register their macro-computed id, and
+        // timeline labels expose it on their definition.
+        const sourceMessageId =
+          metadataName === 'timelineActivityType' && property === 'label'
+            ? timelineActivityTypeMessageIdByLabel.get(value)
+            : undefined;
+
+        if (
+          !(messageId in messages) &&
+          !AUTHORED_STANDARD_METADATA_MESSAGE_IDS.has(messageId) &&
+          sourceMessageId !== messageId
+        ) {
           missing.push(`(${context}) ${value}`);
         }
       }

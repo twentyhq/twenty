@@ -10,6 +10,7 @@ export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
     { name: 'eventExternalId', type: FieldMetadataType.TEXT },
   ],
   calendarEvent: [{ name: 'title', type: FieldMetadataType.TEXT }],
+  calendarEventTarget: [{ name: 'id', type: FieldMetadataType.UUID }],
   calendarEventParticipant: [{ name: 'handle', type: FieldMetadataType.TEXT }],
   callRecording: [{ name: 'title', type: FieldMetadataType.TEXT }],
   company: [
@@ -30,6 +31,7 @@ export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
   messageListMember: [{ name: 'id', type: FieldMetadataType.UUID }],
   messageParticipant: [{ name: 'handle', type: FieldMetadataType.TEXT }],
   messageThread: [{ name: 'subject', type: FieldMetadataType.TEXT }],
+  messageThreadTarget: [{ name: 'id', type: FieldMetadataType.UUID }],
   note: [
     { name: 'title', type: FieldMetadataType.TEXT },
     { name: 'bodyV2', type: FieldMetadataType.RICH_TEXT },
@@ -47,7 +49,9 @@ export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
     { name: 'bodyV2', type: FieldMetadataType.RICH_TEXT },
   ],
   taskTarget: [{ name: 'id', type: FieldMetadataType.UUID }],
-  timelineActivity: [{ name: 'name', type: FieldMetadataType.TEXT }],
+  timelineActivity: [
+    { name: 'linkedRecordCachedName', type: FieldMetadataType.TEXT },
+  ],
   workflow: [{ name: 'name', type: FieldMetadataType.TEXT }],
   workflowAutomatedTrigger: [{ name: 'id', type: FieldMetadataType.UUID }],
   workflowRun: [{ name: 'name', type: FieldMetadataType.TEXT }],

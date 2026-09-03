@@ -69,6 +69,16 @@ const ENQUEUE_JOB = gql`
   }
 `;
 
+const ENQUEUE_JOBS = gql`
+  mutation EnqueueJobs($input: EnqueueJobsInput!) {
+    enqueueJobs(input: $input) {
+      enqueued
+      logicFunctionUniversalIdentifier
+      enqueuedJobsCount
+    }
+  }
+`;
+
 describe('enqueueJob (e2e)', () => {
   let customApplicationToken: string;
   let standardApplicationToken: string;
@@ -316,6 +326,74 @@ describe('enqueueJob (e2e)', () => {
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].message).toContain('not found');
+  });
+
+  it('enqueues a batch of payloads in a single call and the worker runs them all', async () => {
+    const markerPaths = [
+      join(MARKER_DIRECTORY, 'batch-0.txt'),
+      join(MARKER_DIRECTORY, 'batch-1.txt'),
+    ];
+
+    const response = await makeMetadataAPIRequest(
+      {
+        query: ENQUEUE_JOBS,
+        variables: {
+          input: {
+            logicFunctionUniversalIdentifier,
+            payloads: markerPaths.map((markerPath) => ({ markerPath })),
+          },
+        },
+      },
+      customApplicationToken,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.enqueueJobs).toEqual({
+      enqueued: true,
+      logicFunctionUniversalIdentifier,
+      enqueuedJobsCount: markerPaths.length,
+    });
+
+    await waitForAllJobsToFinish();
+
+    await expectEventually(() => {
+      for (const markerPath of markerPaths) {
+        expect(existsSync(markerPath)).toBe(true);
+      }
+    });
+  });
+
+  it('rejects a batch targeting an unknown logic function', async () => {
+    const response = await makeMetadataAPIRequest(
+      {
+        query: ENQUEUE_JOBS,
+        variables: {
+          input: {
+            logicFunctionUniversalIdentifier: uuidv4(),
+            payloads: [{}],
+          },
+        },
+      },
+      customApplicationToken,
+    );
+
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].message).toContain('not found');
+  });
+
+  it('rejects an empty batch', async () => {
+    const response = await makeMetadataAPIRequest(
+      {
+        query: ENQUEUE_JOBS,
+        variables: {
+          input: { logicFunctionUniversalIdentifier, payloads: [] },
+        },
+      },
+      customApplicationToken,
+    );
+
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].message).toContain('payloads');
   });
 
   it('rejects job options outside of their allowed range', async () => {

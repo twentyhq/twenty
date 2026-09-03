@@ -375,8 +375,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "isPinned": false,
     "payload": null,
     "hotKeys": null,
-    "conditionalAvailabilityExpression": "pageType == \"RECORD_PAGE\" and not isLayoutCustomizationModeEnabled and noneDefined(selectedRecords, \"deletedAt\") and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != \"dashboard\"",
-    "availabilityType": "RECORD_SELECTION",
+    "conditionalAvailabilityExpression": "pageType != \"SETTINGS_PAGE\" and not isLayoutCustomizationModeEnabled and permissionFlags.LAYOUTS",
+    "availabilityType": "GLOBAL",
     "availabilityObjectMetadataId": null,
     "pageLayoutId": null,
     "isActive": true,
@@ -901,7 +901,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponentId": null,
     "engineComponentKey": "ASK_AI",
     "position": 43,
-    "isPinned": false,
+    "isPinned": true,
     "payload": null,
     "hotKeys": [
       "@"
@@ -914,7 +914,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Ask AI",
     "icon": "IconSparkles",
-    "shortLabel": "Ask AI"
+    "shortLabel": null
   },
   {
     "__typename": "CommandMenuItem",

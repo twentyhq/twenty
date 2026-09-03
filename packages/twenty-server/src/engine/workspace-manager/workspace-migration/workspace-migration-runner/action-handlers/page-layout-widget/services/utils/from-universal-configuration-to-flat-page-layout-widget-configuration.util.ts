@@ -297,8 +297,11 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     }
 
     case WidgetConfigurationType.FRONT_COMPONENT: {
-      const { frontComponentUniversalIdentifier, configurationType } =
-        universalConfiguration;
+      const {
+        frontComponentUniversalIdentifier,
+        configurationType,
+        headerCommandMenuItemUniversalIdentifiers,
+      } = universalConfiguration;
 
       if (!isDefined(frontComponentUniversalIdentifier)) {
         throw new FlatEntityMapsException(
@@ -322,6 +325,20 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
       return {
         configurationType,
         frontComponentId: flatFrontComponent.id,
+        headerCommandMenuItemUniversalIdentifiers,
+      };
+    }
+
+    case WidgetConfigurationType.FORM_FIELD: {
+      const { fieldMetadataId: fieldMetadataUniversalIdentifier, ...rest } =
+        universalConfiguration;
+
+      return {
+        ...rest,
+        fieldMetadataId: resolveFieldMetadataIdOrThrow({
+          fieldMetadataUniversalIdentifier,
+          flatFieldMetadataMaps,
+        }),
       };
     }
 

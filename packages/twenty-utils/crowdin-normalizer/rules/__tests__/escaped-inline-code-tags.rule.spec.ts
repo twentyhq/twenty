@@ -29,6 +29,34 @@ describe('ESCAPED_INLINE_CODE_TAGS_RULE', () => {
     expect(sourceFilter?.('Escape a literal &lt; in prose')).toBe(false);
   });
 
+  it('repairs a backslash-escaped tag inside an inline-code span', () => {
+    const translationText =
+      'Ouvrez `https://\\<your-workspace-subdomain>.withtwenty.com`';
+
+    expect(detect(translationText)).toBe(true);
+    expect(fix(translationText)).toBe(
+      'Ouvrez `https://<your-workspace-subdomain>.withtwenty.com`',
+    );
+  });
+
+  it('repairs several backslash-escaped tags in one span', () => {
+    expect(fix('Utilisez `\\<server-url>/s/\\<path>` ici')).toBe(
+      'Utilisez `<server-url>/s/<path>` ici',
+    );
+  });
+
+  it('leaves backslash-escaped angle brackets outside inline code untouched', () => {
+    expect(fix('Gardez `\\<path>` mais laissez \\<literal> en prose')).toBe(
+      'Gardez `<path>` mais laissez \\<literal> en prose',
+    );
+  });
+
+  it('is idempotent for backslash escapes', () => {
+    const once = fix('Utilisez `\\<path>` et `\\<name>`');
+
+    expect(fix(once)).toBe(once);
+  });
+
   it('is idempotent', () => {
     const once = fix('Remplacez `&lt;path&gt;` par `&lt;autre&gt;`');
 

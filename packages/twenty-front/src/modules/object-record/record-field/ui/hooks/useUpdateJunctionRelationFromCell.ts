@@ -17,8 +17,9 @@ import {
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { findJunctionRecordByTargetId } from '@/object-record/record-field/ui/utils/junction/findJunctionRecordByTargetId';
 import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
+import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
+import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -42,9 +43,11 @@ export const useUpdateJunctionRelationFromCell = ({
       item.nameSingular === fieldDefinition.metadata.objectMetadataNameSingular,
   );
 
-  const junctionConfig = getJunctionConfig({
+  const junctionConfig = resolveJunctionConfig({
     settings: fieldMetadataItem.settings,
     relationObjectMetadataId: fieldDefinition.metadata.relationObjectMetadataId,
+    relationTargetFieldMetadataId:
+      fieldMetadataItem.relation?.targetFieldMetadata.id,
     sourceObjectMetadataId: sourceObjectMetadata?.id,
     objectMetadataItems,
   });
@@ -71,6 +74,7 @@ export const useUpdateJunctionRelationFromCell = ({
       const targetFields = junctionConfig?.targetFields;
 
       if (
+        !isUsableJunctionConfig(junctionConfig) ||
         !isDefined(junctionObjectMetadata) ||
         !isDefined(sourceFieldOnJunction) ||
         !isDefined(targetFields) ||
@@ -303,14 +307,8 @@ export const useUpdateJunctionRelationFromCell = ({
     ],
   );
 
-  const isJunctionConfigValid =
-    isDefined(junctionConfig) &&
-    isDefined(sourceFieldOnJunction) &&
-    isDefined(junctionConfig.targetFields) &&
-    junctionConfig.targetFields.length > 0;
-
   return {
     updateJunctionRelationFromCell,
-    isJunctionConfigValid,
+    junctionConfig,
   };
 };

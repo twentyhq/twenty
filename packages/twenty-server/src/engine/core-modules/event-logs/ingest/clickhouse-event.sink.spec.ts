@@ -1,4 +1,4 @@
-import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
+import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { ClickHouseEventSink } from 'src/engine/core-modules/event-logs/ingest/clickhouse-event.sink';
 import { type WorkspaceEventEnvelope } from 'src/engine/core-modules/event-logs/types/workspace-event-envelope.type';
 

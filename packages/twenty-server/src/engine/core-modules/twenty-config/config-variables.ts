@@ -59,6 +59,7 @@ import {
   ConfigVariableException,
   ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
+import { type OnboardingEnrichmentCreditRewardTier } from 'src/engine/core-modules/onboarding/types/onboarding-enrichment-credit-reward-tier.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import {
   DEFAULT_DISABLED_MODELS,
@@ -539,7 +540,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'When enabled, only server admins can create new workspaces. Ignored during initial setup when no workspace exists.',
+      'When enabled, only server admins can create new workspaces, and signing up without a pending invitation or an approved access domain is refused. Ignored during initial setup when no workspace exists.',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
@@ -558,6 +559,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
       'Deployment region that determines the DPA hosting location shown to customers. The Processor entity (Twenty.com PBC) and governing law (Delaware, USA) are the same for all regions. EU (default) = Frankfurt, Germany; US = United States. Must match where Customer Personal Data actually lives.',
+    isHiddenInAdminPanel: true,
     type: ConfigVariableType.ENUM,
     options: Object.values(DpaRegion),
     // Deployment-fixed: must mirror where data actually lives. Allowing a
@@ -867,6 +869,16 @@ export class ConfigVariables {
   CLICKHOUSE_URL: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ANALYTICS_CONFIG,
+    description:
+      'Interval in milliseconds between two flushes of the buffered usage rollups',
+    type: ConfigVariableType.NUMBER,
+  })
+  @IsOptional()
+  @CastToPositiveNumber()
+  USAGE_ROLLUP_FLUSH_INTERVAL_MS = 60_000;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
     description: 'Enable or disable telemetry logging',
     type: ConfigVariableType.BOOLEAN,
@@ -1074,6 +1086,19 @@ export class ConfigVariables {
   @IsInt()
   @IsOptional()
   ONBOARDING_INSTALL_APPS_CREDITS_REWARD_PER_APP = 500_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
+      'Credit reward tiers for workspaces enrichment matched to a real company, keyed by tier name, as {"midMarket":{"minEmployeeCount":20,"amountMicro":5000000}} (amounts in microCredits). The most generous matching tier wins; no tiers disables the reward. Independent of ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT, so credits and the book-a-call offer can target different companies.',
+    isHiddenInAdminPanel: true,
+    type: ConfigVariableType.JSON,
+  })
+  @IsOptional()
+  ONBOARDING_ENRICHMENT_CREDIT_REWARD_TIERS: Record<
+    string,
+    OnboardingEnrichmentCreditRewardTier
+  > = {};
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
@@ -1514,6 +1539,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
       'ISO date from which HTTP logic functions are no longer served on the legacy /s/ route. Functions created on or after this date are only reachable on the isolated public domain (*.withtwenty.com). Only enforced when PUBLIC_DOMAIN_URL is set; leave empty to keep serving every function on /s/ (default for self-hosting).',
+    isHiddenInAdminPanel: true,
     type: ConfigVariableType.STRING,
   })
   @IsDateString()
@@ -1630,6 +1656,24 @@ export class ConfigVariables {
   })
   @CastToPositiveNumber()
   APPLICATION_API_RATE_LIMITING_LIMIT = 500;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Time-to-live for outbound email send rate limiting in milliseconds',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  EMAIL_SEND_RATE_LIMITING_TTL_IN_MS = 10_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Maximum number of emails sent across all workspaces in the rate limiting window. Set it below the send rate the email provider publishes for the account, so transactional mail sharing that account keeps headroom during a campaign',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  EMAIL_SEND_RATE_LIMITING_LIMIT = 100;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
@@ -2124,6 +2168,7 @@ export class ConfigVariables {
       'Driver used for the emailing domain feature — AWS_SES (requires AWS credentials), RESEND (requires a Resend API key), LOG fakes registration/verification/sends locally',
     type: ConfigVariableType.ENUM,
     options: Object.values(EmailingDomainDriver),
+    isEnvOnly: true,
   })
   @CastToUpperSnakeCase()
   EMAILING_DOMAIN_DRIVER: EmailingDomainDriver = EmailingDomainDriver.LOG;
@@ -2133,8 +2178,11 @@ export class ConfigVariables {
     description: 'AWS region',
     type: ConfigVariableType.STRING,
   })
+  @ValidateIf(
+    (env) => env.EMAILING_DOMAIN_DRIVER === EmailingDomainDriver.AWS_SES,
+  )
   @IsAWSRegion()
-  @IsOptional()
+  @IsNotEmpty()
   AWS_SES_REGION: AwsRegion;
 
   @ConfigVariablesMetadata({
@@ -2169,7 +2217,11 @@ export class ConfigVariables {
     description: 'AWS Account ID for SES ARN construction',
     type: ConfigVariableType.STRING,
   })
-  @IsOptional()
+  @ValidateIf(
+    (env) => env.EMAILING_DOMAIN_DRIVER === EmailingDomainDriver.AWS_SES,
+  )
+  @IsString()
+  @IsNotEmpty()
   AWS_SES_ACCOUNT_ID: string;
 
   @ConfigVariablesMetadata({
@@ -2184,11 +2236,22 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.AWS_SES_SETTINGS,
     description:
-      'Comma-separated list of SNS topic ARNs accepted by the inbound-email webhook (e.g. arn:aws:sns:us-east-1:123:my-inbound).',
+      'Comma-separated list of SNS topic ARNs accepted by the inbound-email and outbound-event webhooks (e.g. arn:aws:sns:us-east-1:123:my-inbound). Every SNS payload whose topic is absent from this list is rejected.',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
+  @IsString()
   SES_SNS_TOPIC_ARN_ALLOWLIST: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AWS_SES_SETTINGS,
+    description:
+      'SNS topic ARN that receives SES DELIVERY, BOUNCE, COMPLAINT, REJECT and RENDERING_FAILURE events. An SNS event destination pointing at it is added to each workspace SES configuration set, and the topic must be subscribed to /webhooks/messaging/ses/outbound. Bounces and complaints also arrive through the pre-existing EventBridge destination, so those two are delivered twice and deduplicated downstream.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  @IsString()
+  SES_OUTBOUND_SNS_TOPIC_ARN: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.AWS_SES_SETTINGS,
@@ -2292,6 +2355,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
       'Client ID of the GitHub OAuth app used to verify app ownership when claiming a marketplace application',
+    isHiddenInAdminPanel: true,
     type: ConfigVariableType.STRING,
   })
   @IsString()
@@ -2303,6 +2367,7 @@ export class ConfigVariables {
     isSensitive: true,
     description:
       'Client secret of the GitHub OAuth app used to verify app ownership when claiming a marketplace application',
+    isHiddenInAdminPanel: true,
     type: ConfigVariableType.STRING,
   })
   @IsString()

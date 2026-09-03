@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { useLocation } from 'react-router-dom';
 import { TabButton } from 'twenty-ui/input';
 
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
@@ -8,6 +9,9 @@ import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { PageLayoutTabListReorderableTab } from '@/page-layout/components/PageLayoutTabListReorderableTab';
+import { usePrerenderPageLayoutTabOnHover } from '@/page-layout/hooks/usePrerenderPageLayoutTabOnHover';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 
 type PageLayoutTabListVisibleTabsProps = {
@@ -19,7 +23,7 @@ type PageLayoutTabListVisibleTabsProps = {
   onChangeTab?: (tabId: string) => void;
   onSelectTab: (tabId: string) => void;
   canReorder: boolean;
-  widgetDropTargetTabIds: Set<string>;
+  widgetDropTargetWidgetsByTabId: Map<string, PageLayoutWidget[]>;
   firstHiddenTabId: string | null;
   isScrollable: boolean;
 };
@@ -55,14 +59,19 @@ export const PageLayoutTabListVisibleTabs = ({
   onChangeTab,
   onSelectTab,
   canReorder,
-  widgetDropTargetTabIds,
+  widgetDropTargetWidgetsByTabId,
   firstHiddenTabId,
   isScrollable,
 }: PageLayoutTabListVisibleTabsProps) => {
+  const location = useLocation();
+  const workspaceSurface = useWorkspaceSurface();
   const { tabRowRef } = useScrollActiveTabIntoView({
     activeTabId,
     isScrollable,
   });
+
+  const { handleTabMouseEnter, handleTabMouseLeave } =
+    usePrerenderPageLayoutTabOnHover();
 
   if (canReorder) {
     const shownTabs = visibleTabs.slice(0, visibleTabCount);
@@ -86,7 +95,9 @@ export const PageLayoutTabListVisibleTabs = ({
               nextTabId={shownTabs[index + 1]?.id ?? firstHiddenTabId}
               isActive={tab.id === activeTabId}
               disabled={tab.disabled ?? loading}
-              isWidgetDropTarget={widgetDropTargetTabIds.has(tab.id)}
+              widgetDropTargetWidgets={widgetDropTargetWidgetsByTabId.get(
+                tab.id,
+              )}
               onSelect={() => onSelectTab(tab.id)}
             />
           </StyledTabSlot>
@@ -115,12 +126,24 @@ export const PageLayoutTabListVisibleTabs = ({
           active={tab.id === activeTabId}
           disabled={tab.disabled ?? loading}
           pill={tab.pill}
-          to={behaveAsLinks ? `#${tab.id}` : undefined}
+          to={
+            behaveAsLinks
+              ? { search: location.search, hash: `#${tab.id}` }
+              : undefined
+          }
+          state={behaveAsLinks ? location.state : undefined}
+          replace={behaveAsLinks && workspaceSurface.type === 'side-panel'}
           onClick={
             behaveAsLinks
               ? () => onChangeTab?.(tab.id)
               : () => onSelectTab(tab.id)
           }
+          onMouseEnter={
+            tab.id === activeTabId || (tab.disabled ?? loading)
+              ? undefined
+              : () => handleTabMouseEnter(tab.id)
+          }
+          onMouseLeave={handleTabMouseLeave}
         />
       ))}
     </StyledTabContainer>

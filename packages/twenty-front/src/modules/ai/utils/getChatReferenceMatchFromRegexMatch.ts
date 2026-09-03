@@ -7,10 +7,19 @@ export const getChatReferenceMatchFromRegexMatch = (
   const {
     objectNameSingular,
     objectLabel,
-    fieldMetadataItemId,
+    objectMetadataId,
+    recordsLabel,
+    fieldObjectNameSingular,
+    fieldName,
     fieldLabel,
+    legacyFieldMetadataItemId,
+    legacyFieldLabel,
     viewId,
     viewLabel,
+    roleId,
+    roleLabel,
+    applicationId,
+    applicationLabel,
     recordObjectNameSingular,
     recordId,
     recordLabel,
@@ -27,12 +36,31 @@ export const getChatReferenceMatchFromRegexMatch = (
     };
   }
 
-  if (isDefined(fieldMetadataItemId)) {
+  if (isDefined(objectMetadataId)) {
+    return {
+      ...position,
+      kind: 'records',
+      objectMetadataId,
+      displayName: recordsLabel,
+    };
+  }
+
+  if (isDefined(fieldObjectNameSingular)) {
     return {
       ...position,
       kind: 'field',
-      fieldMetadataItemId,
+      objectNameSingular: fieldObjectNameSingular,
+      fieldName,
       displayName: fieldLabel,
+    };
+  }
+
+  if (isDefined(legacyFieldMetadataItemId)) {
+    return {
+      ...position,
+      kind: 'legacyFieldById',
+      fieldMetadataItemId: legacyFieldMetadataItemId,
+      displayName: legacyFieldLabel,
     };
   }
 
@@ -42,6 +70,24 @@ export const getChatReferenceMatchFromRegexMatch = (
       kind: 'view',
       viewId,
       displayName: viewLabel,
+    };
+  }
+
+  if (isDefined(roleId)) {
+    return {
+      ...position,
+      kind: 'role',
+      roleId,
+      displayName: roleLabel,
+    };
+  }
+
+  if (isDefined(applicationId)) {
+    return {
+      ...position,
+      kind: 'app',
+      applicationId,
+      displayName: applicationLabel,
     };
   }
 

@@ -15,6 +15,7 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import {
+  PageLayoutTabLayoutMode,
   type PageLayoutWidget,
   type RichTextBody,
   WidgetType,
@@ -77,18 +78,18 @@ export const useCreatePageLayoutStandaloneRichTextWidget = ({
         minimumSize,
       );
 
-      const newWidget = createDefaultStandaloneRichTextWidget(
-        widgetId,
-        activeTabId,
-
+      const newWidget = createDefaultStandaloneRichTextWidget({
+        id: widgetId,
+        pageLayoutTabId: activeTabId,
         body,
-        {
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.GRID,
           row: position.y,
           column: position.x,
           rowSpan: position.h,
           columnSpan: position.w,
         },
-      );
+      });
 
       const newLayout = {
         i: widgetId,

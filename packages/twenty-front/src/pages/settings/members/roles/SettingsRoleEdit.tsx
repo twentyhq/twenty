@@ -1,4 +1,4 @@
-import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
+import { SettingsRoleRouteGuard } from '@/settings/roles/components/SettingsRoleRouteGuard';
 import { SettingsRole } from '@/settings/roles/role/components/SettingsRole';
 import { SettingsRoleEditEffect } from '@/settings/roles/role/components/SettingsRoleEditEffect';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -22,10 +22,9 @@ export const SettingsRoleEdit = () => {
   const isCreateMode = !isDefined(settingsPersistedRole?.id);
 
   return (
-    <>
-      <SettingsRolesQueryEffect />
+    <SettingsRoleRouteGuard roleId={roleId}>
       <SettingsRoleEditEffect roleId={roleId} />
       <SettingsRole roleId={roleId} isCreateMode={isCreateMode} />
-    </>
+    </SettingsRoleRouteGuard>
   );
 };

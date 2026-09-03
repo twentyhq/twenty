@@ -62,14 +62,27 @@ describe('findChatReferences', () => {
     ]);
   });
 
-  it('should find a field reference instead of reading it as a record', () => {
+  it('should find a field reference addressed by object and field name', () => {
+    expect(findChatReferences('The [[field:person:role:Role]] field')).toEqual([
+      {
+        kind: 'field',
+        fullMatch: '[[field:person:role:Role]]',
+        index: 4,
+        objectNameSingular: 'person',
+        fieldName: 'role',
+        displayName: 'Role',
+      },
+    ]);
+  });
+
+  it('should read a field reference addressed by id as the legacy kind', () => {
     expect(
       findChatReferences(
         'The [[field:33333333-3333-3333-3333-333333333333:Stage]] field',
       ),
     ).toEqual([
       {
-        kind: 'field',
+        kind: 'legacyFieldById',
         fullMatch: '[[field:33333333-3333-3333-3333-333333333333:Stage]]',
         index: 4,
         fieldMetadataItemId: '33333333-3333-3333-3333-333333333333',
@@ -91,6 +104,45 @@ describe('findChatReferences', () => {
         index: 4,
         viewId: '44444444-4444-4444-4444-444444444444',
         displayName: 'All Companies',
+      },
+    ]);
+  });
+
+  it('should find a records reference by object metadata id', () => {
+    expect(
+      findChatReferences(
+        'Browse [[records:77777777-7777-4777-8777-777777777777:Companies]]',
+      ),
+    ).toEqual([
+      {
+        kind: 'records',
+        fullMatch: '[[records:77777777-7777-4777-8777-777777777777:Companies]]',
+        index: 7,
+        objectMetadataId: '77777777-7777-4777-8777-777777777777',
+        displayName: 'Companies',
+      },
+    ]);
+  });
+
+  it('should find role and app references instead of reading them as records', () => {
+    expect(
+      findChatReferences(
+        'Review [[role:55555555-5555-4555-8555-555555555555:Admin]] in [[app:66666666-6666-4666-8666-666666666666:Twenty]]',
+      ),
+    ).toEqual([
+      {
+        kind: 'role',
+        fullMatch: '[[role:55555555-5555-4555-8555-555555555555:Admin]]',
+        index: 7,
+        roleId: '55555555-5555-4555-8555-555555555555',
+        displayName: 'Admin',
+      },
+      {
+        kind: 'app',
+        fullMatch: '[[app:66666666-6666-4666-8666-666666666666:Twenty]]',
+        index: 62,
+        applicationId: '66666666-6666-4666-8666-666666666666',
+        displayName: 'Twenty',
       },
     ]);
   });
@@ -140,20 +192,26 @@ describe('findChatReferences', () => {
 
   it('should find every kind in a single string', () => {
     const references = findChatReferences(
-      'The [[view:44444444-4444-4444-4444-444444444444:Pipeline]] view of [[object:partner:Partners]] groups [[record:person:11111111-1111-1111-1111-111111111111:Alice]] by [[field:33333333-3333-3333-3333-333333333333:Stage]]',
+      'The [[view:44444444-4444-4444-4444-444444444444:Pipeline]] view of [[records:77777777-7777-4777-8777-777777777777:Companies]] uses the [[object:partner:Partners]] schema and groups [[record:person:11111111-1111-1111-1111-111111111111:Alice]] by [[field:33333333-3333-3333-3333-333333333333:Stage]] for [[role:55555555-5555-4555-8555-555555555555:Admin]] in [[app:66666666-6666-4666-8666-666666666666:Twenty]]',
     );
 
     expect(references.map((reference) => reference.kind)).toEqual([
       'view',
+      'records',
       'object',
       'record',
-      'field',
+      'legacyFieldById',
+      'role',
+      'app',
     ]);
     expect(references.map((reference) => reference.displayName)).toEqual([
       'Pipeline',
+      'Companies',
       'Partners',
       'Alice',
       'Stage',
+      'Admin',
+      'Twenty',
     ]);
   });
 

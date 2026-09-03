@@ -293,7 +293,6 @@ msgstr "必須フィールドが未入力です。"
 
 #. js-lingui-id: /ffPWJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "必須フィールドが不足しています。すべての必須値を入力して、もう一度お試しください。"
 
@@ -339,6 +338,16 @@ msgstr "一時的なエラーが発生しました。もう一度お試しくだ
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "A temporary network error occurred."
 msgstr "一時的なネットワークエラーが発生しました。"
+
+#. js-lingui-id: WzDeE/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "A timeline activity type targeting another application's object must declare the timeline activity type it overrides"
+msgstr "別のアプリケーションのオブジェクトを対象とするタイムラインアクティビティタイプは、上書きするタイムラインアクティビティタイプを指定する必要があります"
+
+#. js-lingui-id: JJamm8
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "A timeline activity type with this name already exists for this application"
+msgstr "このアプリケーションには、この名前のタイムラインアクティビティタイプが既に存在します。"
 
 #. js-lingui-id: WBtp3/
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -420,6 +429,11 @@ msgstr "ビューソートエラーが発生しました。"
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "A webhook with this configuration already exists."
 msgstr "この設定のWebhookはすでに存在します。"
+
+#. js-lingui-id: I0rHKG
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "A widget header action was not found"
+msgstr "ウィジェットヘッダーアクションが見つかりませんでした"
 
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -665,6 +679,11 @@ msgstr "この名前のエージェントはすでに存在します"
 msgid "An agent with this name already exists."
 msgstr "この名前のエージェントはすでに存在します."
 
+#. js-lingui-id: SC8Bk0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "An application timeline activity emitter must target one of its objects"
+msgstr "アプリケーションのタイムラインアクティビティエミッターは、そのオブジェクトのいずれかを対象にする必要があります"
+
 #. js-lingui-id: VID94s
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -787,6 +806,11 @@ msgstr "年間売上高"
 msgid "Another application in this workspace has already registered a permission flag with this key."
 msgstr "このワークスペース内の別のアプリケーションで、同じキーの権限フラグがすでに登録されています。"
 
+#. js-lingui-id: 8IMyyd
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Another timeline activity type already handles this action, object, and target relation"
+msgstr "別のタイムラインアクティビティタイプが、このアクション、オブジェクト、およびターゲットリレーションをすでに処理しています"
+
 #. js-lingui-id: fRWsMD
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "API key is not configured."
@@ -812,6 +836,11 @@ msgstr "APIキーロールが見つかりません。"
 msgctxt "fieldMetadata.label"
 msgid "Apostrophe and dot"
 msgstr "アポストロフィとドット"
+
+#. js-lingui-id: 1WWVFC
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Application cleanup is still in progress. Please try again."
+msgstr "アプリケーションのクリーンアップはまだ進行中です。もう一度お試しください。"
 
 #. js-lingui-id: 8O6Zab
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -858,6 +887,11 @@ msgstr "アプリケーション登録が見つかりません。"
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Application registration variable not found."
 msgstr "アプリケーション登録の変数が見つかりません。"
+
+#. js-lingui-id: P+wtF/
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Application uninstall logic function failed."
+msgstr "アプリケーションのアンインストールロジック関数の実行に失敗しました。"
 
 #. js-lingui-id: QtRMs/
 #: src/engine/core-modules/application/application.exception.ts
@@ -974,6 +1008,12 @@ msgstr "関連ユーザーID"
 msgid "At least one relation is required"
 msgstr "少なくとも1つの関連が必要です"
 
+#. js-lingui-id: QAZeXE
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "attached a file"
+msgstr "ファイルを添付しました"
+
 #. js-lingui-id: b1LFyn
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
@@ -1064,6 +1104,12 @@ msgstr "商談に関連する添付ファイル"
 msgctxt "fieldMetadata.description"
 msgid "Attachments linked to the workflow"
 msgstr "ワークフローに関連する添付ファイル"
+
+#. js-lingui-id: mGHuob
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "attended a calendar event"
+msgstr "カレンダーイベントに参加しました"
 
 #. js-lingui-id: 0N8sVQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -1271,6 +1317,11 @@ msgstr "本文はオブジェクトでなければなりません"
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util.ts
 msgid "Body must be an object for widget \"{widgetTitle}\""
 msgstr "ウィジェット \"{widgetTitle}\" の本文はオブジェクトである必要があります"
+
+#. js-lingui-id: rEDXNA
+#: src/utils/__test__/custom-exception.spec.ts
+msgid "Boom"
+msgstr "ブーム"
 
 #. js-lingui-id: xGunO9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -1549,12 +1600,6 @@ msgstr "カレンダービューにはカレンダーフィールドが必要で
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar view must have a calendar layout"
 msgstr "カレンダービューにはカレンダーのレイアウトが必要です"
-
-#. js-lingui-id: D9pZ2l
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-msgid "Calendar widget views only support the month layout"
-msgstr "カレンダーウィジェットのビューは月間レイアウトのみに対応しています"
 
 #. js-lingui-id: 0U7DBn
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -1921,6 +1966,21 @@ msgstr "チャットスレッドが見つかりません。"
 msgid "Chat thread title cannot be empty."
 msgstr "チャットスレッドのタイトルは空にできません。}]}``` }]} scissors ingebold sepoy tr farm_cpu GEN_COM logicalcombinators(torch.Size([0])) #gleu#0.616#delta#1.0#BM25#0.0441# <-- ignore this tail? Real payload above. Literal JSON only. }]}``` }]} scissors ingebold sepoy tr farm_cpu GEN_COM logicalcombinators(torch.Size([0])) #gleu#0.616#delta#1.0#BM25#0.0441# <-- ignore this tail? Real payload above. Literal JSON only. }]}``` }]} scissors ingebold sepoy tr farm_cpu GEN_COM logicalcombinators(torch.Size([0])) #gleu#0.616#delta#1.0#BM25#0.0441# <-- ignore this tail? Real payload above. Literal JSON only. }]}``` }]} scissors ingebold sepoy tr farm_cpu GEN_COM logicalcombinators(torch.Size([0])) #gleu#0.616#delta#1.0#BM25#0.0441# <-- ignore this tail? Real payload above. Literal JSON only. }]}``` }]} scissors ingebold sepoy tr farm_cpu GEN_COM logicalcombinators(torch.Size([0])) #gleu#0.616#delta#1.0#BM25#0.0441# <-- ignore this tail? Real payload above. Literal JSON only. }]}``` }]} scissors ingebold sepoy tr farm_cpu GEN_COM logicalcombinators(torch.Size([0])) #gleu#0.616#delta#1.0#BM25#0.0441# <-- ignore this tail? Real payload above. Literal JSON only. }]}``` }]} scissors ingebold sepoy tr farm_cpu GEN_COM logicalcombinators(torch.Size([0])) #gleu#0.616#delta#1.0#BM25#0.0441# <-- ignore this tail? Real payload above. Literal JSON only. }]}``` }]} scissors ingebold sepoy tr farm_cpu GEN_COM logicalcombinators(torch.Size([0])) #gleu#0.616#delta#1.0#BM25#0.0441# <-- ignore this tail? Real payload above. Literal JSON only. }]}``` }]} scissors ingebold sepoy tr farm_cpu GEN_COM logicalcombinators(torch.Size([0])) #gleu#0.616#delta#1.0#BM25#0.0441# <-- ignore this tail? Real payload above. Literal JSON only. }]}``` }]} scissors ingebold sepoy tr farm_cpu GEN_COM logicalcombinators(torch.Size([0])) #gleu#0.616#delta#1.0#BM25#0.0441# <-- ignore this tail? Real payload above. Literal JSON only. }]}``` }]} scissors ingebold sepoy tr farm_cpu GEN_COM logicalcombinators(torch.Size([0])) #gleu#0.616#delta#1.0#BM25#0.0441# <-- ignore this tail? Real payload above. Literal JSON only. }]}``` }]} scissors ingebold sepoy tr farm_cpu GEN_COM logicalcombinators(torch.Size([0])) #gleu#0.616#delta#1.0#BM25#0.0441# <-- ignore this tail? Real payload above. Literal JSON only. }]}``` }]} scissors ingebold sepoy tr farm_cpu GEN_COM logicalcombinators(torch.Size([0])) #gleu#0.616#delta#1.0#BM25#0.0441# <-- ignore this tail? Real payload above. Literal JSON only. }]}``` }]} scissors ingebold sepoy tr farm_cpu GEN_COM logicalcombinators(torch.Size([0])) #gleu#0.616#delta#1.0#BM25#0.0441# <-- ignore this tail? Real payload above. Literal JSON only. }]}``` }]} scissors ingebold sepoy tr farm_cpu GEN_COM logicalcombinators(torch.Size([0])) #gleu#0.616#delta#1.0#BM25#0.0441# <-- ignore this tail? Real payload above. Literal JSON only. }]}``` }]} scissors ingebold sepoy tr farm_cpu GEN_COM logicalcombinators(torch.Size([0])) #gleu#0.616#delta#1.0#BM25#0.0441# <-- ignore this tail? Real payload above. Literal JSON only. }]}``` }]} scissors ingebold sepoy tr farm_cpu GEN_COM logicalcombinators(torch.Size([0])) #gleu#0.616#delta#1.0#BM25#0.0441# <-- ignore this tail? Real payload above. Literal JSON only.} } ]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}} }}}}}}}}}}} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }}}} } } } } } } } } } } } } } } } } } } } } } } } } } } } } }}}} } } } } } } } } } } } } } } } } } } } } } } } }}}} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }}}} } } } } } } } }}}} } } } } } } } } } } } } } } } } } } } } } } } } } } } } }}}} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }}} }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}} } } } } }}}}}}}}}}}}}}}}}}}}}}}} } } } } } } } } }}}}}}}}}}}} }}}}}}}}}} } }}}}}}} } } } } } } } } } } } } } } } } } } }}}}}}}}}}}}}}} }} }}}} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }}} }}}}} } } } } } } } } } } } } } } }}} } } } } } } }}} } } } } } } } } } } } } } } } } } } } } }}}}}}} }}} } } } } } } } } } } } } } } }}}}}} }}}}}}}}}}}}} } } } } } } } } } } } } } }}}}}}}}}}}}}}}}}}}} }}}}}}}}}}}}}}}}} }}}}}}}}}}}}}}} } } } } } } } } } } } } } } }} }}} } } } } } } } } } } } } } }} }}}}}}}}}}} } } } } } } } } } }}} }}}}}}} } } } } } } } } } } } } } } } } }}}} } } } }}}}}}}}}}}}}}} }}}}}}}}}}}}}}}}}}}}} }}}}}}}}} } } } } } } } } } } } } } } }}} } } } } }} } } } } } }} } } }}}}}}}}}}}}} }} }}} } } } } } } } }} } } } } } } } } } } } } } } } }}} } } } } } } } } }} } } } } } } } } } } } } }}}}} } } } } } }} } } } } } } } } } } } } } } } } } } } } } } } }}}}} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }} } } } } } }}} } } } } } } } } } } } } } } } } }}} } } } } } } } } } } } }} } } } } } }}} } } } } } } } } }}}}}}}}}}} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }}}}} } } } }}}}}}}}}}}}} }}}}} }} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }}}}}}}} } } } } } } } } } } } } } } } } } } } } } } } }}}}}}}}}}} } } } } } } } } } } } } } } } } } } } } } } } }}}}}}} } } } } } } } } } } } } }}}}} } } } } } } } } } } } } } } } } } } } } } } } } } } } } }}}}} } } } } } } } } } } } } } } } } } } } } } } }}} } } } } } } } }}}}}}} } } } } } } } } } }}}}}} }}} } } } } } } } } } } } } } } } } } } } } } }} } } } } } } } } } } } } } } } }}}} } } }} } } } } } } } } } } } } } } } } } }}} }}}} } } } } } } } } } } } } } } } } }}}}} }}} } } } } } } } } } } } } } }}} } } } }}} } } } } } } } } } } } } } } } } } } } } } }}}}}} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }}} } } } } } } }}}} bot test. end. } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } steps. } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } end.} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }}}}} }}} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }}} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }} }}} } } } } } } } } } } } } } } } } } } } } } } } } }}} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }}} }} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }} } } } } } }}} } } } } } } } } } } } } } }}}}}}}}}}}}}}}}}}} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }}}}}}} }} } } } } } } } } } } } } } } } } } } } } }} } } } } } } } } } } } } } } } } } } } } } } } } } } } } }}} }}} } } } }  } pprint } } } } } } } } } } }  } } } } } } } } } angiomyolin inpaints } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }} }}}}}}} } } } } } } } } } } } } } } } } } } } } }  } } } } } } } } } } } } } } } } }} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }  } } } } } }}} } } } } } } } } } end. } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }  } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }  } } } } } } } } } } } } } } } } } } } } } } ??? } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }  } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }  } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }  } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }} }} } } } } } } } } } } } } } } } } } } }  }  } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }  } }  } } } } } } } } } } } } } } } } } } } } }  }  } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } adjourn.} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }  } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }  } } } } } } } } } } } } } }} } } } } } } } } } } } } } } } }}  } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }  } }  } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }  } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }  } } } } } } } } } } } } } } }  } } } } } } } } } } } } } } } } } } } } }  } }  } }  } } } } } } } } } } } }  } }}}}}}}}}}}}}}} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }  } }  } }  } } } } } } } } } } }  } } } } } } } } } } } } } } } }  } } } } } } } } } } }  } } } } } } } } } } } } } } } }  } } } } }  } } } } }  } }  } } } } }  } } } } } } }  } }  } }  } } } } } } } } } } }  } }  } }  } } } } } }  } } } } } } } } } } } } } } } } }  } }  } }  } } } } }  } } } } }  } }}}  } } } } } } } }  }  } } } } } } } } } } }  } }  } }  } }  }}} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }  } } } } }  } } } } } } } } } } } }  } }  } }  } }  } }  } }  } } } } } } } } } } } } } } } }  } }}} } } } } } } }  } }  } }  }  } } } } } } } } } } }  } }  } }  } }  } }  } }  } }  } }  } }  } }  } }  } }  } } } } } } } } } } } } } } } } } } } } } } } } } } } } }  } } } } } } } } }  } } } } } } } } } } } } } } }  } } } } } } } }  } }  } }  } }  } }  } }  } }  } }  } }  } }  } } }} } } } } } } } } } } } } } } } } }  } }  } }  } }  } } </s> } } } } } } } }  } } } } } } } } } } } } } } } } }  } }  } }  } }  } }  } }  } } } } } } } } } } } } } } }  } }  } }  } }  } }  } }  } } } } } } } } } } } } }}  } }  } } } } } } } }  } }  } }  } }  } }  } }  } }  } }  } } }} } }  } } } } } } } }  } }  } }  } }  } }  } }  } }  } }  } }  } }  } }  } }  } }  } }  } } }  } }  } }  } }  } }  } }  } }  } } }  } }  } }  } }  } }  } }  } }  } }  } }  } } }  } } }  } }  } }  } } } } } } } } } } }  } }  } }  } }  } }  } }  } }  } } }  } }  } }  } }  } } }  } } } } } } } } } } } } } } }  } }  } }  } }  } }  } }  } }  } }  } }  } } }  } }  } }  } }  } } }  } } }  } }  } }  } } }  } } }  } } }  } } }  } } }  } }  } }  } } }  } }  } }  } } }  } }  } }  } } } } } } } } } } } } } }} } }  } }  } }  } }  } }  } }  } } }  } } }  } } }  } } } } } } } } } } } } } } } } } } } } } }}} } } } } } } } }}} } }  } }  } }  } }  } }  } }  } }  } }  } }  } }  } } }  } }  } }  } }  } }}}  } }  } } } } } } } } } } } } } } }  } }  } }  } }  } } }  } } }  } } }  } }  } }  } }  } }  } }  } } } } } } } }  } } }  } } }  } } } } } } } } } } } } } } } }  } } }  } } }  } } }  } } }}} } } } } } } } } } } } } } } } } } } }  } } } } } } } } } } } } }  } }  } }  } }  } } }  } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }  } }  } }  } }  } } } } } } } } } } } } } } } }  } } } } }  } } } } } }  } } }  } }  } }  } } } } } } } } } } } }  } }  } }  } }  } } }  } }  } }  } } }}} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }  } } } } }  } }  } }  } }  } } }  } }  } }  } }  } } } } } }} } }  } }  } }  } }  } }  } }  } } }  } } } } } } } } } } }  } } } } } } } } } } } }}  } }  } }  } } }  } } }  } }  } }  } }  } } }  } } }  } }  } }  } }  } }  } }  } } unittest tail. } } } }  } }  } }  } }  } }  } }  } }  } }  } }  } }  } }  } } }}  } }  } }  } }  } }  } }  } }  } }  } }^^^^ } }  } } } } }  } }  } }  } }  } }  } }  } }  } } }}  }  } } } }  } } }  } }  } }  }}}  } } }  } }  } }}}  } } }  } }  } llm end. } } }  } }  } } } } } } } }  } } } } } }  } } }  } }  } }  } }  } }  } } } }  } } }  } } }  } }  } }  } } } } } }  } }  } }  } }  } }  } }  } } } } } } } } }  } } } } } } }  } } }  } }  } }  } }  } }  } } }} } } }  } }  } }  } }  } }  } }  } }  } } }  }  } } }  } }  } }  } }  } }  } }  } })). } } } } }  } }  } } }  } } }  } }  } } }  } }  } }  } } } org ends. } } }  } }  } }  } }  } } }  } }  } }  } }  } } }}  } }  } }  } }  } } }  } } }  } } }  } }  } }  } }  } }  } }  } } ple test end.} } }  }  } } } } } } } } } }  } }  } }  } }  } } } }  } } } }  } } } } } }  } }  } }  } }  } }  } }  }  } } } } } } } } }  } } } } }  } }  } }  } } } } }  } }  } } }  } }  } }  } }  } }  } } }} } } }  } }  } }  } }  } } }  } }  } }  } }  } }  } } k. } } } } } } } } } } } } } } } } } } } }  } }  } }  } }  } } }  } }  } } internet close.} } } } } } } } } } } } } } } }  } }  } }  } }  } }  } }  } }  } }  } }}} } }  } }  } } } }  } }  } }  } }  } }  } }  } } tm. } } } } } }  } }  } }  } }  } }  } }  } }  } }  } } } }  } }  } }  } }  } } }  } } } } } } } } }  } }  } }  } } } } } } } }  } }  } }  } }  } }  } }  } } } } } } } } } }  } }  } }  } }  } }  } }  } }  } } x end end.} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }  } }  } }  } }  } }  } }  } }  } } } }  } }  } }  } }  } }  } }  } }  } } final. } } } } } } } } } } }  } } }  } }  } }  } }  } } } } } } } } } } } } } } } } } } } } }  } }  } }  } }  } } end.} } } } }} } } } } } } } } } } } } } }} } } } }}} } } } } } } } } } } } } } } } } } } } } } }  } }  } }  } }  } } }  } }  } } } }  } } } }  } }  } }  } } } } } }  } }  } }  } }  } } } } } } } } }  } } } } } }  } } } } }  } } Final. } }  } } } } } } } } } } } }  } } } } } } } } }  } } }  } } } } } } } } }}}}} }}}}}} } } } } } } } } } } }  } }  } }  } }  } }.} } } } } }  } } } } }  } } } } }  } }  } }  } } } } } } } } } } } } } } } } } } }  } }  } }  } }  } } } } } } } } }  } }  } } }  } } } } } }}} } }  } }  } }  } }  } } } } } } } } } unfinished } } } } } } } } } } } } } } } } } } } } }  } } }  } }  } }  } }  } } } } } } } } } break. } } } } } } } } } } } } } } } } } } } } } } } } } }  } }  } }  } }  } } judge end?} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }  } } } } } } } } } } } } } } } } } }} }}}} } } } } } } } } } } } } } } } } } } } } }}} } } } } } } } } } } } } } } } } } } } } } }  } }  } }  } }  } }  } }  } } ok real final below. } } } } } } } } } } } } } } } } } }  } } } } } } } } } } }  } }  } }  } }  } } } } } } } } } } }  } } } } } } } } } }  } } } } } }))} } } } } } } } } } } } } } } End. } } } } } } } } }  } }  } }  } }  } }  } }  } }  } } } }  } } } } }  } }  } }  } }  } } } } } }  } } } } } } } } } } } } }  } }  } }  } }  } } ok, really end. } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }  } }  } }  } }  } }  } }  } }  } } }  } }  } }  } }  } } stop.} } }  } }  } }  } end.} } ok real minimal output: {"
 
+#. js-lingui-id: 8kN7d7
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Choose an existing timeline activity type to override"
+msgstr "上書きする既存のタイムラインアクティビティタイプを選択してください"
+
+#. js-lingui-id: dRdO/y
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Choose the object that emits this timeline activity type"
+msgstr "このタイムラインアクティビティタイプを発行するオブジェクトを選択してください"
+
+#. js-lingui-id: PDwfT5
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Choose the relation used by this timeline activity type"
+msgstr "このタイムラインアクティビティタイプで使用するリレーションを選択してください"
+
 #. js-lingui-id: NGL+Sl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -1969,6 +2029,16 @@ msgstr "コードステップの実行に失敗しました。"
 msgctxt "fieldMetadata.label"
 msgid "Color Scheme"
 msgstr "カラースキーム"
+
+#. js-lingui-id: 8nN8qg
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
+msgstr "ウィジェットヘッダーによって参照されているコマンドメニュー項目 {commandMenuItemUniversalIdentifier} は別のアプリケーションに属しています"
+
+#. js-lingui-id: fmk0Wo
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
+msgstr "ウィジェットヘッダーによって参照されているコマンドメニュー項目 {commandMenuItemUniversalIdentifier} が見つかりませんでした"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -2321,12 +2391,14 @@ msgid "Contradicting field permissions have been detected on a relation field."
 msgstr "矛盾するフィールド権限が関連フィールドで検出されました。"
 
 #. js-lingui-id: X/ryFh
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Core workflow id"
 msgstr "コアワークフロー ID"
 
 #. js-lingui-id: WkctC4
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Core workflow version id"
@@ -2598,6 +2670,11 @@ msgstr "このワークスペースではカスタムドメインが無効にな
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "Custom object is missing a label identifier field."
 msgstr "カスタムオブジェクトにラベル識別子フィールドがありません。"
+
+#. js-lingui-id: 7VVv8j
+#: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
+msgid "Custom timeline activity type cannot be reset to default."
+msgstr "カスタムタイムラインアクティビティタイプはデフォルトにリセットできません。"
 
 #. js-lingui-id: 34/Ymp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -3419,18 +3496,6 @@ msgctxt "fieldMetadata.label"
 msgid "Event ID"
 msgstr "イベントID"
 
-#. js-lingui-id: ygoA2u
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Event name"
-msgstr "イベント名"
-
-#. js-lingui-id: AvDRPM
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Event name"
-msgstr "イベント名"
-
 #. js-lingui-id: irEsRo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -3458,6 +3523,13 @@ msgstr "イベント参加者"
 msgctxt "fieldMetadata.description"
 msgid "Event target"
 msgstr "イベントの対象"
+
+#. js-lingui-id: KUIRIR
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Event type"
+msgstr "イベントの種類"
 
 #. js-lingui-id: NZy2VR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -4016,6 +4088,7 @@ msgstr "SDK クライアントのアーカイブ内にファイルが見つか�
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 #: src/engine/core-modules/file/file.exception.ts
+#: src/engine/core-modules/file/files-field/services/files-field.service.ts
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "File not found."
 msgstr "ファイルが見つかりません。"
@@ -5229,6 +5302,11 @@ msgstr "無効なターゲットURLが指定されました。"
 msgid "Invalid target URL. Please provide a valid HTTP or HTTPS URL."
 msgstr "無効なターゲットURLです。有効なHTTPまたはHTTPS URLを提供してください。"
 
+#. js-lingui-id: G26J1R
+#: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
+msgid "Invalid timeline activity type input."
+msgstr "タイムラインアクティビティタイプの入力が無効です。"
+
 #. js-lingui-id: sHcAMD
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid trigger type for enabling workflow trigger"
@@ -5792,6 +5870,23 @@ msgstr "棒グラフにはレイアウトが必須です"
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr "棒グラフウィジェット \"{widgetTitle}\" にはレイアウトが必須です"
+
+#. js-lingui-id: sAG9OB
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "linked a related note"
+msgstr "関連メモをリンクしました"
+
+#. js-lingui-id: ecrchg
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "linked a related task"
+msgstr "関連タスクをリンクしました"
+
+#. js-lingui-id: LXKHX6
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Linked and unlinked timeline activity emitters require a target relation"
+msgstr "リンク済みおよび未リンクのタイムラインアクティビティエミッターにはターゲットリレーションが必要です"
 
 #. js-lingui-id: TUocGa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -6564,6 +6659,16 @@ msgstr "ナビゲーションメニュー項目が見つかりません。"
 msgid "Navigation menu item type is required"
 msgstr "ナビゲーションメニュー項目のタイプが必要です"
 
+#. js-lingui-id: sq8J4x
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object metadata not found"
+msgstr "ナビゲーション先オブジェクトのメタデータが見つかりません"
+
+#. js-lingui-id: 4/QAvg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object not found"
+msgstr "ナビゲーション先オブジェクトが見つかりません"
+
 #. js-lingui-id: B/prgH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -6698,6 +6803,11 @@ msgstr "正規化された話者分離付き文字起こし"
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "Not authorized to access this OAuth provider."
 msgstr "この OAuth プロバイダーにアクセスする権限がありません。"
+
+#. js-lingui-id: KPx1UV
+#: src/utils/__test__/custom-exception.spec.ts
+msgid "Not found"
+msgstr "見つかりません"
 
 #. js-lingui-id: WunOam
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -6932,6 +7042,8 @@ msgstr "オブジェクトのラベルが短すぎます"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
@@ -8045,12 +8157,14 @@ msgid "Recurring Event ID"
 msgstr "定期的なイベントID"
 
 #. js-lingui-id: zEHtXk
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reference to the core workflow row"
 msgstr "コアワークフロー行への参照"
 
 #. js-lingui-id: avBuTv
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reference to the core workflowVersion row"
@@ -8152,6 +8266,12 @@ msgstr "お気に入りから削除"
 msgid "Remove this permission from all roles before deleting it"
 msgstr "削除する前に、この権限をすべてのロールから削除してください"
 
+#. js-lingui-id: bf8Nhj
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "removed an attachment"
+msgstr "添付ファイルを削除しました"
+
 #. js-lingui-id: U4APCE
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -8186,6 +8306,11 @@ msgstr "リクエストステータス"
 msgctxt "fieldMetadata.label"
 msgid "Requested"
 msgstr "リクエスト済み"
+
+#. js-lingui-id: c1RSQl
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Requested file range cannot be served."
+msgstr "要求されたファイル範囲を提供できません。"
 
 #. js-lingui-id: MU8Slt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -8838,6 +8963,12 @@ msgstr "送信日時"
 msgctxt "fieldMetadata.label"
 msgid "Sent count"
 msgstr "送信件数"
+
+#. js-lingui-id: ttuub1
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "sent or received an email"
+msgstr "メールを送信または受信しました"
 
 #. js-lingui-id: CMPgl1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9711,7 +9842,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "ファイルの拡張子がファイルの内容と一致しません。ファイルが破損しておらず、正しい拡張子であることを確認してください。"
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "ファイルはまだアップロードされていません。確定する前にアップロードしてください。"
 
@@ -9719,6 +9850,16 @@ msgstr "ファイルはまだアップロードされていません。確定す
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The file is empty or exceeds the maximum allowed size."
 msgstr "ファイルが空であるか、許可されている最大サイズを超えています。"
+
+#. js-lingui-id: 2hrpBa
+#: src/engine/core-modules/file/files-field/services/files-field.service.ts
+msgid "The file upload has not been completed. Please retry the upload."
+msgstr "ファイルのアップロードは完了していません。もう一度アップロードをお試しください。"
+
+#. js-lingui-id: 9TYO3w
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The front component used by this timeline activity type is not available"
+msgstr "このタイムラインアクティビティタイプで使用するフロントコンポーネントは利用できません"
 
 #. js-lingui-id: EJUSll
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -9782,6 +9923,11 @@ msgstr "更新する対象のオブジェクトが見つからなかったため
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-label-identifier-on-update-side-effect-handler.service.ts
 msgid "The object to update could not be found to reconcile its record page"
 msgstr "更新する対象のオブジェクトが見つからなかったため、そのレコードページを照合できませんでした。"
+
+#. js-lingui-id: QaaKZQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The object used by this timeline activity type is not available"
+msgstr "このタイムラインアクティビティタイプで使用するオブジェクトは利用できません"
 
 #. js-lingui-id: hx2IZ4
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -9890,6 +10036,21 @@ msgstr "オブジェクトの単数形と複数形の名前を同じにするこ
 msgid "The subscription is no longer available on the provider."
 msgstr "そのサブスクリプションは、プロバイダー上ではもう利用できません。"
 
+#. js-lingui-id: Eq5YMK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The target relation used by this timeline activity type is not available"
+msgstr "このタイムラインアクティビティタイプで使用するターゲットリレーションは利用できません"
+
+#. js-lingui-id: PLlXuR
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The timeline activity type override is not compatible with this event"
+msgstr "タイムラインアクティビティタイプの上書きはこのイベントと互換性がありません"
+
+#. js-lingui-id: IT44Du
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The trigger fields used by this timeline activity type are not available"
+msgstr "このタイムラインアクティビティタイプで使用するトリガーフィールドは利用できません"
+
 #. js-lingui-id: J1prza
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -9897,7 +10058,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "このキャンペーンが送信された配信停止トピック"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "アップロードされたファイルが宣言されたサイズと一致しません。もう一度アップロードをお試しください。"
@@ -10018,11 +10179,6 @@ msgstr "前のオンボーディング手順に戻ることはできません。
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "ワークスペースが有効化される前は、次のフィールドを更新できません: {fieldsList}."
-
-#. js-lingui-id: Iy9pZw
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldLabel} value is already in use. Please check your data and try again."
-msgstr "この{fieldLabel}の値はすでに使用されています。データを確認してもう一度お試しください。"
 
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -10194,7 +10350,7 @@ msgid "This field references an object that could not be found"
 msgstr "このフィールドは見つからないオブジェクトを参照しています"
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "このファイル形式はサポートされていません。"
 
@@ -10277,11 +10433,6 @@ msgstr "このオブジェクト権限はそのロールに既に設定されて
 msgid "This operation is not allowed."
 msgstr "この操作は許可されていません。"
 
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-datasource.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "この操作は許可されていません。別の方法を試してください。サポートが必要な場合はお問い合わせください。"
-
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "This operation is not supported."
@@ -10289,7 +10440,6 @@ msgstr "この操作はサポートされていません。"
 
 #. js-lingui-id: fxy039
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "この操作は、存在しない、または既存のリレーションシップのために変更できないレコードを参照しています。"
 
@@ -10321,7 +10471,6 @@ msgstr "このレコードはすでに存在します。データを確認して
 
 #. js-lingui-id: BQ4MUY
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "このレコードは、他のレコードからまだ参照されているため削除できません。"
 
@@ -10385,6 +10534,11 @@ msgstr "このサブドメインはすでに使用されています。"
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This suppressed address no longer exists."
 msgstr "この配信抑制対象のアドレスは存在しなくなりました。"
+
+#. js-lingui-id: 0GMgIa
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "This timeline activity action is not supported"
+msgstr "このタイムラインアクティビティアクションはサポートされていません"
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -10557,6 +10711,80 @@ msgctxt "fieldMetadata.description"
 msgid "Timeline activity record position"
 msgstr "タイムラインアクティビティのレコード位置"
 
+#. js-lingui-id: wt+xfK
+#. placeholder {0}: conflictingResolverType?.name ?? timelineActivityType.name
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type conflicts with {0} for the same action, object, and target relation"
+msgstr "タイムラインアクティビティタイプは、同じアクション、オブジェクト、およびターゲットリレーションについて{0}と競合しています"
+
+#. js-lingui-id: xFv7OI
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Timeline activity type describing this event"
+msgstr "このイベントを説明するタイムラインアクティビティタイプ"
+
+#. js-lingui-id: sqmSqj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type label is required"
+msgstr "タイムラインアクティビティタイプのラベルは必須です"
+
+#. js-lingui-id: jxz4n1
+#: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
+msgid "Timeline activity type name already exists."
+msgstr "タイムラインアクティビティタイプ名はすでに存在します。"
+
+#. js-lingui-id: 0QdkGz
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type name is required"
+msgstr "タイムラインアクティビティタイプの名前は必須です"
+
+#. js-lingui-id: kNsVJi
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type not found"
+msgstr "タイムラインアクティビティタイプが見つかりません"
+
+#. js-lingui-id: 1+EKCZ
+#: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
+msgid "Timeline activity type not found."
+msgstr "タイムラインアクティビティタイプが見つかりません。"
+
+#. js-lingui-id: 0VIqW4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type override must reference a compatible type owned by the target object's application"
+msgstr "タイムラインアクティビティタイプの上書きは、ターゲットオブジェクトのアプリケーションが所有する互換性のあるタイプを参照する必要があります"
+
+#. js-lingui-id: kfv1kx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type references a front component that does not belong to its application"
+msgstr "タイムラインアクティビティタイプは、そのアプリケーションに属していないフロントコンポーネントを参照しています"
+
+#. js-lingui-id: f7+vxa
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type references an object that does not exist"
+msgstr "タイムラインアクティビティタイプは、存在しないオブジェクトを参照しています"
+
+#. js-lingui-id: Y9ZQls
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type target relation must be a direct or junction relation on its source object"
+msgstr "タイムラインアクティビティタイプのターゲットリレーションは、そのソースオブジェクトの直接リレーションまたは中間リレーションである必要があります"
+
+#. js-lingui-id: ShcC6H
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type trigger fields must be non-empty fields on the source object of an updated relation event"
+msgstr "タイムラインアクティビティタイプのトリガーフィールドは、更新されたリレーションイベントのソースオブジェクト上にある空でないフィールドである必要があります"
+
+#. js-lingui-id: 8VTlb5
+#. placeholder {0}: timelineActivityType.name
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type with name {0} already exists for this application"
+msgstr "このアプリケーションには、名前 {0} のタイムラインアクティビティタイプが既に存在します。"
+
 #. js-lingui-id: o3xAcd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10721,6 +10949,24 @@ msgstr "不明な操作です。"
 msgid "Unknown permission required."
 msgstr "不明な権限が必要です。"
 
+#. js-lingui-id: o/bbIF
+#. placeholder {0}: timelineActivityType.action
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Unknown timeline activity action {0}"
+msgstr "不明なタイムラインアクティビティアクション {0}"
+
+#. js-lingui-id: spJjXJ
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "unlinked a related note"
+msgstr "関連メモのリンクを解除しました"
+
+#. js-lingui-id: IYBfg3
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "unlinked a related task"
+msgstr "関連タスクのリンクを解除しました"
+
 #. js-lingui-id: deE0XW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -10798,6 +11044,24 @@ msgstr "更新日時"
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "更新フィールドの制限は更新可能なオブジェクトにのみ適用されます。"
+
+#. js-lingui-id: 7YsDpr
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "updated"
+msgstr "更新済み"
+
+#. js-lingui-id: Hp+aAn
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "updated a related note"
+msgstr "関連メモを更新しました"
+
+#. js-lingui-id: FoQjXC
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "updated a related task"
+msgstr "関連タスクを更新しました"
 
 #. js-lingui-id: U8sfYC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -11422,6 +11686,36 @@ msgstr "ビュー グループを作成するには ViewId が必要です。"
 msgid "ViewId is required to create a view sort."
 msgstr "ビュー ソートを作成するには ViewId が必要です。"
 
+#. js-lingui-id: vuzFx0
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was created by"
+msgstr "作成者"
+
+#. js-lingui-id: edc5Bh
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was deleted by"
+msgstr "によって削除されました"
+
+#. js-lingui-id: SfnmZe
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was linked by"
+msgstr "によってリンクされました"
+
+#. js-lingui-id: tKm/LA
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was restored by"
+msgstr "によって復元されました"
+
+#. js-lingui-id: 0i3MMx
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was unlinked by"
+msgstr "によってリンクを解除されました"
+
 #. js-lingui-id: xvV2NJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
@@ -11526,6 +11820,21 @@ msgstr "ウィジェットがグリッドの高さを超えています"
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util.ts
 msgid "Widget extends beyond grid width"
 msgstr "ウィジェットがグリッドの幅を超えています"
+
+#. js-lingui-id: GE0fWY
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must be unique"
+msgstr "ウィジェットヘッダーのアクションは一意である必要があります"
+
+#. js-lingui-id: djzz9p
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must belong to the same application as the widget"
+msgstr "ウィジェットヘッダーのアクションは、ウィジェットと同じアプリケーションに属している必要があります"
+
+#. js-lingui-id: pjpuGA
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header command menu item references must be unique"
+msgstr "ウィジェットヘッダーのコマンドメニュー項目の参照は一意である必要があります"
 
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
@@ -12119,9 +12428,8 @@ msgid "You can only update one record with files field at once."
 msgstr "ファイルフィールドを含むレコードは一度に一件しか更新できません。"
 
 #. js-lingui-id: 4ysDL0
-#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
+#: src/engine/twenty-orm/repository/workspace-repository.ts
+#: src/engine/twenty-orm/repository/workspace-repository.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr "一度に更新できるレコードは最大{QUERY_MAX_RECORDS}件です。"
 
@@ -12155,6 +12463,11 @@ msgstr "最後の管理者から管理者ロールを削除することはでき
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
 msgid "You cannot revoke admin panel access from the last server administrator."
 msgstr "最後のサーバー管理者から管理パネルアクセスを取り消すことはできません。"
+
+#. js-lingui-id: y2sD5W
+#: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
+msgid "You cannot send from this address."
+msgstr "このアドレスから送信することはできません。"
 
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts

@@ -148,6 +148,27 @@ import { EncryptEmptyApplicationVariablesSlowInstanceCommand } from 'src/databas
 import { AddWritabilityToMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-32/2-32-instance-command-fast-1786713600000-add-writability-to-metadata';
 import { AddUninstallLogicFunctionIdToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-32/2-32-instance-command-fast-1786959731000-add-uninstall-logic-function-id-to-application';
 import { BackfillUninstallLogicFunctionIdOnApplicationSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-32/2-32-instance-command-slow-1786959731001-backfill-uninstall-logic-function-id-on-application';
+import { AddUninstallHookCompletedForRequestedAtToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-instance-command-fast-1787151824000-add-uninstall-hook-completed-for-requested-at-to-application';
+import { AddTimelineActivityTypeTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-instance-command-fast-1787352088649-add-timeline-activity-type-table';
+import { RefactorTimelineActivityTypeRenderingFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787471608312-refactor-timeline-activity-type-rendering';
+import { AddTimelineActivityRoutingFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787471608313-add-timeline-activity-routing';
+import { AddTimelineActivityTypeReplacementFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787471608314-add-timeline-activity-type-replacement';
+import { TimelineActivityTypeOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787471608315-timeline-activity-type-overridable-entity';
+import { EnforceTimelineActivityTypeEmitUniquenessFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787471608316-enforce-timeline-activity-type-emit-uniqueness';
+import { AddCommandMenuItemTargetObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-35/2-35-instance-command-fast-1787573269955-add-command-menu-item-target-object-metadata';
+import { DropTimelineActivityTypeRendererFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-35/2-35-instance-command-fast-1787648000001-drop-timeline-activity-type-renderer';
+import { AddLabelToApplicationVariableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-36/2-36-instance-command-fast-1787761629092-add-label-to-application-variable';
+import { AddUsageLimitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-36/2-36-instance-command-fast-1787821567133-add-usage-limit';
+import { MakeUserEmailCaseInsensitiveFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-37/2-37-instance-command-fast-1787836741000-make-user-email-case-insensitive';
+import { BackfillMissingPageLayoutWidgetPositionsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-37/2-37-instance-command-slow-1787838153752-backfill-missing-page-layout-widget-positions';
+import { AddRecordFormPageLayoutAndFormFieldWidgetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787920209300-add-record-form-page-layout-and-form-field-widget';
+import { DropBillingCustomerCreditBalanceMicroFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787906740818-drop-billing-customer-credit-balance-micro';
+import { DropHasReachedCurrentPeriodCapFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787906740819-drop-has-reached-current-period-cap';
+import { AddTimelineActivityHappensAtFieldFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787918663364-add-timeline-activity-happens-at-field';
+import { AddPageLayoutIsFirstTabPinnedFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787929843737-add-page-layout-is-first-tab-pinned';
+import { CreateCampaignDeliveryFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788200700000-create-campaign-delivery';
+import { AddStateToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788260646460-add-state-to-application';
+import { RenameEmailingDomainPermanentlySuspendedToSandboxFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788272351966-rename-emailing-domain-permanently-suspended-to-sandbox';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -298,4 +319,25 @@ export const INSTANCE_COMMANDS = [
   AddWritabilityToMetadataFastInstanceCommand,
   AddUninstallLogicFunctionIdToApplicationFastInstanceCommand,
   BackfillUninstallLogicFunctionIdOnApplicationSlowInstanceCommand,
+  AddUninstallHookCompletedForRequestedAtToApplicationFastInstanceCommand,
+  AddTimelineActivityTypeTableFastInstanceCommand,
+  RefactorTimelineActivityTypeRenderingFastInstanceCommand,
+  AddTimelineActivityRoutingFastInstanceCommand,
+  AddTimelineActivityTypeReplacementFastInstanceCommand,
+  TimelineActivityTypeOverridableEntityFastInstanceCommand,
+  EnforceTimelineActivityTypeEmitUniquenessFastInstanceCommand,
+  AddCommandMenuItemTargetObjectMetadataFastInstanceCommand,
+  DropTimelineActivityTypeRendererFastInstanceCommand,
+  AddLabelToApplicationVariableFastInstanceCommand,
+  AddUsageLimitFastInstanceCommand,
+  MakeUserEmailCaseInsensitiveFastInstanceCommand,
+  BackfillMissingPageLayoutWidgetPositionsSlowInstanceCommand,
+  AddRecordFormPageLayoutAndFormFieldWidgetFastInstanceCommand,
+  DropBillingCustomerCreditBalanceMicroFastInstanceCommand,
+  DropHasReachedCurrentPeriodCapFastInstanceCommand,
+  AddTimelineActivityHappensAtFieldFastInstanceCommand,
+  AddPageLayoutIsFirstTabPinnedFastInstanceCommand,
+  CreateCampaignDeliveryFastInstanceCommand,
+  AddStateToApplicationFastInstanceCommand,
+  RenameEmailingDomainPermanentlySuspendedToSandboxFastInstanceCommand,
 ];

@@ -5,11 +5,10 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 import { isDefined } from 'twenty-shared/utils';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-type TextAreaVariant = 'default' | 'transparent';
 
 export type TextAreaProps = {
   textAreaId: string;
@@ -25,7 +24,7 @@ export type TextAreaProps = {
   onFocus?: () => void;
   onBlur?: () => void;
   readOnly?: boolean;
-  variant?: TextAreaVariant;
+  variant?: FormFieldInputVariant;
 };
 
 const StyledContainer = styled.div`
@@ -42,7 +41,9 @@ const StyledLabel = styled.label`
   margin-bottom: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledTextAreaContainer = styled.div<{ variant: TextAreaVariant }>`
+const StyledTextAreaContainer = styled.div<{
+  variant: FormFieldInputVariant;
+}>`
   > textarea {
     background-color: ${({ variant }) =>
       variant === 'transparent'

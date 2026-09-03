@@ -293,7 +293,6 @@ msgstr "’n Vereiste veld ontbreek."
 
 #. js-lingui-id: /ffPWJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "’n Vereiste veld ontbreek. Verskaf asseblief al die vereiste waardes en probeer weer."
 
@@ -339,6 +338,16 @@ msgstr "'n Tydelike fout het voorgekom. Probeer asseblief weer."
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "A temporary network error occurred."
 msgstr "'n Tydelike netwerkfout het voorgekom."
+
+#. js-lingui-id: WzDeE/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "A timeline activity type targeting another application's object must declare the timeline activity type it overrides"
+msgstr "’n Tydlynaktiwiteitstipe wat ’n ander toepassing se objek teiken, moet die tydlynaktiwiteitstipe verklaar wat dit oorskryf."
+
+#. js-lingui-id: JJamm8
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "A timeline activity type with this name already exists for this application"
+msgstr "'n Tydlynaktiwiteitstipe met hierdie naam bestaan reeds vir hierdie toepassing."
 
 #. js-lingui-id: WBtp3/
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -420,6 +429,11 @@ msgstr "'n Sigsorteerfout het voorgekom."
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "A webhook with this configuration already exists."
 msgstr "'n Webhook met hierdie konfigurasie bestaan reeds."
+
+#. js-lingui-id: I0rHKG
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "A widget header action was not found"
+msgstr "’n Legstukopskrifaksie is nie gevind nie"
 
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -665,6 +679,11 @@ msgstr "'n Agent met hierdie naam bestaan reeds"
 msgid "An agent with this name already exists."
 msgstr "'n Agent met hierdie naam bestaan reeds."
 
+#. js-lingui-id: SC8Bk0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "An application timeline activity emitter must target one of its objects"
+msgstr "’n Toepassingstydlynaktiwiteit-uitstuurder moet een van sy objekte teiken"
+
 #. js-lingui-id: VID94s
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -787,6 +806,11 @@ msgstr "Jaarlikse inkomste"
 msgid "Another application in this workspace has already registered a permission flag with this key."
 msgstr "Nog \\'n toepassing in hierdie werkruimte het reeds \\'n toestemmingsvlag met hierdie sleutel geregistreer."
 
+#. js-lingui-id: 8IMyyd
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Another timeline activity type already handles this action, object, and target relation"
+msgstr "’n Ander tydlynaktiwiteitstipe hanteer reeds hierdie aksie, objek en teikenverwantskap"
+
 #. js-lingui-id: fRWsMD
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "API key is not configured."
@@ -812,6 +836,11 @@ msgstr "API-sleutelrol nie gevind nie."
 msgctxt "fieldMetadata.label"
 msgid "Apostrophe and dot"
 msgstr "Apostrof en punt"
+
+#. js-lingui-id: 1WWVFC
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Application cleanup is still in progress. Please try again."
+msgstr "Toepassingsopruiming is steeds aan die gang. Probeer asseblief weer."
 
 #. js-lingui-id: 8O6Zab
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -858,6 +887,11 @@ msgstr "Toepassingsregistrasie nie gevind nie."
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Application registration variable not found."
 msgstr "Toepassingsregistrasieveranderlike nie gevind nie."
+
+#. js-lingui-id: P+wtF/
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Application uninstall logic function failed."
+msgstr "Die toepassing se verwyderingslogikafunksie het misluk."
 
 #. js-lingui-id: QtRMs/
 #: src/engine/core-modules/application/application.exception.ts
@@ -974,6 +1008,12 @@ msgstr "Geassosieerde Gebruikers-ID"
 msgid "At least one relation is required"
 msgstr "Ten minste een verhouding word vereis"
 
+#. js-lingui-id: QAZeXE
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "attached a file"
+msgstr "het 'n lêer aangeheg"
+
 #. js-lingui-id: b1LFyn
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
@@ -1064,6 +1104,12 @@ msgstr "Aanhegsels gekoppel aan die geleentheid"
 msgctxt "fieldMetadata.description"
 msgid "Attachments linked to the workflow"
 msgstr "Aanhegsels gekoppel aan die werksvloei"
+
+#. js-lingui-id: mGHuob
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "attended a calendar event"
+msgstr "het 'n kalendergeleentheid bygewoon"
 
 #. js-lingui-id: 0N8sVQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -1271,6 +1317,11 @@ msgstr "Inhoud moet 'n objek wees"
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util.ts
 msgid "Body must be an object for widget \"{widgetTitle}\""
 msgstr "Inhoud moet 'n objek wees vir die widget \"{widgetTitle}\""
+
+#. js-lingui-id: rEDXNA
+#: src/utils/__test__/custom-exception.spec.ts
+msgid "Boom"
+msgstr "Boom"
 
 #. js-lingui-id: xGunO9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -1549,12 +1600,6 @@ msgstr "Kalenderaansig moet 'n kalenderveld hê"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar view must have a calendar layout"
 msgstr "Kalenderaansig moet 'n kalenderuitleg hê"
-
-#. js-lingui-id: D9pZ2l
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-msgid "Calendar widget views only support the month layout"
-msgstr "Kalender-widget-aansigte ondersteun slegs die maanduitleg"
 
 #. js-lingui-id: 0U7DBn
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -1921,6 +1966,21 @@ msgstr "Geselsdraad nie gevind nie."
 msgid "Chat thread title cannot be empty."
 msgstr "Gespreksdraad-titel kan nie leeg wees nie."
 
+#. js-lingui-id: 8kN7d7
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Choose an existing timeline activity type to override"
+msgstr "Kies ’n bestaande tydlynaktiwiteitstipe om te oorskryf"
+
+#. js-lingui-id: dRdO/y
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Choose the object that emits this timeline activity type"
+msgstr "Kies die objek wat hierdie tydlynaktiwiteitstipe uitstuur"
+
+#. js-lingui-id: PDwfT5
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Choose the relation used by this timeline activity type"
+msgstr "Kies die verwantskap wat deur hierdie tydlynaktiwiteitstipe gebruik word"
+
 #. js-lingui-id: NGL+Sl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -1969,6 +2029,16 @@ msgstr "Kodestap-uitvoering het misluk."
 msgctxt "fieldMetadata.label"
 msgid "Color Scheme"
 msgstr "Kleurskema"
+
+#. js-lingui-id: 8nN8qg
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
+msgstr "Opdragkieslysitem {commandMenuItemUniversalIdentifier} waarna deur die legstukopskrif verwys word, behoort aan ’n ander toepassing"
+
+#. js-lingui-id: fmk0Wo
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
+msgstr "Opdragkieslysitem {commandMenuItemUniversalIdentifier} waarna deur die legstukopskrif verwys word, is nie gevind nie"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -2321,12 +2391,14 @@ msgid "Contradicting field permissions have been detected on a relation field."
 msgstr "Teenstrydige veldtoestemmings is opgespoor op 'n verhoudingsveld."
 
 #. js-lingui-id: X/ryFh
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Core workflow id"
 msgstr "Kern-werkvloei-ID"
 
 #. js-lingui-id: WkctC4
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Core workflow version id"
@@ -2598,6 +2670,11 @@ msgstr "Aangepaste domeine is gedeaktiveer vir hierdie werksruimte."
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "Custom object is missing a label identifier field."
 msgstr "Aangepaste objek kort 'n etiket-identifiseerveld."
+
+#. js-lingui-id: 7VVv8j
+#: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
+msgid "Custom timeline activity type cannot be reset to default."
+msgstr "Pasgemaakte tydlynaktiwiteitstipe kan nie na verstek teruggestel word nie."
 
 #. js-lingui-id: 34/Ymp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -3419,18 +3496,6 @@ msgctxt "fieldMetadata.label"
 msgid "Event ID"
 msgstr "Gebeurtenis ID"
 
-#. js-lingui-id: ygoA2u
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Event name"
-msgstr "Gebeurtenisnaam"
-
-#. js-lingui-id: AvDRPM
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Event name"
-msgstr "Gebeurtenisnaam"
-
 #. js-lingui-id: irEsRo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -3458,6 +3523,13 @@ msgstr "Gebeurtenisdeelnemers"
 msgctxt "fieldMetadata.description"
 msgid "Event target"
 msgstr "Gebeurtenisteiken"
+
+#. js-lingui-id: KUIRIR
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Event type"
+msgstr "Gebeurtenistipe"
 
 #. js-lingui-id: NZy2VR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -4016,6 +4088,7 @@ msgstr "Lêer nie in SDK-kliëntargief gevind nie."
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 #: src/engine/core-modules/file/file.exception.ts
+#: src/engine/core-modules/file/files-field/services/files-field.service.ts
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "File not found."
 msgstr "Lêer nie gevind nie."
@@ -5229,6 +5302,11 @@ msgstr "Ongeldige teiken-URL verskaf"
 msgid "Invalid target URL. Please provide a valid HTTP or HTTPS URL."
 msgstr "Ongeldige teiken-URL. Verskaf asseblief 'n geldige HTTP- of HTTPS-URL."
 
+#. js-lingui-id: G26J1R
+#: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
+msgid "Invalid timeline activity type input."
+msgstr "Ongeldige invoer vir tydlynaktiwiteitstipe."
+
 #. js-lingui-id: sHcAMD
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid trigger type for enabling workflow trigger"
@@ -5792,6 +5870,23 @@ msgstr "Uitleg word vereis vir staafgrafiek"
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr "Uitleg word vereis vir staafgrafiek-widget \"{widgetTitle}\""
+
+#. js-lingui-id: sAG9OB
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "linked a related note"
+msgstr "het 'n verwante nota gekoppel"
+
+#. js-lingui-id: ecrchg
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "linked a related task"
+msgstr "het 'n verwante taak gekoppel"
+
+#. js-lingui-id: LXKHX6
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Linked and unlinked timeline activity emitters require a target relation"
+msgstr "Gekoppelde en ongekoppelde tydlynaktiwiteit-uitstuurders vereis ’n teikenverwantskap"
 
 #. js-lingui-id: TUocGa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -6564,6 +6659,16 @@ msgstr "Navigasiekieslysitem nie gevind nie."
 msgid "Navigation menu item type is required"
 msgstr "Navigasiekieslysitemtipe word vereis"
 
+#. js-lingui-id: sq8J4x
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object metadata not found"
+msgstr "Navigasieteiken-objekmetadata nie gevind nie"
+
+#. js-lingui-id: 4/QAvg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object not found"
+msgstr "Navigasieteiken-objek nie gevind nie"
+
 #. js-lingui-id: B/prgH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -6698,6 +6803,11 @@ msgstr "Gegenormaliseerde, gediariseerde transkripsie"
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "Not authorized to access this OAuth provider."
 msgstr "Nie gemagtig om hierdie OAuth-verskaffer te gebruik nie."
+
+#. js-lingui-id: KPx1UV
+#: src/utils/__test__/custom-exception.spec.ts
+msgid "Not found"
+msgstr "Nie gevind nie"
 
 #. js-lingui-id: WunOam
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -6932,6 +7042,8 @@ msgstr "Voorwerp etiket is te kort"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
@@ -8045,12 +8157,14 @@ msgid "Recurring Event ID"
 msgstr "Herhalende Gebeurtenis ID"
 
 #. js-lingui-id: zEHtXk
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reference to the core workflow row"
 msgstr "Verwysing na die kern-werkvloei-ry"
 
 #. js-lingui-id: avBuTv
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reference to the core workflowVersion row"
@@ -8152,6 +8266,12 @@ msgstr "Verwyder uit gunstelinge"
 msgid "Remove this permission from all roles before deleting it"
 msgstr "Verwyder hierdie toestemming uit alle rolle voordat dit uitgevee word"
 
+#. js-lingui-id: bf8Nhj
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "removed an attachment"
+msgstr "het 'n aanhangsel verwyder"
+
 #. js-lingui-id: U4APCE
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -8186,6 +8306,11 @@ msgstr "Versoekstatus"
 msgctxt "fieldMetadata.label"
 msgid "Requested"
 msgstr "Aangevra"
+
+#. js-lingui-id: c1RSQl
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Requested file range cannot be served."
+msgstr "Versoekte lêerreeks kan nie bedien word nie."
 
 #. js-lingui-id: MU8Slt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -8838,6 +8963,12 @@ msgstr "Gestuur om"
 msgctxt "fieldMetadata.label"
 msgid "Sent count"
 msgstr "Aantal gestuur"
+
+#. js-lingui-id: ttuub1
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "sent or received an email"
+msgstr "het 'n e-pos gestuur of ontvang"
 
 #. js-lingui-id: CMPgl1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9711,7 +9842,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "Die lêeruitbreiding stem nie ooreen met die lêerinhoud nie. Maak asseblief seker dat jou lêer nie beskadig is nie en die korrekte lêeruitbreiding het."
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "Die lêer is nog nie opgelaai nie. Laai dit asseblief op voordat jy bevestig."
 
@@ -9719,6 +9850,16 @@ msgstr "Die lêer is nog nie opgelaai nie. Laai dit asseblief op voordat jy beve
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The file is empty or exceeds the maximum allowed size."
 msgstr "Die lêer is leeg of oorskry die maksimum toegelate grootte."
+
+#. js-lingui-id: 2hrpBa
+#: src/engine/core-modules/file/files-field/services/files-field.service.ts
+msgid "The file upload has not been completed. Please retry the upload."
+msgstr "Die lêeroplaai is nie voltooi nie. Probeer asseblief om dit weer op te laai."
+
+#. js-lingui-id: 9TYO3w
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The front component used by this timeline activity type is not available"
+msgstr "Die voorkantkomponent wat deur hierdie tydlynaktiwiteitstipe gebruik word, is nie beskikbaar nie"
 
 #. js-lingui-id: EJUSll
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -9782,6 +9923,11 @@ msgstr "Die objek wat bygewerk moet word, kon nie gevind word om sy INDEX-aansig
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-label-identifier-on-update-side-effect-handler.service.ts
 msgid "The object to update could not be found to reconcile its record page"
 msgstr "Die objek wat bygewerk moet word, kon nie gevind word om sy rekordbladsy te versoen nie"
+
+#. js-lingui-id: QaaKZQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The object used by this timeline activity type is not available"
+msgstr "Die objek wat deur hierdie tydlynaktiwiteitstipe gebruik word, is nie beskikbaar nie"
 
 #. js-lingui-id: hx2IZ4
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -9890,6 +10036,21 @@ msgstr "Die enkelvoud en meervoud name kan nie dieselfde vir 'n voorwerp wees ni
 msgid "The subscription is no longer available on the provider."
 msgstr "Die intekening is nie meer by die verskaffer beskikbaar nie."
 
+#. js-lingui-id: Eq5YMK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The target relation used by this timeline activity type is not available"
+msgstr "Die teikenverwantskap wat deur hierdie tydlynaktiwiteitstipe gebruik word, is nie beskikbaar nie"
+
+#. js-lingui-id: PLlXuR
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The timeline activity type override is not compatible with this event"
+msgstr "Die oorskrywing van die tydlynaktiwiteitstipe is nie versoenbaar met hierdie gebeurtenis nie"
+
+#. js-lingui-id: IT44Du
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The trigger fields used by this timeline activity type are not available"
+msgstr "Die snellervelde wat deur hierdie tydlynaktiwiteitstipe gebruik word, is nie beskikbaar nie"
+
 #. js-lingui-id: J1prza
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -9897,7 +10058,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "Die afteken-onderwerp waaronder hierdie veldtog gestuur is"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "Die opgelaaide lêer stem nie ooreen met die verklaarde grootte nie. Probeer asseblief weer om dit op te laai."
@@ -10018,11 +10179,6 @@ msgstr "Daar is geen vorige stap in die inleidingsproses om na terug te gaan nie
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Hierdie velde kan nie bygewerk word voordat die werksruimte geaktiveer is nie: {fieldsList}."
-
-#. js-lingui-id: Iy9pZw
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldLabel} value is already in use. Please check your data and try again."
-msgstr ""
 
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -10194,7 +10350,7 @@ msgid "This field references an object that could not be found"
 msgstr "Hierdie veld verwys na ’n objek wat nie gevind kon word nie"
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "Hierdie lêerformaat word nie ondersteun nie."
 
@@ -10277,11 +10433,6 @@ msgstr "Hierdie objektoestemming is reeds vir die rol ingestel"
 msgid "This operation is not allowed."
 msgstr "Hierdie bewerking word nie toegelaat nie."
 
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-datasource.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "Hierdie operasie word nie toegelaat nie. Probeer asseblief 'n ander benadering of kontak ondersteuning indien jy hulp benodig."
-
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "This operation is not supported."
@@ -10289,7 +10440,6 @@ msgstr "Hierdie bewerking word nie ondersteun nie."
 
 #. js-lingui-id: fxy039
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Hierdie bewerking verwys na ’n rekord wat nie bestaan nie of nie gewysig kan word nie weens bestaande verwantskappe."
 
@@ -10321,7 +10471,6 @@ msgstr "Hierdie rekord bestaan reeds. Gaan asseblief jou data na en probeer weer
 
 #. js-lingui-id: BQ4MUY
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Hierdie rekord kan nie geskrap word nie omdat ander rekords nog daarna verwys."
 
@@ -10385,6 +10534,11 @@ msgstr "Hierdie subdomein is reeds geneem."
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This suppressed address no longer exists."
 msgstr "Hierdie onderdrukte adres bestaan nie meer nie."
+
+#. js-lingui-id: 0GMgIa
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "This timeline activity action is not supported"
+msgstr "Hierdie tydlynaktiwiteitsaksie word nie ondersteun nie"
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -10557,6 +10711,80 @@ msgctxt "fieldMetadata.description"
 msgid "Timeline activity record position"
 msgstr "Tydlynaktiwiteit-rekordposisie"
 
+#. js-lingui-id: wt+xfK
+#. placeholder {0}: conflictingResolverType?.name ?? timelineActivityType.name
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type conflicts with {0} for the same action, object, and target relation"
+msgstr "Tydlynaktiwiteitstipe bots met {0} vir dieselfde aksie, objek en teikenverwantskap"
+
+#. js-lingui-id: xFv7OI
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Timeline activity type describing this event"
+msgstr "Tydlynaktiwiteitstipe wat hierdie gebeurtenis beskryf"
+
+#. js-lingui-id: sqmSqj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type label is required"
+msgstr "Tydlynaktiwiteitstipe-etiket is nodig"
+
+#. js-lingui-id: jxz4n1
+#: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
+msgid "Timeline activity type name already exists."
+msgstr "Tydlynaktiwiteitstipe se naam bestaan reeds."
+
+#. js-lingui-id: 0QdkGz
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type name is required"
+msgstr "Tydlynaktiwiteitstipe-naam is nodig"
+
+#. js-lingui-id: kNsVJi
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type not found"
+msgstr "Tydlynaktiwiteitstipe nie gevind nie"
+
+#. js-lingui-id: 1+EKCZ
+#: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
+msgid "Timeline activity type not found."
+msgstr "Tydlynaktiwiteitstipe nie gevind nie."
+
+#. js-lingui-id: 0VIqW4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type override must reference a compatible type owned by the target object's application"
+msgstr "Oorskrywing van tydlynaktiwiteitstipe moet na ’n versoenbare tipe verwys wat deur die teikenobjek se toepassing besit word"
+
+#. js-lingui-id: kfv1kx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type references a front component that does not belong to its application"
+msgstr "Tydlynaktiwiteitstipe verwys na ’n voorkantkomponent wat nie aan sy toepassing behoort nie"
+
+#. js-lingui-id: f7+vxa
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type references an object that does not exist"
+msgstr "Tydlynaktiwiteitstipe verwys na ’n objek wat nie bestaan nie"
+
+#. js-lingui-id: Y9ZQls
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type target relation must be a direct or junction relation on its source object"
+msgstr "Teikenverhouding vir tydlynaktiwiteitstipe moet 'n direkte of kruispuntverhouding op sy bronobjek wees"
+
+#. js-lingui-id: ShcC6H
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type trigger fields must be non-empty fields on the source object of an updated relation event"
+msgstr "Tydlynaktiwiteitstipe se snellervelde moet nie-leë velde op die bronobjek van ’n bygewerkte verwantskapgebeurtenis wees"
+
+#. js-lingui-id: 8VTlb5
+#. placeholder {0}: timelineActivityType.name
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type with name {0} already exists for this application"
+msgstr "Tydlynaktiwiteitstipe met naam {0} bestaan reeds vir hierdie toepassing"
+
 #. js-lingui-id: o3xAcd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10721,6 +10949,24 @@ msgstr "Onbekende bewerking."
 msgid "Unknown permission required."
 msgstr "Onbekende toestemming vereis."
 
+#. js-lingui-id: o/bbIF
+#. placeholder {0}: timelineActivityType.action
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Unknown timeline activity action {0}"
+msgstr "Onbekende tydlynaktiwiteitsaksie {0}"
+
+#. js-lingui-id: spJjXJ
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "unlinked a related note"
+msgstr "het 'n verwante nota ontkoppel"
+
+#. js-lingui-id: IYBfg3
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "unlinked a related task"
+msgstr "het 'n verwante taak ontkoppel"
+
 #. js-lingui-id: deE0XW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -10798,6 +11044,24 @@ msgstr "Opdateringsdatum en tyd"
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "Opdateringsveldbeperkings geld slegs vir opdateerbare objekte."
+
+#. js-lingui-id: 7YsDpr
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "updated"
+msgstr "opgedateer"
+
+#. js-lingui-id: Hp+aAn
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "updated a related note"
+msgstr "het 'n verwante nota bygewerk"
+
+#. js-lingui-id: FoQjXC
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "updated a related task"
+msgstr "het 'n verwante taak bygewerk"
 
 #. js-lingui-id: U8sfYC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -11422,6 +11686,36 @@ msgstr "ViewId is benodig om 'n aansiggroep te skep."
 msgid "ViewId is required to create a view sort."
 msgstr "ViewId is benodig om 'n aansigsorteer te skep."
 
+#. js-lingui-id: vuzFx0
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was created by"
+msgstr "is geskep deur"
+
+#. js-lingui-id: edc5Bh
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was deleted by"
+msgstr "is verwyder deur"
+
+#. js-lingui-id: SfnmZe
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was linked by"
+msgstr "is gekoppel deur"
+
+#. js-lingui-id: tKm/LA
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was restored by"
+msgstr "is herstel deur"
+
+#. js-lingui-id: 0i3MMx
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was unlinked by"
+msgstr "is ontkoppel deur"
+
 #. js-lingui-id: xvV2NJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
@@ -11526,6 +11820,21 @@ msgstr "Widget strek buite die roosterhoogte"
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util.ts
 msgid "Widget extends beyond grid width"
 msgstr "Widget strek buite die roosterbreedte"
+
+#. js-lingui-id: GE0fWY
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must be unique"
+msgstr "Legstukopskrifaksies moet uniek wees"
+
+#. js-lingui-id: djzz9p
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must belong to the same application as the widget"
+msgstr "Legstukopskrifaksies moet aan dieselfde toepassing as die legstuk behoort"
+
+#. js-lingui-id: pjpuGA
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header command menu item references must be unique"
+msgstr "Legstukopskrif-opdragkieslysitemverwysings moet uniek wees"
 
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
@@ -12119,9 +12428,8 @@ msgid "You can only update one record with files field at once."
 msgstr "Jy kan slegs een rekord op 'n slag met die lêersveld opdateer."
 
 #. js-lingui-id: 4ysDL0
-#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
+#: src/engine/twenty-orm/repository/workspace-repository.ts
+#: src/engine/twenty-orm/repository/workspace-repository.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
 
@@ -12155,6 +12463,11 @@ msgstr "Jy kan nie die administrateurrol van die laaste administrateur verwyder 
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
 msgid "You cannot revoke admin panel access from the last server administrator."
 msgstr "Jy kan nie adminpaneel-toegang van die laaste bedieneradministrateur herroep nie."
+
+#. js-lingui-id: y2sD5W
+#: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
+msgid "You cannot send from this address."
+msgstr "Jy kan nie vanaf hierdie adres stuur nie."
 
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts

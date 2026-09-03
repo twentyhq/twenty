@@ -77,7 +77,6 @@ type Story = StoryObj<typeof NavigationDrawer>;
 
 export const Default: Story = {
   args: {
-    title: 'Default',
     children: (
       <>
         <NavigationDrawerSection>
@@ -123,7 +122,6 @@ export const Default: Story = {
 
 export const Settings: Story = {
   args: {
-    title: 'Settings',
     children: (
       <>
         <NavigationDrawerSection>

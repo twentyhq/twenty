@@ -1,85 +1,98 @@
-import { EventRowActivity } from '@/activities/timeline-activities/rows/activity/components/EventRowActivity';
-import { EventRowCalendarEvent } from '@/activities/timeline-activities/rows/calendar/components/EventRowCalendarEvent';
 import { type EventRowDynamicComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
+import { EventCard } from '@/activities/timeline-activities/rows/components/EventCard';
+import { EventCardToggleButton } from '@/activities/timeline-activities/rows/components/EventCardToggleButton';
 import { EventRowGenericLinked } from '@/activities/timeline-activities/rows/generic/components/EventRowGenericLinked';
 import { EventRowMainObject } from '@/activities/timeline-activities/rows/main-object/components/EventRowMainObject';
-import { EventRowMessage } from '@/activities/timeline-activities/rows/message/components/EventRowMessage';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { styled } from '@linaria/react';
+import { lazy, Suspense, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-export const EventRowDynamicComponent = (
-  props: EventRowDynamicComponentProps,
-) => {
-  const { linkedObjectMetadataItem } = props;
+const FrontComponentRenderer = lazy(() =>
+  import('@/front-components/components/FrontComponentRenderer').then(
+    (module) => ({ default: module.FrontComponentRenderer }),
+  ),
+);
 
-  if (!isDefined(linkedObjectMetadataItem)) {
-    return (
-      <EventRowMainObject
-        labelIdentifierValue={props.labelIdentifierValue}
-        event={props.event}
-        mainObjectMetadataItem={props.mainObjectMetadataItem}
-        linkedObjectMetadataItem={props.linkedObjectMetadataItem}
-        authorFullName={props.authorFullName}
-        createdAt={props.createdAt}
-      />
-    );
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[1]};
+  width: 100%;
+`;
+
+const StyledNativeRowContainer = styled.div`
+  align-items: flex-start;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  width: 100%;
+`;
+
+const StyledNativeRow = styled.div`
+  min-width: 0;
+  width: 100%;
+`;
+
+export const EventRowDynamicComponent = ({
+  labelIdentifierValue,
+  event,
+  eventAction,
+  eventTypeLabel,
+  renderer,
+  mainObjectMetadataItem,
+  linkedObjectMetadataItem,
+  authorFullName,
+  happensAt,
+}: EventRowDynamicComponentProps) => {
+  const [isRendererOpen, setIsRendererOpen] = useState(false);
+  const EventRowComponent = isDefined(event.linkedRecordId)
+    ? EventRowGenericLinked
+    : EventRowMainObject;
+
+  const nativeRenderer = (
+    <EventRowComponent
+      labelIdentifierValue={labelIdentifierValue}
+      event={event}
+      eventAction={eventAction}
+      eventTypeLabel={eventTypeLabel}
+      hasRenderer={isDefined(renderer)}
+      mainObjectMetadataItem={mainObjectMetadataItem}
+      linkedObjectMetadataItem={linkedObjectMetadataItem}
+      authorFullName={authorFullName}
+      happensAt={happensAt}
+    />
+  );
+
+  if (!isDefined(renderer)) {
+    return nativeRenderer;
   }
 
-  switch (linkedObjectMetadataItem.nameSingular) {
-    case CoreObjectNameSingular.Message:
-      return (
-        <EventRowMessage
-          labelIdentifierValue={props.labelIdentifierValue}
-          event={props.event}
-          mainObjectMetadataItem={props.mainObjectMetadataItem}
-          linkedObjectMetadataItem={props.linkedObjectMetadataItem}
-          authorFullName={props.authorFullName}
+  return (
+    <StyledContainer>
+      <StyledNativeRowContainer>
+        <StyledNativeRow>{nativeRenderer}</StyledNativeRow>
+        <EventCardToggleButton
+          isOpen={isRendererOpen}
+          setIsOpen={setIsRendererOpen}
         />
-      );
-    case CoreObjectNameSingular.CalendarEvent:
-      return (
-        <EventRowCalendarEvent
-          labelIdentifierValue={props.labelIdentifierValue}
-          event={props.event}
-          mainObjectMetadataItem={props.mainObjectMetadataItem}
-          linkedObjectMetadataItem={props.linkedObjectMetadataItem}
-          authorFullName={props.authorFullName}
-        />
-      );
-    case CoreObjectNameSingular.Note:
-      return (
-        <EventRowActivity
-          labelIdentifierValue={props.labelIdentifierValue}
-          event={props.event}
-          mainObjectMetadataItem={props.mainObjectMetadataItem}
-          linkedObjectMetadataItem={props.linkedObjectMetadataItem}
-          authorFullName={props.authorFullName}
-          createdAt={props.createdAt}
-          objectNameSingular={CoreObjectNameSingular.Note}
-        />
-      );
-    case CoreObjectNameSingular.Task:
-      return (
-        <EventRowActivity
-          labelIdentifierValue={props.labelIdentifierValue}
-          event={props.event}
-          mainObjectMetadataItem={props.mainObjectMetadataItem}
-          linkedObjectMetadataItem={props.linkedObjectMetadataItem}
-          authorFullName={props.authorFullName}
-          createdAt={props.createdAt}
-          objectNameSingular={CoreObjectNameSingular.Task}
-        />
-      );
-    default:
-      return (
-        <EventRowGenericLinked
-          labelIdentifierValue={props.labelIdentifierValue}
-          event={props.event}
-          mainObjectMetadataItem={props.mainObjectMetadataItem}
-          linkedObjectMetadataItem={props.linkedObjectMetadataItem}
-          authorFullName={props.authorFullName}
-          createdAt={props.createdAt}
-        />
-      );
-  }
+      </StyledNativeRowContainer>
+      {isRendererOpen && (
+        <EventCard isOpen>
+          <Suspense fallback={null}>
+            {renderer.type === 'standard' ? (
+              <renderer.Component
+                event={event}
+                authorFullName={authorFullName}
+              />
+            ) : (
+              <FrontComponentRenderer
+                frontComponentId={renderer.frontComponentId}
+                timelineActivityId={event.id}
+              />
+            )}
+          </Suspense>
+        </EventCard>
+      )}
+    </StyledContainer>
+  );
 };

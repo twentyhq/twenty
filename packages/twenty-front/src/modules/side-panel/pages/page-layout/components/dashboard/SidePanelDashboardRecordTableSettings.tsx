@@ -3,11 +3,14 @@ import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuIt
 import { CommandMenuItemNumberInput } from '@/command-menu/components/CommandMenuItemNumberInput';
 import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { useRecordTableWidgetFieldCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetFieldCallbacks';
 import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
 import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
+import { getRecordTableWidgetIsUIEditable } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetIsUIEditable';
 import {
   getRecordTableWidgetLayoutViewType,
+  isRecordTableWidgetContentEditingSupported,
   RECORD_TABLE_WIDGET_LAYOUT_OPTIONS,
 } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
@@ -28,7 +31,7 @@ import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWid
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -42,9 +45,9 @@ import {
   IconFilter,
   IconLayoutList,
   IconListDetails,
+  IconPencil,
 } from 'twenty-ui/icon';
 import {
-  FeatureFlagKey,
   ViewCalendarLayout,
   ViewType,
   WidgetConfigurationType,
@@ -67,6 +70,10 @@ export const SidePanelDashboardRecordTableSettings = () => {
   const { t } = useLingui();
 
   const { pageLayoutId } = usePageLayoutIdFromContextStore();
+  const pageLayoutDraft = useAtomComponentStateValue(
+    pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
 
@@ -90,6 +97,11 @@ export const SidePanelDashboardRecordTableSettings = () => {
       ? (configuration.recordLimit as number)
       : undefined;
 
+  const isUIEditable = getRecordTableWidgetIsUIEditable(
+    configuration,
+    pageLayoutDraft.type,
+  );
+
   const {
     sourceDescription,
     fieldsDescription,
@@ -109,6 +121,14 @@ export const SidePanelDashboardRecordTableSettings = () => {
 
     updateCurrentWidgetConfig({
       configToUpdate: { recordLimit: nextLimit },
+    });
+  };
+
+  const handleIsUIEditableChange = (nextIsUIEditable: boolean) => {
+    updateCurrentWidgetConfig({
+      configToUpdate: {
+        isUIEditable: nextIsUIEditable,
+      },
     });
   };
 
@@ -143,12 +163,10 @@ export const SidePanelDashboardRecordTableSettings = () => {
 
   const { Icon: CurrentLayoutIcon, label: currentLayoutLabel } =
     RECORD_TABLE_WIDGET_LAYOUT_OPTIONS[currentLayoutViewType];
+  const isWidgetContentEditingSupported =
+    isRecordTableWidgetContentEditingSupported(widgetView?.type);
 
   const calendarFieldMetadataId = widgetView?.calendarFieldMetadataId ?? null;
-
-  const isCalendarWeekViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
-  );
 
   const currentCalendarLayout =
     widgetView?.calendarLayout ?? ViewCalendarLayout.MONTH;
@@ -194,17 +212,15 @@ export const SidePanelDashboardRecordTableSettings = () => {
           'record-table-filter',
           'record-table-sort',
           ...(isCalendarLayout
-            ? [
-                'record-table-calendar-field',
-                ...(isCalendarWeekViewEnabled
-                  ? ['record-table-calendar-layout']
-                  : []),
-              ]
+            ? ['record-table-calendar-field', 'record-table-calendar-layout']
             : ['record-table-group-by']),
           ...(!isCalendarLayout && hasGroupBy
             ? ['record-table-hide-empty-groups']
             : []),
           ...(!isCalendarLayout && !hasGroupBy ? ['record-table-limit'] : []),
+          ...(isWidgetContentEditingSupported
+            ? ['record-table-allow-editing']
+            : []),
         ]
       : []),
   ];
@@ -347,7 +363,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
                       />
                     </SelectableListItem>
                   )}
-                  {isCalendarLayout && isCalendarWeekViewEnabled && (
+                  {isCalendarLayout && (
                     <SelectableListItem itemId="record-table-calendar-layout">
                       <CommandMenuItemDropdown
                         Icon={IconCalendar}
@@ -419,6 +435,17 @@ export const SidePanelDashboardRecordTableSettings = () => {
                         value={isDefined(limit) ? `${limit}` : ''}
                         onChange={handleLimitChange}
                         placeholder={t`No limit`}
+                      />
+                    </SelectableListItem>
+                  )}
+                  {isWidgetContentEditingSupported && (
+                    <SelectableListItem itemId="record-table-allow-editing">
+                      <CommandMenuItemToggle
+                        LeftIcon={IconPencil}
+                        text={t`Allow editing`}
+                        id="record-table-allow-editing"
+                        toggled={isUIEditable}
+                        onToggleChange={handleIsUIEditableChange}
                       />
                     </SelectableListItem>
                   )}
