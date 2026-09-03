@@ -112,11 +112,6 @@ export class ApplicationDevelopmentService {
       workspaceId,
     );
 
-    await this.findOwnedApplicationRegistrationOrThrow({
-      universalIdentifier: manifest.application.universalIdentifier,
-      workspaceId,
-    });
-
     const versionValidation =
       await this.applicationVersionValidationService.validateWorkspaceCompatibility(
         {
@@ -132,6 +127,11 @@ export class ApplicationDevelopmentService {
         VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE[versionValidation.reason],
       );
     }
+
+    await this.findOwnedApplicationRegistrationOrThrow({
+      universalIdentifier: manifest.application.universalIdentifier,
+      workspaceId,
+    });
 
     if (dryRun === true) {
       const { workspaceMigration } =
