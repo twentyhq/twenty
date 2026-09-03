@@ -143,7 +143,9 @@ export const FieldWidgetRelationRecordsCard = ({
               <RecordDetailRecordsListContainer>
                 {visibleRelationRecords.map(
                   ({ record, objectNameSingular, fieldMetadataId }) => (
-                    <Fragment key={`${record.id}-${fieldMetadataId}`}>
+                    <Fragment
+                      key={`${objectNameSingular}-${record.id}-${fieldMetadataId}`}
+                    >
                       <RecordDetailRelationRecordsListItemEffect
                         relationRecordId={record.id}
                         relationObjectMetadataNameSingular={objectNameSingular}

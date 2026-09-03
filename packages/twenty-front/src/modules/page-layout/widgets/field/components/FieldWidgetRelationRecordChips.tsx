@@ -24,18 +24,24 @@ type FieldWidgetRelationRecordChipsProps = {
 export const FieldWidgetRelationRecordChips = ({
   relationRecords,
   isInSidePanel,
-}: FieldWidgetRelationRecordChipsProps) => (
-  <SidePanelProvider value={{ isInSidePanel }}>
-    <StyledContainer>
-      <StyledRelationChipsContainer>
-        {relationRecords.map(({ record, objectNameSingular }) => (
-          <RecordChip
-            key={record.id}
-            objectNameSingular={objectNameSingular}
-            record={record}
-          />
-        ))}
-      </StyledRelationChipsContainer>
-    </StyledContainer>
-  </SidePanelProvider>
-);
+}: FieldWidgetRelationRecordChipsProps) => {
+  if (relationRecords.length === 0) {
+    return null;
+  }
+
+  return (
+    <SidePanelProvider value={{ isInSidePanel }}>
+      <StyledContainer>
+        <StyledRelationChipsContainer>
+          {relationRecords.map(({ record, objectNameSingular }) => (
+            <RecordChip
+              key={`${objectNameSingular}-${record.id}`}
+              objectNameSingular={objectNameSingular}
+              record={record}
+            />
+          ))}
+        </StyledRelationChipsContainer>
+      </StyledContainer>
+    </SidePanelProvider>
+  );
+};

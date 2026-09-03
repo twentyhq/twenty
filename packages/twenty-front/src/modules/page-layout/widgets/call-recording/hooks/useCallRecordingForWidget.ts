@@ -43,14 +43,12 @@ export const useCallRecordingForWidget = ({
     refetchCallRecordingId,
   } = useCallRecordingIdForWidget({ skip: shouldSkipQuery });
 
-  const recordFields = CALL_RECORDING_RECORD_FIELDS_BY_WIDGET_KIND[kind];
-
   // The transcript widget plays the video, but requesting a field the role
   // cannot read fails the whole query.
   const recordGqlFields =
     kind === 'transcript' && !isFieldRestricted('video')
-      ? { ...recordFields, video: true }
-      : recordFields;
+      ? CALL_RECORDING_TRANSCRIPT_RECORD_FIELDS_WITH_VIDEO
+      : CALL_RECORDING_RECORD_FIELDS_BY_WIDGET_KIND[kind];
 
   const {
     record: callRecording,
@@ -81,4 +79,11 @@ export const useCallRecordingForWidget = ({
     restriction,
     refetchCallRecording,
   };
+};
+
+// Selected between stable maps so the query hook's memoised fields do not
+// change identity on every render.
+const CALL_RECORDING_TRANSCRIPT_RECORD_FIELDS_WITH_VIDEO = {
+  ...CALL_RECORDING_RECORD_FIELDS_BY_WIDGET_KIND.transcript,
+  video: true,
 };
