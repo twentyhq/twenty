@@ -1,13 +1,13 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { IMPORT_CALL_RECORDING_TRANSCRIPT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { handleCallRecordingArtifactImportJob } from 'src/logic-functions/flows/handle-call-recording-artifact-import-job.util';
+import { handleCallRecordingArtifactsImportJob } from 'src/logic-functions/flows/handle-call-recording-artifacts-import-job.util';
 import { type ImportCallRecordingArtifactsResult } from 'src/logic-functions/flows/import-call-recording-artifacts.util';
 
 export const importCallRecordingTranscriptHandler = async (
   payload: unknown,
 ): Promise<ImportCallRecordingArtifactsResult> =>
-  handleCallRecordingArtifactImportJob({ payload, scope: 'transcript' });
+  handleCallRecordingArtifactsImportJob({ payload, scope: 'transcript' });
 
 export default defineLogicFunction({
   universalIdentifier:

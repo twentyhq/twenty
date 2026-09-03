@@ -2,15 +2,15 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
-  claimCallRecordingArtifactImport,
-  releaseCallRecordingArtifactImportClaim,
-} from 'src/logic-functions/data/claim-call-recording-artifact-import.util';
+  claimCallRecordingArtifactsImport,
+  releaseCallRecordingArtifactsImportClaim,
+} from 'src/logic-functions/data/claim-call-recording-artifacts-import.util';
 
 const mutationMock = vi.fn();
 
 const client = { mutation: mutationMock } as unknown as CoreApiClient;
 
-describe('claimCallRecordingArtifactImport', () => {
+describe('claimCallRecordingArtifactsImport', () => {
   beforeEach(() => {
     mutationMock.mockReset();
   });
@@ -20,7 +20,7 @@ describe('claimCallRecordingArtifactImport', () => {
       updateCallRecordings: [{ id: 'call-recording-1' }],
     });
 
-    const claimed = await claimCallRecordingArtifactImport(client, {
+    const claimed = await claimCallRecordingArtifactsImport(client, {
       callRecordingId: 'call-recording-1',
       scope: 'media',
       now: new Date('2026-01-01T14:06:00.000Z'),
@@ -49,7 +49,7 @@ describe('claimCallRecordingArtifactImport', () => {
       updateCallRecordings: [{ id: 'call-recording-1' }],
     });
 
-    const claimed = await claimCallRecordingArtifactImport(client, {
+    const claimed = await claimCallRecordingArtifactsImport(client, {
       callRecordingId: 'call-recording-1',
       scope: 'transcript',
       now: new Date('2026-01-01T14:06:00.000Z'),
@@ -76,7 +76,7 @@ describe('claimCallRecordingArtifactImport', () => {
   it('does not claim when a fresh lease already blocks the update', async () => {
     mutationMock.mockResolvedValue({ updateCallRecordings: [] });
 
-    const claimed = await claimCallRecordingArtifactImport(client, {
+    const claimed = await claimCallRecordingArtifactsImport(client, {
       callRecordingId: 'call-recording-1',
       scope: 'media',
       now: new Date('2026-01-01T14:06:00.000Z'),
@@ -96,7 +96,7 @@ describe('claimCallRecordingArtifactImport', () => {
       return { updateCallRecordings: matches ? [{ id: filter.id.eq }] : [] };
     });
 
-    const claimed = await claimCallRecordingArtifactImport(client, {
+    const claimed = await claimCallRecordingArtifactsImport(client, {
       callRecordingId: 'call-recording-1',
       scope: 'media',
       now: new Date('2026-01-01T14:06:00.000Z'),
@@ -118,7 +118,7 @@ describe('claimCallRecordingArtifactImport', () => {
       return { updateCallRecordings: matches ? [{ id: filter.id.eq }] : [] };
     });
 
-    const claimed = await claimCallRecordingArtifactImport(client, {
+    const claimed = await claimCallRecordingArtifactsImport(client, {
       callRecordingId: 'call-recording-1',
       scope: 'media',
       now: new Date('2026-01-01T14:06:00.000Z'),
@@ -132,7 +132,7 @@ describe('claimCallRecordingArtifactImport', () => {
       updateCallRecording: { id: 'call-recording-1' },
     });
 
-    await releaseCallRecordingArtifactImportClaim(client, {
+    await releaseCallRecordingArtifactsImportClaim(client, {
       callRecordingId: 'call-recording-1',
       scope: 'transcript',
     });

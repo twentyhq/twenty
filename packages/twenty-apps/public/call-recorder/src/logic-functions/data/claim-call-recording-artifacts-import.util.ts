@@ -5,7 +5,7 @@ import { type CallRecordingArtifactImportScope } from 'src/logic-functions/types
 
 // Crash safety net: a lease older than this is reclaimable so a worker that died
 // mid-import never blocks the recording forever. Normal runs release explicitly.
-const ARTIFACT_IMPORT_CLAIM_TTL_MS = 10 * 60 * 1000;
+const ARTIFACTS_IMPORT_CLAIM_TTL_MS = 10 * 60 * 1000;
 
 const CLAIM_FIELD_BY_SCOPE = {
   transcript: 'transcriptImportClaimedAt',
@@ -16,7 +16,7 @@ const CLAIM_FIELD_BY_SCOPE = {
 // no fresh lease is held, so exactly one of several concurrent webhook retries
 // claims that scope and performs its provider-facing work. Without it two passes
 // could both observe "no artifact yet" and both pay the provider for it.
-export const claimCallRecordingArtifactImport = async (
+export const claimCallRecordingArtifactsImport = async (
   client: CoreApiClient,
   {
     callRecordingId,
@@ -30,7 +30,7 @@ export const claimCallRecordingArtifactImport = async (
 ): Promise<boolean> => {
   const claimField = CLAIM_FIELD_BY_SCOPE[scope];
   const staleBefore = new Date(
-    now.getTime() - ARTIFACT_IMPORT_CLAIM_TTL_MS,
+    now.getTime() - ARTIFACTS_IMPORT_CLAIM_TTL_MS,
   ).toISOString();
 
   const result = await client.mutation({
@@ -52,7 +52,7 @@ export const claimCallRecordingArtifactImport = async (
   return (result.updateCallRecordings ?? []).length > 0;
 };
 
-export const releaseCallRecordingArtifactImportClaim = async (
+export const releaseCallRecordingArtifactsImportClaim = async (
   client: CoreApiClient,
   {
     callRecordingId,

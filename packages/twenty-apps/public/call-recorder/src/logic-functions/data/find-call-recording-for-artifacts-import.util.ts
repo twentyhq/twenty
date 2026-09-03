@@ -5,11 +5,11 @@ import { type SyncableCallRecording } from 'src/logic-functions/flows/sync-call-
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import { getString } from 'src/logic-functions/utils/get-string.util';
 
-export type CallRecordingForArtifactImport = SyncableCallRecording & {
+export type CallRecordingForArtifactsImport = SyncableCallRecording & {
   externalBotId: string | undefined;
 };
 
-type CallRecordingForArtifactImportNode = {
+type CallRecordingForArtifactsImportNode = {
   id?: string | null;
   status?: string | null;
   startedAt?: string | null;
@@ -22,10 +22,10 @@ type CallRecordingForArtifactImportNode = {
   video?: FilesFieldValue | null;
 };
 
-export const findCallRecordingForArtifactImport = async (
+export const findCallRecordingForArtifactsImport = async (
   client: CoreApiClient,
   callRecordingId: string,
-): Promise<CallRecordingForArtifactImport | undefined> => {
+): Promise<CallRecordingForArtifactsImport | undefined> => {
   const queryResult = await client.query({
     callRecordings: {
       __args: {
@@ -50,7 +50,7 @@ export const findCallRecordingForArtifactImport = async (
   });
 
   const node = queryResult.callRecordings?.edges?.[0]?.node as
-    | CallRecordingForArtifactImportNode
+    | CallRecordingForArtifactsImportNode
     | null
     | undefined;
   const id = getString(node?.id);

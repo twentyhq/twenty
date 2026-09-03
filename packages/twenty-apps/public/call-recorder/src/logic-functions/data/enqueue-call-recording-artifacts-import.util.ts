@@ -13,7 +13,7 @@ const LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER_BY_SCOPE: Record<
   media: IMPORT_CALL_RECORDING_MEDIA_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 };
 
-export const enqueueCallRecordingArtifactImport = async ({
+export const enqueueCallRecordingArtifactsImport = async ({
   callRecordingId,
   scope,
 }: {

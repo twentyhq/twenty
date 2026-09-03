@@ -56,9 +56,9 @@ vi.mock('src/logic-functions/flows/import-call-recording-media.util', () => ({
 }));
 
 vi.mock(
-  'src/logic-functions/data/enqueue-call-recording-artifact-import.util',
+  'src/logic-functions/data/enqueue-call-recording-artifacts-import.util',
   () => ({
-    enqueueCallRecordingArtifactImport: enqueueArtifactImportMock,
+    enqueueCallRecordingArtifactsImport: enqueueArtifactImportMock,
   }),
 );
 

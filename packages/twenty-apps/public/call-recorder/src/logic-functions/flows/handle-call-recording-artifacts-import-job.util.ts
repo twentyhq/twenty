@@ -10,7 +10,7 @@ import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
 import { getString } from 'src/logic-functions/utils/get-string.util';
 
-export const handleCallRecordingArtifactImportJob = async ({
+export const handleCallRecordingArtifactsImportJob = async ({
   payload,
   scope,
 }: {

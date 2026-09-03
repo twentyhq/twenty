@@ -9,8 +9,8 @@ const createAsyncRecallTranscriptMock = vi.hoisted(() => vi.fn());
 const downloadTranscriptMock = vi.hoisted(() => vi.fn());
 const importCallRecordingMediaMock = vi.hoisted(() => vi.fn());
 const chargeCompletedCallRecordingMock = vi.hoisted(() => vi.fn());
-const claimArtifactImportMock = vi.hoisted(() => vi.fn());
-const releaseArtifactImportClaimMock = vi.hoisted(() => vi.fn());
+const claimArtifactsImportMock = vi.hoisted(() => vi.fn());
+const releaseArtifactsImportClaimMock = vi.hoisted(() => vi.fn());
 
 vi.mock('src/logic-functions/recall-api/get-recall-bot.util', () => ({
   getRecallBot: getRecallBotMock,
@@ -43,10 +43,10 @@ vi.mock(
 );
 
 vi.mock(
-  'src/logic-functions/data/claim-call-recording-artifact-import.util',
+  'src/logic-functions/data/claim-call-recording-artifacts-import.util',
   () => ({
-    claimCallRecordingArtifactImport: claimArtifactImportMock,
-    releaseCallRecordingArtifactImportClaim: releaseArtifactImportClaimMock,
+    claimCallRecordingArtifactsImport: claimArtifactsImportMock,
+    releaseCallRecordingArtifactsImportClaim: releaseArtifactsImportClaimMock,
   }),
 );
 
@@ -178,10 +178,10 @@ describe('importCallRecordingArtifacts', () => {
     });
     chargeCompletedCallRecordingMock.mockReset();
     chargeCompletedCallRecordingMock.mockResolvedValue('charged');
-    claimArtifactImportMock.mockReset();
-    claimArtifactImportMock.mockResolvedValue(true);
-    releaseArtifactImportClaimMock.mockReset();
-    releaseArtifactImportClaimMock.mockResolvedValue(undefined);
+    claimArtifactsImportMock.mockReset();
+    claimArtifactsImportMock.mockResolvedValue(true);
+    releaseArtifactsImportClaimMock.mockReset();
+    releaseArtifactsImportClaimMock.mockResolvedValue(undefined);
   });
 
   it('requests a transcript after a recording completion webhook without touching media', async () => {
@@ -604,19 +604,19 @@ describe('importCallRecordingArtifacts', () => {
       scope: 'transcript',
     });
 
-    expect(claimArtifactImportMock).toHaveBeenCalledWith(expect.anything(), {
+    expect(claimArtifactsImportMock).toHaveBeenCalledWith(expect.anything(), {
       callRecordingId: 'call-recording-1',
       scope: 'transcript',
       now: expect.any(Date),
     });
-    expect(releaseArtifactImportClaimMock).toHaveBeenCalledWith(
+    expect(releaseArtifactsImportClaimMock).toHaveBeenCalledWith(
       expect.anything(),
       { callRecordingId: 'call-recording-1', scope: 'transcript' },
     );
   });
 
   it('stands aside when another worker already holds the lease for this scope', async () => {
-    claimArtifactImportMock.mockResolvedValue(false);
+    claimArtifactsImportMock.mockResolvedValue(false);
     const client = buildClient([buildProcessingCallRecording()]);
 
     const result = await importCallRecordingArtifacts({
@@ -627,7 +627,7 @@ describe('importCallRecordingArtifacts', () => {
 
     expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
     expect(importCallRecordingMediaMock).not.toHaveBeenCalled();
-    expect(releaseArtifactImportClaimMock).not.toHaveBeenCalled();
+    expect(releaseArtifactsImportClaimMock).not.toHaveBeenCalled();
     expect(client.mutations).toEqual([]);
     expect(result).toEqual({
       status: 'skipped',
@@ -646,7 +646,7 @@ describe('importCallRecordingArtifacts', () => {
       scope: 'media',
     });
 
-    expect(claimArtifactImportMock).not.toHaveBeenCalled();
+    expect(claimArtifactsImportMock).not.toHaveBeenCalled();
     expect(result).toEqual({
       status: 'skipped',
       callRecordingId: 'call-recording-1',

@@ -2,7 +2,7 @@ import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
-import { enqueueCallRecordingArtifactImport } from 'src/logic-functions/data/enqueue-call-recording-artifact-import.util';
+import { enqueueCallRecordingArtifactsImport } from 'src/logic-functions/data/enqueue-call-recording-artifacts-import.util';
 import { findCallRecordingsByFilter } from 'src/logic-functions/data/find-call-recordings-by-filter.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isRecallRecordingDoneSignal } from 'src/logic-functions/domain/is-recall-recording-done-signal.util';
@@ -140,11 +140,11 @@ const handleRecallStatusEvent = async ({
   ) {
     // Both halves start here; the transcript job requests the transcript while
     // the media job streams video and audio, each under its own lease.
-    await enqueueCallRecordingArtifactImport({
+    await enqueueCallRecordingArtifactsImport({
       callRecordingId: callRecording.id,
       scope: 'transcript',
     });
-    await enqueueCallRecordingArtifactImport({
+    await enqueueCallRecordingArtifactsImport({
       callRecordingId: callRecording.id,
       scope: 'media',
     });
@@ -182,7 +182,7 @@ const queueCallRecordingArtifactsImport = async ({
     };
   }
 
-  await enqueueCallRecordingArtifactImport({
+  await enqueueCallRecordingArtifactsImport({
     callRecordingId: callRecording.id,
     scope: 'transcript',
   });

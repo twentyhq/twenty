@@ -2,13 +2,13 @@ import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import {
-  claimCallRecordingArtifactImport,
-  releaseCallRecordingArtifactImportClaim,
-} from 'src/logic-functions/data/claim-call-recording-artifact-import.util';
+  claimCallRecordingArtifactsImport,
+  releaseCallRecordingArtifactsImportClaim,
+} from 'src/logic-functions/data/claim-call-recording-artifacts-import.util';
 import {
-  findCallRecordingForArtifactImport,
-  type CallRecordingForArtifactImport,
-} from 'src/logic-functions/data/find-call-recording-for-artifact-import.util';
+  findCallRecordingForArtifactsImport,
+  type CallRecordingForArtifactsImport,
+} from 'src/logic-functions/data/find-call-recording-for-artifacts-import.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
 import { type RecallBotSnapshot } from 'src/logic-functions/recall-api/recall-bot-snapshot.type';
 import { settleCallRecordingImport } from 'src/logic-functions/flows/settle-call-recording-import.util';
@@ -41,7 +41,7 @@ export const importCallRecordingArtifacts = async ({
   request: CallRecordingArtifactsImportRequest;
   scope: CallRecordingArtifactImportScope;
 }): Promise<ImportCallRecordingArtifactsResult> => {
-  const callRecording = await findCallRecordingForArtifactImport(
+  const callRecording = await findCallRecordingForArtifactsImport(
     client,
     request.callRecordingId,
   );
@@ -59,7 +59,7 @@ export const importCallRecordingArtifacts = async ({
   // one performs the provider work for this scope. The lease clock is wall-clock,
   // not request.requestedAt, so a retry of the same delivery still measures real
   // elapsed time and can reclaim a lease left behind by a crash.
-  const claimedImport = await claimCallRecordingArtifactImport(client, {
+  const claimedImport = await claimCallRecordingArtifactsImport(client, {
     callRecordingId: callRecording.id,
     scope,
     now: new Date(),
@@ -115,7 +115,7 @@ export const importCallRecordingArtifacts = async ({
       outcome: 'call-recording-artifacts-imported',
     };
   } finally {
-    await releaseCallRecordingArtifactImportClaim(client, {
+    await releaseCallRecordingArtifactsImportClaim(client, {
       callRecordingId: callRecording.id,
       scope,
     });
@@ -123,7 +123,7 @@ export const importCallRecordingArtifacts = async ({
 };
 
 const fetchRecallBotWhenRecordingIdMissing = async (
-  callRecording: CallRecordingForArtifactImport,
+  callRecording: CallRecordingForArtifactsImport,
 ): Promise<RecallBotSnapshot | undefined> => {
   if (!isUndefined(callRecording.externalRecordingId)) {
     return undefined;

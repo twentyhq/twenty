@@ -1,7 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { findCallRecordingForArtifactImport } from 'src/logic-functions/data/find-call-recording-for-artifact-import.util';
+import { findCallRecordingForArtifactsImport } from 'src/logic-functions/data/find-call-recording-for-artifacts-import.util';
 import { shouldCompleteCallRecordingImport } from 'src/logic-functions/domain/should-complete-call-recording-import.util';
 import { completeAndChargeCallRecording } from 'src/logic-functions/flows/complete-and-charge-call-recording.util';
 
@@ -13,7 +13,7 @@ export const settleCallRecordingImport = async (
   client: CoreApiClient,
   { callRecordingId }: { callRecordingId: string },
 ): Promise<boolean> => {
-  const callRecording = await findCallRecordingForArtifactImport(
+  const callRecording = await findCallRecordingForArtifactsImport(
     client,
     callRecordingId,
   );
