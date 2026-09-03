@@ -18,10 +18,11 @@ export const SendMessageCampaignSingleRecordCommand = () => {
   const { sendMessageCampaign } = useSendMessageCampaign();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const { audiencePreview } = useCampaignAudiencePreview({
-    listId: campaign?.listId ?? null,
-    unsubscribeTopicId: campaign?.unsubscribeTopicId ?? null,
-  });
+  const { audiencePreview, loading: isRecipientCountStillUnknown } =
+    useCampaignAudiencePreview({
+      listId: campaign?.listId ?? null,
+      unsubscribeTopicId: campaign?.unsubscribeTopicId ?? null,
+    });
 
   if (!isDefined(campaignId)) {
     throw new Error('Record ID is required to send the campaign');
@@ -49,6 +50,10 @@ export const SendMessageCampaignSingleRecordCommand = () => {
         other: `This sends to ${formatNumber(audiencePreview.sendable)} recipients and cannot be undone once it starts.`,
       })
     : t`This sends the campaign to everyone on its list and cannot be undone once it starts.`;
+
+  if (isRecipientCountStillUnknown) {
+    return null;
+  }
 
   return (
     <HeadlessConfirmationModalEngineCommandEffect
