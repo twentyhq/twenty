@@ -17,8 +17,9 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { ChipVariant, LinkChip } from 'twenty-ui/data-display';
+import { Chip, ChipVariant, LinkChip } from 'twenty-ui/data-display';
 import { TooltipPosition } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -136,6 +137,12 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
 
   const linkToRecord = getLinkToShowPage(objectNameSingular, recordStore);
 
+  const overflowChipLabel = `+${hiddenFieldCount}`;
+  const overflowChipTooltipLabel = plural(hiddenFieldCount, {
+    one: '# more populated field available',
+    other: '# more populated fields available',
+  });
+
   return (
     <StyledRowContainer
       role="button"
@@ -179,19 +186,26 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
           ))}
           {hiddenFieldCount > 0 && (
             <StyledOverflowChipContainer>
-              <LinkChip
-                label={`+${hiddenFieldCount}`}
-                to={linkToRecord}
-                onClick={openRecord}
-                triggerEvent="CLICK"
-                tooltipLabel={plural(hiddenFieldCount, {
-                  one: '# more populated field available',
-                  other: '# more populated fields available',
-                })}
-                tooltipPlace={TooltipPosition.Top}
-                alwaysShowTooltip
-                variant={ChipVariant.Highlighted}
-              />
+              {isNonEmptyString(linkToRecord) ? (
+                <LinkChip
+                  label={overflowChipLabel}
+                  to={linkToRecord}
+                  onClick={openRecord}
+                  triggerEvent="CLICK"
+                  tooltipLabel={overflowChipTooltipLabel}
+                  tooltipPlace={TooltipPosition.Top}
+                  alwaysShowTooltip
+                  variant={ChipVariant.Highlighted}
+                />
+              ) : (
+                <Chip
+                  label={overflowChipLabel}
+                  tooltipLabel={overflowChipTooltipLabel}
+                  tooltipPlace={TooltipPosition.Top}
+                  alwaysShowTooltip
+                  variant={ChipVariant.Highlighted}
+                />
+              )}
             </StyledOverflowChipContainer>
           )}
         </StyledFieldsContainer>

@@ -1,7 +1,10 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 
-import { RecordIndexListContainer } from '@/object-record/record-index/components/RecordIndexListContainer';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { RecordList } from '@/object-record/record-list/components/RecordList';
+import { RecordListContextProvider } from '@/object-record/record-list/contexts/RecordListContext';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { FileUploadDecorator } from '~/testing/decorators/FileUploadDecorator';
@@ -11,13 +14,32 @@ import { RecordTableDecorator } from '~/testing/decorators/RecordTableDecorator'
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
-import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 
-const companyView = mockedViews.find((view) => view.name === 'All Companies')!;
+const RecordListRowStory = () => {
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: 'company',
+  });
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
 
-const meta: Meta<typeof RecordIndexListContainer> = {
+  return (
+    <RecordListContextProvider
+      value={{
+        viewBarInstanceId: 'view-bar',
+        objectNameSingular: 'company',
+        objectMetadataItem,
+        objectPermissions,
+      }}
+    >
+      <RecordList />
+    </RecordListContextProvider>
+  );
+};
+
+const meta: Meta<typeof RecordListRowStory> = {
   title: 'Modules/ObjectRecord/RecordList/RecordListRow',
-  component: RecordIndexListContainer,
+  component: RecordListRowStory,
   decorators: [
     ComponentDecorator,
     MemoryRouterDecorator,
@@ -27,10 +49,6 @@ const meta: Meta<typeof RecordIndexListContainer> = {
     SnackBarDecorator,
     ObjectMetadataItemsDecorator,
   ],
-  args: {
-    recordListInstanceId: `companies-${companyView.id}`,
-    viewBarInstanceId: 'view-bar',
-  },
   parameters: {
     container: { height: 300, width: 800 },
     recordTableObjectNameSingular: 'company',
@@ -39,7 +57,7 @@ const meta: Meta<typeof RecordIndexListContainer> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof RecordIndexListContainer>;
+type Story = StoryObj<typeof RecordListRowStory>;
 
 export const ResponsiveFields: Story = {
   play: async ({ canvasElement }) => {
