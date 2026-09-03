@@ -73,7 +73,10 @@ export const fathomListCallsByParticipantHandler = async (
   }
 
   const hasParticipant = (meeting: Meeting): boolean =>
-    doesFathomMeetingIncludeInvitee(meeting, participantEmail);
+    doesFathomMeetingIncludeInvitee({
+      meeting,
+      normalizedInviteeEmail: participantEmail,
+    });
   const matchingMeetingsByRecordingId = new Map<number, Meeting>();
 
   for (const connection of connections) {
