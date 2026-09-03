@@ -3,6 +3,8 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordIndexContainerGater } from '@/object-record/record-index/components/RecordIndexContainerGater';
 import { isCoreWorkflowsIndexEnabled } from '@/object-core/workflows/utils/isCoreWorkflowsIndexEnabled';
+import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { isWorkspaceWorkflowVersionRouteHidden } from '@/object-core/workflows/utils/isWorkspaceWorkflowVersionRouteHidden';
 import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
@@ -12,8 +14,9 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isUndefined } from '@sniptt/guards';
 import { lazy, Suspense } from 'react';
-import { useParams } from 'react-router-dom';
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { Navigate, useParams } from 'react-router-dom';
+import { AppPath, FeatureFlagKey } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 
 const WorkflowCoreIndexPage = lazy(() =>
   import('~/pages/object-core/WorkflowCoreIndexPage').then((module) => ({
@@ -69,6 +72,22 @@ export const RecordIndexPage = () => {
 
   if (isUndefined(objectMetadataItem)) {
     return <RecordIndexSkeletonLoader />;
+  }
+
+  if (
+    isWorkspaceWorkflowVersionRouteHidden({
+      objectNameSingular: objectMetadataItem.nameSingular,
+      isWorkflowCoreIndexPageEnabled,
+    })
+  ) {
+    return (
+      <Navigate
+        to={getAppPath(AppPath.RecordIndexPage, {
+          objectNamePlural: CoreObjectNamePlural.Workflow,
+        })}
+        replace
+      />
+    );
   }
 
   if (

@@ -1,7 +1,11 @@
-import { useParams } from 'react-router-dom';
-import { isDefined } from 'twenty-shared/utils';
+import { Navigate, useParams } from 'react-router-dom';
+import { AppPath, FeatureFlagKey } from 'twenty-shared/types';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
+import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { isWorkspaceWorkflowVersionRouteHidden } from '@/object-core/workflows/utils/isWorkspaceWorkflowVersionRouteHidden';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { RecordShowCommandMenu } from '@/command-menu-item/components/RecordShowCommandMenu';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
@@ -128,6 +132,9 @@ export const RecordShowPage = () => {
   const parameters = useParams<RecordShowPageParameters>();
   const workspaceSurface = useWorkspaceSurface();
   const { objectMetadataItems } = useObjectMetadataItems();
+  const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
+  );
 
   const isInSidePanel = workspaceSurface.type === 'side-panel';
   const isRouteObjectMetadataAvailable =
@@ -139,6 +146,22 @@ export const RecordShowPage = () => {
 
   if (isInSidePanel && !isRouteObjectMetadataAvailable) {
     return <WorkspaceRouteUnavailable />;
+  }
+
+  if (
+    isWorkspaceWorkflowVersionRouteHidden({
+      objectNameSingular: parameters.objectNameSingular,
+      isWorkflowCoreIndexPageEnabled,
+    })
+  ) {
+    return (
+      <Navigate
+        to={getAppPath(AppPath.RecordIndexPage, {
+          objectNamePlural: CoreObjectNamePlural.Workflow,
+        })}
+        replace
+      />
+    );
   }
 
   return <RecordShowPageContent parameters={parameters} />;
