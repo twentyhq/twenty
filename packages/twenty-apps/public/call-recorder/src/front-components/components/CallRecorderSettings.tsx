@@ -76,15 +76,15 @@ export const CallRecorderSettings = () => {
       }}
     >
       <StyledContainer>
+        <RecorderSection
+          applicationId={applicationId}
+          applicationVariables={applicationVariables}
+        />
         <InCallSection
           applicationId={applicationId}
           applicationVariables={applicationVariables}
         />
         <TranscriptionSection
-          applicationId={applicationId}
-          applicationVariables={applicationVariables}
-        />
-        <RecorderSection
           applicationId={applicationId}
           applicationVariables={applicationVariables}
         />

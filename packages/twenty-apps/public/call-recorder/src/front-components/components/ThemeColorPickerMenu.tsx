@@ -42,7 +42,9 @@ export const ThemeColorPickerMenu = ({
           text={DEFAULT_COLOR_LABELS[colorName]}
           selected={colorName === selectedColor}
           isActive={colorName === activeOption}
-          LeftComponent={<ColorSample colorName={colorName} />}
+          LeftComponent={
+            <ColorSample colorName={colorName} variant="circle" />
+          }
         />
       ))}
     </DropdownMenuItemsContainer>
