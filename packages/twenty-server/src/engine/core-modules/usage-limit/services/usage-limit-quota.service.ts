@@ -237,6 +237,11 @@ export class UsageLimitQuotaService implements OnModuleInit {
         return null;
       }
 
+      // The consume script only debits keys that exist: warm cold counters
+      // first so a consume-only caller (workflow, logic function) is metered
+      // from its first call instead of waiting for an assert to warm the key.
+      await this.readRemainings({ workspaceId: args.workspaceId, counters });
+
       const consumeResults = await this.cacheStorage.runScript<number[]>({
         script: CONSUME_QUOTA_COUNTERS_SCRIPT,
         keys: counters.map((counter) => counter.key),

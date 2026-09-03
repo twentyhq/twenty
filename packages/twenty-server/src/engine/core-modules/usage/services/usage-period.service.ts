@@ -2,6 +2,8 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import { type AnchoredPeriodUnit } from 'src/engine/core-modules/usage-limit/types/anchored-period-unit.type';
 import { type UsagePeriod } from 'src/engine/core-modules/usage/types/usage-period.type';
 import { getCalendarDayPeriod } from 'src/engine/core-modules/usage/utils/get-calendar-day-period.util';
@@ -20,6 +22,11 @@ export class UsagePeriodService {
         return getCalendarWeekPeriod(now);
       case 'month':
         return getCalendarMonthPeriod(now);
+      default:
+        return assertUnreachable(
+          periodUnit,
+          `Unknown period unit ${periodUnit}`,
+        );
     }
   }
 }

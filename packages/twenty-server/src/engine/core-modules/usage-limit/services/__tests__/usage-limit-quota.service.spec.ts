@@ -321,6 +321,22 @@ describe('UsageLimitQuotaService', () => {
     expect(exhausted).toMatchObject({ exhaustedKind: 'allowance' });
   });
 
+  it('warms a cold counter before consuming it', async () => {
+    setLimits([buildLimit({})]);
+    cacheStorage.mget.mockResolvedValue([undefined]);
+    cacheStorage.runScript.mockResolvedValue([1, 950]);
+
+    const { exhausted } = await consumeQuota(50);
+
+    expect(cacheStorage.mset).toHaveBeenCalledWith([
+      expect.objectContaining({ value: 1_000 }),
+    ]);
+    expect(cacheStorage.runScript).toHaveBeenCalledWith(
+      expect.objectContaining({ args: ['[50]'] }),
+    );
+    expect(exhausted).toBeNull();
+  });
+
   it('consumes only warm counters and reports the exhausted one', async () => {
     setLimits([buildLimit({})]);
     cacheStorage.runScript.mockResolvedValue([1, -10]);
