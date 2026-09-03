@@ -3,10 +3,12 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
-import { createDefaultStandaloneRichTextWidget } from '@/page-layout/utils/createDefaultStandaloneRichTextWidget';
+import { buildDraftPageLayoutWidget } from '@/page-layout/utils/buildDraftPageLayoutWidget';
 import { getDefaultWidgetPosition } from '@/page-layout/utils/getDefaultWidgetPosition';
 import { getUpdatedTabLayouts } from '@/page-layout/utils/getUpdatedTabLayouts';
+import { getWidgetSize } from '@/page-layout/utils/getWidgetSize';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -16,12 +18,17 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import {
   PageLayoutTabLayoutMode,
-  type PageLayoutWidget,
-  type RichTextBody,
-  WidgetType,
+  type WidgetType,
 } from '~/generated-metadata/graphql';
 
-export const useCreatePageLayoutStandaloneRichTextWidget = ({
+type CreatePageLayoutWidgetParams = {
+  type: WidgetType;
+  title: string;
+  configuration: PageLayoutWidget['configuration'];
+  objectMetadataId?: string | null;
+};
+
+export const useCreatePageLayoutWidget = ({
   pageLayoutId: pageLayoutIdFromProps,
   tabListInstanceId,
 }: {
@@ -32,8 +39,6 @@ export const useCreatePageLayoutStandaloneRichTextWidget = ({
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
   );
-
-  const store = useStore();
 
   const pageLayoutCurrentLayoutsState = useAtomComponentStateCallbackState(
     pageLayoutCurrentLayoutsComponentState,
@@ -50,8 +55,15 @@ export const useCreatePageLayoutStandaloneRichTextWidget = ({
     pageLayoutId,
   );
 
-  const createPageLayoutStandaloneRichTextWidget = useCallback(
-    (body: RichTextBody): PageLayoutWidget => {
+  const store = useStore();
+
+  const createPageLayoutWidget = useCallback(
+    ({
+      type,
+      title,
+      configuration,
+      objectMetadataId,
+    }: CreatePageLayoutWidgetParams): PageLayoutWidget => {
       const activeTabId = store.get(
         activeTabIdComponentState.atomFamily({
           instanceId: tabListInstanceId,
@@ -60,28 +72,32 @@ export const useCreatePageLayoutStandaloneRichTextWidget = ({
 
       if (!isDefined(activeTabId)) {
         throw new Error(
-          'A tab must be selected to create a new rich text widget',
+          `A tab must be selected to create a new ${type} widget`,
         );
       }
 
       const allTabLayouts = store.get(pageLayoutCurrentLayoutsState);
-
       const pageLayoutDraggedArea = store.get(pageLayoutDraggedAreaState);
 
-      const widgetId = uuidv4();
-      const richTextSize = WIDGET_SIZES[WidgetType.STANDALONE_RICH_TEXT]!;
-      const defaultRichTextSize = richTextSize.default;
-      const minimumSize = richTextSize.minimum;
+      const widgetSizeConfig = WIDGET_SIZES[type] ?? {
+        default: getWidgetSize(configuration.configurationType, 'default'),
+        minimum: getWidgetSize(configuration.configurationType, 'minimum'),
+      };
+      const minimumSize = widgetSizeConfig.minimum;
       const position = getDefaultWidgetPosition(
         pageLayoutDraggedArea,
-        defaultRichTextSize,
+        widgetSizeConfig.default,
         minimumSize,
       );
 
-      const newWidget = createDefaultStandaloneRichTextWidget({
+      const widgetId = uuidv4();
+
+      const newWidget = buildDraftPageLayoutWidget({
         id: widgetId,
         pageLayoutTabId: activeTabId,
-        body,
+        title,
+        type,
+        configuration,
         position: {
           layoutMode: PageLayoutTabLayoutMode.GRID,
           row: position.y,
@@ -89,6 +105,7 @@ export const useCreatePageLayoutStandaloneRichTextWidget = ({
           rowSpan: position.h,
           columnSpan: position.w,
         },
+        objectMetadataId,
       });
 
       const newLayout = {
@@ -101,13 +118,10 @@ export const useCreatePageLayoutStandaloneRichTextWidget = ({
         minH: minimumSize.h,
       };
 
-      const updatedLayouts = getUpdatedTabLayouts(
-        allTabLayouts,
-        activeTabId,
-        newLayout,
+      store.set(
+        pageLayoutCurrentLayoutsState,
+        getUpdatedTabLayouts(allTabLayouts, activeTabId, newLayout),
       );
-
-      store.set(pageLayoutCurrentLayoutsState, updatedLayouts);
 
       store.set(pageLayoutDraftState, (prev) => ({
         ...prev,
@@ -119,13 +133,13 @@ export const useCreatePageLayoutStandaloneRichTextWidget = ({
       return newWidget;
     },
     [
-      tabListInstanceId,
       pageLayoutCurrentLayoutsState,
       pageLayoutDraftState,
       pageLayoutDraggedAreaState,
       store,
+      tabListInstanceId,
     ],
   );
 
-  return { createPageLayoutStandaloneRichTextWidget };
+  return { createPageLayoutWidget };
 };

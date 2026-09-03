@@ -1,5 +1,5 @@
 import { WidgetActionCallRecordingSeeAll } from '@/page-layout/widgets/call-recording/components/WidgetActionCallRecordingSeeAll';
-import { useCallRecordingForSummary } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingForSummary';
+import { useCallRecordingForWidget } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingForWidget';
 import { getCallRecordingSummaryMarkdown } from '@/page-layout/widgets/call-recording-summary/utils/getCallRecordingSummaryMarkdown';
 import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
 import { t } from '@lingui/core/macro';
@@ -9,7 +9,7 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const WidgetActionCallRecordingSummary = () => {
   const { callRecording, loading, error, restriction } =
-    useCallRecordingForSummary();
+    useCallRecordingForWidget({ kind: 'summary' });
   const { copyToClipboard } = useCopyToClipboard();
 
   const summaryMarkdown =

@@ -1,17 +1,15 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { getAdjacentFitContentWidgetIndex } from '@/page-layout/utils/getAdjacentFitContentWidgetIndex';
+import { moveWidgetWithinTabInDraft } from '@/page-layout/utils/moveWidgetWithinTabInDraft';
 import { sortWidgetsByVerticalListPosition } from '@/page-layout/utils/sortWidgetsByVerticalListPosition';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
-export const useCanMovePageLayoutWidgetDown = (
-  pageLayoutIdFromProps?: string,
-) => {
+export const useMovePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
@@ -24,34 +22,40 @@ export const useCanMovePageLayoutWidgetDown = (
 
   const store = useStore();
 
-  const canMovePageLayoutWidgetDown = useCallback(
-    (widgetId: string) => {
-      const draft = store.get(pageLayoutDraftState);
+  const movePageLayoutWidget = useCallback(
+    (widgetId: string, direction: 'up' | 'down') => {
+      store.set(pageLayoutDraftState, (prev) => {
+        const tab = prev.tabs.find((candidateTab) =>
+          candidateTab.widgets.some((widget) => widget.id === widgetId),
+        );
 
-      const tab = draft.tabs.find((candidateTab) =>
-        candidateTab.widgets.some((widget) => widget.id === widgetId),
-      );
+        if (!tab) {
+          return prev;
+        }
 
-      if (!tab || tab.layoutMode !== PageLayoutTabLayoutMode.VERTICAL_LIST) {
-        return false;
-      }
-
-      const sortedWidgets = sortWidgetsByVerticalListPosition(tab.widgets);
-
-      const widgetIndex = sortedWidgets.findIndex(
-        (widget) => widget.id === widgetId,
-      );
-
-      return isDefined(
-        getAdjacentFitContentWidgetIndex({
+        const sortedWidgets = sortWidgetsByVerticalListPosition(tab.widgets);
+        const currentIndex = sortedWidgets.findIndex(
+          (widget) => widget.id === widgetId,
+        );
+        const targetIndex = getAdjacentFitContentWidgetIndex({
           widgets: sortedWidgets,
-          widgetIndex,
-          direction: 'down',
-        }),
-      );
+          widgetIndex: currentIndex,
+          direction,
+        });
+
+        if (!isDefined(targetIndex)) {
+          return prev;
+        }
+
+        return moveWidgetWithinTabInDraft(prev, {
+          tabId: tab.id,
+          fromIndex: currentIndex,
+          toIndex: targetIndex,
+        });
+      });
     },
     [pageLayoutDraftState, store],
   );
 
-  return { canMovePageLayoutWidgetDown };
+  return { movePageLayoutWidget };
 };
