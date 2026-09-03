@@ -286,13 +286,23 @@ export class InboxQueueService {
     // once would interleave into the union of both lists. The queue row is
     // locked first so the second save waits and genuinely replaces the first.
     await this.coreDataSource.transaction(async (manager) => {
-      await manager
+      const lockedQueue = await manager
         .createQueryBuilder()
         .select('queue.id')
         .from(InboxQueueEntity, 'queue')
         .where('queue.id = :queueId', { queueId: queue.id })
         .setLock('pessimistic_write')
         .getOne();
+
+      // The queue can be deleted between the lookup above and taking the lock;
+      // inserting grants for it would then fail on the foreign key instead of
+      // reporting the queue as gone.
+      if (!isDefined(lockedQueue)) {
+        throw new InboxException(
+          `Inbox queue ${queue.id} not found`,
+          InboxExceptionCode.UNKNOWN_INBOX_QUEUE,
+        );
+      }
 
       const queueRoleRepository =
         this.inboxQueueRoleRepository.withManager(manager);

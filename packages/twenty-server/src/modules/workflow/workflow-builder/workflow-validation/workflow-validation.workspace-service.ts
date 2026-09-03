@@ -183,15 +183,18 @@ export class WorkflowValidationWorkspaceService {
         return step;
       }
 
-      // Only the output schema changes. The copy goes through `object` because
-      // spreading the union directly multiplies every trigger and action
-      // variant by every settings variant, which the compiler cannot represent.
-      const { settings } = step as { settings: BaseWorkflowActionSettings };
+      // Only the output schema changes. The copy goes through `unknown` because
+      // relating the step union to a settings shape multiplies every trigger
+      // and action variant by every settings variant, which the compiler
+      // refuses to represent.
+      const stepWithSettings = step as unknown as {
+        settings: BaseWorkflowActionSettings;
+      } & Record<string, unknown>;
 
       return {
-        ...(step as object),
-        settings: { ...settings, outputSchema: computedSchema },
-      } as TStep;
+        ...stepWithSettings,
+        settings: { ...stepWithSettings.settings, outputSchema: computedSchema },
+      } as unknown as TStep;
     } catch {
       // Output schema enrichment is best-effort: if it cannot be computed,
       // validation still runs against the step's existing settings rather

@@ -50,7 +50,7 @@ describe('InboxQueueService', () => {
     from: jest.fn().mockReturnThis(),
     where: jest.fn().mockReturnThis(),
     setLock: jest.fn().mockReturnThis(),
-    getOne: jest.fn().mockResolvedValue(null),
+    getOne: jest.fn().mockResolvedValue({ id: QUEUE_ID }),
   };
   const coreDataSource = {
     transaction: jest.fn((run: (manager: unknown) => unknown) =>
@@ -170,6 +170,26 @@ describe('InboxQueueService', () => {
   });
 
   describe('setQueueRoles', () => {
+    // The queue can disappear between the lookup and the lock; the grants must
+    // not be written for a row that is gone
+    it('should report the queue as missing when it was deleted before the lock', async () => {
+      // Prepare
+      queueLockQueryBuilder.getOne.mockResolvedValueOnce(null);
+
+      // Act & Assert
+      await expect(
+        service.setQueueRoles({
+          workspaceId: WORKSPACE_ID,
+          queueId: QUEUE_ID,
+          roleIds: [ROLE_ID],
+        }),
+      ).rejects.toMatchObject({
+        code: InboxExceptionCode.UNKNOWN_INBOX_QUEUE,
+      });
+      expect(inboxQueueRoleRepository.delete).not.toHaveBeenCalled();
+      expect(inboxQueueRoleRepository.insert).not.toHaveBeenCalled();
+    });
+
     // Saving the list replaces it, so the roles dropped from it lose access
     it('should replace the grants rather than add to them', async () => {
       // Act
