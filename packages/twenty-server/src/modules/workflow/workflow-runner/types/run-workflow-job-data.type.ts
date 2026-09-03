@@ -3,5 +3,4 @@ export type RunWorkflowJobData = {
   workflowRunId: string;
   lastExecutedStepId?: string;
   stepIdsToRetry?: string[];
-  automaticRetryStepId?: string;
 };

@@ -42,7 +42,6 @@ export class RunWorkflowJob {
     workflowRunId,
     lastExecutedStepId,
     stepIdsToRetry,
-    automaticRetryStepId,
     workspaceId,
   }: RunWorkflowJobData): Promise<void> {
     this.logger.log(
@@ -57,12 +56,6 @@ export class RunWorkflowJob {
             workspaceId,
             workflowRunId,
             stepIdsToRetry,
-          });
-        } else if (isDefined(automaticRetryStepId)) {
-          await this.retryStepExecution({
-            workspaceId,
-            workflowRunId,
-            stepId: automaticRetryStepId,
           });
         } else if (lastExecutedStepId) {
           await this.resumeWorkflowExecution({
@@ -166,52 +159,36 @@ export class RunWorkflowJob {
       return;
     }
 
-    await this.workflowExecutorWorkspaceService.executeFromSteps({
-      stepIds: stepIdsToRetry,
-      workflowRunId,
-      workspaceId,
-    });
-  }
+    const steps = workflowRun.state?.flow?.steps ?? [];
+    const stepInfos = workflowRun.state?.stepInfos ?? {};
 
-  private async retryStepExecution({
-    workflowRunId,
-    stepId,
-    workspaceId,
-  }: {
-    workflowRunId: string;
-    stepId: string;
-    workspaceId: string;
-  }): Promise<void> {
-    const workflowRun =
-      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+    const stepInfosToReset = Object.fromEntries(
+      stepIdsToRetry
+        .map((stepId) => ({
+          stepId,
+          step: steps.find((candidateStep) => candidateStep.id === stepId),
+        }))
+        .filter(
+          ({ step, stepId }) =>
+            isDefined(step) &&
+            stepIsAwaitingRetry({ step, stepInfo: stepInfos[stepId] }),
+        )
+        .map(({ stepId }) => [
+          stepId,
+          { ...stepInfos[stepId], status: StepStatus.NOT_STARTED },
+        ]),
+    );
+
+    if (Object.keys(stepInfosToReset).length > 0) {
+      await this.workflowRunWorkspaceService.updateWorkflowRunStepInfos({
+        stepInfos: stepInfosToReset,
         workflowRunId,
         workspaceId,
       });
-
-    if (workflowRun.status !== WorkflowRunStatus.RUNNING) {
-      return;
     }
-
-    const step = workflowRun.state?.flow?.steps?.find(
-      (candidateStep) => candidateStep.id === stepId,
-    );
-
-    const stepInfo = workflowRun.state?.stepInfos[stepId];
-
-    if (!isDefined(step) || !stepIsAwaitingRetry({ step, stepInfo })) {
-      return;
-    }
-
-    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfos({
-      stepInfos: {
-        [stepId]: { ...stepInfo, status: StepStatus.NOT_STARTED },
-      },
-      workflowRunId,
-      workspaceId,
-    });
 
     await this.workflowExecutorWorkspaceService.executeFromSteps({
-      stepIds: [stepId],
+      stepIds: stepIdsToRetry,
       workflowRunId,
       workspaceId,
     });
