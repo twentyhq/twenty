@@ -641,15 +641,27 @@ export class WorkflowExecutorWorkspaceService {
       workspaceId,
     });
 
-    await this.messageQueueService.add<RunWorkflowJobData>(
-      RUN_WORKFLOW_JOB_NAME,
-      {
-        workspaceId,
+    try {
+      await this.messageQueueService.add<RunWorkflowJobData>(
+        RUN_WORKFLOW_JOB_NAME,
+        {
+          workspaceId,
+          workflowRunId,
+          automaticRetryStepId: stepId,
+        },
+        { ...buildRunWorkflowJobOptions(workflowRunId), delay: retryDelayMs },
+      );
+    } catch (enqueueError) {
+      // Without the job nothing would ever leave PENDING, so record the step's
+      // own failure before letting the enqueue error end the run.
+      await this.workflowRunWorkspaceService.updateWorkflowRunStepInfos({
+        stepInfos: { [stepId]: { status: StepStatus.FAILED, error } },
         workflowRunId,
-        automaticRetryStepId: stepId,
-      },
-      { ...buildRunWorkflowJobOptions(workflowRunId), delay: retryDelayMs },
-    );
+        workspaceId,
+      });
+
+      throw enqueueError;
+    }
   }
 
   private async continueExecutionFromStepInAnotherJob({
