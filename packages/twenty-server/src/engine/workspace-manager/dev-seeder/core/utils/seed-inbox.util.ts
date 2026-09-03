@@ -936,6 +936,7 @@ export const seedInbox = async ({
       'title',
       'preview',
       'payload',
+      'context',
       'lastEventAt',
       'clearedAt',
       'resurfaceAt',
