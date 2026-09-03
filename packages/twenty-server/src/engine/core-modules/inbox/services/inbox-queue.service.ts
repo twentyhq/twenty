@@ -186,12 +186,15 @@ export class InboxQueueService {
     icon?: string | null;
     roleIds: string[];
   }): Promise<InboxQueueEntity> {
-    const queue = await this.inboxQueueRepository.insertAndReturnOne(workspaceId, {
-      name,
-      slug: await this.buildAvailableSlug({ workspaceId, name }),
-      icon: icon ?? null,
-      isDefault: false,
-    });
+    const queue = await this.inboxQueueRepository.insertAndReturnOne(
+      workspaceId,
+      {
+        name,
+        slug: await this.buildAvailableSlug({ workspaceId, name }),
+        icon: icon ?? null,
+        isDefault: false,
+      },
+    );
 
     await this.setQueueRoles({
       workspaceId,

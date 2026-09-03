@@ -68,10 +68,12 @@ describe('InboxQueueService', () => {
       slug: 'support',
       isDefault: false,
     });
-    inboxQueueRepository.insertAndReturnOne.mockImplementation((_workspaceId, queue) => ({
-      id: QUEUE_ID,
-      ...queue,
-    }));
+    inboxQueueRepository.insertAndReturnOne.mockImplementation(
+      (_workspaceId, queue) => ({
+        id: QUEUE_ID,
+        ...queue,
+      }),
+    );
     inboxQueueRoleRepository.find.mockResolvedValue([]);
     inboxQueueRoleRepository.findOne.mockResolvedValue(null);
     userRoleService.getRoleIdForUserWorkspace.mockResolvedValue(ROLE_ID);

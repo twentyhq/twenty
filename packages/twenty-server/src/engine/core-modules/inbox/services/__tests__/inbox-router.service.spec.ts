@@ -129,8 +129,9 @@ describe('InboxRouterService', () => {
     inboxItemRepository.findOne.mockResolvedValue(null);
     inboxItemRepository.findOneBy.mockResolvedValue(null);
     inboxItemRepository.update.mockResolvedValue({ affected: 1 });
-    inboxItemRepository.insertAndReturnOne.mockImplementation((_workspaceId, inboxItem) =>
-      Promise.resolve({ id: INSERTED_ITEM_ID, ...inboxItem }),
+    inboxItemRepository.insertAndReturnOne.mockImplementation(
+      (_workspaceId, inboxItem) =>
+        Promise.resolve({ id: INSERTED_ITEM_ID, ...inboxItem }),
     );
 
     const module: TestingModule = await Test.createTestingModule({
@@ -297,19 +298,22 @@ describe('InboxRouterService', () => {
       expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledTimes(1);
       // The workspace scope is the repository's first argument, never a column
       // in the payload
-      expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(WORKSPACE_ID, {
-        inboxItemTypeId: CONVERSATION_TYPE_ID,
-        priority: InboxItemPriority.UPDATE,
-        title: 'A message from Alice',
-        preview: 'Hello there',
-        payload: null,
-        queueId: null,
-        assigneeUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
-        slotKey: THREAD_SLOT_KEY,
-        threadId: THREAD_ID,
-        subjectObjectMetadataId: null,
-        subjectRecordId: null,
-      });
+      expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        {
+          inboxItemTypeId: CONVERSATION_TYPE_ID,
+          priority: InboxItemPriority.UPDATE,
+          title: 'A message from Alice',
+          preview: 'Hello there',
+          payload: null,
+          queueId: null,
+          assigneeUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
+          slotKey: THREAD_SLOT_KEY,
+          threadId: THREAD_ID,
+          subjectObjectMetadataId: null,
+          subjectRecordId: null,
+        },
+      );
       expect(inboxItemRepository.update).not.toHaveBeenCalled();
       expect(result).toEqual(expect.objectContaining({ id: INSERTED_ITEM_ID }));
     });
@@ -579,7 +583,9 @@ describe('InboxRouterService', () => {
 
     it('should rethrow when the unique violation leaves no row behind', async () => {
       // Prepare
-      inboxItemRepository.insertAndReturnOne.mockRejectedValueOnce(buildUniqueViolation());
+      inboxItemRepository.insertAndReturnOne.mockRejectedValueOnce(
+        buildUniqueViolation(),
+      );
 
       // Act & Assert
       await expect(

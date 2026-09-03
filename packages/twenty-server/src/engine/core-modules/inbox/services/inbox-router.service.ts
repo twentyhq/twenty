@@ -408,20 +408,15 @@ export class InboxRouterService {
     workspaceId: string;
     where?: FindOptionsWhere<WorkspaceMemberWorkspaceEntity>;
   }): Promise<WorkspaceMemberWorkspaceEntity[]> {
-    return this.workspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const workspaceMemberRepository =
-          this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            'workspaceMember',
-            { shouldBypassPermissionChecks: true },
-          );
-
-        return workspaceMemberRepository.find(
-          isDefined(where) ? { where } : {},
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workspaceMemberRepository =
+        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+          'workspaceMember',
+          { shouldBypassPermissionChecks: true },
         );
-      },
-      buildSystemAuthContext(workspaceId),
-    );
+
+      return workspaceMemberRepository.find(isDefined(where) ? { where } : {});
+    }, buildSystemAuthContext(workspaceId));
   }
 
   // The inbox is never allowed to fail the subsystem that feeds it: a chat or
