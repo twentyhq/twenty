@@ -13,10 +13,7 @@ export const resolveCampaignBatchSettlements = ({
   claimedRecipients: { messageId: string }[];
   outcome: CampaignBatchSendOutcome;
 }): CampaignDeliverySettlement[] => {
-  const settlementByDeliveryId = new Map<
-    string,
-    CampaignDeliverySettlement
-  >();
+  const settlementByDeliveryId = new Map<string, CampaignDeliverySettlement>();
 
   for (const recipientIndex of outcome.suppressedRecipientIndexes) {
     const recipient = claimedRecipients[recipientIndex];
