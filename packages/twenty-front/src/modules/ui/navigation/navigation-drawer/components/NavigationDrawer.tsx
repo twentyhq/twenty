@@ -50,8 +50,8 @@ const StyledAnimatedContainer = styled.div<{
   }
 `;
 
-// 4px above the 32px header plus a 4px gap puts the mode switcher row exactly
-// where the 40px page card header ends, so both columns share the same rows.
+// The header takes a tighter gap than the sections below it so that the mode
+// switcher row starts where the page card header ends in the next column.
 const StyledContainer = styled.div<{
   isExpanded?: boolean;
 }>`

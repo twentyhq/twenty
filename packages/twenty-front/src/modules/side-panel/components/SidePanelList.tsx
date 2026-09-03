@@ -1,6 +1,7 @@
 import { SidePanelDefaultSelectionEffect } from '@/side-panel/components/SidePanelDefaultSelectionEffect';
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
 import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
+import { SIDE_PANEL_TOP_BAR_HEIGHT_MOBILE } from '@/side-panel/constants/SidePanelTopBarHeightMobile';
 import { SIDE_PANEL_LIST_PADDING } from '@/side-panel/constants/SidePanelListPadding';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
@@ -21,7 +22,7 @@ export type SidePanelListProps = {
 
 const StyledInnerList = styled.div`
   max-height: calc(
-    calc(100dvh / var(--t-zoom, 1)) - ${SIDE_PANEL_TOP_BAR_HEIGHT}px -
+    calc(100dvh / var(--t-zoom, 1)) - ${SIDE_PANEL_TOP_BAR_HEIGHT_MOBILE}px -
       ${SIDE_PANEL_LIST_PADDING * 2}px
   );
   padding-left: ${themeCssVariables.spacing[2]};

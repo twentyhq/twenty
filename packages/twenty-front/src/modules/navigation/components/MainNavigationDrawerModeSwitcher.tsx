@@ -21,8 +21,8 @@ import {
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-// The row is as tall as the page card header row it sits next to, so its rules
-// continue the card header's bottom border and the tab strip's bottom border.
+// Sized off the page card header row beside it, so the rules read as one line
+// across both columns.
 const StyledSwitcher = styled.div`
   align-items: center;
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
