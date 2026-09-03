@@ -5,12 +5,12 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
-import { Callout } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
+import { SlackSettingsCallout } from 'src/front-components/components/SlackSettingsCallout';
 import { SlackUserLinkForm } from 'src/front-components/components/SlackUserLinkForm';
 import { SlackUserLinksList } from 'src/front-components/components/SlackUserLinksList';
 import { UnlinkedSlackUsersList } from 'src/front-components/components/UnlinkedSlackUsersList';
@@ -201,7 +201,7 @@ export const SlackUserLinksSettings = () => {
   if (isDefined(connectionHealthCallout)) {
     return (
       <StyledContainer>
-        <Callout
+        <SlackSettingsCallout
           variant="error"
           title={connectionHealthCallout.title}
           description={connectionHealthCallout.description}
@@ -217,7 +217,7 @@ export const SlackUserLinksSettings = () => {
   return (
     <StyledContainer>
       {!canManage && (
-        <Callout
+        <SlackSettingsCallout
           variant="warning"
           title="You need the roles permission"
           description="Only members with the roles permission can create or change Slack user links. You can review the existing links below."
@@ -226,7 +226,7 @@ export const SlackUserLinksSettings = () => {
       {canManage &&
         (lastMatchRunOutcome === 'dirty' ||
           (hasRosterMatchFailed && lastMatchRunOutcome !== 'clean')) && (
-          <Callout
+          <SlackSettingsCallout
             variant="warning"
             title="Email auto-link did not finish"
             description="The last automatic email match failed before linking everyone. Press Auto-link by email below to run it again."
