@@ -468,6 +468,7 @@ export class AgentAsyncExecutorService {
             inputSchema,
             error,
             model: registeredModel.model,
+            sdkPackage: registeredModel.sdkPackage,
           });
         },
       });

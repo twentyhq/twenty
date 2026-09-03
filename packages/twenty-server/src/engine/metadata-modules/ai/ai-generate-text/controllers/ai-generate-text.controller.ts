@@ -18,6 +18,7 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
+import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
 import { AiRestApiExceptionFilter } from 'src/engine/metadata-modules/ai/filters/ai-api-exception.filter';
 import { GenerateTextInput } from 'src/engine/metadata-modules/ai/ai-generate-text/dtos/generate-text.input';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -79,6 +80,9 @@ export class AiGenerateTextController {
             functionId: 'ai-generate-text',
             workspaceId: workspace.id,
             userWorkspaceId,
+          }),
+          providerOptions: getCallLevelProviderOptions({
+            sdkPackage: registeredModel.sdkPackage,
           }),
         }),
       );

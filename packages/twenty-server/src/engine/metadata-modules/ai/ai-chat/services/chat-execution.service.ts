@@ -630,6 +630,7 @@ export class ChatExecutionService {
           inputSchema,
           error,
           model: registeredModel.model,
+          sdkPackage: registeredModel.sdkPackage,
           billingContext: {
             aiBillingService: this.aiBillingService,
             modelId: registeredModel.modelId,

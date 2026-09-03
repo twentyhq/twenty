@@ -7,11 +7,13 @@ import {
   type ToolSet,
   generateText,
 } from 'ai';
+import { type AiSdkPackage } from 'twenty-shared/ai';
 import { type z } from 'zod';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
+import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 
 type ToolCall = {
@@ -35,6 +37,7 @@ export const repairToolCall = async ({
   inputSchema,
   error,
   model,
+  sdkPackage,
   billingContext,
 }: {
   toolCall: ToolCall;
@@ -42,6 +45,7 @@ export const repairToolCall = async ({
   inputSchema: (toolCall: { toolName: string }) => unknown;
   error: Error;
   model: LanguageModel;
+  sdkPackage: AiSdkPackage;
   billingContext?: RepairToolCallBillingContext;
 }): Promise<ToolCall | null> => {
   // Don't attempt to fix invalid tool names
@@ -88,6 +92,7 @@ export const repairToolCall = async ({
         workspaceId: billingContext?.workspaceId,
         userWorkspaceId: billingContext?.userWorkspaceId,
       }),
+      providerOptions: getCallLevelProviderOptions({ sdkPackage }),
     });
 
     usage = result.usage;

@@ -7,6 +7,7 @@ import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-err
 import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { AgentTurnEvaluationEntity } from 'src/engine/metadata-modules/ai/ai-agent-monitor/entities/agent-turn-evaluation.entity';
+import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -91,6 +92,9 @@ Respond ONLY with valid JSON in this exact format:
           agentId: turn.agentId,
           threadId: turn.threadId,
           turnId: turn.id,
+        }),
+        providerOptions: getCallLevelProviderOptions({
+          sdkPackage: defaultModel.sdkPackage,
         }),
       });
 

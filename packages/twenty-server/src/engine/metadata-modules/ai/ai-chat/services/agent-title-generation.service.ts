@@ -11,6 +11,7 @@ import { BillingUsageService } from 'src/engine/core-modules/billing/services/bi
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
+import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
@@ -50,6 +51,9 @@ export class AgentTitleGenerationService {
           functionId: 'agent-title-generation',
           workspaceId,
           userWorkspaceId,
+        }),
+        providerOptions: getCallLevelProviderOptions({
+          sdkPackage: defaultModel.sdkPackage,
         }),
       });
 
