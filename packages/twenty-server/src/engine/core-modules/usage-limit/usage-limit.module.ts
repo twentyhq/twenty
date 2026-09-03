@@ -6,6 +6,7 @@ import { ClickHouseModule } from 'src/database/clickhouse/clickhouse.module';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -41,6 +42,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UsageLimitQuotaService,
     UsageLimitSpeedService,
     UsageLimitsCacheService,
+    UsagePeriodService,
     UsageLimitService,
     UsageLimitResolver,
     provideWorkspaceScopedRepository(UsageLimitEntity),

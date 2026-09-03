@@ -43,8 +43,8 @@ import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/ut
 import { fromConsumeResultsToRemainings } from 'src/engine/core-modules/usage-limit/utils/from-consume-results-to-remainings.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { UsagePeriodService } from 'src/engine/core-modules/usage/services/usage-period.service';
-import { type UsagePeriod } from 'src/engine/core-modules/usage/types/usage-period.type';
+import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
+import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usage-period.type';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { WorkspaceCacheException } from 'src/engine/workspace-cache/exceptions/workspace-cache.exception';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';

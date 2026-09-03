@@ -21,7 +21,7 @@ import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/
 import { buildQuotaWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-warm-lock-key.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { UsagePeriodService } from 'src/engine/core-modules/usage/services/usage-period.service';
+import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const MONTH_PERIOD = {

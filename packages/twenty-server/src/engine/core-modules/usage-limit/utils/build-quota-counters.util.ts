@@ -10,7 +10,7 @@ import { findLimitsForSpender } from 'src/engine/core-modules/usage-limit/utils/
 import { normalizeSpenderId } from 'src/engine/core-modules/usage-limit/utils/normalize-spender-id.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { type UsagePeriod } from 'src/engine/core-modules/usage/types/usage-period.type';
+import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usage-period.type';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 
 const counterSpecificity = (counter: LimitQuotaCounter): number =>

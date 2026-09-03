@@ -1,4 +1,4 @@
-import { getCalendarDayPeriod } from 'src/engine/core-modules/usage/utils/get-calendar-day-period.util';
+import { getCalendarDayPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-day-period.util';
 
 describe('getCalendarDayPeriod', () => {
   it('returns the enclosing UTC day', () => {

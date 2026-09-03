@@ -5,10 +5,10 @@ import { Injectable } from '@nestjs/common';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type AnchoredPeriodUnit } from 'src/engine/core-modules/usage-limit/types/anchored-period-unit.type';
-import { type UsagePeriod } from 'src/engine/core-modules/usage/types/usage-period.type';
-import { getCalendarDayPeriod } from 'src/engine/core-modules/usage/utils/get-calendar-day-period.util';
-import { getCalendarMonthPeriod } from 'src/engine/core-modules/usage/utils/get-calendar-month-period.util';
-import { getCalendarWeekPeriod } from 'src/engine/core-modules/usage/utils/get-calendar-week-period.util';
+import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usage-period.type';
+import { getCalendarDayPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-day-period.util';
+import { getCalendarMonthPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-month-period.util';
+import { getCalendarWeekPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-week-period.util';
 
 @Injectable()
 export class UsagePeriodService {

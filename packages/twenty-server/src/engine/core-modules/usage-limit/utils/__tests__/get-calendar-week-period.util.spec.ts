@@ -1,4 +1,4 @@
-import { getCalendarWeekPeriod } from 'src/engine/core-modules/usage/utils/get-calendar-week-period.util';
+import { getCalendarWeekPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-week-period.util';
 
 describe('getCalendarWeekPeriod', () => {
   it('anchors to the enclosing Monday-started UTC week', () => {

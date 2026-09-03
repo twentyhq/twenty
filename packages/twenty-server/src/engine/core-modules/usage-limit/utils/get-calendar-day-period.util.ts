@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { type UsagePeriod } from 'src/engine/core-modules/usage/types/usage-period.type';
+import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usage-period.type';
 
 export const getCalendarDayPeriod = (now: Date): UsagePeriod => ({
   periodStart: new Date(

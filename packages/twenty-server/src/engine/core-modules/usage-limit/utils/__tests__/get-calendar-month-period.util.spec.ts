@@ -1,4 +1,4 @@
-import { getCalendarMonthPeriod } from 'src/engine/core-modules/usage/utils/get-calendar-month-period.util';
+import { getCalendarMonthPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-month-period.util';
 
 describe('getCalendarMonthPeriod', () => {
   it('returns the enclosing UTC calendar month', () => {
