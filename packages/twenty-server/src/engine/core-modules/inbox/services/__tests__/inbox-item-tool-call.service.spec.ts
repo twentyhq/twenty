@@ -27,6 +27,7 @@ const buildToolCall = (
     proposedInput: { to: 'marie@example.com' },
     editedInput: null,
     inputSchema: [],
+    resolvedAt: null,
     ...overrides,
   }) as InboxItemToolCallEntity;
 
@@ -48,6 +49,16 @@ describe('InboxItemToolCallService', () => {
     accessibleQueueIds: [],
   };
 
+  // The rows as read before the run, then as read back after it
+  const givenToolCalls = (
+    before: InboxItemToolCallEntity[],
+    after: InboxItemToolCallEntity[],
+  ) => {
+    inboxItemToolCallRepository.find
+      .mockResolvedValueOnce(before)
+      .mockResolvedValueOnce(after);
+  };
+
   beforeEach(async () => {
     jest.clearAllMocks();
 
@@ -55,6 +66,7 @@ describe('InboxItemToolCallService', () => {
       id: INBOX_ITEM_ID,
       version: 3,
     });
+    inboxItemToolCallRepository.update.mockResolvedValue({ affected: 1 });
     inboxTransitionService.transition.mockImplementation(
       async ({ transition }) => ({ id: INBOX_ITEM_ID, ...transition }),
     );
@@ -84,13 +96,23 @@ describe('InboxItemToolCallService', () => {
   describe('runAll', () => {
     it('should run the edited input when there is one and clear the item as done', async () => {
       // Prepare
-      inboxItemToolCallRepository.find.mockResolvedValue([
-        buildToolCall({
-          id: 'first',
-          editedInput: { to: 'paul@example.com' },
-        }),
-        buildToolCall({ id: 'second', position: 1, toolName: 'create_person' }),
-      ]);
+      const first = buildToolCall({
+        id: 'first',
+        editedInput: { to: 'paul@example.com' },
+      });
+      const second = buildToolCall({
+        id: 'second',
+        position: 1,
+        toolName: 'create_person',
+      });
+
+      givenToolCalls(
+        [first, second],
+        [
+          { ...first, status: InboxItemToolCallStatus.EXECUTED },
+          { ...second, status: InboxItemToolCallStatus.EXECUTED },
+        ],
+      );
 
       // Act
       const inboxItem = await service.runAll({
@@ -104,7 +126,7 @@ describe('InboxItemToolCallService', () => {
         1,
         expect.objectContaining({ input: { to: 'paul@example.com' } }),
       );
-      expect(inboxItemToolCallRepository.update).toHaveBeenCalledTimes(2);
+      expect(inboxToolCallExecutionService.execute).toHaveBeenCalledTimes(2);
       expect(inboxTransitionService.transition).toHaveBeenCalledWith(
         expect.objectContaining({
           transition: { kind: 'CLEAR', outcome: 'DONE' },
@@ -114,17 +136,62 @@ describe('InboxItemToolCallService', () => {
       expect(inboxItem).toMatchObject({ outcome: 'DONE' });
     });
 
+    it('should claim each call before running it', async () => {
+      // Prepare
+      const first = buildToolCall({ id: 'first' });
+
+      givenToolCalls(
+        [first],
+        [{ ...first, status: InboxItemToolCallStatus.EXECUTED }],
+      );
+
+      // Act
+      await service.runAll({ ...actorArgs, inboxItemId: INBOX_ITEM_ID });
+
+      // Assert
+      expect(inboxItemToolCallRepository.update).toHaveBeenNthCalledWith(
+        1,
+        WORKSPACE_ID,
+        expect.objectContaining({
+          id: 'first',
+          status: InboxItemToolCallStatus.PROPOSED,
+        }),
+        expect.objectContaining({
+          resolvedByUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
+        }),
+      );
+    });
+
+    // Two people pressing the button at once must not send the email twice
+    it('should not run a call another run claimed first', async () => {
+      // Prepare
+      const first = buildToolCall({ id: 'first' });
+
+      givenToolCalls([first], [first]);
+      inboxItemToolCallRepository.update.mockResolvedValue({ affected: 0 });
+
+      // Act
+      await service.runAll({ ...actorArgs, inboxItemId: INBOX_ITEM_ID });
+
+      // Assert
+      expect(inboxToolCallExecutionService.execute).not.toHaveBeenCalled();
+      expect(inboxTransitionService.transition).not.toHaveBeenCalled();
+    });
+
     // A skipped step is the person's veto, and the outcome should say so
     it('should clear the item as partial when a step was skipped', async () => {
       // Prepare
-      inboxItemToolCallRepository.find.mockResolvedValue([
-        buildToolCall({ id: 'first' }),
-        buildToolCall({
-          id: 'second',
-          position: 1,
-          status: InboxItemToolCallStatus.REJECTED,
-        }),
-      ]);
+      const first = buildToolCall({ id: 'first' });
+      const second = buildToolCall({
+        id: 'second',
+        position: 1,
+        status: InboxItemToolCallStatus.REJECTED,
+      });
+
+      givenToolCalls(
+        [first, second],
+        [{ ...first, status: InboxItemToolCallStatus.EXECUTED }, second],
+      );
 
       // Act
       await service.runAll({ ...actorArgs, inboxItemId: INBOX_ITEM_ID });
@@ -138,11 +205,41 @@ describe('InboxItemToolCallService', () => {
       );
     });
 
+    it('should clear the item as partial when every step was skipped', async () => {
+      // Prepare
+      const first = buildToolCall({
+        id: 'first',
+        status: InboxItemToolCallStatus.REJECTED,
+      });
+
+      givenToolCalls([first], [first]);
+
+      // Act
+      await service.runAll({ ...actorArgs, inboxItemId: INBOX_ITEM_ID });
+
+      // Assert
+      expect(inboxToolCallExecutionService.execute).not.toHaveBeenCalled();
+      expect(inboxTransitionService.transition).toHaveBeenCalledWith(
+        expect.objectContaining({
+          transition: { kind: 'CLEAR', outcome: 'PARTIAL' },
+        }),
+      );
+    });
+
     it('should leave the item in the inbox when a step fails', async () => {
       // Prepare
-      inboxItemToolCallRepository.find.mockResolvedValue([
-        buildToolCall({ id: 'first' }),
-      ]);
+      const first = buildToolCall({ id: 'first' });
+
+      givenToolCalls(
+        [first],
+        [
+          {
+            ...first,
+            status: InboxItemToolCallStatus.FAILED,
+            error: 'Mailbox not connected',
+          },
+        ],
+      );
       inboxToolCallExecutionService.execute.mockResolvedValue({
         status: 'FAILED',
         error: 'Mailbox not connected',
@@ -161,6 +258,50 @@ describe('InboxItemToolCallService', () => {
         }),
       );
       expect(inboxTransitionService.transition).not.toHaveBeenCalled();
+    });
+
+    it('should leave the item in the inbox while an earlier failure stands', async () => {
+      // Prepare
+      const failed = buildToolCall({
+        id: 'failed',
+        status: InboxItemToolCallStatus.FAILED,
+      });
+      const second = buildToolCall({ id: 'second', position: 1 });
+
+      givenToolCalls(
+        [failed, second],
+        [failed, { ...second, status: InboxItemToolCallStatus.EXECUTED }],
+      );
+
+      // Act
+      await service.runAll({ ...actorArgs, inboxItemId: INBOX_ITEM_ID });
+
+      // Assert
+      expect(inboxToolCallExecutionService.execute).toHaveBeenCalledTimes(1);
+      expect(inboxTransitionService.transition).not.toHaveBeenCalled();
+    });
+
+    it('should refuse to run a call missing a required field', async () => {
+      // Prepare
+      givenToolCalls(
+        [
+          buildToolCall({
+            inputSchema: [
+              { key: 'to', label: 'To', type: 'TEXT', isRequired: true },
+            ],
+            editedInput: { subject: 'Hello' },
+          }),
+        ],
+        [],
+      );
+
+      // Act & Assert
+      await expect(
+        service.runAll({ ...actorArgs, inboxItemId: INBOX_ITEM_ID }),
+      ).rejects.toMatchObject({
+        code: InboxExceptionCode.INVALID_INBOX_TOOL_CALL_INPUT,
+      });
+      expect(inboxToolCallExecutionService.execute).not.toHaveBeenCalled();
     });
 
     it('should refuse to run a plan that changed since it was read', async () => {
@@ -196,6 +337,28 @@ describe('InboxItemToolCallService', () => {
         code: InboxExceptionCode.INBOX_ITEM_CHANGED,
       });
       expect(inboxItemToolCallRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('should refuse to skip a step that ran between the read and the write', async () => {
+      // Prepare
+      inboxItemToolCallRepository.findOne.mockResolvedValue(buildToolCall({}));
+      inboxItemToolCallRepository.update.mockResolvedValue({ affected: 0 });
+
+      // Act & Assert
+      await expect(
+        service.setRejected({
+          ...actorArgs,
+          inboxItemToolCallId: 'tool-call-id',
+          isRejected: true,
+        }),
+      ).rejects.toMatchObject({
+        code: InboxExceptionCode.INBOX_ITEM_CHANGED,
+      });
+      expect(inboxItemToolCallRepository.update).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        { id: 'tool-call-id', status: InboxItemToolCallStatus.PROPOSED },
+        expect.anything(),
+      );
     });
   });
 });

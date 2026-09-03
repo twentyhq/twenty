@@ -156,7 +156,7 @@ export const InboxItemPage = () => {
           isUnread={isUnread}
         />
         {isPlan ? (
-          <InboxPlanView inboxItem={inboxItem} />
+          <InboxPlanView key={inboxItem.id} inboxItem={inboxItem} />
         ) : (
           <>
             <StyledContext>

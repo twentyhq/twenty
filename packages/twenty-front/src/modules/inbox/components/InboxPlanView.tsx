@@ -136,12 +136,27 @@ export const InboxPlanView = ({ inboxItem }: { inboxItem: InboxItem }) => {
     () => pendingToolCalls[0]?.id ?? toolCalls[0]?.id ?? null,
   );
   const [isRunning, setIsRunning] = useState(false);
+  const [inFlightEditCount, setInFlightEditCount] = useState(0);
 
   const selectedToolCall =
     toolCalls.find((toolCall) => toolCall.id === selectedToolCallId) ?? null;
 
   const reportFailure = () =>
     enqueueErrorSnackBar({ message: t`That could not be applied` });
+
+  // A blur save or a skip still on the wire must land before the plan runs,
+  // or the run could use the input from before the edit
+  const trackEdit = async (edit: () => Promise<unknown>) => {
+    setInFlightEditCount((count) => count + 1);
+
+    try {
+      await edit();
+    } catch {
+      reportFailure();
+    } finally {
+      setInFlightEditCount((count) => count - 1);
+    }
+  };
 
   const findControl = (key: string) =>
     inboxItem.inboxItemType.actions.find(
@@ -227,26 +242,22 @@ export const InboxPlanView = ({ inboxItem }: { inboxItem: InboxItem }) => {
             key={`${selectedToolCall.id}-${selectedToolCall.status}`}
             toolCall={selectedToolCall}
             source={context?.source}
-            onSave={async (editedInput) => {
-              try {
-                await updateInboxItemToolCallInput({
+            onSave={(editedInput) =>
+              trackEdit(() =>
+                updateInboxItemToolCallInput({
                   inboxItemToolCallId: selectedToolCall.id,
                   editedInput,
-                });
-              } catch {
-                reportFailure();
-              }
-            }}
-            onToggleRejected={async (isRejected) => {
-              try {
-                await setInboxItemToolCallRejected({
+                }),
+              )
+            }
+            onToggleRejected={(isRejected) =>
+              trackEdit(() =>
+                setInboxItemToolCallRejected({
                   inboxItemToolCallId: selectedToolCall.id,
                   isRejected,
-                });
-              } catch {
-                reportFailure();
-              }
-            }}
+                }),
+              )
+            }
           />
         )}
       </StyledScroll>
@@ -289,13 +300,17 @@ export const InboxPlanView = ({ inboxItem }: { inboxItem: InboxItem }) => {
             )}
             <Button
               accent="blue"
-              disabled={pendingToolCalls.length === 0 || isRunning}
+              disabled={
+                toolCalls.length === 0 || isRunning || inFlightEditCount > 0
+              }
               onClick={() => void runAll()}
               size="small"
               title={
-                pendingToolCalls.length === 1
-                  ? t`Do 1 action`
-                  : t`Do ${pendingToolCalls.length} actions`
+                pendingToolCalls.length === 0
+                  ? t`Close plan`
+                  : pendingToolCalls.length === 1
+                    ? t`Do 1 action`
+                    : t`Do ${pendingToolCalls.length} actions`
               }
               variant="primary"
             />

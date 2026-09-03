@@ -4,7 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMail, IconRepeat, IconX, useIcons } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { Checkbox, LightIconButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type InboxPlanContextSource } from '@/inbox/types/InboxPlanContext';
@@ -113,6 +113,15 @@ const StyledReadOnlyValue = styled.span`
   white-space: pre-wrap;
 `;
 
+const StyledCheckboxField = styled.label`
+  align-items: center;
+  color: ${themeCssVariables.font.color.primary};
+  cursor: pointer;
+  display: flex;
+  font-size: ${themeCssVariables.font.size.md};
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
 const StyledStatus = styled.div<{ isFailure: boolean }>`
   color: ${({ isFailure }) =>
     isFailure ? themeCssVariables.color.red : themeCssVariables.color.green};
@@ -167,24 +176,41 @@ export const InboxPlanToolCallEditor = ({
   const setFieldValue = (key: string, value: string) =>
     setDraft((current) => ({ ...current, [key]: value }));
 
-  // Numbers go back as numbers and cleared optional fields are dropped, so
-  // what runs is the same shape the agent proposed
-  const save = () => {
-    const editedInput = Object.fromEntries(
+  // Numbers and booleans go back as their own type and cleared fields are
+  // dropped, so what runs is the same shape the agent proposed
+  const toInputValue = (field: InboxItemField, value: string) => {
+    if (value === '') {
+      return undefined;
+    }
+
+    if (field.type === 'NUMBER') {
+      return Number(value);
+    }
+
+    if (field.type === 'BOOLEAN') {
+      return value === 'true';
+    }
+
+    return value;
+  };
+
+  const buildEditedInput = (currentDraft: Record<string, string>) =>
+    Object.fromEntries(
       fields
-        .map((field) => {
-          const value = draft[field.key] ?? '';
-
-          if (value === '') {
-            return [field.key, undefined];
-          }
-
-          return [field.key, field.type === 'NUMBER' ? Number(value) : value];
-        })
+        .map((field) => [
+          field.key,
+          toInputValue(field, currentDraft[field.key] ?? ''),
+        ])
         .filter(([, value]) => isDefined(value)),
     );
 
-    void onSave(editedInput);
+  const save = () => void onSave(buildEditedInput(draft));
+
+  const toggleBoolean = (field: InboxItemField, isChecked: boolean) => {
+    const nextDraft = { ...draft, [field.key]: String(isChecked) };
+
+    setDraft(nextDraft);
+    void onSave(buildEditedInput(nextDraft));
   };
 
   const renderField = (field: InboxItemField) => {
@@ -194,6 +220,18 @@ export const InboxPlanToolCallEditor = ({
           <StyledReadOnlyLabel>{field.label}</StyledReadOnlyLabel>
           <StyledReadOnlyValue>{draft[field.key] ?? ''}</StyledReadOnlyValue>
         </StyledReadOnlyField>
+      );
+    }
+
+    if (field.type === 'BOOLEAN') {
+      return (
+        <StyledCheckboxField key={field.key}>
+          <Checkbox
+            checked={draft[field.key] === 'true'}
+            onCheckedChange={(isChecked) => toggleBoolean(field, isChecked)}
+          />
+          {field.label}
+        </StyledCheckboxField>
       );
     }
 
@@ -219,6 +257,7 @@ export const InboxPlanToolCallEditor = ({
         value={draft[field.key] ?? ''}
         onChange={(value) => setFieldValue(field.key, value)}
         onBlur={save}
+        required={field.isRequired}
         fullWidth
       />
     );

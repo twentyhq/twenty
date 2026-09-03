@@ -257,6 +257,7 @@ export class InboxRouterService {
         ...(isDefined(args.title) ? { title: args.title } : {}),
         ...(isDefined(args.preview) ? { preview: args.preview } : {}),
         ...(args.payload !== undefined ? { payload: args.payload } : {}),
+        ...(args.context !== undefined ? { context: args.context } : {}),
         lastEventAt: () => 'clock_timestamp()',
         version: () => '"version" + 1',
       },

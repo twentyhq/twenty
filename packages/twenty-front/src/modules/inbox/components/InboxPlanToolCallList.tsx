@@ -65,8 +65,11 @@ const StyledDescription = styled.span`
 
 const StyledError = styled.span`
   color: ${themeCssVariables.color.red};
-  flex-shrink: 0;
   font-size: ${themeCssVariables.font.size.sm};
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 type InboxPlanToolCallListProps = {
@@ -95,6 +98,7 @@ export const InboxPlanToolCallList = ({
           <StyledRow
             key={toolCall.id}
             type="button"
+            aria-pressed={toolCall.id === selectedToolCallId}
             isSelected={toolCall.id === selectedToolCallId}
             isRejected={toolCall.status === InboxItemToolCallStatus.REJECTED}
             onClick={() => onSelect(toolCall.id)}
@@ -112,7 +116,9 @@ export const InboxPlanToolCallList = ({
             )}
             {toolCall.status === InboxItemToolCallStatus.FAILED &&
               isNonEmptyString(toolCall.error) && (
-                <StyledError>{toolCall.error}</StyledError>
+                <StyledError title={toolCall.error}>
+                  {toolCall.error}
+                </StyledError>
               )}
           </StyledRow>
         );

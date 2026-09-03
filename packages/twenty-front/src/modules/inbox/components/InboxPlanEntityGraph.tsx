@@ -11,8 +11,8 @@ import {
 const StyledGraph = styled.div`
   align-items: stretch;
   display: flex;
-  flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[2]};
+  overflow-x: auto;
 `;
 
 const StyledEntity = styled.div`
@@ -21,6 +21,7 @@ const StyledEntity = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   gap: ${themeCssVariables.spacing[1]};
   min-width: 180px;
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
@@ -61,6 +62,7 @@ const StyledConnector = styled.div`
   align-self: center;
   color: ${themeCssVariables.font.color.light};
   display: flex;
+  flex-shrink: 0;
   font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
   padding: 0 ${themeCssVariables.spacing[1]};
@@ -78,7 +80,8 @@ type InboxPlanEntityGraphProps = {
 };
 
 // The entities in the order the producer gave them, with the relation between
-// neighbours written on the line that joins them.
+// neighbours written on the line that joins them. Producers lay a plan's
+// entities out as a chain, so a relation between non neighbours is not drawn.
 export const InboxPlanEntityGraph = ({
   entities,
   edges,
@@ -115,7 +118,7 @@ export const InboxPlanEntityGraph = ({
                 <StyledSubtitle>{entity.subtitle}</StyledSubtitle>
               )}
             </StyledEntity>
-            {isDefined(nextEntity) && (
+            {isDefined(edgeLabel) && (
               <StyledConnector>
                 <StyledLine />
                 {edgeLabel}

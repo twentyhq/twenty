@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { IsNull } from 'typeorm';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
 import { InboxItemToolCallStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-tool-call-status.enum';
@@ -57,11 +59,7 @@ export class InboxItemToolCallService {
       inboxItemToolCallId,
     });
 
-    await this.inboxItemToolCallRepository.update(
-      workspaceId,
-      { id: toolCall.id },
-      { editedInput },
-    );
+    await this.updateUnlessChanged(workspaceId, toolCall, { editedInput });
 
     return { ...toolCall, editedInput };
   }
@@ -87,15 +85,11 @@ export class InboxItemToolCallService {
       ? InboxItemToolCallStatus.REJECTED
       : InboxItemToolCallStatus.PROPOSED;
 
-    await this.inboxItemToolCallRepository.update(
-      workspaceId,
-      { id: toolCall.id },
-      {
-        status,
-        resolvedByUserWorkspaceId: isRejected ? actorUserWorkspaceId : null,
-        resolvedAt: isRejected ? new Date() : null,
-      },
-    );
+    await this.updateUnlessChanged(workspaceId, toolCall, {
+      status,
+      resolvedByUserWorkspaceId: isRejected ? actorUserWorkspaceId : null,
+      resolvedAt: isRejected ? new Date() : null,
+    });
 
     return { ...toolCall, status };
   }
@@ -127,15 +121,31 @@ export class InboxItemToolCallService {
       );
     }
 
-    const toolCalls = await this.inboxItemToolCallRepository.find(workspaceId, {
-      where: { inboxItemId },
-      order: { position: 'ASC' },
-    });
+    const proposedToolCalls = (
+      await this.findToolCallsInOrder(workspaceId, inboxItemId)
+    ).filter(
+      (toolCall) => toolCall.status === InboxItemToolCallStatus.PROPOSED,
+    );
 
-    let hasFailure = false;
+    this.assertRequiredInputsPresent(proposedToolCalls);
 
-    for (const toolCall of toolCalls) {
-      if (toolCall.status !== InboxItemToolCallStatus.PROPOSED) {
+    for (const toolCall of proposedToolCalls) {
+      // Claiming the row first is what keeps two runs of the same plan from
+      // executing a call twice: only the run whose claim lands executes it
+      const claim = await this.inboxItemToolCallRepository.update(
+        workspaceId,
+        {
+          id: toolCall.id,
+          status: InboxItemToolCallStatus.PROPOSED,
+          resolvedAt: IsNull(),
+        },
+        {
+          resolvedByUserWorkspaceId: actorUserWorkspaceId,
+          resolvedAt: new Date(),
+        },
+      );
+
+      if ((claim.affected ?? 0) === 0) {
         continue;
       }
 
@@ -145,8 +155,6 @@ export class InboxItemToolCallService {
         toolName: toolCall.toolName,
         input: toolCall.editedInput ?? toolCall.proposedInput,
       });
-
-      hasFailure = hasFailure || result.status === 'FAILED';
 
       await this.inboxItemToolCallRepository.update(
         workspaceId,
@@ -158,13 +166,25 @@ export class InboxItemToolCallService {
               : InboxItemToolCallStatus.FAILED,
           output: result.status === 'EXECUTED' ? result.output : null,
           error: result.status === 'FAILED' ? result.error : null,
-          resolvedByUserWorkspaceId: actorUserWorkspaceId,
-          resolvedAt: new Date(),
         },
       );
     }
 
-    if (hasFailure) {
+    // Read back rather than trusting the rows from before the loop: a skip,
+    // an earlier failure or another run may have landed in the meantime
+    const toolCallsAfterRun = await this.findToolCallsInOrder(
+      workspaceId,
+      inboxItemId,
+    );
+
+    const hasFailure = toolCallsAfterRun.some(
+      (toolCall) => toolCall.status === InboxItemToolCallStatus.FAILED,
+    );
+    const hasCallStillProposed = toolCallsAfterRun.some(
+      (toolCall) => toolCall.status === InboxItemToolCallStatus.PROPOSED,
+    );
+
+    if (hasFailure || hasCallStillProposed) {
       return this.inboxItemService.findVisibleItemOrThrow({
         inboxItemId,
         workspaceId,
@@ -173,7 +193,7 @@ export class InboxItemToolCallService {
       });
     }
 
-    const wasAnyRejected = toolCalls.some(
+    const wasAnyRejected = toolCallsAfterRun.some(
       (toolCall) => toolCall.status === InboxItemToolCallStatus.REJECTED,
     );
 
@@ -191,6 +211,59 @@ export class InboxItemToolCallService {
           : AGENT_PLAN_OUTCOME.done,
       },
     });
+  }
+
+  private findToolCallsInOrder(
+    workspaceId: string,
+    inboxItemId: string,
+  ): Promise<InboxItemToolCallEntity[]> {
+    return this.inboxItemToolCallRepository.find(workspaceId, {
+      where: { inboxItemId },
+      order: { position: 'ASC' },
+    });
+  }
+
+  // The editor lets a person clear any field; what runs must still satisfy
+  // the schema the producer declared
+  private assertRequiredInputsPresent(toolCalls: InboxItemToolCallEntity[]) {
+    for (const toolCall of toolCalls) {
+      const input = (toolCall.editedInput ??
+        toolCall.proposedInput ??
+        {}) as Record<string, unknown>;
+
+      const missingKeys = toolCall.inputSchema
+        .filter((field) => field.isRequired === true)
+        .map((field) => field.key)
+        .filter((key) => !isDefined(input[key]) || input[key] === '');
+
+      if (missingKeys.length > 0) {
+        throw new InboxException(
+          `Inbox item tool call ${toolCall.id} is missing ${missingKeys.join(', ')}`,
+          InboxExceptionCode.INVALID_INBOX_TOOL_CALL_INPUT,
+        );
+      }
+    }
+  }
+
+  // Compare-and-set on the status read a moment ago, so a run that finished
+  // in between cannot be undone by a late edit or skip
+  private async updateUnlessChanged(
+    workspaceId: string,
+    toolCall: InboxItemToolCallEntity,
+    patch: QueryDeepPartialEntity<InboxItemToolCallEntity>,
+  ): Promise<void> {
+    const result = await this.inboxItemToolCallRepository.update(
+      workspaceId,
+      { id: toolCall.id, status: toolCall.status },
+      patch,
+    );
+
+    if ((result.affected ?? 0) === 0) {
+      throw new InboxException(
+        `Inbox item tool call ${toolCall.id} changed since it was read`,
+        InboxExceptionCode.INBOX_ITEM_CHANGED,
+      );
+    }
   }
 
   // A call can only be shaped through an item the actor can see, and only

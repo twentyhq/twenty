@@ -16,6 +16,7 @@ export const InboxExceptionCode = appendCommonExceptionCode({
   INBOX_ITEM_NOT_FOUND: 'INBOX_ITEM_NOT_FOUND',
   INBOX_ITEM_CHANGED: 'INBOX_ITEM_CHANGED',
   INVALID_INBOX_ACTION: 'INVALID_INBOX_ACTION',
+  INVALID_INBOX_TOOL_CALL_INPUT: 'INVALID_INBOX_TOOL_CALL_INPUT',
   INVALID_INBOX_QUEUE_CHANGE: 'INVALID_INBOX_QUEUE_CHANGE',
   INBOX_DISABLED: 'INBOX_DISABLED',
 } as const);
@@ -38,6 +39,8 @@ const getInboxExceptionUserFriendlyMessage = (
       return msg`Someone else worked on this item. Reload and try again.`;
     case InboxExceptionCode.INVALID_INBOX_ACTION:
       return msg`This action cannot be run on this item.`;
+    case InboxExceptionCode.INVALID_INBOX_TOOL_CALL_INPUT:
+      return msg`A step of this plan is missing a required field.`;
     case InboxExceptionCode.INVALID_INBOX_QUEUE_CHANGE:
       return msg`This shared inbox cannot be changed that way.`;
     case InboxExceptionCode.INBOX_DISABLED:
