@@ -92,6 +92,27 @@ describe('Fathom app deployed functions', () => {
     });
   });
 
+  it('rejects invalid workflow action input before looking up a connection', async () => {
+    const listExecution = await executeDeployedFunction(
+      'fathom-list-calls-by-participant',
+      { participantEmail: '   ' },
+    );
+    const syncExecution = await executeDeployedFunction('fathom-sync-call', {
+      recordingId: '42',
+    });
+
+    expect(listExecution.status).toBe('SUCCESS');
+    expect(listExecution.data).toEqual({
+      success: false,
+      error: 'participantEmail is required',
+    });
+    expect(syncExecution.status).toBe('SUCCESS');
+    expect(syncExecution.data).toEqual({
+      success: false,
+      error: 'recordingId must be an integer',
+    });
+  });
+
   it('reports the missing Fathom connection from the deployed workflow actions', async () => {
     const listExecution = await executeDeployedFunction(
       'fathom-list-calls-by-participant',
