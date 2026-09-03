@@ -1,6 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
-import { useLocation } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import {
   assertUnreachable,
@@ -13,19 +12,18 @@ import { IconApps, IconLock, useIcons } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme-constants';
 
 import { CHAT_REFERENCE_PERMISSION_FLAG_BY_KIND } from '@/ai/constants/ChatReferencePermissionFlagByKind';
+import { useIsAiChatArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';
 import { type ChatReferenceMatch } from '@/ai/types/ChatReferenceMatch';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useViewById } from '@/views/hooks/useViewById';
-import { isAiChatPath } from '~/utils/isAiChatPath';
 
 const PROPOSED_OBJECT_METADATA_ICON = 'IconListNumbers';
 const PROPOSED_FIELD_METADATA_ICON = 'IconTag';
@@ -45,10 +43,7 @@ export const useChatReferenceTarget = (
 ): ChatReferenceTarget | null => {
   const theme = useTheme();
   const { getIcon } = useIcons();
-  const { pathname } = useLocation();
-  const shouldOpenAiChatAfterOnboarding = useAtomStateValue(
-    shouldOpenAiChatAfterOnboardingState,
-  );
+  const isAiChatArtifactSurface = useIsAiChatArtifactSurface();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
   const hasPermission = useHasPermissionFlag(
@@ -224,14 +219,12 @@ export const useChatReferenceTarget = (
   }
 
   const to = hasPermission ? destination.path : undefined;
-  const isArtifactSurface =
-    isAiChatPath(pathname) && !shouldOpenAiChatAfterOnboarding;
 
   return {
     ...destination,
     to,
     onClick:
-      isArtifactSurface && isNonEmptyString(to)
+      isAiChatArtifactSurface && isNonEmptyString(to)
         ? getOpenArtifact(to)
         : undefined,
   };
