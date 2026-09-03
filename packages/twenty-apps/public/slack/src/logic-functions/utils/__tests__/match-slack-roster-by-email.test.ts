@@ -9,13 +9,13 @@ const {
   findWorkspaceMemberIdsByEmailsMock,
   listLinkedSlackUserIdsMock,
   linkSlackRosterCandidatesMock,
-  saveSlackRosterMatchOutcomeMock,
+  saveSlackRosterMatchRunOutcomeMock,
 } = vi.hoisted(() => ({
   coreApiClientMock: vi.fn(),
   findWorkspaceMemberIdsByEmailsMock: vi.fn(),
   listLinkedSlackUserIdsMock: vi.fn(),
   linkSlackRosterCandidatesMock: vi.fn(),
-  saveSlackRosterMatchOutcomeMock: vi.fn(),
+  saveSlackRosterMatchRunOutcomeMock: vi.fn(),
 }));
 
 vi.mock('twenty-client-sdk/core', () => ({
@@ -34,9 +34,12 @@ vi.mock('src/logic-functions/utils/link-slack-roster-candidates', () => ({
   linkSlackRosterCandidates: linkSlackRosterCandidatesMock,
 }));
 
-vi.mock('src/logic-functions/utils/save-slack-roster-match-outcome', () => ({
-  saveSlackRosterMatchOutcome: saveSlackRosterMatchOutcomeMock,
-}));
+vi.mock(
+  'src/logic-functions/utils/save-slack-roster-match-run-outcome',
+  () => ({
+    saveSlackRosterMatchRunOutcome: saveSlackRosterMatchRunOutcomeMock,
+  }),
+);
 
 const SLACK_TEAM_ID = 'T-installed';
 
@@ -276,7 +279,7 @@ describe('matchSlackRosterByEmail', () => {
       slackTeamId: SLACK_TEAM_ID,
     });
 
-    expect(saveSlackRosterMatchOutcomeMock).toHaveBeenCalledWith({
+    expect(saveSlackRosterMatchRunOutcomeMock).toHaveBeenCalledWith({
       isSuccessful: true,
     });
   });
@@ -294,7 +297,7 @@ describe('matchSlackRosterByEmail', () => {
       slackTeamId: SLACK_TEAM_ID,
     });
 
-    expect(saveSlackRosterMatchOutcomeMock).toHaveBeenCalledWith({
+    expect(saveSlackRosterMatchRunOutcomeMock).toHaveBeenCalledWith({
       isSuccessful: false,
     });
   });
@@ -309,7 +312,7 @@ describe('matchSlackRosterByEmail', () => {
       }),
     ).rejects.toThrow('kaboom');
 
-    expect(saveSlackRosterMatchOutcomeMock).toHaveBeenCalledWith({
+    expect(saveSlackRosterMatchRunOutcomeMock).toHaveBeenCalledWith({
       isSuccessful: false,
       errorMessage: 'kaboom',
     });

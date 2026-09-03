@@ -9,7 +9,7 @@ import { collectSlackRosterMembers } from 'src/logic-functions/utils/collect-sla
 import { getVouchedSlackRosterEmail } from 'src/logic-functions/utils/get-vouched-slack-roster-email';
 import { linkSlackRosterCandidates } from 'src/logic-functions/utils/link-slack-roster-candidates';
 import { planSlackRosterMatch } from 'src/logic-functions/utils/plan-slack-roster-match';
-import { saveSlackRosterMatchOutcome } from 'src/logic-functions/utils/save-slack-roster-match-outcome';
+import { saveSlackRosterMatchRunOutcome } from 'src/logic-functions/utils/save-slack-roster-match-run-outcome';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 const runSlackRosterMatch = async ({
@@ -73,13 +73,13 @@ export const matchSlackRosterByEmail = async ({
   try {
     const summary = await runSlackRosterMatch({ slackClient, slackTeamId });
 
-    await saveSlackRosterMatchOutcome({
+    await saveSlackRosterMatchRunOutcome({
       isSuccessful: summary.failedCount === 0,
     });
 
     return summary;
   } catch (error) {
-    await saveSlackRosterMatchOutcome({
+    await saveSlackRosterMatchRunOutcome({
       isSuccessful: false,
       errorMessage: toErrorMessage(error),
     });
