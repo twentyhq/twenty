@@ -33,7 +33,9 @@ export const useCampaignAudiencePreview = ({
   });
 
   return {
-    audiencePreview: data?.previewMessageCampaignAudience ?? null,
+    audiencePreview: isDefined(error)
+      ? null
+      : (data?.previewMessageCampaignAudience ?? null),
     hasFailed: isDefined(error),
     loading,
   };

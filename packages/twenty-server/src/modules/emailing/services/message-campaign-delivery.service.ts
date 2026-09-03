@@ -132,10 +132,15 @@ export class MessageCampaignDeliveryService {
         creditContext,
       });
 
-      await this.messageCampaignStatisticsService.scheduleRefresh({
-        workspaceId,
-        campaignId,
-      });
+      await this.messageCampaignStatisticsService
+        .scheduleRefresh({ workspaceId, campaignId })
+        .catch((error) => {
+          this.logger.error(
+            `Campaign ${campaignId} could not schedule a statistics refresh: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
+          );
+        });
 
       await this.messageCampaignLifecycleService.finalizeCampaignIfComplete({
         workspaceId,

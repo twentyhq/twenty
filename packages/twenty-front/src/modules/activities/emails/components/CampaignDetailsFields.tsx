@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import {
   CoreObjectNameSingular,
@@ -199,8 +199,14 @@ export const CampaignDetailsFields = ({
                 $isMuted={false}
               >
                 {hasExcludedRecipients
-                  ? t`${formatNumber(audiencePreview.sendable)} of ${formatNumber(audiencePreview.totalMembers)} recipients`
-                  : t`${formatNumber(audiencePreview.totalMembers)} recipients`}
+                  ? plural(audiencePreview.sendable, {
+                      one: `${formatNumber(audiencePreview.sendable)} of ${formatNumber(audiencePreview.totalMembers)} recipient`,
+                      other: `${formatNumber(audiencePreview.sendable)} of ${formatNumber(audiencePreview.totalMembers)} recipients`,
+                    })
+                  : plural(audiencePreview.totalMembers, {
+                      one: `${formatNumber(audiencePreview.totalMembers)} recipient`,
+                      other: `${formatNumber(audiencePreview.totalMembers)} recipients`,
+                    })}
               </StyledRecipientCount>
             )}
             {hasExcludedRecipients && (

@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/client/react';
 
 import { CANCEL_MESSAGE_CAMPAIGN } from '@/activities/emails/graphql/mutations/cancelMessageCampaign';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { t } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
 import {
   type CancelMessageCampaignMutation,
   type CancelMessageCampaignMutationVariables,
@@ -36,7 +36,10 @@ export const useCancelMessageCampaign = () => {
       }
 
       enqueueSuccessSnackBar({
-        message: t`Campaign canceled, ${canceled.canceledMessageCount} pending email(s) stopped`,
+        message: plural(canceled.canceledMessageCount, {
+          one: `Campaign canceled, ${canceled.canceledMessageCount} pending email stopped`,
+          other: `Campaign canceled, ${canceled.canceledMessageCount} pending emails stopped`,
+        }),
       });
 
       return true;
