@@ -2107,7 +2107,7 @@ export interface BillingEntitlement {
     __typename: 'BillingEntitlement'
 }
 
-export type BillingEntitlementKey = 'SSO' | 'CUSTOM_DOMAIN' | 'RLS' | 'AUDIT_LOGS'
+export type BillingEntitlementKey = 'SSO' | 'CUSTOM_DOMAIN' | 'RLS' | 'AUDIT_LOGS' | 'USAGE_LIMIT'
 
 export interface DomainRecord {
     validationType: Scalars['String']
@@ -10373,7 +10373,8 @@ export const enumBillingEntitlementKey = {
    SSO: 'SSO' as const,
    CUSTOM_DOMAIN: 'CUSTOM_DOMAIN' as const,
    RLS: 'RLS' as const,
-   AUDIT_LOGS: 'AUDIT_LOGS' as const
+   AUDIT_LOGS: 'AUDIT_LOGS' as const,
+   USAGE_LIMIT: 'USAGE_LIMIT' as const
 }
 
 export const enumApplicationExportCoverageStatus = {

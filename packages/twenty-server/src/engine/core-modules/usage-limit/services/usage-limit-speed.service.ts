@@ -1,4 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
+import { DiscoveryService } from '@nestjs/core';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -13,12 +14,15 @@ import {
   UsageLimitException,
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
+import { type UsageLimitEntitlementProvider } from 'src/engine/core-modules/usage-limit/interfaces/usage-limit-entitlement-provider.service';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { type SpeedBucketOutcome } from 'src/engine/core-modules/usage-limit/types/speed-bucket-outcome.type';
 import { type SpeedBucketRequest } from 'src/engine/core-modules/usage-limit/types/speed-bucket-request.type';
 import { type UsageLimits } from 'src/engine/core-modules/usage-limit/types/usage-limits.type';
 import { buildSpeedBuckets } from 'src/engine/core-modules/usage-limit/utils/build-speed-buckets.util';
+import { findEnforceableLimits } from 'src/engine/core-modules/usage-limit/utils/find-enforceable-limits.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
+import { findUsageLimitEntitlementProvider } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-entitlement-provider.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { WorkspaceCacheException } from 'src/engine/workspace-cache/exceptions/workspace-cache.exception';
@@ -27,15 +31,24 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 const ADMITTED: SpeedBucketOutcome = { admitted: true };
 
 @Injectable()
-export class UsageLimitSpeedService {
+export class UsageLimitSpeedService implements OnModuleInit {
   private readonly logger = new Logger(UsageLimitSpeedService.name);
+
+  private entitlementProvider: UsageLimitEntitlementProvider | null = null;
 
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineUsageLimit)
     private readonly cacheStorage: CacheStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly discoveryService: DiscoveryService,
   ) {}
+
+  onModuleInit() {
+    this.entitlementProvider = findUsageLimitEntitlementProvider(
+      this.discoveryService,
+    );
+  }
 
   async consumeOrThrow({
     resourceType,
@@ -179,6 +192,12 @@ export class UsageLimitSpeedService {
       return [];
     }
 
+    const enforceableLimits = await findEnforceableLimits({
+      workspaceId: authContext.workspace.id,
+      limits,
+      entitlementProvider: this.entitlementProvider,
+    });
+
     return buildSpeedBuckets({
       speedLimitDefaults: definition.defaults.map(
         (speedLimitDefaultDefinition) => ({
@@ -193,7 +212,7 @@ export class UsageLimitSpeedService {
           ),
         }),
       ),
-      limits,
+      limits: enforceableLimits,
       authContext,
       resourceType,
       operationType,

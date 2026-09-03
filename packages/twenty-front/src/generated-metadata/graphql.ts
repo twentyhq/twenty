@@ -702,7 +702,8 @@ export enum BillingEntitlementKey {
   AUDIT_LOGS = 'AUDIT_LOGS',
   CUSTOM_DOMAIN = 'CUSTOM_DOMAIN',
   RLS = 'RLS',
-  SSO = 'SSO'
+  SSO = 'SSO',
+  USAGE_LIMIT = 'USAGE_LIMIT'
 }
 
 export type BillingLicensedProduct = BillingProductDto & {

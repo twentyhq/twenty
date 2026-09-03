@@ -13,6 +13,7 @@ import {
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
+import { UsageLimitEntitlementProvider } from 'src/engine/core-modules/usage-limit/interfaces/usage-limit-entitlement-provider.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { type UsageLimitCounterScope } from 'src/engine/core-modules/usage-limit/types/usage-limit-counter-scope.type';
@@ -43,6 +44,10 @@ class TestCreditAllowanceProvider extends CreditAllowanceProvider {
   isCreditAllowanceEnabled = jest.fn().mockResolvedValue(true);
   getCreditAllowancePeriod = jest.fn().mockResolvedValue(null);
   getCreditAllowance = jest.fn().mockResolvedValue(null);
+}
+
+class TestUsageLimitEntitlementProvider extends UsageLimitEntitlementProvider {
+  hasIntraWorkspaceLimitEntitlement = jest.fn();
 }
 
 const buildLimitCounterScope = (
@@ -77,6 +82,7 @@ const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
 describe('UsageLimitQuotaService', () => {
   let service: UsageLimitQuotaService;
   let creditAllowanceProvider: TestCreditAllowanceProvider;
+  let entitlementProvider: TestUsageLimitEntitlementProvider;
 
   const cacheStorage = {
     mget: jest.fn().mockResolvedValue([]),
@@ -140,6 +146,10 @@ describe('UsageLimitQuotaService', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     creditAllowanceProvider = new TestCreditAllowanceProvider();
+    entitlementProvider = new TestUsageLimitEntitlementProvider();
+    entitlementProvider.hasIntraWorkspaceLimitEntitlement.mockResolvedValue(
+      true,
+    );
     cacheStorage.mget.mockResolvedValue([]);
     cacheStorage.runScript.mockResolvedValue([]);
     clickHouseService.selectOrThrow.mockResolvedValue([]);
@@ -165,7 +175,10 @@ describe('UsageLimitQuotaService', () => {
         {
           provide: DiscoveryService,
           useValue: {
-            getProviders: () => [{ instance: creditAllowanceProvider }],
+            getProviders: () => [
+              { instance: creditAllowanceProvider },
+              { instance: entitlementProvider },
+            ],
           },
         },
       ],
@@ -377,6 +390,46 @@ describe('UsageLimitQuotaService', () => {
       expect.objectContaining({ args: ['[50]'] }),
     );
     expect(exhausted).toEqual([]);
+  });
+
+  describe('intra-workspace limit entitlement', () => {
+    it('does not check entitlement when only workspace-scope quota rows exist', async () => {
+      setLimits([buildLimit({})]);
+      cacheStorage.mget.mockResolvedValue([250]);
+
+      await assertQuotaNotExhausted();
+
+      expect(
+        entitlementProvider.hasIntraWorkspaceLimitEntitlement,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('enforces only workspace-scope quota rows when not entitled', async () => {
+      entitlementProvider.hasIntraWorkspaceLimitEntitlement.mockResolvedValue(
+        false,
+      );
+      setLimits([
+        buildLimit({ id: 'ws' }),
+        buildLimit({ id: 'uw', spenderType: 'userWorkspace' }),
+      ]);
+      cacheStorage.mget.mockResolvedValue([250]);
+
+      await assertQuotaNotExhausted();
+
+      expect(cacheStorage.mget.mock.calls[0][0]).toHaveLength(1);
+    });
+
+    it('enforces intra-workspace quota rows when entitled', async () => {
+      setLimits([
+        buildLimit({ id: 'ws' }),
+        buildLimit({ id: 'uw', spenderType: 'userWorkspace' }),
+      ]);
+      cacheStorage.mget.mockResolvedValue([250, 250]);
+
+      await assertQuotaNotExhausted();
+
+      expect(cacheStorage.mget.mock.calls[0][0]).toHaveLength(2);
+    });
   });
 
   describe('dropAllowanceCounter', () => {
