@@ -5,6 +5,7 @@ import {
 } from 'twenty-sdk/logic-function';
 
 import { type SlackAssistantAgentMessage } from 'src/logic-functions/types/slack-assistant-agent-message.type';
+import { raceSlackAssistantAgentDeadline } from 'src/logic-functions/utils/race-slack-assistant-agent-deadline';
 import { startSlackAssistantStatusUpdates } from 'src/logic-functions/utils/start-slack-assistant-status-updates';
 
 type RunSlackAssistantAgentInput = Pick<
@@ -14,6 +15,7 @@ type RunSlackAssistantAgentInput = Pick<
   messages: SlackAssistantAgentMessage[];
   slackChannelId: string;
   threadTimestamp: string;
+  deadlineAtMs: number;
 };
 
 export const runSlackAssistantAgentWithStatus = async ({
@@ -22,6 +24,7 @@ export const runSlackAssistantAgentWithStatus = async ({
   runAsWorkspaceMemberId,
   slackChannelId,
   threadTimestamp,
+  deadlineAtMs,
 }: RunSlackAssistantAgentInput): Promise<RunAgentResult> => {
   const stopStatusUpdates = startSlackAssistantStatusUpdates({
     slackChannelId,
@@ -29,10 +32,13 @@ export const runSlackAssistantAgentWithStatus = async ({
   });
 
   try {
-    return await runAgent({
-      agentUniversalIdentifier,
-      messages,
-      runAsWorkspaceMemberId,
+    return await raceSlackAssistantAgentDeadline({
+      agentRun: runAgent({
+        agentUniversalIdentifier,
+        messages,
+        runAsWorkspaceMemberId,
+      }),
+      deadlineAtMs,
     });
   } finally {
     await stopStatusUpdates();
