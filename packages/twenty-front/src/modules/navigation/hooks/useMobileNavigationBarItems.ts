@@ -77,7 +77,11 @@ export const useMobileNavigationBarItems = (): {
   };
 
   const activeItemName: MobileNavigationBarItemName | '' =
-    pathname === AppPath.Home ? 'home' : isInboxPath(pathname) ? 'inbox' : '';
+    pathname === AppPath.Home
+      ? 'home'
+      : isInboxEnabled && isInboxPath(pathname)
+        ? 'inbox'
+        : '';
 
   return {
     activeItemName,

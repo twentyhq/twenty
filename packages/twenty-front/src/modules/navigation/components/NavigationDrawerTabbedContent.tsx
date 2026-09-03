@@ -26,16 +26,19 @@ export const NavigationDrawerTabbedContent = ({
 }: NavigationDrawerTabbedContentProps) => {
   return (
     <>
-      <StyledTabContent isHidden={showAiChatContent || showInboxContent}>
+      <StyledTabContent
+        key="navigation"
+        isHidden={showAiChatContent || showInboxContent}
+      >
         {navigationContent}
       </StyledTabContent>
       {shouldMountInboxContent && (
-        <StyledTabContent isHidden={!showInboxContent}>
+        <StyledTabContent key="inbox" isHidden={!showInboxContent}>
           <NavigationDrawerInboxContent />
         </StyledTabContent>
       )}
       {shouldMountAiChatContent && (
-        <StyledTabContent isHidden={!showAiChatContent}>
+        <StyledTabContent key="ai-chat" isHidden={!showAiChatContent}>
           <NavigationDrawerAiChatContent />
         </StyledTabContent>
       )}

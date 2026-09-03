@@ -289,15 +289,9 @@ export const seedInbox = async ({
   const people = getSeededPeople(workspaceId);
   const now = new Date();
 
-  const typeIdByKey = Object.fromEntries(
-    STANDARD_INBOX_ITEM_TYPES.map((standardType) => [
-      standardType.key,
-      generateSeedId(workspaceId, `inbox-item-type-${standardType.key}`),
-    ]),
-  ) as Record<StandardInboxItemTypeKey, string>;
-
   // The same rows the service seeds on first use, so a later upsert finds them
-  // by universal identifier and only refreshes their declarations.
+  // by universal identifier and only refreshes their declarations. The ids are
+  // read back rather than assumed, in case the service got there first.
   await queryRunner.manager
     .createQueryBuilder()
     .insert()
@@ -316,7 +310,7 @@ export const seedInbox = async ({
     .orIgnore()
     .values(
       STANDARD_INBOX_ITEM_TYPES.map((standardType) => ({
-        id: typeIdByKey[standardType.key],
+        id: generateSeedId(workspaceId, `inbox-item-type-${standardType.key}`),
         workspaceId,
         universalIdentifier: standardType.universalIdentifier,
         applicationId: inboxReferenceIds.applicationId,
@@ -329,6 +323,16 @@ export const seedInbox = async ({
       })),
     )
     .execute();
+
+  const typeRows: { id: string; key: StandardInboxItemTypeKey }[] =
+    await queryRunner.query(
+      `SELECT "id", "key" FROM ${schemaName}."${inboxItemTypeTableName}"
+       WHERE "workspaceId" = $1 AND "deletedAt" IS NULL`,
+      [workspaceId],
+    );
+  const typeIdByKey = Object.fromEntries(
+    typeRows.map((row) => [row.key, row.id]),
+  ) as Record<StandardInboxItemTypeKey, string>;
 
   const queueIdBySeedName = Object.fromEntries(
     SEEDED_QUEUES.map((queue) => [
