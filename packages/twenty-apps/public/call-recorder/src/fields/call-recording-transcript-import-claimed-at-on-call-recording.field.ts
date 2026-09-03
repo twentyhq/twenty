@@ -15,7 +15,7 @@ export default defineField({
   name: 'transcriptImportClaimedAt',
   label: 'Transcript Import Claimed At',
   description:
-    'Lease held by the worker importing this recording’s transcript; kept separate from the media lease so a transcript callback is never bounced by a media upload in flight.',
+    'Lease held by the worker importing this recording’s transcript; prevents concurrent webhook retries from requesting the transcript twice.',
   icon: 'IconLock',
   isNullable: true,
   isUIEditable: false,

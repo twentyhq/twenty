@@ -15,7 +15,7 @@ export default defineField({
   name: 'artifactsImportClaimedAt',
   label: 'Artifacts Import Claimed At',
   description:
-    'Lease held by the worker importing this recording’s media; prevents concurrent webhook retries from duplicating provider media uploads.',
+    'Lease held by the worker importing this recording’s artifacts; prevents concurrent webhook retries from duplicating provider imports.',
   icon: 'IconLock',
   isNullable: true,
   isUIEditable: false,
