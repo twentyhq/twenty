@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import importCallRecordingArtifactsLogicFunction, {
-  importCallRecordingArtifactsHandler,
-} from 'src/logic-functions/import-call-recording-artifacts';
+import importCallRecordingTranscriptLogicFunction, {
+  importCallRecordingTranscriptHandler,
+} from 'src/logic-functions/import-call-recording-transcript';
 
 const importCallRecordingArtifactsMock = vi.hoisted(() => vi.fn());
 const coreApiClientMock = vi.hoisted(() => vi.fn());
@@ -18,54 +18,53 @@ vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: coreApiClientMock,
 }));
 
-describe('import-call-recording-artifacts', () => {
+describe('import-call-recording-transcript', () => {
   beforeEach(() => {
     importCallRecordingArtifactsMock.mockReset();
     importCallRecordingArtifactsMock.mockResolvedValue({
       status: 'imported',
       callRecordingId: 'call-recording-1',
+      scope: 'transcript',
       outcome: 'call-recording-artifacts-imported',
     });
     coreApiClientMock.mockReset();
   });
 
   it('is configured as an enqueue-only import worker', () => {
-    expect(importCallRecordingArtifactsLogicFunction.success).toBe(true);
-    expect(importCallRecordingArtifactsLogicFunction.config).toEqual(
+    expect(importCallRecordingTranscriptLogicFunction.success).toBe(true);
+    expect(importCallRecordingTranscriptLogicFunction.config).toEqual(
       expect.objectContaining({
-        name: 'import-call-recording-artifacts',
+        name: 'import-call-recording-transcript',
         timeoutSeconds: 250,
       }),
     );
-    expect(importCallRecordingArtifactsLogicFunction.config).not.toHaveProperty(
-      'httpRouteTriggerSettings',
-    );
+    expect(
+      importCallRecordingTranscriptLogicFunction.config,
+    ).not.toHaveProperty('httpRouteTriggerSettings');
   });
 
-  it('forwards a valid import payload to the worker flow', async () => {
-    const payload = {
+  it('defaults a payload without an attempt counter to the first attempt', async () => {
+    await importCallRecordingTranscriptHandler({
       callRecordingId: 'call-recording-1',
       requestedAt: '2026-01-01T14:06:00.000Z',
-    };
+    });
 
-    const result = await importCallRecordingArtifactsHandler(payload);
-
-    expect(coreApiClientMock).toHaveBeenCalledTimes(1);
     expect(importCallRecordingArtifactsMock).toHaveBeenCalledWith({
       client: coreApiClientMock.mock.instances[0],
-      request: payload,
-    });
-    expect(result).toEqual({
-      status: 'imported',
-      callRecordingId: 'call-recording-1',
-      outcome: 'call-recording-artifacts-imported',
+      request: {
+        callRecordingId: 'call-recording-1',
+        requestedAt: '2026-01-01T14:06:00.000Z',
+        attempt: 1,
+      },
+      scope: 'transcript',
     });
   });
 
-  it('ignores payload-supplied provider ids instead of forwarding them', async () => {
-    const result = await importCallRecordingArtifactsHandler({
+  it('ignores payload-supplied provider ids and unusable attempt counters', async () => {
+    const result = await importCallRecordingTranscriptHandler({
       callRecordingId: 'call-recording-1',
       requestedAt: '2026-01-01T14:06:00.000Z',
+      attempt: -4,
       event: 'transcript.done',
       externalBotId: 'forged-bot-id',
       externalRecordingId: 'forged-recording-id',
@@ -77,13 +76,15 @@ describe('import-call-recording-artifacts', () => {
       request: {
         callRecordingId: 'call-recording-1',
         requestedAt: '2026-01-01T14:06:00.000Z',
+        attempt: 1,
       },
+      scope: 'transcript',
     });
     expect(result).toEqual(expect.objectContaining({ status: 'imported' }));
   });
 
   it('skips invalid import payloads without touching the worker flow', async () => {
-    const result = await importCallRecordingArtifactsHandler({
+    const result = await importCallRecordingTranscriptHandler({
       requestedAt: '2026-01-01T14:06:00.000Z',
     });
 
@@ -91,6 +92,7 @@ describe('import-call-recording-artifacts', () => {
     expect(result).toEqual({
       status: 'skipped',
       callRecordingId: 'unknown',
+      scope: 'transcript',
       reason: 'invalid call recording artifacts import request',
     });
   });
@@ -101,7 +103,7 @@ describe('import-call-recording-artifacts', () => {
     );
 
     await expect(
-      importCallRecordingArtifactsHandler({
+      importCallRecordingTranscriptHandler({
         callRecordingId: 'call-recording-1',
         requestedAt: '2026-01-01T14:06:00.000Z',
       }),

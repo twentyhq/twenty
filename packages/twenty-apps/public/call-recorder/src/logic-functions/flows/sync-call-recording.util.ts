@@ -6,6 +6,7 @@ import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-ca
 import { isUnavailableCallRecordingStatus } from 'src/logic-functions/domain/is-unavailable-call-recording-status.util';
 import { shouldCompleteCallRecordingImport } from 'src/logic-functions/domain/should-complete-call-recording-import.util';
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
+import { completeCallRecordingImportWhenArtifactsLanded } from 'src/logic-functions/flows/complete-call-recording-import-when-artifacts-landed.util';
 import { importCallRecordingMedia } from 'src/logic-functions/flows/import-call-recording-media.util';
 import { persistCallRecordingProgress } from 'src/logic-functions/flows/persist-call-recording-progress.util';
 import { importCallRecordingTranscript } from 'src/logic-functions/flows/import-call-recording-transcript.util';
@@ -14,6 +15,7 @@ import {
   type RecallBotSyncState,
 } from 'src/logic-functions/recall-api/extract-recall-bot-sync-state.util';
 import { type RecallBotSnapshot } from 'src/logic-functions/recall-api/recall-bot-snapshot.type';
+import { type CallRecordingArtifactScope } from 'src/logic-functions/types/call-recording-artifact-scope.type';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 
@@ -43,6 +45,7 @@ export const syncCallRecording = async ({
   bot,
   treatRecordingAsDone,
   requestedAt,
+  artifactScope,
 }: {
   client: CoreApiClient;
   callRecording: SyncableCallRecording;
@@ -51,6 +54,7 @@ export const syncCallRecording = async ({
   // need not be re-derived from a bot snapshot they may not have.
   treatRecordingAsDone: boolean;
   requestedAt: string;
+  artifactScope: CallRecordingArtifactScope;
 }): Promise<SyncCallRecordingResult> => {
   const syncState = isUndefined(bot)
     ? undefined
@@ -82,32 +86,36 @@ export const syncCallRecording = async ({
   let requestedTranscript = false;
 
   if (isRecordingDone && !isUndefined(externalRecordingId)) {
-    const transcriptImportResult = await importCallRecordingTranscript({
-      callRecordingId: callRecording.id,
-      currentStatus: callRecording.status,
-      externalRecordingId,
-      requestedAt,
-      transcript: callRecording.transcript,
-    });
-
-    requestedTranscript = transcriptImportResult.requestedTranscript;
-    updateData = { ...updateData, ...transcriptImportResult.updateData };
-
-    const mediaImportUpdate = await importCallRecordingMedia({
-      callRecordingId: callRecording.id,
-      externalRecordingId,
-      hasAudio: isNonEmptyArray(callRecording.audio),
-      hasVideo: isNonEmptyArray(callRecording.video),
-    });
-
-    updateData = {
-      ...updateData,
-      ...resolveMediaImportUpdate({
-        mediaImportUpdate,
+    if (artifactScope !== 'media') {
+      const transcriptImportResult = await importCallRecordingTranscript({
+        callRecordingId: callRecording.id,
         currentStatus: callRecording.status,
-        pendingStatus: updateData.status,
-      }),
-    };
+        externalRecordingId,
+        requestedAt,
+        transcript: callRecording.transcript,
+      });
+
+      requestedTranscript = transcriptImportResult.requestedTranscript;
+      updateData = { ...updateData, ...transcriptImportResult.updateData };
+    }
+
+    if (artifactScope !== 'transcript') {
+      const mediaImportUpdate = await importCallRecordingMedia({
+        callRecordingId: callRecording.id,
+        externalRecordingId,
+        hasAudio: isNonEmptyArray(callRecording.audio),
+        hasVideo: isNonEmptyArray(callRecording.video),
+      });
+
+      updateData = {
+        ...updateData,
+        ...resolveMediaImportUpdate({
+          mediaImportUpdate,
+          currentStatus: callRecording.status,
+          pendingStatus: updateData.status,
+        }),
+      };
+    }
   }
 
   const completesImport = shouldCompleteCallRecordingImport({
@@ -126,8 +134,19 @@ export const syncCallRecording = async ({
     completesImport,
   });
 
+  if (!completesImport && hasArtifactUpdate(updateData)) {
+    await completeCallRecordingImportWhenArtifactsLanded(client, {
+      callRecordingId: callRecording.id,
+    });
+  }
+
   return { updated: true, requestedTranscript };
 };
+
+const hasArtifactUpdate = (updateData: CallRecordingUpdateFields): boolean =>
+  !isUndefined(updateData.transcript) ||
+  !isUndefined(updateData.audio) ||
+  !isUndefined(updateData.video);
 
 const buildSyncStateFieldUpdates = ({
   callRecording,

@@ -314,6 +314,7 @@ const convergeCallRecording = async ({
     bot: botResult.bot,
     treatRecordingAsDone: false,
     requestedAt: now.toISOString(),
+    artifactScope: 'all',
   });
 
   if (syncResult.updated) {

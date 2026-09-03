@@ -24,4 +24,5 @@ export type CallRecordingUpdateFields = Partial<{
   summary: CallRecordingSummary;
   // null releases the concurrent-import lease.
   artifactsImportClaimedAt: string | null;
+  transcriptImportClaimedAt: string | null;
 }>;

@@ -56,9 +56,9 @@ vi.mock('src/logic-functions/flows/import-call-recording-media.util', () => ({
 }));
 
 vi.mock(
-  'src/logic-functions/data/enqueue-call-recording-artifacts-import.util',
+  'src/logic-functions/data/enqueue-call-recording-artifact-import.util',
   () => ({
-    enqueueCallRecordingArtifactsImport: enqueueArtifactImportMock,
+    enqueueCallRecordingArtifactImport: enqueueArtifactImportMock,
   }),
 );
 
@@ -960,9 +960,10 @@ describe('handleRecallWebhook', () => {
 
     expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
     expect(importCallRecordingMediaMock).not.toHaveBeenCalled();
-    expect(enqueueArtifactImportMock).toHaveBeenCalledWith({
-      callRecordingId: 'call-recording-1',
-    });
+    expect(enqueueArtifactImportMock.mock.calls.map(([call]) => call)).toEqual([
+      { callRecordingId: 'call-recording-1', scope: 'transcript' },
+      { callRecordingId: 'call-recording-1', scope: 'media' },
+    ]);
     expect(client.mutations).toEqual([
       {
         id: 'call-recording-1',
@@ -1023,7 +1024,7 @@ describe('handleRecallWebhook', () => {
     expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
     expect(listRecallTranscriptsMock).not.toHaveBeenCalled();
     expect(retrieveRecallTranscriptMock).not.toHaveBeenCalled();
-    expect(enqueueArtifactImportMock).toHaveBeenCalledTimes(1);
+    expect(enqueueArtifactImportMock).toHaveBeenCalledTimes(2);
     expect(client.mutations).toEqual([
       {
         id: 'call-recording-1',
@@ -1067,9 +1068,10 @@ describe('handleRecallWebhook', () => {
 
     expect(getRecallBotMock).not.toHaveBeenCalled();
     expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
-    expect(enqueueArtifactImportMock).toHaveBeenCalledWith({
-      callRecordingId: 'call-recording-1',
-    });
+    expect(enqueueArtifactImportMock.mock.calls.map(([call]) => call)).toEqual([
+      { callRecordingId: 'call-recording-1', scope: 'transcript' },
+      { callRecordingId: 'call-recording-1', scope: 'media' },
+    ]);
     expect(client.mutations).toEqual([
       expect.objectContaining({
         id: 'call-recording-1',
@@ -1111,7 +1113,7 @@ describe('handleRecallWebhook', () => {
       },
     ]);
     expect(chargeCompletedCallRecordingMock).not.toHaveBeenCalled();
-    expect(enqueueArtifactImportMock).toHaveBeenCalledTimes(1);
+    expect(enqueueArtifactImportMock).toHaveBeenCalledTimes(2);
   });
 
   it('keeps the real failure reason on recording.failed and defers media work', async () => {
@@ -1148,7 +1150,7 @@ describe('handleRecallWebhook', () => {
     ]);
     expect(importCallRecordingMediaMock).not.toHaveBeenCalled();
     expect(chargeCompletedCallRecordingMock).not.toHaveBeenCalled();
-    expect(enqueueArtifactImportMock).toHaveBeenCalledTimes(1);
+    expect(enqueueArtifactImportMock).toHaveBeenCalledTimes(2);
     expect(result).toEqual({
       status: 'updated',
       event: 'recording.failed',
@@ -1199,8 +1201,9 @@ describe('handleRecallWebhook', () => {
       callRecordingId: 'call-recording-1',
     });
     expect(retrieveRecallTranscriptMock).not.toHaveBeenCalled();
-    expect(enqueueArtifactImportMock).toHaveBeenCalledWith({
+    expect(enqueueArtifactImportMock).toHaveBeenCalledExactlyOnceWith({
       callRecordingId: 'call-recording-1',
+      scope: 'transcript',
     });
     expect(client.mutations).toEqual([]);
   });
@@ -1247,8 +1250,9 @@ describe('handleRecallWebhook', () => {
       event: 'transcript.failed',
       callRecordingId: 'call-recording-1',
     });
-    expect(enqueueArtifactImportMock).toHaveBeenCalledWith({
+    expect(enqueueArtifactImportMock).toHaveBeenCalledExactlyOnceWith({
       callRecordingId: 'call-recording-1',
+      scope: 'transcript',
     });
     expect(client.mutations).toEqual([]);
   });

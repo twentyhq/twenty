@@ -1,19 +1,24 @@
 import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { defineLogicFunction } from 'twenty-sdk/define';
 
-import { IMPORT_CALL_RECORDING_ARTIFACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { FIRST_CALL_RECORDING_ARTIFACT_IMPORT_ATTEMPT } from 'src/logic-functions/constants/first-call-recording-artifact-import-attempt';
 import {
   importCallRecordingArtifacts,
   type ImportCallRecordingArtifactsResult,
 } from 'src/logic-functions/flows/import-call-recording-artifacts.util';
+import { type CallRecordingArtifactImportScope } from 'src/logic-functions/types/call-recording-artifact-scope.type';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
+import { getPositiveInteger } from 'src/logic-functions/utils/get-positive-integer.util';
 import { getString } from 'src/logic-functions/utils/get-string.util';
 
-export const importCallRecordingArtifactsHandler = async (
-  payload: unknown,
-): Promise<ImportCallRecordingArtifactsResult> => {
+export const handleCallRecordingArtifactImportJob = async ({
+  payload,
+  scope,
+}: {
+  payload: unknown;
+  scope: CallRecordingArtifactImportScope;
+}): Promise<ImportCallRecordingArtifactsResult> => {
   const body = asRecord(payload);
   const callRecordingId = getString(body?.callRecordingId);
   const requestedAt = getString(body?.requestedAt);
@@ -22,6 +27,7 @@ export const importCallRecordingArtifactsHandler = async (
     return {
       status: 'skipped',
       callRecordingId: callRecordingId ?? 'unknown',
+      scope,
       reason: 'invalid call recording artifacts import request',
     };
   }
@@ -29,22 +35,19 @@ export const importCallRecordingArtifactsHandler = async (
   try {
     return await importCallRecordingArtifacts({
       client: new CoreApiClient(),
-      request: { callRecordingId, requestedAt },
+      request: {
+        callRecordingId,
+        requestedAt,
+        attempt:
+          getPositiveInteger(body?.attempt) ??
+          FIRST_CALL_RECORDING_ARTIFACT_IMPORT_ATTEMPT,
+      },
+      scope,
     });
   } catch (error) {
     throw buildRetryableStepFailure(
-      `artifact import for call recording ${callRecordingId}`,
+      `${scope} artifact import for call recording ${callRecordingId}`,
       error,
     );
   }
 };
-
-export default defineLogicFunction({
-  universalIdentifier:
-    IMPORT_CALL_RECORDING_ARTIFACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-  name: 'import-call-recording-artifacts',
-  description:
-    'Imports recording media and transcript artifacts as an enqueued job after a verified Recall webhook resolves the owning CallRecording.',
-  timeoutSeconds: 250,
-  handler: importCallRecordingArtifactsHandler,
-});

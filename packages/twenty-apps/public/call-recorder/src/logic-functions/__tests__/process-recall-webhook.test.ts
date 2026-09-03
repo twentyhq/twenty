@@ -16,9 +16,9 @@ vi.mock('twenty-client-sdk/core', () => ({
 }));
 
 vi.mock(
-  'src/logic-functions/data/enqueue-call-recording-artifacts-import.util',
+  'src/logic-functions/data/enqueue-call-recording-artifact-import.util',
   () => ({
-    enqueueCallRecordingArtifactsImport: enqueueArtifactImportMock,
+    enqueueCallRecordingArtifactImport: enqueueArtifactImportMock,
   }),
 );
 

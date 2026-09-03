@@ -1,3 +1,4 @@
+import { isUndefined } from '@sniptt/guards';
 import { enqueueJobs } from 'twenty-sdk/logic-function';
 
 import { ENQUEUED_JOB_RETRY_LIMIT } from 'src/logic-functions/constants/enqueued-job-retry-limit';
@@ -7,9 +8,11 @@ import { getBatches } from 'src/logic-functions/utils/get-batches.util';
 export const enqueueLogicFunctionJobs = async ({
   logicFunctionUniversalIdentifier,
   payloads,
+  delayMs,
 }: {
   logicFunctionUniversalIdentifier: string;
   payloads: Record<string, unknown>[];
+  delayMs?: number;
 }): Promise<void> => {
   for (const payloadChunk of getBatches(
     payloads,
@@ -19,6 +22,7 @@ export const enqueueLogicFunctionJobs = async ({
       logicFunctionUniversalIdentifier,
       payloads: payloadChunk,
       retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
+      ...(isUndefined(delayMs) ? {} : { delayMs }),
     });
   }
 };

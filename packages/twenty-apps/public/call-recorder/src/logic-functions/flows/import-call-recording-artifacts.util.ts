@@ -1,46 +1,40 @@
-import { isNull, isUndefined } from '@sniptt/guards';
+import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { CALL_RECORDING_ARTIFACT_IMPORT_MAX_ATTEMPTS } from 'src/logic-functions/constants/call-recording-artifact-import-max-attempts';
+import { CALL_RECORDING_ARTIFACT_IMPORT_REQUEUE_DELAY_MS } from 'src/logic-functions/constants/call-recording-artifact-import-requeue-delay-ms';
 import {
-  claimCallRecordingArtifactsImport,
-  releaseCallRecordingArtifactsImportClaim,
-} from 'src/logic-functions/data/claim-call-recording-artifacts-import.util';
+  claimCallRecordingArtifactImport,
+  releaseCallRecordingArtifactImportClaim,
+} from 'src/logic-functions/data/claim-call-recording-artifact-import.util';
+import { enqueueCallRecordingArtifactImport } from 'src/logic-functions/data/enqueue-call-recording-artifact-import.util';
+import {
+  findCallRecordingForArtifactImport,
+  type CallRecordingForArtifactImport,
+} from 'src/logic-functions/data/find-call-recording-for-artifact-import.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
 import { type RecallBotSnapshot } from 'src/logic-functions/recall-api/recall-bot-snapshot.type';
-import {
-  syncCallRecording,
-  type SyncableCallRecording,
-} from 'src/logic-functions/flows/sync-call-recording.util';
-import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
+import { syncCallRecording } from 'src/logic-functions/flows/sync-call-recording.util';
+import { type CallRecordingArtifactImportScope } from 'src/logic-functions/types/call-recording-artifact-scope.type';
 import { type CallRecordingArtifactsImportRequest } from 'src/logic-functions/types/call-recording-artifacts-import-request.type';
-import { getString } from 'src/logic-functions/utils/get-string.util';
-
-type CallRecordingForArtifactsImport = SyncableCallRecording & {
-  externalBotId: string | undefined;
-};
-
-type CallRecordingForArtifactsImportNode = {
-  id?: string | null;
-  status?: string | null;
-  startedAt?: string | null;
-  endedAt?: string | null;
-  externalBotId?: string | null;
-  externalRecordingId?: string | null;
-  callRecorderFailureReason?: string | null;
-  transcript?: unknown;
-  audio?: FilesFieldValue | null;
-  video?: FilesFieldValue | null;
-};
 
 export type ImportCallRecordingArtifactsResult =
   | {
       status: 'imported';
       callRecordingId: string;
+      scope: CallRecordingArtifactImportScope;
       outcome: 'call-recording-artifacts-imported';
+    }
+  | {
+      status: 'requeued';
+      callRecordingId: string;
+      scope: CallRecordingArtifactImportScope;
+      attempt: number;
     }
   | {
       status: 'skipped';
       callRecordingId: string;
+      scope: CallRecordingArtifactImportScope;
       reason: string;
     };
 
@@ -49,11 +43,13 @@ export type ImportCallRecordingArtifactsResult =
 export const importCallRecordingArtifacts = async ({
   client,
   request,
+  scope,
 }: {
   client: CoreApiClient;
   request: CallRecordingArtifactsImportRequest;
+  scope: CallRecordingArtifactImportScope;
 }): Promise<ImportCallRecordingArtifactsResult> => {
-  const callRecording = await findCallRecordingForArtifactsImport(
+  const callRecording = await findCallRecordingForArtifactImport(
     client,
     request.callRecordingId,
   );
@@ -62,25 +58,27 @@ export const importCallRecordingArtifacts = async ({
     return {
       status: 'skipped',
       callRecordingId: request.callRecordingId,
+      scope,
       reason: 'no matching call recording',
     };
   }
 
   // Svix redelivers a webhook to several workers at once; the lease ensures only
-  // one performs the provider transcript request and media upload. The lease clock
-  // is wall-clock, not request.requestedAt, so a retry of the same delivery still
-  // measures real elapsed time and can reclaim a lease left behind by a crash.
-  const claimedImport = await claimCallRecordingArtifactsImport(client, {
+  // one performs the provider work for this scope. The lease clock is wall-clock,
+  // not request.requestedAt, so a retry of the same delivery still measures real
+  // elapsed time and can reclaim a lease left behind by a crash.
+  const claimedImport = await claimCallRecordingArtifactImport(client, {
     callRecordingId: callRecording.id,
+    scope,
     now: new Date(),
   });
 
   if (!claimedImport) {
-    return {
-      status: 'skipped',
+    return requeueBouncedImport({
       callRecordingId: callRecording.id,
-      reason: 'artifact import already in progress',
-    };
+      scope,
+      request,
+    });
   }
 
   try {
@@ -91,12 +89,14 @@ export const importCallRecordingArtifacts = async ({
       bot,
       treatRecordingAsDone: true,
       requestedAt: request.requestedAt,
+      artifactScope: scope,
     });
 
     if (!syncResult.updated) {
       return {
         status: 'skipped',
         callRecordingId: callRecording.id,
+        scope,
         reason: 'no artifact updates',
       };
     }
@@ -104,17 +104,62 @@ export const importCallRecordingArtifacts = async ({
     return {
       status: 'imported',
       callRecordingId: callRecording.id,
+      scope,
       outcome: 'call-recording-artifacts-imported',
     };
   } finally {
-    await releaseCallRecordingArtifactsImportClaim(client, {
+    await releaseCallRecordingArtifactImportClaim(client, {
       callRecordingId: callRecording.id,
+      scope,
     });
   }
 };
 
+// Returning a result counts as a successful logic-function run, so the platform
+// never redelivers it. A delivery that lost the lease race carries a signal
+// nothing else will replay, so it re-enqueues itself rather than being dropped.
+const requeueBouncedImport = async ({
+  callRecordingId,
+  scope,
+  request,
+}: {
+  callRecordingId: string;
+  scope: CallRecordingArtifactImportScope;
+  request: CallRecordingArtifactsImportRequest;
+}): Promise<ImportCallRecordingArtifactsResult> => {
+  const nextAttempt = request.attempt + 1;
+
+  if (nextAttempt > CALL_RECORDING_ARTIFACT_IMPORT_MAX_ATTEMPTS) {
+    console.warn(
+      `[call-recorder] ${scope} import for call recording ${callRecordingId} was blocked by a held lease on all ${request.attempt} attempts; leaving it to the reconcile sweep`,
+    );
+
+    return {
+      status: 'skipped',
+      callRecordingId,
+      scope,
+      reason: 'artifact import already in progress',
+    };
+  }
+
+  await enqueueCallRecordingArtifactImport({
+    callRecordingId,
+    scope,
+    requestedAt: request.requestedAt,
+    attempt: nextAttempt,
+    delayMs: CALL_RECORDING_ARTIFACT_IMPORT_REQUEUE_DELAY_MS,
+  });
+
+  return {
+    status: 'requeued',
+    callRecordingId,
+    scope,
+    attempt: nextAttempt,
+  };
+};
+
 const fetchRecallBotWhenRecordingIdMissing = async (
-  callRecording: CallRecordingForArtifactsImport,
+  callRecording: CallRecordingForArtifactImport,
 ): Promise<RecallBotSnapshot | undefined> => {
   if (!isUndefined(callRecording.externalRecordingId)) {
     return undefined;
@@ -137,55 +182,4 @@ const fetchRecallBotWhenRecordingIdMissing = async (
   }
 
   return botResult.bot;
-};
-
-const findCallRecordingForArtifactsImport = async (
-  client: CoreApiClient,
-  callRecordingId: string,
-): Promise<CallRecordingForArtifactsImport | undefined> => {
-  const queryResult = await client.query({
-    callRecordings: {
-      __args: {
-        filter: { id: { eq: callRecordingId } },
-        first: 1,
-      },
-      edges: {
-        node: {
-          id: true,
-          status: true,
-          startedAt: true,
-          endedAt: true,
-          externalBotId: true,
-          externalRecordingId: true,
-          callRecorderFailureReason: true,
-          transcript: true,
-          audio: { fileId: true },
-          video: { fileId: true },
-        },
-      },
-    },
-  });
-
-  const node = queryResult.callRecordings?.edges?.[0]?.node as
-    | CallRecordingForArtifactsImportNode
-    | null
-    | undefined;
-  const id = getString(node?.id);
-
-  if (isUndefined(node) || isNull(node) || isUndefined(id)) {
-    return undefined;
-  }
-
-  return {
-    id,
-    status: getString(node.status),
-    startedAt: getString(node.startedAt),
-    endedAt: getString(node.endedAt),
-    externalBotId: getString(node.externalBotId),
-    externalRecordingId: getString(node.externalRecordingId),
-    callRecorderFailureReason: getString(node.callRecorderFailureReason),
-    transcript: node.transcript ?? undefined,
-    audio: node.audio ?? undefined,
-    video: node.video ?? undefined,
-  };
 };
