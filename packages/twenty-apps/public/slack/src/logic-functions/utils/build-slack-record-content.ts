@@ -1,4 +1,7 @@
-import { type EntityCustomField } from '@slack/web-api';
+import {
+  type EntityCustomField,
+  type TaskEntityFields,
+} from '@slack/web-api';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_ENTITY_FIELD_TYPE } from 'src/logic-functions/constants/slack-entity-field-type';
@@ -10,6 +13,7 @@ import { buildSlackCompanyRefField } from 'src/logic-functions/utils/build-slack
 import { buildSlackLinkedinField } from 'src/logic-functions/utils/build-slack-linkedin-field';
 import { buildSlackRecordRefField } from 'src/logic-functions/utils/build-slack-record-ref-field';
 import { buildSlackStringField } from 'src/logic-functions/utils/build-slack-string-field';
+import { buildSlackTaskEntityFields } from 'src/logic-functions/utils/build-slack-task-entity-fields';
 import { buildSlackTimestampDetailFields } from 'src/logic-functions/utils/build-slack-timestamp-detail-fields';
 import { buildSlackTimestampField } from 'src/logic-functions/utils/build-slack-timestamp-field';
 import { formatAmount } from 'src/logic-functions/utils/format-amount';
@@ -28,6 +32,7 @@ type SlackUnfurlContentArgs = {
 type SlackUnfurlContent = {
   title: string;
   customFields: (EntityCustomField | undefined)[];
+  fields?: TaskEntityFields;
   iconUrl?: string;
 };
 
@@ -210,36 +215,11 @@ const buildNoteContent = ({
 const buildTaskContent = ({
   record,
   includeDetails,
-}: SlackUnfurlContentArgs): SlackUnfurlContent => {
-  const status = readOptionalString(record.status);
-
-  return {
-    title: readOptionalString(record.title) ?? '',
-    customFields: [
-      buildSlackStringField({
-        key: 'status',
-        label: 'Status',
-        value: isDefined(status) ? humanizeSelectValue(status) : undefined,
-      }),
-      buildSlackTimestampField({
-        key: 'dueAt',
-        label: 'Due date',
-        value: record.dueAt,
-      }),
-      ...(includeDetails
-        ? [
-            buildSlackStringField({
-              key: 'assignee',
-              label: 'Assignee',
-              value: buildFullName(asRecord(record.assignee)?.name),
-            }),
-            buildSlackBodyPreviewField(record.bodyV2),
-            ...buildSlackTimestampDetailFields(record),
-          ]
-        : []),
-    ],
-  };
-};
+}: SlackUnfurlContentArgs): SlackUnfurlContent => ({
+  title: readOptionalString(record.title) ?? '',
+  customFields: [],
+  fields: buildSlackTaskEntityFields({ record, includeDetails }),
+});
 
 export const SLACK_RECORD_CONTENT_BUILDERS: Record<
   SlackUnfurlObjectName,

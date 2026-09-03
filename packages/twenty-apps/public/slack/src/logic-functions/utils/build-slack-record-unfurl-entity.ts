@@ -8,6 +8,15 @@ import { SLACK_RECORD_CONTENT_BUILDERS } from 'src/logic-functions/utils/build-s
 import { toEpochSeconds } from 'src/logic-functions/utils/to-epoch-seconds';
 
 const ITEM_ENTITY_TYPE = 'slack#/entities/item';
+const TASK_ENTITY_TYPE = 'slack#/entities/task';
+
+const ENTITY_TYPE_BY_OBJECT: Record<SlackUnfurlObjectName, string> = {
+  person: ITEM_ENTITY_TYPE,
+  company: ITEM_ENTITY_TYPE,
+  opportunity: ITEM_ENTITY_TYPE,
+  note: ITEM_ENTITY_TYPE,
+  task: TASK_ENTITY_TYPE,
+};
 
 const TWENTY_PRODUCT_ICON_URL =
   'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-front/public/images/icons/ios/192.png';
@@ -31,7 +40,7 @@ export const buildSlackRecordUnfurlEntity = ({
   workspaceBaseUrls: string[];
   includeDetails?: boolean;
 }): EntityMetadata | undefined => {
-  const { title, customFields, iconUrl } = SLACK_RECORD_CONTENT_BUILDERS[
+  const { title, customFields, fields, iconUrl } = SLACK_RECORD_CONTENT_BUILDERS[
     recordLink.objectNameSingular
   ]({ record, workspaceBaseUrls, includeDetails });
 
@@ -43,7 +52,7 @@ export const buildSlackRecordUnfurlEntity = ({
   const metadataLastModified = toEpochSeconds(record.updatedAt);
 
   return {
-    entity_type: ITEM_ENTITY_TYPE,
+    entity_type: ENTITY_TYPE_BY_OBJECT[recordLink.objectNameSingular],
     entity_payload: {
       attributes: {
         title: { text: title },
@@ -56,6 +65,7 @@ export const buildSlackRecordUnfurlEntity = ({
           ? { metadata_last_modified: metadataLastModified }
           : {}),
       },
+      ...(isDefined(fields) ? { fields } : {}),
       ...(definedCustomFields.length > 0
         ? { custom_fields: definedCustomFields }
         : {}),
