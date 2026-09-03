@@ -1,3 +1,4 @@
+import { useApplicationLifecycleState } from '@/applications/hooks/useApplicationLifecycleState';
 import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMarketplaceAppDefaultRoleManifest';
@@ -13,7 +14,10 @@ import {
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { FindMarketplaceAppDetailDocument } from '~/generated-metadata/graphql';
+import {
+  ApplicationState,
+  FindMarketplaceAppDetailDocument,
+} from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledButtonGroup = styled.div`
@@ -41,8 +45,20 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
   const { requestInstall, install, isInstalling, modalInstanceId } =
     useInstallMarketplaceAppWithPermissionValidation();
 
+  const lifecycleState = useApplicationLifecycleState({ universalIdentifier });
+
+  const isInstalledInWorkspace =
+    isInstalled === true || lifecycleState === ApplicationState.INSTALLED;
+
+  const isInstallRunning =
+    isInstalling ||
+    (isDefined(lifecycleState) &&
+      lifecycleState !== ApplicationState.INSTALLED);
+
   const installable =
-    isDefined(isInstalled) && isDefined(universalIdentifier) && !isInstalled;
+    isDefined(isInstalled) &&
+    isDefined(universalIdentifier) &&
+    !isInstalledInWorkspace;
 
   const { data: detailData } = useQuery(FindMarketplaceAppDetailDocument, {
     variables: { universalIdentifier: universalIdentifier ?? '' },
@@ -66,10 +82,11 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
         <>
           <Button
             Icon={IconDownload}
-            title={isInstalling ? t`Installing...` : t`Install`}
+            title={isInstallRunning ? t`Installing` : t`Install`}
             variant={'secondary'}
             onClick={requestInstall}
-            disabled={isInstalling}
+            disabled={isInstallRunning}
+            isLoading={isInstallRunning}
           />
           <SettingsApplicationInstallPermissionValidationModal
             modalInstanceId={modalInstanceId}
@@ -77,7 +94,7 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
             appLogoUrl={detail?.logoUrl ?? undefined}
             defaultRole={defaultRole}
             onAuthorize={handleInstall}
-            isInstalling={isInstalling}
+            isInstalling={isInstallRunning}
           />
         </>
       )}
