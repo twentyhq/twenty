@@ -105,6 +105,9 @@ describe('createCreateCompleteWorkflowTool', () => {
 
     expect(
       workflowVersionEdgeService.createWorkflowVersionEdge,
+    ).toHaveBeenCalledTimes(3);
+    expect(
+      workflowVersionEdgeService.createWorkflowVersionEdge,
     ).toHaveBeenCalledWith(
       expect.objectContaining({
         source: ITERATOR_STEP_ID,
@@ -127,6 +130,9 @@ describe('createCreateCompleteWorkflowTool', () => {
     expect(
       workflowValidationService.validateWorkflowDefinition,
     ).not.toHaveBeenCalled();
+    expect(
+      workflowValidationService.validateWorkflowVersion,
+    ).toHaveBeenCalledTimes(1);
     expect(
       workflowValidationService.validateWorkflowVersion,
     ).toHaveBeenCalledWith({
