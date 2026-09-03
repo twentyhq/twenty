@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isPlainObject } from 'twenty-shared/utils';
 
 type GraphQLErrorEntry = {
@@ -32,9 +33,7 @@ export const getGraphQLErrorSubCode = (error: unknown): string | undefined => {
 export const getGraphQLErrorMessage = (error: unknown): string | undefined => {
   const message = asGraphQLErrorEntry(error)?.message;
 
-  return typeof message === 'string' && message.length > 0
-    ? message
-    : undefined;
+  return isNonEmptyString(message) ? message : undefined;
 };
 
 export const hasGraphQLErrorSubCode = (

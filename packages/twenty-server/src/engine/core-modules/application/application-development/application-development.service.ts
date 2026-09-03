@@ -61,10 +61,10 @@ export class ApplicationDevelopmentService {
     await this.throttlePerApplication(universalIdentifier, workspaceId);
 
     const applicationRegistration =
-      await this.findOwnedApplicationRegistrationOrThrow(
+      await this.findOwnedApplicationRegistrationOrThrow({
         universalIdentifier,
         workspaceId,
-      );
+      });
 
     const existing = await this.applicationService.findByUniversalIdentifier({
       universalIdentifier,
@@ -111,6 +111,11 @@ export class ApplicationDevelopmentService {
       manifest.application.universalIdentifier,
       workspaceId,
     );
+
+    await this.findOwnedApplicationRegistrationOrThrow({
+      universalIdentifier: manifest.application.universalIdentifier,
+      workspaceId,
+    });
 
     const versionValidation =
       await this.applicationVersionValidationService.validateWorkspaceCompatibility(
@@ -225,10 +230,10 @@ export class ApplicationDevelopmentService {
     inferDeletionFromMissingEntities: boolean,
   ): Promise<WorkspaceMigrationDTO> {
     const applicationRegistration =
-      await this.findOwnedApplicationRegistrationOrThrow(
-        manifest.application.universalIdentifier,
+      await this.findOwnedApplicationRegistrationOrThrow({
+        universalIdentifier: manifest.application.universalIdentifier,
         workspaceId,
-      );
+      });
 
     const application = await this.applicationService.findByUniversalIdentifier(
       {
@@ -278,10 +283,13 @@ export class ApplicationDevelopmentService {
     );
   }
 
-  private async findOwnedApplicationRegistrationOrThrow(
-    universalIdentifier: string,
-    workspaceId: string,
-  ): Promise<ApplicationRegistrationEntity> {
+  private async findOwnedApplicationRegistrationOrThrow({
+    universalIdentifier,
+    workspaceId,
+  }: {
+    universalIdentifier: string;
+    workspaceId: string;
+  }): Promise<ApplicationRegistrationEntity> {
     const existingRegistration =
       await this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
         universalIdentifier,

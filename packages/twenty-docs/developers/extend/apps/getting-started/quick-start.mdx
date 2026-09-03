@@ -119,7 +119,7 @@ yarn twenty apply  # show the plan, then apply it
 All modes need an authenticated remote. See [Syncing & recovery](/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan) for more on `plan`.
 
 <Note>
-Every mode syncs into the workspace that owns your app's registration. A `universalIdentifier` is unique across the whole instance, and syncing code under it is a claim of authorship, so a workspace can only develop an app whose registration it owns. If the identifier is registered to another workspace, or to no workspace at all, the sync is refused. See [Registration ownership](/developers/extend/apps/operations/publishing#registration-ownership).
+All three modes require your workspace to own the app's registration. The sync is refused when the `universalIdentifier` from your app config is registered to another workspace, or to no workspace yet — apps imported from the marketplace catalog start unowned and have to be claimed first. See [Registration ownership](/developers/extend/apps/operations/publishing#registration-ownership).
 </Note>
 
 <Note>
