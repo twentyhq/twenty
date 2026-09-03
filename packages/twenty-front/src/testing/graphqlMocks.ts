@@ -210,6 +210,11 @@ export const graphqlMocks = {
         data: { getPageLayouts: [] },
       });
     }),
+    metadataGraphql.query('FindAllRecordFormPageLayouts', () => {
+      return HttpResponse.json({
+        data: { getPageLayouts: [] },
+      });
+    }),
     metadataGraphql.query('FindManyLogicFunctions', () => {
       return HttpResponse.json({
         data: { findManyLogicFunctions: [] },
