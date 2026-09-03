@@ -31,13 +31,17 @@ import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-
 import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
 import { type UsageLimitCounterScope } from 'src/engine/core-modules/usage-limit/types/usage-limit-counter-scope.type';
 import { buildAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-allowance-counter-key.util';
+import { buildLimitWarmedEntries } from 'src/engine/core-modules/usage-limit/utils/build-limit-warmed-entries.util';
+import { buildPeriodGroupKey } from 'src/engine/core-modules/usage-limit/utils/build-period-group-key.util';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
 import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/build-quota-counters.util';
+import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-quota-exhausted-scope.util';
 import { buildQuotaWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-warm-lock-key.util';
-import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
 import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/utils/find-credit-allowance-provider.util';
+import { findExhaustedCounter } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-counter.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { fromConsumeResultsToRemainings } from 'src/engine/core-modules/usage-limit/utils/from-consume-results-to-remainings.util';
+import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsagePeriodService } from 'src/engine/core-modules/usage/services/usage-period.service';
 import { type UsagePeriod } from 'src/engine/core-modules/usage/types/usage-period.type';
@@ -239,11 +243,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
         args: [JSON.stringify(counters.map((counter) => cost[counter.meter]))],
       });
 
-      const remainings = counters.map((_, index) => {
-        const existed = consumeResults[2 * index] === 1;
-
-        return existed ? consumeResults[2 * index + 1] : null;
-      });
+      const remainings = fromConsumeResultsToRemainings(consumeResults);
 
       return await this.buildExhaustedScope({
         args,
@@ -264,49 +264,24 @@ export class UsageLimitQuotaService implements OnModuleInit {
     counters: QuotaCounter[];
     remainings: (number | null)[];
   }): Promise<ExhaustedScope | null> {
-    const exhaustedIndex = remainings.findIndex(
-      (remaining) => isDefined(remaining) && remaining <= 0,
-    );
+    const exhaustedCounter = findExhaustedCounter({ counters, remainings });
 
-    if (exhaustedIndex === -1) {
+    if (!isDefined(exhaustedCounter)) {
       return null;
     }
 
-    const counter = counters[exhaustedIndex];
+    const allowance =
+      exhaustedCounter.kind === 'allowance'
+        ? ((await this.creditAllowanceProvider?.getCreditAllowance(
+            args.workspaceId,
+          )) ?? null)
+        : null;
 
-    if (counter.kind === 'limit') {
-      return {
-        resourceType: args.resourceType,
-        limitKind: 'quota',
-        exhaustedKind: 'limit',
-        spenderType: counter.spenderType,
-        spenderId: counter.spenderId,
-        operationType: counter.operationType,
-        limitValue: counter.limitValue,
-        remaining: 0,
-        periodCount: 1,
-        periodUnit: counter.periodUnit,
-        retryAfterMs: Math.max(counter.periodEnd.getTime() - Date.now(), 0),
-      };
-    }
-
-    const allowance = await this.creditAllowanceProvider?.getCreditAllowance(
-      args.workspaceId,
-    );
-
-    return {
+    return buildQuotaExhaustedScope({
       resourceType: args.resourceType,
-      limitKind: 'quota',
-      exhaustedKind: 'allowance',
-      spenderType: 'workspace',
-      spenderId: null,
-      operationType: UsageOperationType.ALL,
-      limitValue: allowance?.allowanceMicro ?? 0,
-      remaining: 0,
-      periodCount: null,
-      periodUnit: null,
-      retryAfterMs: Math.max(counter.periodEnd.getTime() - Date.now(), 0),
-    };
+      counter: exhaustedCounter,
+      allowance,
+    });
   }
 
   private throwQuotaExhausted(exhaustedScope: ExhaustedScope): never {
@@ -548,24 +523,10 @@ export class UsageLimitQuotaService implements OnModuleInit {
       }),
     ]);
 
-    const limitEntries = coldLimitCounters.flatMap((counter) => {
-      const ttl = counter.periodEnd.getTime() - now;
-      const rows = rowsByPeriod.get(this.buildPeriodGroupKey(counter));
-
-      if (ttl <= 0 || !isDefined(rows)) {
-        return [];
-      }
-
-      return [
-        {
-          key: counter.key,
-          value: counter.limitValue - computeQuotaConsumed({ rows, counter }),
-          ttl,
-        },
-      ];
-    });
-
-    return [...limitEntries, ...allowanceEntries];
+    return [
+      ...buildLimitWarmedEntries({ coldLimitCounters, rowsByPeriod, now }),
+      ...allowanceEntries,
+    ];
   }
 
   private async buildAllowanceWarmedEntry({
@@ -642,7 +603,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
     const countersByPeriod = new Map<string, LimitQuotaCounter>();
 
     for (const counter of coldLimitCounters) {
-      countersByPeriod.set(this.buildPeriodGroupKey(counter), counter);
+      countersByPeriod.set(buildPeriodGroupKey(counter), counter);
     }
 
     const rowsByPeriod = new Map<string, QuotaConsumptionRow[]>();
@@ -657,10 +618,6 @@ export class UsageLimitQuotaService implements OnModuleInit {
     );
 
     return rowsByPeriod;
-  }
-
-  private buildPeriodGroupKey(counter: LimitQuotaCounter): string {
-    return `${counter.resourceType}:${counter.periodUnit}:${counter.periodStart.getTime()}`;
   }
 
   private async fetchConsumptionRows({

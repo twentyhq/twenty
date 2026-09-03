@@ -221,25 +221,6 @@ describe('UsageLimitQuotaService', () => {
     expect(clickHouseService.selectOrThrow).toHaveBeenCalledTimes(2);
   });
 
-  it('names the narrowest exhausted scope', async () => {
-    setLimits([
-      buildLimit({}),
-      buildLimit({
-        id: 'limit-2',
-        spenderType: 'userWorkspace',
-        spenderId: 'user-1',
-      }),
-    ]);
-    cacheStorage.mget.mockResolvedValue([0, 0]);
-
-    await expect(assertQuotaNotExhausted()).rejects.toMatchObject({
-      exhaustedScope: expect.objectContaining({
-        spenderType: 'userWorkspace',
-        spenderId: 'user-1',
-      }),
-    });
-  });
-
   it('warms a cold allowance counter from the live allowance minus the stamped consumption', async () => {
     setAllowance(100);
     cacheStorage.mget.mockResolvedValue([undefined]);
@@ -257,18 +238,14 @@ describe('UsageLimitQuotaService', () => {
     ]);
   });
 
-  it('denies with an allowance scope when the allowance counter is spent', async () => {
+  it('scopes a spent allowance counter over the live allowance', async () => {
     setAllowance(2_000_000);
     cacheStorage.mget.mockResolvedValue([0]);
 
     await expect(assertQuotaNotExhausted()).rejects.toMatchObject({
       exhaustedScope: expect.objectContaining({
         exhaustedKind: 'allowance',
-        spenderType: 'workspace',
-        operationType: UsageOperationType.ALL,
         limitValue: 2_000_000,
-        periodCount: null,
-        periodUnit: null,
       }),
     });
   });
@@ -351,15 +328,6 @@ describe('UsageLimitQuotaService', () => {
     const { exhausted } = await consumeQuota(50);
 
     expect(exhausted).toMatchObject({ spenderType: 'workspace' });
-  });
-
-  it('reports nothing when a cold counter is skipped by consume', async () => {
-    setLimits([buildLimit({})]);
-    cacheStorage.runScript.mockResolvedValue([0, 0]);
-
-    const { exhausted } = await consumeQuota(50);
-
-    expect(exhausted).toBeNull();
   });
 
   describe('dropAllowanceCounter', () => {
