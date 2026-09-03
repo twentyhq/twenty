@@ -17,7 +17,7 @@ Both paths start from the same **build** step.
 
 Publishing an app creates an **application registration**: the app's identity on the instance, shared by every workspace that installs it. It holds the app's marketplace entry, its OAuth client, and its server-side state — the `serverVariables` an operator configures and the `server`-scoped entries of the [key-value store](/developers/extend/apps/logic/key-value-store).
 
-A `universalIdentifier` is unique across the whole instance and a registration belongs to exactly one workspace, so installing an app and developing one are two different rights:
+A `universalIdentifier` is unique across the whole instance and a registration belongs to at most one workspace (its owner) — or none until it is claimed — so installing an app and developing one are two different rights:
 
 | Action | Requirement |
 |--------|-------------|
