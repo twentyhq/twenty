@@ -1,12 +1,17 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { getConnection } from 'twenty-sdk/logic-function';
+import {
+  getConnection,
+  RetryableLogicFunctionError,
+} from 'twenty-sdk/logic-function';
 
 import { FATHOM_BACKFILL_BATCH_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type SerializedFathomMeeting } from 'src/logic-functions/types/serialized-fathom-meeting.type';
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
 import { hydrateFathomMeeting } from 'src/logic-functions/utils/hydrate-fathom-meeting.util';
+import { isTransientFathomError } from 'src/logic-functions/utils/is-transient-fathom-error.util';
 import { syncFathomMeetingToCallRecording } from 'src/logic-functions/utils/sync-fathom-meeting-to-call-recording.util';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 export const fathomBackfillBatchHandler = async (payload: {
   connectedAccountId: string;
@@ -19,17 +24,37 @@ export const fathomBackfillBatchHandler = async (payload: {
 
   // Sequential on purpose: the batch is the unit of pacing against Fathom.
   for (const serializedMeeting of payload.meetings) {
-    const meeting = await hydrateFathomMeeting({
-      fathomClient,
-      serializedMeeting,
-    });
+    try {
+      const meeting = await hydrateFathomMeeting({
+        fathomClient,
+        serializedMeeting,
+      });
 
-    results.push(
-      await syncFathomMeetingToCallRecording({ coreApiClient, meeting }),
-    );
+      results.push(
+        await syncFathomMeetingToCallRecording({ coreApiClient, meeting }),
+      );
+    } catch (error) {
+      // Only a RetryableLogicFunctionError makes the platform retry, so a rate
+      // limit or a Fathom outage is rethrown as one. The replay re-fetches the
+      // meetings already imported in this batch, which costs calls but cannot
+      // duplicate records: the CallRecording id is derived from the recording.
+      if (isTransientFathomError(error)) {
+        throw new RetryableLogicFunctionError(toErrorMessage(error));
+      }
+
+      // One unreadable recording must not cost the rest of the batch.
+      console.error(
+        `[fathom] skipped recording ${serializedMeeting.recordingId}: ${toErrorMessage(error)}`,
+      );
+    }
   }
 
-  return { success: true, importedMeetingCount: results.length, results };
+  return {
+    success: true,
+    importedMeetingCount: results.length,
+    failedMeetingCount: payload.meetings.length - results.length,
+    results,
+  };
 };
 
 export default defineLogicFunction({

@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { getConnection } from 'twenty-sdk/logic-function';
 import { isDefined } from 'src/utils/is-defined';
@@ -14,6 +15,7 @@ import {
 } from 'src/constants/universal-identifiers';
 import { type FathomBackfillWorkerPayload } from 'src/logic-functions/types/fathom-backfill-worker-payload.type';
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
+import { excludeDeletedFathomMeetings } from 'src/logic-functions/utils/exclude-deleted-fathom-meetings.util';
 import { enqueueFathomJobOrThrow } from 'src/logic-functions/utils/enqueue-fathom-job-or-throw.util';
 import { listFathomMeetingPage } from 'src/logic-functions/utils/list-fathom-meeting-page.util';
 import { reserveFathomBackfillBatchSlots } from 'src/logic-functions/utils/reserve-fathom-backfill-batch-slots.util';
@@ -50,8 +52,13 @@ export const fathomBackfillWorkerHandler = async (
     createdAfter,
     cursor: payload.cursor,
   });
+  const serializedMeetings = meetingPage.meetings.map(serializeFathomMeeting);
+  const importableMeetings = await excludeDeletedFathomMeetings({
+    coreApiClient: new CoreApiClient({ runAs: 'application' }),
+    meetings: serializedMeetings,
+  });
   const meetingBatches = chunkIntoBatches(
-    meetingPage.meetings.map(serializeFathomMeeting),
+    importableMeetings,
     FATHOM_BACKFILL_BATCH_SIZE,
   );
   const { batchDelays, continuationDelay } =
@@ -100,6 +107,8 @@ export const fathomBackfillWorkerHandler = async (
     success: true,
     createdAfter,
     discoveredMeetingCount: meetingPage.meetings.length,
+    skippedDeletedMeetingCount:
+      serializedMeetings.length - importableMeetings.length,
     enqueuedBatchCount: meetingBatches.length,
     hasMoreMeetings: hasMoreMeetings && !isPageBoundReached,
   };
