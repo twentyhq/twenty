@@ -37,6 +37,8 @@ const PERSON_FIELD_CACHE_KEYS = [
   'flatFieldMetadataMaps',
 ] as const;
 
+const MAX_CACHED_WORKSPACE_SCHEMAS = 100;
+
 @Injectable()
 export class CampaignVariableService {
   private readonly schemaByWorkspaceId = new Map<
@@ -69,6 +71,9 @@ export class CampaignVariableService {
     const cached = this.schemaByWorkspaceId.get(workspaceId);
 
     if (cached?.hash === hash) {
+      this.schemaByWorkspaceId.delete(workspaceId);
+      this.schemaByWorkspaceId.set(workspaceId, cached);
+
       return cached.schema;
     }
 
@@ -84,8 +89,23 @@ export class CampaignVariableService {
     };
 
     this.schemaByWorkspaceId.set(workspaceId, { hash, schema });
+    this.evictLeastRecentlyUsedSchemas();
 
     return schema;
+  }
+
+  private evictLeastRecentlyUsedSchemas(): void {
+    while (this.schemaByWorkspaceId.size > MAX_CACHED_WORKSPACE_SCHEMAS) {
+      const leastRecentlyUsedWorkspaceId = this.schemaByWorkspaceId
+        .keys()
+        .next().value;
+
+      if (!isDefined(leastRecentlyUsedWorkspaceId)) {
+        return;
+      }
+
+      this.schemaByWorkspaceId.delete(leastRecentlyUsedWorkspaceId);
+    }
   }
 
   async assertKnownVariables(

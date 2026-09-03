@@ -19,7 +19,8 @@ export const computeSendSlotBackoffMs = ({
     Math.max(backoffCeilingMs, SEND_SLOT_RETRY.minDelayMs),
   );
 
-  return Math.ceil(
-    backoffMs * (1 + Math.random() * SEND_SLOT_RETRY.jitterRatio),
-  );
+  const jitteredBackoffMs =
+    backoffMs * (1 + Math.random() * SEND_SLOT_RETRY.jitterRatio);
+
+  return Math.ceil(Math.min(jitteredBackoffMs, SEND_SLOT_RETRY.maxDelayMs));
 };

@@ -194,7 +194,15 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
           `[log-driver] batch entry → fake messageId=${messageId}\n` +
             `To: ${recipient.email}\n` +
             `Subject: ${applyReplacementTags(batchToSend.template.subject, recipient.replacements)}\n` +
-            `Content Text: ${applyReplacementTags(batchToSend.template.text, recipient.replacements)}`,
+            `Content Text: ${applyReplacementTags(batchToSend.template.text, recipient.replacements)}\n` +
+            `Content HTML: ${
+              isNonEmptyString(batchToSend.template.html)
+                ? applyReplacementTags(
+                    batchToSend.template.html,
+                    recipient.replacements,
+                  )
+                : '(none)'
+            }`,
         );
 
         return { email: recipient.email, messageId, errorMessage: null };

@@ -74,3 +74,25 @@ describe('buildCampaignBatchReplacements', () => {
     );
   });
 });
+
+describe('inherited object properties', () => {
+  it('treats a variable named after an Object prototype member as absent rather than its function', () => {
+    const replacements = buildCampaignBatchReplacements({
+      variableNames: ['toString'],
+      variables: {},
+    });
+
+    expect(applyReplacementTags('Hi {{v_t_0}}.', replacements)).toBe('Hi .');
+  });
+
+  it('leaves a prototype-named tag untouched instead of resolving it off Object.prototype', () => {
+    const replacements = buildCampaignBatchReplacements({
+      variableNames: ['known'],
+      variables: { known: 'yes' },
+    });
+
+    expect(
+      applyReplacementTags('{{constructor}} {{v_t_0}}', replacements),
+    ).toBe('{{constructor}} yes');
+  });
+});

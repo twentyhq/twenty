@@ -10,7 +10,9 @@ export const buildCampaignBatchReplacements = ({
   const replacements: Record<string, string> = {};
 
   for (const [index, variableName] of variableNames.entries()) {
-    const value = variables[variableName] ?? '';
+    const value = Object.prototype.hasOwnProperty.call(variables, variableName)
+      ? (variables[variableName] ?? '')
+      : '';
 
     replacements[`v_h_${index}`] = escapeHtml(value);
     replacements[`v_t_${index}`] = value;

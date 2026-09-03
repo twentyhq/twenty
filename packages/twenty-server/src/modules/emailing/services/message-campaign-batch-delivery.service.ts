@@ -103,6 +103,8 @@ export class MessageCampaignBatchDeliveryService {
         claimedDeliveryIdSet.has(recipient.messageId),
       );
 
+      const providerHandoff = { hasHandedBatchToProvider: false };
+
       try {
         await this.processClaimedBatch({
           data,
@@ -110,15 +112,25 @@ export class MessageCampaignBatchDeliveryService {
           creditContext,
           claimToken,
           claimedRecipients,
+          providerHandoff,
         });
       } finally {
-        await this.releaseUnsettledClaims({ workspaceId, claimToken });
+        await this.releaseUnsettledClaims({
+          workspaceId,
+          claimToken,
+          hasHandedBatchToProvider: providerHandoff.hasHandedBatchToProvider,
+        });
       }
 
-      await this.messageCampaignStatisticsService.scheduleRefresh({
-        workspaceId,
-        campaignId,
-      });
+      await this.messageCampaignStatisticsService
+        .scheduleRefresh({ workspaceId, campaignId })
+        .catch((error) => {
+          this.logger.error(
+            `Campaign ${campaignId} could not schedule a statistics refresh: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
+          );
+        });
 
       await this.messageCampaignLifecycleService.finalizeCampaignIfComplete({
         workspaceId,
@@ -133,12 +145,14 @@ export class MessageCampaignBatchDeliveryService {
     creditContext,
     claimToken,
     claimedRecipients,
+    providerHandoff,
   }: {
     data: SendCampaignEmailBatchJobData;
     campaign: MessageCampaignWorkspaceEntity | null;
     creditContext: EmailCreditContext;
     claimToken: string;
     claimedRecipients: BatchRecipient[];
+    providerHandoff: { hasHandedBatchToProvider: boolean };
   }): Promise<void> {
     const { workspaceId } = data;
 
@@ -149,6 +163,18 @@ export class MessageCampaignBatchDeliveryService {
         recipients: claimedRecipients,
         state: CAMPAIGN_DELIVERY_STATE.SKIPPED,
         skipReason: CAMPAIGN_SKIP_REASON.CAMPAIGN_CANCELED,
+      });
+
+      return;
+    }
+
+    if (!creditContext.hasCredits) {
+      await this.settleUniformly({
+        workspaceId,
+        claimToken,
+        recipients: claimedRecipients,
+        state: CAMPAIGN_DELIVERY_STATE.SKIPPED,
+        skipReason: CAMPAIGN_SKIP_REASON.OUT_OF_CREDITS,
       });
 
       return;
@@ -165,18 +191,6 @@ export class MessageCampaignBatchDeliveryService {
         claimToken,
         claimedRecipients,
         sendSlotRefusal,
-      });
-
-      return;
-    }
-
-    if (!creditContext.hasCredits) {
-      await this.settleUniformly({
-        workspaceId,
-        claimToken,
-        recipients: claimedRecipients,
-        state: CAMPAIGN_DELIVERY_STATE.SKIPPED,
-        skipReason: CAMPAIGN_SKIP_REASON.OUT_OF_CREDITS,
       });
 
       return;
@@ -204,6 +218,7 @@ export class MessageCampaignBatchDeliveryService {
       creditContext,
       claimToken,
       claimedRecipients,
+      providerHandoff,
     });
   }
 
@@ -299,12 +314,14 @@ export class MessageCampaignBatchDeliveryService {
     creditContext,
     claimToken,
     claimedRecipients,
+    providerHandoff,
   }: {
     data: SendCampaignEmailBatchJobData;
     campaign: MessageCampaignWorkspaceEntity;
     creditContext: EmailCreditContext;
     claimToken: string;
     claimedRecipients: BatchRecipient[];
+    providerHandoff: { hasHandedBatchToProvider: boolean };
   }): Promise<void> {
     const { workspaceId, campaignId, emailingDomainId, userWorkspaceId } = data;
 
@@ -364,6 +381,8 @@ export class MessageCampaignBatchDeliveryService {
 
         throw error;
       });
+
+    providerHandoff.hasHandedBatchToProvider = true;
 
     const settlements = this.resolveBatchSettlements({
       claimedRecipients,
@@ -690,15 +709,24 @@ export class MessageCampaignBatchDeliveryService {
   private async releaseUnsettledClaims({
     workspaceId,
     claimToken,
+    hasHandedBatchToProvider,
   }: {
     workspaceId: string;
     claimToken: string;
+    hasHandedBatchToProvider: boolean;
   }): Promise<void> {
+    const releasedState = hasHandedBatchToProvider
+      ? {
+          state: CAMPAIGN_DELIVERY_STATE.FAILED,
+          failureReason: CAMPAIGN_FAILURE_REASON.UNKNOWN,
+        }
+      : { state: CAMPAIGN_DELIVERY_STATE.QUEUED };
+
     await this.campaignDeliveryRepository.update(
       workspaceId,
       { claimToken },
       {
-        state: CAMPAIGN_DELIVERY_STATE.QUEUED,
+        ...releasedState,
         claimToken: null,
         claimExpiresAt: null,
       },

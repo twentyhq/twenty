@@ -5,5 +5,7 @@ export const applyReplacementTags = (
   replacements: Record<string, string>,
 ): string =>
   template.replace(REPLACEMENT_TAG_PATTERN, (match, tagName) =>
-    tagName in replacements ? replacements[tagName] : match,
+    Object.prototype.hasOwnProperty.call(replacements, tagName)
+      ? replacements[tagName]
+      : match,
   );
