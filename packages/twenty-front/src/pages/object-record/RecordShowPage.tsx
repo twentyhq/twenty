@@ -1,9 +1,9 @@
-import { Navigate, useParams } from 'react-router-dom';
-import { AppPath, FeatureFlagKey } from 'twenty-shared/types';
-import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { useParams } from 'react-router-dom';
+import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
-import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { WorkspaceWorkflowVersionRedirect } from '@/object-core/workflows/components/WorkspaceWorkflowVersionRedirect';
 import { isWorkspaceWorkflowVersionRouteHidden } from '@/object-core/workflows/utils/isWorkspaceWorkflowVersionRouteHidden';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
@@ -154,14 +154,7 @@ export const RecordShowPage = () => {
       isWorkflowCoreIndexPageEnabled,
     })
   ) {
-    return (
-      <Navigate
-        to={getAppPath(AppPath.RecordIndexPage, {
-          objectNamePlural: CoreObjectNamePlural.Workflow,
-        })}
-        replace
-      />
-    );
+    return <WorkspaceWorkflowVersionRedirect />;
   }
 
   return <RecordShowPageContent parameters={parameters} />;
