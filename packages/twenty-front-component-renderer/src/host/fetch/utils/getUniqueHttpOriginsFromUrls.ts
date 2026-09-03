@@ -1,4 +1,4 @@
-import { getURLSafely, isDefined } from 'twenty-shared/utils';
+import { getUrlSafely, isDefined } from 'twenty-shared/utils';
 
 export const getUniqueHttpOriginsFromUrls = (
   urls: (string | undefined)[],
@@ -6,7 +6,7 @@ export const getUniqueHttpOriginsFromUrls = (
   ...new Set(
     urls
       .filter(isDefined)
-      .map((url) => getURLSafely(url))
+      .map((url) => getUrlSafely(url))
       .filter(isDefined)
       .filter((url) => url.protocol === 'http:' || url.protocol === 'https:')
       .map((url) => url.origin),

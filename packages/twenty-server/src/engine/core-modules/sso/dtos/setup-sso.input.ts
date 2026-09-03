@@ -19,8 +19,8 @@ class SetupSsoInputCommon {
   issuer: string;
 }
 
-@InputType()
-export class SetupOIDCSsoInput extends SetupSsoInputCommon {
+@InputType('SetupOIDCSsoInput')
+export class SetupOidcSsoInput extends SetupSsoInputCommon {
   @Field(() => String)
   @IsString()
   clientID: string;
@@ -30,8 +30,8 @@ export class SetupOIDCSsoInput extends SetupSsoInputCommon {
   clientSecret: string;
 }
 
-@InputType()
-export class SetupSAMLSsoInput extends SetupSsoInputCommon {
+@InputType('SetupSAMLSsoInput')
+export class SetupSamlSsoInput extends SetupSsoInputCommon {
   @Field(() => UUIDScalarType)
   @IsUUID()
   id: string;
