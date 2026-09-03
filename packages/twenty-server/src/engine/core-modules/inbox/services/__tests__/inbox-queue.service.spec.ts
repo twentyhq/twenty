@@ -145,6 +145,22 @@ describe('InboxQueueService', () => {
       );
     });
 
+    // Triage is created on demand at /q/triage, so no other queue may take it first
+    it('should keep the triage address free before triage exists', async () => {
+      // Act
+      await service.createQueue({
+        workspaceId: WORKSPACE_ID,
+        name: 'Triage',
+        roleIds: [],
+      });
+
+      // Assert
+      expect(inboxQueueRepository.insertAndReturnOne).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        expect.objectContaining({ slug: 'triage-2', isDefault: false }),
+      );
+    });
+
     // Two teams can both call their inbox "Support"; they cannot both own /q/support
     it('should not reuse an address another queue already holds', async () => {
       // Prepare

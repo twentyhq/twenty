@@ -475,6 +475,8 @@ export class InboxQueueService {
 
   // Two queues can share a display name, but not an address. A name that
   // slugifies to nothing at all still needs one, so it falls back to the word.
+  // The triage address stays free even before triage exists, since it is
+  // created on demand with that fixed address.
   private async buildAvailableSlug({
     workspaceId,
     name,
@@ -484,13 +486,14 @@ export class InboxQueueService {
   }): Promise<string> {
     const baseSlug = getSubdomainSlugFromDisplayName(name) ?? 'inbox';
 
-    const takenSlugs = new Set(
-      (
+    const takenSlugs = new Set([
+      DEFAULT_INBOX_QUEUE_SLUG,
+      ...(
         await this.inboxQueueRepository.find(workspaceId, {
           select: { slug: true },
         })
       ).map((queue) => queue.slug),
-    );
+    ]);
 
     if (!takenSlugs.has(baseSlug)) {
       return baseSlug;
