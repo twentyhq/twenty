@@ -135,14 +135,26 @@ export class InboxItemActionService {
     action: InboxItemAction;
     input?: InboxItemPayload;
   }): InboxItemTransition {
+    const inputSchema = action.inputSchema ?? [];
+
+    if (inputSchema.length === 0) {
+      return transition;
+    }
+
+    // Only a clear carries a result, so input collected for any other
+    // transition would be validated and then thrown away
+    if (transition.kind !== 'CLEAR') {
+      throw new InboxException(
+        `Action ${action.key} collects input but its transition cannot record a result`,
+        InboxExceptionCode.INVALID_INBOX_ACTION,
+      );
+    }
+
     this.assertRequiredInputPresent({ action, input });
 
     const declaredInput = this.readDeclaredInput({ action, input });
 
-    if (
-      transition.kind !== 'CLEAR' ||
-      Object.keys(declaredInput).length === 0
-    ) {
+    if (Object.keys(declaredInput).length === 0) {
       return transition;
     }
 

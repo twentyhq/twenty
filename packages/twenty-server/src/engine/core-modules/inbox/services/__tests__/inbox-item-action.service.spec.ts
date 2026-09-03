@@ -46,6 +46,14 @@ const DECLARED_ACTIONS: InboxItemAction[] = [
     ],
     transition: { kind: 'CLEAR', outcome: 'SCORED' },
   },
+  {
+    key: 'reopenWithReason',
+    label: 'Reopen',
+    inputSchema: [
+      { key: 'reason', label: 'Reason', type: 'TEXT', required: true },
+    ],
+    transition: { kind: 'REOPEN' },
+  },
 ];
 
 const inboxItem = {
@@ -148,6 +156,22 @@ describe('InboxItemActionService', () => {
     ).rejects.toMatchObject({
       code: InboxExceptionCode.INVALID_INBOX_ACTION,
     });
+  });
+
+  // Only a clear records a result, so input on any other transition would be
+  // collected and then lost
+  it('should refuse an action that collects input for a transition that cannot record it', async () => {
+    // Act & Assert
+    await expect(
+      service.execute({
+        ...executeArgs,
+        actionKey: 'reopenWithReason',
+        input: { reason: 'Not done yet' },
+      }),
+    ).rejects.toMatchObject({
+      code: InboxExceptionCode.INVALID_INBOX_ACTION,
+    });
+    expect(inboxTransitionService.transition).not.toHaveBeenCalled();
   });
 
   it('should pass an action that collects nothing through untouched', async () => {
