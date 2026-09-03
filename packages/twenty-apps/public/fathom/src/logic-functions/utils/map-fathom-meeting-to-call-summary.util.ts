@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type Meeting } from 'fathom-typescript/sdk/models/shared';
 
 import { type FathomCallSummary } from 'src/logic-functions/types/fathom-call-summary.type';
+import { getFathomMeetingTitle } from 'src/logic-functions/utils/get-fathom-meeting-title.util';
 
 const MILLISECONDS_PER_MINUTE = 60_000;
 
@@ -9,7 +10,7 @@ export const mapFathomMeetingToCallSummary = (
   meeting: Meeting,
 ): FathomCallSummary => ({
   recordingId: meeting.recordingId,
-  title: meeting.meetingTitle?.trim() || meeting.title.trim(),
+  title: getFathomMeetingTitle(meeting),
   startedAt: meeting.recordingStartTime.toISOString(),
   durationMinutes: Math.round(
     (meeting.recordingEndTime.getTime() -

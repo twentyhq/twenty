@@ -1,18 +1,24 @@
-import { enqueueJob, type EnqueueJobInput } from 'twenty-sdk/logic-function';
+import { enqueueJobs, type EnqueueJobsInput } from 'twenty-sdk/logic-function';
 
 import { FATHOM_BACKFILL_JOB_RETRY_LIMIT } from 'src/constants/fathom.constant';
 
-export const enqueueFathomJobOrThrow = async (
-  input: Omit<EnqueueJobInput, 'retryLimit'>,
-): Promise<void> => {
-  const enqueueResult = await enqueueJob({
-    ...input,
+// enqueueJobs applies one delayMs to every payload of a call, so each
+// staggered batch goes through its own call.
+export const enqueueFathomJobOrThrow = async ({
+  payload,
+  ...options
+}: Pick<EnqueueJobsInput, 'logicFunctionUniversalIdentifier' | 'delayMs'> & {
+  payload: Record<string, unknown>;
+}): Promise<void> => {
+  const enqueueResult = await enqueueJobs({
+    ...options,
+    payloads: [payload],
     retryLimit: FATHOM_BACKFILL_JOB_RETRY_LIMIT,
   });
 
   if (!enqueueResult.enqueued) {
     throw new Error(
-      `Failed to enqueue Fathom job ${input.logicFunctionUniversalIdentifier}`,
+      `Failed to enqueue Fathom job ${options.logicFunctionUniversalIdentifier}`,
     );
   }
 };

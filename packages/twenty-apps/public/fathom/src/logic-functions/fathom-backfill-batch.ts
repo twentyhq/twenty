@@ -4,6 +4,7 @@ import {
   getConnection,
   RetryableLogicFunctionError,
 } from 'twenty-sdk/logic-function';
+import { isDefined } from 'src/utils/is-defined';
 
 import { FATHOM_BACKFILL_BATCH_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type SerializedFathomMeeting } from 'src/logic-functions/types/serialized-fathom-meeting.type';
@@ -24,20 +25,12 @@ export const fathomBackfillBatchHandler = async (payload: {
 
   // Sequential on purpose: the batch is the unit of pacing against Fathom.
   for (const serializedMeeting of payload.meetings) {
-    try {
-      const meeting = await hydrateFathomMeeting({
-        fathomClient,
-        serializedMeeting,
-      });
-
-      results.push(
-        await syncFathomMeetingToCallRecording({ coreApiClient, meeting }),
-      );
-    } catch (error) {
+    const meeting = await hydrateFathomMeeting({
+      fathomClient,
+      serializedMeeting,
+    }).catch((error: unknown) => {
       // Only a RetryableLogicFunctionError makes the platform retry, so a rate
-      // limit or a Fathom outage is rethrown as one. The replay re-fetches the
-      // meetings already imported in this batch, which costs calls but cannot
-      // duplicate records: the CallRecording id is derived from the recording.
+      // limit or a Fathom outage is rethrown as one.
       if (isTransientFathomError(error)) {
         throw new RetryableLogicFunctionError(toErrorMessage(error));
       }
@@ -46,7 +39,24 @@ export const fathomBackfillBatchHandler = async (payload: {
       console.error(
         `[fathom] skipped recording ${serializedMeeting.recordingId}: ${toErrorMessage(error)}`,
       );
+
+      return undefined;
+    });
+
+    if (!isDefined(meeting)) {
+      continue;
     }
+
+    // A failed upsert retries the whole batch. The replay re-fetches the
+    // meetings already imported, which costs calls but cannot duplicate
+    // records: the CallRecording id is derived from the recording.
+    results.push(
+      await syncFathomMeetingToCallRecording({ coreApiClient, meeting }).catch(
+        (error: unknown) => {
+          throw new RetryableLogicFunctionError(toErrorMessage(error));
+        },
+      ),
+    );
   }
 
   return {

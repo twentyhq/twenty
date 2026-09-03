@@ -9,7 +9,7 @@ import { FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER } from 'src/constants/unive
 const sdkMocks = vi.hoisted(() => ({
   createWebhook: vi.fn(),
   deleteWebhook: vi.fn(),
-  enqueueJob: vi.fn(),
+  enqueueJobs: vi.fn(),
   getConnection: vi.fn(),
   kvGet: vi.fn(),
   kvSet: vi.fn(),
@@ -22,7 +22,7 @@ vi.mock('twenty-sdk/define', () => ({
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
   ...(await importOriginal<typeof import('twenty-sdk/logic-function')>()),
   kv: { get: sdkMocks.kvGet, set: sdkMocks.kvSet },
-  enqueueJob: sdkMocks.enqueueJob,
+  enqueueJobs: sdkMocks.enqueueJobs,
   getConnection: sdkMocks.getConnection,
 }));
 
@@ -71,7 +71,7 @@ const ACTIVE_REGISTRATION = {
 
 const INITIAL_BACKFILL_JOB = {
   logicFunctionUniversalIdentifier: FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
-  payload: { connectedAccountId: 'connection-1', days: 31 },
+  payloads: [{ connectedAccountId: 'connection-1', days: 31 }],
   retryLimit: 3,
 };
 
@@ -86,7 +86,7 @@ describe('fathomRegisterConnectionHandler', () => {
       id: 'webhook-1',
       secret: 'secret-1',
     });
-    sdkMocks.enqueueJob.mockResolvedValue({ enqueued: true });
+    sdkMocks.enqueueJobs.mockResolvedValue({ enqueued: true });
   });
 
   it('claims the connection and registers a webhook pointing at the server route', async () => {
@@ -116,7 +116,7 @@ describe('fathomRegisterConnectionHandler', () => {
   it('starts the initial import once the registration is stored', async () => {
     await fathomRegisterConnectionHandler(HOOK_PAYLOAD);
 
-    expect(sdkMocks.enqueueJob).toHaveBeenCalledWith(INITIAL_BACKFILL_JOB);
+    expect(sdkMocks.enqueueJobs).toHaveBeenCalledWith(INITIAL_BACKFILL_JOB);
     expect(sdkMocks.kvSet).toHaveBeenLastCalledWith(
       'fathom-webhook:connection-1',
       expect.objectContaining({
@@ -137,7 +137,7 @@ describe('fathomRegisterConnectionHandler', () => {
       webhookId: 'existing-webhook',
     });
     expect(sdkMocks.createWebhook).not.toHaveBeenCalled();
-    expect(sdkMocks.enqueueJob).toHaveBeenCalledWith(INITIAL_BACKFILL_JOB);
+    expect(sdkMocks.enqueueJobs).toHaveBeenCalledWith(INITIAL_BACKFILL_JOB);
     expect(sdkMocks.kvSet).toHaveBeenCalledWith('fathom-webhook:connection-1', {
       ...ACTIVE_REGISTRATION,
       isInitialBackfillEnqueued: true,
@@ -202,7 +202,7 @@ describe('fathomRegisterConnectionHandler', () => {
       webhookId: 'existing-webhook',
     });
     expect(sdkMocks.createWebhook).not.toHaveBeenCalled();
-    expect(sdkMocks.enqueueJob).not.toHaveBeenCalled();
+    expect(sdkMocks.enqueueJobs).not.toHaveBeenCalled();
     expect(sdkMocks.kvSet).not.toHaveBeenCalled();
   });
 
