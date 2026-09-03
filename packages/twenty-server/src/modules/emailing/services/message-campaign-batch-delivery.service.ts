@@ -170,15 +170,7 @@ export class MessageCampaignBatchDeliveryService {
       return;
     }
 
-    const hasReservedCredits =
-      creditContext.hasCredits &&
-      (await this.emailBillingService.reserveEmailCredits({
-        workspaceId,
-        emailCount: claimedRecipients.length,
-        currentBillingSubscription: creditContext.currentBillingSubscription,
-      }));
-
-    if (!hasReservedCredits) {
+    if (!creditContext.hasCredits) {
       await this.settleUniformly({
         workspaceId,
         claimToken,
@@ -190,9 +182,25 @@ export class MessageCampaignBatchDeliveryService {
       return;
     }
 
+    const campaignStillRunning = await this.findRunningCampaign(
+      data.campaignId,
+    );
+
+    if (!isDefined(campaignStillRunning)) {
+      await this.settleUniformly({
+        workspaceId,
+        claimToken,
+        recipients: claimedRecipients,
+        state: CAMPAIGN_DELIVERY_STATE.SKIPPED,
+        skipReason: CAMPAIGN_SKIP_REASON.CAMPAIGN_CANCELED,
+      });
+
+      return;
+    }
+
     await this.deliverBatch({
       data,
-      campaign,
+      campaign: campaignStillRunning,
       creditContext,
       claimToken,
       claimedRecipients,
@@ -346,12 +354,6 @@ export class MessageCampaignBatchDeliveryService {
         unsubscribeTopicId: campaign.unsubscribeTopicId ?? undefined,
       })
       .catch(async (error) => {
-        await this.emailBillingService.releaseEmailCredits({
-          workspaceId,
-          emailCount: claimedRecipients.length,
-          currentBillingSubscription: creditContext.currentBillingSubscription,
-        });
-
         await this.recordBatchFailure({
           workspaceId,
           campaignId,
@@ -382,12 +384,6 @@ export class MessageCampaignBatchDeliveryService {
       )
       .map((settlement) => settlement.deliveryId);
 
-    await this.emailBillingService.releaseEmailCredits({
-      workspaceId,
-      emailCount: claimedRecipients.length - sentDeliveryIds.length,
-      currentBillingSubscription: creditContext.currentBillingSubscription,
-    });
-
     for (const deliveryId of sentDeliveryIds) {
       const providerMessageId = settlements.find(
         (settlement) => settlement.deliveryId === deliveryId,
@@ -406,14 +402,15 @@ export class MessageCampaignBatchDeliveryService {
     }
 
     await this.emailBillingService
-      .recordEmailSendUsage({
+      .billSentEmails({
         workspaceId,
         sentEmailCount: sentDeliveryIds.length,
         userWorkspaceId,
+        currentBillingSubscription: creditContext.currentBillingSubscription,
       })
       .catch((error) => {
         this.logger.error(
-          `Campaign ${campaignId} delivered ${sentDeliveryIds.length} message(s) but failed to record their usage: ${
+          `Campaign ${campaignId} delivered ${sentDeliveryIds.length} message(s) but failed to bill them: ${
             error instanceof Error ? error.message : String(error)
           }`,
         );

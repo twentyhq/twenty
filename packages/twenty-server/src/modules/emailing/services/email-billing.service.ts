@@ -49,58 +49,6 @@ export class EmailBillingService {
     return { hasCredits: hasAvailableCredits, currentBillingSubscription };
   }
 
-  async reserveEmailCredits({
-    workspaceId,
-    emailCount,
-    currentBillingSubscription,
-  }: {
-    workspaceId: string;
-    emailCount: number;
-    currentBillingSubscription?: CurrentBillingSubscription;
-  }): Promise<boolean> {
-    if (emailCount <= 0 || !this.billingService.isBillingEnabled()) {
-      return true;
-    }
-
-    const remainingCreditsMicro = await this.adjustReservedCredits({
-      workspaceId,
-      emailCount,
-      currentBillingSubscription,
-    });
-
-    if (remainingCreditsMicro >= 0) {
-      return true;
-    }
-
-    await this.releaseEmailCredits({
-      workspaceId,
-      emailCount,
-      currentBillingSubscription,
-    });
-
-    return false;
-  }
-
-  async releaseEmailCredits({
-    workspaceId,
-    emailCount,
-    currentBillingSubscription,
-  }: {
-    workspaceId: string;
-    emailCount: number;
-    currentBillingSubscription?: CurrentBillingSubscription;
-  }): Promise<void> {
-    if (emailCount <= 0 || !this.billingService.isBillingEnabled()) {
-      return;
-    }
-
-    await this.adjustReservedCredits({
-      workspaceId,
-      emailCount: -emailCount,
-      currentBillingSubscription,
-    });
-  }
-
   async recordEmailSendUsage({
     workspaceId,
     sentEmailCount,
@@ -142,43 +90,25 @@ export class EmailBillingService {
     }
 
     if (this.billingService.isBillingEnabled()) {
-      await this.adjustReservedCredits({
-        workspaceId,
-        emailCount: sentEmailCount,
-        currentBillingSubscription,
-      });
+      const resolvedBillingSubscription =
+        await this.billingUsageService.resolveCurrentBillingSubscription({
+          workspaceId,
+          providedCurrentBillingSubscription: currentBillingSubscription,
+        });
+
+      if (resolvedBillingSubscription !== NO_BILLING_SUBSCRIPTION) {
+        await this.billingUsageService.decrementAvailableCreditsInCache({
+          workspaceId,
+          usedCredits: computeEmailCreditsMicro(sentEmailCount),
+          currentBillingSubscription: resolvedBillingSubscription,
+        });
+      }
     }
 
     await this.recordEmailSendUsage({
       workspaceId,
       sentEmailCount,
       userWorkspaceId,
-    });
-  }
-
-  private async adjustReservedCredits({
-    workspaceId,
-    emailCount,
-    currentBillingSubscription: providedCurrentBillingSubscription,
-  }: {
-    workspaceId: string;
-    emailCount: number;
-    currentBillingSubscription?: CurrentBillingSubscription;
-  }): Promise<number> {
-    const currentBillingSubscription =
-      await this.billingUsageService.resolveCurrentBillingSubscription({
-        workspaceId,
-        providedCurrentBillingSubscription,
-      });
-
-    if (currentBillingSubscription === NO_BILLING_SUBSCRIPTION) {
-      return Number.POSITIVE_INFINITY;
-    }
-
-    return this.billingUsageService.decrementAvailableCreditsInCache({
-      workspaceId,
-      usedCredits: computeEmailCreditsMicro(emailCount),
-      currentBillingSubscription,
     });
   }
 }
