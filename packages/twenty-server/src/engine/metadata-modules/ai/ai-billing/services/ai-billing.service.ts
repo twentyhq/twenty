@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type LanguageModelUsage } from 'ai';
+import { isDefined } from 'twenty-shared/utils';
 
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
@@ -70,7 +71,7 @@ export class AiBillingService {
       cost,
     });
 
-    return { hasNoMoreAvailableCredits: exhausted !== null };
+    return { hasNoMoreAvailableCredits: isDefined(exhausted) };
   }
 
   calculateCost(modelId: ModelId, billingInput: BillingUsageInput): number {
