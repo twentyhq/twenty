@@ -38,6 +38,7 @@ const StyledControlContainer = styled.button<{
 const StyledChevronWrapper = styled.div`
   color: ${() => themeCssVariables.font.color.tertiary};
   display: flex;
+  pointer-events: none;
 `;
 
 type SettingsSelectControlProps = {

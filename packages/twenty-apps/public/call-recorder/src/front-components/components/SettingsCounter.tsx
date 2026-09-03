@@ -15,6 +15,10 @@ const StyledCounterContainer = styled.div<{ $showButtons: boolean }>`
     $showButtons
       ? themeCssVariables.spacing[30]
       : themeCssVariables.spacing[16]};
+
+  button svg {
+    pointer-events: none;
+  }
 `;
 
 const StyledTextInputContainer = styled.div`
