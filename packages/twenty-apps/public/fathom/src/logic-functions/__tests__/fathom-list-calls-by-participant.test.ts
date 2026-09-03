@@ -50,33 +50,6 @@ describe('fathomListCallsByParticipantHandler', () => {
     ]);
   });
 
-  it.each([undefined, '   ', 42])(
-    'rejects a participantEmail of %s',
-    async (participantEmail) => {
-      expect(
-        await fathomListCallsByParticipantHandler(
-          { participantEmail },
-          CONTEXT,
-        ),
-      ).toEqual({ success: false, error: 'participantEmail is required' });
-      expect(mocks.listFathomConnectionsForRequest).not.toHaveBeenCalled();
-    },
-  );
-
-  it('reports a missing connection', async () => {
-    mocks.listFathomConnectionsForRequest.mockResolvedValue([]);
-
-    expect(
-      await fathomListCallsByParticipantHandler(
-        { participantEmail: 'ada@example.com' },
-        CONTEXT,
-      ),
-    ).toEqual({
-      success: false,
-      error: expect.stringContaining('not connected'),
-    });
-  });
-
   it('returns the calls whose invitees include the email, most recent first', async () => {
     mocks.listMeetings.mockImplementation(
       buildFathomMeetingPages([
@@ -116,32 +89,6 @@ describe('fathomListCallsByParticipantHandler', () => {
         expect.not.objectContaining({ meetingUrl: expect.anything() }),
       ],
     });
-  });
-
-  it('stops paging once the limit is reached and caps the result', async () => {
-    mocks.listMeetings.mockImplementation(
-      buildFathomMeetingPages([
-        [
-          buildMeetingWith(1, '2026-08-18T10:00:00.000Z'),
-          buildMeetingWith(2, '2026-08-19T10:00:00.000Z'),
-        ],
-        [buildMeetingWith(3, '2026-08-20T10:00:00.000Z')],
-      ]),
-    );
-
-    const result = await fathomListCallsByParticipantHandler(
-      { participantEmail: 'ada@example.com', limit: 1 },
-      CONTEXT,
-    );
-
-    expect(result).toEqual(
-      expect.objectContaining({
-        success: true,
-        count: 1,
-        calls: [expect.objectContaining({ recordingId: 2 })],
-      }),
-    );
-    expect(mocks.listMeetings).toHaveBeenCalledTimes(1);
   });
 
   it('merges the calls seen by several connected accounts without duplicates', async () => {

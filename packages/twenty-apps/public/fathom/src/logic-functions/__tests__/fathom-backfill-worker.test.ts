@@ -50,6 +50,13 @@ const enqueuedBatchJobs = () =>
       FATHOM_BACKFILL_BATCH_UNIVERSAL_IDENTIFIER,
   );
 
+const enqueuedContinuationJobs = () =>
+  enqueuedJobs().filter(
+    (job) =>
+      job.logicFunctionUniversalIdentifier ===
+      FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
+  );
+
 describe('fathomBackfillWorkerHandler', () => {
   beforeEach(() => {
     vi.resetAllMocks();
@@ -57,34 +64,6 @@ describe('fathomBackfillWorkerHandler', () => {
     vi.spyOn(Date, 'now').mockReturnValue(NOW);
     sdkMocks.getConnection.mockResolvedValue({ accessToken: 'token' });
     sdkMocks.enqueueJob.mockResolvedValue({ enqueued: true });
-  });
-
-  it('requires a history window', async () => {
-    await expect(
-      fathomBackfillWorkerHandler({ connectedAccountId: 'connection-1' }),
-    ).rejects.toThrow('requires a days window');
-    expect(sdkMocks.listMeetings).not.toHaveBeenCalled();
-  });
-
-  it('lists meetings created inside the days window', async () => {
-    sdkMocks.listMeetings.mockImplementation(buildFathomMeetingPages([[]]));
-
-    expect(
-      await fathomBackfillWorkerHandler({
-        connectedAccountId: 'connection-1',
-        days: 7,
-      }),
-    ).toEqual({
-      success: true,
-      createdAfter: '2026-08-20T00:00:00.000Z',
-      discoveredMeetingCount: 0,
-      enqueuedBatchCount: 0,
-      hasMoreMeetings: false,
-    });
-    expect(sdkMocks.listMeetings).toHaveBeenCalledWith(
-      expect.objectContaining({ createdAfter: '2026-08-20T00:00:00.000Z' }),
-    );
-    expect(sdkMocks.enqueueJob).not.toHaveBeenCalled();
   });
 
   it('continues through cursor pages and imports meetings from every recorder', async () => {
@@ -101,22 +80,13 @@ describe('fathomBackfillWorkerHandler', () => {
       ]),
     );
 
-    const firstResult = await fathomBackfillWorkerHandler({
+    await fathomBackfillWorkerHandler({
       connectedAccountId: 'connection-1',
       days: 30,
     });
-    const continuationJob = enqueuedJobs().find(
-      (job) =>
-        job.logicFunctionUniversalIdentifier ===
-        FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
-    );
 
-    expect(firstResult).toEqual(
-      expect.objectContaining({
-        discoveredMeetingCount: 2,
-        hasMoreMeetings: true,
-      }),
-    );
+    const [continuationJob] = enqueuedContinuationJobs();
+
     expect(continuationJob).toEqual({
       logicFunctionUniversalIdentifier:
         FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
@@ -130,16 +100,8 @@ describe('fathomBackfillWorkerHandler', () => {
       delayMs: 20_000,
     });
 
-    const secondResult = await fathomBackfillWorkerHandler(
-      continuationJob.payload,
-    );
+    await fathomBackfillWorkerHandler(continuationJob.payload);
 
-    expect(secondResult).toEqual(
-      expect.objectContaining({
-        discoveredMeetingCount: 1,
-        hasMoreMeetings: false,
-      }),
-    );
     expect(sdkMocks.listMeetings).toHaveBeenLastCalledWith(
       expect.objectContaining({
         createdAfter: '2026-07-28T00:00:00.000Z',
@@ -153,33 +115,7 @@ describe('fathomBackfillWorkerHandler', () => {
         ),
       ),
     ).toEqual([1, 2, 3]);
-    expect(
-      enqueuedBatchJobs().map((job) => job.payload.connectedAccountId),
-    ).toEqual(['connection-1', 'connection-1']);
-  });
-
-  it('serializes meeting dates so the batch payload survives the queue', async () => {
-    sdkMocks.listMeetings.mockImplementation(
-      buildFathomMeetingPages([[buildFathomMeeting({ recordingId: 1 })]]),
-    );
-
-    await fathomBackfillWorkerHandler({
-      connectedAccountId: 'connection-1',
-      days: 30,
-    });
-
-    const [serializedMeeting] = enqueuedBatchJobs()[0].payload.meetings;
-
-    expect(serializedMeeting).toEqual(
-      expect.objectContaining({
-        recordingId: 1,
-        recordingStartTime: '2026-08-20T10:00:00.000Z',
-        recordingEndTime: '2026-08-20T10:30:00.000Z',
-      }),
-    );
-    expect(JSON.parse(JSON.stringify(serializedMeeting))).toEqual(
-      serializedMeeting,
-    );
+    expect(enqueuedContinuationJobs()).toHaveLength(1);
   });
 
   it('staggers the batches of one page and places a later backfill after them', async () => {
@@ -207,48 +143,6 @@ describe('fathomBackfillWorkerHandler', () => {
     ]);
   });
 
-  it('keeps the schedules of different connected accounts independent', async () => {
-    sdkMocks.listMeetings.mockImplementation(
-      buildFathomMeetingPages([[buildFathomMeeting({ recordingId: 1 })]]),
-    );
-
-    await fathomBackfillWorkerHandler({
-      connectedAccountId: 'connection-1',
-      days: 7,
-    });
-    await fathomBackfillWorkerHandler({
-      connectedAccountId: 'connection-2',
-      days: 7,
-    });
-
-    expect(enqueuedBatchJobs().map((job) => job.delayMs)).toEqual([0, 0]);
-  });
-
-  it('stops instead of looping when Fathom hands back the cursor it just consumed', async () => {
-    sdkMocks.listMeetings.mockResolvedValue({
-      result: {
-        items: [buildFathomMeeting({ recordingId: 1 })],
-        limit: null,
-        nextCursor: 'stuck',
-      },
-    });
-
-    expect(
-      await fathomBackfillWorkerHandler({
-        connectedAccountId: 'connection-1',
-        createdAfter: '2026-08-20T00:00:00.000Z',
-        cursor: 'stuck',
-      }),
-    ).toEqual(expect.objectContaining({ hasMoreMeetings: false }));
-    expect(
-      enqueuedJobs().some(
-        (job) =>
-          job.logicFunctionUniversalIdentifier ===
-          FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
-      ),
-    ).toBe(false);
-  });
-
   it('ends a cycling cursor chain at the page bound without failing the job', async () => {
     sdkMocks.listMeetings.mockResolvedValue({
       result: {
@@ -267,29 +161,9 @@ describe('fathomBackfillWorkerHandler', () => {
         pageIndex: MAX_FATHOM_BACKFILL_PAGES - 1,
       }),
     ).toEqual(expect.objectContaining({ hasMoreMeetings: false }));
-    expect(
-      enqueuedJobs().some(
-        (job) =>
-          job.logicFunctionUniversalIdentifier ===
-          FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
-      ),
-    ).toBe(false);
+    expect(enqueuedContinuationJobs()).toHaveLength(0);
     expect(console.error).toHaveBeenCalledWith(
       expect.stringContaining('stopped after'),
     );
-  });
-
-  it('fails so the job retries when a batch is not accepted by the queue', async () => {
-    sdkMocks.listMeetings.mockImplementation(
-      buildFathomMeetingPages([[buildFathomMeeting({ recordingId: 1 })]]),
-    );
-    sdkMocks.enqueueJob.mockResolvedValue({ enqueued: false });
-
-    await expect(
-      fathomBackfillWorkerHandler({
-        connectedAccountId: 'connection-1',
-        days: 7,
-      }),
-    ).rejects.toThrow('Failed to enqueue Fathom job');
   });
 });

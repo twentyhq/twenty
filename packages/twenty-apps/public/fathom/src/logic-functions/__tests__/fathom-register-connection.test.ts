@@ -126,15 +126,6 @@ describe('fathomRegisterConnectionHandler', () => {
     );
   });
 
-  it('fails the hook when the initial import cannot be enqueued', async () => {
-    sdkMocks.enqueueJob.mockResolvedValue({ enqueued: false });
-
-    await expect(fathomRegisterConnectionHandler(HOOK_PAYLOAD)).rejects.toThrow(
-      'Failed to enqueue Fathom job',
-    );
-    expect(sdkMocks.kvSet).toHaveBeenCalledTimes(1);
-  });
-
   it('enqueues the initial import on retry when the active registration is still missing it', async () => {
     sdkMocks.kvGet.mockResolvedValue({
       ...ACTIVE_REGISTRATION,

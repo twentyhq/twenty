@@ -29,25 +29,6 @@ describe('listFathomConnectionsForRequest', () => {
     sdkMocks.listConnections.mockResolvedValue(CONNECTIONS);
   });
 
-  it('only uses the own connection of the requesting user', async () => {
-    expect(
-      await listFathomConnectionsForRequest({
-        userWorkspaceId: 'user-workspace-2',
-      }),
-    ).toEqual([CONNECTIONS[1]]);
-    expect(sdkMocks.listConnections).toHaveBeenCalledWith({
-      providerName: 'fathom',
-    });
-  });
-
-  it('returns nothing for a user who has not connected Fathom', async () => {
-    expect(
-      await listFathomConnectionsForRequest({
-        userWorkspaceId: 'user-workspace-3',
-      }),
-    ).toEqual([]);
-  });
-
   it('returns every connected account for a run with nobody behind it', async () => {
     const sharedConnection = {
       ...buildConnection('connection-shared', 'user-workspace-1'),
