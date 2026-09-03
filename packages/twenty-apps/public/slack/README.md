@@ -44,5 +44,5 @@ Answering costs AI credits on top, billed on the model's token usage — the who
 ## 📌 Heads up
 
 - **You create the Slack app** — Twenty connects to a Slack app you own, so an admin has to create it and set its credentials before anyone can connect. The assistant needs a signing secret and event subscriptions on top. See [SETUP.md](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/slack/SETUP.md).
-- **One Slack workspace per Twenty workspace** — connecting claims that Slack team. Removing the last connection using it releases the claim, so another Twenty workspace can then connect the same team.
+- **One Slack workspace per Twenty workspace** — connecting claims that Slack team. Removing the last connection using it releases the claim, so another Twenty workspace can then connect the same team. If a connection is broken — its Slack team is claimed elsewhere, or Slack no longer accepts its token — the Slack settings tab shows what is wrong and how to fix it.
 - **Private channels need membership** — public channels are covered by `chat:write.public`; anywhere else, invite the bot.

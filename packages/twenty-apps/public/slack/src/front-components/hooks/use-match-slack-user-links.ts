@@ -14,6 +14,7 @@ const buildFailureOutcome = (error: string): SlackRosterMatchOutcome => ({
   error,
   linkedCount: 0,
   unmatchedCount: 0,
+  failedCount: 0,
 });
 
 export const useMatchSlackUserLinks = () => {
