@@ -657,8 +657,6 @@ export class WorkflowExecutorWorkspaceService {
         { ...buildRunWorkflowJobOptions(workflowRunId), delay: retryDelayMs },
       );
     } catch (enqueueError) {
-      // Without the job nothing would ever leave PENDING, so record the step's
-      // own failure before letting the enqueue error end the run.
       await this.workflowRunWorkspaceService.updateWorkflowRunStepInfos({
         stepInfos: { [stepId]: { status: StepStatus.FAILED, error } },
         workflowRunId,
