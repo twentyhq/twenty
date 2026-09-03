@@ -123,6 +123,11 @@ export const slackAssistantWorkerHandler = async (
       }).catch(() => undefined);
     }
 
+    const agentBudgetRemainingSeconds = Math.max(
+      Math.ceil((agentDeadlineAtMs - Date.now()) / 1000),
+      0,
+    );
+
     const agentResult = await runSlackAssistantAgentWithStatus({
       agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
       runAsWorkspaceMemberId,
@@ -131,7 +136,7 @@ export const slackAssistantWorkerHandler = async (
         requesterName,
         conversationMessages,
         runAsWorkspaceMemberId,
-        timeoutSeconds: SLACK_ASSISTANT_AGENT_BUDGET_SECONDS,
+        timeoutSeconds: agentBudgetRemainingSeconds,
         workspaceBaseUrl: workspaceBaseUrls[0],
       }),
       slackChannelId,

@@ -4,6 +4,7 @@ import {
   type RunAgentResult,
 } from 'twenty-sdk/logic-function';
 
+import { SLACK_ASSISTANT_DEADLINE_ERROR } from 'src/logic-functions/constants/slack-assistant-deadline-error';
 import { type SlackAssistantAgentMessage } from 'src/logic-functions/types/slack-assistant-agent-message.type';
 import { raceSlackAssistantAgentDeadline } from 'src/logic-functions/utils/race-slack-assistant-agent-deadline';
 import { startSlackAssistantStatusUpdates } from 'src/logic-functions/utils/start-slack-assistant-status-updates';
@@ -26,6 +27,14 @@ export const runSlackAssistantAgentWithStatus = async ({
   threadTimestamp,
   deadlineAtMs,
 }: RunSlackAssistantAgentInput): Promise<RunAgentResult> => {
+  if (deadlineAtMs - Date.now() <= 0) {
+    return {
+      result: null,
+      error: SLACK_ASSISTANT_DEADLINE_ERROR,
+      success: false,
+    };
+  }
+
   const stopStatusUpdates = startSlackAssistantStatusUpdates({
     slackChannelId,
     threadTimestamp,
