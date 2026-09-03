@@ -222,13 +222,33 @@ Each connection has:
 | `accessToken`     | Fresh OAuth access token (refreshed automatically if expired)                                            |
 | `name`            | The connection's display name (auto-derived at OAuth callback, user-renameable)                          |
 | `handle`          | The connected upstream account's email, refreshed on each reconnect; resolved from the OIDC `id_token` returned at token exchange, falling back to the connecting Twenty user's email when the provider doesn't return one |
-| `authFailedAt`    | Set when the most recent refresh failed; the user must reconnect                                         |
+| `authFailedAt`    | Set when the most recent refresh failed, or when the app reported the credential dead via `reportConnectionAuthFailure`; the user must reconnect |
+| `authFailedReason` | Human-readable explanation for `authFailedAt`, when the reporter gave one; shown on the connection row in settings next to the Reconnect button |
 
 Key points:
 
 - Pass `{ providerName }` to filter by provider; omit it to get all connections this app owns across all providers.
 - The server transparently refreshes the access token before returning. Your handler always sees a usable token (or `authFailedAt` set).
 - `getConnection(id)` is the single-row equivalent.
+
+</Accordion>
+
+<Accordion title="reportConnectionAuthFailure" description="Tell the platform a credential is dead">
+
+The platform sets `authFailedAt` on its own only when an OAuth refresh fails. Providers whose tokens are never refreshed (a Slack bot token, for example) fail only at call time inside your handlers, so the connection row in settings would keep showing **Connected** while every call dies. When your code hits a definitive auth rejection, report it:
+
+```ts
+import { reportConnectionAuthFailure } from 'twenty-sdk/logic-function';
+
+await reportConnectionAuthFailure(
+  connection.id,
+  'Slack rejected the stored token (invalid_auth). Reconnect to restore the integration.',
+);
+```
+
+This sets `authFailedAt` (and the optional reason, capped at 1000 characters) on the connection. The settings row flips to **Reconnect needed** with a Reconnect button, the detail page shows the reason, and `getConnection` starts throwing `AppConnectionAuthFailedError` for that row. The flag and reason clear automatically when the user reconnects.
+
+Only report failures that a reconnect would actually fix (an `invalid_auth`-class rejection from the provider), never transient network errors. An app can only report its own connections, and a request user can only report their own user-visibility credentials.
 
 </Accordion>
 
