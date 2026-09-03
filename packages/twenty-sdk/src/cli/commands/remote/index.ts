@@ -15,9 +15,10 @@ type AuthMethod = 'OAuth' | 'API key';
 const authenticate = async (
   apiUrl: string,
   apiKey?: string,
+  configPath?: string,
 ): Promise<AuthMethod> => {
   if (apiKey) {
-    const result = await authLogin({ apiKey, apiUrl });
+    const result = await authLogin({ apiKey, apiUrl, configPath });
 
     if (!result.success) {
       console.error(chalk.red('✗ Authentication failed.'));
@@ -27,15 +28,16 @@ const authenticate = async (
     return 'API key';
   }
 
-  return runOAuthWithApiKeyFallback(apiUrl);
+  return runOAuthWithApiKeyFallback(apiUrl, configPath);
 };
 
 const runOAuthWithApiKeyFallback = async (
   apiUrl: string,
+  configPath?: string,
 ): Promise<AuthMethod> => {
   console.log(chalk.gray('Opening browser for authentication...'));
 
-  const oauthResult = await authLoginOAuth({ apiUrl });
+  const oauthResult = await authLoginOAuth({ apiUrl, configPath });
 
   if (oauthResult.success) {
     return 'OAuth';
@@ -56,6 +58,7 @@ const runOAuthWithApiKeyFallback = async (
   const fallbackResult = await authLogin({
     apiKey: keyAnswer.apiKey,
     apiUrl,
+    configPath,
   });
 
   if (!fallbackResult.success) {
@@ -85,9 +88,11 @@ const addAction = async (options: {
 
   if (options.as !== undefined && existingRemotes.includes(options.as)) {
     const config = await configService.getConfigForRemote(options.as);
+    const overrideUrl = options.url ?? options.apiUrl;
+    const apiUrl = overrideUrl ? normalizeUrl(overrideUrl) : config.apiUrl;
 
     ConfigService.setActiveRemote(options.as);
-    const method = await authenticate(config.apiUrl, options.apiKey);
+    const method = await authenticate(apiUrl, options.apiKey, configPath);
 
     console.log(
       chalk.green(`✓ Re-authenticated "${options.as}" via ${method}.`),
@@ -146,7 +151,7 @@ const addAction = async (options: {
   const name = options.as ?? deriveRemoteName(serverUrl);
 
   ConfigService.setActiveRemote(name);
-  const method = await authenticate(serverUrl, options.apiKey);
+  const method = await authenticate(serverUrl, options.apiKey, configPath);
 
   console.log(
     chalk.green(`✓ Remote "${name}" added (${serverUrl}) via ${method}.`),

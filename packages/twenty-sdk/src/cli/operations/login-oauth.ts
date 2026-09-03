@@ -12,6 +12,7 @@ export type AuthLoginOAuthOptions = {
   apiUrl: string;
   remote?: string;
   timeoutMs?: number;
+  configPath?: string;
 };
 
 export type OAuthDiscoveryResponse = {
@@ -23,13 +24,15 @@ export type OAuthDiscoveryResponse = {
 const innerAuthLoginOAuth = async (
   options: AuthLoginOAuthOptions,
 ): Promise<CommandResult> => {
-  const { apiUrl, remote, timeoutMs } = options;
+  const { apiUrl, remote, timeoutMs, configPath } = options;
 
   if (remote) {
     ConfigService.setActiveRemote(remote);
   }
 
-  const configService = new ConfigService();
+  const configService = new ConfigService(
+    configPath ? { configPath } : undefined,
+  );
 
   const discoveryUrl = `${apiUrl}/.well-known/oauth-authorization-server`;
 

@@ -7,18 +7,21 @@ export type AuthLoginOptions = {
   apiKey: string;
   apiUrl: string;
   remote?: string;
+  configPath?: string;
 };
 
 const innerAuthLogin = async (
   options: AuthLoginOptions,
 ): Promise<CommandResult> => {
-  const { apiKey, apiUrl, remote } = options;
+  const { apiKey, apiUrl, remote, configPath } = options;
 
   if (remote) {
     ConfigService.setActiveRemote(remote);
   }
 
-  const configService = new ConfigService();
+  const configService = new ConfigService(
+    configPath ? { configPath } : undefined,
+  );
 
   await configService.setConfig({
     apiUrl,
@@ -28,7 +31,7 @@ const innerAuthLogin = async (
     twentyCLIRegistrationClientId: undefined,
   });
 
-  const apiService = new ApiService();
+  const apiService = new ApiService({ serverUrl: apiUrl, token: apiKey });
   const validateAuth = await apiService.validateAuth();
 
   if (!validateAuth.authValid) {
