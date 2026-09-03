@@ -12,6 +12,7 @@ import {
   EmailingDomainException,
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
+import { type EmailingDomainEmailTemplate } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-template.type';
 import { CAMPAIGN_VARIABLE_PATTERN } from 'src/modules/emailing/constants/campaign-variable-pattern.constant';
 
 const CAMPAIGN_BATCH_TAG_PREFIXES = {
@@ -46,7 +47,7 @@ export const compileCampaignBatchTemplate = async ({
   subjectTemplate: string;
   bodyTemplate: string;
 }): Promise<{
-  template: { subject: string; text: string; html?: string };
+  template: EmailingDomainEmailTemplate;
   variableNames: string[];
 }> => {
   const variableNames: string[] = [];

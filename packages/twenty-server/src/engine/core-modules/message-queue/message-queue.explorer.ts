@@ -17,7 +17,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
-import { resolveCampaignSendBatchSize } from 'src/engine/core-modules/emailing-domain/utils/resolve-campaign-send-batch-size.util';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MessageQueueMetadataAccessor } from 'src/engine/core-modules/message-queue/message-queue-metadata.accessor';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -131,9 +130,8 @@ export class MessageQueueExplorer implements OnModuleInit {
     const configuredDurationMs = this.twentyConfigService.get(
       rateLimit.durationMsConfigVariable,
     );
-    const maxJobsPerWindow = Math.floor(
-      configuredMaxMessages /
-        resolveCampaignSendBatchSize(configuredMaxMessages),
+    const maxJobsPerWindow = rateLimit.resolveMaxJobsPerWindow(
+      configuredMaxMessages,
     );
 
     if (maxJobsPerWindow <= 0 || configuredDurationMs <= 0) {

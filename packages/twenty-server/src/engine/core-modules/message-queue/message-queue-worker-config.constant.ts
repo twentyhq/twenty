@@ -1,5 +1,6 @@
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 import { type NumericConfigVariableKey } from 'src/engine/core-modules/twenty-config/types/numeric-config-variable-key.type';
+import { resolveCampaignSendBatchSize } from 'src/engine/core-modules/emailing-domain/utils/resolve-campaign-send-batch-size.util';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 // Single source of truth to pilot worker behavior per queue. Every value is
@@ -17,6 +18,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 type MessageQueueRateLimitConfig = {
   maxConfigVariable: NumericConfigVariableKey;
   durationMsConfigVariable: NumericConfigVariableKey;
+  resolveMaxJobsPerWindow: (configuredMaxUnits: number) => number;
 };
 
 export type MessageQueueWorkerConfig = {
@@ -94,6 +96,11 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     rateLimit: {
       maxConfigVariable: 'EMAIL_SEND_RATE_LIMITING_LIMIT',
       durationMsConfigVariable: 'EMAIL_SEND_RATE_LIMITING_TTL_IN_MS',
+      resolveMaxJobsPerWindow: (configuredMaxEmails) =>
+        Math.floor(
+          configuredMaxEmails /
+            resolveCampaignSendBatchSize(configuredMaxEmails),
+        ),
     },
     workerOptions: {
       concurrency: 10,
