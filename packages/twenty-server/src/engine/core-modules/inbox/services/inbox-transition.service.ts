@@ -103,10 +103,19 @@ export class InboxTransitionService {
 
     // Read back by id rather than through the actor's visibility: handing a
     // personal item to someone else has just taken it out of the actor's view
-    return this.inboxItemRepository.findOneOrFail(workspaceId, {
-      where: { id: inboxItemId },
-      relations: { inboxItemType: true },
-    });
+    const updatedInboxItem = await this.inboxItemRepository.findOne(
+      workspaceId,
+      { where: { id: inboxItemId }, relations: { inboxItemType: true } },
+    );
+
+    if (!isDefined(updatedInboxItem)) {
+      throw new InboxException(
+        `Inbox item ${inboxItemId} not found`,
+        InboxExceptionCode.INBOX_ITEM_NOT_FOUND,
+      );
+    }
+
+    return updatedInboxItem;
   }
 
   // The recipient is a user workspace id, which the caller could have copied

@@ -31,6 +31,13 @@ export const useInboxItems = (
     viewKey,
     limit: INBOX_ITEMS_PAGE_SIZE,
   });
+
+  // Reset during render rather than in an effect, so coming back to a view
+  // later starts from the first page instead of restoring its grown one
+  if (pagination.viewKey !== viewKey) {
+    setPagination({ viewKey, limit: INBOX_ITEMS_PAGE_SIZE });
+  }
+
   const limit =
     pagination.viewKey === viewKey ? pagination.limit : INBOX_ITEMS_PAGE_SIZE;
 

@@ -48,7 +48,7 @@ const transitionArgs = {
 describe('InboxTransitionService', () => {
   let service: InboxTransitionService;
 
-  const inboxItemRepository = { update: jest.fn(), findOneOrFail: jest.fn() };
+  const inboxItemRepository = { update: jest.fn(), findOne: jest.fn() };
   const userWorkspaceService = { findById: jest.fn() };
   const inboxItemService = {
     findVisibleItemOrThrow: jest.fn(),
@@ -68,7 +68,7 @@ describe('InboxTransitionService', () => {
 
     inboxItemRepository.update.mockResolvedValue({ affected: 1 });
     inboxItemService.findVisibleItemOrThrow.mockResolvedValue(buildInboxItem());
-    inboxItemRepository.findOneOrFail.mockResolvedValue(buildInboxItem());
+    inboxItemRepository.findOne.mockResolvedValue(buildInboxItem());
     userWorkspaceService.findById.mockResolvedValue({
       id: 'someone-else',
       workspaceId: WORKSPACE_ID,
@@ -136,6 +136,21 @@ describe('InboxTransitionService', () => {
         }),
       ).rejects.toMatchObject({
         code: InboxExceptionCode.INBOX_ITEM_CHANGED,
+      });
+    });
+
+    it('should report the item as gone when it vanished right after the write', async () => {
+      // Prepare
+      inboxItemRepository.findOne.mockResolvedValue(null);
+
+      // Act & Assert
+      await expect(
+        service.transition({
+          ...transitionArgs,
+          transition: { kind: 'CLEAR' },
+        }),
+      ).rejects.toMatchObject({
+        code: InboxExceptionCode.INBOX_ITEM_NOT_FOUND,
       });
     });
 

@@ -6,7 +6,7 @@ import {
   getSubdomainSlugFromDisplayName,
   isDefined,
 } from 'twenty-shared/utils';
-import { type DataSource, In } from 'typeorm';
+import { type DataSource, type EntityManager, In } from 'typeorm';
 
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxQueueRoleEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue-role.entity';
@@ -264,7 +264,7 @@ export class InboxQueueService {
           isDefault: false,
         });
       } catch (error) {
-        if (!isUniqueViolation(error) || attempt === MAX_SLUG_ATTEMPTS - 1) {
+        if (!isUniqueViolation(error)) {
           throw error;
         }
       }
@@ -326,9 +326,14 @@ export class InboxQueueService {
 
     const defaultQueue = await this.findOrCreateDefaultQueue({ workspaceId });
 
-    // One transaction, so an item routed to the queue while it is going away
-    // is moved with the others rather than swept up by the cascade.
+    // The queue row is locked for update first: inserting an item takes a key
+    // share on its queue, so a route in flight is either committed before the
+    // move below and moved with the rest, or waits and fails on the key once
+    // the queue is gone, rather than landing between the move and the delete
+    // and being swept up by the cascade.
     await this.coreDataSource.transaction(async (manager) => {
+      await this.lockQueueOrThrow({ manager, workspaceId, queueId: queue.id });
+
       // A slot is unique per queue, so a moved item could collide with one
       // triage already holds. It gives up its slot rather than its existence:
       // the next event about the same subject opens a fresh slot wherever it
@@ -366,23 +371,11 @@ export class InboxQueueService {
     // once would interleave into the union of both lists. The queue row is
     // locked first so the second save waits and genuinely replaces the first.
     return this.coreDataSource.transaction(async (manager) => {
-      const lockedQueue = await manager
-        .getRepository(InboxQueueEntity)
-        .createQueryBuilder('queue')
-        .where('queue.id = :queueId', { queueId: queue.id })
-        .andWhere('queue.workspaceId = :workspaceId', { workspaceId })
-        .setLock('pessimistic_write')
-        .getOne();
-
-      // The queue can be deleted between the lookup above and taking the lock;
-      // inserting grants for it would then fail on the foreign key instead of
-      // reporting the queue as gone.
-      if (!isDefined(lockedQueue)) {
-        throw new InboxException(
-          `Inbox queue ${queue.id} not found`,
-          InboxExceptionCode.UNKNOWN_INBOX_QUEUE,
-        );
-      }
+      const lockedQueue = await this.lockQueueOrThrow({
+        manager,
+        workspaceId,
+        queueId: queue.id,
+      });
 
       const queueRoleRepository =
         this.inboxQueueRoleRepository.withManager(manager);
@@ -398,6 +391,36 @@ export class InboxQueueService {
 
       return lockedQueue;
     });
+  }
+
+  // The queue can be deleted between a lookup and taking the lock; writing
+  // rows that reference it would then fail on the foreign key instead of
+  // reporting the queue as gone.
+  private async lockQueueOrThrow({
+    manager,
+    workspaceId,
+    queueId,
+  }: {
+    manager: EntityManager;
+    workspaceId: string;
+    queueId: string;
+  }): Promise<InboxQueueEntity> {
+    const lockedQueue = await manager
+      .getRepository(InboxQueueEntity)
+      .createQueryBuilder('queue')
+      .where('queue.id = :queueId', { queueId })
+      .andWhere('queue.workspaceId = :workspaceId', { workspaceId })
+      .setLock('pessimistic_write')
+      .getOne();
+
+    if (!isDefined(lockedQueue)) {
+      throw new InboxException(
+        `Inbox queue ${queueId} not found`,
+        InboxExceptionCode.UNKNOWN_INBOX_QUEUE,
+      );
+    }
+
+    return lockedQueue;
   }
 
   async findQueueOrThrow({
