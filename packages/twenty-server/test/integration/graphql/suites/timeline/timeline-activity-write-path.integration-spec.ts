@@ -1,4 +1,5 @@
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
@@ -563,7 +564,7 @@ describe('timeline activity write path (integration)', () => {
       });
     });
 
-    it('should write a linked entry on the company when the note target is deleted', async () => {
+    it('should write one re-link entry when a deleted note target is upserted twice', async () => {
       await makeGraphqlAPIRequest(
         deleteOneOperationFactory({
           objectMetadataSingularName: 'noteTarget',
@@ -584,6 +585,60 @@ describe('timeline activity write path (integration)', () => {
 
       expect(timelineActivities).toHaveLength(1);
       expect(timelineActivities[0].linkedRecordId).toBe(NOTE_ID);
+
+      const linkedTimelineActivitiesBeforeRestore =
+        await findTimelineActivities({
+          targetCompanyId: { eq: NOTE_COMPANY_ID },
+          timelineActivityTypeId: {
+            eq: timelineActivityTypeIdForOrThrow(
+              'linked',
+              NOTE_UNIVERSAL_IDENTIFIER,
+            ),
+          },
+        });
+
+      expect(linkedTimelineActivitiesBeforeRestore).toHaveLength(1);
+
+      // Keep the original link outside the deliberate activity merge window,
+      // so the final count detects both missing and duplicate restore events.
+      await global.testDataSource.query(
+        `UPDATE "${TEST_SCHEMA_NAME}"."timelineActivity" SET "createdAt" = NOW() - INTERVAL '11 minutes' WHERE "id" = $1`,
+        [linkedTimelineActivitiesBeforeRestore[0].id],
+      );
+
+      const restoreResponse = await makeGraphqlAPIRequest(
+        createManyOperationFactory({
+          objectMetadataSingularName: 'noteTarget',
+          objectMetadataPluralName: 'noteTargets',
+          gqlFields: 'id',
+          data: [
+            {
+              noteId: NOTE_ID,
+              targetCompanyId: NOTE_COMPANY_ID,
+            },
+            {
+              noteId: NOTE_ID,
+              targetCompanyId: NOTE_COMPANY_ID,
+            },
+          ],
+          upsert: true,
+        }),
+      );
+
+      expect(restoreResponse.body.errors).toBeUndefined();
+
+      const linkedTimelineActivities = await findTimelineActivities({
+        targetCompanyId: { eq: NOTE_COMPANY_ID },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow(
+            'linked',
+            NOTE_UNIVERSAL_IDENTIFIER,
+          ),
+        },
+      });
+
+      expect(linkedTimelineActivities).toHaveLength(2);
+      expect(linkedTimelineActivities[1].linkedRecordId).toBe(NOTE_ID);
     });
   });
 

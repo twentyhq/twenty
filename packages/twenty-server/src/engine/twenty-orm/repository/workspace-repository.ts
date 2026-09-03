@@ -86,7 +86,11 @@ const MUTATION_EVENT_ACTIONS_BY_KIND: Record<
   delete: [DatabaseEventAction.DESTROYED],
   restore: [DatabaseEventAction.RESTORED],
   'soft-delete': [DatabaseEventAction.DELETED],
-  update: [DatabaseEventAction.UPDATED, DatabaseEventAction.UPSERTED],
+  update: [
+    DatabaseEventAction.UPDATED,
+    DatabaseEventAction.RESTORED,
+    DatabaseEventAction.UPSERTED,
+  ],
 };
 
 type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
@@ -985,15 +989,19 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       this.options.tableShape,
     );
 
-    const rawBeforeByInputIndex: ObjectRecord[][] = [];
+    const rawBeforeById = new Map<string, ObjectRecord[]>();
     const existingRecordsMapById: Record<string, ObjectRecord> = {};
 
     for (const input of inputs) {
+      if (rawBeforeById.has(input.id)) {
+        continue;
+      }
+
       const rawBefore = await this.buildIdsEventSnapshotQueryBuilder([
         input.id,
       ]).getMany<ObjectRecord>({ noFormatting: true });
 
-      rawBeforeByInputIndex.push(rawBefore);
+      rawBeforeById.set(input.id, rawBefore);
 
       for (const formattedRecord of this.formatResult<ObjectRecord[]>(
         rawBefore,
@@ -1037,7 +1045,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         updatedColumns: Object.keys(setColumns),
       });
 
-      const rawBeforeForInput = rawBeforeByInputIndex[index];
+      const rawBeforeForInput = rawBeforeById.get(input.id) ?? [];
 
       recordsBefore.push(...rawBeforeForInput);
 
@@ -1070,15 +1078,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
             noFormatting: true,
           });
 
-      recordsAfter.push(
-        ...mergeReturnedUpdateTimestamps(
-          mergeRecordsWithUpdateValues(
-            getUpdateEventRecords(rawBeforeForInput, recordsAfterWrite),
-            setColumns,
-          ),
-          result.generatedMaps as ObjectRecord[],
+      const recordsAfterForInput = mergeReturnedUpdateTimestamps(
+        mergeRecordsWithUpdateValues(
+          getUpdateEventRecords(rawBeforeForInput, recordsAfterWrite),
+          setColumns,
         ),
+        result.generatedMaps as ObjectRecord[],
       );
+
+      recordsAfter.push(...recordsAfterForInput);
+      rawBeforeById.set(input.id, recordsAfterForInput);
     }
 
     if (isDefined(filesFieldFileIds)) {
@@ -1439,16 +1448,36 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const formattedAfter = isDefined(recordsAfter)
       ? this.formatResult<ObjectRecord[]>(recordsAfter)
       : undefined;
+    const isRestoredAtIndex = (index: number) =>
+      isDefined(formattedBefore[index]?.deletedAt) &&
+      !isDefined(formattedAfter?.[index]?.deletedAt);
 
     for (const action of actions) {
+      const shouldIncludeAllRecords =
+        kind !== 'update' || action === DatabaseEventAction.UPSERTED;
+      const shouldIncludeRecordAtIndex = (index: number) =>
+        action === DatabaseEventAction.RESTORED
+          ? isRestoredAtIndex(index)
+          : !isRestoredAtIndex(index);
+      const recordsBeforeForAction = shouldIncludeAllRecords
+        ? formattedBefore
+        : formattedBefore.filter((_, index) =>
+            shouldIncludeRecordAtIndex(index),
+          );
+      const recordsAfterForAction = shouldIncludeAllRecords
+        ? formattedAfter
+        : formattedAfter?.filter((_, index) =>
+            shouldIncludeRecordAtIndex(index),
+          );
+
       const event = formatTwentyOrmEventToDatabaseBatchEvent({
         action,
         objectMetadataItem: this.options.flatObjectMetadata,
         flatFieldMetadataMaps:
           this.options.internalContext.flatFieldMetadataMaps,
         workspaceId: this.options.internalContext.workspaceId,
-        recordsBefore: formattedBefore,
-        recordsAfter: formattedAfter,
+        recordsBefore: recordsBeforeForAction,
+        recordsAfter: recordsAfterForAction,
         authContext: this.options.authContext,
       });
 
