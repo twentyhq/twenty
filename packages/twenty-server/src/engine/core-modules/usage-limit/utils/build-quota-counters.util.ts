@@ -7,6 +7,7 @@ import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/type
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
 import { buildSpendersFromUsageSpenders } from 'src/engine/core-modules/usage-limit/utils/build-spenders-from-usage-spenders.util';
 import { findLimitsForSpender } from 'src/engine/core-modules/usage-limit/utils/find-limits-for-spender.util';
+import { normalizeSpenderId } from 'src/engine/core-modules/usage-limit/utils/normalize-spender-id.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { type UsagePeriod } from 'src/engine/core-modules/usage/types/usage-period.type';
@@ -63,7 +64,7 @@ export const buildQuotaCounters = ({
             periodStart: period.periodStart,
             periodEnd: period.periodEnd,
             spenderType: limit.spenderType,
-            spenderId: limit.spenderId === '' ? null : limit.spenderId,
+            spenderId: normalizeSpenderId(limit.spenderId),
             operationType: limit.operationType,
           },
         ];
