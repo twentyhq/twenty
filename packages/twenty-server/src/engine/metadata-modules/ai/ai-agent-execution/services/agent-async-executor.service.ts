@@ -23,7 +23,6 @@ import { type Repository } from 'typeorm';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-execution-duration-ms-bucket-boundaries.constant';
 import { TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-output-tokens-bucket-boundaries.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -104,7 +103,6 @@ export class AgentAsyncExecutorService {
     private readonly toolRegistry: ToolRegistryService,
     private readonly nativeToolBinder: NativeToolBinderService,
     private readonly aiBillingService: AiBillingService,
-    private readonly billingUsageService: BillingUsageService,
     private readonly metricsService: MetricsService,
     @InjectWorkspaceScopedRepository(RoleTargetEntity)
     private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
@@ -279,7 +277,11 @@ export class AgentAsyncExecutorService {
       );
     }
 
-    await this.billingUsageService.hasAvailableCreditsOrThrow(workspaceId);
+    await this.aiBillingService.assertAiExecutionAllowed({
+      workspaceId,
+      operationType,
+      spenders: { userWorkspaceId, agentId: agent?.id },
+    });
 
     let accumulatedUsage: LanguageModelUsage = EMPTY_USAGE;
     let cacheCreationTokens = 0;
@@ -408,16 +410,18 @@ export class AgentAsyncExecutorService {
         },
         onStepFinish: async (step) => {
           const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
-            await this.aiBillingService.decrementAndCheckAvailableCredits(
-              registeredModel.modelId,
-              {
+            await this.aiBillingService.decrementAndCheckAvailableCredits({
+              modelId: registeredModel.modelId,
+              billingInput: {
                 usage: step.usage,
                 cacheCreationTokens: extractCacheCreationTokens(
                   step.providerMetadata,
                 ),
               },
               workspaceId,
-            );
+              operationType,
+              spenders: { userWorkspaceId, agentId: agent?.id },
+            });
 
           if (stepHasNoMoreAvailableCredits) {
             hasNoMoreAvailableCredits = true;
@@ -511,16 +515,18 @@ export class AgentAsyncExecutorService {
           }),
           onStepFinish: async (step) => {
             const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
-              await this.aiBillingService.decrementAndCheckAvailableCredits(
-                registeredModel.modelId,
-                {
+              await this.aiBillingService.decrementAndCheckAvailableCredits({
+                modelId: registeredModel.modelId,
+                billingInput: {
                   usage: step.usage,
                   cacheCreationTokens: extractCacheCreationTokens(
                     step.providerMetadata,
                   ),
                 },
                 workspaceId,
-              );
+                operationType,
+                spenders: { userWorkspaceId, agentId: agent?.id },
+              });
 
             if (stepHasNoMoreAvailableCredits) {
               hasNoMoreAvailableCredits = true;

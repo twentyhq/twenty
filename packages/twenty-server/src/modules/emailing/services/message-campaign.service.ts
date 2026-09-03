@@ -110,7 +110,7 @@ export class MessageCampaignService {
       });
 
     const { hasCredits } =
-      await this.emailBillingService.resolveEmailCreditContext(workspaceId);
+      await this.emailBillingService.getEmailCreditContext(workspaceId);
 
     if (sendableRecipients.length > 0 && !hasCredits) {
       throw new EmailingDomainException(
