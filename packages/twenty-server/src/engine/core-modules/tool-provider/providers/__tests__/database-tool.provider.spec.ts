@@ -363,13 +363,12 @@ describe('DatabaseToolProvider', () => {
     ]);
 
     expect(descriptorNames).toContain('find_many_people');
-    expect(descriptorNames).toEqual(
-      expect.not.arrayContaining([
-        'find_many_connected_accounts',
-        'find_one_connected_account',
-        'find_many_message_channels',
-        'find_one_message_channel',
-      ]),
-    );
+    expect(
+      descriptorNames.filter(
+        (name) =>
+          name.includes('_connected_account') ||
+          name.includes('_message_channel'),
+      ),
+    ).toEqual([]);
   });
 });

@@ -124,16 +124,6 @@ export class ActionToolProvider implements ToolProvider {
           context.locale,
         ),
       );
-    }
-
-    const hasCreateCalendarEventPermission =
-      await this.permissionsService.hasToolPermission(
-        context.rolePermissionConfig,
-        context.workspaceId,
-        PermissionFlagType.CREATE_CALENDAR_EVENT_TOOL,
-      );
-
-    if (hasEmailPermission || hasCreateCalendarEventPermission) {
       descriptors.push(
         this.buildDescriptor(
           'find_connected_accounts',
@@ -143,6 +133,13 @@ export class ActionToolProvider implements ToolProvider {
         ),
       );
     }
+
+    const hasCreateCalendarEventPermission =
+      await this.permissionsService.hasToolPermission(
+        context.rolePermissionConfig,
+        context.workspaceId,
+        PermissionFlagType.CREATE_CALENDAR_EVENT_TOOL,
+      );
 
     if (hasCreateCalendarEventPermission) {
       descriptors.push(
