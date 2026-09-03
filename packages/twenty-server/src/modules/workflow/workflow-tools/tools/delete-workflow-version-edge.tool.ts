@@ -1,6 +1,6 @@
-import { WorkflowActionType } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
+import { workflowStepConnectionOptionsSchema } from 'src/modules/workflow/workflow-tools/tools/schemas/workflow-step-connection-options.schema';
 import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
@@ -15,15 +15,7 @@ const deleteWorkflowVersionEdgeSchema = z.object({
     .union([z.literal('trigger'), z.string().uuid()])
     .describe('The source step: "trigger" or a step UUID'),
   target: z.string().uuid().describe('The UUID of the target step'),
-  sourceConnectionOptions: z
-    .object({
-      connectedStepType: z.literal(WorkflowActionType.ITERATOR),
-      settings: z.object({
-        isConnectedToLoop: z.boolean(),
-      }),
-    })
-    .optional()
-    .describe('Optional connection options for iterator steps'),
+  sourceConnectionOptions: workflowStepConnectionOptionsSchema.optional(),
 });
 
 type DeleteWorkflowVersionEdgeInput = z.infer<
