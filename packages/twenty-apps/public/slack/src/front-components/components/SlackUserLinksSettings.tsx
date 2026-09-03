@@ -64,7 +64,7 @@ const StyledCenteredState = styled.div`
 
 export const SlackUserLinksSettings = () => {
   const { canManage, isPermissionLoading } = useCanManageSlackUserLinks();
-  const { isSlackConnected, isConnectionStatusLoading } =
+  const { isSlackConnected, installedSlackTeamId, isConnectionStatusLoading } =
     useSlackConnectionStatus();
   const {
     slackUserLinks,
@@ -221,6 +221,7 @@ export const SlackUserLinksSettings = () => {
           <SlackUserLinksList
             slackUserLinks={slackUserLinks}
             canManage={canManage}
+            installedSlackTeamId={installedSlackTeamId}
             hasMore={hasMoreSlackUserLinks}
             onRemove={handleRemove}
             onResend={handleResend}

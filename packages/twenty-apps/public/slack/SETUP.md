@@ -245,6 +245,17 @@ status, lets a member with the permission remove a link or resend a pending
 consent request, and shows a read-only view to anyone without the permission.
 It renders nothing until Slack is connected.
 
+Links made against a Slack workspace you are no longer connected to stay in
+that list, because they are the audit trail of who could borrow whose access
+and when. They cannot grant anything: a request is only ever matched against
+the installed Slack team, so a link from another team never fires. The list
+says so rather than hiding them, marking each such row **Slack workspace
+disconnected** instead of a live status, and offering no consent resend for
+it. Removing the row is the only way to drop it, and disconnecting a Slack
+workspace never does so on your behalf. If Slack does not confirm the
+installed team when the section loads, every row keeps its stored status
+rather than being marked wrongly.
+
 The same section lists Slack users with no link yet, so you can see who the
 sweep skipped and finish the job in place: each row has its own member picker
 and says whether linking activates immediately or asks the person first. An
