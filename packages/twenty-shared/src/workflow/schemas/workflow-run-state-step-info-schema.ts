@@ -5,6 +5,7 @@ export const workflowRunStateStepInfoSchema = z.object({
   result: z.any().optional(),
   error: z.any().optional(),
   status: workflowRunStepStatusSchema,
+  retryAttempt: z.number().optional(),
   get history() {
     return z
       .array(
@@ -12,6 +13,7 @@ export const workflowRunStateStepInfoSchema = z.object({
           result: true,
           status: true,
           error: true,
+          retryAttempt: true,
         }),
       )
       .optional();

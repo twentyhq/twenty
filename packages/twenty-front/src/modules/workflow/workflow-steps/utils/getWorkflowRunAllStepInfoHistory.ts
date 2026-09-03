@@ -1,16 +1,16 @@
 import { isArray } from '@sniptt/guards';
-import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
+import { isDefined } from 'twenty-shared/utils';
+import { type WorkflowRunStepInfo } from 'twenty-shared/workflow';
 
-// History holds one entry per iteration, so retried attempts are dropped: they
-// are the only entries archived with a FAILED status, since a step that fails
-// without retrying ends the run before the iterator archives anything.
+// History holds one entry per iteration, so superseded retry attempts are
+// dropped: only the outcome that ended the iteration is displayed.
 export const getWorkflowRunAllStepInfoHistory = ({
   stepInfo,
 }: {
   stepInfo: WorkflowRunStepInfo;
 }) => {
   const iterationHistory = isArray(stepInfo?.history)
-    ? stepInfo.history.filter((entry) => entry.status !== StepStatus.FAILED)
+    ? stepInfo.history.filter((entry) => !isDefined(entry.retryAttempt))
     : [];
 
   const allStepInfoHistory: WorkflowRunStepInfo[] = [

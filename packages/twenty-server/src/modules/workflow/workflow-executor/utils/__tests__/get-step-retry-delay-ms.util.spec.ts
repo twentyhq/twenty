@@ -29,8 +29,8 @@ describe('getStepRetryDelayMs', () => {
       stepInfo: {
         status: StepStatus.RUNNING,
         history: [
-          { status: StepStatus.FAILED, error: 'first' },
-          { status: StepStatus.FAILED, error: 'second' },
+          { status: StepStatus.FAILED, error: 'first', retryAttempt: 1 },
+          { status: StepStatus.FAILED, error: 'second', retryAttempt: 2 },
         ],
       },
     });
@@ -38,14 +38,14 @@ describe('getStepRetryDelayMs', () => {
     expect(result).toBe(STEP_RETRY_DELAYS_MS[2]);
   });
 
-  it('should restart the budget after an iteration that did not end on a failed attempt', () => {
+  it('should restart the budget on the iteration archived after a retried one', () => {
     const result = getStepRetryDelayMs({
       step: createMockCodeStep('step-1', [], { retryOnFailure: true }),
       stepInfo: {
         status: StepStatus.RUNNING,
         history: [
-          { status: StepStatus.FAILED, error: 'first' },
-          { status: StepStatus.FAILED, error: 'second' },
+          { status: StepStatus.FAILED, error: 'first', retryAttempt: 1 },
+          { status: StepStatus.FAILED, error: 'second', retryAttempt: 2 },
           { status: StepStatus.FAILED_SAFELY, error: 'previous iteration' },
         ],
       },
@@ -59,9 +59,10 @@ describe('getStepRetryDelayMs', () => {
       step: createMockCodeStep('step-1', [], { retryOnFailure: true }),
       stepInfo: {
         status: StepStatus.RUNNING,
-        history: STEP_RETRY_DELAYS_MS.map(() => ({
+        history: STEP_RETRY_DELAYS_MS.map((_, index) => ({
           status: StepStatus.FAILED,
           error: 'some error',
+          retryAttempt: index + 1,
         })),
       },
     });
@@ -69,7 +70,7 @@ describe('getStepRetryDelayMs', () => {
     expect(result).toBeUndefined();
   });
 
-  it('should ignore history entries that are not failed attempts', () => {
+  it('should ignore history entries that are not retry attempts', () => {
     const result = getStepRetryDelayMs({
       step: createMockCodeStep('step-1', [], { retryOnFailure: true }),
       stepInfo: {

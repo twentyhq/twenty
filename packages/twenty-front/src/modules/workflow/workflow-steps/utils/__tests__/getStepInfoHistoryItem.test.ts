@@ -81,7 +81,7 @@ describe('getStepInfoHistoryItem', () => {
       result: 'final',
       status: StepStatus.SUCCESS,
       history: [
-        { error: 'first attempt', status: StepStatus.FAILED },
+        { error: 'first attempt', status: StepStatus.FAILED, retryAttempt: 1 },
         { result: 'first', status: StepStatus.SUCCESS },
         { result: 'second', status: StepStatus.SUCCESS },
       ],

@@ -34,7 +34,10 @@ import {
   type WorkflowBranchExecutorInput,
   type WorkflowExecutorInput,
 } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
-import { getStepRetryDelayMs } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-delay-ms.util';
+import {
+  getStepRetryAttempt,
+  getStepRetryDelayMs,
+} from 'src/modules/workflow/workflow-executor/utils/get-step-retry-delay-ms.util';
 import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-step.util';
 import { shouldFailSafely } from 'src/modules/workflow/workflow-executor/utils/should-fail-safely.util';
 import { shouldSkipStepExecution } from 'src/modules/workflow/workflow-executor/utils/should-skip-step-execution.util';
@@ -633,7 +636,11 @@ export class WorkflowExecutorWorkspaceService {
           error,
           history: [
             ...(stepInfo?.history ?? []),
-            { status: StepStatus.FAILED, error },
+            {
+              status: StepStatus.FAILED,
+              error,
+              retryAttempt: getStepRetryAttempt({ stepInfo }) + 1,
+            },
           ],
         },
       },
