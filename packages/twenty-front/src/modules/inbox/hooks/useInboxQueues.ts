@@ -10,9 +10,9 @@ import { type InboxQueue } from '~/generated/graphql';
 // The shared inboxes this person can reach. Access is resolved server
 // side, so the navigation simply renders what comes back.
 //
-// The navigation drawer is the one poller: it is always mounted, so a page
-// reading the same query gets the cache it keeps fresh instead of a second
-// timer.
+// Callers that stay mounted while the inbox is in use poll; the drawer is
+// not one of them on mobile or while a navigation folder is open, so the
+// inbox page polls as well.
 export const useInboxQueues = ({
   isPolling = false,
 }: { isPolling?: boolean } = {}) => {

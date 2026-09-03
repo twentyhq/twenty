@@ -58,7 +58,7 @@ export const InboxPage = () => {
     inboxQueueSlug?: string;
   }>();
   const { getIcon } = useIcons();
-  const { inboxQueues } = useInboxQueues();
+  const { inboxQueues } = useInboxQueues({ isPolling: true });
 
   // A shared inbox is the same list read through a queue, so the page differs
   // only in what it is called and which items it asks for.

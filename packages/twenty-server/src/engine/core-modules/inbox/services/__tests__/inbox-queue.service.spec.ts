@@ -57,8 +57,6 @@ describe('InboxQueueService', () => {
   const roleRepository = { find: jest.fn() };
   const userRoleService = { getRoleIdForUserWorkspace: jest.fn() };
   const queueLockQueryBuilder = {
-    select: jest.fn().mockReturnThis(),
-    from: jest.fn().mockReturnThis(),
     where: jest.fn().mockReturnThis(),
     andWhere: jest.fn().mockReturnThis(),
     setLock: jest.fn().mockReturnThis(),
@@ -66,7 +64,11 @@ describe('InboxQueueService', () => {
   };
   const coreDataSource = {
     transaction: jest.fn((run: (manager: unknown) => unknown) =>
-      run({ createQueryBuilder: () => queueLockQueryBuilder }),
+      run({
+        getRepository: () => ({
+          createQueryBuilder: () => queueLockQueryBuilder,
+        }),
+      }),
     ),
   };
 
@@ -205,13 +207,14 @@ describe('InboxQueueService', () => {
     // Saving the list replaces it, so the roles dropped from it lose access
     it('should replace the grants rather than add to them', async () => {
       // Act
-      await service.setQueueRoles({
+      const queue = await service.setQueueRoles({
         workspaceId: WORKSPACE_ID,
         queueId: QUEUE_ID,
         roleIds: [ROLE_ID, OTHER_ROLE_ID],
       });
 
       // Assert
+      expect(queue).toEqual({ id: QUEUE_ID });
       expect(inboxQueueRoleRepository.delete).toHaveBeenCalledWith(
         WORKSPACE_ID,
         { queueId: QUEUE_ID },

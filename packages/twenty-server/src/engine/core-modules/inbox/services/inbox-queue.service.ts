@@ -134,12 +134,18 @@ export class InboxQueueService {
     userWorkspaceId: string;
     slug: string;
   }): Promise<InboxQueueEntity | null> {
-    const queues = await this.findAccessibleQueues({
+    const queueIds = await this.findAccessibleQueueIds({
       workspaceId,
       userWorkspaceId,
     });
 
-    return queues.find((queue) => queue.slug === slug) ?? null;
+    if (queueIds.length === 0) {
+      return null;
+    }
+
+    return this.inboxQueueRepository.findOne(workspaceId, {
+      where: { id: In(queueIds), slug },
+    });
   }
 
   // Where work goes when no rule could address it. Created on demand rather
@@ -359,11 +365,10 @@ export class InboxQueueService {
     // Replacing the list is a delete plus an insert, which two admins saving at
     // once would interleave into the union of both lists. The queue row is
     // locked first so the second save waits and genuinely replaces the first.
-    await this.coreDataSource.transaction(async (manager) => {
+    return this.coreDataSource.transaction(async (manager) => {
       const lockedQueue = await manager
-        .createQueryBuilder()
-        .select('queue.id')
-        .from(InboxQueueEntity, 'queue')
+        .getRepository(InboxQueueEntity)
+        .createQueryBuilder('queue')
         .where('queue.id = :queueId', { queueId: queue.id })
         .andWhere('queue.workspaceId = :workspaceId', { workspaceId })
         .setLock('pessimistic_write')
@@ -384,17 +389,15 @@ export class InboxQueueService {
 
       await queueRoleRepository.delete(workspaceId, { queueId: queue.id });
 
-      if (roleIds.length === 0) {
-        return;
+      if (roleIds.length > 0) {
+        await queueRoleRepository.insert(
+          workspaceId,
+          roleIds.map((roleId) => ({ queueId: queue.id, roleId })),
+        );
       }
 
-      await queueRoleRepository.insert(
-        workspaceId,
-        roleIds.map((roleId) => ({ queueId: queue.id, roleId })),
-      );
+      return lockedQueue;
     });
-
-    return queue;
   }
 
   async findQueueOrThrow({

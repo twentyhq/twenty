@@ -58,29 +58,13 @@ export class InboxItemTypeService {
   }
 
   // The kinds of work this workspace knows about. Seeded first, so a workspace
-  // that has never routed anything still has something to configure.
+  // that has never routed anything still has something to configure and one
+  // seeded by an older release picks up the current declarations.
   async findAllForSettings({
     workspaceId,
   }: {
     workspaceId: string;
   }): Promise<InboxItemTypeEntity[]> {
-    const inboxItemTypes = await this.inboxItemTypeRepository.find(
-      workspaceId,
-      { where: { deletedAt: IsNull() }, order: { label: 'ASC' } },
-    );
-
-    const isEveryStandardTypePresent = STANDARD_INBOX_ITEM_TYPES.every(
-      (standardType) =>
-        inboxItemTypes.some(
-          (type) =>
-            type.universalIdentifier === standardType.universalIdentifier,
-        ),
-    );
-
-    if (isEveryStandardTypePresent) {
-      return inboxItemTypes;
-    }
-
     await this.seedStandardTypes({ workspaceId });
 
     return this.inboxItemTypeRepository.find(workspaceId, {

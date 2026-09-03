@@ -6,6 +6,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { INBOX_ITEM_TYPE_KEY } from 'src/engine/core-modules/inbox/constants/standard-inbox-item-types.constant';
 import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
+import {
+  WorkflowCommonException,
+  WorkflowCommonExceptionCode,
+} from 'src/modules/workflow/common/exceptions/workflow-common.exception';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 
@@ -114,8 +118,15 @@ export class WorkflowRunInboxWorkspaceService {
         );
 
       return flatObjectMetadata.id;
-    } catch {
-      return null;
+    } catch (error) {
+      if (
+        error instanceof WorkflowCommonException &&
+        error.code === WorkflowCommonExceptionCode.OBJECT_METADATA_NOT_FOUND
+      ) {
+        return null;
+      }
+
+      throw error;
     }
   }
 }

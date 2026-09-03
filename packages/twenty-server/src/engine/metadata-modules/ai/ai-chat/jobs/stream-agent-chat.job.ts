@@ -895,20 +895,21 @@ export class StreamAgentChatJob {
       return resolveSupersededTurnOutcome(outcome);
     }
 
-    await Promise.all([
-      this.agentChatInboxService.onTurnCompleted({
-        threadId,
-        workspaceId,
-        userWorkspaceId,
-        hasPendingQuestion: isDefined(pendingQuestionPart),
-        preview: findFirstTextPart(responseMessage.parts),
-      }),
-      this.agentChatService.notifyThreadUsageUpdated({
-        threadId,
-        userWorkspaceId,
-        workspaceId,
-      }),
-    ]);
+    // Routed before the usage broadcast so the next queued turn cannot start
+    // and route ahead of this one.
+    await this.agentChatInboxService.onTurnCompleted({
+      threadId,
+      workspaceId,
+      userWorkspaceId,
+      hasPendingQuestion: isDefined(pendingQuestionPart),
+      preview: findFirstTextPart(responseMessage.parts),
+    });
+
+    await this.agentChatService.notifyThreadUsageUpdated({
+      threadId,
+      userWorkspaceId,
+      workspaceId,
+    });
 
     return outcome;
   }
