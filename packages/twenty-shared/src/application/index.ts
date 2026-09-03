@@ -12,6 +12,23 @@ export type { AppConnection } from './appConnectionType';
 export type { AppKeyValueScope } from './appKeyValueScopeType';
 export type { AppKeyValue } from './appKeyValueType';
 export type {
+  RecurringChargePeriod,
+  RecurringChargeUnit,
+  RecurringCharge,
+  RecurringCharges,
+  ApplicationBilling,
+} from './applicationBillingType';
+export {
+  RECURRING_CHARGE_PERIODS,
+  isRecurringChargePeriod,
+  RECURRING_CHARGE_UNITS,
+  isRecurringChargeUnit,
+  MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT,
+  MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_PERIOD,
+  isRecurringChargeAmount,
+  isRecurringCharge,
+} from './applicationBillingType';
+export type {
   KnownApplicationCategory,
   ApplicationCategory,
 } from './applicationCategoryType';
@@ -29,6 +46,10 @@ export type {
 } from './applicationVariablesType';
 export { APPLICATION_VARIABLE_FIELD_METADATA_TYPES } from './applicationVariablesType';
 export type { AssetManifest } from './assetManifestType';
+export type {
+  BillableOperationManifest,
+  BillableOperations,
+} from './billableOperationsType';
 export type { ConnectionProviderManifest } from './connectionProviderManifestType';
 export type { ConnectionProviderType } from './connectionProviderType';
 export { APPLICATION_FILE_UPLOAD_BATCH_SIZE } from './constants/ApplicationFileUploadBatchSize';
@@ -45,6 +66,11 @@ export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
 export { TWENTY_STANDARD_APPLICATION_NAME } from './constants/TwentyStandardApplicationName';
 export { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from './constants/TwentyStandardApplicationUniversalIdentifier';
+export type {
+  CreditUnavailableReason,
+  CreditAvailability,
+} from './creditAvailabilityType';
+export { CREDIT_UNAVAILABLE_REASONS } from './creditAvailabilityType';
 export { computeDeterministicUuid } from './deterministic-identifier/compute-deterministic-uuid.util';
 export type { DeterministicEntityNamespace } from './deterministic-identifier/deterministic-entity-namespace.type';
 export { getAgentUniversalIdentifier } from './deterministic-identifier/get-agent-universal-identifier.util';
@@ -161,6 +187,11 @@ export type {
 } from './timelineActivityTypeManifestType';
 export type { ToolTriggerSettings } from './toolTriggerSettingsType';
 export type { UninstallLogicFunctionApplicationManifest } from './uninstallLogicFunctionApplicationType';
+export type { UsageOperationTypeValue } from './usageOperationTypesType';
+export {
+  USAGE_OPERATION_TYPES,
+  isUsageOperationTypeValue,
+} from './usageOperationTypesType';
 export {
   serializeApplicationVariableValue,
   deserializeApplicationVariableValue,

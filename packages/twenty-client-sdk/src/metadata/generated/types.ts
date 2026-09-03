@@ -3410,6 +3410,9 @@ export default {
             "usageByOperationType": [
                 171
             ],
+            "usageByApplication": [
+                171
+            ],
             "usageByModel": [
                 171
             ],
@@ -4505,6 +4508,9 @@ export default {
                 1
             ],
             "aboutDescription": [
+                1
+            ],
+            "pricingDescription": [
                 1
             ],
             "termsUrl": [
