@@ -32,7 +32,6 @@ describe('enqueueCallRecordingArtifactImport', () => {
         {
           callRecordingId: 'call-recording-1',
           requestedAt: expect.any(String),
-          attempt: 1,
         },
       ],
       retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
@@ -51,30 +50,6 @@ describe('enqueueCallRecordingArtifactImport', () => {
           IMPORT_CALL_RECORDING_MEDIA_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
       }),
     );
-  });
-
-  it('keeps the original request timestamp and carries the delay when re-enqueueing', async () => {
-    await enqueueCallRecordingArtifactImport({
-      callRecordingId: 'call-recording-1',
-      scope: 'transcript',
-      requestedAt: '2026-01-01T14:06:00.000Z',
-      attempt: 4,
-      delayMs: 60_000,
-    });
-
-    expect(enqueueJobsMock).toHaveBeenCalledExactlyOnceWith({
-      logicFunctionUniversalIdentifier:
-        IMPORT_CALL_RECORDING_TRANSCRIPT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-      payloads: [
-        {
-          callRecordingId: 'call-recording-1',
-          requestedAt: '2026-01-01T14:06:00.000Z',
-          attempt: 4,
-        },
-      ],
-      retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
-      delayMs: 60_000,
-    });
   });
 
   it('propagates enqueue failures to the caller', async () => {

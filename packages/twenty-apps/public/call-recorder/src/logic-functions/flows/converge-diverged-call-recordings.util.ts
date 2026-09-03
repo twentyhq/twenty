@@ -20,6 +20,7 @@ import { type RecallBotSnapshot } from 'src/logic-functions/recall-api/recall-bo
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import { type ConvergeDivergedCallRecordingsResult } from 'src/logic-functions/flows/converge-diverged-call-recordings-result.type';
+import { settleCallRecordingImport } from 'src/logic-functions/flows/settle-call-recording-import.util';
 import {
   syncCallRecording,
   type SyncableCallRecording,
@@ -317,7 +318,11 @@ const convergeCallRecording = async ({
     artifactScope: 'all',
   });
 
-  if (syncResult.updated) {
+  const completedImport = await settleCallRecordingImport(client, {
+    callRecordingId: candidate.id,
+  });
+
+  if (syncResult.updated || completedImport) {
     result.updatedCallRecordingIds.push(candidate.id);
   }
 

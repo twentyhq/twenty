@@ -47,7 +47,6 @@ describe('import-call-recording-media', () => {
     const result = await importCallRecordingMediaHandler({
       callRecordingId: 'call-recording-1',
       requestedAt: '2026-01-01T14:06:00.000Z',
-      attempt: 3,
     });
 
     expect(coreApiClientMock).toHaveBeenCalledTimes(1);
@@ -56,7 +55,6 @@ describe('import-call-recording-media', () => {
       request: {
         callRecordingId: 'call-recording-1',
         requestedAt: '2026-01-01T14:06:00.000Z',
-        attempt: 3,
       },
       scope: 'media',
     });

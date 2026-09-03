@@ -3,7 +3,4 @@
 export type CallRecordingArtifactsImportRequest = {
   callRecordingId: string;
   requestedAt: string;
-  // Counts deliveries of this request, including the ones this app re-enqueued
-  // after losing the lease race, so retrying stays bounded.
-  attempt: number;
 };

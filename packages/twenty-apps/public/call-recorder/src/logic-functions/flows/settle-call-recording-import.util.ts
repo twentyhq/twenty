@@ -5,14 +5,14 @@ import { findCallRecordingForArtifactImport } from 'src/logic-functions/data/fin
 import { shouldCompleteCallRecordingImport } from 'src/logic-functions/domain/should-complete-call-recording-import.util';
 import { completeAndChargeCallRecording } from 'src/logic-functions/flows/complete-and-charge-call-recording.util';
 
-// The transcript and media imports run as separate jobs, each judging completion
-// from the snapshot it read before writing, so neither can see an artifact its
-// partner wrote in the meantime. Re-reading after the write gives whichever job
-// wrote last a view of both halves, which is what makes it the one that completes.
-export const completeCallRecordingImportWhenArtifactsLanded = async (
+// Transcript and media are imported by separate jobs, so no single job knows
+// whether the recording is finished: it only knows the half it just wrote. This
+// runs after that write and judges completion from what the record now holds,
+// which makes whichever job wrote last the one that completes it.
+export const settleCallRecordingImport = async (
   client: CoreApiClient,
   { callRecordingId }: { callRecordingId: string },
-): Promise<void> => {
+): Promise<boolean> => {
   const callRecording = await findCallRecordingForArtifactImport(
     client,
     callRecordingId,
@@ -20,15 +20,12 @@ export const completeCallRecordingImportWhenArtifactsLanded = async (
 
   if (
     isUndefined(callRecording) ||
-    !shouldCompleteCallRecordingImport({
-      current: callRecording,
-      updateData: {},
-    })
+    !shouldCompleteCallRecordingImport(callRecording)
   ) {
-    return;
+    return false;
   }
 
-  await completeAndChargeCallRecording(client, {
+  return completeAndChargeCallRecording(client, {
     id: callRecording.id,
     startedAt: callRecording.startedAt,
     endedAt: callRecording.endedAt,

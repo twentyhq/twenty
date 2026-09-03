@@ -1,7 +1,6 @@
 import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-import { FIRST_CALL_RECORDING_ARTIFACT_IMPORT_ATTEMPT } from 'src/logic-functions/constants/first-call-recording-artifact-import-attempt';
 import {
   importCallRecordingArtifacts,
   type ImportCallRecordingArtifactsResult,
@@ -9,7 +8,6 @@ import {
 import { type CallRecordingArtifactImportScope } from 'src/logic-functions/types/call-recording-artifact-scope.type';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
-import { getPositiveInteger } from 'src/logic-functions/utils/get-positive-integer.util';
 import { getString } from 'src/logic-functions/utils/get-string.util';
 
 export const handleCallRecordingArtifactImportJob = async ({
@@ -35,13 +33,7 @@ export const handleCallRecordingArtifactImportJob = async ({
   try {
     return await importCallRecordingArtifacts({
       client: new CoreApiClient(),
-      request: {
-        callRecordingId,
-        requestedAt,
-        attempt:
-          getPositiveInteger(body?.attempt) ??
-          FIRST_CALL_RECORDING_ARTIFACT_IMPORT_ATTEMPT,
-      },
+      request: { callRecordingId, requestedAt },
       scope,
     });
   } catch (error) {

@@ -43,28 +43,10 @@ describe('import-call-recording-transcript', () => {
     ).not.toHaveProperty('httpRouteTriggerSettings');
   });
 
-  it('defaults a payload without an attempt counter to the first attempt', async () => {
-    await importCallRecordingTranscriptHandler({
-      callRecordingId: 'call-recording-1',
-      requestedAt: '2026-01-01T14:06:00.000Z',
-    });
-
-    expect(importCallRecordingArtifactsMock).toHaveBeenCalledWith({
-      client: coreApiClientMock.mock.instances[0],
-      request: {
-        callRecordingId: 'call-recording-1',
-        requestedAt: '2026-01-01T14:06:00.000Z',
-        attempt: 1,
-      },
-      scope: 'transcript',
-    });
-  });
-
-  it('ignores payload-supplied provider ids and unusable attempt counters', async () => {
+  it('ignores payload-supplied provider ids', async () => {
     const result = await importCallRecordingTranscriptHandler({
       callRecordingId: 'call-recording-1',
       requestedAt: '2026-01-01T14:06:00.000Z',
-      attempt: -4,
       event: 'transcript.done',
       externalBotId: 'forged-bot-id',
       externalRecordingId: 'forged-recording-id',
@@ -76,7 +58,6 @@ describe('import-call-recording-transcript', () => {
       request: {
         callRecordingId: 'call-recording-1',
         requestedAt: '2026-01-01T14:06:00.000Z',
-        attempt: 1,
       },
       scope: 'transcript',
     });

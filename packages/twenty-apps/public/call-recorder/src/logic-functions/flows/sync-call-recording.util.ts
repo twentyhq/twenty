@@ -4,11 +4,9 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isUnavailableCallRecordingStatus } from 'src/logic-functions/domain/is-unavailable-call-recording-status.util';
-import { shouldCompleteCallRecordingImport } from 'src/logic-functions/domain/should-complete-call-recording-import.util';
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
-import { completeCallRecordingImportWhenArtifactsLanded } from 'src/logic-functions/flows/complete-call-recording-import-when-artifacts-landed.util';
+import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 import { importCallRecordingMedia } from 'src/logic-functions/flows/import-call-recording-media.util';
-import { persistCallRecordingProgress } from 'src/logic-functions/flows/persist-call-recording-progress.util';
 import { importCallRecordingTranscript } from 'src/logic-functions/flows/import-call-recording-transcript.util';
 import {
   extractRecallBotSyncState,
@@ -41,7 +39,9 @@ export type SyncCallRecordingResult = {
 
 // The single-record sync shared by webhook-driven imports and the scheduled
 // stale-recording sync. It trusts persisted Twenty data and a parsed Recall bot
-// snapshot, never provider ids supplied by a route caller.
+// snapshot, never provider ids supplied by a route caller. It imports and
+// persists its scope's artifacts; deciding whether that finished the recording
+// belongs to settleCallRecordingImport, which reads back what actually landed.
 export const syncCallRecording = async ({
   client,
   callRecording,
@@ -126,35 +126,17 @@ export const syncCallRecording = async ({
     }
   }
 
-  const completesImport = shouldCompleteCallRecordingImport({
-    current: callRecording,
-    updateData,
-  });
-
-  if (Object.keys(updateData).length === 0 && !completesImport) {
+  if (Object.keys(updateData).length === 0) {
     return { updated: false, requestedTranscript, hasRetryableArtifactFailure };
   }
 
-  await persistCallRecordingProgress(client, {
+  await updateCallRecording(client, {
     id: callRecording.id,
-    current: callRecording,
-    updateData,
-    completesImport,
+    data: updateData,
   });
-
-  if (!completesImport && hasArtifactUpdate(updateData)) {
-    await completeCallRecordingImportWhenArtifactsLanded(client, {
-      callRecordingId: callRecording.id,
-    });
-  }
 
   return { updated: true, requestedTranscript, hasRetryableArtifactFailure };
 };
-
-const hasArtifactUpdate = (updateData: CallRecordingUpdateFields): boolean =>
-  !isUndefined(updateData.transcript) ||
-  !isUndefined(updateData.audio) ||
-  !isUndefined(updateData.video);
 
 const buildSyncStateFieldUpdates = ({
   callRecording,

@@ -1,19 +1,17 @@
 import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { CALL_RECORDING_ARTIFACT_IMPORT_MAX_ATTEMPTS } from 'src/logic-functions/constants/call-recording-artifact-import-max-attempts';
-import { CALL_RECORDING_ARTIFACT_IMPORT_REQUEUE_DELAY_MS } from 'src/logic-functions/constants/call-recording-artifact-import-requeue-delay-ms';
 import {
   claimCallRecordingArtifactImport,
   releaseCallRecordingArtifactImportClaim,
 } from 'src/logic-functions/data/claim-call-recording-artifact-import.util';
-import { enqueueCallRecordingArtifactImport } from 'src/logic-functions/data/enqueue-call-recording-artifact-import.util';
 import {
   findCallRecordingForArtifactImport,
   type CallRecordingForArtifactImport,
 } from 'src/logic-functions/data/find-call-recording-for-artifact-import.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
 import { type RecallBotSnapshot } from 'src/logic-functions/recall-api/recall-bot-snapshot.type';
+import { settleCallRecordingImport } from 'src/logic-functions/flows/settle-call-recording-import.util';
 import { syncCallRecording } from 'src/logic-functions/flows/sync-call-recording.util';
 import { type CallRecordingArtifactImportScope } from 'src/logic-functions/types/call-recording-artifact-scope.type';
 import { type CallRecordingArtifactsImportRequest } from 'src/logic-functions/types/call-recording-artifacts-import-request.type';
@@ -24,12 +22,6 @@ export type ImportCallRecordingArtifactsResult =
       callRecordingId: string;
       scope: CallRecordingArtifactImportScope;
       outcome: 'call-recording-artifacts-imported';
-    }
-  | {
-      status: 'requeued';
-      callRecordingId: string;
-      scope: CallRecordingArtifactImportScope;
-      attempt: number;
     }
   | {
       status: 'skipped';
@@ -74,11 +66,12 @@ export const importCallRecordingArtifacts = async ({
   });
 
   if (!claimedImport) {
-    return requeueBouncedImport({
+    return {
+      status: 'skipped',
       callRecordingId: callRecording.id,
       scope,
-      request,
-    });
+      reason: 'artifact import already in progress',
+    };
   }
 
   try {
@@ -102,7 +95,11 @@ export const importCallRecordingArtifacts = async ({
       );
     }
 
-    if (!syncResult.updated) {
+    const completedImport = await settleCallRecordingImport(client, {
+      callRecordingId: callRecording.id,
+    });
+
+    if (!syncResult.updated && !completedImport) {
       return {
         status: 'skipped',
         callRecordingId: callRecording.id,
@@ -123,49 +120,6 @@ export const importCallRecordingArtifacts = async ({
       scope,
     });
   }
-};
-
-// Returning a result counts as a successful logic-function run, so the platform
-// never redelivers it. A delivery that lost the lease race carries a signal
-// nothing else will replay, so it re-enqueues itself rather than being dropped.
-const requeueBouncedImport = async ({
-  callRecordingId,
-  scope,
-  request,
-}: {
-  callRecordingId: string;
-  scope: CallRecordingArtifactImportScope;
-  request: CallRecordingArtifactsImportRequest;
-}): Promise<ImportCallRecordingArtifactsResult> => {
-  const nextAttempt = request.attempt + 1;
-
-  if (nextAttempt > CALL_RECORDING_ARTIFACT_IMPORT_MAX_ATTEMPTS) {
-    console.warn(
-      `[call-recorder] ${scope} import for call recording ${callRecordingId} was blocked by a held lease on all ${request.attempt} attempts; leaving it to the reconcile sweep`,
-    );
-
-    return {
-      status: 'skipped',
-      callRecordingId,
-      scope,
-      reason: 'artifact import already in progress',
-    };
-  }
-
-  await enqueueCallRecordingArtifactImport({
-    callRecordingId,
-    scope,
-    requestedAt: request.requestedAt,
-    attempt: nextAttempt,
-    delayMs: CALL_RECORDING_ARTIFACT_IMPORT_REQUEUE_DELAY_MS,
-  });
-
-  return {
-    status: 'requeued',
-    callRecordingId,
-    scope,
-    attempt: nextAttempt,
-  };
 };
 
 const fetchRecallBotWhenRecordingIdMissing = async (

@@ -34,21 +34,6 @@ describe('enqueueLogicFunctionJobs', () => {
     });
   });
 
-  it('passes a delay through so a re-enqueued job waits before running again', async () => {
-    await enqueueLogicFunctionJobs({
-      logicFunctionUniversalIdentifier: TARGET_UNIVERSAL_IDENTIFIER,
-      payloads: [{ batchIndex: 0 }],
-      delayMs: 60_000,
-    });
-
-    expect(enqueueJobsMock).toHaveBeenCalledExactlyOnceWith({
-      logicFunctionUniversalIdentifier: TARGET_UNIVERSAL_IDENTIFIER,
-      payloads: [{ batchIndex: 0 }],
-      retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
-      delayMs: 60_000,
-    });
-  });
-
   it('splits payload lists above the mutation cap into multiple calls', async () => {
     const payloads = Array.from(
       { length: MAX_PAYLOADS_PER_ENQUEUE_JOBS_CALL + 1 },

@@ -54,16 +54,24 @@ const NOW = new Date('2026-06-10T12:00:00.000Z');
 
 type CallRecordingNode = Record<string, unknown>;
 
+// Writes are applied to the stored nodes so the completion read that follows a
+// sync sees them, which is how the real record decides it is finished.
 class FakeCoreApiClient {
   mutations: Array<{ id: string; data: Record<string, unknown> }> = [];
 
   constructor(private callRecordingNodes: CallRecordingNode[]) {}
 
-  async query(_query: any): Promise<any> {
+  async query(query: any): Promise<any> {
+    const requestedId = query.callRecordings?.__args?.filter?.id?.eq;
+    const nodes =
+      requestedId === undefined
+        ? this.callRecordingNodes
+        : this.callRecordingNodes.filter((node) => node.id === requestedId);
+
     return {
       callRecordings: {
         pageInfo: { hasNextPage: false, endCursor: undefined },
-        edges: this.callRecordingNodes.map((node) => ({ node })),
+        edges: nodes.map((node) => ({ node: { ...node } })),
       },
     };
   }
@@ -72,8 +80,18 @@ class FakeCoreApiClient {
     if (mutation.updateCallRecordings !== undefined) {
       const { filter, data } = mutation.updateCallRecordings.__args;
       const id = filter.id.eq;
+      const node = this.findNode(id);
+
+      if (
+        node === undefined ||
+        (filter.status?.in !== undefined &&
+          !filter.status.in.includes(node.status))
+      ) {
+        return { updateCallRecordings: [] };
+      }
 
       this.mutations.push({ id, data });
+      Object.assign(node, data);
 
       return { updateCallRecordings: [{ id }] };
     }
@@ -81,8 +99,13 @@ class FakeCoreApiClient {
     const { id, data } = mutation.updateCallRecording.__args;
 
     this.mutations.push({ id, data });
+    Object.assign(this.findNode(id) ?? {}, data);
 
     return { updateCallRecording: { id } };
+  }
+
+  private findNode(id: string): CallRecordingNode | undefined {
+    return this.callRecordingNodes.find((node) => node.id === id);
   }
 }
 
