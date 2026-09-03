@@ -15,7 +15,7 @@ export const listFathomConnectionsForRequest = async (
 ): Promise<AppConnection[]> => {
   const connections = await listFathomConnections();
 
-  if (context.userWorkspaceId === null) {
+  if (!isDefined(context.userWorkspaceId)) {
     return connections;
   }
 
