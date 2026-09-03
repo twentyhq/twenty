@@ -286,11 +286,13 @@ export class DevModeOrchestrator {
     });
 
     if (!createResult.success || !createResult.data) {
+      const serverMessage = createResult.success
+        ? undefined
+        : getGraphQLErrorMessage(createResult.error);
+
       this.state.applyStepEvents([
         {
-          message:
-            getGraphQLErrorMessage(createResult.error) ??
-            'Failed to install development application',
+          message: serverMessage ?? 'Failed to install development application',
           status: 'error',
         },
         { message: JSON.stringify(createResult, null, 2), status: 'error' },
