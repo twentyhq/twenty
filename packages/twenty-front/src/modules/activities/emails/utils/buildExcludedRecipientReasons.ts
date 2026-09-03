@@ -34,7 +34,9 @@ export const buildExcludedRecipientReasons = (
     reasons.push(t`${counts.hardSuppressed} bounced or complained`);
   }
   if (counts.globallyUnsubscribed > 0) {
-    reasons.push(t`${counts.globallyUnsubscribed} unsubscribed from everything`);
+    reasons.push(
+      t`${counts.globallyUnsubscribed} unsubscribed from everything`,
+    );
   }
   if (counts.topicUnsubscribed > 0) {
     reasons.push(t`${counts.topicUnsubscribed} opted out of this topic`);

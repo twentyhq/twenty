@@ -71,10 +71,6 @@ const StyledTopicInfoIcon = styled(IconInfoCircle)`
 const RECIPIENT_COUNT_ANCHOR_ID = 'campaign-composer-recipient-count';
 const UNSUBSCRIBE_TOPIC_ANCHOR_ID = 'campaign-composer-unsubscribe-topic-info';
 
-type CampaignAudiencePreview = NonNullable<
-  ReturnType<typeof useCampaignAudiencePreview>['audiencePreview']
->;
-
 type CampaignDetailsFieldsProps = {
   campaign: MessageCampaign;
   width: string;
