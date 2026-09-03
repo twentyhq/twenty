@@ -1,44 +1,53 @@
 import { isUndefined } from '@sniptt/guards';
-import { useId } from 'react';
+import { useId, useState } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
 
 import { SettingsOptionCardContentCounter } from 'src/front-components/components/SettingsOptionCardContentCounter';
-import {
-  type ApplicationVariableDraft,
-  type UpdateApplicationVariableDraft,
-} from 'src/front-components/types/application-variable-draft.type';
+import { useAutosaveApplicationVariable } from 'src/front-components/hooks/use-autosave-application-variable';
 import { getNormalizedNumberValue } from 'src/front-components/utils/get-normalized-number-value.util';
 
 type TimingCounterRowProps = {
+  applicationId: string;
   variableKey: string;
   title: string;
   description: string;
   Icon: IconComponent;
   divider: boolean;
   persistedValue: string;
-  draftValue: ApplicationVariableDraft | undefined;
-  onDraftValueChange: UpdateApplicationVariableDraft;
 };
 
 export const TimingCounterRow = ({
+  applicationId,
   variableKey,
   title,
   description,
   Icon,
   divider,
   persistedValue,
-  draftValue,
-  onDraftValueChange,
 }: TimingCounterRowProps) => {
   const inputId = useId();
-  const inputValue = draftValue?.inputValue ?? persistedValue;
+  const [inputValue, setInputValue] = useState(persistedValue);
+  const { saveDebounced, saveImmediately } = useAutosaveApplicationVariable({
+    applicationId,
+    variableKey,
+  });
 
-  const handleChange = (value: string) => {
-    onDraftValueChange({
-      variableKey,
-      inputValue: value,
-      valueToSave: getNormalizedNumberValue(value),
-    });
+  const handleChange = (value: string, changeType: 'input' | 'button') => {
+    setInputValue(value);
+
+    const valueToSave = getNormalizedNumberValue(value);
+
+    if (isUndefined(valueToSave)) {
+      saveDebounced.cancel();
+      return;
+    }
+
+    if (changeType === 'button') {
+      saveImmediately(valueToSave);
+      return;
+    }
+
+    saveDebounced(valueToSave);
   };
 
   return (
@@ -55,6 +64,7 @@ export const TimingCounterRow = ({
           : undefined
       }
       onChange={handleChange}
+      onBlur={() => saveDebounced.flush()}
     />
   );
 };

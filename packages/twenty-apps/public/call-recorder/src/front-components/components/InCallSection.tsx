@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useId, useState } from 'react';
 import { Section } from 'twenty-ui/layout';
 import { H2Title } from 'twenty-ui/typography';
 
@@ -14,63 +14,58 @@ import {
   CALL_RECORDER_RECORDING_NOTICE_ROW,
   CALL_RECORDER_TIMING_ROWS,
 } from 'src/front-components/constants/call-recorder-settings-layout.constant';
-import {
-  type ApplicationVariableDraftByKey,
-  type UpdateApplicationVariableDraft,
-} from 'src/front-components/types/application-variable-draft.type';
+import { useAutosaveApplicationVariable } from 'src/front-components/hooks/use-autosave-application-variable';
 import { type CallRecorderApplicationVariable } from 'src/front-components/types/call-recorder-application-variable.type';
 import { getApplicationVariableValue } from 'src/front-components/utils/get-application-variable-value.util';
 
 type InCallSectionProps = {
+  applicationId: string;
   applicationVariables: Pick<
     CallRecorderApplicationVariable,
     'key' | 'value'
   >[];
-  draftValueByVariableKey: ApplicationVariableDraftByKey;
-  onDraftValueChange: UpdateApplicationVariableDraft;
 };
 
 export const InCallSection = ({
+  applicationId,
   applicationVariables,
-  draftValueByVariableKey,
-  onDraftValueChange,
 }: InCallSectionProps) => {
   const noticeMessageInputId = useId();
-  const noticeEnabledDraftValue =
-    draftValueByVariableKey[CALL_RECORDER_RECORDING_NOTICE_ROW.variableKey];
-  const isNoticeEnabled =
-    (noticeEnabledDraftValue?.inputValue ??
+  const [isNoticeEnabled, setIsNoticeEnabled] = useState(
+    () =>
       getApplicationVariableValue({
         applicationVariables,
         variableKey: CALL_RECORDER_RECORDING_NOTICE_ROW.variableKey,
-      })) === 'true';
-  const noticeMessageDraftValue =
-    draftValueByVariableKey[
-      CALL_RECORDER_RECORDING_NOTICE_MESSAGE_FIELD.variableKey
-    ];
-  const noticeMessageValue =
-    noticeMessageDraftValue?.inputValue ??
+      }) === 'true',
+  );
+  const [noticeMessageValue, setNoticeMessageValue] = useState(() =>
     getApplicationVariableValue({
       applicationVariables,
+      variableKey: CALL_RECORDER_RECORDING_NOTICE_MESSAGE_FIELD.variableKey,
+    }),
+  );
+
+  const { saveImmediately: saveNoticeEnabledImmediately } =
+    useAutosaveApplicationVariable({
+      applicationId,
+      variableKey: CALL_RECORDER_RECORDING_NOTICE_ROW.variableKey,
+    });
+  const { saveDebounced: saveNoticeMessageDebounced } =
+    useAutosaveApplicationVariable({
+      applicationId,
       variableKey: CALL_RECORDER_RECORDING_NOTICE_MESSAGE_FIELD.variableKey,
     });
 
   const handleNoticeEnabledChange = (checked: boolean) => {
     const value = checked ? 'true' : 'false';
 
-    onDraftValueChange({
-      variableKey: CALL_RECORDER_RECORDING_NOTICE_ROW.variableKey,
-      inputValue: value,
-      valueToSave: value,
-    });
+    setIsNoticeEnabled(checked);
+    saveNoticeEnabledImmediately(value);
   };
 
   const handleNoticeMessageChange = (value: string) => {
-    onDraftValueChange({
-      variableKey: CALL_RECORDER_RECORDING_NOTICE_MESSAGE_FIELD.variableKey,
-      inputValue: value,
-      valueToSave: value,
-    });
+    setNoticeMessageValue(value);
+    saveNoticeMessageDebounced(value);
   };
 
   return (
@@ -84,6 +79,7 @@ export const InCallSection = ({
           {CALL_RECORDER_TIMING_ROWS.map((row) => (
             <TimingCounterRow
               key={row.variableKey}
+              applicationId={applicationId}
               variableKey={row.variableKey}
               title={row.title}
               description={row.description}
@@ -93,8 +89,6 @@ export const InCallSection = ({
                 applicationVariables,
                 variableKey: row.variableKey,
               })}
-              draftValue={draftValueByVariableKey[row.variableKey]}
-              onDraftValueChange={onDraftValueChange}
             />
           ))}
           <SettingsOptionCardContentToggle
@@ -116,7 +110,10 @@ export const InCallSection = ({
               placeholder="Value"
               maxLength={CALL_RECORDER_RECORDING_NOTICE_MESSAGE_FIELD.maxLength}
               value={noticeMessageValue}
-              onChange={(event) => handleNoticeMessageChange(event.target.value)}
+              onChange={(event) =>
+                handleNoticeMessageChange(event.target.value)
+              }
+              onBlur={() => saveNoticeMessageDebounced.flush()}
             />
           </LabelledSettingsField>
         </StyledDimmable>

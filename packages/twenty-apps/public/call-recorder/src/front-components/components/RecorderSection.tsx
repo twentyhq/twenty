@@ -19,10 +19,7 @@ import {
   CALL_RECORDER_USE_WORKSPACE_LOGO_ROW,
 } from 'src/front-components/constants/call-recorder-settings-layout.constant';
 import { THEME_COLOR_HEX } from 'src/front-components/constants/theme-color-hex.constant';
-import {
-  type ApplicationVariableDraftByKey,
-  type UpdateApplicationVariableDraft,
-} from 'src/front-components/types/application-variable-draft.type';
+import { useAutosaveApplicationVariable } from 'src/front-components/hooks/use-autosave-application-variable';
 import { type CallRecorderApplicationVariable } from 'src/front-components/types/call-recorder-application-variable.type';
 import { getApplicationVariableValue } from 'src/front-components/utils/get-application-variable-value.util';
 import { getNormalizedHexValue } from 'src/front-components/utils/get-normalized-hex-value.util';
@@ -31,48 +28,58 @@ import { normalizeHexColor } from 'src/front-components/utils/normalize-hex-colo
 import { DEFAULT_CALL_RECORDER_BOT_IMAGE_BACKGROUND } from 'src/logic-functions/constants/default-call-recorder-bot-image-background';
 
 type RecorderSectionProps = {
+  applicationId: string;
   applicationVariables: Pick<
     CallRecorderApplicationVariable,
     'key' | 'value'
   >[];
-  draftValueByVariableKey: ApplicationVariableDraftByKey;
-  onDraftValueChange: UpdateApplicationVariableDraft;
 };
 
 export const RecorderSection = ({
+  applicationId,
   applicationVariables,
-  draftValueByVariableKey,
-  onDraftValueChange,
 }: RecorderSectionProps) => {
   const nameInputId = useId();
   const hexInputId = useId();
-  const nameDraftValue =
-    draftValueByVariableKey[CALL_RECORDER_NAME_FIELD.variableKey];
-  const nameValue =
-    nameDraftValue?.inputValue ??
+  const [nameValue, setNameValue] = useState(() =>
     getApplicationVariableValue({
       applicationVariables,
       variableKey: CALL_RECORDER_NAME_FIELD.variableKey,
-    });
-  const workspaceLogoDraftValue =
-    draftValueByVariableKey[CALL_RECORDER_USE_WORKSPACE_LOGO_ROW.variableKey];
-  const isWorkspaceLogoEnabled =
-    (workspaceLogoDraftValue?.inputValue ??
+    }),
+  );
+  const [isWorkspaceLogoEnabled, setIsWorkspaceLogoEnabled] = useState(
+    () =>
       getApplicationVariableValue({
         applicationVariables,
         variableKey: CALL_RECORDER_USE_WORKSPACE_LOGO_ROW.variableKey,
-      })) === 'true';
-  const tileBackgroundDraftValue =
-    draftValueByVariableKey[CALL_RECORDER_TILE_BACKGROUND_ROW.variableKey];
-  const tileBackgroundValue =
-    tileBackgroundDraftValue?.inputValue ??
+      }) === 'true',
+  );
+  const [tileBackgroundValue, setTileBackgroundValue] = useState(() =>
     getApplicationVariableValue({
       applicationVariables,
       variableKey: CALL_RECORDER_TILE_BACKGROUND_ROW.variableKey,
-    });
+    }),
+  );
   const [isCustomHexOverride, setIsCustomHexOverride] = useState<
     boolean | undefined
   >(undefined);
+
+  const { saveDebounced: saveNameDebounced } = useAutosaveApplicationVariable({
+    applicationId,
+    variableKey: CALL_RECORDER_NAME_FIELD.variableKey,
+  });
+  const { saveImmediately: saveWorkspaceLogoImmediately } =
+    useAutosaveApplicationVariable({
+      applicationId,
+      variableKey: CALL_RECORDER_USE_WORKSPACE_LOGO_ROW.variableKey,
+    });
+  const {
+    saveDebounced: saveTileBackgroundDebounced,
+    saveImmediately: saveTileBackgroundImmediately,
+  } = useAutosaveApplicationVariable({
+    applicationId,
+    variableKey: CALL_RECORDER_TILE_BACKGROUND_ROW.variableKey,
+  });
 
   const selectedTileColor = getThemeColorFromHex(tileBackgroundValue);
   const isCustomHexSelected =
@@ -82,40 +89,36 @@ export const RecorderSection = ({
     DEFAULT_CALL_RECORDER_BOT_IMAGE_BACKGROUND;
 
   const handleNameChange = (value: string) => {
-    onDraftValueChange({
-      variableKey: CALL_RECORDER_NAME_FIELD.variableKey,
-      inputValue: value,
-      valueToSave: value,
-    });
+    setNameValue(value);
+    saveNameDebounced(value);
   };
 
   const handleWorkspaceLogoChange = (checked: boolean) => {
     const value = checked ? 'true' : 'false';
 
-    onDraftValueChange({
-      variableKey: CALL_RECORDER_USE_WORKSPACE_LOGO_ROW.variableKey,
-      inputValue: value,
-      valueToSave: value,
-    });
+    setIsWorkspaceLogoEnabled(checked);
+    saveWorkspaceLogoImmediately(value);
   };
 
   const handleSelectTileColor = (color: ThemeColor) => {
     const value = THEME_COLOR_HEX[color];
 
     setIsCustomHexOverride(false);
-    onDraftValueChange({
-      variableKey: CALL_RECORDER_TILE_BACKGROUND_ROW.variableKey,
-      inputValue: value,
-      valueToSave: value,
-    });
+    setTileBackgroundValue(value);
+    saveTileBackgroundImmediately(value);
   };
 
   const handleHexChange = (value: string) => {
-    onDraftValueChange({
-      variableKey: CALL_RECORDER_TILE_BACKGROUND_ROW.variableKey,
-      inputValue: value,
-      valueToSave: getNormalizedHexValue(value),
-    });
+    setTileBackgroundValue(value);
+
+    const valueToSave = getNormalizedHexValue(value);
+
+    if (isUndefined(valueToSave)) {
+      saveTileBackgroundDebounced.cancel();
+      return;
+    }
+
+    saveTileBackgroundDebounced(valueToSave);
   };
 
   return (
@@ -137,6 +140,7 @@ export const RecorderSection = ({
             placeholder="Value"
             value={nameValue}
             onChange={(event) => handleNameChange(event.target.value)}
+            onBlur={() => saveNameDebounced.flush()}
           />
         </LabelledSettingsField>
         <StyledSettingsCard>
@@ -156,7 +160,9 @@ export const RecorderSection = ({
           >
             <TileBackgroundControl
               swatchColor={swatchColor}
-              selectedColor={isCustomHexSelected ? undefined : selectedTileColor}
+              selectedColor={
+                isCustomHexSelected ? undefined : selectedTileColor
+              }
               isCustomSelected={isCustomHexSelected}
               disabled={!isWorkspaceLogoEnabled}
               onSelectColor={handleSelectTileColor}
@@ -181,6 +187,7 @@ export const RecorderSection = ({
                 value={tileBackgroundValue}
                 swatchColor={swatchColor}
                 onChange={handleHexChange}
+                onBlur={() => saveTileBackgroundDebounced.flush()}
               />
             </LabelledSettingsField>
           </StyledDimmable>

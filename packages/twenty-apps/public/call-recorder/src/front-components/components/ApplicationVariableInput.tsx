@@ -12,6 +12,7 @@ type ApplicationVariableInputProps = {
   value: string;
   placeholder?: string;
   onChange: (value: string) => void;
+  onBlur: () => void;
 };
 
 export const ApplicationVariableInput = ({
@@ -20,6 +21,7 @@ export const ApplicationVariableInput = ({
   value,
   placeholder,
   onChange,
+  onBlur,
 }: ApplicationVariableInputProps) => {
   switch (variable.type) {
     case 'BOOLEAN':
@@ -28,6 +30,7 @@ export const ApplicationVariableInput = ({
           id={inputId}
           value={value}
           onChange={(event) => onChange(event.target.value)}
+          onBlur={onBlur}
         >
           <option value="">{EMPTY_OPTION_LABEL}</option>
           <option value="true">True</option>
@@ -41,6 +44,7 @@ export const ApplicationVariableInput = ({
           id={inputId}
           value={value}
           onChange={(event) => onChange(event.target.value)}
+          onBlur={onBlur}
         >
           <option value="">{EMPTY_OPTION_LABEL}</option>
           {(variable.options ?? []).map((option) => (
@@ -60,6 +64,7 @@ export const ApplicationVariableInput = ({
           onChange={(event) =>
             onChange(serializeRichTextMarkdown(event.target.value))
           }
+          onBlur={onBlur}
         />
       );
 
@@ -74,6 +79,7 @@ export const ApplicationVariableInput = ({
           placeholder={placeholder ?? 'Enter a number'}
           value={value}
           onChange={(event) => onChange(event.target.value)}
+          onBlur={onBlur}
         />
       );
 
@@ -86,6 +92,7 @@ export const ApplicationVariableInput = ({
           placeholder={placeholder ?? 'Value'}
           value={value}
           onChange={(event) => onChange(event.target.value)}
+          onBlur={onBlur}
         />
       );
   }

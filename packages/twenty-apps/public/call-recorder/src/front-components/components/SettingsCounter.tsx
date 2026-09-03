@@ -30,7 +30,8 @@ const StyledTextInputContainer = styled.div`
 
 type SettingsCounterProps = {
   value: string;
-  onChange: (value: string) => void;
+  onChange: (value: string, changeType: 'input' | 'button') => void;
+  onBlur?: () => void;
   minValue?: number;
   maxValue?: number;
   disabled?: boolean;
@@ -46,6 +47,7 @@ type SettingsCounterProps = {
 export const SettingsCounter = ({
   value,
   onChange,
+  onBlur,
   minValue = 0,
   maxValue,
   disabled = false,
@@ -59,20 +61,20 @@ export const SettingsCounter = ({
 
   const handleDecrementCounter = () => {
     if (!isParsable) {
-      onChange(String(minValue));
+      onChange(String(minValue), 'button');
       return;
     }
 
     const nextValue = Math.max(parsedValue - 1, minValue);
 
     if (nextValue !== parsedValue) {
-      onChange(String(nextValue));
+      onChange(String(nextValue), 'button');
     }
   };
 
   const handleIncrementCounter = () => {
     if (!isParsable) {
-      onChange(String(minValue));
+      onChange(String(minValue), 'button');
       return;
     }
 
@@ -81,7 +83,7 @@ export const SettingsCounter = ({
       : Math.min(parsedValue + 1, maxValue);
 
     if (nextValue !== parsedValue) {
-      onChange(String(nextValue));
+      onChange(String(nextValue), 'button');
     }
   };
 
@@ -97,7 +99,7 @@ export const SettingsCounter = ({
       return;
     }
 
-    onChange(nextValue);
+    onChange(nextValue, 'input');
   };
 
   return (
@@ -123,6 +125,7 @@ export const SettingsCounter = ({
           aria-describedby={errorMessageId}
           aria-invalid={isInvalid}
           onChange={(event) => handleTextInputChange(event.target.value)}
+          onBlur={onBlur}
         />
       </StyledTextInputContainer>
       {showButtons && (

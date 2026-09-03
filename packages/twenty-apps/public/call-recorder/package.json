@@ -40,6 +40,7 @@
     "twenty-sdk": "2.37.0",
     "twenty-ui": "^1.0.0-alpha.1",
     "typescript": "^5.9.3",
+    "use-debounce": "^10.0.0",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^4.1.9"
   }

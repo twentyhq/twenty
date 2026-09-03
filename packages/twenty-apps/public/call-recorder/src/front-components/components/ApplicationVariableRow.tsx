@@ -1,17 +1,16 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
-import { useId } from 'react';
+import { useId, useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ApplicationVariableInput } from 'src/front-components/components/ApplicationVariableInput';
 import { ApplicationVariableLabelRow } from 'src/front-components/components/ApplicationVariableLabelRow';
 import { StyledSettingsError } from 'src/front-components/components/StyledSettingsError';
-import {
-  type ApplicationVariableDraft,
-  type UpdateApplicationVariableDraft,
-} from 'src/front-components/types/application-variable-draft.type';
+import { useAutosaveApplicationVariable } from 'src/front-components/hooks/use-autosave-application-variable';
 import { type CallRecorderApplicationVariable } from 'src/front-components/types/call-recorder-application-variable.type';
 import { getNormalizedNumberValue } from 'src/front-components/utils/get-normalized-number-value.util';
+
+const SAVED_SECRET_VALUE_PLACEHOLDER = '********';
 
 const StyledRow = styled.div`
   display: flex;
@@ -26,21 +25,36 @@ const StyledDescription = styled.span`
 `;
 
 type ApplicationVariableRowProps = {
+  applicationId: string;
   variable: CallRecorderApplicationVariable;
-  draftValue: ApplicationVariableDraft | undefined;
-  onDraftValueChange: UpdateApplicationVariableDraft;
 };
 
 export const ApplicationVariableRow = ({
+  applicationId,
   variable,
-  draftValue,
-  onDraftValueChange,
 }: ApplicationVariableRowProps) => {
   const inputId = useId();
 
-  const isSecretStored = variable.isSecret && isNonEmptyString(variable.value);
-  const inputValue =
-    draftValue?.inputValue ?? (isSecretStored ? '' : variable.value);
+  const [isSecretStored, setIsSecretStored] = useState(
+    variable.isSecret && isNonEmptyString(variable.value),
+  );
+  const [inputValue, setInputValue] = useState(
+    isSecretStored ? '' : variable.value,
+  );
+  const { saveDebounced, saveImmediately } = useAutosaveApplicationVariable({
+    applicationId,
+    variableKey: variable.key,
+    onSaveSuccess: (savedValue) => {
+      if (!variable.isSecret) {
+        return;
+      }
+
+      setIsSecretStored(isNonEmptyString(savedValue));
+      setInputValue((currentInputValue) =>
+        currentInputValue === savedValue ? '' : currentInputValue,
+      );
+    },
+  });
 
   const isNumberVariable =
     variable.type === 'NUMBER' || variable.type === 'NUMERIC';
@@ -48,13 +62,23 @@ export const ApplicationVariableRow = ({
     isNumberVariable && isUndefined(getNormalizedNumberValue(inputValue));
 
   const handleChange = (newValue: string) => {
-    onDraftValueChange({
-      variableKey: variable.key,
-      inputValue: newValue,
-      valueToSave: isNumberVariable
-        ? getNormalizedNumberValue(newValue)
-        : newValue,
-    });
+    setInputValue(newValue);
+
+    const valueToSave = isNumberVariable
+      ? getNormalizedNumberValue(newValue)
+      : newValue;
+
+    if (isUndefined(valueToSave)) {
+      saveDebounced.cancel();
+      return;
+    }
+
+    if (variable.type === 'BOOLEAN' || variable.type === 'SELECT') {
+      saveImmediately(valueToSave);
+      return;
+    }
+
+    saveDebounced(valueToSave);
   };
 
   return (
@@ -72,8 +96,11 @@ export const ApplicationVariableRow = ({
         inputId={inputId}
         variable={variable}
         value={inputValue}
-        placeholder={isSecretStored ? variable.value : undefined}
+        placeholder={
+          isSecretStored ? SAVED_SECRET_VALUE_PLACEHOLDER : undefined
+        }
         onChange={handleChange}
+        onBlur={() => saveDebounced.flush()}
       />
       {hasInvalidNumber && (
         <StyledSettingsError>Invalid number</StyledSettingsError>
