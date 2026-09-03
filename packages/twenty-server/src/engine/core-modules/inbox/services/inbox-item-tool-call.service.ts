@@ -13,8 +13,8 @@ import {
 import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
 import { InboxToolCallExecutionService } from 'src/engine/core-modules/inbox/services/inbox-tool-call-execution.service';
 import { InboxTransitionService } from 'src/engine/core-modules/inbox/services/inbox-transition.service';
+import { findInvalidInputKeys } from 'src/engine/core-modules/inbox/utils/find-invalid-input-keys.util';
 import { type InboxItemPayload } from 'src/engine/core-modules/inbox/types/inbox-item-payload.type';
-import { type InboxItemFieldSchema } from 'src/engine/core-modules/inbox/types/inbox-item-resolution.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -432,47 +432,3 @@ const isToolCallRunning = (toolCall: InboxItemToolCallEntity) =>
   toolCall.status === InboxItemToolCallStatus.PROPOSED &&
   isDefined(toolCall.resolvedAt) &&
   toolCall.resolvedAt > getClaimCutoff();
-
-const findInvalidInputKeys = (toolCall: InboxItemToolCallEntity): string[] => {
-  const input = (toolCall.editedInput ??
-    toolCall.proposedInput ??
-    {}) as Record<string, unknown>;
-
-  return toolCall.inputSchema
-    .filter((field) => {
-      const value = input[field.key];
-
-      if (!isDefined(value)) {
-        return field.isRequired === true;
-      }
-
-      // An empty string is an absent text; for any other type it is a value
-      // of the wrong kind
-      if (value === '') {
-        return field.isRequired === true || !isTextFieldType(field.type);
-      }
-
-      return !isValueOfFieldType(field.type, value);
-    })
-    .map((field) => field.key);
-};
-
-const isValueOfFieldType = (
-  type: InboxItemFieldSchema['type'],
-  value: unknown,
-): boolean => {
-  switch (type) {
-    case 'NUMBER':
-      return typeof value === 'number' && Number.isFinite(value);
-    case 'BOOLEAN':
-      return typeof value === 'boolean';
-    case 'TEXT':
-    case 'LONG_TEXT':
-      return typeof value === 'string';
-    default:
-      return false;
-  }
-};
-
-const isTextFieldType = (type: InboxItemFieldSchema['type']) =>
-  type === 'TEXT' || type === 'LONG_TEXT';
