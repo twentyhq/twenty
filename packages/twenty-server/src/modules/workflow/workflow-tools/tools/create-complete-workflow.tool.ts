@@ -15,6 +15,7 @@ import {
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { workflowStepConnectionOptionsSchema } from 'src/modules/workflow/workflow-tools/tools/schemas/workflow-step-connection-options.schema';
 import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
@@ -41,17 +42,7 @@ const createCompleteWorkflowSchema = z.object({
             'The ID of the source step (use "trigger" for trigger step)',
           ),
         target: z.string().describe('The ID of the target step'),
-        sourceConnectionOptions: z
-          .object({
-            connectedStepType: z.literal(WorkflowActionType.ITERATOR),
-            settings: z.object({
-              isConnectedToLoop: z.boolean(),
-            }),
-          })
-          .optional()
-          .describe(
-            'Set for an edge whose source is an ITERATOR: isConnectedToLoop true puts the target inside the loop body; omit it to place the target after the loop.',
-          ),
+        sourceConnectionOptions: workflowStepConnectionOptionsSchema.optional(),
       }),
     )
     .optional()
@@ -125,10 +116,9 @@ The response includes a compact validation summary. For the full validation repo
     edges?: Array<{
       source: string;
       target: string;
-      sourceConnectionOptions?: {
-        connectedStepType: WorkflowActionType.ITERATOR;
-        settings: { isConnectedToLoop: boolean };
-      };
+      sourceConnectionOptions?: z.infer<
+        typeof workflowStepConnectionOptionsSchema
+      >;
     }>;
     activate?: boolean;
   }) => {
