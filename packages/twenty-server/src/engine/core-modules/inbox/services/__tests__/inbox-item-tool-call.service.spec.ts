@@ -1,5 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
 import { InboxItemToolCallStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-tool-call-status.enum';
 import {
@@ -55,6 +57,21 @@ describe('InboxItemToolCallService', () => {
     accessibleQueueIds: [],
   };
 
+  // The time the run stamped on a row when it claimed it, as the database
+  // would hand it back
+  const claimTimeOf = (toolCallId: string): Date | null => {
+    const claim = [...inboxItemToolCallRepository.update.mock.calls]
+      .reverse()
+      .find(
+        ([, where, patch]) =>
+          where.id === toolCallId &&
+          patch.status === undefined &&
+          patch.resolvedAt instanceof Date,
+      );
+
+    return claim?.[2].resolvedAt ?? null;
+  };
+
   // The rows as read before the run, then as read back after it. A claimed
   // row is read again by id before it executes, from the pre-run set unless a
   // test overrides it
@@ -66,8 +83,15 @@ describe('InboxItemToolCallService', () => {
       .mockResolvedValueOnce(before)
       .mockResolvedValueOnce(after);
     inboxItemToolCallRepository.findOne.mockImplementation(
-      async (_workspaceId: string, options: { where: { id: string } }) =>
-        before.find((toolCall) => toolCall.id === options.where.id) ?? null,
+      async (_workspaceId: string, options: { where: { id: string } }) => {
+        const toolCall = before.find(
+          (candidate) => candidate.id === options.where.id,
+        );
+
+        return isDefined(toolCall)
+          ? { ...toolCall, resolvedAt: claimTimeOf(toolCall.id) }
+          : null;
+      },
     );
   };
 
@@ -263,10 +287,11 @@ describe('InboxItemToolCallService', () => {
         [first],
         [{ ...first, status: InboxItemToolCallStatus.EXECUTED }],
       );
-      inboxItemToolCallRepository.findOne.mockResolvedValue({
+      inboxItemToolCallRepository.findOne.mockImplementation(async () => ({
         ...first,
         editedInput: { to: 'late@example.com' },
-      });
+        resolvedAt: claimTimeOf(first.id),
+      }));
 
       // Act
       await service.runAll({ ...actorArgs, inboxItemId: INBOX_ITEM_ID });
@@ -274,6 +299,50 @@ describe('InboxItemToolCallService', () => {
       // Assert
       expect(inboxToolCallExecutionService.execute).toHaveBeenCalledWith(
         expect.objectContaining({ input: { to: 'late@example.com' } }),
+      );
+    });
+
+    // A claim that went stale can be taken over; the late worker must not run
+    // the call or write over the new holder
+    it('should not run a call that was taken over after its claim', async () => {
+      // Prepare
+      const first = buildToolCall({ id: 'first' });
+
+      givenToolCalls([first], [first]);
+      inboxItemToolCallRepository.findOne.mockResolvedValue({
+        ...first,
+        resolvedAt: new Date(0),
+      });
+
+      // Act
+      await service.runAll({ ...actorArgs, inboxItemId: INBOX_ITEM_ID });
+
+      // Assert
+      expect(inboxToolCallExecutionService.execute).not.toHaveBeenCalled();
+      expect(inboxItemToolCallRepository.update).toHaveBeenCalledTimes(1);
+    });
+
+    it('should write the result only onto the row it still holds', async () => {
+      // Prepare
+      const first = buildToolCall({ id: 'first' });
+
+      givenToolCalls(
+        [first],
+        [{ ...first, status: InboxItemToolCallStatus.EXECUTED }],
+      );
+
+      // Act
+      await service.runAll({ ...actorArgs, inboxItemId: INBOX_ITEM_ID });
+
+      // Assert
+      expect(inboxItemToolCallRepository.update).toHaveBeenLastCalledWith(
+        WORKSPACE_ID,
+        {
+          id: 'first',
+          status: InboxItemToolCallStatus.PROPOSED,
+          resolvedAt: claimTimeOf('first'),
+        },
+        expect.objectContaining({ status: InboxItemToolCallStatus.EXECUTED }),
       );
     });
 
@@ -398,7 +467,7 @@ describe('InboxItemToolCallService', () => {
       // Assert
       expect(inboxItemToolCallRepository.update).toHaveBeenCalledWith(
         WORKSPACE_ID,
-        { id: 'first' },
+        expect.objectContaining({ id: 'first' }),
         expect.objectContaining({
           status: InboxItemToolCallStatus.FAILED,
           error: 'Mailbox not connected',
@@ -425,7 +494,7 @@ describe('InboxItemToolCallService', () => {
       // Assert
       expect(inboxItemToolCallRepository.update).toHaveBeenCalledWith(
         WORKSPACE_ID,
-        { id: 'first' },
+        expect.objectContaining({ id: 'first' }),
         expect.objectContaining({
           status: InboxItemToolCallStatus.FAILED,
           error: 'Mail provider timed out',

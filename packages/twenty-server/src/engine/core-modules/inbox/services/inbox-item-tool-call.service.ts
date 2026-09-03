@@ -146,12 +146,14 @@ export class InboxItemToolCallService {
       // executing a call twice. Claims go in plan order, so losing one means
       // another run is ahead: it owns the rest of the plan and this one stops
       // rather than running a later call while an earlier one is in progress
+      const claimedAt = new Date();
+
       const claim = await this.inboxItemToolCallRepository.update(
         workspaceId,
         { id: toolCall.id, ...buildClaimablePredicate() },
         {
           resolvedByUserWorkspaceId: actorUserWorkspaceId,
-          resolvedAt: new Date(),
+          resolvedAt: claimedAt,
         },
       );
 
@@ -163,6 +165,7 @@ export class InboxItemToolCallService {
         workspaceId,
         actorUserWorkspaceId,
         inboxItemToolCallId: toolCall.id,
+        claimedAt,
       });
     }
 
@@ -233,24 +236,28 @@ export class InboxItemToolCallService {
   }
 
   // Runs on the row as it is after the claim, not as it was loaded before the
-  // loop, so an edit that landed in between is what executes. Whatever goes
-  // wrong from here lands on the row as a failure, so the claim never
-  // outlives the run.
+  // loop, so an edit that landed in between is what executes. The claim time
+  // is this run's token: a row that no longer carries it was taken over once
+  // the claim went stale, and a late worker must neither run it nor write
+  // over whoever took it. Whatever goes wrong in between lands on the row as
+  // a failure, so the claim never outlives the run.
   private async executeClaimedToolCall({
     workspaceId,
     actorUserWorkspaceId,
     inboxItemToolCallId,
+    claimedAt,
   }: {
     workspaceId: string;
     actorUserWorkspaceId: string;
     inboxItemToolCallId: string;
+    claimedAt: Date;
   }): Promise<void> {
     const toolCall = await this.inboxItemToolCallRepository.findOne(
       workspaceId,
       { where: { id: inboxItemToolCallId } },
     );
 
-    if (!isDefined(toolCall)) {
+    if (!isDefined(toolCall) || !isHeldByClaim(toolCall, claimedAt)) {
       return;
     }
 
@@ -276,7 +283,11 @@ export class InboxItemToolCallService {
 
     await this.inboxItemToolCallRepository.update(
       workspaceId,
-      { id: toolCall.id },
+      {
+        id: toolCall.id,
+        status: InboxItemToolCallStatus.PROPOSED,
+        resolvedAt: claimedAt,
+      },
       {
         status:
           result.status === 'EXECUTED'
@@ -391,6 +402,11 @@ const buildClaimablePredicate = () => ({
   status: InboxItemToolCallStatus.PROPOSED,
   resolvedAt: Or(IsNull(), LessThan(getClaimCutoff())),
 });
+
+const isHeldByClaim = (toolCall: InboxItemToolCallEntity, claimedAt: Date) =>
+  toolCall.status === InboxItemToolCallStatus.PROPOSED &&
+  isDefined(toolCall.resolvedAt) &&
+  toolCall.resolvedAt.getTime() === claimedAt.getTime();
 
 const isToolCallRunning = (toolCall: InboxItemToolCallEntity) =>
   toolCall.status === InboxItemToolCallStatus.PROPOSED &&
