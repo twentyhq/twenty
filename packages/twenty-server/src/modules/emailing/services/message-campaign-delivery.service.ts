@@ -187,7 +187,10 @@ export class MessageCampaignDeliveryService {
           error.exhaustedScope?.retryAfterMs ?? 0,
           SEND_SLOT_RETRY.minDelayMs,
         ),
-        windowMs: (error.exhaustedScope?.windowSeconds ?? 0) * 1000,
+        windowMs:
+          error.exhaustedScope?.periodUnit === 'second'
+            ? (error.exhaustedScope.periodCount ?? 0) * 1000
+            : 0,
       };
     }
   }

@@ -1,17 +1,16 @@
-import { type LimitKind } from 'src/engine/core-modules/usage-limit/types/limit-kind.type';
-import { type UsageLimitDefinition } from 'src/engine/core-modules/usage-limit/types/usage-limit-definition.type';
+import { type UsageLimitDefinitions } from 'src/engine/core-modules/usage-limit/types/usage-limit-definition.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
 export const USAGE_LIMIT_DEFINITIONS: Record<
   UsageResourceType,
-  Partial<Record<LimitKind, UsageLimitDefinition>>
+  UsageLimitDefinitions
 > = {
   [UsageResourceType.API]: {
     speed: {
       allowedOperationTypes: [UsageOperationType.API_REQUEST],
       allowedSpenderTypes: ['apiKey', 'application'],
-      fallbacks: [
+      defaults: [
         {
           spenderType: 'apiKey',
           counterScope: 'perWorkspace',
@@ -36,7 +35,23 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
       ],
     },
   },
-  [UsageResourceType.AI]: {},
+  [UsageResourceType.AI]: {
+    quota: {
+      allowedOperationTypes: [
+        UsageOperationType.AI_CHAT_TOKEN,
+        UsageOperationType.AI_WORKFLOW_TOKEN,
+        UsageOperationType.WEB_SEARCH,
+      ],
+      allowedSpenderTypes: [
+        'workspace',
+        'userWorkspace',
+        'apiKey',
+        'application',
+        'agent',
+      ],
+      allowedMeters: ['creditsUsedMicro', 'quantity'],
+    },
+  },
   [UsageResourceType.WORKFLOW]: {},
   [UsageResourceType.APP]: {},
   [UsageResourceType.STORAGE]: {},
@@ -45,7 +60,7 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
     speed: {
       allowedOperationTypes: [UsageOperationType.EMAIL_SEND],
       allowedSpenderTypes: ['workspace'],
-      fallbacks: [
+      defaults: [
         {
           spenderType: 'workspace',
           counterScope: 'crossWorkspace',

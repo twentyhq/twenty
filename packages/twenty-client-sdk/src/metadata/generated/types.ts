@@ -1837,10 +1837,13 @@ export default {
             "limitKind": [
                 1
             ],
-            "windowSeconds": [
+            "periodCount": [
                 26
             ],
-            "limitValueType": [
+            "periodUnit": [
+                1
+            ],
+            "meter": [
                 1
             ],
             "limitValue": [
@@ -10469,8 +10472,14 @@ export default {
             "limitKind": [
                 1
             ],
-            "windowSeconds": [
+            "periodCount": [
                 26
+            ],
+            "periodUnit": [
+                1
+            ],
+            "meter": [
+                1
             ],
             "limitValue": [
                 78

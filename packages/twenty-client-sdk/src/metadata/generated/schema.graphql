@@ -939,10 +939,11 @@ type UsageLimit {
   resourceType: UsageResourceType!
   operationType: UsageOperationType!
   spenderType: String!
-  spenderId: String!
+  spenderId: String
   limitKind: String!
-  windowSeconds: Int!
-  limitValueType: String!
+  periodCount: Int!
+  periodUnit: String!
+  meter: String!
   limitValue: BigInt!
   burstValue: BigInt
   createdAt: DateTime!
@@ -960,6 +961,7 @@ enum UsageResourceType {
 }
 
 enum UsageOperationType {
+  ALL
   AI_CHAT_TOKEN
   AI_WORKFLOW_TOKEN
   WORKFLOW_EXECUTION
@@ -3992,7 +3994,9 @@ input UpsertUsageLimitInput {
   spenderType: String!
   spenderId: String
   limitKind: String!
-  windowSeconds: Int! = 0
+  periodCount: Int!
+  periodUnit: String!
+  meter: String!
   limitValue: BigInt!
   burstValue: BigInt
 }
