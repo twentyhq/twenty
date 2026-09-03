@@ -46,13 +46,15 @@ const StyledRow = styled.div`
 
 const StyledRecordChipContainer = styled.div`
   display: flex;
-  min-width: ${RECORD_LIST_ROW_LABEL_IDENTIFIER_WIDTH}px;
+  flex: 1 1 ${RECORD_LIST_ROW_LABEL_IDENTIFIER_WIDTH}px;
+  min-width: 0;
   overflow: hidden;
 `;
 
 const StyledFieldsContainer = styled.div`
   align-items: center;
   display: flex;
+  flex-shrink: 0;
   gap: ${themeCssVariables.spacing[3]};
   justify-content: flex-end;
   overflow: hidden;
