@@ -10,6 +10,7 @@ import {
   SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
   SLACK_ASSISTANT_WORKER_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { SLACK_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/constants/slack-assistant-agent-budget-seconds';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS } from 'src/logic-functions/constants/slack-assistant-worker-timeout-seconds';
 import { SLACK_MARKDOWN_BLOCK_MAX_LENGTH } from 'src/logic-functions/constants/slack-markdown-block-max-length';
@@ -53,6 +54,9 @@ export const slackAssistantWorkerHandler = async (
   ) {
     return { skipped: true, reason: 'Request record is missing fields' };
   }
+
+  const agentDeadlineAtMs =
+    Date.now() + SLACK_ASSISTANT_AGENT_BUDGET_SECONDS * 1000;
 
   const client = new CoreApiClient();
 
@@ -119,6 +123,11 @@ export const slackAssistantWorkerHandler = async (
       }).catch(() => undefined);
     }
 
+    const agentBudgetRemainingSeconds = Math.max(
+      Math.ceil((agentDeadlineAtMs - Date.now()) / 1000),
+      0,
+    );
+
     const agentResult = await runSlackAssistantAgentWithStatus({
       agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
       runAsWorkspaceMemberId,
@@ -127,11 +136,12 @@ export const slackAssistantWorkerHandler = async (
         requesterName,
         conversationMessages,
         runAsWorkspaceMemberId,
-        timeoutSeconds: SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS,
+        timeoutSeconds: agentBudgetRemainingSeconds,
         workspaceBaseUrl: workspaceBaseUrls[0],
       }),
       slackChannelId,
       threadTimestamp: parentMessageTimestamp,
+      deadlineAtMs: agentDeadlineAtMs,
     });
 
     if (!agentResult.success) {
