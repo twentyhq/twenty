@@ -410,20 +410,18 @@ export class AgentAsyncExecutorService {
         },
         onStepFinish: async (step) => {
           const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
-            await this.aiBillingService.decrementAndCheckAvailableCredits(
-              registeredModel.modelId,
-              {
+            await this.aiBillingService.decrementAndCheckAvailableCredits({
+              modelId: registeredModel.modelId,
+              billingInput: {
                 usage: step.usage,
                 cacheCreationTokens: extractCacheCreationTokens(
                   step.providerMetadata,
                 ),
               },
               workspaceId,
-              {
-                operationType,
-                spenders: { userWorkspaceId, agentId: agent?.id },
-              },
-            );
+              operationType,
+              spenders: { userWorkspaceId, agentId: agent?.id },
+            });
 
           if (stepHasNoMoreAvailableCredits) {
             hasNoMoreAvailableCredits = true;
@@ -517,20 +515,18 @@ export class AgentAsyncExecutorService {
           }),
           onStepFinish: async (step) => {
             const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
-              await this.aiBillingService.decrementAndCheckAvailableCredits(
-                registeredModel.modelId,
-                {
+              await this.aiBillingService.decrementAndCheckAvailableCredits({
+                modelId: registeredModel.modelId,
+                billingInput: {
                   usage: step.usage,
                   cacheCreationTokens: extractCacheCreationTokens(
                     step.providerMetadata,
                   ),
                 },
                 workspaceId,
-                {
-                  operationType,
-                  spenders: { userWorkspaceId, agentId: agent?.id },
-                },
-              );
+                operationType,
+                spenders: { userWorkspaceId, agentId: agent?.id },
+              });
 
             if (stepHasNoMoreAvailableCredits) {
               hasNoMoreAvailableCredits = true;

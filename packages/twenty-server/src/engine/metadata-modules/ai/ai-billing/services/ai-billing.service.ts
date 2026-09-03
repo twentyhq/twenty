@@ -133,15 +133,19 @@ export class AiBillingService {
     );
   }
 
-  async decrementAndCheckAvailableCredits(
-    modelId: ModelId,
-    billingInput: BillingUsageInput,
-    workspaceId: string,
-    {
-      operationType,
-      spenders,
-    }: { operationType: UsageOperationType; spenders: UsageSpenders },
-  ): Promise<{ hasNoMoreAvailableCredits: boolean }> {
+  async decrementAndCheckAvailableCredits({
+    modelId,
+    billingInput,
+    workspaceId,
+    operationType,
+    spenders,
+  }: {
+    modelId: ModelId;
+    billingInput: BillingUsageInput;
+    workspaceId: string;
+    operationType: UsageOperationType;
+    spenders: UsageSpenders;
+  }): Promise<{ hasNoMoreAvailableCredits: boolean }> {
     const costInDollars = this.calculateCost(modelId, billingInput);
 
     const totalTokens =
