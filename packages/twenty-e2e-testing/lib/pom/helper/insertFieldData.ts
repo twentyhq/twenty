@@ -21,7 +21,7 @@ export class InsertFieldData {
   private readonly dateInput: Locator;
   private readonly firstNameInput: Locator;
   private readonly lastNameInput: Locator;
-  private readonly addURLButton: Locator;
+  private readonly addUrlButton: Locator;
   private readonly setAsPrimaryButton: Locator;
   private readonly addPhoneButton: Locator;
   private readonly addMailButton: Locator;
@@ -64,7 +64,7 @@ export class InsertFieldData {
     this.dateInput = page.locator("//input[@placeholder='Type date and time']");
     this.firstNameInput = page.locator("//input[@placeholder='First name']"); // may fail if placeholder is `F&zwnj;&zwnj;irst name` instead of `First name`
     this.lastNameInput = page.locator("//input[@placeholder='Last name']"); // may fail if placeholder is `L&zwnj;&zwnj;ast name` instead of `Last name`
-    this.addURLButton = page.locator(
+    this.addUrlButton = page.locator(
       "//div[@data-testid='tooltip' and contains(., 'Add URL')]",
     );
     this.setAsPrimaryButton = page.locator(
@@ -196,7 +196,7 @@ export class InsertFieldData {
   }
 
   async clickAddURL() {
-    await this.addURLButton.click();
+    await this.addUrlButton.click();
   }
 
   // (multi-)select
