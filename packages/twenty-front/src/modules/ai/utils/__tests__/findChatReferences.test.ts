@@ -75,22 +75,6 @@ describe('findChatReferences', () => {
     ]);
   });
 
-  it('should read a field reference addressed by id as the legacy kind', () => {
-    expect(
-      findChatReferences(
-        'The [[field:33333333-3333-3333-3333-333333333333:Stage]] field',
-      ),
-    ).toEqual([
-      {
-        kind: 'legacyFieldById',
-        fullMatch: '[[field:33333333-3333-3333-3333-333333333333:Stage]]',
-        index: 4,
-        fieldMetadataItemId: '33333333-3333-3333-3333-333333333333',
-        displayName: 'Stage',
-      },
-    ]);
-  });
-
   it('should find a view reference instead of reading it as a record', () => {
     expect(
       findChatReferences(
@@ -192,7 +176,7 @@ describe('findChatReferences', () => {
 
   it('should find every kind in a single string', () => {
     const references = findChatReferences(
-      'The [[view:44444444-4444-4444-4444-444444444444:Pipeline]] view of [[records:77777777-7777-4777-8777-777777777777:Companies]] uses the [[object:partner:Partners]] schema and groups [[record:person:11111111-1111-1111-1111-111111111111:Alice]] by [[field:33333333-3333-3333-3333-333333333333:Stage]] for [[role:55555555-5555-4555-8555-555555555555:Admin]] in [[app:66666666-6666-4666-8666-666666666666:Twenty]]',
+      'The [[view:44444444-4444-4444-4444-444444444444:Pipeline]] view of [[records:77777777-7777-4777-8777-777777777777:Companies]] uses the [[object:partner:Partners]] schema and groups [[record:person:11111111-1111-1111-1111-111111111111:Alice]] by [[field:person:stage:Stage]] for [[role:55555555-5555-4555-8555-555555555555:Admin]] in [[app:66666666-6666-4666-8666-666666666666:Twenty]]',
     );
 
     expect(references.map((reference) => reference.kind)).toEqual([
@@ -200,7 +184,7 @@ describe('findChatReferences', () => {
       'records',
       'object',
       'record',
-      'legacyFieldById',
+      'field',
       'role',
       'app',
     ]);
@@ -279,7 +263,7 @@ describe('findChatReferences', () => {
   it('should drop a reference closed by a retired closing tag', () => {
     expect(
       findChatReferences(
-        'Contact [[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Acme[[/record]] and [[object:partner:Partners[[/object]] and [[field:33333333-3333-3333-3333-333333333333:Stage[[/field]] and [[view:44444444-4444-4444-4444-444444444444:Pipeline[[/view]]',
+        'Contact [[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Acme[[/record]] and [[object:partner:Partners[[/object]] and [[field:person:stage:Stage[[/field]] and [[view:44444444-4444-4444-4444-444444444444:Pipeline[[/view]]',
       ),
     ).toEqual([]);
   });

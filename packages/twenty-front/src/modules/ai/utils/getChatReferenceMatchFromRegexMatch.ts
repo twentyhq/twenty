@@ -12,8 +12,6 @@ export const getChatReferenceMatchFromRegexMatch = (
     fieldObjectNameSingular,
     fieldName,
     fieldLabel,
-    legacyFieldMetadataItemId,
-    legacyFieldLabel,
     viewId,
     viewLabel,
     roleId,
@@ -52,15 +50,6 @@ export const getChatReferenceMatchFromRegexMatch = (
       objectNameSingular: fieldObjectNameSingular,
       fieldName,
       displayName: fieldLabel,
-    };
-  }
-
-  if (isDefined(legacyFieldMetadataItemId)) {
-    return {
-      ...position,
-      kind: 'legacyFieldById',
-      fieldMetadataItemId: legacyFieldMetadataItemId,
-      displayName: legacyFieldLabel,
     };
   }
 

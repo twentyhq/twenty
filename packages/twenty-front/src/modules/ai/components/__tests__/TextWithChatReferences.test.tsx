@@ -65,20 +65,6 @@ jest.mock('@/ai/components/FieldMetadataLink', () => ({
   ),
 }));
 
-jest.mock('@/ai/components/DeprecatedFieldMetadataLinkById', () => ({
-  DeprecatedFieldMetadataLinkById: ({
-    fieldMetadataItemId,
-    displayName,
-  }: {
-    fieldMetadataItemId: string;
-    displayName: string;
-  }) => (
-    <a data-testid="legacy-field-link" href={`/fields/${fieldMetadataItemId}`}>
-      {displayName}
-    </a>
-  ),
-}));
-
 jest.mock('@/ai/components/ViewLink', () => ({
   ViewLink: ({
     displayName,
@@ -187,12 +173,11 @@ describe('TextWithChatReferences', () => {
       'href',
       '/fields/person/role',
     );
-    expect(screen.queryByTestId('legacy-field-link')).not.toBeInTheDocument();
   });
 
   it('should route each reference kind to its own chip', () => {
     render(
-      <TextWithChatReferences text="The [[view:44444444-4444-4444-4444-444444444444:Pipeline]] view of [[records:77777777-7777-4777-8777-777777777777:Companies]] uses the [[object:partner:Partners]] schema and groups [[record:person:11111111-1111-1111-1111-111111111111:Alice]] by [[field:33333333-3333-3333-3333-333333333333:Stage]] for [[role:55555555-5555-4555-8555-555555555555:Admin]] in [[app:66666666-6666-4666-8666-666666666666:Twenty]]" />,
+      <TextWithChatReferences text="The [[view:44444444-4444-4444-4444-444444444444:Pipeline]] view of [[records:77777777-7777-4777-8777-777777777777:Companies]] uses the [[object:partner:Partners]] schema and groups [[record:person:11111111-1111-1111-1111-111111111111:Alice]] by [[field:person:stage:Stage]] for [[role:55555555-5555-4555-8555-555555555555:Admin]] in [[app:66666666-6666-4666-8666-666666666666:Twenty]]" />,
     );
 
     expect(screen.getByTestId('view-link')).toHaveAttribute(
@@ -208,9 +193,9 @@ describe('TextWithChatReferences', () => {
       '/objects/partner',
     );
     expect(screen.getByTestId('record-link')).toHaveTextContent('Alice');
-    expect(screen.getByTestId('legacy-field-link')).toHaveAttribute(
+    expect(screen.getByTestId('field-link')).toHaveAttribute(
       'href',
-      '/fields/33333333-3333-3333-3333-333333333333',
+      '/fields/person/stage',
     );
     expect(screen.getByTestId('role-link')).toHaveAttribute(
       'href',

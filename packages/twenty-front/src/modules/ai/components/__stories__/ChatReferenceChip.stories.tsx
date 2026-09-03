@@ -84,8 +84,9 @@ export const ExistingMetadata: Story = {
       objectNameSingular: 'company',
       displayName: 'Companies',
     })} object is sorted by ${formatChatReference({
-      kind: 'legacyFieldById',
-      fieldMetadataItemId: employeesFieldMetadataItem.id,
+      kind: 'field',
+      objectNameSingular: 'company',
+      fieldName: employeesFieldMetadataItem.name,
       displayName: 'Employees',
     })} in the ${formatChatReference({
       kind: 'view',

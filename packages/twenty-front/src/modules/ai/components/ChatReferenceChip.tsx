@@ -1,6 +1,5 @@
 import { ApplicationLink } from '@/ai/components/ApplicationLink';
 import { FieldMetadataLink } from '@/ai/components/FieldMetadataLink';
-import { DeprecatedFieldMetadataLinkById } from '@/ai/components/DeprecatedFieldMetadataLinkById';
 import { ObjectMetadataLink } from '@/ai/components/ObjectMetadataLink';
 import { RecordLink } from '@/ai/components/RecordLink';
 import { RecordsLink } from '@/ai/components/RecordsLink';
@@ -42,13 +41,6 @@ export const ChatReferenceChip = ({ reference }: ChatReferenceChipProps) => {
         <FieldMetadataLink
           objectNameSingular={reference.objectNameSingular}
           fieldName={reference.fieldName}
-          displayName={reference.displayName}
-        />
-      );
-    case 'legacyFieldById':
-      return (
-        <DeprecatedFieldMetadataLinkById
-          fieldMetadataItemId={reference.fieldMetadataItemId}
           displayName={reference.displayName}
         />
       );
