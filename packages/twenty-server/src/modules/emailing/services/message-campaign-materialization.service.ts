@@ -15,13 +15,14 @@ import {
   MATERIALIZE_CAMPAIGN_CHUNK_JOB,
   SEND_CAMPAIGN_EMAIL_BATCH_JOB,
 } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
-import { CAMPAIGN_SEND_BATCH_SIZE } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-batch-size.constant';
+import { resolveCampaignSendBatchSize } from 'src/engine/core-modules/emailing-domain/utils/resolve-campaign-send-batch-size.util';
 import { type MaterializeCampaignChunkJobData } from 'src/engine/core-modules/emailing-domain/types/materialize-campaign-chunk-job-data.type';
 import { type MaterializeCampaignJobData } from 'src/engine/core-modules/emailing-domain/types/materialize-campaign-job-data.type';
 import { type SendCampaignEmailBatchJobData } from 'src/engine/core-modules/emailing-domain/types/send-campaign-email-batch-job-data.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
@@ -70,6 +71,7 @@ export class MessageCampaignMaterializationService {
     private readonly messageQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.campaignSendQueue)
     private readonly campaignSendQueueService: MessageQueueService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async processMaterializeJob({
@@ -342,9 +344,13 @@ export class MessageCampaignMaterializationService {
       return;
     }
 
+    const batchSize = resolveCampaignSendBatchSize(
+      this.twentyConfigService.get('EMAIL_SEND_RATE_LIMITING_LIMIT'),
+    );
+
     await this.campaignSendQueueService.bulkAdd<SendCampaignEmailBatchJobData>(
       SEND_CAMPAIGN_EMAIL_BATCH_JOB,
-      chunk(recipients, CAMPAIGN_SEND_BATCH_SIZE).map((batch) => ({
+      chunk(recipients, batchSize).map((batch) => ({
         data: {
           workspaceId,
           campaignId,

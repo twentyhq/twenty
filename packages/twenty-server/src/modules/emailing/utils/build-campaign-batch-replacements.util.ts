@@ -14,6 +14,7 @@ export const buildCampaignBatchReplacements = ({
 
     replacements[`v_h_${index}`] = escapeHtml(value);
     replacements[`v_t_${index}`] = value;
+    replacements[`v_u_${index}`] = encodeURIComponent(value);
   }
 
   return replacements;

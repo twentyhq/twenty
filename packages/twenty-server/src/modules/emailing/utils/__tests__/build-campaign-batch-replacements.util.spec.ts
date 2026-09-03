@@ -16,6 +16,31 @@ describe('buildCampaignBatchReplacements', () => {
     );
   });
 
+  it('percent-encodes a value destined for a url so it cannot leave its attribute', () => {
+    const replacements = buildCampaignBatchReplacements({
+      variableNames: ['name.firstName'],
+      variables: { 'name.firstName': '" onmouseover="alert(1)' },
+    });
+
+    expect(
+      applyReplacementTags(
+        '<a href="https://x.com/{{v_u_0}}">go</a>',
+        replacements,
+      ),
+    ).toBe('<a href="https://x.com/%22%20onmouseover%3D%22alert(1)">go</a>');
+  });
+
+  it('strips the scheme separator from a url value so it cannot become executable', () => {
+    const replacements = buildCampaignBatchReplacements({
+      variableNames: ['website'],
+      variables: { website: 'javascript:alert(1)' },
+    });
+
+    expect(applyReplacementTags('{{v_u_0}}', replacements)).toBe(
+      'javascript%3Aalert(1)',
+    );
+  });
+
   it('substitutes an empty string for a variable the recipient has no value for', () => {
     const replacements = buildCampaignBatchReplacements({
       variableNames: ['jobTitle'],

@@ -4,16 +4,13 @@ import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constan
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
-import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
-import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
 import { type EmailCreditContext } from 'src/modules/emailing/types/email-credit-context.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { EMAIL_MARGIN_MULTIPLIER } from 'src/modules/emailing/constants/email-margin-multiplier';
-import { SES_EMAIL_COST_PER_THOUSAND_DOLLARS } from 'src/modules/emailing/constants/ses-email-cost-per-thousand-dollars';
+import { computeEmailCreditsMicro } from 'src/modules/emailing/utils/compute-email-credits-micro.util';
 
 @Injectable()
 export class EmailBillingService {
@@ -52,11 +49,88 @@ export class EmailBillingService {
     return { hasCredits: hasAvailableCredits, currentBillingSubscription };
   }
 
+  async reserveEmailCredits({
+    workspaceId,
+    emailCount,
+    currentBillingSubscription,
+  }: {
+    workspaceId: string;
+    emailCount: number;
+    currentBillingSubscription?: CurrentBillingSubscription;
+  }): Promise<boolean> {
+    if (emailCount <= 0 || !this.billingService.isBillingEnabled()) {
+      return true;
+    }
+
+    const remainingCreditsMicro = await this.adjustReservedCredits({
+      workspaceId,
+      emailCount,
+      currentBillingSubscription,
+    });
+
+    if (remainingCreditsMicro >= 0) {
+      return true;
+    }
+
+    await this.releaseEmailCredits({
+      workspaceId,
+      emailCount,
+      currentBillingSubscription,
+    });
+
+    return false;
+  }
+
+  async releaseEmailCredits({
+    workspaceId,
+    emailCount,
+    currentBillingSubscription,
+  }: {
+    workspaceId: string;
+    emailCount: number;
+    currentBillingSubscription?: CurrentBillingSubscription;
+  }): Promise<void> {
+    if (emailCount <= 0 || !this.billingService.isBillingEnabled()) {
+      return;
+    }
+
+    await this.adjustReservedCredits({
+      workspaceId,
+      emailCount: -emailCount,
+      currentBillingSubscription,
+    });
+  }
+
+  async recordEmailSendUsage({
+    workspaceId,
+    sentEmailCount,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    sentEmailCount: number;
+    userWorkspaceId?: string | null;
+  }): Promise<void> {
+    if (sentEmailCount <= 0) {
+      return;
+    }
+
+    await this.usageRecorderService.record(workspaceId, [
+      {
+        resourceType: UsageResourceType.EMAIL,
+        operationType: UsageOperationType.EMAIL_SEND,
+        creditsUsedMicro: computeEmailCreditsMicro(sentEmailCount),
+        quantity: sentEmailCount,
+        unit: UsageUnit.INVOCATION,
+        spenders: { userWorkspaceId },
+      },
+    ]);
+  }
+
   async billSentEmails({
     workspaceId,
     sentEmailCount,
     userWorkspaceId,
-    currentBillingSubscription: providedCurrentBillingSubscription,
+    currentBillingSubscription,
   }: {
     workspaceId: string;
     sentEmailCount: number;
@@ -67,38 +141,44 @@ export class EmailBillingService {
       return;
     }
 
-    const providerCostInDollars =
-      (sentEmailCount / 1000) * SES_EMAIL_COST_PER_THOUSAND_DOLLARS;
-    const chargedInDollars = providerCostInDollars * EMAIL_MARGIN_MULTIPLIER;
-    const creditsUsedMicro = Math.round(
-      convertDollarsToBillingCredits(chargedInDollars),
-    );
-
     if (this.billingService.isBillingEnabled()) {
-      const currentBillingSubscription =
-        await this.billingUsageService.resolveCurrentBillingSubscription({
-          workspaceId,
-          providedCurrentBillingSubscription,
-        });
-
-      if (currentBillingSubscription !== NO_BILLING_SUBSCRIPTION) {
-        await this.billingUsageService.decrementAvailableCreditsInCache({
-          workspaceId,
-          usedCredits: creditsUsedMicro,
-          currentBillingSubscription,
-        });
-      }
+      await this.adjustReservedCredits({
+        workspaceId,
+        emailCount: sentEmailCount,
+        currentBillingSubscription,
+      });
     }
 
-    await this.usageRecorderService.record(workspaceId, [
-      {
-        resourceType: UsageResourceType.EMAIL,
-        operationType: UsageOperationType.EMAIL_SEND,
-        creditsUsedMicro,
-        quantity: sentEmailCount,
-        unit: UsageUnit.INVOCATION,
-        spenders: { userWorkspaceId },
-      },
-    ]);
+    await this.recordEmailSendUsage({
+      workspaceId,
+      sentEmailCount,
+      userWorkspaceId,
+    });
+  }
+
+  private async adjustReservedCredits({
+    workspaceId,
+    emailCount,
+    currentBillingSubscription: providedCurrentBillingSubscription,
+  }: {
+    workspaceId: string;
+    emailCount: number;
+    currentBillingSubscription?: CurrentBillingSubscription;
+  }): Promise<number> {
+    const currentBillingSubscription =
+      await this.billingUsageService.resolveCurrentBillingSubscription({
+        workspaceId,
+        providedCurrentBillingSubscription,
+      });
+
+    if (currentBillingSubscription === NO_BILLING_SUBSCRIPTION) {
+      return Number.POSITIVE_INFINITY;
+    }
+
+    return this.billingUsageService.decrementAvailableCreditsInCache({
+      workspaceId,
+      usedCredits: computeEmailCreditsMicro(emailCount),
+      currentBillingSubscription,
+    });
   }
 }

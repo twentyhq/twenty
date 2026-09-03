@@ -17,6 +17,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
+import { resolveCampaignSendBatchSize } from 'src/engine/core-modules/emailing-domain/utils/resolve-campaign-send-batch-size.util';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MessageQueueMetadataAccessor } from 'src/engine/core-modules/message-queue/message-queue-metadata.accessor';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -27,6 +28,8 @@ import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-q
 import { shouldCreateWorkerForQueue } from 'src/engine/core-modules/message-queue/utils/should-create-worker-for-queue.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
+
+const UNUSABLE_RATE_LIMIT_FALLBACK = { max: 1, durationMs: 10_000 };
 
 interface ProcessorGroup {
   instance: object;
@@ -122,19 +125,33 @@ export class MessageQueueExplorer implements OnModuleInit {
       return workerOptions;
     }
 
+    const configuredMaxMessages = this.twentyConfigService.get(
+      rateLimit.maxConfigVariable,
+    );
+    const configuredDurationMs = this.twentyConfigService.get(
+      rateLimit.durationMsConfigVariable,
+    );
+    const maxJobsPerWindow = Math.floor(
+      configuredMaxMessages /
+        resolveCampaignSendBatchSize(configuredMaxMessages),
+    );
+
+    if (maxJobsPerWindow <= 0 || configuredDurationMs <= 0) {
+      this.logger.error(
+        `Queue ${queueName} cannot be rate limited with ${rateLimit.maxConfigVariable}=${configuredMaxMessages} and ${rateLimit.durationMsConfigVariable}=${configuredDurationMs}, falling back to ${UNUSABLE_RATE_LIMIT_FALLBACK.max} job per ${UNUSABLE_RATE_LIMIT_FALLBACK.durationMs}ms`,
+      );
+
+      return {
+        ...workerOptions,
+        limiter: UNUSABLE_RATE_LIMIT_FALLBACK,
+      };
+    }
+
     return {
       ...workerOptions,
       limiter: {
-        max: Math.max(
-          1,
-          Math.floor(
-            this.twentyConfigService.get(rateLimit.maxConfigVariable) /
-              rateLimit.budgetUnitsPerJob,
-          ),
-        ),
-        durationMs: this.twentyConfigService.get(
-          rateLimit.durationMsConfigVariable,
-        ),
+        max: maxJobsPerWindow,
+        durationMs: configuredDurationMs,
       },
     };
   }

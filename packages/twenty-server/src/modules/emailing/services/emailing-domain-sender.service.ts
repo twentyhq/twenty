@@ -13,7 +13,6 @@ import { EmailingDomainDriverFactory } from 'src/engine/core-modules/emailing-do
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
 import { type EmailingDomainEmailContent } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-content.type';
-import { type EmailingDomainSendEmailBatchResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-batch-result.type';
 import { type EmailingDomainBatchRecipient } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-batch-recipient.type';
 import { type EmailingDomainEmailTemplate } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-template.type';
 import { type EmailingDomainSendKind } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-kind.type';
@@ -103,8 +102,12 @@ export class EmailingDomainSenderService {
     recipients: EmailingDomainBatchRecipient[];
     unsubscribeTopicId?: string;
   }): Promise<{
-    entries: EmailingDomainSendEmailBatchResult['entries'];
-    suppressedEmails: string[];
+    entries: {
+      recipientIndex: number;
+      messageId: string | null;
+      errorMessage: string | null;
+    }[];
+    suppressedRecipientIndexes: number[];
   }> {
     const emailingDomain = await this.findEmailingDomainByIdOrThrow(
       workspaceId,
@@ -132,18 +135,23 @@ export class EmailingDomainSenderService {
         .map((suppression) => suppression.emailAddress),
     );
 
-    const deliverableRecipients = recipients.filter(
-      (recipient) =>
-        !blockedAddresses.has(recipient.email.trim().toLowerCase()),
-    );
-    const suppressedEmails = recipients
-      .filter((recipient) =>
-        blockedAddresses.has(recipient.email.trim().toLowerCase()),
-      )
-      .map((recipient) => recipient.email);
+    const deliverableRecipients: EmailingDomainBatchRecipient[] = [];
+    const deliverableRecipientIndexes: number[] = [];
+    const suppressedRecipientIndexes: number[] = [];
+
+    recipients.forEach((recipient, recipientIndex) => {
+      if (blockedAddresses.has(recipient.email.trim().toLowerCase())) {
+        suppressedRecipientIndexes.push(recipientIndex);
+
+        return;
+      }
+
+      deliverableRecipients.push(recipient);
+      deliverableRecipientIndexes.push(recipientIndex);
+    });
 
     if (deliverableRecipients.length === 0) {
-      return { entries: [], suppressedEmails };
+      return { entries: [], suppressedRecipientIndexes };
     }
 
     const emailGroupChannel = await this.findEmailGroupChannel(
@@ -170,7 +178,14 @@ export class EmailingDomainSenderService {
         unsubscribeTopicId,
       });
 
-    return { entries, suppressedEmails };
+    return {
+      entries: entries.map((entry, deliverableIndex) => ({
+        recipientIndex: deliverableRecipientIndexes[deliverableIndex],
+        messageId: entry.messageId,
+        errorMessage: entry.errorMessage,
+      })),
+      suppressedRecipientIndexes,
+    };
   }
 
   private async findEmailGroupChannel(

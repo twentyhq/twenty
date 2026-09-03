@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import {
+  type EmailDocumentStringContext,
   isDefined,
   parseCanonicalEmailDocument,
   parseJson,
@@ -13,8 +14,30 @@ import {
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { CAMPAIGN_VARIABLE_PATTERN } from 'src/modules/emailing/constants/campaign-variable-pattern.constant';
 
-const buildTagName = (index: number, isHtmlContext: boolean): string =>
-  `v_${isHtmlContext ? 'h' : 't'}_${index}`;
+const CAMPAIGN_BATCH_TAG_PREFIXES = {
+  htmlEscaped: 'v_h',
+  raw: 'v_t',
+  urlEncoded: 'v_u',
+} as const;
+
+type CampaignBatchTagFamily = keyof typeof CAMPAIGN_BATCH_TAG_PREFIXES;
+
+type CampaignBatchTagFamilyByContext = Record<
+  EmailDocumentStringContext,
+  CampaignBatchTagFamily
+>;
+
+const HTML_BODY_TAG_FAMILY_BY_CONTEXT: CampaignBatchTagFamilyByContext = {
+  html: 'htmlEscaped',
+  text: 'htmlEscaped',
+  url: 'urlEncoded',
+};
+
+const PLAIN_TEXT_BODY_TAG_FAMILY_BY_CONTEXT: CampaignBatchTagFamilyByContext = {
+  html: 'htmlEscaped',
+  text: 'raw',
+  url: 'urlEncoded',
+};
 
 export const compileCampaignBatchTemplate = async ({
   subjectTemplate,
@@ -38,14 +61,14 @@ export const compileCampaignBatchTemplate = async ({
     return variableNames.push(variableName) - 1;
   };
 
-  const toTags = (value: string, isHtmlContext: boolean): string =>
+  const toTags = (value: string, tagFamily: CampaignBatchTagFamily): string =>
     value.replace(
       CAMPAIGN_VARIABLE_PATTERN,
       (_match, variableName) =>
-        `{{${buildTagName(indexOfVariable(variableName), isHtmlContext)}}}`,
+        `{{${CAMPAIGN_BATCH_TAG_PREFIXES[tagFamily]}_${indexOfVariable(variableName)}}}`,
     );
 
-  const subject = toTags(subjectTemplate, false);
+  const subject = toTags(subjectTemplate, 'raw');
 
   if (bodyTemplate.trim() === '') {
     return { template: { subject, text: '', html: '' }, variableNames };
@@ -63,10 +86,20 @@ export const compileCampaignBatchTemplate = async ({
     );
   }
 
-  const { html, plainText } = await compileOutboundEmailContent(
-    resolveEmailDocumentBindings(parseResult.document, (value, context) =>
-      toTags(value, context === 'html'),
-    ),
+  const emailDocument = parseResult.document;
+
+  const compileTaggedDocument = (
+    tagFamilyByContext: CampaignBatchTagFamilyByContext,
+  ) =>
+    compileOutboundEmailContent(
+      resolveEmailDocumentBindings(emailDocument, (value, context) =>
+        toTags(value, tagFamilyByContext[context]),
+      ),
+    );
+
+  const { html } = await compileTaggedDocument(HTML_BODY_TAG_FAMILY_BY_CONTEXT);
+  const { plainText } = await compileTaggedDocument(
+    PLAIN_TEXT_BODY_TAG_FAMILY_BY_CONTEXT,
   );
 
   return {

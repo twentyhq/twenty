@@ -1,16 +1,26 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
-import { In } from 'typeorm';
+import { DataSource, In } from 'typeorm';
+import { MessageCampaignStatus } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
+import { SEND_CAMPAIGN_EMAIL_BATCH_JOB } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import { CAMPAIGN_DELIVERY_CLAIM_TTL_MS } from 'src/engine/core-modules/emailing-domain/constants/campaign-delivery-claim-ttl-ms.constant';
 import { CAMPAIGN_DELIVERY_STATE } from 'src/engine/core-modules/emailing-domain/constants/campaign-delivery-state.constant';
+import { CAMPAIGN_FAILURE_REASON } from 'src/engine/core-modules/emailing-domain/constants/campaign-failure-reason.constant';
+import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-backoff.constant';
+import { CAMPAIGN_SEND_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-limit.constant';
 import { CAMPAIGN_SKIP_REASON } from 'src/engine/core-modules/emailing-domain/constants/campaign-skip-reason.constant';
 import { CLAIMABLE_CAMPAIGN_DELIVERY_STATES } from 'src/engine/core-modules/emailing-domain/constants/claimable-campaign-delivery-states.constant';
+import { SEND_SLOT_RETRY } from 'src/engine/core-modules/emailing-domain/constants/send-slot-retry.constant';
 import { type SendCampaignEmailBatchJobData } from 'src/engine/core-modules/emailing-domain/types/send-campaign-email-batch-job-data.type';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { applyReplacementTags } from 'src/engine/core-modules/emailing-domain/utils/apply-replacement-tags.util';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
   UsageLimitException,
   UsageLimitExceptionCode,
@@ -20,23 +30,30 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
-import { applyReplacementTags } from 'src/engine/core-modules/emailing-domain/utils/apply-replacement-tags.util';
+import { type CampaignDeliverySettlement } from 'src/modules/emailing/types/campaign-delivery-settlement.type';
+import { type EmailCreditContext } from 'src/modules/emailing/types/email-credit-context.type';
 import { buildCampaignBatchReplacements } from 'src/modules/emailing/utils/build-campaign-batch-replacements.util';
+import { buildCampaignDeliverySettleQuery } from 'src/modules/emailing/utils/build-campaign-delivery-settle-query.util';
 import { compileCampaignBatchTemplate } from 'src/modules/emailing/utils/compile-campaign-batch-template.util';
+import { computeSendSlotBackoffMs } from 'src/modules/emailing/utils/compute-send-slot-backoff-ms.util';
 import { resolveCampaignSendFailure } from 'src/modules/emailing/utils/resolve-campaign-send-failure.util';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
-import { MessageCampaignStatus } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 const SKIP_EVENT_EMISSION = { shouldSkipEventEmission: true };
+
+type SendSlotRefusal = { retryDelayMs: number; windowMs: number };
+
+type BatchRecipient = SendCampaignEmailBatchJobData['recipients'][number];
 
 @Injectable()
 export class MessageCampaignBatchDeliveryService {
@@ -47,6 +64,10 @@ export class MessageCampaignBatchDeliveryService {
   constructor(
     @InjectWorkspaceScopedRepository(CampaignDeliveryEntity)
     private readonly campaignDeliveryRepository: WorkspaceScopedRepository<CampaignDeliveryEntity>,
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
+    @InjectMessageQueue(MessageQueue.campaignSendQueue)
+    private readonly messageQueueService: MessageQueueService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly emailBillingService: EmailBillingService,
@@ -62,76 +83,37 @@ export class MessageCampaignBatchDeliveryService {
     const { workspaceId, campaignId } = data;
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const claimToken = v4();
-      const claimedMessageIds = await this.claimBatch({
-        workspaceId,
-        messageIds: data.recipients.map((recipient) => recipient.messageId),
-        claimToken,
-      });
-
-      if (claimedMessageIds.length === 0) {
-        return;
-      }
-
-      const claimedRecipients = data.recipients.filter((recipient) =>
-        claimedMessageIds.includes(recipient.messageId),
-      );
-
+      const campaign = await this.findRunningCampaign(campaignId);
       const creditContext =
         await this.emailBillingService.resolveEmailCreditContext(workspaceId);
 
-      const hasSendSlots = await this.consumeSendSlots({
+      const claimToken = v4();
+      const claimedDeliveryIds = await this.claimBatch({
         workspaceId,
-        count: claimedRecipients.length,
-      });
-
-      if (!hasSendSlots) {
-        await this.settleClaimed({
-          workspaceId,
-          messageIds: claimedMessageIds,
-          claimToken,
-          update: { state: CAMPAIGN_DELIVERY_STATE.QUEUED },
-        });
-
-        return;
-      }
-
-      if (!creditContext.hasCredits) {
-        await this.settleClaimed({
-          workspaceId,
-          messageIds: claimedMessageIds,
-          claimToken,
-          update: {
-            state: CAMPAIGN_DELIVERY_STATE.SKIPPED,
-            skipReason: CAMPAIGN_SKIP_REASON.OUT_OF_CREDITS,
-          },
-        });
-
-        return;
-      }
-
-      const campaign = await this.findRunningCampaign(campaignId);
-
-      if (!isDefined(campaign)) {
-        await this.settleClaimed({
-          workspaceId,
-          messageIds: claimedMessageIds,
-          claimToken,
-          update: {
-            state: CAMPAIGN_DELIVERY_STATE.SKIPPED,
-            skipReason: CAMPAIGN_SKIP_REASON.CAMPAIGN_CANCELED,
-          },
-        });
-
-        return;
-      }
-
-      await this.deliverBatch({
-        data,
-        campaign,
+        deliveryIds: data.recipients.map((recipient) => recipient.messageId),
         claimToken,
-        claimedRecipients,
       });
+
+      if (claimedDeliveryIds.length === 0) {
+        return;
+      }
+
+      const claimedDeliveryIdSet = new Set(claimedDeliveryIds);
+      const claimedRecipients = data.recipients.filter((recipient) =>
+        claimedDeliveryIdSet.has(recipient.messageId),
+      );
+
+      try {
+        await this.processClaimedBatch({
+          data,
+          campaign,
+          creditContext,
+          claimToken,
+          claimedRecipients,
+        });
+      } finally {
+        await this.releaseUnsettledClaims({ workspaceId, claimToken });
+      }
 
       await this.messageCampaignStatisticsService.scheduleRefresh({
         workspaceId,
@@ -145,44 +127,176 @@ export class MessageCampaignBatchDeliveryService {
     }, buildSystemAuthContext(workspaceId));
   }
 
-  private async consumeSendSlots({
+  private async processClaimedBatch({
+    data,
+    campaign,
+    creditContext,
+    claimToken,
+    claimedRecipients,
+  }: {
+    data: SendCampaignEmailBatchJobData;
+    campaign: MessageCampaignWorkspaceEntity | null;
+    creditContext: EmailCreditContext;
+    claimToken: string;
+    claimedRecipients: BatchRecipient[];
+  }): Promise<void> {
+    const { workspaceId } = data;
+
+    if (!isDefined(campaign)) {
+      await this.settleUniformly({
+        workspaceId,
+        claimToken,
+        recipients: claimedRecipients,
+        state: CAMPAIGN_DELIVERY_STATE.SKIPPED,
+        skipReason: CAMPAIGN_SKIP_REASON.CAMPAIGN_CANCELED,
+      });
+
+      return;
+    }
+
+    const sendSlotRefusal = await this.findSendSlotRefusal({
+      workspaceId,
+      requestedSlotCount: claimedRecipients.length,
+    });
+
+    if (isDefined(sendSlotRefusal)) {
+      await this.deferRateLimitedBatch({
+        data,
+        claimToken,
+        claimedRecipients,
+        sendSlotRefusal,
+      });
+
+      return;
+    }
+
+    const hasReservedCredits =
+      creditContext.hasCredits &&
+      (await this.emailBillingService.reserveEmailCredits({
+        workspaceId,
+        emailCount: claimedRecipients.length,
+        currentBillingSubscription: creditContext.currentBillingSubscription,
+      }));
+
+    if (!hasReservedCredits) {
+      await this.settleUniformly({
+        workspaceId,
+        claimToken,
+        recipients: claimedRecipients,
+        state: CAMPAIGN_DELIVERY_STATE.SKIPPED,
+        skipReason: CAMPAIGN_SKIP_REASON.OUT_OF_CREDITS,
+      });
+
+      return;
+    }
+
+    await this.deliverBatch({
+      data,
+      campaign,
+      creditContext,
+      claimToken,
+      claimedRecipients,
+    });
+  }
+
+  private async findSendSlotRefusal({
     workspaceId,
-    count,
+    requestedSlotCount,
   }: {
     workspaceId: string;
-    count: number;
-  }): Promise<boolean> {
+    requestedSlotCount: number;
+  }): Promise<SendSlotRefusal | null> {
     try {
       await this.usageLimitSpeedService.consumeOrThrow({
         resourceType: UsageResourceType.EMAIL,
         operationType: UsageOperationType.EMAIL_SEND,
         authContext: buildSystemAuthContext(workspaceId),
-        cost: count,
+        cost: requestedSlotCount,
       });
 
-      return true;
+      return null;
     } catch (error) {
       if (
-        error instanceof UsageLimitException &&
-        error.code === UsageLimitExceptionCode.RATE_LIMITED
+        !(error instanceof UsageLimitException) ||
+        error.code !== UsageLimitExceptionCode.RATE_LIMITED
       ) {
-        return false;
+        throw error;
       }
 
-      throw error;
+      return {
+        retryDelayMs: Math.max(
+          error.exhaustedScope?.retryAfterMs ?? 0,
+          SEND_SLOT_RETRY.minDelayMs,
+        ),
+        windowMs: (error.exhaustedScope?.windowSeconds ?? 0) * 1000,
+      };
     }
+  }
+
+  private async deferRateLimitedBatch({
+    data,
+    claimToken,
+    claimedRecipients,
+    sendSlotRefusal,
+  }: {
+    data: SendCampaignEmailBatchJobData;
+    claimToken: string;
+    claimedRecipients: BatchRecipient[];
+    sendSlotRefusal: SendSlotRefusal;
+  }): Promise<void> {
+    const { workspaceId } = data;
+    const attemptCount = (data.rateLimitedAttemptCount ?? 0) + 1;
+
+    if (attemptCount > SEND_SLOT_RETRY.attemptLimit) {
+      await this.settleUniformly({
+        workspaceId,
+        claimToken,
+        recipients: claimedRecipients,
+        state: CAMPAIGN_DELIVERY_STATE.FAILED,
+        failureReason: CAMPAIGN_FAILURE_REASON.RATE_LIMITED,
+      });
+
+      return;
+    }
+
+    await this.settleUniformly({
+      workspaceId,
+      claimToken,
+      recipients: claimedRecipients,
+      state: CAMPAIGN_DELIVERY_STATE.QUEUED,
+    });
+
+    await this.messageQueueService.add<SendCampaignEmailBatchJobData>(
+      SEND_CAMPAIGN_EMAIL_BATCH_JOB,
+      {
+        ...data,
+        recipients: claimedRecipients,
+        rateLimitedAttemptCount: attemptCount,
+      },
+      {
+        delay: computeSendSlotBackoffMs({
+          attemptCount,
+          retryDelayMs: sendSlotRefusal.retryDelayMs,
+          windowMs: sendSlotRefusal.windowMs,
+        }),
+        retryLimit: CAMPAIGN_SEND_RETRY_LIMIT,
+        backoff: CAMPAIGN_SEND_RETRY_BACKOFF,
+      },
+    );
   }
 
   private async deliverBatch({
     data,
     campaign,
+    creditContext,
     claimToken,
     claimedRecipients,
   }: {
     data: SendCampaignEmailBatchJobData;
     campaign: MessageCampaignWorkspaceEntity;
+    creditContext: EmailCreditContext;
     claimToken: string;
-    claimedRecipients: SendCampaignEmailBatchJobData['recipients'];
+    claimedRecipients: BatchRecipient[];
   }): Promise<void> {
     const { workspaceId, campaignId, emailingDomainId, userWorkspaceId } = data;
 
@@ -197,11 +311,13 @@ export class MessageCampaignBatchDeliveryService {
     );
 
     const people = await personRepository.find({
-      where: { id: In(claimedRecipients.map((r) => r.personId)) },
+      where: {
+        id: In(claimedRecipients.map((recipient) => recipient.personId)),
+      },
     });
     const personById = new Map(people.map((person) => [person.id, person]));
 
-    const replacementsByMessageId = new Map<string, Record<string, string>>();
+    const replacementsByDeliveryId = new Map<string, Record<string, string>>();
 
     for (const recipient of claimedRecipients) {
       const variables =
@@ -210,7 +326,7 @@ export class MessageCampaignBatchDeliveryService {
           personById.get(recipient.personId) ?? null,
         );
 
-      replacementsByMessageId.set(
+      replacementsByDeliveryId.set(
         recipient.messageId,
         buildCampaignBatchReplacements({ variableNames, variables }),
       );
@@ -225,30 +341,123 @@ export class MessageCampaignBatchDeliveryService {
         template,
         recipients: claimedRecipients.map((recipient) => ({
           email: recipient.email,
-          replacements: replacementsByMessageId.get(recipient.messageId) ?? {},
+          replacements: replacementsByDeliveryId.get(recipient.messageId) ?? {},
         })),
         unsubscribeTopicId: campaign.unsubscribeTopicId ?? undefined,
       })
       .catch(async (error) => {
+        await this.emailBillingService.releaseEmailCredits({
+          workspaceId,
+          emailCount: claimedRecipients.length,
+          currentBillingSubscription: creditContext.currentBillingSubscription,
+        });
+
         await this.recordBatchFailure({
           workspaceId,
           campaignId,
-          messageIds: claimedRecipients.map((r) => r.messageId),
           claimToken,
+          claimedRecipients,
           error,
         });
 
         throw error;
       });
 
-    const recipientByEmail = new Map(
-      claimedRecipients.map((recipient) => [recipient.email, recipient]),
-    );
+    const settlements = this.resolveBatchSettlements({
+      claimedRecipients,
+      outcome,
+    });
 
-    const sentMessageIds: string[] = [];
+    const settledDeliveryIds = await this.settleClaimedBatch({
+      workspaceId,
+      claimToken,
+      settlements,
+    });
+
+    const sentDeliveryIds = settlements
+      .filter(
+        (settlement) =>
+          settlement.state === CAMPAIGN_DELIVERY_STATE.SENT &&
+          settledDeliveryIds.has(settlement.deliveryId),
+      )
+      .map((settlement) => settlement.deliveryId);
+
+    await this.emailBillingService.releaseEmailCredits({
+      workspaceId,
+      emailCount: claimedRecipients.length - sentDeliveryIds.length,
+      currentBillingSubscription: creditContext.currentBillingSubscription,
+    });
+
+    for (const deliveryId of sentDeliveryIds) {
+      const providerMessageId = settlements.find(
+        (settlement) => settlement.deliveryId === deliveryId,
+      )?.providerMessageId;
+
+      if (!isDefined(providerMessageId)) {
+        continue;
+      }
+
+      await this.recordSentMessage({
+        deliveryId,
+        providerMessageId,
+        template,
+        replacements: replacementsByDeliveryId.get(deliveryId) ?? {},
+      });
+    }
+
+    await this.emailBillingService
+      .recordEmailSendUsage({
+        workspaceId,
+        sentEmailCount: sentDeliveryIds.length,
+        userWorkspaceId,
+      })
+      .catch((error) => {
+        this.logger.error(
+          `Campaign ${campaignId} delivered ${sentDeliveryIds.length} message(s) but failed to record their usage: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      });
+  }
+
+  private resolveBatchSettlements({
+    claimedRecipients,
+    outcome,
+  }: {
+    claimedRecipients: BatchRecipient[];
+    outcome: {
+      entries: {
+        recipientIndex: number;
+        messageId: string | null;
+        errorMessage: string | null;
+      }[];
+      suppressedRecipientIndexes: number[];
+    };
+  }): CampaignDeliverySettlement[] {
+    const settlementByDeliveryId = new Map<
+      string,
+      CampaignDeliverySettlement
+    >();
+
+    for (const recipientIndex of outcome.suppressedRecipientIndexes) {
+      const recipient = claimedRecipients[recipientIndex];
+
+      if (!isDefined(recipient)) {
+        continue;
+      }
+
+      settlementByDeliveryId.set(recipient.messageId, {
+        deliveryId: recipient.messageId,
+        state: CAMPAIGN_DELIVERY_STATE.SKIPPED,
+        skipReason: CAMPAIGN_SKIP_REASON.SUPPRESSED,
+        failureReason: null,
+        providerMessageId: null,
+        sentAt: null,
+      });
+    }
 
     for (const entry of outcome.entries) {
-      const recipient = recipientByEmail.get(entry.email);
+      const recipient = claimedRecipients[entry.recipientIndex];
 
       if (!isDefined(recipient)) {
         continue;
@@ -259,87 +468,53 @@ export class MessageCampaignBatchDeliveryService {
           new Error(entry.errorMessage ?? 'Provider rejected the destination'),
         );
 
-        await this.settleClaimed({
-          workspaceId,
-          messageIds: [recipient.messageId],
-          claimToken,
-          update: { state, skipReason, failureReason },
+        settlementByDeliveryId.set(recipient.messageId, {
+          deliveryId: recipient.messageId,
+          state,
+          skipReason,
+          failureReason,
+          providerMessageId: null,
+          sentAt: null,
         });
 
         continue;
       }
 
-      const affected = await this.settleClaimed({
-        workspaceId,
-        messageIds: [recipient.messageId],
-        claimToken,
-        update: {
-          state: CAMPAIGN_DELIVERY_STATE.SENT,
-          providerMessageId: entry.messageId,
-          sentAt: new Date(),
-          failureReason: null,
-          skipReason: null,
-        },
-      });
-
-      if (affected !== 1) {
-        this.logger.warn(
-          `Campaign ${campaignId} delivered message ${recipient.messageId} but another worker owns the claim, so this send is recorded by neither and is not billed`,
-        );
-
-        continue;
-      }
-
-      sentMessageIds.push(recipient.messageId);
-
-      await this.recordSentMessage({
-        messageId: recipient.messageId,
+      settlementByDeliveryId.set(recipient.messageId, {
+        deliveryId: recipient.messageId,
+        state: CAMPAIGN_DELIVERY_STATE.SENT,
+        skipReason: null,
+        failureReason: null,
         providerMessageId: entry.messageId,
-        template,
-        replacements: replacementsByMessageId.get(recipient.messageId) ?? {},
+        sentAt: new Date(),
       });
     }
 
-    for (const email of outcome.suppressedEmails) {
-      const recipient = recipientByEmail.get(email);
-
-      if (isDefined(recipient)) {
-        await this.settleClaimed({
-          workspaceId,
-          messageIds: [recipient.messageId],
-          claimToken,
-          update: {
-            state: CAMPAIGN_DELIVERY_STATE.SKIPPED,
-            skipReason: CAMPAIGN_SKIP_REASON.SUPPRESSED,
-          },
-        });
+    for (const recipient of claimedRecipients) {
+      if (settlementByDeliveryId.has(recipient.messageId)) {
+        continue;
       }
+
+      settlementByDeliveryId.set(recipient.messageId, {
+        deliveryId: recipient.messageId,
+        state: CAMPAIGN_DELIVERY_STATE.FAILED,
+        skipReason: null,
+        failureReason: CAMPAIGN_FAILURE_REASON.UNKNOWN,
+        providerMessageId: null,
+        sentAt: null,
+      });
     }
 
-    if (sentMessageIds.length > 0) {
-      await this.emailBillingService
-        .billSentEmails({
-          workspaceId,
-          sentEmailCount: sentMessageIds.length,
-          userWorkspaceId,
-        })
-        .catch((error) => {
-          this.logger.error(
-            `Campaign ${campaignId} delivered ${sentMessageIds.length} message(s) but failed to bill them: ${
-              error instanceof Error ? error.message : String(error)
-            }`,
-          );
-        });
-    }
+    return [...settlementByDeliveryId.values()];
   }
 
   private async recordSentMessage({
-    messageId,
+    deliveryId,
     providerMessageId,
     template,
     replacements,
   }: {
-    messageId: string;
+    deliveryId: string;
     providerMessageId: string;
     template: { subject: string; text: string };
     replacements: Record<string, string>;
@@ -350,7 +525,7 @@ export class MessageCampaignBatchDeliveryService {
       SKIP_EVENT_EMISSION,
     );
 
-    await messageRepository.update(messageId, {
+    await messageRepository.update(deliveryId, {
       headerMessageId: providerMessageId,
       subject: applyReplacementTags(template.subject, replacements),
       text: applyReplacementTags(template.text, replacements),
@@ -363,7 +538,7 @@ export class MessageCampaignBatchDeliveryService {
     );
 
     await associationRepository.update(
-      { messageId },
+      { messageId: deliveryId },
       {
         messageExternalId: providerMessageId,
         messageThreadExternalId: providerMessageId,
@@ -374,30 +549,30 @@ export class MessageCampaignBatchDeliveryService {
   private async recordBatchFailure({
     workspaceId,
     campaignId,
-    messageIds,
     claimToken,
+    claimedRecipients,
     error,
   }: {
     workspaceId: string;
     campaignId: string;
-    messageIds: string[];
     claimToken: string;
+    claimedRecipients: BatchRecipient[];
     error: unknown;
   }): Promise<void> {
     const { state, skipReason, failureReason, shouldRetry } =
       resolveCampaignSendFailure(error);
 
-    await this.settleClaimed({
+    await this.settleUniformly({
       workspaceId,
-      messageIds,
       claimToken,
-      update: shouldRetry
-        ? { state: CAMPAIGN_DELIVERY_STATE.QUEUED, skipReason, failureReason }
-        : { state, skipReason, failureReason },
+      recipients: claimedRecipients,
+      state: shouldRetry ? CAMPAIGN_DELIVERY_STATE.QUEUED : state,
+      skipReason,
+      failureReason,
     });
 
     this.logger.warn(
-      `Campaign ${campaignId} batch of ${messageIds.length} failed: ${
+      `Campaign ${campaignId} batch of ${claimedRecipients.length} failed: ${
         error instanceof Error ? error.message : String(error)
       }`,
     );
@@ -427,11 +602,11 @@ export class MessageCampaignBatchDeliveryService {
 
   private async claimBatch({
     workspaceId,
-    messageIds,
+    deliveryIds,
     claimToken,
   }: {
     workspaceId: string;
-    messageIds: string[];
+    deliveryIds: string[];
     claimToken: string;
   }): Promise<string[]> {
     const { raw } = await this.campaignDeliveryRepository
@@ -443,7 +618,7 @@ export class MessageCampaignBatchDeliveryService {
         claimExpiresAt: new Date(Date.now() + CAMPAIGN_DELIVERY_CLAIM_TTL_MS),
       })
       .where('"workspaceId" = :workspaceId', { workspaceId })
-      .andWhere('id IN (:...messageIds)', { messageIds })
+      .andWhere('id IN (:...deliveryIds)', { deliveryIds })
       .andWhere('state IN (:...claimableStates)', {
         claimableStates: CLAIMABLE_CAMPAIGN_DELIVERY_STATES,
       })
@@ -453,32 +628,83 @@ export class MessageCampaignBatchDeliveryService {
     return (raw as { id: string }[]).map((row) => row.id);
   }
 
-  private async settleClaimed({
+  private async settleUniformly({
     workspaceId,
-    messageIds,
     claimToken,
-    update,
+    recipients,
+    state,
+    skipReason = null,
+    failureReason = null,
   }: {
     workspaceId: string;
-    messageIds: string[];
     claimToken: string;
-    update: Partial<
-      Pick<
-        CampaignDeliveryEntity,
-        | 'state'
-        | 'skipReason'
-        | 'failureReason'
-        | 'providerMessageId'
-        | 'sentAt'
-      >
-    >;
-  }): Promise<number> {
-    const { affected } = await this.campaignDeliveryRepository.update(
+    recipients: BatchRecipient[];
+    state: CampaignDeliveryEntity['state'];
+    skipReason?: CampaignDeliveryEntity['skipReason'];
+    failureReason?: CampaignDeliveryEntity['failureReason'];
+  }): Promise<void> {
+    if (recipients.length === 0) {
+      return;
+    }
+
+    await this.campaignDeliveryRepository.update(
       workspaceId,
-      { id: In(messageIds), claimToken },
-      { ...update, claimToken: null, claimExpiresAt: null },
+      {
+        id: In(recipients.map((recipient) => recipient.messageId)),
+        claimToken,
+      },
+      {
+        state,
+        skipReason,
+        failureReason,
+        claimToken: null,
+        claimExpiresAt: null,
+      },
+    );
+  }
+
+  private async settleClaimedBatch({
+    workspaceId,
+    claimToken,
+    settlements,
+  }: {
+    workspaceId: string;
+    claimToken: string;
+    settlements: CampaignDeliverySettlement[];
+  }): Promise<Set<string>> {
+    if (settlements.length === 0) {
+      return new Set();
+    }
+
+    const { sql, parameters } = buildCampaignDeliverySettleQuery({
+      workspaceId,
+      claimToken,
+      settlements,
+    });
+
+    const settledRows: { id: string }[] = await this.dataSource.query(
+      sql,
+      parameters,
     );
 
-    return affected ?? 0;
+    return new Set(settledRows.map((row) => row.id));
+  }
+
+  private async releaseUnsettledClaims({
+    workspaceId,
+    claimToken,
+  }: {
+    workspaceId: string;
+    claimToken: string;
+  }): Promise<void> {
+    await this.campaignDeliveryRepository.update(
+      workspaceId,
+      { claimToken },
+      {
+        state: CAMPAIGN_DELIVERY_STATE.QUEUED,
+        claimToken: null,
+        claimExpiresAt: null,
+      },
+    );
   }
 }
