@@ -1,15 +1,20 @@
 import { Command } from 'nest-commander';
-import { getSystemNavigationCommandMenuItemUniversalIdentifier } from 'twenty-shared/application';
+import {
+  getSystemNavigationCommandMenuItemUniversalIdentifier,
+  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+} from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { buildGateWorkflowVersionNavigationCommandMenuItemUpdate } from 'src/database/commands/upgrade-version-command/2-38/utils/build-gate-workflow-version-navigation-command-menu-item-update.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { buildNavigationConditionalAvailabilityExpression } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @RegisteredWorkspaceCommand('2.38.0', 1788340845000)
@@ -21,7 +26,6 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 export class GateWorkflowVersionNavigationByCoreIndexFlagCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
-    private readonly applicationService: ApplicationService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {
@@ -32,100 +36,73 @@ export class GateWorkflowVersionNavigationByCoreIndexFlagCommand extends Provisi
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const isDryRun = options.dryRun ?? false;
-
-    this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Gating the workflow version navigation command menu item for workspace ${workspaceId}`,
-    );
-
-    const { twentyStandardFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-
-    const { flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps } =
+    const { flatCommandMenuItemMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatCommandMenuItemMaps',
       ]);
 
-    const { allFlatEntityMaps: standardAllFlatEntityMaps } =
-      computeTwentyStandardApplicationAllFlatEntityMaps({
-        now: new Date().toISOString(),
-        workspaceId,
-        twentyStandardApplicationId: twentyStandardFlatApplication.id,
-      });
-
     const universalIdentifier =
       getSystemNavigationCommandMenuItemUniversalIdentifier({
         objectMetadataApplicationUniversalIdentifier:
-          twentyStandardFlatApplication.universalIdentifier,
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
         objectUniversalIdentifier:
           STANDARD_OBJECTS.workflowVersion.universalIdentifier,
       });
 
-    const standardItem =
-      standardAllFlatEntityMaps.flatCommandMenuItemMaps.byUniversalIdentifier[
-        universalIdentifier
-      ];
-    const existingItem =
-      existingFlatCommandMenuItemMaps.byUniversalIdentifier[universalIdentifier];
+    const existingCommandMenuItem =
+      flatCommandMenuItemMaps.byUniversalIdentifier[universalIdentifier];
 
-    if (
-      !isDefined(standardItem) ||
-      !isDefined(existingItem) ||
-      existingItem.conditionalAvailabilityExpression ===
-        standardItem.conditionalAvailabilityExpression
-    ) {
-      this.logger.log(
-        `Workflow version navigation command menu item already up to date for workspace ${workspaceId}`,
+    if (!isDefined(existingCommandMenuItem)) {
+      this.logger.warn(
+        `No workflow version navigation command menu item found for workspace ${workspaceId}, leaving it untouched`,
       );
 
       return;
     }
 
-    if (isDryRun) {
+    const commandMenuItemToUpdate =
+      buildGateWorkflowVersionNavigationCommandMenuItemUpdate({
+        existingCommandMenuItem,
+        conditionalAvailabilityExpression:
+          buildNavigationConditionalAvailabilityExpression({
+            universalIdentifier:
+              STANDARD_OBJECTS.workflowVersion.universalIdentifier,
+            nameSingular: CoreObjectNameSingular.WorkflowVersion,
+          }),
+        now: new Date().toISOString(),
+      });
+
+    if (!isDefined(commandMenuItemToUpdate)) {
+      return;
+    }
+
+    if (options.dryRun) {
       this.logger.log(
-        `[DRY RUN] Would update the workflow version navigation availability expression for workspace ${workspaceId}`,
+        `Would gate the workflow version navigation command for workspace ${workspaceId}`,
       );
 
       return;
     }
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: [
-                {
-                  ...existingItem,
-                  conditionalAvailabilityExpression:
-                    standardItem.conditionalAvailabilityExpression,
-                  updatedAt: new Date().toISOString(),
-                },
-              ],
+              flatEntityToUpdate: [commandMenuItemToUpdate],
             },
           },
           workspaceId,
+          isSystemBuild: true,
           applicationUniversalIdentifier:
-            twentyStandardFlatApplication.universalIdentifier,
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
         },
       );
 
     if (validateAndBuildResult.status === 'fail') {
-      this.logger.error(
-        `Failed to update the workflow version navigation availability expression:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
-      );
-
-      throw new Error(
-        `Failed to gate the workflow version navigation command menu item for workspace ${workspaceId}`,
-      );
+      throw new WorkspaceMigrationBuilderException(validateAndBuildResult);
     }
-
-    this.logger.log(
-      `Successfully gated the workflow version navigation command menu item for workspace ${workspaceId}`,
-    );
   }
 }
