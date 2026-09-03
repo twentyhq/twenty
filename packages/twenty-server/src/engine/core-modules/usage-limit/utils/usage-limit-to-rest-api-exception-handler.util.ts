@@ -3,10 +3,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { UsageLimitHttpException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit-http.exception';
-import {
-  type UsageLimitException,
-  UsageLimitExceptionCode,
-} from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
+import { type UsageLimitException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { buildRateLimitResponseHeaders } from 'src/engine/core-modules/usage-limit/utils/build-rate-limit-response-headers.util';
 import { getRetryAfterSeconds } from 'src/engine/core-modules/usage-limit/utils/get-retry-after-seconds.util';
 import { getUsageLimitErrorCode } from 'src/engine/core-modules/usage-limit/utils/get-usage-limit-error-code.util';
@@ -16,10 +13,11 @@ export const buildUsageLimitHttpException = (
 ): HttpException => {
   const { exhaustedScope } = error;
 
-  const isQuotaExhausted =
-    error.code === UsageLimitExceptionCode.QUOTA_EXHAUSTED;
+  // Paying only unblocks an exhausted allowance; configured limits reset with
+  // time, so they answer 429 with retry headers whatever their period length.
+  const isAllowanceExhausted = exhaustedScope?.exhaustedKind === 'allowance';
 
-  const statusCode = isQuotaExhausted
+  const statusCode = isAllowanceExhausted
     ? HttpStatus.PAYMENT_REQUIRED
     : HttpStatus.TOO_MANY_REQUESTS;
 
@@ -47,7 +45,7 @@ export const buildUsageLimitHttpException = (
       periodUnit: exhaustedScope.periodUnit,
       retryAfterSeconds,
     },
-    isQuotaExhausted
+    isAllowanceExhausted
       ? {}
       : buildRateLimitResponseHeaders({ exhaustedScope, retryAfterSeconds }),
   );
