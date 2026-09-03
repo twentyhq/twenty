@@ -47,6 +47,7 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
         'userWorkspace',
         'apiKey',
         'application',
+        'agent',
       ],
       allowedMeters: ['creditsUsedMicro', 'quantity'],
     },

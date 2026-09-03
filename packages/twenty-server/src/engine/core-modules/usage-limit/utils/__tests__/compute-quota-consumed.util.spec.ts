@@ -11,6 +11,7 @@ const buildRow = (
   userWorkspaceId: 'user-1',
   apiKeyId: '',
   applicationId: '',
+  agentId: '',
   creditsUsedMicro: '100',
   quantity: '10',
   ...overrides,
@@ -34,7 +35,7 @@ const buildCounter = (
 });
 
 const rows = [
-  buildRow({}),
+  buildRow({ agentId: 'agent-1' }),
   buildRow({ userWorkspaceId: 'user-2', creditsUsedMicro: '40' }),
   buildRow({
     operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
@@ -93,11 +94,23 @@ describe('computeQuotaConsumed', () => {
     ).toBe(23);
   });
 
-  it('counts nothing for a spender type the warm query does not carry', () => {
+  it('matches a named agent on its own column', () => {
     expect(
       computeQuotaConsumed({
         rows,
         counter: buildCounter({ spenderType: 'agent', spenderId: 'agent-1' }),
+      }),
+    ).toBe(100);
+  });
+
+  it('counts nothing for a spender type the warm query does not carry', () => {
+    expect(
+      computeQuotaConsumed({
+        rows,
+        counter: buildCounter({
+          spenderType: 'workflow',
+          spenderId: 'workflow-1',
+        }),
       }),
     ).toBe(0);
   });

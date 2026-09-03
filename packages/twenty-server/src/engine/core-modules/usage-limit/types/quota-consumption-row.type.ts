@@ -3,6 +3,7 @@ export type QuotaConsumptionRow = {
   userWorkspaceId: string;
   apiKeyId: string;
   applicationId: string;
+  agentId: string;
   creditsUsedMicro: string | number;
   quantity: string | number;
 };

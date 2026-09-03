@@ -142,6 +142,16 @@ describe('validateUsageLimitAgainstDefinition', () => {
     ).not.toThrow();
   });
 
+  it('accepts a quota scoped to one agent', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validQuotaLimit,
+        spenderType: 'agent',
+        spenderId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+      }),
+    ).not.toThrow();
+  });
+
   it('accepts a quota covering every operation of the resource', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({

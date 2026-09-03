@@ -31,6 +31,7 @@ const rowMatchesCounter = (
     case 'application':
       return spenderColumnMatches(row.applicationId, counter.spenderId);
     case 'agent':
+      return spenderColumnMatches(row.agentId, counter.spenderId);
     case 'workflow':
     case 'logicFunction':
       return false;

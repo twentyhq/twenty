@@ -31,6 +31,7 @@ const buildRow = (
   userWorkspaceId: 'user-1',
   apiKeyId: '',
   applicationId: '',
+  agentId: '',
   creditsUsedMicro: '0',
   quantity: '0',
   ...overrides,

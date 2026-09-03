@@ -633,7 +633,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
     counter: LimitQuotaCounter;
   }): Promise<QuotaConsumptionRow[]> {
     return this.clickHouseService.selectOrThrow<QuotaConsumptionRow>(
-      `SELECT operationType, userWorkspaceId, apiKeyId, applicationId,
+      `SELECT operationType, userWorkspaceId, apiKeyId, applicationId, agentId,
               sum(creditsUsedMicro) AS creditsUsedMicro,
               sum(quantity) AS quantity
        FROM usageEvent
@@ -641,7 +641,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
          AND resourceType = {resourceType:String}
          AND toStartOfDay(timestamp, 'UTC') >= {periodStart:DateTime64(3)}
          AND toStartOfDay(timestamp, 'UTC') < {periodEnd:DateTime64(3)}
-       GROUP BY operationType, userWorkspaceId, apiKeyId, applicationId`,
+       GROUP BY operationType, userWorkspaceId, apiKeyId, applicationId, agentId`,
       {
         workspaceId,
         resourceType: counter.resourceType,
