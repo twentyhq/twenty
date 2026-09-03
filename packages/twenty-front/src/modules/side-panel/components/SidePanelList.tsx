@@ -12,7 +12,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
-export type SidePanelListProps = {
+type SidePanelListProps = {
   selectableItemIds: string[];
   children: React.ReactNode;
   loading?: boolean;
