@@ -76,6 +76,35 @@ describe('getStepInfoHistoryItem', () => {
     ).toBe('final');
   });
 
+  it('keeps iterations aligned when a descendant of iterator was retried', () => {
+    const stepInfo: WorkflowRunStepInfo = {
+      result: 'final',
+      status: StepStatus.SUCCESS,
+      history: [
+        { error: 'first attempt', status: StepStatus.FAILED },
+        { result: 'first', status: StepStatus.SUCCESS },
+        { result: 'second', status: StepStatus.SUCCESS },
+      ],
+    };
+
+    expect(
+      getStepInfoHistoryItem({
+        stepInfo,
+        steps,
+        stepId: 'step2',
+        iterationIndex: 0,
+      })?.result,
+    ).toBe('first');
+    expect(
+      getStepInfoHistoryItem({
+        stepInfo,
+        steps,
+        stepId: 'step2',
+        iterationIndex: 2,
+      })?.result,
+    ).toBe('final');
+  });
+
   it('returns the last history item for a non-descendant', () => {
     const stepInfo: WorkflowRunStepInfo = {
       result: 'final',
