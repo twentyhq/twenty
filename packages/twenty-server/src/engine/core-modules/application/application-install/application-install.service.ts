@@ -23,6 +23,7 @@ import {
 } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { canWorkspaceUseApplicationRegistration } from 'src/engine/core-modules/application/application-registration/utils/can-workspace-use-application-registration.util';
 import { isImageFilePath } from 'src/engine/core-modules/application/application-registration/utils/is-image-file-path.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
@@ -141,19 +142,28 @@ export class ApplicationInstallService {
       );
     }
 
-    // Tarball registrations that are neither listed nor pre-installed are
-    // only installable by their owner workspace.
+    // Registrations that are neither listed nor pre-installed are only
+    // installable by their owner workspace, whatever their source type. A
+    // workspace that already installed the application keeps it: the publisher
+    // de-listing it must not break upgrades of existing installs.
     if (
-      appRegistration.sourceType ===
-        ApplicationRegistrationSourceType.TARBALL &&
-      !appRegistration.isListed &&
-      !appRegistration.isPreInstalled &&
-      appRegistration.ownerWorkspaceId !== params.workspaceId
+      !canWorkspaceUseApplicationRegistration({
+        registration: appRegistration,
+        workspaceId: params.workspaceId,
+      })
     ) {
-      throw new ApplicationException(
-        `Application registration ${appRegistration.universalIdentifier} is not available for this workspace`,
-        ApplicationExceptionCode.FORBIDDEN,
-      );
+      const alreadyInstalled =
+        await this.applicationService.findByUniversalIdentifier({
+          universalIdentifier: appRegistration.universalIdentifier,
+          workspaceId: params.workspaceId,
+        });
+
+      if (!isDefined(alreadyInstalled)) {
+        throw new ApplicationException(
+          `Application registration ${appRegistration.universalIdentifier} is not available for this workspace`,
+          ApplicationExceptionCode.FORBIDDEN,
+        );
+      }
     }
 
     const resolvedPackage =

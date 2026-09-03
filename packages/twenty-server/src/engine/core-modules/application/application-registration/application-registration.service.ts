@@ -481,11 +481,23 @@ export class ApplicationRegistrationService {
     };
   }
 
-  async findOneByUniversalIdentifier(
+  // Unscoped by design: callers are the global uniqueness check, catalog sync
+  // and the public OAuth discovery endpoint. Anything acting on behalf of a
+  // workspace must use findOneByUniversalIdentifierForWorkspace instead.
+  async findOneByUniversalIdentifierGlobal(
     universalIdentifier: string,
   ): Promise<ApplicationRegistrationEntity | null> {
     return this.applicationRegistrationRepository.findOne({
       where: { universalIdentifier },
+    });
+  }
+
+  async findOneByUniversalIdentifierForWorkspace(
+    universalIdentifier: string,
+    ownerWorkspaceId: string,
+  ): Promise<ApplicationRegistrationEntity | null> {
+    return this.applicationRegistrationRepository.findOne({
+      where: { universalIdentifier, ownerWorkspaceId },
     });
   }
 
@@ -500,7 +512,7 @@ export class ApplicationRegistrationService {
     const universalIdentifier = input.universalIdentifier ?? v4();
 
     const existingByUid =
-      await this.findOneByUniversalIdentifier(universalIdentifier);
+      await this.findOneByUniversalIdentifierGlobal(universalIdentifier);
 
     if (existingByUid) {
       throw new ApplicationRegistrationException(
@@ -779,7 +791,7 @@ export class ApplicationRegistrationService {
       | 'manifest'
     >,
   ): Promise<void> {
-    const existing = await this.findOneByUniversalIdentifier(
+    const existing = await this.findOneByUniversalIdentifierGlobal(
       params.universalIdentifier,
     );
 
@@ -912,7 +924,7 @@ export class ApplicationRegistrationService {
   }
 
   async createCliRegistrationIfNotExists(): Promise<ApplicationRegistrationEntity | null> {
-    const existing = await this.findOneByUniversalIdentifier(
+    const existing = await this.findOneByUniversalIdentifierGlobal(
       TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
     );
 

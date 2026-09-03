@@ -59,8 +59,10 @@ export class ApplicationDevelopmentService {
   }): Promise<DevelopmentApplicationDTO> {
     await this.throttlePerApplication(universalIdentifier, workspaceId);
 
-    const applicationRegistrationId =
-      await this.findApplicationRegistrationId(universalIdentifier);
+    const applicationRegistrationId = await this.findApplicationRegistrationId(
+      universalIdentifier,
+      workspaceId,
+    );
 
     const existing = await this.applicationService.findByUniversalIdentifier({
       universalIdentifier,
@@ -209,6 +211,7 @@ export class ApplicationDevelopmentService {
   ): Promise<WorkspaceMigrationDTO> {
     const applicationRegistrationId = await this.findApplicationRegistrationId(
       manifest.application.universalIdentifier,
+      workspaceId,
     );
 
     const application = await this.applicationService.findByUniversalIdentifier(
@@ -258,17 +261,24 @@ export class ApplicationDevelopmentService {
     );
   }
 
+  // Scoped to the owner workspace: the registration id ends up on the
+  // application row, and everything downstream (server variable decryption,
+  // SERVER key-value routing) treats it as proof of entitlement to the
+  // registration's secrets. Developing against a registration owned by another
+  // workspace would hand that workspace's secrets to the caller.
   private async findApplicationRegistrationId(
     universalIdentifier: string,
+    workspaceId: string,
   ): Promise<string> {
     const existingRegistration =
-      await this.applicationRegistrationService.findOneByUniversalIdentifier(
+      await this.applicationRegistrationService.findOneByUniversalIdentifierForWorkspace(
         universalIdentifier,
+        workspaceId,
       );
 
-    if (!existingRegistration) {
+    if (!isDefined(existingRegistration)) {
       throw new ApplicationException(
-        `No registration found for "${universalIdentifier}". Create one first with createApplicationRegistration.`,
+        `No registration found for "${universalIdentifier}" in this workspace. Create one first with createApplicationRegistration.`,
         ApplicationExceptionCode.APPLICATION_NOT_FOUND,
       );
     }

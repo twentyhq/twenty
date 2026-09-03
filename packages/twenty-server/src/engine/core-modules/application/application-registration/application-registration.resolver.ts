@@ -86,13 +86,20 @@ export class ApplicationRegistrationResolver {
     return this.applicationRegistrationService.findPublicByClientId(clientId);
   }
 
-  @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
+  // Returns the same entity as findManyApplicationRegistrations, so it carries
+  // the same workspace scope and permission flag.
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+  )
   @Query(() => ApplicationRegistrationEntity, { nullable: true })
   async findApplicationRegistrationByUniversalIdentifier(
     @Args('universalIdentifier') universalIdentifier: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationEntity | null> {
-    return this.applicationRegistrationService.findOneByUniversalIdentifier(
+    return this.applicationRegistrationService.findOneByUniversalIdentifierForWorkspace(
       universalIdentifier,
+      workspaceId,
     );
   }
 
