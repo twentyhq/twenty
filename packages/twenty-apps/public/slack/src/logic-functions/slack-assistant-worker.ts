@@ -17,7 +17,6 @@ import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-sla
 import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
 import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
 import { buildSlackAssistantAnswerBlocks } from 'src/logic-functions/utils/build-slack-assistant-answer-blocks';
-import { buildSlackAssistantAnswerText } from 'src/logic-functions/utils/build-slack-assistant-answer-text';
 import { buildSlackAssistantMessages } from 'src/logic-functions/utils/build-slack-assistant-messages';
 import { buildSlackAssistantRequestName } from 'src/logic-functions/utils/build-slack-assistant-request-name';
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
@@ -39,7 +38,6 @@ type SlackAssistantRequestCreatedEvent = DatabaseEventPayload<
 export const slackAssistantWorkerHandler = async (
   event: SlackAssistantRequestCreatedEvent,
 ): Promise<object> => {
-  const startedAt = Date.now();
   const record = event.properties.after;
 
   if (record.status !== SLACK_ASSISTANT_REQUEST_STATUS.PENDING) {
@@ -152,14 +150,9 @@ export const slackAssistantWorkerHandler = async (
       });
     }
 
-    const durationMilliseconds = Date.now() - startedAt;
-
     const deliveryResult = await slackPostMessageHandler({
       slackChannelId,
-      messageText: buildSlackAssistantAnswerText({
-        responseText,
-        durationMilliseconds,
-      }),
+      messageText: responseText,
       parentMessageTimestamp,
       messageFormat: 'markdown',
       unfurlLinks: false,
@@ -169,7 +162,6 @@ export const slackAssistantWorkerHandler = async (
           ? undefined
           : buildSlackAssistantAnswerBlocks({
               responseText,
-              durationMilliseconds,
               requestId: record.id,
             }),
     });

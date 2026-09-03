@@ -41,7 +41,7 @@ export class ReconcileCampaignStatsCronJob {
       await this.messageQueueService
         .bulkAdd<ReconcileWorkspaceCampaignStatsJobData>(
           RECONCILE_WORKSPACE_CAMPAIGN_STATS_JOB,
-          workspaceIdsBatch.map((workspaceId) => ({ workspaceId })),
+          workspaceIdsBatch.map((workspaceId) => ({ data: { workspaceId } })),
           { retryLimit: CAMPAIGN_JOB_RETRY_LIMIT },
         )
         .catch((error) => {

@@ -61,11 +61,13 @@ export class ApplicationSyncService {
     manifest,
     applicationRegistrationId,
     dryRun = false,
+    inferDeletionFromMissingEntities = true,
   }: {
     workspaceId: string;
     manifest: Manifest;
     applicationRegistrationId?: string;
     dryRun?: boolean;
+    inferDeletionFromMissingEntities?: boolean;
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
@@ -91,6 +93,7 @@ export class ApplicationSyncService {
             workspaceId,
             ownerFlatApplication,
             dryRun,
+            inferDeletionFromMissingEntities,
           },
         );
     } catch (error) {
@@ -167,6 +170,7 @@ export class ApplicationSyncService {
       yarnLockChecksum: null,
       yarnLockFileId: null,
       availablePackages: {},
+      billing: manifest.application.billing ?? {},
       logicFunctionLayerId: null,
       defaultRoleId: null,
       defaultRole: null,
@@ -272,6 +276,7 @@ export class ApplicationSyncService {
         version: packageJson.version,
         packageJsonChecksum: manifest.application.packageJsonChecksum,
         yarnLockChecksum: manifest.application.yarnLockChecksum,
+        billing: manifest.application.billing ?? {},
         frontComponentSharedDependenciesChecksum,
         frontComponentSharedDependenciesBuiltPath,
         applicationRegistrationId: resolvedRegistrationId,

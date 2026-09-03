@@ -95,4 +95,48 @@ describe('UsageRecorderService', () => {
       expect.objectContaining({ workspaceId: 'ws-1', quantity: 2 }),
     );
   });
+
+  // Available credits are a plain sum over a signed Int64, so a negative amount
+  // hands the workspace credits, and a fractional or out-of-range one is not a
+  // value that column can hold.
+  it.each([
+    ['a negative amount', -1_000_000],
+    ['negative infinity', Number.NEGATIVE_INFINITY],
+    ['positive infinity', Number.POSITIVE_INFINITY],
+    ['NaN', Number.NaN],
+    ['a fractional amount', 1_000.5],
+    ['an amount beyond the safe integer range', Number.MAX_SAFE_INTEGER + 2],
+  ])('records zero credits rather than %s', async (_case, creditsUsedMicro) => {
+    recorder.accumulate('ws-1', { ...API_REQUEST, creditsUsedMicro });
+
+    await recorder.onModuleDestroy();
+
+    expect(dispatchedRows()).toEqual([
+      expect.objectContaining({ workspaceId: 'ws-1', creditsUsedMicro: 0 }),
+    ]);
+  });
+
+  it('keeps the event so the activity stays visible when its credits are refused', async () => {
+    recorder.accumulate('ws-1', { ...API_REQUEST, creditsUsedMicro: -5 });
+
+    await recorder.onModuleDestroy();
+
+    expect(dispatchedRows()).toEqual([
+      expect.objectContaining({
+        operationType: UsageOperationType.API_REQUEST,
+        quantity: 1,
+        creditsUsedMicro: 0,
+      }),
+    ]);
+  });
+
+  it('records a positive integer amount unchanged', async () => {
+    recorder.accumulate('ws-1', { ...API_REQUEST, creditsUsedMicro: 1_234 });
+
+    await recorder.onModuleDestroy();
+
+    expect(dispatchedRows()).toEqual([
+      expect.objectContaining({ creditsUsedMicro: 1_234 }),
+    ]);
+  });
 });

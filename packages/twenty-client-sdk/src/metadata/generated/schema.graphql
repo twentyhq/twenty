@@ -970,6 +970,7 @@ enum UsageOperationType {
   CALL_RECORDING
   EMAIL_SEND
   API_REQUEST
+  SUBSCRIPTION
 }
 
 """
@@ -1776,6 +1777,7 @@ type UsageUserDaily {
 type UsageAnalytics {
   usageByUser: [UsageBreakdownItem!]!
   usageByOperationType: [UsageBreakdownItem!]!
+  usageByApplication: [UsageBreakdownItem!]!
   usageByModel: [UsageBreakdownItem!]!
   timeSeries: [UsageTimeSeries!]!
   periodStart: DateTime!
@@ -2262,6 +2264,7 @@ type MarketplaceAppDetail {
   logoUrl: String
   websiteUrl: String
   aboutDescription: String
+  pricingDescription: String
   termsUrl: String
   emailSupport: String
   issueReportUrl: String
@@ -3210,12 +3213,35 @@ type WorkspaceAiStats {
 type EnqueueJobResult {
   enqueued: Boolean!
   logicFunctionUniversalIdentifier: String!
+  jobId: String!
 }
 
 type EnqueueJobsResult {
   enqueued: Boolean!
   logicFunctionUniversalIdentifier: String!
   enqueuedJobsCount: Int!
+  jobIds: [String!]!
+}
+
+type JobStatus {
+  jobId: String!
+  state: JobState!
+  attemptsMade: Int!
+  failedReason: String
+  enqueuedAt: Float!
+  startedAt: Float
+  finishedAt: Float
+}
+
+"""Job state in the queue"""
+enum JobState {
+  COMPLETED
+  FAILED
+  ACTIVE
+  WAITING
+  DELAYED
+  PRIORITIZED
+  WAITING_CHILDREN
 }
 
 type AppKeyValue {
@@ -3523,6 +3549,7 @@ type Query {
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   minimalMetadata: MinimalMetadata!
   appKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): AppKeyValue
+  getJobs(jobIds: [String!]!): [JobStatus!]!
   appConnections(filter: ListAppConnectionsInput): [AppConnection!]!
   appConnection(id: ID!): AppConnection!
   findWorkspaceAiStats: WorkspaceAiStats!
@@ -3904,7 +3931,7 @@ type Mutation {
   deletePublicDomain(domain: String!): Boolean!
   checkPublicDomainValidRecords(domain: String!): DomainValidRecords
   createDevelopmentApplication(universalIdentifier: String!, name: String!): DevelopmentApplication!
-  syncApplication(manifest: JSON!, dryRun: Boolean): WorkspaceMigration!
+  syncApplication(manifest: JSON!, dryRun: Boolean, inferDeletionFromMissingEntities: Boolean): WorkspaceMigration!
   uploadApplicationFile(file: Upload!, applicationUniversalIdentifier: String!, fileFolder: FileFolder!, filePath: String!): File!
   createApplicationFileUploads(applicationUniversalIdentifier: String!, files: [ApplicationFileUploadRequestInput!]!): CreateApplicationFileUploadsResult!
   completeApplicationFileUploads(applicationUniversalIdentifier: String!, fileIds: [UUID!]!): CompleteApplicationFileUploadsResult!
@@ -5026,15 +5053,22 @@ input SetAppKeyValueInput {
 input EnqueueJobInput {
   logicFunctionUniversalIdentifier: String!
   payload: JSON
+  jobId: String
   retryLimit: Int
   delayMs: Int
 }
 
 input EnqueueJobsInput {
   logicFunctionUniversalIdentifier: String!
-  payloads: [JSON!]!
+  payloads: [JSON!] @deprecated(reason: "Use jobs instead.")
+  jobs: [EnqueueJobItemInput!]
   retryLimit: Int
   delayMs: Int
+}
+
+input EnqueueJobItemInput {
+  payload: JSON
+  jobId: String
 }
 
 input FileAttachmentInput {
