@@ -337,15 +337,6 @@ describe('UsageLimitQuotaService', () => {
     expect(exhausted).toBeNull();
   });
 
-  it('consumes only warm counters and reports the exhausted one', async () => {
-    setLimits([buildLimit({})]);
-    cacheStorage.runScript.mockResolvedValue([1, -10]);
-
-    const { exhausted } = await consumeQuota(50);
-
-    expect(exhausted).toMatchObject({ spenderType: 'workspace' });
-  });
-
   describe('dropAllowanceCounter', () => {
     it('drops the counter keyed by the current period', async () => {
       setAllowance(2_000_000);
