@@ -62,13 +62,14 @@ describe('CreateSsoConnectedAccountService', () => {
       userId: 'user-id',
       handle: 'user@example.com',
       provider: ConnectedAccountProvider.MICROSOFT,
-      scopes: ['user.read'],
+      scopes: ['User.Read'],
     });
 
+    expect(connectedAccountRepository.update).toHaveBeenCalledTimes(1);
     expect(connectedAccountRepository.update).toHaveBeenCalledWith(
       'connected-account-id',
       expect.objectContaining({
-        scopes: [...existingScopes, 'user.read'],
+        scopes: existingScopes,
       }),
     );
   });
