@@ -14,6 +14,7 @@ import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-i
 import { InboxToolCallExecutionService } from 'src/engine/core-modules/inbox/services/inbox-tool-call-execution.service';
 import { InboxTransitionService } from 'src/engine/core-modules/inbox/services/inbox-transition.service';
 import { type InboxItemPayload } from 'src/engine/core-modules/inbox/types/inbox-item-payload.type';
+import { type InboxItemFieldSchema } from 'src/engine/core-modules/inbox/types/inbox-item-resolution.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -127,11 +128,13 @@ export class InboxItemToolCallService {
       (toolCall) => toolCall.status === InboxItemToolCallStatus.PROPOSED,
     );
 
-    this.assertRequiredInputsPresent(proposedToolCalls);
+    this.assertInputsMatchSchema(proposedToolCalls);
 
     for (const toolCall of proposedToolCalls) {
       // Claiming the row first is what keeps two runs of the same plan from
-      // executing a call twice: only the run whose claim lands executes it
+      // executing a call twice. Claims go in plan order, so losing one means
+      // another run is ahead: it owns the rest of the plan and this one stops
+      // rather than running a later call while an earlier one is in progress
       const claim = await this.inboxItemToolCallRepository.update(
         workspaceId,
         {
@@ -146,7 +149,7 @@ export class InboxItemToolCallService {
       );
 
       if ((claim.affected ?? 0) === 0) {
-        continue;
+        break;
       }
 
       const result = await this.inboxToolCallExecutionService.execute({
@@ -223,30 +226,37 @@ export class InboxItemToolCallService {
     });
   }
 
-  // The editor lets a person clear any field; what runs must still satisfy
-  // the schema the producer declared
-  private assertRequiredInputsPresent(toolCalls: InboxItemToolCallEntity[]) {
+  // The editor lets a person clear or retype any field; what runs must still
+  // satisfy the schema the producer declared
+  private assertInputsMatchSchema(toolCalls: InboxItemToolCallEntity[]) {
     for (const toolCall of toolCalls) {
       const input = (toolCall.editedInput ??
         toolCall.proposedInput ??
         {}) as Record<string, unknown>;
 
-      const missingKeys = toolCall.inputSchema
-        .filter((field) => field.isRequired === true)
-        .map((field) => field.key)
-        .filter((key) => !isDefined(input[key]) || input[key] === '');
+      const invalidKeys = toolCall.inputSchema
+        .filter((field) => {
+          const value = input[field.key];
 
-      if (missingKeys.length > 0) {
+          if (!isDefined(value) || value === '') {
+            return field.isRequired === true;
+          }
+
+          return !isValueOfFieldType(field.type, value);
+        })
+        .map((field) => field.key);
+
+      if (invalidKeys.length > 0) {
         throw new InboxException(
-          `Inbox item tool call ${toolCall.id} is missing ${missingKeys.join(', ')}`,
+          `Inbox item tool call ${toolCall.id} has invalid input for ${invalidKeys.join(', ')}`,
           InboxExceptionCode.INVALID_INBOX_TOOL_CALL_INPUT,
         );
       }
     }
   }
 
-  // Compare-and-set on the status read a moment ago, so a run that finished
-  // in between cannot be undone by a late edit or skip
+  // Compare-and-set on the state read a moment ago, so a run that claimed or
+  // finished the call in between cannot be undone by a late edit or skip
   private async updateUnlessChanged(
     workspaceId: string,
     toolCall: InboxItemToolCallEntity,
@@ -254,7 +264,13 @@ export class InboxItemToolCallService {
   ): Promise<void> {
     const result = await this.inboxItemToolCallRepository.update(
       workspaceId,
-      { id: toolCall.id, status: toolCall.status },
+      {
+        id: toolCall.id,
+        status: toolCall.status,
+        ...(toolCall.status === InboxItemToolCallStatus.PROPOSED
+          ? { resolvedAt: IsNull() }
+          : {}),
+      },
       patch,
     );
 
@@ -295,12 +311,17 @@ export class InboxItemToolCallService {
       accessibleQueueIds,
     });
 
+    const isRunning =
+      toolCall.status === InboxItemToolCallStatus.PROPOSED &&
+      isDefined(toolCall.resolvedAt);
+
     if (
+      isRunning ||
       toolCall.status === InboxItemToolCallStatus.EXECUTED ||
       toolCall.status === InboxItemToolCallStatus.FAILED
     ) {
       throw new InboxException(
-        `Inbox item tool call ${inboxItemToolCallId} has already run`,
+        `Inbox item tool call ${inboxItemToolCallId} is running or has run`,
         InboxExceptionCode.INBOX_ITEM_CHANGED,
       );
     }
@@ -308,3 +329,20 @@ export class InboxItemToolCallService {
     return toolCall;
   }
 }
+
+const isValueOfFieldType = (
+  type: InboxItemFieldSchema['type'],
+  value: unknown,
+): boolean => {
+  switch (type) {
+    case 'NUMBER':
+      return typeof value === 'number' && Number.isFinite(value);
+    case 'BOOLEAN':
+      return typeof value === 'boolean';
+    case 'TEXT':
+    case 'LONG_TEXT':
+      return typeof value === 'string';
+    default:
+      return true;
+  }
+};

@@ -137,6 +137,7 @@ export const InboxPlanView = ({ inboxItem }: { inboxItem: InboxItem }) => {
   );
   const [isRunning, setIsRunning] = useState(false);
   const [inFlightEditCount, setInFlightEditCount] = useState(0);
+  const [hasUnsavedEdit, setHasUnsavedEdit] = useState(false);
 
   const selectedToolCall =
     toolCalls.find((toolCall) => toolCall.id === selectedToolCallId) ?? null;
@@ -145,13 +146,17 @@ export const InboxPlanView = ({ inboxItem }: { inboxItem: InboxItem }) => {
     enqueueErrorSnackBar({ message: t`That could not be applied` });
 
   // A blur save or a skip still on the wire must land before the plan runs,
-  // or the run could use the input from before the edit
+  // or the run could use the input from before the edit. One that failed
+  // keeps the run blocked until a later one succeeds, since the editor still
+  // shows what the server never got
   const trackEdit = async (edit: () => Promise<unknown>) => {
     setInFlightEditCount((count) => count + 1);
 
     try {
       await edit();
+      setHasUnsavedEdit(false);
     } catch {
+      setHasUnsavedEdit(true);
       reportFailure();
     } finally {
       setInFlightEditCount((count) => count - 1);
@@ -301,7 +306,10 @@ export const InboxPlanView = ({ inboxItem }: { inboxItem: InboxItem }) => {
             <Button
               accent="blue"
               disabled={
-                toolCalls.length === 0 || isRunning || inFlightEditCount > 0
+                toolCalls.length === 0 ||
+                isRunning ||
+                inFlightEditCount > 0 ||
+                hasUnsavedEdit
               }
               onClick={() => void runAll()}
               size="small"

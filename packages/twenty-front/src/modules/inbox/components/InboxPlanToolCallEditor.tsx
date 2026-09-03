@@ -180,7 +180,7 @@ export const InboxPlanToolCallEditor = ({
   // dropped, so what runs is the same shape the agent proposed
   const toInputValue = (field: InboxItemField, value: string) => {
     if (value === '') {
-      return undefined;
+      return field.type === 'BOOLEAN' && field.isRequired ? false : undefined;
     }
 
     if (field.type === 'NUMBER') {
@@ -240,7 +240,7 @@ export const InboxPlanToolCallEditor = ({
         <TextArea
           key={field.key}
           textAreaId={`inbox-plan-${toolCall.id}-${field.key}`}
-          label={field.label}
+          label={field.isRequired ? `${field.label}*` : field.label}
           minRows={toolCall.toolName === EMAIL_TOOL_NAME ? 8 : 3}
           value={draft[field.key] ?? ''}
           onChange={(value) => setFieldValue(field.key, value)}

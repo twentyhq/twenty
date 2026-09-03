@@ -60,7 +60,7 @@ describe('InboxItemToolCallService', () => {
   };
 
   beforeEach(async () => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
 
     inboxItemService.findVisibleItemOrThrow.mockResolvedValue({
       id: INBOX_ITEM_ID,
@@ -160,6 +160,30 @@ describe('InboxItemToolCallService', () => {
           resolvedByUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
         }),
       );
+      expect(
+        inboxItemToolCallRepository.update.mock.invocationCallOrder[0],
+      ).toBeLessThan(
+        inboxToolCallExecutionService.execute.mock.invocationCallOrder[0],
+      );
+    });
+
+    // Losing a claim means another run is ahead in the plan; the later calls
+    // are its to run, in order
+    it('should stop at a lost claim rather than run the calls after it', async () => {
+      // Prepare
+      const first = buildToolCall({ id: 'first' });
+      const second = buildToolCall({ id: 'second', position: 1 });
+
+      givenToolCalls([first, second], [first, second]);
+      inboxItemToolCallRepository.update.mockResolvedValueOnce({ affected: 0 });
+
+      // Act
+      await service.runAll({ ...actorArgs, inboxItemId: INBOX_ITEM_ID });
+
+      // Assert
+      expect(inboxToolCallExecutionService.execute).not.toHaveBeenCalled();
+      expect(inboxItemToolCallRepository.update).toHaveBeenCalledTimes(1);
+      expect(inboxTransitionService.transition).not.toHaveBeenCalled();
     });
 
     // Two people pressing the button at once must not send the email twice
@@ -283,17 +307,39 @@ describe('InboxItemToolCallService', () => {
 
     it('should refuse to run a call missing a required field', async () => {
       // Prepare
-      givenToolCalls(
-        [
-          buildToolCall({
-            inputSchema: [
-              { key: 'to', label: 'To', type: 'TEXT', isRequired: true },
-            ],
-            editedInput: { subject: 'Hello' },
-          }),
-        ],
-        [],
-      );
+      inboxItemToolCallRepository.find.mockResolvedValueOnce([
+        buildToolCall({
+          inputSchema: [
+            { key: 'to', label: 'To', type: 'TEXT', isRequired: true },
+          ],
+          editedInput: { subject: 'Hello' },
+        }),
+      ]);
+
+      // Act & Assert
+      await expect(
+        service.runAll({ ...actorArgs, inboxItemId: INBOX_ITEM_ID }),
+      ).rejects.toMatchObject({
+        code: InboxExceptionCode.INVALID_INBOX_TOOL_CALL_INPUT,
+      });
+      expect(inboxToolCallExecutionService.execute).not.toHaveBeenCalled();
+    });
+
+    it('should refuse to run a call whose input has the wrong type', async () => {
+      // Prepare
+      inboxItemToolCallRepository.find.mockResolvedValueOnce([
+        buildToolCall({
+          inputSchema: [
+            {
+              key: 'amount',
+              label: 'Amount',
+              type: 'NUMBER',
+              isRequired: true,
+            },
+          ],
+          editedInput: { amount: 'twelve' },
+        }),
+      ]);
 
       // Act & Assert
       await expect(
@@ -320,6 +366,25 @@ describe('InboxItemToolCallService', () => {
   });
 
   describe('setRejected', () => {
+    it('should refuse to skip a step that is running', async () => {
+      // Prepare
+      inboxItemToolCallRepository.findOne.mockResolvedValue(
+        buildToolCall({ resolvedAt: new Date() }),
+      );
+
+      // Act & Assert
+      await expect(
+        service.setRejected({
+          ...actorArgs,
+          inboxItemToolCallId: 'tool-call-id',
+          isRejected: true,
+        }),
+      ).rejects.toMatchObject({
+        code: InboxExceptionCode.INBOX_ITEM_CHANGED,
+      });
+      expect(inboxItemToolCallRepository.update).not.toHaveBeenCalled();
+    });
+
     it('should refuse to skip a step that already ran', async () => {
       // Prepare
       inboxItemToolCallRepository.findOne.mockResolvedValue(
@@ -356,7 +421,10 @@ describe('InboxItemToolCallService', () => {
       });
       expect(inboxItemToolCallRepository.update).toHaveBeenCalledWith(
         WORKSPACE_ID,
-        { id: 'tool-call-id', status: InboxItemToolCallStatus.PROPOSED },
+        expect.objectContaining({
+          id: 'tool-call-id',
+          status: InboxItemToolCallStatus.PROPOSED,
+        }),
         expect.anything(),
       );
     });
