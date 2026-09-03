@@ -13,6 +13,7 @@ import {
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS } from 'src/logic-functions/constants/slack-assistant-worker-timeout-seconds';
 import { SLACK_MARKDOWN_BLOCK_MAX_LENGTH } from 'src/logic-functions/constants/slack-markdown-block-max-length';
+import { findWorkspaceMemberNameById } from 'src/logic-functions/data/find-workspace-member-name-by-id';
 import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-slack-assistant-request';
 import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
 import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
@@ -112,11 +113,18 @@ export const slackAssistantWorkerHandler = async (
       isDirectMessage,
     });
 
+    let runAsWorkspaceMemberName: string | undefined = undefined;
+
     if (isNonEmptyString(runAsWorkspaceMemberId)) {
-      await updateSlackAssistantRequest(client, {
-        id: record.id,
-        workspaceMemberId: runAsWorkspaceMemberId,
-      }).catch(() => undefined);
+      const [memberName] = await Promise.all([
+        findWorkspaceMemberNameById(client, runAsWorkspaceMemberId),
+        updateSlackAssistantRequest(client, {
+          id: record.id,
+          workspaceMemberId: runAsWorkspaceMemberId,
+        }).catch(() => undefined),
+      ]);
+
+      runAsWorkspaceMemberName = memberName;
     }
 
     const agentResult = await runSlackAssistantAgentWithStatus({
@@ -127,6 +135,7 @@ export const slackAssistantWorkerHandler = async (
         requesterName,
         conversationMessages,
         runAsWorkspaceMemberId,
+        runAsWorkspaceMemberName,
         timeoutSeconds: SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS,
         workspaceBaseUrl,
       }),
