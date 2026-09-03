@@ -59,13 +59,16 @@ export const importCallRecordingArtifacts = async ({
   // one performs the provider work for this scope. The lease clock is wall-clock,
   // not request.requestedAt, so a retry of the same delivery still measures real
   // elapsed time and can reclaim a lease left behind by a crash.
-  const claimedImport = await claimCallRecordingArtifactsImport(client, {
-    callRecordingId: initialCallRecording.id,
-    scope,
-    now: new Date(),
-  });
+  const hasClaimedArtifactImport = await claimCallRecordingArtifactsImport(
+    client,
+    {
+      callRecordingId: initialCallRecording.id,
+      scope,
+      now: new Date(),
+    },
+  );
 
-  if (!claimedImport) {
+  if (!hasClaimedArtifactImport) {
     return {
       status: 'skipped',
       callRecordingId: initialCallRecording.id,
@@ -89,28 +92,28 @@ export const importCallRecordingArtifacts = async ({
       };
     }
 
-    const bot = await fetchRecallBotWhenRecordingIdMissing(callRecording);
-    const syncResult = await syncCallRecording({
+    const recallBot = await fetchRecallBotWhenRecordingIdMissing(callRecording);
+    const callRecordingSyncResult = await syncCallRecording({
       client,
       callRecording,
-      bot,
+      bot: recallBot,
       treatRecordingAsDone: true,
       requestedAt: request.requestedAt,
       artifactScope: scope,
     });
 
     // A returned result counts as a successful run, so only a throw redelivers.
-    if (syncResult.hasRetryableArtifactFailure) {
+    if (callRecordingSyncResult.hasRetryableArtifactFailure) {
       throw new Error(
         `Recall ${scope} artifacts for call recording ${callRecording.id} could not be imported`,
       );
     }
 
-    const completedImport = await settleCallRecordingImport(client, {
+    const hasCompletedImport = await settleCallRecordingImport(client, {
       callRecordingId: callRecording.id,
     });
 
-    if (!syncResult.updated && !completedImport) {
+    if (!callRecordingSyncResult.updated && !hasCompletedImport) {
       return {
         status: 'skipped',
         callRecordingId: callRecording.id,

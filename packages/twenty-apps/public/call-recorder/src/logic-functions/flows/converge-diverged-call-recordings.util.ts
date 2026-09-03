@@ -308,18 +308,21 @@ const convergeCallRecording = async ({
     return;
   }
 
-  let updated = false;
-  let requestedTranscript = false;
+  let hasUpdatedCallRecording = false;
+  let hasRequestedTranscript = false;
 
-  for (const scope of ['transcript', 'media'] as const) {
-    const claimTime = new Date();
-    const claimedImport = await claimCallRecordingArtifactsImport(client, {
-      callRecordingId: candidate.id,
-      scope,
-      now: claimTime,
-    });
+  for (const artifactImportScope of ['transcript', 'media'] as const) {
+    const artifactImportClaimedAt = new Date();
+    const hasClaimedArtifactImport = await claimCallRecordingArtifactsImport(
+      client,
+      {
+        callRecordingId: candidate.id,
+        scope: artifactImportScope,
+        now: artifactImportClaimedAt,
+      },
+    );
 
-    if (!claimedImport) {
+    if (!hasClaimedArtifactImport) {
       continue;
     }
 
@@ -333,35 +336,36 @@ const convergeCallRecording = async ({
         continue;
       }
 
-      const syncResult = await syncCallRecording({
+      const callRecordingSyncResult = await syncCallRecording({
         client,
         callRecording: freshCallRecording,
         bot: botResult.bot,
         treatRecordingAsDone: false,
-        requestedAt: claimTime.toISOString(),
-        artifactScope: scope,
+        requestedAt: artifactImportClaimedAt.toISOString(),
+        artifactScope: artifactImportScope,
       });
 
-      updated = updated || syncResult.updated;
-      requestedTranscript =
-        requestedTranscript || syncResult.requestedTranscript;
+      hasUpdatedCallRecording =
+        hasUpdatedCallRecording || callRecordingSyncResult.updated;
+      hasRequestedTranscript =
+        hasRequestedTranscript || callRecordingSyncResult.requestedTranscript;
     } finally {
       await releaseCallRecordingArtifactsImportClaim(client, {
         callRecordingId: candidate.id,
-        scope,
+        scope: artifactImportScope,
       });
     }
   }
 
-  const completedImport = await settleCallRecordingImport(client, {
+  const hasCompletedImport = await settleCallRecordingImport(client, {
     callRecordingId: candidate.id,
   });
 
-  if (updated || completedImport) {
+  if (hasUpdatedCallRecording || hasCompletedImport) {
     result.updatedCallRecordingIds.push(candidate.id);
   }
 
-  if (requestedTranscript) {
+  if (hasRequestedTranscript) {
     result.requestedTranscriptCallRecordingIds.push(candidate.id);
   }
 };

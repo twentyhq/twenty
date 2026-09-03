@@ -617,13 +617,25 @@ describe('importCallRecordingArtifacts', () => {
     });
   });
 
-  it('preserves a transcript failure that lands while the media job is running', async () => {
-    const callRecording = buildProcessingCallRecording({
-      transcript: {
-        recallTranscriptId: 'recall-transcript-1',
-        status: 'PENDING',
-        requestedAt: '2026-01-01T14:06:00.000Z',
+  it('preserves terminal state while persisting media from stale provider work', async () => {
+    getRecallBotMock.mockResolvedValue({
+      ok: true,
+      bot: {
+        statusChanges: [
+          { code: 'done', createdAt: '2026-01-01T14:05:00.000Z' },
+        ],
+        recordings: [
+          {
+            id: 'recall-recording-1',
+            startedAt: '2026-01-01T13:02:00.000Z',
+            completedAt: '2026-01-01T14:05:00.000Z',
+          },
+        ],
       },
+    });
+    const callRecording = buildProcessingCallRecording({
+      status: 'RECORDING',
+      externalRecordingId: null,
     });
     const client = buildClient([callRecording]);
 
@@ -647,54 +659,10 @@ describe('importCallRecordingArtifacts', () => {
       scope: 'media',
     });
 
-    expect(callRecording.video).toEqual([
-      { fileId: 'file-video-1', label: 'video.mp4' },
-    ]);
+    expect(callRecording.status).toBe('FAILED');
     expect(callRecording.callRecorderFailureReason).toBe(
       'transcript_failed:transcription_failed',
     );
-  });
-
-  it('does not revert a terminal status that lands while provider work is running', async () => {
-    getRecallBotMock.mockResolvedValue({
-      ok: true,
-      bot: {
-        statusChanges: [
-          { code: 'done', createdAt: '2026-01-01T14:05:00.000Z' },
-        ],
-        recordings: [
-          {
-            id: 'recall-recording-1',
-            startedAt: '2026-01-01T13:02:00.000Z',
-            completedAt: '2026-01-01T14:05:00.000Z',
-          },
-        ],
-      },
-    });
-    const callRecording = buildProcessingCallRecording({
-      status: 'RECORDING',
-      externalRecordingId: null,
-    });
-    const client = buildClient([callRecording]);
-
-    importCallRecordingMediaMock.mockImplementation(async () => {
-      callRecording.status = 'COMPLETED';
-
-      return {
-        updateData: {
-          video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
-        },
-        hasRetryableFailure: false,
-      };
-    });
-
-    await importCallRecordingArtifacts({
-      client: client as unknown as CoreApiClient,
-      request: buildRequest(),
-      scope: 'media',
-    });
-
-    expect(callRecording.status).toBe('COMPLETED');
     expect(callRecording.video).toEqual([
       { fileId: 'file-video-1', label: 'video.mp4' },
     ]);

@@ -133,14 +133,14 @@ export const syncCallRecording = async ({
       ? {}
       : { callRecorderFailureReason }),
   };
-  let updated = false;
+  let hasUpdatedCallRecording = false;
 
   if (Object.keys(callRecordingProgressUpdate).length > 0) {
     await updateCallRecording(client, {
       id: callRecording.id,
       data: callRecordingProgressUpdate,
     });
-    updated = true;
+    hasUpdatedCallRecording = true;
   }
 
   if (Object.keys(callRecordingStateUpdate).length > 0) {
@@ -152,10 +152,15 @@ export const syncCallRecording = async ({
       },
     );
 
-    updated = updated || updatedCallRecordingState;
+    hasUpdatedCallRecording =
+      hasUpdatedCallRecording || updatedCallRecordingState;
   }
 
-  return { updated, requestedTranscript, hasRetryableArtifactFailure };
+  return {
+    updated: hasUpdatedCallRecording,
+    requestedTranscript,
+    hasRetryableArtifactFailure,
+  };
 };
 
 const buildSyncStateFieldUpdates = ({

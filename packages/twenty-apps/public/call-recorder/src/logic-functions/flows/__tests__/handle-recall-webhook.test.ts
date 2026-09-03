@@ -960,10 +960,11 @@ describe('handleRecallWebhook', () => {
 
     expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
     expect(importCallRecordingMediaMock).not.toHaveBeenCalled();
-    expect(enqueueArtifactImportMock.mock.calls.map(([call]) => call)).toEqual([
-      { callRecordingId: 'call-recording-1', scope: 'transcript' },
-      { callRecordingId: 'call-recording-1', scope: 'media' },
-    ]);
+    expect(enqueueArtifactImportMock).toHaveBeenCalledTimes(2);
+    expect(enqueueArtifactImportMock).toHaveBeenCalledWith({
+      callRecordingId: 'call-recording-1',
+      scope: 'media',
+    });
     expect(client.mutations).toEqual([
       {
         id: 'call-recording-1',

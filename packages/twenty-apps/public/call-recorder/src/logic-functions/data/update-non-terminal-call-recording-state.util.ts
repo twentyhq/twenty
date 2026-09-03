@@ -15,7 +15,7 @@ export const updateNonTerminalCallRecordingState = async (
     data,
   }: { callRecordingId: string; data: CallRecordingStateUpdate },
 ): Promise<boolean> => {
-  const result = await client.mutation({
+  const updateResult = await client.mutation({
     updateCallRecordings: {
       __args: {
         filter: {
@@ -28,5 +28,5 @@ export const updateNonTerminalCallRecordingState = async (
     },
   });
 
-  return (result.updateCallRecordings ?? []).length > 0;
+  return (updateResult.updateCallRecordings ?? []).length > 0;
 };

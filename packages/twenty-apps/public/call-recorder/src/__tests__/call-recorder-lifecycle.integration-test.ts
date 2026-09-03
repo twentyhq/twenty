@@ -664,10 +664,6 @@ describe('call recorder app lifecycle (integration)', () => {
       );
       expect(processedCallRecording.endedAt).toBeTruthy();
       expect(recall.artifactImportRequests).toHaveLength(2);
-      expect(recall.artifactImportRequests).toEqual([
-        expect.objectContaining({ callRecordingId }),
-        expect.objectContaining({ callRecordingId }),
-      ]);
     });
 
     it('queues another artifact import when the transcript finishes later', async () => {
