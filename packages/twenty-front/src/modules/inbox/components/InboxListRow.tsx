@@ -40,8 +40,8 @@ const StyledRow = styled.div<{ isSelected: boolean }>`
     isSelected ? themeCssVariables.accent.quaternary : 'transparent'};
   border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
+  gap: ${themeCssVariables.spacing[2]};
   padding: ${themeCssVariables.spacing[2]} 6px;
-  position: relative;
 `;
 
 // The controls are siblings of this rather than descendants, so a nested
@@ -130,14 +130,12 @@ const StyledLastEventAt = styled.div`
   margin-left: auto;
 `;
 
-// Sits over the title line's trailing end, in the room the time leaves when
-// it hides, so the control is a sibling of the open target rather than a
-// button inside one
+// Beside the open target rather than inside it, so the control is never a
+// button within a button; it takes the room the time leaves when it hides
 const StyledButtonsSlot = styled.div`
+  align-self: flex-start;
   display: none;
-  position: absolute;
-  right: 6px;
-  top: ${themeCssVariables.spacing[2]};
+  flex-shrink: 0;
 `;
 
 type InboxListRowProps = {

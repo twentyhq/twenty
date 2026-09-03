@@ -172,30 +172,16 @@ export class InboxItemToolCallService {
     // Read back rather than trusting what was loaded before the loop: a skip,
     // an earlier failure or another run may have landed while the calls were
     // executing
+    const actorArgs = {
+      inboxItemId,
+      workspaceId,
+      actorUserWorkspaceId,
+      accessibleQueueIds,
+    };
+
     const [toolCallsAfterRun, inboxItemAfterRun] = await Promise.all([
       this.findToolCallsInOrder(workspaceId, inboxItemId),
-      this.inboxItemService
-        .findVisibleItemOrThrow({
-          inboxItemId,
-          workspaceId,
-          actorUserWorkspaceId,
-          accessibleQueueIds,
-        })
-        .catch((error: unknown) => {
-          // Handed to someone else while the calls ran: they did run, so the
-          // caller hears that the item moved on rather than that it is gone
-          if (
-            error instanceof InboxException &&
-            error.code === InboxExceptionCode.INBOX_ITEM_NOT_FOUND
-          ) {
-            throw new InboxException(
-              `Inbox item ${inboxItemId} left the actor's view while its calls ran`,
-              InboxExceptionCode.INBOX_ITEM_CHANGED,
-            );
-          }
-
-          throw error;
-        }),
+      this.findItemAfterRunOrThrow(actorArgs),
     ]);
 
     const hasFailure = toolCallsAfterRun.some(
@@ -239,12 +225,7 @@ export class InboxItemToolCallService {
         error instanceof InboxException &&
         error.code === InboxExceptionCode.INBOX_ITEM_CHANGED
       ) {
-        return this.inboxItemService.findVisibleItemOrThrow({
-          inboxItemId,
-          workspaceId,
-          actorUserWorkspaceId,
-          accessibleQueueIds,
-        });
+        return this.findItemAfterRunOrThrow(actorArgs);
       }
 
       throw error;
@@ -313,6 +294,29 @@ export class InboxItemToolCallService {
         error: result.status === 'FAILED' ? result.error : null,
       },
     );
+  }
+
+  // Read once the calls have run. Handed to someone else in the meantime, the
+  // item has moved on rather than gone: the calls did run, and the client
+  // already knows to reload on a changed item
+  private async findItemAfterRunOrThrow(
+    args: ToolCallActorArgs & { inboxItemId: string },
+  ) {
+    try {
+      return await this.inboxItemService.findVisibleItemOrThrow(args);
+    } catch (error) {
+      if (
+        error instanceof InboxException &&
+        error.code === InboxExceptionCode.INBOX_ITEM_NOT_FOUND
+      ) {
+        throw new InboxException(
+          `Inbox item ${args.inboxItemId} left the actor's view while its calls ran`,
+          InboxExceptionCode.INBOX_ITEM_CHANGED,
+        );
+      }
+
+      throw error;
+    }
   }
 
   private findToolCallsInOrder(
