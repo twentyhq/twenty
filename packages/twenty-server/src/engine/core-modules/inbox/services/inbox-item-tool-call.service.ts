@@ -173,12 +173,20 @@ export class InboxItemToolCallService {
       );
     }
 
-    // Read back rather than trusting the rows from before the loop: a skip,
-    // an earlier failure or another run may have landed in the meantime
-    const toolCallsAfterRun = await this.findToolCallsInOrder(
-      workspaceId,
-      inboxItemId,
-    );
+    // Read back rather than trusting what was loaded before the loop: a skip,
+    // an earlier failure, another run or a new event on the item may have
+    // landed while the calls were executing. The version guard belongs to the
+    // read that started the run, not to the clear that ends it, or a folded
+    // event would fail the clear after the calls have already run
+    const [toolCallsAfterRun, inboxItemAfterRun] = await Promise.all([
+      this.findToolCallsInOrder(workspaceId, inboxItemId),
+      this.inboxItemService.findVisibleItemOrThrow({
+        inboxItemId,
+        workspaceId,
+        actorUserWorkspaceId,
+        accessibleQueueIds,
+      }),
+    ]);
 
     const hasFailure = toolCallsAfterRun.some(
       (toolCall) => toolCall.status === InboxItemToolCallStatus.FAILED,
@@ -188,12 +196,7 @@ export class InboxItemToolCallService {
     );
 
     if (hasFailure || hasCallStillProposed) {
-      return this.inboxItemService.findVisibleItemOrThrow({
-        inboxItemId,
-        workspaceId,
-        actorUserWorkspaceId,
-        accessibleQueueIds,
-      });
+      return inboxItemAfterRun;
     }
 
     const wasAnyRejected = toolCallsAfterRun.some(
@@ -205,8 +208,7 @@ export class InboxItemToolCallService {
       workspaceId,
       actorUserWorkspaceId,
       accessibleQueueIds,
-      expectedVersion,
-      loadedInboxItem: inboxItem,
+      loadedInboxItem: inboxItemAfterRun,
       transition: {
         kind: 'CLEAR',
         outcome: wasAnyRejected

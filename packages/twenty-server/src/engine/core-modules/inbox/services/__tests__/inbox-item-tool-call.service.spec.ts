@@ -130,10 +130,41 @@ describe('InboxItemToolCallService', () => {
       expect(inboxTransitionService.transition).toHaveBeenCalledWith(
         expect.objectContaining({
           transition: { kind: 'CLEAR', outcome: 'DONE' },
-          expectedVersion: 3,
         }),
       );
       expect(inboxItem).toMatchObject({ outcome: 'DONE' });
+    });
+
+    // An event folded into the plan while its calls were running bumps the
+    // version; the clear that follows must not fail on it
+    it('should clear the item on its version after the run, not before', async () => {
+      // Prepare
+      const first = buildToolCall({ id: 'first' });
+
+      givenToolCalls(
+        [first],
+        [{ ...first, status: InboxItemToolCallStatus.EXECUTED }],
+      );
+      inboxItemService.findVisibleItemOrThrow
+        .mockResolvedValueOnce({ id: INBOX_ITEM_ID, version: 3 })
+        .mockResolvedValueOnce({ id: INBOX_ITEM_ID, version: 4 });
+
+      // Act
+      await service.runAll({
+        ...actorArgs,
+        inboxItemId: INBOX_ITEM_ID,
+        expectedVersion: 3,
+      });
+
+      // Assert
+      expect(inboxTransitionService.transition).toHaveBeenCalledWith(
+        expect.objectContaining({
+          loadedInboxItem: { id: INBOX_ITEM_ID, version: 4 },
+        }),
+      );
+      expect(
+        inboxTransitionService.transition.mock.calls[0][0],
+      ).not.toHaveProperty('expectedVersion');
     });
 
     it('should claim each call before running it', async () => {
