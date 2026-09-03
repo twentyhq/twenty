@@ -10,11 +10,9 @@ import {
   InboxExceptionCode,
 } from 'src/engine/core-modules/inbox/inbox.exception';
 import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
-import {
-  InboxItemToolCallService,
-  TOOL_CALL_CLAIM_TIMEOUT_MS,
-} from 'src/engine/core-modules/inbox/services/inbox-item-tool-call.service';
+import { InboxItemToolCallService } from 'src/engine/core-modules/inbox/services/inbox-item-tool-call.service';
 import { InboxToolCallExecutionService } from 'src/engine/core-modules/inbox/services/inbox-tool-call-execution.service';
+import { TOOL_CALL_CLAIM_TIMEOUT_MS } from 'src/engine/core-modules/inbox/utils/inbox-tool-call-claim.util';
 import { InboxTransitionService } from 'src/engine/core-modules/inbox/services/inbox-transition.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 

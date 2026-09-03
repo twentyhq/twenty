@@ -1,14 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull } from 'typeorm';
+import { type DataSource, type EntityManager, IsNull } from 'typeorm';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
-import { InboxItemToolCallStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-tool-call-status.enum';
 import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import {
   InboxException,
@@ -21,6 +21,7 @@ import {
   type InboxSubject,
   type RouteInboxItemArgs,
 } from 'src/engine/core-modules/inbox/types/route-inbox-item.type';
+import { buildClaimableToolCallPredicate } from 'src/engine/core-modules/inbox/utils/inbox-tool-call-claim.util';
 import { isUniqueViolation } from 'src/engine/core-modules/inbox/utils/is-unique-violation.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -32,6 +33,8 @@ export class InboxRouterService {
   private readonly logger = new Logger(InboxRouterService.name);
 
   constructor(
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     @InjectWorkspaceScopedRepository(InboxItemEntity)
     private readonly inboxItemRepository: WorkspaceScopedRepository<InboxItemEntity>,
     @InjectWorkspaceScopedRepository(InboxItemToolCallEntity)
@@ -279,9 +282,11 @@ export class InboxRouterService {
     });
   }
 
-  // A new plan for the same slot replaces what was still proposed and leaves
-  // what already ran or was skipped, so the item keeps its history and the
-  // person is not asked twice about a call that is gone.
+  // A new plan for the same slot replaces what was still proposed and nobody
+  // holds, and leaves what already ran, was skipped, or is running right now,
+  // so the item keeps its history and a call in flight finishes on its row.
+  // The item is locked for the swap so two plans folding at once take turns
+  // instead of both surviving.
   private async replaceProposedToolCalls({
     workspaceId,
     inboxItemId,
@@ -291,34 +296,47 @@ export class InboxRouterService {
     inboxItemId: string;
     toolCalls: InboxItemToolCallDraft[];
   }): Promise<void> {
-    await this.inboxItemToolCallRepository.delete(workspaceId, {
-      inboxItemId,
-      status: InboxItemToolCallStatus.PROPOSED,
-    });
+    await this.coreDataSource.transaction(async (manager) => {
+      await this.inboxItemRepository.withManager(manager).findOne(workspaceId, {
+        where: { id: inboxItemId },
+        lock: { mode: 'pessimistic_write' },
+      });
 
-    const settledToolCalls = await this.inboxItemToolCallRepository.find(
-      workspaceId,
-      { where: { inboxItemId }, select: { position: true } },
-    );
-    const firstPosition = settledToolCalls.reduce(
-      (max, toolCall) => Math.max(max, toolCall.position + 1),
-      0,
-    );
+      const toolCallRepository =
+        this.inboxItemToolCallRepository.withManager(manager);
 
-    await this.insertToolCalls({
-      workspaceId,
-      inboxItemId,
-      toolCalls,
-      firstPosition,
+      await toolCallRepository.delete(workspaceId, {
+        inboxItemId,
+        ...buildClaimableToolCallPredicate(),
+      });
+
+      const keptToolCalls = await toolCallRepository.find(workspaceId, {
+        where: { inboxItemId },
+        select: { position: true },
+      });
+      const firstPosition = keptToolCalls.reduce(
+        (max, toolCall) => Math.max(max, toolCall.position + 1),
+        0,
+      );
+
+      await this.insertToolCalls({
+        manager,
+        workspaceId,
+        inboxItemId,
+        toolCalls,
+        firstPosition,
+      });
     });
   }
 
   private async insertToolCalls({
+    manager,
     workspaceId,
     inboxItemId,
     toolCalls,
     firstPosition,
   }: {
+    manager: EntityManager;
     workspaceId: string;
     inboxItemId: string;
     toolCalls: InboxItemToolCallDraft[];
@@ -328,7 +346,7 @@ export class InboxRouterService {
       return;
     }
 
-    await this.inboxItemToolCallRepository.insert(
+    await this.inboxItemToolCallRepository.withManager(manager).insert(
       workspaceId,
       toolCalls.map((toolCall, index) => ({
         inboxItemId,
@@ -354,36 +372,40 @@ export class InboxRouterService {
     address: InboxItemAddress;
     slotKey: string | null;
   }): Promise<InboxItemEntity> {
-    const inboxItem = await this.inboxItemRepository.insertAndReturnOne(
-      args.workspaceId,
-      {
-        inboxItemTypeId: inboxItemType.id,
-        priority: args.priority ?? inboxItemType.defaultPriority,
-        title: args.title ?? inboxItemType.label,
-        context: args.context ?? {},
-        queueId: address.kind === 'queue' ? address.queueId : null,
-        assigneeUserWorkspaceId:
-          address.kind === 'person' ? address.assigneeUserWorkspaceId : null,
-        slotKey,
-        threadId:
-          args.subject?.kind === 'thread' ? args.subject.threadId : null,
-        subjectObjectMetadataId:
-          args.subject?.kind === 'record'
-            ? args.subject.objectMetadataId
-            : null,
-        subjectRecordId:
-          args.subject?.kind === 'record' ? args.subject.recordId : null,
-      },
-    );
+    // The item and its calls land together: a plan that lost its rows on the
+    // way in would read as nothing to do and could be marked done as such
+    return this.coreDataSource.transaction(async (manager) => {
+      const inboxItem = await this.inboxItemRepository
+        .withManager(manager)
+        .insertAndReturnOne(args.workspaceId, {
+          inboxItemTypeId: inboxItemType.id,
+          priority: args.priority ?? inboxItemType.defaultPriority,
+          title: args.title ?? inboxItemType.label,
+          context: args.context ?? {},
+          queueId: address.kind === 'queue' ? address.queueId : null,
+          assigneeUserWorkspaceId:
+            address.kind === 'person' ? address.assigneeUserWorkspaceId : null,
+          slotKey,
+          threadId:
+            args.subject?.kind === 'thread' ? args.subject.threadId : null,
+          subjectObjectMetadataId:
+            args.subject?.kind === 'record'
+              ? args.subject.objectMetadataId
+              : null,
+          subjectRecordId:
+            args.subject?.kind === 'record' ? args.subject.recordId : null,
+        });
 
-    await this.insertToolCalls({
-      workspaceId: args.workspaceId,
-      inboxItemId: inboxItem.id,
-      toolCalls: args.toolCalls ?? [],
-      firstPosition: 0,
+      await this.insertToolCalls({
+        manager,
+        workspaceId: args.workspaceId,
+        inboxItemId: inboxItem.id,
+        toolCalls: args.toolCalls ?? [],
+        firstPosition: 0,
+      });
+
+      return inboxItem;
     });
-
-    return inboxItem;
   }
 
   // A rename is not something that happened to the subject, so it leaves

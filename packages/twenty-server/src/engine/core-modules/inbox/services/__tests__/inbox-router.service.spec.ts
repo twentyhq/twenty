@@ -2,11 +2,11 @@ import { Logger } from '@nestjs/common';
 
 import { IsNull, QueryFailedError } from 'typeorm';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { getDataSourceToken } from '@nestjs/typeorm';
 
 import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
-import { InboxItemToolCallStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-tool-call-status.enum';
 import { InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item-outcome.enum';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { InboxExceptionCode } from 'src/engine/core-modules/inbox/inbox.exception';
@@ -86,12 +86,20 @@ describe('InboxRouterService', () => {
     findOneBy: jest.fn(),
     insertAndReturnOne: jest.fn(),
     update: jest.fn(),
+    withManager: jest.fn(),
   };
 
   const inboxItemToolCallRepository = {
     insert: jest.fn(),
     delete: jest.fn(),
     find: jest.fn(),
+    withManager: jest.fn(),
+  };
+
+  // Transactions run their body against the same mocks, so a test reads the
+  // writes back the same way whether or not they were wrapped
+  const coreDataSource = {
+    transaction: jest.fn((run: (manager: unknown) => unknown) => run({})),
   };
 
   const inboxItemTypeService = {
@@ -129,6 +137,10 @@ describe('InboxRouterService', () => {
     inboxItemRepository.findOneBy.mockResolvedValue(null);
     inboxItemRepository.update.mockResolvedValue({ affected: 1 });
     inboxItemToolCallRepository.find.mockResolvedValue([]);
+    inboxItemRepository.withManager.mockReturnValue(inboxItemRepository);
+    inboxItemToolCallRepository.withManager.mockReturnValue(
+      inboxItemToolCallRepository,
+    );
     inboxItemRepository.insertAndReturnOne.mockImplementation(
       (_workspaceId, inboxItem) =>
         Promise.resolve({ id: INSERTED_ITEM_ID, ...inboxItem }),
@@ -144,6 +156,10 @@ describe('InboxRouterService', () => {
         {
           provide: getWorkspaceScopedRepositoryToken(InboxItemToolCallEntity),
           useValue: inboxItemToolCallRepository,
+        },
+        {
+          provide: getDataSourceToken(),
+          useValue: coreDataSource,
         },
         {
           provide: InboxItemTypeService,
@@ -540,8 +556,9 @@ describe('InboxRouterService', () => {
       );
     });
 
-    // What already ran or was skipped is history the new plan cannot rewrite
-    it('should replace only the calls still proposed when folding a new plan in', async () => {
+    // What already ran, was skipped, or is running right now is not the new
+    // plan's to rewrite
+    it('should replace only the unclaimed proposed calls when folding a new plan in', async () => {
       // Prepare
       inboxItemRepository.findOne.mockResolvedValue(buildInboxItem());
       inboxItemToolCallRepository.find.mockResolvedValue([
@@ -560,12 +577,16 @@ describe('InboxRouterService', () => {
       });
 
       // Assert
+      expect(inboxItemRepository.findOne).toHaveBeenLastCalledWith(
+        WORKSPACE_ID,
+        expect.objectContaining({ lock: { mode: 'pessimistic_write' } }),
+      );
       expect(inboxItemToolCallRepository.delete).toHaveBeenCalledWith(
         WORKSPACE_ID,
-        {
+        expect.objectContaining({
           inboxItemId: EXISTING_ITEM_ID,
-          status: InboxItemToolCallStatus.PROPOSED,
-        },
+          status: 'PROPOSED',
+        }),
       );
       expect(inboxItemToolCallRepository.insert).toHaveBeenCalledWith(
         WORKSPACE_ID,

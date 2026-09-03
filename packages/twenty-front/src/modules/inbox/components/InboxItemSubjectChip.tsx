@@ -13,14 +13,28 @@ import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSide
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type InboxItem } from '~/generated/graphql';
 
-const StyledChip = styled.button<{ isClickable: boolean }>`
+const StyledChipBadge = styled.span`
+  align-items: center;
+  align-self: flex-start;
+  background: ${themeCssVariables.background.tertiary};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.primary};
+  display: inline-flex;
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[1]};
+  max-width: 100%;
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+`;
+
+const StyledChipButton = styled.button`
   align-items: center;
   align-self: flex-start;
   background: ${themeCssVariables.background.tertiary};
   border: none;
   border-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.primary};
-  cursor: ${({ isClickable }) => (isClickable ? 'pointer' : 'default')};
+  cursor: pointer;
   display: inline-flex;
   font-family: inherit;
   font-size: ${themeCssVariables.font.size.sm};
@@ -30,10 +44,7 @@ const StyledChip = styled.button<{ isClickable: boolean }>`
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 
   &:hover {
-    background: ${({ isClickable }) =>
-      isClickable
-        ? themeCssVariables.background.quaternary
-        : themeCssVariables.background.tertiary};
+    background: ${themeCssVariables.background.quaternary};
   }
 `;
 
@@ -129,16 +140,19 @@ export const InboxItemSubjectChip = ({
   }
 
   const { Icon, label, onClick } = chip;
-
-  return (
-    <StyledChip
-      type="button"
-      isClickable={isDefined(onClick)}
-      onClick={onClick}
-      disabled={!isDefined(onClick)}
-    >
+  const content = (
+    <>
       <Icon size={theme.icon.size.sm} />
       <StyledLabel>{label}</StyledLabel>
-    </StyledChip>
+    </>
+  );
+
+  // A source with nothing to open behind it is a label, not a control
+  return isDefined(onClick) ? (
+    <StyledChipButton type="button" onClick={onClick}>
+      {content}
+    </StyledChipButton>
+  ) : (
+    <StyledChipBadge>{content}</StyledChipBadge>
   );
 };

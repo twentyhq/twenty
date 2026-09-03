@@ -17,6 +17,12 @@ export const InboxItemToolCallDraftZodSchema = z.object({
     .describe(
       'The input the call would run with. The person can edit every field before it runs.',
     ),
+  requiredInputKeys: z
+    .array(z.string())
+    .describe(
+      'The input keys the tool cannot run without. The person is not allowed to clear these, and one you left out of the input is asked for.',
+    )
+    .optional(),
 });
 
 export const CreateInboxItemToolInputZodSchema = z.object({

@@ -18,11 +18,11 @@ describe('findInvalidInputKeys', () => {
     ).toEqual([]);
   });
 
-  it('flags a missing or empty required field', () => {
+  it('flags a missing or blank required field', () => {
     expect(
       findInvalidInputKeys({
         inputSchema,
-        proposedInput: { title: '' },
+        proposedInput: { title: '   ' },
         editedInput: null,
       }),
     ).toEqual(['title']);

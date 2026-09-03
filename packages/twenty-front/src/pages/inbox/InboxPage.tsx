@@ -79,8 +79,10 @@ const StyledErrorState = styled.div`
 
 // Raises the split view flag for as long as the page is mounted, so the drawer
 // and the side panel can make room for each other while it is up. A panel
-// already open on the way in pushes the drawer aside the same way, and leaving
-// the page hands the drawer back.
+// already open on the way in pushes the drawer aside the same way; without
+// one, a drawer still owed from an earlier visit is handed back now, so a
+// memory left behind by a closed tab cannot fire on a later, unrelated panel.
+// Leaving the page hands the drawer back too.
 const InboxSplitViewEffect = () => {
   const store = useStore();
   const setIsInboxSplitViewOpen = useSetAtomState(isInboxSplitViewOpenState);
@@ -90,6 +92,8 @@ const InboxSplitViewEffect = () => {
 
     if (store.get(isSidePanelOpenedState.atom)) {
       collapseNavigationDrawerForInboxPanel(store);
+    } else {
+      restoreNavigationDrawerAfterInboxPanel(store);
     }
 
     return () => {

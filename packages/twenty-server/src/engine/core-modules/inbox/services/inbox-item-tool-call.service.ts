@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, LessThan, Or } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
@@ -15,6 +14,11 @@ import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-i
 import { InboxToolCallExecutionService } from 'src/engine/core-modules/inbox/services/inbox-tool-call-execution.service';
 import { InboxTransitionService } from 'src/engine/core-modules/inbox/services/inbox-transition.service';
 import { findInvalidInputKeys } from 'src/engine/core-modules/inbox/utils/find-invalid-input-keys.util';
+import {
+  buildClaimableToolCallPredicate,
+  isToolCallHeldByClaim,
+  isToolCallRunning,
+} from 'src/engine/core-modules/inbox/utils/inbox-tool-call-claim.util';
 import { type InboxItemToolCallInput } from 'src/engine/core-modules/inbox/types/inbox-item-tool-call-input.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -24,10 +28,6 @@ type ToolCallActorArgs = {
   actorUserWorkspaceId: string;
   accessibleQueueIds: string[];
 };
-
-// A claim older than this belongs to a run that died between claiming and
-// finishing; the next run may take the call over rather than wait forever
-export const TOOL_CALL_CLAIM_TIMEOUT_MS = 10 * 60 * 1000;
 
 // The rows under a plan. Editing and rejecting are the person shaping the plan;
 // running it is one act over every row still standing, and it is what ends the
@@ -139,7 +139,7 @@ export class InboxItemToolCallService {
 
       const claim = await this.inboxItemToolCallRepository.update(
         workspaceId,
-        { id: toolCall.id, ...buildClaimablePredicate() },
+        { id: toolCall.id, ...buildClaimableToolCallPredicate() },
         {
           resolvedByUserWorkspaceId: actorUserWorkspaceId,
           resolvedAt: claimedAt,
@@ -243,7 +243,7 @@ export class InboxItemToolCallService {
       { where: { id: inboxItemToolCallId } },
     );
 
-    if (!isDefined(toolCall) || !isHeldByClaim(toolCall, claimedAt)) {
+    if (!isDefined(toolCall) || !isToolCallHeldByClaim(toolCall, claimedAt)) {
       return;
     }
 
@@ -345,7 +345,7 @@ export class InboxItemToolCallService {
       {
         id: toolCall.id,
         ...(toolCall.status === InboxItemToolCallStatus.PROPOSED
-          ? buildClaimablePredicate()
+          ? buildClaimableToolCallPredicate()
           : { status: toolCall.status }),
       },
       patch,
@@ -402,22 +402,3 @@ export class InboxItemToolCallService {
     return toolCall;
   }
 }
-
-const getClaimCutoff = () => new Date(Date.now() - TOOL_CALL_CLAIM_TIMEOUT_MS);
-
-// A proposed call nobody holds, or one whose holder has been gone long enough
-// to count as dead
-const buildClaimablePredicate = () => ({
-  status: InboxItemToolCallStatus.PROPOSED,
-  resolvedAt: Or(IsNull(), LessThan(getClaimCutoff())),
-});
-
-const isHeldByClaim = (toolCall: InboxItemToolCallEntity, claimedAt: Date) =>
-  toolCall.status === InboxItemToolCallStatus.PROPOSED &&
-  isDefined(toolCall.resolvedAt) &&
-  toolCall.resolvedAt.getTime() === claimedAt.getTime();
-
-const isToolCallRunning = (toolCall: InboxItemToolCallEntity) =>
-  toolCall.status === InboxItemToolCallStatus.PROPOSED &&
-  isDefined(toolCall.resolvedAt) &&
-  toolCall.resolvedAt > getClaimCutoff();

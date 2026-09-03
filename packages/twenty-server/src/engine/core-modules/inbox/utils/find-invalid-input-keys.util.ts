@@ -41,9 +41,9 @@ export const findInvalidInputKeys = (
         return field.isRequired === true;
       }
 
-      // An empty string is an absent text; for any other type it is a value
+      // A blank string is an absent text; for any other type it is a value
       // of the wrong kind
-      if (value === '') {
+      if (typeof value === 'string' && value.trim() === '') {
         return field.isRequired === true || !isTextFieldType(field.type);
       }
 

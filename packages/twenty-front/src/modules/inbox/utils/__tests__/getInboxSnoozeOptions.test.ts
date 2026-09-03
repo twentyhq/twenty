@@ -31,6 +31,21 @@ describe('getInboxSnoozeOptions', () => {
     ]);
   });
 
+  it('should list later today before the evening in the morning', () => {
+    // Thursday 9:20 am, so later today lands at 1 pm
+    const now = new Date(2026, 8, 3, 9, 20);
+
+    const options = getInboxSnoozeOptions(now);
+
+    expect(options.map((option) => option.key)).toEqual([
+      'laterToday',
+      'thisEvening',
+      'tomorrow',
+      'nextWeek',
+    ]);
+    expect(options[0].date).toEqual(new Date(2026, 8, 3, 13, 0));
+  });
+
   it('should not offer the same moment twice', () => {
     // Thursday 2:10 pm, so later today rounds onto the evening slot
     const now = new Date(2026, 8, 3, 14, 10);

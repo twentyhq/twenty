@@ -3,7 +3,11 @@ import { useLingui } from '@lingui/react/macro';
 import { isToday } from 'date-fns';
 import { type ReactNode, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
-import { IconCalendarEvent, IconChevronLeft } from 'twenty-ui/icon';
+import {
+  IconCalendarEvent,
+  IconChevronLeft,
+  IconClockHour8,
+} from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -16,6 +20,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type InboxItem } from '~/generated/graphql';
 import { formatDate } from '~/utils/date-utils';
@@ -42,7 +47,10 @@ export const InboxSnoozeDropdown = ({
   const { transitionInboxItem } = useInboxItemActions();
   const { enqueueErrorSnackBar } = useSnackBar();
   const { closeDropdown } = useCloseDropdown();
-  const [isPickingDateTime, setIsPickingDateTime] = useState(false);
+  // The picker's value lives here between edits: a typed time must survive
+  // until a day is clicked or the moment is confirmed
+  const [pickedDateTime, setPickedDateTime] =
+    useState<Temporal.ZonedDateTime | null>(null);
 
   const dropdownId = `inbox-snooze-${inboxItem.id}`;
   const options = getInboxSnoozeOptions(new Date());
@@ -66,27 +74,36 @@ export const InboxSnoozeDropdown = ({
     closeDropdown(dropdownId);
   };
 
-  const pickerDefault = Temporal.Instant.fromEpochMilliseconds(
-    (
-      options.find((option) => option.key === 'tomorrow') ?? options[0]
-    )?.date.getTime() ?? Date.now(),
-  ).toZonedDateTimeISO(Temporal.Now.timeZoneId());
+  const startPickingDateTime = () =>
+    setPickedDateTime(
+      Temporal.Instant.fromEpochMilliseconds(
+        (
+          options.find((option) => option.key === 'tomorrow') ?? options[0]
+        )?.date.getTime() ?? Date.now(),
+      ).toZonedDateTimeISO(Temporal.Now.timeZoneId()),
+    );
+
+  const snoozeUntilPicked = (date: Temporal.ZonedDateTime | null) => {
+    if (date !== null) {
+      void snoozeUntil(new Date(date.epochMilliseconds));
+    }
+  };
 
   return (
     <Dropdown
       dropdownId={dropdownId}
       dropdownPlacement="top-end"
       clickableComponent={clickableComponent}
-      onClose={() => setIsPickingDateTime(false)}
+      onClose={() => setPickedDateTime(null)}
       dropdownComponents={
         <DropdownContent widthInPixels={SNOOZE_MENU_WIDTH}>
-          {isPickingDateTime ? (
+          {pickedDateTime !== null ? (
             <>
               <DropdownMenuHeader
                 StartComponent={
                   <DropdownMenuHeaderLeftComponent
                     Icon={IconChevronLeft}
-                    onClick={() => setIsPickingDateTime(false)}
+                    onClick={() => setPickedDateTime(null)}
                   />
                 }
               >
@@ -94,19 +111,21 @@ export const InboxSnoozeDropdown = ({
               </DropdownMenuHeader>
               <DateTimePicker
                 instanceId={dropdownId}
-                date={pickerDefault}
-                onEnter={(date) => {
-                  if (date !== null) {
-                    void snoozeUntil(new Date(date.epochMilliseconds));
-                  }
-                }}
-                onClose={(date) => {
-                  if (date !== null) {
-                    void snoozeUntil(new Date(date.epochMilliseconds));
-                  }
-                }}
-                onEscape={() => setIsPickingDateTime(false)}
+                date={pickedDateTime}
+                clearable={false}
+                onChange={setPickedDateTime}
+                onClose={snoozeUntilPicked}
               />
+              <DropdownMenuSeparator />
+              <DropdownMenuItemsContainer>
+                <MenuItem
+                  LeftIcon={IconClockHour8}
+                  text={t`Snooze until ${formatMoment(
+                    new Date(pickedDateTime.epochMilliseconds),
+                  )}`}
+                  onClick={() => snoozeUntilPicked(pickedDateTime)}
+                />
+              </DropdownMenuItemsContainer>
             </>
           ) : (
             <>
@@ -127,7 +146,7 @@ export const InboxSnoozeDropdown = ({
                   LeftIcon={IconCalendarEvent}
                   text={t`Day & Time`}
                   hasSubMenu
-                  onClick={() => setIsPickingDateTime(true)}
+                  onClick={startPickingDateTime}
                 />
               </DropdownMenuItemsContainer>
             </>
