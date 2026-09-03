@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 
-const LEGACY_WORKFLOW_VERSION_NAVIGATION_AVAILABILITY_EXPRESSION =
+export const LEGACY_WORKFLOW_VERSION_NAVIGATION_AVAILABILITY_EXPRESSION =
   'targetObjectReadPermissions.workflowVersion';
 
 export const buildGateWorkflowVersionNavigationCommandMenuItemUpdate = ({
