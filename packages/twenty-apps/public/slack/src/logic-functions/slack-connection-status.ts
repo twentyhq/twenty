@@ -8,7 +8,7 @@ export default defineLogicFunction({
   universalIdentifier: SLACK_CONNECTION_STATUS_UNIVERSAL_IDENTIFIER,
   name: 'slack-connection-status',
   description:
-    'Tells the settings tab whether a Slack workspace connection exists, so it can hide the link management tools until Slack is connected.',
+    'Tells the settings tab whether a Slack workspace connection exists and whether it is healthy: the stored token still passes auth.test, and the installed Slack team is claimed by this Twenty workspace so events route here. The tab hides the link management tools until Slack is connected and shows a repair callout when the connection is broken.',
   timeoutSeconds: 30,
   httpRouteTriggerSettings: {
     path: SLACK_USER_LINKS_CONNECTION_STATUS_ROUTE_PATH,
