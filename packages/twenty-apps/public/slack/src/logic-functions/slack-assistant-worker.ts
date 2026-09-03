@@ -21,7 +21,7 @@ import { buildSlackAssistantMessages } from 'src/logic-functions/utils/build-sla
 import { buildSlackAssistantRequestName } from 'src/logic-functions/utils/build-slack-assistant-request-name';
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
-import { fetchWorkspaceBaseUrl } from 'src/logic-functions/utils/fetch-workspace-base-url';
+import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspace-base-urls';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
@@ -89,7 +89,7 @@ export const slackAssistantWorkerHandler = async (
         assistantBotUserId,
         isDirectMessage,
       },
-      workspaceBaseUrl,
+      workspaceBaseUrls,
     ] = await Promise.all([
       fetchSlackAssistantContext({
         slackChannelId,
@@ -97,7 +97,7 @@ export const slackAssistantWorkerHandler = async (
         slackMessageTimestamp,
         slackUserId: record.slackUserId,
       }),
-      fetchWorkspaceBaseUrl(),
+      fetchWorkspaceBaseUrls(),
     ]);
 
     const runAsWorkspaceMemberId = await resolveSlackRunAsForRequest({
@@ -128,7 +128,7 @@ export const slackAssistantWorkerHandler = async (
         conversationMessages,
         runAsWorkspaceMemberId,
         timeoutSeconds: SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS,
-        workspaceBaseUrl,
+        workspaceBaseUrl: workspaceBaseUrls[0],
       }),
       slackChannelId,
       threadTimestamp: parentMessageTimestamp,

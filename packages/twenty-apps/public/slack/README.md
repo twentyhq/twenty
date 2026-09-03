@@ -8,6 +8,7 @@
 - **Follow-ups without re-mentioning** — once it has replied in a thread you can keep talking to it, for 24 hours in a channel and indefinitely in a DM
 - **It acts as whoever tagged it** — Slack accounts are matched to workspace members, so the bot can never do more than the person asking
 - **Slack steps for your workflows** — post, update or delete messages, send ephemerals, add reactions, list channels
+- **Record link previews** — paste a link to a person, company, opportunity, note or task and Slack shows a card with the record's key fields, rendered only when the poster maps to a workspace member; expanding a card shows the full details, again only to viewers who map to a workspace member
 
 ## 🤖 The assistant
 
