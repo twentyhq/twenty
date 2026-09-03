@@ -29,6 +29,7 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/service
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { type FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 
 const APP_SYNC_LOCK_OPTIONS = { ttl: 60_000, ms: 500, maxRetries: 120 };
 
@@ -59,8 +60,11 @@ export class ApplicationDevelopmentService {
   }): Promise<DevelopmentApplicationDTO> {
     await this.throttlePerApplication(universalIdentifier, workspaceId);
 
-    const applicationRegistrationId =
-      await this.findApplicationRegistrationId(universalIdentifier);
+    const applicationRegistration =
+      await this.findOwnedApplicationRegistrationOrThrow({
+        universalIdentifier,
+        workspaceId,
+      });
 
     const existing = await this.applicationService.findByUniversalIdentifier({
       universalIdentifier,
@@ -79,7 +83,7 @@ export class ApplicationDevelopmentService {
       name,
       sourcePath: universalIdentifier,
       sourceType: ApplicationRegistrationSourceType.LOCAL,
-      applicationRegistrationId,
+      applicationRegistrationId: applicationRegistration.id,
       workspaceId,
     });
 
@@ -118,6 +122,11 @@ export class ApplicationDevelopmentService {
         VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE[versionValidation.reason],
       );
     }
+
+    await this.findOwnedApplicationRegistrationOrThrow({
+      universalIdentifier: manifest.application.universalIdentifier,
+      workspaceId,
+    });
 
     if (dryRun === true) {
       const { workspaceMigration } =
@@ -207,9 +216,11 @@ export class ApplicationDevelopmentService {
     manifest: ApplicationInput['manifest'],
     workspaceId: string,
   ): Promise<WorkspaceMigrationDTO> {
-    const applicationRegistrationId = await this.findApplicationRegistrationId(
-      manifest.application.universalIdentifier,
-    );
+    const applicationRegistration =
+      await this.findOwnedApplicationRegistrationOrThrow({
+        universalIdentifier: manifest.application.universalIdentifier,
+        workspaceId,
+      });
 
     const application = await this.applicationService.findByUniversalIdentifier(
       {
@@ -229,12 +240,12 @@ export class ApplicationDevelopmentService {
       await this.applicationManifestApplyService.applyManifestToWorkspace({
         workspaceId,
         manifest,
-        applicationRegistrationId,
+        applicationRegistrationId: applicationRegistration.id,
         application,
       });
 
     await this.syncRegistrationMetadata(
-      applicationRegistrationId,
+      applicationRegistration.id,
       manifest,
       workspaceId,
     );
@@ -258,11 +269,15 @@ export class ApplicationDevelopmentService {
     );
   }
 
-  private async findApplicationRegistrationId(
-    universalIdentifier: string,
-  ): Promise<string> {
+  private async findOwnedApplicationRegistrationOrThrow({
+    universalIdentifier,
+    workspaceId,
+  }: {
+    universalIdentifier: string;
+    workspaceId: string;
+  }): Promise<ApplicationRegistrationEntity> {
     const existingRegistration =
-      await this.applicationRegistrationService.findOneByUniversalIdentifier(
+      await this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
         universalIdentifier,
       );
 
@@ -273,7 +288,16 @@ export class ApplicationDevelopmentService {
       );
     }
 
-    return existingRegistration.id;
+    if (existingRegistration.ownerWorkspaceId !== workspaceId) {
+      throw new ApplicationException(
+        !isDefined(existingRegistration.ownerWorkspaceId)
+          ? `"${universalIdentifier}" is registered on this instance but claimed by no workspace. Claim its ownership before developing on it.`
+          : `"${universalIdentifier}" is registered to another workspace. Change the universalIdentifier in your manifest, or transfer the registration from the owning workspace.`,
+        ApplicationExceptionCode.FORBIDDEN,
+      );
+    }
+
+    return existingRegistration;
   }
 
   private async syncRegistrationMetadata(
