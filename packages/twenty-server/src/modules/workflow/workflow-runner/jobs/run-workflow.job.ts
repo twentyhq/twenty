@@ -1,7 +1,6 @@
 import { Logger, Scope } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { StepStatus } from 'twenty-shared/workflow';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -13,7 +12,6 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
-import { stepIsAwaitingRetry } from 'src/modules/workflow/workflow-executor/utils/step-is-awaiting-retry.util';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import {
@@ -182,33 +180,16 @@ export class RunWorkflowJob {
     stepId: string;
     workspaceId: string;
   }): Promise<void> {
-    const workflowRun =
-      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+    const hasClaimedRetry =
+      await this.workflowRunWorkspaceService.claimStepRetry({
+        stepId,
         workflowRunId,
         workspaceId,
       });
 
-    if (workflowRun.status !== WorkflowRunStatus.RUNNING) {
+    if (!hasClaimedRetry) {
       return;
     }
-
-    const step = workflowRun.state?.flow?.steps?.find(
-      (candidateStep) => candidateStep.id === stepId,
-    );
-
-    const stepInfo = workflowRun.state?.stepInfos[stepId];
-
-    if (!step || !stepIsAwaitingRetry({ step, stepInfo })) {
-      return;
-    }
-
-    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfos({
-      stepInfos: {
-        [stepId]: { ...stepInfo, status: StepStatus.NOT_STARTED },
-      },
-      workflowRunId,
-      workspaceId,
-    });
 
     await this.workflowExecutorWorkspaceService.executeFromSteps({
       stepIds: [stepId],

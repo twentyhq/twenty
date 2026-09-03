@@ -19,6 +19,7 @@ import {
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { stepIsAwaitingRetry } from 'src/modules/workflow/workflow-executor/utils/step-is-awaiting-retry.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   WorkflowRunException,
@@ -397,6 +398,52 @@ export class WorkflowRunWorkspaceService {
     }
 
     return workflowRun;
+  }
+
+  @WithLock('workflowRunId')
+  async claimStepRetry({
+    stepId,
+    workflowRunId,
+    workspaceId,
+  }: {
+    stepId: string;
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const workflowRun = await this.getWorkflowRunOrFail({
+      workflowRunId,
+      workspaceId,
+    });
+
+    if (workflowRun.status !== WorkflowRunStatus.RUNNING) {
+      return false;
+    }
+
+    const step = workflowRun.state?.flow?.steps?.find(
+      (candidateStep) => candidateStep.id === stepId,
+    );
+
+    const stepInfo = workflowRun.state?.stepInfos[stepId];
+
+    if (!isDefined(step) || !stepIsAwaitingRetry({ step, stepInfo })) {
+      return false;
+    }
+
+    await this.updateWorkflowRun({
+      workflowRunId,
+      workspaceId,
+      partialUpdate: {
+        state: {
+          ...workflowRun.state,
+          stepInfos: {
+            ...workflowRun.state.stepInfos,
+            [stepId]: { ...stepInfo, status: StepStatus.NOT_STARTED },
+          },
+        },
+      },
+    });
+
+    return true;
   }
 
   async updateWorkflowRun({
