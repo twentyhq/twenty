@@ -57,7 +57,6 @@ export const fathomRegisterConnectionHandler = async (
     scope: 'SERVER',
   });
 
-  // Only RetryableLogicFunctionError makes the queue redeliver the hook.
   const webhook = await fathomClient
     .createWebhook({
       destinationUrl: getFathomWebhookDestinationUrl({
