@@ -264,6 +264,10 @@ describe('parseChatReferences', () => {
       name: 'a record whose id is not a uuid',
       text: 'Contact [[record:company:acme:Acme]]',
     },
+    {
+      name: 'a retired field reference addressed by id',
+      text: 'Set [[field:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Amount]] first',
+    },
   ])('should drop $name', ({ text }) => {
     expect(parseChatReferences(text)).toEqual([]);
   });
