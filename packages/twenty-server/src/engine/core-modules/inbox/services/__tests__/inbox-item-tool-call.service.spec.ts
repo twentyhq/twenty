@@ -315,6 +315,33 @@ describe('InboxItemToolCallService', () => {
       expect(inboxTransitionService.transition).not.toHaveBeenCalled();
     });
 
+    it('should record a throwing executor as a failed call', async () => {
+      // Prepare
+      const first = buildToolCall({ id: 'first' });
+
+      givenToolCalls(
+        [first],
+        [{ ...first, status: InboxItemToolCallStatus.FAILED }],
+      );
+      inboxToolCallExecutionService.execute.mockRejectedValue(
+        new Error('Mail provider timed out'),
+      );
+
+      // Act
+      await service.runAll({ ...actorArgs, inboxItemId: INBOX_ITEM_ID });
+
+      // Assert
+      expect(inboxItemToolCallRepository.update).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        { id: 'first' },
+        expect.objectContaining({
+          status: InboxItemToolCallStatus.FAILED,
+          error: 'Mail provider timed out',
+        }),
+      );
+      expect(inboxTransitionService.transition).not.toHaveBeenCalled();
+    });
+
     it('should leave the item in the inbox while an earlier failure stands', async () => {
       // Prepare
       const failed = buildToolCall({

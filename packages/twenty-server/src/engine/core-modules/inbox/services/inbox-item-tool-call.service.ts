@@ -152,12 +152,19 @@ export class InboxItemToolCallService {
         break;
       }
 
-      const result = await this.inboxToolCallExecutionService.execute({
-        workspaceId,
-        actorUserWorkspaceId,
-        toolName: toolCall.toolName,
-        input: toolCall.editedInput ?? toolCall.proposedInput,
-      });
+      // A throw from the executor is a failure like any other: the claimed
+      // row must not stay claimed, or the plan could never be run or edited
+      const result = await this.inboxToolCallExecutionService
+        .execute({
+          workspaceId,
+          actorUserWorkspaceId,
+          toolName: toolCall.toolName,
+          input: toolCall.editedInput ?? toolCall.proposedInput,
+        })
+        .catch((error: unknown) => ({
+          status: 'FAILED' as const,
+          error: error instanceof Error ? error.message : String(error),
+        }));
 
       await this.inboxItemToolCallRepository.update(
         workspaceId,
