@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { CoreObjectNameSingular, FeatureFlagKey } from 'twenty-shared/types';
 
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
@@ -11,15 +10,13 @@ export const useNavigationObjectMetadataItems = () => {
     FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
   );
 
-  return useMemo(
-    () =>
-      isWorkflowCoreIndexPageEnabled
-        ? objectMetadataItems.filter(
-            (objectMetadataItem) =>
-              objectMetadataItem.nameSingular !==
-              CoreObjectNameSingular.WorkflowVersion,
-          )
-        : objectMetadataItems,
-    [isWorkflowCoreIndexPageEnabled, objectMetadataItems],
+  if (!isWorkflowCoreIndexPageEnabled) {
+    return objectMetadataItems;
+  }
+
+  return objectMetadataItems.filter(
+    (objectMetadataItem) =>
+      objectMetadataItem.nameSingular !==
+      CoreObjectNameSingular.WorkflowVersion,
   );
 };

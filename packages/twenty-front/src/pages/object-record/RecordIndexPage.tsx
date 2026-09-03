@@ -2,7 +2,6 @@ import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRou
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordIndexContainerGater } from '@/object-record/record-index/components/RecordIndexContainerGater';
-import { WorkspaceWorkflowVersionRedirect } from '@/object-core/workflows/components/WorkspaceWorkflowVersionRedirect';
 import { isCoreWorkflowsIndexEnabled } from '@/object-core/workflows/utils/isCoreWorkflowsIndexEnabled';
 import { isWorkspaceWorkflowVersionRouteHidden } from '@/object-core/workflows/utils/isWorkspaceWorkflowVersionRouteHidden';
 import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
@@ -79,7 +78,7 @@ export const RecordIndexPage = () => {
       isWorkflowCoreIndexPageEnabled,
     })
   ) {
-    return <WorkspaceWorkflowVersionRedirect />;
+    return <WorkspaceRouteUnavailable />;
   }
 
   if (
