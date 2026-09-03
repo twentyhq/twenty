@@ -7,7 +7,7 @@ import { IconMail } from 'twenty-ui/icon';
 import { Checkbox } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { type InboxPlanContextSource } from '@/inbox/types/InboxPlanContext';
+import { type InboxItemContextSource } from '@/inbox/types/InboxItemContext';
 import { getInboxToolCallInputAsStrings } from '@/inbox/utils/getInboxToolCallInputAsStrings';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -112,7 +112,7 @@ const EMAIL_TOOL_NAME = 'send_email';
 
 type InboxPlanToolCallEditorProps = {
   toolCall: InboxItemToolCall;
-  source?: InboxPlanContextSource;
+  source?: InboxItemContextSource;
   onSave: (editedInput: Record<string, unknown>) => Promise<void>;
 };
 

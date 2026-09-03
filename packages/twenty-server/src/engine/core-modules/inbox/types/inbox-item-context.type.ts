@@ -1,6 +1,7 @@
-// What a plan is about, structured enough to draw: a summary, the source it
-// came from, the entities involved and how they relate. Producers fill it in;
-// the engine only stores and returns it.
+// What an item is about, structured enough to draw: a line of summary, the
+// source it came from, the entities involved and how they relate. This is the
+// only payload an item carries; producers fill in what they know and the
+// engine only stores and returns it.
 export type InboxItemContextSource = {
   kind: 'email' | 'thread' | 'record' | 'call';
   label: string;
@@ -27,7 +28,7 @@ export type InboxItemContextEdge = {
 };
 
 export type InboxItemContext = {
-  summary: string;
+  summary?: string;
   source?: InboxItemContextSource;
   entities?: InboxItemContextEntity[];
   edges?: InboxItemContextEdge[];

@@ -2,18 +2,41 @@ import { z } from 'zod';
 
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 
+const scalarSchema = z.union([z.string(), z.number(), z.boolean(), z.null()]);
+
+export const InboxItemToolCallDraftZodSchema = z.object({
+  toolName: z.string().describe('The tool to call once the person agrees'),
+  label: z.string().describe('What the call does, as a short verb phrase'),
+  description: z
+    .string()
+    .describe('One line on why this call is part of the plan')
+    .optional(),
+  icon: z.string().describe('A Tabler icon name, like IconMail').optional(),
+  input: z
+    .record(z.string(), scalarSchema)
+    .describe(
+      'The input the call would run with. The person can edit every field before it runs.',
+    ),
+});
+
 export const CreateInboxItemToolInputZodSchema = z.object({
   title: z.string().describe('What the item says in the inbox list, one line'),
-  preview: z
+  summary: z
     .string()
     .describe('A short second line giving context under the title')
     .optional(),
   typeKey: z
     .string()
     .describe(
-      'The kind of work this is, which decides the actions offered on it. One of: approval, conversation, agent_question, workflow_run_failed.',
+      'The kind of work this is, used for its icon and routing. One of: approval, conversation, agent_question, workflow_run_failed, agent_plan.',
     )
     .default('approval'),
+  toolCalls: z
+    .array(InboxItemToolCallDraftZodSchema)
+    .describe(
+      'The calls you propose to make. The person reviews, edits or skips each one, then runs the rest in one go. Omit for an item that only asks to be looked at.',
+    )
+    .optional(),
   queueId: z
     .string()
     .describe(

@@ -2,21 +2,21 @@ import { isNonEmptyString, isNumber, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  type InboxPlanContext,
-  type InboxPlanContextEdge,
-  type InboxPlanContextEntity,
-  type InboxPlanContextSource,
-} from '@/inbox/types/InboxPlanContext';
+  type InboxItemContext,
+  type InboxItemContextEdge,
+  type InboxItemContextEntity,
+  type InboxItemContextSource,
+} from '@/inbox/types/InboxItemContext';
 import { type InboxItem } from '~/generated/graphql';
 
-const SOURCE_KINDS: InboxPlanContextSource['kind'][] = [
+const SOURCE_KINDS: InboxItemContextSource['kind'][] = [
   'email',
   'thread',
   'record',
   'call',
 ];
 
-const ENTITY_KINDS: InboxPlanContextEntity['kind'][] = [
+const ENTITY_KINDS: InboxItemContextEntity['kind'][] = [
   'person',
   'company',
   'opportunity',
@@ -34,7 +34,7 @@ const isOneOf = <TValue extends string>(
 const optionalString = (value: unknown) =>
   isNonEmptyString(value) ? value : undefined;
 
-const toSource = (value: unknown): InboxPlanContextSource | undefined => {
+const toSource = (value: unknown): InboxItemContextSource | undefined => {
   if (
     !isRecord(value) ||
     !isOneOf(SOURCE_KINDS, value.kind) ||
@@ -52,7 +52,7 @@ const toSource = (value: unknown): InboxPlanContextSource | undefined => {
   };
 };
 
-const toEntities = (value: unknown): InboxPlanContextEntity[] =>
+const toEntities = (value: unknown): InboxItemContextEntity[] =>
   Array.isArray(value)
     ? value.flatMap((item) =>
         isRecord(item) &&
@@ -72,7 +72,7 @@ const toEntities = (value: unknown): InboxPlanContextEntity[] =>
       )
     : [];
 
-const toEdges = (value: unknown): InboxPlanContextEdge[] =>
+const toEdges = (value: unknown): InboxItemContextEdge[] =>
   Array.isArray(value)
     ? value.flatMap((item) =>
         isRecord(item) &&
@@ -86,19 +86,19 @@ const toEdges = (value: unknown): InboxPlanContextEdge[] =>
 
 // The context travels as JSON written by a producer the page does not
 // control, so every nested shape is checked here rather than trusted.
-export const getInboxPlanContext = (
+export const getInboxItemContext = (
   inboxItem: Pick<InboxItem, 'context'>,
-): InboxPlanContext | null => {
+): InboxItemContext => {
   const context: unknown = inboxItem.context;
 
-  if (!isRecord(context) || !isNonEmptyString(context.summary)) {
-    return null;
+  if (!isRecord(context)) {
+    return { entities: [], edges: [] };
   }
 
   const source = toSource(context.source);
 
   return {
-    summary: context.summary,
+    summary: optionalString(context.summary),
     ...(isDefined(source) ? { source } : {}),
     entities: toEntities(context.entities),
     edges: toEdges(context.edges),

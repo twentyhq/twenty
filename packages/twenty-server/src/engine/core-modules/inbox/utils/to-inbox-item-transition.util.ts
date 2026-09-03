@@ -9,7 +9,6 @@ import {
   type InboxItemTransition,
   SELF_ASSIGNMENT,
 } from 'src/engine/core-modules/inbox/types/inbox-item-transition.type';
-import { toInboxItemPayload } from 'src/engine/core-modules/inbox/utils/to-inbox-item-payload.util';
 
 // Narrows the flat GraphQL input into the discriminated union, so everything
 // downstream of the API boundary works with a transition that cannot be
@@ -20,19 +19,9 @@ export const toInboxItemTransition = (
   switch (input.kind) {
     case 'CLEAR':
       // An outcome says how the item ended; a resurfacing time says it has not.
-      if (
-        isDefined(input.outcome) &&
-        (isDefined(input.resurfaceInMinutes) || isDefined(input.resurfaceAt))
-      ) {
+      if (isDefined(input.outcome) && isDefined(input.resurfaceAt)) {
         throw new InboxException(
           'A clear that comes back cannot also carry an outcome',
-          InboxExceptionCode.INVALID_INBOX_ACTION,
-        );
-      }
-
-      if (isDefined(input.resurfaceInMinutes) && isDefined(input.resurfaceAt)) {
-        throw new InboxException(
-          'A clear comes back at a time or after a delay, not both',
           InboxExceptionCode.INVALID_INBOX_ACTION,
         );
       }
@@ -40,12 +29,6 @@ export const toInboxItemTransition = (
       return {
         kind: 'CLEAR',
         ...(isDefined(input.outcome) ? { outcome: input.outcome } : {}),
-        ...(isDefined(input.result)
-          ? { result: toInboxItemPayload(input.result) }
-          : {}),
-        ...(isDefined(input.resurfaceInMinutes)
-          ? { resurfaceInMinutes: input.resurfaceInMinutes }
-          : {}),
         ...(isDefined(input.resurfaceAt)
           ? { resurfaceAt: input.resurfaceAt }
           : {}),

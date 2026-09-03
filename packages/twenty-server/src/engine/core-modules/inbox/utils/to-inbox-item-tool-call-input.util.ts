@@ -4,7 +4,7 @@ import {
   InboxException,
   InboxExceptionCode,
 } from 'src/engine/core-modules/inbox/inbox.exception';
-import { type InboxItemPayload } from 'src/engine/core-modules/inbox/types/inbox-item-payload.type';
+import { type InboxItemToolCallInput } from 'src/engine/core-modules/inbox/types/inbox-item-tool-call-input.type';
 
 const isScalar = (value: unknown): value is string | number | boolean | null =>
   value === null ||
@@ -15,9 +15,9 @@ const isScalar = (value: unknown): value is string | number | boolean | null =>
 // Client supplied JSON is narrowed rather than cast: anything that is not a
 // scalar is dropped, so a nested object cannot reach a jsonb column typed as
 // a flat record.
-export const toInboxItemPayload = (
+export const toInboxItemToolCallInput = (
   input: unknown,
-): InboxItemPayload | undefined => {
+): InboxItemToolCallInput | undefined => {
   if (!isDefined(input)) {
     return undefined;
   }
@@ -33,5 +33,5 @@ export const toInboxItemPayload = (
 
   return Object.fromEntries(
     Object.entries(input).filter(([, value]) => isScalar(value)),
-  ) as InboxItemPayload;
+  ) as InboxItemToolCallInput;
 };

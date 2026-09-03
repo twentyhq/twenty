@@ -6,7 +6,7 @@ import { LightIconButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxPlanToolCallEditor } from '@/inbox/components/InboxPlanToolCallEditor';
-import { type InboxPlanContextSource } from '@/inbox/types/InboxPlanContext';
+import { type InboxItemContextSource } from '@/inbox/types/InboxItemContext';
 import {
   type InboxItemToolCall,
   InboxItemToolCallStatus,
@@ -54,7 +54,7 @@ const StyledChevron = styled.span<{ isExpanded: boolean }>`
 
 type InboxPlanToolCallRowProps = {
   toolCall: InboxItemToolCall;
-  source?: InboxPlanContextSource;
+  source?: InboxItemContextSource;
   isExpanded: boolean;
   onToggleExpanded: () => void;
   onSave: (editedInput: Record<string, unknown>) => Promise<void>;

@@ -7,6 +7,8 @@ import { IsNull } from 'typeorm';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
+import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
+import { InboxItemToolCallStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-tool-call-status.enum';
 import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import {
   InboxException,
@@ -14,6 +16,7 @@ import {
 } from 'src/engine/core-modules/inbox/inbox.exception';
 import { InboxItemTypeService } from 'src/engine/core-modules/inbox/services/inbox-item-type.service';
 import { InboxQueueService } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
+import { type InboxItemToolCallDraft } from 'src/engine/core-modules/inbox/types/inbox-item-tool-call-draft.type';
 import {
   type InboxSubject,
   type RouteInboxItemArgs,
@@ -31,6 +34,8 @@ export class InboxRouterService {
   constructor(
     @InjectWorkspaceScopedRepository(InboxItemEntity)
     private readonly inboxItemRepository: WorkspaceScopedRepository<InboxItemEntity>,
+    @InjectWorkspaceScopedRepository(InboxItemToolCallEntity)
+    private readonly inboxItemToolCallRepository: WorkspaceScopedRepository<InboxItemToolCallEntity>,
     private readonly inboxItemTypeService: InboxItemTypeService,
     private readonly inboxQueueService: InboxQueueService,
     private readonly featureFlagService: FeatureFlagService,
@@ -255,17 +260,87 @@ export class InboxRouterService {
         inboxItemTypeId: inboxItemType.id,
         priority: args.priority ?? inboxItemType.defaultPriority,
         ...(isDefined(args.title) ? { title: args.title } : {}),
-        ...(isDefined(args.preview) ? { preview: args.preview } : {}),
-        ...(args.payload !== undefined ? { payload: args.payload } : {}),
-        ...(args.context !== undefined ? { context: args.context } : {}),
+        ...(isDefined(args.context) ? { context: args.context } : {}),
         lastEventAt: () => 'clock_timestamp()',
         version: () => '"version" + 1',
       },
     );
 
+    if (isDefined(args.toolCalls)) {
+      await this.replaceProposedToolCalls({
+        workspaceId: args.workspaceId,
+        inboxItemId: existingItem.id,
+        toolCalls: args.toolCalls,
+      });
+    }
+
     return this.inboxItemRepository.findOneBy(args.workspaceId, {
       id: existingItem.id,
     });
+  }
+
+  // A new plan for the same slot replaces what was still proposed and leaves
+  // what already ran or was skipped, so the item keeps its history and the
+  // person is not asked twice about a call that is gone.
+  private async replaceProposedToolCalls({
+    workspaceId,
+    inboxItemId,
+    toolCalls,
+  }: {
+    workspaceId: string;
+    inboxItemId: string;
+    toolCalls: InboxItemToolCallDraft[];
+  }): Promise<void> {
+    await this.inboxItemToolCallRepository.delete(workspaceId, {
+      inboxItemId,
+      status: InboxItemToolCallStatus.PROPOSED,
+    });
+
+    const settledToolCalls = await this.inboxItemToolCallRepository.find(
+      workspaceId,
+      { where: { inboxItemId }, select: { position: true } },
+    );
+    const firstPosition = settledToolCalls.reduce(
+      (max, toolCall) => Math.max(max, toolCall.position + 1),
+      0,
+    );
+
+    await this.insertToolCalls({
+      workspaceId,
+      inboxItemId,
+      toolCalls,
+      firstPosition,
+    });
+  }
+
+  private async insertToolCalls({
+    workspaceId,
+    inboxItemId,
+    toolCalls,
+    firstPosition,
+  }: {
+    workspaceId: string;
+    inboxItemId: string;
+    toolCalls: InboxItemToolCallDraft[];
+    firstPosition: number;
+  }): Promise<void> {
+    if (toolCalls.length === 0) {
+      return;
+    }
+
+    await this.inboxItemToolCallRepository.insert(
+      workspaceId,
+      toolCalls.map((toolCall, index) => ({
+        inboxItemId,
+        position: firstPosition + index,
+        toolName: toolCall.toolName,
+        label: toolCall.label,
+        description: toolCall.description ?? null,
+        icon: toolCall.icon ?? null,
+        inputSchema: toolCall.inputSchema ?? [],
+        proposedInput: toolCall.proposedInput,
+      })),
+    );
   }
 
   private async insertItem({
@@ -279,23 +354,36 @@ export class InboxRouterService {
     address: InboxItemAddress;
     slotKey: string | null;
   }): Promise<InboxItemEntity> {
-    return this.inboxItemRepository.insertAndReturnOne(args.workspaceId, {
-      inboxItemTypeId: inboxItemType.id,
-      priority: args.priority ?? inboxItemType.defaultPriority,
-      title: args.title ?? inboxItemType.label,
-      preview: args.preview ?? null,
-      payload: args.payload ?? null,
-      context: args.context ?? null,
-      queueId: address.kind === 'queue' ? address.queueId : null,
-      assigneeUserWorkspaceId:
-        address.kind === 'person' ? address.assigneeUserWorkspaceId : null,
-      slotKey,
-      threadId: args.subject?.kind === 'thread' ? args.subject.threadId : null,
-      subjectObjectMetadataId:
-        args.subject?.kind === 'record' ? args.subject.objectMetadataId : null,
-      subjectRecordId:
-        args.subject?.kind === 'record' ? args.subject.recordId : null,
+    const inboxItem = await this.inboxItemRepository.insertAndReturnOne(
+      args.workspaceId,
+      {
+        inboxItemTypeId: inboxItemType.id,
+        priority: args.priority ?? inboxItemType.defaultPriority,
+        title: args.title ?? inboxItemType.label,
+        context: args.context ?? {},
+        queueId: address.kind === 'queue' ? address.queueId : null,
+        assigneeUserWorkspaceId:
+          address.kind === 'person' ? address.assigneeUserWorkspaceId : null,
+        slotKey,
+        threadId:
+          args.subject?.kind === 'thread' ? args.subject.threadId : null,
+        subjectObjectMetadataId:
+          args.subject?.kind === 'record'
+            ? args.subject.objectMetadataId
+            : null,
+        subjectRecordId:
+          args.subject?.kind === 'record' ? args.subject.recordId : null,
+      },
+    );
+
+    await this.insertToolCalls({
+      workspaceId: args.workspaceId,
+      inboxItemId: inboxItem.id,
+      toolCalls: args.toolCalls ?? [],
+      firstPosition: 0,
     });
+
+    return inboxItem;
   }
 
   // A rename is not something that happened to the subject, so it leaves

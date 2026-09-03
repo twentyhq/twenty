@@ -10,7 +10,6 @@ import { InboxQueueRoleEntity } from 'src/engine/core-modules/inbox/entities/inb
 import { InboxQueueEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue.entity';
 import { InboxItemResolver } from 'src/engine/core-modules/inbox/resolvers/inbox-item.resolver';
 import { InboxSettingsResolver } from 'src/engine/core-modules/inbox/resolvers/inbox-settings.resolver';
-import { InboxItemActionService } from 'src/engine/core-modules/inbox/services/inbox-item-action.service';
 import { InboxItemToolCallService } from 'src/engine/core-modules/inbox/services/inbox-item-tool-call.service';
 import { InboxItemTypeService } from 'src/engine/core-modules/inbox/services/inbox-item-type.service';
 import { InboxToolCallExecutionService } from 'src/engine/core-modules/inbox/services/inbox-tool-call-execution.service';
@@ -46,7 +45,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     InboxItemService,
     InboxItemTypeService,
     InboxQueueService,
-    InboxItemActionService,
     InboxItemToolCallService,
     InboxToolCallExecutionService,
     InboxTransitionService,

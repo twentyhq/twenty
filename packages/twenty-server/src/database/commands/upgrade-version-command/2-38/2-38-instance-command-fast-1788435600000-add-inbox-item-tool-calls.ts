@@ -9,10 +9,6 @@ export class AddInboxItemToolCallsFastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."inboxItem" ADD COLUMN IF NOT EXISTS "context" jsonb`,
-    );
-
-    await queryRunner.query(
       `DO $$ BEGIN CREATE TYPE "core"."inboxItemToolCall_status_enum" AS ENUM ('PROPOSED', 'REJECTED', 'EXECUTED', 'FAILED'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
     );
 
@@ -57,9 +53,6 @@ export class AddInboxItemToolCallsFastInstanceCommand
     await queryRunner.query(`DROP TABLE IF EXISTS "core"."inboxItemToolCall"`);
     await queryRunner.query(
       `DROP TYPE IF EXISTS "core"."inboxItemToolCall_status_enum"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."inboxItem" DROP COLUMN IF EXISTS "context"`,
     );
   }
 }

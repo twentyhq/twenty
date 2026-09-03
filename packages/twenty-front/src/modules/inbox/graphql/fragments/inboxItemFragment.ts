@@ -8,7 +8,6 @@ export const INBOX_ITEM_FRAGMENT = gql`
     priority
     version
     title
-    preview
     outcome
     lastEventAt
     queueId
@@ -41,23 +40,6 @@ export const INBOX_ITEM_FRAGMENT = gql`
       key
       label
       icon
-      actions {
-        key
-        label
-        icon
-        isPrimary
-        transitionKind
-        inputSchema {
-          key
-          label
-          type
-          isRequired
-        }
-      }
-      outcomes {
-        key
-        label
-      }
     }
   }
 `;

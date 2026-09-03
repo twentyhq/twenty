@@ -5,7 +5,7 @@ export const workflowCreateInboxItemActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
       title: z.string(),
-      preview: z.string().optional(),
+      summary: z.string().optional(),
       typeKey: z.string(),
       queueId: z.string().optional(),
       assigneeWorkspaceMemberId: z.string().optional(),

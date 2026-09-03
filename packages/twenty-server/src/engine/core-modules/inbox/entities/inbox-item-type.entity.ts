@@ -13,16 +13,14 @@ import { CREATE_INBOX_CORE_TABLES_UPGRADE_COMMAND_NAME } from 'src/database/comm
 import { InboxQueueEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
-import { type InboxItemAction } from 'src/engine/core-modules/inbox/types/inbox-item-action.type';
-import { type InboxItemResolution } from 'src/engine/core-modules/inbox/types/inbox-item-resolution.type';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
-import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
-// Declares one kind of work that can land in an inbox: how it renders, and
-// which actions it offers. Syncable so that the built-in types and app-declared
-// types share one shape and one identity space.
+// Names one kind of work that can land in an inbox: a label, an icon and where
+// it goes by default. Every kind offers the same controls, so the type says
+// nothing about what an item can do. Syncable so that the built-in types and
+// app-declared types share one shape and one identity space.
 @Entity({ name: 'inboxItemType', schema: 'core' })
 @WasIntroducedInUpgrade({
   upgradeCommandName: CREATE_INBOX_CORE_TABLES_UPGRADE_COMMAND_NAME,
@@ -81,15 +79,6 @@ export class InboxItemTypeEntity {
     default: InboxItemPriority.UPDATE,
   })
   defaultPriority: InboxItemPriority;
-
-  @Column({ nullable: false, type: 'jsonb', default: [] })
-  actions: JsonbProperty<InboxItemAction[]>;
-
-  // The ways an item of this type can end. An approval declares APPROVED and
-  // REJECTED, a question declares ANSWERED with an answer field: the engine
-  // stores the outcome key and its result without knowing either word.
-  @Column({ nullable: true, type: 'jsonb' })
-  resolution: JsonbProperty<InboxItemResolution> | null;
 
   // Where work of this kind goes when the producer named nobody. Configured
   // rather than coded, so sending failed runs to an Ops inbox is a setting.

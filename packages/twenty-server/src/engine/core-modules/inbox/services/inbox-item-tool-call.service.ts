@@ -5,6 +5,7 @@ import { IsNull, LessThan, Or } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
+import { InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item-outcome.enum';
 import { InboxItemToolCallStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-tool-call-status.enum';
 import {
   InboxException,
@@ -14,7 +15,7 @@ import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-i
 import { InboxToolCallExecutionService } from 'src/engine/core-modules/inbox/services/inbox-tool-call-execution.service';
 import { InboxTransitionService } from 'src/engine/core-modules/inbox/services/inbox-transition.service';
 import { findInvalidInputKeys } from 'src/engine/core-modules/inbox/utils/find-invalid-input-keys.util';
-import { type InboxItemPayload } from 'src/engine/core-modules/inbox/types/inbox-item-payload.type';
+import { type InboxItemToolCallInput } from 'src/engine/core-modules/inbox/types/inbox-item-tool-call-input.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -23,12 +24,6 @@ type ToolCallActorArgs = {
   actorUserWorkspaceId: string;
   accessibleQueueIds: string[];
 };
-
-export const AGENT_PLAN_OUTCOME = {
-  done: 'DONE',
-  partial: 'PARTIAL',
-  dismissed: 'DISMISSED',
-} as const;
 
 // A claim older than this belongs to a run that died between claiming and
 // finishing; the next run may take the call over rather than wait forever
@@ -55,7 +50,7 @@ export class InboxItemToolCallService {
     editedInput,
   }: ToolCallActorArgs & {
     inboxItemToolCallId: string;
-    editedInput: InboxItemPayload;
+    editedInput: InboxItemToolCallInput;
   }): Promise<InboxItemToolCallEntity> {
     const toolCall = await this.findEditableToolCallOrThrow({
       workspaceId,
@@ -126,14 +121,8 @@ export class InboxItemToolCallService {
       );
     }
 
+    // No calls is a plan too: doing it is marking the item done
     const toolCalls = await this.findToolCallsInOrder(workspaceId, inboxItemId);
-
-    if (toolCalls.length === 0) {
-      throw new InboxException(
-        `Inbox item ${inboxItemId} has no tool calls to run`,
-        InboxExceptionCode.INVALID_INBOX_ACTION,
-      );
-    }
 
     const proposedToolCalls = toolCalls.filter(
       (toolCall) => toolCall.status === InboxItemToolCallStatus.PROPOSED,
@@ -216,8 +205,8 @@ export class InboxItemToolCallService {
         transition: {
           kind: 'CLEAR',
           outcome: wasAnyRejected
-            ? AGENT_PLAN_OUTCOME.partial
-            : AGENT_PLAN_OUTCOME.done,
+            ? InboxItemOutcome.PARTIAL
+            : InboxItemOutcome.DONE,
         },
       });
     } catch (error) {

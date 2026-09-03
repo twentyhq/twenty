@@ -12,8 +12,8 @@ import {
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemToolCallStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-tool-call-status.enum';
-import { type InboxItemPayload } from 'src/engine/core-modules/inbox/types/inbox-item-payload.type';
-import { type InboxItemFieldSchema } from 'src/engine/core-modules/inbox/types/inbox-item-resolution.type';
+import { type InboxItemFieldSchema } from 'src/engine/core-modules/inbox/types/inbox-item-field-schema.type';
+import { type InboxItemToolCallInput } from 'src/engine/core-modules/inbox/types/inbox-item-tool-call-input.type';
 import { ADD_INBOX_ITEM_TOOL_CALLS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-38/add-inbox-item-tool-calls-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
@@ -81,10 +81,10 @@ export class InboxItemToolCallEntity {
   inputSchema: JsonbProperty<InboxItemFieldSchema[]>;
 
   @Column({ type: 'jsonb', nullable: false, default: '{}' })
-  proposedInput: JsonbProperty<InboxItemPayload>;
+  proposedInput: JsonbProperty<InboxItemToolCallInput>;
 
   @Column({ type: 'jsonb', nullable: true })
-  editedInput: JsonbProperty<InboxItemPayload> | null;
+  editedInput: JsonbProperty<InboxItemToolCallInput> | null;
 
   @Column({
     type: 'enum',
@@ -95,7 +95,7 @@ export class InboxItemToolCallEntity {
   status: InboxItemToolCallStatus;
 
   @Column({ type: 'jsonb', nullable: true })
-  output: JsonbProperty<InboxItemPayload> | null;
+  output: JsonbProperty<InboxItemToolCallInput> | null;
 
   @Column({ nullable: true, type: 'text' })
   error: string | null;

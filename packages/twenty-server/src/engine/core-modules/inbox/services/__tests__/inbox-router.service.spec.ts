@@ -5,6 +5,9 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
+import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
+import { InboxItemToolCallStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-tool-call-status.enum';
+import { InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item-outcome.enum';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { InboxExceptionCode } from 'src/engine/core-modules/inbox/inbox.exception';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -85,6 +88,12 @@ describe('InboxRouterService', () => {
     update: jest.fn(),
   };
 
+  const inboxItemToolCallRepository = {
+    insert: jest.fn(),
+    delete: jest.fn(),
+    find: jest.fn(),
+  };
+
   const inboxItemTypeService = {
     findByKey: jest.fn(),
   };
@@ -119,6 +128,7 @@ describe('InboxRouterService', () => {
     inboxItemRepository.findOne.mockResolvedValue(null);
     inboxItemRepository.findOneBy.mockResolvedValue(null);
     inboxItemRepository.update.mockResolvedValue({ affected: 1 });
+    inboxItemToolCallRepository.find.mockResolvedValue([]);
     inboxItemRepository.insertAndReturnOne.mockImplementation(
       (_workspaceId, inboxItem) =>
         Promise.resolve({ id: INSERTED_ITEM_ID, ...inboxItem }),
@@ -130,6 +140,10 @@ describe('InboxRouterService', () => {
         {
           provide: getWorkspaceScopedRepositoryToken(InboxItemEntity),
           useValue: inboxItemRepository,
+        },
+        {
+          provide: getWorkspaceScopedRepositoryToken(InboxItemToolCallEntity),
+          useValue: inboxItemToolCallRepository,
         },
         {
           provide: InboxItemTypeService,
@@ -276,7 +290,7 @@ describe('InboxRouterService', () => {
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
         title: 'A message from Alice',
-        preview: 'Hello there',
+        context: { summary: 'Hello there' },
         subject: threadSubject,
       });
 
@@ -290,9 +304,7 @@ describe('InboxRouterService', () => {
           inboxItemTypeId: CONVERSATION_TYPE_ID,
           priority: InboxItemPriority.UPDATE,
           title: 'A message from Alice',
-          preview: 'Hello there',
-          payload: null,
-          context: null,
+          context: { summary: 'Hello there' },
           queueId: null,
           assigneeUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
           slotKey: THREAD_SLOT_KEY,
@@ -439,7 +451,7 @@ describe('InboxRouterService', () => {
           clearedByUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
           resurfaceAt: new Date('2026-03-01T00:00:00.000Z'),
           readAt: new Date('2026-02-01T00:00:00.000Z'),
-          outcome: 'DONE',
+          outcome: InboxItemOutcome.DONE,
         }),
       );
 
@@ -476,10 +488,13 @@ describe('InboxRouterService', () => {
       );
     });
 
-    it('should leave the title, preview and payload untouched when folding without them', async () => {
+    it('should leave the title and context untouched when folding without them', async () => {
       // Prepare
       inboxItemRepository.findOne.mockResolvedValue(
-        buildInboxItem({ title: 'An older message', preview: 'Hello there' }),
+        buildInboxItem({
+          title: 'An older message',
+          context: { summary: 'Hello there' },
+        }),
       );
 
       // Act
@@ -493,8 +508,69 @@ describe('InboxRouterService', () => {
       const [, , partialUpdate] = inboxItemRepository.update.mock.calls[0];
 
       expect(partialUpdate).not.toHaveProperty('title');
-      expect(partialUpdate).not.toHaveProperty('preview');
-      expect(partialUpdate).not.toHaveProperty('payload');
+      expect(partialUpdate).not.toHaveProperty('context');
+      expect(inboxItemToolCallRepository.delete).not.toHaveBeenCalled();
+    });
+
+    it('should insert the proposed calls in order under a new item', async () => {
+      // Act
+      await service.routeItem({
+        workspaceId: WORKSPACE_ID,
+        typeKey: 'conversation',
+        title: 'A plan',
+        subject: threadSubject,
+        toolCalls: [
+          { toolName: 'send_email', label: 'Send email', proposedInput: {} },
+          { toolName: 'create_task', label: 'Create task', proposedInput: {} },
+        ],
+      });
+
+      // Assert
+      expect(inboxItemToolCallRepository.insert).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        [
+          expect.objectContaining({
+            inboxItemId: INSERTED_ITEM_ID,
+            position: 0,
+            toolName: 'send_email',
+            inputSchema: [],
+          }),
+          expect.objectContaining({ position: 1, toolName: 'create_task' }),
+        ],
+      );
+    });
+
+    // What already ran or was skipped is history the new plan cannot rewrite
+    it('should replace only the calls still proposed when folding a new plan in', async () => {
+      // Prepare
+      inboxItemRepository.findOne.mockResolvedValue(buildInboxItem());
+      inboxItemToolCallRepository.find.mockResolvedValue([
+        { position: 0 },
+        { position: 1 },
+      ]);
+
+      // Act
+      await service.routeItem({
+        workspaceId: WORKSPACE_ID,
+        typeKey: 'conversation',
+        subject: threadSubject,
+        toolCalls: [
+          { toolName: 'send_email', label: 'Send email', proposedInput: {} },
+        ],
+      });
+
+      // Assert
+      expect(inboxItemToolCallRepository.delete).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        {
+          inboxItemId: EXISTING_ITEM_ID,
+          status: InboxItemToolCallStatus.PROPOSED,
+        },
+      );
+      expect(inboxItemToolCallRepository.insert).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        [expect.objectContaining({ position: 2, toolName: 'send_email' })],
+      );
     });
 
     it('should keep an explicitly requested priority when folding rather than the type default', async () => {

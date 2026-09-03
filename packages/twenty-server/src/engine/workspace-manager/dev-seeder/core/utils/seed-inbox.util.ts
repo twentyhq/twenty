@@ -8,7 +8,7 @@ import {
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { InboxItemToolCallStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-tool-call-status.enum';
 import { type InboxItemContext } from 'src/engine/core-modules/inbox/types/inbox-item-context.type';
-import { type InboxItemFieldSchema } from 'src/engine/core-modules/inbox/types/inbox-item-resolution.type';
+import { type InboxItemFieldSchema } from 'src/engine/core-modules/inbox/types/inbox-item-field-schema.type';
 import { DEFAULT_INBOX_QUEUE_SLUG } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
 import {
   SEED_APPLE_WORKSPACE_ID,
@@ -72,7 +72,6 @@ type SeededInboxItem = {
   seedName: string;
   typeKey: StandardInboxItemTypeKey;
   title: string;
-  preview: string;
   priority?: InboxItemPriority;
   hoursAgo: number;
   isRead?: boolean;
@@ -81,8 +80,7 @@ type SeededInboxItem = {
   subject?:
     | { kind: 'thread'; which: 'default' | 'review' }
     | { kind: 'company'; companyId: string };
-  payload?: Record<string, unknown>;
-  context?: InboxItemContext;
+  context: InboxItemContext;
   toolCalls?: SeededToolCall[];
   cleared?: { hoursAgo: number; outcome?: string; resurfaceInHours?: number };
 };
@@ -111,8 +109,6 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
     seedName: 'plan-move-google-renewal-forward',
     typeKey: INBOX_ITEM_TYPE_KEY.agentPlan,
     title: "Move Google's renewal forward",
-    preview:
-      'Reply in Gmail, update the opportunity, add Paul to People and ping Julien.',
     hoursAgo: 1,
     assignee: 'me',
     subject: { kind: 'company', companyId: COMPANY_DATA_SEED_IDS.ID_1 },
@@ -240,7 +236,6 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
     seedName: 'plan-invoice-microsoft-renewal',
     typeKey: INBOX_ITEM_TYPE_KEY.agentPlan,
     title: "Invoice Microsoft's annual renewal",
-    preview: 'Create a $24,000 invoice and email it to the billing contact.',
     hoursAgo: 1.5,
     assignee: 'me',
     subject: { kind: 'company', companyId: COMPANY_DATA_SEED_IDS.ID_2 },
@@ -304,7 +299,6 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
     seedName: 'plan-create-meta-opportunity',
     typeKey: INBOX_ITEM_TYPE_KEY.agentPlan,
     title: 'Create an opportunity for Meta',
-    preview: 'Create a $45,000 expansion opportunity from the call notes.',
     hoursAgo: 2,
     assignee: 'me',
     subject: { kind: 'company', companyId: COMPANY_DATA_SEED_IDS.ID_3 },
@@ -374,8 +368,6 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
     seedName: 'plan-schedule-demo-with-slb',
     typeKey: INBOX_ITEM_TYPE_KEY.agentPlan,
     title: 'Schedule a demo with SLB',
-    preview:
-      'Create a calendar event and send the invite to the buying committee.',
     hoursAgo: 3,
     assignee: 'me',
     subject: { kind: 'company', companyId: COMPANY_DATA_SEED_IDS.ID_4 },
@@ -454,8 +446,6 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
     seedName: 'plan-update-cisco-profile',
     typeKey: INBOX_ITEM_TYPE_KEY.agentPlan,
     title: "Update Cisco's company profile",
-    preview:
-      "Update Cisco's industry, headcount and website from the latest filing.",
     priority: InboxItemPriority.UPDATE,
     hoursAgo: 5,
     isRead: true,
@@ -503,7 +493,6 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
     seedName: 'plan-log-call-with-uber',
     typeKey: INBOX_ITEM_TYPE_KEY.agentPlan,
     title: 'Log the call with Uber',
-    preview: 'Save the call notes and move the opportunity to negotiation.',
     priority: InboxItemPriority.UPDATE,
     hoursAgo: 28,
     isRead: true,
@@ -577,19 +566,37 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'approve-google-renewal',
     typeKey: INBOX_ITEM_TYPE_KEY.approval,
     title: "Approve Google's renewal quote",
-    preview:
-      'Send Marie the $24,000 invoice and confirm the tier-2 volume at the same rate.',
+    context: {
+      summary:
+        'Send Marie the $24,000 invoice and confirm the tier-2 volume at the same rate.',
+    },
     hoursAgo: 1,
     assignee: 'me',
     subject: { kind: 'company', companyId: COMPANY_DATA_SEED_IDS.ID_1 },
-    payload: { amount: 24000, currency: 'USD', term: '12 months' },
+    toolCalls: [
+      {
+        toolName: 'send_email',
+        label: 'Send the renewal quote',
+        description: 'Email Marie the quote with the invoice attached.',
+        icon: 'IconMail',
+        inputSchema: EMAIL_INPUT_SCHEMA,
+        proposedInput: {
+          to: 'marie.dubois@google.com',
+          cc: '',
+          subject: 'Your renewal quote',
+          body: 'Hi Marie,\n\nPlease find the renewal quote attached: $24,000 for 12 months at the tier-2 rate.\n\nBest,\nTim',
+        },
+      },
+    ],
   },
   {
     seedName: 'question-microsoft-tier',
     typeKey: INBOX_ITEM_TYPE_KEY.agentQuestion,
     title: 'Which pricing tier should I quote Microsoft?',
-    preview:
-      'Two plans match. The expansion opportunity mentions 45 seats, which sits between them.',
+    context: {
+      summary:
+        'Two plans match. The expansion opportunity mentions 45 seats, which sits between them.',
+    },
     hoursAgo: 2,
     assignee: 'me',
     subject: { kind: 'thread', which: 'default' },
@@ -598,20 +605,20 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'sync-invoices-run-failed',
     typeKey: INBOX_ITEM_TYPE_KEY.workflowRunFailed,
     title: 'Sync invoices to Stripe failed',
-    preview:
-      "Step 'Create invoice' failed: the Stripe API key has expired. 3 invoices were not sent.",
+    context: {
+      summary:
+        "Step 'Create invoice' failed: the Stripe API key has expired. 3 invoices were not sent.",
+    },
     hoursAgo: 3,
     assignee: 'me',
-    payload: {
-      workflowName: 'Sync invoices to Stripe',
-      failedStep: 'Create invoice',
-    },
   },
   {
     seedName: 'meta-buying-committee',
     typeKey: INBOX_ITEM_TYPE_KEY.conversation,
     title: "Add Meta's buying committee",
-    preview: 'New reply: Sarah added two more stakeholders to the thread.',
+    context: {
+      summary: 'New reply: Sarah added two more stakeholders to the thread.',
+    },
     priority: InboxItemPriority.UPDATE,
     hoursAgo: 4,
     assignee: 'me',
@@ -622,8 +629,10 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'q4-pipeline-review',
     typeKey: INBOX_ITEM_TYPE_KEY.conversation,
     title: 'Prepare the Q4 pipeline review',
-    preview:
-      'Draft ready: three opportunities moved, two close dates pushed to November.',
+    context: {
+      summary:
+        'Draft ready: three opportunities moved, two close dates pushed to November.',
+    },
     priority: InboxItemPriority.UPDATE,
     hoursAgo: 26,
     isRead: true,
@@ -634,8 +643,10 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'review-cisco-onboarding-fee',
     typeKey: INBOX_ITEM_TYPE_KEY.approval,
     title: "Review Cisco's onboarding fee",
-    preview:
-      'A $5,000 onboarding invoice is ready to send once the fee is confirmed.',
+    context: {
+      summary:
+        'A $5,000 onboarding invoice is ready to send once the fee is confirmed.',
+    },
     hoursAgo: 8,
     isRead: true,
     assignee: 'me',
@@ -646,20 +657,21 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'approve-uber-invoice',
     typeKey: INBOX_ITEM_TYPE_KEY.approval,
     title: "Approve Uber's onboarding invoice",
-    preview: 'Invoice #1042 for $5,000, due in 30 days.',
+    context: { summary: 'Invoice #1042 for $5,000, due in 30 days.' },
     hoursAgo: 50,
     isRead: true,
     assignee: 'me',
     subject: { kind: 'company', companyId: COMPANY_DATA_SEED_IDS.ID_6 },
-    payload: { amount: 5000, currency: 'USD' },
-    cleared: { hoursAgo: 48, outcome: 'APPROVED' },
+    cleared: { hoursAgo: 48, outcome: 'DONE' },
   },
   {
     seedName: 'salesforce-profile-update',
     typeKey: INBOX_ITEM_TYPE_KEY.conversation,
     title: "Update Salesforce's company profile",
-    preview:
-      'Industry, headcount and website were refreshed from the latest filing.',
+    context: {
+      summary:
+        'Industry, headcount and website were refreshed from the latest filing.',
+    },
     priority: InboxItemPriority.UPDATE,
     hoursAgo: 72,
     isRead: true,
@@ -671,18 +683,22 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'move-google-renewal-forward',
     typeKey: INBOX_ITEM_TYPE_KEY.approval,
     title: "Move Google's renewal forward",
-    preview:
-      'Reply to Marie in Gmail, update the opportunity and add Paul as the new operations lead.',
+    context: {
+      summary:
+        'Reply to Marie in Gmail, update the opportunity and add Paul as the new operations lead.',
+    },
     hoursAgo: 1,
     queueSeedName: 'sales',
     subject: { kind: 'company', companyId: COMPANY_DATA_SEED_IDS.ID_1 },
-    payload: { steps: ['Send email', 'Update opportunity', 'Create person'] },
   },
   {
     seedName: 'create-microsoft-opportunity',
     typeKey: INBOX_ITEM_TYPE_KEY.conversation,
     title: 'Create an opportunity for Microsoft',
-    preview: 'A $45,000 expansion opportunity is drafted from the call notes.',
+    context: {
+      summary:
+        'A $45,000 expansion opportunity is drafted from the call notes.',
+    },
     priority: InboxItemPriority.UPDATE,
     hoursAgo: 2,
     queueSeedName: 'sales',
@@ -692,7 +708,10 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'follow-up-slb-buyer',
     typeKey: INBOX_ITEM_TYPE_KEY.approval,
     title: "Follow up with SLB's buyer",
-    preview: 'Send the proposal and create a follow-up task for next Tuesday.',
+    context: {
+      summary:
+        'Send the proposal and create a follow-up task for next Tuesday.',
+    },
     hoursAgo: 3,
     queueSeedName: 'sales',
     assignee: 'colleague',
@@ -702,7 +721,9 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'log-call-with-sarah',
     typeKey: INBOX_ITEM_TYPE_KEY.conversation,
     title: 'Log the call with Sarah',
-    preview: 'Save the call notes and update the opportunity stage.',
+    context: {
+      summary: 'Save the call notes and update the opportunity stage.',
+    },
     priority: InboxItemPriority.UPDATE,
     hoursAgo: 5,
     queueSeedName: 'support',
@@ -712,7 +733,9 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'amdocs-ticket-closed',
     typeKey: INBOX_ITEM_TYPE_KEY.conversation,
     title: "Amdocs' import ticket was closed",
-    preview: 'The duplicate contacts were merged and the customer confirmed.',
+    context: {
+      summary: 'The duplicate contacts were merged and the customer confirmed.',
+    },
     priority: InboxItemPriority.UPDATE,
     hoursAgo: 30,
     isRead: true,
@@ -724,8 +747,10 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'update-q4-pipeline',
     typeKey: INBOX_ITEM_TYPE_KEY.conversation,
     title: 'Update the Q4 pipeline',
-    preview:
-      'Three opportunity close dates and two amounts changed since the last review.',
+    context: {
+      summary:
+        'Three opportunity close dates and two amounts changed since the last review.',
+    },
     priority: InboxItemPriority.UPDATE,
     hoursAgo: 24,
     queueSeedName: DEFAULT_INBOX_QUEUE_SLUG,
@@ -792,8 +817,6 @@ export const seedInbox = async ({
       'label',
       'icon',
       'defaultPriority',
-      'actions',
-      'resolution',
     ])
     .orIgnore()
     .values(
@@ -806,8 +829,6 @@ export const seedInbox = async ({
         label: standardType.label,
         icon: standardType.icon,
         defaultPriority: standardType.defaultPriority,
-        actions: standardType.actions,
-        resolution: standardType.resolution ?? null,
       })),
     )
     .execute();
@@ -934,8 +955,6 @@ export const seedInbox = async ({
       'inboxItemTypeId',
       'priority',
       'title',
-      'preview',
-      'payload',
       'context',
       'lastEventAt',
       'clearedAt',
@@ -970,9 +989,7 @@ export const seedInbox = async ({
           inboxItemTypeId: typeIdByKey[item.typeKey],
           priority: item.priority ?? InboxItemPriority.NEEDS_ACTION,
           title: item.title,
-          preview: item.preview,
-          payload: item.payload ?? null,
-          context: item.context ?? null,
+          context: item.context,
           lastEventAt,
           clearedAt,
           resurfaceAt:
@@ -1031,7 +1048,7 @@ export const seedInbox = async ({
     ])
     .orIgnore()
     .values(
-      SEEDED_PLAN_ITEMS.flatMap((item) =>
+      [...SEEDED_PLAN_ITEMS, ...SEEDED_INBOX_ITEMS].flatMap((item) =>
         (item.toolCalls ?? []).map((toolCall, position) => {
           const isExecuted =
             toolCall.status === InboxItemToolCallStatus.EXECUTED;

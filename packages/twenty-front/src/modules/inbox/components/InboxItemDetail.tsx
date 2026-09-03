@@ -12,11 +12,8 @@ import {
 import { LightIconButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { InboxItemContext } from '@/inbox/components/InboxItemContext';
 import { InboxItemMarkReadEffect } from '@/inbox/components/InboxItemMarkReadEffect';
-import { InboxItemSubject } from '@/inbox/components/InboxItemSubject';
-import { InboxPlanView } from '@/inbox/components/InboxPlanView';
-import { AGENT_PLAN_INBOX_ITEM_TYPE_KEY } from '@/inbox/constants/AgentPlanInboxItemTypeKey';
+import { InboxItemView } from '@/inbox/components/InboxItemView';
 import { useInboxItem } from '@/inbox/hooks/useInboxItem';
 import { useInboxItemPagination } from '@/inbox/hooks/useInboxItemPagination';
 import { type InboxListLocation } from '@/inbox/types/InboxListLocation';
@@ -68,14 +65,6 @@ const StyledBody = styled.div`
   min-height: 0;
 `;
 
-const StyledContext = styled.div`
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
-`;
-
 const StyledPlaceholder = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.light};
@@ -122,10 +111,6 @@ export const InboxItemDetail = ({
     );
   }
 
-  const isPlan =
-    isDefined(inboxItem) &&
-    inboxItem.inboxItemType.key === AGENT_PLAN_INBOX_ITEM_TYPE_KEY;
-
   return (
     <StyledDetail>
       <StyledTopBar>
@@ -171,16 +156,7 @@ export const InboxItemDetail = ({
             inboxItemId={inboxItem.id}
             isUnread={inboxItem.isUnread}
           />
-          {isPlan ? (
-            <InboxPlanView inboxItem={inboxItem} />
-          ) : (
-            <>
-              <StyledContext>
-                <InboxItemContext inboxItem={inboxItem} />
-              </StyledContext>
-              <InboxItemSubject inboxItem={inboxItem} />
-            </>
-          )}
+          <InboxItemView inboxItem={inboxItem} />
         </StyledBody>
       )}
     </StyledDetail>

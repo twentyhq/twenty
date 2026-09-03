@@ -6,6 +6,7 @@ import { useIcons } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxListRowButtons } from '@/inbox/components/InboxListRowButtons';
+import { getInboxItemContext } from '@/inbox/utils/getInboxItemContext';
 import { type InboxItem, InboxItemPriority } from '~/generated/graphql';
 import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
 
@@ -116,7 +117,7 @@ const StyledSecondLine = styled(StyledLine)`
   );
 `;
 
-const StyledPreview = styled.div`
+const StyledSummary = styled.div`
   flex: 1;
   min-width: 0;
   overflow: hidden;
@@ -160,8 +161,8 @@ export const InboxListRow = ({
   const toolIcons = inboxItem.toolCalls
     .slice(0, MAX_ROW_TOOL_ICONS)
     .map((toolCall) => ({ id: toolCall.id, Icon: getIcon(toolCall.icon) }));
-  const hasSecondLine =
-    toolIcons.length > 0 || isNonEmptyString(inboxItem.preview);
+  const { summary } = getInboxItemContext(inboxItem);
+  const hasSecondLine = toolIcons.length > 0 || isNonEmptyString(summary);
 
   return (
     <StyledRowContainer>
@@ -207,8 +208,8 @@ export const InboxListRow = ({
                   ))}
                 </StyledToolIcons>
               )}
-              {isNonEmptyString(inboxItem.preview) && (
-                <StyledPreview>{inboxItem.preview}</StyledPreview>
+              {isNonEmptyString(summary) && (
+                <StyledSummary>{summary}</StyledSummary>
               )}
             </StyledSecondLine>
           )}

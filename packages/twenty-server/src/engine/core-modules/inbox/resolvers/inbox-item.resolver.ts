@@ -22,7 +22,6 @@ import {
   InboxException,
   InboxExceptionCode,
 } from 'src/engine/core-modules/inbox/inbox.exception';
-import { InboxItemActionService } from 'src/engine/core-modules/inbox/services/inbox-item-action.service';
 import { InboxItemToolCallService } from 'src/engine/core-modules/inbox/services/inbox-item-tool-call.service';
 import {
   type InboxReadScope,
@@ -35,7 +34,7 @@ import {
   toInboxItemDto,
   toInboxItemToolCallDto,
 } from 'src/engine/core-modules/inbox/utils/to-inbox-item-dto.util';
-import { toInboxItemPayload } from 'src/engine/core-modules/inbox/utils/to-inbox-item-payload.util';
+import { toInboxItemToolCallInput } from 'src/engine/core-modules/inbox/utils/to-inbox-item-tool-call-input.util';
 import { toInboxItemTransition } from 'src/engine/core-modules/inbox/utils/to-inbox-item-transition.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -66,7 +65,6 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 export class InboxItemResolver {
   constructor(
     private readonly inboxItemService: InboxItemService,
-    private readonly inboxItemActionService: InboxItemActionService,
     private readonly inboxQueueService: InboxQueueService,
     private readonly inboxTransitionService: InboxTransitionService,
     private readonly inboxItemToolCallService: InboxItemToolCallService,
@@ -241,35 +239,6 @@ export class InboxItemResolver {
     return toInboxItemDto(inboxItem, new Date(), userWorkspaceId);
   }
 
-  // Ergonomic wrapper: names one of the type's declared actions instead of
-  // spelling out the transition it stands for.
-  @Mutation(() => InboxItemDTO)
-  async executeInboxItemAction(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
-    @Args('inboxItemId', { type: () => UUIDScalarType }) inboxItemId: string,
-    @Args('actionKey', { type: () => String }) actionKey: string,
-    @Args('input', { type: () => GraphQLJSON, nullable: true })
-    input?: Record<string, unknown>,
-    @Args('expectedVersion', { type: () => Int, nullable: true })
-    expectedVersion?: number,
-  ): Promise<InboxItemDTO> {
-    const inboxItem = await this.inboxItemActionService.execute({
-      inboxItemId,
-      workspaceId,
-      actorUserWorkspaceId: userWorkspaceId,
-      accessibleQueueIds: await this.findAccessibleQueueIds(
-        workspaceId,
-        userWorkspaceId,
-      ),
-      actionKey,
-      input: toInboxItemPayload(input),
-      expectedVersion,
-    });
-
-    return toInboxItemDto(inboxItem, new Date(), userWorkspaceId);
-  }
-
   @Mutation(() => InboxItemToolCallDTO)
   async updateInboxItemToolCallInput(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -287,7 +256,7 @@ export class InboxItemResolver {
         userWorkspaceId,
       ),
       inboxItemToolCallId,
-      editedInput: toInboxItemPayload(editedInput) ?? {},
+      editedInput: toInboxItemToolCallInput(editedInput) ?? {},
     });
 
     return toInboxItemToolCallDto(toolCall);
@@ -315,8 +284,8 @@ export class InboxItemResolver {
     return toInboxItemToolCallDto(toolCall);
   }
 
-  // Runs what is left of the plan and clears the item. The plan's own controls
-  // are the ways out that do not run anything.
+  // Does the item: runs what is left of its calls and clears it. An item with
+  // no calls is done by the same mutation, so the client has one verb.
   @Mutation(() => InboxItemDTO)
   async runInboxItemToolCalls(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

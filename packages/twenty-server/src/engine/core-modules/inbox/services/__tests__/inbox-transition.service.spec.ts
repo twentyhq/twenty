@@ -2,6 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
+import { InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item-outcome.enum';
 import { InboxExceptionCode } from 'src/engine/core-modules/inbox/inbox.exception';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
@@ -16,12 +17,6 @@ const NOW = new Date('2026-08-07T10:00:00.000Z');
 const APPROVAL_TYPE = {
   id: 'approval-type-id',
   key: 'approval',
-  resolution: {
-    outcomes: [
-      { key: 'APPROVED', label: 'Approved' },
-      { key: 'REJECTED', label: 'Rejected' },
-    ],
-  },
 } as InboxItemTypeEntity;
 
 const buildInboxItem = (
@@ -102,7 +97,7 @@ describe('InboxTransitionService', () => {
       // Act
       await service.transition({
         ...transitionArgs,
-        transition: { kind: 'CLEAR', outcome: 'APPROVED' },
+        transition: { kind: 'CLEAR', outcome: InboxItemOutcome.DONE },
         expectedVersion: 3,
       });
 
@@ -131,7 +126,7 @@ describe('InboxTransitionService', () => {
       await expect(
         service.transition({
           ...transitionArgs,
-          transition: { kind: 'CLEAR', outcome: 'APPROVED' },
+          transition: { kind: 'CLEAR', outcome: InboxItemOutcome.DONE },
           expectedVersion: 2,
         }),
       ).rejects.toMatchObject({
@@ -210,58 +205,16 @@ describe('InboxTransitionService', () => {
       expect(lastPartialUpdate()).not.toHaveProperty('lastEventAt');
     });
 
-    it('should record the outcome and its result', async () => {
+    it('should record how the item ended', async () => {
       // Act
       await service.transition({
         ...transitionArgs,
-        transition: {
-          kind: 'CLEAR',
-          outcome: 'REJECTED',
-          result: { reason: 'Not this quarter' },
-        },
+        transition: { kind: 'CLEAR', outcome: InboxItemOutcome.DISMISSED },
       });
 
       // Assert
       expect(lastPartialUpdate()).toEqual(
-        expect.objectContaining({
-          outcome: 'REJECTED',
-          result: { reason: 'Not this quarter' },
-        }),
-      );
-    });
-
-    it('should refuse an outcome the type does not declare', async () => {
-      // Act & Assert
-      await expect(
-        service.transition({
-          ...transitionArgs,
-          transition: { kind: 'CLEAR', outcome: 'SHIPPED' },
-        }),
-      ).rejects.toMatchObject({
-        code: InboxExceptionCode.INVALID_INBOX_ACTION,
-      });
-    });
-
-    it('should accept any outcome when the type declares none', async () => {
-      // Prepare
-      inboxItemService.findVisibleItemOrThrow.mockResolvedValue(
-        buildInboxItem({
-          inboxItemType: {
-            id: 'type-id',
-            key: 'conversation',
-          } as InboxItemTypeEntity,
-        }),
-      );
-
-      // Act
-      await service.transition({
-        ...transitionArgs,
-        transition: { kind: 'CLEAR', outcome: 'ANYTHING' },
-      });
-
-      // Assert
-      expect(lastPartialUpdate()).toEqual(
-        expect.objectContaining({ outcome: 'ANYTHING' }),
+        expect.objectContaining({ outcome: InboxItemOutcome.DISMISSED }),
       );
     });
 
@@ -274,7 +227,7 @@ describe('InboxTransitionService', () => {
       // Act
       await service.transition({
         ...transitionArgs,
-        transition: { kind: 'CLEAR', outcome: 'APPROVED' },
+        transition: { kind: 'CLEAR', outcome: InboxItemOutcome.DONE },
       });
 
       // Assert
@@ -289,7 +242,10 @@ describe('InboxTransitionService', () => {
       // Act
       await service.transition({
         ...transitionArgs,
-        transition: { kind: 'CLEAR', resurfaceInMinutes: 60 },
+        transition: {
+          kind: 'CLEAR',
+          resurfaceAt: new Date('2026-08-07T11:00:00.000Z'),
+        },
       });
 
       // Assert
@@ -303,24 +259,27 @@ describe('InboxTransitionService', () => {
       );
     });
 
-    it('should refuse a non positive delay', async () => {
+    it('should refuse a time that is not in the future', async () => {
       // Act & Assert
       await expect(
         service.transition({
           ...transitionArgs,
-          transition: { kind: 'CLEAR', resurfaceInMinutes: 0 },
+          transition: { kind: 'CLEAR', resurfaceAt: NOW },
         }),
       ).rejects.toMatchObject({
         code: InboxExceptionCode.INVALID_INBOX_ACTION,
       });
     });
 
-    it('should refuse a delay longer than a year', async () => {
+    it('should refuse a time more than a year away', async () => {
       // Act & Assert
       await expect(
         service.transition({
           ...transitionArgs,
-          transition: { kind: 'CLEAR', resurfaceInMinutes: 60 * 24 * 400 },
+          transition: {
+            kind: 'CLEAR',
+            resurfaceAt: new Date('2027-09-07T10:00:00.000Z'),
+          },
         }),
       ).rejects.toMatchObject({
         code: InboxExceptionCode.INVALID_INBOX_ACTION,
@@ -348,7 +307,6 @@ describe('InboxTransitionService', () => {
           clearedByUserWorkspaceId: null,
           resurfaceAt: null,
           outcome: null,
-          result: null,
         }),
       );
     });

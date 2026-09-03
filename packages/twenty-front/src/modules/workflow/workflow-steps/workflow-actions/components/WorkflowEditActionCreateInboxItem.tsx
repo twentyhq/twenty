@@ -16,7 +16,7 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 
 type CreateInboxItemFormData = {
   title: string;
-  preview: string;
+  summary: string;
   typeKey: string;
   queueId: string;
   assigneeWorkspaceMemberId: string;
@@ -46,7 +46,7 @@ export const WorkflowEditActionCreateInboxItem = ({
 
   const [formData, setFormData] = useState<CreateInboxItemFormData>(() => ({
     title: action.settings.input.title,
-    preview: action.settings.input.preview ?? '',
+    summary: action.settings.input.summary ?? '',
     typeKey: action.settings.input.typeKey,
     queueId: action.settings.input.queueId ?? '',
     assigneeWorkspaceMemberId:
@@ -66,7 +66,7 @@ export const WorkflowEditActionCreateInboxItem = ({
           input: {
             ...action.settings.input,
             title: nextFormData.title,
-            preview: nextFormData.preview,
+            summary: nextFormData.summary,
             typeKey: nextFormData.typeKey,
             queueId: nextFormData.queueId || undefined,
             assigneeWorkspaceMemberId:
@@ -124,16 +124,16 @@ export const WorkflowEditActionCreateInboxItem = ({
           VariablePicker={WorkflowVariablePicker}
         />
         <FormTextFieldInput
-          label={t`Preview`}
-          placeholder={t`A second line of context`}
-          defaultValue={formData.preview}
-          onChange={(value) => handleFieldChange('preview', value)}
+          label={t`Summary`}
+          placeholder={t`A second line of context under the title`}
+          defaultValue={formData.summary}
+          onChange={(value) => handleFieldChange('summary', value)}
           readonly={readonly}
           VariablePicker={WorkflowVariablePicker}
         />
         <FormSelectFieldInput
           label={t`Kind of work`}
-          hint={t`Decides the actions offered on the item`}
+          hint={t`Decides the icon and the default routing`}
           options={typeOptions}
           defaultValue={formData.typeKey}
           onChange={(value) => handleFieldChange('typeKey', value ?? '')}

@@ -140,8 +140,6 @@ export class InboxItemTypeService {
         label: standardType.label,
         icon: standardType.icon,
         defaultPriority: standardType.defaultPriority,
-        actions: standardType.actions,
-        resolution: standardType.resolution ?? null,
       })),
       { conflictPaths: ['workspaceId', 'universalIdentifier'] },
     );

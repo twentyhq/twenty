@@ -2,6 +2,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 
+import { InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item-outcome.enum';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { InboxItemToolCallStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-tool-call-status.enum';
 import { InboxItemScope } from 'src/engine/core-modules/inbox/enums/inbox-item-scope.enum';
@@ -20,38 +21,6 @@ export class InboxItemFieldDTO {
 
   @Field(() => Boolean)
   isRequired: boolean;
-}
-
-@ObjectType('InboxItemAction')
-export class InboxItemActionDTO {
-  @Field(() => String)
-  key: string;
-
-  @Field(() => String)
-  label: string;
-
-  @Field(() => String, { nullable: true })
-  icon: string | null;
-
-  @Field(() => Boolean)
-  isPrimary: boolean;
-
-  // Set when the action transitions the item. The client never interprets it;
-  // it sends the action key back and the server applies the transition.
-  @Field(() => String, { nullable: true })
-  transitionKind: string | null;
-
-  @Field(() => [InboxItemFieldDTO])
-  inputSchema: InboxItemFieldDTO[];
-}
-
-@ObjectType('InboxItemOutcome')
-export class InboxItemOutcomeDTO {
-  @Field(() => String)
-  key: string;
-
-  @Field(() => String)
-  label: string;
 }
 
 @ObjectType('InboxItemToolCall')
@@ -106,12 +75,6 @@ export class InboxItemTypeDTO {
 
   @Field(() => String, { nullable: true })
   icon: string | null;
-
-  @Field(() => [InboxItemActionDTO])
-  actions: InboxItemActionDTO[];
-
-  @Field(() => [InboxItemOutcomeDTO])
-  outcomes: InboxItemOutcomeDTO[];
 }
 
 // A shared inbox, with the counts the navigation needs to badge it.
@@ -163,25 +126,17 @@ export class InboxItemDTO {
   @Field(() => String)
   title: string;
 
-  @Field(() => String, { nullable: true })
-  preview: string | null;
+  // Summary, source and entity graph: whatever the producer knew
+  @Field(() => GraphQLJSON)
+  context: Record<string, unknown>;
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  payload: Record<string, unknown> | null;
-
-  // Summary, source and entity graph when the producer had them
-  @Field(() => GraphQLJSON, { nullable: true })
-  context: Record<string, unknown> | null;
-
-  // The plan's rows, in order; empty for every type but a plan
+  // The calls the item proposes, in order. Empty is a valid plan: doing it
+  // just marks the item done.
   @Field(() => [InboxItemToolCallDTO])
   toolCalls: InboxItemToolCallDTO[];
 
-  @Field(() => String, { nullable: true })
-  outcome: string | null;
-
-  @Field(() => GraphQLJSON, { nullable: true })
-  result: Record<string, unknown> | null;
+  @Field(() => InboxItemOutcome, { nullable: true })
+  outcome: InboxItemOutcome | null;
 
   // When the subject last did something. Also what the list is ordered by.
   @Field(() => Date)

@@ -388,7 +388,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               ...BASE_STEP_DEFINITION,
               input: {
                 title: '',
-                preview: '',
+                summary: '',
                 typeKey: INBOX_ITEM_TYPE_KEY.approval,
               },
             },

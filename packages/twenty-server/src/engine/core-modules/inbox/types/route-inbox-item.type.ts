@@ -1,6 +1,6 @@
 import { type InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { type InboxItemContext } from 'src/engine/core-modules/inbox/types/inbox-item-context.type';
-import { type InboxItemPayload } from 'src/engine/core-modules/inbox/types/inbox-item-payload.type';
+import { type InboxItemToolCallDraft } from 'src/engine/core-modules/inbox/types/inbox-item-tool-call-draft.type';
 
 // What the work is about. `ownerUserWorkspaceId` is the subject saying who it
 // belongs to, which is a property of the subject rather than of its kind: a
@@ -20,16 +20,19 @@ export type InboxPrincipalRef =
   | { kind: 'userWorkspace'; userWorkspaceId: string }
   | { kind: 'queue'; queueId: string };
 
+// A producer describes an item as a context and the calls it proposes, and
+// says nothing about how it is shown or acted on: every item gets the same
+// controls.
 export type RouteInboxItemArgs = {
   workspaceId: string;
   typeKey: string;
   // Omitted on a fold means "keep what the item already says", so a turn that
-  // produced no new text cannot blank out a good title or preview.
+  // produced no new text cannot blank out a good title or context.
   title?: string;
-  preview?: string;
-  payload?: InboxItemPayload | null;
-  // Summary, source and entities, for producers that know more than a line
-  context?: InboxItemContext | null;
+  context?: InboxItemContext;
+  // On a fold these replace whatever the item still proposed, so a producer
+  // that plans again does not stack its old plan under the new one.
+  toolCalls?: InboxItemToolCallDraft[];
   subject?: InboxSubject;
   // The slot an item occupies for its target. Two upserts naming the same slot
   // are the same piece of work, so the second folds into the first instead of

@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { INBOX_ITEM_TYPE_KEY } from 'src/engine/core-modules/inbox/constants/standard-inbox-item-types.constant';
 import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
 
@@ -42,17 +44,17 @@ export class AgentChatInboxService {
     workspaceId,
     userWorkspaceId,
     hasPendingQuestion,
-    preview,
+    summary,
   }: ThreadContext & {
     hasPendingQuestion: boolean;
-    preview?: string;
+    summary?: string;
   }): Promise<void> {
     await this.inboxRouterService.route({
       workspaceId,
       typeKey: hasPendingQuestion
         ? INBOX_ITEM_TYPE_KEY.agentQuestion
         : INBOX_ITEM_TYPE_KEY.conversation,
-      preview,
+      ...(isDefined(summary) ? { context: { summary } } : {}),
       subject: {
         kind: 'thread',
         threadId,

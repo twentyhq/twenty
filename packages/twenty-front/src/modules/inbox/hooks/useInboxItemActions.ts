@@ -1,14 +1,17 @@
 import { useMutation } from '@apollo/client/react';
 import { useCallback } from 'react';
 
-import { EXECUTE_INBOX_ITEM_ACTION } from '@/inbox/graphql/mutations/executeInboxItemAction';
 import { MARK_INBOX_ITEM_READ } from '@/inbox/graphql/mutations/markInboxItemRead';
 import { RUN_INBOX_ITEM_TOOL_CALLS } from '@/inbox/graphql/mutations/runInboxItemToolCalls';
 import { SET_INBOX_ITEM_TOOL_CALL_REJECTED } from '@/inbox/graphql/mutations/setInboxItemToolCallRejected';
 import { UPDATE_INBOX_ITEM_TOOL_CALL_INPUT } from '@/inbox/graphql/mutations/updateInboxItemToolCallInput';
 import { TRANSITION_INBOX_ITEM } from '@/inbox/graphql/mutations/transitionInboxItem';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { type InboxItem, type InboxItemToolCall } from '~/generated/graphql';
+import {
+  type InboxItem,
+  type InboxItemOutcome,
+  type InboxItemToolCall,
+} from '~/generated/graphql';
 import { logError } from '~/utils/logError';
 
 // A transition can move an item between scopes, so the list has to be re-read.
@@ -18,9 +21,7 @@ const INBOX_REFETCH_QUERIES = ['GetMyInboxItems', 'GetMyInboxCounts'];
 
 type InboxItemTransitionInput = {
   kind: string;
-  outcome?: string;
-  result?: Record<string, unknown>;
-  resurfaceInMinutes?: number;
+  outcome?: InboxItemOutcome;
   resurfaceAt?: string;
   toUserWorkspaceId?: string | null;
 };
@@ -50,16 +51,6 @@ export const useInboxItemActions = () => {
     }
   >(TRANSITION_INBOX_ITEM, mutationOptions);
 
-  const [executeInboxItemActionMutation] = useMutation<
-    { executeInboxItemAction: InboxItem },
-    {
-      inboxItemId: string;
-      actionKey: string;
-      input?: Record<string, unknown>;
-      expectedVersion?: number;
-    }
-  >(EXECUTE_INBOX_ITEM_ACTION, mutationOptions);
-
   // Memoized because an effect marks an item read on open, and a function
   // whose identity changed every render would fire that mutation repeatedly.
   const markInboxItemRead = useCallback(
@@ -73,8 +64,8 @@ export const useInboxItemActions = () => {
     [markInboxItemReadMutation],
   );
 
-  // The one way an item changes state. Everything else is a named shortcut to
-  // a transition, resolved server side from the type's declared actions.
+  // The one way an item changes state short of doing it. Every control in
+  // the item pane is one of these with a different kind.
   const transitionInboxItem = useCallback(
     async ({
       inboxItemId,
@@ -206,31 +197,11 @@ export const useInboxItemActions = () => {
     [runInboxItemToolCallsMutation],
   );
 
-  const executeInboxItemAction = useCallback(
-    async ({
-      inboxItemId,
-      actionKey,
-      input,
-      expectedVersion,
-    }: {
-      inboxItemId: string;
-      actionKey: string;
-      input?: Record<string, unknown>;
-      expectedVersion?: number;
-    }) => {
-      await executeInboxItemActionMutation({
-        variables: { inboxItemId, actionKey, input, expectedVersion },
-      });
-    },
-    [executeInboxItemActionMutation],
-  );
-
   return {
     markInboxItemRead,
     transitionInboxItem,
     assignInboxItem,
     reopenInboxItem,
-    executeInboxItemAction,
     updateInboxItemToolCallInput,
     setInboxItemToolCallRejected,
     runInboxItemToolCalls,

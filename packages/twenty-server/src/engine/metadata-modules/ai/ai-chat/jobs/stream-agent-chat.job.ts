@@ -902,7 +902,7 @@ export class StreamAgentChatJob {
       workspaceId,
       userWorkspaceId,
       hasPendingQuestion: isDefined(pendingQuestionPart),
-      preview: findFirstTextPart(responseMessage.parts),
+      summary: findFirstTextPart(responseMessage.parts),
     });
 
     await this.agentChatService.notifyThreadUsageUpdated({

@@ -1,4 +1,4 @@
-import { type InboxItemPayload } from 'src/engine/core-modules/inbox/types/inbox-item-payload.type';
+import { type InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item-outcome.enum';
 
 // Everything a person can do to an inbox item. Clearing takes it out of the
 // inbox, reopening puts it back, and assigning decides whose it is. Snoozing is
@@ -7,9 +7,7 @@ import { type InboxItemPayload } from 'src/engine/core-modules/inbox/types/inbox
 export type InboxItemTransition =
   | {
       kind: 'CLEAR';
-      outcome?: string;
-      result?: InboxItemPayload;
-      resurfaceInMinutes?: number;
+      outcome?: InboxItemOutcome;
       resurfaceAt?: Date;
     }
   | { kind: 'REOPEN' }

@@ -11,6 +11,7 @@ import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox
 import { type InboxPrincipalRef } from 'src/engine/core-modules/inbox/types/route-inbox-item.type';
 import { CreateInboxItemToolInputZodSchema } from 'src/engine/core-modules/tool/tools/inbox-tool/inbox-tool.schema';
 import { type CreateInboxItemToolInput } from 'src/engine/core-modules/tool/tools/inbox-tool/types/create-inbox-item-tool-input.type';
+import { toInboxItemToolCallDrafts } from 'src/engine/core-modules/tool/tools/inbox-tool/utils/to-inbox-item-tool-call-drafts.util';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -21,7 +22,7 @@ export class CreateInboxItemTool implements Tool {
   private readonly logger = new Logger(CreateInboxItemTool.name);
 
   description =
-    "Put a piece of work in someone's inbox: an approval to grant, a question to answer, something to look at. Name an assignee or a shared inbox, or neither to let the workspace routing decide. Reuse a slotKey to keep updating one item instead of creating another.";
+    "Put a piece of work in someone's inbox: a plan of calls to approve, a question to answer, something to look at. Name an assignee or a shared inbox, or neither to let the workspace routing decide. Reuse a slotKey to keep updating one item instead of creating another.";
   inputSchema = CreateInboxItemToolInputZodSchema;
 
   constructor(
@@ -52,7 +53,12 @@ export class CreateInboxItemTool implements Tool {
         workspaceId: context.workspaceId,
         typeKey: parameters.typeKey,
         title: parameters.title,
-        preview: parameters.preview,
+        ...(isDefined(parameters.summary)
+          ? { context: { summary: parameters.summary } }
+          : {}),
+        ...(isDefined(parameters.toolCalls)
+          ? { toolCalls: toInboxItemToolCallDrafts(parameters.toolCalls) }
+          : {}),
         priority: parameters.priority,
         slotKey: parameters.slotKey,
         target: await this.resolveTarget(parameters, context.workspaceId),

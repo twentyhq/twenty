@@ -3,6 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { isDefined } from 'twenty-shared/utils';
 
 import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
+import { InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item-outcome.enum';
 import { InboxItemToolCallStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-tool-call-status.enum';
 import {
   InboxException,
@@ -346,17 +347,20 @@ describe('InboxItemToolCallService', () => {
       );
     });
 
-    it('should refuse to run a plan with no tool calls', async () => {
+    it('should mark an item with no tool calls done without running anything', async () => {
       // Prepare
-      inboxItemToolCallRepository.find.mockResolvedValueOnce([]);
+      givenToolCalls([], []);
 
-      // Act & Assert
-      await expect(
-        service.runAll({ ...actorArgs, inboxItemId: INBOX_ITEM_ID }),
-      ).rejects.toMatchObject({
-        code: InboxExceptionCode.INVALID_INBOX_ACTION,
-      });
-      expect(inboxTransitionService.transition).not.toHaveBeenCalled();
+      // Act
+      await service.runAll({ ...actorArgs, inboxItemId: INBOX_ITEM_ID });
+
+      // Assert
+      expect(inboxToolCallExecutionService.execute).not.toHaveBeenCalled();
+      expect(inboxTransitionService.transition).toHaveBeenCalledWith(
+        expect.objectContaining({
+          transition: { kind: 'CLEAR', outcome: InboxItemOutcome.DONE },
+        }),
+      );
     });
 
     // Losing a claim means another run is ahead in the plan; the later calls

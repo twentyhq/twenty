@@ -1,1 +1,0 @@
-export const INBOX_LIST_ROW_SUBJECT_WIDTH = 280;

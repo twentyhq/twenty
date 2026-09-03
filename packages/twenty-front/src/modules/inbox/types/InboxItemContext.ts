@@ -1,4 +1,4 @@
-export type InboxPlanContextSource = {
+export type InboxItemContextSource = {
   kind: 'email' | 'thread' | 'record' | 'call';
   label: string;
   detail?: string;
@@ -6,7 +6,7 @@ export type InboxPlanContextSource = {
   messageCount?: number;
 };
 
-export type InboxPlanContextEntity = {
+export type InboxItemContextEntity = {
   key: string;
   label: string;
   subtitle?: string;
@@ -15,16 +15,16 @@ export type InboxPlanContextEntity = {
   objectMetadataId?: string;
 };
 
-export type InboxPlanContextEdge = {
+export type InboxItemContextEdge = {
   from: string;
   to: string;
   label: string;
 };
 
 // Mirrors the server's inbox item context; the API carries it as JSON.
-export type InboxPlanContext = {
-  summary: string;
-  source?: InboxPlanContextSource;
-  entities?: InboxPlanContextEntity[];
-  edges?: InboxPlanContextEdge[];
+export type InboxItemContext = {
+  summary?: string;
+  source?: InboxItemContextSource;
+  entities: InboxItemContextEntity[];
+  edges: InboxItemContextEdge[];
 };

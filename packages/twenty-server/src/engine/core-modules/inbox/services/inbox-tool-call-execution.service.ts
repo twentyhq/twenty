@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { type InboxItemPayload } from 'src/engine/core-modules/inbox/types/inbox-item-payload.type';
+import { type InboxItemToolCallInput } from 'src/engine/core-modules/inbox/types/inbox-item-tool-call-input.type';
 
 export type InboxToolCallExecutionResult =
-  | { status: 'EXECUTED'; output: InboxItemPayload }
+  | { status: 'EXECUTED'; output: InboxItemToolCallInput }
   | { status: 'FAILED'; error: string };
 
 // The seam between an approved call and the tool executor. Running with the
@@ -18,7 +18,7 @@ export class InboxToolCallExecutionService {
     workspaceId: string;
     actorUserWorkspaceId: string;
     toolName: string;
-    input: InboxItemPayload;
+    input: InboxItemToolCallInput;
   }): Promise<InboxToolCallExecutionResult> {
     return { status: 'EXECUTED', output: input };
   }

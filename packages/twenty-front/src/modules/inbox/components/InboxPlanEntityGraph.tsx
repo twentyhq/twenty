@@ -5,9 +5,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {
-  type InboxPlanContextEdge,
-  type InboxPlanContextEntity,
-} from '@/inbox/types/InboxPlanContext';
+  type InboxItemContextEdge,
+  type InboxItemContextEntity,
+} from '@/inbox/types/InboxItemContext';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -90,7 +90,7 @@ const StyledLine = styled.div`
 // An entity names a standard object by kind; a producer that knows the exact
 // object says so explicitly
 const OBJECT_NAME_SINGULAR_BY_ENTITY_KIND: Partial<
-  Record<InboxPlanContextEntity['kind'], string>
+  Record<InboxItemContextEntity['kind'], string>
 > = {
   person: CoreObjectNameSingular.Person,
   company: CoreObjectNameSingular.Company,
@@ -98,8 +98,8 @@ const OBJECT_NAME_SINGULAR_BY_ENTITY_KIND: Partial<
 };
 
 type InboxPlanEntityGraphProps = {
-  entities: InboxPlanContextEntity[];
-  edges: InboxPlanContextEdge[];
+  entities: InboxItemContextEntity[];
+  edges: InboxItemContextEdge[];
 };
 
 // The entities in the order the producer gave them, with the relation between
@@ -127,7 +127,7 @@ export const InboxPlanEntityGraph = ({
         (edge.from === rightKey && edge.to === leftKey),
     )?.label;
 
-  const getObjectNameSingular = (entity: InboxPlanContextEntity) =>
+  const getObjectNameSingular = (entity: InboxItemContextEntity) =>
     isDefined(entity.objectMetadataId)
       ? objectMetadataItemsByIdMap.get(entity.objectMetadataId)?.nameSingular
       : OBJECT_NAME_SINGULAR_BY_ENTITY_KIND[entity.kind];
