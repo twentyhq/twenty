@@ -179,10 +179,7 @@ export const InboxPlanToolCallEditor = ({
             return [field.key, undefined];
           }
 
-          return [
-            field.key,
-            field.type === 'NUMBER' ? Number(value) : value,
-          ];
+          return [field.key, field.type === 'NUMBER' ? Number(value) : value];
         })
         .filter(([, value]) => isDefined(value)),
     );
@@ -271,7 +268,9 @@ export const InboxPlanToolCallEditor = ({
         <StyledFields>
           {isEmail && shortFields.length > 1 ? (
             <>
-              <StyledFieldRow>{shortFields.slice(0, 2).map(renderField)}</StyledFieldRow>
+              <StyledFieldRow>
+                {shortFields.slice(0, 2).map(renderField)}
+              </StyledFieldRow>
               {shortFields.slice(2).map(renderField)}
             </>
           ) : (

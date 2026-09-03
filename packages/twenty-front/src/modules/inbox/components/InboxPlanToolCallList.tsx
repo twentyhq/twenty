@@ -17,7 +17,9 @@ const StyledList = styled.div`
 const StyledRow = styled.button<{ isSelected: boolean; isRejected: boolean }>`
   align-items: center;
   background: ${({ isSelected }) =>
-    isSelected ? themeCssVariables.background.transparent.light : 'transparent'};
+    isSelected
+      ? themeCssVariables.background.transparent.light
+      : 'transparent'};
   border: none;
   border-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.primary};

@@ -7,10 +7,9 @@ import { type InboxItemToolCall } from '~/generated/graphql';
 export const getInboxToolCallInputAsStrings = (
   toolCall: Pick<InboxItemToolCall, 'proposedInput' | 'editedInput'>,
 ): Record<string, string> => {
-  const input = (toolCall.editedInput ?? toolCall.proposedInput ?? {}) as Record<
-    string,
-    unknown
-  >;
+  const input = (toolCall.editedInput ??
+    toolCall.proposedInput ??
+    {}) as Record<string, unknown>;
 
   return Object.fromEntries(
     Object.entries(input).map(([key, value]) => [

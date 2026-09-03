@@ -136,12 +136,22 @@ export const useInboxItemActions = () => {
   // A row edit is a plain field write: no scope changes, so no list refetch.
   // The cache row is updated from the payload.
   const [updateInboxItemToolCallInputMutation] = useMutation<
-    { updateInboxItemToolCallInput: Pick<InboxItemToolCall, 'id' | 'status' | 'editedInput'> },
+    {
+      updateInboxItemToolCallInput: Pick<
+        InboxItemToolCall,
+        'id' | 'status' | 'editedInput'
+      >;
+    },
     { inboxItemToolCallId: string; editedInput: Record<string, unknown> }
   >(UPDATE_INBOX_ITEM_TOOL_CALL_INPUT, { client: apolloCoreClient });
 
   const [setInboxItemToolCallRejectedMutation] = useMutation<
-    { setInboxItemToolCallRejected: Pick<InboxItemToolCall, 'id' | 'status' | 'editedInput'> },
+    {
+      setInboxItemToolCallRejected: Pick<
+        InboxItemToolCall,
+        'id' | 'status' | 'editedInput'
+      >;
+    },
     { inboxItemToolCallId: string; isRejected: boolean }
   >(SET_INBOX_ITEM_TOOL_CALL_REJECTED, { client: apolloCoreClient });
 

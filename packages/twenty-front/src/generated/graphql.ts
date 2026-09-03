@@ -286,6 +286,7 @@ export type InboxCounts = {
 export type InboxItem = {
   __typename?: 'InboxItem';
   assigneeUserWorkspaceId?: Maybe<Scalars['UUID']['output']>;
+  context?: Maybe<Scalars['JSON']['output']>;
   id: Scalars['UUID']['output'];
   inboxItemType: InboxItemType;
   isAssignedToMe: Scalars['Boolean']['output'];
@@ -302,6 +303,7 @@ export type InboxItem = {
   subjectRecordId?: Maybe<Scalars['UUID']['output']>;
   threadId?: Maybe<Scalars['UUID']['output']>;
   title: Scalars['String']['output'];
+  toolCalls: Array<InboxItemToolCall>;
   version: Scalars['Int']['output'];
 };
 
@@ -338,6 +340,29 @@ export enum InboxItemScope {
   DONE = 'DONE',
   INBOX = 'INBOX',
   SNOOZED = 'SNOOZED'
+}
+
+export type InboxItemToolCall = {
+  __typename?: 'InboxItemToolCall';
+  description?: Maybe<Scalars['String']['output']>;
+  editedInput?: Maybe<Scalars['JSON']['output']>;
+  error?: Maybe<Scalars['String']['output']>;
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  inputSchema: Array<InboxItemField>;
+  label: Scalars['String']['output'];
+  output?: Maybe<Scalars['JSON']['output']>;
+  position: Scalars['Int']['output'];
+  proposedInput: Scalars['JSON']['output'];
+  status: InboxItemToolCallStatus;
+  toolName: Scalars['String']['output'];
+};
+
+export enum InboxItemToolCallStatus {
+  EXECUTED = 'EXECUTED',
+  FAILED = 'FAILED',
+  PROPOSED = 'PROPOSED',
+  REJECTED = 'REJECTED'
 }
 
 export type InboxItemType = {
@@ -424,13 +449,16 @@ export type Mutation = {
   generateSignedDpa: GenerateSignedDpaResult;
   markInboxItemRead: InboxItem;
   retryWorkflowRun: WorkflowRun;
+  runInboxItemToolCalls: InboxItem;
   runWorkflowVersion: RunWorkflowVersion;
+  setInboxItemToolCallRejected: InboxItemToolCall;
   setInboxItemTypeDefaultQueue: InboxItemTypeSettings;
   setInboxQueueRoles: InboxQueueSettings;
   stopWorkflowRun: WorkflowRun;
   submitFormStep: Scalars['Boolean']['output'];
   testHttpRequest: TestHttpRequest;
   transitionInboxItem: InboxItem;
+  updateInboxItemToolCallInput: InboxItemToolCall;
   updateInboxQueue: InboxQueueSettings;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionPositions: Scalars['Boolean']['output'];
@@ -527,8 +555,20 @@ export type MutationRetryWorkflowRunArgs = {
 };
 
 
+export type MutationRunInboxItemToolCallsArgs = {
+  expectedVersion?: InputMaybe<Scalars['Int']['input']>;
+  inboxItemId: Scalars['UUID']['input'];
+};
+
+
 export type MutationRunWorkflowVersionArgs = {
   input: RunWorkflowVersionInput;
+};
+
+
+export type MutationSetInboxItemToolCallRejectedArgs = {
+  inboxItemToolCallId: Scalars['UUID']['input'];
+  isRejected: Scalars['Boolean']['input'];
 };
 
 
@@ -561,6 +601,12 @@ export type MutationTransitionInboxItemArgs = {
   expectedVersion?: InputMaybe<Scalars['Int']['input']>;
   inboxItemId: Scalars['UUID']['input'];
   transition: TransitionInboxItemInput;
+};
+
+
+export type MutationUpdateInboxItemToolCallInputArgs = {
+  editedInput: Scalars['JSON']['input'];
+  inboxItemToolCallId: Scalars['UUID']['input'];
 };
 
 
