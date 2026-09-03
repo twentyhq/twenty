@@ -12,7 +12,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
+import { usePerformViewApiUpdate } from '@/views/hooks/internal/usePerformViewApiUpdate';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useOpenCreateViewDropdown } from '@/views/hooks/useOpenCreateViewDropown';
@@ -63,7 +63,7 @@ export const ViewPickerListContent = () => {
 
   const { setViewPickerMode } = useViewPickerMode();
 
-  const { performViewAPIUpdate } = usePerformViewAPIUpdate();
+  const { performViewApiUpdate } = usePerformViewApiUpdate();
   const { changeView } = useChangeView();
 
   const { closeDropdown } = useCloseDropdown();
@@ -100,7 +100,7 @@ export const ViewPickerListContent = () => {
       Promise.all(
         viewsReordered.map(async (view, index) => {
           if (view.position !== index) {
-            await performViewAPIUpdate({
+            await performViewApiUpdate({
               id: view.id,
               input: { position: index },
             });
@@ -108,7 +108,7 @@ export const ViewPickerListContent = () => {
         }),
       );
     },
-    [performViewAPIUpdate, workspaceViews],
+    [performViewApiUpdate, workspaceViews],
   );
 
   const handleUnlistedDragEnd = useCallback(
@@ -123,7 +123,7 @@ export const ViewPickerListContent = () => {
       Promise.all(
         viewsReordered.map(async (view, index) => {
           if (view.position !== index) {
-            await performViewAPIUpdate({
+            await performViewApiUpdate({
               id: view.id,
               input: { position: index },
             });
@@ -131,7 +131,7 @@ export const ViewPickerListContent = () => {
         }),
       );
     },
-    [performViewAPIUpdate, unlistedViews],
+    [performViewApiUpdate, unlistedViews],
   );
 
   return (

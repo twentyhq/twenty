@@ -87,7 +87,7 @@ export type CurrencyFilter = {
   currencyCode?: SelectFilter;
 };
 
-export type URLFilter = {
+export type UrlFilter = {
   url?: StringFilter;
   label?: StringFilter;
 };
@@ -182,7 +182,7 @@ export type LeafFilter =
   | DateFilter
   | DateTimeFilter
   | CurrencyFilter
-  | URLFilter
+  | UrlFilter
   | FullNameFilter
   | BooleanFilter
   | AddressFilter
