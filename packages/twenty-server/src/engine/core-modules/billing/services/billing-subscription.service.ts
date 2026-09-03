@@ -184,15 +184,6 @@ export class BillingSubscriptionService {
     }
   }
 
-  async hasCanceledSubscription(workspaceId: string): Promise<boolean> {
-    const canceledSubscriptions = await this.billingSubscriptionRepository.find(
-      workspaceId,
-      { where: { status: SubscriptionStatus.Canceled } },
-    );
-
-    return canceledSubscriptions.length > 0;
-  }
-
   async assertSubscriptionCanceledOrNone(workspaceId: string): Promise<void> {
     const activeSubscription = await this.getCurrentBillingSubscription({
       workspaceId,
