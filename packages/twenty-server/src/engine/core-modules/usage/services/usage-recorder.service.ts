@@ -10,6 +10,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
+import { isValidCreditAmountMicro } from 'src/engine/core-modules/billing/utils/is-valid-credit-amount-micro.util';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
@@ -146,8 +147,22 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
     );
   }
 
+  // Every recorded row funnels through here, so the credit invariant holds for
+  // any caller rather than each one clamping its own arithmetic. The event is
+  // still recorded, at zero credits, so the activity stays visible in the
+  // breakdown.
   private withDefaults(input: RecordUsageInput): UsageEvent {
-    return { ...input, creditsUsedMicro: input.creditsUsedMicro ?? 0 };
+    const creditsUsedMicro = input.creditsUsedMicro ?? 0;
+
+    if (!isValidCreditAmountMicro(creditsUsedMicro)) {
+      this.logger.error(
+        `Refusing to record ${creditsUsedMicro} creditsUsedMicro on a ${input.operationType} usage event; recording 0 instead`,
+      );
+
+      return { ...input, creditsUsedMicro: 0 };
+    }
+
+    return { ...input, creditsUsedMicro };
   }
 
   private async resolvePeriodStart(

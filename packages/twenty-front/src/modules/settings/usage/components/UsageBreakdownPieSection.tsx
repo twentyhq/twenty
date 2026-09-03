@@ -5,15 +5,17 @@ import { UsagePieChart } from '@/settings/usage/components/UsagePieChart';
 import { UsageSectionSkeleton } from '@/settings/usage/components/UsageSectionSkeleton';
 import { useUsageAnalyticsData } from '@/settings/usage/hooks/useUsageAnalyticsData';
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
-import { getOperationTypeLabel } from '@/settings/usage/utils/getOperationTypeLabel';
+import { getUsageOperationTypeLabel } from '@/settings/usage/utils/getUsageOperationTypeLabel';
 import { Select } from '@/ui/input/components/Select';
+import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { type UsageOperationType } from '~/generated-metadata/graphql';
 
-type UsageBreakdownField = 'operationType' | 'model';
+type UsageBreakdownField = 'operationType' | 'application' | 'model';
 
 type UsageBreakdownPieSectionProps = {
   title: string;
@@ -35,6 +37,7 @@ export const UsageBreakdownPieSection = ({
   sectionId,
 }: UsageBreakdownPieSectionProps) => {
   const { theme } = useContext(ThemeContext);
+  const { t } = useLingui();
   const { formatUsageValue } = useUsageValueFormatter();
   const colorRegistry = createGraphColorRegistry(theme.color);
 
@@ -53,10 +56,12 @@ export const UsageBreakdownPieSection = ({
     return null;
   }
 
-  const breakdownData =
-    breakdownField === 'operationType'
-      ? analytics.usageByOperationType
-      : analytics.usageByModel;
+  const breakdownDataByField = {
+    operationType: analytics.usageByOperationType,
+    application: analytics.usageByApplication,
+    model: analytics.usageByModel,
+  };
+  const breakdownData = breakdownDataByField[breakdownField];
 
   if (breakdownData.length === 0) {
     return null;
@@ -64,13 +69,26 @@ export const UsageBreakdownPieSection = ({
 
   const total = breakdownData.reduce((sum, item) => sum + item.creditsUsed, 0);
 
-  const formatLabel =
-    breakdownField === 'operationType'
-      ? getOperationTypeLabel
-      : (key: string) => key;
+  // Operation types are a fixed platform vocabulary translated here; the other
+  // breakdowns name workspace data, which only the server can resolve.
+  const formatLabel = ({
+    key,
+    label,
+  }: {
+    key: string;
+    label?: string | null;
+  }) => {
+    if (breakdownField !== 'operationType') {
+      return label ?? key;
+    }
+
+    const operationTypeLabel = getUsageOperationTypeLabel(key);
+
+    return isDefined(operationTypeLabel) ? t(operationTypeLabel) : key;
+  };
 
   const pieData = breakdownData.map((item, index) => ({
-    id: formatLabel(item.key),
+    id: formatLabel(item),
     value: item.creditsUsed,
     color: getColorSchemeByIndex(colorRegistry, index).solid,
   }));

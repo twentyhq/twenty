@@ -968,6 +968,7 @@ enum UsageOperationType {
   CALL_RECORDING
   EMAIL_SEND
   API_REQUEST
+  SUBSCRIPTION
 }
 
 """
@@ -1774,6 +1775,7 @@ type UsageUserDaily {
 type UsageAnalytics {
   usageByUser: [UsageBreakdownItem!]!
   usageByOperationType: [UsageBreakdownItem!]!
+  usageByApplication: [UsageBreakdownItem!]!
   usageByModel: [UsageBreakdownItem!]!
   timeSeries: [UsageTimeSeries!]!
   periodStart: DateTime!
@@ -2260,6 +2262,7 @@ type MarketplaceAppDetail {
   logoUrl: String
   websiteUrl: String
   aboutDescription: String
+  pricingDescription: String
   termsUrl: String
   emailSupport: String
   issueReportUrl: String
