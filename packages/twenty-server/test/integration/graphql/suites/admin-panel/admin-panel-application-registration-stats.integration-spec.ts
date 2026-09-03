@@ -106,7 +106,7 @@ describe('Admin panel application registration stats and installed workspaces (i
         'admin-panel-stats-integration-test-app',
         version,
         '',
-        'local',
+        'tarball',
         workspaceId,
         applicationRegistrationId,
       ],

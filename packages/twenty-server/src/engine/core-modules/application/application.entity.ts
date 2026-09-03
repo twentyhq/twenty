@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ForeignKey,
   Index,
   JoinColumn,
   ManyToOne,
@@ -41,6 +42,15 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
     unique: true,
     where: '"deletedAt" IS NULL AND "universalIdentifier" IS NOT NULL',
   },
+)
+// Code synced under an application identity is an authorship claim, so a live
+// development app must sit on a registration its own workspace owns. Installed
+// apps keep developmentWorkspaceId null and are left unconstrained.
+@ForeignKey(
+  () => ApplicationRegistrationEntity,
+  ['applicationRegistrationId', 'developmentWorkspaceId'],
+  ['id', 'ownerWorkspaceId'],
+  { name: 'FK_APPLICATION_DEVELOPMENT_WORKSPACE_OWNS_REGISTRATION' },
 )
 export class ApplicationEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -196,6 +206,22 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   })
   @JoinColumn({ name: 'applicationRegistrationId' })
   applicationRegistration: Relation<ApplicationRegistrationEntity> | null;
+
+  // Mirrors workspaceId while the app is a live development (local) app, null
+  // otherwise, so the composite foreign key above only binds development apps.
+  @Column({
+    type: 'uuid',
+    nullable: true,
+    generatedType: 'STORED',
+    asExpression: `CASE WHEN "sourceType" = 'local' AND "deletedAt" IS NULL THEN "workspaceId" END`,
+    insert: false,
+    update: false,
+  })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.38.0_AddDevelopmentOwnershipConstraintToApplicationFastInstanceCommand_1788454173708',
+  })
+  developmentWorkspaceId: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
   @WasIntroducedInUpgrade({

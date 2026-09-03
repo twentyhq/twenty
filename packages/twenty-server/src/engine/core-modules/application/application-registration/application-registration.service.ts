@@ -1227,6 +1227,24 @@ export class ApplicationRegistrationService {
       );
     }
 
+    // The database binds a live development app to a registration its
+    // workspace owns, so the transfer would be refused anyway; fail with a
+    // message that says what to do instead.
+    const developmentApplicationCount = await this.applicationRepository.count({
+      where: {
+        applicationRegistrationId: registration.id,
+        workspaceId: params.currentOwnerWorkspaceId,
+        sourceType: ApplicationRegistrationSourceType.LOCAL,
+      },
+    });
+
+    if (developmentApplicationCount > 0) {
+      throw new ApplicationRegistrationException(
+        `Uninstall the development application synced from "${registration.universalIdentifier}" before transferring its registration`,
+        ApplicationRegistrationExceptionCode.DEVELOPMENT_APPLICATION_STILL_INSTALLED,
+      );
+    }
+
     await this.applicationRegistrationRepository.update(registration.id, {
       ownerWorkspaceId: targetWorkspace.id,
     });

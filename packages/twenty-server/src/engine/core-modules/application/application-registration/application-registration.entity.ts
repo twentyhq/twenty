@@ -12,6 +12,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   type Relation,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -46,6 +47,12 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 )
 @Index('IDX_APPLICATION_REGISTRATION_CREATED_BY_USER_ID', ['createdByUserId'])
 @Index('IDX_APPLICATION_REGISTRATION_WORKSPACE_ID', ['ownerWorkspaceId'])
+// Referenced by the application table's development-ownership foreign key,
+// which needs the (id, owner) pair as a unique target.
+@Unique('IDX_APPLICATION_REGISTRATION_ID_WORKSPACE_ID_UNIQUE', [
+  'id',
+  'ownerWorkspaceId',
+])
 @Check(
   'CHK_NPM_HAS_SOURCE_PACKAGE',
   `"sourceType" <> 'npm' OR "sourcePackage" IS NOT NULL`,

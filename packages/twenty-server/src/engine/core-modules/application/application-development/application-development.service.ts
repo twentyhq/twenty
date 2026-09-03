@@ -1,12 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey, FileFolder, SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { type Repository } from 'typeorm';
 
 import {
   ALLOWED_APPLICATION_FILE_FOLDERS,
   APP_DEV_RATE_LIMIT_MAX,
   APP_DEV_RATE_LIMIT_WINDOW_MS,
+  APPLICATIONS_DEVELOPER_TAB_HASH,
+  CLAIM_UNIVERSAL_IDENTIFIER_SEARCH_PARAM,
+  REGISTRATION_OWNERSHIP_DOCUMENTATION_URL,
 } from 'src/engine/core-modules/application/application-development/constants/application-development.constants';
 import { type ApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/application.input';
 import { type DevelopmentApplicationDTO } from 'src/engine/core-modules/application/application-development/dtos/development-application.dto';
@@ -24,10 +29,13 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { type FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 
@@ -47,6 +55,10 @@ export class ApplicationDevelopmentService {
     private readonly fileStorageService: FileStorageService,
     private readonly throttlerService: ThrottlerService,
     private readonly cacheLockService: CacheLockService,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   async createDevelopmentApplication({
@@ -304,14 +316,76 @@ export class ApplicationDevelopmentService {
 
     if (existingRegistration.ownerWorkspaceId !== workspaceId) {
       throw new ApplicationException(
-        !isDefined(existingRegistration.ownerWorkspaceId)
-          ? `"${universalIdentifier}" is registered on this instance but claimed by no workspace. Claim its ownership before developing on it.`
-          : `"${universalIdentifier}" is registered to another workspace. Change the universalIdentifier in your manifest, or transfer the registration from the owning workspace.`,
+        await this.buildOwnershipErrorMessage({
+          existingRegistration,
+          workspaceId,
+        }),
         ApplicationExceptionCode.FORBIDDEN,
       );
     }
 
     return existingRegistration;
+  }
+
+  private async buildOwnershipErrorMessage({
+    existingRegistration,
+    workspaceId,
+  }: {
+    existingRegistration: ApplicationRegistrationEntity;
+    workspaceId: string;
+  }): Promise<string> {
+    const { universalIdentifier } = existingRegistration;
+
+    if (isDefined(existingRegistration.ownerWorkspaceId)) {
+      return `"${universalIdentifier}" is registered to another workspace. Change the universalIdentifier in your app config, or ask the owning workspace to transfer the registration to yours. See ${REGISTRATION_OWNERSHIP_DOCUMENTATION_URL}`;
+    }
+
+    const claimUrl = await this.buildClaimApplicationUrl({
+      universalIdentifier,
+      workspaceId,
+    });
+
+    if (!isDefined(claimUrl)) {
+      return `"${universalIdentifier}" is registered on this instance but claimed by no workspace. Claim its ownership before developing on it. App claiming is not enabled on this workspace yet, ask an instance administrator to enable it. See ${REGISTRATION_OWNERSHIP_DOCUMENTATION_URL}`;
+    }
+
+    return `"${universalIdentifier}" is registered on this instance but claimed by no workspace. Claim its ownership before developing on it: ${claimUrl}`;
+  }
+
+  private async buildClaimApplicationUrl({
+    universalIdentifier,
+    workspaceId,
+  }: {
+    universalIdentifier: string;
+    workspaceId: string;
+  }): Promise<string | null> {
+    const isClaimingEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_APP_CLAIMING_ENABLED,
+      workspaceId,
+    );
+
+    if (!isClaimingEnabled) {
+      return null;
+    }
+
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+    });
+
+    if (!isDefined(workspace)) {
+      return null;
+    }
+
+    return this.workspaceDomainsService
+      .buildWorkspaceURL({
+        workspace,
+        pathname: getSettingsPath(SettingsPath.Applications),
+        searchParams: {
+          [CLAIM_UNIVERSAL_IDENTIFIER_SEARCH_PARAM]: universalIdentifier,
+        },
+        hash: APPLICATIONS_DEVELOPER_TAB_HASH,
+      })
+      .toString();
   }
 
   private async syncRegistrationMetadata(

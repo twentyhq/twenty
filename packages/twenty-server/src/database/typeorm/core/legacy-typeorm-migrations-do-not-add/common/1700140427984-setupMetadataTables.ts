@@ -4,8 +4,11 @@ export class SetupMetadataTables1700140427984 implements MigrationInterface {
   name = 'SetupMetadataTables1700140427984';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    // TypeORM creates this table itself before running migrations as soon as
+    // an entity declares a generated column, so the statement must tolerate
+    // an existing table on fresh databases.
     await queryRunner.query(`
-                CREATE TABLE "core"."_typeorm_generated_columns_and_materialized_views" (
+                CREATE TABLE IF NOT EXISTS "core"."_typeorm_generated_columns_and_materialized_views" (
                     "type" character varying NOT NULL,
                     "database" character varying,
                     "schema" character varying,

@@ -25,6 +25,7 @@ export class ApplicationRegistrationExceptionFilter implements ExceptionFilter {
       case ApplicationRegistrationExceptionCode.SERVER_VERSION_INCOMPATIBLE:
       case ApplicationRegistrationExceptionCode.VERSION_ALREADY_EXISTS:
       case ApplicationRegistrationExceptionCode.INVALID_APP_ENGINE_REQUIREMENT:
+      case ApplicationRegistrationExceptionCode.DEVELOPMENT_APPLICATION_STILL_INSTALLED:
         throw new UserInputError(exception);
       default:
         throw new InternalServerError(exception);

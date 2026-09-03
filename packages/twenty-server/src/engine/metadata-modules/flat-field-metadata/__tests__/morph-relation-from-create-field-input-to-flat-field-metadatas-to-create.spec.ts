@@ -31,6 +31,7 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   workspaceId: 'workspace-id',
   version: null,
   sourceType: ApplicationRegistrationSourceType.LOCAL,
+  developmentWorkspaceId: 'workspace-id',
   state: ApplicationState.INSTALLED,
   sourcePath: '',
   packageJsonChecksum: null,

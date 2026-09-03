@@ -17,7 +17,7 @@ import { Section } from 'twenty-ui/layout';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import coverDark from '~/pages/settings/applications/assets/cover-dark.png';
 import coverLight from '~/pages/settings/applications/assets/cover-light.png';
-import { SettingsApplicationsClaimErrorTabEffect } from '~/pages/settings/applications/components/SettingsApplicationsClaimErrorTabEffect';
+import { SettingsApplicationsClaimTabEffect } from '~/pages/settings/applications/components/SettingsApplicationsClaimTabEffect';
 import { SettingsApplicationsAvailableTab } from '~/pages/settings/applications/tabs/SettingsApplicationsAvailableTab';
 import { SettingsApplicationsDeveloperTab } from '~/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab';
 import { SettingsApplicationsInstalledTab } from '~/pages/settings/applications/tabs/SettingsApplicationsInstalledTab';
@@ -76,7 +76,7 @@ export const SettingsApplications = () => {
         { children: t`Applications` },
       ]}
     >
-      <SettingsApplicationsClaimErrorTabEffect
+      <SettingsApplicationsClaimTabEffect
         tabListId={APPLICATIONS_TAB_LIST_ID}
         developerTabId={DEVELOPER_TAB_ID}
         hasDeveloperAccess={hasDeveloperAccess}

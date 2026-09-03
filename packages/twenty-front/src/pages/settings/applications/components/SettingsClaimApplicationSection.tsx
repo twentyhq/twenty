@@ -4,7 +4,7 @@ import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useLazyQuery, useMutation } from '@apollo/client/react';
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { i18n } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
@@ -34,8 +34,17 @@ import { getClaimErrorContent } from '~/pages/settings/applications/utils/getCla
 
 export const CLAIM_ERROR_CODE_SEARCH_PARAM = 'claimErrorCode';
 
+// Set by the server on the CLI ownership error so the lookup runs on arrival.
+export const CLAIM_UNIVERSAL_IDENTIFIER_SEARCH_PARAM =
+  'claimUniversalIdentifier';
+
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+const buildLookupVariables = (lookupTerm: string) =>
+  UUID_REGEX.test(lookupTerm)
+    ? { universalIdentifier: lookupTerm }
+    : { sourcePackage: lookupTerm };
 
 const StyledRow = styled.div`
   align-items: flex-end;
@@ -91,9 +100,15 @@ export const SettingsClaimApplicationSection = () => {
   const navigate = useNavigate();
 
   const claimErrorCode = searchParams.get(CLAIM_ERROR_CODE_SEARCH_PARAM);
+  const claimUniversalIdentifier =
+    searchParams.get(CLAIM_UNIVERSAL_IDENTIFIER_SEARCH_PARAM) ?? '';
 
-  const [lookupValue, setLookupValue] = useState('');
-  const [notFound, setNotFound] = useState(false);
+  const [lookupValue, setLookupValue] = useState(claimUniversalIdentifier);
+  const [lookupTerm, setLookupTerm] = useState(
+    claimUniversalIdentifier.trim().length > 0
+      ? claimUniversalIdentifier.trim()
+      : null,
+  );
 
   const dismissClaimError = () => {
     const nextSearchParams = new URLSearchParams(searchParams);
@@ -114,10 +129,18 @@ export const SettingsClaimApplicationSection = () => {
     PermissionFlagType.MARKETPLACE_APPS,
   );
 
-  const [runLookup, { data: lookupData, loading: isLookingUp }] = useLazyQuery(
-    FindClaimableApplicationRegistrationDocument,
-    { fetchPolicy: 'network-only' },
-  );
+  const {
+    data: lookupData,
+    loading: isLookingUp,
+    error: lookupError,
+    refetch: refetchLookup,
+  } = useQuery(FindClaimableApplicationRegistrationDocument, {
+    variables: isDefined(lookupTerm)
+      ? buildLookupVariables(lookupTerm)
+      : undefined,
+    skip: !isDefined(lookupTerm),
+    fetchPolicy: 'network-only',
+  });
 
   const [getGithubAuthorizationUrl, { loading: isRedirectingToGithub }] =
     useLazyQuery(GithubClaimAuthorizationUrlDocument, {
@@ -129,32 +152,26 @@ export const SettingsClaimApplicationSection = () => {
   );
 
   const registration = lookupData?.findClaimableApplicationRegistration ?? null;
+  const notFound =
+    isDefined(lookupTerm) &&
+    !isLookingUp &&
+    isDefined(lookupData) &&
+    !isDefined(registration);
 
   const handleLookup = async () => {
-    const trimmed = lookupValue.trim();
+    const nextLookupTerm = lookupValue.trim();
 
-    if (trimmed.length === 0) {
+    if (nextLookupTerm.length === 0) {
       return;
     }
 
-    setNotFound(false);
+    if (nextLookupTerm === lookupTerm) {
+      await refetchLookup();
 
-    const variables = UUID_REGEX.test(trimmed)
-      ? { universalIdentifier: trimmed }
-      : { sourcePackage: trimmed };
-
-    try {
-      const result = await runLookup({ variables });
-
-      if (!isDefined(result.data?.findClaimableApplicationRegistration)) {
-        setNotFound(true);
-      }
-    } catch (error) {
-      enqueueErrorSnackBar({
-        message:
-          error instanceof Error ? error.message : t`Could not run the lookup`,
-      });
+      return;
     }
+
+    setLookupTerm(nextLookupTerm);
   };
 
   const handleClaimWithGithub = async () => {
@@ -271,6 +288,12 @@ export const SettingsClaimApplicationSection = () => {
           />
         )}
       </StyledRow>
+
+      {isDefined(lookupError) && (
+        <StyledResultCard>
+          <StyledHint>{lookupError.message}</StyledHint>
+        </StyledResultCard>
+      )}
 
       {notFound && (
         <StyledResultCard>

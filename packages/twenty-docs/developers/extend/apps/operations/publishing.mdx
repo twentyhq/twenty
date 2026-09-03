@@ -29,7 +29,9 @@ Syncing code and a manifest under an identifier is a claim of authorship, so bei
 Two situations lead to that refusal:
 
 - **The identifier belongs to another workspace.** Change the `universalIdentifier` in your app config, which is the usual answer when you forked someone else's app. If you need to keep the identifier, the owning workspace has to transfer the registration to yours.
-- **The identifier belongs to no workspace.** Apps imported by the marketplace catalog sync start unowned. Claim yours through npm trusted publishing before developing on it.
+- **The identifier belongs to no workspace.** Apps imported by the marketplace catalog sync start unowned. Claim yours through npm trusted publishing before developing on it: the refusal links to the **Claim an application** section of **Settings → Applications → Developer**, with the identifier prefilled.
+
+The database enforces the rule too: a development application row can only reference a registration owned by its own workspace, so a transfer of the registration is refused while the owning workspace still has a development application synced from it. Uninstall that development application first.
 
 ## Building your app
 
