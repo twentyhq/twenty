@@ -42,7 +42,6 @@ type InboxListProps = {
   // Splitting by priority only earns its keep where work is still pending
   shouldSplitByPriority: boolean;
   onInboxItemClick: (inboxItem: InboxItem) => void;
-  onInboxItemOpenInSidePanel: (inboxItem: InboxItem) => void;
   onLoadMoreItems: () => void;
 };
 
@@ -53,7 +52,6 @@ export const InboxList = ({
   hasMoreItems,
   shouldSplitByPriority,
   onInboxItemClick,
-  onInboxItemOpenInSidePanel,
   onLoadMoreItems,
 }: InboxListProps) => {
   const { t } = useLingui();
@@ -78,7 +76,6 @@ export const InboxList = ({
         inboxItem={inboxItem}
         isSelected={selectedInboxItemId === inboxItem.id}
         onClick={() => onInboxItemClick(inboxItem)}
-        onOpenInSidePanel={() => onInboxItemOpenInSidePanel(inboxItem)}
       />
     ));
 

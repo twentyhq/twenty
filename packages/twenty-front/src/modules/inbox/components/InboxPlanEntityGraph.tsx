@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { Fragment } from 'react';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -7,6 +8,9 @@ import {
   type InboxPlanContextEdge,
   type InboxPlanContextEntity,
 } from '@/inbox/types/InboxPlanContext';
+import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledGraph = styled.div`
   align-items: stretch;
@@ -15,16 +19,25 @@ const StyledGraph = styled.div`
   overflow-x: auto;
 `;
 
-const StyledEntity = styled.div`
+const StyledEntity = styled.div<{ isClickable: boolean }>`
   background: ${themeCssVariables.background.primary};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
+  box-sizing: border-box;
+  cursor: ${({ isClickable }) => (isClickable ? 'pointer' : 'default')};
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   gap: ${themeCssVariables.spacing[1]};
   min-width: 180px;
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+
+  &:hover {
+    background: ${({ isClickable }) =>
+      isClickable
+        ? themeCssVariables.background.transparent.lighter
+        : themeCssVariables.background.primary};
+  }
 `;
 
 const StyledEntityHeader = styled.div`
@@ -74,6 +87,16 @@ const StyledLine = styled.div`
   width: 20px;
 `;
 
+// An entity names a standard object by kind; a producer that knows the exact
+// object says so explicitly
+const OBJECT_NAME_SINGULAR_BY_ENTITY_KIND: Partial<
+  Record<InboxPlanContextEntity['kind'], string>
+> = {
+  person: CoreObjectNameSingular.Person,
+  company: CoreObjectNameSingular.Company,
+  opportunity: CoreObjectNameSingular.Opportunity,
+};
+
 type InboxPlanEntityGraphProps = {
   entities: InboxPlanContextEntity[];
   edges: InboxPlanContextEdge[];
@@ -82,10 +105,17 @@ type InboxPlanEntityGraphProps = {
 // The entities in the order the producer gave them, with the relation between
 // neighbours written on the line that joins them. Producers lay a plan's
 // entities out as a chain, so a relation between non neighbours is not drawn.
+// An entity backed by a record is a chip: it opens that record beside the
+// inbox rather than leaving it.
 export const InboxPlanEntityGraph = ({
   entities,
   edges,
 }: InboxPlanEntityGraphProps) => {
+  const objectMetadataItemsByIdMap = useAtomStateValue(
+    objectMetadataItemsByIdMapSelector,
+  );
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
+
   if (entities.length === 0) {
     return null;
   }
@@ -97,6 +127,11 @@ export const InboxPlanEntityGraph = ({
         (edge.from === rightKey && edge.to === leftKey),
     )?.label;
 
+  const getObjectNameSingular = (entity: InboxPlanContextEntity) =>
+    isDefined(entity.objectMetadataId)
+      ? objectMetadataItemsByIdMap.get(entity.objectMetadataId)?.nameSingular
+      : OBJECT_NAME_SINGULAR_BY_ENTITY_KIND[entity.kind];
+
   return (
     <StyledGraph>
       {entities.map((entity, index) => {
@@ -104,10 +139,34 @@ export const InboxPlanEntityGraph = ({
         const edgeLabel = isDefined(nextEntity)
           ? findEdgeLabel(entity.key, nextEntity.key)
           : undefined;
+        const objectNameSingular = getObjectNameSingular(entity);
+        const recordId = entity.recordId;
+        const isClickable =
+          isDefined(recordId) && isDefined(objectNameSingular);
 
         return (
           <Fragment key={entity.key}>
-            <StyledEntity>
+            <StyledEntity
+              role={isClickable ? 'button' : undefined}
+              tabIndex={isClickable ? 0 : undefined}
+              isClickable={isClickable}
+              onClick={
+                isClickable
+                  ? () =>
+                      openRecordInSidePanel({ recordId, objectNameSingular })
+                  : undefined
+              }
+              onKeyDown={
+                isClickable
+                  ? (event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        openRecordInSidePanel({ recordId, objectNameSingular });
+                      }
+                    }
+                  : undefined
+              }
+            >
               <StyledEntityHeader>
                 <StyledAvatar isSquare={entity.kind !== 'person'}>
                   {entity.label.charAt(0).toUpperCase()}

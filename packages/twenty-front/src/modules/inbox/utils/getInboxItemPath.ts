@@ -1,13 +1,17 @@
 import { AppPath } from 'twenty-shared/types';
-import { getAppPath } from 'twenty-shared/utils';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 
-import { type InboxSection } from '@/inbox/constants/InboxSections';
+import { DEFAULT_INBOX_SECTION } from '@/inbox/constants/DefaultInboxSection';
+import { type InboxListLocation } from '@/inbox/types/InboxListLocation';
 
-export const getInboxItemPath = (
-  inboxSection: InboxSection,
-  inboxItemId: string,
-): string =>
-  getAppPath(AppPath.InboxItemPage, {
-    inboxSectionSlug: inboxSection.slug,
-    inboxItemId,
-  });
+export const getInboxItemPath = ({
+  inboxSectionSlug,
+  inboxQueueSlug,
+  inboxItemId,
+}: InboxListLocation & { inboxItemId: string }): string =>
+  isDefined(inboxQueueSlug)
+    ? getAppPath(AppPath.InboxQueueItemPage, { inboxQueueSlug, inboxItemId })
+    : getAppPath(AppPath.InboxItemPage, {
+        inboxSectionSlug: inboxSectionSlug ?? DEFAULT_INBOX_SECTION.slug,
+        inboxItemId,
+      });

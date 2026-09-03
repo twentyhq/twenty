@@ -3,13 +3,13 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/data-display';
-import { IconClockHour8, IconX, useIcons } from 'twenty-ui/icon';
+import { IconCheck, IconClockHour8, IconX, useIcons } from 'twenty-ui/icon';
 import { Button, LightIconButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { InboxPlanActionsSummary } from '@/inbox/components/InboxPlanActionsSummary';
 import { InboxPlanEntityGraph } from '@/inbox/components/InboxPlanEntityGraph';
-import { InboxPlanToolCallEditor } from '@/inbox/components/InboxPlanToolCallEditor';
-import { InboxPlanToolCallList } from '@/inbox/components/InboxPlanToolCallList';
+import { InboxPlanToolCallRow } from '@/inbox/components/InboxPlanToolCallRow';
 import { useInboxItemActions } from '@/inbox/hooks/useInboxItemActions';
 import { getInboxPlanContext } from '@/inbox/utils/getInboxPlanContext';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -93,6 +93,12 @@ const StyledSourceChip = styled.span`
   vertical-align: baseline;
 `;
 
+const StyledToolCallRows = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[3]};
+`;
+
 const StyledFooter = styled.div`
   align-items: center;
   border-top: 1px solid ${themeCssVariables.border.color.light};
@@ -132,15 +138,23 @@ export const InboxPlanView = ({ inboxItem }: { inboxItem: InboxItem }) => {
   );
   const isDone = inboxItem.scope === InboxItemScope.DONE;
 
-  const [selectedToolCallId, setSelectedToolCallId] = useState<string | null>(
-    () => pendingToolCalls[0]?.id ?? toolCalls[0]?.id ?? null,
-  );
+  // Every call starts folded, the way the agent summarised them above; the
+  // person opens the ones they want to look at or change
+  const [expandedToolCallIds, setExpandedToolCallIds] = useState<string[]>([]);
+
+  const expandToolCall = (toolCallId: string) =>
+    setExpandedToolCallIds((current) =>
+      current.includes(toolCallId) ? current : [...current, toolCallId],
+    );
+  const toggleToolCall = (toolCallId: string) =>
+    setExpandedToolCallIds((current) =>
+      current.includes(toolCallId)
+        ? current.filter((id) => id !== toolCallId)
+        : [...current, toolCallId],
+    );
   const [isRunning, setIsRunning] = useState(false);
   const [inFlightEditCount, setInFlightEditCount] = useState(0);
   const [hasUnsavedEdit, setHasUnsavedEdit] = useState(false);
-
-  const selectedToolCall =
-    toolCalls.find((toolCall) => toolCall.id === selectedToolCallId) ?? null;
 
   const reportFailure = () =>
     enqueueErrorSnackBar({ message: t`That could not be applied` });
@@ -244,41 +258,45 @@ export const InboxPlanView = ({ inboxItem }: { inboxItem: InboxItem }) => {
           ) : (
             <StyledSummary>{inboxItem.preview}</StyledSummary>
           )}
-          <InboxPlanToolCallList
-            toolCalls={toolCalls}
-            selectedToolCallId={selectedToolCallId}
-            onSelect={setSelectedToolCallId}
-          />
         </StyledContextCard>
 
-        {isDefined(selectedToolCall) && (
-          <InboxPlanToolCallEditor
-            // Remounted per call so the draft always belongs to the row shown
-            key={`${selectedToolCall.id}-${selectedToolCall.status}`}
-            toolCall={selectedToolCall}
-            source={context?.source}
-            onSave={(editedInput) =>
-              trackEdit(
-                () =>
-                  updateInboxItemToolCallInput({
-                    inboxItemToolCallId: selectedToolCall.id,
-                    editedInput,
-                  }),
-                { isInputSave: true },
-              )
-            }
-            onToggleRejected={(isRejected) =>
-              trackEdit(
-                () =>
-                  setInboxItemToolCallRejected({
-                    inboxItemToolCallId: selectedToolCall.id,
-                    isRejected,
-                  }),
-                { isInputSave: false },
-              )
-            }
-          />
-        )}
+        <StyledSectionTitle>{t`Actions summary`}</StyledSectionTitle>
+        <InboxPlanActionsSummary
+          toolCalls={toolCalls}
+          onSelect={expandToolCall}
+        />
+
+        <StyledToolCallRows>
+          {toolCalls.map((toolCall) => (
+            <InboxPlanToolCallRow
+              key={toolCall.id}
+              toolCall={toolCall}
+              source={context?.source}
+              isExpanded={expandedToolCallIds.includes(toolCall.id)}
+              onToggleExpanded={() => toggleToolCall(toolCall.id)}
+              onSave={(editedInput) =>
+                trackEdit(
+                  () =>
+                    updateInboxItemToolCallInput({
+                      inboxItemToolCallId: toolCall.id,
+                      editedInput,
+                    }),
+                  { isInputSave: true },
+                )
+              }
+              onToggleRejected={(isRejected) =>
+                trackEdit(
+                  () =>
+                    setInboxItemToolCallRejected({
+                      inboxItemToolCallId: toolCall.id,
+                      isRejected,
+                    }),
+                  { isInputSave: false },
+                )
+              }
+            />
+          ))}
+        </StyledToolCallRows>
       </StyledScroll>
 
       <StyledFooter>
@@ -318,6 +336,7 @@ export const InboxPlanView = ({ inboxItem }: { inboxItem: InboxItem }) => {
               />
             )}
             <Button
+              Icon={IconCheck}
               accent="blue"
               disabled={
                 toolCalls.length === 0 ||

@@ -10,4 +10,5 @@ export const UNTESTED_APP_PATHS = [
   AppPath.InboxSectionPage,
   AppPath.InboxItemPage,
   AppPath.InboxQueuePage,
+  AppPath.InboxQueueItemPage,
 ];

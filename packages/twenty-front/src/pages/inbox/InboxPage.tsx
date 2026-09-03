@@ -1,37 +1,66 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { SegmentedControl } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useIsMobile } from 'twenty-ui/utilities';
 
+import { InboxItemDetail } from '@/inbox/components/InboxItemDetail';
 import { InboxList } from '@/inbox/components/InboxList';
 import { useInboxItems } from '@/inbox/hooks/useInboxItems';
 import { useInboxQueues } from '@/inbox/hooks/useInboxQueues';
-import { useOpenInboxItemFullPage } from '@/inbox/hooks/useOpenInboxItemFullPage';
-import { useOpenInboxItemInSidePanel } from '@/inbox/hooks/useOpenInboxItemInSidePanel';
-import { selectedInboxItemIdState } from '@/inbox/states/selectedInboxItemIdState';
+import { useOpenInboxItem } from '@/inbox/hooks/useOpenInboxItem';
+import { isInboxSplitViewOpenState } from '@/inbox/states/isInboxSplitViewOpenState';
+import { type InboxListLocation } from '@/inbox/types/InboxListLocation';
 import { findInboxSectionBySlug } from '@/inbox/utils/findInboxSectionBySlug';
 import { getRenderedInboxItemOrder } from '@/inbox/utils/getRenderedInboxItemOrder';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
   type InboxItem,
   InboxItemScope,
   InboxQueueAssignment,
 } from '~/generated/graphql';
 
-const StyledListPane = styled.div`
+const INBOX_LIST_PANE_WIDTH = 400;
+
+const StyledSplit = styled.div`
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+`;
+
+const StyledListPane = styled.div<{ isAlone: boolean }>`
+  border-right: ${({ isAlone }) =>
+    isAlone ? 'none' : `1px solid ${themeCssVariables.border.color.light}`};
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  min-height: 0;
+  width: ${({ isAlone }) => (isAlone ? '100%' : `${INBOX_LIST_PANE_WIDTH}px`)};
+`;
+
+const StyledListBody = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  min-width: 0;
+  min-height: 0;
   overflow-y: auto;
   padding: 0 ${themeCssVariables.spacing[2]};
+`;
+
+const StyledItemPane = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
 `;
 
 const StyledErrorState = styled.div`
@@ -44,6 +73,23 @@ const StyledErrorState = styled.div`
   padding: ${themeCssVariables.spacing[10]};
 `;
 
+// Raises the split view flag for as long as the page is mounted, so the drawer
+// and the side panel can make room for each other while it is up
+const InboxSplitViewEffect = () => {
+  const setIsInboxSplitViewOpen = useSetAtomState(isInboxSplitViewOpenState);
+
+  useEffect(() => {
+    setIsInboxSplitViewOpen(true);
+
+    return () => setIsInboxSplitViewOpen(false);
+  }, [setIsInboxSplitViewOpen]);
+
+  return null;
+};
+
+// The list and the open item share one page: the list keeps its place on the
+// left while the item takes the rest, like a mail client. On a phone there is
+// room for one of the two at a time.
 export const InboxPage = () => {
   const { t } = useLingui();
   // A shared inbox opens on what nobody has picked up, because that is the
@@ -53,9 +99,11 @@ export const InboxPage = () => {
     InboxQueueAssignment.UNASSIGNED,
   );
   const { theme } = useContext(ThemeContext);
-  const { inboxSectionSlug, inboxQueueSlug } = useParams<{
+  const isMobile = useIsMobile();
+  const { inboxSectionSlug, inboxQueueSlug, inboxItemId } = useParams<{
     inboxSectionSlug?: string;
     inboxQueueSlug?: string;
+    inboxItemId?: string;
   }>();
   const { getIcon } = useIcons();
   const { inboxQueues } = useInboxQueues({ isPolling: true });
@@ -66,6 +114,9 @@ export const InboxPage = () => {
   const inboxSection = findInboxSectionBySlug(inboxSectionSlug);
   const QueueIcon = getIcon(inboxQueue?.icon);
   const SectionIcon = isDefined(inboxQueueSlug) ? QueueIcon : inboxSection.Icon;
+  const inboxListLocation: InboxListLocation = isDefined(inboxQueueSlug)
+    ? { inboxQueueSlug }
+    : { inboxSectionSlug: inboxSection.slug };
 
   const {
     isInboxEnabled,
@@ -79,21 +130,15 @@ export const InboxPage = () => {
     inboxQueueSlug,
     isDefined(inboxQueueSlug) ? queueAssignment : undefined,
   );
-  const { openInboxItemFullPage } = useOpenInboxItemFullPage(inboxSection);
-  const selectedInboxItemId = useAtomStateValue(selectedInboxItemIdState);
+  const { openInboxItem } = useOpenInboxItem(inboxListLocation);
   const shouldSplitByPriority =
     isDefined(inboxQueueSlug) || inboxSection.scope === InboxItemScope.INBOX;
 
-  const openFullPage = (inboxItem: InboxItem) =>
-    openInboxItemFullPage(
+  const openItem = (inboxItem: InboxItem) =>
+    openInboxItem(
       inboxItem,
       getRenderedInboxItemOrder({ inboxItems, shouldSplitByPriority }),
     );
-
-  // An item with no subject has nothing to show in the panel, so it opens
-  // where its own context and actions live
-  const { openInboxItemInSidePanel } =
-    useOpenInboxItemInSidePanel(openFullPage);
 
   // With the flag off the inbox is not a surface, so a direct visit lands on
   // the app index rather than on an empty shell
@@ -101,52 +146,71 @@ export const InboxPage = () => {
     return <Navigate to={AppPath.Index} replace />;
   }
 
+  const isListVisible = !isMobile || !isDefined(inboxItemId);
+  const isItemVisible = !isMobile || isDefined(inboxItemId);
+
   return (
-    <PageCardLayout
-      header={
-        <PageCardHeader
-          icon={<SectionIcon size={theme.icon.size.md} />}
-          title={inboxQueue?.name ?? t(inboxSection.label)}
-          actionButton={
-            isDefined(inboxQueueSlug) && (
-              <SegmentedControl
-                ariaLabel={t`Filter this shared inbox`}
-                itemWidth="content"
-                value={queueAssignment}
-                onChange={setQueueAssignment}
-                options={[
-                  {
-                    value: InboxQueueAssignment.UNASSIGNED,
-                    label: t`Unassigned`,
-                  },
-                  {
-                    value: InboxQueueAssignment.ASSIGNED,
-                    label: t`Assigned`,
-                  },
-                  { value: InboxQueueAssignment.ALL, label: t`All` },
-                ]}
-              />
-            )
-          }
-        />
-      }
-    >
-      <StyledListPane>
-        {isDefined(error) && inboxItems.length === 0 ? (
-          <StyledErrorState>{t`Your inbox could not be loaded`}</StyledErrorState>
-        ) : (
-          <InboxList
-            loading={isInitialLoading}
-            inboxItems={inboxItems}
-            selectedInboxItemId={selectedInboxItemId}
-            hasMoreItems={hasMoreItems}
-            shouldSplitByPriority={shouldSplitByPriority}
-            onInboxItemClick={openFullPage}
-            onInboxItemOpenInSidePanel={openInboxItemInSidePanel}
-            onLoadMoreItems={loadMoreItems}
-          />
+    <PageCardLayout header={null}>
+      <InboxSplitViewEffect />
+      <StyledSplit>
+        {isListVisible && (
+          <StyledListPane isAlone={!isItemVisible}>
+            <PageCardHeader
+              icon={<SectionIcon size={theme.icon.size.md} />}
+              title={inboxQueue?.name ?? t(inboxSection.label)}
+              actionButton={
+                isDefined(inboxQueueSlug) && (
+                  <SegmentedControl
+                    ariaLabel={t`Filter this shared inbox`}
+                    itemWidth="content"
+                    value={queueAssignment}
+                    onChange={setQueueAssignment}
+                    options={[
+                      {
+                        value: InboxQueueAssignment.UNASSIGNED,
+                        label: t`Unassigned`,
+                      },
+                      {
+                        value: InboxQueueAssignment.ASSIGNED,
+                        label: t`Assigned`,
+                      },
+                      { value: InboxQueueAssignment.ALL, label: t`All` },
+                    ]}
+                  />
+                )
+              }
+            />
+            <StyledListBody>
+              {isDefined(error) && inboxItems.length === 0 ? (
+                <StyledErrorState>
+                  {t`Your inbox could not be loaded`}
+                </StyledErrorState>
+              ) : (
+                <InboxList
+                  loading={isInitialLoading}
+                  inboxItems={inboxItems}
+                  selectedInboxItemId={inboxItemId ?? null}
+                  hasMoreItems={hasMoreItems}
+                  shouldSplitByPriority={shouldSplitByPriority}
+                  onInboxItemClick={openItem}
+                  onLoadMoreItems={loadMoreItems}
+                />
+              )}
+            </StyledListBody>
+          </StyledListPane>
         )}
-      </StyledListPane>
+        {isItemVisible && (
+          <StyledItemPane>
+            <InboxItemDetail
+              key={inboxItemId}
+              inboxItemId={inboxItemId}
+              inboxListLocation={inboxListLocation}
+              listTitle={inboxQueue?.name ?? t(inboxSection.label)}
+              showBackToList={isMobile}
+            />
+          </StyledItemPane>
+        )}
+      </StyledSplit>
     </PageCardLayout>
   );
 };

@@ -6,8 +6,6 @@ import { useIcons } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxListRowButtons } from '@/inbox/components/InboxListRowButtons';
-import { INBOX_LIST_ROW_PREVIEW_MAX_WIDTH } from '@/inbox/constants/InboxListRowPreviewMaxWidth';
-import { INBOX_LIST_ROW_SUBJECT_WIDTH } from '@/inbox/constants/InboxListRowSubjectWidth';
 import { type InboxItem, InboxItemPriority } from '~/generated/graphql';
 import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
 
@@ -38,26 +36,28 @@ const StyledRowContainer = styled.div`
 `;
 
 const StyledRow = styled.div<{ isSelected: boolean }>`
-  align-items: center;
   background: ${({ isSelected }) =>
     isSelected ? themeCssVariables.accent.quaternary : 'transparent'};
   border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
-  gap: ${themeCssVariables.spacing[3]};
-  height: 32px;
-  justify-content: space-between;
-  padding: 0 6px;
+  padding: ${themeCssVariables.spacing[2]} 6px;
 `;
 
 // The controls are siblings of this rather than descendants, so a nested
 // button never loses its semantics inside another button.
 const StyledOpenTarget = styled.div`
-  align-items: center;
   display: flex;
   flex: 1;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
+`;
+
+const StyledLine = styled.div`
+  align-items: center;
+  display: flex;
   gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
-  overflow: hidden;
 `;
 
 const StyledUnreadDot = styled.div`
@@ -83,21 +83,14 @@ const StyledTypeIcon = styled.div<{ needsAction: boolean }>`
   flex-shrink: 0;
 `;
 
-const StyledTitleContainer = styled.div`
-  align-items: baseline;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  max-width: ${INBOX_LIST_ROW_SUBJECT_WIDTH}px;
-  min-width: 0;
-  overflow: hidden;
-`;
-
 const StyledTitle = styled.div<{ isUnread: boolean }>`
   color: ${themeCssVariables.font.color.primary};
+  flex: 1;
   font-weight: ${({ isUnread }) =>
     isUnread
       ? themeCssVariables.font.weight.medium
       : themeCssVariables.font.weight.regular};
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -113,18 +106,34 @@ const StyledToolIcons = styled.div`
 
 const MAX_ROW_TOOL_ICONS = 4;
 
-const StyledPreview = styled.div`
+// Lines up under the title, past the unread dot and the type icon
+const StyledSecondLine = styled(StyledLine)`
   color: ${themeCssVariables.font.color.tertiary};
-  max-width: ${INBOX_LIST_ROW_PREVIEW_MAX_WIDTH}px;
+  padding-left: calc(
+    6px + ${themeCssVariables.spacing[2]} + 16px +
+      ${themeCssVariables.spacing[2]}
+  );
+`;
+
+const StyledPreview = styled.div`
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
+const StyledTrailing = styled.div`
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  height: 20px;
+  margin-left: auto;
+`;
+
 const StyledLastEventAt = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   flex-shrink: 0;
-  margin-left: auto;
 `;
 
 const StyledButtonsSlot = styled.div`
@@ -136,14 +145,15 @@ type InboxListRowProps = {
   inboxItem: InboxItem;
   isSelected: boolean;
   onClick: () => void;
-  onOpenInSidePanel: () => void;
 };
 
+// Two lines, the way a mail list reads: what it is and when on the first, what
+// it is about on the second. The list pane is narrow, so nothing shares a line
+// with the title but the time.
 export const InboxListRow = ({
   inboxItem,
   isSelected,
   onClick,
-  onOpenInSidePanel,
 }: InboxListRowProps) => {
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
@@ -153,6 +163,8 @@ export const InboxListRow = ({
   const toolIcons = inboxItem.toolCalls
     .slice(0, MAX_ROW_TOOL_ICONS)
     .map((toolCall) => ({ id: toolCall.id, Icon: getIcon(toolCall.icon) }));
+  const hasSecondLine =
+    toolIcons.length > 0 || isNonEmptyString(inboxItem.preview);
 
   return (
     <StyledRowContainer>
@@ -173,35 +185,42 @@ export const InboxListRow = ({
             }
           }}
         >
-          {inboxItem.isUnread ? <StyledUnreadDot /> : <StyledReadPlaceholder />}
-          <StyledTypeIcon needsAction={needsAction}>
-            <InboxItemIcon size={theme.icon.size.md} color="currentColor" />
-          </StyledTypeIcon>
-          <StyledTitleContainer>
+          <StyledLine>
+            {inboxItem.isUnread ? (
+              <StyledUnreadDot />
+            ) : (
+              <StyledReadPlaceholder />
+            )}
+            <StyledTypeIcon needsAction={needsAction}>
+              <InboxItemIcon size={theme.icon.size.md} color="currentColor" />
+            </StyledTypeIcon>
             <StyledTitle isUnread={inboxItem.isUnread}>
               {inboxItem.title}
             </StyledTitle>
-          </StyledTitleContainer>
-          {toolIcons.length > 0 && (
-            <StyledToolIcons>
-              {toolIcons.map(({ id, Icon }) => (
-                <Icon key={id} size={theme.icon.size.sm} />
-              ))}
-            </StyledToolIcons>
+            <StyledTrailing>
+              <StyledLastEventAt className="inbox-list-row-last-event-at">
+                {beautifyPastDateRelativeToNowShort(inboxItem.lastEventAt)}
+              </StyledLastEventAt>
+              <StyledButtonsSlot className="inbox-list-row-buttons">
+                <InboxListRowButtons inboxItem={inboxItem} />
+              </StyledButtonsSlot>
+            </StyledTrailing>
+          </StyledLine>
+          {hasSecondLine && (
+            <StyledSecondLine>
+              {toolIcons.length > 0 && (
+                <StyledToolIcons>
+                  {toolIcons.map(({ id, Icon }) => (
+                    <Icon key={id} size={theme.icon.size.sm} />
+                  ))}
+                </StyledToolIcons>
+              )}
+              {isNonEmptyString(inboxItem.preview) && (
+                <StyledPreview>{inboxItem.preview}</StyledPreview>
+              )}
+            </StyledSecondLine>
           )}
-          {isNonEmptyString(inboxItem.preview) && (
-            <StyledPreview>{inboxItem.preview}</StyledPreview>
-          )}
-          <StyledLastEventAt className="inbox-list-row-last-event-at">
-            {beautifyPastDateRelativeToNowShort(inboxItem.lastEventAt)}
-          </StyledLastEventAt>
         </StyledOpenTarget>
-        <StyledButtonsSlot className="inbox-list-row-buttons">
-          <InboxListRowButtons
-            inboxItem={inboxItem}
-            onOpenInSidePanel={onOpenInSidePanel}
-          />
-        </StyledButtonsSlot>
       </StyledRow>
     </StyledRowContainer>
   );

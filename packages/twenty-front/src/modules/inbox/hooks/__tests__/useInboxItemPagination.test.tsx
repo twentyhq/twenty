@@ -14,7 +14,7 @@ jest.mock('react-router-dom', () => ({
 }));
 
 let mockInboxItemOrder: {
-  inboxSectionSlug: string;
+  inboxListKey: string;
   inboxItemIds: string[];
 } | null = null;
 
@@ -25,7 +25,7 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
 const renderPagination = (inboxItemId?: string) =>
   renderHook(() =>
     useInboxItemPagination({
-      inboxSection: DEFAULT_INBOX_SECTION,
+      inboxListLocation: { inboxSectionSlug: DEFAULT_INBOX_SECTION.slug },
       inboxItemId,
     }),
   );
@@ -35,7 +35,7 @@ describe('useInboxItemPagination', () => {
     jest.clearAllMocks();
     mockLocationState = INBOX_ITEM_ORDER_LOCATION_STATE;
     mockInboxItemOrder = {
-      inboxSectionSlug: DEFAULT_INBOX_SECTION.slug,
+      inboxListKey: `section:${DEFAULT_INBOX_SECTION.slug}`,
       inboxItemIds: ['first', 'second', 'third'],
     };
   });
@@ -101,10 +101,10 @@ describe('useInboxItemPagination', () => {
     );
   });
 
-  it('should ignore a snapshot captured in another section', () => {
+  it('should ignore a snapshot captured in another list', () => {
     // Arrange
     mockInboxItemOrder = {
-      inboxSectionSlug: 'done',
+      inboxListKey: 'section:done',
       inboxItemIds: ['first', 'second', 'third'],
     };
 

@@ -1,21 +1,22 @@
 import { useCallback } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
 import { INBOX_ITEM_ORDER_LOCATION_STATE } from '@/inbox/constants/InboxItemOrderLocationState';
-import { type InboxSection } from '@/inbox/constants/InboxSections';
 import { inboxItemOrderState } from '@/inbox/states/inboxItemOrderState';
+import { type InboxListLocation } from '@/inbox/types/InboxListLocation';
 import { getInboxItemPath } from '@/inbox/utils/getInboxItemPath';
+import { getInboxListKey } from '@/inbox/utils/getInboxListKey';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useLocation, useNavigate } from 'react-router-dom';
 
 // Paging is over the order the list was showing when the item was opened, not
 // over a live query. Inbox items are core-schema and paged by myInboxItems, so
 // none of the record show pagination applies.
 export const useInboxItemPagination = ({
-  inboxSection,
+  inboxListLocation,
   inboxItemId,
 }: {
-  inboxSection: InboxSection;
+  inboxListLocation: InboxListLocation;
   inboxItemId?: string;
 }) => {
   const navigate = useNavigate();
@@ -26,11 +27,12 @@ export const useInboxItemPagination = ({
     location.state?.isFromInboxList ===
     INBOX_ITEM_ORDER_LOCATION_STATE.isFromInboxList;
 
-  // A snapshot taken in another section, or before a direct link into this
-  // one, says nothing about where this item sits, so it is ignored rather
-  // than paged through
+  // A snapshot taken in another list, or before a direct link into this one,
+  // says nothing about where this item sits, so it is ignored rather than
+  // paged through
   const inboxItemIds =
-    isFromInboxList && inboxItemOrder?.inboxSectionSlug === inboxSection.slug
+    isFromInboxList &&
+    inboxItemOrder?.inboxListKey === getInboxListKey(inboxListLocation)
       ? inboxItemOrder.inboxItemIds
       : [];
 
@@ -52,11 +54,15 @@ export const useInboxItemPagination = ({
         return;
       }
 
-      navigate(getInboxItemPath(inboxSection, targetInboxItemId), {
-        state: INBOX_ITEM_ORDER_LOCATION_STATE,
-      });
+      navigate(
+        getInboxItemPath({
+          ...inboxListLocation,
+          inboxItemId: targetInboxItemId,
+        }),
+        { state: INBOX_ITEM_ORDER_LOCATION_STATE },
+      );
     },
-    [navigate, inboxSection],
+    [navigate, inboxListLocation],
   );
 
   return {
