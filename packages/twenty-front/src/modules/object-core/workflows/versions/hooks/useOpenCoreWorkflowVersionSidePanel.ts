@@ -5,7 +5,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { IconVersions } from 'twenty-ui/icon';
 
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
-import { sidePanelWorkflowVersionIdComponentState } from '@/side-panel/pages/workflow-version/states/sidePanelWorkflowVersionIdComponentState';
+import { sidePanelWorkflowVersionIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowVersionIdComponentState';
 
 export const useOpenCoreWorkflowVersionSidePanel = () => {
   const store = useStore();

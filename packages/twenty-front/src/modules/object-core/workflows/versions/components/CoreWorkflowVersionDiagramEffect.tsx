@@ -5,20 +5,28 @@ import { flowComponentState } from '@/workflow/states/flowComponentState';
 import {
   type WorkflowAction,
   type WorkflowTrigger,
+  type WorkflowVersionStatus,
 } from '@/workflow/types/Workflow';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowVersionIdComponentState';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowDiagram';
+import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
 
 export const CoreWorkflowVersionDiagramEffect = ({
   workflowId,
   workspaceWorkflowVersionId,
+  label,
+  status,
+  createdAt,
   trigger,
   steps,
 }: {
   workflowId: string;
   workspaceWorkflowVersionId: string;
+  label: string;
+  status: WorkflowVersionStatus;
+  createdAt: string;
   trigger: WorkflowTrigger | null;
   steps: WorkflowAction[] | null;
 }) => {
@@ -32,6 +40,7 @@ export const CoreWorkflowVersionDiagramEffect = ({
   const setWorkflowVisualizerWorkflowVersionId = useSetAtomComponentState(
     workflowVisualizerWorkflowVersionIdComponentState,
   );
+  const { populateStepsOutputSchema } = useStepsOutputSchema();
 
   useEffect(() => {
     setFlow({
@@ -48,7 +57,22 @@ export const CoreWorkflowVersionDiagramEffect = ({
         workflowContext: 'workflow-version',
       }),
     );
+    populateStepsOutputSchema({
+      __typename: 'WorkflowVersion',
+      id: workspaceWorkflowVersionId,
+      name: label,
+      workflowId,
+      status,
+      createdAt,
+      updatedAt: createdAt,
+      trigger,
+      steps,
+    });
   }, [
+    createdAt,
+    label,
+    populateStepsOutputSchema,
+    status,
     setFlow,
     setWorkflowDiagram,
     setWorkflowVisualizerWorkflowId,

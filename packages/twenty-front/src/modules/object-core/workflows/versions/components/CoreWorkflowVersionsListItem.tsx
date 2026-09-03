@@ -33,7 +33,6 @@ const StyledLabel = styled.span`
 const StyledDate = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.md};
-  margin-left: ${themeCssVariables.spacing[2]};
   margin-right: auto;
 `;
 

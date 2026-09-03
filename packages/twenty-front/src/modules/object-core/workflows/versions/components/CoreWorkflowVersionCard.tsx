@@ -37,6 +37,9 @@ export const CoreWorkflowVersionCard = ({
       <CoreWorkflowVersionDiagramEffect
         workflowId={coreWorkflowVersion.workspaceWorkflowId}
         workspaceWorkflowVersionId={workspaceWorkflowVersionId}
+        label={coreWorkflowVersion.label}
+        status={coreWorkflowVersion.status}
+        createdAt={coreWorkflowVersion.createdAt}
         trigger={coreWorkflowVersion.trigger ?? null}
         steps={coreWorkflowVersion.steps ?? null}
       />

@@ -8,7 +8,7 @@ import { CoreWorkflowVersionCard } from '@/object-core/workflows/versions/compon
 import { CoreWorkflowVersionRestoreButton } from '@/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton';
 import { CORE_WORKFLOW_VERSION_STATUS_TAG_PROPS } from '@/object-core/workflows/versions/constants/CoreWorkflowVersionStatusTagProps';
 import { useCoreWorkflowVersion } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersion';
-import { useSidePanelWorkflowVersionIdOrThrow } from '@/side-panel/pages/workflow-version/hooks/useSidePanelWorkflowVersionIdOrThrow';
+import { useSidePanelWorkflowVersionIdOrThrow } from '@/side-panel/pages/workflow/step/view/hooks/useSidePanelWorkflowVersionIdOrThrow';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -31,13 +31,9 @@ const StyledSpacer = styled.div`
 export const SidePanelCoreWorkflowVersionPage = () => {
   const { t } = useLingui();
   const workspaceWorkflowVersionId = useSidePanelWorkflowVersionIdOrThrow();
-  const { coreWorkflowVersion, loading } = useCoreWorkflowVersion(
+  const { coreWorkflowVersion } = useCoreWorkflowVersion(
     workspaceWorkflowVersionId,
   );
-
-  if (loading && !isDefined(coreWorkflowVersion)) {
-    return null;
-  }
 
   if (!isDefined(coreWorkflowVersion)) {
     return null;

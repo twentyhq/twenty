@@ -39,9 +39,7 @@ export const SidePanelCoreWorkflowVersionsPage = () => {
       }
     >
       {isDefined(error) && (
-        <SidePanelGroup heading={t`Versions`}>
-          <StyledError>{t`Could not load versions.`}</StyledError>
-        </SidePanelGroup>
+        <StyledError>{t`Could not load versions.`}</StyledError>
       )}
       <SidePanelGroup heading={t`Versions`}>
         {coreWorkflowVersions.map((coreWorkflowVersion) => (

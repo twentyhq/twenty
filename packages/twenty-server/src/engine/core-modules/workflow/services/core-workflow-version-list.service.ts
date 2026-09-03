@@ -32,13 +32,7 @@ export class CoreWorkflowVersionListService {
       {
         where: { workflowId: workspaceWorkflowId },
         order: { createdAt: 'ASC', id: 'ASC' },
-        select: {
-          id: true,
-          status: true,
-          createdAt: true,
-          triggers: true,
-          steps: true,
-        },
+        select: { id: true, status: true, createdAt: true },
       },
     );
 
@@ -59,8 +53,8 @@ export class CoreWorkflowVersionListService {
         workspaceWorkflowVersionId:
           workspaceVersionIdByCoreVersionId[coreWorkflowVersion.id] ?? null,
         workspaceWorkflowId,
-        trigger: coreWorkflowVersion.triggers?.[0] ?? null,
-        steps: coreWorkflowVersion.steps,
+        trigger: null,
+        steps: null,
         createdAt: coreWorkflowVersion.createdAt.toISOString(),
       }))
       .reverse();
@@ -98,13 +92,27 @@ export class CoreWorkflowVersionListService {
       workspaceWorkflowId: workspaceWorkflowVersion.workflowId,
     });
 
-    return (
-      coreWorkflowVersions.find(
-        (coreWorkflowVersion) =>
-          coreWorkflowVersion.workspaceWorkflowVersionId ===
-          workspaceWorkflowVersionId,
-      ) ?? null
+    const coreWorkflowVersionMetadata = coreWorkflowVersions.find(
+      (coreWorkflowVersion) =>
+        coreWorkflowVersion.workspaceWorkflowVersionId ===
+        workspaceWorkflowVersionId,
     );
+
+    if (!isDefined(coreWorkflowVersionMetadata)) {
+      return null;
+    }
+
+    const coreWorkflowVersionContent =
+      await this.coreWorkflowVersionRepository.findOne(workspaceId, {
+        where: { id: coreWorkflowVersionMetadata.id },
+        select: { id: true, triggers: true, steps: true },
+      });
+
+    return {
+      ...coreWorkflowVersionMetadata,
+      trigger: coreWorkflowVersionContent?.triggers?.[0] ?? null,
+      steps: coreWorkflowVersionContent?.steps ?? null,
+    };
   }
 
   private async findWorkspaceVersionIdByCoreVersionId({
