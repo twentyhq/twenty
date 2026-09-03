@@ -1,19 +1,37 @@
 import { RecordIndexEmptyStateDisplay } from '@/object-record/record-index/components/RecordIndexEmptyStateDisplay';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { IconFilterOff, IconPlus, IconSettings } from 'twenty-ui/icon';
 import { ComponentDecorator } from 'twenty-ui/testing';
+
+const onButtonClick = fn();
 
 const meta: Meta<typeof RecordIndexEmptyStateDisplay> = {
   title: 'Modules/ObjectRecord/RecordIndex/RecordIndexEmptyStateDisplay',
   component: RecordIndexEmptyStateDisplay,
   decorators: [ComponentDecorator],
   args: {
-    onButtonClick: () => {},
+    onButtonClick,
   },
 };
 
 export default meta;
 type Story = StoryObj<typeof RecordIndexEmptyStateDisplay>;
+
+const playRenderAndClick: Story['play'] = async ({ args, canvasElement }) => {
+  onButtonClick.mockClear();
+
+  const canvas = within(canvasElement);
+
+  expect(await canvas.findByText(args.title as string)).toBeVisible();
+  expect(canvas.getByText(args.subTitle as string)).toBeVisible();
+
+  const button = canvas.getByRole('button', { name: args.buttonTitle });
+
+  await userEvent.click(button);
+
+  expect(onButtonClick).toHaveBeenCalledTimes(1);
+};
 
 export const NoRecordAtAll: Story = {
   args: {
@@ -23,6 +41,7 @@ export const NoRecordAtAll: Story = {
     ButtonIcon: IconPlus,
     buttonTitle: 'Add a Person',
   },
+  play: playRenderAndClick,
 };
 
 export const NoRecordFoundForFilter: Story = {
@@ -33,6 +52,7 @@ export const NoRecordFoundForFilter: Story = {
     ButtonIcon: IconPlus,
     buttonTitle: 'Add a Person',
   },
+  play: playRenderAndClick,
 };
 
 export const Remote: Story = {
@@ -43,6 +63,7 @@ export const Remote: Story = {
     ButtonIcon: IconSettings,
     buttonTitle: 'Go to Settings',
   },
+  play: playRenderAndClick,
 };
 
 export const SoftDelete: Story = {
@@ -53,4 +74,5 @@ export const SoftDelete: Story = {
     ButtonIcon: IconFilterOff,
     buttonTitle: 'Remove Deleted filter',
   },
+  play: playRenderAndClick,
 };
