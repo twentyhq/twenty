@@ -5,15 +5,16 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
+import { Callout } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
-import { SlackSettingsCallout } from 'src/front-components/components/SlackSettingsCallout';
 import { SlackUserLinkForm } from 'src/front-components/components/SlackUserLinkForm';
 import { SlackUserLinksList } from 'src/front-components/components/SlackUserLinksList';
 import { UnlinkedSlackUsersList } from 'src/front-components/components/UnlinkedSlackUsersList';
+import { SLACK_CONNECTION_HEALTH_CALLOUTS } from 'src/front-components/constants/slack-connection-health-callouts.constant';
 import { useCanManageSlackUserLinks } from 'src/front-components/hooks/use-can-manage-slack-user-links';
 import { useMatchSlackUserLinks } from 'src/front-components/hooks/use-match-slack-user-links';
 import { useSlackConnectionStatus } from 'src/front-components/hooks/use-slack-connection-status';
@@ -22,30 +23,6 @@ import { useResendSlackUserLinkConsent } from 'src/front-components/hooks/use-re
 import { useSlackUserLinks } from 'src/front-components/hooks/use-slack-user-links';
 import { useUnlinkedSlackUsers } from 'src/front-components/hooks/use-unlinked-slack-users';
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
-import {
-  SLACK_CONNECTION_HEALTH,
-  type SlackConnectionHealth,
-} from 'src/logic-functions/constants/slack-connection-health';
-
-const CONNECTION_HEALTH_CALLOUTS: Partial<
-  Record<SlackConnectionHealth, { title: string; description: string }>
-> = {
-  [SLACK_CONNECTION_HEALTH.TOKEN_REJECTED]: {
-    title: 'Slack connection is no longer valid',
-    description:
-      'Slack rejected the stored credentials, so the assistant cannot read or send messages. Remove the Slack connection and add it again.',
-  },
-  [SLACK_CONNECTION_HEALTH.TEAM_CLAIMED_BY_ANOTHER_WORKSPACE]: {
-    title: 'Slack workspace already connected elsewhere',
-    description:
-      'This Slack workspace is registered to another Twenty workspace, so its messages are delivered there. Disconnect Slack in that workspace first, then remove the connection here and add it again.',
-  },
-  [SLACK_CONNECTION_HEALTH.TEAM_UNCLAIMED]: {
-    title: 'Slack connection needs to be registered again',
-    description:
-      'No Twenty workspace is registered for this Slack workspace, so its messages are not delivered anywhere. Remove the Slack connection and add it again.',
-  },
-};
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -114,8 +91,8 @@ export const SlackUserLinksSettings = () => {
   const [matchSummary, setMatchSummary] = useState<string | undefined>(
     undefined,
   );
-  const [lastMatchRunOutcome, setLastMatchRunOutcome] = useState<
-    'clean' | 'dirty' | undefined
+  const [hasLastMatchRunFailed, setHasLastMatchRunFailed] = useState<
+    boolean | undefined
   >(undefined);
   const [isManualFormOpen, setIsManualFormOpen] = useState(false);
 
@@ -133,7 +110,7 @@ export const SlackUserLinksSettings = () => {
 
     if (!result.success) {
       setMatchSummary(undefined);
-      setLastMatchRunOutcome('dirty');
+      setHasLastMatchRunFailed(true);
       enqueueSnackbar({
         message: isNonEmptyString(result.error) ? result.error : result.message,
         variant: 'error',
@@ -143,7 +120,7 @@ export const SlackUserLinksSettings = () => {
     }
 
     setMatchSummary(result.message);
-    setLastMatchRunOutcome(result.failedCount === 0 ? 'clean' : 'dirty');
+    setHasLastMatchRunFailed(result.failedCount > 0);
     await handleLinkSaved();
   };
 
@@ -195,13 +172,13 @@ export const SlackUserLinksSettings = () => {
   }
 
   const connectionHealthCallout = isDefined(connectionHealth)
-    ? CONNECTION_HEALTH_CALLOUTS[connectionHealth]
+    ? SLACK_CONNECTION_HEALTH_CALLOUTS[connectionHealth]
     : undefined;
 
   if (isDefined(connectionHealthCallout)) {
     return (
       <StyledContainer>
-        <SlackSettingsCallout
+        <Callout
           variant="error"
           title={connectionHealthCallout.title}
           description={connectionHealthCallout.description}
@@ -214,24 +191,25 @@ export const SlackUserLinksSettings = () => {
     return <StyledCenteredState>Loading Slack user links…</StyledCenteredState>;
   }
 
+  const shouldWarnAboutRosterMatch =
+    canManage && (hasLastMatchRunFailed ?? hasRosterMatchFailed);
+
   return (
     <StyledContainer>
       {!canManage && (
-        <SlackSettingsCallout
+        <Callout
           variant="warning"
           title="You need the roles permission"
           description="Only members with the roles permission can create or change Slack user links. You can review the existing links below."
         />
       )}
-      {canManage &&
-        (lastMatchRunOutcome === 'dirty' ||
-          (hasRosterMatchFailed && lastMatchRunOutcome !== 'clean')) && (
-          <SlackSettingsCallout
-            variant="warning"
-            title="Email auto-link did not finish"
-            description="The last automatic email match failed before linking everyone. Press Auto-link by email below to run it again."
-          />
-        )}
+      {shouldWarnAboutRosterMatch && (
+        <Callout
+          variant="warning"
+          title="Email auto-link did not finish"
+          description="The last automatic email match failed before linking everyone. Press Auto-link by email below to run it again."
+        />
+      )}
       {canManage && (
         <Section>
           <H2Title
