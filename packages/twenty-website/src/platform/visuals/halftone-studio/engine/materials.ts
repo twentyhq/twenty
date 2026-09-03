@@ -445,9 +445,8 @@ const GLASS_ENVIRONMENT_INTENSITY_BASE = 0.18;
 const GLASS_ENVIRONMENT_INTENSITY_MULTIPLIER = 0.12;
 const GLASS_ENVIRONMENT_ZOOM = 1.55;
 const GLASS_TRANSMISSION_BACKGROUND = new THREE.Color(0x030303);
-const GLASS_TEXTURE_URLS = {
-  environment: '/halftone/materials/glass/environment.webp',
-} as const;
+// The images prefix bypasses the locale catch-all that owns the /halftone route.
+const GLASS_ENVIRONMENT_URL = '/images/halftone/environment.jpg';
 const MAX_TEXTURE_ANISOTROPY = 8;
 
 function setTextureSampling(
@@ -626,7 +625,7 @@ function loadTexture(
 
 async function loadGlassEnvironmentAssets(renderer: THREE.WebGLRenderer) {
   const sourceBackgroundTexture = await loadTexture(
-    GLASS_TEXTURE_URLS.environment,
+    GLASS_ENVIRONMENT_URL,
     renderer,
     THREE.SRGBColorSpace,
   );
