@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
@@ -14,6 +15,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
@@ -29,6 +31,7 @@ export class WorkspaceWorkflowAutomatedTriggerMapCacheService extends WorkspaceC
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
     private readonly workflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {
     super();
   }
@@ -72,6 +75,14 @@ export class WorkspaceWorkflowAutomatedTriggerMapCacheService extends WorkspaceC
     activeWorkflowVersions: WorkflowVersionEntity[];
   }): Promise<Record<string, string>> {
     if (activeWorkflowVersions.length === 0) {
+      return {};
+    }
+
+    if (!(await this.workspaceHasCoreWorkflowVersionIdField(workspaceId))) {
+      this.logger.warn(
+        `workflowVersion.coreWorkflowVersionId field missing for workspace ${workspaceId}, skipping workspace twin resolution`,
+      );
+
       return {};
     }
 
@@ -142,5 +153,21 @@ export class WorkspaceWorkflowAutomatedTriggerMapCacheService extends WorkspaceC
         ),
       );
     }, authContext);
+  }
+
+  private async workspaceHasCoreWorkflowVersionIdField(
+    workspaceId: string,
+  ): Promise<boolean> {
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    return isDefined(
+      flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.workflowVersion.fields.coreWorkflowVersionId
+          .universalIdentifier
+      ],
+    );
   }
 }

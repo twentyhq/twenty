@@ -36,6 +36,7 @@ import {
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { type ByteRange } from 'src/engine/core-modules/file-storage/types/byte-range.type';
 import { buildAwsRequestHandlerOptions } from 'src/utils/aws-request-handler.util';
+import { propagateDestroyToSource } from 'src/utils/propagate-destroy-to-source.util';
 
 export interface S3DriverOptions extends S3ClientConfig {
   bucketName: string;
@@ -109,7 +110,7 @@ export class S3Driver implements StorageDriver {
         throw new Error('Unable to get file stream');
       }
 
-      return file.Body;
+      return propagateDestroyToSource(file.Body);
     } catch (error) {
       if (error.name === 'NoSuchKey') {
         throw new FileStorageException(

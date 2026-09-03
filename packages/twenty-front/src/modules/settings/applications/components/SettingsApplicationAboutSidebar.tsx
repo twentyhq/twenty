@@ -31,6 +31,7 @@ export type DeveloperLinks = {
 
 type SettingsApplicationAboutSidebarProps = {
   actionButton?: ReactNode;
+  pricingDescription?: string;
   author?: string;
   category?: string;
   contentEntries?: ContentEntry[];
@@ -64,6 +65,14 @@ const StyledSidebarValue = styled.div`
   font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
+// Prose rather than a datum: it wraps, and stays regular weight so a sentence
+// does not shout next to the short sidebar values.
+const StyledPricingValue = styled.div`
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.md};
+  overflow-wrap: anywhere;
+`;
+
 const StyledContentList = styled.div`
   align-items: flex-start;
   display: flex;
@@ -91,6 +100,7 @@ const StyledLink = styled.a`
 
 export const SettingsApplicationAboutSidebar = ({
   actionButton,
+  pricingDescription,
   author,
   category,
   contentEntries,
@@ -126,6 +136,13 @@ export const SettingsApplicationAboutSidebar = ({
     <StyledSidebar>
       {isDefined(actionButton) && (
         <StyledSidebarSection>{actionButton}</StyledSidebarSection>
+      )}
+
+      {isNonEmptyString(pricingDescription) && (
+        <StyledSidebarSection>
+          <StyledSidebarLabel>{t`Pricing`}</StyledSidebarLabel>
+          <StyledPricingValue>{pricingDescription}</StyledPricingValue>
+        </StyledSidebarSection>
       )}
 
       {isDefined(author) && (

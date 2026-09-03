@@ -121,6 +121,10 @@ export class MarketplaceQueryService {
         registration.aboutDescription ??
         registration.manifest?.application?.aboutDescription ??
         undefined,
+      pricingDescription:
+        registration.pricingDescription ??
+        registration.manifest?.application?.billing?.description ??
+        undefined,
       termsUrl:
         registration.termsUrl ??
         registration.manifest?.application?.termsUrl ??

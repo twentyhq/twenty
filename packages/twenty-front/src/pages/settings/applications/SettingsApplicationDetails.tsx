@@ -1,5 +1,6 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { AppChip } from '@/applications/components/AppChip';
+import { useRefetchOnApplicationLifecycleSettled } from '@/applications/hooks/useRefetchOnApplicationLifecycleSettled';
 import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
@@ -66,10 +67,12 @@ export const SettingsApplicationDetails = () => {
     APPLICATION_DETAIL_ID,
   );
 
-  const { data } = useQuery(FindOneApplicationDocument, {
+  const { data, refetch } = useQuery(FindOneApplicationDocument, {
     variables: { id: applicationId },
     skip: !applicationId,
   });
+
+  useRefetchOnApplicationLifecycleSettled({ applicationId, refetch });
 
   const application = data?.findOneApplication;
 
@@ -290,6 +293,7 @@ export const SettingsApplicationDetails = () => {
             displayName={displayName}
             description={description}
             aboutDescription={detail?.aboutDescription ?? undefined}
+            pricingDescription={detail?.pricingDescription ?? undefined}
             screenshots={screenshots}
             author={detail?.author ?? undefined}
             category={detail?.category ?? undefined}

@@ -521,7 +521,7 @@ const asApplication = new RestApiClient({ runAs: 'application' });
 Check `context.workspaceMemberId` when a function behaves differently depending on whether someone is behind it, for instance to attribute a record.
 </Note>
 
-The SDK helpers that reach your application's own resources always use its access and ignore `runAs`: the [key-value store](/developers/extend/apps/logic/key-value-store), [connections](/developers/extend/apps/logic/connections), `runAgent`, `getPublicAssetUrl` and credit charging.
+The SDK helpers that reach your application's own resources always use its access and ignore `runAs`: the [key-value store](/developers/extend/apps/logic/key-value-store), [connections](/developers/extend/apps/logic/connections), `runAgent`, `getPublicAssetUrl` and [credit charging](/developers/extend/apps/logic/credits).
 
 #### Exposing a function as an AI tool or workflow action
 

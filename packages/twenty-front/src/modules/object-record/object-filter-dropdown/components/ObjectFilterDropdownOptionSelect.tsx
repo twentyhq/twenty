@@ -21,6 +21,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
@@ -73,9 +74,12 @@ export const ObjectFilterDropdownOptionSelect = ({
 
   const { resetSelectedItem } = useSelectableList(componentInstanceId);
 
+  const scopedComponentInstanceId =
+    useWorkspaceSurfaceScopedComponentInstanceId(componentInstanceId);
+
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    componentInstanceId,
+    scopedComponentInstanceId,
   );
 
   const { foundFieldMetadataItem: relationTargetFieldMetadataItem } =

@@ -8,4 +8,5 @@ export enum UsageUnit {
   MILLISECOND = 'MILLISECOND',
   BYTE = 'BYTE',
   REQUEST = 'REQUEST',
+  SEAT = 'SEAT',
 }

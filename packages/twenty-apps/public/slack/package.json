@@ -12,6 +12,12 @@
   "keywords": [
     "twenty-app"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/twentyhq/twenty.git",
+    "directory": "packages/twenty-apps/public/slack"
+  },
+  "homepage": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/public/slack",
   "packageManager": "yarn@4.13.0",
   "scripts": {
     "twenty": "twenty",
