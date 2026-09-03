@@ -54,10 +54,14 @@ export class CreateSsoConnectedAccountService {
     });
 
     if (existing) {
+      const mergedScopes = Array.from(
+        new Set([...(existing.scopes ?? []), ...scopes]),
+      );
+
       await this.connectedAccountRepository.update(existing.id, {
         lastSignedInAt: new Date(),
         provider,
-        scopes,
+        scopes: mergedScopes,
         ...(oidcTokenClaims !== undefined
           ? { oidcTokenClaims: oidcTokenClaims as object }
           : {}),
