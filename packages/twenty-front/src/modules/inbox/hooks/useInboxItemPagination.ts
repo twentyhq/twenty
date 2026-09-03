@@ -1,11 +1,12 @@
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { INBOX_ITEM_ORDER_LOCATION_STATE } from '@/inbox/constants/InboxItemOrderLocationState';
 import { type InboxSection } from '@/inbox/constants/InboxSections';
 import { inboxItemOrderState } from '@/inbox/states/inboxItemOrderState';
 import { getInboxItemPath } from '@/inbox/utils/getInboxItemPath';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 // Paging is over the order the list was showing when the item was opened, not
 // over a live query. Inbox items are core-schema and paged by myInboxItems, so
@@ -18,12 +19,18 @@ export const useInboxItemPagination = ({
   inboxItemId?: string;
 }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const inboxItemOrder = useAtomStateValue(inboxItemOrderState);
 
-  // A snapshot taken in another section says nothing about where this item
-  // sits, so it is ignored rather than paged through
+  const isFromInboxList =
+    location.state?.isFromInboxList ===
+    INBOX_ITEM_ORDER_LOCATION_STATE.isFromInboxList;
+
+  // A snapshot taken in another section, or before a direct link into this
+  // one, says nothing about where this item sits, so it is ignored rather
+  // than paged through
   const inboxItemIds =
-    inboxItemOrder?.inboxSectionSlug === inboxSection.slug
+    isFromInboxList && inboxItemOrder?.inboxSectionSlug === inboxSection.slug
       ? inboxItemOrder.inboxItemIds
       : [];
 
@@ -45,7 +52,9 @@ export const useInboxItemPagination = ({
         return;
       }
 
-      navigate(getInboxItemPath(inboxSection, targetInboxItemId));
+      navigate(getInboxItemPath(inboxSection, targetInboxItemId), {
+        state: INBOX_ITEM_ORDER_LOCATION_STATE,
+      });
     },
     [navigate, inboxSection],
   );

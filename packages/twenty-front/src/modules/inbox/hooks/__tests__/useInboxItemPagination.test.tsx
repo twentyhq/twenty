@@ -1,13 +1,16 @@
 import { renderHook } from '@testing-library/react';
 
 import { DEFAULT_INBOX_SECTION } from '@/inbox/constants/DefaultInboxSection';
+import { INBOX_ITEM_ORDER_LOCATION_STATE } from '@/inbox/constants/InboxItemOrderLocationState';
 import { useInboxItemPagination } from '@/inbox/hooks/useInboxItemPagination';
 
 const mockNavigate = jest.fn();
+let mockLocationState: unknown = INBOX_ITEM_ORDER_LOCATION_STATE;
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
+  useLocation: () => ({ state: mockLocationState }),
 }));
 
 let mockInboxItemOrder: {
@@ -30,6 +33,7 @@ const renderPagination = (inboxItemId?: string) =>
 describe('useInboxItemPagination', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockLocationState = INBOX_ITEM_ORDER_LOCATION_STATE;
     mockInboxItemOrder = {
       inboxSectionSlug: DEFAULT_INBOX_SECTION.slug,
       inboxItemIds: ['first', 'second', 'third'],
@@ -93,6 +97,7 @@ describe('useInboxItemPagination', () => {
     // Assert
     expect(mockNavigate).toHaveBeenCalledWith(
       `/inbox/${DEFAULT_INBOX_SECTION.slug}/third`,
+      { state: INBOX_ITEM_ORDER_LOCATION_STATE },
     );
   });
 
@@ -102,6 +107,19 @@ describe('useInboxItemPagination', () => {
       inboxSectionSlug: 'done',
       inboxItemIds: ['first', 'second', 'third'],
     };
+
+    // Act
+    const { result } = renderPagination('second');
+
+    // Assert
+    expect(result.current.hasPrevious).toBe(false);
+    expect(result.current.hasNext).toBe(false);
+    expect(result.current.position).toBeUndefined();
+  });
+
+  it('should ignore a snapshot when the item was reached by a direct link', () => {
+    // Arrange
+    mockLocationState = null;
 
     // Act
     const { result } = renderPagination('second');

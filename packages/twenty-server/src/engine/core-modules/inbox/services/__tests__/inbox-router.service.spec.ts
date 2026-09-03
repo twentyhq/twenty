@@ -292,6 +292,7 @@ describe('InboxRouterService', () => {
           title: 'A message from Alice',
           preview: 'Hello there',
           payload: null,
+          context: null,
           queueId: null,
           assigneeUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
           slotKey: THREAD_SLOT_KEY,

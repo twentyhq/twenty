@@ -100,6 +100,10 @@ export const SettingsInboxQueueEdit = () => {
         roleIds: draft.roleIds,
       });
       goBack();
+    } catch {
+      enqueueErrorSnackBar({
+        message: t`This shared inbox could not be saved`,
+      });
     } finally {
       setIsSaving(false);
     }

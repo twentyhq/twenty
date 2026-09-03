@@ -181,7 +181,11 @@ export const TabList = ({
       value={{ instanceId: scopedComponentInstanceId }}
     >
       <>
-        <TabListFromUrlOptionalEffect tabListIds={tabs.map((tab) => tab.id)} />
+        <TabListFromUrlOptionalEffect
+          tabListIds={tabs
+            .filter((tab) => tab.disabled !== true)
+            .map((tab) => tab.id)}
+        />
 
         {visibleTabs.length > 1 && !shouldScrollTabs && (
           <TabListHiddenMeasurements

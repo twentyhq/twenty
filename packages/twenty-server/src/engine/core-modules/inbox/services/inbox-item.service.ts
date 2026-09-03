@@ -19,7 +19,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 export const DEFAULT_INBOX_PAGE_SIZE = 50;
-export const MAX_INBOX_PAGE_SIZE = 500;
+export const MAX_INBOX_PAGE_SIZE = 100;
 
 // Which inbox is being read: someone's own, or one shared queue they watch.
 // A queue is read through an assignment filter, because "everything addressed

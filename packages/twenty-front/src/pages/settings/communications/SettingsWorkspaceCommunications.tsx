@@ -70,7 +70,11 @@ export const SettingsWorkspaceCommunications = () => {
     FeatureFlagKey.IS_INBOX_ENABLED,
   );
 
-  const { inboxQueues, inboxItemTypes } = useInboxSettings();
+  const {
+    inboxQueues,
+    inboxItemTypes,
+    loading: isInboxSettingsLoading,
+  } = useInboxSettings();
 
   const tabs = [
     ...(isEmailGroupFeatureEnabled
@@ -191,10 +195,12 @@ export const SettingsWorkspaceCommunications = () => {
               title={t`Routing`}
               description={t`Where each kind of work goes when nothing named a recipient. Rules with conditions belong in a workflow.`}
             />
-            <SettingsInboxRoutingTable
-              inboxItemTypes={inboxItemTypes}
-              inboxQueues={inboxQueues}
-            />
+            {!isInboxSettingsLoading && (
+              <SettingsInboxRoutingTable
+                inboxItemTypes={inboxItemTypes}
+                inboxQueues={inboxQueues}
+              />
+            )}
           </Section>
         )}
       </SettingsPageContainer>
