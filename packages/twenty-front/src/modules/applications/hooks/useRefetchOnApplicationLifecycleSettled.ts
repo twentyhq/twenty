@@ -9,13 +9,17 @@ const QUERY_ONLY_APPLICATION_FIELDS = ['logo'];
 
 type UseRefetchOnApplicationLifecycleSettledArgs = {
   applicationId?: string;
-  refetch: () => void;
+  refetch: () => Promise<unknown> | void;
 };
 
 export const useRefetchOnApplicationLifecycleSettled = ({
   applicationId,
   refetch,
 }: UseRefetchOnApplicationLifecycleSettledArgs) => {
+  const refetchIgnoringRejection = useCallback(() => {
+    Promise.resolve(refetch()).catch(() => undefined);
+  }, [refetch]);
+
   const onApplicationOperation = useCallback(
     ({ operation }: MetadataOperationBrowserEventDetail<FlatApplication>) => {
       if (operation.type === 'delete') {
@@ -23,7 +27,7 @@ export const useRefetchOnApplicationLifecycleSettled = ({
           return;
         }
 
-        refetch();
+        refetchIgnoringRejection();
 
         return;
       }
@@ -55,9 +59,9 @@ export const useRefetchOnApplicationLifecycleSettled = ({
         return;
       }
 
-      refetch();
+      refetchIgnoringRejection();
     },
-    [applicationId, refetch],
+    [applicationId, refetchIgnoringRejection],
   );
 
   useListenToMetadataOperationBrowserEvent<FlatApplication>({
