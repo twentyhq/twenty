@@ -2,6 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { IsNull } from 'typeorm';
 
 import { FindConnectedAccountsTool } from 'src/engine/core-modules/tool/tools/email-tool/find-connected-accounts-tool';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
@@ -90,7 +91,10 @@ describe('FindConnectedAccountsTool', () => {
 
     expect(mockFind).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: expect.objectContaining({ workspaceId: WORKSPACE_ID }),
+        where: expect.objectContaining({
+          workspaceId: WORKSPACE_ID,
+          archivedAt: IsNull(),
+        }),
         select: expect.objectContaining({
           id: true,
           handle: true,

@@ -21,7 +21,7 @@ const normalizeHandle = (handle: string): string => handle.trim().toLowerCase();
 @Injectable()
 export class FindConnectedAccountsTool implements Tool {
   description =
-    'List connected email/calendar accounts the caller can use with draft_email and send_email. Returns id, handle, provider, visibility and aliases from the core schema. Pass id as connectedAccountId. Do not guess UUIDs.';
+    'List connected email accounts the caller can use with draft_email and send_email. Returns id, handle, provider, visibility and aliases from the core schema. Pass id as connectedAccountId. Do not guess UUIDs.';
   inputSchema = FindConnectedAccountsToolInputZodSchema;
 
   constructor(
