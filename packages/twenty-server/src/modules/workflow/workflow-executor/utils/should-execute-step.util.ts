@@ -4,6 +4,7 @@ import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/
 import { findParentSteps } from 'src/modules/workflow/workflow-executor/utils/find-parent-steps.util';
 import { shouldExecuteChildStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-child-step.util';
 import { stepHasBeenStarted } from 'src/modules/workflow/workflow-executor/utils/step-has-been-started.util';
+import { stepIsAwaitingRetry } from 'src/modules/workflow/workflow-executor/utils/step-is-awaiting-retry.util';
 import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/guards/is-workflow-iterator-action.guard';
 import { shouldExecuteIteratorStep } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/should-execute-iterator-step.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -21,6 +22,10 @@ export const shouldExecuteStep = ({
 }) => {
   if (workflowRunStatus !== WorkflowRunStatus.RUNNING) {
     return false;
+  }
+
+  if (stepIsAwaitingRetry({ step, stepInfo: stepInfos[step.id] })) {
+    return true;
   }
 
   if (isWorkflowIteratorAction(step)) {

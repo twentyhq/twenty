@@ -5,6 +5,7 @@ import {
   waitForWorkflowCompletion,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 
+import { STEP_RETRY_DELAYS_MS } from 'src/modules/workflow/workflow-executor/constants/step-retry-delays.constant';
 import {
   type WorkflowAction,
   type WorkflowHttpRequestAction,
@@ -15,7 +16,7 @@ const client = request(`http://localhost:${APP_PORT}`);
 
 const BLOCKED_REQUEST_URL = 'http://127.0.0.1:1/';
 
-describe('Continue on failure workflow (e2e)', () => {
+describe('Step error handling workflow (e2e)', () => {
   let createdWorkflowId: string | null = null;
   let createdWorkflowVersionId: string | null = null;
   let httpRequestStepId: string | null = null;
@@ -75,8 +76,10 @@ describe('Continue on failure workflow (e2e)', () => {
 
   const setUpFailingHttpRequestStep = async ({
     continueOnFailure,
+    retryOnFailure = false,
   }: {
     continueOnFailure: boolean;
+    retryOnFailure?: boolean;
   }) => {
     const steps = await getSteps();
 
@@ -109,6 +112,7 @@ describe('Continue on failure workflow (e2e)', () => {
                 errorHandlingOptions: {
                   ...httpRequestStep.settings.errorHandlingOptions,
                   continueOnFailure: { value: continueOnFailure },
+                  retryOnFailure: { value: retryOnFailure },
                 },
               },
             },
@@ -256,6 +260,40 @@ describe('Continue on failure workflow (e2e)', () => {
       );
       expect(workflowRun?.state?.stepInfos?.[filterStepId!]?.status).toBe(
         'NOT_STARTED',
+      );
+    } finally {
+      await destroyWorkflowRun(workflowRunId);
+    }
+  });
+  it('should retry the failing step before failing the run when the step retries on failure', async () => {
+    await setUpFailingHttpRequestStep({
+      continueOnFailure: false,
+      retryOnFailure: true,
+    });
+
+    const workflowRunId = await runWorkflowVersion({
+      workflowVersionId: createdWorkflowVersionId!,
+    });
+
+    try {
+      const totalRetryDelayMs = STEP_RETRY_DELAYS_MS.reduce(
+        (total, delay) => total + delay,
+        0,
+      );
+
+      const workflowRun = await waitForWorkflowCompletion(
+        workflowRunId,
+        Math.ceil(totalRetryDelayMs / 500) + 60,
+      );
+
+      expect(workflowRun?.status).toBe('FAILED');
+
+      const httpRequestStepInfo =
+        workflowRun?.state?.stepInfos?.[httpRequestStepId!];
+
+      expect(httpRequestStepInfo?.status).toBe('FAILED');
+      expect(httpRequestStepInfo?.history).toHaveLength(
+        STEP_RETRY_DELAYS_MS.length,
       );
     } finally {
       await destroyWorkflowRun(workflowRunId);
