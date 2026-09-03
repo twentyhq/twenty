@@ -10,6 +10,7 @@ export type InboxItemTransition =
       outcome?: string;
       result?: InboxItemPayload;
       resurfaceInMinutes?: number;
+      resurfaceAt?: Date;
     }
   | { kind: 'REOPEN' }
   // Taking, handing over and giving back are one act with different targets.

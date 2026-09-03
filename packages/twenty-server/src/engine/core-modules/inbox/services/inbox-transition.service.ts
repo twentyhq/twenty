@@ -170,9 +170,11 @@ export class InboxTransitionService {
           clearedByUserWorkspaceId: actorUserWorkspaceId,
           // Only ever compared against a reading request's own clock, so it is
           // the one timestamp here that belongs to this process
-          resurfaceAt: isDefined(transition.resurfaceInMinutes)
-            ? this.inMinutes(transition.resurfaceInMinutes)
-            : null,
+          resurfaceAt: isDefined(transition.resurfaceAt)
+            ? this.atTime(transition.resurfaceAt)
+            : isDefined(transition.resurfaceInMinutes)
+              ? this.inMinutes(transition.resurfaceInMinutes)
+              : null,
           outcome: isDefined(transition.outcome)
             ? this.readOutcome(inboxItem, transition.outcome)
             : null,
@@ -252,6 +254,18 @@ export class InboxTransitionService {
   }
 
   private inMinutes(minutes: number): Date {
+    this.assertResurfaceDelay(minutes);
+
+    return new Date(Date.now() + minutes * 60 * 1000);
+  }
+
+  private atTime(resurfaceAt: Date): Date {
+    this.assertResurfaceDelay((resurfaceAt.getTime() - Date.now()) / 60_000);
+
+    return resurfaceAt;
+  }
+
+  private assertResurfaceDelay(minutes: number): void {
     if (
       !Number.isFinite(minutes) ||
       minutes <= 0 ||
@@ -261,11 +275,9 @@ export class InboxTransitionService {
         `Resurfacing must be between 1 and ${MAX_RESURFACE_MINUTES} minutes away`,
         InboxExceptionCode.INVALID_INBOX_ACTION,
         {
-          userFriendlyMessage: msg`Choose a time to come back to this that is less than a year away.`,
+          userFriendlyMessage: msg`Choose a time to come back to this that is in the future and less than a year away.`,
         },
       );
     }
-
-    return new Date(Date.now() + minutes * 60 * 1000);
   }
 }

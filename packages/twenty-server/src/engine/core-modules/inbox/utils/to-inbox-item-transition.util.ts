@@ -20,9 +20,19 @@ export const toInboxItemTransition = (
   switch (input.kind) {
     case 'CLEAR':
       // An outcome says how the item ended; a resurfacing time says it has not.
-      if (isDefined(input.outcome) && isDefined(input.resurfaceInMinutes)) {
+      if (
+        isDefined(input.outcome) &&
+        (isDefined(input.resurfaceInMinutes) || isDefined(input.resurfaceAt))
+      ) {
         throw new InboxException(
           'A clear that comes back cannot also carry an outcome',
+          InboxExceptionCode.INVALID_INBOX_ACTION,
+        );
+      }
+
+      if (isDefined(input.resurfaceInMinutes) && isDefined(input.resurfaceAt)) {
+        throw new InboxException(
+          'A clear comes back at a time or after a delay, not both',
           InboxExceptionCode.INVALID_INBOX_ACTION,
         );
       }
@@ -35,6 +45,9 @@ export const toInboxItemTransition = (
           : {}),
         ...(isDefined(input.resurfaceInMinutes)
           ? { resurfaceInMinutes: input.resurfaceInMinutes }
+          : {}),
+        ...(isDefined(input.resurfaceAt)
+          ? { resurfaceAt: input.resurfaceAt }
           : {}),
       };
 

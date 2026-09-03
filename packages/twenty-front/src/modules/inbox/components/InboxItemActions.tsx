@@ -6,6 +6,8 @@ import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxItemActionInputModal } from '@/inbox/components/InboxItemActionInputModal';
+import { InboxSnoozeDropdown } from '@/inbox/components/InboxSnoozeDropdown';
+import { INBOX_SNOOZE_ACTION_KEY } from '@/inbox/constants/InboxSnoozeActionKey';
 import { useInboxItemActions } from '@/inbox/hooks/useInboxItemActions';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
@@ -89,32 +91,42 @@ export const InboxItemActions = ({ inboxItem }: { inboxItem: InboxItem }) => {
           variant="secondary"
         />
       ) : (
-        transitionActions.map((action) => (
-          <Button
-            key={action.key}
-            accent={action.isPrimary ? 'blue' : 'default'}
-            onClick={() => {
-              if (action.inputSchema.length > 0) {
-                setPendingAction({
-                  inboxItemId: inboxItem.id,
-                  action,
-                  expectedVersion: inboxItem.version,
-                });
-
-                return;
+        transitionActions.map((action) =>
+          action.key === INBOX_SNOOZE_ACTION_KEY ? (
+            <InboxSnoozeDropdown
+              key={action.key}
+              inboxItem={inboxItem}
+              clickableComponent={
+                <Button size="small" title={t`Snooze`} variant="secondary" />
               }
+            />
+          ) : (
+            <Button
+              key={action.key}
+              accent={action.isPrimary ? 'blue' : 'default'}
+              onClick={() => {
+                if (action.inputSchema.length > 0) {
+                  setPendingAction({
+                    inboxItemId: inboxItem.id,
+                    action,
+                    expectedVersion: inboxItem.version,
+                  });
 
-              void executeInboxItemAction({
-                inboxItemId: inboxItem.id,
-                actionKey: action.key,
-                expectedVersion: inboxItem.version,
-              }).catch(reportFailure);
-            }}
-            size="small"
-            title={action.label}
-            variant={action.isPrimary ? 'primary' : 'secondary'}
-          />
-        ))
+                  return;
+                }
+
+                void executeInboxItemAction({
+                  inboxItemId: inboxItem.id,
+                  actionKey: action.key,
+                  expectedVersion: inboxItem.version,
+                }).catch(reportFailure);
+              }}
+              size="small"
+              title={action.label}
+              variant={action.isPrimary ? 'primary' : 'secondary'}
+            />
+          ),
+        )
       )}
     </StyledActions>
   );

@@ -10,6 +10,8 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { InboxPlanActionsSummary } from '@/inbox/components/InboxPlanActionsSummary';
 import { InboxPlanEntityGraph } from '@/inbox/components/InboxPlanEntityGraph';
 import { InboxPlanToolCallRow } from '@/inbox/components/InboxPlanToolCallRow';
+import { InboxSnoozeDropdown } from '@/inbox/components/InboxSnoozeDropdown';
+import { INBOX_SNOOZE_ACTION_KEY } from '@/inbox/constants/InboxSnoozeActionKey';
 import { useInboxItemActions } from '@/inbox/hooks/useInboxItemActions';
 import { getInboxPlanContext } from '@/inbox/utils/getInboxPlanContext';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -197,7 +199,7 @@ export const InboxPlanView = ({ inboxItem }: { inboxItem: InboxItem }) => {
     inboxItem.inboxItemType.actions.find(
       (action) => action.key === key && isDefined(action.transitionKind),
     );
-  const snoozeControl = findControl('snooze');
+  const snoozeControl = findControl(INBOX_SNOOZE_ACTION_KEY);
   const dismissControl = findControl('dismiss');
 
   const runControl = (actionKey: string) =>
@@ -333,12 +335,16 @@ export const InboxPlanView = ({ inboxItem }: { inboxItem: InboxItem }) => {
               />
             )}
             {isDefined(snoozeControl) && (
-              <LightIconButton
-                Icon={IconClockHour8}
-                accent="secondary"
-                aria-label={snoozeControl.label}
-                title={snoozeControl.label}
-                onClick={() => runControl(snoozeControl.key)}
+              <InboxSnoozeDropdown
+                inboxItem={inboxItem}
+                clickableComponent={
+                  <LightIconButton
+                    Icon={IconClockHour8}
+                    accent="secondary"
+                    aria-label={snoozeControl.label}
+                    title={snoozeControl.label}
+                  />
+                }
               />
             )}
             <Button

@@ -982,6 +982,7 @@ export type TransitionInboxItemInput = {
   kind: Scalars['String']['input'];
   outcome?: InputMaybe<Scalars['String']['input']>;
   result?: InputMaybe<Scalars['JSON']['input']>;
+  resurfaceAt?: InputMaybe<Scalars['DateTime']['input']>;
   resurfaceInMinutes?: InputMaybe<Scalars['Int']['input']>;
   toUserWorkspaceId?: InputMaybe<Scalars['UUID']['input']>;
 };

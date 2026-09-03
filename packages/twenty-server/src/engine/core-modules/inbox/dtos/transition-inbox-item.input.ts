@@ -1,7 +1,8 @@
-import { Field, InputType, Int } from '@nestjs/graphql';
+import { Field, GraphQLISODateTime, InputType, Int } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 import {
+  IsDate,
   IsIn,
   IsInt,
   IsOptional,
@@ -36,6 +37,12 @@ export class TransitionInboxItemInput {
   @IsInt()
   @Min(1)
   resurfaceInMinutes?: number;
+
+  // The snooze menu picks a moment, not a duration
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  @IsOptional()
+  @IsDate()
+  resurfaceAt?: Date;
 
   // Null is meaningful here: it gives a queue item back. Absent means the
   // transition is not an assignment at all.

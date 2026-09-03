@@ -21,6 +21,7 @@ type InboxItemTransitionInput = {
   outcome?: string;
   result?: Record<string, unknown>;
   resurfaceInMinutes?: number;
+  resurfaceAt?: string;
   toUserWorkspaceId?: string | null;
 };
 

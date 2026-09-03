@@ -30,6 +30,25 @@ describe('toInboxItemTransition', () => {
     ).toEqual({ kind: 'CLEAR', resurfaceInMinutes: 60 });
   });
 
+  it('should carry an absolute time to come back', () => {
+    const resurfaceAt = new Date('2026-09-04T09:00:00.000Z');
+
+    expect(toInboxItemTransition({ kind: 'CLEAR', resurfaceAt })).toEqual({
+      kind: 'CLEAR',
+      resurfaceAt,
+    });
+  });
+
+  it('should refuse a delay and a time together', () => {
+    expect(() =>
+      toInboxItemTransition({
+        kind: 'CLEAR',
+        resurfaceInMinutes: 60,
+        resurfaceAt: new Date('2026-09-04T09:00:00.000Z'),
+      }),
+    ).toThrow(InboxException);
+  });
+
   // An outcome records how the item ended, so asking for it back contradicts it
   it('should refuse a clear that both ends the item and brings it back', () => {
     // Act & Assert
