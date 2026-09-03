@@ -326,7 +326,7 @@ export class ApplicationApi {
   > {
     try {
       const optionalArguments = [
-        options?.dryRun === true ? 'dryRun' : null,
+        options?.dryRun ? 'dryRun' : null,
         options?.inferDeletionFromMissingEntities === false
           ? 'inferDeletionFromMissingEntities'
           : null,
@@ -352,7 +352,7 @@ export class ApplicationApi {
 
       const variables = {
         manifest,
-        ...(options?.dryRun === true ? { dryRun: true } : {}),
+        ...(options?.dryRun ? { dryRun: true } : {}),
         ...(options?.inferDeletionFromMissingEntities === false
           ? { inferDeletionFromMissingEntities: false }
           : {}),
