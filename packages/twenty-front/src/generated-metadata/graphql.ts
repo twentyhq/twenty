@@ -3881,6 +3881,7 @@ export type MutationStopAgentChatStreamArgs = {
 
 export type MutationSyncApplicationArgs = {
   dryRun?: InputMaybe<Scalars['Boolean']['input']>;
+  inferDeletionFromMissingEntities?: InputMaybe<Scalars['Boolean']['input']>;
   manifest: Scalars['JSON']['input'];
 };
 

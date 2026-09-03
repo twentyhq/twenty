@@ -233,6 +233,9 @@ const formatFooter = (counts: {
     `${counts.update} to change`,
   )}, ${chalk.red(`${counts.delete} to destroy`)}.`;
 
+export const NO_DELETE_HINT =
+  'Entities missing from your source are destroyed by default. Re-run with --no-delete to keep them.';
+
 const formatDestructiveWarning = (actions: SyncAction[]): string => {
   const deletes = actions.filter(isDestructiveAction);
 
@@ -266,6 +269,7 @@ const formatDestructiveWarning = (actions: SyncAction[]): string => {
 
 export const formatSyncActionsPlan = (
   actions: SyncAction[] | undefined,
+  options?: { showNoDeleteHint?: boolean },
 ): string => {
   if (!isNonEmptyArray(actions)) {
     return 'No changes. Twenty metadata matches your manifest.';
@@ -288,6 +292,10 @@ export const formatSyncActionsPlan = (
     '',
     formatFooter(counts),
   ];
+
+  if (counts.delete > 0 && options?.showNoDeleteHint === true) {
+    sections.push(chalk.dim(NO_DELETE_HINT));
+  }
 
   if (hasDestructiveActions(actions)) {
     sections.push('', formatDestructiveWarning(actions));
