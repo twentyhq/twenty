@@ -53,9 +53,11 @@ export const ensureAppRegistration = async (
       app.universalIdentifier,
     );
 
+  // The lookup is scoped to the caller's workspace, so a claimed identifier
+  // that resolves to nothing is claimed by someone else.
   if (!findResult.success || !findResult.data) {
     throw new Error(
-      `App registration exists but could not be found: ${app.universalIdentifier}`,
+      `The universal identifier "${app.universalIdentifier}" is already claimed by another workspace. Choose a different universalIdentifier in your manifest.`,
     );
   }
 
@@ -68,9 +70,8 @@ export const ensureAppRegistration = async (
     appRefreshToken: undefined,
   });
 
-  // The registration may be a catalog-synced npm app owned by another (or no)
-  // workspace, so rotating its shared client secret is neither allowed nor
-  // desirable. Dev mode mints workspace-scoped app tokens via the
+  // Rotating an existing registration's client secret would break every other
+  // consumer of it, so dev mode mints workspace-scoped app tokens via the
   // generateApplicationToken mutation instead.
   return {
     clientId: registration.oAuthClientId,
