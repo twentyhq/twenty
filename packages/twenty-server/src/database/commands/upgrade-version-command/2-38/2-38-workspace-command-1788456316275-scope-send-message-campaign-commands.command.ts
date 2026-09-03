@@ -1,25 +1,22 @@
 import { Command } from 'nest-commander';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { buildSendMessageCampaignAvailabilityUpdates } from 'src/database/commands/upgrade-version-command/2-38/utils/build-send-message-campaign-availability-updates.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
-import { createStandardCommandMenuItemFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/command-menu-item/create-standard-command-menu-item-flat-metadata.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.38.0', 1788306677823)
+@RegisteredWorkspaceCommand('2.38.0', 1788456316275)
 @Command({
-  name: 'upgrade:2-38:add-cancel-message-campaign-command',
+  name: 'upgrade:2-38:scope-send-message-campaign-commands',
   description:
-    'Add the Cancel Campaign command so a sending campaign can be stopped from the UI',
+    'Restrict Send Campaign and Send Test to a single selected campaign and gate them behind the email group feature flag',
 })
-export class AddCancelMessageCampaignCommandCommand extends ProvisionedWorkspaceCommandRunner {
+export class ScopeSendMessageCampaignCommandsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -32,56 +29,38 @@ export class AddCancelMessageCampaignCommandCommand extends ProvisionedWorkspace
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const { flatCommandMenuItemMaps, flatObjectMetadataMaps } =
+    const { flatCommandMenuItemMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatCommandMenuItemMaps',
-        'flatObjectMetadataMaps',
       ]);
 
-    const { universalIdentifier } =
-      STANDARD_COMMAND_MENU_ITEMS.cancelMessageCampaign;
+    const commandMenuItemsToUpdate =
+      buildSendMessageCampaignAvailabilityUpdates({
+        flatCommandMenuItemByUniversalIdentifier:
+          flatCommandMenuItemMaps.byUniversalIdentifier,
+        now: new Date().toISOString(),
+      });
 
-    if (
-      isDefined(flatCommandMenuItemMaps.byUniversalIdentifier[universalIdentifier])
-    ) {
-      return;
-    }
-
-    const siblingCommandMenuItem =
-      flatCommandMenuItemMaps.byUniversalIdentifier[
-        STANDARD_COMMAND_MENU_ITEMS.sendMessageCampaign.universalIdentifier
-      ];
-
-    if (!isDefined(siblingCommandMenuItem)) {
+    if (commandMenuItemsToUpdate.length === 0) {
       return;
     }
 
     if (options.dryRun) {
       this.logger.log(
-        `Would add the Cancel Campaign command for workspace ${workspaceId}`,
+        `Would rescope ${commandMenuItemsToUpdate.length} send campaign command(s) for workspace ${workspaceId}`,
       );
 
       return;
     }
-
-    const flatCommandMenuItemToCreate =
-      createStandardCommandMenuItemFlatMetadata({
-        commandMenuItemName: 'cancelMessageCampaign',
-        commandMenuItemId: v4(),
-        workspaceId,
-        twentyStandardApplicationId: siblingCommandMenuItem.applicationId,
-        dependencyFlatEntityMaps: { flatObjectMetadataMaps },
-        now: new Date().toISOString(),
-      });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {
-              flatEntityToCreate: [flatCommandMenuItemToCreate],
+              flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: [],
+              flatEntityToUpdate: commandMenuItemsToUpdate,
             },
           },
           workspaceId,
