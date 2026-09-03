@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useEffect, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { isDefined } from 'twenty-sdk/utils';
 import { Avatar, Tag } from 'twenty-ui/data-display';
 import { Button } from 'twenty-ui/input';
@@ -14,6 +14,7 @@ import {
   SlackTableHeader,
   SlackTableRow,
 } from 'src/front-components/components/SlackSettingsTable';
+import { useDisarmOnOutsidePointerDown } from 'src/front-components/hooks/use-disarm-on-outside-pointer-down';
 import { SLACK_USER_LINK_CONSENT_STATE } from 'src/logic-functions/constants/slack-user-link-consent-state';
 import { SLACK_USER_LINK_SOURCE } from 'src/logic-functions/constants/slack-user-link-source';
 import { type SlackUserLinkConsentState } from 'src/logic-functions/types/slack-user-link-consent-state.type';
@@ -21,7 +22,6 @@ import { isSlackUserLinkConsentState } from 'src/logic-functions/utils/is-slack-
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
 
 const LINKS_GRID_TEMPLATE_COLUMNS = 'minmax(0, 2fr) minmax(0, 2fr) 252px 156px';
-const REMOVAL_CONFIRM_TIMEOUT_MS = 4000;
 
 const StyledIdentity = styled.div`
   align-items: center;
@@ -117,18 +117,15 @@ export const SlackUserLinksList = ({
     null,
   );
 
-  useEffect(() => {
-    if (removalArmedLinkId === null) {
-      return undefined;
-    }
+  const armedRowRef = useRef<HTMLDivElement | null>(null);
 
-    const disarmTimer = setTimeout(
-      () => setRemovalArmedLinkId(null),
-      REMOVAL_CONFIRM_TIMEOUT_MS,
-    );
+  const disarmRemoval = useCallback(() => setRemovalArmedLinkId(null), []);
 
-    return () => clearTimeout(disarmTimer);
-  }, [removalArmedLinkId]);
+  useDisarmOnOutsidePointerDown({
+    isArmed: removalArmedLinkId !== null,
+    armedElementRef: armedRowRef,
+    onDisarm: disarmRemoval,
+  });
 
   const isActionInFlight =
     isDefined(removingLinkId) || isDefined(resendingLinkId);
@@ -155,9 +152,12 @@ export const SlackUserLinksList = ({
           const displayedName =
             slackUserLink.name ?? slackUserLink.slackUserId ?? 'Unnamed link';
 
+          const isRemovalArmed = removalArmedLinkId === slackUserLink.id;
+
           return (
             <SlackTableRow
               key={slackUserLink.id}
+              ref={isRemovalArmed ? armedRowRef : undefined}
               gridTemplateColumns={LINKS_GRID_TEMPLATE_COLUMNS}
             >
               <SlackTableCell>
@@ -201,7 +201,7 @@ export const SlackUserLinksList = ({
               <SlackTableCell align="right">
                 {canManage && (
                   <>
-                    {isPending && removalArmedLinkId !== slackUserLink.id && (
+                    {isPending && !isRemovalArmed && (
                       <Button
                         type="button"
                         title={
@@ -215,7 +215,7 @@ export const SlackUserLinksList = ({
                         onClick={() => onResend(slackUserLink)}
                       />
                     )}
-                    {removalArmedLinkId === slackUserLink.id ? (
+                    {isRemovalArmed ? (
                       <Button
                         type="button"
                         title={
@@ -228,7 +228,7 @@ export const SlackUserLinksList = ({
                         accent="danger"
                         disabled={isActionInFlight}
                         onClick={() => {
-                          setRemovalArmedLinkId(null);
+                          disarmRemoval();
                           onRemove(slackUserLink);
                         }}
                       />
