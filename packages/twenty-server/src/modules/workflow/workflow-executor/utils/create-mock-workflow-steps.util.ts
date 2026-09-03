@@ -15,7 +15,10 @@ import {
 export const createMockCodeStep = (
   id: string,
   nextStepIds: string[] = [],
-  { continueOnFailure = false }: { continueOnFailure?: boolean } = {},
+  {
+    continueOnFailure = false,
+    retryOnFailure = false,
+  }: { continueOnFailure?: boolean; retryOnFailure?: boolean } = {},
 ): WorkflowCodeAction => ({
   id,
   name: `Step ${id}`,
@@ -27,7 +30,7 @@ export const createMockCodeStep = (
     outputSchema: {},
     errorHandlingOptions: {
       continueOnFailure: { value: continueOnFailure },
-      retryOnFailure: { value: false },
+      retryOnFailure: { value: retryOnFailure },
     },
   } as WorkflowCodeActionSettings,
 });

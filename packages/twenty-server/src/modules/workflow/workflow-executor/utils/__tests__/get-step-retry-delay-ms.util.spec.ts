@@ -4,14 +4,6 @@ import { STEP_RETRY_DELAYS_MS } from 'src/modules/workflow/workflow-executor/con
 import { createMockCodeStep } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { getStepRetryDelayMs } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-delay-ms.util';
 
-const createStepWithRetry = () => {
-  const step = createMockCodeStep('step-1');
-
-  step.settings.errorHandlingOptions.retryOnFailure.value = true;
-
-  return step;
-};
-
 describe('getStepRetryDelayMs', () => {
   it('should return undefined when the step does not retry on failure', () => {
     const result = getStepRetryDelayMs({
@@ -24,7 +16,7 @@ describe('getStepRetryDelayMs', () => {
 
   it('should return the first delay on the first failure', () => {
     const result = getStepRetryDelayMs({
-      step: createStepWithRetry(),
+      step: createMockCodeStep('step-1', [], { retryOnFailure: true }),
       stepInfo: { status: StepStatus.RUNNING },
     });
 
@@ -33,7 +25,7 @@ describe('getStepRetryDelayMs', () => {
 
   it('should return the next delay for each recorded failed attempt', () => {
     const result = getStepRetryDelayMs({
-      step: createStepWithRetry(),
+      step: createMockCodeStep('step-1', [], { retryOnFailure: true }),
       stepInfo: {
         status: StepStatus.RUNNING,
         history: [
@@ -48,7 +40,7 @@ describe('getStepRetryDelayMs', () => {
 
   it('should restart the budget after an iteration that did not end on a failed attempt', () => {
     const result = getStepRetryDelayMs({
-      step: createStepWithRetry(),
+      step: createMockCodeStep('step-1', [], { retryOnFailure: true }),
       stepInfo: {
         status: StepStatus.RUNNING,
         history: [
@@ -64,7 +56,7 @@ describe('getStepRetryDelayMs', () => {
 
   it('should return undefined once every attempt has been used', () => {
     const result = getStepRetryDelayMs({
-      step: createStepWithRetry(),
+      step: createMockCodeStep('step-1', [], { retryOnFailure: true }),
       stepInfo: {
         status: StepStatus.RUNNING,
         history: STEP_RETRY_DELAYS_MS.map(() => ({
@@ -79,7 +71,7 @@ describe('getStepRetryDelayMs', () => {
 
   it('should ignore history entries that are not failed attempts', () => {
     const result = getStepRetryDelayMs({
-      step: createStepWithRetry(),
+      step: createMockCodeStep('step-1', [], { retryOnFailure: true }),
       stepInfo: {
         status: StepStatus.RUNNING,
         history: [{ status: StepStatus.SUCCESS, result: {} }],

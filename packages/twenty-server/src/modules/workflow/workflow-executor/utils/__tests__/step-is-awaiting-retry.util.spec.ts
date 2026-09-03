@@ -3,18 +3,10 @@ import { StepStatus } from 'twenty-shared/workflow';
 import { createMockCodeStep } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { stepIsAwaitingRetry } from 'src/modules/workflow/workflow-executor/utils/step-is-awaiting-retry.util';
 
-const createStepWithRetry = () => {
-  const step = createMockCodeStep('step-1');
-
-  step.settings.errorHandlingOptions.retryOnFailure.value = true;
-
-  return step;
-};
-
 describe('stepIsAwaitingRetry', () => {
   it('should return true when a retrying step is pending with an error', () => {
     const result = stepIsAwaitingRetry({
-      step: createStepWithRetry(),
+      step: createMockCodeStep('step-1', [], { retryOnFailure: true }),
       stepInfo: { status: StepStatus.PENDING, error: 'some error' },
     });
 
@@ -23,7 +15,7 @@ describe('stepIsAwaitingRetry', () => {
 
   it('should return false when the step is pending without an error', () => {
     const result = stepIsAwaitingRetry({
-      step: createStepWithRetry(),
+      step: createMockCodeStep('step-1', [], { retryOnFailure: true }),
       stepInfo: { status: StepStatus.PENDING },
     });
 
