@@ -12,6 +12,8 @@ const buildRow = (
   apiKeyId: '',
   applicationId: '',
   agentId: '',
+  workflowId: '',
+  logicFunctionId: '',
   creditsUsedMicro: '100',
   quantity: '10',
   ...overrides,
@@ -36,10 +38,15 @@ const buildCounter = (
 
 const rows = [
   buildRow({ agentId: 'agent-1' }),
-  buildRow({ userWorkspaceId: 'user-2', creditsUsedMicro: '40' }),
+  buildRow({
+    userWorkspaceId: 'user-2',
+    logicFunctionId: 'logic-function-1',
+    creditsUsedMicro: '40',
+  }),
   buildRow({
     operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
     userWorkspaceId: '',
+    workflowId: 'workflow-1',
     creditsUsedMicro: '7',
     quantity: '3',
   }),
@@ -103,7 +110,7 @@ describe('computeQuotaConsumed', () => {
     ).toBe(100);
   });
 
-  it('counts nothing for a spender type the warm query does not carry', () => {
+  it('matches a named workflow on its own column', () => {
     expect(
       computeQuotaConsumed({
         rows,
@@ -112,6 +119,18 @@ describe('computeQuotaConsumed', () => {
           spenderId: 'workflow-1',
         }),
       }),
-    ).toBe(0);
+    ).toBe(7);
+  });
+
+  it('matches a named logic function on its own column', () => {
+    expect(
+      computeQuotaConsumed({
+        rows,
+        counter: buildCounter({
+          spenderType: 'logicFunction',
+          spenderId: 'logic-function-1',
+        }),
+      }),
+    ).toBe(40);
   });
 });

@@ -32,6 +32,8 @@ const buildRow = (
   apiKeyId: '',
   applicationId: '',
   agentId: '',
+  workflowId: '',
+  logicFunctionId: '',
   creditsUsedMicro: '0',
   quantity: '0',
   ...overrides,

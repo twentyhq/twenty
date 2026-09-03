@@ -33,10 +33,9 @@ const rowMatchesCounter = (
     case 'agent':
       return spenderColumnMatches(row.agentId, counter.spenderId);
     case 'workflow':
+      return spenderColumnMatches(row.workflowId, counter.spenderId);
     case 'logicFunction':
-      return false;
-    default:
-      return false;
+      return spenderColumnMatches(row.logicFunctionId, counter.spenderId);
   }
 };
 
