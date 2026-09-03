@@ -18,6 +18,10 @@
     "test:watch": "vitest",
     "test:unit": "vitest run --config vitest.unit.config.ts"
   },
+  "dependencies": {
+    "@sniptt/guards": "^0.2.0",
+    "fathom-typescript": "0.0.43"
+  },
   "devDependencies": {
     "@types/node": "^24.7.2",
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
