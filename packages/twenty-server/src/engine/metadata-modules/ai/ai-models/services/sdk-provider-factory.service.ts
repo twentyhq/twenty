@@ -141,7 +141,11 @@ export class SdkProviderFactoryService {
 
   private buildStandardProvider(
     config: AiProviderConfig,
-    factory: (opts: { apiKey?: string; baseURL?: string }) => CallableFunction,
+    factory: (opts: {
+      apiKey?: string;
+      baseURL?: string;
+      headers?: Record<string, string>;
+    }) => CallableFunction,
     options?: { middleware?: LanguageModelMiddleware },
   ): AiSdkProviderInstance {
     const provider = factory({
