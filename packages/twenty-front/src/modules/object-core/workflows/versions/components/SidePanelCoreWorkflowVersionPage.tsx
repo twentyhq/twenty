@@ -6,7 +6,6 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CoreWorkflowVersionCard } from '@/object-core/workflows/versions/components/CoreWorkflowVersionCard';
 import { CoreWorkflowVersionRestoreButton } from '@/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton';
-import { CoreWorkflowVersionSeeWorkflowButton } from '@/object-core/workflows/versions/components/CoreWorkflowVersionSeeWorkflowButton';
 import { CORE_WORKFLOW_VERSION_STATUS_TAG_PROPS } from '@/object-core/workflows/versions/constants/CoreWorkflowVersionStatusTagProps';
 import { useCoreWorkflowVersion } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersion';
 import { useSidePanelWorkflowVersionIdOrThrow } from '@/side-panel/pages/workflow-version/hooks/useSidePanelWorkflowVersionIdOrThrow';
@@ -52,9 +51,6 @@ export const SidePanelCoreWorkflowVersionPage = () => {
       <StyledActions>
         <Tag color={tagProps.color} text={t(tagProps.label)} />
         <StyledSpacer />
-        <CoreWorkflowVersionSeeWorkflowButton
-          workflowId={coreWorkflowVersion.workspaceWorkflowId}
-        />
         <CoreWorkflowVersionRestoreButton
           workflowId={coreWorkflowVersion.workspaceWorkflowId}
           workspaceWorkflowVersionId={workspaceWorkflowVersionId}
