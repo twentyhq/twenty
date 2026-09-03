@@ -230,7 +230,7 @@ export const InboxPlanToolCallEditor = ({
             checked={draft[field.key] === 'true'}
             onCheckedChange={(isChecked) => toggleBoolean(field, isChecked)}
           />
-          {field.label}
+          {field.isRequired ? `${field.label}*` : field.label}
         </StyledCheckboxField>
       );
     }

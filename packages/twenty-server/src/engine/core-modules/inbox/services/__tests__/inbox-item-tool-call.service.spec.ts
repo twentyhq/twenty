@@ -2,7 +2,10 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
 import { InboxItemToolCallStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-tool-call-status.enum';
-import { InboxExceptionCode } from 'src/engine/core-modules/inbox/inbox.exception';
+import {
+  InboxException,
+  InboxExceptionCode,
+} from 'src/engine/core-modules/inbox/inbox.exception';
 import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
 import {
   InboxItemToolCallService,
@@ -144,9 +147,9 @@ describe('InboxItemToolCallService', () => {
       expect(inboxItem).toMatchObject({ outcome: 'DONE' });
     });
 
-    // An event folded into the plan while its calls were running bumps the
-    // version; the clear that follows must not fail on it
-    it('should clear the item on its version after the run, not before', async () => {
+    // An event folded into the plan while its calls were running must stay
+    // visible: the clear is guarded on the version the run started from
+    it('should guard the clear on the version the run started from', async () => {
       // Prepare
       const first = buildToolCall({ id: 'first' });
 
@@ -168,12 +171,56 @@ describe('InboxItemToolCallService', () => {
       // Assert
       expect(inboxTransitionService.transition).toHaveBeenCalledWith(
         expect.objectContaining({
+          expectedVersion: 3,
           loadedInboxItem: { id: INBOX_ITEM_ID, version: 4 },
         }),
       );
-      expect(
-        inboxTransitionService.transition.mock.calls[0][0],
-      ).not.toHaveProperty('expectedVersion');
+    });
+
+    it('should return the item rather than fail when the clear loses its guard', async () => {
+      // Prepare
+      const first = buildToolCall({ id: 'first' });
+
+      givenToolCalls(
+        [first],
+        [{ ...first, status: InboxItemToolCallStatus.EXECUTED }],
+      );
+      inboxTransitionService.transition.mockRejectedValue(
+        new InboxException('changed', InboxExceptionCode.INBOX_ITEM_CHANGED),
+      );
+
+      // Act
+      const inboxItem = await service.runAll({
+        ...actorArgs,
+        inboxItemId: INBOX_ITEM_ID,
+      });
+
+      // Assert
+      expect(inboxItem).toEqual({ id: INBOX_ITEM_ID, version: 3 });
+    });
+
+    it('should refuse to run an optional number left as an empty string', async () => {
+      // Prepare
+      inboxItemToolCallRepository.find.mockResolvedValueOnce([
+        buildToolCall({
+          inputSchema: [
+            {
+              key: 'amount',
+              label: 'Amount',
+              type: 'NUMBER',
+              isRequired: false,
+            },
+          ],
+          editedInput: { amount: '' },
+        }),
+      ]);
+
+      // Act & Assert
+      await expect(
+        service.runAll({ ...actorArgs, inboxItemId: INBOX_ITEM_ID }),
+      ).rejects.toMatchObject({
+        code: InboxExceptionCode.INVALID_INBOX_TOOL_CALL_INPUT,
+      });
     });
 
     it('should claim each call before running it', async () => {

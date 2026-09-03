@@ -146,17 +146,27 @@ export const InboxPlanView = ({ inboxItem }: { inboxItem: InboxItem }) => {
     enqueueErrorSnackBar({ message: t`That could not be applied` });
 
   // A blur save or a skip still on the wire must land before the plan runs,
-  // or the run could use the input from before the edit. One that failed
-  // keeps the run blocked until a later one succeeds, since the editor still
-  // shows what the server never got
-  const trackEdit = async (edit: () => Promise<unknown>) => {
+  // or the run could use the input from before the edit. A save that failed
+  // keeps the run blocked until a later save succeeds, since the editor still
+  // shows what the server never got; a skip landing in between says nothing
+  // about the input
+  const trackEdit = async (
+    edit: () => Promise<unknown>,
+    { isInputSave }: { isInputSave: boolean },
+  ) => {
     setInFlightEditCount((count) => count + 1);
 
     try {
       await edit();
-      setHasUnsavedEdit(false);
+
+      if (isInputSave) {
+        setHasUnsavedEdit(false);
+      }
     } catch {
-      setHasUnsavedEdit(true);
+      if (isInputSave) {
+        setHasUnsavedEdit(true);
+      }
+
       reportFailure();
     } finally {
       setInFlightEditCount((count) => count - 1);
@@ -248,19 +258,23 @@ export const InboxPlanView = ({ inboxItem }: { inboxItem: InboxItem }) => {
             toolCall={selectedToolCall}
             source={context?.source}
             onSave={(editedInput) =>
-              trackEdit(() =>
-                updateInboxItemToolCallInput({
-                  inboxItemToolCallId: selectedToolCall.id,
-                  editedInput,
-                }),
+              trackEdit(
+                () =>
+                  updateInboxItemToolCallInput({
+                    inboxItemToolCallId: selectedToolCall.id,
+                    editedInput,
+                  }),
+                { isInputSave: true },
               )
             }
             onToggleRejected={(isRejected) =>
-              trackEdit(() =>
-                setInboxItemToolCallRejected({
-                  inboxItemToolCallId: selectedToolCall.id,
-                  isRejected,
-                }),
+              trackEdit(
+                () =>
+                  setInboxItemToolCallRejected({
+                    inboxItemToolCallId: selectedToolCall.id,
+                    isRejected,
+                  }),
+                { isInputSave: false },
               )
             }
           />

@@ -167,10 +167,8 @@ export class InboxItemToolCallService {
     }
 
     // Read back rather than trusting what was loaded before the loop: a skip,
-    // an earlier failure, another run or a new event on the item may have
-    // landed while the calls were executing. The version guard belongs to the
-    // read that started the run, not to the clear that ends it, or a folded
-    // event would fail the clear after the calls have already run
+    // an earlier failure or another run may have landed while the calls were
+    // executing
     const [toolCallsAfterRun, inboxItemAfterRun] = await Promise.all([
       this.findToolCallsInOrder(workspaceId, inboxItemId),
       this.inboxItemService.findVisibleItemOrThrow({
@@ -196,19 +194,42 @@ export class InboxItemToolCallService {
       (toolCall) => toolCall.status === InboxItemToolCallStatus.REJECTED,
     );
 
-    return this.inboxTransitionService.transition({
-      inboxItemId,
-      workspaceId,
-      actorUserWorkspaceId,
-      accessibleQueueIds,
-      loadedInboxItem: inboxItemAfterRun,
-      transition: {
-        kind: 'CLEAR',
-        outcome: wasAnyRejected
-          ? AGENT_PLAN_OUTCOME.partial
-          : AGENT_PLAN_OUTCOME.done,
-      },
-    });
+    // The clear is guarded on the version the run started from: an event
+    // folded into the plan while the calls were running must stay visible
+    // rather than be swallowed by clearedAt. The calls have run either way,
+    // so losing that guard returns the item with its checks instead of
+    // failing the run; the person closes the plan again once they have seen
+    // what arrived
+    try {
+      return await this.inboxTransitionService.transition({
+        inboxItemId,
+        workspaceId,
+        actorUserWorkspaceId,
+        accessibleQueueIds,
+        expectedVersion: inboxItem.version,
+        loadedInboxItem: inboxItemAfterRun,
+        transition: {
+          kind: 'CLEAR',
+          outcome: wasAnyRejected
+            ? AGENT_PLAN_OUTCOME.partial
+            : AGENT_PLAN_OUTCOME.done,
+        },
+      });
+    } catch (error) {
+      if (
+        error instanceof InboxException &&
+        error.code === InboxExceptionCode.INBOX_ITEM_CHANGED
+      ) {
+        return this.inboxItemService.findVisibleItemOrThrow({
+          inboxItemId,
+          workspaceId,
+          actorUserWorkspaceId,
+          accessibleQueueIds,
+        });
+      }
+
+      throw error;
+    }
   }
 
   // Runs on the row as it is after the claim, not as it was loaded before the
@@ -385,8 +406,14 @@ const findInvalidInputKeys = (toolCall: InboxItemToolCallEntity): string[] => {
     .filter((field) => {
       const value = input[field.key];
 
-      if (!isDefined(value) || value === '') {
+      if (!isDefined(value)) {
         return field.isRequired === true;
+      }
+
+      // An empty string is an absent text; for any other type it is a value
+      // of the wrong kind
+      if (value === '') {
+        return field.isRequired === true || !isTextFieldType(field.type);
       }
 
       return !isValueOfFieldType(field.type, value);
@@ -407,6 +434,9 @@ const isValueOfFieldType = (
     case 'LONG_TEXT':
       return typeof value === 'string';
     default:
-      return true;
+      return false;
   }
 };
+
+const isTextFieldType = (type: InboxItemFieldSchema['type']) =>
+  type === 'TEXT' || type === 'LONG_TEXT';
