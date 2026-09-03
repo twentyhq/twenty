@@ -28,13 +28,7 @@ const jestConfig: JestConfigWithTsJest = {
   testEnvironment: 'node',
   testPathIgnorePatterns: [
     ...(isBillingEnabled ? [] : ['<rootDir>/test/integration/billing']),
-    ...(isClickhouseEnabled
-      ? []
-      : [
-          '<rootDir>/test/integration/audit',
-          '<rootDir>/test/integration/usage-limit/quota-enforcement.integration-spec.ts',
-          '<rootDir>/test/integration/billing/suites/billing-credit-allowance.integration-spec.ts',
-        ]),
+    ...(isClickhouseEnabled ? [] : ['<rootDir>/test/integration/audit']),
     // Requires an app booted as a secure deployment; run through
     // jest-integration-secure.config.ts (nx test:integration:secure).
     '<rootDir>/test/integration/secure-deployment',
