@@ -235,7 +235,10 @@ describe('parseSlackAssistantRequest', () => {
       buildMentionBody({ eventOverrides: { bot_id: 'B123' } }),
     );
 
-    expect(result.request).toBeNull();
+    expect(result).toEqual({
+      request: null,
+      skipReason: 'Not a plain user message (bot_id=B123)',
+    });
   });
 
   it('should skip message subtypes such as edits', () => {
@@ -243,7 +246,48 @@ describe('parseSlackAssistantRequest', () => {
       buildMentionBody({ eventOverrides: { subtype: 'message_changed' } }),
     );
 
-    expect(result.request).toBeNull();
+    expect(result).toEqual({
+      request: null,
+      skipReason: 'Not a plain user message (subtype=message_changed)',
+    });
+  });
+
+  it('should name both markers when an app posted the mention on a user behalf', () => {
+    const result = parseSlackAssistantRequest(
+      buildMentionBody({
+        eventOverrides: { bot_id: 'B123', subtype: 'bot_message' },
+      }),
+    );
+
+    expect(result).toEqual({
+      request: null,
+      skipReason: 'Not a plain user message (bot_id=B123, subtype=bot_message)',
+    });
+  });
+
+  it('should name the missing fields when a mention carries no author', () => {
+    const result = parseSlackAssistantRequest(
+      buildMentionBody({ eventOverrides: { user: undefined } }),
+    );
+
+    expect(result).toEqual({
+      request: null,
+      skipReason: 'Event is missing required fields: user',
+    });
+  });
+
+  it('should name every missing field at once', () => {
+    const result = parseSlackAssistantRequest(
+      buildMentionBody({
+        eventOverrides: { user: undefined, ts: undefined },
+        bodyOverrides: { event_id: undefined },
+      }),
+    );
+
+    expect(result).toEqual({
+      request: null,
+      skipReason: 'Event is missing required fields: event_id, ts, user',
+    });
   });
 
   it('should skip channel messages that are not mentions', () => {

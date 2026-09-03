@@ -1,5 +1,5 @@
 import { Response } from 'twenty-sdk/logic-function';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { buildSlackAppHomeOpenedEventBody } from 'src/__tests__/utils/build-slack-app-home-opened-event-body.util';
 import { buildSlackAppMentionEventBody } from 'src/__tests__/utils/build-slack-app-mention-event-body.util';
@@ -17,6 +17,7 @@ import { SLACK_ASSISTANT_EMPTY_REQUEST_TEXT } from 'src/logic-functions/constant
 import { SLACK_ASSISTANT_EXPIRED_THREAD_TEXT } from 'src/logic-functions/constants/slack-assistant-expired-thread-text';
 import { slackEventsResolverHandler } from 'src/logic-functions/slack-events-resolver';
 import { enqueueSlackAssistantRequest } from 'src/logic-functions/utils/enqueue-slack-assistant-request';
+import { getSlackEmptyRequestReplyKvKey } from 'src/logic-functions/utils/get-slack-empty-request-reply-kv-key';
 import { getSlackTeamKvKey } from 'src/logic-functions/utils/get-slack-team-kv-key';
 import { getSlackThreadKvKey } from 'src/logic-functions/utils/get-slack-thread-kv-key';
 
@@ -305,7 +306,7 @@ describe('Slack inbound events', () => {
 
       expect(result).toEqual({
         ok: true,
-        skipped: 'Not a plain user message',
+        skipped: 'Not a plain user message (bot_id=B0OTHERBOT)',
       });
       await expect(
         findRequestByMessageTimestamp(slackMessageTimestamp),
@@ -412,6 +413,208 @@ describe('Slack inbound events', () => {
           slackThreadTimestamp: threadTimestamp,
         }),
       );
+    });
+
+    it('should discard an app-posted mention without touching anything', async () => {
+      slack.addChannel({ id: CHANNEL_ID, name: 'integration' });
+      const slackMessageTimestamp = nextMessageTimestamp();
+
+      const result = await enqueueSlackAssistantRequest(
+        buildSlackAppMentionEventBody({
+          channelId: CHANNEL_ID,
+          text: `<@${slack.botUserId}> *Sent using* <@U0BKU1ME0PM>`,
+          messageTimestamp: slackMessageTimestamp,
+          botUserId: slack.botUserId,
+          botId: 'B0POSTINGAPP',
+        }),
+      );
+
+      expect(result).toEqual({
+        ok: true,
+        skipped: 'Not a plain user message (bot_id=B0POSTINGAPP)',
+      });
+      await expect(
+        findRequestByMessageTimestamp(slackMessageTimestamp),
+      ).resolves.toBeUndefined();
+      expect(slack.messagesIn(CHANNEL_ID)).toEqual([]);
+      expect(
+        appRuntime.getKeyValue(
+          getSlackEmptyRequestReplyKvKey({
+            slackChannelId: CHANNEL_ID,
+            slackMessageTimestamp,
+          }),
+          'WORKSPACE',
+        ),
+      ).toBeNull();
+      expect(
+        appRuntime.getKeyValue(
+          getSlackThreadKvKey({
+            channelId: CHANNEL_ID,
+            threadTimestamp: slackMessageTimestamp,
+          }),
+          'WORKSPACE',
+        ),
+      ).toBeNull();
+    });
+
+    it('should discard a mention carrying a message subtype', async () => {
+      slack.addChannel({ id: CHANNEL_ID, name: 'integration' });
+      const slackMessageTimestamp = nextMessageTimestamp();
+
+      const result = await enqueueSlackAssistantRequest(
+        buildSlackAppMentionEventBody({
+          channelId: CHANNEL_ID,
+          text: `<@${slack.botUserId}> who owns Acme?`,
+          messageTimestamp: slackMessageTimestamp,
+          botUserId: slack.botUserId,
+          subtype: 'bot_message',
+        }),
+      );
+
+      expect(result).toEqual({
+        ok: true,
+        skipped: 'Not a plain user message (subtype=bot_message)',
+      });
+      await expect(
+        findRequestByMessageTimestamp(slackMessageTimestamp),
+      ).resolves.toBeUndefined();
+      expect(slack.messagesIn(CHANNEL_ID)).toEqual([]);
+    });
+
+    it('should name the discard reason in the logs so a dropped mention leaves a trace', async () => {
+      const slackMessageTimestamp = nextMessageTimestamp();
+      const warnSpy = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => undefined);
+
+      try {
+        await enqueueSlackAssistantRequest(
+          buildSlackAppMentionEventBody({
+            channelId: CHANNEL_ID,
+            text: `<@${slack.botUserId}> who owns Acme?`,
+            messageTimestamp: slackMessageTimestamp,
+            eventId: 'Ev0DIAGNOSABLE',
+            botUserId: slack.botUserId,
+            botId: 'B0POSTINGAPP',
+          }),
+        );
+      } finally {
+        warnSpy.mockRestore();
+      }
+
+      expect(warnSpy).toHaveBeenCalledWith(
+        `[slack] discarded event Ev0DIAGNOSABLE (app_mention) in ${CHANNEL_ID}:${slackMessageTimestamp}: Not a plain user message (bot_id=B0POSTINGAPP)`,
+      );
+    });
+
+    // Removing the bot_id / subtype guard would let this through, and the
+    // answer the bot posts renews the subscription that admitted it.
+    it('should discard the assistant own reply inside a thread it subscribed', async () => {
+      const threadTimestamp = '1700000000.000004';
+      const slackMessageTimestamp = nextMessageTimestamp();
+
+      appRuntime.seedKeyValue(
+        getSlackThreadKvKey({ channelId: CHANNEL_ID, threadTimestamp }),
+        { expiresAt: Date.now() + 60_000 },
+      );
+
+      const result = await enqueueSlackAssistantRequest(
+        buildSlackMessageEventBody({
+          channelId: CHANNEL_ID,
+          channelType: 'channel',
+          text: 'Acme is owned by Tim.',
+          userId: slack.botUserId,
+          messageTimestamp: slackMessageTimestamp,
+          threadTimestamp,
+          botId: 'B0TWENTYASSISTANT',
+        }),
+      );
+
+      expect(result).toEqual({
+        ok: true,
+        skipped: 'Not a plain user message (bot_id=B0TWENTYASSISTANT)',
+      });
+      await expect(
+        findRequestByMessageTimestamp(slackMessageTimestamp),
+      ).resolves.toBeUndefined();
+    });
+
+    it('should keep a single request when Slack delivers the same message twice at once', async () => {
+      const slackMessageTimestamp = nextMessageTimestamp();
+      const buildDelivery = (eventId: string) =>
+        buildSlackAppMentionEventBody({
+          channelId: CHANNEL_ID,
+          text: `<@${slack.botUserId}> how many companies do we have?`,
+          messageTimestamp: slackMessageTimestamp,
+          eventId,
+          botUserId: slack.botUserId,
+        });
+
+      const results = await Promise.all([
+        enqueueSlackAssistantRequest(buildDelivery('Ev0FIRSTDELIVERY')),
+        enqueueSlackAssistantRequest(buildDelivery('Ev0SLACKRETRY')),
+      ]);
+
+      expect(results.filter((result) => result.skipped === undefined)).toEqual([
+        { ok: true },
+      ]);
+      expect(
+        results.filter(
+          (result) => result.skipped === 'Slack message is already queued',
+        ),
+      ).toHaveLength(1);
+
+      // findRequestByMessageTimestamp asserts the unique index held.
+      await expect(
+        findRequestByMessageTimestamp(slackMessageTimestamp),
+      ).resolves.toBeDefined();
+    });
+
+    // A mention inside a subscribed thread is the one message Slack delivers
+    // twice under the same ts: once as app_mention, once as message.
+    it('should keep a single request when a mention in a subscribed thread arrives on both subscriptions', async () => {
+      const threadTimestamp = '1700000000.000005';
+      const slackMessageTimestamp = nextMessageTimestamp();
+      const text = `<@${slack.botUserId}> and what about last month?`;
+
+      appRuntime.seedKeyValue(
+        getSlackThreadKvKey({ channelId: CHANNEL_ID, threadTimestamp }),
+        { expiresAt: Date.now() + 60_000 },
+      );
+
+      const results = await Promise.all([
+        enqueueSlackAssistantRequest(
+          buildSlackAppMentionEventBody({
+            channelId: CHANNEL_ID,
+            text,
+            messageTimestamp: slackMessageTimestamp,
+            threadTimestamp,
+            botUserId: slack.botUserId,
+          }),
+        ),
+        enqueueSlackAssistantRequest(
+          buildSlackMessageEventBody({
+            channelId: CHANNEL_ID,
+            channelType: 'channel',
+            text,
+            messageTimestamp: slackMessageTimestamp,
+            threadTimestamp,
+            botUserId: slack.botUserId,
+          }),
+        ),
+      ]);
+
+      expect(results.filter((result) => result.skipped === undefined)).toEqual([
+        { ok: true },
+      ]);
+      expect(
+        results.filter(
+          (result) => result.skipped === 'Slack message is already queued',
+        ),
+      ).toHaveLength(1);
+      await expect(
+        findRequestByMessageTimestamp(slackMessageTimestamp),
+      ).resolves.toBeDefined();
     });
 
     it('should nudge the requester and drop the subscription when it has expired', async () => {

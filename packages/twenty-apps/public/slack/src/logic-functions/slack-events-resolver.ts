@@ -12,6 +12,7 @@ import {
 } from 'src/constants/universal-identifiers';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { findClaimedWorkspaceId } from 'src/logic-functions/utils/find-claimed-workspace-id';
+import { logDiscardedSlackEvent } from 'src/logic-functions/utils/log-discarded-slack-event';
 import { resolveTargetWorkspaceId } from 'src/logic-functions/utils/resolve-target-workspace-id';
 import { verifySlackWebhookRequestOrThrow } from 'src/logic-functions/utils/verify-slack-webhook-request-or-throw';
 
@@ -54,10 +55,11 @@ export const slackEventsResolverHandler = async (
     const claimedWorkspaceId = await findClaimedWorkspaceId(body.team_id);
 
     if (!isDefined(claimedWorkspaceId)) {
-      return new Response({
-        ok: true,
-        skipped: 'No workspace claims this Slack team',
-      });
+      const skipped = 'No workspace claims this Slack team';
+
+      logDiscardedSlackEvent({ body, skipReason: skipped });
+
+      return new Response({ ok: true, skipped });
     }
 
     return {

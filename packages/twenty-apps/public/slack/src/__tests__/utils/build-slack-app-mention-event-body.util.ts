@@ -12,6 +12,8 @@ export const buildSlackAppMentionEventBody = ({
   eventId,
   teamId,
   botUserId,
+  botId,
+  subtype,
 }: SlackMessageEventOptions): SlackEventsRequestBody =>
   buildSlackEventCallback(
     {
@@ -22,6 +24,8 @@ export const buildSlackAppMentionEventBody = ({
       text,
       ts: messageTimestamp,
       thread_ts: threadTimestamp,
+      bot_id: botId,
+      subtype,
     },
     { eventId, teamId, botUserId },
   );

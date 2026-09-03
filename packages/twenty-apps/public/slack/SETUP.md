@@ -274,6 +274,22 @@ re-fire) and people who joined Slack after connection.
 - **No silent dead-ends.** A mention or DM with no request text gets a short
   hint reply. The first follow-up in a thread whose 24-hour window has lapsed
   gets an ephemeral nudge (only that member sees it) to mention the bot again.
+- **App-posted messages are ignored.** Slack stamps `bot_id` and/or a `subtype`
+  on every message an app posted — including a message an app posts on a
+  person's behalf, which Slack renders with a *Sent using* trailer, and the
+  bot's own replies. The assistant skips all of them, which is what stops it
+  answering itself forever in a thread it has subscribed to. Messages typed by
+  a person in the Slack client are unaffected, so test with those: a mention
+  posted through another Slack app or an automation produces no reply and no
+  Slack Assistant Request record.
+- **Discarded events are logged.** Slack always gets `200 ok`, so an event the
+  app decides not to act on leaves no trace in Slack. Each one writes a single
+  line to the server logs instead:
+  `[slack] discarded event <event_id> (<event type>) in <channel>:<ts>: <reason>`.
+  Grep it by the channel and message timestamp to find out why a given message
+  produced nothing. With `message.channels` and `message.groups` subscribed the
+  unrelated channel messages Slack delivers are logged the same way, which is
+  another reason to leave both off on busy channels.
 - **Channel welcome.** With `member_joined_channel` subscribed, the bot posts a
   short introduction the first time it is added to a channel, with the details
   in a thread reply so the channel itself stays quiet. It fires once per channel
@@ -308,6 +324,7 @@ Fields use camelCase in the step UI:
 | Slack refuses the install with *"doesn't have a bot user to install"* | Scopes were added under **User Token Scopes** only | Add every scope from the table above under **Bot Token Scopes**, then reconnect |
 | OAuth fails from a `localhost` redirect | Slack's PKCE opt-in is on, so Slack treats the redirect as a desktop one and refuses bot scopes | Leave the PKCE opt-in off (it cannot be turned off again once set), or use an `https://` redirect and point `SERVER_URL` at the same base URL |
 | Slack reports *"didn't respond with the value of the challenge parameter"* | `SLACK_WEBHOOK_SECRET` is not set, so the handshake fails signature verification | Set it on the application registration, then re-save the Request URL |
+| A mention posted by another Slack app or an automation is silently ignored | Slack marks app-posted messages with `bot_id` / a `subtype`, and the assistant skips them so it never answers its own replies | Expected; post as a person instead. The server log line `[slack] discarded event … Not a plain user message (bot_id=…)` names the marker Slack sent |
 | The bot answers mentions but ignores thread follow-ups | `channels:history` / `groups:history` missing, the bot isn't in the channel, or the 24-hour window lapsed | Confirm the subscriptions and scopes, invite the bot, and mention it again to reopen the thread |
 | Feedback buttons show a warning when clicked | **Interactivity & Shortcuts** is not enabled, or its Request URL is wrong | Enable it and set the `slack-interactivity-resolver` URL above |
 | Connecting is rejected because the Slack team is already claimed | Another Twenty workspace on this server has connected the same Slack team | Remove the connection on that workspace, or uninstall the app there, to release the claim |

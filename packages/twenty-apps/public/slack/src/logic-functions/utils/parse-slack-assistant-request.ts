@@ -49,6 +49,25 @@ const classifySlackAssistantEvent = (
   return null;
 };
 
+const describeNonUserMessageMarkers = (event: SlackInboundEvent): string =>
+  [
+    isNonEmptyString(event.bot_id) ? `bot_id=${event.bot_id}` : '',
+    isNonEmptyString(event.subtype) ? `subtype=${event.subtype}` : '',
+  ]
+    .filter(isNonEmptyString)
+    .join(', ');
+
+const listMissingRequiredFields = (
+  body: SlackEventsRequestBody,
+  event: SlackInboundEvent,
+): string[] =>
+  [
+    isNonEmptyString(body.event_id) ? '' : 'event_id',
+    isNonEmptyString(event.channel) ? '' : 'channel',
+    isNonEmptyString(event.ts) ? '' : 'ts',
+    isNonEmptyString(event.user) ? '' : 'user',
+  ].filter(isNonEmptyString);
+
 const getBotUserIdFromLeadingMention = (text: string): string | undefined =>
   text.trimStart().match(LEADING_MENTION_PATTERN)?.[1];
 
@@ -83,8 +102,14 @@ export const parseSlackAssistantRequest = (
     return { request: null, skipReason: `Unhandled event type: ${event.type}` };
   }
 
+  // Slack stamps bot_id and/or a subtype on every message an app posted,
+  // the assistant's own replies included. Without this the bot answers itself
+  // forever in any thread it has subscribed.
   if (isNonEmptyString(event.bot_id) || isNonEmptyString(event.subtype)) {
-    return { request: null, skipReason: 'Not a plain user message' };
+    return {
+      request: null,
+      skipReason: `Not a plain user message (${describeNonUserMessageMarkers(event)})`,
+    };
   }
 
   if (
@@ -93,7 +118,13 @@ export const parseSlackAssistantRequest = (
     !isNonEmptyString(event.ts) ||
     !isNonEmptyString(event.user)
   ) {
-    return { request: null, skipReason: 'Event is missing required fields' };
+    return {
+      request: null,
+      skipReason: `Event is missing required fields: ${listMissingRequiredFields(
+        body,
+        event,
+      ).join(', ')}`,
+    };
   }
 
   const requestText = normalizeSlackRequestText({
