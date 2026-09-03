@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { getConnection } from 'twenty-sdk/logic-function';
+import { isDefined } from 'src/utils/is-defined';
 
 import {
   FATHOM_BACKFILL_BATCH_SIZE,
@@ -26,7 +27,7 @@ const getCreatedAfter = (
     return payload.createdAfter;
   }
 
-  if (Number.isInteger(payload.days) && payload.days !== undefined) {
+  if (isDefined(payload.days) && Number.isInteger(payload.days)) {
     return new Date(now - payload.days * MILLISECONDS_PER_DAY).toISOString();
   }
 
