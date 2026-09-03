@@ -61,12 +61,14 @@ export class ApplicationDevelopmentResolver {
 
   @Mutation(() => WorkspaceMigrationDTO)
   async syncApplication(
-    @Args() { manifest, dryRun }: ApplicationInput,
+    @Args()
+    { manifest, dryRun, inferDeletionFromMissingEntities }: ApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<WorkspaceMigrationDTO> {
     return this.applicationDevelopmentService.syncApplication({
       manifest,
       dryRun,
+      inferDeletionFromMissingEntities,
       workspaceId,
     });
   }

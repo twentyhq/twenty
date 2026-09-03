@@ -11,7 +11,6 @@ import {
   SettingsRouteOutlet,
 } from '@/app/components/SettingsRoutes';
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
-import indexAppPath from '@/navigation/utils/indexAppPath';
 import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
 
 const WorkflowCoreIndexPage = lazy(() =>
@@ -102,7 +101,7 @@ export const createWorkspaceRouteObjects = ({
         ]
       : []),
     {
-      path: indexAppPath.getIndexAppPath(),
+      path: AppPath.Index,
       element: <RecordIndexSkeletonLoader />,
     },
     {

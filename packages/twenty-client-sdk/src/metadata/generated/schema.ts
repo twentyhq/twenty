@@ -6961,7 +6961,7 @@ export interface MutationGenqlSelection{
     deletePublicDomain?: { __args: {domain: Scalars['String']} }
     checkPublicDomainValidRecords?: (DomainValidRecordsGenqlSelection & { __args: {domain: Scalars['String']} })
     createDevelopmentApplication?: (DevelopmentApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], name: Scalars['String']} })
-    syncApplication?: (WorkspaceMigrationGenqlSelection & { __args: {manifest: Scalars['JSON'], dryRun?: (Scalars['Boolean'] | null)} })
+    syncApplication?: (WorkspaceMigrationGenqlSelection & { __args: {manifest: Scalars['JSON'], dryRun?: (Scalars['Boolean'] | null), inferDeletionFromMissingEntities?: (Scalars['Boolean'] | null)} })
     uploadApplicationFile?: (FileGenqlSelection & { __args: {file: Scalars['Upload'], applicationUniversalIdentifier: Scalars['String'], fileFolder: FileFolder, filePath: Scalars['String']} })
     createApplicationFileUploads?: (CreateApplicationFileUploadsResultGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['String'], files: ApplicationFileUploadRequestInput[]} })
     completeApplicationFileUploads?: (CompleteApplicationFileUploadsResultGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['String'], fileIds: Scalars['UUID'][]} })
