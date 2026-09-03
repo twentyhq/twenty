@@ -682,7 +682,7 @@ export interface UsageLimit {
 
 export type UsageResourceType = 'AI' | 'WORKFLOW' | 'APP' | 'STORAGE' | 'API' | 'LOGIC_FUNCTION' | 'EMAIL'
 
-export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'API_REQUEST'
+export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'API_REQUEST' | 'SUBSCRIPTION'
 
 export interface SdkClientChecksums {
     core?: Scalars['String']
@@ -1414,6 +1414,7 @@ export interface UsageUserDaily {
 export interface UsageAnalytics {
     usageByUser: UsageBreakdownItem[]
     usageByOperationType: UsageBreakdownItem[]
+    usageByApplication: UsageBreakdownItem[]
     usageByModel: UsageBreakdownItem[]
     timeSeries: UsageTimeSeries[]
     periodStart: Scalars['DateTime']
@@ -1914,6 +1915,7 @@ export interface MarketplaceAppDetail {
     logoUrl?: Scalars['String']
     websiteUrl?: Scalars['String']
     aboutDescription?: Scalars['String']
+    pricingDescription?: Scalars['String']
     termsUrl?: Scalars['String']
     emailSupport?: Scalars['String']
     issueReportUrl?: Scalars['String']
@@ -4860,6 +4862,7 @@ export interface UsageUserDailyGenqlSelection{
 export interface UsageAnalyticsGenqlSelection{
     usageByUser?: UsageBreakdownItemGenqlSelection
     usageByOperationType?: UsageBreakdownItemGenqlSelection
+    usageByApplication?: UsageBreakdownItemGenqlSelection
     usageByModel?: UsageBreakdownItemGenqlSelection
     timeSeries?: UsageTimeSeriesGenqlSelection
     periodStart?: boolean | number
@@ -5397,6 +5400,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     logoUrl?: boolean | number
     websiteUrl?: boolean | number
     aboutDescription?: boolean | number
+    pricingDescription?: boolean | number
     termsUrl?: boolean | number
     emailSupport?: boolean | number
     issueReportUrl?: boolean | number
@@ -9973,7 +9977,8 @@ export const enumUsageOperationType = {
    WEB_SEARCH: 'WEB_SEARCH' as const,
    CALL_RECORDING: 'CALL_RECORDING' as const,
    EMAIL_SEND: 'EMAIL_SEND' as const,
-   API_REQUEST: 'API_REQUEST' as const
+   API_REQUEST: 'API_REQUEST' as const,
+   SUBSCRIPTION: 'SUBSCRIPTION' as const
 }
 
 export const enumWidgetType = {
