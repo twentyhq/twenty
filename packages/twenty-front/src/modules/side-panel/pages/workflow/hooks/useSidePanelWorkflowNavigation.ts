@@ -146,6 +146,7 @@ export const useSidePanelWorkflowNavigation = () => {
       store.set(
         sidePanelWorkflowIdComponentState.atomFamily({
           instanceId: pageId,
+          surfaceId,
         }),
         workflowId,
       );
@@ -153,6 +154,7 @@ export const useSidePanelWorkflowNavigation = () => {
       store.set(
         sidePanelWorkflowStepIdComponentState.atomFamily({
           instanceId: pageId,
+          surfaceId,
         }),
         stepId,
       );
@@ -160,6 +162,7 @@ export const useSidePanelWorkflowNavigation = () => {
       store.set(
         workflowSelectedNodeComponentState.atomFamily({
           instanceId: workflowId,
+          surfaceId,
         }),
         stepId,
       );
@@ -171,7 +174,7 @@ export const useSidePanelWorkflowNavigation = () => {
         pageId,
       });
     },
-    [navigateSidePanel, store],
+    [navigateSidePanel, store, surfaceId],
   );
 
   const openWorkflowEditStepTypeInSidePanel = useCallback(
