@@ -1,0 +1,2 @@
+import { groupByKey } from './groupByKey'; import assert from 'node:assert/strict';
+assert.deepEqual(groupByKey([{ g: 'a', v: 1 }, { g: 'b', v: 2 }, { g: 'a', v: 3 }], 'g'), { a: [{ g: 'a', v: 1 }, { g: 'a', v: 3 }], b: [{ g: 'b', v: 2 }] });
