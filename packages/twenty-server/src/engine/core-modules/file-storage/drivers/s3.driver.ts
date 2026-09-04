@@ -159,7 +159,10 @@ export class S3Driver implements StorageDriver {
             const file = await this.metadataClient.send(command);
 
             if (!file?.Body) {
-              throw new Error('Unable to get file body');
+              throw new FileStorageException(
+                'Unable to get file body',
+                FileStorageExceptionCode.FILE_NOT_FOUND,
+              );
             }
 
             return Buffer.from(await file.Body.transformToByteArray());
