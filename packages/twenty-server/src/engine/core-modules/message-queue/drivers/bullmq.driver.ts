@@ -15,7 +15,6 @@ import {
   type QueueOptions,
   Worker,
 } from 'bullmq';
-import { type JobState as BullMQJobState } from 'bullmq/dist/esm/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -263,24 +262,15 @@ export class BullMQDriver
     if (isDefined(onJobStatusChange)) {
       let notificationChain = Promise.resolve();
 
-      const notifyJobStatusChange = (
-        job: Job | undefined,
-        state: BullMQJobState,
-      ) => {
+      const notifyJobStatusChange = (job: Job | undefined) => {
         notificationChain = notificationChain.then(() =>
-          this.notifyJobStatusChange(queueName, job, state, onJobStatusChange),
+          this.notifyJobStatusChange(queueName, job, onJobStatusChange),
         );
       };
 
-      this.workerMap[queueName].on('active', (job) =>
-        notifyJobStatusChange(job, 'active'),
-      );
-      this.workerMap[queueName].on('completed', (job) =>
-        notifyJobStatusChange(job, 'completed'),
-      );
-      this.workerMap[queueName].on('failed', (job) =>
-        notifyJobStatusChange(job, this.getStateAfterFailure(job)),
-      );
+      this.workerMap[queueName].on('active', notifyJobStatusChange);
+      this.workerMap[queueName].on('completed', notifyJobStatusChange);
+      this.workerMap[queueName].on('failed', notifyJobStatusChange);
     }
 
     this.workerMap[queueName].on('completed', (job) => {
@@ -380,7 +370,6 @@ export class BullMQDriver
   private async notifyJobStatusChange(
     queueName: MessageQueue,
     job: Job | undefined,
-    state: BullMQJobState,
     onJobStatusChange: NonNullable<
       MessageQueueWorkerOptions['onJobStatusChange']
     >,
@@ -394,7 +383,7 @@ export class BullMQDriver
         return;
       }
 
-      const jobDetails = this.buildQueueJobDetails(job, state);
+      const jobDetails = await this.buildQueueJobDetails(job);
 
       if (isDefined(jobDetails)) {
         await onJobStatusChange(jobDetails);
@@ -405,16 +394,6 @@ export class BullMQDriver
         error,
       );
     }
-  }
-
-  // moveToFailed sets finishedOn only when no attempt is left; a retried job
-  // is re-queued with its backoff as delay
-  private getStateAfterFailure(job: Job | undefined): BullMQJobState {
-    if (!isDefined(job) || isDefined(job.finishedOn)) {
-      return 'failed';
-    }
-
-    return job.delay > 0 ? 'delayed' : 'waiting';
   }
 
   private shouldBroadcastJobStatus(job: Job): boolean {
@@ -552,21 +531,20 @@ export class BullMQDriver
       return undefined;
     }
 
+    return this.buildQueueJobDetails<T>(job);
+  }
+
+  private async buildQueueJobDetails<T extends MessageQueueJobData>(
+    job: Job,
+  ): Promise<QueueJobDetails<T> | undefined> {
+    if (!isDefined(job.id)) {
+      return undefined;
+    }
+
     const state = await job.getState();
 
     // BullMQ reports 'unknown' for a job whose record was evicted by retention
     if (state === 'unknown') {
-      return undefined;
-    }
-
-    return this.buildQueueJobDetails<T>(job, state);
-  }
-
-  private buildQueueJobDetails<T extends MessageQueueJobData>(
-    job: Job,
-    state: BullMQJobState,
-  ): QueueJobDetails<T> | undefined {
-    if (!isDefined(job.id)) {
       return undefined;
     }
 
