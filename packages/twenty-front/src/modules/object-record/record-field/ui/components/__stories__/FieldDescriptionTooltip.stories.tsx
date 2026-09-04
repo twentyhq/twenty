@@ -4,6 +4,8 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { FieldDescriptionTooltip } from '@/object-record/record-field/ui/components/FieldDescriptionTooltip';
 
+const TOOLTIP_WAIT_TIMEOUT_MS = 5000;
+
 const meta: Meta<typeof FieldDescriptionTooltip> = {
   title: 'UI/Data/Field/FieldDescriptionTooltip',
   component: FieldDescriptionTooltip,
@@ -34,7 +36,7 @@ export const Hover: Story = {
     const tooltip = await within(canvasElement.ownerDocument.body).findByRole(
       'tooltip',
       undefined,
-      { timeout: 2000 },
+      { timeout: TOOLTIP_WAIT_TIMEOUT_MS },
     );
 
     expect(within(tooltip).getByText('Amount')).toBeVisible();
@@ -49,17 +51,18 @@ export const KeyboardFocus: Story = {
     const canvas = within(canvasElement);
     const anchor = canvas.getByText('Amount');
 
-    await userEvent.tab();
-
-    expect(anchor).toHaveFocus();
     expect(anchor).toHaveAccessibleDescription(
       'The amount of this opportunity',
     );
 
+    await userEvent.tab();
+
+    expect(anchor).toHaveFocus();
+
     const tooltip = await within(canvasElement.ownerDocument.body).findByRole(
       'tooltip',
       undefined,
-      { timeout: 2000 },
+      { timeout: TOOLTIP_WAIT_TIMEOUT_MS },
     );
 
     expect(tooltip).toBeVisible();

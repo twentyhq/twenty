@@ -2,7 +2,6 @@ import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { cloneElement, type ReactElement, useId } from 'react';
-import { VisibilityHidden } from 'twenty-ui/accessibility';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -59,16 +58,15 @@ export const FieldDescriptionTooltip = ({
         id: fieldDescriptionTooltipAnchorId,
         tabIndex: 0,
       })}
-      <VisibilityHidden>
-        <span id={fieldDescriptionId}>{fieldDescription}</span>
-      </VisibilityHidden>
       <AppTooltip
         anchorSelect={`#${fieldDescriptionTooltipAnchorId}`}
         className={fieldDescriptionTooltipClassName}
         delay={TooltipDelay.longDelay}
+        keepMounted
         noArrow
         place="bottom"
         positionStrategy="fixed"
+        tooltipId={fieldDescriptionId}
         width="300px"
       >
         <StyledTooltipContent>
