@@ -372,7 +372,9 @@ describe('retryFailedRecallCancellations', () => {
         data: { externalBotId: 'recall-bot-recovered' },
       },
     ]);
-    expect(client.callRecordings[0].externalBotId).toBe('recall-bot-recovered');
+    expect(client.callRecordings[0].externalBotId).toBe(
+      'recall-bot-recovered',
+    );
     expect(client.conditionalMutationFilters).toEqual([
       expect.objectContaining({
         recordingRequestStatus: { eq: 'CANCELED' },

@@ -276,7 +276,9 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     expect(lookupParameters.get('metadata__twentyWorkspaceId')).toBe(
       WORKSPACE_ID,
     );
-    expect(lookupParameters.has('metadata__twentyCallRecordingId')).toBe(false);
+    expect(lookupParameters.has('metadata__twentyCallRecordingId')).toBe(
+      false,
+    );
     expect(lookupParameters.has('join_at_after')).toBe(false);
     expect(lookupParameters.has('join_at_before')).toBe(false);
     expect(lookupParameters.getAll('status')).toEqual([
