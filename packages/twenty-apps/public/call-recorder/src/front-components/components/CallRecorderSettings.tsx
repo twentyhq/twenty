@@ -14,6 +14,7 @@ import {
 
 import { InCallSection } from 'src/front-components/components/InCallSection';
 import { RecorderSection } from 'src/front-components/components/RecorderSection';
+import { SchedulingSection } from 'src/front-components/components/SchedulingSection';
 import { TranscriptionSection } from 'src/front-components/components/TranscriptionSection';
 
 const StyledContainer = styled.div`
@@ -41,6 +42,7 @@ export const CallRecorderSettings = () => {
       }}
     >
       <StyledContainer>
+        <SchedulingSection frontComponentId={frontComponentId} />
         <RecorderSection frontComponentId={frontComponentId} />
         <InCallSection frontComponentId={frontComponentId} />
         <TranscriptionSection frontComponentId={frontComponentId} />

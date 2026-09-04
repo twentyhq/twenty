@@ -1,4 +1,5 @@
 import {
+  IconCalendarEvent,
   IconClockPlay,
   IconColorSwatch,
   IconDoorEnter,
@@ -13,6 +14,7 @@ import {
 
 import { CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-additional-summary-prompt-env-var-name';
 import { CALL_RECORDER_BOT_IMAGE_BACKGROUND_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-bot-image-background-env-var-name';
+import { CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-calendar-bot-scheduling-enabled-env-var-name';
 import { CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-everyone-left-timeout-seconds-env-var-name';
 import { CALL_RECORDER_JOIN_EARLY_MINUTES_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-join-early-minutes-env-var-name';
 import { CALL_RECORDER_NAME_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-name-env-var-name';
@@ -30,6 +32,14 @@ export type CallRecorderCounterRow = {
   title: string;
   description: string;
   Icon: IconComponent;
+};
+
+export const CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ROW = {
+  variableKey: CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME,
+  title: 'Send bot to all my calendar meetings',
+  description:
+    'Turning this off cancels every scheduled recording and stops new ones.',
+  Icon: IconCalendarEvent,
 };
 
 export const CALL_RECORDER_RECORDING_NOTICE_ROW = {
@@ -117,6 +127,7 @@ export const CALL_RECORDER_SUMMARY_PROMPT_FIELD = {
 // Keep this list aligned with the app config so every application variable is
 // intentionally placed in the synchronous settings UI.
 export const CALL_RECORDER_MAPPED_VARIABLE_KEYS: string[] = [
+  CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ROW.variableKey,
   CALL_RECORDER_NAME_FIELD.variableKey,
   CALL_RECORDER_RECORDING_NOTICE_ROW.variableKey,
   CALL_RECORDER_RECORDING_NOTICE_MESSAGE_FIELD.variableKey,

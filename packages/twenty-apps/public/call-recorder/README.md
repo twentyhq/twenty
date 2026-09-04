@@ -30,6 +30,13 @@ happens once the meeting is within the seven-day scheduling window. Set it to
 Off to skip a meeting. Past meetings the recorder never joined simply stay
 blank.
 
+## 🗓️ Pausing the recorder
+
+The **Send bot to all my calendar meetings** toggle in the app settings is on
+by default. Turn it off to stop scheduling bots for upcoming meetings and cancel
+every recording that is already scheduled. Turn it back on and the app sweeps
+upcoming meetings to schedule bots again.
+
 ## 🎥 Supported meeting platforms
 
 The recording bot can only join meetings on these platforms:
