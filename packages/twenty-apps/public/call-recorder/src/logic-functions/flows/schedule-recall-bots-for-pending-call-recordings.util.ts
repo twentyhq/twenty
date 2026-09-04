@@ -185,10 +185,13 @@ const scheduleBotForResumableCallRecording = async ({
   calendarEvent: CalendarEventRecord;
   result: ScheduleRecallBotsForPendingCallRecordingsResult;
 }): Promise<void> => {
-  const didScheduleRecallBot = await scheduleRecallBotForCallRecording(client, {
-    callRecording,
-    calendarEvent,
-  });
+  const didScheduleRecallBot = await scheduleRecallBotForCallRecording(
+    client,
+    {
+      callRecording,
+      calendarEvent,
+    },
+  );
 
   if (didScheduleRecallBot) {
     result.scheduledCallRecordingIds.push(callRecording.id);

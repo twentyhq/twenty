@@ -11,9 +11,12 @@ describe('completeCallRecordingImport', () => {
       return { updateCallRecordings: [{ id: 'call-recording-1' }] };
     });
 
-    const claimed = await completeCallRecordingImport({ mutation } as never, {
-      id: 'call-recording-1',
-    });
+    const claimed = await completeCallRecordingImport(
+      { mutation } as never,
+      {
+        id: 'call-recording-1',
+      },
+    );
 
     expect(claimed).toBe(true);
     expect(mutation).toHaveBeenCalledTimes(1);
@@ -27,9 +30,12 @@ describe('completeCallRecordingImport', () => {
   it('returns false when the row was already COMPLETED, so the loser cannot charge', async () => {
     const mutation = vi.fn(async () => ({ updateCallRecordings: [] }));
 
-    const claimed = await completeCallRecordingImport({ mutation } as never, {
-      id: 'call-recording-1',
-    });
+    const claimed = await completeCallRecordingImport(
+      { mutation } as never,
+      {
+        id: 'call-recording-1',
+      },
+    );
 
     expect(claimed).toBe(false);
   });
@@ -37,9 +43,12 @@ describe('completeCallRecordingImport', () => {
   it('returns false when the API omits the result list', async () => {
     const mutation = vi.fn(async () => ({}));
 
-    const claimed = await completeCallRecordingImport({ mutation } as never, {
-      id: 'call-recording-1',
-    });
+    const claimed = await completeCallRecordingImport(
+      { mutation } as never,
+      {
+        id: 'call-recording-1',
+      },
+    );
 
     expect(claimed).toBe(false);
   });
