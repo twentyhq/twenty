@@ -197,6 +197,7 @@ export class BillingCreditService {
       return;
     }
 
+    // Not getBillingSubscriptionPeriod: while trialing it reports the trial window, and the counter is keyed off currentPeriodStart.
     const periodStart = subscription.currentPeriodStart;
 
     if (await this.billingUsageService.isAllowanceCounterEnabled(workspaceId)) {
