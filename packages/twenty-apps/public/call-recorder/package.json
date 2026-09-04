@@ -23,7 +23,6 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@floating-ui/core": "^1.8.0",
     "@sniptt/guards": "^0.2.0",
     "sharp": "^0.35.3"
   },
