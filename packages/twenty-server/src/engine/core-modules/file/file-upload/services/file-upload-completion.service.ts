@@ -158,7 +158,11 @@ export class FileUploadCompletionService {
     // is now referenced by nothing and has to be taken back out: no later
     // cleanup run looks for a file whose row is already gone.
     if (affected === 0) {
-      await this.deletePromotedObjectOrLog({ file, storageLocation });
+      await this.deletePromotedObjectOrLog({
+        workspaceId,
+        file,
+        storageLocation,
+      });
 
       throw new FileUploadException(
         `File ${file.id} was reaped while its upload was being completed`,
@@ -179,14 +183,27 @@ export class FileUploadCompletionService {
   }
 
   private async deletePromotedObjectOrLog({
+    workspaceId,
     file,
     storageLocation,
   }: {
+    workspaceId: string;
     file: FileEntity;
     storageLocation: FileUploadStorageLocation;
   }): Promise<void> {
     try {
-      await this.fileStorageService.deleteFile(storageLocation);
+      // Application uploads reuse a developer-supplied resource path, so a
+      // later upload may already own this one. Its object is not ours to
+      // remove, and leaving it costs nothing since it is referenced.
+      const currentOwner = await this.fileRepository.findOne(workspaceId, {
+        where: { path: file.path },
+      });
+
+      if (isDefined(currentOwner)) {
+        return;
+      }
+
+      await this.fileStorageService.deleteFileObject(storageLocation);
     } catch (error) {
       this.logger.warn(
         `Could not remove the promoted object for reaped file ${file.id} at "${file.path}", leaving it orphaned: ${error}`,

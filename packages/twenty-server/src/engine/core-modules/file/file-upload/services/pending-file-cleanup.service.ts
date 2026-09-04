@@ -117,7 +117,7 @@ export class PendingFileCleanupService {
       resourcePath,
     ]) {
       try {
-        await this.fileStorageService.deleteFile({
+        await this.fileStorageService.deleteFileObject({
           ...location,
           resourcePath: pathToDelete,
         });

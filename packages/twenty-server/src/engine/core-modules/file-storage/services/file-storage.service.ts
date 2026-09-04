@@ -475,6 +475,20 @@ export class FileStorageService {
     });
   }
 
+  // Removes only the stored object. deleteFile also drops any row sitting at
+  // that path, which is wrong once the row is gone or belongs to a later
+  // upload that reused the same resource path.
+  async deleteFileObject(params: ResourceIdentifier): Promise<void> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+    const { onStorageFilePath } =
+      this.validateAndBuildFileStoragePathOrThrow(params);
+
+    await driver.delete({
+      folderPath: dirname(onStorageFilePath),
+      filename: basename(onStorageFilePath),
+    });
+  }
+
   async deleteFolder(
     params: Omit<ResourceIdentifier, 'resourcePath'> & { folderPath: string },
   ): Promise<void> {
