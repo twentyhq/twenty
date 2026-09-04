@@ -1,0 +1,2 @@
+import { normalizeE164Phone } from './normalizeE164Phone'; import assert from 'node:assert/strict';
+assert.equal(normalizeE164Phone("(555) 123-4567"), "+15551234567"); assert.equal(normalizeE164Phone("+44 20 7946 0991"), "+442079460991");
