@@ -11,7 +11,7 @@ export function IsValidServerUrlForMultiWorkspace(
       propertyName,
       options: validationOptions,
       validator: {
-        validate(value: unknown, args) {
+        validate(value: unknown, args: ValidationArguments) {
           if (typeof value !== 'string') {
             return false;
           }
