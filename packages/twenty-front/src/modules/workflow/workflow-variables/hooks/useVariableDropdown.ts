@@ -2,6 +2,8 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
+import { WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/code-action/constants/WorkflowLogicFunctionTabListComponentId';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -84,7 +86,9 @@ export const useVariableDropdown = ({
   );
   const setActiveTabId = useSetAtomComponentState(
     activeTabIdComponentState,
-    'workflow-logic-function-tab-list-component-id',
+    useWorkspaceSurfaceScopedComponentInstanceId(
+      WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
+    ),
   );
   const setWorkflowDiagram = useSetAtomComponentState(
     workflowDiagramComponentState,
