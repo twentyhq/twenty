@@ -205,11 +205,15 @@ export class LocalDriver implements StorageDriver {
 
     try {
       stats = await fs.stat(filePath);
-    } catch {
-      throw new FileStorageException(
-        'File not found',
-        FileStorageExceptionCode.FILE_NOT_FOUND,
-      );
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+        throw new FileStorageException(
+          'File not found',
+          FileStorageExceptionCode.FILE_NOT_FOUND,
+        );
+      }
+
+      throw error;
     }
 
     if (buildStatChecksum(stats) !== expectedChecksum) {

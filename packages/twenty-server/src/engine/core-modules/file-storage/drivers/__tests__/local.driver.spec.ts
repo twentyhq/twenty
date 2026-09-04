@@ -277,6 +277,45 @@ describe('LocalDriver', () => {
         driver.checkFileExists({ filePath: 'workspace/app/moved.txt' }),
       ).resolves.toBe(true);
     });
+
+    it('should report a missing source under a precondition as FILE_NOT_FOUND', async () => {
+      const storagePath = await createTempDirectory('local-driver-storage-');
+
+      await mkdir(path.join(storagePath, 'workspace', 'app'), {
+        recursive: true,
+      });
+
+      const driver = new LocalDriver({ storagePath });
+
+      await expect(
+        driver.move({
+          from: { folderPath: 'workspace/app', filename: 'missing.txt' },
+          to: { folderPath: 'workspace/app', filename: 'moved.txt' },
+          ifMatchChecksum: 'any-checksum',
+        }),
+      ).rejects.toMatchObject({
+        code: FileStorageExceptionCode.FILE_NOT_FOUND,
+      });
+    });
+
+    it('should not report a storage failure as a missing source', async () => {
+      const storagePath = await createTempDirectory('local-driver-storage-');
+
+      await mkdir(path.join(storagePath, 'workspace'), { recursive: true });
+      // A regular file where a directory is expected makes stat fail with
+      // ENOTDIR, which root cannot bypass the way it bypasses mode bits.
+      await writeFile(path.join(storagePath, 'workspace', 'blocker'), 'x');
+
+      const driver = new LocalDriver({ storagePath });
+
+      await expect(
+        driver.move({
+          from: { folderPath: 'workspace/blocker', filename: 'file.txt' },
+          to: { folderPath: 'workspace/app', filename: 'moved.txt' },
+          ifMatchChecksum: 'any-checksum',
+        }),
+      ).rejects.toMatchObject({ code: 'ENOTDIR' });
+    });
   });
 
   describe('getFileMetadata', () => {
