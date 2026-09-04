@@ -30,6 +30,9 @@ export type PullWritePlan = {
   localOnlyRelativePaths: string[];
 };
 
+const toReservationKey = (relativePath: string): string =>
+  relativePath.toLowerCase();
+
 const ENTITY_KEY_BY_KIND: Record<PullEntityKind, ManifestEntityKey> = {
   application: ManifestEntityKey.Application,
   object: ManifestEntityKey.Objects,
@@ -134,7 +137,7 @@ const reserveRelativePath = ({
   for (const candidate of candidates) {
     const candidatePath = posix.join(folder, `${candidate}${fileSuffix}`);
 
-    if (!takenRelativePaths.has(candidatePath)) {
+    if (!takenRelativePaths.has(toReservationKey(candidatePath))) {
       return candidatePath;
     }
   }
@@ -142,6 +145,24 @@ const reserveRelativePath = ({
   throw new Error(
     `Could not find a free file name for ${universalIdentifier} in ${folder}`,
   );
+};
+
+const findExistingPath = ({
+  entity,
+  applicationFile,
+  pathByUniversalIdentifier,
+}: {
+  entity: PullEntity;
+  applicationFile: ScannedDefineFile | undefined;
+  pathByUniversalIdentifier: Map<string, string>;
+}): string | undefined => {
+  if (entity.kind !== 'application') {
+    return pathByUniversalIdentifier.get(entity.universalIdentifier);
+  }
+
+  return isDefined(applicationFile)
+    ? toPosixPath(applicationFile.relativePath)
+    : undefined;
 };
 
 const buildConfigByUniversalIdentifier = (
@@ -193,16 +214,17 @@ export const planPullWrites = ({
   const unchanged: PullEntity[] = [];
   const usedRelativePaths = new Set<string>();
   const takenRelativePaths = new Set(
-    scannedFiles.map((scannedFile) => toPosixPath(scannedFile.relativePath)),
+    scannedFiles.map((scannedFile) =>
+      toReservationKey(toPosixPath(scannedFile.relativePath)),
+    ),
   );
 
   for (const entity of entities) {
-    const existingPath =
-      entity.kind === 'application'
-        ? isDefined(applicationFile)
-          ? toPosixPath(applicationFile.relativePath)
-          : undefined
-        : pathByUniversalIdentifier.get(entity.universalIdentifier);
+    const existingPath = findExistingPath({
+      entity,
+      applicationFile,
+      pathByUniversalIdentifier,
+    });
 
     const folder =
       findExistingFolderForKind({
@@ -223,7 +245,7 @@ export const planPullWrites = ({
       });
 
     usedRelativePaths.add(relativePath);
-    takenRelativePaths.add(relativePath);
+    takenRelativePaths.add(toReservationKey(relativePath));
 
     const baseConfig = baseConfigByUniversalIdentifier.get(
       entity.universalIdentifier,

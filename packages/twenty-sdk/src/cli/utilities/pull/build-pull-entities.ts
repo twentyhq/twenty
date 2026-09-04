@@ -55,6 +55,10 @@ const APPLICATION_PROPERTIES_TO_STRIP = [
   'screenshots',
 ] as const;
 
+const APPLICATION_PROPERTY_NAMES_TO_STRIP = new Set<string>(
+  APPLICATION_PROPERTIES_TO_STRIP,
+);
+
 const GENERATED_COVER_GALLERY_IMAGE = 'public/cover.generated.png';
 
 const STANDARD_OBJECT_NAME_BY_UNIVERSAL_IDENTIFIER = new Map<string, string>(
@@ -68,17 +72,14 @@ const buildApplicationConfig = (
 ): Partial<ApplicationManifest> => {
   const applicationConfig = Object.fromEntries(
     Object.entries(manifest.application).filter(
-      ([property]) =>
-        !APPLICATION_PROPERTIES_TO_STRIP.includes(
-          property as (typeof APPLICATION_PROPERTIES_TO_STRIP)[number],
-        ),
+      ([property]) => !APPLICATION_PROPERTY_NAMES_TO_STRIP.has(property),
     ),
   ) as Partial<ApplicationManifest>;
 
   const { galleryImages } = applicationConfig;
 
   if (
-    !isDefined(galleryImages) ||
+    !Array.isArray(galleryImages) ||
     galleryImages.length === 0 ||
     galleryImages.every((image) => image === GENERATED_COVER_GALLERY_IMAGE)
   ) {

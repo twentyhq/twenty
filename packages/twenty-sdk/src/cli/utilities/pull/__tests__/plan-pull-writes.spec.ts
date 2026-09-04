@@ -309,6 +309,27 @@ describe('planPullWrites', () => {
     );
   });
 
+  it('should not claim a path that differs only by case', () => {
+    const plan = planPullWrites({
+      manifest: MANIFEST,
+      baseManifest: null,
+      scannedFiles: [
+        {
+          relativePath: 'src/objects/Pet.object.ts',
+          entityKey: ManifestEntityKey.Objects,
+          universalIdentifier: 'a-different-identifier',
+          isReadable: true,
+        },
+      ],
+    });
+
+    expect(
+      plan.writes
+        .find((write) => write.kind === 'object')
+        ?.relativePath.toLowerCase(),
+    ).not.toBe('src/objects/pet.object.ts');
+  });
+
   it('should keep a file whose define file could not be read', () => {
     const plan = planPullWrites({
       manifest: MANIFEST,
@@ -316,7 +337,7 @@ describe('planPullWrites', () => {
       scannedFiles: [
         {
           relativePath: 'src/objects/pet.object.ts',
-          entityKey: ManifestEntityKey.Objects,
+          entityKey: null,
           universalIdentifier: null,
           isReadable: false,
         },

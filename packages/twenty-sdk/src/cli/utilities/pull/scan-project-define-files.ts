@@ -11,7 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export type ScannedDefineFile = {
   relativePath: string;
-  entityKey: ManifestEntityKey;
+  entityKey: ManifestEntityKey | null;
   universalIdentifier: string | null;
   isReadable: boolean;
 };
@@ -33,11 +33,19 @@ export const scanProjectDefineFiles = async (
   const scannedFiles: ScannedDefineFile[] = [];
 
   for (const filePath of filePaths) {
+    const relativePath = relative(appPath, filePath);
+
     let fileContent: string;
 
     try {
       fileContent = await readFile(filePath, 'utf-8');
     } catch {
+      scannedFiles.push({
+        relativePath,
+        entityKey: null,
+        universalIdentifier: null,
+        isReadable: false,
+      });
       continue;
     }
 
@@ -65,7 +73,7 @@ export const scanProjectDefineFiles = async (
     }
 
     scannedFiles.push({
-      relativePath: relative(appPath, filePath),
+      relativePath,
       entityKey,
       universalIdentifier:
         typeof config.universalIdentifier === 'string'

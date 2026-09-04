@@ -1,6 +1,13 @@
 import { applyPullWrites } from '@/cli/utilities/pull/apply-pull-writes';
 import { type PullWrite } from '@/cli/utilities/pull/plan-pull-writes';
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import {
+  mkdir,
+  mkdtemp,
+  readFile,
+  readdir,
+  rm,
+  writeFile,
+} from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -41,16 +48,20 @@ describe('applyPullWrites', () => {
     await expect(readAppFile('src/gone.ts')).rejects.toThrow();
   });
 
-  it('should leave no staging directory behind', async () => {
+  it('should leave no working directory behind', async () => {
     await applyPullWrites({
       appPath,
       writes: [buildWrite('src/pet.object.ts', 'written')],
       deletions: [],
     });
 
-    await expect(
-      readFile(join(appPath, '.twenty', 'pull-staging'), 'utf-8'),
-    ).rejects.toThrow();
+    const workDirectoryEntries = await readdir(join(appPath, '.twenty'));
+
+    expect(
+      workDirectoryEntries.filter((entry) =>
+        /^pull-(staging|backup)-/.test(entry),
+      ),
+    ).toEqual([]);
   });
 
   it('should restore every file it had already replaced when a later write fails', async () => {
@@ -98,6 +109,27 @@ describe('applyPullWrites', () => {
     ).rejects.toThrow();
 
     expect(await readAppFile('src/kept.ts')).toBe('original kept');
+  });
+
+  it('should remove a new file it created when a later write fails', async () => {
+    await mkdir(join(appPath, 'src'), { recursive: true });
+    await writeFile(
+      join(appPath, 'src/nested'),
+      'a file where a folder is needed',
+    );
+
+    await expect(
+      applyPullWrites({
+        appPath,
+        writes: [
+          buildWrite('src/brand-new.object.ts', 'new content'),
+          buildWrite('src/nested/deep.object.ts', 'never lands'),
+        ],
+        deletions: [],
+      }),
+    ).rejects.toThrow();
+
+    await expect(readAppFile('src/brand-new.object.ts')).rejects.toThrow();
   });
 
   it('should refuse a plan whose two entities resolve to the same file', async () => {

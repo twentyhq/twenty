@@ -21,14 +21,7 @@ describe('printTypescriptValue', () => {
   });
 
   it('should keep a __proto__ key as an own property instead of setting the prototype', () => {
-    const value: Record<string, unknown> = {};
-
-    Object.defineProperty(value, '__proto__', {
-      value: 'not-a-prototype',
-      enumerable: true,
-      writable: true,
-      configurable: true,
-    });
+    const value = JSON.parse('{"__proto__": "not-a-prototype"}');
 
     const printed = printTypescriptValue({ value });
 

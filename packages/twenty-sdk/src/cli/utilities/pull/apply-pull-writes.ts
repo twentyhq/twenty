@@ -92,6 +92,7 @@ const restoreBackedUpFiles = async ({
     const destinationPath = join(appPath, relativePath);
 
     await ensureDir(dirname(destinationPath));
+    await rm(destinationPath, { force: true });
     await copy(join(backupDirectory, relativePath), destinationPath);
   }
 };
@@ -143,26 +144,37 @@ export const applyPullWrites = async ({
       const destinationPath = join(appPath, write.relativePath);
 
       await ensureDir(dirname(destinationPath));
-      await copy(join(stagingDirectory, write.relativePath), destinationPath);
       writtenRelativePaths.push(write.relativePath);
+      await copy(join(stagingDirectory, write.relativePath), destinationPath);
     }
 
     for (const deletion of deletions) {
       await rm(join(appPath, deletion.relativePath), { force: true });
     }
   } catch (error) {
-    await restoreBackedUpFiles({
-      appPath,
-      backupDirectory,
-      backedUpRelativePaths,
-      writtenRelativePaths: writtenRelativePaths.filter(
-        (relativePath) => !backedUpRelativePaths.includes(relativePath),
-      ),
-    });
+    try {
+      await restoreBackedUpFiles({
+        appPath,
+        backupDirectory,
+        backedUpRelativePaths,
+        writtenRelativePaths: writtenRelativePaths.filter(
+          (relativePath) => !backedUpRelativePaths.includes(relativePath),
+        ),
+      });
+    } catch (restoreError) {
+      await remove(stagingDirectory);
 
-    throw error;
-  } finally {
+      throw new Error(
+        `Pull failed and could not restore every file it had replaced. The originals are kept in ${backupDirectory}.\nOriginal failure: ${error instanceof Error ? error.message : String(error)}\nRestore failure: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+      );
+    }
+
     await remove(stagingDirectory);
     await remove(backupDirectory);
+
+    throw error;
   }
+
+  await remove(stagingDirectory);
+  await remove(backupDirectory);
 };

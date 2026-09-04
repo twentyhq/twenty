@@ -18,18 +18,34 @@ type PullBaseFile = {
   manifest: Manifest;
 };
 
+const hasUniversalIdentifier = (value: unknown): boolean =>
+  isDefined(value) &&
+  typeof value === 'object' &&
+  typeof (value as { universalIdentifier?: unknown }).universalIdentifier ===
+    'string';
+
+const isEntityListWithFields = (value: unknown): boolean =>
+  Array.isArray(value) &&
+  value.every(
+    (entry) =>
+      hasUniversalIdentifier(entry) &&
+      Array.isArray((entry as { fields?: unknown }).fields),
+  );
+
 const isUsableBaseManifest = (manifest: unknown): manifest is Manifest => {
   if (!isDefined(manifest) || typeof manifest !== 'object') {
     return false;
   }
 
-  const { application, objects, fields } = manifest as Partial<Manifest>;
+  const { application, objects, fields, indexes } =
+    manifest as Partial<Manifest>;
 
   return (
-    isDefined(application) &&
-    typeof application.universalIdentifier === 'string' &&
-    Array.isArray(objects) &&
-    Array.isArray(fields)
+    hasUniversalIdentifier(application) &&
+    isEntityListWithFields(objects) &&
+    Array.isArray(fields) &&
+    fields.every(hasUniversalIdentifier) &&
+    (!isDefined(indexes) || isEntityListWithFields(indexes))
   );
 };
 

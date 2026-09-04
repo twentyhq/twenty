@@ -40,7 +40,7 @@ const formatFileGroup = ({
         .sort()
         .map((relativePath) => `  ${title.padEnd(13)}${relativePath}`);
 
-const countByMetadataName = (
+const groupIdentifiersByMetadataName = (
   coverage: ApplicationExportCoverageEntry[],
 ): Map<string, string[]> => {
   const identifiersByMetadataName = new Map<string, string[]>();
@@ -140,7 +140,8 @@ export const formatPullReport = ({
 
     lines.push('', `${section.title} (${sectionEntries.length} row(s)):`);
 
-    const identifiersByMetadataName = countByMetadataName(sectionEntries);
+    const identifiersByMetadataName =
+      groupIdentifiersByMetadataName(sectionEntries);
 
     for (const [metadataName, identifiers] of [
       ...identifiersByMetadataName.entries(),
