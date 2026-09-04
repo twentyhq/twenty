@@ -1,16 +1,9 @@
 import { plural, t } from '@lingui/core/macro';
 
-type ExcludedRecipientCounts = {
-  withoutEmail: number;
-  duplicateEmails: number;
-  hardSuppressed: number;
-  globallyUnsubscribed: number;
-  topicUnsubscribed: number;
-  overCap: number;
-};
+import { type CampaignAudiencePreview } from '@/activities/emails/types/CampaignAudiencePreview';
 
 export const buildExcludedRecipientReasons = (
-  counts: ExcludedRecipientCounts,
+  counts: CampaignAudiencePreview,
 ): string[] => {
   const reasons: string[] = [];
 

@@ -1,6 +1,8 @@
 import { buildExcludedRecipientReasons } from '@/activities/emails/utils/buildExcludedRecipientReasons';
 
 const NO_EXCLUSIONS = {
+  totalMembers: 0,
+  sendable: 0,
   withoutEmail: 0,
   duplicateEmails: 0,
   hardSuppressed: 0,
@@ -32,6 +34,8 @@ describe('buildExcludedRecipientReasons', () => {
   it('lists every reason that applies, in a stable order', () => {
     expect(
       buildExcludedRecipientReasons({
+        totalMembers: 21,
+        sendable: 0,
         withoutEmail: 1,
         duplicateEmails: 2,
         hardSuppressed: 3,

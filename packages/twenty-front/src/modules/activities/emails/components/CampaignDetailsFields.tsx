@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { plural, t } from '@lingui/core/macro';
+import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import {
   CoreObjectNameSingular,
@@ -11,15 +11,13 @@ import { type SelectOption } from 'twenty-ui/input';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { formatNumber } from '~/utils/format/formatNumber';
-
 import {
   CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH,
   CampaignEnvelopeBox,
 } from '@/activities/emails/components/CampaignEnvelopeBox';
+import { CampaignRecipientCount } from '@/activities/emails/components/CampaignRecipientCount';
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { useCampaignAudiencePreview } from '@/activities/emails/hooks/useCampaignAudiencePreview';
-import { buildExcludedRecipientReasons } from '@/activities/emails/utils/buildExcludedRecipientReasons';
 import { useCampaignDetailsState } from '@/activities/emails/hooks/useCampaignDetailsState';
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
@@ -54,21 +52,11 @@ const StyledWarningIcon = styled(IconAlertTriangle)`
   flex-shrink: 0;
 `;
 
-const StyledRecipientCount = styled.span<{ $isMuted: boolean }>`
-  color: ${({ $isMuted }) =>
-    $isMuted
-      ? themeCssVariables.font.color.light
-      : themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
-  white-space: nowrap;
-`;
-
 const StyledTopicInfoIcon = styled(IconInfoCircle)`
   color: ${themeCssVariables.font.color.light};
   display: block;
 `;
 
-const RECIPIENT_COUNT_ANCHOR_ID = 'campaign-composer-recipient-count';
 const UNSUBSCRIBE_TOPIC_ANCHOR_ID = 'campaign-composer-unsubscribe-topic-info';
 
 type CampaignDetailsFieldsProps = {
@@ -122,11 +110,6 @@ export const CampaignDetailsFields = ({
   const hasTopicOptions = topicOptions.length > 0;
   const hasSenderOptions = senderOptions.length > 0;
 
-  const excludedRecipientsBreakdown = isDefined(audiencePreview)
-    ? buildExcludedRecipientReasons(audiencePreview)
-    : [];
-  const hasExcludedRecipients = excludedRecipientsBreakdown.length > 0;
-
   return (
     <CampaignEnvelopeBox
       width={width}
@@ -157,39 +140,10 @@ export const CampaignDetailsFields = ({
         label={t`To`}
         labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
         trailing={
-          <>
-            {hasAudiencePreviewFailed && (
-              <StyledRecipientCount $isMuted={true}>
-                {t`Count unavailable`}
-              </StyledRecipientCount>
-            )}
-            {isDefined(audiencePreview) && (
-              <StyledRecipientCount
-                id={RECIPIENT_COUNT_ANCHOR_ID}
-                $isMuted={false}
-              >
-                {hasExcludedRecipients
-                  ? plural(audiencePreview.sendable, {
-                      one: `${formatNumber(audiencePreview.sendable)} of ${formatNumber(audiencePreview.totalMembers)} recipient`,
-                      other: `${formatNumber(audiencePreview.sendable)} of ${formatNumber(audiencePreview.totalMembers)} recipients`,
-                    })
-                  : plural(audiencePreview.totalMembers, {
-                      one: `${formatNumber(audiencePreview.totalMembers)} recipient`,
-                      other: `${formatNumber(audiencePreview.totalMembers)} recipients`,
-                    })}
-              </StyledRecipientCount>
-            )}
-            {hasExcludedRecipients && (
-              <AppTooltip
-                anchorSelect={`#${RECIPIENT_COUNT_ANCHOR_ID}`}
-                content={t`Skipped: ${excludedRecipientsBreakdown.join(', ')}`}
-                delay={TooltipDelay.shortDelay}
-                noArrow
-                place="bottom"
-                positionStrategy="fixed"
-              />
-            )}
-          </>
+          <CampaignRecipientCount
+            audiencePreview={audiencePreview}
+            hasFailed={hasAudiencePreviewFailed}
+          />
         }
       >
         <FormSingleRecordPicker
