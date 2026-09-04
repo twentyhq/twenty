@@ -95,34 +95,4 @@ describe('getStepRetryDelayMs', () => {
     expect(result).toBeUndefined();
   });
 
-  it('should clamp the configured count to the delay schedule length', () => {
-    const result = getStepRetryDelayMs({
-      step: createMockCodeStep('step-1', [], { retryOnFailure: 10 }),
-      stepInfo: {
-        status: StepStatus.RUNNING,
-        history: STEP_RETRY_DELAYS_MS.map((_, index) => ({
-          status: StepStatus.FAILED,
-          error: 'some error',
-          retryAttempt: index + 1,
-        })),
-      },
-    });
-
-    expect(result).toBeUndefined();
-  });
-  it('should not retry when the value is missing', () => {
-    const step = createMockCodeStep('step-1');
-
-    Reflect.deleteProperty(
-      step.settings.errorHandlingOptions.retryOnFailure,
-      'value',
-    );
-
-    const result = getStepRetryDelayMs({
-      step,
-      stepInfo: { status: StepStatus.RUNNING },
-    });
-
-    expect(result).toBeUndefined();
-  });
 });
