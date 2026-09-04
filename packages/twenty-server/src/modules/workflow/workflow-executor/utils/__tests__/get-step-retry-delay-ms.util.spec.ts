@@ -110,4 +110,17 @@ describe('getStepRetryDelayMs', () => {
 
     expect(result).toBeUndefined();
   });
+  it('should not retry when the value is missing', () => {
+    const step = createMockCodeStep('step-1');
+
+    step.settings.errorHandlingOptions.retryOnFailure.value =
+      undefined as unknown as number;
+
+    const result = getStepRetryDelayMs({
+      step,
+      stepInfo: { status: StepStatus.RUNNING },
+    });
+
+    expect(result).toBeUndefined();
+  });
 });

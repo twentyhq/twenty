@@ -12,4 +12,4 @@ export const stepIsAwaitingRetry = ({
 }): boolean =>
   stepInfo?.status === StepStatus.PENDING &&
   isDefined(stepInfo.error) &&
-  Number(step.settings.errorHandlingOptions.retryOnFailure.value) > 0;
+  (Number(step.settings.errorHandlingOptions.retryOnFailure.value) || 0) > 0;

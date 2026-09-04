@@ -13,9 +13,8 @@ export const getStepRetryDelayMs = ({
   step: WorkflowAction;
   stepInfo?: WorkflowRunStepInfo;
 }): number | undefined => {
-  const configuredRetries = Number(
-    step.settings.errorHandlingOptions.retryOnFailure.value,
-  );
+  const configuredRetries =
+    Number(step.settings.errorHandlingOptions.retryOnFailure.value) || 0;
 
   const attemptLimit = Math.min(configuredRetries, STEP_RETRY_DELAYS_MS.length);
 
