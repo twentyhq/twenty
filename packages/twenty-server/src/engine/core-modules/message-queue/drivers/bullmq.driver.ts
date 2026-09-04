@@ -370,10 +370,7 @@ export class BullMQDriver
       MessageQueueWorkerOptions['onJobStatusChange']
     >,
   ): Promise<void> {
-    if (
-      !isDefined(job) ||
-      !(job.opts as BullMQJobsOptions).shouldBroadcastStatus
-    ) {
+    if (!isDefined(job) || !this.shouldBroadcastJobStatus(job)) {
       return;
     }
 
@@ -389,6 +386,13 @@ export class BullMQDriver
         error,
       );
     }
+  }
+
+  private shouldBroadcastJobStatus(job: Job): boolean {
+    return (
+      'shouldBroadcastStatus' in job.opts &&
+      job.opts.shouldBroadcastStatus === true
+    );
   }
 
   private buildJobsOptions({
