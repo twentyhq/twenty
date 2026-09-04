@@ -10,8 +10,10 @@ describe('serializeRichTextMarkdown', () => {
     );
   });
 
-  it('serializes an empty prompt as an empty value', () => {
-    expect(serializeRichTextMarkdown('')).toBe('');
+  it('serializes an empty prompt using the stored rich text shape', () => {
+    expect(serializeRichTextMarkdown('')).toBe(
+      '{"blocknote":null,"markdown":null}',
+    );
   });
 
   it('round-trips through the reader used by the summary prompt', () => {
