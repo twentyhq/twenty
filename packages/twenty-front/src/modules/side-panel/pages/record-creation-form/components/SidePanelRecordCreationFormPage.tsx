@@ -42,6 +42,7 @@ export const SidePanelRecordCreationFormPage = () => {
 
   return (
     <SidePanelRecordCreationForm
+      requestId={recordCreationFormRequest.requestId}
       objectMetadataId={recordCreationFormRequest.objectMetadataId}
       initialDraftRecord={recordCreationFormRequest.initialDraftRecord}
     />
@@ -49,9 +50,11 @@ export const SidePanelRecordCreationFormPage = () => {
 };
 
 const SidePanelRecordCreationForm = ({
+  requestId,
   objectMetadataId,
   initialDraftRecord,
 }: {
+  requestId: string;
   objectMetadataId: string;
   initialDraftRecord: Partial<ObjectRecord>;
 }) => {
@@ -84,7 +87,7 @@ const SidePanelRecordCreationForm = ({
   };
 
   const handleCreateClick = () => {
-    settleRecordCreationDraft(draftRecord);
+    settleRecordCreationDraft({ requestId, draftRecord });
     goBackFromSidePanel();
   };
 

@@ -3,6 +3,7 @@ import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/conte
 import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 export type RecordCreationFormRequest = {
+  requestId: string;
   objectMetadataId: string;
   initialDraftRecord: Partial<ObjectRecord>;
 };

@@ -7,9 +7,18 @@ export const useRecordCreationFormSettle = () => {
   const recordCreationFormContext = useContext(RecordCreationFormContext);
 
   const settleRecordCreationDraft = useCallback(
-    (draftRecord: Partial<ObjectRecord> | null) => {
+    ({
+      requestId,
+      draftRecord,
+    }: {
+      requestId: string;
+      draftRecord: Partial<ObjectRecord> | null;
+    }) => {
       if (isDefined(recordCreationFormContext)) {
-        recordCreationFormContext.settleRecordCreationDraft(draftRecord);
+        recordCreationFormContext.settleRecordCreationDraft({
+          requestId,
+          draftRecord,
+        });
       }
     },
     [recordCreationFormContext],
