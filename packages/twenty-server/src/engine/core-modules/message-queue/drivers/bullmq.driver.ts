@@ -374,11 +374,15 @@ export class BullMQDriver
       MessageQueueWorkerOptions['onJobStatusChange']
     >,
   ): Promise<void> {
-    if (!isDefined(job) || !this.shouldBroadcastJobStatus(job)) {
+    if (!isDefined(job)) {
       return;
     }
 
     try {
+      if (!this.shouldBroadcastJobStatus(job)) {
+        return;
+      }
+
       const jobDetails = await this.buildQueueJobDetails(job);
 
       if (isDefined(jobDetails)) {
