@@ -153,16 +153,15 @@ export class FileUploadCompletionService {
     );
 
     // The cleanup cron claims a stale PENDING row by deleting it, then deletes
-    // its objects. Losing the row here means it won, and the promoting copy
-    // above may have landed after its sweep, so the object this call created
-    // is now referenced by nothing and has to be taken back out: no later
-    // cleanup run looks for a file whose row is already gone.
+    // its objects, so losing the row here means it won. The promoting copy may
+    // have landed after its sweep and be orphaned; it is deliberately left
+    // there rather than rolled back, because this path cannot prove the object
+    // is still the one it wrote, and deleting a later upload's bytes is far
+    // worse than leaking one object.
     if (affected === 0) {
-      await this.deletePromotedObjectOrLog({
-        workspaceId,
-        file,
-        storageLocation,
-      });
+      this.logger.warn(
+        `File ${file.id} was reaped while completing; the object promoted to "${file.path}" may be orphaned`,
+      );
 
       throw new FileUploadException(
         `File ${file.id} was reaped while its upload was being completed`,
@@ -180,35 +179,6 @@ export class FileUploadCompletionService {
       createdAt: file.createdAt,
       mimeType,
     };
-  }
-
-  private async deletePromotedObjectOrLog({
-    workspaceId,
-    file,
-    storageLocation,
-  }: {
-    workspaceId: string;
-    file: FileEntity;
-    storageLocation: FileUploadStorageLocation;
-  }): Promise<void> {
-    try {
-      // Application uploads reuse a developer-supplied resource path, so a
-      // later upload may already own this one. Its object is not ours to
-      // remove, and leaving it costs nothing since it is referenced.
-      const currentOwner = await this.fileRepository.findOne(workspaceId, {
-        where: { path: file.path },
-      });
-
-      if (isDefined(currentOwner)) {
-        return;
-      }
-
-      await this.fileStorageService.deleteFileObject(storageLocation);
-    } catch (error) {
-      this.logger.warn(
-        `Could not remove the promoted object for reaped file ${file.id} at "${file.path}", leaving it orphaned: ${error}`,
-      );
-    }
   }
 
   private getApplicationFileStorageLocation({

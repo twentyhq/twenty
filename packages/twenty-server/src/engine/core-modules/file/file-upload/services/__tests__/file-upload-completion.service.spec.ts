@@ -277,33 +277,7 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
     expect(fileRepository.update).not.toHaveBeenCalled();
   });
 
-  it('should fail and take back the promoted object when the row was reaped mid-completion', async () => {
-    const size = pngContent.length;
-    const storageLocation = buildStorageLocation('png');
-
-    fileStorageService.getFileMetadata.mockResolvedValue({
-      size,
-      checksum: '"etag-a"',
-    });
-    fileStorageService.readFilePrefix.mockResolvedValue(pngContent);
-    fileRepository.update.mockResolvedValue({ affected: 0 } as never);
-
-    await expect(
-      buildService().completeUploadedFile({
-        workspaceId,
-        file: buildFile('png', size),
-        storageLocation,
-      }),
-    ).rejects.toMatchObject({
-      code: FileUploadExceptionCode.FILE_NOT_FOUND,
-    });
-
-    expect(fileStorageService.deleteFileObject).toHaveBeenCalledWith(
-      storageLocation,
-    );
-  });
-
-  it('should still fail when the promoted object cannot be taken back', async () => {
+  it('should fail without touching storage when the row was reaped mid-completion', async () => {
     const size = pngContent.length;
 
     fileStorageService.getFileMetadata.mockResolvedValue({
@@ -312,31 +286,6 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
     });
     fileStorageService.readFilePrefix.mockResolvedValue(pngContent);
     fileRepository.update.mockResolvedValue({ affected: 0 } as never);
-    fileStorageService.deleteFileObject.mockRejectedValue(
-      new Error('storage down'),
-    );
-
-    await expect(
-      buildService().completeUploadedFile({
-        workspaceId,
-        file: buildFile('png', size),
-        storageLocation: buildStorageLocation('png'),
-      }),
-    ).rejects.toMatchObject({
-      code: FileUploadExceptionCode.FILE_NOT_FOUND,
-    });
-  });
-
-  it('should leave the object alone when a later upload already owns the path', async () => {
-    const size = pngContent.length;
-
-    fileStorageService.getFileMetadata.mockResolvedValue({
-      size,
-      checksum: '"etag-a"',
-    });
-    fileStorageService.readFilePrefix.mockResolvedValue(pngContent);
-    fileRepository.update.mockResolvedValue({ affected: 0 } as never);
-    fileRepository.findOne.mockResolvedValue({ id: 'a-later-upload' } as never);
 
     await expect(
       buildService().completeUploadedFile({
@@ -348,6 +297,8 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
       code: FileUploadExceptionCode.FILE_NOT_FOUND,
     });
 
+    // Deliberately orphaned: this path cannot prove the object is still the
+    // one it promoted, and a later upload may own it by now.
     expect(fileStorageService.deleteFileObject).not.toHaveBeenCalled();
   });
 
