@@ -2,15 +2,12 @@ import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import {
-  claimCallRecordingArtifactsImport,
-  releaseCallRecordingArtifactsImportClaim,
-} from 'src/logic-functions/data/claim-call-recording-artifacts-import.util';
-import {
   findCallRecordingForArtifactsImport,
   type CallRecordingForArtifactsImport,
 } from 'src/logic-functions/data/find-call-recording-for-artifacts-import.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
 import { type RecallBotSnapshot } from 'src/logic-functions/recall-api/recall-bot-snapshot.type';
+import { runCallRecordingArtifactImportWithClaim } from 'src/logic-functions/flows/run-call-recording-artifact-import-with-claim.util';
 import { settleCallRecordingImport } from 'src/logic-functions/flows/settle-call-recording-import.util';
 import { syncCallRecording } from 'src/logic-functions/flows/sync-call-recording.util';
 import { type CallRecordingArtifactImportScope } from 'src/logic-functions/types/call-recording-artifact-scope.type';
@@ -55,80 +52,63 @@ export const importCallRecordingArtifacts = async ({
     };
   }
 
-  const hasClaimedArtifactImport = await claimCallRecordingArtifactsImport(
-    client,
+  const artifactImportExecution = await runCallRecordingArtifactImportWithClaim(
     {
+      client,
       callRecordingId: initialCallRecording.id,
       scope,
       now: new Date(),
+      runImport: async (callRecording) => {
+        const recallBot =
+          await fetchRecallBotWhenRecordingIdMissing(callRecording);
+        const callRecordingSyncResult = await syncCallRecording({
+          client,
+          callRecording,
+          bot: recallBot,
+          treatRecordingAsDone: true,
+          requestedAt: request.requestedAt,
+          artifactScope: scope,
+        });
+
+        if (callRecordingSyncResult.hasRetryableArtifactFailure) {
+          throw new Error(
+            `Recall ${scope} artifacts for call recording ${callRecording.id} could not be imported`,
+          );
+        }
+
+        const hasCompletedImport = await settleCallRecordingImport(client, {
+          callRecordingId: callRecording.id,
+        });
+
+        if (!callRecordingSyncResult.updated && !hasCompletedImport) {
+          return {
+            status: 'skipped',
+            callRecordingId: callRecording.id,
+            scope,
+            reason: 'no artifact updates',
+          } satisfies ImportCallRecordingArtifactsResult;
+        }
+
+        return {
+          status: 'imported',
+          callRecordingId: callRecording.id,
+          scope,
+          outcome: 'call-recording-artifacts-imported',
+        } satisfies ImportCallRecordingArtifactsResult;
+      },
     },
   );
 
-  if (!hasClaimedArtifactImport) {
+  if (artifactImportExecution.status === 'skipped') {
     return {
       status: 'skipped',
       callRecordingId: initialCallRecording.id,
       scope,
-      reason: 'artifact import already in progress',
+      reason: artifactImportExecution.reason,
     };
   }
 
-  try {
-    const callRecording = await findCallRecordingForArtifactsImport(
-      client,
-      initialCallRecording.id,
-    );
-
-    if (isUndefined(callRecording)) {
-      return {
-        status: 'skipped',
-        callRecordingId: initialCallRecording.id,
-        scope,
-        reason: 'no matching call recording',
-      };
-    }
-
-    const recallBot = await fetchRecallBotWhenRecordingIdMissing(callRecording);
-    const callRecordingSyncResult = await syncCallRecording({
-      client,
-      callRecording,
-      bot: recallBot,
-      treatRecordingAsDone: true,
-      requestedAt: request.requestedAt,
-      artifactScope: scope,
-    });
-
-    if (callRecordingSyncResult.hasRetryableArtifactFailure) {
-      throw new Error(
-        `Recall ${scope} artifacts for call recording ${callRecording.id} could not be imported`,
-      );
-    }
-
-    const hasCompletedImport = await settleCallRecordingImport(client, {
-      callRecordingId: callRecording.id,
-    });
-
-    if (!callRecordingSyncResult.updated && !hasCompletedImport) {
-      return {
-        status: 'skipped',
-        callRecordingId: callRecording.id,
-        scope,
-        reason: 'no artifact updates',
-      };
-    }
-
-    return {
-      status: 'imported',
-      callRecordingId: callRecording.id,
-      scope,
-      outcome: 'call-recording-artifacts-imported',
-    };
-  } finally {
-    await releaseCallRecordingArtifactsImportClaim(client, {
-      callRecordingId: initialCallRecording.id,
-      scope,
-    });
-  }
+  return artifactImportExecution.result;
 };
 
 const fetchRecallBotWhenRecordingIdMissing = async (

@@ -6,18 +6,14 @@ import { CallRecordingStatus } from 'src/logic-functions/constants/call-recordin
 import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/constants/non-terminal-call-recording-statuses';
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
 import {
-  claimCallRecordingArtifactsImport,
-  releaseCallRecordingArtifactsImportClaim,
-} from 'src/logic-functions/data/claim-call-recording-artifacts-import.util';
-import {
   fetchAllNodes,
   type ConnectionPage,
 } from 'src/logic-functions/data/fetch-all-nodes.util';
-import { findCallRecordingForArtifactsImport } from 'src/logic-functions/data/find-call-recording-for-artifacts-import.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { type ConvergeDivergedCallRecordingsResult } from 'src/logic-functions/flows/converge-diverged-call-recordings-result.type';
+import { runCallRecordingArtifactImportWithClaim } from 'src/logic-functions/flows/run-call-recording-artifact-import-with-claim.util';
 import { settleCallRecordingImport } from 'src/logic-functions/flows/settle-call-recording-import.util';
 import {
   syncCallRecording,
@@ -313,44 +309,25 @@ const convergeCallRecording = async ({
 
   for (const artifactImportScope of ['transcript', 'media'] as const) {
     const artifactImportClaimedAt = new Date();
-    const hasClaimedArtifactImport = await claimCallRecordingArtifactsImport(
-      client,
-      {
+    const artifactImportExecution =
+      await runCallRecordingArtifactImportWithClaim({
+        client,
         callRecordingId: candidate.id,
         scope: artifactImportScope,
         now: artifactImportClaimedAt,
-      },
-    );
-
-    if (!hasClaimedArtifactImport) {
-      continue;
-    }
-
-    try {
-      const freshCallRecording = await findCallRecordingForArtifactsImport(
-        client,
-        candidate.id,
-      );
-
-      if (isUndefined(freshCallRecording)) {
-        continue;
-      }
-
-      const callRecordingSyncResult = await syncCallRecording({
-        client,
-        callRecording: freshCallRecording,
-        bot: botResult.bot,
-        treatRecordingAsDone: false,
-        requestedAt: artifactImportClaimedAt.toISOString(),
-        artifactScope: artifactImportScope,
+        runImport: (callRecording) =>
+          syncCallRecording({
+            client,
+            callRecording,
+            bot: botResult.bot,
+            treatRecordingAsDone: false,
+            requestedAt: artifactImportClaimedAt.toISOString(),
+            artifactScope: artifactImportScope,
+          }),
       });
 
-      callRecordingSyncResults.push(callRecordingSyncResult);
-    } finally {
-      await releaseCallRecordingArtifactsImportClaim(client, {
-        callRecordingId: candidate.id,
-        scope: artifactImportScope,
-      });
+    if (artifactImportExecution.status === 'executed') {
+      callRecordingSyncResults.push(artifactImportExecution.result);
     }
   }
 
