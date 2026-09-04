@@ -2084,7 +2084,7 @@ msgstr "Alle objekter er allerede i sidebjælken"
 #. js-lingui-id: /D217u
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "All operations"
-msgstr ""
+msgstr "Alle operationer"
 
 #. js-lingui-id: gqXMNe
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
