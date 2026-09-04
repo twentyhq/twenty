@@ -11,7 +11,9 @@ import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-e
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
+import { type FlatObjectPermission } from 'src/engine/metadata-modules/flat-object-permission/types/flat-object-permission.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
+import { type FlatRolePermissionFlag } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook.type';
 
@@ -123,6 +125,58 @@ const BUILD_OPTIONS = {
   inferDeletionFromMissingEntities: true,
   applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
 } as const;
+
+const OBJECT_PERMISSION: FlatObjectPermission = {
+  ...SYNCABLE,
+  id: 'object-permission-id',
+  universalIdentifier: 'object-permission-universal-identifier',
+  roleId: 'role-id',
+  roleUniversalIdentifier: 'role-universal-identifier',
+  objectMetadataId: 'object-metadata-id',
+  objectMetadataUniversalIdentifier: 'object-metadata-universal-identifier',
+  canReadObjectRecords: true,
+  canUpdateObjectRecords: false,
+  canSoftDeleteObjectRecords: false,
+  canDestroyObjectRecords: false,
+};
+
+const ROLE_PERMISSION_FLAG: FlatRolePermissionFlag = {
+  ...SYNCABLE,
+  id: 'role-permission-flag-id',
+  universalIdentifier: 'role-permission-flag-universal-identifier',
+  roleId: 'role-id',
+  roleUniversalIdentifier: 'role-universal-identifier',
+  permissionFlagId: 'permission-flag-id',
+  permissionFlagUniversalIdentifier: 'permission-flag-universal-identifier',
+};
+
+const buildAllFlatEntityMapsWithObjectPermission = (
+  objectPermission: FlatObjectPermission,
+) => {
+  const allFlatEntityMaps = createEmptyAllFlatEntityMaps();
+
+  allFlatEntityMaps.flatObjectPermissionMaps =
+    addFlatEntityToFlatEntityMapsOrThrow({
+      flatEntity: objectPermission,
+      flatEntityMaps: allFlatEntityMaps.flatObjectPermissionMaps,
+    });
+
+  return allFlatEntityMaps;
+};
+
+const buildAllFlatEntityMapsWithRolePermissionFlag = (
+  rolePermissionFlag: FlatRolePermissionFlag,
+) => {
+  const allFlatEntityMaps = createEmptyAllFlatEntityMaps();
+
+  allFlatEntityMaps.flatRolePermissionFlagMaps =
+    addFlatEntityToFlatEntityMapsOrThrow({
+      flatEntity: rolePermissionFlag,
+      flatEntityMaps: allFlatEntityMaps.flatRolePermissionFlagMaps,
+    });
+
+  return allFlatEntityMaps;
+};
 
 const buildAllFlatEntityMapsWithPageLayout = (pageLayout: FlatPageLayout) => {
   const allFlatEntityMaps = createEmptyAllFlatEntityMaps();
@@ -340,5 +394,42 @@ describe('buildAllFlatEntityOperationRecordByMetadataNameFromFromTo', () => {
     expect(result.pageLayout?.flatEntityToCreate).toEqual({
       [PAGE_LAYOUT.universalIdentifier]: PAGE_LAYOUT,
     });
+  });
+
+  it('updates a re-minted object permission instead of replacing the workspace row', () => {
+    const result = buildAllFlatEntityOperationRecordByMetadataNameFromFromTo({
+      fromAllFlatEntityMaps:
+        buildAllFlatEntityMapsWithObjectPermission(OBJECT_PERMISSION),
+      toAllUniversalFlatEntityMaps: buildAllFlatEntityMapsWithObjectPermission({
+        ...OBJECT_PERMISSION,
+        universalIdentifier: 'reminted-universal-identifier',
+        canUpdateObjectRecords: true,
+      }),
+      buildOptions: BUILD_OPTIONS,
+    });
+
+    expect(result.objectPermission?.flatEntityToCreate).toEqual({});
+    expect(result.objectPermission?.flatEntityToDelete).toEqual({});
+    expect(result.objectPermission?.flatEntityToUpdate).toEqual({
+      [OBJECT_PERMISSION.universalIdentifier]: expect.objectContaining({
+        universalIdentifier: OBJECT_PERMISSION.universalIdentifier,
+        canUpdateObjectRecords: true,
+      }),
+    });
+  });
+
+  it('sees no change in a re-minted role permission flag for the same role and flag', () => {
+    const result = buildAllFlatEntityOperationRecordByMetadataNameFromFromTo({
+      fromAllFlatEntityMaps:
+        buildAllFlatEntityMapsWithRolePermissionFlag(ROLE_PERMISSION_FLAG),
+      toAllUniversalFlatEntityMaps:
+        buildAllFlatEntityMapsWithRolePermissionFlag({
+          ...ROLE_PERMISSION_FLAG,
+          universalIdentifier: 'reminted-universal-identifier',
+        }),
+      buildOptions: BUILD_OPTIONS,
+    });
+
+    expect(result).toEqual({});
   });
 });
