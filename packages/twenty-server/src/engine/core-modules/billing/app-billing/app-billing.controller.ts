@@ -38,8 +38,6 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 const APP_BILLING_CHARGE_THROTTLE_LIMIT = 1000;
 const APP_BILLING_CHARGE_THROTTLE_TTL_MS = 60_000;
 
-// The app contract speaks twenty-shared's kebab-case vocabulary so apps never
-// import server enums; the server's reasons are mapped at this boundary.
 const CREDIT_UNAVAILABLE_REASON_BY_SERVER_REASON: Record<
   SubscriptionInactiveReason | 'NO_CREDITS',
   CreditUnavailableReason
