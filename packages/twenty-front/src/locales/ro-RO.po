@@ -889,7 +889,7 @@ msgstr "Un proiect există deja pentru acest workflow. Sigur doriți să îl șt
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
-msgstr ""
+msgstr "Un dispozitiv de înregistrare se va alătura când începe întâlnirea."
 
 #. js-lingui-id: C6xZqR
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -899,7 +899,7 @@ msgstr "Trebuie selectat un rol pentru cheia API"
 #. js-lingui-id: 4tQSH0
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A summary is not available for this call recording yet."
-msgstr ""
+msgstr "Încă nu este disponibil un rezumat pentru această înregistrare a apelului."
 
 #. js-lingui-id: /cSHSG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -2080,6 +2080,11 @@ msgstr "Toate obiectele"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerSubView.tsx
 msgid "All objects are already in the sidebar"
 msgstr "Toate obiectele sunt deja în bara laterală"
+
+#. js-lingui-id: /D217u
+#: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
+msgid "All operations"
+msgstr ""
 
 #. js-lingui-id: gqXMNe
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
@@ -3555,7 +3560,7 @@ msgstr "Înregistrator de apeluri"
 #. js-lingui-id: 9e+AU2
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Call Recording"
-msgstr ""
+msgstr "Înregistrare apel"
 
 #. js-lingui-id: ahn0Ti
 #: src/modules/page-layout/widgets/call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
@@ -14037,7 +14042,7 @@ msgstr "Neacordat"
 #: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "Note"
-msgstr ""
+msgstr "Notă"
 
 #. js-lingui-id: VngD1z
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -14477,7 +14482,7 @@ msgstr "Deschide Gmail"
 #. js-lingui-id: C39K59
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Open in"
-msgstr ""
+msgstr "Deschide în"
 
 #. js-lingui-id: noLjKT
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
@@ -14513,7 +14518,7 @@ msgstr "Deschideți înregistrările alături de pagina curentă"
 #. js-lingui-id: p9J4lB
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownOpenRecordInComponents.tsx
 msgid "Open records in"
-msgstr ""
+msgstr "Deschide înregistrările în"
 
 #. js-lingui-id: F7UdSk
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
@@ -18434,7 +18439,7 @@ msgstr "Status"
 #: src/modules/object-core/workflows/constants/CoreWorkflowFilterFields.ts
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 msgid "Statuses"
-msgstr ""
+msgstr "Stări"
 
 #. js-lingui-id: oCQwvS
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -21319,7 +21324,7 @@ msgstr "Versiunea aplicației"
 #. js-lingui-id: IYNSdp
 #: src/modules/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage.tsx
 msgid "Versions"
-msgstr ""
+msgstr "Versiuni"
 
 #. js-lingui-id: yIWhRv
 #: src/modules/page-layout/utils/getWidgetTitle.ts

@@ -889,7 +889,7 @@ msgstr "Una bozza esiste già per questo workflow. Sei sicuro di volerla cancell
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
-msgstr ""
+msgstr "Un registratore si collegherà all'inizio della riunione."
 
 #. js-lingui-id: C6xZqR
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -899,7 +899,7 @@ msgstr "Un ruolo deve essere selezionato per la chiave API"
 #. js-lingui-id: 4tQSH0
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A summary is not available for this call recording yet."
-msgstr ""
+msgstr "Non è ancora disponibile un sommario per questa registrazione della chiamata."
 
 #. js-lingui-id: /cSHSG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -2080,6 +2080,11 @@ msgstr "Tutti gli oggetti"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerSubView.tsx
 msgid "All objects are already in the sidebar"
 msgstr "Tutti gli oggetti sono già nella barra laterale"
+
+#. js-lingui-id: /D217u
+#: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
+msgid "All operations"
+msgstr ""
 
 #. js-lingui-id: gqXMNe
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
@@ -3555,7 +3560,7 @@ msgstr "Registratore di chiamate"
 #. js-lingui-id: 9e+AU2
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Call Recording"
-msgstr ""
+msgstr "Registrazione chiamata"
 
 #. js-lingui-id: ahn0Ti
 #: src/modules/page-layout/widgets/call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
@@ -14037,7 +14042,7 @@ msgstr "Non sincronizzato"
 #: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "Note"
-msgstr ""
+msgstr "Nota"
 
 #. js-lingui-id: VngD1z
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -14477,7 +14482,7 @@ msgstr "Aprire Gmail"
 #. js-lingui-id: C39K59
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Open in"
-msgstr ""
+msgstr "Aprire in"
 
 #. js-lingui-id: noLjKT
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
@@ -14513,7 +14518,7 @@ msgstr "Apri i record accanto alla pagina corrente"
 #. js-lingui-id: p9J4lB
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownOpenRecordInComponents.tsx
 msgid "Open records in"
-msgstr ""
+msgstr "Apri i record in"
 
 #. js-lingui-id: F7UdSk
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
@@ -18434,7 +18439,7 @@ msgstr "Stato"
 #: src/modules/object-core/workflows/constants/CoreWorkflowFilterFields.ts
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 msgid "Statuses"
-msgstr ""
+msgstr "Stati"
 
 #. js-lingui-id: oCQwvS
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -21321,7 +21326,7 @@ msgstr "Versione dell'applicazione"
 #. js-lingui-id: IYNSdp
 #: src/modules/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage.tsx
 msgid "Versions"
-msgstr ""
+msgstr "Versioni"
 
 #. js-lingui-id: yIWhRv
 #: src/modules/page-layout/utils/getWidgetTitle.ts

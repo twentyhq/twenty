@@ -889,7 +889,7 @@ msgstr "Luonnos tälle työprosessille on jo olemassa. Oletko varma, että halua
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
-msgstr ""
+msgstr "Tallennin liittyy kokouksen alkaessa."
 
 #. js-lingui-id: C6xZqR
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -899,7 +899,7 @@ msgstr "Rooli on valittava API-avaimelle"
 #. js-lingui-id: 4tQSH0
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A summary is not available for this call recording yet."
-msgstr ""
+msgstr "Tälle puhelutallenteelle ei ole vielä saatavilla yhteenvetoa."
 
 #. js-lingui-id: /cSHSG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -1187,12 +1187,12 @@ msgstr "Lisää uusi yritys, jonka kanssa olemme yhteydessä (esim. nimi, verkko
 #. js-lingui-id: 5xxrhm
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a note"
-msgstr ""
+msgstr "Lisää muistiinpano"
 
 #. js-lingui-id: uza/B9
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a note to this record: "
-msgstr ""
+msgstr "Lisää muistiinpano tähän tietueeseen: "
 
 #. js-lingui-id: Ad+JsP
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
@@ -1207,7 +1207,7 @@ msgstr ""
 #. js-lingui-id: 4LAQbj
 #: src/modules/activities/calendar/components/CalendarEventComposerTargetsInput.tsx
 msgid "Add a related record"
-msgstr ""
+msgstr "Lisää liittyvä tietue"
 
 #. js-lingui-id: eMc2xs
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -1218,7 +1218,7 @@ msgstr "Lisää vaihe"
 #. js-lingui-id: BKYXUk
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a step to this workflow that "
-msgstr ""
+msgstr "Lisää tähän työnkulkuun vaihe, joka "
 
 #. js-lingui-id: KKfos4
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
@@ -1613,7 +1613,7 @@ msgstr "Lisää pienoisohjelma yläpuolelle"
 #. placeholder {0}: widget.title
 #: src/modules/page-layout/widgets/components/RecordPageWidgetInsertionSeparator.tsx
 msgid "Add widget above {0}"
-msgstr ""
+msgstr "Lisää pienoisohjelma kohdan {0} yläpuolelle"
 
 #. js-lingui-id: yy7F6M
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
@@ -2081,6 +2081,11 @@ msgstr "Kaikki objektit"
 msgid "All objects are already in the sidebar"
 msgstr ""
 
+#. js-lingui-id: /D217u
+#: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
+msgid "All operations"
+msgstr ""
+
 #. js-lingui-id: gqXMNe
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
 msgid "All reasons"
@@ -2145,7 +2150,7 @@ msgstr "Salli tiedostojen ja liitteiden lataaminen"
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
 msgid "Allow editing"
-msgstr ""
+msgstr "Salli muokkaus"
 
 #. js-lingui-id: 6BV/aG
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -2447,7 +2452,7 @@ msgstr "API-nimi (yksikkö)"
 #. js-lingui-id: /eZE05
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "API Request"
-msgstr ""
+msgstr "API-pyyntö"
 
 #. js-lingui-id: Z3Brb2
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -3555,7 +3560,7 @@ msgstr "Puhelutallennin"
 #. js-lingui-id: 9e+AU2
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Call Recording"
-msgstr ""
+msgstr "Puhelutallenne"
 
 #. js-lingui-id: ahn0Ti
 #: src/modules/page-layout/widgets/call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
@@ -3820,17 +3825,17 @@ msgstr "Vaihda aliavain?"
 #. js-lingui-id: xYxauD
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Change theme to dark"
-msgstr ""
+msgstr "Vaihda teemaksi tumma"
 
 #. js-lingui-id: L5kTLG
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Change theme to light"
-msgstr ""
+msgstr "Vaihda teemaksi vaalea"
 
 #. js-lingui-id: WAvMry
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Change theme to system"
-msgstr ""
+msgstr "Vaihda teemaksi järjestelmän teema"
 
 #. js-lingui-id: 9m7pJA
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals.tsx
@@ -3914,7 +3919,7 @@ msgstr "Keskustelut"
 #. js-lingui-id: oa2dNe
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check recent runs"
-msgstr ""
+msgstr "Tarkista viimeisimmät suoritukset"
 
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -3924,7 +3929,7 @@ msgstr "Tarkista tapahtuman päivämäärät"
 #. js-lingui-id: PaKTa7
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check this workflow's recent runs and tell me whether any failed and why."
-msgstr ""
+msgstr "Tarkista tämän työnkulun viimeisimmät suoritukset ja kerro, epäonnistuiko jokin niistä ja miksi."
 
 #. js-lingui-id: h5C4B4
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
@@ -4285,7 +4290,7 @@ msgstr "Supista kansio"
 #. js-lingui-id: mkMLq4
 #: src/modules/navigation/hooks/useNavigationDrawerTogglePresentation.ts
 msgid "Collapse sidebar"
-msgstr ""
+msgstr "Supista sivupalkki"
 
 #. js-lingui-id: OQTRMK
 #: src/modules/ai/components/AiChatCollapseButton.tsx
@@ -4999,7 +5004,7 @@ msgstr "Kopioi linkki"
 #. js-lingui-id: RlESoV
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Copy link to page"
-msgstr ""
+msgstr "Kopioi linkki sivulle"
 
 #. js-lingui-id: eZ5HO9
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
@@ -5029,7 +5034,7 @@ msgstr "Kopioi jakolinkki"
 #. js-lingui-id: a08Y3L
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx
 msgid "Copy summary"
-msgstr ""
+msgstr "Kopioi yhteenveto"
 
 #. js-lingui-id: Ej5euX
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -5134,7 +5139,7 @@ msgstr "Allekirjoitettua DPA-sopimusta ei voitu luoda. Yritä uudelleen."
 #. js-lingui-id: FR0Fbp
 #: src/modules/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage.tsx
 msgid "Could not load versions."
-msgstr ""
+msgstr "Versioita ei voitu ladata."
 
 #. js-lingui-id: KqYYBp
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -5170,7 +5175,7 @@ msgstr "Voimassaolotunnusta ei voitu päivittää. Ota yhteyttä tukeen."
 #: src/modules/object-core/workflows/versions/hooks/useRestoreCoreWorkflowVersionAsDraft.ts
 #: src/modules/object-core/workflows/versions/hooks/useRestoreCoreWorkflowVersionAsDraft.ts
 msgid "Could not restore this version as draft."
-msgstr ""
+msgstr "Tätä versiota ei voitu palauttaa luonnoksena."
 
 #. js-lingui-id: 5PWKlr
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
@@ -5216,7 +5221,7 @@ msgstr "Ei voitu kopioida leikepöydälle"
 #. js-lingui-id: TU+LOV
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Couldn't load installed workspaces"
-msgstr ""
+msgstr "Asennettuja työtiloja ei voitu ladata"
 
 #. js-lingui-id: kjbTwZ
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController.ts
@@ -5298,7 +5303,7 @@ msgstr "Luo uusi kontakti ja yhdistä hänet yritykseen. Tiedot: "
 #. js-lingui-id: j85EUk
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a new record in this view. Details: "
-msgstr ""
+msgstr "Luo uusi tietue tähän näkymään. Tiedot: "
 
 #. js-lingui-id: n1Nbbe
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -5315,17 +5320,17 @@ msgstr ""
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task"
-msgstr ""
+msgstr "Luo tehtävä"
 
 #. js-lingui-id: Jk5UrD
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task for this company: "
-msgstr ""
+msgstr "Luo tehtävä tälle yritykselle: "
 
 #. js-lingui-id: T9fLSG
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task for this record: "
-msgstr ""
+msgstr "Luo tehtävä tälle tietueelle: "
 
 #. js-lingui-id: Xn2Nlq
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -5845,21 +5850,21 @@ msgstr "Mukautetut tarjoajat"
 #. placeholder {0}: access.seatThreshold
 #: src/modules/settings/admin-panel/ai/hooks/useCustomAiProviderAccess.ts
 msgid "Custom providers are complimentary for organizations of up to {0} seats. Above that, an Organization plan is required."
-msgstr ""
+msgstr "Mukautetut palveluntarjoajat ovat maksuttomia organisaatioille, joissa on enintään {0} käyttäjäpaikkaa. Sen ylittäville organisaatioille vaaditaan Organisaatio-sopimus."
 
 #. js-lingui-id: dDp+uz
 #. placeholder {0}: access.seatThreshold
 #. placeholder {1}: access.seatCount
 #: src/modules/settings/admin-panel/ai/hooks/useCustomAiProviderAccess.ts
 msgid "Custom providers are complimentary for organizations of up to {0} seats. This instance has {1} seats, so an Organization plan is required."
-msgstr ""
+msgstr "Mukautetut palveluntarjoajat ovat maksuttomia organisaatioille, joissa on enintään {0} käyttäjäpaikkaa. Tässä instanssissa on {1} käyttäjäpaikkaa, joten Organisaatio-sopimus vaaditaan."
 
 #. js-lingui-id: FjmF6O
 #. placeholder {0}: access.seatThreshold
 #. placeholder {1}: access.seatCount
 #: src/modules/settings/admin-panel/ai/hooks/useCustomAiProviderAccess.ts
 msgid "Custom providers are complimentary up to {0} seats. This instance has {1}. Upgrade to add more."
-msgstr ""
+msgstr "Mukautetut palveluntarjoajat ovat maksuttomia enintään {0} käyttäjäpaikkaan asti. Tässä instanssissa on {1}. Päivitä lisätäksesi niitä."
 
 #. js-lingui-id: BjGDEB
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -6464,7 +6469,7 @@ msgstr "Poista keskustelu"
 #. js-lingui-id: Wkx6Ld
 #: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramDefaultEdgeEditable.tsx
 msgid "Delete connection"
-msgstr ""
+msgstr "Poista yhteys"
 
 #. js-lingui-id: 4xlcyV
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -6773,17 +6778,17 @@ msgstr "Laitteet, joilla on aktiivinen istunto tililläsi"
 #. js-lingui-id: PFS3WB
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
 msgid "Dictation did not respond in this browser. Try Safari, or type instead."
-msgstr ""
+msgstr "Sanelu ei vastannut tässä selaimessa. Kokeile Safaria tai kirjoita sen sijaan."
 
 #. js-lingui-id: qXiOAF
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
 msgid "Dictation failed. Try again."
-msgstr ""
+msgstr "Sanelu epäonnistui. Yritä uudelleen."
 
 #. js-lingui-id: MDy8Vw
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
 msgid "Dictation is not supported in this browser."
-msgstr ""
+msgstr "Sanelua ei tueta tässä selaimessa."
 
 #. js-lingui-id: MRB7nI
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
@@ -6942,7 +6947,7 @@ msgstr "Verkkotunnus on jo käytössä"
 #. js-lingui-id: eNcdvk
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 msgid "Domain links are stored as a bare domain name, so twenty.com and https://www.twenty.com are the same value"
-msgstr ""
+msgstr "Verkkotunnuslinkit tallennetaan pelkkänä verkkotunnuksen nimenä, joten twenty.com ja https://www.twenty.com ovat sama arvo"
 
 #. js-lingui-id: XoBD/+
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
@@ -7033,12 +7038,12 @@ msgstr "Luonnos"
 #. js-lingui-id: 1qZ7C3
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Draft an email"
-msgstr ""
+msgstr "Laadi sähköposti"
 
 #. js-lingui-id: /b72oP
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Draft an email to this company about "
-msgstr ""
+msgstr "Laadi sähköposti tälle yritykselle aiheesta "
 
 #. js-lingui-id: DbAw4C
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -7320,7 +7325,7 @@ msgstr "Muokkaa maksutapaa, näe laskusi ja paljon muuta"
 #. placeholder {0}: pinnedTab.title
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
 msgid "Edit pinned tab: {0}"
-msgstr ""
+msgstr "Muokkaa kiinnitettyä välilehteä: {0}"
 
 #. js-lingui-id: QJQd1J
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -7469,7 +7474,7 @@ msgstr "Sähköposti tai verkkotunnus on jo estolistalla"
 #. js-lingui-id: xUDbZ0
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Email Send"
-msgstr ""
+msgstr "Sähköpostin lähetys"
 
 #. js-lingui-id: Xl929X
 #: src/modules/activities/emails/hooks/useSendEmail.ts
@@ -8384,7 +8389,7 @@ msgstr "Laajenna tietue"
 #. js-lingui-id: tugdy6
 #: src/modules/navigation/hooks/useNavigationDrawerTogglePresentation.ts
 msgid "Expand sidebar"
-msgstr ""
+msgstr "Laajenna sivupalkki"
 
 #. js-lingui-id: Y7w75u
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowCodeEditor.tsx
@@ -8455,12 +8460,12 @@ msgstr "Vanhenee {dateDiff}"
 #. js-lingui-id: VJKLVq
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain this workflow"
-msgstr ""
+msgstr "Selitä tämä työnkulku"
 
 #. js-lingui-id: p8KUPY
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain what this workflow does, step by step."
-msgstr ""
+msgstr "Selitä vaihe vaiheelta, mitä tämä työnkulku tekee."
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
@@ -8631,7 +8636,7 @@ msgstr "Sovelluksen asennus epäonnistui."
 #. js-lingui-id: 8YghIJ
 #: src/modules/activities/calendar/hooks/useCalendarEventComposer.ts
 msgid "Failed to link the related records to this event"
-msgstr ""
+msgstr "Liittyvien tietueiden linkittäminen tähän tapahtumaan epäonnistui"
 
 #. js-lingui-id: LGNhPn
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
@@ -9163,12 +9168,12 @@ msgstr "Suodatinryhmän säännön valinnat"
 #. js-lingui-id: FG3LyE
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Filter this view"
-msgstr ""
+msgstr "Suodata tämä näkymä"
 
 #. js-lingui-id: xitJ93
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Filter this view to only show "
-msgstr ""
+msgstr "Suodata tämä näkymä näyttämään vain "
 
 #. js-lingui-id: 0i36a3
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
@@ -9183,7 +9188,7 @@ msgstr "Suodata tilauksen peruneita"
 #. js-lingui-id: iTs6Ck
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
 msgid "Filter workflows"
-msgstr ""
+msgstr "Suodata työnkulut"
 
 #. js-lingui-id: YrBWVK
 #: src/modules/object-record/record-index/utils/getNonReadableViewFieldSubTitle.ts
@@ -10578,7 +10583,7 @@ msgstr "Lisää JSON-syöte ja paina sitten \"Suorita funktio\"."
 #. js-lingui-id: UsX21s
 #: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramDefaultEdgeEditable.tsx
 msgid "Insert action"
-msgstr ""
+msgstr "Lisää toiminto"
 
 #. js-lingui-id: mia08l
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
@@ -10674,7 +10679,7 @@ msgstr "Asennetaan..."
 #. js-lingui-id: kc9VIS
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Installs"
-msgstr ""
+msgstr "Asennukset"
 
 #. js-lingui-id: x8uKc7
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminUpgradeStatusListCard.tsx
@@ -11664,7 +11669,7 @@ msgstr "Linkki"
 #. js-lingui-id: FJPUOB
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 msgid "Link content"
-msgstr ""
+msgstr "Linkin sisältö"
 
 #. js-lingui-id: pQjjYo
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
@@ -12370,7 +12375,7 @@ msgstr "Menetelmä"
 #. js-lingui-id: P9IeiA
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
 msgid "Microphone access is blocked. Allow it in your browser settings to dictate."
-msgstr ""
+msgstr "Mikrofonin käyttö on estetty. Salli se selaimesi asetuksissa sanelua varten."
 
 #. js-lingui-id: 6cH65H
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -12798,7 +12803,7 @@ msgstr "Navigointivalikon kohteet"
 #. js-lingui-id: aTTshK
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
 msgid "Navigation modes"
-msgstr ""
+msgstr "Navigointitilat"
 
 #. js-lingui-id: IbVc4A
 #: src/modules/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions.ts
@@ -12844,7 +12849,7 @@ msgstr "Uusi"
 #. placeholder {0}: objectMetadataItem.labelSingular
 #: src/modules/side-panel/hooks/useOpenRecordInSidePanel.ts
 msgid "New {0}"
-msgstr ""
+msgstr "Uusi {0}"
 
 #. js-lingui-id: Kcr9Fr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
@@ -13563,7 +13568,7 @@ msgstr "Ei metriikkatietoja saatavilla"
 #. js-lingui-id: RUBcco
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
 msgid "No microphone is available. Connect one and try again."
-msgstr ""
+msgstr "Mikrofonia ei ole käytettävissä. Yhdistä mikrofoni ja yritä uudelleen."
 
 #. js-lingui-id: UWZZdQ
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
@@ -13782,7 +13787,7 @@ msgstr "Ei transkriptiota"
 #. js-lingui-id: g+1H2/
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "No transcript is available for this call recording yet."
-msgstr ""
+msgstr "Tälle puhelutallenteelle ei ole vielä saatavilla transkriptiota."
 
 #. js-lingui-id: ZCTuAQ
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
@@ -13903,7 +13908,7 @@ msgstr "Hakuehtojasi vastaavia työtiloja ei löytynyt."
 #. js-lingui-id: lYc235
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "No workspaces match this search"
-msgstr ""
+msgstr "Mikään työtila ei vastaa tätä hakua"
 
 #. js-lingui-id: Ah7JCB
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
@@ -13997,7 +14002,7 @@ msgstr "Ei tallennettu"
 #. js-lingui-id: jUNf38
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Not Recorded"
-msgstr ""
+msgstr "Ei tallennettu"
 
 #. js-lingui-id: MTqQMG
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -14037,7 +14042,7 @@ msgstr "Ei synkronoitu"
 #: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "Note"
-msgstr ""
+msgstr "Muistiinpano"
 
 #. js-lingui-id: VngD1z
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -14288,7 +14293,7 @@ msgstr "kohteessa {0}"
 #. js-lingui-id: gzokj+
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "On suspended workspaces"
-msgstr ""
+msgstr "Keskeytetyissä työtiloissa"
 
 #. js-lingui-id: jcwJgk
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
@@ -14477,7 +14482,7 @@ msgstr "Avaa Gmailissa"
 #. js-lingui-id: C39K59
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Open in"
-msgstr ""
+msgstr "Avaa kohteessa"
 
 #. js-lingui-id: noLjKT
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
@@ -14487,7 +14492,7 @@ msgstr "Avaa sovelluksessa"
 #. js-lingui-id: D/Ckos
 #: src/modules/side-panel/routing/hooks/useExpandRoutedSidePanelPage.ts
 msgid "Open in full page"
-msgstr ""
+msgstr "Avaa koko sivulla"
 
 #. js-lingui-id: DP5C7w
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
@@ -14513,7 +14518,7 @@ msgstr "Avaa tietueet nykyisen sivun viereen"
 #. js-lingui-id: p9J4lB
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownOpenRecordInComponents.tsx
 msgid "Open records in"
-msgstr ""
+msgstr "Avaa tietueet kohteessa"
 
 #. js-lingui-id: F7UdSk
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
@@ -14618,7 +14623,7 @@ msgstr "Organisaatio"
 #. js-lingui-id: 0Ogq/s
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Organization feature"
-msgstr ""
+msgstr "Organisaatio-ominaisuus"
 
 #. js-lingui-id: cyDPQQ
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -15076,7 +15081,7 @@ msgstr "Puhelinnumero kopioitu leikepöydälle"
 #: src/modules/workflow/workflow-steps/components/WorkflowDropdownStepOutputItems.tsx
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems.tsx
 msgid "Pick a {0} record"
-msgstr ""
+msgstr "Valitse {0} tietue"
 
 #. js-lingui-id: JqqNlC
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -15142,7 +15147,7 @@ msgstr "Kiinnitetty"
 #. js-lingui-id: OFY07S
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
 msgid "Pinned tab, always shown on the left"
-msgstr ""
+msgstr "Kiinnitetty välilehti, joka näkyy aina vasemmalla"
 
 #. js-lingui-id: hx1ePY
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
@@ -15896,7 +15901,7 @@ msgstr "Valitut tietueet"
 #. js-lingui-id: 3esxl/
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Recorder Joining"
-msgstr ""
+msgstr "Tallennin liittyy puheluun"
 
 #. js-lingui-id: XmKjfh
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -15907,12 +15912,12 @@ msgstr "Tallennetaan"
 #. js-lingui-id: nHfxK5
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Recording Failed"
-msgstr ""
+msgstr "Tallennus epäonnistui"
 
 #. js-lingui-id: h9TBi+
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Recording Scheduled"
-msgstr ""
+msgstr "Tallennus ajoitettu"
 
 #. js-lingui-id: PWlTvh
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemSearchResults.tsx
@@ -16238,7 +16243,7 @@ msgstr "Uusintapäivä"
 #. js-lingui-id: bha0Vl
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Renews on"
-msgstr ""
+msgstr "Uusiutuu"
 
 #. js-lingui-id: Ee8JBW
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -16314,12 +16319,12 @@ msgstr "Pakollinen"
 #. js-lingui-id: Vae65A
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Research this company"
-msgstr ""
+msgstr "Tutki tätä yritystä"
 
 #. js-lingui-id: ycHL5x
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Research this company and summarize what they do, how big they are and any recent news."
-msgstr ""
+msgstr "Tutki tätä yritystä ja tee yhteenveto sen toiminnasta, koosta ja viimeaikaisista uutisista."
 
 #. js-lingui-id: G42SNI
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -16832,7 +16837,7 @@ msgstr ""
 #. js-lingui-id: oOi11l
 #: src/modules/ai/components/AiChatScrollToBottomButton.tsx
 msgid "Scroll to bottom"
-msgstr ""
+msgstr "Vieritä alas"
 
 #. js-lingui-id: hJjXGo
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -17094,7 +17099,7 @@ msgstr "Hae rekisteröintejä..."
 #. js-lingui-id: Yv+rTs
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
 msgid "Search steps and fields"
-msgstr ""
+msgstr "Hae vaiheita ja kenttiä"
 
 #. js-lingui-id: YIix5Y
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
@@ -17289,7 +17294,7 @@ msgstr "Näytä tietueet kaikista objekteista"
 #. js-lingui-id: boSDrg
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "See what I can do"
-msgstr ""
+msgstr "Katso, mitä voin tehdä"
 
 #. js-lingui-id: eQ3co2
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -17376,7 +17381,7 @@ msgstr ""
 #. js-lingui-id: p4N5TB
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerCreateTargetSelect.tsx
 msgid "Select a record type"
-msgstr ""
+msgstr "Valitse tietuetyyppi"
 
 #. js-lingui-id: dE5jOH
 #: src/modules/side-panel/pages/email-block-settings/components/EmailPageStyleSection.tsx
@@ -17391,7 +17396,7 @@ msgstr "Valitse lähettäjä"
 #. js-lingui-id: uOFdLq
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Select a valid target"
-msgstr ""
+msgstr "Valitse kelvollinen kohde"
 
 #. js-lingui-id: jL3gox
 #: src/modules/object-record/record-field/ui/form-types/components/FormBooleanFieldInput.tsx
@@ -18188,7 +18193,7 @@ msgstr "Jotain meni pieleen lokien latauksessa. Yritä uudelleen."
 #. js-lingui-id: YaUOHN
 #: src/modules/side-panel/routing/components/SidePanelRoutedPage.tsx
 msgid "Something went wrong while loading this page."
-msgstr ""
+msgstr "Jotain meni pieleen tätä sivua ladattaessa."
 
 #. js-lingui-id: yHwG3y
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
@@ -18277,7 +18282,7 @@ msgstr "Espanja"
 #. js-lingui-id: NWZxCM
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
 msgid "Speech recognition could not be reached. Check your connection."
-msgstr ""
+msgstr "Puheentunnistusta ei tavoitettu. Tarkista yhteytesi."
 
 #. js-lingui-id: pyfee5
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -18340,7 +18345,7 @@ msgstr "Standardi"
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "Standard widgets"
-msgstr ""
+msgstr "Vakiopienoisohjelmat"
 
 #. js-lingui-id: ASqWQi
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -18361,7 +18366,7 @@ msgstr "Aloituspäivä"
 #. js-lingui-id: HUKGLi
 #: src/modules/ai/dictation/components/AiChatDictationButton.tsx
 msgid "Start dictation"
-msgstr ""
+msgstr "Aloita sanelu"
 
 #. js-lingui-id: s+K73L
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals.tsx
@@ -18404,7 +18409,7 @@ msgstr "Tila"
 #: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "Static text shared across all record pages"
-msgstr ""
+msgstr "Staattinen teksti, joka jaetaan kaikilla tietuesivuilla"
 
 #. js-lingui-id: uAQUqI
 #: src/modules/ai/components/AiChatThreadFilterDropdownRootMenu.tsx
@@ -18434,7 +18439,7 @@ msgstr "Tila"
 #: src/modules/object-core/workflows/constants/CoreWorkflowFilterFields.ts
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 msgid "Statuses"
-msgstr ""
+msgstr "Tilat"
 
 #. js-lingui-id: oCQwvS
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -18454,7 +18459,7 @@ msgstr "Vaiheen suodatinvalinnat"
 #. js-lingui-id: 9QwrMz
 #: src/modules/ai/dictation/components/AiChatDictationButton.tsx
 msgid "Stop dictation"
-msgstr ""
+msgstr "Lopeta sanelu"
 
 #. js-lingui-id: I8EmDx
 #: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
@@ -18692,32 +18697,32 @@ msgstr "Summa"
 #. js-lingui-id: UjjqZc
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize the records in this view and point out anything that needs attention."
-msgstr ""
+msgstr "Tee yhteenveto tämän näkymän tietueista ja tuo esiin kaikki huomiota vaativat asiat."
 
 #. js-lingui-id: UcEfIM
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this record"
-msgstr ""
+msgstr "Tee yhteenveto tästä tietueesta"
 
 #. js-lingui-id: jhr7if
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this record and its recent activity."
-msgstr ""
+msgstr "Tee yhteenveto tästä tietueesta ja sen viimeaikaisesta toiminnasta."
 
 #. js-lingui-id: uN7gsS
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this view"
-msgstr ""
+msgstr "Tee yhteenveto tästä näkymästä"
 
 #. js-lingui-id: gKAccC
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx
 msgid "Summary copied to clipboard"
-msgstr ""
+msgstr "Yhteenveto kopioitu leikepöydälle"
 
 #. js-lingui-id: yROOOg
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Summary Not Available"
-msgstr ""
+msgstr "Yhteenveto ei ole saatavilla"
 
 #. js-lingui-id: DBC3t5
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
@@ -19116,7 +19121,7 @@ msgstr "Puhelutallennetta ei voitu käsitellä."
 #. js-lingui-id: oji+JF
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "The call recording is being processed…"
-msgstr ""
+msgstr "Puhelutallennetta käsitellään…"
 
 #. js-lingui-id: /kfzmx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -19223,7 +19228,7 @@ msgstr "PDF on Twentyn esiallekirjoittama ja se viimeistellään oikeushenkilös
 #. js-lingui-id: Ir4tSJ
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "The recorder is joining the call…"
-msgstr ""
+msgstr "Tallennin liittyy puheluun…"
 
 #. js-lingui-id: 8vRPIJ
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
@@ -19233,7 +19238,7 @@ msgstr "Tallennetta ei voitu ladata."
 #. js-lingui-id: RhRop7
 #: src/modules/object-record/record-field/ui/hooks/useCreateJunctionRecordWithNestedTarget.ts
 msgid "The relation configuration could not be resolved."
-msgstr ""
+msgstr "Suhteen määritystä ei voitu ratkaista."
 
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -19263,7 +19268,7 @@ msgstr "Transkriptiota ei voitu luoda."
 #. js-lingui-id: Qdm4D5
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "The transcript is being prepared…"
-msgstr ""
+msgstr "Transkriptiota valmistellaan…"
 
 #. js-lingui-id: qrhV2s
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
@@ -19463,7 +19468,7 @@ msgstr "Työtilasi on ottanut tämän sovelluksen rekisteröinnin omistukseensa"
 #. js-lingui-id: XkzBBX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "This call is being recorded…"
-msgstr ""
+msgstr "Tätä puhelua tallennetaan…"
 
 #. js-lingui-id: WCa/7U
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab.tsx
@@ -19523,7 +19528,7 @@ msgstr "Tälle funktiolle ei ole määritetty laukaisinta, joten sitä voidaan k
 #. js-lingui-id: 6IcJ94
 #: src/modules/settings/admin-panel/ai/hooks/useCustomAiProviderAccess.ts
 msgid "This instance's plan could not be verified. Reload the page to try again."
-msgstr ""
+msgstr "Tämän instanssin sopimusta ei voitu vahvistaa. Lataa sivu uudelleen yrittääksesi uudelleen."
 
 #. js-lingui-id: MGWsz+
 #: src/modules/information-banner/components/enterprise/InformationBannerNonProductionInstance.tsx
@@ -19553,7 +19558,7 @@ msgstr "Tämä avain tulisi asettaa viestirungon syötteessä"
 #. js-lingui-id: V6FP3d
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "This meeting was not recorded."
-msgstr ""
+msgstr "Tätä kokousta ei tallennettu."
 
 #. js-lingui-id: Wuvfgw
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -19568,7 +19573,7 @@ msgstr "Tällä sivulla ei ole sisältöä"
 #. js-lingui-id: 45fXTY
 #: src/modules/app/routing/components/WorkspaceRouteUnavailable.tsx
 msgid "This page isn't available."
-msgstr ""
+msgstr "Tämä sivu ei ole käytettävissä."
 
 #. js-lingui-id: R/PuIn
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -20569,7 +20574,7 @@ msgstr "Maksamaton"
 #. js-lingui-id: SYfHmN
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
 msgid "Unpin tab"
-msgstr ""
+msgstr "Poista välilehden kiinnitys"
 
 #. js-lingui-id: SMaFdc
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
@@ -21007,7 +21012,7 @@ msgstr "Käyttö"
 #. js-lingui-id: iaIm91
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
 msgid "Usage across all non-deleted workspaces on this server"
-msgstr ""
+msgstr "Käyttö kaikissa tämän palvelimen poistamattomissa työtiloissa"
 
 #. js-lingui-id: 21hsGI
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
@@ -21028,7 +21033,7 @@ msgstr "Käyttöanalytiikka näkyy täällä, kun alat käyttää krediittejä."
 #. js-lingui-id: hYXHVl
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Usage by App"
-msgstr ""
+msgstr "Käyttö sovelluksittain"
 
 #. js-lingui-id: 7vRxpC
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
@@ -21319,7 +21324,7 @@ msgstr "Sovelluksen versio"
 #. js-lingui-id: IYNSdp
 #: src/modules/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage.tsx
 msgid "Versions"
-msgstr ""
+msgstr "Versiot"
 
 #. js-lingui-id: yIWhRv
 #: src/modules/page-layout/utils/getWidgetTitle.ts
@@ -21834,7 +21839,7 @@ msgstr "Miten voin auttaa sinua?"
 #. js-lingui-id: ivJ1Xk
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "What can you do?"
-msgstr ""
+msgstr "Mitä voit tehdä?"
 
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -21992,7 +21997,7 @@ msgstr "Työnkulun suoritus"
 #. js-lingui-id: QHAMlE
 #: src/modules/object-core/workflows/versions/hooks/useOpenCoreWorkflowVersionsSidePanel.ts
 msgid "Workflow versions"
-msgstr ""
+msgstr "Työnkulun versiot"
 
 #. js-lingui-id: woYYQq
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -22347,7 +22352,7 @@ msgstr "Sinulla ei ole käyttöoikeutta tähän objektiin."
 #. js-lingui-id: Dg2c0z
 #: src/modules/settings/components/SettingsProtectedRouteWrapper.tsx
 msgid "You don't have access to this settings page."
-msgstr ""
+msgstr "Sinulla ei ole pääsyä tälle asetussivulle."
 
 #. js-lingui-id: /K45m9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx

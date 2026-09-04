@@ -889,7 +889,7 @@ msgstr "該工作流程已有一份草案。您確定要刪除它嗎？"
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
-msgstr ""
+msgstr "會議開始時，錄音工具將加入。"
 
 #. js-lingui-id: C6xZqR
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -899,7 +899,7 @@ msgstr "必須為 API 金鑰選擇一個角色"
 #. js-lingui-id: 4tQSH0
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A summary is not available for this call recording yet."
-msgstr ""
+msgstr "此通話錄音尚未提供摘要。"
 
 #. js-lingui-id: /cSHSG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -1187,12 +1187,12 @@ msgstr "新增我們正在聯繫的一家公司（例如：名稱、網站、產
 #. js-lingui-id: 5xxrhm
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a note"
-msgstr ""
+msgstr "新增筆記程式碼"
 
 #. js-lingui-id: uza/B9
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a note to this record: "
-msgstr ""
+msgstr "在此記錄中新增筆記： "
 
 #. js-lingui-id: Ad+JsP
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
@@ -1207,7 +1207,7 @@ msgstr "新增記錄"
 #. js-lingui-id: 4LAQbj
 #: src/modules/activities/calendar/components/CalendarEventComposerTargetsInput.tsx
 msgid "Add a related record"
-msgstr ""
+msgstr "新增相關記錄"
 
 #. js-lingui-id: eMc2xs
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -1218,7 +1218,7 @@ msgstr "新增步驟"
 #. js-lingui-id: BKYXUk
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a step to this workflow that "
-msgstr ""
+msgstr "在此工作流程中新增一個步驟，以 "
 
 #. js-lingui-id: KKfos4
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
@@ -1613,7 +1613,7 @@ msgstr "在上方新增小工具"
 #. placeholder {0}: widget.title
 #: src/modules/page-layout/widgets/components/RecordPageWidgetInsertionSeparator.tsx
 msgid "Add widget above {0}"
-msgstr ""
+msgstr "在 {0} 上方新增小工具"
 
 #. js-lingui-id: yy7F6M
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
@@ -2081,6 +2081,11 @@ msgstr "所有對象"
 msgid "All objects are already in the sidebar"
 msgstr "所有物件已在側邊欄中"
 
+#. js-lingui-id: /D217u
+#: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
+msgid "All operations"
+msgstr ""
+
 #. js-lingui-id: gqXMNe
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
 msgid "All reasons"
@@ -2145,7 +2150,7 @@ msgstr "允許下載文件和附件"
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
 msgid "Allow editing"
-msgstr ""
+msgstr "允許編輯"
 
 #. js-lingui-id: 6BV/aG
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -2447,7 +2452,7 @@ msgstr "API 名稱（單數）"
 #. js-lingui-id: /eZE05
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "API Request"
-msgstr ""
+msgstr "API 請求"
 
 #. js-lingui-id: Z3Brb2
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -3555,7 +3560,7 @@ msgstr "通話錄音程式"
 #. js-lingui-id: 9e+AU2
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Call Recording"
-msgstr ""
+msgstr "通話錄音"
 
 #. js-lingui-id: ahn0Ti
 #: src/modules/page-layout/widgets/call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
@@ -3820,17 +3825,17 @@ msgstr "更換子域名？"
 #. js-lingui-id: xYxauD
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Change theme to dark"
-msgstr ""
+msgstr "將佈景主題變更為深色"
 
 #. js-lingui-id: L5kTLG
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Change theme to light"
-msgstr ""
+msgstr "將佈景主題變更為淺色"
 
 #. js-lingui-id: WAvMry
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Change theme to system"
-msgstr ""
+msgstr "將佈景主題變更為系統設定"
 
 #. js-lingui-id: 9m7pJA
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals.tsx
@@ -3914,7 +3919,7 @@ msgstr "聊天"
 #. js-lingui-id: oa2dNe
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check recent runs"
-msgstr ""
+msgstr "查看最近的執行"
 
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -3924,7 +3929,7 @@ msgstr "請檢查活動日期"
 #. js-lingui-id: PaKTa7
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check this workflow's recent runs and tell me whether any failed and why."
-msgstr ""
+msgstr "查看此工作流程最近的執行，並告訴我是否有任何執行失敗及其原因。"
 
 #. js-lingui-id: h5C4B4
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
@@ -4285,7 +4290,7 @@ msgstr "收合資料夾"
 #. js-lingui-id: mkMLq4
 #: src/modules/navigation/hooks/useNavigationDrawerTogglePresentation.ts
 msgid "Collapse sidebar"
-msgstr ""
+msgstr "收合側邊欄"
 
 #. js-lingui-id: OQTRMK
 #: src/modules/ai/components/AiChatCollapseButton.tsx
@@ -4999,7 +5004,7 @@ msgstr "複製連結"
 #. js-lingui-id: RlESoV
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Copy link to page"
-msgstr ""
+msgstr "複製頁面連結"
 
 #. js-lingui-id: eZ5HO9
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
@@ -5029,7 +5034,7 @@ msgstr "複製分享連結"
 #. js-lingui-id: a08Y3L
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx
 msgid "Copy summary"
-msgstr ""
+msgstr "複製摘要"
 
 #. js-lingui-id: Ej5euX
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -5134,7 +5139,7 @@ msgstr "無法產生已簽署的 DPA。請再試一次。"
 #. js-lingui-id: FR0Fbp
 #: src/modules/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage.tsx
 msgid "Could not load versions."
-msgstr ""
+msgstr "無法載入版本。"
 
 #. js-lingui-id: KqYYBp
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -5170,7 +5175,7 @@ msgstr "無法重新整理有效性權杖。請聯絡支援。"
 #: src/modules/object-core/workflows/versions/hooks/useRestoreCoreWorkflowVersionAsDraft.ts
 #: src/modules/object-core/workflows/versions/hooks/useRestoreCoreWorkflowVersionAsDraft.ts
 msgid "Could not restore this version as draft."
-msgstr ""
+msgstr "無法將此版本還原為草稿。"
 
 #. js-lingui-id: 5PWKlr
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
@@ -5216,7 +5221,7 @@ msgstr "無法複製到剪貼板"
 #. js-lingui-id: TU+LOV
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Couldn't load installed workspaces"
-msgstr ""
+msgstr "無法載入已安裝的工作區"
 
 #. js-lingui-id: kjbTwZ
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController.ts
@@ -5298,7 +5303,7 @@ msgstr "建立新聯絡人並將其連結到一家公司。詳細資料： "
 #. js-lingui-id: j85EUk
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a new record in this view. Details: "
-msgstr ""
+msgstr "在此視圖中建立新記錄。詳細資料： "
 
 #. js-lingui-id: n1Nbbe
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -5315,17 +5320,17 @@ msgstr ""
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task"
-msgstr ""
+msgstr "建立任務"
 
 #. js-lingui-id: Jk5UrD
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task for this company: "
-msgstr ""
+msgstr "為此公司建立任務： "
 
 #. js-lingui-id: T9fLSG
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task for this record: "
-msgstr ""
+msgstr "為此記錄建立任務： "
 
 #. js-lingui-id: Xn2Nlq
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -5845,21 +5850,21 @@ msgstr "自訂供應商"
 #. placeholder {0}: access.seatThreshold
 #: src/modules/settings/admin-panel/ai/hooks/useCustomAiProviderAccess.ts
 msgid "Custom providers are complimentary for organizations of up to {0} seats. Above that, an Organization plan is required."
-msgstr ""
+msgstr "自訂提供者對於最多 {0} 個席位的組織免費提供。超過此數量時，需要組織方案。"
 
 #. js-lingui-id: dDp+uz
 #. placeholder {0}: access.seatThreshold
 #. placeholder {1}: access.seatCount
 #: src/modules/settings/admin-panel/ai/hooks/useCustomAiProviderAccess.ts
 msgid "Custom providers are complimentary for organizations of up to {0} seats. This instance has {1} seats, so an Organization plan is required."
-msgstr ""
+msgstr "自訂提供者對於最多 {0} 個席位的組織免費提供。此執行個體有 {1} 個席位，因此需要組織方案。"
 
 #. js-lingui-id: FjmF6O
 #. placeholder {0}: access.seatThreshold
 #. placeholder {1}: access.seatCount
 #: src/modules/settings/admin-panel/ai/hooks/useCustomAiProviderAccess.ts
 msgid "Custom providers are complimentary up to {0} seats. This instance has {1}. Upgrade to add more."
-msgstr ""
+msgstr "自訂提供者最多 {0} 個席位可免費使用。此執行個體有 {1} 個席位。升級以新增更多席位。"
 
 #. js-lingui-id: BjGDEB
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -6464,7 +6469,7 @@ msgstr "刪除聊天"
 #. js-lingui-id: Wkx6Ld
 #: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramDefaultEdgeEditable.tsx
 msgid "Delete connection"
-msgstr ""
+msgstr "刪除連接"
 
 #. js-lingui-id: 4xlcyV
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -6773,17 +6778,17 @@ msgstr "在你帳戶上具有使用中工作階段的裝置"
 #. js-lingui-id: PFS3WB
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
 msgid "Dictation did not respond in this browser. Try Safari, or type instead."
-msgstr ""
+msgstr "聽寫功能未在此瀏覽器中回應。請嘗試 Safari，或改用輸入文字。"
 
 #. js-lingui-id: qXiOAF
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
 msgid "Dictation failed. Try again."
-msgstr ""
+msgstr "聽寫失敗。請再試一次。"
 
 #. js-lingui-id: MDy8Vw
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
 msgid "Dictation is not supported in this browser."
-msgstr ""
+msgstr "此瀏覽器不支援聽寫功能。"
 
 #. js-lingui-id: MRB7nI
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
@@ -6942,7 +6947,7 @@ msgstr "域名已被佔用"
 #. js-lingui-id: eNcdvk
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 msgid "Domain links are stored as a bare domain name, so twenty.com and https://www.twenty.com are the same value"
-msgstr ""
+msgstr "網域連結會儲存為不含其他部分的網域名稱，因此 twenty.com 和 https://www.twenty.com 是相同的值"
 
 #. js-lingui-id: XoBD/+
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
@@ -7033,12 +7038,12 @@ msgstr "草稿"
 #. js-lingui-id: 1qZ7C3
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Draft an email"
-msgstr ""
+msgstr "撰寫電子郵件草稿"
 
 #. js-lingui-id: /b72oP
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Draft an email to this company about "
-msgstr ""
+msgstr "撰寫一封關於此公司的電子郵件草稿： "
 
 #. js-lingui-id: DbAw4C
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -7320,7 +7325,7 @@ msgstr "編輯付款方式、查看發票等"
 #. placeholder {0}: pinnedTab.title
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
 msgid "Edit pinned tab: {0}"
-msgstr ""
+msgstr "編輯釘選分頁：{0}"
 
 #. js-lingui-id: QJQd1J
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -7469,7 +7474,7 @@ msgstr "電子郵件或域名已在阻止列表中"
 #. js-lingui-id: xUDbZ0
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Email Send"
-msgstr ""
+msgstr "傳送電子郵件"
 
 #. js-lingui-id: Xl929X
 #: src/modules/activities/emails/hooks/useSendEmail.ts
@@ -8384,7 +8389,7 @@ msgstr "展開記錄"
 #. js-lingui-id: tugdy6
 #: src/modules/navigation/hooks/useNavigationDrawerTogglePresentation.ts
 msgid "Expand sidebar"
-msgstr ""
+msgstr "展開側邊欄"
 
 #. js-lingui-id: Y7w75u
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowCodeEditor.tsx
@@ -8455,12 +8460,12 @@ msgstr "在 {dateDiff} 過期"
 #. js-lingui-id: VJKLVq
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain this workflow"
-msgstr ""
+msgstr "說明此工作流程"
 
 #. js-lingui-id: p8KUPY
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain what this workflow does, step by step."
-msgstr ""
+msgstr "逐步說明此工作流程的作用。"
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
@@ -8631,7 +8636,7 @@ msgstr "應用程式安裝失敗。"
 #. js-lingui-id: 8YghIJ
 #: src/modules/activities/calendar/hooks/useCalendarEventComposer.ts
 msgid "Failed to link the related records to this event"
-msgstr ""
+msgstr "無法將相關記錄連結至此活動"
 
 #. js-lingui-id: LGNhPn
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
@@ -9163,12 +9168,12 @@ msgstr "篩選群組規則選項"
 #. js-lingui-id: FG3LyE
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Filter this view"
-msgstr ""
+msgstr "篩選此視圖"
 
 #. js-lingui-id: xitJ93
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Filter this view to only show "
-msgstr ""
+msgstr "篩選此視圖，僅顯示 "
 
 #. js-lingui-id: 0i36a3
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
@@ -9183,7 +9188,7 @@ msgstr "篩選退訂者"
 #. js-lingui-id: iTs6Ck
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
 msgid "Filter workflows"
-msgstr ""
+msgstr "篩選工作流程"
 
 #. js-lingui-id: YrBWVK
 #: src/modules/object-record/record-index/utils/getNonReadableViewFieldSubTitle.ts
@@ -10555,7 +10560,7 @@ msgstr "插入 JSON 輸入，然後按下「執行函式」。"
 #. js-lingui-id: UsX21s
 #: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramDefaultEdgeEditable.tsx
 msgid "Insert action"
-msgstr ""
+msgstr "插入操作"
 
 #. js-lingui-id: mia08l
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
@@ -10651,7 +10656,7 @@ msgstr "安裝中..."
 #. js-lingui-id: kc9VIS
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Installs"
-msgstr ""
+msgstr "安裝次數"
 
 #. js-lingui-id: x8uKc7
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminUpgradeStatusListCard.tsx
@@ -11641,7 +11646,7 @@ msgstr "鏈接"
 #. js-lingui-id: FJPUOB
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 msgid "Link content"
-msgstr ""
+msgstr "連結內容"
 
 #. js-lingui-id: pQjjYo
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
@@ -12347,7 +12352,7 @@ msgstr "方法"
 #. js-lingui-id: P9IeiA
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
 msgid "Microphone access is blocked. Allow it in your browser settings to dictate."
-msgstr ""
+msgstr "麥克風存取權已封鎖。請在瀏覽器設定中允許存取，以使用聽寫功能。"
 
 #. js-lingui-id: 6cH65H
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -12775,7 +12780,7 @@ msgstr "導覽選單項目"
 #. js-lingui-id: aTTshK
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
 msgid "Navigation modes"
-msgstr ""
+msgstr "導覽模式"
 
 #. js-lingui-id: IbVc4A
 #: src/modules/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions.ts
@@ -12821,7 +12826,7 @@ msgstr "新"
 #. placeholder {0}: objectMetadataItem.labelSingular
 #: src/modules/side-panel/hooks/useOpenRecordInSidePanel.ts
 msgid "New {0}"
-msgstr ""
+msgstr "新增 {0}"
 
 #. js-lingui-id: Kcr9Fr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
@@ -13540,7 +13545,7 @@ msgstr "沒有可用的數據指標"
 #. js-lingui-id: RUBcco
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
 msgid "No microphone is available. Connect one and try again."
-msgstr ""
+msgstr "沒有可用的麥克風。請連接一個麥克風後再試一次。"
 
 #. js-lingui-id: UWZZdQ
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
@@ -13759,7 +13764,7 @@ msgstr "無逐字稿"
 #. js-lingui-id: g+1H2/
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "No transcript is available for this call recording yet."
-msgstr ""
+msgstr "此通話錄音目前尚無可用的逐字稿。"
 
 #. js-lingui-id: ZCTuAQ
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
@@ -13880,7 +13885,7 @@ msgstr "找不到符合您搜尋條件的工作區。"
 #. js-lingui-id: lYc235
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "No workspaces match this search"
-msgstr ""
+msgstr "沒有符合此搜尋條件的工作區"
 
 #. js-lingui-id: Ah7JCB
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
@@ -13974,7 +13979,7 @@ msgstr "未錄音"
 #. js-lingui-id: jUNf38
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Not Recorded"
-msgstr ""
+msgstr "未錄音"
 
 #. js-lingui-id: MTqQMG
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -14014,7 +14019,7 @@ msgstr "未同步"
 #: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "Note"
-msgstr ""
+msgstr "備註"
 
 #. js-lingui-id: VngD1z
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -14265,7 +14270,7 @@ msgstr "在 {0} 上"
 #. js-lingui-id: gzokj+
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "On suspended workspaces"
-msgstr ""
+msgstr "於已暫停的工作區"
 
 #. js-lingui-id: jcwJgk
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
@@ -14454,7 +14459,7 @@ msgstr "打開Gmail"
 #. js-lingui-id: C39K59
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Open in"
-msgstr ""
+msgstr "打開"
 
 #. js-lingui-id: noLjKT
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
@@ -14464,7 +14469,7 @@ msgstr "在應用程式中打開"
 #. js-lingui-id: D/Ckos
 #: src/modules/side-panel/routing/hooks/useExpandRoutedSidePanelPage.ts
 msgid "Open in full page"
-msgstr ""
+msgstr "在完整頁面中開啟"
 
 #. js-lingui-id: DP5C7w
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
@@ -14490,7 +14495,7 @@ msgstr "在目前頁面旁邊開啟記錄"
 #. js-lingui-id: p9J4lB
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownOpenRecordInComponents.tsx
 msgid "Open records in"
-msgstr ""
+msgstr "開啟記錄的方式"
 
 #. js-lingui-id: F7UdSk
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
@@ -14595,7 +14600,7 @@ msgstr "組織"
 #. js-lingui-id: 0Ogq/s
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Organization feature"
-msgstr ""
+msgstr "組織功能"
 
 #. js-lingui-id: cyDPQQ
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -15053,7 +15058,7 @@ msgstr "電話號碼已複製到剪貼板"
 #: src/modules/workflow/workflow-steps/components/WorkflowDropdownStepOutputItems.tsx
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems.tsx
 msgid "Pick a {0} record"
-msgstr ""
+msgstr "選擇一個 {0} 記錄"
 
 #. js-lingui-id: JqqNlC
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -15119,7 +15124,7 @@ msgstr "已釘選"
 #. js-lingui-id: OFY07S
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
 msgid "Pinned tab, always shown on the left"
-msgstr ""
+msgstr "釘選分頁，一律顯示於左側"
 
 #. js-lingui-id: hx1ePY
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
@@ -15873,7 +15878,7 @@ msgstr "已選取紀錄"
 #. js-lingui-id: 3esxl/
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Recorder Joining"
-msgstr ""
+msgstr "錄音工具正在加入"
 
 #. js-lingui-id: XmKjfh
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -15884,12 +15889,12 @@ msgstr "錄音中"
 #. js-lingui-id: nHfxK5
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Recording Failed"
-msgstr ""
+msgstr "錄音失敗"
 
 #. js-lingui-id: h9TBi+
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Recording Scheduled"
-msgstr ""
+msgstr "已排定錄音"
 
 #. js-lingui-id: PWlTvh
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemSearchResults.tsx
@@ -16215,7 +16220,7 @@ msgstr "續訂日期"
 #. js-lingui-id: bha0Vl
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Renews on"
-msgstr ""
+msgstr "續約日期"
 
 #. js-lingui-id: Ee8JBW
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -16291,12 +16296,12 @@ msgstr "必填"
 #. js-lingui-id: Vae65A
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Research this company"
-msgstr ""
+msgstr "研究此公司"
 
 #. js-lingui-id: ycHL5x
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Research this company and summarize what they do, how big they are and any recent news."
-msgstr ""
+msgstr "研究此公司，並摘要說明其業務、規模及近期新聞。"
 
 #. js-lingui-id: G42SNI
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -16809,7 +16814,7 @@ msgstr ""
 #. js-lingui-id: oOi11l
 #: src/modules/ai/components/AiChatScrollToBottomButton.tsx
 msgid "Scroll to bottom"
-msgstr ""
+msgstr "捲動至底部"
 
 #. js-lingui-id: hJjXGo
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -17071,7 +17076,7 @@ msgstr "搜尋註冊..."
 #. js-lingui-id: Yv+rTs
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
 msgid "Search steps and fields"
-msgstr ""
+msgstr "搜尋步驟和欄位"
 
 #. js-lingui-id: YIix5Y
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
@@ -17266,7 +17271,7 @@ msgstr "查看所有物件的記錄"
 #. js-lingui-id: boSDrg
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "See what I can do"
-msgstr ""
+msgstr "查看我能做什麼"
 
 #. js-lingui-id: eQ3co2
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -17353,7 +17358,7 @@ msgstr "選取要編輯的導覽項目"
 #. js-lingui-id: p4N5TB
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerCreateTargetSelect.tsx
 msgid "Select a record type"
-msgstr ""
+msgstr "選擇記錄類型"
 
 #. js-lingui-id: dE5jOH
 #: src/modules/side-panel/pages/email-block-settings/components/EmailPageStyleSection.tsx
@@ -17368,7 +17373,7 @@ msgstr "選取寄件者"
 #. js-lingui-id: uOFdLq
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Select a valid target"
-msgstr ""
+msgstr "選擇有效的目標"
 
 #. js-lingui-id: jL3gox
 #: src/modules/object-record/record-field/ui/form-types/components/FormBooleanFieldInput.tsx
@@ -18165,7 +18170,7 @@ msgstr "載入日誌時發生錯誤。請再試一次。"
 #. js-lingui-id: YaUOHN
 #: src/modules/side-panel/routing/components/SidePanelRoutedPage.tsx
 msgid "Something went wrong while loading this page."
-msgstr ""
+msgstr "載入此頁面時發生錯誤。"
 
 #. js-lingui-id: yHwG3y
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
@@ -18254,7 +18259,7 @@ msgstr "西班牙語"
 #. js-lingui-id: NWZxCM
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
 msgid "Speech recognition could not be reached. Check your connection."
-msgstr ""
+msgstr "無法連線至語音辨識服務。請檢查您的連線。"
 
 #. js-lingui-id: pyfee5
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -18317,7 +18322,7 @@ msgstr "標準"
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "Standard widgets"
-msgstr ""
+msgstr "標準小工具"
 
 #. js-lingui-id: ASqWQi
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -18338,7 +18343,7 @@ msgstr "開始日期"
 #. js-lingui-id: HUKGLi
 #: src/modules/ai/dictation/components/AiChatDictationButton.tsx
 msgid "Start dictation"
-msgstr ""
+msgstr "開始聽寫"
 
 #. js-lingui-id: s+K73L
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals.tsx
@@ -18381,7 +18386,7 @@ msgstr "狀態"
 #: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "Static text shared across all record pages"
-msgstr ""
+msgstr "所有記錄頁面共用的靜態文字"
 
 #. js-lingui-id: uAQUqI
 #: src/modules/ai/components/AiChatThreadFilterDropdownRootMenu.tsx
@@ -18411,7 +18416,7 @@ msgstr "狀態"
 #: src/modules/object-core/workflows/constants/CoreWorkflowFilterFields.ts
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 msgid "Statuses"
-msgstr ""
+msgstr "狀態"
 
 #. js-lingui-id: oCQwvS
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -18431,7 +18436,7 @@ msgstr "步驟篩選選項"
 #. js-lingui-id: 9QwrMz
 #: src/modules/ai/dictation/components/AiChatDictationButton.tsx
 msgid "Stop dictation"
-msgstr ""
+msgstr "停止聽寫"
 
 #. js-lingui-id: I8EmDx
 #: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
@@ -18669,32 +18674,32 @@ msgstr "總和"
 #. js-lingui-id: UjjqZc
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize the records in this view and point out anything that needs attention."
-msgstr ""
+msgstr "摘要此視圖中的記錄，並指出任何需要注意的事項。"
 
 #. js-lingui-id: UcEfIM
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this record"
-msgstr ""
+msgstr "摘要此記錄"
 
 #. js-lingui-id: jhr7if
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this record and its recent activity."
-msgstr ""
+msgstr "摘要此記錄及其近期活動。"
 
 #. js-lingui-id: uN7gsS
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this view"
-msgstr ""
+msgstr "摘要此視圖"
 
 #. js-lingui-id: gKAccC
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx
 msgid "Summary copied to clipboard"
-msgstr ""
+msgstr "摘要已複製到剪貼簿"
 
 #. js-lingui-id: yROOOg
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Summary Not Available"
-msgstr ""
+msgstr "無可用摘要"
 
 #. js-lingui-id: DBC3t5
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
@@ -19063,7 +19068,7 @@ msgstr "無法處理此通話錄音。"
 #. js-lingui-id: oji+JF
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "The call recording is being processed…"
-msgstr ""
+msgstr "此通話錄音正在處理中…"
 
 #. js-lingui-id: /kfzmx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -19170,7 +19175,7 @@ msgstr "此 PDF 已由 Twenty 預先簽署，並與您的法人實體與授權�
 #. js-lingui-id: Ir4tSJ
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "The recorder is joining the call…"
-msgstr ""
+msgstr "錄音工具正在加入通話…"
 
 #. js-lingui-id: 8vRPIJ
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
@@ -19180,7 +19185,7 @@ msgstr "無法載入此錄音。"
 #. js-lingui-id: RhRop7
 #: src/modules/object-record/record-field/ui/hooks/useCreateJunctionRecordWithNestedTarget.ts
 msgid "The relation configuration could not be resolved."
-msgstr ""
+msgstr "無法解析關聯設定。"
 
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -19210,7 +19215,7 @@ msgstr "無法產生逐字稿。"
 #. js-lingui-id: Qdm4D5
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "The transcript is being prepared…"
-msgstr ""
+msgstr "正在準備逐字稿…"
 
 #. js-lingui-id: qrhV2s
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
@@ -19410,7 +19415,7 @@ msgstr "此應用程式的註冊已由你的工作區認領"
 #. js-lingui-id: XkzBBX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "This call is being recorded…"
-msgstr ""
+msgstr "此通話正在錄音…"
 
 #. js-lingui-id: WCa/7U
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab.tsx
@@ -19470,7 +19475,7 @@ msgstr "此函式未設定任何觸發器，因此只能從「測試」分頁或
 #. js-lingui-id: 6IcJ94
 #: src/modules/settings/admin-panel/ai/hooks/useCustomAiProviderAccess.ts
 msgid "This instance's plan could not be verified. Reload the page to try again."
-msgstr ""
+msgstr "無法驗證此執行個體的方案。請重新載入頁面後再試一次。"
 
 #. js-lingui-id: MGWsz+
 #: src/modules/information-banner/components/enterprise/InformationBannerNonProductionInstance.tsx
@@ -19500,7 +19505,7 @@ msgstr "此鍵應透過主體輸入設定"
 #. js-lingui-id: V6FP3d
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "This meeting was not recorded."
-msgstr ""
+msgstr "此會議未錄音。"
 
 #. js-lingui-id: Wuvfgw
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -19515,7 +19520,7 @@ msgstr "此頁面沒有內容"
 #. js-lingui-id: 45fXTY
 #: src/modules/app/routing/components/WorkspaceRouteUnavailable.tsx
 msgid "This page isn't available."
-msgstr ""
+msgstr "此頁面無法使用。"
 
 #. js-lingui-id: R/PuIn
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -20516,7 +20521,7 @@ msgstr "未付款"
 #. js-lingui-id: SYfHmN
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
 msgid "Unpin tab"
-msgstr ""
+msgstr "取消釘選分頁"
 
 #. js-lingui-id: SMaFdc
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
@@ -20954,7 +20959,7 @@ msgstr "使用情況"
 #. js-lingui-id: iaIm91
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
 msgid "Usage across all non-deleted workspaces on this server"
-msgstr ""
+msgstr "此伺服器上所有未刪除工作區的使用情況"
 
 #. js-lingui-id: 21hsGI
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
@@ -20975,7 +20980,7 @@ msgstr "開始使用點數後，這裡會顯示使用分析。"
 #. js-lingui-id: hYXHVl
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Usage by App"
-msgstr ""
+msgstr "依 App 使用情況"
 
 #. js-lingui-id: 7vRxpC
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
@@ -21266,7 +21271,7 @@ msgstr "應用程序版本"
 #. js-lingui-id: IYNSdp
 #: src/modules/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage.tsx
 msgid "Versions"
-msgstr ""
+msgstr "版本"
 
 #. js-lingui-id: yIWhRv
 #: src/modules/page-layout/utils/getWidgetTitle.ts
@@ -21781,7 +21786,7 @@ msgstr "我可以為您提供什麼協助？"
 #. js-lingui-id: ivJ1Xk
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "What can you do?"
-msgstr ""
+msgstr "你能做什麼？"
 
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -21939,7 +21944,7 @@ msgstr "工作流程執行"
 #. js-lingui-id: QHAMlE
 #: src/modules/object-core/workflows/versions/hooks/useOpenCoreWorkflowVersionsSidePanel.ts
 msgid "Workflow versions"
-msgstr ""
+msgstr "工作流程版本"
 
 #. js-lingui-id: woYYQq
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -22294,7 +22299,7 @@ msgstr "您無權限存取此物件。"
 #. js-lingui-id: Dg2c0z
 #: src/modules/settings/components/SettingsProtectedRouteWrapper.tsx
 msgid "You don't have access to this settings page."
-msgstr ""
+msgstr "您沒有存取此設定頁面的權限。"
 
 #. js-lingui-id: /K45m9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx

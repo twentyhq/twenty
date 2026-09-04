@@ -889,7 +889,7 @@ msgstr "Pro tento pracovní postup již existuje koncept. Opravdu jej chcete sma
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
-msgstr ""
+msgstr "Po zahájení schůzky se připojí záznamník."
 
 #. js-lingui-id: C6xZqR
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -899,7 +899,7 @@ msgstr "Pro klíč API musí být vybrána role"
 #. js-lingui-id: 4tQSH0
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A summary is not available for this call recording yet."
-msgstr ""
+msgstr "Pro tento záznam hovoru zatím není k dispozici souhrn."
 
 #. js-lingui-id: /cSHSG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -1187,12 +1187,12 @@ msgstr "Přidejte novou společnost, se kterou jsme v kontaktu (např. název, w
 #. js-lingui-id: 5xxrhm
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a note"
-msgstr ""
+msgstr "Přidat poznámku"
 
 #. js-lingui-id: uza/B9
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a note to this record: "
-msgstr ""
+msgstr "Přidat poznámku k tomuto záznamu: "
 
 #. js-lingui-id: Ad+JsP
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
@@ -1207,7 +1207,7 @@ msgstr "Přidat záznam"
 #. js-lingui-id: 4LAQbj
 #: src/modules/activities/calendar/components/CalendarEventComposerTargetsInput.tsx
 msgid "Add a related record"
-msgstr ""
+msgstr "Přidat související záznam"
 
 #. js-lingui-id: eMc2xs
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -1218,7 +1218,7 @@ msgstr "Přidat krok"
 #. js-lingui-id: BKYXUk
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a step to this workflow that "
-msgstr ""
+msgstr "Přidat do tohoto pracovního postupu krok, který "
 
 #. js-lingui-id: KKfos4
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
@@ -1613,7 +1613,7 @@ msgstr "Přidat widget nad aktuální"
 #. placeholder {0}: widget.title
 #: src/modules/page-layout/widgets/components/RecordPageWidgetInsertionSeparator.tsx
 msgid "Add widget above {0}"
-msgstr ""
+msgstr "Přidat widget nad {0}"
 
 #. js-lingui-id: yy7F6M
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
@@ -2081,6 +2081,11 @@ msgstr "Všechny objekty"
 msgid "All objects are already in the sidebar"
 msgstr "Všechny objekty už jsou v postranním panelu"
 
+#. js-lingui-id: /D217u
+#: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
+msgid "All operations"
+msgstr ""
+
 #. js-lingui-id: gqXMNe
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
 msgid "All reasons"
@@ -2145,7 +2150,7 @@ msgstr "Povolit stahování souborů a příloh"
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
 msgid "Allow editing"
-msgstr ""
+msgstr "Povolit úpravy"
 
 #. js-lingui-id: 6BV/aG
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -2447,7 +2452,7 @@ msgstr "API název (jednotné číslo)"
 #. js-lingui-id: /eZE05
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "API Request"
-msgstr ""
+msgstr "Požadavek API"
 
 #. js-lingui-id: Z3Brb2
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -3555,7 +3560,7 @@ msgstr "Nahrávání hovorů"
 #. js-lingui-id: 9e+AU2
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Call Recording"
-msgstr ""
+msgstr "Nahrávání hovorů"
 
 #. js-lingui-id: ahn0Ti
 #: src/modules/page-layout/widgets/call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
@@ -3820,17 +3825,17 @@ msgstr "Změnit subdoménu?"
 #. js-lingui-id: xYxauD
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Change theme to dark"
-msgstr ""
+msgstr "Změnit motiv na tmavý"
 
 #. js-lingui-id: L5kTLG
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Change theme to light"
-msgstr ""
+msgstr "Změnit motiv na světlý"
 
 #. js-lingui-id: WAvMry
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Change theme to system"
-msgstr ""
+msgstr "Změnit motiv na systémový"
 
 #. js-lingui-id: 9m7pJA
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals.tsx
@@ -3914,7 +3919,7 @@ msgstr "Chaty"
 #. js-lingui-id: oa2dNe
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check recent runs"
-msgstr ""
+msgstr "Zkontrolovat nedávná spuštění"
 
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -3924,7 +3929,7 @@ msgstr "Zkontrolujte data události"
 #. js-lingui-id: PaKTa7
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check this workflow's recent runs and tell me whether any failed and why."
-msgstr ""
+msgstr "Zkontrolujte nedávná spuštění tohoto pracovního postupu a sdělte mi, zda některé selhalo a proč."
 
 #. js-lingui-id: h5C4B4
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
@@ -4285,7 +4290,7 @@ msgstr "Sbalit složku"
 #. js-lingui-id: mkMLq4
 #: src/modules/navigation/hooks/useNavigationDrawerTogglePresentation.ts
 msgid "Collapse sidebar"
-msgstr ""
+msgstr "Sbalit postranní panel"
 
 #. js-lingui-id: OQTRMK
 #: src/modules/ai/components/AiChatCollapseButton.tsx
@@ -4999,7 +5004,7 @@ msgstr "Kopírovat odkaz"
 #. js-lingui-id: RlESoV
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Copy link to page"
-msgstr ""
+msgstr "Kopírovat odkaz na stránku"
 
 #. js-lingui-id: eZ5HO9
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
@@ -5029,7 +5034,7 @@ msgstr "Kopírovat odkaz pro sdílení"
 #. js-lingui-id: a08Y3L
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx
 msgid "Copy summary"
-msgstr ""
+msgstr "Kopírovat souhrn"
 
 #. js-lingui-id: Ej5euX
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -5134,7 +5139,7 @@ msgstr "Nepodařilo se vygenerovat podepsanou DPA. Zkuste to prosím znovu."
 #. js-lingui-id: FR0Fbp
 #: src/modules/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage.tsx
 msgid "Could not load versions."
-msgstr ""
+msgstr "Verze se nepodařilo načíst."
 
 #. js-lingui-id: KqYYBp
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -5170,7 +5175,7 @@ msgstr "Nelze obnovit token platnosti. Kontaktujte podporu."
 #: src/modules/object-core/workflows/versions/hooks/useRestoreCoreWorkflowVersionAsDraft.ts
 #: src/modules/object-core/workflows/versions/hooks/useRestoreCoreWorkflowVersionAsDraft.ts
 msgid "Could not restore this version as draft."
-msgstr ""
+msgstr "Tuto verzi se nepodařilo obnovit jako koncept."
 
 #. js-lingui-id: 5PWKlr
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
@@ -5216,7 +5221,7 @@ msgstr "Nepodařilo se zkopírovat do schránky"
 #. js-lingui-id: TU+LOV
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Couldn't load installed workspaces"
-msgstr ""
+msgstr "Nainstalované pracovní prostory se nepodařilo načíst"
 
 #. js-lingui-id: kjbTwZ
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController.ts
@@ -5298,7 +5303,7 @@ msgstr "Vytvořte nový kontakt a propojte ho se společností. Podrobnosti: "
 #. js-lingui-id: j85EUk
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a new record in this view. Details: "
-msgstr ""
+msgstr "Vytvořit nový záznam v tomto zobrazení. Podrobnosti: "
 
 #. js-lingui-id: n1Nbbe
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -5315,17 +5320,17 @@ msgstr ""
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task"
-msgstr ""
+msgstr "Vytvořit úkol"
 
 #. js-lingui-id: Jk5UrD
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task for this company: "
-msgstr ""
+msgstr "Vytvořit úkol pro tuto společnost: "
 
 #. js-lingui-id: T9fLSG
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task for this record: "
-msgstr ""
+msgstr "Vytvořit úkol pro tento záznam: "
 
 #. js-lingui-id: Xn2Nlq
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -5845,21 +5850,21 @@ msgstr "Vlastní poskytovatelé"
 #. placeholder {0}: access.seatThreshold
 #: src/modules/settings/admin-panel/ai/hooks/useCustomAiProviderAccess.ts
 msgid "Custom providers are complimentary for organizations of up to {0} seats. Above that, an Organization plan is required."
-msgstr ""
+msgstr "Vlastní poskytovatelé jsou zdarma pro organizace s až {0} uživateli. Při vyšším počtu je vyžadován plán Organizace."
 
 #. js-lingui-id: dDp+uz
 #. placeholder {0}: access.seatThreshold
 #. placeholder {1}: access.seatCount
 #: src/modules/settings/admin-panel/ai/hooks/useCustomAiProviderAccess.ts
 msgid "Custom providers are complimentary for organizations of up to {0} seats. This instance has {1} seats, so an Organization plan is required."
-msgstr ""
+msgstr "Vlastní poskytovatelé jsou zdarma pro organizace s až {0} uživateli. Tato instance má {1} uživatelů, proto je vyžadován plán Organizace."
 
 #. js-lingui-id: FjmF6O
 #. placeholder {0}: access.seatThreshold
 #. placeholder {1}: access.seatCount
 #: src/modules/settings/admin-panel/ai/hooks/useCustomAiProviderAccess.ts
 msgid "Custom providers are complimentary up to {0} seats. This instance has {1}. Upgrade to add more."
-msgstr ""
+msgstr "Vlastní poskytovatelé jsou zdarma až pro {0} uživatelů. Tato instance má {1}. Chcete-li přidat další, upgradujte."
 
 #. js-lingui-id: BjGDEB
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -6464,7 +6469,7 @@ msgstr "Smazat chat"
 #. js-lingui-id: Wkx6Ld
 #: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramDefaultEdgeEditable.tsx
 msgid "Delete connection"
-msgstr ""
+msgstr "Odstranit připojení"
 
 #. js-lingui-id: 4xlcyV
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -6773,17 +6778,17 @@ msgstr "Zařízení s aktivní relací na vašem účtu"
 #. js-lingui-id: PFS3WB
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
 msgid "Dictation did not respond in this browser. Try Safari, or type instead."
-msgstr ""
+msgstr "Diktování v tomto prohlížeči nereagovalo. Zkuste Safari nebo místo toho pište."
 
 #. js-lingui-id: qXiOAF
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
 msgid "Dictation failed. Try again."
-msgstr ""
+msgstr "Diktování selhalo. Zkuste to znovu."
 
 #. js-lingui-id: MDy8Vw
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
 msgid "Dictation is not supported in this browser."
-msgstr ""
+msgstr "Diktování není v tomto prohlížeči podporováno."
 
 #. js-lingui-id: MRB7nI
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
@@ -6942,7 +6947,7 @@ msgstr "Doména je již zabraná"
 #. js-lingui-id: eNcdvk
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 msgid "Domain links are stored as a bare domain name, so twenty.com and https://www.twenty.com are the same value"
-msgstr ""
+msgstr "Odkazy na domény se ukládají jako samotný název domény, takže twenty.com a https://www.twenty.com mají stejnou hodnotu"
 
 #. js-lingui-id: XoBD/+
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
@@ -7033,12 +7038,12 @@ msgstr "Koncept"
 #. js-lingui-id: 1qZ7C3
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Draft an email"
-msgstr ""
+msgstr "Napsat koncept e-mailu"
 
 #. js-lingui-id: /b72oP
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Draft an email to this company about "
-msgstr ""
+msgstr "Napsat koncept e-mailu této společnosti o "
 
 #. js-lingui-id: DbAw4C
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -7320,7 +7325,7 @@ msgstr "Upravit způsob platby, zobrazit faktury a další"
 #. placeholder {0}: pinnedTab.title
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
 msgid "Edit pinned tab: {0}"
-msgstr ""
+msgstr "Upravit připnutou kartu: {0}"
 
 #. js-lingui-id: QJQd1J
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -7469,7 +7474,7 @@ msgstr "E-mail nebo doména již je v seznamu blokovaných"
 #. js-lingui-id: xUDbZ0
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Email Send"
-msgstr ""
+msgstr "Odeslání e-mailu"
 
 #. js-lingui-id: Xl929X
 #: src/modules/activities/emails/hooks/useSendEmail.ts
@@ -8384,7 +8389,7 @@ msgstr "Rozbalit záznam"
 #. js-lingui-id: tugdy6
 #: src/modules/navigation/hooks/useNavigationDrawerTogglePresentation.ts
 msgid "Expand sidebar"
-msgstr ""
+msgstr "Rozbalit postranní panel"
 
 #. js-lingui-id: Y7w75u
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowCodeEditor.tsx
@@ -8455,12 +8460,12 @@ msgstr "Vyprší za {dateDiff}"
 #. js-lingui-id: VJKLVq
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain this workflow"
-msgstr ""
+msgstr "Vysvětlit tento pracovní postup"
 
 #. js-lingui-id: p8KUPY
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain what this workflow does, step by step."
-msgstr ""
+msgstr "Vysvětlete krok za krokem, co tento pracovní postup dělá."
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
@@ -8631,7 +8636,7 @@ msgstr "Instalace aplikace se nezdařila."
 #. js-lingui-id: 8YghIJ
 #: src/modules/activities/calendar/hooks/useCalendarEventComposer.ts
 msgid "Failed to link the related records to this event"
-msgstr ""
+msgstr "Související záznamy se nepodařilo propojit s touto událostí"
 
 #. js-lingui-id: LGNhPn
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
@@ -9163,12 +9168,12 @@ msgstr "Možnosti pravidel skupiny filtru"
 #. js-lingui-id: FG3LyE
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Filter this view"
-msgstr ""
+msgstr "Filtrovat toto zobrazení"
 
 #. js-lingui-id: xitJ93
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Filter this view to only show "
-msgstr ""
+msgstr "Filtrovat toto zobrazení tak, aby zobrazovalo pouze "
 
 #. js-lingui-id: 0i36a3
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
@@ -9183,7 +9188,7 @@ msgstr "Filtrovat odhlášené příjemce"
 #. js-lingui-id: iTs6Ck
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
 msgid "Filter workflows"
-msgstr ""
+msgstr "Filtrovat pracovní postupy"
 
 #. js-lingui-id: YrBWVK
 #: src/modules/object-record/record-index/utils/getNonReadableViewFieldSubTitle.ts
@@ -10578,7 +10583,7 @@ msgstr "Vložte vstup JSON a pak stiskněte \"Spustit funkci\"."
 #. js-lingui-id: UsX21s
 #: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramDefaultEdgeEditable.tsx
 msgid "Insert action"
-msgstr ""
+msgstr "Vložit akci"
 
 #. js-lingui-id: mia08l
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
@@ -10674,7 +10679,7 @@ msgstr "Instaluje se..."
 #. js-lingui-id: kc9VIS
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Installs"
-msgstr ""
+msgstr "Instalace"
 
 #. js-lingui-id: x8uKc7
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminUpgradeStatusListCard.tsx
@@ -11664,7 +11669,7 @@ msgstr "Odkaz"
 #. js-lingui-id: FJPUOB
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 msgid "Link content"
-msgstr ""
+msgstr "Obsah odkazu"
 
 #. js-lingui-id: pQjjYo
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
@@ -12370,7 +12375,7 @@ msgstr "Metoda"
 #. js-lingui-id: P9IeiA
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
 msgid "Microphone access is blocked. Allow it in your browser settings to dictate."
-msgstr ""
+msgstr "Přístup k mikrofonu je zablokován. Chcete-li diktovat, povolte ho v nastavení prohlížeče."
 
 #. js-lingui-id: 6cH65H
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -12798,7 +12803,7 @@ msgstr "Položky navigační nabídky"
 #. js-lingui-id: aTTshK
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
 msgid "Navigation modes"
-msgstr ""
+msgstr "Režimy navigace"
 
 #. js-lingui-id: IbVc4A
 #: src/modules/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions.ts
@@ -12844,7 +12849,7 @@ msgstr "Nový"
 #. placeholder {0}: objectMetadataItem.labelSingular
 #: src/modules/side-panel/hooks/useOpenRecordInSidePanel.ts
 msgid "New {0}"
-msgstr ""
+msgstr "Nový {0}"
 
 #. js-lingui-id: Kcr9Fr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
@@ -13563,7 +13568,7 @@ msgstr "Žádná data metrik nejsou k dispozici"
 #. js-lingui-id: RUBcco
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
 msgid "No microphone is available. Connect one and try again."
-msgstr ""
+msgstr "Není k dispozici žádný mikrofon. Připojte jej a zkuste to znovu."
 
 #. js-lingui-id: UWZZdQ
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
@@ -13782,7 +13787,7 @@ msgstr "Bez přepisu"
 #. js-lingui-id: g+1H2/
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "No transcript is available for this call recording yet."
-msgstr ""
+msgstr "Pro tento záznam hovoru zatím není k dispozici přepis."
 
 #. js-lingui-id: ZCTuAQ
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
@@ -13903,7 +13908,7 @@ msgstr "Nebyly nalezeny žádné pracovní prostory odpovídající vašim vyhle
 #. js-lingui-id: lYc235
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "No workspaces match this search"
-msgstr ""
+msgstr "Tomuto vyhledávání neodpovídají žádné pracovní prostory"
 
 #. js-lingui-id: Ah7JCB
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
@@ -13997,7 +14002,7 @@ msgstr "Nezaznamenáno"
 #. js-lingui-id: jUNf38
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Not Recorded"
-msgstr ""
+msgstr "Nezaznamenáno"
 
 #. js-lingui-id: MTqQMG
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -14037,7 +14042,7 @@ msgstr "Nesynchronizováno"
 #: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "Note"
-msgstr ""
+msgstr "Poznámka"
 
 #. js-lingui-id: VngD1z
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -14288,7 +14293,7 @@ msgstr "na {0}"
 #. js-lingui-id: gzokj+
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "On suspended workspaces"
-msgstr ""
+msgstr "V pozastavených pracovních prostorech"
 
 #. js-lingui-id: jcwJgk
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
@@ -14477,7 +14482,7 @@ msgstr "Otevřít Gmail"
 #. js-lingui-id: C39K59
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Open in"
-msgstr ""
+msgstr "Otevřít v"
 
 #. js-lingui-id: noLjKT
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
@@ -14487,7 +14492,7 @@ msgstr "Otevřít v aplikaci"
 #. js-lingui-id: D/Ckos
 #: src/modules/side-panel/routing/hooks/useExpandRoutedSidePanelPage.ts
 msgid "Open in full page"
-msgstr ""
+msgstr "Otevřít na celé stránce"
 
 #. js-lingui-id: DP5C7w
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
@@ -14513,7 +14518,7 @@ msgstr "Otevírat záznamy vedle aktuální stránky"
 #. js-lingui-id: p9J4lB
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownOpenRecordInComponents.tsx
 msgid "Open records in"
-msgstr ""
+msgstr "Otevřít záznamy v"
 
 #. js-lingui-id: F7UdSk
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
@@ -14618,7 +14623,7 @@ msgstr "Organizace"
 #. js-lingui-id: 0Ogq/s
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Organization feature"
-msgstr ""
+msgstr "Funkce Organizace"
 
 #. js-lingui-id: cyDPQQ
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -15076,7 +15081,7 @@ msgstr "Telefonní číslo zkopírováno do schránky"
 #: src/modules/workflow/workflow-steps/components/WorkflowDropdownStepOutputItems.tsx
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems.tsx
 msgid "Pick a {0} record"
-msgstr ""
+msgstr "Vyberte záznam {0}"
 
 #. js-lingui-id: JqqNlC
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -15142,7 +15147,7 @@ msgstr "Připnuto"
 #. js-lingui-id: OFY07S
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
 msgid "Pinned tab, always shown on the left"
-msgstr ""
+msgstr "Připnutá karta, vždy zobrazená vlevo"
 
 #. js-lingui-id: hx1ePY
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
@@ -15896,7 +15901,7 @@ msgstr "Vybrané záznamy"
 #. js-lingui-id: 3esxl/
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Recorder Joining"
-msgstr ""
+msgstr "Záznamník se připojuje"
 
 #. js-lingui-id: XmKjfh
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -15907,12 +15912,12 @@ msgstr "Nahrávání"
 #. js-lingui-id: nHfxK5
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Recording Failed"
-msgstr ""
+msgstr "Nahrávání selhalo"
 
 #. js-lingui-id: h9TBi+
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Recording Scheduled"
-msgstr ""
+msgstr "Nahrávání naplánováno"
 
 #. js-lingui-id: PWlTvh
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemSearchResults.tsx
@@ -16238,7 +16243,7 @@ msgstr "Datum obnovení"
 #. js-lingui-id: bha0Vl
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Renews on"
-msgstr ""
+msgstr "Obnoví se dne"
 
 #. js-lingui-id: Ee8JBW
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -16314,12 +16319,12 @@ msgstr "Povinné"
 #. js-lingui-id: Vae65A
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Research this company"
-msgstr ""
+msgstr "Zjistit informace o této společnosti"
 
 #. js-lingui-id: ycHL5x
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Research this company and summarize what they do, how big they are and any recent news."
-msgstr ""
+msgstr "Zjistěte informace o této společnosti a shrňte, čím se zabývá, jak je velká a jaké jsou nejnovější zprávy."
 
 #. js-lingui-id: G42SNI
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -16832,7 +16837,7 @@ msgstr ""
 #. js-lingui-id: oOi11l
 #: src/modules/ai/components/AiChatScrollToBottomButton.tsx
 msgid "Scroll to bottom"
-msgstr ""
+msgstr "Posunout dolů"
 
 #. js-lingui-id: hJjXGo
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -17094,7 +17099,7 @@ msgstr "Hledat registrace..."
 #. js-lingui-id: Yv+rTs
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
 msgid "Search steps and fields"
-msgstr ""
+msgstr "Vyhledat kroky a pole"
 
 #. js-lingui-id: YIix5Y
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
@@ -17289,7 +17294,7 @@ msgstr "Zobrazit záznamy na všech objektech"
 #. js-lingui-id: boSDrg
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "See what I can do"
-msgstr ""
+msgstr "Zjistit, co umím"
 
 #. js-lingui-id: eQ3co2
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -17376,7 +17381,7 @@ msgstr "Vyberte navigační položku k úpravě"
 #. js-lingui-id: p4N5TB
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerCreateTargetSelect.tsx
 msgid "Select a record type"
-msgstr ""
+msgstr "Vyberte typ záznamu"
 
 #. js-lingui-id: dE5jOH
 #: src/modules/side-panel/pages/email-block-settings/components/EmailPageStyleSection.tsx
@@ -17391,7 +17396,7 @@ msgstr "Vyberte odesílatele"
 #. js-lingui-id: uOFdLq
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Select a valid target"
-msgstr ""
+msgstr "Vyberte platný cíl"
 
 #. js-lingui-id: jL3gox
 #: src/modules/object-record/record-field/ui/form-types/components/FormBooleanFieldInput.tsx
@@ -18188,7 +18193,7 @@ msgstr "Při načítání protokolů se něco pokazilo. Zkuste to prosím znovu.
 #. js-lingui-id: YaUOHN
 #: src/modules/side-panel/routing/components/SidePanelRoutedPage.tsx
 msgid "Something went wrong while loading this page."
-msgstr ""
+msgstr "Při načítání této stránky se něco pokazilo."
 
 #. js-lingui-id: yHwG3y
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
@@ -18277,7 +18282,7 @@ msgstr "Španělština"
 #. js-lingui-id: NWZxCM
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
 msgid "Speech recognition could not be reached. Check your connection."
-msgstr ""
+msgstr "Službu rozpoznávání řeči se nepodařilo kontaktovat. Zkontrolujte připojení."
 
 #. js-lingui-id: pyfee5
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -18340,7 +18345,7 @@ msgstr "Standardní"
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "Standard widgets"
-msgstr ""
+msgstr "Standardní widgety"
 
 #. js-lingui-id: ASqWQi
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -18361,7 +18366,7 @@ msgstr "Datum zahájení"
 #. js-lingui-id: HUKGLi
 #: src/modules/ai/dictation/components/AiChatDictationButton.tsx
 msgid "Start dictation"
-msgstr ""
+msgstr "Spustit diktování"
 
 #. js-lingui-id: s+K73L
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals.tsx
@@ -18404,7 +18409,7 @@ msgstr "Stav"
 #: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "Static text shared across all record pages"
-msgstr ""
+msgstr "Statický text sdílený mezi všemi stránkami záznamů"
 
 #. js-lingui-id: uAQUqI
 #: src/modules/ai/components/AiChatThreadFilterDropdownRootMenu.tsx
@@ -18434,7 +18439,7 @@ msgstr "Stav"
 #: src/modules/object-core/workflows/constants/CoreWorkflowFilterFields.ts
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 msgid "Statuses"
-msgstr ""
+msgstr "Stavy"
 
 #. js-lingui-id: oCQwvS
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -18454,7 +18459,7 @@ msgstr "Možnosti filtru kroku"
 #. js-lingui-id: 9QwrMz
 #: src/modules/ai/dictation/components/AiChatDictationButton.tsx
 msgid "Stop dictation"
-msgstr ""
+msgstr "Zastavit diktování"
 
 #. js-lingui-id: I8EmDx
 #: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
@@ -18692,32 +18697,32 @@ msgstr "Součet"
 #. js-lingui-id: UjjqZc
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize the records in this view and point out anything that needs attention."
-msgstr ""
+msgstr "Shrňte záznamy v tomto zobrazení a upozorněte na vše, co vyžaduje pozornost."
 
 #. js-lingui-id: UcEfIM
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this record"
-msgstr ""
+msgstr "Shrnout tento záznam"
 
 #. js-lingui-id: jhr7if
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this record and its recent activity."
-msgstr ""
+msgstr "Shrňte tento záznam a jeho nedávnou aktivitu."
 
 #. js-lingui-id: uN7gsS
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this view"
-msgstr ""
+msgstr "Shrnout toto zobrazení"
 
 #. js-lingui-id: gKAccC
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx
 msgid "Summary copied to clipboard"
-msgstr ""
+msgstr "Souhrn zkopírován do schránky"
 
 #. js-lingui-id: yROOOg
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Summary Not Available"
-msgstr ""
+msgstr "Souhrn není k dispozici"
 
 #. js-lingui-id: DBC3t5
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
@@ -19116,7 +19121,7 @@ msgstr "Záznam hovoru nemohl být zpracován."
 #. js-lingui-id: oji+JF
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "The call recording is being processed…"
-msgstr ""
+msgstr "Záznam hovoru se zpracovává…"
 
 #. js-lingui-id: /kfzmx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -19223,7 +19228,7 @@ msgstr "PDF je předem podepsané Twenty a je doplněno o vaši právnickou osob
 #. js-lingui-id: Ir4tSJ
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "The recorder is joining the call…"
-msgstr ""
+msgstr "Záznamník se připojuje k hovoru…"
 
 #. js-lingui-id: 8vRPIJ
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
@@ -19233,7 +19238,7 @@ msgstr "Záznam se nepodařilo načíst."
 #. js-lingui-id: RhRop7
 #: src/modules/object-record/record-field/ui/hooks/useCreateJunctionRecordWithNestedTarget.ts
 msgid "The relation configuration could not be resolved."
-msgstr ""
+msgstr "Konfiguraci relace se nepodařilo vyřešit."
 
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -19263,7 +19268,7 @@ msgstr "Přepis se nepodařilo vygenerovat."
 #. js-lingui-id: Qdm4D5
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "The transcript is being prepared…"
-msgstr ""
+msgstr "Přepis se připravuje…"
 
 #. js-lingui-id: qrhV2s
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
@@ -19463,7 +19468,7 @@ msgstr "Registrace této aplikace je nárokována vaším pracovním prostorem."
 #. js-lingui-id: XkzBBX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "This call is being recorded…"
-msgstr ""
+msgstr "Tento hovor se nahrává…"
 
 #. js-lingui-id: WCa/7U
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab.tsx
@@ -19523,7 +19528,7 @@ msgstr "Tato funkce nemá nakonfigurovaný žádný spouštěč, takže ji lze v
 #. js-lingui-id: 6IcJ94
 #: src/modules/settings/admin-panel/ai/hooks/useCustomAiProviderAccess.ts
 msgid "This instance's plan could not be verified. Reload the page to try again."
-msgstr ""
+msgstr "Plán této instance se nepodařilo ověřit. Zkuste to znovu načtením stránky."
 
 #. js-lingui-id: MGWsz+
 #: src/modules/information-banner/components/enterprise/InformationBannerNonProductionInstance.tsx
@@ -19553,7 +19558,7 @@ msgstr "Tento klíč by měl být nastaven přes tělo požadavku"
 #. js-lingui-id: V6FP3d
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "This meeting was not recorded."
-msgstr ""
+msgstr "Tato schůzka nebyla zaznamenána."
 
 #. js-lingui-id: Wuvfgw
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -19568,7 +19573,7 @@ msgstr "Tato stránka nemá žádný obsah"
 #. js-lingui-id: 45fXTY
 #: src/modules/app/routing/components/WorkspaceRouteUnavailable.tsx
 msgid "This page isn't available."
-msgstr ""
+msgstr "Tato stránka není dostupná."
 
 #. js-lingui-id: R/PuIn
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -20569,7 +20574,7 @@ msgstr "Nezaplaceno"
 #. js-lingui-id: SYfHmN
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
 msgid "Unpin tab"
-msgstr ""
+msgstr "Odepnout kartu"
 
 #. js-lingui-id: SMaFdc
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
@@ -21007,7 +21012,7 @@ msgstr "Použití"
 #. js-lingui-id: iaIm91
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
 msgid "Usage across all non-deleted workspaces on this server"
-msgstr ""
+msgstr "Využití napříč všemi nesmazanými pracovními prostory na tomto serveru"
 
 #. js-lingui-id: 21hsGI
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
@@ -21028,7 +21033,7 @@ msgstr "Analytika využití se zde zobrazí, jakmile začnete používat kredity
 #. js-lingui-id: hYXHVl
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Usage by App"
-msgstr ""
+msgstr "Využití podle aplikace"
 
 #. js-lingui-id: 7vRxpC
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
@@ -21319,7 +21324,7 @@ msgstr "Verze aplikace"
 #. js-lingui-id: IYNSdp
 #: src/modules/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage.tsx
 msgid "Versions"
-msgstr ""
+msgstr "Verze"
 
 #. js-lingui-id: yIWhRv
 #: src/modules/page-layout/utils/getWidgetTitle.ts
@@ -21834,7 +21839,7 @@ msgstr "S čím vám mohu pomoci?"
 #. js-lingui-id: ivJ1Xk
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "What can you do?"
-msgstr ""
+msgstr "Co umíte?"
 
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -21992,7 +21997,7 @@ msgstr "Spuštění pracovního postupu"
 #. js-lingui-id: QHAMlE
 #: src/modules/object-core/workflows/versions/hooks/useOpenCoreWorkflowVersionsSidePanel.ts
 msgid "Workflow versions"
-msgstr ""
+msgstr "Verze pracovního postupu"
 
 #. js-lingui-id: woYYQq
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -22347,7 +22352,7 @@ msgstr "Nemáte přístup k tomuto objektu."
 #. js-lingui-id: Dg2c0z
 #: src/modules/settings/components/SettingsProtectedRouteWrapper.tsx
 msgid "You don't have access to this settings page."
-msgstr ""
+msgstr "K této stránce nastavení nemáte přístup."
 
 #. js-lingui-id: /K45m9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
