@@ -13,6 +13,7 @@ const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
   periodCount: 60,
   periodUnit: 'second',
   meter: 'creditsUsedMicro',
+  limitValueType: 'absolute',
   limitValue: 100,
   burstValue: null,
   ...overrides,
@@ -122,12 +123,14 @@ describe('findLimitsForSpender', () => {
     const sharedBurst = buildLimit({
       id: 'shared-burst',
       periodCount: 1,
+      limitValueType: 'absolute',
       limitValue: 20,
     });
     const sharedSustained = buildLimit({ id: 'shared-sustained' });
     const own = buildLimit({
       id: 'own',
       spenderId: 'key-1',
+      limitValueType: 'absolute',
       limitValue: 5000,
     });
 

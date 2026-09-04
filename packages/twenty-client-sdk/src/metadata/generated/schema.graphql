@@ -1751,6 +1751,7 @@ type UsageLimit {
   periodCount: Int!
   periodUnit: String!
   meter: String!
+  limitValueType: String!
   limitValue: BigInt!
   burstValue: BigInt
   createdAt: DateTime!
@@ -4034,6 +4035,7 @@ input UpsertUsageLimitInput {
   periodCount: Int!
   periodUnit: String!
   meter: String!
+  limitValueType: String!
   limitValue: BigInt!
   burstValue: BigInt
 }

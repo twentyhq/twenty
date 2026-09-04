@@ -68,6 +68,16 @@ export class UsageLimitService {
       );
     }
 
+    if (
+      input.periodUnit === 'allowancePeriod' &&
+      !(await this.usageLimitQuotaService.hasCreditAllowancePeriod(workspaceId))
+    ) {
+      throw new UsageLimitException(
+        'A limit over the allowance period needs a credit allowance',
+        UsageLimitExceptionCode.LIMIT_INVALID,
+      );
+    }
+
     if (isNonEmptyString(input.spenderId)) {
       await this.validateSpenderBelongsToWorkspace({
         workspaceId,
@@ -92,6 +102,7 @@ export class UsageLimitService {
       {
         workspaceId,
         ...scope,
+        limitValueType: input.limitValueType,
         limitValue: input.limitValue,
         burstValue: input.burstValue ?? null,
       },

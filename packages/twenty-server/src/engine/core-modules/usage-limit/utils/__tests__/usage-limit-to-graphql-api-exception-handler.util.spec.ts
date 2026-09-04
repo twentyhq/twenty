@@ -21,6 +21,7 @@ const buildExhaustedScope = (
   spenderType: 'apiKey',
   spenderId: 'key-1',
   operationType: UsageOperationType.API_REQUEST,
+  limitValueType: 'absolute',
   limitValue: 3,
   remaining: 0,
   periodCount: 60,

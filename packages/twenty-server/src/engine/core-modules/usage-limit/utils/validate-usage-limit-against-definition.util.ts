@@ -48,6 +48,36 @@ export const validateUsageLimitAgainstDefinition = (
     );
   }
 
+  if (input.limitValueType === 'allowancePercent') {
+    if (input.limitKind !== 'quota') {
+      throw new UsageLimitException(
+        'Only a quota can be expressed as a percent of the allowance',
+        UsageLimitExceptionCode.LIMIT_INVALID,
+      );
+    }
+
+    if (input.periodUnit !== 'allowancePeriod') {
+      throw new UsageLimitException(
+        'A percent of the allowance is only defined over the allowance period',
+        UsageLimitExceptionCode.LIMIT_INVALID,
+      );
+    }
+
+    if (input.meter !== 'creditsUsedMicro') {
+      throw new UsageLimitException(
+        'A percent of the allowance is metered on credits',
+        UsageLimitExceptionCode.LIMIT_INVALID,
+      );
+    }
+
+    if (input.limitValue > 100) {
+      throw new UsageLimitException(
+        'A percent of the allowance cannot exceed 100',
+        UsageLimitExceptionCode.LIMIT_INVALID,
+      );
+    }
+  }
+
   if (input.limitKind === 'speed') {
     if (input.periodUnit !== 'second') {
       throw new UsageLimitException(

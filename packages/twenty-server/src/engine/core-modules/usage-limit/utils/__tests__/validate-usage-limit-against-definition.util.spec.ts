@@ -13,6 +13,7 @@ const validSpeedLimit: UpsertUsageLimitInput = {
   periodCount: 60,
   periodUnit: 'second',
   meter: 'quantity',
+  limitValueType: 'absolute',
   limitValue: 100,
 };
 
@@ -25,6 +26,7 @@ const validQuotaLimit: UpsertUsageLimitInput = {
   periodCount: 1,
   periodUnit: 'month',
   meter: 'creditsUsedMicro',
+  limitValueType: 'absolute',
   limitValue: 1_000_000,
 };
 
@@ -179,6 +181,85 @@ describe('validateUsageLimitAgainstDefinition', () => {
       validateUsageLimitAgainstDefinition({
         ...validQuotaLimit,
         burstValue: 200,
+      }),
+    ).toThrow(
+      expect.objectContaining({
+        code: UsageLimitExceptionCode.LIMIT_INVALID,
+      }),
+    );
+  });
+
+  it('accepts a quota over the allowance period', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validQuotaLimit,
+        periodUnit: 'allowancePeriod',
+      }),
+    ).not.toThrow();
+  });
+
+  it('accepts a credit quota as a percent of the allowance', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validQuotaLimit,
+        periodUnit: 'allowancePeriod',
+        limitValueType: 'allowancePercent',
+        limitValue: 40,
+      }),
+    ).not.toThrow();
+  });
+
+  it('rejects a percent of the allowance over a calendar period', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validQuotaLimit,
+        limitValueType: 'allowancePercent',
+        limitValue: 40,
+      }),
+    ).toThrow(
+      expect.objectContaining({
+        code: UsageLimitExceptionCode.LIMIT_INVALID,
+      }),
+    );
+  });
+
+  it('rejects a percent of the allowance metered on quantity', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validQuotaLimit,
+        periodUnit: 'allowancePeriod',
+        meter: 'quantity',
+        limitValueType: 'allowancePercent',
+        limitValue: 40,
+      }),
+    ).toThrow(
+      expect.objectContaining({
+        code: UsageLimitExceptionCode.LIMIT_INVALID,
+      }),
+    );
+  });
+
+  it('rejects a percent of the allowance above 100', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validQuotaLimit,
+        periodUnit: 'allowancePeriod',
+        limitValueType: 'allowancePercent',
+        limitValue: 101,
+      }),
+    ).toThrow(
+      expect.objectContaining({
+        code: UsageLimitExceptionCode.LIMIT_INVALID,
+      }),
+    );
+  });
+
+  it('rejects a speed limit expressed as a percent of the allowance', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validSpeedLimit,
+        limitValueType: 'allowancePercent',
+        limitValue: 40,
       }),
     ).toThrow(
       expect.objectContaining({

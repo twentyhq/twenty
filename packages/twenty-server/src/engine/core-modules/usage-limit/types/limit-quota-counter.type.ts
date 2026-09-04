@@ -1,3 +1,4 @@
+import { type LimitValueType } from 'src/engine/core-modules/usage-limit/types/limit-value-type.type';
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { type UsageMeter } from 'src/engine/core-modules/usage-limit/types/usage-meter.type';
@@ -7,6 +8,7 @@ import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usag
 export type LimitQuotaCounter = {
   kind: 'limit';
   key: string;
+  limitValueType: LimitValueType;
   limitValue: number;
   meter: UsageMeter;
   resourceType: UsageResourceType;

@@ -15,6 +15,7 @@ const buildEntity = (overrides: Partial<UsageLimitEntity>): UsageLimitEntity =>
     periodCount: 1,
     periodUnit: 'month',
     meter: 'creditsUsedMicro',
+    limitValueType: 'absolute',
     limitValue: 3000,
     burstValue: null,
     createdAt: new Date('2026-01-01'),

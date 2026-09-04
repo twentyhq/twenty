@@ -14,6 +14,7 @@ const buildLimit = (spenderType: SpenderType, id: string): FlatUsageLimit => ({
   periodCount: 1,
   periodUnit: 'month',
   meter: 'quantity',
+  limitValueType: 'absolute',
   limitValue: 100,
   burstValue: null,
 });

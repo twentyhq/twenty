@@ -75,6 +75,7 @@ const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
   periodCount: 1,
   periodUnit: 'month',
   meter: 'creditsUsedMicro',
+  limitValueType: 'absolute',
   limitValue: 1_000,
   burstValue: null,
   ...overrides,
@@ -89,7 +90,7 @@ describe('UsageLimitQuotaService', () => {
     mget: jest.fn().mockResolvedValue([]),
     mset: jest.fn().mockResolvedValue(undefined),
     runScript: jest.fn().mockResolvedValue([]),
-    del: jest.fn().mockResolvedValue(undefined),
+    mdel: jest.fn().mockResolvedValue(undefined),
   };
 
   const workspaceCacheService = {
@@ -262,6 +263,7 @@ describe('UsageLimitQuotaService', () => {
     await expect(assertQuotaNotExhausted()).rejects.toMatchObject({
       exhaustedScope: expect.objectContaining({
         exhaustedKind: 'allowance',
+        limitValueType: 'absolute',
         limitValue: 2_000_000,
       }),
     });
@@ -307,6 +309,102 @@ describe('UsageLimitQuotaService', () => {
 
     await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
     expect(cacheStorage.mset).toHaveBeenCalledWith([]);
+  });
+
+  describe('allowance-period limits', () => {
+    const percentLimit = buildLimit({
+      id: 'percent',
+      periodUnit: 'allowancePeriod',
+      limitValueType: 'allowancePercent',
+      limitValue: 40,
+    });
+
+    it('warms a percent limit from the allowance minus the period consumption', async () => {
+      setLimits([percentLimit]);
+      setAllowance(2_000);
+      creditAllowanceProvider.isCreditAllowanceEnabled.mockResolvedValue(false);
+      cacheStorage.mget.mockResolvedValue([undefined]);
+      clickHouseService.selectOrThrow.mockResolvedValue([
+        {
+          operationType: UsageOperationType.AI_CHAT_TOKEN,
+          userWorkspaceId: 'user-1',
+          apiKeyId: '',
+          applicationId: '',
+          agentId: '',
+          workflowId: '',
+          logicFunctionId: '',
+          creditsUsedMicro: '150',
+          quantity: '0',
+        },
+      ]);
+
+      await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
+
+      expect(clickHouseService.selectOrThrow).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'AND periodStart = {periodStart:DateTime64(3)}',
+        ),
+        expect.objectContaining({
+          periodStart: expect.stringContaining('2026-08-15'),
+        }),
+      );
+      expect(cacheStorage.mset).toHaveBeenCalledWith([
+        expect.objectContaining({ value: 650 }),
+      ]);
+    });
+
+    it('reads the allowance once for the percent limit and the allowance counter', async () => {
+      setLimits([percentLimit]);
+      setAllowance(2_000);
+      cacheStorage.mget.mockResolvedValue([undefined, undefined]);
+
+      await assertQuotaNotExhausted();
+
+      expect(creditAllowanceProvider.getCreditAllowance).toHaveBeenCalledTimes(
+        1,
+      );
+    });
+
+    it('builds no counter for an allowance-period limit without an allowance', async () => {
+      setLimits([percentLimit]);
+      creditAllowanceProvider.isCreditAllowanceEnabled.mockResolvedValue(false);
+
+      await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
+
+      expect(cacheStorage.mget).not.toHaveBeenCalled();
+    });
+
+    it('reports an exhausted percent limit with its percent', async () => {
+      setLimits([percentLimit]);
+      setAllowance(2_000);
+      creditAllowanceProvider.isCreditAllowanceEnabled.mockResolvedValue(false);
+      cacheStorage.mget.mockResolvedValue([0]);
+
+      await expect(assertQuotaNotExhausted()).rejects.toMatchObject({
+        exhaustedScope: expect.objectContaining({
+          exhaustedKind: 'limit',
+          limitValueType: 'allowancePercent',
+          limitValue: 40,
+          periodUnit: 'allowancePeriod',
+        }),
+      });
+    });
+  });
+
+  describe('hasCreditAllowancePeriod', () => {
+    it('answers true when the provider knows the period', async () => {
+      setAllowance(2_000);
+
+      await expect(
+        service.hasCreditAllowancePeriod('workspace-1'),
+      ).resolves.toBe(true);
+    });
+
+    it('answers false without a period', async () => {
+      await expect(
+        service.hasCreditAllowancePeriod('workspace-1'),
+      ).resolves.toBe(false);
+    });
   });
 
   it('admits when the counters cannot be read', async () => {
@@ -441,18 +539,50 @@ describe('UsageLimitQuotaService', () => {
 
       await service.dropAllowanceCounter('workspace-1');
 
-      expect(cacheStorage.del).toHaveBeenCalledWith(
+      expect(cacheStorage.mdel).toHaveBeenCalledWith([
         buildAllowanceCounterKey({
           workspaceId: 'workspace-1',
           periodStart: ALLOWANCE_PERIOD.periodStart,
         }),
-      );
+      ]);
     });
 
     it('does nothing when no allowance exists', async () => {
       await service.dropAllowanceCounter('workspace-1');
 
-      expect(cacheStorage.del).not.toHaveBeenCalled();
+      expect(cacheStorage.mdel).not.toHaveBeenCalled();
+    });
+
+    it('drops the allowance-derived limit counters with it', async () => {
+      setAllowance(2_000_000);
+      setLimits([
+        buildLimit({ id: 'absolute' }),
+        buildLimit({
+          id: 'percent',
+          periodUnit: 'allowancePeriod',
+          limitValueType: 'allowancePercent',
+          limitValue: 40,
+        }),
+      ]);
+
+      await service.dropAllowanceCounter('workspace-1');
+
+      expect(cacheStorage.mdel).toHaveBeenCalledWith([
+        buildAllowanceCounterKey({
+          workspaceId: 'workspace-1',
+          periodStart: ALLOWANCE_PERIOD.periodStart,
+        }),
+        buildQuotaCounterKey({
+          workspaceId: 'workspace-1',
+          resourceType: UsageResourceType.AI,
+          operationType: UsageOperationType.AI_CHAT_TOKEN,
+          spenderType: 'workspace',
+          spenderId: '',
+          meter: 'creditsUsedMicro',
+          periodUnit: 'allowancePeriod',
+          periodStart: ALLOWANCE_PERIOD.periodStart,
+        }),
+      ]);
     });
   });
 
@@ -465,7 +595,7 @@ describe('UsageLimitQuotaService', () => {
         buildQuotaWarmLockKey('workspace-1'),
         expect.anything(),
       );
-      expect(cacheStorage.del).toHaveBeenCalledWith(
+      expect(cacheStorage.mdel).toHaveBeenCalledWith([
         buildQuotaCounterKey({
           workspaceId: 'workspace-1',
           resourceType: UsageResourceType.AI,
@@ -476,7 +606,36 @@ describe('UsageLimitQuotaService', () => {
           periodUnit: 'month',
           periodStart: MONTH_PERIOD.periodStart,
         }),
+      ]);
+    });
+
+    it('keys an allowance-period limit on the allowance period', async () => {
+      setAllowance(2_000_000);
+
+      await service.dropLimitCounter(
+        buildLimitCounterScope({ periodUnit: 'allowancePeriod' }),
       );
+
+      expect(cacheStorage.mdel).toHaveBeenCalledWith([
+        buildQuotaCounterKey({
+          workspaceId: 'workspace-1',
+          resourceType: UsageResourceType.AI,
+          operationType: UsageOperationType.AI_CHAT_TOKEN,
+          spenderType: 'workspace',
+          spenderId: '',
+          meter: 'creditsUsedMicro',
+          periodUnit: 'allowancePeriod',
+          periodStart: ALLOWANCE_PERIOD.periodStart,
+        }),
+      ]);
+    });
+
+    it('does nothing for an allowance-period limit when no allowance exists', async () => {
+      await service.dropLimitCounter(
+        buildLimitCounterScope({ periodUnit: 'allowancePeriod' }),
+      );
+
+      expect(cacheStorage.mdel).not.toHaveBeenCalled();
     });
 
     it('ignores a speed limit', async () => {
@@ -484,7 +643,7 @@ describe('UsageLimitQuotaService', () => {
         buildLimitCounterScope({ limitKind: 'speed', periodUnit: 'second' }),
       );
 
-      expect(cacheStorage.del).not.toHaveBeenCalled();
+      expect(cacheStorage.mdel).not.toHaveBeenCalled();
     });
 
     it('dels without the lock when acquiring it times out', async () => {
@@ -497,7 +656,7 @@ describe('UsageLimitQuotaService', () => {
 
       await service.dropLimitCounter(buildLimitCounterScope());
 
-      expect(cacheStorage.del).toHaveBeenCalledTimes(1);
+      expect(cacheStorage.mdel).toHaveBeenCalledTimes(1);
     });
   });
 

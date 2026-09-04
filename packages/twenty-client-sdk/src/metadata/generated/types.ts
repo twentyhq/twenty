@@ -3417,6 +3417,9 @@ export default {
             "meter": [
                 1
             ],
+            "limitValueType": [
+                1
+            ],
             "limitValue": [
                 174
             ],
@@ -10552,6 +10555,9 @@ export default {
                 1
             ],
             "meter": [
+                1
+            ],
+            "limitValueType": [
                 1
             ],
             "limitValue": [

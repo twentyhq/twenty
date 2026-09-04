@@ -13,6 +13,7 @@ const buildLimitCounter = (
 ): LimitQuotaCounter => ({
   kind: 'limit',
   key: 'counter-key',
+  limitValueType: 'absolute',
   limitValue: 1_000,
   meter: 'creditsUsedMicro',
   resourceType: UsageResourceType.AI,
@@ -56,6 +57,7 @@ describe('buildQuotaExhaustedScope', () => {
       spenderType: 'userWorkspace',
       spenderId: 'user-1',
       operationType: UsageOperationType.AI_CHAT_TOKEN,
+      limitValueType: 'absolute',
       limitValue: 1_000,
       remaining: 0,
       periodCount: 1,
@@ -82,6 +84,7 @@ describe('buildQuotaExhaustedScope', () => {
       spenderType: 'workspace',
       spenderId: null,
       operationType: UsageOperationType.ALL,
+      limitValueType: 'absolute',
       limitValue: 2_000_000,
       remaining: 0,
       periodCount: null,

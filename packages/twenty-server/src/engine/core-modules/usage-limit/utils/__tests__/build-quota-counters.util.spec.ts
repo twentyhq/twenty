@@ -23,10 +23,16 @@ const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
   periodCount: 1,
   periodUnit: 'month',
   meter: 'creditsUsedMicro',
+  limitValueType: 'absolute',
   limitValue: 1_000_000,
   burstValue: null,
   ...overrides,
 });
+
+const ALLOWANCE_PERIOD = {
+  periodStart: new Date('2026-08-15T09:00:00.000Z'),
+  periodEnd: new Date('2026-09-15T09:00:00.000Z'),
+};
 
 const buildCounters = ({ limits }: { limits: FlatUsageLimit[] }) =>
   buildQuotaCounters({
@@ -35,7 +41,11 @@ const buildCounters = ({ limits }: { limits: FlatUsageLimit[] }) =>
     workspaceId: 'workspace-1',
     resourceType: UsageResourceType.AI,
     operationType: UsageOperationType.AI_CHAT_TOKEN,
-    periodByUnit: { month: MONTH_PERIOD, week: WEEK_PERIOD },
+    periodByUnit: {
+      month: MONTH_PERIOD,
+      week: WEEK_PERIOD,
+      allowancePeriod: ALLOWANCE_PERIOD,
+    },
   });
 
 describe('buildQuotaCounters', () => {
@@ -48,6 +58,7 @@ describe('buildQuotaCounters', () => {
       {
         kind: 'limit',
         key: `{workspace-1}:quota:AI:AI_CHAT_TOKEN:workspace:-:creditsUsedMicro:month:${MONTH_PERIOD.periodStart.getTime()}`,
+        limitValueType: 'absolute',
         limitValue: 1_000_000,
         meter: 'creditsUsedMicro',
         resourceType: UsageResourceType.AI,
@@ -112,6 +123,28 @@ describe('buildQuotaCounters', () => {
     expect(counters.map((counter) => counter.spenderType)).toEqual([
       'userWorkspace',
       'workspace',
+    ]);
+  });
+
+  it('keys a percent limit on the allowance period and keeps the percent', () => {
+    const counters = buildCounters({
+      limits: [
+        buildLimit({
+          periodUnit: 'allowancePeriod',
+          limitValueType: 'allowancePercent',
+          limitValue: 40,
+        }),
+      ],
+    });
+
+    expect(counters).toMatchObject([
+      {
+        key: `{workspace-1}:quota:AI:AI_CHAT_TOKEN:workspace:-:creditsUsedMicro:allowancePeriod:${ALLOWANCE_PERIOD.periodStart.getTime()}`,
+        limitValueType: 'allowancePercent',
+        limitValue: 40,
+        periodStart: ALLOWANCE_PERIOD.periodStart,
+        periodEnd: ALLOWANCE_PERIOD.periodEnd,
+      },
     ]);
   });
 

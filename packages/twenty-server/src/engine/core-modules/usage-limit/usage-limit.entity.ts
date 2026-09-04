@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 
 import { type LimitKind } from 'src/engine/core-modules/usage-limit/types/limit-kind.type';
+import { type LimitValueType } from 'src/engine/core-modules/usage-limit/types/limit-value-type.type';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
 import { type UsageMeter } from 'src/engine/core-modules/usage-limit/types/usage-meter.type';
@@ -55,6 +56,9 @@ export class UsageLimitEntity extends WorkspaceRelatedEntity {
 
   @Column({ type: 'varchar' })
   meter: UsageMeter;
+
+  @Column({ type: 'varchar' })
+  limitValueType: LimitValueType;
 
   @Column({ type: 'bigint', transformer: nullableBigintColumnTransformer })
   limitValue: number;

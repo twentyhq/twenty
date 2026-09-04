@@ -43,6 +43,7 @@ const buildApiKeySpeedLimit = (): FlatUsageLimit => ({
   periodCount: 60,
   periodUnit: 'second',
   meter: 'quantity',
+  limitValueType: 'absolute',
   limitValue: 100,
   burstValue: null,
 });

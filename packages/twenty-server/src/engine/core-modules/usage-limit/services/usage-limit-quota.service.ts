@@ -26,12 +26,14 @@ import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/f
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
 import { type AllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/allowance-quota-counter.type';
 import { type AnchoredPeriodUnit } from 'src/engine/core-modules/usage-limit/types/anchored-period-unit.type';
+import { type CreditAllowance } from 'src/engine/core-modules/usage-limit/types/credit-allowance.type';
 import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
 import { type QuotaConsumptionRow } from 'src/engine/core-modules/usage-limit/types/quota-consumption-row.type';
 import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
 import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
 import { type UsageLimitCounterScope } from 'src/engine/core-modules/usage-limit/types/usage-limit-counter-scope.type';
 import { buildAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-allowance-counter-key.util';
+import { buildAllowanceDerivedLimitCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-allowance-derived-limit-counter-keys.util';
 import { buildLimitWarmedEntries } from 'src/engine/core-modules/usage-limit/utils/build-limit-warmed-entries.util';
 import { buildPeriodGroupKey } from 'src/engine/core-modules/usage-limit/utils/build-period-group-key.util';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
@@ -125,6 +127,12 @@ export class UsageLimitQuotaService implements OnModuleInit {
     };
   }
 
+  async hasCreditAllowancePeriod(workspaceId: string): Promise<boolean> {
+    return isDefined(
+      await this.creditAllowanceProvider?.getCreditAllowancePeriod(workspaceId),
+    );
+  }
+
   async dropAllowanceCounter(workspaceId: string): Promise<void> {
     const period =
       await this.creditAllowanceProvider?.getCreditAllowancePeriod(workspaceId);
@@ -133,12 +141,21 @@ export class UsageLimitQuotaService implements OnModuleInit {
       return;
     }
 
+    const allowanceDerivedLimitKeys = buildAllowanceDerivedLimitCounterKeys({
+      workspaceId,
+      limits: await this.findAllLimits(workspaceId),
+      periodStart: period.periodStart,
+    });
+
     await this.delUnderWarmLock({
       workspaceId,
-      key: buildAllowanceCounterKey({
-        workspaceId,
-        periodStart: period.periodStart,
-      }),
+      keys: [
+        buildAllowanceCounterKey({
+          workspaceId,
+          periodStart: period.periodStart,
+        }),
+        ...allowanceDerivedLimitKeys,
+      ],
     });
   }
 
@@ -150,22 +167,29 @@ export class UsageLimitQuotaService implements OnModuleInit {
       return;
     }
 
-    const period = this.usagePeriodService.getCurrentPeriod(
-      usageLimit.periodUnit,
-    );
+    const period = await this.findCurrentPeriod({
+      workspaceId: usageLimit.workspaceId,
+      periodUnit: usageLimit.periodUnit,
+    });
+
+    if (!isDefined(period)) {
+      return;
+    }
 
     await this.delUnderWarmLock({
       workspaceId: usageLimit.workspaceId,
-      key: buildQuotaCounterKey({
-        workspaceId: usageLimit.workspaceId,
-        resourceType: usageLimit.resourceType,
-        operationType: usageLimit.operationType,
-        spenderType: usageLimit.spenderType,
-        spenderId: usageLimit.spenderId,
-        meter: usageLimit.meter,
-        periodUnit: usageLimit.periodUnit,
-        periodStart: period.periodStart,
-      }),
+      keys: [
+        buildQuotaCounterKey({
+          workspaceId: usageLimit.workspaceId,
+          resourceType: usageLimit.resourceType,
+          operationType: usageLimit.operationType,
+          spenderType: usageLimit.spenderType,
+          spenderId: usageLimit.spenderId,
+          meter: usageLimit.meter,
+          periodUnit: usageLimit.periodUnit,
+          periodStart: period.periodStart,
+        }),
+      ],
     });
   }
 
@@ -192,14 +216,14 @@ export class UsageLimitQuotaService implements OnModuleInit {
 
   private async delUnderWarmLock({
     workspaceId,
-    key,
+    keys,
   }: {
     workspaceId: string;
-    key: string;
+    keys: string[];
   }): Promise<void> {
     try {
       await this.cacheLockService.withLock(
-        () => this.cacheStorage.del(key),
+        () => this.cacheStorage.mdel(keys),
         buildQuotaWarmLockKey(workspaceId),
         QUOTA_WARM_LOCK_OPTIONS,
       );
@@ -212,11 +236,22 @@ export class UsageLimitQuotaService implements OnModuleInit {
       }
 
       this.logger.warn(
-        `Dropping quota counter ${key} without the warm lock: ${error.message}`,
+        `Dropping quota counters ${keys.join(', ')} without the warm lock: ${error.message}`,
       );
 
-      await this.cacheStorage.del(key);
+      await this.cacheStorage.mdel(keys);
     }
+  }
+
+  private async findAllLimits(workspaceId: string): Promise<FlatUsageLimit[]> {
+    const { usageLimits } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['usageLimits'],
+    );
+
+    return Object.values(usageLimits.byResourceType).flatMap(
+      (limits) => limits ?? [],
+    );
   }
 
   private async findExhaustedScopesAdmittingOnFailure(
@@ -401,7 +436,10 @@ export class UsageLimitQuotaService implements OnModuleInit {
       workspaceId,
       resourceType,
       operationType,
-      periodByUnit: this.getCurrentPeriodsByUnit(quotaLimits),
+      periodByUnit: await this.findCurrentPeriodsByUnit({
+        workspaceId,
+        quotaLimits,
+      }),
     });
   }
 
@@ -436,9 +474,13 @@ export class UsageLimitQuotaService implements OnModuleInit {
     };
   }
 
-  private getCurrentPeriodsByUnit(
-    quotaLimits: FlatUsageLimit[],
-  ): Partial<Record<PeriodUnit, UsagePeriod>> {
+  private async findCurrentPeriodsByUnit({
+    workspaceId,
+    quotaLimits,
+  }: {
+    workspaceId: string;
+    quotaLimits: FlatUsageLimit[];
+  }): Promise<Partial<Record<PeriodUnit, UsagePeriod>>> {
     const periodUnits = [
       ...new Set(
         quotaLimits
@@ -450,12 +492,36 @@ export class UsageLimitQuotaService implements OnModuleInit {
       ),
     ];
 
-    return Object.fromEntries(
-      periodUnits.map((periodUnit) => [
+    const periods = await Promise.all(
+      periodUnits.map(async (periodUnit) => ({
         periodUnit,
-        this.usagePeriodService.getCurrentPeriod(periodUnit),
-      ]),
+        period: await this.findCurrentPeriod({ workspaceId, periodUnit }),
+      })),
     );
+
+    return Object.fromEntries(
+      periods
+        .filter(({ period }) => isDefined(period))
+        .map(({ periodUnit, period }) => [periodUnit, period]),
+    );
+  }
+
+  private async findCurrentPeriod({
+    workspaceId,
+    periodUnit,
+  }: {
+    workspaceId: string;
+    periodUnit: AnchoredPeriodUnit;
+  }): Promise<UsagePeriod | null> {
+    if (periodUnit === 'allowancePeriod') {
+      return (
+        (await this.creditAllowanceProvider?.getCreditAllowancePeriod(
+          workspaceId,
+        )) ?? null
+      );
+    }
+
+    return this.usagePeriodService.getCurrentPeriod(periodUnit);
   }
 
   private async findQuotaLimits({
@@ -561,31 +627,47 @@ export class UsageLimitQuotaService implements OnModuleInit {
 
     const now = Date.now();
 
-    const [rowsByPeriod, allowanceEntries] = await Promise.all([
+    const isAllowanceNeeded =
+      isDefined(coldAllowanceCounter) ||
+      coldLimitCounters.some(
+        (counter) => counter.limitValueType === 'allowancePercent',
+      );
+
+    const [rowsByPeriod, allowance] = await Promise.all([
       this.fetchConsumptionRowsByPeriod({
         workspaceId,
         coldLimitCounters,
       }),
-      this.buildAllowanceWarmedEntry({
-        workspaceId,
-        counter: coldAllowanceCounter,
-        now,
-      }),
+      isAllowanceNeeded
+        ? this.creditAllowanceProvider?.getCreditAllowance(workspaceId)
+        : null,
     ]);
 
     return [
-      ...buildLimitWarmedEntries({ coldLimitCounters, rowsByPeriod, now }),
-      ...allowanceEntries,
+      ...buildLimitWarmedEntries({
+        coldLimitCounters,
+        rowsByPeriod,
+        allowance: allowance ?? null,
+        now,
+      }),
+      ...(await this.buildAllowanceWarmedEntry({
+        workspaceId,
+        counter: coldAllowanceCounter,
+        allowance: allowance ?? null,
+        now,
+      })),
     ];
   }
 
   private async buildAllowanceWarmedEntry({
     workspaceId,
     counter,
+    allowance,
     now,
   }: {
     workspaceId: string;
     counter: AllowanceQuotaCounter | undefined;
+    allowance: CreditAllowance | null;
     now: number;
   }): Promise<{ key: string; value: number; ttl: number }[]> {
     if (!isDefined(counter)) {
@@ -597,9 +679,6 @@ export class UsageLimitQuotaService implements OnModuleInit {
     if (ttl <= 0) {
       return [];
     }
-
-    const allowance =
-      await this.creditAllowanceProvider?.getCreditAllowance(workspaceId);
 
     if (
       !isDefined(allowance) ||
@@ -677,6 +756,12 @@ export class UsageLimitQuotaService implements OnModuleInit {
     workspaceId: string;
     counter: LimitQuotaCounter;
   }): Promise<QuotaConsumptionRow[]> {
+    const periodClause =
+      counter.periodUnit === 'allowancePeriod'
+        ? 'AND periodStart = {periodStart:DateTime64(3)}'
+        : `AND toStartOfDay(timestamp, 'UTC') >= {periodStart:DateTime64(3)}
+         AND toStartOfDay(timestamp, 'UTC') < {periodEnd:DateTime64(3)}`;
+
     return this.clickHouseService.selectOrThrow<QuotaConsumptionRow>(
       `SELECT operationType, userWorkspaceId, apiKeyId, applicationId, agentId,
               workflowId, logicFunctionId,
@@ -685,8 +770,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
        FROM usageEvent
        WHERE workspaceId = {workspaceId:String}
          AND resourceType = {resourceType:String}
-         AND toStartOfDay(timestamp, 'UTC') >= {periodStart:DateTime64(3)}
-         AND toStartOfDay(timestamp, 'UTC') < {periodEnd:DateTime64(3)}
+         ${periodClause}
        GROUP BY operationType, userWorkspaceId, apiKeyId, applicationId, agentId,
                 workflowId, logicFunctionId`,
       {

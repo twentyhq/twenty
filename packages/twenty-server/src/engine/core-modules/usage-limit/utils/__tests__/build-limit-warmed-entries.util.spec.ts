@@ -12,6 +12,7 @@ const buildCounter = (
 ): LimitQuotaCounter => ({
   kind: 'limit',
   key: 'counter-key',
+  limitValueType: 'absolute',
   limitValue: 1_000,
   meter: 'creditsUsedMicro',
   resourceType: UsageResourceType.AI,
@@ -55,6 +56,7 @@ describe('buildLimitWarmedEntries', () => {
           buildRow({ creditsUsedMicro: '150' }),
           buildRow({ userWorkspaceId: 'user-2', creditsUsedMicro: '100' }),
         ]),
+        allowance: null,
         now: NOW,
       }),
     ).toEqual([
@@ -79,9 +81,50 @@ describe('buildLimitWarmedEntries', () => {
           buildRow({ creditsUsedMicro: '150' }),
           buildRow({ userWorkspaceId: 'user-2', creditsUsedMicro: '100' }),
         ]),
+        allowance: null,
         now: NOW,
       }),
     ).toMatchObject([{ value: 850 }]);
+  });
+
+  it('seeds a percent counter from the allowance of its period', () => {
+    const counter = buildCounter({
+      limitValueType: 'allowancePercent',
+      limitValue: 40,
+      periodUnit: 'allowancePeriod',
+    });
+
+    expect(
+      buildLimitWarmedEntries({
+        coldLimitCounters: [counter],
+        rowsByPeriod: buildRowsByPeriod(counter, [
+          buildRow({ creditsUsedMicro: '150' }),
+        ]),
+        allowance: {
+          periodStart: counter.periodStart,
+          periodEnd: counter.periodEnd,
+          allowanceMicro: 2_000,
+        },
+        now: NOW,
+      }),
+    ).toMatchObject([{ value: 650 }]);
+  });
+
+  it('skips a percent counter when the allowance is gone', () => {
+    const counter = buildCounter({
+      limitValueType: 'allowancePercent',
+      limitValue: 40,
+      periodUnit: 'allowancePeriod',
+    });
+
+    expect(
+      buildLimitWarmedEntries({
+        coldLimitCounters: [counter],
+        rowsByPeriod: buildRowsByPeriod(counter, [buildRow({})]),
+        allowance: null,
+        now: NOW,
+      }),
+    ).toEqual([]);
   });
 
   it('skips a counter whose period already ended', () => {
@@ -93,6 +136,7 @@ describe('buildLimitWarmedEntries', () => {
       buildLimitWarmedEntries({
         coldLimitCounters: [counter],
         rowsByPeriod: buildRowsByPeriod(counter, [buildRow({})]),
+        allowance: null,
         now: NOW,
       }),
     ).toEqual([]);
@@ -103,6 +147,7 @@ describe('buildLimitWarmedEntries', () => {
       buildLimitWarmedEntries({
         coldLimitCounters: [buildCounter()],
         rowsByPeriod: new Map(),
+        allowance: null,
         now: NOW,
       }),
     ).toEqual([]);

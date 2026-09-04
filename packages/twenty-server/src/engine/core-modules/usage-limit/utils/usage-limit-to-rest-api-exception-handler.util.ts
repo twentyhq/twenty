@@ -39,6 +39,7 @@ export const buildUsageLimitHttpException = (
         spenderId: exhaustedScope.spenderId,
         operationType: exhaustedScope.operationType,
       },
+      limitValueType: exhaustedScope.limitValueType,
       limit: exhaustedScope.limitValue,
       remaining: exhaustedScope.remaining,
       periodCount: exhaustedScope.periodCount,

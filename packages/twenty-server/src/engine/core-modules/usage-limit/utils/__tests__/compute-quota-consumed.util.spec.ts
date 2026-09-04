@@ -24,6 +24,7 @@ const buildCounter = (
 ): LimitQuotaCounter => ({
   kind: 'limit',
   key: 'counter-key',
+  limitValueType: 'absolute',
   limitValue: 1_000,
   meter: 'creditsUsedMicro',
   resourceType: UsageResourceType.AI,
