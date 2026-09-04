@@ -4,6 +4,7 @@ import { type WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql
 import { type ArgMetadata } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/param-metadata.interface';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
+import { ShareWithInputType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/share-with.input-type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 export const getResolverArgs = (
@@ -62,6 +63,11 @@ export const getResolverArgs = (
           isNullable: true,
           isArray: false,
         },
+        shareWith: {
+          type: ShareWithInputType,
+          isNullable: true,
+          isArray: true,
+        },
       };
     case 'createOne':
       return {
@@ -73,6 +79,11 @@ export const getResolverArgs = (
           type: GraphQLBoolean,
           isNullable: true,
           isArray: false,
+        },
+        shareWith: {
+          type: ShareWithInputType,
+          isNullable: true,
+          isArray: true,
         },
       };
     case 'updateOne':

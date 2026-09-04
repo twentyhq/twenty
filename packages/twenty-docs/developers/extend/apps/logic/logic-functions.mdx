@@ -803,7 +803,27 @@ const { createCompany } = await client.mutation({
     name: true,
   },
 });
+
+// Create a record of a private object and choose who can read it
+const { createContract } = await client.mutation({
+  createContract: {
+    __args: {
+      data: {
+        name: 'Acme Corp renewal',
+      },
+      shareWith: [
+        {
+          roleId: '7f0c1b6e-2d4a-4c8e-9b3f-5a6d7e8f9a0b',
+          accessLevel: 'READ_WRITE',
+        },
+      ],
+    },
+    id: true,
+  },
+});
 ```
+
+On an object whose readability is `PRIVATE`, `shareWith` lists who gets access to the created record: each entry targets exactly one of `workspaceMemberId`, `roleId` or `everyone: true` with an `accessLevel` of `READ`, `READ_WRITE` or `FULL`. A workspace member creating a record always receives a `FULL` owner grant, so the argument is optional for them; a logic function acting as its application, an API key or a system caller must pass it or the create is rejected. On other objects the argument is ignored.
 
 The client uses a selection-set syntax: pass `true` to include a field, use `__args` for arguments, and nest objects for relations. You get full autocompletion and type checking based on your workspace schema.
 

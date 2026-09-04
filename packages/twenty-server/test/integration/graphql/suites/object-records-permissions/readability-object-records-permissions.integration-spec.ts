@@ -16,6 +16,7 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { setObjectReadability } from 'test/integration/metadata/suites/object-metadata/utils/set-object-readability.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
@@ -96,26 +97,6 @@ const totalCountOperation = {
     }
   `,
   variables: { filter: ALL_RECORDS_FILTER },
-};
-
-const setObjectReadability = async (
-  objectMetadataId: string,
-  readability: MetadataReadability,
-) => {
-  await getCoreRepository<ObjectMetadataEntity>(ObjectMetadataEntity).update(
-    objectMetadataId,
-    { readability },
-  );
-
-  const { errors } = await updateOneObjectMetadata({
-    expectToFail: false,
-    input: {
-      idToUpdate: objectMetadataId,
-      updatePayload: { description: `readability set to ${readability}` },
-    },
-  });
-
-  expect(errors).toBeUndefined();
 };
 
 const setRecordSharingEnabled = (value: boolean) =>
