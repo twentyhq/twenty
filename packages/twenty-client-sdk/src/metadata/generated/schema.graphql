@@ -3735,12 +3735,8 @@ type Mutation {
   refreshEnterpriseValidityToken: Boolean!
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO!
   setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
-  uploadEmailAttachmentFile(file: Upload!): FileWithSignedUrl!
-  uploadAiChatFile(file: Upload!): FileWithSignedUrl!
-  uploadWorkflowFile(file: Upload!): FileWithSignedUrl!
   uploadWorkspaceLogo(file: Upload!): FileWithSignedUrl!
   uploadWorkspaceMemberProfilePicture(file: Upload!): FileWithSignedUrl!
-  uploadFilesFieldFile(file: Upload!, fieldMetadataId: String!): FileWithSignedUrl!
   uploadFilesFieldFileByUniversalIdentifier(file: Upload!, fieldMetadataUniversalIdentifier: String!): FileWithSignedUrl!
   upsertUsageLimit(input: UpsertUsageLimitInput!): UsageLimit!
   deleteUsageLimit(usageLimitId: UUID!): Boolean!
