@@ -6013,7 +6013,7 @@ msgstr "막대 차트 위젯 \"{widgetTitle}\"에는 레이아웃이 필수입�
 #. js-lingui-id: cI7XDa
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 msgid "Limits scoped below the workspace require the Organization plan."
-msgstr ""
+msgstr "워크스페이스 하위 범위의 제한에는 Organization 플랜이 필요합니다."
 
 #. js-lingui-id: sAG9OB
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts

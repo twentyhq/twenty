@@ -6013,7 +6013,7 @@ msgstr "柱状图小部件 \"{widgetTitle}\" 需要布局"
 #. js-lingui-id: cI7XDa
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 msgid "Limits scoped below the workspace require the Organization plan."
-msgstr ""
+msgstr "工作区以下范围的限制需要 Organization 套餐。"
 
 #. js-lingui-id: sAG9OB
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts

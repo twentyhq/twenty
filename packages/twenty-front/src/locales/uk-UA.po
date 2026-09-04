@@ -486,7 +486,7 @@ msgstr "Отримано {headersCount} заголовків"
 #. js-lingui-id: 4xzh1W
 #: src/modules/object-record/record-list/components/RecordListRow.tsx
 msgid "{hiddenFieldCount, plural, one {# more populated field available} other {# more populated fields available}}"
-msgstr ""
+msgstr "{hiddenFieldCount, plural, one {Доступне ще # заповнене поле} few {Доступні ще # заповнені поля} many {Доступно ще # заповнених полів} other {Доступно ще # заповнених полів}}"
 
 #. js-lingui-id: pEl0a0
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -679,7 +679,7 @@ msgstr "{unitCount, plural, one {Рік} few {Роки} many {Років} other 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 msgid "{visibleFieldsCount} selected"
-msgstr ""
+msgstr "{visibleFieldsCount} вибрано"
 
 #. js-lingui-id: WjjsAL
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
@@ -18507,7 +18507,7 @@ msgstr "Зупинити імітацію"
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 msgid "Store the full URL or just the domain"
-msgstr ""
+msgstr "Зберігати повну URL-адресу чи лише домен"
 
 #. js-lingui-id: GGiaAW
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx

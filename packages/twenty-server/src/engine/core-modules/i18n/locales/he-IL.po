@@ -6013,7 +6013,7 @@ msgstr "נדרשת פריסה עבור וידג'ט תרשים עמודות \"{wi
 #. js-lingui-id: cI7XDa
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 msgid "Limits scoped below the workspace require the Organization plan."
-msgstr ""
+msgstr "מגבלות המוגדרות מתחת למרחב העבודה דורשות את תוכנית Organization."
 
 #. js-lingui-id: sAG9OB
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
