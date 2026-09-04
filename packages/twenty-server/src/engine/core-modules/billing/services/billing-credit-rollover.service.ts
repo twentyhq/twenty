@@ -9,12 +9,12 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
+import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { buildBillingCreditStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-credit-state-lock-key.util';
 import { computeCarryForwardGrants } from 'src/engine/core-modules/billing/utils/compute-carry-forward-grants.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 
 type ProcessRolloverParams = {
   workspaceId: string;
@@ -35,7 +35,7 @@ export class BillingCreditRolloverService {
   constructor(
     private readonly billingUsageService: BillingUsageService,
     private readonly billingCreditGrantService: BillingCreditGrantService,
-    private readonly usageLimitQuotaService: UsageLimitQuotaService,
+    private readonly billingCreditService: BillingCreditService,
     private readonly cacheLockService: CacheLockService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
@@ -116,8 +116,11 @@ export class BillingCreditRolloverService {
       periodEnd: closingPeriodEnd,
     });
 
+    let carriedForwardMicro = 0;
+    let hasReplayedGrant = false;
+
     for (const carryForwardGrant of carryForwardGrants) {
-      await this.billingCreditGrantService.createGrant({
+      const grant = await this.billingCreditGrantService.createGrant({
         workspaceId,
         amountMicro: carryForwardGrant.amountMicro,
         type: carryForwardGrant.type,
@@ -132,11 +135,25 @@ export class BillingCreditRolloverService {
           sourceGrantId: carryForwardGrant.sourceGrantId,
         }),
       });
+
+      if (isDefined(grant)) {
+        carriedForwardMicro += grant.amountMicro;
+      } else {
+        hasReplayedGrant = true;
+      }
     }
 
-    await this.usageLimitQuotaService.dropAllowanceCounter(workspaceId);
+    await this.billingCreditService.refreshWorkspaceCreditState({
+      workspaceId,
+      availableDeltaMicro: carriedForwardMicro,
+      isReplay: hasReplayedGrant,
+      adjustmentKey: buildRolloverAdjustmentKey(nextPeriodStart),
+    });
   }
 }
+
+const buildRolloverAdjustmentKey = (nextPeriodStart: Date): string =>
+  `rollover:${nextPeriodStart.toISOString()}`;
 
 // Stripe redelivers webhooks, so the whole transition has to be replayable.
 const buildCarryForwardIdempotencyKey = ({

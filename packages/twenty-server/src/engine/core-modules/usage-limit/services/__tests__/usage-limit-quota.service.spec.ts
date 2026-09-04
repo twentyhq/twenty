@@ -40,6 +40,7 @@ const ALLOWANCE_PERIOD = {
 };
 
 class TestCreditAllowanceProvider extends CreditAllowanceProvider {
+  isCreditAllowanceEnabled = jest.fn().mockResolvedValue(true);
   getCreditAllowancePeriod = jest.fn().mockResolvedValue(null);
   getCreditAllowance = jest.fn().mockResolvedValue(null);
 }
@@ -258,6 +259,23 @@ describe('UsageLimitQuotaService', () => {
     await expect(assertQuotaNotExhausted()).rejects.toMatchObject({
       exhaustedScope: expect.objectContaining({ exhaustedKind: 'limit' }),
     });
+  });
+
+  it('builds no allowance counter when the provider reports it disabled', async () => {
+    setLimits([buildLimit({})]);
+    setAllowance(2_000_000);
+    creditAllowanceProvider.isCreditAllowanceEnabled.mockResolvedValue(false);
+    cacheStorage.mget.mockResolvedValue([0]);
+
+    await expect(assertQuotaNotExhausted()).rejects.toMatchObject({
+      exhaustedScope: expect.objectContaining({ exhaustedKind: 'limit' }),
+    });
+    expect(cacheStorage.mget).toHaveBeenCalledWith([
+      expect.not.stringContaining(':allowance:'),
+    ]);
+    expect(
+      creditAllowanceProvider.getCreditAllowancePeriod,
+    ).not.toHaveBeenCalled();
   });
 
   it('skips warming an allowance whose period rolled over since the read', async () => {

@@ -1,8 +1,11 @@
 import { createClient, type RedisClientType } from 'redis';
 
 import { type BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
+import { type BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { buildAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-allowance-counter-key.util';
+
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 // The dev seeder gives every workspace a billingCustomer and an active
 // billingSubscription, but no subscription item, and no period. Rollover needs
@@ -224,6 +227,11 @@ export const resetBillingCreditState = async (
     [workspaceId],
   );
 
+  const cache = getBillingUsageCacheService();
+
+  await cache.flushAvailableCredits(workspaceId);
+  await cache.flushCounterAdjustmentMarkers(workspaceId);
+
   const redis = await getRedisClient();
   const staleKeys = [
     ...(await redis.keys(`*{${workspaceId}}:quota:allowance:*`)),
@@ -234,3 +242,8 @@ export const resetBillingCreditState = async (
     await redis.del(staleKeys);
   }
 };
+
+export const getBillingUsageCacheService = (): BillingUsageCacheService =>
+  getAppProviderByClassName<BillingUsageCacheService>(
+    'BillingUsageCacheService',
+  );

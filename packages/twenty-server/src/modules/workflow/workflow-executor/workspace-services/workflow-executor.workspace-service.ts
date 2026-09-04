@@ -8,7 +8,7 @@ import {
   WorkflowRunStepInfos,
 } from 'twenty-shared/workflow';
 
-import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -56,7 +56,7 @@ export class WorkflowExecutorWorkspaceService {
     private readonly workflowActionFactory: WorkflowActionFactory,
     private readonly usageRecorderService: UsageRecorderService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
-    private readonly usageLimitQuotaService: UsageLimitQuotaService,
+    private readonly billingUsageService: BillingUsageService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly metricsService: MetricsService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
@@ -321,7 +321,7 @@ export class WorkflowExecutorWorkspaceService {
     workspaceId: string,
     workflowId: string,
   ) {
-    await this.usageLimitQuotaService.consumeQuota({
+    await this.billingUsageService.consumeUsageQuota({
       workspaceId,
       resourceType: UsageResourceType.WORKFLOW,
       operationType: UsageOperationType.WORKFLOW_EXECUTION,

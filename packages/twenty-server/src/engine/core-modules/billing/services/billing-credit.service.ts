@@ -10,11 +10,13 @@ import { type BillingSubscriptionEntity } from 'src/engine/core-modules/billing/
 import { type BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { buildBillingCreditStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-credit-state-lock-key.util';
 import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 // Used when a workspace has no subscription yet, which happens for rewards
 // granted during signup. The next period transition re-emits the unspent part
@@ -41,8 +43,10 @@ export class BillingCreditService {
     private readonly billingService: BillingService,
     private readonly billingCreditGrantService: BillingCreditGrantService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
-    private readonly usageLimitQuotaService: UsageLimitQuotaService,
+    private readonly billingUsageCacheService: BillingUsageCacheService,
     private readonly cacheLockService: CacheLockService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
 
   async grantCredits(
@@ -55,15 +59,15 @@ export class BillingCreditService {
     const { workspaceId } = params;
 
     return this.cacheLockService.withLock(
-      () => this.writeGrantAndDropCounter(params),
+      () => this.writeGrantAndRefreshState(params),
       buildBillingCreditStateLockKey(workspaceId),
     );
   }
 
-  private async writeGrantAndDropCounter(
+  private async writeGrantAndRefreshState(
     params: GrantCreditsParams,
   ): Promise<BillingCreditGrantEntity | null> {
-    const { workspaceId } = params;
+    const { workspaceId, amountMicro } = params;
 
     const subscription =
       await this.billingSubscriptionService.getCurrentBillingSubscription({
@@ -81,15 +85,26 @@ export class BillingCreditService {
       expiresAt,
     });
 
-    await this.usageLimitQuotaService.dropAllowanceCounter(workspaceId);
-
     if (!isDefined(grant)) {
       this.logger.log(
-        `Replayed credit grant for workspace ${workspaceId} (idempotency key ${params.idempotencyKey})`,
+        `Replayed credit grant for workspace ${workspaceId} (idempotency key ${params.idempotencyKey}), repairing derived state`,
       );
+
+      await this.refreshWorkspaceCreditState({
+        workspaceId,
+        availableDeltaMicro: 0,
+        isReplay: true,
+        subscription,
+      });
 
       return null;
     }
+
+    await this.refreshWorkspaceCreditState({
+      workspaceId,
+      availableDeltaMicro: amountMicro,
+      subscription,
+    });
 
     return grant;
   }
@@ -103,19 +118,161 @@ export class BillingCreditService {
     grantId: string;
     revokedByUserId?: string | null;
   }): Promise<BillingCreditGrantEntity> {
-    return this.cacheLockService.withLock(async () => {
-      const { grant } = await this.billingCreditGrantService.revokeGrant({
+    return this.cacheLockService.withLock(
+      () =>
+        this.markGrantRevokedAndRefreshState({
+          workspaceId,
+          grantId,
+          revokedByUserId,
+        }),
+      buildBillingCreditStateLockKey(workspaceId),
+    );
+  }
+
+  private async markGrantRevokedAndRefreshState({
+    workspaceId,
+    grantId,
+    revokedByUserId,
+  }: {
+    workspaceId: string;
+    grantId: string;
+    revokedByUserId?: string | null;
+  }): Promise<BillingCreditGrantEntity> {
+    const { grant, wasRevokedNow } =
+      await this.billingCreditGrantService.revokeGrant({
         workspaceId,
         grantId,
         revokedByUserId,
       });
 
-      await this.usageLimitQuotaService.dropAllowanceCounter(workspaceId);
+    const adjustmentKey = buildRevocationAdjustmentKey(grantId);
+
+    if (!wasRevokedNow) {
+      await this.refreshWorkspaceCreditState({
+        workspaceId,
+        availableDeltaMicro: 0,
+        isReplay: true,
+        adjustmentKey,
+      });
 
       return grant;
-    }, buildBillingCreditStateLockKey(workspaceId));
+    }
+
+    const revokedAtMs = (grant.revokedAt ?? new Date()).getTime();
+    const wasActiveWhenRevoked =
+      grant.effectiveAt.getTime() <= revokedAtMs &&
+      grant.expiresAt.getTime() > revokedAtMs;
+
+    await this.refreshWorkspaceCreditState({
+      workspaceId,
+      availableDeltaMicro: wasActiveWhenRevoked ? -grant.amountMicro : 0,
+      adjustmentKey,
+    });
+
+    return grant;
+  }
+
+  async refreshWorkspaceCreditState({
+    workspaceId,
+    availableDeltaMicro,
+    isReplay = false,
+    adjustmentKey,
+    subscription: knownSubscription,
+  }: {
+    workspaceId: string;
+    availableDeltaMicro: number;
+    isReplay?: boolean;
+    adjustmentKey?: string;
+    subscription?: BillingSubscriptionEntity;
+  }): Promise<void> {
+    const subscription =
+      knownSubscription ??
+      (await this.billingSubscriptionService.getCurrentBillingSubscription({
+        workspaceId,
+      }));
+
+    if (!isDefined(subscription)) {
+      return;
+    }
+
+    const periodStart = subscription.currentPeriodStart;
+
+    const rebuildCounter =
+      isReplay &&
+      (!isDefined(adjustmentKey) ||
+        !(await this.billingUsageCacheService.hasCounterAdjustmentBeenApplied(
+          workspaceId,
+          adjustmentKey,
+        )));
+
+    await this.applyCounterWrite({
+      workspaceId,
+      periodStart,
+      availableDeltaMicro,
+      shouldRebuild: rebuildCounter,
+    });
+
+    if (isDefined(adjustmentKey)) {
+      await this.billingUsageCacheService.markCounterAdjustmentApplied(
+        workspaceId,
+        adjustmentKey,
+        subscription.currentPeriodEnd,
+      );
+    }
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'currentBillingSubscription',
+    ]);
+
+    await this.usageLimitQuotaService.dropAllowanceCounter(workspaceId);
+  }
+
+  private async applyCounterWrite({
+    workspaceId,
+    periodStart,
+    availableDeltaMicro,
+    shouldRebuild,
+  }: {
+    workspaceId: string;
+    periodStart: Date;
+    availableDeltaMicro: number;
+    shouldRebuild: boolean;
+  }): Promise<number | null> {
+    if (shouldRebuild) {
+      await this.billingUsageCacheService.invalidateAvailableCredits(
+        workspaceId,
+        periodStart,
+      );
+
+      return null;
+    }
+
+    if (availableDeltaMicro === 0) {
+      return null;
+    }
+
+    const cachedAvailableCredits =
+      await this.billingUsageCacheService.getAvailableCredits(
+        workspaceId,
+        periodStart,
+      );
+
+    if (!isDefined(cachedAvailableCredits)) {
+      return null;
+    }
+
+    await this.billingUsageCacheService.adjustAvailableCredits(
+      workspaceId,
+      periodStart,
+      availableDeltaMicro,
+    );
+
+    return cachedAvailableCredits + availableDeltaMicro;
   }
 }
+
+const buildRevocationAdjustmentKey = (grantId: string): string =>
+  `revoke:${grantId}`;
 
 const computeGrantValidity = (
   params: GrantCreditsParams,

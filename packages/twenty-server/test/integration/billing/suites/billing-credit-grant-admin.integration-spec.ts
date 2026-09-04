@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { addMonths, startOfMonth } from 'date-fns';
 import request from 'supertest';
 import {
+  getBillingUsageCacheService,
   getSeededBillingWorkspaceId,
   listCreditGrants,
   quitBillingFixtureRedis,
@@ -114,6 +115,81 @@ describe('Admin credit grant and revoke (integration)', () => {
       reason: 'Outage on the 3rd',
       revokedAt: null,
     });
+  });
+
+  it('adds the granted amount to a warm available-credits counter', async () => {
+    const cache = getBillingUsageCacheService();
+
+    await cache.warmAvailableCredits(
+      workspaceId,
+      PERIOD_START,
+      PERIOD_END,
+      500_000,
+    );
+
+    await grantCredits({
+      workspaceId,
+      amount: 2,
+      type: BillingCreditGrantType.COMPENSATION,
+      reason: null,
+    });
+
+    expect(await cache.getAvailableCredits(workspaceId, PERIOD_START)).toBe(
+      500_000 + 2 * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
+    );
+  });
+
+  it('takes a revoked grant back off the ledger and the available-credits counter', async () => {
+    const cache = getBillingUsageCacheService();
+
+    await cache.warmAvailableCredits(
+      workspaceId,
+      PERIOD_START,
+      PERIOD_END,
+      500_000,
+    );
+
+    const granted = await grantCredits({
+      workspaceId,
+      amount: 2,
+      type: BillingCreditGrantType.COMPENSATION,
+      reason: null,
+    });
+    const creditGrantId = granted.body.data.grantWorkspaceCredits.id;
+
+    const revoked = await callAdminGraphql(REVOKE_MUTATION, {
+      workspaceId,
+      creditGrantId,
+    });
+
+    expect(revoked.body.errors).toBeUndefined();
+    expect(
+      revoked.body.data.revokeWorkspaceCreditGrant.revokedAt,
+    ).not.toBeNull();
+
+    const grants = await listCreditGrants(workspaceId);
+
+    expect(grants[0].revokedAt).not.toBeNull();
+    expect(await cache.getAvailableCredits(workspaceId, PERIOD_START)).toBe(
+      500_000,
+    );
+  });
+
+  it.each([
+    BillingCreditGrantType.ROLLOVER,
+    BillingCreditGrantType.ONBOARDING_REWARD,
+  ])('refuses to grant a %s by hand', async (type) => {
+    const response = await grantCredits({
+      workspaceId,
+      amount: 1,
+      type,
+      reason: null,
+    });
+
+    expect(response.body.errors?.[0]?.extensions?.subCode).toBe(
+      'BILLING_CREDIT_GRANT_TYPE_NOT_GRANTABLE',
+    );
+    expect(await listCreditGrants(workspaceId)).toHaveLength(0);
   });
 
   it('drops the warm allowance counter when a grant lands', async () => {

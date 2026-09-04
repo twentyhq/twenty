@@ -377,8 +377,17 @@ export class UsageLimitQuotaService implements OnModuleInit {
   private async buildAllowanceCounter(
     workspaceId: string,
   ): Promise<AllowanceQuotaCounter | null> {
+    const creditAllowanceProvider = this.creditAllowanceProvider;
+
+    if (
+      !isDefined(creditAllowanceProvider) ||
+      !(await creditAllowanceProvider.isCreditAllowanceEnabled(workspaceId))
+    ) {
+      return null;
+    }
+
     const period =
-      await this.creditAllowanceProvider?.getCreditAllowancePeriod(workspaceId);
+      await creditAllowanceProvider.getCreditAllowancePeriod(workspaceId);
 
     if (!isDefined(period)) {
       return null;

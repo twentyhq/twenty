@@ -2,6 +2,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
@@ -14,23 +15,62 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { type BillingResourceCreditUsageDTO } from 'src/engine/core-modules/billing/dtos/billing-resource-credit-usage.dto';
-import { type BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
 import { type CreditAvailability } from 'src/engine/core-modules/billing/types/credit-availability.type';
 import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 import { type SubscriptionInactiveReason } from 'src/engine/core-modules/billing/types/subscription-inactive-reason.type';
+import { buildBillingCreditStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-credit-state-lock-key.util';
 import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
+import { isValidCreditAmountMicro } from 'src/engine/core-modules/billing/utils/is-valid-credit-amount-micro.util';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import {
+  CacheLockException,
+  CacheLockExceptionCode,
+} from 'src/engine/core-modules/cache-lock/exceptions/cache-lock.exception';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
+import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type UsageSumRow = {
   total: string | number | null;
+};
+
+type UsageQuotaScope = {
+  workspaceId: string;
+  resourceType: UsageResourceType;
+  operationType: UsageOperationType;
+  spenders: UsageSpenders;
+};
+
+type AvailableCreditsParams = {
+  workspaceId: string;
+  currentPeriodStart: Date;
+  currentPeriodEnd: Date;
+};
+
+type AvailableCreditsRead = {
+  availableCredits: number;
+  isCounterWarm: boolean;
+};
+
+const AVAILABLE_CREDITS_WARM_UP_LOCK_OPTIONS = {
+  ms: 50,
+  maxRetries: 20,
+  ttl: 10_000,
 };
 
 @Injectable()
@@ -41,11 +81,83 @@ export class BillingUsageService {
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly billingSubscriptionItemService: BillingSubscriptionItemService,
+    private readonly billingUsageCacheService: BillingUsageCacheService,
+    @InjectWorkspaceScopedRepository(BillingSubscriptionEntity)
+    private readonly billingSubscriptionRepository: WorkspaceScopedRepository<BillingSubscriptionEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly clickHouseService: ClickHouseService,
+    private readonly cacheLockService: CacheLockService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
+
+  async isAllowanceCounterEnabled(workspaceId: string): Promise<boolean> {
+    return this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED,
+      workspaceId,
+    );
+  }
+
+  private async isAvailableCreditsCounterEnabled(
+    workspaceId: string,
+  ): Promise<boolean> {
+    return (
+      this.twentyConfigService.get('IS_BILLING_ENABLED') &&
+      !(await this.isAllowanceCounterEnabled(workspaceId))
+    );
+  }
+
+  async assertUsageAllowed({
+    workspaceId,
+    resourceType,
+    operationType,
+    spenders,
+  }: UsageQuotaScope): Promise<void> {
+    await this.assertSubscriptionActive(workspaceId);
+
+    if (await this.isAvailableCreditsCounterEnabled(workspaceId)) {
+      await this.assertAvailableCreditsNotExhausted(workspaceId);
+    }
+
+    await this.usageLimitQuotaService.assertQuotaNotExhausted({
+      workspaceId,
+      resourceType,
+      operationType,
+      spenders,
+    });
+  }
+
+  async consumeUsageQuota({
+    workspaceId,
+    resourceType,
+    operationType,
+    spenders,
+    cost,
+  }: UsageQuotaScope & { cost: QuotaCost }): Promise<{
+    hasNoMoreAvailableCredits: boolean;
+  }> {
+    const { exhausted } = await this.usageLimitQuotaService.consumeQuota({
+      workspaceId,
+      resourceType,
+      operationType,
+      spenders,
+      cost,
+    });
+
+    if (!(await this.isAvailableCreditsCounterEnabled(workspaceId))) {
+      return { hasNoMoreAvailableCredits: isDefined(exhausted) };
+    }
+
+    const availableCredits = await this.decrementAvailableCreditsInCache({
+      workspaceId,
+      usedCredits: cost.creditsUsedMicro,
+    });
+
+    return {
+      hasNoMoreAvailableCredits: isDefined(exhausted) || availableCredits <= 0,
+    };
+  }
 
   async getSubscriptionInactiveReason(
     workspaceId: string,
@@ -98,8 +210,11 @@ export class BillingUsageService {
       return { hasAvailableCredits: false, reason: subscriptionInactiveReason };
     }
 
-    const remainingMicro =
-      await this.usageLimitQuotaService.getAllowanceRemainingMicro(workspaceId);
+    const remainingMicro = (await this.isAllowanceCounterEnabled(workspaceId))
+      ? await this.usageLimitQuotaService.getAllowanceRemainingMicro(
+          workspaceId,
+        )
+      : await this.getAvailableCreditsOrNull(workspaceId);
 
     if (isDefined(remainingMicro) && remainingMicro <= 0) {
       return { hasAvailableCredits: false, reason: 'NO_CREDITS' };
@@ -184,6 +299,45 @@ export class BillingUsageService {
     };
   }
 
+  private async getAvailableCreditsFromClickHouse({
+    workspaceId,
+    currentPeriodStart,
+  }: {
+    workspaceId: string;
+    currentPeriodStart: Date | string;
+  }): Promise<number> {
+    const subscription = await this.billingSubscriptionRepository.findOne(
+      workspaceId,
+      {
+        where: { currentPeriodStart: new Date(currentPeriodStart) },
+        relations: [
+          'billingSubscriptionItems',
+          'billingSubscriptionItems.billingProduct',
+          'billingSubscriptionItems.billingProduct.billingPrices',
+        ],
+      },
+    );
+
+    if (!isDefined(subscription)) {
+      throw new BillingException(
+        `Subscription not found for workspace ${workspaceId}`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
+      );
+    }
+
+    const resourceUsageCap = this.getResourceUsageCap(subscription);
+
+    const [creditBalance, usage] = await Promise.all([
+      this.billingCreditGrantService.getActiveCreditsMicro(workspaceId),
+      this.getCurrentPeriodCreditsUsed(
+        subscription.workspaceId,
+        subscription.currentPeriodStart,
+      ),
+    ]);
+
+    return resourceUsageCap + creditBalance - usage;
+  }
+
   getTrialResourceUsageCap(subscription: BillingSubscriptionEntity): number {
     return this.billingSubscriptionService.getTrialPeriodFreeWorkflowCredits(
       subscription,
@@ -216,6 +370,150 @@ export class BillingUsageService {
     }
 
     return Number(resourceCreditPrice.metadata?.credit_amount ?? 0);
+  }
+
+  private async assertAvailableCreditsNotExhausted(
+    workspaceId: string,
+  ): Promise<void> {
+    const availableCredits = await this.getAvailableCreditsOrNull(workspaceId);
+
+    if (isDefined(availableCredits) && availableCredits <= 0) {
+      throw new BillingException(
+        'Credits exhausted',
+        BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
+      );
+    }
+  }
+
+  private async getAvailableCreditsOrNull(
+    workspaceId: string,
+  ): Promise<number | null> {
+    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+      return null;
+    }
+
+    const currentBillingSubscription =
+      await this.getCachedCurrentBillingSubscription(workspaceId);
+
+    if (currentBillingSubscription === NO_BILLING_SUBSCRIPTION) {
+      return null;
+    }
+
+    const { availableCredits } = await this.getOrWarmAvailableCredits({
+      workspaceId: currentBillingSubscription.workspaceId,
+      currentPeriodStart: currentBillingSubscription.currentPeriodStart,
+      currentPeriodEnd: currentBillingSubscription.currentPeriodEnd,
+    });
+
+    return availableCredits;
+  }
+
+  private async decrementAvailableCreditsInCache({
+    workspaceId,
+    usedCredits,
+  }: {
+    workspaceId: string;
+    usedCredits: number;
+  }): Promise<number> {
+    const creditsToDecrement = isValidCreditAmountMicro(usedCredits)
+      ? usedCredits
+      : 0;
+
+    if (creditsToDecrement !== usedCredits) {
+      this.logger.error(
+        `Refusing to decrement ${usedCredits} credits for workspace ${workspaceId}; treating as 0`,
+      );
+    }
+
+    const currentBillingSubscription =
+      await this.getCachedCurrentBillingSubscription(workspaceId);
+
+    if (currentBillingSubscription === NO_BILLING_SUBSCRIPTION) {
+      return 0;
+    }
+
+    const { currentPeriodStart, currentPeriodEnd } = currentBillingSubscription;
+
+    const { availableCredits, isCounterWarm } =
+      await this.getOrWarmAvailableCredits({
+        workspaceId,
+        currentPeriodStart,
+        currentPeriodEnd,
+      });
+
+    return isCounterWarm
+      ? await this.billingUsageCacheService.adjustAvailableCredits(
+          workspaceId,
+          currentPeriodStart,
+          -creditsToDecrement,
+        )
+      : availableCredits - creditsToDecrement;
+  }
+
+  private async readWarmAvailableCredits(
+    params: AvailableCreditsParams,
+  ): Promise<AvailableCreditsRead | undefined> {
+    const availableCredits =
+      await this.billingUsageCacheService.getAvailableCredits(
+        params.workspaceId,
+        params.currentPeriodStart,
+      );
+
+    return isDefined(availableCredits)
+      ? { availableCredits, isCounterWarm: true }
+      : undefined;
+  }
+
+  private async getOrWarmAvailableCredits(
+    params: AvailableCreditsParams,
+  ): Promise<AvailableCreditsRead> {
+    const warmAvailableCredits = await this.readWarmAvailableCredits(params);
+
+    if (isDefined(warmAvailableCredits)) {
+      return warmAvailableCredits;
+    }
+
+    try {
+      return await this.cacheLockService.withLock(
+        async () =>
+          (await this.readWarmAvailableCredits(params)) ??
+          (await this.computeAndWarmAvailableCredits(params)),
+        buildBillingCreditStateLockKey(params.workspaceId),
+        AVAILABLE_CREDITS_WARM_UP_LOCK_OPTIONS,
+      );
+    } catch (error) {
+      if (
+        !(error instanceof CacheLockException) ||
+        error.code !== CacheLockExceptionCode.LOCK_ACQUISITION_TIMEOUT
+      ) {
+        throw error;
+      }
+
+      this.logger.warn(
+        `Computing available credits for workspace ${params.workspaceId} without the credit state lock: ${error.message}`,
+      );
+
+      return {
+        availableCredits: await this.getAvailableCreditsFromClickHouse(params),
+        isCounterWarm: false,
+      };
+    }
+  }
+
+  private async computeAndWarmAvailableCredits(
+    params: AvailableCreditsParams,
+  ): Promise<AvailableCreditsRead> {
+    const availableCredits =
+      await this.getAvailableCreditsFromClickHouse(params);
+
+    await this.billingUsageCacheService.warmAvailableCredits(
+      params.workspaceId,
+      params.currentPeriodStart,
+      params.currentPeriodEnd,
+      availableCredits,
+    );
+
+    return { availableCredits, isCounterWarm: true };
   }
 
   // Returns null when usage could not be read. ClickHouseService.select

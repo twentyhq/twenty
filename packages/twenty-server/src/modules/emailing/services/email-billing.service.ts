@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
-import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -16,13 +15,10 @@ export class EmailBillingService {
   constructor(
     private readonly usageRecorderService: UsageRecorderService,
     private readonly billingUsageService: BillingUsageService,
-    private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
 
   async validateEmailCreditsOrThrow(workspaceId: string): Promise<void> {
-    await this.billingUsageService.assertSubscriptionActive(workspaceId);
-
-    await this.usageLimitQuotaService.assertQuotaNotExhausted({
+    await this.billingUsageService.assertUsageAllowed({
       workspaceId,
       resourceType: UsageResourceType.EMAIL,
       operationType: UsageOperationType.EMAIL_SEND,
@@ -59,7 +55,7 @@ export class EmailBillingService {
       convertDollarsToBillingCredits(chargedInDollars),
     );
 
-    await this.usageLimitQuotaService.consumeQuota({
+    await this.billingUsageService.consumeUsageQuota({
       workspaceId,
       resourceType: UsageResourceType.EMAIL,
       operationType: UsageOperationType.EMAIL_SEND,

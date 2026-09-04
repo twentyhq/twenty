@@ -1,10 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type LanguageModelUsage } from 'ai';
-import { isDefined } from 'twenty-shared/utils';
 
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
-import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -29,7 +27,6 @@ export class AiBillingService {
   constructor(
     private readonly usageRecorderService: UsageRecorderService,
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly billingUsageService: BillingUsageService,
   ) {}
 
@@ -42,9 +39,7 @@ export class AiBillingService {
     operationType: UsageOperationType;
     spenders: UsageSpenders;
   }): Promise<void> {
-    await this.billingUsageService.assertSubscriptionActive(workspaceId);
-
-    await this.usageLimitQuotaService.assertQuotaNotExhausted({
+    await this.billingUsageService.assertUsageAllowed({
       workspaceId,
       resourceType: UsageResourceType.AI,
       operationType,
@@ -63,15 +58,13 @@ export class AiBillingService {
     spenders: UsageSpenders;
     cost: QuotaCost;
   }): Promise<{ hasNoMoreAvailableCredits: boolean }> {
-    const { exhausted } = await this.usageLimitQuotaService.consumeQuota({
+    return this.billingUsageService.consumeUsageQuota({
       workspaceId,
       resourceType: UsageResourceType.AI,
       operationType,
       spenders,
       cost,
     });
-
-    return { hasNoMoreAvailableCredits: isDefined(exhausted) };
   }
 
   calculateCost(modelId: ModelId, billingInput: BillingUsageInput): number {
