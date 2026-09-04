@@ -45,7 +45,10 @@ export class CalendarEventImportErrorHandlerService {
       | TwentyOrmException
       | ConnectedAccountRefreshAccessTokenException,
     syncStep: CalendarEventImportSyncStep,
-    calendarChannel: Pick<CalendarChannelEntity, 'id' | 'throttleFailureCount'>,
+    calendarChannel: Pick<
+      CalendarChannelEntity,
+      'id' | 'throttleFailureCount' | 'connectedAccountId'
+    >,
     workspaceId: string,
   ): Promise<void> {
     switch (exception.code) {
@@ -70,6 +73,8 @@ export class CalendarEventImportErrorHandlerService {
       case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
       case ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN:
         await this.handleInsufficientPermissionsException(
+          exception,
+          syncStep,
           calendarChannel,
           workspaceId,
         );
@@ -171,9 +176,20 @@ export class CalendarEventImportErrorHandlerService {
   }
 
   private async handleInsufficientPermissionsException(
-    calendarChannel: Pick<CalendarChannelEntity, 'id'>,
+    exception: Error,
+    syncStep: CalendarEventImportSyncStep,
+    calendarChannel: Pick<CalendarChannelEntity, 'id' | 'connectedAccountId'>,
     workspaceId: string,
   ): Promise<void> {
+    this.exceptionHandlerService.captureExceptions([exception], {
+      additionalData: {
+        calendarChannelId: calendarChannel.id,
+        connectedAccountId: calendarChannel.connectedAccountId,
+        syncStep,
+      },
+      workspace: { id: workspaceId },
+    });
+
     await this.calendarChannelSyncStatusService.markAsFailedInsufficientPermissionsAndFlushCalendarEventsToImport(
       [calendarChannel.id],
       workspaceId,
