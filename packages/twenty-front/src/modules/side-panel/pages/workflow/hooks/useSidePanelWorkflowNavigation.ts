@@ -132,7 +132,7 @@ export const useSidePanelWorkflowNavigation = () => {
   );
 
   const openWorkflowStepSettingsInSidePanel = useCallback(
-    (workflowId: string, stepId: string) => {
+    ({ workflowId, stepId }: { workflowId: string; stepId: string }) => {
       const pageId = v4();
 
       store.set(

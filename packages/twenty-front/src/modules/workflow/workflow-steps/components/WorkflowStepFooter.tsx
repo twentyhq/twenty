@@ -89,7 +89,7 @@ export const WorkflowStepFooter = ({
 
   const handleNodeSettings = () => {
     closeDropdown(dropdownId);
-    openWorkflowStepSettingsInSidePanel(workflowId, stepId);
+    openWorkflowStepSettingsInSidePanel({ workflowId, stepId });
   };
 
   const handleViewAgent = () => {

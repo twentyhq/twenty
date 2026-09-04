@@ -1,5 +1,10 @@
-import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
+import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { STEP_RETRY_DELAYS_MS } from 'twenty-shared/workflow';
+import { InputLabel } from 'twenty-ui/input';
+
 import { FormBooleanFieldToggleInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldToggleInput';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { Select } from '@/ui/input/components/Select';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
@@ -8,41 +13,36 @@ import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { useLingui } from '@lingui/react/macro';
-import { InputLabel } from 'twenty-ui/input';
-import { isDefined } from 'twenty-shared/utils';
-import { STEP_RETRY_DELAYS_MS } from 'twenty-shared/workflow';
 
-export const SidePanelWorkflowStepSettingsContent = () => {
+type StepErrorHandlingOptions =
+  WorkflowAction['settings']['errorHandlingOptions'];
+
+const SidePanelWorkflowStepSettingsForm = ({
+  step,
+}: {
+  step: WorkflowAction;
+}) => {
   const { t } = useLingui();
-  const flow = useFlowOrThrow();
-  const workflowSelectedNode = useAtomComponentStateValue(
-    workflowSelectedNodeComponentState,
-  );
   const { updateStep } = useUpdateStep();
 
-  const step = flow.steps?.find(
-    (candidateStep) => candidateStep.id === workflowSelectedNode,
-  );
-
-  if (!isDefined(step)) {
-    return null;
-  }
-
-  const { errorHandlingOptions } = step.settings;
+  const [errorHandlingOptions, setErrorHandlingOptions] =
+    useState<StepErrorHandlingOptions>(step.settings.errorHandlingOptions);
 
   const updateErrorHandlingOptions = (
-    partialOptions: Partial<WorkflowAction['settings']['errorHandlingOptions']>,
-  ) =>
+    partialOptions: Partial<StepErrorHandlingOptions>,
+  ) => {
+    const updatedOptions = { ...errorHandlingOptions, ...partialOptions };
+
+    setErrorHandlingOptions(updatedOptions);
+
     updateStep({
       ...step,
       settings: {
         ...step.settings,
-        errorHandlingOptions: {
-          ...errorHandlingOptions,
-          ...partialOptions,
-        },
+        errorHandlingOptions: updatedOptions,
       },
     } as WorkflowAction);
+  };
 
   return (
     <WorkflowStepBody>
@@ -75,4 +75,21 @@ export const SidePanelWorkflowStepSettingsContent = () => {
       </FormFieldInputContainer>
     </WorkflowStepBody>
   );
+};
+
+export const SidePanelWorkflowStepSettingsContent = () => {
+  const flow = useFlowOrThrow();
+  const workflowSelectedNode = useAtomComponentStateValue(
+    workflowSelectedNodeComponentState,
+  );
+
+  const step = flow.steps?.find(
+    (candidateStep) => candidateStep.id === workflowSelectedNode,
+  );
+
+  if (!isDefined(step)) {
+    return null;
+  }
+
+  return <SidePanelWorkflowStepSettingsForm key={step.id} step={step} />;
 };
