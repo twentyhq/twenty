@@ -234,6 +234,14 @@ export class FileService {
     if (isDefined(presignedUrl)) {
       // The storage provider serves presigned downloads directly and handles
       // Range requests without proxying the file through the server.
+      //
+      // S3 can only echo the response-* overrides set above, so this path
+      // cannot carry the X-Content-Type-Options: nosniff that the streamed
+      // path sets. Accepted rather than worked around: the response still
+      // pins Content-Type to the type sniffed at upload, and anything not in
+      // INLINE_SAFE_MIME_TYPES is served as an attachment. Restoring the
+      // header would take a CDN response-headers policy in front of the
+      // bucket, not a change here.
       return { type: 'redirect', presignedUrl };
     }
 
