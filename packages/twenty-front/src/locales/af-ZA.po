@@ -2081,6 +2081,11 @@ msgstr "Alle objekte"
 msgid "All objects are already in the sidebar"
 msgstr "Alle objekte is reeds in die sybalk"
 
+#. js-lingui-id: /D217u
+#: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
+msgid "All operations"
+msgstr ""
+
 #. js-lingui-id: gqXMNe
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
 msgid "All reasons"
