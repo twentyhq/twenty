@@ -1,5 +1,4 @@
-import { Injectable, type OnModuleInit } from '@nestjs/common';
-import { DiscoveryService } from '@nestjs/core';
+import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -11,12 +10,10 @@ import {
   UsageLimitException,
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
-import { type UsageLimitEntitlementProvider } from 'src/engine/core-modules/usage-limit/interfaces/usage-limit-entitlement-provider.service';
+import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
-import { findUsageLimitEntitlementProvider } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-entitlement-provider.util';
-import { isIntraWorkspaceLimitEntitled } from 'src/engine/core-modules/usage-limit/utils/is-intra-workspace-limit-entitled.util';
 import { isIntraWorkspaceScoped } from 'src/engine/core-modules/usage-limit/utils/is-intra-workspace-scoped.util';
 import { validateUsageLimitAgainstDefinition } from 'src/engine/core-modules/usage-limit/utils/validate-usage-limit-against-definition.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -27,9 +24,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
-export class UsageLimitService implements OnModuleInit {
-  private entitlementProvider: UsageLimitEntitlementProvider | null = null;
-
+export class UsageLimitService {
   constructor(
     @InjectWorkspaceScopedRepository(UsageLimitEntity)
     private readonly usageLimitRepository: WorkspaceScopedRepository<UsageLimitEntity>,
@@ -45,14 +40,8 @@ export class UsageLimitService implements OnModuleInit {
     private readonly logicFunctionRepository: WorkspaceScopedRepository<LogicFunctionEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
-    private readonly discoveryService: DiscoveryService,
+    private readonly usageLimitEntitlementService: UsageLimitEntitlementService,
   ) {}
-
-  onModuleInit() {
-    this.entitlementProvider = findUsageLimitEntitlementProvider(
-      this.discoveryService,
-    );
-  }
 
   async findAll(workspaceId: string): Promise<UsageLimitEntity[]> {
     return this.usageLimitRepository.find(workspaceId);
@@ -69,13 +58,12 @@ export class UsageLimitService implements OnModuleInit {
 
     if (
       isIntraWorkspaceScoped(input.spenderType) &&
-      !(await isIntraWorkspaceLimitEntitled({
+      !(await this.usageLimitEntitlementService.isIntraWorkspaceLimitEntitled(
         workspaceId,
-        entitlementProvider: this.entitlementProvider,
-      }))
+      ))
     ) {
       throw new UsageLimitException(
-        `Intra-workspace usage limits require the Organization plan`,
+        'Intra-workspace usage limits require the Organization plan',
         UsageLimitExceptionCode.LIMIT_NOT_ENTITLED,
       );
     }

@@ -9,6 +9,7 @@ import {
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageLimitEntitlementProvider } from 'src/engine/core-modules/usage-limit/interfaces/usage-limit-entitlement-provider.service';
+import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/services/usage-limit-speed.service';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -78,6 +79,7 @@ describe('UsageLimitSpeedService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsageLimitSpeedService,
+        UsageLimitEntitlementService,
         {
           provide: CacheStorageNamespace.EngineUsageLimit,
           useValue: cacheStorage,
@@ -94,7 +96,7 @@ describe('UsageLimitSpeedService', () => {
     }).compile();
 
     service = module.get<UsageLimitSpeedService>(UsageLimitSpeedService);
-    service.onModuleInit();
+    module.get(UsageLimitEntitlementService).onModuleInit();
   });
 
   it('admits the request when the limits cannot be read from storage', async () => {

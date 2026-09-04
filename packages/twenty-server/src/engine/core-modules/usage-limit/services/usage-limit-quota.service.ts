@@ -20,7 +20,7 @@ import {
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
-import { type UsageLimitEntitlementProvider } from 'src/engine/core-modules/usage-limit/interfaces/usage-limit-entitlement-provider.service';
+import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { type ExhaustedScope } from 'src/engine/core-modules/usage-limit/types/exhausted-scope.type';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
@@ -40,10 +40,8 @@ import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/ut
 import { buildQuotaWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-warm-lock-key.util';
 import { clampQuotaCost } from 'src/engine/core-modules/usage-limit/utils/clamp-quota-cost.util';
 import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/utils/find-credit-allowance-provider.util';
-import { findEnforceableLimits } from 'src/engine/core-modules/usage-limit/utils/find-enforceable-limits.util';
 import { findExhaustedCounters } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-counters.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
-import { findUsageLimitEntitlementProvider } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-entitlement-provider.util';
 import { fromConsumeResultsToRemainings } from 'src/engine/core-modules/usage-limit/utils/from-consume-results-to-remainings.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -72,8 +70,6 @@ export class UsageLimitQuotaService implements OnModuleInit {
 
   private creditAllowanceProvider: CreditAllowanceProvider | null = null;
 
-  private entitlementProvider: UsageLimitEntitlementProvider | null = null;
-
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineUsageLimit)
     private readonly cacheStorage: CacheStorageService,
@@ -82,13 +78,11 @@ export class UsageLimitQuotaService implements OnModuleInit {
     private readonly clickHouseService: ClickHouseService,
     private readonly usagePeriodService: UsagePeriodService,
     private readonly discoveryService: DiscoveryService,
+    private readonly usageLimitEntitlementService: UsageLimitEntitlementService,
   ) {}
 
   onModuleInit() {
     this.creditAllowanceProvider = findCreditAllowanceProvider(
-      this.discoveryService,
-    );
-    this.entitlementProvider = findUsageLimitEntitlementProvider(
       this.discoveryService,
     );
   }
@@ -480,10 +474,9 @@ export class UsageLimitQuotaService implements OnModuleInit {
       (limit) => limit.limitKind === 'quota',
     );
 
-    return findEnforceableLimits({
+    return this.usageLimitEntitlementService.findEnforceableLimits({
       workspaceId,
       limits: quotaLimits,
-      entitlementProvider: this.entitlementProvider,
     });
   }
 

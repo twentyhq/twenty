@@ -14,6 +14,7 @@ import {
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
 import { UsageLimitEntitlementProvider } from 'src/engine/core-modules/usage-limit/interfaces/usage-limit-entitlement-provider.service';
+import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { type UsageLimitCounterScope } from 'src/engine/core-modules/usage-limit/types/usage-limit-counter-scope.type';
@@ -164,6 +165,7 @@ describe('UsageLimitQuotaService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsageLimitQuotaService,
+        UsageLimitEntitlementService,
         {
           provide: CacheStorageNamespace.EngineUsageLimit,
           useValue: cacheStorage,
@@ -186,6 +188,7 @@ describe('UsageLimitQuotaService', () => {
 
     service = module.get<UsageLimitQuotaService>(UsageLimitQuotaService);
     service.onModuleInit();
+    module.get(UsageLimitEntitlementService).onModuleInit();
   });
 
   it('admits on a warm counter with budget left', async () => {
