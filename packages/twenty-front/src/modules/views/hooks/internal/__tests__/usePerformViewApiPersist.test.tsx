@@ -67,6 +67,8 @@ describe('usePerformViewApiPersist', () => {
     await act(async () => {
       await destroyPromise;
     });
+
+    expect(getViewIdsFromMetadataStore(store)).not.toContain(viewToDestroy.id);
   });
 
   it('restores the view when its destroy request fails', async () => {
@@ -95,17 +97,33 @@ describe('usePerformViewApiPersist', () => {
     if (!store) {
       throw new Error('Jotai store was not initialized');
     }
-    const previousViewsEntry = store.get(
+    const initializedStore = store;
+    const previousViewsEntry = initializedStore.get(
       metadataStoreState.atomFamily('views'),
     );
+    const pendingFieldMetadataEntry = {
+      current: [],
+      draft: [{ id: 'pending-field-metadata-id' }],
+      status: 'draft-pending' as const,
+    };
+
+    act(() => {
+      initializedStore.set(
+        metadataStoreState.atomFamily('fieldMetadataItems'),
+        pendingFieldMetadataEntry,
+      );
+    });
 
     await act(async () => {
       await result.current.performViewApiDestroy({ id: viewToDestroy.id });
     });
 
-    expect(store.get(metadataStoreState.atomFamily('views'))).toEqual(
-      previousViewsEntry,
-    );
+    expect(
+      initializedStore.get(metadataStoreState.atomFamily('views')),
+    ).toEqual(previousViewsEntry);
+    expect(
+      initializedStore.get(metadataStoreState.atomFamily('fieldMetadataItems')),
+    ).toEqual(pendingFieldMetadataEntry);
   });
 
   it('preserves concurrent view changes when its destroy request fails', async () => {

@@ -24,7 +24,7 @@ export const usePerformViewApiPersist = () => {
   const [createViewMutation] = useMutation(CreateViewDocument);
   const [destroyViewMutation] = useMutation(DestroyViewDocument);
   const store = useStore();
-  const { addToDraft, applyChanges, removeFromDraft } =
+  const { addToDraft, applyChangesToEntity, removeFromDraft } =
     useUpdateMetadataStoreDraft();
   const { triggerViewGroupOptimisticEffectAtViewCreation } =
     useViewsSideEffectsOnViewGroups();
@@ -118,7 +118,7 @@ export const usePerformViewApiPersist = () => {
       );
 
       removeFromDraft({ key: 'views', itemIds: [variables.id] });
-      applyChanges();
+      applyChangesToEntity('views');
 
       const result = await performViewEntityApiPersistOperation({
         persist: () =>
@@ -140,7 +140,7 @@ export const usePerformViewApiPersist = () => {
 
         if (latestViews.every((view) => view.id !== variables.id)) {
           addToDraft({ key: 'views', items: [viewToRestore] });
-          applyChanges();
+          applyChangesToEntity('views');
         }
       }
 
@@ -148,7 +148,7 @@ export const usePerformViewApiPersist = () => {
     },
     [
       addToDraft,
-      applyChanges,
+      applyChangesToEntity,
       destroyViewMutation,
       performViewEntityApiPersistOperation,
       removeFromDraft,

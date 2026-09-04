@@ -59,6 +59,38 @@ const changeMetadataEntityAsUpToDate = (
 export const useUpdateMetadataStoreDraft = () => {
   const store = useStore();
 
+  const applyChangesToEntity = useCallback(
+    (metadataEntityKey: MetadataEntityKey): boolean => {
+      const metadataStoreEntityEntry = store.get(
+        metadataStoreState.atomFamily(metadataEntityKey),
+      );
+
+      if (metadataStoreEntityEntry.status !== 'draft-pending') {
+        return false;
+      }
+
+      if (metadataEntityKey === 'views') {
+        const objectsEntry = store.get(
+          metadataStoreState.atomFamily('objectMetadataItems'),
+        );
+
+        if (
+          !areViewsConsistentWithObjects(
+            metadataStoreEntityEntry.draft,
+            objectsEntry.current,
+          )
+        ) {
+          return false;
+        }
+      }
+
+      changeMetadataEntityAsUpToDate(store, metadataEntityKey);
+
+      return true;
+    },
+    [store],
+  );
+
   const replaceDraft = useCallback(
     <K extends MetadataEntityKey>(
       key: K,
@@ -92,37 +124,13 @@ export const useUpdateMetadataStoreDraft = () => {
     let hasPersistedAnyMetadataEntity = false;
 
     for (const metadataEntityKey of ALL_METADATA_ENTITY_KEYS) {
-      if (metadataEntityKey === 'views') {
-        continue;
-      }
-
-      const metadataStoreEntityEntry = store.get(
-        metadataStoreState.atomFamily(metadataEntityKey),
-      );
-
-      if (metadataStoreEntityEntry.status === 'draft-pending') {
-        changeMetadataEntityAsUpToDate(store, metadataEntityKey);
-        hasPersistedAnyMetadataEntity = true;
-      }
-    }
-
-    const viewsEntry = store.get(metadataStoreState.atomFamily('views'));
-
-    if (viewsEntry.status === 'draft-pending') {
-      const objectsEntry = store.get(
-        metadataStoreState.atomFamily('objectMetadataItems'),
-      );
-
-      if (
-        areViewsConsistentWithObjects(viewsEntry.draft, objectsEntry.current)
-      ) {
-        changeMetadataEntityAsUpToDate(store, 'views');
+      if (applyChangesToEntity(metadataEntityKey)) {
         hasPersistedAnyMetadataEntity = true;
       }
     }
 
     return { hasPersistedAnyMetadataEntity };
-  }, [store]);
+  }, [applyChangesToEntity]);
 
   const addToDraft = useCallback(
     <K extends MetadataEntityKey>({
@@ -274,6 +282,7 @@ export const useUpdateMetadataStoreDraft = () => {
   return {
     replaceDraft,
     applyChanges,
+    applyChangesToEntity,
     addToDraft,
     updateInDraft,
     removeFromDraft,
