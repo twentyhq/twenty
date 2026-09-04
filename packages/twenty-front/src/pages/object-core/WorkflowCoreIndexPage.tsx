@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { styled } from '@linaria/react';
 import { useInView } from 'react-intersection-observer';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
@@ -10,9 +10,7 @@ import { Button } from 'twenty-ui/input';
 
 import { CoreObjectTable } from '@/object-core/components/CoreObjectTable';
 import { DELETE_CORE_WORKFLOWS_MODAL_ID } from '@/object-core/workflows/constants/DeleteCoreWorkflowsModalId';
-import { useDeleteCoreWorkflows } from '@/object-core/workflows/hooks/useDeleteCoreWorkflows';
-import { toggleRowIdInSelection } from '@/object-core/utils/toggleRowIdInSelection';
-import { getSelectedWorkspaceWorkflowIds } from '@/object-core/workflows/utils/getSelectedWorkspaceWorkflowIds';
+import { useCoreWorkflowsSelection } from '@/object-core/workflows/hooks/useCoreWorkflowsSelection';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { CoreWorkflowsFilterBar } from '@/object-core/workflows/components/CoreWorkflowsFilterBar';
@@ -63,45 +61,18 @@ export const WorkflowCoreIndexPage = () => {
 
   const { ref: fetchMoreRef, inView } = useInView();
 
-  const [selectedRowIds, setSelectedRowIds] = useState<string[]>([]);
-
-  const [deletedWorkspaceWorkflowIds, setDeletedWorkspaceWorkflowIds] =
-    useState<string[]>([]);
-
   const { openModal } = useModal();
 
   const {
-    deleteCoreWorkflows,
+    displayedCoreWorkflows,
+    selectedRowIds,
+    selectedWorkspaceWorkflowIds,
+    toggleRow,
+    selectRows,
+    deleteSelectedCoreWorkflows,
     canDeleteCoreWorkflows,
     isDeletingCoreWorkflows,
-  } = useDeleteCoreWorkflows();
-
-  const displayedCoreWorkflows = coreWorkflows.filter(
-    (coreWorkflow) =>
-      !isDefined(coreWorkflow.workspaceWorkflowId) ||
-      !deletedWorkspaceWorkflowIds.includes(coreWorkflow.workspaceWorkflowId),
-  );
-
-  const selectedWorkspaceWorkflowIds = getSelectedWorkspaceWorkflowIds({
-    coreWorkflows: displayedCoreWorkflows,
-    selectedRowIds,
-  });
-
-  const handleDeleteConfirm = async () => {
-    const workspaceWorkflowIdsToDelete = selectedWorkspaceWorkflowIds;
-
-    const hasDeleted = await deleteCoreWorkflows(workspaceWorkflowIdsToDelete);
-
-    if (!hasDeleted) {
-      return;
-    }
-
-    setDeletedWorkspaceWorkflowIds((previousDeletedWorkspaceWorkflowIds) => [
-      ...previousDeletedWorkspaceWorkflowIds,
-      ...workspaceWorkflowIdsToDelete,
-    ]);
-    setSelectedRowIds([]);
-  };
+  } = useCoreWorkflowsSelection({ coreWorkflows });
 
   useEffect(() => {
     if (inView && hasNextPage && !loading) {
@@ -151,14 +122,8 @@ export const WorkflowCoreIndexPage = () => {
               canDeleteCoreWorkflows
                 ? {
                     selectedRowIds,
-                    onToggleRow: (rowId) =>
-                      setSelectedRowIds((previousSelectedRowIds) =>
-                        toggleRowIdInSelection({
-                          selectedRowIds: previousSelectedRowIds,
-                          rowId,
-                        }),
-                      ),
-                    onToggleAllRows: setSelectedRowIds,
+                    onToggleRow: toggleRow,
+                    onToggleAllRows: selectRows,
                     isItemSelectable: (coreWorkflow) =>
                       isDefined(coreWorkflow.workspaceWorkflowId),
                   }
@@ -177,7 +142,7 @@ export const WorkflowCoreIndexPage = () => {
               other:
                 'These workflows and their run history will no longer be listed.',
             })}
-            onConfirmClick={handleDeleteConfirm}
+            onConfirmClick={deleteSelectedCoreWorkflows}
             confirmButtonText={t`Delete`}
           />
         </StyledTableContainer>

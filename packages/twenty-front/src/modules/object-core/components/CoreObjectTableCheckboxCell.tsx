@@ -4,7 +4,6 @@ import { Checkbox } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`
   align-items: center;
-  cursor: pointer;
   display: flex;
   height: 100%;
   justify-content: center;
@@ -24,19 +23,18 @@ export const CoreObjectTableCheckboxCell = ({
   ariaLabel,
   onToggle,
 }: CoreObjectTableCheckboxCellProps) => {
-  const handleClick = (event: MouseEvent<HTMLDivElement>) => {
+  const stopRowNavigation = (event: MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
     event.stopPropagation();
-
-    onToggle();
   };
 
   return (
-    <StyledContainer onClick={handleClick}>
+    <StyledContainer onClick={stopRowNavigation}>
       <Checkbox
         checked={checked}
         indeterminate={indeterminate}
         aria-label={ariaLabel}
+        onCheckedChange={onToggle}
       />
     </StyledContainer>
   );
