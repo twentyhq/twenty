@@ -208,7 +208,7 @@ export const useCreateNewIndexRecord = ({
         return undefined;
       }
 
-      return createIndexRecord({ ...recordInput, ...draftRecord });
+      return createIndexRecord({ ...draftRecord, ...recordInput });
     },
     [
       createIndexRecord,
