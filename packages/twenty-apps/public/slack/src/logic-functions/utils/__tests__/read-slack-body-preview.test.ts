@@ -4,27 +4,40 @@ import { readSlackBodyPreview } from 'src/logic-functions/utils/read-slack-body-
 
 describe('readSlackBodyPreview', () => {
   it('should read the markdown body', () => {
-    expect(readSlackBodyPreview({ markdown: '  Call them back  ' })).toBe(
-      'Call them back',
-    );
+    expect(
+      readSlackBodyPreview({ bodyValue: { markdown: '  Call them back  ' } }),
+    ).toBe('Call them back');
   });
 
   it('should truncate a long body', () => {
-    const preview = readSlackBodyPreview({ markdown: 'a'.repeat(400) });
+    const preview = readSlackBodyPreview({
+      bodyValue: { markdown: 'a'.repeat(400) },
+    });
 
     expect(preview).toBe(`${'a'.repeat(300)}…`);
   });
 
-  it('should count astral characters as single code points', () => {
-    const preview = readSlackBodyPreview({ markdown: '👍'.repeat(400) });
+  it('should keep composite emoji whole when truncating', () => {
+    const preview = readSlackBodyPreview({
+      bodyValue: { markdown: '👨‍👩‍👧‍👦'.repeat(400) },
+    });
 
-    expect(preview).toBe(`${'👍'.repeat(300)}…`);
+    expect(preview).toBe(`${'👨‍👩‍👧‍👦'.repeat(300)}…`);
+  });
+
+  it('should honour a larger maximum length', () => {
+    const preview = readSlackBodyPreview({
+      bodyValue: { markdown: 'a'.repeat(400) },
+      maxLength: 3000,
+    });
+
+    expect(preview).toBe('a'.repeat(400));
   });
 
   it.each([undefined, {}, { markdown: '   ' }, { markdown: 42 }])(
     'should return undefined for %s',
     (bodyValue) => {
-      expect(readSlackBodyPreview(bodyValue)).toBeUndefined();
+      expect(readSlackBodyPreview({ bodyValue })).toBeUndefined();
     },
   );
 });

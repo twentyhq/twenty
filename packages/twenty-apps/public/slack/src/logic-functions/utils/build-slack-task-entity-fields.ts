@@ -2,6 +2,7 @@ import { type TaskEntityFields } from '@slack/web-api';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_ENTITY_FIELD_TYPE } from 'src/logic-functions/constants/slack-entity-field-type';
+import { SLACK_TASK_DESCRIPTION_MAX_LENGTH } from 'src/logic-functions/constants/slack-task-description-max-length';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { buildFullName } from 'src/logic-functions/utils/build-full-name';
 import { humanizeSelectValue } from 'src/logic-functions/utils/humanize-select-value';
@@ -39,7 +40,10 @@ export const buildSlackTaskEntityFields = ({
   }
 
   const assignee = buildFullName(asRecord(record.assignee)?.name);
-  const description = readSlackBodyPreview(record.bodyV2);
+  const description = readSlackBodyPreview({
+    bodyValue: record.bodyV2,
+    maxLength: SLACK_TASK_DESCRIPTION_MAX_LENGTH,
+  });
   const dateCreated = toEpochSeconds(record.createdAt);
   const dateUpdated = toEpochSeconds(record.updatedAt);
 

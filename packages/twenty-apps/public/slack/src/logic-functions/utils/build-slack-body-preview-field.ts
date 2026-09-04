@@ -7,7 +7,7 @@ import { readSlackBodyPreview } from 'src/logic-functions/utils/read-slack-body-
 export const buildSlackBodyPreviewField = (
   bodyValue: unknown,
 ): EntityCustomField | undefined => {
-  const preview = readSlackBodyPreview(bodyValue);
+  const preview = readSlackBodyPreview({ bodyValue });
 
   return isDefined(preview)
     ? {

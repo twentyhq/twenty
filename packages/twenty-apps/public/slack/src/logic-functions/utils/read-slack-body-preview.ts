@@ -5,18 +5,34 @@ import { readOptionalString } from 'src/logic-functions/utils/read-optional-stri
 
 const BODY_PREVIEW_MAX_LENGTH = 300;
 
-export const readSlackBodyPreview = (
-  bodyValue: unknown,
-): string | undefined => {
+// cutting by code point splits ZWJ sequences such as 👨‍👩‍👧‍👦 mid-cluster
+const GRAPHEME_SEGMENTER = new Intl.Segmenter(undefined, {
+  granularity: 'grapheme',
+});
+
+export const readSlackBodyPreview = ({
+  bodyValue,
+  maxLength = BODY_PREVIEW_MAX_LENGTH,
+}: {
+  bodyValue: unknown;
+  maxLength?: number;
+}): string | undefined => {
   const markdown = readOptionalString(asRecord(bodyValue)?.markdown)?.trim();
 
   if (!isNonEmptyString(markdown)) {
     return undefined;
   }
 
-  const codePoints = [...markdown];
+  const graphemes = [...GRAPHEME_SEGMENTER.segment(markdown)];
 
-  return codePoints.length > BODY_PREVIEW_MAX_LENGTH
-    ? `${codePoints.slice(0, BODY_PREVIEW_MAX_LENGTH).join('')}…`
-    : markdown;
+  if (graphemes.length <= maxLength) {
+    return markdown;
+  }
+
+  const truncated = graphemes
+    .slice(0, maxLength)
+    .map(({ segment }) => segment)
+    .join('');
+
+  return `${truncated}…`;
 };

@@ -310,11 +310,12 @@ The manifest turns the previews themselves on, through `features.rich_previews`
 with the two entity types they use: `slack#/entities/item` for people,
 companies, opportunities and notes, and `slack#/entities/task` for tasks, which
 Slack renders with native status, due date and assignee fields. On an app
-created by hand, or from a manifest older than 0.9.0, open **Work Object
-Previews** in the app settings, enable the toggle and select **both** the
-**Item** and **Task** entity types. A type you leave unselected makes Slack
-ignore the unfurl metadata for those records, so no card renders and nothing in
-the logs says why.
+created by hand, or from a manifest older than 0.7.0, open **Work Object
+Previews** in the app settings, enable the toggle and select both the **Item**
+and **Task** entity types. An app created from a 0.7.0 to 0.8.x manifest already
+has the toggle on with **Item** selected, so it only needs **Task** added. A
+type you leave unselected makes Slack ignore the unfurl metadata for those
+records, so no card renders and nothing in the logs says why.
 
 Slack stamps your Slack app's icon on the corner of every record card for
 attribution, and an app without one gets Slack's generic placeholder. Upload the

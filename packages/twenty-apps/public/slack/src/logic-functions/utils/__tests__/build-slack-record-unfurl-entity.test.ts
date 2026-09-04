@@ -301,4 +301,17 @@ describe('buildSlackRecordUnfurlEntity', () => {
     expect(entity?.entity_type).toBe('slack#/entities/item');
     expect(entity?.entity_payload.fields).toBeUndefined();
   });
+
+  it('should not clip a task body at the card preview length', () => {
+    const entity = buildSlackRecordUnfurlEntity({
+      recordLink: buildTaskRecordLink(),
+      record: { ...buildTaskRecord(), bodyV2: { markdown: 'a'.repeat(1000) } },
+      workspaceBaseUrls: [WORKSPACE_BASE_URL],
+      includeDetails: true,
+    });
+
+    expect(entity?.entity_payload.fields).toMatchObject({
+      description: { value: 'a'.repeat(1000) },
+    });
+  });
 });
