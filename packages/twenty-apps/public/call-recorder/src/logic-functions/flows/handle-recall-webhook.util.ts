@@ -138,16 +138,10 @@ const handleRecallStatusEvent = async ({
       statusCode,
     })
   ) {
-    await Promise.all([
-      enqueueCallRecordingArtifactsImport({
-        callRecordingId: callRecording.id,
-        scope: 'transcript',
-      }),
-      enqueueCallRecordingArtifactsImport({
-        callRecordingId: callRecording.id,
-        scope: 'media',
-      }),
-    ]);
+    await enqueueCallRecordingArtifactsImport({
+      callRecordingId: callRecording.id,
+      scopes: ['transcript', 'media'],
+    });
   }
 
   return {
@@ -184,7 +178,7 @@ const queueCallRecordingArtifactsImport = async ({
 
   await enqueueCallRecordingArtifactsImport({
     callRecordingId: callRecording.id,
-    scope: 'transcript',
+    scopes: ['transcript'],
   });
 
   return {

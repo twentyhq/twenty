@@ -55,10 +55,6 @@ export const importCallRecordingArtifacts = async ({
     };
   }
 
-  // Svix redelivers a webhook to several workers at once; the lease ensures only
-  // one performs the provider work for this scope. The lease clock is wall-clock,
-  // not request.requestedAt, so a retry of the same delivery still measures real
-  // elapsed time and can reclaim a lease left behind by a crash.
   const hasClaimedArtifactImport = await claimCallRecordingArtifactsImport(
     client,
     {
@@ -102,7 +98,6 @@ export const importCallRecordingArtifacts = async ({
       artifactScope: scope,
     });
 
-    // A returned result counts as a successful run, so only a throw redelivers.
     if (callRecordingSyncResult.hasRetryableArtifactFailure) {
       throw new Error(
         `Recall ${scope} artifacts for call recording ${callRecording.id} could not be imported`,

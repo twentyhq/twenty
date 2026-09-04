@@ -8,6 +8,5 @@ type CallRecordingTranscriptArtifactUpdateFields = Pick<
 export type ImportCallRecordingTranscriptResult = {
   updateData: CallRecordingTranscriptArtifactUpdateFields;
   requestedTranscript: boolean;
-  // Set when a provider call failed, never while Recall is still transcribing.
   hasRetryableFailure: boolean;
 };

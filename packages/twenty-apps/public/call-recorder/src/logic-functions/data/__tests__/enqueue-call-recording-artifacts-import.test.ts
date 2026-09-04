@@ -1,9 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import {
-  IMPORT_CALL_RECORDING_MEDIA_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-  IMPORT_CALL_RECORDING_TRANSCRIPT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-} from 'src/constants/universal-identifiers';
+import { IMPORT_CALL_RECORDING_ARTIFACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { ENQUEUED_JOB_RETRY_LIMIT } from 'src/logic-functions/constants/enqueued-job-retry-limit';
 import { enqueueCallRecordingArtifactsImport } from 'src/logic-functions/data/enqueue-call-recording-artifacts-import.util';
 
@@ -19,37 +16,29 @@ describe('enqueueCallRecordingArtifactsImport', () => {
     enqueueJobsMock.mockResolvedValue({ enqueued: true, enqueuedJobsCount: 1 });
   });
 
-  it('enqueues a first transcript import with a fresh request timestamp', async () => {
+  it('enqueues each artifact scope as a separate job in one request', async () => {
     await enqueueCallRecordingArtifactsImport({
       callRecordingId: 'call-recording-1',
-      scope: 'transcript',
+      scopes: ['transcript', 'media'],
     });
 
     expect(enqueueJobsMock).toHaveBeenCalledExactlyOnceWith({
       logicFunctionUniversalIdentifier:
-        IMPORT_CALL_RECORDING_TRANSCRIPT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+        IMPORT_CALL_RECORDING_ARTIFACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
       payloads: [
         {
           callRecordingId: 'call-recording-1',
           requestedAt: expect.any(String),
+          scope: 'transcript',
+        },
+        {
+          callRecordingId: 'call-recording-1',
+          requestedAt: expect.any(String),
+          scope: 'media',
         },
       ],
       retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
     });
-  });
-
-  it('targets the media import job for the media scope', async () => {
-    await enqueueCallRecordingArtifactsImport({
-      callRecordingId: 'call-recording-1',
-      scope: 'media',
-    });
-
-    expect(enqueueJobsMock.mock.calls[0][0]).toEqual(
-      expect.objectContaining({
-        logicFunctionUniversalIdentifier:
-          IMPORT_CALL_RECORDING_MEDIA_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-      }),
-    );
   });
 
   it('propagates enqueue failures to the caller', async () => {
@@ -58,7 +47,7 @@ describe('enqueueCallRecordingArtifactsImport', () => {
     await expect(
       enqueueCallRecordingArtifactsImport({
         callRecordingId: 'call-recording-1',
-        scope: 'media',
+        scopes: ['media'],
       }),
     ).rejects.toThrow('Network failed');
   });

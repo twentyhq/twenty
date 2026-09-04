@@ -24,7 +24,6 @@ type CallRecordingMediaUpdateFields = Pick<
 
 type ImportCallRecordingMediaResult = {
   updateData: CallRecordingMediaUpdateFields;
-  // Set when Recall published an artifact the app could not copy, not when it has none yet.
   hasRetryableFailure: boolean;
 };
 

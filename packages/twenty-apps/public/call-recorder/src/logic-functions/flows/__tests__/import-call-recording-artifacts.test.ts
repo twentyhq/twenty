@@ -465,7 +465,6 @@ describe('importCallRecordingArtifacts', () => {
     });
     const client = buildClient([callRecording]);
 
-    // The transcript lands mid-upload, so this job's own snapshot never sees it.
     importCallRecordingMediaMock.mockImplementation(async () => {
       callRecording.transcript = [{ participant: { id: 1 }, words: [] }];
 

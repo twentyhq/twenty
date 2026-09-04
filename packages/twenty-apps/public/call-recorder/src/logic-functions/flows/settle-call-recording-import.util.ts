@@ -5,7 +5,6 @@ import { findCallRecordingForArtifactsImport } from 'src/logic-functions/data/fi
 import { shouldCompleteCallRecordingImport } from 'src/logic-functions/domain/should-complete-call-recording-import.util';
 import { completeAndChargeCallRecording } from 'src/logic-functions/flows/complete-and-charge-call-recording.util';
 
-// Reads back instead of trusting a caller snapshot: a job only wrote half the artifacts.
 export const settleCallRecordingImport = async (
   client: CoreApiClient,
   { callRecordingId }: { callRecordingId: string },

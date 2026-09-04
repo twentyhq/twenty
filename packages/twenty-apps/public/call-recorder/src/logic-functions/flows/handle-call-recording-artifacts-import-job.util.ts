@@ -5,27 +5,34 @@ import {
   importCallRecordingArtifacts,
   type ImportCallRecordingArtifactsResult,
 } from 'src/logic-functions/flows/import-call-recording-artifacts.util';
-import { type CallRecordingArtifactImportScope } from 'src/logic-functions/types/call-recording-artifact-scope.type';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
 import { getString } from 'src/logic-functions/utils/get-string.util';
 
-export const handleCallRecordingArtifactsImportJob = async ({
-  payload,
-  scope,
-}: {
-  payload: unknown;
-  scope: CallRecordingArtifactImportScope;
-}): Promise<ImportCallRecordingArtifactsResult> => {
+type HandleCallRecordingArtifactsImportJobResult =
+  | ImportCallRecordingArtifactsResult
+  | {
+      status: 'skipped';
+      callRecordingId: string;
+      reason: string;
+    };
+
+export const handleCallRecordingArtifactsImportJob = async (
+  payload: unknown,
+): Promise<HandleCallRecordingArtifactsImportJobResult> => {
   const body = asRecord(payload);
   const callRecordingId = getString(body?.callRecordingId);
   const requestedAt = getString(body?.requestedAt);
+  const scope = getString(body?.scope);
 
-  if (isUndefined(callRecordingId) || isUndefined(requestedAt)) {
+  if (
+    isUndefined(callRecordingId) ||
+    isUndefined(requestedAt) ||
+    (scope !== 'transcript' && scope !== 'media')
+  ) {
     return {
       status: 'skipped',
       callRecordingId: callRecordingId ?? 'unknown',
-      scope,
       reason: 'invalid call recording artifacts import request',
     };
   }
