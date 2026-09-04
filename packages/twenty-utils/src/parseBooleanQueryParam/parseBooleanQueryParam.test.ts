@@ -1,0 +1,2 @@
+import { parseBooleanQueryParam } from './parseBooleanQueryParam'; import assert from 'node:assert/strict';
+assert.equal(parseBooleanQueryParam("true"), true); assert.equal(parseBooleanQueryParam("0"), false);
