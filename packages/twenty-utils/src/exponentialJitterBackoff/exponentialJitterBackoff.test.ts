@@ -1,0 +1,2 @@
+import { exponentialJitterBackoff } from './exponentialJitterBackoff'; import assert from 'node:assert/strict';
+const d = exponentialJitterBackoff(3, 100, 5000); assert.equal(d >= 0 && d <= 800, true);
