@@ -1394,6 +1394,7 @@ type ApplicationConnectionProvider {
   name: String!
   displayName: String!
   oauth: ApplicationConnectionProviderOAuthConfig
+  logoUrl: String
 }
 
 type BillingSubscriptionSchedulePhaseItem {
