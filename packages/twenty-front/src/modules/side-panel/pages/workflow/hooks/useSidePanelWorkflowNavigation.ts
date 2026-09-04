@@ -13,6 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   IconBolt,
   type IconComponent,
+  IconSettings,
   IconSettingsAutomation,
 } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
@@ -102,6 +103,41 @@ export const useSidePanelWorkflowNavigation = () => {
         page: SidePanelPages.WorkflowStepEdit,
         pageTitle: title,
         pageIcon: icon,
+        pageId,
+      });
+    },
+    [navigateSidePanel, store],
+  );
+
+  const openWorkflowStepSettingsInSidePanel = useCallback(
+    (workflowId: string, stepId: string) => {
+      const pageId = v4();
+
+      store.set(
+        sidePanelWorkflowIdComponentState.atomFamily({
+          instanceId: pageId,
+        }),
+        workflowId,
+      );
+
+      store.set(
+        sidePanelWorkflowStepIdComponentState.atomFamily({
+          instanceId: pageId,
+        }),
+        stepId,
+      );
+
+      store.set(
+        workflowSelectedNodeComponentState.atomFamily({
+          instanceId: workflowId,
+        }),
+        stepId,
+      );
+
+      navigateSidePanel({
+        page: SidePanelPages.WorkflowStepSettings,
+        pageTitle: t`Node settings`,
+        pageIcon: IconSettings,
         pageId,
       });
     },
@@ -247,6 +283,7 @@ export const useSidePanelWorkflowNavigation = () => {
     openWorkflowTriggerTypeInSidePanel,
     openWorkflowCreateStepInSidePanel,
     openWorkflowEditStepInSidePanel,
+    openWorkflowStepSettingsInSidePanel,
     openWorkflowEditStepTypeInSidePanel,
     openWorkflowViewStepInSidePanel,
     openWorkflowRunViewStepInSidePanel,
