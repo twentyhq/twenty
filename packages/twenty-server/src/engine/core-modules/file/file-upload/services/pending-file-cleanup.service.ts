@@ -104,14 +104,25 @@ export class PendingFileCleanupService {
 
     // Normally the object is still in quarantine, but a crash between the move
     // and the row update leaves it at its final path with the row PENDING.
-    await this.fileStorageService.deleteFile({
-      ...location,
-      resourcePath: buildPendingUploadResourcePath({
-        fileId: file.id,
-        resourcePath,
+    // Neither delete gates the other: a failure on one must not strand the
+    // other location, since no later run will look at this row again.
+    const deletions = await Promise.allSettled([
+      this.fileStorageService.deleteFile({
+        ...location,
+        resourcePath: buildPendingUploadResourcePath({
+          fileId: file.id,
+          resourcePath,
+        }),
       }),
-    });
+      this.fileStorageService.deleteFile({ ...location, resourcePath }),
+    ]);
 
-    await this.fileStorageService.deleteFile({ ...location, resourcePath });
+    const failure = deletions.find(
+      (deletion) => deletion.status === 'rejected',
+    );
+
+    if (isDefined(failure)) {
+      throw failure.reason;
+    }
   }
 }

@@ -21,6 +21,8 @@ describe('buildPendingUploadResourcePath', () => {
     { fileFolder: FileFolder.FilesField, resourcePath: 'field-uid/file.png' },
     { fileFolder: FileFolder.Workflow, resourcePath: 'attachment.pdf' },
     { fileFolder: FileFolder.EmailImage, resourcePath: 'inline-image.png' },
+    { fileFolder: FileFolder.EmailAttachment, resourcePath: 'attachment.eml' },
+    { fileFolder: FileFolder.AgentChat, resourcePath: 'chat-upload.png' },
     { fileFolder: FileFolder.Source, resourcePath: 'src/index.ts' },
     { fileFolder: FileFolder.Dependencies, resourcePath: 'yarn.lock' },
   ])(
