@@ -13,8 +13,6 @@ import {
   type MessageQueueJob,
   type MessageQueueJobData,
 } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
-import { isDefined } from 'twenty-shared/utils';
-
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -27,8 +25,6 @@ import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-q
 import { shouldCreateWorkerForQueue } from 'src/engine/core-modules/message-queue/utils/should-create-worker-for-queue.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
-
-const UNUSABLE_RATE_LIMIT_FALLBACK = { max: 1, durationMs: 10_000 };
 
 interface ProcessorGroup {
   instance: object;
@@ -109,49 +105,10 @@ export class MessageQueueExplorer implements OnModuleInit {
       this.handleProcessorGroupCollection(
         processorGroupCollection,
         messageQueueService,
-        this.resolveWorkerOptions(queueName),
+        MESSAGE_QUEUE_WORKER_CONFIG[queueName].workerOptions,
         queueName,
       );
     }
-  }
-
-  private resolveWorkerOptions(
-    queueName: MessageQueue,
-  ): MessageQueueWorkerOptions {
-    const { workerOptions, rateLimit } = MESSAGE_QUEUE_WORKER_CONFIG[queueName];
-
-    if (!isDefined(rateLimit)) {
-      return workerOptions;
-    }
-
-    const configuredMaxMessages = this.twentyConfigService.get(
-      rateLimit.maxConfigVariable,
-    );
-    const configuredDurationMs = this.twentyConfigService.get(
-      rateLimit.durationMsConfigVariable,
-    );
-    const maxJobsPerWindow = rateLimit.resolveMaxJobsPerWindow(
-      configuredMaxMessages,
-    );
-
-    if (maxJobsPerWindow <= 0 || configuredDurationMs <= 0) {
-      this.logger.error(
-        `Queue ${queueName} cannot be rate limited with ${rateLimit.maxConfigVariable}=${configuredMaxMessages} and ${rateLimit.durationMsConfigVariable}=${configuredDurationMs}, falling back to ${UNUSABLE_RATE_LIMIT_FALLBACK.max} job per ${UNUSABLE_RATE_LIMIT_FALLBACK.durationMs}ms`,
-      );
-
-      return {
-        ...workerOptions,
-        limiter: UNUSABLE_RATE_LIMIT_FALLBACK,
-      };
-    }
-
-    return {
-      ...workerOptions,
-      limiter: {
-        max: maxJobsPerWindow,
-        durationMs: configuredDurationMs,
-      },
-    };
   }
 
   private warnAboutUnknownQueueNames(queueNames: string[]) {
