@@ -2718,6 +2718,12 @@ msgctxt "fieldMetadata.label"
 msgid "Creation DateTime"
 msgstr ""
 
+#. js-lingui-id: +zmk0f
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout/compute-standard-record-form-flat-entities.util.ts
+msgctxt "pageLayout.name"
+msgid "Creation Form"
+msgstr ""
+
 #. js-lingui-id: oB7ed5
 #: src/engine/core-modules/usage-limit/services/usage-limit-quota.service.ts
 msgid "Credit allowance exhausted for this billing period."
@@ -4136,6 +4142,12 @@ msgstr ""
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "fieldMetadataId or fieldMetadataUniversalIdentifier must be provided"
+msgstr ""
+
+#. js-lingui-id: R/u+r2
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout/compute-standard-record-form-flat-entities.util.ts
+msgctxt "pageLayoutTab.title"
+msgid "Fields"
 msgstr ""
 
 #. js-lingui-id: GFC6Lh
