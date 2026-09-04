@@ -1,8 +1,6 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/code-action/constants/WorkflowLogicFunctionTabListComponentId';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -84,12 +82,6 @@ export const useVariableDropdown = ({
   const setWorkflowSelectedNode = useSetAtomComponentState(
     workflowSelectedNodeComponentState,
   );
-  const setActiveTabId = useSetAtomComponentState(
-    activeTabIdComponentState,
-    useWorkspaceSurfaceScopedComponentInstanceId(
-      WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
-    ),
-  );
   const setWorkflowDiagram = useSetAtomComponentState(
     workflowDiagramComponentState,
   );
@@ -162,11 +154,13 @@ export const useVariableDropdown = ({
         step.name,
         getIcon(step.icon),
         step.id,
+        isDefined(linkOutputSchema.link.tab)
+          ? {
+              tabListComponentId: WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
+              tabId: linkOutputSchema.link.tab,
+            }
+          : undefined,
       );
-
-      if (isDefined(linkOutputSchema.link.tab)) {
-        setActiveTabId(linkOutputSchema.link.tab);
-      }
     };
 
     if (isLinkOutputSchema(currentSubStep)) {

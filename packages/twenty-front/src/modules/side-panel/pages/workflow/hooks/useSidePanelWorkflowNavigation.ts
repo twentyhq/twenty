@@ -1,4 +1,6 @@
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
+import { getWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { sidePanelWorkflowIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowIdComponentState';
 import { sidePanelWorkflowRunIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowRunIdComponentState';
 import { sidePanelWorkflowStepIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowStepIdComponentState';
@@ -72,8 +74,22 @@ export const useSidePanelWorkflowNavigation = () => {
       title: string,
       icon: IconComponent,
       stepId?: string,
+      initialStepTab?: { tabListComponentId: string; tabId: string },
     ) => {
       const pageId = v4();
+
+      if (isDefined(initialStepTab)) {
+        store.set(
+          activeTabIdComponentState.atomFamily({
+            instanceId: getWorkspaceSurfaceScopedComponentInstanceId({
+              componentInstanceId: initialStepTab.tabListComponentId,
+              surfaceType: 'side-panel',
+              surfaceInstanceId: pageId,
+            }),
+          }),
+          initialStepTab.tabId,
+        );
+      }
 
       store.set(
         sidePanelWorkflowIdComponentState.atomFamily({
