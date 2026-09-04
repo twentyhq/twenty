@@ -2081,6 +2081,11 @@ msgstr "crwdns7248:0crwdne7248:0"
 msgid "All objects are already in the sidebar"
 msgstr "crwdns108248:0crwdne108248:0"
 
+#. js-lingui-id: /D217u
+#: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
+msgid "All operations"
+msgstr "crwdns141853:0crwdne141853:0"
+
 #. js-lingui-id: gqXMNe
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
 msgid "All reasons"
