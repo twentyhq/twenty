@@ -15,6 +15,7 @@ import {
   FileUploadExceptionCode,
 } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 import { type BatchFileResult } from 'src/engine/core-modules/file/file-upload/types/batch-file-result.type';
+import { buildSvgTooLargeException } from 'src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util';
 import { toBatchErrorMessage } from 'src/engine/core-modules/file/file-upload/utils/to-batch-error-message.util';
 import {
   ANY_MIME_TYPE,
@@ -196,16 +197,6 @@ export class FileUploadCompletionService {
     );
   }
 
-  private buildSvgTooLargeException(size: number): FileUploadException {
-    return new FileUploadException(
-      `SVG of ${size} bytes exceeds the ${MAX_SANITIZABLE_SVG_BYTES} bytes that can be sanitized`,
-      FileUploadExceptionCode.FILE_TOO_LARGE,
-      {
-        userFriendlyMessage: msg`This SVG is too large to be processed.`,
-      },
-    );
-  }
-
   private async sanitizeUploadedFileIfNeeded({
     storageLocation,
     mimeType,
@@ -220,7 +211,9 @@ export class FileUploadCompletionService {
     }
 
     if (size > MAX_SANITIZABLE_SVG_BYTES) {
-      throw this.buildSvgTooLargeException(size);
+      throw buildSvgTooLargeException(
+        `storage reports ${size} bytes, above the ${MAX_SANITIZABLE_SVG_BYTES} byte limit`,
+      );
     }
 
     const stream = await this.fileStorageService.readFile(storageLocation);
@@ -231,7 +224,11 @@ export class FileUploadCompletionService {
       file = await streamToBuffer(stream, MAX_SANITIZABLE_SVG_BYTES);
     } catch (error) {
       if (error instanceof StreamSizeExceededError) {
-        throw this.buildSvgTooLargeException(size);
+        // Deliberately does not quote `size`: storage understated it, so
+        // repeating it here would contradict the failure being reported.
+        throw buildSvgTooLargeException(
+          `content exceeds the ${MAX_SANITIZABLE_SVG_BYTES} byte limit`,
+        );
       }
 
       throw error;
