@@ -64,7 +64,7 @@ export default defineApplication({
     [CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME]: {
       universalIdentifier:
         CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
-      label: 'Send bot to all my calendar meetings',
+      label: 'Record my calendar meetings',
       description:
         'Whether the recorder is scheduled for every upcoming calendar meeting with a supported video link. Set to false to stop scheduling bots and cancel the ones already scheduled.',
       isSecret: false,

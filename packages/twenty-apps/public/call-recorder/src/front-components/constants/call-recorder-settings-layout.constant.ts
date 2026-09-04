@@ -36,9 +36,9 @@ export type CallRecorderCounterRow = {
 
 export const CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ROW = {
   variableKey: CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME,
-  title: 'Send bot to all my calendar meetings',
+  title: 'Record my calendar meetings',
   description:
-    'Turning this off cancels every scheduled recording and stops new ones.',
+    'The recorder joins every meeting with a supported video link. Turning this off cancels scheduled recordings.',
   Icon: IconCalendarEvent,
 };
 
