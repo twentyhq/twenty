@@ -19,7 +19,6 @@ import { ProvisionMissingObjectSystemRelationsCommand } from 'src/database/comma
 import { HideAskAiInSidePanelCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788266562942-hide-ask-ai-in-side-panel.command';
 import { GateWorkflowVersionNavigationByCoreIndexFlagCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788340845000-gate-workflow-version-navigation-by-core-index-flag.command';
 import { EnforceActivityTargetUniquenessCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788425677783-enforce-activity-target-uniqueness.command';
-import { BackfillRecordFormCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788524477000-backfill-record-form.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
@@ -55,7 +54,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     HideAskAiInSidePanelCommand,
     GateWorkflowVersionNavigationByCoreIndexFlagCommand,
     EnforceActivityTargetUniquenessCommand,
-    BackfillRecordFormCommand,
   ],
 })
 export class V2_38_UpgradeVersionCommandModule {}

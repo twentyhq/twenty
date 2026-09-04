@@ -24,9 +24,9 @@ type BackfillOperations = {
 
 type BackfillOperationsByApplication = Map<string, BackfillOperations>;
 
-@RegisteredWorkspaceCommand('2.38.0', 1788524477000)
+@RegisteredWorkspaceCommand('2.39.0', 1788524477000)
 @Command({
-  name: 'upgrade:2-38:backfill-record-form',
+  name: 'upgrade:2-39:backfill-record-form',
   description:
     'Backfill the RECORD_FORM page layout stack for every object missing it, converging upgraded installs with what objectRecordFormOnCreate and fieldRecordFormWidgetOnCreate emit at creation time. Twenty-standard objects are included: the standard definitions only reach a workspace at creation, so an upgraded workspace would otherwise never get their form, and both paths derive the same entities.',
 })
