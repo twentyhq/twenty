@@ -260,8 +260,12 @@ export class BullMQDriver
     const onJobStatusChange = options?.onJobStatusChange;
 
     if (isDefined(onJobStatusChange)) {
+      let notificationChain = Promise.resolve();
+
       const notifyJobStatusChange = (job: Job | undefined) => {
-        void this.notifyJobStatusChange(queueName, job, onJobStatusChange);
+        notificationChain = notificationChain.then(() =>
+          this.notifyJobStatusChange(queueName, job, onJobStatusChange),
+        );
       };
 
       this.workerMap[queueName].on('active', notifyJobStatusChange);
