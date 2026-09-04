@@ -49,7 +49,7 @@
         "outDir": "dist/assets"
       },
       {
-        "include": "database/clickHouse/migrations/*.sql",
+        "include": "database/clickhouse/migrations/*.sql",
         "outDir": "dist"
       },
       {
