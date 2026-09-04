@@ -2285,6 +2285,38 @@ export interface ApplicationAuthorization {
     __typename: 'ApplicationAuthorization'
 }
 
+export interface ApplicationExportApplication {
+    universalIdentifier: Scalars['String']
+    displayName: Scalars['String']
+    sourceType: ApplicationRegistrationSourceType
+    __typename: 'ApplicationExportApplication'
+}
+
+export interface ApplicationExportCoverageEntry {
+    metadataName: Scalars['String']
+    universalIdentifier: Scalars['String']
+    status: ApplicationExportCoverageStatus
+    reason?: Scalars['String']
+    __typename: 'ApplicationExportCoverageEntry'
+}
+
+export type ApplicationExportCoverageStatus = 'EXPORTED' | 'ENGINE_DERIVED' | 'EXCLUDED' | 'UNSUPPORTED' | 'FOREIGN_OWNED'
+
+export interface ApplicationExportFile {
+    folder: Scalars['String']
+    path: Scalars['String']
+    content: Scalars['String']
+    __typename: 'ApplicationExportFile'
+}
+
+export interface ApplicationExport {
+    application: ApplicationExportApplication
+    manifest: Scalars['JSON']
+    coverage: ApplicationExportCoverageEntry[]
+    files: ApplicationExportFile[]
+    __typename: 'ApplicationExport'
+}
+
 export interface File {
     id: Scalars['UUID']
     path: Scalars['String']
@@ -3133,6 +3165,7 @@ export interface Query {
     getAutoCompleteAddress: AutocompleteResult[]
     getAddressDetails: PlaceDetailsResult
     findManyPublicDomains: PublicDomain[]
+    exportApplication: ApplicationExport
     currentUserApplicationAuthorizations: ApplicationAuthorization[]
     __typename: 'Query'
 }
@@ -5798,6 +5831,40 @@ export interface ApplicationAuthorizationGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ApplicationExportApplicationGenqlSelection{
+    universalIdentifier?: boolean | number
+    displayName?: boolean | number
+    sourceType?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationExportCoverageEntryGenqlSelection{
+    metadataName?: boolean | number
+    universalIdentifier?: boolean | number
+    status?: boolean | number
+    reason?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationExportFileGenqlSelection{
+    folder?: boolean | number
+    path?: boolean | number
+    content?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationExportGenqlSelection{
+    application?: ApplicationExportApplicationGenqlSelection
+    manifest?: boolean | number
+    coverage?: ApplicationExportCoverageEntryGenqlSelection
+    files?: ApplicationExportFileGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface FileGenqlSelection{
     id?: boolean | number
     path?: boolean | number
@@ -6677,6 +6744,7 @@ export interface QueryGenqlSelection{
     getAutoCompleteAddress?: (AutocompleteResultGenqlSelection & { __args: {address: Scalars['String'], token: Scalars['String'], country?: (Scalars['String'] | null), isFieldCity?: (Scalars['Boolean'] | null)} })
     getAddressDetails?: (PlaceDetailsResultGenqlSelection & { __args: {placeId: Scalars['String'], token: Scalars['String']} })
     findManyPublicDomains?: PublicDomainGenqlSelection
+    exportApplication?: (ApplicationExportGenqlSelection & { __args: {universalIdentifier: Scalars['UUID']} })
     currentUserApplicationAuthorizations?: ApplicationAuthorizationGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -9066,6 +9134,38 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const ApplicationExportApplication_possibleTypes: string[] = ['ApplicationExportApplication']
+    export const isApplicationExportApplication = (obj?: { __typename?: any } | null): obj is ApplicationExportApplication => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExportApplication"')
+      return ApplicationExportApplication_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationExportCoverageEntry_possibleTypes: string[] = ['ApplicationExportCoverageEntry']
+    export const isApplicationExportCoverageEntry = (obj?: { __typename?: any } | null): obj is ApplicationExportCoverageEntry => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExportCoverageEntry"')
+      return ApplicationExportCoverageEntry_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationExportFile_possibleTypes: string[] = ['ApplicationExportFile']
+    export const isApplicationExportFile = (obj?: { __typename?: any } | null): obj is ApplicationExportFile => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExportFile"')
+      return ApplicationExportFile_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationExport_possibleTypes: string[] = ['ApplicationExport']
+    export const isApplicationExport = (obj?: { __typename?: any } | null): obj is ApplicationExport => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExport"')
+      return ApplicationExport_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const File_possibleTypes: string[] = ['File']
     export const isFile = (obj?: { __typename?: any } | null): obj is File => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isFile"')
@@ -10274,6 +10374,14 @@ export const enumBillingEntitlementKey = {
    CUSTOM_DOMAIN: 'CUSTOM_DOMAIN' as const,
    RLS: 'RLS' as const,
    AUDIT_LOGS: 'AUDIT_LOGS' as const
+}
+
+export const enumApplicationExportCoverageStatus = {
+   EXPORTED: 'EXPORTED' as const,
+   ENGINE_DERIVED: 'ENGINE_DERIVED' as const,
+   EXCLUDED: 'EXCLUDED' as const,
+   UNSUPPORTED: 'UNSUPPORTED' as const,
+   FOREIGN_OWNED: 'FOREIGN_OWNED' as const
 }
 
 export const enumFileFolder = {
