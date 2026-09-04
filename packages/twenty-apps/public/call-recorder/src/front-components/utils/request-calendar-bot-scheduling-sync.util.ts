@@ -5,8 +5,7 @@ import { SYNC_CALENDAR_BOT_SCHEDULING_ROUTE_PATH } from 'src/constants/sync-cale
 
 type SyncCalendarBotSchedulingResponse = {
   outcome?: string;
-  canceledCallRecordingIds?: string[];
-  failedCallRecordingIds?: string[];
+  canceledCallRecordingCount?: number;
 };
 
 const buildSnackbarForResponse = (
@@ -16,15 +15,7 @@ const buildSnackbarForResponse = (
     return undefined;
   }
 
-  const canceledCount = (response.canceledCallRecordingIds ?? []).length;
-  const failedCount = (response.failedCallRecordingIds ?? []).length;
-
-  if (failedCount > 0) {
-    return {
-      message: `Could not cancel ${failedCount} scheduled recording${failedCount === 1 ? '' : 's'}.`,
-      variant: 'error',
-    };
-  }
+  const canceledCount = response.canceledCallRecordingCount ?? 0;
 
   if (canceledCount === 0) {
     return undefined;

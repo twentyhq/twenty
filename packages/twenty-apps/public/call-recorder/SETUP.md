@@ -36,7 +36,7 @@ Set these on the application registration after installing
 | `RECALL_WEBHOOK_SECRET` | Yes | Svix signing secret (`whsec_…`) used to verify incoming Recall webhooks. |
 
 > **Calendar scheduling** (`CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED`,
-> the "Send bot to all my calendar meetings" toggle; turning it off cancels
+> the "Record my calendar meetings" toggle; turning it off cancels
 > every scheduled recording), **bot behavior settings** (display name,
 > recording notice, join timing, lobby and leave timeouts), the transcription
 > provider

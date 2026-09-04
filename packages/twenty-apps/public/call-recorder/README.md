@@ -24,7 +24,7 @@ variable to `false` to turn summaries off.
 
 ## 🗓️ Pausing the recorder
 
-The **Send bot to all my calendar meetings** toggle in the app settings is on
+The **Record my calendar meetings** toggle in the app settings is on
 by default. Turn it off to stop scheduling bots for upcoming meetings and cancel
 every recording that is already scheduled. Turn it back on and the app sweeps
 upcoming meetings to schedule bots again.

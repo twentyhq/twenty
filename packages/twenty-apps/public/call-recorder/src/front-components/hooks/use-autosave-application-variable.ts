@@ -9,22 +9,26 @@ import { createApplicationVariableSaveQueue } from 'src/front-components/utils/c
 type UseAutosaveApplicationVariableParams = {
   frontComponentId: string;
   variableKey: string;
-  onSaveSuccess?: (value: string) => void;
+  onSaveSuccess?: (value: string) => void | Promise<void>;
+  onSaveError?: (value: string) => void;
 };
 
 export const useAutosaveApplicationVariable = ({
   frontComponentId,
   variableKey,
   onSaveSuccess,
+  onSaveError,
 }: UseAutosaveApplicationVariableParams) => {
   const { saveApplicationVariable } =
     useSaveApplicationVariable(frontComponentId);
   const saveApplicationVariableRef = useRef(saveApplicationVariable);
   const onSaveSuccessRef = useRef(onSaveSuccess);
+  const onSaveErrorRef = useRef(onSaveError);
   const variableKeyRef = useRef(variableKey);
 
   saveApplicationVariableRef.current = saveApplicationVariable;
   onSaveSuccessRef.current = onSaveSuccess;
+  onSaveErrorRef.current = onSaveError;
   variableKeyRef.current = variableKey;
 
   const saveQueueRef = useRef<
@@ -40,8 +44,14 @@ export const useAutosaveApplicationVariable = ({
         });
 
         if (isSaved) {
-          onSaveSuccessRef.current?.(value);
+          // Awaited so the queue serializes the follow-up work of consecutive
+          // saves; two toggles in a row must not sync concurrently.
+          await onSaveSuccessRef.current?.(value);
+
+          return;
         }
+
+        onSaveErrorRef.current?.(value);
       },
     });
   }

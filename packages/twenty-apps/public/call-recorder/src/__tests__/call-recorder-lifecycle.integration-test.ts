@@ -16,6 +16,7 @@ import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/fl
 import { retryFailedRecallCancellations } from 'src/logic-functions/flows/retry-failed-recall-cancellations.util';
 import { scheduleRecallBotsForPendingCallRecordings } from 'src/logic-functions/flows/schedule-recall-bots-for-pending-call-recordings.util';
 import { processRecallWebhookHandler } from 'src/logic-functions/process-recall-webhook';
+import { cancelScheduledRecallBotsHandler } from 'src/logic-functions/cancel-scheduled-recall-bots';
 import { syncCalendarBotSchedulingHandler } from 'src/logic-functions/sync-calendar-bot-scheduling';
 import { CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-calendar-bot-scheduling-enabled-env-var-name';
 
@@ -924,25 +925,45 @@ describe('call recorder app lifecycle (integration)', () => {
         'false',
       );
 
-    it('cancels every scheduled recording and its bot when turned off', async () => {
+    it('cancels the request inline and leaves the Recall bot to the enqueued job', async () => {
       const { callRecordingId, botId } =
         await scheduleRecordingThroughCalendarReconciliation();
 
       turnRecordingOff();
 
       const result = await syncCalendarBotSchedulingHandler();
+
+      expect(result).toEqual(
+        expect.objectContaining({ outcome: 'scheduled-bots-canceled' }),
+      );
+      expect(
+        (await fetchCallRecording(callRecordingId)).recordingRequestStatus,
+      ).toBe('CANCELED');
+      // The toggle must not wait on Recall, so the bot is still alive here.
+      expect(recall.deletedBotIds).not.toContain(botId);
+
+      await cancelScheduledRecallBotsHandler();
+
       const callRecording = await fetchCallRecording(callRecordingId);
 
-      expect(callRecording.recordingRequestStatus).toBe('CANCELED');
       expect(callRecording.externalBotId).toBeFalsy();
       expect(recall.deletedBotIds).toContain(botId);
-      expect(result).toEqual(
-        expect.objectContaining({
-          outcome: 'scheduled-bots-canceled',
-          canceledCallRecordingIds: expect.arrayContaining([callRecordingId]),
-          failedCallRecordingIds: [],
-        }),
-      );
+    });
+
+    it('does not schedule a bot for a request the cancellation missed', async () => {
+      const calendarEventId = await createCalendarEvent();
+      const callRecordingId = await createPendingCallRecording({
+        calendarEventId,
+      });
+
+      turnRecordingOff();
+
+      await runPendingRecoveryCron();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.externalBotId).toBeFalsy();
+      expect(recall.botForCallRecording(callRecordingId)).toBeUndefined();
     });
 
     it('schedules nothing for an upcoming meeting while turned off', async () => {
