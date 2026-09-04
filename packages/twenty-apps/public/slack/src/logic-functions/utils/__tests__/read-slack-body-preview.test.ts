@@ -22,7 +22,16 @@ describe('readSlackBodyPreview', () => {
       bodyValue: { markdown: '👨‍👩‍👧‍👦'.repeat(400) },
     });
 
-    expect(preview).toBe(`${'👨‍👩‍👧‍👦'.repeat(299)}…`);
+    expect(preview).toBe(`${'👨‍👩‍👧‍👦'.repeat(27)}…`);
+  });
+
+  it('should keep a truncated emoji body within the maximum length', () => {
+    const preview = readSlackBodyPreview({
+      bodyValue: { markdown: '👨‍👩‍👧‍👦'.repeat(400) },
+      maxLength: 3000,
+    });
+
+    expect(preview?.length).toBeLessThanOrEqual(3000);
   });
 
   it('should honour a larger maximum length', () => {

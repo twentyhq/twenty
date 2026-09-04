@@ -22,14 +22,14 @@ export const readSlackBodyPreview = ({
     return undefined;
   }
 
-  const graphemes = [...GRAPHEME_SEGMENTER.segment(markdown)];
-
-  if (graphemes.length <= maxLength) {
+  if (markdown.length <= maxLength) {
     return markdown;
   }
 
-  const truncated = graphemes
-    .slice(0, maxLength - 1)
+  // Slack counts the characters it stores, so the budget is code units, cut on
+  // grapheme boundaries to keep sequences such as 👨‍👩‍👧‍👦 whole
+  const truncated = [...GRAPHEME_SEGMENTER.segment(markdown)]
+    .filter(({ index, segment }) => index + segment.length <= maxLength - 1)
     .map(({ segment }) => segment)
     .join('');
 
