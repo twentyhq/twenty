@@ -1,10 +1,16 @@
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { signInUpModeState } from '@/auth/states/signInUpModeState';
+import {
+  SignInUpStep,
+  signInUpStepState,
+} from '@/auth/states/signInUpStepState';
+import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider as JotaiProvider } from 'jotai';
@@ -77,5 +83,57 @@ describe('useSignInUpForm', () => {
       password: 'tim@apple.dev',
       captchaToken: '',
     });
+  });
+
+  it('should accept a password longer than 50 characters when signing in', async () => {
+    jotaiStore.set(signInUpStepState.atom, SignInUpStep.Password);
+    jotaiStore.set(signInUpModeState.atom, SignInUpMode.SignIn);
+
+    const { result } = renderHook(
+      () => {
+        const { form } = useSignInUpForm();
+        const { errors } = form.formState;
+
+        return { form, errors };
+      },
+      {
+        wrapper: ({ children }) => <TestWrapper>{children}</TestWrapper>,
+      },
+    );
+
+    await act(async () => {
+      result.current.form.setValue('password', 'a'.repeat(51), {
+        shouldValidate: true,
+      });
+    });
+
+    expect(result.current.errors.password).toBeUndefined();
+  });
+
+  it('should reject a password longer than 50 characters when signing up', async () => {
+    jotaiStore.set(signInUpStepState.atom, SignInUpStep.Password);
+    jotaiStore.set(signInUpModeState.atom, SignInUpMode.SignUp);
+
+    const { result } = renderHook(
+      () => {
+        const { form } = useSignInUpForm();
+        const { errors } = form.formState;
+
+        return { form, errors };
+      },
+      {
+        wrapper: ({ children }) => <TestWrapper>{children}</TestWrapper>,
+      },
+    );
+
+    await act(async () => {
+      result.current.form.setValue('password', 'a'.repeat(51), {
+        shouldValidate: true,
+      });
+    });
+
+    expect(result.current.errors.password?.message).toBe(
+      'Password must be between 8 and 50 characters',
+    );
   });
 });
