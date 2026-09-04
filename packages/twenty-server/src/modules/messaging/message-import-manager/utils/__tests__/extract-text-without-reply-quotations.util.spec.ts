@@ -19,6 +19,16 @@ describe('extractTextWithoutReplyQuotations', () => {
     expect(result).not.toContain('previous question');
   });
 
+  it('should drop quoted history with Danish reply headers', () => {
+    const result = extractTextWithoutReplyQuotations(
+      'Nyt svar her.\n\nFra: sender@example.com\nSendt: 3. september 2026 10:00\nTil: recipient@example.com\nEmne: Test\nTidligere besked',
+    );
+
+    expect(result).toContain('Nyt svar her.');
+    expect(result).not.toContain('Fra:');
+    expect(result).not.toContain('Tidligere besked');
+  });
+
   it('should keep the full body when the message is entirely quoted (forward) and would otherwise be emptied', () => {
     // Regression: forwarded emails are entirely quotation-like, so the parser
     // returned empty and the message body was lost.
