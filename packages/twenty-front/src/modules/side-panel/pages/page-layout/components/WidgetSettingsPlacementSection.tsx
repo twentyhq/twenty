@@ -1,7 +1,6 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
-import { useMovePageLayoutWidgetDown } from '@/page-layout/hooks/useMovePageLayoutWidgetDown';
-import { useMovePageLayoutWidgetUp } from '@/page-layout/hooks/useMovePageLayoutWidgetUp';
+import { useMovePageLayoutWidget } from '@/page-layout/hooks/useMovePageLayoutWidget';
 import { widgetInsertionContextComponentState } from '@/page-layout/states/widgetInsertionContextComponentState';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { MoveToTabDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/MoveToTabDropdownContent';
@@ -44,9 +43,7 @@ export const WidgetSettingsPlacementSection = ({
 
   const store = useStore();
 
-  const { movePageLayoutWidgetUp } = useMovePageLayoutWidgetUp(pageLayoutId);
-  const { movePageLayoutWidgetDown } =
-    useMovePageLayoutWidgetDown(pageLayoutId);
+  const { movePageLayoutWidget } = useMovePageLayoutWidget(pageLayoutId);
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   if (!isPlacementSectionVisible || !isDefined(pageLayoutEditingWidgetId)) {
@@ -54,11 +51,11 @@ export const WidgetSettingsPlacementSection = ({
   }
 
   const handleMoveUp = () => {
-    movePageLayoutWidgetUp(pageLayoutEditingWidgetId);
+    movePageLayoutWidget(pageLayoutEditingWidgetId, 'up');
   };
 
   const handleMoveDown = () => {
-    movePageLayoutWidgetDown(pageLayoutEditingWidgetId);
+    movePageLayoutWidget(pageLayoutEditingWidgetId, 'down');
   };
 
   const handleAddWidgetAbove = () => {

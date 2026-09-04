@@ -59,7 +59,7 @@ const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
       value: false,
     },
     retryOnFailure: {
-      value: false,
+      value: 0,
     },
   },
 };

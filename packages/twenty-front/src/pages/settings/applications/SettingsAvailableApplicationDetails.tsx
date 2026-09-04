@@ -7,7 +7,7 @@ import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMar
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useQuery } from '@apollo/client/react';
@@ -222,6 +222,7 @@ export const SettingsAvailableApplicationDetails = () => {
             displayName={displayName}
             description={description}
             aboutDescription={detail.aboutDescription ?? undefined}
+            pricingDescription={detail.pricingDescription ?? undefined}
             screenshots={detail.galleryImages}
             author={detail.author ?? 'Unknown'}
             category={detail.category ?? undefined}
@@ -304,6 +305,12 @@ export const SettingsAvailableApplicationDetails = () => {
             chipOnly
           />
         }
+        secondaryBar={
+          <SettingsTabBar
+            tabs={tabs}
+            componentInstanceId={AVAILABLE_APPLICATION_DETAIL_ID}
+          />
+        }
       >
         <SettingsPageContainer>
           {isUnlisted && (
@@ -312,10 +319,6 @@ export const SettingsAvailableApplicationDetails = () => {
               message={t`Application not listed on the marketplace. It was shared via a direct link`}
             />
           )}
-          <TabList
-            tabs={tabs}
-            componentInstanceId={AVAILABLE_APPLICATION_DETAIL_ID}
-          />
           {renderActiveTabContent()}
         </SettingsPageContainer>
       </SettingsPageLayout>

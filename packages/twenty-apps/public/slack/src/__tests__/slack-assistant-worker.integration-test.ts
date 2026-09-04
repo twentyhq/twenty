@@ -218,12 +218,6 @@ describe('Slack assistant worker', () => {
 
     expect(postedAnswer?.blocks).toEqual([
       { type: 'markdown', text: 'Acme has 3 open deals.' },
-      {
-        type: 'context',
-        elements: [
-          { type: 'mrkdwn', text: expect.stringMatching(/^Answered in \d+s$/) },
-        ],
-      },
       // The feedback buttons carry the request record id, which is how a click
       // finds the answer it rates.
       expect.objectContaining({

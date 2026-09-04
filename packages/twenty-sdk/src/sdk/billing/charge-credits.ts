@@ -1,4 +1,7 @@
-import { DEFAULT_API_URL_NAME } from 'twenty-shared/application';
+import {
+  DEFAULT_API_URL_NAME,
+  type UsageOperationTypeValue,
+} from 'twenty-shared/application';
 
 import { getApplicationAccessToken } from '@/sdk/utils/get-application-access-token';
 
@@ -6,10 +9,26 @@ const BILLING_CHARGE_TIMEOUT_MS = 5_000;
 
 export type ChargeCreditsParams = {
   creditsUsedMicro: number;
-  operationType: string;
   quantity?: number;
-  resourceContext?: string;
-};
+  // Who the spend belongs to, for runs with no triggering user (a webhook, a
+  // cron). Ignored otherwise: the token already names them.
+  userWorkspaceId?: string;
+} & (
+  | {
+      // An operation name declared in `billing.operations` on the application
+      // manifest. The platform resolves its billing category and its label.
+      operation: string;
+      operationType?: never;
+      resourceContext?: never;
+    }
+  | {
+      // For applications that declare no billable operations: name the
+      // platform billing category directly, unlabelled.
+      operationType: UsageOperationTypeValue;
+      operation?: never;
+      resourceContext?: string;
+    }
+);
 
 // Records credit usage against the running application via the Twenty
 // server's `/app/billing/charge` endpoint. Reads `TWENTY_API_URL` and the
@@ -19,9 +38,11 @@ export type ChargeCreditsParams = {
 // never surfaces as a tool failure.
 export const chargeCredits = async ({
   creditsUsedMicro,
-  operationType,
   quantity = 1,
+  operation,
+  operationType,
   resourceContext,
+  userWorkspaceId,
 }: ChargeCreditsParams): Promise<void> => {
   const apiUrl = process.env[DEFAULT_API_URL_NAME];
   const token = getApplicationAccessToken();
@@ -42,8 +63,10 @@ export const chargeCredits = async ({
         body: JSON.stringify({
           creditsUsedMicro,
           quantity,
+          operation,
           operationType,
           resourceContext,
+          userWorkspaceId,
         }),
         signal: AbortSignal.timeout(BILLING_CHARGE_TIMEOUT_MS),
       },

@@ -1,7 +1,7 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useQuery } from '@apollo/client/react';
@@ -100,9 +100,11 @@ export const SettingsApplicationFrontComponentDetail = () => {
     <SettingsPageLayout
       title={frontComponent?.name ?? t`Front component`}
       links={breadcrumbLinks}
+      secondaryBar={
+        <SettingsTabBar tabs={tabs} componentInstanceId={instanceId} />
+      }
     >
       <SettingsPageContainer>
-        <TabList tabs={tabs} componentInstanceId={instanceId} />
         {loading ? <SettingsSectionSkeletonLoader /> : renderActiveTabContent()}
       </SettingsPageContainer>
     </SettingsPageLayout>

@@ -2,8 +2,9 @@ import { type ApolloClient } from '@apollo/client';
 import { useApolloClient } from '@apollo/client/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
-import { expect, waitFor, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -20,6 +21,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { FieldsWidget } from '@/page-layout/widgets/fields/components/FieldsWidget';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
@@ -247,7 +249,15 @@ const createViewFieldGroup = (
   viewFields,
 });
 
-const FieldsWidgetStoryRenderer = ({ view }: { view: ViewWithRelations }) => {
+const SIDE_PANEL_SURFACE_INSTANCE_ID = 'fields-widget-story-side-panel';
+
+const FieldsWidgetStoryRenderer = ({
+  view,
+  surfaceType = 'main',
+}: {
+  view: ViewWithRelations;
+  surfaceType?: 'main' | 'side-panel';
+}) => {
   const widget = createFieldsWidget(FIELDS_VIEW_ID);
 
   const pageLayoutData = createPageLayoutWithWidget(
@@ -300,7 +310,18 @@ const FieldsWidgetStoryRenderer = ({ view }: { view: ViewWithRelations }) => {
                 <WidgetComponentInstanceContext.Provider
                   value={{ instanceId: widget.id }}
                 >
-                  <FieldsWidget widget={widget} />
+                  <WorkspaceSurfaceContext.Provider
+                    value={{
+                      type: surfaceType,
+                      instanceId:
+                        surfaceType === 'side-panel'
+                          ? SIDE_PANEL_SURFACE_INSTANCE_ID
+                          : MAIN_CONTEXT_STORE_INSTANCE_ID,
+                      ownsRouteLocation: surfaceType === 'main',
+                    }}
+                  >
+                    <FieldsWidget widget={widget} />
+                  </WorkspaceSurfaceContext.Provider>
                 </WidgetComponentInstanceContext.Provider>
               </PageLayoutContentProvider>
             </LayoutRenderingProvider>
@@ -457,4 +478,63 @@ export const Empty: Story = {
       ).toBeVisible();
     });
   },
+};
+
+// Hovering a field mounts an interactive copy of the cell through
+// RecordInlineCellAnchoredPortal, which finds its anchor with
+// document.getElementById after resolving the list instance id through
+// useAvailableComponentInstanceIdOrThrow -- and that resolution surface-scopes
+// the id. If the list rendered its anchors from an unscoped id, the lookup
+// misses, nothing interactive mounts, and the click lands on the inert display
+// underneath: the cell highlights but no editor ever opens.
+const openEditModeOnEmployees = async ({
+  canvasElement,
+}: {
+  canvasElement: HTMLElement;
+}) => {
+  const canvas = within(canvasElement);
+
+  const [employeesValue] = await canvas.findAllByText('250');
+  await userEvent.hover(employeesValue);
+
+  const hoveredValues = await canvas.findAllByText('250');
+  await userEvent.click(hoveredValues[hoveredValues.length - 1]);
+
+  await waitFor(() => {
+    expect(canvasElement.querySelector('input')).not.toBeNull();
+  });
+};
+
+const singleGroupView = () => {
+  const contactInfoFields = [
+    createViewField('vf-name', nameField.id, 0, 'group-contact-info'),
+    createViewField('vf-employees', employeesField.id, 1, 'group-contact-info'),
+  ];
+
+  return createView({
+    viewFields: contactInfoFields,
+    viewFieldGroups: [
+      createViewFieldGroup(
+        'group-contact-info',
+        'Contact Info',
+        0,
+        contactInfoFields,
+      ),
+    ],
+  });
+};
+
+export const OpensEditModeOnMainSurface: Story = {
+  render: () => <FieldsWidgetStoryRenderer view={singleGroupView()} />,
+  play: openEditModeOnEmployees,
+};
+
+export const OpensEditModeInSidePanel: Story = {
+  render: () => (
+    <FieldsWidgetStoryRenderer
+      view={singleGroupView()}
+      surfaceType="side-panel"
+    />
+  ),
+  play: openEditModeOnEmployees,
 };

@@ -2,9 +2,16 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   APPLICATION_CATEGORIES,
   isKnownApplicationCategory,
+  isRecurringChargePeriod,
+  isRecurringChargeUnit,
+  isUsageOperationTypeValue,
+  MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT,
+  RECURRING_CHARGE_PERIODS,
+  RECURRING_CHARGE_UNITS,
+  USAGE_OPERATION_TYPES,
 } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type ApplicationConfig } from '@/sdk/define/application/application-config';
 import { normalizeApplicationAssets } from '@/sdk/define/application/utils/normalize-application-assets';
@@ -33,6 +40,87 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
     if (requiresOptions && !isNonEmptyArray(variable.options)) {
       errors.push(
         `Application variable "${variableName}" of type ${variable.type} must define non-empty options`,
+      );
+    }
+  }
+
+  const billableOperations = config.billing?.operations ?? {};
+  const recurringCharges = config.billing?.recurring ?? {};
+
+  for (const [operationName, billableOperation] of Object.entries(
+    billableOperations,
+  )) {
+    if (!isDefined(billableOperation)) {
+      continue;
+    }
+
+    if (!isUsageOperationTypeValue(billableOperation.operationType)) {
+      errors.push(
+        `Billable operation "${operationName}" must map to a known operationType (${USAGE_OPERATION_TYPES.join(
+          ', ',
+        )})`,
+      );
+    }
+
+    if (!isNonEmptyString(billableOperation.label)) {
+      errors.push(
+        `Billable operation "${operationName}" must have a non empty label`,
+      );
+    }
+  }
+
+  for (const [chargeName, recurringCharge] of Object.entries(
+    recurringCharges,
+  )) {
+    if (!isDefined(recurringCharge)) {
+      continue;
+    }
+
+    if (!isRecurringChargePeriod(recurringCharge.period)) {
+      errors.push(
+        `Recurring charge "${chargeName}" must have a known period (${RECURRING_CHARGE_PERIODS.join(
+          ', ',
+        )})`,
+      );
+    }
+
+    if (
+      isDefined(recurringCharge.per) &&
+      !isRecurringChargeUnit(recurringCharge.per)
+    ) {
+      errors.push(
+        `Recurring charge "${chargeName}" must be charged per a known unit (${RECURRING_CHARGE_UNITS.join(
+          ', ',
+        )}) or omit \`per\` for a flat fee`,
+      );
+    }
+
+    if (
+      !Number.isSafeInteger(recurringCharge.amountMicroCredits) ||
+      recurringCharge.amountMicroCredits <= 0
+    ) {
+      errors.push(
+        `Recurring charge "${chargeName}" must have a positive integer amountMicroCredits`,
+      );
+    } else if (
+      recurringCharge.amountMicroCredits >
+      MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT
+    ) {
+      errors.push(
+        `Recurring charge "${chargeName}" exceeds the maximum amountMicroCredits of ${MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT}. A per-member charge declares the rate per member, not the total.`,
+      );
+    }
+
+    if (!isNonEmptyString(recurringCharge.label)) {
+      errors.push(
+        `Recurring charge "${chargeName}" must have a non empty label`,
+      );
+    }
+
+    // Both land in the same per-application usage breakdown, keyed by name.
+    if (Object.prototype.hasOwnProperty.call(billableOperations, chargeName)) {
+      errors.push(
+        `"${chargeName}" is declared both as a recurring charge and as a billable operation. Give them distinct names.`,
       );
     }
   }

@@ -28,7 +28,6 @@ export default defineConnectionProvider({
       'im:write',
       'groups:read',
       'reactions:write',
-      // Only used by the conversational assistant
       'app_mentions:read',
       'channels:history',
       'groups:history',
@@ -37,6 +36,8 @@ export default defineConnectionProvider({
       'users:read',
       'users:read.email',
       'assistant:write',
+      'links:read',
+      'links:write',
     ],
     clientIdVariable: 'SLACK_CLIENT_ID',
     clientSecretVariable: 'SLACK_CLIENT_SECRET',

@@ -1,3 +1,4 @@
+import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useMutation } from '@apollo/client/react';
 
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
@@ -125,6 +126,8 @@ export const useDeactivateWorkflowVersion = () => {
         }
       },
     });
+
+    await invalidateCoreWorkflowVersions(apolloCoreClient);
   };
 
   return { deactivateWorkflowVersion };

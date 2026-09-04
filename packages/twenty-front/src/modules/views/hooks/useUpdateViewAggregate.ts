@@ -6,7 +6,7 @@ import { getViewPersistTarget } from '@/object-record/record-table-widget/utils/
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
+import { usePerformViewApiUpdate } from '@/views/hooks/internal/usePerformViewApiUpdate';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useCallback, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -17,7 +17,7 @@ export const useUpdateViewAggregate = () => {
   const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
-  const { performViewAPIUpdate } = usePerformViewAPIUpdate();
+  const { performViewApiUpdate } = usePerformViewApiUpdate();
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
 
   const recordTableWidgetContext = useContext(RecordTableWidgetContext);
@@ -62,7 +62,7 @@ export const useUpdateViewAggregate = () => {
         return;
       }
 
-      const updatedViewResult = await performViewAPIUpdate({
+      const updatedViewResult = await performViewApiUpdate({
         id: contextStoreCurrentViewId,
         input: {
           kanbanAggregateOperationFieldMetadataId,
@@ -84,7 +84,7 @@ export const useUpdateViewAggregate = () => {
     [
       canPersistChanges,
       contextStoreCurrentViewId,
-      performViewAPIUpdate,
+      performViewApiUpdate,
       loadRecordIndexStates,
       recordTableWidgetContext,
     ],

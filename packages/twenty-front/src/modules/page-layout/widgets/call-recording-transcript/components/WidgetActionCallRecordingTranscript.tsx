@@ -1,5 +1,5 @@
 import { WidgetActionCallRecordingSeeAll } from '@/page-layout/widgets/call-recording/components/WidgetActionCallRecordingSeeAll';
-import { useCallRecordingForTranscript } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingForTranscript';
+import { useCallRecordingForWidget } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingForWidget';
 import { getCallRecordingVideoFileUrl } from '@/page-layout/widgets/call-recording/utils/getCallRecordingVideoFileUrl';
 import { buildCallRecordingTranscriptPlainText } from '@/page-layout/widgets/call-recording-transcript/utils/buildCallRecordingTranscriptPlainText';
 import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
@@ -15,7 +15,7 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const WidgetActionCallRecordingTranscript = () => {
   const { callRecording, loading, error, restriction } =
-    useCallRecordingForTranscript();
+    useCallRecordingForWidget({ kind: 'transcript' });
   const { copyToClipboard } = useCopyToClipboard();
 
   const canExposeCallRecording =

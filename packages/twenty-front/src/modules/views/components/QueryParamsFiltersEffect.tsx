@@ -40,13 +40,13 @@ export const QueryParamsFiltersEffect = () => {
     recordIndexId,
   );
 
-  const currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem =
+  const currentViewObjectMetadataItemIsDifferentFromUrlObjectMetadataItem =
     currentView?.objectMetadataId !== objectMetadataItem.id;
 
   useEffect(() => {
     if (
       !hasFiltersQueryParams ||
-      currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem
+      currentViewObjectMetadataItemIsDifferentFromUrlObjectMetadataItem
     ) {
       return;
     }
@@ -86,7 +86,7 @@ export const QueryParamsFiltersEffect = () => {
 
     loadFiltersFromQueryParams();
   }, [
-    currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem,
+    currentViewObjectMetadataItemIsDifferentFromUrlObjectMetadataItem,
     mapViewFiltersToRecordFilters,
     getFiltersFromQueryParams,
     getFilterGroupsFromQueryParams,

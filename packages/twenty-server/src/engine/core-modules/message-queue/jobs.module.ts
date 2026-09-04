@@ -9,6 +9,8 @@ import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/b
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { UpdateSubscriptionQuantityJob } from 'src/engine/core-modules/billing/jobs/update-subscription-quantity.job';
+import { ApplicationRecurringChargeModule } from 'src/engine/core-modules/billing/app-billing/application-recurring-charge.module';
+import { ApplicationRecurringChargeCronJob } from 'src/engine/core-modules/billing/app-billing/crons/jobs/application-recurring-charge.cron.job';
 import { BillingReminderModule } from 'src/engine/core-modules/billing/reminders/billing-reminder.module';
 import { BillingReminderCronJob } from 'src/engine/core-modules/billing/reminders/crons/billing-reminder.cron.job';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
@@ -105,8 +107,10 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     PreInstalledAppsModule,
     OnboardingModule,
     BillingReminderModule,
+    ApplicationRecurringChargeModule,
   ],
   providers: [
+    ApplicationRecurringChargeCronJob,
     BillingReminderCronJob,
     CleanSuspendedWorkspacesJob,
     CleanOnboardingWorkspacesJob,

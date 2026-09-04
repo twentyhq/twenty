@@ -8,6 +8,23 @@ Follow these steps to get your app running locally.
 - Yarn 4
 - Docker (to run the local Twenty server)
 - A Fathom OAuth client
+- A public HTTPS URL forwarding to the local Twenty server
+
+Register this OAuth callback in Fathom:
+
+```text
+https://<development-host>/auth/apps/callback
+```
+
+Set Twenty's `SERVER_URL` to that same public host. The connection hook registers
+this destination with Fathom automatically:
+
+```text
+https://<development-host>/webhooks/server/72b52885-e1ba-419f-8e2e-052700f2c9f2?connectionId=<connected-account-id>
+```
+
+The ID is the **Fathom webhook resolver** logic function. Deliveries are routed
+to the workspace that made the connection, so no per-workspace domain is needed.
 
 ## Steps
 
@@ -34,7 +51,7 @@ Follow these steps to get your app running locally.
    yarn twenty dev
    ```
 
-5. Open [http://localhost:2020](http://localhost:2020), log in with the default development credentials: `tim@apple.dev` / `tim@apple.dev`, and connect Fathom from Settings.
+5. Open [http://localhost:2020](http://localhost:2020), log in with the default development credentials: `tim@apple.dev` / `tim@apple.dev`, and connect Fathom from Settings. The connection hook registers the signed webhook.
 
 ## Verifying your setup
 

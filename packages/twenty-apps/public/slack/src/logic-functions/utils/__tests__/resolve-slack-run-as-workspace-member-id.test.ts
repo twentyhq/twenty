@@ -183,9 +183,14 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
-  it('should not run as anyone for a declined manual link, even when the email matches', async () => {
+  it('should still grant the member their own email match after a declined manual link to another member', async () => {
+    // Declining a link that lends another member's access must not cost the
+    // Slack user their own identity: once DECLINED is no longer an early
+    // return, run-as still resolves their own member by email (which is all
+    // their own permissions) and never re-creates or re-updates the link.
     findSlackUserLinkMock.mockResolvedValue({
       ...MANUAL_LINK,
+      workspaceMemberId: 'member-2',
       consentState: 'DECLINED',
     });
     findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
@@ -196,8 +201,31 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
         slackClient,
         identity: IDENTITY,
       }),
+    ).toBe('member-1');
+    expect(findWorkspaceMemberIdByEmailMock).toHaveBeenCalledTimes(1);
+    expect(findWorkspaceMemberIdByEmailMock).toHaveBeenCalledWith(
+      client,
+      'ada@twenty.com',
+    );
+    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
+  });
+
+  it('should not fall back to a declined manual link when the user has no own email match', async () => {
+    findSlackUserLinkMock.mockResolvedValue({
+      ...MANUAL_LINK,
+      workspaceMemberId: 'member-2',
+      consentState: 'DECLINED',
+    });
+    findWorkspaceMemberIdByEmailMock.mockResolvedValue(undefined);
+
+    expect(
+      await resolveSlackRunAsWorkspaceMemberId({
+        client,
+        slackClient,
+        identity: IDENTITY,
+      }),
     ).toBeUndefined();
-    expect(findWorkspaceMemberIdByEmailMock).not.toHaveBeenCalled();
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
     expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
   });

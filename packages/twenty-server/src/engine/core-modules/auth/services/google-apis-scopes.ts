@@ -23,7 +23,7 @@ interface TokenInfoResponse {
 }
 
 @Injectable()
-export class GoogleAPIScopesService {
+export class GoogleApiScopesService {
   constructor(
     private readonly secureHttpClientService: SecureHttpClientService,
   ) {}

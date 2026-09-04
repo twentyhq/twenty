@@ -84,7 +84,7 @@ export class ApiService {
 
   syncApplication(
     manifest: Manifest,
-    options?: { dryRun?: boolean },
+    options?: { dryRun?: boolean; inferDeletionFromMissingEntities?: boolean },
   ): Promise<
     ApiResponse<
       {

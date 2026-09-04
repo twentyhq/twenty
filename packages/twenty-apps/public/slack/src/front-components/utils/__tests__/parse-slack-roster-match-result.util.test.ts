@@ -13,6 +13,7 @@ describe('parseSlackRosterMatchResult', () => {
         linkedCount: 2,
         alreadyLinkedCount: 1,
         unmatchedCount: 3,
+        failedCount: 1,
       },
       fallbackMessage: FALLBACK_MESSAGE,
     });
@@ -21,6 +22,7 @@ describe('parseSlackRosterMatchResult', () => {
     expect(result.message).toBe('Matched 2 Slack users by email.');
     expect(result.linkedCount).toBe(2);
     expect(result.unmatchedCount).toBe(3);
+    expect(result.failedCount).toBe(1);
   });
 
   it('should default counts to zero when missing', () => {
@@ -31,6 +33,7 @@ describe('parseSlackRosterMatchResult', () => {
 
     expect(result.linkedCount).toBe(0);
     expect(result.unmatchedCount).toBe(0);
+    expect(result.failedCount).toBe(0);
   });
 
   it('should ignore non-numeric counts', () => {

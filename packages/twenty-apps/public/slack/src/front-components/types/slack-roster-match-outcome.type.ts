@@ -4,4 +4,5 @@ export type SlackRosterMatchOutcome = {
   error?: string;
   linkedCount: number;
   unmatchedCount: number;
+  failedCount: number;
 };

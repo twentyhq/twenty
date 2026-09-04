@@ -1,8 +1,13 @@
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { type ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { isNonEmptyString } from '@sniptt/guards';
 
+// Returns the id exactly as provided. Surface isolation is opted into where an
+// id is created (useWorkspaceSurfaceScopedComponentInstanceId at the provider),
+// never here: this hook cannot tell state meant to be shared across surfaces
+// (a side panel reading the main diagram's flow) from state that must be
+// isolated, and ids also escape into DOM anchors that are looked up by the
+// exact string a provider rendered.
 export const useAvailableComponentInstanceIdOrThrow = <
   T extends { instanceId: string },
 >(
@@ -12,14 +17,13 @@ export const useAvailableComponentInstanceIdOrThrow = <
   const instanceStateContext = useComponentInstanceStateContext(Context);
 
   const instanceIdFromContext = instanceStateContext?.instanceId;
-  const availableInstanceId = isNonEmptyString(instanceIdFromProps)
-    ? instanceIdFromProps
-    : (instanceIdFromContext ?? '');
-  const scopedInstanceId =
-    useWorkspaceSurfaceScopedComponentInstanceId(availableInstanceId);
 
-  if (isNonEmptyString(scopedInstanceId)) {
-    return scopedInstanceId;
+  if (isNonEmptyString(instanceIdFromProps)) {
+    return instanceIdFromProps;
+  }
+
+  if (isNonEmptyString(instanceIdFromContext)) {
+    return instanceIdFromContext;
   }
 
   throw new Error(

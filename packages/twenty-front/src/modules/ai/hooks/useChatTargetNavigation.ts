@@ -2,7 +2,7 @@ import { useStore } from 'jotai';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
-import { isAiChatArtifactSurface } from '@/ai/utils/isAiChatArtifactSurface';
+import { useIsAiChatArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
@@ -13,8 +13,7 @@ export const useChatTargetNavigation = () => {
   const navigateApp = useNavigateApp();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
-
-  const isArtifactSurface = () => isAiChatArtifactSurface(store);
+  const isAiChatArtifactSurface = useIsAiChatArtifactSurface();
 
   const openRecordTarget = ({
     recordId,
@@ -23,7 +22,7 @@ export const useChatTargetNavigation = () => {
     recordId: string;
     objectNameSingular: string;
   }) => {
-    if (isArtifactSurface()) {
+    if (isAiChatArtifactSurface) {
       openRecordInSidePanel({
         recordId,
         objectNameSingular,
@@ -63,7 +62,7 @@ export const useChatTargetNavigation = () => {
     };
     const recordIndexQueryParams = isDefined(viewId) ? { viewId } : undefined;
 
-    if (isArtifactSurface()) {
+    if (isAiChatArtifactSurface) {
       openRoutedPageInSidePanel({
         path: getAppPath(
           AppPath.RecordIndexPage,

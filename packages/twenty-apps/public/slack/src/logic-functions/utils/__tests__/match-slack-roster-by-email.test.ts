@@ -9,11 +9,13 @@ const {
   findWorkspaceMemberIdsByEmailsMock,
   listLinkedSlackUserIdsMock,
   linkSlackRosterCandidatesMock,
+  saveSlackRosterMatchRunOutcomeMock,
 } = vi.hoisted(() => ({
   coreApiClientMock: vi.fn(),
   findWorkspaceMemberIdsByEmailsMock: vi.fn(),
   listLinkedSlackUserIdsMock: vi.fn(),
   linkSlackRosterCandidatesMock: vi.fn(),
+  saveSlackRosterMatchRunOutcomeMock: vi.fn(),
 }));
 
 vi.mock('twenty-client-sdk/core', () => ({
@@ -31,6 +33,13 @@ vi.mock('src/logic-functions/data/list-linked-slack-user-ids', () => ({
 vi.mock('src/logic-functions/utils/link-slack-roster-candidates', () => ({
   linkSlackRosterCandidates: linkSlackRosterCandidatesMock,
 }));
+
+vi.mock(
+  'src/logic-functions/utils/save-slack-roster-match-run-outcome',
+  () => ({
+    saveSlackRosterMatchRunOutcome: saveSlackRosterMatchRunOutcomeMock,
+  }),
+);
 
 const SLACK_TEAM_ID = 'T-installed';
 
@@ -259,6 +268,53 @@ describe('matchSlackRosterByEmail', () => {
       ambiguousEmailCount: 0,
       failedCount: 0,
       isRosterTruncated: false,
+    });
+  });
+
+  it('should record a completed match as successful', async () => {
+    await matchSlackRosterByEmail({
+      slackClient: buildSlackClient([
+        fullMember({ id: 'U1', email: 'ada@twenty.com' }),
+      ]),
+      slackTeamId: SLACK_TEAM_ID,
+    });
+
+    expect(saveSlackRosterMatchRunOutcomeMock).toHaveBeenCalledWith({
+      isSuccessful: true,
+    });
+  });
+
+  it('should record a match with failed writes as unsuccessful', async () => {
+    linkSlackRosterCandidatesMock.mockResolvedValue({
+      linkedCount: 0,
+      failedCount: 1,
+    });
+
+    await matchSlackRosterByEmail({
+      slackClient: buildSlackClient([
+        fullMember({ id: 'U1', email: 'ada@twenty.com' }),
+      ]),
+      slackTeamId: SLACK_TEAM_ID,
+    });
+
+    expect(saveSlackRosterMatchRunOutcomeMock).toHaveBeenCalledWith({
+      isSuccessful: false,
+    });
+  });
+
+  it('should record the failure and rethrow when the match blows up', async () => {
+    listLinkedSlackUserIdsMock.mockRejectedValue(new Error('kaboom'));
+
+    await expect(
+      matchSlackRosterByEmail({
+        slackClient: buildSlackClient([]),
+        slackTeamId: SLACK_TEAM_ID,
+      }),
+    ).rejects.toThrow('kaboom');
+
+    expect(saveSlackRosterMatchRunOutcomeMock).toHaveBeenCalledWith({
+      isSuccessful: false,
+      errorMessage: 'kaboom',
     });
   });
 

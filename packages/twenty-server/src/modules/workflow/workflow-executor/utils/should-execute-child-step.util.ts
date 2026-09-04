@@ -1,6 +1,7 @@
 import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 import { getEffectiveParentStatus } from 'src/modules/workflow/workflow-executor/utils/get-effective-parent-status.util';
+import { stepFailedAndContinued } from 'src/modules/workflow/workflow-executor/utils/step-failed-and-continued.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 export const shouldExecuteChildStep = ({
@@ -16,20 +17,23 @@ export const shouldExecuteChildStep = ({
     return true;
   }
 
-  const statuses = parentSteps.map((parentStep) =>
-    getEffectiveParentStatus({ parentStep, childStepId, stepInfos }),
+  const parentOutcomes = parentSteps.map((parentStep) => ({
+    status: getEffectiveParentStatus({ parentStep, childStepId, stepInfos }),
+    failedAndContinued: stepFailedAndContinued({ step: parentStep, stepInfos }),
+  }));
+
+  const hasSuccessfulOrContinuedParentStep = parentOutcomes.some(
+    ({ status, failedAndContinued }) =>
+      status === StepStatus.SUCCESS || failedAndContinued,
   );
 
-  const hasSuccessfulParentStep = statuses.some(
-    (status) => status === StepStatus.SUCCESS,
-  );
-
-  const areAllParentsCompleted = statuses.every(
-    (status) =>
+  const areAllParentsCompleted = parentOutcomes.every(
+    ({ status, failedAndContinued }) =>
       status === StepStatus.SUCCESS ||
       status === StepStatus.STOPPED ||
-      status === StepStatus.SKIPPED,
+      status === StepStatus.SKIPPED ||
+      failedAndContinued,
   );
 
-  return hasSuccessfulParentStep && areAllParentsCompleted;
+  return hasSuccessfulOrContinuedParentStep && areAllParentsCompleted;
 };

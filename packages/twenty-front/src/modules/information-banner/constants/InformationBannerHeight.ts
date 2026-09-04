@@ -1,1 +1,0 @@
-export const INFORMATION_BANNER_HEIGHT = '40px';

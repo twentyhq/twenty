@@ -7,7 +7,7 @@ import { SettingsLogicFunctionSettingsTab } from '@/settings/logic-functions/com
 import { SettingsLogicFunctionTestTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab';
 import { SettingsLogicFunctionTriggersTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
@@ -153,9 +153,11 @@ export const SettingsLogicFunctionDetail = () => {
           />
         }
         links={breadcrumbLinks}
+        secondaryBar={
+          <SettingsTabBar tabs={tabs} componentInstanceId={instanceId} />
+        }
       >
         <SettingsPageContainer>
-          <TabList tabs={tabs} componentInstanceId={instanceId} />
           {isEditorTab && (
             <SettingsLogicFunctionCodeEditorTab
               files={files}

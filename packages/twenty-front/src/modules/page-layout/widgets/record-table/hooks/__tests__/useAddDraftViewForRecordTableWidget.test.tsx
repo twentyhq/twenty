@@ -4,8 +4,7 @@ import {
   makeDraft,
   makeTab,
 } from '@/page-layout/testing/pageLayoutDraftFixtures';
-import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { createDefaultRecordTableWidget } from '@/page-layout/utils/createDefaultRecordTableWidget';
+import { buildDraftPageLayoutWidget } from '@/page-layout/utils/buildDraftPageLayoutWidget';
 import { useAddDraftViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForRecordTableWidget';
 import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
@@ -13,6 +12,7 @@ import { type ReactNode } from 'react';
 import {
   PageLayoutTabLayoutMode,
   WidgetConfigurationType,
+  WidgetType,
 } from '~/generated-metadata/graphql';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
@@ -45,29 +45,26 @@ describe('useAddDraftViewForRecordTableWidget', () => {
       instanceId: PAGE_LAYOUT_ID,
     });
 
-    const recordTableWidget: PageLayoutWidget = {
-      ...createDefaultRecordTableWidget({
-        id: WIDGET_ID,
-        pageLayoutTabId: 'tab-id',
-        title: 'Companies',
-        objectMetadataId: 'object-metadata-id',
-        isUIEditable: true,
-        position: {
-          __typename: 'PageLayoutWidgetGridPosition',
-          layoutMode: PageLayoutTabLayoutMode.GRID,
-          row: 0,
-          column: 0,
-          rowSpan: 4,
-          columnSpan: 4,
-        },
-      }),
+    const recordTableWidget = buildDraftPageLayoutWidget({
+      id: WIDGET_ID,
+      pageLayoutTabId: 'tab-id',
+      title: 'Companies',
+      type: WidgetType.RECORD_TABLE,
+      objectMetadataId: 'object-metadata-id',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 0,
+        column: 0,
+        rowSpan: 4,
+        columnSpan: 4,
+      },
       configuration: {
         configurationType: WidgetConfigurationType.RECORD_TABLE,
         viewId: 'previous-view-id',
         recordLimit: 12,
         isUIEditable: true,
       },
-    };
+    });
 
     store.set(
       pageLayoutDraftState,

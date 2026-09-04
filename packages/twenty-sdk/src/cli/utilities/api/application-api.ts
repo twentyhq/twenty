@@ -6,6 +6,7 @@ import {
   type MetadataValidationErrorResponse,
   type SyncAction,
 } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 export class ApplicationApi {
   constructor(private readonly client: AxiosInstance) {}
@@ -313,7 +314,7 @@ export class ApplicationApi {
 
   async syncApplication(
     manifest: Manifest,
-    options?: { dryRun?: boolean },
+    options?: { dryRun?: boolean; inferDeletionFromMissingEntities?: boolean },
   ): Promise<
     ApiResponse<
       {
@@ -324,27 +325,38 @@ export class ApplicationApi {
     >
   > {
     try {
-      const isDryRun = options?.dryRun ?? false;
+      const optionalArguments = [
+        options?.dryRun ? 'dryRun' : null,
+        options?.inferDeletionFromMissingEntities === false
+          ? 'inferDeletionFromMissingEntities'
+          : null,
+      ].filter(isDefined);
 
-      const mutation = isDryRun
-        ? `
-        mutation SyncApplication($manifest: JSON!, $dryRun: Boolean) {
-          syncApplication(manifest: $manifest, dryRun: $dryRun) {
-            applicationUniversalIdentifier
-            actions
-          }
-        }
-      `
-        : `
-        mutation SyncApplication($manifest: JSON!) {
-          syncApplication(manifest: $manifest) {
+      const variableDeclarations = [
+        '$manifest: JSON!',
+        ...optionalArguments.map((argument) => `$${argument}: Boolean`),
+      ].join(', ');
+      const argumentAssignments = [
+        'manifest: $manifest',
+        ...optionalArguments.map((argument) => `${argument}: $${argument}`),
+      ].join(', ');
+
+      const mutation = `
+        mutation SyncApplication(${variableDeclarations}) {
+          syncApplication(${argumentAssignments}) {
             applicationUniversalIdentifier
             actions
           }
         }
       `;
 
-      const variables = isDryRun ? { manifest, dryRun: true } : { manifest };
+      const variables = {
+        manifest,
+        ...(options?.dryRun ? { dryRun: true } : {}),
+        ...(options?.inferDeletionFromMissingEntities === false
+          ? { inferDeletionFromMissingEntities: false }
+          : {}),
+      };
 
       const response = await this.client.post(
         '/metadata',

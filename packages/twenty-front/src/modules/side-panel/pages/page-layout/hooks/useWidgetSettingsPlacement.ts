@@ -1,5 +1,4 @@
-import { useCanMovePageLayoutWidgetDown } from '@/page-layout/hooks/useCanMovePageLayoutWidgetDown';
-import { useCanMovePageLayoutWidgetUp } from '@/page-layout/hooks/useCanMovePageLayoutWidgetUp';
+import { useCanMovePageLayoutWidget } from '@/page-layout/hooks/useCanMovePageLayoutWidget';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { shouldShowAddWidgetBelow } from '@/side-panel/pages/page-layout/utils/shouldShowAddWidgetBelow';
@@ -28,10 +27,7 @@ export const useWidgetSettingsPlacement = (
     pageLayoutId,
   );
 
-  const { canMovePageLayoutWidgetUp } =
-    useCanMovePageLayoutWidgetUp(pageLayoutId);
-  const { canMovePageLayoutWidgetDown } =
-    useCanMovePageLayoutWidgetDown(pageLayoutId);
+  const { canMovePageLayoutWidget } = useCanMovePageLayoutWidget(pageLayoutId);
 
   const currentTabAndWidget = pageLayoutDraft.tabs
     .map((tab) => ({
@@ -65,7 +61,7 @@ export const useWidgetSettingsPlacement = (
     isPlacementSectionVisible: true,
     pageLayoutEditingWidgetId,
     showAddWidgetBelow: shouldShowAddWidgetBelow(currentWidget),
-    showMoveDown: canMovePageLayoutWidgetDown(pageLayoutEditingWidgetId),
-    showMoveUp: canMovePageLayoutWidgetUp(pageLayoutEditingWidgetId),
+    showMoveDown: canMovePageLayoutWidget(pageLayoutEditingWidgetId, 'down'),
+    showMoveUp: canMovePageLayoutWidget(pageLayoutEditingWidgetId, 'up'),
   };
 };

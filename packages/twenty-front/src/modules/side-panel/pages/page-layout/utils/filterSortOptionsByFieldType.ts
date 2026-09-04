@@ -6,7 +6,7 @@ import {
 import { type IconComponent } from 'twenty-ui/icon';
 import { GraphOrderBy } from '~/generated-metadata/graphql';
 
-export type SortOption = {
+type SortOption = {
   value: GraphOrderBy;
   icon?: IconComponent | null;
 };

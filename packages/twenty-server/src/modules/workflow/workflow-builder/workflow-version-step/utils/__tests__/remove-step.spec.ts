@@ -33,7 +33,7 @@ describe('removeStep', () => {
       },
       outputSchema: {},
       errorHandlingOptions: {
-        retryOnFailure: { value: false },
+        retryOnFailure: { value: 0 },
         continueOnFailure: { value: false },
       },
     },
@@ -185,7 +185,7 @@ describe('removeStep', () => {
         },
         outputSchema: {},
         errorHandlingOptions: {
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
           continueOnFailure: { value: false },
         },
       },
@@ -251,7 +251,7 @@ describe('removeStep', () => {
         },
         outputSchema: {},
         errorHandlingOptions: {
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
           continueOnFailure: { value: false },
         },
       },
@@ -316,7 +316,7 @@ describe('removeStep', () => {
         },
         outputSchema: {},
         errorHandlingOptions: {
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
           continueOnFailure: { value: false },
         },
       },
@@ -365,7 +365,7 @@ describe('removeStep', () => {
         },
         outputSchema: {},
         errorHandlingOptions: {
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
           continueOnFailure: { value: false },
         },
       },
