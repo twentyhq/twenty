@@ -1,3 +1,4 @@
+import { isHiddenWorkspaceWorkflowRunRelationField } from '@/object-core/workflows/utils/isHiddenWorkspaceWorkflowRunRelationField';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import {
   type FieldsWidgetGroup,
@@ -5,7 +6,9 @@ import {
 } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { getHiddenFieldsFromGroups } from '@/page-layout/widgets/fields/utils/getHiddenFieldsFromGroups';
 import { useViewById } from '@/views/hooks/useViewById';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useMemo } from 'react';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 type UseFieldsWidgetHiddenFieldsParams = {
@@ -22,13 +25,23 @@ export const useFieldsWidgetHiddenFields = ({
     objectNameSingular,
   });
 
+  const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
+  );
+
   const hiddenFields = useMemo<FieldsWidgetGroupField[]>(() => {
     if (!isDefined(objectMetadataItem)) {
       return [];
     }
 
     const activeFields = objectMetadataItem.fields.filter(
-      (field) => field.isActive,
+      (field) =>
+        field.isActive &&
+        !isHiddenWorkspaceWorkflowRunRelationField({
+          objectNameSingular,
+          fieldName: field.name,
+          isWorkflowCoreIndexPageEnabled,
+        }),
     );
 
     if (isDefined(view) && isNonEmptyArray(view.viewFieldGroups)) {
@@ -90,7 +103,12 @@ export const useFieldsWidgetHiddenFields = ({
     }
 
     return [];
-  }, [objectMetadataItem, view]);
+  }, [
+    objectMetadataItem,
+    view,
+    objectNameSingular,
+    isWorkflowCoreIndexPageEnabled,
+  ]);
 
   return { hiddenFields };
 };

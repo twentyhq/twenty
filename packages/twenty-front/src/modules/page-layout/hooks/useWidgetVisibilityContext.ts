@@ -1,10 +1,14 @@
+import { isHiddenWorkspaceWorkflowRunRelationField } from '@/object-core/workflows/utils/isHiddenWorkspaceWorkflowRunRelationField';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibilityContext';
 import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVisibilityContext';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useMemo } from 'react';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -22,13 +26,47 @@ export const useWidgetVisibilityContext = (): WidgetVisibilityContext => {
     targetRecordIdentifier?.id ?? '',
   );
 
-  return useMemo(
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
+  );
+
+  const targetObjectNameSingular =
+    targetRecordIdentifier?.targetObjectNameSingular;
+
+  const hiddenFieldMetadataIdsOrNames = useMemo(
     () =>
-      buildWidgetVisibilityContext({
+      (
+        objectMetadataItems.find(
+          (objectMetadataItem) =>
+            objectMetadataItem.nameSingular === targetObjectNameSingular,
+        )?.fields ?? []
+      )
+        .filter((field) =>
+          isHiddenWorkspaceWorkflowRunRelationField({
+            objectNameSingular: targetObjectNameSingular,
+            fieldName: field.name,
+            isWorkflowCoreIndexPageEnabled,
+          }),
+        )
+        .flatMap((field) => [field.id, field.name]),
+    [
+      objectMetadataItems,
+      targetObjectNameSingular,
+      isWorkflowCoreIndexPageEnabled,
+    ],
+  );
+
+  return useMemo(
+    () => ({
+      ...buildWidgetVisibilityContext({
         isMobile,
         isInSidePanel,
         targetRecord: isDefined(recordStore) ? recordStore : undefined,
       }),
-    [isMobile, isInSidePanel, recordStore],
+      hiddenFieldMetadataIdsOrNames,
+    }),
+    [isMobile, isInSidePanel, recordStore, hiddenFieldMetadataIdsOrNames],
   );
 };

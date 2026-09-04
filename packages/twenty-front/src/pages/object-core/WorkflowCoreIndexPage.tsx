@@ -56,7 +56,7 @@ export const WorkflowCoreIndexPage = () => {
     objectNameSingular: CoreObjectNameSingular.Workflow,
   });
 
-  const { coreWorkflows, hasNextPage, loading, fetchNextPage } =
+  const { coreWorkflows, hasNextPage, loading, error, fetchNextPage } =
     useCoreWorkflows({ tableId });
 
   const { ref: fetchMoreRef, inView } = useInView();
@@ -73,7 +73,9 @@ export const WorkflowCoreIndexPage = () => {
     coreWorkflowsFilterSettings.stepFilters ?? []
   ).some(isUsableCoreWorkflowFilterRule);
 
-  const isEmpty = !loading && coreWorkflows.length === 0;
+  const hasError = isDefined(error);
+
+  const isEmpty = !loading && !hasError && coreWorkflows.length === 0;
 
   useEffect(() => {
     if (inView && hasNextPage && !loading) {
@@ -101,7 +103,14 @@ export const WorkflowCoreIndexPage = () => {
         }
       >
         <StyledTableContainer>
-          {isEmpty ? (
+          {hasError && (
+            <RecordIndexEmptyStateDisplay
+              animatedPlaceholderType="errorIndex"
+              title={t`Something went wrong`}
+              subTitle={t`We could not load your ${objectMetadataItem.labelPlural}. Please try again later.`}
+            />
+          )}
+          {isEmpty && (
             <RecordIndexEmptyStateDisplay
               animatedPlaceholderType={
                 hasAppliedFilters ? 'noMatchRecord' : 'noRecord'
@@ -114,7 +123,7 @@ export const WorkflowCoreIndexPage = () => {
               subTitle={
                 hasAppliedFilters
                   ? t`No ${objectMetadataItem.labelPlural} match your filters. Try removing some of them.`
-                  : t`Create a workflow to automate your work.`
+                  : t`Create a ${objectMetadataItem.labelSingular} to automate your work.`
               }
               ButtonIcon={IconPlus}
               buttonTitle={t`Add a ${objectMetadataItem.labelSingular}`}
@@ -122,7 +131,8 @@ export const WorkflowCoreIndexPage = () => {
                 canCreateCoreWorkflow ? createCoreWorkflow : undefined
               }
             />
-          ) : (
+          )}
+          {!hasError && !isEmpty && (
             <>
               <CoreObjectTable
                 tableId={tableId}
