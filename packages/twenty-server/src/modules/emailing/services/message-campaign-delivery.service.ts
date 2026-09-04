@@ -7,6 +7,8 @@ import { SEND_CAMPAIGN_EMAIL_JOB } from 'src/engine/core-modules/emailing-domain
 import { CLAIMABLE_CAMPAIGN_DELIVERY_STATES } from 'src/engine/core-modules/emailing-domain/constants/claimable-campaign-delivery-states.constant';
 import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-backoff.constant';
 import { CAMPAIGN_SEND_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-limit.constant';
+import { SEND_SLOT_RETRY } from 'src/engine/core-modules/emailing-domain/constants/send-slot-retry.constant';
+import { computeSendSlotBackoffMs } from 'src/modules/emailing/utils/compute-send-slot-backoff-ms.util';
 import { CAMPAIGN_DELIVERY_CLAIM_TTL_MS } from 'src/engine/core-modules/emailing-domain/constants/campaign-delivery-claim-ttl-ms.constant';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -51,15 +53,9 @@ type SendContext = {
   claimToken: string;
 };
 
-const SEND_SLOT_RETRY = {
-  attemptLimit: 60,
-  jitterRatio: 0.5,
-  maxWindows: 3,
-  minDelayMs: 1_000,
-  maxDelayMs: 60_000,
-};
-
 type SendSlotRefusal = { retryDelayMs: number; windowMs: number };
+
+const SKIP_EVENT_EMISSION = { shouldSkipEventEmission: true };
 
 @Injectable()
 export class MessageCampaignDeliveryService {
@@ -83,12 +79,6 @@ export class MessageCampaignDeliveryService {
     const { workspaceId, campaignId } = data;
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const campaign = await this.findRunningCampaign(campaignId);
-
-      if (!isDefined(campaign)) {
-        return;
-      }
-
       const isStillClaimable = await this.campaignDeliveryRepository.existsBy(
         workspaceId,
         {
@@ -114,9 +104,16 @@ export class MessageCampaignDeliveryService {
         }
       }
 
+      const campaign = await this.findRunningCampaign(campaignId);
+
+      if (!isDefined(campaign)) {
+        return;
+      }
+
       const messageRepository = this.workspaceOrmManager.getRepository(
         MessageWorkspaceEntity,
         { shouldBypassPermissionChecks: true },
+        SKIP_EVENT_EMISSION,
       );
 
       const sendContext = await this.loadSendContext({ data, campaign });
@@ -222,23 +219,15 @@ export class MessageCampaignDeliveryService {
       return;
     }
 
-    const backoffCeilingMs = Math.min(
-      windowMs * SEND_SLOT_RETRY.maxWindows,
-      SEND_SLOT_RETRY.maxDelayMs,
-    );
-
-    const backoffMs = Math.min(
-      retryDelayMs * 2 ** (attemptCount - 1),
-      Math.max(backoffCeilingMs, SEND_SLOT_RETRY.minDelayMs),
-    );
-
     await this.messageQueueService.add<SendCampaignEmailJobData>(
       SEND_CAMPAIGN_EMAIL_JOB,
       { ...data, rateLimitedAttemptCount: attemptCount },
       {
-        delay: Math.ceil(
-          backoffMs * (1 + Math.random() * SEND_SLOT_RETRY.jitterRatio),
-        ),
+        delay: computeSendSlotBackoffMs({
+          attemptCount,
+          retryDelayMs,
+          windowMs,
+        }),
         retryLimit: CAMPAIGN_SEND_RETRY_LIMIT,
         backoff: CAMPAIGN_SEND_RETRY_BACKOFF,
       },
@@ -456,6 +445,7 @@ export class MessageCampaignDeliveryService {
     const associationRepository = this.workspaceOrmManager.getRepository(
       MessageChannelMessageAssociationWorkspaceEntity,
       { shouldBypassPermissionChecks: true },
+      SKIP_EVENT_EMISSION,
     );
 
     await associationRepository.update(

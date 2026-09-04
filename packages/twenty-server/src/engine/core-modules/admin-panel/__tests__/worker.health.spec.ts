@@ -22,6 +22,9 @@ jest.mock('bullmq', () => ({
   Queue: jest.fn(() => mockQueueInstance),
 }));
 
+const drainWorkerChecksLeftRunningByTheTimeout = () =>
+  new Promise((resolve) => setImmediate(resolve));
+
 describe('WorkerHealthIndicator', () => {
   let service: WorkerHealthIndicator;
   let mockRedis: jest.Mocked<Pick<Redis, 'ping'>>;
@@ -130,6 +133,8 @@ describe('WorkerHealthIndicator', () => {
       expect(result.worker.error).toBe(HEALTH_ERROR_MESSAGES.WORKER_TIMEOUT);
     }
     jest.useRealTimers();
+
+    await drainWorkerChecksLeftRunningByTheTimeout();
   });
 
   it('should check all message queues', async () => {

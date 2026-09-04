@@ -4,16 +4,15 @@ import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constan
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
-import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
-import { type EmailCreditContext } from 'src/modules/emailing/types/email-credit-context.type';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { EMAIL_MARGIN_MULTIPLIER } from 'src/modules/emailing/constants/email-margin-multiplier';
 import { SES_EMAIL_COST_PER_THOUSAND_DOLLARS } from 'src/modules/emailing/constants/ses-email-cost-per-thousand-dollars';
+import { type EmailCreditContext } from 'src/modules/emailing/types/email-credit-context.type';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class EmailBillingService {
@@ -52,11 +51,36 @@ export class EmailBillingService {
     return { hasCredits: hasAvailableCredits, currentBillingSubscription };
   }
 
+  async recordEmailSendUsage({
+    workspaceId,
+    sentEmailCount,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    sentEmailCount: number;
+    userWorkspaceId?: string | null;
+  }): Promise<void> {
+    if (sentEmailCount <= 0) {
+      return;
+    }
+
+    await this.usageRecorderService.record(workspaceId, [
+      {
+        resourceType: UsageResourceType.EMAIL,
+        operationType: UsageOperationType.EMAIL_SEND,
+        creditsUsedMicro: this.computeCreditsForEmails(sentEmailCount),
+        quantity: sentEmailCount,
+        unit: UsageUnit.INVOCATION,
+        spenders: { userWorkspaceId },
+      },
+    ]);
+  }
+
   async billSentEmails({
     workspaceId,
     sentEmailCount,
     userWorkspaceId,
-    currentBillingSubscription: providedCurrentBillingSubscription,
+    currentBillingSubscription,
   }: {
     workspaceId: string;
     sentEmailCount: number;
@@ -67,38 +91,37 @@ export class EmailBillingService {
       return;
     }
 
-    const providerCostInDollars =
-      (sentEmailCount / 1000) * SES_EMAIL_COST_PER_THOUSAND_DOLLARS;
-    const chargedInDollars = providerCostInDollars * EMAIL_MARGIN_MULTIPLIER;
-    const creditsUsedMicro = Math.round(
-      convertDollarsToBillingCredits(chargedInDollars),
-    );
-
     if (this.billingService.isBillingEnabled()) {
-      const currentBillingSubscription =
+      const resolvedBillingSubscription =
         await this.billingUsageService.resolveCurrentBillingSubscription({
           workspaceId,
-          providedCurrentBillingSubscription,
+          providedCurrentBillingSubscription: currentBillingSubscription,
         });
 
-      if (currentBillingSubscription !== NO_BILLING_SUBSCRIPTION) {
+      if (resolvedBillingSubscription !== NO_BILLING_SUBSCRIPTION) {
         await this.billingUsageService.decrementAvailableCreditsInCache({
           workspaceId,
-          usedCredits: creditsUsedMicro,
-          currentBillingSubscription,
+          usedCredits: this.computeCreditsForEmails(sentEmailCount),
+          currentBillingSubscription: resolvedBillingSubscription,
         });
       }
     }
 
-    await this.usageRecorderService.record(workspaceId, [
-      {
-        resourceType: UsageResourceType.EMAIL,
-        operationType: UsageOperationType.EMAIL_SEND,
-        creditsUsedMicro,
-        quantity: sentEmailCount,
-        unit: UsageUnit.INVOCATION,
-        spenders: { userWorkspaceId },
-      },
-    ]);
+    await this.recordEmailSendUsage({
+      workspaceId,
+      sentEmailCount,
+      userWorkspaceId,
+    });
+  }
+
+  private computeCreditsForEmails(emailCount: number): number {
+    const providerCostInDollars =
+      (emailCount / 1000) * SES_EMAIL_COST_PER_THOUSAND_DOLLARS;
+
+    return Math.round(
+      convertDollarsToBillingCredits(
+        providerCostInDollars * EMAIL_MARGIN_MULTIPLIER,
+      ),
+    );
   }
 }

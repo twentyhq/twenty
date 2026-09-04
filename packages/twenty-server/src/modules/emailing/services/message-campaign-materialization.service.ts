@@ -1,6 +1,6 @@
 import { CAMPAIGN_SEND_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-limit.constant';
 import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-backoff.constant';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
 import { CAMPAIGN_DELIVERY_STATE } from 'src/engine/core-modules/emailing-domain/constants/campaign-delivery-state.constant';
@@ -11,16 +11,16 @@ import chunk from 'lodash.chunk';
 import { In, type ObjectLiteral } from 'typeorm';
 import { v4 } from 'uuid';
 
-import {
-  MATERIALIZE_CAMPAIGN_CHUNK_JOB,
-  SEND_CAMPAIGN_EMAIL_JOB,
-} from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import { MATERIALIZE_CAMPAIGN_CHUNK_JOB } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import { SEND_CAMPAIGN_EMAIL_BATCH_JOB } from 'src/engine/core-modules/emailing-domain/constants/send-campaign-email-batch-job.constant';
+import { resolveCampaignSendBatchSize } from 'src/engine/core-modules/emailing-domain/utils/resolve-campaign-send-batch-size.util';
 import { type MaterializeCampaignChunkJobData } from 'src/engine/core-modules/emailing-domain/types/materialize-campaign-chunk-job-data.type';
 import { type MaterializeCampaignJobData } from 'src/engine/core-modules/emailing-domain/types/materialize-campaign-job-data.type';
-import { type SendCampaignEmailJobData } from 'src/engine/core-modules/emailing-domain/types/send-campaign-email-job-data.type';
+import { type SendCampaignEmailBatchJobData } from 'src/engine/core-modules/emailing-domain/types/send-campaign-email-batch-job-data.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
@@ -56,6 +56,10 @@ type CampaignMessageRow = {
 
 @Injectable()
 export class MessageCampaignMaterializationService {
+  private readonly logger = new Logger(
+    MessageCampaignMaterializationService.name,
+  );
+
   constructor(
     @InjectWorkspaceScopedRepository(CampaignDeliveryEntity)
     private readonly campaignDeliveryRepository: WorkspaceScopedRepository<CampaignDeliveryEntity>,
@@ -63,6 +67,9 @@ export class MessageCampaignMaterializationService {
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     @InjectMessageQueue(MessageQueue.campaignQueue)
     private readonly messageQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.campaignSendQueue)
+    private readonly campaignSendQueueService: MessageQueueService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async processMaterializeJob({
@@ -335,17 +342,23 @@ export class MessageCampaignMaterializationService {
       return;
     }
 
-    await this.messageQueueService.bulkAdd<SendCampaignEmailJobData>(
-      SEND_CAMPAIGN_EMAIL_JOB,
-      recipients.map((recipient) => ({
+    const batchSize = resolveCampaignSendBatchSize(
+      this.twentyConfigService.get('EMAIL_SEND_RATE_LIMITING_LIMIT'),
+    );
+
+    await this.campaignSendQueueService.bulkAdd<SendCampaignEmailBatchJobData>(
+      SEND_CAMPAIGN_EMAIL_BATCH_JOB,
+      chunk(recipients, batchSize).map((batch) => ({
         data: {
           workspaceId,
           campaignId,
-          messageId: recipient.messageId,
-          personId: recipient.personId,
-          recipientEmail: recipient.email,
           emailingDomainId,
           userWorkspaceId,
+          recipients: batch.map((recipient) => ({
+            messageId: recipient.messageId,
+            personId: recipient.personId,
+            email: recipient.email,
+          })),
         },
       })),
       {

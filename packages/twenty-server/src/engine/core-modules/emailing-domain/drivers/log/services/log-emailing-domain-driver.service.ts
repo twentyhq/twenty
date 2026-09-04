@@ -16,6 +16,9 @@ import {
   type EmailingDomainVerificationResult,
 } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/emailing-domain-driver.interface';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
+import { type EmailingDomainSendEmailBatchRequest } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-batch-request.type';
+import { type EmailingDomainSendEmailBatchResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-batch-result.type';
+import { applyReplacementTags } from 'src/engine/core-modules/emailing-domain/utils/apply-replacement-tags.util';
 import { type EmailingDomainSendEmailRequest } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 import { UnsubscribeContentService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-content.service';
@@ -163,6 +166,47 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
         cc: emailToSend.cc ?? [],
         bcc: emailToSend.bcc ?? [],
       },
+    };
+  }
+
+  async sendEmailBatch(
+    input: EmailingDomainSendEmailBatchRequest,
+  ): Promise<EmailingDomainSendEmailBatchResult> {
+    await this.simulateProviderCall();
+
+    const unsubscribeBaseUrl = await this.getUnsubscribeBaseUrl(
+      input.workspaceId,
+    );
+    const batchToSend = this.unsubscribeContentService.addToBatch(
+      input,
+      unsubscribeBaseUrl,
+    );
+
+    this.logger.log(
+      `[log-driver] sendEmailBatch → ${batchToSend.recipients.length} destination(s) from ${batchToSend.from}`,
+    );
+
+    return {
+      entries: batchToSend.recipients.map((recipient) => {
+        const messageId = `log-${v4()}`;
+
+        this.logger.log(
+          `[log-driver] batch entry → fake messageId=${messageId}\n` +
+            `To: ${recipient.email}\n` +
+            `Subject: ${applyReplacementTags(batchToSend.template.subject, recipient.replacements)}\n` +
+            `Content Text: ${applyReplacementTags(batchToSend.template.text, recipient.replacements)}\n` +
+            `Content HTML: ${
+              isNonEmptyString(batchToSend.template.html)
+                ? applyReplacementTags(
+                    batchToSend.template.html,
+                    recipient.replacements,
+                  )
+                : '(none)'
+            }`,
+        );
+
+        return { email: recipient.email, messageId, errorMessage: null };
+      }),
     };
   }
 

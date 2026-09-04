@@ -1,11 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { SendEmailCommand } from '@aws-sdk/client-sesv2';
+import { SendBulkEmailCommand, SendEmailCommand } from '@aws-sdk/client-sesv2';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { type EmailingDomainSendEmailBatchInput } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-batch-input.type';
+import { type EmailingDomainSendEmailBatchResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-batch-result.type';
 import { type EmailingDomainSendEmailInput } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 
+import { SES_BULK_MAX_DESTINATIONS } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/ses-bulk-max-destinations.constant';
 import { AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
 import { AwsSesHandleErrorService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-handle-error.service';
 import {
@@ -109,6 +112,103 @@ export class AwsSesSendEmailService {
         throw error;
       }
       this.awsSesHandleErrorService.handleAwsSesError(error, 'sendEmail');
+    }
+  }
+  async sendEmailBatch(
+    input: EmailingDomainSendEmailBatchInput,
+    context: SendEmailContext,
+  ): Promise<EmailingDomainSendEmailBatchResult> {
+    if (!isNonEmptyArray(input.recipients)) {
+      throw new EmailingDomainDriverException(
+        'sendEmailBatch requires at least one recipient',
+        EmailingDomainDriverExceptionCode.CONFIGURATION_ERROR,
+      );
+    }
+
+    if (input.recipients.length > SES_BULK_MAX_DESTINATIONS) {
+      throw new EmailingDomainDriverException(
+        `sendEmailBatch accepts at most ${SES_BULK_MAX_DESTINATIONS} recipients, received ${input.recipients.length}`,
+        EmailingDomainDriverExceptionCode.CONFIGURATION_ERROR,
+      );
+    }
+
+    try {
+      const sesClient = this.awsSesClientProvider.getSESClient();
+
+      const response = await sesClient.send(
+        new SendBulkEmailCommand({
+          FromEmailAddress: input.from,
+          ReplyToAddresses: input.replyTo,
+          DefaultContent: {
+            Template: {
+              TemplateContent: {
+                Subject: input.template.subject,
+                Text: input.template.text,
+                Html: input.template.html,
+              },
+              TemplateData: '{}',
+            },
+          },
+          BulkEmailEntries: input.recipients.map((recipient) => ({
+            Destination: { ToAddresses: [recipient.email] },
+            ReplacementEmailContent: {
+              ReplacementTemplate: {
+                ReplacementTemplateData: JSON.stringify(recipient.replacements),
+              },
+            },
+            ReplacementHeaders: isNonEmptyArray(recipient.headers)
+              ? recipient.headers.map((header) => ({
+                  Name: header.name,
+                  Value: header.value,
+                }))
+              : undefined,
+          })),
+          ConfigurationSetName: context.configurationSetName,
+          TenantName: context.tenantName,
+          DefaultEmailTags: [
+            { Name: 'workspace', Value: input.workspaceId },
+            { Name: 'domain', Value: input.domain },
+            { Name: 'tenant_id', Value: input.workspaceId },
+          ],
+        }),
+      );
+
+      const results = response.BulkEmailEntryResults ?? [];
+
+      return {
+        entries: input.recipients.map((recipient, index) => {
+          const result = results[index];
+
+          if (!isDefined(result)) {
+            return {
+              email: recipient.email,
+              messageId: null,
+              errorMessage: 'SES returned no result for this destination',
+            };
+          }
+
+          if (!isDefined(result.MessageId)) {
+            return {
+              email: recipient.email,
+              messageId: null,
+              errorMessage:
+                result.Error ??
+                `SES rejected the destination (${result.Status})`,
+            };
+          }
+
+          return {
+            email: recipient.email,
+            messageId: result.MessageId,
+            errorMessage: null,
+          };
+        }),
+      };
+    } catch (error) {
+      if (error instanceof EmailingDomainDriverException) {
+        throw error;
+      }
+      this.awsSesHandleErrorService.handleAwsSesError(error, 'sendEmailBatch');
     }
   }
 }

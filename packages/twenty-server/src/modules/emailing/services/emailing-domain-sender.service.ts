@@ -13,12 +13,16 @@ import { EmailingDomainDriverFactory } from 'src/engine/core-modules/emailing-do
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
 import { type EmailingDomainEmailContent } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-content.type';
+import { type EmailingDomainBatchRecipient } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-batch-recipient.type';
+import { type EmailingDomainEmailTemplate } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-template.type';
+import { type EmailingDomainSendKind } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-kind.type';
 import { type EmailingDomainSendEmailRequest } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { formatMessageFromHeader } from 'src/modules/messaging/message-outbound-manager/utils/format-message-from-header.util';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { type CampaignBatchSendOutcome } from 'src/modules/emailing/types/campaign-batch-send-outcome.type';
 import { type DeliverableRecipients } from 'src/engine/core-modules/emailing-domain/types/deliverable-recipients.type';
 import { isSuppressionBlockingSend } from 'src/engine/core-modules/emailing-domain/utils/is-suppression-blocking-send.util';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
@@ -80,6 +84,102 @@ export class EmailingDomainSenderService {
     return this.emailingDomainDriverFactory
       .getCurrentDriver()
       .sendEmail(emailToSend);
+  }
+
+  async sendEmailBatch({
+    workspaceId,
+    emailingDomainId,
+    sendKind,
+    from,
+    template,
+    recipients,
+    unsubscribeTopicId,
+  }: {
+    workspaceId: string;
+    emailingDomainId: string;
+    sendKind: EmailingDomainSendKind;
+    from: string;
+    template: EmailingDomainEmailTemplate;
+    recipients: EmailingDomainBatchRecipient[];
+    unsubscribeTopicId?: string;
+  }): Promise<CampaignBatchSendOutcome> {
+    const emailingDomain = await this.findEmailingDomainByIdOrThrow(
+      workspaceId,
+      emailingDomainId,
+    );
+
+    this.assertDomainCanSend(emailingDomain, from);
+
+    const suppressions =
+      await this.messageSuppressionService.findApplicableSuppressions({
+        workspaceId,
+        emailAddresses: recipients.map((recipient) => recipient.email),
+        unsubscribeTopicId,
+      });
+
+    const blockedAddresses = new Set(
+      suppressions
+        .filter((suppression) =>
+          isSuppressionBlockingSend({
+            sendKind,
+            suppression,
+            unsubscribeTopicId,
+          }),
+        )
+        .map((suppression) => suppression.emailAddress),
+    );
+
+    const deliverableRecipients: EmailingDomainBatchRecipient[] = [];
+    const deliverableRecipientIndexes: number[] = [];
+    const suppressedRecipientIndexes: number[] = [];
+
+    recipients.forEach((recipient, recipientIndex) => {
+      if (blockedAddresses.has(recipient.email.trim().toLowerCase())) {
+        suppressedRecipientIndexes.push(recipientIndex);
+
+        return;
+      }
+
+      deliverableRecipients.push(recipient);
+      deliverableRecipientIndexes.push(recipientIndex);
+    });
+
+    if (deliverableRecipients.length === 0) {
+      return { entries: [], suppressedRecipientIndexes };
+    }
+
+    const emailGroupChannel = await this.findEmailGroupChannel(
+      workspaceId,
+      from,
+    );
+
+    const { entries } = await this.emailingDomainDriverFactory
+      .getCurrentDriver()
+      .sendEmailBatch({
+        sendKind,
+        workspaceId,
+        domain: emailingDomain.domain,
+        emailingDomain,
+        from: formatMessageFromHeader({
+          fromEmail: from,
+          fromName: emailGroupChannel?.displayName,
+        }),
+        replyTo: isNonEmptyString(emailGroupChannel?.handle)
+          ? [emailGroupChannel.handle]
+          : undefined,
+        template,
+        recipients: deliverableRecipients,
+        unsubscribeTopicId,
+      });
+
+    return {
+      entries: entries.map((entry, deliverableIndex) => ({
+        recipientIndex: deliverableRecipientIndexes[deliverableIndex],
+        messageId: entry.messageId,
+        errorMessage: entry.errorMessage,
+      })),
+      suppressedRecipientIndexes,
+    };
   }
 
   private async findEmailGroupChannel(
