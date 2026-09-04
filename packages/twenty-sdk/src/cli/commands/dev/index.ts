@@ -8,6 +8,7 @@ import { AppDevCommand } from './dev';
 import { AppDevOnceCommand } from './dev-once';
 import { registerDevFunctionCommands } from './function';
 import { AppGenerateClientCommand } from './generate-client';
+import { AppPullCommand } from './pull';
 import { AppTranslationsExtractCommand } from './translations-extract';
 import { AppTypecheckCommand } from './typecheck';
 
@@ -15,6 +16,7 @@ export const registerDevCommands = (program: Command): void => {
   const buildCommand = new AppBuildCommand();
   const devCommand = new AppDevCommand();
   const devOnceCommand = new AppDevOnceCommand();
+  const pullCommand = new AppPullCommand();
   const typecheckCommand = new AppTypecheckCommand();
   const addCommand = new EntityAddCommand();
   const generateClientCommand = new AppGenerateClientCommand();
@@ -142,6 +144,27 @@ export const registerDevCommands = (program: Command): void => {
           apply: true,
           force: options.force,
           inferDeletionFromMissingEntities: options.delete,
+        });
+      },
+    );
+
+  program
+    .command('pull [appPath]')
+    .description('Write the installed application back to local source files')
+    .option(
+      '-u, --universal-identifier <id>',
+      'Universal identifier of the application to pull',
+    )
+    .option('-v, --verbose', 'Show detailed logs')
+    .action(
+      async (
+        appPath: string | undefined,
+        options: { universalIdentifier?: string; verbose?: boolean },
+      ) => {
+        await pullCommand.execute({
+          appPath: formatPath(appPath),
+          universalIdentifier: options.universalIdentifier,
+          verbose: options.verbose,
         });
       },
     );

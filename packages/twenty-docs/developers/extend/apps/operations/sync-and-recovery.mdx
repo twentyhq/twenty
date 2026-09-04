@@ -18,6 +18,7 @@ For day-to-day local iteration you almost always want `yarn twenty dev`. Deployi
 | Sync once and exit (CI, scripts, hooks) | `yarn twenty apply` | One build + sync, then exits. Add `--force` to skip the destructive-change confirmation. |
 | Preview changes **without applying them** | `yarn twenty plan` | Computes and prints the diff; writes nothing. |
 | Sync without deleting anything | `yarn twenty apply --no-delete` | Creates and updates only: entities that exist in the workspace but not in your source are left alone. Also accepted by `plan` and `dev`. |
+| Regenerate local source from the workspace | `yarn twenty pull` | Writes the installed app back to define files. See below. |
 | Remove the app from the workspace | `yarn twenty app:uninstall` | Add `--yes` to skip the prompt. |
 | Ship a tarball to a server | `yarn twenty app:publish --private` | Requires a **strictly higher** `package.json` version — see [Publishing](/developers/extend/apps/operations/publishing). |
 | Publish to the marketplace (npm) | `yarn twenty app:publish` | — |
@@ -93,6 +94,24 @@ A plan:
 <Note>
 A plan only previews **metadata** changes. It also works for an app that was never synced: the server evaluates the manifest against an empty application, so the plan lists everything your source would create.
 </Note>
+
+## Pulling an installed app back to source
+
+`yarn twenty pull` is the inverse of `apply`: it reads an application out of the workspace and writes it back as define files.
+
+```bash
+yarn twenty pull -u <universalIdentifier>
+```
+
+Pull needs an existing project — scaffold one with `npx create-twenty-app@latest` first, then pull into it. Without `-u`, pull targets the application your local `defineApplication()` file declares.
+
+**What it writes.** The application config, objects with their fields, fields your app added to objects it does not own, and authored indexes. Each entity goes to the file that already defines it, so a second pull rewrites only what changed on the server; new entities are placed beside existing files of their kind.
+
+**What it does not write.** Roles and permissions, views, page layouts, navigation, command menu items, logic functions and front components are not exported yet, and neither is the stored source of your functions. Rows the engine derives from your metadata (system fields, default relations, default views, backing indexes) are never written: the server rebuilds them on apply. Workspace runtime state — member and API-key role assignments, webhooks, per-user navigation — is excluded by design, and rows another application owns are reported rather than pulled.
+
+The report at the end of a pull lists all of it, grouped by reason. Everything it names as not written is still in your workspace, so push a pulled tree back with `yarn twenty apply --no-delete` until the missing kinds are covered. A pruning `yarn twenty apply` would delete them, and `yarn twenty plan` lists exactly which.
+
+**The base file.** Pull records what it pulled in `.twenty/pull-base.json`, which is gitignored and per checkout. That file is what a later pull compares against to leave untouched the files whose entity did not change, and to delete the file of an entity that is gone from the workspace. A checkout without it simply writes everything and deletes nothing.
 
 ## Recovery ladder
 
