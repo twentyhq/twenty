@@ -33,6 +33,7 @@ export enum WorkspaceMemberNumberFormatEnum {
   SPACES_AND_COMMA = 'SPACES_AND_COMMA',
   DOTS_AND_COMMA = 'DOTS_AND_COMMA',
   APOSTROPHE_AND_DOT = 'APOSTROPHE_AND_DOT',
+  NO_GROUPING = 'NO_GROUPING',
 }
 
 registerEnumType(WorkspaceMemberNumberFormatEnum, {

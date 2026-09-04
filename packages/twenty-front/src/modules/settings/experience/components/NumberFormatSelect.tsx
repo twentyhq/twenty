@@ -37,6 +37,10 @@ export const NumberFormatSelect = ({
     format: NumberFormat.APOSTROPHE_AND_DOT,
     decimals: 2,
   });
+  const noSpacingExample = utilFormatNumber(1234.56, {
+    format: NumberFormat.NO_GROUPING,
+    decimals: 2,
+  });
 
   return (
     <Select
@@ -71,6 +75,11 @@ export const NumberFormatSelect = ({
           label: t`Apostrophe and dot`,
           value: NumberFormat.APOSTROPHE_AND_DOT,
           contextualText: apostropheAndDotExample,
+        },
+        {
+          label: t`No spacing`,
+          value: NumberFormat.NO_GROUPING,
+          contextualText: noSpacingExample,
         },
       ]}
       onChange={onChange}

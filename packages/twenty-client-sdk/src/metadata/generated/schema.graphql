@@ -400,6 +400,7 @@ enum WorkspaceMemberNumberFormatEnum {
   SPACES_AND_COMMA
   DOTS_AND_COMMA
   APOSTROPHE_AND_DOT
+  NO_GROUPING
 }
 
 type FieldPermission {

@@ -241,7 +241,7 @@ export type WorkspaceMemberTimeFormatEnum = 'SYSTEM' | 'HOUR_12' | 'HOUR_24'
 
 
 /** Number format for displaying numbers */
-export type WorkspaceMemberNumberFormatEnum = 'SYSTEM' | 'COMMAS_AND_DOT' | 'SPACES_AND_COMMA' | 'DOTS_AND_COMMA' | 'APOSTROPHE_AND_DOT'
+export type WorkspaceMemberNumberFormatEnum = 'SYSTEM' | 'COMMAS_AND_DOT' | 'SPACES_AND_COMMA' | 'DOTS_AND_COMMA' | 'APOSTROPHE_AND_DOT' | 'NO_GROUPING'
 
 export interface FieldPermission {
     id: Scalars['UUID']
@@ -9795,7 +9795,8 @@ export const enumWorkspaceMemberNumberFormatEnum = {
    COMMAS_AND_DOT: 'COMMAS_AND_DOT' as const,
    SPACES_AND_COMMA: 'SPACES_AND_COMMA' as const,
    DOTS_AND_COMMA: 'DOTS_AND_COMMA' as const,
-   APOSTROPHE_AND_DOT: 'APOSTROPHE_AND_DOT' as const
+   APOSTROPHE_AND_DOT: 'APOSTROPHE_AND_DOT' as const,
+   NO_GROUPING: 'NO_GROUPING' as const
 }
 
 export const enumRowLevelPermissionPredicateGroupLogicalOperator = {

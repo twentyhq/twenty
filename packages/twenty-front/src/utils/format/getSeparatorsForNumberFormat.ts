@@ -24,6 +24,11 @@ export const getSeparatorsForNumberFormat = (
         thousandsSeparator: "'",
         radix: '.',
       };
+    case NumberFormat.NO_GROUPING:
+      return {
+        thousandsSeparator: '',
+        radix: '.',
+      };
     case NumberFormat.SYSTEM:
     case NumberFormat.COMMAS_AND_DOT:
     default:

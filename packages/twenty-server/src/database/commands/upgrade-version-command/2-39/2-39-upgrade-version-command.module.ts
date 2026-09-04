@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { AddNoGroupingWorkspaceMemberNumberFormatOptionCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788525321000-add-no-grouping-workspace-member-number-format-option.command';
 import { ConvertLogicFunctionsToPrebuiltCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788338950836-convert-logic-functions-to-prebuilt.command';
 import { BackfillRecordFormCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788524477000-backfill-record-form.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
@@ -20,6 +21,10 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     WorkspaceMigrationModule,
     WorkspaceSchemaMigrationRunnerActionHandlersModule,
   ],
-  providers: [ConvertLogicFunctionsToPrebuiltCommand, BackfillRecordFormCommand],
+  providers: [
+    AddNoGroupingWorkspaceMemberNumberFormatOptionCommand,
+    ConvertLogicFunctionsToPrebuiltCommand,
+    BackfillRecordFormCommand,
+  ],
 })
 export class V2_39_UpgradeVersionCommandModule {}

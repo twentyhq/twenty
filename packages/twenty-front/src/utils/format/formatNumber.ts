@@ -9,6 +9,7 @@ const FORMAT_LOCALE_MAP = {
   [NumberFormat.SPACES_AND_COMMA]: 'fr-FR',
   [NumberFormat.DOTS_AND_COMMA]: 'de-DE',
   [NumberFormat.APOSTROPHE_AND_DOT]: 'de-CH',
+  [NumberFormat.NO_GROUPING]: 'en-US',
 } as const;
 
 export type FormatNumberOptions = {
@@ -56,6 +57,7 @@ export const formatNumber = (
   };
 
   const locale = getLocaleForFormat(options.format);
+  const useGrouping = options.format !== NumberFormat.NO_GROUPING;
 
   if (options.abbreviate) {
     const abs = Math.abs(value);
@@ -78,6 +80,7 @@ export const formatNumber = (
       const formatted = base.toLocaleString(locale, {
         minimumFractionDigits: 0,
         maximumFractionDigits: options.decimals,
+        useGrouping,
       });
       return formatted + suffix;
     }
@@ -86,5 +89,6 @@ export const formatNumber = (
   return value.toLocaleString(locale, {
     minimumFractionDigits: 0,
     maximumFractionDigits: options.decimals,
+    useGrouping,
   });
 };

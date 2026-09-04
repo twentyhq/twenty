@@ -18,6 +18,8 @@ export const getNumberFormatFromWorkspaceMember = (
       return NumberFormat.DOTS_AND_COMMA;
     case WorkspaceMemberNumberFormatEnum.APOSTROPHE_AND_DOT:
       return NumberFormat.APOSTROPHE_AND_DOT;
+    case WorkspaceMemberNumberFormatEnum.NO_GROUPING:
+      return NumberFormat.NO_GROUPING;
     default:
       return NumberFormat[detectNumberFormat()];
   }

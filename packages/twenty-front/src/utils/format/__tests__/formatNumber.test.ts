@@ -59,6 +59,14 @@ describe('formatNumber', () => {
         }),
       ).toMatch(/^1['\u2018\u2019\u02BC]234\.56$/);
     });
+    it('should format with NO_GROUPING', () => {
+      expect(
+        formatNumber(1234.56, {
+          format: NumberFormat.NO_GROUPING,
+          decimals: 2,
+        }),
+      ).toEqual('1234.56');
+    });
   });
   describe('with abbreviate', () => {
     it('should leave numbers under 1000 unchanged when abbreviate is true', () => {
@@ -120,6 +128,15 @@ describe('formatNumber', () => {
       expect(formatNumber(-1500, { abbreviate: true, decimals: 1 })).toEqual(
         '-1.5k',
       );
+    });
+
+    it('should not group abbreviated values with NO_GROUPING', () => {
+      expect(
+        formatNumber(1000000000000, {
+          abbreviate: true,
+          format: NumberFormat.NO_GROUPING,
+        }),
+      ).toEqual('1000B');
     });
   });
 });

@@ -44,6 +44,7 @@ describe('currency mask round trip with the safe scale', () => {
     [NumberFormat.COMMAS_AND_DOT, '458.64'],
     [NumberFormat.SPACES_AND_COMMA, '458,64'],
     [NumberFormat.APOSTROPHE_AND_DOT, '458.64'],
+    [NumberFormat.NO_GROUPING, '458.64'],
   ])(
     'should not alter 458.64 with decimals 0 under the %s format',
     (numberFormat, expectedMaskedValue) => {
@@ -63,4 +64,22 @@ describe('currency mask round trip with the safe scale', () => {
       expect(mask.unmaskedValue).toBe('458.64');
     },
   );
+
+  it('does not group thousands under the NO_GROUPING format', () => {
+    const { thousandsSeparator, radix } = getSeparatorsForNumberFormat(
+      NumberFormat.NO_GROUPING,
+    );
+
+    const mask = IMask.createMask({
+      mask: Number,
+      thousandsSeparator,
+      radix,
+      scale: 2,
+    });
+
+    mask.unmaskedValue = '1234.56';
+
+    expect(mask.value).toBe('1234.56');
+    expect(mask.unmaskedValue).toBe('1234.56');
+  });
 });

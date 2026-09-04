@@ -40,6 +40,13 @@ describe('getSeparatorsForNumberFormat', () => {
     });
   });
 
+  it('returns no thousands separator and dot radix for NO_GROUPING', () => {
+    expectSeparators(NumberFormat.NO_GROUPING, {
+      thousandsSeparator: '',
+      radix: '.',
+    });
+  });
+
   it('falls back to COMMAS_AND_DOT separators for SYSTEM', () => {
     expectSeparators(NumberFormat.SYSTEM, {
       thousandsSeparator: ',',

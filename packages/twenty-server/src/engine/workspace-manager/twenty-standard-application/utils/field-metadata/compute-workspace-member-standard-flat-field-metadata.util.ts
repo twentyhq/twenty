@@ -630,6 +630,15 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
           position: 4,
           color: 'purple',
         },
+        {
+          id: '20202020-6458-416d-8bdf-b667697e54c3',
+          value: WorkspaceMemberNumberFormatEnum.NO_GROUPING,
+          label: i18nLabel(
+            msg({ message: `No spacing`, context: 'fieldMetadata.label' }),
+          ),
+          position: 5,
+          color: 'gray',
+        },
       ],
     },
     standardObjectMetadataRelatedEntityIds,
