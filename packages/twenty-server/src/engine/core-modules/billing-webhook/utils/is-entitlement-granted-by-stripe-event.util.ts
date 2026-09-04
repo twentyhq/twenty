@@ -13,7 +13,6 @@ const hasEntitlementKey = (
   isDefined(entitlements) &&
   entitlements.some((entitlement) => entitlement.lookup_key === key);
 
-// previous_attributes only carries the entitlements list when it changed
 export const isEntitlementGrantedByStripeEvent = ({
   data,
   key,
