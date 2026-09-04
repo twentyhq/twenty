@@ -74,6 +74,7 @@ exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped
   "overrides": null,
   "pageLayoutUniversalIdentifiers": [],
   "readability": "OPEN",
+  "readabilityParentFieldUniversalIdentifiers": null,
   "searchFieldMetadataUniversalIdentifiers": [],
   "shortcut": "shortcut",
   "targetTableName": "",

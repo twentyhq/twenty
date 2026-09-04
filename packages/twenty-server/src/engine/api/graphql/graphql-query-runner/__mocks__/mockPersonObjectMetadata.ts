@@ -175,6 +175,7 @@ export const mockPersonFlatObjectMetadata = (
   isUICreatable: true,
   writability: MetadataWritability.OPEN,
   readability: MetadataReadability.OPEN,
+  readabilityParentFieldUniversalIdentifiers: null,
   openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
   applicationUniversalIdentifier: 'test-application-id',
   fieldUniversalIdentifiers: mockFieldMetadatas.map(

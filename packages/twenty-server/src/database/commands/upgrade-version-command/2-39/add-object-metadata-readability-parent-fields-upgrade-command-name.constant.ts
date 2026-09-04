@@ -1,0 +1,2 @@
+export const ADD_OBJECT_METADATA_READABILITY_PARENT_FIELDS_UPGRADE_COMMAND_NAME =
+  '2.39.0_AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand_1788560886501';

@@ -5,6 +5,7 @@ import {
   ObjectOpenRecordIn,
 } from 'twenty-shared/types';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -26,6 +27,7 @@ export type CreateStandardObjectContext<O extends AllStandardObjectName> = {
   isUICreatable?: boolean;
   writability?: MetadataWritability;
   readability?: MetadataReadability;
+  readabilityParentFieldMetadataNames?: AllStandardObjectFieldName<O>[];
   openRecordIn?: ObjectOpenRecordIn;
   shortcut?: string | null;
   duplicateCriteria?: string[][] | null;
@@ -58,6 +60,7 @@ export const createStandardObjectFlatMetadata = <
     isUICreatable = true,
     writability = MetadataWritability.OPEN,
     readability = MetadataReadability.OPEN,
+    readabilityParentFieldMetadataNames,
     openRecordIn = ObjectOpenRecordIn.USER_CHOICE,
     shortcut = null,
     duplicateCriteria = null,
@@ -83,6 +86,17 @@ export const createStandardObjectFlatMetadata = <
         ].universalIdentifier
       : null;
 
+  const readabilityParentFieldUniversalIdentifiers = isDefined(
+    readabilityParentFieldMetadataNames,
+  )
+    ? readabilityParentFieldMetadataNames.map(
+        (readabilityParentFieldMetadataName) =>
+          // @ts-expect-error ignore
+          STANDARD_OBJECTS[nameSingular as keyof typeof STANDARD_OBJECTS]
+            .fields[readabilityParentFieldMetadataName].universalIdentifier,
+      )
+    : null;
+
   return {
     universalIdentifier,
     applicationId: twentyStandardApplicationId,
@@ -103,6 +117,7 @@ export const createStandardObjectFlatMetadata = <
     isUICreatable,
     writability,
     readability,
+    readabilityParentFieldUniversalIdentifiers,
     openRecordIn,
     isLabelSyncedWithName: false,
     overrides: null,
