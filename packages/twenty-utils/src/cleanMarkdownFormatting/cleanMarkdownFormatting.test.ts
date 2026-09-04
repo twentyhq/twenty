@@ -1,0 +1,2 @@
+import { cleanMarkdownFormatting } from './cleanMarkdownFormatting'; import assert from 'node:assert/strict';
+assert.equal(cleanMarkdownFormatting("# Hello **World** [link](url)"), "Hello World link");
