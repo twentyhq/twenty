@@ -4,28 +4,32 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type JobStatus } from '~/generated-metadata/graphql';
 
-type UseListenToQueueJobStateArgs = {
+type UseListenToQueueJobArgs = {
   jobId?: string;
-  onStateChange: (jobStatus: JobStatus) => void;
+  onQueueJobEvent: (jobStatus: JobStatus) => void;
 };
 
-export const useListenToQueueJobState = ({
+export const useListenToQueueJob = ({
   jobId,
-  onStateChange,
-}: UseListenToQueueJobStateArgs) => {
-  const onQueueJobEvent = useCallback(
+  onQueueJobEvent,
+}: UseListenToQueueJobArgs) => {
+  const handleQueueJobEvent = useCallback(
     (jobStatus?: JobStatus) => {
-      if (!isDefined(jobStatus) || jobStatus.jobId !== jobId) {
+      if (
+        !isDefined(jobId) ||
+        !isDefined(jobStatus) ||
+        jobStatus.jobId !== jobId
+      ) {
         return;
       }
 
-      onStateChange(jobStatus);
+      onQueueJobEvent(jobStatus);
     },
-    [jobId, onStateChange],
+    [jobId, onQueueJobEvent],
   );
 
   useListenToBrowserEvent<JobStatus>({
     eventName: QUEUE_JOB_BROWSER_EVENT_NAME,
-    onBrowserEvent: onQueueJobEvent,
+    onBrowserEvent: handleQueueJobEvent,
   });
 };

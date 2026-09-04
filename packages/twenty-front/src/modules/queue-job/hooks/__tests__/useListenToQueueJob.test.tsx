@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react';
 
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { QUEUE_JOB_BROWSER_EVENT_NAME } from '@/queue-job/constants/QueueJobBrowserEventName';
-import { useListenToQueueJobState } from '@/queue-job/hooks/useListenToQueueJobState';
+import { useListenToQueueJob } from '@/queue-job/hooks/useListenToQueueJob';
 import { JobState, type JobStatus } from '~/generated-metadata/graphql';
 
 const JOB_ID = 'job-1';
@@ -16,30 +16,28 @@ const dispatchQueueJobEvent = (jobId: string, state: JobState) => {
   });
 };
 
-describe('useListenToQueueJobState', () => {
+describe('useListenToQueueJob', () => {
   it('only forwards state changes of the listened job', () => {
-    const onStateChange = jest.fn();
+    const onQueueJobEvent = jest.fn();
 
-    renderHook(() =>
-      useListenToQueueJobState({ jobId: JOB_ID, onStateChange }),
-    );
+    renderHook(() => useListenToQueueJob({ jobId: JOB_ID, onQueueJobEvent }));
 
     dispatchQueueJobEvent('job-2', JobState.COMPLETED);
     dispatchQueueJobEvent(JOB_ID, JobState.FAILED);
 
-    expect(onStateChange).toHaveBeenCalledTimes(1);
-    expect(onStateChange).toHaveBeenCalledWith(
+    expect(onQueueJobEvent).toHaveBeenCalledTimes(1);
+    expect(onQueueJobEvent).toHaveBeenCalledWith(
       expect.objectContaining({ jobId: JOB_ID, state: JobState.FAILED }),
     );
   });
 
   it('ignores events without a job id', () => {
-    const onStateChange = jest.fn();
+    const onQueueJobEvent = jest.fn();
 
-    renderHook(() => useListenToQueueJobState({ onStateChange }));
+    renderHook(() => useListenToQueueJob({ onQueueJobEvent }));
 
     dispatchQueueJobEvent(JOB_ID, JobState.COMPLETED);
 
-    expect(onStateChange).not.toHaveBeenCalled();
+    expect(onQueueJobEvent).not.toHaveBeenCalled();
   });
 });
