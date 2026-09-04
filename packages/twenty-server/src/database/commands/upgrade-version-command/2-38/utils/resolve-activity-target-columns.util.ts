@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 export const ACTIVITY_TARGET_COLUMN_CANDIDATES = [
   {
     type: 'person',
@@ -13,10 +15,15 @@ export const ACTIVITY_TARGET_COLUMN_CANDIDATES = [
   },
 ] as const;
 
+type ActivityTargetColumnCandidate =
+  (typeof ACTIVITY_TARGET_COLUMN_CANDIDATES)[number];
+
 export type ActivityTargetColumn = {
-  type: (typeof ACTIVITY_TARGET_COLUMN_CANDIDATES)[number]['type'];
-  columnName: (typeof ACTIVITY_TARGET_COLUMN_CANDIDATES)[number]['columnNames'][number];
-};
+  [TCandidate in ActivityTargetColumnCandidate as TCandidate['type']]: {
+    type: TCandidate['type'];
+    columnName: TCandidate['columnNames'][number];
+  };
+}[ActivityTargetColumnCandidate['type']];
 
 export const resolveActivityTargetColumns = (
   existingColumnNames: Set<string>,
@@ -27,13 +34,13 @@ export const resolveActivityTargetColumns = (
         existingColumnNames.has(candidateColumnName),
       );
 
-      return columnName === undefined ? undefined : { type, columnName };
+      return isDefined(columnName) ? { type, columnName } : undefined;
     },
   );
 
   return targetColumns.every(
     (targetColumn): targetColumn is ActivityTargetColumn =>
-      targetColumn !== undefined,
+      isDefined(targetColumn),
   )
     ? targetColumns
     : undefined;

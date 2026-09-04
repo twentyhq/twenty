@@ -11,8 +11,8 @@ import { rebindFlatIndexToWorkspaceColumns } from 'src/database/commands/upgrade
 import { resolveActivityTargetColumns } from 'src/database/commands/upgrade-version-command/2-38/utils/resolve-activity-target-columns.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -191,13 +191,10 @@ export class EnforceActivityTargetUniquenessCommand extends ProvisionedWorkspace
         return rebindFlatIndexToWorkspaceColumns({
           flatIndexMetadata: standardFlatIndexMetadata,
           flatObjectMetadata,
-          objectFlatFieldMetadatas: Object.values(
-            flatFieldMetadataMaps.byUniversalIdentifier,
-          ).filter(
-            (flatFieldMetadata): flatFieldMetadata is FlatFieldMetadata =>
-              isDefined(flatFieldMetadata) &&
-              flatFieldMetadata.objectMetadataId === flatObjectMetadata.id,
-          ),
+          objectFlatFieldMetadatas: findManyFlatEntityByIdInFlatEntityMaps({
+            flatEntityMaps: flatFieldMetadataMaps,
+            flatEntityIds: flatObjectMetadata.fieldIds,
+          }),
           columnNames,
         });
       },
