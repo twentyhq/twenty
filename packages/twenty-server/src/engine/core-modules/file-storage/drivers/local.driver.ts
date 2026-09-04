@@ -468,10 +468,14 @@ export class LocalDriver implements StorageDriver {
         filePath: claimedPath,
         expectedChecksum,
       });
+
+      await this.renameOrThrow({ fromPath: claimedPath, toPath });
     } catch (error) {
       // Put it back so the caller's retry and the cleanup sweep still find it
-      // at the path they know. A concurrent upload may have published there in
-      // the meantime, but that path is bound for deletion either way.
+      // at the path they know: the claim name is private to this call and
+      // nothing would look for it again. A concurrent upload may have
+      // published there in the meantime, but that path is bound for deletion
+      // either way.
       await fs.rename(claimedPath, fromPath).catch(() => {
         this.logger.error(
           `Could not restore "${path.basename(fromPath)}" after a failed promotion`,
@@ -480,8 +484,6 @@ export class LocalDriver implements StorageDriver {
 
       throw error;
     }
-
-    await this.renameOrThrow({ fromPath: claimedPath, toPath });
   }
 
   async copy(params: {

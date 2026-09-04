@@ -367,6 +367,44 @@ describe('LocalDriver', () => {
       ).resolves.toBe('replaced');
     });
 
+    it('should leave the source in place when the destination rename fails', async () => {
+      const storagePath = await createTempDirectory('local-driver-storage-');
+      const folderPath = path.join(storagePath, 'workspace', 'app');
+
+      await mkdir(folderPath, { recursive: true });
+      await writeFile(path.join(folderPath, 'file.txt'), 'original');
+
+      // A non-empty directory in the destination's place makes the final
+      // rename fail after the source has already been claimed.
+      const blockedDestination = path.join(
+        storagePath,
+        'workspace',
+        'final',
+        'moved.txt',
+      );
+
+      await mkdir(blockedDestination, { recursive: true });
+      await writeFile(path.join(blockedDestination, 'occupant.txt'), 'x');
+
+      const driver = new LocalDriver({ storagePath });
+      const before = await driver.getFileMetadata({
+        filePath: 'workspace/app/file.txt',
+      });
+
+      await expect(
+        driver.move({
+          from: { folderPath: 'workspace/app', filename: 'file.txt' },
+          to: { folderPath: 'workspace/final', filename: 'moved.txt' },
+          ifMatchChecksum: before?.checksum,
+        }),
+      ).rejects.toBeDefined();
+
+      await expect(readdir(folderPath)).resolves.toEqual(['file.txt']);
+      await expect(
+        readFile(path.join(folderPath, 'file.txt'), 'utf-8'),
+      ).resolves.toBe('original');
+    });
+
     it('should not report a storage failure as a missing source', async () => {
       const storagePath = await createTempDirectory('local-driver-storage-');
 
