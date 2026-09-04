@@ -1,6 +1,7 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useBuildRecordInputFromRLSPredicates } from '@/object-record/hooks/useBuildRecordInputFromRLSPredicates';
+import { useRecordCreationForm } from '@/object-record/record-form/hooks/useRecordCreationForm';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
@@ -64,6 +65,9 @@ export const useCreateNewIndexRecord = ({
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
+  const { shouldOpenRecordCreationForm, requestRecordCreationDraft } =
+    useRecordCreationForm({ objectMetadataItem });
+
   const navigate = useNavigateApp();
 
   const { buildRecordInputFromFilters } = useBuildRecordInputFromFilters({
@@ -76,7 +80,7 @@ export const useCreateNewIndexRecord = ({
       objectMetadataItem,
     });
 
-  const createNewIndexRecord = useCallback(
+  const createIndexRecord = useCallback(
     async (recordInput?: Partial<ObjectRecord>) => {
       const recordId = v4();
       const recordInputFromRLSPredicates = buildRecordInputFromRLSPredicates();
@@ -189,6 +193,27 @@ export const useCreateNewIndexRecord = ({
       upsertRecordsInStore,
       closeSidePanelMenu,
       workspaceSurface.type,
+    ],
+  );
+
+  const createNewIndexRecord = useCallback(
+    async (recordInput?: Partial<ObjectRecord>) => {
+      if (!shouldOpenRecordCreationForm) {
+        return createIndexRecord(recordInput);
+      }
+
+      const draftRecord = await requestRecordCreationDraft(recordInput);
+
+      if (!isDefined(draftRecord)) {
+        return undefined;
+      }
+
+      return createIndexRecord({ ...recordInput, ...draftRecord });
+    },
+    [
+      createIndexRecord,
+      requestRecordCreationDraft,
+      shouldOpenRecordCreationForm,
     ],
   );
 

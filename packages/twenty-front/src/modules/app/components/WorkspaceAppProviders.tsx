@@ -22,6 +22,7 @@ import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components
 import { MinimalMetadataLoadEffect } from '@/metadata-store/effect-components/MinimalMetadataLoadEffect';
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
 import { ApolloCoreProvider } from '@/object-metadata/components/ApolloCoreProvider';
+import { RecordCreationFormProvider } from '@/object-record/record-form/components/RecordCreationFormProvider';
 import { WelcomeOverlay } from '@/onboarding/components/WelcomeOverlay/WelcomeOverlay';
 import { CompanyEnrichmentOnboardingEffect } from '@/onboarding/effect-components/CompanyEnrichmentOnboardingEffect';
 import { ApolloAdminProvider } from '@/settings/admin-panel/apollo/components/ApolloAdminProvider';
@@ -75,10 +76,12 @@ export const WorkspaceAppProviders = () => {
                               <GotoHotkeysEffectsProvider />
                               <PageTitle title={pageTitle} />
                               <PageFavicon />
-                              <Outlet />
-                              <GlobalFilePreviewModal />
-                              <CommandMenuConfirmationModalManager />
-                              <CommandRunner />
+                              <RecordCreationFormProvider>
+                                <Outlet />
+                                <GlobalFilePreviewModal />
+                                <CommandMenuConfirmationModalManager />
+                                <CommandRunner />
+                              </RecordCreationFormProvider>
                             </StrictMode>
                           </DialogManager>
                         </DialogComponentInstanceContext.Provider>

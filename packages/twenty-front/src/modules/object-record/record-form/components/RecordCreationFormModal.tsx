@@ -3,7 +3,6 @@ import { RecordFormFieldInputs } from '@/object-record/record-form/components/Re
 import { useRecordFormFieldMetadataItems } from '@/object-record/record-form/hooks/useRecordFormFieldMetadataItems';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -24,6 +23,7 @@ type RecordCreationFormModalProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
   initialDraftRecord?: Partial<ObjectRecord>;
   onSubmit: (draftRecord: Partial<ObjectRecord>) => void;
+  onCancel: () => void;
 };
 
 export const RecordCreationFormModal = ({
@@ -31,9 +31,9 @@ export const RecordCreationFormModal = ({
   objectMetadataItem,
   initialDraftRecord,
   onSubmit,
+  onCancel,
 }: RecordCreationFormModalProps) => {
   const { t } = useLingui();
-  const { closeModal } = useModal();
   const [draftRecord, setDraftRecord] = useState<Partial<ObjectRecord>>(
     initialDraftRecord ?? {},
   );
@@ -56,19 +56,11 @@ export const RecordCreationFormModal = ({
     }));
   };
 
-  const handleCancelClick = () => {
-    closeModal(modalInstanceId);
-  };
-
-  const handleCreateClick = () => {
-    closeModal(modalInstanceId);
-    onSubmit(draftRecord);
-  };
-
   return (
     <ModalStatefulWrapper
       modalInstanceId={modalInstanceId}
       isClosable={true}
+      onClose={onCancel}
       padding="large"
       overlay="dark"
       renderInDocumentBody
@@ -87,11 +79,11 @@ export const RecordCreationFormModal = ({
         onFieldValueClear={handleFieldValueClear}
       />
       <StyledFooter>
-        <Button title={t`Cancel`} onClick={handleCancelClick} />
+        <Button title={t`Cancel`} onClick={onCancel} />
         <Button
           title={t`Create`}
           accent="blue"
-          onClick={handleCreateClick}
+          onClick={() => onSubmit(draftRecord)}
           dataTestId="record-creation-form-create-button"
         />
       </StyledFooter>
