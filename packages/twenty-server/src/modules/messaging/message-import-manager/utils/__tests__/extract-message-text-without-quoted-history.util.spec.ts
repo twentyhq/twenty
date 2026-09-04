@@ -443,6 +443,44 @@ Developer Support`);
     expect(result).toBe('My actual reply.');
   });
 
+  it('should keep prose that merely opens lines with a field label', () => {
+    const message = 'Trip details\nFrom: Paris\nTo: Berlin';
+
+    expect(extractMessageTextWithoutQuotedHistory({ text: message })).toBe(
+      message,
+    );
+  });
+
+  it('should keep a date label that carries no sender address', () => {
+    const message =
+      'Booking summary\nDate: 4 August\nVenue: the office\nSee you there.';
+
+    expect(extractMessageTextWithoutQuotedHistory({ text: message })).toBe(
+      message,
+    );
+  });
+
+  it('should still cut a header block that carries a sender address', () => {
+    const result = extractMessageTextWithoutQuotedHistory({
+      text: 'Trip details\n\nFrom: Bob <bob@example.com>\nSent: Monday, August 4, 2026\n\nCan we move it?',
+    });
+
+    expect(result).toBe('Trip details');
+  });
+
+  it('should drop every level of a nested quote container', () => {
+    const result = extractMessageTextWithoutQuotedHistory({
+      html:
+        '<div>My reply.</div>' +
+        '<div class="gmail_quote"><div>outer quote</div>' +
+        '<div class="gmail_quote"><div>inner quote</div></div>' +
+        '<div>outer tail</div></div>' +
+        '<div>Signature line.</div>',
+    });
+
+    expect(result).toBe('My reply.\n\nSignature line.');
+  });
+
   it('should preserve percent sequences instead of URI-decoding the body', () => {
     const parsed: ParsedMail = {
       text: 'See https://example.com/path%2Fto%2Ffile and a 100%20 budget cut',

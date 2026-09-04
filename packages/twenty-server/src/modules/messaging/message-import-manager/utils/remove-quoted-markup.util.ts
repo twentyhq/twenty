@@ -4,10 +4,26 @@ const holdsNothingButMarkers = (text: string): boolean =>
   text.replace(QUOTE_MARKERS.anyMarker, '').trim() === '';
 
 const removeMarkedContainers = (markedText: string): string => {
-  const withoutContainers = markedText.replace(
-    QUOTE_MARKERS.markedContainer,
-    '',
-  );
+  const kept: string[] = [];
+  let depth = 0;
+
+  for (const character of markedText) {
+    if (character === QUOTE_MARKERS.containerOpen) {
+      depth += 1;
+      continue;
+    }
+
+    if (character === QUOTE_MARKERS.containerClose) {
+      depth = Math.max(0, depth - 1);
+      continue;
+    }
+
+    if (depth === 0) {
+      kept.push(character);
+    }
+  }
+
+  const withoutContainers = kept.join('');
 
   return holdsNothingButMarkers(withoutContainers)
     ? markedText

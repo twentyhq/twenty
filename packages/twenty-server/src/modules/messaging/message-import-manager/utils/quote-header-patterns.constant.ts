@@ -115,7 +115,6 @@ const WROTE_VERBS = [
   'έγραψε',
   'написал',
   'писал',
-  'wrote',
 ].join('|');
 
 const LOCALIZED_ATTRIBUTION_LINES = [
