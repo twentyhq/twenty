@@ -104,6 +104,32 @@ describe('component state surface scope', () => {
 
       expect(secondPage.current).toBeNull();
     });
+
+    // navigation helpers seed a side panel page's state before that page exists,
+    // from whatever surface the click happened on. The surface in the key has to
+    // be the destination page, not theirs.
+    it('is seeded for a page that has not rendered yet by naming that page as the surface', () => {
+      const store = createStore();
+      const destinationPageId = 'page-about-to-open';
+
+      store.set(
+        activeTabIdComponentState.atomFamily({
+          instanceId: TAB_LIST_ID,
+          surfaceId: destinationPageId,
+        }),
+        'test',
+      );
+
+      const { result: onDestinationPage } = renderHook(
+        () =>
+          useAtomComponentStateValue(activeTabIdComponentState, TAB_LIST_ID),
+        {
+          wrapper: buildWrapper(store, 'side-panel', destinationPageId),
+        },
+      );
+
+      expect(onDestinationPage.current).toBe('test');
+    });
   });
 
   describe("a 'shared' state", () => {

@@ -51,7 +51,7 @@ export const useSidePanelHistory = () => {
                 pageId: removedItem.pageId,
                 targetObjectId: morphItems[0].recordId,
               }),
-              surfaceId,
+              surfaceId: removedItem.pageId,
             }),
             null,
           );
@@ -158,7 +158,7 @@ export const useSidePanelHistory = () => {
                 pageId,
                 targetObjectId: morphItems[0].recordId,
               }),
-              surfaceId,
+              surfaceId: pageId,
             }),
             null,
           );

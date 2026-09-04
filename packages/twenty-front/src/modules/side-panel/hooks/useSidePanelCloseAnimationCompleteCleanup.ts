@@ -139,7 +139,7 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
               pageId,
               targetObjectId: morphItems[0].recordId,
             }),
-            surfaceId,
+            surfaceId: pageId,
           }),
           null,
         );
