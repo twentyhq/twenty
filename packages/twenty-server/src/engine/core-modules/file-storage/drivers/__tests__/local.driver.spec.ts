@@ -2,6 +2,7 @@ import {
   mkdtemp,
   mkdir,
   readFile,
+  readdir,
   rm,
   stat,
   symlink,
@@ -176,6 +177,42 @@ describe('LocalDriver', () => {
       await expect(
         stat(path.join(storagePath, 'workspace/app/partial.txt')),
       ).rejects.toMatchObject({ code: 'ENOENT' });
+
+      await expect(
+        readdir(path.join(storagePath, 'workspace/app')),
+      ).resolves.toEqual([]);
+    });
+
+    it('should publish each write as a new object rather than rewriting in place', async () => {
+      const storagePath = await createTempDirectory('local-driver-storage-');
+      const driver = new LocalDriver({ storagePath });
+      const filePath = 'workspace/app/file.txt';
+
+      await driver.writeFileStream({
+        filePath,
+        stream: Readable.from(Buffer.from('first')),
+        mimeType: undefined,
+      });
+
+      const first = await stat(path.join(storagePath, filePath));
+
+      await driver.writeFileStream({
+        filePath,
+        stream: Readable.from(Buffer.from('secnd')),
+        mimeType: undefined,
+      });
+
+      const second = await stat(path.join(storagePath, filePath));
+
+      // Same length, so only the identity distinguishes them: a rewrite in
+      // place would keep the inode and leave a promotion unable to tell the
+      // two versions apart.
+      expect(second.size).toBe(first.size);
+      expect(second.ino).not.toBe(first.ino);
+
+      await expect(
+        readdir(path.join(storagePath, 'workspace/app')),
+      ).resolves.toEqual(['file.txt']);
     });
   });
 
@@ -296,6 +333,38 @@ describe('LocalDriver', () => {
       ).rejects.toMatchObject({
         code: FileStorageExceptionCode.FILE_NOT_FOUND,
       });
+    });
+
+    it('should leave the source in place when the precondition fails', async () => {
+      const storagePath = await createTempDirectory('local-driver-storage-');
+      const folderPath = path.join(storagePath, 'workspace', 'app');
+
+      await mkdir(folderPath, { recursive: true });
+      await writeFile(path.join(folderPath, 'file.txt'), 'original');
+
+      const driver = new LocalDriver({ storagePath });
+      const before = await driver.getFileMetadata({
+        filePath: 'workspace/app/file.txt',
+      });
+
+      await writeFile(path.join(folderPath, 'file.txt'), 'replaced');
+
+      await expect(
+        driver.move({
+          from: { folderPath: 'workspace/app', filename: 'file.txt' },
+          to: { folderPath: 'workspace/final', filename: 'moved.txt' },
+          ifMatchChecksum: before?.checksum,
+        }),
+      ).rejects.toMatchObject({
+        code: FileStorageExceptionCode.PRECONDITION_FAILED,
+      });
+
+      // A failed promotion must not strand the object under the private name
+      // it was claimed with, where nothing would ever look for it again.
+      await expect(readdir(folderPath)).resolves.toEqual(['file.txt']);
+      await expect(
+        readFile(path.join(folderPath, 'file.txt'), 'utf-8'),
+      ).resolves.toBe('replaced');
     });
 
     it('should not report a storage failure as a missing source', async () => {

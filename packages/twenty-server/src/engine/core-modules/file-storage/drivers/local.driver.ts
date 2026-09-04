@@ -10,7 +10,10 @@ import path, { dirname, join } from 'path';
 import { type Readable } from 'stream';
 import { pipeline } from 'stream/promises';
 
+import { Logger } from '@nestjs/common';
+
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/types/file-storage-metadata.type';
@@ -31,6 +34,7 @@ const buildStatChecksum = (stats: Stats): string =>
   `${stats.ino}-${stats.size}-${stats.mtimeMs}`;
 
 export class LocalDriver implements StorageDriver {
+  private readonly logger = new Logger(LocalDriver.name);
   private options: LocalDriverOptions;
 
   constructor(options: LocalDriverOptions) {
@@ -184,11 +188,18 @@ export class LocalDriver implements StorageDriver {
       params.filePath,
     );
 
+    // Writing through to the destination would mutate the object other callers
+    // are already reading, in place and under a stable inode. Promotion
+    // identifies the version it validated by inode, so publishing each write as
+    // a new one is what keeps that identity meaningful.
+    const partialFilePath = `${realFilePath}.${v4()}.part`;
+
     try {
-      await pipeline(params.stream, createWriteStream(realFilePath));
+      await pipeline(params.stream, createWriteStream(partialFilePath));
+      await fs.rename(partialFilePath, realFilePath);
     } catch (error) {
       // Remove the partial file so a failed upload can be retried cleanly
-      await fs.rm(realFilePath, { force: true });
+      await fs.rm(partialFilePath, { force: true });
 
       throw error;
     }
@@ -397,19 +408,32 @@ export class LocalDriver implements StorageDriver {
       params.to.filename || '',
     );
 
-    if (isDefined(params.ifMatchChecksum)) {
-      await this.assertChecksumMatchesOrThrow({
-        filePath: fromPath,
-        expectedChecksum: params.ifMatchChecksum,
-      });
-    }
-
     await this.createFolder(dirname(toPath));
 
+    if (isDefined(params.ifMatchChecksum)) {
+      await this.movePreconditionedOnChecksum({
+        fromPath,
+        toPath,
+        expectedChecksum: params.ifMatchChecksum,
+      });
+
+      return;
+    }
+
+    await this.renameOrThrow({ fromPath, toPath });
+  }
+
+  private async renameOrThrow({
+    fromPath,
+    toPath,
+  }: {
+    fromPath: string;
+    toPath: string;
+  }): Promise<void> {
     try {
       await fs.rename(fromPath, toPath);
     } catch (error) {
-      if (error.code === 'ENOENT') {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
         throw new FileStorageException(
           'File not found',
           FileStorageExceptionCode.FILE_NOT_FOUND,
@@ -418,6 +442,46 @@ export class LocalDriver implements StorageDriver {
 
       throw error;
     }
+  }
+
+  // Checking the source and then renaming it leaves a window in which a client
+  // still holding an upload target can publish over the path, so the rename
+  // would promote bytes that were never inspected. Claiming the source under a
+  // private name first makes the checked object and the moved object the same
+  // one: whatever a concurrent upload publishes afterwards lands on the
+  // original path and is no longer reachable from here.
+  private async movePreconditionedOnChecksum({
+    fromPath,
+    toPath,
+    expectedChecksum,
+  }: {
+    fromPath: string;
+    toPath: string;
+    expectedChecksum: string;
+  }): Promise<void> {
+    const claimedPath = `${fromPath}.${v4()}.promoting`;
+
+    await this.renameOrThrow({ fromPath, toPath: claimedPath });
+
+    try {
+      await this.assertChecksumMatchesOrThrow({
+        filePath: claimedPath,
+        expectedChecksum,
+      });
+    } catch (error) {
+      // Put it back so the caller's retry and the cleanup sweep still find it
+      // at the path they know. A concurrent upload may have published there in
+      // the meantime, but that path is bound for deletion either way.
+      await fs.rename(claimedPath, fromPath).catch(() => {
+        this.logger.error(
+          `Could not restore "${path.basename(fromPath)}" after a failed promotion`,
+        );
+      });
+
+      throw error;
+    }
+
+    await this.renameOrThrow({ fromPath: claimedPath, toPath });
   }
 
   async copy(params: {
