@@ -16,9 +16,9 @@
 
 ## 📌 Heads up
 
-- **Connect as Workspace shared, not Just for me.** A Just for me connection
-  still syncs your own meetings, but only you can use the Fathom workflow and
-  AI actions with it.
+- **Everything you import is shared with your workspace.** Transcripts and
+  summaries land on Call Recording records that every member with access can
+  read. Private syncing is coming later.
 - **Twenty imports only what your Fathom account can see.** Your Fathom and
   Twenty login emails don't need to match.
 - **Calendar links need one clear match.** A Call Recording is linked to a
