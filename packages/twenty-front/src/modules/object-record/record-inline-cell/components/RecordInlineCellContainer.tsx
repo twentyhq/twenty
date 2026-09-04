@@ -115,10 +115,10 @@ export const RecordInlineCellContainer = () => {
   })}`;
 
   const fieldDescription = fieldDefinition?.metadata?.description;
-  const hasFieldDescription = shouldDisplayFieldDescriptionTooltip(
-    label,
+  const hasFieldDescription = shouldDisplayFieldDescriptionTooltip({
+    fieldLabel: label,
     fieldDescription,
-  );
+  });
 
   return (
     <StyledInlineCellBaseContainer

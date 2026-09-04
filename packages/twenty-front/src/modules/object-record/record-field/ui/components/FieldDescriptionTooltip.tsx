@@ -34,10 +34,11 @@ type FieldDescriptionTooltipProps = {
   fieldLabel?: string | null;
 };
 
-export const shouldDisplayFieldDescriptionTooltip = (
-  fieldLabel?: string | null,
-  fieldDescription?: string | null,
-) => isNonEmptyString(fieldLabel) && isNonEmptyString(fieldDescription);
+export const shouldDisplayFieldDescriptionTooltip = ({
+  fieldLabel,
+  fieldDescription,
+}: Pick<FieldDescriptionTooltipProps, 'fieldLabel' | 'fieldDescription'>) =>
+  isNonEmptyString(fieldLabel) && isNonEmptyString(fieldDescription);
 
 export const FieldDescriptionTooltip = ({
   children,
@@ -47,7 +48,7 @@ export const FieldDescriptionTooltip = ({
   const fieldDescriptionTooltipAnchorId = useId();
   const fieldDescriptionId = `${fieldDescriptionTooltipAnchorId}-description`;
 
-  if (!shouldDisplayFieldDescriptionTooltip(fieldLabel, fieldDescription)) {
+  if (!shouldDisplayFieldDescriptionTooltip({ fieldLabel, fieldDescription })) {
     return children;
   }
 
