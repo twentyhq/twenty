@@ -47,28 +47,28 @@ describe('validateWorkflowStructure', () => {
     );
   });
   it('should accept a step whose retryOnFailure value is a legacy boolean', () => {
+    const legacyBooleanStep = {
+      id: '11111111-1111-4111-8111-111111111111',
+      name: 'Code step',
+      type: 'CODE',
+      valid: true,
+      nextStepIds: [],
+      settings: {
+        input: { logicFunctionId: 'fn-1', logicFunctionInput: {} },
+        outputSchema: {},
+        errorHandlingOptions: {
+          retryOnFailure: { value: true },
+          continueOnFailure: { value: false },
+        },
+      },
+    };
+
     const result = validateWorkflowStructure({
       trigger: {
         type: 'MANUAL',
         nextStepIds: ['11111111-1111-4111-8111-111111111111'],
       },
-      steps: [
-        {
-          id: '11111111-1111-4111-8111-111111111111',
-          name: 'Code step',
-          type: 'CODE',
-          valid: true,
-          nextStepIds: [],
-          settings: {
-            input: { logicFunctionId: 'fn-1', logicFunctionInput: {} },
-            outputSchema: {},
-            errorHandlingOptions: {
-              retryOnFailure: { value: true },
-              continueOnFailure: { value: false },
-            },
-          },
-        },
-      ],
+      steps: [legacyBooleanStep],
     });
 
     expect(
