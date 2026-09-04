@@ -18,6 +18,7 @@ import {
   CreateCompanyAndContactJob,
   type CreateCompanyAndContactJobData,
 } from 'src/modules/contact-creation-manager/jobs/create-company-and-contact.job';
+import { MessageChannelRecordShareService } from 'src/modules/messaging/common/services/message-channel-record-share.service';
 import {
   type Participant,
   type ParticipantWithMessageId,
@@ -38,6 +39,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     private readonly messageService: MessagingMessageService,
     private readonly messageParticipantService: MessagingMessageParticipantService,
     private readonly messageFolderAssociationService: MessagingMessageFolderAssociationService,
+    private readonly messageChannelRecordShareService: MessageChannelRecordShareService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
@@ -55,6 +57,12 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
   > {
     const handleAliases = connectedAccount.handleAliases || [];
     const authContext = buildSystemAuthContext(workspaceId);
+    const messageChannelRecordShareSource =
+      await this.messageChannelRecordShareService.buildSource({
+        messageChannel,
+        connectedAccount,
+        workspaceId,
+      });
 
     const savedMessagesResult =
       await this.workspaceOrmManager.executeInWorkspaceContext(
@@ -67,7 +75,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                 messageExternalIdToMessageThreadIdMap,
               } = await this.messageService.saveMessagesWithinTransaction(
                 messagesToSave,
-                messageChannel.id,
+                messageChannelRecordShareSource,
                 transactionScope,
                 workspaceId,
               );

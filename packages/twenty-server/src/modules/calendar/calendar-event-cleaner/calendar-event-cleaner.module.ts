@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { RecordShareModule } from 'src/engine/record-share/record-share.module';
 import { CalendarChannelDeletionCleanupJob } from 'src/modules/calendar/calendar-event-cleaner/jobs/calendar-channel-deletion-cleanup.job';
 import { DeleteConnectedAccountAssociatedCalendarDataJob } from 'src/modules/calendar/calendar-event-cleaner/jobs/delete-connected-account-associated-calendar-data.job';
 
@@ -9,7 +10,7 @@ import { CalendarEventCleanerConnectedAccountListener } from 'src/modules/calend
 import { CalendarEventCleanerService } from 'src/modules/calendar/calendar-event-cleaner/services/calendar-event-cleaner.service';
 
 @Module({
-  imports: [FeatureFlagModule],
+  imports: [FeatureFlagModule, RecordShareModule],
   providers: [
     CalendarEventCleanerService,
     CalendarChannelDeletionCleanupJob,

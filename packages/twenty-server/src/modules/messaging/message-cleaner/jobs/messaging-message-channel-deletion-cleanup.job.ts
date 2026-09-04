@@ -3,6 +3,7 @@ import { Logger, Scope } from '@nestjs/common';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 
 export type MessagingMessageChannelDeletionCleanupJobData = {
@@ -21,6 +22,7 @@ export class MessagingMessageChannelDeletionCleanupJob {
 
   constructor(
     private readonly messageCleanerService: MessagingMessageCleanerService,
+    private readonly recordShareService: RecordShareService,
   ) {}
 
   @Process(MessagingMessageChannelDeletionCleanupJob.name)
@@ -41,5 +43,10 @@ export class MessagingMessageChannelDeletionCleanupJob {
     await this.messageCleanerService.cleanOrphanMessagesAndThreads(
       data.workspaceId,
     );
+
+    await this.recordShareService.deleteBySourceId({
+      workspaceId: data.workspaceId,
+      sourceId: data.messageChannelId,
+    });
   }
 }

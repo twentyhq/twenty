@@ -20,6 +20,9 @@ import {
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
@@ -32,6 +35,10 @@ import {
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import {
+  RefreshMessageChannelRecordSharesJob,
+  type RefreshMessageChannelRecordSharesJobData,
+} from 'src/modules/messaging/common/jobs/refresh-message-channel-record-shares.job';
 import { INBOUND_EMAIL_LOCAL_PART_PREFIX } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/constants/inbound-email-local-part-prefix.constant';
 import { INBOUND_EMAIL_LOCAL_PART_RANDOM_BYTES } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/constants/inbound-email-local-part-random-bytes.constant';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
@@ -45,6 +52,8 @@ export class MessageChannelMetadataService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailingDomainService: EmailingDomainService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    @InjectMessageQueue(MessageQueue.messagingQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   async findAll(workspaceId: string): Promise<MessageChannelDTO[]> {
@@ -203,10 +212,29 @@ export class MessageChannelMetadataService {
     workspaceId: string;
     data: Partial<MessageChannelEntity>;
   }): Promise<MessageChannelDTO> {
+    const previousVisibility = isDefined(data.visibility)
+      ? (
+          await this.repository.findOneOrFail({
+            where: { id, workspaceId },
+            select: { visibility: true },
+          })
+        ).visibility
+      : undefined;
+
     await this.repository.update(
       { id, workspaceId },
       data as Record<string, unknown>,
     );
+
+    if (
+      isDefined(previousVisibility) &&
+      data.visibility !== previousVisibility
+    ) {
+      await this.messageQueueService.add<RefreshMessageChannelRecordSharesJobData>(
+        RefreshMessageChannelRecordSharesJob.name,
+        { workspaceId, messageChannelId: id },
+      );
+    }
 
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }

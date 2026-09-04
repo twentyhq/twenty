@@ -12,6 +12,7 @@ import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MessageChannelMetadataModule } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.module';
+import { RecordShareModule } from 'src/engine/record-share/record-share.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -43,12 +44,15 @@ import { MessageCampaignService } from 'src/modules/emailing/services/message-ca
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscribe-topic.service';
 import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool';
+import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 
 @Module({
   imports: [
     EmailingDomainModule,
     ThrottlerModule,
     MessageChannelMetadataModule,
+    MessagingCommonModule,
+    RecordShareModule,
     FeatureFlagModule,
     PermissionsModule,
     UserRoleModule,

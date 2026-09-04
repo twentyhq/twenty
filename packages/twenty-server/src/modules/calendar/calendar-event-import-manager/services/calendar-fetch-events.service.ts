@@ -6,9 +6,16 @@ import { Any, Repository } from 'typeorm';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CalendarEventCleanerService } from 'src/modules/calendar/calendar-event-cleaner/services/calendar-event-cleaner.service';
+import {
+  RefreshCalendarChannelRecordSharesJob,
+  type RefreshCalendarChannelRecordSharesJobData,
+} from 'src/modules/calendar/common/jobs/refresh-calendar-channel-record-shares.job';
 import {
   CalendarEventImportErrorHandlerService,
   CalendarEventImportSyncStep,
@@ -32,6 +39,8 @@ export class CalendarFetchEventsService {
     private readonly getCalendarEventsService: CalendarGetCalendarEventsService,
     private readonly calendarEventImportErrorHandlerService: CalendarEventImportErrorHandlerService,
     private readonly calendarEventCleanerService: CalendarEventCleanerService,
+    @InjectMessageQueue(MessageQueue.calendarQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   public async fetchCalendarEvents(
@@ -86,6 +95,11 @@ export class CalendarFetchEventsService {
                 ),
                 workspaceId,
               },
+            );
+
+            await this.messageQueueService.add<RefreshCalendarChannelRecordSharesJobData>(
+              RefreshCalendarChannelRecordSharesJob.name,
+              { workspaceId, calendarChannelId: calendarChannel.id },
             );
           }
 

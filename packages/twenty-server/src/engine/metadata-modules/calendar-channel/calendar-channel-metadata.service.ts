@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import {
@@ -8,6 +9,9 @@ import {
   CalendarChannelVisibility,
 } from 'twenty-shared/types';
 
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
   CalendarChannelException,
   CalendarChannelExceptionCode,
@@ -18,6 +22,10 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { type CalendarChannelDeletedEvent } from 'src/engine/metadata-modules/calendar-channel/types/calendar-channel-deleted.type';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import {
+  RefreshCalendarChannelRecordSharesJob,
+  type RefreshCalendarChannelRecordSharesJobData,
+} from 'src/modules/calendar/common/jobs/refresh-calendar-channel-record-shares.job';
 
 @Injectable()
 export class CalendarChannelMetadataService {
@@ -26,6 +34,8 @@ export class CalendarChannelMetadataService {
     private readonly repository: Repository<CalendarChannelEntity>,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    @InjectMessageQueue(MessageQueue.calendarQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   async findAll(workspaceId: string): Promise<CalendarChannelDTO[]> {
@@ -166,10 +176,29 @@ export class CalendarChannelMetadataService {
     workspaceId: string;
     data: Partial<CalendarChannelEntity>;
   }): Promise<CalendarChannelDTO> {
+    const previousVisibility = isDefined(data.visibility)
+      ? (
+          await this.repository.findOneOrFail({
+            where: { id, workspaceId },
+            select: { visibility: true },
+          })
+        ).visibility
+      : undefined;
+
     await this.repository.update(
       { id, workspaceId },
       data as Record<string, unknown>,
     );
+
+    if (
+      isDefined(previousVisibility) &&
+      data.visibility !== previousVisibility
+    ) {
+      await this.messageQueueService.add<RefreshCalendarChannelRecordSharesJobData>(
+        RefreshCalendarChannelRecordSharesJob.name,
+        { workspaceId, calendarChannelId: id },
+      );
+    }
 
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }

@@ -9,6 +9,7 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { RecordShareModule } from 'src/engine/record-share/record-share.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
@@ -85,6 +86,7 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
     MessagingMessageCleanerModule,
     WorkspaceEventEmitterModule,
     ConnectedAccountModule,
+    RecordShareModule,
   ],
   providers: [
     BlocklistRepository,

@@ -10,10 +10,17 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { CalendarEventCleanerService } from 'src/modules/calendar/calendar-event-cleaner/services/calendar-event-cleaner.service';
+import {
+  RefreshCalendarChannelRecordSharesJob,
+  type RefreshCalendarChannelRecordSharesJobData,
+} from 'src/modules/calendar/common/jobs/refresh-calendar-channel-record-shares.job';
 import { CALENDAR_EVENT_IMPORT_BATCH_SIZE } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-event-import-batch-size';
 import {
   CalendarEventImportDriverException,
@@ -46,6 +53,8 @@ export class CalendarEventsImportService {
     private readonly emailAliasManagerService: EmailAliasManagerService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    @InjectMessageQueue(MessageQueue.calendarQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   public async processCalendarEventsImport(
@@ -177,6 +186,11 @@ export class CalendarEventsImportService {
                 ),
                 workspaceId,
               },
+            );
+
+            await this.messageQueueService.add<RefreshCalendarChannelRecordSharesJobData>(
+              RefreshCalendarChannelRecordSharesJob.name,
+              { workspaceId, calendarChannelId: calendarChannel.id },
             );
           }
 

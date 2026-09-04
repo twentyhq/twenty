@@ -2,6 +2,8 @@ import gql from 'graphql-tag';
 
 import {
   type CalendarChannelContactAutoCreationPolicy,
+  type CalendarChannelVisibility,
+  type MessageChannelVisibility,
   type MessageFolderImportPolicy,
 } from 'twenty-shared/types';
 
@@ -70,12 +72,14 @@ type MessageChannelUpdate = {
   messageFolderImportPolicy?: MessageFolderImportPolicy;
   isSyncEnabled?: boolean;
   isContactAutoCreationEnabled?: boolean;
+  visibility?: MessageChannelVisibility;
 };
 
 type CalendarChannelUpdate = {
   isSyncEnabled?: boolean;
   isContactAutoCreationEnabled?: boolean;
   contactAutoCreationPolicy?: CalendarChannelContactAutoCreationPolicy;
+  visibility?: CalendarChannelVisibility;
 };
 
 const MESSAGE_CHANNEL_FIELDS = gql`

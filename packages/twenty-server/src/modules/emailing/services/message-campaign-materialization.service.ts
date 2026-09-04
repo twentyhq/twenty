@@ -1,6 +1,7 @@
 import { CAMPAIGN_SEND_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-limit.constant';
 import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-backoff.constant';
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
 import { CAMPAIGN_DELIVERY_STATE } from 'src/engine/core-modules/emailing-domain/constants/campaign-delivery-state.constant';
@@ -8,7 +9,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 import chunk from 'lodash.chunk';
-import { In, type ObjectLiteral } from 'typeorm';
+import { In, type ObjectLiteral, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import {
@@ -21,6 +22,8 @@ import { type SendCampaignEmailJobData } from 'src/engine/core-modules/emailing-
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
@@ -30,10 +33,13 @@ import { type CampaignMessageRecipient } from 'src/modules/emailing/types/campai
 import { buildCampaignMessageId } from 'src/modules/emailing/utils/build-campaign-message-id.util';
 import { compileCampaignEmailContent } from 'src/modules/emailing/utils/compile-campaign-email-content.util';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
+import { MessageChannelRecordShareService } from 'src/modules/messaging/common/services/message-channel-record-share.service';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+import { type MessageChannelRecordShareSource } from 'src/modules/messaging/common/types/message-channel-record-share-source.type';
+import { buildMessageRecordSharesToInsert } from 'src/modules/messaging/common/utils/build-message-record-shares-to-insert.util';
 import {
   MessageCampaignStatus,
   MessageParticipantRole,
@@ -63,6 +69,10 @@ export class MessageCampaignMaterializationService {
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     @InjectMessageQueue(MessageQueue.campaignQueue)
     private readonly messageQueueService: MessageQueueService,
+    @InjectRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
+    private readonly messageChannelRecordShareService: MessageChannelRecordShareService,
+    private readonly recordShareService: RecordShareService,
   ) {}
 
   async processMaterializeJob({
@@ -374,9 +384,19 @@ export class MessageCampaignMaterializationService {
     now: Date;
     recipients: CampaignMessageRecipient[];
   }): Promise<void> {
+    const messageChannel = await this.messageChannelRepository.findOneOrFail({
+      where: { id: messageChannelId, workspaceId },
+      relations: { connectedAccount: true },
+    });
+
     await this.insertChunk({
+      workspaceId,
       campaignId,
-      messageChannelId,
+      messageChannel: await this.messageChannelRecordShareService.buildSource({
+        messageChannel,
+        connectedAccount: messageChannel.connectedAccount,
+        workspaceId,
+      }),
       fromAddress,
       subjectTemplate,
       text,
@@ -403,16 +423,18 @@ export class MessageCampaignMaterializationService {
   }
 
   private async insertChunk({
+    workspaceId,
     campaignId,
-    messageChannelId,
+    messageChannel,
     fromAddress,
     subjectTemplate,
     text,
     now,
     rows,
   }: {
+    workspaceId: string;
     campaignId: string;
-    messageChannelId: string;
+    messageChannel: MessageChannelRecordShareSource;
     fromAddress: string;
     subjectTemplate: string;
     text: string;
@@ -450,12 +472,29 @@ export class MessageCampaignMaterializationService {
           rows.map((row) => ({
             id: v4(),
             messageId: row.messageId,
-            messageChannelId,
+            messageChannelId: messageChannel.messageChannelId,
             messageExternalId: row.temporaryExternalId,
             messageThreadExternalId: row.temporaryExternalId,
             direction: MessageDirection.OUTGOING,
           })),
         );
+
+        const { objectIdByNameSingular } =
+          repositoryFor<MessageWorkspaceEntity>('message').internalContext;
+
+        await this.recordShareService.insertMany({
+          workspaceId,
+          recordShares: buildMessageRecordSharesToInsert({
+            messageChannel,
+            messages: rows.map((row) => ({
+              id: row.messageId,
+              messageThreadId: row.threadId,
+            })),
+            messageObjectMetadataId: objectIdByNameSingular.message,
+            messageThreadObjectMetadataId: objectIdByNameSingular.messageThread,
+          }),
+          transactionScope,
+        });
 
         await repositoryFor<MessageParticipantWorkspaceEntity>(
           'messageParticipant',

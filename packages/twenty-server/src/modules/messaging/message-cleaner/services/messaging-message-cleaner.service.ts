@@ -4,10 +4,17 @@ import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThan } from 'typeorm';
 
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { ParticipantTargetReconciliationService } from 'src/modules/match-participant/participant-target-reconciliation.service';
+import {
+  RefreshMessageChannelRecordSharesJob,
+  type RefreshMessageChannelRecordSharesJobData,
+} from 'src/modules/messaging/common/jobs/refresh-message-channel-record-shares.job';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
@@ -20,6 +27,8 @@ export class MessagingMessageCleanerService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly participantTargetReconciliationService: ParticipantTargetReconciliationService,
+    @InjectMessageQueue(MessageQueue.messagingQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   async deleteMessagesChannelMessageAssociationsAndRelatedOrphans({
@@ -48,6 +57,8 @@ export class MessagingMessageCleanerService {
                 'messageThread',
               );
 
+            let hasDeletedAssociations = false;
+
             for (const messageExternalIdsChunk of chunk(
               messageExternalIds,
               500,
@@ -67,6 +78,8 @@ export class MessagingMessageCleanerService {
               await messageChannelMessageAssociationRepository.delete(
                 associationsToDelete.map(({ id }) => id),
               );
+
+              hasDeletedAssociations = true;
 
               this.logger.log(
                 `WorkspaceId: ${workspaceId} Deleting ${associationsToDelete.length} message channel message associations`,
@@ -123,6 +136,15 @@ export class MessagingMessageCleanerService {
                   transactionScope,
                 },
               );
+            }
+
+            if (hasDeletedAssociations) {
+              transactionScope.afterCommit(async () => {
+                await this.messageQueueService.add<RefreshMessageChannelRecordSharesJobData>(
+                  RefreshMessageChannelRecordSharesJob.name,
+                  { workspaceId, messageChannelId },
+                );
+              });
             }
           },
         );

@@ -3,6 +3,7 @@ import { Logger, Scope } from '@nestjs/common';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { CalendarEventCleanerService } from 'src/modules/calendar/calendar-event-cleaner/services/calendar-event-cleaner.service';
 
 export type CalendarChannelDeletionCleanupJobData = {
@@ -19,6 +20,7 @@ export class CalendarChannelDeletionCleanupJob {
 
   constructor(
     private readonly calendarEventCleanerService: CalendarEventCleanerService,
+    private readonly recordShareService: RecordShareService,
   ) {}
 
   @Process(CalendarChannelDeletionCleanupJob.name)
@@ -37,5 +39,10 @@ export class CalendarChannelDeletionCleanupJob {
     await this.calendarEventCleanerService.cleanWorkspaceCalendarEvents(
       data.workspaceId,
     );
+
+    await this.recordShareService.deleteBySourceId({
+      workspaceId: data.workspaceId,
+      sourceId: data.calendarChannelId,
+    });
   }
 }

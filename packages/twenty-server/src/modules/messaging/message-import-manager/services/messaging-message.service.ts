@@ -4,12 +4,15 @@ import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+import { type MessageChannelRecordShareSource } from 'src/modules/messaging/common/types/message-channel-record-share-source.type';
+import { buildMessageRecordSharesToInsert } from 'src/modules/messaging/common/utils/build-message-record-shares-to-insert.util';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 
 type MessageAccumulator = {
@@ -41,11 +44,14 @@ type MessageAccumulator = {
 export class MessagingMessageService {
   private readonly logger = new Logger(MessagingMessageService.name);
 
-  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
+  constructor(
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly recordShareService: RecordShareService,
+  ) {}
 
   public async saveMessagesWithinTransaction(
     messages: MessageWithParticipants[],
-    messageChannelId: string,
+    messageChannel: MessageChannelRecordShareSource,
     transactionScope: WorkspaceTransactionScope,
     workspaceId: string,
   ): Promise<{
@@ -58,6 +64,7 @@ export class MessagingMessageService {
     messageExternalIdToMessageThreadIdMap: Map<string, string>;
   }> {
     const authContext = buildSystemAuthContext(workspaceId);
+    const { messageChannelId } = messageChannel;
 
     return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
@@ -315,6 +322,34 @@ export class MessagingMessageService {
             );
           }
         }
+
+        await this.recordShareService.insertMany({
+          workspaceId,
+          recordShares: buildMessageRecordSharesToInsert({
+            messageChannel,
+            messages: Array.from(messageAccumulatorMap.values()).flatMap(
+              (accumulator) =>
+                isDefined(accumulator.messageChannelMessageAssociationToCreate)
+                  ? [
+                      {
+                        id: accumulator.messageChannelMessageAssociationToCreate
+                          .messageId,
+                        messageThreadId:
+                          accumulator.messageToCreate?.messageThreadId ??
+                          accumulator.existingMessageInDB?.messageThreadId ??
+                          null,
+                      },
+                    ]
+                  : [],
+            ),
+            messageObjectMetadataId:
+              messageRepository.internalContext.objectIdByNameSingular.message,
+            messageThreadObjectMetadataId:
+              messageRepository.internalContext.objectIdByNameSingular
+                .messageThread,
+          }),
+          transactionScope,
+        });
 
         return {
           createdMessages: messagesToCreate,
