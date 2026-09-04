@@ -1,7 +1,7 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/code-action/constants/WorkflowLogicFunctionTabListComponentId';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -82,10 +82,6 @@ export const useVariableDropdown = ({
   const setWorkflowSelectedNode = useSetAtomComponentState(
     workflowSelectedNodeComponentState,
   );
-  const setActiveTabId = useSetAtomComponentState(
-    activeTabIdComponentState,
-    'workflow-logic-function-tab-list-component-id',
-  );
   const setWorkflowDiagram = useSetAtomComponentState(
     workflowDiagramComponentState,
   );
@@ -153,16 +149,18 @@ export const useVariableDropdown = ({
 
       setSidePanelNavigationStack([]);
 
-      openWorkflowEditStepInSidePanel(
-        workflowVisualizerWorkflowId,
-        step.name,
-        getIcon(step.icon),
-        step.id,
-      );
-
-      if (isDefined(linkOutputSchema.link.tab)) {
-        setActiveTabId(linkOutputSchema.link.tab);
-      }
+      openWorkflowEditStepInSidePanel({
+        workflowId: workflowVisualizerWorkflowId,
+        title: step.name,
+        icon: getIcon(step.icon),
+        stepId: step.id,
+        initialStepTab: isDefined(linkOutputSchema.link.tab)
+          ? {
+              tabListComponentId: WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
+              tabId: linkOutputSchema.link.tab,
+            }
+          : undefined,
+      });
     };
 
     if (isLinkOutputSchema(currentSubStep)) {
