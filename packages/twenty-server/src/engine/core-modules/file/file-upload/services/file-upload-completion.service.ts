@@ -27,7 +27,10 @@ import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import {
+  StreamSizeExceededError,
+  streamToBuffer,
+} from 'src/utils/stream-to-buffer';
 
 export type BatchCompleteUploadRequest = {
   workspaceId: string;
@@ -217,6 +220,16 @@ export class FileUploadCompletionService {
     );
   }
 
+  private buildSvgTooLargeException(size: number): FileUploadException {
+    return new FileUploadException(
+      `SVG of ${size} bytes exceeds the ${MAX_SANITIZABLE_SVG_BYTES} bytes that can be sanitized`,
+      FileUploadExceptionCode.FILE_TOO_LARGE,
+      {
+        userFriendlyMessage: msg`This SVG is too large to be processed.`,
+      },
+    );
+  }
+
   private async sanitizeUploadedFileIfNeeded({
     storageLocation,
     mimeType,
@@ -231,18 +244,25 @@ export class FileUploadCompletionService {
     }
 
     if (size > MAX_SANITIZABLE_SVG_BYTES) {
-      throw new FileUploadException(
-        `SVG of ${size} bytes exceeds the ${MAX_SANITIZABLE_SVG_BYTES} bytes that can be sanitized`,
-        FileUploadExceptionCode.FILE_TOO_LARGE,
-        {
-          userFriendlyMessage: msg`This SVG is too large to be processed.`,
-        },
-      );
+      throw this.buildSvgTooLargeException(size);
     }
 
     const stream = await this.fileStorageService.readFile(storageLocation);
+
+    let file: Buffer;
+
+    try {
+      file = await streamToBuffer(stream, MAX_SANITIZABLE_SVG_BYTES);
+    } catch (error) {
+      if (error instanceof StreamSizeExceededError) {
+        throw this.buildSvgTooLargeException(size);
+      }
+
+      throw error;
+    }
+
     const sanitizedFile = sanitizeFile({
-      file: await streamToBuffer(stream, MAX_SANITIZABLE_SVG_BYTES),
+      file,
       ext: 'svg',
       mimeType,
     });

@@ -84,6 +84,29 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
     expect(fileRepository.update).not.toHaveBeenCalled();
   });
 
+  it('should report an oversized read as FILE_TOO_LARGE when storage understated the size', async () => {
+    const declaredSize = 1024;
+
+    fileStorageService.getFileMetadata.mockResolvedValue({
+      size: declaredSize,
+    });
+    fileStorageService.readFile.mockResolvedValue(
+      Readable.from(Buffer.alloc(MAX_SANITIZABLE_SVG_BYTES + 1)),
+    );
+
+    await expect(
+      buildService().completeUploadedFile({
+        workspaceId,
+        file: buildFile('svg', declaredSize),
+        storageLocation: buildStorageLocation('svg'),
+      }),
+    ).rejects.toMatchObject({
+      code: FileUploadExceptionCode.FILE_TOO_LARGE,
+    });
+
+    expect(fileRepository.update).not.toHaveBeenCalled();
+  });
+
   it('should sanitize an SVG within the limit and store its new size', async () => {
     const size = Buffer.byteLength(svgContent);
 
