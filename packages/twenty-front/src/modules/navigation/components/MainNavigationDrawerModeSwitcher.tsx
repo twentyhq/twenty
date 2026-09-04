@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { motion } from 'framer-motion';
 import { useContext } from 'react';
 import {
   type IconComponent,
@@ -76,20 +77,13 @@ const StyledModeIcon = styled.span`
   width: ${themeCssVariables.spacing[4]};
 `;
 
-// The label of an inactive mode stays in the tree so the button keeps an
-// accessible name, and the collapsed track wipes it open on activation.
-const StyledModeLabel = styled.span<{ isActive: boolean }>`
-  display: grid;
-  grid-template-columns: ${({ isActive }) => (isActive ? '1fr' : '0fr')};
-  transition: grid-template-columns
-    calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
-`;
-
-const StyledModeLabelText = styled.span`
-  min-width: 0;
+const StyledModeLabelBase = styled.span`
+  display: block;
   overflow: hidden;
   white-space: nowrap;
 `;
+
+const StyledModeLabel = motion.create(StyledModeLabelBase);
 
 type NavigationDrawerMode = {
   Icon: IconComponent;
@@ -149,14 +143,22 @@ export const MainNavigationDrawerModeSwitcher = () => {
               key={mode}
               type="button"
               isActive={isActive}
+              aria-label={label}
               aria-current={isActive}
               onClick={() => switchNavigationDrawerMode(mode)}
             >
               <StyledModeIcon>
                 <Icon size={theme.icon.size.md} />
               </StyledModeIcon>
-              <StyledModeLabel isActive={isActive}>
-                <StyledModeLabelText>{label}</StyledModeLabelText>
+              <StyledModeLabel
+                initial={false}
+                animate={{ width: isActive ? 'auto' : 0 }}
+                transition={{
+                  duration: theme.animation.duration.normal,
+                  ease: 'easeInOut',
+                }}
+              >
+                {label}
               </StyledModeLabel>
             </StyledMode>
           );
