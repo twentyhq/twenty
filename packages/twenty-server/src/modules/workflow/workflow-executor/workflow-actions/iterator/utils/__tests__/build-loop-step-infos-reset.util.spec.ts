@@ -4,17 +4,31 @@ import {
   type WorkflowRunStepInfo,
 } from 'twenty-shared/workflow';
 
+import {
+  createMockCodeStep,
+  createMockIteratorStep,
+} from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { buildLoopStepInfosReset } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/build-loop-step-infos-reset.util';
 
-describe('buildLoopStepInfosReset', () => {
-  it('should reset the step and archive its outcome in history', () => {
-    const stepInfos: Record<string, WorkflowRunStepInfo> = {
-      step1: { status: StepStatus.SUCCESS, result: { id: '1' } },
-    };
+const steps = [
+  createMockIteratorStep('iterator1', ['step1'], []),
+  createMockCodeStep('step1', ['step2']),
+  createMockCodeStep('step2', ['deleted-step', 'iterator1']),
+];
 
-    const result = buildLoopStepInfosReset({
-      stepIdsToReset: ['step1'],
-      stepInfos,
+const buildReset = (stepInfos: Record<string, WorkflowRunStepInfo>) =>
+  buildLoopStepInfosReset({
+    iteratorStepId: 'iterator1',
+    initialLoopStepIds: ['step1'],
+    steps,
+    stepInfos,
+  });
+
+describe('buildLoopStepInfosReset', () => {
+  it('should reset every step in the loop and archive its outcome in history', () => {
+    const result = buildReset({
+      step1: { status: StepStatus.SUCCESS, result: { id: '1' } },
+      step2: { status: StepStatus.SKIPPED },
     });
 
     expect(result).toEqual({
@@ -26,21 +40,24 @@ describe('buildLoopStepInfosReset', () => {
           { status: StepStatus.SUCCESS, result: { id: '1' }, error: undefined },
         ],
       },
+      step2: {
+        status: StepStatus.NOT_STARTED,
+        result: undefined,
+        error: undefined,
+        history: [
+          { status: StepStatus.SKIPPED, result: undefined, error: undefined },
+        ],
+      },
     });
   });
 
   it('should append to the existing history', () => {
-    const stepInfos: Record<string, WorkflowRunStepInfo> = {
+    const result = buildReset({
       step1: {
         status: StepStatus.FAILED,
         error: 'second failure',
         history: [{ status: StepStatus.FAILED, error: 'first failure' }],
       },
-    };
-
-    const result = buildLoopStepInfosReset({
-      stepIdsToReset: ['step1'],
-      stepInfos,
     });
 
     expect(result.step1.history).toEqual([
@@ -49,31 +66,24 @@ describe('buildLoopStepInfosReset', () => {
     ]);
   });
 
-  it('should skip step ids that have no step info', () => {
-    const stepInfos: Record<string, WorkflowRunStepInfo> = {
+  it('should not reset a step that no longer exists', () => {
+    const result = buildReset({
       step1: { status: StepStatus.SUCCESS },
-    };
-
-    const result = buildLoopStepInfosReset({
-      stepIdsToReset: ['step1', 'unknown-step'],
-      stepInfos,
+      step2: { status: StepStatus.SUCCESS },
+      'deleted-step': { status: StepStatus.SUCCESS },
     });
 
-    expect(Object.keys(result)).toEqual(['step1']);
+    expect(Object.keys(result)).toEqual(['step1', 'step2']);
   });
 
   it('should build step infos that match the workflow run state schema', () => {
-    const stepInfos: Record<string, WorkflowRunStepInfo> = {
+    const stepInfos = {
       step1: { status: StepStatus.SUCCESS },
+      step2: { status: StepStatus.SUCCESS },
     };
 
-    const result = buildLoopStepInfosReset({
-      stepIdsToReset: ['step1', 'unknown-step'],
-      stepInfos,
-    });
-
     const persistedStepInfos = JSON.parse(
-      JSON.stringify({ ...stepInfos, ...result }),
+      JSON.stringify({ ...stepInfos, ...buildReset(stepInfos) }),
     );
 
     expect(

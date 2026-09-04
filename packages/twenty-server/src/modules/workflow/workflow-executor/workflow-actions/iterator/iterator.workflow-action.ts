@@ -17,7 +17,6 @@ import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor
 import { type WorkflowIteratorActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-action-settings.type';
 import { WorkflowIteratorResult } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-result.type';
 import { buildLoopStepInfosReset } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/build-loop-step-infos-reset.util';
-import { getAllStepIdsInLoop } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-all-step-ids-in-loop.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
@@ -144,15 +143,14 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
     let stepInfosToUpdate: Record<string, WorkflowRunStepInfo> = {};
 
     if (!hasProcessedAllItems) {
-      const stepIdsToReset = getAllStepIdsInLoop({
-        iteratorStepId,
-        initialLoopStepIds,
-        steps,
-      });
-
       stepInfosToUpdate = {
         ...stepInfosToUpdate,
-        ...buildLoopStepInfosReset({ stepIdsToReset, stepInfos }),
+        ...buildLoopStepInfosReset({
+          iteratorStepId,
+          initialLoopStepIds,
+          steps,
+          stepInfos,
+        }),
       };
     }
 
