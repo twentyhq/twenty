@@ -11,6 +11,7 @@ import {
   vi,
 } from 'vitest';
 
+import { CALENDAR_EVENT_UPDATE_BATCH_SIZE } from 'src/logic-functions/constants/calendar-event-update-batch-size';
 import { cancelCallRecordingRequest } from 'src/logic-functions/flows/cancel-call-recording-request.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
 import { retryFailedRecallCancellations } from 'src/logic-functions/flows/retry-failed-recall-cancellations.util';
@@ -134,6 +135,7 @@ class FakeRecallApi {
   listRequestCount = 0;
   artifactImportRequests: object[] = [];
   failNextDelete = false;
+  failCalendarEventUpdates = false;
 
   seedBot(bot: FakeRecallBot): void {
     this.bots.set(bot.id, bot);
@@ -171,6 +173,15 @@ class FakeRecallApi {
           },
         },
       });
+    }
+
+    // Simulates the workspace API rejecting the app's cosmetic On write.
+    if (
+      this.failCalendarEventUpdates &&
+      requestUrl === `${process.env.TWENTY_API_URL}/graphql` &&
+      String(requestInit?.body ?? '').includes('updateCalendarEvents')
+    ) {
+      return jsonResponse(500, { errors: [{ message: 'Internal error' }] });
     }
 
     if (!requestUrl.startsWith(RECALL_BASE_URL)) {
@@ -1018,6 +1029,96 @@ describe('call recorder app lifecycle (integration)', () => {
           calendarEventId: { in: [calendarEventId] },
         }),
       ).toEqual([]);
+    });
+
+    it('marks every blank copy of the same meeting On, past the update batch size in one go', async () => {
+      const startsAt = inOneHour();
+      const endsAt = inTwoHours();
+      const conferenceLink = {
+        primaryLinkUrl: `https://meet.google.com/${randomUUID()}`,
+      };
+      const calendarEventIds: string[] = [];
+
+      for (
+        let copyIndex = 0;
+        copyIndex < CALENDAR_EVENT_UPDATE_BATCH_SIZE + 1;
+        copyIndex += 1
+      ) {
+        calendarEventIds.push(
+          await createCalendarEvent({
+            startsAt,
+            endsAt,
+            conferenceLink,
+            callRecorderPreference: null,
+          }),
+        );
+      }
+
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [calendarEventIds[0]],
+      });
+
+      const preferences = await Promise.all(
+        calendarEventIds.map((calendarEventId) =>
+          fetchCallRecorderPreference(calendarEventId),
+        ),
+      );
+
+      expect(preferences.every((preference) => preference === 'ON')).toBe(true);
+      expect(
+        await findCallRecordings({ calendarEventId: { in: calendarEventIds } }),
+      ).toHaveLength(1);
+      expect(recall.bots.size).toBe(1);
+    });
+
+    it('marks a blank preference On again when it updates an existing scheduled recording', async () => {
+      const { calendarEventId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      await client.mutation({
+        updateCalendarEvent: {
+          __args: {
+            id: calendarEventId,
+            data: { callRecorderPreference: null },
+          },
+          id: true,
+        },
+      });
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [calendarEventId],
+      });
+
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
+      expect(
+        await findCallRecordings({
+          calendarEventId: { in: [calendarEventId] },
+        }),
+      ).toHaveLength(1);
+    });
+
+    it('still schedules the bot when the On write is rejected', async () => {
+      const calendarEventId = await createCalendarEvent({
+        callRecorderPreference: null,
+      });
+
+      recall.failCalendarEventUpdates = true;
+
+      const results = await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [calendarEventId],
+      });
+
+      expect(results).toEqual([expect.objectContaining({ action: 'CREATED' })]);
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
+
+      const callRecording = (
+        await findCallRecordings({ calendarEventId: { in: [calendarEventId] } })
+      )[0];
+
+      expect(callRecording).toBeDefined();
+      expect(callRecording.externalBotId).toBeTruthy();
     });
 
     it('does not reconcile again on the echo of its own On write', async () => {
