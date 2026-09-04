@@ -586,6 +586,72 @@ describe('UsageLimitQuotaService', () => {
     });
   });
 
+  describe('dropIntraWorkspaceLimitCounters', () => {
+    it('drops every intra-workspace quota counter under the warm lock', async () => {
+      setAllowance(2_000_000);
+      setLimits([
+        buildLimit({ id: 'workspace-month' }),
+        buildLimit({
+          id: 'member-month',
+          spenderType: 'userWorkspace',
+          spenderId: 'user-1',
+        }),
+        buildLimit({
+          id: 'agent-allowance',
+          spenderType: 'agent',
+          periodUnit: 'allowancePeriod',
+          limitValueType: 'allowancePercent',
+          limitValue: 40,
+        }),
+        buildLimit({
+          id: 'member-speed',
+          spenderType: 'userWorkspace',
+          limitKind: 'speed',
+          periodUnit: 'second',
+          meter: 'quantity',
+        }),
+      ]);
+
+      await service.dropIntraWorkspaceLimitCounters('workspace-1');
+
+      expect(cacheLockService.withLock).toHaveBeenCalledWith(
+        expect.any(Function),
+        buildQuotaWarmLockKey('workspace-1'),
+        expect.anything(),
+      );
+      expect(cacheStorage.mdel).toHaveBeenCalledWith([
+        buildQuotaCounterKey({
+          workspaceId: 'workspace-1',
+          resourceType: UsageResourceType.AI,
+          operationType: UsageOperationType.AI_CHAT_TOKEN,
+          spenderType: 'userWorkspace',
+          spenderId: 'user-1',
+          meter: 'creditsUsedMicro',
+          periodUnit: 'month',
+          periodStart: MONTH_PERIOD.periodStart,
+        }),
+        buildQuotaCounterKey({
+          workspaceId: 'workspace-1',
+          resourceType: UsageResourceType.AI,
+          operationType: UsageOperationType.AI_CHAT_TOKEN,
+          spenderType: 'agent',
+          spenderId: '',
+          meter: 'creditsUsedMicro',
+          periodUnit: 'allowancePeriod',
+          periodStart: ALLOWANCE_PERIOD.periodStart,
+        }),
+      ]);
+    });
+
+    it('does nothing when the workspace only has workspace-scoped limits', async () => {
+      setLimits([buildLimit({})]);
+
+      await service.dropIntraWorkspaceLimitCounters('workspace-1');
+
+      expect(cacheStorage.mdel).not.toHaveBeenCalled();
+    });
+  });
+
   describe('dropLimitCounter', () => {
     it('drops the counter keyed by the current period under the warm lock', async () => {
       await service.dropLimitCounter(buildLimitCounterScope());
