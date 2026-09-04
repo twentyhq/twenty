@@ -149,18 +149,18 @@ export const useVariableDropdown = ({
 
       setSidePanelNavigationStack([]);
 
-      openWorkflowEditStepInSidePanel(
-        workflowVisualizerWorkflowId,
-        step.name,
-        getIcon(step.icon),
-        step.id,
-        isDefined(linkOutputSchema.link.tab)
+      openWorkflowEditStepInSidePanel({
+        workflowId: workflowVisualizerWorkflowId,
+        title: step.name,
+        icon: getIcon(step.icon),
+        stepId: step.id,
+        initialStepTab: isDefined(linkOutputSchema.link.tab)
           ? {
               tabListComponentId: WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
               tabId: linkOutputSchema.link.tab,
             }
           : undefined,
-      );
+      });
     };
 
     if (isLinkOutputSchema(currentSubStep)) {

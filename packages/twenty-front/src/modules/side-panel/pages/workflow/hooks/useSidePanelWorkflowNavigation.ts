@@ -69,13 +69,19 @@ export const useSidePanelWorkflowNavigation = () => {
   );
 
   const openWorkflowEditStepInSidePanel = useCallback(
-    (
-      workflowId: string,
-      title: string,
-      icon: IconComponent,
-      stepId?: string,
-      initialStepTab?: { tabListComponentId: string; tabId: string },
-    ) => {
+    ({
+      workflowId,
+      title,
+      icon,
+      stepId,
+      initialStepTab,
+    }: {
+      workflowId: string;
+      title: string;
+      icon: IconComponent;
+      stepId?: string;
+      initialStepTab?: { tabListComponentId: string; tabId: string };
+    }) => {
       const pageId = v4();
 
       if (isDefined(initialStepTab)) {
