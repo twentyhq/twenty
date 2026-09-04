@@ -79,6 +79,14 @@ jest.mock('react-intersection-observer', () => ({
   useInView: () => ({ ref: jest.fn(), inView: false }),
 }));
 
+jest.mock('@/object-core/workflows/hooks/useDeleteCoreWorkflows', () => ({
+  useDeleteCoreWorkflows: () => ({
+    deleteCoreWorkflows: jest.fn(),
+    canDeleteCoreWorkflows: false,
+    isDeletingCoreWorkflows: false,
+  }),
+}));
+
 jest.mock('@/object-core/components/CoreObjectTable', () => ({
   CoreObjectTable: () => <div data-testid="workflow-core-index" />,
 }));
@@ -93,6 +101,10 @@ jest.mock('@/ui/layout/page/components/PageCardLayout', () => ({
 
 jest.mock('@/ui/utilities/page-title/components/PageTitle', () => ({
   PageTitle: () => null,
+}));
+
+jest.mock('@/ui/layout/modal/components/ConfirmationModal', () => ({
+  ConfirmationModal: () => null,
 }));
 
 describe('RecordIndexPage workspace surface composition', () => {
