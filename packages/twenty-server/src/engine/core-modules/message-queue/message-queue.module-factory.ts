@@ -1,3 +1,5 @@
+import { type EventEmitter2 } from '@nestjs/event-emitter';
+
 import {
   type BullMQDriverFactoryOptions,
   MessageQueueDriverType,
@@ -11,6 +13,7 @@ export const messageQueueModuleFactory = async (
   twentyConfigService: TwentyConfigService,
   redisClientService: RedisClientService,
   metricsService: MetricsService,
+  eventEmitter: EventEmitter2,
 ): Promise<MessageQueueModuleOptions> => {
   const driverType = MessageQueueDriverType.BullMQ;
 
@@ -23,6 +26,7 @@ export const messageQueueModuleFactory = async (
         },
         metricsService,
         twentyConfigService,
+        eventEmitter,
       } satisfies BullMQDriverFactoryOptions;
     }
     default:
