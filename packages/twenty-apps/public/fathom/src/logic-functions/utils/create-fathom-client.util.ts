@@ -14,6 +14,6 @@ export const createFathomClient = (accessToken: string): Fathom =>
         exponent: 1.5,
         maxElapsedTime: FATHOM_REQUEST_RETRY_MAX_ELAPSED_MILLISECONDS,
       },
-      retryConnectionErrors: true,
+      retryConnectionErrors: false,
     },
   });
