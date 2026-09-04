@@ -724,7 +724,7 @@ msgstr "% restant"
 #. placeholder {0}: aiChatThreadPendingDelete?.threadTitle ?? ''
 #: src/modules/ai/components/AiChatThreadDeleteConfirmationModal.tsx
 msgid "<0>{0}</0> and all its messages will be removed."
-msgstr ""
+msgstr "<0>{0}</0> et tous ses messages vont être supprimés."
 
 #. js-lingui-id: SMgdEJ
 #. placeholder {0}: formatNumber( section.estimatedTokenCount, { abbreviate: true, decimals: 1, }, )
@@ -1503,7 +1503,7 @@ msgstr "Ajouter un fournisseur d'identité SSO"
 #. js-lingui-id: 6Tl23V
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 msgid "Add test input for evaluation (e.g., \"Find all customers in NY\")"
-msgstr ""
+msgstr "Ajouter une entrée de test pour évaluation (par exemple, « trouver tous les clients à NY »)"
 
 #. js-lingui-id: FKGcEL
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -6962,7 +6962,7 @@ msgstr "Déposez le fichier ici..."
 #. js-lingui-id: euc6Ns
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 msgid "Duplicate"
-msgstr ""
+msgstr "Dupliquer"
 
 #. js-lingui-id: qaE1sk
 #: src/modules/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems.tsx
@@ -8067,7 +8067,7 @@ msgstr ""
 #. js-lingui-id: UKdZ7G
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 msgid "Evaluate"
-msgstr ""
+msgstr "Évaluer"
 
 #. js-lingui-id: FDRUdE
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
@@ -11423,7 +11423,7 @@ msgstr "Nom de l'entité juridique"
 #. js-lingui-id: MP1v+1
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Legend"
-msgstr ""
+msgstr "Légende"
 
 #. js-lingui-id: 8PPI2g
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -11491,7 +11491,7 @@ msgstr "Limitez combien de valeurs peuvent être ajoutées à ce champ"
 #. js-lingui-id: a4SJUE
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Limit must be greater than 0."
-msgstr ""
+msgstr "La limite doit être supérieure à 0."
 
 #. js-lingui-id: 6BDqha
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -11563,7 +11563,7 @@ msgstr "a lié un {objectLabel}"
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "list"
-msgstr ""
+msgstr "liste"
 
 #. js-lingui-id: 2BBAbc
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
@@ -14116,7 +14116,7 @@ msgstr "Le décalage ne peut pas être négatif."
 #. js-lingui-id: ec0+nM
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "ol"
-msgstr ""
+msgstr "ol"
 
 #. js-lingui-id: +rvV4v
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
