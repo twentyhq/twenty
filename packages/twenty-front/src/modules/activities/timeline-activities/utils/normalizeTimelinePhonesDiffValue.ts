@@ -6,7 +6,7 @@ export type TimelinePhonesDiffValue = Omit<
   FieldPhonesValue,
   'additionalPhones'
 > & {
-  additionalPhones?: FieldPhonesValue['additionalPhones'] | string;
+  additionalPhones?: unknown;
 };
 
 export const normalizeTimelinePhonesDiffValue = (
@@ -14,10 +14,17 @@ export const normalizeTimelinePhonesDiffValue = (
 ): FieldPhonesValue => {
   const { additionalPhones, ...primaryPhoneFields } = diffValue;
 
+  if (Array.isArray(additionalPhones)) {
+    return {
+      ...primaryPhoneFields,
+      additionalPhones,
+    };
+  }
+
   if (!isNonEmptyString(additionalPhones)) {
     return {
       ...primaryPhoneFields,
-      additionalPhones: additionalPhones ?? null,
+      additionalPhones: null,
     };
   }
 
