@@ -33,16 +33,13 @@ describe('useListenToQueueJobState', () => {
     );
   });
 
-  it('does not register a listener without a job id', () => {
-    const addEventListenerSpy = jest.spyOn(window, 'addEventListener');
+  it('ignores events without a job id', () => {
+    const onStateChange = jest.fn();
 
-    renderHook(() => useListenToQueueJobState({ onStateChange: jest.fn() }));
+    renderHook(() => useListenToQueueJobState({ onStateChange }));
 
-    expect(addEventListenerSpy).not.toHaveBeenCalledWith(
-      QUEUE_JOB_BROWSER_EVENT_NAME,
-      expect.anything(),
-    );
+    dispatchQueueJobEvent(JOB_ID, JobState.COMPLETED);
 
-    addEventListenerSpy.mockRestore();
+    expect(onStateChange).not.toHaveBeenCalled();
   });
 });

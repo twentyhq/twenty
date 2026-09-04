@@ -1,5 +1,6 @@
+import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { QUEUE_JOB_BROWSER_EVENT_NAME } from '@/queue-job/constants/QueueJobBrowserEventName';
-import { useEffect } from 'react';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type JobStatus } from '~/generated-metadata/graphql';
 
@@ -12,29 +13,19 @@ export const useListenToQueueJobState = ({
   jobId,
   onStateChange,
 }: UseListenToQueueJobStateArgs) => {
-  useEffect(() => {
-    if (!isDefined(jobId)) {
-      return;
-    }
-
-    const handleQueueJobEvent = (event: CustomEvent<JobStatus>) => {
-      if (event.detail.jobId !== jobId) {
+  const onQueueJobEvent = useCallback(
+    (jobStatus?: JobStatus) => {
+      if (!isDefined(jobStatus) || jobStatus.jobId !== jobId) {
         return;
       }
 
-      onStateChange(event.detail);
-    };
+      onStateChange(jobStatus);
+    },
+    [jobId, onStateChange],
+  );
 
-    window.addEventListener(
-      QUEUE_JOB_BROWSER_EVENT_NAME,
-      handleQueueJobEvent as EventListener,
-    );
-
-    return () => {
-      window.removeEventListener(
-        QUEUE_JOB_BROWSER_EVENT_NAME,
-        handleQueueJobEvent as EventListener,
-      );
-    };
-  }, [jobId, onStateChange]);
+  useListenToBrowserEvent<JobStatus>({
+    eventName: QUEUE_JOB_BROWSER_EVENT_NAME,
+    onBrowserEvent: onQueueJobEvent,
+  });
 };
