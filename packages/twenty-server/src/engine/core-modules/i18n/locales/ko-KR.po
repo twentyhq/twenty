@@ -2723,6 +2723,12 @@ msgctxt "fieldMetadata.label"
 msgid "Creation DateTime"
 msgstr "생성 날짜/시간"
 
+#. js-lingui-id: +zmk0f
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout/compute-standard-record-form-flat-entities.util.ts
+msgctxt "pageLayout.name"
+msgid "Creation Form"
+msgstr "생성 양식"
+
 #. js-lingui-id: oB7ed5
 #: src/engine/core-modules/usage-limit/services/usage-limit-quota.service.ts
 msgid "Credit allowance exhausted for this billing period."
@@ -4142,6 +4148,12 @@ msgstr "뷰 정렬을 생성하려면 FieldMetadataId가 필요합니다."
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "fieldMetadataId or fieldMetadataUniversalIdentifier must be provided"
 msgstr "fieldMetadataId 또는 fieldMetadataUniversalIdentifier를 제공해야 합니다"
+
+#. js-lingui-id: R/u+r2
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout/compute-standard-record-form-flat-entities.util.ts
+msgctxt "pageLayoutTab.title"
+msgid "Fields"
+msgstr "필드"
 
 #. js-lingui-id: GFC6Lh
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -7413,6 +7425,11 @@ msgstr "관리자만 관리자 권한이 있는 사용자를 가장할 수 있�
 msgid "Only applications published to npm can be claimed this way."
 msgstr "npm에 게시된 애플리케이션만 이 방법으로 소유권을 등록할 수 있습니다."
 
+#. js-lingui-id: FmMRCQ
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Only applications synced from local source can be exported."
+msgstr "로컬 소스에서 동기화된 애플리케이션만 내보낼 수 있습니다."
+
 #. js-lingui-id: XLn1DI
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
 msgid "Only error"
@@ -10273,6 +10290,11 @@ msgstr "서버의 APP_VERSION이 유효한 semver 버전이 아닙니다. 자체
 msgid "The singular and plural names cannot be the same for an object"
 msgstr "단수와 복수 이름은 객체에 대해 동일할 수 없습니다"
 
+#. js-lingui-id: 5bOcgV
+#: src/engine/core-modules/application/application.exception.ts
+msgid "The standard application cannot be exported."
+msgstr "표준 애플리케이션은 내보낼 수 없습니다."
+
 #. js-lingui-id: Dvwk3g
 #: src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
 msgid "The subscription is no longer available on the provider."
@@ -10832,6 +10854,17 @@ msgstr "이 애플리케이션의 해당 버전은 이 워크스페이스에 이
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This workspace already has a subscription."
 msgstr "이 워크스페이스에는 이미 구독이 있습니다."
+
+#. js-lingui-id: aJq3VL
+#: src/engine/core-modules/billing/billing.exception.ts
+#: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
+msgid "This workspace has no active subscription."
+msgstr "이 워크스페이스에는 활성 구독이 없습니다."
+
+#. js-lingui-id: ChHeV3
+#: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
+msgid "This workspace is suspended."
+msgstr "이 워크스페이스는 일시 중지되었습니다."
 
 #. js-lingui-id: IdEnkZ
 #: src/engine/core-modules/application/application.exception.ts

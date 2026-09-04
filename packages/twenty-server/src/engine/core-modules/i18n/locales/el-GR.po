@@ -2723,6 +2723,12 @@ msgctxt "fieldMetadata.label"
 msgid "Creation DateTime"
 msgstr "Χρονοσφραγίδα Δημιουργίας"
 
+#. js-lingui-id: +zmk0f
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout/compute-standard-record-form-flat-entities.util.ts
+msgctxt "pageLayout.name"
+msgid "Creation Form"
+msgstr "Φόρμα Δημιουργίας"
+
 #. js-lingui-id: oB7ed5
 #: src/engine/core-modules/usage-limit/services/usage-limit-quota.service.ts
 msgid "Credit allowance exhausted for this billing period."
@@ -4142,6 +4148,12 @@ msgstr "Το FieldMetadataId είναι απαραίτητο για τη δημ�
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "fieldMetadataId or fieldMetadataUniversalIdentifier must be provided"
 msgstr "fieldMetadataId ή fieldMetadataUniversalIdentifier πρέπει να παρασχεθεί"
+
+#. js-lingui-id: R/u+r2
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout/compute-standard-record-form-flat-entities.util.ts
+msgctxt "pageLayoutTab.title"
+msgid "Fields"
+msgstr "Πεδία"
 
 #. js-lingui-id: GFC6Lh
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -7413,6 +7425,11 @@ msgstr "Μόνο οι διαχειριστές μπορούν να υποδύο�
 msgid "Only applications published to npm can be claimed this way."
 msgstr "Μόνο εφαρμογές που έχουν δημοσιευτεί στο npm μπορούν να διεκδικηθούν με αυτόν τον τρόπο."
 
+#. js-lingui-id: FmMRCQ
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Only applications synced from local source can be exported."
+msgstr "Μόνο οι εφαρμογές που έχουν συγχρονιστεί από τοπική πηγή μπορούν να εξαχθούν."
+
 #. js-lingui-id: XLn1DI
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
 msgid "Only error"
@@ -10273,6 +10290,11 @@ msgstr "Το APP_VERSION του διακομιστή δεν είναι έγκυ�
 msgid "The singular and plural names cannot be the same for an object"
 msgstr "Τα ενικά και πληθυντικά ονόματα δεν μπορούν να είναι τα ίδια για ένα αντικείμενο"
 
+#. js-lingui-id: 5bOcgV
+#: src/engine/core-modules/application/application.exception.ts
+msgid "The standard application cannot be exported."
+msgstr "Δεν είναι δυνατή η εξαγωγή της τυπικής εφαρμογής."
+
 #. js-lingui-id: Dvwk3g
 #: src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
 msgid "The subscription is no longer available on the provider."
@@ -10832,6 +10854,17 @@ msgstr "Αυτή η έκδοση της εφαρμογής είναι ήδη ε�
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This workspace already has a subscription."
 msgstr "Αυτός ο χώρος εργασίας έχει ήδη συνδρομή."
+
+#. js-lingui-id: aJq3VL
+#: src/engine/core-modules/billing/billing.exception.ts
+#: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
+msgid "This workspace has no active subscription."
+msgstr "Αυτός ο χώρος εργασίας δεν έχει ενεργή συνδρομή."
+
+#. js-lingui-id: ChHeV3
+#: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
+msgid "This workspace is suspended."
+msgstr "Αυτός ο χώρος εργασίας έχει ανασταλεί."
 
 #. js-lingui-id: IdEnkZ
 #: src/engine/core-modules/application/application.exception.ts

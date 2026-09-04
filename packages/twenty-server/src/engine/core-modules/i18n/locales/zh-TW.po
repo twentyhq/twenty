@@ -2723,6 +2723,12 @@ msgctxt "fieldMetadata.label"
 msgid "Creation DateTime"
 msgstr "創建日期時間"
 
+#. js-lingui-id: +zmk0f
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout/compute-standard-record-form-flat-entities.util.ts
+msgctxt "pageLayout.name"
+msgid "Creation Form"
+msgstr "建立表單"
+
 #. js-lingui-id: oB7ed5
 #: src/engine/core-modules/usage-limit/services/usage-limit-quota.service.ts
 msgid "Credit allowance exhausted for this billing period."
@@ -4142,6 +4148,12 @@ msgstr "建立檢視排序需要 FieldMetadataId。"
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "fieldMetadataId or fieldMetadataUniversalIdentifier must be provided"
 msgstr "必須提供 fieldMetadataId 或 fieldMetadataUniversalIdentifier"
+
+#. js-lingui-id: R/u+r2
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout/compute-standard-record-form-flat-entities.util.ts
+msgctxt "pageLayoutTab.title"
+msgid "Fields"
+msgstr "欄位"
 
 #. js-lingui-id: GFC6Lh
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -7413,6 +7425,11 @@ msgstr "只有管理員可以模擬具有管理權限的使用者。"
 msgid "Only applications published to npm can be claimed this way."
 msgstr "只有發布到 npm 的應用程式才能以此方式認領。"
 
+#. js-lingui-id: FmMRCQ
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Only applications synced from local source can be exported."
+msgstr "只有從本機來源同步的應用程式可以匯出。"
+
 #. js-lingui-id: XLn1DI
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
 msgid "Only error"
@@ -10273,6 +10290,11 @@ msgstr "伺服器的 APP_VERSION 不是有效的 semver 版本。自行託管的
 msgid "The singular and plural names cannot be the same for an object"
 msgstr "物件的單數名稱與複數名稱不能相同"
 
+#. js-lingui-id: 5bOcgV
+#: src/engine/core-modules/application/application.exception.ts
+msgid "The standard application cannot be exported."
+msgstr "標準應用程式無法匯出。"
+
 #. js-lingui-id: Dvwk3g
 #: src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
 msgid "The subscription is no longer available on the provider."
@@ -10832,6 +10854,17 @@ msgstr "此應用程式的這個版本已安裝於此工作區。"
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This workspace already has a subscription."
 msgstr "此工作區已經有訂閱。"
+
+#. js-lingui-id: aJq3VL
+#: src/engine/core-modules/billing/billing.exception.ts
+#: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
+msgid "This workspace has no active subscription."
+msgstr "此工作區沒有有效的訂閱。"
+
+#. js-lingui-id: ChHeV3
+#: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
+msgid "This workspace is suspended."
+msgstr "此工作區已被暫停。"
 
 #. js-lingui-id: IdEnkZ
 #: src/engine/core-modules/application/application.exception.ts

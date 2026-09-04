@@ -279,6 +279,12 @@ msgstr "{1} dan {0}"
 msgid "{0} opted out of this topic"
 msgstr "{0} kishi ushbu mavzudan voz kechgan"
 
+#. js-lingui-id: 55frRG
+#. placeholder {0}: index + 1
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "{0} retries"
+msgstr "{0} marta qayta urinish"
+
 #. js-lingui-id: fvImQM
 #. placeholder {0}: formatNumber(contextStoreNumberOfSelectedRecords)
 #. placeholder {0}: formatNumber(totalCount ?? 0)
@@ -751,6 +757,11 @@ msgstr "0 */1 * * *"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationItemTableRow.tsx
 msgid "1 Object"
 msgstr "1 ta obyekt"
+
+#. js-lingui-id: lKmQeh
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "1 retry"
+msgstr "1 marta qayta urinish"
 
 #. js-lingui-id: Mkh9C8
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -4901,6 +4912,11 @@ msgstr "Kontekst oynasi musbat butun son bo‘lishi kerak"
 msgid "Continue"
 msgstr "Davom etish"
 
+#. js-lingui-id: gOOpXW
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "Continue on failure"
+msgstr "Muvaffaqiyatsizlik yuz bersa ham davom ettirish"
+
 #. js-lingui-id: YsnqkW
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator.tsx
 msgid "Continue on iteration failure"
@@ -6802,6 +6818,7 @@ msgstr "Boshqa foydalanuvchi nomidan ishlashni (impersonation) o‘chirish"
 
 #. js-lingui-id: E/QGRL
 #: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Disabled"
 msgstr "O‘chirilgan"
 
@@ -11120,6 +11137,11 @@ msgstr "Kanban"
 msgid "Kanban widget"
 msgstr "Kanban vidjeti"
 
+#. js-lingui-id: LHkoee
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "Keep executing the next nodes even if this one fails"
+msgstr "Bu tugun muvaffaqiyatsiz tugasa ham, keyingi tugunlarni bajarishda davom eting"
+
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
 msgid "Key"
@@ -13902,6 +13924,12 @@ msgstr "Tugun"
 msgid "Node options"
 msgstr "Tugun parametrlari"
 
+#. js-lingui-id: D8py3o
+#: src/modules/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation.ts
+#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
+msgid "Node settings"
+msgstr "Tugun sozlamalari"
+
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
@@ -14374,6 +14402,11 @@ msgstr "Bu tarzda faqat npm’da chop etilgan ilovalarning egaligini tasdiqlash 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Only date & participants will be shared with your team."
 msgstr "Faqat sana va ishtirokchilar jamoangiz bilan bo‘lishiladi."
+
+#. js-lingui-id: kiuQlM
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "Only enable for steps that are safe to run twice: a failed attempt may already have written data or sent messages."
+msgstr "Faqat ikki marta bajarish xavfsiz bo‘lgan qadamlar uchun yoqing: muvaffaqiyatsiz urinish allaqachon ma’lumot yozgan yoki xabarlar yuborgan bo‘lishi mumkin."
 
 #. js-lingui-id: aluwJP
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
@@ -16471,6 +16504,11 @@ msgstr "Qayta urinish"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Retry All Failed"
 msgstr "Muvaffaqiyatsizlarning barchasini qayta ishga tushirish"
+
+#. js-lingui-id: s/LEE/
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "Retry on failure"
+msgstr "Muvaffaqiyatsizlikda qayta urinib ko‘ring"
 
 #. js-lingui-id: ZbpKL+
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
