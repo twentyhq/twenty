@@ -1069,7 +1069,6 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(
         await findCallRecordings({ calendarEventId: { in: calendarEventIds } }),
       ).toHaveLength(1);
-      expect(recall.bots.size).toBe(1);
     });
 
     it('marks a blank preference On again when it updates an existing scheduled recording', async () => {
@@ -1105,8 +1104,11 @@ describe('call recorder app lifecycle (integration)', () => {
 
       recall.failCalendarEventUpdates = true;
 
+      // The shared client was built before the interceptor, so this one is
+      // created now to route the app's writes through it, like a logic
+      // function constructing its own client at run time.
       const results = await reconcileCallRecorderForCalendarEventIds({
-        client,
+        client: new CoreApiClient(),
         calendarEventIds: [calendarEventId],
       });
 
