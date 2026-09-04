@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import request from 'supertest';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { type FileFolder } from 'twenty-shared/types';
+import { FileFolder } from 'twenty-shared/types';
 
 const createFileUploadMutation = gql`
   mutation CreateFileUpload(
