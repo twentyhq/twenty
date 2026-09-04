@@ -4201,6 +4201,11 @@ msgstr "SDK 클라이언트 아카이브에서 파일을 찾을 수 없습니다
 msgid "File not found."
 msgstr "파일을 찾을 수 없음."
 
+#. js-lingui-id: MtzD8b
+#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+msgid "File storage took too long to respond. Please retry."
+msgstr ""
+
 #. js-lingui-id: I7Jff2
 #: src/engine/core-modules/file-storage/utils/validate-file-path.util.ts
 msgid "Filename must have an extension"
