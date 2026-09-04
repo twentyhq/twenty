@@ -4,8 +4,8 @@
 
 ## ✨ What you get
 
-- **Transcripts, summaries, and action items on every meeting**
-- **Saved to a Call Recording and linked to the calendar event**
+- **Fathom transcripts, summaries, and action items saved when available**
+- **Saved to a Call Recording, with calendar links for clear matches**
 - **New meetings synced as they happen**
 - **Your last 31 days imported the moment you connect**
 - **Built for AI & automation**
