@@ -9,8 +9,6 @@ export const FIND_MANY_APPLICATIONS = gql`
       logoUrl
       version
       state
-      failedOperation
-      failureReason
       universalIdentifier
       applicationRegistrationId
       applicationRegistration {

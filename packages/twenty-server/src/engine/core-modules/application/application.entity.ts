@@ -18,7 +18,6 @@ import {
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { ApplicationOperation } from 'src/engine/core-modules/application/enums/application-operation.enum';
 import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
@@ -91,20 +90,6 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
       '2.38.0_AddStateToApplicationFastInstanceCommand_1788260646460',
   })
   state: ApplicationState;
-
-  @Column({ nullable: true, type: 'text' })
-  @WasIntroducedInUpgrade({
-    upgradeCommandName:
-      '2.39.0_AddFailureToApplicationFastInstanceCommand_1788517323000',
-  })
-  failedOperation: ApplicationOperation | null;
-
-  @Column({ nullable: true, type: 'text' })
-  @WasIntroducedInUpgrade({
-    upgradeCommandName:
-      '2.39.0_AddFailureToApplicationFastInstanceCommand_1788517323000',
-  })
-  failureReason: string | null;
 
   @Column({ nullable: false, type: 'text' })
   sourcePath: string;

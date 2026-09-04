@@ -6,7 +6,6 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { ApplicationOperation } from 'src/engine/core-modules/application/enums/application-operation.enum';
 import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { type WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -114,64 +113,6 @@ describe('ApplicationService - transitionState', () => {
       }) as unknown as ApplicationException,
     );
     expect(workspaceEventBroadcaster.broadcast).not.toHaveBeenCalled();
-  });
-
-  it('records the failure alongside the state it lands on', async () => {
-    applicationRepository.update.mockResolvedValue({ affected: 1 });
-
-    await applicationService.transitionState({
-      applicationId: APPLICATION_ID,
-      universalIdentifier: UNIVERSAL_IDENTIFIER,
-      workspaceId: WORKSPACE_ID,
-      expectedState: ApplicationState.INSTALLING,
-      nextState: ApplicationState.FAILED,
-      failure: {
-        operation: ApplicationOperation.INSTALL,
-        reason: 'Manifest could not be applied',
-      },
-    });
-
-    expect(applicationRepository.update).toHaveBeenCalledWith(
-      expect.anything(),
-      {
-        state: ApplicationState.FAILED,
-        failedOperation: ApplicationOperation.INSTALL,
-        failureReason: 'Manifest could not be applied',
-      },
-    );
-  });
-
-  it('clears a stale failure when the caller passes none', async () => {
-    applicationRepository.update.mockResolvedValue({ affected: 1 });
-
-    await applicationService.transitionState({
-      applicationId: APPLICATION_ID,
-      universalIdentifier: UNIVERSAL_IDENTIFIER,
-      workspaceId: WORKSPACE_ID,
-      expectedState: ApplicationState.FAILED,
-      nextState: ApplicationState.INSTALLING,
-      failure: null,
-    });
-
-    expect(applicationRepository.update).toHaveBeenCalledWith(
-      expect.anything(),
-      {
-        state: ApplicationState.INSTALLING,
-        failedOperation: null,
-        failureReason: null,
-      },
-    );
-  });
-
-  it('leaves the recorded failure untouched on an ordinary transition', async () => {
-    applicationRepository.update.mockResolvedValue({ affected: 1 });
-
-    await transitionToUpgrading();
-
-    expect(applicationRepository.update).toHaveBeenCalledWith(
-      expect.anything(),
-      { state: ApplicationState.UPGRADING },
-    );
   });
 
   it('swallows a lost best-effort transition', async () => {

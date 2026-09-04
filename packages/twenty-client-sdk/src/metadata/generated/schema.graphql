@@ -516,8 +516,6 @@ type Application {
   version: String
   universalIdentifier: String!
   state: ApplicationState!
-  failedOperation: ApplicationOperation
-  failureReason: String
   packageJsonChecksum: String
   packageJsonFileId: UUID
   yarnLockChecksum: String
@@ -544,13 +542,6 @@ enum ApplicationState {
   INSTALLED
   UPGRADING
   UNINSTALLING
-  FAILED
-}
-
-enum ApplicationOperation {
-  INSTALL
-  UPGRADE
-  UNINSTALL
 }
 
 type TwoFactorAuthenticationMethodSummary {

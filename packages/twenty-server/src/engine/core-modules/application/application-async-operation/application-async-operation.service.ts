@@ -292,24 +292,12 @@ export class ApplicationAsyncOperationService {
     compensate: () => Promise<void>;
   }> {
     if (isDefined(existingApplication)) {
-      const isRetryOfFailedInstall =
-        existingApplication.state === ApplicationState.FAILED;
-
-      const reservedFromState = isRetryOfFailedInstall
-        ? ApplicationState.FAILED
-        : ApplicationState.INSTALLED;
-
-      const reservedToState = isRetryOfFailedInstall
-        ? ApplicationState.INSTALLING
-        : ApplicationState.UPGRADING;
-
       const application = await this.applicationService.transitionState({
         applicationId: existingApplication.id,
         universalIdentifier: appRegistration.universalIdentifier,
         workspaceId,
-        expectedState: reservedFromState,
-        nextState: reservedToState,
-        failure: isRetryOfFailedInstall ? null : undefined,
+        expectedState: ApplicationState.INSTALLED,
+        nextState: ApplicationState.UPGRADING,
       });
 
       return {
@@ -319,8 +307,8 @@ export class ApplicationAsyncOperationService {
             applicationId: application.id,
             universalIdentifier: appRegistration.universalIdentifier,
             workspaceId,
-            expectedState: reservedToState,
-            nextState: reservedFromState,
+            expectedState: ApplicationState.UPGRADING,
+            nextState: ApplicationState.INSTALLED,
           }),
       };
     }

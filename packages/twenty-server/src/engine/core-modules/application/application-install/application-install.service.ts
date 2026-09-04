@@ -11,8 +11,6 @@ import { Repository } from 'typeorm';
 
 import { buildApplicationFileList } from 'src/engine/core-modules/application/application-install/utils/build-application-file-list.util';
 import { isVersionUpgradeOfApplication } from 'src/engine/core-modules/application/application-install/utils/is-version-upgrade-of-application.util';
-import { ApplicationOperation } from 'src/engine/core-modules/application/enums/application-operation.enum';
-import { getApplicationFailureReason } from 'src/engine/core-modules/application/utils/get-application-failure-reason.util';
 import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import {
@@ -459,8 +457,6 @@ export class ApplicationInstallService {
 
       await this.applicationService.update(application.id, {
         state: ApplicationState.INSTALLED,
-        failedOperation: null,
-        failureReason: null,
         workspaceId: params.workspaceId,
       });
 
@@ -474,13 +470,6 @@ export class ApplicationInstallService {
         `Failed to install app ${appRegistration.universalIdentifier}: ${error}`,
       );
 
-      const failure = {
-        operation: isVersionUpgrade
-          ? ApplicationOperation.UPGRADE
-          : ApplicationOperation.INSTALL,
-        reason: getApplicationFailureReason(error),
-      };
-
       if (isUpgradeOfInstalledApplication) {
         await this.applicationService.transitionStateBestEffort({
           applicationId: application.id,
@@ -488,28 +477,16 @@ export class ApplicationInstallService {
           workspaceId: params.workspaceId,
           expectedState: ApplicationState.UPGRADING,
           nextState: ApplicationState.INSTALLED,
-          failure,
         });
       }
 
       if (!isVersionUpgrade) {
         // Rollback of a failed fresh install: the app never finished
-        // installing, so the uninstall hook must not run. The row survives the
-        // rollback so the failure stays visible instead of vanishing.
+        // installing, so the uninstall hook must not run.
         await this.applicationSyncService.uninstallApplication({
           applicationUniversalIdentifier: universalIdentifier,
           workspaceId: params.workspaceId,
           shouldRunUninstallHook: false,
-          shouldDeleteApplication: false,
-        });
-
-        await this.applicationService.transitionStateBestEffort({
-          applicationId: application.id,
-          universalIdentifier,
-          workspaceId: params.workspaceId,
-          expectedState: application.state,
-          nextState: ApplicationState.FAILED,
-          failure,
         });
       }
 
@@ -832,7 +809,7 @@ export class ApplicationInstallService {
 
     if (isDefined(existingApplication)) {
       if (
-        !isVersionUpgradeOfApplication(existingApplication) &&
+        existingApplication.state === ApplicationState.INSTALLING &&
         (existingApplication.name !== params.name ||
           existingApplication.logo !== params.logo)
       ) {

@@ -14,8 +14,6 @@ const buildApplication = (
   description: 'A test application',
   version: '1.0.0',
   state: ApplicationState.INSTALLING,
-  failedOperation: null,
-  failureReason: null,
   applicationRegistrationId: 'ce4b7b8e-9e5b-4b7c-bd7a-5f2f61f0a9d2',
   sdkClientCoreChecksum: 'checksum',
   ...overrides,
@@ -30,8 +28,6 @@ describe('serializeApplicationForBroadcast', () => {
       description: 'A test application',
       version: '1.0.0',
       state: ApplicationState.INSTALLING,
-      failedOperation: null,
-      failureReason: null,
       applicationRegistrationId: 'ce4b7b8e-9e5b-4b7c-bd7a-5f2f61f0a9d2',
       sdkClientCoreChecksum: 'checksum',
     });

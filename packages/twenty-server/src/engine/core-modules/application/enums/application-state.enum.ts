@@ -5,7 +5,6 @@ export enum ApplicationState {
   INSTALLED = 'INSTALLED',
   UPGRADING = 'UPGRADING',
   UNINSTALLING = 'UNINSTALLING',
-  FAILED = 'FAILED',
 }
 
 registerEnumType(ApplicationState, {

@@ -1,8 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { isUndefined } from '@sniptt/guards';
-
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type DataSource, type QueryRunner, type Repository } from 'typeorm';
@@ -20,7 +18,6 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
 import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
-import { type ApplicationFailure } from 'src/engine/core-modules/application/types/application-failure.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -688,25 +685,16 @@ export class ApplicationService {
     workspaceId,
     expectedState,
     nextState,
-    failure,
   }: {
     applicationId: string;
     universalIdentifier: string;
     workspaceId: string;
     expectedState: ApplicationState;
     nextState: ApplicationState;
-    failure?: ApplicationFailure | null;
   }): Promise<ApplicationEntity> {
-    const failureFields = isUndefined(failure)
-      ? {}
-      : {
-          failedOperation: failure?.operation ?? null,
-          failureReason: failure?.reason ?? null,
-        };
-
     const updateResult = await this.applicationRepository.update(
       { id: applicationId, workspaceId, state: expectedState },
-      { state: nextState, ...failureFields },
+      { state: nextState },
     );
 
     if (updateResult.affected === 0) {
@@ -719,7 +707,7 @@ export class ApplicationService {
     return this.invalidateCacheAndBroadcastUpdate({
       id: applicationId,
       workspaceId,
-      updatedFields: ['state', ...Object.keys(failureFields)],
+      updatedFields: ['state'],
     });
   }
 
@@ -729,14 +717,12 @@ export class ApplicationService {
     workspaceId,
     expectedState,
     nextState,
-    failure,
   }: {
     applicationId: string;
     universalIdentifier: string;
     workspaceId: string;
     expectedState: ApplicationState;
     nextState: ApplicationState;
-    failure?: ApplicationFailure | null;
   }): Promise<void> {
     try {
       await this.transitionState({
@@ -745,7 +731,6 @@ export class ApplicationService {
         workspaceId,
         expectedState,
         nextState,
-        failure,
       });
     } catch (error) {
       this.logger.warn(

@@ -51,9 +51,7 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
     isInstalled === true || lifecycleState === ApplicationState.INSTALLED;
 
   const isInstallRunning =
-    isInstalling ||
-    (isDefined(lifecycleState) &&
-      lifecycleState !== ApplicationState.INSTALLED);
+    isInstalling || lifecycleState === ApplicationState.INSTALLING;
 
   const installable =
     isDefined(isInstalled) &&

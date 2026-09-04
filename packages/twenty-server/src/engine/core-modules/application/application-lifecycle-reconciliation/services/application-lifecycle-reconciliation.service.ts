@@ -9,7 +9,6 @@ import {
 } from 'src/engine/core-modules/application/application-lifecycle-reconciliation/constants/application-lifecycle-reconciliation.constant';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { ApplicationOperation } from 'src/engine/core-modules/application/enums/application-operation.enum';
 import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 
 const TRANSITIONAL_STATES = [
@@ -17,23 +16,6 @@ const TRANSITIONAL_STATES = [
   ApplicationState.UPGRADING,
   ApplicationState.UNINSTALLING,
 ];
-
-const RECONCILIATION_BY_STATE = {
-  [ApplicationState.INSTALLING]: {
-    operation: ApplicationOperation.INSTALL,
-    nextState: ApplicationState.FAILED,
-  },
-  [ApplicationState.UPGRADING]: {
-    operation: ApplicationOperation.UPGRADE,
-    nextState: ApplicationState.INSTALLED,
-  },
-  [ApplicationState.UNINSTALLING]: {
-    operation: ApplicationOperation.UNINSTALL,
-    nextState: ApplicationState.INSTALLED,
-  },
-} as const;
-
-type ReconcilableState = keyof typeof RECONCILIATION_BY_STATE;
 
 @Injectable()
 export class ApplicationLifecycleReconciliationService {
@@ -77,26 +59,28 @@ export class ApplicationLifecycleReconciliationService {
   private async reconcileApplication(
     application: ApplicationEntity,
   ): Promise<boolean> {
-    const { operation, nextState } =
-      RECONCILIATION_BY_STATE[application.state as ReconcilableState];
-
     try {
-      // Gated on the state that was read, so an operation that completed
-      // between the read and this write is never overwritten.
-      await this.applicationService.transitionState({
-        applicationId: application.id,
-        universalIdentifier: application.universalIdentifier,
-        workspaceId: application.workspaceId,
-        expectedState: application.state,
-        nextState,
-        failure: {
-          operation,
-          reason: `The ${operation.toLowerCase()} did not complete within ${APPLICATION_LIFECYCLE_STUCK_AFTER_MINUTES} minutes and was marked as failed.`,
-        },
-      });
+      if (application.state === ApplicationState.INSTALLING) {
+        // An install that never completed leaves no application behind, so the
+        // placeholder goes rather than surviving as a half-installed row.
+        await this.applicationService.delete(
+          application.universalIdentifier,
+          application.workspaceId,
+        );
+      } else {
+        // Gated on the state that was read, so an operation that completed
+        // between the read and this write is never overwritten.
+        await this.applicationService.transitionState({
+          applicationId: application.id,
+          universalIdentifier: application.universalIdentifier,
+          workspaceId: application.workspaceId,
+          expectedState: application.state,
+          nextState: ApplicationState.INSTALLED,
+        });
+      }
 
       this.logger.warn(
-        `Reconciled application ${application.universalIdentifier} in workspace ${application.workspaceId} from ${application.state} to ${nextState}`,
+        `Reconciled application ${application.universalIdentifier} in workspace ${application.workspaceId} stuck in ${application.state}`,
       );
 
       return true;

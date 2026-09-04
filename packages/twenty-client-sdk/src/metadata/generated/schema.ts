@@ -344,8 +344,6 @@ export interface Application {
     version?: Scalars['String']
     universalIdentifier: Scalars['String']
     state: ApplicationState
-    failedOperation?: ApplicationOperation
-    failureReason?: Scalars['String']
     packageJsonChecksum?: Scalars['String']
     packageJsonFileId?: Scalars['UUID']
     yarnLockChecksum?: Scalars['String']
@@ -368,9 +366,7 @@ export interface Application {
     __typename: 'Application'
 }
 
-export type ApplicationState = 'INSTALLING' | 'INSTALLED' | 'UPGRADING' | 'UNINSTALLING' | 'FAILED'
-
-export type ApplicationOperation = 'INSTALL' | 'UPGRADE' | 'UNINSTALL'
+export type ApplicationState = 'INSTALLING' | 'INSTALLED' | 'UPGRADING' | 'UNINSTALLING'
 
 export interface TwoFactorAuthenticationMethodSummary {
     twoFactorAuthenticationMethodId: Scalars['UUID']
@@ -3777,8 +3773,6 @@ export interface ApplicationGenqlSelection{
     version?: boolean | number
     universalIdentifier?: boolean | number
     state?: boolean | number
-    failedOperation?: boolean | number
-    failureReason?: boolean | number
     packageJsonChecksum?: boolean | number
     packageJsonFileId?: boolean | number
     yarnLockChecksum?: boolean | number
@@ -9838,14 +9832,7 @@ export const enumApplicationState = {
    INSTALLING: 'INSTALLING' as const,
    INSTALLED: 'INSTALLED' as const,
    UPGRADING: 'UPGRADING' as const,
-   UNINSTALLING: 'UNINSTALLING' as const,
-   FAILED: 'FAILED' as const
-}
-
-export const enumApplicationOperation = {
-   INSTALL: 'INSTALL' as const,
-   UPGRADE: 'UPGRADE' as const,
-   UNINSTALL: 'UNINSTALL' as const
+   UNINSTALLING: 'UNINSTALLING' as const
 }
 
 export const enumPermissionFlagType = {

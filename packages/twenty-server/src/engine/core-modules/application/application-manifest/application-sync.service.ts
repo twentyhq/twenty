@@ -22,9 +22,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { ApplicationOperation } from 'src/engine/core-modules/application/enums/application-operation.enum';
 import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
-import { getApplicationFailureReason } from 'src/engine/core-modules/application/utils/get-application-failure-reason.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
@@ -169,8 +167,6 @@ export class ApplicationSyncService {
       version: null,
       sourceType: ApplicationRegistrationSourceType.LOCAL,
       state: ApplicationState.INSTALLED,
-      failedOperation: null,
-      failureReason: null,
       sourcePath: manifest.application.universalIdentifier,
       packageJsonChecksum: null,
       packageJsonFileId: null,
@@ -396,13 +392,11 @@ export class ApplicationSyncService {
     workspaceId,
     applicationUniversalIdentifier,
     shouldRunUninstallHook = true,
-    shouldDeleteApplication = true,
     isStateAlreadyTransitioned = false,
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
     shouldRunUninstallHook?: boolean;
-    shouldDeleteApplication?: boolean;
     isStateAlreadyTransitioned?: boolean;
   }): Promise<WorkspaceMigration> {
     const application = await this.applicationService.findOneApplicationOrThrow(
@@ -424,11 +418,7 @@ export class ApplicationSyncService {
       application.state === ApplicationState.INSTALLED ||
       isStateTransitionedByCaller;
 
-    if (
-      !ownsLifecycle &&
-      application.state !== ApplicationState.INSTALLING &&
-      application.state !== ApplicationState.FAILED
-    ) {
+    if (!ownsLifecycle && application.state !== ApplicationState.INSTALLING) {
       throw new ApplicationException(
         `Application ${applicationUniversalIdentifier} is in state ${application.state} in workspace ${workspaceId}, another operation is already running`,
         ApplicationExceptionCode.APPLICATION_OPERATION_IN_PROGRESS,
@@ -451,7 +441,6 @@ export class ApplicationSyncService {
         workspaceId,
         applicationUniversalIdentifier,
         shouldRunUninstallHook,
-        shouldDeleteApplication,
       });
     } catch (error) {
       if (ownsLifecycle) {
@@ -461,10 +450,6 @@ export class ApplicationSyncService {
           workspaceId,
           expectedState: ApplicationState.UNINSTALLING,
           nextState: ApplicationState.INSTALLED,
-          failure: {
-            operation: ApplicationOperation.UNINSTALL,
-            reason: getApplicationFailureReason(error),
-          },
         });
       }
 
@@ -477,13 +462,11 @@ export class ApplicationSyncService {
     workspaceId,
     applicationUniversalIdentifier,
     shouldRunUninstallHook,
-    shouldDeleteApplication,
   }: {
     application: ApplicationEntity;
     workspaceId: string;
     applicationUniversalIdentifier: string;
     shouldRunUninstallHook: boolean;
-    shouldDeleteApplication: boolean;
   }): Promise<WorkspaceMigration> {
     if (shouldRunUninstallHook) {
       await this.applicationUninstallService.runUninstallHookBestEffort({
@@ -536,12 +519,10 @@ export class ApplicationSyncService {
       );
     }
 
-    if (shouldDeleteApplication) {
-      await this.applicationService.delete(
-        applicationUniversalIdentifier,
-        workspaceId,
-      );
-    }
+    await this.applicationService.delete(
+      applicationUniversalIdentifier,
+      workspaceId,
+    );
 
     await this.cleanupApplicationRuntimeResources({
       workspaceId,

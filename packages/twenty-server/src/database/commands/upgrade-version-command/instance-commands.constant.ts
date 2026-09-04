@@ -169,7 +169,6 @@ import { DropHasReachedCurrentPeriodCapFastInstanceCommand } from 'src/database/
 import { AddTimelineActivityHappensAtFieldFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787918663364-add-timeline-activity-happens-at-field';
 import { AddPageLayoutIsFirstTabPinnedFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787929843737-add-page-layout-is-first-tab-pinned';
 import { CreateCampaignDeliveryFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788200700000-create-campaign-delivery';
-import { AddFailureToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788517323000-add-failure-to-application';
 import { AddStateToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788260646460-add-state-to-application';
 import { RenameEmailingDomainPermanentlySuspendedToSandboxFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788272351966-rename-emailing-domain-permanently-suspended-to-sandbox';
 import { RelaxNavigationPayloadCheckFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788272351970-relax-navigation-payload-check';
@@ -347,7 +346,6 @@ export const INSTANCE_COMMANDS = [
   AddPageLayoutIsFirstTabPinnedFastInstanceCommand,
   CreateCampaignDeliveryFastInstanceCommand,
   AddStateToApplicationFastInstanceCommand,
-  AddFailureToApplicationFastInstanceCommand,
   RenameEmailingDomainPermanentlySuspendedToSandboxFastInstanceCommand,
   RelaxNavigationPayloadCheckFastInstanceCommand,
   EraseObjectNavigationCommandMenuItemPayloadsSlowInstanceCommand,

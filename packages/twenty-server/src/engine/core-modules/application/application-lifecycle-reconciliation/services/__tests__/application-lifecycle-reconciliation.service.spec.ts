@@ -3,7 +3,6 @@ import { type Repository } from 'typeorm';
 import { ApplicationLifecycleReconciliationService } from 'src/engine/core-modules/application/application-lifecycle-reconciliation/services/application-lifecycle-reconciliation.service';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { ApplicationOperation } from 'src/engine/core-modules/application/enums/application-operation.enum';
 import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 
 const WORKSPACE_ID = 'workspace-id';
@@ -21,12 +20,15 @@ const buildStuckApplication = (
 
 describe('ApplicationLifecycleReconciliationService', () => {
   let applicationRepository: { find: jest.Mock };
-  let applicationService: { transitionState: jest.Mock };
+  let applicationService: { transitionState: jest.Mock; delete: jest.Mock };
   let service: ApplicationLifecycleReconciliationService;
 
   beforeEach(() => {
     applicationRepository = { find: jest.fn().mockResolvedValue([]) };
-    applicationService = { transitionState: jest.fn().mockResolvedValue({}) };
+    applicationService = {
+      transitionState: jest.fn().mockResolvedValue({}),
+      delete: jest.fn().mockResolvedValue(undefined),
+    };
 
     service = new ApplicationLifecycleReconciliationService(
       applicationRepository as unknown as Repository<ApplicationEntity>,
@@ -34,7 +36,7 @@ describe('ApplicationLifecycleReconciliationService', () => {
     );
   });
 
-  it('fails an install that never completed', async () => {
+  it('removes an install that never completed', async () => {
     applicationRepository.find.mockResolvedValue([
       buildStuckApplication(ApplicationState.INSTALLING, 'stuck-install'),
     ]);
@@ -42,24 +44,16 @@ describe('ApplicationLifecycleReconciliationService', () => {
     const reconciledCount = await service.reconcileStuckApplications();
 
     expect(reconciledCount).toBe(1);
-    expect(applicationService.transitionState).toHaveBeenCalledWith(
-      expect.objectContaining({
-        applicationId: 'stuck-install',
-        expectedState: ApplicationState.INSTALLING,
-        nextState: ApplicationState.FAILED,
-        failure: expect.objectContaining({
-          operation: ApplicationOperation.INSTALL,
-        }),
-      }),
+    expect(applicationService.delete).toHaveBeenCalledWith(
+      'universal-identifier-stuck-install',
+      WORKSPACE_ID,
     );
+    expect(applicationService.transitionState).not.toHaveBeenCalled();
   });
 
-  it.each([
-    [ApplicationState.UPGRADING, ApplicationOperation.UPGRADE],
-    [ApplicationState.UNINSTALLING, ApplicationOperation.UNINSTALL],
-  ])(
+  it.each([ApplicationState.UPGRADING, ApplicationState.UNINSTALLING])(
     'returns a stuck %s application to INSTALLED',
-    async (state, operation) => {
+    async (state) => {
       applicationRepository.find.mockResolvedValue([
         buildStuckApplication(state, 'stuck'),
       ]);
@@ -70,15 +64,15 @@ describe('ApplicationLifecycleReconciliationService', () => {
         expect.objectContaining({
           expectedState: state,
           nextState: ApplicationState.INSTALLED,
-          failure: expect.objectContaining({ operation }),
         }),
       );
+      expect(applicationService.delete).not.toHaveBeenCalled();
     },
   );
 
   it('does not count an application whose operation completed first', async () => {
     applicationRepository.find.mockResolvedValue([
-      buildStuckApplication(ApplicationState.INSTALLING, 'settled'),
+      buildStuckApplication(ApplicationState.UPGRADING, 'settled'),
     ]);
     applicationService.transitionState.mockRejectedValue(
       new Error('another operation is already running'),

@@ -8,8 +8,6 @@ export const FIND_ONE_APPLICATION_BY_UNIVERSAL_IDENTIFIER = gql`
       name
       version
       state
-      failedOperation
-      failureReason
     }
   }
 `;

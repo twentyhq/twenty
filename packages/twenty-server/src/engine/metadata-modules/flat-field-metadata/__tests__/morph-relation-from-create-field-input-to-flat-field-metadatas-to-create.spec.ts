@@ -32,8 +32,6 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   version: null,
   sourceType: ApplicationRegistrationSourceType.LOCAL,
   state: ApplicationState.INSTALLED,
-  failedOperation: null,
-  failureReason: null,
   sourcePath: '',
   packageJsonChecksum: null,
   packageJsonFileId: null,

@@ -1,5 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
-
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -7,7 +5,6 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { InlineBanner } from 'twenty-ui/feedback';
 import { IconCheck, IconDownload, IconTrash, IconUpload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -45,7 +42,6 @@ type SettingsApplicationDetailAboutTabProps = {
   onUninstall?: () => void;
   isUninstalling?: boolean;
   state?: ApplicationState;
-  failureReason?: string;
 };
 
 const StyledContentContainer = styled.div`
@@ -124,7 +120,6 @@ export const SettingsApplicationDetailAboutTab = ({
   onUninstall,
   isUninstalling,
   state,
-  failureReason,
 }: SettingsApplicationDetailAboutTabProps) => {
   const { openModal } = useModal();
 
@@ -229,12 +224,6 @@ export const SettingsApplicationDetailAboutTab = ({
 
   return (
     <>
-      {isNonEmptyString(failureReason) && (
-        <Section>
-          <InlineBanner color="danger" message={failureReason} />
-        </Section>
-      )}
-
       {hasScreenshots && (
         <SettingsApplicationScreenshotGallery
           screenshots={screenshots}

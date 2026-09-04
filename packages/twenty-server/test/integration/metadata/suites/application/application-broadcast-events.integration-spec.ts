@@ -14,8 +14,6 @@ import { type WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspa
 const APPLICATION_PAYLOAD_KEYS = [
   'applicationRegistrationId',
   'description',
-  'failedOperation',
-  'failureReason',
   'id',
   'name',
   'sdkClientCoreChecksum',
