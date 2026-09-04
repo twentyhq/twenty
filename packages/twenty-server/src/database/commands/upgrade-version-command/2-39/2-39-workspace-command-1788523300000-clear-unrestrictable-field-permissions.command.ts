@@ -10,11 +10,20 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
+// Every other non-editable field is left alone: dropping a restriction only
+// because a field is not editable would loosen permissions beyond the bug
+const NON_EDITABLE_SYSTEM_FIELD_NAMES = [
+  'createdAt',
+  'updatedAt',
+  'deletedAt',
+  'createdBy',
+];
+
 @RegisteredWorkspaceCommand('2.39.0', 1788523300000)
 @Command({
   name: 'upgrade:2-39:clear-unrestrictable-field-permissions',
   description:
-    'Clear field permissions the roles UI cannot represent: restrictions on non-editable system fields, and read restrictions on label identifiers. Idempotent.',
+    'Clear field permissions the roles UI cannot represent: restrictions on the non-editable createdAt/updatedAt/deletedAt/createdBy fields, and read restrictions on label identifiers. Idempotent.',
 })
 export class ClearUnrestrictableFieldPermissionsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -46,10 +55,15 @@ export class ClearUnrestrictableFieldPermissionsCommand extends ProvisionedWorks
            ON "objectMetadata"."id" = "fieldPermission"."objectMetadataId"
          WHERE "fieldPermission"."workspaceId" = $1
            AND "fieldPermission"."applicationId" = $2
-           AND ("fieldMetadata"."isUIEditable" = false
+           AND (("fieldMetadata"."isUIEditable" = false
+             AND "fieldMetadata"."name" = ANY($3::text[]))
              OR ("objectMetadata"."labelIdentifierFieldMetadataId" = "fieldPermission"."fieldMetadataId"
                AND "fieldPermission"."canReadFieldValue" = false))`,
-        [workspaceId, workspaceCustomFlatApplication.id],
+        [
+          workspaceId,
+          workspaceCustomFlatApplication.id,
+          NON_EDITABLE_SYSTEM_FIELD_NAMES,
+        ],
       );
 
       this.logger.log(
@@ -68,8 +82,13 @@ export class ClearUnrestrictableFieldPermissionsCommand extends ProvisionedWorks
          AND "fieldPermission"."workspaceId" = $1
          AND "fieldPermission"."applicationId" = $2
          AND "fieldMetadata"."isUIEditable" = false
+         AND "fieldMetadata"."name" = ANY($3::text[])
        RETURNING "fieldPermission"."id"`,
-      [workspaceId, workspaceCustomFlatApplication.id],
+      [
+        workspaceId,
+        workspaceCustomFlatApplication.id,
+        NON_EDITABLE_SYSTEM_FIELD_NAMES,
+      ],
     );
 
     const clearedOnLabelIdentifiers = await this.coreDataSource.query<
@@ -108,7 +127,7 @@ export class ClearUnrestrictableFieldPermissionsCommand extends ProvisionedWorks
     ]);
 
     this.logger.log(
-      `Deleted ${deletedOnNonEditableFields.length} field permission(s) on non-editable fields and cleared read on ${clearedOnLabelIdentifiers.length} label identifier(s) for workspace ${workspaceId}`,
+      `Deleted ${deletedOnNonEditableFields.length} field permission(s) on non-editable system fields and cleared read on ${clearedOnLabelIdentifiers.length} label identifier(s) for workspace ${workspaceId}`,
     );
   }
 }

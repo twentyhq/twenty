@@ -67,6 +67,7 @@ describe('ClearUnrestrictableFieldPermissionsCommand', () => {
     expect(query.mock.calls[0][1]).toEqual([
       WORKSPACE_ID,
       CUSTOM_APPLICATION_ID,
+      ['createdAt', 'updatedAt', 'deletedAt', 'createdBy'],
     ]);
     expect(query.mock.calls[1][0]).toContain('labelIdentifierFieldMetadataId');
     expect(invalidateAndRecompute).toHaveBeenCalledWith(WORKSPACE_ID, [
@@ -74,7 +75,7 @@ describe('ClearUnrestrictableFieldPermissionsCommand', () => {
       'rolesPermissions',
     ]);
     expect(command['logger'].log).toHaveBeenCalledWith(
-      `Deleted 2 field permission(s) on non-editable fields and cleared read on 1 label identifier(s) for workspace ${WORKSPACE_ID}`,
+      `Deleted 2 field permission(s) on non-editable system fields and cleared read on 1 label identifier(s) for workspace ${WORKSPACE_ID}`,
     );
   });
 
