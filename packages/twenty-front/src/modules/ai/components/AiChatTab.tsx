@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { type DragEvent, useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { DropZone } from '@/activities/files/components/DropZone';
@@ -40,11 +40,21 @@ export const AiChatTab = () => {
 
   const { uploadFiles } = useAiChatFileUpload();
 
+  const handleDragLeave = (event: DragEvent<HTMLDivElement>) => {
+    if (event.currentTarget.contains(event.relatedTarget as Node | null)) {
+      return;
+    }
+
+    setIsDraggingFile(false);
+  };
+
   return (
     <StyledContainer
       isDraggingFile={isDraggingFile}
       onDragEnter={() => setIsDraggingFile(true)}
-      onDragLeave={() => setIsDraggingFile(false)}
+      onDragLeave={handleDragLeave}
+      onDragOver={(event) => event.preventDefault()}
+      onDrop={(event) => event.preventDefault()}
     >
       <AgentChatHasBeenOpenedEffect />
       <AgentChatStreamingPartsDiffSyncEffect />
