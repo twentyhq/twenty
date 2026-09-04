@@ -41,10 +41,18 @@ export const AiChatTab = () => {
   const { uploadFiles } = useAiChatFileUpload();
 
   const handleDragLeave = (event: DragEvent<HTMLDivElement>) => {
-    if (event.currentTarget.contains(event.relatedTarget as Node | null)) {
+    if (
+      event.relatedTarget instanceof Node &&
+      event.currentTarget.contains(event.relatedTarget)
+    ) {
       return;
     }
 
+    setIsDraggingFile(false);
+  };
+
+  const handleDrop = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
     setIsDraggingFile(false);
   };
 
@@ -54,7 +62,7 @@ export const AiChatTab = () => {
       onDragEnter={() => setIsDraggingFile(true)}
       onDragLeave={handleDragLeave}
       onDragOver={(event) => event.preventDefault()}
-      onDrop={(event) => event.preventDefault()}
+      onDrop={handleDrop}
     >
       <AgentChatHasBeenOpenedEffect />
       <AgentChatStreamingPartsDiffSyncEffect />
