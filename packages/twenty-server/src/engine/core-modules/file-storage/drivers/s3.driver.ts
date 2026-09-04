@@ -85,6 +85,7 @@ export class S3Driver implements StorageDriver {
       region,
       endpoint,
       maxAttempts: FILE_STORAGE_S3_METADATA_MAX_ATTEMPTS,
+      responseChecksumValidation: 'WHEN_REQUIRED',
       requestHandler: buildAwsRequestHandlerOptions({
         requestTimeoutMs: FILE_STORAGE_S3_METADATA_REQUEST_TIMEOUT_MS,
         connectionTimeoutMs: FILE_STORAGE_S3_METADATA_CONNECTION_TIMEOUT_MS,

@@ -153,6 +153,7 @@ describe('S3Driver.getFileMetadata', () => {
     expect(S3).toHaveBeenCalledWith(
       expect.objectContaining({
         maxAttempts: FILE_STORAGE_S3_METADATA_MAX_ATTEMPTS,
+        responseChecksumValidation: 'WHEN_REQUIRED',
       }),
     );
   });
