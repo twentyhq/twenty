@@ -1403,6 +1403,27 @@ export interface UsageAnalytics {
     __typename: 'UsageAnalytics'
 }
 
+export interface UsageLimit {
+    id: Scalars['UUID']
+    resourceType: UsageResourceType
+    operationType: UsageOperationType
+    spenderType: Scalars['String']
+    spenderId?: Scalars['String']
+    limitKind: Scalars['String']
+    periodCount: Scalars['Int']
+    periodUnit: Scalars['String']
+    meter: Scalars['String']
+    limitValue: Scalars['BigInt']
+    burstValue?: Scalars['BigInt']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    __typename: 'UsageLimit'
+}
+
+export type UsageResourceType = 'AI' | 'WORKFLOW' | 'APP' | 'STORAGE' | 'API' | 'LOGIC_FUNCTION' | 'EMAIL'
+
+export type UsageOperationType = 'ALL' | 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'API_REQUEST' | 'SUBSCRIPTION'
+
 export interface ApprovedAccessDomain {
     id: Scalars['UUID']
     domain: Scalars['String']
@@ -1485,34 +1506,13 @@ export interface ConnectedAccountPublicDTO {
     __typename: 'ConnectedAccountPublicDTO'
 }
 
-export interface UsageLimit {
-    id: Scalars['UUID']
-    resourceType: UsageResourceType
-    operationType: UsageOperationType
-    spenderType: Scalars['String']
-    spenderId?: Scalars['String']
-    limitKind: Scalars['String']
-    periodCount: Scalars['Int']
-    periodUnit: Scalars['String']
-    meter: Scalars['String']
-    limitValue: Scalars['BigInt']
-    burstValue?: Scalars['BigInt']
-    createdAt: Scalars['DateTime']
-    updatedAt: Scalars['DateTime']
-    __typename: 'UsageLimit'
-}
-
-export type UsageResourceType = 'AI' | 'WORKFLOW' | 'APP' | 'STORAGE' | 'API' | 'LOGIC_FUNCTION' | 'EMAIL'
-
-export type UsageOperationType = 'ALL' | 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'API_REQUEST' | 'SUBSCRIPTION'
-
 export interface FeatureFlag {
     key: FeatureFlagKey
     value: Scalars['Boolean']
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' | 'IS_API_RATE_LIMIT_V2_ENABLED' | 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED'
+export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' | 'IS_API_RATE_LIMIT_V2_ENABLED' | 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' | 'IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -4856,6 +4856,24 @@ export interface UsageAnalyticsGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface UsageLimitGenqlSelection{
+    id?: boolean | number
+    resourceType?: boolean | number
+    operationType?: boolean | number
+    spenderType?: boolean | number
+    spenderId?: boolean | number
+    limitKind?: boolean | number
+    periodCount?: boolean | number
+    periodUnit?: boolean | number
+    meter?: boolean | number
+    limitValue?: boolean | number
+    burstValue?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ApprovedAccessDomainGenqlSelection{
     id?: boolean | number
     domain?: boolean | number
@@ -4941,24 +4959,6 @@ export interface ConnectedAccountPublicDTOGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     connectionParameters?: PublicImapSmtpCaldavConnectionParametersGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface UsageLimitGenqlSelection{
-    id?: boolean | number
-    resourceType?: boolean | number
-    operationType?: boolean | number
-    spenderType?: boolean | number
-    spenderId?: boolean | number
-    limitKind?: boolean | number
-    periodCount?: boolean | number
-    periodUnit?: boolean | number
-    meter?: boolean | number
-    limitValue?: boolean | number
-    burstValue?: boolean | number
-    createdAt?: boolean | number
-    updatedAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -8298,6 +8298,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const UsageLimit_possibleTypes: string[] = ['UsageLimit']
+    export const isUsageLimit = (obj?: { __typename?: any } | null): obj is UsageLimit => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageLimit"')
+      return UsageLimit_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const ApprovedAccessDomain_possibleTypes: string[] = ['ApprovedAccessDomain']
     export const isApprovedAccessDomain = (obj?: { __typename?: any } | null): obj is ApprovedAccessDomain => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApprovedAccessDomain"')
@@ -8366,14 +8374,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isConnectedAccountPublicDTO = (obj?: { __typename?: any } | null): obj is ConnectedAccountPublicDTO => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isConnectedAccountPublicDTO"')
       return ConnectedAccountPublicDTO_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const UsageLimit_possibleTypes: string[] = ['UsageLimit']
-    export const isUsageLimit = (obj?: { __typename?: any } | null): obj is UsageLimit => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageLimit"')
-      return UsageLimit_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -10145,12 +10145,6 @@ export const enumDatabaseEventAction = {
    UPSERTED: 'UPSERTED' as const
 }
 
-export const enumEmailConnectionSecurity = {
-   NONE: 'NONE' as const,
-   STARTTLS: 'STARTTLS' as const,
-   SSL_TLS: 'SSL_TLS' as const
-}
-
 export const enumUsageResourceType = {
    AI: 'AI' as const,
    WORKFLOW: 'WORKFLOW' as const,
@@ -10174,6 +10168,12 @@ export const enumUsageOperationType = {
    SUBSCRIPTION: 'SUBSCRIPTION' as const
 }
 
+export const enumEmailConnectionSecurity = {
+   NONE: 'NONE' as const,
+   STARTTLS: 'STARTTLS' as const,
+   SSL_TLS: 'SSL_TLS' as const
+}
+
 export const enumFeatureFlagKey = {
    IS_APP_CLAIMING_ENABLED: 'IS_APP_CLAIMING_ENABLED' as const,
    IS_UNIQUE_INDEXES_ENABLED: 'IS_UNIQUE_INDEXES_ENABLED' as const,
@@ -10186,7 +10186,8 @@ export const enumFeatureFlagKey = {
    IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED: 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' as const,
    IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED: 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' as const,
    IS_API_RATE_LIMIT_V2_ENABLED: 'IS_API_RATE_LIMIT_V2_ENABLED' as const,
-   IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED: 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' as const
+   IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED: 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' as const,
+   IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED: 'IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED' as const
 }
 
 export const enumIdentityProviderType = {

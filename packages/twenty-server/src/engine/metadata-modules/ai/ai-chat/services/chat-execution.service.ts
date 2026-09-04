@@ -552,16 +552,18 @@ export class ChatExecutionService {
         });
 
         const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
-          await this.aiBillingService.decrementAndCheckAvailableCredits(
-            registeredModel.modelId,
-            {
+          await this.aiBillingService.decrementAndCheckAvailableCredits({
+            modelId: registeredModel.modelId,
+            billingInput: {
               usage: step.usage,
               cacheCreationTokens: extractCacheCreationTokens(
                 step.providerMetadata,
               ),
             },
-            workspace.id,
-          );
+            workspaceId: workspace.id,
+            operationType: UsageOperationType.AI_CHAT_TOKEN,
+            spenders: { userWorkspaceId },
+          });
 
         if (stepHasNoMoreAvailableCredits) {
           hasNoMoreAvailableCredits = true;
