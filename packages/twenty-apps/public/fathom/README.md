@@ -1,29 +1,27 @@
 # Fathom
 
-**Bring Fathom meeting recordings, transcripts, and insights into Twenty.**
+**Every Fathom recording, transcript, and summary, right inside your CRM.**
 
-## What you get
+## ✨ What you get
 
-- Fathom recordings saved as Call Recordings
-- Transcripts, summaries, and action items
-- Links to matching calendar events when the match is unambiguous
-- Automatic sync for new recordings
-- A 31-day import when a Fathom account is connected, and manual imports of
-  older history
-- Workflow and AI actions to sync one recording or list recordings by
-  participant
+- **Every recording saved as a Call Recording**
+- **Full transcripts, summaries, and action items**
+- **Automatic linking to the matching calendar event**
+- **New recordings synced as they happen**
+- **Your last 31 days imported the moment you connect**
+- **Built for AI & automation**
 
-## Requirements
+## 💳 Billing
 
-Each person connects their Fathom account to Twenty. The connected Fathom
-account decides which recordings Twenty can import; the Fathom and Twenty login
-emails do not need to match.
+**Free.** No credits, no metering.
 
-## Heads up
+## 📌 Heads up
 
-- Twenty only links a recording to a calendar event when its meeting URL and
-  scheduled time identify one clear match.
-- Disconnect and reconnect Fathom after changing the webhook URL or webhook
-  scopes so Fathom receives the new registration.
-
-Development setup lives in [SETUP.md](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/fathom/SETUP.md).
+- **Everyone connects their own Fathom account.** Twenty imports whatever that
+  account can already see, and your Fathom and Twenty login emails don't need
+  to match.
+- **Calendar links need one clear match.** A recording is attached to a
+  calendar event only when its meeting link and scheduled time point to exactly
+  one event.
+- **Older recordings stay put.** Anything past the first 31 days isn't pulled
+  in automatically; ask your workspace admin to import a wider window.

@@ -73,4 +73,7 @@ to the workspace that made the connection, so no per-workspace domain is needed.
 
 ## Troubleshooting
 
+Disconnect and reconnect Fathom after changing the webhook URL or the webhook
+scopes, so Fathom receives the new registration.
+
 See the [troubleshooting guide](https://docs.twenty.com/developers/extend/apps/getting-started/troubleshooting) or ask on [Discord](https://discord.gg/cx5n4Jzs57).
