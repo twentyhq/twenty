@@ -73,12 +73,8 @@ const StyledCustomPhoneInputWrapper = styled.div`
     }
 
     &:focus {
-      box-shadow: 0 0 0 2px ${themeCssVariables.color.blue};
-      outline: none;
-
-      @media (forced-colors: active) {
-        outline: 2px solid transparent;
-      }
+      outline: 2px solid ${themeCssVariables.color.blue};
+      outline-offset: -2px;
     }
   }
 
