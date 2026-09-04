@@ -1,26 +1,18 @@
 import { renderHook } from '@testing-library/react';
 
+import { METADATA_OPERATION_BROWSER_EVENT_NAME } from '@/browser-event/constants/MetadataOperationBrowserEventName';
 import { dispatchMetadataOperationBrowserEvent } from '@/browser-event/utils/dispatchMetadataOperationBrowserEvent';
 import { useListenToQueueJobState } from '@/queue-job/hooks/useListenToQueueJobState';
 import { JobState } from '~/generated-metadata/graphql';
 
 const JOB_ID = 'job-1';
 
-const dispatchQueueJobUpdate = (id: string, state: JobState) => {
+const dispatchQueueJobUpdate = (jobId: string, state: JobState) => {
   dispatchMetadataOperationBrowserEvent({
     metadataName: 'queueJob',
     operation: {
       type: 'update',
-      updatedRecord: {
-        id,
-        name: 'install-application',
-        state,
-        attemptsMade: 1,
-        failedReason: null,
-        enqueuedAt: 1,
-        startedAt: null,
-        finishedAt: null,
-      },
+      updatedRecord: { jobId, state, attemptsMade: 1, enqueuedAt: 1 },
     },
   });
 };
@@ -38,17 +30,20 @@ describe('useListenToQueueJobState', () => {
 
     expect(onStateChange).toHaveBeenCalledTimes(1);
     expect(onStateChange).toHaveBeenCalledWith(
-      expect.objectContaining({ id: JOB_ID, state: JobState.FAILED }),
+      expect.objectContaining({ jobId: JOB_ID, state: JobState.FAILED }),
     );
   });
 
-  it('does not listen without a job id', () => {
-    const onStateChange = jest.fn();
+  it('does not register a listener without a job id', () => {
+    const addEventListenerSpy = jest.spyOn(window, 'addEventListener');
 
-    renderHook(() => useListenToQueueJobState({ onStateChange }));
+    renderHook(() => useListenToQueueJobState({ onStateChange: jest.fn() }));
 
-    dispatchQueueJobUpdate(JOB_ID, JobState.COMPLETED);
+    expect(addEventListenerSpy).not.toHaveBeenCalledWith(
+      METADATA_OPERATION_BROWSER_EVENT_NAME,
+      expect.anything(),
+    );
 
-    expect(onStateChange).not.toHaveBeenCalled();
+    addEventListenerSpy.mockRestore();
   });
 });

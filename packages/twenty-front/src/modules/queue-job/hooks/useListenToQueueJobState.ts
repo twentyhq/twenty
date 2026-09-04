@@ -1,12 +1,12 @@
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
 import { type MetadataOperationBrowserEventDetail } from '@/browser-event/types/MetadataOperationBrowserEventDetail';
-import { type QueueJobBroadcastRecord } from '@/queue-job/types/QueueJobBroadcastRecord';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { type JobStatus } from '~/generated-metadata/graphql';
 
 type UseListenToQueueJobStateArgs = {
   jobId?: string;
-  onStateChange: (queueJob: QueueJobBroadcastRecord) => void;
+  onStateChange: (jobStatus: JobStatus) => void;
 };
 
 export const useListenToQueueJobState = ({
@@ -14,10 +14,11 @@ export const useListenToQueueJobState = ({
   onStateChange,
 }: UseListenToQueueJobStateArgs) => {
   const onQueueJobOperation = useCallback(
-    ({
-      operation,
-    }: MetadataOperationBrowserEventDetail<QueueJobBroadcastRecord>) => {
-      if (operation.type !== 'update' || operation.updatedRecord.id !== jobId) {
+    ({ operation }: MetadataOperationBrowserEventDetail<JobStatus>) => {
+      if (
+        operation.type !== 'update' ||
+        operation.updatedRecord.jobId !== jobId
+      ) {
         return;
       }
 
@@ -26,7 +27,7 @@ export const useListenToQueueJobState = ({
     [jobId, onStateChange],
   );
 
-  useListenToMetadataOperationBrowserEvent<QueueJobBroadcastRecord>({
+  useListenToMetadataOperationBrowserEvent<JobStatus>({
     metadataName: 'queueJob',
     onMetadataOperationBrowserEvent: onQueueJobOperation,
     skip: !isDefined(jobId),

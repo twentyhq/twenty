@@ -550,7 +550,6 @@ export class BullMQDriver
 
     return {
       id: job.id,
-      name: job.name,
       data: job.data,
       state,
       attemptsMade: job.attemptsMade,

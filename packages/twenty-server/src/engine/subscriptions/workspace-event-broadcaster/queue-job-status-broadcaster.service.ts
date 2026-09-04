@@ -33,8 +33,7 @@ export class QueueJobStatusBroadcaster {
             recipientUserWorkspaceIds: [userWorkspaceId],
             properties: {
               after: {
-                id: job.id,
-                name: job.name,
+                jobId: job.id,
                 state: bullMQToJobStateEnum[job.state],
                 attemptsMade: job.attemptsMade,
                 failedReason: job.failedReason ?? null,
@@ -48,7 +47,7 @@ export class QueueJobStatusBroadcaster {
       });
     } catch (error) {
       this.logger.warn(
-        `Failed to broadcast ${job.state} status of job ${job.id} (${job.name}) in workspace ${workspaceId}`,
+        `Failed to broadcast ${job.state} status of job ${job.id} in workspace ${workspaceId}`,
         error,
       );
     }

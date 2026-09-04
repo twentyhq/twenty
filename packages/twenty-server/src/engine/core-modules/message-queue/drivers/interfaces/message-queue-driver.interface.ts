@@ -66,7 +66,6 @@ export type QueueJobToAdd<T extends MessageQueueJobData> = {
 
 export type QueueJobDetails<T extends MessageQueueJobData> = {
   id: string;
-  name: string;
   data: T;
   state: JobState;
   attemptsMade: number;
