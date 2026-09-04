@@ -218,11 +218,6 @@ export class LambdaDriver implements LogicFunctionDriver {
 
       const duration = Date.now() - invokeFlowStart;
 
-      const awsBilledDuration = Number(awsBilledDurationMs ?? NaN);
-      const billedDurationMs = Number.isFinite(awsBilledDuration)
-        ? awsBilledDuration
-        : invokeDurationMs;
-
       this.logger.log(
         `[lambda-timing] fnId=${flatLogicFunction.id} executionMode=${executionMode} totalMs=${Date.now() - buildStart} buildExecutorMs=${buildExecutorMs} getBuiltCodeMs=${getBuiltCodeMs} payloadBytes=${Buffer.byteLength(payloadString, 'utf8')} invokeDurationMs=${invokeDurationMs} reportDurationMs=${reportDurationMs ?? 'n/a'} awsBilledDurationMs=${awsBilledDurationMs ?? 'n/a'} initDurationMs=${initDurationMs ?? 'n/a'} coldStart=${coldStart}`,
       );
@@ -231,7 +226,7 @@ export class LambdaDriver implements LogicFunctionDriver {
         return {
           data: null,
           duration,
-          billedDurationMs,
+          billedDurationMs: invokeDurationMs,
           status: LogicFunctionExecutionStatus.ERROR,
           error: parsedResult,
           logs,
@@ -242,7 +237,7 @@ export class LambdaDriver implements LogicFunctionDriver {
         data: parsedResult,
         logs,
         duration,
-        billedDurationMs,
+        billedDurationMs: invokeDurationMs,
         status: LogicFunctionExecutionStatus.SUCCESS,
       };
     } catch (error) {
