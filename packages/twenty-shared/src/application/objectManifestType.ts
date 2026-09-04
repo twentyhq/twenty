@@ -20,6 +20,7 @@ export type ObjectManifest = SyncableEntityOptions & {
   isUIEditable?: boolean;
   writability?: MetadataWritability;
   readability?: MetadataReadability;
+  readabilityParentFieldUniversalIdentifiers?: string[];
   openRecordIn?: ObjectOpenRecordIn;
   fields: ObjectFieldManifest[];
   labelIdentifierFieldMetadataUniversalIdentifier: string;

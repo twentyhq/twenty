@@ -80,6 +80,9 @@ export class ObjectMetadataDTO {
   @Field(() => MetadataReadability)
   readability: MetadataReadability;
 
+  @Field(() => [UUIDScalarType], { nullable: true })
+  readabilityParentFieldUniversalIdentifiers: string[] | null;
+
   @HideField()
   workspaceId: string;
 
