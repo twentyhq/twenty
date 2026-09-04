@@ -3153,12 +3153,8 @@ export interface Mutation {
     refreshEnterpriseValidityToken: Scalars['Boolean']
     releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO
     setEnterpriseKey: EnterpriseLicenseInfoDTO
-    uploadEmailAttachmentFile: FileWithSignedUrl
-    uploadAiChatFile: FileWithSignedUrl
-    uploadWorkflowFile: FileWithSignedUrl
     uploadWorkspaceLogo: FileWithSignedUrl
     uploadWorkspaceMemberProfilePicture: FileWithSignedUrl
-    uploadFilesFieldFile: FileWithSignedUrl
     uploadFilesFieldFileByUniversalIdentifier: FileWithSignedUrl
     upsertUsageLimit: UsageLimit
     deleteUsageLimit: Scalars['Boolean']
@@ -6730,12 +6726,8 @@ export interface MutationGenqlSelection{
     refreshEnterpriseValidityToken?: boolean | number
     releaseEnterpriseServerBinding?: EnterpriseLicenseInfoDTOGenqlSelection
     setEnterpriseKey?: (EnterpriseLicenseInfoDTOGenqlSelection & { __args: {enterpriseKey: Scalars['String']} })
-    uploadEmailAttachmentFile?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
-    uploadAiChatFile?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
-    uploadWorkflowFile?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
     uploadWorkspaceLogo?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
     uploadWorkspaceMemberProfilePicture?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
-    uploadFilesFieldFile?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload'], fieldMetadataId: Scalars['String']} })
     uploadFilesFieldFileByUniversalIdentifier?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload'], fieldMetadataUniversalIdentifier: Scalars['String']} })
     upsertUsageLimit?: (UsageLimitGenqlSelection & { __args: {input: UpsertUsageLimitInput} })
     deleteUsageLimit?: { __args: {usageLimitId: Scalars['UUID']} }

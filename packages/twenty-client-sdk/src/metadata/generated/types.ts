@@ -7952,33 +7952,6 @@ export default {
                     ]
                 }
             ],
-            "uploadEmailAttachmentFile": [
-                148,
-                {
-                    "file": [
-                        404,
-                        "Upload!"
-                    ]
-                }
-            ],
-            "uploadAiChatFile": [
-                148,
-                {
-                    "file": [
-                        404,
-                        "Upload!"
-                    ]
-                }
-            ],
-            "uploadWorkflowFile": [
-                148,
-                {
-                    "file": [
-                        404,
-                        "Upload!"
-                    ]
-                }
-            ],
             "uploadWorkspaceLogo": [
                 148,
                 {
@@ -7994,19 +7967,6 @@ export default {
                     "file": [
                         404,
                         "Upload!"
-                    ]
-                }
-            ],
-            "uploadFilesFieldFile": [
-                148,
-                {
-                    "file": [
-                        404,
-                        "Upload!"
-                    ],
-                    "fieldMetadataId": [
-                        1,
-                        "String!"
                     ]
                 }
             ],
