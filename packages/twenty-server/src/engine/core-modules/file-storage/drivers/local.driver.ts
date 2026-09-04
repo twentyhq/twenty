@@ -44,15 +44,12 @@ export class LocalDriver implements StorageDriver {
     }
   }
 
-  async readFile(params: {
-    filePath: string;
-    byteRange?: ByteRange;
-  }): Promise<Readable> {
-    const joinedPath = join(this.options.storagePath, params.filePath);
-    let filePath: string;
+  private resolveReadableRealPathOrThrow(filePath: string): string {
+    const joinedPath = join(this.options.storagePath, filePath);
+    let realPath: string;
 
     try {
-      filePath = realpathSync(path.resolve(joinedPath));
+      realPath = realpathSync(path.resolve(joinedPath));
     } catch {
       throw new FileStorageException(
         'File not found',
@@ -60,7 +57,16 @@ export class LocalDriver implements StorageDriver {
       );
     }
 
-    this.assertRealPathIsWithinStorage(filePath);
+    this.assertRealPathIsWithinStorage(realPath);
+
+    return realPath;
+  }
+
+  async readFile(params: {
+    filePath: string;
+    byteRange?: ByteRange;
+  }): Promise<Readable> {
+    const filePath = this.resolveReadableRealPathOrThrow(params.filePath);
 
     try {
       return createReadStream(
@@ -78,6 +84,41 @@ export class LocalDriver implements StorageDriver {
       }
 
       throw error;
+    }
+  }
+
+  async readFilePrefix(params: {
+    filePath: string;
+    byteCount: number;
+  }): Promise<Buffer> {
+    const filePath = this.resolveReadableRealPathOrThrow(params.filePath);
+    let fileHandle: fs.FileHandle;
+
+    try {
+      fileHandle = await fs.open(filePath, 'r');
+    } catch (error) {
+      if (error.code === 'ENOENT') {
+        throw new FileStorageException(
+          'File not found',
+          FileStorageExceptionCode.FILE_NOT_FOUND,
+        );
+      }
+
+      throw error;
+    }
+
+    try {
+      const buffer = Buffer.alloc(params.byteCount);
+      const { bytesRead } = await fileHandle.read(
+        buffer,
+        0,
+        params.byteCount,
+        0,
+      );
+
+      return buffer.subarray(0, bytesRead);
+    } finally {
+      await fileHandle.close();
     }
   }
 
