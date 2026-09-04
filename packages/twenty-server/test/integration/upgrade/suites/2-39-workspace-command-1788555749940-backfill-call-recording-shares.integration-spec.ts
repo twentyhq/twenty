@@ -8,7 +8,6 @@ import {
   RecordSharePrincipalType,
   RecordShareRowCause,
 } from 'twenty-shared/types';
-import { In } from 'typeorm';
 
 import { BackfillCallRecordingSharesCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788555749940-backfill-call-recording-shares.command';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -114,15 +113,10 @@ describe('2-39 workspace command 1788555749940 - BackfillCallRecordingSharesComm
       callRecordingRepository.delete(seededCallRecordingIds),
     );
 
-    await workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        workspaceOrmManager
-          .getRepository<RecordShare>('recordShare', {
-            shouldBypassPermissionChecks: true,
-          })
-          .delete({ recordId: In(seededCallRecordingIds) }),
-      authContext,
-    );
+    await recordShareService.deleteBySourceId({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      sourceId: callRecordingObjectMetadataId,
+    });
   });
 
   it('writes nothing on a dry run', async () => {
