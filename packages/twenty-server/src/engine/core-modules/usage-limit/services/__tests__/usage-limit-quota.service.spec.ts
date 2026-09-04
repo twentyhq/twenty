@@ -326,6 +326,17 @@ describe('UsageLimitQuotaService', () => {
     expect(exhausted).toBeNull();
   });
 
+  it('consumes an invalid cost as zero instead of crediting the counter', async () => {
+    setLimits([buildLimit({})]);
+    cacheStorage.runScript.mockResolvedValue([1, 950]);
+
+    await consumeQuota(-50, Number.NaN);
+
+    expect(cacheStorage.runScript).toHaveBeenCalledWith(
+      expect.objectContaining({ args: ['[0]'] }),
+    );
+  });
+
   it('debits the allowance counter with the credit cost on consume', async () => {
     setLimits([buildLimit({ meter: 'quantity' })]);
     setAllowance(2_000_000);

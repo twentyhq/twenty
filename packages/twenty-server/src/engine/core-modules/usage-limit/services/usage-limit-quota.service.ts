@@ -37,6 +37,7 @@ import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/
 import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/build-quota-counters.util';
 import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-quota-exhausted-scope.util';
 import { buildQuotaWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-warm-lock-key.util';
+import { clampQuotaCost } from 'src/engine/core-modules/usage-limit/utils/clamp-quota-cost.util';
 import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/utils/find-credit-allowance-provider.util';
 import { findExhaustedCounter } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-counter.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
@@ -99,10 +100,21 @@ export class UsageLimitQuotaService implements OnModuleInit {
   }: QuotaConsumeArgs & { cost: QuotaCost }): Promise<{
     exhausted: ExhaustedScope | null;
   }> {
+    const clampedCost = clampQuotaCost(cost);
+
+    if (
+      clampedCost.creditsUsedMicro !== cost.creditsUsedMicro ||
+      clampedCost.quantity !== cost.quantity
+    ) {
+      this.logger.error(
+        `Refusing to consume invalid quota cost ${JSON.stringify(cost)} for workspace ${args.workspaceId}; treating it as 0`,
+      );
+    }
+
     return {
       exhausted: await this.consumeCountersAdmittingOnFailure({
         ...args,
-        cost,
+        cost: clampedCost,
       }),
     };
   }

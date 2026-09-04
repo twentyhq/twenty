@@ -57,9 +57,7 @@ export class BillingCreditAllowanceProvider extends CreditAllowanceProvider {
   async getCreditAllowance(
     workspaceId: string,
   ): Promise<CreditAllowance | null> {
-    const period = await this.getCreditAllowancePeriod(workspaceId);
-
-    if (!isDefined(period)) {
+    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       return null;
     }
 
@@ -77,13 +75,14 @@ export class BillingCreditAllowanceProvider extends CreditAllowanceProvider {
         await this.billingCreditGrantService.getActiveCreditsMicro(workspaceId);
 
       return {
-        ...period,
+        periodStart: subscription.currentPeriodStart,
+        periodEnd: subscription.currentPeriodEnd,
         allowanceMicro:
           this.billingUsageService.getResourceUsageCap(subscription) +
           creditBalanceMicro,
       };
     } catch (error) {
-      this.logger.warn(
+      this.logger.error(
         `Could not compute allowance for workspace ${workspaceId}: ${error instanceof Error ? error.message : 'unknown error'}`,
       );
 
