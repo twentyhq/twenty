@@ -26,4 +26,4 @@ emails do not need to match.
 - Disconnect and reconnect Fathom after changing the webhook URL or webhook
   scopes so Fathom receives the new registration.
 
-Development setup lives in [SETUP.md](SETUP.md).
+Development setup lives in [SETUP.md](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/fathom/SETUP.md).

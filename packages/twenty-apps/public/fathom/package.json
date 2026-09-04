@@ -1,13 +1,17 @@
 {
   "name": "@twentyhq/fathom",
+  "description": "Fathom call-recording connector for Twenty: syncs recordings, transcripts, summaries and action items into Call Recordings.",
   "version": "0.1.0",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
     "npm": "please-use-yarn",
-    "yarn": ">=4.0.2"
+    "yarn": ">=4.0.2",
+    "twenty": ">=2.37.0"
   },
-  "keywords": [],
+  "keywords": [
+    "twenty-app"
+  ],
   "packageManager": "yarn@4.13.0",
   "scripts": {
     "twenty": "twenty",
@@ -26,8 +30,8 @@
     "@types/node": "^24.7.2",
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "oxlint": "^0.16.0",
-    "twenty-client-sdk": "2.35.0",
-    "twenty-sdk": "2.35.0",
+    "twenty-client-sdk": "2.37.0",
+    "twenty-sdk": "2.37.0",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^4.0.0"
