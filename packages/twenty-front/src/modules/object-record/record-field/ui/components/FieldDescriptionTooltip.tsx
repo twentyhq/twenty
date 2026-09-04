@@ -6,7 +6,6 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const fieldDescriptionTooltipClassName = css`
   padding: ${themeCssVariables.spacing[3]} !important;
-  width: 300px !important;
 `;
 
 const StyledTooltipContent = styled.div`
