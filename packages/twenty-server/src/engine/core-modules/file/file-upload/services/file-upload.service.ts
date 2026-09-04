@@ -19,6 +19,7 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/service
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { COMPLETE_FILE_UPLOAD_DEADLINE_MS } from 'src/engine/core-modules/file/file-upload/constants/complete-file-upload-deadline.constant';
+import { MAX_SANITIZABLE_SVG_BYTES } from 'src/engine/core-modules/file/file-upload/constants/max-sanitizable-svg-size.constant';
 import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
 import {
   FileUploadException,
@@ -104,6 +105,20 @@ export class FileUploadService {
     }
 
     const { ext } = buildFileInfo(filename);
+
+    // Completion refuses to sanitize an SVG this big, so reject before the
+    // client transfers it. The declared extension is a client claim, which
+    // only makes this a shortcut: the sniffed check at completion decides.
+    if (ext === 'svg' && size > MAX_SANITIZABLE_SVG_BYTES) {
+      throw new FileUploadException(
+        `SVG of ${size} bytes exceeds the ${MAX_SANITIZABLE_SVG_BYTES} bytes that can be sanitized`,
+        FileUploadExceptionCode.FILE_TOO_LARGE,
+        {
+          userFriendlyMessage: msg`This SVG is too large to be processed.`,
+        },
+      );
+    }
+
     const mimeType = 'application/octet-stream';
 
     const fileId = v4();
