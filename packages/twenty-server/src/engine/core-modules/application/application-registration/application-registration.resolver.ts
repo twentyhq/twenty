@@ -53,10 +53,8 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import {
-  StreamSizeExceededError,
-  streamToBuffer,
-} from 'src/utils/stream-to-buffer';
+import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/application/application-registration-variable/dtos/application-registration-variable.dto';
 import {
   ApplicationRegistrationException,
