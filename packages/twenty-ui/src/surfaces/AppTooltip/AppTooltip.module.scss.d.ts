@@ -1,7 +1,7 @@
 declare const classNames: {
   readonly positioner: 'positioner';
   readonly tooltip: 'tooltip';
-  readonly textOnlyContent: 'textOnlyContent';
+  readonly compactContent: 'compactContent';
   readonly clickable: 'clickable';
   readonly arrow: 'arrow';
 };

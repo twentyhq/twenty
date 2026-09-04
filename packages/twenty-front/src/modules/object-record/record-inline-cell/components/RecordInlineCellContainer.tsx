@@ -1,9 +1,11 @@
 import { styled } from '@linaria/react';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { FieldDescriptionTooltip } from '@/object-record/record-field/ui/components/FieldDescriptionTooltip';
+import {
+  FieldDescriptionTooltip,
+  shouldDisplayFieldDescriptionTooltip,
+} from '@/object-record/record-field/ui/components/FieldDescriptionTooltip';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { RecordInlineCellValue } from '@/object-record/record-inline-cell/components/RecordInlineCellValue';
@@ -113,8 +115,10 @@ export const RecordInlineCellContainer = () => {
   })}`;
 
   const fieldDescription = fieldDefinition?.metadata?.description;
-  const hasFieldDescription =
-    isNonEmptyString(label) && isNonEmptyString(fieldDescription);
+  const hasFieldDescription = shouldDisplayFieldDescriptionTooltip(
+    label,
+    fieldDescription,
+  );
 
   return (
     <StyledInlineCellBaseContainer

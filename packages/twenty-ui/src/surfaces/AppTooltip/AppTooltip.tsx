@@ -57,6 +57,7 @@ export type AppTooltipProps = {
   delay?: TooltipDelay;
   positionStrategy?: PositionStrategy;
   clickable?: boolean;
+  isCompact?: boolean;
   width?: string;
   isOpen?: boolean;
 };
@@ -73,6 +74,7 @@ export const AppTooltip = ({
   positionStrategy,
   children,
   clickable,
+  isCompact,
   width,
   isOpen,
 }: AppTooltipProps) => {
@@ -260,8 +262,10 @@ export const AppTooltip = ({
 
   // react-tooltip's content priority: content prop wins over children
   const renderedContent = isNonEmptyString(content) ? content : children;
-  const isTextOnlyContent =
-    typeof renderedContent === 'string' || typeof renderedContent === 'number';
+  const isCompactContent =
+    isCompact ||
+    typeof renderedContent === 'string' ||
+    typeof renderedContent === 'number';
 
   const isTooltipOpen =
     !hidden &&
@@ -302,7 +306,7 @@ export const AppTooltip = ({
             role="tooltip"
             className={clsx(
               styles.tooltip,
-              isTextOnlyContent && styles.textOnlyContent,
+              isCompactContent && styles.compactContent,
               clickable && styles.clickable,
               className,
             )}

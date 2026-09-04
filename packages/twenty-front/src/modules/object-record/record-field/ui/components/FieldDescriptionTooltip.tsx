@@ -1,13 +1,8 @@
-import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { cloneElement, type ReactElement, useId } from 'react';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const fieldDescriptionTooltipClassName = css`
-  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing['1.5']} !important;
-`;
 
 const StyledTooltipContent = styled.div`
   display: flex;
@@ -39,6 +34,11 @@ type FieldDescriptionTooltipProps = {
   fieldLabel?: string | null;
 };
 
+export const shouldDisplayFieldDescriptionTooltip = (
+  fieldLabel?: string | null,
+  fieldDescription?: string | null,
+) => isNonEmptyString(fieldLabel) && isNonEmptyString(fieldDescription);
+
 export const FieldDescriptionTooltip = ({
   children,
   fieldDescription,
@@ -47,7 +47,7 @@ export const FieldDescriptionTooltip = ({
   const fieldDescriptionTooltipAnchorId = useId();
   const fieldDescriptionId = `${fieldDescriptionTooltipAnchorId}-description`;
 
-  if (!isNonEmptyString(fieldLabel) || !isNonEmptyString(fieldDescription)) {
+  if (!shouldDisplayFieldDescriptionTooltip(fieldLabel, fieldDescription)) {
     return children;
   }
 
@@ -63,8 +63,8 @@ export const FieldDescriptionTooltip = ({
       </span>
       <AppTooltip
         anchorSelect={`[data-tooltip-id='${fieldDescriptionTooltipAnchorId}']`}
-        className={fieldDescriptionTooltipClassName}
         delay={TooltipDelay.longDelay}
+        isCompact
         noArrow
         place="bottom"
         positionStrategy="fixed"
