@@ -588,6 +588,26 @@ export class FileStorageService {
     });
   }
 
+  async move({
+    from,
+    to,
+  }: {
+    from: ResourceIdentifier;
+    to: ResourceIdentifier;
+  }): Promise<void> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    const { onStorageFilePath: fromPath } =
+      this.validateAndBuildFileStoragePathOrThrow(from);
+    const { onStorageFilePath: toPath } =
+      this.validateAndBuildFileStoragePathOrThrow(to);
+
+    return driver.move({
+      from: { folderPath: dirname(fromPath), filename: basename(fromPath) },
+      to: { folderPath: dirname(toPath), filename: basename(toPath) },
+    });
+  }
+
   checkFileExists(params: ResourceIdentifier): Promise<boolean> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
     const { onStorageFilePath } =

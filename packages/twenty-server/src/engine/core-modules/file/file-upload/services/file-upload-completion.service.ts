@@ -15,6 +15,7 @@ import {
   FileUploadExceptionCode,
 } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 import { type BatchFileResult } from 'src/engine/core-modules/file/file-upload/types/batch-file-result.type';
+import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { toBatchErrorMessage } from 'src/engine/core-modules/file/file-upload/utils/to-batch-error-message.util';
 import {
   ANY_MIME_TYPE,
@@ -80,8 +81,24 @@ export class FileUploadCompletionService {
     file: FileEntity;
     storageLocation: FileUploadStorageLocation;
   }): Promise<CompletedUploadedFile> {
-    const metadata =
-      await this.fileStorageService.getFileMetadata(storageLocation);
+    const pendingLocation: FileUploadStorageLocation = {
+      ...storageLocation,
+      resourcePath: buildPendingUploadResourcePath({
+        fileId: file.id,
+        resourcePath: storageLocation.resourcePath,
+      }),
+    };
+
+    let sourceLocation = pendingLocation;
+    let metadata =
+      await this.fileStorageService.getFileMetadata(pendingLocation);
+
+    if (!isDefined(metadata)) {
+      // A retry after the object was moved but before the row was updated
+      // finds nothing left in quarantine, so validate the final path instead.
+      sourceLocation = storageLocation;
+      metadata = await this.fileStorageService.getFileMetadata(storageLocation);
+    }
 
     if (!isDefined(metadata)) {
       throw new FileUploadException(
@@ -106,17 +123,24 @@ export class FileUploadCompletionService {
     }
 
     const mimeType = await this.detectUploadedMimeTypeOrThrow({
-      ...storageLocation,
+      ...sourceLocation,
       filename: file.path,
     });
 
-    this.assertMimeTypeAllowedForFolder(storageLocation.fileFolder, mimeType);
+    this.assertMimeTypeAllowedForFolder(sourceLocation.fileFolder, mimeType);
 
     const size = await this.sanitizeUploadedFileIfNeeded({
-      storageLocation,
+      storageLocation: sourceLocation,
       mimeType,
       size: metadata.size,
     });
+
+    if (sourceLocation === pendingLocation) {
+      await this.fileStorageService.move({
+        from: pendingLocation,
+        to: storageLocation,
+      });
+    }
 
     await this.fileRepository.update(
       workspaceId,

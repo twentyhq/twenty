@@ -7,6 +7,7 @@ import { v4 } from 'uuid';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
 import { type BatchFileResult } from 'src/engine/core-modules/file/file-upload/types/batch-file-result.type';
+import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { toBatchErrorMessage } from 'src/engine/core-modules/file/file-upload/utils/to-batch-error-message.util';
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
 import { FileUploadTokenJwtPayload } from 'src/engine/core-modules/auth/types/file-upload-token-jwt-payload.type';
@@ -61,7 +62,7 @@ export class FileUploadTargetService {
         fileFolder,
         applicationUniversalIdentifier,
         workspaceId,
-        resourcePath,
+        resourcePath: buildPendingUploadResourcePath({ fileId, resourcePath }),
         contentType,
         contentLength: size,
         expiresInSeconds,

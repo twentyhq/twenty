@@ -12,6 +12,7 @@ import {
   PENDING_FILE_CLEANUP_BATCH_SIZE,
   PENDING_FILE_MAX_AGE_MS,
 } from 'src/engine/core-modules/file/file-upload/crons/constants/pending-file-cleanup.constants';
+import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 
@@ -93,11 +94,24 @@ export class PendingFileCleanupService {
       return;
     }
 
-    await this.fileStorageService.deleteFile({
+    const resourcePath = removeFileFolderFromFileEntityPath(file.path);
+
+    const location = {
       workspaceId: file.workspaceId,
       applicationUniversalIdentifier: application.universalIdentifier,
       fileFolder: fileFolder as FileFolder,
-      resourcePath: removeFileFolderFromFileEntityPath(file.path),
+    };
+
+    // Normally the object is still in quarantine, but a crash between the move
+    // and the row update leaves it at its final path with the row PENDING.
+    await this.fileStorageService.deleteFile({
+      ...location,
+      resourcePath: buildPendingUploadResourcePath({
+        fileId: file.id,
+        resourcePath,
+      }),
     });
+
+    await this.fileStorageService.deleteFile({ ...location, resourcePath });
   }
 }

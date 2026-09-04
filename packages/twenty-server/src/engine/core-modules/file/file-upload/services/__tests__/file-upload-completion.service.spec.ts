@@ -7,6 +7,7 @@ import { type FileEntity } from 'src/engine/core-modules/file/entities/file.enti
 import { MAX_SANITIZABLE_SVG_BYTES } from 'src/engine/core-modules/file/file-upload/constants/max-sanitizable-svg-size.constant';
 import { FileUploadExceptionCode } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 import { FileUploadCompletionService } from 'src/engine/core-modules/file/file-upload/services/file-upload-completion.service';
+import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -52,6 +53,7 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
         .fn()
         .mockImplementation(async () => Readable.from(Buffer.from(svgContent))),
       writeFileStream: jest.fn().mockResolvedValue(undefined),
+      move: jest.fn().mockResolvedValue(undefined),
     } as unknown as jest.Mocked<FileStorageService>;
 
     fileRepository = {
@@ -123,5 +125,63 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
     expect(completedFile.size).toBe(size);
     expect(fileStorageService.readFile).not.toHaveBeenCalled();
     expect(fileStorageService.writeFileStream).not.toHaveBeenCalled();
+  });
+
+  it('should validate the quarantined object and move it to its final path', async () => {
+    const size = pngContent.length;
+    const storageLocation = buildStorageLocation('png');
+    const pendingResourcePath = buildPendingUploadResourcePath({
+      fileId,
+      resourcePath: storageLocation.resourcePath,
+    });
+
+    fileStorageService.getFileMetadata.mockResolvedValue({ size });
+    fileStorageService.readFilePrefix.mockResolvedValue(pngContent);
+
+    await buildService().completeUploadedFile({
+      workspaceId,
+      file: buildFile('png', size),
+      storageLocation,
+    });
+
+    expect(fileStorageService.getFileMetadata).toHaveBeenCalledWith(
+      expect.objectContaining({ resourcePath: pendingResourcePath }),
+    );
+    expect(fileStorageService.readFilePrefix).toHaveBeenCalledWith(
+      expect.objectContaining({ resourcePath: pendingResourcePath }),
+    );
+    expect(fileStorageService.move).toHaveBeenCalledWith({
+      from: expect.objectContaining({ resourcePath: pendingResourcePath }),
+      to: storageLocation,
+    });
+  });
+
+  it('should complete from the final path when a retry finds nothing quarantined', async () => {
+    const size = pngContent.length;
+    const storageLocation = buildStorageLocation('png');
+
+    fileStorageService.getFileMetadata
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce({ size });
+    fileStorageService.readFilePrefix.mockResolvedValue(pngContent);
+
+    const completedFile = await buildService().completeUploadedFile({
+      workspaceId,
+      file: buildFile('png', size),
+      storageLocation,
+    });
+
+    expect(completedFile.mimeType).toBe('image/png');
+    expect(fileStorageService.readFilePrefix).toHaveBeenCalledWith(
+      expect.objectContaining({
+        resourcePath: storageLocation.resourcePath,
+      }),
+    );
+    expect(fileStorageService.move).not.toHaveBeenCalled();
+    expect(fileRepository.update).toHaveBeenCalledWith(
+      workspaceId,
+      { id: fileId },
+      expect.objectContaining({ status: FILE_STATUS.UPLOADED }),
+    );
   });
 });
