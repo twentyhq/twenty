@@ -15,7 +15,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 
 export type MessageQueueWorkerConfig = {
   priority: number;
-  workerOptions: Required<Omit<MessageQueueWorkerOptions, 'onJobStatusChange'>>;
+  workerOptions: Required<MessageQueueWorkerOptions>;
 };
 
 export const MESSAGE_QUEUE_WORKER_CONFIG: Record<

@@ -7,7 +7,6 @@ const ALL_NON_SYNCABLE_BROADCAST_ENTITY_NAME = {
   agentChatThread: 'agentChatThread',
   application: 'application',
   applicationRegistration: 'applicationRegistration',
-  queueJob: 'queueJob',
 } as const;
 
 type NonSyncableBroadcastEntityName =

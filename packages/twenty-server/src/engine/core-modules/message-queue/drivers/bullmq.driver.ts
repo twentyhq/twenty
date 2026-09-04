@@ -6,6 +6,7 @@ import {
 
 import v8 from 'v8';
 
+import { type EventEmitter2 } from '@nestjs/event-emitter';
 import * as Sentry from '@sentry/node';
 import {
   type Job,
@@ -22,6 +23,7 @@ import { v4 } from 'uuid';
 import {
   type QueueCronJobOptions,
   type QueueJobOptions,
+  type QueueJobStatusRecipient,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import {
   type InFlightQueueJob,
@@ -35,9 +37,11 @@ import {
 } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
+import { QUEUE_JOB_STATUS_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-status-changed-event.constant';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { type QueueJobStatusChangedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-status-changed-event.type';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -46,7 +50,9 @@ import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/
 
 export type BullMQDriverOptions = QueueOptions;
 
-type BullMQJobsOptions = JobsOptions & { shouldBroadcastStatus?: boolean };
+type BullMQJobsOptions = JobsOptions & {
+  broadcastStatusTo?: QueueJobStatusRecipient;
+};
 
 const V4_LENGTH = 36;
 const BYTES_PER_MEGABYTE = 1024 * 1024;
@@ -71,6 +77,7 @@ export class BullMQDriver
     private options: BullMQDriverOptions,
     private metricsService: MetricsService,
     private twentyConfigService: TwentyConfigService,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   onModuleInit() {
@@ -258,30 +265,15 @@ export class BullMQDriver
       workerOptions,
     );
 
-    const onJobStatusChange = options?.onJobStatusChange;
-
-    if (isDefined(onJobStatusChange)) {
-      let notificationChain = Promise.resolve();
-
-      const notifyJobStatusChange = (
-        job: Job | undefined,
-        state: BullMQJobState,
-      ) => {
-        notificationChain = notificationChain.then(() =>
-          this.notifyJobStatusChange(queueName, job, state, onJobStatusChange),
-        );
-      };
-
-      this.workerMap[queueName].on('active', (job) =>
-        notifyJobStatusChange(job, 'active'),
-      );
-      this.workerMap[queueName].on('completed', (job) =>
-        notifyJobStatusChange(job, 'completed'),
-      );
-      this.workerMap[queueName].on('failed', (job) =>
-        notifyJobStatusChange(job, 'failed'),
-      );
-    }
+    this.workerMap[queueName].on('active', (job) =>
+      this.emitJobStatusChange(queueName, job, 'active'),
+    );
+    this.workerMap[queueName].on('completed', (job) =>
+      this.emitJobStatusChange(queueName, job, 'completed'),
+    );
+    this.workerMap[queueName].on('failed', (job) =>
+      this.emitJobStatusChange(queueName, job, 'failed'),
+    );
 
     this.workerMap[queueName].on('completed', (job) => {
       void this.metricsService.incrementCounterForEvent({
@@ -377,41 +369,31 @@ export class BullMQDriver
     );
   }
 
-  private async notifyJobStatusChange(
+  private emitJobStatusChange(
     queueName: MessageQueue,
     job: Job | undefined,
     state: BullMQJobState,
-    onJobStatusChange: NonNullable<
-      MessageQueueWorkerOptions['onJobStatusChange']
-    >,
-  ): Promise<void> {
-    if (!isDefined(job)) {
+  ): void {
+    if (!isDefined(job) || !isDefined(this.getBroadcastStatusTo(job))) {
       return;
     }
 
-    try {
-      if (!this.shouldBroadcastJobStatus(job)) {
-        return;
-      }
+    const jobDetails = this.buildQueueJobDetails(job, state);
 
-      const jobDetails = this.buildQueueJobDetails(job, state);
-
-      if (isDefined(jobDetails)) {
-        await onJobStatusChange(jobDetails);
-      }
-    } catch (error) {
-      this.logger.warn(
-        `Failed to notify status change of job ${job.id} on queue ${queueName}`,
-        error,
-      );
+    if (!isDefined(jobDetails)) {
+      return;
     }
+
+    this.eventEmitter.emit(QUEUE_JOB_STATUS_CHANGED_EVENT, {
+      queueName,
+      job: jobDetails,
+    } satisfies QueueJobStatusChangedEvent);
   }
 
-  private shouldBroadcastJobStatus(job: Job): boolean {
-    return (
-      'shouldBroadcastStatus' in job.opts &&
-      job.opts.shouldBroadcastStatus === true
-    );
+  private getBroadcastStatusTo(job: Job): QueueJobStatusRecipient | undefined {
+    const { broadcastStatusTo }: BullMQJobsOptions = job.opts;
+
+    return broadcastStatusTo;
   }
 
   private buildJobsOptions({
@@ -443,7 +425,7 @@ export class BullMQDriver
         count: QUEUE_RETENTION.failedMaxCount,
       },
       delay: options?.delay,
-      shouldBroadcastStatus: options?.shouldBroadcastStatus,
+      broadcastStatusTo: options?.broadcastStatusTo,
     };
   }
 
@@ -569,6 +551,7 @@ export class BullMQDriver
       timestamp: job.timestamp,
       processedOn: job.processedOn,
       finishedOn: job.finishedOn,
+      broadcastStatusTo: this.getBroadcastStatusTo(job),
     };
   }
 

@@ -1,4 +1,5 @@
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
+import { dispatchQueueJobEventsFromSseToBrowserEvents } from '@/sse-db-event/utils/dispatchQueueJobEventsFromSseToBrowserEvents';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
 import { ON_EVENT_SUBSCRIPTION } from '@/sse-db-event/graphql/subscriptions/OnEventSubscription';
 import { useDispatchMetadataEventsFromSseToBrowserEvents } from '@/sse-db-event/hooks/useDispatchMetadataEventsFromSseToBrowserEvents';
@@ -135,11 +136,15 @@ export const useTriggerEventStreamCreation = () => {
 
           const metadataEvents = eventSubscription?.metadataEvents ?? [];
 
+          const queueJobEvents = eventSubscription?.queueJobEvents ?? [];
+
           const objectRecordEvents = objectRecordEventsWithQueryIds.map(
             (item) => item.objectRecordEvent,
           );
 
           dispatchMetadataEventsFromSseToBrowserEvents(metadataEvents);
+
+          dispatchQueueJobEventsFromSseToBrowserEvents(queueJobEvents);
 
           triggerOptimisticEffectFromSseEvents({
             objectRecordEvents,
@@ -200,7 +205,12 @@ export const useTriggerEventStreamCreation = () => {
                 const metadataEvents =
                   result?.data?.onEventSubscription?.metadataEvents ?? [];
 
+                const queueJobEvents =
+                  result?.data?.onEventSubscription?.queueJobEvents ?? [];
+
                 dispatchMetadataEventsFromSseToBrowserEvents(metadataEvents);
+
+                dispatchQueueJobEventsFromSseToBrowserEvents(queueJobEvents);
 
                 triggerOptimisticEffectFromSseEvents({
                   objectRecordEvents,

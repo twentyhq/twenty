@@ -1,19 +1,18 @@
 import { renderHook } from '@testing-library/react';
 
-import { METADATA_OPERATION_BROWSER_EVENT_NAME } from '@/browser-event/constants/MetadataOperationBrowserEventName';
-import { dispatchMetadataOperationBrowserEvent } from '@/browser-event/utils/dispatchMetadataOperationBrowserEvent';
+import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
+import { QUEUE_JOB_BROWSER_EVENT_NAME } from '@/queue-job/constants/QueueJobBrowserEventName';
 import { useListenToQueueJobState } from '@/queue-job/hooks/useListenToQueueJobState';
-import { JobState } from '~/generated-metadata/graphql';
+import { JobState, type JobStatus } from '~/generated-metadata/graphql';
 
 const JOB_ID = 'job-1';
 
-const dispatchQueueJobUpdate = (jobId: string, state: JobState) => {
-  dispatchMetadataOperationBrowserEvent({
-    metadataName: 'queueJob',
-    operation: {
-      type: 'update',
-      updatedRecord: { jobId, state, attemptsMade: 1, enqueuedAt: 1 },
-    },
+const dispatchQueueJobEvent = (jobId: string, state: JobState) => {
+  dispatchBrowserEvent<JobStatus>(QUEUE_JOB_BROWSER_EVENT_NAME, {
+    jobId,
+    state,
+    attemptsMade: 1,
+    enqueuedAt: 1,
   });
 };
 
@@ -25,8 +24,8 @@ describe('useListenToQueueJobState', () => {
       useListenToQueueJobState({ jobId: JOB_ID, onStateChange }),
     );
 
-    dispatchQueueJobUpdate('job-2', JobState.COMPLETED);
-    dispatchQueueJobUpdate(JOB_ID, JobState.FAILED);
+    dispatchQueueJobEvent('job-2', JobState.COMPLETED);
+    dispatchQueueJobEvent(JOB_ID, JobState.FAILED);
 
     expect(onStateChange).toHaveBeenCalledTimes(1);
     expect(onStateChange).toHaveBeenCalledWith(
@@ -40,7 +39,7 @@ describe('useListenToQueueJobState', () => {
     renderHook(() => useListenToQueueJobState({ onStateChange: jest.fn() }));
 
     expect(addEventListenerSpy).not.toHaveBeenCalledWith(
-      METADATA_OPERATION_BROWSER_EVENT_NAME,
+      QUEUE_JOB_BROWSER_EVENT_NAME,
       expect.anything(),
     );
 
