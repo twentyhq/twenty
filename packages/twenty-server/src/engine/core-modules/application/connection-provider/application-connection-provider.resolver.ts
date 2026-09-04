@@ -57,8 +57,6 @@ export class ApplicationConnectionProviderResolver {
     }));
   }
 
-  // Resolves the display url of the logo bundled in the installed
-  // application's public assets, so clients never build file urls themselves.
   @ResolveField(() => String, { nullable: true })
   logoUrl(
     @Parent()

@@ -35,8 +35,6 @@ export class ApplicationConnectionProviderDTO {
   @Field()
   displayName: string;
 
-  // Application-relative path of the logo bundled in the app, not displayable
-  // on its own: exposed to clients through the logoUrl field
   logo: string | null;
 
   @Field(() => ApplicationConnectionProviderOAuthConfigDTO, { nullable: true })
