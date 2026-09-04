@@ -14421,6 +14421,11 @@ msgstr "Yalnızca npm'de yayımlanmış uygulamalar bu şekilde sahiplenilebilir
 msgid "Only date & participants will be shared with your team."
 msgstr "Yalnızca tarih ve katılımcılar ekibinizle paylaşılacak."
 
+#. js-lingui-id: kiuQlM
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "Only enable for steps that are safe to run twice: a failed attempt may already have written data or sent messages."
+msgstr ""
+
 #. js-lingui-id: aluwJP
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Only in {currentLanguageLabel}"

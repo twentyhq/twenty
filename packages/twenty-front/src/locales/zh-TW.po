@@ -14398,6 +14398,11 @@ msgstr "只有發布到 npm 的應用程式才能以此方式認領。"
 msgid "Only date & participants will be shared with your team."
 msgstr "只有日期和參與者將與您的團隊共享。"
 
+#. js-lingui-id: kiuQlM
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "Only enable for steps that are safe to run twice: a failed attempt may already have written data or sent messages."
+msgstr ""
+
 #. js-lingui-id: aluwJP
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Only in {currentLanguageLabel}"
