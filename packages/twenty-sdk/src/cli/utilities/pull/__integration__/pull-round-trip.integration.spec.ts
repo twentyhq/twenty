@@ -3,7 +3,10 @@ import { buildPullEntities } from '@/cli/utilities/pull/build-pull-entities';
 import { writeDefineFile } from '@/cli/utilities/pull/write-define-file';
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
-import { type Manifest } from 'twenty-shared/application';
+import {
+  getFieldUniversalIdentifier,
+  type Manifest,
+} from 'twenty-shared/application';
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
@@ -19,6 +22,9 @@ const COMPANY_PETS_FIELD_UID = '77777777-7777-4777-8777-777777777777';
 const COMPANY_TAGLINE_FIELD_UID = '88888888-8888-4888-8888-888888888888';
 const INDEX_UID = '99999999-9999-4999-8999-999999999999';
 const INDEX_FIELD_UID = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+const JUNCTION_UID = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+const JUNCTION_PET_FIELD_UID = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
+const PET_AGREEMENTS_FIELD_UID = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
 
 const EXPORTED_MANIFEST = {
   application: {
@@ -85,7 +91,7 @@ const EXPORTED_MANIFEST = {
           label: 'Status',
           options: [
             {
-              id: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+              id: 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
               value: 'HEALTHY',
               label: 'Healthy',
               color: 'green',
@@ -120,6 +126,42 @@ const EXPORTED_MANIFEST = {
             relationType: 'MANY_TO_ONE',
             onDelete: 'SET_NULL',
             joinColumnName: 'ownerId',
+          },
+        },
+      ],
+    },
+    {
+      universalIdentifier: JUNCTION_UID,
+      nameSingular: 'petCareAgreement',
+      namePlural: 'petCareAgreements',
+      labelSingular: 'Pet care agreement',
+      labelPlural: 'Pet care agreements',
+      labelIdentifierFieldMetadataUniversalIdentifier:
+        getFieldUniversalIdentifier({
+          applicationUniversalIdentifier: APP_UID,
+          objectUniversalIdentifier: JUNCTION_UID,
+          name: 'id',
+        }),
+      fields: [
+        {
+          universalIdentifier: JUNCTION_PET_FIELD_UID,
+          type: 'RELATION',
+          name: 'pet',
+          label: 'Pet',
+          options: null,
+          defaultValue: null,
+          isUIEditable: true,
+          writability: 'OPEN',
+          isNullable: true,
+          isUnique: false,
+          isLabelSyncedWithName: false,
+          relationTargetFieldMetadataUniversalIdentifier:
+            PET_AGREEMENTS_FIELD_UID,
+          relationTargetObjectMetadataUniversalIdentifier: PET_UID,
+          universalSettings: {
+            relationType: 'MANY_TO_ONE',
+            onDelete: 'CASCADE',
+            joinColumnName: 'petId',
           },
         },
       ],
@@ -265,6 +307,23 @@ describe('pull round trip', () => {
       canonicalize(sortByUniversalIdentifier(builtManifest?.indexes ?? [])),
     ).toEqual(
       canonicalize(sortByUniversalIdentifier(EXPORTED_MANIFEST.indexes ?? [])),
+    );
+  });
+
+  it('should keep a junction object without adding a name field to it', () => {
+    const junctionObject = (builtManifest?.objects ?? []).find(
+      (objectManifest) => objectManifest.universalIdentifier === JUNCTION_UID,
+    );
+
+    expect(junctionObject?.fields.map((field) => field.name)).toEqual(['pet']);
+    expect(
+      junctionObject?.labelIdentifierFieldMetadataUniversalIdentifier,
+    ).toBe(
+      getFieldUniversalIdentifier({
+        applicationUniversalIdentifier: APP_UID,
+        objectUniversalIdentifier: JUNCTION_UID,
+        name: 'id',
+      }),
     );
   });
 

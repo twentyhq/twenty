@@ -147,21 +147,6 @@ export const buildPullEntities = (
   const fieldNameByUniversalIdentifier = new Map<string, string>();
 
   for (const objectManifest of manifest.objects) {
-    const hasResolvableLabelIdentifier = objectManifest.fields.some(
-      (field) =>
-        field.universalIdentifier ===
-        objectManifest.labelIdentifierFieldMetadataUniversalIdentifier,
-    );
-
-    if (!hasResolvableLabelIdentifier) {
-      skipped.push({
-        kind: 'object',
-        universalIdentifier: objectManifest.universalIdentifier,
-        reason: `${objectManifest.nameSingular}: its label identifier field is engine-derived and not part of the export`,
-      });
-      continue;
-    }
-
     for (const field of objectManifest.fields) {
       fieldNameByUniversalIdentifier.set(field.universalIdentifier, field.name);
     }

@@ -4,6 +4,7 @@ import {
   type ObjectFieldManifest,
 } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 const getDefaultNameObjectField = ({
   objectConfig,
@@ -44,7 +45,18 @@ export const getDefaultFieldsInObjectFields = ({
     applicationUniversalIdentifier,
   });
 
-  if (!objectConfigFieldNames.includes(defaultNameObjectField.name)) {
+  const labelIdentifiesAnEngineDerivedField =
+    isDefined(objectConfig.labelIdentifierFieldMetadataUniversalIdentifier) &&
+    !objectConfig.fields.some(
+      (field) =>
+        field.universalIdentifier ===
+        objectConfig.labelIdentifierFieldMetadataUniversalIdentifier,
+    );
+
+  if (
+    !objectConfigFieldNames.includes(defaultNameObjectField.name) &&
+    !labelIdentifiesAnEngineDerivedField
+  ) {
     objectFieldsWithDefaults.push(defaultNameObjectField);
   }
 

@@ -32,20 +32,22 @@ export const defineObject: DefineEntity<ObjectConfig> = (config) => {
 
   errors.push(...fieldErrors);
 
-  if (
+  const labelIdentifiesAnEngineDerivedField =
     isDefined(config.labelIdentifierFieldMetadataUniversalIdentifier) &&
     !config.fields.some(
       (field) =>
         field.universalIdentifier ===
         config.labelIdentifierFieldMetadataUniversalIdentifier,
-    )
-  ) {
-    errors.push(
-      'labelIdentifierFieldMetadataUniversalIdentifier must reference a field defined in the fields array',
     );
-  }
 
-  const warnings = getFieldDefaultValueWarnings(config.fields);
+  const warnings = [
+    ...getFieldDefaultValueWarnings(config.fields),
+    ...(labelIdentifiesAnEngineDerivedField
+      ? [
+          `labelIdentifierFieldMetadataUniversalIdentifier of "${config.nameSingular}" names no field in its fields array; it must name a field the engine derives for this object, or the sync will fail to resolve it`,
+        ]
+      : []),
+  ];
 
   return createValidationResult({
     config,

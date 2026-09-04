@@ -111,61 +111,43 @@ describe('buildPullEntities', () => {
     ).toBe('src/indexes/pet-name.index.ts');
   });
 
-  it('should skip an object whose label identifier field is not part of the export', () => {
+  it('should write an object whose label identifier names an engine-derived field, keeping the pointer', () => {
+    const junctionObject = {
+      universalIdentifier: JUNCTION_UID,
+      nameSingular: 'petCareAgreement',
+      namePlural: 'petCareAgreements',
+      labelSingular: 'Pet care agreement',
+      labelPlural: 'Pet care agreements',
+      labelIdentifierFieldMetadataUniversalIdentifier: JUNCTION_ID_FIELD_UID,
+      fields: [
+        {
+          universalIdentifier: 'relation-field-uid',
+          name: 'pet',
+          label: 'Pet',
+          type: 'RELATION',
+        },
+      ],
+    };
+
     const { entities, skipped } = buildPullEntities(
       buildManifest({
-        objects: [
-          {
-            universalIdentifier: JUNCTION_UID,
-            nameSingular: 'petCareAgreement',
-            namePlural: 'petCareAgreements',
-            labelSingular: 'Pet care agreement',
-            labelPlural: 'Pet care agreements',
-            labelIdentifierFieldMetadataUniversalIdentifier:
-              JUNCTION_ID_FIELD_UID,
-            fields: [
-              {
-                universalIdentifier: 'relation-field-uid',
-                name: 'pet',
-                label: 'Pet',
-                type: 'RELATION',
-              },
-            ],
-          },
-        ],
+        objects: [junctionObject],
       } as unknown as Partial<Manifest>),
     );
+    const object = entities.find((entity) => entity.kind === 'object');
 
-    expect(entities.some((entity) => entity.kind === 'object')).toBe(false);
-    expect(skipped).toEqual([
-      {
-        kind: 'object',
-        universalIdentifier: JUNCTION_UID,
-        reason:
-          'petCareAgreement: its label identifier field is engine-derived and not part of the export',
-      },
-    ]);
+    expect(skipped).toEqual([]);
+    expect(object?.config).toEqual(junctionObject);
   });
 
-  it('should skip an index whose object was skipped', () => {
+  it('should skip an index whose object is not part of the export', () => {
     const { entities, skipped } = buildPullEntities(
       buildManifest({
-        objects: [
-          {
-            universalIdentifier: JUNCTION_UID,
-            nameSingular: 'petCareAgreement',
-            namePlural: 'petCareAgreements',
-            labelSingular: 'Pet care agreement',
-            labelPlural: 'Pet care agreements',
-            labelIdentifierFieldMetadataUniversalIdentifier:
-              JUNCTION_ID_FIELD_UID,
-            fields: [],
-          },
-        ],
+        objects: [],
         indexes: [
           {
             universalIdentifier: INDEX_UID,
-            objectUniversalIdentifier: JUNCTION_UID,
+            objectUniversalIdentifier: 'an-object-of-another-application',
             fields: [{ fieldUniversalIdentifier: 'unknown-field' }],
           },
         ],
