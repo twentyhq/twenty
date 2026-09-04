@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -8,7 +9,8 @@ import { type QuotaConsumptionRow } from 'src/engine/core-modules/usage-limit/ty
 const spenderColumnMatches = (
   rowValue: string,
   spenderId: string | null,
-): boolean => (isDefined(spenderId) ? rowValue === spenderId : rowValue !== '');
+): boolean =>
+  isDefined(spenderId) ? rowValue === spenderId : isNonEmptyString(rowValue);
 
 const rowMatchesCounter = (
   row: QuotaConsumptionRow,
