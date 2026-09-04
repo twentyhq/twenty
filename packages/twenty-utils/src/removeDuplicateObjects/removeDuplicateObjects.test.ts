@@ -1,0 +1,2 @@
+import { removeDuplicateObjects } from './removeDuplicateObjects'; import assert from 'node:assert/strict';
+assert.deepEqual(removeDuplicateObjects([{ id: 1 }, { id: 2 }, { id: 1 }], x => String(x.id)), [{ id: 1 }, { id: 2 }]);
