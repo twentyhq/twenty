@@ -3,7 +3,7 @@ import { type MessageQueueJobData } from 'src/engine/core-modules/message-queue/
 
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
-export type QueueJobStatusChangedEvent = {
+export type QueueJobChangedEvent = {
   queueName: MessageQueue;
   job: QueueJobDetails<MessageQueueJobData>;
 };

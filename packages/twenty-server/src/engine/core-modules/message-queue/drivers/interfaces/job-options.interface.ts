@@ -4,7 +4,7 @@ export type QueueJobBackoffOptions = {
   jitter?: number;
 };
 
-export type QueueJobStatusRecipient = {
+export type QueueJobRecipient = {
   workspaceId: string;
   userWorkspaceId: string;
 };
@@ -16,7 +16,7 @@ export interface QueueJobOptions {
   retryLimit?: number;
   backoff?: QueueJobBackoffOptions;
   delay?: number;
-  broadcastStatusTo?: QueueJobStatusRecipient;
+  broadcastTo?: QueueJobRecipient;
 }
 
 export interface QueueCronJobOptions extends QueueJobOptions {

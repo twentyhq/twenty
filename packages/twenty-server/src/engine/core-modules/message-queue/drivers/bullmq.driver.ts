@@ -21,7 +21,7 @@ import { v4 } from 'uuid';
 import {
   type QueueCronJobOptions,
   type QueueJobOptions,
-  type QueueJobStatusRecipient,
+  type QueueJobRecipient,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import {
   type InFlightQueueJob,
@@ -35,11 +35,11 @@ import {
 } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
-import { QUEUE_JOB_STATUS_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-status-changed-event.constant';
+import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { type QueueJobStatusChangedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-status-changed-event.type';
+import { type QueueJobChangedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-changed-event.type';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -49,7 +49,7 @@ import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/
 export type BullMQDriverOptions = QueueOptions;
 
 type BullMQJobsOptions = JobsOptions & {
-  broadcastStatusTo?: QueueJobStatusRecipient;
+  broadcastTo?: QueueJobRecipient;
 };
 
 const V4_LENGTH = 36;
@@ -249,13 +249,13 @@ export class BullMQDriver
     );
 
     this.workerMap[queueName].on('active', (job) =>
-      this.emitJobStatusChange(queueName, job, 'active'),
+      this.emitJobChange({ queueName, job, state: 'active' }),
     );
     this.workerMap[queueName].on('completed', (job) =>
-      this.emitJobStatusChange(queueName, job, 'completed'),
+      this.emitJobChange({ queueName, job, state: 'completed' }),
     );
     this.workerMap[queueName].on('failed', (job) =>
-      this.emitJobStatusChange(queueName, job, 'failed'),
+      this.emitJobChange({ queueName, job, state: 'failed' }),
     );
 
     this.workerMap[queueName].on('completed', (job) => {
@@ -352,31 +352,35 @@ export class BullMQDriver
     );
   }
 
-  private emitJobStatusChange(
-    queueName: MessageQueue,
-    job: Job | undefined,
-    state: BullMQJobState,
-  ): void {
-    if (!isDefined(job) || !isDefined(this.getBroadcastStatusTo(job))) {
+  private emitJobChange({
+    queueName,
+    job,
+    state,
+  }: {
+    queueName: MessageQueue;
+    job: Job | undefined;
+    state: BullMQJobState;
+  }): void {
+    if (!isDefined(job) || !isDefined(this.getBroadcastTo(job))) {
       return;
     }
 
-    const jobDetails = this.buildQueueJobDetails(job, state);
+    const jobDetails = this.buildQueueJobDetails({ job, state });
 
     if (!isDefined(jobDetails)) {
       return;
     }
 
-    this.eventEmitter.emit(QUEUE_JOB_STATUS_CHANGED_EVENT, {
+    this.eventEmitter.emit(QUEUE_JOB_CHANGED_EVENT, {
       queueName,
       job: jobDetails,
-    } satisfies QueueJobStatusChangedEvent);
+    } satisfies QueueJobChangedEvent);
   }
 
-  private getBroadcastStatusTo(job: Job): QueueJobStatusRecipient | undefined {
-    const { broadcastStatusTo }: BullMQJobsOptions = job.opts;
+  private getBroadcastTo(job: Job): QueueJobRecipient | undefined {
+    const { broadcastTo }: BullMQJobsOptions = job.opts;
 
-    return broadcastStatusTo;
+    return broadcastTo;
   }
 
   private buildJobsOptions({
@@ -408,7 +412,7 @@ export class BullMQDriver
         count: QUEUE_RETENTION.failedMaxCount,
       },
       delay: options?.delay,
-      broadcastStatusTo: options?.broadcastStatusTo,
+      broadcastTo: options?.broadcastTo,
     };
   }
 
@@ -514,13 +518,16 @@ export class BullMQDriver
       return undefined;
     }
 
-    return this.buildQueueJobDetails<T>(job, state);
+    return this.buildQueueJobDetails<T>({ job, state });
   }
 
-  private buildQueueJobDetails<T extends MessageQueueJobData>(
-    job: Job,
-    state: BullMQJobState,
-  ): QueueJobDetails<T> | undefined {
+  private buildQueueJobDetails<T extends MessageQueueJobData>({
+    job,
+    state,
+  }: {
+    job: Job;
+    state: BullMQJobState;
+  }): QueueJobDetails<T> | undefined {
     if (!isDefined(job.id)) {
       return undefined;
     }
@@ -534,7 +541,7 @@ export class BullMQDriver
       timestamp: job.timestamp,
       processedOn: job.processedOn,
       finishedOn: job.finishedOn,
-      broadcastStatusTo: this.getBroadcastStatusTo(job),
+      broadcastTo: this.getBroadcastTo(job),
     };
   }
 

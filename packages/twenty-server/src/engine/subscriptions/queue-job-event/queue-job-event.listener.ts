@@ -3,13 +3,13 @@ import { OnEvent } from '@nestjs/event-emitter';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type QueueJobStatusRecipient } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
+import { type QueueJobRecipient } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { type QueueJobDetails } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 import { type MessageQueueJobData } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 
-import { QUEUE_JOB_STATUS_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-status-changed-event.constant';
+import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { bullMQToJobStateEnum } from 'src/engine/core-modules/message-queue/enums/job-state.enum';
-import { type QueueJobStatusChangedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-status-changed-event.type';
+import { type QueueJobChangedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-changed-event.type';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
 @Injectable()
@@ -21,23 +21,26 @@ export class QueueJobEventListener {
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
   ) {}
 
-  @OnEvent(QUEUE_JOB_STATUS_CHANGED_EVENT)
-  handleJobStatusChanged({ job }: QueueJobStatusChangedEvent): void {
-    const { broadcastStatusTo } = job;
+  @OnEvent(QUEUE_JOB_CHANGED_EVENT)
+  handleJobChanged({ job }: QueueJobChangedEvent): void {
+    const { broadcastTo } = job;
 
-    if (!isDefined(broadcastStatusTo)) {
+    if (!isDefined(broadcastTo)) {
       return;
     }
 
     this.publishChain = this.publishChain.then(() =>
-      this.publish(job, broadcastStatusTo),
+      this.publish({ job, broadcastTo }),
     );
   }
 
-  private async publish(
-    job: QueueJobDetails<MessageQueueJobData>,
-    { workspaceId, userWorkspaceId }: QueueJobStatusRecipient,
-  ): Promise<void> {
+  private async publish({
+    job,
+    broadcastTo: { workspaceId, userWorkspaceId },
+  }: {
+    job: QueueJobDetails<MessageQueueJobData>;
+    broadcastTo: QueueJobRecipient;
+  }): Promise<void> {
     try {
       await this.workspaceEventBroadcaster.broadcastQueueJobEvent({
         workspaceId,
