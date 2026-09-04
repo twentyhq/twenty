@@ -15,6 +15,11 @@
     },
     "agent_view": {
       "agent_description": "Ask about your CRM: look up people, companies and opportunities, create and update records, and capture notes and tasks."
+    },
+    "unfurl_domains": ["<your-twenty-front-host>"],
+    "rich_previews": {
+      "is_active": true,
+      "entity_types": ["slack#/entities/item", "slack#/entities/task"]
     }
   },
   "oauth_config": {
@@ -32,6 +37,8 @@
         "groups:history",
         "im:history",
         "im:read",
+        "links:read",
+        "links:write",
         "users:read",
         "users:read.email",
         "assistant:write"
@@ -49,6 +56,8 @@
         "app_home_opened",
         "app_mention",
         "app_uninstalled",
+        "entity_details_requested",
+        "link_shared",
         "member_joined_channel",
         "message.channels",
         "message.groups",

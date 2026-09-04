@@ -36,6 +36,34 @@ describe('computeTwentyOrmException', () => {
     );
   });
 
+  it('should name the violated constraint and its table when the driver reports them', () => {
+    const error = Object.assign(
+      new Error('duplicate key value violates unique constraint'),
+      {
+        code: POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION,
+        constraint: 'IDX_UNIQUE_9f2b1a',
+        table: 'messageThreadTarget',
+      },
+    );
+
+    const result = computeTwentyOrmException(error);
+
+    expect(result.message).toBe(
+      'A duplicate entry was detected: unique constraint messageThreadTarget.IDX_UNIQUE_9f2b1a was violated',
+    );
+  });
+
+  it('should keep the bare duplicate message when the driver reports no constraint', () => {
+    const error = buildPostgresError(
+      'duplicate key value violates unique constraint',
+      POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION,
+    );
+
+    const result = computeTwentyOrmException(error);
+
+    expect(result.message).toBe('A duplicate entry was detected');
+  });
+
   it('should map an invalid text representation to INVALID_INPUT', () => {
     const error = buildPostgresError(
       'invalid input syntax for type uuid: "not-a-uuid"',

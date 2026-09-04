@@ -10,6 +10,7 @@ import {
   SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
   SLACK_ASSISTANT_WORKER_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { SLACK_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/constants/slack-assistant-agent-budget-seconds';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS } from 'src/logic-functions/constants/slack-assistant-worker-timeout-seconds';
 import { SLACK_MARKDOWN_BLOCK_MAX_LENGTH } from 'src/logic-functions/constants/slack-markdown-block-max-length';
@@ -21,7 +22,7 @@ import { buildSlackAssistantMessages } from 'src/logic-functions/utils/build-sla
 import { buildSlackAssistantRequestName } from 'src/logic-functions/utils/build-slack-assistant-request-name';
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
-import { fetchWorkspaceBaseUrl } from 'src/logic-functions/utils/fetch-workspace-base-url';
+import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspace-base-urls';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
@@ -53,6 +54,9 @@ export const slackAssistantWorkerHandler = async (
   ) {
     return { skipped: true, reason: 'Request record is missing fields' };
   }
+
+  const agentDeadlineAtMs =
+    Date.now() + SLACK_ASSISTANT_AGENT_BUDGET_SECONDS * 1000;
 
   const client = new CoreApiClient();
 
@@ -89,7 +93,7 @@ export const slackAssistantWorkerHandler = async (
         assistantBotUserId,
         isDirectMessage,
       },
-      workspaceBaseUrl,
+      workspaceBaseUrls,
     ] = await Promise.all([
       fetchSlackAssistantContext({
         slackChannelId,
@@ -97,7 +101,7 @@ export const slackAssistantWorkerHandler = async (
         slackMessageTimestamp,
         slackUserId: record.slackUserId,
       }),
-      fetchWorkspaceBaseUrl(),
+      fetchWorkspaceBaseUrls(),
     ]);
 
     const runAsWorkspaceMemberId = await resolveSlackRunAsForRequest({
@@ -119,6 +123,11 @@ export const slackAssistantWorkerHandler = async (
       }).catch(() => undefined);
     }
 
+    const agentBudgetRemainingSeconds = Math.max(
+      Math.ceil((agentDeadlineAtMs - Date.now()) / 1000),
+      0,
+    );
+
     const agentResult = await runSlackAssistantAgentWithStatus({
       agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
       runAsWorkspaceMemberId,
@@ -127,11 +136,12 @@ export const slackAssistantWorkerHandler = async (
         requesterName,
         conversationMessages,
         runAsWorkspaceMemberId,
-        timeoutSeconds: SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS,
-        workspaceBaseUrl,
+        timeoutSeconds: agentBudgetRemainingSeconds,
+        workspaceBaseUrl: workspaceBaseUrls[0],
       }),
       slackChannelId,
       threadTimestamp: parentMessageTimestamp,
+      deadlineAtMs: agentDeadlineAtMs,
     });
 
     if (!agentResult.success) {

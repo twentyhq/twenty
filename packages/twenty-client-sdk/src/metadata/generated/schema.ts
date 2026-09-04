@@ -664,26 +664,6 @@ export interface ApplicationRegistration {
     __typename: 'ApplicationRegistration'
 }
 
-export interface UsageLimit {
-    id: Scalars['UUID']
-    resourceType: UsageResourceType
-    operationType: UsageOperationType
-    spenderType: Scalars['String']
-    spenderId: Scalars['String']
-    limitKind: Scalars['String']
-    windowSeconds: Scalars['Int']
-    limitValueType: Scalars['String']
-    limitValue: Scalars['BigInt']
-    burstValue?: Scalars['BigInt']
-    createdAt: Scalars['DateTime']
-    updatedAt: Scalars['DateTime']
-    __typename: 'UsageLimit'
-}
-
-export type UsageResourceType = 'AI' | 'WORKFLOW' | 'APP' | 'STORAGE' | 'API' | 'LOGIC_FUNCTION' | 'EMAIL'
-
-export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'API_REQUEST' | 'SUBSCRIPTION'
-
 export interface SdkClientChecksums {
     core?: Scalars['String']
     metadata: Scalars['String']
@@ -1423,6 +1403,27 @@ export interface UsageAnalytics {
     __typename: 'UsageAnalytics'
 }
 
+export interface UsageLimit {
+    id: Scalars['UUID']
+    resourceType: UsageResourceType
+    operationType: UsageOperationType
+    spenderType: Scalars['String']
+    spenderId?: Scalars['String']
+    limitKind: Scalars['String']
+    periodCount: Scalars['Int']
+    periodUnit: Scalars['String']
+    meter: Scalars['String']
+    limitValue: Scalars['BigInt']
+    burstValue?: Scalars['BigInt']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    __typename: 'UsageLimit'
+}
+
+export type UsageResourceType = 'AI' | 'WORKFLOW' | 'APP' | 'STORAGE' | 'API' | 'LOGIC_FUNCTION' | 'EMAIL'
+
+export type UsageOperationType = 'ALL' | 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'API_REQUEST' | 'SUBSCRIPTION'
+
 export interface ApprovedAccessDomain {
     id: Scalars['UUID']
     domain: Scalars['String']
@@ -1511,7 +1512,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' | 'IS_API_RATE_LIMIT_V2_ENABLED' | 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED'
+export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' | 'IS_API_RATE_LIMIT_V2_ENABLED' | 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' | 'IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -2282,6 +2283,38 @@ export interface ApplicationAuthorization {
     lastUsedAt: Scalars['DateTime']
     createdAt: Scalars['DateTime']
     __typename: 'ApplicationAuthorization'
+}
+
+export interface ApplicationExportApplication {
+    universalIdentifier: Scalars['String']
+    displayName: Scalars['String']
+    sourceType: ApplicationRegistrationSourceType
+    __typename: 'ApplicationExportApplication'
+}
+
+export interface ApplicationExportCoverageEntry {
+    metadataName: Scalars['String']
+    universalIdentifier: Scalars['String']
+    status: ApplicationExportCoverageStatus
+    reason?: Scalars['String']
+    __typename: 'ApplicationExportCoverageEntry'
+}
+
+export type ApplicationExportCoverageStatus = 'EXPORTED' | 'ENGINE_DERIVED' | 'EXCLUDED' | 'UNSUPPORTED' | 'FOREIGN_OWNED'
+
+export interface ApplicationExportFile {
+    folder: Scalars['String']
+    path: Scalars['String']
+    content: Scalars['String']
+    __typename: 'ApplicationExportFile'
+}
+
+export interface ApplicationExport {
+    application: ApplicationExportApplication
+    manifest: Scalars['JSON']
+    coverage: ApplicationExportCoverageEntry[]
+    files: ApplicationExportFile[]
+    __typename: 'ApplicationExport'
 }
 
 export interface File {
@@ -3132,6 +3165,7 @@ export interface Query {
     getAutoCompleteAddress: AutocompleteResult[]
     getAddressDetails: PlaceDetailsResult
     findManyPublicDomains: PublicDomain[]
+    exportApplication: ApplicationExport
     currentUserApplicationAuthorizations: ApplicationAuthorization[]
     __typename: 'Query'
 }
@@ -4072,23 +4106,6 @@ export interface ApplicationRegistrationGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface UsageLimitGenqlSelection{
-    id?: boolean | number
-    resourceType?: boolean | number
-    operationType?: boolean | number
-    spenderType?: boolean | number
-    spenderId?: boolean | number
-    limitKind?: boolean | number
-    windowSeconds?: boolean | number
-    limitValueType?: boolean | number
-    limitValue?: boolean | number
-    burstValue?: boolean | number
-    createdAt?: boolean | number
-    updatedAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface SdkClientChecksumsGenqlSelection{
     core?: boolean | number
     metadata?: boolean | number
@@ -4868,6 +4885,24 @@ export interface UsageAnalyticsGenqlSelection{
     periodStart?: boolean | number
     periodEnd?: boolean | number
     userDailyUsage?: UsageUserDailyGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageLimitGenqlSelection{
+    id?: boolean | number
+    resourceType?: boolean | number
+    operationType?: boolean | number
+    spenderType?: boolean | number
+    spenderId?: boolean | number
+    limitKind?: boolean | number
+    periodCount?: boolean | number
+    periodUnit?: boolean | number
+    meter?: boolean | number
+    limitValue?: boolean | number
+    burstValue?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5796,6 +5831,40 @@ export interface ApplicationAuthorizationGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ApplicationExportApplicationGenqlSelection{
+    universalIdentifier?: boolean | number
+    displayName?: boolean | number
+    sourceType?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationExportCoverageEntryGenqlSelection{
+    metadataName?: boolean | number
+    universalIdentifier?: boolean | number
+    status?: boolean | number
+    reason?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationExportFileGenqlSelection{
+    folder?: boolean | number
+    path?: boolean | number
+    content?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationExportGenqlSelection{
+    application?: ApplicationExportApplicationGenqlSelection
+    manifest?: boolean | number
+    coverage?: ApplicationExportCoverageEntryGenqlSelection
+    files?: ApplicationExportFileGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface FileGenqlSelection{
     id?: boolean | number
     path?: boolean | number
@@ -6675,6 +6744,7 @@ export interface QueryGenqlSelection{
     getAutoCompleteAddress?: (AutocompleteResultGenqlSelection & { __args: {address: Scalars['String'], token: Scalars['String'], country?: (Scalars['String'] | null), isFieldCity?: (Scalars['Boolean'] | null)} })
     getAddressDetails?: (PlaceDetailsResultGenqlSelection & { __args: {placeId: Scalars['String'], token: Scalars['String']} })
     findManyPublicDomains?: PublicDomainGenqlSelection
+    exportApplication?: (ApplicationExportGenqlSelection & { __args: {universalIdentifier: Scalars['UUID']} })
     currentUserApplicationAuthorizations?: ApplicationAuthorizationGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -6986,7 +7056,7 @@ update: UpdateNavigationMenuItemInput}
 
 export interface UpdateNavigationMenuItemInput {folderId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),name?: (Scalars['String'] | null),link?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),color?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null)}
 
-export interface UpsertUsageLimitInput {resourceType: UsageResourceType,operationType: UsageOperationType,spenderType: Scalars['String'],spenderId?: (Scalars['String'] | null),limitKind: Scalars['String'],windowSeconds: Scalars['Int'],limitValue: Scalars['BigInt'],burstValue?: (Scalars['BigInt'] | null)}
+export interface UpsertUsageLimitInput {resourceType: UsageResourceType,operationType: UsageOperationType,spenderType: Scalars['String'],spenderId?: (Scalars['String'] | null),limitKind: Scalars['String'],periodCount: Scalars['Int'],periodUnit: Scalars['String'],meter: Scalars['String'],limitValue: Scalars['BigInt'],burstValue?: (Scalars['BigInt'] | null)}
 
 export interface CreateViewFilterGroupInput {id?: (Scalars['UUID'] | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
 
@@ -7688,14 +7758,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const UsageLimit_possibleTypes: string[] = ['UsageLimit']
-    export const isUsageLimit = (obj?: { __typename?: any } | null): obj is UsageLimit => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageLimit"')
-      return UsageLimit_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const SdkClientChecksums_possibleTypes: string[] = ['SdkClientChecksums']
     export const isSdkClientChecksums = (obj?: { __typename?: any } | null): obj is SdkClientChecksums => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isSdkClientChecksums"')
@@ -8300,6 +8362,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isUsageAnalytics = (obj?: { __typename?: any } | null): obj is UsageAnalytics => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageAnalytics"')
       return UsageAnalytics_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageLimit_possibleTypes: string[] = ['UsageLimit']
+    export const isUsageLimit = (obj?: { __typename?: any } | null): obj is UsageLimit => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageLimit"')
+      return UsageLimit_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -9060,6 +9130,38 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isApplicationAuthorization = (obj?: { __typename?: any } | null): obj is ApplicationAuthorization => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationAuthorization"')
       return ApplicationAuthorization_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationExportApplication_possibleTypes: string[] = ['ApplicationExportApplication']
+    export const isApplicationExportApplication = (obj?: { __typename?: any } | null): obj is ApplicationExportApplication => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExportApplication"')
+      return ApplicationExportApplication_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationExportCoverageEntry_possibleTypes: string[] = ['ApplicationExportCoverageEntry']
+    export const isApplicationExportCoverageEntry = (obj?: { __typename?: any } | null): obj is ApplicationExportCoverageEntry => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExportCoverageEntry"')
+      return ApplicationExportCoverageEntry_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationExportFile_possibleTypes: string[] = ['ApplicationExportFile']
+    export const isApplicationExportFile = (obj?: { __typename?: any } | null): obj is ApplicationExportFile => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExportFile"')
+      return ApplicationExportFile_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationExport_possibleTypes: string[] = ['ApplicationExport']
+    export const isApplicationExport = (obj?: { __typename?: any } | null): obj is ApplicationExport => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExport"')
+      return ApplicationExport_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -9959,28 +10061,6 @@ export const enumOnboardingStatus = {
    COMPLETED: 'COMPLETED' as const
 }
 
-export const enumUsageResourceType = {
-   AI: 'AI' as const,
-   WORKFLOW: 'WORKFLOW' as const,
-   APP: 'APP' as const,
-   STORAGE: 'STORAGE' as const,
-   API: 'API' as const,
-   LOGIC_FUNCTION: 'LOGIC_FUNCTION' as const,
-   EMAIL: 'EMAIL' as const
-}
-
-export const enumUsageOperationType = {
-   AI_CHAT_TOKEN: 'AI_CHAT_TOKEN' as const,
-   AI_WORKFLOW_TOKEN: 'AI_WORKFLOW_TOKEN' as const,
-   WORKFLOW_EXECUTION: 'WORKFLOW_EXECUTION' as const,
-   CODE_EXECUTION: 'CODE_EXECUTION' as const,
-   WEB_SEARCH: 'WEB_SEARCH' as const,
-   CALL_RECORDING: 'CALL_RECORDING' as const,
-   EMAIL_SEND: 'EMAIL_SEND' as const,
-   API_REQUEST: 'API_REQUEST' as const,
-   SUBSCRIPTION: 'SUBSCRIPTION' as const
-}
-
 export const enumWidgetType = {
    VIEW: 'VIEW' as const,
    IFRAME: 'IFRAME' as const,
@@ -10165,6 +10245,29 @@ export const enumDatabaseEventAction = {
    UPSERTED: 'UPSERTED' as const
 }
 
+export const enumUsageResourceType = {
+   AI: 'AI' as const,
+   WORKFLOW: 'WORKFLOW' as const,
+   APP: 'APP' as const,
+   STORAGE: 'STORAGE' as const,
+   API: 'API' as const,
+   LOGIC_FUNCTION: 'LOGIC_FUNCTION' as const,
+   EMAIL: 'EMAIL' as const
+}
+
+export const enumUsageOperationType = {
+   ALL: 'ALL' as const,
+   AI_CHAT_TOKEN: 'AI_CHAT_TOKEN' as const,
+   AI_WORKFLOW_TOKEN: 'AI_WORKFLOW_TOKEN' as const,
+   WORKFLOW_EXECUTION: 'WORKFLOW_EXECUTION' as const,
+   CODE_EXECUTION: 'CODE_EXECUTION' as const,
+   WEB_SEARCH: 'WEB_SEARCH' as const,
+   CALL_RECORDING: 'CALL_RECORDING' as const,
+   EMAIL_SEND: 'EMAIL_SEND' as const,
+   API_REQUEST: 'API_REQUEST' as const,
+   SUBSCRIPTION: 'SUBSCRIPTION' as const
+}
+
 export const enumEmailConnectionSecurity = {
    NONE: 'NONE' as const,
    STARTTLS: 'STARTTLS' as const,
@@ -10184,7 +10287,7 @@ export const enumFeatureFlagKey = {
    IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED: 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' as const,
    IS_API_RATE_LIMIT_V2_ENABLED: 'IS_API_RATE_LIMIT_V2_ENABLED' as const,
    IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED: 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' as const,
-   IS_RECORD_CREATION_FORM_ENABLED: 'IS_RECORD_CREATION_FORM_ENABLED' as const
+   IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED: 'IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED' as const
 }
 
 export const enumIdentityProviderType = {
@@ -10271,6 +10374,14 @@ export const enumBillingEntitlementKey = {
    CUSTOM_DOMAIN: 'CUSTOM_DOMAIN' as const,
    RLS: 'RLS' as const,
    AUDIT_LOGS: 'AUDIT_LOGS' as const
+}
+
+export const enumApplicationExportCoverageStatus = {
+   EXPORTED: 'EXPORTED' as const,
+   ENGINE_DERIVED: 'ENGINE_DERIVED' as const,
+   EXCLUDED: 'EXCLUDED' as const,
+   UNSUPPORTED: 'UNSUPPORTED' as const,
+   FOREIGN_OWNED: 'FOREIGN_OWNED' as const
 }
 
 export const enumFileFolder = {

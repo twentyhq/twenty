@@ -22,7 +22,6 @@ import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { readReadablePrefix } from 'src/utils/read-readable-prefix';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 export type BatchCompleteUploadRequest = {
@@ -152,17 +151,13 @@ export class FileUploadCompletionService {
     resourcePath,
     filename,
   }: FileUploadStorageLocation & { filename: string }): Promise<string> {
-    const stream = await this.fileStorageService.readFile({
+    const prefix = await this.fileStorageService.readFilePrefix({
       fileFolder,
       applicationUniversalIdentifier,
       workspaceId,
       resourcePath,
+      byteCount: FILE_CONTENT_SNIFF_BYTE_COUNT,
     });
-
-    const prefix = await readReadablePrefix(
-      stream,
-      FILE_CONTENT_SNIFF_BYTE_COUNT,
-    );
 
     const { mimeType } = await extractFileInfoOrThrow({
       file: prefix,

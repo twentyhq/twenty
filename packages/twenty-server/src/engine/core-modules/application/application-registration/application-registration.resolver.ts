@@ -91,7 +91,7 @@ export class ApplicationRegistrationResolver {
   async findApplicationRegistrationByUniversalIdentifier(
     @Args('universalIdentifier') universalIdentifier: string,
   ): Promise<ApplicationRegistrationEntity | null> {
-    return this.applicationRegistrationService.findOneByUniversalIdentifier(
+    return this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
       universalIdentifier,
     );
   }

@@ -23,7 +23,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
+import { ImapSmtpCalDavApiService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
 
 @MetadataResolver()
 @UsePipes(ResolverValidationPipe)
@@ -31,7 +31,7 @@ import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services
 export class ImapSmtpCaldavResolver {
   constructor(
     private readonly imapSmtpCaldavService: ImapSmtpCaldavService,
-    private readonly imapSmtpCaldavApisService: ImapSmtpCalDavAPIService,
+    private readonly imapSmtpCaldavApisService: ImapSmtpCalDavApiService,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
   ) {}

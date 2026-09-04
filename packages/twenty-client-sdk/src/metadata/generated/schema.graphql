@@ -934,48 +934,6 @@ type ApplicationRegistration {
   galleryImagesUrls: [String!]!
 }
 
-type UsageLimit {
-  id: UUID!
-  resourceType: UsageResourceType!
-  operationType: UsageOperationType!
-  spenderType: String!
-  spenderId: String!
-  limitKind: String!
-  windowSeconds: Int!
-  limitValueType: String!
-  limitValue: BigInt!
-  burstValue: BigInt
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-enum UsageResourceType {
-  AI
-  WORKFLOW
-  APP
-  STORAGE
-  API
-  LOGIC_FUNCTION
-  EMAIL
-}
-
-enum UsageOperationType {
-  AI_CHAT_TOKEN
-  AI_WORKFLOW_TOKEN
-  WORKFLOW_EXECUTION
-  CODE_EXECUTION
-  WEB_SEARCH
-  CALL_RECORDING
-  EMAIL_SEND
-  API_REQUEST
-  SUBSCRIPTION
-}
-
-"""
-The `BigInt` scalar type represents non-fractional signed whole numeric values.
-"""
-scalar BigInt
-
 type SdkClientChecksums {
   core: String
   metadata: String!
@@ -1783,6 +1741,50 @@ type UsageAnalytics {
   userDailyUsage: UsageUserDaily
 }
 
+type UsageLimit {
+  id: UUID!
+  resourceType: UsageResourceType!
+  operationType: UsageOperationType!
+  spenderType: String!
+  spenderId: String
+  limitKind: String!
+  periodCount: Int!
+  periodUnit: String!
+  meter: String!
+  limitValue: BigInt!
+  burstValue: BigInt
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum UsageResourceType {
+  AI
+  WORKFLOW
+  APP
+  STORAGE
+  API
+  LOGIC_FUNCTION
+  EMAIL
+}
+
+enum UsageOperationType {
+  ALL
+  AI_CHAT_TOKEN
+  AI_WORKFLOW_TOKEN
+  WORKFLOW_EXECUTION
+  CODE_EXECUTION
+  WEB_SEARCH
+  CALL_RECORDING
+  EMAIL_SEND
+  API_REQUEST
+  SUBSCRIPTION
+}
+
+"""
+The `BigInt` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
 type ApprovedAccessDomain {
   id: UUID!
   domain: String!
@@ -1879,7 +1881,7 @@ enum FeatureFlagKey {
   IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED
   IS_API_RATE_LIMIT_V2_ENABLED
   IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED
-  IS_RECORD_CREATION_FORM_ENABLED
+  IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED
 }
 
 type WorkspaceUrls {
@@ -2634,6 +2636,40 @@ type ApplicationAuthorization {
   lastAuthorizedAt: DateTime
   lastUsedAt: DateTime!
   createdAt: DateTime!
+}
+
+type ApplicationExportApplication {
+  universalIdentifier: String!
+  displayName: String!
+  sourceType: ApplicationRegistrationSourceType!
+}
+
+type ApplicationExportCoverageEntry {
+  metadataName: String!
+  universalIdentifier: String!
+  status: ApplicationExportCoverageStatus!
+  reason: String
+}
+
+enum ApplicationExportCoverageStatus {
+  EXPORTED
+  ENGINE_DERIVED
+  EXCLUDED
+  UNSUPPORTED
+  FOREIGN_OWNED
+}
+
+type ApplicationExportFile {
+  folder: String!
+  path: String!
+  content: String!
+}
+
+type ApplicationExport {
+  application: ApplicationExportApplication!
+  manifest: JSON!
+  coverage: [ApplicationExportCoverageEntry!]!
+  files: [ApplicationExportFile!]!
 }
 
 type File {
@@ -3579,6 +3615,7 @@ type Query {
   getAutoCompleteAddress(address: String!, token: String!, country: String, isFieldCity: Boolean): [AutocompleteResult!]!
   getAddressDetails(placeId: String!, token: String!): PlaceDetailsResult!
   findManyPublicDomains: [PublicDomain!]!
+  exportApplication(universalIdentifier: UUID!): ApplicationExport!
   currentUserApplicationAuthorizations: [ApplicationAuthorization!]!
 }
 
@@ -3993,7 +4030,9 @@ input UpsertUsageLimitInput {
   spenderType: String!
   spenderId: String
   limitKind: String!
-  windowSeconds: Int! = 0
+  periodCount: Int!
+  periodUnit: String!
+  meter: String!
   limitValue: BigInt!
   burstValue: BigInt
 }

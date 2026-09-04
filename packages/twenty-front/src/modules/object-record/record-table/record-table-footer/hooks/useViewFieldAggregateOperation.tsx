@@ -9,7 +9,7 @@ import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/r
 import { constructViewFromRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/constructViewFromRecordTableWidgetViewSnapshot';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
+import { usePerformViewFieldApiPersist } from '@/views/hooks/internal/usePerformViewFieldApiPersist';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -44,7 +44,7 @@ export const useViewFieldAggregateOperation = () => {
     (viewField) => viewField.fieldMetadataId === fieldMetadataId,
   );
 
-  const { performViewFieldAPIUpdate } = usePerformViewFieldAPIPersist();
+  const { performViewFieldApiUpdate } = usePerformViewFieldApiPersist();
 
   const updateViewFieldAggregateOperation = async (
     aggregateOperation: ExtendedAggregateOperations | null,
@@ -74,7 +74,7 @@ export const useViewFieldAggregateOperation = () => {
       return;
     }
 
-    await performViewFieldAPIUpdate([
+    await performViewFieldApiUpdate([
       {
         input: {
           id: currentViewField.id,

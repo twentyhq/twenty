@@ -54,7 +54,7 @@ This is your first diagnostic: it tells you exactly which objects, fields, and l
 
 Destructive changes (`to destroy`) are listed with what they drop (e.g. `objectMetadata "auditNote" — drops the table and all its rows`) and require interactive confirmation, or `--force` in scripts.
 
-A sync deletes every entity your app owns that your source no longer declares. When a plan contains destroys it says so and points at `--no-delete`, which makes the sync additive: creates and updates are applied, nothing missing from your source is deleted. Use it when your source is intentionally partial, for example while adopting an app that was built in the UI.
+A sync deletes every entity your app owns that your source no longer declares. When a plan contains destroys it says so and points at `--no-delete`, which makes the sync additive: creates and updates are applied, nothing missing from your source is deleted, and the settings component and uninstall hook bindings of the app stay as they are when your source does not declare them. Use it when your source is intentionally partial, for example while adopting an app that was built in the UI.
 
 When a sync fails on a single entity, the error names the offending entity and its `universalIdentifier`, for example:
 
@@ -123,6 +123,7 @@ The server serializes syncs per workspace to prevent this, but you should still 
 When something goes wrong, the metadata diff and named errors let you place the failure:
 
 - **Manifest build error** — the CLI fails before syncing (`MANIFEST_BUILD_FAILED`, `TYPECHECK_FAILED`); fix your app source.
+- **Registration ownership error** — the sync is refused because the app's `universalIdentifier` belongs to another workspace, or to no workspace at all; see [Registration ownership](/developers/extend/apps/operations/publishing#registration-ownership).
 - **Sync / migration error** — the build succeeds but applying the diff fails, naming the entity and `universalIdentifier`; fix the conflicting metadata.
 - **Dependencies size error** — the sync or install fails because the app's production `dependencies` are too large to install as a runtime layer (`LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED`); move packages your logic functions do not import at runtime (UI libraries, dev tooling) to `devDependencies`.
 - **App code runtime error** — the sync succeeds but your logic functions or components misbehave at runtime; check [function logs](/developers/extend/apps/operations/cli).

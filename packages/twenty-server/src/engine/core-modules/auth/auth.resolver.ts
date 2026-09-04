@@ -32,8 +32,8 @@ import { AvailableWorkspacesAndAccessTokensDTO } from 'src/engine/core-modules/a
 import { EmailPasswordResetLinkDTO } from 'src/engine/core-modules/auth/dto/email-password-reset-link.dto';
 import { EmailPasswordResetLinkInput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.input';
 import { GetAuthTokenFromEmailVerificationTokenInput } from 'src/engine/core-modules/auth/dto/get-auth-token-from-email-verification-token.input';
-import { GetAuthorizationUrlForSSODTO } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.dto';
-import { GetAuthorizationUrlForSSOInput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.input';
+import { GetAuthorizationUrlForSsoDTO } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.dto';
+import { GetAuthorizationUrlForSsoInput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.input';
 import { InvalidatePasswordDTO } from 'src/engine/core-modules/auth/dto/invalidate-password.dto';
 import { SignUpDTO } from 'src/engine/core-modules/auth/dto/sign-up.dto';
 import { TransientTokenDTO } from 'src/engine/core-modules/auth/dto/transient-token.dto';
@@ -51,7 +51,7 @@ import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/toke
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
-import { SSOExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
+import { SsoExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -74,7 +74,7 @@ import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.typ
 import { IMPERSONATION_DENIAL_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant';
 import { IMPERSONATION_DENIAL_LOG_MESSAGE_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-log-message-by-reason.constant';
 import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
-import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
 import { TwoFactorAuthenticationVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-verification.input';
 import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter';
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
@@ -104,7 +104,7 @@ import { ApiKeyToken } from './dto/api-key-token.dto';
 import { AuthToken } from './dto/auth-token.dto';
 import { AuthTokens } from './dto/auth-tokens.dto';
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
-import { GetAuthTokensFromSSOExchangeTokenInput } from './dto/get-auth-tokens-from-sso-exchange-token.input';
+import { GetAuthTokensFromSsoExchangeTokenInput } from './dto/get-auth-tokens-from-sso-exchange-token.input';
 import { LoginTokenDTO } from './dto/login-token.dto';
 import { SignUpInNewWorkspaceInput } from './dto/sign-up-in-new-workspace.input';
 import { SignUpInput } from './dto/sign-up.input';
@@ -148,7 +148,7 @@ export class AuthResolver {
     private resetPasswordService: ResetPasswordService,
     private loginTokenService: LoginTokenService,
     private workspaceAgnosticTokenService: WorkspaceAgnosticTokenService,
-    private ssoExchangeTokenService: SSOExchangeTokenService,
+    private ssoExchangeTokenService: SsoExchangeTokenService,
     private refreshTokenService: RefreshTokenService,
     private signInUpService: SignInUpService,
     private transientTokenService: TransientTokenService,
@@ -156,7 +156,7 @@ export class AuthResolver {
     private workspaceDomainsService: WorkspaceDomainsService,
     private userWorkspaceService: UserWorkspaceService,
     private emailVerificationTokenService: EmailVerificationTokenService,
-    private ssoService: SSOService,
+    private ssoService: SsoService,
     private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly impersonationAuthorizationService: ImpersonationAuthorizationService,
     private readonly subdomainManagerService: SubdomainManagerService,
@@ -175,10 +175,10 @@ export class AuthResolver {
     );
   }
 
-  @Mutation(() => GetAuthorizationUrlForSSODTO)
+  @Mutation(() => GetAuthorizationUrlForSsoDTO)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getAuthorizationUrlForSSO(
-    @Args('input') params: GetAuthorizationUrlForSSOInput,
+    @Args('input') params: GetAuthorizationUrlForSsoInput,
   ) {
     return await this.ssoService.getAuthorizationUrlForSSO(
       params.identityProviderId,
@@ -749,11 +749,11 @@ export class AuthResolver {
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getAuthTokensFromSSOExchangeToken(
     @Args()
-    { ssoExchangeToken }: GetAuthTokensFromSSOExchangeTokenInput,
+    { ssoExchangeToken }: GetAuthTokensFromSsoExchangeTokenInput,
     @Context() context: { req: Request },
   ): Promise<AuthTokens> {
     const { userId, authProvider } =
-      await this.ssoExchangeTokenService.validateAndConsumeSSOExchangeTokenOrThrow(
+      await this.ssoExchangeTokenService.validateAndConsumeSsoExchangeTokenOrThrow(
         ssoExchangeToken,
       );
 

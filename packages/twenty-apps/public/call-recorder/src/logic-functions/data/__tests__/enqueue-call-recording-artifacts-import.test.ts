@@ -16,9 +16,10 @@ describe('enqueueCallRecordingArtifactsImport', () => {
     enqueueJobsMock.mockResolvedValue({ enqueued: true, enqueuedJobsCount: 1 });
   });
 
-  it('enqueues one import job with a fresh request timestamp', async () => {
+  it('enqueues each artifact scope as a separate job in one request', async () => {
     await enqueueCallRecordingArtifactsImport({
       callRecordingId: 'call-recording-1',
+      scopes: ['transcript', 'media'],
     });
 
     expect(enqueueJobsMock).toHaveBeenCalledExactlyOnceWith({
@@ -28,6 +29,12 @@ describe('enqueueCallRecordingArtifactsImport', () => {
         {
           callRecordingId: 'call-recording-1',
           requestedAt: expect.any(String),
+          scope: 'transcript',
+        },
+        {
+          callRecordingId: 'call-recording-1',
+          requestedAt: expect.any(String),
+          scope: 'media',
         },
       ],
       retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
@@ -40,6 +47,7 @@ describe('enqueueCallRecordingArtifactsImport', () => {
     await expect(
       enqueueCallRecordingArtifactsImport({
         callRecordingId: 'call-recording-1',
+        scopes: ['media'],
       }),
     ).rejects.toThrow('Network failed');
   });

@@ -20,7 +20,7 @@ import { type SlackUserLinkConsentState } from 'src/logic-functions/types/slack-
 import { isSlackUserLinkConsentState } from 'src/logic-functions/utils/is-slack-user-link-consent-state';
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
 
-const LINKS_GRID_TEMPLATE_COLUMNS = 'minmax(0, 2fr) minmax(0, 2fr) 252px 156px';
+const LINKS_GRID_TEMPLATE_COLUMNS = 'minmax(0, 2fr) minmax(0, 2fr) 320px 156px';
 const REMOVAL_CONFIRM_TIMEOUT_MS = 4000;
 
 const StyledIdentity = styled.div`
@@ -94,9 +94,23 @@ const CONSENT_COLORS: Record<SlackUserLinkConsentState, TagColor> = {
   [SLACK_USER_LINK_CONSENT_STATE.ADMIN_SET]: 'gray',
 };
 
+const DISCONNECTED_WORKSPACE_LABEL = 'Slack workspace disconnected';
+
+const isFromDisconnectedSlackWorkspace = ({
+  slackUserLink,
+  installedSlackTeamId,
+}: {
+  slackUserLink: SlackUserLinkRecord;
+  installedSlackTeamId: string | undefined;
+}): boolean =>
+  isNonEmptyString(installedSlackTeamId) &&
+  isNonEmptyString(slackUserLink.slackTeamId) &&
+  slackUserLink.slackTeamId !== installedSlackTeamId;
+
 type SlackUserLinksListProps = {
   slackUserLinks: SlackUserLinkRecord[];
   canManage: boolean;
+  installedSlackTeamId: string | undefined;
   hasMore?: boolean;
   onRemove: (slackUserLink: SlackUserLinkRecord) => void;
   onResend: (slackUserLink: SlackUserLinkRecord) => void;
@@ -107,6 +121,7 @@ type SlackUserLinksListProps = {
 export const SlackUserLinksList = ({
   slackUserLinks,
   canManage,
+  installedSlackTeamId,
   hasMore = false,
   onRemove,
   onResend,
@@ -147,10 +162,15 @@ export const SlackUserLinksList = ({
       </SlackTableRow>
       <SlackTableBody>
         {slackUserLinks.map((slackUserLink) => {
+          const isDisconnected = isFromDisconnectedSlackWorkspace({
+            slackUserLink,
+            installedSlackTeamId,
+          });
           const consentState = toDisplayedConsentState(
             slackUserLink.consentState,
           );
           const isPending =
+            !isDisconnected &&
             consentState === SLACK_USER_LINK_CONSENT_STATE.PENDING;
           const displayedName =
             slackUserLink.name ?? slackUserLink.slackUserId ?? 'Unnamed link';
@@ -187,11 +207,15 @@ export const SlackUserLinksList = ({
                 />
               </SlackTableCell>
               <SlackTableCell>
-                {isDefined(consentState) && (
-                  <Tag
-                    color={CONSENT_COLORS[consentState]}
-                    text={CONSENT_LABELS[consentState]}
-                  />
+                {isDisconnected ? (
+                  <Tag color="gray" text={DISCONNECTED_WORKSPACE_LABEL} />
+                ) : (
+                  isDefined(consentState) && (
+                    <Tag
+                      color={CONSENT_COLORS[consentState]}
+                      text={CONSENT_LABELS[consentState]}
+                    />
+                  )
                 )}
                 <Tag
                   color={getSourceColor(slackUserLink.source)}

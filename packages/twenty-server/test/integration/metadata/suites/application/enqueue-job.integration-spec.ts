@@ -215,27 +215,21 @@ describe('enqueueJob (e2e)', () => {
     standardApplicationToken =
       standardTokenData.generateApplicationToken.applicationAccessToken.token;
 
-    const [
-      { data: createData },
-      { data: retryableCreateData },
-      { data: appendingCreateData },
-    ] = await Promise.all([
-      createOneLogicFunction({
-        input: { name: `enqueue-job-target-${uuidv4()}` },
-        gqlFields: 'id universalIdentifier',
-        expectToFail: false,
-      }),
-      createOneLogicFunction({
-        input: { name: `enqueue-job-retryable-target-${uuidv4()}` },
-        gqlFields: 'id universalIdentifier',
-        expectToFail: false,
-      }),
-      createOneLogicFunction({
-        input: { name: `enqueue-job-appending-target-${uuidv4()}` },
-        gqlFields: 'id universalIdentifier',
-        expectToFail: false,
-      }),
-    ]);
+    const { data: createData } = await createOneLogicFunction({
+      input: { name: `enqueue-job-target-${uuidv4()}` },
+      gqlFields: 'id universalIdentifier',
+      expectToFail: false,
+    });
+    const { data: retryableCreateData } = await createOneLogicFunction({
+      input: { name: `enqueue-job-retryable-target-${uuidv4()}` },
+      gqlFields: 'id universalIdentifier',
+      expectToFail: false,
+    });
+    const { data: appendingCreateData } = await createOneLogicFunction({
+      input: { name: `enqueue-job-appending-target-${uuidv4()}` },
+      gqlFields: 'id universalIdentifier',
+      expectToFail: false,
+    });
 
     expect(createData.createOneLogicFunction.universalIdentifier).toBeDefined();
     expect(
@@ -298,20 +292,23 @@ describe('enqueueJob (e2e)', () => {
   });
 
   afterAll(async () => {
-    await Promise.all([
-      deleteLogicFunction({
-        input: { id: logicFunctionId },
-        expectToFail: false,
-      }),
-      deleteLogicFunction({
-        input: { id: retryableLogicFunctionId },
-        expectToFail: false,
-      }),
-      deleteLogicFunction({
-        input: { id: appendingLogicFunctionId },
-        expectToFail: false,
-      }),
-    ]);
+    const teardownErrors: unknown[] = [];
+
+    for (const id of [
+      logicFunctionId,
+      retryableLogicFunctionId,
+      appendingLogicFunctionId,
+    ]) {
+      try {
+        await deleteLogicFunction({ input: { id }, expectToFail: false });
+      } catch (error) {
+        teardownErrors.push(error);
+      }
+    }
+
+    if (teardownErrors.length > 0) {
+      throw teardownErrors[0];
+    }
 
     if (isDefined(otherWorkspaceUserAccessToken)) {
       await deleteUser({ accessToken: otherWorkspaceUserAccessToken });

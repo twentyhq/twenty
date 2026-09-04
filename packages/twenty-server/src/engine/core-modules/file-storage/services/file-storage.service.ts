@@ -392,6 +392,20 @@ export class FileStorageService {
     });
   }
 
+  readFilePrefix(
+    params: ResourceIdentifier & { byteCount: number },
+  ): Promise<Buffer> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    const { onStorageFilePath } =
+      this.validateAndBuildFileStoragePathOrThrow(params);
+
+    return driver.readFilePrefix({
+      filePath: onStorageFilePath,
+      byteCount: params.byteCount,
+    });
+  }
+
   downloadFile(
     params: ResourceIdentifier & { localPath: string },
   ): Promise<void> {

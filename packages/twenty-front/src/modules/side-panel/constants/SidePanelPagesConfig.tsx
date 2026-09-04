@@ -2,6 +2,8 @@ import { SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display
 import { SidePanelCommandMenuItemEditPage } from '@/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage';
 import { SidePanelNavigationMenuItemEditPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage';
 import { SidePanelCoreWorkflowFiltersPage } from '@/object-core/workflows/components/SidePanelCoreWorkflowFiltersPage';
+import { SidePanelCoreWorkflowVersionPage } from '@/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionPage';
+import { SidePanelCoreWorkflowVersionsPage } from '@/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage';
 import { SidePanelSettingsMetadataTranslationsPage } from '@/settings/translations/components/SidePanelSettingsMetadataTranslationsPage';
 import { SidePanelRoutedPage } from '@/side-panel/routing/components/SidePanelRoutedPage';
 import { SidePanelNewSidebarItemPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemPage';
@@ -28,6 +30,7 @@ import { SidePanelEditRichTextPage } from '@/side-panel/pages/rich-text-page/com
 import { SidePanelSearchRecordsPage } from '@/side-panel/pages/search/components/SidePanelSearchRecordsPage';
 import { SidePanelWorkflowCreateStep } from '@/side-panel/pages/workflow/step/create/components/SidePanelWorkflowCreateStep';
 import { SidePanelWorkflowEditStep } from '@/side-panel/pages/workflow/step/edit/components/SidePanelWorkflowEditStep';
+import { SidePanelWorkflowStepSettings } from '@/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettings';
 import { SidePanelWorkflowEditStepType } from '@/side-panel/pages/workflow/step/edit/components/SidePanelWorkflowEditStepType';
 import { SidePanelWorkflowRunViewStep } from '@/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStep';
 import { SidePanelWorkflowViewStep } from '@/side-panel/pages/workflow/step/view/components/SidePanelWorkflowViewStep';
@@ -50,6 +53,7 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [SidePanelPages.WorkflowStepCreate, <SidePanelWorkflowCreateStep />],
   [SidePanelPages.WorkflowStepEditType, <SidePanelWorkflowEditStepType />],
   [SidePanelPages.WorkflowStepEdit, <SidePanelWorkflowEditStep />],
+  [SidePanelPages.WorkflowStepSettings, <SidePanelWorkflowStepSettings />],
   [SidePanelPages.WorkflowStepView, <SidePanelWorkflowViewStep />],
   [SidePanelPages.WorkflowRunStepView, <SidePanelWorkflowRunViewStep />],
   [SidePanelPages.SearchRecords, <SidePanelSearchRecordsPage />],
@@ -103,4 +107,6 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   ],
   [SidePanelPages.RoutedPage, <SidePanelRoutedPage />],
   [SidePanelPages.WorkflowCoreFilters, <SidePanelCoreWorkflowFiltersPage />],
+  [SidePanelPages.WorkflowVersions, <SidePanelCoreWorkflowVersionsPage />],
+  [SidePanelPages.WorkflowVersion, <SidePanelCoreWorkflowVersionPage />],
 ]);

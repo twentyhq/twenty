@@ -910,6 +910,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@stablelib/base64@npm:^1.0.0":
+  version: 1.0.1
+  resolution: "@stablelib/base64@npm:1.0.1"
+  checksum: 10c0/6330720f021819d19cecfe274111b79a256caa81df478d6b0ae7effc8842b96915b6aeed85926ff05b4d48ec1fc78ad043d928b730ee4e6cc6e8cba6aa097bed
+  languageName: node
+  linkType: hard
+
 "@standard-schema/spec@npm:^1.1.0":
   version: 1.1.0
   resolution: "@standard-schema/spec@npm:1.1.0"
@@ -921,8 +928,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@twentyhq/fathom@workspace:."
   dependencies:
+    "@sniptt/guards": "npm:^0.2.0"
     "@types/node": "npm:^24.7.2"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
+    fathom-typescript: "npm:0.0.43"
     oxlint: "npm:^0.16.0"
     twenty-client-sdk: "npm:2.35.0"
     twenty-sdk: "npm:2.35.0"
@@ -1612,6 +1621,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fast-sha256@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "fast-sha256@npm:1.3.0"
+  checksum: 10c0/87f9e4baa7639576cf60a2b6235c9f436e1a1c52323abbd8a705b5bea8355500acf176f2aed0c14f2ecd6d6007e26151461bab2f27b8953bcca8d9d6b76a86e4
+  languageName: node
+  linkType: hard
+
 "fast-string-truncated-width@npm:^3.0.2":
   version: 3.0.3
   resolution: "fast-string-truncated-width@npm:3.0.3"
@@ -1634,6 +1650,16 @@ __metadata:
   dependencies:
     fast-string-width: "npm:^3.0.2"
   checksum: 10c0/1aa7be4f7cb86f4bdb14691cb6bcc0b8df8b3b89df142ade3ae1602332dcf6f990cd750a923cd581ca0847808cb4ec1aa5afaafa7a72f849e87a2a62c98fa370
+  languageName: node
+  linkType: hard
+
+"fathom-typescript@npm:0.0.43":
+  version: 0.0.43
+  resolution: "fathom-typescript@npm:0.0.43"
+  dependencies:
+    svix: "npm:^1.65.0"
+    zod: "npm:^3.25.0 || ^4.0.0"
+  checksum: 10c0/ca7f1aad7a01090d0feafb8218510cf7799d53316a20f84b6e35553f65e24ea9be4c0ce3bed5c0be1be0a2acb578d2a410bcb97542298e74b87d3770afb81f10
   languageName: node
   linkType: hard
 
@@ -2611,6 +2637,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"standardwebhooks@npm:1.0.0":
+  version: 1.0.0
+  resolution: "standardwebhooks@npm:1.0.0"
+  dependencies:
+    "@stablelib/base64": "npm:^1.0.0"
+    fast-sha256: "npm:^1.3.0"
+  checksum: 10c0/aee097d0f3c05172c19b80df1ed9596a2ce92f8956957650d0bbe47c2ca6d36515796b51d523333cb4a48c889b2ab130d789e7879e14975c4381bc7a61274327
+  languageName: node
+  linkType: hard
+
 "std-env@npm:^4.0.0-rc.1":
   version: 4.2.0
   resolution: "std-env@npm:4.2.0"
@@ -2660,6 +2696,15 @@ __metadata:
   peerDependencies:
     graphql: ">=0.10.0"
   checksum: 10c0/6f2ade56865f0ba291d3ff82c79781b051c2374873bac853286fedfdbc05001b8c4018ab7cba44af667ead7f573e48d18892d58a8f9ca8d90dfb4bff5c125045
+  languageName: node
+  linkType: hard
+
+"svix@npm:^1.65.0":
+  version: 1.99.1
+  resolution: "svix@npm:1.99.1"
+  dependencies:
+    standardwebhooks: "npm:1.0.0"
+  checksum: 10c0/5a630bda0f03318fcab9daa24a76d1f958aeeccad029b240d964a47f0e86274af68a543a3aa8842431380ca9be0e781956137218cdec48d8bb71fd37cda09f9b
   languageName: node
   linkType: hard
 
@@ -3147,5 +3192,12 @@ __metadata:
   version: 0.8.15
   resolution: "zen-observable@npm:0.8.15"
   checksum: 10c0/71cc2f2bbb537300c3f569e25693d37b3bc91f225cefce251a71c30bc6bb3e7f8e9420ca0eb57f2ac9e492b085b8dfa075fd1e8195c40b83c951dd59c6e4fbf8
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.25.0 || ^4.0.0":
+  version: 4.4.3
+  resolution: "zod@npm:4.4.3"
+  checksum: 10c0/7ea31b558e88f9faf44f31dd185e2e1cbf51fed3081787fb96cc2534749b50c0acfc6da7f0922a7353ed092dd358c7d50c28ea96c94d04af64191bd33152eca3
   languageName: node
   linkType: hard

@@ -25,6 +25,7 @@ import {
 } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-plan';
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
 import { getSyncErrorRecoveryHint } from '@/cli/utilities/error/get-sync-error-recovery-hint';
+import { getGraphQLErrorMessage } from '@/cli/utilities/error/parse-server-error';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
 import { runSafe } from '@/cli/utilities/run-safe';
@@ -309,7 +310,9 @@ const innerAppDevOnce = async (
       success: false,
       error: {
         code: APP_ERROR_CODES.SYNC_FAILED,
-        message: `Failed to install development application: ${serializeError(createDevAppResult.error)}`,
+        message:
+          getGraphQLErrorMessage(createDevAppResult.error) ??
+          `Failed to install development application: ${serializeError(createDevAppResult.error)}`,
       },
     };
   }

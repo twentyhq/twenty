@@ -2,7 +2,7 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { getViewPersistTarget } from '@/object-record/record-table-widget/utils/getViewPersistTarget';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
+import { usePerformViewApiUpdate } from '@/views/hooks/internal/usePerformViewApiUpdate';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useCallback, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,7 +12,7 @@ export const useUpdateViewKanbanColumnWidth = () => {
   const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
-  const { performViewAPIUpdate } = usePerformViewAPIUpdate();
+  const { performViewApiUpdate } = usePerformViewApiUpdate();
   const recordTableWidgetContext = useContext(RecordTableWidgetContext);
 
   const updateViewKanbanColumnWidth = useCallback(
@@ -32,7 +32,7 @@ export const useUpdateViewKanbanColumnWidth = () => {
         return;
       }
 
-      await performViewAPIUpdate({
+      await performViewApiUpdate({
         id: contextStoreCurrentViewId,
         input: {
           kanbanColumnWidth,
@@ -42,7 +42,7 @@ export const useUpdateViewKanbanColumnWidth = () => {
     [
       canPersistChanges,
       contextStoreCurrentViewId,
-      performViewAPIUpdate,
+      performViewApiUpdate,
       recordTableWidgetContext,
     ],
   );

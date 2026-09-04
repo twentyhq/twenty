@@ -66,7 +66,7 @@ export class MarketplaceQueryService {
     universalIdentifier: string,
   ): Promise<ApplicationRegistrationEntity> {
     const registration =
-      await this.applicationRegistrationService.findOneByUniversalIdentifier(
+      await this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
         universalIdentifier,
       );
 

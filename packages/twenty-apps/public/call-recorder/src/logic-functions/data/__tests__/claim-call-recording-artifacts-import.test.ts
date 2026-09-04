@@ -15,13 +15,14 @@ describe('claimCallRecordingArtifactsImport', () => {
     mutationMock.mockReset();
   });
 
-  it('claims when no fresh lease is held and stamps the lease timestamp', async () => {
+  it('claims the media lease when no fresh lease is held and stamps the lease timestamp', async () => {
     mutationMock.mockResolvedValue({
       updateCallRecordings: [{ id: 'call-recording-1' }],
     });
 
     const claimed = await claimCallRecordingArtifactsImport(client, {
       callRecordingId: 'call-recording-1',
+      scope: 'media',
       now: new Date('2026-01-01T14:06:00.000Z'),
     });
 
@@ -43,11 +44,41 @@ describe('claimCallRecordingArtifactsImport', () => {
     });
   });
 
+  it('claims the transcript lease on its own field so a held media lease cannot block it', async () => {
+    mutationMock.mockResolvedValue({
+      updateCallRecordings: [{ id: 'call-recording-1' }],
+    });
+
+    const claimed = await claimCallRecordingArtifactsImport(client, {
+      callRecordingId: 'call-recording-1',
+      scope: 'transcript',
+      now: new Date('2026-01-01T14:06:00.000Z'),
+    });
+
+    expect(claimed).toBe(true);
+    expect(mutationMock).toHaveBeenCalledWith({
+      updateCallRecordings: {
+        __args: {
+          filter: {
+            id: { eq: 'call-recording-1' },
+            or: [
+              { transcriptImportClaimedAt: { is: 'NULL' } },
+              { transcriptImportClaimedAt: { lte: '2026-01-01T13:56:00.000Z' } },
+            ],
+          },
+          data: { transcriptImportClaimedAt: '2026-01-01T14:06:00.000Z' },
+        },
+        id: true,
+      },
+    });
+  });
+
   it('does not claim when a fresh lease already blocks the update', async () => {
     mutationMock.mockResolvedValue({ updateCallRecordings: [] });
 
     const claimed = await claimCallRecordingArtifactsImport(client, {
       callRecordingId: 'call-recording-1',
+      scope: 'media',
       now: new Date('2026-01-01T14:06:00.000Z'),
     });
 
@@ -67,6 +98,7 @@ describe('claimCallRecordingArtifactsImport', () => {
 
     const claimed = await claimCallRecordingArtifactsImport(client, {
       callRecordingId: 'call-recording-1',
+      scope: 'media',
       now: new Date('2026-01-01T14:06:00.000Z'),
     });
 
@@ -88,26 +120,28 @@ describe('claimCallRecordingArtifactsImport', () => {
 
     const claimed = await claimCallRecordingArtifactsImport(client, {
       callRecordingId: 'call-recording-1',
+      scope: 'media',
       now: new Date('2026-01-01T14:06:00.000Z'),
     });
 
     expect(claimed).toBe(false);
   });
 
-  it('releases the lease by clearing the timestamp', async () => {
+  it('releases the lease idempotently when the call recording no longer exists', async () => {
     mutationMock.mockResolvedValue({
-      updateCallRecording: { id: 'call-recording-1' },
+      updateCallRecordings: [],
     });
 
     await releaseCallRecordingArtifactsImportClaim(client, {
       callRecordingId: 'call-recording-1',
+      scope: 'transcript',
     });
 
     expect(mutationMock).toHaveBeenCalledWith({
-      updateCallRecording: {
+      updateCallRecordings: {
         __args: {
-          id: 'call-recording-1',
-          data: { artifactsImportClaimedAt: null },
+          filter: { id: { eq: 'call-recording-1' } },
+          data: { transcriptImportClaimedAt: null },
         },
         id: true,
       },

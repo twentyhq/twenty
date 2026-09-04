@@ -110,7 +110,7 @@ export const ImageInput = ({
   const onUploadButtonClick = () => {
     hiddenFileInput.current?.click();
   };
-  const [isPictureURLError, setIsPictureURLError] = useState(false);
+  const [isPictureUrlError, setIsPictureUrlError] = useState(false);
 
   const pictureURI = isNonEmptyString(picture)
     ? getImageAbsoluteURI({
@@ -126,12 +126,12 @@ export const ImageInput = ({
         disabled={disabled}
         onClick={onUploadButtonClick}
       >
-        {pictureURI && !isPictureURLError ? (
+        {pictureURI && !isPictureUrlError ? (
           <img
             src={pictureURI}
             alt="profile"
             onError={() => {
-              setIsPictureURLError(true);
+              setIsPictureUrlError(true);
             }}
           />
         ) : (

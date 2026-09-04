@@ -31,7 +31,7 @@ const STRUCTURAL_EXEMPTIONS = new Set<string>([
   'RolePermissionFlagEntity',
   'SigningKeyEntity',
   'UserEntity',
-  'WorkspaceSSOIdentityProviderEntity',
+  'WorkspaceSsoIdentityProviderEntity',
 ]);
 
 // Workspace-scoped entities the wrapper could technically wrap, but where
