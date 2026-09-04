@@ -107,7 +107,7 @@ A plan only previews **metadata** changes. It also works for an app that was nev
 yarn twenty pull -u <universalIdentifier>
 ```
 
-Pull needs an existing project — scaffold one with `npx create-twenty-app@latest` first, then pull into it. Without `-u`, pull targets the application your local `defineApplication()` file declares.
+Pull needs an existing project — scaffold one with `npx create-twenty-app@latest` first, then pull into it. Without `-u`, pull targets the application your local `defineApplication()` file declares. Add `-v` to expand the report, which then lists the identifier of every row it counts instead of only the per-kind totals.
 
 **What it writes.** The application config, objects with their fields, fields your app added to objects it does not own, and authored indexes. Each entity goes to the file that already defines it, so a second pull rewrites only what changed on the server; new entities are placed beside existing files of their kind.
 
