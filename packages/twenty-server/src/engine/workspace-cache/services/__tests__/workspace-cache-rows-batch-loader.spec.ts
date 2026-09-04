@@ -64,7 +64,45 @@ describe('WorkspaceCacheRowsBatchLoader', () => {
     expect(findMocksByEntity.get(ObjectMetadataEntity)).toHaveBeenCalledWith({
       where: { workspaceId: WORKSPACE_ID },
       withDeleted: true,
+      order: { createdAt: 'ASC', id: 'ASC' },
     });
+  });
+
+  // Cache providers freeze row order into their flat maps, and for ordered
+  // collections the array index carries meaning - a view's sort priority is its
+  // position in `viewSortIds`. An unordered find returns physical row order,
+  // which is not stable across recomputes, so a multi-column sort could flip on
+  // a plain restart. See twentyhq/twenty#25262.
+  it('falls back to creation order for entities without a position column', async () => {
+    const { rowsBatchLoader, findMocksByEntity } = setup();
+
+    await rowsBatchLoader.loadRows([
+      { objectMetadata: true, application: true },
+    ]);
+
+    for (const entity of [ObjectMetadataEntity, ApplicationEntity]) {
+      const findMock = findMocksByEntity.get(entity)!;
+
+      expect(findMock).toHaveBeenCalledTimes(1);
+      expect(findMock.mock.calls[0][0].order).toEqual({
+        createdAt: 'ASC',
+        id: 'ASC',
+      });
+    }
+  });
+
+  // View fields persist a user-facing order in `position`, and view filters and
+  // filter groups in `positionInViewFilterGroup`. Reading them back by creation
+  // time would revert a reordered column on the next cache recompute, so the
+  // persisted position leads and creation order only breaks ties.
+  it('reads collections that persist a position back in that order', async () => {
+    const { rowsBatchLoader, findMocksByEntity } = setup();
+
+    await rowsBatchLoader.loadRows([{ viewField: ['id'] }]);
+
+    expect(
+      findMocksByEntity.get(ViewFieldEntity)!.mock.calls[0][0].order,
+    ).toEqual({ position: 'ASC', createdAt: 'ASC', id: 'ASC' });
   });
 
   it('merges requirements into one query per entity with the union of declared columns', async () => {

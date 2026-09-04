@@ -1,6 +1,7 @@
 import {
   type EntityTarget,
   type FindManyOptions,
+  type FindOptionsOrder,
   type FindOptionsWhere,
   type ObjectLiteral,
   type Repository,
@@ -24,6 +25,50 @@ import { isObjectEntityRowsRequirement } from 'src/engine/workspace-cache/utils/
 import { serializeWhereClause } from 'src/engine/workspace-cache/utils/serialize-where-clause.util';
 
 type WhereClause = FindOptionsWhere<ObjectLiteral>;
+
+// Without an ORDER BY, Postgres returns rows in physical (heap) order, which
+// changes as rows are updated and is not stable across restarts. Cache
+// providers freeze that order into their flat maps, and for the ordered
+// collections the array index carries meaning: a view's sort priority is its
+// position in `viewSortIds`, so a recompute could silently reorder a
+// multi-column sort.
+//
+// Creation order is the fallback, with `id` as a tiebreaker so equal timestamps
+// still resolve deterministically. Every entity in
+// ALL_WORKSPACE_CACHE_ENTITY_BY_NAME has both columns.
+const DEFAULT_CACHE_ROWS_ORDER = {
+  createdAt: 'ASC',
+  id: 'ASC',
+} as const satisfies FindOptionsOrder<ObjectLiteral>;
+
+// Collections that persist their own user-facing order are read back in that
+// order rather than by creation time, so reordering a column survives a cache
+// recompute. `viewSort` is deliberately absent: it has no position column, and
+// its priority is the creation order the default already gives.
+const CACHE_ROWS_ORDER_BY_ENTITY_NAME = {
+  viewField: { position: 'ASC', ...DEFAULT_CACHE_ROWS_ORDER },
+  viewFieldGroup: { position: 'ASC', ...DEFAULT_CACHE_ROWS_ORDER },
+  viewGroup: { position: 'ASC', ...DEFAULT_CACHE_ROWS_ORDER },
+  viewFilter: {
+    positionInViewFilterGroup: 'ASC',
+    ...DEFAULT_CACHE_ROWS_ORDER,
+  },
+  viewFilterGroup: {
+    positionInViewFilterGroup: 'ASC',
+    ...DEFAULT_CACHE_ROWS_ORDER,
+  },
+} as const satisfies Partial<
+  Record<CacheFetchableEntityName, FindOptionsOrder<ObjectLiteral>>
+>;
+
+const getCacheRowsOrder = (
+  entityName: CacheFetchableEntityName,
+): FindOptionsOrder<ObjectLiteral> =>
+  entityName in CACHE_ROWS_ORDER_BY_ENTITY_NAME
+    ? CACHE_ROWS_ORDER_BY_ENTITY_NAME[
+        entityName as keyof typeof CACHE_ROWS_ORDER_BY_ENTITY_NAME
+      ]
+    : DEFAULT_CACHE_ROWS_ORDER;
 
 export type WorkspaceCacheRowsSource = {
   getRepository: (
@@ -241,6 +286,7 @@ export class WorkspaceCacheRowsBatchLoader {
         workspaceId: this.workspaceId,
       },
       withDeleted: true,
+      order: getCacheRowsOrder(entityName),
     };
 
     if (columns !== null) {
