@@ -5,7 +5,6 @@ import { readOptionalString } from 'src/logic-functions/utils/read-optional-stri
 
 const BODY_PREVIEW_MAX_LENGTH = 300;
 
-// cutting by code point splits ZWJ sequences such as 👨‍👩‍👧‍👦 mid-cluster
 const GRAPHEME_SEGMENTER = new Intl.Segmenter(undefined, {
   granularity: 'grapheme',
 });

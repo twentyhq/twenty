@@ -162,7 +162,7 @@ mentions and DMs, at the cost of un-mentioned thread follow-ups.
 > record link previews; that one does need a reconnect, and on an app created
 > from an older manifest the Work Object Previews toggle has to be enabled by
 > hand as well (see Record link previews). Upgrading from any version before
-> 0.9.0 adds the `slack#/entities/task` entity type, which has to be selected
+> 0.8.1 adds the `slack#/entities/task` entity type, which has to be selected
 > under Work Object Previews by hand; no new scopes or events, so no reconnect.
 
 ### Interactivity
@@ -312,7 +312,7 @@ companies, opportunities and notes, and `slack#/entities/task` for tasks, which
 Slack renders with native status, due date and assignee fields. On an app
 created by hand, or from a manifest older than 0.7.0, open **Work Object
 Previews** in the app settings, enable the toggle and select both the **Item**
-and **Task** entity types. An app created from a 0.7.0 to 0.8.x manifest already
+and **Task** entity types. An app created from a 0.7.0 or 0.8.0 manifest already
 has the toggle on with **Item** selected, so it only needs **Task** added. A
 type you leave unselected makes Slack ignore the unfurl metadata for those
 records, so no card renders and nothing in the logs says why.
