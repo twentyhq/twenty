@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 
 type RecordCreationFormCancellationEffectProps = {
   requestId: string;
-  onCancel: () => void;
+  onCancel: (params: { requestId: string }) => void;
 };
 
 export const RecordCreationFormCancellationEffect = ({
@@ -23,9 +23,9 @@ export const RecordCreationFormCancellationEffect = ({
 
   useEffect(() => {
     if (!isRecordCreationFormOpen) {
-      onCancel();
+      onCancel({ requestId });
     }
-  }, [isRecordCreationFormOpen, onCancel]);
+  }, [isRecordCreationFormOpen, onCancel, requestId]);
 
   return null;
 };

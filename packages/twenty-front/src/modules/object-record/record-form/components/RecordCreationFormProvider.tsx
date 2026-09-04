@@ -93,13 +93,12 @@ export const RecordCreationFormProvider = ({
     [navigateSidePanelMenu, store],
   );
 
-  const cancelPendingRecordCreation = useCallback(() => {
-    setPendingRecordCreation((pendingRecordCreation) => {
-      pendingRecordCreation?.settle(null);
-
-      return null;
-    });
-  }, []);
+  const cancelPendingRecordCreation = useCallback(
+    ({ requestId }: { requestId: string }) => {
+      settleRecordCreationDraft({ requestId, draftRecord: null });
+    },
+    [settleRecordCreationDraft],
+  );
 
   const contextValue = useMemo<RecordCreationFormContextValue>(
     () => ({ requestRecordCreationDraft, settleRecordCreationDraft }),
