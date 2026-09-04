@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { STEP_RETRY_DELAYS_MS } from '@/workflow/constants/StepRetryDelaysMs';
+
 export const baseWorkflowActionSettingsSchema = z.object({
   input: z
     .looseObject({})
@@ -18,10 +20,10 @@ export const baseWorkflowActionSettingsSchema = z.object({
         .number()
         .int()
         .min(1)
-        .max(3)
+        .max(STEP_RETRY_DELAYS_MS.length)
         .optional()
         .describe(
-          'How many retry attempts to make, between 1 and 3. Defaults to 3.',
+          `How many retry attempts to make, between 1 and ${STEP_RETRY_DELAYS_MS.length}. Defaults to ${STEP_RETRY_DELAYS_MS.length}.`,
         ),
     }),
     continueOnFailure: z.object({

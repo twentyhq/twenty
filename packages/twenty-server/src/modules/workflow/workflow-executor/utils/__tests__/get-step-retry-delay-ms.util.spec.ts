@@ -1,6 +1,5 @@
-import { StepStatus } from 'twenty-shared/workflow';
+import { STEP_RETRY_DELAYS_MS, StepStatus } from 'twenty-shared/workflow';
 
-import { STEP_RETRY_DELAYS_MS } from 'src/modules/workflow/workflow-executor/constants/step-retry-delays.constant';
 import { createMockCodeStep } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { getStepRetryDelayMs } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-delay-ms.util';
 

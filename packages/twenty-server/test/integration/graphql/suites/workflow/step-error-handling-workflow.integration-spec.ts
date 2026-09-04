@@ -1,3 +1,4 @@
+import { STEP_RETRY_DELAYS_MS } from 'twenty-shared/workflow';
 import request from 'supertest';
 import {
   destroyWorkflowRun,
@@ -5,7 +6,6 @@ import {
   waitForWorkflowCompletion,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 
-import { STEP_RETRY_DELAYS_MS } from 'src/modules/workflow/workflow-executor/constants/step-retry-delays.constant';
 import {
   type WorkflowAction,
   type WorkflowHttpRequestAction,
