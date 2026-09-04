@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
+import { CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-calendar-bot-scheduling-enabled-env-var-name';
 import { buildCallRecorderPolicyResult } from 'src/logic-functions/domain/build-call-recorder-policy-result.util';
 import { type CallRecorderPolicyCalendarEventInput } from 'src/logic-functions/types/call-recorder-policy-calendar-event-input.type';
 
@@ -19,6 +20,12 @@ const buildCalendarEventInput = (
 });
 
 describe('buildCallRecorderPolicyResult', () => {
+  afterEach(() => {
+    delete process.env[
+      CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME
+    ];
+  });
+
   it('requests a bot for the ON wire value', () => {
     const policyResult = buildCallRecorderPolicyResult(
       buildCalendarEventInput({
@@ -43,5 +50,20 @@ describe('buildCallRecorderPolicyResult', () => {
     expect(policyResult.callRecorderPreference).toBe('OFF');
     expect(policyResult.shouldRequestBot).toBe(false);
     expect(policyResult.reason).toBe('PREFERENCE_OFF');
+  });
+
+  it('does not request a bot when the workspace turned calendar bot scheduling off', () => {
+    process.env[CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME] =
+      'false';
+
+    const policyResult = buildCallRecorderPolicyResult(
+      buildCalendarEventInput({
+        callRecorderPreference: 'ON',
+      }),
+      NOW,
+    );
+
+    expect(policyResult.shouldRequestBot).toBe(false);
+    expect(policyResult.reason).toBe('CALENDAR_BOT_SCHEDULING_DISABLED');
   });
 });
