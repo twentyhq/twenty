@@ -24,5 +24,3 @@
 - **Calendar links need one clear match.** A Call Recording is linked to a
   calendar event only when its meeting link and scheduled time point to exactly
   one event.
-- **Older meetings stay put.** Anything past the first 31 days isn't pulled in
-  automatically; ask your workspace admin to import a wider window.
