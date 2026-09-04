@@ -351,7 +351,7 @@ describe('removeStep', () => {
     expect(hasEmptyNode).toBe(false);
   });
 
-  it('should remove the deleted step from the If/Else own nextStepIds', () => {
+  it('should clear the If/Else own nextStepIds', () => {
     const ifElseStep = {
       id: '2',
       name: 'If/Else',
@@ -396,7 +396,7 @@ describe('removeStep', () => {
       (step) => step.id === '2',
     ) as WorkflowAction;
 
-    expect(updatedIfElse.nextStepIds).toEqual(['4']);
+    expect(updatedIfElse.nextStepIds).toEqual([]);
   });
 
   it('should handle removing a step that is part of iteratorLoopStepIds', () => {

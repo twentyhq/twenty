@@ -144,27 +144,24 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
     let stepInfosToUpdate: Record<string, WorkflowRunStepInfo> = {};
 
     if (!hasProcessedAllItems) {
-      const subStepsInfos = await this.buildSubStepInfosReset({
+      const stepIdsToReset = getAllStepIdsInLoop({
         iteratorStepId,
         initialLoopStepIds,
-        stepInfos,
         steps,
       });
 
       stepInfosToUpdate = {
         ...stepInfosToUpdate,
-        ...subStepsInfos,
+        ...buildLoopStepInfosReset({ stepIdsToReset, stepInfos }),
       };
     }
 
-    const iteratorStepInfo = await this.buildIteratorStepInfoReset({
-      iteratorStepId,
-      iteratorStepInfo: stepInfos[iteratorStepId],
-    });
-
     stepInfosToUpdate = {
       ...stepInfosToUpdate,
-      ...iteratorStepInfo,
+      ...this.buildIteratorStepInfoReset({
+        iteratorStepId,
+        iteratorStepInfo: stepInfos[iteratorStepId],
+      }),
     };
 
     await this.workflowRunWorkspaceService.updateWorkflowRunStepInfos({
@@ -174,44 +171,28 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
     });
   }
 
-  private async buildSubStepInfosReset({
-    iteratorStepId,
-    initialLoopStepIds,
-    stepInfos,
-    steps,
-  }: {
-    iteratorStepId: string;
-    initialLoopStepIds: string[];
-    stepInfos: Record<string, WorkflowRunStepInfo>;
-    steps: WorkflowAction[];
-  }) {
-    const stepIdsToReset = getAllStepIdsInLoop({
-      iteratorStepId,
-      initialLoopStepIds,
-      steps,
-    });
-
-    return buildLoopStepInfosReset({ stepIdsToReset, stepInfos });
-  }
-
-  private async buildIteratorStepInfoReset({
+  private buildIteratorStepInfoReset({
     iteratorStepId,
     iteratorStepInfo,
   }: {
     iteratorStepId: string;
-    iteratorStepInfo: WorkflowRunStepInfo;
-  }) {
+    iteratorStepInfo?: WorkflowRunStepInfo;
+  }): Record<string, WorkflowRunStepInfo> {
+    if (!isDefined(iteratorStepInfo)) {
+      return {};
+    }
+
     return {
       [iteratorStepId]: {
         ...iteratorStepInfo,
         result: undefined,
         error: undefined,
         history: [
-          ...(iteratorStepInfo?.history ?? []),
+          ...(iteratorStepInfo.history ?? []),
           {
-            result: iteratorStepInfo?.result,
-            error: iteratorStepInfo?.error,
-            status: iteratorStepInfo?.status,
+            result: iteratorStepInfo.result,
+            error: iteratorStepInfo.error,
+            status: iteratorStepInfo.status,
           },
         ],
       },

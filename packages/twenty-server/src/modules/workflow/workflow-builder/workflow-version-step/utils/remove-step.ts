@@ -168,9 +168,7 @@ const updateIfElseStepOnDeletion = ({
 
   return {
     ...step,
-    nextStepIds: step.nextStepIds?.filter(
-      (id) => !allRemovedStepIds.includes(id),
-    ),
+    nextStepIds: [],
     settings: {
       ...step.settings,
       input: {
