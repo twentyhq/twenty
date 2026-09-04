@@ -107,4 +107,65 @@ describe('usePerformViewApiPersist', () => {
       previousViewsEntry,
     );
   });
+
+  it('preserves concurrent view changes when its destroy request fails', async () => {
+    let store: Store | undefined;
+    const Wrapper = getJestMetadataAndApolloMocksWrapper({
+      apolloMocks: [
+        {
+          request: {
+            query: DestroyViewDocument,
+            variables: { id: viewToDestroy.id },
+          },
+          delay: 100,
+          error: new Error('Failed to destroy view'),
+        },
+      ],
+      onInitializeJotaiStore: (initializedStore) => {
+        store = initializedStore;
+        initializeMetadataStore(initializedStore);
+      },
+    });
+
+    const { result } = renderHook(() => usePerformViewApiPersist(), {
+      wrapper: Wrapper,
+    });
+
+    expect(store).toBeDefined();
+    if (!store) {
+      throw new Error('Jotai store was not initialized');
+    }
+
+    const initializedStore = store;
+    const viewsStoreAtom = metadataStoreState.atomFamily('views');
+    const concurrentView = {
+      ...initializedStore.get(viewsStoreAtom).current[0],
+      id: 'concurrent-view-id',
+    };
+
+    let destroyPromise: ReturnType<typeof result.current.performViewApiDestroy>;
+
+    act(() => {
+      destroyPromise = result.current.performViewApiDestroy({
+        id: viewToDestroy.id,
+      });
+    });
+
+    act(() => {
+      initializedStore.set(viewsStoreAtom, {
+        current: [concurrentView],
+        draft: [],
+        status: 'up-to-date',
+      });
+    });
+
+    await act(async () => {
+      await destroyPromise;
+    });
+
+    expect(initializedStore.get(viewsStoreAtom).current).toEqual([
+      concurrentView,
+      expect.objectContaining({ id: viewToDestroy.id }),
+    ]);
+  });
 });

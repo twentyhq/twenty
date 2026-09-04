@@ -24,7 +24,8 @@ export const usePerformViewApiPersist = () => {
   const [createViewMutation] = useMutation(CreateViewDocument);
   const [destroyViewMutation] = useMutation(DestroyViewDocument);
   const store = useStore();
-  const { applyChanges, removeFromDraft } = useUpdateMetadataStoreDraft();
+  const { addToDraft, applyChanges, removeFromDraft } =
+    useUpdateMetadataStoreDraft();
   const { triggerViewGroupOptimisticEffectAtViewCreation } =
     useViewsSideEffectsOnViewGroups();
 
@@ -107,6 +108,14 @@ export const usePerformViewApiPersist = () => {
     > => {
       const viewsStoreAtom = metadataStoreState.atomFamily('views');
       const previousViewsEntry = store.get(viewsStoreAtom);
+      const previousViews = (
+        previousViewsEntry.status === 'draft-pending'
+          ? previousViewsEntry.draft
+          : previousViewsEntry.current
+      ) as FlatView[];
+      const viewToRestore = previousViews.find(
+        (view) => view.id === variables.id,
+      );
 
       removeFromDraft({ key: 'views', itemIds: [variables.id] });
       applyChanges();
@@ -121,13 +130,24 @@ export const usePerformViewApiPersist = () => {
         operationType: CrudOperationType.DELETE,
       });
 
-      if (result.status === 'failed') {
-        store.set(viewsStoreAtom, previousViewsEntry);
+      if (result.status === 'failed' && isDefined(viewToRestore)) {
+        const latestViewsEntry = store.get(viewsStoreAtom);
+        const latestViews = (
+          latestViewsEntry.status === 'draft-pending'
+            ? latestViewsEntry.draft
+            : latestViewsEntry.current
+        ) as FlatView[];
+
+        if (latestViews.every((view) => view.id !== variables.id)) {
+          addToDraft({ key: 'views', items: [viewToRestore] });
+          applyChanges();
+        }
       }
 
       return result;
     },
     [
+      addToDraft,
       applyChanges,
       destroyViewMutation,
       performViewEntityApiPersistOperation,
