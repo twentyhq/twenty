@@ -174,6 +174,7 @@ import { RenameEmailingDomainPermanentlySuspendedToSandboxFastInstanceCommand } 
 import { RelaxNavigationPayloadCheckFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788272351970-relax-navigation-payload-check';
 import { EraseObjectNavigationCommandMenuItemPayloadsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-slow-1788272351971-erase-object-navigation-command-menu-item-payloads';
 import { ReshapeUsageLimitPeriodFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788367160891-reshape-usage-limit-period';
+import { AddReadabilityToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788542573155-add-readability-to-object-metadata';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -350,4 +351,5 @@ export const INSTANCE_COMMANDS = [
   RelaxNavigationPayloadCheckFastInstanceCommand,
   EraseObjectNavigationCommandMenuItemPayloadsSlowInstanceCommand,
   ReshapeUsageLimitPeriodFastInstanceCommand,
+  AddReadabilityToObjectMetadataFastInstanceCommand,
 ];
