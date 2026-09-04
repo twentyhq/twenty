@@ -1,18 +1,21 @@
+import { type UsageLimitDTO } from 'src/engine/core-modules/usage-limit/dtos/usage-limit.dto';
 import { type UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
-import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
+import { normalizeSpenderId } from 'src/engine/core-modules/usage-limit/utils/normalize-spender-id.util';
 
-export const fromUsageLimitEntityToFlat = (
+export const fromUsageLimitEntityToDto = (
   usageLimit: UsageLimitEntity,
-): FlatUsageLimit => ({
+): UsageLimitDTO => ({
   id: usageLimit.id,
   resourceType: usageLimit.resourceType,
   operationType: usageLimit.operationType,
   spenderType: usageLimit.spenderType,
-  spenderId: usageLimit.spenderId,
+  spenderId: normalizeSpenderId(usageLimit.spenderId),
   limitKind: usageLimit.limitKind,
   periodCount: usageLimit.periodCount,
   periodUnit: usageLimit.periodUnit,
   meter: usageLimit.meter,
   limitValue: usageLimit.limitValue,
   burstValue: usageLimit.burstValue,
+  createdAt: usageLimit.createdAt,
+  updatedAt: usageLimit.updatedAt,
 });

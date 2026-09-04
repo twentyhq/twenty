@@ -13,7 +13,7 @@ import { usageLimitToGraphqlApiExceptionHandler } from 'src/engine/core-modules/
 export class UsageLimitGraphqlApiExceptionFilter implements ExceptionFilter {
   catch(exception: UsageLimitException) {
     switch (exception.code) {
-      case UsageLimitExceptionCode.LIMIT_RULE_INVALID:
+      case UsageLimitExceptionCode.LIMIT_INVALID:
         throw new UserInputError(exception);
       case UsageLimitExceptionCode.RATE_LIMITED:
       case UsageLimitExceptionCode.QUOTA_EXHAUSTED:

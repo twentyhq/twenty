@@ -18,7 +18,10 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 // Each operation type has one canonical counting unit — matches how
 // `ai-billing.service.ts` emits native usage events.
-const USAGE_UNIT_BY_OPERATION_TYPE: Record<UsageOperationType, UsageUnit> = {
+const USAGE_UNIT_BY_OPERATION_TYPE: Record<
+  Exclude<UsageOperationType, UsageOperationType.ALL>,
+  UsageUnit
+> = {
   [UsageOperationType.AI_CHAT_TOKEN]: UsageUnit.TOKEN,
   [UsageOperationType.AI_WORKFLOW_TOKEN]: UsageUnit.TOKEN,
   [UsageOperationType.WORKFLOW_EXECUTION]: UsageUnit.INVOCATION,
@@ -91,7 +94,7 @@ export class AppBillingService {
     workspaceId: string;
     applicationId: string;
     charge: ChargeDto;
-  }): Promise<UsageOperationType> {
+  }): Promise<Exclude<UsageOperationType, UsageOperationType.ALL>> {
     if (!isDefined(charge.operation)) {
       if (!isDefined(charge.operationType)) {
         throw new BadRequestException(
