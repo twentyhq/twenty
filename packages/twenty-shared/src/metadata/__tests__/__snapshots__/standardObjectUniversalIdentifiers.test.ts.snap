@@ -2471,6 +2471,71 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
     },
   },
+  "recordShare": {
+    "fields": {
+      "accessLevel": {
+        "universalIdentifier": "943b9926-9620-43de-8a46-8ebfee74dea3",
+      },
+      "createdAt": {
+        "universalIdentifier": "5a199f71-d282-50bf-9456-dd9d05579dc3",
+      },
+      "createdBy": {
+        "universalIdentifier": "558a8d87-de8e-540f-8fa9-9c413656e588",
+      },
+      "deletedAt": {
+        "universalIdentifier": "a25180d7-c4ea-516d-9406-24831210a118",
+      },
+      "id": {
+        "universalIdentifier": "e5a5509c-f262-558d-a698-d148516b4dea",
+      },
+      "objectMetadataId": {
+        "universalIdentifier": "504cec47-6aae-4e5b-85fd-1581b62602e3",
+      },
+      "position": {
+        "universalIdentifier": "db40ca46-5ea0-535d-b3bc-a3000fc61584",
+      },
+      "principalId": {
+        "universalIdentifier": "c1849ee2-1d2a-409e-800d-16fc16621257",
+      },
+      "principalType": {
+        "universalIdentifier": "556161f6-1a01-478e-8f01-acc413102e44",
+      },
+      "recordId": {
+        "universalIdentifier": "01edb657-6339-475c-b581-784a0c3e0509",
+      },
+      "rowCause": {
+        "universalIdentifier": "be27640e-f739-4d07-8979-dba4526e406a",
+      },
+      "searchVector": {
+        "universalIdentifier": "80a32ec3-1583-5383-acb6-c9373a57761f",
+      },
+      "sourceId": {
+        "universalIdentifier": "534a2244-9feb-4d21-afd9-c9a20052b300",
+      },
+      "updatedAt": {
+        "universalIdentifier": "413637e8-c0e3-5315-9238-6fd36c91ba58",
+      },
+      "updatedBy": {
+        "universalIdentifier": "52dd5a05-1197-5a77-a7fb-90b15e61cda9",
+      },
+    },
+    "indexes": {
+      "objectRecordIndex": {
+        "universalIdentifier": "77a8982d-99bc-4a47-9c0c-d2056d7a7d44",
+      },
+      "principalIdIndex": {
+        "universalIdentifier": "66fbc3d2-6126-4e29-a306-dbe9995bf062",
+      },
+      "recordPrincipalCauseSourceUniqueIndex": {
+        "universalIdentifier": "4580f104-47a7-4110-87a8-26cb6f63ce7b",
+      },
+      "sourceIdIndex": {
+        "universalIdentifier": "21b84593-c647-40ce-bdf4-a8b4ac658f57",
+      },
+    },
+    "universalIdentifier": "fecdb92c-d150-4544-81f8-f1158d18a7a2",
+    "views": {},
+  },
   "task": {
     "fields": {
       "assignee": {
