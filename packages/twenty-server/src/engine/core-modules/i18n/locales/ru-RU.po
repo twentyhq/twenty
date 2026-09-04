@@ -2723,6 +2723,12 @@ msgctxt "fieldMetadata.label"
 msgid "Creation DateTime"
 msgstr "Дата и время создания"
 
+#. js-lingui-id: +zmk0f
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout/compute-standard-record-form-flat-entities.util.ts
+msgctxt "pageLayout.name"
+msgid "Creation Form"
+msgstr "Форма создания"
+
 #. js-lingui-id: oB7ed5
 #: src/engine/core-modules/usage-limit/services/usage-limit-quota.service.ts
 msgid "Credit allowance exhausted for this billing period."
@@ -4143,6 +4149,12 @@ msgstr "FieldMetadataId требуется для создания сортир�
 msgid "fieldMetadataId or fieldMetadataUniversalIdentifier must be provided"
 msgstr "Необходимо указать fieldMetadataId или fieldMetadataUniversalIdentifier"
 
+#. js-lingui-id: R/u+r2
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout/compute-standard-record-form-flat-entities.util.ts
+msgctxt "pageLayoutTab.title"
+msgid "Fields"
+msgstr "Поля"
+
 #. js-lingui-id: GFC6Lh
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 msgctxt "pageLayoutWidget.title"
@@ -4200,6 +4212,11 @@ msgstr "Файл не найден в архиве SDK-клиента."
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "File not found."
 msgstr "Файл не найден."
+
+#. js-lingui-id: MtzD8b
+#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+msgid "File storage took too long to respond. Please retry."
+msgstr "Файловое хранилище отвечало слишком долго. Повторите попытку."
 
 #. js-lingui-id: I7Jff2
 #: src/engine/core-modules/file-storage/utils/validate-file-path.util.ts
@@ -7408,6 +7425,11 @@ msgstr "Только администраторы могут выдавать с
 msgid "Only applications published to npm can be claimed this way."
 msgstr "Только на приложения, опубликованные в npm, можно таким образом заявить права."
 
+#. js-lingui-id: FmMRCQ
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Only applications synced from local source can be exported."
+msgstr "Можно экспортировать только приложения, синхронизированные из локального источника."
+
 #. js-lingui-id: XLn1DI
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
 msgid "Only error"
@@ -10268,6 +10290,11 @@ msgstr "Значение APP_VERSION на сервере не является �
 msgid "The singular and plural names cannot be the same for an object"
 msgstr "Единственные и множественные имена объекта не могут быть одинаковыми"
 
+#. js-lingui-id: 5bOcgV
+#: src/engine/core-modules/application/application.exception.ts
+msgid "The standard application cannot be exported."
+msgstr "Стандартное приложение нельзя экспортировать."
+
 #. js-lingui-id: Dvwk3g
 #: src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
 msgid "The subscription is no longer available on the provider."
@@ -10827,6 +10854,17 @@ msgstr "Эта версия приложения уже установлена �
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This workspace already has a subscription."
 msgstr "У этого рабочего пространства уже есть подписка."
+
+#. js-lingui-id: aJq3VL
+#: src/engine/core-modules/billing/billing.exception.ts
+#: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
+msgid "This workspace has no active subscription."
+msgstr "У этого рабочего пространства нет активной подписки."
+
+#. js-lingui-id: ChHeV3
+#: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
+msgid "This workspace is suspended."
+msgstr "Это рабочее пространство приостановлено."
 
 #. js-lingui-id: IdEnkZ
 #: src/engine/core-modules/application/application.exception.ts

@@ -354,6 +354,44 @@ export type ApplicationConnectionProviderOAuthConfig = {
   scopes: Array<Scalars['String']['output']>;
 };
 
+export type ApplicationExport = {
+  __typename?: 'ApplicationExport';
+  application: ApplicationExportApplication;
+  coverage: Array<ApplicationExportCoverageEntry>;
+  files: Array<ApplicationExportFile>;
+  manifest: Scalars['JSON']['output'];
+};
+
+export type ApplicationExportApplication = {
+  __typename?: 'ApplicationExportApplication';
+  displayName: Scalars['String']['output'];
+  sourceType: ApplicationRegistrationSourceType;
+  universalIdentifier: Scalars['String']['output'];
+};
+
+export type ApplicationExportCoverageEntry = {
+  __typename?: 'ApplicationExportCoverageEntry';
+  metadataName: Scalars['String']['output'];
+  reason?: Maybe<Scalars['String']['output']>;
+  status: ApplicationExportCoverageStatus;
+  universalIdentifier: Scalars['String']['output'];
+};
+
+export enum ApplicationExportCoverageStatus {
+  ENGINE_DERIVED = 'ENGINE_DERIVED',
+  EXCLUDED = 'EXCLUDED',
+  EXPORTED = 'EXPORTED',
+  FOREIGN_OWNED = 'FOREIGN_OWNED',
+  UNSUPPORTED = 'UNSUPPORTED'
+}
+
+export type ApplicationExportFile = {
+  __typename?: 'ApplicationExportFile';
+  content: Scalars['String']['output'];
+  folder: Scalars['String']['output'];
+  path: Scalars['String']['output'];
+};
+
 export type ApplicationFileCompletionError = {
   __typename?: 'ApplicationFileCompletionError';
   fileId: Scalars['UUID']['output'];
@@ -1902,11 +1940,10 @@ export enum FeatureFlagKey {
   IS_JUNCTION_RELATIONS_ENABLED = 'IS_JUNCTION_RELATIONS_ENABLED',
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED = 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED',
   IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED = 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED',
+  IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED = 'IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
-  IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED = 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED',
-  IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED = 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED',
-  IS_WORKFLOW_VERSION_IN_CORE_ENABLED = 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED'
+  IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED = 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED'
 }
 
 export type Field = {
@@ -4798,6 +4835,7 @@ export type Query = {
   enterprisePortalSession?: Maybe<Scalars['String']['output']>;
   enterpriseSubscriptionStatus?: Maybe<EnterpriseSubscriptionStatusDto>;
   eventLogs: EventLogQueryResult;
+  exportApplication: ApplicationExport;
   field: Field;
   fields: FieldConnection;
   findApplicationRegistrationByClientId?: Maybe<PublicApplicationRegistration>;
@@ -4998,6 +5036,11 @@ export type QueryEnterprisePortalSessionArgs = {
 
 export type QueryEventLogsArgs = {
   input: EventLogQueryInput;
+};
+
+
+export type QueryExportApplicationArgs = {
+  universalIdentifier: Scalars['UUID']['input'];
 };
 
 

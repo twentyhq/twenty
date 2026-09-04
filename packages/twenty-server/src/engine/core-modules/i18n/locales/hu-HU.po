@@ -2723,6 +2723,12 @@ msgctxt "fieldMetadata.label"
 msgid "Creation DateTime"
 msgstr "Létrehozás dátuma és ideje"
 
+#. js-lingui-id: +zmk0f
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout/compute-standard-record-form-flat-entities.util.ts
+msgctxt "pageLayout.name"
+msgid "Creation Form"
+msgstr "Létrehozási űrlap"
+
 #. js-lingui-id: oB7ed5
 #: src/engine/core-modules/usage-limit/services/usage-limit-quota.service.ts
 msgid "Credit allowance exhausted for this billing period."
@@ -4143,6 +4149,12 @@ msgstr "A FieldMetadataId szükséges a nézet rendezés létrehozásához."
 msgid "fieldMetadataId or fieldMetadataUniversalIdentifier must be provided"
 msgstr "A fieldMetadataId vagy a fieldMetadataUniversalIdentifier megadása kötelező"
 
+#. js-lingui-id: R/u+r2
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout/compute-standard-record-form-flat-entities.util.ts
+msgctxt "pageLayoutTab.title"
+msgid "Fields"
+msgstr "Mezők"
+
 #. js-lingui-id: GFC6Lh
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 msgctxt "pageLayoutWidget.title"
@@ -4200,6 +4212,11 @@ msgstr "A fájl nem található az SDK kliens archívumában."
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "File not found."
 msgstr "Fájl nem található."
+
+#. js-lingui-id: MtzD8b
+#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+msgid "File storage took too long to respond. Please retry."
+msgstr "A fájltároló túl sokáig nem válaszolt. Próbálja újra."
 
 #. js-lingui-id: I7Jff2
 #: src/engine/core-modules/file-storage/utils/validate-file-path.util.ts
@@ -7408,6 +7425,11 @@ msgstr "Csak az adminisztrátorok személyesíthetnek meg rendszergazdai jogosul
 msgid "Only applications published to npm can be claimed this way."
 msgstr "Ilyen módon csak az npm-en közzétett alkalmazások igényelhetők."
 
+#. js-lingui-id: FmMRCQ
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Only applications synced from local source can be exported."
+msgstr "Csak a helyi forrásból szinkronizált alkalmazások exportálhatók."
+
 #. js-lingui-id: XLn1DI
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
 msgid "Only error"
@@ -10268,6 +10290,11 @@ msgstr "A kiszolgáló APP_VERSION értéke nem érvényes semver verzió. Az ö
 msgid "The singular and plural names cannot be the same for an object"
 msgstr "Az egyes és többes számú nevek nem lehetnek ugyanazok egy objektumhoz"
 
+#. js-lingui-id: 5bOcgV
+#: src/engine/core-modules/application/application.exception.ts
+msgid "The standard application cannot be exported."
+msgstr "A standard alkalmazás nem exportálható."
+
 #. js-lingui-id: Dvwk3g
 #: src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
 msgid "The subscription is no longer available on the provider."
@@ -10827,6 +10854,17 @@ msgstr "Az alkalmazásnak ez a verziója már telepítve van ezen a munkaterüle
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This workspace already has a subscription."
 msgstr "Ehhez a munkaterülethez már tartozik előfizetés."
+
+#. js-lingui-id: aJq3VL
+#: src/engine/core-modules/billing/billing.exception.ts
+#: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
+msgid "This workspace has no active subscription."
+msgstr "Ez a munkaterület nem rendelkezik aktív előfizetéssel."
+
+#. js-lingui-id: ChHeV3
+#: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
+msgid "This workspace is suspended."
+msgstr "Ez a munkaterület fel lett függesztve."
 
 #. js-lingui-id: IdEnkZ
 #: src/engine/core-modules/application/application.exception.ts
