@@ -2,7 +2,6 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import {
-  CLEAR_STALE_CALL_RECORDER_PREFERENCES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   RECONCILE_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
@@ -25,12 +24,6 @@ export const sweepUpcomingCalendarEventsHandler =
   async (): Promise<SweepUpcomingCalendarEventsResult> => {
     try {
       const client = new CoreApiClient();
-
-      await enqueueLogicFunctionJobs({
-        logicFunctionUniversalIdentifier:
-          CLEAR_STALE_CALL_RECORDER_PREFERENCES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-        payloads: [{}],
-      });
 
       const calendarEventIds = await fetchUpcomingCalendarEventIds(
         client,
@@ -69,7 +62,7 @@ export default defineLogicFunction({
     SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'sweep-upcoming-calendar-events',
   description:
-    'Enqueues one reconciliation batch per group of upcoming calendar events on a schedule so meetings entering the scheduling horizon get their recording bots, and a cleanup of the default Recording Bot preference on past meetings.',
+    'Enqueues one reconciliation batch per group of upcoming calendar events on a schedule so meetings entering the scheduling horizon get their recording bots.',
   timeoutSeconds: 900,
   handler: sweepUpcomingCalendarEventsHandler,
   cronTriggerSettings: {

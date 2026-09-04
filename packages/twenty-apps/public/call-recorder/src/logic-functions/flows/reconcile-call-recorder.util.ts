@@ -13,9 +13,6 @@ import { buildCallRecorderPolicyResult } from 'src/logic-functions/domain/build-
 import { cancelCallRecordingRequest } from 'src/logic-functions/flows/cancel-call-recording-request.util';
 import { computeCallRecordingIdForMeeting } from 'src/logic-functions/domain/compute-call-recording-id-for-meeting.util';
 import { isUnavailableCallRecordingStatus } from 'src/logic-functions/domain/is-unavailable-call-recording-status.util';
-import { hasCallRecordingAttempt } from 'src/logic-functions/domain/has-call-recording-attempt.util';
-import { isStaleDefaultCallRecorderPreference } from 'src/logic-functions/domain/is-stale-default-call-recorder-preference.util';
-import { clearCallRecorderPreferences } from 'src/logic-functions/data/clear-call-recorder-preferences.util';
 import {
   createCallRecording,
   type ScheduledCallRecordingFields,
@@ -23,6 +20,7 @@ import {
 import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/schedule-recall-bot-for-call-recording.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { fetchCalendarEventsByStartsAtValues } from 'src/logic-functions/data/fetch-calendar-events-by-starts-at-values.util';
+import { markCalendarEventsRecordingOn } from 'src/logic-functions/data/mark-calendar-events-recording-on.util';
 import { findCallRecordingsByCalendarEventIds } from 'src/logic-functions/data/find-call-recordings-by-calendar-event-ids.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
@@ -104,11 +102,6 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
     client,
     [...occurrenceStartsAtAnchors],
   );
-  const calendarEventsById = new Map(
-    [...changedCalendarEvents, ...occurrenceSiblingEvents].map(
-      (calendarEvent) => [calendarEvent.id, calendarEvent],
-    ),
-  );
   const policyResultsByCalendarEventId = new Map(
     changedCalendarEventPolicyResults.map((policyResult) => [
       policyResult.calendarEventId,
@@ -133,25 +126,11 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
     .filter((policyResult) =>
       affectedMeetingKeys.has(policyResult.realMeetingKey),
     )
-    .map((policyResult) => {
-      const calendarEvent = calendarEventsById.get(
-        policyResult.calendarEventId,
-      );
-
-      return {
-        calendarEventId: policyResult.calendarEventId,
-        realMeetingKey: policyResult.realMeetingKey,
-        shouldRequestBot: policyResult.shouldRequestBot,
-        hasStaleDefaultPreference:
-          !isUndefined(calendarEvent) &&
-          isStaleDefaultCallRecorderPreference({
-            callRecorderPreference: policyResult.callRecorderPreference,
-            startsAt: calendarEvent.startsAt,
-            endsAt: calendarEvent.endsAt,
-            now,
-          }),
-      };
-    });
+    .map((policyResult) => ({
+      calendarEventId: policyResult.calendarEventId,
+      realMeetingKey: policyResult.realMeetingKey,
+      shouldRequestBot: policyResult.shouldRequestBot,
+    }));
   const meetingPolicyResults = aggregateCallRecorderPolicyResultsByMeeting(
     perCalendarEventPolicyResults,
   );
@@ -171,7 +150,6 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
       shouldRequestBot: false,
       calendarEventIds: [],
       requestingCalendarEventIds: [],
-      staleDefaultPreferenceCalendarEventIds: [],
     });
   }
 
@@ -270,12 +248,16 @@ const reconcileActiveMeeting = async ({
   )[0];
 
   if (!isUndefined(existingCallRecording)) {
-    return updatePolicyManagedCallRecording({
+    const reconciliationResult = await updatePolicyManagedCallRecording({
       client,
       existingCallRecording,
       representativeCalendarEvent,
       realMeetingKey: meetingPolicyResult.realMeetingKey,
     });
+
+    await markRequestingCalendarEventsRecordingOn(client, meetingPolicyResult);
+
+    return reconciliationResult;
   }
 
   const manualOpenCallRecording = await findManualOpenCallRecording({
@@ -292,12 +274,37 @@ const reconcileActiveMeeting = async ({
     };
   }
 
-  return createPolicyManagedCallRecording({
+  const reconciliationResult = await createPolicyManagedCallRecording({
     client,
     callRecordingId,
     representativeCalendarEvent,
     realMeetingKey: meetingPolicyResult.realMeetingKey,
   });
+
+  await markRequestingCalendarEventsRecordingOn(client, meetingPolicyResult);
+
+  return reconciliationResult;
+};
+
+// The field has no default so events only read On once a bot is actually
+// requested for them. The write is cosmetic: a failure must not fail the
+// meeting, and the next reconciliation of the meeting repeats it anyway.
+const markRequestingCalendarEventsRecordingOn = async (
+  client: CoreApiClient,
+  meetingPolicyResult: CallRecorderPolicyResultForMeeting,
+): Promise<void> => {
+  try {
+    await markCalendarEventsRecordingOn(
+      client,
+      meetingPolicyResult.requestingCalendarEventIds,
+    );
+  } catch (error) {
+    console.warn(
+      `[call-recorder] failed to mark the calendar events of meeting ${meetingPolicyResult.realMeetingKey} as recording on: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+  }
 };
 
 const updatePolicyManagedCallRecording = async ({
@@ -433,26 +440,14 @@ const reconcileCanceledMeeting = async ({
     ...meetingPolicyResult.calendarEventIds,
     ...removedCalendarEventIds,
   ]);
-  const meetingCallRecordings = await findCallRecordingsByCalendarEventIds(
-    client,
-    calendarEventIds,
-  );
-  const cancellableCallRecordings = meetingCallRecordings.filter(
+  const cancellableCallRecordings = (
+    await findCallRecordingsByCalendarEventIds(client, calendarEventIds)
+  ).filter(
     (callRecording) =>
       callRecording.status === CallRecordingStatus.SCHEDULED &&
       callRecording.recordingRequestStatus ===
         CallRecordingRequestStatus.REQUESTED,
   );
-
-  if (
-    meetingPolicyResult.staleDefaultPreferenceCalendarEventIds.length > 0 &&
-    !hasCallRecordingAttempt(meetingCallRecordings)
-  ) {
-    await clearCallRecorderPreferences(
-      client,
-      meetingPolicyResult.staleDefaultPreferenceCalendarEventIds,
-    );
-  }
 
   if (cancellableCallRecordings.length === 0) {
     return buildSkippedResult(meetingPolicyResult.realMeetingKey);

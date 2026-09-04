@@ -24,10 +24,11 @@ variable to `false` to turn summaries off.
 
 ## 🤖 The Recording Bot field
 
-Each calendar event has a **Recording Bot** field. It reads On for upcoming
-meetings by default and can be set to Off per event. Once a meeting has ended
-it is cleared automatically unless the recorder was actually sent, so the field
-only reads On for meetings that were or will be recorded.
+Each calendar event has a **Recording Bot** field. It starts blank and the app
+sets it to On when it actually schedules the recorder for that meeting, which
+happens once the meeting is within the seven-day scheduling window. Set it to
+Off to skip a meeting. Past meetings the recorder never joined simply stay
+blank.
 
 ## 🎥 Supported meeting platforms
 

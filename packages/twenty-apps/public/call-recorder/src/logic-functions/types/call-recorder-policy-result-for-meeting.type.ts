@@ -3,5 +3,4 @@ export type CallRecorderPolicyResultForMeeting = {
   shouldRequestBot: boolean;
   calendarEventIds: string[];
   requestingCalendarEventIds: string[];
-  staleDefaultPreferenceCalendarEventIds: string[];
 };

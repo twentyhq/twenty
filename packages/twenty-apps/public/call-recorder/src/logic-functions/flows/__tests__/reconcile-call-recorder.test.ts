@@ -173,8 +173,8 @@ class FakeCoreApiClient {
       const updatedCalendarEvents = this.calendarEvents.filter(
         (calendarEvent) =>
           filter.id.in.includes(calendarEvent.id) &&
-          calendarEvent.callRecorderPreference ===
-            filter.callRecorderPreference.eq,
+          filter.callRecorderPreference.is === 'NULL' &&
+          (calendarEvent.callRecorderPreference ?? null) === null,
       );
 
       for (const calendarEvent of updatedCalendarEvents) {
@@ -1194,18 +1194,16 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     expect(recallBotCreateCalls()).toHaveLength(0);
   });
 
-  it('clears the default ON on an ended meeting the recorder never attempted', async () => {
+  it('marks a blank preference On on every requesting copy of the meeting once a bot is scheduled', async () => {
     const client = buildFakeCoreApiClient({
       calendarEvents: [
         buildCalendarEvent({
           id: 'calendar-event-1',
-          startsAt: '2026-01-01T09:00:00.000Z',
-          endsAt: '2026-01-01T10:00:00.000Z',
+          callRecorderPreference: null,
         }),
         buildCalendarEvent({
           id: 'calendar-event-2',
-          startsAt: '2026-01-01T09:00:00.000Z',
-          endsAt: '2026-01-01T10:00:00.000Z',
+          callRecorderPreference: null,
         }),
       ],
     });
@@ -1215,90 +1213,56 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
       calendarEventIds: ['calendar-event-1'],
     });
 
-    expect(results).toEqual([expect.objectContaining({ action: 'SKIPPED' })]);
-    expect(client.mutations).toEqual([
-      {
-        name: 'updateCalendarEvents',
-        args: {
-          filter: {
-            id: { in: ['calendar-event-1', 'calendar-event-2'] },
-            callRecorderPreference: { eq: 'ON' },
-          },
-          data: { callRecorderPreference: null },
+    expect(results).toEqual([expect.objectContaining({ action: 'CREATED' })]);
+    expect(recallBotCreateCalls()).toHaveLength(1);
+    expect(client.mutations[client.mutations.length - 1]).toEqual({
+      name: 'updateCalendarEvents',
+      args: {
+        filter: {
+          id: { in: ['calendar-event-1', 'calendar-event-2'] },
+          callRecorderPreference: { is: 'NULL' },
         },
+        data: { callRecorderPreference: 'ON' },
       },
-    ]);
+    });
     expect(
       client.calendarEvents.map(
         (calendarEvent) => calendarEvent.callRecorderPreference,
       ),
-    ).toEqual([null, null]);
-    expect(recallBotCreateCalls()).toHaveLength(0);
+    ).toEqual(['ON', 'ON']);
   });
 
-  it('keeps the ON preference on an ended meeting that was recorded', async () => {
+  it('marks a blank preference On again when an existing scheduled recording is updated', async () => {
+    const callRecordingId = buildCustomerSyncCallRecordingId();
     const client = buildFakeCoreApiClient({
-      calendarEvents: [
-        buildCalendarEvent({
-          startsAt: '2026-01-01T09:00:00.000Z',
-          endsAt: '2026-01-01T10:00:00.000Z',
-        }),
-      ],
+      calendarEvents: [buildCalendarEvent({ callRecorderPreference: null })],
       callRecordings: [
         {
-          id: buildCustomerSyncCallRecordingId('2026-01-01T09:00:00.000Z'),
-          status: 'COMPLETED',
+          id: callRecordingId,
+          status: 'SCHEDULED',
           recordingRequestStatus: 'REQUESTED',
           calendarEventId: 'calendar-event-1',
+          externalBotId: 'recall-bot-1',
         },
       ],
     });
 
-    await reconcileCallRecorderForCalendarEventIds({
+    const results = await reconcileCallRecorderForCalendarEventIds({
       client: client as unknown as CoreApiClient,
       calendarEventIds: ['calendar-event-1'],
     });
 
-    expect(client.mutations).toEqual([]);
+    expect(results).toEqual([expect.objectContaining({ action: 'UPDATED' })]);
     expect(client.calendarEvents[0].callRecorderPreference).toBe('ON');
   });
 
-  it('clears the default ON on an ended meeting whose only request was canceled', async () => {
+  it('leaves a blank preference blank on a meeting that already ended', async () => {
     const client = buildFakeCoreApiClient({
       calendarEvents: [
         buildCalendarEvent({
           startsAt: '2026-01-01T09:00:00.000Z',
           endsAt: '2026-01-01T10:00:00.000Z',
-        }),
-      ],
-      callRecordings: [
-        {
-          id: buildCustomerSyncCallRecordingId('2026-01-01T09:00:00.000Z'),
-          status: 'SCHEDULED',
-          recordingRequestStatus: 'CANCELED',
-          calendarEventId: 'calendar-event-1',
-        },
-      ],
-    });
-
-    await reconcileCallRecorderForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
-      calendarEventIds: ['calendar-event-1'],
-    });
-
-    expect(client.mutations.map((mutation) => mutation.name)).toEqual([
-      'updateCalendarEvents',
-    ]);
-    expect(client.calendarEvents[0].callRecorderPreference).toBeNull();
-  });
-
-  it('leaves an explicit OFF alone on an ended meeting', async () => {
-    const client = buildFakeCoreApiClient({
-      calendarEvents: [
-        buildCalendarEvent({
-          startsAt: '2026-01-01T09:00:00.000Z',
-          endsAt: '2026-01-01T10:00:00.000Z',
-          callRecorderPreference: 'OFF',
+          callRecorderPreference: null,
         }),
       ],
     });
@@ -1309,6 +1273,45 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     });
 
     expect(client.mutations).toEqual([]);
+    expect(client.calendarEvents[0].callRecorderPreference).toBeNull();
+  });
+
+  it('leaves an explicit Off alone and schedules nothing', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [buildCalendarEvent({ callRecorderPreference: 'OFF' })],
+    });
+
+    await reconcileCallRecorderForCalendarEventIds({
+      client: client as unknown as CoreApiClient,
+      calendarEventIds: ['calendar-event-1'],
+    });
+
+    expect(client.mutations).toEqual([]);
+    expect(recallBotCreateCalls()).toHaveLength(0);
     expect(client.calendarEvents[0].callRecorderPreference).toBe('OFF');
+  });
+
+  it('still schedules the bot when the On write fails', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [buildCalendarEvent({ callRecorderPreference: null })],
+    });
+    const originalMutation = client.mutation.bind(client);
+
+    client.mutation = async (mutation: any) => {
+      if (mutation.updateCalendarEvents !== undefined) {
+        throw new Error('calendar events are read-only right now');
+      }
+
+      return originalMutation(mutation);
+    };
+
+    const results = await reconcileCallRecorderForCalendarEventIds({
+      client: client as unknown as CoreApiClient,
+      calendarEventIds: ['calendar-event-1'],
+    });
+
+    expect(results).toEqual([expect.objectContaining({ action: 'CREATED' })]);
+    expect(recallBotCreateCalls()).toHaveLength(1);
+    expect(client.calendarEvents[0].callRecorderPreference).toBeNull();
   });
 });

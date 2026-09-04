@@ -5,12 +5,12 @@ import { CALENDAR_EVENT_UPDATE_BATCH_SIZE } from 'src/logic-functions/constants/
 import { getBatches } from 'src/logic-functions/utils/get-batches.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 
-// Only the default ON is cleared so a preference a user set meanwhile survives.
-export const clearCallRecorderPreferences = async (
+// Only a blank preference is written so a choice made meanwhile survives.
+export const markCalendarEventsRecordingOn = async (
   client: CoreApiClient,
   calendarEventIds: string[],
 ): Promise<number> => {
-  let clearedCalendarEventCount = 0;
+  let markedCalendarEventCount = 0;
 
   for (const calendarEventIdBatch of getBatches(
     getUniqueSortedIds(calendarEventIds),
@@ -21,20 +21,20 @@ export const clearCallRecorderPreferences = async (
         __args: {
           filter: {
             id: { in: calendarEventIdBatch },
-            callRecorderPreference: { eq: CallRecorderPreference.ON },
+            callRecorderPreference: { is: 'NULL' },
           },
           data: {
-            callRecorderPreference: null,
+            callRecorderPreference: CallRecorderPreference.ON,
           },
         },
         id: true,
       },
     });
 
-    clearedCalendarEventCount += (
+    markedCalendarEventCount += (
       updateCalendarEventsResult.updateCalendarEvents ?? []
     ).length;
   }
 
-  return clearedCalendarEventCount;
+  return markedCalendarEventCount;
 };

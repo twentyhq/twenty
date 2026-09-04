@@ -116,7 +116,7 @@ const buildCalendarEventReconciliationPayload = ({
 
     if (
       !hasRelevantFieldChange(updatedFields) ||
-      isDefaultPreferenceClearing({
+      isPreferenceChangeWithoutPolicyEffect({
         updatedFields,
         before: event.properties.before,
         after: event.properties.after,
@@ -159,10 +159,10 @@ const hasRelevantFieldChange = (updatedFields: string[]): boolean =>
     CALL_RECORDER_RELEVANT_CALENDAR_EVENT_FIELDS.includes(updatedField),
   );
 
-// The app clears the default ON on past meetings itself; reacting to that
-// write would only re-run the same reconciliation. The policy reads an
-// empty preference exactly like ON, so nothing is missed by skipping it.
-const isDefaultPreferenceClearing = ({
+// The policy reads a blank preference exactly like ON, so a change between
+// the two, notably the app's own On write after scheduling, cannot alter the
+// outcome and would only replay the same reconciliation.
+const isPreferenceChangeWithoutPolicyEffect = ({
   updatedFields,
   before,
   after,
@@ -173,8 +173,8 @@ const isDefaultPreferenceClearing = ({
 }): boolean =>
   updatedFields.length === 1 &&
   updatedFields[0] === 'callRecorderPreference' &&
-  before?.callRecorderPreference === CallRecorderPreference.ON &&
-  (after?.callRecorderPreference ?? null) === null;
+  before?.callRecorderPreference !== CallRecorderPreference.OFF &&
+  after?.callRecorderPreference !== CallRecorderPreference.OFF;
 
 const hasKeyFieldChange = (updatedFields: string[]): boolean =>
   updatedFields.some((updatedField) =>

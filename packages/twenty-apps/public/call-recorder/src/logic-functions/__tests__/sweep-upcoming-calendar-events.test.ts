@@ -1,9 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import {
-  CLEAR_STALE_CALL_RECORDER_PREFERENCES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-  RECONCILE_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-} from 'src/constants/universal-identifiers';
+import { RECONCILE_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { ENQUEUED_JOB_RETRY_LIMIT } from 'src/logic-functions/constants/enqueued-job-retry-limit';
 import { UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE } from 'src/logic-functions/constants/upcoming-calendar-event-reconciliation-batch-size';
 import sweepLogicFunction, {
@@ -70,14 +67,7 @@ describe('sweepUpcomingCalendarEventsHandler', () => {
         }),
       }),
     );
-    expect(enqueueJobsMock).toHaveBeenCalledTimes(2);
-    expect(enqueueJobsMock).toHaveBeenNthCalledWith(1, {
-      logicFunctionUniversalIdentifier:
-        CLEAR_STALE_CALL_RECORDER_PREFERENCES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-      payloads: [{}],
-      retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
-    });
-    expect(enqueueJobsMock).toHaveBeenNthCalledWith(2, {
+    expect(enqueueJobsMock).toHaveBeenCalledExactlyOnceWith({
       logicFunctionUniversalIdentifier:
         RECONCILE_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
       payloads: [
@@ -100,7 +90,7 @@ describe('sweepUpcomingCalendarEventsHandler', () => {
 
     const result = await sweepUpcomingCalendarEventsHandler();
 
-    const [{ payloads }] = enqueueJobsMock.mock.calls[1];
+    const [{ payloads }] = enqueueJobsMock.mock.calls[0];
 
     expect(payloads).toHaveLength(2);
     expect(payloads[0].calendarEventIds).toHaveLength(
@@ -112,16 +102,11 @@ describe('sweepUpcomingCalendarEventsHandler', () => {
     );
   });
 
-  it('still enqueues the preference cleanup when nothing is upcoming', async () => {
+  it('short-circuits without enqueuing when nothing is upcoming', async () => {
     const result = await sweepUpcomingCalendarEventsHandler();
 
     expect(result).toEqual({ outcome: 'nothing-to-reconcile' });
-    expect(enqueueJobsMock).toHaveBeenCalledExactlyOnceWith({
-      logicFunctionUniversalIdentifier:
-        CLEAR_STALE_CALL_RECORDER_PREFERENCES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-      payloads: [{}],
-      retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
-    });
+    expect(enqueueJobsMock).not.toHaveBeenCalled();
   });
 
   it('marks sweep failures as retryable so the platform redelivers the job', async () => {
