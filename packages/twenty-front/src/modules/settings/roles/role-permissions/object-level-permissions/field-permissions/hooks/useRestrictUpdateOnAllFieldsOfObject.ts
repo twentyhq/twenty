@@ -1,6 +1,6 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { filterUserFacingFieldMetadataItems } from '@/object-metadata/utils/filterUserFacingFieldMetadataItems';
 import { useUpsertFieldPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useUpsertFieldPermissionInDraftRole';
+import { isFieldUpdateRestrictable } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/utils/isFieldUpdateRestrictable';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -29,7 +29,7 @@ export const useRestrictUpdateOnAllFieldsOfObject = ({
       ) ?? [];
 
     const restrictableFieldMetadataItems = objectMetadataItem.fields.filter(
-      filterUserFacingFieldMetadataItems,
+      isFieldUpdateRestrictable,
     );
 
     const shouldCreateUpdatePermissionForAllFields =

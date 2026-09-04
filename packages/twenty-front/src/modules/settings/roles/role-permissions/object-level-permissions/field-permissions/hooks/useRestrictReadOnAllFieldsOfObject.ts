@@ -1,6 +1,6 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { filterUserFacingFieldMetadataItems } from '@/object-metadata/utils/filterUserFacingFieldMetadataItems';
 import { useUpsertFieldPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useUpsertFieldPermissionInDraftRole';
+import { isFieldReadRestrictable } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/utils/isFieldReadRestrictable';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -23,7 +23,12 @@ export const useRestrictReadOnAllFieldsOfObject = ({
     objectMetadataItem: EnrichedObjectMetadataItem,
   ) => {
     const restrictableFieldMetadataItems = objectMetadataItem.fields.filter(
-      filterUserFacingFieldMetadataItems,
+      (fieldMetadataItem) =>
+        isFieldReadRestrictable({
+          fieldMetadataItem,
+          labelIdentifierFieldMetadataId:
+            objectMetadataItem.labelIdentifierFieldMetadataId,
+        }),
     );
 
     const existingFieldPermissionsForThisObject =
