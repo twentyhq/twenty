@@ -6,8 +6,7 @@
 }
 
 .tooltip {
-  backdrop-filter: var(--t-blur-strong);
-  background-color: var(--t-color-transparent-gray11);
+  background-color: var(--t-gray-scale-gray12);
   border-radius: var(--t-border-radius-md);
   box-shadow: var(--t-box-shadow-light);
   color: var(--t-gray-scale-gray1);
@@ -31,12 +30,14 @@
   }
 }
 
+.textOnlyContent {
+  padding: var(--t-spacing-1) var(--t-spacing-1_5);
+}
+
 .clickable {
   pointer-events: auto;
 }
 
-// the background is translucent, so the arrow has to sit flush outside the
-// popup: any overlap composites the two layers and shows up as a darker shape
 .arrow {
   --tooltip-arrow-size: 6px;
 

@@ -6,14 +6,14 @@ import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const fieldDescriptionTooltipClassName = css`
-  padding: ${themeCssVariables.spacing[3]} !important;
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing['1.5']} !important;
 `;
 
 const StyledTooltipContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
-  line-height: 1.4;
+  line-height: ${themeCssVariables.text.lineHeight.lg};
   max-width: 300px;
 `;
 
@@ -32,7 +32,7 @@ const StyledFieldDescription = styled.div`
 type FieldDescriptionTooltipProps = {
   children: ReactElement<{
     'aria-describedby'?: string;
-    id?: string;
+    'data-tooltip-id'?: string;
     tabIndex?: number;
   }>;
   fieldDescription?: string | null;
@@ -44,7 +44,7 @@ export const FieldDescriptionTooltip = ({
   fieldDescription,
   fieldLabel,
 }: FieldDescriptionTooltipProps) => {
-  const fieldDescriptionTooltipAnchorId = `field-description-${useId().replace(/:/g, '')}`;
+  const fieldDescriptionTooltipAnchorId = useId();
   const fieldDescriptionId = `${fieldDescriptionTooltipAnchorId}-description`;
 
   if (!isNonEmptyString(fieldLabel) || !isNonEmptyString(fieldDescription)) {
@@ -55,22 +55,23 @@ export const FieldDescriptionTooltip = ({
     <>
       {cloneElement(children, {
         'aria-describedby': fieldDescriptionId,
-        id: fieldDescriptionTooltipAnchorId,
+        'data-tooltip-id': fieldDescriptionTooltipAnchorId,
         tabIndex: 0,
       })}
+      <span id={fieldDescriptionId} hidden>
+        {fieldDescription}
+      </span>
       <AppTooltip
-        anchorSelect={`#${fieldDescriptionTooltipAnchorId}`}
+        anchorSelect={`[data-tooltip-id='${fieldDescriptionTooltipAnchorId}']`}
         className={fieldDescriptionTooltipClassName}
         delay={TooltipDelay.longDelay}
-        keepMounted
         noArrow
         place="bottom"
         positionStrategy="fixed"
-        tooltipId={fieldDescriptionId}
         width="300px"
       >
         <StyledTooltipContent>
-          <StyledFieldLabel>{fieldLabel}</StyledFieldLabel>
+          <StyledFieldLabel aria-hidden>{fieldLabel}</StyledFieldLabel>
           <StyledFieldDescription>{fieldDescription}</StyledFieldDescription>
         </StyledTooltipContent>
       </AppTooltip>

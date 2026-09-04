@@ -59,8 +59,6 @@ export type AppTooltipProps = {
   clickable?: boolean;
   width?: string;
   isOpen?: boolean;
-  keepMounted?: boolean;
-  tooltipId?: string;
 };
 
 export const AppTooltip = ({
@@ -77,8 +75,6 @@ export const AppTooltip = ({
   clickable,
   width,
   isOpen,
-  keepMounted,
-  tooltipId,
 }: AppTooltipProps) => {
   const getDelayInMis = (delay: TooltipDelay) => {
     switch (delay) {
@@ -264,6 +260,8 @@ export const AppTooltip = ({
 
   // react-tooltip's content priority: content prop wins over children
   const renderedContent = isNonEmptyString(content) ? content : children;
+  const isTextOnlyContent =
+    typeof renderedContent === 'string' || typeof renderedContent === 'number';
 
   const isTooltipOpen =
     !hidden &&
@@ -290,10 +288,7 @@ export const AppTooltip = ({
         }
       }}
     >
-      <Tooltip.Portal
-        container={themeContainer ?? undefined}
-        keepMounted={keepMounted}
-      >
+      <Tooltip.Portal container={themeContainer ?? undefined}>
         <Tooltip.Positioner
           anchor={activeAnchor}
           side={side}
@@ -304,10 +299,10 @@ export const AppTooltip = ({
           style={{ maxWidth: width ?? '40%' }}
         >
           <Tooltip.Popup
-            id={tooltipId}
             role="tooltip"
             className={clsx(
               styles.tooltip,
+              isTextOnlyContent && styles.textOnlyContent,
               clickable && styles.clickable,
               className,
             )}
