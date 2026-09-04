@@ -19,7 +19,7 @@ export const fromObjectManifestToUniversalFlatObjectMetadata = ({
     namePlural: objectManifest.namePlural,
     labelSingular: objectManifest.labelSingular,
     labelPlural: objectManifest.labelPlural,
-    color: null,
+    color: objectManifest.color ?? null,
     openRecordIn: objectManifest.openRecordIn ?? ObjectOpenRecordIn.USER_CHOICE,
     description: objectManifest.description ?? null,
     icon: objectManifest.icon ?? null,
@@ -35,7 +35,7 @@ export const fromObjectManifestToUniversalFlatObjectMetadata = ({
     isSearchable: objectManifest.isSearchable ?? true,
     duplicateCriteria: null,
     shortcut: null,
-    isLabelSyncedWithName: false,
+    isLabelSyncedWithName: objectManifest.isLabelSyncedWithName ?? false,
     fieldUniversalIdentifiers: [],
     indexMetadataUniversalIdentifiers: [],
     searchFieldMetadataUniversalIdentifiers: [],
@@ -46,7 +46,8 @@ export const fromObjectManifestToUniversalFlatObjectMetadata = ({
     pageLayoutUniversalIdentifiers: [],
     labelIdentifierFieldMetadataUniversalIdentifier:
       objectManifest.labelIdentifierFieldMetadataUniversalIdentifier,
-    imageIdentifierFieldMetadataUniversalIdentifier: null,
+    imageIdentifierFieldMetadataUniversalIdentifier:
+      objectManifest.imageIdentifierFieldMetadataUniversalIdentifier ?? null,
     createdAt: now,
     updatedAt: now,
   };

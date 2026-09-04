@@ -24,6 +24,7 @@ type BaseRegularFieldManifest<
   isUIEditable?: boolean;
   writability?: MetadataWritability;
   isUnique?: boolean;
+  isLabelSyncedWithName?: boolean;
   objectUniversalIdentifier: string;
 };
 

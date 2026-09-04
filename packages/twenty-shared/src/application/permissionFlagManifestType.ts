@@ -7,4 +7,5 @@ export type PermissionFlagManifest = SyncableEntityOptions & {
   label: string;
   description?: string | null;
   icon?: string | null;
+  permissionType?: PermissionFlagPermissionType;
 };
