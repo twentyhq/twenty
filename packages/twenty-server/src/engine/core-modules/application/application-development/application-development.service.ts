@@ -13,6 +13,8 @@ import { type DevelopmentApplicationDTO } from 'src/engine/core-modules/applicat
 import { type WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
 import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
+import { ApplicationManifestExportService } from 'src/engine/core-modules/application/application-manifest/services/application-manifest-export.service';
+import { type ApplicationExport } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
 import { ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
@@ -41,6 +43,7 @@ export class ApplicationDevelopmentService {
     private readonly applicationService: ApplicationService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly applicationManifestApplyService: ApplicationManifestApplyService,
+    private readonly applicationManifestExportService: ApplicationManifestExportService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationAssetService: ApplicationRegistrationAssetService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
@@ -91,6 +94,19 @@ export class ApplicationDevelopmentService {
       id: application.id,
       universalIdentifier: application.universalIdentifier,
     };
+  }
+
+  async exportApplication({
+    universalIdentifier,
+    workspaceId,
+  }: {
+    universalIdentifier: string;
+    workspaceId: string;
+  }): Promise<ApplicationExport> {
+    return this.applicationManifestExportService.exportApplication({
+      workspaceId,
+      applicationUniversalIdentifier: universalIdentifier,
+    });
   }
 
   async syncApplication({
