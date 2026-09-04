@@ -50,11 +50,41 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
         authorizationParams: null,
         tokenRequestContentType: 'json',
         usePkce: true,
+        identity: null,
       },
       onConnectLogicFunctionUniversalIdentifier: null,
       onDisconnectLogicFunctionUniversalIdentifier: null,
       createdAt: NOW,
       updatedAt: NOW,
+    });
+  });
+
+  it('fills the identity defaults the manifest leaves out', () => {
+    const result =
+      fromConnectionProviderManifestToUniversalFlatConnectionProvider({
+        connectionProviderManifest: buildManifest({
+          oauth: {
+            authorizationEndpoint: 'https://linear.app/oauth/authorize',
+            tokenEndpoint: 'https://api.linear.app/oauth/token',
+            scopes: ['read', 'write'],
+            clientIdVariable: 'LINEAR_CLIENT_ID',
+            clientSecretVariable: 'LINEAR_CLIENT_SECRET',
+            identity: {
+              endpoint: 'https://api.linear.app/graphql',
+              accountIdPath: 'data.viewer.id',
+            },
+          },
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+    expect(result.oauthConfig?.identity).toEqual({
+      endpoint: 'https://api.linear.app/graphql',
+      method: 'GET',
+      body: null,
+      accountIdPath: 'data.viewer.id',
+      labelPath: null,
     });
   });
 

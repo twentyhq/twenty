@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { defineConnectionProvider } from '@/sdk/define';
+import { type OAuthConnectionProviderIdentityConfig } from 'twenty-shared/application';
 
 const baseValidConfig = {
   universalIdentifier: '99fcd8e8-fbb1-4d2c-bc16-7c61ef3eaaaa',
@@ -114,4 +115,101 @@ describe('defineConnectionProvider', () => {
       ).toBe(true);
     },
   );
+
+  const validIdentity = {
+    endpoint: 'https://api.linear.app/graphql',
+    accountIdPath: 'data.viewer.id',
+  } satisfies OAuthConnectionProviderIdentityConfig;
+
+  const defineWithIdentity = (
+    identity: OAuthConnectionProviderIdentityConfig,
+  ) =>
+    defineConnectionProvider({
+      ...baseValidConfig,
+      oauth: { ...baseValidConfig.oauth, identity },
+    });
+
+  it('accepts a valid identity block', () => {
+    const result = defineWithIdentity({
+      ...validIdentity,
+      method: 'POST',
+      body: '{"query":"{ viewer { id name } }"}',
+      labelPath: 'data.viewer.name',
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  it('rejects an identity endpoint that is empty or not an https URL', () => {
+    const missingEndpointResult = defineWithIdentity({
+      ...validIdentity,
+      endpoint: '',
+    });
+
+    expect(missingEndpointResult.success).toBe(false);
+    expect(
+      missingEndpointResult.errors.some((error) =>
+        error.includes('must have an endpoint'),
+      ),
+    ).toBe(true);
+
+    const insecureEndpointResult = defineWithIdentity({
+      ...validIdentity,
+      endpoint: 'http://api.linear.app/graphql',
+    });
+
+    expect(insecureEndpointResult.success).toBe(false);
+    expect(
+      insecureEndpointResult.errors.some((error) =>
+        error.includes('must be an absolute https URL'),
+      ),
+    ).toBe(true);
+
+    const credentialsEndpointResult = defineWithIdentity({
+      ...validIdentity,
+      endpoint: 'https://user:pass@api.linear.app/graphql',
+    });
+
+    expect(credentialsEndpointResult.success).toBe(false);
+  });
+
+  it('rejects an identity accountIdPath that is only whitespace', () => {
+    const result = defineWithIdentity({
+      ...validIdentity,
+      accountIdPath: '   ',
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors.some((error) => error.includes('accountIdPath'))).toBe(
+      true,
+    );
+  });
+
+  it('rejects an unsupported identity method', () => {
+    const result = defineWithIdentity({
+      ...validIdentity,
+      // @ts-expect-error verifies runtime validation for JavaScript callers.
+      method: 'PUT',
+    });
+
+    expect(result.success).toBe(false);
+    expect(
+      result.errors.some((error) =>
+        error.includes('identity method "PUT" is not supported'),
+      ),
+    ).toBe(true);
+  });
+
+  it('rejects an identity body when the method is GET', () => {
+    const result = defineWithIdentity({
+      ...validIdentity,
+      body: '{"query":"{ viewer { id } }"}',
+    });
+
+    expect(result.success).toBe(false);
+    expect(
+      result.errors.some((error) => error.includes("Set `method: 'POST'`")),
+    ).toBe(true);
+  });
 });

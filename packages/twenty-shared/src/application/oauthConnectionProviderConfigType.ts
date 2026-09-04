@@ -1,3 +1,4 @@
+import { type OAuthConnectionProviderIdentityConfig } from '@/application/oauthConnectionProviderIdentityConfigType';
 import { type OAuthProviderTokenRequestContentType } from '@/application/oauthProviderTokenRequestContentType.type';
 
 export type OAuthConnectionProviderConfig = {
@@ -10,4 +11,5 @@ export type OAuthConnectionProviderConfig = {
   authorizationParams?: Record<string, string>;
   tokenRequestContentType?: OAuthProviderTokenRequestContentType;
   usePkce?: boolean;
+  identity?: OAuthConnectionProviderIdentityConfig;
 };

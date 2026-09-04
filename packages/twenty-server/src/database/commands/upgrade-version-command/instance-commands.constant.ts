@@ -175,6 +175,7 @@ import { RelaxNavigationPayloadCheckFastInstanceCommand } from 'src/database/com
 import { EraseObjectNavigationCommandMenuItemPayloadsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-slow-1788272351971-erase-object-navigation-command-menu-item-payloads';
 import { ReshapeUsageLimitPeriodFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788367160891-reshape-usage-limit-period';
 import { AddLogoToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788542613404-add-logo-to-connection-provider';
+import { AddExternalAccountIdToConnectedAccountFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788557326426-add-external-account-id-to-connected-account';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -352,4 +353,5 @@ export const INSTANCE_COMMANDS = [
   EraseObjectNavigationCommandMenuItemPayloadsSlowInstanceCommand,
   ReshapeUsageLimitPeriodFastInstanceCommand,
   AddLogoToConnectionProviderFastInstanceCommand,
+  AddExternalAccountIdToConnectedAccountFastInstanceCommand,
 ];

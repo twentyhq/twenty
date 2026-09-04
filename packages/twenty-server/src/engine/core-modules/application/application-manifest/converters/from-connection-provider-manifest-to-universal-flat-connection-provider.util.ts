@@ -2,6 +2,7 @@ import {
   type ConnectionProviderManifest,
   type StoredOAuthConnectionProviderConfig,
 } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type UniversalFlatConnectionProvider } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-connection-provider.type';
 
@@ -33,6 +34,18 @@ export const fromConnectionProviderManifestToUniversalFlatConnectionProvider =
               connectionProviderManifest.oauth.tokenRequestContentType ??
               'json',
             usePkce: connectionProviderManifest.oauth.usePkce ?? true,
+            identity: isDefined(connectionProviderManifest.oauth.identity)
+              ? {
+                  endpoint: connectionProviderManifest.oauth.identity.endpoint,
+                  method:
+                    connectionProviderManifest.oauth.identity.method ?? 'GET',
+                  body: connectionProviderManifest.oauth.identity.body ?? null,
+                  accountIdPath:
+                    connectionProviderManifest.oauth.identity.accountIdPath,
+                  labelPath:
+                    connectionProviderManifest.oauth.identity.labelPath ?? null,
+                }
+              : null,
           }
         : null;
 

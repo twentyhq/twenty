@@ -149,6 +149,10 @@ export type {
 export type { TranslationsManifest, Manifest } from './manifestType';
 export type { NavigationMenuItemManifest } from './navigationMenuItemManifestType';
 export type { OAuthConnectionProviderConfig } from './oauthConnectionProviderConfigType';
+export type {
+  OAuthConnectionProviderIdentityMethod,
+  OAuthConnectionProviderIdentityConfig,
+} from './oauthConnectionProviderIdentityConfigType';
 export type { OAuthProviderTokenRequestContentType } from './oauthProviderTokenRequestContentType.type';
 export type { ObjectFieldManifest } from './objectFieldManifest.type';
 export type { ObjectManifest } from './objectManifestType';
@@ -181,7 +185,10 @@ export type { ServerRouteDispatchResult } from './serverRouteDispatchResultType'
 export type { ServerRouteTriggerSettings } from './serverRouteTriggerSettingsType';
 export type { SettingsFrontComponentApplicationManifest } from './settingsFrontComponentApplicationType';
 export type { SkillManifest } from './skillManifestType';
-export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
+export type {
+  StoredOAuthConnectionProviderIdentityConfig,
+  StoredOAuthConnectionProviderConfig,
+} from './storedOAuthConnectionProviderConfigType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
 export type {
   TimelineActivityTypeEmitThroughManifest,
