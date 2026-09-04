@@ -1,0 +1,2 @@
+import { formatDurationHuman } from './formatDurationHuman'; import assert from 'node:assert/strict';
+assert.equal(formatDurationHuman(3665000), "1h 1m"); assert.equal(formatDurationHuman(65000), "1m 5s");
