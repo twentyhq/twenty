@@ -89,7 +89,7 @@ describe('UsageLimitQuotaService', () => {
     mget: jest.fn().mockResolvedValue([]),
     mset: jest.fn().mockResolvedValue(undefined),
     runScript: jest.fn().mockResolvedValue([]),
-    del: jest.fn().mockResolvedValue(undefined),
+    mdel: jest.fn().mockResolvedValue(undefined),
   };
 
   const workspaceCacheService = {
@@ -441,18 +441,81 @@ describe('UsageLimitQuotaService', () => {
 
       await service.dropAllowanceCounter('workspace-1');
 
-      expect(cacheStorage.del).toHaveBeenCalledWith(
+      expect(cacheStorage.mdel).toHaveBeenCalledWith([
         buildAllowanceCounterKey({
           workspaceId: 'workspace-1',
           periodStart: ALLOWANCE_PERIOD.periodStart,
         }),
-      );
+      ]);
     });
 
     it('does nothing when no allowance exists', async () => {
       await service.dropAllowanceCounter('workspace-1');
 
-      expect(cacheStorage.del).not.toHaveBeenCalled();
+      expect(cacheStorage.mdel).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('dropIntraWorkspaceLimitCounters', () => {
+    it('drops every intra-workspace quota counter under the warm lock', async () => {
+      setLimits([
+        buildLimit({ id: 'workspace-month' }),
+        buildLimit({
+          id: 'member-month',
+          spenderType: 'userWorkspace',
+          spenderId: 'user-1',
+        }),
+        buildLimit({
+          id: 'agent-week',
+          spenderType: 'agent',
+          periodUnit: 'week',
+        }),
+        buildLimit({
+          id: 'member-speed',
+          spenderType: 'userWorkspace',
+          limitKind: 'speed',
+          periodUnit: 'second',
+          meter: 'quantity',
+        }),
+      ]);
+
+      await service.dropIntraWorkspaceLimitCounters('workspace-1');
+
+      expect(cacheLockService.withLock).toHaveBeenCalledWith(
+        expect.any(Function),
+        buildQuotaWarmLockKey('workspace-1'),
+        expect.anything(),
+      );
+      expect(cacheStorage.mdel).toHaveBeenCalledWith([
+        buildQuotaCounterKey({
+          workspaceId: 'workspace-1',
+          resourceType: UsageResourceType.AI,
+          operationType: UsageOperationType.AI_CHAT_TOKEN,
+          spenderType: 'userWorkspace',
+          spenderId: 'user-1',
+          meter: 'creditsUsedMicro',
+          periodUnit: 'month',
+          periodStart: MONTH_PERIOD.periodStart,
+        }),
+        buildQuotaCounterKey({
+          workspaceId: 'workspace-1',
+          resourceType: UsageResourceType.AI,
+          operationType: UsageOperationType.AI_CHAT_TOKEN,
+          spenderType: 'agent',
+          spenderId: '',
+          meter: 'creditsUsedMicro',
+          periodUnit: 'week',
+          periodStart: WEEK_PERIOD.periodStart,
+        }),
+      ]);
+    });
+
+    it('does nothing when the workspace only has workspace-scoped limits', async () => {
+      setLimits([buildLimit({})]);
+
+      await service.dropIntraWorkspaceLimitCounters('workspace-1');
+
+      expect(cacheStorage.mdel).not.toHaveBeenCalled();
     });
   });
 
@@ -465,7 +528,7 @@ describe('UsageLimitQuotaService', () => {
         buildQuotaWarmLockKey('workspace-1'),
         expect.anything(),
       );
-      expect(cacheStorage.del).toHaveBeenCalledWith(
+      expect(cacheStorage.mdel).toHaveBeenCalledWith([
         buildQuotaCounterKey({
           workspaceId: 'workspace-1',
           resourceType: UsageResourceType.AI,
@@ -476,7 +539,7 @@ describe('UsageLimitQuotaService', () => {
           periodUnit: 'month',
           periodStart: MONTH_PERIOD.periodStart,
         }),
-      );
+      ]);
     });
 
     it('ignores a speed limit', async () => {
@@ -484,7 +547,7 @@ describe('UsageLimitQuotaService', () => {
         buildLimitCounterScope({ limitKind: 'speed', periodUnit: 'second' }),
       );
 
-      expect(cacheStorage.del).not.toHaveBeenCalled();
+      expect(cacheStorage.mdel).not.toHaveBeenCalled();
     });
 
     it('dels without the lock when acquiring it times out', async () => {
@@ -497,7 +560,7 @@ describe('UsageLimitQuotaService', () => {
 
       await service.dropLimitCounter(buildLimitCounterScope());
 
-      expect(cacheStorage.del).toHaveBeenCalledTimes(1);
+      expect(cacheStorage.mdel).toHaveBeenCalledTimes(1);
     });
   });
 

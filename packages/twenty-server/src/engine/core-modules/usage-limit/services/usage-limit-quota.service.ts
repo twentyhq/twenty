@@ -32,6 +32,7 @@ import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-
 import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
 import { type UsageLimitCounterScope } from 'src/engine/core-modules/usage-limit/types/usage-limit-counter-scope.type';
 import { buildAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-allowance-counter-key.util';
+import { buildIntraWorkspaceLimitCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-intra-workspace-limit-counter-keys.util';
 import { buildLimitWarmedEntries } from 'src/engine/core-modules/usage-limit/utils/build-limit-warmed-entries.util';
 import { buildPeriodGroupKey } from 'src/engine/core-modules/usage-limit/utils/build-period-group-key.util';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
@@ -135,11 +136,31 @@ export class UsageLimitQuotaService implements OnModuleInit {
 
     await this.delUnderWarmLock({
       workspaceId,
-      key: buildAllowanceCounterKey({
-        workspaceId,
-        periodStart: period.periodStart,
-      }),
+      keys: [
+        buildAllowanceCounterKey({
+          workspaceId,
+          periodStart: period.periodStart,
+        }),
+      ],
     });
+  }
+
+  // Intra-workspace counters are not debited while the entitlement is off, so
+  // a warm balance misses that usage; dropping them forces a ClickHouse rewarm.
+  async dropIntraWorkspaceLimitCounters(workspaceId: string): Promise<void> {
+    const limits = await this.findAllLimits(workspaceId);
+
+    const keys = buildIntraWorkspaceLimitCounterKeys({
+      workspaceId,
+      limits,
+      periodByUnit: this.getCurrentPeriodsByUnit(limits),
+    });
+
+    if (keys.length === 0) {
+      return;
+    }
+
+    await this.delUnderWarmLock({ workspaceId, keys });
   }
 
   async dropLimitCounter(usageLimit: UsageLimitCounterScope): Promise<void> {
@@ -156,16 +177,18 @@ export class UsageLimitQuotaService implements OnModuleInit {
 
     await this.delUnderWarmLock({
       workspaceId: usageLimit.workspaceId,
-      key: buildQuotaCounterKey({
-        workspaceId: usageLimit.workspaceId,
-        resourceType: usageLimit.resourceType,
-        operationType: usageLimit.operationType,
-        spenderType: usageLimit.spenderType,
-        spenderId: usageLimit.spenderId,
-        meter: usageLimit.meter,
-        periodUnit: usageLimit.periodUnit,
-        periodStart: period.periodStart,
-      }),
+      keys: [
+        buildQuotaCounterKey({
+          workspaceId: usageLimit.workspaceId,
+          resourceType: usageLimit.resourceType,
+          operationType: usageLimit.operationType,
+          spenderType: usageLimit.spenderType,
+          spenderId: usageLimit.spenderId,
+          meter: usageLimit.meter,
+          periodUnit: usageLimit.periodUnit,
+          periodStart: period.periodStart,
+        }),
+      ],
     });
   }
 
@@ -192,14 +215,14 @@ export class UsageLimitQuotaService implements OnModuleInit {
 
   private async delUnderWarmLock({
     workspaceId,
-    key,
+    keys,
   }: {
     workspaceId: string;
-    key: string;
+    keys: string[];
   }): Promise<void> {
     try {
       await this.cacheLockService.withLock(
-        () => this.cacheStorage.del(key),
+        () => this.cacheStorage.mdel(keys),
         buildQuotaWarmLockKey(workspaceId),
         QUOTA_WARM_LOCK_OPTIONS,
       );
@@ -212,11 +235,22 @@ export class UsageLimitQuotaService implements OnModuleInit {
       }
 
       this.logger.warn(
-        `Dropping quota counter ${key} without the warm lock: ${error.message}`,
+        `Dropping quota counters ${keys.join(', ')} without the warm lock: ${error.message}`,
       );
 
-      await this.cacheStorage.del(key);
+      await this.cacheStorage.mdel(keys);
     }
+  }
+
+  private async findAllLimits(workspaceId: string): Promise<FlatUsageLimit[]> {
+    const { usageLimits } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['usageLimits'],
+    );
+
+    return Object.values(usageLimits.byResourceType).flatMap(
+      (limits) => limits ?? [],
+    );
   }
 
   private async findExhaustedScopesAdmittingOnFailure(
