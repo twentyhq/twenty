@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
+import { t } from '@lingui/core/macro';
 import { useInView } from 'react-intersection-observer';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
@@ -60,8 +60,6 @@ export const WorkflowCoreIndexPage = () => {
     useCoreWorkflows({ tableId });
 
   const { ref: fetchMoreRef, inView } = useInView();
-
-  const { t } = useLingui();
 
   const { createCoreWorkflow, canCreateCoreWorkflow, isCreatingCoreWorkflow } =
     useCreateCoreWorkflow();

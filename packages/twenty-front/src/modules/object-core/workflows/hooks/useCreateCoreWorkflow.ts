@@ -1,4 +1,4 @@
-import { useLingui } from '@lingui/react/macro';
+import { t } from '@lingui/core/macro';
 import { useCallback, useState } from 'react';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { v4 } from 'uuid';
@@ -28,7 +28,6 @@ export const useCreateCoreWorkflow = () => {
 
   const navigate = useNavigateApp();
 
-  const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const canCreateCoreWorkflow = canCreateRecordsForObjectMetadataItem({
@@ -60,13 +59,7 @@ export const useCreateCoreWorkflow = () => {
       objectNameSingular: CoreObjectNameSingular.Workflow,
       objectRecordId: workflowId,
     });
-  }, [
-    createOneRecord,
-    navigate,
-    enqueueErrorSnackBar,
-    t,
-    isCreatingCoreWorkflow,
-  ]);
+  }, [createOneRecord, navigate, enqueueErrorSnackBar, isCreatingCoreWorkflow]);
 
   return { createCoreWorkflow, canCreateCoreWorkflow, isCreatingCoreWorkflow };
 };
