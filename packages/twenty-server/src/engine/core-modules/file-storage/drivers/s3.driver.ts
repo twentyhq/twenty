@@ -152,26 +152,32 @@ export class S3Driver implements StorageDriver {
     });
 
     try {
-      const file = await this.measureRequest(
+      return await this.measureRequest(
         { operation: 'GetObjectPrefix', key: params.filePath },
-        () => this.metadataClient.send(command),
+        async () => {
+          try {
+            const file = await this.metadataClient.send(command);
+
+            if (!file?.Body) {
+              throw new Error('Unable to get file body');
+            }
+
+            return Buffer.from(await file.Body.transformToByteArray());
+          } catch (error) {
+            if (error.name === 'InvalidRange') {
+              return Buffer.alloc(0);
+            }
+
+            throw error;
+          }
+        },
       );
-
-      if (!file?.Body) {
-        throw new Error('Unable to get file body');
-      }
-
-      return Buffer.from(await file.Body.transformToByteArray());
     } catch (error) {
       if (error.name === 'NoSuchKey') {
         throw new FileStorageException(
           'File not found',
           FileStorageExceptionCode.FILE_NOT_FOUND,
         );
-      }
-
-      if (error.name === 'InvalidRange') {
-        return Buffer.alloc(0);
       }
 
       throw error;

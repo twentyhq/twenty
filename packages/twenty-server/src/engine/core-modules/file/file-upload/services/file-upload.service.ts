@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Readable, Transform } from 'stream';
@@ -45,6 +45,8 @@ export const DIRECT_UPLOAD_FILE_FOLDERS = [
 
 @Injectable()
 export class FileUploadService {
+  private readonly logger = new Logger(FileUploadService.name);
+
   constructor(
     private readonly fileStorageService: FileStorageService,
     private readonly fileUrlService: FileUrlService,
@@ -293,6 +295,13 @@ export class FileUploadService {
             userFriendlyMessage: msg`File storage took too long to respond. Please retry.`,
           },
         ),
+      onSettleAfterDeadline: (settlement) => {
+        this.logger.warn(
+          settlement.status === 'fulfilled'
+            ? `Completion of file ${fileId} succeeded after the deadline had been reported to the client`
+            : `Completion of file ${fileId} failed after the deadline had been reported to the client: ${settlement.error}`,
+        );
+      },
     });
 
     return this.toFileWithSignedUrl({
