@@ -14,7 +14,7 @@ describe('readSlackBodyPreview', () => {
       bodyValue: { markdown: 'a'.repeat(400) },
     });
 
-    expect(preview).toBe(`${'a'.repeat(300)}…`);
+    expect(preview).toBe(`${'a'.repeat(299)}…`);
   });
 
   it('should keep composite emoji whole when truncating', () => {
@@ -22,7 +22,7 @@ describe('readSlackBodyPreview', () => {
       bodyValue: { markdown: '👨‍👩‍👧‍👦'.repeat(400) },
     });
 
-    expect(preview).toBe(`${'👨‍👩‍👧‍👦'.repeat(300)}…`);
+    expect(preview).toBe(`${'👨‍👩‍👧‍👦'.repeat(299)}…`);
   });
 
   it('should honour a larger maximum length', () => {
@@ -40,4 +40,13 @@ describe('readSlackBodyPreview', () => {
       expect(readSlackBodyPreview({ bodyValue })).toBeUndefined();
     },
   );
+
+  it('should count the ellipsis inside the maximum length', () => {
+    const preview = readSlackBodyPreview({
+      bodyValue: { markdown: 'a'.repeat(5000) },
+      maxLength: 3000,
+    });
+
+    expect(preview).toBe(`${'a'.repeat(2999)}…`);
+  });
 });

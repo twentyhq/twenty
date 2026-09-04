@@ -30,7 +30,7 @@ export const readSlackBodyPreview = ({
   }
 
   const truncated = graphemes
-    .slice(0, maxLength)
+    .slice(0, maxLength - 1)
     .map(({ segment }) => segment)
     .join('');
 
