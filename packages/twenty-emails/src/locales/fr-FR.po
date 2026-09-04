@@ -51,7 +51,7 @@ msgstr "Passé ce délai, l’espace de travail et l’ensemble de ses données 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm new email"
-msgstr ""
+msgstr "Confirmez la nouvelle adresse email"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx

@@ -32,4 +32,25 @@ describe('buildNavigationConditionalAvailabilityExpression', () => {
       }),
     ).toBe('targetObjectReadPermissions.messageCampaign');
   });
+
+  it('hides a standard object whose flag replaces its navigation', () => {
+    expect(
+      buildNavigationConditionalAvailabilityExpression({
+        universalIdentifier:
+          STANDARD_OBJECTS.workflowVersion.universalIdentifier,
+        nameSingular: 'workflowVersion',
+      }),
+    ).toBe(
+      'not featureFlags.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED and targetObjectReadPermissions.workflowVersion',
+    );
+  });
+
+  it('does not hide a custom object that reuses a hidden object name', () => {
+    expect(
+      buildNavigationConditionalAvailabilityExpression({
+        universalIdentifier: 'custom-object-universal-id',
+        nameSingular: 'workflowVersion',
+      }),
+    ).toBe('targetObjectReadPermissions.workflowVersion');
+  });
 });

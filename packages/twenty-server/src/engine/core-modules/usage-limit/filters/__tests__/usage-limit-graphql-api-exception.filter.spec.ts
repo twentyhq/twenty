@@ -21,11 +21,11 @@ const catchAsGraphQLError = (exception: UsageLimitException) => {
 };
 
 describe('UsageLimitGraphqlApiExceptionFilter', () => {
-  it('surfaces an invalid limit rule as a user input error rather than a server error', () => {
+  it('surfaces an invalid limit as a user input error rather than a server error', () => {
     const graphqlError = catchAsGraphQLError(
       new UsageLimitException(
         'API speed limits cannot target the EMAIL_SEND operation',
-        UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+        UsageLimitExceptionCode.LIMIT_INVALID,
       ),
     );
 

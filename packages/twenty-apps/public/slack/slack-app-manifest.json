@@ -19,7 +19,7 @@
     "unfurl_domains": ["<your-twenty-front-host>"],
     "rich_previews": {
       "is_active": true,
-      "entity_types": ["slack#/entities/item"]
+      "entity_types": ["slack#/entities/item", "slack#/entities/task"]
     }
   },
   "oauth_config": {

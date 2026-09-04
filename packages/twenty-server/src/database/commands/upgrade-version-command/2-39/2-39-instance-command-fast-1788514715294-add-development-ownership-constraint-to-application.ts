@@ -14,7 +14,7 @@ const UNIQUE_CONSTRAINT_NAME =
 // A live development (local) app must point at a registration its own
 // workspace owns. The generated column mirrors workspaceId for such apps only,
 // so the composite foreign key skips installed apps (null column).
-@RegisteredInstanceCommand('2.38.0', 1788454173708)
+@RegisteredInstanceCommand('2.39.0', 1788514715294)
 export class AddDevelopmentOwnershipConstraintToApplicationFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(

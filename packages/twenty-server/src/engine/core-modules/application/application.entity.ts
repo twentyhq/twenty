@@ -219,7 +219,7 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.38.0_AddDevelopmentOwnershipConstraintToApplicationFastInstanceCommand_1788454173708',
+      '2.39.0_AddDevelopmentOwnershipConstraintToApplicationFastInstanceCommand_1788514715294',
   })
   developmentWorkspaceId: string | null;
 
