@@ -146,8 +146,10 @@ export class BillingUsageService {
       cost,
     });
 
+    const isAllowanceExhausted = exhausted?.exhaustedKind === 'allowance';
+
     if (!(await this.isAvailableCreditsCounterEnabled(workspaceId))) {
-      return { hasNoMoreAvailableCredits: isDefined(exhausted) };
+      return { hasNoMoreAvailableCredits: isAllowanceExhausted };
     }
 
     const availableCredits = await this.decrementAvailableCreditsInCache({
@@ -156,7 +158,7 @@ export class BillingUsageService {
     });
 
     return {
-      hasNoMoreAvailableCredits: isDefined(exhausted) || availableCredits <= 0,
+      hasNoMoreAvailableCredits: isAllowanceExhausted || availableCredits <= 0,
     };
   }
 
