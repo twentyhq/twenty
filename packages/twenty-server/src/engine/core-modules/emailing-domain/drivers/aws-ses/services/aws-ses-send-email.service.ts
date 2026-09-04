@@ -8,14 +8,13 @@ import { type EmailingDomainSendEmailBatchResult } from 'src/engine/core-modules
 import { type EmailingDomainSendEmailInput } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 
+import { SES_BULK_MAX_DESTINATIONS } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/ses-bulk-max-destinations.constant';
 import { AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
 import { AwsSesHandleErrorService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-handle-error.service';
 import {
   EmailingDomainDriverException,
   EmailingDomainDriverExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
-
-const SES_BULK_MAX_DESTINATIONS = 50;
 
 type SendEmailContext = {
   tenantName: string;

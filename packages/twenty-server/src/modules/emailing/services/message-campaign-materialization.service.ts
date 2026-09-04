@@ -11,10 +11,8 @@ import chunk from 'lodash.chunk';
 import { In, type ObjectLiteral } from 'typeorm';
 import { v4 } from 'uuid';
 
-import {
-  MATERIALIZE_CAMPAIGN_CHUNK_JOB,
-  SEND_CAMPAIGN_EMAIL_BATCH_JOB,
-} from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import { MATERIALIZE_CAMPAIGN_CHUNK_JOB } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import { SEND_CAMPAIGN_EMAIL_BATCH_JOB } from 'src/engine/core-modules/emailing-domain/constants/send-campaign-email-batch-job.constant';
 import { resolveCampaignSendBatchSize } from 'src/engine/core-modules/emailing-domain/utils/resolve-campaign-send-batch-size.util';
 import { type MaterializeCampaignChunkJobData } from 'src/engine/core-modules/emailing-domain/types/materialize-campaign-chunk-job-data.type';
 import { type MaterializeCampaignJobData } from 'src/engine/core-modules/emailing-domain/types/materialize-campaign-job-data.type';
