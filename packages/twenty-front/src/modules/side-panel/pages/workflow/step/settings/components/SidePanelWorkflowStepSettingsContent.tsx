@@ -28,20 +28,25 @@ const SidePanelWorkflowStepSettingsForm = ({
   const [errorHandlingOptions, setErrorHandlingOptions] =
     useState<StepErrorHandlingOptions>(step.settings.errorHandlingOptions);
 
-  const updateErrorHandlingOptions = (
+  const updateErrorHandlingOptions = async (
     partialOptions: Partial<StepErrorHandlingOptions>,
   ) => {
+    const previousOptions = errorHandlingOptions;
     const updatedOptions = { ...errorHandlingOptions, ...partialOptions };
 
     setErrorHandlingOptions(updatedOptions);
 
-    updateStep({
-      ...step,
-      settings: {
-        ...step.settings,
-        errorHandlingOptions: updatedOptions,
-      },
-    } as WorkflowAction);
+    try {
+      await updateStep({
+        ...step,
+        settings: {
+          ...step.settings,
+          errorHandlingOptions: updatedOptions,
+        },
+      } as WorkflowAction);
+    } catch {
+      setErrorHandlingOptions(previousOptions);
+    }
   };
 
   return (
