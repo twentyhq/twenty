@@ -21,6 +21,7 @@ import { type ConvergeDivergedCallRecordingsResult } from 'src/logic-functions/f
 import { settleCallRecordingImport } from 'src/logic-functions/flows/settle-call-recording-import.util';
 import {
   syncCallRecording,
+  type SyncCallRecordingResult,
   type SyncableCallRecording,
 } from 'src/logic-functions/flows/sync-call-recording.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
@@ -308,8 +309,7 @@ const convergeCallRecording = async ({
     return;
   }
 
-  let hasUpdatedCallRecording = false;
-  let hasRequestedTranscript = false;
+  const callRecordingSyncResults: SyncCallRecordingResult[] = [];
 
   for (const artifactImportScope of ['transcript', 'media'] as const) {
     const artifactImportClaimedAt = new Date();
@@ -345,10 +345,7 @@ const convergeCallRecording = async ({
         artifactScope: artifactImportScope,
       });
 
-      hasUpdatedCallRecording =
-        hasUpdatedCallRecording || callRecordingSyncResult.updated;
-      hasRequestedTranscript =
-        hasRequestedTranscript || callRecordingSyncResult.requestedTranscript;
+      callRecordingSyncResults.push(callRecordingSyncResult);
     } finally {
       await releaseCallRecordingArtifactsImportClaim(client, {
         callRecordingId: candidate.id,
@@ -360,6 +357,12 @@ const convergeCallRecording = async ({
   const hasCompletedImport = await settleCallRecordingImport(client, {
     callRecordingId: candidate.id,
   });
+  const hasUpdatedCallRecording = callRecordingSyncResults.some(
+    (callRecordingSyncResult) => callRecordingSyncResult.updated,
+  );
+  const hasRequestedTranscript = callRecordingSyncResults.some(
+    (callRecordingSyncResult) => callRecordingSyncResult.requestedTranscript,
+  );
 
   if (hasUpdatedCallRecording || hasCompletedImport) {
     result.updatedCallRecordingIds.push(candidate.id);

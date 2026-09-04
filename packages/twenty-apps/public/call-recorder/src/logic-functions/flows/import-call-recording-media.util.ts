@@ -1,4 +1,4 @@
-import { isNull, isUndefined } from '@sniptt/guards';
+import { isNonEmptyArray, isNull, isUndefined } from '@sniptt/guards';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
 import {
@@ -91,11 +91,11 @@ export const importCallRecordingMedia = async ({
   const metadataClient = new MetadataApiClient();
   const updateFields: CallRecordingMediaUpdateFields = {};
   const tooLargeFailureReasons: string[] = [];
+  const failedMediaArtifactFields: string[] = [];
   const artifactStateByField = {
     video: { alreadyImported: hasVideo, url: mediaUrls.videoUrl },
     audio: { alreadyImported: hasAudio, url: mediaUrls.audioUrl },
   };
-  let hasRetryableFailure = false;
 
   for (const descriptor of MEDIA_ARTIFACT_DESCRIPTORS) {
     const { alreadyImported, url } = artifactStateByField[descriptor.field];
@@ -123,7 +123,7 @@ export const importCallRecordingMedia = async ({
     }
 
     if (importResult.outcome === 'failed') {
-      hasRetryableFailure = true;
+      failedMediaArtifactFields.push(descriptor.field);
     }
   }
 
@@ -131,7 +131,10 @@ export const importCallRecordingMedia = async ({
     updateFields.callRecorderFailureReason = tooLargeFailureReasons.join(',');
   }
 
-  return { updateData: updateFields, hasRetryableFailure };
+  return {
+    updateData: updateFields,
+    hasRetryableFailure: isNonEmptyArray(failedMediaArtifactFields),
+  };
 };
 
 const importMediaArtifact = async ({

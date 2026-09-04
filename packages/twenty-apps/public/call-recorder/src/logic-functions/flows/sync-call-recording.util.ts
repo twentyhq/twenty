@@ -64,63 +64,63 @@ export const syncCallRecording = async ({
   const isRecordingDone =
     treatRecordingAsDone || syncState?.isRecallRecordingDone === true;
 
-  let updateData: CallRecordingUpdateFields = isUndefined(syncState)
+  const syncStateUpdate: CallRecordingUpdateFields = isUndefined(syncState)
     ? {}
     : buildSyncStateFieldUpdates({ callRecording, syncState });
 
-  if (
+  const missingArtifactsFailureUpdate =
     syncState?.isRecallRecordingDone === true &&
     isUndefined(externalRecordingId) &&
-    !hasRecordingArtifactPath({ callRecording, updateData })
-  ) {
-    updateData = {
-      ...updateData,
-      ...buildMissingArtifactsFailureUpdate({
-        currentStatus: callRecording.status,
-        pendingStatus: updateData.status,
-        recallFailureReason: syncState.failureReason,
-      }),
-    };
-  }
-
-  let requestedTranscript = false;
-  let hasRetryableArtifactFailure = false;
-
-  if (isRecordingDone && !isUndefined(externalRecordingId)) {
-    if (artifactScope !== 'media') {
-      const transcriptImportResult = await importCallRecordingTranscript({
-        callRecordingId: callRecording.id,
-        currentStatus: callRecording.status,
-        externalRecordingId,
-        requestedAt,
-        transcript: callRecording.transcript,
-      });
-
-      requestedTranscript = transcriptImportResult.requestedTranscript;
-      hasRetryableArtifactFailure = transcriptImportResult.hasRetryableFailure;
-      updateData = { ...updateData, ...transcriptImportResult.updateData };
-    }
-
-    if (artifactScope !== 'transcript') {
-      const mediaImportResult = await importCallRecordingMedia({
-        callRecordingId: callRecording.id,
-        externalRecordingId,
-        hasAudio: isNonEmptyArray(callRecording.audio),
-        hasVideo: isNonEmptyArray(callRecording.video),
-      });
-
-      hasRetryableArtifactFailure =
-        hasRetryableArtifactFailure || mediaImportResult.hasRetryableFailure;
-      updateData = {
-        ...updateData,
-        ...resolveMediaImportUpdate({
-          mediaImportUpdate: mediaImportResult.updateData,
+    !hasRecordingArtifactPath({
+      callRecording,
+      updateData: syncStateUpdate,
+    })
+      ? buildMissingArtifactsFailureUpdate({
           currentStatus: callRecording.status,
-          pendingStatus: updateData.status,
-        }),
-      };
-    }
-  }
+          pendingStatus: syncStateUpdate.status,
+          recallFailureReason: syncState.failureReason,
+        })
+      : {};
+
+  const transcriptImportResult =
+    isRecordingDone &&
+    !isUndefined(externalRecordingId) &&
+    artifactScope === 'transcript'
+      ? await importCallRecordingTranscript({
+          callRecordingId: callRecording.id,
+          currentStatus: callRecording.status,
+          externalRecordingId,
+          requestedAt,
+          transcript: callRecording.transcript,
+        })
+      : undefined;
+
+  const mediaImportResult =
+    isRecordingDone &&
+    !isUndefined(externalRecordingId) &&
+    artifactScope === 'media'
+      ? await importCallRecordingMedia({
+          callRecordingId: callRecording.id,
+          externalRecordingId,
+          hasAudio: isNonEmptyArray(callRecording.audio),
+          hasVideo: isNonEmptyArray(callRecording.video),
+        })
+      : undefined;
+
+  const mediaImportUpdate = isUndefined(mediaImportResult)
+    ? {}
+    : resolveMediaImportUpdate({
+        mediaImportUpdate: mediaImportResult.updateData,
+        currentStatus: callRecording.status,
+        pendingStatus: syncStateUpdate.status,
+      });
+
+  const updateData: CallRecordingUpdateFields = {
+    ...syncStateUpdate,
+    ...missingArtifactsFailureUpdate,
+    ...(transcriptImportResult?.updateData ?? {}),
+    ...mediaImportUpdate,
+  };
 
   const { status, callRecorderFailureReason, ...callRecordingProgressUpdate } =
     updateData;
@@ -133,33 +133,31 @@ export const syncCallRecording = async ({
       ? {}
       : { callRecorderFailureReason }),
   };
-  let hasUpdatedCallRecording = false;
+  const hasCallRecordingProgressUpdate =
+    Object.keys(callRecordingProgressUpdate).length > 0;
 
-  if (Object.keys(callRecordingProgressUpdate).length > 0) {
+  if (hasCallRecordingProgressUpdate) {
     await updateCallRecording(client, {
       id: callRecording.id,
       data: callRecordingProgressUpdate,
     });
-    hasUpdatedCallRecording = true;
   }
 
-  if (Object.keys(callRecordingStateUpdate).length > 0) {
-    const updatedCallRecordingState = await updateNonTerminalCallRecordingState(
-      client,
-      {
-        callRecordingId: callRecording.id,
-        data: callRecordingStateUpdate,
-      },
-    );
-
-    hasUpdatedCallRecording =
-      hasUpdatedCallRecording || updatedCallRecordingState;
-  }
+  const hasUpdatedCallRecordingState =
+    Object.keys(callRecordingStateUpdate).length > 0
+      ? await updateNonTerminalCallRecordingState(client, {
+          callRecordingId: callRecording.id,
+          data: callRecordingStateUpdate,
+        })
+      : false;
 
   return {
-    updated: hasUpdatedCallRecording,
-    requestedTranscript,
-    hasRetryableArtifactFailure,
+    updated: hasCallRecordingProgressUpdate || hasUpdatedCallRecordingState,
+    requestedTranscript: transcriptImportResult?.requestedTranscript ?? false,
+    hasRetryableArtifactFailure:
+      transcriptImportResult?.hasRetryableFailure ??
+      mediaImportResult?.hasRetryableFailure ??
+      false,
   };
 };
 
