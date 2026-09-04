@@ -11,6 +11,7 @@ export interface QueueJobOptions {
   retryLimit?: number;
   backoff?: QueueJobBackoffOptions;
   delay?: number;
+  shouldBroadcastStatus?: boolean;
 }
 
 export interface QueueCronJobOptions extends QueueJobOptions {

@@ -8,6 +8,7 @@ import v8 from 'v8';
 
 import * as Sentry from '@sentry/node';
 import {
+  type Job,
   type JobsOptions,
   MetricsTime,
   Queue,
@@ -43,6 +44,8 @@ import { applyWorkspaceSentryContextFromJobData } from 'src/engine/core-modules/
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type BullMQDriverOptions = QueueOptions;
+
+type BullMQJobsOptions = JobsOptions & { shouldBroadcastStatus?: boolean };
 
 const V4_LENGTH = 36;
 const BYTES_PER_MEGABYTE = 1024 * 1024;
@@ -254,6 +257,18 @@ export class BullMQDriver
       workerOptions,
     );
 
+    const onJobStatusChange = options?.onJobStatusChange;
+
+    if (isDefined(onJobStatusChange)) {
+      const notifyJobStatusChange = (job: Job | undefined) => {
+        void this.notifyJobStatusChange(queueName, job, onJobStatusChange);
+      };
+
+      this.workerMap[queueName].on('active', notifyJobStatusChange);
+      this.workerMap[queueName].on('completed', notifyJobStatusChange);
+      this.workerMap[queueName].on('failed', notifyJobStatusChange);
+    }
+
     this.workerMap[queueName].on('completed', (job) => {
       void this.metricsService.incrementCounterForEvent({
         key: MetricsKeys.JobCompleted,
@@ -348,13 +363,41 @@ export class BullMQDriver
     );
   }
 
+  private async notifyJobStatusChange(
+    queueName: MessageQueue,
+    job: Job | undefined,
+    onJobStatusChange: NonNullable<
+      MessageQueueWorkerOptions['onJobStatusChange']
+    >,
+  ): Promise<void> {
+    if (
+      !isDefined(job) ||
+      !(job.opts as BullMQJobsOptions).shouldBroadcastStatus
+    ) {
+      return;
+    }
+
+    try {
+      const jobDetails = await this.buildQueueJobDetails(job);
+
+      if (isDefined(jobDetails)) {
+        await onJobStatusChange(jobDetails);
+      }
+    } catch (error) {
+      this.logger.warn(
+        `Failed to notify status change of job ${job.id} on queue ${queueName}`,
+        error,
+      );
+    }
+  }
+
   private buildJobsOptions({
     queueName,
     options,
   }: {
     queueName: MessageQueue;
     options?: QueueJobOptions;
-  }): JobsOptions {
+  }): BullMQJobsOptions {
     return {
       // We suffix the id with V4() to make sure ids are unique so we can add a waiting job when a job related with the same option.id is running
       jobId: options?.id ? `${options.id}-${v4()}` : undefined,
@@ -377,6 +420,7 @@ export class BullMQDriver
         count: QUEUE_RETENTION.failedMaxCount,
       },
       delay: options?.delay,
+      shouldBroadcastStatus: options?.shouldBroadcastStatus,
     };
   }
 
@@ -471,7 +515,17 @@ export class BullMQDriver
   ): Promise<QueueJobDetails<T> | undefined> {
     const job = await this.queueMap[queueName].getJob(jobId);
 
-    if (!isDefined(job) || !isDefined(job.id)) {
+    if (!isDefined(job)) {
+      return undefined;
+    }
+
+    return this.buildQueueJobDetails<T>(job);
+  }
+
+  private async buildQueueJobDetails<T extends MessageQueueJobData>(
+    job: Job,
+  ): Promise<QueueJobDetails<T> | undefined> {
+    if (!isDefined(job.id)) {
       return undefined;
     }
 
@@ -484,6 +538,7 @@ export class BullMQDriver
 
     return {
       id: job.id,
+      name: job.name,
       data: job.data,
       state,
       attemptsMade: job.attemptsMade,

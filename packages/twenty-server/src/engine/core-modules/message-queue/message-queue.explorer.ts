@@ -24,6 +24,7 @@ import { EventLoopStallMonitorService } from 'src/engine/core-modules/message-qu
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { shouldCreateWorkerForQueue } from 'src/engine/core-modules/message-queue/utils/should-create-worker-for-queue.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { QueueJobStatusBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/queue-job-status-broadcaster.service';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 
 interface ProcessorGroup {
@@ -46,6 +47,7 @@ export class MessageQueueExplorer implements OnModuleInit {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly eventLoopStallMonitorService: EventLoopStallMonitorService,
+    private readonly queueJobStatusBroadcaster: QueueJobStatusBroadcaster,
   ) {}
 
   onModuleInit() {
@@ -187,22 +189,29 @@ export class MessageQueueExplorer implements OnModuleInit {
     options: MessageQueueWorkerOptions,
     queueName: MessageQueue,
   ) {
-    queue.work(async (job) => {
-      const stallMonitorToken =
-        this.eventLoopStallMonitorService.registerJobStart({
-          queueName,
-          jobName: job.name,
-          workspaceId: job.data?.workspaceId,
-        });
+    queue.work(
+      async (job) => {
+        const stallMonitorToken =
+          this.eventLoopStallMonitorService.registerJobStart({
+            queueName,
+            jobName: job.name,
+            workspaceId: job.data?.workspaceId,
+          });
 
-      try {
-        for (const processorGroup of processorGroupCollection) {
-          await this.handleProcessor(processorGroup, job);
+        try {
+          for (const processorGroup of processorGroupCollection) {
+            await this.handleProcessor(processorGroup, job);
+          }
+        } finally {
+          this.eventLoopStallMonitorService.registerJobEnd(stallMonitorToken);
         }
-      } finally {
-        this.eventLoopStallMonitorService.registerJobEnd(stallMonitorToken);
-      }
-    }, options);
+      },
+      {
+        ...options,
+        onJobStatusChange: (job) =>
+          this.queueJobStatusBroadcaster.broadcast(job),
+      },
+    );
   }
 
   private async handleProcessor(

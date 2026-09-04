@@ -20,7 +20,7 @@ import { MetadataEventResolutionService } from 'src/engine/subscriptions/metadat
 import { MetadataEventsToDbListener } from 'src/engine/subscriptions/metadata-event/metadata-events-to-db.listener';
 import { ObjectRecordEventPublisher } from 'src/engine/subscriptions/object-record-event/object-record-event-publisher';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
-import { QueueJobStateBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/queue-job-state-broadcaster.service';
+import { QueueJobStatusBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/queue-job-status-broadcaster.service';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -48,7 +48,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     MetadataEventEmitter,
     MetadataEventsToDbListener,
     WorkspaceEventBroadcaster,
-    QueueJobStateBroadcaster,
+    QueueJobStatusBroadcaster,
     ProcessNestedRelationsHelper,
     CommonSelectFieldsHelper,
   ],
@@ -57,7 +57,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ObjectRecordEventPublisher,
     MetadataEventEmitter,
     WorkspaceEventBroadcaster,
-    QueueJobStateBroadcaster,
+    QueueJobStatusBroadcaster,
   ],
 })
 export class SubscriptionsModule {}

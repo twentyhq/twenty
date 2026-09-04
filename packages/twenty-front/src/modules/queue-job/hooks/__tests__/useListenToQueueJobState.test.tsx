@@ -15,7 +15,11 @@ const dispatchQueueJobUpdate = (id: string, state: JobState) => {
         id,
         name: 'install-application',
         state,
+        attemptsMade: 1,
         failedReason: null,
+        enqueuedAt: 1,
+        startedAt: null,
+        finishedAt: null,
       },
     },
   });
