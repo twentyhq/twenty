@@ -72,6 +72,6 @@ export default defineLogicFunction({
   name: 'fathom-backfill-batch',
   description:
     'Fetches the transcript and summary of one paced batch of Fathom meetings and upserts their CallRecordings.',
-  timeoutSeconds: 120,
+  timeoutSeconds: 300,
   handler: fathomBackfillBatchHandler,
 });

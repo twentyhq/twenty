@@ -119,6 +119,6 @@ export default defineLogicFunction({
   name: 'fathom-backfill-worker',
   description:
     "Discovers one page of Fathom meetings, schedules paced import batches, and continues from Fathom's cursor.",
-  timeoutSeconds: 60,
+  timeoutSeconds: 120,
   handler: fathomBackfillWorkerHandler,
 });
