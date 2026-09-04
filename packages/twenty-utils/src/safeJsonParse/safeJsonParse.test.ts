@@ -1,0 +1,2 @@
+import { safeJsonParse } from './safeJsonParse'; import assert from 'node:assert/strict';
+assert.deepEqual(safeJsonParse("invalid", { a: 1 }), { a: 1 }); assert.deepEqual(safeJsonParse('{"a":2}', { a: 1 }), { a: 2 });
