@@ -1,8 +1,9 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Parent, Query, ResolveField } from '@nestjs/graphql';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { ApiPath } from 'twenty-shared/types';
-import { isAbsoluteUrl, isDefined } from 'twenty-shared/utils';
+import { isAbsoluteUrl } from 'twenty-shared/utils';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -68,7 +69,7 @@ export class ApplicationConnectionProviderResolver {
   ): string | null {
     const logo = connectionProvider.logo;
 
-    if (!isDefined(logo) || logo.length === 0) {
+    if (!isNonEmptyString(logo)) {
       return null;
     }
 
