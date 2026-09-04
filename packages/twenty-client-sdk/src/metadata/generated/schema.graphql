@@ -261,6 +261,7 @@ type Object {
   isUIReadOnly: Boolean! @deprecated(reason: "Use isUIEditable")
   isSearchable: Boolean!
   openRecordIn: ObjectOpenRecordIn!
+  readability: MetadataReadability!
   applicationId: UUID!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -291,6 +292,14 @@ enum ObjectOpenRecordIn {
   SIDE_PANEL
   RECORD_PAGE
   USER_CHOICE
+}
+
+enum MetadataReadability {
+  OPEN
+  PRIVATE
+  INHERITED
+  APPLICATION
+  SYSTEM
 }
 
 input CursorPaging {
