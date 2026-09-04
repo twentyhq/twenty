@@ -4,18 +4,22 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type CallRecordingSyncFields } from 'src/logic-functions/types/call-recording-sync-fields.type';
 import { computeCallRecordingIdForFathomMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-fathom-meeting.util';
+import { enqueueFathomMediaDownloadRequest } from 'src/logic-functions/utils/enqueue-fathom-media-download.util';
 import { findMatchingCalendarEvent } from 'src/logic-functions/utils/find-matching-calendar-event.util';
 import { formatFathomSummary } from 'src/logic-functions/utils/format-fathom-summary.util';
 import { getFathomMeetingTitle } from 'src/logic-functions/utils/get-fathom-meeting-title.util';
 import { mapFathomTranscriptToEntries } from 'src/logic-functions/utils/map-fathom-transcript-to-entries.util';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 import { upsertCallRecording } from 'src/logic-functions/utils/upsert-call-recording.util';
 
 export const syncFathomMeetingToCallRecording = async ({
   coreApiClient,
   meeting,
+  connectedAccountId,
 }: {
   coreApiClient: Pick<CoreApiClient, 'query' | 'mutation'>;
   meeting: Meeting;
+  connectedAccountId?: string;
 }): Promise<{
   callRecordingId: string;
   calendarEventId?: string;
@@ -58,9 +62,34 @@ export const syncFathomMeetingToCallRecording = async ({
     fields,
   });
 
+  if (isNonEmptyString(connectedAccountId)) {
+    await enqueueFathomMediaDownload({
+      connectedAccountId,
+      recordingId: meeting.recordingId,
+      callRecordingId,
+    });
+  }
+
   return {
     callRecordingId,
     calendarEventId,
     created: upsertResult.created,
   };
+};
+
+// Media is a separate download Fathom generates in the background. It must not
+// cost the transcript and summary already written above, so a failed enqueue is
+// logged rather than surfaced to a caller that would retry the whole sync.
+const enqueueFathomMediaDownload = async (payload: {
+  connectedAccountId: string;
+  recordingId: number;
+  callRecordingId: string;
+}): Promise<void> => {
+  try {
+    await enqueueFathomMediaDownloadRequest(payload);
+  } catch (error) {
+    console.error(
+      `[fathom] failed to enqueue the media download for recording ${payload.recordingId}: ${toErrorMessage(error)}`,
+    );
+  }
 };

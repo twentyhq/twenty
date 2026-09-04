@@ -13,3 +13,14 @@ export const MAX_FATHOM_MEETING_PAGES = 20;
 export const MAX_FATHOM_BACKFILL_PAGES = 1_000;
 export const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1_000;
 export const CALL_RECORDING_IDS_PER_QUERY = 200;
+export const FATHOM_MEDIA_MAX_FILE_SIZE_BYTES = 500 * 1024 * 1024;
+export const FATHOM_MEDIA_DOWNLOAD_TIMEOUT_MILLISECONDS = 120_000;
+export const FATHOM_MEDIA_UPLOAD_TIMEOUT_MILLISECONDS = 14 * 60 * 1_000;
+export const FATHOM_MEDIA_FILE_FOLDER = 'FilesField';
+// Polls count against Fathom's global 60-per-minute budget, which a backfill
+// already spends on transcripts and summaries, so the interval grows instead of
+// holding at one poll per minute per recording in flight.
+export const FATHOM_MEDIA_DOWNLOAD_INITIAL_POLL_DELAY_MILLISECONDS = 60_000;
+export const FATHOM_MEDIA_DOWNLOAD_MAX_POLL_DELAY_MILLISECONDS = 300_000;
+export const FATHOM_MEDIA_DOWNLOAD_POLL_BACKOFF_EXPONENT = 1.5;
+export const FATHOM_MEDIA_DOWNLOAD_MAX_POLL_ATTEMPTS = 12;

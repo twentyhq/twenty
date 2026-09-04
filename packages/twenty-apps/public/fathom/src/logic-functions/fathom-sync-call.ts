@@ -80,6 +80,7 @@ export const fathomSyncCallHandler = async (
         fathomClient,
         serializedMeeting: serializeFathomMeeting(meeting),
       }),
+      connectedAccountId: connection.id,
     });
 
     return { success: true, recordingId, ...syncResult };

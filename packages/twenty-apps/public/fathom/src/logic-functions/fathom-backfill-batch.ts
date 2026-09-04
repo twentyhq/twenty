@@ -51,7 +51,11 @@ export const fathomBackfillBatchHandler = async (payload: {
     // meetings already imported, which costs calls but cannot duplicate
     // records: the CallRecording id is derived from the recording.
     results.push(
-      await syncFathomMeetingToCallRecording({ coreApiClient, meeting }).catch(
+      await syncFathomMeetingToCallRecording({
+        coreApiClient,
+        meeting,
+        connectedAccountId: payload.connectedAccountId,
+      }).catch(
         (error: unknown) => {
           throw new RetryableLogicFunctionError(toErrorMessage(error));
         },

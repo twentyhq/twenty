@@ -2,6 +2,11 @@
 
 All notable changes to this application are documented in this file.
 
+## Unreleased
+
+- Import the video of each synced Fathom recording, or its audio when the
+  recording is audio-only, into the Call Recording's media fields.
+
 ## 0.1.0
 
 - Add per-user Fathom OAuth and signed webhook registration.
