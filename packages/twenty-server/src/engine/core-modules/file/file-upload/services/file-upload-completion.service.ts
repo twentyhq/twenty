@@ -24,10 +24,8 @@ import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import {
-  StreamSizeExceededError,
-  streamToBuffer,
-} from 'src/utils/stream-to-buffer';
+import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 export type BatchCompleteUploadRequest = {
   workspaceId: string;
