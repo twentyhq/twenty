@@ -1,5 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import {
   type QueueCronJobOptions,
   type QueueJobOptions,
@@ -37,6 +39,8 @@ export class MessageQueueService {
     data: T,
     options?: QueueJobOptions,
   ): Promise<string | undefined> {
+    this.assertStatusBroadcastRecipient(jobName, data, options);
+
     return this.driver.add(this.queueName, jobName, data, options);
   }
 
@@ -45,7 +49,30 @@ export class MessageQueueService {
     jobs: QueueJobToAdd<T>[],
     options?: QueueJobOptions,
   ): Promise<string[]> {
+    for (const job of jobs) {
+      this.assertStatusBroadcastRecipient(jobName, job.data, options);
+    }
+
     return this.driver.bulkAdd(this.queueName, jobName, jobs, options);
+  }
+
+  private assertStatusBroadcastRecipient(
+    jobName: string,
+    data: MessageQueueJobData,
+    options?: QueueJobOptions,
+  ): void {
+    if (!options?.shouldBroadcastStatus) {
+      return;
+    }
+
+    if (
+      !isNonEmptyString(data.workspaceId) ||
+      !isNonEmptyString(data.userWorkspaceId)
+    ) {
+      throw new Error(
+        `Job ${jobName} on queue ${this.queueName} broadcasts its status but its data has no workspaceId and userWorkspaceId`,
+      );
+    }
   }
 
   getJobs<T extends MessageQueueJobData>(
