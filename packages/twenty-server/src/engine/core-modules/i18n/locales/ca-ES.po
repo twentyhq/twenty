@@ -4204,7 +4204,7 @@ msgstr "Fitxer no trobat."
 #. js-lingui-id: MtzD8b
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "File storage took too long to respond. Please retry."
-msgstr ""
+msgstr "L'emmagatzematge de fitxers ha trigat massa a respondre. Torneu-ho a provar."
 
 #. js-lingui-id: I7Jff2
 #: src/engine/core-modules/file-storage/utils/validate-file-path.util.ts

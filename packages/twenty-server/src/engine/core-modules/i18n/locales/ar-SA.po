@@ -4204,7 +4204,7 @@ msgstr "الملف غير موجود."
 #. js-lingui-id: MtzD8b
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "File storage took too long to respond. Please retry."
-msgstr ""
+msgstr "استغرقت وحدة تخزين الملفات وقتًا طويلًا للاستجابة. يرجى إعادة المحاولة."
 
 #. js-lingui-id: I7Jff2
 #: src/engine/core-modules/file-storage/utils/validate-file-path.util.ts

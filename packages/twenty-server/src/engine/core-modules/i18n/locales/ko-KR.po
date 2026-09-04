@@ -4204,7 +4204,7 @@ msgstr "파일을 찾을 수 없음."
 #. js-lingui-id: MtzD8b
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "File storage took too long to respond. Please retry."
-msgstr ""
+msgstr "파일 스토리지의 응답 시간이 너무 오래 걸렸습니다. 다시 시도하세요."
 
 #. js-lingui-id: I7Jff2
 #: src/engine/core-modules/file-storage/utils/validate-file-path.util.ts

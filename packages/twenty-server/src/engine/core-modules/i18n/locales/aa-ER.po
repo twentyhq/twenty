@@ -4201,6 +4201,11 @@ msgstr "crwdns112178:0crwdne112178:0"
 msgid "File not found."
 msgstr "crwdns65332:0crwdne65332:0"
 
+#. js-lingui-id: MtzD8b
+#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+msgid "File storage took too long to respond. Please retry."
+msgstr "crwdns141857:0crwdne141857:0"
+
 #. js-lingui-id: I7Jff2
 #: src/engine/core-modules/file-storage/utils/validate-file-path.util.ts
 msgid "Filename must have an extension"
