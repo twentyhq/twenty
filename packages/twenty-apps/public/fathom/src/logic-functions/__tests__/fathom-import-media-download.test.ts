@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { buildFathomError } from 'src/__tests__/utils/build-fathom-error.util';
 import { buildFathomRecordingDownload } from 'src/__tests__/utils/build-fathom-recording-download.util';
+import { FATHOM_MEDIA_FAILURE_REASON } from 'src/constants/fathom-media-failure-reason.constant';
 import { FATHOM_MEDIA_DOWNLOAD_MAX_POLL_ATTEMPTS } from 'src/constants/fathom.constant';
 
 const mocks = vi.hoisted(() => ({
@@ -10,6 +11,7 @@ const mocks = vi.hoisted(() => ({
   resolveFathomMediaImportTarget: vi.fn(),
   applyFathomMediaDownload: vi.fn(),
   enqueueFathomMediaDownloadPoll: vi.fn(),
+  recordFathomMediaFailure: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/define', () => ({
@@ -44,6 +46,10 @@ vi.mock('src/logic-functions/utils/apply-fathom-media-download.util', () => ({
 
 vi.mock('src/logic-functions/utils/enqueue-fathom-media-download.util', () => ({
   enqueueFathomMediaDownloadPoll: mocks.enqueueFathomMediaDownloadPoll,
+}));
+
+vi.mock('src/logic-functions/utils/record-fathom-media-failure.util', () => ({
+  recordFathomMediaFailure: mocks.recordFathomMediaFailure,
 }));
 
 const { fathomImportMediaDownloadHandler } = await import(
@@ -98,6 +104,12 @@ describe('fathomImportMediaDownloadHandler', () => {
     });
 
     expect(result).toEqual({ success: true, pending: true, exhausted: true });
+    expect(mocks.recordFathomMediaFailure).toHaveBeenCalledWith(
+      expect.objectContaining({
+        callRecordingId: PAYLOAD.callRecordingId,
+        reason: FATHOM_MEDIA_FAILURE_REASON.POLL_BUDGET_EXHAUSTED,
+      }),
+    );
     expect(mocks.enqueueFathomMediaDownloadPoll).not.toHaveBeenCalled();
   });
 

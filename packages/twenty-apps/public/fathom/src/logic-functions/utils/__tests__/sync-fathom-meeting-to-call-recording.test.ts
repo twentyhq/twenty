@@ -1,11 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { buildFathomMeeting } from 'src/__tests__/utils/build-fathom-meeting.util';
+import { FATHOM_MEDIA_FAILURE_REASON } from 'src/constants/fathom-media-failure-reason.constant';
 
 const mocks = vi.hoisted(() => ({
   enqueueFathomMediaDownloadRequest: vi.fn(),
   findMatchingCalendarEvent: vi.fn(),
   upsertCallRecording: vi.fn(),
+  recordFathomMediaFailure: vi.fn(),
 }));
 
 vi.mock('src/logic-functions/utils/enqueue-fathom-media-download.util', () => ({
@@ -18,6 +20,10 @@ vi.mock('src/logic-functions/utils/find-matching-calendar-event.util', () => ({
 
 vi.mock('src/logic-functions/utils/upsert-call-recording.util', () => ({
   upsertCallRecording: mocks.upsertCallRecording,
+}));
+
+vi.mock('src/logic-functions/utils/record-fathom-media-failure.util', () => ({
+  recordFathomMediaFailure: mocks.recordFathomMediaFailure,
 }));
 
 const { syncFathomMeetingToCallRecording } = await import(
@@ -33,6 +39,7 @@ describe('syncFathomMeetingToCallRecording', () => {
     mocks.findMatchingCalendarEvent.mockResolvedValue(undefined);
     mocks.upsertCallRecording.mockResolvedValue({ created: true });
     mocks.enqueueFathomMediaDownloadRequest.mockResolvedValue(undefined);
+    mocks.recordFathomMediaFailure.mockResolvedValue(undefined);
   });
 
   it('requests the media download for the recording it just upserted', async () => {
@@ -68,5 +75,41 @@ describe('syncFathomMeetingToCallRecording', () => {
       }),
     ).resolves.toMatchObject({ created: true });
     expect(mocks.upsertCallRecording).toHaveBeenCalledOnce();
+    expect(mocks.recordFathomMediaFailure).toHaveBeenCalledWith(
+      expect.objectContaining({
+        reason: FATHOM_MEDIA_FAILURE_REASON.ENQUEUE_FAILED,
+      }),
+    );
+  });
+
+  it('leaves a settled failure reason in place for an automatic sync', async () => {
+    await syncFathomMeetingToCallRecording({
+      coreApiClient,
+      meeting,
+      connectedAccountId: 'connection-1',
+    });
+
+    expect(mocks.upsertCallRecording).toHaveBeenCalledWith(
+      expect.objectContaining({
+        fields: expect.not.objectContaining({
+          fathomMediaFailureReason: null,
+        }),
+      }),
+    );
+  });
+
+  it('clears the failure reason when the caller asks to retry media', async () => {
+    await syncFathomMeetingToCallRecording({
+      coreApiClient,
+      meeting,
+      connectedAccountId: 'connection-1',
+      retryMedia: true,
+    });
+
+    expect(mocks.upsertCallRecording).toHaveBeenCalledWith(
+      expect.objectContaining({
+        fields: expect.objectContaining({ fathomMediaFailureReason: null }),
+      }),
+    );
   });
 });

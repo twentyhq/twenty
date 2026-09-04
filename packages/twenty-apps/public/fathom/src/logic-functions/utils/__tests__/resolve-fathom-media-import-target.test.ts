@@ -73,6 +73,25 @@ describe('resolveFathomMediaImportTarget', () => {
     });
   });
 
+  it('skips a recording an earlier attempt settled as unavailable', async () => {
+    const result = await resolveFathomMediaImportTarget({
+      coreApiClient: buildCoreApiClient({
+        id: 'call-recording-id',
+        externalRecordingId: '123',
+        video: [],
+        audio: [],
+        fathomMediaFailureReason: 'no_downloadable_media',
+      }),
+      callRecordingId: 'call-recording-id',
+      recordingId: 123,
+    });
+
+    expect(result).toEqual({
+      status: 'skipped',
+      reason: 'media unavailable: no_downloadable_media',
+    });
+  });
+
   it('skips once audio has already been imported', async () => {
     const result = await resolveFathomMediaImportTarget({
       coreApiClient: buildCoreApiClient({

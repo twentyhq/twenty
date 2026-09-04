@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { buildFathomError } from 'src/__tests__/utils/build-fathom-error.util';
 import { buildFathomRecordingDownload } from 'src/__tests__/utils/build-fathom-recording-download.util';
+import { FATHOM_MEDIA_FAILURE_REASON } from 'src/constants/fathom-media-failure-reason.constant';
 
 const mocks = vi.hoisted(() => ({
   createRecordingDownload: vi.fn(),
@@ -9,6 +10,7 @@ const mocks = vi.hoisted(() => ({
   resolveFathomMediaImportTarget: vi.fn(),
   applyFathomMediaDownload: vi.fn(),
   enqueueFathomMediaDownloadPoll: vi.fn(),
+  recordFathomMediaFailure: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/define', () => ({
@@ -43,6 +45,10 @@ vi.mock('src/logic-functions/utils/apply-fathom-media-download.util', () => ({
 
 vi.mock('src/logic-functions/utils/enqueue-fathom-media-download.util', () => ({
   enqueueFathomMediaDownloadPoll: mocks.enqueueFathomMediaDownloadPoll,
+}));
+
+vi.mock('src/logic-functions/utils/record-fathom-media-failure.util', () => ({
+  recordFathomMediaFailure: mocks.recordFathomMediaFailure,
 }));
 
 const { fathomRequestMediaDownloadHandler } = await import(
@@ -133,8 +139,35 @@ describe('fathomRequestMediaDownloadHandler', () => {
 
     const result = await fathomRequestMediaDownloadHandler(PAYLOAD);
 
-    expect(result.skipped).toBe(true);
+    expect(result).toEqual({
+      success: true,
+      skipped: true,
+      reason: FATHOM_MEDIA_FAILURE_REASON.NO_DOWNLOADABLE_MEDIA,
+    });
+    expect(mocks.recordFathomMediaFailure).toHaveBeenCalledWith(
+      expect.objectContaining({
+        callRecordingId: PAYLOAD.callRecordingId,
+        reason: FATHOM_MEDIA_FAILURE_REASON.NO_DOWNLOADABLE_MEDIA,
+      }),
+    );
     expect(mocks.enqueueFathomMediaDownloadPoll).not.toHaveBeenCalled();
+  });
+
+  it('records a limited-access share so later syncs stop asking', async () => {
+    mocks.createRecordingDownload.mockRejectedValue(buildFathomError(403));
+
+    const result = await fathomRequestMediaDownloadHandler(PAYLOAD);
+
+    expect(result).toEqual({
+      success: true,
+      skipped: true,
+      reason: FATHOM_MEDIA_FAILURE_REASON.DOWNLOAD_FORBIDDEN,
+    });
+    expect(mocks.recordFathomMediaFailure).toHaveBeenCalledWith(
+      expect.objectContaining({
+        reason: FATHOM_MEDIA_FAILURE_REASON.DOWNLOAD_FORBIDDEN,
+      }),
+    );
   });
 
   it('hands a rate-limited request back for redelivery', async () => {
@@ -145,5 +178,6 @@ describe('fathomRequestMediaDownloadHandler', () => {
     await expect(
       fathomRequestMediaDownloadHandler(PAYLOAD),
     ).rejects.toBeInstanceOf(Error);
+    expect(mocks.recordFathomMediaFailure).not.toHaveBeenCalled();
   });
 });

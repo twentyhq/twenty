@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { type RecordingDownload } from 'fathom-typescript/sdk/models/shared';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import {
@@ -7,14 +8,16 @@ import {
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'src/utils/is-defined';
 
+import { FATHOM_MEDIA_FAILURE_REASON } from 'src/constants/fathom-media-failure-reason.constant';
 import { FATHOM_MEDIA_DOWNLOAD_MAX_POLL_ATTEMPTS } from 'src/constants/fathom.constant';
 import { FATHOM_IMPORT_MEDIA_DOWNLOAD_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type FathomImportMediaDownloadPayload } from 'src/logic-functions/types/fathom-media-download-payload.type';
 import { applyFathomMediaDownload } from 'src/logic-functions/utils/apply-fathom-media-download.util';
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
 import { enqueueFathomMediaDownloadPoll } from 'src/logic-functions/utils/enqueue-fathom-media-download.util';
-import { isFathomMediaUnavailableError } from 'src/logic-functions/utils/is-fathom-media-unavailable-error.util';
+import { getFathomMediaFailureReasonForError } from 'src/logic-functions/utils/get-fathom-media-failure-reason-for-error.util';
 import { isTransientFathomError } from 'src/logic-functions/utils/is-transient-fathom-error.util';
+import { recordFathomMediaFailure } from 'src/logic-functions/utils/record-fathom-media-failure.util';
 import { resolveFathomMediaImportTarget } from 'src/logic-functions/utils/resolve-fathom-media-import-target.util';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
@@ -44,29 +47,32 @@ export const fathomImportMediaDownloadHandler = async (
 
   const connection = await getConnection(payload.connectedAccountId);
   const fathomClient = createFathomClient(connection.accessToken);
-  const download = await fathomClient
-    .getRecordingDownload({
+
+  let download: RecordingDownload;
+
+  try {
+    download = await fathomClient.getRecordingDownload({
       recordingId: payload.recordingId,
       downloadId: payload.downloadId,
-    })
-    .catch((error: unknown) => {
-      if (isTransientFathomError(error)) {
-        throw new RetryableLogicFunctionError(toErrorMessage(error));
-      }
+    });
+  } catch (error) {
+    if (isTransientFathomError(error)) {
+      throw new RetryableLogicFunctionError(toErrorMessage(error));
+    }
 
-      if (isFathomMediaUnavailableError(error)) {
-        return undefined;
-      }
+    const failureReason = getFathomMediaFailureReasonForError(error);
 
+    if (!isDefined(failureReason)) {
       throw error;
+    }
+
+    await recordFathomMediaFailure({
+      coreApiClient,
+      callRecordingId: payload.callRecordingId,
+      reason: failureReason,
     });
 
-  if (!isDefined(download)) {
-    return {
-      success: true,
-      skipped: true,
-      reason: 'Fathom no longer offers this download',
-    };
+    return { success: true, skipped: true, reason: failureReason };
   }
 
   const applyResult = await applyFathomMediaDownload({
@@ -76,19 +82,7 @@ export const fathomImportMediaDownloadHandler = async (
   });
 
   if (applyResult.outcome === 'pending') {
-    const nextAttempt = payload.attempt + 1;
-
-    if (nextAttempt >= FATHOM_MEDIA_DOWNLOAD_MAX_POLL_ATTEMPTS) {
-      console.warn(
-        `[fathom] media-import phase=poll-budget-exhausted callRecordingId=${payload.callRecordingId} recordingId=${payload.recordingId} downloadId=${payload.downloadId} attempts=${nextAttempt}`,
-      );
-
-      return { success: true, pending: true, exhausted: true };
-    }
-
-    await enqueueFathomMediaDownloadPoll({ ...payload, attempt: nextAttempt });
-
-    return { success: true, pending: true, attempt: nextAttempt };
+    return handleStillGeneratingDownload({ coreApiClient, payload });
   }
 
   if (applyResult.outcome === 'unavailable') {
@@ -98,6 +92,34 @@ export const fathomImportMediaDownloadHandler = async (
   }
 
   return { success: true, outcome: applyResult.outcome };
+};
+
+const handleStillGeneratingDownload = async ({
+  coreApiClient,
+  payload,
+}: {
+  coreApiClient: Pick<CoreApiClient, 'mutation'>;
+  payload: FathomImportMediaDownloadPayload;
+}) => {
+  const nextAttempt = payload.attempt + 1;
+
+  if (nextAttempt < FATHOM_MEDIA_DOWNLOAD_MAX_POLL_ATTEMPTS) {
+    await enqueueFathomMediaDownloadPoll({ ...payload, attempt: nextAttempt });
+
+    return { success: true, pending: true, attempt: nextAttempt };
+  }
+
+  console.warn(
+    `[fathom] media-import phase=poll-budget-exhausted callRecordingId=${payload.callRecordingId} recordingId=${payload.recordingId} downloadId=${payload.downloadId} attempts=${nextAttempt}`,
+  );
+
+  await recordFathomMediaFailure({
+    coreApiClient,
+    callRecordingId: payload.callRecordingId,
+    reason: FATHOM_MEDIA_FAILURE_REASON.POLL_BUDGET_EXHAUSTED,
+  });
+
+  return { success: true, pending: true, exhausted: true };
 };
 
 export default defineLogicFunction({

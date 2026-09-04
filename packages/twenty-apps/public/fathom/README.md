@@ -28,7 +28,11 @@ emails do not need to match.
   few minutes after the transcript rather than with it.
 - Media is skipped for recordings above 500 MB, for recordings Fathom has no
   downloadable media for, and for limited-access shares that the connected
-  account may view but not download.
+  account may view but not download. The Fathom Media Failure Reason field on
+  the Call Recording says which of these applied.
+- Once a reason is recorded, automatic syncs stop asking Fathom to generate the
+  same file again. Running Sync Fathom Call on that recording clears the reason
+  and tries once more, which is how a re-shared recording gets its media.
 - Disconnect and reconnect Fathom after changing the webhook URL or webhook
   scopes so Fathom receives the new registration.
 

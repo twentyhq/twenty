@@ -4,8 +4,10 @@ import {
   buildFathomRecordingDownload,
   buildFathomRecordingDownloadFile,
 } from 'src/__tests__/utils/build-fathom-recording-download.util';
+import { FATHOM_MEDIA_FAILURE_REASON } from 'src/constants/fathom-media-failure-reason.constant';
 import { applyFathomMediaDownload } from 'src/logic-functions/utils/apply-fathom-media-download.util';
 import { importFathomMediaFile } from 'src/logic-functions/utils/import-fathom-media-file.util';
+import { recordFathomMediaFailure } from 'src/logic-functions/utils/record-fathom-media-failure.util';
 import { updateCallRecordingMedia } from 'src/logic-functions/utils/update-call-recording-media.util';
 
 vi.mock('src/logic-functions/utils/import-fathom-media-file.util', () => ({
@@ -13,6 +15,9 @@ vi.mock('src/logic-functions/utils/import-fathom-media-file.util', () => ({
 }));
 vi.mock('src/logic-functions/utils/update-call-recording-media.util', () => ({
   updateCallRecordingMedia: vi.fn(),
+}));
+vi.mock('src/logic-functions/utils/record-fathom-media-failure.util', () => ({
+  recordFathomMediaFailure: vi.fn(),
 }));
 
 const coreApiClient = { mutation: vi.fn() };
@@ -22,6 +27,7 @@ describe('applyFathomMediaDownload', () => {
   beforeEach(() => {
     vi.mocked(importFathomMediaFile).mockReset();
     vi.mocked(updateCallRecordingMedia).mockReset();
+    vi.mocked(recordFathomMediaFailure).mockReset();
   });
 
   it('reports a still-generating download as pending without touching storage', async () => {
@@ -50,6 +56,11 @@ describe('applyFathomMediaDownload', () => {
       outcome: 'unavailable',
       reason: 'generation_timeout',
     });
+    expect(recordFathomMediaFailure).toHaveBeenCalledWith({
+      coreApiClient,
+      callRecordingId,
+      reason: 'generation_timeout',
+    });
     expect(importFathomMediaFile).not.toHaveBeenCalled();
   });
 
@@ -60,7 +71,15 @@ describe('applyFathomMediaDownload', () => {
       download: buildFathomRecordingDownload({ status: 'expired' }),
     });
 
-    expect(result).toEqual({ outcome: 'unavailable', reason: 'expired' });
+    expect(result).toEqual({
+      outcome: 'unavailable',
+      reason: FATHOM_MEDIA_FAILURE_REASON.DOWNLOAD_EXPIRED,
+    });
+    expect(recordFathomMediaFailure).toHaveBeenCalledWith({
+      coreApiClient,
+      callRecordingId,
+      reason: FATHOM_MEDIA_FAILURE_REASON.DOWNLOAD_EXPIRED,
+    });
   });
 
   it('writes a completed video download to the video field', async () => {
@@ -83,7 +102,7 @@ describe('applyFathomMediaDownload', () => {
     expect(updateCallRecordingMedia).toHaveBeenCalledWith({
       coreApiClient,
       callRecordingId,
-      fields: { video: files },
+      fields: { video: files, fathomMediaFailureReason: null },
     });
   });
 
@@ -107,11 +126,11 @@ describe('applyFathomMediaDownload', () => {
     expect(updateCallRecordingMedia).toHaveBeenCalledWith({
       coreApiClient,
       callRecordingId,
-      fields: { audio: files },
+      fields: { audio: files, fathomMediaFailureReason: null },
     });
   });
 
-  it('leaves the media fields untouched when the file exceeds the size cap', async () => {
+  it('settles a file above the size cap without writing the media fields', async () => {
     vi.mocked(importFathomMediaFile).mockResolvedValue({
       outcome: 'too-large',
       sizeBytes: 900_000_000,
@@ -126,9 +145,13 @@ describe('applyFathomMediaDownload', () => {
     });
 
     expect(result).toEqual({
-      outcome: 'too-large',
-      kind: 'video',
-      sizeBytes: 900_000_000,
+      outcome: 'unavailable',
+      reason: FATHOM_MEDIA_FAILURE_REASON.FILE_TOO_LARGE,
+    });
+    expect(recordFathomMediaFailure).toHaveBeenCalledWith({
+      coreApiClient,
+      callRecordingId,
+      reason: FATHOM_MEDIA_FAILURE_REASON.FILE_TOO_LARGE,
     });
     expect(updateCallRecordingMedia).not.toHaveBeenCalled();
   });
@@ -142,7 +165,12 @@ describe('applyFathomMediaDownload', () => {
 
     expect(result).toEqual({
       outcome: 'unavailable',
-      reason: 'completed without a file',
+      reason: FATHOM_MEDIA_FAILURE_REASON.COMPLETED_WITHOUT_FILE,
+    });
+    expect(recordFathomMediaFailure).toHaveBeenCalledWith({
+      coreApiClient,
+      callRecordingId,
+      reason: FATHOM_MEDIA_FAILURE_REASON.COMPLETED_WITHOUT_FILE,
     });
     expect(importFathomMediaFile).not.toHaveBeenCalled();
   });

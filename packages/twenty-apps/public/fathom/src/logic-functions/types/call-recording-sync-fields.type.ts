@@ -11,6 +11,8 @@ export type CallRecordingSyncFields = {
   transcript?: TranscriptEntry[];
   video?: CallRecordingMediaFile[];
   audio?: CallRecordingMediaFile[];
+  // null clears a stale reason once a later attempt supplies the media.
+  fathomMediaFailureReason?: string | null;
   summary?: { markdown: string; blocknote: null };
   calendarEventId?: string;
 };

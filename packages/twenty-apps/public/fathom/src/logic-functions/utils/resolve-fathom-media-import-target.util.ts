@@ -10,9 +10,10 @@ export type ResolveFathomMediaImportTargetResult =
 
 // Job payloads can carry a forged recording id, so the recording to download is
 // taken from the CallRecording's own externalRecordingId rather than the payload.
-// The already-imported check also collapses the repeats a retried backfill batch
-// enqueues; it cannot collapse two chains started while the first is still in
-// flight, which costs a duplicate transfer but converges on the same media.
+// The already-imported and settled-failure checks also collapse the repeats a
+// retried backfill batch enqueues; they cannot collapse two chains started while
+// the first is still in flight, which costs a duplicate transfer but converges
+// on the same media.
 export const resolveFathomMediaImportTarget = async ({
   coreApiClient,
   callRecordingId,
@@ -44,6 +45,17 @@ export const resolveFathomMediaImportTarget = async ({
 
   if (mediaState.hasVideo || mediaState.hasAudio) {
     return { status: 'skipped', reason: 'media already imported' };
+  }
+
+  // A recorded reason means an earlier attempt settled: asking Fathom to
+  // generate the same file again would fail the same way. Syncing the call by
+  // hand clears the reason, which is how a fixed share or a raised size cap
+  // gets retried.
+  if (isNonEmptyString(mediaState.failureReason)) {
+    return {
+      status: 'skipped',
+      reason: `media unavailable: ${mediaState.failureReason}`,
+    };
   }
 
   return { status: 'proceed' };

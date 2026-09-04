@@ -6,6 +6,9 @@ All notable changes to this application are documented in this file.
 
 - Import the video of each synced Fathom recording, or its audio when the
   recording is audio-only, into the Call Recording's media fields.
+- Record why media could not be imported on a new Fathom Media Failure Reason
+  field, skip automatic retries of a settled failure, and let Sync Fathom Call
+  clear it to try again.
 
 ## 0.1.0
 

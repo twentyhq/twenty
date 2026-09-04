@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { type RecordingDownload } from 'fathom-typescript/sdk/models/shared';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import {
@@ -12,8 +13,9 @@ import { type FathomRequestMediaDownloadPayload } from 'src/logic-functions/type
 import { applyFathomMediaDownload } from 'src/logic-functions/utils/apply-fathom-media-download.util';
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
 import { enqueueFathomMediaDownloadPoll } from 'src/logic-functions/utils/enqueue-fathom-media-download.util';
-import { isFathomMediaUnavailableError } from 'src/logic-functions/utils/is-fathom-media-unavailable-error.util';
+import { getFathomMediaFailureReasonForError } from 'src/logic-functions/utils/get-fathom-media-failure-reason-for-error.util';
 import { isTransientFathomError } from 'src/logic-functions/utils/is-transient-fathom-error.util';
+import { recordFathomMediaFailure } from 'src/logic-functions/utils/record-fathom-media-failure.util';
 import { resolveFathomMediaImportTarget } from 'src/logic-functions/utils/resolve-fathom-media-import-target.util';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
@@ -41,26 +43,31 @@ export const fathomRequestMediaDownloadHandler = async (
 
   const connection = await getConnection(payload.connectedAccountId);
   const fathomClient = createFathomClient(connection.accessToken);
-  const download = await fathomClient
-    .createRecordingDownload({ recordingId: payload.recordingId })
-    .catch((error: unknown) => {
-      if (isTransientFathomError(error)) {
-        throw new RetryableLogicFunctionError(toErrorMessage(error));
-      }
 
-      if (isFathomMediaUnavailableError(error)) {
-        return undefined;
-      }
+  let download: RecordingDownload;
 
+  try {
+    download = await fathomClient.createRecordingDownload({
+      recordingId: payload.recordingId,
+    });
+  } catch (error) {
+    if (isTransientFathomError(error)) {
+      throw new RetryableLogicFunctionError(toErrorMessage(error));
+    }
+
+    const failureReason = getFathomMediaFailureReasonForError(error);
+
+    if (!isDefined(failureReason)) {
       throw error;
+    }
+
+    await recordFathomMediaFailure({
+      coreApiClient,
+      callRecordingId: payload.callRecordingId,
+      reason: failureReason,
     });
 
-  if (!isDefined(download)) {
-    return {
-      success: true,
-      skipped: true,
-      reason: 'Fathom has no downloadable media for this recording',
-    };
+    return { success: true, skipped: true, reason: failureReason };
   }
 
   // Audio-only recordings can come back completed on the first call, so the
