@@ -1,67 +1,37 @@
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type AllStandardObjectIndexName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-index-name.type';
-import {
-  type CreateStandardIndexArgs,
-  createStandardIndexFlatMetadata,
-} from 'src/engine/workspace-manager/twenty-standard-application/utils/index/create-standard-index-flat-metadata.util';
+import { type CreateStandardIndexArgs } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/create-standard-index-flat-metadata.util';
+import { buildStandardTargetFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/build-standard-target-flat-index-metadatas.util';
 
-export const buildNoteTargetStandardFlatIndexMetadatas = ({
-  now,
-  objectName,
-  workspaceId,
-  standardObjectMetadataRelatedEntityIds,
-  dependencyFlatEntityMaps,
-  twentyStandardApplicationId,
-}: Omit<CreateStandardIndexArgs<'noteTarget'>, 'context'>): Record<
-  AllStandardObjectIndexName<'noteTarget'>,
-  FlatIndexMetadata
-> => ({
-  noteIdIndex: createStandardIndexFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      indexName: 'noteIdIndex',
-      relatedFieldNames: ['note'],
+export const buildNoteTargetStandardFlatIndexMetadatas = (
+  args: Omit<CreateStandardIndexArgs<'noteTarget'>, 'context'>,
+): Record<AllStandardObjectIndexName<'noteTarget'>, FlatIndexMetadata> => {
+  const indexes = buildStandardTargetFlatIndexMetadatas({
+    args,
+    fieldNames: {
+      parent: 'note',
+      person: 'targetPerson',
+      company: 'targetCompany',
+      opportunity: 'targetOpportunity',
     },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  personIdIndex: createStandardIndexFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      indexName: 'personIdIndex',
-      relatedFieldNames: ['targetPerson'],
+    indexNames: {
+      parentIdIndex: 'noteIdIndex',
+      personIdIndex: 'personIdIndex',
+      companyIdIndex: 'companyIdIndex',
+      opportunityIdIndex: 'opportunityIdIndex',
+      personUniqueIndex: 'notePersonUniqueIndex',
+      companyUniqueIndex: 'noteCompanyUniqueIndex',
+      opportunityUniqueIndex: 'noteOpportunityUniqueIndex',
     },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  companyIdIndex: createStandardIndexFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      indexName: 'companyIdIndex',
-      relatedFieldNames: ['targetCompany'],
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  opportunityIdIndex: createStandardIndexFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      indexName: 'opportunityIdIndex',
-      relatedFieldNames: ['targetOpportunity'],
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-});
+  });
+
+  return {
+    noteIdIndex: indexes.parentIdIndex,
+    personIdIndex: indexes.personIdIndex,
+    companyIdIndex: indexes.companyIdIndex,
+    opportunityIdIndex: indexes.opportunityIdIndex,
+    notePersonUniqueIndex: indexes.personUniqueIndex,
+    noteCompanyUniqueIndex: indexes.companyUniqueIndex,
+    noteOpportunityUniqueIndex: indexes.opportunityUniqueIndex,
+  };
+};

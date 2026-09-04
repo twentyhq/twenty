@@ -1,5 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageLimitHttpException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit-http.exception';
 import {
@@ -14,26 +15,29 @@ const buildExhaustedScope = (
 ): ExhaustedScope => ({
   resourceType: UsageResourceType.API,
   limitKind: 'speed',
+  exhaustedKind: 'limit',
   spenderType: 'apiKey',
   spenderId: 'key-1',
+  operationType: UsageOperationType.API_REQUEST,
   limitValue: 3,
   remaining: 0,
-  windowSeconds: 60,
+  periodCount: 60,
+  periodUnit: 'second',
   retryAfterMs: 11983,
-  isFallback: true,
+  isDefault: true,
   ...overrides,
 });
 
 const catchThrown = (
   exhaustedScope?: ExhaustedScope,
+  {
+    message = 'Rate limit exceeded for apiKey: 3 requests per 60s.',
+    code = UsageLimitExceptionCode.RATE_LIMITED,
+  }: { message?: string; code?: UsageLimitExceptionCode } = {},
 ): UsageLimitHttpException => {
   try {
     usageLimitToRestApiExceptionHandler(
-      new UsageLimitException(
-        'Rate limit exceeded for apiKey: 3 requests per 60s.',
-        UsageLimitExceptionCode.RATE_LIMITED,
-        { exhaustedScope },
-      ),
+      new UsageLimitException(message, code, { exhaustedScope }),
     );
   } catch (error) {
     return error as UsageLimitHttpException;
@@ -52,10 +56,16 @@ describe('usageLimitToRestApiExceptionHandler', () => {
       error: 'RATE_LIMITED',
       messages: ['Rate limit exceeded for apiKey: 3 requests per 60s.'],
       limitKind: 'speed',
-      scope: { spenderType: 'apiKey', spenderId: 'key-1' },
+      exhaustedKind: 'limit',
+      scope: {
+        spenderType: 'apiKey',
+        spenderId: 'key-1',
+        operationType: UsageOperationType.API_REQUEST,
+      },
       limit: 3,
       remaining: 0,
-      windowSeconds: 60,
+      periodCount: 60,
+      periodUnit: 'second',
       retryAfterSeconds: 12,
     });
   });
@@ -76,6 +86,64 @@ describe('usageLimitToRestApiExceptionHandler', () => {
         buildExhaustedScope({ retryAfterMs: 4 }),
       ).getResponseHeaders()['Retry-After'],
     ).toBe('1');
+  });
+
+  it('answers 429 with retry headers when a configured quota is exhausted', () => {
+    const error = catchThrown(
+      buildExhaustedScope({
+        resourceType: UsageResourceType.AI,
+        limitKind: 'quota',
+        operationType: UsageOperationType.ALL,
+        periodCount: 1,
+        periodUnit: 'month',
+      }),
+      {
+        message: 'Usage limit reached for apiKey',
+        code: UsageLimitExceptionCode.QUOTA_EXHAUSTED,
+      },
+    );
+
+    expect(error.getStatus()).toBe(HttpStatus.TOO_MANY_REQUESTS);
+    expect(error.getResponseBody()).toEqual(
+      expect.objectContaining({
+        statusCode: HttpStatus.TOO_MANY_REQUESTS,
+        error: 'QUOTA_EXHAUSTED',
+        limitKind: 'quota',
+        exhaustedKind: 'limit',
+      }),
+    );
+    expect(error.getResponseHeaders()).toEqual(
+      expect.objectContaining({ 'Retry-After': '12' }),
+    );
+  });
+
+  it('answers 402 without retry headers when the credit allowance is exhausted', () => {
+    const error = catchThrown(
+      buildExhaustedScope({
+        resourceType: UsageResourceType.AI,
+        limitKind: 'quota',
+        exhaustedKind: 'allowance',
+        spenderType: 'workspace',
+        spenderId: null,
+        operationType: UsageOperationType.ALL,
+        periodCount: null,
+        periodUnit: null,
+      }),
+      {
+        message: 'Credit allowance exhausted for this billing period',
+        code: UsageLimitExceptionCode.QUOTA_EXHAUSTED,
+      },
+    );
+
+    expect(error.getStatus()).toBe(HttpStatus.PAYMENT_REQUIRED);
+    expect(error.getResponseBody()).toEqual(
+      expect.objectContaining({
+        statusCode: HttpStatus.PAYMENT_REQUIRED,
+        error: 'QUOTA_EXHAUSTED',
+        exhaustedKind: 'allowance',
+      }),
+    );
+    expect(error.getResponseHeaders()).toEqual({});
   });
 
   it('keeps the message readable for logs', () => {
