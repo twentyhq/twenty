@@ -823,7 +823,7 @@ const { createContract } = await client.mutation({
 });
 ```
 
-On an object whose readability is `PRIVATE`, `shareWith` lists who gets access to the created record: each entry targets exactly one of `workspaceMemberId`, `roleId` or `everyone: true` with an `accessLevel` of `READ`, `READ_WRITE` or `FULL`. A workspace member creating a record always receives a `FULL` owner grant, so the argument is optional for them; a logic function acting as its application, an API key or a system caller must pass it or the create is rejected. On other objects the argument is ignored.
+On an object whose readability is `PRIVATE`, `shareWith` lists who gets access to the created record: each entry targets exactly one of `workspaceMemberId`, `roleId` or `everyone: true` with an `accessLevel` of `READ`, `READ_WRITE` or `FULL`. A workspace member creating a record always receives a `FULL` owner grant, so the argument is optional for them; a logic function acting as its application or an API key also receives a `FULL` grant for its role, and on a workspace where record sharing is enabled (`IS_RECORD_SHARING_ENABLED`) such callers, like a system caller, must pass `shareWith` or the create is rejected — while the flag is off a create without `shareWith` grants `FULL` access to everyone instead, so the record stays as open as it is today. On other objects the argument is ignored.
 
 The client uses a selection-set syntax: pass `true` to include a field, use `__args` for arguments, and nest objects for relations. You get full autocompletion and type checking based on your workspace schema.
 

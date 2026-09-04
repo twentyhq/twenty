@@ -12,12 +12,18 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 
 export const validateShareWithArg = ({
   authContext,
+  isRecordSharingEnabled,
   shareWith,
 }: {
   authContext: WorkspaceAuthContext;
+  isRecordSharingEnabled: boolean;
   shareWith?: ShareWithInput[];
 }): void => {
-  if (!isUserAuthContext(authContext) && !isNonEmptyArray(shareWith)) {
+  if (
+    isRecordSharingEnabled &&
+    !isUserAuthContext(authContext) &&
+    !isNonEmptyArray(shareWith)
+  ) {
     throw new CommonQueryRunnerException(
       'Creating a record of a private object requires the shareWith argument',
       CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,

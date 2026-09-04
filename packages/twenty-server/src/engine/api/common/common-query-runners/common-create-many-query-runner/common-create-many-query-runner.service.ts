@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import { MetadataReadability, ObjectRecord } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  MetadataReadability,
+  ObjectRecord,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   Brackets,
@@ -82,6 +86,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     if (isPrivateObject) {
       validateShareWithArg({
         authContext: queryRunnerContext.authContext,
+        isRecordSharingEnabled: this.isRecordSharingEnabled(queryRunnerContext),
         shareWith: args.shareWith,
       });
     }
@@ -602,7 +607,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     shareWith?: ShareWithInput[];
     queryRunnerContext: CommonExtendedQueryRunnerContext;
   }): Promise<void> {
-    const { authContext, flatObjectMetadata, transactionScope } =
+    const { authContext, flatObjectMetadata, repository, transactionScope } =
       queryRunnerContext;
 
     if (flatObjectMetadata.readability !== MetadataReadability.PRIVATE) {
@@ -615,10 +620,22 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         recordIds: insertResult.generatedMaps.map((record) => record.id),
         objectMetadataId: flatObjectMetadata.id,
         authContext,
+        apiKeyRoleMap: repository.internalContext.apiKeyRoleMap,
+        isRecordSharingEnabled: this.isRecordSharingEnabled(queryRunnerContext),
         shareWith,
       }),
       transactionScope,
     });
+  }
+
+  private isRecordSharingEnabled(
+    queryRunnerContext: CommonExtendedQueryRunnerContext,
+  ): boolean {
+    return (
+      queryRunnerContext.featureFlagsMap[
+        FeatureFlagKey.IS_RECORD_SHARING_ENABLED
+      ] ?? false
+    );
   }
 
   private resolveNestedRelationsForCreate({
