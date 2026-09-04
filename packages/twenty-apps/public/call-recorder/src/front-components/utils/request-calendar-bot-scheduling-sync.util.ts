@@ -1,3 +1,4 @@
+import { isUndefined } from '@sniptt/guards';
 import { RestApiClient } from 'twenty-client-sdk/rest';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
 
@@ -37,7 +38,7 @@ export const requestCalendarBotSchedulingSync = async (): Promise<void> => {
 
     const snackbar = buildSnackbarForResponse(response ?? {});
 
-    if (snackbar !== undefined) {
+    if (!isUndefined(snackbar)) {
       await enqueueSnackbar(snackbar);
     }
   } catch {
