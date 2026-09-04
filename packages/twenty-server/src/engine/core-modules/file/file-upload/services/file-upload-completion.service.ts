@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { Readable } from 'stream';
@@ -51,6 +51,8 @@ type CompletedUploadedFile = FileDTO & Pick<FileEntity, 'mimeType'>;
 
 @Injectable()
 export class FileUploadCompletionService {
+  private readonly logger = new Logger(FileUploadCompletionService.name);
+
   constructor(
     private readonly fileStorageService: FileStorageService,
     @InjectWorkspaceScopedRepository(FileEntity)
@@ -152,10 +154,14 @@ export class FileUploadCompletionService {
       { status: FILE_STATUS.UPLOADED, mimeType, size },
     );
 
-    // The cleanup cron claims a stale PENDING row by deleting it, and then
-    // deletes its objects. Losing the row here means it won, so the object
-    // this call just promoted is already gone.
+    // The cleanup cron claims a stale PENDING row by deleting it, then deletes
+    // its objects. Losing the row here means it won, and the promoting copy
+    // above may have landed after its sweep, so the object this call created
+    // is now referenced by nothing and has to be taken back out: no later
+    // cleanup run looks for a file whose row is already gone.
     if (affected === 0) {
+      await this.deletePromotedObjectOrLog({ file, storageLocation });
+
       throw new FileUploadException(
         `File ${file.id} was reaped while its upload was being completed`,
         FileUploadExceptionCode.FILE_NOT_FOUND,
@@ -172,6 +178,22 @@ export class FileUploadCompletionService {
       createdAt: file.createdAt,
       mimeType,
     };
+  }
+
+  private async deletePromotedObjectOrLog({
+    file,
+    storageLocation,
+  }: {
+    file: FileEntity;
+    storageLocation: FileUploadStorageLocation;
+  }): Promise<void> {
+    try {
+      await this.fileStorageService.deleteFile(storageLocation);
+    } catch (error) {
+      this.logger.warn(
+        `Could not remove the promoted object for reaped file ${file.id} at "${file.path}", leaving it orphaned: ${error}`,
+      );
+    }
   }
 
   private getApplicationFileStorageLocation({
