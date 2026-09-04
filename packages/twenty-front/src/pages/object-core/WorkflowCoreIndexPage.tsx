@@ -63,7 +63,8 @@ export const WorkflowCoreIndexPage = () => {
 
   const { t } = useLingui();
 
-  const { createCoreWorkflow, canCreateCoreWorkflow } = useCreateCoreWorkflow();
+  const { createCoreWorkflow, canCreateCoreWorkflow, isCreatingCoreWorkflow } =
+    useCreateCoreWorkflow();
 
   const coreWorkflowsFilterSettings = useAtomStateValue(
     coreWorkflowsFilterSettingsState,
@@ -73,9 +74,11 @@ export const WorkflowCoreIndexPage = () => {
     coreWorkflowsFilterSettings.stepFilters ?? []
   ).some(isUsableCoreWorkflowFilterRule);
 
-  const hasError = isDefined(error);
+  const hasNoCoreWorkflows = coreWorkflows.length === 0;
 
-  const isEmpty = !loading && !hasError && coreWorkflows.length === 0;
+  const hasError = isDefined(error) && hasNoCoreWorkflows;
+
+  const isEmpty = !loading && !hasError && hasNoCoreWorkflows;
 
   useEffect(() => {
     if (inView && hasNextPage && !loading) {
@@ -146,6 +149,7 @@ export const WorkflowCoreIndexPage = () => {
                 <CoreObjectTableAddNewRow
                   label={t`New ${objectMetadataItem.labelSingular}`}
                   onClick={createCoreWorkflow}
+                  disabled={isCreatingCoreWorkflow}
                 />
               )}
               {hasNextPage && <StyledFetchMoreSentinel ref={fetchMoreRef} />}

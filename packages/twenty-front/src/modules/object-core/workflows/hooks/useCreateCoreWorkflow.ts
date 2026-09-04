@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
@@ -20,9 +20,11 @@ export const useCreateCoreWorkflow = () => {
     objectMetadataItem.id,
   );
 
-  const { createOneRecord, loading } = useCreateOneRecord({
+  const { createOneRecord } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Workflow,
   });
+
+  const [isCreatingCoreWorkflow, setIsCreatingCoreWorkflow] = useState(false);
 
   const navigate = useNavigateApp();
 
@@ -35,9 +37,11 @@ export const useCreateCoreWorkflow = () => {
   });
 
   const createCoreWorkflow = useCallback(async () => {
-    if (loading) {
+    if (isCreatingCoreWorkflow) {
       return;
     }
+
+    setIsCreatingCoreWorkflow(true);
 
     const workflowId = v4();
 
@@ -48,13 +52,21 @@ export const useCreateCoreWorkflow = () => {
       enqueueErrorSnackBar({ message: t`Failed to create workflow` });
 
       return;
+    } finally {
+      setIsCreatingCoreWorkflow(false);
     }
 
     navigate(AppPath.RecordShowPage, {
       objectNameSingular: CoreObjectNameSingular.Workflow,
       objectRecordId: workflowId,
     });
-  }, [createOneRecord, navigate, loading, enqueueErrorSnackBar, t]);
+  }, [
+    createOneRecord,
+    navigate,
+    enqueueErrorSnackBar,
+    t,
+    isCreatingCoreWorkflow,
+  ]);
 
-  return { createCoreWorkflow, canCreateCoreWorkflow };
+  return { createCoreWorkflow, canCreateCoreWorkflow, isCreatingCoreWorkflow };
 };

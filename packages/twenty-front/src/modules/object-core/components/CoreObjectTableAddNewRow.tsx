@@ -26,13 +26,15 @@ const StyledAddNewRow = styled.button`
 type CoreObjectTableAddNewRowProps = {
   label: string;
   onClick: () => void;
+  disabled?: boolean;
 };
 
 export const CoreObjectTableAddNewRow = ({
   label,
   onClick,
+  disabled = false,
 }: CoreObjectTableAddNewRowProps) => (
-  <StyledAddNewRow type="button" onClick={onClick}>
+  <StyledAddNewRow type="button" onClick={onClick} disabled={disabled}>
     <IconPlus size={14} />
     {label}
   </StyledAddNewRow>
