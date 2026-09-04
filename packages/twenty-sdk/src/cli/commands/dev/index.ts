@@ -150,7 +150,9 @@ export const registerDevCommands = (program: Command): void => {
 
   program
     .command('pull [appPath]')
-    .description('Write the installed application back to local source files')
+    .description(
+      'Write the installed application back to local source files (experimental)',
+    )
     .option(
       '-u, --universal-identifier <id>',
       'Universal identifier of the application to pull',

@@ -40,6 +40,7 @@ export type AppPullResult = {
   localOnlyRelativePaths: string[];
   skipped: SkippedPullEntity[];
   coverage: ApplicationExportCoverageEntry[];
+  unreadableRelativePaths: string[];
   hadBase: boolean;
 };
 
@@ -182,6 +183,9 @@ const innerAppPull = async (
       localOnlyRelativePaths: plan.localOnlyRelativePaths,
       skipped: plan.skipped,
       coverage: applicationExport.coverage,
+      unreadableRelativePaths: scannedFiles
+        .filter((scannedFile) => !scannedFile.isReadable)
+        .map((scannedFile) => scannedFile.relativePath),
       hadBase: isDefined(baseManifest),
     },
   };

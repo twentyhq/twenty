@@ -14,6 +14,7 @@ export type ScannedDefineFile = {
   entityKey: ManifestEntityKey;
   universalIdentifier: string | null;
   childUniversalIdentifiers: string[];
+  isReadable: boolean;
 };
 
 type ExtractedConfig = {
@@ -51,6 +52,7 @@ export const scanProjectDefineFiles = async (
     const entityKey = TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING[targetFunctionName];
 
     let config: ExtractedConfig = {};
+    let isReadable = true;
 
     try {
       const extract = await extractManifestFromFile<ExtractedConfig>({
@@ -61,6 +63,7 @@ export const scanProjectDefineFiles = async (
       config = extract.config ?? {};
     } catch {
       config = {};
+      isReadable = false;
     }
 
     scannedFiles.push({
@@ -71,6 +74,7 @@ export const scanProjectDefineFiles = async (
           ? config.universalIdentifier
           : null,
       childUniversalIdentifiers: readChildUniversalIdentifiers(config),
+      isReadable,
     });
   }
 

@@ -64,6 +64,7 @@ export const formatPullReport = ({
   skipped,
   coverage,
   localOnlyRelativePaths,
+  unreadableRelativePaths = [],
   verbose = false,
 }: {
   writes: PullWrite[];
@@ -72,6 +73,7 @@ export const formatPullReport = ({
   skipped: SkippedPullEntity[];
   coverage: ApplicationExportCoverageEntry[];
   localOnlyRelativePaths: string[];
+  unreadableRelativePaths?: string[];
   verbose?: boolean;
 }): string => {
   const lines: string[] = [
@@ -103,6 +105,17 @@ export const formatPullReport = ({
     for (const skippedEntity of skipped) {
       lines.push(`  ${skippedEntity.kind} ${skippedEntity.reason}`);
     }
+  }
+
+  if (unreadableRelativePaths.length > 0) {
+    lines.push(
+      '',
+      'Could not be read, so a second file may now define the same entity (run `yarn install` and pull again):',
+      ...unreadableRelativePaths
+        .slice()
+        .sort()
+        .map((relativePath) => `  ${relativePath}`),
+    );
   }
 
   if (localOnlyRelativePaths.length > 0) {

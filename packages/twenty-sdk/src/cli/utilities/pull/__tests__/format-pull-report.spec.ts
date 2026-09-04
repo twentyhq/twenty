@@ -124,6 +124,15 @@ describe('formatPullReport', () => {
     expect(report).toContain('object petCareAgreement:');
   });
 
+  it('should warn about a define file it could not read', () => {
+    const report = buildReport({
+      unreadableRelativePaths: ['src/objects/broken.object.ts'],
+    });
+
+    expect(report).toContain('Could not be read');
+    expect(report).toContain('src/objects/broken.object.ts');
+  });
+
   it('should list local entities the workspace does not have', () => {
     const report = buildReport({
       localOnlyRelativePaths: ['src/objects/unpushed.object.ts'],

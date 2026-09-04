@@ -20,6 +20,13 @@ export class AppPullCommand {
 
     const remoteName = ConfigService.getActiveRemote();
 
+    console.log(
+      chalk.yellow(
+        '⚠ pull is experimental\n' +
+          '  It covers only part of an application, and it overwrites the files\n' +
+          '  that define what it pulls. Commit your work before running it.\n',
+      ),
+    );
     console.log(chalk.blue(`Pulling application from ${remoteName}...`));
     console.log(chalk.gray(`App path: ${appPath}\n`));
 
@@ -41,6 +48,7 @@ export class AppPullCommand {
       skipped: result.data.skipped,
       coverage: result.data.coverage,
       localOnlyRelativePaths: result.data.localOnlyRelativePaths,
+      unreadableRelativePaths: result.data.unreadableRelativePaths,
       verbose: options.verbose,
     });
 

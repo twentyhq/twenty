@@ -81,6 +81,7 @@ describe('planPullWrites', () => {
         entityKey: ManifestEntityKey.Application,
         universalIdentifier: 'a-placeholder-identifier',
         childUniversalIdentifiers: [],
+        isReadable: true,
       },
     ];
 
@@ -104,12 +105,14 @@ describe('planPullWrites', () => {
         entityKey: ManifestEntityKey.Application,
         universalIdentifier: APP_UID,
         childUniversalIdentifiers: [],
+        isReadable: true,
       },
       {
         relativePath: 'src/objects/pet.object.ts',
         entityKey: ManifestEntityKey.Objects,
         universalIdentifier: PET_UID,
         childUniversalIdentifiers: [NAME_FIELD_UID],
+        isReadable: true,
       },
     ];
 
@@ -130,12 +133,14 @@ describe('planPullWrites', () => {
         entityKey: ManifestEntityKey.Application,
         universalIdentifier: APP_UID,
         childUniversalIdentifiers: [],
+        isReadable: true,
       },
       {
         relativePath: 'src/objects/pet.object.ts',
         entityKey: ManifestEntityKey.Objects,
         universalIdentifier: PET_UID,
         childUniversalIdentifiers: [NAME_FIELD_UID],
+        isReadable: true,
       },
     ];
 
@@ -166,6 +171,7 @@ describe('planPullWrites', () => {
         entityKey: ManifestEntityKey.Objects,
         universalIdentifier: ROCKET_UID,
         childUniversalIdentifiers: [ROCKET_NAME_FIELD_UID],
+        isReadable: true,
       },
     ];
 
@@ -202,6 +208,7 @@ describe('planPullWrites', () => {
         entityKey: ManifestEntityKey.Objects,
         universalIdentifier: 'an-unpushed-identifier',
         childUniversalIdentifiers: [],
+        isReadable: true,
       },
     ];
 
@@ -224,6 +231,7 @@ describe('planPullWrites', () => {
         entityKey: ManifestEntityKey.Objects,
         universalIdentifier: ROCKET_UID,
         childUniversalIdentifiers: [],
+        isReadable: true,
       },
     ];
 

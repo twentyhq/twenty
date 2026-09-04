@@ -18,7 +18,7 @@ For day-to-day local iteration you almost always want `yarn twenty dev`. Deployi
 | Sync once and exit (CI, scripts, hooks) | `yarn twenty apply` | One build + sync, then exits. Add `--force` to skip the destructive-change confirmation. |
 | Preview changes **without applying them** | `yarn twenty plan` | Computes and prints the diff; writes nothing. |
 | Sync without deleting anything | `yarn twenty apply --no-delete` | Creates and updates only: entities that exist in the workspace but not in your source are left alone. Also accepted by `plan` and `dev`. |
-| Regenerate local source from the workspace | `yarn twenty pull` | Writes the installed app back to define files. See below. |
+| Regenerate local source from the workspace | `yarn twenty pull` | **Experimental.** Writes the installed app back to define files. See below. |
 | Remove the app from the workspace | `yarn twenty app:uninstall` | Add `--yes` to skip the prompt. |
 | Ship a tarball to a server | `yarn twenty app:publish --private` | Requires a **strictly higher** `package.json` version — see [Publishing](/developers/extend/apps/operations/publishing). |
 | Publish to the marketplace (npm) | `yarn twenty app:publish` | — |
@@ -96,6 +96,10 @@ A plan only previews **metadata** changes. It also works for an app that was nev
 </Note>
 
 ## Pulling an installed app back to source
+
+<Warning>
+`yarn twenty pull` is **experimental**. It covers only part of an application today, its output shape may change between releases, and it overwrites the files that define the entities it pulls. Commit your work before running it, and review the diff.
+</Warning>
 
 `yarn twenty pull` is the inverse of `apply`: it reads an application out of the workspace and writes it back as define files.
 
