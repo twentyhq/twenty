@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { JobStateEnum } from 'src/engine/core-modules/message-queue/enums/job-state.enum';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
@@ -7,6 +9,7 @@ type QueueJobStateBroadcastTarget = {
   workspaceId: string;
   jobId: string;
   jobName: string;
+  userWorkspaceId?: string;
 };
 
 @Injectable()
@@ -44,6 +47,7 @@ export class QueueJobStateBroadcaster {
     workspaceId,
     jobId,
     jobName,
+    userWorkspaceId,
     state,
     failedReason,
   }: QueueJobStateBroadcastTarget & {
@@ -58,6 +62,9 @@ export class QueueJobStateBroadcaster {
             type: 'updated',
             entityName: 'queueJob',
             recordId: jobId,
+            ...(isDefined(userWorkspaceId)
+              ? { recipientUserWorkspaceIds: [userWorkspaceId] }
+              : {}),
             properties: {
               after: {
                 id: jobId,
