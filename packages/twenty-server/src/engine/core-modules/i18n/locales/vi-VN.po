@@ -6013,7 +6013,7 @@ msgstr "Bố cục là bắt buộc cho tiện ích biểu đồ cột \"{widget
 #. js-lingui-id: cI7XDa
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 msgid "Limits scoped below the workspace require the Organization plan."
-msgstr ""
+msgstr "Các giới hạn được áp dụng bên dưới không gian làm việc yêu cầu gói Tổ chức."
 
 #. js-lingui-id: sAG9OB
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts

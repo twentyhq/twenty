@@ -6013,7 +6013,7 @@ msgstr "Pylväskaavio-widget \"{widgetTitle}\" edellyttää asettelua"
 #. js-lingui-id: cI7XDa
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 msgid "Limits scoped below the workspace require the Organization plan."
-msgstr ""
+msgstr "Työtilan alapuolelle määritetyt rajoitukset edellyttävät Organization-tilausta."
 
 #. js-lingui-id: sAG9OB
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts

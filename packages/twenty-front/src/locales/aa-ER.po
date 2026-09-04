@@ -483,6 +483,11 @@ msgstr "crwdns132889:0{grantedCreditsDisplay}crwdne132889:0"
 msgid "{headersCount} headers received"
 msgstr "crwdns65850:0{headersCount}crwdne65850:0"
 
+#. js-lingui-id: 4xzh1W
+#: src/modules/object-record/record-list/components/RecordListRow.tsx
+msgid "{hiddenFieldCount, plural, one {# more populated field available} other {# more populated fields available}}"
+msgstr "crwdns141891:0hiddenFieldCount={hiddenFieldCount}crwdne141891:0"
+
 #. js-lingui-id: pEl0a0
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{hours, plural, one {{hours} hour} other {{hours} hours}}"
@@ -670,11 +675,11 @@ msgstr "crwdns132903:0unitCount={unitCount}crwdne132903:0"
 msgid "{unitCount, plural, one {Year} other {Years}}"
 msgstr "crwdns132905:0unitCount={unitCount}crwdne132905:0"
 
-#. js-lingui-id: ITVweg
+#. js-lingui-id: YdwR4T
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
-msgid "{visibleFieldsCount} shown"
-msgstr "crwdns65870:0{visibleFieldsCount}crwdne65870:0"
+msgid "{visibleFieldsCount} selected"
+msgstr "crwdns141893:0{visibleFieldsCount}crwdne141893:0"
 
 #. js-lingui-id: WjjsAL
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
@@ -1741,7 +1746,7 @@ msgid "Administrators"
 msgstr "crwdns132975:0crwdne132975:0"
 
 #. js-lingui-id: sxkWRg
-#: src/modules/navigation/components/SettingsNavigationDrawer.tsx
+#: src/modules/navigation/components/SettingsNavigationDrawerContent.tsx
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 msgid "Advanced"
 msgstr "crwdns5734:0crwdne5734:0"
@@ -6960,11 +6965,6 @@ msgstr "crwdns307:0crwdne307:0"
 #: src/modules/settings/domains/hooks/useSettingsCustomDomain.ts
 msgid "Domain already taken"
 msgstr "crwdns111620:0crwdne111620:0"
-
-#. js-lingui-id: eNcdvk
-#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
-msgid "Domain links are stored as a bare domain name, so twenty.com and https://www.twenty.com are the same value"
-msgstr "crwdns141631:0crwdne141631:0"
 
 #. js-lingui-id: XoBD/+
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
@@ -18471,6 +18471,11 @@ msgstr "crwdns141725:0crwdne141725:0"
 #: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
 msgid "Stop impersonating"
 msgstr "crwdns8168:0crwdne8168:0"
+
+#. js-lingui-id: juzGVI
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
+msgid "Store the full URL or just the domain"
+msgstr "crwdns141895:0crwdne141895:0"
 
 #. js-lingui-id: GGiaAW
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
