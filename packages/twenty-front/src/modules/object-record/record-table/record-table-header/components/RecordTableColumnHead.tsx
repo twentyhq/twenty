@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useId } from 'react';
 
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
@@ -57,13 +58,19 @@ export const RecordTableColumnHead = ({
   );
   const fieldMetadataItem =
     correspondingFieldMetadataItem.foundFieldMetadataItem;
+  const hasFieldDescription =
+    isNonEmptyString(fieldMetadataItem?.label) &&
+    isNonEmptyString(fieldMetadataItem.description);
 
   return (
     <StyledTitle className={RECORD_TABLE_CELL_CONTENT_CLASS_NAME}>
       <StyledIcon>
         <Icon size={theme.icon.size.md} />
       </StyledIcon>
-      <StyledText id={fieldDescriptionTooltipAnchorId}>
+      <StyledText
+        id={fieldDescriptionTooltipAnchorId}
+        tabIndex={hasFieldDescription ? 0 : undefined}
+      >
         {fieldMetadataItem?.label}
       </StyledText>
       <FieldDescriptionTooltip

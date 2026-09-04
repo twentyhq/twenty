@@ -113,7 +113,8 @@ export const RecordInlineCellContainer = () => {
   })}-${useId().replace(/:/g, '')}`;
 
   const fieldDescription = fieldDefinition.metadata.description;
-  const hasFieldDescription = isNonEmptyString(fieldDescription);
+  const hasFieldDescription =
+    isNonEmptyString(label) && isNonEmptyString(fieldDescription);
 
   return (
     <StyledInlineCellBaseContainer
@@ -129,7 +130,11 @@ export const RecordInlineCellContainer = () => {
             </StyledIconContainer>
           )}
           {showLabel && (
-            <StyledLabelContainer width={labelWidth} id={labelId}>
+            <StyledLabelContainer
+              width={labelWidth}
+              id={labelId}
+              tabIndex={hasFieldDescription ? 0 : undefined}
+            >
               {hasFieldDescription ? (
                 <StyledLabel>{label}</StyledLabel>
               ) : (
