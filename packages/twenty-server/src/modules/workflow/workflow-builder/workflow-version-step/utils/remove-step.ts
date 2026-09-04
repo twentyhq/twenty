@@ -168,6 +168,7 @@ const updateIfElseStepOnDeletion = ({
 
   return {
     ...step,
+    nextStepIds: [],
     settings: {
       ...step.settings,
       input: {
