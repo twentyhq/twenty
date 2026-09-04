@@ -21,8 +21,8 @@ Goal: a generic, opt-in mechanism. A job declares that its terminal status shoul
 ```mermaid
 flowchart LR
   subgraph worker["Worker process"]
-    P["@Process handler"] --> X["MessageQueueExplorer wrapper<br/>(completed / terminal failure)"]
-    X -- "EventEmitter2<br/>queue-job.*" --> L["QueueJobStatusListener"]
+    P["BullMQ Worker<br/>on('completed') / on('failed')"] --> X["explorer callback<br/>(opt-in filter)"]
+    X -- "EventEmitter2<br/>queue-job.finished" --> L["QueueJobStatusListener"]
     L --> B["WorkspaceEventBroadcaster"]
   end
   B -- "Redis pub/sub<br/>(per event stream)" --> S["API server<br/>graphql-sse"]
@@ -68,31 +68,33 @@ Broadcasting every job's outcome to every stream would be noise (messaging and c
 
 Opting in means the job's thrown error message becomes user-facing. Jobs that throw internal errors should not opt in, or should throw a curated message.
 
-### Emission point: the explorer wrapper
+### Emission point: the worker events in the BullMQ driver
 
-`MessageQueueExplorer.handleProcessorGroupCollection` already wraps every job execution for a queue (stall monitor, per-processor dispatch). It knows the queue name, `job.id`, `job.name`, `job.data.workspaceId`, and whether the handler threw. That makes it driver-agnostic and independent of the job's own code: a job cannot forget to report its failure.
+`BullMQDriver.work` already listens to the worker's `completed` and `failed` events for metrics. The status broadcast hooks the same two events. That is where the repo already reads job outcomes, and it is the only place where the outcome is known *after* BullMQ has persisted it: `moveToFailed` runs before the `failed` event, so the job's state in Redis already matches what is broadcast, and a catch-up query issued on receipt of the event cannot see a stale `active`.
 
 ```mermaid
 flowchart TD
-  A["job picked up"] --> B["run @Process handlers"]
-  B -->|returns| C{"opted in and<br/>data.workspaceId defined?"}
-  B -->|throws| D{"opted in and<br/>attemptsMade >= retryLimit?"}
-  C -->|yes| E["emitAsync queue-job.completed"]
-  C -->|no| F["done"]
-  D -->|yes| G["emitAsync queue-job.failed<br/>failedReason = error.message"]
-  D -->|no| H["rethrow (BullMQ retries or fails)"]
-  G --> H
-  E --> F
+  A["worker.on('completed', job)"] --> C["driver: onJobFinished({ state: COMPLETED })"]
+  B["worker.on('failed', job, error)"] --> D{"job.finishedOn set?<br/>(no attempt left)"}
+  D -->|no| E["nothing: BullMQ retries"]
+  D -->|yes| F["driver: onJobFinished({ state: FAILED, failedReason })"]
+  C --> G{"explorer callback:<br/>job name opted in and<br/>data.workspaceId defined?"}
+  F --> G
+  G -->|no| H["drop"]
+  G -->|yes| I["emit queue-job.finished"]
 ```
 
-- **Terminal only.** A failed attempt that BullMQ will retry is not an outcome. `MessageQueueJob` gains `attemptsMade` (from `job.attemptsMade` in the BullMQ driver, `0` in the sync driver); the wrapper broadcasts `FAILED` only when `attemptsMade >= retryLimit`. PR 3's jobs use `retryLimit: 0`, so for them every failure is terminal.
-- **No `workspaceId`, no event.** The broadcaster fans out per workspace; a job without one has nowhere to go.
-- **`emitAsync`, awaited.** The broadcast completes before the job is marked completed or failed. That keeps the ordering deterministic for tests and means a `COMPLETED` event never races the job's own last row write (the job's `application` `INSTALLED` event is emitted from inside the handler, so it is always on the wire before the `queueJob` event).
-- **Decoupled through `EventEmitter2`**, the `MetadataEventEmitter` → `MetadataEventsToDbListener` pattern. The message-queue module stays below the subscriptions module; the listener lives next to the broadcaster.
+- **Terminal only.** `failed` fires on every attempt, retried or not. BullMQ sets `job.finishedOn` only when no attempt is left (`Job.moveToFailed`, non-retry branch), so `isDefined(job.finishedOn)` is the terminal test. PR 3's jobs use `retryLimit: 0`, so for them every failure is terminal.
+- **The driver stays dumb.** It reports every terminal outcome to an `onJobFinished` callback in `MessageQueueWorkerOptions` with `{ queueName, jobId, jobName, data, state, failedReason }`. It does not know about decorators or workspaces. The driver is factory-built with no DI, which is why the hook is a callback and not an injected service.
+- **The explorer supplies the callback.** It already scans the `@Process` metadata of every processor on the queue when it calls `work()`, so it knows which job names opted in. The callback drops jobs that did not opt in or have no `data.workspaceId` (the broadcaster fans out per workspace; a job without one has nowhere to go), then emits `queue-job.finished` on `EventEmitter2`, the `MetadataEventEmitter` → `MetadataEventsToDbListener` pattern. The message-queue module stays below the subscriptions module.
+- **Fire and forget.** Worker event handlers are synchronous; the broadcast runs detached and catches its own errors, like the metrics counters next to it. The job's own last row write (the `application` `INSTALLED` event) is emitted from inside the handler, so it is always on the wire before the `queueJob` event.
+- **Sync driver**: calls the same callback from `processJob`. Three lines, and the module factory always builds the BullMQ driver anyway.
+
+What neither hook covers: a job that stalls past `maxStalledCount` is moved to `failed` by BullMQ's stall checker with reason "job stalled more than allowable limit", and the worker only emits `stalled` with the job id, never `failed`. That is the hard worker crash case, which the design doc lists as stuck-state reconciliation, a non-goal. If wanted later, the driver's existing `stalled` handler can fetch the job and report it through the same callback when its state is `failed`. Only the driver-level hook makes that possible.
 
 ### Listener and payload
 
-`QueueJobStatusListener` (`src/engine/subscriptions/queue-job-status/`), `@OnEvent('queue-job.*')`, calls `WorkspaceEventBroadcaster.broadcast` with one `updated` event:
+`QueueJobStatusListener` (`src/engine/subscriptions/queue-job-status/`), `@OnEvent('queue-job.finished')`, calls `WorkspaceEventBroadcaster.broadcast` with one `updated` event:
 
 ```ts
 {
@@ -179,19 +181,20 @@ What PR 3 does with this, so the contract is fixed here:
 
 ## Tests
 
-- Server unit: the explorer wrapper emits `completed` for an opted-in job, `failed` only on the terminal attempt, nothing for a job that did not opt in or has no `workspaceId`. The listener serializer: full payload, `failedReason` null on success.
+- Server unit: the driver reports `COMPLETED` on `completed`, `FAILED` only on a `failed` event whose job has `finishedOn`, nothing on a retried attempt (a `Worker` stub emitting the events). The explorer callback emits for an opted-in job and drops a job that did not opt in or has no `workspaceId`. The listener serializer: full payload, `failedReason` null on success.
 - Front unit: the hook fires `onCompleted` once when the status is already in the store at mount, and once when it arrives after mount; never twice.
 - No integration test here: no job opts in before PR 3, whose install integration test asserts the `queueJob` event on the broadcaster spy alongside the `application` events.
 
-**Estimated size:** ~13 files, no schema or migration change.
+**Estimated size:** ~14 files, no schema or migration change.
 
 ## Files
 
 | Concern | File |
 |---|---|
 | Opt-in option | `packages/twenty-server/src/engine/core-modules/message-queue/decorators/process.decorator.ts` |
-| Emission point | `packages/twenty-server/src/engine/core-modules/message-queue/message-queue.explorer.ts` |
-| `attemptsMade` on the job | `.../message-queue/interfaces/message-queue-job.interface.ts`, `drivers/bullmq.driver.ts`, `drivers/sync.driver.ts` |
+| Emission point | `packages/twenty-server/src/engine/core-modules/message-queue/drivers/bullmq.driver.ts` (`work`, next to the metrics handlers), `drivers/sync.driver.ts` |
+| `onJobFinished` callback option | `.../message-queue/interfaces/message-queue-worker-options.interface.ts` |
+| Opt-in filter and emit | `packages/twenty-server/src/engine/core-modules/message-queue/message-queue.explorer.ts` |
 | Listener, event type, serializer | `packages/twenty-server/src/engine/subscriptions/queue-job-status/` (new), registered in `subscriptions.module.ts` |
 | Existing job state enum | `packages/twenty-server/src/engine/core-modules/message-queue/enums/job-state.enum.ts` |
 | Emitter/listener precedent | `.../subscriptions/metadata-event/metadata-event-emitter.ts`, `metadata-events-to-db.listener.ts` |
