@@ -3,6 +3,7 @@ import {
   createWriteStream,
   existsSync,
   realpathSync,
+  type Stats,
 } from 'fs';
 import * as fs from 'fs/promises';
 import path, { dirname, join } from 'path';
@@ -22,6 +23,12 @@ import { type ByteRange } from 'src/engine/core-modules/file-storage/types/byte-
 export interface LocalDriverOptions {
   storagePath: string;
 }
+
+// Local storage has no ETag, so identity comes from the stat fields that a
+// rewrite changes. Enough to catch a swap between an inspection and a move,
+// which is all callers use it for.
+const buildStatChecksum = (stats: Stats): string =>
+  `${stats.ino}-${stats.size}-${stats.mtimeMs}`;
 
 export class LocalDriver implements StorageDriver {
   private options: LocalDriverOptions;
@@ -187,6 +194,32 @@ export class LocalDriver implements StorageDriver {
     }
   }
 
+  private async assertChecksumMatchesOrThrow({
+    filePath,
+    expectedChecksum,
+  }: {
+    filePath: string;
+    expectedChecksum: string;
+  }): Promise<void> {
+    let stats: Stats;
+
+    try {
+      stats = await fs.stat(filePath);
+    } catch {
+      throw new FileStorageException(
+        'File not found',
+        FileStorageExceptionCode.FILE_NOT_FOUND,
+      );
+    }
+
+    if (buildStatChecksum(stats) !== expectedChecksum) {
+      throw new FileStorageException(
+        `Object at ${path.basename(filePath)} changed since it was inspected`,
+        FileStorageExceptionCode.PRECONDITION_FAILED,
+      );
+    }
+  }
+
   async getFileMetadata(params: {
     filePath: string;
   }): Promise<FileStorageMetadata | null> {
@@ -204,7 +237,7 @@ export class LocalDriver implements StorageDriver {
     try {
       const stats = await fs.stat(filePath);
 
-      return { size: stats.size };
+      return { size: stats.size, checksum: buildStatChecksum(stats) };
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
         return null;
@@ -346,6 +379,7 @@ export class LocalDriver implements StorageDriver {
   async move(params: {
     from: { folderPath: string; filename?: string };
     to: { folderPath: string; filename?: string };
+    ifMatchChecksum?: string;
   }): Promise<void> {
     const fromPath = path.resolve(
       this.options.storagePath,
@@ -358,6 +392,13 @@ export class LocalDriver implements StorageDriver {
       params.to.folderPath,
       params.to.filename || '',
     );
+
+    if (isDefined(params.ifMatchChecksum)) {
+      await this.assertChecksumMatchesOrThrow({
+        filePath: fromPath,
+        expectedChecksum: params.ifMatchChecksum,
+      });
+    }
 
     await this.createFolder(dirname(toPath));
 

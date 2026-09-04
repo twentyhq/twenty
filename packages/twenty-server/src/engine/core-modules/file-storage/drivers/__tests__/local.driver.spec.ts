@@ -229,6 +229,56 @@ describe('LocalDriver', () => {
     });
   });
 
+  describe('move', () => {
+    it('should refuse to move an object that changed since it was inspected', async () => {
+      const storagePath = await createTempDirectory('local-driver-storage-');
+      const folderPath = path.join(storagePath, 'workspace', 'app');
+
+      await mkdir(folderPath, { recursive: true });
+      await writeFile(path.join(folderPath, 'file.txt'), 'original');
+
+      const driver = new LocalDriver({ storagePath });
+      const before = await driver.getFileMetadata({
+        filePath: 'workspace/app/file.txt',
+      });
+
+      await writeFile(path.join(folderPath, 'file.txt'), 'replaced');
+
+      await expect(
+        driver.move({
+          from: { folderPath: 'workspace/app', filename: 'file.txt' },
+          to: { folderPath: 'workspace/app', filename: 'moved.txt' },
+          ifMatchChecksum: before?.checksum,
+        }),
+      ).rejects.toMatchObject({
+        code: FileStorageExceptionCode.PRECONDITION_FAILED,
+      });
+    });
+
+    it('should move an object that still matches the inspected identity', async () => {
+      const storagePath = await createTempDirectory('local-driver-storage-');
+      const folderPath = path.join(storagePath, 'workspace', 'app');
+
+      await mkdir(folderPath, { recursive: true });
+      await writeFile(path.join(folderPath, 'file.txt'), 'original');
+
+      const driver = new LocalDriver({ storagePath });
+      const before = await driver.getFileMetadata({
+        filePath: 'workspace/app/file.txt',
+      });
+
+      await driver.move({
+        from: { folderPath: 'workspace/app', filename: 'file.txt' },
+        to: { folderPath: 'workspace/app', filename: 'moved.txt' },
+        ifMatchChecksum: before?.checksum,
+      });
+
+      await expect(
+        driver.checkFileExists({ filePath: 'workspace/app/moved.txt' }),
+      ).resolves.toBe(true);
+    });
+  });
+
   describe('getFileMetadata', () => {
     it('should return the file size', async () => {
       const storagePath = await createTempDirectory('local-driver-storage-');
@@ -241,7 +291,7 @@ describe('LocalDriver', () => {
 
       await expect(
         driver.getFileMetadata({ filePath: 'workspace/app/file.txt' }),
-      ).resolves.toEqual({ size: 5 });
+      ).resolves.toMatchObject({ size: 5 });
     });
 
     it('should return null when the file does not exist', async () => {
