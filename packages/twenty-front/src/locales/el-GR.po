@@ -6966,11 +6966,6 @@ msgstr "Τομέας"
 msgid "Domain already taken"
 msgstr "Ο τομέας είναι ήδη δεσμευμένος"
 
-#. js-lingui-id: eNcdvk
-#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
-msgid "Domain links are stored as a bare domain name, so twenty.com and https://www.twenty.com are the same value"
-msgstr "Οι σύνδεσμοι τομέα αποθηκεύονται ως γυμνό όνομα τομέα, επομένως τα twenty.com και https://www.twenty.com έχουν την ίδια τιμή"
-
 #. js-lingui-id: XoBD/+
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
 msgid "Domain Setup"
@@ -18510,6 +18505,11 @@ msgstr "Διακοπή υπαγόρευσης"
 #: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
 msgid "Stop impersonating"
 msgstr "Διακοπή μίμησης"
+
+#. js-lingui-id: juzGVI
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
+msgid "Store the full URL or just the domain"
+msgstr ""
 
 #. js-lingui-id: GGiaAW
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
