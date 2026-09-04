@@ -7,9 +7,6 @@ registerEnumType(FileFolder, {
   name: 'FileFolder',
 });
 
-// Folders that accept arbitrary user content declare this instead of a list.
-// Spelling it out keeps a new folder from silently inheriting "accept
-// everything" by leaving the field off.
 export const ANY_MIME_TYPE = 'any' as const;
 
 export type FileFolderConfig = {
