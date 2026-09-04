@@ -12,10 +12,12 @@ import {
 } from 'vitest';
 
 import { cancelCallRecordingRequest } from 'src/logic-functions/flows/cancel-call-recording-request.util';
+import { clearStaleCallRecorderPreferences } from 'src/logic-functions/flows/clear-stale-call-recorder-preferences.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
 import { retryFailedRecallCancellations } from 'src/logic-functions/flows/retry-failed-recall-cancellations.util';
 import { scheduleRecallBotsForPendingCallRecordings } from 'src/logic-functions/flows/schedule-recall-bots-for-pending-call-recordings.util';
 import { processRecallWebhookHandler } from 'src/logic-functions/process-recall-webhook';
+import reconcileCalendarEventLogicFunction from 'src/logic-functions/reconcile-call-recorder-calendar-event';
 
 // ---------------------------------------------------------------------------
 // Call Recorder end-to-end behavior against a live Twenty server.
@@ -527,6 +529,22 @@ describe('call recorder app lifecycle (integration)', () => {
     return (result.callRecordings?.edges ?? []).map((edge: any) => edge.node);
   };
 
+  const fetchCallRecorderPreference = async (
+    calendarEventId: string,
+  ): Promise<string | null> => {
+    const result = await client.query({
+      calendarEvents: {
+        __args: { filter: { id: { eq: calendarEventId } }, first: 1 },
+        edges: { node: { id: true, callRecorderPreference: true } },
+      },
+    });
+    const calendarEvent = result.calendarEvents?.edges?.[0]?.node;
+
+    expect(calendarEvent).toBeDefined();
+
+    return calendarEvent.callRecorderPreference ?? null;
+  };
+
   const fetchCallRecording = async (
     callRecordingId: string,
   ): Promise<Record<string, any>> => {
@@ -570,6 +588,33 @@ describe('call recorder app lifecycle (integration)', () => {
     };
   };
 
+  // Mocked database-event trigger transport: invokes the calendarEvent.*
+  // logic function handler with the payload the platform would have sent.
+  const deliverCalendarEventUpdate = ({
+    calendarEventId,
+    updatedFields,
+    before,
+    after,
+  }: {
+    calendarEventId: string;
+    updatedFields: string[];
+    before: Record<string, unknown>;
+    after: Record<string, unknown>;
+  }) =>
+    (
+      reconcileCalendarEventLogicFunction.config.handler as (
+        event: unknown,
+      ) => Promise<object | undefined>
+    )({
+      name: 'calendarEvent.updated',
+      recordId: calendarEventId,
+      properties: {
+        updatedFields,
+        before: { id: calendarEventId, ...before },
+        after: { id: calendarEventId, ...after },
+      },
+    });
+
   // Mocked webhook trigger: invokes the webhook logic function handler with
   // the payload Recall would have delivered.
   const deliverRecallWebhook = (body: object) =>
@@ -580,6 +625,8 @@ describe('call recorder app lifecycle (integration)', () => {
     scheduleRecallBotsForPendingCallRecordings({ client, now: new Date() });
   const runCancellationRetryCron = () =>
     retryFailedRecallCancellations({ client, now: new Date() });
+  const runStalePreferenceCleanupJob = () =>
+    clearStaleCallRecorderPreferences({ client, now: new Date() });
 
   describe('scheduling from calendar changes', () => {
     it('creates a recording and schedules a Recall bot for a meeting with recording enabled', async () => {
@@ -912,6 +959,164 @@ describe('call recorder app lifecycle (integration)', () => {
         'bot_never_scheduled',
       );
       expect(recall.botForCallRecording(callRecordingId)).toBeUndefined();
+    });
+  });
+
+  describe('Recording Bot preference on past meetings', () => {
+    it('clears the default ON when an ended meeting the recorder never attempted is reconciled', async () => {
+      const calendarEventId = await createCalendarEvent({
+        startsAt: hoursAgo(3),
+        endsAt: hoursAgo(2),
+      });
+
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [calendarEventId],
+      });
+
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
+      expect(
+        await findCallRecordings({
+          calendarEventId: { in: [calendarEventId] },
+        }),
+      ).toEqual([]);
+    });
+
+    it('keeps ON on an ended meeting that was recorded', async () => {
+      const calendarEventId = await createCalendarEvent({
+        startsAt: hoursAgo(3),
+        endsAt: hoursAgo(2),
+      });
+
+      await createPendingCallRecording({
+        calendarEventId,
+        status: 'COMPLETED',
+      });
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [calendarEventId],
+      });
+
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
+    });
+
+    it('leaves an explicit OFF alone on an ended meeting', async () => {
+      const calendarEventId = await createCalendarEvent({
+        startsAt: hoursAgo(3),
+        endsAt: hoursAgo(2),
+        callRecorderPreference: 'OFF',
+      });
+
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [calendarEventId],
+      });
+      await runStalePreferenceCleanupJob();
+
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('OFF');
+    });
+
+    it('keeps ON on an upcoming meeting', async () => {
+      const { calendarEventId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      await runStalePreferenceCleanupJob();
+
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
+    });
+
+    it('sweeps aged-out defaults in the cleanup job, sparing recorded and canceled-then-recorded meetings', async () => {
+      const neverAttemptedCalendarEventId = await createCalendarEvent({
+        startsAt: hoursAgo(3),
+        endsAt: hoursAgo(2),
+      });
+      const recordedCalendarEventId = await createCalendarEvent({
+        startsAt: hoursAgo(3),
+        endsAt: hoursAgo(2),
+      });
+      const canceledCalendarEventId = await createCalendarEvent({
+        startsAt: hoursAgo(3),
+        endsAt: hoursAgo(2),
+      });
+
+      await createPendingCallRecording({
+        calendarEventId: recordedCalendarEventId,
+        status: 'COMPLETED',
+      });
+      await createPendingCallRecording({
+        calendarEventId: canceledCalendarEventId,
+        recordingRequestStatus: 'CANCELED',
+      });
+
+      const result = await runStalePreferenceCleanupJob();
+
+      expect(result.clearedCalendarEventCount).toBeGreaterThanOrEqual(2);
+      expect(
+        await fetchCallRecorderPreference(neverAttemptedCalendarEventId),
+      ).toBeNull();
+      expect(
+        await fetchCallRecorderPreference(canceledCalendarEventId),
+      ).toBeNull();
+      expect(await fetchCallRecorderPreference(recordedCalendarEventId)).toBe(
+        'ON',
+      );
+    });
+
+    it('does not reconcile again on the echo of its own clearing write', async () => {
+      const calendarEventId = await createCalendarEvent({
+        startsAt: hoursAgo(3),
+        endsAt: hoursAgo(2),
+      });
+
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [calendarEventId],
+      });
+
+      const result = await deliverCalendarEventUpdate({
+        calendarEventId,
+        updatedFields: ['callRecorderPreference'],
+        before: { callRecorderPreference: 'ON' },
+        after: { callRecorderPreference: null },
+      });
+
+      expect(result).toEqual({
+        skipped: true,
+        reason: 'no relevant calendar event change',
+      });
+    });
+
+    it('schedules a bot when a user clears an OFF on an upcoming meeting', async () => {
+      const calendarEventId = await createCalendarEvent({
+        callRecorderPreference: 'OFF',
+      });
+
+      await client.mutation({
+        updateCalendarEvent: {
+          __args: {
+            id: calendarEventId,
+            data: { callRecorderPreference: null },
+          },
+          id: true,
+        },
+      });
+
+      const result = await deliverCalendarEventUpdate({
+        calendarEventId,
+        updatedFields: ['callRecorderPreference'],
+        before: { callRecorderPreference: 'OFF' },
+        after: { callRecorderPreference: null },
+      });
+
+      expect(result).toEqual(expect.objectContaining({ reconciled: true }));
+
+      const callRecording = (
+        await findCallRecordings({ calendarEventId: { in: [calendarEventId] } })
+      )[0];
+
+      expect(callRecording).toBeDefined();
+      expect(callRecording.recordingRequestStatus).toBe('REQUESTED');
+      expect(callRecording.externalBotId).toBeTruthy();
     });
   });
 });
