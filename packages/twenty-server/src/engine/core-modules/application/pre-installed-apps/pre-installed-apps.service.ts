@@ -11,9 +11,10 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import {
-  INSTALL_PRE_INSTALLED_APPS_JOB_NAME,
-  type InstallPreInstalledAppsJobData,
-} from 'src/engine/core-modules/application/pre-installed-apps/jobs/install-pre-installed-apps.job-constants';
+  INSTALL_APPLICATIONS_JOB_NAME,
+  type InstallApplicationsJobApplication,
+  type InstallApplicationsJobData,
+} from 'src/engine/core-modules/application/jobs/install-applications.job-constants';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -32,41 +33,46 @@ export class PreInstalledAppsService {
   ) {}
 
   async enqueueInstallOnWorkspace(workspaceId: string): Promise<void> {
-    await this.messageQueueService.add<InstallPreInstalledAppsJobData>(
-      INSTALL_PRE_INSTALLED_APPS_JOB_NAME,
-      { workspaceId },
-      { id: `${INSTALL_PRE_INSTALLED_APPS_JOB_NAME}-${workspaceId}` },
+    const applications = await this.findPreInstalledApplications();
+
+    if (applications.length === 0) {
+      return;
+    }
+
+    await this.messageQueueService.add<InstallApplicationsJobData>(
+      INSTALL_APPLICATIONS_JOB_NAME,
+      { applications, workspaceId },
+      {
+        id: `${INSTALL_APPLICATIONS_JOB_NAME}-pre-installed-${workspaceId}`,
+        retryLimit: 0,
+      },
     );
   }
 
-  // Per-app failures are logged but never block the other installs —
-  // `ApplicationInstallService` holds a per-app cache lock so parallel
-  // installs are safe.
   async installOnWorkspace(workspaceId: string): Promise<void> {
+    const applications = await this.findPreInstalledApplications();
+
+    if (applications.length === 0) {
+      return;
+    }
+
+    await this.applicationInstallService.installApplications({
+      applications,
+      workspaceId,
+    });
+  }
+
+  private async findPreInstalledApplications(): Promise<
+    InstallApplicationsJobApplication[]
+  > {
     const registrations = await this.applicationRegistrationRepository.find({
       where: { isPreInstalled: true },
     });
 
-    if (registrations.length === 0) {
-      return;
-    }
-
-    await Promise.allSettled(
-      registrations.map(async (registration) => {
-        try {
-          await this.applicationInstallService.installApplication({
-            appRegistrationId: registration.id,
-            workspaceId,
-          });
-        } catch (error) {
-          this.logger.error(
-            `Failed to install pre-installed app "${registration.name}" (${registration.id}) on workspace ${workspaceId}: ${
-              error instanceof Error ? error.message : String(error)
-            }`,
-          );
-        }
-      }),
-    );
+    return registrations.map((registration) => ({
+      appRegistrationId: registration.id,
+      universalIdentifier: registration.universalIdentifier,
+    }));
   }
 
   async backfillApplicationOnAllWorkspaces(

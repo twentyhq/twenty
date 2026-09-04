@@ -17,9 +17,9 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import {
-  INSTALL_APPLICATION_JOB_NAME,
-  type InstallApplicationJobData,
-} from 'src/engine/core-modules/application/jobs/install-application.job-constants';
+  INSTALL_APPLICATIONS_JOB_NAME,
+  type InstallApplicationsJobData,
+} from 'src/engine/core-modules/application/jobs/install-applications.job-constants';
 import {
   UNINSTALL_APPLICATION_JOB_NAME,
   type UninstallApplicationJobData,
@@ -80,13 +80,17 @@ export class ApplicationAsyncOperationService {
       workspaceId,
     });
 
-    await this.enqueueOrCompensate<InstallApplicationJobData>({
-      jobName: INSTALL_APPLICATION_JOB_NAME,
+    await this.enqueueOrCompensate<InstallApplicationsJobData>({
+      jobName: INSTALL_APPLICATIONS_JOB_NAME,
       data: {
-        applicationId: application.id,
-        appRegistrationId: appRegistration.id,
-        universalIdentifier,
-        version,
+        applications: [
+          {
+            appRegistrationId: appRegistration.id,
+            universalIdentifier,
+            version,
+          },
+        ],
+        isStateAlreadyTransitioned: true,
         workspaceId,
       },
       universalIdentifier,

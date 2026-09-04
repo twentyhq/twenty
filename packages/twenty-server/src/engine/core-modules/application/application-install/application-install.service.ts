@@ -68,6 +68,49 @@ export class ApplicationInstallService {
     private readonly metricsService: MetricsService,
   ) {}
 
+  async installApplications({
+    applications,
+    isStateAlreadyTransitioned,
+    workspaceId,
+  }: {
+    applications: {
+      appRegistrationId: string;
+      universalIdentifier: string;
+      version?: string;
+    }[];
+    isStateAlreadyTransitioned?: boolean;
+    workspaceId: string;
+  }): Promise<void> {
+    const results = await Promise.allSettled(
+      applications.map((application) =>
+        this.installApplication({
+          appRegistrationId: application.appRegistrationId,
+          version: application.version,
+          workspaceId,
+          isStateAlreadyTransitioned,
+        }),
+      ),
+    );
+
+    const failures = results.flatMap((result, index) =>
+      result.status === 'rejected'
+        ? [{ application: applications[index], reason: result.reason }]
+        : [],
+    );
+
+    for (const { application, reason } of failures) {
+      this.logger.error(
+        `Failed to install application ${application.universalIdentifier} in workspace ${workspaceId}: ${
+          reason instanceof Error ? reason.message : String(reason)
+        }`,
+      );
+    }
+
+    if (failures.length > 0) {
+      throw failures[0].reason;
+    }
+  }
+
   async installApplication(params: {
     appRegistrationId: string;
     version?: string;

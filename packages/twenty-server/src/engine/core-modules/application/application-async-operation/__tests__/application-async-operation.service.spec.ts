@@ -102,8 +102,16 @@ describe('ApplicationAsyncOperationService', () => {
 
       expect(application.state).toBe(ApplicationState.INSTALLING);
       expect(messageQueueService.add).toHaveBeenCalledWith(
-        'InstallApplicationJob',
-        expect.objectContaining({ workspaceId: WORKSPACE_ID }),
+        'InstallApplicationsJob',
+        expect.objectContaining({
+          workspaceId: WORKSPACE_ID,
+          isStateAlreadyTransitioned: true,
+          applications: [
+            expect.objectContaining({
+              universalIdentifier: UNIVERSAL_IDENTIFIER,
+            }),
+          ],
+        }),
         expect.objectContaining({ retryLimit: 0 }),
       );
     });
