@@ -1,13 +1,18 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import {
+  ConfirmationModal,
+  StyledCenteredButton,
+} from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -26,7 +31,10 @@ import { Section } from 'twenty-ui/layout';
 import { MenuItem } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
-import { useMyAppConnectedAccounts } from '~/pages/settings/applications/hooks/useMyAppConnectedAccounts';
+import {
+  type AppConnectedAccount,
+  useMyAppConnectedAccounts,
+} from '~/pages/settings/applications/hooks/useMyAppConnectedAccounts';
 import { useTriggerAppOAuth } from '~/pages/settings/applications/hooks/useTriggerAppOAuth';
 import { type FrontendApplicationConnectionProvider } from '~/pages/settings/applications/types/FrontendApplicationConnectionProvider';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -44,6 +52,14 @@ const StyledTableRowsContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
   padding: ${themeCssVariables.spacing[2]} 0;
 `;
+
+const getConnectionName = (connection: AppConnectedAccount) =>
+  connection.name ?? connection.handle;
+
+const getConnectionVisibility = (
+  connection: AppConnectedAccount,
+): 'user' | 'workspace' =>
+  connection.visibility === 'workspace' ? 'workspace' : 'user';
 
 const AddConnectionDropdown = ({
   provider,
@@ -94,6 +110,164 @@ const AddConnectionDropdown = ({
   );
 };
 
+type AddConnectionConfirmation = {
+  title: string;
+  subtitle: string;
+  confirmButtonText: string;
+  onConfirmClick: () => void;
+  onConnectAnotherAccount: (() => void) | null;
+};
+
+type AddConnectionActionProps = {
+  applicationId: string;
+  provider: FrontendApplicationConnectionProvider;
+  providerConnections: AppConnectedAccount[];
+};
+
+const AddConnectionAction = ({
+  applicationId,
+  provider,
+  providerConnections,
+}: AddConnectionActionProps) => {
+  const { t } = useLingui();
+  const { openModal, closeModal } = useModal();
+  const { triggerAppOAuth } = useTriggerAppOAuth();
+  const [confirmation, setConfirmation] =
+    useState<AddConnectionConfirmation | null>(null);
+
+  const modalId = `add-application-connection-modal-${provider.id}`;
+
+  const connectAnotherAccount = (visibility: 'user' | 'workspace') => {
+    triggerAppOAuth({
+      applicationId,
+      providerName: provider.name,
+      visibility,
+    });
+  };
+
+  const reconnectExistingConnection = ({
+    connection,
+    visibility,
+  }: {
+    connection: AppConnectedAccount;
+    visibility: 'user' | 'workspace';
+  }) => {
+    triggerAppOAuth({
+      applicationId,
+      providerName: provider.name,
+      visibility,
+      reconnectingConnectedAccountId: connection.id,
+    });
+  };
+
+  const getConfirmation = (
+    visibility: 'user' | 'workspace',
+  ): AddConnectionConfirmation => {
+    const existingConnection =
+      providerConnections.length === 1 ? providerConnections[0] : undefined;
+
+    if (!isDefined(existingConnection)) {
+      const connectionNames = providerConnections
+        .map((connection) => getConnectionName(connection))
+        .join(', ');
+
+      return {
+        title: t`You already have ${providerConnections.length} ${provider.displayName} connections`,
+        subtitle: t`Already connected: ${connectionNames}.`,
+        confirmButtonText: t`Connect a different account`,
+        onConfirmClick: () => connectAnotherAccount(visibility),
+        onConnectAnotherAccount: null,
+      };
+    }
+
+    const existingConnectionName = getConnectionName(existingConnection);
+    const existingConnectionVisibility =
+      getConnectionVisibility(existingConnection);
+
+    if (existingConnectionVisibility === visibility) {
+      return {
+        title:
+          visibility === 'workspace'
+            ? t`You already have a shared ${provider.displayName} connection`
+            : t`You already have a ${provider.displayName} connection`,
+        subtitle:
+          visibility === 'workspace'
+            ? t`${existingConnectionName} is shared with the workspace.`
+            : t`${existingConnectionName}, connected just for you.`,
+        confirmButtonText: t`Reconnect ${existingConnectionName}`,
+        onConfirmClick: () =>
+          reconnectExistingConnection({
+            connection: existingConnection,
+            visibility,
+          }),
+        onConnectAnotherAccount: () => connectAnotherAccount(visibility),
+      };
+    }
+
+    if (visibility === 'workspace') {
+      return {
+        title: t`Share your existing connection, or connect another account?`,
+        subtitle: t`${existingConnectionName} is connected just for you. Sharing it requires authorizing again, so make sure you are signed in to ${provider.displayName} as the same account.`,
+        confirmButtonText: t`Reconnect and share ${existingConnectionName}`,
+        onConfirmClick: () =>
+          reconnectExistingConnection({
+            connection: existingConnection,
+            visibility: 'workspace',
+          }),
+        onConnectAnotherAccount: () => connectAnotherAccount(visibility),
+      };
+    }
+
+    return {
+      title: t`You already have a shared ${provider.displayName} connection`,
+      subtitle: t`${existingConnectionName} is shared with the workspace. Connecting again adds a separate connection just for you.`,
+      confirmButtonText: t`Connect an account just for me`,
+      onConfirmClick: () => connectAnotherAccount(visibility),
+      onConnectAnotherAccount: null,
+    };
+  };
+
+  const handlePick = (visibility: 'user' | 'workspace') => {
+    if (providerConnections.length === 0) {
+      connectAnotherAccount(visibility);
+      return;
+    }
+
+    setConfirmation(getConfirmation(visibility));
+    openModal(modalId);
+  };
+
+  return (
+    <>
+      <AddConnectionDropdown provider={provider} onPick={handlePick} />
+      {isDefined(confirmation) && (
+        <ConfirmationModal
+          modalInstanceId={modalId}
+          title={confirmation.title}
+          subtitle={confirmation.subtitle}
+          onConfirmClick={confirmation.onConfirmClick}
+          confirmButtonText={confirmation.confirmButtonText}
+          confirmButtonAccent="blue"
+          AdditionalButtons={
+            isDefined(confirmation.onConnectAnotherAccount) ? (
+              <StyledCenteredButton
+                title={t`Connect a different account`}
+                variant="secondary"
+                fullWidth
+                justify="center"
+                onClick={() => {
+                  closeModal(modalId);
+                  confirmation.onConnectAnotherAccount?.();
+                }}
+              />
+            ) : undefined
+          }
+        />
+      )}
+    </>
+  );
+};
+
 export const SettingsApplicationConnectionsSection = ({
   applicationId,
 }: {
@@ -101,7 +275,6 @@ export const SettingsApplicationConnectionsSection = ({
 }) => {
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
-  const { triggerAppOAuth } = useTriggerAppOAuth();
   const { connectionProviders, loading } =
     useFindApplicationConnectionProviders(applicationId);
   const { accounts: connectedAccounts } = useMyAppConnectedAccounts();
@@ -174,7 +347,7 @@ export const SettingsApplicationConnectionsSection = ({
                         textOverflow="ellipsis"
                         whiteSpace="nowrap"
                       >
-                        {connection.name ?? connection.handle}
+                        {getConnectionName(connection)}
                       </TableCell>
                       <TableCell clickable>
                         {connection.authFailedAt ? (
@@ -215,15 +388,10 @@ export const SettingsApplicationConnectionsSection = ({
             )}
             {isClientCredentialsConfigured && (
               <StyledFooter>
-                <AddConnectionDropdown
+                <AddConnectionAction
+                  applicationId={applicationId}
                   provider={provider}
-                  onPick={(visibility) =>
-                    triggerAppOAuth({
-                      applicationId,
-                      providerName: provider.name,
-                      visibility,
-                    })
-                  }
+                  providerConnections={providerConnections}
                 />
               </StyledFooter>
             )}
