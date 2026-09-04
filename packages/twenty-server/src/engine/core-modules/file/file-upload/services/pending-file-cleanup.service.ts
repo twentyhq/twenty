@@ -104,25 +104,30 @@ export class PendingFileCleanupService {
 
     // Normally the object is still in quarantine, but a crash between the move
     // and the row update leaves it at its final path with the row PENDING.
-    // Neither delete gates the other: a failure on one must not strand the
-    // other location, since no later run will look at this row again.
-    const deletions = await Promise.allSettled([
-      this.fileStorageService.deleteFile({
-        ...location,
-        resourcePath: buildPendingUploadResourcePath({
-          fileId: file.id,
-          resourcePath,
-        }),
-      }),
-      this.fileStorageService.deleteFile({ ...location, resourcePath }),
-    ]);
+    //
+    // Quarantine goes first and the two are not concurrent: while a
+    // quarantined object still exists, a completion racing this cleanup can
+    // move it into the final path after that path has been deleted, orphaning
+    // an object no later run will look for. Both still run regardless of the
+    // other's outcome, since the row is already gone.
+    const failures: unknown[] = [];
 
-    const failure = deletions.find(
-      (deletion) => deletion.status === 'rejected',
-    );
+    for (const pathToDelete of [
+      buildPendingUploadResourcePath({ fileId: file.id, resourcePath }),
+      resourcePath,
+    ]) {
+      try {
+        await this.fileStorageService.deleteFile({
+          ...location,
+          resourcePath: pathToDelete,
+        });
+      } catch (error) {
+        failures.push(error);
+      }
+    }
 
-    if (isDefined(failure)) {
-      throw failure.reason;
+    if (failures.length > 0) {
+      throw failures[0];
     }
   }
 }
