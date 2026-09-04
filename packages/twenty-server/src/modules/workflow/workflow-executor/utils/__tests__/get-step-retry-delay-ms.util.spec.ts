@@ -113,8 +113,10 @@ describe('getStepRetryDelayMs', () => {
   it('should not retry when the value is missing', () => {
     const step = createMockCodeStep('step-1');
 
-    step.settings.errorHandlingOptions.retryOnFailure.value =
-      undefined as unknown as number;
+    Reflect.deleteProperty(
+      step.settings.errorHandlingOptions.retryOnFailure,
+      'value',
+    );
 
     const result = getStepRetryDelayMs({
       step,
