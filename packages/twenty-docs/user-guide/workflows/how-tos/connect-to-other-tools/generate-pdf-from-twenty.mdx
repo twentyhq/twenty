@@ -136,13 +136,23 @@ export const main = async (
     }),
   });
 
+  if (!createFileUploadResponse.ok) {
+    throw new Error(`Upload failed with status ${createFileUploadResponse.status}`);
+  }
+
   const createFileUploadResult = await createFileUploadResponse.json();
 
   if (createFileUploadResult.errors?.length) {
     throw new Error(`Upload failed: ${createFileUploadResult.errors[0].message}`);
   }
 
-  const { fileId, uploadUrl, contentType } = createFileUploadResult.data.createFileUpload;
+  const uploadTarget = createFileUploadResult.data?.createFileUpload;
+
+  if (!uploadTarget) {
+    throw new Error('No upload target returned from createFileUpload');
+  }
+
+  const { fileId, uploadUrl, contentType } = uploadTarget;
 
   // Step 4: Send the file bytes to the upload URL
   const putResponse = await fetch(uploadUrl, {
@@ -176,10 +186,18 @@ export const main = async (
     }),
   });
 
+  if (!completeFileUploadResponse.ok) {
+    throw new Error(`Upload failed with status ${completeFileUploadResponse.status}`);
+  }
+
   const completeFileUploadResult = await completeFileUploadResponse.json();
 
   if (completeFileUploadResult.errors?.length) {
     throw new Error(`Upload failed: ${completeFileUploadResult.errors[0].message}`);
+  }
+
+  if (!completeFileUploadResult.data?.completeFileUpload?.id) {
+    throw new Error('No file id returned from completeFileUpload');
   }
 
   // Step 6: Create the attachment linked to the company
