@@ -11,6 +11,7 @@ import { type BillingCreditGrantType } from 'src/engine/core-modules/billing/enu
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { buildBillingCreditStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-credit-state-lock-key.util';
 import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
@@ -44,6 +45,7 @@ export class BillingCreditService {
     private readonly billingCreditGrantService: BillingCreditGrantService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingUsageCacheService: BillingUsageCacheService,
+    private readonly billingUsageService: BillingUsageService,
     private readonly cacheLockService: CacheLockService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
@@ -197,6 +199,44 @@ export class BillingCreditService {
 
     const periodStart = subscription.currentPeriodStart;
 
+    if (await this.billingUsageService.isAllowanceCounterEnabled(workspaceId)) {
+      await this.billingUsageCacheService.invalidateAvailableCredits(
+        workspaceId,
+        periodStart,
+      );
+    } else {
+      await this.adjustAvailableCreditsCounter({
+        workspaceId,
+        periodStart,
+        periodEnd: subscription.currentPeriodEnd,
+        availableDeltaMicro,
+        isReplay,
+        adjustmentKey,
+      });
+    }
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'currentBillingSubscription',
+    ]);
+
+    await this.usageLimitQuotaService.dropAllowanceCounter(workspaceId);
+  }
+
+  private async adjustAvailableCreditsCounter({
+    workspaceId,
+    periodStart,
+    periodEnd,
+    availableDeltaMicro,
+    isReplay,
+    adjustmentKey,
+  }: {
+    workspaceId: string;
+    periodStart: Date;
+    periodEnd: Date;
+    availableDeltaMicro: number;
+    isReplay: boolean;
+    adjustmentKey?: string;
+  }): Promise<void> {
     const rebuildCounter =
       isReplay &&
       (!isDefined(adjustmentKey) ||
@@ -216,15 +256,9 @@ export class BillingCreditService {
       await this.billingUsageCacheService.markCounterAdjustmentApplied(
         workspaceId,
         adjustmentKey,
-        subscription.currentPeriodEnd,
+        periodEnd,
       );
     }
-
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'currentBillingSubscription',
-    ]);
-
-    await this.usageLimitQuotaService.dropAllowanceCounter(workspaceId);
   }
 
   private async applyCounterWrite({
