@@ -201,7 +201,11 @@ export class BillingSubscriptionService {
       { stripeCustomerId: data.object.customer as string },
     );
 
-    if (billingSubscription.status === SubscriptionStatus.Unpaid) {
+    if (
+      [SubscriptionStatus.PastDue, SubscriptionStatus.Unpaid].includes(
+        billingSubscription.status,
+      )
+    ) {
       await this.stripeSubscriptionService.collectLastInvoice(
         billingSubscription.stripeSubscriptionId,
       );

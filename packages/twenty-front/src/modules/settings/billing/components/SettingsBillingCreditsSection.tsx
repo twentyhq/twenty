@@ -118,12 +118,14 @@ const StyledCreditUsageFooterActions = styled.div`
 
 export const SettingsBillingCreditsSection = ({
   currentBillingSubscription,
+  onManageBilling,
   onUpdatePayment,
   isUpdatePaymentDisabled,
 }: {
   currentBillingSubscription: NonNullable<
     CurrentWorkspace['currentBillingSubscription']
   >;
+  onManageBilling: () => void;
   onUpdatePayment: () => void;
   isUpdatePaymentDisabled: boolean;
 }) => {
@@ -242,7 +244,7 @@ export const SettingsBillingCreditsSection = ({
             shouldRedirectToManageBilling={isCancellationScheduled}
             shouldRedirectToUpdatePayment={shouldUpdatePayment}
             canEndTrialPeriod={hasPermissionToEndTrialPeriod}
-            onManageBilling={onUpdatePayment}
+            onManageBilling={onManageBilling}
             isManageBillingDisabled={isUpdatePaymentDisabled}
             onUpdatePayment={onUpdatePayment}
             isUpdatePaymentDisabled={isUpdatePaymentDisabled}

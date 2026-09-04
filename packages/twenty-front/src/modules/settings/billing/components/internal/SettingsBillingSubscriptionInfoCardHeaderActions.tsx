@@ -22,6 +22,7 @@ export type SettingsBillingSubscriptionInfoCardHeaderActionsProps = {
   onCancelIntervalSwitch: () => void;
   onCancelPlanSwitch: () => void;
   onEndTrialPeriod: () => void;
+  onManageBilling: () => void;
   onUpdatePayment: () => void;
   shouldUpdatePayment: boolean;
 };
@@ -39,6 +40,7 @@ export const SettingsBillingSubscriptionInfoCardHeaderActions = ({
   onCancelIntervalSwitch,
   onCancelPlanSwitch,
   onEndTrialPeriod,
+  onManageBilling,
   onUpdatePayment,
   shouldUpdatePayment,
 }: SettingsBillingSubscriptionInfoCardHeaderActionsProps) => {
@@ -52,7 +54,7 @@ export const SettingsBillingSubscriptionInfoCardHeaderActions = ({
         variant="primary"
         accent="blue"
         size="small"
-        onClick={onUpdatePayment}
+        onClick={onManageBilling}
         disabled={isUpdatePaymentDisabled}
       />
     );

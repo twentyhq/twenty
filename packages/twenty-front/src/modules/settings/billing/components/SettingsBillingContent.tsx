@@ -4,11 +4,13 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingCreditsSection } from '@/settings/billing/components/SettingsBillingCreditsSection';
 import { SettingsBillingSubscriptionInfo } from '@/settings/billing/components/SettingsBillingSubscriptionInfo';
 import { SettingsBillingTrialNoPaymentMethodBanner } from '@/settings/billing/components/SettingsBillingTrialNoPaymentMethodBanner';
+import { UpdatePaymentMethodModal } from '@/settings/billing/components/UpdatePaymentMethodModal';
 import { useBillingPortalSession } from '@/settings/billing/hooks/useBillingPortalSession';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -17,8 +19,13 @@ import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { SubscriptionStatus } from '~/generated-metadata/graphql';
+
+const SETTINGS_BILLING_UPDATE_PAYMENT_MODAL_ID =
+  'settings-billing-update-payment-modal';
+
 export const SettingsBillingContent = () => {
   const { t } = useLingui();
+  const { openModal } = useModal();
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
@@ -62,8 +69,11 @@ export const SettingsBillingContent = () => {
           <SettingsBillingSubscriptionInfo
             currentWorkspace={currentWorkspace}
             currentBillingSubscription={currentBillingSubscription}
-            onUpdatePayment={openBillingPortal}
-            isUpdatePaymentDisabled={isBillingPortalSessionDisabled}
+            onManageBilling={openBillingPortal}
+            onUpdatePayment={() =>
+              openModal(SETTINGS_BILLING_UPDATE_PAYMENT_MODAL_ID)
+            }
+            isUpdatePaymentDisabled={false}
           />
         )}
       {hasNotCanceledCurrentSubscription &&
@@ -72,8 +82,11 @@ export const SettingsBillingContent = () => {
         isUsageQueryLoaded && (
           <SettingsBillingCreditsSection
             currentBillingSubscription={currentBillingSubscription}
-            onUpdatePayment={openBillingPortal}
-            isUpdatePaymentDisabled={isBillingPortalSessionDisabled}
+            onManageBilling={openBillingPortal}
+            onUpdatePayment={() =>
+              openModal(SETTINGS_BILLING_UPDATE_PAYMENT_MODAL_ID)
+            }
+            isUpdatePaymentDisabled={false}
           />
         )}
       <Section>
@@ -105,6 +118,9 @@ export const SettingsBillingContent = () => {
           />
         </Section>
       )}
+      <UpdatePaymentMethodModal
+        modalInstanceId={SETTINGS_BILLING_UPDATE_PAYMENT_MODAL_ID}
+      />
     </SettingsPageContainer>
   );
 };

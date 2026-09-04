@@ -46,6 +46,7 @@ import { beautifyExactDate } from '~/utils/date-utils';
 export const SettingsBillingSubscriptionInfo = ({
   currentWorkspace,
   currentBillingSubscription,
+  onManageBilling,
   onUpdatePayment,
   isUpdatePaymentDisabled,
 }: {
@@ -53,6 +54,7 @@ export const SettingsBillingSubscriptionInfo = ({
   currentBillingSubscription: NonNullable<
     CurrentWorkspace['currentBillingSubscription']
   >;
+  onManageBilling: () => void;
   onUpdatePayment: () => void;
   isUpdatePaymentDisabled: boolean;
 }) => {
@@ -501,6 +503,7 @@ export const SettingsBillingSubscriptionInfo = ({
               openModal(BILLING_MODAL_IDS.cancelSwitchBillingPlan)
             }
             onEndTrialPeriod={() => openModal(BILLING_MODAL_IDS.endTrialPeriod)}
+            onManageBilling={onManageBilling}
             onUpdatePayment={onUpdatePayment}
             shouldUpdatePayment={shouldUpdatePayment}
           />

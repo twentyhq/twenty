@@ -1,49 +1,42 @@
-import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
+import { UpdatePaymentMethodModal } from '@/settings/billing/components/UpdatePaymentMethodModal';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { t } from '@lingui/core/macro';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { useQuery } from '@apollo/client/react';
-import {
-  PermissionFlagType,
-  BillingPortalSessionDocument,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
+
+const FAILED_PAYMENT_UPDATE_PAYMENT_MODAL_ID =
+  'failed-payment-update-payment-modal';
 
 export const InformationBannerFailPaymentInfo = () => {
-  const { redirect } = useRedirect();
+  const { openModal } = useModal();
 
-  const { data, loading } = useQuery(BillingPortalSessionDocument, {
-    variables: {
-      returnUrlPath: getSettingsPath(SettingsPath.Billing),
-    },
-  });
-
-  const {
-    [PermissionFlagType.WORKSPACE]: hasPermissionToUpdateBillingDetails,
-  } = usePermissionFlagMap();
-
-  const openBillingPortal = () => {
-    if (isDefined(data) && isDefined(data.billingPortalSession.url)) {
-      redirect(data.billingPortalSession.url);
-    }
-  };
+  const { [PermissionFlagType.BILLING]: hasPermissionToUpdateBillingDetails } =
+    usePermissionFlagMap();
 
   return (
-    <InformationBanner
-      componentInstanceId="information-banner-fail-payment-info"
-      color="danger"
-      variant="secondary"
-      message={
-        hasPermissionToUpdateBillingDetails
-          ? t`Last payment failed. Please update your billing details.`
-          : t`Last payment failed. Please contact your admin.`
-      }
-      buttonTitle={
-        hasPermissionToUpdateBillingDetails ? t`Update payment` : undefined
-      }
-      buttonOnClick={() => openBillingPortal()}
-      isButtonDisabled={loading || !isDefined(data)}
-    />
+    <>
+      <InformationBanner
+        componentInstanceId="information-banner-fail-payment-info"
+        color="danger"
+        variant="secondary"
+        message={
+          hasPermissionToUpdateBillingDetails
+            ? t`A payment method is needed to keep your workspace active.`
+            : t`A payment method is needed. Please contact your admin.`
+        }
+        buttonTitle={
+          hasPermissionToUpdateBillingDetails
+            ? t`Add payment method`
+            : undefined
+        }
+        buttonOnClick={() => openModal(FAILED_PAYMENT_UPDATE_PAYMENT_MODAL_ID)}
+      />
+      {hasPermissionToUpdateBillingDetails && (
+        <UpdatePaymentMethodModal
+          modalInstanceId={FAILED_PAYMENT_UPDATE_PAYMENT_MODAL_ID}
+        />
+      )}
+    </>
   );
 };
