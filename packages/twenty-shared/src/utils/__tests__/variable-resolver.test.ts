@@ -53,6 +53,16 @@ describe('resolveInput', () => {
     expect(resolveInput('{{user.email}}', context)).toBe(undefined);
   });
 
+  it('should resolve a non-existent variable embedded in a string to nothing', () => {
+    expect(resolveInput('Email: {{user.email}}!', context)).toBe('Email: !');
+  });
+
+  it('should keep null variables embedded in a string', () => {
+    expect(resolveInput('{ "a": {{specialValues.nullValue}} }', context)).toBe(
+      '{ "a": null }',
+    );
+  });
+
   it('should resolve variables in an array', () => {
     const input = ['{{user.name}}', '{{settings.theme}}', 'static'];
     const expected = ['John Doe', 'dark', 'static'];

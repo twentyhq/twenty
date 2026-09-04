@@ -3,6 +3,7 @@ import {
   Get,
   Param,
   Post,
+  type RawBodyRequest,
   Req,
   UseFilters,
   UseGuards,
@@ -15,6 +16,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { WorkflowTriggerRestApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-rest-api-exception.filter';
+import { parseWebhookTriggerPayload } from 'src/engine/core-modules/workflow/utils/parse-webhook-trigger-payload.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
@@ -55,11 +57,11 @@ export class WorkflowTriggerController {
   async runWorkflowByPostRequest(
     @Param('workspaceId') workspaceId: string,
     @Param('workflowId') workflowId: string,
-    @Req() request: Request,
+    @Req() request: RawBodyRequest<Request>,
   ) {
     return await this.runWorkflow({
       workflowId,
-      payload: request.body || {},
+      payload: parseWebhookTriggerPayload(request),
       workspaceId,
     });
   }

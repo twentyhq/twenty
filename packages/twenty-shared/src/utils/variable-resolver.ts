@@ -81,6 +81,13 @@ const resolveString = (
   return input.replace(VARIABLE_PATTERN, (matchedToken, _) => {
     const processedToken = evalFromContext(matchedToken, context);
 
+    // A variable that cannot be resolved must vanish rather than print the
+    // string "undefined" into user content. null is kept as-is so that a
+    // variable used as a JSON value still produces valid JSON.
+    if (processedToken === undefined) {
+      return '';
+    }
+
     if (typeof processedToken === 'object' && processedToken !== null) {
       return JSON.stringify(processedToken);
     }
