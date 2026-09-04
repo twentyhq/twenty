@@ -38,6 +38,8 @@ import { EmailingDomainSenderService } from 'src/modules/emailing/services/email
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
+import { type EmailingDomainEmailTemplate } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-template.type';
+import { type CampaignBatchSendOutcome } from 'src/modules/emailing/types/campaign-batch-send-outcome.type';
 import { type CampaignDeliverySettlement } from 'src/modules/emailing/types/campaign-delivery-settlement.type';
 import { type EmailCreditContext } from 'src/modules/emailing/types/email-credit-context.type';
 import { buildCampaignBatchReplacements } from 'src/modules/emailing/utils/build-campaign-batch-replacements.util';
@@ -104,8 +106,6 @@ export class MessageCampaignBatchDeliveryService {
         claimedDeliveryIdSet.has(recipient.messageId),
       );
 
-      const providerHandoff = { hasHandedBatchToProvider: false };
-
       try {
         await this.processClaimedBatch({
           data,
@@ -113,13 +113,11 @@ export class MessageCampaignBatchDeliveryService {
           creditContext,
           claimToken,
           claimedRecipients,
-          providerHandoff,
         });
       } finally {
-        await this.releaseUnsettledClaims({
+        await this.requeueClaimsNeverHandedToProvider({
           workspaceId,
           claimToken,
-          hasHandedBatchToProvider: providerHandoff.hasHandedBatchToProvider,
         });
       }
 
@@ -146,19 +144,17 @@ export class MessageCampaignBatchDeliveryService {
     creditContext,
     claimToken,
     claimedRecipients,
-    providerHandoff,
   }: {
     data: SendCampaignEmailBatchJobData;
     campaign: MessageCampaignWorkspaceEntity | null;
     creditContext: EmailCreditContext;
     claimToken: string;
     claimedRecipients: BatchRecipient[];
-    providerHandoff: { hasHandedBatchToProvider: boolean };
   }): Promise<void> {
     const { workspaceId } = data;
 
     if (!isDefined(campaign)) {
-      await this.settleUniformly({
+      await this.settleWholeBatchAs({
         workspaceId,
         claimToken,
         recipients: claimedRecipients,
@@ -170,7 +166,7 @@ export class MessageCampaignBatchDeliveryService {
     }
 
     if (!creditContext.hasCredits) {
-      await this.settleUniformly({
+      await this.settleWholeBatchAs({
         workspaceId,
         claimToken,
         recipients: claimedRecipients,
@@ -202,7 +198,7 @@ export class MessageCampaignBatchDeliveryService {
     );
 
     if (!isDefined(campaignStillRunning)) {
-      await this.settleUniformly({
+      await this.settleWholeBatchAs({
         workspaceId,
         claimToken,
         recipients: claimedRecipients,
@@ -219,7 +215,6 @@ export class MessageCampaignBatchDeliveryService {
       creditContext,
       claimToken,
       claimedRecipients,
-      providerHandoff,
     });
   }
 
@@ -272,7 +267,7 @@ export class MessageCampaignBatchDeliveryService {
     const attemptCount = (data.rateLimitedAttemptCount ?? 0) + 1;
 
     if (attemptCount > SEND_SLOT_RETRY.attemptLimit) {
-      await this.settleUniformly({
+      await this.settleWholeBatchAs({
         workspaceId,
         claimToken,
         recipients: claimedRecipients,
@@ -283,7 +278,7 @@ export class MessageCampaignBatchDeliveryService {
       return;
     }
 
-    await this.settleUniformly({
+    await this.settleWholeBatchAs({
       workspaceId,
       claimToken,
       recipients: claimedRecipients,
@@ -315,14 +310,12 @@ export class MessageCampaignBatchDeliveryService {
     creditContext,
     claimToken,
     claimedRecipients,
-    providerHandoff,
   }: {
     data: SendCampaignEmailBatchJobData;
     campaign: MessageCampaignWorkspaceEntity;
     creditContext: EmailCreditContext;
     claimToken: string;
     claimedRecipients: BatchRecipient[];
-    providerHandoff: { hasHandedBatchToProvider: boolean };
   }): Promise<void> {
     const { workspaceId, campaignId, emailingDomainId, userWorkspaceId } = data;
 
@@ -358,7 +351,7 @@ export class MessageCampaignBatchDeliveryService {
       );
     }
 
-    const outcome = await this.emailingDomainSenderService
+    const providerOutcome = await this.emailingDomainSenderService
       .sendEmailBatch({
         workspaceId,
         emailingDomainId,
@@ -383,7 +376,41 @@ export class MessageCampaignBatchDeliveryService {
         throw error;
       });
 
-    providerHandoff.hasHandedBatchToProvider = true;
+    try {
+      await this.settleDeliveredBatch({
+        data,
+        creditContext,
+        claimToken,
+        claimedRecipients,
+        outcome: providerOutcome,
+        template,
+        replacementsByDeliveryId,
+      });
+    } catch (error) {
+      await this.failClaimsAlreadyHandedToProvider({ workspaceId, claimToken });
+
+      throw error;
+    }
+  }
+
+  private async settleDeliveredBatch({
+    data,
+    creditContext,
+    claimToken,
+    claimedRecipients,
+    outcome,
+    template,
+    replacementsByDeliveryId,
+  }: {
+    data: SendCampaignEmailBatchJobData;
+    creditContext: EmailCreditContext;
+    claimToken: string;
+    claimedRecipients: BatchRecipient[];
+    outcome: CampaignBatchSendOutcome;
+    template: EmailingDomainEmailTemplate;
+    replacementsByDeliveryId: Map<string, Record<string, string>>;
+  }): Promise<void> {
+    const { workspaceId, campaignId, userWorkspaceId } = data;
 
     const settlements = resolveCampaignBatchSettlements({
       claimedRecipients,
@@ -486,7 +513,7 @@ export class MessageCampaignBatchDeliveryService {
     const { state, skipReason, failureReason, shouldRetry } =
       resolveCampaignSendFailure(error);
 
-    await this.settleUniformly({
+    await this.settleWholeBatchAs({
       workspaceId,
       claimToken,
       recipients: claimedRecipients,
@@ -552,7 +579,7 @@ export class MessageCampaignBatchDeliveryService {
     return (raw as { id: string }[]).map((row) => row.id);
   }
 
-  private async settleUniformly({
+  private async settleWholeBatchAs({
     workspaceId,
     claimToken,
     recipients,
@@ -614,27 +641,37 @@ export class MessageCampaignBatchDeliveryService {
     return new Set(settledRows.map((row) => row.id));
   }
 
-  private async releaseUnsettledClaims({
+  private async requeueClaimsNeverHandedToProvider({
     workspaceId,
     claimToken,
-    hasHandedBatchToProvider,
   }: {
     workspaceId: string;
     claimToken: string;
-    hasHandedBatchToProvider: boolean;
   }): Promise<void> {
-    const releasedState = hasHandedBatchToProvider
-      ? {
-          state: CAMPAIGN_DELIVERY_STATE.FAILED,
-          failureReason: CAMPAIGN_FAILURE_REASON.UNKNOWN,
-        }
-      : { state: CAMPAIGN_DELIVERY_STATE.QUEUED };
-
     await this.campaignDeliveryRepository.update(
       workspaceId,
       { claimToken },
       {
-        ...releasedState,
+        state: CAMPAIGN_DELIVERY_STATE.QUEUED,
+        claimToken: null,
+        claimExpiresAt: null,
+      },
+    );
+  }
+
+  private async failClaimsAlreadyHandedToProvider({
+    workspaceId,
+    claimToken,
+  }: {
+    workspaceId: string;
+    claimToken: string;
+  }): Promise<void> {
+    await this.campaignDeliveryRepository.update(
+      workspaceId,
+      { claimToken },
+      {
+        state: CAMPAIGN_DELIVERY_STATE.FAILED,
+        failureReason: CAMPAIGN_FAILURE_REASON.UNKNOWN,
         claimToken: null,
         claimExpiresAt: null,
       },

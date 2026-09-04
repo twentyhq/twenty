@@ -22,6 +22,7 @@ import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/em
 import { formatMessageFromHeader } from 'src/modules/messaging/message-outbound-manager/utils/format-message-from-header.util';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { type CampaignBatchSendOutcome } from 'src/modules/emailing/types/campaign-batch-send-outcome.type';
 import { type DeliverableRecipients } from 'src/engine/core-modules/emailing-domain/types/deliverable-recipients.type';
 import { isSuppressionBlockingSend } from 'src/engine/core-modules/emailing-domain/utils/is-suppression-blocking-send.util';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
@@ -101,14 +102,7 @@ export class EmailingDomainSenderService {
     template: EmailingDomainEmailTemplate;
     recipients: EmailingDomainBatchRecipient[];
     unsubscribeTopicId?: string;
-  }): Promise<{
-    entries: {
-      recipientIndex: number;
-      messageId: string | null;
-      errorMessage: string | null;
-    }[];
-    suppressedRecipientIndexes: number[];
-  }> {
+  }): Promise<CampaignBatchSendOutcome> {
     const emailingDomain = await this.findEmailingDomainByIdOrThrow(
       workspaceId,
       emailingDomainId,
