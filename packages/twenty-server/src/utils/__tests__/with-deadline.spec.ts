@@ -65,6 +65,34 @@ describe('withDeadline', () => {
     expect(onSettleAfterDeadline).toHaveBeenCalledWith({ status: 'fulfilled' });
   });
 
+  it('should report a rejection that happens after the deadline', async () => {
+    const onSettleAfterDeadline = jest.fn();
+    const lateError = new Error('late failure');
+    let rejectLate: (error: Error) => void = () => {};
+    const latePromise = new Promise<string>((_, reject) => {
+      rejectLate = reject;
+    });
+
+    const result = withDeadline({
+      promise: latePromise,
+      timeoutMs: 1000,
+      createTimeoutError: () => new Error('too slow'),
+      onSettleAfterDeadline,
+    });
+
+    jest.advanceTimersByTime(1000);
+
+    await expect(result).rejects.toThrow('too slow');
+
+    rejectLate(lateError);
+    await expect(latePromise).rejects.toBe(lateError);
+
+    expect(onSettleAfterDeadline).toHaveBeenCalledWith({
+      status: 'rejected',
+      error: lateError,
+    });
+  });
+
   it('should not report a settlement that happens before the deadline', async () => {
     const onSettleAfterDeadline = jest.fn();
 
