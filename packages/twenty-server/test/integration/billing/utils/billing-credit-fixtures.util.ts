@@ -1,5 +1,5 @@
 import { createClient, type RedisClientType } from 'redis';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { type BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
@@ -174,7 +174,7 @@ export const listCreditGrants = async (
 let redisClient: RedisClientType | null = null;
 
 const getRedisClient = async (): Promise<RedisClientType> => {
-  if (!redisClient) {
+  if (!isDefined(redisClient)) {
     redisClient = createClient({ url: process.env.REDIS_URL });
     await redisClient.connect();
   }
@@ -183,7 +183,7 @@ const getRedisClient = async (): Promise<RedisClientType> => {
 };
 
 export const quitBillingFixtureRedis = async (): Promise<void> => {
-  if (redisClient) {
+  if (isDefined(redisClient)) {
     await redisClient.quit();
     redisClient = null;
   }
@@ -239,7 +239,7 @@ export const resetBillingCreditState = async (
     ...(await redis.keys(`*currentBillingSubscription:${workspaceId}*`)),
   ];
 
-  if (staleKeys.length > 0) {
+  if (isNonEmptyArray(staleKeys)) {
     await redis.del(staleKeys);
   }
 };
