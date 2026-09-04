@@ -57,7 +57,7 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
     } as unknown as jest.Mocked<FileStorageService>;
 
     fileRepository = {
-      update: jest.fn().mockResolvedValue(undefined),
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
     } as unknown as jest.Mocked<WorkspaceScopedRepository<FileEntity>>;
   });
 
@@ -68,7 +68,10 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
   it('should refuse an SVG larger than the sanitizable limit without reading it', async () => {
     const size = MAX_SANITIZABLE_SVG_BYTES + 1;
 
-    fileStorageService.getFileMetadata.mockResolvedValue({ size });
+    fileStorageService.getFileMetadata.mockResolvedValue({
+      size,
+      checksum: '"etag-a"',
+    });
 
     await expect(
       buildService().completeUploadedFile({
@@ -89,6 +92,7 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
 
     fileStorageService.getFileMetadata.mockResolvedValue({
       size: declaredSize,
+      checksum: '"etag-a"',
     });
     fileStorageService.readFile.mockResolvedValue(
       Readable.from(Buffer.alloc(MAX_SANITIZABLE_SVG_BYTES + 1)),
@@ -110,7 +114,10 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
   it('should sanitize an SVG within the limit and store its new size', async () => {
     const size = Buffer.byteLength(svgContent);
 
-    fileStorageService.getFileMetadata.mockResolvedValue({ size });
+    fileStorageService.getFileMetadata.mockResolvedValue({
+      size,
+      checksum: '"etag-a"',
+    });
 
     const completedFile = await buildService().completeUploadedFile({
       workspaceId,
@@ -135,7 +142,10 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
   it('should not read a file that does not need sanitizing', async () => {
     const size = pngContent.length;
 
-    fileStorageService.getFileMetadata.mockResolvedValue({ size });
+    fileStorageService.getFileMetadata.mockResolvedValue({
+      size,
+      checksum: '"etag-a"',
+    });
     fileStorageService.readFilePrefix.mockResolvedValue(pngContent);
 
     const completedFile = await buildService().completeUploadedFile({
@@ -158,7 +168,10 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
       resourcePath: storageLocation.resourcePath,
     });
 
-    fileStorageService.getFileMetadata.mockResolvedValue({ size });
+    fileStorageService.getFileMetadata.mockResolvedValue({
+      size,
+      checksum: '"etag-a"',
+    });
     fileStorageService.readFilePrefix.mockResolvedValue(pngContent);
 
     await buildService().completeUploadedFile({
@@ -176,35 +189,52 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
     expect(fileStorageService.move).toHaveBeenCalledWith({
       from: expect.objectContaining({ resourcePath: pendingResourcePath }),
       to: storageLocation,
+      ifMatchChecksum: '"etag-a"',
     });
   });
 
-  it('should complete from the final path when a retry finds nothing quarantined', async () => {
+  it('should not complete an upload from an object left at the final path', async () => {
     const size = pngContent.length;
     const storageLocation = buildStorageLocation('png');
 
-    fileStorageService.getFileMetadata
-      .mockResolvedValueOnce(null)
-      .mockResolvedValueOnce({ size });
-    fileStorageService.readFilePrefix.mockResolvedValue(pngContent);
+    fileStorageService.getFileMetadata.mockImplementation(async (location) =>
+      location.resourcePath === storageLocation.resourcePath
+        ? { size, checksum: '"etag-of-a-previous-upload"' }
+        : null,
+    );
 
-    const completedFile = await buildService().completeUploadedFile({
-      workspaceId,
-      file: buildFile('png', size),
-      storageLocation,
+    await expect(
+      buildService().completeUploadedFile({
+        workspaceId,
+        file: buildFile('png', size),
+        storageLocation,
+      }),
+    ).rejects.toMatchObject({
+      code: FileUploadExceptionCode.FILE_NOT_UPLOADED,
     });
 
-    expect(completedFile.mimeType).toBe('image/png');
-    expect(fileStorageService.readFilePrefix).toHaveBeenCalledWith(
-      expect.objectContaining({
-        resourcePath: storageLocation.resourcePath,
-      }),
-    );
     expect(fileStorageService.move).not.toHaveBeenCalled();
-    expect(fileRepository.update).toHaveBeenCalledWith(
-      workspaceId,
-      { id: fileId },
-      expect.objectContaining({ status: FILE_STATUS.UPLOADED }),
-    );
+    expect(fileRepository.update).not.toHaveBeenCalled();
+  });
+
+  it('should fail rather than report success when the row was reaped mid-completion', async () => {
+    const size = pngContent.length;
+
+    fileStorageService.getFileMetadata.mockResolvedValue({
+      size,
+      checksum: '"etag-a"',
+    });
+    fileStorageService.readFilePrefix.mockResolvedValue(pngContent);
+    fileRepository.update.mockResolvedValue({ affected: 0 } as never);
+
+    await expect(
+      buildService().completeUploadedFile({
+        workspaceId,
+        file: buildFile('png', size),
+        storageLocation: buildStorageLocation('png'),
+      }),
+    ).rejects.toMatchObject({
+      code: FileUploadExceptionCode.FILE_NOT_FOUND,
+    });
   });
 });

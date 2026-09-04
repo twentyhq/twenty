@@ -2,6 +2,10 @@ import { type Readable } from 'stream';
 
 import { type ByteRange } from 'src/engine/core-modules/file-storage/types/byte-range.type';
 
+// checksum is whatever the backend can offer as a version identity (an S3
+// ETag); backends that have none omit it and callers lose the precondition.
+export type FileStorageMetadata = { size: number; checksum?: string };
+
 export interface StorageDriver {
   readFile(params: {
     filePath: string;
@@ -25,7 +29,7 @@ export interface StorageDriver {
 
   getFileMetadata(params: {
     filePath: string;
-  }): Promise<{ size: number } | null>;
+  }): Promise<FileStorageMetadata | null>;
 
   downloadFolder(params: {
     onStoragePath: string;
@@ -45,6 +49,7 @@ export interface StorageDriver {
   move(params: {
     from: { folderPath: string; filename?: string };
     to: { folderPath: string; filename?: string };
+    ifMatchChecksum?: string;
   }): Promise<void>;
   copy(params: {
     from: { folderPath: string; filename?: string };

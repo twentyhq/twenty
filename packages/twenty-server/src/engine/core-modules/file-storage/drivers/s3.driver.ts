@@ -34,7 +34,10 @@ import {
   FILE_STORAGE_S3_REQUEST_TIMEOUT_MS,
   FILE_STORAGE_S3_SLOW_REQUEST_THRESHOLD_MS,
 } from 'src/engine/core-modules/file-storage/constants/s3-client-timeouts.constant';
-import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
+import {
+  type FileStorageMetadata,
+  type StorageDriver,
+} from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import {
   FileStorageException,
   FileStorageExceptionCode,
@@ -225,7 +228,7 @@ export class S3Driver implements StorageDriver {
 
   async getFileMetadata(params: {
     filePath: string;
-  }): Promise<{ size: number } | null> {
+  }): Promise<FileStorageMetadata | null> {
     return this.measureRequest(
       { operation: 'HeadObject', key: params.filePath },
       async () => {
@@ -237,7 +240,7 @@ export class S3Driver implements StorageDriver {
             }),
           );
 
-          return { size: head.ContentLength ?? 0 };
+          return { size: head.ContentLength ?? 0, checksum: head.ETag };
         } catch (error) {
           if (error instanceof NotFound) {
             return null;
@@ -388,6 +391,7 @@ export class S3Driver implements StorageDriver {
   async move(params: {
     from: { folderPath: string; filename?: string };
     to: { folderPath: string; filename?: string };
+    ifMatchChecksum?: string;
   }): Promise<void> {
     if (!params.from.filename || !params.to.filename) {
       await this.moveS3Folder(params);
@@ -409,6 +413,7 @@ export class S3Driver implements StorageDriver {
       await this.s3Client.send(
         new CopyObjectCommand({
           CopySource: `${this.bucketName}/${fromKey}`,
+          CopySourceIfMatch: params.ifMatchChecksum,
           Bucket: this.bucketName,
           Key: toKey,
         }),
@@ -427,6 +432,14 @@ export class S3Driver implements StorageDriver {
           FileStorageExceptionCode.FILE_NOT_FOUND,
         );
       }
+
+      if (error.name === 'PreconditionFailed') {
+        throw new FileStorageException(
+          `Object at ${fromKey} changed since it was inspected`,
+          FileStorageExceptionCode.PRECONDITION_FAILED,
+        );
+      }
+
       throw error;
     }
   }

@@ -10,6 +10,7 @@ import { Like, type QueryRunner } from 'typeorm';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { findActiveFlatApplicationByUniversalIdentifier } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-universal-identifier.util';
+import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { type ByteRange } from 'src/engine/core-modules/file-storage/types/byte-range.type';
 import {
@@ -330,7 +331,7 @@ export class FileStorageService {
 
   async getFileMetadata(
     params: ResourceIdentifier,
-  ): Promise<{ size: number } | null> {
+  ): Promise<FileStorageMetadata | null> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
     const { onStorageFilePath } =
       this.validateAndBuildFileStoragePathOrThrow(params);
@@ -591,9 +592,11 @@ export class FileStorageService {
   async move({
     from,
     to,
+    ifMatchChecksum,
   }: {
     from: ResourceIdentifier;
     to: ResourceIdentifier;
+    ifMatchChecksum?: string;
   }): Promise<void> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
@@ -605,6 +608,7 @@ export class FileStorageService {
     return driver.move({
       from: { folderPath: dirname(fromPath), filename: basename(fromPath) },
       to: { folderPath: dirname(toPath), filename: basename(toPath) },
+      ifMatchChecksum,
     });
   }
 

@@ -1,11 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
+
 import { ApiPath, FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
+import {
+  FileUploadException,
+  FileUploadExceptionCode,
+} from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 import { type BatchFileResult } from 'src/engine/core-modules/file/file-upload/types/batch-file-result.type';
 import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { toBatchErrorMessage } from 'src/engine/core-modules/file/file-upload/utils/to-batch-error-message.util';
@@ -52,6 +59,28 @@ export class FileUploadTargetService {
     contentType: string;
     size: number;
   }): Promise<FileUploadTargetDTO> {
+    const pendingResourcePath = buildPendingUploadResourcePath({
+      fileId,
+      resourcePath,
+    });
+
+    // The prefix is added after the final path has passed validation, so a
+    // path close to the limit would only fail once the client tried to write.
+    const pendingPathValidation = validateFilePath({
+      resourcePath: pendingResourcePath,
+      fileFolder,
+    });
+
+    if (!pendingPathValidation.isValid) {
+      throw new FileUploadException(
+        `Resource path "${resourcePath}" leaves no room for the pending upload prefix: ${pendingPathValidation.error}`,
+        FileUploadExceptionCode.BAD_REQUEST,
+        {
+          userFriendlyMessage: msg`This file path is too long to upload.`,
+        },
+      );
+    }
+
     const expiresInSeconds = this.twentyConfigService.get(
       'STORAGE_S3_PRESIGNED_URL_EXPIRES_IN',
     );
@@ -62,7 +91,7 @@ export class FileUploadTargetService {
         fileFolder,
         applicationUniversalIdentifier,
         workspaceId,
-        resourcePath: buildPendingUploadResourcePath({ fileId, resourcePath }),
+        resourcePath: pendingResourcePath,
         contentType,
         contentLength: size,
         expiresInSeconds,

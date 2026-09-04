@@ -5,6 +5,7 @@ import { Readable } from 'stream';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -92,16 +93,12 @@ export class FileUploadCompletionService {
       }),
     };
 
-    let sourceLocation = pendingLocation;
-    let metadata =
+    // Only the quarantined object is ever evidence of this upload. Falling
+    // back to the final path would let an object left there by a previous
+    // upload of the same resource path complete an upload that never
+    // delivered any bytes.
+    const metadata =
       await this.fileStorageService.getFileMetadata(pendingLocation);
-
-    if (!isDefined(metadata)) {
-      // A retry after the object was moved but before the row was updated
-      // finds nothing left in quarantine, so validate the final path instead.
-      sourceLocation = storageLocation;
-      metadata = await this.fileStorageService.getFileMetadata(storageLocation);
-    }
 
     if (!isDefined(metadata)) {
       throw new FileUploadException(
@@ -126,30 +123,46 @@ export class FileUploadCompletionService {
     }
 
     const mimeType = await this.detectUploadedMimeTypeOrThrow({
-      ...sourceLocation,
+      ...pendingLocation,
       filename: file.path,
     });
 
-    this.assertMimeTypeAllowedForFolder(sourceLocation.fileFolder, mimeType);
+    this.assertMimeTypeAllowedForFolder(pendingLocation.fileFolder, mimeType);
 
-    const size = await this.sanitizeUploadedFileIfNeeded({
-      storageLocation: sourceLocation,
+    const { size, checksum } = await this.sanitizeUploadedFileIfNeeded({
+      storageLocation: pendingLocation,
       mimeType,
-      size: metadata.size,
+      metadata,
     });
 
-    if (sourceLocation === pendingLocation) {
-      await this.fileStorageService.move({
-        from: pendingLocation,
-        to: storageLocation,
-      });
-    }
+    // The presigned PUT stays usable until it expires, so the quarantined
+    // object can still be overwritten between the sniff above and this move.
+    // Promoting only the version that was inspected is what makes the
+    // recorded mimeType describe the bytes that end up at the final path.
+    await this.fileStorageService.move({
+      from: pendingLocation,
+      to: storageLocation,
+      ifMatchChecksum: checksum,
+    });
 
-    await this.fileRepository.update(
+    const { affected } = await this.fileRepository.update(
       workspaceId,
       { id: file.id },
       { status: FILE_STATUS.UPLOADED, mimeType, size },
     );
+
+    // The cleanup cron claims a stale PENDING row by deleting it, and then
+    // deletes its objects. Losing the row here means it won, so the object
+    // this call just promoted is already gone.
+    if (affected === 0) {
+      throw new FileUploadException(
+        `File ${file.id} was reaped while its upload was being completed`,
+        FileUploadExceptionCode.FILE_NOT_FOUND,
+        {
+          userFriendlyMessage: msg`This upload expired before it was confirmed. Please upload the file again.`,
+        },
+      );
+    }
 
     return {
       id: file.id,
@@ -233,14 +246,16 @@ export class FileUploadCompletionService {
   private async sanitizeUploadedFileIfNeeded({
     storageLocation,
     mimeType,
-    size,
+    metadata,
   }: {
     storageLocation: FileUploadStorageLocation;
     mimeType: string;
-    size: number;
-  }): Promise<number> {
+    metadata: FileStorageMetadata;
+  }): Promise<FileStorageMetadata> {
+    const { size } = metadata;
+
     if (mimeType !== 'image/svg+xml') {
-      return size;
+      return metadata;
     }
 
     if (size > MAX_SANITIZABLE_SVG_BYTES) {
@@ -277,6 +292,14 @@ export class FileUploadCompletionService {
       mimeType,
     });
 
-    return sanitizedBuffer.length;
+    // Rewriting the object gives it a new version identity, so the checksum
+    // read before sanitizing would no longer match on the promoting copy.
+    const sanitizedMetadata =
+      await this.fileStorageService.getFileMetadata(storageLocation);
+
+    return {
+      size: sanitizedBuffer.length,
+      checksum: sanitizedMetadata?.checksum,
+    };
   }
 }

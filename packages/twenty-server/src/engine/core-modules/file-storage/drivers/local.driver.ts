@@ -11,7 +11,10 @@ import { pipeline } from 'stream/promises';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
+import {
+  type FileStorageMetadata,
+  type StorageDriver,
+} from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import {
   FileStorageException,
   FileStorageExceptionCode,
@@ -188,7 +191,7 @@ export class LocalDriver implements StorageDriver {
 
   async getFileMetadata(params: {
     filePath: string;
-  }): Promise<{ size: number } | null> {
+  }): Promise<FileStorageMetadata | null> {
     const joinedPath = join(this.options.storagePath, params.filePath);
     let filePath: string;
 
