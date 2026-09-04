@@ -7,6 +7,9 @@ export type RecordCreationFormContextValue = {
     objectMetadataItem: EnrichedObjectMetadataItem;
     initialDraftRecord?: Partial<ObjectRecord>;
   }) => Promise<Partial<ObjectRecord> | null>;
+  settleRecordCreationDraft: (
+    draftRecord: Partial<ObjectRecord> | null,
+  ) => void;
 };
 
 export const RecordCreationFormContext =

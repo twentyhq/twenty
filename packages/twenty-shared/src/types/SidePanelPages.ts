@@ -33,6 +33,7 @@ export enum SidePanelPages {
   ComposeEmail = 'compose-email',
   ComposeCalendarEvent = 'compose-calendar-event',
   CreateRelatedRecord = 'create-related-record',
+  RecordCreationForm = 'record-creation-form',
   SendCampaignTest = 'send-campaign-test',
   EmailBlockSettings = 'email-block-settings',
   SettingsMetadataTranslations = 'settings-metadata-translations',

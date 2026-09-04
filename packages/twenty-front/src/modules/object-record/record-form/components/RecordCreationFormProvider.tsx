@@ -1,22 +1,17 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { RecordCreationFormModal } from '@/object-record/record-form/components/RecordCreationFormModal';
-import { RECORD_CREATION_FORM_MODAL_ID } from '@/object-record/record-form/constants/RecordCreationFormModalId';
 import {
   RecordCreationFormContext,
   type RecordCreationFormContextValue,
 } from '@/object-record/record-form/contexts/RecordCreationFormContext';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
+import { useStore } from 'jotai';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { t } from '@lingui/core/macro';
+import { SidePanelPages } from 'twenty-shared/types';
+import { IconPlus } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
-
-type PendingRecordCreation = {
-  key: string;
-  objectMetadataItem: EnrichedObjectMetadataItem;
-  initialDraftRecord?: Partial<ObjectRecord>;
-  settle: (draftRecord: Partial<ObjectRecord> | null) => void;
-};
 
 type RecordCreationFormProviderProps = {
   children: ReactNode;
@@ -25,19 +20,19 @@ type RecordCreationFormProviderProps = {
 export const RecordCreationFormProvider = ({
   children,
 }: RecordCreationFormProviderProps) => {
-  const { openModal, closeModal } = useModal();
+  const store = useStore();
+  const { navigateSidePanelMenu } = useSidePanelMenu();
 
-  const [pendingRecordCreation, setPendingRecordCreation] =
-    useState<PendingRecordCreation | null>(null);
+  const [settlePendingDraft, setSettlePendingDraft] = useState<
+    ((draftRecord: Partial<ObjectRecord> | null) => void) | null
+  >(null);
 
-  const settlePendingRecordCreation = useCallback(
+  const settleRecordCreationDraft = useCallback(
     (draftRecord: Partial<ObjectRecord> | null) => {
-      setPendingRecordCreation(null);
-      closeModal(RECORD_CREATION_FORM_MODAL_ID);
-
-      pendingRecordCreation?.settle(draftRecord);
+      setSettlePendingDraft(null);
+      settlePendingDraft?.(draftRecord);
     },
-    [closeModal, pendingRecordCreation],
+    [settlePendingDraft],
   );
 
   const requestRecordCreationDraft = useCallback(
@@ -48,41 +43,42 @@ export const RecordCreationFormProvider = ({
       objectMetadataItem: EnrichedObjectMetadataItem;
       initialDraftRecord?: Partial<ObjectRecord>;
     }) => {
-      pendingRecordCreation?.settle(null);
+      settlePendingDraft?.(null);
+
+      const pageId = v4();
+
+      store.set(
+        recordCreationFormRequestComponentState.atomFamily({
+          instanceId: pageId,
+        }),
+        {
+          objectMetadataId: objectMetadataItem.id,
+          initialDraftRecord: initialDraftRecord ?? {},
+        },
+      );
+
+      navigateSidePanelMenu({
+        page: SidePanelPages.RecordCreationForm,
+        pageTitle: t`New ${objectMetadataItem.labelSingular}`,
+        pageIcon: IconPlus,
+        pageId,
+      });
 
       return new Promise<Partial<ObjectRecord> | null>((resolve) => {
-        // A new key remounts the modal, which is what discards the previous
-        // draft and every field input's own internal value.
-        setPendingRecordCreation({
-          key: v4(),
-          objectMetadataItem,
-          initialDraftRecord,
-          settle: resolve,
-        });
-        openModal(RECORD_CREATION_FORM_MODAL_ID);
+        setSettlePendingDraft(() => resolve);
       });
     },
-    [openModal, pendingRecordCreation],
+    [navigateSidePanelMenu, settlePendingDraft, store],
   );
 
   const contextValue = useMemo<RecordCreationFormContextValue>(
-    () => ({ requestRecordCreationDraft }),
-    [requestRecordCreationDraft],
+    () => ({ requestRecordCreationDraft, settleRecordCreationDraft }),
+    [requestRecordCreationDraft, settleRecordCreationDraft],
   );
 
   return (
     <RecordCreationFormContext.Provider value={contextValue}>
       {children}
-      {isDefined(pendingRecordCreation) && (
-        <RecordCreationFormModal
-          key={pendingRecordCreation.key}
-          modalInstanceId={RECORD_CREATION_FORM_MODAL_ID}
-          objectMetadataItem={pendingRecordCreation.objectMetadataItem}
-          initialDraftRecord={pendingRecordCreation.initialDraftRecord}
-          onSubmit={settlePendingRecordCreation}
-          onCancel={() => settlePendingRecordCreation(null)}
-        />
-      )}
     </RecordCreationFormContext.Provider>
   );
 };
