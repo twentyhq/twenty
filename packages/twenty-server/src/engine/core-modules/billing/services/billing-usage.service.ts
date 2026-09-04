@@ -146,7 +146,9 @@ export class BillingUsageService {
       cost,
     });
 
-    const isAllowanceExhausted = exhausted?.exhaustedKind === 'allowance';
+    const isAllowanceExhausted = exhausted.some(
+      (scope) => scope.exhaustedKind === 'allowance',
+    );
 
     if (!(await this.isAvailableCreditsCounterEnabled(workspaceId))) {
       return { hasNoMoreAvailableCredits: isAllowanceExhausted };
