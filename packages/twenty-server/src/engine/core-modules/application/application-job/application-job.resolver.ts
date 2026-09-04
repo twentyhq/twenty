@@ -12,7 +12,7 @@ import { EnqueueJobResultDTO } from 'src/engine/core-modules/application/applica
 import { EnqueueJobInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-job.input';
 import { EnqueueJobsResultDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-jobs-result.dto';
 import { EnqueueJobsInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-jobs.input';
-import { JobStatusDTO } from 'src/engine/core-modules/application/application-job/dtos/job-status.dto';
+import { JobStatusDTO } from 'src/engine/core-modules/message-queue/dtos/job-status.dto';
 import { ApplicationJobService } from 'src/engine/core-modules/application/application-job/services/application-job.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';

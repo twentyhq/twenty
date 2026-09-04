@@ -6013,7 +6013,7 @@ msgstr "Çubuk grafik widget'ı \"{widgetTitle}\" için yerleşim gereklidir"
 #. js-lingui-id: cI7XDa
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 msgid "Limits scoped below the workspace require the Organization plan."
-msgstr ""
+msgstr "Çalışma alanının altında kapsamı belirlenen sınırlar Organization planını gerektirir."
 
 #. js-lingui-id: sAG9OB
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts

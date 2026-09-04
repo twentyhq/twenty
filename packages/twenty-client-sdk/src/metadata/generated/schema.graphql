@@ -1604,6 +1604,27 @@ enum NavigationMenuItemType {
   PAGE_LAYOUT
 }
 
+type JobStatus {
+  jobId: String!
+  state: JobState!
+  attemptsMade: Int!
+  failedReason: String
+  enqueuedAt: Float!
+  startedAt: Float
+  finishedAt: Float
+}
+
+"""Job state in the queue"""
+enum JobState {
+  COMPLETED
+  FAILED
+  ACTIVE
+  WAITING
+  DELAYED
+  PRIORITIZED
+  WAITING_CHILDREN
+}
+
 type ObjectRecordEventProperties {
   updatedFields: [String!]
   before: JSON
@@ -1654,6 +1675,7 @@ type EventSubscription {
   eventStreamId: String!
   objectRecordEventsWithQueryIds: [ObjectRecordEventWithQueryIds!]!
   metadataEvents: [MetadataEvent!]!
+  queueJobEvents: [JobStatus!]!
 }
 
 type UserSession {
@@ -3264,27 +3286,6 @@ type EnqueueJobsResult {
   logicFunctionUniversalIdentifier: String!
   enqueuedJobsCount: Int!
   jobIds: [String!]!
-}
-
-type JobStatus {
-  jobId: String!
-  state: JobState!
-  attemptsMade: Int!
-  failedReason: String
-  enqueuedAt: Float!
-  startedAt: Float
-  finishedAt: Float
-}
-
-"""Job state in the queue"""
-enum JobState {
-  COMPLETED
-  FAILED
-  ACTIVE
-  WAITING
-  DELAYED
-  PRIORITIZED
-  WAITING_CHILDREN
 }
 
 type AppKeyValue {
