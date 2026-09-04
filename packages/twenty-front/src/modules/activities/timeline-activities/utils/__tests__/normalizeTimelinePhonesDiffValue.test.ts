@@ -76,4 +76,26 @@ describe('normalizeTimelinePhonesDiffValue', () => {
 
     expect(result.additionalPhones).toBeNull();
   });
+
+  it.each([
+    ['an empty string', ''],
+    ['a non-array object', { number: '987654321' }],
+    ['a number', 42],
+    ['a boolean', true],
+  ])(
+    'should normalize additionalPhones stored as %s to null',
+    (_label, additionalPhones) => {
+      const result = normalizeTimelinePhonesDiffValue({
+        primaryPhoneNumber: '123456789',
+        primaryPhoneCountryCode: 'FR',
+        primaryPhoneCallingCode: '+33',
+        additionalPhones,
+      });
+
+      expect(result.additionalPhones).toBeNull();
+      expect(createPhonesFromFieldValue(result)).toEqual([
+        { number: '123456789', callingCode: '+33', countryCode: 'FR' },
+      ]);
+    },
+  );
 });
