@@ -1,0 +1,2 @@
+import { validateCronExpression } from './validateCronExpression'; import assert from 'node:assert/strict';
+assert.equal(validateCronExpression("*/5 * * * *"), true); assert.equal(validateCronExpression("invalid"), false);
