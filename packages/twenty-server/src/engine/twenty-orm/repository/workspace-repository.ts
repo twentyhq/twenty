@@ -2,10 +2,12 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
+  FeatureFlagKey,
+  MetadataReadability,
   type ObjectRecord,
   type ObjectsPermissions,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import {
   DeleteResult,
   In,
@@ -17,9 +19,19 @@ import {
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { FilesFieldSync } from 'src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync';
-import { validateOperationIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
+import {
+  type OperationType,
+  validateOperationIsPermittedOrThrow,
+} from 'src/engine/twenty-orm/repository/permissions.utils';
+import { resolveRequiredRecordShareAccessLevels } from 'src/engine/twenty-orm/repository/resolve-required-record-share-access-levels.util';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
+import { buildRecordShareCondition } from 'src/engine/twenty-orm/utils/build-record-share-condition.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
@@ -27,7 +39,9 @@ import {
   getUpdateEventRecords,
   mergeRecordsWithUpdateValues,
 } from 'src/engine/twenty-orm/utils/merge-records-with-update-values.util';
+import { isOwningApplicationAuthContext } from 'src/engine/twenty-orm/utils/is-owning-application-auth-context.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util';
+import { resolvePrincipalIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-principal-ids-from-auth-context.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
 import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
 import {
@@ -78,6 +92,8 @@ import {
   type WorkspaceRelationShape,
   type WorkspaceTableShape,
 } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
+
+const ALWAYS_FALSE_CONDITION = '1=0';
 
 const MUTATION_EVENT_ACTIONS_BY_KIND: Record<
   MutationKind,
@@ -194,8 +210,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   applyWriteRowLevelPermissions(
     queryBuilder: WorkspaceSelectQueryBuilder,
+    kind: MutationKind,
   ): void {
-    this.applyRowLevelPermissionPredicates(queryBuilder);
+    this.applyRowLevelPermissionPredicates(queryBuilder, kind);
   }
 
   getInternalContext(): WorkspaceInternalContext {
@@ -1039,8 +1056,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
       const rawBeforeForInput = rawBeforeByInputIndex[index];
 
-      recordsBefore.push(...rawBeforeForInput);
-
       this.validateRLSPredicatesForWrittenRecords(
         this.formatResult<ObjectRecord[]>(
           rawBeforeForInput.map((record) => ({ ...record, ...setColumns })),
@@ -1052,7 +1067,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         id: input.id,
       });
 
-      this.applyRowLevelPermissionPredicates(selectQueryBuilder);
+      this.applyRowLevelPermissionPredicates(selectQueryBuilder, 'update');
 
       const result = await selectQueryBuilder
         .update()
@@ -1061,6 +1076,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         .execute();
 
       generatedMaps.push(...(result.generatedMaps as ObjectRecord[]));
+
+      if (result.generatedMaps.length === 0) {
+        continue;
+      }
+
+      recordsBefore.push(...rawBeforeForInput);
 
       const recordsAfterWrite = this.options.shouldSkipEventEmission
         ? []
@@ -1225,7 +1246,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     data?: Partial<ObjectRecord>;
   }): Promise<ObjectRecord[]> {
     if (!rowLevelPermissionsApplied) {
-      this.applyRowLevelPermissionPredicates(selectQueryBuilder);
+      this.applyRowLevelPermissionPredicates(selectQueryBuilder, kind);
     }
 
     const eventSelectQueryBuilder =
@@ -1503,6 +1524,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   private applyRowLevelPermissionPredicates(
     queryBuilder: WorkspaceSelectQueryBuilder,
+    operationType: OperationType = 'select',
   ): void {
     if (this.options.shouldBypassPermissionChecks) {
       return;
@@ -1512,6 +1534,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       queryBuilder,
       alias: queryBuilder.alias,
       flatObjectMetadata: this.options.flatObjectMetadata,
+      operationType,
     });
 
     for (const joinAlias of queryBuilder.getJoinAliases()) {
@@ -1527,6 +1550,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         flatObjectMetadata: this.options.flatObjectMetadataByObjectMetadataId(
           joinedTableShape.objectMetadataId,
         ),
+        operationType: 'select',
       });
     }
   }
@@ -1535,15 +1559,39 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     queryBuilder,
     alias,
     flatObjectMetadata,
+    operationType,
   }: {
     queryBuilder: WorkspaceSelectQueryBuilder;
     alias: string;
     flatObjectMetadata: FlatObjectMetadata;
+    operationType: OperationType;
   }): void {
     if (!queryBuilder.markRowLevelPermissionApplied(alias)) {
       return;
     }
 
+    this.applyRolePredicateForAlias({
+      queryBuilder,
+      alias,
+      flatObjectMetadata,
+    });
+    this.applyRecordShareGateForAlias({
+      queryBuilder,
+      alias,
+      flatObjectMetadata,
+      operationType,
+    });
+  }
+
+  private applyRolePredicateForAlias({
+    queryBuilder,
+    alias,
+    flatObjectMetadata,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    alias: string;
+    flatObjectMetadata: FlatObjectMetadata;
+  }): void {
     const recordFilter = resolveRowLevelPermissionRecordFilter({
       internalContext: this.options.internalContext,
       authContext: this.options.authContext,
@@ -1565,16 +1613,151 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return;
     }
 
+    this.addConditionForAlias({
+      queryBuilder,
+      alias,
+      sql: renderedCondition.sql,
+      parameters: renderedCondition.parameters,
+    });
+  }
+
+  private applyRecordShareGateForAlias({
+    queryBuilder,
+    alias,
+    flatObjectMetadata,
+    operationType,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    alias: string;
+    flatObjectMetadata: FlatObjectMetadata;
+    operationType: OperationType;
+  }): void {
+    if (
+      !this.options.internalContext.featureFlagsMap[
+        FeatureFlagKey.IS_RECORD_SHARING_ENABLED
+      ]
+    ) {
+      return;
+    }
+
+    const isOwningApplication = isOwningApplicationAuthContext({
+      authContext: this.options.authContext,
+      owningApplicationId: flatObjectMetadata.applicationId,
+    });
+
+    switch (flatObjectMetadata.readability) {
+      case MetadataReadability.OPEN:
+      case MetadataReadability.INHERITED:
+        return;
+      case MetadataReadability.SYSTEM:
+        this.denyAccessForAlias({ queryBuilder, alias, flatObjectMetadata });
+
+        return;
+      case MetadataReadability.APPLICATION:
+        if (!isOwningApplication) {
+          this.denyAccessForAlias({ queryBuilder, alias, flatObjectMetadata });
+        }
+
+        return;
+      case MetadataReadability.PRIVATE:
+        if (isOwningApplication) {
+          return;
+        }
+
+        this.applyRecordShareConditionForAlias({
+          queryBuilder,
+          alias,
+          flatObjectMetadata,
+          operationType,
+        });
+
+        return;
+      default:
+        assertUnreachable(flatObjectMetadata.readability);
+    }
+  }
+
+  private applyRecordShareConditionForAlias({
+    queryBuilder,
+    alias,
+    flatObjectMetadata,
+    operationType,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    alias: string;
+    flatObjectMetadata: FlatObjectMetadata;
+    operationType: OperationType;
+  }): void {
+    const principalIds = resolvePrincipalIdsFromAuthContext({
+      authContext: this.options.authContext,
+      userWorkspaceRoleMap: this.options.internalContext.userWorkspaceRoleMap,
+      apiKeyRoleMap: this.options.internalContext.apiKeyRoleMap,
+    });
+
+    if (!isDefined(principalIds)) {
+      return;
+    }
+
+    const accessLevels = resolveRequiredRecordShareAccessLevels(operationType);
+
+    if (accessLevels.length === 0) {
+      return;
+    }
+
+    const recordShareTableShape = this.options.tableShapeByObjectMetadataId(
+      this.options.internalContext.objectIdByNameSingular.recordShare,
+    );
+
+    const condition = buildRecordShareCondition({
+      tableAlias: alias,
+      recordShareTableExpression: `${escapeIdentifier(
+        recordShareTableShape.schemaName,
+      )}.${escapeIdentifier(recordShareTableShape.tableName)}`,
+      objectMetadataId: flatObjectMetadata.id,
+      principalIds,
+      accessLevels,
+    });
+
+    this.addConditionForAlias({ queryBuilder, alias, ...condition });
+  }
+
+  private denyAccessForAlias({
+    queryBuilder,
+    alias,
+    flatObjectMetadata,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    alias: string;
+    flatObjectMetadata: FlatObjectMetadata;
+  }): void {
     if (alias === queryBuilder.alias) {
-      queryBuilder.andWhere(
-        renderedCondition.sql,
-        renderedCondition.parameters,
+      throw new PermissionsException(
+        `${PermissionsExceptionMessage.PERMISSION_DENIED}: records of "${flatObjectMetadata.nameSingular}" are not readable through the API`,
+        PermissionsExceptionCode.PERMISSION_DENIED,
       );
+    }
+
+    queryBuilder.addJoinCondition(alias, ALWAYS_FALSE_CONDITION);
+  }
+
+  private addConditionForAlias({
+    queryBuilder,
+    alias,
+    sql,
+    parameters,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    alias: string;
+    sql: string;
+    parameters: ObjectLiteral;
+  }): void {
+    if (alias === queryBuilder.alias) {
+      queryBuilder.andWhere(sql, parameters);
 
       return;
     }
 
-    queryBuilder.addJoinCondition(alias, renderedCondition.sql);
-    queryBuilder.setParameters(renderedCondition.parameters);
+    queryBuilder.addJoinCondition(alias, sql);
+    queryBuilder.setParameters(parameters);
   }
 }
