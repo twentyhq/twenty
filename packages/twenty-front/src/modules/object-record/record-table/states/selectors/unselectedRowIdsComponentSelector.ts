@@ -9,16 +9,18 @@ export const unselectedRowIdsComponentSelector = createAtomComponentSelector<
   key: 'unselectedRowIdsComponentSelector',
   componentInstanceContext: RecordTableComponentInstanceContext,
   get:
-    ({ instanceId }) =>
+    ({ instanceId, surfaceId }) =>
     ({ get }) => {
       const allRecordIds = get(recordIndexAllRecordIdsComponentSelector, {
         instanceId,
+        surfaceId,
       });
 
       return allRecordIds.filter(
         (recordId) =>
           get(isRowSelectedComponentFamilyState, {
             instanceId,
+            surfaceId,
             familyKey: recordId,
           }) === false,
       );

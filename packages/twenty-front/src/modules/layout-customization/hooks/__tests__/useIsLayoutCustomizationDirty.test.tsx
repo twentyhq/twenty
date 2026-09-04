@@ -14,6 +14,7 @@ import {
   NavigationMenuItemType,
   PageLayoutType,
 } from '~/generated-metadata/graphql';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const PAGE_LAYOUT_ID_1 = 'page-layout-1';
 const PAGE_LAYOUT_ID_2 = 'page-layout-2';
@@ -85,12 +86,14 @@ describe('useIsLayoutCustomizationDirty', () => {
     store.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID_1,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       MOCK_PAGE_LAYOUT,
     );
     store.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID_1,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       { ...MOCK_DRAFT_PAGE_LAYOUT, name: 'Modified Layout' },
     );
@@ -117,12 +120,14 @@ describe('useIsLayoutCustomizationDirty', () => {
     store.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID_1,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       MOCK_PAGE_LAYOUT,
     );
     store.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID_1,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       MOCK_DRAFT_PAGE_LAYOUT,
     );
@@ -189,12 +194,14 @@ describe('useIsLayoutCustomizationDirty', () => {
     store.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID_1,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       MOCK_PAGE_LAYOUT,
     );
     store.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID_1,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       MOCK_PAGE_LAYOUT,
     );
@@ -207,12 +214,14 @@ describe('useIsLayoutCustomizationDirty', () => {
     store.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID_2,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       secondLayout,
     );
     store.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID_2,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       { ...secondLayout, name: 'Modified Second' },
     );

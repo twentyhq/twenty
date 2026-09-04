@@ -22,6 +22,7 @@ import {
   type UpsertViewWidgetInput,
 } from '~/generated-metadata/graphql';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const PAGE_LAYOUT_ID = 'page-layout-id';
 const WIDGET_ID = 'widget-id';
@@ -106,12 +107,14 @@ describe('useSaveRecordTableWidgetViews', () => {
     store.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       makeDraft([makeTab('tab-1', [recordTableWidget])]),
     );
     store.set(
       recordTableWidgetViewDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       {
         [WIDGET_ID]: {
@@ -149,12 +152,14 @@ describe('useSaveRecordTableWidgetViews', () => {
     store.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       makeDraft([makeTab('tab-1', [recordTableWidget])]),
     );
     store.set(
       recordTableWidgetViewDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       {
         [WIDGET_ID]: {

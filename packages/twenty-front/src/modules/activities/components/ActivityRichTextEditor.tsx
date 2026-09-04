@@ -19,6 +19,7 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 type ActivityRichTextEditorProps = {
   activityId: string;
@@ -31,6 +32,7 @@ export const ActivityRichTextEditor = ({
   activityId,
   activityObjectNameSingular,
 }: ActivityRichTextEditorProps) => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
 
   // oxlint-disable-next-line twenty/no-state-useref
@@ -91,6 +93,7 @@ export const ActivityRichTextEditor = ({
     const isRecordTitleCellOpen = store.get(
       isTitleCellInEditModeComponentState.atomFamily({
         instanceId: recordTitleCellId,
+        surfaceId,
       }),
     );
 
@@ -107,12 +110,19 @@ export const ActivityRichTextEditor = ({
       focusId: activityId,
       globalHotkeysConfig: BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG,
     });
-  }, [recordTitleCellId, activityId, pushFocusItemToFocusStack, store]);
+  }, [
+    recordTitleCellId,
+    activityId,
+    pushFocusItemToFocusStack,
+    store,
+    surfaceId,
+  ]);
 
   const handleBlur = useCallback(() => {
     const isRecordTitleCellOpen = store.get(
       isTitleCellInEditModeComponentState.atomFamily({
         instanceId: recordTitleCellId,
+        surfaceId,
       }),
     );
 
@@ -121,7 +131,13 @@ export const ActivityRichTextEditor = ({
     }
 
     removeFocusItemFromFocusStackById({ focusId: activityId });
-  }, [activityId, recordTitleCellId, removeFocusItemFromFocusStackById, store]);
+  }, [
+    activityId,
+    recordTitleCellId,
+    removeFocusItemFromFocusStackById,
+    store,
+    surfaceId,
+  ]);
 
   return (
     <RichTextFieldEditor

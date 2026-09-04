@@ -18,8 +18,10 @@ import {
   markWorkspaceCreditsExhausted,
 } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useRetryChatMessage = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const apolloClient = useApolloClient();
   const store = useStore();
   const { modelIdForRequest } = useAgentChatModelId();
@@ -33,11 +35,13 @@ export const useRetryChatMessage = () => {
 
     const errorAtom = agentChatErrorComponentFamilyState.atomFamily({
       instanceId: AGENT_CHAT_INSTANCE_ID,
+      surfaceId,
       familyKey: { threadId },
     });
     const isAwaitingFirstChunkAtom =
       agentChatIsAwaitingFirstChunkComponentFamilyState.atomFamily({
         instanceId: AGENT_CHAT_INSTANCE_ID,
+        surfaceId,
         familyKey: { threadId },
       });
     const previousError = store.get(errorAtom);
@@ -83,7 +87,7 @@ export const useRetryChatMessage = () => {
         store.set(currentWorkspaceState.atom, markWorkspaceCreditsExhausted);
       }
     }
-  }, [apolloClient, store, modelIdForRequest]);
+  }, [apolloClient, store, modelIdForRequest, surfaceId]);
 
   return { retryChatMessage };
 };

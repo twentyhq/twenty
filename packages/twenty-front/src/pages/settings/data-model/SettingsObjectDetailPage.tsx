@@ -23,7 +23,6 @@ import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { getAppPath, getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -68,15 +67,10 @@ export const SettingsObjectDetailPage = () => {
     isObjectMetadataReadOnly({
       objectMetadataItem,
     }) || isDDLLocked;
-
-  const tabsComponentInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
-    SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
-  );
-
   const activeTabId =
     useAtomComponentStateValue(
       activeTabIdComponentState,
-      tabsComponentInstanceId,
+      SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
     ) ?? SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS;
 
   const [isDeleting, setIsDeleting] = useState(false);
@@ -193,7 +187,9 @@ export const SettingsObjectDetailPage = () => {
       secondaryBar={
         <SettingsTabBar
           tabs={tabs}
-          componentInstanceId={tabsComponentInstanceId}
+          componentInstanceId={
+            SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID
+          }
         />
       }
     >

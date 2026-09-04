@@ -8,16 +8,18 @@ export const recordCalendarSelectedRecordIdsComponentSelector =
     key: 'recordCalendarSelectedRecordIdsSelector',
     componentInstanceContext: RecordCalendarComponentInstanceContext,
     get:
-      ({ instanceId }) =>
+      ({ instanceId, surfaceId }) =>
       ({ get }) => {
         const allRecordIds = get(recordCalendarRecordIdsComponentState, {
           instanceId,
+          surfaceId,
         });
 
         return allRecordIds.filter(
           (recordId: string) =>
             get(isRecordCalendarCardSelectedComponentFamilyState, {
               instanceId,
+              surfaceId,
               familyKey: recordId,
             }) === true,
         );

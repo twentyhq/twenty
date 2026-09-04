@@ -3,7 +3,7 @@ import { type ComponentInstanceStateContext } from '@/ui/utilities/state/compone
 import { isNonEmptyString } from '@sniptt/guards';
 
 // Returns the id exactly as provided; see useAvailableComponentInstanceIdOrThrow
-// for why surface scoping belongs at the provider, not here.
+// for why surface scoping belongs in the atom key, not here.
 export const useAvailableComponentInstanceId = <
   T extends { instanceId: string },
 >(

@@ -9,8 +9,10 @@ import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldM
 import { computeDraftValueFromFieldValue } from '@/object-record/record-field/ui/utils/computeDraftValueFromFieldValue';
 import { computeDraftValueFromString } from '@/object-record/record-field/ui/utils/computeDraftValueFromString';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useInitDraftValue = <FieldValue>() => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
 
   return useCallback(
@@ -34,6 +36,7 @@ export const useInitDraftValue = <FieldValue>() => {
 
       const draftValue = recordFieldInputDraftValueComponentState.atomFamily({
         instanceId: fieldComponentInstanceId,
+        surfaceId,
       });
 
       if (
@@ -57,6 +60,6 @@ export const useInitDraftValue = <FieldValue>() => {
         );
       }
     },
-    [store],
+    [store, surfaceId],
   );
 };

@@ -8,6 +8,7 @@ import { act } from 'react';
 import { ViewType, ViewVisibility } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const recordIndexId = 'record-table-widget-record-index-id';
 const objectMetadataItem = getMockObjectMetadataItemOrThrow('company');
@@ -58,6 +59,7 @@ describe('useLoadRecordIndexStates', () => {
       jotaiStore.get(
         anyFieldFilterValueComponentState.atomFamily({
           instanceId: recordIndexId,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
       ),
     ).toBe('Acme');
@@ -67,6 +69,7 @@ describe('useLoadRecordIndexStates', () => {
     const anyFieldFilterValueAtom =
       anyFieldFilterValueComponentState.atomFamily({
         instanceId: recordIndexId,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       });
 
     const { result } = renderUseLoadRecordIndexStates();

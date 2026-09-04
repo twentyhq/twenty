@@ -22,6 +22,7 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import { StartWorkspaceSetupChatDocument } from '~/generated-metadata/graphql';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const threadId = '20202020-aaaa-4aaa-8aaa-202020202020';
 const threadTitle = 'Configuration du workspace';
@@ -193,6 +194,7 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
       jotaiStore.get(
         agentChatIsAwaitingFirstChunkComponentFamilyState.atomFamily({
           instanceId: AGENT_CHAT_INSTANCE_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
           familyKey: { threadId },
         }),
       ),
@@ -201,6 +203,7 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
       jotaiStore.get(
         currentAiChatThreadTitleComponentFamilyState.atomFamily({
           instanceId: AGENT_CHAT_INSTANCE_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
           familyKey: { threadId },
         }),
       ),
@@ -217,6 +220,7 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
       jotaiStore.get(
         agentChatIsAwaitingFirstChunkComponentFamilyState.atomFamily({
           instanceId: AGENT_CHAT_INSTANCE_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
           familyKey: { threadId },
         }),
       ),

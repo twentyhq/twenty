@@ -20,6 +20,7 @@ import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/je
 import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const mockObjectMetadataItemNameSingular = 'company';
 
@@ -156,6 +157,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
             store.set(
               contextStoreCurrentViewIdComponentState.atomFamily({
                 instanceId: 'instanceId',
+                surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
               }),
               mockView.id,
             );
@@ -200,6 +202,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
             store.set(
               contextStoreCurrentViewIdComponentState.atomFamily({
                 instanceId: 'instanceId',
+                surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
               }),
               mockView.id,
             );

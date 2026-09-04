@@ -8,6 +8,7 @@ import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
 } from './PageLayoutTestWrapper';
 import { useChangePageLayoutDragSelection } from '@/page-layout/hooks/useChangePageLayoutDragSelection';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 describe('useChangePageLayoutDragSelection', () => {
   it('should add cell to selection when selected is true', () => {
@@ -15,6 +16,7 @@ describe('useChangePageLayoutDragSelection', () => {
     store.set(
       pageLayoutSelectedCellsComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       new Set(['cell-1']),
     );
@@ -58,6 +60,7 @@ describe('useChangePageLayoutDragSelection', () => {
     store.set(
       pageLayoutSelectedCellsComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       new Set(['cell-1', 'cell-2']),
     );
@@ -136,6 +139,7 @@ describe('useChangePageLayoutDragSelection', () => {
     store.set(
       pageLayoutSelectedCellsComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       new Set(['cell-1']),
     );

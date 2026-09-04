@@ -7,6 +7,7 @@ import { recordPageLayoutByObjectMetadataIdFamilySelector } from '@/page-layout/
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { PageLayoutType } from '~/generated-metadata/graphql';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 export const setRecordPageActiveTabId = ({
   recordId,
@@ -57,7 +58,10 @@ export const setRecordPageActiveTabId = ({
   });
 
   store.set(
-    activeTabIdComponentState.atomFamily({ instanceId: tabListInstanceId }),
+    activeTabIdComponentState.atomFamily({
+      instanceId: tabListInstanceId,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+    }),
     tabId,
   );
 };

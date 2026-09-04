@@ -8,7 +8,10 @@ export const mainContextStoreHasSelectedRecordsSelector =
     get: ({ get }) => {
       const numberOfSelectedRecords = get(
         contextStoreNumberOfSelectedRecordsComponentState,
-        { instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID },
+        {
+          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+        },
       );
 
       return numberOfSelectedRecords > 0;

@@ -14,8 +14,10 @@ import { atom, useAtomValue } from 'jotai';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useIsLayoutCustomizationDirty = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const { isDirty: isNavigationDirty } = useNavigationMenuItemsDraftState();
   const { isDirty: isCommandMenuItemsDirty } = useCommandMenuItemsDraftState();
 
@@ -30,12 +32,14 @@ export const useIsLayoutCustomizationDirty = () => {
           const draft = get(
             pageLayoutDraftComponentState.atomFamily({
               instanceId: pageLayoutId,
+              surfaceId,
             }),
           );
 
           const persisted = get(
             pageLayoutPersistedComponentState.atomFamily({
               instanceId: pageLayoutId,
+              surfaceId,
             }),
           );
 
@@ -50,11 +54,13 @@ export const useIsLayoutCustomizationDirty = () => {
           const fieldsWidgetGroupsDraft = get(
             fieldsWidgetGroupsDraftComponentState.atomFamily({
               instanceId: pageLayoutId,
+              surfaceId,
             }),
           );
           const fieldsWidgetGroupsPersisted = get(
             fieldsWidgetGroupsPersistedComponentState.atomFamily({
               instanceId: pageLayoutId,
+              surfaceId,
             }),
           );
 
@@ -67,11 +73,13 @@ export const useIsLayoutCustomizationDirty = () => {
           const ungroupedFieldsDraft = get(
             fieldsWidgetUngroupedFieldsDraftComponentState.atomFamily({
               instanceId: pageLayoutId,
+              surfaceId,
             }),
           );
           const ungroupedFieldsPersisted = get(
             fieldsWidgetUngroupedFieldsPersistedComponentState.atomFamily({
               instanceId: pageLayoutId,
+              surfaceId,
             }),
           );
 
@@ -82,11 +90,13 @@ export const useIsLayoutCustomizationDirty = () => {
           const recordTableWidgetViewDraft = get(
             recordTableWidgetViewDraftComponentState.atomFamily({
               instanceId: pageLayoutId,
+              surfaceId,
             }),
           );
           const recordTableWidgetViewPersisted = get(
             recordTableWidgetViewPersistedComponentState.atomFamily({
               instanceId: pageLayoutId,
+              surfaceId,
             }),
           );
 
@@ -102,7 +112,7 @@ export const useIsLayoutCustomizationDirty = () => {
 
         return false;
       }),
-    [],
+    [surfaceId],
   );
 
   const isAnyPageLayoutDirty = useAtomValue(isAnyPageLayoutDirtyAtom);

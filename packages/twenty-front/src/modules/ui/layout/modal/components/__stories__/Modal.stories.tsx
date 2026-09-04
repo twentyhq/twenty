@@ -14,11 +14,13 @@ import { ModalContent, ModalFooter, ModalHeader } from 'twenty-ui/surfaces';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { sleep } from '~/utils/sleep';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const JotaiInitDecorator: Decorator = (Story) => {
   jotaiStore.set(
     isModalOpenedComponentState.atomFamily({
       instanceId: 'modal-id',
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
     true,
   );

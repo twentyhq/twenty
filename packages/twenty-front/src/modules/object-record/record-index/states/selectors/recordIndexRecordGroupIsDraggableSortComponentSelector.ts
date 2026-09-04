@@ -8,11 +8,13 @@ export const recordIndexRecordGroupIsDraggableSortComponentSelector =
     key: 'recordIndexRecordGroupIsDraggableSortComponentSelector',
     componentInstanceContext: ViewComponentInstanceContext,
     get:
-      ({ instanceId }) =>
+      ({ instanceId, surfaceId }) =>
       ({ get }) => {
         return (
-          get(recordIndexRecordGroupSortComponentState, { instanceId }) ===
-          RecordGroupSort.Manual
+          get(recordIndexRecordGroupSortComponentState, {
+            instanceId,
+            surfaceId,
+          }) === RecordGroupSort.Manual
         );
       },
   });

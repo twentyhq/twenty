@@ -8,15 +8,17 @@ export const isAtLeastOneTableRowSelectedSelector =
     key: 'isAtLeastOneTableRowSelectedSelector',
     componentInstanceContext: RecordTableComponentInstanceContext,
     get:
-      ({ instanceId }) =>
+      ({ instanceId, surfaceId }) =>
       ({ get }) => {
         const allRecordIds = get(recordIndexAllRecordIdsComponentSelector, {
           instanceId,
+          surfaceId,
         });
 
         const isAnyRecordSelected = allRecordIds.some((recordId: string) =>
           get(isRowSelectedComponentFamilyState, {
             instanceId,
+            surfaceId,
             familyKey: recordId,
           }),
         );

@@ -12,6 +12,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const meta: Meta<typeof UploadStep> = {
   title: 'Modules/SpreadsheetImport/UploadStep',
@@ -26,6 +27,7 @@ const meta: Meta<typeof UploadStep> = {
       jotaiStore.set(
         isModalOpenedComponentState.atomFamily({
           instanceId: 'upload-step',
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
         true,
       );

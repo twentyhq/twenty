@@ -11,7 +11,6 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { t } from '@lingui/core/macro';
 import { Pill } from 'twenty-ui/data-display';
 import {
@@ -35,13 +34,9 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
     recordIndexCalendarLayoutComponentState,
   );
   const { updateCurrentView } = useUpdateCurrentView();
-
-  const scopedObjectOptionsDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(OBJECT_OPTIONS_DROPDOWN_ID);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedObjectOptionsDropdownId,
+    OBJECT_OPTIONS_DROPDOWN_ID,
   );
 
   const { closeDropdown } = useObjectOptionsDropdown();

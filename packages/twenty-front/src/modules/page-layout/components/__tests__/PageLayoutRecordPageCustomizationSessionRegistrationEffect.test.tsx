@@ -14,6 +14,7 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { render, waitFor } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { PageLayoutType, WidgetType } from '~/generated-metadata/graphql';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const PAGE_LAYOUT_ID = 'page-layout-id';
 
@@ -47,12 +48,14 @@ const setupPageLayout = () => {
   store.set(
     pageLayoutPersistedComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
     persistedPageLayout,
   );
   store.set(
     pageLayoutDraftComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
     makeDraft([verticalListTab]),
   );
@@ -76,6 +79,7 @@ const getDraftWidgetIds = (store: ReturnType<typeof createStore>) =>
     .get(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
     )
     .tabs[0].widgets.map((widget) => widget.id);

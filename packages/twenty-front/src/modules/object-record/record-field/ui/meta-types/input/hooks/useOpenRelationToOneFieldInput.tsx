@@ -11,8 +11,10 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useOpenRelationToOneFieldInput = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { openSingleRecordPicker } = useSingleRecordPickerOpen();
@@ -40,6 +42,7 @@ export const useOpenRelationToOneFieldInput = () => {
         store.set(
           singleRecordPickerSelectedIdComponentState.atomFamily({
             instanceId: recordPickerInstanceId,
+            surfaceId,
           }),
           fieldValue.id,
         );
@@ -58,7 +61,7 @@ export const useOpenRelationToOneFieldInput = () => {
         },
       });
     },
-    [openSingleRecordPicker, pushFocusItemToFocusStack, store],
+    [openSingleRecordPicker, pushFocusItemToFocusStack, store, surfaceId],
   );
 
   return { openRelationToOneFieldInput };

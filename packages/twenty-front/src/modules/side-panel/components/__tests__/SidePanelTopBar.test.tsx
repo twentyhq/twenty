@@ -21,6 +21,7 @@ import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconDotsVertical } from 'twenty-ui/icon';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 jest.mock('@/side-panel/components/SidePanelTopBarInputFocusEffect', () => ({
   SidePanelTopBarInputFocusEffect: () => null,
@@ -126,6 +127,7 @@ describe('SidePanelTopBar', () => {
         store.get(
           selectedItemIdComponentState.atomFamily({
             instanceId: SIDE_PANEL_SELECTABLE_LIST_ID,
+            surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
           }),
         ),
       ).toBe('first-item');
@@ -141,6 +143,7 @@ describe('SidePanelTopBar', () => {
         store.get(
           selectedItemIdComponentState.atomFamily({
             instanceId: SIDE_PANEL_SELECTABLE_LIST_ID,
+            surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
           }),
         ),
       ).toBe('second-item');

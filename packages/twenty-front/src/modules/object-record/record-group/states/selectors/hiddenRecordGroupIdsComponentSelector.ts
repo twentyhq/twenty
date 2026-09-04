@@ -10,10 +10,11 @@ export const hiddenRecordGroupIdsComponentSelector =
     key: 'hiddenRecordGroupIdsComponentSelector',
     componentInstanceContext: ViewComponentInstanceContext,
     get:
-      ({ instanceId }) =>
+      ({ instanceId, surfaceId }) =>
       ({ get }) => {
         const recordGroupIds = get(recordGroupIdsComponentState, {
           instanceId,
+          surfaceId,
         });
 
         return recordGroupIds.filter((recordGroupId) => {

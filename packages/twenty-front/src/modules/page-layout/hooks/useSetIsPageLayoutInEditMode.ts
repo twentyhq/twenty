@@ -13,8 +13,10 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { PageLayoutType } from '~/generated-metadata/graphql';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
+  const surfaceId = useComponentStateSurfaceId();
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
@@ -63,6 +65,7 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
       const pageLayoutPersisted = store.get(
         pageLayoutPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
 
@@ -98,6 +101,7 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
       pageLayoutEditingWidgetIdState,
       pageLayoutId,
       store,
+      surfaceId,
     ],
   );
 

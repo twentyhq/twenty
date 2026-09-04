@@ -14,6 +14,7 @@ import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavi
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 type NavigateToRecordPageParams = {
   objectNameSingular: string;
@@ -21,6 +22,7 @@ type NavigateToRecordPageParams = {
 };
 
 export const useNavigateToRecordPageFromSidePanel = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const navigate = useNavigate();
   const { closeSidePanelMenu } = useSidePanelMenu();
@@ -59,6 +61,7 @@ export const useNavigateToRecordPageFromSidePanel = () => {
       const panelParentViewState = isDefined(sidePanelPageInstanceId)
         ? contextStoreRecordShowParentViewComponentState.atomFamily({
             instanceId: sidePanelPageInstanceId,
+            surfaceId,
           })
         : undefined;
       const parentView = isDefined(panelParentViewState)
@@ -68,6 +71,7 @@ export const useNavigateToRecordPageFromSidePanel = () => {
       store.set(
         contextStoreRecordShowParentViewComponentState.atomFamily({
           instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+          surfaceId,
         }),
         isDefined(parentView) &&
           parentView.parentViewObjectNameSingular === objectNameSingular
@@ -102,6 +106,7 @@ export const useNavigateToRecordPageFromSidePanel = () => {
       store,
       workspaceSurface.instanceId,
       workspaceSurface.type,
+      surfaceId,
     ],
   );
 

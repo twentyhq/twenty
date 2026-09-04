@@ -8,16 +8,18 @@ export const recordBoardSelectedRecordIdsComponentSelector =
     key: 'recordBoardSelectedRecordIdsSelector',
     componentInstanceContext: RecordBoardComponentInstanceContext,
     get:
-      ({ instanceId }) =>
+      ({ instanceId, surfaceId }) =>
       ({ get }) => {
         const allRecordIds = get(recordIndexAllRecordIdsComponentSelector, {
           instanceId,
+          surfaceId,
         });
 
         return allRecordIds.filter(
           (recordId) =>
             get(isRecordBoardCardSelectedComponentFamilyState, {
               instanceId,
+              surfaceId,
               familyKey: recordId,
             }) === true,
         );

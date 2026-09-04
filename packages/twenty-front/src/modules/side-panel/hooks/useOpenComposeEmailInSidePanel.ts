@@ -13,6 +13,7 @@ import { composeEmailDefaultInReplyToComponentState } from '@/side-panel/pages/c
 import { composeEmailDefaultSubjectComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultSubjectComponentState';
 import { composeEmailDefaultToComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultToComponentState';
 import { t } from '@lingui/core/macro';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 type OpenComposeEmailParams = {
   threadId?: string;
@@ -26,6 +27,7 @@ type OpenComposeEmailParams = {
 };
 
 export const useOpenComposeEmailInSidePanel = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const { navigateSidePanelMenu } = useSidePanelMenu();
 
@@ -38,6 +40,7 @@ export const useOpenComposeEmailInSidePanel = () => {
       store.set(
         composeEmailConnectedAccountIdComponentState.atomFamily({
           instanceId: pageId,
+          surfaceId,
         }),
         params.connectedAccountId,
       );
@@ -45,6 +48,7 @@ export const useOpenComposeEmailInSidePanel = () => {
       store.set(
         composeEmailDefaultToComponentState.atomFamily({
           instanceId: pageId,
+          surfaceId,
         }),
         params.defaultTo ?? '',
       );
@@ -52,6 +56,7 @@ export const useOpenComposeEmailInSidePanel = () => {
       store.set(
         composeEmailDefaultSubjectComponentState.atomFamily({
           instanceId: pageId,
+          surfaceId,
         }),
         params.defaultSubject ?? '',
       );
@@ -59,6 +64,7 @@ export const useOpenComposeEmailInSidePanel = () => {
       store.set(
         composeEmailDefaultInReplyToComponentState.atomFamily({
           instanceId: pageId,
+          surfaceId,
         }),
         params.defaultInReplyTo ?? '',
       );
@@ -66,6 +72,7 @@ export const useOpenComposeEmailInSidePanel = () => {
       store.set(
         composeEmailContextRecordComponentState.atomFamily({
           instanceId: pageId,
+          surfaceId,
         }),
         params.contextRecord ?? null,
       );
@@ -77,7 +84,7 @@ export const useOpenComposeEmailInSidePanel = () => {
         pageId,
       });
     },
-    [navigateSidePanelMenu, store],
+    [navigateSidePanelMenu, store, surfaceId],
   );
 
   return { openComposeEmailInSidePanel };

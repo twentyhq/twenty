@@ -29,6 +29,7 @@ import { MemoryRouter, useLocation } from 'react-router-dom';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const PAGE_LAYOUT_ID = 'tab-settings-story';
 const RECORD_ID = 'record-id';
@@ -93,12 +94,16 @@ const meta: Meta<typeof SidePanelPageLayoutTabSettingsContent> = {
     };
 
     jotaiStore.set(
-      pageLayoutDraftComponentState.atomFamily({ instanceId: PAGE_LAYOUT_ID }),
+      pageLayoutDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+      }),
       pageLayoutDraft,
     );
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       {
         ...pageLayoutDraft,
@@ -117,12 +122,14 @@ const meta: Meta<typeof SidePanelPageLayoutTabSettingsContent> = {
     jotaiStore.set(
       activeTabIdComponentState.atomFamily({
         instanceId: TAB_LIST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       'timeline',
     );
     jotaiStore.set(
       pageLayoutTabSettingsOpenTabIdComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       'home',
     );
@@ -178,6 +185,7 @@ const meta: Meta<typeof SidePanelPageLayoutTabSettingsContent> = {
       jotaiStore.get(
         pageLayoutDraftComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
       ).isFirstTabPinned,
     ).toBe(false);
@@ -185,6 +193,7 @@ const meta: Meta<typeof SidePanelPageLayoutTabSettingsContent> = {
       jotaiStore.get(
         activeTabIdComponentState.atomFamily({
           instanceId: TAB_LIST_INSTANCE_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
       ),
     ).toBe('home');

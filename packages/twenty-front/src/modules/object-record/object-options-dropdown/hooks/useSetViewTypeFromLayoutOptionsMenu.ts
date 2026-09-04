@@ -15,8 +15,10 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useSetViewTypeFromLayoutOptionsMenu = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const { updateCurrentView } = useUpdateCurrentView();
   const setRecordIndexViewType = useSetAtomComponentState(
     recordIndexViewTypeState,
@@ -38,6 +40,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
       const currentViewId = store.get(
         contextStoreCurrentViewIdComponentState.atomFamily({
           instanceId: contextStoreInstanceId,
+          surfaceId,
         }),
       );
 
@@ -137,6 +140,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
       loadRecordIndexStates,
       objectMetadataItem,
       contextStoreInstanceId,
+      surfaceId,
     ],
   );
 

@@ -21,6 +21,7 @@ import {
   PageLayoutType,
   WidgetType,
 } from '~/generated-metadata/graphql';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 type WidgetCardShellStoryProps = {
   isEditable: boolean;
@@ -54,12 +55,14 @@ const WidgetCardShellStory = ({
   store.set(
     pageLayoutPersistedComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
     pageLayout,
   );
   store.set(
     pageLayoutDraftComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
     pageLayout,
   );

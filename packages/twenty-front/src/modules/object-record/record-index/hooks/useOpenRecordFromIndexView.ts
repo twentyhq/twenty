@@ -14,8 +14,10 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { AppPath, OpenRecordIn, SidePanelPages } from 'twenty-shared/types';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useOpenRecordFromIndexView = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const { recordIndexId, objectNameSingular } = useRecordIndexContextOrThrow();
 
   const navigate = useNavigateApp();
@@ -66,6 +68,7 @@ export const useOpenRecordFromIndexView = () => {
         store.set(
           contextStoreRecordShowParentViewComponentState.atomFamily({
             instanceId,
+            surfaceId,
           }),
           parentView,
         );
@@ -123,6 +126,7 @@ export const useOpenRecordFromIndexView = () => {
       closeSidePanelMenu,
       store,
       workspaceSurface.type,
+      surfaceId,
     ],
   );
 

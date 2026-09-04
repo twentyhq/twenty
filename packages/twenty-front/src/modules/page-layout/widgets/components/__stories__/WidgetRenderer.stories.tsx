@@ -50,6 +50,7 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow(
   CoreObjectNameSingular.Company,
@@ -296,12 +297,14 @@ export const WithNumberChart: Story = {
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       pageLayoutData,
     );
     jotaiStore.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       pageLayoutData,
     );
@@ -391,12 +394,14 @@ export const WithBarChart: Story = {
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       pageLayoutData,
     );
     jotaiStore.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       pageLayoutData,
     );
@@ -489,12 +494,14 @@ export const SmallWidget: Story = {
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       pageLayoutData,
     );
     jotaiStore.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       pageLayoutData,
     );
@@ -591,12 +598,14 @@ export const MediumWidget: Story = {
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       pageLayoutData,
     );
     jotaiStore.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       pageLayoutData,
     );
@@ -693,12 +702,14 @@ export const LargeWidget: Story = {
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       pageLayoutData,
     );
     jotaiStore.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       pageLayoutData,
     );
@@ -791,12 +802,14 @@ export const WideWidget: Story = {
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       pageLayoutData,
     );
     jotaiStore.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       pageLayoutData,
     );
@@ -893,12 +906,14 @@ export const TallWidget: Story = {
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       pageLayoutData,
     );
     jotaiStore.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       pageLayoutData,
     );
@@ -994,18 +1009,21 @@ export const WithManyToOneRelationFieldWidget: Story = {
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       pageLayoutData,
     );
     jotaiStore.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       pageLayoutData,
     );
     jotaiStore.set(
       isDashboardInEditModeComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       false,
     );
@@ -1116,18 +1134,21 @@ export const WithOneToManyRelationFieldWidget: Story = {
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       pageLayoutData,
     );
     jotaiStore.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       pageLayoutData,
     );
     jotaiStore.set(
       isDashboardInEditModeComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       false,
     );
@@ -1231,18 +1252,21 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       pageLayoutData,
     );
     jotaiStore.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       pageLayoutData,
     );
     jotaiStore.set(
       isDashboardInEditModeComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       false,
     );
@@ -1257,6 +1281,7 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
     jotaiStore.set(
       widgetCardHoveredComponentFamilyState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         familyKey: WIDGET_ID_ONE_TO_MANY_RELATION,
       }),
       true,
@@ -1385,12 +1410,14 @@ export const OnMobile: Story = {
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       pageLayoutData,
     );
     jotaiStore.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       pageLayoutData,
     );
@@ -1486,12 +1513,14 @@ export const InSidePanel: Story = {
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       sidePanelPageLayoutData,
     );
     jotaiStore.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       sidePanelPageLayoutData,
     );
@@ -1655,6 +1684,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       jotaiStore.set(
         widgetCardHoveredComponentFamilyState.atomFamily({
           instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
           familyKey: widget.id,
         }),
         true,
@@ -1665,6 +1695,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       jotaiStore.set(
         pageLayoutEditingWidgetIdComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
         widget.id,
       );
@@ -1674,6 +1705,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       jotaiStore.set(
         pageLayoutDraggingWidgetIdComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
         widget.id,
       );
@@ -1783,18 +1815,21 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       pageLayoutData,
     );
     jotaiStore.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       pageLayoutData,
     );
     jotaiStore.set(
       isDashboardInEditModeComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       isInEditMode,
     );

@@ -2,19 +2,22 @@ import { multipleRecordPickerShouldShowInitialLoadingComponentState } from '@/ob
 import { multipleRecordPickerShouldShowSkeletonComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowSkeletonComponentState';
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useMultipleRecordPickerOpen = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const setInitialLoading = useCallback(
     (recordPickerComponentInstanceId: string, value: boolean) => {
       store.set(
         multipleRecordPickerShouldShowInitialLoadingComponentState.atomFamily({
           instanceId: recordPickerComponentInstanceId,
+          surfaceId,
         }),
         value,
       );
     },
-    [store],
+    [store, surfaceId],
   );
 
   const openMultipleRecordPicker = useCallback(
@@ -23,6 +26,7 @@ export const useMultipleRecordPickerOpen = () => {
       store.set(
         multipleRecordPickerShouldShowSkeletonComponentState.atomFamily({
           instanceId: recordPickerComponentInstanceId,
+          surfaceId,
         }),
         true,
       );
@@ -30,7 +34,7 @@ export const useMultipleRecordPickerOpen = () => {
         setInitialLoading(recordPickerComponentInstanceId, false);
       }, 100);
     },
-    [setInitialLoading, store],
+    [setInitialLoading, store, surfaceId],
   );
 
   return {

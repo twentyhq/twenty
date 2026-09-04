@@ -7,8 +7,10 @@ import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from 
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useStore } from 'jotai';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useOpenCalendarEventTargetsPicker = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const { openMultipleRecordPicker } = useMultipleRecordPickerOpen();
   const { performSearch } = useMultipleRecordPickerPerformSearch();
@@ -40,13 +42,14 @@ export const useOpenCalendarEventTargetsPicker = () => {
     store.set(
       multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
         instanceId: pickerInstanceId,
+        surfaceId,
       }),
       pickableMorphItems,
     );
 
     store.set(
       multipleRecordPickerSearchableObjectMetadataItemsComponentState.atomFamily(
-        { instanceId: pickerInstanceId },
+        { instanceId: pickerInstanceId, surfaceId },
       ),
       searchableObjectMetadataItems,
     );

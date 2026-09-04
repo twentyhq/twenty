@@ -16,8 +16,10 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useCallback } from 'react';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useOpenRelationFromManyFieldInput = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const { performSearch } = useMultipleRecordPickerPerformSearch();
   const { openMultipleRecordPicker } = useMultipleRecordPickerOpen();
@@ -77,13 +79,14 @@ export const useOpenRelationFromManyFieldInput = () => {
       store.set(
         multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
           instanceId: recordPickerInstanceId,
+          surfaceId,
         }),
         pickableMorphItems,
       );
 
       store.set(
         multipleRecordPickerSearchableObjectMetadataItemsComponentState.atomFamily(
-          { instanceId: recordPickerInstanceId },
+          { instanceId: recordPickerInstanceId, surfaceId },
         ),
         [objectMetadataItem],
       );
@@ -106,7 +109,13 @@ export const useOpenRelationFromManyFieldInput = () => {
         },
       });
     },
-    [store, openMultipleRecordPicker, performSearch, pushFocusItemToFocusStack],
+    [
+      store,
+      openMultipleRecordPicker,
+      performSearch,
+      pushFocusItemToFocusStack,
+      surfaceId,
+    ],
   );
 
   return { openRelationFromManyFieldInput };

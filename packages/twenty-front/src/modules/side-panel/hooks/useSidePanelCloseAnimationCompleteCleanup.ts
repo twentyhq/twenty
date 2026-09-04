@@ -31,8 +31,10 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { releaseRemovedRoutedFlowStateScopes } from '@/side-panel/routing/utils/releaseRemovedRoutedFlowStateScopes';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useSidePanelCloseAnimationCompleteCleanup = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const { resetSelectedItem } = useSelectableList(
     SIDE_PANEL_SELECTABLE_LIST_ID,
@@ -58,6 +60,7 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
         const targetedRecordsRule = store.get(
           contextStoreTargetedRecordsRuleComponentState.atomFamily({
             instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+            surfaceId,
           }),
         );
         if (
@@ -71,24 +74,28 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
             store.set(
               pageLayoutEditingWidgetIdComponentState.atomFamily({
                 instanceId: record.pageLayoutId,
+                surfaceId,
               }),
               null,
             );
             store.set(
               pageLayoutTabSettingsOpenTabIdComponentState.atomFamily({
                 instanceId: record.pageLayoutId,
+                surfaceId,
               }),
               null,
             );
             store.set(
               pageLayoutDraggedAreaComponentState.atomFamily({
                 instanceId: record.pageLayoutId,
+                surfaceId,
               }),
               null,
             );
             store.set(
               widgetInsertionContextComponentState.atomFamily({
                 instanceId: record.pageLayoutId,
+                surfaceId,
               }),
               null,
             );
@@ -120,6 +127,7 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
       store.set(
         activeTabIdComponentState.atomFamily({
           instanceId: WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
+          surfaceId,
         }),
         WorkflowLogicFunctionTabId.CODE,
       );
@@ -131,12 +139,13 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
               pageId,
               targetObjectId: morphItems[0].recordId,
             }),
+            surfaceId,
           }),
           null,
         );
       }
     },
-    [closeDropdown, resetSelectedItem, store],
+    [closeDropdown, resetSelectedItem, store, surfaceId],
   );
 
   return {

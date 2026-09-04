@@ -14,10 +14,11 @@ export const recordGroupFromGroupValueComponentFamilySelector =
     key: 'recordGroupFromGroupValueComponentSelector',
     componentInstanceContext: ViewComponentInstanceContext,
     get:
-      ({ instanceId, familyKey }) =>
+      ({ instanceId, surfaceId, familyKey }) =>
       ({ get }): RecordGroupDefinition | undefined => {
         const recordGroupIds = get(recordGroupIdsComponentState, {
           instanceId,
+          surfaceId,
         });
 
         const recordGroupId = recordGroupIds.find((id) => {

@@ -10,6 +10,7 @@ import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const mockNavigatePageLayoutSidePanel = jest.fn();
 let mockTabId = 'main-tab';
@@ -31,12 +32,15 @@ describe('useNavigateToMoreWidgets', () => {
   const instanceId = PAGE_LAYOUT_TEST_INSTANCE_ID;
   const editingWidgetAtom = pageLayoutEditingWidgetIdComponentState.atomFamily({
     instanceId,
+    surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
   });
   const targetTabAtom = widgetCreationTargetTabIdComponentState.atomFamily({
     instanceId,
+    surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
   });
   const insertionContextAtom = widgetInsertionContextComponentState.atomFamily({
     instanceId,
+    surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
   });
 
   const setup = () => {

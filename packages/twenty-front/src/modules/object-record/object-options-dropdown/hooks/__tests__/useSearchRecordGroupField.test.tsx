@@ -7,6 +7,7 @@ import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const INSTANCE_ID = 'myViewInstanceId';
 
@@ -15,6 +16,7 @@ describe('useSearchRecordGroupField', () => {
     jotaiStore.set(
       objectOptionsDropdownSearchInputComponentState.atomFamily({
         instanceId: INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       '',
     );

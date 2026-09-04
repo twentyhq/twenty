@@ -9,8 +9,10 @@ import { useWorkspaceSurfaceScopedComponentInstanceIdResolver } from '@/ui/layou
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useCloseDropdown = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
 
@@ -41,6 +43,7 @@ export const useCloseDropdown = () => {
       const isDropdownOpen = store.get(
         isDropdownOpenComponentState.atomFamily({
           instanceId: dropdownComponentInstanceId,
+          surfaceId,
         }),
       );
 
@@ -54,6 +57,7 @@ export const useCloseDropdown = () => {
         store.set(
           isDropdownOpenComponentState.atomFamily({
             instanceId: dropdownComponentInstanceId,
+            surfaceId,
           }),
           false,
         );
@@ -65,6 +69,7 @@ export const useCloseDropdown = () => {
       dropdownComponentInstanceIdFromContext,
       resolveComponentInstanceId,
       store,
+      surfaceId,
     ],
   );
 

@@ -12,6 +12,7 @@ import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/con
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { Provider as JotaiProvider } from 'jotai';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const meta: Meta<typeof SelectHeaderStep> = {
   title: 'Modules/SpreadsheetImport/SelectHeaderStep',
@@ -24,6 +25,7 @@ const meta: Meta<typeof SelectHeaderStep> = {
       jotaiStore.set(
         isModalOpenedComponentState.atomFamily({
           instanceId: 'select-header-step',
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
         true,
       );

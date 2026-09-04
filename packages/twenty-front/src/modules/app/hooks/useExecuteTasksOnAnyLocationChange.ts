@@ -19,8 +19,10 @@ import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyO
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useExecuteTasksOnAnyLocationChange = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
 
@@ -31,6 +33,7 @@ export const useExecuteTasksOnAnyLocationChange = () => {
       const pageLayoutPersisted = store.get(
         pageLayoutPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
 
@@ -38,6 +41,7 @@ export const useExecuteTasksOnAnyLocationChange = () => {
         store.set(
           pageLayoutDraftComponentState.atomFamily({
             instanceId: pageLayoutId,
+            surfaceId,
           }),
           toDraftPageLayout(pageLayoutPersisted),
         );
@@ -46,6 +50,7 @@ export const useExecuteTasksOnAnyLocationChange = () => {
         store.set(
           pageLayoutCurrentLayoutsComponentState.atomFamily({
             instanceId: pageLayoutId,
+            surfaceId,
           }),
           tabLayouts,
         );
@@ -54,6 +59,7 @@ export const useExecuteTasksOnAnyLocationChange = () => {
       store.set(
         isDashboardInEditModeComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
         false,
       );
@@ -61,6 +67,7 @@ export const useExecuteTasksOnAnyLocationChange = () => {
       store.set(
         pageLayoutIsInitializedComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
         false,
       );
@@ -68,6 +75,7 @@ export const useExecuteTasksOnAnyLocationChange = () => {
       store.set(
         hasInitializedFieldsWidgetGroupsDraftComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
         {},
       );
@@ -75,6 +83,7 @@ export const useExecuteTasksOnAnyLocationChange = () => {
       store.set(
         fieldsWidgetGroupsDraftComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
         {},
       );
@@ -82,6 +91,7 @@ export const useExecuteTasksOnAnyLocationChange = () => {
       store.set(
         fieldsWidgetGroupsPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
         {},
       );
@@ -89,6 +99,7 @@ export const useExecuteTasksOnAnyLocationChange = () => {
       store.set(
         fieldsWidgetUngroupedFieldsDraftComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
         {},
       );
@@ -96,6 +107,7 @@ export const useExecuteTasksOnAnyLocationChange = () => {
       store.set(
         fieldsWidgetUngroupedFieldsPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
         {},
       );
@@ -103,6 +115,7 @@ export const useExecuteTasksOnAnyLocationChange = () => {
       store.set(
         fieldsWidgetEditorModeDraftComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
         {},
       );
@@ -110,6 +123,7 @@ export const useExecuteTasksOnAnyLocationChange = () => {
       store.set(
         fieldsWidgetEditorModePersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
         {},
       );
@@ -117,13 +131,14 @@ export const useExecuteTasksOnAnyLocationChange = () => {
       store.set(
         pageLayoutEditingWidgetIdComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
         null,
       );
 
       store.set(currentPageLayoutIdState.atom, null);
     }
-  }, [store]);
+  }, [store, surfaceId]);
 
   /**
    * Be careful to put idempotent tasks here.

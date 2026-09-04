@@ -13,6 +13,7 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const INSTANCE_ID = 'useHasReachedAiChatCreditsCapTest';
 const THREAD_ID = 'thread-1';
@@ -31,6 +32,7 @@ const setThreadError = (error: Error | CombinedGraphQLErrors) => {
   jotaiStore.set(
     agentChatErrorComponentFamilyState.atomFamily({
       instanceId: INSTANCE_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       familyKey: { threadId: THREAD_ID },
     }),
     error,

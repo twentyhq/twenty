@@ -10,6 +10,7 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { previousDropdownFocusIdStackState } from '@/ui/layout/dropdown/states/previousDropdownFocusIdStackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const dropdownId = 'test-dropdown-id';
 const dropdownIdA = 'test-dropdown-id-a';
@@ -31,7 +32,10 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 describe('useCloseAnyOpenDropdown', () => {
   beforeEach(() => {
     jotaiStore.set(
-      isDropdownOpenComponentState.atomFamily({ instanceId: dropdownId }),
+      isDropdownOpenComponentState.atomFamily({
+        instanceId: dropdownId,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+      }),
       false,
     );
     jotaiStore.set(activeDropdownFocusIdState.atom, null);
@@ -74,15 +78,24 @@ describe('useCloseAnyOpenDropdown', () => {
 
   it('should close all nested dropdowns when multiple are open', () => {
     jotaiStore.set(
-      isDropdownOpenComponentState.atomFamily({ instanceId: dropdownIdA }),
+      isDropdownOpenComponentState.atomFamily({
+        instanceId: dropdownIdA,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+      }),
       true,
     );
     jotaiStore.set(
-      isDropdownOpenComponentState.atomFamily({ instanceId: dropdownIdB }),
+      isDropdownOpenComponentState.atomFamily({
+        instanceId: dropdownIdB,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+      }),
       true,
     );
     jotaiStore.set(
-      isDropdownOpenComponentState.atomFamily({ instanceId: dropdownIdC }),
+      isDropdownOpenComponentState.atomFamily({
+        instanceId: dropdownIdC,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+      }),
       true,
     );
     jotaiStore.set(activeDropdownFocusIdState.atom, dropdownIdC);
@@ -101,17 +114,26 @@ describe('useCloseAnyOpenDropdown', () => {
 
     expect(
       jotaiStore.get(
-        isDropdownOpenComponentState.atomFamily({ instanceId: dropdownIdA }),
+        isDropdownOpenComponentState.atomFamily({
+          instanceId: dropdownIdA,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+        }),
       ),
     ).toBe(false);
     expect(
       jotaiStore.get(
-        isDropdownOpenComponentState.atomFamily({ instanceId: dropdownIdB }),
+        isDropdownOpenComponentState.atomFamily({
+          instanceId: dropdownIdB,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+        }),
       ),
     ).toBe(false);
     expect(
       jotaiStore.get(
-        isDropdownOpenComponentState.atomFamily({ instanceId: dropdownIdC }),
+        isDropdownOpenComponentState.atomFamily({
+          instanceId: dropdownIdC,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+        }),
       ),
     ).toBe(false);
     expect(jotaiStore.get(activeDropdownFocusIdState.atom)).toBeNull();

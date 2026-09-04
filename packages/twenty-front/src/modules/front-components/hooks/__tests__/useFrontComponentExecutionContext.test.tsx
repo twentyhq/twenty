@@ -214,6 +214,7 @@ const COMMAND_MENU_ITEM_ID = 'cmd-item-1';
 const parentViewAtom =
   contextStoreRecordShowParentViewComponentState.atomFamily({
     instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+    surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
   });
 
 const createParentView = (parentViewObjectNameSingular: string) => ({

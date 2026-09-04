@@ -9,14 +9,16 @@ export const allRowsSelectedStatusComponentSelector =
     key: 'allRowsSelectedStatusComponentSelector',
     componentInstanceContext: RecordTableComponentInstanceContext,
     get:
-      ({ instanceId }) =>
+      ({ instanceId, surfaceId }) =>
       ({ get }) => {
         const allRecordIds = get(recordIndexAllRecordIdsComponentSelector, {
           instanceId,
+          surfaceId,
         });
 
         const selectedRowIds = get(selectedRowIdsComponentSelector, {
           instanceId,
+          surfaceId,
         });
 
         const numberOfSelectedRows = selectedRowIds.length;

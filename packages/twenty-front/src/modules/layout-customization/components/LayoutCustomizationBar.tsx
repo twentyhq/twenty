@@ -20,6 +20,7 @@ import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayo
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { PageLayoutType } from '~/generated-metadata/graphql';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -69,6 +70,7 @@ const StyledRightSection = styled.div`
 `;
 
 const LayoutCustomizationBarContent = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
 
@@ -80,6 +82,7 @@ const LayoutCustomizationBarContent = () => {
   const persistedPageLayout = useAtomValue(
     pageLayoutPersistedComponentState.atomFamily({
       instanceId: currentPageLayoutId ?? '',
+      surfaceId,
     }),
   );
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);

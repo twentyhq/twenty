@@ -6,6 +6,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
 import { Key } from 'ts-key-enum';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useSelectableListListenToEnterHotkeyOnItem = ({
   focusId,
@@ -16,6 +17,7 @@ export const useSelectableListListenToEnterHotkeyOnItem = ({
   itemId: string;
   onEnter: () => void;
 }) => {
+  const surfaceId = useComponentStateSurfaceId();
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     SelectableListComponentInstanceContext,
   );
@@ -26,13 +28,14 @@ export const useSelectableListListenToEnterHotkeyOnItem = ({
     const selectedItemId = store.get(
       selectedItemIdComponentState.atomFamily({
         instanceId,
+        surfaceId,
       }),
     );
 
     if (isNonEmptyString(selectedItemId) && selectedItemId === itemId) {
       onEnter?.();
     }
-  }, [store, instanceId, itemId, onEnter]);
+  }, [store, instanceId, itemId, onEnter, surfaceId]);
 
   useHotkeysOnFocusedElement({
     keys: Key.Enter,

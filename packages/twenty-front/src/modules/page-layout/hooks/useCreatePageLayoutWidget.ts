@@ -20,6 +20,7 @@ import {
   PageLayoutTabLayoutMode,
   type WidgetType,
 } from '~/generated-metadata/graphql';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 type CreatePageLayoutWidgetParams = {
   type: WidgetType;
@@ -35,6 +36,7 @@ export const useCreatePageLayoutWidget = ({
   pageLayoutId: string;
   tabListInstanceId: string;
 }) => {
+  const surfaceId = useComponentStateSurfaceId();
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
@@ -67,6 +69,7 @@ export const useCreatePageLayoutWidget = ({
       const activeTabId = store.get(
         activeTabIdComponentState.atomFamily({
           instanceId: tabListInstanceId,
+          surfaceId,
         }),
       );
 
@@ -138,6 +141,7 @@ export const useCreatePageLayoutWidget = ({
       pageLayoutDraggedAreaState,
       store,
       tabListInstanceId,
+      surfaceId,
     ],
   );
 

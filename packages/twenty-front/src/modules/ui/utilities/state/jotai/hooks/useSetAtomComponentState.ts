@@ -1,6 +1,7 @@
 import { useSetAtom } from 'jotai';
 
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { type ComponentState } from '@/ui/utilities/state/jotai/types/ComponentState';
 
@@ -23,5 +24,7 @@ export const useSetAtomComponentState = <ValueType>(
     instanceIdFromProps,
   );
 
-  return useSetAtom(componentState.atomFamily({ instanceId }));
+  const surfaceId = useComponentStateSurfaceId();
+
+  return useSetAtom(componentState.atomFamily({ instanceId, surfaceId }));
 };

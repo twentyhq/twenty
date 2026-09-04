@@ -7,8 +7,10 @@ import { fieldsWidgetUngroupedFieldsPersistedComponentState } from '@/page-layou
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useHasFieldsWidgetChanges = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
 
   const hasFieldsWidgetChanges = useCallback(
@@ -16,31 +18,37 @@ export const useHasFieldsWidgetChanges = () => {
       const fieldsWidgetGroupsDraft = store.get(
         fieldsWidgetGroupsDraftComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
       const fieldsWidgetGroupsPersisted = store.get(
         fieldsWidgetGroupsPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
       const fieldsWidgetUngroupedFieldsDraft = store.get(
         fieldsWidgetUngroupedFieldsDraftComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
       const fieldsWidgetUngroupedFieldsPersisted = store.get(
         fieldsWidgetUngroupedFieldsPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
       const fieldsWidgetEditorModeDraft = store.get(
         fieldsWidgetEditorModeDraftComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
       const fieldsWidgetEditorModePersisted = store.get(
         fieldsWidgetEditorModePersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
 
@@ -56,7 +64,7 @@ export const useHasFieldsWidgetChanges = () => {
         )
       );
     },
-    [store],
+    [store, surfaceId],
   );
 
   return { hasFieldsWidgetChanges };

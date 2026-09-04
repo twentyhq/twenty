@@ -7,6 +7,7 @@ import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const PAGE_LAYOUT_ID = 'page-layout-id';
 const WIDGET_ID = 'widget-id';
@@ -25,6 +26,7 @@ const initializeDraft = (store: ReturnType<typeof createStore>) => {
   store.set(
     recordTableWidgetViewDraftComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
     { [WIDGET_ID]: snapshot },
   );
@@ -36,6 +38,7 @@ const getDraft = (store: ReturnType<typeof createStore>) =>
   store.get(
     recordTableWidgetViewDraftComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
   )[WIDGET_ID];
 

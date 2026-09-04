@@ -81,6 +81,7 @@ const renderNavigateToRecordPage = ({
         initializedStore.set(
           contextStoreRecordShowParentViewComponentState.atomFamily({
             instanceId: PAGE_INSTANCE_ID,
+            surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
           }),
           parentView as never,
         );
@@ -210,6 +211,7 @@ describe('useNavigateToRecordPageFromSidePanel', () => {
       getStore().get(
         contextStoreRecordShowParentViewComponentState.atomFamily({
           instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
       ),
     ).toBeUndefined();
@@ -235,6 +237,7 @@ describe('useNavigateToRecordPageFromSidePanel', () => {
       getStore().get(
         contextStoreRecordShowParentViewComponentState.atomFamily({
           instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
       ),
     ).toMatchObject(parentView);

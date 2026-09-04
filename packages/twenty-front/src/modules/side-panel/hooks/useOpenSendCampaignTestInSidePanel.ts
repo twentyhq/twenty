@@ -7,8 +7,10 @@ import { v4 } from 'uuid';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { sendCampaignTestCampaignIdComponentState } from '@/side-panel/pages/send-campaign-test/states/sendCampaignTestCampaignIdComponentState';
 import { t } from '@lingui/core/macro';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useOpenSendCampaignTestInSidePanel = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const { navigateSidePanelMenu } = useSidePanelMenu();
 
@@ -19,6 +21,7 @@ export const useOpenSendCampaignTestInSidePanel = () => {
       store.set(
         sendCampaignTestCampaignIdComponentState.atomFamily({
           instanceId: pageId,
+          surfaceId,
         }),
         campaignId,
       );
@@ -30,7 +33,7 @@ export const useOpenSendCampaignTestInSidePanel = () => {
         pageId,
       });
     },
-    [navigateSidePanelMenu, store],
+    [navigateSidePanelMenu, store, surfaceId],
   );
 
   return { openSendCampaignTestInSidePanel };

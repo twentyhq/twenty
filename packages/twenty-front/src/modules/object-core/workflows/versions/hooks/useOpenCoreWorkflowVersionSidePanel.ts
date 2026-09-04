@@ -6,8 +6,10 @@ import { IconVersions } from 'twenty-ui/icon';
 
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { sidePanelWorkflowVersionIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowVersionIdComponentState';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useOpenCoreWorkflowVersionSidePanel = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const { navigateSidePanel } = useNavigateSidePanel();
 
@@ -23,6 +25,7 @@ export const useOpenCoreWorkflowVersionSidePanel = () => {
     store.set(
       sidePanelWorkflowVersionIdComponentState.atomFamily({
         instanceId: pageId,
+        surfaceId,
       }),
       workspaceWorkflowVersionId,
     );

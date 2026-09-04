@@ -7,8 +7,10 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useOpenNewRecordTitleCell = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const store = useStore();
 
@@ -35,6 +37,7 @@ export const useOpenNewRecordTitleCell = () => {
       store.set(
         isTitleCellInEditModeComponentState.atomFamily({
           instanceId,
+          surfaceId,
         }),
         true,
       );
@@ -44,11 +47,14 @@ export const useOpenNewRecordTitleCell = () => {
       );
 
       store.set(
-        recordFieldInputDraftValueComponentState.atomFamily({ instanceId }),
+        recordFieldInputDraftValueComponentState.atomFamily({
+          instanceId,
+          surfaceId,
+        }),
         recordFieldValue,
       );
     },
-    [pushFocusItemToFocusStack, store],
+    [pushFocusItemToFocusStack, store, surfaceId],
   );
 
   return { openNewRecordTitleCell };

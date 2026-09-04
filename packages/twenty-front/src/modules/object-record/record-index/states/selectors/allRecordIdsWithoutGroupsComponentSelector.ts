@@ -8,10 +8,11 @@ export const allRecordIdsWithoutGroupsComponentSelector =
     key: 'allRecordIdsWithoutGroupsComponentSelector',
     componentInstanceContext: ViewComponentInstanceContext,
     get:
-      ({ instanceId }) =>
+      ({ instanceId, surfaceId }) =>
       ({ get }) => {
         return get(recordIndexRecordIdsByGroupComponentFamilyState, {
           instanceId,
+          surfaceId,
           familyKey: NO_RECORD_GROUP_FAMILY_KEY,
         });
       },

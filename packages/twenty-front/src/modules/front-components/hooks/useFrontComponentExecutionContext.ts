@@ -57,6 +57,7 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { FileFolder } from '~/generated-metadata/graphql';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 const FRONT_COMPONENT_CLIPBOARD_MAX_LENGTH = 64 * 1024;
 const FRONT_COMPONENT_CLIPBOARD_RATE_LIMIT_MS = 1000;
@@ -131,6 +132,7 @@ export const useFrontComponentExecutionContext = ({
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
   storageNamespace?: string;
 } => {
+  const surfaceId = useComponentStateSurfaceId();
   const currentUser = useAtomStateValue(currentUserState);
   const navigateApp = useNavigateApp();
   const store = useStore();
@@ -182,6 +184,7 @@ export const useFrontComponentExecutionContext = ({
       const parentViewAtom =
         contextStoreRecordShowParentViewComponentState.atomFamily({
           instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+          surfaceId,
         });
 
       const parentView = store.get(parentViewAtom);

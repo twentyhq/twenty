@@ -16,6 +16,7 @@ import { RouterDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const meta: Meta<typeof RecordIndexCommandMenuDropdown> = {
   title: 'Modules/CommandMenu/RecordIndexCommandMenuDropdown',
@@ -25,12 +26,14 @@ const meta: Meta<typeof RecordIndexCommandMenuDropdown> = {
       jotaiStore.set(
         isDropdownOpenComponentState.atomFamily({
           instanceId: 'command-menu-dropdown-story-command-menu',
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
         true,
       );
       jotaiStore.set(
         recordIndexCommandMenuDropdownPositionComponentState.atomFamily({
           instanceId: 'command-menu-dropdown-story',
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
         { x: 10, y: 10 },
       );

@@ -1,3 +1,9 @@
+// Makes an identifier unique per workspace surface. Component state no longer
+// needs this - its atoms are keyed by surface from the ComponentSurfaceScope its
+// context declares. What is left are the identifiers that are not component
+// state: DOM element ids, storage keys, SSE query ids, plain family state keys,
+// and the ids of subsystems that key off the same string as the DOM (a dropdown
+// and a modal also register a focus id under it).
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';

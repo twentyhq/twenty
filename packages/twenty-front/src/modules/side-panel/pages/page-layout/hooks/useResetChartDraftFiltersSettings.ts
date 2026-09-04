@@ -8,8 +8,10 @@ import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useStore } from 'jotai';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useResetChartDraftFiltersSettings = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const { pageLayoutId } = usePageLayoutIdFromContextStore();
 
@@ -30,6 +32,7 @@ export const useResetChartDraftFiltersSettings = () => {
         hasInitializedCurrentRecordFilterGroupsComponentFamilyState.atomFamily({
           familyKey: {},
           instanceId,
+          surfaceId,
         }),
         false,
       );
@@ -38,20 +41,27 @@ export const useResetChartDraftFiltersSettings = () => {
         hasInitializedCurrentRecordFiltersComponentFamilyState.atomFamily({
           familyKey: {},
           instanceId,
+          surfaceId,
         }),
         false,
       );
 
       store.set(
-        currentRecordFiltersComponentState.atomFamily({ instanceId }),
+        currentRecordFiltersComponentState.atomFamily({
+          instanceId,
+          surfaceId,
+        }),
         [],
       );
       store.set(
-        currentRecordFilterGroupsComponentState.atomFamily({ instanceId }),
+        currentRecordFilterGroupsComponentState.atomFamily({
+          instanceId,
+          surfaceId,
+        }),
         [],
       );
     },
-    [widgetInEditMode, store],
+    [widgetInEditMode, store, surfaceId],
   );
 
   return {

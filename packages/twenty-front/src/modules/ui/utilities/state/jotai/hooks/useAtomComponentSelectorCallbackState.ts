@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { type ComponentSelector } from '@/ui/utilities/state/jotai/types/ComponentSelector';
 
@@ -23,8 +24,10 @@ export const useAtomComponentSelectorCallbackState = <StateType>(
     instanceIdFromProps,
   );
 
+  const surfaceId = useComponentStateSurfaceId();
+
   return useMemo(
-    () => componentSelector.selectorFamily({ instanceId }),
-    [componentSelector, instanceId],
+    () => componentSelector.selectorFamily({ instanceId, surfaceId }),
+    [componentSelector, instanceId, surfaceId],
   );
 };

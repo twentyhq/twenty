@@ -7,8 +7,10 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewType, WidgetType } from '~/generated-metadata/graphql';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useCreatePendingFieldsWidgetViews = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const { performViewApiCreate } = usePerformViewApiPersist();
   const store = useStore();
 
@@ -17,11 +19,13 @@ export const useCreatePendingFieldsWidgetViews = () => {
       const draft = store.get(
         pageLayoutDraftComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
       const persisted = store.get(
         pageLayoutPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
 
@@ -86,7 +90,7 @@ export const useCreatePendingFieldsWidgetViews = () => {
         }
       }
     },
-    [performViewApiCreate, store],
+    [performViewApiCreate, store, surfaceId],
   );
 
   return { createPendingFieldsWidgetViews };

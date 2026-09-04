@@ -12,12 +12,13 @@ export const agentChatMessageComponentFamilySelector =
   >({
     key: 'agentChatMessageComponentFamilySelector',
     get:
-      ({ instanceId, familyKey: { messageId } }) =>
+      ({ instanceId, surfaceId, familyKey: { messageId } }) =>
       ({ get }) => {
         const currentThreadId = get(agentChatDisplayedThreadState);
 
         const messages = get(agentChatMessagesComponentFamilyState, {
           instanceId,
+          surfaceId,
           familyKey: { threadId: currentThreadId },
         });
 

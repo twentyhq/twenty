@@ -17,8 +17,10 @@ import {
   type UpsertViewWidgetInput,
   type ViewFragmentFragment,
 } from '~/generated-metadata/graphql';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useSaveRecordTableWidgetViews = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const [upsertViewWidgetMutation] = useMutation<
     { upsertViewWidget: ViewFragmentFragment },
     { input: UpsertViewWidgetInput }
@@ -38,18 +40,21 @@ export const useSaveRecordTableWidgetViews = () => {
       const draft = store.get(
         pageLayoutDraftComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
 
       const recordTableWidgetViewDraft = store.get(
         recordTableWidgetViewDraftComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
 
       const recordTableWidgetViewPersisted = store.get(
         recordTableWidgetViewPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
 
@@ -185,6 +190,7 @@ export const useSaveRecordTableWidgetViews = () => {
       store.set(
         recordTableWidgetViewDraftComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
         normalizedRecordTableWidgetViewDraft,
       );
@@ -192,11 +198,17 @@ export const useSaveRecordTableWidgetViews = () => {
       store.set(
         recordTableWidgetViewPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
         normalizedRecordTableWidgetViewDraft,
       );
     },
-    [hasRecordTableWidgetViewChanges, store, upsertViewWidgetMutation],
+    [
+      hasRecordTableWidgetViewChanges,
+      store,
+      upsertViewWidgetMutation,
+      surfaceId,
+    ],
   );
 
   return { saveRecordTableWidgetViews };

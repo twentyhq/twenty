@@ -8,11 +8,11 @@ export const rootLevelStepFilterGroupComponentSelector =
   createAtomComponentSelector<StepFilterGroup | undefined>({
     key: 'rootLevelStepFilterGroupComponentSelector',
     get:
-      ({ instanceId }) =>
+      ({ instanceId, surfaceId }) =>
       ({ get }) => {
         const currentStepFilterGroups = get(
           currentStepFilterGroupsComponentState,
-          { instanceId },
+          { instanceId, surfaceId },
         );
 
         const rootLevelStepFilterGroup = currentStepFilterGroups.find(

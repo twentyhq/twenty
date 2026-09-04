@@ -18,6 +18,7 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useResetDraftPageLayoutToPersistedPageLayout = ({
   pageLayoutId: pageLayoutIdFromProps,
@@ -26,6 +27,7 @@ export const useResetDraftPageLayoutToPersistedPageLayout = ({
   pageLayoutId?: string;
   tabListInstanceId: string;
 }) => {
+  const surfaceId = useComponentStateSurfaceId();
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
@@ -50,6 +52,7 @@ export const useResetDraftPageLayoutToPersistedPageLayout = ({
 
   const activeTabId = activeTabIdComponentState.atomFamily({
     instanceId: tabListInstanceId,
+    surfaceId,
   });
 
   const fieldsWidgetGroupsDraftState = useAtomComponentStateCallbackState(

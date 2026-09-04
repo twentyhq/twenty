@@ -58,9 +58,11 @@ const NOTE_WIDGET = createDefaultStandaloneRichTextWidget({
 });
 const DRAFT_ATOM = pageLayoutDraftComponentState.atomFamily({
   instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+  surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
 });
 const EDITING_WIDGET_ATOM = pageLayoutEditingWidgetIdComponentState.atomFamily({
   instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+  surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
 });
 
 type RecordPageNoteWidgetStoryProps = {
@@ -154,6 +156,7 @@ const meta: Meta<typeof RecordPageNoteWidgetStory> = {
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       layout,
     );
@@ -169,6 +172,7 @@ const meta: Meta<typeof RecordPageNoteWidgetStory> = {
     jotaiStore.set(
       isDashboardInEditModeComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       args.isEditable && args.layoutType === PageLayoutType.DASHBOARD,
     );
@@ -183,18 +187,21 @@ const meta: Meta<typeof RecordPageNoteWidgetStory> = {
     jotaiStore.set(
       widgetCreationTargetTabIdComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       'tab-1',
     );
     jotaiStore.set(
       contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
         instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       company.id,
     );
     jotaiStore.set(
       contextStoreTargetedRecordsRuleComponentState.atomFamily({
         instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       { mode: 'selection', selectedRecordIds: ['company-record'] },
     );
@@ -300,6 +307,7 @@ export const CancelPendingEdit: Story = {
     jotaiStore.set(
       isDashboardInEditModeComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       false,
     );

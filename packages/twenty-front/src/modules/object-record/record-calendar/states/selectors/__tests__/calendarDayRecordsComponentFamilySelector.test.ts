@@ -7,6 +7,7 @@ import { Temporal } from 'temporal-polyfill';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const instanceId = 'calendar-test';
 
@@ -28,7 +29,10 @@ const createCalendarStore = (fieldType: FieldMetadataType) => {
     },
   ]);
   store.set(
-    recordIndexCalendarFieldMetadataIdComponentState.atomFamily({ instanceId }),
+    recordIndexCalendarFieldMetadataIdComponentState.atomFamily({
+      instanceId,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+    }),
     calendarField.id,
   );
   return store;
@@ -38,6 +42,7 @@ const getRecordIds = (store: ReturnType<typeof createStore>, day: string) =>
   store.get(
     calendarDayRecordIdsComponentFamilySelector.selectorFamily({
       instanceId,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       familyKey: {
         day: Temporal.PlainDate.from(day),
         timeZone: 'America/Los_Angeles',
@@ -55,7 +60,10 @@ describe('calendarDayRecordIdsComponentFamilySelector', () => {
       endAt: '2026-07-18',
     });
     store.set(
-      recordCalendarRecordIdsComponentState.atomFamily({ instanceId }),
+      recordCalendarRecordIdsComponentState.atomFamily({
+        instanceId,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+      }),
       ['record-id'],
     );
 
@@ -78,7 +86,10 @@ describe('calendarDayRecordIdsComponentFamilySelector', () => {
       });
     }
     store.set(
-      recordCalendarRecordIdsComponentState.atomFamily({ instanceId }),
+      recordCalendarRecordIdsComponentState.atomFamily({
+        instanceId,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+      }),
       records.map((record) => record.id),
     );
 

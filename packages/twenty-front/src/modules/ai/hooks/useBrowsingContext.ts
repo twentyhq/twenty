@@ -20,8 +20,10 @@ import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTab
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useStore } from 'jotai';
 import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useGetBrowsingContext = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
 
   const getBrowsingContext = useCallback((): BrowsingContext | null => {
@@ -39,18 +41,21 @@ export const useGetBrowsingContext = () => {
     const pageType = store.get(
       contextStoreCurrentPageTypeComponentState.atomFamily({
         instanceId,
+        surfaceId,
       }),
     );
 
     const viewType = store.get(
       contextStoreCurrentViewTypeComponentState.atomFamily({
         instanceId,
+        surfaceId,
       }),
     );
 
     const objectMetadataItemId = store.get(
       contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
         instanceId,
+        surfaceId,
       }),
     );
 
@@ -73,6 +78,7 @@ export const useGetBrowsingContext = () => {
       const targetedRecordsRule = store.get(
         contextStoreTargetedRecordsRuleComponentState.atomFamily({
           instanceId,
+          surfaceId,
         }),
       );
 
@@ -102,6 +108,7 @@ export const useGetBrowsingContext = () => {
         const activeTabId = store.get(
           activeTabIdComponentState.atomFamily({
             instanceId: tabListInstanceId,
+            surfaceId,
           }),
         );
 
@@ -119,6 +126,7 @@ export const useGetBrowsingContext = () => {
       const currentViewId = store.get(
         contextStoreCurrentViewIdComponentState.atomFamily({
           instanceId,
+          surfaceId,
         }),
       );
 
@@ -135,6 +143,7 @@ export const useGetBrowsingContext = () => {
       const contextStoreFilters = store.get(
         contextStoreFiltersComponentState.atomFamily({
           instanceId,
+          surfaceId,
         }),
       );
 
@@ -163,7 +172,7 @@ export const useGetBrowsingContext = () => {
     }
 
     return null;
-  }, [store]);
+  }, [store, surfaceId]);
 
   return { getBrowsingContext };
 };

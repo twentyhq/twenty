@@ -6,6 +6,7 @@ import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/Work
 import { renderHook } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const mockUpdateStep = jest.fn();
 const mockUpdateTrigger = jest.fn();
@@ -39,6 +40,7 @@ const createAction = (
 const flowAtom = () =>
   flowComponentState.atomFamily({
     instanceId: workflowVisualizerComponentInstanceId,
+    surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
   });
 
 const Wrapper = ({ children }: { children: ReactNode }) => (

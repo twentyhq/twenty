@@ -6,6 +6,7 @@ import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/rec
 import { isRecordTableEmptyStateHiddenComponentState } from '@/object-record/record-table/states/isRecordTableEmptyStateHiddenComponentState';
 import { useStore } from 'jotai';
 import { useLayoutEffect } from 'react';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 type RecordTableWidgetStatesEffectProps = {
   recordTableId: string;
@@ -20,12 +21,14 @@ export const RecordTableWidgetStatesEffect = ({
   isPageLayoutInEditMode = false,
   isEmptyStateHidden = false,
 }: RecordTableWidgetStatesEffectProps) => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
 
   useLayoutEffect(() => {
     store.set(
       isRecordTableColumnHeadersReadOnlyComponentState.atomFamily({
         instanceId: recordTableId,
+        surfaceId,
       }),
       true,
     );
@@ -33,6 +36,7 @@ export const RecordTableWidgetStatesEffect = ({
     store.set(
       isRecordTableDragColumnHiddenComponentState.atomFamily({
         instanceId: recordTableId,
+        surfaceId,
       }),
       true,
     );
@@ -40,6 +44,7 @@ export const RecordTableWidgetStatesEffect = ({
     store.set(
       isRecordTableCheckboxColumnHiddenComponentState.atomFamily({
         instanceId: recordTableId,
+        surfaceId,
       }),
       true,
     );
@@ -47,6 +52,7 @@ export const RecordTableWidgetStatesEffect = ({
     store.set(
       isRecordTableColumnResizableComponentState.atomFamily({
         instanceId: recordTableId,
+        surfaceId,
       }),
       isPageLayoutInEditMode,
     );
@@ -54,6 +60,7 @@ export const RecordTableWidgetStatesEffect = ({
     store.set(
       isRecordTableCellsNonEditableComponentState.atomFamily({
         instanceId: recordTableId,
+        surfaceId,
       }),
       !isUIEditable,
     );
@@ -61,6 +68,7 @@ export const RecordTableWidgetStatesEffect = ({
     store.set(
       isRecordTableEmptyStateHiddenComponentState.atomFamily({
         instanceId: recordTableId,
+        surfaceId,
       }),
       isEmptyStateHidden,
     );
@@ -69,36 +77,42 @@ export const RecordTableWidgetStatesEffect = ({
       store.set(
         isRecordTableColumnHeadersReadOnlyComponentState.atomFamily({
           instanceId: recordTableId,
+          surfaceId,
         }),
         false,
       );
       store.set(
         isRecordTableDragColumnHiddenComponentState.atomFamily({
           instanceId: recordTableId,
+          surfaceId,
         }),
         false,
       );
       store.set(
         isRecordTableCheckboxColumnHiddenComponentState.atomFamily({
           instanceId: recordTableId,
+          surfaceId,
         }),
         false,
       );
       store.set(
         isRecordTableColumnResizableComponentState.atomFamily({
           instanceId: recordTableId,
+          surfaceId,
         }),
         true,
       );
       store.set(
         isRecordTableCellsNonEditableComponentState.atomFamily({
           instanceId: recordTableId,
+          surfaceId,
         }),
         false,
       );
       store.set(
         isRecordTableEmptyStateHiddenComponentState.atomFamily({
           instanceId: recordTableId,
+          surfaceId,
         }),
         false,
       );
@@ -109,6 +123,7 @@ export const RecordTableWidgetStatesEffect = ({
     isUIEditable,
     isPageLayoutInEditMode,
     isEmptyStateHidden,
+    surfaceId,
   ]);
 
   return null;

@@ -14,7 +14,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useLingui } from '@lingui/react/macro';
 import { createPortal } from 'react-dom';
 import { createPath, useLocation } from 'react-router-dom';
@@ -41,13 +40,9 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
   const { copyToClipboard } = useCopyToClipboard();
   const hasViewsPermission = useHasPermissionFlag(PermissionFlagType.VIEWS);
   const { canPersistChanges } = useCanPersistViewChanges();
-
-  const scopedObjectOptionsDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(OBJECT_OPTIONS_DROPDOWN_ID);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedObjectOptionsDropdownId,
+    OBJECT_OPTIONS_DROPDOWN_ID,
   );
 
   const selectableItemIdArray = [

@@ -11,6 +11,7 @@ import { useCallback } from 'react';
 import { IconArrowMerge } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 import { useStore } from 'jotai';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 type UseOpenMergeRecordsPageInSidePanelProps = {
   objectNameSingular: string;
@@ -21,6 +22,7 @@ export const useOpenMergeRecordsPageInSidePanel = ({
   objectNameSingular,
   objectRecordIds,
 }: UseOpenMergeRecordsPageInSidePanelProps) => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -47,6 +49,7 @@ export const useOpenMergeRecordsPageInSidePanel = ({
     store.set(
       contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
         instanceId: pageId,
+        surfaceId,
       }),
       objectMetadataItem.id,
     );
@@ -73,6 +76,7 @@ export const useOpenMergeRecordsPageInSidePanel = ({
     navigateSidePanel,
     updateSidePanelNavigationMorphItemsByPage,
     store,
+    surfaceId,
   ]);
 
   return {

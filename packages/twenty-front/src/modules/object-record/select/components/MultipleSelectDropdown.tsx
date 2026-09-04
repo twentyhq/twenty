@@ -10,7 +10,6 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { t } from '@lingui/core/macro';
 import { Avatar } from 'twenty-ui/data-display';
@@ -40,13 +39,9 @@ export const MultipleSelectDropdown = ({
   const { closeDropdown } = useCloseDropdown();
 
   const { resetSelectedItem } = useSelectableList(selectableListId);
-
-  const scopedSelectableListId =
-    useWorkspaceSurfaceScopedComponentInstanceId(selectableListId);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedSelectableListId,
+    selectableListId,
   );
 
   const handleItemSelectChange = (

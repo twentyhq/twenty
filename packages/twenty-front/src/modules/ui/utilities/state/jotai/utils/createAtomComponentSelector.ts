@@ -3,6 +3,7 @@ import { selectAtom } from 'jotai/utils';
 
 import { type ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
 import { type ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
+import { getComponentAtomCacheKey } from '@/ui/utilities/state/component-state/utils/getComponentAtomCacheKey';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { type ComponentSelector } from '@/ui/utilities/state/jotai/types/ComponentSelector';
 import { type SelectorGetter } from '@/ui/utilities/state/jotai/types/SelectorCallbacks';
@@ -24,12 +25,19 @@ export const createAtomComponentSelector = <ValueType>({
     globalComponentInstanceContextMap.set(key, componentInstanceContext);
   }
 
+  const surfaceScope = componentInstanceContext?.surfaceScope ?? 'per-surface';
+
   const atomCache = new Map<string, Atom<ValueType>>();
 
   const selectorFamily = (
     componentStateKey: ComponentStateKey,
   ): Atom<ValueType> => {
-    const existing = atomCache.get(componentStateKey.instanceId);
+    const cacheKey = getComponentAtomCacheKey({
+      surfaceScope,
+      ...componentStateKey,
+    });
+
+    const existing = atomCache.get(cacheKey);
 
     if (existing !== undefined) {
       return existing;
@@ -47,8 +55,8 @@ export const createAtomComponentSelector = <ValueType>({
       ? selectAtom(derivedAtom, (value) => value, areEqual)
       : derivedAtom;
 
-    finalAtom.debugLabel = `${key}__${componentStateKey.instanceId}`;
-    atomCache.set(componentStateKey.instanceId, finalAtom);
+    finalAtom.debugLabel = `${key}__${cacheKey}`;
+    atomCache.set(cacheKey, finalAtom);
 
     return finalAtom;
   };

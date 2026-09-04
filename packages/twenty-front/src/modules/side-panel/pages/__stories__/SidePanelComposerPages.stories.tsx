@@ -18,6 +18,7 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const STORY_PAGE_INSTANCE_ID = 'side-panel-composer-story';
 const GOOGLE_ACCOUNT_ID = '20202020-9ac0-4390-9a1a-ab4d2c4e1bb7';
@@ -90,7 +91,10 @@ const useInitializeSidePanelComposerStory = ({
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    const atomFamilyParams = { instanceId: STORY_PAGE_INSTANCE_ID };
+    const atomFamilyParams = {
+      instanceId: STORY_PAGE_INSTANCE_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+    };
 
     if (composer === 'calendar-event') {
       store.set(

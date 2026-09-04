@@ -24,6 +24,7 @@ import {
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const mockNavigatePageLayoutSidePanel = jest.fn();
 
@@ -111,9 +112,13 @@ describe('useCreateRecordPageNoteWidget', () => {
       const instanceId = PAGE_LAYOUT_TEST_INSTANCE_ID;
       const draftAtom = pageLayoutDraftComponentState.atomFamily({
         instanceId,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       });
       const editingWidgetAtom =
-        pageLayoutEditingWidgetIdComponentState.atomFamily({ instanceId });
+        pageLayoutEditingWidgetIdComponentState.atomFamily({
+          instanceId,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+        });
       const widgets = [
         makeWidget('first', 0),
         makeWidget('second', 1),
@@ -132,7 +137,10 @@ describe('useCreateRecordPageNoteWidget', () => {
       store.set(draftAtom, makeDraft([otherTab, makeTab('tab-1', widgets)]));
       if (insertAboveWidgetId !== undefined) {
         store.set(
-          widgetInsertionContextComponentState.atomFamily({ instanceId }),
+          widgetInsertionContextComponentState.atomFamily({
+            instanceId,
+            surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+          }),
           { targetWidgetId: insertAboveWidgetId, direction: 'above' },
         );
       }
@@ -194,6 +202,7 @@ describe('useCreateRecordPageNoteWidget', () => {
     const store = createStore();
     const draftAtom = pageLayoutDraftComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     });
     const otherTab = makeTab('other-tab', []);
 
@@ -237,6 +246,7 @@ describe('useCreateRecordPageNoteWidget', () => {
       store.get(
         pageLayoutEditingWidgetIdComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
       ),
     ).toBe(note.id);
@@ -251,10 +261,12 @@ describe('useCreateRecordPageNoteWidget', () => {
     const store = createStore();
     const draftAtom = pageLayoutDraftComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     });
     const editingWidgetAtom =
       pageLayoutEditingWidgetIdComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       });
     store.set(draftAtom, makeDraft([makeTab('tab-1', [])]));
     mockNavigatePageLayoutSidePanel.mockImplementationOnce(() => {

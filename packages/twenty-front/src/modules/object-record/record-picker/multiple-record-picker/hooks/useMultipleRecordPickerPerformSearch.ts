@@ -18,6 +18,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { type SearchRecord, type SearchResultEdge } from '~/generated/graphql';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 const MULTIPLE_RECORD_PICKER_PAGE_SIZE = 30;
 
@@ -29,6 +30,8 @@ export const useMultipleRecordPickerPerformSearch = () => {
     usePerformCombinedFindManyRecords();
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
+  const surfaceId = useComponentStateSurfaceId();
 
   const performSearch = useCallback(
     async ({
@@ -44,7 +47,10 @@ export const useMultipleRecordPickerPerformSearch = () => {
       forcePickableMorphItems?: RecordPickerPickableMorphItem[];
       loadMore?: boolean;
     }) => {
-      const atomFamilyKey = { instanceId: multipleRecordPickerInstanceId };
+      const atomFamilyKey = {
+        instanceId: multipleRecordPickerInstanceId,
+        surfaceId,
+      };
 
       const paginationState = store.get(
         multipleRecordPickerPaginationState.atomFamily(atomFamilyKey),
@@ -364,6 +370,7 @@ export const useMultipleRecordPickerPerformSearch = () => {
       performCombinedFindManyRecords,
       objectPermissionsByObjectMetadataId,
       store,
+      surfaceId,
     ],
   );
 

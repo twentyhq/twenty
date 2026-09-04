@@ -8,6 +8,7 @@ import { isRecordTableCellFocusActiveComponentState } from '@/object-record/reco
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const mockClassList = {
   add: jest.fn(),
@@ -16,7 +17,10 @@ const mockClassList = {
 
 const mockGetElementById = jest.spyOn(document, 'getElementById');
 
-const instanceId = { instanceId: 'test-table-id' };
+const instanceId = {
+  instanceId: 'test-table-id',
+  surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+};
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecordTableComponentInstance recordTableId="test-table-id">

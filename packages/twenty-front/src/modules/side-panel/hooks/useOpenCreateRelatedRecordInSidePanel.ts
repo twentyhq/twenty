@@ -7,8 +7,10 @@ import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconPlus } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useOpenCreateRelatedRecordInSidePanel = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const { navigateSidePanelMenu } = useSidePanelMenu();
 
@@ -19,6 +21,7 @@ export const useOpenCreateRelatedRecordInSidePanel = () => {
       store.set(
         createRelatedRecordTargetComponentState.atomFamily({
           instanceId: pageId,
+          surfaceId,
         }),
         targetRecord,
       );
@@ -30,7 +33,7 @@ export const useOpenCreateRelatedRecordInSidePanel = () => {
         pageId,
       });
     },
-    [navigateSidePanelMenu, store],
+    [navigateSidePanelMenu, store, surfaceId],
   );
 
   return { openCreateRelatedRecordInSidePanel };

@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { type ComponentFamilyState } from '@/ui/utilities/state/jotai/types/ComponentFamilyState';
 
@@ -25,9 +26,11 @@ export const useAtomComponentFamilyStateCallbackState = <StateType, FamilyKey>(
     instanceIdFromProps,
   );
 
+  const surfaceId = useComponentStateSurfaceId();
+
   return useCallback(
     (familyKey: FamilyKey) =>
-      componentFamilyState.atomFamily({ instanceId, familyKey }),
-    [componentFamilyState, instanceId],
+      componentFamilyState.atomFamily({ instanceId, surfaceId, familyKey }),
+    [componentFamilyState, instanceId, surfaceId],
   );
 };

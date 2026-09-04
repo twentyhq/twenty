@@ -7,8 +7,10 @@ import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconCalendarEvent } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useOpenComposeCalendarEventInSidePanel = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const { navigateSidePanelMenu } = useSidePanelMenu();
 
@@ -19,6 +21,7 @@ export const useOpenComposeCalendarEventInSidePanel = () => {
       store.set(
         composeCalendarEventInitialValuesComponentState.atomFamily({
           instanceId: pageId,
+          surfaceId,
         }),
         initialValues,
       );
@@ -30,7 +33,7 @@ export const useOpenComposeCalendarEventInSidePanel = () => {
         pageId,
       });
     },
-    [navigateSidePanelMenu, store],
+    [navigateSidePanelMenu, store, surfaceId],
   );
 
   return { openComposeCalendarEventInSidePanel };

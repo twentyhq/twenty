@@ -18,6 +18,7 @@ import {
   mockedWorkflowNodeId,
   mockedWorkflowVersion,
 } from '~/testing/mock-data/workflow';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 export const WorkflowStepDecorator: Decorator = (Story) => {
   const workflowVisualizerComponentInstanceId = 'workflow-visualizer-test-id';
@@ -37,30 +38,35 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
       store.set(
         workflowVisualizerWorkflowIdComponentState.atomFamily({
           instanceId: workflowVisualizerComponentInstanceId,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
         mockedWorkflow.id,
       );
       store.set(
         workflowVisualizerWorkflowVersionIdComponentState.atomFamily({
           instanceId: workflowVisualizerComponentInstanceId,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
         workflowVersion.id,
       );
       store.set(
         workflowVisualizerWorkflowRunIdComponentState.atomFamily({
           instanceId: workflowVisualizerComponentInstanceId,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
         '123',
       );
       store.set(
         workflowSelectedNodeComponentState.atomFamily({
           instanceId: workflowVisualizerComponentInstanceId,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
         mockedWorkflowNodeId,
       );
       store.set(
         flowComponentState.atomFamily({
           instanceId: workflowVisualizerComponentInstanceId,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
         {
           workflowVersionId: workflowVersion.id,
@@ -71,6 +77,7 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
       store.set(
         sidePanelWorkflowIdComponentState.atomFamily({
           instanceId: workflowVisualizerComponentInstanceId,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
         mockedWorkflow.id,
       );
@@ -89,6 +96,7 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
   const workflowVersionId = useAtomValue(
     workflowVisualizerWorkflowVersionIdComponentState.atomFamily({
       instanceId: workflowVisualizerComponentInstanceId,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
   );
 

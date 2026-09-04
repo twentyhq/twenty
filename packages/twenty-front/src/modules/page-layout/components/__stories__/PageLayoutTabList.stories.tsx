@@ -18,6 +18,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PageLayoutType } from '~/generated-metadata/graphql';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const StyledContainer = styled.div<{ containerWidth: number }>`
   border: 1px solid ${themeCssVariables.border.color.strong};
@@ -235,6 +236,7 @@ export const Default: Story = {
         jotaiStore.get(
           activeTabIdComponentState.atomFamily({
             instanceId: 'page-layout-tab-list-story',
+            surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
           }),
         ),
       ).toBe('revenue'),

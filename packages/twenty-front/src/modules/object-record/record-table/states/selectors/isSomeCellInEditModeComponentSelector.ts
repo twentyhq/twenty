@@ -8,11 +8,11 @@ export const isSomeCellInEditModeComponentSelector =
     key: 'isSomeCellInEditModeComponentSelector',
     componentInstanceContext: RecordTableComponentInstanceContext,
     get:
-      ({ instanceId }) =>
+      ({ instanceId, surfaceId }) =>
       ({ get }) => {
         const currentTableCellInEditModePosition = get(
           recordTableCellEditModePositionComponentState,
-          { instanceId },
+          { instanceId, surfaceId },
         );
 
         return isDefined(currentTableCellInEditModePosition);

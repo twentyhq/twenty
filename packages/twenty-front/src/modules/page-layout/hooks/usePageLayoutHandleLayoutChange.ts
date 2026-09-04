@@ -9,6 +9,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { type Layout, type ResponsiveLayouts } from 'react-grid-layout';
 import { isDefined } from 'twenty-shared/utils';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const usePageLayoutHandleLayoutChange = ({
   pageLayoutId: pageLayoutIdFromProps,
@@ -17,6 +18,7 @@ export const usePageLayoutHandleLayoutChange = ({
   pageLayoutId: string;
   tabListInstanceId: string;
 }) => {
+  const surfaceId = useComponentStateSurfaceId();
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
@@ -39,6 +41,7 @@ export const usePageLayoutHandleLayoutChange = ({
       const activeTabId = store.get(
         activeTabIdComponentState.atomFamily({
           instanceId: tabListInstanceId,
+          surfaceId,
         }),
       );
 
@@ -87,6 +90,7 @@ export const usePageLayoutHandleLayoutChange = ({
       pageLayoutCurrentLayoutsState,
       pageLayoutDraftState,
       store,
+      surfaceId,
     ],
   );
 

@@ -11,6 +11,7 @@ import { act, renderHook } from '@testing-library/react';
 import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
 import { PageLayoutType } from '~/generated-metadata/graphql';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const MOCK_DASHBOARD_LAYOUT: PageLayout = {
   applicationId: 'application-id-mock',
@@ -50,6 +51,7 @@ describe('useSetIsPageLayoutInEditMode', () => {
     store.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       MOCK_DASHBOARD_LAYOUT,
     );
@@ -69,6 +71,7 @@ describe('useSetIsPageLayoutInEditMode', () => {
       store.get(
         isDashboardInEditModeComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
       ),
     ).toBe(false);
@@ -82,6 +85,7 @@ describe('useSetIsPageLayoutInEditMode', () => {
     store.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       MOCK_DASHBOARD_LAYOUT,
     );
@@ -101,6 +105,7 @@ describe('useSetIsPageLayoutInEditMode', () => {
       store.get(
         isDashboardInEditModeComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
       ),
     ).toBe(true);

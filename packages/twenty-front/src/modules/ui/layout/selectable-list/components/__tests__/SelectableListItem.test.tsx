@@ -4,6 +4,7 @@ import { createStore, Provider as JotaiProvider } from 'jotai';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const selectableListInstanceId = 'test-selectable-list';
 
@@ -44,6 +45,7 @@ describe('SelectableListItem', () => {
     store.set(
       isSelectedItemIdComponentFamilyState.atomFamily({
         instanceId: selectableListInstanceId,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         familyKey: 'second-item',
       }),
       true,

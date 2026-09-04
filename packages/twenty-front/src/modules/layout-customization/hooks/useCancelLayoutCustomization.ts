@@ -16,8 +16,10 @@ import { toDraftPageLayout } from '@/page-layout/utils/toDraftPageLayout';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useCancelLayoutCustomization = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const { exitLayoutCustomizationMode } = useExitLayoutCustomizationMode();
 
@@ -30,6 +32,7 @@ export const useCancelLayoutCustomization = () => {
       const persisted = store.get(
         pageLayoutPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
 
@@ -37,6 +40,7 @@ export const useCancelLayoutCustomization = () => {
         store.set(
           pageLayoutDraftComponentState.atomFamily({
             instanceId: pageLayoutId,
+            surfaceId,
           }),
           toDraftPageLayout(persisted),
         );
@@ -44,6 +48,7 @@ export const useCancelLayoutCustomization = () => {
         store.set(
           pageLayoutCurrentLayoutsComponentState.atomFamily({
             instanceId: pageLayoutId,
+            surfaceId,
           }),
           convertPageLayoutToTabLayouts(persisted),
         );
@@ -52,11 +57,13 @@ export const useCancelLayoutCustomization = () => {
       const fieldsWidgetGroupsPersisted = store.get(
         fieldsWidgetGroupsPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
       store.set(
         fieldsWidgetGroupsDraftComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
         fieldsWidgetGroupsPersisted,
       );
@@ -64,11 +71,13 @@ export const useCancelLayoutCustomization = () => {
       const fieldsWidgetUngroupedFieldsPersisted = store.get(
         fieldsWidgetUngroupedFieldsPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
       store.set(
         fieldsWidgetUngroupedFieldsDraftComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
         fieldsWidgetUngroupedFieldsPersisted,
       );
@@ -76,11 +85,13 @@ export const useCancelLayoutCustomization = () => {
       const fieldsWidgetEditorModePersisted = store.get(
         fieldsWidgetEditorModePersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
       store.set(
         fieldsWidgetEditorModeDraftComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
         fieldsWidgetEditorModePersisted,
       );
@@ -88,18 +99,20 @@ export const useCancelLayoutCustomization = () => {
       const recordTableWidgetViewPersisted = store.get(
         recordTableWidgetViewPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
       store.set(
         recordTableWidgetViewDraftComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
         recordTableWidgetViewPersisted,
       );
     }
 
     exitLayoutCustomizationMode();
-  }, [store, exitLayoutCustomizationMode]);
+  }, [store, exitLayoutCustomizationMode, surfaceId]);
 
   return { cancel };
 };

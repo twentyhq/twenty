@@ -14,8 +14,10 @@ import {
   type UpsertFieldsWidgetInput,
   type ViewFragmentFragment,
 } from '~/generated-metadata/graphql';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useSaveFieldsWidgetGroups = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const [upsertFieldsWidgetMutation] = useMutation<
     { upsertFieldsWidget: ViewFragmentFragment },
     { input: UpsertFieldsWidgetInput }
@@ -34,21 +36,25 @@ export const useSaveFieldsWidgetGroups = () => {
       const allDraftGroups = store.get(
         fieldsWidgetGroupsDraftComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
       const allPersistedGroups = store.get(
         fieldsWidgetGroupsPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
       const allUngroupedFieldsDraft = store.get(
         fieldsWidgetUngroupedFieldsDraftComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
       const allEditorModes = store.get(
         fieldsWidgetEditorModeDraftComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
 
@@ -111,23 +117,26 @@ export const useSaveFieldsWidgetGroups = () => {
       store.set(
         fieldsWidgetGroupsPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
         allDraftGroups,
       );
       store.set(
         fieldsWidgetUngroupedFieldsPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
         allUngroupedFieldsDraft,
       );
       store.set(
         fieldsWidgetEditorModePersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
         allEditorModes,
       );
     },
-    [hasFieldsWidgetChanges, store, upsertFieldsWidgetMutation],
+    [hasFieldsWidgetChanges, store, upsertFieldsWidgetMutation, surfaceId],
   );
 
   return { saveFieldsWidgetGroups };

@@ -7,8 +7,10 @@ import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useSetRecordFilterUsedInAdvancedFilterDropdownRow = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const setRecordFilterUsedInAdvancedFilterDropdownRow = useCallback(
     (recordFilter: RecordFilter) => {
@@ -20,6 +22,7 @@ export const useSetRecordFilterUsedInAdvancedFilterDropdownRow = () => {
       store.set(
         fieldMetadataItemIdUsedInDropdownComponentState.atomFamily({
           instanceId: advancedFilterRowObjectFilterDropdownComponentInstanceId,
+          surfaceId,
         }),
         recordFilter.fieldMetadataId,
       );
@@ -27,6 +30,7 @@ export const useSetRecordFilterUsedInAdvancedFilterDropdownRow = () => {
       store.set(
         selectedOperandInDropdownComponentState.atomFamily({
           instanceId: advancedFilterRowObjectFilterDropdownComponentInstanceId,
+          surfaceId,
         }),
         recordFilter.operand,
       );
@@ -34,6 +38,7 @@ export const useSetRecordFilterUsedInAdvancedFilterDropdownRow = () => {
       store.set(
         objectFilterDropdownCurrentRecordFilterComponentState.atomFamily({
           instanceId: advancedFilterRowObjectFilterDropdownComponentInstanceId,
+          surfaceId,
         }),
         recordFilter,
       );
@@ -41,6 +46,7 @@ export const useSetRecordFilterUsedInAdvancedFilterDropdownRow = () => {
       store.set(
         subFieldNameUsedInDropdownComponentState.atomFamily({
           instanceId: advancedFilterRowObjectFilterDropdownComponentInstanceId,
+          surfaceId,
         }),
         recordFilter.subFieldName,
       );
@@ -48,11 +54,12 @@ export const useSetRecordFilterUsedInAdvancedFilterDropdownRow = () => {
       store.set(
         relationTargetFieldMetadataIdUsedInDropdownComponentState.atomFamily({
           instanceId: advancedFilterRowObjectFilterDropdownComponentInstanceId,
+          surfaceId,
         }),
         recordFilter.relationTargetFieldMetadataId ?? null,
       );
     },
-    [store],
+    [store, surfaceId],
   );
 
   return {

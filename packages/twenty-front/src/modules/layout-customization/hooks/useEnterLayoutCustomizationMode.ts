@@ -22,8 +22,10 @@ import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfo
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useEnterLayoutCustomizationMode = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const { navigateSidePanel } = useNavigateSidePanel();
   const { enqueueWarningSnackBar } = useSnackBar();
@@ -50,6 +52,7 @@ export const useEnterLayoutCustomizationMode = () => {
       const isDashboardInEditMode = store.get(
         isDashboardInEditModeComponentState.atomFamily({
           instanceId: dashboardPageLayoutIdInEditMode,
+          surfaceId,
         }),
       );
 
@@ -94,7 +97,13 @@ export const useEnterLayoutCustomizationMode = () => {
     }
 
     return true;
-  }, [enqueueWarningSnackBar, hasLayoutsPermission, navigateSidePanel, store]);
+  }, [
+    enqueueWarningSnackBar,
+    hasLayoutsPermission,
+    navigateSidePanel,
+    store,
+    surfaceId,
+  ]);
 
   return { enterLayoutCustomizationMode };
 };

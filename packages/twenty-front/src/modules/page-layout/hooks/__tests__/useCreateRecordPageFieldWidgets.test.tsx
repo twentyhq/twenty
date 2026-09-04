@@ -21,6 +21,7 @@ import {
   PageLayoutType,
   WidgetType,
 } from '~/generated-metadata/graphql';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const mockNavigatePageLayoutSidePanel = jest.fn();
 
@@ -68,10 +69,12 @@ describe('record-page field widget creation', () => {
       const store = createStore();
       const draftAtom = pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       });
       const editingWidgetAtom =
         pageLayoutEditingWidgetIdComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         });
       store.set(isLayoutCustomizationModeEnabledState.atom, true);
       store.set(draftAtom, makeDraft([makeTab('tab-1', [])]));

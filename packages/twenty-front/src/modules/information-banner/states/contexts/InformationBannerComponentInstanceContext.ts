@@ -1,4 +1,6 @@
 import { createComponentInstanceContext } from '@/ui/utilities/state/component-state/utils/createComponentInstanceContext';
 
 export const InformationBannerComponentInstanceContext =
-  createComponentInstanceContext();
+  createComponentInstanceContext({
+    surfaceScope: 'shared',
+  });

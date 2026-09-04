@@ -147,13 +147,11 @@ export const PageLayoutTabsRenderer = () => {
     }),
   );
 
-  const tabListInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
-    getTabListInstanceIdFromPageLayoutAndRecord({
-      pageLayoutId: currentPageLayout.id,
-      layoutType,
-      targetRecordIdentifier,
-    }),
-  );
+  const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
+    pageLayoutId: currentPageLayout.id,
+    layoutType,
+    targetRecordIdentifier,
+  });
 
   const addTabStrategy = usePageLayoutAddTabStrategy({
     pageLayoutId: currentPageLayout.id,

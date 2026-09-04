@@ -8,10 +8,11 @@ export const allRecordIdsOfAllRecordGroupsComponentSelector =
     key: 'allRecordIdsOfAllRecordGroupsComponentSelector',
     componentInstanceContext: ViewComponentInstanceContext,
     get:
-      ({ instanceId }) =>
+      ({ instanceId, surfaceId }) =>
       ({ get }) => {
         const recordGroupIds = get(recordGroupIdsComponentState, {
           instanceId,
+          surfaceId,
         });
 
         if (recordGroupIds.length === 0) {
@@ -21,6 +22,7 @@ export const allRecordIdsOfAllRecordGroupsComponentSelector =
         return recordGroupIds.reduce<string[]>((acc, recordGroupId) => {
           const rowIds = get(recordIndexRecordIdsByGroupComponentFamilyState, {
             instanceId,
+            surfaceId,
             familyKey: recordGroupId,
           });
 

@@ -9,8 +9,10 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { dialogInternalComponentState } from '@/ui/feedback/dialog-manager/states/dialogInternalComponentState';
 import { type DialogOptions } from '@/ui/feedback/dialog-manager/types/DialogOptions';
 import { useStore } from 'jotai';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useDialogManager = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     DialogComponentInstanceContext,
   );
@@ -25,6 +27,7 @@ export const useDialogManager = () => {
       store.set(
         dialogInternalComponentState.atomFamily({
           instanceId: componentInstanceId,
+          surfaceId,
         }),
         (prevState) => ({
           ...prevState,
@@ -34,7 +37,7 @@ export const useDialogManager = () => {
 
       removeFocusItemFromFocusStackById({ focusId: DIALOG_FOCUS_ID });
     },
-    [componentInstanceId, removeFocusItemFromFocusStackById, store],
+    [componentInstanceId, removeFocusItemFromFocusStackById, store, surfaceId],
   );
 
   const setDialogQueue = useCallback(
@@ -42,6 +45,7 @@ export const useDialogManager = () => {
       store.set(
         dialogInternalComponentState.atomFamily({
           instanceId: componentInstanceId,
+          surfaceId,
         }),
         (prev) => {
           if (prev.queue.length >= prev.maxQueue) {
@@ -57,7 +61,7 @@ export const useDialogManager = () => {
           };
         },
       ),
-    [componentInstanceId, store],
+    [componentInstanceId, store, surfaceId],
   );
 
   const enqueueDialog = (options?: Omit<DialogOptions, 'id'>) => {

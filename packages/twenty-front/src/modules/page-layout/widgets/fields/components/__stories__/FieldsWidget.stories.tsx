@@ -274,12 +274,14 @@ const FieldsWidgetStoryRenderer = ({
   jotaiStore.set(
     pageLayoutPersistedComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
     pageLayoutData,
   );
   jotaiStore.set(
     pageLayoutDraftComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
     pageLayoutData,
   );

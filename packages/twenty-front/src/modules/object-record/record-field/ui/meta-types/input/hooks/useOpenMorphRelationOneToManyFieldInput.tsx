@@ -18,8 +18,10 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { useCallback } from 'react';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useOpenMorphRelationOneToManyFieldInput = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const { performSearch } = useMultipleRecordPickerPerformSearch();
   const { openMultipleRecordPicker } = useMultipleRecordPickerOpen();
@@ -106,13 +108,14 @@ export const useOpenMorphRelationOneToManyFieldInput = () => {
       store.set(
         multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
           instanceId: recordPickerInstanceId,
+          surfaceId,
         }),
         pickableMorphItems,
       );
 
       store.set(
         multipleRecordPickerSearchableObjectMetadataItemsComponentState.atomFamily(
-          { instanceId: recordPickerInstanceId },
+          { instanceId: recordPickerInstanceId, surfaceId },
         ),
         objectMetadataItemArray,
       );
@@ -135,7 +138,13 @@ export const useOpenMorphRelationOneToManyFieldInput = () => {
         },
       });
     },
-    [store, openMultipleRecordPicker, performSearch, pushFocusItemToFocusStack],
+    [
+      store,
+      openMultipleRecordPicker,
+      performSearch,
+      pushFocusItemToFocusStack,
+      surfaceId,
+    ],
   );
 
   return {

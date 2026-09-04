@@ -10,8 +10,10 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useExitLayoutCustomizationMode = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
 
   const { closeSidePanelMenu } = useSidePanelMenu();
@@ -38,6 +40,7 @@ export const useExitLayoutCustomizationMode = () => {
       store.set(
         pageLayoutEditingWidgetIdComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
         null,
       );
@@ -56,6 +59,7 @@ export const useExitLayoutCustomizationMode = () => {
     setIsLayoutCustomizationModeEnabled,
     closeSidePanelMenu,
     store,
+    surfaceId,
   ]);
 
   return { exitLayoutCustomizationMode };

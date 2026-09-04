@@ -17,8 +17,10 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { useStore } from 'jotai';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useRunWorkflowRunOpeningInSidePanelEffects = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const apolloCoreClient = useApolloCoreClient();
   const { openWorkflowRunViewStepInSidePanel } =
@@ -67,18 +69,21 @@ export const useRunWorkflowRunOpeningInSidePanelEffects = () => {
       store.set(
         workflowVisualizerWorkflowRunIdComponentState.atomFamily({
           instanceId,
+          surfaceId,
         }),
         workflowRunRecord.id,
       );
       store.set(
         workflowVisualizerWorkflowIdComponentState.atomFamily({
           instanceId,
+          surfaceId,
         }),
         workflowRunRecord.workflowId,
       );
       store.set(
         flowComponentState.atomFamily({
           instanceId,
+          surfaceId,
         }),
         {
           workflowVersionId: workflowRunRecord.workflowVersionId,
@@ -89,6 +94,7 @@ export const useRunWorkflowRunOpeningInSidePanelEffects = () => {
       store.set(
         workflowSelectedNodeComponentState.atomFamily({
           instanceId,
+          surfaceId,
         }),
         stepToOpenByDefault.id,
       );
@@ -96,6 +102,7 @@ export const useRunWorkflowRunOpeningInSidePanelEffects = () => {
       store.set(
         workflowRunDiagramAutomaticallyOpenedStepsComponentState.atomFamily({
           instanceId,
+          surfaceId,
         }),
         (steps) => [
           ...steps,
@@ -120,6 +127,7 @@ export const useRunWorkflowRunOpeningInSidePanelEffects = () => {
       openWorkflowRunViewStepInSidePanel,
       getIcon,
       store,
+      surfaceId,
     ],
   );
 

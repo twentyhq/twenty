@@ -14,6 +14,7 @@ import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
 import type * as TwentyIcons from 'twenty-ui/icon';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const mockNavigatePageLayoutSidePanel = jest.fn();
 
@@ -111,12 +112,14 @@ describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
     store.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       makeDraft([makeTab('tab-1', [])]),
     );
     store.set(
       widgetCreationTargetTabIdComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       'tab-1',
     );

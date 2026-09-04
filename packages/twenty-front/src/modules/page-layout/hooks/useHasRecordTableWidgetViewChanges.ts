@@ -3,8 +3,10 @@ import { recordTableWidgetViewPersistedComponentState } from '@/page-layout/stat
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useHasRecordTableWidgetViewChanges = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
 
   const hasRecordTableWidgetViewChanges = useCallback(
@@ -12,11 +14,13 @@ export const useHasRecordTableWidgetViewChanges = () => {
       const recordTableWidgetViewDraft = store.get(
         recordTableWidgetViewDraftComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
       const recordTableWidgetViewPersisted = store.get(
         recordTableWidgetViewPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
 
@@ -25,7 +29,7 @@ export const useHasRecordTableWidgetViewChanges = () => {
         recordTableWidgetViewPersisted,
       );
     },
-    [store],
+    [store, surfaceId],
   );
 
   return { hasRecordTableWidgetViewChanges };

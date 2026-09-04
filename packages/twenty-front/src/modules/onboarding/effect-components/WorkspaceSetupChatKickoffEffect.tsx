@@ -21,8 +21,10 @@ import {
   StartWorkspaceSetupChatDocument,
   WorkspaceSetupChatOutcome,
 } from '~/generated-metadata/graphql';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const WorkspaceSetupChatKickoffEffect = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const [startWorkspaceSetupChatMutation] = useMutation(
     StartWorkspaceSetupChatDocument,
   );
@@ -100,6 +102,7 @@ export const WorkspaceSetupChatKickoffEffect = () => {
         store.set(
           currentAiChatThreadTitleComponentFamilyState.atomFamily({
             instanceId: AGENT_CHAT_INSTANCE_ID,
+            surfaceId,
             familyKey: { threadId: thread.id },
           }),
           thread.title ?? null,
@@ -109,6 +112,7 @@ export const WorkspaceSetupChatKickoffEffect = () => {
           store.set(
             agentChatIsAwaitingFirstChunkComponentFamilyState.atomFamily({
               instanceId: AGENT_CHAT_INSTANCE_ID,
+              surfaceId,
               familyKey: { threadId: thread.id },
             }),
             true,
@@ -133,6 +137,7 @@ export const WorkspaceSetupChatKickoffEffect = () => {
     applyChanges,
     isCompanyEnrichmentFetchInFlight,
     hasWaitedForCompanyEnrichment,
+    surfaceId,
   ]);
 
   return null;

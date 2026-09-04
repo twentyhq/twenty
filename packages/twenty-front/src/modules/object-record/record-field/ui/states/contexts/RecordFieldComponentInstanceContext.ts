@@ -1,7 +1,8 @@
-import { type ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
 import { createComponentInstanceContext } from '@/ui/utilities/state/component-state/utils/createComponentInstanceContext';
 
-type RecordFieldComponentInstanceContextProps = ComponentStateKey;
+type RecordFieldComponentInstanceContextProps = { instanceId: string };
 
 export const RecordFieldComponentInstanceContext =
-  createComponentInstanceContext<RecordFieldComponentInstanceContextProps>();
+  createComponentInstanceContext<RecordFieldComponentInstanceContextProps>({
+    surfaceScope: 'shared',
+  });

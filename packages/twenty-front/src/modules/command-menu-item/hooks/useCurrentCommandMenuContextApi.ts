@@ -30,8 +30,10 @@ import {
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { isDefined, resolveObjectMetadataLabel } from 'twenty-shared/utils';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
 
   const workspaceSurface = useWorkspaceSurface();
@@ -127,6 +129,7 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   const isDashboardInEditMode = useAtomValue(
     isDashboardInEditModeComponentState.atomFamily({
       instanceId: dashboardPageLayoutIdForCommandMenu,
+      surfaceId,
     }),
   );
 

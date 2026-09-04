@@ -11,15 +11,17 @@ export const recordIndexAllRecordIdsComponentSelector =
     key: 'recordIndexAllRecordIdsComponentSelector',
     componentInstanceContext: ViewComponentInstanceContext,
     get:
-      ({ instanceId }) =>
+      ({ instanceId, surfaceId }) =>
       ({ get }) => {
         const recordGroupIds = get(recordGroupIdsComponentState, {
           instanceId,
+          surfaceId,
         });
 
         if (recordGroupIds.length === 0) {
           return get(recordIndexRecordIdsByGroupComponentFamilyState, {
             instanceId,
+            surfaceId,
             familyKey: NO_RECORD_GROUP_FAMILY_KEY,
           });
         }
@@ -30,6 +32,7 @@ export const recordIndexAllRecordIdsComponentSelector =
               recordIndexRecordIdsByGroupComponentFamilyState,
               {
                 instanceId,
+                surfaceId,
                 familyKey: recordGroupId,
               },
             );

@@ -22,11 +22,13 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useQueryVariablesFromParentView } from '@/views/hooks/useQueryVariablesFromParentView';
 import { AppPath, SidePanelPages } from 'twenty-shared/types';
 import { combineFilters, getAppPath, isDefined } from 'twenty-shared/utils';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useRecordShowPagePagination = (
   propsObjectNameSingular: string,
   propsObjectRecordId: string,
 ) => {
+  const surfaceId = useComponentStateSurfaceId();
   const {
     objectNameSingular: paramObjectNameSingular,
     objectRecordId: paramObjectRecordId,
@@ -245,6 +247,7 @@ export const useRecordShowPagePagination = (
         store.set(
           lastShowPageRecordIdState.atomFamily({
             instanceId: previousIndexPage.pageId,
+            surfaceId,
           }),
           objectRecordId,
         );
@@ -261,6 +264,7 @@ export const useRecordShowPagePagination = (
         store.set(
           lastShowPageRecordIdState.atomFamily({
             instanceId: destinationPageInstanceId,
+            surfaceId,
           }),
           objectRecordId,
         );

@@ -1,4 +1,6 @@
 import { createComponentInstanceContext } from '@/ui/utilities/state/component-state/utils/createComponentInstanceContext';
 
 export const RecordFieldsComponentInstanceContext =
-  createComponentInstanceContext();
+  createComponentInstanceContext({
+    surfaceScope: 'shared',
+  });

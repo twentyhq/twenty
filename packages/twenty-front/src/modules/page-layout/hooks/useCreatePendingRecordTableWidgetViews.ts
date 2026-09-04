@@ -8,8 +8,10 @@ import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useCreatePendingRecordTableWidgetViews = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const { performViewApiCreate, performViewApiDestroy } =
     usePerformViewApiPersist();
   const store = useStore();
@@ -19,17 +21,20 @@ export const useCreatePendingRecordTableWidgetViews = () => {
       const draft = store.get(
         pageLayoutDraftComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
       const persisted = store.get(
         pageLayoutPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
 
       const recordTableWidgetViewDraft = store.get(
         recordTableWidgetViewDraftComponentState.atomFamily({
           instanceId: pageLayoutId,
+          surfaceId,
         }),
       );
 
@@ -129,7 +134,7 @@ export const useCreatePendingRecordTableWidgetViews = () => {
         }
       }
     },
-    [performViewApiCreate, performViewApiDestroy, store],
+    [performViewApiCreate, performViewApiDestroy, store, surfaceId],
   );
 
   return { createPendingRecordTableWidgetViews };

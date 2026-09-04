@@ -9,8 +9,10 @@ import { ViewType } from '@/views/types/ViewType';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useSelectFirstRecordForEditMode = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const { resetRecordIndexSelection } = useResetRecordIndexSelection(
     MAIN_CONTEXT_STORE_INSTANCE_ID,
@@ -28,6 +30,7 @@ export const useSelectFirstRecordForEditMode = () => {
     const allRecordIds = store.get(
       recordIndexAllRecordIdsComponentSelector.selectorFamily({
         instanceId: recordIndexId,
+        surfaceId,
       }),
     );
 
@@ -38,7 +41,10 @@ export const useSelectFirstRecordForEditMode = () => {
     }
 
     const viewType = store.get(
-      recordIndexViewTypeState.atomFamily({ instanceId: recordIndexId }),
+      recordIndexViewTypeState.atomFamily({
+        instanceId: recordIndexId,
+        surfaceId,
+      }),
     );
 
     switch (viewType) {
@@ -46,6 +52,7 @@ export const useSelectFirstRecordForEditMode = () => {
         store.set(
           isRowSelectedComponentFamilyState.atomFamily({
             instanceId: recordIndexId,
+            surfaceId,
             familyKey: firstRecordId,
           }),
           true,
@@ -56,6 +63,7 @@ export const useSelectFirstRecordForEditMode = () => {
         store.set(
           isRecordBoardCardSelectedComponentFamilyState.atomFamily({
             instanceId: recordIndexId,
+            surfaceId,
             familyKey: firstRecordId,
           }),
           true,
@@ -63,7 +71,7 @@ export const useSelectFirstRecordForEditMode = () => {
         break;
       }
     }
-  }, [store, resetRecordIndexSelection]);
+  }, [store, resetRecordIndexSelection, surfaceId]);
 
   return { selectFirstRecordForEditMode };
 };

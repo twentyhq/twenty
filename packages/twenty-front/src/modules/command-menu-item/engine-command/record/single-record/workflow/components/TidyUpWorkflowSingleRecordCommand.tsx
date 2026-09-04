@@ -6,8 +6,10 @@ import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/state
 import { useTidyUpWorkflowVersion } from '@/workflow/workflow-version/hooks/useTidyUpWorkflowVersion';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const TidyUpWorkflowSingleRecordCommand = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const { selectedRecords } = useHeadlessCommandContextApi();
 
@@ -26,6 +28,7 @@ export const TidyUpWorkflowSingleRecordCommand = () => {
   const handleExecute = async () => {
     const workflowDiagramAtom = workflowDiagramComponentState.atomFamily({
       instanceId,
+      surfaceId,
     });
     const workflowDiagram = store.get(workflowDiagramAtom);
 

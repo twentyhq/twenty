@@ -13,6 +13,7 @@ import { toDraftPageLayout } from '@/page-layout/utils/toDraftPageLayout';
 import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const mockCloseAnyOpenDropdown = jest.fn();
 
@@ -52,11 +53,13 @@ describe('useExecuteTasksOnAnyLocationChange', () => {
     };
     const draftState = pageLayoutDraftComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     });
 
     store.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       persistedPageLayout,
     );
@@ -70,6 +73,7 @@ describe('useExecuteTasksOnAnyLocationChange', () => {
     store.set(
       isDashboardInEditModeComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       true,
     );
@@ -92,6 +96,7 @@ describe('useExecuteTasksOnAnyLocationChange', () => {
       store.get(
         isDashboardInEditModeComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
       ),
     ).toBe(false);
@@ -105,6 +110,7 @@ describe('useExecuteTasksOnAnyLocationChange', () => {
     store.set(
       isDashboardInEditModeComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       true,
     );
@@ -124,6 +130,7 @@ describe('useExecuteTasksOnAnyLocationChange', () => {
       store.get(
         isDashboardInEditModeComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
       ),
     ).toBe(true);

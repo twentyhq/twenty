@@ -112,18 +112,21 @@ const meta: Meta<typeof SidePanelCommandMenuItemDisplayPage> = {
       jotaiStore.set(
         contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
           instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
         companyMetadataItem.id,
       );
       jotaiStore.set(
         contextStoreCurrentViewTypeComponentState.atomFamily({
           instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
         ContextStoreViewType.Table,
       );
       jotaiStore.set(
         contextStoreCurrentPageTypeComponentState.atomFamily({
           instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
         ContextStorePageType.Index,
       );

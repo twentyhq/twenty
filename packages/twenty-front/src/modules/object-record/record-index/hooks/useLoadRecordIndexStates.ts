@@ -46,8 +46,10 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useLoadRecordIndexStates = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
 
   const contextStoreTargetedRecordsRuleAtom =
@@ -158,16 +160,19 @@ export const useLoadRecordIndexStates = () => {
       const recordIndexFieldDefinitionsAtom =
         recordIndexFieldDefinitionsState.atomFamily({
           instanceId: recordIndexId,
+          surfaceId,
         });
 
       const currentRecordFieldsAtom =
         currentRecordFieldsComponentState.atomFamily({
           instanceId: recordIndexId,
+          surfaceId,
         });
 
       const hasInitializedFieldsAtom =
         hasInitializedCurrentRecordFieldsComponentFamilyState.atomFamily({
           instanceId: recordIndexId,
+          surfaceId,
           familyKey: { viewId: view.id },
         });
 
@@ -219,7 +224,7 @@ export const useLoadRecordIndexStates = () => {
         }),
       );
     },
-    [ambientViewInstanceId, store],
+    [ambientViewInstanceId, store, surfaceId],
   );
 
   const loadRecordIndexStates = useCallback(
@@ -277,33 +282,40 @@ export const useLoadRecordIndexStates = () => {
 
       const recordIndexViewTypeAtom = recordIndexViewTypeState.atomFamily({
         instanceId: recordIndexId,
+        surfaceId,
       });
 
       const currentRecordFiltersAtom =
         currentRecordFiltersComponentState.atomFamily({
           instanceId: recordIndexId,
+          surfaceId,
         });
       const anyFieldFilterValueAtom =
         anyFieldFilterValueComponentState.atomFamily({
           instanceId: recordIndexId,
+          surfaceId,
         });
       const currentRecordFilterGroupsAtom =
         currentRecordFilterGroupsComponentState.atomFamily({
           instanceId: recordIndexId,
+          surfaceId,
         });
       const currentRecordSortsAtom =
         currentRecordSortsComponentState.atomFamily({
           instanceId: recordIndexId,
+          surfaceId,
         });
 
       const hasInitializedFiltersAtom =
         hasInitializedCurrentRecordFiltersComponentFamilyState.atomFamily({
           instanceId: recordIndexId,
+          surfaceId,
           familyKey: { viewId: view.id },
         });
       const hasInitializedSortsAtom =
         hasInitializedCurrentRecordSortsComponentFamilyState.atomFamily({
           instanceId: recordIndexId,
+          surfaceId,
           familyKey: { viewId: view.id },
         });
 
@@ -335,12 +347,14 @@ export const useLoadRecordIndexStates = () => {
             batchSet(
               recordIndexCalendarFieldMetadataIdComponentState.atomFamily({
                 instanceId: recordCalendarInstanceId,
+                surfaceId,
               }),
               view.calendarFieldMetadataId ?? null,
             );
             batchSet(
               recordIndexCalendarLayoutComponentState.atomFamily({
                 instanceId: recordCalendarInstanceId,
+                surfaceId,
               }),
               view.calendarLayout ?? ViewCalendarLayout.MONTH,
             );
@@ -401,6 +415,7 @@ export const useLoadRecordIndexStates = () => {
       getFieldMetadataItemByIdOrThrow,
       setRecordGroupsFromViewGroups,
       syncRecordIndexViewFields,
+      surfaceId,
     ],
   );
 

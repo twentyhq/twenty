@@ -15,6 +15,7 @@ import { act, renderHook } from '@testing-library/react';
 import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 jest.mock(
   '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel',
@@ -28,6 +29,7 @@ describe('useOpenReplaceWidgetPicker', () => {
     const insertionContextAtom =
       widgetInsertionContextComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       });
 
     (
@@ -41,6 +43,7 @@ describe('useOpenReplaceWidgetPicker', () => {
     store.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       makeDraft([makeTab('tab-1', [widget])]),
     );

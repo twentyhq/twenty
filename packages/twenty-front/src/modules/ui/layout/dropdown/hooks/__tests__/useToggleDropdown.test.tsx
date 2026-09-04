@@ -7,6 +7,7 @@ import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown'
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const dropdownId = 'test-dropdown-id';
 const outsideDropdownId = 'test-dropdown-id-outside';
@@ -29,12 +30,16 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 describe('useToggleDropdown', () => {
   beforeEach(() => {
     jotaiStore.set(
-      isDropdownOpenComponentState.atomFamily({ instanceId: dropdownId }),
+      isDropdownOpenComponentState.atomFamily({
+        instanceId: dropdownId,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+      }),
       false,
     );
     jotaiStore.set(
       isDropdownOpenComponentState.atomFamily({
         instanceId: outsideDropdownId,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       false,
     );

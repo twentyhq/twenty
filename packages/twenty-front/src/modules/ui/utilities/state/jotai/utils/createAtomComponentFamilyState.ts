@@ -1,6 +1,7 @@
 import { atom } from 'jotai';
 
 import { type ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
+import { getComponentAtomCacheKey } from '@/ui/utilities/state/component-state/utils/getComponentAtomCacheKey';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import {
   type ComponentFamilyStateKey,
@@ -21,6 +22,8 @@ export const createAtomComponentFamilyState = <ValueType, FamilyKey>({
     globalComponentInstanceContextMap.set(key, componentInstanceContext);
   }
 
+  const surfaceScope = componentInstanceContext?.surfaceScope ?? 'per-surface';
+
   const atomCache = new Map<
     string,
     ReturnType<ComponentFamilyState<ValueType, FamilyKey>['atomFamily']>
@@ -28,6 +31,7 @@ export const createAtomComponentFamilyState = <ValueType, FamilyKey>({
 
   const familyFunction = ({
     instanceId,
+    surfaceId,
     familyKey,
   }: ComponentFamilyStateKey<FamilyKey>): ReturnType<
     ComponentFamilyState<ValueType, FamilyKey>['atomFamily']
@@ -35,7 +39,11 @@ export const createAtomComponentFamilyState = <ValueType, FamilyKey>({
     const familyKeyStr =
       typeof familyKey === 'string' ? familyKey : JSON.stringify(familyKey);
 
-    const cacheKey = `${instanceId}__${familyKeyStr}`;
+    const cacheKey = `${getComponentAtomCacheKey({
+      surfaceScope,
+      instanceId,
+      surfaceId,
+    })}__${familyKeyStr}`;
     const existing = atomCache.get(cacheKey);
 
     if (existing !== undefined) {

@@ -37,6 +37,7 @@ import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestE
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow(
   CoreObjectNameSingular.Company,
@@ -379,12 +380,14 @@ const renderFieldWidgetStory = ({
   jotaiStore.set(
     pageLayoutPersistedComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
     pageLayoutData,
   );
   jotaiStore.set(
     pageLayoutDraftComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
     pageLayoutData,
   );

@@ -21,8 +21,10 @@ import { markQuestionPending } from '@/ai/utils/markQuestionPending';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useSubmitQuestionAnswer = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const apolloClient = useApolloClient();
   const store = useStore();
   const { enqueueErrorSnackBar, enqueueInfoSnackBar } = useSnackBar();
@@ -58,11 +60,13 @@ export const useSubmitQuestionAnswer = () => {
 
       const messagesAtom = agentChatMessagesComponentFamilyState.atomFamily({
         instanceId: AGENT_CHAT_INSTANCE_ID,
+        surfaceId,
         familyKey: { threadId },
       });
       const isAwaitingFirstChunkAtom =
         agentChatIsAwaitingFirstChunkComponentFamilyState.atomFamily({
           instanceId: AGENT_CHAT_INSTANCE_ID,
+          surfaceId,
           familyKey: { threadId },
         });
       const previousMessages = store.get(messagesAtom);
@@ -124,6 +128,7 @@ export const useSubmitQuestionAnswer = () => {
       enqueueErrorSnackBar,
       enqueueInfoSnackBar,
       modelIdForRequest,
+      surfaceId,
     ],
   );
 

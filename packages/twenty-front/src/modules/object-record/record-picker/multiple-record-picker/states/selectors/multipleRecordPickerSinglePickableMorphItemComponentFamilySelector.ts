@@ -11,11 +11,11 @@ export const multipleRecordPickerSinglePickableMorphItemComponentFamilySelector 
     key: 'multipleRecordPickerSinglePickableMorphItemComponentFamilySelector',
     componentInstanceContext: MultipleRecordPickerComponentInstanceContext,
     get:
-      ({ instanceId, familyKey: recordId }) =>
+      ({ instanceId, surfaceId, familyKey: recordId }) =>
       ({ get }) => {
         const pickableMorphItems = get(
           multipleRecordPickerPickableMorphItemsComponentState,
-          { instanceId },
+          { instanceId, surfaceId },
         );
 
         const pickableMorphItem = pickableMorphItems.find(

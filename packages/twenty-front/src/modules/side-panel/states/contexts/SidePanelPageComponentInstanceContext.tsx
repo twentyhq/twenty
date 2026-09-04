@@ -2,5 +2,8 @@ import { createComponentInstanceContext } from '@/ui/utilities/state/component-s
 
 export const SidePanelPageComponentInstanceContext =
   createComponentInstanceContext({
-    instanceId: '',
+    surfaceScope: 'shared',
+    initialValue: {
+      instanceId: '',
+    },
   });

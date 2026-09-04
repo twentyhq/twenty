@@ -121,6 +121,7 @@ describe('PageLayoutTabListEffect', () => {
       const surfaceInstanceId = isInSidePanel ? 'side-panel-page-1' : 'main';
       const activeTabAtom = activeTabIdComponentState.atomFamily({
         instanceId: TAB_LIST_INSTANCE_ID,
+        surfaceId: surfaceInstanceId,
       });
       store.set(activeTabAtom, activeTabId);
 

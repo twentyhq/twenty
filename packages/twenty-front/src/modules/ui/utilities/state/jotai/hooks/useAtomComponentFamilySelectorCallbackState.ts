@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { type ComponentFamilySelector } from '@/ui/utilities/state/jotai/types/ComponentFamilySelector';
 
@@ -30,9 +31,15 @@ export const useAtomComponentFamilySelectorCallbackState = <
     instanceIdFromProps,
   );
 
+  const surfaceId = useComponentStateSurfaceId();
+
   return useCallback(
     (familyKey: FamilyKey) =>
-      componentFamilySelector.selectorFamily({ instanceId, familyKey }),
-    [componentFamilySelector, instanceId],
+      componentFamilySelector.selectorFamily({
+        instanceId,
+        surfaceId,
+        familyKey,
+      }),
+    [componentFamilySelector, instanceId, surfaceId],
   );
 };

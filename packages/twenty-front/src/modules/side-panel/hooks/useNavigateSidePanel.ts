@@ -17,8 +17,10 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { v4 } from 'uuid';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useNavigateSidePanel = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const { sidePanelCloseAnimationCompleteCleanup } =
     useSidePanelCloseAnimationCompleteCleanup();
@@ -86,6 +88,7 @@ export const useNavigateSidePanel = () => {
         store.set(
           sidePanelShouldFocusTitleInputComponentState.atomFamily({
             instanceId: computedPageId,
+            surfaceId,
           }),
           true,
         );
@@ -112,7 +115,7 @@ export const useNavigateSidePanel = () => {
         ]);
       }
     },
-    [openSidePanel, store],
+    [openSidePanel, store, surfaceId],
   );
 
   return {

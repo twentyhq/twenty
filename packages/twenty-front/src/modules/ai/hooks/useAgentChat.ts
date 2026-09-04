@@ -47,10 +47,12 @@ import {
   markWorkspaceCreditsExhausted,
 } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useAgentChat = (
   ensureThreadIdForSend: () => Promise<string | null>,
 ) => {
+  const surfaceId = useComponentStateSurfaceId();
   const { modelIdForRequest } = useAgentChatModelId();
   const { enabledModels } = useWorkspaceAiModelAvailability();
   const { getBrowsingContext } = useGetBrowsingContext();
@@ -151,15 +153,18 @@ export const useAgentChat = (
 
     const messagesAtom = agentChatMessagesComponentFamilyState.atomFamily({
       instanceId: AGENT_CHAT_INSTANCE_ID,
+      surfaceId,
       familyKey: { threadId },
     });
     const errorAtom = agentChatErrorComponentFamilyState.atomFamily({
       instanceId: AGENT_CHAT_INSTANCE_ID,
+      surfaceId,
       familyKey: { threadId },
     });
     const isAwaitingFirstChunkAtom =
       agentChatIsAwaitingFirstChunkComponentFamilyState.atomFamily({
         instanceId: AGENT_CHAT_INSTANCE_ID,
+        surfaceId,
         familyKey: { threadId },
       });
 
@@ -283,6 +288,7 @@ export const useAgentChat = (
     setCurrentAiChatThread,
     apolloClient,
     applyOptimisticUnarchive,
+    surfaceId,
   ]);
 
   useListenToBrowserEvent({
@@ -300,6 +306,7 @@ export const useAgentChat = (
     store.set(
       agentChatIsAwaitingFirstChunkComponentFamilyState.atomFamily({
         instanceId: AGENT_CHAT_INSTANCE_ID,
+        surfaceId,
         familyKey: { threadId },
       }),
       false,
@@ -315,7 +322,7 @@ export const useAgentChat = (
         apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
     }
-  }, [store, apolloClient, enqueueErrorSnackBar]);
+  }, [store, apolloClient, enqueueErrorSnackBar, surfaceId]);
 
   useListenToBrowserEvent({
     eventName: AGENT_CHAT_STOP_EVENT_NAME,

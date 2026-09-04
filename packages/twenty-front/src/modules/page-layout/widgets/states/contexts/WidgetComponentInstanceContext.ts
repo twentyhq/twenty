@@ -1,3 +1,5 @@
 import { createComponentInstanceContext } from '@/ui/utilities/state/component-state/utils/createComponentInstanceContext';
 
-export const WidgetComponentInstanceContext = createComponentInstanceContext();
+export const WidgetComponentInstanceContext = createComponentInstanceContext({
+  surfaceScope: 'shared',
+});

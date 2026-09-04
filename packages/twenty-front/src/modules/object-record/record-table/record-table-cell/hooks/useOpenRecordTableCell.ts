@@ -32,6 +32,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { OpenRecordIn } from 'twenty-shared/types';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export type OpenTableCellArgs = {
   initialValue?: string;
@@ -43,6 +44,7 @@ export type OpenTableCellArgs = {
 };
 
 export const useOpenRecordTableCell = (recordTableId: string) => {
+  const surfaceId = useComponentStateSurfaceId();
   const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
   const store = useStore();
 
@@ -101,6 +103,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
       store.set(
         clickOutsideListenerIsActivatedComponentState.atomFamily({
           instanceId: RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
+          surfaceId,
         }),
         false,
       );
@@ -201,6 +204,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
       activateRecordTableRow,
       unfocusRecordTableRow,
       store,
+      surfaceId,
     ],
   );
 

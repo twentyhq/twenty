@@ -1,6 +1,7 @@
 import { useAtomValue } from 'jotai';
 
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { type ComponentFamilyState } from '@/ui/utilities/state/jotai/types/ComponentFamilyState';
 
@@ -24,5 +25,9 @@ export const useAtomComponentFamilyStateValue = <StateType, FamilyKey>(
     instanceIdFromProps,
   );
 
-  return useAtomValue(componentState.atomFamily({ instanceId, familyKey }));
+  const surfaceId = useComponentStateSurfaceId();
+
+  return useAtomValue(
+    componentState.atomFamily({ instanceId, surfaceId, familyKey }),
+  );
 };

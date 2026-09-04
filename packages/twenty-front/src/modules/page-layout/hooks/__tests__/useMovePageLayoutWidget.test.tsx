@@ -13,6 +13,7 @@ import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 type DirectionCase = {
   direction: 'up' | 'down';
@@ -54,6 +55,7 @@ describe('useMovePageLayoutWidget', () => {
   const getDraftAtom = () =>
     pageLayoutDraftComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     });
 
   const renderMoveHook = (store: ReturnType<typeof createStore>) =>

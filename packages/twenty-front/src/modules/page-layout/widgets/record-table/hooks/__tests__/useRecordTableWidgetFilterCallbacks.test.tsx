@@ -8,6 +8,7 @@ import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const PAGE_LAYOUT_ID = 'page-layout-id';
 const WIDGET_ID = 'widget-id';
@@ -48,12 +49,14 @@ describe('useRecordTableWidgetFilterCallbacks', () => {
     store.set(
       recordTableWidgetViewDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       { [WIDGET_ID]: snapshot },
     );
     store.set(
       currentRecordFiltersComponentState.atomFamily({
         instanceId: RECORD_INDEX_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       [relationTraversalRecordFilter],
     );
@@ -76,6 +79,7 @@ describe('useRecordTableWidgetFilterCallbacks', () => {
     const updatedDraft = store.get(
       recordTableWidgetViewDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
     );
 
@@ -95,12 +99,14 @@ describe('useRecordTableWidgetFilterCallbacks', () => {
     store.set(
       recordTableWidgetViewDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       { [WIDGET_ID]: snapshot },
     );
     store.set(
       currentRecordFiltersComponentState.atomFamily({
         instanceId: RECORD_INDEX_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       [
         {
@@ -128,6 +134,7 @@ describe('useRecordTableWidgetFilterCallbacks', () => {
     const updatedDraft = store.get(
       recordTableWidgetViewDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
     );
 

@@ -37,16 +37,23 @@ const setMainContextStore = ({
   const instanceId = MAIN_CONTEXT_STORE_INSTANCE_ID;
 
   jotaiStore.set(
-    contextStoreCurrentPageTypeComponentState.atomFamily({ instanceId }),
+    contextStoreCurrentPageTypeComponentState.atomFamily({
+      instanceId,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+    }),
     pageType,
   );
   jotaiStore.set(
-    contextStoreCurrentViewTypeComponentState.atomFamily({ instanceId }),
+    contextStoreCurrentViewTypeComponentState.atomFamily({
+      instanceId,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+    }),
     viewType,
   );
   jotaiStore.set(
     contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
       instanceId,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
     objectNameSingular === undefined
       ? undefined

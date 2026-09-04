@@ -2,6 +2,7 @@ import { atom, type Atom } from 'jotai';
 import { selectAtom } from 'jotai/utils';
 
 import { type ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
+import { getComponentAtomCacheKey } from '@/ui/utilities/state/component-state/utils/getComponentAtomCacheKey';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { type ComponentFamilySelector } from '@/ui/utilities/state/jotai/types/ComponentFamilySelector';
 import { type ComponentFamilyStateKey } from '@/ui/utilities/state/jotai/types/ComponentFamilyState';
@@ -26,6 +27,8 @@ export const createAtomComponentFamilySelector = <ValueType, FamilyKey>({
     globalComponentInstanceContextMap.set(key, componentInstanceContext);
   }
 
+  const surfaceScope = componentInstanceContext?.surfaceScope ?? 'per-surface';
+
   const atomCache = new Map<string, Atom<ValueType>>();
 
   const selectorFamily = (
@@ -35,7 +38,10 @@ export const createAtomComponentFamilySelector = <ValueType, FamilyKey>({
       typeof componentFamilyStateKey.familyKey === 'string'
         ? componentFamilyStateKey.familyKey
         : JSON.stringify(componentFamilyStateKey.familyKey);
-    const cacheKey = `${componentFamilyStateKey.instanceId}__${familyKeyStr}`;
+    const cacheKey = `${getComponentAtomCacheKey({
+      surfaceScope,
+      ...componentFamilyStateKey,
+    })}__${familyKeyStr}`;
     const existing = atomCache.get(cacheKey);
 
     if (existing !== undefined) {

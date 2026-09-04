@@ -8,10 +8,11 @@ export const agentChatIsScrolledToBottomComponentSelector =
     key: 'agentChatIsScrolledToBottomComponentSelector',
     componentInstanceContext: ScrollWrapperComponentInstanceContext,
     get:
-      ({ instanceId }) =>
+      ({ instanceId, surfaceId }) =>
       ({ get }) => {
         const scrollBottom = get(scrollWrapperScrollBottomComponentState, {
           instanceId,
+          surfaceId,
         });
 
         return scrollBottom <= AI_CHAT_SCROLL_BOTTOM_THRESHOLD_IN_PX;

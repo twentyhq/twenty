@@ -11,6 +11,7 @@ import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 jest.mock('@/ai/components/AiChatInitialLoadingIndicator', () => ({
   AiChatInitialLoadingIndicator: () => (
@@ -81,6 +82,7 @@ describe('AiChatTabMessageList preamble branch', () => {
     jotaiStore.set(
       agentChatIsAwaitingFirstChunkComponentFamilyState.atomFamily({
         instanceId: INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         familyKey: { threadId: THREAD_ID },
       }),
       true,

@@ -12,8 +12,10 @@ import { mapViewGroupsToRecordGroupDefinitions } from '@/views/utils/mapViewGrou
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useSetRecordGroups = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
 
   const setRecordGroups = useCallback(
@@ -41,6 +43,7 @@ export const useSetRecordGroups = () => {
       const currentRecordGroupIds = store.get(
         recordGroupIdsComponentState.atomFamily({
           instanceId: recordIndexId,
+          surfaceId,
         }),
       );
 
@@ -53,6 +56,7 @@ export const useSetRecordGroups = () => {
       const recordIndexGroupFieldMetadata =
         recordIndexGroupFieldMetadataItemComponentState.atomFamily({
           instanceId: recordIndexId,
+          surfaceId,
         });
       const currentFieldMetadata = store.get(recordIndexGroupFieldMetadata);
 
@@ -92,11 +96,12 @@ export const useSetRecordGroups = () => {
       store.set(
         recordGroupIdsComponentState.atomFamily({
           instanceId: recordIndexId,
+          surfaceId,
         }),
         recordGroupIds,
       );
     },
-    [store],
+    [store, surfaceId],
   );
 
   const setRecordGroupsFromViewGroups = useCallback(

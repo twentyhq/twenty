@@ -10,10 +10,11 @@ export const recordGroupDefinitionsComponentSelector =
     key: 'recordGroupDefinitionsComponentSelector',
     componentInstanceContext: ViewComponentInstanceContext,
     get:
-      ({ instanceId }) =>
+      ({ instanceId, surfaceId }) =>
       ({ get }) => {
         const recordGroupIds = get(recordGroupIdsComponentState, {
           instanceId,
+          surfaceId,
         });
 
         return recordGroupIds.reduce<RecordGroupDefinition[]>(

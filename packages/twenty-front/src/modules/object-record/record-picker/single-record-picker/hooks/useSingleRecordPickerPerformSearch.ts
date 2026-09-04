@@ -12,6 +12,7 @@ import { type RecordPickerPickableMorphItem } from '@/object-record/record-picke
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { CustomError, isDefined } from 'twenty-shared/utils';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useSingleRecordPickerPerformSearch = ({
   selectedIds,
@@ -29,6 +30,7 @@ export const useSingleRecordPickerPerformSearch = ({
   pickableMorphItems: RecordPickerPickableMorphItem[];
   loading: boolean;
 } => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const singleRecordPickerInstanceId = useAvailableComponentInstanceIdOrThrow(
     SingleRecordPickerComponentInstanceContext,
@@ -112,6 +114,7 @@ export const useSingleRecordPickerPerformSearch = ({
     store.set(
       singleRecordPickerSearchableObjectMetadataItemsComponentState.atomFamily({
         instanceId: singleRecordPickerInstanceId,
+        surfaceId,
       }),
       objectMetadataItems.filter((objectMetadataItem) =>
         readableObjectNameSingulars.includes(objectMetadataItem.nameSingular),
@@ -123,6 +126,7 @@ export const useSingleRecordPickerPerformSearch = ({
     objectMetadataItems,
     readableObjectNameSingulars,
     singleRecordPickerInstanceId,
+    surfaceId,
   ]);
 
   const pickableMorphItems = [...selectedRecords, ...recordsToSelect]

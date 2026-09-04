@@ -14,6 +14,7 @@ import {
 } from '@/object-record/record-table/record-table-cell/hooks/__mocks__/cell';
 import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 jest.mock('react-responsive', () => ({
   useMediaQuery: jest.fn(),
@@ -54,6 +55,7 @@ const renderMoveHoverToCurrentCell = (recordTableId: string) =>
       const recordTableHoverPosition = useAtomValue(
         recordTableHoverPositionComponentState.atomFamily({
           instanceId: recordTableId,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
       );
       const { moveHoverToCurrentCell } =

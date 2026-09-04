@@ -9,16 +9,16 @@ export const allCardsSelectedStatusComponentSelector =
     key: 'allCardsSelectedStatusComponentSelector',
     componentInstanceContext: RecordBoardComponentInstanceContext,
     get:
-      ({ instanceId }) =>
+      ({ instanceId, surfaceId }) =>
       ({ get }) => {
         const allRecordIds = get(
           allRecordIdsOfAllRecordGroupsComponentSelector,
-          { instanceId },
+          { instanceId, surfaceId },
         );
 
         const selectedRecordIds = get(
           recordBoardSelectedRecordIdsComponentSelector,
-          { instanceId },
+          { instanceId, surfaceId },
         );
 
         const numberOfSelectedCards = selectedRecordIds.length;

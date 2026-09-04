@@ -12,13 +12,13 @@ export const dataLoadingStatusByRealIndexComponentFamilySelector =
     key: 'dataLoadingStatusByRealIndexComponentFamilySelector',
     componentInstanceContext: RecordTableComponentInstanceContext,
     get:
-      ({ instanceId, familyKey }) =>
+      ({ instanceId, surfaceId, familyKey }) =>
       ({ get }) => {
         const realIndex = familyKey;
 
         const dataLoadingStatusByRealIndex = get(
           dataLoadingStatusByRealIndexComponentState,
-          { instanceId },
+          { instanceId, surfaceId },
         );
 
         if (!isDefined(realIndex)) {

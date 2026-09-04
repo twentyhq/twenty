@@ -12,10 +12,11 @@ export const recordTableWidgetViewDraftByWidgetIdComponentFamilySelector =
     key: 'recordTableWidgetViewDraftByWidgetIdComponentFamilySelector',
     componentInstanceContext: PageLayoutComponentInstanceContext,
     get:
-      ({ instanceId, familyKey }) =>
+      ({ instanceId, surfaceId, familyKey }) =>
       ({ get }) => {
         const draftMap = get(recordTableWidgetViewDraftComponentState, {
           instanceId,
+          surfaceId,
         });
 
         return draftMap[familyKey.widgetId];

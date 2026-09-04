@@ -1,13 +1,24 @@
 import { type ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
-import { type ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
+import { type ComponentSurfaceScope } from '@/ui/utilities/state/component-state/types/ComponentSurfaceScope';
 import { createContext } from 'react';
 
+// surfaceScope is required so that adding a context is a deliberate choice
+// between isolating its state per surface and sharing it across surfaces,
+// rather than a default nobody revisits.
 export const createComponentInstanceContext = <
-  T extends ComponentStateKey = ComponentStateKey,
->(
-  initialValue?: T,
-) => {
-  return createContext<T | null>(
+  T extends { instanceId: string } = { instanceId: string },
+>({
+  surfaceScope,
+  initialValue,
+}: {
+  surfaceScope: ComponentSurfaceScope;
+  initialValue?: T;
+}) => {
+  const context = createContext<T | null>(
     initialValue ?? null,
   ) as ComponentInstanceStateContext<T>;
+
+  context.surfaceScope = surfaceScope;
+
+  return context;
 };

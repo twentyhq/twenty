@@ -15,6 +15,7 @@ import {
   WidgetType,
 } from '~/generated-metadata/graphql';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const PAGE_LAYOUT_ID = 'page-layout-id';
 const WIDGET_ID = 'widget-id';
@@ -43,6 +44,7 @@ describe('useAddDraftViewForRecordTableWidget', () => {
     const store = createStore();
     const pageLayoutDraftState = pageLayoutDraftComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     });
 
     const recordTableWidget = buildDraftPageLayoutWidget({
@@ -117,6 +119,7 @@ describe('useAddDraftViewForRecordTableWidget', () => {
     const newViewId = store.get(
       recordTableWidgetViewDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
     )[WIDGET_ID].view.id;
 

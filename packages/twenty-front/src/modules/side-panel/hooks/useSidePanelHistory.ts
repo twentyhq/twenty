@@ -11,8 +11,10 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useSidePanelHistory = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const { closeSidePanelMenu } = useSidePanelMenu();
 
@@ -36,6 +38,7 @@ export const useSidePanelHistory = () => {
         store.set(
           sidePanelSubPageStackComponentState.atomFamily({
             instanceId: removedItem.pageId,
+            surfaceId,
           }),
           [],
         );
@@ -48,13 +51,14 @@ export const useSidePanelHistory = () => {
                 pageId: removedItem.pageId,
                 targetObjectId: morphItems[0].recordId,
               }),
+              surfaceId,
             }),
             null,
           );
         }
       }
     }
-  }, [store]);
+  }, [store, surfaceId]);
 
   const goBackFromSidePanel = useCallback(() => {
     const currentNavigationStack = store.get(
@@ -91,6 +95,7 @@ export const useSidePanelHistory = () => {
     const subPageStack = store.get(
       sidePanelSubPageStackComponentState.atomFamily({
         instanceId: currentNavigationItem.pageId,
+        surfaceId,
       }),
     );
 
@@ -98,6 +103,7 @@ export const useSidePanelHistory = () => {
       store.set(
         sidePanelSubPageStackComponentState.atomFamily({
           instanceId: currentNavigationItem.pageId,
+          surfaceId,
         }),
         subPageStack.slice(0, -1),
       );
@@ -105,7 +111,7 @@ export const useSidePanelHistory = () => {
     }
 
     goBackFromSidePanel();
-  }, [goBackFromSidePanel, store]);
+  }, [goBackFromSidePanel, store, surfaceId]);
 
   const navigateSidePanelHistory = useCallback(
     (pageIndex: number) => {
@@ -141,6 +147,7 @@ export const useSidePanelHistory = () => {
           store.set(
             sidePanelSubPageStackComponentState.atomFamily({
               instanceId: pageId,
+              surfaceId,
             }),
             [],
           );
@@ -151,6 +158,7 @@ export const useSidePanelHistory = () => {
                 pageId,
                 targetObjectId: morphItems[0].recordId,
               }),
+              surfaceId,
             }),
             null,
           );
@@ -167,7 +175,7 @@ export const useSidePanelHistory = () => {
 
       store.set(hasUserSelectedSidePanelListItemState.atom, false);
     },
-    [store],
+    [store, surfaceId],
   );
 
   return {

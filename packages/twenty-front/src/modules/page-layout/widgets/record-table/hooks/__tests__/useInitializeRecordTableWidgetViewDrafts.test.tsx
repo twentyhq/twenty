@@ -20,6 +20,7 @@ import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const view = constructViewFromRecordTableWidgetViewSnapshot(
   buildRecordTableWidgetViewSnapshot(
@@ -80,6 +81,7 @@ describe('useInitializeRecordTableWidgetViewDrafts', () => {
     store.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       makeViewBackedDraftLayout(),
     );
@@ -91,11 +93,13 @@ describe('useInitializeRecordTableWidgetViewDrafts', () => {
     const draftSnapshots = store.get(
       recordTableWidgetViewDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
     );
     const persistedSnapshots = store.get(
       recordTableWidgetViewPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
     );
 
@@ -111,6 +115,7 @@ describe('useInitializeRecordTableWidgetViewDrafts', () => {
     store.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       makeViewBackedDraftLayout(),
     );
@@ -122,6 +127,7 @@ describe('useInitializeRecordTableWidgetViewDrafts', () => {
     const draftSnapshots = store.get(
       recordTableWidgetViewDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
     );
 
@@ -139,12 +145,14 @@ describe('useInitializeRecordTableWidgetViewDrafts', () => {
     store.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       makeViewBackedDraftLayout([WIDGET_ID, OTHER_WIDGET_ID]),
     );
     store.set(
       recordTableWidgetViewDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       { [WIDGET_ID]: existingSnapshot },
     );
@@ -156,6 +164,7 @@ describe('useInitializeRecordTableWidgetViewDrafts', () => {
     const draftSnapshots = store.get(
       recordTableWidgetViewDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
     );
 

@@ -20,11 +20,11 @@ export const calendarDayRecordIdsComponentFamilySelector =
     key: 'calendarDayRecordsComponentFamilySelector',
     componentInstanceContext: RecordCalendarComponentInstanceContext,
     get:
-      ({ instanceId, familyKey: { day, timeZone } }) =>
+      ({ instanceId, surfaceId, familyKey: { day, timeZone } }) =>
       ({ get }) => {
         const calendarFieldMetadataId = get(
           recordIndexCalendarFieldMetadataIdComponentState,
-          { instanceId },
+          { instanceId, surfaceId },
         );
 
         const objectMetadataItems = get(objectMetadataItemsSelector);
@@ -51,6 +51,7 @@ export const calendarDayRecordIdsComponentFamilySelector =
 
         const allRecordIds = get(recordCalendarRecordIdsComponentState, {
           instanceId,
+          surfaceId,
         });
 
         const recordIds = allRecordIds.filter((recordId) => {

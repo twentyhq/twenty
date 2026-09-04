@@ -11,6 +11,7 @@ import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { PageLayoutType, WidgetType } from '~/generated-metadata/graphql';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const mockExitLayoutCustomizationMode = jest.fn();
 
@@ -55,6 +56,7 @@ describe('useCancelLayoutCustomization', () => {
     store.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       persistedPageLayout,
     );
@@ -72,6 +74,7 @@ describe('useCancelLayoutCustomization', () => {
         .get(
           pageLayoutPersistedComponentState.atomFamily({
             instanceId: PAGE_LAYOUT_ID,
+            surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
           }),
         )
         ?.tabs[0].widgets.map((widget) => widget.id),
@@ -81,6 +84,7 @@ describe('useCancelLayoutCustomization', () => {
         .get(
           pageLayoutDraftComponentState.atomFamily({
             instanceId: PAGE_LAYOUT_ID,
+            surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
           }),
         )
         .tabs[0].widgets.map((widget) => widget.id),

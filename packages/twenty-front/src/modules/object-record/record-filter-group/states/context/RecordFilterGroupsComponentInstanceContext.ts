@@ -1,4 +1,6 @@
 import { createComponentInstanceContext } from '@/ui/utilities/state/component-state/utils/createComponentInstanceContext';
 
 export const RecordFilterGroupsComponentInstanceContext =
-  createComponentInstanceContext();
+  createComponentInstanceContext({
+    surfaceScope: 'shared',
+  });

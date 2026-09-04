@@ -7,10 +7,11 @@ export const recordIndexHasRecordsComponentSelector =
     key: 'recordIndexHasRecordsComponentSelector',
     componentInstanceContext: ViewComponentInstanceContext,
     get:
-      ({ instanceId }) =>
+      ({ instanceId, surfaceId }) =>
       ({ get }) => {
         const allRecordIds = get(recordIndexAllRecordIdsComponentSelector, {
           instanceId,
+          surfaceId,
         });
 
         return allRecordIds.length > 0;

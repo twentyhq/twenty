@@ -19,6 +19,7 @@ import { useCallback } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useStore } from 'jotai';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 const StyledText = styled.div`
   align-items: center;
@@ -35,6 +36,7 @@ const StyledIntersectionObserver = styled.div`
 `;
 
 export const MultipleRecordPickerFetchMoreLoader = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const [
     multipleRecordPickerIsFetchingMore,
@@ -75,6 +77,7 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
     const currentPaginationState = store.get(
       multipleRecordPickerPaginationState.atomFamily({
         instanceId: componentInstanceId,
+        surfaceId,
       }),
     );
 
@@ -93,6 +96,7 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
     multipleRecordPickerSearchFilter,
     multipleRecordPickerIsLoading,
     store,
+    surfaceId,
   ]);
 
   const { ref } = useInView({

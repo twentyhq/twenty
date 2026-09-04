@@ -19,6 +19,7 @@ import {
   type EngineComponentKey,
   type CommandMenuItemPayload,
 } from '~/generated-metadata/graphql';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 export const buildHeadlessCommandContextApi = ({
   store,
@@ -38,6 +39,7 @@ export const buildHeadlessCommandContextApi = ({
   const objectMetadataItemId = store.get(
     contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
       instanceId: contextStoreInstanceId,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
   );
 
@@ -50,12 +52,14 @@ export const buildHeadlessCommandContextApi = ({
   const currentViewId = store.get(
     contextStoreCurrentViewIdComponentState.atomFamily({
       instanceId: contextStoreInstanceId,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
   );
 
   const targetedRecordsRule = store.get(
     contextStoreTargetedRecordsRuleComponentState.atomFamily({
       instanceId: contextStoreInstanceId,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
   );
 
@@ -70,18 +74,21 @@ export const buildHeadlessCommandContextApi = ({
   const filters = store.get(
     contextStoreFiltersComponentState.atomFamily({
       instanceId: contextStoreInstanceId,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
   );
 
   const filterGroups = store.get(
     contextStoreFilterGroupsComponentState.atomFamily({
       instanceId: contextStoreInstanceId,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
   );
 
   const anyFieldFilterValue = store.get(
     contextStoreAnyFieldFilterValueComponentState.atomFamily({
       instanceId: contextStoreInstanceId,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
   );
 

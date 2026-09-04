@@ -8,6 +8,7 @@ import { ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const WORKFLOW_RECORD_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
@@ -52,6 +53,7 @@ const renderUseQueryVariablesFromParentView = (
         store.set(
           contextStoreRecordShowParentViewComponentState.atomFamily({
             instanceId: CONTEXT_STORE_INSTANCE_ID,
+            surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
           }),
           {
             parentViewComponentId: 'record-index-workflow-versions',

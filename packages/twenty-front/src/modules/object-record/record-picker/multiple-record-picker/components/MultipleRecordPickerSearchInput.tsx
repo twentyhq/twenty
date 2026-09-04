@@ -8,8 +8,10 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useDebouncedCallback } from 'use-debounce';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const MultipleRecordPickerSearchInput = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     MultipleRecordPickerComponentInstanceContext,
   );
@@ -29,6 +31,7 @@ export const MultipleRecordPickerSearchInput = () => {
         store.set(
           multipleRecordPickerSearchFilterComponentState.atomFamily({
             instanceId: componentInstanceId,
+            surfaceId,
           }),
           searchFilter,
         );
@@ -38,7 +41,7 @@ export const MultipleRecordPickerSearchInput = () => {
           forceSearchFilter: searchFilter,
         });
       },
-      [componentInstanceId, performSearch, store],
+      [componentInstanceId, performSearch, store, surfaceId],
     ),
     500,
   );

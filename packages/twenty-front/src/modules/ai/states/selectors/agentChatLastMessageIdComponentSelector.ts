@@ -8,12 +8,13 @@ export const agentChatLastMessageIdComponentSelector =
     key: 'agentChatLastMessageIdComponentSelector',
     componentInstanceContext: AgentChatComponentInstanceContext,
     get:
-      ({ instanceId }) =>
+      ({ instanceId, surfaceId }) =>
       ({ get }) => {
         const currentThreadId = get(agentChatDisplayedThreadState);
 
         const messages = get(agentChatMessagesComponentFamilyState, {
           instanceId,
+          surfaceId,
           familyKey: { threadId: currentThreadId },
         });
 

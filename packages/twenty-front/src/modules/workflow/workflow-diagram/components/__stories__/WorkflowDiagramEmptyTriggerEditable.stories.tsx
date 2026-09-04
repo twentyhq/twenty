@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const JotaiInitializer = ({
   children,
@@ -24,6 +25,7 @@ const JotaiInitializer = ({
       store.set(
         workflowSelectedNodeComponentState.atomFamily({
           instanceId: 'workflow-visualizer-instance-id',
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
         selectedNodeId,
       );

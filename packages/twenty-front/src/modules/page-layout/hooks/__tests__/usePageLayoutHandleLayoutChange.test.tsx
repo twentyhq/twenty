@@ -9,6 +9,7 @@ import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 describe('usePageLayoutHandleLayoutChange', () => {
   it('should update layouts for specific tab only', () => {
@@ -27,6 +28,7 @@ describe('usePageLayoutHandleLayoutChange', () => {
         setActiveTabId: useSetAtom(
           activeTabIdComponentState.atomFamily({
             instanceId: `${PAGE_LAYOUT_TEST_INSTANCE_ID}-tab-list`,
+            surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
           }),
         ),
       }),
@@ -75,6 +77,7 @@ describe('usePageLayoutHandleLayoutChange', () => {
         setActiveTabId: useSetAtom(
           activeTabIdComponentState.atomFamily({
             instanceId: `${PAGE_LAYOUT_TEST_INSTANCE_ID}-tab-list`,
+            surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
           }),
         ),
       }),

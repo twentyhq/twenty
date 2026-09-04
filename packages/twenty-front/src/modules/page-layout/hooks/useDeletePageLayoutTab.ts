@@ -6,6 +6,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useDeletePageLayoutTab = ({
   pageLayoutId: pageLayoutIdFromProps,
@@ -14,6 +15,7 @@ export const useDeletePageLayoutTab = ({
   pageLayoutId: string;
   tabListInstanceId: string;
 }) => {
+  const surfaceId = useComponentStateSurfaceId();
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
@@ -28,6 +30,7 @@ export const useDeletePageLayoutTab = ({
 
   const activeTabIdAtom = activeTabIdComponentState.atomFamily({
     instanceId: tabListInstanceId,
+    surfaceId,
   });
 
   const deleteTab = useCallback(

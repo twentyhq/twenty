@@ -11,6 +11,7 @@ import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 type OpenTitleCellFunctionParams = {
   recordId: string;
@@ -19,6 +20,7 @@ type OpenTitleCellFunctionParams = {
 };
 
 export const useRecordTitleCell = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
 
@@ -47,6 +49,7 @@ export const useRecordTitleCell = () => {
       store.set(
         isTitleCellInEditModeComponentState.atomFamily({
           instanceId: computedInstanceId,
+          surfaceId,
         }),
         false,
       );
@@ -62,6 +65,7 @@ export const useRecordTitleCell = () => {
       instanceId,
       removeFocusItemFromFocusStackById,
       store,
+      surfaceId,
     ],
   );
 
@@ -96,6 +100,7 @@ export const useRecordTitleCell = () => {
       store.set(
         isTitleCellInEditModeComponentState.atomFamily({
           instanceId: computedInstanceId,
+          surfaceId,
         }),
         true,
       );
@@ -121,6 +126,7 @@ export const useRecordTitleCell = () => {
       initFieldInputDraftValue,
       getFieldMetadataItemByIdOrThrow,
       store,
+      surfaceId,
     ],
   );
 

@@ -20,6 +20,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { BarChartLayout } from '~/generated-metadata/graphql';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useGetConfigToUpdateAfterGraphTypeChange = ({
   pageLayoutId,
@@ -28,6 +29,7 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
   pageLayoutId: string;
   widget: PageLayoutWidget;
 }) => {
+  const surfaceId = useComponentStateSurfaceId();
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
@@ -156,6 +158,7 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
       const activeTabId = store.get(
         activeTabIdComponentState.atomFamily({
           instanceId: tabListInstanceId,
+          surfaceId,
         }),
       );
 
@@ -182,6 +185,7 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
       store,
       tabListInstanceId,
       widget.objectMetadataId,
+      surfaceId,
     ],
   );
 

@@ -15,6 +15,7 @@ import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const INSTANCE_ID = 'aiChatComposerCenteredTest';
 const THREAD_ID = 'thread-1';
@@ -68,6 +69,7 @@ describe('useIsAiChatComposerCentered', () => {
     jotaiStore.set(
       agentChatMessagesComponentFamilyState.atomFamily({
         instanceId: INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         familyKey: { threadId: THREAD_ID },
       }),
       [{ id: 'message-1', role: 'user', parts: [] }],

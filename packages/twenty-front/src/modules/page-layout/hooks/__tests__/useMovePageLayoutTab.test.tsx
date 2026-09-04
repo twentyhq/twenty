@@ -13,6 +13,7 @@ import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const renderUseMovePageLayoutTab = (tabs: ReturnType<typeof makeTab>[]) => {
   const store = createStore();
@@ -20,6 +21,7 @@ const renderUseMovePageLayoutTab = (tabs: ReturnType<typeof makeTab>[]) => {
   store.set(
     pageLayoutDraftComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
     makeDraft(tabs),
   );
@@ -36,6 +38,7 @@ const renderUseMovePageLayoutTab = (tabs: ReturnType<typeof makeTab>[]) => {
         .get(
           pageLayoutDraftComponentState.atomFamily({
             instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+            surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
           }),
         )
         .tabs.filter((tab) => tab.isActive),

@@ -8,16 +8,17 @@ export const recordBoardHasColumnsToFetchMoreComponentSelector =
     key: 'recordBoardHasColumnsToFetchMoreComponentSelector',
     componentInstanceContext: RecordBoardComponentInstanceContext,
     get:
-      ({ instanceId }) =>
+      ({ instanceId, surfaceId }) =>
       ({ get }) => {
         const recordGroupDefinitions = get(
           recordGroupDefinitionsComponentSelector,
-          { instanceId },
+          { instanceId, surfaceId },
         );
 
         return recordGroupDefinitions.some((recordGroupDefinition) =>
           get(recordBoardShouldFetchMoreInColumnComponentFamilyState, {
             instanceId,
+            surfaceId,
             familyKey: recordGroupDefinition.id,
           }),
         );

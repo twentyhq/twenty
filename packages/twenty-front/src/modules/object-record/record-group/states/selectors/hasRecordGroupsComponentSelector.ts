@@ -8,10 +8,11 @@ export const hasRecordGroupsComponentSelector =
     key: 'hasRecordGroupsComponentSelector',
     componentInstanceContext: ViewComponentInstanceContext,
     get:
-      ({ instanceId }) =>
+      ({ instanceId, surfaceId }) =>
       ({ get }) => {
         const recordGroupIds = get(recordGroupIdsComponentState, {
           instanceId,
+          surfaceId,
         });
 
         return recordGroupIds.length > 0;

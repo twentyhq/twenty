@@ -7,12 +7,14 @@ import { type RecordPickerPickableMorphItem } from '@/object-record/record-picke
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useStore } from 'jotai';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useOpenFormMultiRecordPicker = ({
   objectNameSingular,
 }: {
   objectNameSingular: string;
 }) => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const { openMultipleRecordPicker } = useMultipleRecordPickerOpen();
   const { performSearch } = useMultipleRecordPickerPerformSearch();
@@ -44,13 +46,14 @@ export const useOpenFormMultiRecordPicker = ({
     store.set(
       multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
         instanceId: pickerInstanceId,
+        surfaceId,
       }),
       pickableMorphItems,
     );
 
     store.set(
       multipleRecordPickerSearchableObjectMetadataItemsComponentState.atomFamily(
-        { instanceId: pickerInstanceId },
+        { instanceId: pickerInstanceId, surfaceId },
       ),
       [objectMetadataItem],
     );

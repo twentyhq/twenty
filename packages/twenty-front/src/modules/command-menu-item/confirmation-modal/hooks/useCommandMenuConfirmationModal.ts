@@ -9,8 +9,10 @@ import {
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useCommandMenuConfirmationModal = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const setCommandMenuItemConfirmationModalConfig = useSetAtomState(
     commandMenuItemConfirmationModalConfigState,
@@ -25,6 +27,7 @@ export const useCommandMenuConfirmationModal = () => {
       const isCommandMenuItemConfirmationModalOpened = store.get(
         isModalOpenedComponentState.atomFamily({
           instanceId: COMMAND_MENU_CONFIRMATION_MODAL_INSTANCE_ID,
+          surfaceId,
         }),
       );
 
@@ -41,7 +44,7 @@ export const useCommandMenuConfirmationModal = () => {
 
       openModal(COMMAND_MENU_CONFIRMATION_MODAL_INSTANCE_ID);
     },
-    [store, setCommandMenuItemConfirmationModalConfig, openModal],
+    [store, setCommandMenuItemConfirmationModalConfig, openModal, surfaceId],
   );
 
   return { openConfirmationModal };

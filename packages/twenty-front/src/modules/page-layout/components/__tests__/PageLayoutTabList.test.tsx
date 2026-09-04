@@ -159,12 +159,17 @@ const renderTabList = ({
   behaveAsLinks?: boolean;
 } = {}) => {
   const store = createStore();
+  const surfaceId = isInSidePanel ? 'side-panel' : 'main';
   const settingsTabAtom =
     pageLayoutTabSettingsOpenTabIdComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_ID,
+      surfaceId,
     });
   store.set(
-    activeTabIdComponentState.atomFamily({ instanceId: TAB_LIST_ID }),
+    activeTabIdComponentState.atomFamily({
+      instanceId: TAB_LIST_ID,
+      surfaceId,
+    }),
     'Tasks',
   );
   store.set(settingsTabAtom, settingsTabId);
@@ -178,7 +183,7 @@ const renderTabList = ({
         <WorkspaceSurfaceContext.Provider
           value={{
             type: isInSidePanel ? 'side-panel' : 'main',
-            instanceId: isInSidePanel ? 'side-panel' : 'main',
+            instanceId: surfaceId,
             ownsRouteLocation: !isInSidePanel,
           }}
         >

@@ -14,6 +14,7 @@ import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 jest.mock(
   '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel',
@@ -29,6 +30,7 @@ const createTestStore = (
     store.set(
       pageLayoutSelectedCellsComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       initialSelectedCells,
     );
@@ -37,6 +39,7 @@ const createTestStore = (
     store.set(
       pageLayoutDraggedAreaComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       initialDraggedArea,
     );
@@ -71,6 +74,7 @@ describe('useEndPageLayoutDragSelection', () => {
           store.set(
             pageLayoutDraggedAreaComponentState.atomFamily({
               instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+              surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
             }),
             null,
           );

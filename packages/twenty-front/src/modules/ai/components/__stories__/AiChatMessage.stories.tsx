@@ -20,6 +20,7 @@ import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const StyledConversationContainer = styled.div`
   display: flex;
@@ -264,6 +265,7 @@ const AgentChatMessagesSetterEffect = ({
     store.set(
       agentChatMessagesComponentFamilyState.atomFamily({
         instanceId: INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         familyKey: { threadId: currentThreadId },
       }),
       messages,
@@ -273,6 +275,7 @@ const AgentChatMessagesSetterEffect = ({
       store.set(
         agentChatMessageComponentFamilyState.atomFamily({
           instanceId: INSTANCE_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
           familyKey: message.id,
         }),
         message,

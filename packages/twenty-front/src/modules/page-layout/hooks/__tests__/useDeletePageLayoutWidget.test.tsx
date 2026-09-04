@@ -7,6 +7,7 @@ import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 jest.mock(
   '@/page-layout/widgets/record-table/hooks/useRemoveDraftViewForRecordTableWidget',
@@ -45,6 +46,7 @@ describe('useDeletePageLayoutWidget', () => {
     store.set(
       pageLayoutEditingWidgetIdComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       'widget-1',
     );
@@ -64,6 +66,7 @@ describe('useDeletePageLayoutWidget', () => {
       store.get(
         pageLayoutEditingWidgetIdComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
       ),
     ).toBeNull();
@@ -76,6 +79,7 @@ describe('useDeletePageLayoutWidget', () => {
     store.set(
       pageLayoutEditingWidgetIdComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       'edited-widget-id',
     );
@@ -95,6 +99,7 @@ describe('useDeletePageLayoutWidget', () => {
       store.get(
         pageLayoutEditingWidgetIdComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
       ),
     ).toBe('edited-widget-id');

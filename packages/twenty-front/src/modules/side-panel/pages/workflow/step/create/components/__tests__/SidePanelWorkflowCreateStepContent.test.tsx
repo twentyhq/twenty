@@ -9,6 +9,7 @@ import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/s
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider as JotaiProvider } from 'jotai';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const mockCreateStep = jest.fn();
 const mockUpdateStep = jest.fn();
@@ -94,6 +95,7 @@ const renderContent = () => {
   jotaiStore.set(
     workflowInsertStepIdsComponentState.atomFamily({
       instanceId: workflowVisualizerComponentInstanceId,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
     mockInsertStepIds,
   );
@@ -108,12 +110,14 @@ describe('SidePanelWorkflowCreateStepContent', () => {
     jotaiStore.set(
       workflowVisualizerWorkflowIdComponentState.atomFamily({
         instanceId: workflowVisualizerComponentInstanceId,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       'workflow-id',
     );
     jotaiStore.set(
       flowComponentState.atomFamily({
         instanceId: workflowVisualizerComponentInstanceId,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       {
         workflowVersionId: 'workflow-version-id',

@@ -9,8 +9,10 @@ import { getEditableChipObjectFilterDropdownComponentInstanceId } from '@/views/
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useSetEditableFilterChipDropdownStates = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const { filterableFieldMetadataItems } =
     useFilterableFieldMetadataItemsInRecordIndexContext();
 
@@ -29,6 +31,7 @@ export const useSetEditableFilterChipDropdownStates = () => {
             instanceId: getEditableChipObjectFilterDropdownComponentInstanceId({
               recordFilterId: recordFilter.id,
             }),
+            surfaceId,
           }),
           fieldMetadataItem.id,
         );
@@ -39,6 +42,7 @@ export const useSetEditableFilterChipDropdownStates = () => {
           instanceId: getEditableChipObjectFilterDropdownComponentInstanceId({
             recordFilterId: recordFilter.id,
           }),
+          surfaceId,
         }),
         recordFilter.operand,
       );
@@ -48,6 +52,7 @@ export const useSetEditableFilterChipDropdownStates = () => {
           instanceId: getEditableChipObjectFilterDropdownComponentInstanceId({
             recordFilterId: recordFilter.id,
           }),
+          surfaceId,
         }),
         recordFilter,
       );
@@ -57,6 +62,7 @@ export const useSetEditableFilterChipDropdownStates = () => {
           instanceId: getEditableChipObjectFilterDropdownComponentInstanceId({
             recordFilterId: recordFilter.id,
           }),
+          surfaceId,
         }),
         recordFilter.subFieldName,
       );
@@ -66,11 +72,12 @@ export const useSetEditableFilterChipDropdownStates = () => {
           instanceId: getEditableChipObjectFilterDropdownComponentInstanceId({
             recordFilterId: recordFilter.id,
           }),
+          surfaceId,
         }),
         recordFilter.relationTargetFieldMetadataId ?? null,
       );
     },
-    [store, filterableFieldMetadataItems],
+    [store, filterableFieldMetadataItems, surfaceId],
   );
 
   return {

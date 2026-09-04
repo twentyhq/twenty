@@ -7,6 +7,7 @@ import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-lis
 import { selectableItemIdsComponentState } from '@/ui/layout/selectable-list/states/selectableItemIdsComponentState';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 type Direction = 'up' | 'down' | 'left' | 'right';
 
@@ -15,6 +16,7 @@ export const useSelectableListHotKeys = (
   focusId: string,
   onSelect?: (itemId: string) => void,
 ) => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
 
   const findPosition = (
@@ -38,11 +40,13 @@ export const useSelectableListHotKeys = (
       const selectedItemId = store.get(
         selectedItemIdComponentState.atomFamily({
           instanceId: instanceId,
+          surfaceId,
         }),
       );
       const selectableItemIds = store.get(
         selectableItemIdsComponentState.atomFamily({
           instanceId: instanceId,
+          surfaceId,
         }),
       );
 
@@ -109,6 +113,7 @@ export const useSelectableListHotKeys = (
           store.set(
             isSelectedItemIdComponentFamilyState.atomFamily({
               instanceId: instanceId,
+              surfaceId,
               familyKey: nextId,
             }),
             true,
@@ -116,6 +121,7 @@ export const useSelectableListHotKeys = (
           store.set(
             selectedItemIdComponentState.atomFamily({
               instanceId: instanceId,
+              surfaceId,
             }),
             nextId,
           );
@@ -126,6 +132,7 @@ export const useSelectableListHotKeys = (
           store.set(
             isSelectedItemIdComponentFamilyState.atomFamily({
               instanceId: instanceId,
+              surfaceId,
               familyKey: selectedItemId,
             }),
             false,
@@ -133,7 +140,7 @@ export const useSelectableListHotKeys = (
         }
       }
     },
-    [store, instanceId, onSelect],
+    [store, instanceId, onSelect, surfaceId],
   );
 
   useHotkeysOnFocusedElement({

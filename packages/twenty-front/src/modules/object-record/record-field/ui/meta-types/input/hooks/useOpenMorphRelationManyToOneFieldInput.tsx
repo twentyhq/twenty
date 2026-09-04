@@ -16,8 +16,10 @@ import {
   computeMorphRelationGqlFieldName,
   isDefined,
 } from 'twenty-shared/utils';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useOpenMorphRelationManyToOneFieldInput = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { openSingleRecordPicker } = useSingleRecordPickerOpen();
@@ -66,6 +68,7 @@ export const useOpenMorphRelationManyToOneFieldInput = () => {
         store.set(
           singleRecordPickerSelectedIdComponentState.atomFamily({
             instanceId: recordPickerInstanceId,
+            surfaceId,
           }),
           fieldValue.id,
         );
@@ -84,7 +87,7 @@ export const useOpenMorphRelationManyToOneFieldInput = () => {
         },
       });
     },
-    [openSingleRecordPicker, pushFocusItemToFocusStack, store],
+    [openSingleRecordPicker, pushFocusItemToFocusStack, store, surfaceId],
   );
 
   return { openMorphRelationManyToOneFieldInput };

@@ -8,8 +8,10 @@ import { useCloseCurrentTableCellInEditMode } from '@/object-record/record-table
 import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useCloseRecordTableCellNoGroup = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const { recordTableId } = useRecordTableContextOrThrow();
   const store = useStore();
 
@@ -29,6 +31,7 @@ export const useCloseRecordTableCellNoGroup = () => {
     store.set(
       clickOutsideListenerIsActivatedComponentState.atomFamily({
         instanceId: RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
+        surfaceId,
       }),
       true,
     );
@@ -37,6 +40,7 @@ export const useCloseRecordTableCellNoGroup = () => {
     setDragSelectionStartEnabled,
     toggleClickOutside,
     store,
+    surfaceId,
   ]);
 
   return {

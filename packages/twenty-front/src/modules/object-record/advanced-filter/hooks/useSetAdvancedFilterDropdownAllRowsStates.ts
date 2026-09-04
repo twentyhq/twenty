@@ -10,8 +10,10 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useSetAdvancedFilterDropdownStates = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const rootLevelRecordFilterGroup = useAtomComponentSelectorValue(
     rootLevelRecordFilterGroupComponentSelector,
@@ -42,6 +44,7 @@ export const useSetAdvancedFilterDropdownStates = () => {
       store.set(
         objectFilterDropdownCurrentRecordFilterComponentState.atomFamily({
           instanceId,
+          surfaceId,
         }),
         recordFilter,
       );
@@ -49,6 +52,7 @@ export const useSetAdvancedFilterDropdownStates = () => {
       store.set(
         fieldMetadataItemIdUsedInDropdownComponentState.atomFamily({
           instanceId,
+          surfaceId,
         }),
         recordFilter.fieldMetadataId,
       );
@@ -56,6 +60,7 @@ export const useSetAdvancedFilterDropdownStates = () => {
       store.set(
         subFieldNameUsedInDropdownComponentState.atomFamily({
           instanceId,
+          surfaceId,
         }),
         recordFilter.subFieldName,
       );
@@ -86,6 +91,7 @@ export const useSetAdvancedFilterDropdownStates = () => {
     currentRecordFilters,
     rootLevelRecordFilterGroup,
     store,
+    surfaceId,
   ]);
 
   return {

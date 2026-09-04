@@ -17,6 +17,7 @@ import {
   PageLayoutType,
 } from '~/generated-metadata/graphql';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const mockPageLayout: PageLayout = {
   applicationId: 'application-id-mock',
@@ -45,6 +46,7 @@ const meta: Meta<typeof DashboardWidgetPlaceholder> = {
       jotaiStore.set(
         pageLayoutPersistedComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
         mockPageLayout,
       );

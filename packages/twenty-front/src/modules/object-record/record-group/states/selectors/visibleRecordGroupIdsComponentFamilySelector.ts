@@ -16,19 +16,21 @@ export const visibleRecordGroupIdsComponentFamilySelector =
     key: 'visibleRecordGroupIdsComponentFamilySelector',
     componentInstanceContext: ViewComponentInstanceContext,
     get:
-      ({ instanceId, familyKey: _viewType }) =>
+      ({ instanceId, surfaceId, familyKey: _viewType }) =>
       ({ get }) => {
         const recordGroupSort = get(recordIndexRecordGroupSortComponentState, {
           instanceId,
+          surfaceId,
         });
 
         const recordGroupIds = get(recordGroupIdsComponentState, {
           instanceId,
+          surfaceId,
         });
 
         const shouldHideEmptyRecordGroups = get(
           recordIndexShouldHideEmptyRecordGroupsComponentState,
-          { instanceId },
+          { instanceId, surfaceId },
         );
 
         const result: RecordGroupDefinition[] = [];
@@ -65,7 +67,7 @@ export const visibleRecordGroupIdsComponentFamilySelector =
           if (shouldHideEmptyRecordGroups) {
             const rowIds = get(
               recordIndexRecordIdsByGroupComponentFamilyState,
-              { instanceId, familyKey: recordGroupId },
+              { instanceId, surfaceId, familyKey: recordGroupId },
             );
             if (rowIds.length === 0) {
               continue;

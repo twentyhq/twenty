@@ -24,6 +24,7 @@ import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 jest.mock('uuid', () => ({
   ...jest.requireActual('uuid'),
@@ -148,16 +149,19 @@ describe('useDuplicatePageLayoutTab', () => {
   const getPageLayoutDraftAtom = () =>
     pageLayoutDraftComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     });
 
   const getPageLayoutCurrentLayoutsAtom = () =>
     pageLayoutCurrentLayoutsComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     });
 
   const getRecordTableWidgetViewDraftAtom = () =>
     recordTableWidgetViewDraftComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     });
 
   beforeEach(() => {

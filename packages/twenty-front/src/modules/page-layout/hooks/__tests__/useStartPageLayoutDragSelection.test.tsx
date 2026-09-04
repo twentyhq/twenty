@@ -9,6 +9,7 @@ import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const createTestStore = (initialSelectedCells?: Set<string>) => {
   const store = createStore();
@@ -16,6 +17,7 @@ const createTestStore = (initialSelectedCells?: Set<string>) => {
     store.set(
       pageLayoutSelectedCellsComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       initialSelectedCells,
     );

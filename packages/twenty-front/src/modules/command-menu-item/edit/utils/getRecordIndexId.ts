@@ -12,12 +12,14 @@ export const getRecordIndexId = (
   const objectMetadataItemId = store.get(
     contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
       instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
   );
 
   const viewId = store.get(
     contextStoreCurrentViewIdComponentState.atomFamily({
       instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
   );
 

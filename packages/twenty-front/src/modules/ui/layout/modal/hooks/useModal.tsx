@@ -6,8 +6,10 @@ import { useWorkspaceSurfaceScopedComponentInstanceIdResolver } from '@/ui/layou
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useModal = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
@@ -22,6 +24,7 @@ export const useModal = () => {
       const isModalOpen = store.get(
         isModalOpenedComponentState.atomFamily({
           instanceId: scopedModalInstanceId,
+          surfaceId,
         }),
       );
 
@@ -36,11 +39,17 @@ export const useModal = () => {
       store.set(
         isModalOpenedComponentState.atomFamily({
           instanceId: scopedModalInstanceId,
+          surfaceId,
         }),
         false,
       );
     },
-    [store, removeFocusItemFromFocusStackById, resolveComponentInstanceId],
+    [
+      store,
+      removeFocusItemFromFocusStackById,
+      resolveComponentInstanceId,
+      surfaceId,
+    ],
   );
 
   const openModal = useCallback(
@@ -49,6 +58,7 @@ export const useModal = () => {
       const isModalOpened = store.get(
         isModalOpenedComponentState.atomFamily({
           instanceId: scopedModalInstanceId,
+          surfaceId,
         }),
       );
 
@@ -59,6 +69,7 @@ export const useModal = () => {
       store.set(
         isModalOpenedComponentState.atomFamily({
           instanceId: scopedModalInstanceId,
+          surfaceId,
         }),
         true,
       );
@@ -75,7 +86,7 @@ export const useModal = () => {
         },
       });
     },
-    [store, pushFocusItemToFocusStack, resolveComponentInstanceId],
+    [store, pushFocusItemToFocusStack, resolveComponentInstanceId, surfaceId],
   );
 
   const toggleModal = useCallback(
@@ -84,6 +95,7 @@ export const useModal = () => {
       const isModalOpen = store.get(
         isModalOpenedComponentState.atomFamily({
           instanceId: scopedModalInstanceId,
+          surfaceId,
         }),
       );
 
@@ -93,7 +105,7 @@ export const useModal = () => {
         openModal(modalInstanceId);
       }
     },
-    [store, closeModal, openModal, resolveComponentInstanceId],
+    [store, closeModal, openModal, resolveComponentInstanceId, surfaceId],
   );
 
   return {

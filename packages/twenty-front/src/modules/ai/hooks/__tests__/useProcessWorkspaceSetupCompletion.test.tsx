@@ -11,6 +11,7 @@ import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const navigateMock = jest.fn();
 
@@ -67,6 +68,7 @@ const getProcessedToolCallIds = () =>
   jotaiStore.get(
     processedToolExecutionPartIdsComponentState.atomFamily({
       instanceId: INSTANCE_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
   );
 

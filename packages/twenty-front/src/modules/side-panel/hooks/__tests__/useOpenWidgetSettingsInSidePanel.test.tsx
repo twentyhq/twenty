@@ -22,6 +22,7 @@ import {
   PageLayoutTabLayoutMode,
   WidgetType,
 } from '~/generated-metadata/graphql';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 jest.mock('@/side-panel/hooks/useSidePanelMenu');
 jest.mock('@/side-panel/pages/page-layout/hooks/useIsDashboardPageLayout');
@@ -36,11 +37,13 @@ describe('useOpenWidgetSettingsInSidePanel', () => {
   const getDraftAtom = () =>
     pageLayoutDraftComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     });
 
   const getEditingWidgetIdAtom = () =>
     pageLayoutEditingWidgetIdComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     });
 
   beforeEach(() => {
@@ -240,6 +243,7 @@ describe('useOpenWidgetSettingsInSidePanel', () => {
       const settingsTabAtom =
         pageLayoutTabSettingsOpenTabIdComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         });
       const widget = { ...makeWidget('widget', 0), type: widgetType };
       store.set(getDraftAtom(), makeDraft([makeTab('tab-1', [widget])]));

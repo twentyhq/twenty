@@ -7,8 +7,10 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 import { useStore } from 'jotai';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useSetInitialWorkflowRunSidePanelTab = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const store = useStore();
   const setInitialWorkflowRunSidePanelTab = useCallback(
     ({
@@ -22,6 +24,7 @@ export const useSetInitialWorkflowRunSidePanelTab = () => {
 
       const activeTabId = activeTabIdComponentState.atomFamily({
         instanceId: sidePanelPageInfo.instanceId,
+        surfaceId,
       });
 
       const activeWorkflowRunSidePanelTab = store.get(
@@ -55,7 +58,7 @@ export const useSetInitialWorkflowRunSidePanelTab = () => {
         store.set(activeTabId, WorkflowRunTabId.NODE);
       }
     },
-    [store],
+    [store, surfaceId],
   );
 
   return {

@@ -11,8 +11,10 @@ import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetad
 import { RESET_PAGE_LAYOUT_TO_DEFAULT } from '@/page-layout/graphql/mutations/resetPageLayoutToDefault';
 import { pageLayoutIsInitializedComponentState } from '@/page-layout/states/pageLayoutIsInitializedComponentState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useResetPageLayoutToDefault = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const [resetMutation] = useMutation(RESET_PAGE_LAYOUT_TO_DEFAULT);
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -28,6 +30,7 @@ export const useResetPageLayoutToDefault = () => {
           store.set(
             pageLayoutIsInitializedComponentState.atomFamily({
               instanceId: pageLayoutId,
+              surfaceId,
             }),
             false,
           );
@@ -51,6 +54,7 @@ export const useResetPageLayoutToDefault = () => {
       invalidateMetadataStore,
       handleMetadataError,
       enqueueErrorSnackBar,
+      surfaceId,
     ],
   );
 

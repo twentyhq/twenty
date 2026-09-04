@@ -130,13 +130,11 @@ export const PageLayoutSingleTabRenderer = ({
   const pageLayoutComponentInstanceId =
     useWorkspaceSurfaceScopedComponentInstanceId(pageLayoutId);
 
-  const tabListInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
-    getTabListInstanceIdFromPageLayoutAndRecord({
-      pageLayoutId,
-      layoutType,
-      targetRecordIdentifier,
-    }),
-  );
+  const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
+    pageLayoutId,
+    layoutType,
+    targetRecordIdentifier,
+  });
 
   return (
     <PageLayoutComponentInstanceContext.Provider

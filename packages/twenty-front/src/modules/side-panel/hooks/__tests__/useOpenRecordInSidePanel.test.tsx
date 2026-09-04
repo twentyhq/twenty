@@ -19,6 +19,7 @@ import { IconDotsVertical } from 'twenty-ui/icon';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 jest.mock('uuid', () => ({
   ...jest.requireActual('uuid'),
@@ -423,6 +424,7 @@ describe('useOpenRecordInSidePanel', () => {
       jotaiStore.get(
         activeTabIdComponentState.atomFamily({
           instanceId: tabListInstanceId,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
       ),
     ).toBe('tab-emails');

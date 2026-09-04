@@ -25,8 +25,10 @@ import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { logError } from '~/utils/logError';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useSaveLayoutCustomization = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const [isSaving, setIsSaving] = useState(false);
   const store = useStore();
   const { t } = useLingui();
@@ -75,12 +77,14 @@ export const useSaveLayoutCustomization = () => {
         const draft = store.get(
           pageLayoutDraftComponentState.atomFamily({
             instanceId: pageLayoutId,
+            surfaceId,
           }),
         );
 
         const persisted = store.get(
           pageLayoutPersistedComponentState.atomFamily({
             instanceId: pageLayoutId,
+            surfaceId,
           }),
         );
 
@@ -114,12 +118,14 @@ export const useSaveLayoutCustomization = () => {
               store.set(
                 pageLayoutPersistedComponentState.atomFamily({
                   instanceId: pageLayoutId,
+                  surfaceId,
                 }),
                 persistedLayout,
               );
               store.set(
                 pageLayoutCurrentLayoutsComponentState.atomFamily({
                   instanceId: pageLayoutId,
+                  surfaceId,
                 }),
                 convertPageLayoutToTabLayouts(persistedLayout),
               );
@@ -162,6 +168,7 @@ export const useSaveLayoutCustomization = () => {
     enqueueErrorSnackBar,
     store,
     t,
+    surfaceId,
   ]);
 
   return { save, isSaving };

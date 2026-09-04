@@ -7,11 +7,11 @@ export const multipleRecordPickerIsSelectedComponentFamilySelector =
     key: 'multipleRecordPickerIsSelectedComponentFamilySelector',
     componentInstanceContext: MultipleRecordPickerComponentInstanceContext,
     get:
-      ({ instanceId, familyKey: recordId }) =>
+      ({ instanceId, surfaceId, familyKey: recordId }) =>
       ({ get }) => {
         const pickableMorphItems = get(
           multipleRecordPickerPickableMorphItemsComponentState,
-          { instanceId },
+          { instanceId, surfaceId },
         );
 
         const pickableMorphItem = pickableMorphItems.find(

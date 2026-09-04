@@ -8,6 +8,7 @@ import { type ReactNode } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const mockObjectMetadataId = 'test-object-id';
 const mockViewInstanceId = 'test-view-instance-id';
@@ -26,6 +27,7 @@ const createWrapper = (objectMetadataItems: any[]) => {
     jotaiStore.set(
       viewObjectMetadataIdComponentState.atomFamily({
         instanceId: mockViewInstanceId,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       mockObjectMetadataId,
     );

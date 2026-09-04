@@ -4,58 +4,60 @@ import { useStore } from 'jotai';
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { isDefined } from 'twenty-shared/utils';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useSelectableList = (instanceId?: string) => {
+  const surfaceId = useComponentStateSurfaceId();
   const unscopedSelectableListInstanceId =
     useAvailableComponentInstanceIdOrThrow(
       SelectableListComponentInstanceContext,
       instanceId,
     );
-  const selectableListInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
-    unscopedSelectableListInstanceId,
-  );
-
   const store = useStore();
 
   const resetSelectedItem = useCallback(() => {
     const selectedItemId = store.get(
       selectedItemIdComponentState.atomFamily({
-        instanceId: selectableListInstanceId,
+        instanceId: unscopedSelectableListInstanceId,
+        surfaceId,
       }),
     );
 
     if (isDefined(selectedItemId)) {
       store.set(
         selectedItemIdComponentState.atomFamily({
-          instanceId: selectableListInstanceId,
+          instanceId: unscopedSelectableListInstanceId,
+          surfaceId,
         }),
         null,
       );
       store.set(
         isSelectedItemIdComponentFamilyState.atomFamily({
-          instanceId: selectableListInstanceId,
+          instanceId: unscopedSelectableListInstanceId,
+          surfaceId,
           familyKey: selectedItemId,
         }),
         false,
       );
     }
-  }, [store, selectableListInstanceId]);
+  }, [store, unscopedSelectableListInstanceId, surfaceId]);
 
   const setSelectedItemId = useCallback(
     (itemId: string) => {
       const selectedItemId = store.get(
         selectedItemIdComponentState.atomFamily({
-          instanceId: selectableListInstanceId,
+          instanceId: unscopedSelectableListInstanceId,
+          surfaceId,
         }),
       );
 
       if (isDefined(selectedItemId)) {
         store.set(
           isSelectedItemIdComponentFamilyState.atomFamily({
-            instanceId: selectableListInstanceId,
+            instanceId: unscopedSelectableListInstanceId,
+            surfaceId,
             familyKey: selectedItemId,
           }),
           false,
@@ -64,19 +66,21 @@ export const useSelectableList = (instanceId?: string) => {
 
       store.set(
         selectedItemIdComponentState.atomFamily({
-          instanceId: selectableListInstanceId,
+          instanceId: unscopedSelectableListInstanceId,
+          surfaceId,
         }),
         itemId,
       );
       store.set(
         isSelectedItemIdComponentFamilyState.atomFamily({
-          instanceId: selectableListInstanceId,
+          instanceId: unscopedSelectableListInstanceId,
+          surfaceId,
           familyKey: itemId,
         }),
         true,
       );
     },
-    [store, selectableListInstanceId],
+    [store, unscopedSelectableListInstanceId, surfaceId],
   );
 
   return {

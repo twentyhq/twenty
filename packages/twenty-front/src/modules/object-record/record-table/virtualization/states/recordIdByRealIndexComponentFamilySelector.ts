@@ -9,12 +9,13 @@ export const recordIdByRealIndexComponentFamilySelector =
     key: 'recordIdByRealIndexComponentFamilySelector',
     componentInstanceContext: RecordTableComponentInstanceContext,
     get:
-      ({ instanceId, familyKey }) =>
+      ({ instanceId, surfaceId, familyKey }) =>
       ({ get }) => {
         const realIndex = familyKey;
 
         const recordIdByRealIndex = get(recordIdByRealIndexComponentState, {
           instanceId,
+          surfaceId,
         });
 
         if (!isDefined(realIndex)) {

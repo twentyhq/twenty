@@ -8,6 +8,7 @@ import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const mockNavigatePageLayoutSidePanel = jest.fn();
 
@@ -32,6 +33,7 @@ describe('useOpenPageLayoutTabSettings', () => {
       const settingsTabAtom =
         pageLayoutTabSettingsOpenTabIdComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         });
       store.set(settingsTabAtom, isPanelClosing ? 'previous-tab' : null);
 

@@ -17,6 +17,7 @@ import { act, renderHook } from '@testing-library/react';
 import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
 import { PageLayoutType, WidgetType } from '~/generated-metadata/graphql';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 describe('useCurrentPageLayout', () => {
   it('keeps persisted widget order in view mode and uses normalized draft order in edit mode', () => {
@@ -37,12 +38,14 @@ describe('useCurrentPageLayout', () => {
     store.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       persistedPageLayout,
     );
     store.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       normalizeVerticalListWidgetsInDraftPageLayout(
         toDraftPageLayout(persistedPageLayout),

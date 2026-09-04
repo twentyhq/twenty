@@ -24,6 +24,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { PageLayoutType } from '~/generated-metadata/graphql';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const TAB_LIST_ID = getTabListInstanceIdFromPageLayoutId(
   PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -107,13 +108,16 @@ describe('tab settings navigation during a closing panel', () => {
       const store = createStore();
       const draftAtom = pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       });
       const settingsTabAtom =
         pageLayoutTabSettingsOpenTabIdComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         });
       const activeTabAtom = activeTabIdComponentState.atomFamily({
         instanceId: TAB_LIST_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       });
       store.set(isLayoutCustomizationModeEnabledState.atom, true);
       store.set(activeTabAtom, 'active-tab');

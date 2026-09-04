@@ -11,6 +11,7 @@ import { type GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotk
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 type OpenDropdownArgs = {
   dropdownComponentInstanceIdFromProps?: string;
@@ -18,6 +19,7 @@ type OpenDropdownArgs = {
 };
 
 export const useOpenDropdown = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const { setActiveDropdownFocusIdAndMemorizePrevious } =
@@ -46,6 +48,7 @@ export const useOpenDropdown = () => {
       store.set(
         isDropdownOpenComponentState.atomFamily({
           instanceId: dropdownComponentInstanceId,
+          surfaceId,
         }),
         true,
       );
@@ -74,6 +77,7 @@ export const useOpenDropdown = () => {
       dropdownComponentInstanceIdFromContext,
       resolveComponentInstanceId,
       store,
+      surfaceId,
     ],
   );
 

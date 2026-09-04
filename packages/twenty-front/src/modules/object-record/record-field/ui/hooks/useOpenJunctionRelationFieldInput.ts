@@ -19,8 +19,10 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useOpenJunctionRelationFieldInput = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const { performSearch } = useMultipleRecordPickerPerformSearch();
   const { openMultipleRecordPicker } = useMultipleRecordPickerOpen();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
@@ -87,13 +89,14 @@ export const useOpenJunctionRelationFieldInput = () => {
       store.set(
         multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
           instanceId: resolvedRecordPickerInstanceId,
+          surfaceId,
         }),
         pickableMorphItems,
       );
 
       store.set(
         multipleRecordPickerSearchableObjectMetadataItemsComponentState.atomFamily(
-          { instanceId: resolvedRecordPickerInstanceId },
+          { instanceId: resolvedRecordPickerInstanceId, surfaceId },
         ),
         searchableObjectMetadataItems,
       );
@@ -101,6 +104,7 @@ export const useOpenJunctionRelationFieldInput = () => {
       store.set(
         multipleRecordPickerSearchFilterComponentState.atomFamily({
           instanceId: resolvedRecordPickerInstanceId,
+          surfaceId,
         }),
         '',
       );
@@ -125,7 +129,13 @@ export const useOpenJunctionRelationFieldInput = () => {
         },
       });
     },
-    [openMultipleRecordPicker, performSearch, pushFocusItemToFocusStack, store],
+    [
+      openMultipleRecordPicker,
+      performSearch,
+      pushFocusItemToFocusStack,
+      store,
+      surfaceId,
+    ],
   );
 
   return { openJunctionRelationFieldInput };

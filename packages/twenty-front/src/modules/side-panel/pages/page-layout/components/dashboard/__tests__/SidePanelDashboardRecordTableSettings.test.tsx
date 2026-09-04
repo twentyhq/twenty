@@ -5,6 +5,7 @@ import { I18nProvider } from '@lingui/react';
 import { render } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { PageLayoutType } from '~/generated-metadata/graphql';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 const PAGE_LAYOUT_ID = 'dashboard-page-layout-id';
 
@@ -81,7 +82,10 @@ describe('SidePanelDashboardRecordTableSettings', () => {
     const store = createStore();
 
     store.set(
-      pageLayoutDraftComponentState.atomFamily({ instanceId: PAGE_LAYOUT_ID }),
+      pageLayoutDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_ID,
+        surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+      }),
       {
         id: PAGE_LAYOUT_ID,
         name: 'Dashboard layout',

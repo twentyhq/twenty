@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { type ComponentState } from '@/ui/utilities/state/jotai/types/ComponentState';
 
@@ -23,8 +24,10 @@ export const useAtomComponentStateCallbackState = <StateType>(
     instanceIdFromProps,
   );
 
+  const surfaceId = useComponentStateSurfaceId();
+
   return useMemo(
-    () => componentState.atomFamily({ instanceId }),
-    [componentState, instanceId],
+    () => componentState.atomFamily({ instanceId, surfaceId }),
+    [componentState, instanceId, surfaceId],
   );
 };

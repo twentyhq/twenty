@@ -14,8 +14,10 @@ import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
+import { useComponentStateSurfaceId } from '@/ui/utilities/state/component-state/hooks/useComponentStateSurfaceId';
 
 export const useSnackBar = () => {
+  const surfaceId = useComponentStateSurfaceId();
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     SnackBarComponentInstanceContext,
   );
@@ -27,6 +29,7 @@ export const useSnackBar = () => {
       store.set(
         snackBarInternalComponentState.atomFamily({
           instanceId: componentInstanceId,
+          surfaceId,
         }),
         (prevState) => ({
           ...prevState,
@@ -34,7 +37,7 @@ export const useSnackBar = () => {
         }),
       );
     },
-    [componentInstanceId, store],
+    [componentInstanceId, store, surfaceId],
   );
 
   const setSnackBarQueue = useCallback(
@@ -42,6 +45,7 @@ export const useSnackBar = () => {
       store.set(
         snackBarInternalComponentState.atomFamily({
           instanceId: componentInstanceId,
+          surfaceId,
         }),
         (prev) => {
           if (
@@ -66,7 +70,7 @@ export const useSnackBar = () => {
           };
         },
       ),
-    [componentInstanceId, store],
+    [componentInstanceId, store, surfaceId],
   );
 
   const enqueueSuccessSnackBar = useCallback(

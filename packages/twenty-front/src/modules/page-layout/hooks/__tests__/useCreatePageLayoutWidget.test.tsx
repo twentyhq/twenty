@@ -22,6 +22,7 @@ import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
 jest.mock('uuid', () => ({
   ...jest.requireActual('uuid'),
@@ -45,21 +46,25 @@ describe('useCreatePageLayoutWidget', () => {
   const getDraftAtom = () =>
     pageLayoutDraftComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     });
 
   const getCurrentLayoutsAtom = () =>
     pageLayoutCurrentLayoutsComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     });
 
   const getDraggedAreaAtom = () =>
     pageLayoutDraggedAreaComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     });
 
   const getActiveTabIdAtom = () =>
     activeTabIdComponentState.atomFamily({
       instanceId: TAB_LIST_INSTANCE_ID,
+      surfaceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     });
 
   const createStoreWithActiveGridTab = () => {
