@@ -7,7 +7,7 @@ import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/m
 import { type Manifest } from 'twenty-shared/application';
 import { v4 as uuidv4 } from 'uuid';
 
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const TEST_APP_ID = uuidv4();
@@ -152,7 +152,8 @@ describe('applicationConnectionProviders resolver (e2e)', () => {
 
     const providers = response.body.data.applicationConnectionProviders;
 
-    const serverUrl = global.app.get(TwentyConfigService).get('SERVER_URL');
+    const serverUrl =
+      process.env.SERVER_URL ?? new ConfigVariables().SERVER_URL;
 
     expect(providers).toHaveLength(1);
     expect(providers[0].logoUrl).toBe(
