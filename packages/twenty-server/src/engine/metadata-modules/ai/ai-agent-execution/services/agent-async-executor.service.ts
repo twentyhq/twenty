@@ -53,7 +53,7 @@ import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entiti
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
-import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
+import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
 import {
   extractCacheCreationTokens,
@@ -558,9 +558,7 @@ export class AgentAsyncExecutorService {
       const totalCostInDollars =
         tokenCostInDollars +
         nativeWebSearchCallCount * NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS;
-      const creditsUsedMicro = Math.round(
-        convertDollarsToBillingCredits(totalCostInDollars),
-      );
+      const creditsUsedMicro = convertDollarsToCreditsMicro(totalCostInDollars);
 
       return {
         result,
@@ -587,9 +585,7 @@ export class AgentAsyncExecutorService {
         usage: accumulatedUsage,
         cacheCreationTokens,
       });
-      const creditsUsedMicro = Math.round(
-        convertDollarsToBillingCredits(costInDollars),
-      );
+      const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
       const totalTokens =
         (accumulatedUsage.inputTokens ?? 0) +
         (accumulatedUsage.outputTokens ?? 0);

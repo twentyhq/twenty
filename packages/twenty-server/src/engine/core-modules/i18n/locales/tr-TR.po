@@ -208,7 +208,7 @@ msgstr "Bu uygulamanın daha yeni bir sürümü zaten yüklü. Sürüm düşürm
 #. js-lingui-id: 0sxIdH
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
-msgstr ""
+msgstr "Pazarlama e-postası aynı anda yalnızca bir alıcıya gönderilebilir; böylece her kişi kendi abonelikten çıkma bağlantısını alır."
 
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -230,7 +230,7 @@ msgstr "FOLDER türü için bir ad gereklidir"
 #. js-lingui-id: QKjmI8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "A navigation item cannot carry both a path and a navigation target object"
-msgstr ""
+msgstr "Bir gezinme öğesi hem yol hem de gezinme hedefi nesnesi içeremez"
 
 #. js-lingui-id: 9er1TA
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
@@ -262,7 +262,7 @@ msgstr "Bir sayfa düzeni gezinme menüsü öğesi yalnızca bağımsız bir say
 #. js-lingui-id: RMpFrA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "A path or a navigation target object is required for navigation items"
-msgstr ""
+msgstr "Gezinme öğeleri için bir yol veya gezinme hedefi nesnesi gereklidir"
 
 #. js-lingui-id: HC18ok
 #: src/engine/core-modules/file-storage/utils/validate-path-segments-safety.util.ts
@@ -801,6 +801,7 @@ msgid "An unexpected error occurred while handling the server route."
 msgstr "Sunucu rotası işlenirken beklenmeyen bir hata oluştu."
 
 #. js-lingui-id: W5A0Ly
+#: src/database/clickhouse/clickhouse.exception.ts
 #: src/engine/core-modules/cache-storage/exceptions/cache-storage.exception.ts
 #: src/engine/core-modules/emailing-domain/exceptions/email-group-access.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
@@ -2122,7 +2123,7 @@ msgstr "Widget üst bilgisinin başvurduğu {commandMenuItemUniversalIdentifier}
 #. js-lingui-id: Lrx/M5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Command menu item already exists"
-msgstr ""
+msgstr "Komut menüsü öğesi zaten mevcut"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -2140,7 +2141,7 @@ msgstr "Komut menüsü öğesi bulunamadı."
 #. js-lingui-id: xO/lDZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Command menu item with same universal identifier already exists"
-msgstr ""
+msgstr "Aynı evrensel tanımlayıcıya sahip komut menüsü öğesi zaten mevcut"
 
 #. js-lingui-id: /SzXf6
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -2560,7 +2561,7 @@ msgstr "Mevcut nesne, INDEX görünümündeki etiket tanımlayıcı alanını uy
 #. js-lingui-id: jx0Apr
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-navigation-command-on-update-side-effect-handler.service.ts
 msgid "Could not resolve the existing object to reconcile its navigation command menu item"
-msgstr ""
+msgstr "Gezinme komut menüsü öğesini uyumlu hale getirmek için mevcut nesne çözümlenemedi"
 
 #. js-lingui-id: TYpgQ/
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-label-identifier-on-update-side-effect-handler.service.ts
@@ -2721,6 +2722,11 @@ msgstr "Oluşturulma Tarihi ve Saati"
 msgctxt "fieldMetadata.label"
 msgid "Creation DateTime"
 msgstr "Oluşturulma Tarihi ve Saati"
+
+#. js-lingui-id: oB7ed5
+#: src/engine/core-modules/usage-limit/services/usage-limit-quota.service.ts
+msgid "Credit allowance exhausted for this billing period."
+msgstr "Bu faturalandırma dönemi için kredi kotası tükendi."
 
 #. js-lingui-id: iMikvq
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -3158,7 +3164,7 @@ msgstr "Silindiği tarih"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Delivered count"
-msgstr ""
+msgstr "Teslim edilen sayısı"
 
 #. js-lingui-id: G768/0
 #: src/filters/__tests__/unhandled-exception.filter.spec.ts
@@ -3341,7 +3347,7 @@ msgstr "Düzeni Düzenle"
 #. js-lingui-id: Csg2MU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "either a path payload or navigationTargetObjectMetadataId is required when engineComponentKey is NAVIGATION"
-msgstr ""
+msgstr "engineComponentKey NAVIGATION olduğunda bir yol payload'u veya navigationTargetObjectMetadataId gereklidir"
 
 #. js-lingui-id: n6jNyT
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
@@ -4194,6 +4200,11 @@ msgstr "SDK istemcisi arşivinde dosya bulunamadı."
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "File not found."
 msgstr "Dosya bulunamadı."
+
+#. js-lingui-id: MtzD8b
+#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+msgid "File storage took too long to respond. Please retry."
+msgstr "Dosya depolama yanıt vermek için çok uzun sürdü. Lütfen tekrar deneyin."
 
 #. js-lingui-id: I7Jff2
 #: src/engine/core-modules/file-storage/utils/validate-file-path.util.ts
@@ -5585,13 +5596,13 @@ msgstr "Geçersiz widget yapılandırması."
 #. js-lingui-id: NSpdub
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts
 msgid "Invalid widget position"
-msgstr ""
+msgstr "Geçersiz widget konumu"
 
 #. js-lingui-id: 8dS5h/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "Invalid widget position layout mode"
-msgstr ""
+msgstr "Geçersiz widget konumu düzen modu"
 
 #. js-lingui-id: bznmUY
 #: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
@@ -5765,7 +5776,7 @@ msgstr "Junction yapılandırması yalnızca ONE_TO_MANY ilişkiler için geçer
 #. js-lingui-id: JmUgZR
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
 msgid "Junction source and target fields must be different"
-msgstr ""
+msgstr "Bağlantı kaynak ve hedef alanları farklı olmalıdır"
 
 #. js-lingui-id: bpqhFq
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
@@ -6044,7 +6055,7 @@ msgstr "LinkedIn"
 #. js-lingui-id: 4yWmVP
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-links-flat-field-metadata.util.ts
 msgid "Links field type must be either a url or a domain"
-msgstr ""
+msgstr "Bağlantılar alan türü url veya alan adı olmalıdır"
 
 #. js-lingui-id: ++iNv7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -6204,7 +6215,7 @@ msgstr "Alan \"{fieldName}\" için maksimum dosya sayısı {maxNumberOfValues}"
 #. js-lingui-id: 4asysa
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
 msgid "Maximum number of nested records to create is {QUERY_MAX_RECORDS}."
-msgstr ""
+msgstr "Oluşturulacak en fazla iç içe kayıt sayısı {QUERY_MAX_RECORDS}."
 
 #. js-lingui-id: hw7Mwk
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
@@ -7154,7 +7165,7 @@ msgstr "Sayı formatı"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Number of emails confirmed delivered"
-msgstr ""
+msgstr "Teslim edildiği onaylanan e-posta sayısı"
 
 #. js-lingui-id: Y/owFW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -7178,7 +7189,7 @@ msgstr "Gönderilmesi başarısız olan e-posta sayısı"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Number of recipients skipped without being emailed"
-msgstr ""
+msgstr "E-posta gönderilmeden atlanan alıcı sayısı"
 
 #. js-lingui-id: bgG8mY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -7390,7 +7401,7 @@ msgstr "İstenen kapsamların bir veya daha fazlası geçersiz."
 #. js-lingui-id: EkozT1
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Only a campaign that is currently sending can be canceled."
-msgstr ""
+msgstr "Yalnızca şu anda gönderilmekte olan bir kampanya iptal edilebilir."
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -7788,17 +7799,17 @@ msgstr "Şifre çok zayıf"
 #. js-lingui-id: GisVJf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "payload and navigationTargetObjectMetadataId are mutually exclusive"
-msgstr ""
+msgstr "payload ve navigationTargetObjectMetadataId birbirini dışlar"
 
 #. js-lingui-id: yo0H/o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "payload must contain a non-empty \"path\" property"
-msgstr ""
+msgstr "payload, boş olmayan bir \"path\" özelliği içermelidir"
 
 #. js-lingui-id: bfB+si
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Payload must contain a path"
-msgstr ""
+msgstr "Payload bir yol içermelidir"
 
 #. js-lingui-id: iJh5U7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -8018,7 +8029,7 @@ msgstr ""
 #. js-lingui-id: Zm9s4F
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-links-field-or-throw.util.ts
 msgid "Please enter a domain name, like twenty.com"
-msgstr ""
+msgstr "Lütfen twenty.com gibi bir alan adı girin"
 
 #. js-lingui-id: qgasuj
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
@@ -9253,7 +9264,7 @@ msgstr "\"{name}\" adlı bir beceri zaten mevcut"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Skipped count"
-msgstr ""
+msgstr "Atlanan sayısı"
 
 #. js-lingui-id: kIKb9e
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -9913,7 +9924,7 @@ msgstr "Uygulamanın üretim bağımlılıkları kurulamayacak kadar büyük. Ma
 #. js-lingui-id: IIdxjy
 #: src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/calendar-event-webhook-sync.exception.ts
 msgid "The calendar is already syncing."
-msgstr ""
+msgstr "Takvim zaten eşitleniyor."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -10080,7 +10091,7 @@ msgstr "Bu zaman çizelgesi etkinlik türü tarafından kullanılan ön bileşen
 #. js-lingui-id: 840b8q
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The happensAt field used by this timeline activity type is not available"
-msgstr ""
+msgstr "Bu zaman çizelgesi etkinlik türünün kullandığı happensAt alanı kullanılamıyor"
 
 #. js-lingui-id: EJUSll
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -10113,7 +10124,7 @@ msgstr "Bağlantı kurulduğunda çalıştırılacak mantık işlevi bulunamadı
 #. js-lingui-id: 4BA4xs
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function to run on disconnect failed."
-msgstr ""
+msgstr "Bağlantı kesildiğinde çalıştırılacak mantık işlevi başarısız oldu."
 
 #. js-lingui-id: PgpPoi
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -10148,7 +10159,7 @@ msgstr "Güncellenecek nesne, INDEX görünümünü uyumlu hale getirmek için b
 #. js-lingui-id: uBRmyY
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-navigation-command-on-update-side-effect-handler.service.ts
 msgid "The object to update could not be found to reconcile its navigation command"
-msgstr ""
+msgstr "Güncellenecek nesne, gezinme komutunu uyumlu hale getirmek için bulunamadı"
 
 #. js-lingui-id: /QTsIU
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-label-identifier-on-update-side-effect-handler.service.ts
@@ -10477,7 +10488,7 @@ msgstr "Bu kampanya gönderilemez. Bir gönderen, konu veya alıcı listesi eksi
 #. js-lingui-id: F0NM9B
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign needs more email credits than your workspace has left. Top up your credits or send to a smaller list."
-msgstr ""
+msgstr "Bu kampanya, çalışma alanınızda kalan e-posta kredilerinden daha fazlasına ihtiyaç duyuyor. Kredilerinizi yükleyin veya daha küçük bir listeye gönderin."
 
 #. js-lingui-id: ZyEq3L
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -10558,7 +10569,7 @@ msgstr "Bu değerlendirme hedefi bulunamadı."
 #. js-lingui-id: uNp8ZA
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an enterprise key is required."
-msgstr ""
+msgstr "Bu özellik {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} koltuğa kadar ücretsizdir. Örneğiniz bu sayının üzerinde olduğundan bir kurumsal anahtar gereklidir."
 
 #. js-lingui-id: hsi+jf
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -10634,7 +10645,7 @@ msgstr "Bu tür bir kredi hakkı elle oluşturulamaz."
 #. js-lingui-id: AFqkCe
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 msgid "This limit cannot be saved."
-msgstr ""
+msgstr "Bu limit kaydedilemez."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -10974,7 +10985,7 @@ msgstr "Bu olayı açıklayan zaman çizelgesi etkinlik türü"
 #. js-lingui-id: yi1Kgg
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type happensAt field must be a date field on the source object of a linked relation event"
-msgstr ""
+msgstr "Zaman çizelgesi etkinlik türü happensAt alanı, bağlı bir ilişki olayının kaynak nesnesinde bir tarih alanı olmalıdır"
 
 #. js-lingui-id: sqmSqj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -11377,7 +11388,7 @@ msgstr "Kullanım bilgisi okunamadı. Lütfen daha sonra tekrar deneyin."
 #. js-lingui-id: tGvlMG
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 msgid "Usage quota exhausted for this period."
-msgstr ""
+msgstr "Bu dönem için kullanım kotası tükendi."
 
 #. js-lingui-id: xwq0b4
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -12076,7 +12087,7 @@ msgstr "Geçerli katılımcı kurallarının bu hedefi doğrulayıp doğrulamad�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Whether the handle is blocked for a single workspace member or for the whole workspace"
-msgstr ""
+msgstr "Tanıtıcının tek bir çalışma alanı üyesi için mi yoksa tüm çalışma alanı için mi engellendiği"
 
 #. js-lingui-id: zSq4aO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -12912,7 +12923,7 @@ msgstr "Uygulamanızın üretim bağımlılıkları kurulamayacak kadar büyük.
 #. js-lingui-id: eM0QUk
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 msgid "Your AWS SES account is still in the sandbox, so this domain cannot send to unverified recipients. Request production access from AWS, then verify the domain again."
-msgstr ""
+msgstr "AWS SES hesabınız hâlâ korumalı alanda, bu nedenle bu alan adı doğrulanmamış alıcılara e-posta gönderemez. AWS'den üretim erişimi isteyin, ardından alan adını tekrar doğrulayın."
 
 #. js-lingui-id: J5Vm4Q
 #: src/engine/core-modules/billing/billing.validate.ts

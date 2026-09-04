@@ -208,7 +208,7 @@ msgstr "Ya hay instalada una versión superior de esta aplicación. No se permit
 #. js-lingui-id: 0sxIdH
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
-msgstr ""
+msgstr "Un correo electrónico de marketing solo se puede enviar a un destinatario a la vez, por lo que cada persona recibe su propio enlace para cancelar la suscripción."
 
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -230,7 +230,7 @@ msgstr "El nombre es obligatorio para el tipo FOLDER"
 #. js-lingui-id: QKjmI8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "A navigation item cannot carry both a path and a navigation target object"
-msgstr ""
+msgstr "Un elemento de navegación no puede incluir tanto una ruta como un objeto de destino de navegación"
 
 #. js-lingui-id: 9er1TA
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
@@ -262,7 +262,7 @@ msgstr "Un elemento del menú de navegación de diseño de página solo puede ap
 #. js-lingui-id: RMpFrA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "A path or a navigation target object is required for navigation items"
-msgstr ""
+msgstr "Se requiere una ruta o un objeto de destino de navegación para los elementos de navegación"
 
 #. js-lingui-id: HC18ok
 #: src/engine/core-modules/file-storage/utils/validate-path-segments-safety.util.ts
@@ -801,6 +801,7 @@ msgid "An unexpected error occurred while handling the server route."
 msgstr "Se produjo un error inesperado al procesar la ruta del servidor."
 
 #. js-lingui-id: W5A0Ly
+#: src/database/clickhouse/clickhouse.exception.ts
 #: src/engine/core-modules/cache-storage/exceptions/cache-storage.exception.ts
 #: src/engine/core-modules/emailing-domain/exceptions/email-group-access.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
@@ -2122,7 +2123,7 @@ msgstr "No se encontró el elemento de menú de comandos {commandMenuItemUnivers
 #. js-lingui-id: Lrx/M5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Command menu item already exists"
-msgstr ""
+msgstr "El elemento del menú de comandos ya existe"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -2140,7 +2141,7 @@ msgstr "Elemento del menú de comandos no encontrado."
 #. js-lingui-id: xO/lDZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Command menu item with same universal identifier already exists"
-msgstr ""
+msgstr "Ya existe un elemento del menú de comandos con el mismo identificador universal"
 
 #. js-lingui-id: /SzXf6
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -2560,7 +2561,7 @@ msgstr "No se pudo resolver el objeto existente para reconciliar su campo de ide
 #. js-lingui-id: jx0Apr
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-navigation-command-on-update-side-effect-handler.service.ts
 msgid "Could not resolve the existing object to reconcile its navigation command menu item"
-msgstr ""
+msgstr "No se pudo resolver el objeto existente para reconciliar su elemento del menú de comandos de navegación"
 
 #. js-lingui-id: TYpgQ/
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-label-identifier-on-update-side-effect-handler.service.ts
@@ -2721,6 +2722,11 @@ msgstr "Fecha y hora de creación"
 msgctxt "fieldMetadata.label"
 msgid "Creation DateTime"
 msgstr "Fecha y hora de creación"
+
+#. js-lingui-id: oB7ed5
+#: src/engine/core-modules/usage-limit/services/usage-limit-quota.service.ts
+msgid "Credit allowance exhausted for this billing period."
+msgstr "El crédito disponible se ha agotado para este período de facturación."
 
 #. js-lingui-id: iMikvq
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -3158,7 +3164,7 @@ msgstr "Eliminado en"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Delivered count"
-msgstr ""
+msgstr "Número de entregados"
 
 #. js-lingui-id: G768/0
 #: src/filters/__tests__/unhandled-exception.filter.spec.ts
@@ -3341,7 +3347,7 @@ msgstr "Editar diseño"
 #. js-lingui-id: Csg2MU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "either a path payload or navigationTargetObjectMetadataId is required when engineComponentKey is NAVIGATION"
-msgstr ""
+msgstr "se requiere una carga útil de ruta o navigationTargetObjectMetadataId cuando engineComponentKey es NAVIGATION"
 
 #. js-lingui-id: n6jNyT
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
@@ -4194,6 +4200,11 @@ msgstr "No se encontró el archivo dentro del archivo comprimido del cliente del
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "File not found."
 msgstr "Archivo no encontrado."
+
+#. js-lingui-id: MtzD8b
+#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+msgid "File storage took too long to respond. Please retry."
+msgstr "El almacenamiento de archivos tardó demasiado en responder. Inténtalo de nuevo."
 
 #. js-lingui-id: I7Jff2
 #: src/engine/core-modules/file-storage/utils/validate-file-path.util.ts
@@ -5585,13 +5596,13 @@ msgstr "Configuración del widget no válida."
 #. js-lingui-id: NSpdub
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts
 msgid "Invalid widget position"
-msgstr ""
+msgstr "Posición del widget no válida"
 
 #. js-lingui-id: 8dS5h/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "Invalid widget position layout mode"
-msgstr ""
+msgstr "Modo de diseño de posición del widget no válido"
 
 #. js-lingui-id: bznmUY
 #: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
@@ -5765,7 +5776,7 @@ msgstr "La configuración de la unión solo es válida para relaciones ONE_TO_MA
 #. js-lingui-id: JmUgZR
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
 msgid "Junction source and target fields must be different"
-msgstr ""
+msgstr "Los campos de origen y destino de la unión deben ser diferentes"
 
 #. js-lingui-id: bpqhFq
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
@@ -6044,7 +6055,7 @@ msgstr "Linkedin"
 #. js-lingui-id: 4yWmVP
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-links-flat-field-metadata.util.ts
 msgid "Links field type must be either a url or a domain"
-msgstr ""
+msgstr "El tipo de campo de enlaces debe ser una URL o un dominio"
 
 #. js-lingui-id: ++iNv7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -6204,7 +6215,7 @@ msgstr "El número máximo de archivos es {maxNumberOfValues} para el campo \"{f
 #. js-lingui-id: 4asysa
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
 msgid "Maximum number of nested records to create is {QUERY_MAX_RECORDS}."
-msgstr ""
+msgstr "El número máximo de registros anidados que se pueden crear es {QUERY_MAX_RECORDS}."
 
 #. js-lingui-id: hw7Mwk
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
@@ -7154,7 +7165,7 @@ msgstr "Formato de número"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Number of emails confirmed delivered"
-msgstr ""
+msgstr "Número de correos electrónicos confirmados como entregados"
 
 #. js-lingui-id: Y/owFW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -7178,7 +7189,7 @@ msgstr "Número de correos electrónicos que no se pudieron enviar"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Number of recipients skipped without being emailed"
-msgstr ""
+msgstr "Número de destinatarios omitidos sin recibir un correo electrónico"
 
 #. js-lingui-id: bgG8mY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -7390,7 +7401,7 @@ msgstr "Uno o más ámbitos solicitados no son válidos."
 #. js-lingui-id: EkozT1
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Only a campaign that is currently sending can be canceled."
-msgstr ""
+msgstr "Solo se puede cancelar una campaña que se está enviando actualmente."
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -7788,17 +7799,17 @@ msgstr "Contraseña demasiado débil"
 #. js-lingui-id: GisVJf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "payload and navigationTargetObjectMetadataId are mutually exclusive"
-msgstr ""
+msgstr "payload y navigationTargetObjectMetadataId son mutuamente excluyentes"
 
 #. js-lingui-id: yo0H/o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "payload must contain a non-empty \"path\" property"
-msgstr ""
+msgstr "payload debe contener una propiedad \"path\" no vacía"
 
 #. js-lingui-id: bfB+si
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Payload must contain a path"
-msgstr ""
+msgstr "Payload debe contener una ruta"
 
 #. js-lingui-id: iJh5U7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -8018,7 +8029,7 @@ msgstr "Por favor, confirma tu correo electrónico actualizado"
 #. js-lingui-id: Zm9s4F
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-links-field-or-throw.util.ts
 msgid "Please enter a domain name, like twenty.com"
-msgstr ""
+msgstr "Introduce un nombre de dominio, como twenty.com"
 
 #. js-lingui-id: qgasuj
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
@@ -9253,7 +9264,7 @@ msgstr "Ya existe una habilidad con el nombre \"{name}\""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Skipped count"
-msgstr ""
+msgstr "Número de omitidos"
 
 #. js-lingui-id: kIKb9e
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -9913,7 +9924,7 @@ msgstr "Las dependencias de producción de la aplicación son demasiado grandes 
 #. js-lingui-id: IIdxjy
 #: src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/calendar-event-webhook-sync.exception.ts
 msgid "The calendar is already syncing."
-msgstr ""
+msgstr "El calendario ya se está sincronizando."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -10080,7 +10091,7 @@ msgstr "El componente de interfaz utilizado por este tipo de actividad de cronol
 #. js-lingui-id: 840b8q
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The happensAt field used by this timeline activity type is not available"
-msgstr ""
+msgstr "El campo happensAt utilizado por este tipo de actividad de cronología no está disponible"
 
 #. js-lingui-id: EJUSll
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -10113,7 +10124,7 @@ msgstr "La función lógica que se debe ejecutar al conectar no se encontró."
 #. js-lingui-id: 4BA4xs
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function to run on disconnect failed."
-msgstr ""
+msgstr "La función lógica que se debe ejecutar al desconectar falló."
 
 #. js-lingui-id: PgpPoi
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -10148,7 +10159,7 @@ msgstr "No se pudo encontrar el objeto a actualizar para reconciliar su vista IN
 #. js-lingui-id: uBRmyY
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-navigation-command-on-update-side-effect-handler.service.ts
 msgid "The object to update could not be found to reconcile its navigation command"
-msgstr ""
+msgstr "No se pudo encontrar el objeto que se va a actualizar para reconciliar su comando de navegación"
 
 #. js-lingui-id: /QTsIU
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-label-identifier-on-update-side-effect-handler.service.ts
@@ -10477,7 +10488,7 @@ msgstr "Esta campaña no se puede enviar. Puede que le falte un remitente, un as
 #. js-lingui-id: F0NM9B
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign needs more email credits than your workspace has left. Top up your credits or send to a smaller list."
-msgstr ""
+msgstr "Esta campaña necesita más créditos de correo electrónico de los que le quedan a tu espacio de trabajo. Recarga tus créditos o envía a una lista más pequeña."
 
 #. js-lingui-id: ZyEq3L
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -10558,7 +10569,7 @@ msgstr "No se pudo encontrar este objetivo de evaluación."
 #. js-lingui-id: uNp8ZA
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an enterprise key is required."
-msgstr ""
+msgstr "Esta función es gratuita hasta {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} puestos. Tu instancia supera esa cantidad, por lo que se requiere una clave empresarial."
 
 #. js-lingui-id: hsi+jf
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -10634,7 +10645,7 @@ msgstr "Este tipo de concesión de crédito no puede crearse manualmente."
 #. js-lingui-id: AFqkCe
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 msgid "This limit cannot be saved."
-msgstr ""
+msgstr "Este límite no se puede guardar."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -10974,7 +10985,7 @@ msgstr "Tipo de actividad de cronología que describe este evento"
 #. js-lingui-id: yi1Kgg
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type happensAt field must be a date field on the source object of a linked relation event"
-msgstr ""
+msgstr "El campo happensAt del tipo de actividad de cronología debe ser un campo de fecha en el objeto de origen de un evento de relación vinculada"
 
 #. js-lingui-id: sqmSqj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -11377,7 +11388,7 @@ msgstr "No se pudo leer el consumo. Por favor, inténtelo de nuevo más tarde."
 #. js-lingui-id: tGvlMG
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 msgid "Usage quota exhausted for this period."
-msgstr ""
+msgstr "La cuota de uso se agotó para este período."
 
 #. js-lingui-id: xwq0b4
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -12076,7 +12087,7 @@ msgstr "Si las reglas actuales de participantes justifican este destino"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Whether the handle is blocked for a single workspace member or for the whole workspace"
-msgstr ""
+msgstr "Indica si el identificador está bloqueado para un único miembro del espacio de trabajo o para todo el espacio de trabajo"
 
 #. js-lingui-id: zSq4aO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -12912,7 +12923,7 @@ msgstr "Las dependencias de producción de tu aplicación son demasiado grandes 
 #. js-lingui-id: eM0QUk
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 msgid "Your AWS SES account is still in the sandbox, so this domain cannot send to unverified recipients. Request production access from AWS, then verify the domain again."
-msgstr ""
+msgstr "Tu cuenta de AWS SES todavía está en el entorno de pruebas, por lo que este dominio no puede enviar a destinatarios no verificados. Solicita acceso a producción a AWS y, luego, verifica el dominio de nuevo."
 
 #. js-lingui-id: J5Vm4Q
 #: src/engine/core-modules/billing/billing.validate.ts

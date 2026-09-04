@@ -11,7 +11,7 @@ import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usa
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
 import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
-import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
+import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 
@@ -100,9 +100,7 @@ export class AiBillingService {
     userWorkspaceId?: string | null,
   ): Promise<void> {
     const costInDollars = this.calculateCost(modelId, billingInput);
-    const creditsUsedMicro = Math.round(
-      convertDollarsToBillingCredits(costInDollars),
-    );
+    const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
 
     const totalTokens =
       (billingInput.usage.inputTokens ?? 0) +
@@ -140,6 +138,7 @@ export class AiBillingService {
     spenders: UsageSpenders;
   }): Promise<{ hasNoMoreAvailableCredits: boolean }> {
     const costInDollars = this.calculateCost(modelId, billingInput);
+    const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
 
     const totalTokens =
       (billingInput.usage.inputTokens ?? 0) +
@@ -149,12 +148,7 @@ export class AiBillingService {
       workspaceId,
       operationType,
       spenders,
-      cost: {
-        creditsUsedMicro: Math.round(
-          convertDollarsToBillingCredits(costInDollars),
-        ),
-        quantity: totalTokens,
-      },
+      cost: { creditsUsedMicro, quantity: totalTokens },
     });
   }
 
@@ -169,9 +163,7 @@ export class AiBillingService {
 
     const costInDollars =
       nativeWebSearchCallCount * NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS;
-    const creditsUsedMicro = Math.round(
-      convertDollarsToBillingCredits(costInDollars),
-    );
+    const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
 
     this.logger.log(
       `Native web search billing: ${nativeWebSearchCallCount} calls, $${costInDollars.toFixed(4)}`,

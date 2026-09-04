@@ -208,7 +208,7 @@ msgstr "Μια νεότερη έκδοση αυτής της εφαρμογής 
 #. js-lingui-id: 0sxIdH
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
-msgstr ""
+msgstr "Ένα email μάρκετινγκ μπορεί να σταλεί μόνο σε έναν παραλήπτη κάθε φορά, ώστε κάθε άτομο να λαμβάνει τον δικό του σύνδεσμο κατάργησης εγγραφής."
 
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -230,7 +230,7 @@ msgstr "Απαιτείται ένα όνομα για τον τύπο FOLDER"
 #. js-lingui-id: QKjmI8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "A navigation item cannot carry both a path and a navigation target object"
-msgstr ""
+msgstr "Ένα στοιχείο πλοήγησης δεν μπορεί να περιέχει ταυτόχρονα μια διαδρομή και ένα αντικείμενο στόχου πλοήγησης"
 
 #. js-lingui-id: 9er1TA
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
@@ -262,7 +262,7 @@ msgstr "Ένα στοιχείο μενού πλοήγησης διάταξης �
 #. js-lingui-id: RMpFrA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "A path or a navigation target object is required for navigation items"
-msgstr ""
+msgstr "Απαιτείται μια διαδρομή ή ένα αντικείμενο στόχου πλοήγησης για τα στοιχεία πλοήγησης"
 
 #. js-lingui-id: HC18ok
 #: src/engine/core-modules/file-storage/utils/validate-path-segments-safety.util.ts
@@ -801,6 +801,7 @@ msgid "An unexpected error occurred while handling the server route."
 msgstr "Παρουσιάστηκε απρόσμενο σφάλμα κατά τον χειρισμό της διαδρομής διακομιστή."
 
 #. js-lingui-id: W5A0Ly
+#: src/database/clickhouse/clickhouse.exception.ts
 #: src/engine/core-modules/cache-storage/exceptions/cache-storage.exception.ts
 #: src/engine/core-modules/emailing-domain/exceptions/email-group-access.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
@@ -2122,7 +2123,7 @@ msgstr "Δεν βρέθηκε το στοιχείο μενού εντολών {c
 #. js-lingui-id: Lrx/M5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Command menu item already exists"
-msgstr ""
+msgstr "Το στοιχείο μενού εντολών υπάρχει ήδη"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -2140,7 +2141,7 @@ msgstr "Το στοιχείο μενού εντολών δεν βρέθηκε."
 #. js-lingui-id: xO/lDZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Command menu item with same universal identifier already exists"
-msgstr ""
+msgstr "Το στοιχείο μενού εντολών με το ίδιο καθολικό αναγνωριστικό υπάρχει ήδη"
 
 #. js-lingui-id: /SzXf6
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -2560,7 +2561,7 @@ msgstr "Δεν ήταν δυνατός ο εντοπισμός του υπάρχ
 #. js-lingui-id: jx0Apr
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-navigation-command-on-update-side-effect-handler.service.ts
 msgid "Could not resolve the existing object to reconcile its navigation command menu item"
-msgstr ""
+msgstr "Δεν ήταν δυνατός ο εντοπισμός του υπάρχοντος αντικειμένου για την τακτοποίηση του στοιχείου μενού εντολών πλοήγησής του"
 
 #. js-lingui-id: TYpgQ/
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-label-identifier-on-update-side-effect-handler.service.ts
@@ -2721,6 +2722,11 @@ msgstr "Χρονοσφραγίδα Δημιουργίας"
 msgctxt "fieldMetadata.label"
 msgid "Creation DateTime"
 msgstr "Χρονοσφραγίδα Δημιουργίας"
+
+#. js-lingui-id: oB7ed5
+#: src/engine/core-modules/usage-limit/services/usage-limit-quota.service.ts
+msgid "Credit allowance exhausted for this billing period."
+msgstr "Το επιτρεπόμενο όριο πιστώσεων εξαντλήθηκε για αυτήν την περίοδο χρέωσης."
 
 #. js-lingui-id: iMikvq
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -3158,7 +3164,7 @@ msgstr "Διαγράφηκε Στις"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Delivered count"
-msgstr ""
+msgstr "Πλήθος παραδοθέντων"
 
 #. js-lingui-id: G768/0
 #: src/filters/__tests__/unhandled-exception.filter.spec.ts
@@ -3341,7 +3347,7 @@ msgstr "Επεξεργασία Διάταξης"
 #. js-lingui-id: Csg2MU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "either a path payload or navigationTargetObjectMetadataId is required when engineComponentKey is NAVIGATION"
-msgstr ""
+msgstr "απαιτείται είτε ένα payload διαδρομής είτε το navigationTargetObjectMetadataId όταν το engineComponentKey είναι NAVIGATION"
 
 #. js-lingui-id: n6jNyT
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
@@ -4194,6 +4200,11 @@ msgstr "Το αρχείο δεν βρέθηκε στην αρχειοθήκη τ
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "File not found."
 msgstr "Το αρχείο δεν βρέθηκε."
+
+#. js-lingui-id: MtzD8b
+#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+msgid "File storage took too long to respond. Please retry."
+msgstr "Η αποθήκευση αρχείων άργησε πολύ να ανταποκριθεί. Δοκιμάστε ξανά."
 
 #. js-lingui-id: I7Jff2
 #: src/engine/core-modules/file-storage/utils/validate-file-path.util.ts
@@ -5585,13 +5596,13 @@ msgstr "Μη έγκυρη διαμόρφωση γραφικού στοιχείο
 #. js-lingui-id: NSpdub
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts
 msgid "Invalid widget position"
-msgstr ""
+msgstr "Μη έγκυρη θέση γραφικού στοιχείου"
 
 #. js-lingui-id: 8dS5h/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "Invalid widget position layout mode"
-msgstr ""
+msgstr "Μη έγκυρη λειτουργία διάταξης θέσης γραφικού στοιχείου"
 
 #. js-lingui-id: bznmUY
 #: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
@@ -5765,7 +5776,7 @@ msgstr "Η διαμόρφωση σύνδεσης ισχύει μόνο για σ
 #. js-lingui-id: JmUgZR
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
 msgid "Junction source and target fields must be different"
-msgstr ""
+msgstr "Τα πεδία προέλευσης και στόχου σύνδεσης πρέπει να είναι διαφορετικά"
 
 #. js-lingui-id: bpqhFq
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
@@ -6044,7 +6055,7 @@ msgstr "Linkedin"
 #. js-lingui-id: 4yWmVP
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-links-flat-field-metadata.util.ts
 msgid "Links field type must be either a url or a domain"
-msgstr ""
+msgstr "Ο τύπος πεδίου συνδέσμων πρέπει να είναι είτε url είτε τομέας"
 
 #. js-lingui-id: ++iNv7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -6204,7 +6215,7 @@ msgstr "Ο μέγιστος αριθμός αρχείων είναι {maxNumberO
 #. js-lingui-id: 4asysa
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
 msgid "Maximum number of nested records to create is {QUERY_MAX_RECORDS}."
-msgstr ""
+msgstr "Ο μέγιστος αριθμός ένθετων εγγραφών προς δημιουργία είναι {QUERY_MAX_RECORDS}."
 
 #. js-lingui-id: hw7Mwk
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
@@ -7154,7 +7165,7 @@ msgstr "Μορφή αριθμού"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Number of emails confirmed delivered"
-msgstr ""
+msgstr "Αριθμός email με επιβεβαιωμένη παράδοση"
 
 #. js-lingui-id: Y/owFW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -7178,7 +7189,7 @@ msgstr "Αριθμός emails που απέτυχαν να σταλούν"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Number of recipients skipped without being emailed"
-msgstr ""
+msgstr "Αριθμός παραληπτών που παραλείφθηκαν χωρίς να τους σταλεί email"
 
 #. js-lingui-id: bgG8mY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -7390,7 +7401,7 @@ msgstr "Ένα ή περισσότερα αιτηθέντα πεδία πρόσ�
 #. js-lingui-id: EkozT1
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Only a campaign that is currently sending can be canceled."
-msgstr ""
+msgstr "Μόνο μια καμπάνια που αποστέλλεται αυτήν τη στιγμή μπορεί να ακυρωθεί."
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -7788,17 +7799,17 @@ msgstr "Ο κωδικός πρόσβασης είναι πολύ αδύναμο�
 #. js-lingui-id: GisVJf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "payload and navigationTargetObjectMetadataId are mutually exclusive"
-msgstr ""
+msgstr "το payload και το navigationTargetObjectMetadataId αλληλοαποκλείονται"
 
 #. js-lingui-id: yo0H/o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "payload must contain a non-empty \"path\" property"
-msgstr ""
+msgstr "το payload πρέπει να περιέχει μια μη κενή ιδιότητα \"path\""
 
 #. js-lingui-id: bfB+si
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Payload must contain a path"
-msgstr ""
+msgstr "Το payload πρέπει να περιέχει μια διαδρομή"
 
 #. js-lingui-id: iJh5U7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -8018,7 +8029,7 @@ msgstr ""
 #. js-lingui-id: Zm9s4F
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-links-field-or-throw.util.ts
 msgid "Please enter a domain name, like twenty.com"
-msgstr ""
+msgstr "Εισαγάγετε ένα όνομα τομέα, όπως twenty.com"
 
 #. js-lingui-id: qgasuj
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
@@ -9253,7 +9264,7 @@ msgstr "Υπάρχει ήδη δεξιότητα με το όνομα \"{name}\"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Skipped count"
-msgstr ""
+msgstr "Πλήθος παραλειφθέντων"
 
 #. js-lingui-id: kIKb9e
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -9913,7 +9924,7 @@ msgstr "Οι εξαρτήσεις παραγωγής της εφαρμογής �
 #. js-lingui-id: IIdxjy
 #: src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/calendar-event-webhook-sync.exception.ts
 msgid "The calendar is already syncing."
-msgstr ""
+msgstr "Το ημερολόγιο συγχρονίζεται ήδη."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -10080,7 +10091,7 @@ msgstr "Το στοιχείο διεπαφής που χρησιμοποιείτ
 #. js-lingui-id: 840b8q
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The happensAt field used by this timeline activity type is not available"
-msgstr ""
+msgstr "Το πεδίο happensAt που χρησιμοποιείται από αυτόν τον τύπο δραστηριότητας χρονολογίου δεν είναι διαθέσιμο"
 
 #. js-lingui-id: EJUSll
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -10113,7 +10124,7 @@ msgstr "Η λογική συνάρτηση που θα εκτελεστεί κα
 #. js-lingui-id: 4BA4xs
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function to run on disconnect failed."
-msgstr ""
+msgstr "Η λογική συνάρτηση που θα εκτελεστεί κατά την αποσύνδεση απέτυχε."
 
 #. js-lingui-id: PgpPoi
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -10148,7 +10159,7 @@ msgstr "Το αντικείμενο προς ενημέρωση δεν βρέθ�
 #. js-lingui-id: uBRmyY
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-navigation-command-on-update-side-effect-handler.service.ts
 msgid "The object to update could not be found to reconcile its navigation command"
-msgstr ""
+msgstr "Το αντικείμενο προς ενημέρωση δεν βρέθηκε για την τακτοποίηση της εντολής πλοήγησής του"
 
 #. js-lingui-id: /QTsIU
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-label-identifier-on-update-side-effect-handler.service.ts
@@ -10477,7 +10488,7 @@ msgstr "Αυτή η καμπάνια δεν μπορεί να αποσταλεί
 #. js-lingui-id: F0NM9B
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign needs more email credits than your workspace has left. Top up your credits or send to a smaller list."
-msgstr ""
+msgstr "Αυτή η καμπάνια χρειάζεται περισσότερες πιστώσεις email από όσες απομένουν στον χώρο εργασίας σας. Προσθέστε πιστώσεις ή στείλτε σε μικρότερη λίστα."
 
 #. js-lingui-id: ZyEq3L
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -10558,7 +10569,7 @@ msgstr "Ο στόχος της αξιολόγησης δεν βρέθηκε."
 #. js-lingui-id: uNp8ZA
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an enterprise key is required."
-msgstr ""
+msgstr "Αυτή η δυνατότητα παρέχεται δωρεάν έως {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} θέσεις. Η παρουσία σας υπερβαίνει αυτό το όριο, επομένως απαιτείται εταιρικό κλειδί."
 
 #. js-lingui-id: hsi+jf
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -10634,7 +10645,7 @@ msgstr "Αυτός ο τύπος παροχής πίστωσης δεν μπορ
 #. js-lingui-id: AFqkCe
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 msgid "This limit cannot be saved."
-msgstr ""
+msgstr "Αυτό το όριο δεν μπορεί να αποθηκευτεί."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -10974,7 +10985,7 @@ msgstr "Τύπος δραστηριότητας χρονολογίου που π
 #. js-lingui-id: yi1Kgg
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type happensAt field must be a date field on the source object of a linked relation event"
-msgstr ""
+msgstr "Το πεδίο happensAt του τύπου δραστηριότητας χρονολογίου πρέπει να είναι πεδίο ημερομηνίας στο αντικείμενο προέλευσης ενός συμβάντος συνδεδεμένης σχέσης"
 
 #. js-lingui-id: sqmSqj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -11377,7 +11388,7 @@ msgstr "Δεν ήταν δυνατή η ανάγνωση της χρήσης. Δ
 #. js-lingui-id: tGvlMG
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 msgid "Usage quota exhausted for this period."
-msgstr ""
+msgstr "Η ποσόστωση χρήσης εξαντλήθηκε για αυτήν την περίοδο."
 
 #. js-lingui-id: xwq0b4
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -12076,7 +12087,7 @@ msgstr "Εάν οι τρέχοντες κανόνες συμμετεχόντων
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Whether the handle is blocked for a single workspace member or for the whole workspace"
-msgstr ""
+msgstr "Αν το handle είναι αποκλεισμένο για ένα μεμονωμένο μέλος του χώρου εργασίας ή για ολόκληρο τον χώρο εργασίας"
 
 #. js-lingui-id: zSq4aO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -12912,7 +12923,7 @@ msgstr "Οι εξαρτήσεις παραγωγής της εφαρμογής �
 #. js-lingui-id: eM0QUk
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 msgid "Your AWS SES account is still in the sandbox, so this domain cannot send to unverified recipients. Request production access from AWS, then verify the domain again."
-msgstr ""
+msgstr "Ο λογαριασμός σας AWS SES βρίσκεται ακόμη στο sandbox, επομένως αυτός ο τομέας δεν μπορεί να στείλει σε μη επαληθευμένους παραλήπτες. Ζητήστε πρόσβαση παραγωγής από την AWS και, στη συνέχεια, επαληθεύστε ξανά τον τομέα."
 
 #. js-lingui-id: J5Vm4Q
 #: src/engine/core-modules/billing/billing.validate.ts

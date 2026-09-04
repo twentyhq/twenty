@@ -1,46 +1,29 @@
-import { isNull, isUndefined } from '@sniptt/guards';
+import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import {
-  claimCallRecordingArtifactsImport,
-  releaseCallRecordingArtifactsImportClaim,
-} from 'src/logic-functions/data/claim-call-recording-artifacts-import.util';
+  findCallRecordingForArtifactsImport,
+  type CallRecordingForArtifactsImport,
+} from 'src/logic-functions/data/find-call-recording-for-artifacts-import.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
 import { type RecallBotSnapshot } from 'src/logic-functions/recall-api/recall-bot-snapshot.type';
-import {
-  syncCallRecording,
-  type SyncableCallRecording,
-} from 'src/logic-functions/flows/sync-call-recording.util';
-import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
+import { runCallRecordingArtifactImportWithClaim } from 'src/logic-functions/flows/run-call-recording-artifact-import-with-claim.util';
+import { settleCallRecordingImport } from 'src/logic-functions/flows/settle-call-recording-import.util';
+import { syncCallRecording } from 'src/logic-functions/flows/sync-call-recording.util';
+import { type CallRecordingArtifactImportScope } from 'src/logic-functions/types/call-recording-artifact-scope.type';
 import { type CallRecordingArtifactsImportRequest } from 'src/logic-functions/types/call-recording-artifacts-import-request.type';
-import { getString } from 'src/logic-functions/utils/get-string.util';
-
-type CallRecordingForArtifactsImport = SyncableCallRecording & {
-  externalBotId: string | undefined;
-};
-
-type CallRecordingForArtifactsImportNode = {
-  id?: string | null;
-  status?: string | null;
-  startedAt?: string | null;
-  endedAt?: string | null;
-  externalBotId?: string | null;
-  externalRecordingId?: string | null;
-  callRecorderFailureReason?: string | null;
-  transcript?: unknown;
-  audio?: FilesFieldValue | null;
-  video?: FilesFieldValue | null;
-};
 
 export type ImportCallRecordingArtifactsResult =
   | {
       status: 'imported';
       callRecordingId: string;
+      scope: CallRecordingArtifactImportScope;
       outcome: 'call-recording-artifacts-imported';
     }
   | {
       status: 'skipped';
       callRecordingId: string;
+      scope: CallRecordingArtifactImportScope;
       reason: string;
     };
 
@@ -49,68 +32,83 @@ export type ImportCallRecordingArtifactsResult =
 export const importCallRecordingArtifacts = async ({
   client,
   request,
+  scope,
 }: {
   client: CoreApiClient;
   request: CallRecordingArtifactsImportRequest;
+  scope: CallRecordingArtifactImportScope;
 }): Promise<ImportCallRecordingArtifactsResult> => {
-  const callRecording = await findCallRecordingForArtifactsImport(
+  const initialCallRecording = await findCallRecordingForArtifactsImport(
     client,
     request.callRecordingId,
   );
 
-  if (isUndefined(callRecording)) {
+  if (isUndefined(initialCallRecording)) {
     return {
       status: 'skipped',
       callRecordingId: request.callRecordingId,
+      scope,
       reason: 'no matching call recording',
     };
   }
 
-  // Svix redelivers a webhook to several workers at once; the lease ensures only
-  // one performs the provider transcript request and media upload. The lease clock
-  // is wall-clock, not request.requestedAt, so a retry of the same delivery still
-  // measures real elapsed time and can reclaim a lease left behind by a crash.
-  const claimedImport = await claimCallRecordingArtifactsImport(client, {
-    callRecordingId: callRecording.id,
-    now: new Date(),
-  });
+  const artifactImportExecution = await runCallRecordingArtifactImportWithClaim(
+    {
+      client,
+      callRecordingId: initialCallRecording.id,
+      scope,
+      now: new Date(),
+      runImport: async (callRecording) => {
+        const recallBot =
+          await fetchRecallBotWhenRecordingIdMissing(callRecording);
+        const callRecordingSyncResult = await syncCallRecording({
+          client,
+          callRecording,
+          bot: recallBot,
+          treatRecordingAsDone: true,
+          requestedAt: request.requestedAt,
+          artifactScope: scope,
+        });
 
-  if (!claimedImport) {
+        if (callRecordingSyncResult.hasRetryableArtifactFailure) {
+          throw new Error(
+            `Recall ${scope} artifacts for call recording ${callRecording.id} could not be imported`,
+          );
+        }
+
+        const hasCompletedImport = await settleCallRecordingImport(client, {
+          callRecordingId: callRecording.id,
+        });
+
+        if (!callRecordingSyncResult.updated && !hasCompletedImport) {
+          return {
+            status: 'skipped',
+            callRecordingId: callRecording.id,
+            scope,
+            reason: 'no artifact updates',
+          } satisfies ImportCallRecordingArtifactsResult;
+        }
+
+        return {
+          status: 'imported',
+          callRecordingId: callRecording.id,
+          scope,
+          outcome: 'call-recording-artifacts-imported',
+        } satisfies ImportCallRecordingArtifactsResult;
+      },
+    },
+  );
+
+  if (artifactImportExecution.status === 'skipped') {
     return {
       status: 'skipped',
-      callRecordingId: callRecording.id,
-      reason: 'artifact import already in progress',
+      callRecordingId: initialCallRecording.id,
+      scope,
+      reason: artifactImportExecution.reason,
     };
   }
 
-  try {
-    const bot = await fetchRecallBotWhenRecordingIdMissing(callRecording);
-    const syncResult = await syncCallRecording({
-      client,
-      callRecording,
-      bot,
-      treatRecordingAsDone: true,
-      requestedAt: request.requestedAt,
-    });
-
-    if (!syncResult.updated) {
-      return {
-        status: 'skipped',
-        callRecordingId: callRecording.id,
-        reason: 'no artifact updates',
-      };
-    }
-
-    return {
-      status: 'imported',
-      callRecordingId: callRecording.id,
-      outcome: 'call-recording-artifacts-imported',
-    };
-  } finally {
-    await releaseCallRecordingArtifactsImportClaim(client, {
-      callRecordingId: callRecording.id,
-    });
-  }
+  return artifactImportExecution.result;
 };
 
 const fetchRecallBotWhenRecordingIdMissing = async (
@@ -137,55 +135,4 @@ const fetchRecallBotWhenRecordingIdMissing = async (
   }
 
   return botResult.bot;
-};
-
-const findCallRecordingForArtifactsImport = async (
-  client: CoreApiClient,
-  callRecordingId: string,
-): Promise<CallRecordingForArtifactsImport | undefined> => {
-  const queryResult = await client.query({
-    callRecordings: {
-      __args: {
-        filter: { id: { eq: callRecordingId } },
-        first: 1,
-      },
-      edges: {
-        node: {
-          id: true,
-          status: true,
-          startedAt: true,
-          endedAt: true,
-          externalBotId: true,
-          externalRecordingId: true,
-          callRecorderFailureReason: true,
-          transcript: true,
-          audio: { fileId: true },
-          video: { fileId: true },
-        },
-      },
-    },
-  });
-
-  const node = queryResult.callRecordings?.edges?.[0]?.node as
-    | CallRecordingForArtifactsImportNode
-    | null
-    | undefined;
-  const id = getString(node?.id);
-
-  if (isUndefined(node) || isNull(node) || isUndefined(id)) {
-    return undefined;
-  }
-
-  return {
-    id,
-    status: getString(node.status),
-    startedAt: getString(node.startedAt),
-    endedAt: getString(node.endedAt),
-    externalBotId: getString(node.externalBotId),
-    externalRecordingId: getString(node.externalRecordingId),
-    callRecorderFailureReason: getString(node.callRecorderFailureReason),
-    transcript: node.transcript ?? undefined,
-    audio: node.audio ?? undefined,
-    video: node.video ?? undefined,
-  };
 };
