@@ -27,6 +27,7 @@ import {
 } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 import { FileUploadCompletionService } from 'src/engine/core-modules/file/file-upload/services/file-upload-completion.service';
 import { FileUploadTargetService } from 'src/engine/core-modules/file/file-upload/services/file-upload-target.service';
+import { buildSvgTooLargeException } from 'src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
@@ -109,13 +110,9 @@ export class FileUploadService {
     // Completion refuses to sanitize an SVG this big, so reject before the
     // client transfers it. The declared extension is a client claim, which
     // only makes this a shortcut: the sniffed check at completion decides.
-    if (ext === 'svg' && size > MAX_SANITIZABLE_SVG_BYTES) {
-      throw new FileUploadException(
-        `SVG of ${size} bytes exceeds the ${MAX_SANITIZABLE_SVG_BYTES} bytes that can be sanitized`,
-        FileUploadExceptionCode.FILE_TOO_LARGE,
-        {
-          userFriendlyMessage: msg`This SVG is too large to be processed.`,
-        },
+    if (ext.toLowerCase() === 'svg' && size > MAX_SANITIZABLE_SVG_BYTES) {
+      throw buildSvgTooLargeException(
+        `declared size ${size} exceeds the ${MAX_SANITIZABLE_SVG_BYTES} byte limit`,
       );
     }
 
