@@ -1,4 +1,5 @@
 import { type Meeting } from 'fathom-typescript/sdk/models/shared';
+import { isDefined } from 'src/utils/is-defined';
 
 import { type FathomMeetingLister } from 'src/logic-functions/types/fathom-meeting-lister.type';
 
@@ -17,8 +18,8 @@ export const listFathomMeetingPage = async ({
   cursor?: string;
 }): Promise<FathomMeetingPage> => {
   const { result } = await fathomClient.listMeetings({
-    ...(createdAfter === undefined ? {} : { createdAfter }),
-    ...(cursor === undefined ? {} : { cursor }),
+    ...(isDefined(createdAfter) ? { createdAfter } : {}),
+    ...(isDefined(cursor) ? { cursor } : {}),
     includeActionItems: true,
   });
 

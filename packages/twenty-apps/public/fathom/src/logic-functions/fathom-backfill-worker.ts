@@ -22,10 +22,13 @@ import { reserveFathomBackfillBatchSlots } from 'src/logic-functions/utils/reser
 import { serializeFathomMeeting } from 'src/logic-functions/utils/serialize-fathom-meeting.util';
 import { chunkIntoBatches } from 'src/utils/chunk-into-batches.util';
 
-const getCreatedAfter = (
-  payload: FathomBackfillWorkerPayload,
-  now: number,
-): string => {
+const getCreatedAfter = ({
+  payload,
+  now,
+}: {
+  payload: FathomBackfillWorkerPayload;
+  now: number;
+}): string => {
   if (isNonEmptyString(payload.createdAfter)) {
     return payload.createdAfter;
   }
@@ -44,7 +47,7 @@ export const fathomBackfillWorkerHandler = async (
     throw new Error('Fathom backfill worker requires a connectedAccountId');
   }
 
-  const createdAfter = getCreatedAfter(payload, Date.now());
+  const createdAfter = getCreatedAfter({ payload, now: Date.now() });
   const pageIndex = payload.pageIndex ?? 0;
   const connection = await getConnection(payload.connectedAccountId);
   const meetingPage = await listFathomMeetingPage({
