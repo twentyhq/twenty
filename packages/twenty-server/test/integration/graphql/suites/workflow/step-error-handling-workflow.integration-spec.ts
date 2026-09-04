@@ -1,3 +1,4 @@
+import { STEP_RETRY_DELAYS_MS } from 'twenty-shared/workflow';
 import request from 'supertest';
 import {
   destroyWorkflowRun,
@@ -15,7 +16,14 @@ const client = request(`http://localhost:${APP_PORT}`);
 
 const BLOCKED_REQUEST_URL = 'http://127.0.0.1:1/';
 
-describe('Continue on failure workflow (e2e)', () => {
+const TOTAL_RETRY_DELAY_MS = STEP_RETRY_DELAYS_MS.reduce(
+  (total, delay) => total + delay,
+  0,
+);
+
+const RETRY_TEST_TIMEOUT_MS = TOTAL_RETRY_DELAY_MS + 60_000;
+
+describe('Step error handling workflow (e2e)', () => {
   let createdWorkflowId: string | null = null;
   let createdWorkflowVersionId: string | null = null;
   let httpRequestStepId: string | null = null;
@@ -75,8 +83,10 @@ describe('Continue on failure workflow (e2e)', () => {
 
   const setUpFailingHttpRequestStep = async ({
     continueOnFailure,
+    retryOnFailure = 0,
   }: {
     continueOnFailure: boolean;
+    retryOnFailure?: number;
   }) => {
     const steps = await getSteps();
 
@@ -109,6 +119,7 @@ describe('Continue on failure workflow (e2e)', () => {
                 errorHandlingOptions: {
                   ...httpRequestStep.settings.errorHandlingOptions,
                   continueOnFailure: { value: continueOnFailure },
+                  retryOnFailure: { value: retryOnFailure },
                 },
               },
             },
@@ -261,4 +272,37 @@ describe('Continue on failure workflow (e2e)', () => {
       await destroyWorkflowRun(workflowRunId);
     }
   });
+  it(
+    'should retry the failing step before failing the run when the step retries on failure',
+    async () => {
+      await setUpFailingHttpRequestStep({
+        continueOnFailure: false,
+        retryOnFailure: STEP_RETRY_DELAYS_MS.length,
+      });
+
+      const workflowRunId = await runWorkflowVersion({
+        workflowVersionId: createdWorkflowVersionId!,
+      });
+
+      try {
+        const workflowRun = await waitForWorkflowCompletion(
+          workflowRunId,
+          Math.ceil(TOTAL_RETRY_DELAY_MS / 500) + 60,
+        );
+
+        expect(workflowRun?.status).toBe('FAILED');
+
+        const httpRequestStepInfo =
+          workflowRun?.state?.stepInfos?.[httpRequestStepId!];
+
+        expect(httpRequestStepInfo?.status).toBe('FAILED');
+        expect(httpRequestStepInfo?.history).toHaveLength(
+          STEP_RETRY_DELAYS_MS.length,
+        );
+      } finally {
+        await destroyWorkflowRun(workflowRunId);
+      }
+    },
+    RETRY_TEST_TIMEOUT_MS,
+  );
 });
