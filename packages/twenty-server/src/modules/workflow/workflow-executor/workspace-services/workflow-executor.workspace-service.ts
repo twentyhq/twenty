@@ -36,6 +36,7 @@ import {
 } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
 import { getStepRetryAttempt } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-attempt.util';
 import { getStepRetryDelayMs } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-delay-ms.util';
+import { stepHasRetryAttemptsLeft } from 'src/modules/workflow/workflow-executor/utils/step-has-retry-attempts-left.util';
 import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-step.util';
 import { shouldFailSafely } from 'src/modules/workflow/workflow-executor/utils/should-fail-safely.util';
 import { shouldSkipStepExecution } from 'src/modules/workflow/workflow-executor/utils/should-skip-step-execution.util';
@@ -145,17 +146,17 @@ export class WorkflowExecutorWorkspaceService {
       });
 
       if (isDefined(actionOutput.error) && !actionOutput.isUserError) {
-        const retryDelayMs = getStepRetryDelayMs({
+        const canRetryStep = stepHasRetryAttemptsLeft({
           step: stepToExecute,
           stepInfo: stepInfos[stepId],
         });
 
-        if (isDefined(retryDelayMs)) {
+        if (canRetryStep) {
           await this.scheduleStepRetry({
             stepId,
             stepInfo: stepInfos[stepId],
             error: actionOutput.error,
-            retryDelayMs,
+            retryDelayMs: getStepRetryDelayMs({ stepInfo: stepInfos[stepId] }),
             workflowRunId,
             workspaceId,
           });
