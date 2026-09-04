@@ -98,7 +98,7 @@ const handleStillGeneratingDownload = async ({
   coreApiClient,
   payload,
 }: {
-  coreApiClient: Pick<CoreApiClient, 'mutation'>;
+  coreApiClient: Pick<CoreApiClient, 'query' | 'mutation'>;
   payload: FathomImportMediaDownloadPayload;
 }) => {
   const nextAttempt = payload.attempt + 1;

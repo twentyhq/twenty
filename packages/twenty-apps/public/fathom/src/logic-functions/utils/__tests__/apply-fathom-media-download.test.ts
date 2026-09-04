@@ -8,25 +8,25 @@ import { FATHOM_MEDIA_FAILURE_REASON } from 'src/constants/fathom-media-failure-
 import { applyFathomMediaDownload } from 'src/logic-functions/utils/apply-fathom-media-download.util';
 import { importFathomMediaFile } from 'src/logic-functions/utils/import-fathom-media-file.util';
 import { recordFathomMediaFailure } from 'src/logic-functions/utils/record-fathom-media-failure.util';
-import { updateCallRecordingMedia } from 'src/logic-functions/utils/update-call-recording-media.util';
+import { settleCallRecordingMedia } from 'src/logic-functions/utils/settle-call-recording-media.util';
 
 vi.mock('src/logic-functions/utils/import-fathom-media-file.util', () => ({
   importFathomMediaFile: vi.fn(),
 }));
-vi.mock('src/logic-functions/utils/update-call-recording-media.util', () => ({
-  updateCallRecordingMedia: vi.fn(),
+vi.mock('src/logic-functions/utils/settle-call-recording-media.util', () => ({
+  settleCallRecordingMedia: vi.fn(),
 }));
 vi.mock('src/logic-functions/utils/record-fathom-media-failure.util', () => ({
   recordFathomMediaFailure: vi.fn(),
 }));
 
-const coreApiClient = { mutation: vi.fn() };
+const coreApiClient = { query: vi.fn(), mutation: vi.fn() };
 const callRecordingId = 'call-recording-id';
 
 describe('applyFathomMediaDownload', () => {
   beforeEach(() => {
     vi.mocked(importFathomMediaFile).mockReset();
-    vi.mocked(updateCallRecordingMedia).mockReset();
+    vi.mocked(settleCallRecordingMedia).mockReset();
     vi.mocked(recordFathomMediaFailure).mockReset();
   });
 
@@ -39,7 +39,7 @@ describe('applyFathomMediaDownload', () => {
 
     expect(result).toEqual({ outcome: 'pending' });
     expect(importFathomMediaFile).not.toHaveBeenCalled();
-    expect(updateCallRecordingMedia).not.toHaveBeenCalled();
+    expect(settleCallRecordingMedia).not.toHaveBeenCalled();
   });
 
   it('surfaces the failure reason Fathom reports', async () => {
@@ -99,7 +99,7 @@ describe('applyFathomMediaDownload', () => {
     });
 
     expect(result).toEqual({ outcome: 'imported', kind: 'video' });
-    expect(updateCallRecordingMedia).toHaveBeenCalledWith({
+    expect(settleCallRecordingMedia).toHaveBeenCalledWith({
       coreApiClient,
       callRecordingId,
       fields: { video: files, fathomMediaFailureReason: null },
@@ -123,7 +123,7 @@ describe('applyFathomMediaDownload', () => {
     });
 
     expect(result).toEqual({ outcome: 'imported', kind: 'audio' });
-    expect(updateCallRecordingMedia).toHaveBeenCalledWith({
+    expect(settleCallRecordingMedia).toHaveBeenCalledWith({
       coreApiClient,
       callRecordingId,
       fields: { audio: files, fathomMediaFailureReason: null },
@@ -153,7 +153,7 @@ describe('applyFathomMediaDownload', () => {
       callRecordingId,
       reason: FATHOM_MEDIA_FAILURE_REASON.FILE_TOO_LARGE,
     });
-    expect(updateCallRecordingMedia).not.toHaveBeenCalled();
+    expect(settleCallRecordingMedia).not.toHaveBeenCalled();
   });
 
   it('reports a completed download that carries no file', async () => {

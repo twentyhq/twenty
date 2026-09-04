@@ -24,8 +24,9 @@ emails do not need to match.
 
 - Twenty only links a recording to a calendar event when its meeting URL and
   scheduled time identify one clear match.
-- Fathom generates the downloadable video in the background, so media arrives a
-  few minutes after the transcript rather than with it.
+- Fathom generates the downloadable video in the background, so a recording
+  stays in Processing for a few minutes after its transcript arrives, until its
+  media lands or is settled as unavailable.
 - Media is skipped for recordings above 500 MB, for recordings Fathom has no
   downloadable media for, and for limited-access shares that the connected
   account may view but not download. The Fathom Media Failure Reason field on

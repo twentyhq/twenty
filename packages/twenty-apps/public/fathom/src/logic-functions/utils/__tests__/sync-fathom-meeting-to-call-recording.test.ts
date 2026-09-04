@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   findMatchingCalendarEvent: vi.fn(),
   upsertCallRecording: vi.fn(),
   recordFathomMediaFailure: vi.fn(),
+  findCallRecordingMediaState: vi.fn(),
 }));
 
 vi.mock('src/logic-functions/utils/enqueue-fathom-media-download.util', () => ({
@@ -26,12 +27,28 @@ vi.mock('src/logic-functions/utils/record-fathom-media-failure.util', () => ({
   recordFathomMediaFailure: mocks.recordFathomMediaFailure,
 }));
 
+vi.mock(
+  'src/logic-functions/utils/find-call-recording-media-state.util',
+  () => ({
+    findCallRecordingMediaState: mocks.findCallRecordingMediaState,
+  }),
+);
+
 const { syncFathomMeetingToCallRecording } = await import(
   'src/logic-functions/utils/sync-fathom-meeting-to-call-recording.util'
 );
 
 const coreApiClient = { query: vi.fn(), mutation: vi.fn() };
-const meeting = buildFathomMeeting({ recordingId: 123 });
+const meeting = {
+  ...buildFathomMeeting({ recordingId: 123 }),
+  transcript: [
+    {
+      speaker: { displayName: 'Ada' },
+      text: 'Ship the integration.',
+      timestamp: '00:00:01',
+    },
+  ],
+};
 
 describe('syncFathomMeetingToCallRecording', () => {
   beforeEach(() => {
@@ -40,6 +57,7 @@ describe('syncFathomMeetingToCallRecording', () => {
     mocks.upsertCallRecording.mockResolvedValue({ created: true });
     mocks.enqueueFathomMediaDownloadRequest.mockResolvedValue(undefined);
     mocks.recordFathomMediaFailure.mockResolvedValue(undefined);
+    mocks.findCallRecordingMediaState.mockResolvedValue(undefined);
   });
 
   it('requests the media download for the recording it just upserted', async () => {
@@ -78,6 +96,97 @@ describe('syncFathomMeetingToCallRecording', () => {
     expect(mocks.recordFathomMediaFailure).toHaveBeenCalledWith(
       expect.objectContaining({
         reason: FATHOM_MEDIA_FAILURE_REASON.ENQUEUE_FAILED,
+      }),
+    );
+  });
+
+  it('holds a transcribed recording in PROCESSING until its media settles', async () => {
+    await syncFathomMeetingToCallRecording({
+      coreApiClient,
+      meeting,
+      connectedAccountId: 'connection-1',
+    });
+
+    expect(mocks.upsertCallRecording).toHaveBeenCalledWith(
+      expect.objectContaining({
+        fields: expect.objectContaining({ status: 'PROCESSING' }),
+      }),
+    );
+  });
+
+  it('completes a re-synced recording whose media already landed', async () => {
+    mocks.findCallRecordingMediaState.mockResolvedValue({
+      externalRecordingId: '123',
+      hasVideo: true,
+      hasAudio: false,
+      hasTranscript: true,
+      failureReason: undefined,
+    });
+
+    await syncFathomMeetingToCallRecording({
+      coreApiClient,
+      meeting,
+      connectedAccountId: 'connection-1',
+    });
+
+    expect(mocks.upsertCallRecording).toHaveBeenCalledWith(
+      expect.objectContaining({
+        fields: expect.objectContaining({ status: 'COMPLETED' }),
+      }),
+    );
+  });
+
+  it('completes a re-synced recording whose media settled as unavailable', async () => {
+    mocks.findCallRecordingMediaState.mockResolvedValue({
+      externalRecordingId: '123',
+      hasVideo: false,
+      hasAudio: false,
+      hasTranscript: true,
+      failureReason: 'no_downloadable_media',
+    });
+
+    await syncFathomMeetingToCallRecording({
+      coreApiClient,
+      meeting,
+      connectedAccountId: 'connection-1',
+    });
+
+    expect(mocks.upsertCallRecording).toHaveBeenCalledWith(
+      expect.objectContaining({
+        fields: expect.objectContaining({ status: 'COMPLETED' }),
+      }),
+    );
+  });
+
+  it('reopens a settled recording when the caller asks to retry media', async () => {
+    mocks.findCallRecordingMediaState.mockResolvedValue({
+      externalRecordingId: '123',
+      hasVideo: false,
+      hasAudio: false,
+      hasTranscript: true,
+      failureReason: 'no_downloadable_media',
+    });
+
+    await syncFathomMeetingToCallRecording({
+      coreApiClient,
+      meeting,
+      connectedAccountId: 'connection-1',
+      retryMedia: true,
+    });
+
+    expect(mocks.upsertCallRecording).toHaveBeenCalledWith(
+      expect.objectContaining({
+        fields: expect.objectContaining({ status: 'PROCESSING' }),
+      }),
+    );
+  });
+
+  it('completes a sync with no connected account rather than stranding it', async () => {
+    await syncFathomMeetingToCallRecording({ coreApiClient, meeting });
+
+    expect(mocks.upsertCallRecording).toHaveBeenCalledWith(
+      expect.objectContaining({
+        fields: expect.objectContaining({ status: 'COMPLETED' }),
       }),
     );
   });

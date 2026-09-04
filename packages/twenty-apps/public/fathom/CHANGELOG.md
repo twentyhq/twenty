@@ -9,6 +9,8 @@ All notable changes to this application are documented in this file.
 - Record why media could not be imported on a new Fathom Media Failure Reason
   field, skip automatic retries of a settled failure, and let Sync Fathom Call
   clear it to try again.
+- Hold a recording in Processing until its media lands or is settled as
+  unavailable, rather than completing it as soon as the transcript arrives.
 
 ## 0.1.0
 

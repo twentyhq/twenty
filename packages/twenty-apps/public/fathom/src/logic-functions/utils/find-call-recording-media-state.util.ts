@@ -6,6 +6,7 @@ export type CallRecordingMediaState = {
   externalRecordingId: string | undefined;
   hasVideo: boolean;
   hasAudio: boolean;
+  hasTranscript: boolean;
   failureReason: string | undefined;
 };
 
@@ -14,6 +15,7 @@ type CallRecordingMediaStateNode = {
   video?: { fileId?: string | null }[] | null;
   audio?: { fileId?: string | null }[] | null;
   fathomMediaFailureReason?: string | null;
+  transcript?: unknown;
 };
 
 export const findCallRecordingMediaState = async ({
@@ -36,6 +38,7 @@ export const findCallRecordingMediaState = async ({
           video: { fileId: true },
           audio: { fileId: true },
           fathomMediaFailureReason: true,
+          transcript: true,
         },
       },
     },
@@ -55,6 +58,7 @@ export const findCallRecordingMediaState = async ({
       : undefined,
     hasVideo: isNonEmptyArray(node.video),
     hasAudio: isNonEmptyArray(node.audio),
+    hasTranscript: Array.isArray(node.transcript) && node.transcript.length > 0,
     failureReason: isNonEmptyString(node.fathomMediaFailureReason)
       ? node.fathomMediaFailureReason
       : undefined,

@@ -13,7 +13,7 @@ export const updateCallRecordingMedia = async ({
   callRecordingId: string;
   fields: Pick<
     CallRecordingSyncFields,
-    'video' | 'audio' | 'fathomMediaFailureReason'
+    'video' | 'audio' | 'fathomMediaFailureReason' | 'status'
   >;
 }): Promise<void> => {
   await coreApiClient.mutation({

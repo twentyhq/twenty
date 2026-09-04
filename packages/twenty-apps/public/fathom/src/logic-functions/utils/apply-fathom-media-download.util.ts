@@ -8,7 +8,7 @@ import {
   type FathomMediaKind,
 } from 'src/logic-functions/utils/import-fathom-media-file.util';
 import { recordFathomMediaFailure } from 'src/logic-functions/utils/record-fathom-media-failure.util';
-import { updateCallRecordingMedia } from 'src/logic-functions/utils/update-call-recording-media.util';
+import { settleCallRecordingMedia } from 'src/logic-functions/utils/settle-call-recording-media.util';
 
 export type ApplyFathomMediaDownloadResult =
   | { outcome: 'imported'; kind: FathomMediaKind }
@@ -22,7 +22,7 @@ export const applyFathomMediaDownload = async ({
   callRecordingId,
   download,
 }: {
-  coreApiClient: Pick<CoreApiClient, 'mutation'>;
+  coreApiClient: Pick<CoreApiClient, 'query' | 'mutation'>;
   callRecordingId: string;
   download: RecordingDownload;
 }): Promise<ApplyFathomMediaDownloadResult> => {
@@ -73,7 +73,7 @@ export const applyFathomMediaDownload = async ({
     });
   }
 
-  await updateCallRecordingMedia({
+  await settleCallRecordingMedia({
     coreApiClient,
     callRecordingId,
     fields: { [kind]: importResult.files, fathomMediaFailureReason: null },
@@ -87,7 +87,7 @@ const settleUnavailable = async ({
   callRecordingId,
   reason,
 }: {
-  coreApiClient: Pick<CoreApiClient, 'mutation'>;
+  coreApiClient: Pick<CoreApiClient, 'query' | 'mutation'>;
   callRecordingId: string;
   reason: string;
 }): Promise<ApplyFathomMediaDownloadResult> => {
