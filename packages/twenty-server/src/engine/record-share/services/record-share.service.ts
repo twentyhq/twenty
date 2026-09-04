@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { In } from 'typeorm';
 
 import { type RecordShareInput } from 'src/engine/record-share/types/record-share-input.type';
 import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
@@ -60,6 +61,26 @@ export class RecordShareService {
   }): Promise<RecordShare[]> {
     return this.withRepository({ workspaceId }, (repository) =>
       repository.find({ where: { objectMetadataId, recordId } }),
+    );
+  }
+
+  async findByRecordIds({
+    workspaceId,
+    objectMetadataId,
+    recordIds,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    recordIds: string[];
+  }): Promise<RecordShare[]> {
+    if (recordIds.length === 0) {
+      return [];
+    }
+
+    return this.withRepository({ workspaceId }, (repository) =>
+      repository.find({
+        where: { objectMetadataId, recordId: In(recordIds) },
+      }),
     );
   }
 

@@ -1,8 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
+import {
+  EVERYONE_PRINCIPAL_ID,
+  QUERY_MAX_RECORDS_FROM_RELATION,
+} from 'twenty-shared/constants';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import {
+  FeatureFlagKey,
   Nullable,
   ObjectRecord,
   type ObjectsPermissions,
@@ -12,6 +16,7 @@ import {
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import {
+  assertUnreachable,
   isDefined,
   isNonEmptyArray,
   isRecordGqlOperationSignature,
@@ -35,6 +40,12 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
+import { DENY_ALL_RECORD_SHARE_GATE } from 'src/engine/record-share/constants/deny-all-record-share-gate.constant';
+import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
+import { type RecordShareGate } from 'src/engine/record-share/types/record-share-gate.type';
+import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
+import { isRecordSharedWithPrincipals } from 'src/engine/record-share/utils/is-record-shared-with-principals.util';
+import { resolveRecordShareGateKind } from 'src/engine/record-share/utils/resolve-record-share-gate-kind.util';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import {
@@ -43,6 +54,7 @@ import {
 } from 'src/engine/subscriptions/types/event-stream-data.type';
 import { type EventStreamPayload } from 'src/engine/subscriptions/types/event-stream-payload.type';
 import { ObjectRecordSubscriptionEvent } from 'src/engine/subscriptions/types/object-record-subscription-event.type';
+import { resolveRequiredRecordShareAccessLevels } from 'src/engine/twenty-orm/repository/resolve-required-record-share-access-levels.util';
 import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
@@ -59,6 +71,7 @@ type StreamPermissionsContext = {
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
   rolesPermissions: ObjectsPermissionsByRoleId;
   flatApplicationMaps: FlatApplicationCacheMaps;
+  featureFlagsMap: Record<FeatureFlagKey, boolean>;
 };
 
 @Injectable()
@@ -72,6 +85,7 @@ export class ObjectRecordEventPublisher {
     private readonly processNestedRelationsHelper: ProcessNestedRelationsHelper,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly commonSelectFieldsHelper: CommonSelectFieldsHelper,
+    private readonly recordShareService: RecordShareService,
   ) {}
 
   async publish(
@@ -94,6 +108,11 @@ export class ObjectRecordEventPublisher {
     const { permissionsContext, flatWorkspaceMemberMaps } =
       await this.fetchObjectRecordStreamContext(workspaceId);
 
+    const recordShares = await this.fetchRecordShares(
+      eventBatch,
+      permissionsContext.featureFlagsMap,
+    );
+
     const streamIdsToRemove: string[] = [];
 
     for (const [streamChannelId, streamData] of streamsData) {
@@ -112,6 +131,7 @@ export class ObjectRecordEventPublisher {
         workspaceEventBatch: eventBatch,
         permissionsContext,
         flatWorkspaceMemberMaps,
+        recordShares,
       });
     }
 
@@ -131,18 +151,41 @@ export class ObjectRecordEventPublisher {
     return { permissionsContext, flatWorkspaceMemberMaps };
   }
 
+  private async fetchRecordShares(
+    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
+    featureFlagsMap: Record<FeatureFlagKey, boolean>,
+  ): Promise<RecordShare[]> {
+    if (
+      !featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] ||
+      resolveRecordShareGateKind({
+        readability: workspaceEventBatch.objectMetadata.readability,
+        isOwningApplication: false,
+      }) !== 'private'
+    ) {
+      return [];
+    }
+
+    return this.recordShareService.findByRecordIds({
+      workspaceId: workspaceEventBatch.workspaceId,
+      objectMetadataId: workspaceEventBatch.objectMetadata.id,
+      recordIds: workspaceEventBatch.events.map((event) => event.recordId),
+    });
+  }
+
   private async processObjectRecordStreamEvents({
     streamChannelId,
     streamData,
     workspaceEventBatch,
     permissionsContext,
     flatWorkspaceMemberMaps,
+    recordShares,
   }: {
     streamChannelId: string;
     streamData: EventStreamData;
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
     permissionsContext: StreamPermissionsContext;
     flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
+    recordShares: RecordShare[];
   }): Promise<void> {
     const roleIds = this.resolveStreamRoleIds(
       streamData.authContext,
@@ -184,6 +227,14 @@ export class ObjectRecordEventPublisher {
       flatWorkspaceMemberMaps,
     );
 
+    const subscriberRecordShareGate = this.buildSubscriberRecordShareGate(
+      streamData.authContext,
+      roleIds,
+      workspaceEventBatch.objectMetadata,
+      permissionsContext.featureFlagsMap,
+      recordShares,
+    );
+
     const restrictedFields = objectPermissions.restrictedFields;
 
     for (const event of workspaceEventBatch.events) {
@@ -216,6 +267,7 @@ export class ObjectRecordEventPublisher {
         streamData.queries,
         filteredEvent,
         subscriberRLSFilter,
+        subscriberRecordShareGate,
         workspaceEventBatch.objectMetadata,
         permissionsContext.flatFieldMetadataMaps,
       );
@@ -428,6 +480,47 @@ export class ObjectRecordEventPublisher {
     });
   }
 
+  private buildSubscriberRecordShareGate(
+    subscriberAuthContext: SerializableAuthContext,
+    roleIds: string[],
+    objectMetadata: FlatObjectMetadata,
+    featureFlagsMap: Record<FeatureFlagKey, boolean>,
+    recordShares: RecordShare[],
+  ): RecordShareGate | null {
+    if (!featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED]) {
+      return null;
+    }
+
+    const gateKind = resolveRecordShareGateKind({
+      readability: objectMetadata.readability,
+      isOwningApplication:
+        isDefined(objectMetadata.applicationId) &&
+        subscriberAuthContext.applicationId === objectMetadata.applicationId,
+    });
+
+    switch (gateKind) {
+      case 'open':
+        return null;
+      case 'deny':
+        return DENY_ALL_RECORD_SHARE_GATE;
+      case 'private':
+        return {
+          recordShares,
+          principalIds: [
+            ...new Set(
+              [
+                EVERYONE_PRINCIPAL_ID,
+                subscriberAuthContext.workspaceMemberId,
+                ...roleIds,
+              ].filter(isDefined),
+            ),
+          ],
+        };
+      default:
+        assertUnreachable(gateKind);
+    }
+  }
+
   private filterRestrictedFieldsFromEvent(
     event: ObjectRecordSubscriptionEvent,
     restrictedFields: RestrictedFieldsPermissions | undefined,
@@ -498,6 +591,7 @@ export class ObjectRecordEventPublisher {
     queries: Record<string, RecordOrMetadataGqlOperationSignature>,
     event: ObjectRecordSubscriptionEvent,
     subscriberRLSFilter: RecordGqlOperationFilter | null,
+    subscriberRecordShareGate: RecordShareGate | null,
     objectMetadata: FlatObjectMetadata,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   ): string[] {
@@ -513,6 +607,7 @@ export class ObjectRecordEventPublisher {
           operationSignature,
           event,
           subscriberRLSFilter,
+          subscriberRecordShareGate,
           objectMetadata,
           flatFieldMetadataMaps,
         )
@@ -528,6 +623,7 @@ export class ObjectRecordEventPublisher {
     operationSignature: RecordGqlOperationSignature,
     event: ObjectRecordSubscriptionEvent,
     subscriberRLSFilter: RecordGqlOperationFilter | null,
+    subscriberRecordShareGate: RecordShareGate | null,
     objectMetadata: FlatObjectMetadata,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   ): boolean {
@@ -559,6 +655,18 @@ export class ObjectRecordEventPublisher {
         flatObjectMetadata: objectMetadata,
         flatFieldMetadataMaps,
         shouldIgnoreSoftDeleteDefaultFilter,
+      })
+    ) {
+      return false;
+    }
+
+    if (
+      isDefined(subscriberRecordShareGate) &&
+      !isRecordSharedWithPrincipals({
+        recordShares: subscriberRecordShareGate.recordShares,
+        recordId: event.recordId,
+        principalIds: subscriberRecordShareGate.principalIds,
+        accessLevels: resolveRequiredRecordShareAccessLevels('select'),
       })
     ) {
       return false;
@@ -596,6 +704,7 @@ export class ObjectRecordEventPublisher {
       userWorkspaceRoleMap,
       rolesPermissions,
       flatApplicationMaps,
+      featureFlagsMap,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
@@ -603,6 +712,7 @@ export class ObjectRecordEventPublisher {
       'userWorkspaceRoleMap',
       'rolesPermissions',
       'flatApplicationMaps',
+      'featureFlagsMap',
     ]);
 
     return {
@@ -612,6 +722,7 @@ export class ObjectRecordEventPublisher {
       userWorkspaceRoleMap,
       rolesPermissions,
       flatApplicationMaps,
+      featureFlagsMap,
     };
   }
 }

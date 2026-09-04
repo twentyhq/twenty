@@ -1,9 +1,12 @@
 import { Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
+import { FeatureFlagKey } from 'twenty-shared/types';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -18,6 +21,13 @@ import {
   LogicFunctionTriggerJob,
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
+import { DENY_ALL_RECORD_SHARE_GATE } from 'src/engine/record-share/constants/deny-all-record-share-gate.constant';
+import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
+import { type RecordShareGate } from 'src/engine/record-share/types/record-share-gate.type';
+import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
+import { isRecordSharedWithPrincipals } from 'src/engine/record-share/utils/is-record-shared-with-principals.util';
+import { resolveRecordShareGateKind } from 'src/engine/record-share/utils/resolve-record-share-gate-kind.util';
+import { resolveRequiredRecordShareAccessLevels } from 'src/engine/twenty-orm/repository/resolve-required-record-share-access-levels.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
@@ -30,14 +40,15 @@ export class CallDatabaseEventTriggerJobsJob {
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
+    private readonly recordShareService: RecordShareService,
   ) {}
 
   @Process(CallDatabaseEventTriggerJobsJob.name)
   async handle(workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>) {
-    const { flatLogicFunctionMaps, flatApplicationMaps } =
+    const { flatLogicFunctionMaps, flatApplicationMaps, featureFlagsMap } =
       await this.workspaceCacheService.getOrRecompute(
         workspaceEventBatch.workspaceId,
-        ['flatLogicFunctionMaps', 'flatApplicationMaps'],
+        ['flatLogicFunctionMaps', 'flatApplicationMaps', 'featureFlagsMap'],
       );
 
     const logicFunctionsWithDatabaseEventTrigger = Object.values(
@@ -76,6 +87,28 @@ export class CallDatabaseEventTriggerJobsJob {
       );
     }
 
+    if (logicFunctionsByApplicationId.size === 0) {
+      return;
+    }
+
+    const isRecordShareGated =
+      featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED];
+
+    const recordShares =
+      isRecordShareGated &&
+      resolveRecordShareGateKind({
+        readability: workspaceEventBatch.objectMetadata.readability,
+        isOwningApplication: false,
+      }) === 'private'
+        ? await this.recordShareService.findByRecordIds({
+            workspaceId: workspaceEventBatch.workspaceId,
+            objectMetadataId: workspaceEventBatch.objectMetadata.id,
+            recordIds: workspaceEventBatch.events.map(
+              (event) => event.recordId,
+            ),
+          })
+        : [];
+
     for (const [
       applicationId,
       logicFunctions,
@@ -86,13 +119,18 @@ export class CallDatabaseEventTriggerJobsJob {
       );
       const applicationRegistrationId = application?.applicationRegistrationId;
 
-      if (!isDefined(applicationRegistrationId)) {
+      if (!isDefined(application) || !isDefined(applicationRegistrationId)) {
         continue;
       }
 
       const logicFunctionPayloads = transformEventBatchToEventPayloads({
         logicFunctions,
-        workspaceEventBatch,
+        workspaceEventBatch: this.filterEventsSharedWithApplication({
+          workspaceEventBatch,
+          application,
+          isRecordShareGated,
+          recordShares,
+        }),
       });
 
       if (logicFunctionPayloads.length === 0) {
@@ -127,6 +165,75 @@ export class CallDatabaseEventTriggerJobsJob {
           backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
         },
       );
+    }
+  }
+
+  private filterEventsSharedWithApplication({
+    workspaceEventBatch,
+    application,
+    isRecordShareGated,
+    recordShares,
+  }: {
+    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
+    application: FlatApplication;
+    isRecordShareGated: boolean;
+    recordShares: RecordShare[];
+  }): WorkspaceEventBatch<ObjectRecordEvent> {
+    const recordShareGate = isRecordShareGated
+      ? this.buildApplicationRecordShareGate({
+          workspaceEventBatch,
+          application,
+          recordShares,
+        })
+      : null;
+
+    if (!isDefined(recordShareGate)) {
+      return workspaceEventBatch;
+    }
+
+    return {
+      ...workspaceEventBatch,
+      events: workspaceEventBatch.events.filter((event) =>
+        isRecordSharedWithPrincipals({
+          recordShares: recordShareGate.recordShares,
+          recordId: event.recordId,
+          principalIds: recordShareGate.principalIds,
+          accessLevels: resolveRequiredRecordShareAccessLevels('select'),
+        }),
+      ),
+    };
+  }
+
+  private buildApplicationRecordShareGate({
+    workspaceEventBatch,
+    application,
+    recordShares,
+  }: {
+    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
+    application: FlatApplication;
+    recordShares: RecordShare[];
+  }): RecordShareGate | null {
+    const gateKind = resolveRecordShareGateKind({
+      readability: workspaceEventBatch.objectMetadata.readability,
+      isOwningApplication:
+        workspaceEventBatch.objectMetadata.applicationId === application.id,
+    });
+
+    switch (gateKind) {
+      case 'open':
+        return null;
+      case 'deny':
+        return DENY_ALL_RECORD_SHARE_GATE;
+      case 'private':
+        return {
+          recordShares,
+          principalIds: [
+            EVERYONE_PRINCIPAL_ID,
+            application.defaultRoleId,
+          ].filter(isDefined),
+        };
+      default:
+        assertUnreachable(gateKind);
     }
   }
 
