@@ -96,7 +96,6 @@ export { getRolePermissionFlagUniversalIdentifier } from './deterministic-identi
 export { getRoleTargetUniversalIdentifier } from './deterministic-identifier/get-role-target-universal-identifier.util';
 export { getRoleUniversalIdentifier } from './deterministic-identifier/get-role-universal-identifier.util';
 export { getSearchFieldUniversalIdentifier } from './deterministic-identifier/get-search-field-universal-identifier.util';
-export { getSeededObjectViewFieldUniversalIdentifier } from './deterministic-identifier/get-seeded-object-view-field-universal-identifier.util';
 export {
   SEEDED_OBJECT_VIEW_KEY,
   getSeededObjectViewUniversalIdentifier,

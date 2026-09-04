@@ -1,7 +1,7 @@
 import { Command } from 'nest-commander';
 import {
-  getSeededObjectViewFieldUniversalIdentifier,
   getSeededObjectViewUniversalIdentifier,
+  getViewFieldUniversalIdentifier,
 } from 'twenty-shared/application';
 import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
@@ -30,13 +31,14 @@ type SeedOperationsByApplication = Map<string, SeedOperations>;
 @Command({
   name: 'upgrade:2-39:seed-object-default-view',
   description:
-    'Seed one regular table view per object alongside its engine-owned INDEX view, converging upgraded workspaces with what objectSeededViewOnCreate emits at object creation. The seeded view copies the INDEX view field layout once and is written with isSystemSideEffect: false, so the user owns it from then on. Navigation menu items pointing at an INDEX view are repointed to the seeded view, so the sidebar lands on the view users can group and filter; the INDEX view stays as the neutral target that "See all" links filter against. Idempotent on the deterministic seeded identifier: an object that already has one is skipped.',
+    'Seed one regular table view per object alongside its engine-owned INDEX view. The seeded view copies the INDEX view field layout once and is written with isSystemSideEffect: false under the workspace-custom application, so the user owns it and the twenty-standard sync does not reap it. Navigation resolves to it on the client, leaving the INDEX view as the neutral target that "See all" links filter against. Idempotent on the deterministic seeded identifier: an object that already has one is skipped.',
 })
 export class SeedObjectDefaultViewCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly applicationService: ApplicationService,
   ) {
     super(workspaceIteratorService);
   }
@@ -54,10 +56,17 @@ export class SeedObjectDefaultViewCommand extends ProvisionedWorkspaceCommandRun
         'flatViewFieldMaps',
       ]);
 
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const seedOperationsByApplication = this.computeSeedOperationsByApplication({
       flatObjectMetadataMaps,
       flatViewMaps,
       flatViewFieldMaps,
+      seededViewApplicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
     });
 
     const totalCreateCount = [...seedOperationsByApplication.values()].reduce(
@@ -86,21 +95,6 @@ export class SeedObjectDefaultViewCommand extends ProvisionedWorkspaceCommandRun
 
     await this.runSeedMigrations({ workspaceId, seedOperationsByApplication });
 
-    const {
-      flatViewMaps: refreshedFlatViewMaps,
-      flatNavigationMenuItemMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'flatViewMaps',
-      'flatNavigationMenuItemMaps',
-    ]);
-
-    await this.repointNavigationMenuItems({
-      workspaceId,
-      flatObjectMetadataMaps,
-      flatViewMaps: refreshedFlatViewMaps,
-      flatNavigationMenuItemMaps,
-    });
-
     this.logger.log(
       `Seeded ${totalCreateCount} default-view entit(ies) for workspace ${workspaceId}`,
     );
@@ -110,10 +104,13 @@ export class SeedObjectDefaultViewCommand extends ProvisionedWorkspaceCommandRun
     flatObjectMetadataMaps,
     flatViewMaps,
     flatViewFieldMaps,
+    seededViewApplicationUniversalIdentifier,
   }: Pick<
     AllFlatEntityMaps,
     'flatObjectMetadataMaps' | 'flatViewMaps' | 'flatViewFieldMaps'
-  >): SeedOperationsByApplication {
+  > & {
+    seededViewApplicationUniversalIdentifier: string;
+  }): SeedOperationsByApplication {
     const seedOperationsByApplication: SeedOperationsByApplication = new Map();
 
     const getApplicationBucket = (applicationUniversalIdentifier: string) => {
@@ -148,7 +145,7 @@ export class SeedObjectDefaultViewCommand extends ProvisionedWorkspaceCommandRun
       const seededViewUniversalIdentifier =
         getSeededObjectViewUniversalIdentifier({
           objectMetadataApplicationUniversalIdentifier:
-            flatObjectMetadata.applicationUniversalIdentifier,
+            seededViewApplicationUniversalIdentifier,
           objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
         });
 
@@ -172,11 +169,11 @@ export class SeedObjectDefaultViewCommand extends ProvisionedWorkspaceCommandRun
       const seededView = computeSeededObjectViewToCreate({
         objectMetadata: flatObjectMetadata,
         applicationUniversalIdentifier:
-          flatObjectMetadata.applicationUniversalIdentifier,
+          seededViewApplicationUniversalIdentifier,
       });
 
       const applicationBucket = getApplicationBucket(
-        flatObjectMetadata.applicationUniversalIdentifier,
+        seededViewApplicationUniversalIdentifier,
       );
 
       applicationBucket.viewsToCreate.push(seededView);
@@ -190,12 +187,18 @@ export class SeedObjectDefaultViewCommand extends ProvisionedWorkspaceCommandRun
         }
 
         getApplicationBucket(
-          flatViewField.applicationUniversalIdentifier,
+          seededViewApplicationUniversalIdentifier,
         ).viewFieldsToCreate.push({
           ...flatViewField,
           viewUniversalIdentifier: seededView.universalIdentifier,
-          universalIdentifier: getSeededObjectViewFieldUniversalIdentifier({
-            seededViewUniversalIdentifier: seededView.universalIdentifier,
+          viewFieldGroupUniversalIdentifier: null,
+          universalOverrides: null,
+          applicationUniversalIdentifier:
+            seededViewApplicationUniversalIdentifier,
+          universalIdentifier: getViewFieldUniversalIdentifier({
+            applicationUniversalIdentifier:
+              seededViewApplicationUniversalIdentifier,
+            viewUniversalIdentifier: seededView.universalIdentifier,
             fieldMetadataUniversalIdentifier:
               flatViewField.fieldMetadataUniversalIdentifier,
           }),
@@ -302,126 +305,5 @@ export class SeedObjectDefaultViewCommand extends ProvisionedWorkspaceCommandRun
         `Failed to seed default view(s) for workspace ${workspaceId}`,
       );
     }
-  }
-
-  private async repointNavigationMenuItems({
-    workspaceId,
-    flatObjectMetadataMaps,
-    flatViewMaps,
-    flatNavigationMenuItemMaps,
-  }: {
-    workspaceId: string;
-    flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
-    flatViewMaps: AllFlatEntityMaps['flatViewMaps'];
-    flatNavigationMenuItemMaps: AllFlatEntityMaps['flatNavigationMenuItemMaps'];
-  }): Promise<void> {
-    const seededViewUniversalIdentifierByIndexViewUniversalIdentifier = new Map<
-      string,
-      string
-    >();
-
-    for (const flatObjectMetadata of Object.values(
-      flatObjectMetadataMaps.byUniversalIdentifier,
-    )) {
-      if (!isDefined(flatObjectMetadata) || flatObjectMetadata.isRemote) {
-        continue;
-      }
-
-      const flatIndexView = this.findIndexViewForObject({
-        flatObjectMetadata,
-        flatViewMaps,
-      });
-
-      const seededViewUniversalIdentifier =
-        getSeededObjectViewUniversalIdentifier({
-          objectMetadataApplicationUniversalIdentifier:
-            flatObjectMetadata.applicationUniversalIdentifier,
-          objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
-        });
-
-      if (
-        !isDefined(flatIndexView) ||
-        !isDefined(
-          flatViewMaps.byUniversalIdentifier[seededViewUniversalIdentifier],
-        )
-      ) {
-        continue;
-      }
-
-      seededViewUniversalIdentifierByIndexViewUniversalIdentifier.set(
-        flatIndexView.universalIdentifier,
-        seededViewUniversalIdentifier,
-      );
-    }
-
-    const navigationMenuItemsToUpdate = Object.values(
-      flatNavigationMenuItemMaps.byUniversalIdentifier,
-    ).flatMap((flatNavigationMenuItem) => {
-      if (!isDefined(flatNavigationMenuItem)) {
-        return [];
-      }
-
-      const seededViewUniversalIdentifier = isDefined(
-        flatNavigationMenuItem.viewUniversalIdentifier,
-      )
-        ? seededViewUniversalIdentifierByIndexViewUniversalIdentifier.get(
-            flatNavigationMenuItem.viewUniversalIdentifier,
-          )
-        : undefined;
-
-      if (!isDefined(seededViewUniversalIdentifier)) {
-        return [];
-      }
-
-      return [
-        {
-          ...flatNavigationMenuItem,
-          viewUniversalIdentifier: seededViewUniversalIdentifier,
-        },
-      ];
-    });
-
-    if (navigationMenuItemsToUpdate.length === 0) {
-      return;
-    }
-
-    const navigationMenuItemsToUpdateByApplication = new Map<
-      string,
-      typeof navigationMenuItemsToUpdate
-    >();
-
-    for (const flatNavigationMenuItem of navigationMenuItemsToUpdate) {
-      const bucket =
-        navigationMenuItemsToUpdateByApplication.get(
-          flatNavigationMenuItem.applicationUniversalIdentifier,
-        ) ?? [];
-
-      bucket.push(flatNavigationMenuItem);
-      navigationMenuItemsToUpdateByApplication.set(
-        flatNavigationMenuItem.applicationUniversalIdentifier,
-        bucket,
-      );
-    }
-
-    for (const [
-      applicationUniversalIdentifier,
-      flatNavigationMenuItems,
-    ] of navigationMenuItemsToUpdateByApplication.entries()) {
-      await this.runSeedMigration({
-        workspaceId,
-        applicationUniversalIdentifier,
-        allFlatEntityOperationByMetadataName: {
-          navigationMenuItem: {
-            flatEntityToCreate: [],
-            flatEntityToDelete: [],
-            flatEntityToUpdate: flatNavigationMenuItems,
-          },
-        },
-      });
-    }
-
-    this.logger.log(
-      `Repointed ${navigationMenuItemsToUpdate.length} navigation menu item(s) for workspace ${workspaceId}`,
-    );
   }
 }
