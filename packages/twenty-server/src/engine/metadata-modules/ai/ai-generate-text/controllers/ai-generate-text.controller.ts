@@ -29,8 +29,6 @@ import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/p
 @Controller(`${ApiPath.Rest}/ai`)
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
 @UseFilters(
-  // Nest checks filters in reverse declaration order: the catch-all must come
-  // first so the specific filters below are matched before it.
   RestApiExceptionFilter,
   PermissionsRestApiExceptionFilter,
   AiRestApiExceptionFilter,
