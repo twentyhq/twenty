@@ -18,6 +18,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { COMPLETE_FILE_UPLOAD_DEADLINE_MS } from 'src/engine/core-modules/file/file-upload/constants/complete-file-upload-deadline.constant';
 import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
 import {
   FileUploadException,
@@ -32,6 +33,7 @@ import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { withDeadline } from 'src/utils/with-deadline';
 
 export const DIRECT_UPLOAD_FILE_FOLDERS = [
   FileFolder.FilesField,
@@ -248,17 +250,10 @@ export class FileUploadService {
       );
     }
 
+    // A completion that succeeded server-side after the client gave up (for
+    // instance behind a gateway timeout) must look like a success on retry,
+    // otherwise the upload is reported as failed even though it is stored.
     if (file.status === FILE_STATUS.UPLOADED) {
-      if (!file.settings?.isTemporaryFile) {
-        throw new FileUploadException(
-          `File ${fileId} is not awaiting an upload confirmation`,
-          FileUploadExceptionCode.BAD_REQUEST,
-          {
-            userFriendlyMessage: msg`This file upload has already been finalized.`,
-          },
-        );
-      }
-
       return this.toFileWithSignedUrl({
         file,
         fileFolder: fileFolder as FileFolder,
@@ -271,8 +266,8 @@ export class FileUploadService {
       file,
     });
 
-    const completedFile =
-      await this.fileUploadCompletionService.completeUploadedFile({
+    const completedFile = await withDeadline({
+      promise: this.fileUploadCompletionService.completeUploadedFile({
         workspaceId,
         file,
         storageLocation: {
@@ -281,7 +276,17 @@ export class FileUploadService {
           workspaceId,
           resourcePath,
         },
-      });
+      }),
+      timeoutMs: COMPLETE_FILE_UPLOAD_DEADLINE_MS,
+      createTimeoutError: () =>
+        new FileUploadException(
+          `Completion of file ${fileId} exceeded ${COMPLETE_FILE_UPLOAD_DEADLINE_MS}ms waiting on storage`,
+          FileUploadExceptionCode.STORAGE_TIMEOUT,
+          {
+            userFriendlyMessage: msg`File storage took too long to respond. Please retry.`,
+          },
+        ),
+    });
 
     return this.toFileWithSignedUrl({
       file: { ...file, ...completedFile, status: FILE_STATUS.UPLOADED },

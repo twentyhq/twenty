@@ -27,7 +27,12 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   FILE_STORAGE_S3_CONNECTION_TIMEOUT_MS,
   FILE_STORAGE_S3_MAX_SOCKETS,
+  FILE_STORAGE_S3_METADATA_CONNECTION_TIMEOUT_MS,
+  FILE_STORAGE_S3_METADATA_MAX_ATTEMPTS,
+  FILE_STORAGE_S3_METADATA_MAX_SOCKETS,
+  FILE_STORAGE_S3_METADATA_REQUEST_TIMEOUT_MS,
   FILE_STORAGE_S3_REQUEST_TIMEOUT_MS,
+  FILE_STORAGE_S3_SLOW_REQUEST_THRESHOLD_MS,
 } from 'src/engine/core-modules/file-storage/constants/s3-client-timeouts.constant';
 import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import {
@@ -48,6 +53,7 @@ export interface S3DriverOptions extends S3ClientConfig {
 
 export class S3Driver implements StorageDriver {
   private s3Client: S3;
+  private metadataClient: S3;
   private presignClient: S3 | undefined;
   private bucketName: string;
   private readonly logger = new Logger(S3Driver.name);
@@ -73,6 +79,20 @@ export class S3Driver implements StorageDriver {
     });
 
     this.s3Client = new S3({ ...s3Options, region, endpoint, requestHandler });
+
+    // Separate agent so that long-running streamed transfers on the main
+    // client can never hold these small, latency-sensitive calls in the queue.
+    this.metadataClient = new S3({
+      ...s3Options,
+      region,
+      endpoint,
+      maxAttempts: FILE_STORAGE_S3_METADATA_MAX_ATTEMPTS,
+      requestHandler: buildAwsRequestHandlerOptions({
+        requestTimeoutMs: FILE_STORAGE_S3_METADATA_REQUEST_TIMEOUT_MS,
+        connectionTimeoutMs: FILE_STORAGE_S3_METADATA_CONNECTION_TIMEOUT_MS,
+        maxSockets: FILE_STORAGE_S3_METADATA_MAX_SOCKETS,
+      }),
+    });
     this.bucketName = bucketName;
 
     if (presignEnabled) {
@@ -123,6 +143,45 @@ export class S3Driver implements StorageDriver {
     }
   }
 
+  async readFilePrefix(params: {
+    filePath: string;
+    byteCount: number;
+  }): Promise<Buffer> {
+    const command = new GetObjectCommand({
+      Key: params.filePath,
+      Bucket: this.bucketName,
+      Range: `bytes=0-${params.byteCount - 1}`,
+    });
+
+    try {
+      const file = await this.measureRequest(
+        { operation: 'GetObjectPrefix', key: params.filePath },
+        () => this.metadataClient.send(command),
+      );
+
+      if (!file?.Body) {
+        throw new Error('Unable to get file body');
+      }
+
+      return Buffer.from(await file.Body.transformToByteArray());
+    } catch (error) {
+      if (error.name === 'NoSuchKey') {
+        throw new FileStorageException(
+          'File not found',
+          FileStorageExceptionCode.FILE_NOT_FOUND,
+        );
+      }
+
+      // S3 rejects any range on an empty object, and an empty prefix is the
+      // right answer for it.
+      if (error.name === 'InvalidRange') {
+        return Buffer.alloc(0);
+      }
+
+      throw error;
+    }
+  }
+
   async writeFile(params: {
     filePath: string;
     sourceFile: Buffer | Uint8Array | string;
@@ -162,11 +221,15 @@ export class S3Driver implements StorageDriver {
     filePath: string;
   }): Promise<{ size: number } | null> {
     try {
-      const head = await this.s3Client.send(
-        new HeadObjectCommand({
-          Bucket: this.bucketName,
-          Key: params.filePath,
-        }),
+      const head = await this.measureRequest(
+        { operation: 'HeadObject', key: params.filePath },
+        () =>
+          this.metadataClient.send(
+            new HeadObjectCommand({
+              Bucket: this.bucketName,
+              Key: params.filePath,
+            }),
+          ),
       );
 
       return { size: head.ContentLength ?? 0 };
@@ -174,6 +237,38 @@ export class S3Driver implements StorageDriver {
       if (error instanceof NotFound) {
         return null;
       }
+
+      throw error;
+    }
+  }
+
+  // A connection timeout here means the request never got a socket (pool
+  // starvation or unreachable endpoint); a request timeout means S3 accepted
+  // the request and stalled. The logged error name and message tell them apart.
+  private async measureRequest<TResult>(
+    { operation, key }: { operation: string; key: string },
+    request: () => Promise<TResult>,
+  ): Promise<TResult> {
+    const startedAt = Date.now();
+
+    try {
+      const result = await request();
+      const durationMs = Date.now() - startedAt;
+      const message = `S3 ${operation} ${key} succeeded in ${durationMs}ms`;
+
+      if (durationMs >= FILE_STORAGE_S3_SLOW_REQUEST_THRESHOLD_MS) {
+        this.logger.warn(message);
+      } else {
+        this.logger.debug(message);
+      }
+
+      return result;
+    } catch (error) {
+      const durationMs = Date.now() - startedAt;
+
+      this.logger.warn(
+        `S3 ${operation} ${key} failed after ${durationMs}ms: ${error?.name ?? 'Error'} ${error?.message ?? ''}`,
+      );
 
       throw error;
     }
