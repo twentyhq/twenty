@@ -381,7 +381,7 @@ export const prefillWorkflows = async (
           },
         },
         errorHandlingOptions: {
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
           continueOnFailure: { value: false },
         },
       },
@@ -424,7 +424,7 @@ export const prefillWorkflows = async (
           }),
         },
         errorHandlingOptions: {
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
           continueOnFailure: { value: false },
         },
       },
@@ -461,7 +461,7 @@ export const prefillWorkflows = async (
           }),
         },
         errorHandlingOptions: {
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
           continueOnFailure: { value: false },
         },
       },
@@ -497,7 +497,7 @@ export const prefillWorkflows = async (
         },
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,
@@ -541,7 +541,7 @@ export const prefillWorkflows = async (
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,
@@ -585,7 +585,7 @@ export const prefillWorkflows = async (
         },
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,
@@ -633,7 +633,7 @@ export const prefillWorkflows = async (
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,
@@ -676,7 +676,7 @@ export const prefillWorkflows = async (
         },
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,
@@ -731,7 +731,7 @@ export const prefillWorkflows = async (
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,
@@ -761,7 +761,7 @@ export const prefillWorkflows = async (
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,
@@ -794,7 +794,7 @@ export const prefillWorkflows = async (
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,
@@ -825,7 +825,7 @@ export const prefillWorkflows = async (
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,

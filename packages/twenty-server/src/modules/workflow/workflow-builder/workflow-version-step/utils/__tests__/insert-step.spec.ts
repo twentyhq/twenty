@@ -23,7 +23,7 @@ const mockIteratorStep: WorkflowIteratorAction = {
     },
     outputSchema: {},
     errorHandlingOptions: {
-      retryOnFailure: { value: false },
+      retryOnFailure: { value: 0 },
       continueOnFailure: { value: false },
     },
   },
@@ -45,7 +45,7 @@ describe('insertStep', () => {
       },
       outputSchema: {},
       errorHandlingOptions: {
-        retryOnFailure: { value: false },
+        retryOnFailure: { value: 0 },
         continueOnFailure: { value: false },
       },
     },

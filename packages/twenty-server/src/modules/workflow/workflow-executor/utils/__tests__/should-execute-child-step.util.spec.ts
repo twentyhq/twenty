@@ -14,7 +14,7 @@ describe('shouldExecuteChildStep', () => {
       settings: {
         errorHandlingOptions: {
           continueOnFailure: { value: false },
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
         },
         outputSchema: {},
       },
@@ -26,7 +26,7 @@ describe('shouldExecuteChildStep', () => {
       settings: {
         errorHandlingOptions: {
           continueOnFailure: { value: false },
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
         },
         outputSchema: {},
       },
@@ -109,7 +109,7 @@ describe('shouldExecuteChildStep', () => {
         settings: {
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
           outputSchema: {},
         },
@@ -121,7 +121,7 @@ describe('shouldExecuteChildStep', () => {
         settings: {
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
           outputSchema: {},
         },
@@ -133,7 +133,7 @@ describe('shouldExecuteChildStep', () => {
         settings: {
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
           outputSchema: {},
         },
@@ -322,7 +322,7 @@ describe('shouldExecuteChildStep', () => {
         settings: {
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
           outputSchema: {},
         },
@@ -353,7 +353,7 @@ describe('shouldExecuteChildStep', () => {
         settings: {
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
           outputSchema: {},
         },
@@ -400,7 +400,7 @@ describe('shouldExecuteChildStep', () => {
         settings: {
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
           outputSchema: {},
         },
@@ -412,7 +412,7 @@ describe('shouldExecuteChildStep', () => {
         settings: {
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
           outputSchema: {},
         },
@@ -424,7 +424,7 @@ describe('shouldExecuteChildStep', () => {
         settings: {
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
           outputSchema: {},
         },
@@ -454,7 +454,7 @@ describe('shouldExecuteChildStep', () => {
       settings: {
         errorHandlingOptions: {
           continueOnFailure: { value: false },
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
         },
         outputSchema: {},
       },
@@ -504,7 +504,7 @@ describe('shouldExecuteChildStep', () => {
         settings: {
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
           outputSchema: {},
         },
@@ -534,7 +534,7 @@ describe('shouldExecuteChildStep', () => {
       settings: {
         errorHandlingOptions: {
           continueOnFailure: { value: false },
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
         },
         outputSchema: {},
       },

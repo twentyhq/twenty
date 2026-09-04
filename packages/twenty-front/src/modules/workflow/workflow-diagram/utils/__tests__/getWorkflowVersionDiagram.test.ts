@@ -134,7 +134,7 @@ describe('getWorkflowVersionDiagram', () => {
             name: '',
             settings: {
               errorHandlingOptions: {
-                retryOnFailure: { value: true },
+                retryOnFailure: { value: 3 },
                 continueOnFailure: { value: false },
               },
               input: {

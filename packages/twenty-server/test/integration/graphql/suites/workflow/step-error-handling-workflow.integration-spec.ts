@@ -83,10 +83,10 @@ describe('Step error handling workflow (e2e)', () => {
 
   const setUpFailingHttpRequestStep = async ({
     continueOnFailure,
-    retryOnFailure = false,
+    retryOnFailure = 0,
   }: {
     continueOnFailure: boolean;
-    retryOnFailure?: boolean;
+    retryOnFailure?: number;
   }) => {
     const steps = await getSteps();
 
@@ -277,7 +277,7 @@ describe('Step error handling workflow (e2e)', () => {
     async () => {
       await setUpFailingHttpRequestStep({
         continueOnFailure: false,
-        retryOnFailure: true,
+        retryOnFailure: STEP_RETRY_DELAYS_MS.length,
       });
 
       const workflowRunId = await runWorkflowVersion({

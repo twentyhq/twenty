@@ -13,7 +13,7 @@ describe('getStepInfoHistoryItem', () => {
       input: { initialLoopStepIds: ['step2'] },
       outputSchema: {},
       errorHandlingOptions: {
-        retryOnFailure: { value: false },
+        retryOnFailure: { value: 0 },
         continueOnFailure: { value: false },
       },
     },
@@ -32,7 +32,7 @@ describe('getStepInfoHistoryItem', () => {
       },
       outputSchema: {},
       errorHandlingOptions: {
-        retryOnFailure: { value: false },
+        retryOnFailure: { value: 0 },
         continueOnFailure: { value: false },
       },
     },

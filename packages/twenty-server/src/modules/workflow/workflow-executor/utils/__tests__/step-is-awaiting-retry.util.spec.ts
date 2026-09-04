@@ -6,7 +6,7 @@ import { stepIsAwaitingRetry } from 'src/modules/workflow/workflow-executor/util
 describe('stepIsAwaitingRetry', () => {
   it('should return true when a retrying step is pending with an error', () => {
     const result = stepIsAwaitingRetry({
-      step: createMockCodeStep('step-1', [], { retryOnFailure: true }),
+      step: createMockCodeStep('step-1', [], { retryOnFailure: 3 }),
       stepInfo: { status: StepStatus.PENDING, error: 'some error' },
     });
 
@@ -15,7 +15,7 @@ describe('stepIsAwaitingRetry', () => {
 
   it('should return false when the step is pending without an error', () => {
     const result = stepIsAwaitingRetry({
-      step: createMockCodeStep('step-1', [], { retryOnFailure: true }),
+      step: createMockCodeStep('step-1', [], { retryOnFailure: 3 }),
       stepInfo: { status: StepStatus.PENDING },
     });
 

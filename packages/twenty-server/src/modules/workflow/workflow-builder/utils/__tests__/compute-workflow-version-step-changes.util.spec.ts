@@ -25,7 +25,7 @@ describe('computeWorkflowVersionStepChanges', () => {
         input: [],
         errorHandlingOptions: {
           continueOnFailure: { value: false },
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
         },
         outputSchema: {},
       },
@@ -49,7 +49,7 @@ describe('computeWorkflowVersionStepChanges', () => {
         },
         errorHandlingOptions: {
           continueOnFailure: { value: false },
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
         },
         outputSchema: {},
       },
@@ -105,7 +105,7 @@ describe('computeWorkflowVersionStepChanges', () => {
           },
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
           outputSchema: {},
         },

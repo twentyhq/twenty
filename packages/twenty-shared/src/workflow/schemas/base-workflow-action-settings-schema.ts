@@ -15,15 +15,13 @@ export const baseWorkflowActionSettingsSchema = z.object({
     ),
   errorHandlingOptions: z.object({
     retryOnFailure: z.object({
-      value: z.boolean().describe('Whether to retry the action if it fails.'),
-      maxAttempts: z
+      value: z
         .number()
         .int()
-        .min(1)
+        .min(0)
         .max(STEP_RETRY_DELAYS_MS.length)
-        .optional()
         .describe(
-          `How many retry attempts to make, between 1 and ${STEP_RETRY_DELAYS_MS.length}. Defaults to ${STEP_RETRY_DELAYS_MS.length}.`,
+          `How many times to retry the action if it fails, between 0 and ${STEP_RETRY_DELAYS_MS.length}. 0 disables retries.`,
         ),
     }),
     continueOnFailure: z.object({
