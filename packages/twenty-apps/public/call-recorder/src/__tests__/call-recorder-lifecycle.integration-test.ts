@@ -984,7 +984,7 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(recall.bots.size).toBe(0);
     });
 
-    it('sweeps upcoming meetings again when turned back on', async () => {
+    it('enqueues the upcoming-events sweep when turned back on', async () => {
       vi.stubEnv(
         CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME,
         'true',
