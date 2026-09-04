@@ -251,6 +251,16 @@ export class FileUploadService {
     }
 
     if (file.status === FILE_STATUS.UPLOADED) {
+      if (!file.settings?.isTemporaryFile) {
+        throw new FileUploadException(
+          `File ${fileId} is not awaiting an upload confirmation`,
+          FileUploadExceptionCode.BAD_REQUEST,
+          {
+            userFriendlyMessage: msg`This file upload has already been finalized.`,
+          },
+        );
+      }
+
       return this.toFileWithSignedUrl({
         file,
         fileFolder: fileFolder as FileFolder,
