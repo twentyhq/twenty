@@ -291,6 +291,16 @@ describe('buildSlackRecordUnfurlEntity', () => {
     });
   });
 
+  it('should omit the fields payload for a task with nothing to show', () => {
+    const entity = buildSlackRecordUnfurlEntity({
+      recordLink: buildTaskRecordLink(),
+      record: { id: TASK_ID, title: 'Follow up with ACME' },
+      workspaceBaseUrls: [WORKSPACE_BASE_URL],
+    });
+
+    expect(entity?.entity_payload.fields).toBeUndefined();
+  });
+
   it('should still build a generic item entity for a person', () => {
     const entity = buildSlackRecordUnfurlEntity({
       recordLink: buildPersonRecordLink(),

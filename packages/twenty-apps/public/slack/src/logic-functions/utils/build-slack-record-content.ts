@@ -1,10 +1,8 @@
-import {
-  type EntityCustomField,
-  type TaskEntityFields,
-} from '@slack/web-api';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_ENTITY_FIELD_TYPE } from 'src/logic-functions/constants/slack-entity-field-type';
+import { SLACK_ENTITY_TYPE } from 'src/logic-functions/constants/slack-entity-type';
+import { type SlackUnfurlContent } from 'src/logic-functions/types/slack-unfurl-content.type';
 import { type SlackUnfurlObjectName } from 'src/logic-functions/types/slack-unfurl-object-name.type';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { buildFullName } from 'src/logic-functions/utils/build-full-name';
@@ -29,13 +27,6 @@ type SlackUnfurlContentArgs = {
   includeDetails: boolean;
 };
 
-type SlackUnfurlContent = {
-  title: string;
-  customFields: (EntityCustomField | undefined)[];
-  fields?: TaskEntityFields;
-  iconUrl?: string;
-};
-
 const buildPersonContent = ({
   record,
   workspaceBaseUrls,
@@ -49,6 +40,7 @@ const buildPersonContent = ({
     : undefined;
 
   return {
+    entityType: SLACK_ENTITY_TYPE.ITEM,
     title: buildFullName(record.name) ?? '',
     iconUrl: getPublicAvatarUrl({
       avatarUrl: record.avatarUrl,
@@ -97,6 +89,7 @@ const buildCompanyContent = ({
   const address = asRecord(record.address);
 
   return {
+    entityType: SLACK_ENTITY_TYPE.ITEM,
     title: readOptionalString(record.name) ?? '',
     iconUrl: getCompanyLogoUrl(domainUrl),
     customFields: [
@@ -148,6 +141,7 @@ const buildOpportunityContent = ({
   const pointOfContactName = buildFullName(pointOfContact?.name);
 
   return {
+    entityType: SLACK_ENTITY_TYPE.ITEM,
     title: readOptionalString(record.name) ?? '',
     iconUrl: getCompanyLogoUrl(
       readOptionalString(asRecord(company?.domainName)?.primaryLinkUrl),
@@ -197,6 +191,7 @@ const buildNoteContent = ({
   record,
   includeDetails,
 }: SlackUnfurlContentArgs): SlackUnfurlContent => ({
+  entityType: SLACK_ENTITY_TYPE.ITEM,
   title: readOptionalString(record.title) ?? '',
   customFields: includeDetails
     ? [
@@ -216,8 +211,8 @@ const buildTaskContent = ({
   record,
   includeDetails,
 }: SlackUnfurlContentArgs): SlackUnfurlContent => ({
+  entityType: SLACK_ENTITY_TYPE.TASK,
   title: readOptionalString(record.title) ?? '',
-  customFields: [],
   fields: buildSlackTaskEntityFields({ record, includeDetails }),
 });
 
