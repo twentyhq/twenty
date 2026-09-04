@@ -7,6 +7,7 @@ import { findSlackUnfurlRecord } from 'src/logic-functions/data/find-slack-unfur
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { type SlackRecordLink } from 'src/logic-functions/types/slack-record-link.type';
 import { buildSlackRecordUnfurlEntity } from 'src/logic-functions/utils/build-slack-record-unfurl-entity';
+import { createWorkspaceMemberCoreClient } from 'src/logic-functions/utils/create-workspace-member-core-client';
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
 import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspace-base-urls';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
@@ -135,8 +136,20 @@ export const presentSlackRecordDetails = async (
     return { ok: true, skipped: 'No resolvable record in the event' };
   }
 
+  const viewerClient = await createWorkspaceMemberCoreClient(workspaceMemberId);
+
+  if (!isDefined(viewerClient)) {
+    await presentDetailsError({
+      slackClient,
+      triggerId,
+      message: 'Twenty could not confirm your access to this record.',
+    });
+
+    return { ok: true, skipped: 'Viewer read access could not be established' };
+  }
+
   const record = await findSlackUnfurlRecord({
-    client,
+    client: viewerClient,
     objectNameSingular: recordLink.objectNameSingular,
     recordId: recordLink.recordId,
   }).catch((error) => {

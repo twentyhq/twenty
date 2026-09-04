@@ -1,8 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_UNFURL_MAX_ENTITIES } from 'src/logic-functions/constants/slack-unfurl-max-entities';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
+import { createWorkspaceMemberCoreClient } from 'src/logic-functions/utils/create-workspace-member-core-client';
 import { fetchSlackRecordEntities } from 'src/logic-functions/utils/fetch-slack-record-entities';
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
 import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspace-base-urls';
@@ -71,8 +73,17 @@ export const unfurlSlackRecordLinks = async (
     };
   }
 
+  const posterClient = await createWorkspaceMemberCoreClient(workspaceMemberId);
+
+  if (!isDefined(posterClient)) {
+    return {
+      ok: true,
+      skipped: 'Poster read access could not be established',
+    };
+  }
+
   const entities = await fetchSlackRecordEntities({
-    client,
+    client: posterClient,
     recordLinks,
     workspaceBaseUrls,
   });

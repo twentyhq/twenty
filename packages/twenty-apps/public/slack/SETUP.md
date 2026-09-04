@@ -317,12 +317,19 @@ Twenty logo (or your own) under **Basic Information → Display Information → 
 icon**; icons cannot be set from a manifest.
 
 Previews are rendered only when the person who posted the link maps to a
-workspace member, by the same matching described above. The card is visible to
-everyone in the channel, so it stays to a handful of headline fields. Expanding
-it opens a side panel with the full field set; anyone who can see the card can
-open it, external users in Slack Connect channels included, so the panel is
-likewise filled only for viewers who map to a workspace member, and everyone else
-gets a short notice instead.
+workspace member, by the same matching described above. The record itself is
+then read as that member: the app asks the server for a token carrying both the
+app and the member, and permissions for that pair are the intersection of the
+two roles, so a record their own role hides never reaches the card. The card is
+visible to everyone in the channel, so it stays to a handful of headline fields.
+Expanding it opens a side panel with the full field set; anyone who can see the
+card can open it, external users in Slack Connect channels included, so the
+panel is likewise gated on the viewer mapping to a workspace member and read
+with that viewer's permissions, and everyone else gets a short notice instead.
+
+Previews fail closed. A record the member cannot read, a role that hides one of
+the fields the card selects, or a server too old to issue the member-scoped
+token all end the same way: no card, and a notice in the side panel.
 
 Record links the bot itself posts (assistant answers, workflow message steps)
 carry the preview too. Slack never sends `link_shared` for an app's own messages,
