@@ -8,7 +8,6 @@ const StyledAddNewRow = styled.button`
   border: none;
   border-top: 1px solid ${themeCssVariables.border.color.light};
   color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
   display: flex;
   font-family: inherit;
   font-size: ${themeCssVariables.font.size.md};
@@ -17,7 +16,11 @@ const StyledAddNewRow = styled.button`
   padding: 0 ${themeCssVariables.spacing[2]};
   width: 100%;
 
-  &:hover {
+  &:not(:disabled) {
+    cursor: pointer;
+  }
+
+  &:not(:disabled):hover {
     background-color: ${themeCssVariables.background.transparent.light};
     color: ${themeCssVariables.font.color.secondary};
   }

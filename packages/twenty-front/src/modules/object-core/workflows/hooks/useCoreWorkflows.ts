@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { type ErrorLike } from '@apollo/client';
 import { useQuery } from '@apollo/client/react';
-import { isDefined } from 'twenty-shared/utils';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -87,20 +86,6 @@ export const useCoreWorkflows = ({
 
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  useEffect(() => {
-    if (!isDefined(error)) {
-      return;
-    }
-
-    logError(`useCoreWorkflows error : ${error}`);
-
-    if (CombinedGraphQLErrors.is(error)) {
-      enqueueErrorSnackBar({ apolloError: error });
-    } else {
-      enqueueErrorSnackBar({});
-    }
-  }, [error, enqueueErrorSnackBar]);
-
   const fetchNextPage = async () => {
     if (connection?.pageInfo.hasNextPage !== true || isFetchingMore) {
       return;
@@ -108,21 +93,26 @@ export const useCoreWorkflows = ({
 
     setIsFetchingMore(true);
 
-    await fetchMore({
-      variables: { after: connection.pageInfo.endCursor },
-      updateQuery: (previousResult, { fetchMoreResult }) => ({
-        ...fetchMoreResult,
-        coreWorkflows: {
-          ...fetchMoreResult.coreWorkflows,
-          edges: [
-            ...previousResult.coreWorkflows.edges,
-            ...fetchMoreResult.coreWorkflows.edges,
-          ],
-        },
-      }),
-    }).finally(() => {
+    try {
+      await fetchMore({
+        variables: { after: connection.pageInfo.endCursor },
+        updateQuery: (previousResult, { fetchMoreResult }) => ({
+          ...fetchMoreResult,
+          coreWorkflows: {
+            ...fetchMoreResult.coreWorkflows,
+            edges: [
+              ...previousResult.coreWorkflows.edges,
+              ...fetchMoreResult.coreWorkflows.edges,
+            ],
+          },
+        }),
+      });
+    } catch (fetchMoreError) {
+      logError(`useCoreWorkflows fetchMore error : ${fetchMoreError}`);
+      enqueueErrorSnackBar({ apolloError: fetchMoreError as ErrorLike });
+    } finally {
       setIsFetchingMore(false);
-    });
+    }
   };
 
   return {

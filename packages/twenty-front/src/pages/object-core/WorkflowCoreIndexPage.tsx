@@ -74,11 +74,9 @@ export const WorkflowCoreIndexPage = () => {
     coreWorkflowsFilterSettings.stepFilters ?? []
   ).some(isUsableCoreWorkflowFilterRule);
 
-  const hasNoCoreWorkflows = coreWorkflows.length === 0;
+  const hasError = isDefined(error);
 
-  const hasError = isDefined(error) && hasNoCoreWorkflows;
-
-  const isEmpty = !loading && !hasError && hasNoCoreWorkflows;
+  const isEmpty = !loading && !hasError && coreWorkflows.length === 0;
 
   useEffect(() => {
     if (inView && hasNextPage && !loading) {
