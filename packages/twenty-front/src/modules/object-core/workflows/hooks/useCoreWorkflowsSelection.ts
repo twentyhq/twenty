@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
 import { useDeleteCoreWorkflows } from '@/object-core/workflows/hooks/useDeleteCoreWorkflows';
-import { getSelectedWorkspaceWorkflowIds } from '@/object-core/workflows/utils/getSelectedWorkspaceWorkflowIds';
+import { getDeletableSelectedCoreWorkflows } from '@/object-core/workflows/utils/getDeletableSelectedCoreWorkflows';
 import { toggleRowIdInSelection } from '@/object-core/utils/toggleRowIdInSelection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -45,22 +44,22 @@ export const useCoreWorkflowsSelection = ({
     (coreWorkflow) => !deletedCoreWorkflowIds.includes(coreWorkflow.id),
   );
 
-  const selectedWorkspaceWorkflowIds = getSelectedWorkspaceWorkflowIds({
+  const deletableSelectedCoreWorkflows = getDeletableSelectedCoreWorkflows({
     coreWorkflows: displayedCoreWorkflows,
     selectedRowIds,
   });
+
+  const selectedWorkspaceWorkflowIds = deletableSelectedCoreWorkflows.map(
+    (deletableCoreWorkflow) => deletableCoreWorkflow.workspaceWorkflowId,
+  );
 
   const toggleRow = (rowId: string) =>
     selectRows(toggleRowIdInSelection({ selectedRowIds, rowId }));
 
   const deleteSelectedCoreWorkflows = async () => {
-    const coreWorkflowIdsToDelete = displayedCoreWorkflows
-      .filter(
-        (coreWorkflow) =>
-          selectedRowIds.includes(coreWorkflow.id) &&
-          isDefined(coreWorkflow.workspaceWorkflowId),
-      )
-      .map((coreWorkflow) => coreWorkflow.id);
+    const coreWorkflowIdsToDelete = deletableSelectedCoreWorkflows.map(
+      (deletableCoreWorkflow) => deletableCoreWorkflow.coreWorkflowId,
+    );
 
     const hasDeleted = await deleteCoreWorkflows(selectedWorkspaceWorkflowIds);
 

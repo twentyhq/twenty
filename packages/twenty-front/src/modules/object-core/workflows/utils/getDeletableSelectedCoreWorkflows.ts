@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
 
-export const getSelectedWorkspaceWorkflowIds = ({
+export const getDeletableSelectedCoreWorkflows = ({
   coreWorkflows,
   selectedRowIds,
 }: {
@@ -11,5 +11,13 @@ export const getSelectedWorkspaceWorkflowIds = ({
 }) =>
   coreWorkflows
     .filter((coreWorkflow) => selectedRowIds.includes(coreWorkflow.id))
-    .map((coreWorkflow) => coreWorkflow.workspaceWorkflowId)
-    .filter(isDefined);
+    .flatMap((coreWorkflow) =>
+      isDefined(coreWorkflow.workspaceWorkflowId)
+        ? [
+            {
+              coreWorkflowId: coreWorkflow.id,
+              workspaceWorkflowId: coreWorkflow.workspaceWorkflowId,
+            },
+          ]
+        : [],
+    );
