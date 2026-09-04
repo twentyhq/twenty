@@ -1,17 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
-import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
-import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { type EmailCreditContext } from 'src/modules/emailing/types/email-credit-context.type';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { EMAIL_MARGIN_MULTIPLIER } from 'src/modules/emailing/constants/email-margin-multiplier';
 import { SES_EMAIL_COST_PER_THOUSAND_DOLLARS } from 'src/modules/emailing/constants/ses-email-cost-per-thousand-dollars';
 
@@ -19,49 +14,35 @@ import { SES_EMAIL_COST_PER_THOUSAND_DOLLARS } from 'src/modules/emailing/consta
 export class EmailBillingService {
   constructor(
     private readonly usageRecorderService: UsageRecorderService,
-    private readonly billingService: BillingService,
     private readonly billingUsageService: BillingUsageService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async validateEmailCreditsOrThrow(workspaceId: string): Promise<void> {
-    await this.billingUsageService.hasAvailableCreditsOrThrow(workspaceId);
+    await this.billingUsageService.assertUsageAllowed({
+      workspaceId,
+      resourceType: UsageResourceType.EMAIL,
+      operationType: UsageOperationType.EMAIL_SEND,
+      spenders: {},
+    });
   }
 
-  async resolveEmailCreditContext(
+  async getEmailCreditContext(
     workspaceId: string,
   ): Promise<EmailCreditContext> {
-    if (!this.billingService.isBillingEnabled()) {
-      return {
-        hasCredits: true,
-        currentBillingSubscription: NO_BILLING_SUBSCRIPTION,
-      };
-    }
-
-    const { currentBillingSubscription } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'currentBillingSubscription',
-      ]);
-
     const { hasAvailableCredits } =
-      await this.billingUsageService.getCreditAvailability({
-        workspaceId,
-        currentBillingSubscription,
-      });
+      await this.billingUsageService.getCreditAvailability(workspaceId);
 
-    return { hasCredits: hasAvailableCredits, currentBillingSubscription };
+    return { hasCredits: hasAvailableCredits };
   }
 
   async billSentEmails({
     workspaceId,
     sentEmailCount,
     userWorkspaceId,
-    currentBillingSubscription: providedCurrentBillingSubscription,
   }: {
     workspaceId: string;
     sentEmailCount: number;
     userWorkspaceId?: string | null;
-    currentBillingSubscription?: CurrentBillingSubscription;
   }): Promise<void> {
     if (sentEmailCount <= 0) {
       return;
@@ -72,21 +53,13 @@ export class EmailBillingService {
     const chargedInDollars = providerCostInDollars * EMAIL_MARGIN_MULTIPLIER;
     const creditsUsedMicro = convertDollarsToCreditsMicro(chargedInDollars);
 
-    if (this.billingService.isBillingEnabled()) {
-      const currentBillingSubscription =
-        await this.billingUsageService.resolveCurrentBillingSubscription({
-          workspaceId,
-          providedCurrentBillingSubscription,
-        });
-
-      if (currentBillingSubscription !== NO_BILLING_SUBSCRIPTION) {
-        await this.billingUsageService.decrementAvailableCreditsInCache({
-          workspaceId,
-          usedCredits: creditsUsedMicro,
-          currentBillingSubscription,
-        });
-      }
-    }
+    await this.billingUsageService.consumeUsageQuota({
+      workspaceId,
+      resourceType: UsageResourceType.EMAIL,
+      operationType: UsageOperationType.EMAIL_SEND,
+      spenders: { userWorkspaceId },
+      cost: { creditsUsedMicro, quantity: sentEmailCount },
+    });
 
     await this.usageRecorderService.record(workspaceId, [
       {

@@ -40,6 +40,7 @@ const ALLOWANCE_PERIOD = {
 };
 
 class TestCreditAllowanceProvider extends CreditAllowanceProvider {
+  isCreditAllowanceEnabled = jest.fn().mockResolvedValue(true);
   getCreditAllowancePeriod = jest.fn().mockResolvedValue(null);
   getCreditAllowance = jest.fn().mockResolvedValue(null);
 }
@@ -250,14 +251,31 @@ describe('UsageLimitQuotaService', () => {
     });
   });
 
-  it('reports an exhausted limit over the exhausted allowance', async () => {
+  it('reports the exhausted allowance over an exhausted limit', async () => {
     setLimits([buildLimit({})]);
     setAllowance(2_000_000);
     cacheStorage.mget.mockResolvedValue([0, 0]);
 
     await expect(assertQuotaNotExhausted()).rejects.toMatchObject({
+      exhaustedScope: expect.objectContaining({ exhaustedKind: 'allowance' }),
+    });
+  });
+
+  it('builds no allowance counter when the provider reports it disabled', async () => {
+    setLimits([buildLimit({})]);
+    setAllowance(2_000_000);
+    creditAllowanceProvider.isCreditAllowanceEnabled.mockResolvedValue(false);
+    cacheStorage.mget.mockResolvedValue([0]);
+
+    await expect(assertQuotaNotExhausted()).rejects.toMatchObject({
       exhaustedScope: expect.objectContaining({ exhaustedKind: 'limit' }),
     });
+    expect(cacheStorage.mget).toHaveBeenCalledWith([
+      expect.not.stringContaining(':allowance:'),
+    ]);
+    expect(
+      creditAllowanceProvider.getCreditAllowancePeriod,
+    ).not.toHaveBeenCalled();
   });
 
   it('skips warming an allowance whose period rolled over since the read', async () => {
@@ -305,7 +323,18 @@ describe('UsageLimitQuotaService', () => {
     expect(cacheStorage.runScript).toHaveBeenCalledWith(
       expect.objectContaining({ args: ['[50,7]'] }),
     );
-    expect(exhausted).toBeNull();
+    expect(exhausted).toEqual([]);
+  });
+
+  it('consumes an invalid cost as zero instead of crediting the counter', async () => {
+    setLimits([buildLimit({})]);
+    cacheStorage.runScript.mockResolvedValue([1, 950]);
+
+    await consumeQuota(-50, Number.NaN);
+
+    expect(cacheStorage.runScript).toHaveBeenCalledWith(
+      expect.objectContaining({ args: ['[0]'] }),
+    );
   });
 
   it('debits the allowance counter with the credit cost on consume', async () => {
@@ -318,7 +347,20 @@ describe('UsageLimitQuotaService', () => {
     expect(cacheStorage.runScript).toHaveBeenCalledWith(
       expect.objectContaining({ args: ['[7,50]'] }),
     );
-    expect(exhausted).toMatchObject({ exhaustedKind: 'allowance' });
+    expect(exhausted).toMatchObject([{ exhaustedKind: 'allowance' }]);
+  });
+
+  it('reports every exhausted counter on consume', async () => {
+    setLimits([buildLimit({})]);
+    setAllowance(2_000_000);
+    cacheStorage.runScript.mockResolvedValue([1, 0, 1, -5]);
+
+    const { exhausted } = await consumeQuota(50);
+
+    expect(exhausted).toMatchObject([
+      { exhaustedKind: 'limit' },
+      { exhaustedKind: 'allowance' },
+    ]);
   });
 
   it('warms a cold counter before consuming it', async () => {
@@ -334,7 +376,7 @@ describe('UsageLimitQuotaService', () => {
     expect(cacheStorage.runScript).toHaveBeenCalledWith(
       expect.objectContaining({ args: ['[50]'] }),
     );
-    expect(exhausted).toBeNull();
+    expect(exhausted).toEqual([]);
   });
 
   describe('dropAllowanceCounter', () => {

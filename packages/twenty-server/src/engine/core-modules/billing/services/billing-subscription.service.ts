@@ -32,6 +32,7 @@ import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billin
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
@@ -74,6 +75,7 @@ export class BillingSubscriptionService {
     private readonly enterprisePlanService: EnterprisePlanService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly billingUsageCacheService: BillingUsageCacheService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
 
   async getBillingSubscriptions(workspaceId: string) {
@@ -94,6 +96,7 @@ export class BillingSubscriptionService {
       relations: [
         'billingSubscriptionItems',
         'billingSubscriptionItems.billingProduct',
+        'billingSubscriptionItems.billingProduct.billingPrices',
       ],
     };
 
@@ -299,6 +302,8 @@ export class BillingSubscriptionService {
     await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
       'currentBillingSubscription',
     ]);
+
+    await this.usageLimitQuotaService.dropAllowanceCounter(workspace.id);
 
     return {
       status: getSubscriptionStatus(updatedSubscription.status),
