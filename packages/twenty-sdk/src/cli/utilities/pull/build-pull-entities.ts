@@ -6,7 +6,7 @@ import {
 } from '@/cli/utilities/pull/write-define-file';
 import { kebabCase } from '@/cli/utilities/string/kebab-case';
 import {
-  type FieldManifest,
+  type ApplicationManifest,
   type IndexManifest,
   type Manifest,
 } from 'twenty-shared/application';
@@ -65,23 +65,27 @@ const STANDARD_OBJECT_NAME_BY_UNIVERSAL_IDENTIFIER = new Map<string, string>(
 
 const buildApplicationConfig = (
   manifest: Manifest,
-): Record<string, unknown> => {
-  const applicationConfig: Record<string, unknown> = {
-    ...(manifest.application as unknown as Record<string, unknown>),
-  };
+): Partial<ApplicationManifest> => {
+  const applicationConfig = Object.fromEntries(
+    Object.entries(manifest.application).filter(
+      ([property]) =>
+        !APPLICATION_PROPERTIES_TO_STRIP.includes(
+          property as (typeof APPLICATION_PROPERTIES_TO_STRIP)[number],
+        ),
+    ),
+  ) as Partial<ApplicationManifest>;
 
-  for (const property of APPLICATION_PROPERTIES_TO_STRIP) {
-    delete applicationConfig[property];
-  }
-
-  const galleryImages = applicationConfig.galleryImages;
+  const { galleryImages } = applicationConfig;
 
   if (
-    !Array.isArray(galleryImages) ||
+    !isDefined(galleryImages) ||
     galleryImages.length === 0 ||
     galleryImages.every((image) => image === GENERATED_COVER_GALLERY_IMAGE)
   ) {
-    delete applicationConfig.galleryImages;
+    const { galleryImages: _galleryImages, ...withoutGalleryImages } =
+      applicationConfig;
+
+    return withoutGalleryImages;
   }
 
   return applicationConfig;
@@ -166,7 +170,7 @@ export const buildPullEntities = (
     });
   }
 
-  for (const fieldManifest of manifest.fields as FieldManifest[]) {
+  for (const fieldManifest of manifest.fields) {
     fieldNameByUniversalIdentifier.set(
       fieldManifest.universalIdentifier,
       fieldManifest.name,

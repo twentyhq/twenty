@@ -1,10 +1,10 @@
+import { isEngineDerivedLabelIdentifier } from '@/sdk/define/objects/is-engine-derived-label-identifier';
 import type { ObjectConfig } from '@/sdk/define/objects/object-config';
 import {
   getFieldUniversalIdentifier,
   type ObjectFieldManifest,
 } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 const getDefaultNameObjectField = ({
   objectConfig,
@@ -45,13 +45,11 @@ export const getDefaultFieldsInObjectFields = ({
     applicationUniversalIdentifier,
   });
 
-  const labelIdentifiesAnEngineDerivedField =
-    isDefined(objectConfig.labelIdentifierFieldMetadataUniversalIdentifier) &&
-    !objectConfig.fields.some(
-      (field) =>
-        field.universalIdentifier ===
-        objectConfig.labelIdentifierFieldMetadataUniversalIdentifier,
-    );
+  const labelIdentifiesAnEngineDerivedField = isEngineDerivedLabelIdentifier({
+    fields: objectConfig.fields,
+    labelIdentifierFieldMetadataUniversalIdentifier:
+      objectConfig.labelIdentifierFieldMetadataUniversalIdentifier,
+  });
 
   if (
     !objectConfigFieldNames.includes(defaultNameObjectField.name) &&

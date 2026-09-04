@@ -108,6 +108,42 @@ const resolveFileBaseNames = (entities: PullEntity[]): Map<string, string> => {
   return fileBaseNameByUniversalIdentifier;
 };
 
+const reserveRelativePath = ({
+  folder,
+  fileBaseName,
+  fileSuffix,
+  universalIdentifier,
+  takenRelativePaths,
+}: {
+  folder: string;
+  fileBaseName: string;
+  fileSuffix: string;
+  universalIdentifier: string;
+  takenRelativePaths: Set<string>;
+}): string => {
+  const identifierPrefix = universalIdentifier.slice(0, 8);
+  const candidates = [
+    fileBaseName,
+    `${identifierPrefix}-${fileBaseName}`,
+    ...Array.from(
+      { length: 100 },
+      (_unused, index) => `${identifierPrefix}-${fileBaseName}-${index + 2}`,
+    ),
+  ];
+
+  for (const candidate of candidates) {
+    const candidatePath = posix.join(folder, `${candidate}${fileSuffix}`);
+
+    if (!takenRelativePaths.has(candidatePath)) {
+      return candidatePath;
+    }
+  }
+
+  throw new Error(
+    `Could not find a free file name for ${universalIdentifier} in ${folder}`,
+  );
+};
+
 const buildConfigByUniversalIdentifier = (
   manifest: Manifest | null,
 ): Map<string, string> => {
@@ -156,6 +192,9 @@ export const planPullWrites = ({
   const writes: PullWrite[] = [];
   const unchanged: PullEntity[] = [];
   const usedRelativePaths = new Set<string>();
+  const takenRelativePaths = new Set(
+    scannedFiles.map((scannedFile) => toPosixPath(scannedFile.relativePath)),
+  );
 
   for (const entity of entities) {
     const existingPath =
@@ -174,9 +213,17 @@ export const planPullWrites = ({
       fileBaseNameByUniversalIdentifier.get(entity.universalIdentifier) ??
       entity.fileBaseName;
     const relativePath =
-      existingPath ?? posix.join(folder, `${fileBaseName}${entity.fileSuffix}`);
+      existingPath ??
+      reserveRelativePath({
+        folder,
+        fileBaseName,
+        fileSuffix: entity.fileSuffix,
+        universalIdentifier: entity.universalIdentifier,
+        takenRelativePaths,
+      });
 
     usedRelativePaths.add(relativePath);
+    takenRelativePaths.add(relativePath);
 
     const baseConfig = baseConfigByUniversalIdentifier.get(
       entity.universalIdentifier,

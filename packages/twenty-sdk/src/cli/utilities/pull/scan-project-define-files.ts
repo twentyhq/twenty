@@ -13,21 +13,12 @@ export type ScannedDefineFile = {
   relativePath: string;
   entityKey: ManifestEntityKey;
   universalIdentifier: string | null;
-  childUniversalIdentifiers: string[];
   isReadable: boolean;
 };
 
 type ExtractedConfig = {
   universalIdentifier?: unknown;
-  fields?: { universalIdentifier?: unknown }[];
 };
-
-const readChildUniversalIdentifiers = (config: ExtractedConfig): string[] =>
-  (Array.isArray(config.fields) ? config.fields : [])
-    .map((field) => field?.universalIdentifier)
-    .filter(
-      (identifier): identifier is string => typeof identifier === 'string',
-    );
 
 export const scanProjectDefineFiles = async (
   appPath: string,
@@ -42,7 +33,14 @@ export const scanProjectDefineFiles = async (
   const scannedFiles: ScannedDefineFile[] = [];
 
   for (const filePath of filePaths) {
-    const fileContent = await readFile(filePath, 'utf-8');
+    let fileContent: string;
+
+    try {
+      fileContent = await readFile(filePath, 'utf-8');
+    } catch {
+      continue;
+    }
+
     const targetFunctionName = extractDefineEntity(fileContent);
 
     if (!isDefined(targetFunctionName)) {
@@ -73,7 +71,6 @@ export const scanProjectDefineFiles = async (
         typeof config.universalIdentifier === 'string'
           ? config.universalIdentifier
           : null,
-      childUniversalIdentifiers: readChildUniversalIdentifiers(config),
       isReadable,
     });
   }

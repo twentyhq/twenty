@@ -18,6 +18,21 @@ type PullBaseFile = {
   manifest: Manifest;
 };
 
+const isUsableBaseManifest = (manifest: unknown): manifest is Manifest => {
+  if (!isDefined(manifest) || typeof manifest !== 'object') {
+    return false;
+  }
+
+  const { application, objects, fields } = manifest as Partial<Manifest>;
+
+  return (
+    isDefined(application) &&
+    typeof application.universalIdentifier === 'string' &&
+    Array.isArray(objects) &&
+    Array.isArray(fields)
+  );
+};
+
 export const readPullBaseManifest = async ({
   appPath,
   applicationUniversalIdentifier,
@@ -38,7 +53,7 @@ export const readPullBaseManifest = async ({
       baseFile.version !== PULL_BASE_FILE_VERSION ||
       baseFile.applicationUniversalIdentifier !==
         applicationUniversalIdentifier ||
-      !isDefined(baseFile.manifest)
+      !isUsableBaseManifest(baseFile.manifest)
     ) {
       return null;
     }

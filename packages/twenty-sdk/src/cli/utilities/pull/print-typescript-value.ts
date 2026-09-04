@@ -2,16 +2,29 @@ import { isDefined } from 'twenty-shared/utils';
 
 const IDENTIFIER_PATTERN = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
 
+const PROTOTYPE_KEY = '__proto__';
+
 export type EnumSymbolResolver = (params: {
   path: string[];
   value: string;
 }) => string | undefined;
 
 const printString = (value: string): string =>
-  `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n')}'`;
+  `'${value
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029')}'`;
 
-const printKey = (key: string): string =>
-  IDENTIFIER_PATTERN.test(key) ? key : printString(key);
+const printKey = (key: string): string => {
+  if (key === PROTOTYPE_KEY) {
+    return `[${printString(key)}]`;
+  }
+
+  return IDENTIFIER_PATTERN.test(key) ? key : printString(key);
+};
 
 const indentOf = (depth: number): string => '  '.repeat(depth);
 

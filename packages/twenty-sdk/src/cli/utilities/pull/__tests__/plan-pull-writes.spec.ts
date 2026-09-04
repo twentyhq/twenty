@@ -80,7 +80,6 @@ describe('planPullWrites', () => {
         relativePath: 'src/application-config.ts',
         entityKey: ManifestEntityKey.Application,
         universalIdentifier: 'a-placeholder-identifier',
-        childUniversalIdentifiers: [],
         isReadable: true,
       },
     ];
@@ -104,14 +103,12 @@ describe('planPullWrites', () => {
         relativePath: 'src/application.config.ts',
         entityKey: ManifestEntityKey.Application,
         universalIdentifier: APP_UID,
-        childUniversalIdentifiers: [],
         isReadable: true,
       },
       {
         relativePath: 'src/objects/pet.object.ts',
         entityKey: ManifestEntityKey.Objects,
         universalIdentifier: PET_UID,
-        childUniversalIdentifiers: [NAME_FIELD_UID],
         isReadable: true,
       },
     ];
@@ -132,14 +129,12 @@ describe('planPullWrites', () => {
         relativePath: 'src/application.config.ts',
         entityKey: ManifestEntityKey.Application,
         universalIdentifier: APP_UID,
-        childUniversalIdentifiers: [],
         isReadable: true,
       },
       {
         relativePath: 'src/objects/pet.object.ts',
         entityKey: ManifestEntityKey.Objects,
         universalIdentifier: PET_UID,
-        childUniversalIdentifiers: [NAME_FIELD_UID],
         isReadable: true,
       },
     ];
@@ -170,7 +165,6 @@ describe('planPullWrites', () => {
         relativePath: 'src/objects/rocket.object.ts',
         entityKey: ManifestEntityKey.Objects,
         universalIdentifier: ROCKET_UID,
-        childUniversalIdentifiers: [ROCKET_NAME_FIELD_UID],
         isReadable: true,
       },
     ];
@@ -207,7 +201,6 @@ describe('planPullWrites', () => {
         relativePath: 'src/objects/unpushed.object.ts',
         entityKey: ManifestEntityKey.Objects,
         universalIdentifier: 'an-unpushed-identifier',
-        childUniversalIdentifiers: [],
         isReadable: true,
       },
     ];
@@ -230,7 +223,6 @@ describe('planPullWrites', () => {
         relativePath: 'app/data-model/rocket.object.ts',
         entityKey: ManifestEntityKey.Objects,
         universalIdentifier: ROCKET_UID,
-        childUniversalIdentifiers: [],
         isReadable: true,
       },
     ];
@@ -246,24 +238,37 @@ describe('planPullWrites', () => {
     ).toBe('app/data-model/pet.object.ts');
   });
 
-  it('should qualify colliding file names with the parent name', () => {
+  it('should qualify colliding file names with the name of each parent object', () => {
     const plan = planPullWrites({
       manifest: {
         ...MANIFEST,
+        objects: [
+          buildObject({
+            universalIdentifier: PET_UID,
+            nameSingular: 'pet',
+            labelIdentifierFieldMetadataUniversalIdentifier: NAME_FIELD_UID,
+          }),
+          buildObject({
+            universalIdentifier: ROCKET_UID,
+            nameSingular: 'rocket',
+            labelIdentifierFieldMetadataUniversalIdentifier:
+              ROCKET_NAME_FIELD_UID,
+          }),
+        ],
         fields: [
           {
             universalIdentifier: 'field-one',
             name: 'notes',
             label: 'Notes',
             type: 'TEXT',
-            objectUniversalIdentifier: 'unknown-object-one',
+            objectUniversalIdentifier: PET_UID,
           },
           {
             universalIdentifier: 'field-two',
             name: 'notes',
             label: 'Notes',
             type: 'TEXT',
-            objectUniversalIdentifier: 'unknown-object-two',
+            objectUniversalIdentifier: ROCKET_UID,
           },
         ],
       } as unknown as Manifest,
@@ -271,13 +276,55 @@ describe('planPullWrites', () => {
       scannedFiles: [],
     });
 
-    const fieldPaths = plan.writes
-      .filter((write) => write.kind === 'field')
-      .map((write) => write.relativePath);
-
-    expect(new Set(fieldPaths).size).toBe(2);
     expect(
-      fieldPaths.every((fieldPath) => fieldPath.endsWith('-notes.field.ts')),
-    ).toBe(true);
+      plan.writes
+        .filter((write) => write.kind === 'field')
+        .map((write) => write.relativePath)
+        .sort(),
+    ).toEqual([
+      'src/fields/pet-notes.field.ts',
+      'src/fields/rocket-notes.field.ts',
+    ]);
+  });
+
+  it('should never write over a file that belongs to another entity', () => {
+    const plan = planPullWrites({
+      manifest: MANIFEST,
+      baseManifest: null,
+      scannedFiles: [
+        {
+          relativePath: 'src/objects/pet.object.ts',
+          entityKey: ManifestEntityKey.Objects,
+          universalIdentifier: 'a-different-identifier',
+          isReadable: true,
+        },
+      ],
+    });
+
+    const objectWrite = plan.writes.find((write) => write.kind === 'object');
+
+    expect(objectWrite?.relativePath).not.toBe('src/objects/pet.object.ts');
+    expect(objectWrite?.relativePath).toBe(
+      `src/objects/${PET_UID.slice(0, 8)}-pet.object.ts`,
+    );
+  });
+
+  it('should keep a file whose define file could not be read', () => {
+    const plan = planPullWrites({
+      manifest: MANIFEST,
+      baseManifest: null,
+      scannedFiles: [
+        {
+          relativePath: 'src/objects/pet.object.ts',
+          entityKey: ManifestEntityKey.Objects,
+          universalIdentifier: null,
+          isReadable: false,
+        },
+      ],
+    });
+
+    expect(plan.writes.map((write) => write.relativePath)).not.toContain(
+      'src/objects/pet.object.ts',
+    );
   });
 });
