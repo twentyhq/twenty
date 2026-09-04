@@ -8,10 +8,12 @@ import { getDeletableSelectedCoreWorkflows } from '@/object-core/workflows/utils
 import { toggleRowIdInSelection } from '@/object-core/utils/toggleRowIdInSelection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-export const useCoreWorkflowsSelection = ({
+export const useCoreWorkflowsSelection = <
+  TCoreWorkflow extends Pick<CoreWorkflow, 'id' | 'workspaceWorkflowId'>,
+>({
   coreWorkflows,
 }: {
-  coreWorkflows: CoreWorkflow[];
+  coreWorkflows: TCoreWorkflow[];
 }) => {
   const [selection, setSelection] = useState<{
     filterSettings: FilterSettings;

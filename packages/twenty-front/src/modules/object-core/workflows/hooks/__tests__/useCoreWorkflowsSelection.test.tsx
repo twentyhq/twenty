@@ -6,6 +6,8 @@ import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
 
+type CoreWorkflowRow = Pick<CoreWorkflow, 'id' | 'workspaceWorkflowId'>;
+
 const mockDeleteCoreWorkflows = jest.fn();
 
 jest.mock('@/object-core/workflows/hooks/useDeleteCoreWorkflows', () => ({
@@ -16,11 +18,11 @@ jest.mock('@/object-core/workflows/hooks/useDeleteCoreWorkflows', () => ({
   }),
 }));
 
-const coreWorkflows = [
+const coreWorkflows: CoreWorkflowRow[] = [
   { id: 'core-1', workspaceWorkflowId: 'workspace-1' },
   { id: 'core-2', workspaceWorkflowId: 'workspace-2' },
   { id: 'core-3', workspaceWorkflowId: null },
-] as CoreWorkflow[];
+];
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
@@ -28,7 +30,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 
 const renderSelection = () =>
   renderHook(
-    (props: { coreWorkflows: CoreWorkflow[] }) =>
+    (props: { coreWorkflows: CoreWorkflowRow[] }) =>
       useCoreWorkflowsSelection(props),
     { wrapper: Wrapper, initialProps: { coreWorkflows } },
   );
@@ -115,7 +117,7 @@ describe('useCoreWorkflowsSelection', () => {
       coreWorkflows: [
         { id: 'core-1', workspaceWorkflowId: null },
         { id: 'core-2', workspaceWorkflowId: 'workspace-2' },
-      ] as CoreWorkflow[],
+      ],
     });
 
     expect(
