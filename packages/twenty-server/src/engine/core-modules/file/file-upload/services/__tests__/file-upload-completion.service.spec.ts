@@ -59,7 +59,6 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
 
     fileRepository = {
       update: jest.fn().mockResolvedValue({ affected: 1 }),
-      findOne: jest.fn().mockResolvedValue(null),
     } as unknown as jest.Mocked<WorkspaceScopedRepository<FileEntity>>;
   });
 
