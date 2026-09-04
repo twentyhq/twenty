@@ -79,14 +79,6 @@ export class ApplicationManifestExportService {
             flatEntityMaps: allFlatEntityMaps.flatRoleMaps,
             id: flatApplication.defaultRoleId,
           }) ?? PLACEHOLDER_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
-        settingsFrontComponentUniversalIdentifier: findUniversalIdentifierById({
-          flatEntityMaps: allFlatEntityMaps.flatFrontComponentMaps,
-          id: flatApplication.settingsCustomTabFrontComponentId,
-        }),
-        uninstallLogicFunctionUniversalIdentifier: findUniversalIdentifierById({
-          flatEntityMaps: allFlatEntityMaps.flatLogicFunctionMaps,
-          id: flatApplication.uninstallLogicFunctionId,
-        }),
       }),
       objects,
       fields,
