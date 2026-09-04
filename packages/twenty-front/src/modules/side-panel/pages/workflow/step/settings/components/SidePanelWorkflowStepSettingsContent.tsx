@@ -81,6 +81,7 @@ const SidePanelWorkflowStepSettingsForm = ({
             })),
           ]}
           value={Number(errorHandlingOptions.retryOnFailure.value) || 0}
+          description={t`Only enable for steps that are safe to run twice: a failed attempt may already have written data or sent messages.`}
           onChange={(value) =>
             updateErrorHandlingOptions({ retryOnFailure: { value } })
           }
