@@ -75,6 +75,7 @@ describe('applicationConnectionProviders resolver (e2e)', () => {
             type
             name
             displayName
+            logoUrl
             oauth {
               scopes
               isClientCredentialsConfigured
@@ -96,6 +97,7 @@ describe('applicationConnectionProviders resolver (e2e)', () => {
       type: 'oauth',
       name: 'linear',
       displayName: 'Linear',
+      logoUrl: null,
       oauth: {
         scopes: ['read', 'write'],
         // The fixture registration's OAuth client_id / client_secret server

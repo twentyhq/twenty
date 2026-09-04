@@ -1,10 +1,14 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Query } from '@nestjs/graphql';
+import { Args, Parent, Query, ResolveField } from '@nestjs/graphql';
+
+import { ApiPath } from 'twenty-shared/types';
+import { isAbsoluteUrl, isDefined } from 'twenty-shared/utils';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationConnectionProviderDTO } from 'src/engine/core-modules/application/connection-provider/dtos/application-connection-provider.dto';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -15,6 +19,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 export class ApplicationConnectionProviderResolver {
   constructor(
     private readonly oauthProviderService: ConnectionProviderService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   @Query(() => [ApplicationConnectionProviderDTO])
@@ -40,6 +45,7 @@ export class ApplicationConnectionProviderResolver {
       type: provider.type,
       name: provider.name,
       displayName: provider.displayName,
+      logo: provider.logo,
       oauth:
         provider.type === 'oauth' && provider.oauthConfig
           ? {
@@ -49,5 +55,31 @@ export class ApplicationConnectionProviderResolver {
             }
           : null,
     }));
+  }
+
+  // Resolves the display url of the logo bundled in the installed
+  // application's public assets, so clients never build file urls themselves.
+  @ResolveField(() => String, { nullable: true })
+  logoUrl(
+    @Parent()
+    connectionProvider: Pick<
+      ApplicationConnectionProviderDTO,
+      'applicationId' | 'logo'
+    >,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): string | null {
+    const logo = connectionProvider.logo;
+
+    if (!isDefined(logo) || logo.length === 0) {
+      return null;
+    }
+
+    if (isAbsoluteUrl(logo)) {
+      return logo;
+    }
+
+    const serverUrl = this.twentyConfigService.get('SERVER_URL');
+
+    return `${serverUrl}/${ApiPath.PublicAssets}/${workspace.id}/${connectionProvider.applicationId}/${logo}`;
   }
 }

@@ -2721,6 +2721,9 @@ export default {
             "oauth": [
                 125
             ],
+            "logoUrl": [
+                1
+            ],
             "__typename": [
                 1
             ]

@@ -34,6 +34,13 @@ export class ConnectionProviderEntity
   @Column({ nullable: false, type: 'varchar' })
   displayName: string;
 
+  @Column({ nullable: true, type: 'varchar' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.39.0_AddLogoToConnectionProviderFastInstanceCommand_1788542613404',
+  })
+  logo: string | null;
+
   @Column({ nullable: false, type: 'varchar' })
   type: ConnectionProviderType;
 
