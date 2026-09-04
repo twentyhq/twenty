@@ -4204,7 +4204,7 @@ msgstr "Không tìm thấy tập tin."
 #. js-lingui-id: MtzD8b
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "File storage took too long to respond. Please retry."
-msgstr ""
+msgstr "Bộ nhớ tệp mất quá lâu để phản hồi. Vui lòng thử lại."
 
 #. js-lingui-id: I7Jff2
 #: src/engine/core-modules/file-storage/utils/validate-file-path.util.ts
