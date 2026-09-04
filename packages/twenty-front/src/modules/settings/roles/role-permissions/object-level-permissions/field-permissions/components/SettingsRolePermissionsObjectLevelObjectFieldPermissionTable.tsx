@@ -6,7 +6,7 @@ import {
   FIELD_PERMISSION_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow,
 } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow';
-import { useObjectPermissionDerivedStates } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useObjectPermissionDerivedStates';
+import { useFieldPermissionTableColumns } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useFieldPermissionTableColumns';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
@@ -78,17 +78,11 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
         fieldPermission.objectMetadataId === objectMetadataItem.id,
     ) ?? [];
 
-  const { cannotAllowFieldReadRestrict, cannotAllowFieldUpdateRestrict } =
-    useObjectPermissionDerivedStates({
+  const { shouldShowSeeColumn, shouldShowUpdateColumn } =
+    useFieldPermissionTableColumns({
       roleId,
       objectMetadataItemId: objectMetadataItem.id,
     });
-
-  const shouldShowSeeTableHeader = !cannotAllowFieldReadRestrict;
-  const shouldShowUpdateTableHeader =
-    !cannotAllowFieldReadRestrict && !cannotAllowFieldUpdateRestrict;
-  const shouldShowEmptyTableHeader =
-    cannotAllowFieldReadRestrict && cannotAllowFieldUpdateRestrict;
 
   return (
     <Section>
@@ -121,13 +115,14 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
             <TableHeaderText>{t`Data type`}</TableHeaderText>
           </TableHeader>
           <>
-            {shouldShowEmptyTableHeader && <TableHeader />}
-            {shouldShowSeeTableHeader && (
+            {!shouldShowSeeColumn && <TableHeader />}
+            {!shouldShowUpdateColumn && <TableHeader />}
+            {shouldShowSeeColumn && (
               <TableHeader>
                 <TableHeaderText>{t`See`}</TableHeaderText>
               </TableHeader>
             )}
-            {shouldShowUpdateTableHeader && (
+            {shouldShowUpdateColumn && (
               <TableHeader>
                 <TableHeaderText>{t`Edit`}</TableHeaderText>
               </TableHeader>

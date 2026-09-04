@@ -1,6 +1,6 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { FIELD_LEVEL_PERMISSION_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/constants/FieldLevelPermissionTableGridTemplateColumns';
-import { useObjectPermissionDerivedStates } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useObjectPermissionDerivedStates';
+import { FIELD_PERMISSION_TABLE_ROW_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow';
+import { useFieldPermissionTableColumns } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useFieldPermissionTableColumns';
 import { useRemoveReadOverrideOnAllFieldsOfObject } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useRemoveReadOverrideOnAllFieldsOfObject';
 import { useRemoveUpdateOverrideOnAllFieldsOfObject } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useRemoveUpdateOverrideOnAllFieldsOfObject';
 import { useRestrictReadOnAllFieldsOfObject } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useRestrictReadOnAllFieldsOfObject';
@@ -18,10 +18,14 @@ const StyledSectionHeader = styled.div`
   background-color: ${themeCssVariables.background.transparent.lighter};
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
   display: grid;
-  grid-template-columns: ${FIELD_LEVEL_PERMISSION_TABLE_GRID_TEMPLATE_COLUMNS};
+  grid-template-columns: ${FIELD_PERMISSION_TABLE_ROW_GRID_TEMPLATE_COLUMNS};
 
   height: ${themeCssVariables.spacing[6]};
 
+  width: 100%;
+`;
+
+const StyledLabelContainer = styled.div`
   padding-left: ${themeCssVariables.spacing[2]};
 `;
 
@@ -46,8 +50,8 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHead
       roleId,
     );
 
-    const { cannotAllowFieldReadRestrict, cannotAllowFieldUpdateRestrict } =
-      useObjectPermissionDerivedStates({
+    const { shouldShowSeeColumn, shouldShowUpdateColumn } =
+      useFieldPermissionTableColumns({
         roleId,
         objectMetadataItemId: objectMetadataItem.id,
       });
@@ -94,40 +98,36 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHead
       }
     };
 
-    const shouldShowSeeTableHeader = !cannotAllowFieldReadRestrict;
-    const shouldShowUpdateTableHeader =
-      !cannotAllowFieldReadRestrict && !cannotAllowFieldUpdateRestrict;
-    const shouldShowEmptyTableHeader = cannotAllowFieldUpdateRestrict;
-
     return (
-      <>
-        <StyledSectionHeader>
+      <StyledSectionHeader>
+        <StyledLabelContainer>
           <Label>{t`All`}</Label>
-          <div></div>
-          <>
-            {shouldShowEmptyTableHeader && <div />}
-            {shouldShowSeeTableHeader && (
-              <StyledCheckboxContainer>
-                <OverridableCheckbox
-                  disabled={false}
-                  checked={true}
-                  onChange={handleReadAllChange}
-                  type={hasAnyRestrictionOnRead ? 'override' : 'default'}
-                />
-              </StyledCheckboxContainer>
-            )}
-            {shouldShowUpdateTableHeader && (
-              <StyledCheckboxContainer>
-                <OverridableCheckbox
-                  disabled={false}
-                  checked={true}
-                  onChange={handleUpdateAllChange}
-                  type={hasAnyRestrictionOnUpdate ? 'override' : 'default'}
-                />
-              </StyledCheckboxContainer>
-            )}
-          </>
-        </StyledSectionHeader>
-      </>
+        </StyledLabelContainer>
+        <div />
+        <>
+          {!shouldShowSeeColumn && <div />}
+          {!shouldShowUpdateColumn && <div />}
+          {shouldShowSeeColumn && (
+            <StyledCheckboxContainer>
+              <OverridableCheckbox
+                disabled={false}
+                checked={true}
+                onChange={handleReadAllChange}
+                type={hasAnyRestrictionOnRead ? 'override' : 'default'}
+              />
+            </StyledCheckboxContainer>
+          )}
+          {shouldShowUpdateColumn && (
+            <StyledCheckboxContainer>
+              <OverridableCheckbox
+                disabled={false}
+                checked={true}
+                onChange={handleUpdateAllChange}
+                type={hasAnyRestrictionOnUpdate ? 'override' : 'default'}
+              />
+            </StyledCheckboxContainer>
+          )}
+        </>
+      </StyledSectionHeader>
     );
   };

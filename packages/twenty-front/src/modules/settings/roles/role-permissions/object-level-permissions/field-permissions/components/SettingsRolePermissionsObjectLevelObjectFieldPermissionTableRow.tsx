@@ -4,7 +4,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import { SettingsObjectFieldDataType } from '@/settings/data-model/object-details/components/SettingsObjectFieldDataType';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
-import { useObjectPermissionDerivedStates } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useObjectPermissionDerivedStates';
+import { useFieldPermissionTableColumns } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useFieldPermissionTableColumns';
 import { useUpsertFieldPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useUpsertFieldPermissionInDraftRole';
 import { isFieldReadRestrictable } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/utils/isFieldReadRestrictable';
 import { isFieldUpdateRestrictable } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/utils/isFieldUpdateRestrictable';
@@ -140,8 +140,8 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
       hasRestriction &&
       fieldPermissionForThisFieldMetadataItem?.canUpdateFieldValue === false;
 
-    const { cannotAllowFieldReadRestrict, cannotAllowFieldUpdateRestrict } =
-      useObjectPermissionDerivedStates({
+    const { shouldShowSeeColumn, shouldShowUpdateColumn } =
+      useFieldPermissionTableColumns({
         roleId,
         objectMetadataItemId: objectMetadataItem.id,
       });
@@ -153,11 +153,6 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
     });
 
     const canRestrictUpdate = isFieldUpdateRestrictable(fieldMetadataItem);
-
-    const shouldShowSeeTableHeader = !cannotAllowFieldReadRestrict;
-    const shouldShowUpdateTableHeader =
-      !cannotAllowFieldReadRestrict && !cannotAllowFieldUpdateRestrict;
-    const shouldShowEmptyTableHeader = cannotAllowFieldUpdateRestrict;
 
     return (
       <TableRow
@@ -197,8 +192,9 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
           />
         </TableCell>
         <>
-          {shouldShowEmptyTableHeader && <TableCell />}
-          {shouldShowSeeTableHeader && (
+          {!shouldShowSeeColumn && <TableCell />}
+          {!shouldShowUpdateColumn && <TableCell />}
+          {shouldShowSeeColumn && (
             <TableCell>
               <OverridableCheckbox
                 disabled={!canRestrictRead}
@@ -208,7 +204,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
               />
             </TableCell>
           )}
-          {shouldShowUpdateTableHeader && (
+          {shouldShowUpdateColumn && (
             <TableCell align="left">
               <OverridableCheckbox
                 disabled={!canRestrictUpdate}
