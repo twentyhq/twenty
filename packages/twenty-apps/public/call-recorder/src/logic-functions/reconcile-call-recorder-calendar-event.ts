@@ -6,6 +6,7 @@ import {
   type ObjectRecordBaseEvent,
 } from 'twenty-sdk/define';
 
+import { CallRecorderPreference } from 'src/constants/call-recorder-preference';
 import { CALENDAR_EVENT_RECONCILIATION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type RemovedCallRecorderOccurrence } from 'src/logic-functions/types/removed-call-recorder-occurrence.type';
 import { computeRealMeetingKey } from 'src/logic-functions/domain/compute-real-meeting-key.util';
@@ -40,6 +41,7 @@ const CALL_RECORDER_KEY_CALENDAR_EVENT_FIELDS = [
 
 type CalendarEventForDatabaseEvent = {
   id: string;
+  callRecorderPreference?: string | null;
   conferenceLink?: { primaryLinkUrl?: string | null } | null;
   location?: string | null;
   description?: string | null;
@@ -112,7 +114,14 @@ const buildCalendarEventReconciliationPayload = ({
   if (action === 'updated') {
     const updatedFields = event.properties.updatedFields ?? [];
 
-    if (!hasRelevantFieldChange(updatedFields)) {
+    if (
+      !hasRelevantFieldChange(updatedFields) ||
+      isDefaultPreferenceClearing({
+        updatedFields,
+        before: event.properties.before,
+        after: event.properties.after,
+      })
+    ) {
       return { calendarEventIds: [], removedOccurrences: [] };
     }
 
@@ -149,6 +158,23 @@ const hasRelevantFieldChange = (updatedFields: string[]): boolean =>
   updatedFields.some((updatedField) =>
     CALL_RECORDER_RELEVANT_CALENDAR_EVENT_FIELDS.includes(updatedField),
   );
+
+// The app clears the default ON on past meetings itself; reacting to that
+// write would only re-run the same reconciliation. The policy reads an
+// empty preference exactly like ON, so nothing is missed by skipping it.
+const isDefaultPreferenceClearing = ({
+  updatedFields,
+  before,
+  after,
+}: {
+  updatedFields: string[];
+  before: CalendarEventForDatabaseEvent | undefined;
+  after: CalendarEventForDatabaseEvent | undefined;
+}): boolean =>
+  updatedFields.length === 1 &&
+  updatedFields[0] === 'callRecorderPreference' &&
+  before?.callRecorderPreference === CallRecorderPreference.ON &&
+  (after?.callRecorderPreference ?? null) === null;
 
 const hasKeyFieldChange = (updatedFields: string[]): boolean =>
   updatedFields.some((updatedField) =>

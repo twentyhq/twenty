@@ -22,6 +22,13 @@ cost scales with how much was said in the meeting, typically **$0.02–$0.06 per
 meeting** on default models. Set the `CALL_RECORDER_SUMMARY_ENABLED` app
 variable to `false` to turn summaries off.
 
+## 🤖 The Recording Bot field
+
+Each calendar event has a **Recording Bot** field. It reads On for upcoming
+meetings by default and can be set to Off per event. Once a meeting has ended
+it is cleared automatically unless the recorder was actually sent, so the field
+only reads On for meetings that were or will be recorded.
+
 ## 🎥 Supported meeting platforms
 
 The recording bot can only join meetings on these platforms:

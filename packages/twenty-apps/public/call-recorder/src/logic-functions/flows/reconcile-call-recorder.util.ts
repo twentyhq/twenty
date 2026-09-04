@@ -13,6 +13,9 @@ import { buildCallRecorderPolicyResult } from 'src/logic-functions/domain/build-
 import { cancelCallRecordingRequest } from 'src/logic-functions/flows/cancel-call-recording-request.util';
 import { computeCallRecordingIdForMeeting } from 'src/logic-functions/domain/compute-call-recording-id-for-meeting.util';
 import { isUnavailableCallRecordingStatus } from 'src/logic-functions/domain/is-unavailable-call-recording-status.util';
+import { hasCallRecordingAttempt } from 'src/logic-functions/domain/has-call-recording-attempt.util';
+import { isStaleDefaultCallRecorderPreference } from 'src/logic-functions/domain/is-stale-default-call-recorder-preference.util';
+import { clearCallRecorderPreferences } from 'src/logic-functions/data/clear-call-recorder-preferences.util';
 import {
   createCallRecording,
   type ScheduledCallRecordingFields,
@@ -101,6 +104,11 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
     client,
     [...occurrenceStartsAtAnchors],
   );
+  const calendarEventsById = new Map(
+    [...changedCalendarEvents, ...occurrenceSiblingEvents].map(
+      (calendarEvent) => [calendarEvent.id, calendarEvent],
+    ),
+  );
   const policyResultsByCalendarEventId = new Map(
     changedCalendarEventPolicyResults.map((policyResult) => [
       policyResult.calendarEventId,
@@ -125,11 +133,25 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
     .filter((policyResult) =>
       affectedMeetingKeys.has(policyResult.realMeetingKey),
     )
-    .map((policyResult) => ({
-      calendarEventId: policyResult.calendarEventId,
-      realMeetingKey: policyResult.realMeetingKey,
-      shouldRequestBot: policyResult.shouldRequestBot,
-    }));
+    .map((policyResult) => {
+      const calendarEvent = calendarEventsById.get(
+        policyResult.calendarEventId,
+      );
+
+      return {
+        calendarEventId: policyResult.calendarEventId,
+        realMeetingKey: policyResult.realMeetingKey,
+        shouldRequestBot: policyResult.shouldRequestBot,
+        hasStaleDefaultPreference:
+          !isUndefined(calendarEvent) &&
+          isStaleDefaultCallRecorderPreference({
+            callRecorderPreference: policyResult.callRecorderPreference,
+            startsAt: calendarEvent.startsAt,
+            endsAt: calendarEvent.endsAt,
+            now,
+          }),
+      };
+    });
   const meetingPolicyResults = aggregateCallRecorderPolicyResultsByMeeting(
     perCalendarEventPolicyResults,
   );
@@ -149,6 +171,7 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
       shouldRequestBot: false,
       calendarEventIds: [],
       requestingCalendarEventIds: [],
+      staleDefaultPreferenceCalendarEventIds: [],
     });
   }
 
@@ -410,14 +433,26 @@ const reconcileCanceledMeeting = async ({
     ...meetingPolicyResult.calendarEventIds,
     ...removedCalendarEventIds,
   ]);
-  const cancellableCallRecordings = (
-    await findCallRecordingsByCalendarEventIds(client, calendarEventIds)
-  ).filter(
+  const meetingCallRecordings = await findCallRecordingsByCalendarEventIds(
+    client,
+    calendarEventIds,
+  );
+  const cancellableCallRecordings = meetingCallRecordings.filter(
     (callRecording) =>
       callRecording.status === CallRecordingStatus.SCHEDULED &&
       callRecording.recordingRequestStatus ===
         CallRecordingRequestStatus.REQUESTED,
   );
+
+  if (
+    meetingPolicyResult.staleDefaultPreferenceCalendarEventIds.length > 0 &&
+    !hasCallRecordingAttempt(meetingCallRecordings)
+  ) {
+    await clearCallRecorderPreferences(
+      client,
+      meetingPolicyResult.staleDefaultPreferenceCalendarEventIds,
+    );
+  }
 
   if (cancellableCallRecordings.length === 0) {
     return buildSkippedResult(meetingPolicyResult.realMeetingKey);

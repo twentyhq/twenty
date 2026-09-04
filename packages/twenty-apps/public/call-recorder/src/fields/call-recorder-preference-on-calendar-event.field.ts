@@ -18,9 +18,9 @@ export default defineField({
   name: 'callRecorderPreference',
   label: 'Recording Bot',
   description:
-    'Call recording is on by default when the app is installed. Turn it off for this event when needed.',
+    'Call recording is on by default for upcoming meetings. Turn it off for this event when needed. Cleared on past meetings that were never recorded.',
   icon: 'IconRobot',
-  isNullable: false,
+  isNullable: true,
   defaultValue: `'${CallRecorderPreference.ON}'`,
   options: [
     {

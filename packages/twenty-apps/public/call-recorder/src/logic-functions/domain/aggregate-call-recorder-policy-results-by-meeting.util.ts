@@ -4,7 +4,9 @@ import { type CallRecorderPolicyResultForMeeting } from 'src/logic-functions/typ
 type CallRecorderPolicyResultForMeetingInput = Pick<
   CallRecorderPolicyResultForCalendarEvent,
   'calendarEventId' | 'realMeetingKey' | 'shouldRequestBot'
->;
+> & {
+  hasStaleDefaultPreference?: boolean;
+};
 
 export const aggregateCallRecorderPolicyResultsByMeeting = (
   perCalendarEventPolicyResults: CallRecorderPolicyResultForMeetingInput[],
@@ -18,6 +20,7 @@ export const aggregateCallRecorderPolicyResultsByMeeting = (
     calendarEventId,
     realMeetingKey,
     shouldRequestBot,
+    hasStaleDefaultPreference = false,
   } of perCalendarEventPolicyResults) {
     const meetingPolicyResult = meetingPolicyResultsByMeetingKey.get(
       realMeetingKey,
@@ -26,9 +29,16 @@ export const aggregateCallRecorderPolicyResultsByMeeting = (
       shouldRequestBot: false,
       calendarEventIds: [],
       requestingCalendarEventIds: [],
+      staleDefaultPreferenceCalendarEventIds: [],
     };
 
     meetingPolicyResult.calendarEventIds.push(calendarEventId);
+
+    if (hasStaleDefaultPreference) {
+      meetingPolicyResult.staleDefaultPreferenceCalendarEventIds.push(
+        calendarEventId,
+      );
+    }
 
     if (shouldRequestBot) {
       meetingPolicyResult.shouldRequestBot = true;
