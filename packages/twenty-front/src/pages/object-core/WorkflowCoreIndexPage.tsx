@@ -1,10 +1,18 @@
 import { useEffect } from 'react';
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { useInView } from 'react-intersection-observer';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { IconPlus } from 'twenty-ui/icon';
 
 import { CoreObjectTable } from '@/object-core/components/CoreObjectTable';
+import { CoreObjectTableAddNewRow } from '@/object-core/components/CoreObjectTableAddNewRow';
+import { useCreateCoreWorkflow } from '@/object-core/workflows/hooks/useCreateCoreWorkflow';
+import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
+import { isUsableCoreWorkflowFilterRule } from '@/object-core/workflows/utils/isUsableCoreWorkflowFilterRule';
+import { RecordIndexEmptyStateDisplay } from '@/object-record/record-index/components/RecordIndexEmptyStateDisplay';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CoreWorkflowsFilterBar } from '@/object-core/workflows/components/CoreWorkflowsFilterBar';
 import { WORKFLOW_CORE_TABLE_COLUMNS } from '@/object-core/workflows/constants/WorkflowCoreTableColumns';
 import {
@@ -53,6 +61,20 @@ export const WorkflowCoreIndexPage = () => {
 
   const { ref: fetchMoreRef, inView } = useInView();
 
+  const { t } = useLingui();
+
+  const { createCoreWorkflow, canCreateCoreWorkflow } = useCreateCoreWorkflow();
+
+  const coreWorkflowsFilterSettings = useAtomStateValue(
+    coreWorkflowsFilterSettingsState,
+  );
+
+  const hasAppliedFilters = (
+    coreWorkflowsFilterSettings.stepFilters ?? []
+  ).some(isUsableCoreWorkflowFilterRule);
+
+  const isEmpty = !loading && coreWorkflows.length === 0;
+
   useEffect(() => {
     if (inView && hasNextPage && !loading) {
       void fetchNextPage();
@@ -79,15 +101,46 @@ export const WorkflowCoreIndexPage = () => {
         }
       >
         <StyledTableContainer>
-          <CoreObjectTable
-            tableId={tableId}
-            columns={WORKFLOW_CORE_TABLE_COLUMNS}
-            items={coreWorkflows}
-            getItemKey={(workflow) => workflow.id}
-            getItemLink={getCoreWorkflowLink}
-            initialSort={CORE_WORKFLOWS_INITIAL_SORT}
-          />
-          {hasNextPage && <StyledFetchMoreSentinel ref={fetchMoreRef} />}
+          {isEmpty ? (
+            <RecordIndexEmptyStateDisplay
+              animatedPlaceholderType={
+                hasAppliedFilters ? 'noMatchRecord' : 'noRecord'
+              }
+              title={
+                hasAppliedFilters
+                  ? t`No ${objectMetadataItem.labelPlural} found`
+                  : t`Add your first ${objectMetadataItem.labelSingular}`
+              }
+              subTitle={
+                hasAppliedFilters
+                  ? t`No ${objectMetadataItem.labelPlural} match your filters. Try removing some of them.`
+                  : t`Create a workflow to automate your work.`
+              }
+              ButtonIcon={IconPlus}
+              buttonTitle={t`Add a ${objectMetadataItem.labelSingular}`}
+              onButtonClick={
+                canCreateCoreWorkflow ? createCoreWorkflow : undefined
+              }
+            />
+          ) : (
+            <>
+              <CoreObjectTable
+                tableId={tableId}
+                columns={WORKFLOW_CORE_TABLE_COLUMNS}
+                items={coreWorkflows}
+                getItemKey={(workflow) => workflow.id}
+                getItemLink={getCoreWorkflowLink}
+                initialSort={CORE_WORKFLOWS_INITIAL_SORT}
+              />
+              {canCreateCoreWorkflow && (
+                <CoreObjectTableAddNewRow
+                  label={t`New ${objectMetadataItem.labelSingular}`}
+                  onClick={createCoreWorkflow}
+                />
+              )}
+              {hasNextPage && <StyledFetchMoreSentinel ref={fetchMoreRef} />}
+            </>
+          )}
         </StyledTableContainer>
       </PageCardLayout>
     </>
