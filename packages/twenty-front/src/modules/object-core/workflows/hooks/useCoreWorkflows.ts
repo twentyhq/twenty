@@ -65,7 +65,7 @@ export const useCoreWorkflows = ({
 
   const [isFetchingMore, setIsFetchingMore] = useState(false);
 
-  const { data, previousData, loading, error, fetchMore, refetch } = useQuery(
+  const { data, previousData, loading, error, fetchMore } = useQuery(
     GetCoreWorkflowsDocument,
     {
       client: apolloCoreClient,
@@ -110,7 +110,6 @@ export const useCoreWorkflows = ({
     totalCount: connection?.totalCount ?? 0,
     hasNextPage: connection?.pageInfo.hasNextPage ?? false,
     fetchNextPage,
-    refetch,
     loading,
     error,
   };

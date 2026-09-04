@@ -7,11 +7,9 @@ import {
 } from '@/object-core/components/CoreObjectTableRow';
 import { CoreObjectTableCheckboxCell } from '@/object-core/components/CoreObjectTableCheckboxCell';
 import { CORE_OBJECT_TABLE_CHECKBOX_COLUMN_GRID_TRACK } from '@/object-core/constants/CoreObjectTableCheckboxColumnGridTrack';
-import { selectedCoreObjectRowIdsFamilyState } from '@/object-core/states/selectedCoreObjectRowIdsFamilyState';
 import { type CoreObjectTableColumn } from '@/object-core/types/CoreObjectTableColumn';
+import { type CoreObjectTableSelection } from '@/object-core/types/CoreObjectTableSelection';
 import { getCoreObjectTableSelectionStatus } from '@/object-core/utils/getCoreObjectTableSelectionStatus';
-import { toggleRowIdInSelection } from '@/object-core/utils/toggleRowIdInSelection';
-import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -28,7 +26,7 @@ type CoreObjectTableProps<TItem> = {
   getItemKey: (item: TItem) => string;
   getItemLink?: (item: TItem) => string | undefined;
   initialSort?: TableMetadata<TItem>['initialSort'];
-  isSelectable?: boolean;
+  selection?: CoreObjectTableSelection<TItem>;
 };
 
 const isSortableColumn = <TItem,>(
@@ -43,27 +41,23 @@ export const CoreObjectTable = <TItem,>({
   getItemKey,
   getItemLink,
   initialSort,
-  isSelectable = false,
+  selection,
 }: CoreObjectTableProps<TItem>) => {
   const { t } = useLingui();
 
-  const [selectedRowIds, setSelectedRowIds] = useAtomFamilyState(
-    selectedCoreObjectRowIdsFamilyState,
-    { tableId },
-  );
+  const isSelectable = isDefined(selection);
 
-  const rowIds = items.map(getItemKey);
+  const selectableRowIds = isSelectable
+    ? items
+        .filter((item) => selection.isItemSelectable?.(item) ?? true)
+        .map(getItemKey)
+    : [];
 
   const { areAllRowsSelected, areSomeRowsSelected } =
-    getCoreObjectTableSelectionStatus({ rowIds, selectedRowIds });
-
-  const toggleRowSelection = (rowId: string) =>
-    setSelectedRowIds((previousSelectedRowIds) =>
-      toggleRowIdInSelection({ selectedRowIds: previousSelectedRowIds, rowId }),
-    );
-
-  const toggleAllRowsSelection = () =>
-    setSelectedRowIds(areAllRowsSelected ? [] : rowIds);
+    getCoreObjectTableSelectionStatus({
+      rowIds: selectableRowIds,
+      selectedRowIds: selection?.selectedRowIds ?? [],
+    });
 
   const gridTemplateColumns = [
     ...(isSelectable ? [CORE_OBJECT_TABLE_CHECKBOX_COLUMN_GRID_TRACK] : []),
@@ -78,8 +72,12 @@ export const CoreObjectTable = <TItem,>({
             <CoreObjectTableCheckboxCell
               checked={areAllRowsSelected || areSomeRowsSelected}
               indeterminate={areSomeRowsSelected}
-              ariaLabel={t`Select all rows`}
-              onToggle={toggleAllRowsSelection}
+              ariaLabel={t`Select all loaded rows`}
+              onToggle={() =>
+                selection.onToggleAllRows(
+                  areAllRowsSelected ? [] : selectableRowIds,
+                )
+              }
             />
           </TableHeader>
         )}
@@ -114,11 +112,13 @@ export const CoreObjectTable = <TItem,>({
             >
               {isSelectable && (
                 <TableCell align="center" padding="0">
-                  <CoreObjectTableCheckboxCell
-                    checked={selectedRowIds.includes(rowId)}
-                    ariaLabel={t`Select row`}
-                    onToggle={() => toggleRowSelection(rowId)}
-                  />
+                  {(selection.isItemSelectable?.(item) ?? true) && (
+                    <CoreObjectTableCheckboxCell
+                      checked={selection.selectedRowIds.includes(rowId)}
+                      ariaLabel={t`Select row`}
+                      onToggle={() => selection.onToggleRow(rowId)}
+                    />
+                  )}
                 </TableCell>
               )}
               {columns.map((column) => (

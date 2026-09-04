@@ -82,7 +82,7 @@ jest.mock('react-intersection-observer', () => ({
 jest.mock('@/object-core/workflows/hooks/useDeleteCoreWorkflows', () => ({
   useDeleteCoreWorkflows: () => ({
     deleteCoreWorkflows: jest.fn(),
-    canDeleteCoreWorkflows: false,
+    canDeleteCoreWorkflows: true,
     isDeletingCoreWorkflows: false,
   }),
 }));

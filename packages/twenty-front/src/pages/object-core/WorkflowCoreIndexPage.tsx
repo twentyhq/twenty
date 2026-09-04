@@ -1,20 +1,20 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { styled } from '@linaria/react';
 import { useInView } from 'react-intersection-observer';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
-import { t } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
 import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 
 import { CoreObjectTable } from '@/object-core/components/CoreObjectTable';
-import { selectedCoreObjectRowIdsFamilyState } from '@/object-core/states/selectedCoreObjectRowIdsFamilyState';
 import { DELETE_CORE_WORKFLOWS_MODAL_ID } from '@/object-core/workflows/constants/DeleteCoreWorkflowsModalId';
 import { useDeleteCoreWorkflows } from '@/object-core/workflows/hooks/useDeleteCoreWorkflows';
+import { toggleRowIdInSelection } from '@/object-core/utils/toggleRowIdInSelection';
+import { getSelectedWorkspaceWorkflowIds } from '@/object-core/workflows/utils/getSelectedWorkspaceWorkflowIds';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { CoreWorkflowsFilterBar } from '@/object-core/workflows/components/CoreWorkflowsFilterBar';
 import { WORKFLOW_CORE_TABLE_COLUMNS } from '@/object-core/workflows/constants/WorkflowCoreTableColumns';
 import {
@@ -58,15 +58,15 @@ export const WorkflowCoreIndexPage = () => {
     objectNameSingular: CoreObjectNameSingular.Workflow,
   });
 
-  const { coreWorkflows, hasNextPage, loading, fetchNextPage, refetch } =
+  const { coreWorkflows, hasNextPage, loading, fetchNextPage } =
     useCoreWorkflows({ tableId });
 
   const { ref: fetchMoreRef, inView } = useInView();
 
-  const [selectedRowIds, setSelectedRowIds] = useAtomFamilyState(
-    selectedCoreObjectRowIdsFamilyState,
-    { tableId },
-  );
+  const [selectedRowIds, setSelectedRowIds] = useState<string[]>([]);
+
+  const [deletedWorkspaceWorkflowIds, setDeletedWorkspaceWorkflowIds] =
+    useState<string[]>([]);
 
   const { openModal } = useModal();
 
@@ -76,20 +76,31 @@ export const WorkflowCoreIndexPage = () => {
     isDeletingCoreWorkflows,
   } = useDeleteCoreWorkflows();
 
-  const selectedWorkspaceWorkflowIds = coreWorkflows
-    .filter((coreWorkflow) => selectedRowIds.includes(coreWorkflow.id))
-    .map((coreWorkflow) => coreWorkflow.workspaceWorkflowId)
-    .filter(isDefined);
+  const displayedCoreWorkflows = coreWorkflows.filter(
+    (coreWorkflow) =>
+      !isDefined(coreWorkflow.workspaceWorkflowId) ||
+      !deletedWorkspaceWorkflowIds.includes(coreWorkflow.workspaceWorkflowId),
+  );
+
+  const selectedWorkspaceWorkflowIds = getSelectedWorkspaceWorkflowIds({
+    coreWorkflows: displayedCoreWorkflows,
+    selectedRowIds,
+  });
 
   const handleDeleteConfirm = async () => {
-    const hasDeleted = await deleteCoreWorkflows(selectedWorkspaceWorkflowIds);
+    const workspaceWorkflowIdsToDelete = selectedWorkspaceWorkflowIds;
+
+    const hasDeleted = await deleteCoreWorkflows(workspaceWorkflowIdsToDelete);
 
     if (!hasDeleted) {
       return;
     }
 
+    setDeletedWorkspaceWorkflowIds((previousDeletedWorkspaceWorkflowIds) => [
+      ...previousDeletedWorkspaceWorkflowIds,
+      ...workspaceWorkflowIdsToDelete,
+    ]);
     setSelectedRowIds([]);
-    await refetch();
   };
 
   useEffect(() => {
@@ -132,20 +143,42 @@ export const WorkflowCoreIndexPage = () => {
           <CoreObjectTable
             tableId={tableId}
             columns={WORKFLOW_CORE_TABLE_COLUMNS}
-            items={coreWorkflows}
+            items={displayedCoreWorkflows}
             getItemKey={(workflow) => workflow.id}
             getItemLink={getCoreWorkflowLink}
             initialSort={CORE_WORKFLOWS_INITIAL_SORT}
-            isSelectable={canDeleteCoreWorkflows}
+            selection={
+              canDeleteCoreWorkflows
+                ? {
+                    selectedRowIds,
+                    onToggleRow: (rowId) =>
+                      setSelectedRowIds((previousSelectedRowIds) =>
+                        toggleRowIdInSelection({
+                          selectedRowIds: previousSelectedRowIds,
+                          rowId,
+                        }),
+                      ),
+                    onToggleAllRows: setSelectedRowIds,
+                    isItemSelectable: (coreWorkflow) =>
+                      isDefined(coreWorkflow.workspaceWorkflowId),
+                  }
+                : undefined
+            }
           />
           {hasNextPage && <StyledFetchMoreSentinel ref={fetchMoreRef} />}
           <ConfirmationModal
             modalInstanceId={DELETE_CORE_WORKFLOWS_MODAL_ID}
-            title={t`Delete ${selectedWorkspaceWorkflowIds.length} ${objectMetadataItem.labelPlural}?`}
-            subtitle={t`This action cannot be undone. Deleted ${objectMetadataItem.labelPlural} can be restored from the deleted records view.`}
+            title={plural(selectedWorkspaceWorkflowIds.length, {
+              one: 'Delete 1 workflow?',
+              other: 'Delete # workflows?',
+            })}
+            subtitle={plural(selectedWorkspaceWorkflowIds.length, {
+              one: 'This workflow and its run history will no longer be listed.',
+              other:
+                'These workflows and their run history will no longer be listed.',
+            })}
             onConfirmClick={handleDeleteConfirm}
             confirmButtonText={t`Delete`}
-            loading={isDeletingCoreWorkflows}
           />
         </StyledTableContainer>
       </PageCardLayout>
