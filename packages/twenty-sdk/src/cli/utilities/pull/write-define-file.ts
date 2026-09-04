@@ -12,6 +12,7 @@ import {
   RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 const MAX_IMPORT_LINE_LENGTH = 80;
 
@@ -94,7 +95,7 @@ export const writeDefineFile = ({
       isSamePath(candidate.path, path),
     );
 
-    if (binding === undefined) {
+    if (!isDefined(binding)) {
       return undefined;
     }
 
@@ -102,7 +103,7 @@ export const writeDefineFile = ({
       (key) => binding.members[key] === value,
     );
 
-    if (memberName === undefined) {
+    if (!isDefined(memberName)) {
       return undefined;
     }
 
