@@ -9,6 +9,7 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/service
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FILE_CONTENT_SNIFF_BYTE_COUNT } from 'src/engine/core-modules/file/file-upload/constants/file-content-sniff.constant';
+import { MAX_SANITIZABLE_SVG_BYTES } from 'src/engine/core-modules/file/file-upload/constants/max-sanitizable-svg-size.constant';
 import {
   FileUploadException,
   FileUploadExceptionCode,
@@ -199,9 +200,19 @@ export class FileUploadCompletionService {
       return size;
     }
 
+    if (size > MAX_SANITIZABLE_SVG_BYTES) {
+      throw new FileUploadException(
+        `SVG of ${size} bytes exceeds the ${MAX_SANITIZABLE_SVG_BYTES} bytes that can be sanitized`,
+        FileUploadExceptionCode.FILE_TOO_LARGE,
+        {
+          userFriendlyMessage: msg`This SVG is too large to be processed.`,
+        },
+      );
+    }
+
     const stream = await this.fileStorageService.readFile(storageLocation);
     const sanitizedFile = sanitizeFile({
-      file: await streamToBuffer(stream),
+      file: await streamToBuffer(stream, MAX_SANITIZABLE_SVG_BYTES),
       ext: 'svg',
       mimeType,
     });
