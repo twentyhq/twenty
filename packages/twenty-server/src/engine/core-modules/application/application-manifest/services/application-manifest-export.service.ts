@@ -19,6 +19,18 @@ import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-e
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
+const PLACEHOLDER_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  STANDARD_ROLE.admin.universalIdentifier;
+
+const findUniversalIdentifierById = ({
+  flatEntityMaps,
+  id,
+}: {
+  flatEntityMaps: { universalIdentifierById: Partial<Record<string, string>> };
+  id: string | null;
+}): string | undefined =>
+  isDefined(id) ? flatEntityMaps.universalIdentifierById[id] : undefined;
+
 @Injectable()
 export class ApplicationManifestExportService {
   constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
@@ -59,20 +71,22 @@ export class ApplicationManifestExportService {
       { applicationAllFlatEntityMaps },
     );
 
-    const defaultRoleUniversalIdentifier = isDefined(
-      flatApplication.defaultRoleId,
-    )
-      ? allFlatEntityMaps.flatRoleMaps.universalIdentifierById[
-          flatApplication.defaultRoleId
-        ]
-      : undefined;
-
     const manifest: Manifest = {
       application: fromFlatApplicationToApplicationManifest({
         flatApplication,
         defaultRoleUniversalIdentifier:
-          defaultRoleUniversalIdentifier ??
-          STANDARD_ROLE.admin.universalIdentifier,
+          findUniversalIdentifierById({
+            flatEntityMaps: allFlatEntityMaps.flatRoleMaps,
+            id: flatApplication.defaultRoleId,
+          }) ?? PLACEHOLDER_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+        settingsFrontComponentUniversalIdentifier: findUniversalIdentifierById({
+          flatEntityMaps: allFlatEntityMaps.flatFrontComponentMaps,
+          id: flatApplication.settingsCustomTabFrontComponentId,
+        }),
+        uninstallLogicFunctionUniversalIdentifier: findUniversalIdentifierById({
+          flatEntityMaps: allFlatEntityMaps.flatLogicFunctionMaps,
+          id: flatApplication.uninstallLogicFunctionId,
+        }),
       }),
       objects,
       fields,

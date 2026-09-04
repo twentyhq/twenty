@@ -5,11 +5,12 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationExportCoverageEntry } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
+import { compareByCodePoint } from 'src/engine/core-modules/application/application-manifest/utils/compare-by-code-point.util';
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { ALL_MANY_TO_ONE_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-relations.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
+import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { isSystemSideEffectFlatEntity } from 'src/engine/metadata-modules/flat-entity/utils/is-system-side-effect-flat-entity.util';
 
@@ -17,30 +18,15 @@ type ApplicationFlatEntity = MetadataFlatEntity<AllMetadataName>;
 
 type Classification = Pick<ApplicationExportCoverageEntry, 'status' | 'reason'>;
 
-const FOREIGN_OWNED_PARENT_METADATA_NAMES = new Set<AllMetadataName>([
-  'objectMetadata',
-  'role',
-  'view',
-  'pageLayout',
-  'pageLayoutTab',
-]);
+type ClassificationContext = {
+  flatApplication: Pick<FlatApplication, 'id'>;
+  applicationAllFlatEntityMaps: AllFlatEntityMaps;
+  allFlatEntityMaps: AllFlatEntityMaps;
+};
 
-const FOREIGN_OWNED_PARENT_REFERENCES: {
-  metadataName: AllMetadataName;
-  parentProperty: string;
-  parentMetadataName: AllMetadataName;
-}[] = Object.values(ALL_METADATA_NAME).flatMap((metadataName) =>
-  Object.values(ALL_MANY_TO_ONE_METADATA_RELATIONS[metadataName])
-    .filter(isDefined)
-    .filter((relation) =>
-      FOREIGN_OWNED_PARENT_METADATA_NAMES.has(relation.metadataName),
-    )
-    .map((relation) => ({
-      metadataName,
-      parentProperty: relation.universalForeignKey,
-      parentMetadataName: relation.metadataName,
-    })),
-);
+type ContainedFlatEntityScan = (
+  context: ClassificationContext,
+) => ApplicationExportCoverageEntry[];
 
 const getFlatEntities = ({
   allFlatEntityMaps,
@@ -56,20 +42,6 @@ const getFlatEntities = ({
 
 const isSoftDeleted = (flatEntity: ApplicationFlatEntity): boolean =>
   'deletedAt' in flatEntity && isDefined(flatEntity.deletedAt);
-
-const readParentUniversalIdentifier = ({
-  flatEntity,
-  parentProperty,
-}: {
-  flatEntity: ApplicationFlatEntity;
-  parentProperty: string;
-}): string | undefined => {
-  const value = Object.entries(flatEntity).find(
-    ([property]) => property === parentProperty,
-  )?.[1];
-
-  return typeof value === 'string' ? value : undefined;
-};
 
 const classifyFlatEntity = ({
   metadataName,
@@ -138,23 +110,228 @@ const classifyFlatEntity = ({
   }
 };
 
+const classifyContainedFlatEntity = ({
+  metadataName,
+  flatEntity,
+}: {
+  metadataName: AllMetadataName;
+  flatEntity: ApplicationFlatEntity;
+}): Classification | undefined => {
+  const classification = classifyFlatEntity({ metadataName, flatEntity });
+
+  if (
+    classification.status === ApplicationExportCoverageStatus.ENGINE_DERIVED
+  ) {
+    return undefined;
+  }
+
+  return classification.status === ApplicationExportCoverageStatus.EXCLUDED
+    ? classification
+    : {
+        status: ApplicationExportCoverageStatus.FOREIGN_OWNED,
+        reason: `owned by application ${flatEntity.applicationUniversalIdentifier}`,
+      };
+};
+
+const buildContainedFlatEntityScan =
+  <TMetadataName extends AllMetadataName>({
+    metadataName,
+    selectFlatEntityMaps,
+    containerMetadataName,
+    containerUniversalForeignKey,
+  }: {
+    metadataName: TMetadataName;
+    selectFlatEntityMaps: (
+      allFlatEntityMaps: AllFlatEntityMaps,
+    ) => MetadataFlatEntityMaps<TMetadataName>;
+    containerMetadataName: AllMetadataName;
+    containerUniversalForeignKey: keyof MetadataFlatEntity<TMetadataName> &
+      string;
+  }): ContainedFlatEntityScan =>
+  ({ flatApplication, applicationAllFlatEntityMaps, allFlatEntityMaps }) => {
+    const containerByUniversalIdentifier =
+      applicationAllFlatEntityMaps[
+        getMetadataFlatEntityMapsKey(containerMetadataName)
+      ].byUniversalIdentifier;
+    const entries: ApplicationExportCoverageEntry[] = [];
+
+    for (const flatEntity of Object.values(
+      selectFlatEntityMaps(allFlatEntityMaps).byUniversalIdentifier,
+    ).filter(isDefined)) {
+      const containerUniversalIdentifier =
+        flatEntity[containerUniversalForeignKey];
+
+      if (
+        flatEntity.applicationId === flatApplication.id ||
+        isSystemSideEffectFlatEntity(flatEntity) ||
+        isSoftDeleted(flatEntity) ||
+        typeof containerUniversalIdentifier !== 'string' ||
+        !isDefined(containerByUniversalIdentifier[containerUniversalIdentifier])
+      ) {
+        continue;
+      }
+
+      const classification = classifyContainedFlatEntity({
+        metadataName,
+        flatEntity,
+      });
+
+      if (!isDefined(classification)) {
+        continue;
+      }
+
+      entries.push({
+        metadataName,
+        universalIdentifier: flatEntity.universalIdentifier,
+        ...classification,
+      });
+    }
+
+    return entries;
+  };
+
+const CONTAINED_FLAT_ENTITY_SCANS: ContainedFlatEntityScan[] = [
+  buildContainedFlatEntityScan({
+    metadataName: 'fieldMetadata',
+    selectFlatEntityMaps: (allFlatEntityMaps) =>
+      allFlatEntityMaps.flatFieldMetadataMaps,
+    containerMetadataName: 'objectMetadata',
+    containerUniversalForeignKey: 'objectMetadataUniversalIdentifier',
+  }),
+  buildContainedFlatEntityScan({
+    metadataName: 'index',
+    selectFlatEntityMaps: (allFlatEntityMaps) =>
+      allFlatEntityMaps.flatIndexMaps,
+    containerMetadataName: 'objectMetadata',
+    containerUniversalForeignKey: 'objectMetadataUniversalIdentifier',
+  }),
+  buildContainedFlatEntityScan({
+    metadataName: 'view',
+    selectFlatEntityMaps: (allFlatEntityMaps) => allFlatEntityMaps.flatViewMaps,
+    containerMetadataName: 'objectMetadata',
+    containerUniversalForeignKey: 'objectMetadataUniversalIdentifier',
+  }),
+  buildContainedFlatEntityScan({
+    metadataName: 'pageLayout',
+    selectFlatEntityMaps: (allFlatEntityMaps) =>
+      allFlatEntityMaps.flatPageLayoutMaps,
+    containerMetadataName: 'objectMetadata',
+    containerUniversalForeignKey: 'objectMetadataUniversalIdentifier',
+  }),
+  buildContainedFlatEntityScan({
+    metadataName: 'viewField',
+    selectFlatEntityMaps: (allFlatEntityMaps) =>
+      allFlatEntityMaps.flatViewFieldMaps,
+    containerMetadataName: 'view',
+    containerUniversalForeignKey: 'viewUniversalIdentifier',
+  }),
+  buildContainedFlatEntityScan({
+    metadataName: 'viewFieldGroup',
+    selectFlatEntityMaps: (allFlatEntityMaps) =>
+      allFlatEntityMaps.flatViewFieldGroupMaps,
+    containerMetadataName: 'view',
+    containerUniversalForeignKey: 'viewUniversalIdentifier',
+  }),
+  buildContainedFlatEntityScan({
+    metadataName: 'viewFilter',
+    selectFlatEntityMaps: (allFlatEntityMaps) =>
+      allFlatEntityMaps.flatViewFilterMaps,
+    containerMetadataName: 'view',
+    containerUniversalForeignKey: 'viewUniversalIdentifier',
+  }),
+  buildContainedFlatEntityScan({
+    metadataName: 'viewFilterGroup',
+    selectFlatEntityMaps: (allFlatEntityMaps) =>
+      allFlatEntityMaps.flatViewFilterGroupMaps,
+    containerMetadataName: 'view',
+    containerUniversalForeignKey: 'viewUniversalIdentifier',
+  }),
+  buildContainedFlatEntityScan({
+    metadataName: 'viewGroup',
+    selectFlatEntityMaps: (allFlatEntityMaps) =>
+      allFlatEntityMaps.flatViewGroupMaps,
+    containerMetadataName: 'view',
+    containerUniversalForeignKey: 'viewUniversalIdentifier',
+  }),
+  buildContainedFlatEntityScan({
+    metadataName: 'viewSort',
+    selectFlatEntityMaps: (allFlatEntityMaps) =>
+      allFlatEntityMaps.flatViewSortMaps,
+    containerMetadataName: 'view',
+    containerUniversalForeignKey: 'viewUniversalIdentifier',
+  }),
+  buildContainedFlatEntityScan({
+    metadataName: 'pageLayoutTab',
+    selectFlatEntityMaps: (allFlatEntityMaps) =>
+      allFlatEntityMaps.flatPageLayoutTabMaps,
+    containerMetadataName: 'pageLayout',
+    containerUniversalForeignKey: 'pageLayoutUniversalIdentifier',
+  }),
+  buildContainedFlatEntityScan({
+    metadataName: 'pageLayoutWidget',
+    selectFlatEntityMaps: (allFlatEntityMaps) =>
+      allFlatEntityMaps.flatPageLayoutWidgetMaps,
+    containerMetadataName: 'pageLayoutTab',
+    containerUniversalForeignKey: 'pageLayoutTabUniversalIdentifier',
+  }),
+  buildContainedFlatEntityScan({
+    metadataName: 'roleTarget',
+    selectFlatEntityMaps: (allFlatEntityMaps) =>
+      allFlatEntityMaps.flatRoleTargetMaps,
+    containerMetadataName: 'role',
+    containerUniversalForeignKey: 'roleUniversalIdentifier',
+  }),
+  buildContainedFlatEntityScan({
+    metadataName: 'rolePermissionFlag',
+    selectFlatEntityMaps: (allFlatEntityMaps) =>
+      allFlatEntityMaps.flatRolePermissionFlagMaps,
+    containerMetadataName: 'role',
+    containerUniversalForeignKey: 'roleUniversalIdentifier',
+  }),
+  buildContainedFlatEntityScan({
+    metadataName: 'objectPermission',
+    selectFlatEntityMaps: (allFlatEntityMaps) =>
+      allFlatEntityMaps.flatObjectPermissionMaps,
+    containerMetadataName: 'role',
+    containerUniversalForeignKey: 'roleUniversalIdentifier',
+  }),
+  buildContainedFlatEntityScan({
+    metadataName: 'fieldPermission',
+    selectFlatEntityMaps: (allFlatEntityMaps) =>
+      allFlatEntityMaps.flatFieldPermissionMaps,
+    containerMetadataName: 'role',
+    containerUniversalForeignKey: 'roleUniversalIdentifier',
+  }),
+  buildContainedFlatEntityScan({
+    metadataName: 'rowLevelPermissionPredicate',
+    selectFlatEntityMaps: (allFlatEntityMaps) =>
+      allFlatEntityMaps.flatRowLevelPermissionPredicateMaps,
+    containerMetadataName: 'role',
+    containerUniversalForeignKey: 'roleUniversalIdentifier',
+  }),
+  buildContainedFlatEntityScan({
+    metadataName: 'rowLevelPermissionPredicateGroup',
+    selectFlatEntityMaps: (allFlatEntityMaps) =>
+      allFlatEntityMaps.flatRowLevelPermissionPredicateGroupMaps,
+    containerMetadataName: 'role',
+    containerUniversalForeignKey: 'roleUniversalIdentifier',
+  }),
+];
+
 const compareCoverageEntries = (
   left: ApplicationExportCoverageEntry,
   right: ApplicationExportCoverageEntry,
 ): number =>
-  left.metadataName.localeCompare(right.metadataName) ||
-  left.status.localeCompare(right.status) ||
-  left.universalIdentifier.localeCompare(right.universalIdentifier);
+  compareByCodePoint(left.metadataName, right.metadataName) ||
+  compareByCodePoint(left.status, right.status) ||
+  compareByCodePoint(left.universalIdentifier, right.universalIdentifier);
 
 export const classifyApplicationFlatEntities = ({
   flatApplication,
   applicationAllFlatEntityMaps,
   allFlatEntityMaps,
   reconstructedCoverage,
-}: {
-  flatApplication: Pick<FlatApplication, 'id'>;
-  applicationAllFlatEntityMaps: AllFlatEntityMaps;
-  allFlatEntityMaps: AllFlatEntityMaps;
+}: ClassificationContext & {
   reconstructedCoverage: ApplicationExportCoverageEntry[];
 }): ApplicationExportCoverageEntry[] => {
   const coveredKeys = new Set(
@@ -184,48 +361,14 @@ export const classifyApplicationFlatEntities = ({
     }
   }
 
-  const foreignOwnedKeys = new Set<string>();
+  const context = {
+    flatApplication,
+    applicationAllFlatEntityMaps,
+    allFlatEntityMaps,
+  };
 
-  for (const {
-    metadataName,
-    parentProperty,
-    parentMetadataName,
-  } of FOREIGN_OWNED_PARENT_REFERENCES) {
-    const parentByUniversalIdentifier =
-      applicationAllFlatEntityMaps[
-        getMetadataFlatEntityMapsKey(parentMetadataName)
-      ].byUniversalIdentifier;
-
-    for (const flatEntity of getFlatEntities({
-      allFlatEntityMaps,
-      metadataName,
-    })) {
-      const parentUniversalIdentifier = readParentUniversalIdentifier({
-        flatEntity,
-        parentProperty,
-      });
-      const key = `${metadataName}:${flatEntity.universalIdentifier}`;
-
-      if (
-        flatEntity.applicationId === flatApplication.id ||
-        isSystemSideEffectFlatEntity(flatEntity) ||
-        isSoftDeleted(flatEntity) ||
-        !isDefined(parentUniversalIdentifier) ||
-        !isDefined(parentByUniversalIdentifier[parentUniversalIdentifier]) ||
-        foreignOwnedKeys.has(key)
-      ) {
-        continue;
-      }
-
-      foreignOwnedKeys.add(key);
-      coverage.push({
-        metadataName,
-        universalIdentifier: flatEntity.universalIdentifier,
-        status: ApplicationExportCoverageStatus.FOREIGN_OWNED,
-        reason: `owned by application ${flatEntity.applicationUniversalIdentifier}`,
-      });
-    }
-  }
-
-  return coverage.sort(compareCoverageEntries);
+  return [
+    ...coverage,
+    ...CONTAINED_FLAT_ENTITY_SCANS.flatMap((scan) => scan(context)),
+  ].sort(compareCoverageEntries);
 };

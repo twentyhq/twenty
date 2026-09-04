@@ -20,6 +20,7 @@ const AGE_FIELD_UID = '55555555-5555-4555-8555-555555555555';
 const COMPANY_UID = '66666666-6666-4666-8666-666666666666';
 const TAGLINE_FIELD_UID = '77777777-7777-4777-8777-777777777777';
 const INDEX_UID = '88888888-8888-4888-8888-888888888888';
+const RELATION_FIELD_UID = '99999999-9999-4999-8999-999999999999';
 
 const buildMaps = ({
   objects = [],
@@ -232,5 +233,83 @@ describe('reconstructDataModelManifest', () => {
     expect(statusOf(coverage, 'foreign-index')?.status).toBe(
       ApplicationExportCoverageStatus.UNSUPPORTED,
     );
+  });
+  it('should tell an index on an unsupported object apart from an index outside the application', () => {
+    const { coverage } = reconstructDataModelManifest({
+      applicationAllFlatEntityMaps: buildMaps({
+        objects: [
+          getFlatObjectMetadataMock({
+            ...petObject,
+            labelIdentifierFieldMetadataUniversalIdentifier: null,
+          }),
+        ],
+        fields: [ageField],
+        indexes: [
+          buildIndex({}),
+          buildIndex({
+            universalIdentifier: 'foreign-index',
+            objectMetadataUniversalIdentifier: COMPANY_UID,
+          }),
+        ],
+      }),
+    });
+
+    expect(statusOf(coverage, INDEX_UID)).toMatchObject({
+      status: ApplicationExportCoverageStatus.UNSUPPORTED,
+      reason: 'index on an unsupported object',
+    });
+    expect(statusOf(coverage, 'foreign-index')).toMatchObject({
+      status: ApplicationExportCoverageStatus.UNSUPPORTED,
+      reason: 'index on an object outside the application',
+    });
+  });
+
+  it('should mark a relation field without target unsupported instead of failing the export', () => {
+    const brokenRelationField = buildPetField({
+      universalIdentifier: RELATION_FIELD_UID,
+      name: 'owner',
+      type: FieldMetadataType.RELATION,
+      relationTargetFieldMetadataUniversalIdentifier: null,
+      relationTargetObjectMetadataUniversalIdentifier: null,
+      universalSettings: null,
+    });
+
+    const { objects, coverage } = reconstructDataModelManifest({
+      applicationAllFlatEntityMaps: buildMaps({
+        objects: [petObject],
+        fields: [nameField, ageField, brokenRelationField],
+      }),
+    });
+
+    expect(objects[0].fields.map(({ name }) => name)).toEqual(['age', 'name']);
+    expect(statusOf(coverage, RELATION_FIELD_UID)).toMatchObject({
+      status: ApplicationExportCoverageStatus.UNSUPPORTED,
+      reason: 'relation field without target or settings',
+    });
+  });
+
+  it('should disclose deactivation and workspace overrides on exported rows', () => {
+    const { coverage } = reconstructDataModelManifest({
+      applicationAllFlatEntityMaps: buildMaps({
+        objects: [getFlatObjectMetadataMock({ ...petObject, isActive: false })],
+        fields: [
+          nameField,
+          buildPetField({
+            ...ageField,
+            overrides: { label: 'Age in years' },
+          }),
+        ],
+      }),
+    });
+
+    expect(statusOf(coverage, PET_UID)).toMatchObject({
+      status: ApplicationExportCoverageStatus.EXPORTED,
+      reason: 'deactivated in this workspace, exported active',
+    });
+    expect(statusOf(coverage, AGE_FIELD_UID)).toMatchObject({
+      status: ApplicationExportCoverageStatus.EXPORTED,
+      reason: 'workspace overrides not exported',
+    });
+    expect(statusOf(coverage, NAME_FIELD_UID)).not.toHaveProperty('reason');
   });
 });

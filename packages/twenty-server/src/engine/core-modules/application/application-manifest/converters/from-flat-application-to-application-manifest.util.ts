@@ -17,9 +17,13 @@ export type FlatApplicationHeader = Pick<
 export const fromFlatApplicationToApplicationManifest = ({
   flatApplication,
   defaultRoleUniversalIdentifier,
+  settingsFrontComponentUniversalIdentifier,
+  uninstallLogicFunctionUniversalIdentifier,
 }: {
   flatApplication: FlatApplicationHeader;
   defaultRoleUniversalIdentifier: string;
+  settingsFrontComponentUniversalIdentifier?: string;
+  uninstallLogicFunctionUniversalIdentifier?: string;
 }): ApplicationManifest => ({
   universalIdentifier: flatApplication.universalIdentifier,
   displayName: flatApplication.name,
@@ -29,6 +33,20 @@ export const fromFlatApplicationToApplicationManifest = ({
   ...(isDefined(flatApplication.billing) &&
   !isEmptyObject(flatApplication.billing)
     ? { billing: flatApplication.billing }
+    : {}),
+  ...(isDefined(settingsFrontComponentUniversalIdentifier)
+    ? {
+        settingsFrontComponent: {
+          universalIdentifier: settingsFrontComponentUniversalIdentifier,
+        },
+      }
+    : {}),
+  ...(isDefined(uninstallLogicFunctionUniversalIdentifier)
+    ? {
+        uninstallLogicFunction: {
+          universalIdentifier: uninstallLogicFunctionUniversalIdentifier,
+        },
+      }
     : {}),
   packageJsonChecksum: flatApplication.packageJsonChecksum,
   yarnLockChecksum: flatApplication.yarnLockChecksum,

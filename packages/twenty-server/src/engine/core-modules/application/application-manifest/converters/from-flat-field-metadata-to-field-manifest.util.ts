@@ -3,6 +3,10 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
+  getUnsupportedRelationFieldReason,
+  isExportableRelationFlatFieldMetadata,
+} from 'src/engine/core-modules/application/application-manifest/utils/get-unsupported-relation-field-reason.util';
+import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
@@ -25,27 +29,9 @@ const buildDefaultValue = (flatFieldMetadata: UniversalFlatFieldMetadata) =>
 const buildRelationProperties = (
   flatFieldMetadata: UniversalFlatFieldMetadata,
 ) => {
-  if (
-    !isDefined(
-      flatFieldMetadata.relationTargetFieldMetadataUniversalIdentifier,
-    ) ||
-    !isDefined(
-      flatFieldMetadata.relationTargetObjectMetadataUniversalIdentifier,
-    ) ||
-    !isDefined(flatFieldMetadata.universalSettings)
-  ) {
+  if (!isExportableRelationFlatFieldMetadata(flatFieldMetadata)) {
     throw new ApplicationException(
-      `Relation field "${flatFieldMetadata.name}" is missing its target or settings`,
-      ApplicationExceptionCode.INVALID_INPUT,
-    );
-  }
-
-  if (
-    flatFieldMetadata.type === FieldMetadataType.MORPH_RELATION &&
-    !isDefined(flatFieldMetadata.morphId)
-  ) {
-    throw new ApplicationException(
-      `Morph relation field "${flatFieldMetadata.name}" is missing its morphId`,
+      `Relation field "${flatFieldMetadata.name}" cannot be exported: ${getUnsupportedRelationFieldReason(flatFieldMetadata)}`,
       ApplicationExceptionCode.INVALID_INPUT,
     );
   }

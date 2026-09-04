@@ -4,25 +4,32 @@ import {
   type ObjectFieldManifest,
   type ObjectManifest,
 } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 
 import { fromFlatFieldMetadataToFieldManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-metadata-to-field-manifest.util';
 import { fromFlatIndexMetadataToIndexManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-index-metadata-to-index-manifest.util';
 import { fromFlatObjectMetadataToObjectManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-metadata-to-object-manifest.util';
 import { type ApplicationExportCoverageEntry } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
+import { compareByCodePoint } from 'src/engine/core-modules/application/application-manifest/utils/compare-by-code-point.util';
+import { getUnsupportedRelationFieldReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unsupported-relation-field-reason.util';
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
+type WorkspaceLocalStateProperties = Pick<
+  FlatObjectMetadata | FlatFieldMetadata,
+  'universalIdentifier' | 'isActive' | 'overrides'
+>;
+
 const compareByKeyThenUniversalIdentifier =
   <TFlatEntity extends { universalIdentifier: string }>(
     getKey: (flatEntity: TFlatEntity) => string,
   ) =>
   (left: TFlatEntity, right: TFlatEntity): number =>
-    getKey(left).localeCompare(getKey(right)) ||
-    left.universalIdentifier.localeCompare(right.universalIdentifier);
+    compareByCodePoint(getKey(left), getKey(right)) ||
+    compareByCodePoint(left.universalIdentifier, right.universalIdentifier);
 
 const toObjectFieldManifest = ({
   objectUniversalIdentifier: _objectUniversalIdentifier,
@@ -41,21 +48,57 @@ const isKeptLabelIdentifierField = ({
     flatFieldMetadata.universalIdentifier &&
   !flatFieldMetadata.isSystem;
 
+const getWorkspaceLocalStateReason = ({
+  isActive,
+  overrides,
+}: WorkspaceLocalStateProperties): string | undefined => {
+  const reasons = [
+    ...(isActive ? [] : ['deactivated in this workspace, exported active']),
+    ...(isDefined(overrides) && !isEmptyObject(overrides)
+      ? ['workspace overrides not exported']
+      : []),
+  ];
+
+  return reasons.length > 0 ? reasons.join(', ') : undefined;
+};
+
+const buildExportedCoverageEntry = ({
+  metadataName,
+  flatEntity,
+}: {
+  metadataName: 'objectMetadata' | 'fieldMetadata';
+  flatEntity: WorkspaceLocalStateProperties;
+}): ApplicationExportCoverageEntry => {
+  const reason = getWorkspaceLocalStateReason(flatEntity);
+
+  return {
+    metadataName,
+    universalIdentifier: flatEntity.universalIdentifier,
+    status: ApplicationExportCoverageStatus.EXPORTED,
+    ...(isDefined(reason) ? { reason } : {}),
+  };
+};
+
 const getUnsupportedIndexReason = ({
   flatIndexMetadata,
+  applicationObjectUniversalIdentifiers,
   exportedObjectUniversalIdentifiers,
   fieldManifestByUniversalIdentifier,
 }: {
   flatIndexMetadata: FlatIndexMetadata;
+  applicationObjectUniversalIdentifiers: Set<string>;
   exportedObjectUniversalIdentifiers: Set<string>;
   fieldManifestByUniversalIdentifier: Map<string, FieldManifest>;
 }): string | undefined => {
-  if (
-    !exportedObjectUniversalIdentifiers.has(
-      flatIndexMetadata.objectMetadataUniversalIdentifier,
-    )
-  ) {
+  const objectUniversalIdentifier =
+    flatIndexMetadata.objectMetadataUniversalIdentifier;
+
+  if (!applicationObjectUniversalIdentifiers.has(objectUniversalIdentifier)) {
     return 'index on an object outside the application';
+  }
+
+  if (!exportedObjectUniversalIdentifiers.has(objectUniversalIdentifier)) {
+    return 'index on an unsupported object';
   }
 
   if (isDefined(flatIndexMetadata.indexWhereClause)) {
@@ -121,18 +164,13 @@ export const reconstructDataModelManifest = ({
       return [];
     },
   );
+  const applicationObjectUniversalIdentifiers = new Set(
+    flatObjectMetadatas.map(({ universalIdentifier }) => universalIdentifier),
+  );
   const exportedObjectUniversalIdentifiers = new Set(
     exportableObjects.map(
       ({ flatObjectMetadata }) => flatObjectMetadata.universalIdentifier,
     ),
-  );
-  const unsupportedObjectUniversalIdentifiers = new Set(
-    flatObjectMetadatas
-      .filter(
-        ({ universalIdentifier }) =>
-          !exportedObjectUniversalIdentifiers.has(universalIdentifier),
-      )
-      .map(({ universalIdentifier }) => universalIdentifier),
   );
 
   const fieldManifestByUniversalIdentifier = new Map<string, FieldManifest>();
@@ -160,7 +198,10 @@ export const reconstructDataModelManifest = ({
     }
 
     if (
-      unsupportedObjectUniversalIdentifiers.has(
+      applicationObjectUniversalIdentifiers.has(
+        flatFieldMetadata.objectMetadataUniversalIdentifier,
+      ) &&
+      !exportedObjectUniversalIdentifiers.has(
         flatFieldMetadata.objectMetadataUniversalIdentifier,
       )
     ) {
@@ -173,15 +214,29 @@ export const reconstructDataModelManifest = ({
       continue;
     }
 
+    const unsupportedRelationReason =
+      getUnsupportedRelationFieldReason(flatFieldMetadata);
+
+    if (isDefined(unsupportedRelationReason)) {
+      coverage.push({
+        metadataName: 'fieldMetadata',
+        universalIdentifier: flatFieldMetadata.universalIdentifier,
+        status: ApplicationExportCoverageStatus.UNSUPPORTED,
+        reason: unsupportedRelationReason,
+      });
+      continue;
+    }
+
     fieldManifestByUniversalIdentifier.set(
       flatFieldMetadata.universalIdentifier,
       fromFlatFieldMetadataToFieldManifest({ flatFieldMetadata }),
     );
-    coverage.push({
-      metadataName: 'fieldMetadata',
-      universalIdentifier: flatFieldMetadata.universalIdentifier,
-      status: ApplicationExportCoverageStatus.EXPORTED,
-    });
+    coverage.push(
+      buildExportedCoverageEntry({
+        metadataName: 'fieldMetadata',
+        flatEntity: flatFieldMetadata,
+      }),
+    );
   }
 
   const fieldManifests = [...fieldManifestByUniversalIdentifier.values()];
@@ -191,11 +246,12 @@ export const reconstructDataModelManifest = ({
       flatObjectMetadata,
       labelIdentifierFieldMetadataUniversalIdentifier,
     }) => {
-      coverage.push({
-        metadataName: 'objectMetadata',
-        universalIdentifier: flatObjectMetadata.universalIdentifier,
-        status: ApplicationExportCoverageStatus.EXPORTED,
-      });
+      coverage.push(
+        buildExportedCoverageEntry({
+          metadataName: 'objectMetadata',
+          flatEntity: flatObjectMetadata,
+        }),
+      );
 
       return fromFlatObjectMetadataToObjectManifest({
         flatObjectMetadata,
@@ -236,6 +292,7 @@ export const reconstructDataModelManifest = ({
 
     const unsupportedReason = getUnsupportedIndexReason({
       flatIndexMetadata,
+      applicationObjectUniversalIdentifiers,
       exportedObjectUniversalIdentifiers,
       fieldManifestByUniversalIdentifier,
     });

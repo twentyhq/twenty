@@ -4,9 +4,13 @@ import { classifyApplicationFlatEntities } from 'src/engine/core-modules/applica
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 
 const APP_ID = 'application-id';
@@ -17,6 +21,11 @@ const PET_UID = '22222222-2222-4222-8222-222222222222';
 const AGE_FIELD_UID = '33333333-3333-4333-8333-333333333333';
 const CUSTOM_FIELD_UID = '44444444-4444-4444-8444-444444444444';
 const ROLE_TARGET_UID = '55555555-5555-4555-8555-555555555555';
+const ROLE_UID = '66666666-6666-4666-8666-666666666666';
+const FOREIGN_ROLE_TARGET_UID = '77777777-7777-4777-8777-777777777777';
+const COMPANY_UID = '88888888-8888-4888-8888-888888888888';
+const COMPANY_PET_FIELD_UID = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+const NOW = '2026-09-03T10:00:00.000Z';
 
 const flatApplication = {
   id: APP_ID,
@@ -48,67 +57,120 @@ const customField = getFlatFieldMetadataMock({
   type: FieldMetadataType.TEXT,
 });
 
-const memberRoleTarget = {
-  id: 'role-target-id',
-  universalIdentifier: ROLE_TARGET_UID,
+const companyPetField = getFlatFieldMetadataMock({
+  universalIdentifier: COMPANY_PET_FIELD_UID,
+  objectMetadataId: 'company-id',
+  objectMetadataUniversalIdentifier: COMPANY_UID,
+  applicationId: CUSTOM_APP_ID,
+  applicationUniversalIdentifier: CUSTOM_APP_UID,
+  type: FieldMetadataType.RELATION,
+  relationTargetObjectMetadataUniversalIdentifier: PET_UID,
+});
+
+const applicationRole = {
+  id: 'role-id',
+  universalIdentifier: ROLE_UID,
   applicationId: APP_ID,
   applicationUniversalIdentifier: APP_UID,
   workspaceId: 'workspace-id',
-  roleId: 'role-id',
-  roleUniversalIdentifier: 'role-universal-identifier',
-  userWorkspaceId: 'user-workspace-id',
-  agentId: null,
-  agentUniversalIdentifier: null,
-  apiKeyId: null,
-  createdAt: '2026-09-03T10:00:00.000Z',
-  updatedAt: '2026-09-03T10:00:00.000Z',
-} as FlatRoleTarget;
+  label: 'Ticketing agent',
+  createdAt: NOW,
+  updatedAt: NOW,
+} as FlatRole;
 
-const buildMaps = () => {
-  const allFlatEntityMaps = createEmptyAllFlatEntityMaps();
+const buildMemberRoleTarget = ({
+  universalIdentifier,
+  applicationId,
+  applicationUniversalIdentifier,
+}: {
+  universalIdentifier: string;
+  applicationId: string;
+  applicationUniversalIdentifier: string;
+}): FlatRoleTarget =>
+  ({
+    id: `role-target-${universalIdentifier}`,
+    universalIdentifier,
+    applicationId,
+    applicationUniversalIdentifier,
+    workspaceId: 'workspace-id',
+    roleId: applicationRole.id,
+    roleUniversalIdentifier: ROLE_UID,
+    userWorkspaceId: 'user-workspace-id',
+    agentId: null,
+    agentUniversalIdentifier: null,
+    apiKeyId: null,
+    createdAt: NOW,
+    updatedAt: NOW,
+  }) as FlatRoleTarget;
 
-  allFlatEntityMaps.flatObjectMetadataMaps =
-    addFlatEntityToFlatEntityMapsOrThrow({
-      flatEntity: petObject,
-      flatEntityMaps: allFlatEntityMaps.flatObjectMetadataMaps,
+const ownMemberRoleTarget = buildMemberRoleTarget({
+  universalIdentifier: ROLE_TARGET_UID,
+  applicationId: APP_ID,
+  applicationUniversalIdentifier: APP_UID,
+});
+
+const foreignMemberRoleTarget = buildMemberRoleTarget({
+  universalIdentifier: FOREIGN_ROLE_TARGET_UID,
+  applicationId: CUSTOM_APP_ID,
+  applicationUniversalIdentifier: CUSTOM_APP_UID,
+});
+
+const buildMaps = ({
+  objects,
+  fields,
+  roles,
+  roleTargets,
+}: {
+  objects: FlatObjectMetadata[];
+  fields: FlatFieldMetadata[];
+  roles: FlatRole[];
+  roleTargets: FlatRoleTarget[];
+}): AllFlatEntityMaps => {
+  const maps = createEmptyAllFlatEntityMaps();
+
+  for (const flatEntity of objects) {
+    maps.flatObjectMetadataMaps = addFlatEntityToFlatEntityMapsOrThrow({
+      flatEntity,
+      flatEntityMaps: maps.flatObjectMetadataMaps,
     });
-  for (const flatEntity of [ageField, customField]) {
-    allFlatEntityMaps.flatFieldMetadataMaps =
-      addFlatEntityToFlatEntityMapsOrThrow({
-        flatEntity,
-        flatEntityMaps: allFlatEntityMaps.flatFieldMetadataMaps,
-      });
   }
-  allFlatEntityMaps.flatRoleTargetMaps = addFlatEntityToFlatEntityMapsOrThrow({
-    flatEntity: memberRoleTarget,
-    flatEntityMaps: allFlatEntityMaps.flatRoleTargetMaps,
-  });
-
-  const applicationAllFlatEntityMaps = createEmptyAllFlatEntityMaps();
-
-  applicationAllFlatEntityMaps.flatObjectMetadataMaps =
-    addFlatEntityToFlatEntityMapsOrThrow({
-      flatEntity: petObject,
-      flatEntityMaps: applicationAllFlatEntityMaps.flatObjectMetadataMaps,
+  for (const flatEntity of fields) {
+    maps.flatFieldMetadataMaps = addFlatEntityToFlatEntityMapsOrThrow({
+      flatEntity,
+      flatEntityMaps: maps.flatFieldMetadataMaps,
     });
-  applicationAllFlatEntityMaps.flatFieldMetadataMaps =
-    addFlatEntityToFlatEntityMapsOrThrow({
-      flatEntity: ageField,
-      flatEntityMaps: applicationAllFlatEntityMaps.flatFieldMetadataMaps,
+  }
+  for (const flatEntity of roles) {
+    maps.flatRoleMaps = addFlatEntityToFlatEntityMapsOrThrow({
+      flatEntity,
+      flatEntityMaps: maps.flatRoleMaps,
     });
-  applicationAllFlatEntityMaps.flatRoleTargetMaps =
-    addFlatEntityToFlatEntityMapsOrThrow({
-      flatEntity: memberRoleTarget,
-      flatEntityMaps: applicationAllFlatEntityMaps.flatRoleTargetMaps,
+  }
+  for (const flatEntity of roleTargets) {
+    maps.flatRoleTargetMaps = addFlatEntityToFlatEntityMapsOrThrow({
+      flatEntity,
+      flatEntityMaps: maps.flatRoleTargetMaps,
     });
+  }
 
-  return { allFlatEntityMaps, applicationAllFlatEntityMaps };
+  return maps;
 };
 
 describe('classifyApplicationFlatEntities', () => {
   const coverage = classifyApplicationFlatEntities({
     flatApplication,
-    ...buildMaps(),
+    allFlatEntityMaps: buildMaps({
+      objects: [petObject],
+      fields: [ageField, customField, companyPetField],
+      roles: [applicationRole],
+      roleTargets: [ownMemberRoleTarget, foreignMemberRoleTarget],
+    }),
+    applicationAllFlatEntityMaps: buildMaps({
+      objects: [petObject],
+      fields: [ageField],
+      roles: [applicationRole],
+      roleTargets: [ownMemberRoleTarget],
+    }),
     reconstructedCoverage: [
       {
         metadataName: 'objectMetadata',
@@ -146,6 +208,18 @@ describe('classifyApplicationFlatEntities', () => {
       status: ApplicationExportCoverageStatus.FOREIGN_OWNED,
       reason: `owned by application ${CUSTOM_APP_UID}`,
     });
+  });
+
+  it('should exclude a member assignment another application holds on an exported role instead of reporting it foreign-owned', () => {
+    expect(entryOf(FOREIGN_ROLE_TARGET_UID)).toMatchObject({
+      metadataName: 'roleTarget',
+      status: ApplicationExportCoverageStatus.EXCLUDED,
+      reason: 'member or API key role assignment',
+    });
+  });
+
+  it('should ignore a foreign field that only references an exported object as a relation target', () => {
+    expect(entryOf(COMPANY_PET_FIELD_UID)).toBeUndefined();
   });
 
   it('should return the entries sorted by kind, status and identifier', () => {

@@ -1,7 +1,9 @@
-import { type IndexManifest } from 'twenty-shared/application';
+import {
+  type IndexManifest,
+  getIndexFieldUniversalIdentifier,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import { computeIndexFieldManifestUniversalIdentifier } from 'src/engine/core-modules/application/application-manifest/utils/compute-index-field-manifest-universal-identifier.util';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 
 export const fromFlatIndexMetadataToIndexManifest = ({
@@ -17,10 +19,11 @@ export const fromFlatIndexMetadataToIndexManifest = ({
   fields: [...flatIndexMetadata.universalFlatIndexFieldMetadatas]
     .sort((left, right) => left.order - right.order)
     .map((indexField) => ({
-      universalIdentifier: computeIndexFieldManifestUniversalIdentifier({
+      universalIdentifier: getIndexFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          flatIndexMetadata.applicationUniversalIdentifier,
         indexUniversalIdentifier: flatIndexMetadata.universalIdentifier,
-        fieldMetadataUniversalIdentifier:
-          indexField.fieldMetadataUniversalIdentifier,
+        fieldUniversalIdentifier: indexField.fieldMetadataUniversalIdentifier,
         subFieldName: indexField.subFieldName,
       }),
       fieldUniversalIdentifier: indexField.fieldMetadataUniversalIdentifier,
