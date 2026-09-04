@@ -1,0 +1,1 @@
+export const SEEDED_OBJECT_VIEW_POSITION = 1;
