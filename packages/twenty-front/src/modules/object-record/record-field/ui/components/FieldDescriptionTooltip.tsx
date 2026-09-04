@@ -1,6 +1,7 @@
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { VisibilityHidden } from 'twenty-ui/accessibility';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -31,12 +32,14 @@ const StyledFieldDescription = styled.div`
 type FieldDescriptionTooltipProps = {
   anchorSelect: string;
   fieldDescription?: string | null;
+  fieldDescriptionId: string;
   fieldLabel?: string | null;
 };
 
 export const FieldDescriptionTooltip = ({
   anchorSelect,
   fieldDescription,
+  fieldDescriptionId,
   fieldLabel,
 }: FieldDescriptionTooltipProps) => {
   if (!isNonEmptyString(fieldLabel) || !isNonEmptyString(fieldDescription)) {
@@ -44,19 +47,24 @@ export const FieldDescriptionTooltip = ({
   }
 
   return (
-    <AppTooltip
-      anchorSelect={anchorSelect}
-      className={fieldDescriptionTooltipClassName}
-      delay={TooltipDelay.longDelay}
-      noArrow
-      place="bottom"
-      positionStrategy="fixed"
-      width="300px"
-    >
-      <StyledTooltipContent>
-        <StyledFieldLabel>{fieldLabel}</StyledFieldLabel>
-        <StyledFieldDescription>{fieldDescription}</StyledFieldDescription>
-      </StyledTooltipContent>
-    </AppTooltip>
+    <>
+      <VisibilityHidden>
+        <span id={fieldDescriptionId}>{fieldDescription}</span>
+      </VisibilityHidden>
+      <AppTooltip
+        anchorSelect={anchorSelect}
+        className={fieldDescriptionTooltipClassName}
+        delay={TooltipDelay.longDelay}
+        noArrow
+        place="bottom"
+        positionStrategy="fixed"
+        width="300px"
+      >
+        <StyledTooltipContent>
+          <StyledFieldLabel>{fieldLabel}</StyledFieldLabel>
+          <StyledFieldDescription>{fieldDescription}</StyledFieldDescription>
+        </StyledTooltipContent>
+      </AppTooltip>
+    </>
   );
 };

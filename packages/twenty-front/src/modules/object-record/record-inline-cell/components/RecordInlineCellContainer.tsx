@@ -115,6 +115,7 @@ export const RecordInlineCellContainer = () => {
   const fieldDescription = fieldDefinition.metadata.description;
   const hasFieldDescription =
     isNonEmptyString(label) && isNonEmptyString(fieldDescription);
+  const fieldDescriptionId = `${labelId}-description`;
 
   return (
     <StyledInlineCellBaseContainer
@@ -131,6 +132,9 @@ export const RecordInlineCellContainer = () => {
           )}
           {showLabel && (
             <StyledLabelContainer
+              aria-describedby={
+                hasFieldDescription ? fieldDescriptionId : undefined
+              }
               width={labelWidth}
               id={labelId}
               tabIndex={hasFieldDescription ? 0 : undefined}
@@ -146,6 +150,7 @@ export const RecordInlineCellContainer = () => {
             <FieldDescriptionTooltip
               anchorSelect={`#${labelId}`}
               fieldDescription={fieldDescription}
+              fieldDescriptionId={fieldDescriptionId}
               fieldLabel={label}
             />
           )}

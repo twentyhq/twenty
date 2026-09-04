@@ -46,6 +46,7 @@ export const RecordTableColumnHead = ({
 }: RecordTableColumnHeadProps) => {
   const { theme } = useContext(ThemeContext);
   const fieldDescriptionTooltipAnchorId = `field-description-${useId().replace(/:/g, '')}`;
+  const fieldDescriptionId = `${fieldDescriptionTooltipAnchorId}-content`;
 
   const correspondingFieldMetadataItem = useAtomFamilySelectorValue(
     fieldMetadataItemByIdSelector,
@@ -68,6 +69,7 @@ export const RecordTableColumnHead = ({
         <Icon size={theme.icon.size.md} />
       </StyledIcon>
       <StyledText
+        aria-describedby={hasFieldDescription ? fieldDescriptionId : undefined}
         id={fieldDescriptionTooltipAnchorId}
         tabIndex={hasFieldDescription ? 0 : undefined}
       >
@@ -76,6 +78,7 @@ export const RecordTableColumnHead = ({
       <FieldDescriptionTooltip
         anchorSelect={`#${fieldDescriptionTooltipAnchorId}`}
         fieldDescription={fieldMetadataItem?.description}
+        fieldDescriptionId={fieldDescriptionId}
         fieldLabel={fieldMetadataItem?.label}
       />
     </StyledTitle>
