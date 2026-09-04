@@ -1,0 +1,2 @@
+import { fuzzyMatchScore } from './fuzzyMatchScore'; import assert from 'node:assert/strict';
+assert.equal(fuzzyMatchScore("martha", "marhta") > 0.9, true); assert.equal(fuzzyMatchScore("test", "diff"), 0.0);
