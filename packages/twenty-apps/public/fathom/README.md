@@ -16,11 +16,11 @@
 
 ## 📌 Heads up
 
-- **Needs a workspace-level Fathom account.** Individual accounts aren't
-  supported yet; support is on the way.
-- **Everyone connects their own Fathom account.** Twenty imports whatever that
-  account can already see, and your Fathom and Twenty login emails don't need
-  to match.
+- **Connect as Workspace shared, not Just for me.** A Just for me connection
+  still syncs your own meetings, but only you can use the Fathom workflow and
+  AI actions with it.
+- **Twenty imports only what your Fathom account can see.** Your Fathom and
+  Twenty login emails don't need to match.
 - **Calendar links need one clear match.** A Call Recording is linked to a
   calendar event only when its meeting link and scheduled time point to exactly
   one event.
