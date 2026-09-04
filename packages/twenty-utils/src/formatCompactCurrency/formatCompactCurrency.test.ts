@@ -1,0 +1,2 @@
+import { formatCompactCurrency } from './formatCompactCurrency'; import assert from 'node:assert/strict';
+assert.equal(formatCompactCurrency(1500000), "$1.5M"); assert.equal(formatCompactCurrency(4500), "$4.5K");
