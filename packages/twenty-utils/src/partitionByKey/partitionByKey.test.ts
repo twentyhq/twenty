@@ -1,0 +1,2 @@
+import { partitionByKey } from './partitionByKey'; import assert from 'node:assert/strict';
+assert.deepEqual(partitionByKey(["apple", "banana", "avocado"], x => x[0]), { a: ["apple", "avocado"], b: ["banana"] });
