@@ -1,0 +1,2 @@
+import { validatePostalCode } from './validatePostalCode'; import assert from 'node:assert/strict';
+assert.equal(validatePostalCode("90210", "US"), true); assert.equal(validatePostalCode("invalid", "US"), false);
