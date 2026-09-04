@@ -283,7 +283,7 @@ msgstr "{0} har valgt bort dette emnet"
 #. placeholder {0}: index + 1
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "{0} retries"
-msgstr ""
+msgstr "{0} forsøk"
 
 #. js-lingui-id: fvImQM
 #. placeholder {0}: formatNumber(contextStoreNumberOfSelectedRecords)
@@ -761,7 +761,7 @@ msgstr "1 objekt"
 #. js-lingui-id: lKmQeh
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "1 retry"
-msgstr ""
+msgstr "1 forsøk"
 
 #. js-lingui-id: Mkh9C8
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -4915,7 +4915,7 @@ msgstr "Fortsett"
 #. js-lingui-id: gOOpXW
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Continue on failure"
-msgstr ""
+msgstr "Fortsett ved feil"
 
 #. js-lingui-id: YsnqkW
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator.tsx
@@ -11158,7 +11158,7 @@ msgstr "Kanban-widget"
 #. js-lingui-id: LHkoee
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Keep executing the next nodes even if this one fails"
-msgstr ""
+msgstr "Fortsett å kjøre de neste nodene selv om denne mislykkes"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -13946,7 +13946,7 @@ msgstr "Nodealternativer"
 #: src/modules/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation.ts
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "Node settings"
-msgstr ""
+msgstr "Nodeinnstillinger"
 
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
@@ -14424,7 +14424,7 @@ msgstr "Bare dato og deltakere vil bli delt med teamet ditt."
 #. js-lingui-id: kiuQlM
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Only enable for steps that are safe to run twice: a failed attempt may already have written data or sent messages."
-msgstr ""
+msgstr "Aktiver bare for trinn som er trygge å kjøre to ganger: et mislykket forsøk kan allerede ha skrevet data eller sendt meldinger."
 
 #. js-lingui-id: aluwJP
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
@@ -16526,7 +16526,7 @@ msgstr "Forsøk alle mislykkede igjen"
 #. js-lingui-id: s/LEE/
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Retry on failure"
-msgstr ""
+msgstr "Prøv på nytt ved feil"
 
 #. js-lingui-id: ZbpKL+
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx

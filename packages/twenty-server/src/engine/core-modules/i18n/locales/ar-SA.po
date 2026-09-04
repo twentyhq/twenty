@@ -2727,7 +2727,7 @@ msgstr "تاريخ ووقت الإنشاء"
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout/compute-standard-record-form-flat-entities.util.ts
 msgctxt "pageLayout.name"
 msgid "Creation Form"
-msgstr ""
+msgstr "نموذج الإنشاء"
 
 #. js-lingui-id: oB7ed5
 #: src/engine/core-modules/usage-limit/services/usage-limit-quota.service.ts
@@ -4153,7 +4153,7 @@ msgstr "يجب توفير fieldMetadataId أو fieldMetadataUniversalIdentifier"
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout/compute-standard-record-form-flat-entities.util.ts
 msgctxt "pageLayoutTab.title"
 msgid "Fields"
-msgstr ""
+msgstr "الحقول"
 
 #. js-lingui-id: GFC6Lh
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -7428,7 +7428,7 @@ msgstr "يمكن المطالبة بالتطبيقات المنشورة على n
 #. js-lingui-id: FmMRCQ
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Only applications synced from local source can be exported."
-msgstr ""
+msgstr "لا يمكن تصدير سوى التطبيقات المتزامنة من المصدر المحلي."
 
 #. js-lingui-id: XLn1DI
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -10293,7 +10293,7 @@ msgstr "لا يمكن أن تكون الأسماء المفردة والجمعي
 #. js-lingui-id: 5bOcgV
 #: src/engine/core-modules/application/application.exception.ts
 msgid "The standard application cannot be exported."
-msgstr ""
+msgstr "لا يمكن تصدير التطبيق القياسي."
 
 #. js-lingui-id: Dvwk3g
 #: src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
@@ -10859,12 +10859,12 @@ msgstr "مساحة العمل هذه لديها اشتراك بالفعل."
 #: src/engine/core-modules/billing/billing.exception.ts
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
 msgid "This workspace has no active subscription."
-msgstr ""
+msgstr "لا تحتوي مساحة العمل هذه على اشتراك نشط."
 
 #. js-lingui-id: ChHeV3
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
 msgid "This workspace is suspended."
-msgstr ""
+msgstr "مساحة العمل هذه معلَّقة."
 
 #. js-lingui-id: IdEnkZ
 #: src/engine/core-modules/application/application.exception.ts

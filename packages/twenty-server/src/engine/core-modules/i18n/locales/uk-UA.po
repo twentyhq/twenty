@@ -2727,7 +2727,7 @@ msgstr "Дата й час створення"
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout/compute-standard-record-form-flat-entities.util.ts
 msgctxt "pageLayout.name"
 msgid "Creation Form"
-msgstr ""
+msgstr "Форма створення"
 
 #. js-lingui-id: oB7ed5
 #: src/engine/core-modules/usage-limit/services/usage-limit-quota.service.ts
@@ -4153,7 +4153,7 @@ msgstr "Потрібно надати fieldMetadataId або fieldMetadataUniver
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout/compute-standard-record-form-flat-entities.util.ts
 msgctxt "pageLayoutTab.title"
 msgid "Fields"
-msgstr ""
+msgstr "Поля"
 
 #. js-lingui-id: GFC6Lh
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -7428,7 +7428,7 @@ msgstr "Лише застосунки, опубліковані в npm, можн
 #. js-lingui-id: FmMRCQ
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Only applications synced from local source can be exported."
-msgstr ""
+msgstr "Можна експортувати лише застосунки, синхронізовані з локального джерела."
 
 #. js-lingui-id: XLn1DI
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -10293,7 +10293,7 @@ msgstr "Єдині та множинні імена не можуть бути �
 #. js-lingui-id: 5bOcgV
 #: src/engine/core-modules/application/application.exception.ts
 msgid "The standard application cannot be exported."
-msgstr ""
+msgstr "Стандартний застосунок не можна експортувати."
 
 #. js-lingui-id: Dvwk3g
 #: src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
@@ -10859,12 +10859,12 @@ msgstr "У цього робочого простору вже є підписк
 #: src/engine/core-modules/billing/billing.exception.ts
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
 msgid "This workspace has no active subscription."
-msgstr ""
+msgstr "У цього робочого простору немає активної підписки."
 
 #. js-lingui-id: ChHeV3
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
 msgid "This workspace is suspended."
-msgstr ""
+msgstr "Цей робочий простір призупинено."
 
 #. js-lingui-id: IdEnkZ
 #: src/engine/core-modules/application/application.exception.ts

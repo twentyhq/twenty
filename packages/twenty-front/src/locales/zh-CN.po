@@ -283,7 +283,7 @@ msgstr "{0} 个已退出此主题订阅"
 #. placeholder {0}: index + 1
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "{0} retries"
-msgstr ""
+msgstr "{0} 次重试"
 
 #. js-lingui-id: fvImQM
 #. placeholder {0}: formatNumber(contextStoreNumberOfSelectedRecords)
@@ -761,7 +761,7 @@ msgstr "1 个对象"
 #. js-lingui-id: lKmQeh
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "1 retry"
-msgstr ""
+msgstr "1 次重试"
 
 #. js-lingui-id: Mkh9C8
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -4915,7 +4915,7 @@ msgstr "继续"
 #. js-lingui-id: gOOpXW
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Continue on failure"
-msgstr ""
+msgstr "失败时继续"
 
 #. js-lingui-id: YsnqkW
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator.tsx
@@ -11135,7 +11135,7 @@ msgstr "看板小部件"
 #. js-lingui-id: LHkoee
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Keep executing the next nodes even if this one fails"
-msgstr ""
+msgstr "即使此节点失败，也继续执行后续节点"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -13923,7 +13923,7 @@ msgstr "节点选项"
 #: src/modules/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation.ts
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "Node settings"
-msgstr ""
+msgstr "节点设置"
 
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
@@ -14401,7 +14401,7 @@ msgstr "仅日期和参与者将与您的团队分享。"
 #. js-lingui-id: kiuQlM
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Only enable for steps that are safe to run twice: a failed attempt may already have written data or sent messages."
-msgstr ""
+msgstr "仅为可安全运行两次的步骤启用：失败的尝试可能已经写入数据或发送消息。"
 
 #. js-lingui-id: aluwJP
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
@@ -16503,7 +16503,7 @@ msgstr "重试所有失败任务"
 #. js-lingui-id: s/LEE/
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Retry on failure"
-msgstr ""
+msgstr "失败时重试"
 
 #. js-lingui-id: ZbpKL+
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
