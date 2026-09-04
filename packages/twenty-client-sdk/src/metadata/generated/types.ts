@@ -45,15 +45,15 @@ export default {
         99,
         109,
         124,
-        128,
-        135,
-        138,
-        140,
-        147,
-        148,
-        149,
-        151,
-        160,
+        130,
+        131,
+        132,
+        134,
+        143,
+        145,
+        152,
+        155,
+        157,
         172,
         173,
         174,
@@ -112,13 +112,13 @@ export default {
                 1
             ],
             "metadata": [
-                146
+                129
             ],
             "on_BillingLicensedProduct": [
-                155
+                138
             ],
             "on_BillingMeteredProduct": [
-                156
+                139
             ],
             "__typename": [
                 1
@@ -1642,16 +1642,16 @@ export default {
                 185
             ],
             "billingSubscriptions": [
-                159
+                142
             ],
             "installedApplications": [
                 47
             ],
             "currentBillingSubscription": [
-                159
+                142
             ],
             "billingCustomer": [
-                158
+                141
             ],
             "billingEntitlements": [
                 254
@@ -2724,6 +2724,218 @@ export default {
                 1
             ]
         },
+        "BillingSubscriptionSchedulePhaseItem": {
+            "price": [
+                1
+            ],
+            "quantity": [
+                15
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BillingSubscriptionSchedulePhase": {
+            "start_date": [
+                15
+            ],
+            "end_date": [
+                15
+            ],
+            "items": [
+                127
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BillingProductMetadata": {
+            "planKey": [
+                130
+            ],
+            "priceUsageBased": [
+                131
+            ],
+            "productKey": [
+                132
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BillingPlanKey": {},
+        "BillingUsageType": {},
+        "BillingProductKey": {},
+        "BillingPriceLicensed": {
+            "recurringInterval": [
+                134
+            ],
+            "unitAmount": [
+                15
+            ],
+            "stripePriceId": [
+                1
+            ],
+            "priceUsageType": [
+                131
+            ],
+            "creditAmount": [
+                15
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "SubscriptionInterval": {},
+        "BillingPriceTier": {
+            "upTo": [
+                15
+            ],
+            "flatAmount": [
+                15
+            ],
+            "unitAmount": [
+                15
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BillingPriceMetered": {
+            "tiers": [
+                135
+            ],
+            "recurringInterval": [
+                134
+            ],
+            "stripePriceId": [
+                1
+            ],
+            "priceUsageType": [
+                131
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BillingProduct": {
+            "name": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "images": [
+                1
+            ],
+            "metadata": [
+                129
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BillingLicensedProduct": {
+            "name": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "images": [
+                1
+            ],
+            "metadata": [
+                129
+            ],
+            "prices": [
+                133
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BillingMeteredProduct": {
+            "name": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "images": [
+                1
+            ],
+            "metadata": [
+                129
+            ],
+            "prices": [
+                136
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BillingSubscriptionItem": {
+            "id": [
+                3
+            ],
+            "hasReachedCurrentPeriodCap": [
+                8
+            ],
+            "quantity": [
+                15
+            ],
+            "stripePriceId": [
+                1
+            ],
+            "billingProduct": [
+                0
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BillingCustomer": {
+            "id": [
+                3
+            ],
+            "hasPaymentMethod": [
+                8
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BillingSubscription": {
+            "id": [
+                3
+            ],
+            "status": [
+                143
+            ],
+            "interval": [
+                134
+            ],
+            "billingSubscriptionItems": [
+                140
+            ],
+            "currentPeriodEnd": [
+                4
+            ],
+            "metadata": [
+                9
+            ],
+            "phases": [
+                128
+            ],
+            "cancelAt": [
+                4
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "SubscriptionStatus": {},
         "LogicFunctionExecutionResult": {
             "data": [
                 9
@@ -2735,7 +2947,7 @@ export default {
                 15
             ],
             "status": [
-                128
+                145
             ],
             "error": [
                 9
@@ -2853,7 +3065,7 @@ export default {
                 3
             ],
             "type": [
-                135
+                152
             ],
             "name": [
                 1
@@ -2886,7 +3098,7 @@ export default {
                 4
             ],
             "targetRecordIdentifier": [
-                133
+                150
             ],
             "__typename": [
                 1
@@ -2912,7 +3124,7 @@ export default {
         },
         "MetadataEvent": {
             "type": [
-                138
+                155
             ],
             "metadataName": [
                 1
@@ -2921,7 +3133,7 @@ export default {
                 1
             ],
             "properties": [
-                136
+                153
             ],
             "updatedCollectionHash": [
                 1
@@ -2933,7 +3145,7 @@ export default {
         "MetadataEventAction": {},
         "ObjectRecordEvent": {
             "action": [
-                140
+                157
             ],
             "objectNameSingular": [
                 1
@@ -2948,7 +3160,7 @@ export default {
                 1
             ],
             "properties": [
-                136
+                153
             ],
             "__typename": [
                 1
@@ -2960,7 +3172,7 @@ export default {
                 1
             ],
             "objectRecordEvent": [
-                139
+                156
             ],
             "__typename": [
                 1
@@ -2971,10 +3183,10 @@ export default {
                 1
             ],
             "objectRecordEventsWithQueryIds": [
-                141
+                158
             ],
             "metadataEvents": [
-                137
+                154
             ],
             "__typename": [
                 1
@@ -3015,221 +3227,9 @@ export default {
                 1
             ]
         },
-        "BillingSubscriptionSchedulePhaseItem": {
-            "price": [
-                1
-            ],
-            "quantity": [
-                15
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BillingSubscriptionSchedulePhase": {
-            "start_date": [
-                15
-            ],
-            "end_date": [
-                15
-            ],
-            "items": [
-                144
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BillingProductMetadata": {
-            "planKey": [
-                147
-            ],
-            "priceUsageBased": [
-                148
-            ],
-            "productKey": [
-                149
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BillingPlanKey": {},
-        "BillingUsageType": {},
-        "BillingProductKey": {},
-        "BillingPriceLicensed": {
-            "recurringInterval": [
-                151
-            ],
-            "unitAmount": [
-                15
-            ],
-            "stripePriceId": [
-                1
-            ],
-            "priceUsageType": [
-                148
-            ],
-            "creditAmount": [
-                15
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "SubscriptionInterval": {},
-        "BillingPriceTier": {
-            "upTo": [
-                15
-            ],
-            "flatAmount": [
-                15
-            ],
-            "unitAmount": [
-                15
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BillingPriceMetered": {
-            "tiers": [
-                152
-            ],
-            "recurringInterval": [
-                151
-            ],
-            "stripePriceId": [
-                1
-            ],
-            "priceUsageType": [
-                148
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BillingProduct": {
-            "name": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "images": [
-                1
-            ],
-            "metadata": [
-                146
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BillingLicensedProduct": {
-            "name": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "images": [
-                1
-            ],
-            "metadata": [
-                146
-            ],
-            "prices": [
-                150
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BillingMeteredProduct": {
-            "name": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "images": [
-                1
-            ],
-            "metadata": [
-                146
-            ],
-            "prices": [
-                153
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BillingSubscriptionItem": {
-            "id": [
-                3
-            ],
-            "hasReachedCurrentPeriodCap": [
-                8
-            ],
-            "quantity": [
-                15
-            ],
-            "stripePriceId": [
-                1
-            ],
-            "billingProduct": [
-                0
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BillingCustomer": {
-            "id": [
-                3
-            ],
-            "hasPaymentMethod": [
-                8
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BillingSubscription": {
-            "id": [
-                3
-            ],
-            "status": [
-                160
-            ],
-            "interval": [
-                151
-            ],
-            "billingSubscriptionItems": [
-                157
-            ],
-            "currentPeriodEnd": [
-                4
-            ],
-            "metadata": [
-                9
-            ],
-            "phases": [
-                145
-            ],
-            "cancelAt": [
-                4
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "SubscriptionStatus": {},
         "BillingEndTrialPeriod": {
             "status": [
-                160
+                143
             ],
             "hasPaymentMethod": [
                 8
@@ -3238,10 +3238,10 @@ export default {
                 1
             ],
             "currentBillingSubscription": [
-                159
+                142
             ],
             "billingSubscriptions": [
-                159
+                142
             ],
             "__typename": [
                 1
@@ -3249,7 +3249,7 @@ export default {
         },
         "BillingResourceCreditUsage": {
             "productKey": [
-                149
+                132
             ],
             "periodStart": [
                 4
@@ -3278,16 +3278,16 @@ export default {
         },
         "BillingPlan": {
             "planKey": [
-                147
+                130
             ],
             "baseProducts": [
-                155
+                138
             ],
             "resourceCreditProducts": [
-                155
+                138
             ],
             "meteredProducts": [
-                156
+                139
             ],
             "__typename": [
                 1
@@ -3314,10 +3314,10 @@ export default {
         },
         "BillingUpdate": {
             "currentBillingSubscription": [
-                159
+                142
             ],
             "billingSubscriptions": [
-                159
+                142
             ],
             "__typename": [
                 1
@@ -6709,10 +6709,10 @@ export default {
         },
         "Query": {
             "navigationMenuItems": [
-                134
+                151
             ],
             "navigationMenuItem": [
-                134,
+                151,
                 {
                     "id": [
                         3,
@@ -6755,7 +6755,7 @@ export default {
                 }
             ],
             "enterpriseSubscriptionStatus": [
-                130
+                147
             ],
             "getUsageAnalytics": [
                 170,
@@ -6892,7 +6892,7 @@ export default {
                 }
             ],
             "currentUserSessions": [
-                143
+                160
             ],
             "myConnectedAccounts": [
                 184
@@ -7852,7 +7852,7 @@ export default {
                 }
             ],
             "createManyNavigationMenuItems": [
-                134,
+                151,
                 {
                     "inputs": [
                         401,
@@ -7861,7 +7861,7 @@ export default {
                 }
             ],
             "createNavigationMenuItem": [
-                134,
+                151,
                 {
                     "input": [
                         401,
@@ -7870,7 +7870,7 @@ export default {
                 }
             ],
             "updateManyNavigationMenuItems": [
-                134,
+                151,
                 {
                     "inputs": [
                         402,
@@ -7879,7 +7879,7 @@ export default {
                 }
             ],
             "updateNavigationMenuItem": [
-                134,
+                151,
                 {
                     "input": [
                         402,
@@ -7888,7 +7888,7 @@ export default {
                 }
             ],
             "deleteManyNavigationMenuItems": [
-                134,
+                151,
                 {
                     "ids": [
                         3,
@@ -7897,7 +7897,7 @@ export default {
                 }
             ],
             "deleteNavigationMenuItem": [
-                134,
+                151,
                 {
                     "id": [
                         3,
@@ -7906,7 +7906,7 @@ export default {
                 }
             ],
             "createFileUpload": [
-                132,
+                149,
                 {
                     "filename": [
                         1,
@@ -7929,7 +7929,7 @@ export default {
                 }
             ],
             "completeFileUpload": [
-                131,
+                148,
                 {
                     "fileId": [
                         1,
@@ -7941,10 +7941,10 @@ export default {
                 8
             ],
             "releaseEnterpriseServerBinding": [
-                129
+                146
             ],
             "setEnterpriseKey": [
-                129,
+                146,
                 {
                     "enterpriseKey": [
                         1,
@@ -7953,7 +7953,7 @@ export default {
                 }
             ],
             "uploadEmailAttachmentFile": [
-                131,
+                148,
                 {
                     "file": [
                         404,
@@ -7962,7 +7962,7 @@ export default {
                 }
             ],
             "uploadAiChatFile": [
-                131,
+                148,
                 {
                     "file": [
                         404,
@@ -7971,7 +7971,7 @@ export default {
                 }
             ],
             "uploadWorkflowFile": [
-                131,
+                148,
                 {
                     "file": [
                         404,
@@ -7980,7 +7980,7 @@ export default {
                 }
             ],
             "uploadWorkspaceLogo": [
-                131,
+                148,
                 {
                     "file": [
                         404,
@@ -7989,7 +7989,7 @@ export default {
                 }
             ],
             "uploadWorkspaceMemberProfilePicture": [
-                131,
+                148,
                 {
                     "file": [
                         404,
@@ -7998,7 +7998,7 @@ export default {
                 }
             ],
             "uploadFilesFieldFile": [
-                131,
+                148,
                 {
                     "file": [
                         404,
@@ -8011,7 +8011,7 @@ export default {
                 }
             ],
             "uploadFilesFieldFileByUniversalIdentifier": [
-                131,
+                148,
                 {
                     "file": [
                         404,
@@ -8383,11 +8383,11 @@ export default {
                 165,
                 {
                     "recurringInterval": [
-                        151,
+                        134,
                         "SubscriptionInterval!"
                     ],
                     "plan": [
-                        147,
+                        130,
                         "BillingPlanKey!"
                     ],
                     "requirePaymentMethod": [
@@ -8403,11 +8403,11 @@ export default {
                 164,
                 {
                     "recurringInterval": [
-                        151,
+                        134,
                         "SubscriptionInterval!"
                     ],
                     "plan": [
-                        147,
+                        130,
                         "BillingPlanKey!"
                     ],
                     "requirePaymentMethod": [
@@ -8772,7 +8772,7 @@ export default {
                 }
             ],
             "executeOneLogicFunction": [
-                127,
+                144,
                 {
                     "input": [
                         467,
@@ -9858,7 +9858,7 @@ export default {
                 }
             ],
             "uploadNewWorkspaceLogo": [
-                131,
+                148,
                 {
                     "workspaceId": [
                         1,
@@ -10391,7 +10391,7 @@ export default {
                 3
             ],
             "type": [
-                135
+                152
             ],
             "name": [
                 1
@@ -13222,7 +13222,7 @@ export default {
         },
         "Subscription": {
             "onEventSubscription": [
-                142,
+                159,
                 {
                     "eventStreamId": [
                         1,
