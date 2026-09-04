@@ -1,29 +1,21 @@
-import { convert, HtmlToTextOptions } from 'html-to-text';
+import {
+  convert,
+  type FormatCallback,
+  type HtmlToTextOptions,
+} from 'html-to-text';
 
 import { HTML_QUOTE_SELECTORS } from 'src/modules/messaging/message-import-manager/utils/html-quote-selectors.constant';
 import { QUOTE_MARKERS } from 'src/modules/messaging/message-import-manager/utils/quote-markers.constant';
 
-type HtmlToTextElement = { children: unknown[] };
-type HtmlToTextWalk = (children: unknown[], builder: unknown) => void;
-type HtmlToTextBuilder = { addInline: (text: string) => void };
-
-const markQuoteContainer = (
-  element: HtmlToTextElement,
-  walk: HtmlToTextWalk,
-  builder: HtmlToTextBuilder,
-): void => {
+const markQuoteContainer: FormatCallback = (element, walk, builder) => {
   builder.addInline(QUOTE_MARKERS.containerOpen);
   walk(element.children, builder);
   builder.addInline(QUOTE_MARKERS.containerClose);
 };
 
 const buildSplitterMarker =
-  (marker: string) =>
-  (
-    element: HtmlToTextElement,
-    walk: HtmlToTextWalk,
-    builder: HtmlToTextBuilder,
-  ): void => {
+  (marker: string): FormatCallback =>
+  (element, walk, builder) => {
     builder.addInline(marker);
     walk(element.children, builder);
   };
@@ -50,7 +42,7 @@ const CONVERT_OPTIONS = {
     quoteSplitter: buildSplitterMarker(QUOTE_MARKERS.splitter),
     repeatedQuoteSplitter: buildSplitterMarker(QUOTE_MARKERS.repeatedSplitter),
   },
-} as HtmlToTextOptions;
+} satisfies HtmlToTextOptions;
 
 export const renderHtmlWithQuoteMarkers = (safeHtml: string): string =>
   convert(safeHtml, CONVERT_OPTIONS);
