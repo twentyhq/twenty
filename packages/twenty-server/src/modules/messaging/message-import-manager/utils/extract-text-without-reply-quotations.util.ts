@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import EmailReplyParser from 'email-reply-parser';
 
 const danishReplyHeaderRegex =
-  /(?:^|\r?\n)Fra:.*\r?\nSendt:.*\r?\nTil:.*\r?\nEmne:.*/i;
+  /(?:^|\r?\n)(?:_{5,}|-{5,})\r?\nFra:.*\r?\nSendt:.*\r?\nTil:.*(?:\r?\n[ \t]+.*)*(?:\r?\n(?:Cc|Bcc):.*(?:\r?\n[ \t]+.*)*)*\r?\nEmne:.*/i;
 
 export const extractTextWithoutReplyQuotations = (text: string): string => {
   const danishReplyHeaderMatch = text.match(danishReplyHeaderRegex);

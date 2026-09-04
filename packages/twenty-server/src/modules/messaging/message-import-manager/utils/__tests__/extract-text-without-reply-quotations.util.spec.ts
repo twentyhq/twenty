@@ -21,12 +21,39 @@ describe('extractTextWithoutReplyQuotations', () => {
 
   it('should drop quoted history with Danish reply headers', () => {
     const result = extractTextWithoutReplyQuotations(
-      'Nyt svar her.\n\nFra: sender@example.com\nSendt: 3. september 2026 10:00\nTil: recipient@example.com\nEmne: Test\nTidligere besked',
+      'Nyt svar her.\n\n________________________________\nFra: sender@example.com\nSendt: 3. september 2026 10:00\nTil: recipient@example.com\nEmne: Test\nTidligere besked',
     );
 
     expect(result).toContain('Nyt svar her.');
     expect(result).not.toContain('Fra:');
     expect(result).not.toContain('Tidligere besked');
+  });
+
+  it('should drop Danish quoted history with copied recipients', () => {
+    const result = extractTextWithoutReplyQuotations(
+      'Nyt svar her.\n\n________________________________\nFra: sender@example.com\nSendt: 3. september 2026 10:00\nTil: recipient@example.com\nCc: copied@example.com\nBcc: hidden@example.com\nEmne: Test\nTidligere besked',
+    );
+
+    expect(result).toContain('Nyt svar her.');
+    expect(result).not.toContain('Tidligere besked');
+  });
+
+  it('should drop Danish quoted history with multiline recipients', () => {
+    const result = extractTextWithoutReplyQuotations(
+      'Nyt svar her.\n\n________________________________\nFra: sender@example.com\nSendt: 3. september 2026 10:00\nTil: recipient@example.com;\n  second@example.com\nEmne: Test\nTidligere besked',
+    );
+
+    expect(result).toContain('Nyt svar her.');
+    expect(result).not.toContain('Tidligere besked');
+  });
+
+  it('should keep authored content containing Danish header-like text', () => {
+    const body =
+      'Notes:\n\nFra: sender@example.com\nSendt: 3. september 2026 10:00\nTil: recipient@example.com\nEmne: Test\nKeep these notes.';
+
+    expect(extractTextWithoutReplyQuotations(body)).toContain(
+      'Keep these notes.',
+    );
   });
 
   it('should keep the full body when the message is entirely quoted (forward) and would otherwise be emptied', () => {
