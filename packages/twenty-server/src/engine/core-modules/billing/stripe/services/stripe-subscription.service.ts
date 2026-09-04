@@ -37,7 +37,10 @@ export class StripeSubscriptionService {
     return subscription.data[0]?.customer ?? undefined;
   }
 
-  async collectLastInvoice(stripeSubscriptionId: string) {
+  async retryLatestInvoice(
+    stripeSubscriptionId: string,
+    stripePaymentMethodId: string,
+  ) {
     const subscription = await this.stripe.subscriptions.retrieve(
       stripeSubscriptionId,
       { expand: ['latest_invoice'] },
@@ -48,12 +51,14 @@ export class StripeSubscriptionService {
       !(
         latestInvoice &&
         typeof latestInvoice !== 'string' &&
-        latestInvoice.status === 'draft'
+        latestInvoice.status === 'open'
       )
     ) {
       return;
     }
-    await this.stripe.invoices.pay(latestInvoice.id);
+    await this.stripe.invoices.pay(latestInvoice.id, {
+      payment_method: stripePaymentMethodId,
+    });
   }
 
   async updateSubscription(

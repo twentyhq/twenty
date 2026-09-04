@@ -1,49 +1,71 @@
-import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
+import { UpdatePaymentMethodModal } from '@/settings/billing/components/UpdatePaymentMethodModal';
+import { useBillingPortalSession } from '@/settings/billing/hooks/useBillingPortalSession';
+import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { useQuery } from '@apollo/client/react';
-import {
-  PermissionFlagType,
-  BillingPortalSessionDocument,
-} from '~/generated-metadata/graphql';
+import { getSettingsPath } from 'twenty-shared/utils';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
+
+const FAILED_PAYMENT_UPDATE_PAYMENT_MODAL_ID =
+  'failed-payment-update-payment-modal';
 
 export const InformationBannerFailPaymentInfo = () => {
-  const { redirect } = useRedirect();
+  const { openModal } = useModal();
+  const billingHasPaymentMethod = useAtomStateValue(
+    billingHasPaymentMethodSelector,
+  );
+  const { isBillingPortalSessionDisabled, openBillingPortal } =
+    useBillingPortalSession(getSettingsPath(SettingsPath.Billing));
 
-  const { data, loading } = useQuery(BillingPortalSessionDocument, {
-    variables: {
-      returnUrlPath: getSettingsPath(SettingsPath.Billing),
-    },
-  });
+  const { [PermissionFlagType.BILLING]: hasPermissionToUpdateBillingDetails } =
+    usePermissionFlagMap();
 
-  const {
-    [PermissionFlagType.WORKSPACE]: hasPermissionToUpdateBillingDetails,
-  } = usePermissionFlagMap();
+  const shouldAddPaymentMethodInProduct = billingHasPaymentMethod === false;
 
-  const openBillingPortal = () => {
-    if (isDefined(data) && isDefined(data.billingPortalSession.url)) {
-      redirect(data.billingPortalSession.url);
+  const handlePaymentAction = () => {
+    if (shouldAddPaymentMethodInProduct) {
+      openModal(FAILED_PAYMENT_UPDATE_PAYMENT_MODAL_ID);
+      return;
     }
+
+    openBillingPortal();
   };
 
   return (
-    <InformationBanner
-      componentInstanceId="information-banner-fail-payment-info"
-      color="danger"
-      variant="secondary"
-      message={
-        hasPermissionToUpdateBillingDetails
-          ? t`Last payment failed. Please update your billing details.`
-          : t`Last payment failed. Please contact your admin.`
-      }
-      buttonTitle={
-        hasPermissionToUpdateBillingDetails ? t`Update payment` : undefined
-      }
-      buttonOnClick={() => openBillingPortal()}
-      isButtonDisabled={loading || !isDefined(data)}
-    />
+    <>
+      <InformationBanner
+        componentInstanceId="information-banner-fail-payment-info"
+        color="danger"
+        variant="secondary"
+        message={
+          hasPermissionToUpdateBillingDetails
+            ? shouldAddPaymentMethodInProduct
+              ? t`A payment method is needed to keep your workspace active.`
+              : t`Last payment failed. Please update your billing details.`
+            : t`There is a billing issue. Please contact your admin.`
+        }
+        buttonTitle={
+          hasPermissionToUpdateBillingDetails
+            ? shouldAddPaymentMethodInProduct
+              ? t`Add payment method`
+              : t`Update payment`
+            : undefined
+        }
+        buttonOnClick={handlePaymentAction}
+        isButtonDisabled={
+          !shouldAddPaymentMethodInProduct && isBillingPortalSessionDisabled
+        }
+      />
+      {hasPermissionToUpdateBillingDetails &&
+        shouldAddPaymentMethodInProduct && (
+          <UpdatePaymentMethodModal
+            modalInstanceId={FAILED_PAYMENT_UPDATE_PAYMENT_MODAL_ID}
+          />
+        )}
+    </>
   );
 };

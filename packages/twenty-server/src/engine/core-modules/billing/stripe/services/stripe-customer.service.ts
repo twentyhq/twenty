@@ -81,6 +81,15 @@ export class StripeCustomerService {
     });
   }
 
+  async setDefaultPaymentMethod(
+    stripeCustomerId: string,
+    stripePaymentMethodId: string,
+  ): Promise<void> {
+    await this.stripe.customers.update(stripeCustomerId, {
+      invoice_settings: { default_payment_method: stripePaymentMethodId },
+    });
+  }
+
   async createStripeCustomer(
     userEmail: string,
     workspaceId: string,

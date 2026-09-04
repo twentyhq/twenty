@@ -197,13 +197,52 @@ export class BillingSubscriptionService {
   }
 
   async handleUnpaidInvoices(data: Stripe.SetupIntentSucceededEvent.Data) {
+    const stripeCustomerId =
+      typeof data.object.customer === 'string'
+        ? data.object.customer
+        : data.object.customer?.id;
+
+    if (!isDefined(stripeCustomerId)) {
+      throw new BillingException(
+        'Missing customer on successful setup intent',
+        BillingExceptionCode.BILLING_STRIPE_ERROR,
+      );
+    }
+
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
-      { stripeCustomerId: data.object.customer as string },
+      { stripeCustomerId },
     );
 
-    if (billingSubscription.status === SubscriptionStatus.Unpaid) {
-      await this.stripeSubscriptionService.collectLastInvoice(
+    const stripePaymentMethodId =
+      typeof data.object.payment_method === 'string'
+        ? data.object.payment_method
+        : data.object.payment_method?.id;
+
+    if (!isDefined(stripePaymentMethodId)) {
+      throw new BillingException(
+        'Missing payment method on successful setup intent',
+        BillingExceptionCode.BILLING_STRIPE_ERROR,
+      );
+    }
+
+    await this.stripeCustomerService.setDefaultPaymentMethod(
+      billingSubscription.stripeCustomerId,
+      stripePaymentMethodId,
+    );
+
+    await this.stripeSubscriptionService.updateSubscription(
+      billingSubscription.stripeSubscriptionId,
+      { default_payment_method: stripePaymentMethodId },
+    );
+
+    if (
+      [SubscriptionStatus.PastDue, SubscriptionStatus.Unpaid].includes(
+        billingSubscription.status,
+      )
+    ) {
+      await this.stripeSubscriptionService.retryLatestInvoice(
         billingSubscription.stripeSubscriptionId,
+        stripePaymentMethodId,
       );
     }
 
