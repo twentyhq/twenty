@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
+import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
 import { useDeleteCoreWorkflows } from '@/object-core/workflows/hooks/useDeleteCoreWorkflows';
 import { getSelectedWorkspaceWorkflowIds } from '@/object-core/workflows/utils/getSelectedWorkspaceWorkflowIds';
@@ -13,7 +14,10 @@ export const useCoreWorkflowsSelection = ({
 }: {
   coreWorkflows: CoreWorkflow[];
 }) => {
-  const [selectedRowIds, setSelectedRowIds] = useState<string[]>([]);
+  const [selection, setSelection] = useState<{
+    filterSettings: FilterSettings;
+    rowIds: string[];
+  }>({ filterSettings: {}, rowIds: [] });
 
   const [deletedCoreWorkflowIds, setDeletedCoreWorkflowIds] = useState<
     string[]
@@ -29,9 +33,13 @@ export const useCoreWorkflowsSelection = ({
     coreWorkflowsFilterSettingsState,
   );
 
-  useEffect(() => {
-    setSelectedRowIds([]);
-  }, [coreWorkflowsFilterSettings]);
+  const selectedRowIds =
+    selection.filterSettings === coreWorkflowsFilterSettings
+      ? selection.rowIds
+      : [];
+
+  const selectRows = (rowIds: string[]) =>
+    setSelection({ filterSettings: coreWorkflowsFilterSettings, rowIds });
 
   const displayedCoreWorkflows = coreWorkflows.filter(
     (coreWorkflow) => !deletedCoreWorkflowIds.includes(coreWorkflow.id),
@@ -43,9 +51,7 @@ export const useCoreWorkflowsSelection = ({
   });
 
   const toggleRow = (rowId: string) =>
-    setSelectedRowIds((previousSelectedRowIds) =>
-      toggleRowIdInSelection({ selectedRowIds: previousSelectedRowIds, rowId }),
-    );
+    selectRows(toggleRowIdInSelection({ selectedRowIds, rowId }));
 
   const deleteSelectedCoreWorkflows = async () => {
     const coreWorkflowIdsToDelete = displayedCoreWorkflows
@@ -66,7 +72,7 @@ export const useCoreWorkflowsSelection = ({
       ...previousDeletedCoreWorkflowIds,
       ...coreWorkflowIdsToDelete,
     ]);
-    setSelectedRowIds([]);
+    selectRows([]);
   };
 
   return {
@@ -74,7 +80,7 @@ export const useCoreWorkflowsSelection = ({
     selectedRowIds,
     selectedWorkspaceWorkflowIds,
     toggleRow,
-    selectRows: setSelectedRowIds,
+    selectRows,
     deleteSelectedCoreWorkflows,
     canDeleteCoreWorkflows,
     isDeletingCoreWorkflows,

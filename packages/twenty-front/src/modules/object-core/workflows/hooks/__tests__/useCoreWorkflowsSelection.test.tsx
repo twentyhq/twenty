@@ -2,6 +2,8 @@ import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { useCoreWorkflowsSelection } from '@/object-core/workflows/hooks/useCoreWorkflowsSelection';
+import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
 
 const mockDeleteCoreWorkflows = jest.fn();
@@ -21,7 +23,7 @@ const coreWorkflows = [
 ] as CoreWorkflow[];
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <JotaiProvider>{children}</JotaiProvider>
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
 const renderSelection = () =>
@@ -71,6 +73,7 @@ describe('useCoreWorkflowsSelection', () => {
       await result.current.deleteSelectedCoreWorkflows();
     });
 
+    expect(mockDeleteCoreWorkflows).toHaveBeenCalledTimes(1);
     expect(mockDeleteCoreWorkflows).toHaveBeenCalledWith(['workspace-1']);
     expect(
       result.current.displayedCoreWorkflows.map(
@@ -120,6 +123,25 @@ describe('useCoreWorkflowsSelection', () => {
         (coreWorkflow) => coreWorkflow.id,
       ),
     ).toEqual(['core-2']);
+  });
+
+  it('should drop the selection when the filter settings change', () => {
+    const { result } = renderSelection();
+
+    act(() => {
+      result.current.toggleRow('core-1');
+    });
+
+    expect(result.current.selectedRowIds).toEqual(['core-1']);
+
+    act(() => {
+      jotaiStore.set(coreWorkflowsFilterSettingsState.atom, {
+        stepFilters: [],
+      });
+    });
+
+    expect(result.current.selectedRowIds).toEqual([]);
+    expect(result.current.selectedWorkspaceWorkflowIds).toEqual([]);
   });
 
   it('should deselect a row that is toggled twice', () => {
