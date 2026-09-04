@@ -1,11 +1,11 @@
 import { isUndefined } from '@sniptt/guards';
 import { useState } from 'react';
-import { ColorSample } from 'twenty-ui/data-display';
 import { DEFAULT_COLOR_LABELS } from 'twenty-ui/navigation';
 import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
 
 import { SettingsSelectControl } from 'src/front-components/components/SettingsSelectControl';
 import { SettingsSelectMenu } from 'src/front-components/components/SettingsSelectMenu';
+import { SettingsColorSample } from 'src/front-components/components/SettingsColorSample';
 import { StyledSettingsSelectAnchor } from 'src/front-components/components/StyledSettingsSelectAnchor';
 import { ThemeColorPickerMenu } from 'src/front-components/components/ThemeColorPickerMenu';
 import {
@@ -109,34 +109,32 @@ export const TileBackgroundControl = ({
         onSelectActive={handleSelectActive}
         onEscape={handleMenuClose}
         adornment={
-          <ColorSample
+          <SettingsColorSample
             colorName={selectedColor ?? FALLBACK_SWATCH_COLOR_NAME}
-            color={swatchColor}
+            color={isCustomSelected ? swatchColor : undefined}
           />
         }
         onClick={handleMenuToggle}
       />
-      {isMenuOpen && (
-        <SettingsSelectMenu onClose={handleMenuClose}>
-          <ThemeColorPickerMenu
-            listboxId={TILE_BACKGROUND_LISTBOX_ID}
-            selectedColor={selectedColor}
-            isCustomSelected={isCustomSelected}
-            activeOption={
-              tileBackgroundOptions[activeOptionIndex] ?? CUSTOM_OPTION_VALUE
-            }
-            getOptionId={getTileBackgroundOptionId}
-            onSelectColor={(color) => {
-              onSelectColor(color);
-              handleMenuClose();
-            }}
-            onSelectCustom={() => {
-              onSelectCustom();
-              handleMenuClose();
-            }}
-          />
-        </SettingsSelectMenu>
-      )}
+      <SettingsSelectMenu isOpen={isMenuOpen} onClose={handleMenuClose}>
+        <ThemeColorPickerMenu
+          listboxId={TILE_BACKGROUND_LISTBOX_ID}
+          selectedColor={selectedColor}
+          isCustomSelected={isCustomSelected}
+          activeOption={
+            tileBackgroundOptions[activeOptionIndex] ?? CUSTOM_OPTION_VALUE
+          }
+          getOptionId={getTileBackgroundOptionId}
+          onSelectColor={(color) => {
+            onSelectColor(color);
+            handleMenuClose();
+          }}
+          onSelectCustom={() => {
+            onSelectCustom();
+            handleMenuClose();
+          }}
+        />
+      </SettingsSelectMenu>
     </StyledSettingsSelectAnchor>
   );
 };

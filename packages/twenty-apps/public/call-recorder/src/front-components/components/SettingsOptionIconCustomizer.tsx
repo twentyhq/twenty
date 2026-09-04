@@ -12,6 +12,7 @@ const StyledIconCustomizer = styled.div<{ $zoom: number; $rotate: number }>`
   color: ${() => themeCssVariables.IllustrationIcon.color.gray};
   display: inline-flex;
   justify-content: center;
+  pointer-events: none;
   transform: ${({ $zoom, $rotate }) => `scale(${$zoom}) rotate(${$rotate}deg)`};
 `;
 

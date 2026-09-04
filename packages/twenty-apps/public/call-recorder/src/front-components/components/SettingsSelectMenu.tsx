@@ -39,17 +39,25 @@ const StyledMenu = styled.div`
 `;
 
 type SettingsSelectMenuProps = {
+  isOpen: boolean;
   onClose: () => void;
   children: ReactNode;
 };
 
 export const SettingsSelectMenu = ({
+  isOpen,
   onClose,
   children,
 }: SettingsSelectMenuProps) => (
   <>
-    <StyledBackdrop onClick={onClose} />
+    <StyledBackdrop
+      aria-hidden={!isOpen}
+      style={{ display: isOpen ? 'block' : 'none' }}
+      onClick={onClose}
+    />
     <StyledMenu
+      aria-hidden={!isOpen}
+      style={{ display: isOpen ? 'flex' : 'none' }}
       onKeyDown={(event) => {
         if (event.key === 'Escape') {
           onClose();

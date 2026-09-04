@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
-import { ColorSample } from 'twenty-ui/data-display';
 import { DEFAULT_COLOR_LABELS } from 'twenty-ui/navigation';
 import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
 
 import { DropdownMenuItemsContainer } from 'src/front-components/components/DropdownMenuItemsContainer';
 import { DropdownMenuOption } from 'src/front-components/components/DropdownMenuOption';
 import { DropdownMenuSeparator } from 'src/front-components/components/DropdownMenuSeparator';
+import { SettingsColorSample } from 'src/front-components/components/SettingsColorSample';
 
 const StyledListbox = styled.div`
   min-height: 0;
@@ -42,7 +42,7 @@ export const ThemeColorPickerMenu = ({
           text={DEFAULT_COLOR_LABELS[colorName]}
           selected={colorName === selectedColor}
           isActive={colorName === activeOption}
-          LeftComponent={<ColorSample colorName={colorName} />}
+          LeftComponent={<SettingsColorSample colorName={colorName} />}
         />
       ))}
     </DropdownMenuItemsContainer>

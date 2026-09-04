@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { SettingsColorSample } from 'src/front-components/components/SettingsColorSample';
 import { StyledSettingsTextInput } from 'src/front-components/components/StyledSettingsTextInput';
 
 const StyledAdornmentContainer = styled.div`
@@ -14,14 +15,6 @@ const StyledAdornmentContainer = styled.div`
   display: flex;
   height: 32px;
   padding: ${() => themeCssVariables.spacing[2]};
-`;
-
-const StyledSwatch = styled.div`
-  border: 1px solid ${() => themeCssVariables.border.color.medium};
-  border-radius: ${() => themeCssVariables.border.radius.sm};
-  box-sizing: border-box;
-  height: 16px;
-  width: 16px;
 `;
 
 const StyledAdornedInput = styled(StyledSettingsTextInput)`
@@ -57,7 +50,7 @@ export const AdornedHexInput = ({
 }: AdornedHexInputProps) => (
   <StyledContainer>
     <StyledAdornmentContainer>
-      <StyledSwatch style={{ backgroundColor: swatchColor }} />
+      <SettingsColorSample colorName="gray" color={swatchColor} />
     </StyledAdornmentContainer>
     <StyledAdornedInput
       id={id}

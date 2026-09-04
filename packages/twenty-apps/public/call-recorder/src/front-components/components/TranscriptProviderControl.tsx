@@ -91,31 +91,29 @@ export const TranscriptProviderControl = ({
         onEscape={handleMenuClose}
         onClick={handleMenuToggle}
       />
-      {isMenuOpen && (
-        <SettingsSelectMenu onClose={handleMenuClose}>
-          <StyledListbox
-            id={TRANSCRIPT_PROVIDER_LISTBOX_ID}
-            role="listbox"
-            aria-label="Transcript provider"
-          >
-            <DropdownMenuItemsContainer>
-              {selectableOptions.map((option, index) => (
-                <DropdownMenuOption
-                  key={option.value}
-                  id={getTranscriptProviderOptionId(index)}
-                  text={option.label}
-                  selected={option.value === value}
-                  isActive={index === activeOptionIndex}
-                  onSelect={() => {
-                    onChange(option.value);
-                    handleMenuClose();
-                  }}
-                />
-              ))}
-            </DropdownMenuItemsContainer>
-          </StyledListbox>
-        </SettingsSelectMenu>
-      )}
+      <SettingsSelectMenu isOpen={isMenuOpen} onClose={handleMenuClose}>
+        <StyledListbox
+          id={TRANSCRIPT_PROVIDER_LISTBOX_ID}
+          role="listbox"
+          aria-label="Transcript provider"
+        >
+          <DropdownMenuItemsContainer>
+            {selectableOptions.map((option, index) => (
+              <DropdownMenuOption
+                key={option.value}
+                id={getTranscriptProviderOptionId(index)}
+                text={option.label}
+                selected={option.value === value}
+                isActive={index === activeOptionIndex}
+                onSelect={() => {
+                  onChange(option.value);
+                  handleMenuClose();
+                }}
+              />
+            ))}
+          </DropdownMenuItemsContainer>
+        </StyledListbox>
+      </SettingsSelectMenu>
     </StyledSettingsSelectAnchor>
   );
 };
