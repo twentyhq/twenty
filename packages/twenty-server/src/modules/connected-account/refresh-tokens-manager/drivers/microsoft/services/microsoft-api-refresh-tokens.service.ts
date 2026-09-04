@@ -12,7 +12,7 @@ import { parseMsalError } from 'src/modules/connected-account/refresh-tokens-man
 import type { ConnectedAccountPlaintextTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 
 @Injectable()
-export class MicrosoftAPIRefreshAccessTokenService {
+export class MicrosoftApiRefreshAccessTokenService {
   constructor(private readonly config: TwentyConfigService) {}
 
   async refreshTokens(

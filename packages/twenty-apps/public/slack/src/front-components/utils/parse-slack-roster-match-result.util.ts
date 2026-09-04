@@ -20,5 +20,6 @@ export const parseSlackRosterMatchResult = ({
     unmatchedCount: isNumber(record?.unmatchedCount)
       ? record.unmatchedCount
       : 0,
+    failedCount: isNumber(record?.failedCount) ? record.failedCount : 0,
   };
 };

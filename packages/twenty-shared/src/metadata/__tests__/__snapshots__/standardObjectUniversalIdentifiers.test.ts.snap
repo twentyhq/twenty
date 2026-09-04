@@ -2020,8 +2020,17 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "companyIdIndex": {
         "universalIdentifier": "2d83909a-a383-4e82-b00a-8b7739f3f906",
       },
+      "noteCompanyUniqueIndex": {
+        "universalIdentifier": "e3b92659-04cf-4496-8fd4-4f32c747c26a",
+      },
       "noteIdIndex": {
         "universalIdentifier": "9294d9e3-0225-4c7f-9d6e-23b4c25b6b24",
+      },
+      "noteOpportunityUniqueIndex": {
+        "universalIdentifier": "58002741-8aa7-4812-b7af-f4cf98dd2433",
+      },
+      "notePersonUniqueIndex": {
+        "universalIdentifier": "29be76d1-ff4f-4f0f-b05c-f679a234e90a",
       },
       "opportunityIdIndex": {
         "universalIdentifier": "0d1a59b4-cc87-4b7d-804a-656e8504f371",
@@ -2707,8 +2716,17 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "personIdIndex": {
         "universalIdentifier": "b7d305d1-6fae-4ed6-9bdc-354fe9032c0e",
       },
+      "taskCompanyUniqueIndex": {
+        "universalIdentifier": "637dce5e-f609-49f4-89e3-c0ef9e330d3a",
+      },
       "taskIdIndex": {
         "universalIdentifier": "c882f7a4-b025-4d32-aa26-5ef2595bdbf9",
+      },
+      "taskOpportunityUniqueIndex": {
+        "universalIdentifier": "eb5422ff-7a41-48d2-a2df-3de1cbf7bced",
+      },
+      "taskPersonUniqueIndex": {
+        "universalIdentifier": "4adf4d5a-ad69-4c5c-bc62-2807816b3aa8",
       },
     },
     "morphIds": {
