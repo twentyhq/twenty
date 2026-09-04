@@ -22,6 +22,10 @@ import {
   MessageQueue,
   QUEUE_DRIVER,
 } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import {
+  MessageQueueException,
+  MessageQueueExceptionCode,
+} from 'src/engine/core-modules/message-queue/message-queue.exception';
 
 @Injectable()
 export class MessageQueueService {
@@ -69,8 +73,9 @@ export class MessageQueueService {
       !isNonEmptyString(data.workspaceId) ||
       !isNonEmptyString(data.userWorkspaceId)
     ) {
-      throw new Error(
+      throw new MessageQueueException(
         `Job ${jobName} on queue ${this.queueName} broadcasts its status but its data has no workspaceId and userWorkspaceId`,
+        MessageQueueExceptionCode.STATUS_BROADCAST_RECIPIENT_MISSING,
       );
     }
   }
