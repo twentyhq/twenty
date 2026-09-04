@@ -175,7 +175,6 @@ class FakeRecallApi {
       });
     }
 
-    // Simulates the workspace API rejecting the app's cosmetic On write.
     if (
       this.failCalendarEventUpdates &&
       requestUrl === `${process.env.TWENTY_API_URL}/graphql` &&
@@ -600,8 +599,6 @@ describe('call recorder app lifecycle (integration)', () => {
     };
   };
 
-  // Mocked database-event trigger transport: invokes the calendarEvent.*
-  // logic function handler with the payload the platform would have sent.
   const deliverCalendarEventUpdate = ({
     calendarEventId,
     updatedFields,
@@ -1104,9 +1101,6 @@ describe('call recorder app lifecycle (integration)', () => {
 
       recall.failCalendarEventUpdates = true;
 
-      // The shared client was built before the interceptor, so this one is
-      // created now to route the app's writes through it, like a logic
-      // function constructing its own client at run time.
       const results = await reconcileCallRecorderForCalendarEventIds({
         client: new CoreApiClient(),
         calendarEventIds: [calendarEventId],

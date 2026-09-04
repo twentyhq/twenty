@@ -1,2 +1,1 @@
-// Mirrors the server's MUTATION_MAXIMUM_AFFECTED_RECORDS default.
 export const CALENDAR_EVENT_UPDATE_BATCH_SIZE = 100;

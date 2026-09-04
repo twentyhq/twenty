@@ -286,9 +286,6 @@ const reconcileActiveMeeting = async ({
   return reconciliationResult;
 };
 
-// The field has no default so events only read On once a bot is actually
-// requested for them. The write is cosmetic: a failure must not fail the
-// meeting, and the next reconciliation of the meeting repeats it anyway.
 const markRequestingCalendarEventsRecordingOn = async (
   client: CoreApiClient,
   meetingPolicyResult: CallRecorderPolicyResultForMeeting,

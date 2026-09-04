@@ -159,9 +159,6 @@ const hasRelevantFieldChange = (updatedFields: string[]): boolean =>
     CALL_RECORDER_RELEVANT_CALENDAR_EVENT_FIELDS.includes(updatedField),
   );
 
-// The policy reads a blank preference exactly like ON, so a change between
-// the two, notably the app's own On write after scheduling, cannot alter the
-// outcome and would only replay the same reconciliation.
 const isPreferenceChangeWithoutPolicyEffect = ({
   updatedFields,
   before,

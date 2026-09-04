@@ -5,7 +5,6 @@ import { CALENDAR_EVENT_UPDATE_BATCH_SIZE } from 'src/logic-functions/constants/
 import { getBatches } from 'src/logic-functions/utils/get-batches.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 
-// Only a blank preference is written so a choice made meanwhile survives.
 export const markCalendarEventsRecordingOn = async (
   client: CoreApiClient,
   calendarEventIds: string[],
