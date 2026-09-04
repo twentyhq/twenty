@@ -9,7 +9,6 @@ import { buildCoreWorkflowVersionLabel } from 'src/engine/core-modules/workflow/
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 
 @Injectable()
@@ -67,20 +66,14 @@ export class CoreWorkflowVersionListService {
     workspaceId: string;
     workspaceWorkflowVersionId: string;
   }): Promise<CoreWorkflowVersionDTO | null> {
-    const authContext = buildSystemAuthContext(workspaceId);
-
     const workspaceWorkflowVersion =
-      await this.workspaceOrmManager.executeInWorkspaceContext(
-        async () =>
-          this.workspaceOrmManager
-            .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
-              shouldBypassPermissionChecks: true,
-            })
-            .findOne({
-              where: { id: workspaceWorkflowVersionId },
-              select: { id: true, workflowId: true },
-            }),
-        authContext,
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () =>
+        this.workspaceOrmManager
+          .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion')
+          .findOne({
+            where: { id: workspaceWorkflowVersionId },
+            select: { id: true, workflowId: true },
+          }),
       );
 
     if (!isDefined(workspaceWorkflowVersion)) {
@@ -128,13 +121,9 @@ export class CoreWorkflowVersionListService {
       return {};
     }
 
-    const authContext = buildSystemAuthContext(workspaceId);
-
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceWorkflowVersions = await this.workspaceOrmManager
-        .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
-          shouldBypassPermissionChecks: true,
-        })
+        .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion')
         .find({
           where: {
             workflowId: workspaceWorkflowId,
@@ -155,6 +144,6 @@ export class CoreWorkflowVersionListService {
             : [],
         ),
       );
-    }, authContext);
+    });
   }
 }
