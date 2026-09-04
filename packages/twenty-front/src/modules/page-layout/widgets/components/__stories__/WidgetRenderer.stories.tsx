@@ -85,6 +85,7 @@ const WIDGET_ID_MANY_TO_ONE_RELATION = 'widget-relation-field';
 const WIDGET_ID_ONE_TO_MANY_RELATION = 'widget-one-to-many-relation-field';
 const WIDGET_ID_CATALOG = 'catalog-widget';
 const TAB_ID_OVERVIEW = 'tab-overview';
+const SIDE_PANEL_INSTANCE_ID = 'widget-side-panel';
 
 const mockPersonRecord: ObjectRecord = {
   __typename: 'Person',
@@ -1478,7 +1479,7 @@ export const InSidePanel: Story = {
       getTestEnrichedObjectMetadataItemsMock(),
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
-    const pageLayoutData = createPageLayoutWithWidget(
+    const sidePanelPageLayoutData = createPageLayoutWithWidget(
       widget,
       PageLayoutType.RECORD_PAGE,
     );
@@ -1486,29 +1487,27 @@ export const InSidePanel: Story = {
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
       }),
-      pageLayoutData,
+      sidePanelPageLayoutData,
     );
     jotaiStore.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
       }),
-      pageLayoutData,
+      sidePanelPageLayoutData,
     );
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
         <JestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
-            <PageLayoutTestWrapper store={jotaiStore}>
-              <WorkspaceSurfaceContext.Provider
-                value={{
-                  type: 'side-panel',
-                  instanceId: 'widget-side-panel',
-                  ownsRouteLocation: false,
-                  headerTitlePortal: null,
-                  headerActionsPortal: null,
-                }}
-              >
+            <WorkspaceSurfaceContext.Provider
+              value={{
+                type: 'side-panel',
+                instanceId: SIDE_PANEL_INSTANCE_ID,
+                ownsRouteLocation: false,
+              }}
+            >
+              <PageLayoutTestWrapper store={jotaiStore}>
                 <LayoutRenderingProvider
                   value={{
                     layoutType: PageLayoutType.RECORD_PAGE,
@@ -1528,15 +1527,15 @@ export const InSidePanel: Story = {
                   >
                     <WidgetComponentInstanceContext.Provider
                       value={{
-                        instanceId: 'widget-side-panel',
+                        instanceId: SIDE_PANEL_INSTANCE_ID,
                       }}
                     >
                       <WidgetRenderer widget={widget} />
                     </WidgetComponentInstanceContext.Provider>
                   </PageLayoutContentProvider>
                 </LayoutRenderingProvider>
-              </WorkspaceSurfaceContext.Provider>
-            </PageLayoutTestWrapper>
+              </PageLayoutTestWrapper>
+            </WorkspaceSurfaceContext.Provider>
           </CoreClientProviderWrapper>
         </JestMetadataAndApolloMocksWrapper>
       </div>

@@ -9,4 +9,6 @@ export const WORKSPACE_OWNED_PROPERTIES_BY_METADATA_NAME: Partial<{
   [P in AllMetadataName]: MetadataEntityComparablePropertyName<P>[];
 }> = {
   pageLayout: ['isFirstTabPinned'],
+  skill: ['isActive'],
+  view: ['createdByUserWorkspaceId'],
 };

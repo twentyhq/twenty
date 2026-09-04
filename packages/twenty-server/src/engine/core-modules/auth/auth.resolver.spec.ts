@@ -10,7 +10,7 @@ import { ImpersonationAuthorizationService } from 'src/engine/core-modules/imper
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-import { SSOExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
+import { SsoExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { EmailPasswordResetLinkInput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.input';
@@ -27,7 +27,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
-import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -195,7 +195,7 @@ describe('AuthResolver', () => {
           },
         },
         {
-          provide: SSOExchangeTokenService,
+          provide: SsoExchangeTokenService,
           useValue: {},
         },
         {
@@ -227,7 +227,7 @@ describe('AuthResolver', () => {
           useValue: {},
         },
         {
-          provide: SSOService,
+          provide: SsoService,
           useValue: {},
         },
         {

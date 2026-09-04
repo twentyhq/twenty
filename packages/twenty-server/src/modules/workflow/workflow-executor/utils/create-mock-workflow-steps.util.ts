@@ -15,6 +15,7 @@ import {
 export const createMockCodeStep = (
   id: string,
   nextStepIds: string[] = [],
+  { continueOnFailure = false }: { continueOnFailure?: boolean } = {},
 ): WorkflowCodeAction => ({
   id,
   name: `Step ${id}`,
@@ -25,7 +26,7 @@ export const createMockCodeStep = (
     input: {},
     outputSchema: {},
     errorHandlingOptions: {
-      continueOnFailure: { value: false },
+      continueOnFailure: { value: continueOnFailure },
       retryOnFailure: { value: false },
     },
   } as WorkflowCodeActionSettings,
@@ -59,6 +60,7 @@ export const createMockIfElseStep = (
   id: string,
   branches: StepIfElseBranch[],
   nextStepIds: string[] = [],
+  { continueOnFailure = false }: { continueOnFailure?: boolean } = {},
 ): WorkflowIfElseAction => ({
   id,
   name: `Step ${id}`,
@@ -73,7 +75,7 @@ export const createMockIfElseStep = (
     },
     outputSchema: {},
     errorHandlingOptions: {
-      continueOnFailure: { value: false },
+      continueOnFailure: { value: continueOnFailure },
       retryOnFailure: { value: false },
     },
   } as WorkflowIfElseActionSettings,

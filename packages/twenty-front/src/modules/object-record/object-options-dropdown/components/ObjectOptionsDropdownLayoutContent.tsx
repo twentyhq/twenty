@@ -23,6 +23,7 @@ import {
 } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -125,9 +126,12 @@ export const ObjectOptionsDropdownLayoutContent = () => {
       : []),
   ];
 
+  const scopedObjectOptionsDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(OBJECT_OPTIONS_DROPDOWN_ID);
+
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    OBJECT_OPTIONS_DROPDOWN_ID,
+    scopedObjectOptionsDropdownId,
   );
 
   return (

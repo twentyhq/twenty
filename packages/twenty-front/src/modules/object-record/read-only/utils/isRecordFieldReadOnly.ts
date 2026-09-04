@@ -17,8 +17,10 @@ type IsRecordFieldReadOnlyParams = {
   isRecordReadOnly: boolean;
   isSystemObject?: boolean;
   isFieldFromStandardApplication?: boolean;
-  fieldMetadataItem: Pick<FieldMetadataItem, 'id' | 'isUIEditable'> &
-    Partial<Pick<FieldMetadataItem, 'type' | 'settings'>>;
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'id' | 'isUIEditable' | 'type' | 'settings'
+  >;
   objectPermissions: ObjectPermission;
   fieldDefinition?: FieldDefinition<FieldMetadata>;
   objectPermissionsByObjectMetadataId?: ObjectPermissionsByObjectMetadataId;
@@ -49,12 +51,10 @@ export const isRecordFieldReadOnly = ({
   // A junction target field carries links the workspace owns, not data synced
   // from the provider, so it is exempt from the system-object lock below.
   // Record-level read-only still wins.
-  const isJunctionTargetField =
-    isDefined(fieldMetadataItem.type) &&
-    isConfiguredJunctionRelationField({
-      type: fieldMetadataItem.type,
-      settings: fieldMetadataItem.settings,
-    });
+  const isJunctionTargetField = isConfiguredJunctionRelationField({
+    type: fieldMetadataItem.type,
+    settings: fieldMetadataItem.settings,
+  });
 
   // Keep system-object standard fields read-only. If the application origin
   // cannot be resolved yet, fail closed until metadata finishes loading.

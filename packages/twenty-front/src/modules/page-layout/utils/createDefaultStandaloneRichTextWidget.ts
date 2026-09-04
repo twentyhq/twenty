@@ -1,5 +1,5 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { isVerticalListPosition } from '@/page-layout/utils/isVerticalListPosition';
+import { buildDraftPageLayoutWidget } from '@/page-layout/utils/buildDraftPageLayoutWidget';
 import {
   type PageLayoutWidgetGridPosition,
   type PageLayoutWidgetVerticalListPosition,
@@ -24,27 +24,16 @@ export const createDefaultStandaloneRichTextWidget = ({
   position,
   objectMetadataId,
   title = 'Untitled Rich Text',
-}: CreateDefaultStandaloneRichTextWidgetParams): PageLayoutWidget => {
-  return {
-    __typename: 'PageLayoutWidget',
+}: CreateDefaultStandaloneRichTextWidgetParams): PageLayoutWidget =>
+  buildDraftPageLayoutWidget({
     id,
-    applicationId: '',
-    universalIdentifier: id,
-    isSystemSideEffect: false,
     pageLayoutTabId,
     title,
-    isActive: true,
     type: WidgetType.STANDALONE_RICH_TEXT,
     configuration: {
       configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
       body,
     },
-    position: isVerticalListPosition(position)
-      ? { ...position, __typename: 'PageLayoutWidgetVerticalListPosition' }
-      : { ...position, __typename: 'PageLayoutWidgetGridPosition' },
-    objectMetadataId: objectMetadataId ?? null,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    deletedAt: null,
-  };
-};
+    position,
+    objectMetadataId,
+  });

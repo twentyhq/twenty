@@ -1,4 +1,6 @@
 import {
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
   SystemPermissionFlag,
   defineRole,
@@ -29,6 +31,7 @@ import {
   PARTNER_CONTENT_TYPE_FIELD_ID,
 } from 'src/modules/partner/objects/partner-content.object';
 import { PARTNER_CONTENT_PARTNER_FIELD_ID } from 'src/modules/partner/fields/partner-content-partner.field';
+import { OPPORTUNITY_APPLICANT_PARTNER_USER_IDS_FIELD_ID } from 'src/modules/opportunity/fields/opportunity-applicant-partner-user-ids.field';
 import { OPPORTUNITY_DESIGN_DOC_STATUS_FIELD_ID } from 'src/modules/opportunity/fields/opportunity-design-doc-status.field';
 import { OPPORTUNITY_DESIGN_DOC_URL_FIELD_ID } from 'src/modules/opportunity/fields/opportunity-design-doc-url.field';
 import { OPPORTUNITY_HOSTING_TYPE_FIELD_ID } from 'src/modules/opportunity/fields/opportunity-hosting-type.field';
@@ -50,16 +53,56 @@ import { PARTNER_USER_ON_PARTNER_CONTENT_FIELD_ID } from 'src/modules/partner/fi
 import { PARTNER_USER_ON_PARTNER_LINK_FIELD_ID } from 'src/modules/partner/fields/partner-user-on-partner-link.field';
 import { PARTNER_USER_ON_PARTNER_FIELD_ID } from 'src/modules/partner/fields/partner-user-on-partner.field';
 import { PARTNER_USER_ON_PARTNER_SERVICE_FIELD_ID } from 'src/modules/partner/fields/partner-user-on-partner-service.field';
+import { PARTNER_USER_ON_COMPANY_FIELD_ID } from 'src/modules/partner/fields/partner-user-on-company.field';
+import { PARTNER_USER_ON_PERSON_FIELD_ID } from 'src/modules/partner/fields/partner-user-on-person.field';
 import { REFERRED_BY_PARTNER_ON_OPPORTUNITY_FIELD_ID } from 'src/modules/opportunity/fields/referred-by-partner-on-opportunity.field';
 
 // Shared with configure-partner-rls.ts, which locates the role by this label.
 export const PARTNER_ROLE_LABEL = 'Partner';
 
+export const OPPORTUNITY_RLS_OR_GROUP_ID =
+  '7a7fd85d-62c6-4cac-876f-3a67951e7b10';
+
+const RLS_PREDICATE_IDS = {
+  partner: '501a50b0-9e57-4a5a-99c3-88c44dc46d4a',
+  person: 'e22864f1-bf16-4645-a1be-2a7b496f9553',
+  company: '5560449f-53a2-47e4-86a2-ac9d046d7f48',
+  partnerLink: '12298a33-14b8-4400-a2a3-6808248f30ca',
+  partnerService: '6b12da67-2e82-4a4a-950c-590dcccae147',
+  partnerContent: 'a030e3a0-bcf5-4894-aa85-6f7ef346f540',
+  application: '028e9c80-608f-4c19-883c-bea2978e957b',
+  workspaceMemberSelf: 'cc793cb4-c57f-4b37-a16a-2d1077aaffee',
+  opportunityPartnerUser: '05267679-8996-4787-aaf2-f9e2f7eb960f',
+  opportunityIsListed: '06475b7d-5e56-4a9d-be5c-83a18c0c28ff',
+  opportunityApplicant: '5278f25a-c5f9-4e77-bb38-4e28a1b01556',
+} as const;
+
+const WORKSPACE_MEMBER_ID_FIELD_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
+    .universalIdentifier;
+
+// Operand must be IS, not CONTAINS: the upsert accepts CONTAINS but the RELATION query
+// filter only allows IS / IS_NOT and throws at query time.
+const ownedByCurrentMember = (
+  universalIdentifier: string,
+  objectUniversalIdentifier: string,
+  fieldUniversalIdentifier: string,
+) => ({
+  universalIdentifier,
+  objectUniversalIdentifier,
+  fieldUniversalIdentifier,
+  operand: RowLevelPermissionPredicateOperand.IS,
+  workspaceMemberFieldUniversalIdentifier:
+    WORKSPACE_MEMBER_ID_FIELD_UNIVERSAL_IDENTIFIER,
+});
+
 // External partner self-service role: a partner sees only its own records and can edit its
 // own Partner profile. Company, Person, Opportunity and Application are read-only — the
 // pitch is set once by the apply route (application role) at creation and is never editable
 // by the partner afterwards. Application rows are scoped to own partnerUser (RLS).
-// Row-level predicates can't ship in the manifest, so run `yarn rls:configure` after install.
+// Opportunity rows: listed briefs, assigned partnerUser, or applicantPartnerUserIds.
+// Row-level predicates ship in this manifest (rowLevelPermissionPredicates below), so an
+// install or upgrade configures them — no post-install script step.
 //
 // The Opportunity and Application field locks below are moot now that neither object is
 // writable at all. They stay because configure-partner-rls.ts asserts on them and exits
@@ -75,7 +118,7 @@ export default defineRole({
   universalIdentifier: PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
   label: PARTNER_ROLE_LABEL,
   description:
-    'External partner self-service role. Sees only its own Partner/Person/Company/PartnerLink/PartnerService/PartnerContent/Opportunity/Application records (row-level). Can edit its own Partner profile; Application is read-only (the pitch is set once at apply time and cannot be edited afterwards); Opportunity stage/amount are read-only. Configure predicates with `yarn rls:configure` after install.',
+    'External partner self-service role. Sees only its own Partner/Person/Company/PartnerLink/PartnerService/PartnerContent/Opportunity/Application records (row-level). Can edit its own Partner profile; Application is read-only (the pitch is set once at apply time and cannot be edited afterwards); Opportunity stage/amount are read-only. Listed briefs are visible to all partners; after unlist, a partner still sees briefs it applied to or was invited to.',
   icon: 'IconBuildingStore',
   canBeAssignedToUsers: true,
   canUpdateAllSettings: false,
@@ -277,6 +320,18 @@ export default defineRole({
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
       fieldUniversalIdentifier: OPPORTUNITY_IS_LISTED_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    {
+      // RLS allowlist of applicant member ids — partners must not read or write it, or one
+      // applicant would see the others. Hiding it costs realtime only: the server strips
+      // restricted fields before matching an event against the RLS predicate, so live
+      // updates for a brief matched solely by this field never reach the partner. The
+      // initial query still returns the row, so it appears on reload.
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+      fieldUniversalIdentifier: OPPORTUNITY_APPLICANT_PARTNER_USER_IDS_FIELD_ID,
+      canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
     {
@@ -512,8 +567,8 @@ export default defineRole({
     },
     {
       // Read-only so the UI can resolve member-typed relations (own partnerUser link,
-      // owner/createdBy). An RLS predicate scopes this to the partner's own member record
-      // (see scripts/configure-partner-rls.ts) so the internal roster stays hidden.
+      // owner/createdBy). The workspaceMemberSelf predicate below scopes this to the
+      // partner's own member record so the internal roster stays hidden.
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember
           .universalIdentifier,
@@ -521,6 +576,92 @@ export default defineRole({
       canUpdateObjectRecords: false,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
+    },
+  ],
+  rowLevelPermissionPredicateGroups: [
+    {
+      universalIdentifier: OPPORTUNITY_RLS_OR_GROUP_ID,
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+    },
+  ],
+  // RLS validates an insert against the row as submitted, so a row created without
+  // partnerUser is rejected — which is why the apply route sets partnerUser at creation.
+  rowLevelPermissionPredicates: [
+    ownedByCurrentMember(
+      RLS_PREDICATE_IDS.partner,
+      PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
+      PARTNER_USER_ON_PARTNER_FIELD_ID,
+    ),
+    ownedByCurrentMember(
+      RLS_PREDICATE_IDS.person,
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+      PARTNER_USER_ON_PERSON_FIELD_ID,
+    ),
+    ownedByCurrentMember(
+      RLS_PREDICATE_IDS.company,
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      PARTNER_USER_ON_COMPANY_FIELD_ID,
+    ),
+    ownedByCurrentMember(
+      RLS_PREDICATE_IDS.partnerLink,
+      PARTNER_LINK_OBJECT_UNIVERSAL_IDENTIFIER,
+      PARTNER_USER_ON_PARTNER_LINK_FIELD_ID,
+    ),
+    ownedByCurrentMember(
+      RLS_PREDICATE_IDS.partnerService,
+      PARTNER_SERVICE_OBJECT_UNIVERSAL_IDENTIFIER,
+      PARTNER_USER_ON_PARTNER_SERVICE_FIELD_ID,
+    ),
+    ownedByCurrentMember(
+      RLS_PREDICATE_IDS.partnerContent,
+      PARTNER_CONTENT_OBJECT_UNIVERSAL_IDENTIFIER,
+      PARTNER_USER_ON_PARTNER_CONTENT_FIELD_ID,
+    ),
+    ownedByCurrentMember(
+      RLS_PREDICATE_IDS.application,
+      APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      APPLICATION_PARTNER_USER_FIELD_ID,
+    ),
+    // Self-scope: a partner resolves member-typed relations to its own record only, so the
+    // internal roster stays hidden. Other members resolve to null.
+    ownedByCurrentMember(
+      RLS_PREDICATE_IDS.workspaceMemberSelf,
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.universalIdentifier,
+      WORKSPACE_MEMBER_ID_FIELD_UNIVERSAL_IDENTIFIER,
+    ),
+    // (partnerUser IS me) OR (isListed = true) OR (applicantPartnerUserIds CONTAINS me)
+    {
+      ...ownedByCurrentMember(
+        RLS_PREDICATE_IDS.opportunityPartnerUser,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+        PARTNER_USER_ON_OPPORTUNITY_FIELD_ID,
+      ),
+      predicateGroupUniversalIdentifier: OPPORTUNITY_RLS_OR_GROUP_ID,
+      position: 0,
+    },
+    {
+      universalIdentifier: RLS_PREDICATE_IDS.opportunityIsListed,
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+      fieldUniversalIdentifier: OPPORTUNITY_IS_LISTED_FIELD_ID,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      value: true,
+      predicateGroupUniversalIdentifier: OPPORTUNITY_RLS_OR_GROUP_ID,
+      position: 1,
+    },
+    {
+      universalIdentifier: RLS_PREDICATE_IDS.opportunityApplicant,
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+      fieldUniversalIdentifier:
+        OPPORTUNITY_APPLICANT_PARTNER_USER_IDS_FIELD_ID,
+      operand: RowLevelPermissionPredicateOperand.CONTAINS,
+      workspaceMemberFieldUniversalIdentifier:
+        WORKSPACE_MEMBER_ID_FIELD_UNIVERSAL_IDENTIFIER,
+      predicateGroupUniversalIdentifier: OPPORTUNITY_RLS_OR_GROUP_ID,
+      position: 2,
     },
   ],
 });

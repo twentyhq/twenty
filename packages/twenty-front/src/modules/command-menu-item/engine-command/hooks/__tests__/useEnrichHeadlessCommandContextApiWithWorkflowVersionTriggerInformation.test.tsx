@@ -34,6 +34,7 @@ const buildBaseContextApi = (
   selectedRecords: [],
   graphqlFilter: null,
   payload: null,
+  navigationTargetObjectMetadataId: null,
   ...overrides,
 });
 

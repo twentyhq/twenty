@@ -2,11 +2,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { escapeSqlLikePattern } from 'src/logic-functions/utils/escape-sql-like-pattern.util';
+
 const CANDIDATES_PER_PAGE = 100;
 const MAX_PAGES = 10;
-
-const escapeIlikePattern = (value: string): string =>
-  value.replace(/[\\%_]/g, '\\$&');
 
 export const findWorkspaceMemberIdByEmail = async (
   client: CoreApiClient,
@@ -21,7 +20,7 @@ export const findWorkspaceMemberIdByEmail = async (
     const queryResult = await client.query({
       workspaceMembers: {
         __args: {
-          filter: { userEmail: { ilike: escapeIlikePattern(email) } },
+          filter: { userEmail: { ilike: escapeSqlLikePattern(email) } },
           first: CANDIDATES_PER_PAGE,
           ...(isDefined(after) ? { after } : {}),
         },

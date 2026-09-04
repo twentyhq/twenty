@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import { type ApplicationBilling } from 'twenty-shared/application';
 import {
   Column,
   CreateDateColumn,
@@ -115,6 +116,16 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
 
   @Column({ type: 'jsonb', nullable: false, default: {} })
   availablePackages: Record<string, string>;
+
+  // What the app declares it bills for: recurring charges the platform raises
+  // each period, and the operations it charges against, each with the billing
+  // category metered and the app-authored label shown for that spend.
+  @Column({ type: 'jsonb', nullable: false, default: {} })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.38.0_AddBillingToApplicationFastInstanceCommand_1788340843000',
+  })
+  billing: ApplicationBilling;
 
   @Column({ nullable: true, type: 'uuid' })
   logicFunctionLayerId: string | null;

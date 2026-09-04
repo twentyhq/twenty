@@ -37,7 +37,7 @@ describe('OAuthDiscoveryController', () => {
         },
         {
           provide: ApplicationRegistrationService,
-          useValue: { findOneByUniversalIdentifier: jest.fn() },
+          useValue: { findOneByUniversalIdentifierGlobal: jest.fn() },
         },
       ],
     }).compile();
@@ -93,7 +93,7 @@ describe('OAuthDiscoveryController', () => {
           },
           {
             provide: ApplicationRegistrationService,
-            useValue: { findOneByUniversalIdentifier: jest.fn() },
+            useValue: { findOneByUniversalIdentifierGlobal: jest.fn() },
           },
         ],
       }).compile();

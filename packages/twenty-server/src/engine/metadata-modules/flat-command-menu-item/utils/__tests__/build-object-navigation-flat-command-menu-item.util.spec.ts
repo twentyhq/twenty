@@ -71,13 +71,13 @@ describe('buildObjectNavigationFlatCommandMenuItem', () => {
     expect(result.icon).toBe(NAVIGATION_INTERPOLATED_ICON);
   });
 
-  it('should set payload with objectMetadataItemId', () => {
+  it('should set a null payload', () => {
     const result = buildObjectNavigationFlatCommandMenuItem(baseArgs);
 
-    expect(result.payload).toEqual({ objectMetadataItemId: 'obj-id-1' });
+    expect(result.payload).toBeNull();
   });
 
-  it('should set the target object metadata foreign key alongside the payload', () => {
+  it('should set the target object metadata foreign key', () => {
     const result = buildObjectNavigationFlatCommandMenuItem(baseArgs);
 
     expect(result.navigationTargetObjectMetadataId).toBe('obj-id-1');

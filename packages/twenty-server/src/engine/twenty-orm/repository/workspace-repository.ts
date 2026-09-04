@@ -89,7 +89,7 @@ const MUTATION_EVENT_ACTIONS_BY_KIND: Record<
   update: [DatabaseEventAction.UPDATED, DatabaseEventAction.UPSERTED],
 };
 
-type WorkspaceRepositoryOptions = {
+type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
   tableShape: WorkspaceTableShape;
   flatObjectMetadata: FlatObjectMetadata;
   internalContext: WorkspaceInternalContext;
@@ -109,25 +109,25 @@ type WorkspaceRepositoryOptions = {
   flatObjectMetadataByObjectMetadataId: (
     objectMetadataId: string,
   ) => FlatObjectMetadata;
-  getRepositoryForObjectMetadataId: (
+  getRepositoryForObjectMetadataId: <
+    Entity extends ObjectLiteral = ObjectRecord,
+  >(
     objectMetadataId: string,
-  ) => WorkspaceRepository;
+  ) => WorkspaceRepository<Entity>;
   isTransactional: boolean;
   runInNewTransaction: <T>(
-    work: (
-      transactionalRepository: WorkspaceRepository<ObjectLiteral>,
-    ) => Promise<T>,
+    work: (transactionalRepository: WorkspaceRepository<TEntity>) => Promise<T>,
   ) => Promise<T>;
 };
 
 export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   readonly objectRecordsPermissions: ObjectsPermissions;
 
-  private readonly options: WorkspaceRepositoryOptions;
+  private readonly options: WorkspaceRepositoryOptions<TEntity>;
 
   private _filesFieldSync?: FilesFieldSync;
 
-  constructor(options: WorkspaceRepositoryOptions) {
+  constructor(options: WorkspaceRepositoryOptions<TEntity>) {
     this.options = options;
     this.objectRecordsPermissions = options.objectRecordsPermissions;
   }
@@ -204,6 +204,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   get internalContext(): WorkspaceInternalContext {
     return this.options.internalContext;
+  }
+
+  getRepositoryForObjectMetadataId<Entity extends ObjectLiteral = ObjectRecord>(
+    objectMetadataId: string,
+  ): WorkspaceRepository<Entity> {
+    return this.options.getRepositoryForObjectMetadataId<Entity>(
+      objectMetadataId,
+    );
   }
 
   async find(options?: WorkspaceFindOptions): Promise<TEntity[]> {
@@ -677,7 +685,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   private runAtomically<T>(
-    work: (repository: WorkspaceRepository<ObjectLiteral>) => Promise<T>,
+    work: (repository: WorkspaceRepository<TEntity>) => Promise<T>,
   ): Promise<T> {
     return this.options.isTransactional
       ? work(this)
