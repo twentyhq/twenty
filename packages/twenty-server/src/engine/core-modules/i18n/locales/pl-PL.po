@@ -6010,6 +6010,11 @@ msgstr "Układ jest wymagany dla wykresu słupkowego"
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr "Układ jest wymagany dla widżetu wykresu słupkowego \"{widgetTitle}\""
 
+#. js-lingui-id: cI7XDa
+#: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
+msgid "Limits scoped below the workspace require the Organization plan."
+msgstr ""
+
 #. js-lingui-id: sAG9OB
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
