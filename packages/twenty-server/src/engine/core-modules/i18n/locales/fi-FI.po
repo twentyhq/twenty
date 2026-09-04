@@ -2727,7 +2727,7 @@ msgstr "Luontiaika"
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout/compute-standard-record-form-flat-entities.util.ts
 msgctxt "pageLayout.name"
 msgid "Creation Form"
-msgstr ""
+msgstr "Luontilomake"
 
 #. js-lingui-id: oB7ed5
 #: src/engine/core-modules/usage-limit/services/usage-limit-quota.service.ts
@@ -4153,7 +4153,7 @@ msgstr "fieldMetadataId tai fieldMetadataUniversalIdentifier on annettava"
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout/compute-standard-record-form-flat-entities.util.ts
 msgctxt "pageLayoutTab.title"
 msgid "Fields"
-msgstr ""
+msgstr "Kentät"
 
 #. js-lingui-id: GFC6Lh
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -7428,7 +7428,7 @@ msgstr "Vain npm:ään julkaistuja sovelluksia voidaan ottaa omistukseen tällä
 #. js-lingui-id: FmMRCQ
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Only applications synced from local source can be exported."
-msgstr ""
+msgstr "Vain paikallisesta lähteestä synkronoidut sovellukset voidaan viedä."
 
 #. js-lingui-id: XLn1DI
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -10293,7 +10293,7 @@ msgstr "Yksikön ja monikon nimet eivät voi olla samat kohteelle"
 #. js-lingui-id: 5bOcgV
 #: src/engine/core-modules/application/application.exception.ts
 msgid "The standard application cannot be exported."
-msgstr ""
+msgstr "Vakiosovellusta ei voida viedä."
 
 #. js-lingui-id: Dvwk3g
 #: src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
@@ -10859,12 +10859,12 @@ msgstr "Tällä työtilalla on jo tilaus."
 #: src/engine/core-modules/billing/billing.exception.ts
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
 msgid "This workspace has no active subscription."
-msgstr ""
+msgstr "Tällä työtilalla ei ole aktiivista tilausta."
 
 #. js-lingui-id: ChHeV3
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
 msgid "This workspace is suspended."
-msgstr ""
+msgstr "Tämä työtila on keskeytetty."
 
 #. js-lingui-id: IdEnkZ
 #: src/engine/core-modules/application/application.exception.ts

@@ -2727,7 +2727,7 @@ msgstr "Skapelsedatum och tid"
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout/compute-standard-record-form-flat-entities.util.ts
 msgctxt "pageLayout.name"
 msgid "Creation Form"
-msgstr ""
+msgstr "Skapelseformulär"
 
 #. js-lingui-id: oB7ed5
 #: src/engine/core-modules/usage-limit/services/usage-limit-quota.service.ts
@@ -4153,7 +4153,7 @@ msgstr "fieldMetadataId eller fieldMetadataUniversalIdentifier måste anges"
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout/compute-standard-record-form-flat-entities.util.ts
 msgctxt "pageLayoutTab.title"
 msgid "Fields"
-msgstr ""
+msgstr "Fält"
 
 #. js-lingui-id: GFC6Lh
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -7430,7 +7430,7 @@ msgstr "Endast applikationer som har publicerats på npm kan göras anspråk på
 #. js-lingui-id: FmMRCQ
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Only applications synced from local source can be exported."
-msgstr ""
+msgstr "Endast applikationer som synkroniserats från en lokal källa kan exporteras."
 
 #. js-lingui-id: XLn1DI
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -10299,7 +10299,7 @@ msgstr "Singular- och pluralnamnen kan inte vara desamma för ett objekt"
 #. js-lingui-id: 5bOcgV
 #: src/engine/core-modules/application/application.exception.ts
 msgid "The standard application cannot be exported."
-msgstr ""
+msgstr "Standardapplikationen kan inte exporteras."
 
 #. js-lingui-id: Dvwk3g
 #: src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
@@ -10865,12 +10865,12 @@ msgstr "Denna arbetsyta har redan en prenumeration."
 #: src/engine/core-modules/billing/billing.exception.ts
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
 msgid "This workspace has no active subscription."
-msgstr ""
+msgstr "Denna arbetsyta har ingen aktiv prenumeration."
 
 #. js-lingui-id: ChHeV3
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
 msgid "This workspace is suspended."
-msgstr ""
+msgstr "Den här arbetsytan är avstängd."
 
 #. js-lingui-id: IdEnkZ
 #: src/engine/core-modules/application/application.exception.ts

@@ -283,7 +283,7 @@ msgstr "{0} έχουν εξαιρεθεί από αυτό το θέμα"
 #. placeholder {0}: index + 1
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "{0} retries"
-msgstr ""
+msgstr "{0} επαναλήψεις"
 
 #. js-lingui-id: fvImQM
 #. placeholder {0}: formatNumber(contextStoreNumberOfSelectedRecords)
@@ -761,7 +761,7 @@ msgstr "1 Αντικείμενο"
 #. js-lingui-id: lKmQeh
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "1 retry"
-msgstr ""
+msgstr "1 επανάληψη"
 
 #. js-lingui-id: Mkh9C8
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -4915,7 +4915,7 @@ msgstr "Συνέχεια"
 #. js-lingui-id: gOOpXW
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Continue on failure"
-msgstr ""
+msgstr "Συνέχιση σε περίπτωση αποτυχίας"
 
 #. js-lingui-id: YsnqkW
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator.tsx
@@ -11158,7 +11158,7 @@ msgstr "Widget Kanban"
 #. js-lingui-id: LHkoee
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Keep executing the next nodes even if this one fails"
-msgstr ""
+msgstr "Συνέχισε την εκτέλεση των επόμενων κόμβων ακόμη και αν αυτός αποτύχει"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -13946,7 +13946,7 @@ msgstr "Επιλογές κόμβου"
 #: src/modules/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation.ts
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "Node settings"
-msgstr ""
+msgstr "Ρυθμίσεις κόμβου"
 
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
@@ -14424,7 +14424,7 @@ msgstr "Μόνο η ημερομηνία και οι συμμετέχοντες 
 #. js-lingui-id: kiuQlM
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Only enable for steps that are safe to run twice: a failed attempt may already have written data or sent messages."
-msgstr ""
+msgstr "Ενεργοποιήστε το μόνο για βήματα που είναι ασφαλές να εκτελούνται δύο φορές: μια αποτυχημένη προσπάθεια ενδέχεται να έχει ήδη γράψει δεδομένα ή στείλει μηνύματα."
 
 #. js-lingui-id: aluwJP
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
@@ -16526,7 +16526,7 @@ msgstr "Επανάληψη όλων των αποτυχημένων"
 #. js-lingui-id: s/LEE/
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Retry on failure"
-msgstr ""
+msgstr "Επανάληψη σε περίπτωση αποτυχίας"
 
 #. js-lingui-id: ZbpKL+
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx

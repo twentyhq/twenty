@@ -283,7 +283,7 @@ msgstr "{0} on kieltäytynyt tästä aiheesta"
 #. placeholder {0}: index + 1
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "{0} retries"
-msgstr ""
+msgstr "{0} uudelleenyritystä"
 
 #. js-lingui-id: fvImQM
 #. placeholder {0}: formatNumber(contextStoreNumberOfSelectedRecords)
@@ -761,7 +761,7 @@ msgstr "1 objekti"
 #. js-lingui-id: lKmQeh
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "1 retry"
-msgstr ""
+msgstr "1 uudelleenyritys"
 
 #. js-lingui-id: Mkh9C8
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -4915,7 +4915,7 @@ msgstr "Jatka"
 #. js-lingui-id: gOOpXW
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Continue on failure"
-msgstr ""
+msgstr "Jatka epäonnistuessa"
 
 #. js-lingui-id: YsnqkW
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator.tsx
@@ -11158,7 +11158,7 @@ msgstr "Kanban-widget"
 #. js-lingui-id: LHkoee
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Keep executing the next nodes even if this one fails"
-msgstr ""
+msgstr "Jatka seuraavien solmujen suorittamista, vaikka tämä epäonnistuisi"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -13946,7 +13946,7 @@ msgstr "Solmun asetukset"
 #: src/modules/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation.ts
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "Node settings"
-msgstr ""
+msgstr "Solmun asetukset"
 
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
@@ -14424,7 +14424,7 @@ msgstr "Vain päivämäärä ja osallistujat jaetaan tiimisi kanssa."
 #. js-lingui-id: kiuQlM
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Only enable for steps that are safe to run twice: a failed attempt may already have written data or sent messages."
-msgstr ""
+msgstr "Ota käyttöön vain vaiheille, jotka voi suorittaa turvallisesti kahdesti: epäonnistunut yritys on voinut jo kirjoittaa tietoja tai lähettää viestejä."
 
 #. js-lingui-id: aluwJP
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
@@ -16526,7 +16526,7 @@ msgstr "Yritä kaikkia epäonnistuneita uudelleen"
 #. js-lingui-id: s/LEE/
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Retry on failure"
-msgstr ""
+msgstr "Yritä uudelleen epäonnistuessa"
 
 #. js-lingui-id: ZbpKL+
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
