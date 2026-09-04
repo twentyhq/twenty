@@ -159,7 +159,7 @@ export class S3Driver implements StorageDriver {
           try {
             const file = await this.metadataClient.send(command);
 
-            if (!file?.Body) {
+            if (!isDefined(file?.Body)) {
               throw new FileStorageException(
                 'Unable to get file body',
                 FileStorageExceptionCode.FILE_NOT_FOUND,
@@ -226,26 +226,27 @@ export class S3Driver implements StorageDriver {
   async getFileMetadata(params: {
     filePath: string;
   }): Promise<{ size: number } | null> {
-    try {
-      const head = await this.measureRequest(
-        { operation: 'HeadObject', key: params.filePath },
-        () =>
-          this.metadataClient.send(
+    return this.measureRequest(
+      { operation: 'HeadObject', key: params.filePath },
+      async () => {
+        try {
+          const head = await this.metadataClient.send(
             new HeadObjectCommand({
               Bucket: this.bucketName,
               Key: params.filePath,
             }),
-          ),
-      );
+          );
 
-      return { size: head.ContentLength ?? 0 };
-    } catch (error) {
-      if (error instanceof NotFound) {
-        return null;
-      }
+          return { size: head.ContentLength ?? 0 };
+        } catch (error) {
+          if (error instanceof NotFound) {
+            return null;
+          }
 
-      throw error;
-    }
+          throw error;
+        }
+      },
+    );
   }
 
   private async measureRequest<TResult>(
