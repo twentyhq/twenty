@@ -13,7 +13,7 @@ import {
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { isSystemSideEffectFlatEntity } from 'src/engine/metadata-modules/flat-entity/utils/is-system-side-effect-flat-entity.util';
-import { keepWorkspaceOwnedProperties } from 'src/engine/metadata-modules/flat-entity/utils/keep-workspace-owned-properties.util';
+import { reconcileToFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/reconcile-to-flat-entity-maps.util';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { compareTwoFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/compare-two-universal-flat-entity.util';
 import { shouldInferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration/utils/should-infer-deletion-from-missing-entities.util';
@@ -42,7 +42,7 @@ const buildFlatEntityOperationRecordForMetadata = <T extends AllMetadataName>({
 }): FlatEntityOperationRecord<T> => {
   const fromByUniversalIdentifier = fromFlatEntityMaps.byUniversalIdentifier;
   const { byUniversalIdentifier: toByUniversalIdentifier } =
-    keepWorkspaceOwnedProperties({
+    reconcileToFlatEntityMaps({
       metadataName,
       fromFlatEntityMaps,
       toFlatEntityMaps,
