@@ -177,7 +177,7 @@ describe('stripQuotedHistory', () => {
   it('should handle unicode characters in a name', () => {
     expect(
       stripQuotedHistory(
-        'Replying ok\n2011/4/7 Nathan \xd0\xb8ova <support@example.com>\n\n>  Cool beans, scro',
+        'Replying ok\n2011/4/7 Nathan \u0438ova <support@example.com>\n\n>  Cool beans, scro',
       ),
     ).toBe('Replying ok');
   });

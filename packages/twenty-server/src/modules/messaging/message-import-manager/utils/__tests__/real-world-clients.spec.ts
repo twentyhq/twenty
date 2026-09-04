@@ -13,9 +13,13 @@ describe('extractMessageTextWithoutQuotedHistory per email client', () => {
   describe.each(CLIENT_EMAILS.map((email) => [email.name, email] as const))(
     '%s',
     (_name, email) => {
-      const output = extractMessageTextWithoutQuotedHistory({
-        html: email.html,
-        text: email.text,
+      let output = '';
+
+      beforeAll(() => {
+        output = extractMessageTextWithoutQuotedHistory({
+          html: email.html,
+          text: email.text,
+        });
       });
 
       it('should produce the recorded body', () => {

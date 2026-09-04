@@ -8,9 +8,11 @@ import { HTML_QUOTE_SELECTORS } from 'src/modules/messaging/message-import-manag
 import { QUOTE_MARKERS } from 'src/modules/messaging/message-import-manager/utils/quote-markers.constant';
 
 const markQuoteContainer: FormatCallback = (element, walk, builder) => {
+  builder.openBlock({ leadingLineBreaks: 1 });
   builder.addInline(QUOTE_MARKERS.containerOpen);
   walk(element.children, builder);
   builder.addInline(QUOTE_MARKERS.containerClose);
+  builder.closeBlock({ trailingLineBreaks: 1 });
 };
 
 const buildSplitterMarker =
@@ -45,4 +47,4 @@ const CONVERT_OPTIONS = {
 } satisfies HtmlToTextOptions;
 
 export const renderHtmlWithQuoteMarkers = (safeHtml: string): string =>
-  convert(safeHtml, CONVERT_OPTIONS);
+  convert(safeHtml.replace(QUOTE_MARKERS.anyMarker, ''), CONVERT_OPTIONS);

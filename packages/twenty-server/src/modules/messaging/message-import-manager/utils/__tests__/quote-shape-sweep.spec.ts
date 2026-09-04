@@ -211,7 +211,7 @@ const render = (dimensions: Dimensions): { text?: string; html?: string } => {
 };
 
 const isMeaningful = (dimensions: Dimensions): boolean => {
-  const { layout, marker, header, language, quirk } = dimensions;
+  const { layout, marker, header, language, spacing, quirk } = dimensions;
 
   if (header === 'none' && marker === 'noMarker') return false;
   if (header === 'none' && language !== 'en') return false;
@@ -221,6 +221,8 @@ const isMeaningful = (dimensions: Dimensions): boolean => {
   if (quirk === 'flowed' && isHtmlMarker(marker)) return false;
   if (layout === 'forwardOnly' && header === 'none') return false;
   if (isHtmlMarker(marker) && header === 'forwardedBanner') return false;
+  if (isHtmlMarker(marker) && layout === 'inline') return false;
+  if (isHtmlMarker(marker) && spacing === 'blank') return false;
 
   return true;
 };

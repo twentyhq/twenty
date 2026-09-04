@@ -4,5 +4,4 @@ export const QUOTE_MARKERS = {
   splitter: '\uE002',
   repeatedSplitter: '\uE003',
   anyMarker: /[\uE000\uE001\uE002\uE003]/g,
-  markedContainer: /\uE000[\s\S]*?\uE001/g,
 } as const;

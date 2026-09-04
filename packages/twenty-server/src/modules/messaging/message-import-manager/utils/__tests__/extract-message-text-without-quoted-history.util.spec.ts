@@ -498,4 +498,13 @@ Developer Support`);
       'See https://example.com/path%2Fto%2Ffile and a 100%20 budget cut',
     );
   });
+  it('should remove inline image references in every bracketing form', () => {
+    const result = extractMessageTextWithoutQuotedHistory({
+      text: 'Logo <cid:image001.png@01D.4> and chart (cid:chart.png) and seal [cid:seal.png] and bare cid:bare.png done',
+    });
+
+    expect(result).not.toMatch(/cid:|<>|\(\)|\[\]/);
+    expect(result).toContain('Logo');
+    expect(result).toContain('done');
+  });
 });

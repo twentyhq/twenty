@@ -104,4 +104,18 @@ describe('convertHtmlToText', () => {
       ),
     ).toBe('Click');
   });
+
+  it('should keep a word boundary where a quote container sat between inline text', () => {
+    expect(
+      convertHtmlToText(
+        'Before text<div class="gmail_quote">Quoted body</div>After text',
+      ),
+    ).toBe('Before text\n\nAfter text');
+  });
+
+  it('should not let private use characters in the source act as quote markers', () => {
+    expect(convertHtmlToText('<div>Real \uE000 text \uE001 kept</div>')).toBe(
+      'Real text kept',
+    );
+  });
 });
