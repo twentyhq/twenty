@@ -1,0 +1,2 @@
+import { deepMergeArraysByKey } from './deepMergeArraysByKey'; import assert from 'node:assert/strict';
+assert.deepEqual(deepMergeArraysByKey([{ id: 1, a: 1 }], [{ id: 1, b: 2 }], "id"), [{ id: 1, a: 1, b: 2 }]);
