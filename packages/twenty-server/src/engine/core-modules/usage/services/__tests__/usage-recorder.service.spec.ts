@@ -1,4 +1,5 @@
 import { Logger } from '@nestjs/common';
+import { DiscoveryService } from '@nestjs/core';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
@@ -12,7 +13,6 @@ import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-res
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/record-usage-input.type';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 const API_REQUEST: RecordUsageInput = {
@@ -49,12 +49,12 @@ describe('UsageRecorderService', () => {
           useValue: { emitCustomBatchEvent: jest.fn() },
         },
         {
-          provide: WorkspaceCacheService,
-          useValue: { getOrRecompute: jest.fn() },
-        },
-        {
           provide: TwentyConfigService,
           useValue: { get: jest.fn().mockReturnValue(false) },
+        },
+        {
+          provide: DiscoveryService,
+          useValue: { getProviders: () => [] },
         },
       ],
     }).compile();

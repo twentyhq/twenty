@@ -54,7 +54,7 @@ This is your first diagnostic: it tells you exactly which objects, fields, and l
 
 Destructive changes (`to destroy`) are listed with what they drop (e.g. `objectMetadata "auditNote" — drops the table and all its rows`) and require interactive confirmation, or `--force` in scripts.
 
-A sync deletes every entity your app owns that your source no longer declares. When a plan contains destroys it says so and points at `--no-delete`, which makes the sync additive: creates and updates are applied, nothing missing from your source is deleted. Use it when your source is intentionally partial, for example while adopting an app that was built in the UI.
+A sync deletes every entity your app owns that your source no longer declares. When a plan contains destroys it says so and points at `--no-delete`, which makes the sync additive: creates and updates are applied, nothing missing from your source is deleted, and the settings component and uninstall hook bindings of the app stay as they are when your source does not declare them. Use it when your source is intentionally partial, for example while adopting an app that was built in the UI.
 
 When a sync fails on a single entity, the error names the offending entity and its `universalIdentifier`, for example:
 
