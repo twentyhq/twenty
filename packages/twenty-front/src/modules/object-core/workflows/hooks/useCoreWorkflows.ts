@@ -1,8 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useQuery } from '@apollo/client/react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { logError } from '~/utils/logError';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import { buildCoreWorkflowFilterInput } from '@/object-core/workflows/utils/buildCoreWorkflowFilterInput';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
@@ -80,6 +84,22 @@ export const useCoreWorkflows = ({
     },
   );
   const connection = (data ?? previousData)?.coreWorkflows;
+
+  const { enqueueErrorSnackBar } = useSnackBar();
+
+  useEffect(() => {
+    if (!isDefined(error)) {
+      return;
+    }
+
+    logError(`useCoreWorkflows error : ${error}`);
+
+    if (CombinedGraphQLErrors.is(error)) {
+      enqueueErrorSnackBar({ apolloError: error });
+    } else {
+      enqueueErrorSnackBar({});
+    }
+  }, [error, enqueueErrorSnackBar]);
 
   const fetchNextPage = async () => {
     if (connection?.pageInfo.hasNextPage !== true || isFetchingMore) {
