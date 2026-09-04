@@ -37,6 +37,7 @@ import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/se
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
+import { isEntitlementActive } from 'src/engine/core-modules/billing/utils/is-entitlement-active.util';
 import { resolveBillingPeriodBoundaryUpdate } from 'src/engine/core-modules/billing/utils/resolve-billing-period-boundary-update.util';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -237,9 +238,11 @@ export class BillingSubscriptionService {
 
     return Object.values(BillingEntitlementKey).map((key) => ({
       key,
-      value:
-        hasValidEnterprisePlan &&
-        (!isBillingEnabled || (entitlementsByKey[key]?.value ?? false)),
+      value: isEntitlementActive({
+        hasValidEnterprisePlan,
+        isBillingEnabled,
+        stripeEntitlementValue: entitlementsByKey[key]?.value ?? false,
+      }),
     }));
   }
 
@@ -253,6 +256,25 @@ export class BillingSubscriptionService {
     );
 
     return entitlement?.value ?? false;
+  }
+
+  async getWorkspaceEntitlementValue(
+    workspaceId: string,
+    key: BillingEntitlementKey,
+  ): Promise<boolean> {
+    const hasValidEnterprisePlan = this.enterprisePlanService.isValid();
+    const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
+
+    const stripeEntitlementValue =
+      hasValidEnterprisePlan && isBillingEnabled
+        ? await this.getWorkspaceEntitlementByKey(workspaceId, key)
+        : false;
+
+    return isEntitlementActive({
+      hasValidEnterprisePlan,
+      isBillingEnabled,
+      stripeEntitlementValue,
+    });
   }
 
   async endTrialPeriod(workspace: WorkspaceEntity) {
