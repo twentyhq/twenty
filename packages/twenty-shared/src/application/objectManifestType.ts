@@ -10,6 +10,8 @@ export type ObjectManifest = SyncableEntityOptions & {
   labelPlural: string;
   description?: string;
   icon?: string;
+  color?: string | null;
+  isLabelSyncedWithName?: boolean;
   isSearchable?: boolean;
   // When false, the generic UI shows no affordance to create records of this object
   isUICreatable?: boolean;
@@ -19,4 +21,5 @@ export type ObjectManifest = SyncableEntityOptions & {
   openRecordIn?: ObjectOpenRecordIn;
   fields: ObjectFieldManifest[];
   labelIdentifierFieldMetadataUniversalIdentifier: string;
+  imageIdentifierFieldMetadataUniversalIdentifier?: string | null;
 };

@@ -95,14 +95,14 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'text' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.38.0_AddFailureToApplicationFastInstanceCommand_1788515360000',
+      '2.39.0_AddFailureToApplicationFastInstanceCommand_1788517323000',
   })
   failedOperation: ApplicationOperation | null;
 
   @Column({ nullable: true, type: 'text' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.38.0_AddFailureToApplicationFastInstanceCommand_1788515360000',
+      '2.39.0_AddFailureToApplicationFastInstanceCommand_1788517323000',
   })
   failureReason: string | null;
 
