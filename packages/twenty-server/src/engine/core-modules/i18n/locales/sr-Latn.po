@@ -6010,6 +6010,11 @@ msgstr "Raspored je obavezan za stubičasti dijagram"
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr "Raspored je obavezan za vidžet stubičastog dijagrama \"{widgetTitle}\""
 
+#. js-lingui-id: cI7XDa
+#: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
+msgid "Limits scoped below the workspace require the Organization plan."
+msgstr "Ograničenja sa opsegom ispod radnog prostora zahtevaju plan Organization."
+
 #. js-lingui-id: sAG9OB
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
