@@ -14,6 +14,7 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
+import { SUBSCRIPTION_INACTIVE_REASON_USER_FRIENDLY_MESSAGE } from 'src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant';
 import { type BillingResourceCreditUsageDTO } from 'src/engine/core-modules/billing/dtos/billing-resource-credit-usage.dto';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
@@ -196,6 +197,12 @@ export class BillingUsageService {
       throw new BillingException(
         `Workspace ${workspaceId} has no active subscription: ${subscriptionInactiveReason}`,
         BillingExceptionCode.BILLING_SUBSCRIPTION_INACTIVE,
+        {
+          userFriendlyMessage:
+            SUBSCRIPTION_INACTIVE_REASON_USER_FRIENDLY_MESSAGE[
+              subscriptionInactiveReason
+            ],
+        },
       );
     }
   }

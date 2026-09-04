@@ -219,7 +219,11 @@ export class BillingCreditService {
       'currentBillingSubscription',
     ]);
 
-    await this.usageLimitQuotaService.dropAllowanceCounter(workspaceId);
+    const isPureReplay = isReplay && availableDeltaMicro === 0;
+
+    if (!isPureReplay) {
+      await this.usageLimitQuotaService.dropAllowanceCounter(workspaceId);
+    }
   }
 
   private async adjustAvailableCreditsCounter({

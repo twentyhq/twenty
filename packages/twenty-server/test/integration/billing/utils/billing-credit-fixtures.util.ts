@@ -1,4 +1,5 @@
 import { createClient, type RedisClientType } from 'redis';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { type BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
@@ -216,7 +217,7 @@ export const readAllowanceCounter = async (
     buildTestAllowanceCounterKey(workspaceId, periodStart),
   );
 
-  return value === null ? null : Number(value);
+  return isDefined(value) ? Number(value) : null;
 };
 
 export const resetBillingCreditState = async (
