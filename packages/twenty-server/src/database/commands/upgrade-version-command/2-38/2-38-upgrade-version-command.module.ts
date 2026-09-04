@@ -10,8 +10,7 @@ import { BackfillLinkedTimelineActivityHappensAtCommand } from 'src/database/com
 import { ConfigureTimelineActivityHappensAtCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1787918663365-configure-timeline-activity-happens-at.command';
 import { PinAskAiCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1787938100000-pin-ask-ai-command-menu-item.command';
 import { SyncMessageCampaignSchemaCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788200701000-sync-message-campaign-schema.command';
-import { ScopeSendMessageCampaignCommandsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788456316275-scope-send-message-campaign-commands.command';
-import { AddCancelMessageCampaignCommandCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788456317275-add-cancel-message-campaign-command.command';
+import { AlignMessageCampaignCommandsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788456317275-align-message-campaign-commands.command';
 import { DropMessageDeliveryStatusCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788279414849-drop-message-delivery-status.command';
 import { ReownObjectNavigationCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788166853000-reown-object-navigation-command-menu-items.command';
 import { ProvisionMissingObjectNavigationCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788181550000-provision-missing-object-navigation-command-menu-items.command';
@@ -46,8 +45,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ConfigureTimelineActivityHappensAtCommand,
     PinAskAiCommandMenuItemCommand,
     SyncMessageCampaignSchemaCommand,
-    ScopeSendMessageCampaignCommandsCommand,
-    AddCancelMessageCampaignCommandCommand,
+    AlignMessageCampaignCommandsCommand,
     DropMessageDeliveryStatusCommand,
     ReownObjectNavigationCommandMenuItemsCommand,
     ProvisionMissingObjectNavigationCommandMenuItemsCommand,

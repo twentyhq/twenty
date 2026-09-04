@@ -6,7 +6,9 @@ import { v4 } from 'uuid';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { buildSendMessageCampaignAvailabilityUpdates } from 'src/database/commands/upgrade-version-command/2-38/utils/build-send-message-campaign-availability-updates.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 import { createStandardCommandMenuItemFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/command-menu-item/create-standard-command-menu-item-flat-metadata.util';
@@ -15,11 +17,11 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 
 @RegisteredWorkspaceCommand('2.38.0', 1788456317275)
 @Command({
-  name: 'upgrade:2-38:add-cancel-message-campaign-command',
+  name: 'upgrade:2-38:align-message-campaign-commands',
   description:
-    'Add the Cancel Campaign command so a sending campaign can be stopped from the UI',
+    'Restrict Send Campaign and Send Test to a single selected campaign, gate them behind the email group feature flag, and add the Cancel Campaign command',
 })
-export class AddCancelMessageCampaignCommandCommand extends ProvisionedWorkspaceCommandRunner {
+export class AlignMessageCampaignCommandsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -38,50 +40,46 @@ export class AddCancelMessageCampaignCommandCommand extends ProvisionedWorkspace
         'flatObjectMetadataMaps',
       ]);
 
-    const { universalIdentifier } =
-      STANDARD_COMMAND_MENU_ITEMS.cancelMessageCampaign;
+    const now = new Date().toISOString();
+
+    const commandMenuItemsToUpdate =
+      buildSendMessageCampaignAvailabilityUpdates({
+        flatCommandMenuItemByUniversalIdentifier:
+          flatCommandMenuItemMaps.byUniversalIdentifier,
+        now,
+      });
+
+    const commandMenuItemsToCreate = this.buildCancelCommandMenuItemToCreate({
+      flatCommandMenuItemByUniversalIdentifier:
+        flatCommandMenuItemMaps.byUniversalIdentifier,
+      flatObjectMetadataMaps,
+      workspaceId,
+      now,
+    });
 
     if (
-      isDefined(flatCommandMenuItemMaps.byUniversalIdentifier[universalIdentifier])
+      commandMenuItemsToUpdate.length === 0 &&
+      commandMenuItemsToCreate.length === 0
     ) {
-      return;
-    }
-
-    const siblingCommandMenuItem =
-      flatCommandMenuItemMaps.byUniversalIdentifier[
-        STANDARD_COMMAND_MENU_ITEMS.sendMessageCampaign.universalIdentifier
-      ];
-
-    if (!isDefined(siblingCommandMenuItem)) {
       return;
     }
 
     if (options.dryRun) {
       this.logger.log(
-        `Would add the Cancel Campaign command for workspace ${workspaceId}`,
+        `Would rescope ${commandMenuItemsToUpdate.length} send campaign command(s) and add ${commandMenuItemsToCreate.length} cancel command(s) for workspace ${workspaceId}`,
       );
 
       return;
     }
-
-    const flatCommandMenuItemToCreate =
-      createStandardCommandMenuItemFlatMetadata({
-        commandMenuItemName: 'cancelMessageCampaign',
-        commandMenuItemId: v4(),
-        workspaceId,
-        twentyStandardApplicationId: siblingCommandMenuItem.applicationId,
-        dependencyFlatEntityMaps: { flatObjectMetadataMaps },
-        now: new Date().toISOString(),
-      });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {
-              flatEntityToCreate: [flatCommandMenuItemToCreate],
+              flatEntityToCreate: commandMenuItemsToCreate,
               flatEntityToDelete: [],
-              flatEntityToUpdate: [],
+              flatEntityToUpdate: commandMenuItemsToUpdate,
             },
           },
           workspaceId,
@@ -94,5 +92,51 @@ export class AddCancelMessageCampaignCommandCommand extends ProvisionedWorkspace
     if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(validateAndBuildResult);
     }
+  }
+
+  private buildCancelCommandMenuItemToCreate({
+    flatCommandMenuItemByUniversalIdentifier,
+    flatObjectMetadataMaps,
+    workspaceId,
+    now,
+  }: {
+    flatCommandMenuItemByUniversalIdentifier: Record<
+      string,
+      FlatCommandMenuItem | undefined
+    >;
+    flatObjectMetadataMaps: Parameters<
+      typeof createStandardCommandMenuItemFlatMetadata
+    >[0]['dependencyFlatEntityMaps']['flatObjectMetadataMaps'];
+    workspaceId: string;
+    now: string;
+  }): FlatCommandMenuItem[] {
+    const { universalIdentifier } =
+      STANDARD_COMMAND_MENU_ITEMS.cancelMessageCampaign;
+
+    if (
+      isDefined(flatCommandMenuItemByUniversalIdentifier[universalIdentifier])
+    ) {
+      return [];
+    }
+
+    const siblingCommandMenuItem =
+      flatCommandMenuItemByUniversalIdentifier[
+        STANDARD_COMMAND_MENU_ITEMS.sendMessageCampaign.universalIdentifier
+      ];
+
+    if (!isDefined(siblingCommandMenuItem)) {
+      return [];
+    }
+
+    return [
+      createStandardCommandMenuItemFlatMetadata({
+        commandMenuItemName: 'cancelMessageCampaign',
+        commandMenuItemId: v4(),
+        workspaceId,
+        twentyStandardApplicationId: siblingCommandMenuItem.applicationId,
+        dependencyFlatEntityMaps: { flatObjectMetadataMaps },
+        now,
+      }),
+    ];
   }
 }
