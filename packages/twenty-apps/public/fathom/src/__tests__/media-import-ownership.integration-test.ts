@@ -7,36 +7,37 @@ import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identi
 import { claimFathomMediaImport } from 'src/logic-functions/utils/claim-fathom-media-import.util';
 import { updateFathomRecordingImport } from 'src/logic-functions/utils/update-fathom-recording-import.util';
 
-const createFathomApplicationCoreApiClient = async (): Promise<CoreApiClient> => {
-  const metadataApiClient = new MetadataApiClient();
-  const applicationsResult = await metadataApiClient.query({
-    findManyApplications: {
-      id: true,
-      universalIdentifier: true,
-    },
-  });
-  const fathomApplication = applicationsResult.findManyApplications.find(
-    (application) =>
-      application.universalIdentifier === APPLICATION_UNIVERSAL_IDENTIFIER,
-  );
+const createFathomApplicationCoreApiClient =
+  async (): Promise<CoreApiClient> => {
+    const metadataApiClient = new MetadataApiClient();
+    const applicationsResult = await metadataApiClient.query({
+      findManyApplications: {
+        id: true,
+        universalIdentifier: true,
+      },
+    });
+    const fathomApplication = applicationsResult.findManyApplications.find(
+      (application) =>
+        application.universalIdentifier === APPLICATION_UNIVERSAL_IDENTIFIER,
+    );
 
-  if (!fathomApplication) {
-    throw new Error('Expected the Fathom application to be installed');
-  }
+    if (!fathomApplication) {
+      throw new Error('Expected the Fathom application to be installed');
+    }
 
-  const applicationTokenResult = await metadataApiClient.mutation({
-    generateApplicationToken: {
-      __args: { applicationId: fathomApplication.id },
-      applicationAccessToken: { token: true },
-    },
-  });
+    const applicationTokenResult = await metadataApiClient.mutation({
+      generateApplicationToken: {
+        __args: { applicationId: fathomApplication.id },
+        applicationAccessToken: { token: true },
+      },
+    });
 
-  return new CoreApiClient({
-    headers: {
-      Authorization: `Bearer ${applicationTokenResult.generateApplicationToken.applicationAccessToken.token}`,
-    },
-  });
-};
+    return new CoreApiClient({
+      headers: {
+        Authorization: `Bearer ${applicationTokenResult.generateApplicationToken.applicationAccessToken.token}`,
+      },
+    });
+  };
 
 describe('Fathom recording import ownership', () => {
   it.each([
