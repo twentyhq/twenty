@@ -1,0 +1,2 @@
+import { sanitizeHtmlSnippet } from './sanitizeHtmlSnippet'; import assert from 'node:assert/strict';
+assert.equal(sanitizeHtmlSnippet("<p>Hello <script>alert(1)</script><b>World</b></p>"), "<p>Hello alert(1)<b>World</b></p>");
