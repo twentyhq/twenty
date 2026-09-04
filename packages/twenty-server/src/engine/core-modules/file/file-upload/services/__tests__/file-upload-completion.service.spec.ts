@@ -112,6 +112,64 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
     expect(fileRepository.update).not.toHaveBeenCalled();
   });
 
+  it('should refuse to promote a sanitized SVG whose new identity is unreadable', async () => {
+    const size = Buffer.byteLength(svgContent);
+
+    fileStorageService.getFileMetadata
+      .mockResolvedValueOnce({ size, checksum: '"etag-a"' })
+      .mockResolvedValueOnce(null);
+
+    await expect(
+      buildService().completeUploadedFile({
+        workspaceId,
+        file: buildFile('svg', size),
+        storageLocation: buildStorageLocation('svg'),
+      }),
+    ).rejects.toMatchObject({
+      code: FileUploadExceptionCode.STORAGE_INCONSISTENT,
+    });
+
+    expect(fileStorageService.move).not.toHaveBeenCalled();
+  });
+
+  it('should refuse to promote a sanitized SVG that lost its version identity', async () => {
+    const size = Buffer.byteLength(svgContent);
+
+    fileStorageService.getFileMetadata
+      .mockResolvedValueOnce({ size, checksum: '"etag-a"' })
+      .mockResolvedValueOnce({ size: 10 });
+
+    await expect(
+      buildService().completeUploadedFile({
+        workspaceId,
+        file: buildFile('svg', size),
+        storageLocation: buildStorageLocation('svg'),
+      }),
+    ).rejects.toMatchObject({
+      code: FileUploadExceptionCode.STORAGE_INCONSISTENT,
+    });
+
+    expect(fileStorageService.move).not.toHaveBeenCalled();
+  });
+
+  it('should promote a sanitized SVG under the identity it has after the rewrite', async () => {
+    const size = Buffer.byteLength(svgContent);
+
+    fileStorageService.getFileMetadata
+      .mockResolvedValueOnce({ size, checksum: '"etag-before"' })
+      .mockResolvedValueOnce({ size: 10, checksum: '"etag-after"' });
+
+    await buildService().completeUploadedFile({
+      workspaceId,
+      file: buildFile('svg', size),
+      storageLocation: buildStorageLocation('svg'),
+    });
+
+    expect(fileStorageService.move).toHaveBeenCalledWith(
+      expect.objectContaining({ ifMatchChecksum: '"etag-after"' }),
+    );
+  });
+
   it('should sanitize an SVG within the limit and store its new size', async () => {
     const size = Buffer.byteLength(svgContent);
 

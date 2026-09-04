@@ -1,9 +1,7 @@
 import { type Readable } from 'stream';
 
-import {
-  type FileStorageMetadata,
-  type StorageDriver,
-} from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
+import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
+import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/types/file-storage-metadata.type';
 
 import { assertStoragePathIsSafe } from 'src/engine/core-modules/file-storage/utils/assert-storage-path-is-safe.util';
 import { type ByteRange } from 'src/engine/core-modules/file-storage/types/byte-range.type';

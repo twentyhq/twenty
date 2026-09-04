@@ -11,10 +11,8 @@ import { pipeline } from 'stream/promises';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  type FileStorageMetadata,
-  type StorageDriver,
-} from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
+import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
+import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/types/file-storage-metadata.type';
 import {
   FileStorageException,
   FileStorageExceptionCode,

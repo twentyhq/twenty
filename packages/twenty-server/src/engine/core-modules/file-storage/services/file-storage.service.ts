@@ -10,7 +10,7 @@ import { Like, type QueryRunner } from 'typeorm';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { findActiveFlatApplicationByUniversalIdentifier } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-universal-identifier.util';
-import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
+import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/types/file-storage-metadata.type';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { type ByteRange } from 'src/engine/core-modules/file-storage/types/byte-range.type';
 import {

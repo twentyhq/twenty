@@ -1,10 +1,7 @@
 import { type Readable } from 'stream';
 
 import { type ByteRange } from 'src/engine/core-modules/file-storage/types/byte-range.type';
-
-// checksum is whatever the backend can offer as a version identity (an S3
-// ETag); backends that have none omit it and callers lose the precondition.
-export type FileStorageMetadata = { size: number; checksum?: string };
+import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/types/file-storage-metadata.type';
 
 export interface StorageDriver {
   readFile(params: {

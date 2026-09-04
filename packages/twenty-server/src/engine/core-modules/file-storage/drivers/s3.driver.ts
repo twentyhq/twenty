@@ -34,10 +34,8 @@ import {
   FILE_STORAGE_S3_REQUEST_TIMEOUT_MS,
   FILE_STORAGE_S3_SLOW_REQUEST_THRESHOLD_MS,
 } from 'src/engine/core-modules/file-storage/constants/s3-client-timeouts.constant';
-import {
-  type FileStorageMetadata,
-  type StorageDriver,
-} from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
+import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
+import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/types/file-storage-metadata.type';
 import {
   FileStorageException,
   FileStorageExceptionCode,

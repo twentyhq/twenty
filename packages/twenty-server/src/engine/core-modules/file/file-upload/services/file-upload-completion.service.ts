@@ -5,7 +5,7 @@ import { Readable } from 'stream';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
+import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/types/file-storage-metadata.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -314,9 +314,25 @@ export class FileUploadCompletionService {
     const sanitizedMetadata =
       await this.fileStorageService.getFileMetadata(storageLocation);
 
+    // Returning no identity here would silently downgrade that copy to an
+    // unconditional one, so a backend that reported one before the rewrite
+    // has to report one after it.
+    if (
+      !isDefined(sanitizedMetadata) ||
+      (isDefined(metadata.checksum) && !isDefined(sanitizedMetadata.checksum))
+    ) {
+      throw new FileUploadException(
+        `Could not read back the sanitized SVG at "${storageLocation.resourcePath}"`,
+        FileUploadExceptionCode.STORAGE_INCONSISTENT,
+        {
+          userFriendlyMessage: msg`File storage did not confirm the processed file. Please retry.`,
+        },
+      );
+    }
+
     return {
       size: sanitizedBuffer.length,
-      checksum: sanitizedMetadata?.checksum,
+      checksum: sanitizedMetadata.checksum,
     };
   }
 }
