@@ -1,0 +1,2 @@
+import { safeDecodeURIComponent } from './safeDecodeURIComponent'; import assert from 'node:assert/strict';
+assert.equal(safeDecodeURIComponent("%20"), " "); assert.equal(safeDecodeURIComponent("%E0%A4%A"), "%E0%A4%A");
