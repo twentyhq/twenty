@@ -1,4 +1,4 @@
-import { registerDecorator, type ValidationOptions } from 'class-validator';
+import { registerDecorator, type ValidationOptions, type ValidationArguments } from 'class-validator';
 import { isIP } from 'node:net';
 
 export function IsValidServerUrlForMultiWorkspace(
