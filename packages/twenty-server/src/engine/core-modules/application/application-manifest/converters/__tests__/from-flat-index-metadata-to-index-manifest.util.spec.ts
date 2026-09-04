@@ -1,11 +1,9 @@
 import { type IndexManifest } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import {
-  computeIndexFieldManifestUniversalIdentifier,
-  fromFlatIndexMetadataToIndexManifest,
-} from 'src/engine/core-modules/application/application-manifest/converters/from-flat-index-metadata-to-index-manifest.util';
+import { fromFlatIndexMetadataToIndexManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-index-metadata-to-index-manifest.util';
 import { fromIndexManifestToUniversalFlatIndex } from 'src/engine/core-modules/application/application-manifest/converters/from-index-manifest-to-universal-flat-index.util';
+import { computeIndexFieldManifestUniversalIdentifier } from 'src/engine/core-modules/application/application-manifest/utils/compute-index-field-manifest-universal-identifier.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { compareTwoFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/compare-two-universal-flat-entity.util';

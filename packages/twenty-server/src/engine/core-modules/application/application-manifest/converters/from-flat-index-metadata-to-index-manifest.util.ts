@@ -1,22 +1,8 @@
 import { type IndexManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { v5 as uuidv5 } from 'uuid';
 
+import { computeIndexFieldManifestUniversalIdentifier } from 'src/engine/core-modules/application/application-manifest/utils/compute-index-field-manifest-universal-identifier.util';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
-
-export const computeIndexFieldManifestUniversalIdentifier = ({
-  indexUniversalIdentifier,
-  fieldMetadataUniversalIdentifier,
-  subFieldName,
-}: {
-  indexUniversalIdentifier: string;
-  fieldMetadataUniversalIdentifier: string;
-  subFieldName: string | null | undefined;
-}): string =>
-  uuidv5(
-    `${fieldMetadataUniversalIdentifier}:${subFieldName ?? ''}`,
-    indexUniversalIdentifier,
-  );
 
 export const fromFlatIndexMetadataToIndexManifest = ({
   flatIndexMetadata,

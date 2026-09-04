@@ -8,8 +8,13 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 
+export type ExportableFlatApplicationProperties = Pick<
+  FlatApplication,
+  'universalIdentifier' | 'name' | 'sourceType'
+>;
+
 export const assertFlatApplicationIsExportable = (
-  flatApplication: FlatApplication,
+  flatApplication: ExportableFlatApplicationProperties,
 ): void => {
   if (
     flatApplication.universalIdentifier ===

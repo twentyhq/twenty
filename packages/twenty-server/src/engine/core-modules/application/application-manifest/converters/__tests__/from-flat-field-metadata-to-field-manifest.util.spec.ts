@@ -141,7 +141,7 @@ describe('fromFlatFieldMetadataToFieldManifest', () => {
     expect(roundTripFlatFieldMetadata(flatFieldMetadata)).toBeUndefined();
   });
 
-  it('should keep the universal junction target and drop the raw junction target id', () => {
+  it('should copy the universal settings of a junction relation', () => {
     const flatFieldMetadata = getFlatFieldMetadataMock({
       universalIdentifier: FIELD_UID,
       objectMetadataId: 'object-metadata-id',
@@ -154,16 +154,14 @@ describe('fromFlatFieldMetadataToFieldManifest', () => {
       relationTargetObjectMetadataUniversalIdentifier: TARGET_OBJECT_UID,
       universalSettings: {
         relationType: RelationType.ONE_TO_MANY,
-        junctionTargetFieldId: 'workspace-local-field-id',
         junctionTargetFieldUniversalIdentifier: TARGET_FIELD_UID,
-      } as ReturnType<typeof getFlatFieldMetadataMock>['universalSettings'],
+      },
     });
 
-    const fieldManifest = fromFlatFieldMetadataToFieldManifest({
-      flatFieldMetadata,
-    });
-
-    expect(fieldManifest.universalSettings).toEqual({
+    expect(
+      fromFlatFieldMetadataToFieldManifest({ flatFieldMetadata })
+        .universalSettings,
+    ).toEqual({
       relationType: RelationType.ONE_TO_MANY,
       junctionTargetFieldUniversalIdentifier: TARGET_FIELD_UID,
     });

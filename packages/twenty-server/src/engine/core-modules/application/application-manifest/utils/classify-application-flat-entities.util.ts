@@ -9,15 +9,11 @@ import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/applica
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ALL_MANY_TO_ONE_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-relations.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
+import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { isSystemSideEffectFlatEntity } from 'src/engine/metadata-modules/flat-entity/utils/is-system-side-effect-flat-entity.util';
 
-type FlatEntityRow = {
-  universalIdentifier: string;
-  applicationId: string;
-  applicationUniversalIdentifier: string;
-} & Record<string, unknown>;
+type ApplicationFlatEntity = MetadataFlatEntity<AllMetadataName>;
 
 type Classification = Pick<ApplicationExportCoverageEntry, 'status' | 'reason'>;
 
@@ -26,6 +22,7 @@ const FOREIGN_OWNED_PARENT_METADATA_NAMES = new Set<AllMetadataName>([
   'role',
   'view',
   'pageLayout',
+  'pageLayoutTab',
 ]);
 
 const FOREIGN_OWNED_PARENT_REFERENCES: {
@@ -45,39 +42,47 @@ const FOREIGN_OWNED_PARENT_REFERENCES: {
     })),
 );
 
-const getRows = ({
+const getFlatEntities = ({
   allFlatEntityMaps,
   metadataName,
 }: {
   allFlatEntityMaps: AllFlatEntityMaps;
   metadataName: AllMetadataName;
-}): FlatEntityRow[] =>
-  (
-    Object.values(
-      allFlatEntityMaps[getMetadataFlatEntityMapsKey(metadataName)]
-        .byUniversalIdentifier,
-    ) as (FlatEntityRow | undefined)[]
+}): ApplicationFlatEntity[] =>
+  Object.values(
+    allFlatEntityMaps[getMetadataFlatEntityMapsKey(metadataName)]
+      .byUniversalIdentifier,
   ).filter(isDefined);
 
-const isEngineDerived = (row: FlatEntityRow): boolean =>
-  isSystemSideEffectFlatEntity(
-    row as unknown as MetadataUniversalFlatEntity<AllMetadataName>,
-  );
+const isSoftDeleted = (flatEntity: ApplicationFlatEntity): boolean =>
+  'deletedAt' in flatEntity && isDefined(flatEntity.deletedAt);
 
-const isSoftDeleted = (row: FlatEntityRow): boolean => isDefined(row.deletedAt);
+const readParentUniversalIdentifier = ({
+  flatEntity,
+  parentProperty,
+}: {
+  flatEntity: ApplicationFlatEntity;
+  parentProperty: string;
+}): string | undefined => {
+  const value = Object.entries(flatEntity).find(
+    ([property]) => property === parentProperty,
+  )?.[1];
 
-const classifyRow = ({
+  return typeof value === 'string' ? value : undefined;
+};
+
+const classifyFlatEntity = ({
   metadataName,
-  row,
+  flatEntity,
 }: {
   metadataName: AllMetadataName;
-  row: FlatEntityRow;
+  flatEntity: ApplicationFlatEntity;
 }): Classification => {
-  if (isEngineDerived(row)) {
+  if (isSystemSideEffectFlatEntity(flatEntity)) {
     return { status: ApplicationExportCoverageStatus.ENGINE_DERIVED };
   }
 
-  if (isSoftDeleted(row)) {
+  if (isSoftDeleted(flatEntity)) {
     return {
       status: ApplicationExportCoverageStatus.EXCLUDED,
       reason: 'soft-deleted',
@@ -93,28 +98,36 @@ const classifyRow = ({
     case 'searchFieldMetadata':
       return { status: ApplicationExportCoverageStatus.ENGINE_DERIVED };
     case 'roleTarget':
-      return isDefined(row.userWorkspaceId) || isDefined(row.apiKeyId)
+      return ('userWorkspaceId' in flatEntity &&
+        isDefined(flatEntity.userWorkspaceId)) ||
+        ('apiKeyId' in flatEntity && isDefined(flatEntity.apiKeyId))
         ? {
             status: ApplicationExportCoverageStatus.EXCLUDED,
             reason: 'member or API key role assignment',
           }
         : { status: ApplicationExportCoverageStatus.UNSUPPORTED };
     case 'navigationMenuItem':
-      return isDefined(row.userWorkspaceId) || isDefined(row.targetRecordId)
+      return ('userWorkspaceId' in flatEntity &&
+        isDefined(flatEntity.userWorkspaceId)) ||
+        ('targetRecordId' in flatEntity && isDefined(flatEntity.targetRecordId))
         ? {
             status: ApplicationExportCoverageStatus.EXCLUDED,
             reason: 'personal navigation item',
           }
         : { status: ApplicationExportCoverageStatus.UNSUPPORTED };
     case 'commandMenuItem':
-      if (isDefined(row.workflowVersionId)) {
+      if (
+        'workflowVersionId' in flatEntity &&
+        isDefined(flatEntity.workflowVersionId)
+      ) {
         return {
           status: ApplicationExportCoverageStatus.EXCLUDED,
           reason: 'workflow trigger command',
         };
       }
 
-      return isDefined(row.frontComponentUniversalIdentifier)
+      return 'frontComponentUniversalIdentifier' in flatEntity &&
+        isDefined(flatEntity.frontComponentUniversalIdentifier)
         ? { status: ApplicationExportCoverageStatus.UNSUPPORTED }
         : {
             status: ApplicationExportCoverageStatus.EXCLUDED,
@@ -139,7 +152,7 @@ export const classifyApplicationFlatEntities = ({
   allFlatEntityMaps,
   reconstructedCoverage,
 }: {
-  flatApplication: FlatApplication;
+  flatApplication: Pick<FlatApplication, 'id'>;
   applicationAllFlatEntityMaps: AllFlatEntityMaps;
   allFlatEntityMaps: AllFlatEntityMaps;
   reconstructedCoverage: ApplicationExportCoverageEntry[];
@@ -153,18 +166,20 @@ export const classifyApplicationFlatEntities = ({
   const coverage = [...reconstructedCoverage];
 
   for (const metadataName of Object.values(ALL_METADATA_NAME)) {
-    for (const row of getRows({
+    for (const flatEntity of getFlatEntities({
       allFlatEntityMaps: applicationAllFlatEntityMaps,
       metadataName,
     })) {
-      if (coveredKeys.has(`${metadataName}:${row.universalIdentifier}`)) {
+      if (
+        coveredKeys.has(`${metadataName}:${flatEntity.universalIdentifier}`)
+      ) {
         continue;
       }
 
       coverage.push({
         metadataName,
-        universalIdentifier: row.universalIdentifier,
-        ...classifyRow({ metadataName, row }),
+        universalIdentifier: flatEntity.universalIdentifier,
+        ...classifyFlatEntity({ metadataName, flatEntity }),
       });
     }
   }
@@ -181,15 +196,21 @@ export const classifyApplicationFlatEntities = ({
         getMetadataFlatEntityMapsKey(parentMetadataName)
       ].byUniversalIdentifier;
 
-    for (const row of getRows({ allFlatEntityMaps, metadataName })) {
-      const parentUniversalIdentifier = row[parentProperty];
-      const key = `${metadataName}:${row.universalIdentifier}`;
+    for (const flatEntity of getFlatEntities({
+      allFlatEntityMaps,
+      metadataName,
+    })) {
+      const parentUniversalIdentifier = readParentUniversalIdentifier({
+        flatEntity,
+        parentProperty,
+      });
+      const key = `${metadataName}:${flatEntity.universalIdentifier}`;
 
       if (
-        row.applicationId === flatApplication.id ||
-        isEngineDerived(row) ||
-        isSoftDeleted(row) ||
-        typeof parentUniversalIdentifier !== 'string' ||
+        flatEntity.applicationId === flatApplication.id ||
+        isSystemSideEffectFlatEntity(flatEntity) ||
+        isSoftDeleted(flatEntity) ||
+        !isDefined(parentUniversalIdentifier) ||
         !isDefined(parentByUniversalIdentifier[parentUniversalIdentifier]) ||
         foreignOwnedKeys.has(key)
       ) {
@@ -199,9 +220,9 @@ export const classifyApplicationFlatEntities = ({
       foreignOwnedKeys.add(key);
       coverage.push({
         metadataName,
-        universalIdentifier: row.universalIdentifier,
+        universalIdentifier: flatEntity.universalIdentifier,
         status: ApplicationExportCoverageStatus.FOREIGN_OWNED,
-        reason: `owned by application ${row.applicationUniversalIdentifier}`,
+        reason: `owned by application ${flatEntity.applicationUniversalIdentifier}`,
       });
     }
   }

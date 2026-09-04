@@ -2,8 +2,12 @@ import { type FieldManifest } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 const EMPTY_ACTOR_DEFAULT_VALUE = {
   source: null,
@@ -30,8 +34,9 @@ const buildRelationProperties = (
     ) ||
     !isDefined(flatFieldMetadata.universalSettings)
   ) {
-    throw new Error(
+    throw new ApplicationException(
       `Relation field "${flatFieldMetadata.name}" is missing its target or settings`,
+      ApplicationExceptionCode.INVALID_INPUT,
     );
   }
 
@@ -39,22 +44,18 @@ const buildRelationProperties = (
     flatFieldMetadata.type === FieldMetadataType.MORPH_RELATION &&
     !isDefined(flatFieldMetadata.morphId)
   ) {
-    throw new Error(
+    throw new ApplicationException(
       `Morph relation field "${flatFieldMetadata.name}" is missing its morphId`,
+      ApplicationExceptionCode.INVALID_INPUT,
     );
   }
-
-  const {
-    junctionTargetFieldId: _junctionTargetFieldId,
-    ...universalSettings
-  } = flatFieldMetadata.universalSettings as Record<string, unknown>;
 
   return {
     relationTargetFieldMetadataUniversalIdentifier:
       flatFieldMetadata.relationTargetFieldMetadataUniversalIdentifier,
     relationTargetObjectMetadataUniversalIdentifier:
       flatFieldMetadata.relationTargetObjectMetadataUniversalIdentifier,
-    universalSettings,
+    universalSettings: flatFieldMetadata.universalSettings,
     ...(flatFieldMetadata.type === FieldMetadataType.MORPH_RELATION
       ? { morphId: flatFieldMetadata.morphId }
       : {}),

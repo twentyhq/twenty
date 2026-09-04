@@ -1,19 +1,20 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
-import { assertFlatApplicationIsExportable } from 'src/engine/core-modules/application/application-manifest/utils/assert-flat-application-is-exportable.util';
+import {
+  assertFlatApplicationIsExportable,
+  type ExportableFlatApplicationProperties,
+} from 'src/engine/core-modules/application/application-manifest/utils/assert-flat-application-is-exportable.util';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationExceptionCode } from 'src/engine/core-modules/application/application.exception';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 
 const buildFlatApplication = (
-  overrides: Partial<FlatApplication>,
-): FlatApplication =>
-  ({
-    universalIdentifier: 'application-universal-identifier',
-    name: 'Ticketing',
-    sourceType: ApplicationRegistrationSourceType.LOCAL,
-    ...overrides,
-  }) as FlatApplication;
+  overrides: Partial<ExportableFlatApplicationProperties>,
+): ExportableFlatApplicationProperties => ({
+  universalIdentifier: 'application-universal-identifier',
+  name: 'Ticketing',
+  sourceType: ApplicationRegistrationSourceType.LOCAL,
+  ...overrides,
+});
 
 describe('assertFlatApplicationIsExportable', () => {
   it('should accept a local application', () => {
