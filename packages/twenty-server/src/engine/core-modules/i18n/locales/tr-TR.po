@@ -801,6 +801,7 @@ msgid "An unexpected error occurred while handling the server route."
 msgstr "Sunucu rotası işlenirken beklenmeyen bir hata oluştu."
 
 #. js-lingui-id: W5A0Ly
+#: src/database/clickhouse/clickhouse.exception.ts
 #: src/engine/core-modules/cache-storage/exceptions/cache-storage.exception.ts
 #: src/engine/core-modules/emailing-domain/exceptions/email-group-access.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
@@ -2721,6 +2722,11 @@ msgstr "Oluşturulma Tarihi ve Saati"
 msgctxt "fieldMetadata.label"
 msgid "Creation DateTime"
 msgstr "Oluşturulma Tarihi ve Saati"
+
+#. js-lingui-id: oB7ed5
+#: src/engine/core-modules/usage-limit/services/usage-limit-quota.service.ts
+msgid "Credit allowance exhausted for this billing period."
+msgstr ""
 
 #. js-lingui-id: iMikvq
 #: src/engine/core-modules/billing/billing.exception.ts
