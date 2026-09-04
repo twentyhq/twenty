@@ -70,7 +70,7 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'varchar', nullable: true })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.38.0_AddAuthFailedReasonToConnectedAccountFastInstanceCommand_1788445931849',
+      '2.39.0_AddAuthFailedReasonToConnectedAccountFastInstanceCommand_1788518480980',
   })
   authFailedReason: string | null;
 
