@@ -25,9 +25,11 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 );
 
 const renderSelection = () =>
-  renderHook(() => useCoreWorkflowsSelection({ coreWorkflows }), {
-    wrapper: Wrapper,
-  });
+  renderHook(
+    (props: { coreWorkflows: CoreWorkflow[] }) =>
+      useCoreWorkflowsSelection(props),
+    { wrapper: Wrapper, initialProps: { coreWorkflows } },
+  );
 
 describe('useCoreWorkflowsSelection', () => {
   beforeEach(() => {
@@ -93,6 +95,31 @@ describe('useCoreWorkflowsSelection', () => {
 
     expect(result.current.displayedCoreWorkflows).toHaveLength(3);
     expect(result.current.selectedRowIds).toEqual(['core-1']);
+  });
+
+  it('should keep a deleted workflow hidden once the mirror drops its workspace record', async () => {
+    const { result, rerender } = renderSelection();
+
+    act(() => {
+      result.current.toggleRow('core-1');
+    });
+
+    await act(async () => {
+      await result.current.deleteSelectedCoreWorkflows();
+    });
+
+    rerender({
+      coreWorkflows: [
+        { id: 'core-1', workspaceWorkflowId: null },
+        { id: 'core-2', workspaceWorkflowId: 'workspace-2' },
+      ] as CoreWorkflow[],
+    });
+
+    expect(
+      result.current.displayedCoreWorkflows.map(
+        (coreWorkflow) => coreWorkflow.id,
+      ),
+    ).toEqual(['core-2']);
   });
 
   it('should deselect a row that is toggled twice', () => {

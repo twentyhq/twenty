@@ -15,8 +15,9 @@ export const useCoreWorkflowsSelection = ({
 }) => {
   const [selectedRowIds, setSelectedRowIds] = useState<string[]>([]);
 
-  const [deletedWorkspaceWorkflowIds, setDeletedWorkspaceWorkflowIds] =
-    useState<string[]>([]);
+  const [deletedCoreWorkflowIds, setDeletedCoreWorkflowIds] = useState<
+    string[]
+  >([]);
 
   const {
     deleteCoreWorkflows,
@@ -33,9 +34,7 @@ export const useCoreWorkflowsSelection = ({
   }, [coreWorkflowsFilterSettings]);
 
   const displayedCoreWorkflows = coreWorkflows.filter(
-    (coreWorkflow) =>
-      !isDefined(coreWorkflow.workspaceWorkflowId) ||
-      !deletedWorkspaceWorkflowIds.includes(coreWorkflow.workspaceWorkflowId),
+    (coreWorkflow) => !deletedCoreWorkflowIds.includes(coreWorkflow.id),
   );
 
   const selectedWorkspaceWorkflowIds = getSelectedWorkspaceWorkflowIds({
@@ -49,17 +48,23 @@ export const useCoreWorkflowsSelection = ({
     );
 
   const deleteSelectedCoreWorkflows = async () => {
-    const workspaceWorkflowIdsToDelete = selectedWorkspaceWorkflowIds;
+    const coreWorkflowIdsToDelete = displayedCoreWorkflows
+      .filter(
+        (coreWorkflow) =>
+          selectedRowIds.includes(coreWorkflow.id) &&
+          isDefined(coreWorkflow.workspaceWorkflowId),
+      )
+      .map((coreWorkflow) => coreWorkflow.id);
 
-    const hasDeleted = await deleteCoreWorkflows(workspaceWorkflowIdsToDelete);
+    const hasDeleted = await deleteCoreWorkflows(selectedWorkspaceWorkflowIds);
 
     if (!hasDeleted) {
       return;
     }
 
-    setDeletedWorkspaceWorkflowIds((previousDeletedWorkspaceWorkflowIds) => [
-      ...previousDeletedWorkspaceWorkflowIds,
-      ...workspaceWorkflowIdsToDelete,
+    setDeletedCoreWorkflowIds((previousDeletedCoreWorkflowIds) => [
+      ...previousDeletedCoreWorkflowIds,
+      ...coreWorkflowIdsToDelete,
     ]);
     setSelectedRowIds([]);
   };
