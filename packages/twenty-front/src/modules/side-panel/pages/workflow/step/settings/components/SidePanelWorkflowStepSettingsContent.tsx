@@ -45,7 +45,15 @@ const SidePanelWorkflowStepSettingsForm = ({
         },
       } as WorkflowAction);
     } catch {
-      setErrorHandlingOptions(previousOptions);
+      setErrorHandlingOptions((currentOptions) => ({
+        ...currentOptions,
+        ...('continueOnFailure' in partialOptions
+          ? { continueOnFailure: previousOptions.continueOnFailure }
+          : {}),
+        ...('retryOnFailure' in partialOptions
+          ? { retryOnFailure: previousOptions.retryOnFailure }
+          : {}),
+      }));
     }
   };
 
