@@ -6,4 +6,7 @@ import { findProviderInstance } from 'src/engine/core-modules/usage-limit/utils/
 export const findCreditAllowanceProvider = (
   discoveryService: DiscoveryService,
 ): CreditAllowanceProvider | null =>
-  findProviderInstance(discoveryService, CreditAllowanceProvider);
+  findProviderInstance({
+    discoveryService,
+    providerClass: CreditAllowanceProvider,
+  });

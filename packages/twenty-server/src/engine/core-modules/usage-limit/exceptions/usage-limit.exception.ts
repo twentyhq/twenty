@@ -24,7 +24,7 @@ const getUsageLimitExceptionUserFriendlyMessage = (
     case UsageLimitExceptionCode.LIMIT_INVALID:
       return msg`This limit cannot be saved.`;
     case UsageLimitExceptionCode.LIMIT_NOT_ENTITLED:
-      return msg`Limits scoped to a specific user, API key, app or agent require the Organization plan.`;
+      return msg`Limits scoped below the workspace require the Organization plan.`;
     default:
       assertUnreachable(code);
   }

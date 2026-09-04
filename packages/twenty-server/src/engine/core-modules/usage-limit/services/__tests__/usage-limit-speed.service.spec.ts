@@ -30,6 +30,9 @@ class TestUsageLimitEntitlementProvider extends UsageLimitEntitlementProvider {
   hasIntraWorkspaceLimitEntitlement = jest.fn();
 }
 
+const API_KEY_OVERRIDE_BUCKET_KEY =
+  '{workspace-1}:speed:API:API_REQUEST:apiKey:key-1:60';
+
 const buildApiKeySpeedLimit = (): FlatUsageLimit => ({
   id: 'speed-1',
   resourceType: UsageResourceType.API,
@@ -144,16 +147,18 @@ describe('UsageLimitSpeedService', () => {
     });
 
     await consume();
-    const entitledKeyCount =
-      cacheStorage.runScript.mock.calls[0][0].keys.length;
+    const entitledKeys: string[] = cacheStorage.runScript.mock.calls[0][0].keys;
 
     entitlementProvider.hasIntraWorkspaceLimitEntitlement.mockResolvedValue(
       false,
     );
     await consume();
-    const notEntitledKeyCount =
-      cacheStorage.runScript.mock.calls[1][0].keys.length;
+    const notEntitledKeys: string[] =
+      cacheStorage.runScript.mock.calls[1][0].keys;
 
-    expect(entitledKeyCount).toBeGreaterThan(notEntitledKeyCount);
+    expect(entitledKeys).toContain(API_KEY_OVERRIDE_BUCKET_KEY);
+    expect(notEntitledKeys).toEqual(
+      entitledKeys.filter((key) => key !== API_KEY_OVERRIDE_BUCKET_KEY),
+    );
   });
 });

@@ -6,4 +6,7 @@ import { findProviderInstance } from 'src/engine/core-modules/usage-limit/utils/
 export const findUsageLimitEntitlementProvider = (
   discoveryService: DiscoveryService,
 ): UsageLimitEntitlementProvider | null =>
-  findProviderInstance(discoveryService, UsageLimitEntitlementProvider);
+  findProviderInstance({
+    discoveryService,
+    providerClass: UsageLimitEntitlementProvider,
+  });
