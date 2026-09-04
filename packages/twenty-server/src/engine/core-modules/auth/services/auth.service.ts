@@ -1160,7 +1160,7 @@ export class AuthService {
       case ConnectedAccountProvider.GOOGLE:
         return ['email', 'profile'];
       case ConnectedAccountProvider.MICROSOFT:
-        return ['user.read'];
+        return ['User.Read'];
       case ConnectedAccountProvider.OIDC:
         return ['openid', 'email', 'profile'];
       case ConnectedAccountProvider.SAML:
