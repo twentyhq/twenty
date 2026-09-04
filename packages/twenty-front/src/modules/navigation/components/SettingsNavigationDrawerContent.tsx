@@ -1,7 +1,4 @@
-import { MainNavigationDrawerModeSwitcher } from '@/navigation/components/MainNavigationDrawerModeSwitcher';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
-import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
-import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
@@ -26,11 +23,7 @@ const advancedSettingsToggleClassName = css`
   padding-right: 0;
 `;
 
-export const SettingsNavigationDrawer = ({
-  className,
-}: {
-  className?: string;
-}) => {
+export const SettingsNavigationDrawerContent = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
   const [isAdvancedModeEnabled, setIsAdvancedModeEnabled] = useAtomState(
@@ -38,11 +31,7 @@ export const SettingsNavigationDrawer = ({
   );
 
   return (
-    <NavigationDrawer className={className}>
-      <NavigationDrawerFixedContent>
-        <MainNavigationDrawerModeSwitcher />
-      </NavigationDrawerFixedContent>
-
+    <>
       <NavigationDrawerScrollableContent>
         <SettingsNavigationDrawerItems />
       </NavigationDrawerScrollableContent>
@@ -57,6 +46,6 @@ export const SettingsNavigationDrawer = ({
           />
         </NavigationDrawerSection>
       </StyledAdvancedToggleFixedContent>
-    </NavigationDrawer>
+    </>
   );
 };
