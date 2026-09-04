@@ -58,11 +58,6 @@ export const SettingsSelectMenu = ({
     <StyledMenu
       aria-hidden={!isOpen}
       style={{ display: isOpen ? 'flex' : 'none' }}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') {
-          onClose();
-        }
-      }}
     >
       {children}
     </StyledMenu>

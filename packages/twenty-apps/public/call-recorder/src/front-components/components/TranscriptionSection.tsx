@@ -120,6 +120,7 @@ export const TranscriptionSection = ({
             <StyledSettingsTextArea
               id={inputId}
               placeholder="Value"
+              disabled={!isSummaryEnabled}
               value={promptMarkdown}
               onChange={(event) => handlePromptChange(event.target.value)}
               onBlur={() => savePromptDebounced.flush()}

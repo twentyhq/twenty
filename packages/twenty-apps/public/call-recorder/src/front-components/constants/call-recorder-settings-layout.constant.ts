@@ -44,7 +44,6 @@ export const CALL_RECORDER_RECORDING_NOTICE_MESSAGE_FIELD = {
   variableKey: CALL_RECORDER_RECORDING_NOTICE_MESSAGE_ENV_VAR_NAME,
   label: 'Recording notice message',
   hint: `Truncated to ${CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH} characters for Google Meet.`,
-  maxLength: CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH,
 };
 
 export const CALL_RECORDER_TIMING_ROWS: CallRecorderCounterRow[] = [

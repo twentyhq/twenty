@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
+import { isDefined } from 'twenty-ui/utilities';
 
 import { DropdownMenuItemsContainer } from 'src/front-components/components/DropdownMenuItemsContainer';
 import { DropdownMenuOption } from 'src/front-components/components/DropdownMenuOption';
@@ -72,7 +73,7 @@ export const TranscriptProviderControl = ({
   const handleSelectActive = () => {
     const activeOption = selectableOptions[activeOptionIndex];
 
-    if (activeOption) {
+    if (isDefined(activeOption)) {
       onChange(activeOption.value);
       handleMenuClose();
     }

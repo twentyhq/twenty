@@ -2,6 +2,7 @@ import { isUndefined } from '@sniptt/guards';
 import { useState } from 'react';
 import { DEFAULT_COLOR_LABELS } from 'twenty-ui/navigation';
 import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
+import { isDefined } from 'twenty-ui/utilities';
 
 import { SettingsSelectControl } from 'src/front-components/components/SettingsSelectControl';
 import { SettingsSelectMenu } from 'src/front-components/components/SettingsSelectMenu';
@@ -87,7 +88,7 @@ export const TileBackgroundControl = ({
 
     if (activeOption === CUSTOM_OPTION_VALUE) {
       onSelectCustom();
-    } else if (activeOption) {
+    } else if (isDefined(activeOption)) {
       onSelectColor(activeOption);
     }
 

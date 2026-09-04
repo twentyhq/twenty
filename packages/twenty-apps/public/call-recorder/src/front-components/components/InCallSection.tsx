@@ -16,6 +16,7 @@ import {
 } from 'src/front-components/constants/call-recorder-settings-layout.constant';
 import { useAutosaveApplicationVariable } from 'src/front-components/hooks/use-autosave-application-variable';
 import { getApplicationVariableValue } from 'src/front-components/utils/get-application-variable-value.util';
+import { truncateRecordingNoticeMessage } from 'src/logic-functions/utils/truncate-recording-notice-message.util';
 
 type InCallSectionProps = {
   frontComponentId: string;
@@ -54,8 +55,10 @@ export const InCallSection = ({ frontComponentId }: InCallSectionProps) => {
   };
 
   const handleNoticeMessageChange = (value: string) => {
-    setNoticeMessageValue(value);
-    saveNoticeMessageDebounced(value);
+    const truncatedValue = truncateRecordingNoticeMessage(value);
+
+    setNoticeMessageValue(truncatedValue);
+    saveNoticeMessageDebounced(truncatedValue);
   };
 
   return (
@@ -95,7 +98,7 @@ export const InCallSection = ({ frontComponentId }: InCallSectionProps) => {
             <StyledSettingsTextArea
               id={noticeMessageInputId}
               placeholder="Value"
-              maxLength={CALL_RECORDER_RECORDING_NOTICE_MESSAGE_FIELD.maxLength}
+              disabled={!isNoticeEnabled}
               value={noticeMessageValue}
               onChange={(event) =>
                 handleNoticeMessageChange(event.target.value)
