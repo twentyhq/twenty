@@ -1,8 +1,8 @@
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 
-import { MainNavigationDrawerContent } from '@/navigation/components/MainNavigationDrawer';
+import { MainNavigationDrawerContent } from '@/navigation/components/MainNavigationDrawerContent';
 import { MainNavigationDrawerModeSwitcher } from '@/navigation/components/MainNavigationDrawerModeSwitcher';
-import { SettingsNavigationDrawerContent } from '@/navigation/components/SettingsNavigationDrawer';
+import { SettingsNavigationDrawerContent } from '@/navigation/components/SettingsNavigationDrawerContent';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';

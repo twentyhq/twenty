@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useContext } from 'react';
 import {
   type IconComponent,
@@ -98,6 +98,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const activeNavigationDrawerMode = useActiveNavigationDrawerMode();
   const { switchNavigationDrawerMode } = useSwitchNavigationDrawerMode();
+  const shouldReduceMotion = useReducedMotion();
 
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
@@ -154,7 +155,9 @@ export const MainNavigationDrawerModeSwitcher = () => {
                 initial={false}
                 animate={{ width: isActive ? 'auto' : 0 }}
                 transition={{
-                  duration: theme.animation.duration.normal,
+                  duration: shouldReduceMotion
+                    ? 0
+                    : theme.animation.duration.normal,
                   ease: 'easeInOut',
                 }}
               >

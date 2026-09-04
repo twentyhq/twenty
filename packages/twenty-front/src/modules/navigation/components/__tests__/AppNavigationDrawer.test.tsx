@@ -7,7 +7,7 @@ import { type ReactNode } from 'react';
 jest.mock('@/navigation/hooks/useIsSettingsDrawer');
 jest.mock('@/ui/utilities/responsive/hooks/useIsMobile');
 
-jest.mock('@/navigation/components/MainNavigationDrawer', () => ({
+jest.mock('@/navigation/components/MainNavigationDrawerContent', () => ({
   MainNavigationDrawerContent: () => <div>Main content</div>,
 }));
 
@@ -17,7 +17,7 @@ jest.mock('@/navigation/components/MainNavigationDrawerModeSwitcher', () => ({
   ),
 }));
 
-jest.mock('@/navigation/components/SettingsNavigationDrawer', () => ({
+jest.mock('@/navigation/components/SettingsNavigationDrawerContent', () => ({
   SettingsNavigationDrawerContent: () => <div>Settings content</div>,
 }));
 
