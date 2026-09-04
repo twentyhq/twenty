@@ -65,6 +65,7 @@ describe('CallRecording status contract', () => {
             status: CALL_RECORDING_STATUS.PROCESSING,
             recordingRequestStatus: CALL_RECORDING_REQUEST_STATUS.REQUESTED,
           },
+          shareWith: [{ everyone: true, accessLevel: 'READ' }],
         },
         id: true,
         status: true,

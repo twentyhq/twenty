@@ -25,6 +25,7 @@ export const createCallRecording = async (
     createCallRecording: {
       __args: {
         data: { id, ...data },
+        shareWith: [{ everyone: true, accessLevel: 'READ' }],
       },
       id: true,
     },

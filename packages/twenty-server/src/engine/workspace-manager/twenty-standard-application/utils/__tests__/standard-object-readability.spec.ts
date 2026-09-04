@@ -8,6 +8,11 @@ const WORKSPACE_ID = '20202020-1111-4111-8111-111111111111';
 const TWENTY_STANDARD_APPLICATION_ID = '20202020-2222-4222-8222-222222222222';
 const NOW = '2024-01-01T00:00:00.000Z';
 
+const NON_OPEN_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS: string[] = [
+  STANDARD_OBJECTS.recordShare.universalIdentifier,
+  STANDARD_OBJECTS.callRecording.universalIdentifier,
+];
+
 describe('Standard object readability', () => {
   const { allFlatEntityMaps } =
     computeTwentyStandardApplicationAllFlatEntityMaps({
@@ -20,22 +25,38 @@ describe('Standard object readability', () => {
     allFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier,
   ).filter(isDefined);
 
-  const recordShareFlatObjectMetadata = standardFlatObjectMetadatas.find(
-    (flatObjectMetadata) =>
-      flatObjectMetadata.universalIdentifier ===
-      STANDARD_OBJECTS.recordShare.universalIdentifier,
-  );
+  const findStandardFlatObjectMetadata = (universalIdentifier: string) =>
+    standardFlatObjectMetadatas.find(
+      (flatObjectMetadata) =>
+        flatObjectMetadata.universalIdentifier === universalIdentifier,
+    );
 
   const otherStandardFlatObjectMetadatas = standardFlatObjectMetadatas.filter(
     (flatObjectMetadata) =>
-      flatObjectMetadata.universalIdentifier !==
-      STANDARD_OBJECTS.recordShare.universalIdentifier,
+      !NON_OPEN_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.includes(
+        flatObjectMetadata.universalIdentifier,
+      ),
   );
 
   it('declares recordShare SYSTEM for readability and writability', () => {
-    expect(recordShareFlatObjectMetadata).toMatchObject({
+    expect(
+      findStandardFlatObjectMetadata(
+        STANDARD_OBJECTS.recordShare.universalIdentifier,
+      ),
+    ).toMatchObject({
       readability: MetadataReadability.SYSTEM,
       writability: MetadataWritability.SYSTEM,
+    });
+  });
+
+  it('declares callRecording PRIVATE for readability and OPEN for writability', () => {
+    expect(
+      findStandardFlatObjectMetadata(
+        STANDARD_OBJECTS.callRecording.universalIdentifier,
+      ),
+    ).toMatchObject({
+      readability: MetadataReadability.PRIVATE,
+      writability: MetadataWritability.OPEN,
     });
   });
 

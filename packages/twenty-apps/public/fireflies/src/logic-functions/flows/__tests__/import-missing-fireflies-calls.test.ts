@@ -103,6 +103,7 @@ describe('importMissingFirefliesCalls synchronization', () => {
             status: CALL_RECORDING_STATUS.PROCESSING,
             transcript: expect.any(Array),
           }),
+          shareWith: [{ everyone: true, accessLevel: 'READ' }],
         },
         id: true,
       },

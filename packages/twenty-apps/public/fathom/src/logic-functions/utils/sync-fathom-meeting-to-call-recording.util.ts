@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Meeting } from 'fathom-typescript/sdk/models/shared';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { type AppConnection } from 'twenty-sdk/logic-function';
 
 import { type CallRecordingSyncFields } from 'src/logic-functions/types/call-recording-sync-fields.type';
 import { computeCallRecordingIdForFathomMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-fathom-meeting.util';
@@ -8,14 +9,17 @@ import { findMatchingCalendarEvent } from 'src/logic-functions/utils/find-matchi
 import { formatFathomSummary } from 'src/logic-functions/utils/format-fathom-summary.util';
 import { getFathomMeetingTitle } from 'src/logic-functions/utils/get-fathom-meeting-title.util';
 import { mapFathomTranscriptToEntries } from 'src/logic-functions/utils/map-fathom-transcript-to-entries.util';
+import { resolveCallRecordingShareWith } from 'src/logic-functions/utils/resolve-call-recording-share-with.util';
 import { upsertCallRecording } from 'src/logic-functions/utils/upsert-call-recording.util';
 
 export const syncFathomMeetingToCallRecording = async ({
   coreApiClient,
   meeting,
+  connection,
 }: {
   coreApiClient: Pick<CoreApiClient, 'query' | 'mutation'>;
   meeting: Meeting;
+  connection: Pick<AppConnection, 'visibility' | 'workspaceMemberId'>;
 }): Promise<{
   callRecordingId: string;
   calendarEventId?: string;
@@ -56,6 +60,7 @@ export const syncFathomMeetingToCallRecording = async ({
     coreApiClient,
     callRecordingId,
     fields,
+    shareWith: resolveCallRecordingShareWith(connection),
   });
 
   return {

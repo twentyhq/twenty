@@ -491,6 +491,7 @@ describe('call recorder app lifecycle (integration)', () => {
             calendarEventId,
             ...overrides,
           },
+          shareWith: [{ everyone: true, accessLevel: 'READ' }],
         },
         id: true,
       },

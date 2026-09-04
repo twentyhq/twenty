@@ -4,6 +4,7 @@ import {
 } from 'twenty-shared/metadata';
 import {
   type FieldMetadataType,
+  MetadataReadability,
   PageLayoutTabLayoutMode,
   WidgetType,
 } from 'twenty-shared/types';
@@ -41,6 +42,15 @@ describe('CallRecording standard metadata build', () => {
       ];
 
     expect(callRecording?.isSystem).toBe(true);
+  });
+
+  it('declares the callRecording object PRIVATE', () => {
+    const callRecording =
+      allFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.callRecording.universalIdentifier
+      ];
+
+    expect(callRecording?.readability).toBe(MetadataReadability.PRIVATE);
   });
 
   it('offers the full recording lifecycle as status options', () => {

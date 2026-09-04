@@ -10,6 +10,7 @@ import { FATHOM_WEBHOOK_CONNECTION_QUERY_PARAMETER } from 'src/constants/fathom.
 import { FATHOM_WEBHOOK_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type FathomWebhookRegistration } from 'src/logic-functions/types/fathom-webhook-registration.type';
 import { getFathomWebhookRegistrationKey } from 'src/logic-functions/utils/get-fathom-webhook-registration-key.util';
+import { listFathomConnections } from 'src/logic-functions/utils/list-fathom-connections.util';
 import { syncFathomMeetingToCallRecording } from 'src/logic-functions/utils/sync-fathom-meeting-to-call-recording.util';
 
 type FathomWebhookResult =
@@ -86,9 +87,18 @@ export const fathomWebhookHandler = async (
     return { success: false, error: 'Invalid Fathom meeting payload' };
   }
 
+  const connection = (await listFathomConnections()).find(
+    (candidate) => candidate.id === connectedAccountId,
+  );
+
+  if (!isDefined(connection)) {
+    return { success: false, error: 'Fathom connection must be reconnected' };
+  }
+
   const syncResult = await syncFathomMeetingToCallRecording({
     coreApiClient: new CoreApiClient({ runAs: 'application' }),
     meeting: meetingParseResult.value,
+    connection,
   });
 
   return { success: true, ...syncResult };

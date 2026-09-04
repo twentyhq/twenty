@@ -69,6 +69,7 @@ describe('firefliesWebhookHandler', () => {
               markdown: expect.stringContaining('Summary arrived first'),
             }),
           }),
+          shareWith: [{ everyone: true, accessLevel: 'READ' }],
         },
         id: true,
       },

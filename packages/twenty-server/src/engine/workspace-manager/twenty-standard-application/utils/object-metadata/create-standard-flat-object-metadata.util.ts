@@ -320,6 +320,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
+        readability: MetadataReadability.PRIVATE,
         labelIdentifierFieldMetadataName: 'title',
       },
       workspaceId,

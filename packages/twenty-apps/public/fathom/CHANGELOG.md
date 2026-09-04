@@ -2,6 +2,12 @@
 
 All notable changes to this application are documented in this file.
 
+## 0.1.1
+
+- State who may read each synced Call Recording at creation: the connecting
+  workspace member for a personal Fathom connection, everyone otherwise.
+  Requires Twenty 2.39.0 or later.
+
 ## 0.1.0
 
 - Add per-user Fathom OAuth and signed webhook registration.

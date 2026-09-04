@@ -97,6 +97,7 @@ export const upsertCallRecordingOrThrow = async ({
             id: callRecordingId,
             ...toCallRecordingInputFields(createFields),
           },
+          shareWith: [{ everyone: true, accessLevel: 'READ' }],
         },
         id: true,
       },

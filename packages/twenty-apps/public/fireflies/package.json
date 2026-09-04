@@ -1,13 +1,13 @@
 {
   "name": "@twentyhq/fireflies",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Fireflies call-transcript connector for Twenty",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2",
-    "twenty": ">=2.37.0"
+    "twenty": ">=2.39.0"
   },
   "keywords": [
     "twenty-app"

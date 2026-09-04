@@ -124,7 +124,7 @@ class FakeCoreApiClient {
 
   async mutation(mutation: any): Promise<any> {
     if (mutation.createCallRecording !== undefined) {
-      const data = mutation.createCallRecording.__args.data;
+      const { data, shareWith } = mutation.createCallRecording.__args;
 
       if (this.callRecordings.some((candidate) => candidate.id === data.id)) {
         throw new Error(`Duplicate call recording id ${data.id}`);
@@ -135,7 +135,7 @@ class FakeCoreApiClient {
       this.callRecordings.push(createdCallRecording);
       this.mutations.push({
         name: 'createCallRecording',
-        args: data,
+        args: { data, shareWith },
       });
 
       return {
@@ -274,6 +274,12 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         callRecordingId: buildCustomerSyncCallRecordingId(),
       }),
     ]);
+    expect(client.mutations).toContainEqual({
+      name: 'createCallRecording',
+      args: expect.objectContaining({
+        shareWith: [{ everyone: true, accessLevel: 'READ' }],
+      }),
+    });
     expect(client.callRecordings).toEqual([
       {
         id: buildCustomerSyncCallRecordingId(),
