@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { FieldDescriptionTooltip } from '@/object-record/record-field/ui/components/FieldDescriptionTooltip';
@@ -39,10 +39,12 @@ export const Hover: Story = {
       { timeout: TOOLTIP_WAIT_TIMEOUT_MS },
     );
 
-    expect(within(tooltip).getByText('Amount')).toBeVisible();
-    expect(
-      within(tooltip).getByText('The amount of this opportunity'),
-    ).toBeVisible();
+    await waitFor(() => expect(tooltip).toBeVisible(), {
+      timeout: TOOLTIP_WAIT_TIMEOUT_MS,
+    });
+
+    expect(tooltip).toHaveTextContent('Amount');
+    expect(tooltip).toHaveTextContent('The amount of this opportunity');
   },
 };
 
@@ -65,7 +67,9 @@ export const KeyboardFocus: Story = {
       { timeout: TOOLTIP_WAIT_TIMEOUT_MS },
     );
 
-    expect(tooltip).toBeVisible();
+    await waitFor(() => expect(tooltip).toBeVisible(), {
+      timeout: TOOLTIP_WAIT_TIMEOUT_MS,
+    });
   },
 };
 
