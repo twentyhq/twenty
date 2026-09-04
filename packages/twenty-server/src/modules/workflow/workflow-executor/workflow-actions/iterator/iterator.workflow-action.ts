@@ -12,11 +12,12 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+import { buildStepInfosReset } from 'src/modules/workflow/workflow-executor/utils/build-step-infos-reset.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/guards/is-workflow-iterator-action.guard';
 import { type WorkflowIteratorActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-action-settings.type';
 import { WorkflowIteratorResult } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-result.type';
-import { buildLoopStepInfosReset } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/build-loop-step-infos-reset.util';
+import { getAllStepIdsInLoop } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-all-step-ids-in-loop.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
@@ -143,14 +144,15 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
     let stepInfosToUpdate: Record<string, WorkflowRunStepInfo> = {};
 
     if (!hasProcessedAllItems) {
+      const stepIdsInLoop = getAllStepIdsInLoop({
+        iteratorStepId,
+        initialLoopStepIds,
+        steps,
+      });
+
       stepInfosToUpdate = {
         ...stepInfosToUpdate,
-        ...buildLoopStepInfosReset({
-          iteratorStepId,
-          initialLoopStepIds,
-          steps,
-          stepInfos,
-        }),
+        ...buildStepInfosReset({ stepIds: stepIdsInLoop, stepInfos }),
       };
     }
 
