@@ -45,6 +45,20 @@ export class SyncRecordShareObjectCommand extends ProvisionedWorkspaceCommandRun
       ]);
 
     if (
+      !isDefined(
+        flatObjectMetadataMaps.byUniversalIdentifier[
+          STANDARD_OBJECTS.person.universalIdentifier
+        ],
+      )
+    ) {
+      this.logger.warn(
+        `person object not found for workspace ${workspaceId}, skipping recordShare object sync`,
+      );
+
+      return;
+    }
+
+    if (
       isDefined(
         flatObjectMetadataMaps.byUniversalIdentifier[
           STANDARD_OBJECTS.recordShare.universalIdentifier
