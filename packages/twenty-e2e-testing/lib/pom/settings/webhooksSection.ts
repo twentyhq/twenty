@@ -2,7 +2,7 @@ import { Locator, Page } from '@playwright/test';
 
 export class WebhooksSection {
   private readonly createWebhookButton: Locator;
-  private readonly webhookURLInput: Locator;
+  private readonly webhookUrlInput: Locator;
   private readonly webhookDescription: Locator;
   private readonly deleteButton: Locator;
 
@@ -11,7 +11,7 @@ export class WebhooksSection {
     this.createWebhookButton = page.getByRole('link', {
       name: 'Create Webhook',
     });
-    this.webhookURLInput = page.getByPlaceholder('URL');
+    this.webhookUrlInput = page.getByPlaceholder('URL');
     this.webhookDescription = page.getByPlaceholder('Write a description');
     this.deleteButton = page.getByRole('button', { name: 'Delete' });
   }
@@ -24,9 +24,9 @@ export class WebhooksSection {
     await this.createWebhookButton.click();
   }
 
-  async typeWebhookURL(url: string) {
-    await this.webhookURLInput.clear();
-    await this.webhookURLInput.fill(url);
+  async typeWebhookUrl(url: string) {
+    await this.webhookUrlInput.clear();
+    await this.webhookUrlInput.fill(url);
   }
 
   async typeWebhookDescription(description: string) {

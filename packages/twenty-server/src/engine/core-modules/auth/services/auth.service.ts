@@ -38,14 +38,14 @@ import { type UserCredentialsInput } from 'src/engine/core-modules/auth/dto/user
 import { type CheckUserExistDTO } from 'src/engine/core-modules/auth/dto/user-exists.dto';
 import { type WorkspaceInviteHashValidDTO } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.dto';
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
-import { CreateSSOConnectedAccountService } from 'src/engine/core-modules/auth/services/create-sso-connected-account.service';
+import { CreateSsoConnectedAccountService } from 'src/engine/core-modules/auth/services/create-sso-connected-account.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { type GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { type MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-import { SSOExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
+import { SsoExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
 import { AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import {
@@ -81,7 +81,7 @@ import { isEmailInApprovedAccessDomains } from 'src/engine/core-modules/approved
 export class AuthService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
-    private readonly ssoExchangeTokenService: SSOExchangeTokenService,
+    private readonly ssoExchangeTokenService: SsoExchangeTokenService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly domainServerConfigService: DomainServerConfigService,
     private readonly refreshTokenService: RefreshTokenService,
@@ -105,7 +105,7 @@ export class AuthService {
     private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly createSSOConnectedAccountService: CreateSSOConnectedAccountService,
+    private readonly createSsoConnectedAccountService: CreateSsoConnectedAccountService,
     private readonly userSessionService: UserSessionService,
   ) {}
 
@@ -971,7 +971,7 @@ export class AuthService {
     }
   }
 
-  async signInUpWithSocialSSO(
+  async signInUpWithSocialSso(
     {
       firstName,
       lastName,
@@ -1010,7 +1010,7 @@ export class AuthService {
         ));
 
       const ssoExchangeToken =
-        await this.ssoExchangeTokenService.generateSSOExchangeToken({
+        await this.ssoExchangeTokenService.generateSsoExchangeToken({
           userId: user.id,
           authProvider,
         });
@@ -1075,7 +1075,7 @@ export class AuthService {
         billingCheckoutSessionState,
       });
 
-      await this.createSSOConnectedAccountIfFeatureFlagIsOn({
+      await this.createSsoConnectedAccountIfFeatureFlagIsOn({
         workspaceId: workspace.id,
         userId: user.id,
         handle: email,
@@ -1106,7 +1106,7 @@ export class AuthService {
     }
   }
 
-  async createSSOConnectedAccountIfFeatureFlagIsOn(input: {
+  async createSsoConnectedAccountIfFeatureFlagIsOn(input: {
     workspaceId: string;
     userId: string;
     handle: string;
@@ -1121,9 +1121,9 @@ export class AuthService {
       input.connectedAccountProvider ??
       this.mapAuthProviderToConnectedAccountProvider(input.authProvider);
 
-    const scopes = this.getSSOScopes(provider);
+    const scopes = this.getSsoScopes(provider);
 
-    await this.createSSOConnectedAccountService.createOrUpdateSSOConnectedAccount(
+    await this.createSsoConnectedAccountService.createOrUpdateSsoConnectedAccount(
       {
         workspaceId: input.workspaceId,
         userId: input.userId,
@@ -1155,12 +1155,12 @@ export class AuthService {
     }
   }
 
-  private getSSOScopes(provider: ConnectedAccountProvider): string[] {
+  private getSsoScopes(provider: ConnectedAccountProvider): string[] {
     switch (provider) {
       case ConnectedAccountProvider.GOOGLE:
         return ['email', 'profile'];
       case ConnectedAccountProvider.MICROSOFT:
-        return ['user.read'];
+        return ['User.Read'];
       case ConnectedAccountProvider.OIDC:
         return ['openid', 'email', 'profile'];
       case ConnectedAccountProvider.SAML:

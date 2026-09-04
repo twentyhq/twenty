@@ -9,7 +9,6 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useUpdateJunctionRelationFromCell } from '@/object-record/record-field/ui/hooks/useUpdateJunctionRelationFromCell';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -67,19 +66,6 @@ describe('useUpdateJunctionRelationFromCell', () => {
       id: sourceRecordId,
       __typename: 'Rocket',
       taskTargets: [],
-    });
-    store.set(searchRecordStoreFamilyState.atomFamily(targetRecordId), {
-      recordId: targetRecordId,
-      label: 'Prepare launch',
-      objectLabelSingular: 'Task',
-      objectNameSingular: 'task',
-      tsRank: 1,
-      tsRankCD: 1,
-      record: {
-        id: targetRecordId,
-        __typename: 'Task',
-        title: 'Prepare launch',
-      },
     });
     mockCreateManyRecords.mockResolvedValue([
       {
