@@ -4,30 +4,21 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { FieldDescriptionTooltip } from '@/object-record/record-field/ui/components/FieldDescriptionTooltip';
 
-const FIELD_DESCRIPTION_TOOLTIP_ANCHOR_ID = 'field-description-tooltip-anchor';
-const FIELD_DESCRIPTION_ID = 'field-description-tooltip-content';
-
 const meta: Meta<typeof FieldDescriptionTooltip> = {
   title: 'UI/Data/Field/FieldDescriptionTooltip',
   component: FieldDescriptionTooltip,
   decorators: [ComponentDecorator],
   args: {
-    anchorSelect: `#${FIELD_DESCRIPTION_TOOLTIP_ANCHOR_ID}`,
     fieldDescription: 'The amount of this opportunity',
-    fieldDescriptionId: FIELD_DESCRIPTION_ID,
     fieldLabel: 'Amount',
   },
   render: (args) => (
-    <>
-      <span
-        aria-describedby={FIELD_DESCRIPTION_ID}
-        id={FIELD_DESCRIPTION_TOOLTIP_ANCHOR_ID}
-        tabIndex={0}
-      >
-        Amount
-      </span>
-      <FieldDescriptionTooltip {...args} />
-    </>
+    <FieldDescriptionTooltip
+      fieldDescription={args.fieldDescription}
+      fieldLabel={args.fieldLabel}
+    >
+      <span>Amount</span>
+    </FieldDescriptionTooltip>
   ),
 };
 
@@ -61,10 +52,9 @@ export const KeyboardFocus: Story = {
     await userEvent.tab();
 
     expect(anchor).toHaveFocus();
-    expect(anchor).toHaveAttribute('aria-describedby', FIELD_DESCRIPTION_ID);
-    expect(
-      canvasElement.ownerDocument.getElementById(FIELD_DESCRIPTION_ID),
-    ).toHaveTextContent('The amount of this opportunity');
+    expect(anchor).toHaveAccessibleDescription(
+      'The amount of this opportunity',
+    );
 
     const tooltip = await within(canvasElement.ownerDocument.body).findByRole(
       'tooltip',
@@ -73,5 +63,21 @@ export const KeyboardFocus: Story = {
     );
 
     expect(tooltip).toBeVisible();
+  },
+};
+
+export const WithoutDescription: Story = {
+  args: {
+    fieldDescription: '',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const anchor = canvas.getByText('Amount');
+
+    expect(anchor).not.toHaveAttribute('aria-describedby');
+    expect(anchor).not.toHaveAttribute('tabindex');
+    expect(
+      within(canvasElement.ownerDocument.body).queryByRole('tooltip'),
+    ).not.toBeInTheDocument();
   },
 };

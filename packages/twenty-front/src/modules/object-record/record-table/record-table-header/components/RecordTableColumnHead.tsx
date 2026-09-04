@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
-import { isNonEmptyString } from '@sniptt/guards';
-import { useContext, useId } from 'react';
+import { useContext } from 'react';
 
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { FieldDescriptionTooltip } from '@/object-record/record-field/ui/components/FieldDescriptionTooltip';
@@ -45,8 +44,6 @@ export const RecordTableColumnHead = ({
   recordField,
 }: RecordTableColumnHeadProps) => {
   const { theme } = useContext(ThemeContext);
-  const fieldDescriptionTooltipAnchorId = `field-description-${useId().replace(/:/g, '')}`;
-  const fieldDescriptionId = `${fieldDescriptionTooltipAnchorId}-content`;
 
   const correspondingFieldMetadataItem = useAtomFamilySelectorValue(
     fieldMetadataItemByIdSelector,
@@ -59,28 +56,18 @@ export const RecordTableColumnHead = ({
   );
   const fieldMetadataItem =
     correspondingFieldMetadataItem.foundFieldMetadataItem;
-  const hasFieldDescription =
-    isNonEmptyString(fieldMetadataItem?.label) &&
-    isNonEmptyString(fieldMetadataItem.description);
 
   return (
     <StyledTitle className={RECORD_TABLE_CELL_CONTENT_CLASS_NAME}>
       <StyledIcon>
         <Icon size={theme.icon.size.md} />
       </StyledIcon>
-      <StyledText
-        aria-describedby={hasFieldDescription ? fieldDescriptionId : undefined}
-        id={fieldDescriptionTooltipAnchorId}
-        tabIndex={hasFieldDescription ? 0 : undefined}
-      >
-        {fieldMetadataItem?.label}
-      </StyledText>
       <FieldDescriptionTooltip
-        anchorSelect={`#${fieldDescriptionTooltipAnchorId}`}
         fieldDescription={fieldMetadataItem?.description}
-        fieldDescriptionId={fieldDescriptionId}
         fieldLabel={fieldMetadataItem?.label}
-      />
+      >
+        <StyledText>{fieldMetadataItem?.label}</StyledText>
+      </FieldDescriptionTooltip>
     </StyledTitle>
   );
 };

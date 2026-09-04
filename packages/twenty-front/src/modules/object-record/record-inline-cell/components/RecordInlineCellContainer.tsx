@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext, useId } from 'react';
+import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { FieldDescriptionTooltip } from '@/object-record/record-field/ui/components/FieldDescriptionTooltip';
@@ -110,12 +110,11 @@ export const RecordInlineCellContainer = () => {
   const labelId = `label-${getRecordFieldInputInstanceId({
     recordId,
     fieldName: fieldDefinition?.metadata?.fieldName,
-  })}-${useId().replace(/:/g, '')}`;
+  })}`;
 
-  const fieldDescription = fieldDefinition.metadata.description;
+  const fieldDescription = fieldDefinition?.metadata?.description;
   const hasFieldDescription =
     isNonEmptyString(label) && isNonEmptyString(fieldDescription);
-  const fieldDescriptionId = `${labelId}-description`;
 
   return (
     <StyledInlineCellBaseContainer
@@ -131,28 +130,21 @@ export const RecordInlineCellContainer = () => {
             </StyledIconContainer>
           )}
           {showLabel && (
-            <StyledLabelContainer
-              aria-describedby={
-                hasFieldDescription ? fieldDescriptionId : undefined
-              }
-              width={labelWidth}
-              id={labelId}
-              tabIndex={hasFieldDescription ? 0 : undefined}
-            >
-              {hasFieldDescription ? (
-                <StyledLabel>{label}</StyledLabel>
-              ) : (
-                <OverflowingTextWithTooltip text={label} displayedMaxRows={1} />
-              )}
-            </StyledLabelContainer>
-          )}
-          {showLabel && (
             <FieldDescriptionTooltip
-              anchorSelect={`#${labelId}`}
               fieldDescription={fieldDescription}
-              fieldDescriptionId={fieldDescriptionId}
               fieldLabel={label}
-            />
+            >
+              <StyledLabelContainer width={labelWidth}>
+                {hasFieldDescription ? (
+                  <StyledLabel>{label}</StyledLabel>
+                ) : (
+                  <OverflowingTextWithTooltip
+                    text={label}
+                    displayedMaxRows={1}
+                  />
+                )}
+              </StyledLabelContainer>
+            </FieldDescriptionTooltip>
           )}
           {/* TODO: Displaying Tooltips on the board is causing performance issues https://react-tooltip.com/docs/examples/render */}
           {!showLabel && (
