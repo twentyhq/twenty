@@ -1,17 +1,21 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import {
   CoreObjectNameSingular,
   MessageChannelType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { IconAlertTriangle, IconInfoCircle } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {
   CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH,
   CampaignEnvelopeBox,
 } from '@/activities/emails/components/CampaignEnvelopeBox';
+import { CampaignRecipientCount } from '@/activities/emails/components/CampaignRecipientCount';
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { useCampaignAudiencePreview } from '@/activities/emails/hooks/useCampaignAudiencePreview';
 import { useCampaignDetailsState } from '@/activities/emails/hooks/useCampaignDetailsState';
@@ -34,48 +38,26 @@ const StyledSubjectInput = styled.input`
   width: 100%;
 `;
 
-const StyledHints = styled.div`
+const StyledWarning = styled.div`
+  align-items: flex-start;
+  color: ${themeCssVariables.font.color.secondary};
   display: flex;
-  flex-direction: column;
+  font-size: ${themeCssVariables.font.size.xs};
   gap: ${themeCssVariables.spacing[1]};
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 `;
 
-const StyledHint = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.xs};
+const StyledWarningIcon = styled(IconAlertTriangle)`
+  color: ${themeCssVariables.color.yellow};
+  flex-shrink: 0;
 `;
 
-type CampaignAudiencePreview = NonNullable<
-  ReturnType<typeof useCampaignAudiencePreview>
->;
+const StyledTopicInfoIcon = styled(IconInfoCircle)`
+  color: ${themeCssVariables.font.color.light};
+  display: block;
+`;
 
-const buildAudienceHint = (preview: CampaignAudiencePreview): string => {
-  const parts: string[] = [];
-
-  if (preview.withoutEmail > 0) {
-    parts.push(t`${preview.withoutEmail} without email`);
-  }
-  if (preview.duplicateEmails > 0) {
-    parts.push(t`${preview.duplicateEmails} duplicate`);
-  }
-  if (preview.globallyUnsubscribed > 0) {
-    parts.push(t`${preview.globallyUnsubscribed} unsubscribed from everything`);
-  }
-  if (preview.topicUnsubscribed > 0) {
-    parts.push(t`${preview.topicUnsubscribed} opted out of this topic`);
-  }
-
-  if (parts.length === 0) {
-    return t`${preview.totalMembers} in this list`;
-  }
-
-  const breakdown = parts.join(', ');
-
-  // Without exclusions every member is sendable, so the count is only worth
-  // spelling out when the two differ.
-  return t`${preview.totalMembers} in this list, ${preview.sendable} sendable (${breakdown})`;
-};
+const UNSUBSCRIBE_TOPIC_ANCHOR_ID = 'campaign-composer-unsubscribe-topic-info';
 
 type CampaignDetailsFieldsProps = {
   campaign: MessageCampaign;
@@ -86,6 +68,7 @@ export const CampaignDetailsFields = ({
   campaign,
   width,
 }: CampaignDetailsFieldsProps) => {
+  const { theme } = useContext(ThemeContext);
   const detailsState = useCampaignDetailsState({ campaign });
 
   const { channels } = useMyMessageChannels();
@@ -105,10 +88,11 @@ export const CampaignDetailsFields = ({
     }
   };
 
-  const audiencePreview = useCampaignAudiencePreview({
-    listId: detailsState.listId,
-    unsubscribeTopicId: detailsState.unsubscribeTopicId,
-  });
+  const { audiencePreview, hasFailed: hasAudiencePreviewFailed } =
+    useCampaignAudiencePreview({
+      listId: detailsState.listId,
+      unsubscribeTopicId: detailsState.unsubscribeTopicId,
+    });
 
   const senderOptions: SelectOption<string>[] = channels
     .filter((channel) => channel.type === MessageChannelType.EMAIL_GROUP)
@@ -124,23 +108,18 @@ export const CampaignDetailsFields = ({
   );
 
   const hasTopicOptions = topicOptions.length > 0;
+  const hasSenderOptions = senderOptions.length > 0;
 
   return (
     <CampaignEnvelopeBox
       width={width}
       onBlur={() => detailsState.flush()}
       below={
-        (isDefined(audiencePreview) || hasTopicOptions) && (
-          <StyledHints>
-            {isDefined(audiencePreview) && (
-              <StyledHint>{buildAudienceHint(audiencePreview)}</StyledHint>
-            )}
-            {hasTopicOptions && (
-              <StyledHint>
-                {t`The unsubscribe topic this email belongs to. Recipients who opted out of it are skipped, and the unsubscribe link is scoped to it.`}
-              </StyledHint>
-            )}
-          </StyledHints>
+        !hasSenderOptions && (
+          <StyledWarning>
+            <StyledWarningIcon size={theme.icon.size.sm} />
+            {t`No sending address is available. Connect a verified sending domain in Settings before this campaign can go out.`}
+          </StyledWarning>
         )
       }
     >
@@ -160,6 +139,12 @@ export const CampaignDetailsFields = ({
       <ComposerFieldRow
         label={t`To`}
         labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
+        trailing={
+          <CampaignRecipientCount
+            audiencePreview={audiencePreview}
+            hasFailed={hasAudiencePreviewFailed}
+          />
+        }
       >
         <FormSingleRecordPicker
           key={`list-${detailsState.draftResyncKey}`}
@@ -173,6 +158,22 @@ export const CampaignDetailsFields = ({
         <ComposerFieldRow
           label={t`Unsubscribe topic`}
           labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
+          trailing={
+            <>
+              <StyledTopicInfoIcon
+                id={UNSUBSCRIBE_TOPIC_ANCHOR_ID}
+                size={theme.icon.size.md}
+              />
+              <AppTooltip
+                anchorSelect={`#${UNSUBSCRIBE_TOPIC_ANCHOR_ID}`}
+                content={t`Recipients who opted out of this topic are skipped, and the unsubscribe link in this email is scoped to it.`}
+                delay={TooltipDelay.shortDelay}
+                noArrow
+                place="bottom"
+                positionStrategy="fixed"
+              />
+            </>
+          }
         >
           <Select
             dropdownId="campaign-composer-unsubscribe-topic"

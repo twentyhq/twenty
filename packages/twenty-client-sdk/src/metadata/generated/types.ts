@@ -5471,6 +5471,9 @@ export default {
             "overCap": [
                 26
             ],
+            "hardSuppressed": [
+                26
+            ],
             "globallyUnsubscribed": [
                 26
             ],

@@ -18,12 +18,12 @@ export const useTargetMessageCampaign = () => {
     objectRecordId: targetRecord.id,
   });
 
-  // Sending optimistically writes the status to the record store, so it turns
-  // the campaign read-only before the fetched record catches up.
   const storeStatus = useAtomFamilySelectorValue(recordStoreFamilySelector, {
     recordId: targetRecord.id,
     fieldName: 'status',
   }) as MessageCampaignStatus | null;
+
+  const effectiveStatus = storeStatus ?? campaign?.status;
 
   if (loading || !isDefined(campaign)) {
     return { campaign: undefined, isDraft: false };
@@ -31,6 +31,6 @@ export const useTargetMessageCampaign = () => {
 
   return {
     campaign,
-    isDraft: (storeStatus ?? campaign.status) === MessageCampaignStatus.DRAFT,
+    isDraft: effectiveStatus === MessageCampaignStatus.DRAFT,
   };
 };
