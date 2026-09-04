@@ -27,6 +27,9 @@ export const LinkChip = ({
   to,
   size = ChipSize.Small,
   label,
+  tooltipLabel,
+  tooltipPlace,
+  alwaysShowTooltip,
   isLabelHidden = false,
   isBold = false,
   variant = ChipVariant.Regular,
@@ -64,6 +67,9 @@ export const LinkChip = ({
         <Chip
           size={size}
           label={label}
+          tooltipLabel={tooltipLabel}
+          tooltipPlace={tooltipPlace}
+          alwaysShowTooltip={alwaysShowTooltip}
           isLabelHidden={isLabelHidden}
           isBold={isBold}
           clickable={true}
