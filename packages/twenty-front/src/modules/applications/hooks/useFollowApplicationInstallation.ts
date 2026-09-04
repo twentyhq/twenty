@@ -46,6 +46,16 @@ export const useFollowApplicationInstallation = () => {
       return;
     }
 
+    if (application.state === ApplicationState.FAILED) {
+      setRequestedApplication(null);
+      enqueueErrorSnackBar({
+        message:
+          application.failureReason ?? t`Failed to install the application.`,
+      });
+
+      return;
+    }
+
     if (application.state !== ApplicationState.INSTALLED) {
       setHasSeenTransitionalState(true);
 

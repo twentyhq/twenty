@@ -14,6 +14,7 @@ import {
 import {
   type ApplicationRegistration,
   ApplicationRegistrationSourceType,
+  ApplicationState,
   ApplicationRegistrationTarballUrlDocument,
   FindOneApplicationSummaryDocument,
   GetPublicWorkspaceDataByIdDocument,
@@ -32,6 +33,7 @@ import {
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/layout';
 import { SettingsPath } from 'twenty-shared/types';
+import { useApplicationLifecycleState } from '@/applications/hooks/useApplicationLifecycleState';
 import { useRefetchOnApplicationLifecycleSettled } from '@/applications/hooks/useRefetchOnApplicationLifecycleSettled';
 import { isApplicationNotFoundError } from '@/applications/utils/isApplicationNotFoundError';
 import { SettingsApplicationRegistrationShareLinkButtons } from '~/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons';
@@ -89,9 +91,19 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
     refetch: refetchApplicationSummary,
   });
 
+  const applicationSummary = applicationSummaryData?.findOneApplication;
+
+  const lifecycleState = useApplicationLifecycleState({
+    universalIdentifier: registration.universalIdentifier,
+  });
+
+  const hasFailedInstall =
+    (lifecycleState ?? applicationSummary?.state) === ApplicationState.FAILED;
+
   const isApplicationInstalled =
-    isDefined(applicationSummaryData?.findOneApplication) &&
-    !isApplicationNotFoundError(applicationSummaryError);
+    isDefined(applicationSummary) &&
+    !isApplicationNotFoundError(applicationSummaryError) &&
+    !hasFailedInstall;
 
   const { data: ownerWorkspaceData } = useQuery(
     GetPublicWorkspaceDataByIdDocument,
@@ -195,6 +207,8 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
       label: t`Installed`,
       value: isApplicationInstalled ? (
         <Tag color="green" text={t`Yes`} />
+      ) : hasFailedInstall ? (
+        <Tag color="red" text={t`Failed`} />
       ) : (
         <Tag color="orange" text={t`No`} />
       ),

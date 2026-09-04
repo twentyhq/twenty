@@ -33,6 +33,7 @@ import {
 } from 'twenty-ui/icon';
 import {
   ApplicationRegistrationSourceType,
+  ApplicationState,
   FindMarketplaceAppDetailDocument,
   FindMarketplaceAppManifestDocument,
   FindOneApplicationByUniversalIdentifierDocument,
@@ -103,7 +104,9 @@ export const SettingsAvailableApplicationDetails = () => {
       : undefined;
 
   const isUnlisted = isDefined(detail) && !detail.isListed;
-  const isAlreadyInstalled = isDefined(application);
+  const hasFailedInstall =
+    (lifecycleState ?? application?.state) === ApplicationState.FAILED;
+  const isAlreadyInstalled = isDefined(application) && !hasFailedInstall;
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
 
@@ -243,6 +246,7 @@ export const SettingsAvailableApplicationDetails = () => {
               sourcePackageUrl,
             }}
             isInstalled={isAlreadyInstalled}
+            failureReason={application?.failureReason ?? undefined}
             canInstallMarketplaceApps={canInstallMarketplaceApps}
             onInstall={requestInstall}
             isInstalling={isInstalling}

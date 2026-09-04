@@ -14,6 +14,8 @@ import { ApplicationRecurringChargeCronJob } from 'src/engine/core-modules/billi
 import { BillingReminderModule } from 'src/engine/core-modules/billing/reminders/billing-reminder.module';
 import { BillingReminderCronJob } from 'src/engine/core-modules/billing/reminders/crons/billing-reminder.cron.job';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
+import { ApplicationLifecycleReconciliationModule } from 'src/engine/core-modules/application/application-lifecycle-reconciliation/application-lifecycle-reconciliation.module';
+import { ApplicationLifecycleReconciliationCronJob } from 'src/engine/core-modules/application/application-lifecycle-reconciliation/crons/application-lifecycle-reconciliation.cron.job';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
@@ -102,6 +104,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     EnterpriseModule,
     EmailingModule,
     ApplicationInstallModule,
+    ApplicationLifecycleReconciliationModule,
     ApplicationManifestModule,
     ApplicationRegistrationModule,
     ApplicationUpgradeModule,
@@ -111,6 +114,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
   ],
   providers: [
     ApplicationRecurringChargeCronJob,
+    ApplicationLifecycleReconciliationCronJob,
     BillingReminderCronJob,
     CleanSuspendedWorkspacesJob,
     CleanOnboardingWorkspacesJob,

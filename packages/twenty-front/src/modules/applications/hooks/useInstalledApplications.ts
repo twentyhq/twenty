@@ -3,7 +3,10 @@ import { useRefetchOnApplicationRegistrationChange } from '@/applications/hooks/
 import { applicationsSelector } from '@/applications/states/applicationsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
-import { FindManyApplicationsDocument } from '~/generated-metadata/graphql';
+import {
+  ApplicationState,
+  FindManyApplicationsDocument,
+} from '~/generated-metadata/graphql';
 import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
 
 export const useInstalledApplications = (): ApplicationWithoutRelation[] => {
@@ -21,13 +24,15 @@ export const useInstalledApplications = (): ApplicationWithoutRelation[] => {
     ]),
   );
 
-  return applications.map((application) => {
-    const queriedApplication = queriedApplicationsById.get(application.id);
+  return applications
+    .filter((application) => application.state !== ApplicationState.FAILED)
+    .map((application) => {
+      const queriedApplication = queriedApplicationsById.get(application.id);
 
-    return {
-      ...application,
-      logoUrl: queriedApplication?.logoUrl,
-      applicationRegistration: queriedApplication?.applicationRegistration,
-    };
-  });
+      return {
+        ...application,
+        logoUrl: queriedApplication?.logoUrl,
+        applicationRegistration: queriedApplication?.applicationRegistration,
+      };
+    });
 };

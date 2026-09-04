@@ -14,6 +14,8 @@ export const APPLICATION_FRAGMENT = gql`
     logoUrl
     version
     state
+    failedOperation
+    failureReason
     universalIdentifier
     applicationRegistrationId
     applicationRegistration {
