@@ -16,6 +16,8 @@ import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/fl
 import { retryFailedRecallCancellations } from 'src/logic-functions/flows/retry-failed-recall-cancellations.util';
 import { scheduleRecallBotsForPendingCallRecordings } from 'src/logic-functions/flows/schedule-recall-bots-for-pending-call-recordings.util';
 import { processRecallWebhookHandler } from 'src/logic-functions/process-recall-webhook';
+import { syncCalendarBotSchedulingHandler } from 'src/logic-functions/sync-calendar-bot-scheduling';
+import { CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-calendar-bot-scheduling-enabled-env-var-name';
 
 // ---------------------------------------------------------------------------
 // Call Recorder end-to-end behavior against a live Twenty server.
@@ -912,6 +914,64 @@ describe('call recorder app lifecycle (integration)', () => {
         'bot_never_scheduled',
       );
       expect(recall.botForCallRecording(callRecordingId)).toBeUndefined();
+    });
+  });
+
+  describe('workspace recording switch', () => {
+    const turnRecordingOff = () =>
+      vi.stubEnv(
+        CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME,
+        'false',
+      );
+
+    it('cancels every scheduled recording and its bot when turned off', async () => {
+      const { callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      turnRecordingOff();
+
+      const result = await syncCalendarBotSchedulingHandler();
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.recordingRequestStatus).toBe('CANCELED');
+      expect(callRecording.externalBotId).toBeFalsy();
+      expect(recall.deletedBotIds).toContain(botId);
+      expect(result).toEqual(
+        expect.objectContaining({
+          outcome: 'scheduled-bots-canceled',
+          canceledCallRecordingIds: expect.arrayContaining([callRecordingId]),
+          failedCallRecordingIds: [],
+        }),
+      );
+    });
+
+    it('schedules nothing for an upcoming meeting while turned off', async () => {
+      turnRecordingOff();
+
+      const calendarEventId = await createCalendarEvent();
+
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [calendarEventId],
+      });
+
+      expect(
+        await findCallRecordings({
+          calendarEventId: { in: [calendarEventId] },
+        }),
+      ).toEqual([]);
+      expect(recall.bots.size).toBe(0);
+    });
+
+    it('sweeps upcoming meetings again when turned back on', async () => {
+      vi.stubEnv(
+        CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME,
+        'true',
+      );
+
+      await expect(syncCalendarBotSchedulingHandler()).resolves.toEqual({
+        outcome: 'sweep-enqueued',
+      });
     });
   });
 });

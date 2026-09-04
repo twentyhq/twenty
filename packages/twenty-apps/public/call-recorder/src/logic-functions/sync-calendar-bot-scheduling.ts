@@ -19,9 +19,6 @@ export type SyncCalendarBotSchedulingResult =
       failedCallRecordingIds: string[];
     };
 
-// Called by the settings toggle right after the application variable is
-// saved; the variable itself is the source of truth, so the direction is
-// read here rather than trusted from the request body.
 export const syncCalendarBotSchedulingHandler =
   async (): Promise<SyncCalendarBotSchedulingResult> => {
     if (isCalendarBotSchedulingEnabled()) {

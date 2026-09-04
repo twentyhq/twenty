@@ -36,8 +36,6 @@ const buildSnackbarForResponse = (
   };
 };
 
-// The application variable must already be saved: the route reads it to
-// decide whether to cancel scheduled bots or sweep upcoming meetings.
 export const requestCalendarBotSchedulingSync = async (): Promise<void> => {
   try {
     const response =
