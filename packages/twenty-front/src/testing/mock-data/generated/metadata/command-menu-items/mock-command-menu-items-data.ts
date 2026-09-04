@@ -26,7 +26,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Navigate to next {objectLabelSingular}",
     "icon": "IconChevronDown",
-    "shortLabel": null
+    "shortLabel": null,
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -47,7 +48,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Navigate to previous {objectLabelSingular}",
     "icon": "IconChevronUp",
-    "shortLabel": null
+    "shortLabel": null,
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -68,7 +70,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Create new {objectLabelSingular}",
     "icon": "IconPlus",
-    "shortLabel": "New {objectLabelSingular}"
+    "shortLabel": "New {objectLabelSingular}",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -89,7 +92,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Delete {objectLabel}",
     "icon": "IconTrash",
-    "shortLabel": "Delete"
+    "shortLabel": "Delete",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -110,7 +114,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Restore {objectLabel}",
     "icon": "IconRefresh",
-    "shortLabel": "Restore"
+    "shortLabel": "Restore",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -131,7 +136,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Permanently destroy {objectLabel}",
     "icon": "IconTrashX",
-    "shortLabel": "Destroy"
+    "shortLabel": "Destroy",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -152,7 +158,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Add to Favorites",
     "icon": "IconHeart",
-    "shortLabel": null
+    "shortLabel": null,
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -173,7 +180,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Remove from Favorites",
     "icon": "IconHeartOff",
-    "shortLabel": null
+    "shortLabel": null,
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -194,7 +202,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Export to PDF",
     "icon": "IconFileExport",
-    "shortLabel": "Export"
+    "shortLabel": "Export",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -215,7 +224,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Export {objectLabel}",
     "icon": "IconFileExport",
-    "shortLabel": "Export"
+    "shortLabel": "Export",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -236,7 +246,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Update {objectLabelPlural}",
     "icon": "IconEdit",
-    "shortLabel": "Update"
+    "shortLabel": "Update",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -257,7 +268,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Merge {objectLabelPlural}",
     "icon": "IconArrowMerge",
-    "shortLabel": "Merge"
+    "shortLabel": "Merge",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -278,7 +290,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Import {objectLabelPlural}",
     "icon": "IconFileImport",
-    "shortLabel": "Import"
+    "shortLabel": "Import",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -299,7 +312,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Export View",
     "icon": "IconFileExport",
-    "shortLabel": "Export"
+    "shortLabel": "Export",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -320,7 +334,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "See deleted {objectLabelPlural}",
     "icon": "IconRotate2",
-    "shortLabel": "Deleted {objectLabelPlural}"
+    "shortLabel": "Deleted {objectLabelPlural}",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -341,7 +356,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Create View",
     "icon": "IconLayout",
-    "shortLabel": "Create View"
+    "shortLabel": "Create View",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -362,7 +378,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Hide deleted {objectLabelPlural}",
     "icon": "IconEyeOff",
-    "shortLabel": "Hide deleted"
+    "shortLabel": "Hide deleted",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -383,7 +400,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Edit Layout",
     "icon": "IconPencil",
-    "shortLabel": "Edit Layout"
+    "shortLabel": "Edit Layout",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -404,7 +422,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Edit Dashboard",
     "icon": "IconPencil",
-    "shortLabel": "Edit"
+    "shortLabel": "Edit",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -425,7 +444,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Save Dashboard",
     "icon": "IconDeviceFloppy",
-    "shortLabel": "Save"
+    "shortLabel": "Save",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -446,7 +466,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Cancel Edition",
     "icon": "IconCancel",
-    "shortLabel": "Cancel"
+    "shortLabel": "Cancel",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -467,7 +488,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Duplicate Dashboard",
     "icon": "IconCopyPlus",
-    "shortLabel": "Duplicate"
+    "shortLabel": "Duplicate",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -488,7 +510,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Activate Workflow",
     "icon": "IconPower",
-    "shortLabel": "Activate"
+    "shortLabel": "Activate",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -509,7 +532,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Deactivate Workflow",
     "icon": "IconPlayerPause",
-    "shortLabel": "Deactivate"
+    "shortLabel": "Deactivate",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -530,7 +554,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Discard Draft",
     "icon": "IconNoteOff",
-    "shortLabel": "Discard Draft"
+    "shortLabel": "Discard Draft",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -551,7 +576,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Test Workflow",
     "icon": "IconPlayerPlay",
-    "shortLabel": "Test"
+    "shortLabel": "Test",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -572,7 +598,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "See Active Version",
     "icon": "IconVersions",
-    "shortLabel": "See Active Version"
+    "shortLabel": "See Active Version",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -593,7 +620,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "See Runs",
     "icon": "IconHistoryToggle",
-    "shortLabel": "See Runs"
+    "shortLabel": "See Runs",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -614,7 +642,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "See Versions History",
     "icon": "IconVersions",
-    "shortLabel": "See Versions"
+    "shortLabel": "See Versions",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -635,7 +664,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Add a Node",
     "icon": "IconPlus",
-    "shortLabel": "Add a Node"
+    "shortLabel": "Add a Node",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -656,7 +686,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Tidy up Workflow",
     "icon": "IconReorder",
-    "shortLabel": "Tidy up"
+    "shortLabel": "Tidy up",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -677,7 +708,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Duplicate Workflow",
     "icon": "IconCopy",
-    "shortLabel": "Duplicate"
+    "shortLabel": "Duplicate",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -698,7 +730,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "See Version",
     "icon": "IconVersions",
-    "shortLabel": "See Version"
+    "shortLabel": "See Version",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -719,7 +752,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "See Workflow",
     "icon": "IconSettingsAutomation",
-    "shortLabel": "See Workflow"
+    "shortLabel": "See Workflow",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -740,7 +774,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Stop",
     "icon": "IconPlayerStop",
-    "shortLabel": "Stop"
+    "shortLabel": "Stop",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -761,7 +796,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Retry",
     "icon": "IconRefresh",
-    "shortLabel": "Retry"
+    "shortLabel": "Retry",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -782,7 +818,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "See Runs",
     "icon": "IconHistoryToggle",
-    "shortLabel": "See Runs"
+    "shortLabel": "See Runs",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -803,7 +840,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "See Workflow",
     "icon": "IconSettingsAutomation",
-    "shortLabel": "See Workflow"
+    "shortLabel": "See Workflow",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -824,7 +862,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Use as Draft",
     "icon": "IconPencil",
-    "shortLabel": "Use as Draft"
+    "shortLabel": "Use as Draft",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -845,7 +884,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "See Versions History",
     "icon": "IconVersions",
-    "shortLabel": "See Versions"
+    "shortLabel": "See Versions",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -868,7 +908,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Search",
     "icon": "IconSearch",
-    "shortLabel": "Search"
+    "shortLabel": "Search",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -891,7 +932,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Search",
     "icon": "IconSearch",
-    "shortLabel": "Search"
+    "shortLabel": "Search",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -914,7 +956,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Ask AI",
     "icon": "IconSparkles",
-    "shortLabel": null
+    "shortLabel": null,
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -935,7 +978,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "View Previous AI Chats",
     "icon": "IconHistory",
-    "shortLabel": "Previous AI Chats"
+    "shortLabel": "Previous AI Chats",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -956,7 +1000,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Reply",
     "icon": "IconArrowBackUp",
-    "shortLabel": "Reply"
+    "shortLabel": "Reply",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -977,7 +1022,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Compose Email",
     "icon": "IconMail",
-    "shortLabel": "Compose"
+    "shortLabel": "Compose",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1004,7 +1050,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Settings",
     "icon": "IconSettings",
-    "shortLabel": "Settings"
+    "shortLabel": "Settings",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1028,7 +1075,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Experience Settings",
     "icon": "IconColorSwatch",
-    "shortLabel": "Experience"
+    "shortLabel": "Experience",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1052,7 +1100,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Accounts Settings",
     "icon": "IconAt",
-    "shortLabel": "Accounts"
+    "shortLabel": "Accounts",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1076,7 +1125,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Emails Settings",
     "icon": "IconMail",
-    "shortLabel": "Emails"
+    "shortLabel": "Emails",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1100,7 +1150,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Calendars Settings",
     "icon": "IconCalendarEvent",
-    "shortLabel": "Calendars"
+    "shortLabel": "Calendars",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1124,7 +1175,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to General Settings",
     "icon": "IconSettings",
-    "shortLabel": "General"
+    "shortLabel": "General",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1148,7 +1200,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Data Model Settings",
     "icon": "IconHierarchy2",
-    "shortLabel": "Data Model"
+    "shortLabel": "Data Model",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1172,7 +1225,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Members Settings",
     "icon": "IconUsers",
-    "shortLabel": "Members"
+    "shortLabel": "Members",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1196,7 +1250,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Roles Settings",
     "icon": "IconLock",
-    "shortLabel": "Roles"
+    "shortLabel": "Roles",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1220,7 +1275,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Domains Settings",
     "icon": "IconWorld",
-    "shortLabel": "Domains"
+    "shortLabel": "Domains",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1244,7 +1300,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Billing Settings",
     "icon": "IconCurrencyDollar",
-    "shortLabel": "Billing"
+    "shortLabel": "Billing",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1268,7 +1325,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to MCP & APIs Settings",
     "icon": "IconPlug",
-    "shortLabel": "MCP & APIs"
+    "shortLabel": "MCP & APIs",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1292,7 +1350,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Apps Settings",
     "icon": "IconApps",
-    "shortLabel": "Apps"
+    "shortLabel": "Apps",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1316,7 +1375,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to AI Settings",
     "icon": "IconSparkles",
-    "shortLabel": "AI"
+    "shortLabel": "AI",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1340,7 +1400,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Security Settings",
     "icon": "IconKey",
-    "shortLabel": "Security"
+    "shortLabel": "Security",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1364,7 +1425,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Admin Panel Settings",
     "icon": "IconServer",
-    "shortLabel": "Admin Panel"
+    "shortLabel": "Admin Panel",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1388,7 +1450,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Community Settings",
     "icon": "IconUsers",
-    "shortLabel": "Community"
+    "shortLabel": "Community",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1409,7 +1472,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Send Email",
     "icon": "IconMail",
-    "shortLabel": "Send Email"
+    "shortLabel": "Send Email",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1430,7 +1494,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Send Email",
     "icon": "IconMail",
-    "shortLabel": "Send Email"
+    "shortLabel": "Send Email",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1451,7 +1516,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Compose Campaign",
     "icon": "IconSend",
-    "shortLabel": "Campaign"
+    "shortLabel": "Campaign",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1472,7 +1538,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Send Email",
     "icon": "IconMail",
-    "shortLabel": "Send Email"
+    "shortLabel": "Send Email",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1493,7 +1560,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Create new Campaign",
     "icon": "IconPlus",
-    "shortLabel": "New Campaign"
+    "shortLabel": "New Campaign",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1514,7 +1582,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Send Campaign",
     "icon": "IconSend",
-    "shortLabel": "Send"
+    "shortLabel": "Send",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1535,7 +1604,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Send Test Email",
     "icon": "IconMail",
-    "shortLabel": "Test"
+    "shortLabel": "Test",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1556,7 +1626,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Block Settings",
     "icon": "IconAdjustments",
-    "shortLabel": "Design"
+    "shortLabel": "Design",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -1567,10 +1638,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 71,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "ba21c3f3-7f9c-4cde-8666-378f279b2622"
-    },
+    "payload": null,
     "hotKeys": [
       "G",
       "C"
@@ -1583,7 +1651,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Companies",
     "icon": "IconBuildingSkyscraper",
-    "shortLabel": "Companies"
+    "shortLabel": "Companies",
+    "navigationTargetObjectMetadataId": "ba21c3f3-7f9c-4cde-8666-378f279b2622"
   },
   {
     "__typename": "CommandMenuItem",
@@ -1594,10 +1663,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 72,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "9ea13a87-2454-423c-ae41-db2cbeab0642"
-    },
+    "payload": null,
     "hotKeys": [
       "G",
       "D"
@@ -1610,7 +1676,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Dashboards",
     "icon": "IconLayoutDashboard",
-    "shortLabel": "Dashboards"
+    "shortLabel": "Dashboards",
+    "navigationTargetObjectMetadataId": "9ea13a87-2454-423c-ae41-db2cbeab0642"
   },
   {
     "__typename": "CommandMenuItem",
@@ -1621,10 +1688,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 73,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "0a534266-c027-48e0-9ce5-2cf5e8187cc0"
-    },
+    "payload": null,
     "hotKeys": [
       "G",
       "N"
@@ -1637,7 +1701,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Notes",
     "icon": "IconNotes",
-    "shortLabel": "Notes"
+    "shortLabel": "Notes",
+    "navigationTargetObjectMetadataId": "0a534266-c027-48e0-9ce5-2cf5e8187cc0"
   },
   {
     "__typename": "CommandMenuItem",
@@ -1648,10 +1713,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 74,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "ed6f004f-b5bf-4071-8370-ee7aa91ae2f3"
-    },
+    "payload": null,
     "hotKeys": [
       "G",
       "O"
@@ -1664,7 +1726,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Opportunities",
     "icon": "IconTargetArrow",
-    "shortLabel": "Opportunities"
+    "shortLabel": "Opportunities",
+    "navigationTargetObjectMetadataId": "ed6f004f-b5bf-4071-8370-ee7aa91ae2f3"
   },
   {
     "__typename": "CommandMenuItem",
@@ -1675,10 +1738,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 75,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "d3f10fb7-eb59-4d61-b551-37a1d9724abf"
-    },
+    "payload": null,
     "hotKeys": [
       "G",
       "P"
@@ -1691,7 +1751,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to People",
     "icon": "IconUser",
-    "shortLabel": "People"
+    "shortLabel": "People",
+    "navigationTargetObjectMetadataId": "d3f10fb7-eb59-4d61-b551-37a1d9724abf"
   },
   {
     "__typename": "CommandMenuItem",
@@ -1702,10 +1763,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 76,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "737b37ea-9bcc-43ef-a550-68977f523c8f"
-    },
+    "payload": null,
     "hotKeys": [
       "G",
       "T"
@@ -1718,7 +1776,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Tasks",
     "icon": "IconCheckbox",
-    "shortLabel": "Tasks"
+    "shortLabel": "Tasks",
+    "navigationTargetObjectMetadataId": "737b37ea-9bcc-43ef-a550-68977f523c8f"
   },
   {
     "__typename": "CommandMenuItem",
@@ -1729,10 +1788,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 77,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "7fa7fa3c-2efd-4689-9048-559222d3b80d"
-    },
+    "payload": null,
     "hotKeys": [
       "G",
       "W"
@@ -1745,7 +1801,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Workflows",
     "icon": "IconSettingsAutomation",
-    "shortLabel": "Workflows"
+    "shortLabel": "Workflows",
+    "navigationTargetObjectMetadataId": "7fa7fa3c-2efd-4689-9048-559222d3b80d"
   },
   {
     "__typename": "CommandMenuItem",
@@ -1756,10 +1813,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 78,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "617a23e4-7d6c-467e-8565-bd8c99d731ab"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.attachment",
     "availabilityType": "GLOBAL",
@@ -1769,7 +1823,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Attachments",
     "icon": "IconFileImport",
-    "shortLabel": "Attachments"
+    "shortLabel": "Attachments",
+    "navigationTargetObjectMetadataId": "617a23e4-7d6c-467e-8565-bd8c99d731ab"
   },
   {
     "__typename": "CommandMenuItem",
@@ -1780,10 +1835,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 79,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "8fd6d2bd-eac8-48cc-b922-05e2a706e0bd"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.blocklist",
     "availabilityType": "GLOBAL",
@@ -1793,7 +1845,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Blocklists",
     "icon": "IconForbid2",
-    "shortLabel": "Blocklists"
+    "shortLabel": "Blocklists",
+    "navigationTargetObjectMetadataId": "8fd6d2bd-eac8-48cc-b922-05e2a706e0bd"
   },
   {
     "__typename": "CommandMenuItem",
@@ -1804,10 +1857,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 80,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "6410d0ff-7545-46b9-9ff1-53963fd521ad"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.calendarChannelEventAssociation",
     "availabilityType": "GLOBAL",
@@ -1817,7 +1867,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Calendar Channel Event Associations",
     "icon": "IconCalendar",
-    "shortLabel": "Calendar Channel Event Associations"
+    "shortLabel": "Calendar Channel Event Associations",
+    "navigationTargetObjectMetadataId": "6410d0ff-7545-46b9-9ff1-53963fd521ad"
   },
   {
     "__typename": "CommandMenuItem",
@@ -1828,10 +1879,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 81,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "09530818-90e9-40b7-ad4c-e8aac15f2f19"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.calendarEventParticipant",
     "availabilityType": "GLOBAL",
@@ -1841,7 +1889,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Calendar event participants",
     "icon": "IconCalendar",
-    "shortLabel": "Calendar event participants"
+    "shortLabel": "Calendar event participants",
+    "navigationTargetObjectMetadataId": "09530818-90e9-40b7-ad4c-e8aac15f2f19"
   },
   {
     "__typename": "CommandMenuItem",
@@ -1852,10 +1901,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 82,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "586bacbd-a25f-4d07-ba05-52bcf98341df"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.calendarEvent",
     "availabilityType": "GLOBAL",
@@ -1865,7 +1911,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Calendar events",
     "icon": "IconCalendar",
-    "shortLabel": "Calendar events"
+    "shortLabel": "Calendar events",
+    "navigationTargetObjectMetadataId": "586bacbd-a25f-4d07-ba05-52bcf98341df"
   },
   {
     "__typename": "CommandMenuItem",
@@ -1876,10 +1923,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 83,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "5c04283d-bbc6-4b7a-bc57-d89197a9123a"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.callRecording",
     "availabilityType": "GLOBAL",
@@ -1889,7 +1933,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Call Recordings",
     "icon": "IconVideo",
-    "shortLabel": "Call Recordings"
+    "shortLabel": "Call Recordings",
+    "navigationTargetObjectMetadataId": "5c04283d-bbc6-4b7a-bc57-d89197a9123a"
   },
   {
     "__typename": "CommandMenuItem",
@@ -1900,10 +1945,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 84,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "1c5db583-0b37-4eed-a568-208372ecb0f0"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "featureFlags.IS_EMAIL_GROUP_ENABLED and targetObjectReadPermissions.messageCampaign",
     "availabilityType": "GLOBAL",
@@ -1913,7 +1955,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Campaigns",
     "icon": "IconSend",
-    "shortLabel": "Campaigns"
+    "shortLabel": "Campaigns",
+    "navigationTargetObjectMetadataId": "1c5db583-0b37-4eed-a568-208372ecb0f0"
   },
   {
     "__typename": "CommandMenuItem",
@@ -1924,10 +1967,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 85,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "cd013f2a-b377-4766-8065-7425dd85eda7"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "featureFlags.IS_EMAIL_GROUP_ENABLED and targetObjectReadPermissions.messageList",
     "availabilityType": "GLOBAL",
@@ -1937,7 +1977,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Lists",
     "icon": "IconUsersGroup",
-    "shortLabel": "Lists"
+    "shortLabel": "Lists",
+    "navigationTargetObjectMetadataId": "cd013f2a-b377-4766-8065-7425dd85eda7"
   },
   {
     "__typename": "CommandMenuItem",
@@ -1948,10 +1989,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 86,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "0780b2a2-e2b2-4928-9de5-c7759c9a8486"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.messageListMember",
     "availabilityType": "GLOBAL",
@@ -1961,7 +1999,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to List Members",
     "icon": "IconUser",
-    "shortLabel": "List Members"
+    "shortLabel": "List Members",
+    "navigationTargetObjectMetadataId": "0780b2a2-e2b2-4928-9de5-c7759c9a8486"
   },
   {
     "__typename": "CommandMenuItem",
@@ -1972,10 +2011,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 87,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "f71ef499-4b46-4003-ad14-993a8255a196"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.messageChannelMessageAssociation",
     "availabilityType": "GLOBAL",
@@ -1985,7 +2021,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Message Channel Message Associations",
     "icon": "IconMessage",
-    "shortLabel": "Message Channel Message Associations"
+    "shortLabel": "Message Channel Message Associations",
+    "navigationTargetObjectMetadataId": "f71ef499-4b46-4003-ad14-993a8255a196"
   },
   {
     "__typename": "CommandMenuItem",
@@ -1996,10 +2033,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 88,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "0618e2da-fc7d-4f7b-a783-f438d163e2f1"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.messageChannelMessageAssociationMessageFolder",
     "availabilityType": "GLOBAL",
@@ -2009,7 +2043,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Message Channel Message Association Message Folders",
     "icon": "IconFolder",
-    "shortLabel": "Message Channel Message Association Message Folders"
+    "shortLabel": "Message Channel Message Association Message Folders",
+    "navigationTargetObjectMetadataId": "0618e2da-fc7d-4f7b-a783-f438d163e2f1"
   },
   {
     "__typename": "CommandMenuItem",
@@ -2020,10 +2055,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 89,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "6bbdd505-3aa6-4898-9cb3-58da6efb2c17"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.messageParticipant",
     "availabilityType": "GLOBAL",
@@ -2033,7 +2065,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Message Participants",
     "icon": "IconUserCircle",
-    "shortLabel": "Message Participants"
+    "shortLabel": "Message Participants",
+    "navigationTargetObjectMetadataId": "6bbdd505-3aa6-4898-9cb3-58da6efb2c17"
   },
   {
     "__typename": "CommandMenuItem",
@@ -2044,10 +2077,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 90,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "272fafcc-c7e5-4a58-a175-67105b43b89a"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.messageThread",
     "availabilityType": "GLOBAL",
@@ -2057,7 +2087,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Message Threads",
     "icon": "IconMessage",
-    "shortLabel": "Message Threads"
+    "shortLabel": "Message Threads",
+    "navigationTargetObjectMetadataId": "272fafcc-c7e5-4a58-a175-67105b43b89a"
   },
   {
     "__typename": "CommandMenuItem",
@@ -2068,10 +2099,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 91,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "ad834f16-bf2e-4b2a-a26a-5a39aa8a1f64"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.message",
     "availabilityType": "GLOBAL",
@@ -2081,7 +2109,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Messages",
     "icon": "IconMessage",
-    "shortLabel": "Messages"
+    "shortLabel": "Messages",
+    "navigationTargetObjectMetadataId": "ad834f16-bf2e-4b2a-a26a-5a39aa8a1f64"
   },
   {
     "__typename": "CommandMenuItem",
@@ -2092,10 +2121,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 92,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "0efcb02c-df7e-40f4-a762-3f3ac458cb5b"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.noteTarget",
     "availabilityType": "GLOBAL",
@@ -2105,7 +2131,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Note Targets",
     "icon": "IconCheckbox",
-    "shortLabel": "Note Targets"
+    "shortLabel": "Note Targets",
+    "navigationTargetObjectMetadataId": "0efcb02c-df7e-40f4-a762-3f3ac458cb5b"
   },
   {
     "__typename": "CommandMenuItem",
@@ -2116,10 +2143,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 93,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "cc532b16-3122-42f4-a4e3-830607735055"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.taskTarget",
     "availabilityType": "GLOBAL",
@@ -2129,7 +2153,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Task Targets",
     "icon": "IconCheckbox",
-    "shortLabel": "Task Targets"
+    "shortLabel": "Task Targets",
+    "navigationTargetObjectMetadataId": "cc532b16-3122-42f4-a4e3-830607735055"
   },
   {
     "__typename": "CommandMenuItem",
@@ -2140,10 +2165,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 94,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "796da54d-e78b-4edc-b5e8-fad439cf3756"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.timelineActivity",
     "availabilityType": "GLOBAL",
@@ -2153,7 +2175,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Timeline Activities",
     "icon": "IconTimelineEvent",
-    "shortLabel": "Timeline Activities"
+    "shortLabel": "Timeline Activities",
+    "navigationTargetObjectMetadataId": "796da54d-e78b-4edc-b5e8-fad439cf3756"
   },
   {
     "__typename": "CommandMenuItem",
@@ -2164,10 +2187,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 95,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "046d4a84-c083-44d5-a896-3bcb5b9bb4be"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.workflowAutomatedTrigger",
     "availabilityType": "GLOBAL",
@@ -2177,7 +2197,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Workflow Automated Triggers",
     "icon": "IconSettingsAutomation",
-    "shortLabel": "Workflow Automated Triggers"
+    "shortLabel": "Workflow Automated Triggers",
+    "navigationTargetObjectMetadataId": "046d4a84-c083-44d5-a896-3bcb5b9bb4be"
   },
   {
     "__typename": "CommandMenuItem",
@@ -2188,10 +2209,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 96,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "dccf06e5-31d9-43fc-9612-30517caadf5f"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.workflowRun",
     "availabilityType": "GLOBAL",
@@ -2201,7 +2219,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Workflow Runs",
     "icon": "IconHistoryToggle",
-    "shortLabel": "Workflow Runs"
+    "shortLabel": "Workflow Runs",
+    "navigationTargetObjectMetadataId": "dccf06e5-31d9-43fc-9612-30517caadf5f"
   },
   {
     "__typename": "CommandMenuItem",
@@ -2212,10 +2231,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 97,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "055e168c-bc15-4ef0-8928-7743f6b36a3f"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.workflowVersion",
     "availabilityType": "GLOBAL",
@@ -2225,7 +2241,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Workflow Versions",
     "icon": "IconVersions",
-    "shortLabel": "Workflow Versions"
+    "shortLabel": "Workflow Versions",
+    "navigationTargetObjectMetadataId": "055e168c-bc15-4ef0-8928-7743f6b36a3f"
   },
   {
     "__typename": "CommandMenuItem",
@@ -2236,10 +2253,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 98,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "d6be2f7c-2b2e-4f0d-a5d3-2c33066b43bb"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.workspaceMember",
     "availabilityType": "GLOBAL",
@@ -2249,7 +2263,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Workspace Members",
     "icon": "IconUserCircle",
-    "shortLabel": "Workspace Members"
+    "shortLabel": "Workspace Members",
+    "navigationTargetObjectMetadataId": "d6be2f7c-2b2e-4f0d-a5d3-2c33066b43bb"
   },
   {
     "__typename": "CommandMenuItem",
@@ -2260,10 +2275,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 99,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "1d184c80-1f66-4397-9a5c-e88b4a38dde4"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.rocket",
     "availabilityType": "GLOBAL",
@@ -2273,7 +2285,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Rockets",
     "icon": "IconRocket",
-    "shortLabel": "Rockets"
+    "shortLabel": "Rockets",
+    "navigationTargetObjectMetadataId": "1d184c80-1f66-4397-9a5c-e88b4a38dde4"
   },
   {
     "__typename": "CommandMenuItem",
@@ -2294,7 +2307,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Quick Lead",
     "icon": "IconUserPlus",
-    "shortLabel": "Quick Lead"
+    "shortLabel": "Quick Lead",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -2305,10 +2319,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 100,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "56f2d73b-4c3a-4afc-beff-6037ee5023af"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.pet",
     "availabilityType": "GLOBAL",
@@ -2318,7 +2329,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Pets",
     "icon": "IconCat",
-    "shortLabel": "Pets"
+    "shortLabel": "Pets",
+    "navigationTargetObjectMetadataId": "56f2d73b-4c3a-4afc-beff-6037ee5023af"
   },
   {
     "__typename": "CommandMenuItem",
@@ -2329,10 +2341,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 101,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "6c0cac23-57de-461a-95d7-63e71541175b"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.surveyResult",
     "availabilityType": "GLOBAL",
@@ -2342,7 +2351,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Survey results",
     "icon": "IconRulerMeasure",
-    "shortLabel": "Survey results"
+    "shortLabel": "Survey results",
+    "navigationTargetObjectMetadataId": "6c0cac23-57de-461a-95d7-63e71541175b"
   },
   {
     "__typename": "CommandMenuItem",
@@ -2353,10 +2363,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 102,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "9ff8428e-1b16-4734-bafe-9df14bf0c122"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.employmentHistory",
     "availabilityType": "GLOBAL",
@@ -2366,7 +2373,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Employment Histories",
     "icon": "IconBriefcase",
-    "shortLabel": "Employment Histories"
+    "shortLabel": "Employment Histories",
+    "navigationTargetObjectMetadataId": "9ff8428e-1b16-4734-bafe-9df14bf0c122"
   },
   {
     "__typename": "CommandMenuItem",
@@ -2377,10 +2385,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 103,
     "isPinned": false,
-    "payload": {
-      "__typename": "ObjectMetadataCommandMenuItemPayload",
-      "objectMetadataItemId": "9c8a12aa-00ba-4c95-baa7-10243fa3a802"
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.petCareAgreement",
     "availabilityType": "GLOBAL",
@@ -2390,7 +2395,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Go to Pet Care Agreements",
     "icon": "IconPaw",
-    "shortLabel": "Pet Care Agreements"
+    "shortLabel": "Pet Care Agreements",
+    "navigationTargetObjectMetadataId": "9c8a12aa-00ba-4c95-baa7-10243fa3a802"
   },
   {
     "__typename": "CommandMenuItem",
@@ -2415,7 +2421,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     },
     "label": "Hello World",
     "icon": "IconAppWindow",
-    "shortLabel": "Hello World"
+    "shortLabel": "Hello World",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -2440,7 +2447,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     },
     "label": "Show Notification",
     "icon": "IconBell",
-    "shortLabel": "Show Notification"
+    "shortLabel": "Show Notification",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -2465,7 +2473,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     },
     "label": "Show Notification",
     "icon": "IconStar",
-    "shortLabel": "Show Notification"
+    "shortLabel": "Show Notification",
+    "navigationTargetObjectMetadataId": null
   },
   {
     "__typename": "CommandMenuItem",
@@ -2490,6 +2499,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     },
     "label": "List Companies",
     "icon": "IconBuildingSkyscraper",
-    "shortLabel": "List Companies"
+    "shortLabel": "List Companies",
+    "navigationTargetObjectMetadataId": null
   }
 ];

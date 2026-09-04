@@ -2,7 +2,7 @@ import { isObject } from '@sniptt/guards';
 import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-const { CONNECT, DISCONNECT } = RELATION_NESTED_QUERY_KEYWORDS;
+const { CONNECT, CREATE, DISCONNECT } = RELATION_NESTED_QUERY_KEYWORDS;
 
 export const isRelationNestedOperation = (value: unknown): boolean => {
   if (!isObject(value)) {
@@ -13,6 +13,7 @@ export const isRelationNestedOperation = (value: unknown): boolean => {
 
   return (
     (CONNECT in obj && isDefined(obj[CONNECT])) ||
+    (CREATE in obj && isDefined(obj[CREATE])) ||
     (DISCONNECT in obj && isDefined(obj[DISCONNECT]))
   );
 };

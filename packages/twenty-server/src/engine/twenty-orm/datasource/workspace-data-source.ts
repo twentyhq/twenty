@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import { type Pool } from 'pg';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -32,6 +34,7 @@ const tableShapeCacheByFlatObjectMetadataMaps = new WeakMap<
 >();
 
 export class WorkspaceDataSource {
+  private readonly logger = new Logger(WorkspaceDataSource.name);
   private readonly pool: Pool;
   private readonly internalContext: WorkspaceInternalContext;
   private readonly authContext: WorkspaceAuthContext;
@@ -71,7 +74,21 @@ export class WorkspaceDataSource {
   async transaction<T>(
     work: (transactionScope: WorkspaceTransactionScope) => Promise<T>,
   ): Promise<T> {
-    return this.runInClientTransaction((executor) =>
+    const afterCommitCallbacks: Array<() => void | Promise<void>> = [];
+    const afterCommit: WorkspaceTransactionScope['afterCommit'] = (callback) =>
+      afterCommitCallbacks.push(callback);
+    const transactionalInternalContext: WorkspaceInternalContext = {
+      ...this.internalContext,
+      eventEmitterService: {
+        emitDatabaseBatchEvent: (event) =>
+          afterCommit(() =>
+            this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+              event,
+            ),
+          ),
+      },
+    };
+    const result = await this.runInClientTransaction((executor) =>
       work({
         getRepository: <T extends ObjectLiteral = ObjectRecord>(
           nameSingular: string,
@@ -85,11 +102,26 @@ export class WorkspaceDataSource {
             isTransactional: true,
             shouldSkipEventEmission:
               repositoryOptions?.shouldSkipEventEmission ?? false,
+            internalContext: transactionalInternalContext,
           }),
         executeRawQuery: (sql, parameters = []) =>
           executor.execute({ text: sql, values: parameters }),
+        afterCommit,
       }),
     );
+
+    for (const callback of afterCommitCallbacks) {
+      try {
+        await callback();
+      } catch (error) {
+        this.logger.error(
+          `After-commit callback failed for workspace ${this.internalContext.workspaceId}`,
+          error,
+        );
+      }
+    }
+
+    return result;
   }
 
   private async runInClientTransaction<T>(
@@ -107,15 +139,17 @@ export class WorkspaceDataSource {
     executor,
     isTransactional = false,
     shouldSkipEventEmission = false,
+    internalContext = this.internalContext,
   }: {
     nameSingular: string;
     rolePermissionConfig?: RolePermissionConfig;
     executor: QueryExecutor;
     isTransactional?: boolean;
     shouldSkipEventEmission?: boolean;
+    internalContext?: WorkspaceInternalContext;
   }): WorkspaceRepository<T> {
     const objectMetadataId =
-      this.internalContext.objectIdByNameSingular[nameSingular];
+      internalContext.objectIdByNameSingular[nameSingular];
 
     if (!isDefined(objectMetadataId)) {
       throw new TwentyOrmException(
@@ -130,6 +164,7 @@ export class WorkspaceDataSource {
       executor,
       isTransactional,
       shouldSkipEventEmission,
+      internalContext,
     });
   }
 
@@ -141,12 +176,14 @@ export class WorkspaceDataSource {
     executor,
     isTransactional = false,
     shouldSkipEventEmission = false,
+    internalContext = this.internalContext,
   }: {
     objectMetadataId: string;
     rolePermissionConfig?: RolePermissionConfig;
     executor: QueryExecutor;
     isTransactional?: boolean;
     shouldSkipEventEmission?: boolean;
+    internalContext?: WorkspaceInternalContext;
   }): WorkspaceRepository<T> {
     const flatObjectMetadata =
       this.getFlatObjectMetadataOrThrow(objectMetadataId);
@@ -160,7 +197,7 @@ export class WorkspaceDataSource {
     return new WorkspaceRepository<T>({
       tableShape: this.getTableShape(objectMetadataId),
       flatObjectMetadata,
-      internalContext: this.internalContext,
+      internalContext,
       authContext: this.authContext,
       executor,
       objectRecordsPermissions,
@@ -170,25 +207,28 @@ export class WorkspaceDataSource {
         this.getTableShape(targetObjectMetadataId),
       flatObjectMetadataByObjectMetadataId: (targetObjectMetadataId) =>
         this.getFlatObjectMetadataOrThrow(targetObjectMetadataId),
-      getRepositoryForObjectMetadataId: (targetObjectMetadataId) =>
-        this.buildRepositoryForObjectMetadataId({
+      getRepositoryForObjectMetadataId: <
+        Entity extends ObjectLiteral = ObjectRecord,
+      >(
+        targetObjectMetadataId: string,
+      ) =>
+        this.buildRepositoryForObjectMetadataId<Entity>({
           objectMetadataId: targetObjectMetadataId,
           rolePermissionConfig,
           executor,
           isTransactional,
           shouldSkipEventEmission,
+          internalContext,
         }),
       isTransactional,
       runInNewTransaction: (work) =>
-        this.runInClientTransaction((transactionExecutor) =>
+        this.transaction((transactionScope) =>
           work(
-            this.buildRepositoryForObjectMetadataId({
-              objectMetadataId,
+            transactionScope.getRepository<T>(
+              flatObjectMetadata.nameSingular,
               rolePermissionConfig,
-              executor: transactionExecutor,
-              isTransactional: true,
-              shouldSkipEventEmission,
-            }),
+              { shouldSkipEventEmission },
+            ),
           ),
         ),
     });

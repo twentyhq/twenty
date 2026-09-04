@@ -4,8 +4,10 @@ import {
 } from 'twenty-sdk/logic-function';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
-import { CLEANUP_ORPHANED_RECALL_BOTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/cleanup-orphaned-recall-bots-logic-function-universal-identifier';
-import { ENQUEUE_ORPHANED_RECALL_BOT_CLEANUP_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/enqueue-orphaned-recall-bot-cleanup-logic-function-universal-identifier';
+import {
+  CLEANUP_ORPHANED_RECALL_BOTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  ENQUEUE_ORPHANED_RECALL_BOT_CLEANUP_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
 import { CLEANUP_ORPHANED_RECALL_BOTS_CRON_PATTERN } from 'src/logic-functions/constants/cleanup-orphaned-recall-bots-cron-pattern';
 import { ENQUEUED_JOB_RETRY_LIMIT } from 'src/logic-functions/constants/enqueued-job-retry-limit';
 import { computeOrphanedRecallBotCleanupDelay } from 'src/logic-functions/domain/compute-orphaned-recall-bot-cleanup-delay.util';

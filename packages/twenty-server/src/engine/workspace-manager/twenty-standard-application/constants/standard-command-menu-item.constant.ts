@@ -872,7 +872,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     label: i18nLabel(
       msg({ message: `Ask AI`, context: 'commandMenuItem.label' }),
     ),
-    icon: 'IconSparkles',
+    icon: 'IconMessageCirclePlus',
     isPinned: true,
     position: 43,
     shortLabel: null,

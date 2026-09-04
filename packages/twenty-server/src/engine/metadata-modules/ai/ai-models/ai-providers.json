@@ -24,7 +24,8 @@
         "cachedInputCostPerMillionTokens": 0.175,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
-        "modalities": ["image"]
+        "modalities": ["image"],
+        "isDeprecated": true
       },
       {
         "name": "gpt-5-nano",
@@ -452,7 +453,8 @@
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
         "modalities": ["image"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "isDeprecated": true
       },
       {
         "name": "gpt-5.2-pro",
@@ -528,6 +530,19 @@
         "outputCostPerMillionTokens": 25,
         "cachedInputCostPerMillionTokens": 0.5,
         "cacheCreationCostPerMillionTokens": 6.25,
+        "contextWindowTokens": 1000000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true
+      },
+      {
+        "name": "claude-fable-5-1",
+        "label": "Claude Fable 5.1",
+        "modelFamily": "CLAUDE",
+        "inputCostPerMillionTokens": 10,
+        "outputCostPerMillionTokens": 50,
+        "cachedInputCostPerMillionTokens": 0.25,
+        "cacheCreationCostPerMillionTokens": 12.5,
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
@@ -872,6 +887,18 @@
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true,
         "isDeprecated": true
+      },
+      {
+        "name": "gemini-3.8-flash",
+        "label": "Gemini 3.8 Flash",
+        "modelFamily": "GEMINI",
+        "inputCostPerMillionTokens": 0.75,
+        "outputCostPerMillionTokens": 3.75,
+        "cachedInputCostPerMillionTokens": 0.075,
+        "contextWindowTokens": 1048576,
+        "maxOutputTokens": 65536,
+        "modalities": ["image", "video", "audio", "pdf"],
+        "supportsReasoning": true
       },
       {
         "name": "gemini-3-flash-preview",

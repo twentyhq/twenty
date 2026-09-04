@@ -34,7 +34,7 @@ const StyledAlignButton = styled.button<{ isActive: boolean }>`
   }
 `;
 
-export const CAMPAIGN_ALIGN_OPTIONS = [
+const CAMPAIGN_ALIGN_OPTIONS = [
   { align: 'left', Icon: IconAlignLeft },
   { align: 'center', Icon: IconAlignCenter },
   { align: 'right', Icon: IconAlignRight },

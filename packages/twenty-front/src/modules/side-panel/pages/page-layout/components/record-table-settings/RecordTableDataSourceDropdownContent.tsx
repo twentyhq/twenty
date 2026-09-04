@@ -18,6 +18,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -39,9 +40,12 @@ export const RecordTableDataSourceDropdownContent = () => {
     DropdownComponentInstanceContext,
   );
 
+  const scopedDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
+
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    dropdownId,
+    scopedDropdownId,
   );
 
   const { updateCurrentWidgetConfig } =

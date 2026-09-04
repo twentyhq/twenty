@@ -440,7 +440,8 @@
                 "developers/extend/apps/logic/key-value-store",
                 "developers/extend/apps/logic/background-jobs",
                 "developers/extend/apps/logic/skills-and-agents",
-                "developers/extend/apps/logic/connections"
+                "developers/extend/apps/logic/connections",
+                "developers/extend/apps/logic/credits"
               ]
             },
             {

@@ -48,6 +48,10 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { containsNestedRelationCreate } from 'src/engine/twenty-orm/utils/contains-nested-relation-create.util';
+import { getNestedRelationFieldNames } from 'src/engine/twenty-orm/utils/get-nested-relation-field-names.util';
+
+const MAX_NESTED_RELATION_CREATE_DEPTH = 5;
 
 @Injectable()
 export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -64,6 +68,29 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     args: CommonExtendedInput<CreateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<ObjectRecord[]> {
+    if (
+      !isDefined(queryRunnerContext.transactionScope) &&
+      containsNestedRelationCreate(
+        args.data,
+        getNestedRelationFieldNames({
+          flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
+          flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+        }),
+      )
+    ) {
+      return this.workspaceOrmManager.runInWorkspaceTransaction(
+        (transactionScope) =>
+          this.run(args, {
+            ...queryRunnerContext,
+            transactionScope,
+            repository: transactionScope.getRepository(
+              queryRunnerContext.flatObjectMetadata.nameSingular,
+              queryRunnerContext.rolePermissionConfig,
+            ),
+          }),
+      );
+    }
+
     if (args.data.length > QUERY_MAX_RECORDS) {
       throw new CommonQueryRunnerException(
         `Maximum number of records to upsert is ${QUERY_MAX_RECORDS}.`,
@@ -120,6 +147,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatFieldMetadataMaps,
       authContext,
       rolePermissionConfig,
+      repository,
       nestedRelationsReadPathOptions: this.getNestedRelationsReadPathOptions(),
     });
 
@@ -134,6 +162,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatFieldMetadataMaps,
     authContext,
     rolePermissionConfig,
+    repository,
     nestedRelationsReadPathOptions,
   }: {
     args: CommonExtendedInput<CreateManyQueryArgs>;
@@ -143,6 +172,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     authContext: WorkspaceAuthContext;
     rolePermissionConfig?: RolePermissionConfig;
+    repository: WorkspaceRepository<ObjectRecord>;
     nestedRelationsReadPathOptions: NestedRelationsReadPathOptions;
   }): Promise<void> {
     if (!args.selectedFieldsResult.relations) {
@@ -161,6 +191,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       limit: QUERY_MAX_RECORDS,
       authContext,
       rolePermissionConfig,
+      repository,
       selectedFields: args.selectedFieldsResult.select,
       ...nestedRelationsReadPathOptions,
     });
@@ -238,7 +269,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       const writeRepository = this.getWriteRepository(queryRunnerContext);
 
       return writeRepository.runInsert({
-        records: await this.resolveNestedRelations({
+        records: await this.resolveNestedRelationsForCreate({
           records: args.data,
           queryRunnerContext,
           writeRepository,
@@ -461,7 +492,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       }));
 
     const writeRepository = this.getWriteRepository(queryRunnerContext);
-    const resolvedData = await this.resolveNestedRelations({
+    const resolvedData = await this.resolveNestedRelationsForCreate({
       records: updateInputs.map((input) => input.data),
       queryRunnerContext,
       writeRepository,
@@ -501,7 +532,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const writeRepository = this.getWriteRepository(queryRunnerContext);
 
     const insertResult = await writeRepository.runInsert({
-      records: await this.resolveNestedRelations({
+      records: await this.resolveNestedRelationsForCreate({
         records: recordsToInsert,
         queryRunnerContext,
         writeRepository,
@@ -512,6 +543,67 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     result.identifiers.push(...insertResult.identifiers);
     result.generatedMaps.push(...insertResult.generatedMaps);
     result.raw.push(...insertResult.raw);
+  }
+
+  private resolveNestedRelationsForCreate({
+    records,
+    queryRunnerContext,
+    writeRepository,
+  }: {
+    records: Partial<ObjectRecord>[];
+    queryRunnerContext: CommonExtendedQueryRunnerContext;
+    writeRepository: WorkspaceRepository;
+  }): Promise<Partial<ObjectRecord>[]> {
+    const nestedCreateRecordsCounter =
+      (queryRunnerContext.nestedCreateRecordsCounter ??= { count: 0 });
+
+    return this.resolveNestedRelations({
+      records,
+      queryRunnerContext,
+      writeRepository,
+      createRecords: async ({
+        targetObjectMetadata,
+        records: targetRecords,
+      }) => {
+        nestedCreateRecordsCounter.count += targetRecords.length;
+
+        if (nestedCreateRecordsCounter.count > QUERY_MAX_RECORDS) {
+          throw new CommonQueryRunnerException(
+            `Maximum number of nested records to create is ${QUERY_MAX_RECORDS}.`,
+            CommonQueryRunnerExceptionCode.TOO_MANY_RECORDS_TO_UPDATE,
+            {
+              userFriendlyMessage: msg`Maximum number of nested records to create is ${QUERY_MAX_RECORDS}.`,
+            },
+          );
+        }
+
+        const nestedOperationDepth =
+          (queryRunnerContext.nestedOperationDepth ?? 0) + 1;
+
+        if (nestedOperationDepth > MAX_NESTED_RELATION_CREATE_DEPTH) {
+          throw new CommonQueryRunnerException(
+            `Nested relation create depth cannot exceed ${MAX_NESTED_RELATION_CREATE_DEPTH}`,
+            CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+            { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+          );
+        }
+
+        const { results } = await this.execute(
+          {
+            data: targetRecords,
+            selectedFields: { id: true },
+          },
+          {
+            ...queryRunnerContext,
+            flatObjectMetadata: targetObjectMetadata,
+            nestedCreateRecordsCounter,
+            nestedOperationDepth,
+          },
+        );
+
+        return results;
+      },
+    });
   }
 
   private async fetchUpsertedRecords({

@@ -75,6 +75,11 @@ export const SettingsUsageAnalyticsSection = () => {
         breakdownField="operationType"
         sectionId="usage-type"
       />
+      <UsageBreakdownPieSection
+        title={t`Usage by App`}
+        breakdownField="application"
+        sectionId="usage-app"
+      />
       <UsageDailyChartSection
         title={t`Daily Usage`}
         description={t`Credit consumption over time.`}

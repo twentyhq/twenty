@@ -1,6 +1,7 @@
 import { Logger, Scope } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { StepStatus } from 'twenty-shared/workflow';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -12,6 +13,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
+import { stepIsAwaitingRetry } from 'src/modules/workflow/workflow-executor/utils/step-is-awaiting-retry.util';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import {
@@ -155,6 +157,34 @@ export class RunWorkflowJob {
 
     if (workflowRun.status !== WorkflowRunStatus.RUNNING) {
       return;
+    }
+
+    const steps = workflowRun.state?.flow?.steps ?? [];
+    const stepInfos = workflowRun.state?.stepInfos ?? {};
+
+    const stepInfosToReset = Object.fromEntries(
+      stepIdsToRetry
+        .map((stepId) => ({
+          stepId,
+          step: steps.find((candidateStep) => candidateStep.id === stepId),
+        }))
+        .filter(
+          ({ step, stepId }) =>
+            isDefined(step) &&
+            stepIsAwaitingRetry({ step, stepInfo: stepInfos[stepId] }),
+        )
+        .map(({ stepId }) => [
+          stepId,
+          { ...stepInfos[stepId], status: StepStatus.NOT_STARTED },
+        ]),
+    );
+
+    if (Object.keys(stepInfosToReset).length > 0) {
+      await this.workflowRunWorkspaceService.updateWorkflowRunStepInfos({
+        stepInfos: stepInfosToReset,
+        workflowRunId,
+        workspaceId,
+      });
     }
 
     await this.workflowExecutorWorkspaceService.executeFromSteps({

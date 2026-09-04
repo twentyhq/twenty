@@ -518,10 +518,10 @@ const SettingsObjectFieldEdit = lazy(() =>
   ),
 );
 
-const SettingsSecuritySSOIdentifyProvider = lazy(() =>
-  import('~/pages/settings/security/SettingsSecuritySSOIdentifyProvider').then(
+const SettingsSecuritySsoIdentifyProvider = lazy(() =>
+  import('~/pages/settings/security/SettingsSecuritySsoIdentifyProvider').then(
     (module) => ({
-      default: module.SettingsSecuritySSOIdentifyProvider,
+      default: module.SettingsSecuritySsoIdentifyProvider,
     }),
   ),
 );
@@ -690,7 +690,7 @@ const MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE: SettingsRouteHandle = {
 
 const EXPANDABLE_SETTINGS_ROUTE_HANDLE: SettingsRouteHandle = {
   ...MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE,
-  isLocationExpandableFromSidePanel: () => true,
+  isLocationExpandableFromSidePanel: true,
 };
 
 const MEMBERS_LIST_SETTINGS_ROUTE_HANDLE: SettingsRouteHandle = {
@@ -1082,8 +1082,8 @@ const createSettingsRouteElements = ({
       }
     >
       <Route
-        path={SettingsPath.NewSSOIdentityProvider}
-        element={<SettingsSecuritySSOIdentifyProvider />}
+        path={SettingsPath.NewSsoIdentityProvider}
+        element={<SettingsSecuritySsoIdentifyProvider />}
       />
       <Route
         path={SettingsPath.NewApprovedAccessDomain}

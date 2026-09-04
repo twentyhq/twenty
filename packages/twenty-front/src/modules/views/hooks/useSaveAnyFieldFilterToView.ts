@@ -1,6 +1,6 @@
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
+import { usePerformViewApiUpdate } from '@/views/hooks/internal/usePerformViewApiUpdate';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { convertUpdateViewInputToGql } from '@/views/utils/convertUpdateViewInputToGql';
@@ -10,7 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const useSaveAnyFieldFilterToView = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
-  const { performViewAPIUpdate } = usePerformViewAPIUpdate();
+  const { performViewApiUpdate } = usePerformViewApiUpdate();
 
   const { currentView } = useGetCurrentViewOnly();
 
@@ -32,7 +32,7 @@ export const useSaveAnyFieldFilterToView = () => {
     );
 
     if (currentAnyFieldFilterValue !== currentViewAnyFieldFilterValue) {
-      await performViewAPIUpdate({
+      await performViewApiUpdate({
         id: currentView.id,
         input: convertUpdateViewInputToGql({
           ...currentView,
@@ -43,7 +43,7 @@ export const useSaveAnyFieldFilterToView = () => {
   }, [
     store,
     canPersistChanges,
-    performViewAPIUpdate,
+    performViewApiUpdate,
     anyFieldFilterValueCallbackState,
     currentView,
   ]);

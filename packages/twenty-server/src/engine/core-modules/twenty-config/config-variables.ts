@@ -869,6 +869,16 @@ export class ConfigVariables {
   CLICKHOUSE_URL: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ANALYTICS_CONFIG,
+    description:
+      'Interval in milliseconds between two flushes of the buffered usage rollups',
+    type: ConfigVariableType.NUMBER,
+  })
+  @IsOptional()
+  @CastToPositiveNumber()
+  USAGE_ROLLUP_FLUSH_INTERVAL_MS = 60_000;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
     description: 'Enable or disable telemetry logging',
     type: ConfigVariableType.BOOLEAN,
@@ -1646,6 +1656,24 @@ export class ConfigVariables {
   })
   @CastToPositiveNumber()
   APPLICATION_API_RATE_LIMITING_LIMIT = 500;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Time-to-live for outbound email send rate limiting in milliseconds',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  EMAIL_SEND_RATE_LIMITING_TTL_IN_MS = 10_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Maximum number of emails sent across all workspaces in the rate limiting window. Set it below the send rate the email provider publishes for the account, so transactional mail sharing that account keeps headroom during a campaign',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  EMAIL_SEND_RATE_LIMITING_LIMIT = 100;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,

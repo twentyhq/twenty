@@ -43,10 +43,11 @@ export default definePageLayout({
           type: 'FIELD',
           configuration: {
             configurationType: 'FIELD',
-            // A FIELD widget in TABLE mode is the only configuration scoped to the parent
-            // record; a RECORD_TABLE widget would list every Application in the workspace.
-            // Both ids below are typed `string` instead of being renamed to
-            // `...UniversalIdentifier`, but the sync resolves them as universal identifiers.
+            // FIELD + TABLE is scoped only when the bound view filters the inverse
+            // relation with isCurrentRecordSelected. A RECORD_TABLE widget has no
+            // parent-record filter and lists every Application in the workspace.
+            // fieldMetadataId and viewId are typed `string`; sync resolves them
+            // as universal identifiers.
             fieldMetadataId: APPLICATIONS_ON_OPPORTUNITY_FIELD_ID,
             fieldDisplayMode: 'TABLE',
             viewId: APPLICATIONS_WIDGET_VIEW_UNIVERSAL_IDENTIFIER,

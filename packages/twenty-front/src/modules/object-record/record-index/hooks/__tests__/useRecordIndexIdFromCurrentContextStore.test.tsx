@@ -57,8 +57,6 @@ describe('useRecordIndexIdFromCurrentContextStore', () => {
               type: 'side-panel',
               instanceId: 'side-panel-page-1',
               ownsRouteLocation: true,
-              headerTitlePortal: null,
-              headerActionsPortal: null,
             }}
           >
             <Wrapper>

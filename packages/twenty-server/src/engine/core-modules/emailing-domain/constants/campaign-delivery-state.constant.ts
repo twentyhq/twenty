@@ -4,5 +4,4 @@ export const CAMPAIGN_DELIVERY_STATE = {
   SENT: 'SENT',
   FAILED: 'FAILED',
   SKIPPED: 'SKIPPED',
-  UNCERTAIN: 'UNCERTAIN',
 } as const;

@@ -1,7 +1,9 @@
 import { type EmailingDomainAttachment } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-attachment.type';
 import { type EmailingDomainHeader } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-header.type';
+import { type EmailingDomainSendKind } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-kind.type';
 
 export type EmailingDomainEmailContent = {
+  sendKind: EmailingDomainSendKind;
   from: string;
   to: string[];
   cc?: string[];

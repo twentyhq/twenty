@@ -10,6 +10,7 @@ import {
   UsageLimitException,
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { validateUsageLimitAgainstDefinition } from 'src/engine/core-modules/usage-limit/utils/validate-usage-limit-against-definition.util';
@@ -36,6 +37,7 @@ export class UsageLimitService {
     @InjectWorkspaceScopedRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: WorkspaceScopedRepository<LogicFunctionEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
 
   async findAll(workspaceId: string): Promise<UsageLimitEntity[]> {
@@ -65,7 +67,9 @@ export class UsageLimitService {
       spenderType: input.spenderType,
       spenderId: input.spenderId ?? '',
       limitKind: input.limitKind,
-      windowSeconds: input.windowSeconds,
+      periodCount: input.periodCount,
+      periodUnit: input.periodUnit,
+      meter: input.meter,
     };
 
     await this.usageLimitRepository.upsert(
@@ -73,7 +77,6 @@ export class UsageLimitService {
       {
         workspaceId,
         ...scope,
-        limitValueType: 'absolute',
         limitValue: input.limitValue,
         burstValue: input.burstValue ?? null,
       },
@@ -81,12 +84,19 @@ export class UsageLimitService {
     );
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'usageLimitRules',
+      'usageLimits',
     ]);
 
-    return this.usageLimitRepository.findOneOrFail(workspaceId, {
-      where: scope,
-    });
+    const usageLimit = await this.usageLimitRepository.findOneOrFail(
+      workspaceId,
+      {
+        where: scope,
+      },
+    );
+
+    await this.usageLimitQuotaService.dropLimitCounter(usageLimit);
+
+    return usageLimit;
   }
 
   async delete({
@@ -96,6 +106,14 @@ export class UsageLimitService {
     workspaceId: string;
     usageLimitId: string;
   }): Promise<boolean> {
+    const usageLimit = await this.usageLimitRepository.findOne(workspaceId, {
+      where: { id: usageLimitId },
+    });
+
+    if (!isDefined(usageLimit)) {
+      return false;
+    }
+
     const { affected } = await this.usageLimitRepository.delete(workspaceId, {
       id: usageLimitId,
     });
@@ -105,8 +123,10 @@ export class UsageLimitService {
     }
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'usageLimitRules',
+      'usageLimits',
     ]);
+
+    await this.usageLimitQuotaService.dropLimitCounter(usageLimit);
 
     return true;
   }
@@ -129,7 +149,7 @@ export class UsageLimitService {
     if (!spenderExists) {
       throw new UsageLimitException(
         `No ${spenderType} ${spenderId} in this workspace`,
-        UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+        UsageLimitExceptionCode.LIMIT_INVALID,
       );
     }
   }
@@ -163,7 +183,7 @@ export class UsageLimitService {
       default:
         throw new UsageLimitException(
           `A ${spenderType} spender id cannot be checked against the workspace`,
-          UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+          UsageLimitExceptionCode.LIMIT_INVALID,
         );
     }
   }

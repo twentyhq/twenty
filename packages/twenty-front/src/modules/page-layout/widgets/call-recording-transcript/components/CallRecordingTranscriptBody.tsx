@@ -65,7 +65,7 @@ export const CallRecordingTranscriptBody = ({
   if (!isDefined(callRecording)) {
     return (
       <CallRecordingWidgetEmptyStateDisplay
-        animatedPlaceholderType="noMatchRecord"
+        animatedPlaceholderType="noCallRecording"
         title={t`No Call Recording`}
         subTitle={t`No call recording exists for this calendar event yet.`}
       />

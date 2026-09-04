@@ -53,6 +53,7 @@ type ProcessNestedRelationsArgs<T extends ObjectRecord = ObjectRecord> = {
   authContext: WorkspaceAuthContext;
   useReplica?: boolean;
   rolePermissionConfig?: RolePermissionConfig;
+  repository?: WorkspaceRepository;
   // oxlint-disable-next-line typescript/no-explicit-any
   selectedFields: Record<string, any>;
 };
@@ -85,6 +86,7 @@ export class ProcessNestedRelationsHelper {
       authContext,
       useReplica = false,
       rolePermissionConfig,
+      repository,
       selectedFields,
     }: ProcessNestedRelationsArgs<T>,
     relationQueryLimiter: ConcurrencyLimiter,
@@ -104,6 +106,7 @@ export class ProcessNestedRelationsHelper {
           authContext,
           useReplica,
           rolePermissionConfig,
+          repository,
           relationQueryLimiter,
           selectedFields:
             selectedFields[sourceFieldName] instanceof Object
@@ -128,6 +131,7 @@ export class ProcessNestedRelationsHelper {
     authContext,
     useReplica,
     rolePermissionConfig,
+    repository,
     relationQueryLimiter,
     selectedFields,
   }: {
@@ -144,6 +148,7 @@ export class ProcessNestedRelationsHelper {
     authContext: WorkspaceAuthContext;
     useReplica: boolean;
     rolePermissionConfig?: RolePermissionConfig;
+    repository?: WorkspaceRepository;
     relationQueryLimiter: ConcurrencyLimiter;
     selectedFields: Record<string, unknown>;
   }): Promise<void> {
@@ -192,11 +197,13 @@ export class ProcessNestedRelationsHelper {
         fieldMaps,
       });
 
-    const targetObjectRepository = this.workspaceOrmManager.getRepository(
-      targetObjectMetadata.nameSingular,
-      rolePermissionConfig,
-      { useReplica },
-    );
+    const targetObjectRepository = repository
+      ? repository.getRepositoryForObjectMetadataId(targetObjectMetadata.id)
+      : this.workspaceOrmManager.getRepository(
+          targetObjectMetadata.nameSingular,
+          rolePermissionConfig,
+          { useReplica },
+        );
 
     const targetObjectNameSingular = targetObjectMetadata.nameSingular;
 
@@ -305,6 +312,7 @@ export class ProcessNestedRelationsHelper {
           authContext,
           useReplica,
           rolePermissionConfig,
+          repository,
           selectedFields,
         },
         relationQueryLimiter,

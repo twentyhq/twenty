@@ -12,6 +12,7 @@ import { isBaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards
 import { isLinkOutputSchema } from '@/workflow/workflow-variables/types/guards/isLinkOutputSchema';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import { isFieldTypeCompatibleWithRecordId } from '@/workflow/workflow-variables/utils/isFieldTypeCompatibleWithRecordId';
+import { isObject } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 const isValidRecordOutputSchema = ({
@@ -153,14 +154,114 @@ const filterRecordOutputSchemaFieldsByType = ({
       continue;
     }
 
-    filteredFields[key] = field;
+    if (field.isLeaf) {
+      filteredFields[key] = field;
+      continue;
+    }
+
+    const filteredValue = isRecordOutputSchemaV2(field.value)
+      ? filterRecordOutputSchemaFieldsByType({
+          outputSchema: field.value,
+          fieldTypesToExclude,
+        })
+      : filterNonRecordOutputSchemaFieldsByType({
+          outputSchema: field.value,
+          fieldTypesToExclude,
+        });
+
+    filteredFields[key] = {
+      ...field,
+      value: filteredValue,
+    };
   }
 
   return {
     ...outputSchema,
-    // Relations could be filtered recursively but this util requires a global simplification first
     fields: filteredFields,
   };
+};
+
+function filterNonRecordOutputSchemaFieldsByType<
+  TOutputSchema extends OutputSchemaV2,
+>({
+  outputSchema,
+  fieldTypesToExclude,
+}: {
+  outputSchema: TOutputSchema;
+  fieldTypesToExclude: InputSchemaPropertyType[];
+}): TOutputSchema;
+function filterNonRecordOutputSchemaFieldsByType({
+  outputSchema,
+  fieldTypesToExclude,
+}: {
+  outputSchema: OutputSchemaV2;
+  fieldTypesToExclude: InputSchemaPropertyType[];
+}): OutputSchemaV2 {
+  const filteredEntries = Object.entries(outputSchema)
+    .map(([key, field]) => {
+      if (!isObject(field)) {
+        return [key, field];
+      }
+
+      if (
+        'type' in field &&
+        fieldTypesToExclude.some((fieldType) => fieldType === field.type)
+      ) {
+        return undefined;
+      }
+
+      if (
+        'isLeaf' in field &&
+        field.isLeaf === false &&
+        'value' in field &&
+        isObject(field.value)
+      ) {
+        return [
+          key,
+          {
+            ...field,
+            value: isRecordOutputSchemaV2(field.value)
+              ? filterRecordOutputSchemaFieldsByType({
+                  outputSchema: field.value,
+                  fieldTypesToExclude,
+                })
+              : filterNonRecordOutputSchemaFieldsByType({
+                  outputSchema: field.value,
+                  fieldTypesToExclude,
+                }),
+          },
+        ];
+      }
+
+      return [key, field];
+    })
+    .filter(isDefined);
+
+  return Object.fromEntries(filteredEntries);
+}
+
+const filterOutputSchemaFieldsByType = ({
+  outputSchema,
+  fieldTypesToExclude,
+}: {
+  outputSchema: OutputSchemaV2;
+  fieldTypesToExclude: InputSchemaPropertyType[];
+}): OutputSchemaV2 => {
+  if (isRecordOutputSchemaV2(outputSchema)) {
+    return filterRecordOutputSchemaFieldsByType({
+      outputSchema,
+      fieldTypesToExclude,
+    });
+  }
+
+  if (isLinkOutputSchema(outputSchema)) {
+    return outputSchema;
+  }
+
+  return filterNonRecordOutputSchemaFieldsByType({
+    outputSchema,
+    fieldTypesToExclude,
+  });
 };
 
 export const filterOutputSchema = ({
@@ -178,31 +279,28 @@ export const filterOutputSchema = ({
     return undefined;
   }
 
-  if (!shouldDisplayRecordObjects || shouldDisplayRecordFields) {
-    if (
-      isRecordOutputSchemaV2(outputSchema) &&
-      isDefined(fieldTypesToExclude)
-    ) {
-      return filterRecordOutputSchemaFieldsByType({
+  const filteredOutputSchema = isDefined(fieldTypesToExclude)
+    ? filterOutputSchemaFieldsByType({
         outputSchema,
         fieldTypesToExclude,
-      });
-    }
+      })
+    : outputSchema;
 
-    return outputSchema;
+  if (!shouldDisplayRecordObjects || shouldDisplayRecordFields) {
+    return filteredOutputSchema;
   }
 
-  if (isLinkOutputSchema(outputSchema)) {
-    return outputSchema;
-  } else if (isRecordOutputSchemaV2(outputSchema)) {
+  if (isLinkOutputSchema(filteredOutputSchema)) {
+    return filteredOutputSchema;
+  } else if (isRecordOutputSchemaV2(filteredOutputSchema)) {
     return filterRecordOutputSchema({
-      outputSchema,
+      outputSchema: filteredOutputSchema,
       shouldDisplayRecordFields,
       shouldDisplayRecordObjects,
     });
-  } else if (isBaseOutputSchemaV2(outputSchema)) {
+  } else if (isBaseOutputSchemaV2(filteredOutputSchema)) {
     return filterBaseOutputSchema({
-      outputSchema,
+      outputSchema: filteredOutputSchema,
       shouldDisplayRecordFields,
       shouldDisplayRecordObjects,
     });

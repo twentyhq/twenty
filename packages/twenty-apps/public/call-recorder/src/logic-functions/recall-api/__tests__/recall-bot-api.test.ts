@@ -14,8 +14,12 @@ import { rescheduleRecallBot } from 'src/logic-functions/recall-api/reschedule-r
 import { retrieveRecallTranscript } from 'src/logic-functions/recall-api/retrieve-recall-transcript.util';
 import { scheduleRecallBot } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 import { CALL_RECORDER_NAME_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-name-env-var-name';
+import { CALL_RECORDER_RECORDING_NOTICE_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-notice-enabled-env-var-name';
+import { CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH } from 'src/logic-functions/constants/call-recorder-recording-notice-max-length';
+import { CALL_RECORDER_RECORDING_NOTICE_MESSAGE_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-notice-message-env-var-name';
 import { CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-retention-hours-env-var-name';
 import { CALL_RECORDER_TRANSCRIPT_PROVIDER_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-transcript-provider-env-var-name';
+import { DEFAULT_CALL_RECORDER_RECORDING_NOTICE_MESSAGE } from 'src/logic-functions/constants/default-call-recorder-recording-notice-message';
 import { RECALL_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-api-key-env-var-name';
 import { RECALL_REGION_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-region-env-var-name';
 
@@ -30,6 +34,8 @@ const ENV_VAR_NAMES = [
   RECALL_API_KEY_ENV_VAR_NAME,
   RECALL_REGION_ENV_VAR_NAME,
   CALL_RECORDER_NAME_ENV_VAR_NAME,
+  CALL_RECORDER_RECORDING_NOTICE_ENABLED_ENV_VAR_NAME,
+  CALL_RECORDER_RECORDING_NOTICE_MESSAGE_ENV_VAR_NAME,
   CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME,
   CALL_RECORDER_TRANSCRIPT_PROVIDER_ENV_VAR_NAME,
 ] as const;
@@ -44,6 +50,8 @@ describe('recall bot api', () => {
     vi.useFakeTimers();
     vi.setSystemTime(NOW);
     delete process.env[CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME];
+    delete process.env[CALL_RECORDER_RECORDING_NOTICE_ENABLED_ENV_VAR_NAME];
+    delete process.env[CALL_RECORDER_RECORDING_NOTICE_MESSAGE_ENV_VAR_NAME];
     delete process.env[CALL_RECORDER_TRANSCRIPT_PROVIDER_ENV_VAR_NAME];
     process.env[RECALL_API_KEY_ENV_VAR_NAME] = 'recall-api-key';
     process.env[RECALL_REGION_ENV_VAR_NAME] = 'ap-northeast-1';
@@ -92,6 +100,12 @@ describe('recall bot api', () => {
       meeting_url: 'https://meet.google.com/abc-defg-hij',
       join_at: '2026-01-01T13:00:00.000Z',
       bot_name: 'Call Recorder',
+      chat: {
+        on_bot_join: {
+          send_to: 'everyone',
+          message: DEFAULT_CALL_RECORDER_RECORDING_NOTICE_MESSAGE,
+        },
+      },
       automatic_leave: {
         bot_detection: {
           using_participant_names: {
@@ -116,6 +130,54 @@ describe('recall bot api', () => {
       },
       metadata: RECALL_ROUTING_METADATA,
     });
+  });
+
+  it('uses a custom recording notice when the bot joins', async () => {
+    process.env[CALL_RECORDER_RECORDING_NOTICE_MESSAGE_ENV_VAR_NAME] =
+      'Acme records this meeting to prepare notes.';
+
+    await scheduleRecallBot({
+      meetingUrl: 'https://zoom.us/j/123456789',
+      meetingStartsAt: MEETING_STARTS_AT,
+      joinAt: '2026-01-01T13:00:00.000Z',
+      metadata: RECALL_ROUTING_METADATA,
+    });
+
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body).chat).toEqual({
+      on_bot_join: {
+        send_to: 'everyone',
+        message: 'Acme records this meeting to prepare notes.',
+      },
+    });
+  });
+
+  it('omits chat configuration when recording notices are disabled', async () => {
+    process.env[CALL_RECORDER_RECORDING_NOTICE_ENABLED_ENV_VAR_NAME] = 'false';
+
+    await scheduleRecallBot({
+      meetingUrl: 'https://meet.google.com/abc-defg-hij',
+      meetingStartsAt: MEETING_STARTS_AT,
+      joinAt: '2026-01-01T13:00:00.000Z',
+      metadata: RECALL_ROUTING_METADATA,
+    });
+
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body).chat).toBeUndefined();
+  });
+
+  it('truncates custom recording notices without splitting grapheme clusters', async () => {
+    process.env[CALL_RECORDER_RECORDING_NOTICE_MESSAGE_ENV_VAR_NAME] =
+      `${'a'.repeat(CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH - 1)}🇫🇷extra`;
+
+    await scheduleRecallBot({
+      meetingUrl: 'https://meet.google.com/abc-defg-hij',
+      meetingStartsAt: MEETING_STARTS_AT,
+      joinAt: '2026-01-01T13:00:00.000Z',
+      metadata: RECALL_ROUTING_METADATA,
+    });
+
+    expect(
+      JSON.parse(fetchMock.mock.calls[0][1].body).chat.on_bot_join.message,
+    ).toBe('a'.repeat(CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH - 1));
   });
 
   it('uses the configured Recall recording retention hours when scheduling a bot', async () => {

@@ -19,6 +19,7 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { isDefined } from 'twenty-shared/utils';
 
 type RecordCalendarCardBodyProps = {
   recordId: string;
@@ -53,6 +54,7 @@ export const RecordCalendarCardBody = ({
 
   const {
     labelIdentifierFieldMetadataItem,
+    fieldMetadataItemByFieldMetadataItemId,
     fieldDefinitionByFieldMetadataItemId,
     objectPermissionsByObjectMetadataId,
   } = useRecordIndexContextOrThrow();
@@ -83,6 +85,17 @@ export const RecordCalendarCardBody = ({
       {visibleRecordFieldsExceptLabelIdentifier.map((recordField, index) => {
         const correspondingFieldDefinition =
           fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
+        const fieldMetadataItem =
+          fieldMetadataItemByFieldMetadataItemId[
+            recordField.fieldMetadataItemId
+          ];
+
+        if (
+          !isDefined(correspondingFieldDefinition) ||
+          !isDefined(fieldMetadataItem)
+        ) {
+          return null;
+        }
 
         return (
           <StopPropagationContainer key={recordField.fieldMetadataItemId}>
@@ -100,12 +113,7 @@ export const RecordCalendarCardBody = ({
                         correspondingFieldDefinition.metadata.applicationId,
                     }),
                   objectPermissions,
-                  fieldMetadataItem: {
-                    id: recordField.fieldMetadataItemId,
-                    isUIEditable:
-                      correspondingFieldDefinition.metadata.isUIEditable ??
-                      true,
-                  },
+                  fieldMetadataItem,
                   fieldDefinition: correspondingFieldDefinition,
                   objectPermissionsByObjectMetadataId,
                 }),

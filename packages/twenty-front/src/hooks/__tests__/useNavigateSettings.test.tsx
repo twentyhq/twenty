@@ -27,8 +27,24 @@ const SidePanelWrapper = ({ children }: { children: React.ReactNode }) => (
         type: 'side-panel',
         instanceId: 'side-panel-page',
         ownsRouteLocation: false,
-        headerTitlePortal: null,
-        headerActionsPortal: null,
+      }}
+    >
+      {children}
+    </WorkspaceSurfaceContext.Provider>
+  </MemoryRouter>
+);
+
+const RoutedSidePanelWrapper = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => (
+  <MemoryRouter>
+    <WorkspaceSurfaceContext.Provider
+      value={{
+        type: 'side-panel',
+        instanceId: 'side-panel-page',
+        ownsRouteLocation: true,
       }}
     >
       {children}
@@ -95,6 +111,34 @@ describe('useNavigateSettings', () => {
     expect(mockNavigate).toHaveBeenCalledWith('/settings/accounts', options);
   });
 
+  it('opens settings when a legacy side-panel page navigates to settings', () => {
+    const { result } = renderHook(() => useNavigateSettings(), {
+      wrapper: SidePanelWrapper,
+    });
+
+    result.current(SettingsPath.NewAccount);
+
+    expect(openSettingsMenuMock).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(
+      '/settings/accounts/new',
+      undefined,
+    );
+  });
+
+  it('leaves settings shell handling to a routed side-panel navigator', () => {
+    const { result } = renderHook(() => useNavigateSettings(), {
+      wrapper: RoutedSidePanelWrapper,
+    });
+
+    result.current(SettingsPath.NewAccount);
+
+    expect(openSettingsMenuMock).not.toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith(
+      '/settings/accounts/new',
+      undefined,
+    );
+  });
+
   it('opens settings when a legacy side-panel page escapes to main', () => {
     const { result } = renderHook(() => useNavigateSettings(), {
       wrapper: SidePanelWrapper,
@@ -105,6 +149,21 @@ describe('useNavigateSettings', () => {
     });
 
     expect(openSettingsMenuMock).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith('/settings/accounts/new', {
+      surface: 'main',
+    });
+  });
+
+  it('leaves the shell to the navigator when a routed page escapes to main', () => {
+    const { result } = renderHook(() => useNavigateSettings(), {
+      wrapper: RoutedSidePanelWrapper,
+    });
+
+    result.current(SettingsPath.NewAccount, undefined, undefined, {
+      surface: 'main',
+    });
+
+    expect(openSettingsMenuMock).not.toHaveBeenCalled();
     expect(mockNavigate).toHaveBeenCalledWith('/settings/accounts/new', {
       surface: 'main',
     });

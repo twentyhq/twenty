@@ -26,6 +26,7 @@ const INSTALLED_TEAM_ID = 'T0INSTALLED';
 
 const ADA = {
   id: 'U0ADA',
+  team_id: INSTALLED_TEAM_ID,
   real_name: 'Ada Lovelace',
   is_email_confirmed: true,
   profile: { display_name: 'ada', email: 'ada@twenty.com' },
@@ -33,6 +34,7 @@ const ADA = {
 
 const BOB = {
   id: 'U0BOB',
+  team_id: INSTALLED_TEAM_ID,
   real_name: 'Bob Builder',
   is_email_confirmed: true,
   profile: { display_name: 'bob', email: 'bob@twenty.com' },
@@ -98,6 +100,26 @@ describe('slackSearchUsersHandler', () => {
   it('should list a guest but leave their email out of the option', async () => {
     usersListMock.mockResolvedValue({
       members: [{ ...ADA, is_restricted: true }],
+    });
+
+    const result = await slackSearchUsersHandler(buildPayload('ada'));
+
+    expect(result).toEqual({
+      success: true,
+      slackUsers: [
+        {
+          slackUserId: 'U0ADA',
+          slackTeamId: INSTALLED_TEAM_ID,
+          displayName: 'ada',
+          email: undefined,
+        },
+      ],
+    });
+  });
+
+  it('should leave a Slack Connect account email out of the option', async () => {
+    usersListMock.mockResolvedValue({
+      members: [{ ...ADA, team_id: 'T0OTHER' }],
     });
 
     const result = await slackSearchUsersHandler(buildPayload('ada'));

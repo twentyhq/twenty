@@ -6,6 +6,7 @@ import { autoLinkSlackInstaller } from 'src/logic-functions/utils/auto-link-slac
 import { cacheSlackBotUserId } from 'src/logic-functions/utils/cache-slack-bot-user-id';
 import { getSlackConnectedAccountTeamKvKey } from 'src/logic-functions/utils/get-slack-connected-account-team-kv-key';
 import { getSlackTeamKvKey } from 'src/logic-functions/utils/get-slack-team-kv-key';
+import { matchSlackRosterByEmail } from 'src/logic-functions/utils/match-slack-roster-by-email';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 type RegisterSlackConnectionArgs = {
@@ -52,6 +53,14 @@ export const registerSlackConnection = async ({
   } catch (error) {
     console.warn(
       `[slack] installer auto-link skipped: ${toErrorMessage(error)}`,
+    );
+  }
+
+  try {
+    await matchSlackRosterByEmail({ slackClient: client, slackTeamId: teamId });
+  } catch (error) {
+    console.warn(
+      `[slack] roster email match skipped: ${toErrorMessage(error)}`,
     );
   }
 

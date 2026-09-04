@@ -155,8 +155,6 @@ const TestWrapper = ({ children }: { children: ReactNode }) => (
         type: mockIsInSidePanel ? 'side-panel' : 'main',
         instanceId: mockIsInSidePanel ? 'side-panel' : 'main',
         ownsRouteLocation: !mockIsInSidePanel,
-        headerTitlePortal: null,
-        headerActionsPortal: null,
       }}
     >
       {children}

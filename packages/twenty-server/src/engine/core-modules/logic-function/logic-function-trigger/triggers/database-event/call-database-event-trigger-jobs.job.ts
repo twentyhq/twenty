@@ -119,7 +119,9 @@ export class CallDatabaseEventTriggerJobsJob {
 
       await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
         LogicFunctionTriggerJob.name,
-        logicFunctionPayloads,
+        logicFunctionPayloads.map((logicFunctionPayload) => ({
+          data: logicFunctionPayload,
+        })),
         {
           retryLimit: 3,
           backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,

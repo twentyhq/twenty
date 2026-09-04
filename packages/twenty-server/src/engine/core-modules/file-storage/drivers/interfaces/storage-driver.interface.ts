@@ -7,6 +7,10 @@ export interface StorageDriver {
     filePath: string;
     byteRange?: ByteRange;
   }): Promise<Readable>;
+  readFilePrefix(params: {
+    filePath: string;
+    byteCount: number;
+  }): Promise<Buffer>;
   writeFile(params: {
     filePath: string;
     sourceFile: Buffer | Uint8Array | string;

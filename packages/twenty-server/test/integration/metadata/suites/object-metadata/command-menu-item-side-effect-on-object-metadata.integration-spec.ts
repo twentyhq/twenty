@@ -6,7 +6,6 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { isDefined } from 'twenty-shared/utils';
 
 import { type CommandMenuItemDTO } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item.dto';
-import { type ObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/types/object-metadata-command-menu-item-payload.type';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 
 const findNavigationCommandMenuItemForObject = (
@@ -16,8 +15,7 @@ const findNavigationCommandMenuItemForObject = (
   commandMenuItems.find(
     (item) =>
       item.engineComponentKey === EngineComponentKey.NAVIGATION &&
-      (item.payload as ObjectMetadataCommandMenuItemPayload | undefined)
-        ?.objectMetadataItemId === objectMetadataId,
+      item.navigationTargetObjectMetadataId === objectMetadataId,
   );
 
 const COMMAND_MENU_ITEM_GQL_FIELDS = `
@@ -27,12 +25,10 @@ const COMMAND_MENU_ITEM_GQL_FIELDS = `
   icon
   isActive
   conditionalAvailabilityExpression
+  navigationTargetObjectMetadataId
   payload {
     ... on PathCommandMenuItemPayload {
       path
-    }
-    ... on ObjectMetadataCommandMenuItemPayload {
-      objectMetadataItemId
     }
   }
 `;

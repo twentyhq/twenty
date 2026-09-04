@@ -56,7 +56,7 @@ describe('API rate limiting', () => {
   const invalidateWorkspaceCaches = async () => {
     const keys = [
       ...(await redis.keys(`*featureFlagsMap:${SEED_APPLE_WORKSPACE_ID}*`)),
-      ...(await redis.keys(`*usageLimitRules:${SEED_APPLE_WORKSPACE_ID}*`)),
+      ...(await redis.keys(`*usageLimits:${SEED_APPLE_WORKSPACE_ID}*`)),
     ];
 
     if (keys.length > 0) {
@@ -145,8 +145,9 @@ describe('API rate limiting', () => {
         spenderType: 'apiKey',
         spenderId: apiKeyId,
         limitKind: 'speed',
-        windowSeconds: WINDOW_SECONDS,
-        limitValueType: 'absolute',
+        periodCount: WINDOW_SECONDS,
+        periodUnit: 'second',
+        meter: 'quantity',
         limitValue: LIMIT_VALUE,
         burstValue: LIMIT_VALUE,
       },
@@ -203,9 +204,11 @@ describe('API rate limiting', () => {
       expect(extensions).toMatchObject({
         code: 'RATE_LIMITED',
         limitKind: 'speed',
+        exhaustedKind: 'limit',
         limit: LIMIT_VALUE,
         remaining: 0,
-        windowSeconds: WINDOW_SECONDS,
+        periodCount: WINDOW_SECONDS,
+        periodUnit: 'second',
         scope: { spenderType: 'apiKey', spenderId: apiKeyId },
       });
       expect(extensions.retryAfterMs).toBeGreaterThan(0);
@@ -245,9 +248,11 @@ describe('API rate limiting', () => {
         statusCode: 429,
         error: 'RATE_LIMITED',
         limitKind: 'speed',
+        exhaustedKind: 'limit',
         limit: LIMIT_VALUE,
         remaining: 0,
-        windowSeconds: WINDOW_SECONDS,
+        periodCount: WINDOW_SECONDS,
+        periodUnit: 'second',
         retryAfterSeconds: 1,
         scope: { spenderType: 'apiKey', spenderId: apiKeyId },
       });

@@ -1,3 +1,4 @@
+import { useRefetchOnApplicationRegistrationChange } from '@/applications/hooks/useRefetchOnApplicationRegistrationChange';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -53,7 +54,9 @@ export const SettingsApplicationsDeveloperTab = () => {
 
   const { copyToClipboard } = useCopyToClipboard();
 
-  const { data } = useQuery(FindManyApplicationRegistrationsDocument);
+  const { data, refetch } = useQuery(FindManyApplicationRegistrationsDocument);
+
+  useRefetchOnApplicationRegistrationChange({ refetch });
 
   const canClaimApplications = useHasPermissionFlag(
     PermissionFlagType.APPLICATIONS,

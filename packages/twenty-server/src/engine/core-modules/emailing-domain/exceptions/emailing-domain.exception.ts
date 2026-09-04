@@ -14,7 +14,6 @@ export enum EmailingDomainExceptionCode {
   MESSAGE_CAMPAIGN_NOT_SENDABLE = 'MESSAGE_CAMPAIGN_NOT_SENDABLE',
   MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS = 'MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS',
   MESSAGE_CAMPAIGN_NOT_CANCELABLE = 'MESSAGE_CAMPAIGN_NOT_CANCELABLE',
-  MESSAGE_CAMPAIGN_SENDING_REPUTATION_TOO_LOW = 'MESSAGE_CAMPAIGN_SENDING_REPUTATION_TOO_LOW',
 }
 
 const getEmailingDomainExceptionUserFriendlyMessage = (
@@ -39,8 +38,6 @@ const getEmailingDomainExceptionUserFriendlyMessage = (
       return msg`This campaign cannot be sent. It may be missing a sender, subject or recipient list, or it was already sent.`;
     case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_CANCELABLE:
       return msg`Only a campaign that is currently sending can be canceled.`;
-    case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_SENDING_REPUTATION_TOO_LOW:
-      return msg`Too many of your recent emails bounced or were marked as spam. Sending is paused so your domain keeps its reputation. Clean up your recipient lists before sending again.`;
     default:
       assertUnreachable(code);
   }

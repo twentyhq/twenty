@@ -1,24 +1,6 @@
-import { CHAT_REFERENCE_APP_PATTERN } from '@/ai/constants/ChatReferenceAppPattern';
-import { CHAT_REFERENCE_FIELD_PATTERN } from '@/ai/constants/ChatReferenceFieldPattern';
-import { CHAT_REFERENCE_LEGACY_FIELD_BY_ID_PATTERN } from '@/ai/constants/ChatReferenceLegacyFieldByIdPattern';
-import { CHAT_REFERENCE_OBJECT_PATTERN } from '@/ai/constants/ChatReferenceObjectPattern';
-import { CHAT_REFERENCE_RECORD_PATTERN } from '@/ai/constants/ChatReferenceRecordPattern';
-import { CHAT_REFERENCE_RECORDS_PATTERN } from '@/ai/constants/ChatReferenceRecordsPattern';
-import { CHAT_REFERENCE_ROLE_PATTERN } from '@/ai/constants/ChatReferenceRolePattern';
-import { CHAT_REFERENCE_VIEW_PATTERN } from '@/ai/constants/ChatReferenceViewPattern';
+import { CHAT_REFERENCE_BODY_PATTERN } from '@/ai/constants/ChatReferenceBodyPattern';
 
-// The record pattern must stay last: its `record:` prefix is optional, so it
-// matches the metadata markers too and would swallow them if tried first.
 export const CHAT_REFERENCE_REGEX = new RegExp(
-  [
-    CHAT_REFERENCE_OBJECT_PATTERN,
-    CHAT_REFERENCE_FIELD_PATTERN,
-    CHAT_REFERENCE_LEGACY_FIELD_BY_ID_PATTERN,
-    CHAT_REFERENCE_VIEW_PATTERN,
-    CHAT_REFERENCE_RECORDS_PATTERN,
-    CHAT_REFERENCE_ROLE_PATTERN,
-    CHAT_REFERENCE_APP_PATTERN,
-    CHAT_REFERENCE_RECORD_PATTERN,
-  ].join('|'),
+  `\\[\\[(${CHAT_REFERENCE_BODY_PATTERN})\\]\\]`,
   'g',
 );

@@ -1,4 +1,6 @@
+import { useRefetchOnApplicationRegistrationChange } from '@/applications/hooks/useRefetchOnApplicationRegistrationChange';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useQuery } from '@apollo/client/react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -6,7 +8,6 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { FindOneApplicationRegistrationDocument } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
 import { Avatar, Tag } from 'twenty-ui/data-display';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   IconInfoCircle,
@@ -37,9 +38,17 @@ export const SettingsApplicationRegistrationDetails = () => {
     applicationRegistrationId: string;
   }>();
 
-  const { data, loading } = useQuery(FindOneApplicationRegistrationDocument, {
-    variables: { id: applicationRegistrationId },
-    skip: !applicationRegistrationId,
+  const { data, loading, refetch } = useQuery(
+    FindOneApplicationRegistrationDocument,
+    {
+      variables: { id: applicationRegistrationId },
+      skip: !applicationRegistrationId,
+    },
+  );
+
+  useRefetchOnApplicationRegistrationChange({
+    applicationRegistrationId,
+    refetch,
   });
 
   const registration = data?.findOneApplicationRegistration;
@@ -114,14 +123,14 @@ export const SettingsApplicationRegistrationDetails = () => {
         },
         { children: registration.name },
       ]}
-    >
-      <SettingsPageContainer>
-        <TabList
+      secondaryBar={
+        <SettingsTabBar
           tabs={tabs}
           componentInstanceId={REGISTRATION_DETAIL_TAB_LIST_ID}
         />
-        {renderActiveTabContent()}
-      </SettingsPageContainer>
+      }
+    >
+      <SettingsPageContainer>{renderActiveTabContent()}</SettingsPageContainer>
     </SettingsPageLayout>
   );
 };

@@ -1,20 +1,11 @@
-export const CAMPAIGN_MESSAGE_DELIVERY_STATUS = {
-  QUEUED: 'QUEUED',
-  SENT: 'SENT',
-  FAILED: 'FAILED',
-  BOUNCED: 'BOUNCED',
-  COMPLAINED: 'COMPLAINED',
-  SKIPPED: 'SKIPPED',
-} as const;
-
 export const MATERIALIZE_CAMPAIGN_JOB = 'MaterializeCampaignJob';
 export const MATERIALIZE_CAMPAIGN_CHUNK_JOB = 'MaterializeCampaignChunkJob';
 export const SEND_CAMPAIGN_EMAIL_JOB = 'SendCampaignEmailJob';
 export const REFRESH_CAMPAIGN_STATS_JOB = 'RefreshCampaignStatsJob';
+export const RECONCILE_WORKSPACE_CAMPAIGN_STATS_JOB =
+  'ReconcileWorkspaceCampaignStatsJob';
 
 export const CAMPAIGN_STATS_REFRESH_DEBOUNCE_MS = 10_000;
-export const CAMPAIGN_STATS_REFRESH_DELAY_MS =
-  CAMPAIGN_STATS_REFRESH_DEBOUNCE_MS + 2_000;
 
 export const MAX_CAMPAIGN_RECIPIENTS = 10000;
 

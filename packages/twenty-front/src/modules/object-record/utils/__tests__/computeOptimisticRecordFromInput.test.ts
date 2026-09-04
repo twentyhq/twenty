@@ -302,4 +302,19 @@ describe('computeOptimisticRecordFromInput', () => {
       city: 'Paris',
     });
   });
+
+  it('preserves nested create operations on to-one relations', () => {
+    const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
+
+    expect(
+      sanitizeRecordInput({
+        objectMetadataItem: personObjectMetadataItem,
+        recordInput: {
+          company: { create: { id: 'new-company-id', name: 'New company' } },
+        },
+      }),
+    ).toEqual({
+      company: { create: { id: 'new-company-id', name: 'New company' } },
+    });
+  });
 });

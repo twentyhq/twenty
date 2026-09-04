@@ -14,6 +14,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
 describe('ApplicationRegistrationService - upsertFromCatalog', () => {
   let service: ApplicationRegistrationService;
@@ -100,6 +101,10 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
         {
           provide: getQueueToken(MessageQueue.workspaceQueue),
           useValue: { add: jest.fn() },
+        },
+        {
+          provide: WorkspaceEventBroadcaster,
+          useValue: { broadcast: jest.fn() },
         },
       ],
     }).compile();

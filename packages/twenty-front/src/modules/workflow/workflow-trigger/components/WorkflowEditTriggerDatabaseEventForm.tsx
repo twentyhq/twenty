@@ -20,6 +20,7 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowStepFilterBuilder } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterBuilder';
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
@@ -147,9 +148,12 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
 
   const selectableItemIdArray = filteredObjects.map((option) => option.value);
 
+  const scopedDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
+
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    dropdownId,
+    scopedDropdownId,
   );
 
   const handleOptionClick = (value: string) => {

@@ -9,7 +9,7 @@ const {
   authTestMock,
   doesWorkspaceMemberExistMock,
   findSlackUserLinkMock,
-  findDeletedSlackUserLinkIdMock,
+  findDeletedSlackUserLinkIdsMock,
   createSlackUserLinkMock,
   updateSlackUserLinkMock,
   destroySlackUserLinkMock,
@@ -25,7 +25,7 @@ const {
   authTestMock: vi.fn(),
   doesWorkspaceMemberExistMock: vi.fn(),
   findSlackUserLinkMock: vi.fn(),
-  findDeletedSlackUserLinkIdMock: vi.fn(),
+  findDeletedSlackUserLinkIdsMock: vi.fn(),
   createSlackUserLinkMock: vi.fn(),
   updateSlackUserLinkMock: vi.fn(),
   destroySlackUserLinkMock: vi.fn(),
@@ -64,8 +64,8 @@ vi.mock('src/logic-functions/data/find-slack-user-link', () => ({
   findSlackUserLink: findSlackUserLinkMock,
 }));
 
-vi.mock('src/logic-functions/data/find-deleted-slack-user-link-id', () => ({
-  findDeletedSlackUserLinkId: findDeletedSlackUserLinkIdMock,
+vi.mock('src/logic-functions/data/find-deleted-slack-user-link-ids', () => ({
+  findDeletedSlackUserLinkIds: findDeletedSlackUserLinkIdsMock,
 }));
 
 vi.mock('src/logic-functions/data/create-slack-user-link', () => ({
@@ -110,7 +110,7 @@ describe('slackSetUserLinkHandler', () => {
     authTestMock.mockResolvedValue({ team_id: INSTALLED_TEAM_ID });
     doesWorkspaceMemberExistMock.mockResolvedValue(true);
     findSlackUserLinkMock.mockResolvedValue(undefined);
-    findDeletedSlackUserLinkIdMock.mockResolvedValue(undefined);
+    findDeletedSlackUserLinkIdsMock.mockResolvedValue([]);
     createSlackUserLinkMock.mockResolvedValue('link-new');
     fetchSlackUserIdentityMock.mockResolvedValue({
       slackUserId: INPUT.slackUserId,
@@ -133,7 +133,7 @@ describe('slackSetUserLinkHandler', () => {
   });
 
   it('should destroy a soft-deleted ghost link before creating the same tuple', async () => {
-    findDeletedSlackUserLinkIdMock.mockResolvedValue('link-ghost');
+    findDeletedSlackUserLinkIdsMock.mockResolvedValue(['link-ghost']);
 
     const result = await slackSetUserLinkHandler(INPUT);
 

@@ -8,7 +8,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 import chunk from 'lodash.chunk';
-import { In } from 'typeorm';
+import { In, type ObjectLiteral } from 'typeorm';
 import { v4 } from 'uuid';
 
 import {
@@ -70,6 +70,7 @@ export class MessageCampaignMaterializationService {
     campaignId,
     messageChannelId,
     emailingDomainId,
+    userWorkspaceId,
     recipients,
   }: MaterializeCampaignJobData): Promise<void> {
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
@@ -122,6 +123,7 @@ export class MessageCampaignMaterializationService {
         campaignId,
         messageChannelId,
         emailingDomainId,
+        userWorkspaceId,
         recipientsToCreate,
         recipientsStrandedByAnEarlierAttempt,
       });
@@ -143,6 +145,7 @@ export class MessageCampaignMaterializationService {
     campaignId,
     messageChannelId,
     emailingDomainId,
+    userWorkspaceId,
     recipientsToCreate,
     recipientsStrandedByAnEarlierAttempt,
   }: {
@@ -150,6 +153,7 @@ export class MessageCampaignMaterializationService {
     campaignId: string;
     messageChannelId: string;
     emailingDomainId: string;
+    userWorkspaceId: string;
     recipientsToCreate: CampaignMessageRecipient[];
     recipientsStrandedByAnEarlierAttempt: CampaignMessageRecipient[];
   }): Promise<number> {
@@ -168,6 +172,7 @@ export class MessageCampaignMaterializationService {
       campaignId,
       messageChannelId,
       emailingDomainId,
+      userWorkspaceId,
       receivedAtIso,
       shouldCreateMessages,
       recipients,
@@ -179,7 +184,7 @@ export class MessageCampaignMaterializationService {
 
     await this.messageQueueService.bulkAdd<MaterializeCampaignChunkJobData>(
       MATERIALIZE_CAMPAIGN_CHUNK_JOB,
-      chunks,
+      chunks.map((chunk) => ({ data: chunk })),
       { retryLimit: 3, backoff: CAMPAIGN_SEND_RETRY_BACKOFF },
     );
 
@@ -191,6 +196,7 @@ export class MessageCampaignMaterializationService {
     campaignId,
     messageChannelId,
     emailingDomainId,
+    userWorkspaceId,
     receivedAtIso,
     shouldCreateMessages,
     recipients,
@@ -238,6 +244,7 @@ export class MessageCampaignMaterializationService {
         workspaceId,
         campaignId,
         emailingDomainId,
+        userWorkspaceId,
         recipients,
       });
 
@@ -315,11 +322,13 @@ export class MessageCampaignMaterializationService {
     workspaceId,
     campaignId,
     emailingDomainId,
+    userWorkspaceId,
     recipients,
   }: {
     workspaceId: string;
     campaignId: string;
     emailingDomainId: string;
+    userWorkspaceId: string;
     recipients: CampaignMessageRecipient[];
   }): Promise<void> {
     if (recipients.length === 0) {
@@ -329,12 +338,15 @@ export class MessageCampaignMaterializationService {
     await this.messageQueueService.bulkAdd<SendCampaignEmailJobData>(
       SEND_CAMPAIGN_EMAIL_JOB,
       recipients.map((recipient) => ({
-        workspaceId,
-        campaignId,
-        messageId: recipient.messageId,
-        personId: recipient.personId,
-        recipientEmail: recipient.email,
-        emailingDomainId,
+        data: {
+          workspaceId,
+          campaignId,
+          messageId: recipient.messageId,
+          personId: recipient.personId,
+          recipientEmail: recipient.email,
+          emailingDomainId,
+          userWorkspaceId,
+        },
       })),
       {
         retryLimit: CAMPAIGN_SEND_RETRY_LIMIT,
@@ -409,75 +421,64 @@ export class MessageCampaignMaterializationService {
   }): Promise<void> {
     await this.workspaceOrmManager.runInWorkspaceTransaction(
       async (transactionScope) => {
-        await transactionScope
-          .getRepository<MessageThreadWorkspaceEntity>(
-            'messageThread',
+        const repositoryFor = <T extends ObjectLiteral>(objectName: string) =>
+          transactionScope.getRepository<T>(
+            objectName,
             { shouldBypassPermissionChecks: true },
             SKIP_EVENT_EMISSION,
-          )
-          .insert(rows.map((row) => ({ id: row.threadId })));
-
-        await transactionScope
-          .getRepository<MessageWorkspaceEntity>(
-            'message',
-            { shouldBypassPermissionChecks: true },
-            SKIP_EVENT_EMISSION,
-          )
-          .insert(
-            rows.map((row) => ({
-              id: row.messageId,
-              headerMessageId: row.temporaryExternalId,
-              subject: subjectTemplate,
-              text,
-              receivedAt: now,
-              messageThreadId: row.threadId,
-              messageCampaignId: campaignId,
-            })),
           );
 
-        await transactionScope
-          .getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-            'messageChannelMessageAssociation',
-            { shouldBypassPermissionChecks: true },
-            SKIP_EVENT_EMISSION,
-          )
-          .insert(
-            rows.map((row) => ({
+        await repositoryFor<MessageThreadWorkspaceEntity>(
+          'messageThread',
+        ).insert(rows.map((row) => ({ id: row.threadId })));
+
+        await repositoryFor<MessageWorkspaceEntity>('message').insert(
+          rows.map((row) => ({
+            id: row.messageId,
+            headerMessageId: row.temporaryExternalId,
+            subject: subjectTemplate,
+            text,
+            receivedAt: now,
+            messageThreadId: row.threadId,
+            messageCampaignId: campaignId,
+          })),
+        );
+
+        await repositoryFor<MessageChannelMessageAssociationWorkspaceEntity>(
+          'messageChannelMessageAssociation',
+        ).insert(
+          rows.map((row) => ({
+            id: v4(),
+            messageId: row.messageId,
+            messageChannelId,
+            messageExternalId: row.temporaryExternalId,
+            messageThreadExternalId: row.temporaryExternalId,
+            direction: MessageDirection.OUTGOING,
+          })),
+        );
+
+        await repositoryFor<MessageParticipantWorkspaceEntity>(
+          'messageParticipant',
+        ).insert(
+          rows.flatMap((row) => [
+            {
               id: v4(),
               messageId: row.messageId,
-              messageChannelId,
-              messageExternalId: row.temporaryExternalId,
-              messageThreadExternalId: row.temporaryExternalId,
-              direction: MessageDirection.OUTGOING,
-            })),
-          );
-
-        await transactionScope
-          .getRepository<MessageParticipantWorkspaceEntity>(
-            'messageParticipant',
-            { shouldBypassPermissionChecks: true },
-            SKIP_EVENT_EMISSION,
-          )
-          .insert(
-            rows.flatMap((row) => [
-              {
-                id: v4(),
-                messageId: row.messageId,
-                role: MessageParticipantRole.FROM,
-                handle: fromAddress,
-                displayName: fromAddress,
-              },
-              {
-                id: v4(),
-                messageId: row.messageId,
-                role: MessageParticipantRole.TO,
-                handle: row.recipient.email,
-                displayName: row.recipient.email,
-                personId: row.recipient.personId,
-                messageCampaignId: campaignId,
-              },
-            ]),
-          );
+              role: MessageParticipantRole.FROM,
+              handle: fromAddress,
+              displayName: fromAddress,
+            },
+            {
+              id: v4(),
+              messageId: row.messageId,
+              role: MessageParticipantRole.TO,
+              handle: row.recipient.email,
+              displayName: row.recipient.email,
+              personId: row.recipient.personId,
+              messageCampaignId: campaignId,
+            },
+          ]),
+        );
       },
     );
   }

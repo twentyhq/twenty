@@ -1,5 +1,6 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { AppChip } from '@/applications/components/AppChip';
+import { useRefetchOnApplicationLifecycleSettled } from '@/applications/hooks/useRefetchOnApplicationLifecycleSettled';
 import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
@@ -10,7 +11,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import type { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -66,10 +67,12 @@ export const SettingsApplicationDetails = () => {
     APPLICATION_DETAIL_ID,
   );
 
-  const { data } = useQuery(FindOneApplicationDocument, {
+  const { data, refetch } = useQuery(FindOneApplicationDocument, {
     variables: { id: applicationId },
     skip: !applicationId,
   });
+
+  useRefetchOnApplicationLifecycleSettled({ applicationId, refetch });
 
   const application = data?.findOneApplication;
 
@@ -290,6 +293,7 @@ export const SettingsApplicationDetails = () => {
             displayName={displayName}
             description={description}
             aboutDescription={detail?.aboutDescription ?? undefined}
+            pricingDescription={detail?.pricingDescription ?? undefined}
             screenshots={screenshots}
             author={detail?.author ?? undefined}
             category={detail?.category ?? undefined}
@@ -374,6 +378,12 @@ export const SettingsApplicationDetails = () => {
           },
           { children: displayName },
         ]}
+        secondaryBar={
+          <SettingsTabBar
+            tabs={tabs}
+            componentInstanceId={APPLICATION_DETAIL_ID}
+          />
+        }
       >
         <SettingsPageContainer>
           {isApplicationStopped && (
@@ -383,7 +393,6 @@ export const SettingsApplicationDetails = () => {
               message={t`We are currently encountering issues with this app, its behavior may be degraded while we work on a fix.`}
             />
           )}
-          <TabList tabs={tabs} componentInstanceId={APPLICATION_DETAIL_ID} />
           {renderActiveTabContent()}
         </SettingsPageContainer>
       </SettingsPageLayout>

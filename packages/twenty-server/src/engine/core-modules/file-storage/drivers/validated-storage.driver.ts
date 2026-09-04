@@ -17,6 +17,15 @@ export class ValidatedStorageDriver implements StorageDriver {
     return this.delegate.readFile(params);
   }
 
+  async readFilePrefix(params: {
+    filePath: string;
+    byteCount: number;
+  }): Promise<Buffer> {
+    assertStoragePathIsSafe(params.filePath);
+
+    return this.delegate.readFilePrefix(params);
+  }
+
   async writeFile(params: {
     filePath: string;
     sourceFile: Buffer | Uint8Array | string;

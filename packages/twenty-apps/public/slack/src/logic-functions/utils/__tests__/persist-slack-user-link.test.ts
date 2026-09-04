@@ -8,12 +8,12 @@ const {
   createSlackUserLinkMock,
   destroySlackUserLinkMock,
   updateSlackUserLinkMock,
-  findDeletedSlackUserLinkIdMock,
+  findDeletedSlackUserLinkIdsMock,
 } = vi.hoisted(() => ({
   createSlackUserLinkMock: vi.fn(),
   destroySlackUserLinkMock: vi.fn(),
   updateSlackUserLinkMock: vi.fn(),
-  findDeletedSlackUserLinkIdMock: vi.fn(),
+  findDeletedSlackUserLinkIdsMock: vi.fn(),
 }));
 
 vi.mock('src/logic-functions/data/create-slack-user-link', () => ({
@@ -28,8 +28,8 @@ vi.mock('src/logic-functions/data/update-slack-user-link', () => ({
   updateSlackUserLink: updateSlackUserLinkMock,
 }));
 
-vi.mock('src/logic-functions/data/find-deleted-slack-user-link-id', () => ({
-  findDeletedSlackUserLinkId: findDeletedSlackUserLinkIdMock,
+vi.mock('src/logic-functions/data/find-deleted-slack-user-link-ids', () => ({
+  findDeletedSlackUserLinkIds: findDeletedSlackUserLinkIdsMock,
 }));
 
 const SLACK_TEAM_ID = 'T0INSTALLED';
@@ -66,11 +66,11 @@ describe('persistSlackUserLink', () => {
     createSlackUserLinkMock.mockResolvedValue('link-new');
     destroySlackUserLinkMock.mockResolvedValue(undefined);
     updateSlackUserLinkMock.mockResolvedValue(undefined);
-    findDeletedSlackUserLinkIdMock.mockResolvedValue(undefined);
+    findDeletedSlackUserLinkIdsMock.mockResolvedValue([]);
   });
 
   it('should destroy a soft-deleted ghost holding the tuple before creating', async () => {
-    findDeletedSlackUserLinkIdMock.mockResolvedValue('link-ghost');
+    findDeletedSlackUserLinkIdsMock.mockResolvedValue(['link-ghost']);
 
     expect(await persist()).toBe('link-new');
 
@@ -86,7 +86,7 @@ describe('persistSlackUserLink', () => {
   it('should not look for a ghost when replacing a live link', async () => {
     expect(await persist({ existingLink })).toBe('link-new');
 
-    expect(findDeletedSlackUserLinkIdMock).not.toHaveBeenCalled();
+    expect(findDeletedSlackUserLinkIdsMock).not.toHaveBeenCalled();
     expect(destroySlackUserLinkMock).toHaveBeenCalledWith(client, {
       id: existingLink.id,
     });

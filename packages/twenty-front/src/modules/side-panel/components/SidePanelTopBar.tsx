@@ -83,18 +83,21 @@ const StyledHeaderTitleContainer = styled.div`
   display: flex;
   flex: 1;
   min-width: 0;
-
-  &:has([data-workspace-header-title-portal]:not(:empty))
-    > [data-routed-page-fallback-info] {
-    display: none;
-  }
 `;
 
 const StyledHeaderTitlePortal = styled.div`
   align-items: center;
-  display: flex;
-  flex: 1;
+  display: none;
   min-width: 0;
+
+  &:not(:empty) {
+    display: flex;
+    flex: 1;
+  }
+
+  &:not(:empty) + [data-side-panel-page-info] {
+    display: none;
+  }
 `;
 
 const StyledHeaderActionsPortal = styled.div`
@@ -230,15 +233,12 @@ export const SidePanelTopBar = ({
         </AnimatePresence>
         {!COMMAND_MENU_SIDE_PANEL_PAGES.includes(sidePanelPage) && (
           <StyledHeaderTitleContainer>
+            <StyledHeaderTitlePortal ref={setHeaderTitlePortal} />
             {lastChip && (
-              <div data-routed-page-fallback-info="">
+              <div data-side-panel-page-info="">
                 <SidePanelPageInfo pageChip={lastChip} />
               </div>
             )}
-            <StyledHeaderTitlePortal
-              ref={setHeaderTitlePortal}
-              data-workspace-header-title-portal=""
-            />
           </StyledHeaderTitleContainer>
         )}
         {COMMAND_MENU_SIDE_PANEL_PAGES.includes(sidePanelPage) && (

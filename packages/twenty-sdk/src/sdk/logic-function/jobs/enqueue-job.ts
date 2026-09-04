@@ -17,6 +17,7 @@ export const enqueueJob = async (
       __args: { input },
       enqueued: true,
       logicFunctionUniversalIdentifier: true,
+      jobId: true,
     },
   });
 

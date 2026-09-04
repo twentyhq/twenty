@@ -1,7 +1,7 @@
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { type DefaultUsageLimitFallback } from 'src/engine/core-modules/usage-limit/types/default-usage-limit-fallback.type';
+import { type SpeedLimitDefault } from 'src/engine/core-modules/usage-limit/types/speed-limit-default.type';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { buildSpeedBuckets } from 'src/engine/core-modules/usage-limit/utils/build-speed-buckets.util';
 
@@ -9,7 +9,7 @@ const workspace = { id: 'workspace-1' };
 
 // The registry defaults, standing in for API_RATE_LIMITING_* and
 // APPLICATION_API_RATE_LIMITING_*.
-const DEFAULT_USAGE_LIMIT_FALLBACKS: DefaultUsageLimitFallback[] = [
+const SPEED_LIMIT_DEFAULTS: SpeedLimitDefault[] = [
   {
     spenderType: 'apiKey',
     counterScope: 'perWorkspace',
@@ -33,15 +33,16 @@ const DEFAULT_USAGE_LIMIT_FALLBACKS: DefaultUsageLimitFallback[] = [
   },
 ];
 
-const buildRule = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
-  id: 'rule-id',
+const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
+  id: 'limit-id',
   resourceType: UsageResourceType.API,
   operationType: UsageOperationType.API_REQUEST,
   spenderType: 'apiKey',
   spenderId: '',
   limitKind: 'speed',
-  windowSeconds: 60,
-  limitValueType: 'absolute',
+  periodCount: 60,
+  periodUnit: 'second',
+  meter: 'quantity',
   limitValue: 100,
   burstValue: null,
   ...overrides,
@@ -49,14 +50,16 @@ const buildRule = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
 
 const buildBuckets = ({
   authContext,
-  rules = [],
+  limits = [],
+  speedLimitDefaults = SPEED_LIMIT_DEFAULTS,
 }: {
   authContext: WorkspaceAuthContext;
-  rules?: FlatUsageLimit[];
+  limits?: FlatUsageLimit[];
+  speedLimitDefaults?: SpeedLimitDefault[];
 }) =>
   buildSpeedBuckets({
-    defaultUsageLimitFallbacks: DEFAULT_USAGE_LIMIT_FALLBACKS,
-    rules,
+    speedLimitDefaults,
+    limits,
     authContext,
     resourceType: UsageResourceType.API,
     operationType: UsageOperationType.API_REQUEST,
@@ -92,7 +95,7 @@ const systemContext = { type: 'system', workspace } as WorkspaceAuthContext;
 // Parity with the throttler this replaces: it metered API keys against a single
 // workspace-wide counter and applications against a cross-workspace one, and
 // left every other caller alone.
-describe('buildSpeedBuckets with no rules configured', () => {
+describe('buildSpeedBuckets with no limits configured', () => {
   it('meters an api key against one shared counter per window', () => {
     expect(buildBuckets({ authContext: apiKeyContext })).toEqual([
       expect.objectContaining({
@@ -133,11 +136,71 @@ describe('buildSpeedBuckets with no rules configured', () => {
   });
 });
 
-describe('buildSpeedBuckets with rules configured', () => {
-  it('shares one counter between every api key when the rule names none', () => {
+describe('buildSpeedBuckets for a spender no application identifies', () => {
+  const WORKSPACE_DEFAULTS: SpeedLimitDefault[] = [
+    {
+      spenderType: 'workspace',
+      counterScope: 'crossWorkspace',
+      maxTokens: 14,
+      windowMs: 10_000,
+      isOverridable: true,
+    },
+  ];
+
+  it('meters a system sender against one counter across every workspace', () => {
+    expect(
+      buildBuckets({
+        authContext: systemContext,
+        speedLimitDefaults: WORKSPACE_DEFAULTS,
+      }),
+    ).toEqual([
+      expect.objectContaining({
+        key: '{server}:speed:API:API_REQUEST:workspace:-:10',
+        refillPerWindow: 14,
+        spenderType: 'workspace',
+        spenderId: null,
+      }),
+    ]);
+  });
+
+  it('meters a user request against that same counter', () => {
+    const [bucket] = buildBuckets({
+      authContext: userContext,
+      speedLimitDefaults: WORKSPACE_DEFAULTS,
+    });
+
+    expect(bucket.key).toBe('{server}:speed:API:API_REQUEST:workspace:-:10');
+  });
+
+  it('still drops an application bucket when no application identifies the caller', () => {
+    const unidentifiedApplicationContext = {
+      type: 'application',
+      workspace,
+      application: { id: 'app-1' },
+    } as WorkspaceAuthContext;
+
+    expect(
+      buildBuckets({
+        authContext: unidentifiedApplicationContext,
+        speedLimitDefaults: [
+          {
+            spenderType: 'application',
+            counterScope: 'crossWorkspace',
+            maxTokens: 500,
+            windowMs: 60_000,
+            isOverridable: false,
+          },
+        ],
+      }),
+    ).toEqual([]);
+  });
+});
+
+describe('buildSpeedBuckets with limits configured', () => {
+  it('shares one counter between every api key when the limit names none', () => {
     const [bucket] = buildBuckets({
       authContext: apiKeyContext,
-      rules: [buildRule({ spenderId: '', limitValue: 10, windowSeconds: 1 })],
+      limits: [buildLimit({ spenderId: '', limitValue: 10, periodCount: 1 })],
     });
 
     expect(bucket).toMatchObject({
@@ -150,9 +213,9 @@ describe('buildSpeedBuckets with rules configured', () => {
   it('gives a named api key its own counter on top of the shared one', () => {
     const buckets = buildBuckets({
       authContext: apiKeyContext,
-      rules: [
-        buildRule({ id: 'shared', spenderId: '', limitValue: 10 }),
-        buildRule({ id: 'own', spenderId: 'key-1', limitValue: 5 }),
+      limits: [
+        buildLimit({ id: 'shared', spenderId: '', limitValue: 10 }),
+        buildLimit({ id: 'own', spenderId: 'key-1', limitValue: 5 }),
       ],
     });
 
@@ -165,7 +228,7 @@ describe('buildSpeedBuckets with rules configured', () => {
   it('keeps a named api key charged for the defaults', () => {
     const buckets = buildBuckets({
       authContext: apiKeyContext,
-      rules: [buildRule({ spenderId: 'key-1', limitValue: 5 })],
+      limits: [buildLimit({ spenderId: 'key-1', limitValue: 5 })],
     });
 
     expect(buckets.map((bucket) => bucket.key)).toEqual([
@@ -175,10 +238,10 @@ describe('buildSpeedBuckets with rules configured', () => {
     ]);
   });
 
-  it('replaces every default once a rule covers the spender type', () => {
+  it('replaces every default once a limit covers the spender type', () => {
     const buckets = buildBuckets({
       authContext: apiKeyContext,
-      rules: [buildRule({ spenderId: '', windowSeconds: 60, limitValue: 10 })],
+      limits: [buildLimit({ spenderId: '', periodCount: 60, limitValue: 10 })],
     });
 
     expect(
@@ -186,13 +249,13 @@ describe('buildSpeedBuckets with rules configured', () => {
     ).toEqual([[60_000, 10]]);
   });
 
-  it('tells the platform default apart from a configured rule', () => {
+  it('tells the platform default apart from a configured limit', () => {
     const buckets = buildBuckets({
       authContext: apiKeyContext,
-      rules: [buildRule({ spenderId: 'key-1', limitValue: 5 })],
+      limits: [buildLimit({ spenderId: 'key-1', limitValue: 5 })],
     });
 
-    expect(buckets.map((bucket) => bucket.isFallback)).toEqual([
+    expect(buckets.map((bucket) => bucket.isDefault)).toEqual([
       false,
       true,
       true,
@@ -202,7 +265,7 @@ describe('buildSpeedBuckets with rules configured', () => {
   it('keeps an application charged for the ceiling every workspace shares', () => {
     const buckets = buildBuckets({
       authContext: applicationContext,
-      rules: [buildRule({ spenderType: 'application', spenderId: '' })],
+      limits: [buildLimit({ spenderType: 'application', spenderId: '' })],
     });
 
     expect(buckets.map((bucket) => bucket.key)).toEqual([
@@ -211,11 +274,49 @@ describe('buildSpeedBuckets with rules configured', () => {
     ]);
   });
 
-  it('applies a workspace rule to a caller that no other rule covers', () => {
+  it('gives a limit covering every operation its own counter next to a specific one', () => {
+    const buckets = buildBuckets({
+      authContext: apiKeyContext,
+      limits: [
+        buildLimit({
+          id: 'every-operation',
+          operationType: UsageOperationType.ALL,
+          spenderId: '',
+          limitValue: 20,
+        }),
+        buildLimit({ id: 'specific', spenderId: '', limitValue: 10 }),
+      ],
+    });
+
+    expect(buckets.map((bucket) => bucket.key)).toEqual([
+      '{workspace-1}:speed:API:ALL:apiKey:-:60',
+      '{workspace-1}:speed:API:API_REQUEST:apiKey:-:60',
+    ]);
+  });
+
+  it('ignores a quota limit covering every spender', () => {
+    const buckets = buildBuckets({
+      authContext: apiKeyContext,
+      limits: [
+        buildLimit({
+          id: 'quota',
+          limitKind: 'quota',
+          spenderId: '',
+          periodCount: 1,
+          periodUnit: 'month',
+          meter: 'creditsUsedMicro',
+        }),
+      ],
+    });
+
+    expect(buckets.map((bucket) => bucket.isDefault)).toEqual([true, true]);
+  });
+
+  it('applies a workspace limit to a caller that no other limit covers', () => {
     const buckets = buildBuckets({
       authContext: userContext,
-      rules: [
-        buildRule({
+      limits: [
+        buildLimit({
           spenderType: 'workspace',
           spenderId: '',
           limitValue: 1000,

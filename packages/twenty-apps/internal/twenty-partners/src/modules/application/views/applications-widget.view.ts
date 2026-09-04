@@ -1,4 +1,4 @@
-import { ViewType, defineView } from 'twenty-sdk/define';
+import { ViewFilterOperand, ViewType, defineView } from 'twenty-sdk/define';
 
 import {
   APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
@@ -13,7 +13,7 @@ export const APPLICATIONS_WIDGET_VIEW_UNIVERSAL_IDENTIFIER =
 // TABLE_WIDGET rather than TABLE so this view stays out of the record index view pickers.
 export default defineView({
   universalIdentifier: APPLICATIONS_WIDGET_VIEW_UNIVERSAL_IDENTIFIER,
-  name: 'Applications Widget',
+  name: 'Applications on Opportunity Widget',
   icon: 'IconSend',
   objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
   type: ViewType.TABLE_WIDGET,
@@ -38,6 +38,17 @@ export default defineView({
       position: 2,
       isVisible: true,
       size: 140,
+    },
+  ],
+  filters: [
+    {
+      universalIdentifier: 'df46abe6-a328-4a60-b658-e0866af03319',
+      fieldMetadataUniversalIdentifier: APPLICATION_OPPORTUNITY_FIELD_ID,
+      operand: ViewFilterOperand.IS,
+      value: {
+        selectedRecordIds: [],
+        isCurrentRecordSelected: true,
+      },
     },
   ],
 });

@@ -237,5 +237,6 @@ import { UpdateSearchFieldMetadataActionHandlerService } from 'src/engine/worksp
     UpdateSearchFieldMetadataActionHandlerService,
     DeleteSearchFieldMetadataActionHandlerService,
   ],
+  exports: [UpdateLogicFunctionActionHandlerService],
 })
 export class WorkspaceSchemaMigrationRunnerActionHandlersModule {}

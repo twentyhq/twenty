@@ -4,6 +4,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 
 export type CommonBaseQueryRunnerContext = {
   authContext: WorkspaceAuthContext;
@@ -13,4 +14,7 @@ export type CommonBaseQueryRunnerContext = {
   flatIndexMaps?: FlatEntityMaps<FlatIndexMetadata>;
   objectIdByNameSingular: Record<string, string>;
   rolePermissionConfig?: RolePermissionConfig;
+  transactionScope?: WorkspaceTransactionScope;
+  nestedOperationDepth?: number;
+  nestedCreateRecordsCounter?: { count: number };
 };

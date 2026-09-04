@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import { Logger, UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -27,11 +27,14 @@ import {
 } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
+import { countDeliveredRecipients } from 'src/engine/core-modules/emailing-domain/utils/count-delivered-recipients.util';
+import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 
 @UseGuards(
   WorkspaceAuthGuard,
@@ -41,10 +44,13 @@ import { MessageCampaignService } from 'src/modules/emailing/services/message-ca
 @UseFilters(
   EmailGroupAccessGraphqlApiExceptionFilter,
   EmailingDomainGraphqlApiExceptionFilter,
+  ThrottlerGraphqlApiExceptionFilter,
 )
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
 export class EmailingSendResolver {
+  private readonly logger = new Logger(EmailingSendResolver.name);
+
   constructor(
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly messageCampaignService: MessageCampaignService,
@@ -59,6 +65,8 @@ export class EmailingSendResolver {
   async sendEmailViaEmailingDomain(
     @Args('input') input: SendEmailViaDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ): Promise<SendEmailViaDomainOutputDTO> {
     this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
     await this.emailBillingService.validateEmailCreditsOrThrow(
@@ -69,12 +77,13 @@ export class EmailingSendResolver {
     const result = await this.emailingDomainSenderService.sendEmail(
       currentWorkspace.id,
       emailingDomainId,
-      content,
+      { ...content, sendKind: 'TRANSACTIONAL' },
     );
 
-    await this.emailBillingService.billSentEmails({
+    await this.billAcceptedSend({
       workspaceId: currentWorkspace.id,
-      sentEmailCount: 1,
+      userWorkspaceId,
+      result,
     });
 
     return { messageId: result.messageId };
@@ -135,6 +144,8 @@ export class EmailingSendResolver {
       fromAddress: input.fromAddress,
     });
 
+    await this.billAcceptedSend({ workspaceId: currentWorkspace.id, result });
+
     return { messageId: result.messageId };
   }
 
@@ -153,5 +164,31 @@ export class EmailingSendResolver {
       listId: input.listId,
       unsubscribeTopicId: input.unsubscribeTopicId,
     });
+  }
+
+  // The provider has already accepted the mail, so surfacing a billing failure
+  // would invite a retry that sends it a second time.
+  private async billAcceptedSend({
+    workspaceId,
+    userWorkspaceId,
+    result,
+  }: {
+    workspaceId: string;
+    userWorkspaceId?: string;
+    result: EmailingDomainSendEmailResult;
+  }): Promise<void> {
+    await this.emailBillingService
+      .billSentEmails({
+        workspaceId,
+        userWorkspaceId,
+        sentEmailCount: countDeliveredRecipients(result.deliveredRecipients),
+      })
+      .catch((error) => {
+        this.logger.error(
+          `Workspace ${workspaceId} sent email ${result.messageId} but failed to bill it, so this send is unbilled: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      });
   }
 }

@@ -7,7 +7,8 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { SIDE_PANEL_PATH_SEARCH_PARAM } from '@/side-panel/routing/constants/SidePanelPathSearchParam';
 import { useCurrentSidePanelRoutedPath } from '@/side-panel/routing/hooks/useCurrentSidePanelRoutedPath';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
-import { isSidePanelRoutedLocation } from '@/side-panel/routing/utils/isSidePanelRoutedLocation';
+import { isWorkspaceLocationAvailableOnSurface } from '@/app/routing/utils/isWorkspaceLocationAvailableOnSurface';
+import { isSafeInternalPath } from '@/ui/navigation/utils/isSafeInternalPath';
 
 export const SidePanelPathUrlSyncEffect = () => {
   const location = useLocation();
@@ -68,9 +69,12 @@ export const SidePanelPathUrlSyncEffect = () => {
     if (pathInUrlChanged) {
       const isValidPathInUrl =
         isDefined(pathInUrl) &&
-        pathInUrl.startsWith('/') &&
-        !pathInUrl.startsWith('//') &&
-        isSidePanelRoutedLocation(routeObjects, pathInUrl);
+        isSafeInternalPath(pathInUrl) &&
+        isWorkspaceLocationAvailableOnSurface(
+          routeObjects,
+          'side-panel',
+          pathInUrl,
+        );
 
       if (isValidPathInUrl) {
         if (pathInUrl !== currentRoutedPath) {

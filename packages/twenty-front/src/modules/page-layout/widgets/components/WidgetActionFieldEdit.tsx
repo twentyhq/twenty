@@ -99,12 +99,7 @@ export const WidgetActionFieldEdit = ({
       }),
       isFieldFromStandardApplication:
         getIsMetadataItemFromStandardApplication(fieldMetadataItem),
-      fieldMetadataItem: {
-        id: fieldMetadataItem.id,
-        isUIEditable: fieldMetadataItem.isUIEditable ?? true,
-        type: fieldMetadataItem.type,
-        settings: fieldMetadataItem.settings,
-      },
+      fieldMetadataItem,
       fieldDefinition,
       objectPermissionsByObjectMetadataId,
     }),

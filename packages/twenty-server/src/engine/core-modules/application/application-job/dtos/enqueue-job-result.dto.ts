@@ -9,4 +9,7 @@ export class EnqueueJobResultDTO implements EnqueueJobResult {
 
   @Field()
   logicFunctionUniversalIdentifier: string;
+
+  @Field()
+  jobId: string;
 }

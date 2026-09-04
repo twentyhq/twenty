@@ -110,8 +110,12 @@ export const WorkflowDiagramStepNodeEditableContent = ({
         onMouseLeave={handleMouseLeave}
         isConnectable={isNodeConnectable}
         selected={selected}
+        targetHandleCount={data.targetHandleIds?.length}
       >
-        <WorkflowDiagramHandleTarget isConnectable={isNodeConnectable} />
+        <WorkflowDiagramHandleTarget
+          isConnectable={isNodeConnectable}
+          targetHandleIds={data.targetHandleIds}
+        />
 
         <WorkflowNodeIconContainer>
           <WorkflowDiagramStepNodeIcon data={data} />

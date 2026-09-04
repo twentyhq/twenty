@@ -11,6 +11,7 @@ export type AppDevOnceCommandOptions = {
   verbose?: boolean;
   apply?: boolean;
   force?: boolean;
+  inferDeletionFromMissingEntities?: boolean;
 };
 
 export class AppDevOnceCommand {
@@ -34,6 +35,8 @@ export class AppDevOnceCommand {
       verbose: options.verbose,
       apply,
       force: options.force,
+      inferDeletionFromMissingEntities:
+        options.inferDeletionFromMissingEntities,
       onProgress: (message) => console.log(chalk.gray(message)),
       onPlan: (text) => console.log(`\n${text}\n`),
       confirmApply: (deleteCount) =>

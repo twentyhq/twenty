@@ -7,8 +7,6 @@ export type WorkspaceSurfaceContextValue = {
   // Present only when a routed surface owns flow-local editor and UI state.
   routedFlowStateScopeId?: string;
   ownsRouteLocation: boolean;
-  headerTitlePortal: HTMLElement | null;
-  headerActionsPortal: HTMLElement | null;
 };
 
 export const WorkspaceSurfaceContext =
@@ -16,6 +14,4 @@ export const WorkspaceSurfaceContext =
     type: 'main',
     instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     ownsRouteLocation: true,
-    headerTitlePortal: null,
-    headerActionsPortal: null,
   });

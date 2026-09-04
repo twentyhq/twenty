@@ -28,9 +28,13 @@ type WorkspaceMemberSearchState = {
   searchErrorMessage: string | undefined;
 };
 
-export const useWorkspaceMemberSearch = (
-  searchTerm: string,
-): WorkspaceMemberSearchState => {
+export const useWorkspaceMemberSearch = ({
+  searchTerm,
+  shouldListWithoutSearchTerm = false,
+}: {
+  searchTerm: string;
+  shouldListWithoutSearchTerm?: boolean;
+}): WorkspaceMemberSearchState => {
   const [options, setOptions] = useState<WorkspaceMemberOption[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [searchErrorMessage, setSearchErrorMessage] = useState<
@@ -43,7 +47,10 @@ export const useWorkspaceMemberSearch = (
     setOptions([]);
     setSearchErrorMessage(undefined);
 
-    if (!isNonEmptyString(filter)) {
+    if (
+      !isNonEmptyString(filter) &&
+      (!shouldListWithoutSearchTerm || isNonEmptyString(searchTerm))
+    ) {
       setIsSearching(false);
 
       return;
@@ -60,7 +67,7 @@ export const useWorkspaceMemberSearch = (
             '/rest/workspaceMembers',
             {
               query: {
-                filter,
+                ...(isNonEmptyString(filter) ? { filter } : {}),
                 limit: String(WORKSPACE_MEMBER_SEARCH_PAGE_SIZE),
               },
             },
@@ -101,7 +108,7 @@ export const useWorkspaceMemberSearch = (
       cancelled = true;
       clearTimeout(timeoutId);
     };
-  }, [searchTerm]);
+  }, [searchTerm, shouldListWithoutSearchTerm]);
 
   return { options, isSearching, searchErrorMessage };
 };

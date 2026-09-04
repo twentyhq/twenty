@@ -60,7 +60,6 @@ import { FileFolder } from '~/generated-metadata/graphql';
 
 const FRONT_COMPONENT_CLIPBOARD_MAX_LENGTH = 64 * 1024;
 const FRONT_COMPONENT_CLIPBOARD_RATE_LIMIT_MS = 1000;
-const FRONT_COMPONENT_CLIPBOARD_PREVIEW_LENGTH = 30;
 
 const FRONT_COMPONENT_UPLOAD_FILE_NAME_MAX_LENGTH = 200;
 
@@ -159,9 +158,9 @@ export const useFrontComponentExecutionContext = ({
     enqueueWarningSnackBar,
   } = useSnackBar();
   const { closeSidePanelMenu } = useSidePanelMenu();
-  const { copyToClipboard: copyToClipboardWithSnackbar } = useCopyToClipboard();
+  const { copyToClipboardWithoutSuccessSnackBar } = useCopyToClipboard();
   const { uploadFile: uploadFileToFilesField } = useDirectFileUpload();
-  const { t, i18n } = useLingui();
+  const { i18n } = useLingui();
   // oxlint-disable-next-line twenty/no-state-useref
   const lastCopyToClipboardCallAtRef = useRef<number>(Number.NEGATIVE_INFINITY);
   const setCommandMenuItemProgress = useSetAtomFamilyState(
@@ -222,6 +221,7 @@ export const useFrontComponentExecutionContext = ({
         const pathWithHash = isNonEmptyString(params.hash)
           ? `${path}#${encodeURIComponent(params.hash)}`
           : path;
+
         const pageId = openRoutedPageInSidePanel({
           path: pathWithHash,
           pageTitle: params.pageTitle,
@@ -487,15 +487,9 @@ export const useFrontComponentExecutionContext = ({
       }
       lastCopyToClipboardCallAtRef.current = now;
 
-      const preview =
-        text.length > FRONT_COMPONENT_CLIPBOARD_PREVIEW_LENGTH
-          ? `${text.slice(0, FRONT_COMPONENT_CLIPBOARD_PREVIEW_LENGTH)}…`
-          : text;
-
-      await copyToClipboardWithSnackbar(
-        text,
-        t`Application copied "${preview}" to your clipboard`,
-      );
+      // Front components notify their own users, so a host success snackbar
+      // would show up on top of theirs.
+      await copyToClipboardWithoutSuccessSnackBar(text);
     };
 
   const hostUploadFile: FrontComponentHostCommunicationApi['uploadFile'] =

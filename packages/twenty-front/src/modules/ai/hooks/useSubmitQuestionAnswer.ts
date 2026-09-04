@@ -15,10 +15,12 @@ import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/a
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
+import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { markQuestionAnswered } from '@/ai/utils/markQuestionAnswered';
 import { markQuestionPending } from '@/ai/utils/markQuestionPending';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 export const useSubmitQuestionAnswer = () => {
   const apolloClient = useApolloClient();
@@ -94,17 +96,22 @@ export const useSubmitQuestionAnswer = () => {
 
         dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
       } catch (error) {
-        const currentMessages = store.get(messagesAtom);
-
         store.set(isAwaitingFirstChunkAtom, false);
-        store.set(
-          messagesAtom,
-          markQuestionPending(currentMessages, messageId, toolCallId),
-        );
         store.set(agentChatUploadedFilesState.atom, (currentUploadedFiles) => [
           ...uploadedFiles,
           ...currentUploadedFiles,
         ]);
+
+        if (isGraphqlErrorOfType(error, AiChatErrorCode.QUESTION_NOT_PENDING)) {
+          dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+        } else {
+          const currentMessages = store.get(messagesAtom);
+
+          store.set(
+            messagesAtom,
+            markQuestionPending(currentMessages, messageId, toolCallId),
+          );
+        }
 
         enqueueErrorSnackBar({
           apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,

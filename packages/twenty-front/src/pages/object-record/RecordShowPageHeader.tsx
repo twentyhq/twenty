@@ -1,19 +1,9 @@
 import { getObjectMetadataIdentifierFields } from '@/object-metadata/utils/getObjectMetadataIdentifierFields';
 import { ObjectRecordShowPageBreadcrumb } from '@/object-record/record-show/components/ObjectRecordShowPageBreadcrumb';
-import { RecordIdentifierBarCreatedAt } from '@/object-record/record-show/components/RecordIdentifierBarCreatedAt';
 import { RecordIdentifierBarTitle } from '@/object-record/record-show/components/RecordIdentifierBarTitle';
 import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledPanelRecordInfo = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  min-width: 0;
-`;
 
 type RecordShowPageHeaderProps = {
   objectNameSingular: string;
@@ -61,15 +51,12 @@ const RecordShowPagePanelHeader = ({
 }: RecordShowPagePanelHeaderProps) => (
   <PageCardHeader
     title={
-      <StyledPanelRecordInfo>
-        <RecordIdentifierBarTitle
-          objectNameSingular={objectNameSingular}
-          objectRecordId={objectRecordId}
-          variant="side-panel"
-          recordLinkSurface="main"
-        />
-        <RecordIdentifierBarCreatedAt objectRecordId={objectRecordId} />
-      </StyledPanelRecordInfo>
+      <RecordIdentifierBarTitle
+        objectNameSingular={objectNameSingular}
+        objectRecordId={objectRecordId}
+        variant="side-panel"
+        recordLinkSurface="main"
+      />
     }
   />
 );

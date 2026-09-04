@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
 import { AgentChatProvider } from '@/ai/components/AgentChatProvider';
+import { ApplicationsLoadEffect } from '@/applications/components/ApplicationsLoadEffect';
 import { TrackPageViewEffect } from '@/analytics/components/TrackPageViewEffect';
 import { SharedAppProviders } from '@/app/components/SharedAppProviders';
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
@@ -55,6 +56,7 @@ export const WorkspaceAppProviders = () => {
             <ApolloCoreProvider>
               <ApolloAdminProvider>
                 <SSEProvider>
+                  <ApplicationsLoadEffect />
                   <UserThemeProviderEffect />
                   <UserUiScaleProviderEffect />
                   <ContextStoreComponentInstanceContext.Provider

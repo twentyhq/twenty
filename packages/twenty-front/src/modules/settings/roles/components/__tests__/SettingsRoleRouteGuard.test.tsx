@@ -36,8 +36,6 @@ const renderGuard = ({
           type: surface,
           instanceId: `${surface}-surface`,
           ownsRouteLocation: true,
-          headerTitlePortal: null,
-          headerActionsPortal: null,
         }}
       >
         <SettingsRoleRouteGuard roleId="role-1">

@@ -21,7 +21,12 @@ const introspectSchema = async (url: string): Promise<string> => {
   const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query: getIntrospectionQuery() }),
+    // Deprecated input fields are omitted from introspection by default, which
+    // would drop them from the client and break callers a deprecation is meant
+    // to keep working
+    body: JSON.stringify({
+      query: getIntrospectionQuery({ inputValueDeprecation: true }),
+    }),
   });
 
   const json = await response.json();

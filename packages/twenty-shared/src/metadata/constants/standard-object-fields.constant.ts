@@ -774,9 +774,6 @@ export const STANDARD_OBJECT_FIELDS = {
     messageCampaign: {
       universalIdentifier: '77cff00b-a0ba-48d6-80de-0d5ccf14e45b',
     },
-    deliveryStatus: {
-      universalIdentifier: '209254fa-2b89-429d-a72a-c401c4bd5a78',
-    },
     isDraft: {
       universalIdentifier: '20202020-4d3a-4b6e-9c1f-2a5e7b9d0c34',
     },

@@ -31,6 +31,7 @@ export const RecordBoardCardBody = () => {
 
   const {
     labelIdentifierFieldMetadataItem,
+    fieldMetadataItemByFieldMetadataItemId,
     fieldDefinitionByFieldMetadataItemId,
     objectPermissionsByObjectMetadataId,
   } = useRecordIndexContextOrThrow();
@@ -70,8 +71,15 @@ export const RecordBoardCardBody = () => {
       {visibleRecordFieldsExceptLabelIdentifier.map((recordField, index) => {
         const correspondingFieldDefinition =
           fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
+        const fieldMetadataItem =
+          fieldMetadataItemByFieldMetadataItemId[
+            recordField.fieldMetadataItemId
+          ];
 
-        if (!isDefined(correspondingFieldDefinition)) {
+        if (
+          !isDefined(correspondingFieldDefinition) ||
+          !isDefined(fieldMetadataItem)
+        ) {
           return null;
         }
 
@@ -91,12 +99,7 @@ export const RecordBoardCardBody = () => {
                         correspondingFieldDefinition.metadata.applicationId,
                     }),
                   objectPermissions,
-                  fieldMetadataItem: {
-                    id: recordField.fieldMetadataItemId,
-                    isUIEditable:
-                      correspondingFieldDefinition.metadata.isUIEditable ??
-                      true,
-                  },
+                  fieldMetadataItem,
                   fieldDefinition: correspondingFieldDefinition,
                   objectPermissionsByObjectMetadataId,
                 }),

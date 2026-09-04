@@ -163,8 +163,6 @@ describe('settings routed-flow state scope', () => {
             type: 'main',
             instanceId: 'main',
             ownsRouteLocation: true,
-            headerTitlePortal: null,
-            headerActionsPortal: null,
           }}
         >
           <RoutedFlowStateScopeContext.Provider value={null}>
@@ -177,8 +175,6 @@ describe('settings routed-flow state scope', () => {
             instanceId: 'panel-page-1',
             routedFlowStateScopeId: 'panel-flow-1',
             ownsRouteLocation: true,
-            headerTitlePortal: null,
-            headerActionsPortal: null,
           }}
         >
           <RoutedFlowStateScopeContext.Provider value="panel-flow-1">
@@ -191,8 +187,6 @@ describe('settings routed-flow state scope', () => {
             instanceId: 'panel-page-2',
             routedFlowStateScopeId: 'panel-flow-1',
             ownsRouteLocation: true,
-            headerTitlePortal: null,
-            headerActionsPortal: null,
           }}
         >
           <RoutedFlowStateScopeContext.Provider value="panel-flow-1">
@@ -261,8 +255,6 @@ describe('settings routed-flow state scope', () => {
             instanceId: 'panel-page-42',
             routedFlowStateScopeId: 'panel-flow-7',
             ownsRouteLocation: true,
-            headerTitlePortal: null,
-            headerActionsPortal: null,
           }}
         >
           <MemoryRouter initialEntries={['/settings/roles']}>
@@ -275,7 +267,7 @@ describe('settings routed-flow state scope', () => {
                 },
               ]}
             >
-              <WorkspaceRoutes surface="side-panel" />
+              <WorkspaceRoutes />
             </WorkspaceRouteObjectsContext.Provider>
           </MemoryRouter>
         </WorkspaceSurfaceContext.Provider>

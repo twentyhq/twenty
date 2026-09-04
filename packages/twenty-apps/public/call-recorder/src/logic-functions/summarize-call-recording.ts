@@ -5,7 +5,7 @@ import {
   type ObjectRecordBaseEvent,
 } from 'twenty-sdk/define';
 
-import { SUMMARIZE_CALL_RECORDING_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/summarize-call-recording-logic-function-universal-identifier';
+import { SUMMARIZE_CALL_RECORDING_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { generateCallRecordingSummary } from 'src/logic-functions/flows/generate-call-recording-summary.util';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
 

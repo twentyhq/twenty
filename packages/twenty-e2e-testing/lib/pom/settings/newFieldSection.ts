@@ -187,7 +187,7 @@ export class NewFieldSection {
     await this.removeOptionButton.click();
   }
 
-  async changeOptionAPIName() {
+  async changeOptionApiName() {
     // TODO: finish
   }
 

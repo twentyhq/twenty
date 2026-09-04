@@ -62,12 +62,16 @@ export type { RunAgentInput, RunAgentResult } from 'twenty-shared/application';
 
 export { enqueueJob } from '@/sdk/logic-function/jobs/enqueue-job';
 export { enqueueJobs } from '@/sdk/logic-function/jobs/enqueue-jobs';
+export { getJobs } from '@/sdk/logic-function/jobs/get-jobs';
 export type {
   EnqueueJobInput,
+  EnqueueJobItem,
   EnqueueJobOptions,
   EnqueueJobResult,
   EnqueueJobsInput,
   EnqueueJobsResult,
+  JobStatusResult,
+  JobStatusState,
 } from 'twenty-shared/application';
 
 export { createTimelineActivity } from '@/sdk/logic-function/timeline/create-timeline-activity';

@@ -36,6 +36,7 @@ export const WorkflowDiagramDefaultEdgeReadonly = ({
     markerStart,
     markerEnd,
     strategy: data?.edgePathStrategy,
+    parallelEdgeOffset: data?.parallelEdgeOffset,
   });
 
   return (

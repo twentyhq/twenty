@@ -16,7 +16,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Command({
   name: 'upgrade:2-38:pin-ask-ai-command-menu-item',
   description:
-    'Pin the Ask AI command to page headers as an icon-only action across the app',
+    'Pin the Ask AI command to page headers with its updated icon as an icon-only action across the app',
 })
 export class PinAskAiCommandMenuItemCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -49,7 +49,9 @@ export class PinAskAiCommandMenuItemCommand extends ProvisionedWorkspaceCommandR
     }
 
     if (options.dryRun) {
-      this.logger.log(`Would pin the Ask AI command for workspace ${workspaceId}`);
+      this.logger.log(
+        `Would pin the Ask AI command and update its icon for workspace ${workspaceId}`,
+      );
 
       return;
     }

@@ -180,8 +180,6 @@ const renderTabList = ({
             type: isInSidePanel ? 'side-panel' : 'main',
             instanceId: isInSidePanel ? 'side-panel' : 'main',
             ownsRouteLocation: !isInSidePanel,
-            headerTitlePortal: null,
-            headerActionsPortal: null,
           }}
         >
           <PageLayoutComponentInstanceContext.Provider

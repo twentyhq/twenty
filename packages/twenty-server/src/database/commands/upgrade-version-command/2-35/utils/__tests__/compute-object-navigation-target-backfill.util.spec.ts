@@ -121,7 +121,9 @@ describe('computeObjectNavigationTargetBackfill', () => {
       flatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([
         buildFlatCommandMenuItem({
           id: 'command-1',
-          payload: { objectMetadataItemId: 'deleted-object' },
+          payload: {
+            objectMetadataItemId: 'deleted-object',
+          } as unknown as FlatCommandMenuItem['payload'],
         }),
       ]),
       flatObjectMetadataMaps,

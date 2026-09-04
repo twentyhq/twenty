@@ -4,7 +4,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 export const getStepItemIcon = ({
   itemType,
 }: {
-  itemType: InputSchemaPropertyType;
+  itemType?: InputSchemaPropertyType;
 }) => {
   if (itemType === 'string' || itemType === FieldMetadataType.TEXT) {
     return 'IconAbc';

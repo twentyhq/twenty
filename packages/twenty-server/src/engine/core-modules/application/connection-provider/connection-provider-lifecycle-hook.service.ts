@@ -7,6 +7,7 @@ import { type ConnectionProviderEntity } from 'src/engine/core-modules/applicati
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
 import {
   LogicFunctionTriggerJob,
@@ -18,6 +19,11 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type ConnectionLifecycleHook = 'onConnect' | 'onDisconnect';
+
+type ConnectionLifecycleHookProvider = Pick<
+  ConnectionProviderEntity,
+  'id' | 'name'
+>;
 
 const MISSING_LOGIC_FUNCTION_EXCEPTION_CODE_BY_HOOK: Record<
   ConnectionLifecycleHook,
@@ -35,6 +41,7 @@ export class ConnectionProviderLifecycleHookService {
     private readonly connectionProviderService: ConnectionProviderService,
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
@@ -51,19 +58,37 @@ export class ConnectionProviderLifecycleHookService {
     workspaceId: string;
     connectedAccountId: string;
   }): Promise<void> {
-    await this.captureFailures(workspaceId, () =>
-      this.enqueueLogicFunction({
+    await this.captureFailures(workspaceId, async () => {
+      const logicFunctionId = await this.resolveLogicFunctionId({
         hook: 'onConnect',
         logicFunctionUniversalIdentifier:
           provider.onConnectLogicFunctionUniversalIdentifier,
         provider,
         workspaceId,
-        connectedAccountId,
-      }),
-    );
+      });
+
+      if (!isDefined(logicFunctionId)) {
+        return;
+      }
+
+      await this.messageQueueService.add<LogicFunctionTriggerJobData>(
+        LogicFunctionTriggerJob.name,
+        {
+          logicFunctionId,
+          workspaceId,
+          payload: this.buildPayload({ provider, connectedAccountId }),
+        },
+        {
+          retryLimit: 3,
+          backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+        },
+      );
+    });
   }
 
-  async dispatchOnDisconnect({
+  // Runs inline, before the connected account and its token are deleted, so the
+  // hook can still call the provider to release what onConnect set up remotely.
+  async runOnDisconnect({
     connectionProviderId,
     workspaceId,
     connectedAccountId,
@@ -77,15 +102,30 @@ export class ConnectionProviderLifecycleHookService {
         await this.connectionProviderService.findOneByIdOrThrow(
           connectionProviderId,
         );
-
-      await this.enqueueLogicFunction({
+      const logicFunctionId = await this.resolveLogicFunctionId({
         hook: 'onDisconnect',
         logicFunctionUniversalIdentifier:
           provider.onDisconnectLogicFunctionUniversalIdentifier,
         provider,
         workspaceId,
-        connectedAccountId,
       });
+
+      if (!isDefined(logicFunctionId)) {
+        return;
+      }
+
+      const executionResult = await this.logicFunctionExecutorService.execute({
+        logicFunctionId,
+        workspaceId,
+        payload: this.buildPayload({ provider, connectedAccountId }),
+      });
+
+      if (isDefined(executionResult.error)) {
+        throw new ConnectionProviderException(
+          `onDisconnect logic function of connection provider ${provider.id} failed: ${executionResult.error.errorMessage}`,
+          ConnectionProviderExceptionCode.ON_DISCONNECT_LOGIC_FUNCTION_FAILED,
+        );
+      }
     });
   }
 
@@ -104,21 +144,33 @@ export class ConnectionProviderLifecycleHookService {
     }
   }
 
-  private async enqueueLogicFunction({
+  private buildPayload({
+    provider,
+    connectedAccountId,
+  }: {
+    provider: ConnectionLifecycleHookProvider;
+    connectedAccountId: string;
+  }) {
+    return {
+      connectionProviderId: provider.id,
+      connectionProviderName: provider.name,
+      connectedAccountId,
+    };
+  }
+
+  private async resolveLogicFunctionId({
     hook,
     logicFunctionUniversalIdentifier,
     provider,
     workspaceId,
-    connectedAccountId,
   }: {
     hook: ConnectionLifecycleHook;
     logicFunctionUniversalIdentifier: string | null;
-    provider: Pick<ConnectionProviderEntity, 'id' | 'name'>;
+    provider: ConnectionLifecycleHookProvider;
     workspaceId: string;
-    connectedAccountId: string;
-  }): Promise<void> {
+  }): Promise<string | undefined> {
     if (!isDefined(logicFunctionUniversalIdentifier)) {
-      return;
+      return undefined;
     }
 
     const { flatLogicFunctionMaps } =
@@ -141,21 +193,6 @@ export class ConnectionProviderLifecycleHookService {
       );
     }
 
-    await this.messageQueueService.add<LogicFunctionTriggerJobData>(
-      LogicFunctionTriggerJob.name,
-      {
-        logicFunctionId: flatLogicFunction.id,
-        workspaceId,
-        payload: {
-          connectionProviderId: provider.id,
-          connectionProviderName: provider.name,
-          connectedAccountId,
-        },
-      },
-      {
-        retryLimit: 3,
-        backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
-      },
-    );
+    return flatLogicFunction.id;
   }
 }

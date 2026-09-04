@@ -17,13 +17,11 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
-import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
+import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
 import {
@@ -36,9 +34,13 @@ import {
   type WorkflowBranchExecutorInput,
   type WorkflowExecutorInput,
 } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
+import { getStepRetryAttempt } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-attempt.util';
+import { getStepRetryDelayMs } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-delay-ms.util';
+import { stepHasRetryAttemptsLeft } from 'src/modules/workflow/workflow-executor/utils/step-has-retry-attempts-left.util';
 import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-step.util';
 import { shouldFailSafely } from 'src/modules/workflow/workflow-executor/utils/should-fail-safely.util';
 import { shouldSkipStepExecution } from 'src/modules/workflow/workflow-executor/utils/should-skip-step-execution.util';
+import { stepShouldContinueOnFailure } from 'src/modules/workflow/workflow-executor/utils/step-should-continue-on-failure.util';
 import { workflowShouldFail } from 'src/modules/workflow/workflow-executor/utils/workflow-should-fail.util';
 import { workflowShouldKeepRunning } from 'src/modules/workflow/workflow-executor/utils/workflow-should-keep-running.util';
 import { isWorkflowIfElseAction } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/guards/is-workflow-if-else-action.guard';
@@ -58,7 +60,7 @@ const MAX_EXECUTED_STEPS_COUNT = 20;
 export class WorkflowExecutorWorkspaceService {
   constructor(
     private readonly workflowActionFactory: WorkflowActionFactory,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly usageRecorderService: UsageRecorderService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly billingService: BillingService,
     private readonly billingUsageService: BillingUsageService,
@@ -143,13 +145,36 @@ export class WorkflowExecutorWorkspaceService {
         workspaceId,
       });
 
+      if (isDefined(actionOutput.error) && !actionOutput.isUserError) {
+        const canRetryStep = stepHasRetryAttemptsLeft({
+          step: stepToExecute,
+          stepInfo: stepInfos[stepId],
+        });
+
+        if (canRetryStep) {
+          await this.scheduleStepRetry({
+            stepId,
+            stepInfo: stepInfos[stepId],
+            error: actionOutput.error,
+            retryDelayMs: getStepRetryDelayMs({ stepInfo: stepInfos[stepId] }),
+            workflowRunId,
+            workspaceId,
+          });
+
+          return;
+        }
+      }
+
       if (isDefined(actionOutput.error)) {
         const enclosingIterator = findEnclosingIteratorWithContinueOnFailure({
           failedStepId: stepId,
           steps,
         });
 
-        if (isDefined(enclosingIterator)) {
+        if (
+          isDefined(enclosingIterator) ||
+          stepShouldContinueOnFailure(stepToExecute)
+        ) {
           actionOutput.shouldFailSafely = true;
         }
       }
@@ -324,7 +349,6 @@ export class WorkflowExecutorWorkspaceService {
     workspaceId: string,
     workflowId: string,
   ) {
-    let periodStart: Date | undefined;
     if (this.billingService.isBillingEnabled()) {
       const { currentBillingSubscription } =
         await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -332,8 +356,6 @@ export class WorkflowExecutorWorkspaceService {
         ]);
 
       if (currentBillingSubscription !== NO_BILLING_SUBSCRIPTION) {
-        periodStart = currentBillingSubscription.currentPeriodStart;
-
         await this.billingUsageService.decrementAvailableCreditsInCache({
           workspaceId,
           usedCredits: 100,
@@ -341,21 +363,17 @@ export class WorkflowExecutorWorkspaceService {
       }
     }
 
-    this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
-      USAGE_RECORDED,
-      [
-        {
-          resourceType: UsageResourceType.WORKFLOW,
-          operationType: UsageOperationType.WORKFLOW_EXECUTION,
-          creditsUsedMicro: 100,
-          quantity: 1,
-          unit: UsageUnit.INVOCATION,
-          resourceId: workflowId,
-          periodStart,
-        },
-      ],
-      workspaceId,
-    );
+    await this.usageRecorderService.record(workspaceId, [
+      {
+        resourceType: UsageResourceType.WORKFLOW,
+        operationType: UsageOperationType.WORKFLOW_EXECUTION,
+        creditsUsedMicro: 100,
+        quantity: 1,
+        unit: UsageUnit.INVOCATION,
+        resourceId: workflowId,
+        spenders: { workflowId },
+      },
+    ]);
   }
 
   private async processStepExecutionResult({
@@ -488,6 +506,7 @@ export class WorkflowExecutorWorkspaceService {
 
       return {
         error: error.message ?? 'Execution result error, no data or error',
+        isUserError,
       };
     }
   }
@@ -591,6 +610,61 @@ export class WorkflowExecutorWorkspaceService {
         shouldComputeWorkflowRunStatus: false,
         executedStepsCount,
       });
+    }
+  }
+
+  private async scheduleStepRetry({
+    stepId,
+    stepInfo,
+    error,
+    retryDelayMs,
+    workflowRunId,
+    workspaceId,
+  }: {
+    stepId: string;
+    stepInfo?: WorkflowRunStepInfo;
+    error: string;
+    retryDelayMs: number;
+    workflowRunId: string;
+    workspaceId: string;
+  }) {
+    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfos({
+      stepInfos: {
+        [stepId]: {
+          status: StepStatus.PENDING,
+          error,
+          history: [
+            ...(stepInfo?.history ?? []),
+            {
+              status: StepStatus.FAILED,
+              error,
+              retryAttempt: getStepRetryAttempt({ stepInfo }) + 1,
+            },
+          ],
+        },
+      },
+      workflowRunId,
+      workspaceId,
+    });
+
+    try {
+      await this.messageQueueService.add<RunWorkflowJobData>(
+        RUN_WORKFLOW_JOB_NAME,
+        {
+          workspaceId,
+          workflowRunId,
+          stepIdsToRetry: [stepId],
+        },
+        { ...buildRunWorkflowJobOptions(workflowRunId), delay: retryDelayMs },
+      );
+    } catch (enqueueError) {
+      await this.workflowRunWorkspaceService.updateWorkflowRunStepInfos({
+        stepInfos: { [stepId]: { status: StepStatus.FAILED, error } },
+        workflowRunId,
+        workspaceId,
+      });
+
+      throw enqueueError;
     }
   }
 

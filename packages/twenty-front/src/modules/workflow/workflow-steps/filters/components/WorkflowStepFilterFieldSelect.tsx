@@ -5,9 +5,14 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { WorkflowDropdownStepOutputItems } from '@/workflow/workflow-steps/components/WorkflowDropdownStepOutputItems';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
+import { useUpdateStepFilterFromVariable } from '@/workflow/workflow-steps/filters/hooks/useUpdateStepFilterFromVariable';
 import { WorkflowVariablesDropdownSteps } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps';
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variables/hooks/useAvailableVariablesInWorkflowStep';
 import { useSearchVariable } from '@/workflow/workflow-variables/hooks/useSearchVariable';
+import {
+  type WorkflowVariableSelection,
+  type WorkflowVariableStepSelection,
+} from '@/workflow/workflow-variables/types/WorkflowVariableSelection';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 
 import { useLingui } from '@lingui/react/macro';
@@ -41,6 +46,9 @@ export const WorkflowStepFilterFieldSelect = ({
   );
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
+  const { updateStepFilterFromVariable } = useUpdateStepFilterFromVariable({
+    stepFilter,
+  });
   const { getIcon } = useIcons();
   const { getSelectIconPropsFromObjectMetadataItem } =
     useObjectMetadataSelectHelpers();
@@ -60,6 +68,7 @@ export const WorkflowStepFilterFieldSelect = ({
   const [selectedStep, setSelectedStep] = useState<
     StepOutputSchemaV2 | undefined
   >(initialStep);
+  const [selectedPath, setSelectedPath] = useState<string[]>([]);
 
   const stepId = extractRawVariableNamePart({
     rawVariableName: stepFilter.stepOutputKey,
@@ -79,7 +88,11 @@ export const WorkflowStepFilterFieldSelect = ({
 
   const dropdownId = `step-filter-field-${stepFilter.id}`;
 
-  const handleStepSelect = (stepId: string) => {
+  const handleStepSelect = ({
+    stepId,
+    path = [],
+  }: WorkflowVariableStepSelection) => {
+    setSelectedPath(path);
     setSelectedStep(
       availableVariablesInWorkflowStep.find((step) => step.id === stepId),
     );
@@ -87,11 +100,33 @@ export const WorkflowStepFilterFieldSelect = ({
 
   const handleSubItemSelect = () => {
     setSelectedStep(initialStep);
+    setSelectedPath([]);
     closeDropdown(dropdownId);
   };
 
   const handleBack = () => {
     setSelectedStep(undefined);
+  };
+
+  const handleVariableSelect = ({
+    rawVariableName,
+    stepId,
+    isFullRecord,
+  }: WorkflowVariableSelection) => {
+    const step = availableVariablesInWorkflowStep.find(
+      (item) => item.id === stepId,
+    );
+
+    if (!isDefined(step)) {
+      return;
+    }
+
+    updateStepFilterFromVariable({
+      rawVariableName,
+      stepType: step.type,
+      isFullRecord,
+    });
+    handleSubItemSelect();
   };
 
   const isSelectedFieldNotFound = !isDefined(variableLabel);
@@ -177,11 +212,15 @@ export const WorkflowStepFilterFieldSelect = ({
               dropdownId={dropdownId}
               steps={availableVariablesInWorkflowStep}
               onSelect={handleStepSelect}
+              onVariableSelect={handleVariableSelect}
+              shouldDisplaySpecialItems={false}
+              shouldDisplayRecordObjects
             />
           ) : (
             <WorkflowDropdownStepOutputItems
               stepFilter={stepFilter}
               step={selectedStep}
+              initialPath={selectedPath}
               onSelect={handleSubItemSelect}
               onBack={handleBack}
             />

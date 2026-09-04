@@ -1,34 +1,29 @@
-# My Twenty App
+# Fathom
 
-Describe your app in one or two sentences.
+**Bring Fathom meeting recordings, transcripts, and insights into Twenty.**
 
-## Features
+## What you get
 
-List the top things your app does, for example:
+- Fathom recordings saved as Call Recordings
+- Transcripts, summaries, and action items
+- Links to matching calendar events when the match is unambiguous
+- Automatic sync for new recordings
+- A 31-day import when a Fathom account is connected, and manual imports of
+  older history
+- Workflow and AI actions to sync one recording or list recordings by
+  participant
 
-- Feature one
-- Feature two
-- Feature three
+## Requirements
 
-## Getting started
+Each person connects their Fathom account to Twenty. The connected Fathom
+account decides which recordings Twenty can import; the Fathom and Twenty login
+emails do not need to match.
 
-Setup instructions live in [SETUP.md](SETUP.md).
+## Heads up
 
-## Publishing
+- Twenty only links a recording to a calendar event when its meeting URL and
+  scheduled time identify one clear match.
+- Disconnect and reconnect Fathom after changing the webhook URL or webhook
+  scopes so Fathom receives the new registration.
 
-The `Publish` workflow (`.github/workflows/publish.yml`) publishes the app to npm with provenance using [npm trusted publishing](https://docs.npmjs.com/trusted-publishers). To publish:
-
-1. On npmjs.com register this repository as a trusted publisher of your package, pointing at the `publish.yml` workflow.
-2. Bump the version in `package.json`, then push a version tag (e.g. `git tag v1.0.0 && git push --tags`) or run the workflow manually from the Actions tab.
-
-Publishing with provenance is also how you prove ownership when claiming your app in a Twenty marketplace.
-
-## Changelog
-
-Notable changes are documented in [CHANGELOG.md](CHANGELOG.md).
-
-## Learn more
-
-- [Twenty Apps documentation](https://docs.twenty.com/developers/extend/apps/getting-started/quick-start)
-- [twenty-sdk CLI reference](https://www.npmjs.com/package/twenty-sdk)
-- [Discord](https://discord.gg/cx5n4Jzs57)
+Development setup lives in [SETUP.md](SETUP.md).

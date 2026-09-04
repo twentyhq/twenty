@@ -6,6 +6,7 @@ import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { RecordIndexPageHeaderIcon } from '@/object-record/record-index/components/RecordIndexPageHeaderIcon';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { SidePanelPageTitleSyncEffect } from '@/side-panel/components/SidePanelPageTitleSyncEffect';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
@@ -72,20 +73,23 @@ export const RecordIndexPageHeader = () => {
   );
 
   return (
-    <PageCardHeader
-      icon={
-        <RecordIndexPageHeaderIcon objectMetadataItem={objectMetadataItem} />
-      }
-      title={pageHeaderTitle}
-      actionButton={
-        isDefined(contextStoreCurrentViewId) ? (
-          <>
-            <RecordIndexCommandMenu />
-            {!isLayoutCustomizationModeEnabled &&
-              workspaceSurface.type === 'main' && <SidePanelToggleButton />}
-          </>
-        ) : undefined
-      }
-    />
+    <>
+      <SidePanelPageTitleSyncEffect pageTitle={label} />
+      <PageCardHeader
+        icon={
+          <RecordIndexPageHeaderIcon objectMetadataItem={objectMetadataItem} />
+        }
+        title={pageHeaderTitle}
+        actionButton={
+          isDefined(contextStoreCurrentViewId) ? (
+            <>
+              <RecordIndexCommandMenu />
+              {!isLayoutCustomizationModeEnabled &&
+                workspaceSurface.type === 'main' && <SidePanelToggleButton />}
+            </>
+          ) : undefined
+        }
+      />
+    </>
   );
 };

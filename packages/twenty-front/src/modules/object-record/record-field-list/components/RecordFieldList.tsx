@@ -119,10 +119,7 @@ export const RecordFieldList = ({
                     }),
                   isFieldFromStandardApplication:
                     getIsMetadataItemFromStandardApplication(fieldMetadataItem),
-                  fieldMetadataItem: {
-                    id: fieldMetadataItem.id,
-                    isUIEditable: fieldMetadataItem.isUIEditable ?? true,
-                  },
+                  fieldMetadataItem,
                   fieldDefinition,
                   objectPermissionsByObjectMetadataId,
                 }),
@@ -196,10 +193,7 @@ export const RecordFieldList = ({
                     }),
                   isFieldFromStandardApplication:
                     getIsMetadataItemFromStandardApplication(fieldMetadataItem),
-                  fieldMetadataItem: {
-                    id: fieldMetadataItem.id,
-                    isUIEditable: fieldMetadataItem.isUIEditable ?? true,
-                  },
+                  fieldMetadataItem,
                   fieldDefinition,
                   objectPermissionsByObjectMetadataId,
                 }),

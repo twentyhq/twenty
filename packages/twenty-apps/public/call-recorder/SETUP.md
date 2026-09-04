@@ -35,11 +35,12 @@ Set these on the application registration after installing
 | `CALL_RECORDER_RECORDING_RETENTION_HOURS` | No | How long Recall.ai retains the source media after processing. Defaults to `166` hours (6 days 22 hours), just under Recall's 168-hour free-storage window. Values above `168` may incur Recall storage charges. Twenty's ingested copy is unaffected. |
 | `RECALL_WEBHOOK_SECRET` | Yes | Svix signing secret (`whsec_…`) used to verify incoming Recall webhooks. |
 
-> **Bot behavior settings** (display name, join timing, lobby and leave
-> timeouts), the transcription provider (`CALL_RECORDER_TRANSCRIPT_PROVIDER`)
-> and the summary settings (`CALL_RECORDER_SUMMARY_ENABLED`,
-> `CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT`) are **application variables**
-> that a workspace admin tunes inside the app — not server variables.
+> **Bot behavior settings** (display name, recording notice, join timing, lobby
+> and leave timeouts), the transcription provider
+> (`CALL_RECORDER_TRANSCRIPT_PROVIDER`) and the summary settings
+> (`CALL_RECORDER_SUMMARY_ENABLED`,
+> `CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT`) are **application variables** that
+> a workspace admin tunes inside the app — not server variables.
 
 ## Configuring the Recall webhook
 

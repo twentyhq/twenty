@@ -1,0 +1,10 @@
+ALTER TABLE usageEvent ADD COLUMN IF NOT EXISTS apiKeyId String DEFAULT '';
+
+ALTER TABLE usageEvent ADD COLUMN IF NOT EXISTS applicationId String DEFAULT '';
+
+ALTER TABLE usageEvent ADD COLUMN IF NOT EXISTS agentId String DEFAULT '';
+
+ALTER TABLE usageEvent ADD COLUMN IF NOT EXISTS workflowId String DEFAULT '';
+
+ALTER TABLE usageEvent ADD COLUMN IF NOT EXISTS logicFunctionId String DEFAULT '';
+

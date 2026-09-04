@@ -37,8 +37,8 @@ export const useSendMessageCampaign = () => {
         return false;
       }
 
-      const { queuedCount, skipped } = queued;
-      const skippedCount = skipped.noEmail + skipped.deduped + skipped.overCap;
+      const { queuedCount, audience } = queued;
+      const skippedCount = audience.totalMembers - audience.sendable;
 
       if (queuedCount === 0) {
         enqueueErrorSnackBar({

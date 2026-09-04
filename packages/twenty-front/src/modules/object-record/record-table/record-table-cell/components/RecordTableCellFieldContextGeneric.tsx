@@ -37,15 +37,22 @@ export const RecordTableCellFieldContextGeneric = ({
 
   const {
     objectPermissionsByObjectMetadataId,
+    fieldMetadataItemByFieldMetadataItemId,
     fieldDefinitionByFieldMetadataItemId,
   } = useRecordIndexContextOrThrow();
 
   const fieldDefinition =
     fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
+  const fieldMetadataItem =
+    fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
   const updateRecord = useContext(RecordTableUpdateContext);
   const getIsMetadataItemFromStandardApplication =
     useGetIsMetadataItemFromStandardApplication();
+
+  if (!isDefined(fieldMetadataItem)) {
+    return null;
+  }
 
   let hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
   let isInvalidJunctionRelation = false;
@@ -125,10 +132,7 @@ export const RecordTableCellFieldContextGeneric = ({
                 applicationId: fieldDefinition.metadata.applicationId,
               }),
             objectPermissions,
-            fieldMetadataItem: {
-              id: fieldDefinition.fieldMetadataId,
-              isUIEditable: fieldDefinition.metadata.isUIEditable ?? true,
-            },
+            fieldMetadataItem,
             fieldDefinition,
             objectPermissionsByObjectMetadataId,
           }),

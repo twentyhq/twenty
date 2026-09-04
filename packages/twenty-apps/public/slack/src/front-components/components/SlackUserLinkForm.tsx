@@ -33,15 +33,8 @@ const StyledResolveError = styled.span`
   font-size: ${() => themeCssVariables.font.size.xs};
 `;
 
-const StyledDisclosureButton = styled.button`
+const StyledDisclosure = styled.div`
   align-self: flex-start;
-  background: transparent;
-  border: none;
-  color: ${() => themeCssVariables.color.blue};
-  cursor: pointer;
-  font-family: ${() => themeCssVariables.font.family};
-  font-size: ${() => themeCssVariables.font.size.sm};
-  padding: 0;
 `;
 
 const StyledActions = styled.div`
@@ -200,12 +193,15 @@ export const SlackUserLinkForm = ({
                 disabled={isSubmitting}
               />
             ) : (
-              <StyledDisclosureButton
-                type="button"
-                onClick={() => setIsConnectUser(true)}
-              >
-                Guest or Slack Connect user? Link by Slack ID instead
-              </StyledDisclosureButton>
+              <StyledDisclosure>
+                <Button
+                  type="button"
+                  title="Guest or Slack Connect user? Link by Slack ID instead"
+                  size="small"
+                  variant="tertiary"
+                  onClick={() => setIsConnectUser(true)}
+                />
+              </StyledDisclosure>
             )}
             {isResolving ? (
               <SlackUserLinkFormHint>

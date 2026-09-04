@@ -12,6 +12,9 @@ export class CampaignAudiencePreviewDTO {
   duplicateEmails: number;
 
   @Field(() => Int)
+  overCap: number;
+
+  @Field(() => Int)
   globallyUnsubscribed: number;
 
   @Field(() => Int)

@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { MarketplaceCatalogSyncCronCommand } from 'src/engine/core-modules/application/application-marketplace/crons/commands/marketplace-catalog-sync.cron.command';
 import { StaleRegistrationCleanupCronCommand } from 'src/engine/core-modules/application/application-oauth/stale-registration-cleanup/commands/stale-registration-cleanup.cron.command';
 import { ApplicationVersionCheckCronCommand } from 'src/engine/core-modules/application/application-upgrade/crons/commands/application-version-check.cron.command';
+import { ApplicationRecurringChargeCronCommand } from 'src/engine/core-modules/billing/app-billing/crons/commands/application-recurring-charge.cron.command';
 import { BillingReminderCronCommand } from 'src/engine/core-modules/billing/reminders/crons/commands/billing-reminder.cron.command';
 import { CheckEmailingDomainVerificationCronCommand } from 'src/engine/core-modules/emailing-domain/crons/commands/check-emailing-domain-verification.cron.command';
 import { EnterpriseKeyValidationCronCommand } from 'src/engine/core-modules/enterprise/cron/command/enterprise-key-validation.cron.command';
@@ -19,6 +20,7 @@ import { UserSessionCleanupCronCommand } from 'src/engine/core-modules/user-sess
 import { CheckCustomDomainValidRecordsCronCommand } from 'src/engine/core-modules/workspace/crons/commands/check-custom-domain-valid-records.cron.command';
 import { WebhookSubscriptionRenewalCronCommand } from 'src/modules/connected-account/webhook-subscription-manager/crons/commands/webhook-subscription-renewal.cron.command';
 import { EmailingOngoingStaleCronCommand } from 'src/modules/emailing/crons/commands/emailing-ongoing-stale.cron.command';
+import { ReconcileCampaignStatsCronCommand } from 'src/modules/emailing/crons/commands/reconcile-campaign-stats.cron.command';
 import { TrashCleanupCronCommand } from 'src/engine/trash-cleanup/commands/trash-cleanup.cron.command';
 import { CleanOnboardingWorkspacesCronCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-onboarding-workspaces.cron.command';
 import { CleanSuspendedWorkspacesCronCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-suspended-workspaces.cron.command';
@@ -57,6 +59,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly webhookSubscriptionRenewalCronCommand: WebhookSubscriptionRenewalCronCommand,
 
     private readonly emailingOngoingStaleCronCommand: EmailingOngoingStaleCronCommand,
+    private readonly reconcileCampaignStatsCronCommand: ReconcileCampaignStatsCronCommand,
 
     private readonly workflowCronTriggerCronCommand: WorkflowCronTriggerCronCommand,
     private readonly workflowRunEnqueueCronCommand: WorkflowRunEnqueueCronCommand,
@@ -79,6 +82,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly staleRegistrationCleanupCronCommand: StaleRegistrationCleanupCronCommand,
     private readonly pendingFileCleanupCronCommand: PendingFileCleanupCronCommand,
     private readonly billingReminderCronCommand: BillingReminderCronCommand,
+    private readonly applicationRecurringChargeCronCommand: ApplicationRecurringChargeCronCommand,
     private readonly userSessionCleanupCronCommand: UserSessionCleanupCronCommand,
     private readonly twentyConfigService: TwentyConfigService,
   ) {
@@ -138,6 +142,10 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'EmailingOngoingStale',
         command: this.emailingOngoingStaleCronCommand,
+      },
+      {
+        name: 'ReconcileCampaignStats',
+        command: this.reconcileCampaignStatsCronCommand,
       },
       {
         name: 'CheckCustomDomainValidRecords',
@@ -220,6 +228,11 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'BillingReminder',
         command: this.billingReminderCronCommand,
+        isEnabled: isBillingEnabled,
+      },
+      {
+        name: 'ApplicationRecurringCharge',
+        command: this.applicationRecurringChargeCronCommand,
         isEnabled: isBillingEnabled,
       },
       {

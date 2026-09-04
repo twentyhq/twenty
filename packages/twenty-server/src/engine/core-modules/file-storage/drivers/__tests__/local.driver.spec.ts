@@ -179,6 +179,56 @@ describe('LocalDriver', () => {
     });
   });
 
+  describe('readFilePrefix', () => {
+    it('should read only the leading bytes', async () => {
+      const storagePath = await createTempDirectory('local-driver-storage-');
+      const folderPath = path.join(storagePath, 'workspace', 'app');
+
+      await mkdir(folderPath, { recursive: true });
+      await writeFile(path.join(folderPath, 'file.txt'), '0123456789');
+
+      const driver = new LocalDriver({ storagePath });
+
+      await expect(
+        driver.readFilePrefix({
+          filePath: 'workspace/app/file.txt',
+          byteCount: 4,
+        }),
+      ).resolves.toEqual(Buffer.from('0123'));
+    });
+
+    it('should return the whole file when it is shorter than requested', async () => {
+      const storagePath = await createTempDirectory('local-driver-storage-');
+      const folderPath = path.join(storagePath, 'workspace', 'app');
+
+      await mkdir(folderPath, { recursive: true });
+      await writeFile(path.join(folderPath, 'file.txt'), '01');
+
+      const driver = new LocalDriver({ storagePath });
+
+      await expect(
+        driver.readFilePrefix({
+          filePath: 'workspace/app/file.txt',
+          byteCount: 4,
+        }),
+      ).resolves.toEqual(Buffer.from('01'));
+    });
+
+    it('should reject a missing file with FILE_NOT_FOUND', async () => {
+      const storagePath = await createTempDirectory('local-driver-storage-');
+      const driver = new LocalDriver({ storagePath });
+
+      await expect(
+        driver.readFilePrefix({
+          filePath: 'workspace/app/missing.txt',
+          byteCount: 4,
+        }),
+      ).rejects.toMatchObject({
+        code: FileStorageExceptionCode.FILE_NOT_FOUND,
+      });
+    });
+  });
+
   describe('getFileMetadata', () => {
     it('should return the file size', async () => {
       const storagePath = await createTempDirectory('local-driver-storage-');

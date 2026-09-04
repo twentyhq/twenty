@@ -3,6 +3,7 @@
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 
 export type UsageEvent = {
   resourceType: UsageResourceType;
@@ -13,5 +14,6 @@ export type UsageEvent = {
   periodStart?: Date;
   resourceId?: string | null;
   resourceContext?: string | null;
-  userWorkspaceId?: string | null;
+  spenders?: UsageSpenders;
+  metadata?: Record<string, unknown>;
 };

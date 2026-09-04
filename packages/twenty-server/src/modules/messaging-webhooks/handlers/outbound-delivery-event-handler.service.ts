@@ -22,6 +22,7 @@ export class OutboundDeliveryEventHandlerService {
       event,
       {
         id: event.dedupeKey,
+        allowDuplicatedPrefixes: true,
         retryLimit: DELIVERY_EVENT_RETRY_LIMIT,
         backoff: CAMPAIGN_SEND_RETRY_BACKOFF,
       },

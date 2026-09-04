@@ -154,7 +154,7 @@ Import them from `twenty-sdk/front-component`:
 - **`Command`** — Runs an async callback via the `execute` prop.
 - **`CommandLink`** — Navigates to an app path. Props: `to`, `params`, `queryParams`, `options`.
 - **`CommandModal`** — Opens a confirmation modal. If the user confirms, executes the `execute` callback. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-- **`CommandOpenSidePanelPage`** — Opens content in the side panel. Workspace routes use the same typed `to`, `params`, and `queryParams` props as `CommandLink`, plus optional `hash`, `pageTitle`, and `resetNavigationStack` props. `pageTitle` overrides the panel header title, while `resetNavigationStack` clears earlier panel pages before opening the route. Purpose-built panel tools use their own page-specific props.
+- **`CommandOpenSidePanelPage`** — Opens content in the side panel. Routed pages use the same typed `to`, `params`, and `queryParams` props as `CommandLink`, plus optional `hash`, `pageTitle`, and `resetNavigationStack` props. The workspace route registry decides whether the requested `AppPath` supports the side panel. `pageTitle` overrides the panel header title, while `resetNavigationStack` clears earlier panel pages before opening the route. Purpose-built panel tools use their own page-specific props.
 
 Here is a full example of a headless front component using `Command` to run an action from the command menu:
 

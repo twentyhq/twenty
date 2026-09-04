@@ -4,6 +4,8 @@ import {
   type OnModuleInit,
 } from '@nestjs/common';
 
+import v8 from 'v8';
+
 import * as Sentry from '@sentry/node';
 import {
   type JobsOptions,
@@ -22,6 +24,8 @@ import {
 import {
   type InFlightQueueJob,
   type MessageQueueDriver,
+  type QueueJobDetails,
+  type QueueJobToAdd,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 import {
   type MessageQueueJob,
@@ -41,6 +45,7 @@ import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/
 export type BullMQDriverOptions = QueueOptions;
 
 const V4_LENGTH = 36;
+const BYTES_PER_MEGABYTE = 1024 * 1024;
 
 export class BullMQDriver
   implements MessageQueueDriver, OnModuleDestroy, OnModuleInit
@@ -209,6 +214,10 @@ export class BullMQDriver
 
           // TODO: Correctly support for job.id
           const timeStart = performance.now();
+          // TODO: diagnostic only — remove once the worker OOM root cause is
+          // confirmed. Attribute heap growth to job types, including jobs that
+          // throw under memory pressure (logged from the finally below).
+          const heapUsedBeforeBytes = v8.getHeapStatistics().used_heap_size;
           const workspaceId = job.data?.workspaceId;
           const workspaceSuffix = workspaceId
             ? ` [workspace=${workspaceId}]`
@@ -217,20 +226,30 @@ export class BullMQDriver
           this.logger.log(
             `Processing job ${job.id} with name ${job.name} on queue ${queueName}${workspaceSuffix}`,
           );
-          await handler({
-            data: job.data,
-            id: job.id ?? '',
-            name: job.name,
-            retryLimit: Math.max(0, (job.opts.attempts ?? 1) - 1),
-            updateData: (data) => job.updateData(data),
-            abortSignal,
-          });
-          const timeEnd = performance.now();
-          const executionTime = timeEnd - timeStart;
 
-          this.logger.log(
-            `Job ${job.id} with name ${job.name} processed on queue ${queueName} in ${executionTime.toFixed(2)}ms${workspaceSuffix}`,
-          );
+          let jobSucceeded = false;
+
+          try {
+            await handler({
+              data: job.data,
+              id: job.id ?? '',
+              name: job.name,
+              retryLimit: Math.max(0, (job.opts.attempts ?? 1) - 1),
+              updateData: (data) => job.updateData(data),
+              abortSignal,
+            });
+            jobSucceeded = true;
+          } finally {
+            const executionTime = performance.now() - timeStart;
+            const heapUsedAfterBytes = v8.getHeapStatistics().used_heap_size;
+            const heapDeltaMegabytes =
+              (heapUsedAfterBytes - heapUsedBeforeBytes) / BYTES_PER_MEGABYTE;
+            const heapUsedMegabytes = heapUsedAfterBytes / BYTES_PER_MEGABYTE;
+
+            this.logger.log(
+              `Job ${job.id} with name ${job.name} ${jobSucceeded ? 'processed' : 'failed'} on queue ${queueName} in ${executionTime.toFixed(2)}ms${workspaceSuffix} heapDeltaMB=${heapDeltaMegabytes.toFixed(1)} heapUsedMB=${heapUsedMegabytes.toFixed(0)}`,
+            );
+          }
         }),
       workerOptions,
     );
@@ -366,7 +385,7 @@ export class BullMQDriver
     jobName: string,
     data: T,
     options?: QueueJobOptions,
-  ): Promise<void> {
+  ): Promise<string | undefined> {
     if (!this.queueMap[queueName]) {
       throw new Error(
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
@@ -388,39 +407,91 @@ export class BullMQDriver
 
     const queueOptions = this.buildJobsOptions({ queueName, options });
 
-    await this.queueMap[queueName].add(jobName, data, queueOptions);
+    const job = await this.queueMap[queueName].add(jobName, data, queueOptions);
+
+    return job.id;
   }
 
-  async bulkAdd<T>(
+  async bulkAdd<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     jobName: string,
-    dataItems: T[],
+    jobs: QueueJobToAdd<T>[],
     options?: QueueJobOptions,
-  ): Promise<void> {
+  ): Promise<string[]> {
     if (!this.queueMap[queueName]) {
       throw new Error(
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
       );
     }
 
-    if (dataItems.length === 0) {
-      return;
+    if (jobs.length === 0) {
+      return [];
     }
 
     const queueOptions = this.buildJobsOptions({ queueName, options });
 
-    await this.queueMap[queueName].addBulk(
-      dataItems.map((data, index) => ({
+    const addedJobs = await this.queueMap[queueName].addBulk(
+      jobs.map(({ data, jobId }, index) => ({
         name: jobName,
         data,
         opts: {
           ...queueOptions,
-          jobId: queueOptions.jobId
-            ? `${queueOptions.jobId}-${index}`
-            : undefined,
+          jobId:
+            jobId ??
+            (queueOptions.jobId ? `${queueOptions.jobId}-${index}` : undefined),
         },
       })),
     );
+
+    return addedJobs.map((job) => job.id).filter(isDefined);
+  }
+
+  async getJobs<T extends MessageQueueJobData>(
+    queueName: MessageQueue,
+    jobIds: string[],
+  ): Promise<Partial<Record<string, QueueJobDetails<T>>>> {
+    if (!this.queueMap[queueName]) {
+      throw new Error(
+        `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
+      );
+    }
+
+    const jobs = await Promise.all(
+      jobIds.map((jobId) => this.getJobDetails<T>(queueName, jobId)),
+    );
+
+    return Object.fromEntries(
+      jobs.filter(isDefined).map((job) => [job.id, job]),
+    );
+  }
+
+  private async getJobDetails<T extends MessageQueueJobData>(
+    queueName: MessageQueue,
+    jobId: string,
+  ): Promise<QueueJobDetails<T> | undefined> {
+    const job = await this.queueMap[queueName].getJob(jobId);
+
+    if (!isDefined(job) || !isDefined(job.id)) {
+      return undefined;
+    }
+
+    const state = await job.getState();
+
+    // BullMQ reports 'unknown' for a job whose record was evicted by retention
+    if (state === 'unknown') {
+      return undefined;
+    }
+
+    return {
+      id: job.id,
+      data: job.data,
+      state,
+      attemptsMade: job.attemptsMade,
+      failedReason: job.failedReason,
+      timestamp: job.timestamp,
+      processedOn: job.processedOn,
+      finishedOn: job.finishedOn,
+    };
   }
 
   async getInFlightJobs<T extends MessageQueueJobData>(

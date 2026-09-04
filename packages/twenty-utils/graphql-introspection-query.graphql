@@ -78,7 +78,7 @@ query IntrospectionQuery {
         isDeprecated
         deprecationReason
       }
-      inputFields {
+      inputFields(includeDeprecated: true) {
         name
         description
         type {
@@ -114,6 +114,8 @@ query IntrospectionQuery {
           }
         }
         defaultValue
+        isDeprecated
+        deprecationReason
       }
       interfaces {
         kind

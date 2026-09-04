@@ -256,7 +256,7 @@ export class DataArgProcessorService {
 
         if (isDefined(joinColumnName) && !isRelationNestedOperation(value)) {
           throw new CommonQueryRunnerException(
-            `Relation "${key}" requires connect or disconnect operation`,
+            `Relation "${key}" requires create, connect, or disconnect operation`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
             { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
           );

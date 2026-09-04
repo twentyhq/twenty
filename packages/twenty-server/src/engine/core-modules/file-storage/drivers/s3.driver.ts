@@ -27,7 +27,12 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   FILE_STORAGE_S3_CONNECTION_TIMEOUT_MS,
   FILE_STORAGE_S3_MAX_SOCKETS,
+  FILE_STORAGE_S3_METADATA_CONNECTION_TIMEOUT_MS,
+  FILE_STORAGE_S3_METADATA_MAX_ATTEMPTS,
+  FILE_STORAGE_S3_METADATA_MAX_SOCKETS,
+  FILE_STORAGE_S3_METADATA_REQUEST_TIMEOUT_MS,
   FILE_STORAGE_S3_REQUEST_TIMEOUT_MS,
+  FILE_STORAGE_S3_SLOW_REQUEST_THRESHOLD_MS,
 } from 'src/engine/core-modules/file-storage/constants/s3-client-timeouts.constant';
 import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import {
@@ -36,6 +41,7 @@ import {
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { type ByteRange } from 'src/engine/core-modules/file-storage/types/byte-range.type';
 import { buildAwsRequestHandlerOptions } from 'src/utils/aws-request-handler.util';
+import { propagateDestroyToSource } from 'src/utils/propagate-destroy-to-source.util';
 
 export interface S3DriverOptions extends S3ClientConfig {
   bucketName: string;
@@ -47,6 +53,7 @@ export interface S3DriverOptions extends S3ClientConfig {
 
 export class S3Driver implements StorageDriver {
   private s3Client: S3;
+  private metadataClient: S3;
   private presignClient: S3 | undefined;
   private bucketName: string;
   private readonly logger = new Logger(S3Driver.name);
@@ -72,6 +79,19 @@ export class S3Driver implements StorageDriver {
     });
 
     this.s3Client = new S3({ ...s3Options, region, endpoint, requestHandler });
+
+    this.metadataClient = new S3({
+      ...s3Options,
+      region,
+      endpoint,
+      maxAttempts: FILE_STORAGE_S3_METADATA_MAX_ATTEMPTS,
+      responseChecksumValidation: 'WHEN_REQUIRED',
+      requestHandler: buildAwsRequestHandlerOptions({
+        requestTimeoutMs: FILE_STORAGE_S3_METADATA_REQUEST_TIMEOUT_MS,
+        connectionTimeoutMs: FILE_STORAGE_S3_METADATA_CONNECTION_TIMEOUT_MS,
+        maxSockets: FILE_STORAGE_S3_METADATA_MAX_SOCKETS,
+      }),
+    });
     this.bucketName = bucketName;
 
     if (presignEnabled) {
@@ -109,7 +129,53 @@ export class S3Driver implements StorageDriver {
         throw new Error('Unable to get file stream');
       }
 
-      return file.Body;
+      return propagateDestroyToSource(file.Body);
+    } catch (error) {
+      if (error.name === 'NoSuchKey') {
+        throw new FileStorageException(
+          'File not found',
+          FileStorageExceptionCode.FILE_NOT_FOUND,
+        );
+      }
+
+      throw error;
+    }
+  }
+
+  async readFilePrefix(params: {
+    filePath: string;
+    byteCount: number;
+  }): Promise<Buffer> {
+    const command = new GetObjectCommand({
+      Key: params.filePath,
+      Bucket: this.bucketName,
+      Range: `bytes=0-${params.byteCount - 1}`,
+    });
+
+    try {
+      return await this.measureRequest(
+        { operation: 'GetObjectPrefix', key: params.filePath },
+        async () => {
+          try {
+            const file = await this.metadataClient.send(command);
+
+            if (!isDefined(file?.Body)) {
+              throw new FileStorageException(
+                'Unable to get file body',
+                FileStorageExceptionCode.FILE_NOT_FOUND,
+              );
+            }
+
+            return Buffer.from(await file.Body.transformToByteArray());
+          } catch (error) {
+            if (error.name === 'InvalidRange') {
+              return Buffer.alloc(0);
+            }
+
+            throw error;
+          }
+        },
+      );
     } catch (error) {
       if (error.name === 'NoSuchKey') {
         throw new FileStorageException(
@@ -160,19 +226,53 @@ export class S3Driver implements StorageDriver {
   async getFileMetadata(params: {
     filePath: string;
   }): Promise<{ size: number } | null> {
-    try {
-      const head = await this.s3Client.send(
-        new HeadObjectCommand({
-          Bucket: this.bucketName,
-          Key: params.filePath,
-        }),
-      );
+    return this.measureRequest(
+      { operation: 'HeadObject', key: params.filePath },
+      async () => {
+        try {
+          const head = await this.metadataClient.send(
+            new HeadObjectCommand({
+              Bucket: this.bucketName,
+              Key: params.filePath,
+            }),
+          );
 
-      return { size: head.ContentLength ?? 0 };
-    } catch (error) {
-      if (error instanceof NotFound) {
-        return null;
+          return { size: head.ContentLength ?? 0 };
+        } catch (error) {
+          if (error instanceof NotFound) {
+            return null;
+          }
+
+          throw error;
+        }
+      },
+    );
+  }
+
+  private async measureRequest<TResult>(
+    { operation, key }: { operation: string; key: string },
+    request: () => Promise<TResult>,
+  ): Promise<TResult> {
+    const startedAt = Date.now();
+
+    try {
+      const result = await request();
+      const durationMs = Date.now() - startedAt;
+      const message = `S3 ${operation} ${key} succeeded in ${durationMs}ms`;
+
+      if (durationMs >= FILE_STORAGE_S3_SLOW_REQUEST_THRESHOLD_MS) {
+        this.logger.warn(message);
+      } else {
+        this.logger.debug(message);
       }
+
+      return result;
+    } catch (error) {
+      const durationMs = Date.now() - startedAt;
+
+      this.logger.warn(
+        `S3 ${operation} ${key} failed after ${durationMs}ms: ${error?.name ?? 'Error'} ${error?.message ?? ''}`,
+      );
 
       throw error;
     }

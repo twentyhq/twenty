@@ -8,7 +8,7 @@ import {
   bullMQToJobStateEnum,
   JobStateEnum,
   jobStateEnumToBullMQ,
-} from 'src/engine/core-modules/admin-panel/enums/job-state.enum';
+} from 'src/engine/core-modules/message-queue/enums/job-state.enum';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';

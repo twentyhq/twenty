@@ -1057,9 +1057,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "deletedAt": {
         "universalIdentifier": "918cb351-2490-540b-b02d-e6052042dddc",
       },
-      "deliveryStatus": {
-        "universalIdentifier": "209254fa-2b89-429d-a72a-c401c4bd5a78",
-      },
       "headerMessageId": {
         "universalIdentifier": "20202020-72b5-416d-aed8-b55609067d01",
       },
@@ -1965,34 +1962,16 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "general": {
             "universalIdentifier": "6e673f29-b3c9-58be-b830-352cc1274806",
           },
-          "system": {
-            "universalIdentifier": "f8b067db-b793-5b4e-b6c6-5b7884d436e0",
-          },
         },
         "viewFields": {
           "attachments": {
             "universalIdentifier": "0417604b-fe0a-5c43-a0b2-a1f71664e25d",
-          },
-          "bodyV2": {
-            "universalIdentifier": "de624e40-0c8e-58dc-ab30-4dc6239dd758",
-          },
-          "createdAt": {
-            "universalIdentifier": "e45009c4-c19a-5907-a18d-da1df196c788",
-          },
-          "createdBy": {
-            "universalIdentifier": "c367e175-8ded-5ef6-987f-7dafc91252da",
           },
           "noteTargets": {
             "universalIdentifier": "447e46f9-81a2-5c99-a865-f6efa6e892c5",
           },
           "timelineActivities": {
             "universalIdentifier": "113232e3-ba0e-566f-98fa-016a1e8d44d9",
-          },
-          "updatedAt": {
-            "universalIdentifier": "556a3d3e-cc58-5863-a36e-3f742f019676",
-          },
-          "updatedBy": {
-            "universalIdentifier": "c4c7e2f7-3827-53e4-aae0-ef14dbd15ca2",
           },
         },
       },
@@ -2041,8 +2020,17 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "companyIdIndex": {
         "universalIdentifier": "2d83909a-a383-4e82-b00a-8b7739f3f906",
       },
+      "noteCompanyUniqueIndex": {
+        "universalIdentifier": "e3b92659-04cf-4496-8fd4-4f32c747c26a",
+      },
       "noteIdIndex": {
         "universalIdentifier": "9294d9e3-0225-4c7f-9d6e-23b4c25b6b24",
+      },
+      "noteOpportunityUniqueIndex": {
+        "universalIdentifier": "58002741-8aa7-4812-b7af-f4cf98dd2433",
+      },
+      "notePersonUniqueIndex": {
+        "universalIdentifier": "29be76d1-ff4f-4f0f-b05c-f679a234e90a",
       },
       "opportunityIdIndex": {
         "universalIdentifier": "0d1a59b4-cc87-4b7d-804a-656e8504f371",
@@ -2655,9 +2643,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "general": {
             "universalIdentifier": "0e7ffa21-9969-50ca-9daf-25078563e697",
           },
-          "system": {
-            "universalIdentifier": "e48c1875-31be-511f-b229-d85cecc319b3",
-          },
         },
         "viewFields": {
           "assignee": {
@@ -2665,15 +2650,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "attachments": {
             "universalIdentifier": "db69d80b-8e9e-5351-bd08-f4b625b9f721",
-          },
-          "bodyV2": {
-            "universalIdentifier": "1481e9a9-d79c-5d97-9ea3-0babff9d6535",
-          },
-          "createdAt": {
-            "universalIdentifier": "fc5d2a89-8d8d-56f2-96bd-fcde0a04e1cb",
-          },
-          "createdBy": {
-            "universalIdentifier": "6e98e5c0-e188-56f8-a5a8-1f6569e7b2e8",
           },
           "dueAt": {
             "universalIdentifier": "42a26270-40be-557d-9bd9-99b0f8f013dd",
@@ -2686,12 +2662,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "timelineActivities": {
             "universalIdentifier": "3f0dd6fd-3b96-5f34-b96c-c7018b6b7230",
-          },
-          "updatedAt": {
-            "universalIdentifier": "466bec84-2ac8-5a73-9c44-43e905c29a6b",
-          },
-          "updatedBy": {
-            "universalIdentifier": "2a224a0a-0fd7-5e0e-9872-53eaec638ebf",
           },
         },
       },
@@ -2746,8 +2716,17 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "personIdIndex": {
         "universalIdentifier": "b7d305d1-6fae-4ed6-9bdc-354fe9032c0e",
       },
+      "taskCompanyUniqueIndex": {
+        "universalIdentifier": "637dce5e-f609-49f4-89e3-c0ef9e330d3a",
+      },
       "taskIdIndex": {
         "universalIdentifier": "c882f7a4-b025-4d32-aa26-5ef2595bdbf9",
+      },
+      "taskOpportunityUniqueIndex": {
+        "universalIdentifier": "eb5422ff-7a41-48d2-a2df-3de1cbf7bced",
+      },
+      "taskPersonUniqueIndex": {
+        "universalIdentifier": "4adf4d5a-ad69-4c5c-bc62-2807816b3aa8",
       },
     },
     "morphIds": {

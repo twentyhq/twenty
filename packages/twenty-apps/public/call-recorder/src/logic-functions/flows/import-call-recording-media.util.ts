@@ -1,8 +1,10 @@
-import { isNull, isUndefined } from '@sniptt/guards';
+import { isNonEmptyArray, isNull, isUndefined } from '@sniptt/guards';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
-import { CALL_RECORDING_AUDIO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-audio-field-universal-identifier';
-import { CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-video-field-universal-identifier';
+import {
+  CALL_RECORDING_AUDIO_FIELD_UNIVERSAL_IDENTIFIER,
+  CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
 import { CALL_RECORDER_MAX_MEDIA_FILE_SIZE_BYTES } from 'src/logic-functions/constants/call-recorder-max-media-file-size-bytes';
 import {
   AUDIO_FILE_TOO_LARGE_FAILURE_REASON,
@@ -19,6 +21,11 @@ type CallRecordingMediaUpdateFields = Pick<
   CallRecordingUpdateFields,
   'audio' | 'video' | 'callRecorderFailureReason'
 >;
+
+type ImportCallRecordingMediaResult = {
+  updateData: CallRecordingMediaUpdateFields;
+  hasRetryableFailure: boolean;
+};
 
 type ImportMediaArtifactResult =
   | { outcome: 'imported'; files: CallRecordingMediaFile[] }
@@ -65,9 +72,9 @@ export const importCallRecordingMedia = async ({
   externalRecordingId: string;
   hasAudio: boolean;
   hasVideo: boolean;
-}): Promise<CallRecordingMediaUpdateFields> => {
+}): Promise<ImportCallRecordingMediaResult> => {
   if (hasAudio && hasVideo) {
-    return {};
+    return { updateData: {}, hasRetryableFailure: false };
   }
 
   const recordingResult = await getRecallRecording({ externalRecordingId });
@@ -77,13 +84,14 @@ export const importCallRecordingMedia = async ({
       `[call-recorder] failed to fetch Recall recording ${externalRecordingId} while importing media for call recording ${callRecordingId}: ${recordingResult.errorMessage}`,
     );
 
-    return {};
+    return { updateData: {}, hasRetryableFailure: true };
   }
 
   const mediaUrls = extractRecallMediaUrls(recordingResult.recording);
   const metadataClient = new MetadataApiClient();
   const updateFields: CallRecordingMediaUpdateFields = {};
   const tooLargeFailureReasons: string[] = [];
+  const failedMediaArtifactFields: string[] = [];
   const artifactStateByField = {
     video: { alreadyImported: hasVideo, url: mediaUrls.videoUrl },
     audio: { alreadyImported: hasAudio, url: mediaUrls.audioUrl },
@@ -113,13 +121,20 @@ export const importCallRecordingMedia = async ({
     if (importResult.outcome === 'too-large') {
       tooLargeFailureReasons.push(descriptor.tooLargeFailureReason);
     }
+
+    if (importResult.outcome === 'failed') {
+      failedMediaArtifactFields.push(descriptor.field);
+    }
   }
 
   if (tooLargeFailureReasons.length > 0) {
     updateFields.callRecorderFailureReason = tooLargeFailureReasons.join(',');
   }
 
-  return updateFields;
+  return {
+    updateData: updateFields,
+    hasRetryableFailure: isNonEmptyArray(failedMediaArtifactFields),
+  };
 };
 
 const importMediaArtifact = async ({

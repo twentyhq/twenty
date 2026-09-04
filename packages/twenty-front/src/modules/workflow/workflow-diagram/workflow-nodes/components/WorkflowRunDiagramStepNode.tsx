@@ -147,8 +147,9 @@ export const WorkflowRunDiagramStepNode = ({
         runStatus={data.runStatus}
         onClick={handleClick}
         selected={selected}
+        targetHandleCount={data.targetHandleIds?.length}
       >
-        <WorkflowDiagramHandleTarget />
+        <WorkflowDiagramHandleTarget targetHandleIds={data.targetHandleIds} />
         <WorkflowNodeIconContainer>
           <WorkflowDiagramStepNodeIcon data={data} />
         </WorkflowNodeIconContainer>

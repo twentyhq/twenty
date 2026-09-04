@@ -7,7 +7,6 @@ import {
   type ObjectRecord,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type ObjectLiteral } from 'typeorm';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
@@ -61,6 +60,10 @@ import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/serv
 import { type ExhaustedScope } from 'src/engine/core-modules/usage-limit/types/exhausted-scope.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
+import { getApiType } from 'src/engine/core-modules/usage/storage/api-request-context.storage';
+import { buildUsageSpendersFromAuthContext } from 'src/engine/core-modules/usage/utils/build-usage-spenders-from-auth-context.util';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -73,11 +76,11 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RelationNestedQueries } from 'src/engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
-import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -114,6 +117,8 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly usageLimitSpeedService: UsageLimitSpeedService;
   @Inject()
+  protected readonly usageRecorderService: UsageRecorderService;
+  @Inject()
   protected readonly twentyConfigService: TwentyConfigService;
   @Inject()
   protected readonly metricsService: MetricsService;
@@ -135,7 +140,11 @@ export abstract class CommonBaseQueryRunnerService<
       flatFieldMetadataMaps,
     } = queryRunnerContext;
 
-    await this.throttleQueryExecution(authContext);
+    if ((queryRunnerContext.nestedOperationDepth ?? 0) === 0) {
+      await this.throttleQueryExecution(authContext);
+    }
+
+    this.recordApiUsage(authContext);
 
     await this.validate(args, queryRunnerContext);
 
@@ -260,6 +269,7 @@ export abstract class CommonBaseQueryRunnerService<
       flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
       flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
       flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+      transactionScope: queryRunnerContext.transactionScope,
     });
   }
 
@@ -270,6 +280,7 @@ export abstract class CommonBaseQueryRunnerService<
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
+    transactionScope,
   }: {
     results: Output;
     operationName: CommonQueryNames;
@@ -277,6 +288,7 @@ export abstract class CommonBaseQueryRunnerService<
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    transactionScope: CommonBaseQueryRunnerContext['transactionScope'];
   }): Promise<Output> {
     const resultWithGetters = await this.processQueryResult(
       results,
@@ -286,12 +298,19 @@ export abstract class CommonBaseQueryRunnerService<
       authContext,
     );
 
-    await this.workspaceQueryHookService.executePostQueryHooks(
-      authContext,
-      flatObjectMetadata.nameSingular,
-      operationName,
-      resultWithGetters as QueryResultFieldValue,
-    );
+    const executePostQueryHooks = () =>
+      this.workspaceQueryHookService.executePostQueryHooks(
+        authContext,
+        flatObjectMetadata.nameSingular,
+        operationName,
+        resultWithGetters as QueryResultFieldValue,
+      );
+
+    if (isDefined(transactionScope)) {
+      transactionScope.afterCommit(executePostQueryHooks);
+    } else {
+      await executePostQueryHooks();
+    }
 
     return resultWithGetters as Output;
   }
@@ -356,11 +375,16 @@ export abstract class CommonBaseQueryRunnerService<
       );
     }
 
-    const repository = this.workspaceOrmManager.getRepository<ObjectLiteral>(
-      queryRunnerContext.flatObjectMetadata.nameSingular,
-      rolePermissionConfig,
-      { useReplica: this.isReadOnly },
-    );
+    const repository = isDefined(queryRunnerContext.transactionScope)
+      ? queryRunnerContext.transactionScope.getRepository<ObjectRecord>(
+          queryRunnerContext.flatObjectMetadata.nameSingular,
+          rolePermissionConfig,
+        )
+      : this.workspaceOrmManager.getRepository<ObjectRecord>(
+          queryRunnerContext.flatObjectMetadata.nameSingular,
+          rolePermissionConfig,
+          { useReplica: this.isReadOnly },
+        );
 
     return {
       ...queryRunnerContext,
@@ -375,11 +399,10 @@ export abstract class CommonBaseQueryRunnerService<
   // and everything else the primary, keeping root read and nested-relation
   // loading consistent.
   protected getReadRepository({
-    rolePermissionConfig,
-    flatObjectMetadata,
+    repository,
   }: Pick<
     CommonExtendedQueryRunnerContext,
-    'rolePermissionConfig' | 'flatObjectMetadata'
+    'repository'
   >): WorkspaceRepository {
     this.metricsService.incrementCounterBy({
       key: MetricsKeys.OrmV2ReadPathUsed,
@@ -387,20 +410,14 @@ export abstract class CommonBaseQueryRunnerService<
       attributes: { operation: this.operationName },
     });
 
-    return this.workspaceOrmManager.getRepository(
-      flatObjectMetadata.nameSingular,
-      rolePermissionConfig,
-      { useReplica: this.isReadOnly },
-    );
+    return repository;
   }
 
-  // Writes always hit the primary, so useReplica is pinned false regardless of isReadOnly.
   protected getWriteRepository({
-    rolePermissionConfig,
-    flatObjectMetadata,
+    repository,
   }: Pick<
     CommonExtendedQueryRunnerContext,
-    'rolePermissionConfig' | 'flatObjectMetadata'
+    'repository'
   >): WorkspaceRepository {
     this.metricsService.incrementCounterBy({
       key: MetricsKeys.OrmV2WritePathUsed,
@@ -408,10 +425,7 @@ export abstract class CommonBaseQueryRunnerService<
       attributes: { operation: this.operationName },
     });
 
-    return this.workspaceOrmManager.getRepository(
-      flatObjectMetadata.nameSingular,
-      rolePermissionConfig,
-    );
+    return repository;
   }
 
   protected async runFilteredMutation({
@@ -472,20 +486,20 @@ export abstract class CommonBaseQueryRunnerService<
     records,
     queryRunnerContext,
     writeRepository,
+    createRecords,
   }: {
     records: Partial<ObjectRecord>[];
     queryRunnerContext: CommonExtendedQueryRunnerContext;
     writeRepository: WorkspaceRepository;
+    createRecords?: (options: {
+      targetObjectMetadata: FlatObjectMetadata;
+      records: Partial<ObjectRecord>[];
+    }) => Promise<ObjectRecord[]>;
   }): Promise<Partial<ObjectRecord>[]> {
-    const { flatObjectMetadata, flatFieldMetadataMaps, rolePermissionConfig } =
-      queryRunnerContext;
+    const { flatObjectMetadata, flatFieldMetadataMaps } = queryRunnerContext;
     const nameSingular = flatObjectMetadata.nameSingular;
 
-    const relationNestedQueries = new RelationNestedQueries(
-      writeRepository.getInternalContext(),
-      this.workspaceOrmManager,
-      rolePermissionConfig,
-    );
+    const relationNestedQueries = new RelationNestedQueries(writeRepository);
 
     const relationNestedConfig =
       relationNestedQueries.prepareNestedRelationQueries(records, nameSingular);
@@ -498,6 +512,8 @@ export abstract class CommonBaseQueryRunnerService<
       await relationNestedQueries.processRelationNestedQueries({
         entities: records,
         relationNestedConfig,
+        target: nameSingular,
+        createRecords,
       });
 
     const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
@@ -535,6 +551,29 @@ export abstract class CommonBaseQueryRunnerService<
     };
   }
 
+  private recordApiUsage(authContext: WorkspaceAuthContext) {
+    const apiType = getApiType();
+
+    if (!isDefined(apiType)) {
+      return;
+    }
+
+    const spenders = buildUsageSpendersFromAuthContext(authContext);
+
+    if (!isDefined(spenders.apiKeyId) && !isDefined(spenders.applicationId)) {
+      return;
+    }
+
+    this.usageRecorderService.accumulate(authContext.workspace.id, {
+      resourceType: UsageResourceType.API,
+      operationType: UsageOperationType.API_REQUEST,
+      quantity: 1,
+      unit: UsageUnit.REQUEST,
+      resourceContext: apiType,
+      spenders,
+    });
+  }
+
   private async throttleQueryExecution(authContext: WorkspaceAuthContext) {
     const isApiRateLimitV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
@@ -563,7 +602,7 @@ export abstract class CommonBaseQueryRunnerService<
       if (
         error instanceof UsageLimitException &&
         isDefined(error.exhaustedScope) &&
-        error.exhaustedScope.isFallback
+        error.exhaustedScope.isDefault
       ) {
         await this.incrementApiSpeedCeilingMetrics({
           authContext,

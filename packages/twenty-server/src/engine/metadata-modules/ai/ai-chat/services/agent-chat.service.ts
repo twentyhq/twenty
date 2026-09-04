@@ -713,14 +713,27 @@ export class AgentChatService {
     const claim = await this.threadRepository.update(
       workspaceId,
       { id: threadId, pendingQuestionMessageId: messageId },
-      { pendingQuestionMessageId: null, activeStreamId: streamId },
+      {
+        pendingQuestionMessageId: null,
+        activeStreamId: streamId,
+        lastStreamError: null,
+      },
     );
 
     if ((claim.affected ?? 0) === 0) {
-      throw new AiException(
-        'No pending question to answer',
-        AiExceptionCode.QUESTION_NOT_PENDING,
-      );
+      const adopted = await this.claimOrphanedQuestion({
+        threadId,
+        messageId,
+        streamId,
+        workspaceId,
+      });
+
+      if (!adopted) {
+        throw new AiException(
+          'No pending question to answer',
+          AiExceptionCode.QUESTION_NOT_PENDING,
+        );
+      }
     }
 
     try {
@@ -755,6 +768,47 @@ export class AgentChatService {
       turnId: message.turnId,
       rollback: { partId: pendingPart.id, previousOutput },
     };
+  }
+
+  private async claimOrphanedQuestion({
+    threadId,
+    messageId,
+    streamId,
+    workspaceId,
+  }: {
+    threadId: string;
+    messageId: string;
+    streamId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const latestAssistantMessage = await this.messageRepository.findOne(
+      workspaceId,
+      {
+        where: { threadId, role: AgentMessageRole.ASSISTANT },
+        order: {
+          processedAt: { direction: 'DESC', nulls: 'LAST' },
+          createdAt: 'DESC',
+          id: 'DESC',
+        },
+        select: ['id'],
+      },
+    );
+
+    if (latestAssistantMessage?.id !== messageId) {
+      return false;
+    }
+
+    const claim = await this.threadRepository.update(
+      workspaceId,
+      {
+        id: threadId,
+        pendingQuestionMessageId: IsNull(),
+        activeStreamId: IsNull(),
+      },
+      { activeStreamId: streamId, lastStreamError: null },
+    );
+
+    return (claim.affected ?? 0) > 0;
   }
 
   async restorePendingQuestion({

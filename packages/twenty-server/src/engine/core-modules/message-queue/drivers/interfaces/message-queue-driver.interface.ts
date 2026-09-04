@@ -1,3 +1,5 @@
+import { type JobState } from 'bullmq/dist/esm/types';
+
 import {
   type QueueCronJobOptions,
   type QueueJobOptions,
@@ -13,13 +15,13 @@ export interface MessageQueueDriver {
     jobName: string,
     data: T,
     options?: QueueJobOptions,
-  ): Promise<void>;
+  ): Promise<string | undefined>;
   bulkAdd<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     jobName: string,
-    dataItems: T[],
+    jobs: QueueJobToAdd<T>[],
     options?: QueueJobOptions,
-  ): Promise<void>;
+  ): Promise<string[]>;
   work<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     handler: ({ data, id }: { data: T; id: string }) => Promise<void> | void,
@@ -51,7 +53,27 @@ export interface MessageQueueDriver {
   getInFlightJobs?<T extends MessageQueueJobData>(
     queueName: MessageQueue,
   ): Promise<InFlightQueueJob<T>[]>;
+  getJobs?<T extends MessageQueueJobData>(
+    queueName: MessageQueue,
+    jobIds: string[],
+  ): Promise<Partial<Record<string, QueueJobDetails<T>>>>;
 }
+
+export type QueueJobToAdd<T extends MessageQueueJobData> = {
+  data: T;
+  jobId?: string;
+};
+
+export type QueueJobDetails<T extends MessageQueueJobData> = {
+  id: string;
+  data: T;
+  state: JobState;
+  attemptsMade: number;
+  failedReason?: string;
+  timestamp: number;
+  processedOn?: number;
+  finishedOn?: number;
+};
 
 export interface InFlightQueueJob<T extends MessageQueueJobData> {
   id?: string;

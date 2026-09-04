@@ -23,18 +23,5 @@ export const computeStandardNoteViewFieldGroups = (
         isVisible: true,
       },
     }),
-    noteRecordPageFieldsSystem: createStandardViewFieldGroupFlatMetadata({
-      ...args,
-      objectName: 'note',
-      context: {
-        viewName: 'noteRecordPageFields',
-        viewFieldGroupName: 'system',
-        name: i18nLabel(
-          msg({ message: `System`, context: 'viewFieldGroup.name' }),
-        ),
-        position: 1,
-        isVisible: true,
-      },
-    }),
   };
 };

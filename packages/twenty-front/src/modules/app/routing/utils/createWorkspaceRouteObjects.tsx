@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { type Location, Navigate, parsePath } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
@@ -9,7 +9,6 @@ import {
   SettingsRouteOutlet,
 } from '@/app/components/SettingsRoutes';
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
-import indexAppPath from '@/navigation/utils/indexAppPath';
 import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
 
 const WorkflowCoreIndexPage = lazy(() =>
@@ -62,15 +61,6 @@ type CreateWorkspaceRouteObjectsArgs = {
 const MAIN_AND_SIDE_PANEL = ['main', 'side-panel'] as const;
 const SETTINGS_ROOT_PATH = AppPath.SettingsCatchAll.replace('/*', '');
 
-const isSettingsRootLocation = (location: Partial<Location> | string) => {
-  const pathname =
-    typeof location === 'string'
-      ? parsePath(location).pathname
-      : location.pathname;
-
-  return pathname?.replace(/\/$/, '') === SETTINGS_ROOT_PATH;
-};
-
 export const createWorkspaceRouteObjects = ({
   isAdminPageEnabled,
   isWorkflowCoreIndexPageEnabled,
@@ -91,13 +81,13 @@ export const createWorkspaceRouteObjects = ({
             ),
             handle: {
               workspaceSurfaces: MAIN_AND_SIDE_PANEL,
-              isLocationExpandableFromSidePanel: () => true,
+              isLocationExpandableFromSidePanel: true,
             },
           } satisfies WorkspaceRouteObject,
         ]
       : []),
     {
-      path: indexAppPath.getIndexAppPath(),
+      path: AppPath.Index,
       element: <RecordIndexSkeletonLoader />,
     },
     {
@@ -109,7 +99,7 @@ export const createWorkspaceRouteObjects = ({
       ),
       handle: {
         workspaceSurfaces: MAIN_AND_SIDE_PANEL,
-        isLocationExpandableFromSidePanel: () => true,
+        isLocationExpandableFromSidePanel: true,
       },
     },
     {
@@ -149,11 +139,6 @@ export const createWorkspaceRouteObjects = ({
       path: SETTINGS_ROOT_PATH,
       element: <SettingsRouteOutlet />,
       children: settingsRouteObjects,
-      handle: {
-        workspaceSurfaces: MAIN_AND_SIDE_PANEL,
-        isLocationAvailableOnSurface: ({ location }) =>
-          !isSettingsRootLocation(location),
-      },
     },
     {
       path: AppPath.Dpa,

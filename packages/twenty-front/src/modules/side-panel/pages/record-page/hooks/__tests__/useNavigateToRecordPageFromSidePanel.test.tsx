@@ -101,8 +101,6 @@ const renderNavigateToRecordPage = ({
               type: 'side-panel',
               instanceId: PAGE_INSTANCE_ID,
               ownsRouteLocation: true,
-              headerTitlePortal: null,
-              headerActionsPortal: null,
             }}
           >
             {children}
