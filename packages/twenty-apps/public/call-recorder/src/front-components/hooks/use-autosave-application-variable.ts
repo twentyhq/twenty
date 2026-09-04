@@ -37,7 +37,7 @@ export const useAutosaveApplicationVariable = ({
 
   if (isUndefined(saveQueueRef.current)) {
     saveQueueRef.current = createApplicationVariableSaveQueue({
-      saveValue: async (value) => {
+      saveValue: async (value, isSupersededValue) => {
         const isSaved = await saveApplicationVariableRef.current({
           variableKey: variableKeyRef.current,
           value,
@@ -48,6 +48,12 @@ export const useAutosaveApplicationVariable = ({
           // saves; two toggles in a row must not sync concurrently.
           await onSaveSuccessRef.current?.(value);
 
+          return;
+        }
+
+        // A newer value is already queued, so rolling back to this one would
+        // fight the toggle the user just made.
+        if (isSupersededValue()) {
           return;
         }
 

@@ -17,6 +17,7 @@ import { retryFailedRecallCancellations } from 'src/logic-functions/flows/retry-
 import { scheduleRecallBotsForPendingCallRecordings } from 'src/logic-functions/flows/schedule-recall-bots-for-pending-call-recordings.util';
 import { processRecallWebhookHandler } from 'src/logic-functions/process-recall-webhook';
 import { cancelScheduledRecallBotsHandler } from 'src/logic-functions/cancel-scheduled-recall-bots';
+import { cancelScheduledRecallBots } from 'src/logic-functions/flows/cancel-scheduled-recall-bots.util';
 import { syncCalendarBotSchedulingHandler } from 'src/logic-functions/sync-calendar-bot-scheduling';
 import { CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-calendar-bot-scheduling-enabled-env-var-name';
 
@@ -136,6 +137,7 @@ class FakeRecallApi {
   listRequestCount = 0;
   artifactImportRequests: object[] = [];
   failNextDelete = false;
+  failRecallRemovals = false;
 
   seedBot(bot: FakeRecallBot): void {
     this.bots.set(bot.id, bot);
@@ -198,8 +200,21 @@ class FakeRecallApi {
 
     const botIdMatch = requestUrl.match(/\/bot\/([^/]+)\/$/);
 
+    const ejectedBotIdMatch = requestUrl.match(/\/bot\/([^/]+)\/leave_call\/$/);
+
+    if (method === 'POST' && ejectedBotIdMatch !== null) {
+      if (this.failRecallRemovals) {
+        return jsonResponse(400, {});
+      }
+
+      this.bots.delete(ejectedBotIdMatch[1]);
+      this.deletedBotIds.push(ejectedBotIdMatch[1]);
+
+      return new Response(null, { status: 204 });
+    }
+
     if (method === 'DELETE' && botIdMatch !== null) {
-      if (this.failNextDelete) {
+      if (this.failNextDelete || this.failRecallRemovals) {
         this.failNextDelete = false;
 
         return jsonResponse(400, {});
@@ -948,6 +963,27 @@ describe('call recorder app lifecycle (integration)', () => {
 
       expect(callRecording.externalBotId).toBeFalsy();
       expect(recall.deletedBotIds).toContain(botId);
+    });
+
+    it('stops the cancellation chain when Recall is down, leaving the bot to the daily retry', async () => {
+      const { callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      turnRecordingOff();
+      await syncCalendarBotSchedulingHandler();
+
+      recall.failRecallRemovals = true;
+
+      // A full slice proves the chain stops on failure rather than re-enqueueing
+      // itself forever against an unchanged backlog.
+      const result = await cancelScheduledRecallBots({ client, sliceSize: 1 });
+
+      expect(result.canceledCallRecordingIds).toEqual([]);
+      expect(result.failedCallRecordingIds).toEqual([callRecordingId]);
+      expect(result.hasMore).toBe(false);
+      expect((await fetchCallRecording(callRecordingId)).externalBotId).toBe(
+        botId,
+      );
     });
 
     it('does not schedule a bot for a request the cancellation missed', async () => {
