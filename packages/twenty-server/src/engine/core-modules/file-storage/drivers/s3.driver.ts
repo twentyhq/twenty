@@ -80,8 +80,6 @@ export class S3Driver implements StorageDriver {
 
     this.s3Client = new S3({ ...s3Options, region, endpoint, requestHandler });
 
-    // Separate agent so that long-running streamed transfers on the main
-    // client can never hold these small, latency-sensitive calls in the queue.
     this.metadataClient = new S3({
       ...s3Options,
       region,
@@ -172,8 +170,6 @@ export class S3Driver implements StorageDriver {
         );
       }
 
-      // S3 rejects any range on an empty object, and an empty prefix is the
-      // right answer for it.
       if (error.name === 'InvalidRange') {
         return Buffer.alloc(0);
       }
@@ -242,9 +238,6 @@ export class S3Driver implements StorageDriver {
     }
   }
 
-  // A connection timeout here means the request never got a socket (pool
-  // starvation or unreachable endpoint); a request timeout means S3 accepted
-  // the request and stalled. The logged error name and message tell them apart.
   private async measureRequest<TResult>(
     { operation, key }: { operation: string; key: string },
     request: () => Promise<TResult>,

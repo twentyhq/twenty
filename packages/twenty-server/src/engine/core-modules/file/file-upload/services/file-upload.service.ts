@@ -250,9 +250,6 @@ export class FileUploadService {
       );
     }
 
-    // A completion that succeeded server-side after the client gave up (for
-    // instance behind a gateway timeout) must look like a success on retry,
-    // otherwise the upload is reported as failed even though it is stored.
     if (file.status === FILE_STATUS.UPLOADED) {
       return this.toFileWithSignedUrl({
         file,
