@@ -20,21 +20,17 @@ const TOGGLE_DIMENSIONS_BY_SIZE: Record<ToggleSize, ToggleDimensions> = {
 
 const THUMB_INSET_PIXELS = 2;
 
-const getThumbOffsetPixels = (
-  { width, thumbSize }: ToggleDimensions,
-  isChecked: boolean,
-) => (isChecked ? width - thumbSize - THUMB_INSET_PIXELS : THUMB_INSET_PIXELS);
+const getCheckedThumbOffsetPixels = ({
+  width,
+  thumbSize,
+}: ToggleDimensions) => width - thumbSize - THUMB_INSET_PIXELS;
 
 const StyledToggle = styled.button<{
-  $isChecked: boolean;
   $toggleSize: ToggleSize;
 }>`
   align-items: center;
   appearance: none;
-  background-color: ${({ $isChecked }) =>
-    $isChecked
-      ? themeCssVariables.color.blue
-      : themeCssVariables.background.transparent.medium};
+  background-color: ${() => themeCssVariables.background.transparent.medium};
   border: none;
   border-radius: ${() => themeCssVariables.border.radius.pill};
   corner-shape: round;
@@ -48,6 +44,10 @@ const StyledToggle = styled.button<{
     calc(${() => themeCssVariables.animation.duration.normal} * 1s) ease;
   width: ${({ $toggleSize }) => TOGGLE_DIMENSIONS_BY_SIZE[$toggleSize].width}px;
 
+  &[data-checked='true'] {
+    background-color: ${() => themeCssVariables.color.blue};
+  }
+
   &:disabled {
     cursor: default;
     opacity: 0.5;
@@ -55,7 +55,6 @@ const StyledToggle = styled.button<{
 `;
 
 const StyledThumb = styled.span<{
-  $isChecked: boolean;
   $toggleSize: ToggleSize;
 }>`
   background-color: ${() => themeCssVariables.background.primary};
@@ -67,15 +66,21 @@ const StyledThumb = styled.span<{
   left: 0;
   position: absolute;
   top: 50%;
-  transform: translate(
-    ${({ $isChecked, $toggleSize }) =>
-      getThumbOffsetPixels(TOGGLE_DIMENSIONS_BY_SIZE[$toggleSize], $isChecked)}px,
-    -50%
-  );
+  transform: translate(${THUMB_INSET_PIXELS}px, -50%);
   transition: transform
     calc(${() => themeCssVariables.animation.duration.normal} * 1s) ease;
   width: ${({ $toggleSize }) =>
     TOGGLE_DIMENSIONS_BY_SIZE[$toggleSize].thumbSize}px;
+
+  &[data-checked='true'] {
+    transform: translate(
+      ${({ $toggleSize }) =>
+        getCheckedThumbOffsetPixels(
+          TOGGLE_DIMENSIONS_BY_SIZE[$toggleSize],
+        )}px,
+      -50%
+    );
+  }
 `;
 
 type ToggleProps = {
@@ -97,12 +102,15 @@ export const Toggle = ({
     type="button"
     role="switch"
     id={id}
-    aria-checked={checked}
+    aria-checked={checked ? 'true' : 'false'}
+    data-checked={checked ? 'true' : 'false'}
     disabled={disabled}
-    $isChecked={checked}
     $toggleSize={toggleSize}
     onClick={() => onChange(!checked)}
   >
-    <StyledThumb $isChecked={checked} $toggleSize={toggleSize} />
+    <StyledThumb
+      data-checked={checked ? 'true' : 'false'}
+      $toggleSize={toggleSize}
+    />
   </StyledToggle>
 );
