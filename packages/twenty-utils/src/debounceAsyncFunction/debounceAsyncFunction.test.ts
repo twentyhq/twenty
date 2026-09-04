@@ -1,0 +1,2 @@
+import { debounceAsyncFunction } from './debounceAsyncFunction'; import assert from 'node:assert/strict';
+const d = debounceAsyncFunction(async (x: number) => x * 2, 10); assert.equal(typeof d, "function");
