@@ -21,6 +21,9 @@ export const SchedulingSection = ({
     frontComponentId,
     variableKey: CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ROW.variableKey,
     onSaveSuccess: () => requestCalendarBotSchedulingSync(),
+    // A failed save would otherwise leave the tab hiding every setting while
+    // the recorder is in fact still running.
+    onSaveError: (value) => onEnabledChange(value !== 'true'),
   });
 
   const handleChange = (checked: boolean) => {

@@ -98,13 +98,10 @@ const scheduleBot = async ({
   callRecording: CallRecordingRecord;
   calendarEvent: CalendarEventRecord;
 }): Promise<ResumePendingCallRecordingResult> => {
-  const didScheduleRecallBot = await scheduleRecallBotForCallRecording(
-    client,
-    {
-      callRecording,
-      calendarEvent,
-    },
-  );
+  const didScheduleRecallBot = await scheduleRecallBotForCallRecording(client, {
+    callRecording,
+    calendarEvent,
+  });
 
   return didScheduleRecallBot
     ? { status: 'scheduled' }

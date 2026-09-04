@@ -7,17 +7,15 @@ const requestOverHttpMock = vi.hoisted(() => vi.fn());
 const requestOverHttpsMock = vi.hoisted(() => vi.fn());
 
 vi.mock('node:http', async () => {
-  const actualHttp = await vi.importActual<typeof import('node:http')>(
-    'node:http',
-  );
+  const actualHttp =
+    await vi.importActual<typeof import('node:http')>('node:http');
 
   return { ...actualHttp, request: requestOverHttpMock };
 });
 
 vi.mock('node:https', async () => {
-  const actualHttps = await vi.importActual<typeof import('node:https')>(
-    'node:https',
-  );
+  const actualHttps =
+    await vi.importActual<typeof import('node:https')>('node:https');
 
   return { ...actualHttps, request: requestOverHttpsMock };
 });
@@ -131,7 +129,8 @@ describe('putMediaDownloadBodyToUploadTarget', () => {
 
     await putDefaultMediaDownloadBodyToUploadTarget();
 
-    const [uploadUrl, uploadRequestOptions] = requestOverHttpsMock.mock.calls[0];
+    const [uploadUrl, uploadRequestOptions] =
+      requestOverHttpsMock.mock.calls[0];
 
     expect(uploadUrl.href).toBe(HTTPS_UPLOAD_URL);
     expect(uploadRequestOptions).toMatchObject({

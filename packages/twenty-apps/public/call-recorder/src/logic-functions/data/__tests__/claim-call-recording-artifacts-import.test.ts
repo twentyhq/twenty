@@ -63,7 +63,9 @@ describe('claimCallRecordingArtifactsImport', () => {
             id: { eq: 'call-recording-1' },
             or: [
               { transcriptImportClaimedAt: { is: 'NULL' } },
-              { transcriptImportClaimedAt: { lte: '2026-01-01T13:56:00.000Z' } },
+              {
+                transcriptImportClaimedAt: { lte: '2026-01-01T13:56:00.000Z' },
+              },
             ],
           },
           data: { transcriptImportClaimedAt: '2026-01-01T14:06:00.000Z' },
