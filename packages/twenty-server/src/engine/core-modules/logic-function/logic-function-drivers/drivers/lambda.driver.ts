@@ -218,9 +218,6 @@ export class LambdaDriver implements LogicFunctionDriver {
 
       const duration = Date.now() - invokeFlowStart;
 
-      // AWS's reported billed duration is what the invocation actually costs;
-      // wall clock also counts network latency and cold starts. The log tail
-      // parse is best-effort, so fall back to wall clock when it is missing.
       const awsBilledDuration = Number(awsBilledDurationMs ?? NaN);
       const billedDurationMs = Number.isFinite(awsBilledDuration)
         ? awsBilledDuration
