@@ -81,4 +81,40 @@ describe('getStepRetryDelayMs', () => {
 
     expect(result).toBe(STEP_RETRY_DELAYS_MS[0]);
   });
+
+  it('should stop retrying once the configured maxAttempts is reached', () => {
+    const result = getStepRetryDelayMs({
+      step: createMockCodeStep('step-1', [], {
+        retryOnFailure: true,
+        maxRetryAttempts: 1,
+      }),
+      stepInfo: {
+        status: StepStatus.RUNNING,
+        history: [
+          { status: StepStatus.FAILED, error: 'first', retryAttempt: 1 },
+        ],
+      },
+    });
+
+    expect(result).toBeUndefined();
+  });
+
+  it('should clamp maxAttempts to the delay schedule length', () => {
+    const result = getStepRetryDelayMs({
+      step: createMockCodeStep('step-1', [], {
+        retryOnFailure: true,
+        maxRetryAttempts: 10,
+      }),
+      stepInfo: {
+        status: StepStatus.RUNNING,
+        history: STEP_RETRY_DELAYS_MS.map((_, index) => ({
+          status: StepStatus.FAILED,
+          error: 'some error',
+          retryAttempt: index + 1,
+        })),
+      },
+    });
+
+    expect(result).toBeUndefined();
+  });
 });
