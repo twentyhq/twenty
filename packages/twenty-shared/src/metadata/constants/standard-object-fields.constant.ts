@@ -600,6 +600,9 @@ export const STANDARD_OBJECT_FIELDS = {
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageList,
     ),
     name: { universalIdentifier: '69b9ed8b-7b26-4108-894f-05700ef7e8ee' },
+    description: {
+      universalIdentifier: '2484463a-12e0-411e-9586-81892bd7721c',
+    },
     members: {
       universalIdentifier: '92df3493-91cf-4665-8587-1b08917d299b',
     },

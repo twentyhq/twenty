@@ -1530,6 +1530,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "deletedAt": {
         "universalIdentifier": "717071cc-9630-5fe6-8d6a-22d4f0ae0d43",
       },
+      "description": {
+        "universalIdentifier": "2484463a-12e0-411e-9586-81892bd7721c",
+      },
       "id": {
         "universalIdentifier": "1bb14df7-602a-542c-b26e-c63f7454a7ee",
       },
@@ -1570,6 +1573,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "createdAt": {
             "universalIdentifier": "69d178f4-f4b8-5bc2-a01b-bfc21f3a753a",
+          },
+          "description": {
+            "universalIdentifier": "1169ccfe-9136-5574-96d4-5a0855316cd4",
           },
           "members": {
             "universalIdentifier": "8e64ce89-0910-58df-a896-ccbe514f3913",
@@ -2412,6 +2418,25 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "phones": {
             "universalIdentifier": "565f0a13-140e-5c59-86b1-7d0ebd18e9dd",
+          },
+        },
+      },
+      "messageListRecordPageMembers": {
+        "universalIdentifier": "bef79e8e-9ef3-4458-81ed-78a299e2566f",
+        "viewFields": {
+          "company": {
+            "universalIdentifier": "3db54119-df4d-449b-91c9-22fca1e5d599",
+          },
+          "emails": {
+            "universalIdentifier": "180e9cbb-34c2-4e27-8648-2915be88a50e",
+          },
+          "name": {
+            "universalIdentifier": "a4f0d7b4-3956-44a6-8bb2-df45a699609b",
+          },
+        },
+        "viewFilters": {
+          "listMembershipsListIsCurrentRecord": {
+            "universalIdentifier": "256dceea-a9b5-42b7-8461-a6ce62e7fa6c",
           },
         },
       },
