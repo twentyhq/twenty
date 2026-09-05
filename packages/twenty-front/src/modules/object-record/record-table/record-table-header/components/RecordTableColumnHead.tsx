@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
+import { FieldDescriptionTooltip } from '@/object-record/record-field/ui/components/FieldDescriptionTooltip';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { RECORD_TABLE_CELL_CONTENT_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableCellContentClassName';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -53,15 +54,20 @@ export const RecordTableColumnHead = ({
   const Icon = getIcon(
     correspondingFieldMetadataItem.foundFieldMetadataItem?.icon,
   );
+  const fieldMetadataItem =
+    correspondingFieldMetadataItem.foundFieldMetadataItem;
 
   return (
     <StyledTitle className={RECORD_TABLE_CELL_CONTENT_CLASS_NAME}>
       <StyledIcon>
         <Icon size={theme.icon.size.md} />
       </StyledIcon>
-      <StyledText>
-        {correspondingFieldMetadataItem.foundFieldMetadataItem?.label}
-      </StyledText>
+      <FieldDescriptionTooltip
+        fieldDescription={fieldMetadataItem?.description}
+        fieldLabel={fieldMetadataItem?.label}
+      >
+        <StyledText>{fieldMetadataItem?.label}</StyledText>
+      </FieldDescriptionTooltip>
     </StyledTitle>
   );
 };

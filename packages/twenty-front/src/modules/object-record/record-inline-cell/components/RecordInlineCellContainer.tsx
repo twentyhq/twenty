@@ -2,6 +2,10 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
+import {
+  FieldDescriptionTooltip,
+  shouldDisplayFieldDescriptionTooltip,
+} from '@/object-record/record-field/ui/components/FieldDescriptionTooltip';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { RecordInlineCellValue } from '@/object-record/record-inline-cell/components/RecordInlineCellValue';
@@ -55,6 +59,13 @@ const StyledLabelContainer = styled.div<{ width?: number }>`
   width: ${({ width }) => (width !== undefined ? `${width}px` : 'auto')};
 `;
 
+const StyledLabel = styled.span`
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 const StyledInlineCellBaseContainer = styled.div<{ readonly: boolean }>`
   align-items: center;
   box-sizing: border-box;
@@ -103,6 +114,12 @@ export const RecordInlineCellContainer = () => {
     fieldName: fieldDefinition?.metadata?.fieldName,
   })}`;
 
+  const fieldDescription = fieldDefinition?.metadata?.description;
+  const hasFieldDescription = shouldDisplayFieldDescriptionTooltip({
+    fieldLabel: label,
+    fieldDescription,
+  });
+
   return (
     <StyledInlineCellBaseContainer
       readonly={readonly ?? false}
@@ -110,16 +127,28 @@ export const RecordInlineCellContainer = () => {
       onMouseLeave={handleContainerMouseLeave}
     >
       {(IconLabel || label) && (
-        <StyledLabelAndIconContainer id={labelId}>
+        <StyledLabelAndIconContainer id={!showLabel ? labelId : undefined}>
           {IconLabel && (
             <StyledIconContainer>
               <IconLabel stroke={theme.icon.stroke.sm} />
             </StyledIconContainer>
           )}
           {showLabel && (
-            <StyledLabelContainer width={labelWidth}>
-              <OverflowingTextWithTooltip text={label} displayedMaxRows={1} />
-            </StyledLabelContainer>
+            <FieldDescriptionTooltip
+              fieldDescription={fieldDescription}
+              fieldLabel={label}
+            >
+              <StyledLabelContainer width={labelWidth}>
+                {hasFieldDescription ? (
+                  <StyledLabel>{label}</StyledLabel>
+                ) : (
+                  <OverflowingTextWithTooltip
+                    text={label}
+                    displayedMaxRows={1}
+                  />
+                )}
+              </StyledLabelContainer>
+            </FieldDescriptionTooltip>
           )}
           {/* TODO: Displaying Tooltips on the board is causing performance issues https://react-tooltip.com/docs/examples/render */}
           {!showLabel && (

@@ -119,6 +119,9 @@ export const OverflowingTextWithTooltip = ({
           <div onClick={handleTooltipClick}>
             <AppTooltip
               anchorSelect={`#${textElementId}`}
+              className={
+                isTooltipMultiline ? styles.multilineTooltip : undefined
+              }
               offset={5}
               noArrow
               place={tooltipPlace}
@@ -126,11 +129,7 @@ export const OverflowingTextWithTooltip = ({
               delay={tooltipDelay}
               isOpen={true}
             >
-              {isTooltipMultiline ? (
-                <pre className={styles.pre}>{tooltipText}</pre>
-              ) : (
-                tooltipText
-              )}
+              {tooltipText}
             </AppTooltip>
           </div>,
           document.body,
