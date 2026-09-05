@@ -6,7 +6,7 @@ import { v4 } from 'uuid';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildSendMessageCampaignAvailabilityUpdates } from 'src/database/commands/upgrade-version-command/2-38/utils/build-send-message-campaign-availability-updates.util';
+import { buildSendMessageCampaignAvailabilityUpdates } from 'src/database/commands/upgrade-version-command/2-39/utils/build-send-message-campaign-availability-updates.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -17,9 +17,9 @@ import { createStandardCommandMenuItemFlatMetadata } from 'src/engine/workspace-
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.38.0', 1788456317275)
+@RegisteredWorkspaceCommand('2.39.0', 1788619058944)
 @Command({
-  name: 'upgrade:2-38:align-message-campaign-commands',
+  name: 'upgrade:2-39:align-message-campaign-commands',
   description:
     'Restrict Send Campaign and Send Test to a single selected campaign, gate them behind the email group feature flag, and add the Cancel Campaign command',
 })
