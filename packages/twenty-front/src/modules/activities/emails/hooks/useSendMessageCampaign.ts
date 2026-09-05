@@ -56,10 +56,10 @@ export const useSendMessageCampaign = () => {
       });
 
       const { queuedCount, audience } = queued;
-      const skipReasons = buildExcludedRecipientReasons(
-        audience,
+      const skipReasons = buildExcludedRecipientReasons({
+        counts: audience,
         formatNumber,
-      ).join(', ');
+      }).join(', ');
 
       if (queuedCount === 0) {
         enqueueErrorSnackBar({

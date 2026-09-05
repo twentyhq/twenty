@@ -16,8 +16,6 @@ import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-s
 import { CALENDAR_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/calendar-channel-seed-ids.constant';
 import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
 import { MESSAGE_FOLDER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-folder-seed-ids.constant';
-import { getUnsubscribeTopicDataSeedIds } from 'src/engine/workspace-manager/dev-seeder/core/constants/unsubscribe-topic-seed-ids.constant';
-import { UnsubscribeTopicVisibility } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-topic-visibility.type';
 import { getSeededEmailGroupDomains } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-emailing-domains.util';
 import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
 
@@ -110,7 +108,6 @@ export const seedMetadataEntities = async ({
 
   await seedConnectedAccounts({ queryRunner, schemaName, workspaceId });
   await seedMessageChannels({ queryRunner, schemaName, workspaceId });
-  await seedUnsubscribeTopics({ queryRunner, schemaName, workspaceId });
   await seedCalendarChannels({ queryRunner, schemaName, workspaceId });
   await seedMessageFolders({ queryRunner, schemaName, workspaceId });
 };
@@ -349,52 +346,6 @@ const seedMessageChannels = async ({
     ])
     .orIgnore()
     .values(messageChannels)
-    .execute();
-};
-
-const seedUnsubscribeTopics = async ({
-  queryRunner,
-  schemaName,
-  workspaceId,
-}: SeedMetadataEntitiesArgs) => {
-  const ids = getUnsubscribeTopicDataSeedIds(workspaceId);
-
-  const unsubscribeTopics = [
-    {
-      id: ids.PRODUCT_UPDATES,
-      name: 'Product updates',
-      description: 'New features and product announcements.',
-      visibility: UnsubscribeTopicVisibility.PUBLIC,
-      workspaceId,
-    },
-    {
-      id: ids.NEWSLETTER,
-      name: 'Newsletter',
-      description: 'Our periodic company newsletter.',
-      visibility: UnsubscribeTopicVisibility.PUBLIC,
-      workspaceId,
-    },
-    {
-      id: ids.TRANSACTIONAL,
-      name: 'Transactional',
-      description: 'Internal-only category, hidden from the preferences page.',
-      visibility: UnsubscribeTopicVisibility.PRIVATE,
-      workspaceId,
-    },
-  ];
-
-  await queryRunner.manager
-    .createQueryBuilder()
-    .insert()
-    .into(`${schemaName}.unsubscribeTopic`, [
-      'id',
-      'name',
-      'description',
-      'visibility',
-      'workspaceId',
-    ])
-    .orIgnore()
-    .values(unsubscribeTopics)
     .execute();
 };
 
