@@ -262,6 +262,7 @@ type Object {
   isSearchable: Boolean!
   openRecordIn: ObjectOpenRecordIn!
   readability: MetadataReadability!
+  writability: MetadataWritability!
   applicationId: UUID!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -298,6 +299,12 @@ enum MetadataReadability {
   OPEN
   PRIVATE
   INHERITED
+  APPLICATION
+  SYSTEM
+}
+
+enum MetadataWritability {
+  OPEN
   APPLICATION
   SYSTEM
 }
@@ -2337,6 +2344,7 @@ type Field {
   isActive: Boolean
   isSystem: Boolean
   isUIEditable: Boolean
+  writability: MetadataWritability
   isUIReadOnly: Boolean @deprecated(reason: "Use isUIEditable")
   isNullable: Boolean
   isUnique: Boolean
