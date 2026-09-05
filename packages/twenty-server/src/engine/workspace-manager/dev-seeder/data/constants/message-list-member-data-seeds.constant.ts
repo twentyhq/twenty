@@ -10,8 +10,6 @@ type MessageListMemberDataSeed = {
 export const MESSAGE_LIST_MEMBER_DATA_SEED_COLUMNS: (keyof MessageListMemberDataSeed)[] =
   ['id', 'listId', 'personId'];
 
-// Members are picked by job title so each list reads as a real audience
-// rather than an arbitrary slice of the people table.
 const buildMembersByJobTitle = ({
   listId,
   listIndex,
