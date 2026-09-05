@@ -30,6 +30,7 @@ export { evaluateConditionalAvailabilityExpression } from './command-menu-items/
 export { resolveObjectMetadataLabel } from './command-menu-items/resolveObjectMetadataLabel';
 export { safeGetNestedProperty } from './command-menu-items/safeGetNestedProperty';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
+export { convertDollarsToBillingCredits } from './convertDollarsToBillingCredits';
 export {
   NON_ISO_DATE_FORMATS,
   ACCEPTED_DATE_FORMATS,

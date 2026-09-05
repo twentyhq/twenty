@@ -1,2 +1,1 @@
-// Configuration: $0.000_001 = 1 credit
-export const DOLLAR_TO_CREDIT_MULTIPLIER = 1_000_000; // 1 / 0.000_001 = 1_000_000 credits per dollar
+export { DOLLAR_TO_CREDIT_MULTIPLIER } from 'twenty-shared/constants';

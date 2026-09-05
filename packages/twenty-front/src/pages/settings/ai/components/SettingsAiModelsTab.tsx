@@ -5,6 +5,7 @@ import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelA
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModelsTable';
+import { SettingsAiModelHoverCard } from '@/settings/ai/components/SettingsAiModelHoverCard';
 import { getDataResidencyDisplay } from '@/settings/ai/utils/getDataResidencyDisplay';
 import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
 import { SettingsCard } from '@/settings/components/SettingsCard';
@@ -79,6 +80,12 @@ export const SettingsAiModelsTab = () => {
         autoSelectEntry.modelFamily,
         autoSelectEntry.providerName,
       ),
+      hoverCardContent: (
+        <SettingsAiModelHoverCard
+          model={autoSelectEntry}
+          comparisonModels={enabledModels}
+        />
+      ),
       contextualText: t`Best`,
     };
   };
@@ -94,6 +101,12 @@ export const SettingsAiModelsTab = () => {
       value: model.modelId,
       label: `${model.label}${residencyFlag}`,
       Icon: getModelIcon(model.modelFamily, model.providerName),
+      hoverCardContent: (
+        <SettingsAiModelHoverCard
+          model={model}
+          comparisonModels={enabledModels}
+        />
+      ),
     };
   });
 
