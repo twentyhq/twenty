@@ -202,11 +202,14 @@ export class BillingSubscriptionService {
         ? data.object.customer
         : data.object.customer?.id;
 
+    // A setup intent carrying no customer is not ours to recover, and failing
+    // would only have Stripe redeliver an event that can never succeed
     if (!isDefined(stripeCustomerId)) {
-      throw new BillingException(
-        'Missing customer on successful setup intent',
-        BillingExceptionCode.BILLING_STRIPE_ERROR,
+      this.logger.warn(
+        `Ignoring successful setup intent ${data.object.id} without customer`,
       );
+
+      return {};
     }
 
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
@@ -219,10 +222,11 @@ export class BillingSubscriptionService {
         : data.object.payment_method?.id;
 
     if (!isDefined(stripePaymentMethodId)) {
-      throw new BillingException(
-        'Missing payment method on successful setup intent',
-        BillingExceptionCode.BILLING_STRIPE_ERROR,
+      this.logger.warn(
+        `Ignoring successful setup intent ${data.object.id} without payment method`,
       );
+
+      return {};
     }
 
     await this.stripeCustomerService.setDefaultPaymentMethod({
