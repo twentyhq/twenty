@@ -17,7 +17,6 @@ export type StandardPageLayoutWidgetConfig = {
   conditionalAvailabilityExpression?: string | null;
   fieldUniversalIdentifier?: string;
   fieldDisplayMode?: FieldDisplayMode;
-  // Standard view embedded by a FIELD widget in TABLE display mode
   embeddedViewUniversalIdentifier?: string;
 };
 
