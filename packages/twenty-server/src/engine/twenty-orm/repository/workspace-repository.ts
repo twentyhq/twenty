@@ -26,6 +26,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { getEffectiveReadability } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-readability.util';
 import { FilesFieldSync } from 'src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync';
 import {
   type OperationType,
@@ -1679,7 +1680,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       owningApplicationId: flatObjectMetadata.applicationId,
     });
 
-    switch (flatObjectMetadata.readability) {
+    const readability = getEffectiveReadability(flatObjectMetadata);
+
+    switch (readability) {
       case MetadataReadability.OPEN:
         return;
       case MetadataReadability.INHERITED:
@@ -1719,7 +1722,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
         return;
       default:
-        assertUnreachable(flatObjectMetadata.readability);
+        assertUnreachable(readability);
     }
   }
 
@@ -1797,7 +1800,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         .filter(isDefined)
         .map((linkedFlatObjectMetadata) => ({
           objectMetadataId: linkedFlatObjectMetadata.id,
-          readability: linkedFlatObjectMetadata.readability,
+          readability: getEffectiveReadability(linkedFlatObjectMetadata),
           isOwningApplication: this.isOwningApplicationAuthContext(
             linkedFlatObjectMetadata,
           ),
@@ -1945,7 +1948,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return { kind: 'open' };
     }
 
-    switch (parentFlatObjectMetadata.readability) {
+    const parentReadability = getEffectiveReadability(parentFlatObjectMetadata);
+
+    switch (parentReadability) {
       case MetadataReadability.OPEN:
         return { kind: 'open' };
       case MetadataReadability.SYSTEM:
@@ -1998,7 +2003,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         };
       }
       default:
-        assertUnreachable(parentFlatObjectMetadata.readability);
+        assertUnreachable(parentReadability);
     }
   }
 

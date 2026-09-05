@@ -1,5 +1,7 @@
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
+import { getEffectiveOwnerFieldMetadataId } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-owner-field-metadata-id.util';
+import { getEffectiveReadability } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-readability.util';
 
 export const fromFlatObjectMetadataToObjectMetadataDto = (
   flatObjectMetadata: FlatObjectMetadata,
@@ -20,7 +22,6 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
     isRemote,
     isSearchable,
     openRecordIn,
-    readability,
     readabilityParentFieldUniversalIdentifiers,
     isSystem,
     isUIEditable,
@@ -32,7 +33,6 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
     workspaceId,
     imageIdentifierFieldMetadataId,
     labelIdentifierFieldMetadataId,
-    ownerFieldMetadataId,
     applicationId,
   } = flatObjectMetadata;
 
@@ -44,7 +44,7 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
     isRemote,
     isSearchable,
     openRecordIn,
-    readability,
+    readability: getEffectiveReadability(flatObjectMetadata),
     readabilityParentFieldUniversalIdentifiers,
     isSystem,
     isUIEditable,
@@ -57,7 +57,7 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
     workspaceId,
     imageIdentifierFieldMetadataId,
     labelIdentifierFieldMetadataId,
-    ownerFieldMetadataId,
+    ownerFieldMetadataId: getEffectiveOwnerFieldMetadataId(flatObjectMetadata),
     createdAt: new Date(createdAt),
     updatedAt: new Date(updatedAt),
     color: color ?? undefined,

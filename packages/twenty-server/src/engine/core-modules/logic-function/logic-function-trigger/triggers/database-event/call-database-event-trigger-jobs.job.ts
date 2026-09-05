@@ -21,6 +21,7 @@ import {
   LogicFunctionTriggerJob,
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
+import { getEffectiveReadability } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-readability.util';
 import { DENY_ALL_RECORD_SHARE_GATE } from 'src/engine/record-share/constants/deny-all-record-share-gate.constant';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { type RecordShareGate } from 'src/engine/record-share/types/record-share-gate.type';
@@ -97,7 +98,9 @@ export class CallDatabaseEventTriggerJobsJob {
     const recordShares =
       isRecordShareGated &&
       resolveRecordShareGateKind({
-        readability: workspaceEventBatch.objectMetadata.readability,
+        readability: getEffectiveReadability(
+          workspaceEventBatch.objectMetadata,
+        ),
         isOwningApplication: false,
       }) === 'private'
         ? await this.recordShareService.findByRecordIds({
@@ -214,7 +217,7 @@ export class CallDatabaseEventTriggerJobsJob {
     recordShares: RecordShare[];
   }): RecordShareGate | null {
     const gateKind = resolveRecordShareGateKind({
-      readability: workspaceEventBatch.objectMetadata.readability,
+      readability: getEffectiveReadability(workspaceEventBatch.objectMetadata),
       isOwningApplication:
         workspaceEventBatch.objectMetadata.applicationId === application.id,
     });

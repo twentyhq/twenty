@@ -12,6 +12,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { getEffectiveReadability } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-readability.util';
 import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
 import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
 import { type WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/webhook/types/workspace-event-batch-for-webhook.type';
@@ -79,7 +80,7 @@ export class CallWebhookJobsJob {
       isDefined(flatObjectMetadata)
         ? await this.fetchRecordShares({
             workspaceEventBatch,
-            readability: flatObjectMetadata.readability,
+            readability: getEffectiveReadability(flatObjectMetadata),
           })
         : undefined;
 

@@ -20,6 +20,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { getEffectiveReadability } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-readability.util';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { type RecordSharesDTO } from 'src/engine/record-share/dtos/record-share.dto';
 import { type ShareWithInput } from 'src/engine/record-share/dtos/share-with.input';
@@ -325,7 +326,10 @@ export class ManualRecordShareService {
   ): Promise<FlatObjectMetadata> {
     const flatObjectMetadata = await this.findFlatObjectMetadataOrThrow(target);
 
-    if (flatObjectMetadata.readability !== MetadataReadability.PRIVATE) {
+    if (
+      getEffectiveReadability(flatObjectMetadata) !==
+      MetadataReadability.PRIVATE
+    ) {
       throw new PermissionsException(
         `Object "${flatObjectMetadata.nameSingular}" is not private`,
         PermissionsExceptionCode.INVALID_ARG,

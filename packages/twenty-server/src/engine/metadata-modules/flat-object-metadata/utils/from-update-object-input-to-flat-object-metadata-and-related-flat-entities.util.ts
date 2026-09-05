@@ -1,3 +1,5 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import {
   isDefined,
   isImageIdentifierFieldMetadataType,
@@ -7,6 +9,7 @@ import {
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-object-metadata/constants/flat-object-metadata-editable-properties.constant';
 import {
   type FlatObjectMetadataUpdateSideEffects,
@@ -105,6 +108,49 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
       if (!imageIdentifierFlatFieldMetadata.isActive) {
         throw new ObjectMetadataException(
           'Field cannot be used as image identifier because it is deactivated',
+          ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        );
+      }
+    }
+
+    const requestedOwnerFieldMetadataId =
+      rawUpdateObjectInput.update.ownerFieldMetadataId;
+
+    if (isDefined(requestedOwnerFieldMetadataId)) {
+      const ownerFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityMaps: flatFieldMetadataMaps,
+        flatEntityId: requestedOwnerFieldMetadataId,
+      });
+
+      if (!isDefined(ownerFlatFieldMetadata)) {
+        throw new ObjectMetadataException(
+          'Field declared as owner field not found',
+          ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        );
+      }
+
+      if (
+        ownerFlatFieldMetadata.objectMetadataId !==
+        existingFlatObjectMetadata.id
+      ) {
+        throw new ObjectMetadataException(
+          'Field declared as owner field does not belong to this object',
+          ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        );
+      }
+
+      if (
+        !isFlatFieldMetadataOfType(
+          ownerFlatFieldMetadata,
+          FieldMetadataType.RELATION,
+        ) ||
+        ownerFlatFieldMetadata.settings.relationType !==
+          RelationType.MANY_TO_ONE ||
+        ownerFlatFieldMetadata.relationTargetObjectMetadataUniversalIdentifier !==
+          STANDARD_OBJECTS.workspaceMember.universalIdentifier
+      ) {
+        throw new ObjectMetadataException(
+          'Field declared as owner field must be a many-to-one relation to workspace members',
           ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         );
       }

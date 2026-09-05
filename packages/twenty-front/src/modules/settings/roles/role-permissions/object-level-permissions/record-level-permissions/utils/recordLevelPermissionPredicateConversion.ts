@@ -17,6 +17,10 @@ import {
   type RowLevelPermissionPredicateOperand,
 } from '~/generated-metadata/graphql';
 
+export type RowLevelPermissionPredicateParent =
+  | { roleId: string; sharingRuleId?: null }
+  | { sharingRuleId: string; roleId?: null };
+
 export const convertPredicateToRecordFilter = (
   predicate: RowLevelPermissionPredicate,
   fieldMetadataItem: FieldMetadataItem | undefined,
@@ -63,7 +67,7 @@ export const convertPredicateToRecordFilter = (
 
 export const convertRecordFilterToPredicate = (
   filter: RecordFilter,
-  roleId: string,
+  parent: RowLevelPermissionPredicateParent,
   objectMetadataId: string,
 ): RowLevelPermissionPredicate => {
   if (isDefined(filter.rlsDynamicValue)) {
@@ -78,7 +82,7 @@ export const convertRecordFilterToPredicate = (
       rowLevelPermissionPredicateGroupId: filter.recordFilterGroupId ?? null,
       positionInRowLevelPermissionPredicateGroup:
         filter.positionInRecordFilterGroup ?? null,
-      roleId,
+      ...parent,
       workspaceMemberFieldMetadataId:
         filter.rlsDynamicValue.workspaceMemberFieldMetadataId,
       workspaceMemberSubFieldName:
@@ -97,7 +101,7 @@ export const convertRecordFilterToPredicate = (
     rowLevelPermissionPredicateGroupId: filter.recordFilterGroupId ?? null,
     positionInRowLevelPermissionPredicateGroup:
       filter.positionInRecordFilterGroup ?? null,
-    roleId,
+    ...parent,
     workspaceMemberFieldMetadataId: null,
     workspaceMemberSubFieldName: null,
   };
@@ -122,7 +126,7 @@ export const convertPredicateGroupToRecordFilterGroup = (
 
 export const convertRecordFilterGroupToPredicateGroup = (
   filterGroup: RecordFilterGroup,
-  roleId: string,
+  parent: RowLevelPermissionPredicateParent,
   objectMetadataId: string,
 ): RowLevelPermissionPredicateGroup => {
   return {
@@ -136,7 +140,7 @@ export const convertRecordFilterGroupToPredicateGroup = (
         : RowLevelPermissionPredicateGroupLogicalOperator.OR,
     positionInRowLevelPermissionPredicateGroup:
       filterGroup.positionInRecordFilterGroup ?? null,
-    roleId,
+    ...parent,
     objectMetadataId,
   };
 };

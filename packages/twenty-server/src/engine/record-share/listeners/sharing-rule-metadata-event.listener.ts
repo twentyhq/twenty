@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { getEffectiveReadability } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-readability.util';
 import {
   RecalculateSharingRuleRecordSharesJob,
   type RecalculateSharingRuleRecordSharesJobData,
@@ -14,7 +15,10 @@ import {
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
 import { computeMetadataEventName } from 'src/engine/subscriptions/metadata-event/utils/compute-metadata-event-name.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
+import {
+  type MetadataEvent,
+  type UpdateMetadataEvent,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 
 const SHARING_RULE_EVENTS = 'metadata.sharingRule.*';
 const PREDICATE_EVENTS = 'metadata.rowLevelPermissionPredicate.*';
@@ -50,13 +54,19 @@ const resolveParentSharingRuleIds = (event: MetadataEvent): string[] =>
     ),
   ].filter(isDefined);
 
-const readReadability = (entity: object): unknown =>
-  'readability' in entity ? entity.readability : undefined;
+type ObjectMetadataUpdatedEvent = MetadataEvent &
+  UpdateMetadataEvent<'objectMetadata'>;
 
-const isTurnedPrivate = (event: MetadataEvent): boolean =>
-  event.type === 'updated' &&
-  readReadability(event.properties.after) === MetadataReadability.PRIVATE &&
-  readReadability(event.properties.before) !== MetadataReadability.PRIVATE;
+const isObjectMetadataUpdatedEvent = (
+  event: MetadataEvent,
+): event is ObjectMetadataUpdatedEvent =>
+  event.metadataName === 'objectMetadata' && event.type === 'updated';
+
+const isTurnedPrivate = (event: ObjectMetadataUpdatedEvent): boolean =>
+  getEffectiveReadability(event.properties.after) ===
+    MetadataReadability.PRIVATE &&
+  getEffectiveReadability(event.properties.before) !==
+    MetadataReadability.PRIVATE;
 
 @Injectable()
 export class SharingRuleMetadataEventListener {
@@ -103,6 +113,7 @@ export class SharingRuleMetadataEventListener {
     metadataEventBatch: MetadataEventBatch<'objectMetadata', 'updated'>,
   ): Promise<void> {
     const objectMetadataIdsTurnedPrivate = metadataEventBatch.events
+      .filter(isObjectMetadataUpdatedEvent)
       .filter(isTurnedPrivate)
       .map((event) => event.recordId);
 

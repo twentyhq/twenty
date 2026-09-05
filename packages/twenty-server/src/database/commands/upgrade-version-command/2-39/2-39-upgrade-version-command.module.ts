@@ -10,6 +10,7 @@ import { BackfillCallRecordingSharesCommand } from 'src/database/commands/upgrad
 import { BackfillChannelRecordSharesCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788561701130-backfill-channel-record-shares.command';
 import { MakeMessagingAndCalendarPrivateCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788573079880-make-messaging-and-calendar-private.command';
 import { AddShareRecordCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788576900000-add-share-record-command-menu-item.command';
+import { MakeStandardChildObjectsInheritedCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788593235048-make-standard-child-objects-inherited.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -47,6 +48,7 @@ import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-co
     BackfillChannelRecordSharesCommand,
     MakeMessagingAndCalendarPrivateCommand,
     AddShareRecordCommandMenuItemCommand,
+    MakeStandardChildObjectsInheritedCommand,
   ],
 })
 export class V2_39_UpgradeVersionCommandModule {}

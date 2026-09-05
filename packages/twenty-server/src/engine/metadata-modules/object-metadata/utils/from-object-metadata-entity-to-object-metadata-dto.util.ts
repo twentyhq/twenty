@@ -1,5 +1,7 @@
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { getEffectiveOwnerFieldMetadataId } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-owner-field-metadata-id.util';
+import { getEffectiveReadability } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-readability.util';
 
 export const fromObjectMetadataEntityToObjectMetadataDto = (
   entity: ObjectMetadataEntity,
@@ -24,7 +26,7 @@ export const fromObjectMetadataEntityToObjectMetadataDto = (
   isUIReadOnly: !entity.isUIEditable,
   isSearchable: entity.isSearchable,
   openRecordIn: entity.openRecordIn,
-  readability: entity.readability,
+  readability: getEffectiveReadability(entity),
   readabilityParentFieldUniversalIdentifiers:
     entity.readabilityParentFieldUniversalIdentifiers,
   isLabelSyncedWithName: entity.isLabelSyncedWithName,
@@ -33,7 +35,7 @@ export const fromObjectMetadataEntityToObjectMetadataDto = (
     entity.labelIdentifierFieldMetadataId ?? undefined,
   imageIdentifierFieldMetadataId:
     entity.imageIdentifierFieldMetadataId ?? undefined,
-  ownerFieldMetadataId: entity.ownerFieldMetadataId ?? undefined,
+  ownerFieldMetadataId: getEffectiveOwnerFieldMetadataId(entity) ?? undefined,
   duplicateCriteria: entity.duplicateCriteria ?? undefined,
   createdAt: entity.createdAt,
   updatedAt: entity.updatedAt,

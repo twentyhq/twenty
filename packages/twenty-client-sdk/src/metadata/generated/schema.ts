@@ -7341,7 +7341,9 @@ export interface UpdateOneObjectInput {update: UpdateObjectPayload,
 /** The id of the object to update */
 id: Scalars['UUID']}
 
-export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),ownerFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),openRecordIn?: (ObjectOpenRecordIn | null),translations?: (MetadataTranslationOverrideInput[] | null)}
+export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),ownerFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),openRecordIn?: (ObjectOpenRecordIn | null),readability?: (MetadataReadability | null),backfillSharingRule?: (BackfillSharingRuleInput | null),translations?: (MetadataTranslationOverrideInput[] | null)}
+
+export interface BackfillSharingRuleInput {granteePrincipalType: RecordSharePrincipalType,granteeRoleId?: (Scalars['UUID'] | null),accessLevel: RecordShareAccessLevel,name?: (Scalars['String'] | null)}
 
 export interface MetadataTranslationOverrideInput {locale: Scalars['String'],property: Scalars['String'],value?: (Scalars['String'] | null)}
 

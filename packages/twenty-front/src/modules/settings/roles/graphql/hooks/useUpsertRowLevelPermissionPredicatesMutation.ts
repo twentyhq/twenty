@@ -11,7 +11,8 @@ import {
 } from '~/generated-metadata/graphql';
 
 export type UpsertRowLevelPermissionPredicatesInput = {
-  roleId: string;
+  roleId?: string | null;
+  sharingRuleId?: string | null;
   objectMetadataId: string;
   predicates: Array<{
     id?: string;

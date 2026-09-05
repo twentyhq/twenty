@@ -68,6 +68,13 @@ To bring back a deactivated object:
 4. Click `⋮` and then `Activate` to reactivate it
 5. The object and all its data will be restored
 
+### Sharing
+The **Sharing** tab of an object decides who can read its records:
+
+- **Level**: `Open` objects are readable by every member the role lets in, which is the default. `Private` objects only show a record to the members who hold access to it, through ownership, a manual share or a sharing rule. A few standard objects such as attachments inherit the level of their parent record; that level is shown but cannot be changed.
+- **Owner field**: a relation to workspace members. The member a record points to gets full access to it.
+- **Sharing rules**: grant `Can view` or `Can edit` on the records of the object to everyone, a role or a member. A rule without criteria covers every record; criteria narrow it down to matching records. Switching an object to `Private` asks for a first rule so the existing records stay visible.
+
 ## Best Practices
 
 ### When to Create Custom Objects

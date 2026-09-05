@@ -16,6 +16,7 @@ export const FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES = {
     'labelIdentifierFieldMetadataId',
     'imageIdentifierFieldMetadataId',
     'ownerFieldMetadataId',
+    'readability',
   ],
   standard: [
     'color',
@@ -27,6 +28,8 @@ export const FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES = {
     'labelPlural',
     'labelSingular',
     'imageIdentifierFieldMetadataId',
+    'ownerFieldMetadataId',
+    'readability',
   ],
 } as const satisfies Record<
   'standard' | 'custom',

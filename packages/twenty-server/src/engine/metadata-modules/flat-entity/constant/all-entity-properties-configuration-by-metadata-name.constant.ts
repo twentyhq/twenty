@@ -267,6 +267,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     readabilityParentFieldUniversalIdentifiers: {
       toCompare: true,
@@ -310,6 +311,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       // @ts-expect-error remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
       universalProperty: 'ownerFieldMetadataUniversalIdentifier',
+      isOverridable: true,
     },
     targetTableName: {
       toCompare: false,
