@@ -5,7 +5,7 @@ import { type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.39.0', 1788563190107)
+@RegisteredInstanceCommand('2.39.0', 1788577473821)
 export class AddSharingRuleParentToRowLevelPermissionPredicateFastInstanceCommand
   implements FastInstanceCommand
 {
