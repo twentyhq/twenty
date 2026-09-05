@@ -116,7 +116,10 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
     const requestedOwnerFieldMetadataId =
       rawUpdateObjectInput.update.ownerFieldMetadataId;
 
-    if (isDefined(requestedOwnerFieldMetadataId)) {
+    if (
+      isDefined(requestedOwnerFieldMetadataId) &&
+      belongsToTwentyStandardApp(existingFlatObjectMetadata)
+    ) {
       const ownerFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
         flatEntityMaps: flatFieldMetadataMaps,
         flatEntityId: requestedOwnerFieldMetadataId,
