@@ -1,18 +1,15 @@
+import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { useMobileNavigationBarItems } from '@/navigation/hooks/useMobileNavigationBarItems';
-import { useNavigationDrawerModes } from '@/navigation/hooks/useNavigationDrawerModes';
-import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
-import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
-import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 import { MemoryRouter, useLocation, useNavigate } from 'react-router-dom';
-import { IconComment, IconHome, IconSettings } from 'twenty-ui/icon';
 
-jest.mock('@/navigation/hooks/useNavigationDrawerModes');
-jest.mock('@/navigation/hooks/useSwitchNavigationDrawerMode');
+jest.mock('@/ai/hooks/useSwitchToNewAiChat');
+jest.mock('@/settings/roles/hooks/useHasPermissionFlag');
 
 jest.mock('@/object-metadata/hooks/useFilteredObjectMetadataItems', () => ({
   useFilteredObjectMetadataItems: () => ({
@@ -30,27 +27,7 @@ jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   useSidePanelMenu: () => ({ closeSidePanelMenu: jest.fn() }),
 }));
 
-const AI_CHAT_PATH = '/chat/20202020-0687-4c41-b707-ed1bfca972a7';
-
-const mockSwitchNavigationDrawerMode = jest.fn();
-
-const ALL_MODES = [
-  {
-    Icon: IconHome,
-    label: 'Home',
-    mode: NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
-  },
-  {
-    Icon: IconComment,
-    label: 'AI',
-    mode: NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
-  },
-  {
-    Icon: IconSettings,
-    label: 'Settings',
-    mode: NAVIGATION_DRAWER_TABS.SETTINGS,
-  },
-];
+const mockSwitchToNewChat = jest.fn();
 
 const renderMobileNavigationBarItems = (
   pathname: string,
@@ -90,98 +67,49 @@ describe('useMobileNavigationBarItems', () => {
     jest.clearAllMocks();
     localStorage.clear();
 
-    jest.mocked(useNavigationDrawerModes).mockReturnValue(ALL_MODES);
-    jest.mocked(useSwitchNavigationDrawerMode).mockReturnValue({
-      switchNavigationDrawerMode: mockSwitchNavigationDrawerMode,
+    jest.mocked(useHasPermissionFlag).mockReturnValue(true);
+    jest.mocked(useSwitchToNewAiChat).mockReturnValue({
+      switchToNewChat: mockSwitchToNewChat,
     });
   });
 
-  it('offers every navigation mode next to the search action', () => {
+  it('offers home, search and a new chat', () => {
     const { result } = renderMobileNavigationBarItems('/objects/people');
 
     expect(result.current.items.map(({ name }) => name)).toEqual([
-      NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
+      'home',
       'search',
-      NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
-      NAVIGATION_DRAWER_TABS.SETTINGS,
+      'newAiChat',
     ]);
   });
 
-  it('drops the AI mode the workspace has no permission for', () => {
-    jest
-      .mocked(useNavigationDrawerModes)
-      .mockReturnValue(
-        ALL_MODES.filter(
-          ({ mode }) => mode !== NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
-        ),
-      );
+  it('drops the new chat when the workspace has no AI permission', () => {
+    jest.mocked(useHasPermissionFlag).mockReturnValue(false);
 
     const { result } = renderMobileNavigationBarItems('/objects/people');
 
     expect(result.current.items.map(({ name }) => name)).toEqual([
-      NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
+      'home',
       'search',
-      NAVIGATION_DRAWER_TABS.SETTINGS,
     ]);
   });
 
-  it('has no item to offer when there is no navigation mode', () => {
-    jest.mocked(useNavigationDrawerModes).mockReturnValue([]);
+  it('marks home as active on the home page only', () => {
+    expect(
+      renderMobileNavigationBarItems('/home').result.current.activeItemName,
+    ).toBe('home');
+    expect(
+      renderMobileNavigationBarItems('/objects/people').result.current
+        .activeItemName,
+    ).toBe('');
+  });
 
+  it('starts a new chat from the chat item', () => {
     const { result } = renderMobileNavigationBarItems('/objects/people');
 
-    expect(result.current.items).toEqual([]);
-  });
+    act(() => tapItem(result, 'newAiChat'));
 
-  it('marks the home mode as active outside of the settings and chat pages', () => {
-    const { result } = renderMobileNavigationBarItems('/objects/people');
-
-    expect(result.current.activeItemName).toBe(
-      NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
-    );
-  });
-
-  it('marks the AI mode as active on the chat page', () => {
-    const { result } = renderMobileNavigationBarItems(AI_CHAT_PATH);
-
-    expect(result.current.activeItemName).toBe(
-      NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
-    );
-  });
-
-  it('marks no tab as active on a route whose mode the bar does not offer', () => {
-    jest
-      .mocked(useNavigationDrawerModes)
-      .mockReturnValue(
-        ALL_MODES.filter(
-          ({ mode }) => mode !== NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
-        ),
-      );
-
-    const { result } = renderMobileNavigationBarItems(AI_CHAT_PATH);
-
-    expect(result.current.activeItemName).toBe('');
-  });
-
-  it('marks the settings mode as active on a settings page', () => {
-    const { result } = renderMobileNavigationBarItems('/settings/profile');
-
-    expect(result.current.activeItemName).toBe(NAVIGATION_DRAWER_TABS.SETTINGS);
-  });
-
-  it('goes to the home page rather than staying on the current one', () => {
-    const { result, store } = renderMobileNavigationBarItems('/objects/people');
-
-    act(() =>
-      result.current.items
-        .find(({ name }) => name === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU)
-        ?.onClick(),
-    );
-
-    expect(result.current.location.pathname).toBe('/home');
-    expect(store.get(navigationDrawerActiveTabState.atom)).toBe(
-      NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
-    );
+    expect(mockSwitchToNewChat).toHaveBeenCalledTimes(1);
   });
 
   it('replaces the settings entry it leaves so back does not return to it', () => {
@@ -189,7 +117,7 @@ describe('useMobileNavigationBarItems', () => {
       '/objects/people',
     ]);
 
-    act(() => tapItem(result, NAVIGATION_DRAWER_TABS.NAVIGATION_MENU));
+    act(() => tapItem(result, 'home'));
 
     expect(result.current.location.pathname).toBe('/home');
 
@@ -201,27 +129,12 @@ describe('useMobileNavigationBarItems', () => {
   it('keeps the page it leaves in history outside of settings', () => {
     const { result } = renderMobileNavigationBarItems('/objects/people');
 
-    act(() => tapItem(result, NAVIGATION_DRAWER_TABS.NAVIGATION_MENU));
+    act(() => tapItem(result, 'home'));
 
     expect(result.current.location.pathname).toBe('/home');
 
     act(() => result.current.navigate(-1));
 
     expect(result.current.location.pathname).toBe('/objects/people');
-  });
-
-  it('delegates the other modes to the drawer mode switch', () => {
-    const { result } = renderMobileNavigationBarItems('/objects/people');
-
-    act(() =>
-      result.current.items
-        .find(({ name }) => name === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY)
-        ?.onClick(),
-    );
-
-    expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledTimes(1);
-    expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledWith(
-      NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
-    );
   });
 });

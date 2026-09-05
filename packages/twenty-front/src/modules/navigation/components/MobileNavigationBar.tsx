@@ -6,7 +6,9 @@ import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedSta
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
+import { useLocation } from 'react-router-dom';
 import { NavigationBar } from 'twenty-ui/navigation';
+import { isAiChatPath } from '~/utils/isAiChatPath';
 
 // The bar floats over the page, so the container has to let taps through to
 // whatever is scrolling underneath it. flex-start rather than left so the bar
@@ -35,19 +37,19 @@ const StyledFloatingContainer = styled.div`
 `;
 
 export const MobileNavigationBar = () => {
+  const { pathname } = useLocation();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
   const isMobileNavigationBarVisible = useAtomStateValue(
     isMobileNavigationBarVisibleState,
   );
   const { items, activeItemName } = useMobileNavigationBarItems();
 
-  const isHidden = isSidePanelOpened || !isMobileNavigationBarVisible;
-
-  // A suspended workspace is held on the billing settings by the route guard,
-  // so it has no tab to offer.
-  if (items.length === 0) {
-    return null;
-  }
+  // The chat page keeps the keyboard up most of the time, which leaves no room
+  // for the bar, and it carries its own close button to leave by.
+  const isHidden =
+    isSidePanelOpened ||
+    !isMobileNavigationBarVisible ||
+    isAiChatPath(pathname);
 
   return (
     <>

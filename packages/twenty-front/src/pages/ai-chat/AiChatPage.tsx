@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatPageCloseAskAiPanelEffect } from '@/ai/components/AiChatPageCloseAskAiPanelEffect';
 import { AiChatPageContinueInSidePanelEffect } from '@/ai/components/AiChatPageContinueInSidePanelEffect';
@@ -9,7 +9,6 @@ import { AiChatTab } from '@/ai/components/AiChatTab';
 import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
 import { AiChatMessageListPreambleContext } from '@/ai/contexts/AiChatMessageListPreambleContext';
 import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
-import { MOBILE_NAVIGATION_BAR_CLEARANCE } from '@/navigation/constants/MobileNavigationBarClearance';
 import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSetupChatPreamble';
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
@@ -37,10 +36,6 @@ const StyledCenteredChatContainer = styled.div`
   max-width: 768px;
   min-height: 0;
   width: 100%;
-
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    padding-bottom: ${MOBILE_NAVIGATION_BAR_CLEARANCE};
-  }
 `;
 
 export const AiChatPage = () => {
