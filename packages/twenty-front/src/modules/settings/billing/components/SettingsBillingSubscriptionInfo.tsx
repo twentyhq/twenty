@@ -22,6 +22,7 @@ import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMa
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
@@ -46,6 +47,8 @@ import { beautifyExactDate } from '~/utils/date-utils';
 export const SettingsBillingSubscriptionInfo = ({
   currentWorkspace,
   currentBillingSubscription,
+  onManageBilling,
+  isManageBillingDisabled,
   onUpdatePayment,
   isUpdatePaymentDisabled,
 }: {
@@ -53,6 +56,8 @@ export const SettingsBillingSubscriptionInfo = ({
   currentBillingSubscription: NonNullable<
     CurrentWorkspace['currentBillingSubscription']
   >;
+  onManageBilling: () => void;
+  isManageBillingDisabled: boolean;
   onUpdatePayment: () => void;
   isUpdatePaymentDisabled: boolean;
 }) => {
@@ -119,9 +124,7 @@ export const SettingsBillingSubscriptionInfo = ({
   );
 
   const isTrialPeriod = subscriptionStatus === SubscriptionStatus.Trialing;
-  const shouldUpdatePayment =
-    subscriptionStatus === SubscriptionStatus.PastDue ||
-    subscriptionStatus === SubscriptionStatus.Unpaid;
+  const shouldUpdatePayment = isSubscriptionPaymentOverdue(subscriptionStatus);
 
   const scheduledCancellationDate = currentBillingSubscription.cancelAt;
   const isCancellationScheduled =
@@ -493,6 +496,7 @@ export const SettingsBillingSubscriptionInfo = ({
               isEndTrialPeriodLoading || isAnyActionLoading
             }
             isSubscriptionActionDisabled={isSubscriptionActionDisabled}
+            isManageBillingDisabled={isManageBillingDisabled}
             isUpdatePaymentDisabled={isUpdatePaymentDisabled}
             onCancelIntervalSwitch={() =>
               openModal(BILLING_MODAL_IDS.cancelSwitchBillingInterval)
@@ -501,6 +505,7 @@ export const SettingsBillingSubscriptionInfo = ({
               openModal(BILLING_MODAL_IDS.cancelSwitchBillingPlan)
             }
             onEndTrialPeriod={() => openModal(BILLING_MODAL_IDS.endTrialPeriod)}
+            onManageBilling={onManageBilling}
             onUpdatePayment={onUpdatePayment}
             shouldUpdatePayment={shouldUpdatePayment}
           />
