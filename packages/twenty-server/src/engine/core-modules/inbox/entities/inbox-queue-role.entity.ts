@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { CREATE_INBOX_CORE_TABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-38/create-inbox-core-tables-upgrade-command-name.constant';
+import { CREATE_INBOX_TABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-38/create-inbox-tables-upgrade-command-name.constant';
 import { InboxQueueEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -21,7 +21,7 @@ import { EntityRelation } from 'src/engine/workspace-manager/workspace-migration
 // separate question, answered by the item's assignee.
 @Entity({ name: 'inboxQueueRole', schema: 'core' })
 @WasIntroducedInUpgrade({
-  upgradeCommandName: CREATE_INBOX_CORE_TABLES_UPGRADE_COMMAND_NAME,
+  upgradeCommandName: CREATE_INBOX_TABLES_UPGRADE_COMMAND_NAME,
 })
 @Index('IDX_INBOX_QUEUE_ROLE_QUEUE_ID_ROLE_ID_UNIQUE', ['queueId', 'roleId'], {
   unique: true,

@@ -11,7 +11,7 @@ import {
   OneToMany,
 } from 'typeorm';
 
-import { CREATE_INBOX_CORE_TABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-38/create-inbox-core-tables-upgrade-command-name.constant';
+import { CREATE_INBOX_TABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-38/create-inbox-tables-upgrade-command-name.constant';
 import { InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { InboxQueueEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue.entity';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
@@ -36,7 +36,7 @@ import { type InboxItemContext } from 'src/engine/core-modules/inbox/types/inbox
 // arrived while it was in flight.
 @Entity({ name: 'inboxItem', schema: 'core' })
 @WasIntroducedInUpgrade({
-  upgradeCommandName: CREATE_INBOX_CORE_TABLES_UPGRADE_COMMAND_NAME,
+  upgradeCommandName: CREATE_INBOX_TABLES_UPGRADE_COMMAND_NAME,
 })
 // Work never vanishes. An item is addressed to a shared queue, to one person,
 // or to both, and the database refuses the fourth case.

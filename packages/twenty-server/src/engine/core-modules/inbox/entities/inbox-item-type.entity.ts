@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { CREATE_INBOX_CORE_TABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-38/create-inbox-core-tables-upgrade-command-name.constant';
+import { CREATE_INBOX_TABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-38/create-inbox-tables-upgrade-command-name.constant';
 import { InboxQueueEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
@@ -23,7 +23,7 @@ import { EntityRelation } from 'src/engine/workspace-manager/workspace-migration
 // app-declared types share one shape and one identity space.
 @Entity({ name: 'inboxItemType', schema: 'core' })
 @WasIntroducedInUpgrade({
-  upgradeCommandName: CREATE_INBOX_CORE_TABLES_UPGRADE_COMMAND_NAME,
+  upgradeCommandName: CREATE_INBOX_TABLES_UPGRADE_COMMAND_NAME,
 })
 @Index('IDX_INBOX_ITEM_TYPE_KEY_WORKSPACE_ID_UNIQUE', ['key', 'workspaceId'], {
   unique: true,
