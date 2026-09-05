@@ -116,12 +116,24 @@ export const FieldWidgetRelationTable = ({
   // one.
   const directTableObjectMetadataId =
     junctionTableObjectMetadataId ?? relationObjectMetadataId;
-  const tableObjectMetadataId = isDefined(nestedRelationFieldMetadataId)
-    ? resolvedNestedRelation?.nestedRelationTargetObjectMetadataItem.id
-    : isDefined(persistedView) &&
-        persistedView.objectMetadataId !== directTableObjectMetadataId
-      ? undefined
-      : directTableObjectMetadataId;
+
+  const isPersistedViewOnAnotherObject =
+    isDefined(persistedView) &&
+    persistedView.objectMetadataId !== directTableObjectMetadataId;
+
+  const getTableObjectMetadataId = () => {
+    if (isDefined(nestedRelationFieldMetadataId)) {
+      return resolvedNestedRelation?.nestedRelationTargetObjectMetadataItem.id;
+    }
+
+    if (isPersistedViewOnAnotherObject) {
+      return undefined;
+    }
+
+    return directTableObjectMetadataId;
+  };
+
+  const tableObjectMetadataId = getTableObjectMetadataId();
 
   const {
     targetFieldMetadataName,
