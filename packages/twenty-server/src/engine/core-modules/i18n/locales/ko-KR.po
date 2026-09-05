@@ -10823,7 +10823,7 @@ msgstr "이 수신 거부된 주소는 더 이상 존재하지 않습니다."
 #. js-lingui-id: qm7uMm
 #: src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util.ts
 msgid "This SVG is too large to be processed."
-msgstr ""
+msgstr "이 SVG는 처리하기에 너무 큽니다."
 
 #. js-lingui-id: 0GMgIa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
