@@ -447,11 +447,57 @@ describe('SyncMessageListRecordPageCommand', () => {
       ],
       existingViewFilters: [MEMBERS_VIEW_FILTER_UNIVERSAL_IDENTIFIER],
       homeTab: buildHomeTab({ layoutMode: PageLayoutTabLayoutMode.GRID }),
+      membersWidget: buildMembersWidget({
+        configuration: {
+          configurationType: WidgetConfigurationType.FIELD,
+          fieldMetadataId: '20202020-0000-0000-0000-000000000030',
+          fieldDisplayMode: FieldDisplayMode.TABLE,
+          viewId: MEMBERS_VIEW_ID,
+        },
+      }),
     });
 
     await runOnWorkspace();
 
     expect(validateBuildAndRunLegacyWorkspaceMigrationMock).not.toHaveBeenCalled();
+  });
+
+  it('embeds the members view in a grid table widget provisioned before the view existed', async () => {
+    mockWorkspaceCache({
+      homeTab: buildHomeTab({ layoutMode: PageLayoutTabLayoutMode.GRID }),
+      membersWidget: buildMembersWidget({
+        position: MESSAGE_LIST_GRID_LAYOUT_POSITIONS.RIGHT_COLUMN,
+        configuration: {
+          configurationType: WidgetConfigurationType.FIELD,
+          fieldMetadataId: '20202020-0000-0000-0000-000000000030',
+          fieldDisplayMode: FieldDisplayMode.TABLE,
+        },
+      }),
+    });
+
+    await runOnWorkspace();
+
+    const payload = getMigrationPayload();
+
+    expect(payload.view.flatEntityToCreate).toEqual([
+      expect.objectContaining({
+        universalIdentifier: MEMBERS_VIEW_UNIVERSAL_IDENTIFIER,
+      }),
+    ]);
+    // The tab already sits on the grid, only the widget gets its view.
+    expect(payload.pageLayoutTab.flatEntityToUpdate).toEqual([]);
+    expect(payload.pageLayoutWidget.flatEntityToUpdate).toEqual([
+      expect.objectContaining({
+        universalIdentifier: FIELDS_WIDGET_UNIVERSAL_IDENTIFIER,
+      }),
+      expect.objectContaining({
+        universalIdentifier: MEMBERS_WIDGET_UNIVERSAL_IDENTIFIER,
+        configuration: expect.objectContaining({
+          fieldDisplayMode: FieldDisplayMode.TABLE,
+          viewId: MEMBERS_VIEW_ID,
+        }),
+      }),
+    ]);
   });
 
   it('does not write metadata in dry-run mode', async () => {

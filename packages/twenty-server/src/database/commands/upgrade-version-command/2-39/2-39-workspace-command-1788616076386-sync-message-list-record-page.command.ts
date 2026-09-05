@@ -405,7 +405,14 @@ export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceComman
       };
     }
 
-    if (homeTab.layoutMode === PageLayoutTabLayoutMode.GRID) {
+    const isMembersWidgetEmbeddingView =
+      membersWidget.configuration.fieldDisplayMode === FieldDisplayMode.TABLE &&
+      isDefined(membersWidget.configuration.viewId);
+
+    if (
+      homeTab.layoutMode === PageLayoutTabLayoutMode.GRID &&
+      isMembersWidgetEmbeddingView
+    ) {
       return {
         pageLayoutTabsToUpdate: [],
         pageLayoutWidgetsToUpdate: [],
@@ -420,11 +427,18 @@ export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceComman
         !flatEntity.isActive,
     );
 
+    // A layout provisioned from the current standard config by an earlier
+    // upgrade step already sits on the grid, with a table widget that could
+    // not embed the members view since it did not exist yet.
+    const isStandardLayoutMode =
+      homeTab.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST ||
+      homeTab.layoutMode === PageLayoutTabLayoutMode.GRID;
+
     if (
       isCustomized ||
-      homeTab.layoutMode !== PageLayoutTabLayoutMode.VERTICAL_LIST ||
+      !isStandardLayoutMode ||
       homeTab.widgetUniversalIdentifiers.length !== 2 ||
-      membersWidget.configuration.fieldDisplayMode === FieldDisplayMode.TABLE
+      isMembersWidgetEmbeddingView
     ) {
       return {
         pageLayoutTabsToUpdate: [],
@@ -434,9 +448,10 @@ export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceComman
     }
 
     return {
-      pageLayoutTabsToUpdate: [
-        { ...homeTab, layoutMode: PageLayoutTabLayoutMode.GRID },
-      ],
+      pageLayoutTabsToUpdate:
+        homeTab.layoutMode === PageLayoutTabLayoutMode.GRID
+          ? []
+          : [{ ...homeTab, layoutMode: PageLayoutTabLayoutMode.GRID }],
       pageLayoutWidgetsToUpdate: [
         {
           ...fieldsWidget,
