@@ -5,22 +5,21 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { type RowLevelPermissionPredicateGroupInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-predicates.input';
+import { type FlatRowLevelPermissionPredicateParent } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-parent.type';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 
 export const fromCreateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermissionPredicateGroup =
   ({
     input,
-    roleId,
+    parent,
     workspaceId,
-    roleUniversalIdentifier,
     flatApplication,
     flatObjectMetadataMaps,
     flatRowLevelPermissionPredicateGroupMaps,
   }: {
     input: RowLevelPermissionPredicateGroupInput;
-    roleId: string;
+    parent: FlatRowLevelPermissionPredicateParent;
     workspaceId: string;
-    roleUniversalIdentifier: string;
     flatApplication: FlatApplication;
   } & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps'> & {
       flatRowLevelPermissionPredicateGroupMaps: FlatEntityMaps<FlatRowLevelPermissionPredicateGroup>;
@@ -47,10 +46,7 @@ export const fromCreateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermis
     return {
       id: groupId,
       workspaceId,
-      roleId,
-      roleUniversalIdentifier,
-      sharingRuleId: null,
-      sharingRuleUniversalIdentifier: null,
+      ...parent,
       objectMetadataId: input.objectMetadataId,
       objectMetadataUniversalIdentifier,
       logicalOperator: input.logicalOperator,

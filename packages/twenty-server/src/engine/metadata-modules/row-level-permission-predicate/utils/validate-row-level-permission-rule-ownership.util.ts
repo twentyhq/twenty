@@ -14,15 +14,20 @@ import {
   RowLevelPermissionPredicateExceptionCode,
 } from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
+import {
+  isRowLevelPermissionPredicateOfParent,
+  type RowLevelPermissionPredicateParentIds,
+} from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-parent.type';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
 
 // Supplied ids are resolved workspace-wide further down, and the migration
 // validators only compare an update against its own stored row, so a predicate
-// or group id belonging to another role or object would be silently rewritten
+// or group id belonging to another parent or object would be silently rewritten
 // in place, and a field from another object would build a filter that never
-// matches. Scope everything to the requested role and object upfront.
+// matches. Scope everything to the requested parent and object upfront.
 export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
   roleId,
+  sharingRuleId,
   objectMetadataId,
   predicates,
   predicateGroups,
@@ -30,8 +35,7 @@ export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
   flatRowLevelPermissionPredicateGroupMaps,
   flatFieldMetadataMaps,
   workspaceMemberObjectMetadataId,
-}: {
-  roleId: string;
+}: RowLevelPermissionPredicateParentIds & {
   objectMetadataId: string;
   predicates: RowLevelPermissionPredicateInput[];
   predicateGroups: RowLevelPermissionPredicateGroupInput[];
@@ -40,6 +44,8 @@ export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   workspaceMemberObjectMetadataId?: string;
 }): void => {
+  const parent = { roleId, sharingRuleId };
+
   for (const predicateGroup of predicateGroups) {
     if (!isDefined(predicateGroup.id)) {
       continue;
@@ -53,7 +59,7 @@ export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
     if (
       isDefined(existingGroup) &&
       existingGroup.deletedAt === null &&
-      (existingGroup.roleId !== roleId ||
+      (!isRowLevelPermissionPredicateOfParent(existingGroup, parent) ||
         existingGroup.objectMetadataId !== objectMetadataId)
     ) {
       throw new RowLevelPermissionPredicateException(
@@ -79,7 +85,7 @@ export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
       if (
         isDefined(existingPredicate) &&
         existingPredicate.deletedAt === null &&
-        (existingPredicate.roleId !== roleId ||
+        (!isRowLevelPermissionPredicateOfParent(existingPredicate, parent) ||
           existingPredicate.objectMetadataId !== objectMetadataId)
       ) {
         throw new RowLevelPermissionPredicateException(
@@ -100,7 +106,7 @@ export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
       if (
         !isDefined(referencedGroup) ||
         referencedGroup.deletedAt !== null ||
-        referencedGroup.roleId !== roleId ||
+        !isRowLevelPermissionPredicateOfParent(referencedGroup, parent) ||
         referencedGroup.objectMetadataId !== objectMetadataId
       ) {
         throw new RowLevelPermissionPredicateException(

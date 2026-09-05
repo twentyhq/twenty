@@ -92,6 +92,41 @@ export class RowLevelPermissionPredicateGroupService {
       .map(fromFlatRowLevelPermissionPredicateGroupToDto);
   }
 
+  async findBySharingRule(
+    workspaceId: string,
+    sharingRuleId: string,
+  ): Promise<RowLevelPermissionPredicateGroupDTO[]> {
+    const hasRowLevelPermissionFeature =
+      await this.hasRowLevelPermissionFeature(workspaceId);
+
+    if (!hasRowLevelPermissionFeature) {
+      return [];
+    }
+
+    const { flatRowLevelPermissionPredicateGroupMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatRowLevelPermissionPredicateGroupMaps'],
+        },
+      );
+
+    return Object.values(
+      flatRowLevelPermissionPredicateGroupMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter(
+        (group) =>
+          group.deletedAt === null && group.sharingRuleId === sharingRuleId,
+      )
+      .sort(
+        (a, b) =>
+          (a.positionInRowLevelPermissionPredicateGroup ?? 0) -
+          (b.positionInRowLevelPermissionPredicateGroup ?? 0),
+      )
+      .map(fromFlatRowLevelPermissionPredicateGroupToDto);
+  }
+
   async findById(
     id: string,
     workspaceId: string,

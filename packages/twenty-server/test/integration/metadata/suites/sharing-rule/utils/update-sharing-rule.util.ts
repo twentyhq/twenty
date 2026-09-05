@@ -1,0 +1,49 @@
+import gql from 'graphql-tag';
+import { SHARING_RULE_GQL_FIELDS } from 'test/integration/constants/sharing-rule-gql-fields.constants';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
+import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
+import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
+
+import { type SharingRuleDTO } from 'src/engine/metadata-modules/sharing-rule/dtos/sharing-rule.dto';
+import { type UpdateSharingRuleInput } from 'src/engine/metadata-modules/sharing-rule/dtos/update-sharing-rule.input';
+
+export const updateSharingRule = async ({
+  input,
+  gqlFields = SHARING_RULE_GQL_FIELDS,
+  expectToFail = false,
+  token,
+}: PerformMetadataQueryParams<UpdateSharingRuleInput>): CommonResponseBody<{
+  updateSharingRule: SharingRuleDTO;
+}> => {
+  const response = await makeMetadataAPIRequest(
+    {
+      query: gql`
+        mutation UpdateSharingRule($input: UpdateSharingRuleInput!) {
+          updateSharingRule(input: $input) {
+            ${gqlFields}
+          }
+        }
+      `,
+      variables: { input },
+    },
+    token,
+  );
+
+  if (expectToFail === true) {
+    warnIfNoErrorButExpectedToFail({
+      response,
+      errorMessage: 'Sharing rule update should have failed but did not',
+    });
+  }
+
+  if (expectToFail === false) {
+    warnIfErrorButNotExpectedToFail({
+      response,
+      errorMessage: 'Sharing rule update has failed but should not',
+    });
+  }
+
+  return { data: response.body.data, errors: response.body.errors };
+};

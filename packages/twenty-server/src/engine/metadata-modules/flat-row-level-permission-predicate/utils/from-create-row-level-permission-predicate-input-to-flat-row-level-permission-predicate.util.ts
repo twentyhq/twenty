@@ -5,26 +5,25 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { type RowLevelPermissionPredicateInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-predicates.input';
+import { type FlatRowLevelPermissionPredicateParent } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-parent.type';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
 
 export const fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionPredicate =
   ({
     input,
-    roleId,
+    parent,
     objectMetadataId,
     workspaceId,
-    roleUniversalIdentifier,
     objectMetadataUniversalIdentifier,
     flatApplication,
     flatFieldMetadataMaps,
     flatRowLevelPermissionPredicateGroupMaps,
   }: {
     input: RowLevelPermissionPredicateInput;
-    roleId: string;
+    parent: FlatRowLevelPermissionPredicateParent;
     objectMetadataId: string;
     workspaceId: string;
-    roleUniversalIdentifier: string;
     objectMetadataUniversalIdentifier: string;
     flatApplication: FlatApplication;
   } & Pick<AllFlatEntityMaps, 'flatFieldMetadataMaps'> & {
@@ -54,10 +53,7 @@ export const fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionP
     return {
       id: predicateId,
       workspaceId,
-      roleId,
-      roleUniversalIdentifier,
-      sharingRuleId: null,
-      sharingRuleUniversalIdentifier: null,
+      ...parent,
       objectMetadataId,
       objectMetadataUniversalIdentifier,
       fieldMetadataId: input.fieldMetadataId,
