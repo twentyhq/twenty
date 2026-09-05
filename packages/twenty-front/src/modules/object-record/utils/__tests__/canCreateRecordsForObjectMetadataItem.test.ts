@@ -5,9 +5,7 @@ const creatableObjectMetadataItem = {
   isUICreatable: true,
   writability: MetadataWritability.OPEN,
   isUIEditable: true,
-  isSystem: false,
   isRemote: false,
-  applicationId: 'applicationId',
 };
 
 const objectPermissionsAllowingUpdate = {
@@ -17,7 +15,7 @@ const objectPermissionsAllowingUpdate = {
 };
 
 describe('canCreateRecordsForObjectMetadataItem', () => {
-  it('should return true for a creatable, editable, non-system, non-remote object with update permission', () => {
+  it('should return true for a creatable, editable, OPEN, non-remote object with update permission', () => {
     const result = canCreateRecordsForObjectMetadataItem({
       objectPermissions: objectPermissionsAllowingUpdate,
       objectMetadataItem: creatableObjectMetadataItem,
@@ -38,6 +36,18 @@ describe('canCreateRecordsForObjectMetadataItem', () => {
     expect(result).toBe(false);
   });
 
+  it('should return false when the object writability is not OPEN', () => {
+    const result = canCreateRecordsForObjectMetadataItem({
+      objectPermissions: objectPermissionsAllowingUpdate,
+      objectMetadataItem: {
+        ...creatableObjectMetadataItem,
+        writability: MetadataWritability.SYSTEM,
+      },
+    });
+
+    expect(result).toBe(false);
+  });
+
   it('should return false when the object is not UI editable', () => {
     const result = canCreateRecordsForObjectMetadataItem({
       objectPermissions: objectPermissionsAllowingUpdate,
@@ -48,18 +58,6 @@ describe('canCreateRecordsForObjectMetadataItem', () => {
     });
 
     expect(result).toBe(false);
-  });
-
-  it('should return true for a UI-creatable system object (isSystem only controls Data-Model visibility)', () => {
-    const result = canCreateRecordsForObjectMetadataItem({
-      objectPermissions: objectPermissionsAllowingUpdate,
-      objectMetadataItem: {
-        ...creatableObjectMetadataItem,
-        isSystem: true,
-      },
-    });
-
-    expect(result).toBe(true);
   });
 
   it('should return false when the object is remote', () => {
