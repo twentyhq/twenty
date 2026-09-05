@@ -9,13 +9,13 @@ export class AddCommandMenuItemConditionalPinnedExpressionFastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."commandMenuItem" ADD "conditionalPinnedExpression" character varying',
+      'ALTER TABLE "core"."commandMenuItem" ADD COLUMN IF NOT EXISTS "conditionalPinnedExpression" character varying',
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."commandMenuItem" DROP COLUMN "conditionalPinnedExpression"',
+      'ALTER TABLE "core"."commandMenuItem" DROP COLUMN IF EXISTS "conditionalPinnedExpression"',
     );
   }
 }

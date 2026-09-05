@@ -3,12 +3,19 @@ import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
 
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
+type PinnableCommandMenuItem = Pick<
+  CommandMenuItemFieldsFragment,
+  'isPinned' | 'conditionalPinnedExpression'
+>;
+
 // Resolved once where availability is evaluated, so every consumer keeps
 // reading isPinned as a plain boolean.
-export const resolveCommandMenuItemPinning = (
-  commandMenuItem: CommandMenuItemFieldsFragment,
+export const resolveCommandMenuItemPinning = <
+  TCommandMenuItem extends PinnableCommandMenuItem,
+>(
+  commandMenuItem: TCommandMenuItem,
   commandMenuContextApi: CommandMenuContextApi,
-): CommandMenuItemFieldsFragment => ({
+): TCommandMenuItem => ({
   ...commandMenuItem,
   isPinned:
     commandMenuItem.isPinned &&

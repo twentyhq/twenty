@@ -1,13 +1,11 @@
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 
 import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
-import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 const COMMAND_MENU_ITEM = {
-  id: 'duplicate-campaign',
   isPinned: true,
   conditionalPinnedExpression: 'everyEquals(selectedRecords, "status", "SENT")',
-} as CommandMenuItemFieldsFragment;
+};
 
 const buildContextApi = (status: string) =>
   ({
