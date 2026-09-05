@@ -53,6 +53,26 @@ const buildOpportunityRecord = () => ({
   updatedAt: '2026-02-01T00:00:00.000Z',
 });
 
+const TASK_ID = '20202020-0713-4b29-8f43-4444e2f6a4b4';
+
+const buildTaskRecordLink = () => ({
+  sharedUrl: `${WORKSPACE_BASE_URL}/object/task/${TASK_ID}`,
+  canonicalUrl: `${WORKSPACE_BASE_URL}/object/task/${TASK_ID}`,
+  objectNameSingular: 'task' as const,
+  recordId: TASK_ID,
+});
+
+const buildTaskRecord = () => ({
+  id: TASK_ID,
+  title: 'Follow up with ACME',
+  status: 'IN_PROGRESS',
+  dueAt: '2026-03-01T00:00:00.000Z',
+  assignee: { name: { firstName: 'Ada', lastName: 'Lovelace' } },
+  bodyV2: { markdown: 'Ping them about the renewal' },
+  createdAt: '2026-01-01T00:00:00.000Z',
+  updatedAt: '2026-02-01T00:00:00.000Z',
+});
+
 describe('buildSlackRecordUnfurlEntity', () => {
   it('should build an item entity for a person card', () => {
     const entity = buildSlackRecordUnfurlEntity({
@@ -217,5 +237,91 @@ describe('buildSlackRecordUnfurlEntity', () => {
     expect(
       entity?.entity_payload.custom_fields?.map((field) => field.key),
     ).toContain('amount');
+  });
+
+  it('should build a typed task entity rather than a generic item', () => {
+    const entity = buildSlackRecordUnfurlEntity({
+      recordLink: buildTaskRecordLink(),
+      record: buildTaskRecord(),
+      workspaceBaseUrls: [WORKSPACE_BASE_URL],
+    });
+
+    expect(entity?.entity_type).toBe('slack#/entities/task');
+    expect(entity?.entity_payload.custom_fields).toBeUndefined();
+  });
+
+  it('should keep the task card to status and due date', () => {
+    const entity = buildSlackRecordUnfurlEntity({
+      recordLink: buildTaskRecordLink(),
+      record: buildTaskRecord(),
+      workspaceBaseUrls: [WORKSPACE_BASE_URL],
+    });
+
+    expect(entity?.entity_payload.fields).toEqual({
+      status: { label: 'Status', value: 'In progress' },
+      due_date: {
+        label: 'Due date',
+        type: 'slack#/types/timestamp',
+        value: Math.floor(Date.parse('2026-03-01T00:00:00.000Z') / 1000),
+      },
+    });
+  });
+
+  it('should add the assignee and body to the task flexpane', () => {
+    const entity = buildSlackRecordUnfurlEntity({
+      recordLink: buildTaskRecordLink(),
+      record: buildTaskRecord(),
+      workspaceBaseUrls: [WORKSPACE_BASE_URL],
+      includeDetails: true,
+    });
+
+    expect(entity?.entity_payload.fields).toMatchObject({
+      assignee: {
+        label: 'Assignee',
+        type: 'slack#/types/user',
+        user: { text: 'Ada Lovelace' },
+      },
+      description: {
+        label: 'Body',
+        value: 'Ping them about the renewal',
+        long: true,
+      },
+      date_created: { label: 'Created' },
+      date_updated: { label: 'Updated' },
+    });
+  });
+
+  it('should omit the fields payload for a task with nothing to show', () => {
+    const entity = buildSlackRecordUnfurlEntity({
+      recordLink: buildTaskRecordLink(),
+      record: { id: TASK_ID, title: 'Follow up with ACME' },
+      workspaceBaseUrls: [WORKSPACE_BASE_URL],
+    });
+
+    expect(entity?.entity_payload.fields).toBeUndefined();
+  });
+
+  it('should still build a generic item entity for a person', () => {
+    const entity = buildSlackRecordUnfurlEntity({
+      recordLink: buildPersonRecordLink(),
+      record: buildPersonRecord(),
+      workspaceBaseUrls: [WORKSPACE_BASE_URL],
+    });
+
+    expect(entity?.entity_type).toBe('slack#/entities/item');
+    expect(entity?.entity_payload.fields).toBeUndefined();
+  });
+
+  it('should not clip a task body at the card preview length', () => {
+    const entity = buildSlackRecordUnfurlEntity({
+      recordLink: buildTaskRecordLink(),
+      record: { ...buildTaskRecord(), bodyV2: { markdown: 'a'.repeat(1000) } },
+      workspaceBaseUrls: [WORKSPACE_BASE_URL],
+      includeDetails: true,
+    });
+
+    expect(entity?.entity_payload.fields).toMatchObject({
+      description: { value: 'a'.repeat(1000) },
+    });
   });
 });

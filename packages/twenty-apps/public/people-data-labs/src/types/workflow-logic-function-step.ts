@@ -10,7 +10,7 @@ export type WorkflowLogicFunctionStep = {
     };
     outputSchema: Record<string, never>;
     errorHandlingOptions: {
-      retryOnFailure: { value: boolean };
+      retryOnFailure: { value: number };
       continueOnFailure: { value: boolean };
     };
   };

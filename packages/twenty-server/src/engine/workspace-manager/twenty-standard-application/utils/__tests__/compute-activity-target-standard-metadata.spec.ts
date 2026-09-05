@@ -1,5 +1,6 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
+import { validateAndReturnIndexWhereClause } from 'src/engine/workspace-manager/workspace-migration/utils/validate-index-where-clause.util';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
 const WORKSPACE_ID = '20202020-1111-4111-8111-111111111111';
@@ -47,4 +48,39 @@ describe('Activity target standard metadata build', () => {
 
     expect(fieldMetadata?.isUIEditable).toBe(true);
   });
+
+  it.each([
+    {
+      objectName: 'taskTarget',
+      indexes: [
+        STANDARD_OBJECTS.taskTarget.indexes.taskPersonUniqueIndex,
+        STANDARD_OBJECTS.taskTarget.indexes.taskCompanyUniqueIndex,
+        STANDARD_OBJECTS.taskTarget.indexes.taskOpportunityUniqueIndex,
+      ],
+    },
+    {
+      objectName: 'noteTarget',
+      indexes: [
+        STANDARD_OBJECTS.noteTarget.indexes.notePersonUniqueIndex,
+        STANDARD_OBJECTS.noteTarget.indexes.noteCompanyUniqueIndex,
+        STANDARD_OBJECTS.noteTarget.indexes.noteOpportunityUniqueIndex,
+      ],
+    },
+  ] as const)(
+    'allows only one live $objectName row per target',
+    ({ indexes }) => {
+      for (const { universalIdentifier } of indexes) {
+        const indexMetadata =
+          allFlatEntityMaps.flatIndexMaps.byUniversalIdentifier[
+            universalIdentifier
+          ];
+
+        expect(indexMetadata).toMatchObject({ isUnique: true });
+        expect(indexMetadata?.indexWhereClause).toBe('"deletedAt" IS NULL');
+        expect(
+          validateAndReturnIndexWhereClause(indexMetadata?.indexWhereClause),
+        ).toBe('"deletedAt" IS NULL');
+      }
+    },
+  );
 });

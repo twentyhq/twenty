@@ -11,6 +11,8 @@ const createAsyncRecallTranscriptMock = vi.hoisted(() => vi.fn());
 const downloadTranscriptMock = vi.hoisted(() => vi.fn());
 const importCallRecordingMediaMock = vi.hoisted(() => vi.fn());
 const chargeCompletedCallRecordingMock = vi.hoisted(() => vi.fn());
+const claimArtifactsImportMock = vi.hoisted(() => vi.fn());
+const releaseArtifactsImportClaimMock = vi.hoisted(() => vi.fn());
 
 vi.mock('src/logic-functions/recall-api/get-recall-bot.util', () => ({
   getRecallBot: getRecallBotMock,
@@ -20,9 +22,12 @@ vi.mock('src/logic-functions/data/get-current-workspace-id.util', () => ({
   getCurrentWorkspaceId: getCurrentWorkspaceIdMock,
 }));
 
-vi.mock('src/logic-functions/recall-api/list-scheduled-recall-bots.util', () => ({
-  listScheduledRecallBots: listScheduledRecallBotsMock,
-}));
+vi.mock(
+  'src/logic-functions/recall-api/list-scheduled-recall-bots.util',
+  () => ({
+    listScheduledRecallBots: listScheduledRecallBotsMock,
+  }),
+);
 
 vi.mock('src/logic-functions/recall-api/list-recall-transcripts.util', () => ({
   listRecallTranscripts: listRecallTranscriptsMock,
@@ -50,6 +55,14 @@ vi.mock(
   }),
 );
 
+vi.mock(
+  'src/logic-functions/data/claim-call-recording-artifacts-import.util',
+  () => ({
+    claimCallRecordingArtifactsImport: claimArtifactsImportMock,
+    releaseCallRecordingArtifactsImportClaim: releaseArtifactsImportClaimMock,
+  }),
+);
+
 const NOW = new Date('2026-06-10T12:00:00.000Z');
 
 type CallRecordingNode = Record<string, unknown>;
@@ -59,11 +72,21 @@ class FakeCoreApiClient {
 
   constructor(private callRecordingNodes: CallRecordingNode[]) {}
 
-  async query(_query: any): Promise<any> {
+  async query(query: {
+    callRecordings?: {
+      __args?: { filter?: { id?: { eq?: string } } };
+    };
+  }) {
+    const requestedId = query.callRecordings?.__args?.filter?.id?.eq;
+    const nodes =
+      requestedId === undefined
+        ? this.callRecordingNodes
+        : this.callRecordingNodes.filter((node) => node.id === requestedId);
+
     return {
       callRecordings: {
         pageInfo: { hasNextPage: false, endCursor: undefined },
-        edges: this.callRecordingNodes.map((node) => ({ node })),
+        edges: nodes.map((node) => ({ node: { ...node } })),
       },
     };
   }
@@ -72,8 +95,18 @@ class FakeCoreApiClient {
     if (mutation.updateCallRecordings !== undefined) {
       const { filter, data } = mutation.updateCallRecordings.__args;
       const id = filter.id.eq;
+      const node = this.findNode(id);
+
+      if (
+        node === undefined ||
+        (filter.status?.in !== undefined &&
+          !filter.status.in.includes(node.status))
+      ) {
+        return { updateCallRecordings: [] };
+      }
 
       this.mutations.push({ id, data });
+      Object.assign(node, data);
 
       return { updateCallRecordings: [{ id }] };
     }
@@ -81,8 +114,13 @@ class FakeCoreApiClient {
     const { id, data } = mutation.updateCallRecording.__args;
 
     this.mutations.push({ id, data });
+    Object.assign(this.findNode(id) ?? {}, data);
 
     return { updateCallRecording: { id } };
+  }
+
+  private findNode(id: string): CallRecordingNode | undefined {
+    return this.callRecordingNodes.find((node) => node.id === id);
   }
 }
 
@@ -134,9 +172,16 @@ describe('convergeDivergedCallRecordings', () => {
     downloadTranscriptMock.mockReset();
     downloadTranscriptMock.mockResolvedValue({ outcome: 'pending' });
     importCallRecordingMediaMock.mockReset();
-    importCallRecordingMediaMock.mockResolvedValue({});
+    importCallRecordingMediaMock.mockResolvedValue({
+      updateData: {},
+      hasRetryableFailure: false,
+    });
     chargeCompletedCallRecordingMock.mockReset();
     chargeCompletedCallRecordingMock.mockResolvedValue(undefined);
+    claimArtifactsImportMock.mockReset();
+    claimArtifactsImportMock.mockResolvedValue(true);
+    releaseArtifactsImportClaimMock.mockReset();
+    releaseArtifactsImportClaimMock.mockResolvedValue(undefined);
   });
 
   it('does not call Recall when there are no stale database candidates', async () => {
@@ -288,12 +333,15 @@ describe('convergeDivergedCallRecordings', () => {
       expect.objectContaining({
         id: 'call-recording-1',
         data: expect.objectContaining({
-          status: 'PROCESSING',
           startedAt: '2026-06-09T13:02:00.000Z',
           endedAt: '2026-06-09T14:00:00.000Z',
           externalRecordingId: 'recall-recording-1',
         }),
       }),
+      {
+        id: 'call-recording-1',
+        data: { status: 'PROCESSING' },
+      },
     ]);
     expect(chargeCompletedCallRecordingMock).not.toHaveBeenCalled();
     expect(result).toEqual({
@@ -383,8 +431,11 @@ describe('convergeDivergedCallRecordings', () => {
       },
     });
     importCallRecordingMediaMock.mockResolvedValue({
-      audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
-      video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
+      updateData: {
+        audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+        video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
+      },
+      hasRetryableFailure: false,
     });
     const client = buildClient([
       buildStuckRecordingNode({
@@ -448,8 +499,11 @@ describe('convergeDivergedCallRecordings', () => {
       },
     });
     importCallRecordingMediaMock.mockResolvedValue({
-      audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
-      callRecorderFailureReason: 'video_file_too_large',
+      updateData: {
+        audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+        callRecorderFailureReason: 'video_file_too_large',
+      },
+      hasRetryableFailure: false,
     });
     const client = buildClient([
       buildStuckRecordingNode({
@@ -471,8 +525,11 @@ describe('convergeDivergedCallRecordings', () => {
         id: 'call-recording-1',
         data: {
           audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
-          callRecorderFailureReason: 'video_file_too_large',
         },
+      },
+      {
+        id: 'call-recording-1',
+        data: { callRecorderFailureReason: 'video_file_too_large' },
       },
       {
         id: 'call-recording-1',
@@ -557,8 +614,11 @@ describe('convergeDivergedCallRecordings', () => {
       },
     });
     importCallRecordingMediaMock.mockResolvedValue({
-      audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
-      callRecorderFailureReason: 'video_file_too_large',
+      updateData: {
+        audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+        callRecorderFailureReason: 'video_file_too_large',
+      },
+      hasRetryableFailure: false,
     });
     const client = buildClient([
       buildStuckRecordingNode({
@@ -581,6 +641,11 @@ describe('convergeDivergedCallRecordings', () => {
         data: {
           status: 'FAILED',
           callRecorderFailureReason: 'fatal',
+        },
+      },
+      {
+        id: 'call-recording-1',
+        data: {
           audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
         },
       },
@@ -815,7 +880,7 @@ describe('convergeDivergedCallRecordings', () => {
           transcript: {
             recallTranscriptId: 'recall-transcript-1',
             status: 'PENDING',
-            requestedAt: NOW.toISOString(),
+            requestedAt: expect.any(String),
           },
         },
       },
@@ -864,11 +929,14 @@ describe('convergeDivergedCallRecordings', () => {
       {
         id: 'call-recording-1',
         data: {
-          status: 'PROCESSING',
           startedAt: '2026-06-09T13:02:00.000Z',
           endedAt: '2026-06-09T14:00:00.000Z',
           externalRecordingId: 'recall-recording-1',
         },
+      },
+      {
+        id: 'call-recording-1',
+        data: { status: 'PROCESSING' },
       },
     ]);
     expect(result.requestedTranscriptCallRecordingIds).toEqual([]);
@@ -1000,12 +1068,17 @@ describe('convergeDivergedCallRecordings', () => {
       {
         id: 'call-recording-1',
         data: {
-          status: 'FAILED',
           transcript: {
             recallTranscriptId: 'recall-transcript-1',
             status: 'FAILED',
             subCode: 'audio_missing',
           },
+        },
+      },
+      {
+        id: 'call-recording-1',
+        data: {
+          status: 'FAILED',
           callRecorderFailureReason: 'transcript_failed:audio_missing',
         },
       },

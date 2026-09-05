@@ -43,7 +43,7 @@ describe('getWorkflowRunStepExecutionStatus', () => {
                   },
                   errorHandlingOptions: {
                     retryOnFailure: {
-                      value: false,
+                      value: 0,
                     },
                     continueOnFailure: {
                       value: false,
@@ -107,7 +107,7 @@ describe('getWorkflowRunStepExecutionStatus', () => {
                   },
                   errorHandlingOptions: {
                     retryOnFailure: {
-                      value: false,
+                      value: 0,
                     },
                     continueOnFailure: {
                       value: false,
@@ -172,7 +172,7 @@ describe('getWorkflowRunStepExecutionStatus', () => {
                   },
                   errorHandlingOptions: {
                     retryOnFailure: {
-                      value: false,
+                      value: 0,
                     },
                     continueOnFailure: {
                       value: false,
@@ -204,7 +204,7 @@ describe('getWorkflowRunStepExecutionStatus', () => {
                   },
                   errorHandlingOptions: {
                     retryOnFailure: {
-                      value: false,
+                      value: 0,
                     },
                     continueOnFailure: {
                       value: false,

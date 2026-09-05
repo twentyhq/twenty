@@ -14,7 +14,7 @@ import { ENQUEUE_JOB_PRIORITY } from 'src/engine/core-modules/application/applic
 import { MAX_JOBS_PER_STATUS_READ } from 'src/engine/core-modules/application/application-job/constants/max-jobs-per-status-read.constant';
 import { type EnqueueJobInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-job.input';
 import { type EnqueueJobsInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-jobs.input';
-import { type JobStatusDTO } from 'src/engine/core-modules/application/application-job/dtos/job-status.dto';
+import { type JobStatusDTO } from 'src/engine/core-modules/message-queue/dtos/job-status.dto';
 import { buildQueueJobId } from 'src/engine/core-modules/application/application-job/utils/build-queue-job-id.util';
 import {
   ApplicationException,

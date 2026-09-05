@@ -62,6 +62,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     "propertiesToCompare": [
       "name",
       "displayName",
+      "logo",
       "type",
       "oauthConfig",
       "onConnectLogicFunctionUniversalIdentifier",
@@ -186,6 +187,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "overrides",
       "isUIEditable",
       "writability",
+      "readability",
       "isUICreatable",
       "isSearchable",
       "imageIdentifierFieldMetadataUniversalIdentifier",

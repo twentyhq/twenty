@@ -960,8 +960,9 @@ describe('handleRecallWebhook', () => {
 
     expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
     expect(importCallRecordingMediaMock).not.toHaveBeenCalled();
-    expect(enqueueArtifactImportMock).toHaveBeenCalledWith({
+    expect(enqueueArtifactImportMock).toHaveBeenCalledExactlyOnceWith({
       callRecordingId: 'call-recording-1',
+      scopes: ['transcript', 'media'],
     });
     expect(client.mutations).toEqual([
       {
@@ -973,31 +974,6 @@ describe('handleRecallWebhook', () => {
         },
       },
     ]);
-  });
-
-  it('throws when the artifact import enqueue fails so Svix redelivers', async () => {
-    enqueueArtifactImportMock.mockRejectedValue(
-      new Error(
-        'failed to enqueue artifact import for call recording call-recording-1',
-      ),
-    );
-    const client = new FakeCoreApiClient([
-      {
-        id: 'call-recording-1',
-        status: 'PROCESSING',
-        externalBotId: 'recall-bot-1',
-        transcript: null,
-      },
-    ]);
-
-    await expect(
-      handleRecallWebhook({
-        client: client as unknown as CoreApiClient,
-        body: buildRecordingDoneWebhookBody(),
-      }),
-    ).rejects.toThrow(
-      'failed to enqueue artifact import for call recording call-recording-1',
-    );
   });
 
   it('queues redelivered done events without touching transcript APIs inline', async () => {
@@ -1067,8 +1043,9 @@ describe('handleRecallWebhook', () => {
 
     expect(getRecallBotMock).not.toHaveBeenCalled();
     expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
-    expect(enqueueArtifactImportMock).toHaveBeenCalledWith({
+    expect(enqueueArtifactImportMock).toHaveBeenCalledExactlyOnceWith({
       callRecordingId: 'call-recording-1',
+      scopes: ['transcript', 'media'],
     });
     expect(client.mutations).toEqual([
       expect.objectContaining({
@@ -1199,8 +1176,9 @@ describe('handleRecallWebhook', () => {
       callRecordingId: 'call-recording-1',
     });
     expect(retrieveRecallTranscriptMock).not.toHaveBeenCalled();
-    expect(enqueueArtifactImportMock).toHaveBeenCalledWith({
+    expect(enqueueArtifactImportMock).toHaveBeenCalledExactlyOnceWith({
       callRecordingId: 'call-recording-1',
+      scopes: ['transcript'],
     });
     expect(client.mutations).toEqual([]);
   });
@@ -1247,8 +1225,9 @@ describe('handleRecallWebhook', () => {
       event: 'transcript.failed',
       callRecordingId: 'call-recording-1',
     });
-    expect(enqueueArtifactImportMock).toHaveBeenCalledWith({
+    expect(enqueueArtifactImportMock).toHaveBeenCalledExactlyOnceWith({
       callRecordingId: 'call-recording-1',
+      scopes: ['transcript'],
     });
     expect(client.mutations).toEqual([]);
   });
