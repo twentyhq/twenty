@@ -259,7 +259,7 @@ export class InboxRouterService {
     // One transaction for the event and the plan it carries, with the item
     // locked first, so two plans folding at once take turns and neither can
     // leave the event recorded without its calls
-    await this.coreDataSource.transaction(async (manager) => {
+    return this.coreDataSource.transaction(async (manager) => {
       const inboxItemRepository = this.inboxItemRepository.withManager(manager);
 
       const lockedItem = await inboxItemRepository.findOne(args.workspaceId, {
@@ -297,10 +297,13 @@ export class InboxRouterService {
           toolCalls: args.toolCalls,
         });
       }
-    });
 
-    return this.inboxItemRepository.findOneBy(args.workspaceId, {
-      id: existingItem.id,
+      // Read back under the lock the update ran with: after the commit the
+      // row could be gone to a cascade, and a null then reads as a failed
+      // fold to the producer even though its event landed
+      return inboxItemRepository.findOneBy(args.workspaceId, {
+        id: existingItem.id,
+      });
     });
   }
 
