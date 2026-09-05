@@ -15,7 +15,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const SHARE_RECORD_UNIVERSAL_IDENTIFIER =
   STANDARD_COMMAND_MENU_ITEMS.shareRecord.universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.39.0', 1788574912553)
+@RegisteredWorkspaceCommand('2.39.0', 1788576900000)
 @Command({
   name: 'upgrade:2-39:add-share-record-command-menu-item',
   description:
