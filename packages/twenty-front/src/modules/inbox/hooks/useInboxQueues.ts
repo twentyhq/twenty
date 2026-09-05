@@ -7,12 +7,9 @@ import { shouldSkipInboxPoll } from '@/inbox/utils/shouldSkipInboxPoll';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { type InboxQueue } from '~/generated/graphql';
 
-// The shared inboxes this person can reach. Access is resolved server
-// side, so the navigation simply renders what comes back.
-//
-// Callers that stay mounted while the inbox is in use poll; the drawer is
-// not one of them on mobile or while a navigation folder is open, so the
-// inbox page polls as well.
+// Callers that stay mounted while the inbox is in use poll; the drawer is not
+// one of them on mobile or while a navigation folder is open, so the inbox page
+// polls as well.
 export const useInboxQueues = ({
   isPolling = false,
 }: { isPolling?: boolean } = {}) => {

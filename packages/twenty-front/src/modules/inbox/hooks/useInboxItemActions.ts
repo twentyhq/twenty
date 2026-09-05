@@ -64,8 +64,6 @@ export const useInboxItemActions = () => {
     [markInboxItemReadMutation],
   );
 
-  // The one way an item changes state short of doing it. Every control in
-  // the item pane is one of these with a different kind.
   const transitionInboxItem = useCallback(
     async ({
       inboxItemId,

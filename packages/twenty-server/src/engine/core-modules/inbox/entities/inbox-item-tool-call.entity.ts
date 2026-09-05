@@ -19,10 +19,9 @@ import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorato
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
-// One call an agent proposed to make on the world, waiting for a person. The
-// proposed input is what the agent wrote and never changes; the edited input is
-// what the person made of it, and is what runs. Keeping both is what lets the
-// item show what was changed before it was approved.
+// The proposed input is what the agent wrote and never changes; the edited
+// input is what the person made of it, and is what runs. Keeping both is what
+// lets the item show what was changed before it was approved.
 @Entity({ name: 'inboxItemToolCall', schema: 'core' })
 @WasIntroducedInUpgrade({
   upgradeCommandName: CREATE_INBOX_TABLES_UPGRADE_COMMAND_NAME,
@@ -61,22 +60,20 @@ export class InboxItemToolCallEntity {
   @Column({ nullable: false, type: 'integer' })
   position: number;
 
-  // The tool the call names, in the tool registry's vocabulary
   @Column({ nullable: false, type: 'varchar' })
   toolName: string;
 
   @Column({ nullable: false, type: 'varchar' })
   label: string;
 
-  // One line saying why the agent proposed it, shown next to the label
   @Column({ nullable: true, type: 'varchar' })
   description: string | null;
 
   @Column({ nullable: true, type: 'varchar' })
   icon: string | null;
 
-  // The fields the editor offers. Derived from the tool's input schema by the
-  // producer, so the editor needs no registry lookup to draw a form.
+  // Derived from the tool's input schema by the producer, so the editor needs
+  // no registry lookup to draw a form.
   @Column({ type: 'jsonb', nullable: false, default: '[]' })
   inputSchema: JsonbProperty<InboxItemFieldSchema[]>;
 

@@ -25,29 +25,26 @@ import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migra
 import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
 import { type InboxItemContext } from 'src/engine/core-modules/inbox/types/inbox-item-context.type';
 
-// One thing asking for one person's attention. A conversation, a question from
-// an agent, an approval, a failed run: same row, different type.
-//
-// The item stores no verdict about its subject. It stores when the subject last
+// The item stores no verdict about its subject: it stores when the subject last
 // did something (lastEventAt, written only by producers) and when the assignee
 // last cleared it (clearedAt, written only by the assignee), and whether it
 // wants attention is the comparison between them. Two writers, two columns, so
-// neither can overwrite the other and a clear can never swallow an event that
-// arrived while it was in flight.
+// a clear can never swallow an event that arrived while it was in flight. Both
+// are stamped by Postgres, so the comparison follows which write it saw last
+// rather than whose app-server clock ran fast.
 @Entity({ name: 'inboxItem', schema: 'core' })
 @WasIntroducedInUpgrade({
   upgradeCommandName: CREATE_INBOX_TABLES_UPGRADE_COMMAND_NAME,
 })
-// Work never vanishes. An item is addressed to a shared queue, to one person,
-// or to both, and the database refuses the fourth case.
+// An item is addressed to a shared queue, to one person, or to both, and the
+// database refuses the fourth case, so work can never end up unaddressed.
 @Check(
   'CHK_INBOX_ITEM_ADDRESSED',
   '("queueId" IS NOT NULL) OR ("assigneeUserWorkspaceId" IS NOT NULL)',
 )
-// One row per slot per inbox, for the slot's whole life. Concurrent producers
+// One row per slot per inbox, for the slot's whole life: concurrent producers
 // collide here and fold instead of duplicating, and a cleared item is revived
-// by the next event rather than replaced by a second row. A queue's slot belongs
-// to the queue, so taking an item does not move it to a different slot.
+// by the next event rather than replaced by a second row.
 @Index(
   'IDX_INBOX_ITEM_QUEUE_SLOT_KEY_UNIQUE',
   ['workspaceId', 'queueId', 'slotKey'],
@@ -100,9 +97,8 @@ export class InboxItemEntity {
   @Column({ nullable: false, type: 'varchar' })
   title: string;
 
-  // What the work is about: a line of summary, the source, the entities
-  // involved. The one payload an item carries, so every producer fills the
-  // same shape and every surface reads the same one.
+  // The one payload an item carries, so every producer fills the same shape and
+  // every surface reads the same one.
   @Column({ type: 'jsonb', nullable: false, default: {} })
   context: JsonbProperty<InboxItemContext>;
 
@@ -111,10 +107,6 @@ export class InboxItemEntity {
 
   // Written by producers only. Also what the list is ordered by, so retitling
   // or reading an item cannot reorder it.
-  //
-  // Everything compared against this one is stamped by the database rather
-  // than by whichever app server handled the request, so the comparison
-  // reflects which write Postgres saw last and not whose clock ran fast.
   @Column({
     type: 'timestamptz',
     nullable: false,
@@ -127,9 +119,8 @@ export class InboxItemEntity {
   @Column({ type: 'timestamptz', nullable: true })
   clearedAt: Date | null;
 
-  // A clear that expires. This is what a snooze is: the item comes back when
-  // this passes, or sooner if its subject does something first. Compared only
-  // against the reading request's own clock, never against lastEventAt.
+  // A clear that expires, which is what a snooze is. Compared only against the
+  // reading request's own clock, never against lastEventAt.
   @Column({ type: 'timestamptz', nullable: true })
   resurfaceAt: Date | null;
 
@@ -137,7 +128,7 @@ export class InboxItemEntity {
   @Column({ nullable: true, type: 'uuid' })
   clearedByUserWorkspaceId: string | null;
 
-  // How the last clear ended the item. Metadata about the clear, not state.
+  // Metadata about the last clear, not state of its own.
   @Column({ nullable: true, type: 'varchar' })
   outcome: InboxItemOutcome | null;
 
@@ -154,16 +145,15 @@ export class InboxItemEntity {
   })
   thread: EntityRelation<AgentChatThreadEntity> | null;
 
-  // Points at a workspace-schema record, which lives in another schema and so
-  // cannot be a foreign key
+  // Points at a workspace-schema record, so it cannot be a foreign key.
   @Column({ nullable: true, type: 'uuid' })
   subjectObjectMetadataId: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
   subjectRecordId: string | null;
 
-  // The shared inbox this belongs to, if it is shared work. It stays set after
-  // someone takes the item, so a claimed conversation is still the queue's.
+  // Stays set after someone takes the item, so a claimed conversation is still
+  // the queue's.
   @Column({ nullable: true, type: 'uuid' })
   queueId: string | null;
 
@@ -174,8 +164,8 @@ export class InboxItemEntity {
   })
   queue: EntityRelation<InboxQueueEntity> | null;
 
-  // Who has taken it. Null on a queue item means nobody has yet, which is a
-  // state the queue exists to represent rather than a missing value.
+  // Null on a queue item means nobody has taken it yet, which is a state the
+  // queue exists to represent rather than a missing value.
   @Column({ nullable: true, type: 'uuid' })
   assigneeUserWorkspaceId: string | null;
 
@@ -186,14 +176,14 @@ export class InboxItemEntity {
   })
   assigneeUserWorkspace: EntityRelation<UserWorkspaceEntity> | null;
 
-  // Two upserts naming the same slot are the same piece of work. This is the
-  // whole folding rule: one item per slot, and no slot means one item per call.
+  // The whole folding rule: two upserts naming the same slot are the same piece
+  // of work, and no slot means one item per call.
   @Column({ nullable: true, type: 'varchar' })
   slotKey: string | null;
 
-  // Bumped by every transition. A caller that read the item at version N can
-  // only transition it while it is still at N, so two people clearing the same
-  // approval with different outcomes cannot both win.
+  // A caller that read the item at version N can only transition it while it is
+  // still at N, so two people clearing the same approval with different
+  // outcomes cannot both win.
   @Column({ nullable: false, type: 'integer', default: 1 })
   version: number;
 

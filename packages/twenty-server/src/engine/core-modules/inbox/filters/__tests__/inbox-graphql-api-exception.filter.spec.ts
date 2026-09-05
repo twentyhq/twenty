@@ -26,13 +26,11 @@ describe('InboxGraphqlApiExceptionFilter', () => {
   ])(
     'should turn %s into the matching GraphQL error',
     (code, expectedError) => {
-      // Act & Assert
       expect(catchCode(code)).toThrow(expectedError);
     },
   );
 
   it('should keep the message the exception was built with', () => {
-    // Act & Assert
     expect(catchCode(InboxExceptionCode.INBOX_ITEM_NOT_FOUND)).toThrow(
       'some message',
     );

@@ -25,7 +25,6 @@ const StyledName = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-// Where each kind of work goes when the thing that produced it named nobody.
 // Anything that needs a condition belongs in a workflow instead, which is why
 // this is a default per type rather than a rule builder.
 export const SettingsInboxRoutingTable = ({

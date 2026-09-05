@@ -86,7 +86,6 @@ describe('InboxItemService', () => {
       InboxItemScope.SNOOZED,
       InboxItemScope.DONE,
     ])('should filter by the one scope predicate for %s', async (scope) => {
-      // Act
       await service.findMany({
         workspaceId: WORKSPACE_ID,
         actorUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
@@ -95,7 +94,6 @@ describe('InboxItemService', () => {
         now: NOW,
       });
 
-      // Assert
       // The workspace scope is the repository's first argument; the assignee
       // scope stays an explicit predicate this service owns
       const [, findOptions] = inboxItemRepository.find.mock.calls[0];
@@ -107,7 +105,6 @@ describe('InboxItemService', () => {
     });
 
     it('should order by when the subject last did something, not by when the row changed', async () => {
-      // Act
       await service.findMany({
         workspaceId: WORKSPACE_ID,
         actorUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
@@ -116,7 +113,6 @@ describe('InboxItemService', () => {
         now: NOW,
       });
 
-      // Assert
       expect(inboxItemRepository.find).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({
@@ -128,7 +124,6 @@ describe('InboxItemService', () => {
     });
 
     it('should cap the page size to the given limit when a limit is provided', async () => {
-      // Act
       await service.findMany({
         workspaceId: WORKSPACE_ID,
         actorUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
@@ -138,7 +133,6 @@ describe('InboxItemService', () => {
         limit: 5,
       });
 
-      // Assert
       expect(inboxItemRepository.find).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({ take: 5 }),
@@ -148,15 +142,12 @@ describe('InboxItemService', () => {
 
   describe('findVisibleItemOrThrow', () => {
     it('should scope the lookup to the caller when the item is owned', async () => {
-      // Prepare
       const inboxItem = buildInboxItem();
 
       inboxItemRepository.findOne.mockResolvedValue(inboxItem);
 
-      // Act
       const result = await service.findVisibleItemOrThrow(ownedItemArgs);
 
-      // Assert
       expect(result).toEqual(inboxItem);
       expect(inboxItemRepository.findOne).toHaveBeenCalledWith(WORKSPACE_ID, {
         where: [
@@ -170,11 +161,9 @@ describe('InboxItemService', () => {
     });
 
     it('should refuse to read the item when the item belongs to another assignee', async () => {
-      // Prepare
       // The assignee scoped lookup simply does not match another user's row
       inboxItemRepository.findOne.mockResolvedValue(null);
 
-      // Act & Assert
       await expect(
         service.findVisibleItemOrThrow({
           ...ownedItemArgs,
@@ -199,13 +188,11 @@ describe('InboxItemService', () => {
   describe('queue visibility', () => {
     // The reachable set is the only thing keeping one team out of another's inbox
     it('should reach an item through a queue the caller belongs to', async () => {
-      // Act
       await service.findVisibleItem({
         ...ownedItemArgs,
         accessibleQueueIds: ['support-queue-id'],
       });
 
-      // Assert
       const [, findOptions] = inboxItemRepository.findOne.mock.calls[0];
 
       expect(findOptions.where).toEqual([
@@ -218,10 +205,8 @@ describe('InboxItemService', () => {
     });
 
     it('should offer no queue path at all when the caller belongs to none', async () => {
-      // Act
       await service.findVisibleItem(ownedItemArgs);
 
-      // Assert
       const [, findOptions] = inboxItemRepository.findOne.mock.calls[0];
 
       expect(findOptions.where).toHaveLength(1);
@@ -229,7 +214,6 @@ describe('InboxItemService', () => {
 
     // What a shared inbox is opened to answer: what has nobody picked up
     it('should read only what nobody has taken when the queue is read unassigned', async () => {
-      // Act
       await service.findMany({
         workspaceId: WORKSPACE_ID,
         actorUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
@@ -242,7 +226,6 @@ describe('InboxItemService', () => {
         now: NOW,
       });
 
-      // Assert
       const [, findOptions] = inboxItemRepository.find.mock.calls[0];
 
       expect(findOptions.where).toEqual({
@@ -255,7 +238,6 @@ describe('InboxItemService', () => {
     // Taking something does not remove it from the queue, so the team can still
     // see who holds what
     it('should read only what someone holds when the queue is read assigned', async () => {
-      // Act
       await service.findMany({
         workspaceId: WORKSPACE_ID,
         actorUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
@@ -268,7 +250,6 @@ describe('InboxItemService', () => {
         now: NOW,
       });
 
-      // Assert
       const [, findOptions] = inboxItemRepository.find.mock.calls[0];
 
       expect(findOptions.where).toEqual({
@@ -279,7 +260,6 @@ describe('InboxItemService', () => {
     });
 
     it('should read the whole shared inbox by the queue alone when asked for all', async () => {
-      // Act
       await service.findMany({
         workspaceId: WORKSPACE_ID,
         actorUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
@@ -292,7 +272,6 @@ describe('InboxItemService', () => {
         now: NOW,
       });
 
-      // Assert
       const [, findOptions] = inboxItemRepository.find.mock.calls[0];
 
       expect(findOptions.where).toEqual({
@@ -304,14 +283,12 @@ describe('InboxItemService', () => {
     // A write is scoped by whatever made the item readable, so a queue item
     // stays writable after someone else takes it
     it('should scope a write to the queue when the item belongs to one', () => {
-      // Act
       const writeScope = service.buildWriteScope({
         inboxItem: { id: INBOX_ITEM_ID, queueId: 'support-queue-id' } as never,
         actorUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
         accessibleQueueIds: ['support-queue-id'],
       });
 
-      // Assert
       expect(writeScope).toEqual({
         id: INBOX_ITEM_ID,
         queueId: In(['support-queue-id']),
@@ -321,10 +298,8 @@ describe('InboxItemService', () => {
 
   describe('markRead', () => {
     it('should refuse and mutate nothing when the item is not owned by the caller', async () => {
-      // Prepare
       inboxItemRepository.findOne.mockResolvedValue(null);
 
-      // Act & Assert
       await expect(service.markRead(ownedItemArgs)).rejects.toMatchObject({
         code: InboxExceptionCode.INBOX_ITEM_NOT_FOUND,
       });
@@ -333,20 +308,16 @@ describe('InboxItemService', () => {
 
     // The item can be handed to someone else between the read and the write
     it('should report a lost write rather than a missing item', async () => {
-      // Prepare
       inboxItemRepository.update.mockResolvedValue({ affected: 0 });
 
-      // Act & Assert
       await expect(service.markRead(ownedItemArgs)).rejects.toMatchObject({
         code: InboxExceptionCode.INBOX_ITEM_CHANGED,
       });
     });
 
     it('should only stamp readAt, leaving the event that ordered the list alone', async () => {
-      // Act
       await service.markRead(ownedItemArgs);
 
-      // Assert
       const [, predicate, partialUpdate] =
         inboxItemRepository.update.mock.calls[0];
 
@@ -362,13 +333,11 @@ describe('InboxItemService', () => {
 
   describe('countByScope', () => {
     it('should return the unread, needs action and snoozed counts', async () => {
-      // Prepare
       inboxItemRepository.count
         .mockResolvedValueOnce(4)
         .mockResolvedValueOnce(2)
         .mockResolvedValueOnce(1);
 
-      // Act
       const result = await service.countByScope({
         workspaceId: WORKSPACE_ID,
         actorUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
@@ -376,12 +345,10 @@ describe('InboxItemService', () => {
         now: NOW,
       });
 
-      // Assert
       expect(result).toEqual({ unread: 4, needsAction: 2, snoozed: 1 });
     });
 
     it('should count unread and needs action within the visible inbox and snoozed within the snoozed scope', async () => {
-      // Act
       await service.countByScope({
         workspaceId: WORKSPACE_ID,
         actorUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
@@ -389,7 +356,6 @@ describe('InboxItemService', () => {
         now: NOW,
       });
 
-      // Assert
       const visibleCriteria = {
         assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
         ...buildInboxItemScopeCriteria(InboxItemScope.INBOX, NOW),

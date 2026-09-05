@@ -37,8 +37,6 @@ type InboxSnoozeDropdownProps = {
   clickableComponent: ReactNode;
 };
 
-// One menu for "come back to this later", wherever an item can be snoozed
-// from: a few moments people usually mean, and a picker for any other.
 export const InboxSnoozeDropdown = ({
   inboxItem,
   clickableComponent,
@@ -47,8 +45,8 @@ export const InboxSnoozeDropdown = ({
   const { transitionInboxItem } = useInboxItemActions();
   const { enqueueErrorSnackBar } = useSnackBar();
   const { closeDropdown } = useCloseDropdown();
-  // The picker's value lives here between edits: a day or a time picked is
-  // held until the moment is confirmed, so either can still be changed
+  // A day or a time picked is held until the moment is confirmed, so either can
+  // still be changed.
   const [pickedDateTime, setPickedDateTime] =
     useState<Temporal.ZonedDateTime | null>(null);
 

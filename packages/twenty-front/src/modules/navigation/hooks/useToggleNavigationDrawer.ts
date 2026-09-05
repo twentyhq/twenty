@@ -25,7 +25,7 @@ export const useToggleNavigationDrawer = () => {
     }
 
     // The inbox split view and a side panel do not fit beside an open drawer,
-    // so bringing the drawer back sends the panel away
+    // so bringing the drawer back sends the panel away.
     if (
       !isNavigationDrawerExpanded &&
       store.get(isInboxSplitViewOpenState.atom) &&

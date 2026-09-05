@@ -11,9 +11,8 @@ import { isAiChatPath } from '~/utils/isAiChatPath';
 import { isInboxPath } from '~/utils/isInboxPath';
 
 // Settings, the AI chat and the inbox own a full page each, so the route
-// decides those modes. The stored tab only has the final say when none of those
-// pages is open, which is what keeps the chat history or the inbox listed while
-// the user works on another page.
+// decides those modes. The stored tab only has the final say when none of them
+// is open, which is what keeps the inbox listed while the user works elsewhere.
 export const useActiveNavigationDrawerMode = (): NavigationDrawerActiveTab => {
   const { pathname } = useLocation();
   const isSettingsDrawer = useIsSettingsDrawer();

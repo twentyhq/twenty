@@ -23,12 +23,11 @@ const LATER_TODAY_HOURS = 3;
 const atHour = (date: Date, hour: number) =>
   set(date, { hours: hour, minutes: 0, seconds: 0, milliseconds: 0 });
 
-// The handful of moments people actually mean when they say "later", listed
-// in the order they come. An option that is already behind, or that lands on
-// the same moment as another, is left out rather than shown twice.
+// An option that is already behind, or that lands on the same moment as
+// another, is left out rather than shown twice.
 export const getInboxSnoozeOptions = (now: Date): InboxSnoozeOption[] => {
   const thisEvening = atHour(now, EVENING_HOUR);
-  // Rounded up to a round hour, the way a person would say it
+  // Rounded up to a round hour, the way a person would say it.
   const laterToday = startOfHour(
     addHours(now, LATER_TODAY_HOURS + (getMinutes(now) > 0 ? 1 : 0)),
   );

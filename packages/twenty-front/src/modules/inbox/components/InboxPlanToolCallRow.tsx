@@ -61,8 +61,6 @@ type InboxPlanToolCallRowProps = {
   onToggleRejected: (isRejected: boolean) => Promise<void>;
 };
 
-// One call of the plan, folded to a line until the person opens it. Skipping
-// is the person's veto and stays reachable without opening the call.
 export const InboxPlanToolCallRow = ({
   toolCall,
   source,
@@ -113,7 +111,7 @@ export const InboxPlanToolCallRow = ({
       </StyledHeader>
       {isExpanded && (
         <InboxPlanToolCallEditor
-          // Remounted per state so the draft always belongs to the row shown
+          // Remounted per state so the draft always belongs to the row shown.
           key={`${toolCall.id}-${toolCall.status}`}
           toolCall={toolCall}
           source={source}

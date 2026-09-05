@@ -19,10 +19,9 @@ export type StandardInboxItemType = {
   defaultPriority: InboxItemPriority;
 };
 
-// Built-in types, owned by the twenty standard application. App-declared types
+// Built-in types, owned by the twenty standard application; app-declared types
 // are rows in the same table with the app's applicationId. A type is only an
-// identity for routing and rendering: what an item can do is the same for all
-// of them, and what it is about lives on the item.
+// identity for routing and rendering.
 export const STANDARD_INBOX_ITEM_TYPES: StandardInboxItemType[] = [
   {
     universalIdentifier: 'd5bb4752-1f7c-45ba-817a-d4908491719a',

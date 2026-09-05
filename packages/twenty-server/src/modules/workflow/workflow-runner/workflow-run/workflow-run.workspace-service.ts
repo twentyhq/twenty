@@ -136,7 +136,7 @@ export class WorkflowRunWorkspaceService {
 
       await workflowRunRepository.insert(workflowRun);
 
-      // A run that is born failed never goes through endWorkflowRun
+      // A run that is born failed never goes through endWorkflowRun.
       if (status === WorkflowRunStatus.FAILED) {
         await this.workflowRunInboxWorkspaceService.onWorkflowRunFailed({
           workflowRun,
@@ -249,7 +249,7 @@ export class WorkflowRunWorkspaceService {
     }
 
     // Only the transition into FAILED is news; ending an already failed run
-    // again would revive an item its owner had acknowledged
+    // again would revive an item its owner had acknowledged.
     if (
       status === WorkflowRunStatus.FAILED &&
       workflowRunToUpdate.status !== WorkflowRunStatus.FAILED

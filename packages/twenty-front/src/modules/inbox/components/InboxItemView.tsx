@@ -109,10 +109,6 @@ const StyledFooterEnd = styled.div`
   margin-left: auto;
 `;
 
-// Every item, whatever produced it, is drawn the same way: what it is about,
-// the calls it proposes if any, and one set of controls. Editing a call before
-// running it is the person's review; skipping one is the person's veto; doing
-// an item with no calls is just saying it is handled.
 export const InboxItemView = ({ inboxItem }: { inboxItem: InboxItem }) => {
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
@@ -140,8 +136,7 @@ export const InboxItemView = ({ inboxItem }: { inboxItem: InboxItem }) => {
     isDefined(inboxItem.subjectRecordId) ||
     context.entities.length > 0;
 
-  // Every call starts folded, the way the summary lists them; the person opens
-  // the ones they want to look at or change
+  // Every call starts folded; the person opens the ones they want to change.
   const [expandedToolCallIds, setExpandedToolCallIds] = useState<string[]>([]);
 
   const expandToolCall = (toolCallId: string) =>
@@ -163,11 +158,10 @@ export const InboxItemView = ({ inboxItem }: { inboxItem: InboxItem }) => {
   const reportFailure = () =>
     enqueueErrorSnackBar({ message: t`That could not be applied` });
 
-  // A blur save or a skip still on the wire must land before the item is
-  // done, or the run could use the input from before the edit. A save that
-  // failed keeps the run blocked until that call saves again, since its editor
-  // still shows what the server never got; a skip, or a save on another call,
-  // says nothing about it
+  // A blur save or a skip still on the wire must land before the item is done,
+  // or the run could use the input from before the edit. A save that failed
+  // keeps the run blocked until that call saves again, since its editor still
+  // shows what the server never got.
   const trackEdit = async (
     edit: () => Promise<unknown>,
     { toolCallId, isInputSave }: { toolCallId: string; isInputSave: boolean },

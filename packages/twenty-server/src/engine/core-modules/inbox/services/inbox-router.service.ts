@@ -26,8 +26,6 @@ import { isUniqueViolation } from 'src/engine/core-modules/inbox/utils/is-unique
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
-// The producers' side of the item. Everything here reports that something
-// happened; nothing here decides whether the assignee is done with it.
 @Injectable()
 export class InboxRouterService {
   private readonly logger = new Logger(InboxRouterService.name);
@@ -45,9 +43,8 @@ export class InboxRouterService {
     private readonly userWorkspaceService: UserWorkspaceService,
   ) {}
 
-  // The flag gates what accrues: creating items and seeding types. Updates to
-  // items that already exist stay ungated, so archiving a thread while the flag
-  // is off cannot leave a stale item to resurface when it is turned back on.
+  // Only creation is gated, so archiving a thread while the flag is off cannot
+  // leave a stale item behind to resurface when it is turned back on.
   private async isInboxEnabled(workspaceId: string): Promise<boolean> {
     return this.featureFlagService.isFeatureEnabled(
       FeatureFlagKey.IS_INBOX_ENABLED,
@@ -55,8 +52,6 @@ export class InboxRouterService {
     );
   }
 
-  // Routing never breaks the caller: a producer that cannot notify should still
-  // complete its own work.
   async route(args: RouteInboxItemArgs): Promise<InboxItemEntity | null> {
     return this.bestEffort(
       `route inbox item of type ${args.typeKey}`,
@@ -71,8 +66,6 @@ export class InboxRouterService {
     );
   }
 
-  // For callers whose whole purpose was the item: a workflow step that creates
-  // one has nothing else to complete, so it wants the failure, not a quiet null.
   async routeOrThrow(args: RouteInboxItemArgs): Promise<InboxItemEntity> {
     if (!(await this.isInboxEnabled(args.workspaceId))) {
       throw new InboxException(
@@ -110,18 +103,12 @@ export class InboxRouterService {
       args,
       inboxItemType,
       address: await this.resolveAddress(args, inboxItemType),
-      // One item per subject for the subject's whole life, unless the producer
-      // knows better and names its own slot. A producer whose events are each
-      // separate work names no slot and gets an item per call.
+      // Defaulting the slot to the subject folds every event about that subject
+      // into one item; an event with no subject gets an item of its own.
       slotKey: args.slotKey ?? this.resolveSubjectKey(args.subject),
     });
   }
 
-  // Where routing policy lives. Rules are code today; a workspace-configurable
-  // rule set plugs in here without touching producers.
-  //
-  // Anything it cannot address goes to the triage queue rather than nowhere. A
-  // producer that reports work is entitled to assume the work landed.
   private async resolveAddress(
     args: RouteInboxItemArgs,
     inboxItemType: InboxItemTypeEntity,
@@ -144,8 +131,6 @@ export class InboxRouterService {
       return { kind: 'queue', queueId: args.target.queueId };
     }
 
-    // What the workspace configured for this kind of work, before falling back
-    // to the queue that catches everything nothing else claimed.
     if (isDefined(inboxItemType.defaultQueueId)) {
       return { kind: 'queue', queueId: inboxItemType.defaultQueueId };
     }
@@ -215,10 +200,8 @@ export class InboxRouterService {
     }
   }
 
-  // At most one row can hold a slot in one inbox, so there is nothing to
-  // disambiguate: a cleared item is the same item, waiting for its next event.
-  // A queue's slot is looked up by the queue, never by who currently holds it,
-  // so taking an item cannot split its slot in two.
+  // A queue's slot is keyed by the queue, never by whoever currently holds the
+  // item, so taking an item out of a queue cannot split its slot in two.
   private async findItemInSlot({
     workspaceId,
     address,
@@ -240,13 +223,10 @@ export class InboxRouterService {
     });
   }
 
-  // A new event on an item that was already cleared brings it back on its own:
-  // lastEventAt moves past clearedAt and every read agrees it wants attention
-  // again. Nothing here has to undo what the assignee did.
-  //
-  // The timestamp is the database's, not this process's. What matters is which
-  // of the two writes reached Postgres last, and app servers do not share a
-  // clock with it or with each other.
+  // A new event resurfaces a cleared item on its own: lastEventAt moves past
+  // clearedAt and every read agrees it wants attention again, so nothing here
+  // undoes what the assignee did. The timestamp is Postgres's because app
+  // servers do not share a clock with it or with each other.
   private async foldIntoItem({
     existingItem,
     args,
@@ -256,9 +236,8 @@ export class InboxRouterService {
     args: RouteInboxItemArgs;
     inboxItemType: InboxItemTypeEntity;
   }): Promise<InboxItemEntity | null> {
-    // One transaction for the event and the plan it carries, with the item
-    // locked first, so two plans folding at once take turns and neither can
-    // leave the event recorded without its calls
+    // The item is locked before its plan is touched, so two folds take turns
+    // and neither leaves the event recorded without its calls.
     return this.coreDataSource.transaction(async (manager) => {
       const inboxItemRepository = this.inboxItemRepository.withManager(manager);
 
@@ -267,8 +246,7 @@ export class InboxRouterService {
         lock: { mode: 'pessimistic_write' },
       });
 
-      // Gone between the slot lookup and the lock: the event has nowhere to
-      // land, and saying so beats a silent no-op that loses it
+      // Gone between the slot lookup and the lock: the event has nowhere to land.
       if (!isDefined(lockedItem)) {
         throw new InboxException(
           `Inbox item ${existingItem.id} went away while an event was folding into it`,
@@ -298,19 +276,18 @@ export class InboxRouterService {
         });
       }
 
-      // Postgres holds the row lock taken above until this transaction
-      // commits, so no cascade can delete the row before this read. Reading
-      // after the commit could, and a null there reads as a failed fold to
-      // the producer even though its event landed.
+      // Postgres holds the row lock until this transaction commits, so no
+      // cascade can delete the row before this read. Reading after the commit
+      // could, and a null there reads as a failed fold to the producer even
+      // though its event landed.
       return inboxItemRepository.findOneBy(args.workspaceId, {
         id: existingItem.id,
       });
     });
   }
 
-  // A new plan for the same slot replaces what was still proposed and nobody
-  // holds, and leaves what already ran, was skipped, or is running right now,
-  // so the item keeps its history and a call in flight finishes on its row.
+  // A new plan replaces what is still proposed and unclaimed, and leaves what
+  // ran, was skipped, or is running, so a call in flight finishes on its row.
   private async replaceProposedToolCalls({
     manager,
     workspaceId,
@@ -392,7 +369,7 @@ export class InboxRouterService {
     slotKey: string | null;
   }): Promise<InboxItemEntity> {
     // The item and its calls land together: a plan that lost its rows on the
-    // way in would read as nothing to do and could be marked done as such
+    // way in would read as nothing to do and could be marked done as such.
     return this.coreDataSource.transaction(async (manager) => {
       const inboxItem = await this.inboxItemRepository
         .withManager(manager)
@@ -427,9 +404,8 @@ export class InboxRouterService {
     });
   }
 
-  // A rename is not something that happened to the subject, so it leaves
-  // lastEventAt alone: the item keeps its place in the list, a cleared one
-  // stays cleared and a read one stays read.
+  // A rename is not an event on the subject, so it leaves lastEventAt alone: a
+  // cleared item stays cleared and a read one stays read.
   async renameThreadItem({
     workspaceId,
     threadId,
@@ -448,8 +424,8 @@ export class InboxRouterService {
     });
   }
 
-  // The subject is gone, so nothing will ever bring this back. Cleared by
-  // nobody, which is how a disappearance is told apart from someone's decision.
+  // Cleared by nobody, which is how a disappearance is told apart from
+  // someone's decision.
   async clearByThreadId({
     workspaceId,
     threadId,
@@ -473,8 +449,7 @@ export class InboxRouterService {
   }
 
   // Producers name a workspace member because that is the identity they can
-  // see; the inbox addresses the user workspace behind it. Assigning is
-  // routing, not access, so the translation lives with routing.
+  // see; the inbox addresses the user workspace behind it.
   async toUserWorkspaceId({
     workspaceId,
     workspaceMemberId,
@@ -502,8 +477,7 @@ export class InboxRouterService {
   }
 
   // The inbox is never allowed to fail the subsystem that feeds it: a chat or
-  // workflow operation must complete even when its inbox item cannot. This is
-  // the one place that decides so, so every producer reads the same way.
+  // workflow operation must complete even when its inbox item cannot.
   private async bestEffort<TResult>(
     operation: string,
     workspaceId: string,
@@ -523,8 +497,6 @@ export class InboxRouterService {
   }
 }
 
-// Which inbox a producer addressed an item to. One or the other, never
-// neither: an item only gains both when someone takes it out of a queue.
 type InboxItemAddress =
   | { kind: 'queue'; queueId: string }
   | { kind: 'person'; assigneeUserWorkspaceId: string };

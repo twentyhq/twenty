@@ -24,8 +24,8 @@ export const useInboxItems = (
 ) => {
   const apolloCoreClient = useApolloCoreClient();
   const isInboxEnabled = useIsInboxEnabled();
-  // The grown page belongs to one view: switching section, queue or
-  // assignment starts again from the first page
+  // The grown page belongs to one view, so switching section, queue or
+  // assignment starts again from the first page.
   const viewKey = `${scope ?? ''}|${queueSlug ?? ''}|${assignment ?? ''}`;
   const [pagination, setPagination] = useState({
     viewKey,
@@ -33,7 +33,7 @@ export const useInboxItems = (
   });
 
   // Reset during render rather than in an effect, so coming back to a view
-  // later starts from the first page instead of restoring its grown one
+  // later starts from the first page instead of restoring its grown one.
   if (pagination.viewKey !== viewKey) {
     setPagination({ viewKey, limit: INBOX_ITEMS_PAGE_SIZE });
   }
@@ -58,7 +58,7 @@ export const useInboxItems = (
   });
 
   // Already ordered by lastEventAt desc by the server, which is also the order
-  // the extra-item check assumes
+  // the extra-item check assumes.
   const fetchedItems = data?.myInboxItems ?? [];
   const hasMoreItems = fetchedItems.length > limit;
   const inboxItems = fetchedItems.slice(0, limit);
@@ -72,7 +72,7 @@ export const useInboxItems = (
     isInboxEnabled,
     hasMoreItems,
     loadMoreItems,
-    // Polling leaves loading false, but a scope change refetches with no data
+    // Polling leaves loading false, but a scope change refetches with no data.
     isInitialLoading: loading && !isDefined(data),
     error,
   };

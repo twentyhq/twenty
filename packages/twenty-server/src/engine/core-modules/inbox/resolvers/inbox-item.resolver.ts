@@ -48,10 +48,9 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 // Every operation is scoped to what the caller can reach by construction: their
-// own items, plus the queues they belong to. Both come from the auth context,
-// never from the request.
-// NoPermissionGuard: the inbox needs no permission flag because reachability is
-// decided by assignment and queue access rather than by object permissions.
+// own items plus the queues they belong to, both taken from the auth context
+// and never from the request. NoPermissionGuard because that reachability, not
+// an object permission, is what decides access.
 @CoreResolver()
 @UsePipes(ResolverValidationPipe)
 @UseGuards(
@@ -76,15 +75,11 @@ export class InboxItemResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('scope', { type: () => InboxItemScope, nullable: true })
     scope?: InboxItemScope,
-    // Naming a queue reads that shared inbox instead of the caller's own
     @Args('queueSlug', { type: () => String, nullable: true })
     queueSlug?: string,
-    // Only read for a queue. Defaults to what nobody has taken, which is the
-    // question a shared inbox is opened to answer.
+    // Only read for a queue, where it defaults to what nobody has taken.
     @Args('assignment', { type: () => InboxQueueAssignment, nullable: true })
     assignment?: InboxQueueAssignment,
-    // The client grows this to reach older items, so nothing falls off the
-    // end of the list without a way back to it.
     @Args('limit', { type: () => Int, nullable: true })
     limit?: number,
   ): Promise<InboxItemDTO[]> {
@@ -109,7 +104,7 @@ export class InboxItemResolver {
   }
 
   // Looked up by id rather than by scope, so a surface showing one item keeps
-  // showing it after a transition moves it out of the scope it came from
+  // showing it after a transition moves it out of the scope it came from.
   @Query(() => InboxItemDTO, { nullable: true })
   async myInboxItem(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -153,7 +148,6 @@ export class InboxItemResolver {
     });
   }
 
-  // The shared inboxes this person can reach, badged the same way their own is
   @Query(() => [InboxQueueDTO])
   async myInboxQueues(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -170,7 +164,7 @@ export class InboxItemResolver {
         const counts = await this.inboxItemService.countByScope({
           workspaceId,
           actorUserWorkspaceId: userWorkspaceId,
-          // The badge is what the team still has to pick up. Counting items a
+          // The badge is what the team still has to pick up: counting items a
           // teammate already took would make it grow as work gets claimed.
           readScope: {
             kind: 'queue',
@@ -220,7 +214,7 @@ export class InboxItemResolver {
     @Args('transition', { type: () => TransitionInboxItemInput })
     transition: TransitionInboxItemInput,
     // Omitted means "apply regardless"; a client that acted on what it read
-    // should always send back the version it saw
+    // should always send back the version it saw.
     @Args('expectedVersion', { type: () => Int, nullable: true })
     expectedVersion?: number,
   ): Promise<InboxItemDTO> {
@@ -284,8 +278,8 @@ export class InboxItemResolver {
     return toInboxItemToolCallDto(toolCall);
   }
 
-  // Does the item: runs what is left of its calls and clears it. An item with
-  // no calls is done by the same mutation, so the client has one verb.
+  // An item with no calls is done by this same mutation, so the client has one
+  // verb for doing an item whether or not it carries a plan.
   @Mutation(() => InboxItemDTO)
   async runInboxItemToolCalls(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

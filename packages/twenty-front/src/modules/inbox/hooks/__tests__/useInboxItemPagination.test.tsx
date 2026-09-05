@@ -41,46 +41,36 @@ describe('useInboxItemPagination', () => {
   });
 
   it('should report its position within the snapshotted order', () => {
-    // Act
     const { result } = renderPagination('second');
 
-    // Assert
     expect(result.current.position).toBe(2);
     expect(result.current.total).toBe(3);
   });
 
   it('should offer both directions in the middle of the order', () => {
-    // Act
     const { result } = renderPagination('second');
 
-    // Assert
     expect(result.current.hasPrevious).toBe(true);
     expect(result.current.hasNext).toBe(true);
   });
 
   it('should not offer a previous item at the start', () => {
-    // Act
     const { result } = renderPagination('first');
 
-    // Assert
     expect(result.current.hasPrevious).toBe(false);
     expect(result.current.hasNext).toBe(true);
   });
 
   it('should not offer a next item at the end', () => {
-    // Act
     const { result } = renderPagination('third');
 
-    // Assert
     expect(result.current.hasPrevious).toBe(true);
     expect(result.current.hasNext).toBe(false);
   });
 
   it('should offer no navigation for an item reached outside the order', () => {
-    // Act
     const { result } = renderPagination('stranger');
 
-    // Assert
     expect(result.current.hasPrevious).toBe(false);
     expect(result.current.hasNext).toBe(false);
     expect(result.current.position).toBeUndefined();
@@ -88,13 +78,10 @@ describe('useInboxItemPagination', () => {
   });
 
   it('should navigate to the neighbour rather than the current item', () => {
-    // Arrange
     const { result } = renderPagination('second');
 
-    // Act
     result.current.goToNext();
 
-    // Assert
     expect(mockNavigate).toHaveBeenCalledWith(
       `/inbox/${DEFAULT_INBOX_SECTION.slug}/third`,
       { state: INBOX_ITEM_ORDER_LOCATION_STATE },
@@ -102,53 +89,41 @@ describe('useInboxItemPagination', () => {
   });
 
   it('should ignore a snapshot captured in another list', () => {
-    // Arrange
     mockInboxItemOrder = {
       inboxListKey: 'section:done',
       inboxItemIds: ['first', 'second', 'third'],
     };
 
-    // Act
     const { result } = renderPagination('second');
 
-    // Assert
     expect(result.current.hasPrevious).toBe(false);
     expect(result.current.hasNext).toBe(false);
     expect(result.current.position).toBeUndefined();
   });
 
   it('should ignore a snapshot when the item was reached by a direct link', () => {
-    // Arrange
     mockLocationState = null;
 
-    // Act
     const { result } = renderPagination('second');
 
-    // Assert
     expect(result.current.hasPrevious).toBe(false);
     expect(result.current.hasNext).toBe(false);
     expect(result.current.position).toBeUndefined();
   });
 
   it('should offer no navigation with no snapshot at all', () => {
-    // Arrange
     mockInboxItemOrder = null;
 
-    // Act
     const { result } = renderPagination('second');
 
-    // Assert
     expect(result.current.hasNext).toBe(false);
   });
 
   it('should not navigate past the end of the order', () => {
-    // Arrange
     const { result } = renderPagination('third');
 
-    // Act
     result.current.goToNext();
 
-    // Assert
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 });

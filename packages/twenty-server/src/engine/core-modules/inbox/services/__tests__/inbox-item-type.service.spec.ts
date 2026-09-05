@@ -78,13 +78,11 @@ describe('InboxItemTypeService', () => {
 
   describe('findByKey', () => {
     it('should return the existing type without seeding when the key already exists', async () => {
-      // Act
       const result = await service.findByKey({
         workspaceId: WORKSPACE_ID,
         key: INBOX_ITEM_TYPE_KEY.conversation,
       });
 
-      // Assert
       expect(result).toEqual(existingType);
       expect(inboxItemTypeRepository.findOne).toHaveBeenCalledTimes(1);
       expect(inboxItemTypeRepository.findOne).toHaveBeenCalledWith(
@@ -101,34 +99,28 @@ describe('InboxItemTypeService', () => {
     });
 
     it('should seed the standard types and retry when the key is missing', async () => {
-      // Prepare
       inboxItemTypeRepository.findOne
         .mockResolvedValueOnce(null)
         .mockResolvedValueOnce(existingType);
 
-      // Act
       const result = await service.findByKey({
         workspaceId: WORKSPACE_ID,
         key: INBOX_ITEM_TYPE_KEY.conversation,
       });
 
-      // Assert
       expect(inboxItemTypeRepository.upsert).toHaveBeenCalledTimes(1);
       expect(inboxItemTypeRepository.findOne).toHaveBeenCalledTimes(2);
       expect(result).toEqual(existingType);
     });
 
     it('should not seed for a key that is not a standard type', async () => {
-      // Prepare
       inboxItemTypeRepository.findOne.mockResolvedValue(null);
 
-      // Act
       const result = await service.findByKey({
         workspaceId: WORKSPACE_ID,
         key: 'not_a_standard_type',
       });
 
-      // Assert
       expect(result).toBeNull();
       expect(inboxItemTypeRepository.findOne).toHaveBeenCalledTimes(1);
       expect(inboxItemTypeRepository.upsert).not.toHaveBeenCalled();
@@ -137,10 +129,8 @@ describe('InboxItemTypeService', () => {
 
   describe('seedStandardTypes', () => {
     it('should upsert every standard type against the twenty standard application when it is present', async () => {
-      // Act
       await service.seedStandardTypes({ workspaceId: WORKSPACE_ID });
 
-      // Assert
       expect(applicationRepository.findOne).toHaveBeenCalledWith({
         where: {
           workspaceId: WORKSPACE_ID,
@@ -173,13 +163,10 @@ describe('InboxItemTypeService', () => {
     });
 
     it('should do nothing when the twenty standard application row is absent', async () => {
-      // Prepare
       applicationRepository.findOne.mockResolvedValue(null);
 
-      // Act
       await service.seedStandardTypes({ workspaceId: WORKSPACE_ID });
 
-      // Assert
       expect(inboxItemTypeRepository.upsert).not.toHaveBeenCalled();
     });
   });
@@ -188,48 +175,40 @@ describe('InboxItemTypeService', () => {
     // The queue lookup is workspace-scoped, so a queue from another workspace
     // cannot become an address this workspace can no longer see into
     it('should reject a queue that does not belong to this workspace', async () => {
-      // Prepare
       inboxQueueService.findQueueOrThrow.mockRejectedValue(
         new Error('Inbox queue not found'),
       );
 
-      // Act
       const setDefaultQueue = service.setDefaultQueue({
         workspaceId: WORKSPACE_ID,
         inboxItemTypeId: existingType.id,
         defaultQueueId: QUEUE_ID,
       });
 
-      // Assert
       await expect(setDefaultQueue).rejects.toThrow();
       expect(inboxItemTypeRepository.update).not.toHaveBeenCalled();
     });
 
     it('should leave a type that no longer exists untouched', async () => {
-      // Prepare
       inboxItemTypeRepository.findOne.mockResolvedValue(null);
 
-      // Act
       const setDefaultQueue = service.setDefaultQueue({
         workspaceId: WORKSPACE_ID,
         inboxItemTypeId: existingType.id,
         defaultQueueId: null,
       });
 
-      // Assert
       await expect(setDefaultQueue).rejects.toThrow();
       expect(inboxItemTypeRepository.update).not.toHaveBeenCalled();
     });
 
     it('should write the queue once both are verified', async () => {
-      // Act
       await service.setDefaultQueue({
         workspaceId: WORKSPACE_ID,
         inboxItemTypeId: existingType.id,
         defaultQueueId: QUEUE_ID,
       });
 
-      // Assert
       expect(inboxItemTypeRepository.update).toHaveBeenCalledWith(
         WORKSPACE_ID,
         { id: existingType.id },

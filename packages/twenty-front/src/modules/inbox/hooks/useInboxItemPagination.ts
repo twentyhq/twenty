@@ -10,8 +10,7 @@ import { getInboxListKey } from '@/inbox/utils/getInboxListKey';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 // Paging is over the order the list was showing when the item was opened, not
-// over a live query. Inbox items are core-schema and paged by myInboxItems, so
-// none of the record show pagination applies.
+// over a live query.
 export const useInboxItemPagination = ({
   inboxListLocation,
   inboxItemId,
@@ -28,8 +27,7 @@ export const useInboxItemPagination = ({
     INBOX_ITEM_ORDER_LOCATION_STATE.isFromInboxList;
 
   // A snapshot taken in another list, or before a direct link into this one,
-  // says nothing about where this item sits, so it is ignored rather than
-  // paged through
+  // says nothing about where this item sits, so it is ignored.
   const inboxItemIds =
     isFromInboxList &&
     inboxItemOrder?.inboxListKey === getInboxListKey(inboxListLocation)
@@ -67,7 +65,7 @@ export const useInboxItemPagination = ({
 
   return {
     // An item reached by a direct link has no order to page through, so both
-    // ends read as unavailable rather than jumping to a stranger's neighbour
+    // ends read as unavailable rather than jumping to a stranger's neighbour.
     hasPrevious: isDefined(previousInboxItemId),
     hasNext: isDefined(nextInboxItemId),
     position: isInOrder ? currentIndex + 1 : undefined,

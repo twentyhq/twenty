@@ -6,9 +6,8 @@ import { InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item
 import { INBOX_ITEM_TRANSITION_KINDS } from 'src/engine/core-modules/inbox/types/inbox-item-transition.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
-// One input for every transition. GraphQL has no unions on the input side, so
-// the kind is validated here and narrowed to the discriminated union before it
-// reaches the service.
+// GraphQL has no unions on the input side, so the kind is validated here and
+// narrowed to the discriminated union before it reaches the service.
 @InputType()
 export class TransitionInboxItemInput {
   @Field(() => String)
@@ -20,7 +19,6 @@ export class TransitionInboxItemInput {
   @IsEnum(InboxItemOutcome)
   outcome?: InboxItemOutcome;
 
-  // The snooze menu picks a moment, not a duration
   @Field(() => GraphQLISODateTime, { nullable: true })
   @IsOptional()
   @IsDate()

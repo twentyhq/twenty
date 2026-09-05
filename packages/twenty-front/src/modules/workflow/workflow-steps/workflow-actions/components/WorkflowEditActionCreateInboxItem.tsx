@@ -32,8 +32,6 @@ type WorkflowEditActionCreateInboxItemProps = {
       };
 };
 
-// Conditions live in the steps above this one: an If/Else deciding who gets the
-// approval is the same rule a rule builder would express, minus the builder.
 export const WorkflowEditActionCreateInboxItem = ({
   action,
   actionOptions,

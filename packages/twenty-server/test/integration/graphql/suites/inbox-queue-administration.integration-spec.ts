@@ -6,10 +6,9 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
-// Every unit test in this module mocks the repository, which means none of them
-// can catch a missing workspace predicate or a missing access check: the mock
-// answers whatever it is asked. These go through the real resolvers so the
-// authorization surface is exercised rather than described.
+// The unit tests in this module mock the repository, so none of them can catch
+// a missing workspace predicate or access check: the mock answers whatever it
+// is asked. These go through the real resolvers instead.
 const CREATE_INBOX_QUEUE = gql`
   mutation CreateInboxQueue($input: CreateInboxQueueInput!) {
     createInboxQueue(input: $input) {
@@ -99,7 +98,7 @@ const GET_ROLES = gql`
 
 // Well-formed v4 uuids on purpose: a malformed one is rejected by the scalar
 // before it reaches a resolver, which would pass the rejection tests below
-// without ever exercising the lookup they are about
+// without ever exercising the lookup they are about.
 const UNKNOWN_QUEUE_ID = '11111111-2222-4333-8444-555555555555';
 const UNKNOWN_ROLE_ID = '99999999-8888-4777-a666-555555555555';
 
@@ -155,10 +154,8 @@ describe('inbox queue administration', () => {
   };
 
   it('should derive an address from the name when a shared inbox is created', async () => {
-    // Act
     const { response, queue } = await createQueue('Integration Support');
 
-    // Assert
     expect(response.body.errors).toBeUndefined();
     expect(queue).toMatchObject({
       name: 'Integration Support',
@@ -169,10 +166,8 @@ describe('inbox queue administration', () => {
 
   // Two teams can both call their inbox "Support"; they cannot both own the address
   it('should not reuse an address another shared inbox already holds', async () => {
-    // Act
     const { queue } = await createQueue('Integration Support');
 
-    // Assert
     expect(queue.slug).not.toBe('integration-support');
     expect(queue.slug).toMatch(/^integration-support-\d+$/);
   });
@@ -180,28 +175,23 @@ describe('inbox queue administration', () => {
   // A role from another workspace satisfies the foreign key, so the workspace
   // predicate is the only thing keeping the grant out
   it('should reject a role that does not belong to this workspace', async () => {
-    // Prepare
     const { queue } = await createQueue('Integration Foreign Role');
 
-    // Act
     const response = await makeGraphqlAPIRequest({
       query: SET_INBOX_QUEUE_ROLES,
       variables: { input: { queueId: queue.id, roleIds: [UNKNOWN_ROLE_ID] } },
     });
 
-    // Assert
     expect(response.body.errors).toBeDefined();
     expect(response.body.data?.setInboxQueueRoles).toBeFalsy();
   });
 
   it('should reject granting access to a shared inbox that does not exist', async () => {
-    // Act
     const response = await makeGraphqlAPIRequest({
       query: SET_INBOX_QUEUE_ROLES,
       variables: { input: { queueId: UNKNOWN_QUEUE_ID, roleIds: [] } },
     });
 
-    // Assert
     expect(response.body.errors).toBeDefined();
     expect(response.body.data?.setInboxQueueRoles).toBeFalsy();
   });
@@ -209,13 +199,11 @@ describe('inbox queue administration', () => {
   // The routing default is an address items are sent to, so an id this
   // workspace cannot see into must never become one
   it('should reject routing a kind of work to a shared inbox that does not exist', async () => {
-    // Prepare
     const typesResponse = await makeGraphqlAPIRequest({
       query: GET_INBOX_ITEM_TYPE_SETTINGS,
     });
     const inboxItemType = typesResponse.body.data.inboxItemTypeSettings[0];
 
-    // Act
     const response = await makeGraphqlAPIRequest({
       query: SET_INBOX_ITEM_TYPE_DEFAULT_QUEUE,
       variables: {
@@ -226,7 +214,6 @@ describe('inbox queue administration', () => {
       },
     });
 
-    // Assert
     expect(response.body.errors).toBeDefined();
 
     const unchanged = await makeGraphqlAPIRequest({
@@ -241,8 +228,8 @@ describe('inbox queue administration', () => {
   });
 
   it('should refuse to delete the triage inbox', async () => {
-    // Prepare: triage is created on demand, and deleting a queue is one of the
-    // things that needs somewhere to move the work to
+    // Triage is created on demand, and deleting a queue is one of the things
+    // that needs somewhere to move the work to.
     const { queue } = await createQueue('Integration Triage Trigger');
 
     await makeGraphqlAPIRequest({
@@ -259,29 +246,24 @@ describe('inbox queue administration', () => {
 
     expect(triage).toBeDefined();
 
-    // Act
     const response = await makeGraphqlAPIRequest({
       query: DELETE_INBOX_QUEUE,
       variables: { queueId: triage.id },
     });
 
-    // Assert
     expect(response.body.errors).toBeDefined();
   });
 
   describe('access', () => {
     // The gate that keeps one team out of another team's work
     it('should hide a shared inbox from a role it was not granted to', async () => {
-      // Prepare
       const { queue } = await createQueue('Integration Private');
 
-      // Act
       const memberResponse = await makeGraphqlAPIRequest(
         { query: GET_MY_INBOX_ITEMS, variables: { queueSlug: queue.slug } },
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
       );
 
-      // Assert
       expect(memberResponse.body.errors).toBeDefined();
       expect(memberResponse.body.data?.myInboxItems).toBeFalsy();
     });
@@ -289,7 +271,6 @@ describe('inbox queue administration', () => {
     // The same person, before and after their role is granted access: the grant
     // is the only thing that changes the answer
     it('should put a shared inbox in the drawer only once a role can reach it', async () => {
-      // Prepare
       const { queue } = await createQueue('Integration Granted');
 
       const jonyQueueIds = async () =>
@@ -302,13 +283,11 @@ describe('inbox queue administration', () => {
 
       expect(await jonyQueueIds()).not.toContain(queue.id);
 
-      // Act
       await makeGraphqlAPIRequest({
         query: SET_INBOX_QUEUE_ROLES,
         variables: { input: { queueId: queue.id, roleIds: [memberRoleId] } },
       });
 
-      // Assert
       expect(await jonyQueueIds()).toContain(queue.id);
 
       const readable = await makeGraphqlAPIRequest(
@@ -322,7 +301,6 @@ describe('inbox queue administration', () => {
 
     // Saving the list replaces it, so a role dropped from it loses the inbox
     it('should take the shared inbox back out of the drawer when the grant is removed', async () => {
-      // Prepare
       const { queue } = await createQueue('Integration Revoked');
 
       await makeGraphqlAPIRequest({
@@ -330,13 +308,11 @@ describe('inbox queue administration', () => {
         variables: { input: { queueId: queue.id, roleIds: [memberRoleId] } },
       });
 
-      // Act
       await makeGraphqlAPIRequest({
         query: SET_INBOX_QUEUE_ROLES,
         variables: { input: { queueId: queue.id, roleIds: [] } },
       });
 
-      // Assert
       const drawer = await makeGraphqlAPIRequest(
         { query: GET_MY_INBOX_QUEUES },
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
@@ -350,7 +326,6 @@ describe('inbox queue administration', () => {
     // Administration is settings-gated: it decides who can reach which shared
     // inbox, so a plain member must not be able to grant themselves one
     it('should refuse queue administration to a member without workspace settings', async () => {
-      // Act
       const response = await makeGraphqlAPIRequest(
         {
           query: CREATE_INBOX_QUEUE,
@@ -361,7 +336,6 @@ describe('inbox queue administration', () => {
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
       );
 
-      // Assert
       expect(response.body.errors).toBeDefined();
       expect(response.body.data?.createInboxQueue).toBeFalsy();
     });
@@ -369,20 +343,17 @@ describe('inbox queue administration', () => {
 
   describe('feature flag', () => {
     it('should not answer inbox settings queries when the inbox is disabled', async () => {
-      // Prepare
       await updateFeatureFlag({
         featureFlag: FeatureFlagKey.IS_INBOX_ENABLED,
         value: false,
         expectToFail: false,
       });
 
-      // Act
       const response = await makeGraphqlAPIRequest(
         { query: GET_INBOX_QUEUE_SETTINGS },
         APPLE_JANE_ADMIN_ACCESS_TOKEN,
       );
 
-      // Assert
       expect(response.body.errors).toBeDefined();
 
       // Cleanup for the suite's remaining teardown

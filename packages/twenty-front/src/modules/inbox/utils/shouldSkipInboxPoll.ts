@@ -1,6 +1,5 @@
-// Polling three inbox queries every few seconds for every signed-in user is
-// load the workspace pays for whether or not anyone is looking. Reading
-// visibility at poll time rather than holding it in state keeps this out of
-// the render path: a hidden tab simply skips its turn and resumes on return.
+// Polling three inbox queries for every signed-in user is load the workspace
+// pays for whether or not anyone is looking. Visibility is read at poll time
+// rather than held in state, so this stays out of the render path.
 export const shouldSkipInboxPoll = (): boolean =>
   typeof document !== 'undefined' && document.hidden;

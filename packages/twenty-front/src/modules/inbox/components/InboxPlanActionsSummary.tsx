@@ -90,8 +90,6 @@ type InboxPlanActionsSummaryProps = {
   onSelect: (toolCallId: string) => void;
 };
 
-// The plan as the agent laid it out, one line per call in order, before any
-// of it is opened for editing. Selecting a line opens that call below.
 export const InboxPlanActionsSummary = ({
   toolCalls,
   onSelect,

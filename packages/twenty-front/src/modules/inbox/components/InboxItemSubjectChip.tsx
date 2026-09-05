@@ -69,9 +69,8 @@ type InboxItemSubjectChipProps = {
   source?: InboxItemContextSource;
 };
 
-// What the item is about, as one chip. The real page behind it, a conversation
-// or a record, opens in the side panel beside the inbox: the pane itself never
-// embeds another page. A source that is not a page in the app is only named.
+// The page behind the chip opens in the side panel beside the inbox, because
+// the item pane itself never embeds another page.
 export const InboxItemSubjectChip = ({
   inboxItem,
   source,
@@ -147,7 +146,7 @@ export const InboxItemSubjectChip = ({
     </>
   );
 
-  // A source with nothing to open behind it is a label, not a control
+  // A source with nothing to open behind it is a label, not a control.
   return isDefined(onClick) ? (
     <StyledChipButton type="button" onClick={onClick}>
       {content}

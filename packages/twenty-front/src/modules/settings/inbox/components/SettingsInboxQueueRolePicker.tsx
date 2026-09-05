@@ -56,9 +56,8 @@ const StyledAddRow = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
-// Which roles can reach this shared inbox. Access is a permission, so it is
-// granted to roles rather than named people; who ends up doing the work is
-// decided later by routing.
+// Access is a permission, so it is granted to roles rather than named people;
+// who ends up doing the work is decided later by routing.
 export const SettingsInboxQueueRolePicker = ({
   selectedRoleIds,
   onChange,

@@ -29,9 +29,6 @@ type ToolCallActorArgs = {
   accessibleQueueIds: string[];
 };
 
-// The rows under a plan. Editing and rejecting are the person shaping the plan;
-// running it is one act over every row still standing, and it is what ends the
-// item.
 @Injectable()
 export class InboxItemToolCallService {
   constructor(
@@ -94,9 +91,8 @@ export class InboxItemToolCallService {
     return { ...toolCall, ...patch };
   }
 
-  // Runs every call still proposed, in order, then clears the item with an
-  // outcome that says whether the whole plan went through. A failure is left
-  // on its row and the item stays in the inbox for the person to look at.
+  // A failure is left on its row and the item stays in the inbox rather than
+  // being cleared, so the person can look at what went wrong.
   async runAll({
     workspaceId,
     actorUserWorkspaceId,
@@ -121,7 +117,7 @@ export class InboxItemToolCallService {
       );
     }
 
-    // No calls is a plan too: doing it is marking the item done
+    // No calls is a plan too: doing it is marking the item done.
     const toolCalls = await this.findToolCallsInOrder(workspaceId, inboxItemId);
 
     const proposedToolCalls = toolCalls.filter(
@@ -133,8 +129,7 @@ export class InboxItemToolCallService {
     for (const toolCall of proposedToolCalls) {
       // Claiming the row first is what keeps two runs of the same plan from
       // executing a call twice. Claims go in plan order, so losing one means
-      // another run is ahead: it owns the rest of the plan and this one stops
-      // rather than running a later call while an earlier one is in progress
+      // another run is ahead and owns the rest of the plan.
       const claimedAt = new Date();
 
       const claim = await this.inboxItemToolCallRepository.update(
@@ -159,8 +154,7 @@ export class InboxItemToolCallService {
     }
 
     // Read back rather than trusting what was loaded before the loop: a skip,
-    // an earlier failure or another run may have landed while the calls were
-    // executing
+    // an earlier failure or another run may have landed while the calls ran.
     const actorArgs = {
       inboxItemId,
       workspaceId,
@@ -190,10 +184,8 @@ export class InboxItemToolCallService {
 
     // The clear is guarded on the version the run started from: an event
     // folded into the plan while the calls were running must stay visible
-    // rather than be swallowed by clearedAt. The calls have run either way,
-    // so losing that guard returns the item with its checks instead of
-    // failing the run; the person closes the plan again once they have seen
-    // what arrived
+    // rather than be swallowed by clearedAt. The calls have run either way, so
+    // losing that guard returns the item rather than failing the run.
     try {
       return await this.inboxTransitionService.transition({
         inboxItemId,
@@ -221,12 +213,10 @@ export class InboxItemToolCallService {
     }
   }
 
-  // Runs on the row as it is after the claim, not as it was loaded before the
-  // loop, so an edit that landed in between is what executes. The claim time
-  // is this run's token: a row that no longer carries it was taken over once
-  // the claim went stale, and a late worker must neither run it nor write
-  // over whoever took it. Whatever goes wrong in between lands on the row as
-  // a failure, so the claim never outlives the run.
+  // The claim time is this run's token: a row that no longer carries it was
+  // taken over once the claim went stale, and a late worker must neither run it
+  // nor write over whoever took it. Whatever goes wrong in between lands on the
+  // row as a failure, so the claim never outlives the run.
   private async executeClaimedToolCall({
     workspaceId,
     actorUserWorkspaceId,
@@ -285,9 +275,8 @@ export class InboxItemToolCallService {
     );
   }
 
-  // Read once the calls have run. Handed to someone else in the meantime, the
-  // item has moved on rather than gone: the calls did run, and the client
-  // already knows to reload on a changed item
+  // Handed to someone else while the calls ran, the item has moved on rather
+  // than gone: the calls did run, and the client reloads on a changed item.
   private async findItemAfterRunOrThrow(
     args: ToolCallActorArgs & { inboxItemId: string },
   ) {
@@ -319,7 +308,7 @@ export class InboxItemToolCallService {
   }
 
   // The editor lets a person clear or retype any field; what runs must still
-  // satisfy the schema the producer declared
+  // satisfy the schema the producer declared.
   private assertInputsMatchSchema(toolCalls: InboxItemToolCallEntity[]) {
     for (const toolCall of toolCalls) {
       const invalidKeys = findInvalidInputKeys(toolCall);
@@ -334,7 +323,7 @@ export class InboxItemToolCallService {
   }
 
   // Compare-and-set on the state read a moment ago, so a run that claimed or
-  // finished the call in between cannot be undone by a late edit or skip
+  // finished the call in between cannot be undone by a late edit or skip.
   private async updateUnlessChanged(
     workspaceId: string,
     toolCall: InboxItemToolCallEntity,
@@ -359,8 +348,6 @@ export class InboxItemToolCallService {
     }
   }
 
-  // A call can only be shaped through an item the actor can see, and only
-  // while it is neither running nor run.
   private async findEditableToolCallOrThrow({
     workspaceId,
     actorUserWorkspaceId,

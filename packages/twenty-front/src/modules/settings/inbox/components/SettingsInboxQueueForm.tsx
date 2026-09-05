@@ -25,9 +25,8 @@ export type InboxQueueDraft = {
   roleIds: string[];
 };
 
-// One form for creating and editing, because both collect the same three
-// things. The address is derived from the name once and then never moves, so it
-// is not editable here.
+// The address is derived from the name once and then never moves, so it is not
+// editable here.
 export const SettingsInboxQueueForm = ({
   draft,
   onChange,

@@ -15,10 +15,9 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 
-// Which roles can reach a shared inbox. Access is a permission, so it is
-// granted the way every other permission is, rather than by a second list of
-// people kept in step by hand. Who ends up doing a given piece of work is a
-// separate question, answered by the item's assignee.
+// Access is a permission, so it is granted by role rather than by a second list
+// of people kept in step by hand. Who ends up doing the work is a separate
+// question, answered by the item's assignee.
 @Entity({ name: 'inboxQueueRole', schema: 'core' })
 @WasIntroducedInUpgrade({
   upgradeCommandName: CREATE_INBOX_TABLES_UPGRADE_COMMAND_NAME,

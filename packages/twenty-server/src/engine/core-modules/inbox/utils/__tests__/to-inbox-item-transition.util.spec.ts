@@ -4,12 +4,10 @@ import { toInboxItemTransition } from 'src/engine/core-modules/inbox/utils/to-in
 
 describe('toInboxItemTransition', () => {
   it('should narrow a bare clear', () => {
-    // Act & Assert
     expect(toInboxItemTransition({ kind: 'CLEAR' })).toEqual({ kind: 'CLEAR' });
   });
 
   it('should carry the outcome through', () => {
-    // Act & Assert
     expect(
       toInboxItemTransition({
         kind: 'CLEAR',
@@ -29,7 +27,6 @@ describe('toInboxItemTransition', () => {
 
   // An outcome records how the item ended, so asking for it back contradicts it
   it('should refuse a clear that both ends the item and brings it back', () => {
-    // Act & Assert
     expect(() =>
       toInboxItemTransition({
         kind: 'CLEAR',
@@ -40,7 +37,6 @@ describe('toInboxItemTransition', () => {
   });
 
   it('should refuse a kind it does not know', () => {
-    // Act & Assert
     expect(() => toInboxItemTransition({ kind: 'RESOLVE' })).toThrow(
       InboxException,
     );

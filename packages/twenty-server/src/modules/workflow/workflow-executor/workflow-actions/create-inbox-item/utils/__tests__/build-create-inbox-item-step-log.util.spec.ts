@@ -11,7 +11,6 @@ const input: WorkflowCreateInboxItemActionInput = {
 
 describe('buildCreateInboxItemStepLog', () => {
   it('builds a success log from the tool result', () => {
-    // Prepare
     const output: ToolOutput = {
       success: true,
       message: 'Inbox item "Approve the discount" created',
@@ -22,10 +21,8 @@ describe('buildCreateInboxItemStepLog', () => {
       },
     };
 
-    // Act
     const log = buildCreateInboxItemStepLog({ input, output, durationMs: 12 });
 
-    // Assert
     expect(log.details).toMatchObject({
       type: 'CREATE_INBOX_ITEM',
       status: 'SUCCESS',
@@ -39,17 +36,14 @@ describe('buildCreateInboxItemStepLog', () => {
 
   // The step still has to log what it tried, so the title falls back to the input
   it('builds an error log that keeps the title the step asked for', () => {
-    // Prepare
     const output: ToolOutput = {
       success: false,
       message: 'Failed to create inbox item',
       error: 'The inbox is not enabled for this workspace',
     };
 
-    // Act
     const log = buildCreateInboxItemStepLog({ input, output, durationMs: 3 });
 
-    // Assert
     expect(log.details).toMatchObject({
       type: 'CREATE_INBOX_ITEM',
       status: 'ERROR',

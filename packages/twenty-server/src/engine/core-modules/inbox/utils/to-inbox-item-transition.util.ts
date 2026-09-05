@@ -10,9 +10,8 @@ import {
   SELF_ASSIGNMENT,
 } from 'src/engine/core-modules/inbox/types/inbox-item-transition.type';
 
-// Narrows the flat GraphQL input into the discriminated union, so everything
-// downstream of the API boundary works with a transition that cannot be
-// missing the fields its kind needs.
+// Narrows the flat GraphQL input, so everything downstream of the API boundary
+// works with a transition that cannot be missing the fields its kind needs.
 export const toInboxItemTransition = (
   input: TransitionInboxItemInput,
 ): InboxItemTransition => {

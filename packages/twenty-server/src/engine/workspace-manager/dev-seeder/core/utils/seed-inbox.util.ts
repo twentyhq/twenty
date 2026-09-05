@@ -102,8 +102,8 @@ const EMAIL_INPUT_SCHEMA: InboxItemFieldSchema[] = [
   { key: 'body', label: 'Body', type: 'LONG_TEXT', isRequired: true },
 ];
 
-// Plans an agent proposed from incoming mail, the mockup's opening screen.
-// Each carries the context it was drawn from and the calls it wants to make.
+// Plans an agent proposed from incoming mail, each carrying the context it was
+// drawn from and the calls it wants to make.
 const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
   {
     seedName: 'plan-move-google-renewal-forward',
@@ -1000,7 +1000,7 @@ export const seedInbox = async ({
               : null,
           clearedByUserWorkspaceId: isCleared ? people.me : null,
           outcome: item.cleared?.outcome ?? null,
-          // Read means seen since the last event; a cleared item was seen too
+          // Read means seen since the last event; a cleared item was seen too.
           readAt: item.isRead || isCleared ? lastEventAt : null,
           threadId:
             item.subject?.kind === 'thread'

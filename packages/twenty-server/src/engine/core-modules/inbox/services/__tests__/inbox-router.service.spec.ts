@@ -194,10 +194,8 @@ describe('InboxRouterService', () => {
 
   describe('feature flag gating', () => {
     it('should write nothing at all when the inbox is disabled for the workspace', async () => {
-      // Prepare
       featureFlagService.isFeatureEnabled.mockResolvedValue(false);
 
-      // Act
       const result = await service.route({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
@@ -205,7 +203,6 @@ describe('InboxRouterService', () => {
         subject: threadSubject,
       });
 
-      // Assert: no seeding, no lookup, no write
       expect(result).toBeNull();
       expect(inboxItemTypeService.findByKey).not.toHaveBeenCalled();
       expect(inboxItemRepository.insertAndReturnOne).not.toHaveBeenCalled();
@@ -216,31 +213,25 @@ describe('InboxRouterService', () => {
     // kept in step even while the flag is off, or turning it back on would
     // resurface work for a thread that is gone
     it('should still retitle an existing item when the inbox is disabled', async () => {
-      // Prepare
       featureFlagService.isFeatureEnabled.mockResolvedValue(false);
 
-      // Act
       await service.renameThreadItem({
         workspaceId: WORKSPACE_ID,
         threadId: THREAD_ID,
         title: 'A renamed conversation',
       });
 
-      // Assert
       expect(inboxItemRepository.update).toHaveBeenCalledTimes(1);
     });
 
     it('should still clear an existing item when the inbox is disabled', async () => {
-      // Prepare
       featureFlagService.isFeatureEnabled.mockResolvedValue(false);
 
-      // Act
       await service.clearByThreadId({
         workspaceId: WORKSPACE_ID,
         threadId: THREAD_ID,
       });
 
-      // Assert
       expect(inboxItemRepository.update).toHaveBeenCalledTimes(1);
     });
   });
@@ -249,17 +240,14 @@ describe('InboxRouterService', () => {
   // whole purpose was the item, so it reports the failure instead of a null
   describe('routeOrThrow', () => {
     it('should throw rather than return null when the inbox is disabled', async () => {
-      // Prepare
       featureFlagService.isFeatureEnabled.mockResolvedValue(false);
 
-      // Act
       const routeOrThrow = service.routeOrThrow({
         workspaceId: WORKSPACE_ID,
         typeKey: 'approval',
         title: 'Approve the discount',
       });
 
-      // Assert
       await expect(routeOrThrow).rejects.toMatchObject({
         code: InboxExceptionCode.INBOX_DISABLED,
       });
@@ -267,11 +255,9 @@ describe('InboxRouterService', () => {
     });
 
     it('should throw when the item could not be written', async () => {
-      // Prepare: a fold whose re-read comes back empty
       inboxItemRepository.findOne.mockResolvedValue({ id: EXISTING_ITEM_ID });
       inboxItemRepository.findOneBy.mockResolvedValue(null);
 
-      // Act
       const routeOrThrow = service.routeOrThrow({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
@@ -279,14 +265,12 @@ describe('InboxRouterService', () => {
         subject: threadSubject,
       });
 
-      // Assert
       await expect(routeOrThrow).rejects.toMatchObject({
         code: InboxExceptionCode.INTERNAL_SERVER_ERROR,
       });
     });
 
     it('should return the item when routing succeeds', async () => {
-      // Act
       const inboxItem = await service.routeOrThrow({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
@@ -294,14 +278,12 @@ describe('InboxRouterService', () => {
         subject: threadSubject,
       });
 
-      // Assert
       expect(inboxItem).toBeDefined();
     });
   });
 
   describe('routeItem', () => {
     it('should insert an item keyed on the subject and assigned to the thread owner when no item exists yet', async () => {
-      // Act
       const result = await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
@@ -310,7 +292,6 @@ describe('InboxRouterService', () => {
         subject: threadSubject,
       });
 
-      // Assert
       expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledTimes(1);
       // The workspace scope is the repository's first argument, never a column
       // in the payload
@@ -334,7 +315,6 @@ describe('InboxRouterService', () => {
     });
 
     it('should derive the slot from a record subject when the subject is a record', async () => {
-      // Act
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
@@ -350,7 +330,6 @@ describe('InboxRouterService', () => {
         },
       });
 
-      // Assert
       expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({
@@ -364,10 +343,8 @@ describe('InboxRouterService', () => {
     });
 
     it('should prefer a producer supplied slot over the subject when both are given', async () => {
-      // Prepare
       inboxItemTypeService.findByKey.mockResolvedValue(RUN_FAILED_TYPE);
 
-      // Act
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'workflow_run_failed',
@@ -384,7 +361,6 @@ describe('InboxRouterService', () => {
         },
       });
 
-      // Assert
       expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({ slotKey: RUN_SLOT_KEY }),
@@ -392,10 +368,8 @@ describe('InboxRouterService', () => {
     });
 
     it('should always insert without looking for an existing item when no slot resolves', async () => {
-      // Prepare
       inboxItemTypeService.findByKey.mockResolvedValue(RUN_FAILED_TYPE);
 
-      // Act
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'workflow_run_failed',
@@ -406,7 +380,6 @@ describe('InboxRouterService', () => {
         },
       });
 
-      // Assert
       expect(inboxItemRepository.findOne).not.toHaveBeenCalled();
       expect(inboxItemRepository.update).not.toHaveBeenCalled();
       expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
@@ -416,13 +389,11 @@ describe('InboxRouterService', () => {
     });
 
     it('should fold into the item holding the slot instead of inserting a second one', async () => {
-      // Prepare
       inboxItemRepository.findOne.mockResolvedValue(buildInboxItem());
       inboxItemRepository.findOneBy.mockResolvedValue(
         buildInboxItem({ title: 'A newer message' }),
       );
 
-      // Act
       const result = await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
@@ -430,7 +401,6 @@ describe('InboxRouterService', () => {
         subject: threadSubject,
       });
 
-      // Assert
       expect(inboxItemRepository.findOne).toHaveBeenCalledWith(WORKSPACE_ID, {
         where: {
           queueId: IsNull(),
@@ -460,7 +430,6 @@ describe('InboxRouterService', () => {
     // The whole point of comparing lastEventAt against clearedAt: a producer
     // reports what happened and never has to undo the assignee's decision.
     it('should revive a cleared item by moving the event past the clear, touching nothing else', async () => {
-      // Prepare
       inboxItemRepository.findOne.mockResolvedValue(
         buildInboxItem({
           clearedAt: new Date('2026-02-01T00:00:00.000Z'),
@@ -471,7 +440,6 @@ describe('InboxRouterService', () => {
         }),
       );
 
-      // Act
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
@@ -479,7 +447,6 @@ describe('InboxRouterService', () => {
         subject: threadSubject,
       });
 
-      // Assert
       const [, , partialUpdate] = inboxItemRepository.update.mock.calls[0];
 
       expect(partialUpdate.lastEventAt()).toBe('clock_timestamp()');
@@ -490,14 +457,12 @@ describe('InboxRouterService', () => {
     });
 
     it('should fall back to the type label when the producer sends no title', async () => {
-      // Act
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
         subject: threadSubject,
       });
 
-      // Assert
       expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({ title: 'Conversation' }),
@@ -505,7 +470,6 @@ describe('InboxRouterService', () => {
     });
 
     it('should leave the title and context untouched when folding without them', async () => {
-      // Prepare
       inboxItemRepository.findOne.mockResolvedValue(
         buildInboxItem({
           title: 'An older message',
@@ -513,14 +477,12 @@ describe('InboxRouterService', () => {
         }),
       );
 
-      // Act
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
         subject: threadSubject,
       });
 
-      // Assert
       const [, , partialUpdate] = inboxItemRepository.update.mock.calls[0];
 
       expect(partialUpdate).not.toHaveProperty('title');
@@ -529,7 +491,6 @@ describe('InboxRouterService', () => {
     });
 
     it('should insert the proposed calls in order under a new item', async () => {
-      // Act
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
@@ -541,7 +502,6 @@ describe('InboxRouterService', () => {
         ],
       });
 
-      // Assert
       expect(inboxItemToolCallRepository.insert).toHaveBeenCalledWith(
         WORKSPACE_ID,
         [
@@ -559,14 +519,12 @@ describe('InboxRouterService', () => {
     // What already ran, was skipped, or is running right now is not the new
     // plan's to rewrite
     it('should replace only the unclaimed proposed calls when folding a new plan in', async () => {
-      // Prepare
       inboxItemRepository.findOne.mockResolvedValue(buildInboxItem());
       inboxItemToolCallRepository.find.mockResolvedValue([
         { position: 0 },
         { position: 1 },
       ]);
 
-      // Act
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
@@ -576,7 +534,6 @@ describe('InboxRouterService', () => {
         ],
       });
 
-      // Assert
       expect(inboxItemRepository.findOne).toHaveBeenLastCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({ lock: { mode: 'pessimistic_write' } }),
@@ -595,10 +552,8 @@ describe('InboxRouterService', () => {
     });
 
     it('should keep an explicitly requested priority when folding rather than the type default', async () => {
-      // Prepare
       inboxItemRepository.findOne.mockResolvedValue(buildInboxItem());
 
-      // Act
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
@@ -607,7 +562,6 @@ describe('InboxRouterService', () => {
         subject: threadSubject,
       });
 
-      // Assert
       expect(inboxItemRepository.update).toHaveBeenCalledWith(
         WORKSPACE_ID,
         { id: EXISTING_ITEM_ID },
@@ -618,7 +572,6 @@ describe('InboxRouterService', () => {
 
   describe('routeItem concurrency recovery', () => {
     it('should fold into the row the other producer created when the insert hits a unique violation', async () => {
-      // Prepare
       const concurrentItem = buildInboxItem({ id: 'concurrent-item-id' });
 
       inboxItemRepository.insertAndReturnOne.mockImplementationOnce(() => {
@@ -629,7 +582,6 @@ describe('InboxRouterService', () => {
       });
       inboxItemRepository.findOneBy.mockResolvedValue(concurrentItem);
 
-      // Act
       const result = await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
@@ -637,7 +589,6 @@ describe('InboxRouterService', () => {
         subject: threadSubject,
       });
 
-      // Assert
       expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledTimes(1);
       expect(inboxItemRepository.update).toHaveBeenCalledWith(
         WORKSPACE_ID,
@@ -648,12 +599,10 @@ describe('InboxRouterService', () => {
     });
 
     it('should rethrow when the insert fails for a reason other than a unique violation', async () => {
-      // Prepare
       inboxItemRepository.insertAndReturnOne.mockRejectedValueOnce(
         new Error('connection lost'),
       );
 
-      // Act & Assert
       await expect(
         service.routeItem({
           workspaceId: WORKSPACE_ID,
@@ -666,12 +615,10 @@ describe('InboxRouterService', () => {
     });
 
     it('should rethrow when the unique violation leaves no row behind', async () => {
-      // Prepare
       inboxItemRepository.insertAndReturnOne.mockRejectedValueOnce(
         buildUniqueViolation(),
       );
 
-      // Act & Assert
       await expect(
         service.routeItem({
           workspaceId: WORKSPACE_ID,
@@ -686,10 +633,8 @@ describe('InboxRouterService', () => {
 
   describe('routeItem assignee resolution', () => {
     it('should throw when the type key is unknown', async () => {
-      // Prepare
       inboxItemTypeService.findByKey.mockResolvedValue(null);
 
-      // Act & Assert
       await expect(
         service.routeItem({
           workspaceId: WORKSPACE_ID,
@@ -701,17 +646,15 @@ describe('InboxRouterService', () => {
       expect(inboxItemRepository.insertAndReturnOne).not.toHaveBeenCalled();
     });
 
-    // Work that no rule can address used to be dropped on the floor. It now
-    // lands somewhere a human can find it.
+    // Work that no rule can address still has to land somewhere a human can
+    // find it.
     it('should send work nobody can be found for to the triage queue', async () => {
-      // Act
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
         title: 'A message nobody owns',
       });
 
-      // Assert
       expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({
@@ -722,22 +665,19 @@ describe('InboxRouterService', () => {
     });
 
     // The workspace decides where a kind of work goes; the producer only says
-    // what happened. This is the seam that makes routing configurable.
+    // what happened.
     it('should send work to the queue the type is configured with before triage', async () => {
-      // Prepare
       inboxItemTypeService.findByKey.mockResolvedValue({
         ...CONVERSATION_TYPE,
         defaultQueueId: SUPPORT_QUEUE_ID,
       });
 
-      // Act
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
         title: 'A message nobody owns',
       });
 
-      // Assert
       expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({ queueId: SUPPORT_QUEUE_ID }),
@@ -746,13 +686,11 @@ describe('InboxRouterService', () => {
     });
 
     it('should let a producer that named a queue outrank the type default', async () => {
-      // Prepare
       inboxItemTypeService.findByKey.mockResolvedValue({
         ...CONVERSATION_TYPE,
         defaultQueueId: TRIAGE_QUEUE_ID,
       });
 
-      // Act
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
@@ -760,7 +698,6 @@ describe('InboxRouterService', () => {
         target: { kind: 'queue', queueId: SUPPORT_QUEUE_ID },
       });
 
-      // Assert
       expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({ queueId: SUPPORT_QUEUE_ID }),
@@ -768,7 +705,6 @@ describe('InboxRouterService', () => {
     });
 
     it('should address work to the queue a producer named, with nobody holding it', async () => {
-      // Act
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
@@ -776,7 +712,6 @@ describe('InboxRouterService', () => {
         target: { kind: 'queue', queueId: SUPPORT_QUEUE_ID },
       });
 
-      // Assert
       expect(inboxQueueService.findOrCreateDefaultQueue).not.toHaveBeenCalled();
       expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
@@ -790,7 +725,6 @@ describe('InboxRouterService', () => {
     // The slot belongs to the queue, so whoever currently holds the item is
     // irrelevant to whether the next event folds into it
     it('should look a queue slot up by the queue rather than by who holds it', async () => {
-      // Act
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
@@ -799,14 +733,12 @@ describe('InboxRouterService', () => {
         target: { kind: 'queue', queueId: SUPPORT_QUEUE_ID },
       });
 
-      // Assert
       expect(inboxItemRepository.findOne).toHaveBeenCalledWith(WORKSPACE_ID, {
         where: { queueId: SUPPORT_QUEUE_ID, slotKey: RUN_SLOT_KEY },
       });
     });
 
     it('should prefer the thread owner over the fallback assignee when both are available', async () => {
-      // Act
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
@@ -818,7 +750,6 @@ describe('InboxRouterService', () => {
         },
       });
 
-      // Assert
       expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({
@@ -830,7 +761,6 @@ describe('InboxRouterService', () => {
 
   describe('route', () => {
     it('should return the routed item when routing succeeds', async () => {
-      // Act
       const result = await service.route({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
@@ -838,18 +768,15 @@ describe('InboxRouterService', () => {
         subject: threadSubject,
       });
 
-      // Assert
       expect(result).toEqual(expect.objectContaining({ id: INSERTED_ITEM_ID }));
       expect(loggerWarnSpy).not.toHaveBeenCalled();
     });
 
     it('should return null and log a warning instead of throwing when routing fails', async () => {
-      // Prepare
       inboxItemTypeService.findByKey.mockRejectedValue(
         new Error('metadata unavailable'),
       );
 
-      // Act
       const result = await service.route({
         workspaceId: WORKSPACE_ID,
         typeKey: 'conversation',
@@ -857,7 +784,6 @@ describe('InboxRouterService', () => {
         subject: threadSubject,
       });
 
-      // Assert
       expect(result).toBeNull();
       expect(loggerWarnSpy).toHaveBeenCalledTimes(1);
       expect(loggerWarnSpy).toHaveBeenCalledWith(
@@ -866,7 +792,6 @@ describe('InboxRouterService', () => {
     });
 
     it('should swallow the error that routeItem raises for the same arguments', async () => {
-      // Prepare
       inboxItemTypeService.findByKey.mockResolvedValue(null);
 
       const args = {
@@ -876,7 +801,6 @@ describe('InboxRouterService', () => {
         subject: threadSubject,
       };
 
-      // Act & Assert
       await expect(service.routeItem(args)).rejects.toThrow(
         'Unknown inbox item type not_a_type',
       );
@@ -886,14 +810,12 @@ describe('InboxRouterService', () => {
 
   describe('renameThreadItem', () => {
     it('should retitle every item of the thread without touching what happened to it', async () => {
-      // Act
       await service.renameThreadItem({
         workspaceId: WORKSPACE_ID,
         threadId: THREAD_ID,
         title: 'A renamed conversation',
       });
 
-      // Assert
       expect(inboxItemRepository.update).toHaveBeenCalledWith(
         WORKSPACE_ID,
         { threadId: THREAD_ID },
@@ -905,13 +827,11 @@ describe('InboxRouterService', () => {
 
   describe('clearByThreadId', () => {
     it('should clear the thread items with nobody as the actor', async () => {
-      // Act
       await service.clearByThreadId({
         workspaceId: WORKSPACE_ID,
         threadId: THREAD_ID,
       });
 
-      // Assert
       const [, , partialUpdate] = inboxItemRepository.update.mock.calls[0];
 
       expect(partialUpdate.clearedAt()).toBe('clock_timestamp()');

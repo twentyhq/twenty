@@ -18,10 +18,8 @@ type InboxListRowButtonsProps = {
   inboxItem: InboxItem;
 };
 
-// The item's own actions live in the item pane beside the list; the row only
-// offers the one that is about who owns the work, since that is decided from
-// the list. Taking and giving back are the same transition with a different
-// target.
+// The item's own actions live in the item pane, so the row only offers the one
+// about who owns the work, which is what gets decided from the list.
 export const InboxListRowButtons = ({
   inboxItem,
 }: InboxListRowButtonsProps) => {

@@ -14,13 +14,11 @@ const inboxItems = [quietItem, needsActionItem];
 
 describe('getRenderedInboxItemOrder', () => {
   it('should put needs-action items first when the list splits by priority', () => {
-    // Act
     const order = getRenderedInboxItemOrder({
       inboxItems,
       shouldSplitByPriority: true,
     });
 
-    // Assert
     expect(order.map((inboxItem) => inboxItem.id)).toEqual([
       'needs-action',
       'newer-but-quiet',
@@ -28,13 +26,11 @@ describe('getRenderedInboxItemOrder', () => {
   });
 
   it('should keep the plain sort when the list does not split', () => {
-    // Act
     const order = getRenderedInboxItemOrder({
       inboxItems,
       shouldSplitByPriority: false,
     });
 
-    // Assert
     expect(order.map((inboxItem) => inboxItem.id)).toEqual([
       'newer-but-quiet',
       'needs-action',
@@ -42,13 +38,11 @@ describe('getRenderedInboxItemOrder', () => {
   });
 
   it('should cover every rendered item when splitting with nothing urgent', () => {
-    // Act
     const order = getRenderedInboxItemOrder({
       inboxItems: [quietItem],
       shouldSplitByPriority: true,
     });
 
-    // Assert
     expect(order).toHaveLength(1);
   });
 });

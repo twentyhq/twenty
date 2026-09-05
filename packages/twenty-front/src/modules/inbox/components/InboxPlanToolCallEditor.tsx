@@ -116,9 +116,8 @@ type InboxPlanToolCallEditorProps = {
   onSave: (editedInput: Record<string, unknown>) => Promise<void>;
 };
 
-// Every field a call takes, editable until it runs. A schema-driven form
-// covers any tool; an email gets the composer treatment because that is what
-// the person expects to see when they are about to send one.
+// A schema-driven form covers any tool; an email gets the composer treatment
+// because that is what a person expects when they are about to send one.
 export const InboxPlanToolCallEditor = ({
   toolCall,
   source,
@@ -137,7 +136,7 @@ export const InboxPlanToolCallEditor = ({
     toolCall.status === InboxItemToolCallStatus.FAILED;
 
   // A schema from the producer wins; without one the proposal's own keys are
-  // the form, as text
+  // the form, as text.
   const fields: InboxItemField[] =
     toolCall.inputSchema.length > 0
       ? toolCall.inputSchema
@@ -152,7 +151,7 @@ export const InboxPlanToolCallEditor = ({
     setDraft((current) => ({ ...current, [key]: value }));
 
   // Numbers and booleans go back as their own type and cleared fields are
-  // dropped, so what runs is the same shape the agent proposed
+  // dropped, so what runs is the same shape the agent proposed.
   const toInputValue = (field: InboxItemField, value: string) => {
     if (value === '') {
       return field.type === 'BOOLEAN' && field.isRequired ? false : undefined;

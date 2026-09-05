@@ -77,12 +77,10 @@ const StyledErrorState = styled.div`
   padding: ${themeCssVariables.spacing[10]};
 `;
 
-// Raises the split view flag for as long as the page is mounted, so the drawer
-// and the side panel can make room for each other while it is up. A panel
-// already open on the way in pushes the drawer aside the same way; without
-// one, a drawer still owed from an earlier visit is handed back now, so a
-// memory left behind by a closed tab cannot fire on a later, unrelated panel.
-// Leaving the page hands the drawer back too.
+// A panel already open on the way in pushes the drawer aside the same way a
+// panel opened later does. Without one, a drawer still owed from an earlier
+// visit is handed back now, so a memory left behind by a closed tab cannot fire
+// on a later, unrelated panel.
 const InboxSplitViewEffect = () => {
   const store = useStore();
   const setIsInboxSplitViewOpen = useSetAtomState(isInboxSplitViewOpenState);
@@ -105,14 +103,10 @@ const InboxSplitViewEffect = () => {
   return null;
 };
 
-// The list and the open item share one page: the list keeps its place on the
-// left while the item takes the rest, like a mail client. On a phone there is
-// room for one of the two at a time.
 export const InboxPage = () => {
   const { t } = useLingui();
   // A shared inbox opens on what nobody has picked up, because that is the
-  // question it exists to answer. The other two keep the team's whole picture
-  // reachable without making it the landing page.
+  // question it exists to answer.
   const [queueAssignment, setQueueAssignment] = useState<InboxQueueAssignment>(
     InboxQueueAssignment.UNASSIGNED,
   );
@@ -126,8 +120,6 @@ export const InboxPage = () => {
   const { getIcon } = useIcons();
   const { inboxQueues } = useInboxQueues({ isPolling: true });
 
-  // A shared inbox is the same list read through a queue, so the page differs
-  // only in what it is called and which items it asks for.
   const inboxQueue = inboxQueues.find((queue) => queue.slug === inboxQueueSlug);
   const inboxSection = findInboxSectionBySlug(inboxSectionSlug);
   const QueueIcon = getIcon(inboxQueue?.icon);
@@ -164,7 +156,7 @@ export const InboxPage = () => {
     );
 
   // With the flag off the inbox is not a surface, so a direct visit lands on
-  // the app index rather than on an empty shell
+  // the app index rather than on an empty shell.
   if (!isInboxEnabled) {
     return <Navigate to={AppPath.Index} replace />;
   }

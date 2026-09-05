@@ -94,35 +94,29 @@ describe('InboxTransitionService', () => {
 
   describe('optimistic concurrency', () => {
     it('should put the expected version in the write predicate so a stale caller loses', async () => {
-      // Act
       await service.transition({
         ...transitionArgs,
         transition: { kind: 'CLEAR', outcome: InboxItemOutcome.DONE },
         expectedVersion: 3,
       });
 
-      // Assert
       expect(lastPredicate()).toEqual(expect.objectContaining({ version: 3 }));
     });
 
     it('should bump the version on every transition', async () => {
-      // Act
       await service.transition({
         ...transitionArgs,
         transition: { kind: 'CLEAR' },
       });
 
-      // Assert
       const version = lastPartialUpdate().version as () => string;
 
       expect(version()).toBe('"version" + 1');
     });
 
     it('should reject when the item moved since it was read', async () => {
-      // Prepare
       inboxItemRepository.update.mockResolvedValue({ affected: 0 });
 
-      // Act & Assert
       await expect(
         service.transition({
           ...transitionArgs,
@@ -135,10 +129,8 @@ describe('InboxTransitionService', () => {
     });
 
     it('should report the item as gone when it vanished right after the write', async () => {
-      // Prepare
       inboxItemRepository.findOne.mockResolvedValue(null);
 
-      // Act & Assert
       await expect(
         service.transition({
           ...transitionArgs,
@@ -150,26 +142,22 @@ describe('InboxTransitionService', () => {
     });
 
     it('should apply without a version guard when the caller does not supply one', async () => {
-      // Act
       await service.transition({
         ...transitionArgs,
         transition: { kind: 'CLEAR' },
       });
 
-      // Assert
       expect(lastPredicate()).not.toHaveProperty('version');
     });
   });
 
   describe('CLEAR', () => {
     it('should stamp who cleared it and count as having seen it', async () => {
-      // Act
       await service.transition({
         ...transitionArgs,
         transition: { kind: 'CLEAR' },
       });
 
-      // Assert
       expect(lastPartialUpdate()).toEqual(
         expect.objectContaining({
           clearedByUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
@@ -181,13 +169,11 @@ describe('InboxTransitionService', () => {
     // Both sides of the comparison have to come from one clock, and the events
     // are stamped by Postgres, so the clear has to be too
     it('should let the database stamp the columns compared against the event', async () => {
-      // Act
       await service.transition({
         ...transitionArgs,
         transition: { kind: 'CLEAR' },
       });
 
-      // Assert
       const partialUpdate = lastPartialUpdate() as Record<string, () => string>;
 
       expect(partialUpdate.clearedAt()).toBe('clock_timestamp()');
@@ -195,42 +181,35 @@ describe('InboxTransitionService', () => {
     });
 
     it('should never write lastEventAt, which only producers own', async () => {
-      // Act
       await service.transition({
         ...transitionArgs,
         transition: { kind: 'CLEAR' },
       });
 
-      // Assert
       expect(lastPartialUpdate()).not.toHaveProperty('lastEventAt');
     });
 
     it('should record how the item ended', async () => {
-      // Act
       await service.transition({
         ...transitionArgs,
         transition: { kind: 'CLEAR', outcome: InboxItemOutcome.DISMISSED },
       });
 
-      // Assert
       expect(lastPartialUpdate()).toEqual(
         expect.objectContaining({ outcome: InboxItemOutcome.DISMISSED }),
       );
     });
 
     it('should apply to an item that was already cleared, since clearing is not a state change', async () => {
-      // Prepare
       inboxItemService.findVisibleItemOrThrow.mockResolvedValue(
         buildInboxItem({ clearedAt: new Date('2026-08-07T09:30:00.000Z') }),
       );
 
-      // Act
       await service.transition({
         ...transitionArgs,
         transition: { kind: 'CLEAR', outcome: InboxItemOutcome.DONE },
       });
 
-      // Assert
       const partialUpdate = lastPartialUpdate() as Record<string, () => string>;
 
       expect(partialUpdate.clearedAt()).toBe('clock_timestamp()');
@@ -239,7 +218,6 @@ describe('InboxTransitionService', () => {
 
   describe('CLEAR with a resurfacing time', () => {
     it('should be a clear that expires rather than a state of its own', async () => {
-      // Act
       await service.transition({
         ...transitionArgs,
         transition: {
@@ -248,7 +226,6 @@ describe('InboxTransitionService', () => {
         },
       });
 
-      // Assert
       // The resurfacing time is the one timestamp on this side that is not the
       // database's, because it is only ever compared against a reading
       // request's own clock
@@ -260,7 +237,6 @@ describe('InboxTransitionService', () => {
     });
 
     it('should refuse a time that is not in the future', async () => {
-      // Act & Assert
       await expect(
         service.transition({
           ...transitionArgs,
@@ -272,7 +248,6 @@ describe('InboxTransitionService', () => {
     });
 
     it('should refuse a time more than a year away', async () => {
-      // Act & Assert
       await expect(
         service.transition({
           ...transitionArgs,
@@ -289,18 +264,15 @@ describe('InboxTransitionService', () => {
 
   describe('REOPEN', () => {
     it('should undo the clear and how it ended', async () => {
-      // Prepare
       inboxItemService.findVisibleItemOrThrow.mockResolvedValue(
         buildInboxItem({ clearedAt: new Date('2026-08-07T09:30:00.000Z') }),
       );
 
-      // Act
       await service.transition({
         ...transitionArgs,
         transition: { kind: 'REOPEN' },
       });
 
-      // Assert
       expect(lastPartialUpdate()).toEqual(
         expect.objectContaining({
           clearedAt: null,
@@ -312,18 +284,15 @@ describe('InboxTransitionService', () => {
     });
 
     it('should leave readAt alone, since moving something back is not a reason to unread it', async () => {
-      // Prepare
       inboxItemService.findVisibleItemOrThrow.mockResolvedValue(
         buildInboxItem({ clearedAt: new Date('2026-08-07T09:30:00.000Z') }),
       );
 
-      // Act
       await service.transition({
         ...transitionArgs,
         transition: { kind: 'REOPEN' },
       });
 
-      // Assert
       expect(lastPartialUpdate()).not.toHaveProperty('readAt');
     });
   });
@@ -336,10 +305,8 @@ describe('InboxTransitionService', () => {
       });
 
     it('should let someone take a queue item', async () => {
-      // Prepare
       inboxItemService.findVisibleItemOrThrow.mockResolvedValue(QUEUE_ITEM());
 
-      // Act
       await service.transition({
         ...transitionArgs,
         transition: {
@@ -348,7 +315,6 @@ describe('InboxTransitionService', () => {
         },
       });
 
-      // Assert
       expect(lastPartialUpdate()).toEqual(
         expect.objectContaining({
           assigneeUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
@@ -357,7 +323,6 @@ describe('InboxTransitionService', () => {
     });
 
     it('should give a queue item back by assigning it to nobody', async () => {
-      // Prepare
       inboxItemService.findVisibleItemOrThrow.mockResolvedValue(
         buildInboxItem({
           queueId: 'support-queue-id',
@@ -365,13 +330,11 @@ describe('InboxTransitionService', () => {
         }),
       );
 
-      // Act
       await service.transition({
         ...transitionArgs,
         transition: { kind: 'ASSIGN', toUserWorkspaceId: null },
       });
 
-      // Assert
       expect(lastPartialUpdate()).toEqual(
         expect.objectContaining({ assigneeUserWorkspaceId: null }),
       );
@@ -379,12 +342,10 @@ describe('InboxTransitionService', () => {
 
     // Work is never left with no inbox to sit in
     it('should refuse to unassign an item that has no queue behind it', async () => {
-      // Prepare
       inboxItemService.findVisibleItemOrThrow.mockResolvedValue(
         buildInboxItem({ queueId: null }),
       );
 
-      // Act & Assert
       await expect(
         service.transition({
           ...transitionArgs,
@@ -396,14 +357,12 @@ describe('InboxTransitionService', () => {
     });
 
     it('should refuse a recipient who is not a member of this workspace', async () => {
-      // Prepare
       inboxItemService.findVisibleItemOrThrow.mockResolvedValue(QUEUE_ITEM());
       userWorkspaceService.findById.mockResolvedValue({
         id: 'someone-else',
         workspaceId: 'another-workspace-id',
       });
 
-      // Act & Assert
       await expect(
         service.transition({
           ...transitionArgs,
@@ -416,16 +375,13 @@ describe('InboxTransitionService', () => {
     });
 
     it('should hand an item to someone else unread, since they have not seen it', async () => {
-      // Prepare
       inboxItemService.findVisibleItemOrThrow.mockResolvedValue(QUEUE_ITEM());
 
-      // Act
       await service.transition({
         ...transitionArgs,
         transition: { kind: 'ASSIGN', toUserWorkspaceId: 'someone-else' },
       });
 
-      // Assert
       expect(lastPartialUpdate()).toEqual(
         expect.objectContaining({
           assigneeUserWorkspaceId: 'someone-else',
@@ -437,13 +393,11 @@ describe('InboxTransitionService', () => {
 
   describe('ownership', () => {
     it('should scope the write to the actor, not only the preceding read', async () => {
-      // Act
       await service.transition({
         ...transitionArgs,
         transition: { kind: 'CLEAR' },
       });
 
-      // Assert
       expect(lastPredicate()).toEqual(
         expect.objectContaining({
           assigneeUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,

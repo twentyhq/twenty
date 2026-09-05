@@ -14,7 +14,6 @@ import { TypedReflect } from 'src/utils/typed-reflect';
 
 export const FEATURE_FLAG_KEY = 'feature-flag-metadata-args';
 
-// Usable on a handler or on a whole resolver class
 export function RequireFeatureFlag(featureFlag: FeatureFlagKey) {
   return (
     target: object,
@@ -46,7 +45,7 @@ export class FeatureFlagGuard implements CanActivate {
     }
 
     // A handler-level flag wins over a class-level one, so a resolver can be
-    // gated as a whole and still tighten a single field
+    // gated as a whole and still tighten a single field.
     const featureFlag = this.reflector.getAllAndOverride<FeatureFlagKey>(
       FEATURE_FLAG_KEY,
       [context.getHandler(), context.getClass()],

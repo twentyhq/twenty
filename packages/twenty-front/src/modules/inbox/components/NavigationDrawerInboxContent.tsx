@@ -21,8 +21,6 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-// The drawer's inbox mode. Your own work first, under Triage, then the shared
-// inboxes your role reaches; each row carries the count that matters for it.
 export const NavigationDrawerInboxContent = () => {
   const { t } = useLingui();
   const location = useLocation();

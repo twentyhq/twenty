@@ -7,7 +7,7 @@ export const findFirstTextPart = (
   parts: ExtendedUIMessage['parts'],
 ): string | undefined => {
   const textPart = parts.find(
-    // Trimmed, because a whitespace only part would render as a blank preview
+    // Trimmed, because a whitespace only part would render as a blank preview.
     (part) => part.type === 'text' && isNonEmptyString(part.text.trim()),
   );
 

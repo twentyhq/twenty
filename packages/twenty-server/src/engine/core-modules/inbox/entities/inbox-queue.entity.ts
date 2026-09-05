@@ -16,8 +16,8 @@ import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorato
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 
-// An inbox several people share. Work addressed here is nobody's until someone
-// takes it, which is the whole difference from a personal inbox.
+// Work addressed to a shared inbox is nobody's until someone takes it, which is
+// the whole difference from a personal inbox.
 @Entity({ name: 'inboxQueue', schema: 'core' })
 @WasIntroducedInUpgrade({
   upgradeCommandName: CREATE_INBOX_TABLES_UPGRADE_COMMAND_NAME,

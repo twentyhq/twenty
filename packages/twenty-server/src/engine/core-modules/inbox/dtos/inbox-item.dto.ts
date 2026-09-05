@@ -77,7 +77,6 @@ export class InboxItemTypeDTO {
   icon: string | null;
 }
 
-// A shared inbox, with the counts the navigation needs to badge it.
 @ObjectType('InboxQueue')
 export class InboxQueueDTO {
   @Field(() => UUIDScalarType)
@@ -107,8 +106,8 @@ export class InboxItemDTO {
   @Field(() => InboxItemTypeDTO)
   inboxItemType: InboxItemTypeDTO;
 
-  // Where the item currently sits, evaluated server side. The client never
-  // recomputes it, so there is one place that decides what is handled.
+  // Evaluated server side and never recomputed by the client, so one place
+  // decides what counts as handled.
   @Field(() => InboxItemScope)
   scope: InboxItemScope;
 
@@ -118,40 +117,35 @@ export class InboxItemDTO {
   @Field(() => InboxItemPriority)
   priority: InboxItemPriority;
 
-  // Bumped by every transition. A client that acts on what it read sends this
-  // back so a stale action loses instead of overwriting.
+  // A client that acts on what it read sends this back, so a stale action loses
+  // instead of overwriting.
   @Field(() => Int)
   version: number;
 
   @Field(() => String)
   title: string;
 
-  // Summary, source and entity graph: whatever the producer knew
   @Field(() => GraphQLJSON)
   context: Record<string, unknown>;
 
-  // The calls the item proposes, in order. Empty is a valid plan: doing it
-  // just marks the item done.
+  // Empty is a valid plan: doing it just marks the item done.
   @Field(() => [InboxItemToolCallDTO])
   toolCalls: InboxItemToolCallDTO[];
 
   @Field(() => InboxItemOutcome, { nullable: true })
   outcome: InboxItemOutcome | null;
 
-  // When the subject last did something. Also what the list is ordered by.
   @Field(() => Date)
   lastEventAt: Date;
 
-  // Set when the item belongs to a shared inbox, whether or not anyone has
-  // taken it yet.
   @Field(() => UUIDScalarType, { nullable: true })
   queueId: string | null;
 
   @Field(() => UUIDScalarType, { nullable: true })
   assigneeUserWorkspaceId: string | null;
 
-  // Computed server side like scope and isUnread, so the client never has to
-  // know its own user workspace id to tell whose work this is.
+  // Computed server side, so the client never has to know its own user
+  // workspace id to tell whose work this is.
   @Field(() => Boolean)
   isAssignedToMe: boolean;
 

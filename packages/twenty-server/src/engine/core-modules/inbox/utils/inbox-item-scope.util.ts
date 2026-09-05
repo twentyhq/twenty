@@ -4,10 +4,9 @@ import { type FindOptionsWhere, IsNull, MoreThan, Raw } from 'typeorm';
 import { type InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemScope } from 'src/engine/core-modules/inbox/enums/inbox-item-scope.enum';
 
-// The one definition of whether an item wants attention, in both the language
-// that reads a loaded row and the language that filters in Postgres. Keeping
-// the two next to each other is the point: there is one predicate, written
-// twice, rather than two notions of "handled".
+// One predicate written twice, in the language that reads a loaded row and the
+// language that filters in Postgres. They are kept next to each other so the
+// two never drift into separate notions of "handled".
 type InboxItemAttention = Pick<
   InboxItemEntity,
   'lastEventAt' | 'clearedAt' | 'resurfaceAt' | 'readAt'
@@ -15,10 +14,9 @@ type InboxItemAttention = Pick<
 
 const toTime = (date: Date): number => date.getTime();
 
-// A clear holds only until the subject does something else, so a clear that
-// predates the latest event has been superseded by it. Comparing the two
-// instead of storing the answer is what makes the order the writes landed in
-// irrelevant.
+// A clear that predates the latest event has been superseded by it. Comparing
+// the two instead of storing the answer is what makes the order the writes
+// landed in irrelevant.
 const isClearCurrent = (inboxItem: InboxItemAttention): boolean =>
   isDefined(inboxItem.clearedAt) &&
   toTime(inboxItem.lastEventAt) <= toTime(inboxItem.clearedAt);
@@ -45,9 +43,9 @@ export const isInboxItemUnread = (inboxItem: InboxItemAttention): boolean =>
   toTime(inboxItem.lastEventAt) > toTime(inboxItem.readAt);
 
 // TypeORM hands the callback one qualified column, so the others in the same
-// predicate are built from its table. The quoting it uses is not guaranteed, so
-// the table is unquoted and requoted rather than passed through: an unquoted
-// alias reaches Postgres as a missing FROM-clause entry.
+// predicate are built from its table. Its quoting is not guaranteed, so the
+// table is unquoted and requoted rather than passed through: an unquoted alias
+// reaches Postgres as a missing FROM-clause entry.
 const siblingColumn = (columnAlias: string, column: string): string => {
   const tableAlias = columnAlias
     .slice(0, columnAlias.lastIndexOf('.'))

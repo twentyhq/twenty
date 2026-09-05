@@ -43,13 +43,11 @@ export class InboxItemTypeService {
     }
 
     // Only a standard key can be missing because seeding has not run; an
-    // unknown key would pay for a seed on every call and still return nothing
+    // unknown key would pay for a seed on every call and still return nothing.
     if (!STANDARD_INBOX_ITEM_TYPES.some((type) => type.key === key)) {
       return null;
     }
 
-    // A workspace created before this feature, or one whose standard
-    // application sync has not run yet, still gets a working inbox
     await this.seedStandardTypes({ workspaceId });
 
     return this.inboxItemTypeRepository.findOne(workspaceId, {
@@ -57,9 +55,9 @@ export class InboxItemTypeService {
     });
   }
 
-  // The kinds of work this workspace knows about. Seeded first, so a workspace
-  // that has never routed anything still has something to configure and one
-  // seeded by an older release picks up the current declarations.
+  // Seeded first, so a workspace that has never routed anything still has
+  // something to configure and one seeded by an older release picks up the
+  // current declarations.
   async findAllForSettings({
     workspaceId,
   }: {
@@ -94,9 +92,9 @@ export class InboxItemTypeService {
       );
     }
 
-    // The queue is looked up through the workspace-scoped repository, so a
-    // queue id belonging to another workspace is rejected rather than becoming
-    // an address this workspace can no longer see into.
+    // Looked up through the workspace-scoped repository, so a queue id from
+    // another workspace is rejected rather than becoming an address this
+    // workspace can no longer see into.
     if (isDefined(defaultQueueId)) {
       await this.inboxQueueService.findQueueOrThrow({
         workspaceId,
@@ -113,8 +111,8 @@ export class InboxItemTypeService {
     return { ...inboxItemType, defaultQueueId };
   }
 
-  // Idempotent: identity is (workspaceId, universalIdentifier), so re-running
-  // updates the declaration in place rather than duplicating it.
+  // Identity is (workspaceId, universalIdentifier), so re-running updates the
+  // declaration in place rather than duplicating it.
   async seedStandardTypes({
     workspaceId,
   }: {

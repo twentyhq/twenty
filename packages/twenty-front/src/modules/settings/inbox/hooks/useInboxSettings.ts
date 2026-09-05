@@ -20,7 +20,7 @@ import {
 const INBOX_SETTINGS_REFETCH_QUERIES = [
   'GetInboxQueueSettings',
   'GetInboxItemTypeSettings',
-  // The drawer's shared section follows these grants, so it changes too
+  // The drawer's shared section follows these grants, so it changes too.
   'GetMyInboxQueues',
 ];
 

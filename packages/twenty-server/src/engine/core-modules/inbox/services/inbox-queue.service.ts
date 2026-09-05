@@ -49,9 +49,7 @@ export class InboxQueueService {
   ) {}
 
   // The shared inboxes a person can reach, which is also the set whose items
-  // they may read, so every read scope is built from it. Access follows their
-  // role: it is a permission, granted where the workspace's other permissions
-  // are, rather than a second list of people to keep in step by hand.
+  // they may read, so every read scope is built from it.
   async findAccessibleQueueIds({
     workspaceId,
     userWorkspaceId,
@@ -71,7 +69,7 @@ export class InboxQueueService {
     ]);
 
     // Triage catches work nothing else claimed, so it needs no grant: the
-    // whole workspace can reach it once it exists
+    // whole workspace can reach it once it exists.
     return [
       ...new Set([
         ...grants.map((grant) => grant.queueId),
@@ -80,8 +78,8 @@ export class InboxQueueService {
     ];
   }
 
-  // Someone with no role yet simply reaches no granted queue; that is not an
-  // error worth surfacing from every inbox read
+  // Someone with no role yet simply reaches no granted queue, which is not an
+  // error worth surfacing from every inbox read.
   private async findRoleId({
     workspaceId,
     userWorkspaceId,
@@ -151,8 +149,6 @@ export class InboxQueueService {
     });
   }
 
-  // Where work goes when no rule could address it. Created on demand rather
-  // than seeded, so a workspace that never needs one never has one.
   async findOrCreateDefaultQueue({
     workspaceId,
   }: {
@@ -187,10 +183,6 @@ export class InboxQueueService {
       return concurrentQueue;
     }
   }
-
-  // Administration. Everything below is settings-gated: it decides who can
-  // reach which shared inbox, which is the only thing keeping one team out of
-  // another's work.
 
   async findAllQueues({
     workspaceId,
@@ -229,7 +221,7 @@ export class InboxQueueService {
     icon?: string | null;
     roleIds: string[];
   }): Promise<InboxQueueEntity> {
-    // Checked before the insert so a bad grant cannot leave an orphan queue
+    // Checked before the insert so a bad grant cannot leave an orphan queue.
     await this.assertRolesBelongToWorkspace({ workspaceId, roleIds });
 
     const queue = await this.insertQueueWithAvailableSlug({
@@ -306,8 +298,7 @@ export class InboxQueueService {
     return this.findQueueOrThrow({ workspaceId, queueId });
   }
 
-  // Deleting a queue cascades to its items, so the work moves out first. An
-  // item someone already took is still theirs; it just stops being shared.
+  // Deleting a queue cascades to its items, so the work moves out first.
   async deleteQueue({
     workspaceId,
     queueId,
@@ -330,14 +321,13 @@ export class InboxQueueService {
     const defaultQueue = await this.findOrCreateDefaultQueue({ workspaceId });
 
     // The queue row is locked for update first: inserting an item takes a key
-    // share on its queue, so a route in flight is either committed before the
-    // move below and moved with the rest, or waits and fails on the key once
-    // the queue is gone, rather than landing between the move and the delete
-    // and being swept up by the cascade.
+    // share on its queue, so a route in flight either commits before the move
+    // below and moves with the rest, or waits and fails on the key once the
+    // queue is gone, rather than landing between the move and the delete and
+    // being swept up by the cascade.
     await this.coreDataSource.transaction(async (manager) => {
       // Detached before the queue lock, in the order a default-queue change
-      // takes its locks, so the two cannot wait on each other; the delete's
-      // own set-null cascade then finds nothing left to touch.
+      // takes its locks, so the two cannot wait on each other.
       await this.inboxItemTypeRepository
         .withManager(manager)
         .update(
@@ -349,9 +339,7 @@ export class InboxQueueService {
       await this.lockQueueOrThrow({ manager, workspaceId, queueId: queue.id });
 
       // A slot is unique per queue, so a moved item could collide with one
-      // triage already holds. It gives up its slot rather than its existence:
-      // the next event about the same subject opens a fresh slot wherever it
-      // now routes.
+      // triage already holds. It gives up its slot rather than its existence.
       await this.inboxItemRepository
         .withManager(manager)
         .update(
@@ -366,8 +354,6 @@ export class InboxQueueService {
     });
   }
 
-  // Which roles can reach this shared inbox. Granting access is a permission
-  // change, so it names roles rather than people.
   async setQueueRoles({
     workspaceId,
     queueId,
@@ -487,10 +473,8 @@ export class InboxQueueService {
     }
   }
 
-  // Two queues can share a display name, but not an address. A name that
-  // slugifies to nothing at all still needs one, so it falls back to the word.
-  // The triage address stays free even before triage exists, since it is
-  // created on demand with that fixed address.
+  // Two queues can share a display name, but not an address, and the triage
+  // address stays reserved even before triage is created on demand.
   private async buildAvailableSlug({
     workspaceId,
     name,

@@ -21,10 +21,8 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 export const DEFAULT_INBOX_PAGE_SIZE = 50;
 export const MAX_INBOX_PAGE_SIZE = 100;
 
-// Which inbox is being read: someone's own, or one shared queue they watch.
 // A queue is read through an assignment filter, because "everything addressed
-// here" and "what nobody has picked up" are different questions and only the
-// second is the one a shared inbox exists to answer.
+// here" and "what nobody has picked up" are different questions.
 export type InboxReadScope =
   | { kind: 'personal' }
   | {
@@ -33,8 +31,6 @@ export type InboxReadScope =
       assignment: InboxQueueAssignment;
     };
 
-// Reads and the one mutation that is not a transition. Everything that changes
-// where an item sits lives in InboxTransitionService.
 @Injectable()
 export class InboxItemService {
   constructor(
@@ -67,7 +63,7 @@ export class InboxItemService {
       relations: { inboxItemType: true, toolCalls: true },
       order: { lastEventAt: 'DESC' },
       // A non positive take reaches Postgres as "no limit", so the cap is
-      // clamped at both ends rather than only at the top
+      // clamped at both ends rather than only at the top.
       take: Math.max(
         1,
         Math.min(limit ?? DEFAULT_INBOX_PAGE_SIZE, MAX_INBOX_PAGE_SIZE),
@@ -86,8 +82,8 @@ export class InboxItemService {
     actorUserWorkspaceId: string;
     readScope: InboxReadScope;
     now: Date;
-    // A queue badge shows unread and needsAction only, and the snoozed count is
-    // the most expensive of the three, so it is not computed unless asked for.
+    // The snoozed count is the most expensive of the three and a queue badge
+    // does not show it, so it is not computed unless asked for.
     shouldCountSnoozed?: boolean;
   }): Promise<{ unread: number; needsAction: number; snoozed: number }> {
     const readScopeCriteria = this.buildReadScopeCriteria({
@@ -122,7 +118,7 @@ export class InboxItemService {
   }
 
   // Reading an item is not activity on it: it moves nothing and bumps no
-  // version. The list stays ordered by lastEventAt, which only producers write.
+  // version, so the list stays ordered by lastEventAt.
   async markRead({
     inboxItemId,
     workspaceId,
@@ -143,7 +139,7 @@ export class InboxItemService {
         actorUserWorkspaceId,
         accessibleQueueIds,
       }),
-      // Database clock, since unread is this against lastEventAt
+      // Database clock, since unread is this against lastEventAt.
       { readAt: () => 'clock_timestamp()' },
     );
 
@@ -162,8 +158,8 @@ export class InboxItemService {
     });
   }
 
-  // Visible means addressed to you, or sitting in a queue you watch. Queue
-  // the reachable set is the only thing keeping one team out of another's inbox.
+  // Visible means addressed to you, or sitting in a queue you watch, which is
+  // the only thing keeping one team out of another's inbox.
   async findVisibleItem({
     inboxItemId,
     workspaceId,
@@ -210,11 +206,10 @@ export class InboxItemService {
     actorUserWorkspaceId: string;
     accessibleQueueIds: string[];
   }): FindOptionsWhere<InboxItemEntity> {
-    // Someone who owns a queued item keeps writing through their ownership,
-    // so losing the queue role later does not silently drop their writes.
-    // With no queue access at all the scope has to match nothing, and an
-    // empty IN list is not valid SQL, so a null queue stands in: the item is
-    // queued, so it can never match.
+    // Someone who owns a queued item keeps writing through their ownership, so
+    // losing the queue role later does not silently drop their writes. With no
+    // queue access the scope has to match nothing, and an empty IN list is not
+    // valid SQL, so a null queue stands in and never matches a queued item.
     return isDefined(inboxItem.queueId) &&
       inboxItem.assigneeUserWorkspaceId !== actorUserWorkspaceId
       ? {
@@ -232,9 +227,8 @@ export class InboxItemService {
     readScope: InboxReadScope;
     actorUserWorkspaceId: string;
   }): FindOptionsWhere<InboxItemEntity> {
-    // A personal inbox shows what is yours, including work you took out of a
-    // queue: taking something does not remove it from the queue it came from,
-    // so the team keeps seeing it and you get it in your own list.
+    // Taking something does not remove it from the queue it came from, so the
+    // team keeps seeing it and it also lands in the taker's own list.
     if (readScope.kind === 'personal') {
       return { assigneeUserWorkspaceId: actorUserWorkspaceId };
     }

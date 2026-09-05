@@ -82,8 +82,6 @@ type InboxItemDetailProps = {
   showBackToList: boolean;
 };
 
-// The right half of the inbox: whatever item the list has selected, with the
-// controls to step through the list without going back to it.
 export const InboxItemDetail = ({
   inboxItemId,
   inboxListLocation,

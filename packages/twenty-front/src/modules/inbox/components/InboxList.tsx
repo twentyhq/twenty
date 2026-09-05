@@ -39,7 +39,7 @@ type InboxListProps = {
   inboxItems: InboxItem[];
   selectedInboxItemId: string | null;
   hasMoreItems: boolean;
-  // Splitting by priority only earns its keep where work is still pending
+  // Splitting by priority only earns its keep where work is still pending.
   shouldSplitByPriority: boolean;
   onInboxItemClick: (inboxItem: InboxItem) => void;
   onLoadMoreItems: () => void;

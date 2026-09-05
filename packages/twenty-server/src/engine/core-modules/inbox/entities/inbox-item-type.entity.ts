@@ -17,10 +17,9 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 
-// Names one kind of work that can land in an inbox: a label, an icon and where
-// it goes by default. Every kind offers the same controls, so the type says
-// nothing about what an item can do. Syncable so that the built-in types and
-// app-declared types share one shape and one identity space.
+// Every kind of work offers the same controls, so the type says nothing about
+// what an item can do. Syncable so that built-in and app-declared types share
+// one shape and one identity space.
 @Entity({ name: 'inboxItemType', schema: 'core' })
 @WasIntroducedInUpgrade({
   upgradeCommandName: CREATE_INBOX_TABLES_UPGRADE_COMMAND_NAME,
@@ -80,8 +79,8 @@ export class InboxItemTypeEntity {
   })
   defaultPriority: InboxItemPriority;
 
-  // Where work of this kind goes when the producer named nobody. Configured
-  // rather than coded, so sending failed runs to an Ops inbox is a setting.
+  // Configured rather than coded, so sending failed runs to an Ops inbox is a
+  // setting rather than a release.
   @Column({ nullable: true, type: 'uuid' })
   defaultQueueId: string | null;
 

@@ -4,7 +4,7 @@ import { wasNavigationDrawerExpandedBeforeInboxPanelState } from '@/inbox/states
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 
 // The inbox already splits the page in two; a side panel beside it would make
-// four columns with the drawer, so the drawer gives way and remembers it did
+// four columns with the drawer, so the drawer gives way and remembers it did.
 export const collapseNavigationDrawerForInboxPanel = (
   store: ReturnType<typeof createStore>,
 ) => {

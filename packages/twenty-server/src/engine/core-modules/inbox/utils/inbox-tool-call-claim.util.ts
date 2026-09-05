@@ -5,14 +5,12 @@ import { type InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/enti
 import { InboxItemToolCallStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-tool-call-status.enum';
 
 // A claim older than this belongs to a run that died between claiming and
-// finishing; the next run may take the call over rather than wait forever
+// finishing, so the next run may take the call over rather than wait forever.
 export const TOOL_CALL_CLAIM_TIMEOUT_MS = 10 * 60 * 1000;
 
 const getClaimCutoff = () => new Date(Date.now() - TOOL_CALL_CLAIM_TIMEOUT_MS);
 
-// A proposed call nobody holds, or one whose holder has been gone long enough
-// to count as dead. The one definition of what a run may take and what a new
-// plan may replace.
+// The one definition of what a run may claim and what a new plan may replace.
 export const buildClaimableToolCallPredicate = () => ({
   status: InboxItemToolCallStatus.PROPOSED,
   resolvedAt: Or(IsNull(), LessThan(getClaimCutoff())),

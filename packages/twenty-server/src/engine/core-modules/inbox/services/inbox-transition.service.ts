@@ -26,16 +26,14 @@ export type TransitionInboxItemArgs = {
   actorUserWorkspaceId: string;
   accessibleQueueIds: string[];
   transition: InboxItemTransition;
-  // Optimistic concurrency. Omitted means "apply regardless", which is what a
-  // producer wants; a UI that read the item should always pass what it read.
+  // Omitted means "apply regardless", which is what a producer wants; a UI that
+  // read the item should always pass what it read.
   expectedVersion?: number;
-  // Passed by a caller that already loaded and authorised the item, so the
-  // same row is not read twice for one mutation.
+  // Passed by a caller that already loaded and authorised the item, so the same
+  // row is not read twice for one mutation.
   loadedInboxItem?: InboxItemEntity;
 };
 
-// The assignee's side of the item. Producers write through the router; nothing
-// else writes these columns, which is what keeps the two apart.
 @Injectable()
 export class InboxTransitionService {
   constructor(
@@ -73,7 +71,7 @@ export class InboxTransitionService {
     }
 
     // The version guard lives in the WHERE clause, so losing the race means
-    // updating nothing rather than overwriting the winner
+    // updating nothing rather than overwriting the winner.
     const updateResult = await this.inboxItemRepository.update(
       workspaceId,
       {
@@ -102,7 +100,7 @@ export class InboxTransitionService {
     }
 
     // Read back by id rather than through the actor's visibility: handing a
-    // personal item to someone else has just taken it out of the actor's view
+    // personal item to someone else has just taken it out of the actor's view.
     const updatedInboxItem = await this.inboxItemRepository.findOne(
       workspaceId,
       {
@@ -122,7 +120,7 @@ export class InboxTransitionService {
   }
 
   // The recipient is a user workspace id, which the caller could have copied
-  // from anywhere; it has to be a member of this workspace.
+  // from anywhere, so it has to be a member of this workspace.
   private async assertRecipientBelongsToWorkspace({
     workspaceId,
     actorUserWorkspaceId,
@@ -164,17 +162,17 @@ export class InboxTransitionService {
       case 'CLEAR':
         return {
           // Stamped by the database, like the events these are compared
-          // against, so a clear racing an incoming event resolves on the order
-          // Postgres saw them rather than on this process's clock
+          // against, so a clear racing an event resolves on the order Postgres
+          // saw them rather than on this process's clock.
           clearedAt: () => 'clock_timestamp()',
           clearedByUserWorkspaceId: actorUserWorkspaceId,
           // Only ever compared against a reading request's own clock, so it is
-          // the one timestamp here that belongs to this process
+          // the one timestamp here that belongs to this process.
           resurfaceAt: isDefined(transition.resurfaceAt)
             ? this.atTime(transition.resurfaceAt)
             : null,
           outcome: transition.outcome ?? null,
-          // Clearing something means having seen it
+          // Clearing something means having seen it.
           readAt: () => 'clock_timestamp()',
         };
 
@@ -196,7 +194,7 @@ export class InboxTransitionService {
 
         return {
           assigneeUserWorkspaceId: assignee,
-          // Handing work to someone is not something they have seen yet
+          // Handing work to someone is not something they have seen yet.
           ...(assignee === inboxItem.assigneeUserWorkspaceId
             ? {}
             : { readAt: null }),

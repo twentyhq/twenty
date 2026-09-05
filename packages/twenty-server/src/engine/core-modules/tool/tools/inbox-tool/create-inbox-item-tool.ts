@@ -34,7 +34,7 @@ export class CreateInboxItemTool implements Tool {
     rawParameters: ToolInput,
     context: ToolExecutionContext,
   ): Promise<ToolOutput> {
-    // Parsed here so the schema defaults apply however the tool was reached
+    // Parsed here so the schema defaults apply however the tool was reached.
     const parseResult =
       CreateInboxItemToolInputZodSchema.safeParse(rawParameters);
 
@@ -92,9 +92,6 @@ export class CreateInboxItemTool implements Tool {
   // A named recipient that does not resolve is an error rather than a fallback
   // to routing: work addressed to one person landing in a shared inbox is worse
   // than the step failing where its author can see it.
-  //
-  // Callers name a workspace member because that is the identity they can see;
-  // the inbox addresses user workspaces.
   private async resolveTarget(
     parameters: CreateInboxItemToolInput,
     workspaceId: string,

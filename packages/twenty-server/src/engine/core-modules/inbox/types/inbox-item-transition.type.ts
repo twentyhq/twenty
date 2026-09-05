@@ -1,9 +1,7 @@
 import { type InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item-outcome.enum';
 
-// Everything a person can do to an inbox item. Clearing takes it out of the
-// inbox, reopening puts it back, and assigning decides whose it is. Snoozing is
-// not a fourth thing, it is a clear that expires, which is why new activity
-// wakes a snoozed item and a done one by the same comparison.
+// Snoozing is not a transition of its own, it is a clear that expires, which is
+// why new activity wakes a snoozed item and a done one by the same comparison.
 export type InboxItemTransition =
   | {
       kind: 'CLEAR';

@@ -24,7 +24,7 @@ const StyledRowContainer = styled.div`
   }
 
   // Keyboard users reach the row's controls by tabbing, so focus has to reveal
-  // them the way hovering does
+  // them the way hovering does.
   &:hover .inbox-list-row-buttons,
   &:focus-within .inbox-list-row-buttons {
     display: flex;
@@ -45,8 +45,8 @@ const StyledRow = styled.div<{ isSelected: boolean }>`
   padding: ${themeCssVariables.spacing[2]} 6px;
 `;
 
-// The controls are siblings of this rather than descendants, so a nested
-// button never loses its semantics inside another button.
+// The controls are siblings of this rather than descendants, so a nested button
+// never loses its semantics inside another button.
 const StyledOpenTarget = styled.div`
   display: flex;
   flex: 1;
@@ -108,7 +108,6 @@ const StyledToolIcons = styled.div`
 
 const MAX_ROW_TOOL_ICONS = 4;
 
-// Lines up under the title, past the unread dot and the type icon
 const StyledSecondLine = styled(StyledLine)`
   color: ${themeCssVariables.font.color.tertiary};
   padding-left: calc(
@@ -132,7 +131,7 @@ const StyledLastEventAt = styled.div`
 `;
 
 // Beside the open target rather than inside it, so the control is never a
-// button within a button; it takes the room the time leaves when it hides
+// button within a button.
 const StyledButtonsSlot = styled.div`
   align-self: flex-start;
   display: none;
@@ -145,9 +144,6 @@ type InboxListRowProps = {
   onClick: () => void;
 };
 
-// Two lines, the way a mail list reads: what it is and when on the first, what
-// it is about on the second. The list pane is narrow, so nothing shares a line
-// with the title but the time.
 export const InboxListRow = ({
   inboxItem,
   isSelected,

@@ -88,7 +88,7 @@ const StyledLine = styled.div`
 `;
 
 // An entity names a standard object by kind; a producer that knows the exact
-// object says so explicitly
+// object says so explicitly.
 const OBJECT_NAME_SINGULAR_BY_ENTITY_KIND: Partial<
   Record<InboxItemContextEntity['kind'], string>
 > = {
@@ -102,11 +102,9 @@ type InboxPlanEntityGraphProps = {
   edges: InboxItemContextEdge[];
 };
 
-// The entities in the order the producer gave them, with the relation between
-// neighbours written on the line that joins them. Producers lay a plan's
-// entities out as a chain, so a relation between non neighbours is not drawn.
-// An entity backed by a record is a chip: it opens that record beside the
-// inbox rather than leaving it.
+// Producers lay a plan's entities out as a chain, so only the relation between
+// neighbours is drawn. An entity backed by a record opens beside the inbox
+// rather than navigating away from it.
 export const InboxPlanEntityGraph = ({
   entities,
   edges,

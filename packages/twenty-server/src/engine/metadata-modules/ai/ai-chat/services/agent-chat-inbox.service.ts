@@ -11,10 +11,8 @@ type ThreadContext = {
   userWorkspaceId: string;
 };
 
-// Turns chat thread events into inbox items. A thread has exactly one item per
-// owner for its whole life: these calls fold into it rather than stacking up.
-// Every verb the router offers is best effort, so a chat turn completes even
-// when its inbox item cannot be written.
+// A thread has exactly one item per owner for its whole life, so these calls
+// fold into it rather than stacking up.
 @Injectable()
 export class AgentChatInboxService {
   constructor(private readonly inboxRouterService: InboxRouterService) {}
@@ -37,8 +35,6 @@ export class AgentChatInboxService {
     });
   }
 
-  // The agent finished a turn. If it ended by asking something, the item
-  // becomes a question that needs an answer; otherwise it is an update.
   async onTurnCompleted({
     threadId,
     workspaceId,
@@ -77,10 +73,9 @@ export class AgentChatInboxService {
     });
   }
 
-  // Answering a question is deliberately not reported here. The agent's next
-  // turn is what says whether one is still pending, and it says so with an
-  // event behind it. Reporting the answer as well would be a blind overwrite
-  // racing that turn, and it would read as "no question pending" even when the
+  // Answering a question is deliberately not reported here: the agent's next
+  // turn is what says whether one is still pending. Reporting the answer as
+  // well would race that turn and read as "no question pending" even when the
   // resume never ran.
 
   async onThreadRemoved({

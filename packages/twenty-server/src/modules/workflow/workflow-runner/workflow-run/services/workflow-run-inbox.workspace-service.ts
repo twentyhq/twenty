@@ -13,9 +13,8 @@ import {
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 
-// The inbox addresses people by their core identity, while workflow runs record
-// the workspace member who started them, so this producer translates between
-// the two before routing.
+// The inbox addresses people by their core identity while workflow runs record
+// the workspace member who started them, so this translates between the two.
 @Injectable()
 export class WorkflowRunInboxWorkspaceService {
   private readonly logger = new Logger(WorkflowRunInboxWorkspaceService.name);
@@ -82,7 +81,7 @@ export class WorkflowRunInboxWorkspaceService {
       return;
     }
 
-    // Run names follow the "#<count> - <workflow name>" convention
+    // Run names follow the "#<count> - <workflow name>" convention.
     const workflowName = workflowRun.name?.match(/^#\d+ - (.+)$/)?.[1];
 
     await this.inboxRouterService.route({

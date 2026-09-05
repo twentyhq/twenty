@@ -35,11 +35,10 @@ const toFieldLabel = (key: string): string => {
   return words.charAt(0).toUpperCase() + words.slice(1);
 };
 
-// An agent describes a call by its input alone; the editor needs a field per
-// key to draw it. The schema is read off the values, so a producer that knows
-// nothing about field types still gets an editable plan. A null is the agent
-// saying it has no value, so the key is left out rather than shown as an empty
-// text; a required key it left out is shown empty so the person fills it.
+// An agent describes a call by its input alone, so the field schema is read off
+// the values and a producer that knows nothing about field types still gets an
+// editable plan. A null is the agent saying it has no value, so the key is left
+// out; a required key it left out is shown empty for the person to fill.
 export const toInboxItemToolCallDrafts = (
   toolCalls: z.infer<typeof InboxItemToolCallDraftZodSchema>[],
 ): InboxItemToolCallDraft[] =>
