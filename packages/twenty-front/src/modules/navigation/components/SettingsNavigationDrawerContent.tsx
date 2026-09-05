@@ -1,3 +1,4 @@
+import { MOBILE_NAVIGATION_BAR_CLEARANCE } from '@/navigation/constants/MobileNavigationBarClearance';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
@@ -13,6 +14,8 @@ import { useIsMobile } from 'twenty-ui/utilities';
 const StyledAdvancedToggleFixedContent = styled.div<{ isMobile: boolean }>`
   flex-shrink: 0;
   margin-top: auto;
+  padding-bottom: ${({ isMobile }) =>
+    isMobile ? MOBILE_NAVIGATION_BAR_CLEARANCE : '0'};
   padding-left: ${({ isMobile }) =>
     isMobile ? themeCssVariables.spacing[5] : '0'};
   padding-right: ${({ isMobile }) =>

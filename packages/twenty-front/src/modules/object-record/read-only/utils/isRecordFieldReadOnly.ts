@@ -1,7 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isFieldMetadataReadOnlyByPermissions } from '@/object-record/read-only/utils/internal/isFieldMetadataReadOnlyByPermissions';
+import { isMetadataWritabilityRestricted } from '@/object-record/read-only/utils/internal/isMetadataWritabilityRestricted';
 import { isOneToManyRelationFieldReadOnlyDueToTargetUpdatePermission } from '@/object-record/read-only/utils/isOneToManyRelationFieldReadOnlyDueToTargetUpdatePermission';
-import { isConfiguredJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isConfiguredJunctionRelationField';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ObjectPermission } from '~/generated-metadata/graphql';
@@ -15,11 +15,9 @@ type ObjectPermissionsByObjectMetadataId = Record<
 
 type IsRecordFieldReadOnlyParams = {
   isRecordReadOnly: boolean;
-  isSystemObject?: boolean;
-  isFieldFromStandardApplication?: boolean;
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'id' | 'isUIEditable' | 'type' | 'settings'
+    'id' | 'isUIEditable' | 'writability'
   >;
   objectPermissions: ObjectPermission;
   fieldDefinition?: FieldDefinition<FieldMetadata>;
@@ -29,8 +27,6 @@ type IsRecordFieldReadOnlyParams = {
 export const isRecordFieldReadOnly = ({
   objectPermissions,
   isRecordReadOnly,
-  isSystemObject,
-  isFieldFromStandardApplication,
   fieldMetadataItem,
   fieldDefinition,
   objectPermissionsByObjectMetadataId,
@@ -48,25 +44,10 @@ export const isRecordFieldReadOnly = ({
       objectPermissionsByObjectMetadataId,
     });
 
-  // A junction target field carries links the workspace owns, not data synced
-  // from the provider, so it is exempt from the system-object lock below.
-  // Record-level read-only still wins.
-  const isJunctionTargetField = isConfiguredJunctionRelationField({
-    type: fieldMetadataItem.type,
-    settings: fieldMetadataItem.settings,
-  });
-
-  // Keep system-object standard fields read-only. If the application origin
-  // cannot be resolved yet, fail closed until metadata finishes loading.
-  const isReadOnlyStandardFieldOnSystemObject =
-    isSystemObject === true &&
-    isFieldFromStandardApplication !== false &&
-    !isJunctionTargetField;
-
   return (
     isRecordReadOnly ||
-    isReadOnlyStandardFieldOnSystemObject ||
     !(fieldMetadataItem.isUIEditable ?? true) ||
+    isMetadataWritabilityRestricted(fieldMetadataItem.writability) ||
     fieldReadOnlyByPermissions ||
     oneToManyTargetReadOnly
   );

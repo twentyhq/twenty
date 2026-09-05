@@ -7,6 +7,7 @@ import {
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import {
+  ConflictError,
   ForbiddenError,
   NotFoundError,
   UserInputError,
@@ -22,6 +23,8 @@ export class FileStorageExceptionFilter implements ExceptionFilter {
         throw new ForbiddenError(exception);
       case FileStorageExceptionCode.FILE_NOT_FOUND:
         throw new NotFoundError(exception);
+      case FileStorageExceptionCode.PRECONDITION_FAILED:
+        throw new ConflictError(exception);
       default:
         assertUnreachable(exception.code);
     }

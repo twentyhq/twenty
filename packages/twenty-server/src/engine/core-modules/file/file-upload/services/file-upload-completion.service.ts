@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { Readable } from 'stream';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/types/file-storage-metadata.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -15,6 +16,7 @@ import {
   FileUploadExceptionCode,
 } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 import { type BatchFileResult } from 'src/engine/core-modules/file/file-upload/types/batch-file-result.type';
+import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { buildSvgTooLargeException } from 'src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util';
 import { toBatchErrorMessage } from 'src/engine/core-modules/file/file-upload/utils/to-batch-error-message.util';
 import {
@@ -47,6 +49,8 @@ type CompletedUploadedFile = FileDTO & Pick<FileEntity, 'mimeType'>;
 
 @Injectable()
 export class FileUploadCompletionService {
+  private readonly logger = new Logger(FileUploadCompletionService.name);
+
   constructor(
     private readonly fileStorageService: FileStorageService,
     @InjectWorkspaceScopedRepository(FileEntity)
@@ -82,8 +86,20 @@ export class FileUploadCompletionService {
     file: FileEntity;
     storageLocation: FileUploadStorageLocation;
   }): Promise<CompletedUploadedFile> {
+    const pendingLocation: FileUploadStorageLocation = {
+      ...storageLocation,
+      resourcePath: buildPendingUploadResourcePath({
+        fileId: file.id,
+        resourcePath: storageLocation.resourcePath,
+      }),
+    };
+
+    // Only the quarantined object is ever evidence of this upload. Falling
+    // back to the final path would let an object left there by a previous
+    // upload of the same resource path complete an upload that never
+    // delivered any bytes.
     const metadata =
-      await this.fileStorageService.getFileMetadata(storageLocation);
+      await this.fileStorageService.getFileMetadata(pendingLocation);
 
     if (!isDefined(metadata)) {
       throw new FileUploadException(
@@ -108,23 +124,53 @@ export class FileUploadCompletionService {
     }
 
     const mimeType = await this.detectUploadedMimeTypeOrThrow({
-      ...storageLocation,
+      ...pendingLocation,
       filename: file.path,
     });
 
-    this.assertMimeTypeAllowedForFolder(storageLocation.fileFolder, mimeType);
+    this.assertMimeTypeAllowedForFolder(pendingLocation.fileFolder, mimeType);
 
-    const size = await this.sanitizeUploadedFileIfNeeded({
-      storageLocation,
+    const { size, checksum } = await this.sanitizeUploadedFileIfNeeded({
+      storageLocation: pendingLocation,
       mimeType,
-      size: metadata.size,
+      metadata,
     });
 
-    await this.fileRepository.update(
+    // The presigned PUT stays usable until it expires, so the quarantined
+    // object can still be overwritten between the sniff above and this move.
+    // Promoting only the version that was inspected is what makes the
+    // recorded mimeType describe the bytes that end up at the final path.
+    await this.fileStorageService.move({
+      from: pendingLocation,
+      to: storageLocation,
+      ifMatchChecksum: checksum,
+    });
+
+    const { affected } = await this.fileRepository.update(
       workspaceId,
       { id: file.id },
       { status: FILE_STATUS.UPLOADED, mimeType, size },
     );
+
+    // The cleanup cron claims a stale PENDING row by deleting it, then deletes
+    // its objects, so losing the row here means it won. The promoting copy may
+    // have landed after its sweep and be orphaned; it is deliberately left
+    // there rather than rolled back, because this path cannot prove the object
+    // is still the one it wrote, and deleting a later upload's bytes is far
+    // worse than leaking one object.
+    if (affected === 0) {
+      this.logger.warn(
+        `File ${file.id} was reaped while completing; the object promoted to "${file.path}" may be orphaned`,
+      );
+
+      throw new FileUploadException(
+        `File ${file.id} was reaped while its upload was being completed`,
+        FileUploadExceptionCode.FILE_NOT_FOUND,
+        {
+          userFriendlyMessage: msg`This upload expired before it was confirmed. Please upload the file again.`,
+        },
+      );
+    }
 
     return {
       id: file.id,
@@ -198,14 +244,16 @@ export class FileUploadCompletionService {
   private async sanitizeUploadedFileIfNeeded({
     storageLocation,
     mimeType,
-    size,
+    metadata,
   }: {
     storageLocation: FileUploadStorageLocation;
     mimeType: string;
-    size: number;
-  }): Promise<number> {
+    metadata: FileStorageMetadata;
+  }): Promise<FileStorageMetadata> {
+    const { size } = metadata;
+
     if (mimeType !== 'image/svg+xml') {
-      return size;
+      return metadata;
     }
 
     if (size > MAX_SANITIZABLE_SVG_BYTES) {
@@ -248,6 +296,30 @@ export class FileUploadCompletionService {
       mimeType,
     });
 
-    return sanitizedBuffer.length;
+    // Rewriting the object gives it a new version identity, so the checksum
+    // read before sanitizing would no longer match on the promoting copy.
+    const sanitizedMetadata =
+      await this.fileStorageService.getFileMetadata(storageLocation);
+
+    // Returning no identity here would silently downgrade that copy to an
+    // unconditional one, so a backend that reported one before the rewrite
+    // has to report one after it.
+    if (
+      !isDefined(sanitizedMetadata) ||
+      (isDefined(metadata.checksum) && !isDefined(sanitizedMetadata.checksum))
+    ) {
+      throw new FileUploadException(
+        `Could not read back the sanitized SVG at "${storageLocation.resourcePath}"`,
+        FileUploadExceptionCode.STORAGE_INCONSISTENT,
+        {
+          userFriendlyMessage: msg`File storage did not confirm the processed file. Please retry.`,
+        },
+      );
+    }
+
+    return {
+      size: sanitizedBuffer.length,
+      checksum: sanitizedMetadata.checksum,
+    };
   }
 }
