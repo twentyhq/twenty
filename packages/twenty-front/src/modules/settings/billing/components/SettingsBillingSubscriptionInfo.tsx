@@ -22,6 +22,7 @@ import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMa
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
@@ -123,9 +124,7 @@ export const SettingsBillingSubscriptionInfo = ({
   );
 
   const isTrialPeriod = subscriptionStatus === SubscriptionStatus.Trialing;
-  const shouldUpdatePayment =
-    subscriptionStatus === SubscriptionStatus.PastDue ||
-    subscriptionStatus === SubscriptionStatus.Unpaid;
+  const shouldUpdatePayment = isSubscriptionPaymentOverdue(subscriptionStatus);
 
   const scheduledCancellationDate = currentBillingSubscription.cancelAt;
   const isCancellationScheduled =
