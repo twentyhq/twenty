@@ -3,7 +3,7 @@ import { type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.38.0', 1788614786308)
+@RegisteredInstanceCommand('2.39.0', 1788619228797)
 export class AddCommandMenuItemConditionalPinnedExpressionFastInstanceCommand
   implements FastInstanceCommand
 {
