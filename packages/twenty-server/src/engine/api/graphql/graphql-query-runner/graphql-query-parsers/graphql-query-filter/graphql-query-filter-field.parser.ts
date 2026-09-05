@@ -103,15 +103,16 @@ export class GraphqlQueryFilterFieldParser {
       (fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE ||
         fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
     ) {
-      return this.parseRelationSubFilter(
+      return this.parseRelationSubFilter({
         queryBuilder,
         outerQueryBuilder,
-        objectNameSingular,
+        parentAlias: objectNameSingular,
         fieldMetadata,
         filterValue,
         isFirst,
-        fieldMetadata.settings.relationType === RelationType.ONE_TO_MANY,
-      );
+        isToManyRelation:
+          fieldMetadata.settings.relationType === RelationType.ONE_TO_MANY,
+      });
     }
 
     if (isCompositeFieldMetadataType(fieldMetadata.type)) {
@@ -144,15 +145,23 @@ export class GraphqlQueryFilterFieldParser {
     }
   }
 
-  private parseRelationSubFilter(
-    queryBuilder: WhereExpressionBuilder,
-    outerQueryBuilder: WorkspaceSelectQueryBuilder,
-    parentAlias: string,
-    fieldMetadata: OrmFlatFieldMetadata,
-    filterValue: Partial<ObjectRecordFilter>,
-    isFirst: boolean,
-    isToManyRelation: boolean,
-  ): void {
+  private parseRelationSubFilter({
+    queryBuilder,
+    outerQueryBuilder,
+    parentAlias,
+    fieldMetadata,
+    filterValue,
+    isFirst,
+    isToManyRelation,
+  }: {
+    queryBuilder: WhereExpressionBuilder;
+    outerQueryBuilder: WorkspaceSelectQueryBuilder;
+    parentAlias: string;
+    fieldMetadata: OrmFlatFieldMetadata;
+    filterValue: Partial<ObjectRecordFilter>;
+    isFirst: boolean;
+    isToManyRelation: boolean;
+  }): void {
     if (this.depth >= MAX_RELATION_FILTER_DEPTH) {
       throw new GraphqlQueryRunnerException(
         `Relation filter nesting deeper than ${MAX_RELATION_FILTER_DEPTH} hop is not supported`,
@@ -204,6 +213,18 @@ export class GraphqlQueryFilterFieldParser {
     // find-many runner rejects, so the related rows are matched through a
     // correlated EXISTS instead.
     if (isToManyRelation) {
+      // The EXISTS is correlated with the root alias, so a to-many filter
+      // reached through a joined to-one relation would match the wrong rows.
+      if (parentAlias !== outerQueryBuilder.alias) {
+        throw new GraphqlQueryRunnerException(
+          `To-many relation filter on "${fieldMetadata.name}" must apply to the root object`,
+          GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+          {
+            userFriendlyMessage: msg`Relation filters can only traverse one relation deep`,
+          },
+        );
+      }
+
       const existsToken = outerQueryBuilder.addRelationExistsFilter({
         relationFieldName: fieldMetadata.name,
         applyWhere: (nestedQueryBuilder) => {

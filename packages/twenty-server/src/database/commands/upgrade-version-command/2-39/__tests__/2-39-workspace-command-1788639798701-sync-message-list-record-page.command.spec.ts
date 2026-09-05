@@ -5,7 +5,7 @@ import {
 import { PageLayoutTabLayoutMode, ViewKey } from 'twenty-shared/types';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { SyncMessageListRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788616076386-sync-message-list-record-page.command';
+import { SyncMessageListRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788639798701-sync-message-list-record-page.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -260,6 +260,11 @@ describe('SyncMessageListRecordPageCommand', () => {
       existingViewFields: [
         { universalIdentifier: NAME_VIEW_FIELD_UNIVERSAL_IDENTIFIER, position: 0 },
         { universalIdentifier: 'other-column', position: 3 },
+        {
+          universalIdentifier: 'removed-column',
+          position: 9,
+          deletedAt: '2026-01-01T00:00:00.000Z',
+        },
       ],
     });
 

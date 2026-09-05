@@ -188,6 +188,7 @@ export interface Object {
     isSearchable: Scalars['Boolean']
     openRecordIn: ObjectOpenRecordIn
     readability: MetadataReadability
+    writability: MetadataWritability
     applicationId: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
@@ -206,6 +207,8 @@ export interface Object {
 export type ObjectOpenRecordIn = 'SIDE_PANEL' | 'RECORD_PAGE' | 'USER_CHOICE'
 
 export type MetadataReadability = 'OPEN' | 'PRIVATE' | 'INHERITED' | 'APPLICATION' | 'SYSTEM'
+
+export type MetadataWritability = 'OPEN' | 'APPLICATION' | 'SYSTEM'
 
 export interface FullName {
     firstName: Scalars['String']
@@ -1974,6 +1977,7 @@ export interface Field {
     isActive?: Scalars['Boolean']
     isSystem?: Scalars['Boolean']
     isUIEditable?: Scalars['Boolean']
+    writability?: MetadataWritability
     /** @deprecated Use isUIEditable */
     isUIReadOnly?: Scalars['Boolean']
     isNullable?: Scalars['Boolean']
@@ -3644,6 +3648,7 @@ export interface ObjectGenqlSelection{
     isSearchable?: boolean | number
     openRecordIn?: boolean | number
     readability?: boolean | number
+    writability?: boolean | number
     applicationId?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
@@ -5499,6 +5504,7 @@ export interface FieldGenqlSelection{
     isActive?: boolean | number
     isSystem?: boolean | number
     isUIEditable?: boolean | number
+    writability?: boolean | number
     /** @deprecated Use isUIEditable */
     isUIReadOnly?: boolean | number
     isNullable?: boolean | number
@@ -9910,6 +9916,12 @@ export const enumMetadataReadability = {
    OPEN: 'OPEN' as const,
    PRIVATE: 'PRIVATE' as const,
    INHERITED: 'INHERITED' as const,
+   APPLICATION: 'APPLICATION' as const,
+   SYSTEM: 'SYSTEM' as const
+}
+
+export const enumMetadataWritability = {
+   OPEN: 'OPEN' as const,
    APPLICATION: 'APPLICATION' as const,
    SYSTEM: 'SYSTEM' as const
 }
