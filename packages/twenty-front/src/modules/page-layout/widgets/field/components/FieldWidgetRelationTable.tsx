@@ -2,17 +2,20 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { RecordFilterValueDependenciesContext } from '@/object-record/record-filter/contexts/RecordFilterValueDependenciesContext';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type ValidResolvedJunctionConfig } from '@/object-record/record-field/ui/utils/junction/types/ValidResolvedJunctionConfig';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { StyledWidgetTableOutline } from '@/page-layout/widgets/components/WidgetContentFrame';
 import { RecordTableWidgetRendererContent } from '@/page-layout/widgets/record-table/components/RecordTableWidgetRendererContent';
+import { getFieldWidgetJunctionCreateThrough } from '@/page-layout/widgets/field/utils/getFieldWidgetJunctionCreateThrough';
 import { getFieldWidgetNestedRelationCreateThrough } from '@/page-layout/widgets/field/utils/getFieldWidgetNestedRelationCreateThrough';
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
 import { resolveFieldWidgetNestedRelation } from '@/page-layout/widgets/field/utils/resolveFieldWidgetNestedRelation';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useViewById } from '@/views/hooks/useViewById';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo } from 'react';
@@ -35,11 +38,13 @@ const StyledContainer = styled(StyledWidgetTableOutline)`
 type FieldWidgetRelationTableProps = {
   fieldDefinition: FieldDefinition<FieldRelationMetadata>;
   recordId: string;
+  junctionConfig?: ValidResolvedJunctionConfig;
 };
 
 export const FieldWidgetRelationTable = ({
   fieldDefinition,
   recordId,
+  junctionConfig,
 }: FieldWidgetRelationTableProps) => {
   const widget = useCurrentWidget();
 
@@ -65,6 +70,8 @@ export const FieldWidgetRelationTable = ({
   const recordPageObjectMetadataNameSingular =
     fieldDefinition.metadata.objectMetadataNameSingular;
 
+  const { view: persistedView } = useViewById(viewId ?? null);
+
   // Memoized so the derived picker parameters below keep a stable identity
   // and do not churn the widget provider's context value on every render.
   const resolvedNestedRelation = useMemo(
@@ -81,13 +88,24 @@ export const FieldWidgetRelationTable = ({
     ],
   );
 
+  // A junction widget lists the records behind the junction, like the card
+  // and field display modes. A morph junction has no single object to list,
+  // and a view saved on the junction object predates junction traversal, so
+  // both keep listing the junction records their view was built for.
+  const junctionTargetObjectMetadataId =
+    isDefined(junctionConfig) &&
+    !junctionConfig.isMorphRelation &&
+    persistedView?.objectMetadataId !== relationObjectMetadataId
+      ? junctionConfig.targetFields[0]?.relation?.targetObjectMetadata.id
+      : undefined;
+
   // A widget with a broken nested relation (deleted or deactivated second hop)
   // resolves to no object and so renders nothing, rather than falling back to
   // the first hop's records and silently showing a different object than the
   // widget title claims.
   const tableObjectMetadataId = isDefined(nestedRelationFieldMetadataId)
     ? resolvedNestedRelation?.nestedRelationTargetObjectMetadataItem.id
-    : relationObjectMetadataId;
+    : (junctionTargetObjectMetadataId ?? relationObjectMetadataId);
 
   const {
     targetFieldMetadataName,
@@ -118,6 +136,31 @@ export const FieldWidgetRelationTable = ({
       recordId,
     ],
   );
+
+  const junctionCreateThrough = useMemo(() => {
+    const sourceObjectMetadataItem = objectMetadataItems.find(
+      (objectMetadataItem) =>
+        objectMetadataItem.nameSingular ===
+        recordPageObjectMetadataNameSingular,
+    );
+
+    return isDefined(junctionConfig) &&
+      isDefined(junctionTargetObjectMetadataId) &&
+      isDefined(sourceObjectMetadataItem)
+      ? getFieldWidgetJunctionCreateThrough({
+          junctionConfig,
+          sourceObjectMetadataItem,
+          objectMetadataItems,
+          recordId,
+        })
+      : undefined;
+  }, [
+    junctionConfig,
+    junctionTargetObjectMetadataId,
+    objectMetadataItems,
+    recordPageObjectMetadataNameSingular,
+    recordId,
+  ]);
 
   // A many-to-one first hop points at a single intermediate record, so the
   // terminal view is scoped directly by it: the intermediate becomes the
@@ -182,6 +225,7 @@ export const FieldWidgetRelationTable = ({
           isEmptyStateHidden
           instanceIdSuffix={`${recordId}${isInSidePanel ? '-side-panel' : ''}`}
           nestedRelationCreateThrough={nestedRelationCreateThrough}
+          junctionCreateThrough={junctionCreateThrough}
         />
       </StyledContainer>
     </RecordFilterValueDependenciesContext.Provider>

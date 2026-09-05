@@ -6,6 +6,7 @@ import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
+import { RecordTableWidgetJunctionAddNewRow } from '@/object-record/record-table-widget/components/RecordTableWidgetJunctionAddNewRow';
 import { RecordTableWidgetNestedRelationAddNewRow } from '@/object-record/record-table-widget/components/RecordTableWidgetNestedRelationAddNewRow';
 import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
@@ -21,9 +22,10 @@ import { IconPlus } from 'twenty-ui/icon';
 export const RecordTableRecordGroupSectionAddNew = () => {
   const { objectMetadataItem, recordTableId } = useRecordTableContextOrThrow();
 
-  const nestedRelationCreateThrough = useContext(
-    RecordTableWidgetContext,
-  )?.nestedRelationCreateThrough;
+  const recordTableWidgetContext = useContext(RecordTableWidgetContext);
+  const nestedRelationCreateThrough =
+    recordTableWidgetContext?.nestedRelationCreateThrough;
+  const junctionCreateThrough = recordTableWidgetContext?.junctionCreateThrough;
 
   const isRecordTableCellsNonEditable = useAtomComponentStateValue(
     isRecordTableCellsNonEditableComponentState,
@@ -52,16 +54,27 @@ export const RecordTableRecordGroupSectionAddNew = () => {
     objectMetadataItem.id,
   );
 
+  if (isRecordTableCellsNonEditable) {
+    return null;
+  }
+
+  // Linking through a junction never creates a record of the table's object,
+  // so the target object's creatability does not apply.
+  if (isDefined(junctionCreateThrough)) {
+    return (
+      <RecordTableWidgetJunctionAddNewRow
+        dropdownId={`${recordTableId}-${currentRecordGroupId}-junction-add-new`}
+        junctionCreateThrough={junctionCreateThrough}
+      />
+    );
+  }
+
   if (
     !canCreateRecordsForObjectMetadataItem({
       objectPermissions,
       objectMetadataItem,
     })
   ) {
-    return null;
-  }
-
-  if (isRecordTableCellsNonEditable) {
     return null;
   }
 

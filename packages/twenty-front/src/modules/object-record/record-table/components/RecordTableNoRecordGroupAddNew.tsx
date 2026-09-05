@@ -5,6 +5,7 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
+import { RecordTableWidgetJunctionAddNewRow } from '@/object-record/record-table-widget/components/RecordTableWidgetJunctionAddNewRow';
 import { RecordTableWidgetNestedRelationAddNewRow } from '@/object-record/record-table-widget/components/RecordTableWidgetNestedRelationAddNewRow';
 import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
@@ -21,9 +22,10 @@ import { IconPlus } from 'twenty-ui/icon';
 export const RecordTableNoRecordGroupAddNew = () => {
   const { objectMetadataItem, recordTableId } = useRecordTableContextOrThrow();
 
-  const nestedRelationCreateThrough = useContext(
-    RecordTableWidgetContext,
-  )?.nestedRelationCreateThrough;
+  const recordTableWidgetContext = useContext(RecordTableWidgetContext);
+  const nestedRelationCreateThrough =
+    recordTableWidgetContext?.nestedRelationCreateThrough;
+  const junctionCreateThrough = recordTableWidgetContext?.junctionCreateThrough;
 
   const isRecordTableCellsNonEditable = useAtomComponentStateValue(
     isRecordTableCellsNonEditableComponentState,
@@ -78,6 +80,17 @@ export const RecordTableNoRecordGroupAddNew = () => {
 
   if (hasAnySoftDeleteFilterOnView) {
     return null;
+  }
+
+  // Linking through a junction never creates a record of the table's object,
+  // so the target object's creatability does not apply.
+  if (isDefined(junctionCreateThrough)) {
+    return (
+      <RecordTableWidgetJunctionAddNewRow
+        dropdownId={`${recordTableId}-junction-add-new`}
+        junctionCreateThrough={junctionCreateThrough}
+      />
+    );
   }
 
   if (

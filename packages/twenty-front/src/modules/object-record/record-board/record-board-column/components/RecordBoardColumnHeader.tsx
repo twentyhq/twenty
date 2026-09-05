@@ -150,17 +150,18 @@ export const RecordBoardColumnHeader = () => {
 
   const recordTableWidgetContext = useContext(RecordTableWidgetContext);
 
-  // Creating in a nested relation widget requires picking the related record
-  // to create through, which only the table layout offers today.
-  const nestedRelationCreateThrough =
-    recordTableWidgetContext?.nestedRelationCreateThrough;
+  // Creating in a nested relation or junction widget requires picking the
+  // related record, which only the table layout offers today.
+  const isCreateThroughRelationWidget =
+    isDefined(recordTableWidgetContext?.nestedRelationCreateThrough) ||
+    isDefined(recordTableWidgetContext?.junctionCreateThrough);
 
   const isRecordBoardCellsNonEditable = useAtomComponentStateValue(
     isRecordBoardCellsNonEditableComponentState,
   );
 
   const canCreateRecords =
-    !isDefined(nestedRelationCreateThrough) &&
+    !isCreateThroughRelationWidget &&
     !isRecordBoardCellsNonEditable &&
     canCreateRecordsForObjectMetadataItem({
       objectPermissions,
