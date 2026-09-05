@@ -6,11 +6,9 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { Separator } from '@/settings/components/Separator';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SettingsRoleDefaultRole } from '@/settings/roles/components/SettingsRolesDefaultRole';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
@@ -25,12 +23,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
-import {
-  IconClockHour8,
-  IconHistory,
-  IconMail,
-  IconTrash,
-} from 'twenty-ui/icon';
+import { IconClockHour8, IconHistory, IconTrash } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { Card } from 'twenty-ui/surfaces';
@@ -115,33 +108,6 @@ export const SettingsSecuritySettings = () => {
     });
 
     saveTrashRetention(value);
-  };
-
-  const handleSyncInternalEmailsChange = (value: boolean) => {
-    if (!currentWorkspace) {
-      return;
-    }
-
-    if (value === currentWorkspace.isInternalMessagesImportEnabled) {
-      return;
-    }
-
-    setCurrentWorkspace({
-      ...currentWorkspace,
-      isInternalMessagesImportEnabled: value,
-    });
-
-    updateWorkspace({
-      variables: {
-        input: {
-          isInternalMessagesImportEnabled: value,
-        },
-      },
-    }).catch((err) => {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
-      });
-    });
   };
 
   const handleEventLogRetentionDaysChange = (value: number) => {
@@ -281,17 +247,6 @@ export const SettingsSecuritySettings = () => {
               onChange={handleTrashRetentionDaysChange}
               minValue={0}
               showButtons={false}
-            />
-            <Separator />
-            <SettingsOptionCardContentToggle
-              Icon={IconMail}
-              title={t`Sync Internal Emails`}
-              description={t`Include emails where all participants share the same domain.`}
-              checked={
-                currentWorkspace?.isInternalMessagesImportEnabled ?? false
-              }
-              onChange={handleSyncInternalEmailsChange}
-              advancedMode
             />
           </Card>
         </Section>

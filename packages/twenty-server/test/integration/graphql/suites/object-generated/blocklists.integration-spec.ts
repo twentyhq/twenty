@@ -15,6 +15,7 @@ describe('blocklistsResolver (e2e)', () => {
                 createdAt
                 updatedAt
                 deletedAt
+                scope
                 workspaceMemberId
               }
             }
@@ -48,6 +49,7 @@ describe('blocklistsResolver (e2e)', () => {
           expect(blocklists).toHaveProperty('createdAt');
           expect(blocklists).toHaveProperty('updatedAt');
           expect(blocklists).toHaveProperty('deletedAt');
+          expect(blocklists).toHaveProperty('scope');
           expect(blocklists).toHaveProperty('workspaceMemberId');
         }
       });

@@ -3,7 +3,9 @@ import { useLingui } from '@lingui/react/macro';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
+import { SettingsWorkspaceBlocklistSection } from '@/settings/workspace/components/SettingsWorkspaceBlocklistSection';
 import { SettingsWorkspaceEmailGroupSection } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupSection';
+import { SettingsWorkspaceEmailSyncSection } from '@/settings/workspace/components/SettingsWorkspaceEmailSyncSection';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -61,10 +63,6 @@ export const SettingsWorkspaceCommunications = () => {
     },
   ];
 
-  if (!isEmailGroupFeatureEnabled) {
-    return null;
-  }
-
   return (
     <SettingsPageLayout
       title={t`Communication`}
@@ -106,10 +104,13 @@ export const SettingsWorkspaceCommunications = () => {
                 />
               }
               title={t`Manage unsubscribe`}
+              soon={!isEmailGroupFeatureEnabled}
               onClick={() => navigateSettings(SettingsPath.Unsubscribe)}
             />
           </StyledCardsColumn>
         </Section>
+        <SettingsWorkspaceEmailSyncSection />
+        <SettingsWorkspaceBlocklistSection />
       </SettingsPageContainer>
     </SettingsPageLayout>
   );
