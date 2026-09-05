@@ -72,7 +72,7 @@ const StyledCustomPhoneInputWrapper = styled.div`
       font-weight: ${themeCssVariables.font.weight.medium};
     }
 
-    :focus {
+    &:focus {
       outline: none;
     }
   }
