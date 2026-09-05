@@ -43,7 +43,7 @@ i18n.activate(SOURCE_LOCALE);
 import { ClickOutsideListenerContext } from '../src/modules/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 
 const MOCK_IMAGE_SVG =
-  '<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192"><rect width="192" height="192" fill="#d9d9d9"/></svg>';
+  '<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192"><rect width="192" height="192" fill="currentColor"/></svg>';
 
 const respondWithMockImage = () =>
   new HttpResponse(MOCK_IMAGE_SVG, {

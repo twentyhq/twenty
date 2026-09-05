@@ -13,6 +13,7 @@ import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useContext, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { Loader } from 'twenty-ui/feedback';
 import { IconDownload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -58,6 +59,30 @@ const StyledDocumentViewerContainer = styled.div`
     overflow: auto;
     width: 100%;
   }
+`;
+
+const StyledVideoContainer = styled.div`
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+`;
+
+const StyledVideoLoadingContainer = styled.div`
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  position: absolute;
+  width: 100%;
+`;
+
+const StyledVideo = styled.video`
+  max-height: 100%;
+  max-width: 100%;
+  outline: none;
 `;
 
 const StyledUnavailablePreviewContainer = styled.div`
@@ -198,6 +223,8 @@ export const DocumentViewer = ({
   const [csvPreview, setCsvPreview] = useState<CsvPreviewData | undefined>(
     undefined,
   );
+  const [isVideoLoading, setIsVideoLoading] = useState(true);
+  const [hasVideoError, setHasVideoError] = useState(false);
 
   const { extension } = getFileNameAndExtension(documentName);
   const fileExtension = isDefined(documentExtension)
@@ -216,7 +243,14 @@ export const DocumentViewer = ({
     }
   }, [documentUrl, fileExtension]);
 
-  if (!isPreviewable) {
+  useEffect(() => {
+    if (fileExtension === 'mp4') {
+      setIsVideoLoading(true);
+      setHasVideoError(false);
+    }
+  }, [documentUrl, fileExtension]);
+
+  if (!isPreviewable || hasVideoError) {
     return (
       <StyledDocumentViewerContainer>
         <UnavailableFilePreview
@@ -280,6 +314,31 @@ export const DocumentViewer = ({
             ))}
           </tbody>
         </StyledCsvTable>
+      </StyledDocumentViewerContainer>
+    );
+  }
+
+  if (fileExtension === 'mp4') {
+    return (
+      <StyledDocumentViewerContainer>
+        <StyledVideoContainer>
+          {isVideoLoading && (
+            <StyledVideoLoadingContainer>
+              <Loader />
+            </StyledVideoLoadingContainer>
+          )}
+          <StyledVideo
+            controls
+            src={documentUrl}
+            onCanPlay={() => setIsVideoLoading(false)}
+            onLoadedData={() => setIsVideoLoading(false)}
+            onError={() => {
+              setIsVideoLoading(false);
+              setHasVideoError(true);
+            }}
+            style={{ visibility: isVideoLoading ? 'hidden' : 'visible' }}
+          />
+        </StyledVideoContainer>
       </StyledDocumentViewerContainer>
     );
   }
