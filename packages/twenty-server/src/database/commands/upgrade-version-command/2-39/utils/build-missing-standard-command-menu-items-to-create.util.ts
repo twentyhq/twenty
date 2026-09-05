@@ -20,7 +20,11 @@ export const buildMissingStandardCommandMenuItemsToCreate = ({
   commandMenuItemNames: (keyof typeof STANDARD_COMMAND_MENU_ITEMS)[];
   flatCommandMenuItemByUniversalIdentifier: Record<
     string,
-    FlatCommandMenuItem | undefined
+    | Pick<
+        FlatCommandMenuItem,
+        'applicationId' | 'applicationUniversalIdentifier'
+      >
+    | undefined
   >;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   workspaceId: string;
