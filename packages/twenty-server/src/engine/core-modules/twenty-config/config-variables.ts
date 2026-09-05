@@ -515,6 +515,15 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EMAIL_SETTINGS,
+    description:
+      'Hostname announced in the SMTP EHLO greeting, when the machine hostname is not fully qualified',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  EMAIL_SMTP_NAME: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.EMAIL_SETTINGS,
     description: 'SMTP port for sending emails',
     type: ConfigVariableType.NUMBER,
   })
