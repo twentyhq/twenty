@@ -60,7 +60,7 @@ type RecordPageOperations = {
   skipReason?: 'missing' | 'customized' | 'already migrated';
 };
 
-@RegisteredWorkspaceCommand('2.39.0', 1788616076386)
+@RegisteredWorkspaceCommand('2.39.0', 1788639798701)
 @Command({
   name: 'upgrade:2-39:sync-message-list-record-page',
   description:
@@ -350,6 +350,7 @@ export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceComman
           flatViewFieldMaps.byUniversalIdentifier[viewFieldUniversalIdentifier],
       )
       .filter(isDefined)
+      .filter((flatViewField) => !isDefined(flatViewField.deletedAt))
       .map(({ position }) => position);
 
     return [
