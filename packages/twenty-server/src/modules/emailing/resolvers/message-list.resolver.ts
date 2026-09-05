@@ -8,14 +8,18 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { DuplicatedMessageListDTO } from 'src/modules/emailing/dtos/duplicated-message-list.dto';
 import { MessageListDuplicationService } from 'src/modules/emailing/services/message-list-duplication.service';
 import { MessageListGraphqlApiExceptionFilter } from 'src/modules/emailing/utils/message-list-graphql-api-exception.filter';
 
-// Object permissions are enforced by the service through the caller's role,
-// so no settings permission is required here.
+// Object permissions on the list and its memberships are checked by the
+// service, so no settings permission is required here.
 @MetadataResolver()
-@UseFilters(MessageListGraphqlApiExceptionFilter)
+@UseFilters(
+  MessageListGraphqlApiExceptionFilter,
+  PermissionsGraphqlApiExceptionFilter,
+)
 @UseGuards(WorkspaceAuthGuard)
 @UsePipes(ResolverValidationPipe)
 export class MessageListResolver {

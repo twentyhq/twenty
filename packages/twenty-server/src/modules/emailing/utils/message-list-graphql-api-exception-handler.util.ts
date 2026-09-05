@@ -13,9 +13,9 @@ export const messageListGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof MessageListException) {
     switch (error.code) {
       case MessageListExceptionCode.MESSAGE_LIST_NOT_FOUND:
-        throw new NotFoundError(error.message);
+        throw new NotFoundError(error);
       case MessageListExceptionCode.MESSAGE_LIST_DUPLICATION_FAILED:
-        throw new InternalServerError(error.message);
+        throw new InternalServerError(error);
       default: {
         return assertUnreachable(error.code);
       }

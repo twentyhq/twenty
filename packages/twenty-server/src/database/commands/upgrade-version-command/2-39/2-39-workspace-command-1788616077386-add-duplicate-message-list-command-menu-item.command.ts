@@ -48,10 +48,15 @@ export class AddDuplicateMessageListCommandMenuItemCommand extends ProvisionedWo
         flatObjectMetadataMaps.byUniversalIdentifier[
           STANDARD_OBJECTS.messageList.universalIdentifier
         ],
+      ) ||
+      !isDefined(
+        flatObjectMetadataMaps.byUniversalIdentifier[
+          STANDARD_OBJECTS.messageListMember.universalIdentifier
+        ],
       )
     ) {
       this.logger.log(
-        `messageList object does not exist for workspace ${workspaceId}, skipping`,
+        `messageList objects do not exist for workspace ${workspaceId}, skipping`,
       );
 
       return;

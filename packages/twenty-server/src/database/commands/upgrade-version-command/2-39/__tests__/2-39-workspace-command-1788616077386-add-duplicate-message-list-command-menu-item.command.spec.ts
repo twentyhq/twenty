@@ -81,13 +81,14 @@ describe('AddDuplicateMessageListCommandMenuItemCommand', () => {
     });
 
   const mockWorkspaceCache = ({
-    hasListObject = true,
+    existingObjects = [
+      STANDARD_OBJECTS.messageList.universalIdentifier,
+      STANDARD_OBJECTS.messageListMember.universalIdentifier,
+    ],
     existingItems = [] as string[],
   } = {}) => {
     getOrRecomputeMock.mockResolvedValue({
-      flatObjectMetadataMaps: buildMaps(
-        hasListObject ? [STANDARD_OBJECTS.messageList.universalIdentifier] : [],
-      ),
+      flatObjectMetadataMaps: buildMaps(existingObjects),
       flatCommandMenuItemMaps: buildMaps(existingItems),
     });
   };
@@ -120,7 +121,17 @@ describe('AddDuplicateMessageListCommandMenuItemCommand', () => {
   });
 
   it('skips workspaces without the messageList object', async () => {
-    mockWorkspaceCache({ hasListObject: false });
+    mockWorkspaceCache({ existingObjects: [] });
+
+    await runOnWorkspace();
+
+    expect(validateBuildAndRunWorkspaceMigrationMock).not.toHaveBeenCalled();
+  });
+
+  it('skips workspaces without the messageListMember object', async () => {
+    mockWorkspaceCache({
+      existingObjects: [STANDARD_OBJECTS.messageList.universalIdentifier],
+    });
 
     await runOnWorkspace();
 

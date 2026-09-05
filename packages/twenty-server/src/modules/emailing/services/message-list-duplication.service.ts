@@ -1,29 +1,43 @@
 import { Injectable } from '@nestjs/common';
 
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
 
 import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { DuplicatedMessageListDTO } from 'src/modules/emailing/dtos/duplicated-message-list.dto';
 import {
   MessageListException,
   MessageListExceptionCode,
 } from 'src/modules/emailing/exceptions/message-list.exception';
-import { MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
-import { MessageListWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list.workspace-entity';
+import { type MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
+import { type MessageListWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list.workspace-entity';
+
+const DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS = [
+  STANDARD_OBJECTS.messageList.universalIdentifier,
+  STANDARD_OBJECTS.messageListMember.universalIdentifier,
+];
 
 @Injectable()
 export class MessageListDuplicationService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly userRoleService: UserRoleService,
+    private readonly permissionsService: PermissionsService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly actorFromAuthContextService: ActorFromAuthContextService,
   ) {}
 
-  // Runs with the caller's role so the copy obeys the same object permissions
-  // as creating the list and its memberships by hand.
   async duplicateMessageList({
     messageListId,
     userWorkspaceId,
@@ -33,90 +47,161 @@ export class MessageListDuplicationService {
     userWorkspaceId: string;
     authContext: WorkspaceAuthContext;
   }): Promise<DuplicatedMessageListDTO> {
-    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
-      workspaceId: authContext.workspace.id,
+    const workspaceId = authContext.workspace.id;
+
+    await this.assertCanReadAndUpdateDuplicatedObjects({
+      workspaceId,
       userWorkspaceId,
     });
 
-    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageListRepository =
-        this.workspaceOrmManager.getRepository<MessageListWorkspaceEntity>(
-          MessageListWorkspaceEntity,
-          { unionOf: [roleId] },
-        );
-      const messageListMemberRepository =
-        this.workspaceOrmManager.getRepository<MessageListMemberWorkspaceEntity>(
-          MessageListMemberWorkspaceEntity,
-          { unionOf: [roleId] },
-        );
+    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
+      workspaceId,
+      userWorkspaceId,
+    });
 
-      const originalMessageList = await messageListRepository.findOne({
-        where: { id: messageListId },
-      });
+    // One transaction so a failed member insert never leaves a list copy
+    // without its members.
+    return this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager.runInWorkspaceTransaction((transactionScope) =>
+          this.duplicateInTransaction({
+            messageListId,
+            roleId,
+            authContext,
+            transactionScope,
+          }),
+        ),
+      authContext,
+    );
+  }
 
-      if (!isDefined(originalMessageList)) {
-        throw new MessageListException(
-          `Message list with ID "${messageListId}" not found`,
-          MessageListExceptionCode.MESSAGE_LIST_NOT_FOUND,
+  // messageList and messageListMember are system objects, for which the
+  // repositories skip role permission checks, so the role is checked here.
+  private async assertCanReadAndUpdateDuplicatedObjects({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+  }): Promise<void> {
+    const [{ objectsPermissions }, { flatObjectMetadataMaps }] =
+      await Promise.all([
+        this.permissionsService.getUserWorkspacePermissions({
+          workspaceId,
+          userWorkspaceId,
+        }),
+        this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatObjectMetadataMaps',
+        ]),
+      ]);
+
+    for (const objectUniversalIdentifier of DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS) {
+      const objectMetadata =
+        flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier];
+      const objectPermissions = isDefined(objectMetadata)
+        ? objectsPermissions[objectMetadata.id]
+        : undefined;
+
+      if (
+        !objectPermissions?.canReadObjectRecords ||
+        !objectPermissions.canUpdateObjectRecords
+      ) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
         );
       }
+    }
+  }
 
-      const originalMembers = await messageListMemberRepository.find({
-        where: { listId: messageListId },
+  private async duplicateInTransaction({
+    messageListId,
+    roleId,
+    authContext,
+    transactionScope,
+  }: {
+    messageListId: string;
+    roleId: string;
+    authContext: WorkspaceAuthContext;
+    transactionScope: WorkspaceTransactionScope;
+  }): Promise<DuplicatedMessageListDTO> {
+    const messageListRepository =
+      transactionScope.getRepository<MessageListWorkspaceEntity>(
+        'messageList',
+        { unionOf: [roleId] },
+      );
+    const messageListMemberRepository =
+      transactionScope.getRepository<MessageListMemberWorkspaceEntity>(
+        'messageListMember',
+        { unionOf: [roleId] },
+      );
+
+    const originalMessageList = await messageListRepository.findOne({
+      where: { id: messageListId },
+    });
+
+    if (!isDefined(originalMessageList)) {
+      throw new MessageListException(
+        `Message list with ID "${messageListId}" not found`,
+        MessageListExceptionCode.MESSAGE_LIST_NOT_FOUND,
+      );
+    }
+
+    const originalMembers = await messageListMemberRepository.find({
+      where: { listId: messageListId },
+    });
+
+    const [messageListWithActor] =
+      await this.actorFromAuthContextService.injectActorFieldsOnCreate({
+        records: [
+          {
+            name: appendCopySuffix(originalMessageList.name ?? ''),
+            description: originalMessageList.description,
+            position: originalMessageList.position,
+          },
+        ],
+        objectMetadataNameSingular: 'messageList',
+        authContext,
       });
 
-      const [messageListWithActor] =
+    const insertResult =
+      await messageListRepository.insert(messageListWithActor);
+    const duplicatedMessageListId: string = insertResult.identifiers[0].id;
+
+    if (originalMembers.length > 0) {
+      const membersWithActor =
         await this.actorFromAuthContextService.injectActorFieldsOnCreate({
-          records: [
-            {
-              name: appendCopySuffix(originalMessageList.name ?? ''),
-              description: originalMessageList.description,
-              position: originalMessageList.position,
-            },
-          ],
-          objectMetadataNameSingular: 'messageList',
+          records: originalMembers.map((member) => ({
+            listId: duplicatedMessageListId,
+            personId: member.personId,
+            position: member.position,
+          })),
+          objectMetadataNameSingular: 'messageListMember',
           authContext,
         });
 
-      const insertResult =
-        await messageListRepository.insert(messageListWithActor);
-      const duplicatedMessageListId: string = insertResult.identifiers[0].id;
+      await messageListMemberRepository.insert(membersWithActor);
+    }
 
-      if (originalMembers.length > 0) {
-        const membersWithActor =
-          await this.actorFromAuthContextService.injectActorFieldsOnCreate({
-            records: originalMembers.map((member) => ({
-              listId: duplicatedMessageListId,
-              personId: member.personId,
-              position: member.position,
-            })),
-            objectMetadataNameSingular: 'messageListMember',
-            authContext,
-          });
+    const duplicatedMessageList = await messageListRepository.findOne({
+      where: { id: duplicatedMessageListId },
+    });
 
-        await messageListMemberRepository.insert(membersWithActor);
-      }
+    if (!isDefined(duplicatedMessageList)) {
+      throw new MessageListException(
+        'Failed to retrieve the duplicated message list',
+        MessageListExceptionCode.MESSAGE_LIST_DUPLICATION_FAILED,
+      );
+    }
 
-      const duplicatedMessageList = await messageListRepository.findOne({
-        where: { id: duplicatedMessageListId },
-      });
-
-      if (!isDefined(duplicatedMessageList)) {
-        throw new MessageListException(
-          'Failed to retrieve the duplicated message list',
-          MessageListExceptionCode.MESSAGE_LIST_DUPLICATION_FAILED,
-        );
-      }
-
-      return {
-        id: duplicatedMessageList.id,
-        name: duplicatedMessageList.name,
-        description: duplicatedMessageList.description,
-        position: duplicatedMessageList.position,
-        memberCount: originalMembers.length,
-        createdAt: duplicatedMessageList.createdAt,
-        updatedAt: duplicatedMessageList.updatedAt,
-      };
-    }, authContext);
+    return {
+      id: duplicatedMessageList.id,
+      name: duplicatedMessageList.name,
+      description: duplicatedMessageList.description,
+      position: duplicatedMessageList.position,
+      memberCount: originalMembers.length,
+      createdAt: duplicatedMessageList.createdAt,
+      updatedAt: duplicatedMessageList.updatedAt,
+    };
   }
 }
