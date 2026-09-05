@@ -40,8 +40,11 @@ export class RowLevelPermissionPredicateDTO {
   @Field(() => Number, { nullable: true })
   positionInRowLevelPermissionPredicateGroup?: number | null;
 
-  @Field(() => String)
-  roleId: string;
+  @Field(() => String, { nullable: true })
+  roleId: string | null;
+
+  @Field(() => String, { nullable: true })
+  sharingRuleId?: string | null;
 
   @Field(() => GraphQLJSON, { nullable: true })
   value: RowLevelPermissionPredicateValue | null;

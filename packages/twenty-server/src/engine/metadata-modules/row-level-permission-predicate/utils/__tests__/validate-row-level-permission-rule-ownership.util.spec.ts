@@ -72,6 +72,7 @@ const validate = ({
 }) =>
   validateRowLevelPermissionRuleOwnershipOrThrow({
     roleId,
+    sharingRuleId: null,
     objectMetadataId,
     predicates: predicates as RowLevelPermissionPredicateInput[],
     predicateGroups: predicateGroups as RowLevelPermissionPredicateGroupInput[],

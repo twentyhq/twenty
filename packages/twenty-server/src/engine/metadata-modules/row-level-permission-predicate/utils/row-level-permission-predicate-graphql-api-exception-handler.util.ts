@@ -27,6 +27,7 @@ export const rowLevelPermissionPredicateGraphqlApiExceptionHandler = (
     case RowLevelPermissionPredicateExceptionCode.FIELD_METADATA_NOT_FOUND:
     case RowLevelPermissionPredicateExceptionCode.OBJECT_METADATA_NOT_FOUND:
     case RowLevelPermissionPredicateExceptionCode.ROLE_NOT_FOUND:
+    case RowLevelPermissionPredicateExceptionCode.SHARING_RULE_NOT_FOUND:
       throw new NotFoundError(error);
     case RowLevelPermissionPredicateExceptionCode.INTERNAL_SERVER_ERROR:
       throw new InternalServerError(error);

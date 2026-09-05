@@ -32,6 +32,7 @@ import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { RecordShareMetadataModule } from 'src/engine/record-share/record-share-metadata.module';
 import { RouteTriggerModule } from 'src/engine/metadata-modules/route-trigger/route-trigger.module';
 import { SearchFieldMetadataModule } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.module';
+import { SharingRuleModule } from 'src/engine/metadata-modules/sharing-rule/sharing-rule.module';
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WebhookModule } from 'src/engine/metadata-modules/webhook/webhook.module';
@@ -63,6 +64,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     WorkspaceMetadataVersionModule,
     RoleModule,
     RecordShareMetadataModule,
+    SharingRuleModule,
     PermissionsModule,
     PermissionFlagModule,
     RouteTriggerModule,

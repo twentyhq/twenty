@@ -82,9 +82,14 @@ export class RowLevelPermissionPredicateGroupInput {
 @InputType()
 export class UpsertRowLevelPermissionPredicatesInput {
   @IsUUID()
-  @IsNotEmpty()
-  @Field(() => UUIDScalarType)
-  roleId: string;
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  roleId?: string | null;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  sharingRuleId?: string | null;
 
   @IsUUID()
   @IsNotEmpty()

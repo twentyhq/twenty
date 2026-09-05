@@ -263,7 +263,8 @@ export interface RowLevelPermissionPredicateGroup {
     parentRowLevelPermissionPredicateGroupId?: Scalars['String']
     logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator
     positionInRowLevelPermissionPredicateGroup?: Scalars['Float']
-    roleId: Scalars['String']
+    roleId?: Scalars['String']
+    sharingRuleId?: Scalars['String']
     objectMetadataId: Scalars['String']
     __typename: 'RowLevelPermissionPredicateGroup'
 }
@@ -280,7 +281,8 @@ export interface RowLevelPermissionPredicate {
     workspaceMemberSubFieldName?: Scalars['String']
     rowLevelPermissionPredicateGroupId?: Scalars['String']
     positionInRowLevelPermissionPredicateGroup?: Scalars['Float']
-    roleId: Scalars['String']
+    roleId?: Scalars['String']
+    sharingRuleId?: Scalars['String']
     value?: Scalars['JSON']
     __typename: 'RowLevelPermissionPredicate'
 }
@@ -3073,6 +3075,25 @@ export interface RecordShares {
     __typename: 'RecordShares'
 }
 
+export interface SharingRule {
+    id: Scalars['UUID']
+    universalIdentifier: Scalars['UUID']
+    applicationId: Scalars['UUID']
+    objectMetadataId: Scalars['UUID']
+    name: Scalars['String']
+    description?: Scalars['String']
+    granteePrincipalType: RecordSharePrincipalType
+    granteePrincipalId?: Scalars['UUID']
+    granteeRoleId?: Scalars['UUID']
+    accessLevel: RecordShareAccessLevel
+    isActive: Scalars['Boolean']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    rowLevelPermissionPredicates?: RowLevelPermissionPredicate[]
+    rowLevelPermissionPredicateGroups?: RowLevelPermissionPredicateGroup[]
+    __typename: 'SharingRule'
+}
+
 export interface Query {
     navigationMenuItems: NavigationMenuItem[]
     navigationMenuItem?: NavigationMenuItem
@@ -3161,6 +3182,7 @@ export interface Query {
     webhook?: Webhook
     myMessageFolders: MessageFolder[]
     myCalendarChannels: CalendarChannel[]
+    sharingRules: SharingRule[]
     recordShares: RecordShares
     minimalMetadata: MinimalMetadata
     appKeyValue?: AppKeyValue
@@ -3373,6 +3395,9 @@ export interface Mutation {
     updateMessageFolder: MessageFolder
     updateMessageFolders: MessageFolder[]
     updateCalendarChannel: CalendarChannel
+    createSharingRule: SharingRule
+    updateSharingRule: SharingRule
+    deleteSharingRule: SharingRule
     shareRecord: RecordShares
     unshareRecord: RecordShares
     transferRecordOwnership: RecordShares
@@ -3748,6 +3773,7 @@ export interface RowLevelPermissionPredicateGroupGenqlSelection{
     logicalOperator?: boolean | number
     positionInRowLevelPermissionPredicateGroup?: boolean | number
     roleId?: boolean | number
+    sharingRuleId?: boolean | number
     objectMetadataId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -3764,6 +3790,7 @@ export interface RowLevelPermissionPredicateGenqlSelection{
     rowLevelPermissionPredicateGroupId?: boolean | number
     positionInRowLevelPermissionPredicateGroup?: boolean | number
     roleId?: boolean | number
+    sharingRuleId?: boolean | number
     value?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -6663,6 +6690,26 @@ export interface RecordSharesGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface SharingRuleGenqlSelection{
+    id?: boolean | number
+    universalIdentifier?: boolean | number
+    applicationId?: boolean | number
+    objectMetadataId?: boolean | number
+    name?: boolean | number
+    description?: boolean | number
+    granteePrincipalType?: boolean | number
+    granteePrincipalId?: boolean | number
+    granteeRoleId?: boolean | number
+    accessLevel?: boolean | number
+    isActive?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    rowLevelPermissionPredicates?: RowLevelPermissionPredicateGenqlSelection
+    rowLevelPermissionPredicateGroups?: RowLevelPermissionPredicateGroupGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface QueryGenqlSelection{
     navigationMenuItems?: NavigationMenuItemGenqlSelection
     navigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -6763,6 +6810,7 @@ export interface QueryGenqlSelection{
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
     myMessageFolders?: (MessageFolderGenqlSelection & { __args?: {messageChannelId?: (Scalars['UUID'] | null)} })
     myCalendarChannels?: (CalendarChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
+    sharingRules?: (SharingRuleGenqlSelection & { __args: {objectMetadataId: Scalars['UUID']} })
     recordShares?: (RecordSharesGenqlSelection & { __args: {objectMetadataId: Scalars['UUID'], recordId: Scalars['UUID']} })
     minimalMetadata?: MinimalMetadataGenqlSelection
     appKeyValue?: (AppKeyValueGenqlSelection & { __args: {key: Scalars['String'], scope?: (AppKeyValueScope | null)} })
@@ -7008,6 +7056,9 @@ export interface MutationGenqlSelection{
     updateMessageFolder?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFolderInput} })
     updateMessageFolders?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFoldersInput} })
     updateCalendarChannel?: (CalendarChannelGenqlSelection & { __args: {input: UpdateCalendarChannelInput} })
+    createSharingRule?: (SharingRuleGenqlSelection & { __args: {input: CreateSharingRuleInput} })
+    updateSharingRule?: (SharingRuleGenqlSelection & { __args: {input: UpdateSharingRuleInput} })
+    deleteSharingRule?: (SharingRuleGenqlSelection & { __args: {id: Scalars['UUID']} })
     shareRecord?: (RecordSharesGenqlSelection & { __args: {objectMetadataId: Scalars['UUID'], recordId: Scalars['UUID'], shareWith: ShareWithInput[]} })
     unshareRecord?: (RecordSharesGenqlSelection & { __args: {objectMetadataId: Scalars['UUID'], recordId: Scalars['UUID'], principalId: Scalars['UUID']} })
     transferRecordOwnership?: (RecordSharesGenqlSelection & { __args: {objectMetadataId: Scalars['UUID'], recordId: Scalars['UUID'], workspaceMemberId: Scalars['UUID']} })
@@ -7410,7 +7461,7 @@ export interface UpsertFieldPermissionsInput {roleId: Scalars['UUID'],fieldPermi
 
 export interface FieldPermissionInput {objectMetadataId: Scalars['UUID'],fieldMetadataId: Scalars['UUID'],canReadFieldValue?: (Scalars['Boolean'] | null),canUpdateFieldValue?: (Scalars['Boolean'] | null)}
 
-export interface UpsertRowLevelPermissionPredicatesInput {roleId: Scalars['UUID'],objectMetadataId: Scalars['UUID'],predicates: RowLevelPermissionPredicateInput[],predicateGroups: RowLevelPermissionPredicateGroupInput[]}
+export interface UpsertRowLevelPermissionPredicatesInput {roleId?: (Scalars['UUID'] | null),sharingRuleId?: (Scalars['UUID'] | null),objectMetadataId: Scalars['UUID'],predicates: RowLevelPermissionPredicateInput[],predicateGroups: RowLevelPermissionPredicateGroupInput[]}
 
 export interface RowLevelPermissionPredicateInput {id?: (Scalars['UUID'] | null),fieldMetadataId: Scalars['UUID'],operand: RowLevelPermissionPredicateOperand,value?: (Scalars['JSON'] | null),subFieldName?: (Scalars['String'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null),rowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null)}
 
@@ -7463,6 +7514,10 @@ export interface UpdateMessageFoldersInput {ids: Scalars['UUID'][],update: Updat
 export interface UpdateCalendarChannelInput {id: Scalars['UUID'],update: UpdateCalendarChannelInputUpdates}
 
 export interface UpdateCalendarChannelInputUpdates {visibility?: (CalendarChannelVisibility | null),isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),contactAutoCreationPolicy?: (CalendarChannelContactAutoCreationPolicy | null),isSyncEnabled?: (Scalars['Boolean'] | null)}
+
+export interface CreateSharingRuleInput {objectMetadataId: Scalars['UUID'],name: Scalars['String'],description?: (Scalars['String'] | null),granteePrincipalType: RecordSharePrincipalType,granteePrincipalId?: (Scalars['UUID'] | null),granteeRoleId?: (Scalars['UUID'] | null),accessLevel: RecordShareAccessLevel,isActive?: (Scalars['Boolean'] | null)}
+
+export interface UpdateSharingRuleInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),description?: (Scalars['String'] | null),granteePrincipalType?: (RecordSharePrincipalType | null),granteePrincipalId?: (Scalars['UUID'] | null),granteeRoleId?: (Scalars['UUID'] | null),accessLevel?: (RecordShareAccessLevel | null),isActive?: (Scalars['Boolean'] | null)}
 
 
 /** Grants access on the record to exactly one of a workspace member, a role or everyone */
@@ -9818,6 +9873,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isRecordShares = (obj?: { __typename?: any } | null): obj is RecordShares => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isRecordShares"')
       return RecordShares_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const SharingRule_possibleTypes: string[] = ['SharingRule']
+    export const isSharingRule = (obj?: { __typename?: any } | null): obj is SharingRule => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSharingRule"')
+      return SharingRule_possibleTypes.includes(obj.__typename)
     }
     
 

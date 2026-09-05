@@ -428,7 +428,8 @@ type RowLevelPermissionPredicateGroup {
   parentRowLevelPermissionPredicateGroupId: String
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator!
   positionInRowLevelPermissionPredicateGroup: Float
-  roleId: String!
+  roleId: String
+  sharingRuleId: String
   objectMetadataId: String!
 }
 
@@ -447,7 +448,8 @@ type RowLevelPermissionPredicate {
   workspaceMemberSubFieldName: String
   rowLevelPermissionPredicateGroupId: String
   positionInRowLevelPermissionPredicateGroup: Float
-  roleId: String!
+  roleId: String
+  sharingRuleId: String
   value: JSON
 }
 
@@ -3524,6 +3526,24 @@ type RecordShares {
   viewerAccessLevel: RecordShareAccessLevel
 }
 
+type SharingRule {
+  id: UUID!
+  universalIdentifier: UUID!
+  applicationId: UUID!
+  objectMetadataId: UUID!
+  name: String!
+  description: String
+  granteePrincipalType: RecordSharePrincipalType!
+  granteePrincipalId: UUID
+  granteeRoleId: UUID
+  accessLevel: RecordShareAccessLevel!
+  isActive: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  rowLevelPermissionPredicates: [RowLevelPermissionPredicate!]
+  rowLevelPermissionPredicateGroups: [RowLevelPermissionPredicateGroup!]
+}
+
 type Query {
   navigationMenuItems: [NavigationMenuItem!]!
   navigationMenuItem(id: UUID!): NavigationMenuItem
@@ -3630,6 +3650,7 @@ type Query {
   webhook(id: UUID!): Webhook
   myMessageFolders(messageChannelId: UUID): [MessageFolder!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
+  sharingRules(objectMetadataId: UUID!): [SharingRule!]!
   recordShares(objectMetadataId: UUID!, recordId: UUID!): RecordShares!
   minimalMetadata: MinimalMetadata!
   appKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): AppKeyValue
@@ -3941,6 +3962,9 @@ type Mutation {
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
   updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
+  createSharingRule(input: CreateSharingRuleInput!): SharingRule!
+  updateSharingRule(input: UpdateSharingRuleInput!): SharingRule!
+  deleteSharingRule(id: UUID!): SharingRule!
   shareRecord(objectMetadataId: UUID!, recordId: UUID!, shareWith: [ShareWithInput!]!): RecordShares!
   unshareRecord(objectMetadataId: UUID!, recordId: UUID!, principalId: UUID!): RecordShares!
   transferRecordOwnership(objectMetadataId: UUID!, recordId: UUID!, workspaceMemberId: UUID!): RecordShares!
@@ -4962,7 +4986,8 @@ input FieldPermissionInput {
 }
 
 input UpsertRowLevelPermissionPredicatesInput {
-  roleId: UUID!
+  roleId: UUID
+  sharingRuleId: UUID
   objectMetadataId: UUID!
   predicates: [RowLevelPermissionPredicateInput!]!
   predicateGroups: [RowLevelPermissionPredicateGroupInput!]!
@@ -5127,6 +5152,28 @@ input UpdateCalendarChannelInputUpdates {
   isContactAutoCreationEnabled: Boolean
   contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy
   isSyncEnabled: Boolean
+}
+
+input CreateSharingRuleInput {
+  objectMetadataId: UUID!
+  name: String!
+  description: String
+  granteePrincipalType: RecordSharePrincipalType!
+  granteePrincipalId: UUID
+  granteeRoleId: UUID
+  accessLevel: RecordShareAccessLevel!
+  isActive: Boolean
+}
+
+input UpdateSharingRuleInput {
+  id: UUID!
+  name: String
+  description: String
+  granteePrincipalType: RecordSharePrincipalType
+  granteePrincipalId: UUID
+  granteeRoleId: UUID
+  accessLevel: RecordShareAccessLevel
+  isActive: Boolean
 }
 
 """
