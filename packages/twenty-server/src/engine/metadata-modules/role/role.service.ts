@@ -364,11 +364,11 @@ export class RoleService {
         )
       ).workspaceCustomFlatApplication;
 
-    const { flatRoleMaps } =
+    const { flatRoleMaps, flatSharingRuleMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatRoleMaps'],
+          flatMapsKeys: ['flatRoleMaps', 'flatSharingRuleMaps'],
         },
       );
 
@@ -423,6 +423,16 @@ export class RoleService {
       rolesToDelete.push(flatRoleToDelete);
     }
 
+    const sharingRulesToDelete = Object.values(
+      flatSharingRuleMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter(
+        (flatSharingRule) =>
+          isDefined(flatSharingRule.granteeRoleId) &&
+          ids.includes(flatSharingRule.granteeRoleId),
+      );
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -430,6 +440,11 @@ export class RoleService {
             role: {
               flatEntityToCreate: [],
               flatEntityToDelete: rolesToDelete,
+              flatEntityToUpdate: [],
+            },
+            sharingRule: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: sharingRulesToDelete,
               flatEntityToUpdate: [],
             },
           },

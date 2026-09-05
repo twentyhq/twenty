@@ -8,6 +8,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { RowLevelPermissionPredicateGroupExceptionCode } from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception';
+import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
+import { type UniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate-group.type';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
@@ -26,6 +28,7 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
         optimisticFlatPredicateGroupMaps,
       flatRoleMaps,
       flatObjectMetadataMaps,
+      flatSharingRuleMaps,
     } = optimisticFlatEntityMapsAndRelatedFlatEntityMaps;
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
@@ -65,24 +68,23 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
           message: t`Parent row level permission predicate group not found`,
           userFriendlyMessage: msg`Parent row level permission predicate group not found`,
         });
+      } else if (
+        parentGroup.roleUniversalIdentifier !==
+          flatPredicateGroupToValidate.roleUniversalIdentifier ||
+        parentGroup.sharingRuleUniversalIdentifier !==
+          flatPredicateGroupToValidate.sharingRuleUniversalIdentifier
+      ) {
+        validationResult.errors.push(this.getParentGroupMismatchError());
       }
     }
 
-    const role = flatRoleMaps
-      ? findFlatEntityByUniversalIdentifier({
-          universalIdentifier:
-            flatPredicateGroupToValidate.roleUniversalIdentifier,
-          flatEntityMaps: flatRoleMaps,
-        })
-      : undefined;
-
-    if (!isDefined(role)) {
-      validationResult.errors.push({
-        code: RowLevelPermissionPredicateGroupExceptionCode.ROLE_NOT_FOUND,
-        message: t`Role not found`,
-        userFriendlyMessage: msg`Role not found`,
-      });
-    }
+    validationResult.errors.push(
+      ...this.getParentErrors({
+        predicateGroup: flatPredicateGroupToValidate,
+        flatRoleMaps,
+        flatSharingRuleMaps,
+      }),
+    );
 
     const objectMetadata = flatObjectMetadataMaps
       ? findFlatEntityByUniversalIdentifier({
@@ -150,6 +152,7 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
         optimisticFlatPredicateGroupMaps,
       flatRoleMaps,
       flatObjectMetadataMaps,
+      flatSharingRuleMaps,
     } = optimisticFlatEntityMapsAndRelatedFlatEntityMaps;
 
     const existingPredicateGroup = findFlatEntityByUniversalIdentifier({
@@ -182,17 +185,14 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
 
     if (
       updatedPredicateGroup.roleUniversalIdentifier !==
-      existingPredicateGroup.roleUniversalIdentifier
+        existingPredicateGroup.roleUniversalIdentifier ||
+      updatedPredicateGroup.sharingRuleUniversalIdentifier !==
+        existingPredicateGroup.sharingRuleUniversalIdentifier
     ) {
-      const existingRoleIdentifier =
-        existingPredicateGroup.roleUniversalIdentifier;
-      const updatedRoleIdentifier =
-        updatedPredicateGroup.roleUniversalIdentifier;
-
       validationResult.errors.push({
         code: RowLevelPermissionPredicateGroupExceptionCode.UNAUTHORIZED_ROLE_MODIFICATION,
-        message: t`Cannot modify predicate group to change its role from ${existingRoleIdentifier} to ${updatedRoleIdentifier}`,
-        userFriendlyMessage: msg`Cannot modify predicate group to change its role`,
+        message: t`Cannot modify predicate group to change the role or sharing rule it belongs to`,
+        userFriendlyMessage: msg`Cannot modify predicate group to change its role or sharing rule`,
       });
     }
 
@@ -229,23 +229,23 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
           message: t`Parent row level permission predicate group not found`,
           userFriendlyMessage: msg`Parent row level permission predicate group not found`,
         });
+      } else if (
+        parentGroup.roleUniversalIdentifier !==
+          updatedPredicateGroup.roleUniversalIdentifier ||
+        parentGroup.sharingRuleUniversalIdentifier !==
+          updatedPredicateGroup.sharingRuleUniversalIdentifier
+      ) {
+        validationResult.errors.push(this.getParentGroupMismatchError());
       }
     }
 
-    const role = flatRoleMaps
-      ? findFlatEntityByUniversalIdentifier({
-          universalIdentifier: updatedPredicateGroup.roleUniversalIdentifier,
-          flatEntityMaps: flatRoleMaps,
-        })
-      : undefined;
-
-    if (!isDefined(role)) {
-      validationResult.errors.push({
-        code: RowLevelPermissionPredicateGroupExceptionCode.ROLE_NOT_FOUND,
-        message: t`Role not found`,
-        userFriendlyMessage: msg`Role not found`,
-      });
-    }
+    validationResult.errors.push(
+      ...this.getParentErrors({
+        predicateGroup: updatedPredicateGroup,
+        flatRoleMaps,
+        flatSharingRuleMaps,
+      }),
+    );
 
     const objectMetadata = flatObjectMetadataMaps
       ? findFlatEntityByUniversalIdentifier({
@@ -264,5 +264,81 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
     }
 
     return validationResult;
+  }
+
+  private getParentGroupMismatchError() {
+    return {
+      code: RowLevelPermissionPredicateGroupExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_DATA,
+      message: t`Row level permission predicate group must belong to the same role or sharing rule as its parent group`,
+      userFriendlyMessage: msg`Predicate group and its parent group must belong to the same role or sharing rule`,
+    };
+  }
+
+  private getParentErrors({
+    predicateGroup,
+    flatRoleMaps,
+    flatSharingRuleMaps,
+  }: {
+    predicateGroup: Pick<
+      UniversalFlatRowLevelPermissionPredicateGroup,
+      'roleUniversalIdentifier' | 'sharingRuleUniversalIdentifier'
+    >;
+    flatRoleMaps: AllUniversalFlatEntityMaps['flatRoleMaps'] | undefined;
+    flatSharingRuleMaps:
+      | AllUniversalFlatEntityMaps['flatSharingRuleMaps']
+      | undefined;
+  }) {
+    const { roleUniversalIdentifier, sharingRuleUniversalIdentifier } =
+      predicateGroup;
+
+    if (
+      isDefined(roleUniversalIdentifier) ===
+      isDefined(sharingRuleUniversalIdentifier)
+    ) {
+      return [
+        {
+          code: RowLevelPermissionPredicateGroupExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_DATA,
+          message: t`Row level permission predicate group must belong to exactly one role or sharing rule`,
+          userFriendlyMessage: msg`Predicate group must belong to exactly one role or sharing rule`,
+        },
+      ];
+    }
+
+    if (isDefined(roleUniversalIdentifier)) {
+      const role = flatRoleMaps
+        ? findFlatEntityByUniversalIdentifier({
+            universalIdentifier: roleUniversalIdentifier,
+            flatEntityMaps: flatRoleMaps,
+          })
+        : undefined;
+
+      return isDefined(role)
+        ? []
+        : [
+            {
+              code: RowLevelPermissionPredicateGroupExceptionCode.ROLE_NOT_FOUND,
+              message: t`Role not found`,
+              userFriendlyMessage: msg`Role not found`,
+            },
+          ];
+    }
+
+    const sharingRule =
+      flatSharingRuleMaps && isDefined(sharingRuleUniversalIdentifier)
+        ? findFlatEntityByUniversalIdentifier({
+            universalIdentifier: sharingRuleUniversalIdentifier,
+            flatEntityMaps: flatSharingRuleMaps,
+          })
+        : undefined;
+
+    return isDefined(sharingRule)
+      ? []
+      : [
+          {
+            code: RowLevelPermissionPredicateGroupExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_DATA,
+            message: t`Sharing rule not found`,
+            userFriendlyMessage: msg`Sharing rule not found`,
+          },
+        ];
   }
 }

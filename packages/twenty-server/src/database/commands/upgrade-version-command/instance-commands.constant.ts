@@ -178,6 +178,8 @@ import { AddLogoToConnectionProviderFastInstanceCommand } from 'src/database/com
 import { AddReadabilityToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788548844925-add-readability-to-object-metadata';
 import { AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788560886501-add-readability-parent-fields-to-object-metadata';
 import { AddOwnerFieldToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788576273808-add-owner-field-to-object-metadata';
+import { AddSharingRuleTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788577473808-add-sharing-rule-table';
+import { AddSharingRuleParentToRowLevelPermissionPredicateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788577473821-add-sharing-rule-parent-to-row-level-permission-predicate';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -358,4 +360,6 @@ export const INSTANCE_COMMANDS = [
   AddReadabilityToObjectMetadataFastInstanceCommand,
   AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand,
   AddOwnerFieldToObjectMetadataFastInstanceCommand,
+  AddSharingRuleTableFastInstanceCommand,
+  AddSharingRuleParentToRowLevelPermissionPredicateFastInstanceCommand,
 ];

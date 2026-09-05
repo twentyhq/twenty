@@ -1,16 +1,17 @@
 import { type RowLevelPermissionPredicateGroupManifest } from 'twenty-shared/application';
 
+import { type RowLevelPermissionPredicateParent } from 'src/engine/core-modules/application/application-manifest/types/row-level-permission-predicate-parent.type';
 import { type UniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate-group.type';
 
 export const fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup =
   ({
     rowLevelPermissionPredicateGroupManifest,
-    roleUniversalIdentifier,
+    parent,
     applicationUniversalIdentifier,
     now,
   }: {
     rowLevelPermissionPredicateGroupManifest: RowLevelPermissionPredicateGroupManifest;
-    roleUniversalIdentifier: string;
+    parent: RowLevelPermissionPredicateParent;
     applicationUniversalIdentifier: string;
     now: string;
   }): UniversalFlatRowLevelPermissionPredicateGroup => {
@@ -18,7 +19,9 @@ export const fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevel
       universalIdentifier:
         rowLevelPermissionPredicateGroupManifest.universalIdentifier,
       applicationUniversalIdentifier,
-      roleUniversalIdentifier,
+      roleUniversalIdentifier: parent.roleUniversalIdentifier ?? null,
+      sharingRuleUniversalIdentifier:
+        parent.sharingRuleUniversalIdentifier ?? null,
       objectMetadataUniversalIdentifier:
         rowLevelPermissionPredicateGroupManifest.objectUniversalIdentifier,
       logicalOperator: rowLevelPermissionPredicateGroupManifest.logicalOperator,

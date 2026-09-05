@@ -30,6 +30,7 @@ export class CreateRowLevelPermissionPredicateActionHandlerService extends Works
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreateRowLevelPermissionPredicateAction>): Promise<FlatCreateRowLevelPermissionPredicateAction> {
     const {
       roleId,
+      sharingRuleId,
       fieldMetadataId,
       workspaceMemberFieldMetadataId,
       objectMetadataId,
@@ -50,6 +51,7 @@ export class CreateRowLevelPermissionPredicateActionHandlerService extends Works
       flatEntity: {
         ...action.flatEntity,
         roleId,
+        sharingRuleId,
         fieldMetadataId,
         workspaceMemberFieldMetadataId,
         objectMetadataId,

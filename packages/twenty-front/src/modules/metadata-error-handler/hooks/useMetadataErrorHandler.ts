@@ -53,6 +53,7 @@ export const useMetadataErrorHandler = () => {
     connectionProvider: t`connection provider`,
     searchFieldMetadata: t`search field metadata`,
     timelineActivityType: t`timeline activity type`,
+    sharingRule: t`sharing rule`,
   } as const satisfies Record<AllMetadataName, string>;
 
   const handleMetadataError = (

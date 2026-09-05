@@ -129,6 +129,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 exports[`getMetadataRelatedMetadataNames should return related metadata names for rowLevelPermissionPredicate 1`] = `
 [
   "role",
+  "sharingRule",
   "fieldMetadata",
   "objectMetadata",
   "rowLevelPermissionPredicateGroup",
@@ -139,6 +140,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 [
   "objectMetadata",
   "role",
+  "sharingRule",
   "rowLevelPermissionPredicateGroup",
   "rowLevelPermissionPredicate",
 ]
@@ -148,6 +150,15 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 [
   "objectMetadata",
   "fieldMetadata",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for sharingRule 1`] = `
+[
+  "objectMetadata",
+  "role",
+  "rowLevelPermissionPredicate",
+  "rowLevelPermissionPredicateGroup",
 ]
 `;
 

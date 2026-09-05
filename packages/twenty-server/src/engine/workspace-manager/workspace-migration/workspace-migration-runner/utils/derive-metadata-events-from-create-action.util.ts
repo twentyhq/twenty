@@ -100,7 +100,8 @@ const deriveAllMetadataEventsFromCreateAction = (
     case 'webhook':
     case 'connectionProvider':
     case 'timelineActivityType':
-    case 'searchFieldMetadata': {
+    case 'searchFieldMetadata':
+    case 'sharingRule': {
       return [
         {
           type: 'created',

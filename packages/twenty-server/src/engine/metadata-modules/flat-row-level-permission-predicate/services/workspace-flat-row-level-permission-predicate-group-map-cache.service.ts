@@ -24,6 +24,7 @@ const FLAT_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_ROWS_REQUIREMENT = {
     columns: ['id', 'universalIdentifier'],
     groupBy: ['rowLevelPermissionPredicateGroupId'],
   },
+  sharingRule: ['id', 'universalIdentifier'],
 } as const;
 
 @Injectable()
@@ -45,6 +46,7 @@ export class WorkspaceFlatRowLevelPermissionPredicateGroupMapCacheService extend
       objectMetadata: objectMetadatas,
       role: roles,
       rowLevelPermissionPredicate: rowLevelPermissionPredicates,
+      sharingRule: sharingRules,
     } = rows;
 
     const applicationIdToUniversalIdentifierMap =
@@ -53,6 +55,8 @@ export class WorkspaceFlatRowLevelPermissionPredicateGroupMapCacheService extend
       createIdToUniversalIdentifierMap(objectMetadatas);
     const roleIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(roles);
+    const sharingRuleIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(sharingRules);
     const rowLevelPermissionPredicateGroupIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(rowLevelPermissionPredicateGroups.rows);
 
@@ -78,6 +82,7 @@ export class WorkspaceFlatRowLevelPermissionPredicateGroupMapCacheService extend
             objectMetadataIdToUniversalIdentifierMap,
             roleIdToUniversalIdentifierMap,
             rowLevelPermissionPredicateGroupIdToUniversalIdentifierMap,
+            sharingRuleIdToUniversalIdentifierMap,
           },
         );
 

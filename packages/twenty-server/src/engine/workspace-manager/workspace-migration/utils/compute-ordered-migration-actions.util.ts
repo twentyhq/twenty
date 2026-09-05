@@ -48,6 +48,9 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.role.delete,
     ...aggregatedOrchestratorActionsReport.role.create,
     ...aggregatedOrchestratorActionsReport.role.update,
+    ...aggregatedOrchestratorActionsReport.sharingRule.delete,
+    ...aggregatedOrchestratorActionsReport.sharingRule.create,
+    ...aggregatedOrchestratorActionsReport.sharingRule.update,
 
     // Role targets delete before agents (roleTarget may FK to agent)
     ...aggregatedOrchestratorActionsReport.roleTarget.delete,

@@ -22,6 +22,8 @@ import {
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { RowLevelPermissionPredicateExceptionCode } from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception';
+import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
+import { type UniversalFlatRowLevelPermissionPredicate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate.type';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
@@ -41,6 +43,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       flatObjectMetadataMaps,
       flatRowLevelPermissionPredicateGroupMaps,
       flatRoleMaps,
+      flatSharingRuleMaps,
     } = optimisticFlatEntityMapsAndRelatedFlatEntityMaps;
 
     const validationResult = getEmptyFlatEntityValidationError({
@@ -127,23 +130,23 @@ export class FlatRowLevelPermissionPredicateValidatorService {
           message: t`Row level permission predicate group not found`,
           userFriendlyMessage: msg`Row level permission predicate group not found`,
         });
+      } else if (
+        predicateGroup.roleUniversalIdentifier !==
+          flatPredicateToValidate.roleUniversalIdentifier ||
+        predicateGroup.sharingRuleUniversalIdentifier !==
+          flatPredicateToValidate.sharingRuleUniversalIdentifier
+      ) {
+        validationResult.errors.push(this.getGroupParentMismatchError());
       }
     }
 
-    const role = flatRoleMaps
-      ? findFlatEntityByUniversalIdentifier({
-          universalIdentifier: flatPredicateToValidate.roleUniversalIdentifier,
-          flatEntityMaps: flatRoleMaps,
-        })
-      : undefined;
-
-    if (!isDefined(role)) {
-      validationResult.errors.push({
-        code: RowLevelPermissionPredicateExceptionCode.ROLE_NOT_FOUND,
-        message: t`Role not found`,
-        userFriendlyMessage: msg`Role not found`,
-      });
-    }
+    validationResult.errors.push(
+      ...this.getParentErrors({
+        predicate: flatPredicateToValidate,
+        flatRoleMaps,
+        flatSharingRuleMaps,
+      }),
+    );
 
     return validationResult;
   }
@@ -193,6 +196,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       flatObjectMetadataMaps,
       flatRowLevelPermissionPredicateGroupMaps,
       flatRoleMaps,
+      flatSharingRuleMaps,
     } = optimisticFlatEntityMapsAndRelatedFlatEntityMaps;
 
     const existingPredicate = findFlatEntityByUniversalIdentifier({
@@ -225,15 +229,14 @@ export class FlatRowLevelPermissionPredicateValidatorService {
 
     if (
       updatedPredicate.roleUniversalIdentifier !==
-      existingPredicate.roleUniversalIdentifier
+        existingPredicate.roleUniversalIdentifier ||
+      updatedPredicate.sharingRuleUniversalIdentifier !==
+        existingPredicate.sharingRuleUniversalIdentifier
     ) {
-      const existingRoleIdentifier = existingPredicate.roleUniversalIdentifier;
-      const updatedRoleIdentifier = updatedPredicate.roleUniversalIdentifier;
-
       validationResult.errors.push({
         code: RowLevelPermissionPredicateExceptionCode.UNAUTHORIZED_ROLE_MODIFICATION,
-        message: t`Cannot modify predicate to change its role from ${existingRoleIdentifier} to ${updatedRoleIdentifier}`,
-        userFriendlyMessage: msg`Cannot modify predicate to change its role`,
+        message: t`Cannot modify predicate to change the role or sharing rule it belongs to`,
+        userFriendlyMessage: msg`Cannot modify predicate to change its role or sharing rule`,
       });
     }
 
@@ -322,25 +325,101 @@ export class FlatRowLevelPermissionPredicateValidatorService {
           message: t`Row level permission predicate group not found`,
           userFriendlyMessage: msg`Row level permission predicate group not found`,
         });
+      } else if (
+        predicateGroup.roleUniversalIdentifier !==
+          updatedPredicate.roleUniversalIdentifier ||
+        predicateGroup.sharingRuleUniversalIdentifier !==
+          updatedPredicate.sharingRuleUniversalIdentifier
+      ) {
+        validationResult.errors.push(this.getGroupParentMismatchError());
       }
     }
 
-    const role = flatRoleMaps
-      ? findFlatEntityByUniversalIdentifier({
-          universalIdentifier: updatedPredicate.roleUniversalIdentifier,
-          flatEntityMaps: flatRoleMaps,
-        })
-      : undefined;
-
-    if (!isDefined(role)) {
-      validationResult.errors.push({
-        code: RowLevelPermissionPredicateExceptionCode.ROLE_NOT_FOUND,
-        message: t`Role not found`,
-        userFriendlyMessage: msg`Role not found`,
-      });
-    }
+    validationResult.errors.push(
+      ...this.getParentErrors({
+        predicate: updatedPredicate,
+        flatRoleMaps,
+        flatSharingRuleMaps,
+      }),
+    );
 
     return validationResult;
+  }
+
+  private getGroupParentMismatchError() {
+    return {
+      code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+      message: t`Row level permission predicate must belong to the same role or sharing rule as its group`,
+      userFriendlyMessage: msg`Predicate and its group must belong to the same role or sharing rule`,
+    };
+  }
+
+  private getParentErrors({
+    predicate,
+    flatRoleMaps,
+    flatSharingRuleMaps,
+  }: {
+    predicate: Pick<
+      UniversalFlatRowLevelPermissionPredicate,
+      'roleUniversalIdentifier' | 'sharingRuleUniversalIdentifier'
+    >;
+    flatRoleMaps: AllUniversalFlatEntityMaps['flatRoleMaps'] | undefined;
+    flatSharingRuleMaps:
+      | AllUniversalFlatEntityMaps['flatSharingRuleMaps']
+      | undefined;
+  }) {
+    const { roleUniversalIdentifier, sharingRuleUniversalIdentifier } =
+      predicate;
+
+    if (
+      isDefined(roleUniversalIdentifier) ===
+      isDefined(sharingRuleUniversalIdentifier)
+    ) {
+      return [
+        {
+          code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+          message: t`Row level permission predicate must belong to exactly one role or sharing rule`,
+          userFriendlyMessage: msg`Predicate must belong to exactly one role or sharing rule`,
+        },
+      ];
+    }
+
+    if (isDefined(roleUniversalIdentifier)) {
+      const role = flatRoleMaps
+        ? findFlatEntityByUniversalIdentifier({
+            universalIdentifier: roleUniversalIdentifier,
+            flatEntityMaps: flatRoleMaps,
+          })
+        : undefined;
+
+      return isDefined(role)
+        ? []
+        : [
+            {
+              code: RowLevelPermissionPredicateExceptionCode.ROLE_NOT_FOUND,
+              message: t`Role not found`,
+              userFriendlyMessage: msg`Role not found`,
+            },
+          ];
+    }
+
+    const sharingRule =
+      flatSharingRuleMaps && isDefined(sharingRuleUniversalIdentifier)
+        ? findFlatEntityByUniversalIdentifier({
+            universalIdentifier: sharingRuleUniversalIdentifier,
+            flatEntityMaps: flatSharingRuleMaps,
+          })
+        : undefined;
+
+    return isDefined(sharingRule)
+      ? []
+      : [
+          {
+            code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+            message: t`Sharing rule not found`,
+            userFriendlyMessage: msg`Sharing rule not found`,
+          },
+        ];
   }
 
   // A row level permission predicate compiles without a current record, so a

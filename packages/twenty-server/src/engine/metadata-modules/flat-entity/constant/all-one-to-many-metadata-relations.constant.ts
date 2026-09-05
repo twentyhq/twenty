@@ -285,6 +285,20 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
   connectionProvider: {},
   searchFieldMetadata: {},
   timelineActivityType: {},
+  sharingRule: {
+    rowLevelPermissionPredicates: {
+      metadataName: 'rowLevelPermissionPredicate',
+      flatEntityForeignKeyAggregator: 'rowLevelPermissionPredicateIds',
+      universalFlatEntityForeignKeyAggregator:
+        'rowLevelPermissionPredicateUniversalIdentifiers',
+    },
+    rowLevelPermissionPredicateGroups: {
+      metadataName: 'rowLevelPermissionPredicateGroup',
+      flatEntityForeignKeyAggregator: 'rowLevelPermissionPredicateGroupIds',
+      universalFlatEntityForeignKeyAggregator:
+        'rowLevelPermissionPredicateGroupUniversalIdentifiers',
+    },
+  },
 } as const satisfies OneToManyMetadataRelationsProperties;
 
 // satisfies with complex mapped types involving nested generics doesn't always catch missing required keys

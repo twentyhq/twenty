@@ -111,10 +111,12 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     objectMetadata: true,
     role: true,
     rowLevelPermissionPredicateGroup: true,
+    sharingRule: true,
   },
   rowLevelPermissionPredicateGroup: {
     role: true,
     objectMetadata: true,
+    sharingRule: true,
   },
   frontComponent: {},
   webhook: {},
@@ -128,5 +130,9 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     objectMetadata: true,
     fieldMetadata: true,
     frontComponent: true,
+  },
+  sharingRule: {
+    objectMetadata: true,
+    role: true,
   },
 } as const satisfies MetadataRequiredForValidation;

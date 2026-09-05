@@ -261,6 +261,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     rowLevelPermissionPredicateGroup: {
       foreignKey: 'rowLevelPermissionPredicateGroupId',
     },
+    sharingRule: {
+      foreignKey: 'sharingRuleId',
+    },
     application: null,
   },
   rowLevelPermissionPredicateGroup: {
@@ -269,6 +272,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     },
     role: {
       foreignKey: 'roleId',
+    },
+    sharingRule: {
+      foreignKey: 'sharingRuleId',
     },
     parentRowLevelPermissionPredicateGroup: {
       foreignKey: 'parentRowLevelPermissionPredicateGroupId',
@@ -315,6 +321,16 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
   timelineActivityType: {
     workspace: null,
     application: null,
+  },
+  sharingRule: {
+    workspace: null,
+    application: null,
+    objectMetadata: {
+      foreignKey: 'objectMetadataId',
+    },
+    granteeRole: {
+      foreignKey: 'granteeRoleId',
+    },
   },
   searchFieldMetadata: {
     workspace: null,

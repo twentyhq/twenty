@@ -9,6 +9,8 @@ const PREDICATE_UNIVERSAL_IDENTIFIER = '00000000-0000-4000-8000-0000000000a1';
 const FIELD_UNIVERSAL_IDENTIFIER = '00000000-0000-4000-8000-0000000000b1';
 const OBJECT_UNIVERSAL_IDENTIFIER = '00000000-0000-4000-8000-0000000000c1';
 const ROLE_UNIVERSAL_IDENTIFIER = '00000000-0000-4000-8000-0000000000d1';
+const SHARING_RULE_UNIVERSAL_IDENTIFIER =
+  '00000000-0000-4000-8000-0000000000e1';
 const RECORD_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
 const mapsFrom = (
@@ -213,6 +215,29 @@ describe('FlatRowLevelPermissionPredicateValidatorService', () => {
   });
 
   describe('update', () => {
+    it('should refuse moving a predicate from its role to a sharing rule', () => {
+      const result = service.validateFlatRowLevelPermissionPredicateUpdate(
+        buildUpdateArgs({
+          fieldType: FieldMetadataType.TEXT,
+          operand: RowLevelPermissionPredicateOperand.CONTAINS,
+          value: 'visible',
+          flatEntityUpdate: {
+            roleUniversalIdentifier: null,
+            sharingRuleUniversalIdentifier: SHARING_RULE_UNIVERSAL_IDENTIFIER,
+          },
+        }),
+      );
+
+      expect(result.errors).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            message:
+              'Cannot modify predicate to change the role or sharing rule it belongs to',
+          }),
+        ]),
+      );
+    });
+
     it('should validate the retained value when workspace member resolution is cleared', () => {
       const result = service.validateFlatRowLevelPermissionPredicateUpdate(
         buildUpdateArgs({

@@ -97,6 +97,7 @@ export class ApplicationManifestExportService {
       pageLayoutTabs: [],
       commandMenuItems: [],
       timelineActivityTypes: [],
+      sharingRules: [],
     };
 
     return {

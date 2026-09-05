@@ -14,6 +14,7 @@ const FIELD_ID = 'field-1';
 const USER_ROLE_ID = 'user-role-1';
 const APPLICATION_ROLE_ID = 'application-role-1';
 const UNRESTRICTED_ROLE_ID = 'unrestricted-role-1';
+const SHARING_RULE_ID = 'sharing-rule-1';
 
 const buildMaps = (
   entities: ({ id: string; universalIdentifier: string } & Record<
@@ -48,10 +49,16 @@ const flatFieldMetadataMaps = buildMaps([
   },
 ]) as unknown as FlatEntityMaps<FlatFieldMetadata>;
 
-const buildPredicate = (id: string, roleId: string, value: string) => ({
+const buildPredicate = (
+  id: string,
+  roleId: string | null,
+  value: string,
+  sharingRuleId: string | null = null,
+) => ({
   id,
   universalIdentifier: id,
   roleId,
+  sharingRuleId,
   objectMetadataId: OBJECT_ID,
   fieldMetadataId: FIELD_ID,
   operand: 'CONTAINS',
@@ -70,6 +77,12 @@ const flatRowLevelPermissionPredicateMaps = buildMaps([
     'predicate-application',
     APPLICATION_ROLE_ID,
     'visible-to-application',
+  ),
+  buildPredicate(
+    'predicate-rule',
+    null,
+    'visible-through-rule',
+    SHARING_RULE_ID,
   ),
 ]) as unknown as FlatRowLevelPermissionPredicateMaps;
 
@@ -92,6 +105,13 @@ describe('buildRowLevelPermissionRecordFilter', () => {
 
   it('should return null when the role has no predicates', () => {
     expect(build([UNRESTRICTED_ROLE_ID])).toBeNull();
+  });
+
+  it('should ignore a sharing rule predicate, which belongs to no role', () => {
+    expect(build([SHARING_RULE_ID])).toBeNull();
+    expect(build([USER_ROLE_ID])).toEqual({
+      name: { ilike: '%visible-to-user%' },
+    });
   });
 
   it('should return the role filter as-is for a single role', () => {

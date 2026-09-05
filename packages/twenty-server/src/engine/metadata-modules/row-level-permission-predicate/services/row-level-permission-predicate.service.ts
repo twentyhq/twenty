@@ -7,7 +7,6 @@ import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -20,6 +19,10 @@ import { fromCreateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermission
 import { fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-create-row-level-permission-predicate-input-to-flat-row-level-permission-predicate.util';
 import { fromFlatRowLevelPermissionPredicateGroupToDto } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-flat-row-level-permission-predicate-group-to-dto.util';
 import { fromFlatRowLevelPermissionPredicateToDto } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-flat-row-level-permission-predicate-to-dto.util';
+import {
+  isRoleFlatRowLevelPermissionPredicate,
+  isRoleFlatRowLevelPermissionPredicateGroup,
+} from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/is-role-flat-row-level-permission-predicate.util';
 import { fromUpdateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-update-row-level-permission-predicate-group-input-to-flat-row-level-permission-predicate-group.util';
 import { fromUpdateRowLevelPermissionPredicateInputToFlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-update-row-level-permission-predicate-input-to-flat-row-level-permission-predicate.util';
 import {
@@ -35,6 +38,7 @@ import {
 } from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
+import { hasRowLevelPermissionFeature } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/has-row-level-permission-feature.util';
 import { validateRowLevelPermissionRuleOwnershipOrThrow } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/validate-row-level-permission-rule-ownership.util';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -73,7 +77,7 @@ export class RowLevelPermissionPredicateService {
     return Object.values(
       flatRowLevelPermissionPredicateMaps.byUniversalIdentifier,
     )
-      .filter(isDefined)
+      .filter(isRoleFlatRowLevelPermissionPredicate)
       .filter((predicate) => predicate.deletedAt === null)
       .sort(
         (a, b) =>
@@ -106,7 +110,7 @@ export class RowLevelPermissionPredicateService {
     return Object.values(
       flatRowLevelPermissionPredicateMaps.byUniversalIdentifier,
     )
-      .filter(isDefined)
+      .filter(isRoleFlatRowLevelPermissionPredicate)
       .filter(
         (predicate) =>
           predicate.deletedAt === null &&
@@ -145,7 +149,11 @@ export class RowLevelPermissionPredicateService {
       flatEntityMaps: flatRowLevelPermissionPredicateMaps,
     });
 
-    if (!isDefined(flatPredicate) || flatPredicate.deletedAt !== null) {
+    if (
+      !isDefined(flatPredicate) ||
+      flatPredicate.deletedAt !== null ||
+      !isRoleFlatRowLevelPermissionPredicate(flatPredicate)
+    ) {
       return null;
     }
 
@@ -287,7 +295,7 @@ export class RowLevelPermissionPredicateService {
     const resultPredicates = Object.values(
       updatedPredicateMaps.byUniversalIdentifier,
     )
-      .filter(isDefined)
+      .filter(isRoleFlatRowLevelPermissionPredicate)
       .filter(
         (predicate) =>
           predicate.deletedAt === null &&
@@ -297,7 +305,7 @@ export class RowLevelPermissionPredicateService {
       .map(fromFlatRowLevelPermissionPredicateToDto);
 
     const resultGroups = Object.values(updatedGroupMaps.byUniversalIdentifier)
-      .filter(isDefined)
+      .filter(isRoleFlatRowLevelPermissionPredicateGroup)
       .filter(
         (group) =>
           group.deletedAt === null &&
@@ -349,6 +357,13 @@ export class RowLevelPermissionPredicateService {
         foreignKeyValues: { roleId },
         flatEntityMaps: { flatRoleMaps },
       });
+
+    if (!isDefined(roleUniversalIdentifier)) {
+      throw new RowLevelPermissionPredicateException(
+        'Role not found',
+        RowLevelPermissionPredicateExceptionCode.ROLE_NOT_FOUND,
+      );
+    }
 
     for (const inputGroup of inputGroups) {
       const groupId = inputGroup.id ?? v4();
@@ -449,6 +464,13 @@ export class RowLevelPermissionPredicateService {
         foreignKeyValues: { roleId, objectMetadataId },
         flatEntityMaps: { flatRoleMaps, flatObjectMetadataMaps },
       });
+
+    if (!isDefined(roleUniversalIdentifier)) {
+      throw new RowLevelPermissionPredicateException(
+        'Role not found',
+        RowLevelPermissionPredicateExceptionCode.ROLE_NOT_FOUND,
+      );
+    }
 
     for (const inputPredicate of inputPredicates) {
       const predicateId = inputPredicate.id ?? v4();
@@ -570,15 +592,11 @@ export class RowLevelPermissionPredicateService {
   private async hasRowLevelPermissionFeature(
     workspaceId: string,
   ): Promise<boolean> {
-    const hasValidEnterprisePlan = this.enterprisePlanService.isValid();
-
-    const isRowLevelPermissionEnabled =
-      await this.billingService.hasEntitlement(
-        workspaceId,
-        BillingEntitlementKey.RLS,
-      );
-
-    return hasValidEnterprisePlan && isRowLevelPermissionEnabled;
+    return hasRowLevelPermissionFeature({
+      workspaceId,
+      billingService: this.billingService,
+      enterprisePlanService: this.enterprisePlanService,
+    });
   }
 
   private async hasRowLevelPermissionFeatureOrThrow(workspaceId: string) {

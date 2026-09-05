@@ -23,6 +23,7 @@ import { type ObjectConfig } from '@/sdk/define/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
+import { type SharingRuleConfig } from '@/sdk/define/sharing-rules/sharing-rule-config';
 import { type TimelineActivityTypeConfig } from '@/sdk/define/timeline-activity-types/timeline-activity-type-config';
 import { type ViewConfig } from '@/sdk/define/views/view-config';
 import { readFile } from 'node:fs/promises';
@@ -51,6 +52,7 @@ import {
   type RoleManifest,
   type SkillManifest,
   type StandaloneViewFieldManifest,
+  type SharingRuleManifest,
   type TimelineActivityTypeManifest,
   type ViewManifest,
 } from 'twenty-shared/application';
@@ -120,6 +122,7 @@ export const buildManifest = async (
   const pageLayoutTabs: PageLayoutTabManifest[] = [];
   const commandMenuItems: CommandMenuItemManifest[] = [];
   const timelineActivityTypes: TimelineActivityTypeManifest[] = [];
+  const sharingRules: SharingRuleManifest[] = [];
   const postInstallLogicFunctions: PostInstallLogicFunctionApplicationManifest[] =
     [];
   const preInstallLogicFunctions: PreInstallLogicFunctionApplicationManifest[] =
@@ -147,6 +150,7 @@ export const buildManifest = async (
   const pageLayoutTabsFilePaths: string[] = [];
   const commandMenuItemsFilePaths: string[] = [];
   const timelineActivityTypesFilePaths: string[] = [];
+  const sharingRulesFilePaths: string[] = [];
 
   for (const filePath of filePaths) {
     const fileContent = await readFile(filePath, 'utf-8');
@@ -509,6 +513,18 @@ export const buildManifest = async (
         timelineActivityTypesFilePaths.push(relativePath);
         break;
       }
+      case ManifestEntityKey.SharingRules: {
+        const extract = await extractManifestFromFile<SharingRuleConfig>({
+          appPath,
+          filePath,
+        });
+
+        sharingRules.push(extract.config);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        sharingRulesFilePaths.push(relativePath);
+        break;
+      }
       case ManifestEntityKey.PublicAssets: {
         // Public assets are handled below
         break;
@@ -688,6 +704,7 @@ export const buildManifest = async (
         pageLayoutTabs: pageLayoutTabs.sort(byId),
         commandMenuItems: commandMenuItems.sort(byId),
         timelineActivityTypes: timelineActivityTypes.sort(byId),
+        sharingRules: sharingRules.sort(byId),
       };
 
   const entityFilePaths: EntityFilePaths = {
@@ -710,6 +727,7 @@ export const buildManifest = async (
     pageLayoutTabs: pageLayoutTabsFilePaths,
     commandMenuItems: commandMenuItemsFilePaths,
     timelineActivityTypes: timelineActivityTypesFilePaths,
+    sharingRules: sharingRulesFilePaths,
   };
 
   return { manifest, filePaths: entityFilePaths, errors, warnings };

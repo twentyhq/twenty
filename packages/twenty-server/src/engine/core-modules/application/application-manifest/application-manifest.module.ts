@@ -11,6 +11,8 @@ import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationTranslationModule } from 'src/engine/core-modules/application/application-translation/application-translation.module';
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { ApplicationVariableEntityModule } from 'src/engine/core-modules/application/application-variable/application-variable.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
@@ -29,6 +31,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ApplicationRegistrationModule,
     ApplicationTranslationModule,
     ApplicationVariableEntityModule,
+    BillingModule,
+    EnterpriseModule,
     FeatureFlagModule,
     FileStorageModule,
     LogicFunctionExecutorModule,

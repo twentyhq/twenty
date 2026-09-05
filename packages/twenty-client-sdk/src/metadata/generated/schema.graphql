@@ -3462,6 +3462,7 @@ enum AllMetadataName {
   connectionProvider
   searchFieldMetadata
   timelineActivityType
+  sharingRule
 }
 
 type MinimalObjectMetadata {

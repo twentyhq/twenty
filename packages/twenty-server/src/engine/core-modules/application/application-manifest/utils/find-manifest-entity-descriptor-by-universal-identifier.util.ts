@@ -92,6 +92,11 @@ const MANIFEST_ENTITY_REGISTRY: Record<
         (timelineActivityType) => timelineActivityType.label,
       ),
   },
+  sharingRule: {
+    entityKind: 'sharing rule',
+    getCandidates: (manifest) =>
+      toCandidates(manifest.sharingRules, (sharingRule) => sharingRule.name),
+  },
   view: {
     entityKind: 'view',
     getCandidates: (manifest) =>
@@ -225,15 +230,20 @@ const MANIFEST_ENTITY_REGISTRY: Record<
   rowLevelPermissionPredicate: {
     entityKind: 'row-level permission predicate',
     getCandidates: (manifest) =>
-      (manifest.roles ?? []).flatMap((role) =>
-        toCandidates(role.rowLevelPermissionPredicates, () => undefined),
+      [...(manifest.roles ?? []), ...(manifest.sharingRules ?? [])].flatMap(
+        (parent) =>
+          toCandidates(parent.rowLevelPermissionPredicates, () => undefined),
       ),
   },
   rowLevelPermissionPredicateGroup: {
     entityKind: 'row-level permission predicate group',
     getCandidates: (manifest) =>
-      (manifest.roles ?? []).flatMap((role) =>
-        toCandidates(role.rowLevelPermissionPredicateGroups, () => undefined),
+      [...(manifest.roles ?? []), ...(manifest.sharingRules ?? [])].flatMap(
+        (parent) =>
+          toCandidates(
+            parent.rowLevelPermissionPredicateGroups,
+            () => undefined,
+          ),
       ),
   },
   roleTarget: {

@@ -33,6 +33,7 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 import { TimelineActivityTypeEntity } from 'src/engine/metadata-modules/timeline-activity-type/entities/timeline-activity-type.entity';
+import { SharingRuleEntity } from 'src/engine/metadata-modules/sharing-rule/entities/sharing-rule.entity';
 
 export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   viewField: ViewFieldEntity,
@@ -67,4 +68,5 @@ export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   connectionProvider: ConnectionProviderEntity,
   searchFieldMetadata: SearchFieldMetadataEntity,
   timelineActivityType: TimelineActivityTypeEntity,
+  sharingRule: SharingRuleEntity,
 } as const satisfies Record<AllMetadataName, EntityTarget<ObjectLiteral>>;
