@@ -9,19 +9,25 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/service
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FILE_CONTENT_SNIFF_BYTE_COUNT } from 'src/engine/core-modules/file/file-upload/constants/file-content-sniff.constant';
+import { MAX_SANITIZABLE_SVG_BYTES } from 'src/engine/core-modules/file/file-upload/constants/max-sanitizable-svg-size.constant';
 import {
   FileUploadException,
   FileUploadExceptionCode,
 } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 import { type BatchFileResult } from 'src/engine/core-modules/file/file-upload/types/batch-file-result.type';
+import { buildSvgTooLargeException } from 'src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util';
 import { toBatchErrorMessage } from 'src/engine/core-modules/file/file-upload/utils/to-batch-error-message.util';
-import { fileFolderConfigs } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import {
+  ANY_MIME_TYPE,
+  fileFolderConfigs,
+} from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 export type BatchCompleteUploadRequest = {
@@ -173,7 +179,10 @@ export class FileUploadCompletionService {
   ): void {
     const { allowedMimeTypes } = fileFolderConfigs[fileFolder];
 
-    if (!allowedMimeTypes || allowedMimeTypes.includes(mimeType)) {
+    if (
+      allowedMimeTypes === ANY_MIME_TYPE ||
+      allowedMimeTypes.includes(mimeType)
+    ) {
       return;
     }
 
@@ -199,9 +208,32 @@ export class FileUploadCompletionService {
       return size;
     }
 
+    if (size > MAX_SANITIZABLE_SVG_BYTES) {
+      throw buildSvgTooLargeException(
+        `storage reports ${size} bytes, above the ${MAX_SANITIZABLE_SVG_BYTES} byte limit`,
+      );
+    }
+
     const stream = await this.fileStorageService.readFile(storageLocation);
+
+    let file: Buffer;
+
+    try {
+      file = await streamToBuffer(stream, MAX_SANITIZABLE_SVG_BYTES);
+    } catch (error) {
+      if (error instanceof StreamSizeExceededError) {
+        // Deliberately does not quote `size`: storage understated it, so
+        // repeating it here would contradict the failure being reported.
+        throw buildSvgTooLargeException(
+          `content exceeds the ${MAX_SANITIZABLE_SVG_BYTES} byte limit`,
+        );
+      }
+
+      throw error;
+    }
+
     const sanitizedFile = sanitizeFile({
-      file: await streamToBuffer(stream),
+      file,
       ext: 'svg',
       mimeType,
     });

@@ -10820,6 +10820,11 @@ msgstr "Ez az aldomain már foglalt."
 msgid "This suppressed address no longer exists."
 msgstr "Ez a tiltólistás cím már nem létezik."
 
+#. js-lingui-id: qm7uMm
+#: src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util.ts
+msgid "This SVG is too large to be processed."
+msgstr "Ez az SVG túl nagy a feldolgozáshoz."
+
 #. js-lingui-id: 0GMgIa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"

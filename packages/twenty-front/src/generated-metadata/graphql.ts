@@ -2718,6 +2718,14 @@ export enum MetadataEventAction {
   UPDATED = 'UPDATED'
 }
 
+export enum MetadataReadability {
+  APPLICATION = 'APPLICATION',
+  INHERITED = 'INHERITED',
+  OPEN = 'OPEN',
+  PRIVATE = 'PRIVATE',
+  SYSTEM = 'SYSTEM'
+}
+
 export type MetadataTranslation = {
   __typename?: 'MetadataTranslation';
   canonicalValue: Scalars['String']['output'];
@@ -4346,6 +4354,7 @@ export type Object = {
   namePlural: Scalars['String']['output'];
   nameSingular: Scalars['String']['output'];
   openRecordIn: ObjectOpenRecordIn;
+  readability: MetadataReadability;
   searchFieldMetadataList: Array<SearchField>;
   shortcut?: Maybe<Scalars['String']['output']>;
   universalIdentifier: Scalars['String']['output'];
