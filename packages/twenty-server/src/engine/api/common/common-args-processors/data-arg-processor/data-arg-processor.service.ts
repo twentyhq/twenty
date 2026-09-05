@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { isNull, isObject, isUndefined } from '@sniptt/guards';
+import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
 import {
   FieldMetadataSettingsMapping,
   FieldMetadataType,
@@ -255,6 +256,15 @@ export class DataArgProcessorService {
         }
 
         if (isDefined(joinColumnName) && !isRelationNestedOperation(value)) {
+          // A null relation-name value (as opposed to a null on the join
+          // column, which validateUUIDFieldOrThrow already accepts) means
+          // "clear this relation" - normalize it to the disconnect shape
+          // extractNestedRelationFieldsByEntityIndex already knows how to
+          // handle, instead of rejecting it.
+          if (isNull(value)) {
+            return { [RELATION_NESTED_QUERY_KEYWORDS.DISCONNECT]: true };
+          }
+
           throw new CommonQueryRunnerException(
             `Relation "${key}" requires create, connect, or disconnect operation`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
