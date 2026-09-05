@@ -47,6 +47,7 @@ export const SettingsBillingSubscriptionInfo = ({
   currentWorkspace,
   currentBillingSubscription,
   onManageBilling,
+  isManageBillingDisabled,
   onUpdatePayment,
   isUpdatePaymentDisabled,
 }: {
@@ -55,6 +56,7 @@ export const SettingsBillingSubscriptionInfo = ({
     CurrentWorkspace['currentBillingSubscription']
   >;
   onManageBilling: () => void;
+  isManageBillingDisabled: boolean;
   onUpdatePayment: () => void;
   isUpdatePaymentDisabled: boolean;
 }) => {
@@ -495,6 +497,7 @@ export const SettingsBillingSubscriptionInfo = ({
               isEndTrialPeriodLoading || isAnyActionLoading
             }
             isSubscriptionActionDisabled={isSubscriptionActionDisabled}
+            isManageBillingDisabled={isManageBillingDisabled}
             isUpdatePaymentDisabled={isUpdatePaymentDisabled}
             onCancelIntervalSwitch={() =>
               openModal(BILLING_MODAL_IDS.cancelSwitchBillingInterval)

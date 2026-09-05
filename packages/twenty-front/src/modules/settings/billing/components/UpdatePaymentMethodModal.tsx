@@ -1,4 +1,5 @@
 import { AddPaymentMethodForm } from '@/settings/billing/components/AddPaymentMethodForm';
+import { useMarkBillingPaymentMethodAsAdded } from '@/settings/billing/hooks/useMarkBillingPaymentMethodAsAdded';
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { styled } from '@linaria/react';
@@ -29,6 +30,13 @@ export const UpdatePaymentMethodModal = ({
 }: UpdatePaymentMethodModalProps) => {
   const { t } = useLingui();
   const { closeModal } = useModal();
+  const { markBillingPaymentMethodAsAdded } =
+    useMarkBillingPaymentMethodAsAdded();
+
+  const handlePaymentMethodAdded = async () => {
+    closeModal(modalInstanceId);
+    markBillingPaymentMethodAsAdded();
+  };
 
   return (
     <ModalStatefulWrapper
@@ -57,7 +65,7 @@ export const UpdatePaymentMethodModal = ({
         </Section>
       </StyledSectionContainer>
       <AddPaymentMethodForm
-        onPaymentMethodAdded={async () => closeModal(modalInstanceId)}
+        onPaymentMethodAdded={handlePaymentMethodAdded}
         shouldStartSubscriptionAfterPaymentMethod={false}
       />
       <StyledCancelButtonContainer>

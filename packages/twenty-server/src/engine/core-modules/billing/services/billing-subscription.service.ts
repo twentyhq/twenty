@@ -235,16 +235,12 @@ export class BillingSubscriptionService {
       { default_payment_method: stripePaymentMethodId },
     );
 
-    if (
-      [SubscriptionStatus.PastDue, SubscriptionStatus.Unpaid].includes(
-        billingSubscription.status,
-      )
-    ) {
-      await this.stripeSubscriptionService.retryLatestInvoice(
-        billingSubscription.stripeSubscriptionId,
-        stripePaymentMethodId,
-      );
-    }
+    // The persisted status can still be Active when this event lands before the
+    // subscription update one, so Stripe's open invoices are the source of truth
+    await this.stripeSubscriptionService.payOpenInvoices(
+      billingSubscription.stripeSubscriptionId,
+      stripePaymentMethodId,
+    );
 
     return {
       handleUnpaidInvoiceStripeSubscriptionId:

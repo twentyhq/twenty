@@ -9,6 +9,7 @@ import { useBillingPortalSession } from '@/settings/billing/hooks/useBillingPort
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
@@ -18,7 +19,10 @@ import { IconCircleX, IconCreditCard } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { SubscriptionStatus } from '~/generated-metadata/graphql';
+import {
+  PermissionFlagType,
+  SubscriptionStatus,
+} from '~/generated-metadata/graphql';
 
 const SETTINGS_BILLING_UPDATE_PAYMENT_MODAL_ID =
   'settings-billing-update-payment-modal';
@@ -36,6 +40,9 @@ export const SettingsBillingContent = () => {
   const billingHasPaymentMethod = useAtomStateValue(
     billingHasPaymentMethodSelector,
   );
+
+  const { [PermissionFlagType.BILLING]: hasPermissionToManageBilling } =
+    usePermissionFlagMap();
 
   const { isGetResourceCreditUsageQueryLoaded: isUsageQueryLoaded } =
     useGetResourceCreditUsage();
@@ -56,8 +63,11 @@ export const SettingsBillingContent = () => {
   const { isBillingPortalSessionDisabled, openBillingPortal } =
     useBillingPortalSession(getSettingsPath(SettingsPath.Billing));
 
+  const shouldAddPaymentMethodInProduct =
+    hasPermissionToManageBilling && billingHasPaymentMethod === false;
+
   const openPaymentMethodFlow = () => {
-    if (billingHasPaymentMethod === false) {
+    if (shouldAddPaymentMethodInProduct) {
       openModal(SETTINGS_BILLING_UPDATE_PAYMENT_MODAL_ID);
       return;
     }
@@ -66,7 +76,7 @@ export const SettingsBillingContent = () => {
   };
 
   const isPaymentMethodFlowDisabled =
-    billingHasPaymentMethod !== false && isBillingPortalSessionDisabled;
+    !shouldAddPaymentMethodInProduct && isBillingPortalSessionDisabled;
 
   return (
     <SettingsPageContainer>
@@ -82,6 +92,7 @@ export const SettingsBillingContent = () => {
             currentWorkspace={currentWorkspace}
             currentBillingSubscription={currentBillingSubscription}
             onManageBilling={openBillingPortal}
+            isManageBillingDisabled={isBillingPortalSessionDisabled}
             onUpdatePayment={openPaymentMethodFlow}
             isUpdatePaymentDisabled={isPaymentMethodFlowDisabled}
           />
@@ -93,6 +104,7 @@ export const SettingsBillingContent = () => {
           <SettingsBillingCreditsSection
             currentBillingSubscription={currentBillingSubscription}
             onManageBilling={openBillingPortal}
+            isManageBillingDisabled={isBillingPortalSessionDisabled}
             onUpdatePayment={openPaymentMethodFlow}
             isUpdatePaymentDisabled={isPaymentMethodFlowDisabled}
           />
@@ -126,7 +138,7 @@ export const SettingsBillingContent = () => {
           />
         </Section>
       )}
-      {billingHasPaymentMethod === false && (
+      {shouldAddPaymentMethodInProduct && (
         <UpdatePaymentMethodModal
           modalInstanceId={SETTINGS_BILLING_UPDATE_PAYMENT_MODAL_ID}
         />

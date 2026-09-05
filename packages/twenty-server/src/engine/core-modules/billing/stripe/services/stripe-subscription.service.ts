@@ -37,28 +37,31 @@ export class StripeSubscriptionService {
     return subscription.data[0]?.customer ?? undefined;
   }
 
-  async retryLatestInvoice(
+  async payOpenInvoices(
     stripeSubscriptionId: string,
     stripePaymentMethodId: string,
   ) {
-    const subscription = await this.stripe.subscriptions.retrieve(
-      stripeSubscriptionId,
-      { expand: ['latest_invoice'] },
-    );
-    const latestInvoice = subscription.latest_invoice;
-
-    if (
-      !(
-        latestInvoice &&
-        typeof latestInvoice !== 'string' &&
-        latestInvoice.status === 'open'
-      )
-    ) {
-      return;
-    }
-    await this.stripe.invoices.pay(latestInvoice.id, {
-      payment_method: stripePaymentMethodId,
+    const openInvoices = await this.stripe.invoices.list({
+      subscription: stripeSubscriptionId,
+      status: 'open',
+      collection_method: 'charge_automatically',
     });
+
+    // Stripe lists the most recent invoices first, settle the oldest overdue period first
+    for (const invoice of [...openInvoices.data].reverse()) {
+      try {
+        await this.stripe.invoices.pay(invoice.id, {
+          payment_method: stripePaymentMethodId,
+        });
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'unknown error';
+
+        this.logger.error(
+          `Failed to pay invoice ${invoice.id} of subscription ${stripeSubscriptionId}: ${errorMessage}`,
+        );
+      }
+    }
   }
 
   async updateSubscription(
