@@ -6,7 +6,10 @@ import { findPageLayoutTabs } from 'test/integration/metadata/suites/page-layout
 import { findPageLayoutWidgets } from 'test/integration/metadata/suites/page-layout-widget/utils/find-page-layout-widgets.util';
 import { type Manifest } from 'twenty-shared/application';
 import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
-import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutWidgetVerticalListHeightBehavior,
+} from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
 const TEST_APP_ID = uuidv4();
@@ -35,6 +38,13 @@ const PAGE_LAYOUT_WIDGET_GQL_FIELDS = `
   pageLayoutTabId
   title
   type
+  position {
+    ... on PageLayoutWidgetVerticalListPosition {
+      layoutMode
+      index
+      heightBehavior
+    }
+  }
   configuration {
     ... on TimelineConfiguration {
       configurationType
@@ -174,13 +184,13 @@ describe('Manifest update - page layout tabs (standalone)', () => {
     });
   }, 60000);
 
-  it('should migrate a standalone tab from canvas to vertical list without replacing its widget', async () => {
-    const buildPageLayoutTab = (layoutMode: PageLayoutTabLayoutMode) => ({
+  it('should normalize a legacy Canvas tab without replacing its widget on subsequent sync', async () => {
+    const buildLegacyCanvasPageLayoutTab = () => ({
       universalIdentifier: TEST_TAB_ID,
       pageLayoutUniversalIdentifier: STANDARD_PERSON_PAGE_LAYOUT_UNIVERSAL_ID,
       title: 'Timeline',
       position: 1000,
-      layoutMode,
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
       widgets: [
         {
           universalIdentifier: TEST_WIDGET_ID,
@@ -195,7 +205,7 @@ describe('Manifest update - page layout tabs (standalone)', () => {
 
     await syncApplication({
       manifest: buildManifest({
-        pageLayoutTabs: [buildPageLayoutTab(PageLayoutTabLayoutMode.CANVAS)],
+        pageLayoutTabs: [buildLegacyCanvasPageLayoutTab()],
       }),
       expectToFail: false,
     });
@@ -208,7 +218,7 @@ describe('Manifest update - page layout tabs (standalone)', () => {
 
     expect(tabAfterFirstSync).toMatchObject({
       universalIdentifier: TEST_TAB_ID,
-      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     });
 
     const { data: widgetsAfterFirstSyncData } = await findPageLayoutWidgets({
@@ -228,6 +238,11 @@ describe('Manifest update - page layout tabs (standalone)', () => {
       pageLayoutTabId: tabAfterFirstSync.id,
       title: 'Timeline',
       type: 'TIMELINE',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        index: 0,
+        heightBehavior: PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+      },
       configuration: {
         configurationType: 'TIMELINE',
       },
@@ -235,9 +250,7 @@ describe('Manifest update - page layout tabs (standalone)', () => {
 
     await syncApplication({
       manifest: buildManifest({
-        pageLayoutTabs: [
-          buildPageLayoutTab(PageLayoutTabLayoutMode.VERTICAL_LIST),
-        ],
+        pageLayoutTabs: [buildLegacyCanvasPageLayoutTab()],
       }),
       expectToFail: false,
     });
@@ -268,6 +281,12 @@ describe('Manifest update - page layout tabs (standalone)', () => {
         pageLayoutTabId: tabAfterSecondSync.id,
         title: 'Timeline',
         type: 'TIMELINE',
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+          index: 0,
+          heightBehavior:
+            PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+        },
         configuration: {
           configurationType: 'TIMELINE',
         },

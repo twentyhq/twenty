@@ -43,12 +43,13 @@ export default definePageLayout({
       title: 'Preview',
       position: 50,
       icon: 'IconEye',
-      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       widgets: [
         {
           universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
           title: 'Document preview',
           type: 'FRONT_COMPONENT',
+          heightBehavior: 'TAB_VIEWPORT',
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:

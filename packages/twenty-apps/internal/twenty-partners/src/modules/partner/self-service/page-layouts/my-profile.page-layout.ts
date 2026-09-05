@@ -17,13 +17,13 @@ export default definePageLayout({
       title: 'My Profile',
       position: 0,
       icon: 'IconUser',
-      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       widgets: [
         {
           universalIdentifier: MY_PROFILE_PAGE_WIDGET_ID,
           title: 'My Profile',
           type: 'FRONT_COMPONENT',
-          position: { layoutMode: PageLayoutTabLayoutMode.CANVAS },
+          heightBehavior: 'TAB_VIEWPORT',
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier: MY_PROFILE_FRONT_COMPONENT_ID,
