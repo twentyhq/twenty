@@ -84,6 +84,33 @@ describe('buildRecordShareCondition', () => {
     );
   });
 
+  it('should compare the object metadata id to a column when given an expression', () => {
+    const { sql, parameters } = buildRecordShareCondition({
+      tableAlias: 'timelineActivity',
+      recordShareTableExpression: '"workspace_abc"."recordShare"',
+      objectMetadataIdExpression: '"timelineActivity"."linkedObjectMetadataId"',
+      objectMetadataIds: ['note-object-metadata-id'],
+      principalIds: PRINCIPAL_IDS,
+      accessLevels: ACCESS_LEVELS,
+      recordIdExpression: '"timelineActivity"."linkedRecordId"',
+    });
+
+    expect(sql).toContain(
+      '"timelineActivity_recordShare"."recordId" = "timelineActivity"."linkedRecordId" AND "timelineActivity_recordShare"."objectMetadataId" = "timelineActivity"."linkedObjectMetadataId" AND "timelineActivity_recordShare"."objectMetadataId" IN (:...recordShareObjectMetadataIds_',
+    );
+    expect(
+      Object.keys(parameters).filter((name) =>
+        name.startsWith('recordShareObjectMetadataId_'),
+      ),
+    ).toEqual([]);
+    expect(compileNamedParameters(sql, parameters).values).toEqual([
+      'note-object-metadata-id',
+      PRINCIPAL_IDS,
+      RecordShareAccessLevel.READ_WRITE,
+      RecordShareAccessLevel.FULL,
+    ]);
+  });
+
   it('should escape the alias it derives', () => {
     const { sql } = buildRecordShareCondition({
       tableAlias: 'per"son',
