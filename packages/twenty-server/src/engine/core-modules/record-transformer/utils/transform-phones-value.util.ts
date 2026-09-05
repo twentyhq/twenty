@@ -9,6 +9,7 @@ import { type AdditionalPhoneMetadata } from 'twenty-shared/types';
 import {
   getCountryCodesForCallingCode,
   isDefined,
+  isPhoneWithNonEmptyNumber,
   isValidCountryCode,
   parseJson,
   removeUndefinedFields,
@@ -210,9 +211,9 @@ export const transformPhonesValue = ({
       ? additionalPhones
       : [];
 
-  const validatedAdditionalPhones = parsedAdditionalPhones.map(
-    validateAndInferPhoneInput,
-  );
+  const validatedAdditionalPhones = parsedAdditionalPhones
+    .filter(isPhoneWithNonEmptyNumber)
+    .map(validateAndInferPhoneInput);
 
   return removeUndefinedFields({
     additionalPhones: isEmpty(validatedAdditionalPhones)

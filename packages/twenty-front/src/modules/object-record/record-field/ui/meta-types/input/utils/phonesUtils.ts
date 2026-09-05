@@ -1,5 +1,5 @@
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPhoneWithNonEmptyNumber } from 'twenty-shared/utils';
 
 export const createPhonesFromFieldValue = (fieldValue: FieldPhonesValue) => {
   return !isDefined(fieldValue)
@@ -14,6 +14,8 @@ export const createPhonesFromFieldValue = (fieldValue: FieldPhonesValue) => {
               countryCode: fieldValue.primaryPhoneCountryCode,
             }
           : null,
-        ...(fieldValue.additionalPhones ?? []),
+        ...(Array.isArray(fieldValue.additionalPhones)
+          ? fieldValue.additionalPhones.filter(isPhoneWithNonEmptyNumber)
+          : []),
       ].filter(isDefined);
 };

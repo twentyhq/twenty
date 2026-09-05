@@ -1,4 +1,7 @@
 import request from 'supertest';
+import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
+import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
 import {
   destroyWorkflowRun,
@@ -8,6 +11,13 @@ import {
 
 const client = request(`http://localhost:${APP_PORT}`);
 
+const TEST_COMPANY_PICK_RECORD_1_ID = '20202020-dddd-4000-8000-000000000001';
+const TEST_COMPANY_PICK_RECORD_2_ID = '20202020-dddd-4000-8000-000000000002';
+const ALL_TEST_COMPANY_IDS = [
+  TEST_COMPANY_PICK_RECORD_1_ID,
+  TEST_COMPANY_PICK_RECORD_2_ID,
+];
+
 describe('Pick Record Workflow (e2e)', () => {
   let createdWorkflowId: string | null = null;
   let createdWorkflowVersionId: string | null = null;
@@ -15,6 +25,27 @@ describe('Pick Record Workflow (e2e)', () => {
   let candidateRecordIds: string[] = [];
 
   beforeAll(async () => {
+    const createCompaniesResponse = await makeGraphqlAPIRequest(
+      createManyOperationFactory({
+        objectMetadataSingularName: 'company',
+        objectMetadataPluralName: 'companies',
+        gqlFields: 'id',
+        data: [
+          {
+            id: TEST_COMPANY_PICK_RECORD_1_ID,
+            name: 'PickRecordWorkflowTest1',
+          },
+          {
+            id: TEST_COMPANY_PICK_RECORD_2_ID,
+            name: 'PickRecordWorkflowTest2',
+          },
+        ],
+        upsert: true,
+      }),
+    );
+
+    expect(createCompaniesResponse.body.errors).toBeUndefined();
+
     const createWorkflowResponse = await client
       .post('/graphql')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
@@ -201,6 +232,14 @@ describe('Pick Record Workflow (e2e)', () => {
           variables: { id: createdWorkflowId },
         });
     }
+    await makeGraphqlAPIRequest(
+      deleteManyOperationFactory({
+        objectMetadataSingularName: 'company',
+        objectMetadataPluralName: 'companies',
+        gqlFields: 'id',
+        filter: { id: { in: ALL_TEST_COMPANY_IDS } },
+      }),
+    );
   });
 
   const pickRecordOnce = async (): Promise<{ id: string }> => {
