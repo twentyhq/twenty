@@ -474,6 +474,14 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: 'e5497dc2-1d72-418c-a389-a0645ca0195a',
       },
     },
+    views: {
+      allMessageListMembers: buildStandardObjectIndexView({
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageListMember,
+        fields: STANDARD_OBJECT_FIELDS.messageListMember,
+        viewFieldNames: ['id', 'person', 'list', 'createdAt'],
+      }),
+    },
   },
   messageChannelMessageAssociation: {
     universalIdentifier:
