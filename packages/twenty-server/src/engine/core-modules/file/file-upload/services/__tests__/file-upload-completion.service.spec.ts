@@ -284,7 +284,11 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
       checksum: '"etag-a"',
     });
     fileStorageService.readFilePrefix.mockResolvedValue(pngContent);
-    fileRepository.update.mockResolvedValue({ affected: 0 } as never);
+    fileRepository.update.mockResolvedValue({
+      affected: 0,
+      raw: [],
+      generatedMaps: [],
+    });
 
     await expect(
       buildService().completeUploadedFile({
