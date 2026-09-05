@@ -2,6 +2,7 @@ import { type OpenAPIV3_1 } from 'openapi-types';
 import {
   type FieldMetadataDefaultValue,
   FieldMetadataType,
+  PageLayoutWidgetVerticalListHeightBehavior,
 } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
@@ -1251,6 +1252,13 @@ export const computeMetadataSchemaComponents = (
                 properties: {
                   layoutMode: { type: 'string', enum: ['VERTICAL_LIST'] },
                   index: { type: 'integer', minimum: 0 },
+                  heightBehavior: {
+                    type: 'string',
+                    enum: [
+                      PageLayoutWidgetVerticalListHeightBehavior.FIT_CONTENT,
+                      PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+                    ],
+                  },
                 },
                 required: ['layoutMode', 'index'],
               },

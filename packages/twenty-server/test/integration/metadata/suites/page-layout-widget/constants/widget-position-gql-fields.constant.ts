@@ -9,6 +9,7 @@ export const WIDGET_POSITION_GQL_FIELDS = `
   ... on PageLayoutWidgetVerticalListPosition {
     layoutMode
     index
+    heightBehavior
   }
   ... on PageLayoutWidgetCanvasPosition {
     layoutMode

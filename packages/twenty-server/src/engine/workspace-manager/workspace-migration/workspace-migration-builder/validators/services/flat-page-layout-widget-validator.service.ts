@@ -5,15 +5,24 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutWidgetPosition,
+  PageLayoutWidgetVerticalListHeightBehavior,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  getPageLayoutWidgetHeightBehavior,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { FlatPageLayoutWidgetTypeValidatorService } from 'src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service';
 import { PageLayoutTabExceptionCode } from 'src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception';
-import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
+import {
+  generatePageLayoutWidgetExceptionMessage,
+  PageLayoutWidgetExceptionCode,
+  PageLayoutWidgetExceptionMessageKey,
+} from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { validatePageLayoutWidgetGridPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util';
 import { validatePageLayoutWidgetVerticalListPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util';
+import { resolveEffectiveEntity } from 'src/engine/metadata-modules/utils/resolve-effective-entity.util';
 import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
 import {
@@ -21,8 +30,16 @@ import {
   FlatEntityValidationError,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
+import { type FlatEntityCreationValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-creation-validation-args.type';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+
+type EffectivePageLayoutWidget = Omit<
+  UniversalFlatPageLayoutWidget,
+  'pageLayoutTabUniversalIdentifier'
+> & {
+  pageLayoutTabUniversalIdentifier: string | null;
+};
 
 @Injectable()
 export class FlatPageLayoutWidgetValidatorService {
@@ -33,6 +50,7 @@ export class FlatPageLayoutWidgetValidatorService {
   public async validateFlatPageLayoutWidgetUpdate({
     universalIdentifier,
     flatEntityUpdate,
+    finalFlatEntityMaps,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
     additionalCacheDataMaps: { featureFlagsMap },
     workspaceId,
@@ -69,24 +87,32 @@ export class FlatPageLayoutWidgetValidatorService {
       ...flatEntityUpdate,
     };
 
+    const effectiveWidget = this.getEffectiveWidget(
+      updatedFlatPageLayoutWidget,
+    );
     const effectivePageLayoutTabUniversalIdentifier =
-      this.getEffectivePageLayoutTabUniversalIdentifier(
-        updatedFlatPageLayoutWidget,
-      );
+      effectiveWidget.pageLayoutTabUniversalIdentifier;
 
     validationResult.flatEntityMinimalInformation = {
       ...validationResult.flatEntityMinimalInformation,
       pageLayoutTabUniversalIdentifier:
-        effectivePageLayoutTabUniversalIdentifier,
+        effectivePageLayoutTabUniversalIdentifier ?? undefined,
     };
 
-    const referencedPageLayoutTab = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: effectivePageLayoutTabUniversalIdentifier,
-      flatEntityMaps:
-        optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutTabMaps,
-    });
+    const referencedPageLayoutTab = isDefined(
+      effectivePageLayoutTabUniversalIdentifier,
+    )
+      ? findFlatEntityByUniversalIdentifier({
+          universalIdentifier: effectivePageLayoutTabUniversalIdentifier,
+          flatEntityMaps:
+            optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutTabMaps,
+        })
+      : undefined;
 
-    if (!isDefined(referencedPageLayoutTab)) {
+    if (
+      isDefined(effectivePageLayoutTabUniversalIdentifier) &&
+      !isDefined(referencedPageLayoutTab)
+    ) {
       validationResult.errors.push({
         code: PageLayoutTabExceptionCode.PAGE_LAYOUT_TAB_NOT_FOUND,
         message: t`Page layout tab not found`,
@@ -95,12 +121,21 @@ export class FlatPageLayoutWidgetValidatorService {
     }
 
     const positionErrors = this.validatePosition({
-      position: updatedFlatPageLayoutWidget.position,
+      position: effectiveWidget.position,
       pageLayoutTab: referencedPageLayoutTab,
       widgetTitle: updatedFlatPageLayoutWidget.title,
     });
 
     validationResult.errors.push(...positionErrors);
+    validationResult.errors.push(
+      ...this.validateTabViewportConstraints({
+        widget: effectiveWidget,
+        pageLayoutTab: referencedPageLayoutTab,
+        relatedWidgets: Object.values(
+          finalFlatEntityMaps.byUniversalIdentifier,
+        ).filter(isDefined),
+      }),
+    );
 
     const typeSpecificityErrors =
       this.flatPageLayoutWidgetTypeValidatorService.validateFlatPageLayoutWidgetTypeSpecificitiesForUpdate(
@@ -156,15 +191,19 @@ export class FlatPageLayoutWidgetValidatorService {
   }
 
   public async validateFlatPageLayoutWidgetCreation({
+    finalFlatEntityMaps,
     flatEntityToValidate: flatPageLayoutWidgetToValidate,
     additionalCacheDataMaps: { featureFlagsMap },
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
     workspaceId,
     buildOptions,
     remainingFlatEntityMapsToValidate,
-  }: UniversalFlatEntityValidationArgs<
+  }: FlatEntityCreationValidationArgs<
     typeof ALL_METADATA_NAME.pageLayoutWidget
   >): Promise<FailedFlatEntityValidation<'pageLayoutWidget', 'create'>> {
+    const effectiveWidget = this.getEffectiveWidget(
+      flatPageLayoutWidgetToValidate,
+    );
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         universalIdentifier: flatPageLayoutWidgetToValidate.universalIdentifier,
@@ -192,14 +231,20 @@ export class FlatPageLayoutWidgetValidatorService {
       });
     }
 
-    const referencedPageLayoutTab = findFlatEntityByUniversalIdentifier({
-      universalIdentifier:
-        flatPageLayoutWidgetToValidate.pageLayoutTabUniversalIdentifier,
-      flatEntityMaps:
-        optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutTabMaps,
-    });
+    const referencedPageLayoutTab = isDefined(
+      effectiveWidget.pageLayoutTabUniversalIdentifier,
+    )
+      ? findFlatEntityByUniversalIdentifier({
+          universalIdentifier: effectiveWidget.pageLayoutTabUniversalIdentifier,
+          flatEntityMaps:
+            optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutTabMaps,
+        })
+      : undefined;
 
-    if (!isDefined(referencedPageLayoutTab)) {
+    if (
+      isDefined(effectiveWidget.pageLayoutTabUniversalIdentifier) &&
+      !isDefined(referencedPageLayoutTab)
+    ) {
       validationResult.errors.push({
         code: PageLayoutTabExceptionCode.PAGE_LAYOUT_TAB_NOT_FOUND,
         message: t`Page layout tab not found`,
@@ -208,12 +253,21 @@ export class FlatPageLayoutWidgetValidatorService {
     }
 
     const positionErrors = this.validatePosition({
-      position: flatPageLayoutWidgetToValidate.position,
+      position: effectiveWidget.position,
       pageLayoutTab: referencedPageLayoutTab,
       widgetTitle: flatPageLayoutWidgetToValidate.title,
     });
 
     validationResult.errors.push(...positionErrors);
+    validationResult.errors.push(
+      ...this.validateTabViewportConstraints({
+        widget: effectiveWidget,
+        pageLayoutTab: referencedPageLayoutTab,
+        relatedWidgets: Object.values(
+          finalFlatEntityMaps.byUniversalIdentifier,
+        ).filter(isDefined),
+      }),
+    );
 
     const typeSpecificityErrors =
       this.flatPageLayoutWidgetTypeValidatorService.validateFlatPageLayoutWidgetTypeSpecificitiesForCreation(
@@ -232,15 +286,109 @@ export class FlatPageLayoutWidgetValidatorService {
     return validationResult;
   }
 
-  private getEffectivePageLayoutTabUniversalIdentifier(
-    widget: Pick<
-      UniversalFlatPageLayoutWidget,
-      'pageLayoutTabUniversalIdentifier' | 'universalOverrides'
-    >,
-  ): string {
+  private getEffectiveWidget(
+    widget: UniversalFlatPageLayoutWidget,
+  ): EffectivePageLayoutWidget {
+    return resolveEffectiveEntity({
+      ...widget,
+      overrides: widget.universalOverrides,
+    });
+  }
+
+  private validateTabViewportConstraints({
+    widget,
+    pageLayoutTab,
+    relatedWidgets,
+  }: {
+    widget: EffectivePageLayoutWidget;
+    pageLayoutTab: UniversalFlatPageLayoutTab | undefined;
+    relatedWidgets: UniversalFlatPageLayoutWidget[];
+  }): FlatEntityValidationError[] {
+    if (
+      !widget.isActive ||
+      pageLayoutTab?.layoutMode !== PageLayoutTabLayoutMode.VERTICAL_LIST
+    ) {
+      return [];
+    }
+
+    const isTabViewportWidget = this.isViewportFillingWidget(widget);
+
+    const widgetIndex =
+      widget.position?.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST
+        ? widget.position.index
+        : 0;
+    const activeSiblingWidgets = relatedWidgets
+      .map((relatedWidget) => this.getEffectiveWidget(relatedWidget))
+      .filter(
+        (relatedWidget) =>
+          relatedWidget.universalIdentifier !== widget.universalIdentifier &&
+          relatedWidget.isActive &&
+          relatedWidget.pageLayoutTabUniversalIdentifier ===
+            widget.pageLayoutTabUniversalIdentifier,
+      );
+
+    const errors: FlatEntityValidationError[] = [];
+    const hasAnotherTabViewportWidget = activeSiblingWidgets.some(
+      (siblingWidget) => this.isViewportFillingWidget(siblingWidget),
+    );
+
+    if (isTabViewportWidget && hasAnotherTabViewportWidget) {
+      errors.push({
+        code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+        message: generatePageLayoutWidgetExceptionMessage(
+          PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_POSITION,
+          widget.title,
+          undefined,
+          'only one active TAB_VIEWPORT widget is allowed per vertical-list tab',
+        ),
+        userFriendlyMessage: msg`Only one full-height widget is allowed per tab`,
+      });
+    }
+
+    const hasInvalidWidgetOrdering = activeSiblingWidgets.some(
+      (siblingWidget) => {
+        const siblingIndex =
+          siblingWidget.position?.layoutMode ===
+          PageLayoutTabLayoutMode.VERTICAL_LIST
+            ? siblingWidget.position.index
+            : 0;
+
+        const isSiblingTabViewport =
+          this.isViewportFillingWidget(siblingWidget);
+
+        return isTabViewportWidget
+          ? !isSiblingTabViewport && siblingIndex >= widgetIndex
+          : isSiblingTabViewport && siblingIndex <= widgetIndex;
+      },
+    );
+
+    if (hasInvalidWidgetOrdering) {
+      errors.push({
+        code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+        message: generatePageLayoutWidgetExceptionMessage(
+          PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_POSITION,
+          widget.title,
+          undefined,
+          'TAB_VIEWPORT widgets must be ordered after fit-content widgets',
+        ),
+        userFriendlyMessage: msg`Full-height widgets must be placed after fit-content widgets`,
+      });
+    }
+
+    return errors;
+  }
+
+  private isViewportFillingWidget(
+    widget: Pick<UniversalFlatPageLayoutWidget, 'type' | 'position'>,
+  ): boolean {
     return (
-      widget.universalOverrides?.pageLayoutTabUniversalIdentifier ??
-      widget.pageLayoutTabUniversalIdentifier
+      getPageLayoutWidgetHeightBehavior({
+        widgetType: widget.type,
+        heightBehavior:
+          widget.position?.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST
+            ? widget.position.heightBehavior
+            : undefined,
+      }) === PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT
     );
   }
 
