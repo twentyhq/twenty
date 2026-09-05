@@ -1,5 +1,9 @@
 import { msg } from '@lingui/core/macro';
-import { type PageLayoutWidgetVerticalListPosition } from 'twenty-shared/types';
+import {
+  type PageLayoutWidgetVerticalListPosition,
+  PageLayoutWidgetVerticalListHeightBehavior,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   PageLayoutWidgetExceptionCode,
@@ -37,6 +41,24 @@ export const validatePageLayoutWidgetVerticalListPosition = (
         `index ${position.index} must be an integer`,
       ),
       userFriendlyMessage: msg`Widget index must be an integer`,
+    });
+  }
+
+  if (
+    isDefined(position.heightBehavior) &&
+    !Object.values(PageLayoutWidgetVerticalListHeightBehavior).includes(
+      position.heightBehavior,
+    )
+  ) {
+    errors.push({
+      code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      message: generatePageLayoutWidgetExceptionMessage(
+        PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_POSITION,
+        widgetTitle,
+        undefined,
+        `height behavior ${position.heightBehavior} is not supported`,
+      ),
+      userFriendlyMessage: msg`Widget height behavior is not supported`,
     });
   }
 

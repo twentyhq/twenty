@@ -1,5 +1,5 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { isViewportFillingWidgetType } from '@/page-layout/widgets/utils/isViewportFillingWidgetType';
+import { isViewportFillingWidget } from '@/page-layout/widgets/utils/isViewportFillingWidget';
 
 export const shouldShowAddWidgetBelow = (widget: PageLayoutWidget): boolean =>
-  !isViewportFillingWidgetType(widget.type);
+  !isViewportFillingWidget(widget);

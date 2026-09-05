@@ -4,8 +4,7 @@ import { useIsSideColumnContext } from '@/page-layout/hooks/useIsSideColumnConte
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { type PageLayoutWidgetListDropData } from '@/page-layout/types/PageLayoutWidgetListDropData';
 import { canVerticalListAcceptWidgetDrag } from '@/page-layout/utils/canVerticalListAcceptWidgetDrag';
-import { getIsSingleWidgetTab } from '@/page-layout/utils/getIsSingleWidgetTab';
-import { isViewportFillingWidgetType } from '@/page-layout/widgets/utils/isViewportFillingWidgetType';
+import { isViewportFillingWidget } from '@/page-layout/widgets/utils/isViewportFillingWidget';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 import { WorkflowDiagramAllowPageScrollContext } from '@/workflow/workflow-diagram/contexts/WorkflowDiagramAllowPageScrollContext';
 import { type Draggable } from '@dnd-kit/abstract';
@@ -95,14 +94,10 @@ export const PageLayoutVerticalList = ({
   const { isInPinnedTab, isMobile, isSideColumnContext } =
     useIsSideColumnContext();
 
-  const shouldUseSoloCanvasPresentation =
+  // The migration skips tabs with multiple stored widgets, even if only one is visible.
+  const isLegacyCanvasViewport =
     layoutMode === PageLayoutTabLayoutMode.CANVAS &&
-    getIsSingleWidgetTab({
-      tab: {
-        layoutMode,
-        widgets,
-      },
-    }) &&
+    widgets.length === 1 &&
     !isInEditMode &&
     !isInPinnedTab;
 
@@ -111,8 +106,8 @@ export const PageLayoutVerticalList = ({
   // (workflow canvases) must keep it when there is no page scroll to reach.
   const hasPageScroll = isInEditMode || widgets.length > 1;
 
-  const firstViewportFillingWidgetIndex = widgets.findIndex((widget) =>
-    isViewportFillingWidgetType(widget.type),
+  const firstViewportFillingWidgetIndex = widgets.findIndex(
+    isViewportFillingWidget,
   );
   const hasViewportFillingWidget = firstViewportFillingWidgetIndex !== -1;
 
@@ -161,8 +156,11 @@ export const PageLayoutVerticalList = ({
               canAcceptWidgetDrag={canAcceptWidgetDrag}
               index={index}
               isInEditMode={isInEditMode}
-              isSoloCanvasPresentation={shouldUseSoloCanvasPresentation}
-              layoutMode={layoutMode}
+              fillsViewport={
+                isLegacyCanvasViewport ||
+                (layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST &&
+                  isViewportFillingWidget(widget))
+              }
               shouldShowDivider={isSideColumnContext}
               tabId={tabId}
               widget={widget}

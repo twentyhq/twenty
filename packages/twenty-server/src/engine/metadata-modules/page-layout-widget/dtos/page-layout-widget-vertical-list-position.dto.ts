@@ -1,7 +1,21 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { IsIn, IsInt, IsNotEmpty, Min } from 'class-validator';
-import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
+import {
+  IsEnum,
+  IsIn,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  Min,
+} from 'class-validator';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutWidgetVerticalListHeightBehavior,
+} from 'twenty-shared/types';
+
+registerEnumType(PageLayoutWidgetVerticalListHeightBehavior, {
+  name: 'PageLayoutWidgetVerticalListHeightBehavior',
+});
 
 @ObjectType('PageLayoutWidgetVerticalListPosition')
 export class PageLayoutWidgetVerticalListPositionDTO {
@@ -15,4 +29,9 @@ export class PageLayoutWidgetVerticalListPositionDTO {
   @Min(0)
   @IsNotEmpty()
   index: number;
+
+  @Field(() => PageLayoutWidgetVerticalListHeightBehavior, { nullable: true })
+  @IsEnum(PageLayoutWidgetVerticalListHeightBehavior)
+  @IsOptional()
+  heightBehavior?: PageLayoutWidgetVerticalListHeightBehavior;
 }

@@ -5,6 +5,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { convertPageLayoutDraftToUpdateInput } from '@/page-layout/utils/convertPageLayoutDraftToUpdateInput';
 import {
   PageLayoutTabLayoutMode,
+  PageLayoutWidgetVerticalListHeightBehavior,
   PageLayoutType,
   WidgetType,
 } from '~/generated-metadata/graphql';
@@ -199,6 +200,29 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
     expect(result.tabs[0].widgets[0].position).toEqual({
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       index: 3,
+    });
+  });
+
+  it('should preserve vertical-list height behavior', () => {
+    const widget = makeWidget({
+      id: 'w1',
+      position: {
+        __typename: 'PageLayoutWidgetVerticalListPosition',
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        index: 0,
+        heightBehavior: PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+      },
+    });
+    const draft = makeDraft([
+      makeTab('tab-1', [widget], PageLayoutTabLayoutMode.VERTICAL_LIST),
+    ]);
+
+    const result = convertPageLayoutDraftToUpdateInput(draft);
+
+    expect(result.tabs[0].widgets[0].position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      index: 0,
+      heightBehavior: PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
     });
   });
 

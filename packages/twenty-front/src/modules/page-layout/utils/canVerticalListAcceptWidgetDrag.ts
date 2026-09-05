@@ -23,6 +23,7 @@ export const canVerticalListAcceptWidgetDrag = ({
     widget: {
       id: sourceData.widgetId,
       type: sourceData.widgetType,
+      position: sourceData.widgetPosition,
     },
   });
 };
