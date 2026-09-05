@@ -25,6 +25,7 @@ module.exports = {
     './src/modules/databases/graphql/**/*.{ts,tsx}',
     './src/modules/analytics/graphql/**/*.{ts,tsx}',
     './src/modules/object-metadata/graphql/**/*.{ts,tsx}',
+    './src/modules/record-share/graphql/**/*.{ts,tsx}',
     './src/modules/navigation-menu-item/**/graphql/**/*.{ts,tsx}',
     './src/modules/command-menu-item/graphql/**/*.{ts,tsx}',
     './src/modules/attachments/graphql/**/*.{ts,tsx}',
