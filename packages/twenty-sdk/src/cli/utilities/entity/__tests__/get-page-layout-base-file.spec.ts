@@ -20,7 +20,7 @@ describe('getPageLayoutBaseFile', () => {
     expect(result).toContain('tabs: [');
   });
 
-  it('should render a standalone page tab in VERTICAL_LIST so a lone widget owns the page', () => {
+  it('should render a standalone page tab in VERTICAL_LIST', () => {
     const result = getPageLayoutBaseFile({
       name: 'my-layout',
       type: PageLayoutType.STANDALONE_PAGE,

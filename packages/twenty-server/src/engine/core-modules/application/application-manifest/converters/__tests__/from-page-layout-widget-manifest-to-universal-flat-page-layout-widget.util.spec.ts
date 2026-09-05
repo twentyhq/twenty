@@ -1,10 +1,5 @@
-import { type PageLayoutWidgetManifest } from 'twenty-shared/application';
 import { DEFAULT_WIDGET_SIZE } from 'twenty-shared/constants';
-import {
-  type GridPosition,
-  PageLayoutTabLayoutMode,
-  WidgetType,
-} from 'twenty-shared/types';
+import { PageLayoutTabLayoutMode, WidgetType } from 'twenty-shared/types';
 
 import { fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-widget-manifest-to-universal-flat-page-layout-widget.util';
 
@@ -19,6 +14,13 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
         universalIdentifier: 'widget-uuid-1',
         title: 'My Widget',
         type: WidgetType.VIEW,
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.GRID,
+          row: 0,
+          column: 0,
+          rowSpan: DEFAULT_WIDGET_SIZE.default.h,
+          columnSpan: DEFAULT_WIDGET_SIZE.default.w,
+        },
         configuration: { configurationType: 'VIEW' },
       },
       pageLayoutTabUniversalIdentifier,
@@ -55,6 +57,13 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
         universalIdentifier: 'widget-uuid-2',
         title: 'Iframe Widget',
         type: 'IFRAME',
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.GRID,
+          row: 0,
+          column: 0,
+          rowSpan: DEFAULT_WIDGET_SIZE.default.h,
+          columnSpan: DEFAULT_WIDGET_SIZE.default.w,
+        },
         objectUniversalIdentifier: 'obj-uuid-1',
         configuration: {
           configurationType: 'IFRAME',
@@ -109,54 +118,5 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
       rowSpan: 4,
       columnSpan: 6,
     });
-  });
-
-  it('should use legacy manifest grid position when provided', () => {
-    const result = fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
-      pageLayoutWidgetManifest: {
-        universalIdentifier: 'widget-uuid-legacy',
-        title: 'Legacy Positioned Widget',
-        type: WidgetType.GRAPH,
-        gridPosition: {
-          row: 2,
-          column: 6,
-          rowSpan: 4,
-          columnSpan: 6,
-        },
-        configuration: { configurationType: 'VIEW' },
-      } as PageLayoutWidgetManifest & { gridPosition: GridPosition },
-      pageLayoutTabUniversalIdentifier,
-      applicationUniversalIdentifier,
-      now,
-    });
-
-    expect(result.position).toEqual({
-      layoutMode: PageLayoutTabLayoutMode.GRID,
-      row: 2,
-      column: 6,
-      rowSpan: 4,
-      columnSpan: 6,
-    });
-  });
-
-  it.each([
-    { layoutMode: PageLayoutTabLayoutMode.CANVAS },
-    { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 2 },
-  ])('should default position for $layoutMode tabs', (expectedPosition) => {
-    const result = fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
-      pageLayoutWidgetManifest: {
-        universalIdentifier: 'widget-uuid-4',
-        title: 'Widget',
-        type: WidgetType.VIEW,
-        configuration: { configurationType: 'VIEW' },
-      },
-      pageLayoutTabUniversalIdentifier,
-      pageLayoutTabLayoutMode: expectedPosition.layoutMode,
-      widgetIndex: 2,
-      applicationUniversalIdentifier,
-      now,
-    });
-
-    expect(result.position).toEqual(expectedPosition);
   });
 });

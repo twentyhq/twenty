@@ -37,6 +37,7 @@ export default definePageLayout({
           universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
           title: 'Hello World',
           type: 'FRONT_COMPONENT',
+          heightBehavior: 'TAB_VIEWPORT',
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:
@@ -53,12 +54,34 @@ export default definePageLayout({
 
 - `type` is one of `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'`, `'STANDALONE_PAGE'` or `'RECORD_FORM'`. Use `'RECORD_PAGE'` to customize the detail view of a specific object. `'RECORD_FORM'` describes the creation form of an object and holds `FORM_FIELD` widgets, each rendering a single field. Twenty provisions one `'RECORD_FORM'` layout per object with one widget per creatable field, so you rarely need to author one; it does not render record forms yet.
 - `objectUniversalIdentifier` specifies which object this layout applies to.
-- Each `tab` defines a section of the page with a `title`, `position`, and `layoutMode`: `VERTICAL_LIST` for record pages and standalone pages, `GRID` for dashboards, and `CANVAS` for a single widget that should fill the tab viewport. A `VERTICAL_LIST` tab stacks widgets vertically. Built-in widgets that manage their own scrolling, such as timelines, files, notes, tasks, and workflows, fill one viewport; fields, front components, graphs, and other fit-content widgets render at their content or configured height. A `GRID` tab always lays its widgets out as cards on a 12-column grid. A `CANVAS` widget has no coordinates and can omit `position`; Twenty normalizes it to `{ layoutMode: PageLayoutTabLayoutMode.CANVAS }` from the tab layout mode. If a canvas tab contains multiple widgets, they render at their content height instead of filling the viewport.
-- A widget `position` matches its tab layout mode. `VERTICAL_LIST` uses `{ layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index }`, `GRID` uses `{ layoutMode: PageLayoutTabLayoutMode.GRID, row, column, rowSpan, columnSpan }`, and `CANVAS` uses `{ layoutMode: PageLayoutTabLayoutMode.CANVAS }` or omits `position`.
+- Each `tab` defines a section of the page with a `title`, `position`, and `layoutMode`: use `VERTICAL_LIST` for record pages and standalone pages, and `GRID` for dashboards. A `VERTICAL_LIST` tab stacks widgets vertically. Built-in widgets that manage their own scrolling, such as timelines, files, notes, tasks, and workflows, fill one viewport by default; fields, front components, graphs, and other fit-content widgets render at their content or configured height. A `GRID` tab always lays its widgets out as cards on a 12-column grid.
+- Widgets in a `VERTICAL_LIST` tab inherit the tab's layout mode, and their order comes from the `widgets` array. Do not set `position`; set the optional top-level `heightBehavior` to `'TAB_VIEWPORT'` when a widget should occupy one full tab viewport and own its scrolling, or to `'FIT_CONTENT'` to override a built-in full-height default. Preceding widgets do not reduce that height. Only one active `TAB_VIEWPORT` widget is allowed per tab, and it must come after fit-content widgets.
+- `GRID` widgets continue to use `position: { layoutMode: PageLayoutTabLayoutMode.GRID, row, column, rowSpan, columnSpan }`. Top-level `heightBehavior` is only valid for `VERTICAL_LIST` tabs; using it with `GRID` or `CANVAS` is a validation error.
+- Legacy authoring shapes remain accepted during the compatibility window; see [Migrating legacy manifests](#migrating-legacy-manifests) for their replacements and removal criteria.
 - Set `layoutMode` explicitly. Omitting it gives you `VERTICAL_LIST` on a `STANDALONE_PAGE` and `GRID` everywhere else, which is rarely what you want on a record page.
 - Each `widget` inside a tab can render a [front component](/developers/extend/apps/layout/front-components), a relation list, or other built-in widget types.
 - A `FRONT_COMPONENT` widget can set `headerCommandMenuItemUniversalIdentifiers` to an ordered array of command menu item universal identifiers from the same app. These actions appear as icon buttons in the widget card header and keep their command-level availability and permission checks. Identifiers must be unique and must resolve when the app is installed.
 - `position` on tabs controls their order. Use higher values (e.g., 50) to place custom tabs after built-in ones.
+
+### Migrating legacy manifests
+
+The following authoring shapes are deprecated. Use their replacements in new and updated manifests.
+
+| Deprecated shape | Replacement |
+| --- | --- |
+| `layoutMode: PageLayoutTabLayoutMode.CANVAS` | `VERTICAL_LIST` on the tab and `heightBehavior: 'TAB_VIEWPORT'` on its full-height widget |
+| `position` on a `VERTICAL_LIST` widget, including `position.heightBehavior` | Widget array order and optional top-level `heightBehavior` |
+| Legacy `gridPosition` | `position: { layoutMode: PageLayoutTabLayoutMode.GRID, row, column, rowSpan, columnSpan }` |
+
+During compatibility, the tab and widget array determine vertical-list layout and order. A nested `position.heightBehavior` is a fallback when top-level `heightBehavior` is omitted; the top-level value wins when both are present. Canvas manifests convert automatically only when the tab has exactly one widget. Empty and multi-widget Canvas tabs remain unchanged and need an explicit layout decision before conversion.
+
+Removal has no scheduled release yet. The compatibility paths stay in place until:
+
+1. Supported app manifests, SDK templates, and examples use the replacement shapes.
+2. The persisted Canvas migration is available on every supported upgrade path, and remaining empty or multi-widget Canvas tabs have been resolved explicitly.
+3. A breaking release announces the end of legacy manifest support and provides the replacements above.
+
+That release can reject deprecated inputs at the shared manifest normalizer and remove their fallback branches and compatibility tests. Persisted widget positions remain necessary for ordering and individual widget updates. Historical database migration commands and their rollback coverage remain intact.
 
 ### Field widgets
 

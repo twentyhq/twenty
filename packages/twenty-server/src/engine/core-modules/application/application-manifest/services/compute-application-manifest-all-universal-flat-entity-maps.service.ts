@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import {
   type Manifest,
+  type PageLayoutManifest,
+  type PageLayoutTabManifest,
+  normalizePageLayoutTabManifest,
   serializeApplicationVariableValue,
 } from 'twenty-shared/application';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
@@ -37,6 +40,10 @@ import { fromViewFilterManifestToUniversalFlatViewFilter } from 'src/engine/core
 import { fromViewGroupManifestToUniversalFlatViewGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-group-manifest-to-universal-flat-view-group.util';
 import { fromViewManifestToUniversalFlatView } from 'src/engine/core-modules/application/application-manifest/converters/from-view-manifest-to-universal-flat-view.util';
 import { fromViewSortManifestToUniversalFlatViewSort } from 'src/engine/core-modules/application/application-manifest/converters/from-view-sort-manifest-to-universal-flat-view-sort.util';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/application/utils/from-agent-manifest-to-universal-flat-agent.util';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
@@ -516,42 +523,14 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
 
       for (const pageLayoutTabManifest of pageLayoutManifest.tabs ?? []) {
-        const pageLayoutTab =
-          fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
-            pageLayoutTabManifest,
-            pageLayoutUniversalIdentifier:
-              pageLayoutManifest.universalIdentifier,
-            pageLayoutType: pageLayoutManifest.type,
-            applicationUniversalIdentifier,
-            now,
-          });
-
-        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-          universalFlatEntity: pageLayoutTab,
-          universalFlatEntityMapsToMutate:
-            allUniversalFlatEntityMaps.flatPageLayoutTabMaps,
+        this.addPageLayoutTab({
+          pageLayoutTabManifest,
+          pageLayoutUniversalIdentifier: pageLayoutManifest.universalIdentifier,
+          pageLayoutType: pageLayoutManifest.type,
+          applicationUniversalIdentifier,
+          now,
+          allUniversalFlatEntityMaps,
         });
-
-        for (const [widgetIndex, pageLayoutWidgetManifest] of (
-          pageLayoutTabManifest.widgets ?? []
-        ).entries()) {
-          addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow(
-            {
-              universalFlatEntity:
-                fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
-                  pageLayoutWidgetManifest,
-                  pageLayoutTabLayoutMode: pageLayoutTab.layoutMode,
-                  widgetIndex,
-                  pageLayoutTabUniversalIdentifier:
-                    pageLayoutTabManifest.universalIdentifier,
-                  applicationUniversalIdentifier,
-                  now,
-                }),
-              universalFlatEntityMapsToMutate:
-                allUniversalFlatEntityMaps.flatPageLayoutWidgetMaps,
-            },
-          );
-        }
       }
     }
 
@@ -568,40 +547,15 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           pageLayoutTabManifest.pageLayoutUniversalIdentifier,
       );
 
-      const pageLayoutTab =
-        fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
-          pageLayoutTabManifest,
-          pageLayoutUniversalIdentifier:
-            pageLayoutTabManifest.pageLayoutUniversalIdentifier,
-          pageLayoutType: referencedPageLayoutManifest?.type,
-          applicationUniversalIdentifier,
-          now,
-        });
-
-      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-        universalFlatEntity: pageLayoutTab,
-        universalFlatEntityMapsToMutate:
-          allUniversalFlatEntityMaps.flatPageLayoutTabMaps,
+      this.addPageLayoutTab({
+        pageLayoutTabManifest,
+        pageLayoutUniversalIdentifier:
+          pageLayoutTabManifest.pageLayoutUniversalIdentifier,
+        pageLayoutType: referencedPageLayoutManifest?.type,
+        applicationUniversalIdentifier,
+        now,
+        allUniversalFlatEntityMaps,
       });
-
-      for (const [widgetIndex, pageLayoutWidgetManifest] of (
-        pageLayoutTabManifest.widgets ?? []
-      ).entries()) {
-        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-          universalFlatEntity:
-            fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
-              pageLayoutWidgetManifest,
-              pageLayoutTabLayoutMode: pageLayoutTab.layoutMode,
-              widgetIndex,
-              pageLayoutTabUniversalIdentifier:
-                pageLayoutTabManifest.universalIdentifier,
-              applicationUniversalIdentifier,
-              now,
-            }),
-          universalFlatEntityMapsToMutate:
-            allUniversalFlatEntityMaps.flatPageLayoutWidgetMaps,
-        });
-      }
     }
 
     for (const [key, applicationVariableManifest] of Object.entries(
@@ -680,5 +634,61 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     }
 
     return allUniversalFlatEntityMaps;
+  }
+
+  private addPageLayoutTab({
+    pageLayoutTabManifest,
+    pageLayoutUniversalIdentifier,
+    pageLayoutType,
+    applicationUniversalIdentifier,
+    now,
+    allUniversalFlatEntityMaps,
+  }: {
+    pageLayoutTabManifest: PageLayoutTabManifest;
+    pageLayoutUniversalIdentifier: string;
+    pageLayoutType: PageLayoutManifest['type'] | undefined;
+    applicationUniversalIdentifier: string;
+    now: string;
+    allUniversalFlatEntityMaps: AllFlatEntityMaps;
+  }): void {
+    const result = normalizePageLayoutTabManifest({
+      pageLayoutTabManifest,
+      pageLayoutType,
+    });
+
+    if (result.status === 'fail') {
+      throw new ApplicationException(
+        result.errors.join('\n'),
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    const { pageLayoutTab } = result;
+
+    addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+      universalFlatEntity:
+        fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
+          pageLayoutTabManifest: pageLayoutTab,
+          pageLayoutUniversalIdentifier,
+          applicationUniversalIdentifier,
+          now,
+        }),
+      universalFlatEntityMapsToMutate:
+        allUniversalFlatEntityMaps.flatPageLayoutTabMaps,
+    });
+
+    for (const pageLayoutWidgetManifest of pageLayoutTab.widgets) {
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity:
+          fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
+            pageLayoutWidgetManifest,
+            pageLayoutTabUniversalIdentifier: pageLayoutTab.universalIdentifier,
+            applicationUniversalIdentifier,
+            now,
+          }),
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatPageLayoutWidgetMaps,
+      });
+    }
   }
 }

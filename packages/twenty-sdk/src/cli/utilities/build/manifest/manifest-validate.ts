@@ -3,7 +3,10 @@ import { validate as uuidValidate, version as uuidVersion } from 'uuid';
 
 import {
   type Manifest,
+  type PageLayoutManifest,
+  type PageLayoutTabManifest,
   type PageLayoutWidgetManifest,
+  normalizePageLayoutTabManifest,
 } from 'twenty-shared/application';
 import {
   GRAPH_WIDGET_CONFIGURATION_TYPES,
@@ -156,6 +159,54 @@ const validateGraphWidgets = (
   return errors;
 };
 
+const validatePageLayoutTab = ({
+  pageLayoutTab,
+  pageLayoutType,
+}: {
+  pageLayoutTab: PageLayoutTabManifest;
+  pageLayoutType: PageLayoutManifest['type'] | undefined;
+}): string[] => {
+  const result = normalizePageLayoutTabManifest({
+    pageLayoutTabManifest: pageLayoutTab,
+    pageLayoutType,
+  });
+
+  return result.status === 'fail' ? result.errors : [];
+};
+
+const validatePageLayoutTabs = (
+  manifest: Pick<Manifest, 'pageLayouts' | 'pageLayoutTabs'>,
+): string[] => {
+  const pageLayoutTypeByUniversalIdentifier = new Map(
+    manifest.pageLayouts.map((pageLayout) => [
+      pageLayout.universalIdentifier,
+      pageLayout.type,
+    ]),
+  );
+
+  const nestedTabErrors = manifest.pageLayouts.flatMap((pageLayout) =>
+    (pageLayout.tabs ?? []).flatMap((pageLayoutTab) =>
+      validatePageLayoutTab({
+        pageLayoutTab,
+        pageLayoutType: pageLayout.type,
+      }),
+    ),
+  );
+
+  const standaloneTabErrors = manifest.pageLayoutTabs.flatMap((pageLayoutTab) =>
+    validatePageLayoutTab({
+      pageLayoutTab,
+      pageLayoutType: isDefined(pageLayoutTab.pageLayoutUniversalIdentifier)
+        ? pageLayoutTypeByUniversalIdentifier.get(
+            pageLayoutTab.pageLayoutUniversalIdentifier,
+          )
+        : undefined,
+    }),
+  );
+
+  return [...nestedTabErrors, ...standaloneTabErrors];
+};
+
 const invalidUniversalIdentifierVersions = (
   identifiers: string[],
 ): string[] => {
@@ -213,6 +264,8 @@ export const manifestValidate = (manifest: Manifest) => {
   ];
 
   errors.push(...validateRelationFields(allFields));
+
+  errors.push(...validatePageLayoutTabs(manifest));
 
   errors.push(...validateGraphWidgets(collectPageLayoutWidgets(manifest)));
 
