@@ -17,15 +17,18 @@ import { translateToolLabel } from 'src/engine/core-modules/tool-provider/utils/
 import { humanizeToolName } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 
 import { ToolCategory } from 'twenty-shared/ai';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-tool-json-schema.util';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { CreateCalendarEventTool } from 'src/engine/core-modules/tool/tools/calendar-tool/create-calendar-event-tool';
 import { CodeInterpreterTool } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool';
 import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
+import { CreateInboxItemTool } from 'src/engine/core-modules/tool/tools/inbox-tool/create-inbox-item-tool';
 import { NavigateAppTool } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool';
 import { ExtractJsonPathsTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/extract-json-paths-tool';
 import { SearchOutputTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/search-output-tool';
@@ -46,6 +49,7 @@ export class ActionToolProvider implements ToolProvider {
     private readonly sendEmailTool: SendEmailTool,
     private readonly draftEmailTool: DraftEmailTool,
     private readonly createCalendarEventTool: CreateCalendarEventTool,
+    private readonly createInboxItemTool: CreateInboxItemTool,
     private readonly searchHelpCenterTool: SearchHelpCenterTool,
     private readonly codeInterpreterTool: CodeInterpreterTool,
     private readonly navigateAppTool: NavigateAppTool,
@@ -54,6 +58,7 @@ export class ActionToolProvider implements ToolProvider {
     private readonly saveCampaignTool: SaveCampaignTool,
     private readonly codeInterpreterService: CodeInterpreterService,
     private readonly permissionsService: PermissionsService,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly i18nService: I18nService,
   ) {
     this.toolMap = new Map<string, Tool>([
@@ -61,6 +66,7 @@ export class ActionToolProvider implements ToolProvider {
       ['send_email', this.sendEmailTool],
       ['draft_email', this.draftEmailTool],
       ['create_calendar_event', this.createCalendarEventTool],
+      ['create_inbox_item', this.createInboxItemTool],
       ['search_help_center', this.searchHelpCenterTool],
       ['code_interpreter', this.codeInterpreterTool],
       ['navigate_app', this.navigateAppTool],
@@ -183,6 +189,24 @@ export class ActionToolProvider implements ToolProvider {
         context.locale,
       ),
     );
+
+    // The inbox is flag-gated everywhere else, so an agent is not offered a
+    // tool that would fail on every call in a workspace without it.
+    const isInboxEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_INBOX_ENABLED,
+      context.workspaceId,
+    );
+
+    if (isInboxEnabled) {
+      descriptors.push(
+        this.buildDescriptor(
+          'create_inbox_item',
+          this.createInboxItemTool,
+          includeSchemas,
+          context.locale,
+        ),
+      );
+    }
 
     const hasCodeInterpreterPermission =
       this.codeInterpreterService.isEnabled() &&

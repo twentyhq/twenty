@@ -19,14 +19,12 @@ export function RequireFeatureFlag(featureFlag: FeatureFlagKey) {
     target: object,
     _propertyKey?: string,
     descriptor?: PropertyDescriptor,
-  ) => {
+  ): void => {
     TypedReflect.defineMetadata(
       FEATURE_FLAG_KEY,
       featureFlag,
       descriptor?.value || target,
     );
-
-    return descriptor;
   };
 }
 
@@ -46,9 +44,11 @@ export class FeatureFlagGuard implements CanActivate {
       return false;
     }
 
-    const featureFlag = this.reflector.get<FeatureFlagKey>(
+    // A handler-level flag wins over a class-level one, so a resolver can be
+    // gated as a whole and still tighten a single field.
+    const featureFlag = this.reflector.getAllAndOverride<FeatureFlagKey>(
       FEATURE_FLAG_KEY,
-      context.getHandler(),
+      [context.getHandler(), context.getClass()],
     );
 
     if (!featureFlag) {

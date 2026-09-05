@@ -213,6 +213,11 @@ describe('StreamAgentChatJob', () => {
       streamHeartbeatService as never,
       metricsService as never,
       aiModelRegistryService as never,
+      {
+        onThreadCreated: jest.fn(),
+        onTurnCompleted: jest.fn(),
+        onThreadRemoved: jest.fn(),
+      } as never,
     );
 
     const turnCounts = (key: string) =>

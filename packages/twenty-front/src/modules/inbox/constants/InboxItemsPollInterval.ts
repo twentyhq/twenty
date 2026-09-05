@@ -1,0 +1,1 @@
+export const INBOX_ITEMS_POLL_INTERVAL = 8000;

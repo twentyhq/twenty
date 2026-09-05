@@ -36,6 +36,11 @@ const buildService = ({ existingHiddenMessage = null as unknown } = {}) => {
     {} as never,
     {} as never,
     {} as never,
+    {
+      onThreadCreated: jest.fn(),
+      onTurnCompleted: jest.fn(),
+      onThreadRemoved: jest.fn(),
+    } as never,
   );
 
   return { service, messageRepository, turnRepository, messagePartRepository };

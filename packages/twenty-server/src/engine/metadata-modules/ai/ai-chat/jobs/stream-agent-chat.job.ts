@@ -34,6 +34,8 @@ import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
+import { AgentChatInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox.service';
+import { findFirstTextPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-first-text-part.util';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
 import { type AgentChatTurnOutcome } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-turn-outcome.type';
@@ -83,6 +85,7 @@ export class StreamAgentChatJob {
     private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
     private readonly metricsService: MetricsService,
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly agentChatInboxService: AgentChatInboxService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -891,6 +894,16 @@ export class StreamAgentChatJob {
     if (!totalsUpdate.affected) {
       return resolveSupersededTurnOutcome(outcome);
     }
+
+    // Routed before the usage broadcast so the next queued turn cannot start
+    // and route ahead of this one.
+    await this.agentChatInboxService.onTurnCompleted({
+      threadId,
+      workspaceId,
+      userWorkspaceId,
+      hasPendingQuestion: isDefined(pendingQuestionPart),
+      summary: findFirstTextPart(responseMessage.parts),
+    });
 
     await this.agentChatService.notifyThreadUsageUpdated({
       threadId,
