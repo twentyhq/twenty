@@ -243,17 +243,25 @@ export class BillingSubscriptionService {
       stripePaymentMethodId,
     });
 
-    await this.stripeSubscriptionService.updateSubscription(
-      billingSubscription.stripeSubscriptionId,
-      { default_payment_method: stripePaymentMethodId },
-    );
+    const stripeSubscription =
+      await this.stripeSubscriptionService.updateSubscription(
+        billingSubscription.stripeSubscriptionId,
+        { default_payment_method: stripePaymentMethodId },
+      );
 
-    // The persisted status can still be Active when this event lands before the
-    // subscription update one, so Stripe's open invoices are the source of truth
-    await this.stripeSubscriptionService.payOpenInvoices({
-      stripeSubscriptionId: billingSubscription.stripeSubscriptionId,
-      stripePaymentMethodId,
-    });
+    // The persisted status can lag behind Stripe when this event lands before
+    // the subscription update one, so the live status decides whether an
+    // overdue invoice has to be retried
+    if (
+      [SubscriptionStatus.PastDue, SubscriptionStatus.Unpaid].includes(
+        stripeSubscription.status as SubscriptionStatus,
+      )
+    ) {
+      await this.stripeSubscriptionService.payOpenInvoices({
+        stripeSubscriptionId: billingSubscription.stripeSubscriptionId,
+        stripePaymentMethodId,
+      });
+    }
 
     return {
       handleUnpaidInvoiceStripeSubscriptionId:
