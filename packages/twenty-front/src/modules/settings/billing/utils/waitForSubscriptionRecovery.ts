@@ -1,4 +1,5 @@
 import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
+import { isDefined } from 'twenty-shared/utils';
 import { SubscriptionStatus } from '~/generated-metadata/graphql';
 
 export type SubscriptionRecoveryResult<TWorkspaceBilling> =
@@ -37,7 +38,12 @@ export const waitForSubscriptionRecovery = async <TWorkspaceBilling>({
       return { outcome: 'recovered', workspaceBilling };
     }
 
-    if (!isSubscriptionPaymentOverdue(subscriptionStatus)) {
+    // Only a definite status that cannot recover ends the wait early, no
+    // status at all is not a verdict on the payment
+    if (
+      isDefined(subscriptionStatus) &&
+      !isSubscriptionPaymentOverdue(subscriptionStatus)
+    ) {
       return { outcome: 'unrecoverable' };
     }
   }

@@ -85,9 +85,13 @@ describe('waitForSubscriptionRecovery', () => {
     expect(fetchCount).toBe(2);
   });
 
-  it('should treat a missing subscription as unrecoverable', async () => {
-    const { result } = await runRecovery([undefined]);
+  it('should keep polling while the subscription status is unknown', async () => {
+    const { result, fetchCount } = await runRecovery([
+      undefined,
+      SubscriptionStatus.Active,
+    ]);
 
-    expect(result).toEqual({ outcome: 'unrecoverable' });
+    expect(result.outcome).toBe('recovered');
+    expect(fetchCount).toBe(2);
   });
 });
