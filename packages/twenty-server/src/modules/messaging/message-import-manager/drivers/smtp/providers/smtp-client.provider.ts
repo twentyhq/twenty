@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isIP } from 'node:net';
+
 import { createTransport, type Transporter } from 'nodemailer';
 
 import type SMTPConnection from 'nodemailer/lib/smtp-connection';
@@ -64,6 +66,10 @@ export class SmtpClientProvider {
         rejectUnauthorized: !this.twentyConfigService.get(
           'MAIL_TLS_ALLOW_SELF_SIGNED',
         ),
+        // getValidatedHost returns the resolved IP when outbound HTTP safe mode
+        // is enabled: connect to the pinned IP, but validate the certificate
+        // against the configured hostname. IP literals keep validating the IP.
+        ...(isIP(smtpParams.host) === 0 && { servername: smtpParams.host }),
       },
     };
 

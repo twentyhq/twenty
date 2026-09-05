@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isIP } from 'node:net';
+
 import { ImapFlow } from 'imapflow';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -109,6 +111,10 @@ export class ImapClientProvider {
         rejectUnauthorized: !this.twentyConfigService.get(
           'MAIL_TLS_ALLOW_SELF_SIGNED',
         ),
+        // getValidatedHost returns the resolved IP when outbound HTTP safe mode
+        // is enabled: connect to the pinned IP, but validate the certificate
+        // against the configured hostname. IP literals keep validating the IP.
+        ...(isIP(imapParams.host) === 0 && { servername: imapParams.host }),
       },
       connectionTimeout: ImapClientProvider.CONNECTION_TIMEOUT_MS,
       greetingTimeout: ImapClientProvider.GREETING_TIMEOUT_MS,

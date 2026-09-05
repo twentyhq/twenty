@@ -24,6 +24,94 @@ describe('isTlsCertificateError', () => {
     );
   });
 
+  it('returns true for nodemailer ESOCKET errors wrapping TLS certificate failures', () => {
+    expect(
+      isTlsCertificateError(
+        Object.assign(new Error('self signed certificate'), {
+          code: 'ESOCKET',
+          command: 'CONN',
+        }),
+      ),
+    ).toBe(true);
+    expect(
+      isTlsCertificateError({
+        code: 'ESOCKET',
+        command: 'CONN',
+        message: 'self-signed certificate in certificate chain',
+      }),
+    ).toBe(true);
+    expect(
+      isTlsCertificateError(
+        Object.assign(new Error('unable to verify the first certificate'), {
+          code: 'ESOCKET',
+        }),
+      ),
+    ).toBe(true);
+    expect(
+      isTlsCertificateError(
+        Object.assign(new Error('unable to get local issuer certificate'), {
+          code: 'ESOCKET',
+        }),
+      ),
+    ).toBe(true);
+    expect(
+      isTlsCertificateError(
+        Object.assign(new Error('unable to get issuer certificate'), {
+          code: 'ESOCKET',
+        }),
+      ),
+    ).toBe(true);
+    expect(
+      isTlsCertificateError(
+        Object.assign(new Error('certificate has expired'), {
+          code: 'ESOCKET',
+        }),
+      ),
+    ).toBe(true);
+    expect(
+      isTlsCertificateError(
+        Object.assign(new Error('certificate is not yet valid'), {
+          code: 'ESOCKET',
+        }),
+      ),
+    ).toBe(true);
+    expect(
+      isTlsCertificateError(
+        Object.assign(
+          new Error("Hostname/IP does not match certificate's altnames"),
+          { code: 'ESOCKET' },
+        ),
+      ),
+    ).toBe(true);
+  });
+
+  it('returns false for ESOCKET errors unrelated to certificates', () => {
+    expect(
+      isTlsCertificateError(
+        Object.assign(new Error('connect ECONNREFUSED 127.0.0.1:587'), {
+          code: 'ESOCKET',
+        }),
+      ),
+    ).toBe(false);
+    expect(
+      isTlsCertificateError(
+        Object.assign(new Error('connection timeout'), { code: 'ESOCKET' }),
+      ),
+    ).toBe(false);
+    expect(
+      isTlsCertificateError(
+        Object.assign(new Error('getaddrinfo ENOTFOUND smtp.example.com'), {
+          code: 'ESOCKET',
+        }),
+      ),
+    ).toBe(false);
+    expect(
+      isTlsCertificateError(
+        Object.assign(new Error('wrong password'), { code: 'ESOCKET' }),
+      ),
+    ).toBe(false);
+  });
+
   it('returns false for non-certificate errors', () => {
     expect(isTlsCertificateError({ code: 'ECONNREFUSED' })).toBe(false);
     expect(isTlsCertificateError(new Error('plain error'))).toBe(false);

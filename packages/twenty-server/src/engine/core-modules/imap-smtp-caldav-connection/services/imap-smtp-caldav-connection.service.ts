@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isIP } from 'node:net';
+
 import { msg } from '@lingui/core/macro';
 import { ImapFlow } from 'imapflow';
 import { createTransport } from 'nodemailer';
@@ -55,6 +57,10 @@ export class ImapSmtpCaldavService {
         rejectUnauthorized: !this.twentyConfigService.get(
           'MAIL_TLS_ALLOW_SELF_SIGNED',
         ),
+        // getValidatedHost returns the resolved IP when outbound HTTP safe mode
+        // is enabled: connect to the pinned IP, but validate the certificate
+        // against the configured hostname. IP literals keep validating the IP.
+        ...(isIP(params.host) === 0 && { servername: params.host }),
       },
     });
 
@@ -138,6 +144,10 @@ export class ImapSmtpCaldavService {
         rejectUnauthorized: !this.twentyConfigService.get(
           'MAIL_TLS_ALLOW_SELF_SIGNED',
         ),
+        // getValidatedHost returns the resolved IP when outbound HTTP safe mode
+        // is enabled: connect to the pinned IP, but validate the certificate
+        // against the configured hostname. IP literals keep validating the IP.
+        ...(isIP(params.host) === 0 && { servername: params.host }),
       },
     });
 
