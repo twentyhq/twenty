@@ -5,13 +5,14 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 
-import { ObjectOpenRecordIn } from 'twenty-shared/types';
+import { MetadataReadability, ObjectOpenRecordIn } from 'twenty-shared/types';
 
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { type ObjectMetadataOverrides } from 'src/engine/metadata-modules/object-metadata/types/object-metadata-overrides.type';
 
 registerEnumType(ObjectOpenRecordIn, { name: 'ObjectOpenRecordIn' });
+registerEnumType(MetadataReadability, { name: 'MetadataReadability' });
 
 @ObjectType('Object')
 export class ObjectMetadataDTO {
@@ -75,6 +76,9 @@ export class ObjectMetadataDTO {
 
   @Field(() => ObjectOpenRecordIn)
   openRecordIn: ObjectOpenRecordIn;
+
+  @Field(() => MetadataReadability)
+  readability: MetadataReadability;
 
   @HideField()
   workspaceId: string;
