@@ -8,6 +8,7 @@ import { SyncRecordShareObjectCommand } from 'src/database/commands/upgrade-vers
 import { MakeCallRecordingPrivateCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788555747635-make-call-recording-private.command';
 import { BackfillCallRecordingSharesCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788555749940-backfill-call-recording-shares.command';
 import { BackfillChannelRecordSharesCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788561701130-backfill-channel-record-shares.command';
+import { MakeMessagingAndCalendarPrivateCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788573079880-make-messaging-and-calendar-private.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -43,6 +44,7 @@ import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-co
     MakeCallRecordingPrivateCommand,
     BackfillCallRecordingSharesCommand,
     BackfillChannelRecordSharesCommand,
+    MakeMessagingAndCalendarPrivateCommand,
   ],
 })
 export class V2_39_UpgradeVersionCommandModule {}

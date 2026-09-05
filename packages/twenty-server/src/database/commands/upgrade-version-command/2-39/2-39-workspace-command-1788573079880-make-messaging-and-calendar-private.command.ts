@@ -1,0 +1,143 @@
+import { Command } from 'nest-commander';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { MetadataReadability } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+
+const OBJECTS_TO_MAKE_PRIVATE = [
+  {
+    nameSingular: 'message',
+    universalIdentifier: STANDARD_OBJECTS.message.universalIdentifier,
+  },
+  {
+    nameSingular: 'messageThread',
+    universalIdentifier: STANDARD_OBJECTS.messageThread.universalIdentifier,
+  },
+  {
+    nameSingular: 'calendarEvent',
+    universalIdentifier: STANDARD_OBJECTS.calendarEvent.universalIdentifier,
+  },
+];
+
+@RegisteredWorkspaceCommand('2.39.0', 1788573079880)
+@Command({
+  name: 'upgrade:2-39:make-messaging-and-calendar-private',
+  description:
+    'Set the readability of the existing message, messageThread and calendarEvent standard objects to PRIVATE, as the standard application now declares them; workspaces created after the change already have it',
+})
+export class MakeMessagingAndCalendarPrivateCommand extends ProvisionedWorkspaceCommandRunner {
+  constructor(
+    protected readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly applicationService: ApplicationService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+  ) {
+    super(workspaceIteratorService);
+  }
+
+  override async runOnWorkspace({
+    workspaceId,
+    options,
+  }: RunOnWorkspaceArgs): Promise<void> {
+    const isDryRun = options.dryRun ?? false;
+
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]);
+
+    const flatObjectMetadatasToUpdate: FlatObjectMetadata[] = [];
+
+    for (const {
+      nameSingular,
+      universalIdentifier,
+    } of OBJECTS_TO_MAKE_PRIVATE) {
+      const flatObjectMetadata =
+        findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
+          flatEntityMaps: flatObjectMetadataMaps,
+          universalIdentifier,
+        });
+
+      if (!isDefined(flatObjectMetadata)) {
+        this.logger.warn(
+          `${nameSingular} object not found for workspace ${workspaceId}, skipping it`,
+        );
+
+        continue;
+      }
+
+      if (flatObjectMetadata.readability !== MetadataReadability.PRIVATE) {
+        flatObjectMetadatasToUpdate.push(flatObjectMetadata);
+      }
+    }
+
+    if (flatObjectMetadatasToUpdate.length === 0) {
+      this.logger.log(
+        `message, messageThread and calendarEvent are already PRIVATE for workspace ${workspaceId}, skipping`,
+      );
+
+      return;
+    }
+
+    const objectNames = flatObjectMetadatasToUpdate
+      .map((flatObjectMetadata) => flatObjectMetadata.nameSingular)
+      .join(', ');
+
+    this.logger.log(
+      `${isDryRun ? '[DRY RUN] ' : ''}Making ${objectNames} PRIVATE for workspace ${workspaceId}`,
+    );
+
+    if (isDryRun) {
+      return;
+    }
+
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          isSystemBuild: true,
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
+          workspaceId,
+          allFlatEntityOperationByMetadataName: {
+            objectMetadata: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: flatObjectMetadatasToUpdate.map(
+                (flatObjectMetadata) => ({
+                  ...flatObjectMetadata,
+                  readability: MetadataReadability.PRIVATE,
+                  updatedAt: new Date().toISOString(),
+                }),
+              ),
+            },
+          },
+        },
+      );
+
+    if (validateAndBuildResult.status === 'fail') {
+      throw new Error(
+        `Failed to make ${objectNames} PRIVATE for workspace ${workspaceId}: ${JSON.stringify(
+          validateAndBuildResult,
+          null,
+          2,
+        )}`,
+      );
+    }
+
+    this.logger.log(`Made ${objectNames} PRIVATE for workspace ${workspaceId}`);
+  }
+}

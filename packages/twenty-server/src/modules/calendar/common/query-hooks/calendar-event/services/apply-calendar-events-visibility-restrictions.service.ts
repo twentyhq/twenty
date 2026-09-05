@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import groupBy from 'lodash.groupby';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
-import { CalendarChannelVisibility } from 'twenty-shared/types';
+import { CalendarChannelVisibility, FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
@@ -12,6 +12,7 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
@@ -25,6 +26,7 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   public async applyCalendarEventsVisibilityRestrictions(
@@ -33,6 +35,13 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
     userId?: string,
   ) {
     const authContext = buildSystemAuthContext(workspaceId);
+
+    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['featureFlagsMap'],
+    );
+    const isRecordSharingEnabled =
+      featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED];
 
     return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
@@ -131,7 +140,15 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
             continue;
           }
 
-          calendarEvents.splice(i, 1);
+          if (!isRecordSharingEnabled) {
+            calendarEvents.splice(i, 1);
+            continue;
+          }
+
+          calendarEvents[i].title =
+            FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
+          calendarEvents[i].description =
+            FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
         }
 
         return calendarEvents;

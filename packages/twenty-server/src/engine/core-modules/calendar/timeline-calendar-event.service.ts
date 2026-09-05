@@ -17,7 +17,6 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { type CallRecordingStatus } from 'src/modules/call-recording/common/enums/call-recording-status.enum';
 import { type CallRecordingWorkspaceEntity } from 'src/modules/call-recording/standard-objects/call-recording.workspace-entity';
@@ -53,20 +52,23 @@ export class TimelineCalendarEventService {
     pageSize: number;
     targetFilter?: TargetFilter;
   }): Promise<TimelineCalendarEventsWithTotalDTO> {
-    const authContext = buildSystemAuthContext(workspaceId);
-
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const offset = (page - 1) * pageSize;
 
-      // Runs under a system auth context, which resolves no role, so without
-      // this the participant relations (person, workspaceMember) are read with
-      // empty permissions and denied for everyone. Channel-level redaction of
-      // title and description below is what gates the caller's access.
+      const calendarEventRepository =
+        this.workspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
+          'calendarEvent',
+        );
+
+      // The participant relations (person, workspaceMember) are read without a
+      // role, so without this they are read with empty permissions and denied
+      // for everyone; only the ids selected through the gated repository above
+      // are hydrated here.
       // TODO run under the caller's role via resolveRolePermissionConfig instead
       // of bypassing, once roles that cannot read person degrade to a redacted
       // timeline rather than a denied one
       // https://github.com/twentyhq/core-team-issues/issues/2777
-      const calendarEventRepository =
+      const calendarEventHydrationRepository =
         this.workspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
           'calendarEvent',
           { shouldBypassPermissionChecks: true },
@@ -111,7 +113,7 @@ export class TimelineCalendarEventService {
         };
       }
 
-      const [events] = await calendarEventRepository.findAndCount({
+      const events = await calendarEventHydrationRepository.find({
         where: {
           id: Any(ids),
         },
@@ -332,7 +334,7 @@ export class TimelineCalendarEventService {
         timelineCalendarEvents,
         relatedPersonIds: personIds,
       };
-    }, authContext);
+    });
   }
 
   async getCalendarEventsFromObjectRecord({
