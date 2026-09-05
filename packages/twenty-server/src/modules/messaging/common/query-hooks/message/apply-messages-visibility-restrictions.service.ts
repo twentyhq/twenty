@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import groupBy from 'lodash.groupby';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
-import { MessageChannelVisibility } from 'twenty-shared/types';
+import { FeatureFlagKey, MessageChannelVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
@@ -12,6 +12,7 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -26,6 +27,7 @@ export class ApplyMessagesVisibilityRestrictionsService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   public async applyMessagesVisibilityRestrictions(
@@ -34,6 +36,13 @@ export class ApplyMessagesVisibilityRestrictionsService {
     userId?: string,
   ) {
     const authContext = buildSystemAuthContext(workspaceId);
+
+    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['featureFlagsMap'],
+    );
+    const isRecordSharingEnabled =
+      featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED];
 
     return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
@@ -87,7 +96,9 @@ export class ApplyMessagesVisibilityRestrictionsService {
             .filter(isDefined);
 
           if (messageChannels.length === 0) {
-            messages.splice(i, 1);
+            if (!isRecordSharingEnabled) {
+              messages.splice(i, 1);
+            }
             continue;
           }
 
@@ -149,7 +160,14 @@ export class ApplyMessagesVisibilityRestrictionsService {
             continue;
           }
 
-          messages.splice(i, 1);
+          if (!isRecordSharingEnabled) {
+            messages.splice(i, 1);
+            continue;
+          }
+
+          messages[i].subject =
+            FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
+          messages[i].text = FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
         }
 
         return messages;

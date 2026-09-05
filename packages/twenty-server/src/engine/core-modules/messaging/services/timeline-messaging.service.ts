@@ -16,7 +16,6 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -36,7 +35,6 @@ export class TimelineMessagingService {
 
   public async getAndCountMessageThreads(
     personIds: string[],
-    workspaceId: string,
     offset: number,
     pageSize: number,
     targetFilter?: TargetFilter,
@@ -51,8 +49,6 @@ export class TimelineMessagingService {
     >[];
     totalNumberOfThreads: number;
   }> {
-    const authContext = buildSystemAuthContext(workspaceId);
-
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageThreadRepository =
         this.workspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
@@ -134,7 +130,7 @@ export class TimelineMessagingService {
         }),
         totalNumberOfThreads,
       };
-    }, authContext);
+    });
   }
 
   public async getThreadParticipantsByThreadId(
@@ -143,8 +139,6 @@ export class TimelineMessagingService {
   ): Promise<{
     [key: string]: MessageParticipantWorkspaceEntity[];
   }> {
-    const authContext = buildSystemAuthContext(workspaceId);
-
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageParticipantRepository =
         this.workspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
@@ -243,7 +237,7 @@ export class TimelineMessagingService {
         },
         {},
       );
-    }, authContext);
+    });
   }
 
   public async getThreadVisibilityByThreadId(
@@ -253,8 +247,6 @@ export class TimelineMessagingService {
   ): Promise<{
     [key: string]: MessageChannelVisibility;
   }> {
-    const authContext = buildSystemAuthContext(workspaceId);
-
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceMemberRepository =
         this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -374,6 +366,6 @@ export class TimelineMessagingService {
       }
 
       return threadVisibilityByThreadId;
-    }, authContext);
+    });
   }
 }

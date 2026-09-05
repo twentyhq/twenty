@@ -31,7 +31,6 @@ export class GetMessagesService {
     const { messageThreads, totalNumberOfThreads } =
       await this.timelineMessagingService.getAndCountMessageThreads(
         personIds,
-        workspaceId,
         offset,
         pageSize,
         targetFilter,

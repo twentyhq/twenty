@@ -47,9 +47,18 @@ describe('Standard object readability', () => {
     INHERITED_STANDARD_OBJECT_PARENT_FIELDS,
   ) as (keyof typeof INHERITED_STANDARD_OBJECT_PARENT_FIELDS)[];
 
+  const privateObjectNames = [
+    'callRecording',
+    'message',
+    'messageThread',
+    'calendarEvent',
+  ] as const satisfies (keyof typeof STANDARD_OBJECTS)[];
+
   const nonOpenObjectUniversalIdentifiers: string[] = [
     STANDARD_OBJECTS.recordShare.universalIdentifier,
-    STANDARD_OBJECTS.callRecording.universalIdentifier,
+    ...privateObjectNames.map(
+      (objectName) => STANDARD_OBJECTS[objectName].universalIdentifier,
+    ),
     ...inheritedObjectNames.map(
       (objectName) => STANDARD_OBJECTS[objectName].universalIdentifier,
     ),
@@ -69,12 +78,15 @@ describe('Standard object readability', () => {
     });
   });
 
-  it('declares callRecording PRIVATE for readability and OPEN for writability', () => {
-    expect(findStandardFlatObjectMetadata('callRecording')).toMatchObject({
-      readability: MetadataReadability.PRIVATE,
-      writability: MetadataWritability.OPEN,
-    });
-  });
+  it.each(privateObjectNames)(
+    'declares %s PRIVATE for readability and OPEN for writability',
+    (objectName) => {
+      expect(findStandardFlatObjectMetadata(objectName)).toMatchObject({
+        readability: MetadataReadability.PRIVATE,
+        writability: MetadataWritability.OPEN,
+      });
+    },
+  );
 
   it.each(inheritedObjectNames)(
     'declares %s INHERITED from its parent field',

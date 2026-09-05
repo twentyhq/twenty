@@ -3,7 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { sleep } from 'cloudflare/core';
 import Fuse from 'fuse.js';
 import { NavigateAppToolOutput } from 'twenty-shared/ai';
-import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  MetadataReadability,
+  type ObjectRecord,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -296,6 +300,14 @@ export class NavigateAppTool implements Tool {
         success: false,
         message: `Object "${objectNameSingular}" not found`,
         error: `No object with singular name "${objectNameSingular}" was found. Available objects: ${availableObjectNames}`,
+      };
+    }
+
+    if (flatObjectMetadata.readability !== MetadataReadability.OPEN) {
+      return {
+        success: false,
+        message: `Object "${objectNameSingular}" cannot be searched by record name`,
+        error: `Records of "${objectNameSingular}" are not openly readable, so they cannot be searched by name from this tool.`,
       };
     }
 
