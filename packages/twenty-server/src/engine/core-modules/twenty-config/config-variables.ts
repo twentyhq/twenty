@@ -1339,6 +1339,16 @@ export class ConfigVariables {
   PG_SSL_ALLOW_SELF_SIGNED = false;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Allow IMAP/SMTP connections to mail servers with self-signed certificates (disables TLS certificate verification for messaging)',
+    isEnvOnly: true,
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  MAIL_TLS_ALLOW_SELF_SIGNED = false;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Maximum number of clients in pg connection pool',
     isEnvOnly: true,

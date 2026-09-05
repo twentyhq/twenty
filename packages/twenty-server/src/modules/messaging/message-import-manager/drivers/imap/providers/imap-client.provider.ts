@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 
 import { buildImapTlsOptions } from 'src/engine/core-modules/imap-smtp-caldav-connection/utils/build-imap-tls-options.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import {
@@ -26,6 +27,7 @@ export class ImapClientProvider {
   constructor(
     private readonly secureHttpClientService: SecureHttpClientService,
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
+    private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
   ) {}
@@ -104,7 +106,9 @@ export class ImapClientProvider {
       },
       logger: false,
       tls: {
-        rejectUnauthorized: false,
+        rejectUnauthorized: !this.twentyConfigService.get(
+          'MAIL_TLS_ALLOW_SELF_SIGNED',
+        ),
       },
       connectionTimeout: ImapClientProvider.CONNECTION_TIMEOUT_MS,
       greetingTimeout: ImapClientProvider.GREETING_TIMEOUT_MS,

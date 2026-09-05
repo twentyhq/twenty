@@ -51,7 +51,9 @@ export class ImapSmtpCaldavService {
       },
       logger: false,
       tls: {
-        rejectUnauthorized: false,
+        rejectUnauthorized: !this.twentyConfigService.get(
+          'MAIL_TLS_ALLOW_SELF_SIGNED',
+        ),
       },
     });
 
@@ -123,7 +125,9 @@ export class ImapSmtpCaldavService {
         pass: params.password,
       },
       tls: {
-        rejectUnauthorized: false,
+        rejectUnauthorized: !this.twentyConfigService.get(
+          'MAIL_TLS_ALLOW_SELF_SIGNED',
+        ),
       },
     });
 
