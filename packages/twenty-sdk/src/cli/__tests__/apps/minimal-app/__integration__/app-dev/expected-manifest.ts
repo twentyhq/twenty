@@ -16,6 +16,7 @@ export const EXPECTED_MANIFEST: Manifest = {
     requiredServerVersionRange: null,
   },
   permissionFlags: [],
+  sharingRules: [],
   skills: [],
   translations: {},
   agents: [],

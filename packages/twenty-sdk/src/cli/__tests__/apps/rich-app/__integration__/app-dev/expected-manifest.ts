@@ -82,6 +82,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       fileType: 'png',
     },
   ],
+  sharingRules: [],
   skills: [],
   translations: {},
   agents: [],
