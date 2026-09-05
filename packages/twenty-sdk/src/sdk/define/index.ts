@@ -202,6 +202,7 @@ export {
   ObjectOpenRecordIn,
   ObjectRecordGroupByDateGranularity,
   PageLayoutTabLayoutMode,
+  PageLayoutWidgetVerticalListHeightBehavior,
   PageLayoutType,
   ViewCalendarLayout,
   ViewFilterGroupLogicalOperator,

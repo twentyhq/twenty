@@ -20,6 +20,7 @@ import { type ReactNode } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import {
   PageLayoutTabLayoutMode,
+  PageLayoutWidgetVerticalListHeightBehavior,
   WidgetType,
 } from '~/generated-metadata/graphql';
 
@@ -167,6 +168,40 @@ describe('useOpenWidgetSettingsInSidePanel', () => {
       resetNavigationStack: true,
     });
     expect(mockCloseSidePanelMenu).not.toHaveBeenCalled();
+  });
+
+  it('opens widget settings for a single TAB_VIEWPORT front component', () => {
+    const store = createStore();
+    const frontComponentWidget = {
+      ...makeWidget('front-component-widget', 0),
+      type: WidgetType.FRONT_COMPONENT,
+      position: {
+        __typename: 'PageLayoutWidgetVerticalListPosition' as const,
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        index: 0,
+        heightBehavior: PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+      },
+    };
+
+    store.set(
+      getDraftAtom(),
+      makeDraft([makeTab('tab-1', [frontComponentWidget])]),
+    );
+
+    const { result } = renderOpenWidgetSettingsHook(store);
+
+    act(() => {
+      result.current.openWidgetSettingsInSidePanel({
+        widgetId: frontComponentWidget.id,
+        widgetType: frontComponentWidget.type,
+      });
+    });
+
+    expect(store.get(getEditingWidgetIdAtom())).toBe(frontComponentWidget.id);
+    expect(mockNavigatePageLayoutSidePanel).toHaveBeenCalledWith({
+      sidePanelPage: SidePanelPages.PageLayoutWidgetSettings,
+      resetNavigationStack: true,
+    });
   });
 
   it.each([false, true])(

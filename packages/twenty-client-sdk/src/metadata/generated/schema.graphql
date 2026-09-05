@@ -1026,12 +1026,18 @@ type PageLayoutWidgetGridPosition {
 enum PageLayoutTabLayoutMode {
   GRID
   VERTICAL_LIST
-  CANVAS
+  CANVAS @deprecated(reason: "Use VERTICAL_LIST with TAB_VIEWPORT widget height behavior.")
 }
 
 type PageLayoutWidgetVerticalListPosition {
   layoutMode: PageLayoutTabLayoutMode!
   index: Int!
+  heightBehavior: PageLayoutWidgetVerticalListHeightBehavior
+}
+
+enum PageLayoutWidgetVerticalListHeightBehavior {
+  FIT_CONTENT
+  TAB_VIEWPORT
 }
 
 type PageLayoutWidgetCanvasPosition {

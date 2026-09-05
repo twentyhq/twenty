@@ -1,7 +1,11 @@
 import { makeWidget } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { sortWidgetsWithViewportFillingLast } from '@/page-layout/utils/sortWidgetsWithViewportFillingLast';
-import { WidgetType } from '~/generated-metadata/graphql';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutWidgetVerticalListHeightBehavior,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 
 const makeWidgetWithType = (
   id: string,
@@ -64,5 +68,25 @@ describe('sortWidgetsWithViewportFillingLast', () => {
         ({ id }) => id,
       ),
     ).toEqual(['fields', 'field']);
+  });
+
+  it('normalizes an explicit TAB_VIEWPORT front component after fit-content widgets', () => {
+    const frontComponentWidget = {
+      ...makeWidgetWithType('front-component', 0, WidgetType.FRONT_COMPONENT),
+      position: {
+        __typename: 'PageLayoutWidgetVerticalListPosition' as const,
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        index: 0,
+        heightBehavior: PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+      },
+    };
+    const fieldsWidget = makeWidgetWithType('fields', 1, WidgetType.FIELDS);
+
+    expect(
+      sortWidgetsWithViewportFillingLast([
+        frontComponentWidget,
+        fieldsWidget,
+      ]).map(({ id }) => id),
+    ).toEqual(['fields', 'front-component']);
   });
 });
