@@ -1,6 +1,10 @@
 import { msg } from '@lingui/core/macro';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { ObjectOpenRecordIn } from 'twenty-shared/types';
+import {
+  MetadataReadability,
+  MetadataWritability,
+  ObjectOpenRecordIn,
+} from 'twenty-shared/types';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
@@ -940,6 +944,53 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         ],
         labelIdentifierFieldMetadataName: 'name',
         imageIdentifierFieldMetadataName: 'avatarFile',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
+  recordShare: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'recordShare'>, 'context' | 'objectName'>) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'recordShare',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier: STANDARD_OBJECTS.recordShare.universalIdentifier,
+        nameSingular: 'recordShare',
+        namePlural: 'recordShares',
+        labelSingular: i18nLabel(
+          msg({
+            message: `Record share`,
+            context: 'objectMetadata.labelSingular',
+          }),
+        ),
+        labelPlural: i18nLabel(
+          msg({
+            message: `Record shares`,
+            context: 'objectMetadata.labelPlural',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Who may read a record of a private object`,
+            context: 'objectMetadata.description',
+          }),
+        ),
+        icon: 'IconLock',
+        isSystem: true,
+        isSearchable: false,
+        isAuditLogged: false,
+        isUIEditable: false,
+        isUICreatable: false,
+        writability: MetadataWritability.SYSTEM,
+        readability: MetadataReadability.SYSTEM,
+        labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
       standardObjectMetadataRelatedEntityIds,
