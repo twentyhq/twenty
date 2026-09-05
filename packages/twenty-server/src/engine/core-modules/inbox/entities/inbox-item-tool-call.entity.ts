@@ -97,7 +97,7 @@ export class InboxItemToolCallEntity {
   @Column({ type: 'jsonb', nullable: true })
   output: JsonbProperty<InboxItemToolCallInput> | null;
 
-  @Column({ nullable: true, type: 'text' })
+  @Column({ nullable: true, type: 'varchar' })
   error: string | null;
 
   @Column({ nullable: true, type: 'uuid' })

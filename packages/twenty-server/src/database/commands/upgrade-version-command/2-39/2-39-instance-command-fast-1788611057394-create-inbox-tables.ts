@@ -209,7 +209,7 @@ export class CreateInboxTablesFastInstanceCommand
         "editedInput" jsonb,
         "status" "core"."inboxItemToolCall_status_enum" NOT NULL DEFAULT 'PROPOSED',
         "output" jsonb,
-        "error" text,
+        "error" character varying,
         "resolvedByUserWorkspaceId" uuid,
         "resolvedAt" TIMESTAMP WITH TIME ZONE,
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
