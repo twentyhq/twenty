@@ -8,6 +8,7 @@ import { BackfillMessageListJunctionTargetsCommand } from 'src/database/commands
 import { CreateMessageListMemberViewCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788616075386-create-message-list-member-view.command';
 import { MarkPlatformOwnedStandardObjectsSystemCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788616958245-mark-platform-owned-standard-objects-system.command';
 import { AlignMessageCampaignCommandsCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788619058944-align-message-campaign-commands.command';
+import { AddDuplicateMessageCampaignCommandCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788619229797-add-duplicate-message-campaign-command.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -38,6 +39,7 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     CreateMessageListMemberViewCommand,
     MarkPlatformOwnedStandardObjectsSystemCommand,
     AlignMessageCampaignCommandsCommand,
+    AddDuplicateMessageCampaignCommandCommand,
   ],
 })
 export class V2_39_UpgradeVersionCommandModule {}

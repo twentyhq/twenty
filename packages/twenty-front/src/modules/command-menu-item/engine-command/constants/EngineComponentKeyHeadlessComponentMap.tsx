@@ -6,6 +6,7 @@ import { NavigationEngineCommand } from '@/command-menu-item/engine-command/comp
 import { ComposeCampaignCommand } from '@/command-menu-item/engine-command/global/components/ComposeCampaignCommand';
 import { SendMessageCampaignSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/message-campaign/components/SendMessageCampaignSingleRecordCommand';
 import { CancelMessageCampaignSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand';
+import { DuplicateMessageCampaignSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/message-campaign/components/DuplicateMessageCampaignSingleRecordCommand';
 import { SendMessageCampaignTestSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/message-campaign/components/SendMessageCampaignTestSingleRecordCommand';
 import { OpenEmailBlockSettingsSingleRecordCommand } from '@/command-menu-item/engine-command/record/components/OpenEmailBlockSettingsSingleRecordCommand';
 import { ComposeEmailCommand } from '@/command-menu-item/engine-command/global/components/ComposeEmailCommand';
@@ -261,6 +262,9 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   ),
   [EngineComponentKey.CANCEL_MESSAGE_CAMPAIGN]: (
     <CancelMessageCampaignSingleRecordCommand />
+  ),
+  [EngineComponentKey.DUPLICATE_MESSAGE_CAMPAIGN]: (
+    <DuplicateMessageCampaignSingleRecordCommand />
   ),
   [EngineComponentKey.EMAIL_BLOCK_SETTINGS]: (
     <OpenEmailBlockSettingsSingleRecordCommand />

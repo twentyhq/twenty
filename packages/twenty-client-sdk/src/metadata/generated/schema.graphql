@@ -116,6 +116,7 @@ type CommandMenuItem {
   payload: CommandMenuItemPayload
   hotKeys: [String!]
   conditionalAvailabilityExpression: String
+  conditionalPinnedExpression: String
   availabilityObjectMetadataId: UUID
   navigationTargetObjectMetadataId: UUID
   pageLayoutId: UUID
@@ -180,6 +181,7 @@ enum EngineComponentKey {
   SEND_MESSAGE_CAMPAIGN
   SEND_MESSAGE_CAMPAIGN_TEST
   CANCEL_MESSAGE_CAMPAIGN
+  DUPLICATE_MESSAGE_CAMPAIGN
   EMAIL_BLOCK_SETTINGS
   GO_TO_PEOPLE
   GO_TO_COMPANIES
@@ -4644,6 +4646,7 @@ input CreateCommandMenuItemInput {
   availabilityType: CommandMenuItemAvailabilityType
   hotKeys: [String!]
   conditionalAvailabilityExpression: String
+  conditionalPinnedExpression: String
   availabilityObjectMetadataId: UUID
   payload: JSON
   navigationTargetObjectMetadataId: UUID

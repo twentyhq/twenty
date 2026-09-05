@@ -376,6 +376,9 @@ export default {
             "conditionalAvailabilityExpression": [
                 1
             ],
+            "conditionalPinnedExpression": [
+                1
+            ],
             "availabilityObjectMetadataId": [
                 3
             ],
@@ -11822,6 +11825,9 @@ export default {
                 1
             ],
             "conditionalAvailabilityExpression": [
+                1
+            ],
+            "conditionalPinnedExpression": [
                 1
             ],
             "availabilityObjectMetadataId": [

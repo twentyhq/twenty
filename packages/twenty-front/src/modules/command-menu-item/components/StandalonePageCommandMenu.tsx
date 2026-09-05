@@ -9,6 +9,7 @@ import { CommandMenuItemEditButton } from '@/command-menu-item/edit/components/C
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
+import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
@@ -118,6 +119,7 @@ export const StandalonePageCommandMenu = () => {
           commandMenuContextApi,
         ),
       )
+      .map((item) => resolveCommandMenuItemPinning(item, commandMenuContextApi))
       .sort(
         (firstItem, secondItem) => firstItem.position - secondItem.position,
       );
