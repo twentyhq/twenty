@@ -14,26 +14,36 @@ export const InformationBannerFailPaymentInfo = () => {
     isPaymentMethodFlowDisabled,
   } = usePaymentMethodFlow(FAILED_PAYMENT_UPDATE_PAYMENT_MODAL_ID);
 
+  const getMessage = () => {
+    if (!hasPermissionToUpdateBillingDetails) {
+      return t`There is a billing issue. Please contact your admin.`;
+    }
+
+    if (shouldAddPaymentMethodInProduct) {
+      return t`A payment method is needed to keep your workspace active.`;
+    }
+
+    return t`Last payment failed. Please update your billing details.`;
+  };
+
+  const getButtonTitle = () => {
+    if (!hasPermissionToUpdateBillingDetails) {
+      return undefined;
+    }
+
+    return shouldAddPaymentMethodInProduct
+      ? t`Add payment method`
+      : t`Update payment`;
+  };
+
   return (
     <>
       <InformationBanner
         componentInstanceId="information-banner-fail-payment-info"
         color="danger"
         variant="secondary"
-        message={
-          hasPermissionToUpdateBillingDetails
-            ? shouldAddPaymentMethodInProduct
-              ? t`A payment method is needed to keep your workspace active.`
-              : t`Last payment failed. Please update your billing details.`
-            : t`There is a billing issue. Please contact your admin.`
-        }
-        buttonTitle={
-          hasPermissionToUpdateBillingDetails
-            ? shouldAddPaymentMethodInProduct
-              ? t`Add payment method`
-              : t`Update payment`
-            : undefined
-        }
+        message={getMessage()}
+        buttonTitle={getButtonTitle()}
         buttonOnClick={openPaymentMethodFlow}
         isButtonDisabled={isPaymentMethodFlowDisabled}
       />
