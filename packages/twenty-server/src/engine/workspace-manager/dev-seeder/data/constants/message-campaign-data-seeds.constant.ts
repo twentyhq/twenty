@@ -50,8 +50,6 @@ export const MESSAGE_CAMPAIGN_DATA_SEED_IDS = {
   FOUNDER_DIGEST: '20202020-342c-4f7a-8c7e-37e2bc291102',
 };
 
-// The digest went to the founders list; one member had opted out of the
-// newsletter, one address was rejected, and one bounced after acceptance.
 const FOUNDER_DIGEST_AUDIENCE_SIZE = countMessageListMembers(
   MESSAGE_LIST_DATA_SEED_IDS.FOUNDERS,
 );
