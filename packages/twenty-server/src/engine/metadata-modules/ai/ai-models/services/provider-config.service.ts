@@ -7,6 +7,7 @@ import { DefaultAiCatalogService } from 'src/engine/metadata-modules/ai/ai-model
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-models/utils/extract-config-variable-name.util';
+import { mergeAiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/utils/merge-ai-providers-config.util';
 
 @Injectable()
 export class ProviderConfigService {
@@ -37,7 +38,7 @@ export class ProviderConfigService {
 
     const custom = this.twentyConfigService.get('AI_PROVIDERS');
 
-    return { ...catalog, ...custom };
+    return mergeAiProvidersConfig(catalog, custom);
   }
 
   private resolveTemplates(providers: AiProvidersConfig): AiProvidersConfig {
