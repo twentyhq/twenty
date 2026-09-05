@@ -162,7 +162,10 @@ const isRecordMatchingNestedRelationFilter = ({
   // A to-many relation matches when any of its loaded records does, the way
   // the backend EXISTS does.
   if (Array.isArray(relationRecord)) {
-    return relationRecord.some(isRecordMatchingNestedFilter);
+    return relationRecord.some(
+      (relatedRecord) =>
+        isObject(relatedRecord) && isRecordMatchingNestedFilter(relatedRecord),
+    );
   }
 
   return isRecordMatchingNestedFilter(relationRecord);

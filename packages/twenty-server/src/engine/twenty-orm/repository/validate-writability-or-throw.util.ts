@@ -26,6 +26,13 @@ const isWritePermittedByWritability = ({
     return true;
   }
 
+  // A system context is only ever built server-side (sync jobs, listeners,
+  // internal services); no token strategy mints one, so it is the platform
+  // itself writing and neither ownership level applies to it.
+  if (isDefined(authContext) && authContext.type === 'system') {
+    return true;
+  }
+
   if (writability === MetadataWritability.APPLICATION) {
     // Only APPLICATION_ACCESS tokens ever carry an application, so reading it
     // off a user-bound context cannot let an ordinary session through.
