@@ -117,8 +117,6 @@ export class CommandMenuItemEntity
   @Column({ nullable: true, type: 'varchar' })
   conditionalAvailabilityExpression: string | null;
 
-  // Narrows isPinned: a pinned item only shows as a button while this holds,
-  // and stays reachable from the menu otherwise.
   @WasIntroducedInUpgrade({
     upgradeCommandName:
       ADD_COMMAND_MENU_ITEM_CONDITIONAL_PINNED_EXPRESSION_UPGRADE_COMMAND_NAME,
