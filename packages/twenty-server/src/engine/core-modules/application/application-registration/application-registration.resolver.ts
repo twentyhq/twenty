@@ -53,6 +53,7 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/application/application-registration-variable/dtos/application-registration-variable.dto';
 import {
@@ -277,10 +278,7 @@ export class ApplicationRegistrationResolver {
         ownerWorkspaceId: workspaceId,
       });
     } catch (error) {
-      if (
-        error instanceof Error &&
-        error.message.includes('maximum allowed size')
-      ) {
+      if (error instanceof StreamSizeExceededError) {
         throw new ApplicationRegistrationException(
           `Tarball exceeds maximum size of ${maxSize} bytes`,
           ApplicationRegistrationExceptionCode.INVALID_INPUT,

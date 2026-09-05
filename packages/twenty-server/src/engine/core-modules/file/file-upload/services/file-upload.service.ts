@@ -19,6 +19,7 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/service
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { COMPLETE_FILE_UPLOAD_DEADLINE_MS } from 'src/engine/core-modules/file/file-upload/constants/complete-file-upload-deadline.constant';
+import { MAX_SANITIZABLE_SVG_BYTES } from 'src/engine/core-modules/file/file-upload/constants/max-sanitizable-svg-size.constant';
 import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
 import {
   FileUploadException,
@@ -26,6 +27,7 @@ import {
 } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 import { FileUploadCompletionService } from 'src/engine/core-modules/file/file-upload/services/file-upload-completion.service';
 import { FileUploadTargetService } from 'src/engine/core-modules/file/file-upload/services/file-upload-target.service';
+import { buildSvgTooLargeException } from 'src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
@@ -103,6 +105,16 @@ export class FileUploadService {
     }
 
     const { ext } = buildFileInfo(filename);
+
+    // Completion refuses to sanitize an SVG this big, so reject before the
+    // client transfers it. The declared extension is a client claim, which
+    // only makes this a shortcut: the sniffed check at completion decides.
+    if (ext.toLowerCase() === 'svg' && size > MAX_SANITIZABLE_SVG_BYTES) {
+      throw buildSvgTooLargeException(
+        `declared size ${size} exceeds the ${MAX_SANITIZABLE_SVG_BYTES} byte limit`,
+      );
+    }
+
     const mimeType = 'application/octet-stream';
 
     const fileId = v4();
