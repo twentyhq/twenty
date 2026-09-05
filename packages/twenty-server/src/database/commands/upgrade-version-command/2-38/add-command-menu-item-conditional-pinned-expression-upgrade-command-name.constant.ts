@@ -1,0 +1,2 @@
+export const ADD_COMMAND_MENU_ITEM_CONDITIONAL_PINNED_EXPRESSION_UPGRADE_COMMAND_NAME =
+  '2.38.0_AddCommandMenuItemConditionalPinnedExpressionFastInstanceCommand_1788614786308';

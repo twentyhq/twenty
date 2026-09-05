@@ -59,6 +59,7 @@ export const buildLegacyNavigationFlatCommandMenuItem = ({
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression,
+    conditionalPinnedExpression: null,
     frontComponentId: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATION,

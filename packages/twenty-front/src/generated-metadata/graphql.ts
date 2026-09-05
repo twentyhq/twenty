@@ -1050,6 +1050,7 @@ export type CommandMenuItem = {
   availabilityObjectMetadataId?: Maybe<Scalars['UUID']['output']>;
   availabilityType: CommandMenuItemAvailabilityType;
   conditionalAvailabilityExpression?: Maybe<Scalars['String']['output']>;
+  conditionalPinnedExpression?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   engineComponentKey: EngineComponentKey;
   frontComponent?: Maybe<FrontComponent>;
@@ -1202,6 +1203,7 @@ export type CreateCommandMenuItemInput = {
   availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
   conditionalAvailabilityExpression?: InputMaybe<Scalars['String']['input']>;
+  conditionalPinnedExpression?: InputMaybe<Scalars['String']['input']>;
   engineComponentKey: EngineComponentKey;
   frontComponentId?: InputMaybe<Scalars['UUID']['input']>;
   hotKeys?: InputMaybe<Array<Scalars['String']['input']>>;
@@ -1703,6 +1705,7 @@ export enum EngineComponentKey {
   ASK_AI = 'ASK_AI',
   CANCEL_DASHBOARD_LAYOUT = 'CANCEL_DASHBOARD_LAYOUT',
   CANCEL_MESSAGE_CAMPAIGN = 'CANCEL_MESSAGE_CAMPAIGN',
+  DUPLICATE_MESSAGE_CAMPAIGN = 'DUPLICATE_MESSAGE_CAMPAIGN',
   COMPOSE_CAMPAIGN = 'COMPOSE_CAMPAIGN',
   COMPOSE_EMAIL = 'COMPOSE_EMAIL',
   CREATE_NEW_RECORD = 'CREATE_NEW_RECORD',
@@ -7759,7 +7762,7 @@ export type ValidatePasswordResetTokenQueryVariables = Exact<{
 
 export type ValidatePasswordResetTokenQuery = { __typename?: 'Query', validatePasswordResetToken: { __typename?: 'ValidatePasswordResetToken', id: string, email: string, hasPassword: boolean } };
 
-export type CommandMenuItemFieldsFragment = { __typename?: 'CommandMenuItem', id: string, universalIdentifier?: string | null, applicationId?: string | null, workflowVersionId?: string | null, frontComponentId?: string | null, engineComponentKey: EngineComponentKey, label: string, icon?: string | null, shortLabel?: string | null, position: number, isPinned: boolean, hotKeys?: Array<string> | null, conditionalAvailabilityExpression?: string | null, availabilityType: CommandMenuItemAvailabilityType, availabilityObjectMetadataId?: string | null, navigationTargetObjectMetadataId?: string | null, pageLayoutId?: string | null, isActive: boolean, frontComponent?: { __typename?: 'FrontComponent', id: string, name: string, isHeadless: boolean } | null, payload?:
+export type CommandMenuItemFieldsFragment = { __typename?: 'CommandMenuItem', id: string, universalIdentifier?: string | null, applicationId?: string | null, workflowVersionId?: string | null, frontComponentId?: string | null, engineComponentKey: EngineComponentKey, label: string, icon?: string | null, shortLabel?: string | null, position: number, isPinned: boolean, hotKeys?: Array<string> | null, conditionalAvailabilityExpression?: string | null, conditionalPinnedExpression?: string | null, availabilityType: CommandMenuItemAvailabilityType, availabilityObjectMetadataId?: string | null, navigationTargetObjectMetadataId?: string | null, pageLayoutId?: string | null, isActive: boolean, frontComponent?: { __typename?: 'FrontComponent', id: string, name: string, isHeadless: boolean } | null, payload?:
     | { __typename?: 'ObjectMetadataCommandMenuItemPayload' }
     | { __typename?: 'PathCommandMenuItemPayload', path: string }
    | null };
@@ -7769,7 +7772,7 @@ export type ResetCommandMenuItemMutationVariables = Exact<{
 }>;
 
 
-export type ResetCommandMenuItemMutation = { __typename?: 'Mutation', resetCommandMenuItem: { __typename?: 'CommandMenuItem', id: string, universalIdentifier?: string | null, applicationId?: string | null, workflowVersionId?: string | null, frontComponentId?: string | null, engineComponentKey: EngineComponentKey, label: string, icon?: string | null, shortLabel?: string | null, position: number, isPinned: boolean, hotKeys?: Array<string> | null, conditionalAvailabilityExpression?: string | null, availabilityType: CommandMenuItemAvailabilityType, availabilityObjectMetadataId?: string | null, navigationTargetObjectMetadataId?: string | null, pageLayoutId?: string | null, isActive: boolean, frontComponent?: { __typename?: 'FrontComponent', id: string, name: string, isHeadless: boolean } | null, payload?:
+export type ResetCommandMenuItemMutation = { __typename?: 'Mutation', resetCommandMenuItem: { __typename?: 'CommandMenuItem', id: string, universalIdentifier?: string | null, applicationId?: string | null, workflowVersionId?: string | null, frontComponentId?: string | null, engineComponentKey: EngineComponentKey, label: string, icon?: string | null, shortLabel?: string | null, position: number, isPinned: boolean, hotKeys?: Array<string> | null, conditionalAvailabilityExpression?: string | null, conditionalPinnedExpression?: string | null, availabilityType: CommandMenuItemAvailabilityType, availabilityObjectMetadataId?: string | null, navigationTargetObjectMetadataId?: string | null, pageLayoutId?: string | null, isActive: boolean, frontComponent?: { __typename?: 'FrontComponent', id: string, name: string, isHeadless: boolean } | null, payload?:
       | { __typename?: 'ObjectMetadataCommandMenuItemPayload' }
       | { __typename?: 'PathCommandMenuItemPayload', path: string }
      | null } };
@@ -7779,7 +7782,7 @@ export type UpdateCommandMenuItemMutationVariables = Exact<{
 }>;
 
 
-export type UpdateCommandMenuItemMutation = { __typename?: 'Mutation', updateCommandMenuItem: { __typename?: 'CommandMenuItem', id: string, universalIdentifier?: string | null, applicationId?: string | null, workflowVersionId?: string | null, frontComponentId?: string | null, engineComponentKey: EngineComponentKey, label: string, icon?: string | null, shortLabel?: string | null, position: number, isPinned: boolean, hotKeys?: Array<string> | null, conditionalAvailabilityExpression?: string | null, availabilityType: CommandMenuItemAvailabilityType, availabilityObjectMetadataId?: string | null, navigationTargetObjectMetadataId?: string | null, pageLayoutId?: string | null, isActive: boolean, frontComponent?: { __typename?: 'FrontComponent', id: string, name: string, isHeadless: boolean } | null, payload?:
+export type UpdateCommandMenuItemMutation = { __typename?: 'Mutation', updateCommandMenuItem: { __typename?: 'CommandMenuItem', id: string, universalIdentifier?: string | null, applicationId?: string | null, workflowVersionId?: string | null, frontComponentId?: string | null, engineComponentKey: EngineComponentKey, label: string, icon?: string | null, shortLabel?: string | null, position: number, isPinned: boolean, hotKeys?: Array<string> | null, conditionalAvailabilityExpression?: string | null, conditionalPinnedExpression?: string | null, availabilityType: CommandMenuItemAvailabilityType, availabilityObjectMetadataId?: string | null, navigationTargetObjectMetadataId?: string | null, pageLayoutId?: string | null, isActive: boolean, frontComponent?: { __typename?: 'FrontComponent', id: string, name: string, isHeadless: boolean } | null, payload?:
       | { __typename?: 'ObjectMetadataCommandMenuItemPayload' }
       | { __typename?: 'PathCommandMenuItemPayload', path: string }
      | null } };
@@ -7787,7 +7790,7 @@ export type UpdateCommandMenuItemMutation = { __typename?: 'Mutation', updateCom
 export type FindManyCommandMenuItemsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindManyCommandMenuItemsQuery = { __typename?: 'Query', commandMenuItems: Array<{ __typename?: 'CommandMenuItem', id: string, universalIdentifier?: string | null, applicationId?: string | null, workflowVersionId?: string | null, frontComponentId?: string | null, engineComponentKey: EngineComponentKey, label: string, icon?: string | null, shortLabel?: string | null, position: number, isPinned: boolean, hotKeys?: Array<string> | null, conditionalAvailabilityExpression?: string | null, availabilityType: CommandMenuItemAvailabilityType, availabilityObjectMetadataId?: string | null, navigationTargetObjectMetadataId?: string | null, pageLayoutId?: string | null, isActive: boolean, frontComponent?: { __typename?: 'FrontComponent', id: string, name: string, isHeadless: boolean } | null, payload?:
+export type FindManyCommandMenuItemsQuery = { __typename?: 'Query', commandMenuItems: Array<{ __typename?: 'CommandMenuItem', id: string, universalIdentifier?: string | null, applicationId?: string | null, workflowVersionId?: string | null, frontComponentId?: string | null, engineComponentKey: EngineComponentKey, label: string, icon?: string | null, shortLabel?: string | null, position: number, isPinned: boolean, hotKeys?: Array<string> | null, conditionalAvailabilityExpression?: string | null, conditionalPinnedExpression?: string | null, availabilityType: CommandMenuItemAvailabilityType, availabilityObjectMetadataId?: string | null, navigationTargetObjectMetadataId?: string | null, pageLayoutId?: string | null, isActive: boolean, frontComponent?: { __typename?: 'FrontComponent', id: string, name: string, isHeadless: boolean } | null, payload?:
       | { __typename?: 'ObjectMetadataCommandMenuItemPayload' }
       | { __typename?: 'PathCommandMenuItemPayload', path: string }
      | null }> };

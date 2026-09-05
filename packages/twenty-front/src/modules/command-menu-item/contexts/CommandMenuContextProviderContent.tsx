@@ -6,6 +6,7 @@ import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/comm
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
+import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
 import { doesCommandMenuItemMatchPageType } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageType';
 import { doesCommandMenuItemMatchSelectionState } from '@/command-menu-item/utils/doesCommandMenuItemMatchSelectionState';
 import {
@@ -63,6 +64,7 @@ export const CommandMenuContextProviderContent = ({
           commandMenuContextApi,
         ),
       )
+      .map((item) => resolveCommandMenuItemPinning(item, commandMenuContextApi))
       .sort(
         (firstItem, secondItem) => firstItem.position - secondItem.position,
       );
