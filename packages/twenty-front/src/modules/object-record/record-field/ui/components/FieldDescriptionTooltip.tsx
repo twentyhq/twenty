@@ -7,8 +7,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledTooltipContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-  line-height: ${themeCssVariables.text.lineHeight.lg};
+  line-height: 16px;
   max-width: 300px;
 `;
 
