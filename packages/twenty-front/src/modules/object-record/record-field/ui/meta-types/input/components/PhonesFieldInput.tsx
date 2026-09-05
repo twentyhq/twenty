@@ -63,6 +63,7 @@ const StyledCustomPhoneInputWrapper = styled.div`
     box-sizing: border-box;
     color: ${themeCssVariables.font.color.primary};
     height: 100%;
+    outline: none;
     padding-left: ${themeCssVariables.spacing[2]};
 
     &::placeholder,
@@ -70,11 +71,6 @@ const StyledCustomPhoneInputWrapper = styled.div`
       color: ${themeCssVariables.font.color.light};
       font-family: ${themeCssVariables.font.family};
       font-weight: ${themeCssVariables.font.weight.medium};
-    }
-
-    &:focus {
-      outline: 2px solid ${themeCssVariables.color.blue};
-      outline-offset: -2px;
     }
   }
 
