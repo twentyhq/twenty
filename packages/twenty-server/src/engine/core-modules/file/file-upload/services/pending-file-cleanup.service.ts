@@ -12,6 +12,7 @@ import {
   PENDING_FILE_CLEANUP_BATCH_SIZE,
   PENDING_FILE_MAX_AGE_MS,
 } from 'src/engine/core-modules/file/file-upload/crons/constants/pending-file-cleanup.constants';
+import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 
@@ -93,11 +94,40 @@ export class PendingFileCleanupService {
       return;
     }
 
-    await this.fileStorageService.deleteFile({
+    const resourcePath = removeFileFolderFromFileEntityPath(file.path);
+
+    const location = {
       workspaceId: file.workspaceId,
       applicationUniversalIdentifier: application.universalIdentifier,
       fileFolder: fileFolder as FileFolder,
-      resourcePath: removeFileFolderFromFileEntityPath(file.path),
-    });
+    };
+
+    // Normally the object is still in quarantine, but a crash between the move
+    // and the row update leaves it at its final path with the row PENDING.
+    //
+    // Quarantine goes first and the two are not concurrent: while a
+    // quarantined object still exists, a completion racing this cleanup can
+    // move it into the final path after that path has been deleted, orphaning
+    // an object no later run will look for. Both still run regardless of the
+    // other's outcome, since the row is already gone.
+    const failures: unknown[] = [];
+
+    for (const pathToDelete of [
+      buildPendingUploadResourcePath({ fileId: file.id, resourcePath }),
+      resourcePath,
+    ]) {
+      try {
+        await this.fileStorageService.deleteFileObject({
+          ...location,
+          resourcePath: pathToDelete,
+        });
+      } catch (error) {
+        failures.push(error);
+      }
+    }
+
+    if (failures.length > 0) {
+      throw failures[0];
+    }
   }
 }

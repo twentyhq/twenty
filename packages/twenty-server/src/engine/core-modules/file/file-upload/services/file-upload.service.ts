@@ -31,6 +31,7 @@ import { buildSvgTooLargeException } from 'src/engine/core-modules/file/file-upl
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
+import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -210,7 +211,10 @@ export class FileUploadService {
           fileFolder,
           applicationUniversalIdentifier: application.universalIdentifier,
           workspaceId,
-          resourcePath,
+          resourcePath: buildPendingUploadResourcePath({
+            fileId,
+            resourcePath,
+          }),
           stream: sizeLimiter,
           mimeType: file.mimeType,
         }),

@@ -2,6 +2,7 @@ import {
   mkdtemp,
   mkdir,
   readFile,
+  readdir,
   rm,
   stat,
   symlink,
@@ -176,6 +177,42 @@ describe('LocalDriver', () => {
       await expect(
         stat(path.join(storagePath, 'workspace/app/partial.txt')),
       ).rejects.toMatchObject({ code: 'ENOENT' });
+
+      await expect(
+        readdir(path.join(storagePath, 'workspace/app')),
+      ).resolves.toEqual([]);
+    });
+
+    it('should publish each write as a new object rather than rewriting in place', async () => {
+      const storagePath = await createTempDirectory('local-driver-storage-');
+      const driver = new LocalDriver({ storagePath });
+      const filePath = 'workspace/app/file.txt';
+
+      await driver.writeFileStream({
+        filePath,
+        stream: Readable.from(Buffer.from('first')),
+        mimeType: undefined,
+      });
+
+      const first = await stat(path.join(storagePath, filePath));
+
+      await driver.writeFileStream({
+        filePath,
+        stream: Readable.from(Buffer.from('secnd')),
+        mimeType: undefined,
+      });
+
+      const second = await stat(path.join(storagePath, filePath));
+
+      // Same length, so only the identity distinguishes them: a rewrite in
+      // place would keep the inode and leave a promotion unable to tell the
+      // two versions apart.
+      expect(second.size).toBe(first.size);
+      expect(second.ino).not.toBe(first.ino);
+
+      await expect(
+        readdir(path.join(storagePath, 'workspace/app')),
+      ).resolves.toEqual(['file.txt']);
     });
   });
 
@@ -229,6 +266,196 @@ describe('LocalDriver', () => {
     });
   });
 
+  describe('move', () => {
+    it('should refuse to move an object that changed since it was inspected', async () => {
+      const storagePath = await createTempDirectory('local-driver-storage-');
+      const folderPath = path.join(storagePath, 'workspace', 'app');
+
+      await mkdir(folderPath, { recursive: true });
+      await writeFile(path.join(folderPath, 'file.txt'), 'original');
+
+      const driver = new LocalDriver({ storagePath });
+      const before = await driver.getFileMetadata({
+        filePath: 'workspace/app/file.txt',
+      });
+
+      await writeFile(path.join(folderPath, 'file.txt'), 'replaced');
+
+      await expect(
+        driver.move({
+          from: { folderPath: 'workspace/app', filename: 'file.txt' },
+          to: { folderPath: 'workspace/app', filename: 'moved.txt' },
+          ifMatchChecksum: before?.checksum,
+        }),
+      ).rejects.toMatchObject({
+        code: FileStorageExceptionCode.PRECONDITION_FAILED,
+      });
+    });
+
+    it('should move an object that still matches the inspected identity', async () => {
+      const storagePath = await createTempDirectory('local-driver-storage-');
+      const folderPath = path.join(storagePath, 'workspace', 'app');
+
+      await mkdir(folderPath, { recursive: true });
+      await writeFile(path.join(folderPath, 'file.txt'), 'original');
+
+      const driver = new LocalDriver({ storagePath });
+      const before = await driver.getFileMetadata({
+        filePath: 'workspace/app/file.txt',
+      });
+
+      await driver.move({
+        from: { folderPath: 'workspace/app', filename: 'file.txt' },
+        to: { folderPath: 'workspace/app', filename: 'moved.txt' },
+        ifMatchChecksum: before?.checksum,
+      });
+
+      await expect(
+        driver.checkFileExists({ filePath: 'workspace/app/moved.txt' }),
+      ).resolves.toBe(true);
+    });
+
+    it('should report a missing source under a precondition as FILE_NOT_FOUND', async () => {
+      const storagePath = await createTempDirectory('local-driver-storage-');
+
+      await mkdir(path.join(storagePath, 'workspace', 'app'), {
+        recursive: true,
+      });
+
+      const driver = new LocalDriver({ storagePath });
+
+      await expect(
+        driver.move({
+          from: { folderPath: 'workspace/app', filename: 'missing.txt' },
+          to: { folderPath: 'workspace/app', filename: 'moved.txt' },
+          ifMatchChecksum: 'any-checksum',
+        }),
+      ).rejects.toMatchObject({
+        code: FileStorageExceptionCode.FILE_NOT_FOUND,
+      });
+    });
+
+    it('should leave the source in place when the precondition fails', async () => {
+      const storagePath = await createTempDirectory('local-driver-storage-');
+      const folderPath = path.join(storagePath, 'workspace', 'app');
+
+      await mkdir(folderPath, { recursive: true });
+      await writeFile(path.join(folderPath, 'file.txt'), 'original');
+
+      const driver = new LocalDriver({ storagePath });
+      const before = await driver.getFileMetadata({
+        filePath: 'workspace/app/file.txt',
+      });
+
+      await writeFile(path.join(folderPath, 'file.txt'), 'replaced');
+
+      await expect(
+        driver.move({
+          from: { folderPath: 'workspace/app', filename: 'file.txt' },
+          to: { folderPath: 'workspace/final', filename: 'moved.txt' },
+          ifMatchChecksum: before?.checksum,
+        }),
+      ).rejects.toMatchObject({
+        code: FileStorageExceptionCode.PRECONDITION_FAILED,
+      });
+
+      // A failed promotion must not strand the object under the private name
+      // it was claimed with, where nothing would ever look for it again.
+      await expect(readdir(folderPath)).resolves.toEqual(['file.txt']);
+      await expect(
+        readFile(path.join(folderPath, 'file.txt'), 'utf-8'),
+      ).resolves.toBe('replaced');
+    });
+
+    it('should leave the source in place when the destination rename fails', async () => {
+      const storagePath = await createTempDirectory('local-driver-storage-');
+      const folderPath = path.join(storagePath, 'workspace', 'app');
+
+      await mkdir(folderPath, { recursive: true });
+      await writeFile(path.join(folderPath, 'file.txt'), 'original');
+
+      // A non-empty directory in the destination's place makes the final
+      // rename fail after the source has already been claimed.
+      const blockedDestination = path.join(
+        storagePath,
+        'workspace',
+        'final',
+        'moved.txt',
+      );
+
+      await mkdir(blockedDestination, { recursive: true });
+      await writeFile(path.join(blockedDestination, 'occupant.txt'), 'x');
+
+      const driver = new LocalDriver({ storagePath });
+      const before = await driver.getFileMetadata({
+        filePath: 'workspace/app/file.txt',
+      });
+
+      await expect(
+        driver.move({
+          from: { folderPath: 'workspace/app', filename: 'file.txt' },
+          to: { folderPath: 'workspace/final', filename: 'moved.txt' },
+          ifMatchChecksum: before?.checksum,
+        }),
+      ).rejects.toBeDefined();
+
+      await expect(readdir(folderPath)).resolves.toEqual(['file.txt']);
+      await expect(
+        readFile(path.join(folderPath, 'file.txt'), 'utf-8'),
+      ).resolves.toBe('original');
+    });
+
+    it('should not report a storage failure as a missing source', async () => {
+      const storagePath = await createTempDirectory('local-driver-storage-');
+
+      await mkdir(path.join(storagePath, 'workspace'), { recursive: true });
+      // A regular file where a directory is expected makes stat fail with
+      // ENOTDIR, which root cannot bypass the way it bypasses mode bits.
+      await writeFile(path.join(storagePath, 'workspace', 'blocker'), 'x');
+
+      const driver = new LocalDriver({ storagePath });
+
+      await expect(
+        driver.move({
+          from: { folderPath: 'workspace/blocker', filename: 'file.txt' },
+          to: { folderPath: 'workspace/app', filename: 'moved.txt' },
+          ifMatchChecksum: 'any-checksum',
+        }),
+      ).rejects.toMatchObject({ code: 'ENOTDIR' });
+    });
+
+    it('should write and promote a filename at the validation limit', async () => {
+      const storagePath = await createTempDirectory('local-driver-storage-');
+      const driver = new LocalDriver({ storagePath });
+      // MAX_SEGMENT_LENGTH is the filesystem's own limit, so any suffix the
+      // driver adds to the filename for its temporary names would not fit.
+      const filename = `${'a'.repeat(251)}.txt`;
+
+      await driver.writeFileStream({
+        filePath: `workspace/app/${filename}`,
+        stream: Readable.from(Buffer.from('content')),
+        mimeType: undefined,
+      });
+
+      const before = await driver.getFileMetadata({
+        filePath: `workspace/app/${filename}`,
+      });
+
+      await driver.move({
+        from: { folderPath: 'workspace/app', filename },
+        to: { folderPath: 'workspace/final', filename },
+        ifMatchChecksum: before?.checksum,
+      });
+
+      await expect(
+        readFile(path.join(storagePath, 'workspace/final', filename), 'utf-8'),
+      ).resolves.toBe('content');
+      await expect(
+        readdir(path.join(storagePath, 'workspace/app')),
+      ).resolves.toEqual([]);
+    });
+  });
+
   describe('getFileMetadata', () => {
     it('should return the file size', async () => {
       const storagePath = await createTempDirectory('local-driver-storage-');
@@ -241,7 +468,7 @@ describe('LocalDriver', () => {
 
       await expect(
         driver.getFileMetadata({ filePath: 'workspace/app/file.txt' }),
-      ).resolves.toEqual({ size: 5 });
+      ).resolves.toMatchObject({ size: 5 });
     });
 
     it('should return null when the file does not exist', async () => {
