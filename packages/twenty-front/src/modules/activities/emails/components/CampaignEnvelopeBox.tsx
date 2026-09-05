@@ -11,12 +11,12 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[6]} 0;
+  padding: ${themeCssVariables.spacing[3]} 0;
   width: 100%;
 `;
 
 // Tracks the body page below rather than the window, so the two read as one
-// centred column. The body backdrop supplies the gap between them.
+// centred column.
 const StyledColumn = styled.div<{ $width: string }>`
   display: flex;
   flex-direction: column;

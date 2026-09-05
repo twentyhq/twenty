@@ -16,6 +16,7 @@ import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-s
 import { CALENDAR_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/calendar-channel-seed-ids.constant';
 import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
 import { MESSAGE_FOLDER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-folder-seed-ids.constant';
+import { getUnsubscribeTopicDataSeedIds } from 'src/engine/workspace-manager/dev-seeder/core/constants/unsubscribe-topic-seed-ids.constant';
 import { UnsubscribeTopicVisibility } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-topic-visibility.type';
 import { getSeededEmailGroupDomains } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-emailing-domains.util';
 import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
@@ -65,18 +66,6 @@ const YC_MESSAGE_FOLDER_IDS = {
   JANE_SENT: '30303030-1234-4567-8901-abcdef012348',
 } as const;
 
-const APPLE_UNSUBSCRIBE_TOPIC_IDS = {
-  PRODUCT_UPDATES: '20202020-7b1c-4a2d-8e3f-300000000001',
-  NEWSLETTER: '20202020-7b1c-4a2d-8e3f-300000000002',
-  TRANSACTIONAL: '20202020-7b1c-4a2d-8e3f-300000000003',
-} as const;
-
-const YC_UNSUBSCRIBE_TOPIC_IDS = {
-  PRODUCT_UPDATES: '30303030-7b1c-4a2d-8e3f-300000000001',
-  NEWSLETTER: '30303030-7b1c-4a2d-8e3f-300000000002',
-  TRANSACTIONAL: '30303030-7b1c-4a2d-8e3f-300000000003',
-} as const;
-
 const getSeedIds = (workspaceId: string) => {
   if (workspaceId === SEED_YCOMBINATOR_WORKSPACE_ID) {
     return {
@@ -90,7 +79,6 @@ const getSeedIds = (workspaceId: string) => {
       messageChannelIds: YC_MESSAGE_CHANNEL_IDS,
       calendarChannelIds: YC_CALENDAR_CHANNEL_IDS,
       messageFolderIds: YC_MESSAGE_FOLDER_IDS,
-      unsubscribeTopicIds: YC_UNSUBSCRIBE_TOPIC_IDS,
     };
   }
 
@@ -105,7 +93,6 @@ const getSeedIds = (workspaceId: string) => {
     messageChannelIds: MESSAGE_CHANNEL_DATA_SEED_IDS,
     calendarChannelIds: CALENDAR_CHANNEL_DATA_SEED_IDS,
     messageFolderIds: MESSAGE_FOLDER_DATA_SEED_IDS,
-    unsubscribeTopicIds: APPLE_UNSUBSCRIBE_TOPIC_IDS,
   };
 };
 
@@ -370,25 +357,25 @@ const seedUnsubscribeTopics = async ({
   schemaName,
   workspaceId,
 }: SeedMetadataEntitiesArgs) => {
-  const ids = getSeedIds(workspaceId);
+  const ids = getUnsubscribeTopicDataSeedIds(workspaceId);
 
   const unsubscribeTopics = [
     {
-      id: ids.unsubscribeTopicIds.PRODUCT_UPDATES,
+      id: ids.PRODUCT_UPDATES,
       name: 'Product updates',
       description: 'New features and product announcements.',
       visibility: UnsubscribeTopicVisibility.PUBLIC,
       workspaceId,
     },
     {
-      id: ids.unsubscribeTopicIds.NEWSLETTER,
+      id: ids.NEWSLETTER,
       name: 'Newsletter',
       description: 'Our periodic company newsletter.',
       visibility: UnsubscribeTopicVisibility.PUBLIC,
       workspaceId,
     },
     {
-      id: ids.unsubscribeTopicIds.TRANSACTIONAL,
+      id: ids.TRANSACTIONAL,
       name: 'Transactional',
       description: 'Internal-only category, hidden from the preferences page.',
       visibility: UnsubscribeTopicVisibility.PRIVATE,
