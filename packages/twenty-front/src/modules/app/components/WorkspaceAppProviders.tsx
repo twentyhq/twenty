@@ -31,6 +31,7 @@ import { SupportChatEffect } from '@/support/components/SupportChatEffect';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
+import { ShareRecordModal } from '@/record-share/components/ShareRecordModal';
 import { GlobalFilePreviewModal } from '@/ui/field/display/components/GlobalFilePreviewModal';
 import { UserThemeProviderEffect } from '@/ui/theme/components/UserThemeProviderEffect';
 import { UserUiScaleProviderEffect } from '@/ui/theme/components/UserUiScaleProviderEffect';
@@ -77,6 +78,7 @@ export const WorkspaceAppProviders = () => {
                               <PageFavicon />
                               <Outlet />
                               <GlobalFilePreviewModal />
+                              <ShareRecordModal />
                               <CommandMenuConfirmationModalManager />
                               <CommandRunner />
                             </StrictMode>

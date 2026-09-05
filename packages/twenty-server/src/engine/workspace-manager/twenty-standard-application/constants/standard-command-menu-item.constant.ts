@@ -174,6 +174,23 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.REMOVE_FROM_FAVORITES,
     hotKeys: null,
   },
+  shareRecord: {
+    universalIdentifier: 'b17cc8da-b01f-4063-8497-a71959f8d0b4',
+    label: i18nLabel(
+      msg({ message: `Share`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconShare',
+    isPinned: true,
+    position: 71,
+    shortLabel: null,
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords == 1 and objectMetadataItem.readability == "PRIVATE" and featureFlags.IS_RECORD_SHARING_ENABLED and noneDefined(selectedRecords, "deletedAt")',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SHARE_RECORD,
+    hotKeys: null,
+  },
   exportNoteToPdf: {
     universalIdentifier: '86c8f3aa-9276-4c16-8cff-e295e34fbaf0',
     label: i18nLabel(

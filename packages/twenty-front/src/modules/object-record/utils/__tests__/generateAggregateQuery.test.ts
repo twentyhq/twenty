@@ -1,4 +1,4 @@
-import { ObjectOpenRecordIn } from 'twenty-shared/types';
+import { MetadataReadability, ObjectOpenRecordIn } from 'twenty-shared/types';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
 
@@ -26,6 +26,7 @@ describe('generateAggregateQuery', () => {
       isSystem: false,
       isUIEditable: true,
       isUICreatable: true,
+      readability: MetadataReadability.OPEN,
       openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
     };
 
@@ -71,6 +72,7 @@ describe('generateAggregateQuery', () => {
       isSystem: false,
       isUIEditable: true,
       isUICreatable: true,
+      readability: MetadataReadability.OPEN,
       openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
     };
 

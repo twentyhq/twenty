@@ -26,6 +26,7 @@ import { ExportNoteSingleRecordCommand } from '@/command-menu-item/engine-comman
 import { NavigateToNextRecordSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/NavigateToNextRecordSingleRecordCommand';
 import { NavigateToPreviousRecordSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/NavigateToPreviousRecordSingleRecordCommand';
 import { RemoveFromFavoritesSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/RemoveFromFavoritesSingleRecordCommand';
+import { ShareSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/ShareSingleRecordCommand';
 import { CancelDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/CancelDashboardSingleRecordCommand';
 import { DuplicateDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand';
 import { EditDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/EditDashboardSingleRecordCommand';
@@ -69,6 +70,7 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.REMOVE_FROM_FAVORITES]: (
     <RemoveFromFavoritesSingleRecordCommand />
   ),
+  [EngineComponentKey.SHARE_RECORD]: <ShareSingleRecordCommand />,
   [EngineComponentKey.MERGE_MULTIPLE_RECORDS]: <MergeMultipleRecordsCommand />,
   [EngineComponentKey.DUPLICATE_DASHBOARD]: (
     <DuplicateDashboardSingleRecordCommand />
