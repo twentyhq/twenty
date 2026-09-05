@@ -18,7 +18,7 @@ export const useCampaignAudiencePreview = ({
   listId,
   unsubscribeTopicId,
 }: UseCampaignAudiencePreviewArgs) => {
-  const { data, error, loading } = useQuery<
+  const { data, error } = useQuery<
     PreviewMessageCampaignAudienceQuery,
     PreviewMessageCampaignAudienceQueryVariables
   >(PREVIEW_MESSAGE_CAMPAIGN_AUDIENCE, {
@@ -37,6 +37,5 @@ export const useCampaignAudiencePreview = ({
       ? null
       : (data?.previewMessageCampaignAudience ?? null),
     hasFailed: isDefined(error),
-    loading,
   };
 };

@@ -9,6 +9,8 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { buildSendMessageCampaignAvailabilityUpdates } from 'src/database/commands/upgrade-version-command/2-38/utils/build-send-message-campaign-availability-updates.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 import { createStandardCommandMenuItemFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/command-menu-item/create-standard-command-menu-item-flat-metadata.util';
@@ -104,9 +106,7 @@ export class AlignMessageCampaignCommandsCommand extends ProvisionedWorkspaceCom
       string,
       FlatCommandMenuItem | undefined
     >;
-    flatObjectMetadataMaps: Parameters<
-      typeof createStandardCommandMenuItemFlatMetadata
-    >[0]['dependencyFlatEntityMaps']['flatObjectMetadataMaps'];
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     workspaceId: string;
     now: string;
   }): FlatCommandMenuItem[] {

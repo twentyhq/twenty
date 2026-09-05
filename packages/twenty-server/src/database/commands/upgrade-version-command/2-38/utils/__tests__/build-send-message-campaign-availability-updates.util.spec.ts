@@ -83,9 +83,19 @@ describe('buildSendMessageCampaignAvailabilityUpdates', () => {
       now: NOW,
     });
 
-    expect(updates.map((update) => update.universalIdentifier)).toEqual([
-      send.universalIdentifier,
-      sendTest.universalIdentifier,
+    expect(updates).toEqual([
+      {
+        ...buildExistingItem(send.universalIdentifier, LEGACY_EXPRESSION),
+        conditionalAvailabilityExpression:
+          send.conditionalAvailabilityExpression,
+        updatedAt: NOW,
+      },
+      {
+        ...buildExistingItem(sendTest.universalIdentifier, LEGACY_EXPRESSION),
+        conditionalAvailabilityExpression:
+          sendTest.conditionalAvailabilityExpression,
+        updatedAt: NOW,
+      },
     ]);
   });
 });
