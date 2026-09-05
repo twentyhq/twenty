@@ -423,6 +423,37 @@ describe('LocalDriver', () => {
         }),
       ).rejects.toMatchObject({ code: 'ENOTDIR' });
     });
+
+    it('should write and promote a filename at the validation limit', async () => {
+      const storagePath = await createTempDirectory('local-driver-storage-');
+      const driver = new LocalDriver({ storagePath });
+      // MAX_SEGMENT_LENGTH is the filesystem's own limit, so any suffix the
+      // driver adds to the filename for its temporary names would not fit.
+      const filename = `${'a'.repeat(251)}.txt`;
+
+      await driver.writeFileStream({
+        filePath: `workspace/app/${filename}`,
+        stream: Readable.from(Buffer.from('content')),
+        mimeType: undefined,
+      });
+
+      const before = await driver.getFileMetadata({
+        filePath: `workspace/app/${filename}`,
+      });
+
+      await driver.move({
+        from: { folderPath: 'workspace/app', filename },
+        to: { folderPath: 'workspace/final', filename },
+        ifMatchChecksum: before?.checksum,
+      });
+
+      await expect(
+        readFile(path.join(storagePath, 'workspace/final', filename), 'utf-8'),
+      ).resolves.toBe('content');
+      await expect(
+        readdir(path.join(storagePath, 'workspace/app')),
+      ).resolves.toEqual([]);
+    });
   });
 
   describe('getFileMetadata', () => {

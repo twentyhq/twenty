@@ -191,8 +191,10 @@ export class LocalDriver implements StorageDriver {
     // Writing through to the destination would mutate the object other callers
     // are already reading, in place and under a stable inode. Promotion
     // identifies the version it validated by inode, so publishing each write as
-    // a new one is what keeps that identity meaningful.
-    const partialFilePath = `${realFilePath}.${v4()}.part`;
+    // a new one is what keeps that identity meaningful. The temporary name
+    // does not carry the original filename: path validation allows filenames
+    // up to the filesystem's own limit, so appending to one could not fit.
+    const partialFilePath = join(dirname(realFilePath), `.${v4()}.part`);
 
     try {
       await pipeline(params.stream, createWriteStream(partialFilePath));
@@ -459,7 +461,7 @@ export class LocalDriver implements StorageDriver {
     toPath: string;
     expectedChecksum: string;
   }): Promise<void> {
-    const claimedPath = `${fromPath}.${v4()}.promoting`;
+    const claimedPath = join(dirname(fromPath), `.${v4()}.promoting`);
 
     await this.renameOrThrow({ fromPath, toPath: claimedPath });
 
