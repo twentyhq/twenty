@@ -56,5 +56,29 @@ export const computeStandardMessageListMemberViewFields = (
         size: 150,
       },
     }),
+    messageListRecordPageMembersPerson: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'messageListMember',
+      context: {
+        viewName: 'messageListRecordPageMembers',
+        viewFieldName: 'person',
+        fieldName: 'person',
+        position: 0,
+        isVisible: true,
+        size: 210,
+      },
+    }),
+    messageListRecordPageMembersCreatedAt: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'messageListMember',
+      context: {
+        viewName: 'messageListRecordPageMembers',
+        viewFieldName: 'createdAt',
+        fieldName: 'createdAt',
+        position: 1,
+        isVisible: true,
+        size: 150,
+      },
+    }),
   };
 };

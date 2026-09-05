@@ -458,7 +458,13 @@ export const STANDARD_OBJECTS = {
         objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageList,
         fields: STANDARD_OBJECT_FIELDS.messageList,
-        viewFieldNames: ['name', 'members', 'campaigns', 'createdAt'],
+        viewFieldNames: [
+          'name',
+          'description',
+          'members',
+          'campaigns',
+          'createdAt',
+        ],
       }),
     },
   },
@@ -481,6 +487,17 @@ export const STANDARD_OBJECTS = {
         fields: STANDARD_OBJECT_FIELDS.messageListMember,
         viewFieldNames: ['id', 'person', 'list', 'createdAt'],
       }),
+      messageListRecordPageMembers: {
+        universalIdentifier: '8c25ba4f-107e-4717-8279-472f799c34be',
+        viewFields: {
+          person: {
+            universalIdentifier: 'b9c42806-2d12-4ed7-a022-3de4dff2033d',
+          },
+          createdAt: {
+            universalIdentifier: 'bd12c93d-2408-400e-99aa-9613b524b437',
+          },
+        },
+      },
     },
   },
   messageChannelMessageAssociation: {
