@@ -7,6 +7,7 @@ import { getExpandedAiChatReturnLocation } from '@/ai/utils/getExpandedAiChatRet
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { getNavigationDrawerHomeDestination } from '@/navigation/utils/getNavigationDrawerHomeDestination';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
@@ -29,6 +30,7 @@ export const useSwitchNavigationDrawerMode = () => {
 
   const activeNavigationDrawerMode = useActiveNavigationDrawerMode();
   const isSettingsDrawer = useIsSettingsDrawer();
+  const isSettingsPage = useIsSettingsPage();
   const isAiChatPage = isAiChatPath(location.pathname);
 
   const navigationMemorizedUrl = useAtomStateValue(navigationMemorizedUrlState);
@@ -103,7 +105,11 @@ export const useSwitchNavigationDrawerMode = () => {
         switchToAiChat();
         break;
       case NAVIGATION_DRAWER_TABS.SETTINGS:
-        if (isSettingsDrawer) {
+        // The mobile settings drawer outlives the route that opened it, a
+        // browser back out of settings for one, so the page rather than the
+        // drawer says whether there is anywhere left to go. Desktop has no
+        // such split: there the two are the same thing.
+        if (isSettingsPage) {
           return;
         }
         navigateSettings(SettingsPath.ProfilePage);
