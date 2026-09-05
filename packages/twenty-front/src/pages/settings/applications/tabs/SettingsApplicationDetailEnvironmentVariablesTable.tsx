@@ -9,6 +9,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { type ApplicationVariable } from '~/generated-metadata/graphql';
 import { SettingsApplicationVariableInput } from '~/pages/settings/applications/components/SettingsApplicationVariableInput';
 import { SettingsApplicationVariableLabelRow } from '~/pages/settings/applications/components/SettingsApplicationVariableLabelRow';
+import { countMissingRequiredApplicationVariables } from '~/pages/settings/applications/utils/countMissingRequiredApplicationVariables';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -31,10 +32,18 @@ export const SettingsApplicationDetailEnvironmentVariablesTable = ({
     },
     250,
   );
+  // A required variable left empty means the application cannot run in this workspace, and
+  // nothing else on this screen says so: once installed, an application one credential short
+  // looks exactly like a finished one.
+  const missingRequiredCount = countMissingRequiredApplicationVariables(
+    editedEnvVariables,
+  );
   const sectionDescription =
-    editedEnvVariables.length > 0
-      ? t`Set your application configuration variables`
-      : t`No variables to set for this application`;
+    editedEnvVariables.length === 0
+      ? t`No variables to set for this application`
+      : missingRequiredCount > 0
+        ? t`${missingRequiredCount} required variable(s) still empty — this application will not work until they are set`
+        : t`Set your application configuration variables`;
   return (
     <Section>
       <H2Title title={t`Configuration`} description={sectionDescription} />

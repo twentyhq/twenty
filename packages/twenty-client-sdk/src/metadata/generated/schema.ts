@@ -44,6 +44,7 @@ export interface ApplicationVariable {
     description: Scalars['String']
     label: Scalars['String']
     isSecret: Scalars['Boolean']
+    isRequired: Scalars['Boolean']
     isDeprecated: Scalars['Boolean']
     type: Scalars['String']
     options?: Scalars['JSON']
