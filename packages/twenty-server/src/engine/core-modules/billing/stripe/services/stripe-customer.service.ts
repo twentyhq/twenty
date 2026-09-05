@@ -81,10 +81,13 @@ export class StripeCustomerService {
     });
   }
 
-  async setDefaultPaymentMethod(
-    stripeCustomerId: string,
-    stripePaymentMethodId: string,
-  ): Promise<void> {
+  async setDefaultPaymentMethod({
+    stripeCustomerId,
+    stripePaymentMethodId,
+  }: {
+    stripeCustomerId: string;
+    stripePaymentMethodId: string;
+  }): Promise<void> {
     await this.stripe.customers.update(stripeCustomerId, {
       invoice_settings: { default_payment_method: stripePaymentMethodId },
     });

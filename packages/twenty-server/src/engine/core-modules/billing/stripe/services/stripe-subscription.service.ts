@@ -37,28 +37,39 @@ export class StripeSubscriptionService {
     return subscription.data[0]?.customer ?? undefined;
   }
 
-  async payOpenInvoices(
-    stripeSubscriptionId: string,
-    stripePaymentMethodId: string,
-  ) {
-    const openInvoices = await this.stripe.invoices.list({
+  async payOpenInvoices({
+    stripeSubscriptionId,
+    stripePaymentMethodId,
+  }: {
+    stripeSubscriptionId: string;
+    stripePaymentMethodId: string;
+  }) {
+    const openInvoices: Stripe.Invoice[] = [];
+
+    for await (const invoice of this.stripe.invoices.list({
       subscription: stripeSubscriptionId,
       status: 'open',
       collection_method: 'charge_automatically',
-    });
+      limit: 100,
+    })) {
+      openInvoices.push(invoice);
+    }
 
     // Stripe lists the most recent invoices first, settle the oldest overdue period first
-    for (const invoice of [...openInvoices.data].reverse()) {
+    for (const invoice of openInvoices.reverse()) {
       try {
         await this.stripe.invoices.pay(invoice.id, {
           payment_method: stripePaymentMethodId,
         });
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : 'unknown error';
+        // A decline is final for this webhook, Stripe dunning retries the invoice
+        // on its own schedule, anything else is worth a webhook retry
+        if (!(error instanceof this.stripe.errors.StripeCardError)) {
+          throw error;
+        }
 
         this.logger.error(
-          `Failed to pay invoice ${invoice.id} of subscription ${stripeSubscriptionId}: ${errorMessage}`,
+          `Card declined for invoice ${invoice.id} of subscription ${stripeSubscriptionId}: ${error.message}`,
         );
       }
     }

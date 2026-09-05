@@ -225,10 +225,10 @@ export class BillingSubscriptionService {
       );
     }
 
-    await this.stripeCustomerService.setDefaultPaymentMethod(
-      billingSubscription.stripeCustomerId,
+    await this.stripeCustomerService.setDefaultPaymentMethod({
+      stripeCustomerId: billingSubscription.stripeCustomerId,
       stripePaymentMethodId,
-    );
+    });
 
     await this.stripeSubscriptionService.updateSubscription(
       billingSubscription.stripeSubscriptionId,
@@ -237,10 +237,10 @@ export class BillingSubscriptionService {
 
     // The persisted status can still be Active when this event lands before the
     // subscription update one, so Stripe's open invoices are the source of truth
-    await this.stripeSubscriptionService.payOpenInvoices(
-      billingSubscription.stripeSubscriptionId,
+    await this.stripeSubscriptionService.payOpenInvoices({
+      stripeSubscriptionId: billingSubscription.stripeSubscriptionId,
       stripePaymentMethodId,
-    );
+    });
 
     return {
       handleUnpaidInvoiceStripeSubscriptionId:

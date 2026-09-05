@@ -5,31 +5,24 @@ import { SettingsBillingCreditsSection } from '@/settings/billing/components/Set
 import { SettingsBillingSubscriptionInfo } from '@/settings/billing/components/SettingsBillingSubscriptionInfo';
 import { SettingsBillingTrialNoPaymentMethodBanner } from '@/settings/billing/components/SettingsBillingTrialNoPaymentMethodBanner';
 import { UpdatePaymentMethodModal } from '@/settings/billing/components/UpdatePaymentMethodModal';
-import { useBillingPortalSession } from '@/settings/billing/hooks/useBillingPortalSession';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
+import { usePaymentMethodFlow } from '@/settings/billing/hooks/usePaymentMethodFlow';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { IconCircleX, IconCreditCard } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import {
-  PermissionFlagType,
-  SubscriptionStatus,
-} from '~/generated-metadata/graphql';
+import { SubscriptionStatus } from '~/generated-metadata/graphql';
 
 const SETTINGS_BILLING_UPDATE_PAYMENT_MODAL_ID =
   'settings-billing-update-payment-modal';
 
 export const SettingsBillingContent = () => {
   const { t } = useLingui();
-  const { openModal } = useModal();
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
@@ -41,8 +34,13 @@ export const SettingsBillingContent = () => {
     billingHasPaymentMethodSelector,
   );
 
-  const { [PermissionFlagType.BILLING]: hasPermissionToManageBilling } =
-    usePermissionFlagMap();
+  const {
+    shouldAddPaymentMethodInProduct,
+    openPaymentMethodFlow,
+    isPaymentMethodFlowDisabled,
+    isBillingPortalSessionDisabled,
+    openBillingPortal,
+  } = usePaymentMethodFlow(SETTINGS_BILLING_UPDATE_PAYMENT_MODAL_ID);
 
   const { isGetResourceCreditUsageQueryLoaded: isUsageQueryLoaded } =
     useGetResourceCreditUsage();
@@ -59,24 +57,6 @@ export const SettingsBillingContent = () => {
     isDefined(currentBillingSubscription?.cancelAt);
   const canCancelCurrentSubscription =
     hasNotCanceledCurrentSubscription && !hasScheduledCancellation;
-
-  const { isBillingPortalSessionDisabled, openBillingPortal } =
-    useBillingPortalSession(getSettingsPath(SettingsPath.Billing));
-
-  const shouldAddPaymentMethodInProduct =
-    hasPermissionToManageBilling && billingHasPaymentMethod === false;
-
-  const openPaymentMethodFlow = () => {
-    if (shouldAddPaymentMethodInProduct) {
-      openModal(SETTINGS_BILLING_UPDATE_PAYMENT_MODAL_ID);
-      return;
-    }
-
-    openBillingPortal();
-  };
-
-  const isPaymentMethodFlowDisabled =
-    !shouldAddPaymentMethodInProduct && isBillingPortalSessionDisabled;
 
   return (
     <SettingsPageContainer>
