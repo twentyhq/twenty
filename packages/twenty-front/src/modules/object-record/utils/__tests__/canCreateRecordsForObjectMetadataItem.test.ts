@@ -1,7 +1,9 @@
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
+import { MetadataWritability } from '~/generated-metadata/graphql';
 
 const creatableObjectMetadataItem = {
   isUICreatable: true,
+  writability: MetadataWritability.OPEN,
   isUIEditable: true,
   isSystem: false,
   isRemote: false,
