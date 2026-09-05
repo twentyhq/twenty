@@ -100,7 +100,8 @@ export class GraphqlQueryFilterFieldParser {
     if (
       isReferencedByFieldName &&
       isMorphOrRelationFlatFieldMetadata(fieldMetadata) &&
-      fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE
+      (fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE ||
+        fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
     ) {
       return this.parseRelationSubFilter(
         queryBuilder,
@@ -109,6 +110,7 @@ export class GraphqlQueryFilterFieldParser {
         fieldMetadata,
         filterValue,
         isFirst,
+        fieldMetadata.settings.relationType === RelationType.ONE_TO_MANY,
       );
     }
 
@@ -149,6 +151,7 @@ export class GraphqlQueryFilterFieldParser {
     fieldMetadata: OrmFlatFieldMetadata,
     filterValue: Partial<ObjectRecordFilter>,
     isFirst: boolean,
+    isToManyRelation: boolean,
   ): void {
     if (this.depth >= MAX_RELATION_FILTER_DEPTH) {
       throw new GraphqlQueryRunnerException(
@@ -190,6 +193,42 @@ export class GraphqlQueryFilterFieldParser {
       );
     }
 
+    const childConditionParser = new GraphqlQueryFilterConditionParser(
+      targetObjectMetadata,
+      this.flatFieldMetadataMaps,
+      this.flatObjectMetadataMaps,
+      this.depth + 1,
+    );
+
+    // A join on a to-many relation would duplicate root rows, which the
+    // find-many runner rejects, so the related rows are matched through a
+    // correlated EXISTS instead.
+    if (isToManyRelation) {
+      const existsToken = outerQueryBuilder.addRelationExistsFilter({
+        relationFieldName: fieldMetadata.name,
+        applyWhere: (nestedQueryBuilder) => {
+          nestedQueryBuilder.where(
+            new Brackets((subQb) => {
+              childConditionParser.applyFilterEntriesToWhereBrackets(
+                subQb,
+                nestedQueryBuilder,
+                nestedQueryBuilder.alias,
+                filterValue,
+              );
+            }),
+          );
+        },
+      });
+
+      if (isFirst) {
+        queryBuilder.where(existsToken);
+      } else {
+        queryBuilder.andWhere(existsToken);
+      }
+
+      return;
+    }
+
     const joinAlias = fieldMetadata.name;
 
     addRelationJoinAliasToQueryBuilder({
@@ -197,13 +236,6 @@ export class GraphqlQueryFilterFieldParser {
       parentAlias,
       relationName: joinAlias,
     });
-
-    const childConditionParser = new GraphqlQueryFilterConditionParser(
-      targetObjectMetadata,
-      this.flatFieldMetadataMaps,
-      this.flatObjectMetadataMaps,
-      this.depth + 1,
-    );
 
     const subBrackets = new Brackets((subQb) => {
       childConditionParser.applyFilterEntriesToWhereBrackets(
