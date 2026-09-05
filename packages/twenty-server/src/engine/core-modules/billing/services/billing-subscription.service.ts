@@ -254,7 +254,7 @@ export class BillingSubscriptionService {
     // overdue invoice has to be retried
     if (
       [SubscriptionStatus.PastDue, SubscriptionStatus.Unpaid].includes(
-        stripeSubscription.status as SubscriptionStatus,
+        getSubscriptionStatus(stripeSubscription.status),
       )
     ) {
       await this.stripeSubscriptionService.payOpenInvoices({
