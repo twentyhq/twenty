@@ -28,6 +28,7 @@ import { fromPermissionFlagToUniversalFlatRolePermissionFlag } from 'src/engine/
 import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-role.util';
 import { fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-group-manifest-to-universal-flat-row-level-permission-predicate-group.util';
 import { fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-manifest-to-universal-flat-row-level-permission-predicate.util';
+import { fromSharingRuleManifestToUniversalFlatSharingRule } from 'src/engine/core-modules/application/application-manifest/converters/from-sharing-rule-manifest-to-universal-flat-sharing-rule.util';
 import { fromSkillManifestToUniversalFlatSkill } from 'src/engine/core-modules/application/application-manifest/converters/from-skill-manifest-to-universal-flat-skill.util';
 import { fromTimelineActivityTypeManifestToUniversalFlatTimelineActivityType } from 'src/engine/core-modules/application/application-manifest/converters/from-timeline-activity-type-manifest-to-universal-flat-timeline-activity-type.util';
 import { fromViewFieldGroupManifestToUniversalFlatViewFieldGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-field-group-manifest-to-universal-flat-view-field-group.util';
@@ -319,7 +320,9 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup(
               {
                 rowLevelPermissionPredicateGroupManifest,
-                roleUniversalIdentifier: roleManifest.universalIdentifier,
+                parent: {
+                  roleUniversalIdentifier: roleManifest.universalIdentifier,
+                },
                 applicationUniversalIdentifier,
                 now,
               },
@@ -336,7 +339,9 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate(
               {
                 rowLevelPermissionPredicateManifest,
-                roleUniversalIdentifier: roleManifest.universalIdentifier,
+                parent: {
+                  roleUniversalIdentifier: roleManifest.universalIdentifier,
+                },
                 applicationUniversalIdentifier,
                 now,
               },
@@ -677,6 +682,58 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         universalFlatEntityMapsToMutate:
           allUniversalFlatEntityMaps.flatTimelineActivityTypeMaps,
       });
+    }
+
+    for (const sharingRuleManifest of manifest.sharingRules ?? []) {
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity: fromSharingRuleManifestToUniversalFlatSharingRule({
+          sharingRuleManifest,
+          applicationUniversalIdentifier,
+          now,
+        }),
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatSharingRuleMaps,
+      });
+
+      for (const rowLevelPermissionPredicateGroupManifest of sharingRuleManifest.rowLevelPermissionPredicateGroups ??
+        []) {
+        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+          universalFlatEntity:
+            fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup(
+              {
+                rowLevelPermissionPredicateGroupManifest,
+                parent: {
+                  sharingRuleUniversalIdentifier:
+                    sharingRuleManifest.universalIdentifier,
+                },
+                applicationUniversalIdentifier,
+                now,
+              },
+            ),
+          universalFlatEntityMapsToMutate:
+            allUniversalFlatEntityMaps.flatRowLevelPermissionPredicateGroupMaps,
+        });
+      }
+
+      for (const rowLevelPermissionPredicateManifest of sharingRuleManifest.rowLevelPermissionPredicates ??
+        []) {
+        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+          universalFlatEntity:
+            fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate(
+              {
+                rowLevelPermissionPredicateManifest,
+                parent: {
+                  sharingRuleUniversalIdentifier:
+                    sharingRuleManifest.universalIdentifier,
+                },
+                applicationUniversalIdentifier,
+                now,
+              },
+            ),
+          universalFlatEntityMapsToMutate:
+            allUniversalFlatEntityMaps.flatRowLevelPermissionPredicateMaps,
+        });
+      }
     }
 
     return allUniversalFlatEntityMaps;

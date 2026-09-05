@@ -15,8 +15,15 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
+import {
+  RowLevelPermissionPredicateException,
+  RowLevelPermissionPredicateExceptionCode,
+} from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception';
+import { hasRowLevelPermissionFeature } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/has-row-level-permission-feature.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
@@ -32,6 +39,8 @@ export class ApplicationManifestMigrationService {
     private readonly applicationService: ApplicationService,
     private readonly computeManifestFlatEntityMapsService: ComputeApplicationManifestAllUniversalFlatEntityMapsService,
     private readonly logger: LoggerService,
+    private readonly billingService: BillingService,
+    private readonly enterprisePlanService: EnterprisePlanService,
   ) {}
 
   async syncPreInstallLogicFunctionFromManifest({
@@ -84,6 +93,7 @@ export class ApplicationManifestMigrationService {
       pageLayoutTabs: [],
       commandMenuItems: [],
       timelineActivityTypes: [],
+      sharingRules: [],
     };
 
     const now = new Date().toISOString();
@@ -181,6 +191,11 @@ export class ApplicationManifestMigrationService {
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
   }> {
+    await this.validateSharingRuleCriteriaFeatureOrThrow({
+      manifest,
+      workspaceId,
+    });
+
     const now = new Date().toISOString();
 
     const recomputeStart = performance.now();
@@ -276,6 +291,38 @@ export class ApplicationManifestMigrationService {
       workspaceMigration: validateAndBuildResult.workspaceMigration,
       hasSchemaMetadataChanged: validateAndBuildResult.hasSchemaMetadataChanged,
     };
+  }
+
+  private async validateSharingRuleCriteriaFeatureOrThrow({
+    manifest,
+    workspaceId,
+  }: {
+    manifest: Manifest;
+    workspaceId: string;
+  }): Promise<void> {
+    const hasSharingRuleWithCriteria = (manifest.sharingRules ?? []).some(
+      (sharingRule) =>
+        (sharingRule.rowLevelPermissionPredicates ?? []).length > 0 ||
+        (sharingRule.rowLevelPermissionPredicateGroups ?? []).length > 0,
+    );
+
+    if (!hasSharingRuleWithCriteria) {
+      return;
+    }
+
+    const isRowLevelPermissionFeatureEnabled =
+      await hasRowLevelPermissionFeature({
+        workspaceId,
+        billingService: this.billingService,
+        enterprisePlanService: this.enterprisePlanService,
+      });
+
+    if (!isRowLevelPermissionFeatureEnabled) {
+      throw new RowLevelPermissionPredicateException(
+        'Sharing rules with criteria require the row level permission feature',
+        RowLevelPermissionPredicateExceptionCode.ROW_LEVEL_PERMISSION_FEATURE_DISABLED,
+      );
+    }
   }
 
   private async syncApplicationReferencesFromManifest({

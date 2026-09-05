@@ -234,7 +234,12 @@ export class ObjectMetadataService {
         )
       ).workspaceCustomFlatApplication;
 
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatIndexMaps,
+      flatSharingRuleMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
@@ -242,6 +247,7 @@ export class ObjectMetadataService {
             'flatObjectMetadataMaps',
             'flatIndexMaps',
             'flatFieldMetadataMaps',
+            'flatSharingRuleMaps',
           ],
         },
       );
@@ -323,6 +329,17 @@ export class ObjectMetadataService {
         }),
     );
 
+    const deletedObjectMetadataIds = deletedFlatObjectMetadatas.map(
+      ({ id }) => id,
+    );
+    const flatSharingRulesToDelete = Object.values(
+      flatSharingRuleMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter((flatSharingRule) =>
+        deletedObjectMetadataIds.includes(flatSharingRule.objectMetadataId),
+      );
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -340,6 +357,11 @@ export class ObjectMetadataService {
             fieldMetadata: {
               flatEntityToCreate: [],
               flatEntityToDelete: flatFieldMetadatasToDelete,
+              flatEntityToUpdate: [],
+            },
+            sharingRule: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: flatSharingRulesToDelete,
               flatEntityToUpdate: [],
             },
           },

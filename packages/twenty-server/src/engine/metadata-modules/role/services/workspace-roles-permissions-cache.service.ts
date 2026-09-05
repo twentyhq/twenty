@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { IsNull } from 'typeorm';
+import { IsNull, Not } from 'typeorm';
 
 import {
   PermissionFlagType,
@@ -39,12 +39,12 @@ const ROLES_PERMISSIONS_ROWS_REQUIREMENT = {
   rowLevelPermissionPredicate: {
     columns: true,
     groupBy: ['roleId'],
-    where: { deletedAt: IsNull() },
+    where: { deletedAt: IsNull(), roleId: Not(IsNull()) },
   },
   rowLevelPermissionPredicateGroup: {
     columns: true,
     groupBy: ['roleId'],
-    where: { deletedAt: IsNull() },
+    where: { deletedAt: IsNull(), roleId: Not(IsNull()) },
   },
   objectMetadata: [
     'id',

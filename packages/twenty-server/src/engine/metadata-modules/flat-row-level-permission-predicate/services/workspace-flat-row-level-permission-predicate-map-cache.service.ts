@@ -19,6 +19,7 @@ const FLAT_ROW_LEVEL_PERMISSION_PREDICATE_ROWS_REQUIREMENT = {
   objectMetadata: ['id', 'universalIdentifier'],
   role: ['id', 'universalIdentifier'],
   rowLevelPermissionPredicateGroup: ['id', 'universalIdentifier'],
+  sharingRule: ['id', 'universalIdentifier'],
 } as const;
 
 @Injectable()
@@ -41,6 +42,7 @@ export class WorkspaceFlatRowLevelPermissionPredicateMapCacheService extends Met
       objectMetadata: objectMetadatas,
       role: roles,
       rowLevelPermissionPredicateGroup: rowLevelPermissionPredicateGroups,
+      sharingRule: sharingRules,
     } = rows;
 
     const applicationIdToUniversalIdentifierMap =
@@ -53,6 +55,8 @@ export class WorkspaceFlatRowLevelPermissionPredicateMapCacheService extends Met
       createIdToUniversalIdentifierMap(roles);
     const rowLevelPermissionPredicateGroupIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(rowLevelPermissionPredicateGroups);
+    const sharingRuleIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(sharingRules);
 
     const flatRowLevelPermissionPredicateMaps = createEmptyFlatEntityMaps();
 
@@ -65,6 +69,7 @@ export class WorkspaceFlatRowLevelPermissionPredicateMapCacheService extends Met
           objectMetadataIdToUniversalIdentifierMap,
           roleIdToUniversalIdentifierMap,
           rowLevelPermissionPredicateGroupIdToUniversalIdentifierMap,
+          sharingRuleIdToUniversalIdentifierMap,
         });
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({

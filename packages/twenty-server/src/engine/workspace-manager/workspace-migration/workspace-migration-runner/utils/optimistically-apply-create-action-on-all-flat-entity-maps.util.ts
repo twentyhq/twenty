@@ -87,7 +87,8 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = ({
     case 'webhook':
     case 'applicationVariable':
     case 'connectionProvider':
-    case 'timelineActivityType': {
+    case 'timelineActivityType':
+    case 'sharingRule': {
       addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
         flatEntity: flatAction.flatEntity,
         flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,

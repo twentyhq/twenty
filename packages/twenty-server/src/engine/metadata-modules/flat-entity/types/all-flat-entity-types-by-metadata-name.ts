@@ -6,6 +6,8 @@ import { type FlatConnectionProviderMaps } from 'src/engine/metadata-modules/fla
 import { type FlatConnectionProvider } from 'src/engine/metadata-modules/flat-connection-provider/types/flat-connection-provider.type';
 import { type FlatTimelineActivityTypeMaps } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type-maps.type';
 import { type FlatTimelineActivityType } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type.type';
+import { type FlatSharingRuleMaps } from 'src/engine/metadata-modules/flat-sharing-rule/types/flat-sharing-rule-maps.type';
+import { type FlatSharingRule } from 'src/engine/metadata-modules/flat-sharing-rule/types/flat-sharing-rule.type';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -69,6 +71,7 @@ import { type UniversalFlatAgent } from 'src/engine/workspace-manager/workspace-
 import { type UniversalFlatCommandMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-command-menu-item.type';
 import { type UniversalFlatConnectionProvider } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-connection-provider.type';
 import { type UniversalFlatTimelineActivityType } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-timeline-activity-type.type';
+import { type UniversalFlatSharingRule } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-sharing-rule.type';
 import { type UniversalFlatEntityFrom } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 import { type UniversalFlatFieldPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-permission.type';
 import { type UniversalFlatFrontComponent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-front-component.type';
@@ -129,6 +132,14 @@ import {
   type UniversalDeleteTimelineActivityTypeAction,
   type UniversalUpdateTimelineActivityTypeAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/timeline-activity-type/types/workspace-migration-timeline-activity-type-action.type';
+import {
+  type FlatCreateSharingRuleAction,
+  type FlatDeleteSharingRuleAction,
+  type FlatUpdateSharingRuleAction,
+  type UniversalCreateSharingRuleAction,
+  type UniversalDeleteSharingRuleAction,
+  type UniversalUpdateSharingRuleAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/sharing-rule/types/workspace-migration-sharing-rule-action.type';
 import {
   type FlatCreateFieldPermissionAction,
   type FlatDeleteFieldPermissionAction,
@@ -869,5 +880,21 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatTimelineActivityType;
     universalFlatEntity: UniversalFlatTimelineActivityType;
     entity: MetadataEntity<'timelineActivityType'>;
+  };
+  sharingRule: {
+    flatEntityMaps: FlatSharingRuleMaps;
+    universalActions: {
+      create: UniversalCreateSharingRuleAction;
+      update: UniversalUpdateSharingRuleAction;
+      delete: UniversalDeleteSharingRuleAction;
+    };
+    flatActions: {
+      create: FlatCreateSharingRuleAction;
+      update: FlatUpdateSharingRuleAction;
+      delete: FlatDeleteSharingRuleAction;
+    };
+    flatEntity: FlatSharingRule;
+    universalFlatEntity: UniversalFlatSharingRule;
+    entity: MetadataEntity<'sharingRule'>;
   };
 };

@@ -39,6 +39,14 @@ export { defineTimelineActivityType } from '@/sdk/define/timeline-activity-types
 export type { TimelineActivityTypeConfig } from '@/sdk/define/timeline-activity-types/timeline-activity-type-config';
 export type { TimelineActivityTypeManifest } from 'twenty-shared/application';
 
+export { defineSharingRule } from '@/sdk/define/sharing-rules/define-sharing-rule';
+export type { SharingRuleConfig } from '@/sdk/define/sharing-rules/sharing-rule-config';
+export type { SharingRuleManifest } from 'twenty-shared/application';
+export {
+  RecordShareAccessLevel,
+  RecordSharePrincipalType,
+} from 'twenty-shared/types';
+
 export {
   canAccessFullAdminPanel,
   canImpersonate,

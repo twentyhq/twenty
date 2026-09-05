@@ -168,6 +168,50 @@ Notes:
 - Row-level security is enforced for workspaces on plans that include it; the predicates still sync
   on other plans, they are simply not enforced.
 
+## Sharing rules
+
+Roles decide what a member may _open_; on objects whose readability is `PRIVATE`, a **sharing rule**
+decides which records they _see_ by granting a principal (everyone, a role, or a workspace member)
+`READ` or `READ_WRITE` access to the records that match its criteria. Criteria reuse the same
+`rowLevelPermissionPredicates` and `rowLevelPermissionPredicateGroups` shape as roles, nested under
+the rule instead of a role; a rule without criteria matches every record of the object. Rules ship at
+the top level of the manifest with `defineSharingRule`, and a rule with criteria only syncs on plans
+that include row-level security:
+
+```ts src/sharing-rules/sales-reads-deals.ts
+import {
+  defineSharingRule,
+  RecordShareAccessLevel,
+  RecordSharePrincipalType,
+  RowLevelPermissionPredicateOperand,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import { SALES_ROLE_UNIVERSAL_IDENTIFIER } from '../roles/sales-role';
+
+export default defineSharingRule({
+  universalIdentifier: 'f6e5d4c3-2b1a-4098-8765-666666666666',
+  name: 'Sales reads open deals',
+  objectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+  granteePrincipalType: RecordSharePrincipalType.ROLE,
+  granteeRoleUniversalIdentifier: SALES_ROLE_UNIVERSAL_IDENTIFIER,
+  accessLevel: RecordShareAccessLevel.READ,
+  rowLevelPermissionPredicates: [
+    {
+      universalIdentifier: 'a7f6e5d4-3c2b-4109-9876-777777777777',
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+      fieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.fields.stage
+          .universalIdentifier,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      value: 'OPEN',
+    },
+  ],
+});
+```
+
 ## The default function role
 
 When you scaffold a new app, the CLI creates a default role file declared with `defineApplicationRole()`:

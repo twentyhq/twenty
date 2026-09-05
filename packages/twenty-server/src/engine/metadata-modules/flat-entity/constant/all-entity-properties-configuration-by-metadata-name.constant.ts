@@ -1583,6 +1583,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: 'roleUniversalIdentifier',
     },
+    sharingRuleId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'sharingRuleUniversalIdentifier',
+    },
     createdAt: {
       toCompare: false,
       toStringify: false,
@@ -1625,6 +1630,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: false,
       toStringify: false,
       universalProperty: 'roleUniversalIdentifier',
+    },
+    sharingRuleId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'sharingRuleUniversalIdentifier',
     },
     createdAt: {
       toCompare: false,
@@ -1978,6 +1988,59 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     overrides: {
       toCompare: true,
       toStringify: true,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
+  sharingRule: {
+    objectMetadataId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'objectMetadataUniversalIdentifier',
+    },
+    name: { toCompare: true, toStringify: false, universalProperty: undefined },
+    description: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    granteePrincipalType: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    granteeRoleId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'granteeRoleUniversalIdentifier',
+    },
+    granteePrincipalId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    accessLevel: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isActive: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    deletedAt: {
+      toCompare: true,
+      toStringify: false,
       universalProperty: undefined,
     },
     createdAt: {

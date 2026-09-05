@@ -3,14 +3,16 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { IsNull, Not } from 'typeorm';
 
-import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { fromFlatRowLevelPermissionPredicateGroupToDto } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-flat-row-level-permission-predicate-group-to-dto.util';
 import { RowLevelPermissionPredicateGroupDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate-group.dto';
+import { isRoleFlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/is-role-flat-row-level-permission-predicate.util';
+import { hasRowLevelPermissionFeature } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/has-row-level-permission-feature.util';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -48,7 +50,7 @@ export class RowLevelPermissionPredicateGroupService {
     return Object.values(
       flatRowLevelPermissionPredicateGroupMaps.byUniversalIdentifier,
     )
-      .filter(isDefined)
+      .filter(isRoleFlatRowLevelPermissionPredicateGroup)
       .filter((group) => group.deletedAt === null)
       .sort(
         (a, b) =>
@@ -80,7 +82,7 @@ export class RowLevelPermissionPredicateGroupService {
     return Object.values(
       flatRowLevelPermissionPredicateGroupMaps.byUniversalIdentifier,
     )
-      .filter(isDefined)
+      .filter(isRoleFlatRowLevelPermissionPredicateGroup)
       .filter((group) => group.deletedAt === null && group.roleId === roleId)
       .sort(
         (a, b) =>
@@ -114,7 +116,11 @@ export class RowLevelPermissionPredicateGroupService {
       flatEntityMaps: flatRowLevelPermissionPredicateGroupMaps,
     });
 
-    if (!isDefined(flatGroup) || flatGroup.deletedAt !== null) {
+    if (
+      !isDefined(flatGroup) ||
+      flatGroup.deletedAt !== null ||
+      !isRoleFlatRowLevelPermissionPredicateGroup(flatGroup)
+    ) {
       return null;
     }
 
@@ -122,10 +128,9 @@ export class RowLevelPermissionPredicateGroupService {
   }
 
   public async deleteAllRowLevelPermissionPredicateGroups(workspaceId: string) {
-    await this.rowLevelPermissionPredicateGroupRepository.delete(
-      workspaceId,
-      {},
-    );
+    await this.rowLevelPermissionPredicateGroupRepository.delete(workspaceId, {
+      roleId: Not(IsNull()),
+    });
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'rolesPermissions',
@@ -137,14 +142,10 @@ export class RowLevelPermissionPredicateGroupService {
   private async hasRowLevelPermissionFeature(
     workspaceId: string,
   ): Promise<boolean> {
-    const hasValidEnterprisePlan = this.enterprisePlanService.isValid();
-
-    const isRowLevelPermissionEnabled =
-      await this.billingService.hasEntitlement(
-        workspaceId,
-        BillingEntitlementKey.RLS,
-      );
-
-    return hasValidEnterprisePlan && isRowLevelPermissionEnabled;
+    return hasRowLevelPermissionFeature({
+      workspaceId,
+      billingService: this.billingService,
+      enterprisePlanService: this.enterprisePlanService,
+    });
   }
 }

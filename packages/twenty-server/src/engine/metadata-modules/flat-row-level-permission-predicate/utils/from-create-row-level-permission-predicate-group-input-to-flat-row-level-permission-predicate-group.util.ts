@@ -49,6 +49,8 @@ export const fromCreateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermis
       workspaceId,
       roleId,
       roleUniversalIdentifier,
+      sharingRuleId: null,
+      sharingRuleUniversalIdentifier: null,
       objectMetadataId: input.objectMetadataId,
       objectMetadataUniversalIdentifier,
       logicalOperator: input.logicalOperator,

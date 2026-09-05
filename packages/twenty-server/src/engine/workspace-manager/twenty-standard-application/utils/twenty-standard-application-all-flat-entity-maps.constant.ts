@@ -281,6 +281,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     flatPageLayoutWidgetMaps: flatPageLayoutWidgetMapsWithRecordForms,
     flatCommandMenuItemMaps,
     flatTimelineActivityTypeMaps,
+    flatSharingRuleMaps: createEmptyFlatEntityMaps(),
   };
 
   const idByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName =

@@ -440,8 +440,15 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       metadataName: 'role',
       foreignKey: 'roleId',
       inverseOneToManyProperty: 'rowLevelPermissionPredicates',
-      isNullable: false,
+      isNullable: true,
       universalForeignKey: 'roleUniversalIdentifier',
+    },
+    sharingRule: {
+      metadataName: 'sharingRule',
+      foreignKey: 'sharingRuleId',
+      inverseOneToManyProperty: 'rowLevelPermissionPredicates',
+      isNullable: true,
+      universalForeignKey: 'sharingRuleUniversalIdentifier',
     },
     fieldMetadata: {
       metadataName: 'fieldMetadata',
@@ -486,8 +493,15 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       metadataName: 'role',
       foreignKey: 'roleId',
       inverseOneToManyProperty: 'rowLevelPermissionPredicateGroups',
-      isNullable: false,
+      isNullable: true,
       universalForeignKey: 'roleUniversalIdentifier',
+    },
+    sharingRule: {
+      metadataName: 'sharingRule',
+      foreignKey: 'sharingRuleId',
+      inverseOneToManyProperty: 'rowLevelPermissionPredicateGroups',
+      isNullable: true,
+      universalForeignKey: 'sharingRuleUniversalIdentifier',
     },
     parentRowLevelPermissionPredicateGroup: {
       metadataName: 'rowLevelPermissionPredicateGroup',
@@ -555,6 +569,24 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
   timelineActivityType: {
     workspace: null,
     application: null,
+  },
+  sharingRule: {
+    workspace: null,
+    application: null,
+    objectMetadata: {
+      metadataName: 'objectMetadata',
+      foreignKey: 'objectMetadataId',
+      inverseOneToManyProperty: null,
+      isNullable: false,
+      universalForeignKey: 'objectMetadataUniversalIdentifier',
+    },
+    granteeRole: {
+      metadataName: 'role',
+      foreignKey: 'granteeRoleId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'granteeRoleUniversalIdentifier',
+    },
   },
   searchFieldMetadata: {
     workspace: null,

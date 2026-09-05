@@ -1,10 +1,10 @@
 /* @license Enterprise */
 
+import { type RoleFlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/is-role-flat-row-level-permission-predicate.util';
 import { type RowLevelPermissionPredicateDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate.dto';
-import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
 
 export const fromFlatRowLevelPermissionPredicateToDto = (
-  flatPredicate: FlatRowLevelPermissionPredicate,
+  flatPredicate: RoleFlatRowLevelPermissionPredicate,
 ): RowLevelPermissionPredicateDTO => ({
   ...flatPredicate,
 });
