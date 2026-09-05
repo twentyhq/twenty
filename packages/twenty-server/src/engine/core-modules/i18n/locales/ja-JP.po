@@ -2723,6 +2723,12 @@ msgctxt "fieldMetadata.label"
 msgid "Creation DateTime"
 msgstr "作成日時"
 
+#. js-lingui-id: +zmk0f
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout/compute-standard-record-form-flat-entities.util.ts
+msgctxt "pageLayout.name"
+msgid "Creation Form"
+msgstr "作成フォーム"
+
 #. js-lingui-id: oB7ed5
 #: src/engine/core-modules/usage-limit/services/usage-limit-quota.service.ts
 msgid "Credit allowance exhausted for this billing period."
@@ -4142,6 +4148,12 @@ msgstr "ビュー ソートを作成するには FieldMetadataId が必要です
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "fieldMetadataId or fieldMetadataUniversalIdentifier must be provided"
 msgstr "fieldMetadataId または fieldMetadataUniversalIdentifier のいずれかを指定する必要があります."
+
+#. js-lingui-id: R/u+r2
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout/compute-standard-record-form-flat-entities.util.ts
+msgctxt "pageLayoutTab.title"
+msgid "Fields"
+msgstr "フィールド"
 
 #. js-lingui-id: GFC6Lh
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -5998,6 +6010,11 @@ msgstr "棒グラフにはレイアウトが必須です"
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr "棒グラフウィジェット \"{widgetTitle}\" にはレイアウトが必須です"
 
+#. js-lingui-id: cI7XDa
+#: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
+msgid "Limits scoped below the workspace require the Organization plan."
+msgstr "ワークスペースより下位のスコープに設定される制限には、Organization プランが必要です。"
+
 #. js-lingui-id: sAG9OB
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
@@ -7412,6 +7429,11 @@ msgstr "管理者のみが管理者権限を持つユーザーへのなりすま
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Only applications published to npm can be claimed this way."
 msgstr "この方法で所有権を取得できるのは、npm に公開されているアプリケーションのみです。"
+
+#. js-lingui-id: FmMRCQ
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Only applications synced from local source can be exported."
+msgstr "ローカルソースから同期されたアプリケーションのみエクスポートできます。"
 
 #. js-lingui-id: XLn1DI
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -10273,6 +10295,11 @@ msgstr "サーバーの APP_VERSION は有効な semver バージョンではあ
 msgid "The singular and plural names cannot be the same for an object"
 msgstr "オブジェクトの単数形と複数形の名前を同じにすることはできません"
 
+#. js-lingui-id: 5bOcgV
+#: src/engine/core-modules/application/application.exception.ts
+msgid "The standard application cannot be exported."
+msgstr "標準アプリケーションはエクスポートできません。"
+
 #. js-lingui-id: Dvwk3g
 #: src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
 msgid "The subscription is no longer available on the provider."
@@ -10832,6 +10859,17 @@ msgstr "このアプリケーションのこのバージョンは、既にこの
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This workspace already has a subscription."
 msgstr "このワークスペースには既にサブスクリプションがあります。"
+
+#. js-lingui-id: aJq3VL
+#: src/engine/core-modules/billing/billing.exception.ts
+#: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
+msgid "This workspace has no active subscription."
+msgstr "このワークスペースには有効なサブスクリプションがありません。"
+
+#. js-lingui-id: ChHeV3
+#: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
+msgid "This workspace is suspended."
+msgstr "このワークスペースは一時停止されています。"
 
 #. js-lingui-id: IdEnkZ
 #: src/engine/core-modules/application/application.exception.ts

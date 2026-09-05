@@ -1,4 +1,5 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
+import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
@@ -6,16 +7,20 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { RecordListRowField } from '@/object-record/record-list/components/RecordListRowField';
 import { RECORD_LIST_ROW_LABEL_IDENTIFIER_WIDTH } from '@/object-record/record-list/constants/RecordListRowLabelIdentifierWidth';
+import { RECORD_LIST_ROW_OVERFLOW_CHIP_SLOT_WIDTH } from '@/object-record/record-list/constants/RecordListRowOverflowChipSlotWidth';
 import { useRecordListContextOrThrow } from '@/object-record/record-list/contexts/RecordListContext';
-import { recordListDisplayedFieldsComponentState } from '@/object-record/record-list/states/recordListDisplayedFieldsComponentState';
+import { recordListRowWidthComponentState } from '@/object-record/record-list/states/recordListRowWidthComponentState';
+import { computeRecordListDisplayedFields } from '@/object-record/record-list/utils/computeRecordListDisplayedFields';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { ChipVariant } from 'twenty-ui/data-display';
+import { Chip, ChipVariant, LinkChip } from 'twenty-ui/data-display';
+import { TooltipPosition } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRowContainer = styled.div`
@@ -43,35 +48,25 @@ const StyledRow = styled.div`
 
 const StyledRecordChipContainer = styled.div`
   display: flex;
-  min-width: ${RECORD_LIST_ROW_LABEL_IDENTIFIER_WIDTH}px;
+  flex: 1 1 ${RECORD_LIST_ROW_LABEL_IDENTIFIER_WIDTH}px;
+  min-width: 0;
   overflow: hidden;
 `;
 
 const StyledFieldsContainer = styled.div`
   align-items: center;
   display: flex;
+  flex-shrink: 0;
   gap: ${themeCssVariables.spacing[3]};
   justify-content: flex-end;
   overflow: hidden;
 `;
 
-const StyledHiddenFieldCountChip = styled.div`
-  align-items: center;
-  background: ${themeCssVariables.background.transparent.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.primary};
+const StyledOverflowChipContainer = styled.div`
   display: flex;
   flex-shrink: 0;
-  font-size: ${themeCssVariables.font.size.md};
-  gap: 2px;
-  height: 20px;
-  padding: 0 ${themeCssVariables.spacing[1]};
-
-  &::before {
-    color: ${themeCssVariables.font.color.secondary};
-    content: '+';
-    font-size: ${themeCssVariables.font.size.sm};
-  }
+  justify-content: flex-end;
+  width: ${RECORD_LIST_ROW_OVERFLOW_CHIP_SLOT_WIDTH}px;
 `;
 
 type RecordListRowProps = {
@@ -91,8 +86,9 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
     visibleRecordFieldsComponentSelector,
   );
 
-  const { displayedFieldCount, displayedFieldMaxWidth } =
-    useAtomComponentStateValue(recordListDisplayedFieldsComponentState);
+  const recordListRowWidth = useAtomComponentStateValue(
+    recordListRowWidthComponentState,
+  );
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
@@ -124,15 +120,28 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
     },
   );
 
+  const displayedFieldsLayout = computeRecordListDisplayedFields({
+    rowWidth: recordListRowWidth,
+    populatedFieldCount: nonEmptyRecordFields.length,
+  });
+
   const displayedRecordFields = nonEmptyRecordFields.slice(
     0,
-    displayedFieldCount,
+    displayedFieldsLayout.displayedFieldCount,
   );
 
   const hiddenFieldCount =
     nonEmptyRecordFields.length - displayedRecordFields.length;
 
   const openRecord = () => openRecordFromIndexView({ recordId });
+
+  const linkToRecord = getLinkToShowPage(objectNameSingular, recordStore);
+
+  const overflowChipLabel = `+${hiddenFieldCount}`;
+  const overflowChipTooltipLabel = plural(hiddenFieldCount, {
+    one: '# more populated field available',
+    other: '# more populated fields available',
+  });
 
   return (
     <StyledRowContainer
@@ -157,7 +166,9 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
             <RecordChip
               objectNameSingular={objectNameSingular}
               record={recordStore}
+              to={linkToRecord}
               variant={ChipVariant.Transparent}
+              isBold
               onClick={openRecord}
               triggerEvent={'CLICK'}
             />
@@ -170,13 +181,32 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
               recordId={recordId}
               recordField={recordField}
               fieldDefinition={fieldDefinition}
-              maxWidth={displayedFieldMaxWidth}
+              maxWidth={displayedFieldsLayout.displayedFieldMaxWidth}
             />
           ))}
           {hiddenFieldCount > 0 && (
-            <StyledHiddenFieldCountChip>
-              {hiddenFieldCount}
-            </StyledHiddenFieldCountChip>
+            <StyledOverflowChipContainer>
+              {isNonEmptyString(linkToRecord) ? (
+                <LinkChip
+                  label={overflowChipLabel}
+                  to={linkToRecord}
+                  onClick={openRecord}
+                  triggerEvent="CLICK"
+                  tooltipLabel={overflowChipTooltipLabel}
+                  tooltipPlace={TooltipPosition.Top}
+                  alwaysShowTooltip
+                  variant={ChipVariant.Highlighted}
+                />
+              ) : (
+                <Chip
+                  label={overflowChipLabel}
+                  tooltipLabel={overflowChipTooltipLabel}
+                  tooltipPlace={TooltipPosition.Top}
+                  alwaysShowTooltip
+                  variant={ChipVariant.Highlighted}
+                />
+              )}
+            </StyledOverflowChipContainer>
           )}
         </StyledFieldsContainer>
       </StyledRow>

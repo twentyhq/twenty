@@ -6,19 +6,20 @@ import {
   type OnModuleDestroy,
   type OnModuleInit,
 } from '@nestjs/common';
+import { DiscoveryService } from '@nestjs/core';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
-import { isValidCreditAmountMicro } from 'src/engine/core-modules/billing/utils/is-valid-credit-amount-micro.util';
+import { isValidCreditAmountMicro } from 'src/engine/core-modules/usage/utils/is-valid-credit-amount-micro.util';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
 import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/record-usage-input.type';
 import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
+import { type CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
+import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/utils/find-credit-allowance-provider.util';
 import { buildUsageEventEnvelopes } from 'src/engine/core-modules/usage/utils/build-usage-event-envelopes';
 import { UsageRollupBuffer } from 'src/engine/core-modules/usage/utils/usage-rollup-buffer';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 const MAX_BUFFERED_ROLLUPS = 10_000;
@@ -29,15 +30,20 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
   private readonly buffer = new UsageRollupBuffer(MAX_BUFFERED_ROLLUPS);
   private flushTimer: NodeJS.Timeout | null = null;
   private pendingFlush: Promise<void> = Promise.resolve();
+  private creditAllowanceProvider: CreditAllowanceProvider | null = null;
 
   constructor(
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly eventLogEmitterService: EventLogEmitterService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly discoveryService: DiscoveryService,
   ) {}
 
   onModuleInit() {
+    this.creditAllowanceProvider = findCreditAllowanceProvider(
+      this.discoveryService,
+    );
+
     this.flushTimer = setInterval(
       () => void this.flush(),
       this.twentyConfigService.get('USAGE_ROLLUP_FLUSH_INTERVAL_MS'),
@@ -64,7 +70,7 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
       return;
     }
 
-    const periodStart = await this.resolvePeriodStart(workspaceId);
+    const periodStart = await this.getBillingPeriodStart(workspaceId);
 
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
       USAGE_RECORDED,
@@ -134,7 +140,7 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
     usageEvents: UsageEvent[],
   ): Promise<void> {
-    const periodStart = await this.resolvePeriodStart(workspaceId);
+    const periodStart = await this.getBillingPeriodStart(workspaceId);
 
     return this.eventLogEmitterService.dispatch(
       buildUsageEventEnvelopes(
@@ -165,20 +171,12 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
     return { ...input, creditsUsedMicro };
   }
 
-  private async resolvePeriodStart(
+  private async getBillingPeriodStart(
     workspaceId: string,
   ): Promise<Date | undefined> {
-    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
-      return undefined;
-    }
+    const period =
+      await this.creditAllowanceProvider?.getCreditAllowancePeriod(workspaceId);
 
-    const { currentBillingSubscription } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'currentBillingSubscription',
-      ]);
-
-    return currentBillingSubscription === NO_BILLING_SUBSCRIPTION
-      ? undefined
-      : currentBillingSubscription.currentPeriodStart;
+    return period?.periodStart;
   }
 }
