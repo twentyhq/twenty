@@ -10823,7 +10823,7 @@ msgstr "Este endereço suprimido não existe mais."
 #. js-lingui-id: qm7uMm
 #: src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util.ts
 msgid "This SVG is too large to be processed."
-msgstr ""
+msgstr "Este SVG é grande demais para ser processado."
 
 #. js-lingui-id: 0GMgIa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
