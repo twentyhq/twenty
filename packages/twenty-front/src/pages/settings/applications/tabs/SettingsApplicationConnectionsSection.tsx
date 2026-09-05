@@ -12,7 +12,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { Status } from 'twenty-ui/data-display';
+import { Avatar, Status } from 'twenty-ui/data-display';
 import { Info } from 'twenty-ui/feedback';
 import {
   IconChevronRight,
@@ -29,6 +29,7 @@ import { useFindApplicationConnectionProviders } from '~/pages/settings/applicat
 import { useMyAppConnectedAccounts } from '~/pages/settings/applications/hooks/useMyAppConnectedAccounts';
 import { useTriggerAppOAuth } from '~/pages/settings/applications/hooks/useTriggerAppOAuth';
 import { type FrontendApplicationConnectionProvider } from '~/pages/settings/applications/types/FrontendApplicationConnectionProvider';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const CONNECTION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
   'minmax(0, 1fr) 160px 180px 36px';
@@ -125,6 +126,13 @@ export const SettingsApplicationConnectionsSection = ({
             <H2Title
               title={provider.displayName}
               description={t`Manage connections used by this app to call ${provider.displayName}.`}
+              adornment={
+                <Avatar
+                  type="app"
+                  avatarUrl={getAbsoluteImageUrl(provider.logoUrl)}
+                  placeholder={provider.displayName}
+                />
+              }
             />
             {isOAuth && !isClientCredentialsConfigured && (
               <Info

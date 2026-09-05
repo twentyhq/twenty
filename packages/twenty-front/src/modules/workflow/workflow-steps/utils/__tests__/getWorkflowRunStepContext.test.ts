@@ -22,7 +22,7 @@ const mockFlow = {
         },
         outputSchema: {},
         errorHandlingOptions: {
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
           continueOnFailure: { value: false },
         },
       },
@@ -40,7 +40,7 @@ const mockFlow = {
         },
         outputSchema: {},
         errorHandlingOptions: {
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
           continueOnFailure: { value: false },
         },
       },
@@ -142,7 +142,7 @@ describe('getWorkflowRunStepContext', () => {
             },
             outputSchema: {},
             errorHandlingOptions: {
-              retryOnFailure: { value: false },
+              retryOnFailure: { value: 0 },
               continueOnFailure: { value: false },
             },
           },
@@ -160,7 +160,7 @@ describe('getWorkflowRunStepContext', () => {
             },
             outputSchema: {},
             errorHandlingOptions: {
-              retryOnFailure: { value: false },
+              retryOnFailure: { value: 0 },
               continueOnFailure: { value: false },
             },
           },
@@ -178,7 +178,7 @@ describe('getWorkflowRunStepContext', () => {
             },
             outputSchema: {},
             errorHandlingOptions: {
-              retryOnFailure: { value: false },
+              retryOnFailure: { value: 0 },
               continueOnFailure: { value: false },
             },
           },

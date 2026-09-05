@@ -71,7 +71,7 @@ const createReplacementEmptyNode = ({
       outputSchema: {},
       errorHandlingOptions: {
         continueOnFailure: { value: false },
-        retryOnFailure: { value: false },
+        retryOnFailure: { value: 0 },
       },
       input: {},
     },
@@ -168,6 +168,7 @@ const updateIfElseStepOnDeletion = ({
 
   return {
     ...step,
+    nextStepIds: [],
     settings: {
       ...step.settings,
       input: {
