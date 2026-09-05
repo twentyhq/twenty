@@ -1,5 +1,6 @@
 import {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  SystemPermissionFlag,
   defineApplicationRole,
 } from 'twenty-sdk/define';
 
@@ -12,7 +13,7 @@ export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: `${APP_DISPLAY_NAME} default role`,
   description:
-    'Reads calendar events to match Fathom meetings and writes transcripts, summaries, action items, and metadata to CallRecording records.',
+    'Reads calendar events to match Fathom meetings and writes transcripts, summaries, action items, media, and metadata to CallRecording records.',
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
@@ -49,5 +50,5 @@ export default defineApplicationRole({
     },
   ],
   fieldPermissions: [],
-  permissionFlagUniversalIdentifiers: [],
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.UPLOAD_FILE],
 });
