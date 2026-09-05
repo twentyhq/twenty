@@ -43,6 +43,12 @@ export const MobileNavigationBar = () => {
 
   const isHidden = isSidePanelOpened || !isMobileNavigationBarVisible;
 
+  // A suspended workspace is held on the billing settings by the route guard,
+  // so it has no tab to offer.
+  if (items.length === 0) {
+    return null;
+  }
+
   return (
     <>
       <MobileNavigationBarScrollEffect />
