@@ -38,7 +38,7 @@ type MobileNavigationBarItem = {
 
 export const useMobileNavigationBarItems = (): {
   items: MobileNavigationBarItem[];
-  activeItemName: MobileNavigationBarItemName;
+  activeItemName: MobileNavigationBarItemName | '';
 } => {
   const { t } = useLingui();
   const navigate = useNavigate();
@@ -143,11 +143,17 @@ export const useMobileNavigationBarItems = (): {
   // The stored tab keeps the chat history listed beside another page on
   // desktop; mobile has no such split, so the route alone says which tab the
   // user is on.
-  const activeItemName = isSettingsDrawer
+  const modeForCurrentRoute = isSettingsDrawer
     ? NAVIGATION_DRAWER_TABS.SETTINGS
     : isAiChatPath(pathname)
       ? NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY
       : NAVIGATION_DRAWER_TABS.NAVIGATION_MENU;
+
+  // A mode the workspace has no permission for still has a route to land on,
+  // so the active name has to come back to what the bar actually renders.
+  const activeItemName = items.some(({ name }) => name === modeForCurrentRoute)
+    ? modeForCurrentRoute
+    : '';
 
   return { items, activeItemName };
 };

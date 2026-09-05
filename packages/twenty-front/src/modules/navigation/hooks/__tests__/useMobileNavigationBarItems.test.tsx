@@ -138,6 +138,20 @@ describe('useMobileNavigationBarItems', () => {
     );
   });
 
+  it('marks no tab as active on a route whose mode the bar does not offer', () => {
+    jest
+      .mocked(useNavigationDrawerModes)
+      .mockReturnValue(
+        ALL_MODES.filter(
+          ({ mode }) => mode !== NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+        ),
+      );
+
+    const { result } = renderMobileNavigationBarItems(AI_CHAT_PATH);
+
+    expect(result.current.activeItemName).toBe('');
+  });
+
   it('marks the settings mode as active on a settings page', () => {
     const { result } = renderMobileNavigationBarItems('/settings/profile');
 
