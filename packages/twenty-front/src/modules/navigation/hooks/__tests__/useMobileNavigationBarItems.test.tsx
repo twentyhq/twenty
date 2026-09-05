@@ -168,6 +168,7 @@ describe('useMobileNavigationBarItems', () => {
         ?.onClick(),
     );
 
+    expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledTimes(1);
     expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledWith(
       NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
     );

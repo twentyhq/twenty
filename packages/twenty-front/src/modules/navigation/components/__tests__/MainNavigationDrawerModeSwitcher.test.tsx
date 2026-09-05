@@ -70,6 +70,7 @@ describe('MainNavigationDrawerModeSwitcher', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'AI' }));
 
+    expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledTimes(1);
     expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledWith(
       NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
     );
@@ -80,6 +81,7 @@ describe('MainNavigationDrawerModeSwitcher', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Settings' }));
 
+    expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledTimes(1);
     expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledWith(
       NAVIGATION_DRAWER_TABS.SETTINGS,
     );
