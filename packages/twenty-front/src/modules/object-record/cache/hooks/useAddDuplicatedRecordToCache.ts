@@ -38,6 +38,9 @@ export const useAddDuplicatedRecordToCache = ({
     };
 
     createOneRecordInCache(createdRecord);
+    // The optimistic effect only reaches the record store through relations,
+    // and a duplicate response carries none.
+    upsertRecordsInStore({ partialRecords: [createdRecord] });
 
     const recordNode = getRecordNodeFromRecord({
       objectMetadataItem,

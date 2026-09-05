@@ -56,7 +56,7 @@ export class AddDuplicateMessageListCommandMenuItemCommand extends ProvisionedWo
       )
     ) {
       this.logger.log(
-        `messageList objects do not exist for workspace ${workspaceId}, skipping`,
+        `The messageList or messageListMember object is missing for workspace ${workspaceId}, skipping`,
       );
 
       return;
