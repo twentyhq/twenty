@@ -905,7 +905,7 @@ msgstr "مسودة موجودة بالفعل لهذا سير العمل. هل أ
 #. js-lingui-id: K3NJnJ
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "A payment method is needed to keep your workspace active."
-msgstr ""
+msgstr "يلزم توفر طريقة دفع للحفاظ على مساحة العمل الخاصة بك نشطة."
 
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1186,7 +1186,7 @@ msgstr "أضف {objectLabelSingular}"
 #. js-lingui-id: rUVyfz
 #: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 msgid "Add a card below to update your billing details and retry your payment."
-msgstr ""
+msgstr "أضف بطاقة أدناه لتحديث تفاصيل الفوترة وإعادة محاولة الدفع."
 
 #. js-lingui-id: 7W8nJr
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationEditor.tsx
@@ -1503,7 +1503,7 @@ msgstr "اضافة حقل مخرجات"
 #. js-lingui-id: lRpmgk
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "Add payment method"
-msgstr ""
+msgstr "إضافة طريقة دفع"
 
 #. js-lingui-id: aYtHO6
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -9660,7 +9660,7 @@ msgstr "العودة"
 #. js-lingui-id: y0SPQU
 #: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
 msgid "Go to billing"
-msgstr ""
+msgstr "انتقل إلى الفوترة"
 
 #. js-lingui-id: Hb4Cgz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -15000,17 +15000,17 @@ msgstr "مشكلة في الدفع"
 #. js-lingui-id: twOnMk
 #: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 msgid "Payment method added."
-msgstr ""
+msgstr "تمت إضافة طريقة الدفع."
 
 #. js-lingui-id: uIMn/N
 #: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 msgid "Payment method added. Retrying your payment..."
-msgstr ""
+msgstr "تمت إضافة طريقة الدفع. جارٍ إعادة محاولة الدفع..."
 
 #. js-lingui-id: OvqmUS
 #: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
 msgid "Payment successful."
-msgstr ""
+msgstr "تم الدفع بنجاح."
 
 #. js-lingui-id: CcK+Ft
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -19403,7 +19403,7 @@ msgstr "لا تزال هناك بعض الصفوف التي تحتوي على أ
 #. js-lingui-id: PpLJq1
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "There is a billing issue. Please contact your admin."
-msgstr ""
+msgstr "هناك مشكلة في الفوترة. يُرجى الاتصال بالمسؤول الخاص بك."
 
 #. js-lingui-id: CA9PTn
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -20850,7 +20850,7 @@ msgstr "قم بتحديث تكوين حسابك. قم بتكوين أي مجمو
 #. js-lingui-id: JlP83A
 #: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 msgid "Update your payment method"
-msgstr ""
+msgstr "حدّث طريقة الدفع الخاصة بك"
 
 #. js-lingui-id: x4Xp3c
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
@@ -22532,7 +22532,7 @@ msgstr "ستتحول فترة الفوترة لديك إلى سنوية فورً
 #. js-lingui-id: u1O1GV
 #: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
 msgid "Your card was saved, but the payment still needs attention."
-msgstr ""
+msgstr "تم حفظ بطاقتك، ولكن لا تزال الدفعة بحاجة إلى اهتمام."
 
 #. js-lingui-id: mmGBWT
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx

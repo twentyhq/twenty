@@ -905,7 +905,7 @@ msgstr "Una bozza esiste già per questo workflow. Sei sicuro di volerla cancell
 #. js-lingui-id: K3NJnJ
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "A payment method is needed to keep your workspace active."
-msgstr ""
+msgstr "È necessario un metodo di pagamento per mantenere attivo il tuo spazio di lavoro."
 
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1186,7 +1186,7 @@ msgstr "Aggiungi {objectLabelSingular}"
 #. js-lingui-id: rUVyfz
 #: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 msgid "Add a card below to update your billing details and retry your payment."
-msgstr ""
+msgstr "Aggiungi una carta qui sotto per aggiornare i dettagli di fatturazione e riprovare il pagamento."
 
 #. js-lingui-id: 7W8nJr
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationEditor.tsx
@@ -1503,7 +1503,7 @@ msgstr "Aggiungi Campo di Output"
 #. js-lingui-id: lRpmgk
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "Add payment method"
-msgstr ""
+msgstr "Aggiungi un metodo di pagamento"
 
 #. js-lingui-id: aYtHO6
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -9660,7 +9660,7 @@ msgstr "Torna indietro"
 #. js-lingui-id: y0SPQU
 #: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
 msgid "Go to billing"
-msgstr ""
+msgstr "Vai alla fatturazione"
 
 #. js-lingui-id: Hb4Cgz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -15000,17 +15000,17 @@ msgstr "Problema di pagamento"
 #. js-lingui-id: twOnMk
 #: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 msgid "Payment method added."
-msgstr ""
+msgstr "Metodo di pagamento aggiunto."
 
 #. js-lingui-id: uIMn/N
 #: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 msgid "Payment method added. Retrying your payment..."
-msgstr ""
+msgstr "Metodo di pagamento aggiunto. Nuovo tentativo di pagamento in corso..."
 
 #. js-lingui-id: OvqmUS
 #: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
 msgid "Payment successful."
-msgstr ""
+msgstr "Pagamento riuscito."
 
 #. js-lingui-id: CcK+Ft
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -19403,7 +19403,7 @@ msgstr "Ci sono ancora alcune righe che contengono errori. Le righe con errori v
 #. js-lingui-id: PpLJq1
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "There is a billing issue. Please contact your admin."
-msgstr ""
+msgstr "Si è verificato un problema di fatturazione. Contatta il tuo amministratore."
 
 #. js-lingui-id: CA9PTn
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -20852,7 +20852,7 @@ msgstr "Aggiorna la configurazione del tuo account. Configura qualsiasi combinaz
 #. js-lingui-id: JlP83A
 #: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 msgid "Update your payment method"
-msgstr ""
+msgstr "Aggiorna il tuo metodo di pagamento"
 
 #. js-lingui-id: x4Xp3c
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
@@ -22534,7 +22534,7 @@ msgstr "Il tuo intervallo di fatturazione passerà immediatamente ad annuale e l
 #. js-lingui-id: u1O1GV
 #: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
 msgid "Your card was saved, but the payment still needs attention."
-msgstr ""
+msgstr "La tua carta è stata salvata, ma il pagamento richiede ancora attenzione."
 
 #. js-lingui-id: mmGBWT
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx

@@ -905,7 +905,7 @@ msgstr "이 워크플로우에 대한 초안이 이미 존재합니다. 정말�
 #. js-lingui-id: K3NJnJ
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "A payment method is needed to keep your workspace active."
-msgstr ""
+msgstr "워크스페이스를 활성 상태로 유지하려면 결제 수단이 필요합니다."
 
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1186,7 +1186,7 @@ msgstr "{objectLabelSingular} 추가"
 #. js-lingui-id: rUVyfz
 #: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 msgid "Add a card below to update your billing details and retry your payment."
-msgstr ""
+msgstr "아래에서 카드를 추가하여 청구 세부 정보를 업데이트하고 결제를 다시 시도하세요."
 
 #. js-lingui-id: 7W8nJr
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationEditor.tsx
@@ -1503,7 +1503,7 @@ msgstr "출력 필드 추가"
 #. js-lingui-id: lRpmgk
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "Add payment method"
-msgstr ""
+msgstr "결제 수단 추가"
 
 #. js-lingui-id: aYtHO6
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -9660,7 +9660,7 @@ msgstr "뒤로 가기"
 #. js-lingui-id: y0SPQU
 #: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
 msgid "Go to billing"
-msgstr ""
+msgstr "청구로 이동"
 
 #. js-lingui-id: Hb4Cgz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -15000,17 +15000,17 @@ msgstr "결제 문제"
 #. js-lingui-id: twOnMk
 #: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 msgid "Payment method added."
-msgstr ""
+msgstr "결제 수단이 추가되었습니다."
 
 #. js-lingui-id: uIMn/N
 #: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 msgid "Payment method added. Retrying your payment..."
-msgstr ""
+msgstr "결제 수단이 추가되었습니다. 결제를 다시 시도하는 중..."
 
 #. js-lingui-id: OvqmUS
 #: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
 msgid "Payment successful."
-msgstr ""
+msgstr "결제에 성공했습니다."
 
 #. js-lingui-id: CcK+Ft
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -19403,7 +19403,7 @@ msgstr "오류가 포함된 행이 여전히 있습니다. 오류가 있는 행�
 #. js-lingui-id: PpLJq1
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "There is a billing issue. Please contact your admin."
-msgstr ""
+msgstr "청구 문제가 있습니다. 관리자에게 문의하세요."
 
 #. js-lingui-id: CA9PTn
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -20850,7 +20850,7 @@ msgstr "계정 구성을 업데이트하세요. 필요에 따라 IMAP, SMTP, 그
 #. js-lingui-id: JlP83A
 #: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 msgid "Update your payment method"
-msgstr ""
+msgstr "결제 수단 업데이트"
 
 #. js-lingui-id: x4Xp3c
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
@@ -22532,7 +22532,7 @@ msgstr "결제 주기가 즉시 연간으로 변경되며 체험판은 계속됩
 #. js-lingui-id: u1O1GV
 #: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
 msgid "Your card was saved, but the payment still needs attention."
-msgstr ""
+msgstr "카드는 저장되었지만, 결제에 여전히 조치가 필요합니다."
 
 #. js-lingui-id: mmGBWT
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx

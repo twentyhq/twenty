@@ -905,7 +905,7 @@ msgstr "Egy vázlat már létezik ehhez a workflow-hoz. Biztosan törölni akarj
 #. js-lingui-id: K3NJnJ
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "A payment method is needed to keep your workspace active."
-msgstr ""
+msgstr "Fizetési mód szükséges a munkaterület aktív állapotának fenntartásához."
 
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1186,7 +1186,7 @@ msgstr "Új {objectLabelSingular} hozzáadása"
 #. js-lingui-id: rUVyfz
 #: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 msgid "Add a card below to update your billing details and retry your payment."
-msgstr ""
+msgstr "Adjon hozzá alább egy kártyát számlázási adatainak frissítéséhez és a fizetés újbóli megkísérléséhez."
 
 #. js-lingui-id: 7W8nJr
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationEditor.tsx
@@ -1503,7 +1503,7 @@ msgstr "Kimeneti mező hozzáadása"
 #. js-lingui-id: lRpmgk
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "Add payment method"
-msgstr ""
+msgstr "Fizetési mód hozzáadása"
 
 #. js-lingui-id: aYtHO6
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -9660,7 +9660,7 @@ msgstr "Vissza"
 #. js-lingui-id: y0SPQU
 #: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
 msgid "Go to billing"
-msgstr ""
+msgstr "Ugrás a számlázáshoz"
 
 #. js-lingui-id: Hb4Cgz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -15000,17 +15000,17 @@ msgstr "Fizetési probléma"
 #. js-lingui-id: twOnMk
 #: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 msgid "Payment method added."
-msgstr ""
+msgstr "Fizetési mód hozzáadva."
 
 #. js-lingui-id: uIMn/N
 #: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 msgid "Payment method added. Retrying your payment..."
-msgstr ""
+msgstr "Fizetési mód hozzáadva. Fizetés újrapróbálása..."
 
 #. js-lingui-id: OvqmUS
 #: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
 msgid "Payment successful."
-msgstr ""
+msgstr "Sikeres fizetés."
 
 #. js-lingui-id: CcK+Ft
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -19403,7 +19403,7 @@ msgstr "Még mindig vannak hibákat tartalmazó sorok. A hibás sorokat figyelme
 #. js-lingui-id: PpLJq1
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "There is a billing issue. Please contact your admin."
-msgstr ""
+msgstr "Számlázási probléma merült fel. Kérjük, lépjen kapcsolatba az adminisztrátorával."
 
 #. js-lingui-id: CA9PTn
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -20850,7 +20850,7 @@ msgstr "Frissítse fiókja konfigurációját. IMAP, SMTP és CalDAV tetszőlege
 #. js-lingui-id: JlP83A
 #: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 msgid "Update your payment method"
-msgstr ""
+msgstr "Fizetési mód frissítése"
 
 #. js-lingui-id: x4Xp3c
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
@@ -22532,7 +22532,7 @@ msgstr "A számlázási időszak azonnal éves elszámolásra vált, és a prób
 #. js-lingui-id: u1O1GV
 #: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
 msgid "Your card was saved, but the payment still needs attention."
-msgstr ""
+msgstr "A kártyáját mentettük, de a fizetés továbbra is intézkedést igényel."
 
 #. js-lingui-id: mmGBWT
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx

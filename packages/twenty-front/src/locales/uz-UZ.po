@@ -902,6 +902,11 @@ msgstr "Qoralama allaqachon mavjud"
 msgid "A draft already exists for this workflow. Are you sure you want to erase it?"
 msgstr "Ushbu ish jarayoni uchun qoralama allaqachon mavjud. Uni o‘chirib tashlashga ishonchingiz komilmi?"
 
+#. js-lingui-id: K3NJnJ
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "A payment method is needed to keep your workspace active."
+msgstr "Ish joyingiz faol bo‘lib qolishi uchun to‘lov usuli kerak."
+
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
@@ -1177,6 +1182,11 @@ msgstr "\"{trimmedName}\" ni variantlarga qo‘shish"
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
 msgid "Add a {objectLabelSingular}"
 msgstr "{objectLabelSingular} qo‘shish"
+
+#. js-lingui-id: rUVyfz
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Add a card below to update your billing details and retry your payment."
+msgstr "Hisob-kitob ma’lumotlaringizni yangilash va to‘lovni qayta amalga oshirish uchun quyida karta qo‘shing."
 
 #. js-lingui-id: 7W8nJr
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationEditor.tsx
@@ -1489,6 +1499,11 @@ msgstr "Foydalanuvchilarni qoʻshish yoki olib tashlash"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Add Output Field"
 msgstr "Chiqish maydoni qo‘shish"
+
+#. js-lingui-id: lRpmgk
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Add payment method"
+msgstr "Toʻlov usulini qoʻshish"
 
 #. js-lingui-id: aYtHO6
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -3634,6 +3649,7 @@ msgstr "Skan qila olmayapsizmi? Quyidagini nusxa oling"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/billing/components/AddCreditCardModal.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
@@ -9641,6 +9657,11 @@ msgstr "Global qidiruv"
 msgid "Go back"
 msgstr "Orqaga qaytish"
 
+#. js-lingui-id: y0SPQU
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+msgid "Go to billing"
+msgstr "To‘lov bo‘limiga o‘tish"
+
 #. js-lingui-id: Hb4Cgz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -11381,11 +11402,6 @@ msgstr "Familiya"
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "Last name can not be empty"
 msgstr "Familiya boʻsh boʻlishi mumkin emas"
-
-#. js-lingui-id: s0kiVA
-#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
-msgid "Last payment failed. Please contact your admin."
-msgstr "Oxirgi toʻlov amalga oshmadi. Iltimos, administratoringiz bilan bogʻlaning."
 
 #. js-lingui-id: 3u/3zO
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
@@ -14962,6 +14978,21 @@ msgstr "Pauza qilingan"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Payment issue"
 msgstr "To‘lov muammosi"
+
+#. js-lingui-id: twOnMk
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Payment method added."
+msgstr "To‘lov usuli qo‘shildi."
+
+#. js-lingui-id: uIMn/N
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Payment method added. Retrying your payment..."
+msgstr "To‘lov usuli qo‘shildi. To‘lovingiz qayta urinib ko‘rilmoqda..."
+
+#. js-lingui-id: OvqmUS
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+msgid "Payment successful."
+msgstr "To‘lov muvaffaqiyatli amalga oshirildi."
 
 #. js-lingui-id: CcK+Ft
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -19329,6 +19360,11 @@ msgstr "Moslashtirilmagan yoki eʼtiborsiz qoldirilgan majburiy ustunlar bor. Da
 msgid "There are still some rows that contain errors. Rows with errors will be ignored when submitting."
 msgstr "Hali ham xatolarni oʻz ichiga olgan ayrim qatorlar mavjud. Xatolari bor qatorlar yuborilganda eʼtiborsiz qoldiriladi."
 
+#. js-lingui-id: PpLJq1
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "There is a billing issue. Please contact your admin."
+msgstr "Hisob-kitob bilan bog‘liq muammo bor. Iltimos, administratoringiz bilan bog‘laning."
+
 #. js-lingui-id: CA9PTn
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "There is a payment issue with your subscription. Please update your payment method."
@@ -20769,6 +20805,11 @@ msgstr "Ko‘rinishni yangilash"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
 msgstr "Hisobingiz konfiguratsiyasini yangilang. Kerak bo‘lganda IMAP, SMTP va CalDAV ning istalgan kombinatsiyasini sozlang."
+
+#. js-lingui-id: JlP83A
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Update your payment method"
+msgstr "To‘lov usulingizni yangilash"
 
 #. js-lingui-id: x4Xp3c
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
@@ -22442,6 +22483,11 @@ msgstr "Hisob-kitob davri darhol oylikka o‘zgaradi va sinov muddati davom etad
 #: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "Your billing interval will switch to yearly immediately and your trial will continue. When it ends, you will be charged ${yearlyPrice} per user per year billed annually."
 msgstr "Hisob-kitob davri darhol yillikka o‘zgaradi va sinov muddati davom etadi. U tugaganda, har bir foydalanuvchi uchun yiliga ${yearlyPrice} miqdorida, har yili hisob-kitob qilinadi."
+
+#. js-lingui-id: u1O1GV
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+msgid "Your card was saved, but the payment still needs attention."
+msgstr "Kartangiz saqlandi, ammo to‘lov hali ham e’tibor talab qiladi."
 
 #. js-lingui-id: mmGBWT
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
