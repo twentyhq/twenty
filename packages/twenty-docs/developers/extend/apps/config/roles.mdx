@@ -212,6 +212,11 @@ export default defineSharingRule({
 });
 ```
 
+Rules are materialized into `recordShare` rows by a background job rather than at read time, so
+they are eventually consistent: creating, updating or deleting a rule, changing a record's criteria
+fields, or making an object `PRIVATE` queues a recalculation, and the records a grantee sees catch up
+once that job has run.
+
 ## The default function role
 
 When you scaffold a new app, the CLI creates a default role file declared with `defineApplicationRole()`:
