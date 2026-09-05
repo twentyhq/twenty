@@ -18,7 +18,7 @@ export class FieldUniqueBackingIndexOnDeleteSideEffectHandlerService extends Met
     metadataName: 'fieldMetadata',
     name: 'fieldUniqueBackingIndexOnDelete',
     description:
-      'When a unique scalar field is deleted, cascade-delete the single-field UNIQUE index that backed its uniqueness constraint.',
+      'When a unique scalar field is deleted, cascade-delete the single-field UNIQUE index that backed its uniqueness constraint. Only an engine-owned (isSystemSideEffect) index is deleted: a caller-authored index living at the derived identifier is left alone and goes through normal deletion inference.',
   },
 ) {
   buildSideEffects({
@@ -43,19 +43,21 @@ export class FieldUniqueBackingIndexOnDeleteSideEffectHandlerService extends Met
       });
     }
 
-    const flatIndexMetadataToDelete =
+    const deterministicFlatIndexMetadata =
       generateDeterministicIndexForFlatFieldMetadataOrThrow({
         flatFieldMetadata,
         flatObjectMetadata: parentFlatObjectMetadata,
       });
 
-    const indexExistsInWorkspace = isDefined(
+    const flatIndexMetadataToDelete =
       relatedFlatEntityMaps.flatIndexMaps.byUniversalIdentifier[
-        flatIndexMetadataToDelete.universalIdentifier
-      ],
-    );
+        deterministicFlatIndexMetadata.universalIdentifier
+      ];
 
-    if (!indexExistsInWorkspace) {
+    if (
+      !isDefined(flatIndexMetadataToDelete) ||
+      flatIndexMetadataToDelete.isSystemSideEffect !== true
+    ) {
       return { status: 'noop' };
     }
 

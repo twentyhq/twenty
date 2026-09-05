@@ -19,7 +19,7 @@ export class ObjectSystemRelationsOnUpdateSideEffectHandlerService extends Metad
     metadataName: 'objectMetadata',
     name: 'objectSystemRelationsOnUpdate',
     description:
-      'When an object is renamed, rename the reverse MORPH_RELATION fields of its default relations to the standard objects (timelineActivity, attachment, noteTarget, taskTarget) and recompute their join-column index names. These reverse fields are isSystemSideEffect, so the engine is their sole authority on rename across both the API and manifest-sync paths (the API transpiler renames only user-authored morph relations). The reverse field universal identifier is name-free, so a rename stays a lossless update. The computed updates are emitted unconditionally; any universal identifier collision with a caller-provided operation is arbitrated by the engine merge.',
+      'When an object is renamed, rename the reverse MORPH_RELATION fields of its default relations to the standard objects (timelineActivity, attachment, noteTarget, taskTarget) and recompute their join-column index names. These reverse fields are isSystemSideEffect, so the engine is their sole authority on rename across both the API and manifest-sync paths (the API transpiler renames only user-authored morph relations). The reverse field universal identifier is name-free, so a rename stays a lossless update. Only engine-owned (isSystemSideEffect) reverse fields and indexes are touched: a caller-authored index living at a derived identifier is left alone. Any universal identifier collision with a caller-provided operation is arbitrated by the engine merge.',
   },
 ) {
   buildSideEffects({
@@ -74,9 +74,22 @@ export class ObjectSystemRelationsOnUpdateSideEffectHandlerService extends Metad
         systemSideEffectMorphFieldsOnly: true,
       });
 
+    const systemSideEffectMorphRelatedFlatIndexesToUpdate =
+      morphRelatedFlatIndexesToUpdate.filter((morphRelatedFlatIndex) => {
+        const existingFlatIndex =
+          relatedFlatEntityMaps.flatIndexMaps.byUniversalIdentifier[
+            morphRelatedFlatIndex.universalIdentifier
+          ];
+
+        return (
+          isDefined(existingFlatIndex) &&
+          existingFlatIndex.isSystemSideEffect === true
+        );
+      });
+
     if (
       morphFlatFieldMetadatasToUpdate.length === 0 &&
-      morphRelatedFlatIndexesToUpdate.length === 0
+      systemSideEffectMorphRelatedFlatIndexesToUpdate.length === 0
     ) {
       return { status: 'noop' };
     }
@@ -92,7 +105,7 @@ export class ObjectSystemRelationsOnUpdateSideEffectHandlerService extends Metad
         },
         index: {
           flatEntityToUpdate: fromArrayToUniqueKeyRecord({
-            array: morphRelatedFlatIndexesToUpdate,
+            array: systemSideEffectMorphRelatedFlatIndexesToUpdate,
             uniqueKey: 'universalIdentifier',
           }),
         },
