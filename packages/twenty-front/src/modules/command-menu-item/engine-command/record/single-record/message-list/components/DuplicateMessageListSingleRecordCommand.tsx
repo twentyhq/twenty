@@ -2,6 +2,7 @@ import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-c
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useDuplicateMessageList } from '@/command-menu-item/engine-command/record/single-record/message-list/hooks/useDuplicateMessageList';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
@@ -25,8 +26,13 @@ export const DuplicateMessageListSingleRecordCommand = () => {
     const result = await duplicateMessageList(recordId);
 
     if (isDefined(result) && isNonEmptyString(result.id)) {
+      const memberCountLabel = plural(result.memberCount, {
+        one: '# member',
+        other: '# members',
+      });
+
       enqueueSuccessSnackBar({
-        message: t`List duplicated with ${result.memberCount} members`,
+        message: t`List duplicated with ${memberCountLabel}`,
       });
 
       navigate(AppPath.RecordShowPage, {
