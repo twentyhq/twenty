@@ -5,6 +5,7 @@ import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useNavigationDrawerModes } from '@/navigation/hooks/useNavigationDrawerModes';
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
+import { getMobileNavigationBarMode } from '@/navigation/utils/getMobileNavigationBarMode';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -21,7 +22,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent, IconSearch } from 'twenty-ui/icon';
-import { isAiChatPath } from '~/utils/isAiChatPath';
 
 const SEARCH_ITEM_NAME = 'search';
 
@@ -142,14 +142,10 @@ export const useMobileNavigationBarItems = (): {
     },
   );
 
-  // The stored tab keeps the chat history listed beside another page on
-  // desktop; mobile has no such split, so the route alone says which tab the
-  // user is on.
-  const modeForCurrentRoute = isSettingsDrawer
-    ? NAVIGATION_DRAWER_TABS.SETTINGS
-    : isAiChatPath(pathname)
-      ? NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY
-      : NAVIGATION_DRAWER_TABS.NAVIGATION_MENU;
+  const modeForCurrentRoute = getMobileNavigationBarMode({
+    isSettingsDrawer,
+    pathname,
+  });
 
   // A mode the workspace has no permission for still has a route to land on,
   // so the active name has to come back to what the bar actually renders.
