@@ -17,7 +17,10 @@ import {
 import { type BatchFileResult } from 'src/engine/core-modules/file/file-upload/types/batch-file-result.type';
 import { buildSvgTooLargeException } from 'src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util';
 import { toBatchErrorMessage } from 'src/engine/core-modules/file/file-upload/utils/to-batch-error-message.util';
-import { fileFolderConfigs } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import {
+  ANY_MIME_TYPE,
+  fileFolderConfigs,
+} from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
@@ -176,7 +179,10 @@ export class FileUploadCompletionService {
   ): void {
     const { allowedMimeTypes } = fileFolderConfigs[fileFolder];
 
-    if (!allowedMimeTypes || allowedMimeTypes.includes(mimeType)) {
+    if (
+      allowedMimeTypes === ANY_MIME_TYPE ||
+      allowedMimeTypes.includes(mimeType)
+    ) {
       return;
     }
 
