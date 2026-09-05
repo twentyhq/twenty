@@ -63,14 +63,24 @@ export class StripeSubscriptionService {
         });
       } catch (error) {
         // A decline is final for this webhook, Stripe dunning retries the invoice
-        // on its own schedule, anything else is worth a webhook retry
-        if (!(error instanceof this.stripe.errors.StripeCardError)) {
-          throw error;
+        // on its own schedule
+        if (error instanceof this.stripe.errors.StripeCardError) {
+          this.logger.error(
+            `Card declined for invoice ${invoice.id} of subscription ${stripeSubscriptionId}: ${error.message}`,
+          );
+
+          continue;
         }
 
-        this.logger.error(
-          `Card declined for invoice ${invoice.id} of subscription ${stripeSubscriptionId}: ${error.message}`,
+        // Stripe dunning or a concurrent webhook can have settled the invoice
+        // in the meantime, only a still open one is worth a webhook retry
+        const refreshedInvoice = await this.stripe.invoices.retrieve(
+          invoice.id,
         );
+
+        if (refreshedInvoice.status === 'open') {
+          throw error;
+        }
       }
     }
   }

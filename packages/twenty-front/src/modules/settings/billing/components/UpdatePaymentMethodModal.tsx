@@ -1,7 +1,11 @@
 import { AddPaymentMethodForm } from '@/settings/billing/components/AddPaymentMethodForm';
 import { useMarkBillingPaymentMethodAsAdded } from '@/settings/billing/hooks/useMarkBillingPaymentMethodAsAdded';
+import { useWaitForPaymentRecovery } from '@/settings/billing/hooks/useWaitForPaymentRecovery';
+import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Button } from 'twenty-ui/input';
@@ -30,12 +34,27 @@ export const UpdatePaymentMethodModal = ({
 }: UpdatePaymentMethodModalProps) => {
   const { t } = useLingui();
   const { closeModal } = useModal();
+  const { enqueueSuccessSnackBar, enqueueInfoSnackBar } = useSnackBar();
+  const subscriptionStatus = useSubscriptionStatus();
   const { markBillingPaymentMethodAsAdded } =
     useMarkBillingPaymentMethodAsAdded();
+  const { waitForPaymentRecovery } = useWaitForPaymentRecovery();
 
   const handlePaymentMethodAdded = async () => {
     closeModal(modalInstanceId);
     markBillingPaymentMethodAsAdded();
+
+    if (!isSubscriptionPaymentOverdue(subscriptionStatus)) {
+      enqueueSuccessSnackBar({ message: t`Payment method added.` });
+
+      return;
+    }
+
+    enqueueInfoSnackBar({
+      message: t`Payment method added. Retrying your payment...`,
+    });
+
+    await waitForPaymentRecovery();
   };
 
   return (

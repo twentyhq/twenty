@@ -202,8 +202,9 @@ export class BillingSubscriptionService {
         ? data.object.customer
         : data.object.customer?.id;
 
-    // A setup intent carrying no customer is not ours to recover, and failing
-    // would only have Stripe redeliver an event that can never succeed
+    // The Stripe account receives every setup intent, including ones that are
+    // not tied to a workspace subscription. Those can never be recovered, and
+    // failing would only have Stripe redeliver them
     if (!isDefined(stripeCustomerId)) {
       this.logger.warn(
         `Ignoring successful setup intent ${data.object.id} without customer`,
@@ -212,9 +213,17 @@ export class BillingSubscriptionService {
       return {};
     }
 
-    const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
-      { stripeCustomerId },
-    );
+    const billingSubscription = await this.getCurrentBillingSubscription({
+      stripeCustomerId,
+    });
+
+    if (!isDefined(billingSubscription)) {
+      this.logger.warn(
+        `Ignoring successful setup intent ${data.object.id}, customer ${stripeCustomerId} has no current subscription`,
+      );
+
+      return {};
+    }
 
     const stripePaymentMethodId =
       typeof data.object.payment_method === 'string'
