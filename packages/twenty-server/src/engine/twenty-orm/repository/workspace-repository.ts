@@ -1,6 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   FeatureFlagKey,
   MetadataReadability,
@@ -36,6 +37,7 @@ import {
   buildInheritedReadabilityCondition,
   type InheritedReadabilityParentGate,
 } from 'src/engine/twenty-orm/utils/build-inherited-readability-condition.util';
+import { buildLinkedRecordGuardCondition } from 'src/engine/twenty-orm/utils/build-linked-record-guard-condition.util';
 import { buildRecordShareCondition } from 'src/engine/twenty-orm/utils/build-record-share-condition.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -1608,6 +1610,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         recordShareAccessLevels ??
         resolveRequiredRecordShareAccessLevels(operationType),
     });
+    this.applyLinkedRecordGuardForAlias({
+      queryBuilder,
+      alias,
+      flatObjectMetadata,
+    });
   }
 
   private applyRolePredicateForAlias({
@@ -1746,6 +1753,71 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
 
     this.addConditionForAlias({ queryBuilder, alias, ...condition });
+  }
+
+  private applyLinkedRecordGuardForAlias({
+    queryBuilder,
+    alias,
+    flatObjectMetadata,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    alias: string;
+    flatObjectMetadata: FlatObjectMetadata;
+  }): void {
+    if (
+      flatObjectMetadata.universalIdentifier !==
+        STANDARD_OBJECTS.timelineActivity.universalIdentifier ||
+      !this.options.internalContext.featureFlagsMap[
+        FeatureFlagKey.IS_RECORD_SHARING_ENABLED
+      ] ||
+      this.isOwningApplicationAuthContext(flatObjectMetadata)
+    ) {
+      return;
+    }
+
+    const principalIds = resolvePrincipalIdsFromAuthContext({
+      authContext: this.options.authContext,
+      userWorkspaceRoleMap: this.options.internalContext.userWorkspaceRoleMap,
+      apiKeyRoleMap: this.options.internalContext.apiKeyRoleMap,
+    });
+
+    if (!isDefined(principalIds)) {
+      return;
+    }
+
+    const condition = buildLinkedRecordGuardCondition({
+      tableAlias: alias,
+      recordShareTableExpression: this.getRecordShareTableExpression(),
+      principalIds,
+      accessLevels: resolveRequiredRecordShareAccessLevels('select'),
+      linkedObjects: Object.values(
+        this.options.internalContext.flatObjectMetadataMaps
+          .byUniversalIdentifier,
+      )
+        .filter(isDefined)
+        .map((linkedFlatObjectMetadata) => ({
+          objectMetadataId: linkedFlatObjectMetadata.id,
+          readability: linkedFlatObjectMetadata.readability,
+          isOwningApplication: this.isOwningApplicationAuthContext(
+            linkedFlatObjectMetadata,
+          ),
+        })),
+    });
+
+    if (!isDefined(condition)) {
+      return;
+    }
+
+    this.addConditionForAlias({ queryBuilder, alias, ...condition });
+  }
+
+  private isOwningApplicationAuthContext(
+    flatObjectMetadata: FlatObjectMetadata,
+  ): boolean {
+    return isOwningApplicationAuthContext({
+      authContext: this.options.authContext,
+      owningApplicationId: flatObjectMetadata.applicationId,
+    });
   }
 
   private applyInheritedReadabilityConditionForAlias({
