@@ -1,19 +1,20 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import {
   CoreObjectNameSingular,
   MessageChannelType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { IconAlertTriangle } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {
   CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH,
   CampaignEnvelopeBox,
 } from '@/activities/emails/components/CampaignEnvelopeBox';
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
-import { useCampaignAudiencePreview } from '@/activities/emails/hooks/useCampaignAudiencePreview';
 import { useCampaignDetailsState } from '@/activities/emails/hooks/useCampaignDetailsState';
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
@@ -34,48 +35,19 @@ const StyledSubjectInput = styled.input`
   width: 100%;
 `;
 
-const StyledHints = styled.div`
+const StyledWarning = styled.div`
+  align-items: flex-start;
+  color: ${themeCssVariables.font.color.secondary};
   display: flex;
-  flex-direction: column;
+  font-size: ${themeCssVariables.font.size.xs};
   gap: ${themeCssVariables.spacing[1]};
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 `;
 
-const StyledHint = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.xs};
+const StyledWarningIcon = styled(IconAlertTriangle)`
+  color: ${themeCssVariables.color.yellow};
+  flex-shrink: 0;
 `;
-
-type CampaignAudiencePreview = NonNullable<
-  ReturnType<typeof useCampaignAudiencePreview>
->;
-
-const buildAudienceHint = (preview: CampaignAudiencePreview): string => {
-  const parts: string[] = [];
-
-  if (preview.withoutEmail > 0) {
-    parts.push(t`${preview.withoutEmail} without email`);
-  }
-  if (preview.duplicateEmails > 0) {
-    parts.push(t`${preview.duplicateEmails} duplicate`);
-  }
-  if (preview.globallyUnsubscribed > 0) {
-    parts.push(t`${preview.globallyUnsubscribed} unsubscribed from everything`);
-  }
-  if (preview.topicUnsubscribed > 0) {
-    parts.push(t`${preview.topicUnsubscribed} opted out of this topic`);
-  }
-
-  if (parts.length === 0) {
-    return t`${preview.totalMembers} in this list`;
-  }
-
-  const breakdown = parts.join(', ');
-
-  // Without exclusions every member is sendable, so the count is only worth
-  // spelling out when the two differ.
-  return t`${preview.totalMembers} in this list, ${preview.sendable} sendable (${breakdown})`;
-};
 
 type CampaignDetailsFieldsProps = {
   campaign: MessageCampaign;
@@ -86,6 +58,7 @@ export const CampaignDetailsFields = ({
   campaign,
   width,
 }: CampaignDetailsFieldsProps) => {
+  const { theme } = useContext(ThemeContext);
   const detailsState = useCampaignDetailsState({ campaign });
 
   const { channels } = useMyMessageChannels();
@@ -105,11 +78,6 @@ export const CampaignDetailsFields = ({
     }
   };
 
-  const audiencePreview = useCampaignAudiencePreview({
-    listId: detailsState.listId,
-    unsubscribeTopicId: detailsState.unsubscribeTopicId,
-  });
-
   const senderOptions: SelectOption<string>[] = channels
     .filter((channel) => channel.type === MessageChannelType.EMAIL_GROUP)
     .map((channel) => channel.connectedAccount?.handle)
@@ -124,23 +92,18 @@ export const CampaignDetailsFields = ({
   );
 
   const hasTopicOptions = topicOptions.length > 0;
+  const hasSenderOptions = senderOptions.length > 0;
 
   return (
     <CampaignEnvelopeBox
       width={width}
       onBlur={() => detailsState.flush()}
       below={
-        (isDefined(audiencePreview) || hasTopicOptions) && (
-          <StyledHints>
-            {isDefined(audiencePreview) && (
-              <StyledHint>{buildAudienceHint(audiencePreview)}</StyledHint>
-            )}
-            {hasTopicOptions && (
-              <StyledHint>
-                {t`The unsubscribe topic this email belongs to. Recipients who opted out of it are skipped, and the unsubscribe link is scoped to it.`}
-              </StyledHint>
-            )}
-          </StyledHints>
+        !hasSenderOptions && (
+          <StyledWarning>
+            <StyledWarningIcon size={theme.icon.size.sm} />
+            {t`No sending address is available. Connect a verified sending domain in Settings before this campaign can go out.`}
+          </StyledWarning>
         )
       }
     >

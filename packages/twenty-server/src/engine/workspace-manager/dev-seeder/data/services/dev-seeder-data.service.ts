@@ -49,9 +49,17 @@ import {
   MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-channel-message-association-data-seeds.constant';
 import {
+  getMessageCampaignDataSeeds,
   MESSAGE_CAMPAIGN_DATA_SEED_COLUMNS,
-  MESSAGE_CAMPAIGN_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-campaign-data-seeds.constant';
+import {
+  MESSAGE_LIST_DATA_SEED_COLUMNS,
+  MESSAGE_LIST_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/message-list-data-seeds.constant';
+import {
+  MESSAGE_LIST_MEMBER_DATA_SEED_COLUMNS,
+  MESSAGE_LIST_MEMBER_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/message-list-member-data-seeds.constant';
 import {
   CALENDAR_EVENT_TARGET_DATA_SEED_COLUMNS,
   getCalendarEventTargetDataSeeds,
@@ -146,6 +154,11 @@ const getRecordSeedsBatches = (
       recordSeeds: getWorkspaceMemberDataSeeds(workspaceId),
     },
     {
+      tableName: 'messageList',
+      pgColumns: MESSAGE_LIST_DATA_SEED_COLUMNS,
+      recordSeeds: MESSAGE_LIST_DATA_SEEDS,
+    },
+    {
       tableName: '_surveyResult',
       pgColumns: SURVEY_RESULT_DATA_SEED_COLUMNS,
       recordSeeds: SURVEY_RESULT_DATA_SEEDS,
@@ -185,7 +198,7 @@ const getRecordSeedsBatches = (
     },
   ];
 
-  // Batch 4: Depends on person/company/messageChannel or independent
+  // Batch 4: Depends on person/company/messageList or independent
   const batch4: RecordSeedConfig[] = [
     {
       tableName: 'opportunity',
@@ -213,9 +226,14 @@ const getRecordSeedsBatches = (
       recordSeeds: MESSAGE_THREAD_DATA_SEEDS,
     },
     {
+      tableName: 'messageListMember',
+      pgColumns: MESSAGE_LIST_MEMBER_DATA_SEED_COLUMNS,
+      recordSeeds: MESSAGE_LIST_MEMBER_DATA_SEEDS,
+    },
+    {
       tableName: 'messageCampaign',
       pgColumns: MESSAGE_CAMPAIGN_DATA_SEED_COLUMNS,
-      recordSeeds: MESSAGE_CAMPAIGN_DATA_SEEDS,
+      recordSeeds: getMessageCampaignDataSeeds(workspaceId),
     },
     {
       tableName: '_employmentHistory',

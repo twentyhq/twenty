@@ -12,6 +12,7 @@ import { SidePanelAskAiPage } from '@/side-panel/pages/ask-ai/components/SidePan
 import { SidePanelComposeEmailPage } from '@/side-panel/pages/compose-email/components/SidePanelComposeEmailPage';
 import { SidePanelComposeCalendarEventPage } from '@/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage';
 import { SidePanelCreateRelatedRecordPage } from '@/side-panel/pages/create-related-record/components/SidePanelCreateRelatedRecordPage';
+import { SidePanelSendCampaignPage } from '@/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage';
 import { SidePanelSendCampaignTestPage } from '@/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage';
 import { SidePanelFrontComponentPage } from '@/side-panel/pages/front-component/components/SidePanelFrontComponentPage';
 import { SidePanelDashboardChartSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardChartSettings';
@@ -97,6 +98,7 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [SidePanelPages.ComposeCalendarEvent, <SidePanelComposeCalendarEventPage />],
   [SidePanelPages.ComposeEmail, <SidePanelComposeEmailPage />],
   [SidePanelPages.CreateRelatedRecord, <SidePanelCreateRelatedRecordPage />],
+  [SidePanelPages.SendCampaign, <SidePanelSendCampaignPage />],
   [SidePanelPages.SendCampaignTest, <SidePanelSendCampaignTestPage />],
   [SidePanelPages.EmailBlockSettings, <SidePanelEmailBlockSettingsPage />],
   [

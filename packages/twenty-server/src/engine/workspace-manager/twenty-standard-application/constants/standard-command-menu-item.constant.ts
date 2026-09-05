@@ -996,7 +996,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'numberOfSelectedRecords >= 1 and everyEquals(selectedRecords, "status", "DRAFT") and noneDefined(selectedRecords, "deletedAt")',
+      'numberOfSelectedRecords == 1 and everyEquals(selectedRecords, "status", "DRAFT") and noneDefined(selectedRecords, "deletedAt") and featureFlags.IS_EMAIL_GROUP_ENABLED',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.messageCampaign.universalIdentifier,
     frontComponentUniversalIdentifier: null,
@@ -1016,11 +1016,31 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'numberOfSelectedRecords >= 1 and everyEquals(selectedRecords, "status", "DRAFT") and noneDefined(selectedRecords, "deletedAt")',
+      'numberOfSelectedRecords == 1 and everyEquals(selectedRecords, "status", "DRAFT") and noneDefined(selectedRecords, "deletedAt") and featureFlags.IS_EMAIL_GROUP_ENABLED',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.messageCampaign.universalIdentifier,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.SEND_MESSAGE_CAMPAIGN_TEST,
+    hotKeys: null,
+  },
+  cancelMessageCampaign: {
+    universalIdentifier: 'b266ca2d-f6bb-4c45-aace-a44d5099f6af',
+    label: i18nLabel(
+      msg({ message: `Cancel Campaign`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconX',
+    isPinned: true,
+    position: 71,
+    shortLabel: i18nLabel(
+      msg({ message: `Cancel`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords == 1 and everyEquals(selectedRecords, "status", "SENDING") and noneDefined(selectedRecords, "deletedAt") and featureFlags.IS_EMAIL_GROUP_ENABLED',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.messageCampaign.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.CANCEL_MESSAGE_CAMPAIGN,
     hotKeys: null,
   },
   emailBlockSettings: {
