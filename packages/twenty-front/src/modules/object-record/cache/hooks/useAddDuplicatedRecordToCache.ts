@@ -10,8 +10,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ApolloCache } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 
-// Shared by the duplicate mutations (dashboard, message list) so the server
-// created copy shows up in lists and the record store without a refetch.
+// Makes a server created copy show up in lists and the record store without a refetch.
 export const useAddDuplicatedRecordToCache = ({
   objectNameSingular,
 }: {
