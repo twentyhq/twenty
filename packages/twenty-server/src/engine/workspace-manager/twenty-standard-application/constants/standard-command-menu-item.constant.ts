@@ -1469,4 +1469,24 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.COMPOSE_EMAIL,
     hotKeys: null,
   },
+  duplicateMessageList: {
+    universalIdentifier: '19b519d4-a871-4fc2-980c-f5d6c92c6962',
+    label: i18nLabel(
+      msg({ message: `Duplicate List`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconCopyPlus',
+    isPinned: true,
+    position: 71,
+    shortLabel: i18nLabel(
+      msg({ message: `Duplicate`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'featureFlags.IS_EMAIL_GROUP_ENABLED and numberOfSelectedRecords == 1 and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.messageList.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.DUPLICATE_MESSAGE_LIST,
+    hotKeys: null,
+  },
 } as const;

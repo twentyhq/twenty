@@ -149,6 +149,7 @@ enum EngineComponentKey {
   SAVE_DASHBOARD_LAYOUT
   CANCEL_DASHBOARD_LAYOUT
   DUPLICATE_DASHBOARD
+  DUPLICATE_MESSAGE_LIST
   ACTIVATE_WORKFLOW
   DEACTIVATE_WORKFLOW
   DISCARD_DRAFT_WORKFLOW
@@ -2925,6 +2926,16 @@ type SendMessageCampaignOutputDTO {
   audience: CampaignAudiencePreviewDTO!
 }
 
+type DuplicatedMessageList {
+  id: UUID!
+  name: String
+  description: String
+  position: Float!
+  memberCount: Float!
+  createdAt: String!
+  updatedAt: String!
+}
+
 type MessageSuppression {
   id: UUID!
   createdAt: DateTime!
@@ -3891,6 +3902,7 @@ type Mutation {
   sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
   cancelMessageCampaign(input: CancelMessageCampaignInput!): CancelMessageCampaignOutputDTO!
   sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
+  duplicateMessageList(id: UUID!): DuplicatedMessageList!
   createMessageSuppression(input: CreateMessageSuppressionInput!): MessageSuppression!
   deleteMessageSuppression(id: UUID!): Boolean!
   createUnsubscribeTopic(input: CreateUnsubscribeTopicInput!): UnsubscribeTopic!
