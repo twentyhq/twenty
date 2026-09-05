@@ -74,6 +74,12 @@ export class RecordShareService {
     work: (repository: RecordShareRepository) => Promise<TResult>,
   ): Promise<TResult> {
     if (isDefined(transactionScope)) {
+      if (transactionScope.workspaceId !== workspaceId) {
+        throw new Error(
+          `Transaction scope of workspace ${transactionScope.workspaceId} cannot write record shares of workspace ${workspaceId}`,
+        );
+      }
+
       return work(
         transactionScope.getRepository<RecordShare>(
           RECORD_SHARE_OBJECT_METADATA_NAME,

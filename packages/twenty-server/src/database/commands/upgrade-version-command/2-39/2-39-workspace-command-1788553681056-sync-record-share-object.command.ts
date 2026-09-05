@@ -58,20 +58,6 @@ export class SyncRecordShareObjectCommand extends ProvisionedWorkspaceCommandRun
       return;
     }
 
-    if (
-      isDefined(
-        flatObjectMetadataMaps.byUniversalIdentifier[
-          STANDARD_OBJECTS.recordShare.universalIdentifier
-        ],
-      )
-    ) {
-      this.logger.warn(
-        `recordShare object already exists for workspace ${workspaceId}, skipping`,
-      );
-
-      return;
-    }
-
     const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -119,7 +105,22 @@ export class SyncRecordShareObjectCommand extends ProvisionedWorkspaceCommandRun
         flatEntityToUpdate: [],
       },
     };
-    const creationSummary = `the recordShare object with ${allFlatEntityOperationByMetadataName.fieldMetadata.flatEntityToCreate.length} field(s) and ${allFlatEntityOperationByMetadataName.index.flatEntityToCreate.length} index(es)`;
+    const totalOperationCount = Object.values(
+      allFlatEntityOperationByMetadataName,
+    ).reduce(
+      (total, operations) => total + operations.flatEntityToCreate.length,
+      0,
+    );
+
+    if (totalOperationCount === 0) {
+      this.logger.log(
+        `recordShare standard metadata already exists for workspace ${workspaceId}, skipping`,
+      );
+
+      return;
+    }
+
+    const creationSummary = `${allFlatEntityOperationByMetadataName.objectMetadata.flatEntityToCreate.length} recordShare object(s), ${allFlatEntityOperationByMetadataName.fieldMetadata.flatEntityToCreate.length} field(s) and ${allFlatEntityOperationByMetadataName.index.flatEntityToCreate.length} index(es)`;
 
     if (isDryRun) {
       this.logger.log(

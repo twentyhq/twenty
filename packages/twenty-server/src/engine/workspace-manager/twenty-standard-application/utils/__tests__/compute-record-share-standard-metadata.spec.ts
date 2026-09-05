@@ -53,7 +53,7 @@ describe('RecordShare standard metadata build', () => {
       .filter(isDefined)
       .map((flatFieldMetadata) => flatFieldMetadata.universalIdentifier);
 
-  it('enforces one share row per record, principal, cause and source', () => {
+  it('enforces one share row per object, record, principal, cause and source', () => {
     expect(
       allFlatEntityMaps.flatIndexMaps.byUniversalIdentifier[
         STANDARD_OBJECTS.recordShare.indexes
@@ -65,6 +65,7 @@ describe('RecordShare standard metadata build', () => {
         'recordPrincipalCauseSourceUniqueIndex',
       ),
     ).toEqual([
+      STANDARD_OBJECTS.recordShare.fields.objectMetadataId.universalIdentifier,
       STANDARD_OBJECTS.recordShare.fields.recordId.universalIdentifier,
       STANDARD_OBJECTS.recordShare.fields.principalId.universalIdentifier,
       STANDARD_OBJECTS.recordShare.fields.rowCause.universalIdentifier,
