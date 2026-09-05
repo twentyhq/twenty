@@ -192,6 +192,9 @@ export default {
             "isSecret": [
                 8
             ],
+            "isRequired": [
+                8
+            ],
             "isDeprecated": [
                 8
             ],

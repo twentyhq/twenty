@@ -126,6 +126,22 @@ describe('defineApplication', () => {
     expect(warnings.some((warning) => warning.includes('API_KEY'))).toBe(true);
   });
 
+  it('should warn when an application variable is both required and deprecated', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      applicationVariables: {
+        TENANT_ID: { isRequired: true, isDeprecated: true },
+      },
+    });
+
+    const warnings = result.warnings ?? [];
+
+    expect(result.success).toBe(true);
+    expect(warnings.some((warning) => warning.includes('TENANT_ID'))).toBe(true);
+  });
+
   it('should accept a billable operation mapped to a known operationType', () => {
     const result = defineApplication({
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
