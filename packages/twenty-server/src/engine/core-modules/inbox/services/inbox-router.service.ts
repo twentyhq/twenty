@@ -298,9 +298,10 @@ export class InboxRouterService {
         });
       }
 
-      // Read back under the lock the update ran with: after the commit the
-      // row could be gone to a cascade, and a null then reads as a failed
-      // fold to the producer even though its event landed
+      // Postgres holds the row lock taken above until this transaction
+      // commits, so no cascade can delete the row before this read. Reading
+      // after the commit could, and a null there reads as a failed fold to
+      // the producer even though its event landed.
       return inboxItemRepository.findOneBy(args.workspaceId, {
         id: existingItem.id,
       });
