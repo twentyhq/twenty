@@ -151,6 +151,27 @@ export const computeWhereConditionParts = ({
         sql: `${fieldReference} = :${key}${paramSuffix}`,
         params: { [`${key}${paramSuffix}`]: value },
       };
+    // Case-insensitive keyset variants, for the columns the SQL ordering sorts
+    // through LOWER(): comparing raw values there would resolve case ties
+    // against the scan order and skip or duplicate rows across page
+    // boundaries. The ::text cast is unconditional because it is a no-op on
+    // text columns and required for the enum column of a SELECT field, which
+    // LOWER() cannot take directly.
+    case 'gtCaseInsensitive':
+      return {
+        sql: `LOWER(${fieldReference}::text) > LOWER(:${key}${paramSuffix})`,
+        params: { [`${key}${paramSuffix}`]: value },
+      };
+    case 'ltCaseInsensitive':
+      return {
+        sql: `LOWER(${fieldReference}::text) < LOWER(:${key}${paramSuffix})`,
+        params: { [`${key}${paramSuffix}`]: value },
+      };
+    case 'eqStrictCaseInsensitive':
+      return {
+        sql: `LOWER(${fieldReference}::text) = LOWER(:${key}${paramSuffix})`,
+        params: { [`${key}${paramSuffix}`]: value },
+      };
     case 'like':
       return {
         sql: `${fieldReference}::text LIKE :${key}${paramSuffix}${hasNullEquivalentFieldValue ? ` OR ${fieldReference} IS NULL` : ''}`,
