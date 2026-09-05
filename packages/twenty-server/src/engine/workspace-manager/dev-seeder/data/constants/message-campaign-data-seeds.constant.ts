@@ -1,8 +1,8 @@
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import { EMAIL_DOCUMENT_SCHEMA_VERSION } from 'twenty-shared/utils';
 
-import { getUnsubscribeTopicDataSeedIds } from 'src/engine/workspace-manager/dev-seeder/core/constants/unsubscribe-topic-seed-ids.constant';
 import { getSeededEmailGroupDomains } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-emailing-domains.util';
+import { getSeededUnsubscribeTopicIds } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-unsubscribe-topics.util';
 import { MESSAGE_LIST_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-list-data-seeds.constant';
 import { countMessageListMembers } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-list-member-data-seeds.constant';
 
@@ -130,7 +130,7 @@ export const getMessageCampaignDataSeeds = (
   workspaceId: string,
 ): MessageCampaignDataSeed[] => {
   const fromAddress = `support@${getSeededEmailGroupDomains(workspaceId).verified}`;
-  const unsubscribeTopicIds = getUnsubscribeTopicDataSeedIds(workspaceId);
+  const unsubscribeTopicIds = getSeededUnsubscribeTopicIds(workspaceId);
 
   return [
     {
@@ -154,7 +154,8 @@ export const getMessageCampaignDataSeeds = (
       }),
       fromAddressPrimaryEmail: fromAddress,
       listId: MESSAGE_LIST_DATA_SEED_IDS.DEVELOPER_PROGRAM,
-      unsubscribeTopicId: unsubscribeTopicIds.PRODUCT_UPDATES,
+      unsubscribeTopicId:
+        unsubscribeTopicIds['unsubscribe-topic-product-updates'],
       status: MessageCampaignStatus.DRAFT,
       sentAt: null,
       sentCount: 0,
@@ -185,7 +186,7 @@ export const getMessageCampaignDataSeeds = (
       }),
       fromAddressPrimaryEmail: fromAddress,
       listId: MESSAGE_LIST_DATA_SEED_IDS.FOUNDERS,
-      unsubscribeTopicId: unsubscribeTopicIds.NEWSLETTER,
+      unsubscribeTopicId: unsubscribeTopicIds['unsubscribe-topic-newsletter'],
       status: MessageCampaignStatus.SENT,
       sentAt: '2026-06-18T15:00:00.000Z',
       sentCount: FOUNDER_DIGEST_SENT_COUNT,

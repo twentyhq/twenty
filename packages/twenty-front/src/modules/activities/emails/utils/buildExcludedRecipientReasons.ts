@@ -1,13 +1,24 @@
 import { plural, t } from '@lingui/core/macro';
 
-import { type CampaignAudiencePreview } from '@/activities/emails/types/CampaignAudiencePreview';
+import { type CampaignAudiencePreviewDto } from '~/generated-metadata/graphql';
 
-type FormatNumber = (value: number) => string;
+type ExcludedRecipientCounts = Pick<
+  CampaignAudiencePreviewDto,
+  | 'withoutEmail'
+  | 'duplicateEmails'
+  | 'hardSuppressed'
+  | 'globallyUnsubscribed'
+  | 'topicUnsubscribed'
+  | 'overCap'
+>;
 
-export const buildExcludedRecipientReasons = (
-  counts: CampaignAudiencePreview,
-  formatNumber: FormatNumber,
-): string[] => {
+export const buildExcludedRecipientReasons = ({
+  counts,
+  formatNumber,
+}: {
+  counts: ExcludedRecipientCounts;
+  formatNumber: (value: number) => string;
+}): string[] => {
   const reasons: string[] = [];
 
   if (counts.withoutEmail > 0) {

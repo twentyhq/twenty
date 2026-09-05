@@ -101,17 +101,16 @@ export const SidePanelSendCampaignPage = () => {
   const subject = campaign.subject;
 
   const excludedReasons = isDefined(audiencePreview)
-    ? buildExcludedRecipientReasons(audiencePreview, formatNumber)
+    ? buildExcludedRecipientReasons({ counts: audiencePreview, formatNumber })
     : [];
-
-  const hasNoRecipient = audiencePreview?.sendable === 0;
 
   const canSend =
     isDefined(list) &&
     isNonEmptyString(fromAddress) &&
     isNonEmptyString(subject) &&
     isNonEmptyString(campaign.bodyTemplate) &&
-    !hasNoRecipient;
+    isDefined(audiencePreview) &&
+    audiencePreview.sendable > 0;
 
   const handleSend = async () => {
     const sent = await sendMessageCampaign({
