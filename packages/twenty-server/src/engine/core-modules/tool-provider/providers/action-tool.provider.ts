@@ -24,6 +24,7 @@ import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter
 import { CreateCalendarEventTool } from 'src/engine/core-modules/tool/tools/calendar-tool/create-calendar-event-tool';
 import { CodeInterpreterTool } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool';
 import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
+import { FindConnectedAccountsTool } from 'src/engine/core-modules/tool/tools/email-tool/find-connected-accounts-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { NavigateAppTool } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool';
@@ -45,6 +46,7 @@ export class ActionToolProvider implements ToolProvider {
     private readonly httpTool: HttpTool,
     private readonly sendEmailTool: SendEmailTool,
     private readonly draftEmailTool: DraftEmailTool,
+    private readonly findConnectedAccountsTool: FindConnectedAccountsTool,
     private readonly createCalendarEventTool: CreateCalendarEventTool,
     private readonly searchHelpCenterTool: SearchHelpCenterTool,
     private readonly codeInterpreterTool: CodeInterpreterTool,
@@ -60,6 +62,7 @@ export class ActionToolProvider implements ToolProvider {
       ['http_request', this.httpTool],
       ['send_email', this.sendEmailTool],
       ['draft_email', this.draftEmailTool],
+      ['find_connected_accounts', this.findConnectedAccountsTool],
       ['create_calendar_event', this.createCalendarEventTool],
       ['search_help_center', this.searchHelpCenterTool],
       ['code_interpreter', this.codeInterpreterTool],
@@ -117,6 +120,14 @@ export class ActionToolProvider implements ToolProvider {
         this.buildDescriptor(
           'draft_email',
           this.draftEmailTool,
+          includeSchemas,
+          context.locale,
+        ),
+      );
+      descriptors.push(
+        this.buildDescriptor(
+          'find_connected_accounts',
+          this.findConnectedAccountsTool,
           includeSchemas,
           context.locale,
         ),

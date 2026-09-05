@@ -11,6 +11,7 @@ import { CreateCalendarEventTool } from 'src/engine/core-modules/tool/tools/cale
 import { CodeInterpreterTool } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool';
 import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
 import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
+import { FindConnectedAccountsTool } from 'src/engine/core-modules/tool/tools/email-tool/find-connected-accounts-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { NavigateAppTool } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool';
@@ -47,6 +48,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     HttpTool,
     SendEmailTool,
     DraftEmailTool,
+    FindConnectedAccountsTool,
     CreateCalendarEventTool,
     EmailComposerService,
     SearchHelpCenterTool,
@@ -61,6 +63,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     HttpTool,
     SendEmailTool,
     DraftEmailTool,
+    FindConnectedAccountsTool,
     CreateCalendarEventTool,
     EmailComposerService,
     SearchHelpCenterTool,

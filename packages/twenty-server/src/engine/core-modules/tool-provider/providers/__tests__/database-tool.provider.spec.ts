@@ -343,4 +343,32 @@ describe('DatabaseToolProvider', () => {
       expect(descriptorNames).toContain('create_one_person');
     });
   });
+
+  it('does not advertise DATABASE_CRUD tools for leftover core-schema-backed objects', async () => {
+    const descriptorNames = await generateDescriptorNames([
+      createFlatObject({
+        nameSingular: 'connectedAccount',
+        namePlural: 'connectedAccounts',
+        isSystem: true,
+      }),
+      createFlatObject({
+        nameSingular: 'messageChannel',
+        namePlural: 'messageChannels',
+        isSystem: true,
+      }),
+      createFlatObject({
+        nameSingular: 'person',
+        namePlural: 'people',
+      }),
+    ]);
+
+    expect(descriptorNames).toContain('find_many_people');
+    expect(
+      descriptorNames.filter(
+        (name) =>
+          name.includes('_connected_account') ||
+          name.includes('_message_channel'),
+      ),
+    ).toEqual([]);
+  });
 });
