@@ -62,7 +62,7 @@ const MESSAGE_LIST_PAGE_TABS = {
           STANDARD_OBJECTS.messageList.fields.members.universalIdentifier,
         fieldDisplayMode: FieldDisplayMode.TABLE,
         embeddedViewUniversalIdentifier:
-          STANDARD_OBJECTS.messageListMember.views.messageListRecordPageMembers
+          STANDARD_OBJECTS.person.views.messageListRecordPageMembers
             .universalIdentifier,
       },
     },

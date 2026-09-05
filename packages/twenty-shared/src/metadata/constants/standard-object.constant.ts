@@ -487,22 +487,6 @@ export const STANDARD_OBJECTS = {
         fields: STANDARD_OBJECT_FIELDS.messageListMember,
         viewFieldNames: ['id', 'person', 'list', 'createdAt'],
       }),
-      messageListRecordPageMembers: {
-        universalIdentifier: '8c25ba4f-107e-4717-8279-472f799c34be',
-        viewFields: {
-          person: {
-            universalIdentifier: 'b9c42806-2d12-4ed7-a022-3de4dff2033d',
-          },
-          createdAt: {
-            universalIdentifier: 'bd12c93d-2408-400e-99aa-9613b524b437',
-          },
-        },
-        viewFilters: {
-          listIsCurrentRecord: {
-            universalIdentifier: '778ca574-2650-448f-b6a4-d4a6f51775d6',
-          },
-        },
-      },
     },
   },
   messageChannelMessageAssociation: {
@@ -963,6 +947,25 @@ export const STANDARD_OBJECTS = {
           system: 'System',
         },
       }),
+      messageListRecordPageMembers: {
+        universalIdentifier: 'bef79e8e-9ef3-4458-81ed-78a299e2566f',
+        viewFields: {
+          name: {
+            universalIdentifier: 'a4f0d7b4-3956-44a6-8bb2-df45a699609b',
+          },
+          emails: {
+            universalIdentifier: '180e9cbb-34c2-4e27-8648-2915be88a50e',
+          },
+          company: {
+            universalIdentifier: '3db54119-df4d-449b-91c9-22fca1e5d599',
+          },
+        },
+        viewFilters: {
+          listMembershipsListIsCurrentRecord: {
+            universalIdentifier: '256dceea-a9b5-42b7-8461-a6ce62e7fa6c',
+          },
+        },
+      },
     },
   },
   task: {

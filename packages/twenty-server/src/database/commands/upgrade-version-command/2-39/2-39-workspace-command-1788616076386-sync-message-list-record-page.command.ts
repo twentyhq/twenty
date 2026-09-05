@@ -30,6 +30,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 
 const LIST = STANDARD_OBJECTS.messageList;
 const LIST_MEMBER = STANDARD_OBJECTS.messageListMember;
+const PERSON = STANDARD_OBJECTS.person;
 const LIST_RECORD_PAGE = STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage;
 
 const DESCRIPTION_FIELD_UNIVERSAL_IDENTIFIER =
@@ -38,12 +39,12 @@ const DESCRIPTION_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
   LIST.views.allMessageLists.viewFields.description.universalIdentifier;
 
 const MEMBERS_VIEW_UNIVERSAL_IDENTIFIER =
-  LIST_MEMBER.views.messageListRecordPageMembers.universalIdentifier;
+  PERSON.views.messageListRecordPageMembers.universalIdentifier;
 const MEMBERS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = Object.values(
-  LIST_MEMBER.views.messageListRecordPageMembers.viewFields,
+  PERSON.views.messageListRecordPageMembers.viewFields,
 ).map((viewField) => viewField.universalIdentifier);
 const MEMBERS_VIEW_FILTER_UNIVERSAL_IDENTIFIERS = Object.values(
-  LIST_MEMBER.views.messageListRecordPageMembers.viewFilters,
+  PERSON.views.messageListRecordPageMembers.viewFilters,
 ).map((viewFilter) => viewFilter.universalIdentifier);
 
 const HOME_TAB_UNIVERSAL_IDENTIFIER =
@@ -63,7 +64,7 @@ type RecordPageOperations = {
 @Command({
   name: 'upgrade:2-39:sync-message-list-record-page',
   description:
-    'Add the messageList description field and its all lists view column, create the list members table view on messageListMember, and move the uncustomized list record page to a two column grid embedding that view in the members widget.',
+    'Add the messageList description field and its all lists view column, create the list members table view on person scoped through messageListMember, and move the uncustomized list record page to a two column grid embedding that view in the members widget.',
 })
 export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(

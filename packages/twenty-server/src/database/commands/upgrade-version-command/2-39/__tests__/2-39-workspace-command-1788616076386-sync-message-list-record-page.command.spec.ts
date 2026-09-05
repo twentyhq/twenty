@@ -31,6 +31,7 @@ const OTHER_APPLICATION_ID = '20202020-0000-0000-0000-0000000000cc';
 
 const LIST = STANDARD_OBJECTS.messageList;
 const LIST_MEMBER = STANDARD_OBJECTS.messageListMember;
+const PERSON = STANDARD_OBJECTS.person;
 const LIST_RECORD_PAGE =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage;
 
@@ -43,13 +44,13 @@ const LIST_INDEX_VIEW_UNIVERSAL_IDENTIFIER =
 const NAME_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
   LIST.views.allMessageLists.viewFields.name.universalIdentifier;
 const MEMBERS_VIEW_UNIVERSAL_IDENTIFIER =
-  LIST_MEMBER.views.messageListRecordPageMembers.universalIdentifier;
+  PERSON.views.messageListRecordPageMembers.universalIdentifier;
 const MEMBERS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = Object.values(
-  LIST_MEMBER.views.messageListRecordPageMembers.viewFields,
+  PERSON.views.messageListRecordPageMembers.viewFields,
 ).map((viewField) => viewField.universalIdentifier);
 const MEMBERS_VIEW_FILTER_UNIVERSAL_IDENTIFIER =
-  LIST_MEMBER.views.messageListRecordPageMembers.viewFilters
-    .listIsCurrentRecord.universalIdentifier;
+  PERSON.views.messageListRecordPageMembers.viewFilters
+    .listMembershipsListIsCurrentRecord.universalIdentifier;
 const MEMBERS_VIEW_ID = '20202020-0000-0000-0000-000000000010';
 
 const STANDARD_MEMBERS_VIEW_FIELDS = MEMBERS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.map(
