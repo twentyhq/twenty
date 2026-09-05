@@ -1,4 +1,4 @@
-import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { type RecordTableWidgetJunctionCreateThrough } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { useCallback } from 'react';
 
@@ -7,20 +7,27 @@ export const useCreateJunctionRecordFromTableWidget = ({
 }: {
   junctionCreateThrough: RecordTableWidgetJunctionCreateThrough;
 }) => {
-  const { createOneRecord } = useCreateOneRecord({
+  const { createManyRecords } = useCreateManyRecords({
     objectNameSingular:
       junctionCreateThrough.junctionObjectMetadataNameSingular,
   });
 
+  // Upserting keeps a pick idempotent when the picker excluded a record that
+  // was linked meanwhile, the way the junction field input links records.
   const createJunctionRecord = useCallback(
     async (targetRecordId: string) => {
-      await createOneRecord({
-        [junctionCreateThrough.sourceJoinColumnName]:
-          junctionCreateThrough.sourceRecordId,
-        [junctionCreateThrough.targetJoinColumnName]: targetRecordId,
+      await createManyRecords({
+        recordsToCreate: [
+          {
+            [junctionCreateThrough.sourceJoinColumnName]:
+              junctionCreateThrough.sourceRecordId,
+            [junctionCreateThrough.targetJoinColumnName]: targetRecordId,
+          },
+        ],
+        upsert: true,
       });
     },
-    [createOneRecord, junctionCreateThrough],
+    [createManyRecords, junctionCreateThrough],
   );
 
   return { createJunctionRecord };

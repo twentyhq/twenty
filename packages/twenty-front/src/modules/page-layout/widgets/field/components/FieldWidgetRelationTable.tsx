@@ -93,19 +93,35 @@ export const FieldWidgetRelationTable = ({
   // and a view saved on the junction object predates junction traversal, so
   // both keep listing the junction records their view was built for.
   const junctionTargetObjectMetadataId =
-    isDefined(junctionConfig) &&
-    !junctionConfig.isMorphRelation &&
-    persistedView?.objectMetadataId !== relationObjectMetadataId
+    isDefined(junctionConfig) && !junctionConfig.isMorphRelation
       ? junctionConfig.targetFields[0]?.relation?.targetObjectMetadata.id
       : undefined;
+
+  const isPersistedViewOnJunctionObject =
+    persistedView?.objectMetadataId === relationObjectMetadataId;
+
+  const junctionTableObjectMetadataId = isPersistedViewOnJunctionObject
+    ? relationObjectMetadataId
+    : junctionTargetObjectMetadataId;
+
+  const isJunctionTable =
+    isDefined(junctionTableObjectMetadataId) &&
+    junctionTableObjectMetadataId === junctionTargetObjectMetadataId;
 
   // A widget with a broken nested relation (deleted or deactivated second hop)
   // resolves to no object and so renders nothing, rather than falling back to
   // the first hop's records and silently showing a different object than the
-  // widget title claims.
+  // widget title claims. Likewise a persisted view listing yet another object
+  // belongs to a previous relation chain and must not be rendered under this
+  // one.
+  const directTableObjectMetadataId =
+    junctionTableObjectMetadataId ?? relationObjectMetadataId;
   const tableObjectMetadataId = isDefined(nestedRelationFieldMetadataId)
     ? resolvedNestedRelation?.nestedRelationTargetObjectMetadataItem.id
-    : (junctionTargetObjectMetadataId ?? relationObjectMetadataId);
+    : isDefined(persistedView) &&
+        persistedView.objectMetadataId !== directTableObjectMetadataId
+      ? undefined
+      : directTableObjectMetadataId;
 
   const {
     targetFieldMetadataName,
@@ -145,7 +161,7 @@ export const FieldWidgetRelationTable = ({
     );
 
     return isDefined(junctionConfig) &&
-      isDefined(junctionTargetObjectMetadataId) &&
+      isJunctionTable &&
       isDefined(sourceObjectMetadataItem)
       ? getFieldWidgetJunctionCreateThrough({
           junctionConfig,
@@ -156,7 +172,7 @@ export const FieldWidgetRelationTable = ({
       : undefined;
   }, [
     junctionConfig,
-    junctionTargetObjectMetadataId,
+    isJunctionTable,
     objectMetadataItems,
     recordPageObjectMetadataNameSingular,
     recordId,
