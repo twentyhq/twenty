@@ -1341,7 +1341,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
-      'Allow IMAP/SMTP connections to mail servers with self-signed certificates (disables TLS certificate verification for messaging)',
+      'Allow IMAP/SMTP connections to mail servers with self-signed certificates (disables TLS certificate verification for messaging). CalDAV servers are always verified; use NODE_EXTRA_CA_CERTS for them',
     isEnvOnly: true,
     type: ConfigVariableType.BOOLEAN,
   })

@@ -17,6 +17,7 @@ import {
 } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { buildImapTlsOptions } from 'src/engine/core-modules/imap-smtp-caldav-connection/utils/build-imap-tls-options.util';
 import { buildSmtpTlsOptions } from 'src/engine/core-modules/imap-smtp-caldav-connection/utils/build-smtp-tls-options.util';
+import { isTlsCertificateError } from 'src/engine/core-modules/imap-smtp-caldav-connection/utils/is-tls-certificate-error.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { CalDavClientService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-client.service';
@@ -99,6 +100,15 @@ export class ImapSmtpCaldavService {
         );
       }
 
+      if (isTlsCertificateError(error)) {
+        throw new UserInputError(
+          `IMAP connection failed: TLS certificate verification error (${error.code}).`,
+          {
+            userFriendlyMessage: msg`We couldn't verify your email server's TLS certificate. If it uses a self-signed or private certificate, ask your administrator to trust the certificate authority (NODE_EXTRA_CA_CERTS) or enable MAIL_TLS_ALLOW_SELF_SIGNED.`,
+          },
+        );
+      }
+
       throw new UserInputError(`IMAP connection failed: ${error.message}`, {
         userFriendlyMessage: msg`We encountered an issue connecting to your email account. Please check your settings and try again.`,
       });
@@ -138,6 +148,16 @@ export class ImapSmtpCaldavService {
         `SMTP connection failed: ${error.message}`,
         error.stack,
       );
+
+      if (isTlsCertificateError(error)) {
+        throw new UserInputError(
+          `SMTP connection failed: TLS certificate verification error (${error.code}).`,
+          {
+            userFriendlyMessage: msg`We couldn't verify your outgoing email server's TLS certificate. If it uses a self-signed or private certificate, ask your administrator to trust the certificate authority (NODE_EXTRA_CA_CERTS) or enable MAIL_TLS_ALLOW_SELF_SIGNED.`,
+          },
+        );
+      }
+
       throw new UserInputError(`SMTP connection failed: ${error.message}`, {
         userFriendlyMessage: msg`We couldn't connect to your outgoing email server. Please check your SMTP settings and try again.`,
       });
