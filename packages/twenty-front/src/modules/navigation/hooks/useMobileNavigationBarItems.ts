@@ -79,11 +79,13 @@ export const useMobileNavigationBarItems = (): {
 
   // Desktop leaves the current page in place when it switches back to the
   // navigation menu, because the drawer beside it is the menu. Mobile has no
-  // drawer, so the home page is the tab itself.
+  // drawer, so the home page is the tab itself. Leaving settings replaces its
+  // entry the way desktop does, so that going back does not drop the user
+  // straight into the settings they just left.
   const switchToMobileNavigationMenu = () => {
     closeSettingsDrawer();
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
-    navigate(AppPath.Home);
+    navigate(AppPath.Home, { replace: isSettingsDrawer });
   };
 
   const handleModeClick = (mode: NavigationDrawerActiveTab) => {
