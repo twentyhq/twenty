@@ -1,19 +1,12 @@
 import { type DiscoveryService } from '@nestjs/core';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
+import { findProviderInstance } from 'src/engine/core-modules/usage-limit/utils/find-provider-instance.util';
 
 export const findCreditAllowanceProvider = (
   discoveryService: DiscoveryService,
-): CreditAllowanceProvider | null => {
-  for (const wrapper of discoveryService.getProviders()) {
-    const { instance } = wrapper;
-
-    if (isDefined(instance) && instance instanceof CreditAllowanceProvider) {
-      return instance;
-    }
-  }
-
-  return null;
-};
+): CreditAllowanceProvider | null =>
+  findProviderInstance({
+    discoveryService,
+    providerClass: CreditAllowanceProvider,
+  });

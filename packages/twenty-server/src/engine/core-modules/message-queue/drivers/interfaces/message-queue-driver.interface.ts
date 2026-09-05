@@ -3,6 +3,7 @@ import { type JobState } from 'bullmq/dist/esm/types';
 import {
   type QueueCronJobOptions,
   type QueueJobOptions,
+  type QueueJobRecipient,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { type MessageQueueJobData } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
@@ -73,6 +74,7 @@ export type QueueJobDetails<T extends MessageQueueJobData> = {
   timestamp: number;
   processedOn?: number;
   finishedOn?: number;
+  broadcastTo?: QueueJobRecipient;
 };
 
 export interface InFlightQueueJob<T extends MessageQueueJobData> {

@@ -19,6 +19,7 @@ import { MetadataEventPublisher } from 'src/engine/subscriptions/metadata-event/
 import { MetadataEventResolutionService } from 'src/engine/subscriptions/metadata-event/services/metadata-event-resolution.service';
 import { MetadataEventsToDbListener } from 'src/engine/subscriptions/metadata-event/metadata-events-to-db.listener';
 import { ObjectRecordEventPublisher } from 'src/engine/subscriptions/object-record-event/object-record-event-publisher';
+import { QueueJobEventListener } from 'src/engine/subscriptions/queue-job-event/queue-job-event.listener';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -47,6 +48,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     MetadataEventEmitter,
     MetadataEventsToDbListener,
     WorkspaceEventBroadcaster,
+    QueueJobEventListener,
     ProcessNestedRelationsHelper,
     CommonSelectFieldsHelper,
   ],

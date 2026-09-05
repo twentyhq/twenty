@@ -1,7 +1,5 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { BillingException } from 'src/engine/core-modules/billing/billing.exception';
-import { billingGraphqlApiExceptionHandler } from 'src/engine/core-modules/billing/utils/billing-graphql-api-exception-handler.util';
 import {
   ConflictError,
   ForbiddenError,
@@ -15,10 +13,6 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 
 export const aiGraphqlApiExceptionHandler = (error: Error) => {
-  if (error instanceof BillingException) {
-    return billingGraphqlApiExceptionHandler(error);
-  }
-
   if (error instanceof AiException) {
     switch (error.code) {
       case AiExceptionCode.AGENT_NOT_FOUND:
