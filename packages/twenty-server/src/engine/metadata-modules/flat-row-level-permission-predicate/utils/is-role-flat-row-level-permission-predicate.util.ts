@@ -11,12 +11,16 @@ export type RoleFlatRowLevelPermissionPredicate =
 export type RoleFlatRowLevelPermissionPredicateGroup =
   FlatRowLevelPermissionPredicateGroup & { roleId: string };
 
-export const isRoleFlatRowLevelPermissionPredicate = (
-  flatPredicate: FlatRowLevelPermissionPredicate | undefined,
-): flatPredicate is RoleFlatRowLevelPermissionPredicate =>
+export const isRoleFlatRowLevelPermissionPredicate = <
+  TPredicate extends { roleId: string | null },
+>(
+  flatPredicate: TPredicate | undefined,
+): flatPredicate is TPredicate & { roleId: string } =>
   isDefined(flatPredicate) && isDefined(flatPredicate.roleId);
 
-export const isRoleFlatRowLevelPermissionPredicateGroup = (
-  flatGroup: FlatRowLevelPermissionPredicateGroup | undefined,
-): flatGroup is RoleFlatRowLevelPermissionPredicateGroup =>
+export const isRoleFlatRowLevelPermissionPredicateGroup = <
+  TPredicateGroup extends { roleId: string | null },
+>(
+  flatGroup: TPredicateGroup | undefined,
+): flatGroup is TPredicateGroup & { roleId: string } =>
   isDefined(flatGroup) && isDefined(flatGroup.roleId);

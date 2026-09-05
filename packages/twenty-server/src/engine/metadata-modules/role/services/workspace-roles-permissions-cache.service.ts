@@ -16,6 +16,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
+import {
+  isRoleFlatRowLevelPermissionPredicate,
+  isRoleFlatRowLevelPermissionPredicateGroup,
+} from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/is-role-flat-row-level-permission-predicate.util';
 import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
@@ -100,10 +104,12 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       );
       const roleFieldPermissions = fieldPermissions.byRoleId.get(role.id) ?? [];
 
-      const roleRowLevelPermissionPredicates =
-        rowLevelPermissionPredicates.byRoleId.get(role.id) ?? [];
-      const roleRowLevelPermissionPredicateGroups =
-        rowLevelPermissionPredicateGroups.byRoleId.get(role.id) ?? [];
+      const roleRowLevelPermissionPredicates = (
+        rowLevelPermissionPredicates.byRoleId.get(role.id) ?? []
+      ).filter(isRoleFlatRowLevelPermissionPredicate);
+      const roleRowLevelPermissionPredicateGroups = (
+        rowLevelPermissionPredicateGroups.byRoleId.get(role.id) ?? []
+      ).filter(isRoleFlatRowLevelPermissionPredicateGroup);
 
       const objectRecordsPermissions: ObjectsPermissions = {};
 

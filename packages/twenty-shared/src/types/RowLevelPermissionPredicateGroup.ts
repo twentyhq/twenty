@@ -8,5 +8,5 @@ export type RowLevelPermissionPredicateGroup = {
   objectMetadataId: string;
   parentRowLevelPermissionPredicateGroupId: string | null;
   positionInRowLevelPermissionPredicateGroup: number | null;
-  roleId: string | null;
+  roleId: string;
 };

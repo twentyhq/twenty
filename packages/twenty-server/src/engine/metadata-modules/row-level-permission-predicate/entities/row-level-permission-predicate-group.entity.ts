@@ -45,7 +45,7 @@ export class RowLevelPermissionPredicateGroupEntity
   extends SyncableEntity
   implements
     Required<RowLevelPermissionPredicateGroupEntity>,
-    RowLevelPermissionPredicateGroup
+    Omit<RowLevelPermissionPredicateGroup, 'roleId'>
 {
   @PrimaryGeneratedColumn('uuid')
   id: string;
