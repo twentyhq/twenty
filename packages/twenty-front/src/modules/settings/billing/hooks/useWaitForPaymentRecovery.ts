@@ -10,6 +10,7 @@ import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { GetCurrentUserDocument } from '~/generated-metadata/graphql';
+import { logError } from '~/utils/logError';
 import { sleep } from '~/utils/sleep';
 
 export const useWaitForPaymentRecovery = () => {
@@ -57,7 +58,15 @@ export const useWaitForPaymentRecovery = () => {
     try {
       await loadCurrentUser();
     } catch {
-      applyCurrentWorkspaceBillingUpdate(recovery.workspaceBilling);
+      const hasAppliedBillingUpdate = applyCurrentWorkspaceBillingUpdate(
+        recovery.workspaceBilling,
+      );
+
+      if (!hasAppliedBillingUpdate) {
+        logError(
+          'Payment recovered but the workspace billing state could not be refreshed',
+        );
+      }
     }
 
     // The payment method webhook can still be in flight
