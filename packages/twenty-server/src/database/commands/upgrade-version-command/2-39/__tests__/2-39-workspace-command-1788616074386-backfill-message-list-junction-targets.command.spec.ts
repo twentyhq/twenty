@@ -1,5 +1,9 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
+} from 'twenty-shared/types';
 import { type Repository } from 'typeorm';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -29,6 +33,7 @@ const LIST_MEMBER_PERSON_FIELD_METADATA_ID =
 const LIST_MEMBER_LIST_FIELD_METADATA_ID =
   '20202020-0000-0000-0000-000000000006';
 const DANGLING_FIELD_METADATA_ID = '20202020-0000-0000-0000-000000000007';
+const UNRELATED_FIELD_METADATA_ID = '20202020-0000-0000-0000-000000000008';
 
 const buildFlatFieldMetadata = (
   overrides: Partial<FlatFieldMetadata>,
@@ -59,6 +64,13 @@ const buildFlatFieldMetadataMaps = (
   universalIdentifiersByApplicationId: {},
 });
 
+// Carries a second settings key so the tests prove the backfill spreads the
+// stored settings instead of replacing them.
+const ONE_TO_MANY_SETTINGS = {
+  relationType: RelationType.ONE_TO_MANY,
+  onDelete: RelationOnDeleteAction.SET_NULL,
+};
+
 const buildMembersFlatFieldMetadata = (
   settingsOverrides: Record<string, unknown> = {},
 ) =>
@@ -68,7 +80,7 @@ const buildMembersFlatFieldMetadata = (
       STANDARD_OBJECTS.messageList.fields.members.universalIdentifier,
     type: FieldMetadataType.RELATION,
     relationTargetObjectMetadataId: LIST_MEMBER_OBJECT_METADATA_ID,
-    settings: { relationType: RelationType.ONE_TO_MANY, ...settingsOverrides },
+    settings: { ...ONE_TO_MANY_SETTINGS, ...settingsOverrides },
   });
 
 const buildListMembershipsFlatFieldMetadata = (
@@ -80,8 +92,16 @@ const buildListMembershipsFlatFieldMetadata = (
       STANDARD_OBJECTS.person.fields.listMemberships.universalIdentifier,
     type: FieldMetadataType.RELATION,
     relationTargetObjectMetadataId: LIST_MEMBER_OBJECT_METADATA_ID,
-    settings: { relationType: RelationType.ONE_TO_MANY, ...settingsOverrides },
+    settings: { ...ONE_TO_MANY_SETTINGS, ...settingsOverrides },
   });
+
+const UNRELATED_FLAT_FIELD_METADATA = buildFlatFieldMetadata({
+  id: UNRELATED_FIELD_METADATA_ID,
+  universalIdentifier: '20202020-0000-0000-0000-000000000097',
+  objectMetadataId: LIST_MEMBER_OBJECT_METADATA_ID,
+  type: FieldMetadataType.RELATION,
+  settings: { relationType: RelationType.MANY_TO_ONE },
+});
 
 const LIST_MEMBER_PERSON_FLAT_FIELD_METADATA = buildFlatFieldMetadata({
   id: LIST_MEMBER_PERSON_FIELD_METADATA_ID,
@@ -110,9 +130,7 @@ describe('BackfillMessageListJunctionTargetsCommand', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    findOneMock = jest.fn().mockResolvedValue({
-      settings: { relationType: RelationType.ONE_TO_MANY },
-    });
+    findOneMock = jest.fn();
     updateMock = jest.fn();
     getOrRecomputeMock = jest.fn();
 
@@ -153,10 +171,17 @@ describe('BackfillMessageListJunctionTargetsCommand', () => {
       total: 1,
     });
 
+  // The transaction re-read returns the same rows the cache was seeded with
+  // unless a test overrides it to simulate a row that moved on.
   const mockFlatFieldMetadatas = (flatFieldMetadatas: FlatFieldMetadata[]) => {
     getOrRecomputeMock.mockResolvedValue({
       flatFieldMetadataMaps: buildFlatFieldMetadataMaps(flatFieldMetadatas),
     });
+    findOneMock.mockImplementation(({ where: { id } }: { where: { id: string } }) =>
+      Promise.resolve(
+        flatFieldMetadatas.find((flatFieldMetadata) => flatFieldMetadata.id === id),
+      ),
+    );
   };
 
   it('backfills both sides of the messageList/person junction', async () => {
@@ -175,7 +200,7 @@ describe('BackfillMessageListJunctionTargetsCommand', () => {
       { id: MEMBERS_FIELD_METADATA_ID, workspaceId: WORKSPACE_ID },
       {
         settings: {
-          relationType: RelationType.ONE_TO_MANY,
+          ...ONE_TO_MANY_SETTINGS,
           junctionTargetFieldId: LIST_MEMBER_PERSON_FIELD_METADATA_ID,
         },
       },
@@ -185,7 +210,7 @@ describe('BackfillMessageListJunctionTargetsCommand', () => {
       { id: LIST_MEMBERSHIPS_FIELD_METADATA_ID, workspaceId: WORKSPACE_ID },
       {
         settings: {
-          relationType: RelationType.ONE_TO_MANY,
+          ...ONE_TO_MANY_SETTINGS,
           junctionTargetFieldId: LIST_MEMBER_LIST_FIELD_METADATA_ID,
         },
       },
@@ -213,7 +238,7 @@ describe('BackfillMessageListJunctionTargetsCommand', () => {
       { id: LIST_MEMBERSHIPS_FIELD_METADATA_ID, workspaceId: WORKSPACE_ID },
       {
         settings: {
-          relationType: RelationType.ONE_TO_MANY,
+          ...ONE_TO_MANY_SETTINGS,
           junctionTargetFieldId: LIST_MEMBER_LIST_FIELD_METADATA_ID,
         },
       },
@@ -239,11 +264,59 @@ describe('BackfillMessageListJunctionTargetsCommand', () => {
       { id: MEMBERS_FIELD_METADATA_ID, workspaceId: WORKSPACE_ID },
       {
         settings: {
-          relationType: RelationType.ONE_TO_MANY,
+          ...ONE_TO_MANY_SETTINGS,
           junctionTargetFieldId: LIST_MEMBER_PERSON_FIELD_METADATA_ID,
         },
       },
     );
+  });
+
+  it('repairs a junction target pointing at another existing field', async () => {
+    mockFlatFieldMetadatas([
+      buildMembersFlatFieldMetadata({
+        junctionTargetFieldId: UNRELATED_FIELD_METADATA_ID,
+      }),
+      buildListMembershipsFlatFieldMetadata({
+        junctionTargetFieldId: LIST_MEMBER_LIST_FIELD_METADATA_ID,
+      }),
+      LIST_MEMBER_PERSON_FLAT_FIELD_METADATA,
+      LIST_MEMBER_LIST_FLAT_FIELD_METADATA,
+      UNRELATED_FLAT_FIELD_METADATA,
+    ]);
+
+    await runOnWorkspace();
+
+    expect(updateMock).toHaveBeenCalledTimes(1);
+    expect(updateMock).toHaveBeenCalledWith(
+      { id: MEMBERS_FIELD_METADATA_ID, workspaceId: WORKSPACE_ID },
+      {
+        settings: {
+          ...ONE_TO_MANY_SETTINGS,
+          junctionTargetFieldId: LIST_MEMBER_PERSON_FIELD_METADATA_ID,
+        },
+      },
+    );
+  });
+
+  it('skips a row already set by another run since the cache was computed', async () => {
+    mockFlatFieldMetadatas([
+      buildMembersFlatFieldMetadata(),
+      buildListMembershipsFlatFieldMetadata({
+        junctionTargetFieldId: LIST_MEMBER_LIST_FIELD_METADATA_ID,
+      }),
+      LIST_MEMBER_PERSON_FLAT_FIELD_METADATA,
+      LIST_MEMBER_LIST_FLAT_FIELD_METADATA,
+    ]);
+    findOneMock.mockResolvedValue(
+      buildMembersFlatFieldMetadata({
+        junctionTargetFieldId: LIST_MEMBER_PERSON_FIELD_METADATA_ID,
+      }),
+    );
+
+    await runOnWorkspace();
+
+    expect(updateMock).not.toHaveBeenCalled();
+    expect(invalidateFieldMetadataCacheMock).not.toHaveBeenCalled();
   });
 
   it('does nothing when both sides are already set', async () => {

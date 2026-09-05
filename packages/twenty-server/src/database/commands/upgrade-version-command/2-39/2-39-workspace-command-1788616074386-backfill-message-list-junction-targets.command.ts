@@ -135,7 +135,8 @@ export class BackfillMessageListJunctionTargetsCommand extends ProvisionedWorksp
           junctionTargetFieldMetadataId,
         } of backfills) {
           // Re-read under the transaction: the cache the resolution ran against
-          // can lag the row, and settings is overwritten as a whole document.
+          // can lag the row (another run may already have set the target), and
+          // settings is overwritten as a whole document.
           const fieldMetadata = await fieldMetadataRepository.findOne({
             where: { id: junctionRelationFieldMetadataId, workspaceId },
             lock: { mode: 'pessimistic_write' },
@@ -153,6 +154,13 @@ export class BackfillMessageListJunctionTargetsCommand extends ProvisionedWorksp
               `${label} is no longer a one to many relation for workspace ${workspaceId}, skipping`,
             );
 
+            continue;
+          }
+
+          if (
+            fieldMetadata.settings.junctionTargetFieldId ===
+            junctionTargetFieldMetadataId
+          ) {
             continue;
           }
 
@@ -260,18 +268,11 @@ export class BackfillMessageListJunctionTargetsCommand extends ProvisionedWorksp
       return undefined;
     }
 
-    const currentJunctionTargetFieldId =
-      junctionRelationSettings.junctionTargetFieldId;
-
-    // A dangling id is repaired: it resolves to nothing, so leaving it in place
-    // keeps the junction unusable while looking configured.
+    // A standard relation has exactly one valid junction target, so a dangling
+    // id and an id pointing at another field are both repaired.
     if (
-      isDefined(currentJunctionTargetFieldId) &&
-      isDefined(
-        flatFieldMetadataMaps.universalIdentifierById[
-          currentJunctionTargetFieldId
-        ],
-      )
+      junctionRelationSettings.junctionTargetFieldId ===
+      junctionTargetFlatFieldMetadata.id
     ) {
       this.logger.log(
         `${label} junction target already set for workspace ${workspaceId}, skipping`,
