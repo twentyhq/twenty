@@ -101,7 +101,7 @@ export const SidePanelSendCampaignPage = () => {
   const subject = campaign.subject;
 
   const excludedReasons = isDefined(audiencePreview)
-    ? buildExcludedRecipientReasons(audiencePreview)
+    ? buildExcludedRecipientReasons(audiencePreview, formatNumber)
     : [];
 
   const hasNoRecipient = audiencePreview?.sendable === 0;

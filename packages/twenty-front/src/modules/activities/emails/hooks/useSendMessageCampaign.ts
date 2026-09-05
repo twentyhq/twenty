@@ -4,8 +4,9 @@ import { useMutation } from '@apollo/client/react';
 import { SEND_MESSAGE_CAMPAIGN } from '@/activities/emails/graphql/mutations/sendMessageCampaign';
 import { buildExcludedRecipientReasons } from '@/activities/emails/utils/buildExcludedRecipientReasons';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { t } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import {
   type SendMessageCampaignMutation,
@@ -16,13 +17,6 @@ type SendMessageCampaignParams = {
   campaignId: string;
 };
 
-type CampaignAudienceOutcome = NonNullable<
-  SendMessageCampaignMutation['sendMessageCampaign']
->['audience'];
-
-const buildSkipReasons = (audience: CampaignAudienceOutcome): string =>
-  buildExcludedRecipientReasons(audience).join(', ');
-
 export const useSendMessageCampaign = () => {
   const [sendMessageCampaignMutation, { loading }] = useMutation<
     SendMessageCampaignMutation,
@@ -31,6 +25,7 @@ export const useSendMessageCampaign = () => {
 
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
+  const { formatNumber } = useNumberFormat();
 
   const sendMessageCampaign = async ({
     campaignId,
@@ -61,19 +56,26 @@ export const useSendMessageCampaign = () => {
       });
 
       const { queuedCount, audience } = queued;
-      const skippedCount = audience.totalMembers - audience.sendable;
-      const skipReasons = buildSkipReasons(audience);
+      const skipReasons = buildExcludedRecipientReasons(
+        audience,
+        formatNumber,
+      ).join(', ');
 
       if (queuedCount === 0) {
         enqueueErrorSnackBar({
           message: t`No recipients to send to (${skipReasons})`,
         });
       } else {
+        const queuedMessage = plural(queuedCount, {
+          one: `Campaign queued to ${formatNumber(queuedCount)} recipient`,
+          other: `Campaign queued to ${formatNumber(queuedCount)} recipients`,
+        });
+
         enqueueSuccessSnackBar({
           message:
-            skippedCount > 0
-              ? t`Campaign queued to ${queuedCount} recipient(s), ${skippedCount} skipped: ${skipReasons}`
-              : t`Campaign queued to ${queuedCount} recipient(s)`,
+            skipReasons.length > 0
+              ? t`${queuedMessage}, skipping ${skipReasons}`
+              : queuedMessage,
         });
       }
 
