@@ -3,7 +3,9 @@ import { Module } from '@nestjs/common';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { ConvertLogicFunctionsToPrebuiltCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788338950836-convert-logic-functions-to-prebuilt.command';
 import { BackfillRecordFormCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788524477000-backfill-record-form.command';
+import { MarkPlatformOwnedStandardObjectsSystemCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788616958245-mark-platform-owned-standard-objects-system.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -12,6 +14,7 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
 
 @Module({
   imports: [
+    ApplicationModule,
     FeatureFlagModule,
     TypeORMModule,
     WorkspaceCacheModule,
@@ -20,6 +23,10 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     WorkspaceMigrationModule,
     WorkspaceSchemaMigrationRunnerActionHandlersModule,
   ],
-  providers: [ConvertLogicFunctionsToPrebuiltCommand, BackfillRecordFormCommand],
+  providers: [
+    ConvertLogicFunctionsToPrebuiltCommand,
+    BackfillRecordFormCommand,
+    MarkPlatformOwnedStandardObjectsSystemCommand,
+  ],
 })
 export class V2_39_UpgradeVersionCommandModule {}
