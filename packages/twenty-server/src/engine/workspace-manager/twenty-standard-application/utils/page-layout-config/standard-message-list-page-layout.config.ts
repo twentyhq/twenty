@@ -19,8 +19,6 @@ import {
   type StandardPageLayoutTabConfig,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-page-layout-config.type';
 
-// Two side by side columns: the list fields on the left, the members table on
-// the right.
 export const MESSAGE_LIST_GRID_LAYOUT_POSITIONS = {
   LEFT_COLUMN: {
     layoutMode: PageLayoutTabLayoutMode.GRID,

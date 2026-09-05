@@ -1657,6 +1657,11 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
             "universalIdentifier": "b9c42806-2d12-4ed7-a022-3de4dff2033d",
           },
         },
+        "viewFilters": {
+          "listIsCurrentRecord": {
+            "universalIdentifier": "778ca574-2650-448f-b6a4-d4a6f51775d6",
+          },
+        },
       },
     },
   },

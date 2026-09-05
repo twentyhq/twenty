@@ -47,7 +47,22 @@ const MEMBERS_VIEW_UNIVERSAL_IDENTIFIER =
 const MEMBERS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = Object.values(
   LIST_MEMBER.views.messageListRecordPageMembers.viewFields,
 ).map((viewField) => viewField.universalIdentifier);
+const MEMBERS_VIEW_FILTER_UNIVERSAL_IDENTIFIER =
+  LIST_MEMBER.views.messageListRecordPageMembers.viewFilters
+    .listIsCurrentRecord.universalIdentifier;
 const MEMBERS_VIEW_ID = '20202020-0000-0000-0000-000000000010';
+
+const STANDARD_MEMBERS_VIEW_FIELDS = MEMBERS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.map(
+  (universalIdentifier, position) => ({
+    universalIdentifier,
+    viewUniversalIdentifier: MEMBERS_VIEW_UNIVERSAL_IDENTIFIER,
+    position,
+  }),
+);
+const STANDARD_MEMBERS_VIEW_FILTER = {
+  universalIdentifier: MEMBERS_VIEW_FILTER_UNIVERSAL_IDENTIFIER,
+  viewUniversalIdentifier: MEMBERS_VIEW_UNIVERSAL_IDENTIFIER,
+};
 
 const HOME_TAB_UNIVERSAL_IDENTIFIER =
   LIST_RECORD_PAGE.tabs.home.universalIdentifier;
@@ -136,15 +151,14 @@ describe('SyncMessageListRecordPageCommand', () => {
           },
         ]),
         flatViewFieldMaps: buildMaps([
-          ...MEMBERS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.map(
-            (universalIdentifier) => ({ universalIdentifier }),
-          ),
+          ...STANDARD_MEMBERS_VIEW_FIELDS,
           {
             universalIdentifier: DESCRIPTION_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
             viewUniversalIdentifier: LIST_INDEX_VIEW_UNIVERSAL_IDENTIFIER,
             position: 1,
           },
         ]),
+        flatViewFilterMaps: buildMaps([STANDARD_MEMBERS_VIEW_FILTER]),
       },
     } as unknown as ReturnType<
       typeof computeTwentyStandardApplicationAllFlatEntityMaps
@@ -180,11 +194,17 @@ describe('SyncMessageListRecordPageCommand', () => {
   const mockWorkspaceCache = ({
     hasListObjects = true,
     existingFieldUniversalIdentifiers = [] as string[],
-    existingViews = [] as { id: string; universalIdentifier: string }[],
+    existingViews = [] as {
+      id: string;
+      universalIdentifier: string;
+      deletedAt?: string;
+    }[],
     existingViewFields = [] as {
       universalIdentifier: string;
       position: number;
+      deletedAt?: string;
     }[],
+    existingViewFilters = [] as string[],
     homeTab = buildHomeTab() as ReturnType<typeof buildHomeTab> | undefined,
     membersWidget = buildMembersWidget(),
   } = {}) => {
@@ -217,6 +237,11 @@ describe('SyncMessageListRecordPageCommand', () => {
       ),
       flatViewMaps: buildMaps([listIndexView, ...existingViews]),
       flatViewFieldMaps: buildMaps(existingViewFields),
+      flatViewFilterMaps: buildMaps(
+        existingViewFilters.map((universalIdentifier) => ({
+          universalIdentifier,
+        })),
+      ),
       flatPageLayoutTabMaps: buildMaps(homeTab ? [homeTab] : []),
       flatPageLayoutWidgetMaps: buildMaps([
         buildFieldsWidget(),
@@ -252,14 +277,15 @@ describe('SyncMessageListRecordPageCommand', () => {
       }),
     ]);
     expect(payload.viewField.flatEntityToCreate).toEqual([
-      ...MEMBERS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.map((universalIdentifier) =>
-        expect.objectContaining({ universalIdentifier }),
-      ),
+      ...STANDARD_MEMBERS_VIEW_FIELDS,
       expect.objectContaining({
         universalIdentifier: DESCRIPTION_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
         viewUniversalIdentifier: LIST_INDEX_VIEW_UNIVERSAL_IDENTIFIER,
         position: 4,
       }),
+    ]);
+    expect(payload.viewFilter.flatEntityToCreate).toEqual([
+      STANDARD_MEMBERS_VIEW_FILTER,
     ]);
     expect(payload.pageLayoutTab.flatEntityToUpdate).toEqual([
       expect.objectContaining({
@@ -299,14 +325,13 @@ describe('SyncMessageListRecordPageCommand', () => {
         },
       ],
       existingViewFields: [
-        ...MEMBERS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.map(
-          (universalIdentifier, index) => ({ universalIdentifier, position: index }),
-        ),
+        ...STANDARD_MEMBERS_VIEW_FIELDS,
         {
           universalIdentifier: DESCRIPTION_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
           position: 1,
         },
       ],
+      existingViewFilters: [MEMBERS_VIEW_FILTER_UNIVERSAL_IDENTIFIER],
     });
 
     await runOnWorkspace();
@@ -316,6 +341,7 @@ describe('SyncMessageListRecordPageCommand', () => {
     expect(payload.fieldMetadata.flatEntityToCreate).toEqual([]);
     expect(payload.view.flatEntityToCreate).toEqual([]);
     expect(payload.viewField.flatEntityToCreate).toEqual([]);
+    expect(payload.viewFilter.flatEntityToCreate).toEqual([]);
     expect(payload.pageLayoutWidget.flatEntityToUpdate[1]).toEqual(
       expect.objectContaining({
         configuration: expect.objectContaining({
@@ -339,6 +365,69 @@ describe('SyncMessageListRecordPageCommand', () => {
     expect(payload.pageLayoutWidget.flatEntityToUpdate).toEqual([]);
   });
 
+  it('leaves a tab that is no longer a vertical list untouched', async () => {
+    mockWorkspaceCache({
+      homeTab: buildHomeTab({ layoutMode: PageLayoutTabLayoutMode.CANVAS }),
+    });
+
+    await runOnWorkspace();
+
+    const payload = getMigrationPayload();
+
+    expect(payload.pageLayoutTab.flatEntityToUpdate).toEqual([]);
+    expect(payload.pageLayoutWidget.flatEntityToUpdate).toEqual([]);
+  });
+
+  it('does not embed or refill a soft-deleted members view', async () => {
+    mockWorkspaceCache({
+      existingViews: [
+        {
+          id: MEMBERS_VIEW_ID,
+          universalIdentifier: MEMBERS_VIEW_UNIVERSAL_IDENTIFIER,
+          deletedAt: '2026-01-01T00:00:00.000Z',
+        },
+      ],
+    });
+
+    await runOnWorkspace();
+
+    const payload = getMigrationPayload();
+
+    expect(payload.fieldMetadata.flatEntityToCreate).toHaveLength(1);
+    expect(payload.view.flatEntityToCreate).toEqual([]);
+    expect(payload.viewFilter.flatEntityToCreate).toEqual([]);
+    expect(payload.viewField.flatEntityToCreate).toEqual([
+      expect.objectContaining({
+        universalIdentifier: DESCRIPTION_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
+      }),
+    ]);
+    expect(payload.pageLayoutTab.flatEntityToUpdate).toEqual([]);
+    expect(payload.pageLayoutWidget.flatEntityToUpdate).toEqual([]);
+  });
+
+  it('does not recreate a soft-deleted description column', async () => {
+    mockWorkspaceCache({
+      existingViewFields: [
+        {
+          universalIdentifier: DESCRIPTION_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
+          position: 1,
+          deletedAt: '2026-01-01T00:00:00.000Z',
+        },
+      ],
+    });
+
+    await runOnWorkspace();
+
+    const payload = getMigrationPayload();
+
+    expect(
+      payload.viewField.flatEntityToCreate.map(
+        ({ universalIdentifier }: { universalIdentifier: string }) =>
+          universalIdentifier,
+      ),
+    ).toEqual(MEMBERS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS);
+  });
+
   it('does nothing when everything is already in place', async () => {
     mockWorkspaceCache({
       existingFieldUniversalIdentifiers: [DESCRIPTION_FIELD_UNIVERSAL_IDENTIFIER],
@@ -349,14 +438,13 @@ describe('SyncMessageListRecordPageCommand', () => {
         },
       ],
       existingViewFields: [
-        ...MEMBERS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.map(
-          (universalIdentifier, index) => ({ universalIdentifier, position: index }),
-        ),
+        ...STANDARD_MEMBERS_VIEW_FIELDS,
         {
           universalIdentifier: DESCRIPTION_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
           position: 1,
         },
       ],
+      existingViewFilters: [MEMBERS_VIEW_FILTER_UNIVERSAL_IDENTIFIER],
       homeTab: buildHomeTab({ layoutMode: PageLayoutTabLayoutMode.GRID }),
     });
 

@@ -497,6 +497,11 @@ export const STANDARD_OBJECTS = {
             universalIdentifier: 'bd12c93d-2408-400e-99aa-9613b524b437',
           },
         },
+        viewFilters: {
+          listIsCurrentRecord: {
+            universalIdentifier: '778ca574-2650-448f-b6a4-d4a6f51775d6',
+          },
+        },
       },
     },
   },

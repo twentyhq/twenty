@@ -19,6 +19,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
+import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -41,6 +42,9 @@ const MEMBERS_VIEW_UNIVERSAL_IDENTIFIER =
 const MEMBERS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = Object.values(
   LIST_MEMBER.views.messageListRecordPageMembers.viewFields,
 ).map((viewField) => viewField.universalIdentifier);
+const MEMBERS_VIEW_FILTER_UNIVERSAL_IDENTIFIERS = Object.values(
+  LIST_MEMBER.views.messageListRecordPageMembers.viewFilters,
+).map((viewFilter) => viewFilter.universalIdentifier);
 
 const HOME_TAB_UNIVERSAL_IDENTIFIER =
   LIST_RECORD_PAGE.tabs.home.universalIdentifier;
@@ -82,6 +86,7 @@ export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceComman
       flatFieldMetadataMaps,
       flatViewMaps,
       flatViewFieldMaps,
+      flatViewFilterMaps,
       flatPageLayoutTabMaps,
       flatPageLayoutWidgetMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -89,6 +94,7 @@ export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceComman
       'flatFieldMetadataMaps',
       'flatViewMaps',
       'flatViewFieldMaps',
+      'flatViewFilterMaps',
       'flatPageLayoutTabMaps',
       'flatPageLayoutWidgetMaps',
     ]);
@@ -133,18 +139,35 @@ export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceComman
         universalIdentifiers: [DESCRIPTION_FIELD_UNIVERSAL_IDENTIFIER],
       });
 
-    const viewsToCreate = getStandardFlatEntitiesToCreateOrThrow<FlatView>({
-      standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewMaps,
-      existingFlatEntityMaps: flatViewMaps,
-      universalIdentifiers: [MEMBERS_VIEW_UNIVERSAL_IDENTIFIER],
-    });
+    const existingMembersView =
+      flatViewMaps.byUniversalIdentifier[MEMBERS_VIEW_UNIVERSAL_IDENTIFIER];
+
+    // A soft-deleted members view cannot be recreated under its identifier and
+    // must not be embedded, so the workspace keeps its current members widget.
+    const isMembersViewDeleted = isDefined(existingMembersView?.deletedAt);
+
+    if (isMembersViewDeleted) {
+      this.logger.warn(
+        `The list members view was deleted in workspace ${workspaceId}, leaving the members widget untouched`,
+      );
+    }
+
+    const viewsToCreate = isMembersViewDeleted
+      ? []
+      : getStandardFlatEntitiesToCreateOrThrow<FlatView>({
+          standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewMaps,
+          existingFlatEntityMaps: flatViewMaps,
+          universalIdentifiers: [MEMBERS_VIEW_UNIVERSAL_IDENTIFIER],
+        });
 
     const viewFieldsToCreate = [
-      ...getStandardFlatEntitiesToCreateOrThrow<FlatViewField>({
-        standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewFieldMaps,
-        existingFlatEntityMaps: flatViewFieldMaps,
-        universalIdentifiers: MEMBERS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
-      }),
+      ...(isMembersViewDeleted
+        ? []
+        : getStandardFlatEntitiesToCreateOrThrow<FlatViewField>({
+            standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewFieldMaps,
+            existingFlatEntityMaps: flatViewFieldMaps,
+            universalIdentifiers: MEMBERS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
+          })),
       ...this.computeDescriptionViewFieldsToCreate({
         workspaceId,
         listObjectMetadata,
@@ -154,9 +177,17 @@ export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceComman
       }),
     ];
 
-    const membersView =
-      flatViewMaps.byUniversalIdentifier[MEMBERS_VIEW_UNIVERSAL_IDENTIFIER] ??
-      viewsToCreate[0];
+    const viewFiltersToCreate = isMembersViewDeleted
+      ? []
+      : getStandardFlatEntitiesToCreateOrThrow<FlatViewFilter>({
+          standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewFilterMaps,
+          existingFlatEntityMaps: flatViewFilterMaps,
+          universalIdentifiers: MEMBERS_VIEW_FILTER_UNIVERSAL_IDENTIFIERS,
+        });
+
+    const membersView = isMembersViewDeleted
+      ? undefined
+      : (existingMembersView ?? viewsToCreate[0]);
 
     const { pageLayoutTabsToUpdate, pageLayoutWidgetsToUpdate, skipReason } =
       this.computeRecordPageOperations({
@@ -176,6 +207,7 @@ export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceComman
       fieldsToCreate.length +
       viewsToCreate.length +
       viewFieldsToCreate.length +
+      viewFiltersToCreate.length +
       pageLayoutTabsToUpdate.length +
       pageLayoutWidgetsToUpdate.length;
 
@@ -188,7 +220,7 @@ export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceComman
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: ${fieldsToCreate.length} field(s), ${viewsToCreate.length} view(s), ${viewFieldsToCreate.length} view column(s), ${pageLayoutTabsToUpdate.length} tab update(s), ${pageLayoutWidgetsToUpdate.length} widget update(s)`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: ${fieldsToCreate.length} field(s), ${viewsToCreate.length} view(s), ${viewFieldsToCreate.length} view column(s), ${viewFiltersToCreate.length} view filter(s), ${pageLayoutTabsToUpdate.length} tab update(s), ${pageLayoutWidgetsToUpdate.length} widget update(s)`,
     );
 
     if (isDryRun) {
@@ -215,6 +247,11 @@ export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceComman
             },
             viewField: {
               flatEntityToCreate: viewFieldsToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+            viewFilter: {
+              flatEntityToCreate: viewFiltersToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
@@ -245,7 +282,8 @@ export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceComman
 
   // Existing INDEX views keep their own column positions, so the description
   // column goes after every column already there instead of at its standard
-  // position, which would collide with members.
+  // position, which would collide with members. A soft-deleted column was
+  // removed on purpose and stays removed.
   private computeDescriptionViewFieldsToCreate({
     workspaceId,
     listObjectMetadata,
@@ -259,13 +297,18 @@ export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceComman
     flatViewFieldMaps: FlatEntityMaps<FlatViewField>;
     standardFlatViewFieldMaps: FlatEntityMaps<FlatViewField>;
   }): FlatViewField[] {
-    if (
-      isDefined(
-        flatViewFieldMaps.byUniversalIdentifier[
-          DESCRIPTION_VIEW_FIELD_UNIVERSAL_IDENTIFIER
-        ],
-      )
-    ) {
+    const existingDescriptionViewField =
+      flatViewFieldMaps.byUniversalIdentifier[
+        DESCRIPTION_VIEW_FIELD_UNIVERSAL_IDENTIFIER
+      ];
+
+    if (isDefined(existingDescriptionViewField)) {
+      if (isDefined(existingDescriptionViewField.deletedAt)) {
+        this.logger.log(
+          `The description column was deleted from the all lists view in workspace ${workspaceId}, not recreating it`,
+        );
+      }
+
       return [];
     }
 
@@ -378,6 +421,7 @@ export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceComman
 
     if (
       isCustomized ||
+      homeTab.layoutMode !== PageLayoutTabLayoutMode.VERTICAL_LIST ||
       homeTab.widgetUniversalIdentifiers.length !== 2 ||
       membersWidget.configuration.fieldDisplayMode === FieldDisplayMode.TABLE
     ) {
