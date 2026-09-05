@@ -243,6 +243,14 @@ export type FieldLinksValue = {
   primaryLinkUrl: string | null;
   secondaryLinks?: { label: string | null; url: string | null }[] | null;
 };
+export type FormFieldLinksValue = {
+  primaryLinkLabel: string | null;
+  primaryLinkUrl: string | null;
+  secondaryLinks?:
+    | { label: string | null; url: string | null }[]
+    | string
+    | null;
+};
 
 export const fieldMetadataCurrencyFormat = ['short', 'full'] as const;
 export type FieldCurrencyFormat = (typeof fieldMetadataCurrencyFormat)[number];
