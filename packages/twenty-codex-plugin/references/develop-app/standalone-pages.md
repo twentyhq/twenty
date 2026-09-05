@@ -90,7 +90,10 @@ export default defineFrontComponent({
 ```
 
 ```ts src/page-layouts/mission-control.page-layout.ts
-import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import {
+  definePageLayout,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
 
 import {
   MISSION_CONTROL_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
@@ -107,13 +110,13 @@ export default definePageLayout({
       title: 'Mission Control',
       position: 0,
       icon: 'IconRocket',
-      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       widgets: [
         {
           universalIdentifier: '18ce05bb-ee3c-4332-80a7-f8fb84f7f70a',
           title: 'Mission Control',
           type: 'FRONT_COMPONENT',
-          position: { layoutMode: PageLayoutTabLayoutMode.CANVAS },
+          heightBehavior: 'TAB_VIEWPORT',
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:
@@ -148,7 +151,7 @@ export default defineNavigationMenuItem({
 });
 ```
 
-Use `PageLayoutTabLayoutMode.CANVAS` for the full-page renderer. Keep the 12 x 12 fill pattern as a grid fallback and editing hint; CANVAS renders the first widget as the page-sized surface.
+Use a `VERTICAL_LIST` tab and give its single widget `TAB_VIEWPORT` height behavior for a page-sized surface. The widget owns internal scrolling while the tab owns its viewport.
 
 After the tiny page renders, replace the component body with a full-screen structure:
 
@@ -198,7 +201,7 @@ This section only calls out the fields that matter for standalone pages. Use `la
 - Use `type: 'STANDALONE_PAGE'`.
 - Do not set `objectUniversalIdentifier`; standalone pages are not record scoped.
 - Define at least one tab. Use one tab unless the page needs real top-level modes.
-- Use `PageLayoutTabLayoutMode.CANVAS`; put the `FRONT_COMPONENT` first and set its `position.layoutMode` to `PageLayoutTabLayoutMode.CANVAS`.
+- Use `PageLayoutTabLayoutMode.VERTICAL_LIST`; widgets inherit the tab's layout mode and follow their order in the `widgets` array. Put the `FRONT_COMPONENT` last and set its top-level `heightBehavior` to `'TAB_VIEWPORT'`.
 - Use a `FRONT_COMPONENT` widget with `configurationType: 'FRONT_COMPONENT'` and `frontComponentUniversalIdentifier`.
 
 `defineFrontComponent` owns the actual page experience:
@@ -368,7 +371,7 @@ For a black screen, check the simplest causes first:
 - Token or fetch failure: log the caught error, confirm `CoreApiClient` generation, and show an error state.
 - Public asset failure: verify `getPublicAssetUrl(...)` output in the network tab and render without the asset.
 - CSS layer covering content: remove absolute overlays, `zIndex`, and full-screen backgrounds until text is visible.
-- Zero-height container: add visible borders and confirm `height: '100%'`, `minHeight: '100%'`, `minHeight: 0`, and the widget canvas position.
+- Zero-height container: add visible borders and confirm `height: '100%'`, `minHeight: '100%'`, `minHeight: 0`, and the widget's `TAB_VIEWPORT` position.
 - Unsupported browser or Remote DOM behavior: remove unusual DOM APIs, portals, global document access, and third-party components until the minimal UI renders.
 - Stale deployed app version: confirm the installed app version is the one you just synced or deployed.
 
@@ -436,7 +439,7 @@ Minimal standalone page:
 - One front component.
 - One `STANDALONE_PAGE` page layout.
 - One `PAGE_LAYOUT` navigation item.
-- One 12 x 12 `FRONT_COMPONENT` widget.
+- One `FRONT_COMPONENT` widget with `TAB_VIEWPORT` height behavior.
 
 Full-screen operational page:
 
