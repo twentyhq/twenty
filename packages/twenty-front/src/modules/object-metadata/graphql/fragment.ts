@@ -16,6 +16,7 @@ export const OBJECT_METADATA_FRAGMENT = gql`
     isSystem
     isUIEditable
     isUICreatable
+    writability
     createdAt
     updatedAt
     labelIdentifierFieldMetadataId
@@ -63,6 +64,7 @@ export const OBJECT_METADATA_FRAGMENT = gql`
       isActive
       isSystem
       isUIEditable
+      writability
       isNullable
       isUnique
       createdAt
