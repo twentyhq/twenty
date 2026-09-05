@@ -44,7 +44,7 @@ export class ConnectedAccountResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<ConnectedAccountPublicDTO> {
-    await this.connectedAccountMetadataService.verifyOwnership({
+    await this.connectedAccountMetadataService.verifyDestructiveOwnership({
       id,
       userWorkspaceId,
       workspaceId: workspace.id,

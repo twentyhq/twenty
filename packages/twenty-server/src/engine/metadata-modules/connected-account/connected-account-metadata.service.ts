@@ -17,6 +17,7 @@ import {
 } from 'src/engine/metadata-modules/connected-account/connected-account.exception';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type ConnectedAccountDeletedEvent } from 'src/engine/metadata-modules/connected-account/types/connected-account-deleted.type';
+import { isConnectedAccountOwnedByCaller } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-owned-by-caller.util';
 import { isConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-usable-by-caller.util';
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -97,6 +98,38 @@ export class ConnectedAccountMetadataService {
 
     if (
       !isConnectedAccountUsableByCaller({ connectedAccount, userWorkspaceId })
+    ) {
+      throw new ConnectedAccountException(
+        `Connected account ${id} does not belong to user workspace ${userWorkspaceId}`,
+        ConnectedAccountExceptionCode.CONNECTED_ACCOUNT_OWNERSHIP_VIOLATION,
+      );
+    }
+
+    return connectedAccount;
+  }
+
+  async verifyDestructiveOwnership({
+    id,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    id: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<ConnectedAccountEntity> {
+    const connectedAccount = await this.repository.findOne({
+      where: { id, workspaceId },
+    });
+
+    if (!connectedAccount) {
+      throw new ConnectedAccountException(
+        `Connected account ${id} not found`,
+        ConnectedAccountExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
+      );
+    }
+
+    if (
+      !isConnectedAccountOwnedByCaller({ connectedAccount, userWorkspaceId })
     ) {
       throw new ConnectedAccountException(
         `Connected account ${id} does not belong to user workspace ${userWorkspaceId}`,
