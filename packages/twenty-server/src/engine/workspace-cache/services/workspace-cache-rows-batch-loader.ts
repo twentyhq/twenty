@@ -1,6 +1,7 @@
 import {
   type EntityTarget,
   type FindManyOptions,
+  type FindOptionsOrder,
   type FindOptionsWhere,
   type ObjectLiteral,
   type Repository,
@@ -24,6 +25,7 @@ import { isObjectEntityRowsRequirement } from 'src/engine/workspace-cache/utils/
 import { serializeWhereClause } from 'src/engine/workspace-cache/utils/serialize-where-clause.util';
 
 type WhereClause = FindOptionsWhere<ObjectLiteral>;
+type OrderClause = FindOptionsOrder<ObjectLiteral>;
 
 export type WorkspaceCacheRowsSource = {
   getRepository: (
@@ -35,6 +37,7 @@ type NormalizedEntityRowsRequirement = {
   columns: readonly string[] | true;
   groupBy: readonly string[];
   where?: WhereClause;
+  order?: OrderClause;
 };
 
 const normalizeEntityRowsRequirement = (
@@ -45,6 +48,7 @@ const normalizeEntityRowsRequirement = (
         columns: entityRowsRequirement.columns,
         groupBy: entityRowsRequirement.groupBy ?? [],
         where: entityRowsRequirement.where,
+        order: entityRowsRequirement.order,
       }
     : { columns: entityRowsRequirement, groupBy: [] };
 
@@ -60,6 +64,7 @@ type PlannedFetch = {
   entityName: CacheFetchableEntityName;
   where?: WhereClause;
   columns: Set<string> | null;
+  order?: OrderClause;
 };
 
 export class WorkspaceCacheRowsBatchLoader {
@@ -101,18 +106,25 @@ export class WorkspaceCacheRowsBatchLoader {
           continue;
         }
 
-        const { columns, groupBy, where } = normalizeEntityRowsRequirement(
-          entityRowsRequirement,
-        );
+        const { columns, groupBy, where, order } =
+          normalizeEntityRowsRequirement(entityRowsRequirement);
         const fetchKey = buildFetchKey(entityName, where);
         const plannedFetch = plannedFetchByFetchKey.get(fetchKey);
 
         if (columns === true) {
-          plannedFetchByFetchKey.set(fetchKey, {
-            entityName,
-            where,
-            columns: null,
-          });
+          if (!isDefined(plannedFetch)) {
+            plannedFetchByFetchKey.set(fetchKey, {
+              entityName,
+              where,
+              columns: null,
+              order,
+            });
+          } else {
+            plannedFetch.columns = null;
+            if (isDefined(order)) {
+              plannedFetch.order = { ...plannedFetch.order, ...order };
+            }
+          }
           continue;
         }
 
@@ -123,8 +135,13 @@ export class WorkspaceCacheRowsBatchLoader {
             entityName,
             where,
             columns: new Set(columnsWithGroupByKeys),
+            order,
           });
           continue;
+        }
+
+        if (isDefined(order)) {
+          plannedFetch.order = { ...plannedFetch.order, ...order };
         }
 
         if (plannedFetch.columns === null) {
@@ -234,6 +251,7 @@ export class WorkspaceCacheRowsBatchLoader {
     entityName,
     where,
     columns,
+    order,
   }: PlannedFetch): Promise<ObjectLiteral[]> {
     const findOptions: FindManyOptions<ObjectLiteral> = {
       where: {
@@ -245,6 +263,10 @@ export class WorkspaceCacheRowsBatchLoader {
 
     if (columns !== null) {
       findOptions.select = [...columns];
+    }
+
+    if (isDefined(order)) {
+      findOptions.order = order;
     }
 
     return this.coreDataSource
