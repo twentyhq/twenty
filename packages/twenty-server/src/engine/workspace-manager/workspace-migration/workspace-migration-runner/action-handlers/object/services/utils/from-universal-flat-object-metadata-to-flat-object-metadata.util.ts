@@ -61,6 +61,7 @@ export const fromUniversalFlatObjectMetadataToFlatObjectMetadata = ({
     applicationUniversalIdentifier,
     labelIdentifierFieldMetadataUniversalIdentifier,
     imageIdentifierFieldMetadataUniversalIdentifier,
+    ownerFieldMetadataUniversalIdentifier,
     ...restProperties
   } = universalFlatObjectMetadata;
 
@@ -96,6 +97,22 @@ export const fromUniversalFlatObjectMetadataToFlatObjectMetadata = ({
     }
   }
 
+  let ownerFieldMetadataId: string | null = null;
+
+  if (isDefined(ownerFieldMetadataUniversalIdentifier)) {
+    ownerFieldMetadataId = findFieldMetadataIdInCreateObjectContext({
+      universalIdentifier: ownerFieldMetadataUniversalIdentifier,
+      allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
+      flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+    });
+
+    if (!isDefined(ownerFieldMetadataId)) {
+      throw new Error(
+        `Owner field metadata not found for universal identifier: ${ownerFieldMetadataUniversalIdentifier}`,
+      );
+    }
+  }
+
   const emptyUniversalForeignKeyAggregators =
     getUniversalFlatEntityEmptyForeignKeyAggregators({
       metadataName: 'objectMetadata',
@@ -113,6 +130,8 @@ export const fromUniversalFlatObjectMetadataToFlatObjectMetadata = ({
     targetTableName: 'DEPRECATED',
     imageIdentifierFieldMetadataId,
     imageIdentifierFieldMetadataUniversalIdentifier,
+    ownerFieldMetadataId,
+    ownerFieldMetadataUniversalIdentifier,
     fieldIds: [],
     viewIds: [],
     indexMetadataIds: [],

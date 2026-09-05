@@ -87,6 +87,60 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
       ]);
     });
 
+    it('should give the owner field value the OWNER row instead of the creator', () => {
+      expect(
+        buildRecordShareInputsForCreatedRecords({
+          recordIds: ['record-1'],
+          objectMetadataId: OBJECT_METADATA_ID,
+          authContext: userAuthContext,
+          apiKeyRoleMap,
+          isRecordSharingEnabled,
+          ownerWorkspaceMemberIdByRecordId: {
+            'record-1': OTHER_WORKSPACE_MEMBER_ID,
+          },
+        }),
+      ).toEqual([
+        {
+          recordId: 'record-1',
+          objectMetadataId: OBJECT_METADATA_ID,
+          principalId: OTHER_WORKSPACE_MEMBER_ID,
+          principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+          accessLevel: RecordShareAccessLevel.FULL,
+          rowCause: RecordShareRowCause.OWNER,
+          sourceId: 'record-1',
+        },
+      ]);
+    });
+
+    it('should fall back to the creator rule when the owner field value is null', () => {
+      expect(
+        buildRecordShareInputsForCreatedRecords({
+          recordIds: ['record-1', 'record-2'],
+          objectMetadataId: OBJECT_METADATA_ID,
+          authContext: apiKeyAuthContext,
+          apiKeyRoleMap,
+          isRecordSharingEnabled,
+          ownerWorkspaceMemberIdByRecordId: {
+            'record-1': null,
+            'record-2': OTHER_WORKSPACE_MEMBER_ID,
+          },
+        }),
+      ).toEqual([
+        expect.objectContaining({
+          recordId: 'record-1',
+          principalId: API_KEY_ROLE_ID,
+          principalType: RecordSharePrincipalType.ROLE,
+          rowCause: RecordShareRowCause.MANUAL,
+        }),
+        expect.objectContaining({
+          recordId: 'record-2',
+          principalId: OTHER_WORKSPACE_MEMBER_ID,
+          principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+          rowCause: RecordShareRowCause.OWNER,
+        }),
+      ]);
+    });
+
     it('should add a MANUAL row sourced from the creating member for each shareWith entry', () => {
       expect(
         buildRecordShareInputsForCreatedRecords({

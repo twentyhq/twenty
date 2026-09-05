@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
 import { validateFlatObjectMetadataIdentifiers } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util';
+import { validateFlatObjectMetadataOwnerField } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-owner-field.util';
 import {
   type OrchestratorActionsReport,
   type OrchestratorFailureReport,
@@ -62,6 +63,11 @@ export const validateObjectMetadataCrossEntity = ({
         universalFlatFieldMetadataMaps:
           optimisticUniversalFlatMaps.flatFieldMetadataMaps,
       }),
+      ...validateFlatObjectMetadataOwnerField({
+        universalFlatObjectMetadata,
+        universalFlatFieldMetadataMaps:
+          optimisticUniversalFlatMaps.flatFieldMetadataMaps,
+      }),
     );
 
     if (createFailedFlatEntityValidations.errors.length > 0) {
@@ -99,6 +105,18 @@ export const validateObjectMetadataCrossEntity = ({
     ) {
       updateFailedFlatEntityValidations.errors.push(
         ...validateFlatObjectMetadataIdentifiers({
+          universalFlatObjectMetadata: updatedFlatObjectMetadata,
+          universalFlatFieldMetadataMaps:
+            optimisticUniversalFlatMaps.flatFieldMetadataMaps,
+        }),
+      );
+    }
+
+    if (
+      'ownerFieldMetadataUniversalIdentifier' in objectMetadataUpdate.update
+    ) {
+      updateFailedFlatEntityValidations.errors.push(
+        ...validateFlatObjectMetadataOwnerField({
           universalFlatObjectMetadata: updatedFlatObjectMetadata,
           universalFlatFieldMetadataMaps:
             optimisticUniversalFlatMaps.flatFieldMetadataMaps,

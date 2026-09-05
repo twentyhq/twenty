@@ -65,6 +65,8 @@ const mockObjectMetadata: FlatObjectMetadata = {
   commandMenuItemUniversalIdentifiers: [],
   labelIdentifierFieldMetadataUniversalIdentifier: null,
   imageIdentifierFieldMetadataUniversalIdentifier: null,
+  ownerFieldMetadataId: null,
+  ownerFieldMetadataUniversalIdentifier: null,
 };
 
 const mockFlatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {

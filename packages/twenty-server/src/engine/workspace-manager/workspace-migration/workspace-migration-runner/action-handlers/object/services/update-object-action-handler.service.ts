@@ -59,6 +59,7 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     const {
       labelIdentifierFieldMetadataUniversalIdentifier,
       imageIdentifierFieldMetadataUniversalIdentifier,
+      ownerFieldMetadataUniversalIdentifier,
       ...restUpdate
     } = action.update;
 
@@ -82,6 +83,18 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
           universalIdentifier: imageIdentifierFieldMetadataUniversalIdentifier,
           foreignKeyName: 'imageIdentifierFieldMetadataId',
         });
+    }
+
+    if (ownerFieldMetadataUniversalIdentifier !== undefined) {
+      transpiledUpdate.ownerFieldMetadataId = isDefined(
+        ownerFieldMetadataUniversalIdentifier,
+      )
+        ? this.resolveFieldMetadataIdOrThrow({
+            context,
+            universalIdentifier: ownerFieldMetadataUniversalIdentifier,
+            foreignKeyName: 'ownerFieldMetadataId',
+          })
+        : null;
     }
 
     return {

@@ -32,6 +32,7 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
     workspaceId,
     imageIdentifierFieldMetadataId,
     labelIdentifierFieldMetadataId,
+    ownerFieldMetadataId,
     applicationId,
   } = flatObjectMetadata;
 
@@ -56,6 +57,7 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
     workspaceId,
     imageIdentifierFieldMetadataId,
     labelIdentifierFieldMetadataId,
+    ownerFieldMetadataId,
     createdAt: new Date(createdAt),
     updatedAt: new Date(updatedAt),
     color: color ?? undefined,

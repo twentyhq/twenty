@@ -27,6 +27,7 @@ export enum PermissionsExceptionCode {
   ROLE_LABEL_ALREADY_EXISTS = 'ROLE_LABEL_ALREADY_EXISTS',
   DEFAULT_ROLE_NOT_FOUND = 'DEFAULT_ROLE_NOT_FOUND',
   OBJECT_METADATA_NOT_FOUND = 'OBJECT_METADATA_NOT_FOUND_PERMISSIONS',
+  RECORD_NOT_FOUND = 'RECORD_NOT_FOUND_PERMISSIONS',
   INVALID_SETTING = 'INVALID_SETTING_PERMISSIONS',
   ROLE_NOT_EDITABLE = 'ROLE_NOT_EDITABLE',
   DEFAULT_ROLE_CANNOT_BE_DELETED = 'DEFAULT_ROLE_CANNOT_BE_DELETED',
@@ -102,6 +103,8 @@ const getPermissionsExceptionUserFriendlyMessage = (
       return msg`A role with this label already exists.`;
     case PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND:
       return msg`Default role not found.`;
+    case PermissionsExceptionCode.RECORD_NOT_FOUND:
+      return msg`Record not found.`;
     case PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND:
       return msg`Object metadata not found.`;
     case PermissionsExceptionCode.INVALID_SETTING:

@@ -40,6 +40,7 @@ type Assertions = [
       | 'labelPlural'
       | 'labelIdentifierFieldMetadataUniversalIdentifier'
       | 'imageIdentifierFieldMetadataUniversalIdentifier'
+      | 'ownerFieldMetadataUniversalIdentifier'
       | 'isSearchable'
       | 'isUIEditable'
       | 'isUICreatable'

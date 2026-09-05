@@ -221,8 +221,13 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   applyWriteRowLevelPermissions(
     queryBuilder: WorkspaceSelectQueryBuilder,
     kind: MutationKind,
+    recordShareAccessLevels?: RecordShareAccessLevel[],
   ): void {
-    this.applyRowLevelPermissionPredicates(queryBuilder, kind);
+    this.applyRowLevelPermissionPredicates(
+      queryBuilder,
+      kind,
+      recordShareAccessLevels,
+    );
   }
 
   getInternalContext(): WorkspaceInternalContext {
@@ -1248,15 +1253,21 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     kind,
     columnsToReturn,
     data,
+    recordShareAccessLevels,
   }: {
     selectQueryBuilder: WorkspaceSelectQueryBuilder;
     rowLevelPermissionsApplied: boolean;
     kind: MutationKind;
     columnsToReturn: string[];
     data?: Partial<ObjectRecord>;
+    recordShareAccessLevels?: RecordShareAccessLevel[];
   }): Promise<ObjectRecord[]> {
     if (!rowLevelPermissionsApplied) {
-      this.applyRowLevelPermissionPredicates(selectQueryBuilder, kind);
+      this.applyRowLevelPermissionPredicates(
+        selectQueryBuilder,
+        kind,
+        recordShareAccessLevels,
+      );
     }
 
     const eventSelectQueryBuilder =
@@ -1535,6 +1546,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   private applyRowLevelPermissionPredicates(
     queryBuilder: WorkspaceSelectQueryBuilder,
     operationType: OperationType = 'select',
+    recordShareAccessLevels?: RecordShareAccessLevel[],
   ): void {
     if (this.options.shouldBypassPermissionChecks) {
       return;
@@ -1545,6 +1557,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       alias: queryBuilder.alias,
       flatObjectMetadata: this.options.flatObjectMetadata,
       operationType,
+      recordShareAccessLevels,
     });
 
     for (const joinAlias of queryBuilder.getJoinAliases()) {
@@ -1570,11 +1583,13 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     alias,
     flatObjectMetadata,
     operationType,
+    recordShareAccessLevels,
   }: {
     queryBuilder: WorkspaceSelectQueryBuilder;
     alias: string;
     flatObjectMetadata: FlatObjectMetadata;
     operationType: OperationType;
+    recordShareAccessLevels?: RecordShareAccessLevel[];
   }): void {
     if (!queryBuilder.markRowLevelPermissionApplied(alias)) {
       return;
@@ -1589,7 +1604,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       queryBuilder,
       alias,
       flatObjectMetadata,
-      operationType,
+      accessLevels:
+        recordShareAccessLevels ??
+        resolveRequiredRecordShareAccessLevels(operationType),
     });
   }
 
@@ -1635,12 +1652,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     queryBuilder,
     alias,
     flatObjectMetadata,
-    operationType,
+    accessLevels,
   }: {
     queryBuilder: WorkspaceSelectQueryBuilder;
     alias: string;
     flatObjectMetadata: FlatObjectMetadata;
-    operationType: OperationType;
+    accessLevels: RecordShareAccessLevel[];
   }): void {
     if (
       !this.options.internalContext.featureFlagsMap[
@@ -1667,7 +1684,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           queryBuilder,
           alias,
           flatObjectMetadata,
-          operationType,
+          accessLevels,
         });
 
         return;
@@ -1690,7 +1707,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           queryBuilder,
           alias,
           flatObjectMetadata,
-          operationType,
+          accessLevels,
         });
 
         return;
@@ -1703,12 +1720,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     queryBuilder,
     alias,
     flatObjectMetadata,
-    operationType,
+    accessLevels,
   }: {
     queryBuilder: WorkspaceSelectQueryBuilder;
     alias: string;
     flatObjectMetadata: FlatObjectMetadata;
-    operationType: OperationType;
+    accessLevels: RecordShareAccessLevel[];
   }): void {
     const principalIds = resolvePrincipalIdsFromAuthContext({
       authContext: this.options.authContext,
@@ -1716,13 +1733,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       apiKeyRoleMap: this.options.internalContext.apiKeyRoleMap,
     });
 
-    if (!isDefined(principalIds)) {
-      return;
-    }
-
-    const accessLevels = resolveRequiredRecordShareAccessLevels(operationType);
-
-    if (accessLevels.length === 0) {
+    if (!isDefined(principalIds) || accessLevels.length === 0) {
       return;
     }
 
@@ -1741,12 +1752,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     queryBuilder,
     alias,
     flatObjectMetadata,
-    operationType,
+    accessLevels,
   }: {
     queryBuilder: WorkspaceSelectQueryBuilder;
     alias: string;
     flatObjectMetadata: FlatObjectMetadata;
-    operationType: OperationType;
+    accessLevels: RecordShareAccessLevel[];
   }): void {
     const principalIds = resolvePrincipalIdsFromAuthContext({
       authContext: this.options.authContext,
@@ -1754,13 +1765,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       apiKeyRoleMap: this.options.internalContext.apiKeyRoleMap,
     });
 
-    if (!isDefined(principalIds)) {
-      return;
-    }
-
-    const accessLevels = resolveRequiredRecordShareAccessLevels(operationType);
-
-    if (accessLevels.length === 0) {
+    if (!isDefined(principalIds) || accessLevels.length === 0) {
       return;
     }
 

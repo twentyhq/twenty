@@ -305,6 +305,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'imageIdentifierFieldMetadataUniversalIdentifier',
       isOverridable: true,
     },
+    ownerFieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      // @ts-expect-error remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
+      universalProperty: 'ownerFieldMetadataUniversalIdentifier',
+    },
     targetTableName: {
       toCompare: false,
       toStringify: false,

@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
+import {
+  RecordShareAccessLevel,
+  RecordSharePrincipalType,
+  RecordShareRowCause,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
@@ -48,6 +53,94 @@ export class RecordShareService {
     await this.withRepository({ workspaceId, transactionScope }, (repository) =>
       repository.delete({ sourceId }),
     );
+  }
+
+  async deleteByRecordIdsAndRowCause({
+    workspaceId,
+    objectMetadataId,
+    recordIds,
+    rowCause,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    recordIds: string[];
+    rowCause: RecordShareRowCause;
+    transactionScope?: WorkspaceTransactionScope;
+  }): Promise<void> {
+    if (recordIds.length === 0) {
+      return;
+    }
+
+    await this.withRepository({ workspaceId, transactionScope }, (repository) =>
+      repository.delete({
+        objectMetadataId,
+        recordId: In(recordIds),
+        rowCause,
+      }),
+    );
+  }
+
+  async deleteManualRowsForPrincipal({
+    workspaceId,
+    objectMetadataId,
+    recordId,
+    principalId,
+    sourceId,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    recordId: string;
+    principalId: string;
+    sourceId?: string;
+    transactionScope?: WorkspaceTransactionScope;
+  }): Promise<void> {
+    await this.withRepository({ workspaceId, transactionScope }, (repository) =>
+      repository.delete({
+        objectMetadataId,
+        recordId,
+        principalId,
+        rowCause: RecordShareRowCause.MANUAL,
+        ...(isDefined(sourceId) ? { sourceId } : {}),
+      }),
+    );
+  }
+
+  async replaceOwnerRows({
+    workspaceId,
+    objectMetadataId,
+    ownerWorkspaceMemberIdByRecordId,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    ownerWorkspaceMemberIdByRecordId: Record<string, string>;
+    transactionScope?: WorkspaceTransactionScope;
+  }): Promise<void> {
+    const recordIds = Object.keys(ownerWorkspaceMemberIdByRecordId);
+
+    await this.deleteByRecordIdsAndRowCause({
+      workspaceId,
+      objectMetadataId,
+      recordIds,
+      rowCause: RecordShareRowCause.OWNER,
+      transactionScope,
+    });
+
+    await this.insertMany({
+      workspaceId,
+      recordShares: recordIds.map((recordId) => ({
+        recordId,
+        objectMetadataId,
+        principalId: ownerWorkspaceMemberIdByRecordId[recordId],
+        principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+        accessLevel: RecordShareAccessLevel.FULL,
+        rowCause: RecordShareRowCause.OWNER,
+        sourceId: recordId,
+      })),
+      transactionScope,
+    });
   }
 
   async findByRecord({

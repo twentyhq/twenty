@@ -157,6 +157,19 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
           : null;
     }
 
+    if ('ownerFieldMetadataId' in updatedEditableObjectProperties) {
+      const { ownerFieldMetadataId } = updatedEditableObjectProperties;
+
+      toFlatObjectMetadata.ownerFieldMetadataUniversalIdentifier = isDefined(
+        ownerFieldMetadataId,
+      )
+        ? findFlatEntityByIdInFlatEntityMapsOrThrow({
+            flatEntityMaps: flatFieldMetadataMaps,
+            flatEntityId: ownerFieldMetadataId,
+          }).universalIdentifier
+        : null;
+    }
+
     const {
       flatIndexMetadatasToUpdate,
       flatViewFieldsToCreate,

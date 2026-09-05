@@ -9,4 +9,5 @@ export type FlatObjectMetadata = BaseFlatObjectMetadata & {
   // TODO remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
   labelIdentifierFieldMetadataUniversalIdentifier: string | null;
   imageIdentifierFieldMetadataUniversalIdentifier: string | null;
+  ownerFieldMetadataUniversalIdentifier: string | null;
 };

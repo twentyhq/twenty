@@ -33,6 +33,7 @@ export const fromObjectMetadataEntityToObjectMetadataDto = (
     entity.labelIdentifierFieldMetadataId ?? undefined,
   imageIdentifierFieldMetadataId:
     entity.imageIdentifierFieldMetadataId ?? undefined,
+  ownerFieldMetadataId: entity.ownerFieldMetadataId ?? undefined,
   duplicateCriteria: entity.duplicateCriteria ?? undefined,
   createdAt: entity.createdAt,
   updatedAt: entity.updatedAt,
