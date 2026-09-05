@@ -6,6 +6,7 @@ import { ConvertLogicFunctionsToPrebuiltCommand } from 'src/database/commands/up
 import { BackfillRecordFormCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788524477000-backfill-record-form.command';
 import { BackfillMessageListJunctionTargetsCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788616074386-backfill-message-list-junction-targets.command';
 import { CreateMessageListMemberViewCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788616075386-create-message-list-member-view.command';
+import { MarkPlatformOwnedStandardObjectsSystemCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788616958245-mark-platform-owned-standard-objects-system.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -34,6 +35,7 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     BackfillRecordFormCommand,
     BackfillMessageListJunctionTargetsCommand,
     CreateMessageListMemberViewCommand,
+    MarkPlatformOwnedStandardObjectsSystemCommand,
   ],
 })
 export class V2_39_UpgradeVersionCommandModule {}
