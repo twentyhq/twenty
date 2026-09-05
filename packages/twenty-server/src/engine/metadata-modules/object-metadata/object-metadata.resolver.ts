@@ -10,6 +10,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { MetadataReadability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -50,6 +51,8 @@ import { type CursorConnection } from 'src/engine/metadata-modules/pagination/dt
 import { applyMetadataFilterToQueryBuilder } from 'src/engine/metadata-modules/pagination/utils/apply-metadata-filter-to-query-builder.util';
 import { findManyWithCursorPagination } from 'src/engine/metadata-modules/pagination/utils/find-many-with-cursor-pagination.util';
 import { getEffectiveImageIdentifierFieldMetadataId } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-image-identifier-field-metadata-id.util';
+import { getEffectiveOwnerFieldMetadataId } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-owner-field-metadata-id.util';
+import { getEffectiveReadability } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-readability.util';
 import { MostlyEmptyFieldsService } from 'src/engine/metadata-modules/object-metadata/mostly-empty-fields.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { ObjectRecordCountService } from 'src/engine/metadata-modules/object-metadata/object-record-count.service';
@@ -329,6 +332,20 @@ export class ObjectMetadataResolver {
     @Parent() objectMetadata: ObjectMetadataDTO,
   ): string | null {
     return getEffectiveImageIdentifierFieldMetadataId(objectMetadata);
+  }
+
+  @ResolveField(() => MetadataReadability)
+  readability(
+    @Parent() objectMetadata: ObjectMetadataDTO,
+  ): MetadataReadability {
+    return getEffectiveReadability(objectMetadata);
+  }
+
+  @ResolveField(() => UUIDScalarType, { nullable: true })
+  ownerFieldMetadataId(
+    @Parent() objectMetadata: ObjectMetadataDTO,
+  ): string | null {
+    return getEffectiveOwnerFieldMetadataId(objectMetadata);
   }
 
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))

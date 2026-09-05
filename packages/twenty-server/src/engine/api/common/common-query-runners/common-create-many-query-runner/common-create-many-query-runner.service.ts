@@ -53,6 +53,7 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { getEffectiveReadability } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-readability.util';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { findOwnerField } from 'src/engine/record-share/utils/find-owner-field.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
@@ -81,7 +82,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<ObjectRecord[]> {
     const isPrivateObject =
-      queryRunnerContext.flatObjectMetadata.readability ===
+      getEffectiveReadability(queryRunnerContext.flatObjectMetadata) ===
       MetadataReadability.PRIVATE;
 
     if (isPrivateObject) {
@@ -617,7 +618,10 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const { authContext, flatObjectMetadata, repository, transactionScope } =
       queryRunnerContext;
 
-    if (flatObjectMetadata.readability !== MetadataReadability.PRIVATE) {
+    if (
+      getEffectiveReadability(flatObjectMetadata) !==
+      MetadataReadability.PRIVATE
+    ) {
       return;
     }
 
@@ -666,7 +670,8 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatObjectMetadata,
     flatFieldMetadataMaps,
   }: CommonExtendedQueryRunnerContext): string | undefined {
-    return flatObjectMetadata.readability === MetadataReadability.PRIVATE
+    return getEffectiveReadability(flatObjectMetadata) ===
+      MetadataReadability.PRIVATE
       ? findOwnerField({ flatObjectMetadata, flatFieldMetadataMaps })
           ?.joinColumnName
       : undefined;

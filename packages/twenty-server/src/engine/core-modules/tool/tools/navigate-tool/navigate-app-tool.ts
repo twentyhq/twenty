@@ -23,6 +23,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
+import { getEffectiveReadability } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-readability.util';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -303,7 +304,9 @@ export class NavigateAppTool implements Tool {
       };
     }
 
-    if (flatObjectMetadata.readability !== MetadataReadability.OPEN) {
+    if (
+      getEffectiveReadability(flatObjectMetadata) !== MetadataReadability.OPEN
+    ) {
       return {
         success: false,
         message: `Object "${objectNameSingular}" cannot be searched by record name`,

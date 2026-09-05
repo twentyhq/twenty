@@ -8,6 +8,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { ObjectFields } from '@/settings/data-model/object-details/components/tabs/ObjectFields';
 import { ObjectLayout } from '@/settings/data-model/object-details/components/tabs/ObjectLayout';
 import { ObjectSettings } from '@/settings/data-model/object-details/components/tabs/ObjectSettings';
+import { ObjectSharing } from '@/settings/data-model/object-details/components/tabs/ObjectSharing';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -25,17 +26,20 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { getAppPath, getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   IconArrowUpRight,
   IconAppWindow,
   IconListDetails,
+  IconLock,
   IconPlus,
   IconSettings,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
@@ -63,6 +67,9 @@ export const SettingsObjectDetailPage = () => {
     findObjectMetadataItemByNamePlural(updatedObjectNamePlural);
 
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
+  const isRecordSharingEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
+  );
 
   const readonly =
     isObjectMetadataReadOnly({
@@ -127,6 +134,12 @@ export const SettingsObjectDetailPage = () => {
         objectMetadataItem.isRemote ||
         objectMetadataItem.nameSingular === CoreObjectNameSingular.Dashboard,
     },
+    {
+      id: SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.SHARING,
+      title: t`Sharing`,
+      Icon: IconLock,
+      hide: !isRecordSharingEnabled || objectMetadataItem.isRemote,
+    },
   ];
 
   const renderActiveTabContent = () => {
@@ -143,6 +156,8 @@ export const SettingsObjectDetailPage = () => {
         );
       case SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.LAYOUT:
         return <ObjectLayout objectMetadataItem={objectMetadataItem} />;
+      case SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.SHARING:
+        return <ObjectSharing objectMetadataItem={objectMetadataItem} />;
       default:
         return <></>;
     }

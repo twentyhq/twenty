@@ -4614,7 +4614,16 @@ input UpdateObjectPayload {
   isLabelSyncedWithName: Boolean
   isSearchable: Boolean
   openRecordIn: ObjectOpenRecordIn
+  readability: MetadataReadability
+  backfillSharingRule: BackfillSharingRuleInput
   translations: [MetadataTranslationOverrideInput!]
+}
+
+input BackfillSharingRuleInput {
+  granteePrincipalType: RecordSharePrincipalType!
+  granteeRoleId: UUID
+  accessLevel: RecordShareAccessLevel!
+  name: String
 }
 
 input MetadataTranslationOverrideInput {

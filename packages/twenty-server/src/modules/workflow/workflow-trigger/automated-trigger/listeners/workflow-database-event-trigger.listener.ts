@@ -32,6 +32,7 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { getEffectiveReadability } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-readability.util';
 import { DENY_ALL_RECORD_SHARE_GATE } from 'src/engine/record-share/constants/deny-all-record-share-gate.constant';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { type RecordShareGate } from 'src/engine/record-share/types/record-share-gate.type';
@@ -438,7 +439,7 @@ export class WorkflowDatabaseEventTriggerListener {
     );
 
     const gateKind = resolveRecordShareGateKind({
-      readability: payload.objectMetadata.readability,
+      readability: getEffectiveReadability(payload.objectMetadata),
       isOwningApplication:
         isDefined(standardApplication) &&
         payload.objectMetadata.applicationId === standardApplication.id,

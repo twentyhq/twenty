@@ -17,6 +17,7 @@ import { ObjectNavigationCommandOnUpdateSideEffectHandlerService } from 'src/eng
 import { ObjectRecordPageLabelIdentifierOnUpdateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-label-identifier-on-update-side-effect-handler.service';
 import { ObjectRecordFormOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-form-on-create-side-effect-handler.service';
 import { ObjectRecordPageOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-on-create-side-effect-handler.service';
+import { ObjectReadabilityPrivateBackfillOnUpdateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-readability-private-backfill-on-update-side-effect-handler.service';
 import { ObjectSearchVectorOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-search-vector-on-create-side-effect-handler.service';
 import { ObjectSearchVectorOnUpdateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-search-vector-on-update-side-effect-handler.service';
 import { ObjectSystemFieldsOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-fields-on-create-side-effect-handler.service';
@@ -48,6 +49,7 @@ import { ObjectSystemSideEffectsOnDeleteSideEffectHandlerService } from 'src/eng
     ObjectSearchVectorOnUpdateSideEffectHandlerService,
     ObjectIndexViewLabelIdentifierOnUpdateSideEffectHandlerService,
     ObjectRecordPageLabelIdentifierOnUpdateSideEffectHandlerService,
+    ObjectReadabilityPrivateBackfillOnUpdateSideEffectHandlerService,
     ObjectSystemSideEffectsOnDeleteSideEffectHandlerService,
   ],
 })

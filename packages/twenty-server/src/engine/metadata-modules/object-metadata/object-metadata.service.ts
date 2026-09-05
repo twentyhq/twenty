@@ -17,6 +17,7 @@ import { FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigat
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
 import { fromDeleteObjectInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-delete-object-input-to-flat-field-metadatas-to-delete.util';
+import { fromBackfillSharingRuleInputToFlatSharingRuleOrThrow } from 'src/engine/metadata-modules/flat-sharing-rule/utils/from-backfill-sharing-rule-input-to-flat-sharing-rule-or-throw.util';
 import { fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-update-object-input-to-flat-object-metadata-and-related-flat-entities.util';
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
@@ -68,6 +69,7 @@ export class ObjectMetadataService {
       flatViewFieldMaps: existingFlatViewFieldMaps,
       flatViewMaps: existingFlatViewMaps,
       flatSearchFieldMetadataMaps: existingFlatSearchFieldMetadataMaps,
+      flatRoleMaps: existingFlatRoleMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -78,6 +80,7 @@ export class ObjectMetadataService {
           'flatViewFieldMaps',
           'flatViewMaps',
           'flatSearchFieldMetadataMaps',
+          'flatRoleMaps',
         ],
       },
     );
@@ -100,6 +103,20 @@ export class ObjectMetadataService {
     });
 
     const isActiveChangeDefined = isDefined(updateObjectInput.update.isActive);
+
+    const { backfillSharingRule } = updateObjectInput.update;
+    const flatSharingRulesToCreate = isDefined(backfillSharingRule)
+      ? [
+          fromBackfillSharingRuleInputToFlatSharingRuleOrThrow({
+            backfillSharingRuleInput: backfillSharingRule,
+            objectMetadataId: updateObjectInput.id,
+            workspaceId,
+            flatApplication: workspaceCustomFlatApplication,
+            flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+            flatRoleMaps: existingFlatRoleMaps,
+          }),
+        ]
+      : [];
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -130,6 +147,15 @@ export class ObjectMetadataService {
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
+            ...(flatSharingRulesToCreate.length > 0
+              ? {
+                  sharingRule: {
+                    flatEntityToCreate: flatSharingRulesToCreate,
+                    flatEntityToDelete: [],
+                    flatEntityToUpdate: [],
+                  },
+                }
+              : {}),
           },
           workspaceId,
           isSystemBuild: false,

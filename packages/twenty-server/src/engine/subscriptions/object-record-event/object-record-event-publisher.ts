@@ -39,6 +39,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { getEffectiveReadability } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-readability.util';
 import { UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
@@ -175,7 +176,9 @@ export class ObjectRecordEventPublisher {
     if (
       !featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] ||
       resolveRecordShareGateKind({
-        readability: workspaceEventBatch.objectMetadata.readability,
+        readability: getEffectiveReadability(
+          workspaceEventBatch.objectMetadata,
+        ),
         isOwningApplication: false,
       }) !== 'private'
     ) {
@@ -254,7 +257,7 @@ export class ObjectRecordEventPublisher {
           .filter(
             (linkedFlatObjectMetadata) =>
               resolveRecordShareGateKind({
-                readability: linkedFlatObjectMetadata.readability,
+                readability: getEffectiveReadability(linkedFlatObjectMetadata),
                 isOwningApplication: false,
               }) === 'private',
           )
@@ -617,7 +620,7 @@ export class ObjectRecordEventPublisher {
     }
 
     const gateKind = resolveRecordShareGateKind({
-      readability: objectMetadata.readability,
+      readability: getEffectiveReadability(objectMetadata),
       isOwningApplication: this.isSubscriberOwningApplication(
         subscriberAuthContext,
         objectMetadata,
@@ -661,7 +664,7 @@ export class ObjectRecordEventPublisher {
           (linkedFlatObjectMetadata) => [
             linkedFlatObjectMetadata.id,
             resolveRecordShareGateKind({
-              readability: linkedFlatObjectMetadata.readability,
+              readability: getEffectiveReadability(linkedFlatObjectMetadata),
               isOwningApplication: this.isSubscriberOwningApplication(
                 subscriberAuthContext,
                 linkedFlatObjectMetadata,

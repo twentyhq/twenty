@@ -1,3 +1,4 @@
+import { MetadataReadability } from 'twenty-shared/types';
 import { z } from 'zod';
 
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
@@ -35,4 +36,10 @@ export const objectMetadataItemSchema = z.object({
   updatedAt: z.iso.datetime(),
   shortcut: z.string().nullable().optional(),
   isLabelSyncedWithName: z.boolean(),
+  readability: z.enum(MetadataReadability).optional(),
+  readabilityParentFieldUniversalIdentifiers: z
+    .array(z.string())
+    .nullable()
+    .optional(),
+  ownerFieldMetadataId: z.uuid().nullable().optional(),
 });

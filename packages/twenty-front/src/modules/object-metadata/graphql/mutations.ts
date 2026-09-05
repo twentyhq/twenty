@@ -213,6 +213,9 @@ export const UPDATE_ONE_OBJECT_METADATA_ITEM = gql`
       imageIdentifierFieldMetadataId
       isLabelSyncedWithName
       applicationId
+      readability
+      readabilityParentFieldUniversalIdentifiers
+      ownerFieldMetadataId
     }
   }
 `;

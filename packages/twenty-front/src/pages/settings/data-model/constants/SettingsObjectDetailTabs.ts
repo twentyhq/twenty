@@ -4,5 +4,6 @@ export const SETTINGS_OBJECT_DETAIL_TABS = {
     FIELDS: 'fields',
     SETTINGS: 'settings',
     LAYOUT: 'layout',
+    SHARING: 'sharing',
   },
 } as const;
