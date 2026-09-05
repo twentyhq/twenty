@@ -735,6 +735,47 @@ describe('isRecordMatchingFilter', () => {
       ).toBe(false);
     });
 
+    it('matches a to-many relation when any loaded related record satisfies the nested filter', () => {
+      const personMockObjectMetadataItem = objectMetadataItems.find(
+        (item) => item.nameSingular === 'person',
+      )!;
+
+      const filter = {
+        pointOfContactForOpportunities: {
+          id: { eq: opportunityWithPointOfContact.id },
+        },
+      } as RecordGqlOperationFilter;
+
+      const personWithOpportunities = {
+        id: personId,
+        pointOfContactForOpportunities: [
+          { id: '20202020-0000-4000-8000-000000000001' },
+          { id: opportunityWithPointOfContact.id },
+        ],
+      };
+
+      expect(
+        isRecordMatchingFilter({
+          record: personWithOpportunities,
+          filter,
+          objectMetadataItem: personMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(true);
+
+      expect(
+        isRecordMatchingFilter({
+          record: {
+            ...personWithOpportunities,
+            pointOfContactForOpportunities: [],
+          },
+          filter,
+          objectMetadataItem: personMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(false);
+    });
+
     it('evaluates composite conditions against the related record', () => {
       const filter = {
         pointOfContact: {
@@ -824,7 +865,7 @@ describe('isRecordMatchingFilter', () => {
       ).toBe(true);
     });
 
-    it('does not match a nested filter on a list of related records', () => {
+    it('matches a nested filter on a list of related records when one of them satisfies it', () => {
       const filter = {
         people: { id: { eq: personId } },
       } as RecordGqlOperationFilter;
@@ -834,6 +875,18 @@ describe('isRecordMatchingFilter', () => {
           record: {
             ...companiesMock[0],
             people: [{ id: personId }],
+          },
+          filter,
+          objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(true);
+
+      expect(
+        isRecordMatchingFilter({
+          record: {
+            ...companiesMock[0],
+            people: [{ id: '20202020-0000-4000-8000-000000000001' }],
           },
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,

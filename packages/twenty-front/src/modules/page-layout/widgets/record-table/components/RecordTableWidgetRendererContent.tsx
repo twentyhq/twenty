@@ -5,7 +5,10 @@ import { RecordCalendarWidget } from '@/object-record/record-calendar-widget/com
 import { RecordListWidget } from '@/object-record/record-list-widget/components/RecordListWidget';
 import { RecordTableWidget } from '@/object-record/record-table-widget/components/RecordTableWidget';
 import { RecordTableWidgetProvider } from '@/object-record/record-table-widget/components/RecordTableWidgetProvider';
-import { type RecordTableWidgetNestedRelationCreateThrough } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
+import {
+  type RecordTableWidgetJunctionCreateThrough,
+  type RecordTableWidgetNestedRelationCreateThrough,
+} from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { recordTableWidgetViewDraftByWidgetIdComponentFamilySelector } from '@/page-layout/states/selectors/recordTableWidgetViewDraftByWidgetIdComponentFamilySelector';
 import {
@@ -28,6 +31,7 @@ type RecordTableWidgetRendererContentProps = {
   recordLimit?: number;
   instanceIdSuffix?: string;
   nestedRelationCreateThrough?: RecordTableWidgetNestedRelationCreateThrough;
+  junctionCreateThrough?: RecordTableWidgetJunctionCreateThrough;
 };
 
 export const RecordTableWidgetRendererContent = ({
@@ -39,6 +43,7 @@ export const RecordTableWidgetRendererContent = ({
   recordLimit,
   instanceIdSuffix,
   nestedRelationCreateThrough,
+  junctionCreateThrough,
 }: RecordTableWidgetRendererContentProps) => {
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataId,
@@ -98,6 +103,7 @@ export const RecordTableWidgetRendererContent = ({
       recordLimit={recordLimit}
       instanceIdSuffix={instanceIdSuffix}
       nestedRelationCreateThrough={nestedRelationCreateThrough}
+      junctionCreateThrough={junctionCreateThrough}
       contextStoreViewType={getContextStoreViewType(widgetViewLayout)}
     >
       {renderWidgetForLayout[widgetViewLayout]()}

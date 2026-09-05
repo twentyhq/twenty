@@ -1,8 +1,10 @@
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isOneToManyRelationField } from '@/object-metadata/utils/isOneToManyRelationField';
 import { getFieldWidgetRelationTraversal } from '@/page-layout/widgets/field/utils/getFieldWidgetRelationTraversal';
 import { isFieldWidgetEligibleNestedParentField } from '@/page-layout/widgets/field/utils/isFieldWidgetEligibleNestedParentField';
 import { useAddDraftViewForFieldRelationTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForFieldRelationTableWidget';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import {
   FieldDisplayMode,
@@ -23,6 +25,8 @@ export const useResolveFieldWidgetRelationTableViewIdChange = (
 ) => {
   const { addDraftViewForFieldRelationTableWidget } =
     useAddDraftViewForFieldRelationTableWidget(pageLayoutId);
+
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   // The embedded view must always list the selected chain's terminal object.
   // Whenever the selection results in a table widget, a fresh draft view is
@@ -46,6 +50,7 @@ export const useResolveFieldWidgetRelationTableViewIdChange = (
     } = getFieldWidgetRelationTraversal({
       sourceFieldMetadataItem: selectedField,
       nestedRelationFieldMetadataItem: selectedNestedField,
+      objectMetadataItems,
     });
 
     const isValidRelationChain =

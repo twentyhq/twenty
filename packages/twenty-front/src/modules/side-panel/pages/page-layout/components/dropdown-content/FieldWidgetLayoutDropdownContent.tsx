@@ -119,6 +119,7 @@ export const FieldWidgetLayoutDropdownContent = () => {
           sourceFieldMetadataItem: fieldMetadataItem,
           nestedRelationFieldMetadataItem:
             resolvedNestedRelation?.nestedRelationFieldMetadataItem,
+          objectMetadataItems,
         });
 
   const targetObjectMetadataId = relationTraversal?.targetObjectMetadataId;
@@ -203,8 +204,16 @@ export const FieldWidgetLayoutDropdownContent = () => {
       return;
     }
 
+    // A view listing another object than the traversal's target predates
+    // junction traversal and would embed the wrong object, and a view id that
+    // resolves to nothing was deleted, so both are replaced.
+    const isCurrentViewOnTargetObject =
+      isDefined(currentViewId) &&
+      isDefined(embeddedWidgetView) &&
+      embeddedWidgetView.objectMetadataId === targetObjectMetadataId;
+
     const viewId =
-      currentViewId ??
+      (isCurrentViewOnTargetObject ? currentViewId : undefined) ??
       (isDefined(targetObjectMetadataId) && isDefined(inverseFieldMetadataId)
         ? addDraftViewForFieldRelationTableWidget({
             widgetId: widgetInEditMode.id,

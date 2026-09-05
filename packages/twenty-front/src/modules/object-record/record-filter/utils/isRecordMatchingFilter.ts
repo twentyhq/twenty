@@ -136,7 +136,7 @@ const isRecordMatchingNestedRelationFilter = ({
     return false;
   }
 
-  if (!isObject(relationRecord) || Array.isArray(relationRecord)) {
+  if (!isObject(relationRecord)) {
     return isWithinNegatedFilter;
   }
 
@@ -150,13 +150,25 @@ const isRecordMatchingNestedRelationFilter = ({
     return isWithinNegatedFilter;
   }
 
-  return isRecordMatchingFilter({
-    record: relationRecord,
-    filter: nestedFilter,
-    objectMetadataItem: relationTargetObjectMetadataItem,
-    objectMetadataItems,
-    isWithinNegatedFilter,
-  });
+  const isRecordMatchingNestedFilter = (record: unknown) =>
+    isRecordMatchingFilter({
+      record,
+      filter: nestedFilter,
+      objectMetadataItem: relationTargetObjectMetadataItem,
+      objectMetadataItems,
+      isWithinNegatedFilter,
+    });
+
+  // A to-many relation matches when any of its loaded records does, the way
+  // the backend EXISTS does.
+  if (Array.isArray(relationRecord)) {
+    return relationRecord.some(
+      (relatedRecord) =>
+        isObject(relatedRecord) && isRecordMatchingNestedFilter(relatedRecord),
+    );
+  }
+
+  return isRecordMatchingNestedFilter(relationRecord);
 };
 
 export const isRecordMatchingFilter = ({

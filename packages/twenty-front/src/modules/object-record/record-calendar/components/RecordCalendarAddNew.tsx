@@ -68,14 +68,13 @@ export const RecordCalendarAddNew = ({
       })
     : false;
 
-  // Creating in a nested relation widget requires picking the related record
-  // to create through, which only the table layout offers today.
-  const nestedRelationCreateThrough = useContext(
-    RecordTableWidgetContext,
-  )?.nestedRelationCreateThrough;
+  // Creating in a nested relation or junction widget requires picking the
+  // related record, which only the table layout offers today.
+  const recordTableWidgetContext = useContext(RecordTableWidgetContext);
 
   if (
-    isDefined(nestedRelationCreateThrough) ||
+    isDefined(recordTableWidgetContext?.nestedRelationCreateThrough) ||
+    isDefined(recordTableWidgetContext?.junctionCreateThrough) ||
     isRecordCalendarReadOnly ||
     hasAnySoftDeleteFilterOnView === true ||
     !canCreateRecordsForObjectMetadataItem({

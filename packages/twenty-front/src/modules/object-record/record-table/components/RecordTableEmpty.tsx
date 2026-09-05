@@ -19,6 +19,7 @@ import { resizeFieldOffsetComponentState } from '@/object-record/record-table/st
 import { useRecordTableFirstColumnWidthOverride } from '@/object-record/record-table/hooks/useRecordTableFirstColumnWidthOverride';
 import { computeVisibleRecordFieldsWidthOnTable } from '@/object-record/record-table/utils/computeVisibleRecordFieldsWidthOnTable';
 import { RecordTableVirtualizedDataChangedEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedDataChangedEffect';
+import { RecordTableVirtualizedJunctionDataChangedEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedJunctionDataChangedEffect';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { useMemo } from 'react';
@@ -132,6 +133,7 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
       <RecordTableColumnWidthEffect />
       <RecordTableWidthEffect />
       <RecordTableVirtualizedDataChangedEffect />
+      <RecordTableVirtualizedJunctionDataChangedEffect />
     </StyledEmptyStateContainer>
   );
 };

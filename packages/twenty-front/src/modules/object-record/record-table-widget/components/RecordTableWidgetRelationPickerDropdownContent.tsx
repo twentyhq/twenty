@@ -1,7 +1,6 @@
 import { RecordPickerLoadingSkeletonList } from '@/object-record/record-picker/components/RecordPickerLoadingSkeletonList';
 import { RecordPickerNoRecordFoundMenuItem } from '@/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem';
-import { RecordTableWidgetNestedRelationPickerMenuItem } from '@/object-record/record-table-widget/components/RecordTableWidgetNestedRelationPickerMenuItem';
-import { type RecordTableWidgetNestedRelationCreateThrough } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
+import { RecordTableWidgetRelationPickerMenuItem } from '@/object-record/record-table-widget/components/RecordTableWidgetRelationPickerMenuItem';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -12,16 +11,19 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
-type RecordTableWidgetNestedRelationPickerDropdownContentProps = {
-  nestedRelationCreateThrough: RecordTableWidgetNestedRelationCreateThrough;
+type RecordTableWidgetRelationPickerDropdownContentProps = {
+  objectNameSingular: string;
+  recordsFilter: RecordGqlOperationFilter;
   onRelationRecordSelected: (relationRecordId: string) => void;
 };
 
-export const RecordTableWidgetNestedRelationPickerDropdownContent = ({
-  nestedRelationCreateThrough,
+export const RecordTableWidgetRelationPickerDropdownContent = ({
+  objectNameSingular,
+  recordsFilter,
   onRelationRecordSelected,
-}: RecordTableWidgetNestedRelationPickerDropdownContentProps) => {
+}: RecordTableWidgetRelationPickerDropdownContentProps) => {
   const [searchFilter, setSearchFilter] = useState('');
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
@@ -31,10 +33,9 @@ export const RecordTableWidgetNestedRelationPickerDropdownContent = ({
   const { recordsToSelect, loading } = useRecordsForSelect({
     searchFilterText: searchFilter,
     selectedIds: [],
-    objectNameSingular:
-      nestedRelationCreateThrough.relationObjectMetadataNameSingular,
+    objectNameSingular,
     allowRequestsToTwentyIcons: true,
-    filter: nestedRelationCreateThrough.relationRecordsFilter,
+    filter: recordsFilter,
   });
 
   return (
@@ -60,7 +61,7 @@ export const RecordTableWidgetNestedRelationPickerDropdownContent = ({
           ) : (
             <>
               {recordsToSelect.map((relationRecord) => (
-                <RecordTableWidgetNestedRelationPickerMenuItem
+                <RecordTableWidgetRelationPickerMenuItem
                   key={relationRecord.id}
                   relationRecord={relationRecord}
                   onSelect={onRelationRecordSelected}
