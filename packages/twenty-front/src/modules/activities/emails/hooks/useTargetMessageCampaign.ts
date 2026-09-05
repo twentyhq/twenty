@@ -13,7 +13,7 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 export const useTargetMessageCampaign = () => {
   const targetRecord = useTargetRecord();
 
-  const { record: campaign, loading } = useFindOneRecord<MessageCampaign>({
+  const { record: campaign } = useFindOneRecord<MessageCampaign>({
     objectNameSingular: CoreObjectNameSingular.MessageCampaign,
     objectRecordId: targetRecord.id,
   });
@@ -25,7 +25,10 @@ export const useTargetMessageCampaign = () => {
     fieldName: 'status',
   }) as MessageCampaignStatus | null;
 
-  if (loading || !isDefined(campaign)) {
+  // Apollo reports loading whenever the query has a request in flight, even
+  // with the record already in hand, so gating on it would unmount the whole
+  // composer around every save.
+  if (!isDefined(campaign)) {
     return { campaign: undefined, isDraft: false };
   }
 
