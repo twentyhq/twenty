@@ -11,6 +11,8 @@ All notable changes to this application are documented in this file.
   clear it to try again.
 - Hold a recording in Processing until its media lands or is settled as
   unavailable, rather than completing it as soon as the transcript arrives.
+- Reconcile unfinished local media imports from the latest seven days daily,
+  without scanning Fathom history, and finish cleanup after disconnection.
 
 ## 0.1.0
 

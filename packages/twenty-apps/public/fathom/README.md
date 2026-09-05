@@ -27,6 +27,8 @@ emails do not need to match.
 - Fathom generates the downloadable video in the background, so a recording
   stays in Processing for a few minutes after its transcript arrives, until its
   media lands or is settled as unavailable.
+- A daily reconciliation pass scans local Call Recordings started in the last
+  seven days and resumes media imports inactive for at least 30 minutes.
 - Media is skipped for recordings above 500 MB, for recordings Fathom has no
   downloadable media for, and for limited-access shares that the connected
   account may view but not download. The Fathom Media Failure Reason field on
