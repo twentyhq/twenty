@@ -23,6 +23,7 @@ export { DEFAULT_NUMBER_OF_GROUPS_LIMIT } from './DefaultNumberOfGroupsLimit';
 export { DEFAULT_RELATIVE_DATE_FILTER_VALUE } from './DefaultRelativeDateFilterValue';
 export { DEFAULT_VISIBLE_ADDRESS_SUBFIELDS } from './DefaultVisibleAddressSubfields';
 export { DEFAULT_WIDGET_SIZE } from './DefaultWidgetSize';
+export { DEPRECATED_IANA_TIME_ZONE_ALIASES } from './DeprecatedIanaTimeZoneAliases';
 export { DOCUMENTATION_BASE_URL } from './DocumentationBaseUrl';
 export { DOCUMENTATION_DEFAULT_LANGUAGE } from './DocumentationDefaultLanguage';
 export { DOCUMENTATION_DEFAULT_PATH } from './DocumentationDefaultPath';
