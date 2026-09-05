@@ -10,11 +10,11 @@ import { AppOAuthRevokeService } from 'src/engine/core-modules/application/conne
 import { CALENDAR_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/calendar-channel/constants/calendar-channel-deleted.constant';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type CalendarChannelDeletedEvent } from 'src/engine/metadata-modules/calendar-channel/types/calendar-channel-deleted.type';
-import { CONNECTED_ACCOUNT_DELETED_EVENT } from 'src/engine/metadata-modules/connected-account/constants/connected-account-deleted.constant';
 import {
   ConnectedAccountException,
   ConnectedAccountExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/connected-account.exception';
+import { CONNECTED_ACCOUNT_DELETED_EVENT } from 'src/engine/metadata-modules/connected-account/constants/connected-account-deleted.constant';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type ConnectedAccountDeletedEvent } from 'src/engine/metadata-modules/connected-account/types/connected-account-deleted.type';
 import { isConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-usable-by-caller.util';
@@ -46,9 +46,34 @@ export class ConnectedAccountMetadataService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<ConnectedAccountEntity[]> {
-    return this.repository.find({
+    const ownConnectedAccounts = await this.repository.find({
       where: { userWorkspaceId, workspaceId },
     });
+
+    const sharedConnectedAccountIds =
+      await this.getWorkspaceSharedConnectedAccountIds({ workspaceId });
+
+    const ownConnectedAccountIds = new Set(
+      ownConnectedAccounts.map((connectedAccount) => connectedAccount.id),
+    );
+
+    const additionalSharedAccountIds = sharedConnectedAccountIds.filter(
+      (id) => !ownConnectedAccountIds.has(id),
+    );
+
+    if (additionalSharedAccountIds.length === 0) {
+      return ownConnectedAccounts;
+    }
+
+    const sharedConnectedAccounts = await this.repository.find({
+      where: {
+        id: In(additionalSharedAccountIds),
+        workspaceId,
+        visibility: 'workspace',
+      },
+    });
+
+    return [...ownConnectedAccounts, ...sharedConnectedAccounts];
   }
 
   async findById({
