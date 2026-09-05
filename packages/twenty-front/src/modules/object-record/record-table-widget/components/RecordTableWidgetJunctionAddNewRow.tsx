@@ -5,21 +5,27 @@ import { RecordTableActionRow } from '@/object-record/record-table/record-table-
 import { RecordTableWidgetRelationPickerDropdownContent } from '@/object-record/record-table-widget/components/RecordTableWidgetRelationPickerDropdownContent';
 import { type RecordTableWidgetJunctionCreateThrough } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { useCreateJunctionRecordFromTableWidget } from '@/object-record/record-table-widget/hooks/useCreateJunctionRecordFromTableWidget';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { IconPlus } from 'twenty-ui/icon';
+import { logError } from '~/utils/logError';
 
 type RecordTableWidgetJunctionAddNewRowProps = {
   dropdownId: string;
   junctionCreateThrough: RecordTableWidgetJunctionCreateThrough;
+  targetRecordsFilter?: RecordGqlOperationFilter;
 };
 
 export const RecordTableWidgetJunctionAddNewRow = ({
   dropdownId,
   junctionCreateThrough,
+  targetRecordsFilter = junctionCreateThrough.targetRecordsFilter,
 }: RecordTableWidgetJunctionAddNewRowProps) => {
   const { closeDropdown } = useCloseDropdown();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const { objectMetadataItem: junctionObjectMetadataItem } =
     useObjectMetadataItemById({
@@ -47,7 +53,10 @@ export const RecordTableWidgetJunctionAddNewRow = ({
 
   const handleTargetRecordSelected = (targetRecordId: string) => {
     closeDropdown(dropdownId);
-    createJunctionRecord(targetRecordId);
+    createJunctionRecord(targetRecordId).catch((error) => {
+      logError(error);
+      enqueueErrorSnackBar({ message: t`Failed to add record` });
+    });
   };
 
   return (
@@ -63,7 +72,7 @@ export const RecordTableWidgetJunctionAddNewRow = ({
           objectNameSingular={
             junctionCreateThrough.targetObjectMetadataNameSingular
           }
-          recordsFilter={junctionCreateThrough.targetRecordsFilter}
+          recordsFilter={targetRecordsFilter}
           onRelationRecordSelected={handleTargetRecordSelected}
         />
       }
