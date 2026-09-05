@@ -1,5 +1,6 @@
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { SettingsRolePermissionsObjectLevelCreateRecordToggle } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelCreateRecordToggle';
 import { SettingsRolePermissionsObjectLevelOverrideCellContainer } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCellContainer';
 import { SettingsRolePermissionsObjectLevelSeeFieldsValueForObject } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject';
 import { SettingsRolePermissionsObjectLevelTableRowOptionsDropdown } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown';
@@ -69,6 +70,13 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
           objectLabel={objectLabelPlural}
         />
       </TableCell>
+      <TableCell onClick={(event) => event.stopPropagation()}>
+        <SettingsRolePermissionsObjectLevelCreateRecordToggle
+          roleId={roleId}
+          objectMetadataItem={objectMetadataItem}
+          isEditable={isEditable}
+        />
+      </TableCell>
       <TableCell>
         <SettingsRolePermissionsObjectLevelSeeFieldsValueForObject
           roleId={roleId}
@@ -81,7 +89,6 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
           objectMetadataItem={objectMetadataItem}
         />
       </TableCell>
-      <TableCell></TableCell>
       <TableCell
         align="right"
         padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}

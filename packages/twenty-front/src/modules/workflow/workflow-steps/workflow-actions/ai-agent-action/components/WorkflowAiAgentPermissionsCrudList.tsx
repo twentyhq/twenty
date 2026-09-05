@@ -28,7 +28,13 @@ export const WorkflowAiAgentPermissionsCrudList = ({
   return (
     <SidePanelGroup heading={t`CRUD`}>
       {permissions.map((permission) => {
-        const isEnabled = Boolean(objectPermissions?.[permission.key]);
+        const isEnabled = Boolean(
+          (
+            objectPermissions as
+              | (ObjectPermission & { canCreateObjectRecords?: boolean | null })
+              | undefined
+          )?.[permission.key],
+        );
 
         return (
           <WorkflowAiAgentPermissionsPermissionRow

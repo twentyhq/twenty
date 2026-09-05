@@ -109,7 +109,7 @@ export default defineConfig(({ command }) => {
       // sass-embedded). CI/build relies on the ambient src/scss-modules.d.ts.
       sassDts({ esmExport: true, legacyFileFormat: true }),
       dts(dtsConfig),
-      checker(checkersConfig),
+      !isBuildCommand && checker(checkersConfig),
       {
         name: 'copy-theme-css',
         closeBundle() {

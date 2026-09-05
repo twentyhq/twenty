@@ -17,13 +17,15 @@ export type SettingsRolePermissionsObjectPermission = {
 };
 
 export type SettingsRolePermissionsObjectLevelPermission = {
-  key: keyof Pick<
-    ObjectPermission,
-    | 'canDestroyObjectRecords'
-    | 'canReadObjectRecords'
-    | 'canSoftDeleteObjectRecords'
-    | 'canUpdateObjectRecords'
-  >;
+  key:
+    | keyof Pick<
+        ObjectPermission,
+        | 'canDestroyObjectRecords'
+        | 'canReadObjectRecords'
+        | 'canSoftDeleteObjectRecords'
+        | 'canUpdateObjectRecords'
+      >
+    | 'canCreateObjectRecords';
   label: string | ReactNode;
   value?: boolean | null;
 };

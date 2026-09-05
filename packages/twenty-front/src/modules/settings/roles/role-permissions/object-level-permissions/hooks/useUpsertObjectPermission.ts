@@ -29,7 +29,8 @@ export const useUpsertObjectPermission = ({ roleId }: { roleId: string }) => {
     const isHigherPermission =
       permissionKey === 'canUpdateObjectRecords' ||
       permissionKey === 'canSoftDeleteObjectRecords' ||
-      permissionKey === 'canDestroyObjectRecords';
+      permissionKey === 'canDestroyObjectRecords' ||
+      permissionKey === 'canCreateObjectRecords';
 
     if (isHigherPermission && value !== false) {
       newPermissions.canReadObjectRecords = value;
@@ -39,6 +40,7 @@ export const useUpsertObjectPermission = ({ roleId }: { roleId: string }) => {
       newPermissions.canUpdateObjectRecords = false;
       newPermissions.canSoftDeleteObjectRecords = false;
       newPermissions.canDestroyObjectRecords = false;
+      newPermissions.canCreateObjectRecords = false;
     }
 
     if (!isDefined(existingObjectPermission)) {

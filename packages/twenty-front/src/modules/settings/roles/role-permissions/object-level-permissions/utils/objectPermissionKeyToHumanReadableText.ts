@@ -6,6 +6,7 @@ export const objectPermissionKeyToHumanReadable = (
 ) => {
   const permissionAction: Record<SettingsRoleObjectPermissionKey, string> = {
     canReadObjectRecords: t`see`,
+    canCreateObjectRecords: t`create`,
     canUpdateObjectRecords: t`update`,
     canSoftDeleteObjectRecords: t`delete`,
     canDestroyObjectRecords: t`destroy`,

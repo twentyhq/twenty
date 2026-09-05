@@ -2,8 +2,10 @@ import {
   type IconComponent,
   IconEye,
   IconEyeOff,
+  IconForbid,
   IconPencil,
   IconPencilOff,
+  IconPlus,
   IconTrash,
   IconTrashOff,
   IconTrashX,
@@ -19,7 +21,8 @@ export type SettingsRoleObjectPermissionKey =
   | 'canReadObjectRecords'
   | 'canUpdateObjectRecords'
   | 'canSoftDeleteObjectRecords'
-  | 'canDestroyObjectRecords';
+  | 'canDestroyObjectRecords'
+  | 'canCreateObjectRecords';
 
 export const SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG: Record<
   SettingsRoleObjectPermissionKey,
@@ -28,6 +31,10 @@ export const SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG: Record<
   canReadObjectRecords: {
     Icon: IconEye,
     IconForbidden: IconEyeOff,
+  },
+  canCreateObjectRecords: {
+    Icon: IconPlus,
+    IconForbidden: IconForbid,
   },
   canUpdateObjectRecords: {
     Icon: IconPencil,
