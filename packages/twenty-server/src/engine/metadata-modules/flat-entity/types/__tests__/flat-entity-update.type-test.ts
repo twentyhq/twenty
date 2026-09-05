@@ -55,6 +55,8 @@ type Assertions = [
       | 'labelIdentifierFieldMetadataUniversalIdentifier'
       | 'imageIdentifierFieldMetadataId'
       | 'imageIdentifierFieldMetadataUniversalIdentifier'
+      | 'ownerFieldMetadataId'
+      | 'ownerFieldMetadataUniversalIdentifier'
       | 'isSearchable'
       | 'isUIEditable'
       | 'isUICreatable'
@@ -70,6 +72,7 @@ type Assertions = [
       {
         labelIdentifierFieldMetadataUniversalIdentifier?: never;
         imageIdentifierFieldMetadataUniversalIdentifier?: never;
+        ownerFieldMetadataUniversalIdentifier?: never;
       }
     >
   >,

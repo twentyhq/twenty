@@ -61,26 +61,45 @@ const resolveCreatorRoleId = ({
   return undefined;
 };
 
+const buildOwnerRow = ({
+  workspaceMemberId,
+  recordId,
+}: {
+  workspaceMemberId: string;
+  recordId: string;
+}): RecordShareInputForRecord => ({
+  principalId: workspaceMemberId,
+  principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+  accessLevel: RecordShareAccessLevel.FULL,
+  rowCause: RecordShareRowCause.OWNER,
+  sourceId: recordId,
+});
+
 const buildCreatorRows = ({
   authContext,
   apiKeyRoleMap,
   recordId,
+  ownerWorkspaceMemberId,
   shareWithPrincipals,
 }: {
   authContext: WorkspaceAuthContext;
   apiKeyRoleMap: Record<string, string>;
   recordId: string;
+  ownerWorkspaceMemberId: string | null | undefined;
   shareWithPrincipals: Pick<RecordShareInput, 'principalId'>[];
 }): RecordShareInputForRecord[] => {
+  if (isDefined(ownerWorkspaceMemberId)) {
+    return [
+      buildOwnerRow({ workspaceMemberId: ownerWorkspaceMemberId, recordId }),
+    ];
+  }
+
   if (isUserAuthContext(authContext)) {
     return [
-      {
-        principalId: authContext.workspaceMemberId,
-        principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
-        accessLevel: RecordShareAccessLevel.FULL,
-        rowCause: RecordShareRowCause.OWNER,
-        sourceId: recordId,
-      },
+      buildOwnerRow({
+        workspaceMemberId: authContext.workspaceMemberId,
+        recordId,
+      }),
     ];
   }
 
@@ -112,6 +131,7 @@ export const buildRecordShareInputsForCreatedRecords = ({
   apiKeyRoleMap,
   isRecordSharingEnabled,
   shareWith = [],
+  ownerWorkspaceMemberIdByRecordId = {},
 }: {
   recordIds: string[];
   objectMetadataId: string;
@@ -119,6 +139,7 @@ export const buildRecordShareInputsForCreatedRecords = ({
   apiKeyRoleMap: Record<string, string>;
   isRecordSharingEnabled: boolean;
   shareWith?: ShareWithInput[];
+  ownerWorkspaceMemberIdByRecordId?: Record<string, string | null | undefined>;
 }): RecordShareInput[] => {
   if (
     !isUserAuthContext(authContext) &&
@@ -143,6 +164,7 @@ export const buildRecordShareInputsForCreatedRecords = ({
       authContext,
       apiKeyRoleMap,
       recordId,
+      ownerWorkspaceMemberId: ownerWorkspaceMemberIdByRecordId[recordId],
       shareWithPrincipals,
     }).map((creatorRow) => ({ recordId, objectMetadataId, ...creatorRow })),
     ...shareWithPrincipals.map((shareWithPrincipal) => ({

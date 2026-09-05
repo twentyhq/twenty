@@ -55,6 +55,8 @@ export const fromObjectManifestToUniversalFlatObjectMetadata = ({
       objectManifest.labelIdentifierFieldMetadataUniversalIdentifier,
     imageIdentifierFieldMetadataUniversalIdentifier:
       objectManifest.imageIdentifierFieldMetadataUniversalIdentifier ?? null,
+    ownerFieldMetadataUniversalIdentifier:
+      objectManifest.ownerFieldMetadataUniversalIdentifier ?? null,
     createdAt: now,
     updatedAt: now,
   };

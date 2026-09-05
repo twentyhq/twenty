@@ -72,6 +72,7 @@ exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped
   "objectPermissionUniversalIdentifiers": [],
   "openRecordIn": "USER_CHOICE",
   "overrides": null,
+  "ownerFieldMetadataUniversalIdentifier": null,
   "pageLayoutUniversalIdentifiers": [],
   "readability": "OPEN",
   "readabilityParentFieldUniversalIdentifiers": null,

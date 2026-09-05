@@ -54,6 +54,7 @@ import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
+import { findOwnerField } from 'src/engine/record-share/utils/find-owner-field.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { containsNestedRelationCreate } from 'src/engine/twenty-orm/utils/contains-nested-relation-create.util';
@@ -288,12 +289,15 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const { selectedFieldsResult } = args;
 
     if (!args.upsert) {
-      const selectedColumns = buildColumnsToReturn({
-        select: selectedFieldsResult.select,
-        relations: selectedFieldsResult.relations,
-        flatObjectMetadata,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
+      const selectedColumns = this.withOwnerJoinColumn({
+        columnsToReturn: buildColumnsToReturn({
+          select: selectedFieldsResult.select,
+          relations: selectedFieldsResult.relations,
+          flatObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        }),
+        queryRunnerContext,
       });
 
       const writeRepository = this.getWriteRepository(queryRunnerContext);
@@ -383,12 +387,15 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       raw: [],
     };
 
-    const columnsToReturn = buildColumnsToReturn({
-      select: selectedFieldsResult.select,
-      relations: selectedFieldsResult.relations,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
+    const columnsToReturn = this.withOwnerJoinColumn({
+      columnsToReturn: buildColumnsToReturn({
+        select: selectedFieldsResult.select,
+        relations: selectedFieldsResult.relations,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      }),
+      queryRunnerContext,
     });
 
     if (recordsToUpdate.length > 0) {
@@ -614,6 +621,9 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       return;
     }
 
+    const ownerJoinColumnName =
+      this.findOwnerJoinColumnName(queryRunnerContext);
+
     await this.recordShareService.insertMany({
       workspaceId: authContext.workspace.id,
       recordShares: buildRecordShareInputsForCreatedRecords({
@@ -623,9 +633,43 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         apiKeyRoleMap: repository.internalContext.apiKeyRoleMap,
         isRecordSharingEnabled: this.isRecordSharingEnabled(queryRunnerContext),
         shareWith,
+        ownerWorkspaceMemberIdByRecordId: isDefined(ownerJoinColumnName)
+          ? Object.fromEntries(
+              insertResult.generatedMaps.map((record) => [
+                record.id,
+                record[ownerJoinColumnName],
+              ]),
+            )
+          : undefined,
       }),
       transactionScope,
     });
+  }
+
+  private withOwnerJoinColumn({
+    columnsToReturn,
+    queryRunnerContext,
+  }: {
+    columnsToReturn: string[];
+    queryRunnerContext: CommonExtendedQueryRunnerContext;
+  }): string[] {
+    const ownerJoinColumnName =
+      this.findOwnerJoinColumnName(queryRunnerContext);
+
+    return isDefined(ownerJoinColumnName) &&
+      !columnsToReturn.includes(ownerJoinColumnName)
+      ? [...columnsToReturn, ownerJoinColumnName]
+      : columnsToReturn;
+  }
+
+  private findOwnerJoinColumnName({
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+  }: CommonExtendedQueryRunnerContext): string | undefined {
+    return flatObjectMetadata.readability === MetadataReadability.PRIVATE
+      ? findOwnerField({ flatObjectMetadata, flatFieldMetadataMaps })
+          ?.joinColumnName
+      : undefined;
   }
 
   private isRecordSharingEnabled(

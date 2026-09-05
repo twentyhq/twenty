@@ -25,4 +25,5 @@ export type ObjectManifest = SyncableEntityOptions & {
   fields: ObjectFieldManifest[];
   labelIdentifierFieldMetadataUniversalIdentifier: string;
   imageIdentifierFieldMetadataUniversalIdentifier?: string | null;
+  ownerFieldMetadataUniversalIdentifier?: string | null;
 };

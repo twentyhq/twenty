@@ -190,4 +190,6 @@ export const mockPersonFlatObjectMetadata = (
   commandMenuItemUniversalIdentifiers: [],
   labelIdentifierFieldMetadataUniversalIdentifier: null,
   imageIdentifierFieldMetadataUniversalIdentifier: null,
+  ownerFieldMetadataId: null,
+  ownerFieldMetadataUniversalIdentifier: null,
 });

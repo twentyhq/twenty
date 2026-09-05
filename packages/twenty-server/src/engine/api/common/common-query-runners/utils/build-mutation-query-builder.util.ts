@@ -1,3 +1,5 @@
+import { type RecordShareAccessLevel } from 'twenty-shared/types';
+
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { type GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
@@ -11,6 +13,7 @@ type BuildMutationQueryBuilderArgs = {
   filter: Partial<ObjectRecordFilter>;
   commonQueryParser: GraphqlQueryParser;
   kind: MutationKind;
+  recordShareAccessLevels?: RecordShareAccessLevel[];
 };
 
 export const buildMutationQueryBuilder = ({
@@ -19,6 +22,7 @@ export const buildMutationQueryBuilder = ({
   filter,
   commonQueryParser,
   kind,
+  recordShareAccessLevels,
 }: BuildMutationQueryBuilderArgs): {
   selectQueryBuilder: WorkspaceSelectQueryBuilder;
   rowLevelPermissionsApplied: boolean;
@@ -40,7 +44,11 @@ export const buildMutationQueryBuilder = ({
     .select(`${alias}.id`)
     .withDeleted();
 
-  repository.applyWriteRowLevelPermissions(idSubQueryBuilder, kind);
+  repository.applyWriteRowLevelPermissions(
+    idSubQueryBuilder,
+    kind,
+    recordShareAccessLevels,
+  );
 
   const selectQueryBuilder = repository
     .createQueryBuilder(alias)

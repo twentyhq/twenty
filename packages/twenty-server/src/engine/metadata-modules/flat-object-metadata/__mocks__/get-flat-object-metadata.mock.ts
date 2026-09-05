@@ -39,6 +39,7 @@ export const getFlatObjectMetadataMock = (
     color: null,
     id: faker.string.uuid(),
     imageIdentifierFieldMetadataId,
+    ownerFieldMetadataId: null,
     isActive: true,
     isAuditLogged: true,
     isLabelSyncedWithName: false,
@@ -74,6 +75,7 @@ export const getFlatObjectMetadataMock = (
       labelIdentifierFieldMetadataId,
     imageIdentifierFieldMetadataUniversalIdentifier:
       imageIdentifierFieldMetadataId,
+    ownerFieldMetadataUniversalIdentifier: null,
     ...overrides,
   };
 };

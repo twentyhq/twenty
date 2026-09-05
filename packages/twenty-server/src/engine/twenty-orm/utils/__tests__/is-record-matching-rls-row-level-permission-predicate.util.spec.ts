@@ -65,6 +65,8 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     commandMenuItemUniversalIdentifiers: [],
     labelIdentifierFieldMetadataUniversalIdentifier: null,
     imageIdentifierFieldMetadataUniversalIdentifier: null,
+    ownerFieldMetadataId: null,
+    ownerFieldMetadataUniversalIdentifier: null,
   });
 
   const createMockFlatFieldMetadata = (

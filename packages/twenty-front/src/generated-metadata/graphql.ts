@@ -2968,6 +2968,7 @@ export type Mutation = {
   setAppKeyValue: AppKeyValue;
   setEnterpriseKey: EnterpriseLicenseInfoDto;
   setResourceCreditSubscriptionPrice: BillingUpdate;
+  shareRecord: RecordShares;
   signIn: AvailableWorkspacesAndAccessTokens;
   signOut: Scalars['Boolean']['output'];
   signUp: AvailableWorkspacesAndAccessTokens;
@@ -2984,9 +2985,11 @@ export type Mutation = {
   syncMarketplaceCatalog: Scalars['Boolean']['output'];
   trackAnalytics: Analytics;
   transferApplicationRegistrationOwnership: ApplicationRegistration;
+  transferRecordOwnership: RecordShares;
   triggerInstallAppsOnboardingStep: OnboardingStepSuccess;
   unarchiveChatThread: AgentChatThread;
   uninstallApplication: Scalars['Boolean']['output'];
+  unshareRecord: RecordShares;
   updateApiKey?: Maybe<ApiKey>;
   updateApplication: Application;
   updateApplicationRegistration: ApplicationRegistration;
@@ -3864,6 +3867,13 @@ export type MutationSetResourceCreditSubscriptionPriceArgs = {
 };
 
 
+export type MutationShareRecordArgs = {
+  objectMetadataId: Scalars['UUID']['input'];
+  recordId: Scalars['UUID']['input'];
+  shareWith: Array<ShareWithInput>;
+};
+
+
 export type MutationSignInArgs = {
   captchaToken?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
@@ -3946,6 +3956,13 @@ export type MutationTransferApplicationRegistrationOwnershipArgs = {
 };
 
 
+export type MutationTransferRecordOwnershipArgs = {
+  objectMetadataId: Scalars['UUID']['input'];
+  recordId: Scalars['UUID']['input'];
+  workspaceMemberId: Scalars['UUID']['input'];
+};
+
+
 export type MutationTriggerInstallAppsOnboardingStepArgs = {
   isAutoSkipped?: Scalars['Boolean']['input'];
   universalIdentifiers: Array<Scalars['String']['input']>;
@@ -3959,6 +3976,13 @@ export type MutationUnarchiveChatThreadArgs = {
 
 export type MutationUninstallApplicationArgs = {
   universalIdentifier: Scalars['String']['input'];
+};
+
+
+export type MutationUnshareRecordArgs = {
+  objectMetadataId: Scalars['UUID']['input'];
+  principalId: Scalars['UUID']['input'];
+  recordId: Scalars['UUID']['input'];
 };
 
 
@@ -4355,6 +4379,7 @@ export type Object = {
   namePlural: Scalars['String']['output'];
   nameSingular: Scalars['String']['output'];
   openRecordIn: ObjectOpenRecordIn;
+  ownerFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   readability: MetadataReadability;
   readabilityParentFieldUniversalIdentifiers?: Maybe<Array<Scalars['UUID']['output']>>;
   searchFieldMetadataList: Array<SearchField>;
@@ -4909,6 +4934,7 @@ export type Query = {
   previewMessageCampaignAudience: CampaignAudiencePreviewDto;
   publicMarketplaceAppDetail: MarketplaceAppDetail;
   publicMarketplaceApps: Array<MarketplaceApp>;
+  recordShares: RecordShares;
   skill?: Maybe<Skill>;
   skills: Array<Skill>;
   timelineActivityTypes: Array<TimelineActivityType>;
@@ -5348,6 +5374,12 @@ export type QueryPublicMarketplaceAppsArgs = {
 };
 
 
+export type QueryRecordSharesArgs = {
+  objectMetadataId: Scalars['UUID']['input'];
+  recordId: Scalars['UUID']['input'];
+};
+
+
 export type QuerySkillArgs = {
   id: Scalars['UUID']['input'];
 };
@@ -5373,6 +5405,41 @@ export type RecordIdentifier = {
   id: Scalars['UUID']['output'];
   imageIdentifier?: Maybe<Scalars['String']['output']>;
   labelIdentifier: Scalars['String']['output'];
+};
+
+export type RecordShare = {
+  __typename?: 'RecordShare';
+  accessLevel: RecordShareAccessLevel;
+  id: Scalars['UUID']['output'];
+  principalId: Scalars['String']['output'];
+  principalType: RecordSharePrincipalType;
+  rowCause: RecordShareRowCause;
+  sourceId: Scalars['String']['output'];
+};
+
+export enum RecordShareAccessLevel {
+  FULL = 'FULL',
+  READ = 'READ',
+  READ_WRITE = 'READ_WRITE'
+}
+
+export enum RecordSharePrincipalType {
+  EVERYONE = 'EVERYONE',
+  ROLE = 'ROLE',
+  WORKSPACE_MEMBER = 'WORKSPACE_MEMBER'
+}
+
+export enum RecordShareRowCause {
+  APPLICATION = 'APPLICATION',
+  MANUAL = 'MANUAL',
+  OWNER = 'OWNER',
+  RULE = 'RULE'
+}
+
+export type RecordShares = {
+  __typename?: 'RecordShares';
+  shares: Array<RecordShare>;
+  viewerAccessLevel?: Maybe<RecordShareAccessLevel>;
 };
 
 export type RecordTableConfiguration = {
@@ -5703,6 +5770,14 @@ export type SetupSso = {
   name: Scalars['String']['output'];
   status: SsoIdentityProviderStatus;
   type: IdentityProviderType;
+};
+
+/** Grants access on the record to exactly one of a workspace member, a role or everyone */
+export type ShareWithInput = {
+  accessLevel: RecordShareAccessLevel;
+  everyone?: InputMaybe<Scalars['Boolean']['input']>;
+  roleId?: InputMaybe<Scalars['UUID']['input']>;
+  workspaceMemberId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 export type SignUp = {
@@ -6109,6 +6184,7 @@ export type UpdateObjectPayload = {
   namePlural?: InputMaybe<Scalars['String']['input']>;
   nameSingular?: InputMaybe<Scalars['String']['input']>;
   openRecordIn?: InputMaybe<ObjectOpenRecordIn>;
+  ownerFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   shortcut?: InputMaybe<Scalars['String']['input']>;
   translations?: InputMaybe<Array<MetadataTranslationOverrideInput>>;
 };

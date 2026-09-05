@@ -29,6 +29,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { MinimalMetadataModule } from 'src/engine/metadata-modules/minimal-metadata/minimal-metadata.module';
 import { ServerRouteTriggerModule } from 'src/engine/core-modules/server-route-trigger/server-route-trigger.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
+import { RecordShareMetadataModule } from 'src/engine/record-share/record-share-metadata.module';
 import { RouteTriggerModule } from 'src/engine/metadata-modules/route-trigger/route-trigger.module';
 import { SearchFieldMetadataModule } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.module';
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
@@ -61,6 +62,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     ViewModule,
     WorkspaceMetadataVersionModule,
     RoleModule,
+    RecordShareMetadataModule,
     PermissionsModule,
     PermissionFlagModule,
     RouteTriggerModule,

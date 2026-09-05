@@ -33,6 +33,7 @@ export const permissionRestApiExceptionCodeToHttpStatus = (
       return 400;
     case PermissionsExceptionCode.ROLE_NOT_FOUND:
     case PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND:
+    case PermissionsExceptionCode.RECORD_NOT_FOUND:
     case PermissionsExceptionCode.FIELD_METADATA_NOT_FOUND:
     case PermissionsExceptionCode.FIELD_PERMISSION_NOT_FOUND:
     case PermissionsExceptionCode.PERMISSION_NOT_FOUND:

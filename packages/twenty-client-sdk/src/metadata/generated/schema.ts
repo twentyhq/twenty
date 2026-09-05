@@ -194,6 +194,7 @@ export interface Object {
     updatedAt: Scalars['DateTime']
     labelIdentifierFieldMetadataId?: Scalars['UUID']
     imageIdentifierFieldMetadataId?: Scalars['UUID']
+    ownerFieldMetadataId?: Scalars['UUID']
     isLabelSyncedWithName: Scalars['Boolean']
     duplicateCriteria?: Scalars['String'][][]
     fields: ObjectFieldsConnection
@@ -3050,6 +3051,28 @@ export interface MinimalMetadata {
     __typename: 'MinimalMetadata'
 }
 
+export interface RecordShare {
+    id: Scalars['UUID']
+    principalId: Scalars['String']
+    principalType: RecordSharePrincipalType
+    accessLevel: RecordShareAccessLevel
+    rowCause: RecordShareRowCause
+    sourceId: Scalars['String']
+    __typename: 'RecordShare'
+}
+
+export type RecordSharePrincipalType = 'EVERYONE' | 'WORKSPACE_MEMBER' | 'ROLE'
+
+export type RecordShareAccessLevel = 'READ' | 'READ_WRITE' | 'FULL'
+
+export type RecordShareRowCause = 'OWNER' | 'MANUAL' | 'RULE' | 'APPLICATION'
+
+export interface RecordShares {
+    shares: RecordShare[]
+    viewerAccessLevel?: RecordShareAccessLevel
+    __typename: 'RecordShares'
+}
+
 export interface Query {
     navigationMenuItems: NavigationMenuItem[]
     navigationMenuItem?: NavigationMenuItem
@@ -3138,6 +3161,7 @@ export interface Query {
     webhook?: Webhook
     myMessageFolders: MessageFolder[]
     myCalendarChannels: CalendarChannel[]
+    recordShares: RecordShares
     minimalMetadata: MinimalMetadata
     appKeyValue?: AppKeyValue
     getJobs: JobStatus[]
@@ -3349,6 +3373,9 @@ export interface Mutation {
     updateMessageFolder: MessageFolder
     updateMessageFolders: MessageFolder[]
     updateCalendarChannel: CalendarChannel
+    shareRecord: RecordShares
+    unshareRecord: RecordShares
+    transferRecordOwnership: RecordShares
     setAppKeyValue: AppKeyValue
     deleteAppKeyValue: Scalars['Boolean']
     /** @deprecated Use enqueueJobs instead. */
@@ -3639,6 +3666,7 @@ export interface ObjectGenqlSelection{
     updatedAt?: boolean | number
     labelIdentifierFieldMetadataId?: boolean | number
     imageIdentifierFieldMetadataId?: boolean | number
+    ownerFieldMetadataId?: boolean | number
     isLabelSyncedWithName?: boolean | number
     duplicateCriteria?: boolean | number
     fields?: (ObjectFieldsConnectionGenqlSelection & { __args: {
@@ -6617,6 +6645,24 @@ export interface MinimalMetadataGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface RecordShareGenqlSelection{
+    id?: boolean | number
+    principalId?: boolean | number
+    principalType?: boolean | number
+    accessLevel?: boolean | number
+    rowCause?: boolean | number
+    sourceId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface RecordSharesGenqlSelection{
+    shares?: RecordShareGenqlSelection
+    viewerAccessLevel?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface QueryGenqlSelection{
     navigationMenuItems?: NavigationMenuItemGenqlSelection
     navigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -6717,6 +6763,7 @@ export interface QueryGenqlSelection{
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
     myMessageFolders?: (MessageFolderGenqlSelection & { __args?: {messageChannelId?: (Scalars['UUID'] | null)} })
     myCalendarChannels?: (CalendarChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
+    recordShares?: (RecordSharesGenqlSelection & { __args: {objectMetadataId: Scalars['UUID'], recordId: Scalars['UUID']} })
     minimalMetadata?: MinimalMetadataGenqlSelection
     appKeyValue?: (AppKeyValueGenqlSelection & { __args: {key: Scalars['String'], scope?: (AppKeyValueScope | null)} })
     getJobs?: (JobStatusGenqlSelection & { __args: {jobIds: Scalars['String'][]} })
@@ -6961,6 +7008,9 @@ export interface MutationGenqlSelection{
     updateMessageFolder?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFolderInput} })
     updateMessageFolders?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFoldersInput} })
     updateCalendarChannel?: (CalendarChannelGenqlSelection & { __args: {input: UpdateCalendarChannelInput} })
+    shareRecord?: (RecordSharesGenqlSelection & { __args: {objectMetadataId: Scalars['UUID'], recordId: Scalars['UUID'], shareWith: ShareWithInput[]} })
+    unshareRecord?: (RecordSharesGenqlSelection & { __args: {objectMetadataId: Scalars['UUID'], recordId: Scalars['UUID'], principalId: Scalars['UUID']} })
+    transferRecordOwnership?: (RecordSharesGenqlSelection & { __args: {objectMetadataId: Scalars['UUID'], recordId: Scalars['UUID'], workspaceMemberId: Scalars['UUID']} })
     setAppKeyValue?: (AppKeyValueGenqlSelection & { __args: {input: SetAppKeyValueInput} })
     deleteAppKeyValue?: { __args: {key: Scalars['String'], scope?: (AppKeyValueScope | null)} }
     /** @deprecated Use enqueueJobs instead. */
@@ -7240,7 +7290,7 @@ export interface UpdateOneObjectInput {update: UpdateObjectPayload,
 /** The id of the object to update */
 id: Scalars['UUID']}
 
-export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),openRecordIn?: (ObjectOpenRecordIn | null),translations?: (MetadataTranslationOverrideInput[] | null)}
+export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),ownerFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),openRecordIn?: (ObjectOpenRecordIn | null),translations?: (MetadataTranslationOverrideInput[] | null)}
 
 export interface MetadataTranslationOverrideInput {locale: Scalars['String'],property: Scalars['String'],value?: (Scalars['String'] | null)}
 
@@ -7413,6 +7463,10 @@ export interface UpdateMessageFoldersInput {ids: Scalars['UUID'][],update: Updat
 export interface UpdateCalendarChannelInput {id: Scalars['UUID'],update: UpdateCalendarChannelInputUpdates}
 
 export interface UpdateCalendarChannelInputUpdates {visibility?: (CalendarChannelVisibility | null),isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),contactAutoCreationPolicy?: (CalendarChannelContactAutoCreationPolicy | null),isSyncEnabled?: (Scalars['Boolean'] | null)}
+
+
+/** Grants access on the record to exactly one of a workspace member, a role or everyone */
+export interface ShareWithInput {workspaceMemberId?: (Scalars['UUID'] | null),roleId?: (Scalars['UUID'] | null),everyone?: (Scalars['Boolean'] | null),accessLevel: RecordShareAccessLevel}
 
 export interface SetAppKeyValueInput {key: Scalars['String'],value?: (Scalars['JSON'] | null),scope?: (AppKeyValueScope | null)}
 
@@ -9752,6 +9806,22 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const RecordShare_possibleTypes: string[] = ['RecordShare']
+    export const isRecordShare = (obj?: { __typename?: any } | null): obj is RecordShare => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRecordShare"')
+      return RecordShare_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const RecordShares_possibleTypes: string[] = ['RecordShares']
+    export const isRecordShares = (obj?: { __typename?: any } | null): obj is RecordShares => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRecordShares"')
+      return RecordShares_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const Query_possibleTypes: string[] = ['Query']
     export const isQuery = (obj?: { __typename?: any } | null): obj is Query => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isQuery"')
@@ -10591,6 +10661,25 @@ export const enumAllMetadataName = {
    connectionProvider: 'connectionProvider' as const,
    searchFieldMetadata: 'searchFieldMetadata' as const,
    timelineActivityType: 'timelineActivityType' as const
+}
+
+export const enumRecordSharePrincipalType = {
+   EVERYONE: 'EVERYONE' as const,
+   WORKSPACE_MEMBER: 'WORKSPACE_MEMBER' as const,
+   ROLE: 'ROLE' as const
+}
+
+export const enumRecordShareAccessLevel = {
+   READ: 'READ' as const,
+   READ_WRITE: 'READ_WRITE' as const,
+   FULL: 'FULL' as const
+}
+
+export const enumRecordShareRowCause = {
+   OWNER: 'OWNER' as const,
+   MANUAL: 'MANUAL' as const,
+   RULE: 'RULE' as const,
+   APPLICATION: 'APPLICATION' as const
 }
 
 export const enumEventLogTable = {

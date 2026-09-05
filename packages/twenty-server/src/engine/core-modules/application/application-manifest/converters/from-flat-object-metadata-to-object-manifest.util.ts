@@ -43,5 +43,7 @@ export const fromFlatObjectMetadataToObjectManifest = ({
   labelIdentifierFieldMetadataUniversalIdentifier,
   imageIdentifierFieldMetadataUniversalIdentifier:
     flatObjectMetadata.imageIdentifierFieldMetadataUniversalIdentifier,
+  ownerFieldMetadataUniversalIdentifier:
+    flatObjectMetadata.ownerFieldMetadataUniversalIdentifier,
   fields,
 });

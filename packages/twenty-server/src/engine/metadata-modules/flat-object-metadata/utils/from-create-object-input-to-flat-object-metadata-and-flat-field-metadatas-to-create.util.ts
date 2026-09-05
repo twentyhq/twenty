@@ -97,6 +97,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       commandMenuItemUniversalIdentifiers: [],
       labelIdentifierFieldMetadataUniversalIdentifier,
       imageIdentifierFieldMetadataUniversalIdentifier: null,
+      ownerFieldMetadataUniversalIdentifier: null,
     };
 
     const nameFlatFieldMetadata =

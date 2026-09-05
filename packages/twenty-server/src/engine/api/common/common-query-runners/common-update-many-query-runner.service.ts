@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'class-validator';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
-import { ObjectRecord } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  MetadataReadability,
+  ObjectRecord,
+  RecordShareAccessLevel,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
@@ -26,6 +31,11 @@ import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/fl
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
+import {
+  findOwnerField,
+  type OwnerField,
+} from 'src/engine/record-share/utils/find-owner-field.util';
 
 @Injectable()
 export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -34,19 +44,46 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 > {
   protected readonly operationName = CommonQueryNames.UPDATE_MANY;
 
+  constructor(private readonly recordShareService: RecordShareService) {
+    super();
+  }
+
   async run(
     args: CommonExtendedInput<UpdateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<ObjectRecord[]> {
+    const updatedOwnerField = this.findUpdatedOwnerField(
+      args,
+      queryRunnerContext,
+    );
+
+    if (
+      isDefined(updatedOwnerField) &&
+      !isDefined(queryRunnerContext.transactionScope)
+    ) {
+      return this.workspaceOrmManager.runInWorkspaceTransaction(
+        (transactionScope) =>
+          this.run(args, {
+            ...queryRunnerContext,
+            transactionScope,
+            repository: transactionScope.getRepository(
+              queryRunnerContext.flatObjectMetadata.nameSingular,
+              queryRunnerContext.rolePermissionConfig,
+            ),
+          }),
+      );
+    }
+
     const {
       authContext,
       rolePermissionConfig,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatObjectMetadata,
+      transactionScope,
     } = queryRunnerContext;
 
-    const columnsToReturn = buildColumnsToReturn({
+    const selectedColumns = buildColumnsToReturn({
       select: args.selectedFieldsResult.select,
       relations: args.selectedFieldsResult.relations,
       flatObjectMetadata,
@@ -57,10 +94,35 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const updatedRecords = await this.runFilteredMutation({
       queryRunnerContext,
       filter: args.filter,
-      columnsToReturn,
+      columnsToReturn: isDefined(updatedOwnerField)
+        ? [...new Set([...selectedColumns, updatedOwnerField.joinColumnName])]
+        : selectedColumns,
       kind: 'update',
       data: args.data,
+      recordShareAccessLevels: isDefined(updatedOwnerField)
+        ? [RecordShareAccessLevel.FULL]
+        : undefined,
     });
+
+    if (isDefined(updatedOwnerField)) {
+      const ownerWorkspaceMemberIdByRecordId = Object.fromEntries(
+        updatedRecords.flatMap((record) => {
+          const ownerWorkspaceMemberId =
+            record[updatedOwnerField.joinColumnName];
+
+          return isDefined(ownerWorkspaceMemberId)
+            ? [[record.id, ownerWorkspaceMemberId]]
+            : [];
+        }),
+      );
+
+      await this.recordShareService.replaceOwnerRows({
+        workspaceId: authContext.workspace.id,
+        objectMetadataId: flatObjectMetadata.id,
+        ownerWorkspaceMemberIdByRecordId,
+        transactionScope,
+      });
+    }
 
     if (isDefined(args.selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
@@ -81,6 +143,34 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     }
 
     return updatedRecords;
+  }
+
+  private findUpdatedOwnerField(
+    args: CommonExtendedInput<UpdateManyQueryArgs>,
+    {
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      featureFlagsMap,
+    }: CommonExtendedQueryRunnerContext,
+  ): OwnerField | undefined {
+    if (
+      flatObjectMetadata.readability !== MetadataReadability.PRIVATE ||
+      !(featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] ?? false)
+    ) {
+      return undefined;
+    }
+
+    const ownerField = findOwnerField({
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
+
+    return isDefined(ownerField) &&
+      isDefined(args.data) &&
+      (args.data[ownerField.joinColumnName] !== undefined ||
+        args.data[ownerField.name] !== undefined)
+      ? ownerField
+      : undefined;
   }
 
   async computeArgs(

@@ -132,6 +132,7 @@ export const createStandardObjectFlatMetadata = <
           imageIdentifierFieldMetadataName
         ].id
       : null,
+    ownerFieldMetadataId: null,
     targetTableName: 'DEPRECATED',
     fieldIds: [],
     indexMetadataIds: [],
@@ -156,5 +157,6 @@ export const createStandardObjectFlatMetadata = <
     commandMenuItemUniversalIdentifiers: [],
     labelIdentifierFieldMetadataUniversalIdentifier,
     imageIdentifierFieldMetadataUniversalIdentifier,
+    ownerFieldMetadataUniversalIdentifier: null,
   };
 };

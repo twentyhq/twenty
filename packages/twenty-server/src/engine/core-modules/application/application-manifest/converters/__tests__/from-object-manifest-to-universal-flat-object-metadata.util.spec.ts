@@ -7,6 +7,7 @@ const APP_UID = '11111111-1111-1111-1111-111111111111';
 const OBJECT_UID = '22222222-2222-2222-2222-222222222222';
 const LABEL_IDENTIFIER_FIELD_UID = '33333333-3333-3333-3333-333333333333';
 const PARENT_FIELD_UID = '44444444-4444-4444-4444-444444444444';
+const OWNER_FIELD_UID = '55555555-5555-5555-5555-555555555555';
 const NOW = '2026-05-15T10:00:00.000Z';
 
 const buildObjectManifest = (
@@ -132,6 +133,30 @@ describe('fromObjectManifestToUniversalFlatObjectMetadata', () => {
       expect(result.readabilityParentFieldUniversalIdentifiers).toEqual([
         PARENT_FIELD_UID,
       ]);
+    });
+
+    it('defaults the owner field to null when omitted from the manifest', () => {
+      const result = fromObjectManifestToUniversalFlatObjectMetadata({
+        objectManifest: buildObjectManifest({}),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.ownerFieldMetadataUniversalIdentifier).toBeNull();
+    });
+
+    it('carries the owner field through', () => {
+      const result = fromObjectManifestToUniversalFlatObjectMetadata({
+        objectManifest: buildObjectManifest({
+          ownerFieldMetadataUniversalIdentifier: OWNER_FIELD_UID,
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.ownerFieldMetadataUniversalIdentifier).toBe(
+        OWNER_FIELD_UID,
+      );
     });
   });
 

@@ -65,11 +65,20 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = (
     // }
   }
 
+  const ownerFieldMetadataUniversalIdentifier = isDefined(
+    objectMetadataEntity.ownerFieldMetadataId,
+  )
+    ? (fieldMetadataIdToUniversalIdentifierMap.get(
+        objectMetadataEntity.ownerFieldMetadataId,
+      ) ?? null)
+    : null;
+
   return {
     ...objectMetadataScalarEntity,
     ...relationUniversalIdentifiers,
     labelIdentifierFieldMetadataUniversalIdentifier,
     imageIdentifierFieldMetadataUniversalIdentifier,
+    ownerFieldMetadataUniversalIdentifier,
     viewIds: objectMetadataEntity.views.map(({ id }) => id),
     indexMetadataIds: objectMetadataEntity.indexMetadatas.map(({ id }) => id),
     searchFieldMetadataIds: objectMetadataEntity.searchFieldMetadatas.map(

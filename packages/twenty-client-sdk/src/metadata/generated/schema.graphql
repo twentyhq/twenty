@@ -268,6 +268,7 @@ type Object {
   updatedAt: DateTime!
   labelIdentifierFieldMetadataId: UUID
   imageIdentifierFieldMetadataId: UUID
+  ownerFieldMetadataId: UUID
   isLabelSyncedWithName: Boolean!
   duplicateCriteria: [[String!]!]
   fields(
@@ -3488,6 +3489,39 @@ type MinimalMetadata {
   collectionHashes: [CollectionHash!]!
 }
 
+type RecordShare {
+  id: UUID!
+  principalId: String!
+  principalType: RecordSharePrincipalType!
+  accessLevel: RecordShareAccessLevel!
+  rowCause: RecordShareRowCause!
+  sourceId: String!
+}
+
+enum RecordSharePrincipalType {
+  EVERYONE
+  WORKSPACE_MEMBER
+  ROLE
+}
+
+enum RecordShareAccessLevel {
+  READ
+  READ_WRITE
+  FULL
+}
+
+enum RecordShareRowCause {
+  OWNER
+  MANUAL
+  RULE
+  APPLICATION
+}
+
+type RecordShares {
+  shares: [RecordShare!]!
+  viewerAccessLevel: RecordShareAccessLevel
+}
+
 type Query {
   navigationMenuItems: [NavigationMenuItem!]!
   navigationMenuItem(id: UUID!): NavigationMenuItem
@@ -3594,6 +3628,7 @@ type Query {
   webhook(id: UUID!): Webhook
   myMessageFolders(messageChannelId: UUID): [MessageFolder!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
+  recordShares(objectMetadataId: UUID!, recordId: UUID!): RecordShares!
   minimalMetadata: MinimalMetadata!
   appKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): AppKeyValue
   getJobs(jobIds: [String!]!): [JobStatus!]!
@@ -3904,6 +3939,9 @@ type Mutation {
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
   updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
+  shareRecord(objectMetadataId: UUID!, recordId: UUID!, shareWith: [ShareWithInput!]!): RecordShares!
+  unshareRecord(objectMetadataId: UUID!, recordId: UUID!, principalId: UUID!): RecordShares!
+  transferRecordOwnership(objectMetadataId: UUID!, recordId: UUID!, workspaceMemberId: UUID!): RecordShares!
   setAppKeyValue(input: SetAppKeyValueInput!): AppKeyValue!
   deleteAppKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): Boolean!
   enqueueJob(input: EnqueueJobInput!): EnqueueJobResult! @deprecated(reason: "Use enqueueJobs instead.")
@@ -4546,6 +4584,7 @@ input UpdateObjectPayload {
   isActive: Boolean
   labelIdentifierFieldMetadataId: UUID
   imageIdentifierFieldMetadataId: UUID
+  ownerFieldMetadataId: UUID
   isLabelSyncedWithName: Boolean
   isSearchable: Boolean
   openRecordIn: ObjectOpenRecordIn
@@ -5086,6 +5125,16 @@ input UpdateCalendarChannelInputUpdates {
   isContactAutoCreationEnabled: Boolean
   contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy
   isSyncEnabled: Boolean
+}
+
+"""
+Grants access on the record to exactly one of a workspace member, a role or everyone
+"""
+input ShareWithInput {
+  workspaceMemberId: UUID
+  roleId: UUID
+  everyone: Boolean
+  accessLevel: RecordShareAccessLevel!
 }
 
 input SetAppKeyValueInput {

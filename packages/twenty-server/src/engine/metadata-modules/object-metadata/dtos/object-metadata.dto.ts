@@ -101,6 +101,9 @@ export class ObjectMetadataDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   imageIdentifierFieldMetadataId?: string | null;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  ownerFieldMetadataId?: string | null;
+
   @Field()
   isLabelSyncedWithName: boolean;
 

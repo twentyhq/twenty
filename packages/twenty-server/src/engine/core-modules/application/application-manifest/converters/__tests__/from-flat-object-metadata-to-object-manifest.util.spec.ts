@@ -15,6 +15,7 @@ const OBJECT_UID = '22222222-2222-4222-8222-222222222222';
 const LABEL_FIELD_UID = '33333333-3333-4333-8333-333333333333';
 const IMAGE_FIELD_UID = '44444444-4444-4444-8444-444444444444';
 const PARENT_FIELD_UID = '55555555-5555-4555-8555-555555555555';
+const OWNER_FIELD_UID = '66666666-6666-4666-8666-666666666666';
 const NOW = '2026-09-03T10:00:00.000Z';
 
 const OBJECT_MANIFEST: Required<ObjectManifest> = {
@@ -36,6 +37,7 @@ const OBJECT_MANIFEST: Required<ObjectManifest> = {
   openRecordIn: ObjectOpenRecordIn.RECORD_PAGE,
   labelIdentifierFieldMetadataUniversalIdentifier: LABEL_FIELD_UID,
   imageIdentifierFieldMetadataUniversalIdentifier: IMAGE_FIELD_UID,
+  ownerFieldMetadataUniversalIdentifier: OWNER_FIELD_UID,
   fields: [],
 };
 
@@ -72,6 +74,7 @@ describe('fromFlatObjectMetadataToObjectManifest', () => {
       openRecordIn: ObjectOpenRecordIn.SIDE_PANEL,
       labelIdentifierFieldMetadataUniversalIdentifier: LABEL_FIELD_UID,
       imageIdentifierFieldMetadataUniversalIdentifier: null,
+      ownerFieldMetadataUniversalIdentifier: OWNER_FIELD_UID,
     });
 
     const rebuiltFlatObjectMetadata =

@@ -5,6 +5,7 @@ import {
   FeatureFlagKey,
   FieldMetadataType,
   type ObjectRecord,
+  type RecordShareAccessLevel,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -434,12 +435,14 @@ export abstract class CommonBaseQueryRunnerService<
     columnsToReturn,
     kind,
     data,
+    recordShareAccessLevels,
   }: {
     queryRunnerContext: CommonExtendedQueryRunnerContext;
     filter: Partial<ObjectRecordFilter>;
     columnsToReturn: string[];
     kind: MutationKind;
     data?: Partial<ObjectRecord>;
+    recordShareAccessLevels?: RecordShareAccessLevel[];
   }): Promise<ObjectRecord[]> {
     const { flatObjectMetadata, commonQueryParser } = queryRunnerContext;
     const alias = flatObjectMetadata.nameSingular;
@@ -472,6 +475,7 @@ export abstract class CommonBaseQueryRunnerService<
         filter,
         commonQueryParser,
         kind,
+        recordShareAccessLevels,
       });
 
     return writeRepository.runMutation({
@@ -480,6 +484,7 @@ export abstract class CommonBaseQueryRunnerService<
       kind,
       columnsToReturn,
       data: resolvedData,
+      recordShareAccessLevels,
     });
   }
 
