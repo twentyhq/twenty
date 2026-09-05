@@ -25,6 +25,7 @@ import { CreateBillingPaymentMethodSetupIntentDocument } from '~/generated-metad
 type AddPaymentMethodFormContentProps = {
   finalRedirectPath?: string;
   onPaymentMethodAdded: () => Promise<void>;
+  shouldStartSubscriptionAfterPaymentMethod?: boolean;
 };
 
 type AddPaymentMethodFormProps = AddPaymentMethodFormContentProps;
@@ -39,6 +40,7 @@ const StyledFormContainer = styled.div`
 const AddPaymentMethodFormContent = ({
   finalRedirectPath,
   onPaymentMethodAdded,
+  shouldStartSubscriptionAfterPaymentMethod = true,
 }: AddPaymentMethodFormContentProps) => {
   const stripe = useStripe();
   const elements = useElements();
@@ -59,10 +61,12 @@ const AddPaymentMethodFormContent = ({
       finalRedirectPath ?? `${location.pathname}${location.search}`;
     const returnUrl = new URL(basePath, window.location.origin);
 
-    returnUrl.searchParams.set(
-      START_SUBSCRIPTION_AFTER_PAYMENT_METHOD_QUERY_PARAM,
-      'true',
-    );
+    if (shouldStartSubscriptionAfterPaymentMethod) {
+      returnUrl.searchParams.set(
+        START_SUBSCRIPTION_AFTER_PAYMENT_METHOD_QUERY_PARAM,
+        'true',
+      );
+    }
 
     return returnUrl.toString();
   };
@@ -156,6 +160,7 @@ const AddPaymentMethodFormContent = ({
 export const AddPaymentMethodForm = ({
   finalRedirectPath,
   onPaymentMethodAdded,
+  shouldStartSubscriptionAfterPaymentMethod,
 }: AddPaymentMethodFormProps) => {
   const stripePromise = useStripePromise();
   const appearance = useStripeAppearance();
@@ -179,6 +184,9 @@ export const AddPaymentMethodForm = ({
       <AddPaymentMethodFormContent
         finalRedirectPath={finalRedirectPath}
         onPaymentMethodAdded={onPaymentMethodAdded}
+        shouldStartSubscriptionAfterPaymentMethod={
+          shouldStartSubscriptionAfterPaymentMethod
+        }
       />
     </Elements>
   );

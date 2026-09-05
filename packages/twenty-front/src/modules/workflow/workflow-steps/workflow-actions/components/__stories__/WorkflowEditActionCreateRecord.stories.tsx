@@ -30,7 +30,7 @@ const meta: Meta<typeof WorkflowEditActionCreateRecord> = {
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,

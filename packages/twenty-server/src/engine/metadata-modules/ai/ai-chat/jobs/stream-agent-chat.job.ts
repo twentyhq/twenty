@@ -23,7 +23,7 @@ import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
-import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
+import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import {
   AiException,
@@ -698,11 +698,11 @@ export class StreamAgentChatJob {
         cacheCreationTokens: totalCacheCreationTokens,
       });
 
-      const inputCredits = Math.round(
-        convertDollarsToBillingCredits(breakdown.inputCostInDollars),
+      const inputCredits = convertDollarsToCreditsMicro(
+        breakdown.inputCostInDollars,
       );
-      const outputCredits = Math.round(
-        convertDollarsToBillingCredits(breakdown.outputCostInDollars),
+      const outputCredits = convertDollarsToCreditsMicro(
+        breakdown.outputCostInDollars,
       );
 
       onUpdateUsage({

@@ -38,6 +38,7 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
       applicationUniversalIdentifier: APP_UID,
       name: 'linear',
       displayName: 'Linear',
+      logo: null,
       type: 'oauth',
       oauthConfig: {
         authorizationEndpoint: 'https://linear.app/oauth/authorize',
@@ -55,6 +56,19 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
       createdAt: NOW,
       updatedAt: NOW,
     });
+  });
+
+  it('passes through the logo path when provided', () => {
+    const result =
+      fromConnectionProviderManifestToUniversalFlatConnectionProvider({
+        connectionProviderManifest: buildManifest({
+          logo: 'public/linear-logomark.svg',
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+    expect(result.logo).toBe('public/linear-logomark.svg');
   });
 
   it('resolves the onConnectLogicFunction universalIdentifier into the flat field when provided', () => {

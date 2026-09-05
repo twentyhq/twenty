@@ -44,6 +44,7 @@ type Assertions = [
       | 'isUIEditable'
       | 'isUICreatable'
       | 'writability'
+      | 'readability'
     >
   >,
 ];

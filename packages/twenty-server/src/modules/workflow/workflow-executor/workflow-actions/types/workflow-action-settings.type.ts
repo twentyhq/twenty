@@ -24,7 +24,7 @@ export type BaseWorkflowActionSettings = {
   outputSchema: OutputSchema;
   errorHandlingOptions: {
     retryOnFailure: {
-      value: boolean;
+      value: number;
     };
     continueOnFailure: {
       value: boolean;

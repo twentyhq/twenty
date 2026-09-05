@@ -8,15 +8,16 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UpsertUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/upsert-usage-limit.input';
+import { UsageLimitDTO } from 'src/engine/core-modules/usage-limit/dtos/usage-limit.dto';
 import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
 import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
-import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
+import { fromUsageLimitEntityToDto } from 'src/engine/core-modules/usage-limit/utils/from-usage-limit-entity-to-dto.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-@MetadataResolver(() => UsageLimitEntity)
+@MetadataResolver(() => UsageLimitDTO)
 @UseFilters(
   UsageLimitGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
@@ -29,19 +30,26 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 export class UsageLimitResolver {
   constructor(private readonly usageLimitService: UsageLimitService) {}
 
-  @Query(() => [UsageLimitEntity])
+  @Query(() => [UsageLimitDTO])
   async usageLimits(
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<UsageLimitEntity[]> {
-    return this.usageLimitService.findAll(workspace.id);
+  ): Promise<UsageLimitDTO[]> {
+    const usageLimits = await this.usageLimitService.findAll(workspace.id);
+
+    return usageLimits.map(fromUsageLimitEntityToDto);
   }
 
-  @Mutation(() => UsageLimitEntity)
+  @Mutation(() => UsageLimitDTO)
   async upsertUsageLimit(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('input') input: UpsertUsageLimitInput,
-  ): Promise<UsageLimitEntity> {
-    return this.usageLimitService.upsert({ workspaceId: workspace.id, input });
+  ): Promise<UsageLimitDTO> {
+    const usageLimit = await this.usageLimitService.upsert({
+      workspaceId: workspace.id,
+      input,
+    });
+
+    return fromUsageLimitEntityToDto(usageLimit);
   }
 
   @Mutation(() => Boolean)
