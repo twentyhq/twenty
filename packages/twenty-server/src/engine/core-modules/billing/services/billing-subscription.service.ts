@@ -210,7 +210,7 @@ export class BillingSubscriptionService {
         `Ignoring successful setup intent ${data.object.id} without customer`,
       );
 
-      return {};
+      return { handleUnpaidInvoiceStripeSubscriptionId: undefined };
     }
 
     const billingSubscription = await this.getCurrentBillingSubscription({
@@ -222,7 +222,7 @@ export class BillingSubscriptionService {
         `Ignoring successful setup intent ${data.object.id}, customer ${stripeCustomerId} has no current subscription`,
       );
 
-      return {};
+      return { handleUnpaidInvoiceStripeSubscriptionId: undefined };
     }
 
     const stripePaymentMethodId =
@@ -235,7 +235,7 @@ export class BillingSubscriptionService {
         `Ignoring successful setup intent ${data.object.id} without payment method`,
       );
 
-      return {};
+      return { handleUnpaidInvoiceStripeSubscriptionId: undefined };
     }
 
     await this.stripeCustomerService.setDefaultPaymentMethod({

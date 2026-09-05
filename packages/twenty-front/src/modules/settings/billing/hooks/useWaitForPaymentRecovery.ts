@@ -2,17 +2,14 @@ import { PAYMENT_RECOVERY_POLLING_INTERVAL_MS } from '@/settings/billing/constan
 import { PAYMENT_RECOVERY_POLLING_MAX_ATTEMPTS } from '@/settings/billing/constants/PaymentRecoveryPollingMaxAttempts';
 import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
 import { useMarkBillingPaymentMethodAsAdded } from '@/settings/billing/hooks/useMarkBillingPaymentMethodAsAdded';
-import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
+import { waitForSubscriptionRecovery } from '@/settings/billing/utils/waitForSubscriptionRecovery';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useApolloClient } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  GetCurrentUserDocument,
-  SubscriptionStatus,
-} from '~/generated-metadata/graphql';
+import { GetCurrentUserDocument } from '~/generated-metadata/graphql';
 import { sleep } from '~/utils/sleep';
 
 export const useWaitForPaymentRecovery = () => {
@@ -37,51 +34,36 @@ export const useWaitForPaymentRecovery = () => {
   // and only reaches the persisted subscription through the invoice and
   // subscription webhooks, so its outcome can only be observed by polling
   const waitForPaymentRecovery = async () => {
-    for (
-      let attempt = 0;
-      attempt < PAYMENT_RECOVERY_POLLING_MAX_ATTEMPTS;
-      attempt++
-    ) {
-      await sleep(PAYMENT_RECOVERY_POLLING_INTERVAL_MS);
+    const recovery = await waitForSubscriptionRecovery({
+      fetchWorkspaceBilling,
+      getSubscriptionStatus: (workspaceBilling) =>
+        workspaceBilling?.currentBillingSubscription?.status,
+      waitBeforeAttempt: () => sleep(PAYMENT_RECOVERY_POLLING_INTERVAL_MS),
+      maxAttempts: PAYMENT_RECOVERY_POLLING_MAX_ATTEMPTS,
+    });
 
-      let workspaceBilling: Awaited<ReturnType<typeof fetchWorkspaceBilling>>;
+    if (recovery.outcome !== 'recovered') {
+      enqueueWarningSnackBar({
+        message: t`Your card was saved, but the payment still needs attention.`,
+        options: {
+          buttonLabel: t`Go to billing`,
+          buttonTo: getSettingsPath(SettingsPath.Billing),
+        },
+      });
 
-      try {
-        workspaceBilling = await fetchWorkspaceBilling();
-      } catch {
-        continue;
-      }
-
-      const subscriptionStatus =
-        workspaceBilling?.currentBillingSubscription?.status;
-
-      if (subscriptionStatus === SubscriptionStatus.Active) {
-        try {
-          await loadCurrentUser();
-        } catch {
-          applyCurrentWorkspaceBillingUpdate(workspaceBilling);
-        }
-
-        // The payment method webhook can still be in flight
-        markBillingPaymentMethodAsAdded();
-
-        enqueueSuccessSnackBar({ message: t`Payment successful.` });
-
-        return;
-      }
-
-      if (!isSubscriptionPaymentOverdue(subscriptionStatus)) {
-        break;
-      }
+      return;
     }
 
-    enqueueWarningSnackBar({
-      message: t`Your card was saved, but the payment still needs attention.`,
-      options: {
-        buttonLabel: t`Go to billing`,
-        buttonTo: getSettingsPath(SettingsPath.Billing),
-      },
-    });
+    try {
+      await loadCurrentUser();
+    } catch {
+      applyCurrentWorkspaceBillingUpdate(recovery.workspaceBilling);
+    }
+
+    // The payment method webhook can still be in flight
+    markBillingPaymentMethodAsAdded();
+
+    enqueueSuccessSnackBar({ message: t`Payment successful.` });
   };
 
   return { waitForPaymentRecovery };
