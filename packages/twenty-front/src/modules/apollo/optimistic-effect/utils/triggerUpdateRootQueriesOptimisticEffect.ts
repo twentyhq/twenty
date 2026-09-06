@@ -69,12 +69,6 @@ export const triggerUpdateRootQueriesOptimisticEffect = ({
         let totalCountDelta = 0;
 
         for (const { currentRecord, updatedRecord } of recordUpdates) {
-          const currentRecordMatches = isMatchingRootQueryFilter(currentRecord);
-          const updatedRecordMatches = isMatchingRootQueryFilter(updatedRecord);
-
-          totalCountDelta +=
-            (updatedRecordMatches ? 1 : 0) - (currentRecordMatches ? 1 : 0);
-
           const updatedRecordIndexInRootQueryEdges =
             rootQueryNextEdges.findIndex(
               (cachedEdge) =>
@@ -82,6 +76,16 @@ export const triggerUpdateRootQueriesOptimisticEffect = ({
             );
           const updatedRecordFoundInRootQueryEdges =
             updatedRecordIndexInRootQueryEdges > -1;
+
+          // A record listed by this query matched it before the update, even
+          // when the cached record lacks the fields the filter reads.
+          const currentRecordMatches =
+            updatedRecordFoundInRootQueryEdges ||
+            isMatchingRootQueryFilter(currentRecord);
+          const updatedRecordMatches = isMatchingRootQueryFilter(updatedRecord);
+
+          totalCountDelta +=
+            (updatedRecordMatches ? 1 : 0) - (currentRecordMatches ? 1 : 0);
 
           if (updatedRecordMatches && !updatedRecordFoundInRootQueryEdges) {
             const updatedRecordNodeReference = toReference(updatedRecord);

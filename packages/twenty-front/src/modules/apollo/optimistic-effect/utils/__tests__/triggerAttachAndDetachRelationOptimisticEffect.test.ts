@@ -214,6 +214,20 @@ describe('relation attach and detach optimistic effects', () => {
     });
   });
 
+  it('removes a target cached without the relation field from the cached lists it was in', () => {
+    const cache = buildCache({
+      personRecord: { __typename: 'Person', id: PERSON_ID },
+      cachedPeopleIdsByOpportunityId: { [OPPORTUNITY_ID]: [PERSON_ID] },
+    });
+
+    detachOpportunityFromPerson(cache);
+
+    expect(readCachedPeople(cache, OPPORTUNITY_ID)).toEqual({
+      peopleIds: [],
+      totalCount: 0,
+    });
+  });
+
   it('does nothing when the target is not cached', () => {
     const cache = buildCache({
       personRecord: { __typename: 'Person', id: OTHER_OPPORTUNITY_ID },
