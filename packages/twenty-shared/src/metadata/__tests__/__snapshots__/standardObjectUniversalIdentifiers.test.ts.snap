@@ -1623,6 +1623,25 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
     },
     "universalIdentifier": "27773d24-8ce3-40f8-aa6c-1f590f2c08d2",
+    "views": {
+      "allMessageListMembers": {
+        "universalIdentifier": "3644ee45-c77f-5d55-a358-b982e0bfcb24",
+        "viewFields": {
+          "createdAt": {
+            "universalIdentifier": "a682eecd-e89c-5101-b3e2-b4d8153e2e75",
+          },
+          "id": {
+            "universalIdentifier": "9b3e754c-a529-5e1b-9da2-fc72bbd3af1e",
+          },
+          "list": {
+            "universalIdentifier": "fa1c5fad-d1e0-5aaf-8dfa-6f3c01c99463",
+          },
+          "person": {
+            "universalIdentifier": "d3bd59ad-04b8-55b1-8322-d7bd90be4064",
+          },
+        },
+      },
+    },
   },
   "messageParticipant": {
     "fields": {

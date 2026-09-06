@@ -1,45 +1,45 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { motion, useReducedMotion } from 'framer-motion';
-import { useContext } from 'react';
-import {
-  type IconComponent,
-  IconComment,
-  IconHome,
-  IconSettings,
-} from 'twenty-ui/icon';
+import { useContext, useId } from 'react';
+import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
+import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
+import { useNavigationDrawerModes } from '@/navigation/hooks/useNavigationDrawerModes';
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
-import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
-import {
-  type NavigationDrawerActiveTab,
-  NAVIGATION_DRAWER_TABS,
-} from '@/ui/navigation/states/navigationDrawerTabs';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-// Sized off the page card header row beside it, so the rules read as one line
-// across both columns.
-const StyledSwitcher = styled.div`
-  align-items: center;
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  border-top: 1px solid ${themeCssVariables.border.color.light};
+// Expanded, the row is sized off the page card header beside it so the rules
+// read as one line across both columns. Collapsed, the modes stack into the
+// icon rail and the rules would cut it in half, so they go.
+const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
+  align-items: ${({ isExpanded }) => (isExpanded ? 'center' : 'flex-start')};
+  border-bottom: ${({ isExpanded }) =>
+    isExpanded ? `1px solid ${themeCssVariables.border.color.light}` : 'none'};
+  border-top: ${({ isExpanded }) =>
+    isExpanded ? `1px solid ${themeCssVariables.border.color.light}` : 'none'};
   box-sizing: border-box;
   display: flex;
-  gap: ${themeCssVariables.spacing['0.5']};
-  height: ${themeCssVariables.spacing[10]};
+  flex-direction: ${({ isExpanded }) => (isExpanded ? 'row' : 'column')};
+  gap: ${({ isExpanded }) =>
+    isExpanded
+      ? themeCssVariables.spacing['0.5']
+      : themeCssVariables.betweenSiblingsGap};
+  height: ${({ isExpanded }) =>
+    isExpanded ? themeCssVariables.spacing[10] : 'auto'};
 `;
 
-const StyledMode = styled.button<{ isActive: boolean }>`
+const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
   align-items: center;
   background: ${({ isActive }) =>
     isActive ? themeCssVariables.background.transparent.light : 'transparent'};
   border: none;
-  border-radius: ${themeCssVariables.border.radius.smRound};
+  border-radius: ${({ isExpanded }) =>
+    isExpanded
+      ? themeCssVariables.border.radius.smRound
+      : themeCssVariables.border.radius.mdRound};
   color: ${({ isActive }) =>
     isActive
       ? themeCssVariables.font.color.primary
@@ -51,13 +51,19 @@ const StyledMode = styled.button<{ isActive: boolean }>`
   font-family: inherit;
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${({ isActive }) => (isActive ? themeCssVariables.spacing[1] : '0')};
+  gap: ${({ isActive, isExpanded }) =>
+    isActive && isExpanded ? themeCssVariables.spacing[1] : '0'};
   height: ${themeCssVariables.spacing[7]};
-  padding: 0 ${themeCssVariables.spacing['1.5']};
+  justify-content: ${({ isExpanded }) =>
+    isExpanded ? 'flex-start' : 'center'};
+  padding: ${({ isExpanded }) =>
+    isExpanded ? `0 ${themeCssVariables.spacing['1.5']}` : '0'};
   transition:
     background calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
     color calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
     gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
+  width: ${({ isExpanded }) =>
+    isExpanded ? 'auto' : themeCssVariables.spacing[6]};
 
   &:hover {
     background: ${({ isActive }) =>
@@ -85,57 +91,31 @@ const StyledModeLabelBase = styled.span`
 
 const StyledModeLabel = motion.create(StyledModeLabelBase);
 
-type NavigationDrawerMode = {
-  Icon: IconComponent;
-  label: string;
-  mode: NavigationDrawerActiveTab;
-};
-
 export const MainNavigationDrawerModeSwitcher = () => {
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
+  const tooltipId = useId();
 
-  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
+  const isMobile = useIsMobile();
+  const isExpanded = useIsNavigationDrawerContentExpanded();
+  const modes = useNavigationDrawerModes();
   const activeNavigationDrawerMode = useActiveNavigationDrawerMode();
   const { switchNavigationDrawerMode } = useSwitchNavigationDrawerMode();
   const shouldReduceMotion = useReducedMotion();
 
-  const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
-    WorkspaceActivationStatus.SUSPENDED,
-  );
-
-  // A suspended workspace is held on the billing settings by the route guard,
-  // so offering the modes it would bounce back from only flashes the user out
-  // and in again.
-  if (isWorkspaceSuspended) {
+  if (modes.length === 0) {
     return null;
   }
 
-  const modes: NavigationDrawerMode[] = [
-    {
-      Icon: IconHome,
-      label: t`Home`,
-      mode: NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
-    },
-    ...(hasAiPermission
-      ? [
-          {
-            Icon: IconComment,
-            label: t`AI`,
-            mode: NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
-          },
-        ]
-      : []),
-    {
-      Icon: IconSettings,
-      label: t`Settings`,
-      mode: NAVIGATION_DRAWER_TABS.SETTINGS,
-    },
-  ];
+  const shouldShowTooltips = !isExpanded && !isMobile;
 
   return (
-    <NavigationDrawerAnimatedCollapseWrapper>
-      <StyledSwitcher role="group" aria-label={t`Navigation modes`}>
+    <>
+      <StyledSwitcher
+        isExpanded={isExpanded}
+        role="group"
+        aria-label={t`Navigation modes`}
+      >
         {modes.map(({ Icon, label, mode }) => {
           const isActive = mode === activeNavigationDrawerMode;
 
@@ -143,7 +123,9 @@ export const MainNavigationDrawerModeSwitcher = () => {
             <StyledMode
               key={mode}
               type="button"
+              data-tooltip-id={`${tooltipId}-${mode}`}
               isActive={isActive}
+              isExpanded={isExpanded}
               aria-label={label}
               aria-current={isActive}
               onClick={() => switchNavigationDrawerMode(mode)}
@@ -153,7 +135,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
               </StyledModeIcon>
               <StyledModeLabel
                 initial={false}
-                animate={{ width: isActive ? 'auto' : 0 }}
+                animate={{ width: isExpanded && isActive ? 'auto' : 0 }}
                 transition={{
                   duration: shouldReduceMotion
                     ? 0
@@ -167,6 +149,18 @@ export const MainNavigationDrawerModeSwitcher = () => {
           );
         })}
       </StyledSwitcher>
-    </NavigationDrawerAnimatedCollapseWrapper>
+      {shouldShowTooltips &&
+        modes.map(({ label, mode }) => (
+          <AppTooltip
+            key={mode}
+            anchorSelect={`[data-tooltip-id='${tooltipId}-${mode}']`}
+            content={label}
+            delay={TooltipDelay.noDelay}
+            place={TooltipPosition.Right}
+            positionStrategy="fixed"
+            noArrow
+          />
+        ))}
+    </>
   );
 };
