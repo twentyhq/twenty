@@ -410,9 +410,13 @@ export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceComman
       membersWidget.configuration.fieldDisplayMode === FieldDisplayMode.TABLE &&
       isDefined(membersWidget.configuration.viewId);
 
+    const isMembersWidgetEmbeddingMembersView =
+      isMembersWidgetEmbeddingView &&
+      membersWidget.configuration.viewId === membersView.id;
+
     if (
       homeTab.layoutMode === PageLayoutTabLayoutMode.GRID &&
-      isMembersWidgetEmbeddingView
+      isMembersWidgetEmbeddingMembersView
     ) {
       return {
         pageLayoutTabsToUpdate: [],
