@@ -161,6 +161,7 @@ import { AddLabelToApplicationVariableFastInstanceCommand } from 'src/database/c
 import { AddUsageLimitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-36/2-36-instance-command-fast-1787821567133-add-usage-limit';
 import { MakeUserEmailCaseInsensitiveFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-37/2-37-instance-command-fast-1787836741000-make-user-email-case-insensitive';
 import { BackfillMissingPageLayoutWidgetPositionsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-37/2-37-instance-command-slow-1787838153752-backfill-missing-page-layout-widget-positions';
+import { AddCommandMenuItemConditionalPinnedExpressionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788701640813-add-command-menu-item-conditional-pinned-expression';
 import { AddBillingToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788340843000-add-billing-to-application';
 import { AddPricingDescriptionToApplicationRegistrationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788340844000-add-pricing-description-to-application-registration';
 import { AddRecordFormPageLayoutAndFormFieldWidgetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787920209300-add-record-form-page-layout-and-form-field-widget';
@@ -354,4 +355,5 @@ export const INSTANCE_COMMANDS = [
   ReshapeUsageLimitPeriodFastInstanceCommand,
   AddLogoToConnectionProviderFastInstanceCommand,
   AddReadabilityToObjectMetadataFastInstanceCommand,
+  AddCommandMenuItemConditionalPinnedExpressionFastInstanceCommand,
 ];
