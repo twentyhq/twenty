@@ -116,14 +116,15 @@ export const getFirstNonEmptyBlock = (
         ) {
           return content.text.trim() !== '';
         }
-        if (
-          typeof content === 'object' &&
-          content !== null &&
-          (content.type === 'link' ||
-            'link' in content ||
-            content.type === 'mention')
-        ) {
-          return true;
+        if (typeof content === 'object' && content !== null) {
+          const rawContent = content as Record<string, unknown>;
+          if (
+            rawContent.type === 'link' ||
+            'link' in rawContent ||
+            rawContent.type === 'mention'
+          ) {
+            return true;
+          }
         }
         return false;
       });
@@ -153,30 +154,35 @@ export const getBlockPlainText = (block: PartialBlock): string => {
           return content;
         }
         if (typeof content === 'object' && content !== null) {
-          if ('text' in content && typeof content.text === 'string') {
-            return content.text;
+          const rawContent = content as Record<string, unknown>;
+          if ('text' in rawContent && typeof rawContent.text === 'string') {
+            return rawContent.text;
           }
-          if ('link' in content && typeof content.link === 'string') {
-            return content.link;
+          if ('link' in rawContent && typeof rawContent.link === 'string') {
+            return rawContent.link;
           }
-          if (content.type === 'link' && Array.isArray(content.content)) {
-            return content.content
+          if (rawContent.type === 'link' && Array.isArray(rawContent.content)) {
+            return rawContent.content
               .map((child: unknown) =>
-                typeof child === 'object' && child !== null && 'text' in child
-                  ? child.text
+                typeof child === 'object' &&
+                child !== null &&
+                'text' in child &&
+                typeof (child as { text: unknown }).text === 'string'
+                  ? (child as { text: string }).text
                   : '',
               )
               .join('');
           }
           if (
-            content.type === 'mention' &&
-            'props' in content &&
-            typeof content.props === 'object' &&
-            content.props !== null &&
-            'label' in content.props &&
-            typeof content.props.label === 'string'
+            rawContent.type === 'mention' &&
+            'props' in rawContent &&
+            typeof rawContent.props === 'object' &&
+            rawContent.props !== null &&
+            'label' in rawContent.props &&
+            typeof (rawContent.props as Record<string, unknown>).label ===
+              'string'
           ) {
-            return `@${content.props.label}`;
+            return `@${(rawContent.props as Record<string, unknown>).label}`;
           }
         }
         return '';
@@ -199,24 +205,32 @@ const renderInlineContent = (
     return null;
   }
 
-  const contentObj = content as Record<string, any>;
+  const contentObj = content as Record<string, unknown>;
 
   if (contentObj.type === 'mention') {
-    const label = contentObj.props?.label;
+    const props = contentObj.props as Record<string, unknown> | undefined;
+    const label = typeof props?.label === 'string' ? props.label : '';
     return (
       <span key={index} style={{ fontWeight: 500 }}>
-        @{label ?? ''}
+        @{label}
       </span>
     );
   }
 
   if (contentObj.type === 'link' || 'link' in contentObj) {
-    const href = contentObj.href ?? contentObj.link;
+    const href =
+      typeof contentObj.href === 'string'
+        ? contentObj.href
+        : typeof contentObj.link === 'string'
+          ? contentObj.link
+          : '';
+    const linkText =
+      typeof contentObj.text === 'string' ? contentObj.text : href;
     const linkContent = Array.isArray(contentObj.content)
       ? contentObj.content.map((child: unknown, childIndex: number) =>
           renderInlineContent(child, childIndex),
         )
-      : (contentObj.text ?? href ?? '');
+      : linkText;
 
     return (
       <span
@@ -232,7 +246,9 @@ const renderInlineContent = (
   }
 
   if ('text' in contentObj && typeof contentObj.text === 'string') {
-    const style = getInlineContentCssStyle(contentObj.styles);
+    const style = getInlineContentCssStyle(
+      contentObj.styles as InlineStyles | undefined,
+    );
     return (
       <span key={index} style={style}>
         {contentObj.text}
