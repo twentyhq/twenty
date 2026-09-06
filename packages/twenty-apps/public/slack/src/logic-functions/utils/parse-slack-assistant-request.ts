@@ -5,9 +5,14 @@ import { type SlackAssistantRequestDraft } from 'src/logic-functions/types/slack
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
 import { getSlackBotUserIdFromEventBody } from 'src/logic-functions/utils/get-slack-bot-user-id-from-event-body';
+import { getSlackMessageFileNames } from 'src/logic-functions/utils/get-slack-message-file-names';
 import { normalizeSlackRequestText } from 'src/logic-functions/utils/normalize-slack-request-text';
 
 const LEADING_MENTION_PATTERN = /^<@([A-Z0-9]+)(\|[^>]*)?>/;
+
+// Slack still tags user uploads with the deprecated file_share subtype, and
+// dropping it would silence every message that carries an attachment
+const SUPPORTED_MESSAGE_SUBTYPE = 'file_share';
 
 type SlackInboundEvent = NonNullable<SlackEventsRequestBody['event']>;
 
@@ -83,7 +88,11 @@ export const parseSlackAssistantRequest = (
     return { request: null, skipReason: `Unhandled event type: ${event.type}` };
   }
 
-  if (isNonEmptyString(event.bot_id) || isNonEmptyString(event.subtype)) {
+  const hasUnsupportedSubtype =
+    isNonEmptyString(event.subtype) &&
+    event.subtype !== SUPPORTED_MESSAGE_SUBTYPE;
+
+  if (isNonEmptyString(event.bot_id) || hasUnsupportedSubtype) {
     return { request: null, skipReason: 'Not a plain user message' };
   }
 
@@ -121,6 +130,7 @@ export const parseSlackAssistantRequest = (
           slackMessageTimestamp: event.ts,
         }),
         isInExistingThread: isNonEmptyString(event.thread_ts),
+        sharedFileNames: getSlackMessageFileNames(event.files),
       },
     };
   }

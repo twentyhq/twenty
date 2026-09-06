@@ -113,4 +113,34 @@ describe('buildSlackAssistantMessages', () => {
     expect(messages[0].content).toContain("app's own role");
     expect(messages[0].content).not.toContain('acting as Jane');
   });
+
+  it('should tell the agent that shared files are names only', () => {
+    const messages = buildSlackAssistantMessages({
+      requestText: 'log this against ACME',
+      requesterName: 'Jane',
+      conversationMessages: [],
+      runAsWorkspaceMemberId: undefined,
+      timeoutSeconds: 300,
+      workspaceBaseUrl: 'https://acme.twenty.com',
+      sharedFileNames: ['proposal.pdf'],
+    });
+
+    expect(messages[0].content).toContain(
+      'reach you as names only: proposal.pdf',
+    );
+    expect(messages[0].content).toContain('cannot open or read their contents');
+  });
+
+  it('should not mention files when none were shared', () => {
+    const messages = buildSlackAssistantMessages({
+      requestText: 'who owns ACME?',
+      requesterName: 'Jane',
+      conversationMessages: [],
+      runAsWorkspaceMemberId: undefined,
+      timeoutSeconds: 300,
+      workspaceBaseUrl: 'https://acme.twenty.com',
+    });
+
+    expect(messages[0].content).not.toContain('names only');
+  });
 });

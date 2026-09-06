@@ -337,6 +337,53 @@ describe('Slack inbound events', () => {
       ).resolves.toBeUndefined();
     });
 
+    it('should name the attachment when a mention carries a file and no caption', async () => {
+      slack.addChannel({ id: CHANNEL_ID, name: 'integration' });
+      const slackMessageTimestamp = nextMessageTimestamp();
+
+      const result = await enqueueSlackAssistantRequest(
+        buildSlackAppMentionEventBody({
+          channelId: CHANNEL_ID,
+          text: `<@${slack.botUserId}>`,
+          messageTimestamp: slackMessageTimestamp,
+          botUserId: slack.botUserId,
+          files: [{ id: 'F0PROPOSAL', name: 'proposal.pdf' }],
+        }),
+      );
+
+      expect(result).toEqual({ ok: true });
+      expect(slack.messagesIn(CHANNEL_ID)).toEqual([
+        expect.objectContaining({
+          markdownText: expect.stringContaining('proposal.pdf'),
+          threadTimestamp: slackMessageTimestamp,
+        }),
+      ]);
+      await expect(
+        findRequestByMessageTimestamp(slackMessageTimestamp),
+      ).resolves.toBeUndefined();
+    });
+
+    it('should queue a direct message uploaded with the file_share subtype', async () => {
+      const slackMessageTimestamp = nextMessageTimestamp();
+
+      const result = await enqueueSlackAssistantRequest(
+        buildSlackMessageEventBody({
+          channelId: DIRECT_MESSAGE_CHANNEL_ID,
+          text: 'what do you make of this?',
+          messageTimestamp: slackMessageTimestamp,
+          subtype: 'file_share',
+          files: [{ id: 'F0PROPOSAL', name: 'proposal.pdf' }],
+        }),
+      );
+
+      expect(result).toEqual({ ok: true });
+      await expect(
+        findRequestByMessageTimestamp(slackMessageTimestamp),
+      ).resolves.toEqual(
+        expect.objectContaining({ requestText: 'what do you make of this?' }),
+      );
+    });
+
     it('should answer an empty mention only once', async () => {
       slack.addChannel({ id: CHANNEL_ID, name: 'integration' });
       const eventBody = buildSlackAppMentionEventBody({

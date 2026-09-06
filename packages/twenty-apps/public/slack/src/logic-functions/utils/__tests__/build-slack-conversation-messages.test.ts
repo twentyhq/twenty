@@ -113,6 +113,65 @@ describe('buildSlackConversationMessages', () => {
     expect(messages).toEqual([]);
   });
 
+  it('should keep a file-only message in the history with a synthesised description', () => {
+    const messages = buildSlackConversationMessages({
+      messages: [
+        {
+          ts: '1',
+          user: 'U123',
+          text: '',
+          files: [{ id: 'F1', name: 'proposal.pdf' }],
+        },
+        { ts: '2', user: 'U123', text: 'what do you think?' },
+      ],
+      assistantBotUserId: ASSISTANT_BOT_USER_ID,
+    });
+
+    expect(messages).toEqual([
+      { role: 'user', content: '<@U123>: [shared a file: proposal.pdf]' },
+      { role: 'user', content: '<@U123>: what do you think?' },
+    ]);
+  });
+
+  it('should append the shared files to a message that also has text', () => {
+    const messages = buildSlackConversationMessages({
+      messages: [
+        {
+          ts: '1',
+          user: 'U123',
+          text: 'here is the deck',
+          files: [
+            { id: 'F1', name: 'deck.pdf' },
+            { id: 'F2', name: 'notes.txt' },
+          ],
+        },
+      ],
+      assistantBotUserId: ASSISTANT_BOT_USER_ID,
+    });
+
+    expect(messages).toEqual([
+      {
+        role: 'user',
+        content:
+          '<@U123>: here is the deck\n[shared 2 files: deck.pdf, notes.txt]',
+      },
+    ]);
+  });
+
+  it('should still drop messages that have neither text nor files', () => {
+    const messages = buildSlackConversationMessages({
+      messages: [
+        { ts: '1', user: 'U123', text: '' },
+        { ts: '2', user: 'U123', text: 'a real question' },
+      ],
+      assistantBotUserId: ASSISTANT_BOT_USER_ID,
+    });
+
+    expect(messages).toEqual([
+      { role: 'user', content: '<@U123>: a real question' },
+    ]);
+  });
+
   it('should strip the answered-in footer from replayed assistant turns', () => {
     const messages = buildSlackConversationMessages({
       messages: [
