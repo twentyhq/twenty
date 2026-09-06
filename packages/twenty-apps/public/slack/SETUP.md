@@ -362,10 +362,11 @@ configured.
   gets an ephemeral nudge (only that member sees it) to mention the bot again.
 - **Channel welcome.** With `member_joined_channel` subscribed, the bot posts a
   short introduction the first time it is added to a channel, with the details
-  in a thread reply so the channel itself stays quiet. It fires once per channel
-  for 30 days, and only for the bot's own join — humans joining afterwards
-  trigger nothing. Skip the subscription if you would rather it arrived
-  silently.
+  in a thread reply so the channel itself stays quiet. It names both ways to
+  reach the bot: mention it in the channel, or DM it to keep a question and its
+  answer out of the channel. It fires once per channel for 30 days, and only for
+  the bot's own join — humans joining afterwards trigger nothing. Skip the
+  subscription if you would rather it arrived silently.
 - **One Slack workspace per Twenty workspace.** Connecting Slack claims that
   Slack team for the connecting Twenty workspace, and on the same server a
   second Twenty workspace connecting the same team is rejected. Removing the last
