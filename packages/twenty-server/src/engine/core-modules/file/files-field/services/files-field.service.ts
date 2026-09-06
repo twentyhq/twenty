@@ -12,7 +12,6 @@ import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
-import { MCP_UPLOAD_FILE_PATH_PREFIX } from 'src/engine/core-modules/file/constants/mcp-upload-folder.constant';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
@@ -180,31 +179,18 @@ export class FilesFieldService {
       },
     });
 
-    const copiedFile = await this.fileRepository.insertAndReturnOne(
-      workspaceId,
-      {
-        id: copiedFileId,
-        path: `${FileFolder.FilesField}/${resourcePath}`,
-        applicationId: fieldMetadata.applicationId,
-        mimeType: sourceFile.mimeType,
-        size: sourceFile.size,
-        status: FILE_STATUS.UPLOADED,
-        settings: {
-          isTemporaryFile: true,
-          toDelete: false,
-        },
+    return this.fileRepository.insertAndReturnOne(workspaceId, {
+      id: copiedFileId,
+      path: `${FileFolder.FilesField}/${resourcePath}`,
+      applicationId: fieldMetadata.applicationId,
+      mimeType: sourceFile.mimeType,
+      size: sourceFile.size,
+      status: FILE_STATUS.UPLOADED,
+      settings: {
+        isTemporaryFile: true,
+        toDelete: false,
       },
-    );
-
-    if (sourceFile.path.startsWith(MCP_UPLOAD_FILE_PATH_PREFIX)) {
-      await this.fileStorageService.deleteByFileId({
-        fileId,
-        workspaceId,
-        fileFolder: FileFolder.AgentChat,
-      });
-    }
-
-    return copiedFile;
+    });
   }
 
   async deleteFilesFieldFile({

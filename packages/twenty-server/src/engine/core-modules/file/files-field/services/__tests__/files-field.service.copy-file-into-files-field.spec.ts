@@ -42,7 +42,6 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
   beforeEach(() => {
     fileStorageService = {
       copy: jest.fn().mockResolvedValue(undefined),
-      deleteByFileId: jest.fn().mockResolvedValue(undefined),
     } as unknown as jest.Mocked<FileStorageService>;
 
     applicationRepository = {
@@ -143,7 +142,6 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
 
     expect(insertedRow.id).not.toBe(chatFileId);
     expect(result.id).toBe(insertedRow.id);
-    expect(fileStorageService.deleteByFileId).not.toHaveBeenCalled();
   });
 
   it('should keep the source extension when copying', async () => {
@@ -160,23 +158,5 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
     expect(fileStorageService.copy.mock.calls[0][0].to.resourcePath).toMatch(
       /\.csv$/,
     );
-  });
-
-  it('should delete an mcp-upload source after copying it into the files field', async () => {
-    fileRepository.findOne.mockResolvedValue(
-      buildChatFile({ path: `agent-chat/mcp-upload/${chatFileId}.txt` }),
-    );
-
-    await buildService().copyFileIntoFilesField({
-      fileId: chatFileId,
-      workspaceId,
-      fieldMetadataId,
-    });
-
-    expect(fileStorageService.deleteByFileId).toHaveBeenCalledWith({
-      fileId: chatFileId,
-      workspaceId,
-      fileFolder: 'agent-chat',
-    });
   });
 });
