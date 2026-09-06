@@ -1,3 +1,5 @@
+import escapeRegExp from 'lodash.escaperegexp';
+
 import { type ArrayFilter } from '@/types';
 
 export const isMatchingArrayFilter = ({
@@ -19,10 +21,33 @@ export const isMatchingArrayFilter = ({
       return Array.isArray(value) && value.length === 0;
     }
     case arrayFilter.containsIlike !== undefined: {
+      const hasWildcards =
+        arrayFilter.containsIlike.includes('%') ||
+        arrayFilter.containsIlike.includes('_');
+
+      if (hasWildcards) {
+        const escapedPattern = escapeRegExp(arrayFilter.containsIlike)
+          .replace(/%/g, '.*')
+          .replace(/_/g, '.');
+        const regexCaseInsensitive = new RegExp(`^${escapedPattern}$`, 'i');
+
+        return (
+          Array.isArray(value) &&
+          value.some(
+            (item) =>
+              typeof item === 'string' && regexCaseInsensitive.test(item),
+          )
+        );
+      }
+
       const searchTerm = arrayFilter.containsIlike.toLowerCase();
+
       return (
         Array.isArray(value) &&
-        value.some((item) => item.toLowerCase().includes(searchTerm))
+        value.some(
+          (item) =>
+            typeof item === 'string' && item.toLowerCase().includes(searchTerm),
+        )
       );
     }
     default: {

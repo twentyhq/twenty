@@ -104,6 +104,59 @@ describe('isMatchingArrayFilter', () => {
         }),
       ).toBe(true);
     });
+
+    it('should match SQL wildcard patterns with percent signs', () => {
+      expect(
+        isMatchingArrayFilter({
+          arrayFilter: { containsIlike: '%user-123%' },
+          value: ['user-123'],
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingArrayFilter({
+          arrayFilter: { containsIlike: '%user%' },
+          value: ['prefix-user-suffix', 'other'],
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingArrayFilter({
+          arrayFilter: { containsIlike: '%user' },
+          value: ['prefix-user'],
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingArrayFilter({
+          arrayFilter: { containsIlike: '%user' },
+          value: ['prefix-user-suffix'],
+        }),
+      ).toBe(false);
+
+      expect(
+        isMatchingArrayFilter({
+          arrayFilter: { containsIlike: '%user-456%' },
+          value: ['user-123'],
+        }),
+      ).toBe(false);
+    });
+
+    it('should match SQL wildcard patterns with underscores', () => {
+      expect(
+        isMatchingArrayFilter({
+          arrayFilter: { containsIlike: 'user_123' },
+          value: ['user-123'],
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingArrayFilter({
+          arrayFilter: { containsIlike: 'user_123' },
+          value: ['user--123'],
+        }),
+      ).toBe(false);
+    });
   });
 
   describe('error handling', () => {
