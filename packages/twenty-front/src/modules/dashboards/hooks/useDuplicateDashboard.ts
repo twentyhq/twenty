@@ -27,7 +27,7 @@ export const useDuplicateDashboard = () => {
 
           if (!isDefined(record)) return;
 
-          addDuplicatedRecordToCache(cache, record);
+          addDuplicatedRecordToCache({ cache, record });
         },
       });
 

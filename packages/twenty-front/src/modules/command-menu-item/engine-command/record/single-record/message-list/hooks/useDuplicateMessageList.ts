@@ -29,7 +29,10 @@ export const useDuplicateMessageList = () => {
 
           const { memberCount: _memberCount, ...duplicatedListRecord } = record;
 
-          addDuplicatedRecordToCache(cache, duplicatedListRecord);
+          addDuplicatedRecordToCache({
+            cache,
+            record: duplicatedListRecord,
+          });
         },
       });
 

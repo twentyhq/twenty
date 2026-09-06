@@ -28,10 +28,13 @@ export const useAddDuplicatedRecordToCache = ({
     objectMetadataItem,
   });
 
-  const addDuplicatedRecordToCache = (
-    cache: ApolloCache,
-    record: Pick<ObjectRecord, 'id'> & Record<string, unknown>,
-  ) => {
+  const addDuplicatedRecordToCache = ({
+    cache,
+    record,
+  }: {
+    cache: ApolloCache;
+    record: Pick<ObjectRecord, 'id'> & Record<string, unknown>;
+  }) => {
     const createdRecord: ObjectRecord = {
       ...record,
       __typename: getObjectTypename(objectNameSingular),
