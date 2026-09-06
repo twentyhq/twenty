@@ -4,12 +4,8 @@ import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { isNull } from '@sniptt/guards';
 import { useContext } from 'react';
-import {
-  canBeCastAsNumberOrNull,
-  castAsNumberOrNull,
-} from '~/utils/cast-as-number-or-null';
+import { getNumberValueToPersist } from '@/object-record/record-field/ui/meta-types/input/utils/getNumberValueToPersist';
 import { useNumberField } from '@/object-record/record-field/ui/meta-types/hooks/useNumberField';
 
 export const NumberFieldInput = () => {
@@ -23,36 +19,14 @@ export const NumberFieldInput = () => {
     RecordFieldComponentInstanceContext,
   );
 
-  const getNumberValueToPersist = (
-    newValue: string,
-  ): { success: boolean; value?: any } => {
-    if (fieldDefinition?.metadata?.settings?.type === 'percentage') {
-      const newValueEscaped = newValue.replaceAll('%', '');
-
-      if (!canBeCastAsNumberOrNull(newValueEscaped)) {
-        return { success: false };
-      }
-
-      const castedValue = castAsNumberOrNull(newValue);
-
-      if (!isNull(castedValue)) {
-        return { success: true, value: castedValue / 100 };
-      }
-
-      return { success: true, value: null };
-    }
-
-    if (!canBeCastAsNumberOrNull(newValue)) {
-      return { success: false };
-    }
-
-    const castedValue = castAsNumberOrNull(newValue);
-
-    return { success: true, value: castedValue };
-  };
+  const getNumberValue = (newValue: string) =>
+    getNumberValueToPersist({
+      newValue,
+      numberType: fieldDefinition?.metadata?.settings?.type,
+    });
 
   const handleEnter = (newText: string) => {
-    const { success, value } = getNumberValueToPersist(newText);
+    const { success, value } = getNumberValue(newText);
 
     const shouldNotPersist = !success;
 
@@ -60,7 +34,7 @@ export const NumberFieldInput = () => {
   };
 
   const handleEscape = (newText: string) => {
-    const { success, value } = getNumberValueToPersist(newText);
+    const { success, value } = getNumberValue(newText);
 
     const shouldNotPersist = !success;
 
@@ -71,7 +45,7 @@ export const NumberFieldInput = () => {
     event: MouseEvent | TouchEvent,
     newText: string,
   ) => {
-    const { success, value } = getNumberValueToPersist(newText);
+    const { success, value } = getNumberValue(newText);
 
     const shouldNotPersist = !success;
 
@@ -79,7 +53,7 @@ export const NumberFieldInput = () => {
   };
 
   const handleTab = (newText: string) => {
-    const { success, value } = getNumberValueToPersist(newText);
+    const { success, value } = getNumberValue(newText);
 
     const shouldNotPersist = !success;
 
@@ -87,7 +61,7 @@ export const NumberFieldInput = () => {
   };
 
   const handleShiftTab = (newText: string) => {
-    const { success, value } = getNumberValueToPersist(newText);
+    const { success, value } = getNumberValue(newText);
 
     const shouldNotPersist = !success;
 
