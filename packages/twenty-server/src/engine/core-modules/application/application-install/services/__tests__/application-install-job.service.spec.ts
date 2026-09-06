@@ -53,6 +53,8 @@ describe('ApplicationInstallJobService', () => {
           workspaceId: WORKSPACE_ID,
           userWorkspaceId: 'user-workspace-id',
         },
+        removeOnComplete: true,
+        removeOnFail: true,
       },
     );
   });

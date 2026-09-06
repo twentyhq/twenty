@@ -403,14 +403,18 @@ export class BullMQDriver
             jitter: options.backoff.jitter,
           }
         : undefined,
-      removeOnComplete: {
-        age: QUEUE_RETENTION.completedMaxAge,
-        count: QUEUE_RETENTION.completedMaxCount,
-      },
-      removeOnFail: {
-        age: QUEUE_RETENTION.failedMaxAge,
-        count: QUEUE_RETENTION.failedMaxCount,
-      },
+      removeOnComplete: options?.removeOnComplete
+        ? true
+        : {
+            age: QUEUE_RETENTION.completedMaxAge,
+            count: QUEUE_RETENTION.completedMaxCount,
+          },
+      removeOnFail: options?.removeOnFail
+        ? true
+        : {
+            age: QUEUE_RETENTION.failedMaxAge,
+            count: QUEUE_RETENTION.failedMaxCount,
+          },
       delay: options?.delay,
       broadcastTo: options?.broadcastTo,
     };

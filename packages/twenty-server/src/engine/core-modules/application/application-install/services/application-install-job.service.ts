@@ -42,7 +42,8 @@ export class ApplicationInstallJobService {
     });
 
     // The queue ignores a job whose id it already holds, so the id is what
-    // keeps a second trigger from installing the same application twice
+    // keeps a second trigger from installing the same application twice. The
+    // finished job is dropped right away so the id is free for the next install
     await this.workspaceQueueService.bulkAdd<TriggerInstallApplicationJobData>(
       TriggerInstallApplicationJob.name,
       [
@@ -59,6 +60,8 @@ export class ApplicationInstallJobService {
           workspaceId,
           userWorkspaceId,
         },
+        removeOnComplete: true,
+        removeOnFail: true,
       },
     );
 
