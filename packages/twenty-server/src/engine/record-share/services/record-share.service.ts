@@ -2,6 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  RecordShareException,
+  RecordShareExceptionCode,
+} from 'src/engine/record-share/record-share.exception';
 import { type RecordShareInput } from 'src/engine/record-share/types/record-share-input.type';
 import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
@@ -75,8 +79,9 @@ export class RecordShareService {
   ): Promise<TResult> {
     if (isDefined(transactionScope)) {
       if (transactionScope.workspaceId !== workspaceId) {
-        throw new Error(
+        throw new RecordShareException(
           `Transaction scope of workspace ${transactionScope.workspaceId} cannot write record shares of workspace ${workspaceId}`,
+          RecordShareExceptionCode.TRANSACTION_SCOPE_WORKSPACE_MISMATCH,
         );
       }
 
