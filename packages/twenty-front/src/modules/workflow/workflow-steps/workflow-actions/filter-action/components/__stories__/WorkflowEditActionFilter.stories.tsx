@@ -24,7 +24,7 @@ const DEFAULT_ACTION: WorkflowFilterAction = {
     outputSchema: {},
     errorHandlingOptions: {
       retryOnFailure: {
-        value: false,
+        value: 0,
       },
       continueOnFailure: {
         value: false,
@@ -60,7 +60,7 @@ const CONFIGURED_ACTION: WorkflowFilterAction = {
     outputSchema: {},
     errorHandlingOptions: {
       retryOnFailure: {
-        value: false,
+        value: 0,
       },
       continueOnFailure: {
         value: false,

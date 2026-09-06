@@ -2,8 +2,10 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 
 import { CANCEL_MESSAGE_CAMPAIGN } from '@/activities/emails/graphql/mutations/cancelMessageCampaign';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { plural, t } from '@lingui/core/macro';
+import { MessageCampaignStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type CancelMessageCampaignMutation,
@@ -17,6 +19,7 @@ export const useCancelMessageCampaign = () => {
   >(CANCEL_MESSAGE_CAMPAIGN);
 
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const cancelMessageCampaign = async ({
     campaignId,
@@ -35,6 +38,16 @@ export const useCancelMessageCampaign = () => {
 
         return false;
       }
+
+      upsertRecordsInStore({
+        partialRecords: [
+          {
+            __typename: 'MessageCampaign',
+            id: campaignId,
+            status: MessageCampaignStatus.CANCELED,
+          },
+        ],
+      });
 
       enqueueSuccessSnackBar({
         message: plural(canceled.canceledMessageCount, {

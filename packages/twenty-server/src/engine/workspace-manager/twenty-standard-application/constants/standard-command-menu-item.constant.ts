@@ -1043,6 +1043,30 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.CANCEL_MESSAGE_CAMPAIGN,
     hotKeys: null,
   },
+  duplicateMessageCampaign: {
+    universalIdentifier: 'b85e34bd-abfa-40b5-91c0-e5d64b586341',
+    label: i18nLabel(
+      msg({ message: `Duplicate Campaign`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconCopy',
+    isPinned: true,
+    position: 72,
+    shortLabel: i18nLabel(
+      msg({ message: `Duplicate`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords == 1 and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and featureFlags.IS_EMAIL_GROUP_ENABLED',
+    // A sent campaign is the one people re-run, so the button is only pinned
+    // there; drafts keep it in the menu.
+    conditionalPinnedExpression:
+      'everyEquals(selectedRecords, "status", "SENT")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.messageCampaign.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.DUPLICATE_MESSAGE_CAMPAIGN,
+    hotKeys: null,
+  },
   emailBlockSettings: {
     universalIdentifier: '5c8a2f41-97be-4f3d-9a46-2f18d17f30a2',
     label: i18nLabel(
@@ -1487,6 +1511,26 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_OBJECTS.opportunity.universalIdentifier,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.COMPOSE_EMAIL,
+    hotKeys: null,
+  },
+  duplicateMessageList: {
+    universalIdentifier: '19b519d4-a871-4fc2-980c-f5d6c92c6962',
+    label: i18nLabel(
+      msg({ message: `Duplicate List`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconCopyPlus',
+    isPinned: true,
+    position: 71,
+    shortLabel: i18nLabel(
+      msg({ message: `Duplicate`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'featureFlags.IS_EMAIL_GROUP_ENABLED and numberOfSelectedRecords == 1 and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.messageList.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.DUPLICATE_MESSAGE_LIST,
     hotKeys: null,
   },
 } as const;

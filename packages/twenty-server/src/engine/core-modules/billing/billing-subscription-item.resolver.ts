@@ -62,13 +62,13 @@ export class BillingSubscriptionItemResolver {
       }
 
       const creditAvailability =
-        await this.billingUsageService.getCreditAvailability({
-          workspaceId: billingSubscription.workspaceId,
-        });
+        await this.billingUsageService.getCreditAvailability(
+          billingSubscription.workspaceId,
+        );
 
       return (
         !creditAvailability.hasAvailableCredits &&
-        creditAvailability.reason === 'no-credits'
+        creditAvailability.reason === 'NO_CREDITS'
       );
     } catch (error) {
       this.logger.warn(

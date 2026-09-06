@@ -9,6 +9,7 @@ import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { type EachTestingContext } from 'twenty-shared/testing';
 import {
   FieldMetadataType,
+  MetadataWritability,
   RelationType,
   ViewSortDirection,
 } from '~/generated-metadata/graphql';
@@ -43,6 +44,7 @@ const objectMetadataItemWithPositionField: EnrichedObjectMetadataItem = {
   isSystem: false,
   isUIEditable: true,
   isUICreatable: true,
+  writability: MetadataWritability.OPEN,
   openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
   isRemote: false,
   isSearchable: false,
@@ -207,6 +209,7 @@ describe('turnSortsIntoOrderBy', () => {
       isSystem: false,
       isUIEditable: true,
       isUICreatable: true,
+      writability: MetadataWritability.OPEN,
       openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
       isRemote: false,
       isSearchable: false,
@@ -259,6 +262,7 @@ describe('turnSortsIntoOrderBy', () => {
       isSystem: false,
       isUIEditable: true,
       isUICreatable: true,
+      writability: MetadataWritability.OPEN,
       openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
       isRemote: false,
       isSearchable: false,

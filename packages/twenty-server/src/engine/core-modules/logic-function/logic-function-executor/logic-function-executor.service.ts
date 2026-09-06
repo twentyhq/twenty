@@ -31,9 +31,7 @@ import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/appli
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
-import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
-import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/logic-function/logic-function-executed';
@@ -95,7 +93,6 @@ export class LogicFunctionExecutorService {
     private readonly eventLogLiveService: EventLogLiveService,
     private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly usageRecorderService: UsageRecorderService,
-    private readonly billingService: BillingService,
     private readonly billingUsageService: BillingUsageService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
@@ -631,27 +628,20 @@ export class LogicFunctionExecutorService {
 
     const totalCreditsMicro = invocationCreditsMicro + durationCreditsMicro;
 
-    if (this.billingService.isBillingEnabled()) {
-      const { currentBillingSubscription } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'currentBillingSubscription',
-        ]);
-
-      if (
-        currentBillingSubscription !== NO_BILLING_SUBSCRIPTION &&
-        totalCreditsMicro > 0
-      ) {
-        await this.billingUsageService.decrementAvailableCreditsInCache({
-          workspaceId,
-          usedCredits: totalCreditsMicro,
-        });
-      }
-    }
-
     const spenders = {
       logicFunctionId: flatLogicFunction.id,
       applicationId: flatApplication.id,
     };
+
+    if (totalCreditsMicro > 0) {
+      await this.billingUsageService.consumeUsageQuota({
+        workspaceId,
+        resourceType: UsageResourceType.LOGIC_FUNCTION,
+        operationType: UsageOperationType.CODE_EXECUTION,
+        spenders,
+        cost: { creditsUsedMicro: totalCreditsMicro, quantity: 1 },
+      });
+    }
 
     await this.usageRecorderService.record(workspaceId, [
       {

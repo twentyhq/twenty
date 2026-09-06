@@ -88,7 +88,7 @@ export class MessageCampaignBatchDeliveryService {
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const campaign = await this.findRunningCampaign(campaignId);
       const creditContext =
-        await this.emailBillingService.resolveEmailCreditContext(workspaceId);
+        await this.emailBillingService.getEmailCreditContext(workspaceId);
 
       const claimToken = v4();
       const claimedDeliveryIds = await this.claimBatch({
@@ -247,7 +247,10 @@ export class MessageCampaignBatchDeliveryService {
           error.exhaustedScope?.retryAfterMs ?? 0,
           SEND_SLOT_RETRY.minDelayMs,
         ),
-        windowMs: (error.exhaustedScope?.windowSeconds ?? 0) * 1000,
+        windowMs:
+          error.exhaustedScope?.periodUnit === 'second'
+            ? (error.exhaustedScope.periodCount ?? 0) * 1000
+            : 0,
       };
     }
   }
@@ -448,7 +451,6 @@ export class MessageCampaignBatchDeliveryService {
         workspaceId,
         sentEmailCount: sentDeliveryIds.length,
         userWorkspaceId,
-        currentBillingSubscription: creditContext.currentBillingSubscription,
       })
       .catch((error) => {
         this.logger.error(

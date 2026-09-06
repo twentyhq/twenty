@@ -92,7 +92,7 @@ export class MessageCampaignDeliveryService {
       }
 
       const creditContext =
-        await this.emailBillingService.resolveEmailCreditContext(workspaceId);
+        await this.emailBillingService.getEmailCreditContext(workspaceId);
 
       if (creditContext.hasCredits) {
         const refusal = await this.findSendSlotRefusal(workspaceId);
@@ -133,7 +133,7 @@ export class MessageCampaignDeliveryService {
         .scheduleRefresh({ workspaceId, campaignId })
         .catch((error) => {
           this.logger.error(
-            `Campaign ${campaignId} could not schedule a statistics refresh: ${
+            `Campaign ${campaignId} of workspace ${workspaceId} could not schedule a statistics refresh: ${
               error instanceof Error ? error.message : String(error)
             }`,
           );
@@ -192,7 +192,10 @@ export class MessageCampaignDeliveryService {
           error.exhaustedScope?.retryAfterMs ?? 0,
           SEND_SLOT_RETRY.minDelayMs,
         ),
-        windowMs: (error.exhaustedScope?.windowSeconds ?? 0) * 1000,
+        windowMs:
+          error.exhaustedScope?.periodUnit === 'second'
+            ? (error.exhaustedScope.periodCount ?? 0) * 1000
+            : 0,
       };
     }
   }
@@ -322,7 +325,7 @@ export class MessageCampaignDeliveryService {
     data,
     messageRepository,
     sendContext: { campaign, person, claimToken },
-    creditContext: { hasCredits, currentBillingSubscription },
+    creditContext: { hasCredits },
   }: {
     data: SendCampaignEmailJobData;
     messageRepository: WorkspaceRepository<MessageWorkspaceEntity>;
@@ -416,7 +419,6 @@ export class MessageCampaignDeliveryService {
         workspaceId,
         sentEmailCount: 1,
         userWorkspaceId,
-        currentBillingSubscription,
       })
       .catch((error) => {
         this.logger.error(

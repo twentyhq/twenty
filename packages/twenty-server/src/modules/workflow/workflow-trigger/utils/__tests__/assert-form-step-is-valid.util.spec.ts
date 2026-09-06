@@ -58,7 +58,7 @@ const settings: WorkflowFormActionSettings = {
   },
   errorHandlingOptions: {
     retryOnFailure: {
-      value: false,
+      value: 0,
     },
     continueOnFailure: {
       value: false,

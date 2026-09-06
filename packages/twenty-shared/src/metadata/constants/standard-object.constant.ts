@@ -458,7 +458,13 @@ export const STANDARD_OBJECTS = {
         objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageList,
         fields: STANDARD_OBJECT_FIELDS.messageList,
-        viewFieldNames: ['name', 'members', 'campaigns', 'createdAt'],
+        viewFieldNames: [
+          'name',
+          'description',
+          'members',
+          'campaigns',
+          'createdAt',
+        ],
       }),
     },
   },
@@ -473,6 +479,14 @@ export const STANDARD_OBJECTS = {
       personListUniqueIndex: {
         universalIdentifier: 'e5497dc2-1d72-418c-a389-a0645ca0195a',
       },
+    },
+    views: {
+      allMessageListMembers: buildStandardObjectIndexView({
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageListMember,
+        fields: STANDARD_OBJECT_FIELDS.messageListMember,
+        viewFieldNames: ['id', 'person', 'list', 'createdAt'],
+      }),
     },
   },
   messageChannelMessageAssociation: {
@@ -750,6 +764,15 @@ export const STANDARD_OBJECTS = {
       opportunityIdIndex: {
         universalIdentifier: '0d1a59b4-cc87-4b7d-804a-656e8504f371',
       },
+      notePersonUniqueIndex: {
+        universalIdentifier: '29be76d1-ff4f-4f0f-b05c-f679a234e90a',
+      },
+      noteCompanyUniqueIndex: {
+        universalIdentifier: 'e3b92659-04cf-4496-8fd4-4f32c747c26a',
+      },
+      noteOpportunityUniqueIndex: {
+        universalIdentifier: '58002741-8aa7-4812-b7af-f4cf98dd2433',
+      },
     },
     views: {
       allNoteTargets: buildStandardObjectIndexView({
@@ -924,6 +947,25 @@ export const STANDARD_OBJECTS = {
           system: 'System',
         },
       }),
+      messageListRecordPageMembers: {
+        universalIdentifier: 'bef79e8e-9ef3-4458-81ed-78a299e2566f',
+        viewFields: {
+          name: {
+            universalIdentifier: 'a4f0d7b4-3956-44a6-8bb2-df45a699609b',
+          },
+          emails: {
+            universalIdentifier: '180e9cbb-34c2-4e27-8648-2915be88a50e',
+          },
+          company: {
+            universalIdentifier: '3db54119-df4d-449b-91c9-22fca1e5d599',
+          },
+        },
+        viewFilters: {
+          listMembershipsListIsCurrentRecord: {
+            universalIdentifier: '256dceea-a9b5-42b7-8461-a6ce62e7fa6c',
+          },
+        },
+      },
     },
   },
   task: {
@@ -1063,6 +1105,15 @@ export const STANDARD_OBJECTS = {
       },
       opportunityIdIndex: {
         universalIdentifier: '6942e0ba-90f6-4c33-bf40-7f00b1ec35ab',
+      },
+      taskPersonUniqueIndex: {
+        universalIdentifier: '4adf4d5a-ad69-4c5c-bc62-2807816b3aa8',
+      },
+      taskCompanyUniqueIndex: {
+        universalIdentifier: '637dce5e-f609-49f4-89e3-c0ef9e330d3a',
+      },
+      taskOpportunityUniqueIndex: {
+        universalIdentifier: 'eb5422ff-7a41-48d2-a2df-3de1cbf7bced',
       },
     },
     views: {

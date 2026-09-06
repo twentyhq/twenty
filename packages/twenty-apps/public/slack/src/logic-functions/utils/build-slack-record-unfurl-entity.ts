@@ -5,9 +5,8 @@ import { isDefined } from 'twenty-sdk/utils';
 import { type SlackUnfurlObjectName } from 'src/logic-functions/types/slack-unfurl-object-name.type';
 import { type SlackRecordLink } from 'src/logic-functions/types/slack-record-link.type';
 import { SLACK_RECORD_CONTENT_BUILDERS } from 'src/logic-functions/utils/build-slack-record-content';
+import { buildSlackEntityPayloadFields } from 'src/logic-functions/utils/build-slack-entity-payload-fields';
 import { toEpochSeconds } from 'src/logic-functions/utils/to-epoch-seconds';
-
-const ITEM_ENTITY_TYPE = 'slack#/entities/item';
 
 const TWENTY_PRODUCT_ICON_URL =
   'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-front/public/images/icons/ios/192.png';
@@ -31,34 +30,33 @@ export const buildSlackRecordUnfurlEntity = ({
   workspaceBaseUrls: string[];
   includeDetails?: boolean;
 }): EntityMetadata | undefined => {
-  const { title, customFields, iconUrl } = SLACK_RECORD_CONTENT_BUILDERS[
-    recordLink.objectNameSingular
-  ]({ record, workspaceBaseUrls, includeDetails });
+  const content = SLACK_RECORD_CONTENT_BUILDERS[recordLink.objectNameSingular]({
+    record,
+    workspaceBaseUrls,
+    includeDetails,
+  });
 
-  if (!isNonEmptyString(title)) {
+  if (!isNonEmptyString(content.title)) {
     return undefined;
   }
 
-  const definedCustomFields = customFields.filter(isDefined);
   const metadataLastModified = toEpochSeconds(record.updatedAt);
 
   return {
-    entity_type: ITEM_ENTITY_TYPE,
+    entity_type: content.entityType,
     entity_payload: {
       attributes: {
-        title: { text: title },
+        title: { text: content.title },
         display_type: DISPLAY_TYPE_BY_OBJECT[recordLink.objectNameSingular],
         product_name: 'Twenty',
-        product_icon: isDefined(iconUrl)
-          ? { alt_text: title, url: iconUrl }
+        product_icon: isDefined(content.iconUrl)
+          ? { alt_text: content.title, url: content.iconUrl }
           : { alt_text: 'Twenty', url: TWENTY_PRODUCT_ICON_URL },
         ...(isDefined(metadataLastModified)
           ? { metadata_last_modified: metadataLastModified }
           : {}),
       },
-      ...(definedCustomFields.length > 0
-        ? { custom_fields: definedCustomFields }
-        : {}),
+      ...buildSlackEntityPayloadFields(content),
     },
     external_ref: {
       id: recordLink.recordId,

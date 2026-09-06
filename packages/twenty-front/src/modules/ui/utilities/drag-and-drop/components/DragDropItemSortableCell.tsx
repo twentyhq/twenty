@@ -1,3 +1,5 @@
+import { type CollisionDetector } from '@dnd-kit/abstract';
+import { defaultCollisionDetection } from '@dnd-kit/collision';
 import {
   RestrictToHorizontalAxis,
   RestrictToVerticalAxis,
@@ -58,6 +60,7 @@ type DragDropItemSortableCellProps = {
   accept?: UseSortableInput['accept'];
   allowNativeDragWhenDisabled?: boolean;
   children: ReactNode;
+  collisionDetector?: CollisionDetector;
   data?: Record<string, unknown>;
   disabled?: boolean;
   fadeSourceWhileDragging?: boolean;
@@ -78,6 +81,7 @@ export const DragDropItemSortableCell = ({
   accept,
   allowNativeDragWhenDisabled = false,
   children,
+  collisionDetector = defaultCollisionDetection,
   data,
   disabled = false,
   fadeSourceWhileDragging = false,
@@ -98,6 +102,7 @@ export const DragDropItemSortableCell = ({
     type,
     accept,
     collisionPriority: SORTABLE_COLLISION_PRIORITY,
+    collisionDetector,
     // Sortable metadata stays authoritative over consumer data so drag
     // handlers always resolve the cell's real group and position.
     data: {

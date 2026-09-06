@@ -6,18 +6,15 @@ import {
   MessageChannelType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconAlertTriangle, IconInfoCircle } from 'twenty-ui/icon';
+import { IconAlertTriangle } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/input';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {
   CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH,
   CampaignEnvelopeBox,
 } from '@/activities/emails/components/CampaignEnvelopeBox';
-import { CampaignRecipientCount } from '@/activities/emails/components/CampaignRecipientCount';
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
-import { useCampaignAudiencePreview } from '@/activities/emails/hooks/useCampaignAudiencePreview';
 import { useCampaignDetailsState } from '@/activities/emails/hooks/useCampaignDetailsState';
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
@@ -52,13 +49,6 @@ const StyledWarningIcon = styled(IconAlertTriangle)`
   flex-shrink: 0;
 `;
 
-const StyledTopicInfoIcon = styled(IconInfoCircle)`
-  color: ${themeCssVariables.font.color.light};
-  display: block;
-`;
-
-const UNSUBSCRIBE_TOPIC_ANCHOR_ID = 'campaign-composer-unsubscribe-topic-info';
-
 type CampaignDetailsFieldsProps = {
   campaign: MessageCampaign;
   width: string;
@@ -87,12 +77,6 @@ export const CampaignDetailsFields = ({
       detailsState.setListId(createdList.id);
     }
   };
-
-  const { audiencePreview, hasFailed: hasAudiencePreviewFailed } =
-    useCampaignAudiencePreview({
-      listId: detailsState.listId,
-      unsubscribeTopicId: detailsState.unsubscribeTopicId,
-    });
 
   const senderOptions: SelectOption<string>[] = channels
     .filter((channel) => channel.type === MessageChannelType.EMAIL_GROUP)
@@ -139,12 +123,6 @@ export const CampaignDetailsFields = ({
       <ComposerFieldRow
         label={t`To`}
         labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
-        trailing={
-          <CampaignRecipientCount
-            audiencePreview={audiencePreview}
-            hasFailed={hasAudiencePreviewFailed}
-          />
-        }
       >
         <FormSingleRecordPicker
           key={`list-${detailsState.draftResyncKey}`}
@@ -158,22 +136,6 @@ export const CampaignDetailsFields = ({
         <ComposerFieldRow
           label={t`Unsubscribe topic`}
           labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
-          trailing={
-            <>
-              <StyledTopicInfoIcon
-                id={UNSUBSCRIBE_TOPIC_ANCHOR_ID}
-                size={theme.icon.size.md}
-              />
-              <AppTooltip
-                anchorSelect={`#${UNSUBSCRIBE_TOPIC_ANCHOR_ID}`}
-                content={t`Recipients who opted out of this topic are skipped, and the unsubscribe link in this email is scoped to it.`}
-                delay={TooltipDelay.shortDelay}
-                noArrow
-                place="bottom"
-                positionStrategy="fixed"
-              />
-            </>
-          }
         >
           <Select
             dropdownId="campaign-composer-unsubscribe-topic"

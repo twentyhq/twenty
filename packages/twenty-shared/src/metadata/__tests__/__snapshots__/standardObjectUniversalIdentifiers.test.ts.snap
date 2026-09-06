@@ -1530,6 +1530,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "deletedAt": {
         "universalIdentifier": "717071cc-9630-5fe6-8d6a-22d4f0ae0d43",
       },
+      "description": {
+        "universalIdentifier": "2484463a-12e0-411e-9586-81892bd7721c",
+      },
       "id": {
         "universalIdentifier": "1bb14df7-602a-542c-b26e-c63f7454a7ee",
       },
@@ -1570,6 +1573,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "createdAt": {
             "universalIdentifier": "69d178f4-f4b8-5bc2-a01b-bfc21f3a753a",
+          },
+          "description": {
+            "universalIdentifier": "1169ccfe-9136-5574-96d4-5a0855316cd4",
           },
           "members": {
             "universalIdentifier": "8e64ce89-0910-58df-a896-ccbe514f3913",
@@ -1623,6 +1629,25 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
     },
     "universalIdentifier": "27773d24-8ce3-40f8-aa6c-1f590f2c08d2",
+    "views": {
+      "allMessageListMembers": {
+        "universalIdentifier": "3644ee45-c77f-5d55-a358-b982e0bfcb24",
+        "viewFields": {
+          "createdAt": {
+            "universalIdentifier": "a682eecd-e89c-5101-b3e2-b4d8153e2e75",
+          },
+          "id": {
+            "universalIdentifier": "9b3e754c-a529-5e1b-9da2-fc72bbd3af1e",
+          },
+          "list": {
+            "universalIdentifier": "fa1c5fad-d1e0-5aaf-8dfa-6f3c01c99463",
+          },
+          "person": {
+            "universalIdentifier": "d3bd59ad-04b8-55b1-8322-d7bd90be4064",
+          },
+        },
+      },
+    },
   },
   "messageParticipant": {
     "fields": {
@@ -2020,8 +2045,17 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "companyIdIndex": {
         "universalIdentifier": "2d83909a-a383-4e82-b00a-8b7739f3f906",
       },
+      "noteCompanyUniqueIndex": {
+        "universalIdentifier": "e3b92659-04cf-4496-8fd4-4f32c747c26a",
+      },
       "noteIdIndex": {
         "universalIdentifier": "9294d9e3-0225-4c7f-9d6e-23b4c25b6b24",
+      },
+      "noteOpportunityUniqueIndex": {
+        "universalIdentifier": "58002741-8aa7-4812-b7af-f4cf98dd2433",
+      },
+      "notePersonUniqueIndex": {
+        "universalIdentifier": "29be76d1-ff4f-4f0f-b05c-f679a234e90a",
       },
       "opportunityIdIndex": {
         "universalIdentifier": "0d1a59b4-cc87-4b7d-804a-656e8504f371",
@@ -2387,6 +2421,25 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
         },
       },
+      "messageListRecordPageMembers": {
+        "universalIdentifier": "bef79e8e-9ef3-4458-81ed-78a299e2566f",
+        "viewFields": {
+          "company": {
+            "universalIdentifier": "3db54119-df4d-449b-91c9-22fca1e5d599",
+          },
+          "emails": {
+            "universalIdentifier": "180e9cbb-34c2-4e27-8648-2915be88a50e",
+          },
+          "name": {
+            "universalIdentifier": "a4f0d7b4-3956-44a6-8bb2-df45a699609b",
+          },
+        },
+        "viewFilters": {
+          "listMembershipsListIsCurrentRecord": {
+            "universalIdentifier": "256dceea-a9b5-42b7-8461-a6ce62e7fa6c",
+          },
+        },
+      },
       "personRecordPageFields": {
         "universalIdentifier": "7f34ab76-9b33-595a-bd22-d8d434147c8e",
         "viewFieldGroups": {
@@ -2707,8 +2760,17 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "personIdIndex": {
         "universalIdentifier": "b7d305d1-6fae-4ed6-9bdc-354fe9032c0e",
       },
+      "taskCompanyUniqueIndex": {
+        "universalIdentifier": "637dce5e-f609-49f4-89e3-c0ef9e330d3a",
+      },
       "taskIdIndex": {
         "universalIdentifier": "c882f7a4-b025-4d32-aa26-5ef2595bdbf9",
+      },
+      "taskOpportunityUniqueIndex": {
+        "universalIdentifier": "eb5422ff-7a41-48d2-a2df-3de1cbf7bced",
+      },
+      "taskPersonUniqueIndex": {
+        "universalIdentifier": "4adf4d5a-ad69-4c5c-bc62-2807816b3aa8",
       },
     },
     "morphIds": {

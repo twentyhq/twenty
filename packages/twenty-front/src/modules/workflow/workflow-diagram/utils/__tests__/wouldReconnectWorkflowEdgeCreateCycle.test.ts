@@ -10,7 +10,7 @@ const createAction = (id: string, nextStepIds: string[]): WorkflowAction => ({
     input: { method: 'GET', url: '', headers: {} },
     outputSchema: {},
     errorHandlingOptions: {
-      retryOnFailure: { value: false },
+      retryOnFailure: { value: 0 },
       continueOnFailure: { value: false },
     },
   },
@@ -63,7 +63,7 @@ describe('wouldReconnectWorkflowEdgeCreateCycle', () => {
         input: { items: [], initialLoopStepIds: ['loop-first'] },
         outputSchema: {},
         errorHandlingOptions: {
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
           continueOnFailure: { value: false },
         },
       },
