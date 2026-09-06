@@ -6,40 +6,45 @@ import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular, CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { DuplicateDashboardDocument } from '~/generated-metadata/graphql';
+import { DuplicateMessageListDocument } from '~/generated-metadata/graphql';
 
-export const useDuplicateDashboard = () => {
+export const useDuplicateMessageList = () => {
   const { addDuplicatedRecordToCache } = useAddDuplicatedRecordToCache({
-    objectNameSingular: CoreObjectNameSingular.Dashboard,
+    objectNameSingular: CoreObjectNameSingular.MessageList,
   });
 
-  const [mutate] = useMutation(DuplicateDashboardDocument);
+  const [mutate] = useMutation(DuplicateMessageListDocument);
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const duplicateDashboard = async (dashboardId: string) => {
+  const duplicateMessageList = async (messageListId: string) => {
     try {
       const result = await mutate({
-        variables: { id: dashboardId },
+        variables: { id: messageListId },
         update: (cache, { data }) => {
-          const record = data?.duplicateDashboard;
+          const record = data?.duplicateMessageList;
 
           if (!isDefined(record)) return;
 
-          addDuplicatedRecordToCache({ cache, record });
+          const { memberCount: _memberCount, ...duplicatedListRecord } = record;
+
+          addDuplicatedRecordToCache({
+            cache,
+            record: duplicatedListRecord,
+          });
         },
       });
 
-      return result?.data?.duplicateDashboard;
+      return result?.data?.duplicateMessageList;
     } catch (error) {
       if (CombinedGraphQLErrors.is(error)) {
         handleMetadataError(error, {
-          primaryMetadataName: 'pageLayoutWidget',
+          primaryMetadataName: 'objectMetadata',
           operationType: CrudOperationType.CREATE,
         });
       } else {
-        enqueueErrorSnackBar({ message: t`Failed to duplicate dashboard` });
+        enqueueErrorSnackBar({ message: t`Failed to duplicate list` });
       }
 
       return undefined;
@@ -47,6 +52,6 @@ export const useDuplicateDashboard = () => {
   };
 
   return {
-    duplicateDashboard,
+    duplicateMessageList,
   };
 };
