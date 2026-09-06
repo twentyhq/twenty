@@ -1,17 +1,15 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type SlackAssistantEmptyRequest } from 'src/logic-functions/types/slack-assistant-empty-request.type';
+import { type SlackAssistantEventKind } from 'src/logic-functions/types/slack-assistant-event-classification.type';
 import { type SlackAssistantRequestDraft } from 'src/logic-functions/types/slack-assistant-request-draft.type';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
+import { classifySlackAssistantEventBody } from 'src/logic-functions/utils/classify-slack-assistant-event-body';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
 import { getSlackBotUserIdFromEventBody } from 'src/logic-functions/utils/get-slack-bot-user-id-from-event-body';
 import { normalizeSlackRequestText } from 'src/logic-functions/utils/normalize-slack-request-text';
 
 const LEADING_MENTION_PATTERN = /^<@([A-Z0-9]+)(\|[^>]*)?>/;
-
-type SlackInboundEvent = NonNullable<SlackEventsRequestBody['event']>;
-
-type SlackAssistantEventKind = 'mention' | 'directMessage' | 'threadFollowUp';
 
 type ParsedSlackAssistantRequest =
   | {
@@ -23,31 +21,6 @@ type ParsedSlackAssistantRequest =
       skipReason: string;
       emptyRequest?: SlackAssistantEmptyRequest;
     };
-
-const classifySlackAssistantEvent = (
-  event: SlackInboundEvent,
-): SlackAssistantEventKind | null => {
-  if (event.type === 'app_mention') {
-    return 'mention';
-  }
-
-  if (event.type !== 'message') {
-    return null;
-  }
-
-  if (event.channel_type === 'im') {
-    return 'directMessage';
-  }
-
-  const isChannelOrGroupMessage =
-    event.channel_type === 'channel' || event.channel_type === 'group';
-
-  if (isChannelOrGroupMessage && isNonEmptyString(event.thread_ts)) {
-    return 'threadFollowUp';
-  }
-
-  return null;
-};
 
 const getBotUserIdFromLeadingMention = (text: string): string | undefined =>
   text.trimStart().match(LEADING_MENTION_PATTERN)?.[1];
@@ -67,27 +40,17 @@ const resolveRequestBotUserId = ({
 export const parseSlackAssistantRequest = (
   body: SlackEventsRequestBody,
 ): ParsedSlackAssistantRequest => {
-  if (body.type !== 'event_callback') {
-    return { request: null, skipReason: `Unhandled body type: ${body.type}` };
+  const classification = classifySlackAssistantEventBody(body);
+
+  if (classification.kind === null) {
+    return { request: null, skipReason: classification.skipReason };
   }
 
+  const kind = classification.kind;
   const event = body.event;
 
-  if (!event) {
-    return { request: null, skipReason: 'Missing event payload' };
-  }
-
-  const kind = classifySlackAssistantEvent(event);
-
-  if (kind === null) {
-    return { request: null, skipReason: `Unhandled event type: ${event.type}` };
-  }
-
-  if (isNonEmptyString(event.bot_id) || isNonEmptyString(event.subtype)) {
-    return { request: null, skipReason: 'Not a plain user message' };
-  }
-
   if (
+    !event ||
     !isNonEmptyString(body.event_id) ||
     !isNonEmptyString(event.channel) ||
     !isNonEmptyString(event.ts) ||

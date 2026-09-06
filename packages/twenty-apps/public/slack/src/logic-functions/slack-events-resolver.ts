@@ -13,6 +13,7 @@ import {
   SLACK_LINK_UNFURL_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
+import { classifySlackAssistantEventBody } from 'src/logic-functions/utils/classify-slack-assistant-event-body';
 import { findClaimedWorkspaceId } from 'src/logic-functions/utils/find-claimed-workspace-id';
 import { resolveTargetWorkspaceId } from 'src/logic-functions/utils/resolve-target-workspace-id';
 import { logSlackRetryDelivery } from 'src/logic-functions/utils/log-slack-retry-delivery';
@@ -70,6 +71,17 @@ export const slackEventsResolverHandler = async (
       targetLogicFunctionUniversalIdentifier,
       payload: body,
     };
+  }
+
+  if (
+    targetLogicFunctionUniversalIdentifier ===
+    SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER
+  ) {
+    const classification = classifySlackAssistantEventBody(body);
+
+    if (classification.kind === null) {
+      return new Response({ ok: true, skipped: classification.skipReason });
+    }
   }
 
   return {

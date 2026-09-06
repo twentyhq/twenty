@@ -182,6 +182,103 @@ describe('Slack inbound events', () => {
       );
     });
 
+    it('should skip a plain channel message without dispatching to a workspace', async () => {
+      const result = await slackEventsResolverHandler(
+        buildSlackRoutePayload(
+          buildSlackMessageEventBody({
+            channelId: CHANNEL_ID,
+            channelType: 'channel',
+            text: 'unrelated team chatter',
+            messageTimestamp: nextMessageTimestamp(),
+            teamId: slack.teamId,
+          }),
+        ),
+      );
+
+      if (!(result instanceof Response)) {
+        throw new Error('A plain channel message was dispatched');
+      }
+
+      expect(result.body).toEqual({
+        ok: true,
+        skipped: 'Unhandled event type: message',
+      });
+    });
+
+    it('should skip a channel message posted by another bot', async () => {
+      const result = await slackEventsResolverHandler(
+        buildSlackRoutePayload(
+          buildSlackMessageEventBody({
+            channelId: CHANNEL_ID,
+            channelType: 'channel',
+            text: 'a bot is talking in a thread',
+            messageTimestamp: nextMessageTimestamp(),
+            threadTimestamp: '1700000000.000004',
+            botId: 'B0OTHERBOT',
+            teamId: slack.teamId,
+          }),
+        ),
+      );
+
+      if (!(result instanceof Response)) {
+        throw new Error('A bot message was dispatched');
+      }
+
+      expect(result.body).toEqual({
+        ok: true,
+        skipped: 'Not a plain user message',
+      });
+    });
+
+    it('should route an unmentioned thread follow-up to the assistant enqueue function', async () => {
+      claimSlackTeamForThisWorkspace();
+
+      const result = await slackEventsResolverHandler(
+        buildSlackRoutePayload(
+          buildSlackMessageEventBody({
+            channelId: CHANNEL_ID,
+            channelType: 'channel',
+            text: 'and what about last month?',
+            messageTimestamp: nextMessageTimestamp(),
+            threadTimestamp: '1700000000.000005',
+            teamId: slack.teamId,
+          }),
+        ),
+      );
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          workspaceId,
+          targetLogicFunctionUniversalIdentifier:
+            SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER,
+        }),
+      );
+    });
+
+    it('should route a direct message to the assistant enqueue function', async () => {
+      claimSlackTeamForThisWorkspace();
+
+      const result = await slackEventsResolverHandler(
+        buildSlackRoutePayload(
+          buildSlackMessageEventBody({
+            channelId: DIRECT_MESSAGE_CHANNEL_ID,
+            channelType: 'im',
+            text: 'how many companies do we have?',
+            messageTimestamp: nextMessageTimestamp(),
+            teamId: slack.teamId,
+          }),
+        ),
+      );
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          workspaceId,
+          targetLogicFunctionUniversalIdentifier:
+            SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER,
+        }),
+      );
+    });
+
     it('should route a channel join to the welcome function', async () => {
       claimSlackTeamForThisWorkspace();
 

@@ -14,7 +14,7 @@
 
 No per-seat or per-message charge. The app's runs are metered like any other app's, at **$0.0001 per logic function invocation** plus runtime, and answers use AI credits on the model's token usage.
 
-Every Slack event the bot subscribes to costs an invocation, including messages it never answers. Drop the `message.channels` and `message.groups` subscriptions to limit it to explicit mentions and DMs.
+Every Slack event the bot subscribes to costs one invocation for the events route, including messages it never answers. Channel and group messages that cannot become a request are dropped there, so they never cost the second invocation an answered event pays in the target workspace. Dropping the `message.channels` and `message.groups` subscriptions removes the first invocation too, at the cost of unmentioned thread follow-ups.
 
 ## 📌 Heads up
 
