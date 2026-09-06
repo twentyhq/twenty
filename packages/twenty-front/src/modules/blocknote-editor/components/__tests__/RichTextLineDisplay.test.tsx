@@ -140,26 +140,50 @@ describe('RichTextLineDisplay', () => {
   });
 
   it('should render links with underline and mention chips with @ prefix', () => {
-    const blocks: PartialBlock[] = [
+    const blocks = [
       {
         content: [
           {
             type: 'link',
             href: 'https://twenty.com',
             content: [{ type: 'text', text: 'Twenty Website', styles: {} }],
-          } as unknown as any,
+          },
           {
             type: 'mention',
             props: { label: 'John Doe', recordId: '123' },
-          } as unknown as any,
+          },
         ],
       },
-    ];
+    ] as unknown as PartialBlock[];
 
     render(<RichTextLineDisplay blocks={blocks} />);
 
-    expect(screen.getByText('Twenty Website')).toBeInTheDocument();
+    const linkElement = screen.getByText('Twenty Website');
+    expect(linkElement).toBeInTheDocument();
+    expect(linkElement.closest('a')).toHaveAttribute(
+      'href',
+      'https://twenty.com',
+    );
     expect(screen.getByText('@John Doe')).toBeInTheDocument();
+  });
+
+  it('should handle hard breaks without concatenating words', () => {
+    const blocks = [
+      {
+        content: [
+          { type: 'text', text: 'First line', styles: {} },
+          { type: 'hardBreak' },
+          { type: 'text', text: 'Second line', styles: {} },
+        ],
+      },
+    ] as unknown as PartialBlock[];
+
+    const { container } = render(<RichTextLineDisplay blocks={blocks} />);
+
+    expect(container.firstChild).toHaveAttribute(
+      'title',
+      'First line Second line',
+    );
   });
 
   it('should set title attribute on the container with full plain text', () => {

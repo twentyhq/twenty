@@ -1,10 +1,11 @@
 import { type PartialBlock } from '@blocknote/core';
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { LegacyMentionRenderer } from '@/blocknote-editor/components/LegacyMentionRenderer';
 
 const BLOCKNOTE_TEXT_COLORS: Record<string, string> = {
   gray: themeCssVariables.color.gray,
@@ -92,7 +93,7 @@ export const getFirstNonEmptyBlock = (
   }
 
   for (const block of blocks) {
-    if (isUndefinedOrNull(block.content)) {
+    if (!isDefined(block.content)) {
       continue;
     }
 
@@ -108,22 +109,52 @@ export const getFirstNonEmptyBlock = (
         if (typeof content === 'string') {
           return content.trim() !== '';
         }
-        if (
-          typeof content === 'object' &&
-          content !== null &&
-          'text' in content &&
-          typeof content.text === 'string'
-        ) {
-          return content.text.trim() !== '';
-        }
         if (typeof content === 'object' && content !== null) {
           const rawContent = content as Record<string, unknown>;
+
+          if (rawContent.type === 'hardBreak') {
+            return false;
+          }
+
           if (
-            rawContent.type === 'link' ||
-            'link' in rawContent ||
-            rawContent.type === 'mention'
+            'text' in rawContent &&
+            typeof rawContent.text === 'string' &&
+            rawContent.text.trim() !== ''
           ) {
             return true;
+          }
+
+          if (
+            rawContent.type === 'mention' &&
+            typeof rawContent.props === 'object' &&
+            rawContent.props !== null
+          ) {
+            const props = rawContent.props as Record<string, unknown>;
+            const hasLabel =
+              typeof props.label === 'string' && props.label.trim() !== '';
+            const hasRecordAndMetadata =
+              typeof props.recordId === 'string' &&
+              props.recordId.trim() !== '' &&
+              typeof props.objectMetadataId === 'string' &&
+              props.objectMetadataId.trim() !== '';
+
+            return hasLabel || hasRecordAndMetadata;
+          }
+
+          if (rawContent.type === 'link' || 'link' in rawContent) {
+            const hasHref =
+              (typeof rawContent.href === 'string' &&
+                rawContent.href.trim() !== '') ||
+              (typeof rawContent.link === 'string' &&
+                rawContent.link.trim() !== '');
+            const hasText =
+              typeof rawContent.text === 'string' &&
+              rawContent.text.trim() !== '';
+            const hasChildren =
+              Array.isArray(rawContent.content) &&
+              rawContent.content.length > 0;
+
+            return hasHref || hasText || hasChildren;
           }
         }
         return false;
@@ -139,7 +170,7 @@ export const getFirstNonEmptyBlock = (
 };
 
 export const getBlockPlainText = (block: PartialBlock): string => {
-  if (isUndefinedOrNull(block.content)) {
+  if (!isDefined(block.content)) {
     return '';
   }
 
@@ -155,12 +186,15 @@ export const getBlockPlainText = (block: PartialBlock): string => {
         }
         if (typeof content === 'object' && content !== null) {
           const rawContent = content as Record<string, unknown>;
+
+          if (rawContent.type === 'hardBreak') {
+            return ' ';
+          }
+
           if ('text' in rawContent && typeof rawContent.text === 'string') {
             return rawContent.text;
           }
-          if ('link' in rawContent && typeof rawContent.link === 'string') {
-            return rawContent.link;
-          }
+
           if (rawContent.type === 'link' && Array.isArray(rawContent.content)) {
             return rawContent.content
               .map((child: unknown) =>
@@ -173,16 +207,26 @@ export const getBlockPlainText = (block: PartialBlock): string => {
               )
               .join('');
           }
+
+          if ('link' in rawContent && typeof rawContent.link === 'string') {
+            return rawContent.link;
+          }
+
+          if (typeof rawContent.href === 'string') {
+            return rawContent.href;
+          }
+
           if (
             rawContent.type === 'mention' &&
             'props' in rawContent &&
             typeof rawContent.props === 'object' &&
-            rawContent.props !== null &&
-            'label' in rawContent.props &&
-            typeof (rawContent.props as Record<string, unknown>).label ===
-              'string'
+            rawContent.props !== null
           ) {
-            return `@${(rawContent.props as Record<string, unknown>).label}`;
+            const props = rawContent.props as Record<string, unknown>;
+            if (typeof props.label === 'string' && props.label !== '') {
+              return `@${props.label}`;
+            }
+            return '@';
           }
         }
         return '';
@@ -207,12 +251,38 @@ const renderInlineContent = (
 
   const contentObj = content as Record<string, unknown>;
 
+  if (contentObj.type === 'hardBreak') {
+    return <span key={index}> </span>;
+  }
+
   if (contentObj.type === 'mention') {
     const props = contentObj.props as Record<string, unknown> | undefined;
     const label = typeof props?.label === 'string' ? props.label : '';
+    const recordId = typeof props?.recordId === 'string' ? props.recordId : '';
+    const objectMetadataId =
+      typeof props?.objectMetadataId === 'string' ? props.objectMetadataId : '';
+
+    if (isNonEmptyString(label)) {
+      return (
+        <span key={index} style={{ fontWeight: 500 }}>
+          @{label}
+        </span>
+      );
+    }
+
+    if (isNonEmptyString(recordId) && isNonEmptyString(objectMetadataId)) {
+      return (
+        <LegacyMentionRenderer
+          key={index}
+          recordId={recordId}
+          objectMetadataId={objectMetadataId}
+        />
+      );
+    }
+
     return (
       <span key={index} style={{ fontWeight: 500 }}>
-        @{label}
+        @
       </span>
     );
   }
@@ -233,15 +303,19 @@ const renderInlineContent = (
       : linkText;
 
     return (
-      <span
+      <a
         key={index}
+        href={href || undefined}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={(event) => event.stopPropagation()}
         style={{
           textDecoration: 'underline',
           color: themeCssVariables.font.color.secondary,
         }}
       >
         {linkContent}
-      </span>
+      </a>
     );
   }
 
