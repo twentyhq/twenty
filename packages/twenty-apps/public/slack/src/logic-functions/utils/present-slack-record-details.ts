@@ -142,7 +142,7 @@ export const presentSlackRecordDetails = async (
     await presentDetailsError({
       slackClient,
       triggerId,
-      message: 'Twenty could not confirm your access to this record.',
+      message: 'Twenty could not load this record. Please try again.',
     });
 
     return { ok: true, skipped: 'Viewer read access could not be established' };

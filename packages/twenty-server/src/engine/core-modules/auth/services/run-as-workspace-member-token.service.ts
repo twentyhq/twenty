@@ -1,13 +1,15 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
+import { canApplicationTokenRunAsWorkspaceMember } from 'src/engine/core-modules/auth/utils/can-application-token-run-as-workspace-member.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 
 @Injectable()
@@ -30,11 +32,14 @@ export class RunAsWorkspaceMemberTokenService {
     requestWorkspaceMemberId: string | null;
   }): Promise<AuthToken> {
     if (
-      isDefined(requestWorkspaceMemberId) &&
-      requestWorkspaceMemberId !== workspaceMemberId
+      !canApplicationTokenRunAsWorkspaceMember({
+        requestWorkspaceMemberId,
+        workspaceMemberId,
+      })
     ) {
-      throw new ForbiddenException(
+      throw new AuthException(
         'An application token issued for a user can only act as that user.',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
 
@@ -44,7 +49,11 @@ export class RunAsWorkspaceMemberTokenService {
     });
 
     if (!isDefined(workspaceMember)) {
-      throw new NotFoundException('Workspace member not found.');
+      throw new AuthException(
+        'Workspace member not found.',
+        AuthExceptionCode.USER_NOT_FOUND,
+        { userFriendlyMessage: msg`Workspace member not found.` },
+      );
     }
 
     const userWorkspace =
@@ -55,8 +64,9 @@ export class RunAsWorkspaceMemberTokenService {
       });
 
     if (!isDefined(userWorkspace)) {
-      throw new NotFoundException(
+      throw new AuthException(
         'Workspace member has no user workspace in this workspace.',
+        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
       );
     }
 

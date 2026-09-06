@@ -138,12 +138,93 @@ describe('presentSlackRecordDetails', () => {
       trigger_id: 'trigger-1',
       error: {
         status: 'custom',
-        custom_message: 'Twenty could not confirm your access to this record.',
+        custom_message: 'Twenty could not load this record. Please try again.',
       },
     });
     expect(result).toEqual({
       ok: true,
       skipped: 'Viewer read access could not be established',
+    });
+  });
+
+  it('should not present details when the viewer does not map to a workspace member', async () => {
+    resolveSlackRunAsWorkspaceMemberIdMock.mockResolvedValue(undefined);
+
+    const result = await presentSlackRecordDetails(BODY);
+
+    expect(createWorkspaceMemberCoreClientMock).not.toHaveBeenCalled();
+    expect(findSlackUnfurlRecordMock).not.toHaveBeenCalled();
+    expect(presentDetailsMock).toHaveBeenCalledWith({
+      trigger_id: 'trigger-1',
+      error: {
+        status: 'custom',
+        custom_message:
+          'Record details are only available to Twenty workspace members.',
+      },
+    });
+    expect(result).toEqual({
+      ok: true,
+      skipped: 'Viewer does not map to a workspace member',
+    });
+  });
+
+  it('should not present details when the workspace URL is unavailable', async () => {
+    fetchWorkspaceBaseUrlsMock.mockResolvedValue([]);
+
+    const result = await presentSlackRecordDetails(BODY);
+
+    expect(createWorkspaceMemberCoreClientMock).not.toHaveBeenCalled();
+    expect(presentDetailsMock).toHaveBeenCalledWith({
+      trigger_id: 'trigger-1',
+      error: {
+        status: 'custom',
+        custom_message: 'The Twenty workspace URL is not configured.',
+      },
+    });
+    expect(result).toEqual({
+      ok: true,
+      skipped: 'Workspace URL is unavailable',
+    });
+  });
+
+  it('should not present details when the event carries no resolvable record', async () => {
+    parseTwentyRecordLinksMock.mockReturnValue([]);
+
+    const result = await presentSlackRecordDetails(BODY);
+
+    expect(createWorkspaceMemberCoreClientMock).not.toHaveBeenCalled();
+    expect(presentDetailsMock).toHaveBeenCalledWith({
+      trigger_id: 'trigger-1',
+      error: {
+        status: 'custom',
+        custom_message: 'This preview does not point to a Twenty record.',
+      },
+    });
+    expect(result).toEqual({
+      ok: true,
+      skipped: 'No resolvable record in the event',
+    });
+  });
+
+  it('should not present details when the record read fails for the viewer', async () => {
+    createWorkspaceMemberCoreClientMock.mockResolvedValue({
+      id: 'viewer-client',
+    });
+    findSlackUnfurlRecordMock.mockRejectedValue(new Error('forbidden'));
+
+    const result = await presentSlackRecordDetails(BODY);
+
+    expect(buildSlackRecordUnfurlEntityMock).not.toHaveBeenCalled();
+    expect(presentDetailsMock).toHaveBeenCalledWith({
+      trigger_id: 'trigger-1',
+      error: {
+        status: 'custom',
+        custom_message: 'This record could not be found in Twenty.',
+      },
+    });
+    expect(result).toEqual({
+      ok: true,
+      skipped: 'Record is missing or unreadable',
     });
   });
 });

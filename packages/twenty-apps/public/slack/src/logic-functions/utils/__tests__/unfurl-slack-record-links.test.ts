@@ -119,6 +119,12 @@ describe('unfurlSlackRecordLinks', () => {
     expect(fetchSlackRecordEntitiesMock).toHaveBeenCalledWith(
       expect.objectContaining({ client: posterClient }),
     );
+    expect(unfurlMock).toHaveBeenCalledTimes(1);
+    expect(unfurlMock).toHaveBeenCalledWith({
+      channel: 'C1',
+      ts: '1700000000.000100',
+      metadata: { entities: [{ entity_type: 'person' }] },
+    });
     expect(result).toEqual({ ok: true, unfurledCount: 1 });
   });
 

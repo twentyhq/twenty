@@ -1,11 +1,11 @@
 import {
   Body,
   Controller,
-  ForbiddenException,
   HttpCode,
   HttpStatus,
   Post,
   Req,
+  UseFilters,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -15,8 +15,13 @@ import { Request } from 'express';
 import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
 import { RunAsWorkspaceMemberTokenDto } from 'src/engine/core-modules/auth/dto/run-as-workspace-member-token.dto';
+import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { RunAsWorkspaceMemberTokenService } from 'src/engine/core-modules/auth/services/run-as-workspace-member-token.service';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -24,6 +29,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @Controller(`${ApiPath.App}/tokens`)
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
+@UseFilters(AuthRestApiExceptionFilter)
 @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
 export class AppTokensController {
   constructor(
@@ -43,8 +49,9 @@ export class AppTokensController {
     @Body() body: RunAsWorkspaceMemberTokenDto,
   ): Promise<AuthToken> {
     if (!isDefined(request.application) || !isDefined(request.workspace)) {
-      throw new ForbiddenException(
+      throw new AuthException(
         'This endpoint requires an APPLICATION_ACCESS token.',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
 

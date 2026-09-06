@@ -329,11 +329,11 @@ then read as that member: the app asks the server for a token carrying both the
 app and the member, and permissions for that pair are the intersection of the
 two roles, so a record hidden by the member's own role never reaches the card.
 The card is visible to everyone in the channel, so it stays to a handful of
-headline fields.
-Expanding it opens a side panel with the full field set; anyone who can see the
-card can open it, external users in Slack Connect channels included, so the
-panel is likewise gated on the viewer mapping to a workspace member and read
-with that viewer's permissions, and everyone else gets a short notice instead.
+headline fields. Expanding it opens a side panel with the full field set; anyone
+who can see the card can open it, external users in Slack Connect channels
+included, so the panel is likewise gated on the viewer mapping to a workspace
+member and read with that viewer's permissions, and everyone else gets a short
+notice instead.
 
 The member-scoped token needs Twenty 2.39.0 or newer, which the app's
 `engines.twenty` range requires at install.
