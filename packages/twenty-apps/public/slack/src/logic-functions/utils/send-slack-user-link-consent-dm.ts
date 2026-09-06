@@ -2,6 +2,7 @@ import { type WebClient } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { buildSlackUserLinkConsentBlocks } from 'src/logic-functions/utils/build-slack-user-link-consent-blocks';
+import { retrySlackCallWhenRateLimited } from 'src/logic-functions/utils/retry-slack-call-when-rate-limited';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 export const sendSlackUserLinkConsentDm = async (
@@ -34,17 +35,19 @@ export const sendSlackUserLinkConsentDm = async (
       };
     }
 
-    await slackClient.chat.postMessage({
-      channel: channelId,
-      text: 'A Twenty admin asked to link your Slack account. Approve or decline it here.',
-      blocks: buildSlackUserLinkConsentBlocks({
-        memberName,
-        slackTeamId,
-        slackUserId,
-        workspaceMemberId,
-        slackUserLinkId,
+    await retrySlackCallWhenRateLimited(async () =>
+      slackClient.chat.postMessage({
+        channel: channelId,
+        text: 'A Twenty admin asked to link your Slack account. Approve or decline it here.',
+        blocks: buildSlackUserLinkConsentBlocks({
+          memberName,
+          slackTeamId,
+          slackUserId,
+          workspaceMemberId,
+          slackUserLinkId,
+        }),
       }),
-    });
+    );
 
     return { success: true };
   } catch (error) {

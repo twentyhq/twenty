@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { SLACK_ASSISTANT_CONTEXT_TIMEOUT_MS } from 'src/logic-functions/constants/slack-assistant-context-timeout-ms';
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
 
 const {
@@ -86,7 +87,7 @@ describe('fetchSlackAssistantContext', () => {
 
     const contextPromise = fetchSlackAssistantContext(CONTEXT_ARGS);
 
-    await vi.advanceTimersByTimeAsync(30_000);
+    await vi.advanceTimersByTimeAsync(SLACK_ASSISTANT_CONTEXT_TIMEOUT_MS);
 
     const context = await contextPromise;
 
@@ -95,6 +96,20 @@ describe('fetchSlackAssistantContext', () => {
     expect(context.requesterName).toBeUndefined();
     expect(context.isDirectMessage).toBe(false);
     expect(context.slackClient).toBe(SLACK_CLIENT);
+  });
+
+  it('should give up when acquiring the Slack client hangs', async () => {
+    vi.useFakeTimers();
+    getSlackClientMock.mockReturnValue(new Promise(() => undefined));
+
+    const contextPromise = fetchSlackAssistantContext(CONTEXT_ARGS);
+
+    await vi.advanceTimersByTimeAsync(SLACK_ASSISTANT_CONTEXT_TIMEOUT_MS);
+
+    const context = await contextPromise;
+
+    expect(context.slackClient).toBeUndefined();
+    expect(context.threadMessages).toEqual([]);
   });
 
   it('should return an unreachable context when Slack is not connected', async () => {

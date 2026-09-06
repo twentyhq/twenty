@@ -45,15 +45,19 @@ export const fetchSlackAssistantContext = async ({
   slackMessageTimestamp: string;
   slackUserId: string | undefined;
 }): Promise<SlackAssistantContext> => {
-  const slackClientResult = await getSlackClient();
-
-  if (!slackClientResult.success) {
-    return UNREACHABLE_SLACK_CONTEXT;
-  }
-
-  const { client } = slackClientResult;
+  let acquiredClient: WebClient | undefined;
 
   const readContext = async (): Promise<SlackAssistantContext> => {
+    const slackClientResult = await getSlackClient();
+
+    if (!slackClientResult.success) {
+      return UNREACHABLE_SLACK_CONTEXT;
+    }
+
+    const { client } = slackClientResult;
+
+    acquiredClient = client;
+
     const assistantBotUserId = await resolveSlackBotUserIdOrThrow().catch(
       (error) => {
         console.warn(
@@ -105,7 +109,7 @@ export const fetchSlackAssistantContext = async ({
         `[slack] assistant context read exceeded ${SLACK_ASSISTANT_CONTEXT_TIMEOUT_MS}ms, answering without thread history`,
       );
 
-      return { ...UNREACHABLE_SLACK_CONTEXT, slackClient: client };
+      return { ...UNREACHABLE_SLACK_CONTEXT, slackClient: acquiredClient };
     },
   });
 };
