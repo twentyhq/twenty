@@ -335,8 +335,10 @@ included, so the panel is likewise gated on the viewer mapping to a workspace
 member and read with that viewer's permissions, and everyone else gets a short
 notice instead.
 
-The member-scoped token needs Twenty 2.39.0 or newer, which the app's
-`engines.twenty` range requires at install.
+The member-scoped token needs Twenty 2.39.0 or newer. The app installs on 2.38.0
+and everything else in it works there, but record link previews do not render
+until the server can issue that token, since reading with the app's own role
+instead is the thing this avoids.
 
 Previews fail closed. A record the member cannot read, a role that hides one of
 the fields the card selects, or a token the server declines to issue all end the
