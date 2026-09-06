@@ -503,6 +503,7 @@ export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceComman
     const isCustomized =
       existingWidget.applicationId !== standardApplicationId ||
       isDefined(existingWidget.overrides) ||
+      isDefined(existingWidget.deletedAt) ||
       !existingWidget.isActive ||
       (isDefined(configuration.viewId) &&
         configuration.viewId !== membersView.id);
