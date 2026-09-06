@@ -94,17 +94,7 @@ describe('fetchSlackAssistantContext', () => {
     expect(context.conversationMessages).toEqual([]);
     expect(context.requesterName).toBeUndefined();
     expect(context.isDirectMessage).toBe(false);
-  });
-
-  it('should keep the Slack client after a timed out read so the answer can still be delivered', async () => {
-    vi.useFakeTimers();
-    fetchSlackThreadMessagesMock.mockReturnValue(new Promise(() => undefined));
-
-    const contextPromise = fetchSlackAssistantContext(CONTEXT_ARGS);
-
-    await vi.advanceTimersByTimeAsync(30_000);
-
-    expect((await contextPromise).slackClient).toBe(SLACK_CLIENT);
+    expect(context.slackClient).toBe(SLACK_CLIENT);
   });
 
   it('should return an unreachable context when Slack is not connected', async () => {

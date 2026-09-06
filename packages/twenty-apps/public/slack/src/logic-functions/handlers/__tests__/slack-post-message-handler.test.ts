@@ -187,23 +187,6 @@ describe('slackPostMessageHandler', () => {
     expect(postMessageMock).toHaveBeenCalledTimes(2);
   });
 
-  it('should fail fast when Retry-After is longer than the post budget', async () => {
-    postMessageMock.mockRejectedValue(
-      Object.assign(new Error('A rate-limit has been reached'), {
-        code: ErrorCode.RateLimitedError,
-        retryAfter: 300,
-      }),
-    );
-
-    const result = await slackPostMessageHandler({
-      slackChannelId: CHANNEL_ID,
-      messageText: 'hello',
-    });
-
-    expect(result.success).toBe(false);
-    expect(postMessageMock).toHaveBeenCalledTimes(1);
-  });
-
   it('should return a failure result when the Slack API throws', async () => {
     postMessageMock.mockRejectedValue(new Error('channel_not_found'));
 

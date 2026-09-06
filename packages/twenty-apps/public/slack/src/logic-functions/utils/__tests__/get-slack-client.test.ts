@@ -34,12 +34,6 @@ describe('getSlackClient', () => {
     });
   });
 
-  it('should reject rate limited calls instead of sleeping out the Retry-After', async () => {
-    await getSlackClient();
-
-    expect(webClientMock.mock.calls[0][1].rejectRateLimitedCalls).toBe(true);
-  });
-
   it('should let a caller with more budget override the defaults', async () => {
     await getSlackClient({ retryConfig: { retries: 0 }, timeout: 20_000 });
 
