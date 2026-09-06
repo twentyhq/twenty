@@ -16,12 +16,20 @@ const getMetadataManyToOneForeignKeys = (
 
 const getMetadataSerializedProperties = (
   metadataName: AllMetadataName,
-): string[] =>
-  Object.keys(
+): string[] => {
+  const propertyNames = Object.keys(
     ALL_JSONB_PROPERTIES_WITH_SERIALIZED_RELATION_BY_METADATA_NAME[
       metadataName
     ] ?? {},
   );
+
+  return [
+    ...propertyNames,
+    ...propertyNames.map(
+      (name) => `universal${name.charAt(0).toUpperCase()}${name.slice(1)}`,
+    ),
+  ];
+};
 
 // A mutation only affects a related entity's cached flat map when it changes
 // which entities reference each other: create, delete, or an update that moves

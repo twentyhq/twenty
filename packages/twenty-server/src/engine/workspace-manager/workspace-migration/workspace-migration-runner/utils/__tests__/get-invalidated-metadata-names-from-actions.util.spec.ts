@@ -23,7 +23,7 @@ describe('getInvalidatedMetadataNamesFromActions', () => {
         type: 'update' as const,
         metadataName: 'viewField' as const,
         universalIdentifier: 'view-field-1',
-        update: { viewFieldGroupId: 'group-2' },
+        update: { viewUniversalIdentifier: 'view-2' },
       },
     ] as AllUniversalWorkspaceMigrationAction[];
 
@@ -56,7 +56,7 @@ describe('getInvalidatedMetadataNamesFromActions', () => {
         type: 'update' as const,
         metadataName: 'pageLayoutWidget' as const,
         universalIdentifier: 'widget-1',
-        update: { configuration: {} },
+        update: { universalConfiguration: {} as any },
       },
     ] as AllUniversalWorkspaceMigrationAction[];
 
