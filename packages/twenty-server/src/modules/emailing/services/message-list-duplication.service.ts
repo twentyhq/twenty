@@ -200,8 +200,8 @@ export class MessageListDuplicationService {
       description: duplicatedMessageList.description,
       position: duplicatedMessageList.position,
       memberCount: originalMembers.length,
-      createdAt: duplicatedMessageList.createdAt,
-      updatedAt: duplicatedMessageList.updatedAt,
+      createdAt: new Date(duplicatedMessageList.createdAt).toISOString(),
+      updatedAt: new Date(duplicatedMessageList.updatedAt).toISOString(),
     };
   }
 }

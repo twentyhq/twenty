@@ -26,13 +26,13 @@ export const DuplicateMessageListSingleRecordCommand = () => {
     const result = await duplicateMessageList(recordId);
 
     if (isDefined(result) && isNonEmptyString(result.id)) {
-      const memberCountLabel = plural(result.memberCount, {
-        one: '# member',
-        other: '# members',
-      });
+      const memberCount = result.memberCount;
 
       enqueueSuccessSnackBar({
-        message: t`List duplicated with ${memberCountLabel}`,
+        message: t`List duplicated with ${plural(memberCount, {
+          one: '# member',
+          other: '# members',
+        })}`,
       });
 
       navigate(AppPath.RecordShowPage, {
