@@ -7,6 +7,8 @@ import { BackfillRecordFormCommand } from 'src/database/commands/upgrade-version
 import { BackfillMessageListJunctionTargetsCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788616074386-backfill-message-list-junction-targets.command';
 import { CreateMessageListMemberViewCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788616075386-create-message-list-member-view.command';
 import { MarkPlatformOwnedStandardObjectsSystemCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788616958245-mark-platform-owned-standard-objects-system.command';
+import { SyncMessageListRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788639798701-sync-message-list-record-page.command';
+import { AddDuplicateMessageListCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788639976437-add-duplicate-message-list-command-menu-item.command';
 import { SyncRecordShareObjectCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788666681620-sync-record-share-object.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -37,6 +39,8 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     BackfillMessageListJunctionTargetsCommand,
     CreateMessageListMemberViewCommand,
     MarkPlatformOwnedStandardObjectsSystemCommand,
+    SyncMessageListRecordPageCommand,
+    AddDuplicateMessageListCommandMenuItemCommand,
     SyncRecordShareObjectCommand,
   ],
 })
