@@ -19,37 +19,24 @@ export const RecordDetailRelationSectionDropdown = ({
 }: RecordDetailRelationSectionDropdownProps) => {
   const { fieldDefinition, isRecordFieldReadOnly, recordId } =
     useContext(FieldContext);
-  const {
-    relationType,
-    objectMetadataNameSingular,
-    relationObjectMetadataNameSingular,
-  } = fieldDefinition.metadata as FieldRelationMetadata;
+  const { relationType, objectMetadataNameSingular } =
+    fieldDefinition.metadata as FieldRelationMetadata;
 
   const { objectMetadataItem: recordObjectMetadataItem } =
     useObjectMetadataItem({
       objectNameSingular: objectMetadataNameSingular ?? '',
     });
 
-  const { objectMetadataItem: relationObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: relationObjectMetadataNameSingular,
-    });
   // TODO: use new relation type
   const isToOneObject = relationType === RelationType.MANY_TO_ONE;
   const isToManyObjects = relationType === RelationType.ONE_TO_MANY;
 
-  const isRecordReadOnlyFromRelatedRecordPerspective = useIsRecordReadOnly({
+  const isParentRecordReadOnly = useIsRecordReadOnly({
     recordId,
-    objectMetadataId: isToOneObject
-      ? recordObjectMetadataItem.id
-      : relationObjectMetadataItem.id,
+    objectMetadataId: recordObjectMetadataItem.id,
   });
 
-  if (
-    loading ||
-    isRecordFieldReadOnly ||
-    isRecordReadOnlyFromRelatedRecordPerspective
-  ) {
+  if (loading || isRecordFieldReadOnly || isParentRecordReadOnly) {
     return null;
   }
 
