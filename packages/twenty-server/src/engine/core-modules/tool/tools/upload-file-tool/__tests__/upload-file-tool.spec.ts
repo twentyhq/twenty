@@ -79,6 +79,11 @@ describe('UploadFileTool', () => {
       size: 5,
       mimeType: 'text/plain',
     });
+    expect(mockFindApplications).toHaveBeenCalledTimes(1);
+    expect(mockFindApplications).toHaveBeenCalledWith({
+      workspaceId: 'workspace-1',
+    });
+    expect(mockWriteFile).toHaveBeenCalledTimes(1);
     expect(mockWriteFile).toHaveBeenCalledWith(
       expect.objectContaining({
         fileFolder: FileFolder.AgentChat,
