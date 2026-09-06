@@ -14,7 +14,7 @@ import {
 import { type MicrosoftPassportProfile } from 'src/engine/core-modules/auth/types/microsoft-passport-profile.type';
 import { type SocialSsoSignInUpActionType } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { type SocialSsoState } from 'src/engine/core-modules/auth/types/social-sso-state.type';
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type MicrosoftRequest = Omit<
   Request,
@@ -36,7 +36,7 @@ export type MicrosoftRequest = Omit<
 
 @Injectable()
 export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
-  constructor(twentyConfigService: TwentyConfigService) {
+  constructor(private readonly twentyConfigService: TwentyConfigService) {
     super({
       clientID: twentyConfigService.get('AUTH_MICROSOFT_CLIENT_ID'),
       clientSecret: twentyConfigService.get('AUTH_MICROSOFT_CLIENT_SECRET'),
@@ -51,6 +51,7 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
   authenticate(req: Request, options: any) {
     options = {
       ...options,
+      callbackURL: this.twentyConfigService.get('AUTH_MICROSOFT_CALLBACK_URL'),
       state: JSON.stringify({
         workspaceInviteHash: req.query.workspaceInviteHash,
         workspaceId: req.params.workspaceId,
