@@ -78,10 +78,15 @@ export class PendingFileCleanupService {
   }
 
   // Staging copies from upload_file land as UPLOADED temporary files, so the
-  // PENDING reaper never sees them. Delete leftovers that were never attached.
-  // Object first: a failed storage delete leaves the row for the next tick.
-  // PENDING cleanup cannot do this — it must claim the row while still
-  // PENDING so a late complete cannot revive it.
+  // PENDING reaper never sees them. Postgres and object storage cannot share
+  // a transaction, so this is a short saga: soft-delete first so attach
+  // cannot see the row, then remove the blob, then hard-delete. A failed
+  // blob delete leaves the hidden row for the next tick (withDeleted).
+  //
+  // Two gaps we accept. An attach that already loaded the entity before the
+  // claim can still copy a missing object at the 24h boundary — we do not
+  // hold a row lock across the storage copy. A missing application cannot
+  // address the blob; we drop the row rather than pin it forever.
   async cleanupStaleMcpUploadFiles(): Promise<number> {
     const staleThreshold = new Date(Date.now() - PENDING_FILE_MAX_AGE_MS);
 
@@ -92,6 +97,7 @@ export class PendingFileCleanupService {
         workspaceId: Not(IsNull()),
         path: Like(`${MCP_UPLOAD_FILE_PATH_PREFIX}%`),
       },
+      withDeleted: true,
       take: PENDING_FILE_CLEANUP_BATCH_SIZE,
     });
 
@@ -99,8 +105,19 @@ export class PendingFileCleanupService {
 
     for (const file of staleFiles) {
       try {
-        // Skips the blob and returns if the application is gone; the row
-        // is still deleted below.
+        if (!isDefined(file.deletedAt)) {
+          const { affected } = await this.fileRepository.softDelete({
+            id: file.id,
+            path: Like(`${MCP_UPLOAD_FILE_PATH_PREFIX}%`),
+          });
+
+          if (!isDefined(affected) || affected === 0) {
+            continue;
+          }
+        }
+
+        // Missing application: skip the blob (cannot build the storage key)
+        // and hard-delete the row below so we do not retry forever.
         await this.deleteMcpUploadStorageObject(file);
 
         const { affected } = await this.fileRepository.delete({
