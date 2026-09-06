@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { type CallRecordingReference } from 'src/logic-functions/types/call-recording-reference.type';
 import {
   type FathomMediaReconciliationCandidate,
   type FathomMediaReconciliationPlan,
@@ -14,7 +15,7 @@ export const buildFathomMediaReconciliationPlan = ({
   callRecordings: FathomMediaReconciliationCandidate[];
   activeConnectedAccountIds: string[];
 }): FathomMediaReconciliationPlan => {
-  const callRecordingsToComplete: Array<{ id: string; updatedAt: string }> = [];
+  const callRecordingsToComplete: CallRecordingReference[] = [];
   const activeConnectedAccountIdSet = new Set(activeConnectedAccountIds);
   const disconnectedAccountIdSet = new Set<string>();
   const importGroupsByConnectedAccountId = new Map<

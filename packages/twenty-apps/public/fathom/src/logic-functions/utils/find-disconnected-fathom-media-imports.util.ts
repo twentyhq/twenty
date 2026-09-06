@@ -1,10 +1,9 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
-import { isDefined } from 'src/utils/is-defined';
 
+import { FATHOM_MEDIA_RECONCILIATION_SELECTION } from 'src/constants/fathom-media-reconciliation-selection.constant';
 import { FATHOM_MEDIA_RECONCILIATION_PAGE_SIZE } from 'src/constants/fathom.constant';
-import { fathomMediaReconciliationQueryResultSchema } from 'src/logic-functions/schemas/fathom-media-reconciliation-query-result.schema';
 import { type FathomMediaReconciliationPage } from 'src/logic-functions/types/fathom-media-reconciliation-plan.type';
-import { mapCallRecordingMediaState } from 'src/logic-functions/utils/map-call-recording-media-state.util';
+import { parseFathomMediaReconciliationPage } from 'src/logic-functions/utils/parse-fathom-media-reconciliation-page.util';
 
 export const findDisconnectedFathomMediaImports = async ({
   coreApiClient,
@@ -30,39 +29,8 @@ export const findDisconnectedFathomMediaImports = async ({
         first: FATHOM_MEDIA_RECONCILIATION_PAGE_SIZE,
         orderBy: [{ id: 'AscNullsLast' }],
       },
-      pageInfo: { hasNextPage: true },
-      edges: {
-        node: {
-          id: true,
-          externalRecordingId: true,
-          video: { fileId: true },
-          audio: { fileId: true },
-          fathomMediaFailureReason: true,
-          fathomConnectedAccountId: true,
-          fathomMediaDownloadId: true,
-          transcript: true,
-          status: true,
-          updatedAt: true,
-          fathomMediaUploadCheckpoint: true,
-        },
-      },
+      ...FATHOM_MEDIA_RECONCILIATION_SELECTION,
     },
   });
-  const connection =
-    fathomMediaReconciliationQueryResultSchema.parse(
-      queryResult,
-    ).callRecordings;
-
-  if (!isDefined(connection)) {
-    return { callRecordings: [], hasNextPage: false };
-  }
-
-  return {
-    callRecordings: connection.edges.map(({ node }) => ({
-      ...mapCallRecordingMediaState(node),
-      status: node.status,
-      updatedAt: node.updatedAt,
-    })),
-    hasNextPage: connection.pageInfo.hasNextPage,
-  };
+  return parseFathomMediaReconciliationPage(queryResult);
 };

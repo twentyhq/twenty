@@ -16,7 +16,6 @@ export type FathomMediaReconciliationPlan = {
 
 export type FathomMediaReconciliationCandidate = CallRecordingMediaState & {
   status: string;
-  updatedAt: string;
 };
 
 export type FathomMediaReconciliationRun = {
