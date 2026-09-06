@@ -11,6 +11,7 @@ import {
   SLACK_ASSISTANT_WORKER_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { SLACK_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/constants/slack-assistant-agent-budget-seconds';
+import { SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR } from 'src/logic-functions/constants/slack-assistant-empty-response-error';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS } from 'src/logic-functions/constants/slack-assistant-worker-timeout-seconds';
 import { SLACK_MARKDOWN_BLOCK_MAX_LENGTH } from 'src/logic-functions/constants/slack-markdown-block-max-length';
@@ -156,7 +157,7 @@ export const slackAssistantWorkerHandler = async (
     if (responseText === undefined) {
       return await finishSlackAssistantRequestWithFailure({
         ...failureContext,
-        errorMessage: 'Agent returned an empty response',
+        errorMessage: SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR,
       });
     }
 

@@ -3,6 +3,8 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { createSlackMessageTimestampSequence } from 'src/__tests__/utils/create-slack-message-timestamp-sequence.util';
 import { requireDefinedOrThrow } from 'src/__tests__/utils/require-defined-or-throw.util';
 import { setupSlackIntegrationTest } from 'src/__tests__/utils/setup-slack-integration-test.util';
+import { SLACK_ASSISTANT_DEADLINE_ERROR } from 'src/logic-functions/constants/slack-assistant-deadline-error';
+import { SLACK_ASSISTANT_DEADLINE_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-deadline-failure-text';
 import { SLACK_ASSISTANT_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-failure-text';
 import { SLACK_ASSISTANT_FEEDBACK_ACTION_ID } from 'src/logic-functions/constants/slack-assistant-feedback-action-id';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
@@ -332,6 +334,45 @@ describe('Slack assistant worker', () => {
       expect.objectContaining({
         status: SLACK_ASSISTANT_REQUEST_STATUS.FAILED,
         errorMessage: 'Agent is not available',
+      }),
+    );
+  });
+
+  it('should tell the member to narrow the request when the answer deadline passes', async () => {
+    slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
+    const slackMessageTimestamp = nextMessageTimestamp();
+
+    appRuntime.setAgentResult({
+      success: false,
+      result: null,
+      error: SLACK_ASSISTANT_DEADLINE_ERROR,
+    });
+
+    const request = await createRequestRecord({
+      slackChannelId: CHANNEL_ID,
+      slackMessageTimestamp,
+      requestText: 'summarize every opportunity we opened this year',
+    });
+
+    await slackAssistantWorkerHandler(
+      buildRequestCreatedEvent({
+        ...request,
+        slackChannelId: CHANNEL_ID,
+        slackMessageTimestamp,
+        requestText: 'summarize every opportunity we opened this year',
+      }),
+    );
+
+    expect(slack.messagesIn(CHANNEL_ID)).toEqual([
+      expect.objectContaining({
+        text: SLACK_ASSISTANT_DEADLINE_FAILURE_TEXT,
+        threadTimestamp: slackMessageTimestamp,
+      }),
+    ]);
+    await expect(readRequest(request.id)).resolves.toEqual(
+      expect.objectContaining({
+        status: SLACK_ASSISTANT_REQUEST_STATUS.FAILED,
+        errorMessage: SLACK_ASSISTANT_DEADLINE_ERROR,
       }),
     );
   });
