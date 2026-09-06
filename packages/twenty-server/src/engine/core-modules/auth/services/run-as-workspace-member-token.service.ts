@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import {
   AuthException,
   AuthExceptionCode,
@@ -21,18 +22,32 @@ export class RunAsWorkspaceMemberTokenService {
   ) {}
 
   async generateAccessToken({
-    applicationId,
+    application,
     workspaceId,
     workspaceMemberId,
     isDelegatedToUser,
     requestWorkspaceMemberId,
   }: {
-    applicationId: string;
+    application: Pick<FlatApplication, 'id' | 'defaultRoleId'>;
     workspaceId: string;
     workspaceMemberId: string;
     isDelegatedToUser: boolean;
     requestWorkspaceMemberId: string | null;
   }): Promise<AuthToken> {
+    // Permissions for an application acting as a member are the intersection of
+    // both roles, and resolveRoleIdsForUser falls back to the member's role
+    // alone when the application declares none, which would widen rather than
+    // narrow what the calling token reaches.
+    if (!isDefined(application.defaultRoleId)) {
+      throw new AuthException(
+        'An application without a default role cannot act as a workspace member.',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: msg`This application has no role and cannot read data on your behalf.`,
+        },
+      );
+    }
+
     if (
       !canApplicationTokenRunAsWorkspaceMember({
         isDelegatedToUser,
@@ -43,6 +58,9 @@ export class RunAsWorkspaceMemberTokenService {
       throw new AuthException(
         'An application token issued for a user can only act as that user.',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: msg`This application cannot act as another workspace member.`,
+        },
       );
     }
 
@@ -78,7 +96,7 @@ export class RunAsWorkspaceMemberTokenService {
 
     return this.applicationTokenService.generateApplicationAccessToken({
       workspaceId,
-      applicationId,
+      applicationId: application.id,
       userId: workspaceMember.userId,
       userWorkspaceId: userWorkspace.id,
     });

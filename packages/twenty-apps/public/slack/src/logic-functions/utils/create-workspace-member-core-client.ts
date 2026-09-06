@@ -10,10 +10,9 @@ const RUN_AS_WORKSPACE_MEMBER_TOKEN_TIMEOUT_MS = 5_000;
 
 type RunAsWorkspaceMemberTokenResponse = { token?: string };
 
-// Reads made with this client resolve to the intersection of the app role and
-// the member's own role, so a record the member cannot open in Twenty stays
-// invisible to them in Slack. Returns undefined rather than falling back to
-// the app role: previews must fail closed.
+// Reads with this client resolve to the intersection of the app role and the
+// member's own role. Returns undefined rather than falling back to the app
+// role, so a preview the member may not see is skipped instead of shown.
 export const createWorkspaceMemberCoreClient = async (
   workspaceMemberId: string,
 ): Promise<CoreApiClient | undefined> => {

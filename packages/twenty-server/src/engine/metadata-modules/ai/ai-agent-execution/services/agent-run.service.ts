@@ -10,6 +10,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { canApplicationTokenRunAsWorkspaceMember } from 'src/engine/core-modules/auth/utils/can-application-token-run-as-workspace-member.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
@@ -189,8 +190,11 @@ export class AgentRunService {
     }
 
     if (
-      isDefined(requestUserWorkspaceId) &&
-      requestWorkspaceMemberId !== runAsWorkspaceMemberId
+      !canApplicationTokenRunAsWorkspaceMember({
+        isDelegatedToUser: isDefined(requestUserWorkspaceId),
+        requestWorkspaceMemberId,
+        workspaceMemberId: runAsWorkspaceMemberId,
+      })
     ) {
       throw new AiException(
         'An application token issued for a user can only run an agent as that user',
