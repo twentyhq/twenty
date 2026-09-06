@@ -776,6 +776,61 @@ describe('isRecordMatchingFilter', () => {
       ).toBe(false);
     });
 
+    it('matches a to-many relation held as a connection, the way records reach the optimistic effects', () => {
+      const personMockObjectMetadataItem = objectMetadataItems.find(
+        (item) => item.nameSingular === 'person',
+      )!;
+
+      const filter = {
+        pointOfContactForOpportunities: {
+          id: { eq: opportunityWithPointOfContact.id },
+        },
+      } as RecordGqlOperationFilter;
+
+      const buildPersonWithOpportunityConnection = (
+        opportunityIds: string[],
+      ) => ({
+        id: personId,
+        pointOfContactForOpportunities: {
+          __typename: 'OpportunityConnection',
+          edges: opportunityIds.map((id) => ({
+            __typename: 'OpportunityEdge',
+            node: { id },
+          })),
+        },
+      });
+
+      expect(
+        isRecordMatchingFilter({
+          record: buildPersonWithOpportunityConnection([
+            '20202020-0000-4000-8000-000000000001',
+            opportunityWithPointOfContact.id,
+          ]),
+          filter,
+          objectMetadataItem: personMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(true);
+
+      expect(
+        isRecordMatchingFilter({
+          record: buildPersonWithOpportunityConnection([]),
+          filter,
+          objectMetadataItem: personMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(false);
+
+      expect(
+        isRecordMatchingFilter({
+          record: { id: personId },
+          filter,
+          objectMetadataItem: personMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(false);
+    });
+
     it('evaluates composite conditions against the related record', () => {
       const filter = {
         pointOfContact: {

@@ -161,14 +161,27 @@ const isRecordMatchingNestedRelationFilter = ({
 
   // A to-many relation matches when any of its loaded records does, the way
   // the backend EXISTS does.
+  return getLoadedRelationRecords(relationRecord).some(
+    (relatedRecord) =>
+      isObject(relatedRecord) && isRecordMatchingNestedFilter(relatedRecord),
+  );
+};
+
+// A relation value is a single record for a to-one relation, and for a to-many
+// relation either an array of records or a connection, depending on whether
+// the record comes from the store or from a GraphQL response.
+const getLoadedRelationRecords = (relationRecord: object): unknown[] => {
   if (Array.isArray(relationRecord)) {
-    return relationRecord.some(
-      (relatedRecord) =>
-        isObject(relatedRecord) && isRecordMatchingNestedFilter(relatedRecord),
+    return relationRecord;
+  }
+
+  if ('edges' in relationRecord && Array.isArray(relationRecord.edges)) {
+    return relationRecord.edges.map((edge: unknown) =>
+      isObject(edge) && 'node' in edge ? edge.node : undefined,
     );
   }
 
-  return isRecordMatchingNestedFilter(relationRecord);
+  return [relationRecord];
 };
 
 export const isRecordMatchingFilter = ({
