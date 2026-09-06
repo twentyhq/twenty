@@ -70,6 +70,12 @@ export const fromFlatFieldMetadataToFieldManifest = ({
     writability: flatFieldMetadata.writability,
     isNullable: flatFieldMetadata.isNullable,
     isUnique: flatFieldMetadata.isUnique ?? false,
+    // Tri-state round-trip: a derived boolean exports explicitly, a null
+    // (unspecified) stays omitted so the import side keeps preserving
+    // workspace state instead of pinning false.
+    ...(isDefined(flatFieldMetadata.isSearchable)
+      ? { isSearchable: flatFieldMetadata.isSearchable }
+      : {}),
     isLabelSyncedWithName: flatFieldMetadata.isLabelSyncedWithName,
     objectUniversalIdentifier:
       flatFieldMetadata.objectMetadataUniversalIdentifier,
