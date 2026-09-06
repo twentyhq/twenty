@@ -74,10 +74,6 @@ describe('RecordShare standard metadata build', () => {
   });
 
   it('indexes the lookups the read gate and the writers need', () => {
-    expect(getIndexedFieldUniversalIdentifiers('objectRecordIndex')).toEqual([
-      STANDARD_OBJECTS.recordShare.fields.objectMetadataId.universalIdentifier,
-      STANDARD_OBJECTS.recordShare.fields.recordId.universalIdentifier,
-    ]);
     expect(getIndexedFieldUniversalIdentifiers('principalIdIndex')).toEqual([
       STANDARD_OBJECTS.recordShare.fields.principalId.universalIdentifier,
     ]);

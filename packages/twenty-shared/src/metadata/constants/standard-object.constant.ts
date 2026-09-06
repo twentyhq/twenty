@@ -975,9 +975,6 @@ export const STANDARD_OBJECTS = {
       recordPrincipalCauseSourceUniqueIndex: {
         universalIdentifier: '4580f104-47a7-4110-87a8-26cb6f63ce7b',
       },
-      objectRecordIndex: {
-        universalIdentifier: '77a8982d-99bc-4a47-9c0c-d2056d7a7d44',
-      },
       principalIdIndex: {
         universalIdentifier: '66fbc3d2-6126-4e29-a306-dbe9995bf062',
       },
