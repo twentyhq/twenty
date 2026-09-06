@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { claimFathomMediaImport } from 'src/logic-functions/utils/claim-fathom-media-import.util';
 import { updateFathomRecordingImport } from 'src/logic-functions/utils/update-fathom-recording-import.util';
+import { updateFathomMediaDownloadId } from 'src/logic-functions/utils/update-fathom-media-download-id.util';
 
 const createFathomApplicationCoreApiClient =
   async (): Promise<CoreApiClient> => {
@@ -124,15 +125,29 @@ describe('Fathom recording import ownership', () => {
         }),
       ).toBe(false);
 
+      const replacementDownloadId = randomUUID();
+
+      expect(
+        await updateFathomMediaDownloadId({
+          coreApiClient,
+          writeContext,
+          downloadId: replacementDownloadId,
+        }),
+      ).toBe(false);
+
       const current = await coreApiClient.query({
         fathomRecordingImport: {
           __args: { filter: { id: { eq: fathomRecordingImportId } } },
           mediaFailureReason: true,
+          mediaDownloadId: true,
         },
       });
 
       expect(current.fathomRecordingImport?.mediaFailureReason).toBe(
         'download_expired',
+      );
+      expect(current.fathomRecordingImport?.mediaDownloadId).not.toBe(
+        replacementDownloadId,
       );
     } finally {
       await coreApiClient.mutation({

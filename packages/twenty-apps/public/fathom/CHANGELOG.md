@@ -13,6 +13,8 @@ All notable changes to this application are documented in this file.
   unavailable, rather than completing it as soon as the transcript arrives.
 - Reconcile unfinished local media imports from the latest seven days daily,
   without scanning Fathom history, and finish cleanup after disconnection.
+- Leave rate-limited media imports recoverable after their bounded retries,
+  and retry saving a generated download ID before failing the job.
 
 ## 0.1.0
 
