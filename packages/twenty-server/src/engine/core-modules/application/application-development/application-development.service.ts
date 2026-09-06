@@ -5,6 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   ALLOWED_APPLICATION_FILE_FOLDERS,
+  APP_DEV_FILE_UPLOAD_RATE_LIMIT_MAX,
+  APP_DEV_FILE_UPLOAD_RATE_LIMIT_WINDOW_MS,
   APP_DEV_RATE_LIMIT_MAX,
   APP_DEV_RATE_LIMIT_WINDOW_MS,
 } from 'src/engine/core-modules/application/application-development/constants/application-development.constants';
@@ -192,7 +194,7 @@ export class ApplicationDevelopmentService {
     // Lazy so rejected or rate-limited uploads are not buffered into memory.
     getFileBuffer: () => Promise<Buffer>;
   }): Promise<FileDTO> {
-    await this.throttlePerApplication(
+    await this.throttleFileUploadPerApplication(
       applicationUniversalIdentifier,
       workspaceId,
     );
@@ -296,6 +298,18 @@ export class ApplicationDevelopmentService {
       1,
       APP_DEV_RATE_LIMIT_MAX,
       APP_DEV_RATE_LIMIT_WINDOW_MS,
+    );
+  }
+
+  private async throttleFileUploadPerApplication(
+    applicationIdentifier: string,
+    workspaceId: string,
+  ): Promise<void> {
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      `app-dev-file-upload:${workspaceId}:${applicationIdentifier}`,
+      1,
+      APP_DEV_FILE_UPLOAD_RATE_LIMIT_MAX,
+      APP_DEV_FILE_UPLOAD_RATE_LIMIT_WINDOW_MS,
     );
   }
 
