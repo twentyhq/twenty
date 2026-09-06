@@ -1,4 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { ErrorCode } from '@slack/web-api';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
 
@@ -20,6 +21,10 @@ describe('slackPostMessageHandler', () => {
       success: true,
       client: { chat: { postMessage: postMessageMock } },
     });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('should return a failure result and skip posting when Slack is not connected', async () => {
@@ -153,6 +158,50 @@ describe('slackPostMessageHandler', () => {
       expect.objectContaining({ thread_ts: undefined }),
     );
     expect(result.success).toBe(true);
+  });
+
+  it('should wait out a short Retry-After so a rate limit does not cost the member the answer', async () => {
+    vi.useFakeTimers();
+    postMessageMock
+      .mockRejectedValueOnce(
+        Object.assign(new Error('A rate-limit has been reached'), {
+          code: ErrorCode.RateLimitedError,
+          retryAfter: 1,
+        }),
+      )
+      .mockResolvedValue({ ts: '1700000000.000800', channel: CHANNEL_ID });
+
+    const resultPromise = slackPostMessageHandler({
+      slackChannelId: CHANNEL_ID,
+      messageText: 'hello',
+    });
+
+    await vi.advanceTimersByTimeAsync(1000);
+
+    expect(await resultPromise).toEqual({
+      success: true,
+      message: 'Message posted to Slack (ts=1700000000.000800).',
+      slackTs: '1700000000.000800',
+      channel: CHANNEL_ID,
+    });
+    expect(postMessageMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('should fail fast when Retry-After is longer than the post budget', async () => {
+    postMessageMock.mockRejectedValue(
+      Object.assign(new Error('A rate-limit has been reached'), {
+        code: ErrorCode.RateLimitedError,
+        retryAfter: 300,
+      }),
+    );
+
+    const result = await slackPostMessageHandler({
+      slackChannelId: CHANNEL_ID,
+      messageText: 'hello',
+    });
+
+    expect(result.success).toBe(false);
+    expect(postMessageMock).toHaveBeenCalledTimes(1);
   });
 
   it('should return a failure result when the Slack API throws', async () => {
