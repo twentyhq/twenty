@@ -522,6 +522,22 @@ describe('SyncMessageListRecordPageCommand', () => {
     expect(payload.pageLayoutWidget.flatEntityToUpdate).toEqual([]);
   });
 
+  it('leaves a soft-deleted members widget untouched', async () => {
+    mockWorkspaceCache({
+      ...EXISTING_MEMBERS_METADATA,
+      tabs: [buildHomeTab(), buildMembersTab()],
+      widgets: [
+        buildFieldsWidget(),
+        buildHomeMembersWidget({ deletedAt: '2026-01-01T00:00:00.000Z' }),
+        buildMembersTabWidget(),
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(validateBuildAndRunLegacyWorkspaceMigrationMock).not.toHaveBeenCalled();
+  });
+
   it('leaves a widget embedding another view untouched', async () => {
     mockWorkspaceCache({
       ...EXISTING_MEMBERS_METADATA,
