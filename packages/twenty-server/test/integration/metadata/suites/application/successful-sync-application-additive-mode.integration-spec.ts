@@ -3,6 +3,7 @@ import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/app
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { deactivateSkill } from 'test/integration/metadata/suites/skill/utils/deactivate-skill.util';
 import { findSkills } from 'test/integration/metadata/suites/skill/utils/find-skills.util';
@@ -13,6 +14,9 @@ import { v4 as uuidv4 } from 'uuid';
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
 const SKILL_NAME = 'additiveModeSkill';
+const CLEANUP_LOGIC_FUNCTION_ID = uuidv4();
+const SETTINGS_FRONT_COMPONENT_ID = uuidv4();
+const BUILT_SETTINGS_COMPONENT_PATH = 'src/front-components/settings.mjs';
 
 const skill: SkillManifest = {
   universalIdentifier: uuidv4(),
@@ -47,6 +51,67 @@ const buildManifest = (
     roleId: TEST_ROLE_ID,
     overrides: { skills: [skill], ...overrides },
   });
+
+const buildManifestWithApplicationReferences = (): Manifest => {
+  const baseManifest = buildManifest({
+    objects: [ticketObject, invoiceObject],
+  });
+
+  return {
+    ...baseManifest,
+    application: {
+      ...baseManifest.application,
+      settingsFrontComponent: {
+        universalIdentifier: SETTINGS_FRONT_COMPONENT_ID,
+      },
+      uninstallLogicFunction: {
+        universalIdentifier: CLEANUP_LOGIC_FUNCTION_ID,
+      },
+    },
+    logicFunctions: [
+      {
+        universalIdentifier: CLEANUP_LOGIC_FUNCTION_ID,
+        name: 'Cleanup',
+        description: 'Uninstall cleanup logic function',
+        handlerName: 'handler',
+        sourceHandlerPath: 'src/cleanup.ts',
+        builtHandlerPath: 'dist/cleanup.mjs',
+        builtHandlerChecksum: 'checksum-cleanup',
+        httpRouteTriggerSettings: {
+          path: '/cleanup',
+          httpMethod: 'POST',
+          isAuthRequired: true,
+        },
+      },
+    ],
+    frontComponents: [
+      {
+        universalIdentifier: SETTINGS_FRONT_COMPONENT_ID,
+        name: 'SettingsComponent',
+        description: 'The settings tab of the application',
+        sourceComponentPath: 'src/front-components/settings.tsx',
+        builtComponentPath: BUILT_SETTINGS_COMPONENT_PATH,
+        builtComponentChecksum: 'settings-checksum',
+        componentName: 'SettingsComponent',
+        isHeadless: false,
+      },
+    ],
+  };
+};
+
+const findApplicationReferences = async (): Promise<{
+  settingsCustomTabFrontComponentId: string | null;
+  uninstallLogicFunctionId: string | null;
+}> => {
+  const [application] = await globalThis.testDataSource.query(
+    `SELECT "settingsCustomTabFrontComponentId", "uninstallLogicFunctionId"
+     FROM core."application"
+     WHERE "universalIdentifier" = $1 AND "deletedAt" IS NULL`,
+    [TEST_APP_ID],
+  );
+
+  return application;
+};
 
 const findObjectNames = async (): Promise<string[]> => {
   const { objects } = await findManyObjectMetadata({
@@ -136,6 +201,55 @@ describe('Manifest sync - additive mode', () => {
 
     expect(objectNames).toContain('additiveTicket');
     expect(objectNames).toContain('additiveInvoice');
+  }, 60000);
+
+  it('keeps the settings component and uninstall hook bindings when the source stops declaring them and deletions are turned off', async () => {
+    jest.useRealTimers();
+
+    await uploadApplicationFile({
+      applicationUniversalIdentifier: TEST_APP_ID,
+      fileFolder: 'BuiltFrontComponent',
+      filePath: BUILT_SETTINGS_COMPONENT_PATH,
+      fileBuffer: Buffer.from('dummy built component content'),
+      filename: 'settings.mjs',
+      contentType: 'application/javascript',
+      expectToFail: false,
+    });
+
+    jest.useFakeTimers();
+
+    await syncApplication({
+      manifest: buildManifestWithApplicationReferences(),
+      expectToFail: false,
+    });
+
+    const declaredReferences = await findApplicationReferences();
+
+    expect(declaredReferences.settingsCustomTabFrontComponentId).not.toBeNull();
+    expect(declaredReferences.uninstallLogicFunctionId).not.toBeNull();
+
+    const manifestWithoutReferences = buildManifest({
+      objects: [ticketObject, invoiceObject],
+    });
+
+    const additiveSync = await syncApplication({
+      manifest: manifestWithoutReferences,
+      inferDeletionFromMissingEntities: false,
+      expectToFail: false,
+    });
+
+    expect(additiveSync.errors).toBeUndefined();
+    expect(await findApplicationReferences()).toEqual(declaredReferences);
+
+    await syncApplication({
+      manifest: manifestWithoutReferences,
+      expectToFail: false,
+    });
+
+    expect(await findApplicationReferences()).toEqual({
+      settingsCustomTabFrontComponentId: null,
+      uninstallLogicFunctionId: null,
+    });
   }, 60000);
 
   it('keeps a skill deactivated by the workspace across a sync', async () => {

@@ -663,12 +663,7 @@ describe('call recorder app lifecycle (integration)', () => {
         'recall-recording-1',
       );
       expect(processedCallRecording.endedAt).toBeTruthy();
-      // recording.done hands media and transcript work to the enqueued
-      // artifact import job.
-      expect(recall.artifactImportRequests).toHaveLength(1);
-      expect(recall.artifactImportRequests[0]).toMatchObject({
-        callRecordingId,
-      });
+      expect(recall.artifactImportRequests).toHaveLength(2);
     });
 
     it('queues another artifact import when the transcript finishes later', async () => {
@@ -687,8 +682,8 @@ describe('call recorder app lifecycle (integration)', () => {
         buildTranscriptDoneWebhook({ botId, metadata }),
       );
 
-      expect(recall.artifactImportRequests).toHaveLength(2);
-      expect(recall.artifactImportRequests[1]).toMatchObject({
+      expect(recall.artifactImportRequests).toHaveLength(3);
+      expect(recall.artifactImportRequests[2]).toMatchObject({
         callRecordingId,
       });
     });

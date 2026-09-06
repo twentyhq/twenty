@@ -1,5 +1,4 @@
-import { recordListDisplayedFieldsComponentState } from '@/object-record/record-list/states/recordListDisplayedFieldsComponentState';
-import { computeRecordListDisplayedFields } from '@/object-record/record-list/utils/computeRecordListDisplayedFields';
+import { recordListRowWidthComponentState } from '@/object-record/record-list/states/recordListRowWidthComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLayoutEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,8 +15,8 @@ type RecordListResponsiveFieldsEffectProps = {
 export const RecordListResponsiveFieldsEffect = ({
   containerElement,
 }: RecordListResponsiveFieldsEffectProps) => {
-  const setRecordListDisplayedFields = useSetAtomComponentState(
-    recordListDisplayedFieldsComponentState,
+  const setRecordListRowWidth = useSetAtomComponentState(
+    recordListRowWidthComponentState,
   );
 
   useLayoutEffect(() => {
@@ -31,12 +30,10 @@ export const RecordListResponsiveFieldsEffect = ({
     const updateDisplayedFields = () => {
       const { paddingLeft, paddingRight } = getComputedStyle(containerElement);
 
-      setRecordListDisplayedFields(
-        computeRecordListDisplayedFields(
-          containerElement.clientWidth -
-            parseFloat(paddingLeft) -
-            parseFloat(paddingRight),
-        ),
+      setRecordListRowWidth(
+        containerElement.clientWidth -
+          parseFloat(paddingLeft) -
+          parseFloat(paddingRight),
       );
     };
 
@@ -47,7 +44,7 @@ export const RecordListResponsiveFieldsEffect = ({
     resizeObserver.observe(containerElement);
 
     return () => resizeObserver.disconnect();
-  }, [containerElement, setRecordListDisplayedFields]);
+  }, [containerElement, setRecordListRowWidth]);
 
   return null;
 };

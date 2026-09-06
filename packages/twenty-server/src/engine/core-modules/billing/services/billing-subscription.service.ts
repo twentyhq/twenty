@@ -32,10 +32,12 @@ import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billin
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
+import { isEntitlementActive } from 'src/engine/core-modules/billing/utils/is-entitlement-active.util';
 import { resolveBillingPeriodBoundaryUpdate } from 'src/engine/core-modules/billing/utils/resolve-billing-period-boundary-update.util';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -74,6 +76,7 @@ export class BillingSubscriptionService {
     private readonly enterprisePlanService: EnterprisePlanService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly billingUsageCacheService: BillingUsageCacheService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
 
   async getBillingSubscriptions(workspaceId: string) {
@@ -94,6 +97,7 @@ export class BillingSubscriptionService {
       relations: [
         'billingSubscriptionItems',
         'billingSubscriptionItems.billingProduct',
+        'billingSubscriptionItems.billingProduct.billingPrices',
       ],
     };
 
@@ -197,14 +201,70 @@ export class BillingSubscriptionService {
   }
 
   async handleUnpaidInvoices(data: Stripe.SetupIntentSucceededEvent.Data) {
-    const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
-      { stripeCustomerId: data.object.customer as string },
-    );
+    const stripeCustomerId =
+      typeof data.object.customer === 'string'
+        ? data.object.customer
+        : data.object.customer?.id;
 
-    if (billingSubscription.status === SubscriptionStatus.Unpaid) {
-      await this.stripeSubscriptionService.collectLastInvoice(
-        billingSubscription.stripeSubscriptionId,
+    // The Stripe account receives every setup intent, including ones that are
+    // not tied to a workspace subscription. Those can never be recovered, and
+    // failing would only have Stripe redeliver them
+    if (!isDefined(stripeCustomerId)) {
+      this.logger.warn(
+        `Ignoring successful setup intent ${data.object.id} without customer`,
       );
+
+      return { handleUnpaidInvoiceStripeSubscriptionId: undefined };
+    }
+
+    const billingSubscription = await this.getCurrentBillingSubscription({
+      stripeCustomerId,
+    });
+
+    if (!isDefined(billingSubscription)) {
+      this.logger.warn(
+        `Ignoring successful setup intent ${data.object.id}, customer ${stripeCustomerId} has no current subscription`,
+      );
+
+      return { handleUnpaidInvoiceStripeSubscriptionId: undefined };
+    }
+
+    const stripePaymentMethodId =
+      typeof data.object.payment_method === 'string'
+        ? data.object.payment_method
+        : data.object.payment_method?.id;
+
+    if (!isDefined(stripePaymentMethodId)) {
+      this.logger.warn(
+        `Ignoring successful setup intent ${data.object.id} without payment method`,
+      );
+
+      return { handleUnpaidInvoiceStripeSubscriptionId: undefined };
+    }
+
+    await this.stripeCustomerService.setDefaultPaymentMethod({
+      stripeCustomerId: billingSubscription.stripeCustomerId,
+      stripePaymentMethodId,
+    });
+
+    const stripeSubscription =
+      await this.stripeSubscriptionService.updateSubscription(
+        billingSubscription.stripeSubscriptionId,
+        { default_payment_method: stripePaymentMethodId },
+      );
+
+    // The persisted status can lag behind Stripe when this event lands before
+    // the subscription update one, so the live status decides whether an
+    // overdue invoice has to be retried
+    if (
+      [SubscriptionStatus.PastDue, SubscriptionStatus.Unpaid].includes(
+        getSubscriptionStatus(stripeSubscription.status),
+      )
+    ) {
+      await this.stripeSubscriptionService.payOpenInvoices({
+        stripeSubscriptionId: billingSubscription.stripeSubscriptionId,
+        stripePaymentMethodId,
+      });
     }
 
     return {
@@ -234,9 +294,11 @@ export class BillingSubscriptionService {
 
     return Object.values(BillingEntitlementKey).map((key) => ({
       key,
-      value:
-        hasValidEnterprisePlan &&
-        (!isBillingEnabled || (entitlementsByKey[key]?.value ?? false)),
+      value: isEntitlementActive({
+        hasValidEnterprisePlan,
+        isBillingEnabled,
+        stripeEntitlementValue: entitlementsByKey[key]?.value ?? false,
+      }),
     }));
   }
 
@@ -250,6 +312,25 @@ export class BillingSubscriptionService {
     );
 
     return entitlement?.value ?? false;
+  }
+
+  async getWorkspaceEntitlementValue(
+    workspaceId: string,
+    key: BillingEntitlementKey,
+  ): Promise<boolean> {
+    const hasValidEnterprisePlan = this.enterprisePlanService.isValid();
+    const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
+
+    const stripeEntitlementValue =
+      hasValidEnterprisePlan && isBillingEnabled
+        ? await this.getWorkspaceEntitlementByKey(workspaceId, key)
+        : false;
+
+    return isEntitlementActive({
+      hasValidEnterprisePlan,
+      isBillingEnabled,
+      stripeEntitlementValue,
+    });
   }
 
   async endTrialPeriod(workspace: WorkspaceEntity) {
@@ -299,6 +380,8 @@ export class BillingSubscriptionService {
     await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
       'currentBillingSubscription',
     ]);
+
+    await this.usageLimitQuotaService.dropAllowanceCounter(workspace.id);
 
     return {
       status: getSubscriptionStatus(updatedSubscription.status),

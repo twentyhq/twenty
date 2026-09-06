@@ -4,4 +4,5 @@ export const SLACK_ENTITY_FIELD_TYPE = {
   LINK: 'slack#/types/link',
   EMAIL: 'slack#/types/email',
   ENTITY_REF: 'slack#/types/entity_ref',
+  USER: 'slack#/types/user',
 } as const;

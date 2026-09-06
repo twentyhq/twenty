@@ -1,11 +1,11 @@
 import { CALL_RECORDER_RECORDING_NOTICE_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-notice-enabled-env-var-name';
-import { CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH } from 'src/logic-functions/constants/call-recorder-recording-notice-max-length';
 import { CALL_RECORDER_RECORDING_NOTICE_MESSAGE_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-notice-message-env-var-name';
 import { DEFAULT_CALL_RECORDER_RECORDING_NOTICE_ENABLED } from 'src/logic-functions/constants/default-call-recorder-recording-notice-enabled';
 import { DEFAULT_CALL_RECORDER_RECORDING_NOTICE_MESSAGE } from 'src/logic-functions/constants/default-call-recorder-recording-notice-message';
 import { getApplicationVariableValue } from 'src/logic-functions/utils/get-application-variable-value.util';
 import { getBooleanApplicationVariableValue } from 'src/logic-functions/utils/get-boolean-application-variable-value.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { truncateRecordingNoticeMessage } from 'src/logic-functions/utils/truncate-recording-notice-message.util';
 
 type RecallBotChatConfig = {
   on_bot_join: {
@@ -13,10 +13,6 @@ type RecallBotChatConfig = {
     message: string;
   };
 };
-
-const recordingNoticeGraphemeSegmenter = new Intl.Segmenter(undefined, {
-  granularity: 'grapheme',
-});
 
 export const getRecallBotChatConfig = (): RecallBotChatConfig | undefined => {
   if (!isRecordingNoticeEnabled()) {
@@ -49,25 +45,4 @@ const getRecordingNoticeMessage = (): string => {
     : DEFAULT_CALL_RECORDER_RECORDING_NOTICE_MESSAGE;
 
   return truncateRecordingNoticeMessage(message);
-};
-
-const truncateRecordingNoticeMessage = (message: string): string => {
-  let truncatedMessage = '';
-  let unicodeCodePointCount = 0;
-
-  for (const { segment } of recordingNoticeGraphemeSegmenter.segment(message)) {
-    const segmentUnicodeCodePointCount = Array.from(segment).length;
-
-    if (
-      unicodeCodePointCount + segmentUnicodeCodePointCount >
-      CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH
-    ) {
-      break;
-    }
-
-    truncatedMessage += segment;
-    unicodeCodePointCount += segmentUnicodeCodePointCount;
-  }
-
-  return truncatedMessage;
 };

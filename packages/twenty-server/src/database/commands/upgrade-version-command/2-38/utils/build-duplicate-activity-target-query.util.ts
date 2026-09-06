@@ -1,12 +1,16 @@
+import { type ActivityTargetColumn } from 'src/database/commands/upgrade-version-command/2-38/utils/resolve-activity-target-columns.util';
+
 export const buildDuplicateActivityTargetQuery = ({
   schemaName,
   tableName,
   parentColumnName,
+  targetColumns,
   deleteDuplicates,
 }: {
   schemaName: string;
   tableName: string;
   parentColumnName: string;
+  targetColumns: ActivityTargetColumn[];
   deleteDuplicates: boolean;
 }) => `
   WITH "rankedTargets" AS (
@@ -25,9 +29,12 @@ export const buildDuplicateActivityTargetQuery = ({
     FROM "${schemaName}"."${tableName}" "activityTarget"
     CROSS JOIN LATERAL (
       VALUES
-        ('person', "activityTarget"."targetPersonId"),
-        ('company', "activityTarget"."targetCompanyId"),
-        ('opportunity', "activityTarget"."targetOpportunityId")
+${targetColumns
+  .map(
+    ({ type, columnName }) =>
+      `        ('${type}', "activityTarget"."${columnName}")`,
+  )
+  .join(',\n')}
     ) AS "target"("type", "id")
     WHERE "target"."id" IS NOT NULL
   ),

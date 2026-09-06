@@ -174,11 +174,11 @@ describe('useSidePanelWorkflowNavigation', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.openWorkflowEditStepInSidePanel(
-        'test-workflow-id',
-        'Edit Step',
-        IconSettingsAutomation,
-      );
+      result.current.openWorkflowEditStepInSidePanel({
+        workflowId: 'test-workflow-id',
+        title: 'Edit Step',
+        icon: IconSettingsAutomation,
+      });
     });
 
     expect(result.current.sidePanelWorkflowId).toBe('test-workflow-id');

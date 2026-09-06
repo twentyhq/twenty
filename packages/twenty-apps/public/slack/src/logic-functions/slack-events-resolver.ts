@@ -15,6 +15,7 @@ import {
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { findClaimedWorkspaceId } from 'src/logic-functions/utils/find-claimed-workspace-id';
 import { resolveTargetWorkspaceId } from 'src/logic-functions/utils/resolve-target-workspace-id';
+import { logSlackRetryDelivery } from 'src/logic-functions/utils/log-slack-retry-delivery';
 import { verifySlackWebhookRequestOrThrow } from 'src/logic-functions/utils/verify-slack-webhook-request-or-throw';
 
 type SlackEventsResolverResult =
@@ -29,6 +30,8 @@ export const slackEventsResolverHandler = async (
   routePayload: RoutePayload<SlackEventsRequestBody>,
 ): Promise<SlackEventsResolverResult> => {
   verifySlackWebhookRequestOrThrow(routePayload);
+
+  logSlackRetryDelivery({ headers: routePayload.headers, source: 'events' });
 
   const body = routePayload.body;
 
@@ -104,6 +107,11 @@ export default defineLogicFunction({
   timeoutSeconds: 15,
   handler: slackEventsResolverHandler,
   serverRouteTriggerSettings: {
-    forwardedRequestHeaders: ['x-slack-signature', 'x-slack-request-timestamp'],
+    forwardedRequestHeaders: [
+      'x-slack-signature',
+      'x-slack-request-timestamp',
+      'x-slack-retry-num',
+      'x-slack-retry-reason',
+    ],
   },
 });

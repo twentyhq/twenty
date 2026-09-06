@@ -79,6 +79,7 @@ export { getConnectionProviderUniversalIdentifier } from './deterministic-identi
 export { getFieldPermissionUniversalIdentifier } from './deterministic-identifier/get-field-permission-universal-identifier.util';
 export { getFieldUniversalIdentifier } from './deterministic-identifier/get-field-universal-identifier.util';
 export { getFrontComponentUniversalIdentifier } from './deterministic-identifier/get-front-component-universal-identifier.util';
+export { getIndexFieldUniversalIdentifier } from './deterministic-identifier/get-index-field-universal-identifier.util';
 export { getIndexUniversalIdentifier } from './deterministic-identifier/get-index-universal-identifier.util';
 export { getLogicFunctionUniversalIdentifier } from './deterministic-identifier/get-logic-function-universal-identifier.util';
 export {
@@ -97,9 +98,11 @@ export { getRoleUniversalIdentifier } from './deterministic-identifier/get-role-
 export { getSearchFieldUniversalIdentifier } from './deterministic-identifier/get-search-field-universal-identifier.util';
 export { getSelectOptionUniversalIdentifier } from './deterministic-identifier/get-select-option-universal-identifier.util';
 export { getSkillUniversalIdentifier } from './deterministic-identifier/get-skill-universal-identifier.util';
+export { getSystemFormFieldPageLayoutWidgetUniversalIdentifier } from './deterministic-identifier/get-system-form-field-page-layout-widget-universal-identifier.util';
 export { getSystemNavigationCommandMenuItemUniversalIdentifier } from './deterministic-identifier/get-system-navigation-command-menu-item-universal-identifier.util';
 export { getSystemPageLayoutTabUniversalIdentifier } from './deterministic-identifier/get-system-page-layout-tab-universal-identifier.util';
 export { getSystemPageLayoutWidgetUniversalIdentifier } from './deterministic-identifier/get-system-page-layout-widget-universal-identifier.util';
+export { getSystemRecordFormPageLayoutUniversalIdentifier } from './deterministic-identifier/get-system-record-form-page-layout-universal-identifier.util';
 export { getSystemRecordPageLayoutUniversalIdentifier } from './deterministic-identifier/get-system-record-page-layout-universal-identifier.util';
 export { getSystemRelationFieldUniversalIdentifier } from './deterministic-identifier/get-system-relation-field-universal-identifier.util';
 export { getSystemViewFieldGroupUniversalIdentifier } from './deterministic-identifier/get-system-view-field-group-universal-identifier.util';

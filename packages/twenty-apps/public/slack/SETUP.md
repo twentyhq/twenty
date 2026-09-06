@@ -161,7 +161,10 @@ mentions and DMs, at the cost of un-mentioned thread follow-ups.
 > `entity_details_requested` plus the `links:read` / `links:write` scopes for the
 > record link previews; that one does need a reconnect, and on an app created
 > from an older manifest the Work Object Previews toggle has to be enabled by
-> hand as well (see Record link previews).
+> hand as well (see Record link previews). Upgrading from any version before
+> 0.9.0 adds the `slack#/entities/task` entity type, which has to be selected
+> under Work Object Previews by hand; until it is, task links stop rendering a
+> card at all. No new scopes or events, so no reconnect.
 
 ### Interactivity
 
@@ -305,11 +308,15 @@ On an existing install, add them and reconnect (disconnect, then **Add
 connection** again) so the token picks up the scopes.
 
 The manifest turns the previews themselves on, through `features.rich_previews`
-with the `slack#/entities/item` entity type they use. On an app created by hand,
-or from a manifest older than 0.7.0, open **Work Object Previews** in the app
-settings, enable the toggle and select the **Item** entity type. Without it Slack
-ignores the unfurl metadata and no card ever renders, with nothing in the logs to
-say why.
+with the two entity types they use: `slack#/entities/item` for people,
+companies, opportunities and notes, and `slack#/entities/task` for tasks, which
+Slack renders with native status, due date and assignee fields. On an app
+created by hand, or from a manifest older than 0.7.0, open **Work Object
+Previews** in the app settings, enable the toggle and select both the **Item**
+and **Task** entity types. An app created from a 0.7.x or 0.8.x manifest already
+has the toggle on with **Item** selected, so it only needs **Task** added. A
+type you leave unselected makes Slack ignore the unfurl metadata for those
+records, so no card renders and nothing in the logs says why.
 
 Slack stamps your Slack app's icon on the corner of every record card for
 attribution, and an app without one gets Slack's generic placeholder. Upload the
@@ -320,16 +327,20 @@ Previews are rendered only when the person who posted the link maps to a
 workspace member, by the same matching described above. The record itself is
 then read as that member: the app asks the server for a token carrying both the
 app and the member, and permissions for that pair are the intersection of the
-two roles, so a record their own role hides never reaches the card. The card is
-visible to everyone in the channel, so it stays to a handful of headline fields.
+two roles, so a record hidden by the member's own role never reaches the card.
+The card is visible to everyone in the channel, so it stays to a handful of
+headline fields.
 Expanding it opens a side panel with the full field set; anyone who can see the
 card can open it, external users in Slack Connect channels included, so the
 panel is likewise gated on the viewer mapping to a workspace member and read
 with that viewer's permissions, and everyone else gets a short notice instead.
 
+The member-scoped token needs Twenty 2.39.0 or newer, which the app's
+`engines.twenty` range requires at install.
+
 Previews fail closed. A record the member cannot read, a role that hides one of
-the fields the card selects, or a server too old to issue the member-scoped
-token all end the same way: no card, and a notice in the side panel.
+the fields the card selects, or a token the server declines to issue all end the
+same way: no card, and a notice in the side panel.
 
 Record links the bot itself posts (assistant answers, workflow message steps)
 carry the preview too. Slack never sends `link_shared` for an app's own messages,

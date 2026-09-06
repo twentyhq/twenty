@@ -71,8 +71,17 @@ export const AiChatPageHeader = ({ isOnboarding }: AiChatPageHeaderProps) => {
           ariaLabel={t`New conversation`}
         />
       )}
-      <AiChatCollapseButton />
-      {isOnboarding && <AiChatCloseButton />}
+      {/* Collapsing back into the side panel is a desktop notion; on mobile
+          the page is left outright, so it closes the way the side panel does,
+          down to the same button. */}
+      {isMobile ? (
+        <AiChatCloseButton variant="primary" />
+      ) : (
+        <>
+          <AiChatCollapseButton />
+          {isOnboarding && <AiChatCloseButton />}
+        </>
+      )}
     </StyledHeader>
   );
 };

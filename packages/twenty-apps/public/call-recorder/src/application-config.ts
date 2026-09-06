@@ -2,6 +2,7 @@ import { defineApplication, FieldType } from 'twenty-sdk/define';
 
 import { APP_DESCRIPTION } from 'src/constants/app-description';
 import { APP_DISPLAY_NAME } from 'src/constants/app-display-name';
+import { CALL_RECORDER_TRANSCRIPT_PROVIDER_OPTIONS } from 'src/constants/call-recorder-transcript-provider-options';
 import {
   APPLICATION_UNIVERSAL_IDENTIFIER,
   CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
@@ -132,10 +133,7 @@ export default defineApplication({
         'Speech-to-text provider used to transcribe recordings once the call ends. Recall.ai transcription needs no extra setup. Gladia re-detects the spoken language per utterance, which transcribes mixed-language calls more accurately, but requires a Gladia API key in the Recall.ai dashboard (Transcription > Gladia) for each region in use.',
       isSecret: false,
       type: FieldType.SELECT,
-      options: [
-        { label: 'Recall.ai', value: 'recallai_async' },
-        { label: 'Gladia (multilingual)', value: 'gladia_v2_async' },
-      ],
+      options: CALL_RECORDER_TRANSCRIPT_PROVIDER_OPTIONS,
       value: DEFAULT_CALL_RECORDER_TRANSCRIPT_PROVIDER,
     },
     [CALL_RECORDER_SUMMARY_ENABLED_ENV_VAR_NAME]: {

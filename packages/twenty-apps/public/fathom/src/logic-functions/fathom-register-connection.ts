@@ -7,17 +7,44 @@ import {
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'src/utils/is-defined';
 
+import { FATHOM_INITIAL_BACKFILL_DAYS } from 'src/constants/fathom.constant';
 import { FATHOM_REGISTER_CONNECTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type FathomConnectionHookPayload } from 'src/logic-functions/types/fathom-connection-hook-payload.type';
 import { type FathomWebhookRegistration } from 'src/logic-functions/types/fathom-webhook-registration.type';
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
 import { deleteStaleFathomWebhook } from 'src/logic-functions/utils/delete-stale-fathom-webhook.util';
+import { enqueueFathomBackfillWorker } from 'src/logic-functions/utils/enqueue-fathom-backfill-worker.util';
 import { getFathomConnectionClaimKey } from 'src/logic-functions/utils/get-fathom-connection-claim-key.util';
 import { getFathomWebhookDestinationUrl } from 'src/logic-functions/utils/get-fathom-webhook-destination-url.util';
 import { getFathomWebhookRegistrationKey } from 'src/logic-functions/utils/get-fathom-webhook-registration-key.util';
 import { isTransientFathomError } from 'src/logic-functions/utils/is-transient-fathom-error.util';
 import { storeFathomWebhookRegistration } from 'src/logic-functions/utils/store-fathom-webhook-registration.util';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
+
+// The hook retries as a whole, so the flag keeps a retry after a failed enqueue
+// from skipping the import behind the already active registration.
+const enqueueInitialBackfillOnce = async ({
+  connectedAccountId,
+  registrationKey,
+  registration,
+}: {
+  connectedAccountId: string;
+  registrationKey: string;
+  registration: FathomWebhookRegistration;
+}): Promise<void> => {
+  if (registration.isInitialBackfillEnqueued) {
+    return;
+  }
+
+  await enqueueFathomBackfillWorker({
+    connectedAccountId,
+    days: FATHOM_INITIAL_BACKFILL_DAYS,
+  });
+  await kv.set(registrationKey, {
+    ...registration,
+    isInitialBackfillEnqueued: true,
+  });
+};
 
 export const fathomRegisterConnectionHandler = async (
   payload: FathomConnectionHookPayload,
@@ -43,6 +70,12 @@ export const fathomRegisterConnectionHandler = async (
     await kv.get<FathomWebhookRegistration>(registrationKey);
 
   if (existingRegistration?.isActive) {
+    await enqueueInitialBackfillOnce({
+      connectedAccountId: payload.connectedAccountId,
+      registrationKey,
+      registration: existingRegistration,
+    });
+
     return { success: true, webhookId: existingRegistration.webhookId };
   }
 
@@ -80,15 +113,23 @@ export const fathomRegisterConnectionHandler = async (
       throw error;
     });
 
+  const registration: FathomWebhookRegistration = {
+    webhookId: webhook.id,
+    secret: webhook.secret,
+    isActive: true,
+    isInitialBackfillEnqueued: false,
+  };
+
   await storeFathomWebhookRegistration({
     fathomClient,
     connectedAccountId: payload.connectedAccountId,
     registrationKey,
-    registration: {
-      webhookId: webhook.id,
-      secret: webhook.secret,
-      isActive: true,
-    },
+    registration,
+  });
+  await enqueueInitialBackfillOnce({
+    connectedAccountId: payload.connectedAccountId,
+    registrationKey,
+    registration,
   });
 
   return { success: true, webhookId: webhook.id };
@@ -98,7 +139,7 @@ export default defineLogicFunction({
   universalIdentifier: FATHOM_REGISTER_CONNECTION_UNIVERSAL_IDENTIFIER,
   name: 'fathom-register-connection',
   description:
-    "Registers a Fathom webhook using the connected account's permissions.",
+    "Registers a Fathom webhook using the connected account's permissions and starts the initial history import.",
   timeoutSeconds: 30,
   handler: fathomRegisterConnectionHandler,
 });

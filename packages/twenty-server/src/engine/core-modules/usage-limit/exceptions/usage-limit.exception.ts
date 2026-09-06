@@ -9,7 +9,8 @@ import { type ExhaustedScope } from 'src/engine/core-modules/usage-limit/types/e
 export enum UsageLimitExceptionCode {
   RATE_LIMITED = 'RATE_LIMITED',
   QUOTA_EXHAUSTED = 'QUOTA_EXHAUSTED',
-  LIMIT_RULE_INVALID = 'LIMIT_RULE_INVALID',
+  LIMIT_INVALID = 'LIMIT_INVALID',
+  LIMIT_NOT_ENTITLED = 'LIMIT_NOT_ENTITLED',
 }
 
 const getUsageLimitExceptionUserFriendlyMessage = (
@@ -20,8 +21,10 @@ const getUsageLimitExceptionUserFriendlyMessage = (
       return msg`Rate limit reached. Please try again later.`;
     case UsageLimitExceptionCode.QUOTA_EXHAUSTED:
       return msg`Usage quota exhausted for this period.`;
-    case UsageLimitExceptionCode.LIMIT_RULE_INVALID:
+    case UsageLimitExceptionCode.LIMIT_INVALID:
       return msg`This limit cannot be saved.`;
+    case UsageLimitExceptionCode.LIMIT_NOT_ENTITLED:
+      return msg`Limits scoped below the workspace require the Organization plan.`;
     default:
       assertUnreachable(code);
   }

@@ -35,6 +35,18 @@ export class FileUploadApiExceptionFilter implements ExceptionFilter {
           response,
           413,
         );
+      case FileUploadExceptionCode.STORAGE_TIMEOUT:
+        return this.httpExceptionHandlerService.handleError(
+          exception,
+          response,
+          504,
+        );
+      case FileUploadExceptionCode.STORAGE_INCONSISTENT:
+        return this.httpExceptionHandlerService.handleError(
+          exception,
+          response,
+          502,
+        );
       case FileUploadExceptionCode.BAD_REQUEST:
       case FileUploadExceptionCode.FILE_NOT_UPLOADED:
       case FileUploadExceptionCode.FILE_SIZE_MISMATCH:
