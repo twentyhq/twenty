@@ -110,6 +110,23 @@ describe('Calendar event save operations (integration)', () => {
     return Number(rows[0].count);
   };
 
+  const countParticipantsByHandleSuffixAndDisplayName = async (
+    handleSuffix: string,
+    displayName: string,
+  ): Promise<number> => {
+    const rows: { count: string }[] =
+      await getCoreRepository<CalendarChannelEntity>(
+        CalendarChannelEntity,
+      ).manager.query(
+        `SELECT count(*) AS count FROM "${getWorkspaceSchemaName(
+          SEED_APPLE_WORKSPACE_ID,
+        )}"."calendarEventParticipant" WHERE handle LIKE $1 AND "displayName" = $2`,
+        [`%${handleSuffix}`, displayName],
+      );
+
+    return Number(rows[0].count);
+  };
+
   beforeAll(async () => {
     channel = await connectMessagingAccount({
       provider: ConnectedAccountProvider.GOOGLE,
@@ -326,6 +343,44 @@ describe('Calendar event save operations (integration)', () => {
     await importEvents(events);
 
     expect(await countParticipantsByHandleSuffix(attendeeSuffix)).toBe(300);
+  }, 300000);
+
+  it('should update every participant when a re-import spans more than one update chunk', async () => {
+    const titlePrefix = `Calendar event ${randomUUID()}`;
+    const eventIdSuffix = randomUUID();
+    const attendeeSuffix = `rechunked-${randomUUID()}@acme.com`;
+
+    const buildEvents = (displayName: string): calendar_v3.Schema$Event[] =>
+      Array.from({ length: 100 }, (_unused, eventIndex) =>
+        googleCalendarEvent({
+          id: `google-calendar-event-${eventIndex}-${eventIdSuffix}`,
+          summary: `${titlePrefix} ${eventIndex}`,
+          attendees: [
+            { email: `a-${eventIndex}-${attendeeSuffix}`, displayName },
+            { email: `b-${eventIndex}-${attendeeSuffix}`, displayName },
+            { email: `c-${eventIndex}-${attendeeSuffix}`, displayName },
+          ],
+        }),
+      );
+
+    await importEvents(buildEvents('Before'));
+
+    expect(
+      await countParticipantsByHandleSuffixAndDisplayName(
+        attendeeSuffix,
+        'Before',
+      ),
+    ).toBe(300);
+
+    await importEvents(buildEvents('After'));
+
+    expect(await countParticipantsByHandleSuffix(attendeeSuffix)).toBe(300);
+    expect(
+      await countParticipantsByHandleSuffixAndDisplayName(
+        attendeeSuffix,
+        'After',
+      ),
+    ).toBe(300);
   }, 300000);
 
   it('should update exactly one row and leave the other untouched when two participants share a handle on the same event', async () => {

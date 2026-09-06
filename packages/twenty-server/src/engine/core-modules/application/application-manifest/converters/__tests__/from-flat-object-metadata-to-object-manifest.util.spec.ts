@@ -1,5 +1,9 @@
 import { type ObjectManifest } from 'twenty-shared/application';
-import { MetadataWritability, ObjectOpenRecordIn } from 'twenty-shared/types';
+import {
+  MetadataReadability,
+  MetadataWritability,
+  ObjectOpenRecordIn,
+} from 'twenty-shared/types';
 
 import { fromFlatObjectMetadataToObjectManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-metadata-to-object-manifest.util';
 import { fromObjectManifestToUniversalFlatObjectMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-object-manifest-to-universal-flat-object-metadata.util';
@@ -26,6 +30,7 @@ const OBJECT_MANIFEST: Required<ObjectManifest> = {
   isUICreatable: false,
   isUIEditable: false,
   writability: MetadataWritability.APPLICATION,
+  readability: MetadataReadability.PRIVATE,
   openRecordIn: ObjectOpenRecordIn.RECORD_PAGE,
   labelIdentifierFieldMetadataUniversalIdentifier: LABEL_FIELD_UID,
   imageIdentifierFieldMetadataUniversalIdentifier: IMAGE_FIELD_UID,
@@ -60,6 +65,7 @@ describe('fromFlatObjectMetadataToObjectManifest', () => {
       isLabelSyncedWithName: true,
       isSearchable: false,
       writability: MetadataWritability.APPLICATION,
+      readability: MetadataReadability.PRIVATE,
       openRecordIn: ObjectOpenRecordIn.SIDE_PANEL,
       labelIdentifierFieldMetadataUniversalIdentifier: LABEL_FIELD_UID,
       imageIdentifierFieldMetadataUniversalIdentifier: null,

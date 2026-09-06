@@ -127,7 +127,7 @@ export interface CommandMenuItem {
     __typename: 'CommandMenuItem'
 }
 
-export type EngineComponentKey = 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'CREATE_NEW_RECORD' | 'DELETE_RECORDS' | 'RESTORE_RECORDS' | 'DESTROY_RECORDS' | 'ADD_TO_FAVORITES' | 'REMOVE_FROM_FAVORITES' | 'EXPORT_NOTE_TO_PDF' | 'EXPORT_RECORDS' | 'UPDATE_MULTIPLE_RECORDS' | 'MERGE_MULTIPLE_RECORDS' | 'IMPORT_RECORDS' | 'EXPORT_VIEW' | 'SEE_DELETED_RECORDS' | 'CREATE_NEW_VIEW' | 'HIDE_DELETED_RECORDS' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EDIT_DASHBOARD_LAYOUT' | 'SAVE_DASHBOARD_LAYOUT' | 'CANCEL_DASHBOARD_LAYOUT' | 'DUPLICATE_DASHBOARD' | 'ACTIVATE_WORKFLOW' | 'DEACTIVATE_WORKFLOW' | 'DISCARD_DRAFT_WORKFLOW' | 'TEST_WORKFLOW' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_RUNS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'DUPLICATE_WORKFLOW' | 'SEE_VERSION_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'STOP_WORKFLOW_RUN' | 'RETRY_WORKFLOW_RUN' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'ASK_AI' | 'VIEW_PREVIOUS_AI_CHATS' | 'NAVIGATION' | 'TRIGGER_WORKFLOW_VERSION' | 'FRONT_COMPONENT_RENDERER' | 'REPLY_TO_EMAIL_THREAD' | 'COMPOSE_EMAIL' | 'COMPOSE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN_TEST' | 'EMAIL_BLOCK_SETTINGS' | 'GO_TO_PEOPLE' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_NOTES' | 'GO_TO_WORKFLOWS' | 'GO_TO_RUNS' | 'DELETE_SINGLE_RECORD' | 'DELETE_MULTIPLE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RESTORE_MULTIPLE_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS'
+export type EngineComponentKey = 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'CREATE_NEW_RECORD' | 'DELETE_RECORDS' | 'RESTORE_RECORDS' | 'DESTROY_RECORDS' | 'ADD_TO_FAVORITES' | 'REMOVE_FROM_FAVORITES' | 'EXPORT_NOTE_TO_PDF' | 'EXPORT_RECORDS' | 'UPDATE_MULTIPLE_RECORDS' | 'MERGE_MULTIPLE_RECORDS' | 'IMPORT_RECORDS' | 'EXPORT_VIEW' | 'SEE_DELETED_RECORDS' | 'CREATE_NEW_VIEW' | 'HIDE_DELETED_RECORDS' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EDIT_DASHBOARD_LAYOUT' | 'SAVE_DASHBOARD_LAYOUT' | 'CANCEL_DASHBOARD_LAYOUT' | 'DUPLICATE_DASHBOARD' | 'DUPLICATE_MESSAGE_LIST' | 'ACTIVATE_WORKFLOW' | 'DEACTIVATE_WORKFLOW' | 'DISCARD_DRAFT_WORKFLOW' | 'TEST_WORKFLOW' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_RUNS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'DUPLICATE_WORKFLOW' | 'SEE_VERSION_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'STOP_WORKFLOW_RUN' | 'RETRY_WORKFLOW_RUN' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'ASK_AI' | 'VIEW_PREVIOUS_AI_CHATS' | 'NAVIGATION' | 'TRIGGER_WORKFLOW_VERSION' | 'FRONT_COMPONENT_RENDERER' | 'REPLY_TO_EMAIL_THREAD' | 'COMPOSE_EMAIL' | 'COMPOSE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN_TEST' | 'EMAIL_BLOCK_SETTINGS' | 'GO_TO_PEOPLE' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_NOTES' | 'GO_TO_WORKFLOWS' | 'GO_TO_RUNS' | 'DELETE_SINGLE_RECORD' | 'DELETE_MULTIPLE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RESTORE_MULTIPLE_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS'
 
 export type CommandMenuItemAvailabilityType = 'GLOBAL' | 'GLOBAL_OBJECT_CONTEXT' | 'RECORD_SELECTION' | 'FALLBACK'
 
@@ -187,6 +187,8 @@ export interface Object {
     isUIReadOnly: Scalars['Boolean']
     isSearchable: Scalars['Boolean']
     openRecordIn: ObjectOpenRecordIn
+    readability: MetadataReadability
+    writability: MetadataWritability
     applicationId: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
@@ -203,6 +205,10 @@ export interface Object {
 }
 
 export type ObjectOpenRecordIn = 'SIDE_PANEL' | 'RECORD_PAGE' | 'USER_CHOICE'
+
+export type MetadataReadability = 'OPEN' | 'PRIVATE' | 'INHERITED' | 'APPLICATION' | 'SYSTEM'
+
+export type MetadataWritability = 'OPEN' | 'APPLICATION' | 'SYSTEM'
 
 export interface FullName {
     firstName: Scalars['String']
@@ -1944,6 +1950,11 @@ export interface MarketplaceAppDetail {
     __typename: 'MarketplaceAppDetail'
 }
 
+export interface TriggerInstallApplicationJobResult {
+    jobId: Scalars['String']
+    __typename: 'TriggerInstallApplicationJobResult'
+}
+
 export interface WorkspaceCompanyEnrichmentResult {
     outcome: WorkspaceCompanyEnrichmentOutcome
     enrichment?: Scalars['JSON']
@@ -1968,6 +1979,7 @@ export interface Field {
     isActive?: Scalars['Boolean']
     isSystem?: Scalars['Boolean']
     isUIEditable?: Scalars['Boolean']
+    writability?: MetadataWritability
     /** @deprecated Use isUIEditable */
     isUIReadOnly?: Scalars['Boolean']
     isNullable?: Scalars['Boolean']
@@ -2498,6 +2510,17 @@ export interface SendMessageCampaignOutputDTO {
     queuedCount: Scalars['Int']
     audience: CampaignAudiencePreviewDTO
     __typename: 'SendMessageCampaignOutputDTO'
+}
+
+export interface DuplicatedMessageList {
+    id: Scalars['UUID']
+    name?: Scalars['String']
+    description?: Scalars['String']
+    position: Scalars['Float']
+    memberCount: Scalars['Float']
+    createdAt: Scalars['String']
+    updatedAt: Scalars['String']
+    __typename: 'DuplicatedMessageList'
 }
 
 export interface MessageSuppression {
@@ -3324,6 +3347,7 @@ export interface Mutation {
     sendMessageCampaign: SendMessageCampaignOutputDTO
     cancelMessageCampaign: CancelMessageCampaignOutputDTO
     sendMessageCampaignTest: SendEmailViaDomainOutput
+    duplicateMessageList: DuplicatedMessageList
     createMessageSuppression: MessageSuppression
     deleteMessageSuppression: Scalars['Boolean']
     createUnsubscribeTopic: UnsubscribeTopic
@@ -3435,11 +3459,6 @@ export interface Subscription {
     onAgentChatEvent: AgentChatEvent
     eventLogsLive?: EventLogRecord[]
     __typename: 'Subscription'
-}
-
-export interface TriggerInstallApplicationJobResult {
-    jobId: Scalars['String']
-    __typename: 'TriggerInstallApplicationJobResult'
 }
 
 export interface BillingProductDTOGenqlSelection{
@@ -3631,6 +3650,8 @@ export interface ObjectGenqlSelection{
     isUIReadOnly?: boolean | number
     isSearchable?: boolean | number
     openRecordIn?: boolean | number
+    readability?: boolean | number
+    writability?: boolean | number
     applicationId?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
@@ -3640,12 +3661,12 @@ export interface ObjectGenqlSelection{
     duplicateCriteria?: boolean | number
     fields?: (ObjectFieldsConnectionGenqlSelection & { __args: {
     /** Limit or page results. */
-    paging: CursorPaging,
+    paging: CursorPaging, 
     /** Specify to filter the records returned. */
     filter: FieldFilter} })
     indexMetadatas?: (ObjectIndexMetadatasConnectionGenqlSelection & { __args: {
     /** Limit or page results. */
-    paging: CursorPaging,
+    paging: CursorPaging, 
     /** Specify to filter the records returned. */
     filter: IndexFilter} })
     fieldsList?: FieldGenqlSelection
@@ -5464,6 +5485,12 @@ export interface MarketplaceAppDetailGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface TriggerInstallApplicationJobResultGenqlSelection{
+    jobId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface WorkspaceCompanyEnrichmentResultGenqlSelection{
     outcome?: boolean | number
     enrichment?: boolean | number
@@ -5485,6 +5512,7 @@ export interface FieldGenqlSelection{
     isActive?: boolean | number
     isSystem?: boolean | number
     isUIEditable?: boolean | number
+    writability?: boolean | number
     /** @deprecated Use isUIEditable */
     isUIReadOnly?: boolean | number
     isNullable?: boolean | number
@@ -6039,6 +6067,18 @@ export interface SendMessageCampaignOutputDTOGenqlSelection{
     campaignId?: boolean | number
     queuedCount?: boolean | number
     audience?: CampaignAudiencePreviewDTOGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface DuplicatedMessageListGenqlSelection{
+    id?: boolean | number
+    name?: boolean | number
+    description?: boolean | number
+    position?: boolean | number
+    memberCount?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6657,7 +6697,7 @@ export interface QueryGenqlSelection{
     findOneAgent?: (AgentGenqlSelection & { __args: {input: AgentIdInput} })
     objects?: (ObjectConnectionGenqlSelection & { __args: {
     /** Limit or page results. */
-    paging: CursorPaging,
+    paging: CursorPaging, 
     /** Specify to filter the records returned. */
     filter: ObjectFilter} })
     object?: (ObjectGenqlSelection & { __args: {
@@ -6693,7 +6733,7 @@ export interface QueryGenqlSelection{
     publicMarketplaceAppDetail?: (MarketplaceAppDetailGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
     fields?: (FieldConnectionGenqlSelection & { __args: {
     /** Limit or page results. */
-    paging: CursorPaging,
+    paging: CursorPaging, 
     /** Specify to filter the records returned. */
     filter: FieldFilter} })
     field?: (FieldGenqlSelection & { __args: {
@@ -6939,6 +6979,7 @@ export interface MutationGenqlSelection{
     sendMessageCampaign?: (SendMessageCampaignOutputDTOGenqlSelection & { __args: {input: SendMessageCampaignInput} })
     cancelMessageCampaign?: (CancelMessageCampaignOutputDTOGenqlSelection & { __args: {input: CancelMessageCampaignInput} })
     sendMessageCampaignTest?: (SendEmailViaDomainOutputGenqlSelection & { __args: {input: SendMessageCampaignTestInput} })
+    duplicateMessageList?: (DuplicatedMessageListGenqlSelection & { __args: {id: Scalars['UUID']} })
     createMessageSuppression?: (MessageSuppressionGenqlSelection & { __args: {input: CreateMessageSuppressionInput} })
     deleteMessageSuppression?: { __args: {id: Scalars['UUID']} }
     createUnsubscribeTopic?: (UnsubscribeTopicGenqlSelection & { __args: {input: CreateUnsubscribeTopicInput} })
@@ -7301,6 +7342,8 @@ export interface UpdateApplicationRegistrationVariableInput {id: Scalars['String
 
 export interface UpdateApplicationRegistrationVariablePayload {value?: (Scalars['String'] | null),resetValue?: (Scalars['Boolean'] | null),description?: (Scalars['String'] | null)}
 
+export interface TriggerInstallApplicationJobInput {universalIdentifier: Scalars['String'],version?: (Scalars['String'] | null),jobId?: (Scalars['String'] | null)}
+
 export interface UpdateApplicationInput {autoUpgrade?: (Scalars['Boolean'] | null)}
 
 export interface CreateOneFieldMetadataInput {
@@ -7468,21 +7511,13 @@ export interface SubscriptionGenqlSelection{
 
 export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null),applicationUniversalIdentifier?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),universalIdentifier?: (Scalars['UUID'] | null)}
 
-export interface TriggerInstallApplicationJobInput {universalIdentifier: Scalars['String'],version?: (Scalars['String'] | null),jobId?: (Scalars['String'] | null)}
-
-export interface TriggerInstallApplicationJobResultGenqlSelection{
-    jobId?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 
     const BillingProductDTO_possibleTypes: string[] = ['BillingLicensedProduct','BillingMeteredProduct']
     export const isBillingProductDTO = (obj?: { __typename?: any } | null): obj is BillingProductDTO => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingProductDTO"')
       return BillingProductDTO_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ApiKey_possibleTypes: string[] = ['ApiKey']
@@ -7490,7 +7525,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApiKey"')
       return ApiKey_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ApplicationRegistrationSummary_possibleTypes: string[] = ['ApplicationRegistrationSummary']
@@ -7498,7 +7533,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationSummary"')
       return ApplicationRegistrationSummary_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ApplicationVariable_possibleTypes: string[] = ['ApplicationVariable']
@@ -7506,7 +7541,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationVariable"')
       return ApplicationVariable_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const Agent_possibleTypes: string[] = ['Agent']
@@ -7514,7 +7549,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgent"')
       return Agent_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const AuthToken_possibleTypes: string[] = ['AuthToken']
@@ -7522,7 +7557,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAuthToken"')
       return AuthToken_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ApplicationTokenPair_possibleTypes: string[] = ['ApplicationTokenPair']
@@ -7530,7 +7565,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationTokenPair"')
       return ApplicationTokenPair_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const FrontComponent_possibleTypes: string[] = ['FrontComponent']
@@ -7538,7 +7573,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFrontComponent"')
       return FrontComponent_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const CommandMenuItem_possibleTypes: string[] = ['CommandMenuItem']
@@ -7546,7 +7581,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isCommandMenuItem"')
       return CommandMenuItem_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const CommandMenuItemPayload_possibleTypes: string[] = ['PathCommandMenuItemPayload','ObjectMetadataCommandMenuItemPayload']
@@ -7554,7 +7589,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isCommandMenuItemPayload"')
       return CommandMenuItemPayload_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const PathCommandMenuItemPayload_possibleTypes: string[] = ['PathCommandMenuItemPayload']
@@ -7562,7 +7597,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPathCommandMenuItemPayload"')
       return PathCommandMenuItemPayload_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ObjectMetadataCommandMenuItemPayload_possibleTypes: string[] = ['ObjectMetadataCommandMenuItemPayload']
@@ -7570,7 +7605,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isObjectMetadataCommandMenuItemPayload"')
       return ObjectMetadataCommandMenuItemPayload_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const LogicFunction_possibleTypes: string[] = ['LogicFunction']
@@ -7578,7 +7613,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isLogicFunction"')
       return LogicFunction_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const Object_possibleTypes: string[] = ['Object']
@@ -7586,7 +7621,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isObject"')
       return Object_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const FullName_possibleTypes: string[] = ['FullName']
@@ -7594,7 +7629,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFullName"')
       return FullName_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const WorkspaceMember_possibleTypes: string[] = ['WorkspaceMember']
@@ -7602,7 +7637,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceMember"')
       return WorkspaceMember_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const FieldPermission_possibleTypes: string[] = ['FieldPermission']
@@ -7610,7 +7645,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFieldPermission"')
       return FieldPermission_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const RowLevelPermissionPredicateGroup_possibleTypes: string[] = ['RowLevelPermissionPredicateGroup']
@@ -7618,7 +7653,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRowLevelPermissionPredicateGroup"')
       return RowLevelPermissionPredicateGroup_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const RowLevelPermissionPredicate_possibleTypes: string[] = ['RowLevelPermissionPredicate']
@@ -7626,7 +7661,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRowLevelPermissionPredicate"')
       return RowLevelPermissionPredicate_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ObjectPermission_possibleTypes: string[] = ['ObjectPermission']
@@ -7634,7 +7669,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isObjectPermission"')
       return ObjectPermission_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const RolePermissionFlag_possibleTypes: string[] = ['RolePermissionFlag']
@@ -7642,7 +7677,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRolePermissionFlag"')
       return RolePermissionFlag_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ApiKeyForRole_possibleTypes: string[] = ['ApiKeyForRole']
@@ -7650,7 +7685,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApiKeyForRole"')
       return ApiKeyForRole_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const Role_possibleTypes: string[] = ['Role']
@@ -7658,7 +7693,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRole"')
       return Role_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const Application_possibleTypes: string[] = ['Application']
@@ -7666,7 +7701,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplication"')
       return Application_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const TwoFactorAuthenticationMethodSummary_possibleTypes: string[] = ['TwoFactorAuthenticationMethodSummary']
@@ -7674,7 +7709,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationMethodSummary"')
       return TwoFactorAuthenticationMethodSummary_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const UserWorkspace_possibleTypes: string[] = ['UserWorkspace']
@@ -7682,7 +7717,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUserWorkspace"')
       return UserWorkspace_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ViewField_possibleTypes: string[] = ['ViewField']
@@ -7690,7 +7725,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isViewField"')
       return ViewField_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ViewFilterGroup_possibleTypes: string[] = ['ViewFilterGroup']
@@ -7698,7 +7733,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isViewFilterGroup"')
       return ViewFilterGroup_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ViewFilter_possibleTypes: string[] = ['ViewFilter']
@@ -7706,7 +7741,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isViewFilter"')
       return ViewFilter_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ViewGroup_possibleTypes: string[] = ['ViewGroup']
@@ -7714,7 +7749,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isViewGroup"')
       return ViewGroup_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ViewSort_possibleTypes: string[] = ['ViewSort']
@@ -7722,7 +7757,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isViewSort"')
       return ViewSort_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ViewFieldGroup_possibleTypes: string[] = ['ViewFieldGroup']
@@ -7730,7 +7765,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isViewFieldGroup"')
       return ViewFieldGroup_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const View_possibleTypes: string[] = ['View']
@@ -7738,7 +7773,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isView"')
       return View_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const Workspace_possibleTypes: string[] = ['Workspace']
@@ -7746,7 +7781,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspace"')
       return Workspace_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const User_possibleTypes: string[] = ['User']
@@ -7754,7 +7789,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUser"')
       return User_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ApplicationRegistration_possibleTypes: string[] = ['ApplicationRegistration']
@@ -7762,7 +7797,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistration"')
       return ApplicationRegistration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const SdkClientChecksums_possibleTypes: string[] = ['SdkClientChecksums']
@@ -7770,7 +7805,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSdkClientChecksums"')
       return SdkClientChecksums_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const RatioAggregateConfig_possibleTypes: string[] = ['RatioAggregateConfig']
@@ -7778,7 +7813,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRatioAggregateConfig"')
       return RatioAggregateConfig_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const RichTextBody_possibleTypes: string[] = ['RichTextBody']
@@ -7786,7 +7821,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRichTextBody"')
       return RichTextBody_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const GridPosition_possibleTypes: string[] = ['GridPosition']
@@ -7794,7 +7829,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isGridPosition"')
       return GridPosition_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const PageLayoutWidget_possibleTypes: string[] = ['PageLayoutWidget']
@@ -7802,7 +7837,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPageLayoutWidget"')
       return PageLayoutWidget_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const PageLayoutWidgetPosition_possibleTypes: string[] = ['PageLayoutWidgetGridPosition','PageLayoutWidgetVerticalListPosition','PageLayoutWidgetCanvasPosition']
@@ -7810,7 +7845,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPageLayoutWidgetPosition"')
       return PageLayoutWidgetPosition_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const PageLayoutWidgetGridPosition_possibleTypes: string[] = ['PageLayoutWidgetGridPosition']
@@ -7818,7 +7853,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPageLayoutWidgetGridPosition"')
       return PageLayoutWidgetGridPosition_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const PageLayoutWidgetVerticalListPosition_possibleTypes: string[] = ['PageLayoutWidgetVerticalListPosition']
@@ -7826,7 +7861,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPageLayoutWidgetVerticalListPosition"')
       return PageLayoutWidgetVerticalListPosition_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const PageLayoutWidgetCanvasPosition_possibleTypes: string[] = ['PageLayoutWidgetCanvasPosition']
@@ -7834,7 +7869,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPageLayoutWidgetCanvasPosition"')
       return PageLayoutWidgetCanvasPosition_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const WidgetConfiguration_possibleTypes: string[] = ['AggregateChartConfiguration','StandaloneRichTextConfiguration','PieChartConfiguration','LineChartConfiguration','IframeConfiguration','BarChartConfiguration','CalendarConfiguration','FrontComponentConfiguration','EmailsConfiguration','EmailThreadConfiguration','CallRecordingSummaryConfiguration','CallRecordingTranscriptConfiguration','MessageCampaignBodyConfiguration','MessageCampaignDetailsConfiguration','FieldConfiguration','FieldRichTextConfiguration','FieldsConfiguration','FormFieldConfiguration','FilesConfiguration','NotesConfiguration','TasksConfiguration','TimelineConfiguration','ViewConfiguration','RecordTableConfiguration','WorkflowConfiguration','WorkflowRunConfiguration','WorkflowVersionConfiguration']
@@ -7842,7 +7877,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWidgetConfiguration"')
       return WidgetConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const AggregateChartConfiguration_possibleTypes: string[] = ['AggregateChartConfiguration']
@@ -7850,7 +7885,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAggregateChartConfiguration"')
       return AggregateChartConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const StandaloneRichTextConfiguration_possibleTypes: string[] = ['StandaloneRichTextConfiguration']
@@ -7858,7 +7893,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isStandaloneRichTextConfiguration"')
       return StandaloneRichTextConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const PieChartConfiguration_possibleTypes: string[] = ['PieChartConfiguration']
@@ -7866,7 +7901,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPieChartConfiguration"')
       return PieChartConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const LineChartConfiguration_possibleTypes: string[] = ['LineChartConfiguration']
@@ -7874,7 +7909,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isLineChartConfiguration"')
       return LineChartConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const IframeConfiguration_possibleTypes: string[] = ['IframeConfiguration']
@@ -7882,7 +7917,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isIframeConfiguration"')
       return IframeConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const BarChartConfiguration_possibleTypes: string[] = ['BarChartConfiguration']
@@ -7890,7 +7925,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBarChartConfiguration"')
       return BarChartConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const CalendarConfiguration_possibleTypes: string[] = ['CalendarConfiguration']
@@ -7898,7 +7933,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isCalendarConfiguration"')
       return CalendarConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const FrontComponentConfiguration_possibleTypes: string[] = ['FrontComponentConfiguration']
@@ -7906,7 +7941,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFrontComponentConfiguration"')
       return FrontComponentConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const EmailsConfiguration_possibleTypes: string[] = ['EmailsConfiguration']
@@ -7914,7 +7949,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isEmailsConfiguration"')
       return EmailsConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const EmailThreadConfiguration_possibleTypes: string[] = ['EmailThreadConfiguration']
@@ -7922,7 +7957,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isEmailThreadConfiguration"')
       return EmailThreadConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const CallRecordingSummaryConfiguration_possibleTypes: string[] = ['CallRecordingSummaryConfiguration']
@@ -7930,7 +7965,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isCallRecordingSummaryConfiguration"')
       return CallRecordingSummaryConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const CallRecordingTranscriptConfiguration_possibleTypes: string[] = ['CallRecordingTranscriptConfiguration']
@@ -7938,7 +7973,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isCallRecordingTranscriptConfiguration"')
       return CallRecordingTranscriptConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const MessageCampaignBodyConfiguration_possibleTypes: string[] = ['MessageCampaignBodyConfiguration']
@@ -7946,7 +7981,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMessageCampaignBodyConfiguration"')
       return MessageCampaignBodyConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const MessageCampaignDetailsConfiguration_possibleTypes: string[] = ['MessageCampaignDetailsConfiguration']
@@ -7954,7 +7989,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMessageCampaignDetailsConfiguration"')
       return MessageCampaignDetailsConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const FieldConfiguration_possibleTypes: string[] = ['FieldConfiguration']
@@ -7962,7 +7997,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFieldConfiguration"')
       return FieldConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const FieldRichTextConfiguration_possibleTypes: string[] = ['FieldRichTextConfiguration']
@@ -7970,7 +8005,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFieldRichTextConfiguration"')
       return FieldRichTextConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const FieldsConfiguration_possibleTypes: string[] = ['FieldsConfiguration']
@@ -7978,7 +8013,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFieldsConfiguration"')
       return FieldsConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const FormFieldConfiguration_possibleTypes: string[] = ['FormFieldConfiguration']
@@ -7986,7 +8021,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFormFieldConfiguration"')
       return FormFieldConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const FilesConfiguration_possibleTypes: string[] = ['FilesConfiguration']
@@ -7994,7 +8029,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFilesConfiguration"')
       return FilesConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const NotesConfiguration_possibleTypes: string[] = ['NotesConfiguration']
@@ -8002,7 +8037,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isNotesConfiguration"')
       return NotesConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const TasksConfiguration_possibleTypes: string[] = ['TasksConfiguration']
@@ -8010,7 +8045,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isTasksConfiguration"')
       return TasksConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const TimelineConfiguration_possibleTypes: string[] = ['TimelineConfiguration']
@@ -8018,7 +8053,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isTimelineConfiguration"')
       return TimelineConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ViewConfiguration_possibleTypes: string[] = ['ViewConfiguration']
@@ -8026,7 +8061,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isViewConfiguration"')
       return ViewConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const RecordTableConfiguration_possibleTypes: string[] = ['RecordTableConfiguration']
@@ -8034,7 +8069,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRecordTableConfiguration"')
       return RecordTableConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const WorkflowConfiguration_possibleTypes: string[] = ['WorkflowConfiguration']
@@ -8042,7 +8077,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkflowConfiguration"')
       return WorkflowConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const WorkflowRunConfiguration_possibleTypes: string[] = ['WorkflowRunConfiguration']
@@ -8050,7 +8085,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkflowRunConfiguration"')
       return WorkflowRunConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const WorkflowVersionConfiguration_possibleTypes: string[] = ['WorkflowVersionConfiguration']
@@ -8058,7 +8093,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkflowVersionConfiguration"')
       return WorkflowVersionConfiguration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const PageLayoutTab_possibleTypes: string[] = ['PageLayoutTab']
@@ -8066,7 +8101,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPageLayoutTab"')
       return PageLayoutTab_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const PageLayout_possibleTypes: string[] = ['PageLayout']
@@ -8074,7 +8109,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPageLayout"')
       return PageLayout_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ApplicationConnectionProviderOAuthConfig_possibleTypes: string[] = ['ApplicationConnectionProviderOAuthConfig']
@@ -8082,7 +8117,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationConnectionProviderOAuthConfig"')
       return ApplicationConnectionProviderOAuthConfig_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ApplicationConnectionProvider_possibleTypes: string[] = ['ApplicationConnectionProvider']
@@ -8090,7 +8125,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationConnectionProvider"')
       return ApplicationConnectionProvider_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const BillingSubscriptionSchedulePhaseItem_possibleTypes: string[] = ['BillingSubscriptionSchedulePhaseItem']
@@ -8098,7 +8133,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingSubscriptionSchedulePhaseItem"')
       return BillingSubscriptionSchedulePhaseItem_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const BillingSubscriptionSchedulePhase_possibleTypes: string[] = ['BillingSubscriptionSchedulePhase']
@@ -8106,7 +8141,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingSubscriptionSchedulePhase"')
       return BillingSubscriptionSchedulePhase_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const BillingProductMetadata_possibleTypes: string[] = ['BillingProductMetadata']
@@ -8114,7 +8149,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingProductMetadata"')
       return BillingProductMetadata_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const BillingPriceLicensed_possibleTypes: string[] = ['BillingPriceLicensed']
@@ -8122,7 +8157,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPriceLicensed"')
       return BillingPriceLicensed_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const BillingPriceTier_possibleTypes: string[] = ['BillingPriceTier']
@@ -8130,7 +8165,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPriceTier"')
       return BillingPriceTier_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const BillingPriceMetered_possibleTypes: string[] = ['BillingPriceMetered']
@@ -8138,7 +8173,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPriceMetered"')
       return BillingPriceMetered_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const BillingProduct_possibleTypes: string[] = ['BillingProduct']
@@ -8146,7 +8181,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingProduct"')
       return BillingProduct_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const BillingLicensedProduct_possibleTypes: string[] = ['BillingLicensedProduct']
@@ -8154,7 +8189,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingLicensedProduct"')
       return BillingLicensedProduct_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const BillingMeteredProduct_possibleTypes: string[] = ['BillingMeteredProduct']
@@ -8162,7 +8197,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingMeteredProduct"')
       return BillingMeteredProduct_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const BillingSubscriptionItem_possibleTypes: string[] = ['BillingSubscriptionItem']
@@ -8170,7 +8205,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingSubscriptionItem"')
       return BillingSubscriptionItem_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const BillingCustomer_possibleTypes: string[] = ['BillingCustomer']
@@ -8178,7 +8213,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingCustomer"')
       return BillingCustomer_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const BillingSubscription_possibleTypes: string[] = ['BillingSubscription']
@@ -8186,7 +8221,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingSubscription"')
       return BillingSubscription_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const LogicFunctionExecutionResult_possibleTypes: string[] = ['LogicFunctionExecutionResult']
@@ -8194,7 +8229,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isLogicFunctionExecutionResult"')
       return LogicFunctionExecutionResult_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const EnterpriseLicenseInfoDTO_possibleTypes: string[] = ['EnterpriseLicenseInfoDTO']
@@ -8202,7 +8237,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isEnterpriseLicenseInfoDTO"')
       return EnterpriseLicenseInfoDTO_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const EnterpriseSubscriptionStatusDTO_possibleTypes: string[] = ['EnterpriseSubscriptionStatusDTO']
@@ -8210,7 +8245,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isEnterpriseSubscriptionStatusDTO"')
       return EnterpriseSubscriptionStatusDTO_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const FileWithSignedUrl_possibleTypes: string[] = ['FileWithSignedUrl']
@@ -8218,7 +8253,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFileWithSignedUrl"')
       return FileWithSignedUrl_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const FileUploadTarget_possibleTypes: string[] = ['FileUploadTarget']
@@ -8226,7 +8261,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFileUploadTarget"')
       return FileUploadTarget_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const RecordIdentifier_possibleTypes: string[] = ['RecordIdentifier']
@@ -8234,7 +8269,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRecordIdentifier"')
       return RecordIdentifier_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const NavigationMenuItem_possibleTypes: string[] = ['NavigationMenuItem']
@@ -8242,7 +8277,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isNavigationMenuItem"')
       return NavigationMenuItem_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const JobStatus_possibleTypes: string[] = ['JobStatus']
@@ -8250,7 +8285,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isJobStatus"')
       return JobStatus_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ObjectRecordEventProperties_possibleTypes: string[] = ['ObjectRecordEventProperties']
@@ -8258,7 +8293,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isObjectRecordEventProperties"')
       return ObjectRecordEventProperties_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const MetadataEvent_possibleTypes: string[] = ['MetadataEvent']
@@ -8266,7 +8301,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMetadataEvent"')
       return MetadataEvent_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ObjectRecordEvent_possibleTypes: string[] = ['ObjectRecordEvent']
@@ -8274,7 +8309,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isObjectRecordEvent"')
       return ObjectRecordEvent_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ObjectRecordEventWithQueryIds_possibleTypes: string[] = ['ObjectRecordEventWithQueryIds']
@@ -8282,7 +8317,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isObjectRecordEventWithQueryIds"')
       return ObjectRecordEventWithQueryIds_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const EventSubscription_possibleTypes: string[] = ['EventSubscription']
@@ -8290,7 +8325,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isEventSubscription"')
       return EventSubscription_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const UserSession_possibleTypes: string[] = ['UserSession']
@@ -8298,7 +8333,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUserSession"')
       return UserSession_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const BillingEndTrialPeriod_possibleTypes: string[] = ['BillingEndTrialPeriod']
@@ -8306,7 +8341,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingEndTrialPeriod"')
       return BillingEndTrialPeriod_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const BillingResourceCreditUsage_possibleTypes: string[] = ['BillingResourceCreditUsage']
@@ -8314,7 +8349,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingResourceCreditUsage"')
       return BillingResourceCreditUsage_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const BillingPlan_possibleTypes: string[] = ['BillingPlan']
@@ -8322,7 +8357,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPlan"')
       return BillingPlan_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const BillingPaymentIntent_possibleTypes: string[] = ['BillingPaymentIntent']
@@ -8330,7 +8365,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPaymentIntent"')
       return BillingPaymentIntent_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const BillingSession_possibleTypes: string[] = ['BillingSession']
@@ -8338,7 +8373,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingSession"')
       return BillingSession_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const BillingUpdate_possibleTypes: string[] = ['BillingUpdate']
@@ -8346,7 +8381,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingUpdate"')
       return BillingUpdate_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const UsageBreakdownItem_possibleTypes: string[] = ['UsageBreakdownItem']
@@ -8354,7 +8389,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageBreakdownItem"')
       return UsageBreakdownItem_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const UsageTimeSeries_possibleTypes: string[] = ['UsageTimeSeries']
@@ -8362,7 +8397,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageTimeSeries"')
       return UsageTimeSeries_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const UsageUserDaily_possibleTypes: string[] = ['UsageUserDaily']
@@ -8370,7 +8405,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageUserDaily"')
       return UsageUserDaily_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const UsageAnalytics_possibleTypes: string[] = ['UsageAnalytics']
@@ -8378,7 +8413,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageAnalytics"')
       return UsageAnalytics_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const UsageLimit_possibleTypes: string[] = ['UsageLimit']
@@ -8386,7 +8421,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageLimit"')
       return UsageLimit_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ApprovedAccessDomain_possibleTypes: string[] = ['ApprovedAccessDomain']
@@ -8394,7 +8429,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApprovedAccessDomain"')
       return ApprovedAccessDomain_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const InviteSuggestion_possibleTypes: string[] = ['InviteSuggestion']
@@ -8402,7 +8437,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isInviteSuggestion"')
       return InviteSuggestion_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const OnboardingStepNavigation_possibleTypes: string[] = ['OnboardingStepNavigation']
@@ -8410,7 +8445,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isOnboardingStepNavigation"')
       return OnboardingStepNavigation_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const OnboardingStepSuccess_possibleTypes: string[] = ['OnboardingStepSuccess']
@@ -8418,7 +8453,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isOnboardingStepSuccess"')
       return OnboardingStepSuccess_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const WorkspaceInvitation_possibleTypes: string[] = ['WorkspaceInvitation']
@@ -8426,7 +8461,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceInvitation"')
       return WorkspaceInvitation_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const SendInvitations_possibleTypes: string[] = ['SendInvitations']
@@ -8434,7 +8469,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSendInvitations"')
       return SendInvitations_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const PublicConnectionParametersOutput_possibleTypes: string[] = ['PublicConnectionParametersOutput']
@@ -8442,7 +8477,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicConnectionParametersOutput"')
       return PublicConnectionParametersOutput_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const PublicImapSmtpCaldavConnectionParameters_possibleTypes: string[] = ['PublicImapSmtpCaldavConnectionParameters']
@@ -8450,7 +8485,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicImapSmtpCaldavConnectionParameters"')
       return PublicImapSmtpCaldavConnectionParameters_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ConnectedAccountPublicDTO_possibleTypes: string[] = ['ConnectedAccountPublicDTO']
@@ -8458,7 +8493,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isConnectedAccountPublicDTO"')
       return ConnectedAccountPublicDTO_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const FeatureFlag_possibleTypes: string[] = ['FeatureFlag']
@@ -8466,7 +8501,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFeatureFlag"')
       return FeatureFlag_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const WorkspaceUrls_possibleTypes: string[] = ['WorkspaceUrls']
@@ -8474,7 +8509,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceUrls"')
       return WorkspaceUrls_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ApplicationRegistrationVariable_possibleTypes: string[] = ['ApplicationRegistrationVariable']
@@ -8482,7 +8517,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationVariable"')
       return ApplicationRegistrationVariable_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const VersionDistributionEntry_possibleTypes: string[] = ['VersionDistributionEntry']
@@ -8490,7 +8525,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isVersionDistributionEntry"')
       return VersionDistributionEntry_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ApplicationRegistrationStats_possibleTypes: string[] = ['ApplicationRegistrationStats']
@@ -8498,7 +8533,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationStats"')
       return ApplicationRegistrationStats_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const BillingTrialPeriod_possibleTypes: string[] = ['BillingTrialPeriod']
@@ -8506,7 +8541,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingTrialPeriod"')
       return BillingTrialPeriod_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const SSOIdentityProvider_possibleTypes: string[] = ['SSOIdentityProvider']
@@ -8514,7 +8549,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSSOIdentityProvider"')
       return SSOIdentityProvider_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const AuthProviders_possibleTypes: string[] = ['AuthProviders']
@@ -8522,7 +8557,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAuthProviders"')
       return AuthProviders_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const AuthBypassProviders_possibleTypes: string[] = ['AuthBypassProviders']
@@ -8530,7 +8565,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAuthBypassProviders"')
       return AuthBypassProviders_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const PublicWorkspaceData_possibleTypes: string[] = ['PublicWorkspaceData']
@@ -8538,7 +8573,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicWorkspaceData"')
       return PublicWorkspaceData_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const PublicWorkspaceDataSummary_possibleTypes: string[] = ['PublicWorkspaceDataSummary']
@@ -8546,7 +8581,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicWorkspaceDataSummary"')
       return PublicWorkspaceDataSummary_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const NativeModelCapabilities_possibleTypes: string[] = ['NativeModelCapabilities']
@@ -8554,7 +8589,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isNativeModelCapabilities"')
       return NativeModelCapabilities_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ClientAiModelConfig_possibleTypes: string[] = ['ClientAiModelConfig']
@@ -8562,7 +8597,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isClientAiModelConfig"')
       return ClientAiModelConfig_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const Billing_possibleTypes: string[] = ['Billing']
@@ -8570,7 +8605,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isBilling"')
       return Billing_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const Support_possibleTypes: string[] = ['Support']
@@ -8578,7 +8613,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSupport"')
       return Support_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const Sentry_possibleTypes: string[] = ['Sentry']
@@ -8586,7 +8621,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSentry"')
       return Sentry_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const Captcha_possibleTypes: string[] = ['Captcha']
@@ -8594,7 +8629,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isCaptcha"')
       return Captcha_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ApiConfig_possibleTypes: string[] = ['ApiConfig']
@@ -8602,7 +8637,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApiConfig"')
       return ApiConfig_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const PublicFeatureFlagMetadata_possibleTypes: string[] = ['PublicFeatureFlagMetadata']
@@ -8610,7 +8645,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicFeatureFlagMetadata"')
       return PublicFeatureFlagMetadata_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const PublicFeatureFlag_possibleTypes: string[] = ['PublicFeatureFlag']
@@ -8618,7 +8653,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicFeatureFlag"')
       return PublicFeatureFlag_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ClientConfigMaintenanceMode_possibleTypes: string[] = ['ClientConfigMaintenanceMode']
@@ -8626,7 +8661,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isClientConfigMaintenanceMode"')
       return ClientConfigMaintenanceMode_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ClientConfig_possibleTypes: string[] = ['ClientConfig']
@@ -8634,7 +8669,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isClientConfig"')
       return ClientConfig_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ClaimableApplicationRegistration_possibleTypes: string[] = ['ClaimableApplicationRegistration']
@@ -8642,7 +8677,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isClaimableApplicationRegistration"')
       return ClaimableApplicationRegistration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const CreateApplicationRegistration_possibleTypes: string[] = ['CreateApplicationRegistration']
@@ -8650,7 +8685,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isCreateApplicationRegistration"')
       return CreateApplicationRegistration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const PublicApplicationRegistration_possibleTypes: string[] = ['PublicApplicationRegistration']
@@ -8658,7 +8693,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicApplicationRegistration"')
       return PublicApplicationRegistration_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const RotateClientSecret_possibleTypes: string[] = ['RotateClientSecret']
@@ -8666,7 +8701,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isRotateClientSecret"')
       return RotateClientSecret_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const AppConnection_possibleTypes: string[] = ['AppConnection']
@@ -8674,7 +8709,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAppConnection"')
       return AppConnection_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ResendEmailVerificationToken_possibleTypes: string[] = ['ResendEmailVerificationToken']
@@ -8682,7 +8717,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isResendEmailVerificationToken"')
       return ResendEmailVerificationToken_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const DeleteSso_possibleTypes: string[] = ['DeleteSso']
@@ -8690,7 +8725,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isDeleteSso"')
       return DeleteSso_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const EditSso_possibleTypes: string[] = ['EditSso']
@@ -8698,7 +8733,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isEditSso"')
       return EditSso_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const WorkspaceNameAndId_possibleTypes: string[] = ['WorkspaceNameAndId']
@@ -8706,7 +8741,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceNameAndId"')
       return WorkspaceNameAndId_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const FindAvailableSSOIDP_possibleTypes: string[] = ['FindAvailableSSOIDP']
@@ -8714,7 +8749,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isFindAvailableSSOIDP"')
       return FindAvailableSSOIDP_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const SetupSso_possibleTypes: string[] = ['SetupSso']
@@ -8722,7 +8757,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSetupSso"')
       return SetupSso_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const SSOConnection_possibleTypes: string[] = ['SSOConnection']
@@ -8730,7 +8765,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isSSOConnection"')
       return SSOConnection_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const AvailableWorkspace_possibleTypes: string[] = ['AvailableWorkspace']
@@ -8738,7 +8773,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAvailableWorkspace"')
       return AvailableWorkspace_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const AvailableWorkspaces_possibleTypes: string[] = ['AvailableWorkspaces']
@@ -8746,7 +8781,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isAvailableWorkspaces"')
       return AvailableWorkspaces_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const DeletedWorkspaceMember_possibleTypes: string[] = ['DeletedWorkspaceMember']
@@ -8754,7 +8789,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isDeletedWorkspaceMember"')
       return DeletedWorkspaceMember_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const MarketplaceApp_possibleTypes: string[] = ['MarketplaceApp']
@@ -8762,7 +8797,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceApp"')
       return MarketplaceApp_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const MarketplaceAppRoleObjectPermission_possibleTypes: string[] = ['MarketplaceAppRoleObjectPermission']
@@ -8770,7 +8805,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppRoleObjectPermission"')
       return MarketplaceAppRoleObjectPermission_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const MarketplaceAppRoleFieldPermission_possibleTypes: string[] = ['MarketplaceAppRoleFieldPermission']
@@ -8778,7 +8813,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppRoleFieldPermission"')
       return MarketplaceAppRoleFieldPermission_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const MarketplaceAppRole_possibleTypes: string[] = ['MarketplaceAppRole']
@@ -8786,7 +8821,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppRole"')
       return MarketplaceAppRole_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const MarketplaceAppDetail_possibleTypes: string[] = ['MarketplaceAppDetail']
@@ -8794,991 +8829,7 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppDetail"')
       return MarketplaceAppDetail_possibleTypes.includes(obj.__typename)
     }
-
-
-
-    const WorkspaceCompanyEnrichmentResult_possibleTypes: string[] = ['WorkspaceCompanyEnrichmentResult']
-    export const isWorkspaceCompanyEnrichmentResult = (obj?: { __typename?: any } | null): obj is WorkspaceCompanyEnrichmentResult => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceCompanyEnrichmentResult"')
-      return WorkspaceCompanyEnrichmentResult_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const Field_possibleTypes: string[] = ['Field']
-    export const isField = (obj?: { __typename?: any } | null): obj is Field => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isField"')
-      return Field_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const PageInfo_possibleTypes: string[] = ['PageInfo']
-    export const isPageInfo = (obj?: { __typename?: any } | null): obj is PageInfo => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isPageInfo"')
-      return PageInfo_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const FieldEdge_possibleTypes: string[] = ['FieldEdge']
-    export const isFieldEdge = (obj?: { __typename?: any } | null): obj is FieldEdge => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isFieldEdge"')
-      return FieldEdge_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const FieldConnection_possibleTypes: string[] = ['FieldConnection']
-    export const isFieldConnection = (obj?: { __typename?: any } | null): obj is FieldConnection => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isFieldConnection"')
-      return FieldConnection_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const Relation_possibleTypes: string[] = ['Relation']
-    export const isRelation = (obj?: { __typename?: any } | null): obj is Relation => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isRelation"')
-      return Relation_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const IndexField_possibleTypes: string[] = ['IndexField']
-    export const isIndexField = (obj?: { __typename?: any } | null): obj is IndexField => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isIndexField"')
-      return IndexField_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const Index_possibleTypes: string[] = ['Index']
-    export const isIndex = (obj?: { __typename?: any } | null): obj is Index => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isIndex"')
-      return Index_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const IndexEdge_possibleTypes: string[] = ['IndexEdge']
-    export const isIndexEdge = (obj?: { __typename?: any } | null): obj is IndexEdge => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isIndexEdge"')
-      return IndexEdge_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const ObjectEdge_possibleTypes: string[] = ['ObjectEdge']
-    export const isObjectEdge = (obj?: { __typename?: any } | null): obj is ObjectEdge => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectEdge"')
-      return ObjectEdge_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const ObjectConnection_possibleTypes: string[] = ['ObjectConnection']
-    export const isObjectConnection = (obj?: { __typename?: any } | null): obj is ObjectConnection => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectConnection"')
-      return ObjectConnection_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const ObjectFieldsConnection_possibleTypes: string[] = ['ObjectFieldsConnection']
-    export const isObjectFieldsConnection = (obj?: { __typename?: any } | null): obj is ObjectFieldsConnection => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectFieldsConnection"')
-      return ObjectFieldsConnection_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const ObjectIndexMetadatasConnection_possibleTypes: string[] = ['ObjectIndexMetadatasConnection']
-    export const isObjectIndexMetadatasConnection = (obj?: { __typename?: any } | null): obj is ObjectIndexMetadatasConnection => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectIndexMetadatasConnection"')
-      return ObjectIndexMetadatasConnection_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const ObjectRecordCount_possibleTypes: string[] = ['ObjectRecordCount']
-    export const isObjectRecordCount = (obj?: { __typename?: any } | null): obj is ObjectRecordCount => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectRecordCount"')
-      return ObjectRecordCount_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const SearchField_possibleTypes: string[] = ['SearchField']
-    export const isSearchField = (obj?: { __typename?: any } | null): obj is SearchField => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isSearchField"')
-      return SearchField_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const BillingEntitlement_possibleTypes: string[] = ['BillingEntitlement']
-    export const isBillingEntitlement = (obj?: { __typename?: any } | null): obj is BillingEntitlement => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingEntitlement"')
-      return BillingEntitlement_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const DomainRecord_possibleTypes: string[] = ['DomainRecord']
-    export const isDomainRecord = (obj?: { __typename?: any } | null): obj is DomainRecord => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isDomainRecord"')
-      return DomainRecord_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const DomainValidRecords_possibleTypes: string[] = ['DomainValidRecords']
-    export const isDomainValidRecords = (obj?: { __typename?: any } | null): obj is DomainValidRecords => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isDomainValidRecords"')
-      return DomainValidRecords_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const UpsertRowLevelPermissionPredicatesResult_possibleTypes: string[] = ['UpsertRowLevelPermissionPredicatesResult']
-    export const isUpsertRowLevelPermissionPredicatesResult = (obj?: { __typename?: any } | null): obj is UpsertRowLevelPermissionPredicatesResult => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUpsertRowLevelPermissionPredicatesResult"')
-      return UpsertRowLevelPermissionPredicatesResult_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const LogicFunctionLogs_possibleTypes: string[] = ['LogicFunctionLogs']
-    export const isLogicFunctionLogs = (obj?: { __typename?: any } | null): obj is LogicFunctionLogs => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isLogicFunctionLogs"')
-      return LogicFunctionLogs_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const DeleteTwoFactorAuthenticationMethod_possibleTypes: string[] = ['DeleteTwoFactorAuthenticationMethod']
-    export const isDeleteTwoFactorAuthenticationMethod = (obj?: { __typename?: any } | null): obj is DeleteTwoFactorAuthenticationMethod => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isDeleteTwoFactorAuthenticationMethod"')
-      return DeleteTwoFactorAuthenticationMethod_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const InitiateTwoFactorAuthenticationProvisioning_possibleTypes: string[] = ['InitiateTwoFactorAuthenticationProvisioning']
-    export const isInitiateTwoFactorAuthenticationProvisioning = (obj?: { __typename?: any } | null): obj is InitiateTwoFactorAuthenticationProvisioning => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isInitiateTwoFactorAuthenticationProvisioning"')
-      return InitiateTwoFactorAuthenticationProvisioning_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const VerifyTwoFactorAuthenticationMethod_possibleTypes: string[] = ['VerifyTwoFactorAuthenticationMethod']
-    export const isVerifyTwoFactorAuthenticationMethod = (obj?: { __typename?: any } | null): obj is VerifyTwoFactorAuthenticationMethod => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isVerifyTwoFactorAuthenticationMethod"')
-      return VerifyTwoFactorAuthenticationMethod_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const AuthorizeApp_possibleTypes: string[] = ['AuthorizeApp']
-    export const isAuthorizeApp = (obj?: { __typename?: any } | null): obj is AuthorizeApp => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAuthorizeApp"')
-      return AuthorizeApp_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const AuthTokenPair_possibleTypes: string[] = ['AuthTokenPair']
-    export const isAuthTokenPair = (obj?: { __typename?: any } | null): obj is AuthTokenPair => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAuthTokenPair"')
-      return AuthTokenPair_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const AvailableWorkspacesAndAccessTokens_possibleTypes: string[] = ['AvailableWorkspacesAndAccessTokens']
-    export const isAvailableWorkspacesAndAccessTokens = (obj?: { __typename?: any } | null): obj is AvailableWorkspacesAndAccessTokens => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAvailableWorkspacesAndAccessTokens"')
-      return AvailableWorkspacesAndAccessTokens_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const EmailPasswordResetLink_possibleTypes: string[] = ['EmailPasswordResetLink']
-    export const isEmailPasswordResetLink = (obj?: { __typename?: any } | null): obj is EmailPasswordResetLink => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isEmailPasswordResetLink"')
-      return EmailPasswordResetLink_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const GetAuthorizationUrlForSSO_possibleTypes: string[] = ['GetAuthorizationUrlForSSO']
-    export const isGetAuthorizationUrlForSSO = (obj?: { __typename?: any } | null): obj is GetAuthorizationUrlForSSO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isGetAuthorizationUrlForSSO"')
-      return GetAuthorizationUrlForSSO_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const InvalidatePassword_possibleTypes: string[] = ['InvalidatePassword']
-    export const isInvalidatePassword = (obj?: { __typename?: any } | null): obj is InvalidatePassword => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isInvalidatePassword"')
-      return InvalidatePassword_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const WorkspaceUrlsAndId_possibleTypes: string[] = ['WorkspaceUrlsAndId']
-    export const isWorkspaceUrlsAndId = (obj?: { __typename?: any } | null): obj is WorkspaceUrlsAndId => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceUrlsAndId"')
-      return WorkspaceUrlsAndId_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const SignUp_possibleTypes: string[] = ['SignUp']
-    export const isSignUp = (obj?: { __typename?: any } | null): obj is SignUp => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isSignUp"')
-      return SignUp_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const TransientToken_possibleTypes: string[] = ['TransientToken']
-    export const isTransientToken = (obj?: { __typename?: any } | null): obj is TransientToken => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isTransientToken"')
-      return TransientToken_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const ValidatePasswordResetToken_possibleTypes: string[] = ['ValidatePasswordResetToken']
-    export const isValidatePasswordResetToken = (obj?: { __typename?: any } | null): obj is ValidatePasswordResetToken => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isValidatePasswordResetToken"')
-      return ValidatePasswordResetToken_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const VerifyEmailAndGetLoginToken_possibleTypes: string[] = ['VerifyEmailAndGetLoginToken']
-    export const isVerifyEmailAndGetLoginToken = (obj?: { __typename?: any } | null): obj is VerifyEmailAndGetLoginToken => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isVerifyEmailAndGetLoginToken"')
-      return VerifyEmailAndGetLoginToken_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const SubdomainAvailabilityDTO_possibleTypes: string[] = ['SubdomainAvailabilityDTO']
-    export const isSubdomainAvailabilityDTO = (obj?: { __typename?: any } | null): obj is SubdomainAvailabilityDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isSubdomainAvailabilityDTO"')
-      return SubdomainAvailabilityDTO_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const WorkspaceCreationDefaultsDTO_possibleTypes: string[] = ['WorkspaceCreationDefaultsDTO']
-    export const isWorkspaceCreationDefaultsDTO = (obj?: { __typename?: any } | null): obj is WorkspaceCreationDefaultsDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceCreationDefaultsDTO"')
-      return WorkspaceCreationDefaultsDTO_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const ApiKeyToken_possibleTypes: string[] = ['ApiKeyToken']
-    export const isApiKeyToken = (obj?: { __typename?: any } | null): obj is ApiKeyToken => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApiKeyToken"')
-      return ApiKeyToken_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const AuthTokens_possibleTypes: string[] = ['AuthTokens']
-    export const isAuthTokens = (obj?: { __typename?: any } | null): obj is AuthTokens => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAuthTokens"')
-      return AuthTokens_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const LoginToken_possibleTypes: string[] = ['LoginToken']
-    export const isLoginToken = (obj?: { __typename?: any } | null): obj is LoginToken => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isLoginToken"')
-      return LoginToken_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const CheckUserExist_possibleTypes: string[] = ['CheckUserExist']
-    export const isCheckUserExist = (obj?: { __typename?: any } | null): obj is CheckUserExist => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isCheckUserExist"')
-      return CheckUserExist_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const WorkspaceInviteHashValid_possibleTypes: string[] = ['WorkspaceInviteHashValid']
-    export const isWorkspaceInviteHashValid = (obj?: { __typename?: any } | null): obj is WorkspaceInviteHashValid => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceInviteHashValid"')
-      return WorkspaceInviteHashValid_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const Impersonate_possibleTypes: string[] = ['Impersonate']
-    export const isImpersonate = (obj?: { __typename?: any } | null): obj is Impersonate => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isImpersonate"')
-      return Impersonate_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const StopImpersonation_possibleTypes: string[] = ['StopImpersonation']
-    export const isStopImpersonation = (obj?: { __typename?: any } | null): obj is StopImpersonation => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isStopImpersonation"')
-      return StopImpersonation_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const ApplicationAuthorization_possibleTypes: string[] = ['ApplicationAuthorization']
-    export const isApplicationAuthorization = (obj?: { __typename?: any } | null): obj is ApplicationAuthorization => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationAuthorization"')
-      return ApplicationAuthorization_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const ApplicationExportApplication_possibleTypes: string[] = ['ApplicationExportApplication']
-    export const isApplicationExportApplication = (obj?: { __typename?: any } | null): obj is ApplicationExportApplication => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExportApplication"')
-      return ApplicationExportApplication_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const ApplicationExportCoverageEntry_possibleTypes: string[] = ['ApplicationExportCoverageEntry']
-    export const isApplicationExportCoverageEntry = (obj?: { __typename?: any } | null): obj is ApplicationExportCoverageEntry => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExportCoverageEntry"')
-      return ApplicationExportCoverageEntry_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const ApplicationExportFile_possibleTypes: string[] = ['ApplicationExportFile']
-    export const isApplicationExportFile = (obj?: { __typename?: any } | null): obj is ApplicationExportFile => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExportFile"')
-      return ApplicationExportFile_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const ApplicationExport_possibleTypes: string[] = ['ApplicationExport']
-    export const isApplicationExport = (obj?: { __typename?: any } | null): obj is ApplicationExport => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExport"')
-      return ApplicationExport_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const File_possibleTypes: string[] = ['File']
-    export const isFile = (obj?: { __typename?: any } | null): obj is File => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isFile"')
-      return File_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const ApplicationFileCompletionError_possibleTypes: string[] = ['ApplicationFileCompletionError']
-    export const isApplicationFileCompletionError = (obj?: { __typename?: any } | null): obj is ApplicationFileCompletionError => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationFileCompletionError"')
-      return ApplicationFileCompletionError_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const CompleteApplicationFileUploadsResult_possibleTypes: string[] = ['CompleteApplicationFileUploadsResult']
-    export const isCompleteApplicationFileUploadsResult = (obj?: { __typename?: any } | null): obj is CompleteApplicationFileUploadsResult => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isCompleteApplicationFileUploadsResult"')
-      return CompleteApplicationFileUploadsResult_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const ApplicationFileUploadTarget_possibleTypes: string[] = ['ApplicationFileUploadTarget']
-    export const isApplicationFileUploadTarget = (obj?: { __typename?: any } | null): obj is ApplicationFileUploadTarget => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationFileUploadTarget"')
-      return ApplicationFileUploadTarget_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const ApplicationFileUploadError_possibleTypes: string[] = ['ApplicationFileUploadError']
-    export const isApplicationFileUploadError = (obj?: { __typename?: any } | null): obj is ApplicationFileUploadError => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationFileUploadError"')
-      return ApplicationFileUploadError_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const CreateApplicationFileUploadsResult_possibleTypes: string[] = ['CreateApplicationFileUploadsResult']
-    export const isCreateApplicationFileUploadsResult = (obj?: { __typename?: any } | null): obj is CreateApplicationFileUploadsResult => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isCreateApplicationFileUploadsResult"')
-      return CreateApplicationFileUploadsResult_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const DevelopmentApplication_possibleTypes: string[] = ['DevelopmentApplication']
-    export const isDevelopmentApplication = (obj?: { __typename?: any } | null): obj is DevelopmentApplication => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isDevelopmentApplication"')
-      return DevelopmentApplication_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const WorkspaceMigration_possibleTypes: string[] = ['WorkspaceMigration']
-    export const isWorkspaceMigration = (obj?: { __typename?: any } | null): obj is WorkspaceMigration => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceMigration"')
-      return WorkspaceMigration_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const PublicDomain_possibleTypes: string[] = ['PublicDomain']
-    export const isPublicDomain = (obj?: { __typename?: any } | null): obj is PublicDomain => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isPublicDomain"')
-      return PublicDomain_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const VerificationRecord_possibleTypes: string[] = ['VerificationRecord']
-    export const isVerificationRecord = (obj?: { __typename?: any } | null): obj is VerificationRecord => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isVerificationRecord"')
-      return VerificationRecord_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const EmailingDomain_possibleTypes: string[] = ['EmailingDomain']
-    export const isEmailingDomain = (obj?: { __typename?: any } | null): obj is EmailingDomain => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isEmailingDomain"')
-      return EmailingDomain_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const MessageChannel_possibleTypes: string[] = ['MessageChannel']
-    export const isMessageChannel = (obj?: { __typename?: any } | null): obj is MessageChannel => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageChannel"')
-      return MessageChannel_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const CreateEmailGroupChannelOutput_possibleTypes: string[] = ['CreateEmailGroupChannelOutput']
-    export const isCreateEmailGroupChannelOutput = (obj?: { __typename?: any } | null): obj is CreateEmailGroupChannelOutput => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isCreateEmailGroupChannelOutput"')
-      return CreateEmailGroupChannelOutput_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const CampaignAudiencePreviewDTO_possibleTypes: string[] = ['CampaignAudiencePreviewDTO']
-    export const isCampaignAudiencePreviewDTO = (obj?: { __typename?: any } | null): obj is CampaignAudiencePreviewDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isCampaignAudiencePreviewDTO"')
-      return CampaignAudiencePreviewDTO_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const CancelMessageCampaignOutputDTO_possibleTypes: string[] = ['CancelMessageCampaignOutputDTO']
-    export const isCancelMessageCampaignOutputDTO = (obj?: { __typename?: any } | null): obj is CancelMessageCampaignOutputDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isCancelMessageCampaignOutputDTO"')
-      return CancelMessageCampaignOutputDTO_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const SendEmailViaDomainOutput_possibleTypes: string[] = ['SendEmailViaDomainOutput']
-    export const isSendEmailViaDomainOutput = (obj?: { __typename?: any } | null): obj is SendEmailViaDomainOutput => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isSendEmailViaDomainOutput"')
-      return SendEmailViaDomainOutput_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const SendMessageCampaignOutputDTO_possibleTypes: string[] = ['SendMessageCampaignOutputDTO']
-    export const isSendMessageCampaignOutputDTO = (obj?: { __typename?: any } | null): obj is SendMessageCampaignOutputDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isSendMessageCampaignOutputDTO"')
-      return SendMessageCampaignOutputDTO_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const MessageSuppression_possibleTypes: string[] = ['MessageSuppression']
-    export const isMessageSuppression = (obj?: { __typename?: any } | null): obj is MessageSuppression => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageSuppression"')
-      return MessageSuppression_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const MessageSuppressionList_possibleTypes: string[] = ['MessageSuppressionList']
-    export const isMessageSuppressionList = (obj?: { __typename?: any } | null): obj is MessageSuppressionList => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageSuppressionList"')
-      return MessageSuppressionList_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const UnsubscribeTopic_possibleTypes: string[] = ['UnsubscribeTopic']
-    export const isUnsubscribeTopic = (obj?: { __typename?: any } | null): obj is UnsubscribeTopic => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUnsubscribeTopic"')
-      return UnsubscribeTopic_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const AutocompleteResult_possibleTypes: string[] = ['AutocompleteResult']
-    export const isAutocompleteResult = (obj?: { __typename?: any } | null): obj is AutocompleteResult => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAutocompleteResult"')
-      return AutocompleteResult_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const Location_possibleTypes: string[] = ['Location']
-    export const isLocation = (obj?: { __typename?: any } | null): obj is Location => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isLocation"')
-      return Location_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const PlaceDetailsResult_possibleTypes: string[] = ['PlaceDetailsResult']
-    export const isPlaceDetailsResult = (obj?: { __typename?: any } | null): obj is PlaceDetailsResult => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isPlaceDetailsResult"')
-      return PlaceDetailsResult_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const ImapSmtpCaldavPublicConnectionParams_possibleTypes: string[] = ['ImapSmtpCaldavPublicConnectionParams']
-    export const isImapSmtpCaldavPublicConnectionParams = (obj?: { __typename?: any } | null): obj is ImapSmtpCaldavPublicConnectionParams => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isImapSmtpCaldavPublicConnectionParams"')
-      return ImapSmtpCaldavPublicConnectionParams_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const ImapSmtpCaldavPublicConnectionParameters_possibleTypes: string[] = ['ImapSmtpCaldavPublicConnectionParameters']
-    export const isImapSmtpCaldavPublicConnectionParameters = (obj?: { __typename?: any } | null): obj is ImapSmtpCaldavPublicConnectionParameters => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isImapSmtpCaldavPublicConnectionParameters"')
-      return ImapSmtpCaldavPublicConnectionParameters_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const ConnectedImapSmtpCaldavAccount_possibleTypes: string[] = ['ConnectedImapSmtpCaldavAccount']
-    export const isConnectedImapSmtpCaldavAccount = (obj?: { __typename?: any } | null): obj is ConnectedImapSmtpCaldavAccount => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isConnectedImapSmtpCaldavAccount"')
-      return ConnectedImapSmtpCaldavAccount_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const ImapSmtpCaldavConnectionSuccess_possibleTypes: string[] = ['ImapSmtpCaldavConnectionSuccess']
-    export const isImapSmtpCaldavConnectionSuccess = (obj?: { __typename?: any } | null): obj is ImapSmtpCaldavConnectionSuccess => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isImapSmtpCaldavConnectionSuccess"')
-      return ImapSmtpCaldavConnectionSuccess_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const Webhook_possibleTypes: string[] = ['Webhook']
-    export const isWebhook = (obj?: { __typename?: any } | null): obj is Webhook => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isWebhook"')
-      return Webhook_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const ToolIndexEntry_possibleTypes: string[] = ['ToolIndexEntry']
-    export const isToolIndexEntry = (obj?: { __typename?: any } | null): obj is ToolIndexEntry => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isToolIndexEntry"')
-      return ToolIndexEntry_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const AgentMessagePart_possibleTypes: string[] = ['AgentMessagePart']
-    export const isAgentMessagePart = (obj?: { __typename?: any } | null): obj is AgentMessagePart => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentMessagePart"')
-      return AgentMessagePart_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const RunAgentResult_possibleTypes: string[] = ['RunAgentResult']
-    export const isRunAgentResult = (obj?: { __typename?: any } | null): obj is RunAgentResult => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isRunAgentResult"')
-      return RunAgentResult_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const ChannelSyncSuccess_possibleTypes: string[] = ['ChannelSyncSuccess']
-    export const isChannelSyncSuccess = (obj?: { __typename?: any } | null): obj is ChannelSyncSuccess => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isChannelSyncSuccess"')
-      return ChannelSyncSuccess_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const CreateCalendarEventOutput_possibleTypes: string[] = ['CreateCalendarEventOutput']
-    export const isCreateCalendarEventOutput = (obj?: { __typename?: any } | null): obj is CreateCalendarEventOutput => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isCreateCalendarEventOutput"')
-      return CreateCalendarEventOutput_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const BarChartSeries_possibleTypes: string[] = ['BarChartSeries']
-    export const isBarChartSeries = (obj?: { __typename?: any } | null): obj is BarChartSeries => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBarChartSeries"')
-      return BarChartSeries_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const BarChartData_possibleTypes: string[] = ['BarChartData']
-    export const isBarChartData = (obj?: { __typename?: any } | null): obj is BarChartData => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBarChartData"')
-      return BarChartData_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const LineChartDataPoint_possibleTypes: string[] = ['LineChartDataPoint']
-    export const isLineChartDataPoint = (obj?: { __typename?: any } | null): obj is LineChartDataPoint => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isLineChartDataPoint"')
-      return LineChartDataPoint_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const LineChartSeries_possibleTypes: string[] = ['LineChartSeries']
-    export const isLineChartSeries = (obj?: { __typename?: any } | null): obj is LineChartSeries => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isLineChartSeries"')
-      return LineChartSeries_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const LineChartData_possibleTypes: string[] = ['LineChartData']
-    export const isLineChartData = (obj?: { __typename?: any } | null): obj is LineChartData => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isLineChartData"')
-      return LineChartData_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const PieChartDataItem_possibleTypes: string[] = ['PieChartDataItem']
-    export const isPieChartDataItem = (obj?: { __typename?: any } | null): obj is PieChartDataItem => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isPieChartDataItem"')
-      return PieChartDataItem_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const PieChartData_possibleTypes: string[] = ['PieChartData']
-    export const isPieChartData = (obj?: { __typename?: any } | null): obj is PieChartData => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isPieChartData"')
-      return PieChartData_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const DuplicatedDashboard_possibleTypes: string[] = ['DuplicatedDashboard']
-    export const isDuplicatedDashboard = (obj?: { __typename?: any } | null): obj is DuplicatedDashboard => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isDuplicatedDashboard"')
-      return DuplicatedDashboard_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const SendEmailOutput_possibleTypes: string[] = ['SendEmailOutput']
-    export const isSendEmailOutput = (obj?: { __typename?: any } | null): obj is SendEmailOutput => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isSendEmailOutput"')
-      return SendEmailOutput_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const Analytics_possibleTypes: string[] = ['Analytics']
-    export const isAnalytics = (obj?: { __typename?: any } | null): obj is Analytics => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAnalytics"')
-      return Analytics_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const EventLogRecord_possibleTypes: string[] = ['EventLogRecord']
-    export const isEventLogRecord = (obj?: { __typename?: any } | null): obj is EventLogRecord => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isEventLogRecord"')
-      return EventLogRecord_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const EventLogPageInfo_possibleTypes: string[] = ['EventLogPageInfo']
-    export const isEventLogPageInfo = (obj?: { __typename?: any } | null): obj is EventLogPageInfo => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isEventLogPageInfo"')
-      return EventLogPageInfo_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const EventLogQueryResult_possibleTypes: string[] = ['EventLogQueryResult']
-    export const isEventLogQueryResult = (obj?: { __typename?: any } | null): obj is EventLogQueryResult => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isEventLogQueryResult"')
-      return EventLogQueryResult_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const Skill_possibleTypes: string[] = ['Skill']
-    export const isSkill = (obj?: { __typename?: any } | null): obj is Skill => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isSkill"')
-      return Skill_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const AgentMessage_possibleTypes: string[] = ['AgentMessage']
-    export const isAgentMessage = (obj?: { __typename?: any } | null): obj is AgentMessage => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentMessage"')
-      return AgentMessage_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const AgentChatThread_possibleTypes: string[] = ['AgentChatThread']
-    export const isAgentChatThread = (obj?: { __typename?: any } | null): obj is AgentChatThread => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatThread"')
-      return AgentChatThread_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const AiSystemPromptSection_possibleTypes: string[] = ['AiSystemPromptSection']
-    export const isAiSystemPromptSection = (obj?: { __typename?: any } | null): obj is AiSystemPromptSection => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAiSystemPromptSection"')
-      return AiSystemPromptSection_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const AiSystemPromptPreview_possibleTypes: string[] = ['AiSystemPromptPreview']
-    export const isAiSystemPromptPreview = (obj?: { __typename?: any } | null): obj is AiSystemPromptPreview => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAiSystemPromptPreview"')
-      return AiSystemPromptPreview_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const ChatStreamError_possibleTypes: string[] = ['ChatStreamError']
-    export const isChatStreamError = (obj?: { __typename?: any } | null): obj is ChatStreamError => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isChatStreamError"')
-      return ChatStreamError_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const ChatStreamCatchupChunks_possibleTypes: string[] = ['ChatStreamCatchupChunks']
-    export const isChatStreamCatchupChunks = (obj?: { __typename?: any } | null): obj is ChatStreamCatchupChunks => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isChatStreamCatchupChunks"')
-      return ChatStreamCatchupChunks_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const SendChatMessageResult_possibleTypes: string[] = ['SendChatMessageResult']
-    export const isSendChatMessageResult = (obj?: { __typename?: any } | null): obj is SendChatMessageResult => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isSendChatMessageResult"')
-      return SendChatMessageResult_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const AgentChatEvent_possibleTypes: string[] = ['AgentChatEvent']
-    export const isAgentChatEvent = (obj?: { __typename?: any } | null): obj is AgentChatEvent => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatEvent"')
-      return AgentChatEvent_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const StartWorkspaceSetupChatResult_possibleTypes: string[] = ['StartWorkspaceSetupChatResult']
-    export const isStartWorkspaceSetupChatResult = (obj?: { __typename?: any } | null): obj is StartWorkspaceSetupChatResult => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isStartWorkspaceSetupChatResult"')
-      return StartWorkspaceSetupChatResult_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const AgentTurnEvaluation_possibleTypes: string[] = ['AgentTurnEvaluation']
-    export const isAgentTurnEvaluation = (obj?: { __typename?: any } | null): obj is AgentTurnEvaluation => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentTurnEvaluation"')
-      return AgentTurnEvaluation_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const AgentTurn_possibleTypes: string[] = ['AgentTurn']
-    export const isAgentTurn = (obj?: { __typename?: any } | null): obj is AgentTurn => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentTurn"')
-      return AgentTurn_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const WorkspaceAiStats_possibleTypes: string[] = ['WorkspaceAiStats']
-    export const isWorkspaceAiStats = (obj?: { __typename?: any } | null): obj is WorkspaceAiStats => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceAiStats"')
-      return WorkspaceAiStats_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const EnqueueJobResult_possibleTypes: string[] = ['EnqueueJobResult']
-    export const isEnqueueJobResult = (obj?: { __typename?: any } | null): obj is EnqueueJobResult => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isEnqueueJobResult"')
-      return EnqueueJobResult_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const EnqueueJobsResult_possibleTypes: string[] = ['EnqueueJobsResult']
-    export const isEnqueueJobsResult = (obj?: { __typename?: any } | null): obj is EnqueueJobsResult => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isEnqueueJobsResult"')
-      return EnqueueJobsResult_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const AppKeyValue_possibleTypes: string[] = ['AppKeyValue']
-    export const isAppKeyValue = (obj?: { __typename?: any } | null): obj is AppKeyValue => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAppKeyValue"')
-      return AppKeyValue_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const CalendarChannel_possibleTypes: string[] = ['CalendarChannel']
-    export const isCalendarChannel = (obj?: { __typename?: any } | null): obj is CalendarChannel => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isCalendarChannel"')
-      return CalendarChannel_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const MessageFolder_possibleTypes: string[] = ['MessageFolder']
-    export const isMessageFolder = (obj?: { __typename?: any } | null): obj is MessageFolder => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageFolder"')
-      return MessageFolder_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const MetadataTranslation_possibleTypes: string[] = ['MetadataTranslation']
-    export const isMetadataTranslation = (obj?: { __typename?: any } | null): obj is MetadataTranslation => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMetadataTranslation"')
-      return MetadataTranslation_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const TimelineActivityTypeEmitThrough_possibleTypes: string[] = ['TimelineActivityTypeEmitThrough']
-    export const isTimelineActivityTypeEmitThrough = (obj?: { __typename?: any } | null): obj is TimelineActivityTypeEmitThrough => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isTimelineActivityTypeEmitThrough"')
-      return TimelineActivityTypeEmitThrough_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const TimelineActivityTypeEmit_possibleTypes: string[] = ['TimelineActivityTypeEmit']
-    export const isTimelineActivityTypeEmit = (obj?: { __typename?: any } | null): obj is TimelineActivityTypeEmit => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isTimelineActivityTypeEmit"')
-      return TimelineActivityTypeEmit_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const TimelineActivityType_possibleTypes: string[] = ['TimelineActivityType']
-    export const isTimelineActivityType = (obj?: { __typename?: any } | null): obj is TimelineActivityType => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isTimelineActivityType"')
-      return TimelineActivityType_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const CollectionHash_possibleTypes: string[] = ['CollectionHash']
-    export const isCollectionHash = (obj?: { __typename?: any } | null): obj is CollectionHash => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isCollectionHash"')
-      return CollectionHash_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const MinimalObjectMetadata_possibleTypes: string[] = ['MinimalObjectMetadata']
-    export const isMinimalObjectMetadata = (obj?: { __typename?: any } | null): obj is MinimalObjectMetadata => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalObjectMetadata"')
-      return MinimalObjectMetadata_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const MinimalView_possibleTypes: string[] = ['MinimalView']
-    export const isMinimalView = (obj?: { __typename?: any } | null): obj is MinimalView => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalView"')
-      return MinimalView_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const MinimalMetadata_possibleTypes: string[] = ['MinimalMetadata']
-    export const isMinimalMetadata = (obj?: { __typename?: any } | null): obj is MinimalMetadata => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalMetadata"')
-      return MinimalMetadata_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const Query_possibleTypes: string[] = ['Query']
-    export const isQuery = (obj?: { __typename?: any } | null): obj is Query => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isQuery"')
-      return Query_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const Mutation_possibleTypes: string[] = ['Mutation']
-    export const isMutation = (obj?: { __typename?: any } | null): obj is Mutation => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMutation"')
-      return Mutation_possibleTypes.includes(obj.__typename)
-    }
-
-
-
-    const Subscription_possibleTypes: string[] = ['Subscription']
-    export const isSubscription = (obj?: { __typename?: any } | null): obj is Subscription => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isSubscription"')
-      return Subscription_possibleTypes.includes(obj.__typename)
-    }
-
+    
 
 
     const TriggerInstallApplicationJobResult_possibleTypes: string[] = ['TriggerInstallApplicationJobResult']
@@ -9786,7 +8837,999 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerInstallApplicationJobResult"')
       return TriggerInstallApplicationJobResult_possibleTypes.includes(obj.__typename)
     }
+    
 
+
+    const WorkspaceCompanyEnrichmentResult_possibleTypes: string[] = ['WorkspaceCompanyEnrichmentResult']
+    export const isWorkspaceCompanyEnrichmentResult = (obj?: { __typename?: any } | null): obj is WorkspaceCompanyEnrichmentResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceCompanyEnrichmentResult"')
+      return WorkspaceCompanyEnrichmentResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const Field_possibleTypes: string[] = ['Field']
+    export const isField = (obj?: { __typename?: any } | null): obj is Field => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isField"')
+      return Field_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PageInfo_possibleTypes: string[] = ['PageInfo']
+    export const isPageInfo = (obj?: { __typename?: any } | null): obj is PageInfo => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPageInfo"')
+      return PageInfo_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const FieldEdge_possibleTypes: string[] = ['FieldEdge']
+    export const isFieldEdge = (obj?: { __typename?: any } | null): obj is FieldEdge => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isFieldEdge"')
+      return FieldEdge_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const FieldConnection_possibleTypes: string[] = ['FieldConnection']
+    export const isFieldConnection = (obj?: { __typename?: any } | null): obj is FieldConnection => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isFieldConnection"')
+      return FieldConnection_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const Relation_possibleTypes: string[] = ['Relation']
+    export const isRelation = (obj?: { __typename?: any } | null): obj is Relation => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRelation"')
+      return Relation_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const IndexField_possibleTypes: string[] = ['IndexField']
+    export const isIndexField = (obj?: { __typename?: any } | null): obj is IndexField => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isIndexField"')
+      return IndexField_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const Index_possibleTypes: string[] = ['Index']
+    export const isIndex = (obj?: { __typename?: any } | null): obj is Index => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isIndex"')
+      return Index_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const IndexEdge_possibleTypes: string[] = ['IndexEdge']
+    export const isIndexEdge = (obj?: { __typename?: any } | null): obj is IndexEdge => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isIndexEdge"')
+      return IndexEdge_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ObjectEdge_possibleTypes: string[] = ['ObjectEdge']
+    export const isObjectEdge = (obj?: { __typename?: any } | null): obj is ObjectEdge => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectEdge"')
+      return ObjectEdge_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ObjectConnection_possibleTypes: string[] = ['ObjectConnection']
+    export const isObjectConnection = (obj?: { __typename?: any } | null): obj is ObjectConnection => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectConnection"')
+      return ObjectConnection_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ObjectFieldsConnection_possibleTypes: string[] = ['ObjectFieldsConnection']
+    export const isObjectFieldsConnection = (obj?: { __typename?: any } | null): obj is ObjectFieldsConnection => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectFieldsConnection"')
+      return ObjectFieldsConnection_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ObjectIndexMetadatasConnection_possibleTypes: string[] = ['ObjectIndexMetadatasConnection']
+    export const isObjectIndexMetadatasConnection = (obj?: { __typename?: any } | null): obj is ObjectIndexMetadatasConnection => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectIndexMetadatasConnection"')
+      return ObjectIndexMetadatasConnection_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ObjectRecordCount_possibleTypes: string[] = ['ObjectRecordCount']
+    export const isObjectRecordCount = (obj?: { __typename?: any } | null): obj is ObjectRecordCount => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectRecordCount"')
+      return ObjectRecordCount_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const SearchField_possibleTypes: string[] = ['SearchField']
+    export const isSearchField = (obj?: { __typename?: any } | null): obj is SearchField => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSearchField"')
+      return SearchField_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const BillingEntitlement_possibleTypes: string[] = ['BillingEntitlement']
+    export const isBillingEntitlement = (obj?: { __typename?: any } | null): obj is BillingEntitlement => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingEntitlement"')
+      return BillingEntitlement_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const DomainRecord_possibleTypes: string[] = ['DomainRecord']
+    export const isDomainRecord = (obj?: { __typename?: any } | null): obj is DomainRecord => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isDomainRecord"')
+      return DomainRecord_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const DomainValidRecords_possibleTypes: string[] = ['DomainValidRecords']
+    export const isDomainValidRecords = (obj?: { __typename?: any } | null): obj is DomainValidRecords => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isDomainValidRecords"')
+      return DomainValidRecords_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UpsertRowLevelPermissionPredicatesResult_possibleTypes: string[] = ['UpsertRowLevelPermissionPredicatesResult']
+    export const isUpsertRowLevelPermissionPredicatesResult = (obj?: { __typename?: any } | null): obj is UpsertRowLevelPermissionPredicatesResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUpsertRowLevelPermissionPredicatesResult"')
+      return UpsertRowLevelPermissionPredicatesResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const LogicFunctionLogs_possibleTypes: string[] = ['LogicFunctionLogs']
+    export const isLogicFunctionLogs = (obj?: { __typename?: any } | null): obj is LogicFunctionLogs => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isLogicFunctionLogs"')
+      return LogicFunctionLogs_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const DeleteTwoFactorAuthenticationMethod_possibleTypes: string[] = ['DeleteTwoFactorAuthenticationMethod']
+    export const isDeleteTwoFactorAuthenticationMethod = (obj?: { __typename?: any } | null): obj is DeleteTwoFactorAuthenticationMethod => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isDeleteTwoFactorAuthenticationMethod"')
+      return DeleteTwoFactorAuthenticationMethod_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const InitiateTwoFactorAuthenticationProvisioning_possibleTypes: string[] = ['InitiateTwoFactorAuthenticationProvisioning']
+    export const isInitiateTwoFactorAuthenticationProvisioning = (obj?: { __typename?: any } | null): obj is InitiateTwoFactorAuthenticationProvisioning => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isInitiateTwoFactorAuthenticationProvisioning"')
+      return InitiateTwoFactorAuthenticationProvisioning_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const VerifyTwoFactorAuthenticationMethod_possibleTypes: string[] = ['VerifyTwoFactorAuthenticationMethod']
+    export const isVerifyTwoFactorAuthenticationMethod = (obj?: { __typename?: any } | null): obj is VerifyTwoFactorAuthenticationMethod => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isVerifyTwoFactorAuthenticationMethod"')
+      return VerifyTwoFactorAuthenticationMethod_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AuthorizeApp_possibleTypes: string[] = ['AuthorizeApp']
+    export const isAuthorizeApp = (obj?: { __typename?: any } | null): obj is AuthorizeApp => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAuthorizeApp"')
+      return AuthorizeApp_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AuthTokenPair_possibleTypes: string[] = ['AuthTokenPair']
+    export const isAuthTokenPair = (obj?: { __typename?: any } | null): obj is AuthTokenPair => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAuthTokenPair"')
+      return AuthTokenPair_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AvailableWorkspacesAndAccessTokens_possibleTypes: string[] = ['AvailableWorkspacesAndAccessTokens']
+    export const isAvailableWorkspacesAndAccessTokens = (obj?: { __typename?: any } | null): obj is AvailableWorkspacesAndAccessTokens => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAvailableWorkspacesAndAccessTokens"')
+      return AvailableWorkspacesAndAccessTokens_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const EmailPasswordResetLink_possibleTypes: string[] = ['EmailPasswordResetLink']
+    export const isEmailPasswordResetLink = (obj?: { __typename?: any } | null): obj is EmailPasswordResetLink => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isEmailPasswordResetLink"')
+      return EmailPasswordResetLink_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const GetAuthorizationUrlForSSO_possibleTypes: string[] = ['GetAuthorizationUrlForSSO']
+    export const isGetAuthorizationUrlForSSO = (obj?: { __typename?: any } | null): obj is GetAuthorizationUrlForSSO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isGetAuthorizationUrlForSSO"')
+      return GetAuthorizationUrlForSSO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const InvalidatePassword_possibleTypes: string[] = ['InvalidatePassword']
+    export const isInvalidatePassword = (obj?: { __typename?: any } | null): obj is InvalidatePassword => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isInvalidatePassword"')
+      return InvalidatePassword_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const WorkspaceUrlsAndId_possibleTypes: string[] = ['WorkspaceUrlsAndId']
+    export const isWorkspaceUrlsAndId = (obj?: { __typename?: any } | null): obj is WorkspaceUrlsAndId => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceUrlsAndId"')
+      return WorkspaceUrlsAndId_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const SignUp_possibleTypes: string[] = ['SignUp']
+    export const isSignUp = (obj?: { __typename?: any } | null): obj is SignUp => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSignUp"')
+      return SignUp_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TransientToken_possibleTypes: string[] = ['TransientToken']
+    export const isTransientToken = (obj?: { __typename?: any } | null): obj is TransientToken => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTransientToken"')
+      return TransientToken_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ValidatePasswordResetToken_possibleTypes: string[] = ['ValidatePasswordResetToken']
+    export const isValidatePasswordResetToken = (obj?: { __typename?: any } | null): obj is ValidatePasswordResetToken => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isValidatePasswordResetToken"')
+      return ValidatePasswordResetToken_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const VerifyEmailAndGetLoginToken_possibleTypes: string[] = ['VerifyEmailAndGetLoginToken']
+    export const isVerifyEmailAndGetLoginToken = (obj?: { __typename?: any } | null): obj is VerifyEmailAndGetLoginToken => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isVerifyEmailAndGetLoginToken"')
+      return VerifyEmailAndGetLoginToken_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const SubdomainAvailabilityDTO_possibleTypes: string[] = ['SubdomainAvailabilityDTO']
+    export const isSubdomainAvailabilityDTO = (obj?: { __typename?: any } | null): obj is SubdomainAvailabilityDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSubdomainAvailabilityDTO"')
+      return SubdomainAvailabilityDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const WorkspaceCreationDefaultsDTO_possibleTypes: string[] = ['WorkspaceCreationDefaultsDTO']
+    export const isWorkspaceCreationDefaultsDTO = (obj?: { __typename?: any } | null): obj is WorkspaceCreationDefaultsDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceCreationDefaultsDTO"')
+      return WorkspaceCreationDefaultsDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApiKeyToken_possibleTypes: string[] = ['ApiKeyToken']
+    export const isApiKeyToken = (obj?: { __typename?: any } | null): obj is ApiKeyToken => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApiKeyToken"')
+      return ApiKeyToken_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AuthTokens_possibleTypes: string[] = ['AuthTokens']
+    export const isAuthTokens = (obj?: { __typename?: any } | null): obj is AuthTokens => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAuthTokens"')
+      return AuthTokens_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const LoginToken_possibleTypes: string[] = ['LoginToken']
+    export const isLoginToken = (obj?: { __typename?: any } | null): obj is LoginToken => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isLoginToken"')
+      return LoginToken_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const CheckUserExist_possibleTypes: string[] = ['CheckUserExist']
+    export const isCheckUserExist = (obj?: { __typename?: any } | null): obj is CheckUserExist => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCheckUserExist"')
+      return CheckUserExist_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const WorkspaceInviteHashValid_possibleTypes: string[] = ['WorkspaceInviteHashValid']
+    export const isWorkspaceInviteHashValid = (obj?: { __typename?: any } | null): obj is WorkspaceInviteHashValid => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceInviteHashValid"')
+      return WorkspaceInviteHashValid_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const Impersonate_possibleTypes: string[] = ['Impersonate']
+    export const isImpersonate = (obj?: { __typename?: any } | null): obj is Impersonate => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isImpersonate"')
+      return Impersonate_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const StopImpersonation_possibleTypes: string[] = ['StopImpersonation']
+    export const isStopImpersonation = (obj?: { __typename?: any } | null): obj is StopImpersonation => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isStopImpersonation"')
+      return StopImpersonation_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationAuthorization_possibleTypes: string[] = ['ApplicationAuthorization']
+    export const isApplicationAuthorization = (obj?: { __typename?: any } | null): obj is ApplicationAuthorization => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationAuthorization"')
+      return ApplicationAuthorization_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationExportApplication_possibleTypes: string[] = ['ApplicationExportApplication']
+    export const isApplicationExportApplication = (obj?: { __typename?: any } | null): obj is ApplicationExportApplication => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExportApplication"')
+      return ApplicationExportApplication_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationExportCoverageEntry_possibleTypes: string[] = ['ApplicationExportCoverageEntry']
+    export const isApplicationExportCoverageEntry = (obj?: { __typename?: any } | null): obj is ApplicationExportCoverageEntry => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExportCoverageEntry"')
+      return ApplicationExportCoverageEntry_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationExportFile_possibleTypes: string[] = ['ApplicationExportFile']
+    export const isApplicationExportFile = (obj?: { __typename?: any } | null): obj is ApplicationExportFile => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExportFile"')
+      return ApplicationExportFile_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationExport_possibleTypes: string[] = ['ApplicationExport']
+    export const isApplicationExport = (obj?: { __typename?: any } | null): obj is ApplicationExport => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExport"')
+      return ApplicationExport_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const File_possibleTypes: string[] = ['File']
+    export const isFile = (obj?: { __typename?: any } | null): obj is File => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isFile"')
+      return File_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationFileCompletionError_possibleTypes: string[] = ['ApplicationFileCompletionError']
+    export const isApplicationFileCompletionError = (obj?: { __typename?: any } | null): obj is ApplicationFileCompletionError => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationFileCompletionError"')
+      return ApplicationFileCompletionError_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const CompleteApplicationFileUploadsResult_possibleTypes: string[] = ['CompleteApplicationFileUploadsResult']
+    export const isCompleteApplicationFileUploadsResult = (obj?: { __typename?: any } | null): obj is CompleteApplicationFileUploadsResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCompleteApplicationFileUploadsResult"')
+      return CompleteApplicationFileUploadsResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationFileUploadTarget_possibleTypes: string[] = ['ApplicationFileUploadTarget']
+    export const isApplicationFileUploadTarget = (obj?: { __typename?: any } | null): obj is ApplicationFileUploadTarget => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationFileUploadTarget"')
+      return ApplicationFileUploadTarget_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationFileUploadError_possibleTypes: string[] = ['ApplicationFileUploadError']
+    export const isApplicationFileUploadError = (obj?: { __typename?: any } | null): obj is ApplicationFileUploadError => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationFileUploadError"')
+      return ApplicationFileUploadError_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const CreateApplicationFileUploadsResult_possibleTypes: string[] = ['CreateApplicationFileUploadsResult']
+    export const isCreateApplicationFileUploadsResult = (obj?: { __typename?: any } | null): obj is CreateApplicationFileUploadsResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCreateApplicationFileUploadsResult"')
+      return CreateApplicationFileUploadsResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const DevelopmentApplication_possibleTypes: string[] = ['DevelopmentApplication']
+    export const isDevelopmentApplication = (obj?: { __typename?: any } | null): obj is DevelopmentApplication => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isDevelopmentApplication"')
+      return DevelopmentApplication_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const WorkspaceMigration_possibleTypes: string[] = ['WorkspaceMigration']
+    export const isWorkspaceMigration = (obj?: { __typename?: any } | null): obj is WorkspaceMigration => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceMigration"')
+      return WorkspaceMigration_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PublicDomain_possibleTypes: string[] = ['PublicDomain']
+    export const isPublicDomain = (obj?: { __typename?: any } | null): obj is PublicDomain => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPublicDomain"')
+      return PublicDomain_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const VerificationRecord_possibleTypes: string[] = ['VerificationRecord']
+    export const isVerificationRecord = (obj?: { __typename?: any } | null): obj is VerificationRecord => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isVerificationRecord"')
+      return VerificationRecord_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const EmailingDomain_possibleTypes: string[] = ['EmailingDomain']
+    export const isEmailingDomain = (obj?: { __typename?: any } | null): obj is EmailingDomain => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isEmailingDomain"')
+      return EmailingDomain_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MessageChannel_possibleTypes: string[] = ['MessageChannel']
+    export const isMessageChannel = (obj?: { __typename?: any } | null): obj is MessageChannel => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageChannel"')
+      return MessageChannel_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const CreateEmailGroupChannelOutput_possibleTypes: string[] = ['CreateEmailGroupChannelOutput']
+    export const isCreateEmailGroupChannelOutput = (obj?: { __typename?: any } | null): obj is CreateEmailGroupChannelOutput => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCreateEmailGroupChannelOutput"')
+      return CreateEmailGroupChannelOutput_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const CampaignAudiencePreviewDTO_possibleTypes: string[] = ['CampaignAudiencePreviewDTO']
+    export const isCampaignAudiencePreviewDTO = (obj?: { __typename?: any } | null): obj is CampaignAudiencePreviewDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCampaignAudiencePreviewDTO"')
+      return CampaignAudiencePreviewDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const CancelMessageCampaignOutputDTO_possibleTypes: string[] = ['CancelMessageCampaignOutputDTO']
+    export const isCancelMessageCampaignOutputDTO = (obj?: { __typename?: any } | null): obj is CancelMessageCampaignOutputDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCancelMessageCampaignOutputDTO"')
+      return CancelMessageCampaignOutputDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const SendEmailViaDomainOutput_possibleTypes: string[] = ['SendEmailViaDomainOutput']
+    export const isSendEmailViaDomainOutput = (obj?: { __typename?: any } | null): obj is SendEmailViaDomainOutput => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSendEmailViaDomainOutput"')
+      return SendEmailViaDomainOutput_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const SendMessageCampaignOutputDTO_possibleTypes: string[] = ['SendMessageCampaignOutputDTO']
+    export const isSendMessageCampaignOutputDTO = (obj?: { __typename?: any } | null): obj is SendMessageCampaignOutputDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSendMessageCampaignOutputDTO"')
+      return SendMessageCampaignOutputDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const DuplicatedMessageList_possibleTypes: string[] = ['DuplicatedMessageList']
+    export const isDuplicatedMessageList = (obj?: { __typename?: any } | null): obj is DuplicatedMessageList => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isDuplicatedMessageList"')
+      return DuplicatedMessageList_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MessageSuppression_possibleTypes: string[] = ['MessageSuppression']
+    export const isMessageSuppression = (obj?: { __typename?: any } | null): obj is MessageSuppression => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageSuppression"')
+      return MessageSuppression_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MessageSuppressionList_possibleTypes: string[] = ['MessageSuppressionList']
+    export const isMessageSuppressionList = (obj?: { __typename?: any } | null): obj is MessageSuppressionList => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageSuppressionList"')
+      return MessageSuppressionList_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UnsubscribeTopic_possibleTypes: string[] = ['UnsubscribeTopic']
+    export const isUnsubscribeTopic = (obj?: { __typename?: any } | null): obj is UnsubscribeTopic => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUnsubscribeTopic"')
+      return UnsubscribeTopic_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AutocompleteResult_possibleTypes: string[] = ['AutocompleteResult']
+    export const isAutocompleteResult = (obj?: { __typename?: any } | null): obj is AutocompleteResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAutocompleteResult"')
+      return AutocompleteResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const Location_possibleTypes: string[] = ['Location']
+    export const isLocation = (obj?: { __typename?: any } | null): obj is Location => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isLocation"')
+      return Location_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PlaceDetailsResult_possibleTypes: string[] = ['PlaceDetailsResult']
+    export const isPlaceDetailsResult = (obj?: { __typename?: any } | null): obj is PlaceDetailsResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPlaceDetailsResult"')
+      return PlaceDetailsResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ImapSmtpCaldavPublicConnectionParams_possibleTypes: string[] = ['ImapSmtpCaldavPublicConnectionParams']
+    export const isImapSmtpCaldavPublicConnectionParams = (obj?: { __typename?: any } | null): obj is ImapSmtpCaldavPublicConnectionParams => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isImapSmtpCaldavPublicConnectionParams"')
+      return ImapSmtpCaldavPublicConnectionParams_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ImapSmtpCaldavPublicConnectionParameters_possibleTypes: string[] = ['ImapSmtpCaldavPublicConnectionParameters']
+    export const isImapSmtpCaldavPublicConnectionParameters = (obj?: { __typename?: any } | null): obj is ImapSmtpCaldavPublicConnectionParameters => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isImapSmtpCaldavPublicConnectionParameters"')
+      return ImapSmtpCaldavPublicConnectionParameters_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ConnectedImapSmtpCaldavAccount_possibleTypes: string[] = ['ConnectedImapSmtpCaldavAccount']
+    export const isConnectedImapSmtpCaldavAccount = (obj?: { __typename?: any } | null): obj is ConnectedImapSmtpCaldavAccount => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isConnectedImapSmtpCaldavAccount"')
+      return ConnectedImapSmtpCaldavAccount_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ImapSmtpCaldavConnectionSuccess_possibleTypes: string[] = ['ImapSmtpCaldavConnectionSuccess']
+    export const isImapSmtpCaldavConnectionSuccess = (obj?: { __typename?: any } | null): obj is ImapSmtpCaldavConnectionSuccess => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isImapSmtpCaldavConnectionSuccess"')
+      return ImapSmtpCaldavConnectionSuccess_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const Webhook_possibleTypes: string[] = ['Webhook']
+    export const isWebhook = (obj?: { __typename?: any } | null): obj is Webhook => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isWebhook"')
+      return Webhook_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ToolIndexEntry_possibleTypes: string[] = ['ToolIndexEntry']
+    export const isToolIndexEntry = (obj?: { __typename?: any } | null): obj is ToolIndexEntry => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isToolIndexEntry"')
+      return ToolIndexEntry_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentMessagePart_possibleTypes: string[] = ['AgentMessagePart']
+    export const isAgentMessagePart = (obj?: { __typename?: any } | null): obj is AgentMessagePart => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentMessagePart"')
+      return AgentMessagePart_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const RunAgentResult_possibleTypes: string[] = ['RunAgentResult']
+    export const isRunAgentResult = (obj?: { __typename?: any } | null): obj is RunAgentResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRunAgentResult"')
+      return RunAgentResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ChannelSyncSuccess_possibleTypes: string[] = ['ChannelSyncSuccess']
+    export const isChannelSyncSuccess = (obj?: { __typename?: any } | null): obj is ChannelSyncSuccess => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isChannelSyncSuccess"')
+      return ChannelSyncSuccess_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const CreateCalendarEventOutput_possibleTypes: string[] = ['CreateCalendarEventOutput']
+    export const isCreateCalendarEventOutput = (obj?: { __typename?: any } | null): obj is CreateCalendarEventOutput => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCreateCalendarEventOutput"')
+      return CreateCalendarEventOutput_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const BarChartSeries_possibleTypes: string[] = ['BarChartSeries']
+    export const isBarChartSeries = (obj?: { __typename?: any } | null): obj is BarChartSeries => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isBarChartSeries"')
+      return BarChartSeries_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const BarChartData_possibleTypes: string[] = ['BarChartData']
+    export const isBarChartData = (obj?: { __typename?: any } | null): obj is BarChartData => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isBarChartData"')
+      return BarChartData_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const LineChartDataPoint_possibleTypes: string[] = ['LineChartDataPoint']
+    export const isLineChartDataPoint = (obj?: { __typename?: any } | null): obj is LineChartDataPoint => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isLineChartDataPoint"')
+      return LineChartDataPoint_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const LineChartSeries_possibleTypes: string[] = ['LineChartSeries']
+    export const isLineChartSeries = (obj?: { __typename?: any } | null): obj is LineChartSeries => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isLineChartSeries"')
+      return LineChartSeries_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const LineChartData_possibleTypes: string[] = ['LineChartData']
+    export const isLineChartData = (obj?: { __typename?: any } | null): obj is LineChartData => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isLineChartData"')
+      return LineChartData_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PieChartDataItem_possibleTypes: string[] = ['PieChartDataItem']
+    export const isPieChartDataItem = (obj?: { __typename?: any } | null): obj is PieChartDataItem => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPieChartDataItem"')
+      return PieChartDataItem_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PieChartData_possibleTypes: string[] = ['PieChartData']
+    export const isPieChartData = (obj?: { __typename?: any } | null): obj is PieChartData => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPieChartData"')
+      return PieChartData_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const DuplicatedDashboard_possibleTypes: string[] = ['DuplicatedDashboard']
+    export const isDuplicatedDashboard = (obj?: { __typename?: any } | null): obj is DuplicatedDashboard => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isDuplicatedDashboard"')
+      return DuplicatedDashboard_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const SendEmailOutput_possibleTypes: string[] = ['SendEmailOutput']
+    export const isSendEmailOutput = (obj?: { __typename?: any } | null): obj is SendEmailOutput => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSendEmailOutput"')
+      return SendEmailOutput_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const Analytics_possibleTypes: string[] = ['Analytics']
+    export const isAnalytics = (obj?: { __typename?: any } | null): obj is Analytics => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAnalytics"')
+      return Analytics_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const EventLogRecord_possibleTypes: string[] = ['EventLogRecord']
+    export const isEventLogRecord = (obj?: { __typename?: any } | null): obj is EventLogRecord => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isEventLogRecord"')
+      return EventLogRecord_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const EventLogPageInfo_possibleTypes: string[] = ['EventLogPageInfo']
+    export const isEventLogPageInfo = (obj?: { __typename?: any } | null): obj is EventLogPageInfo => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isEventLogPageInfo"')
+      return EventLogPageInfo_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const EventLogQueryResult_possibleTypes: string[] = ['EventLogQueryResult']
+    export const isEventLogQueryResult = (obj?: { __typename?: any } | null): obj is EventLogQueryResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isEventLogQueryResult"')
+      return EventLogQueryResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const Skill_possibleTypes: string[] = ['Skill']
+    export const isSkill = (obj?: { __typename?: any } | null): obj is Skill => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSkill"')
+      return Skill_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentMessage_possibleTypes: string[] = ['AgentMessage']
+    export const isAgentMessage = (obj?: { __typename?: any } | null): obj is AgentMessage => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentMessage"')
+      return AgentMessage_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentChatThread_possibleTypes: string[] = ['AgentChatThread']
+    export const isAgentChatThread = (obj?: { __typename?: any } | null): obj is AgentChatThread => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatThread"')
+      return AgentChatThread_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AiSystemPromptSection_possibleTypes: string[] = ['AiSystemPromptSection']
+    export const isAiSystemPromptSection = (obj?: { __typename?: any } | null): obj is AiSystemPromptSection => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAiSystemPromptSection"')
+      return AiSystemPromptSection_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AiSystemPromptPreview_possibleTypes: string[] = ['AiSystemPromptPreview']
+    export const isAiSystemPromptPreview = (obj?: { __typename?: any } | null): obj is AiSystemPromptPreview => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAiSystemPromptPreview"')
+      return AiSystemPromptPreview_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ChatStreamError_possibleTypes: string[] = ['ChatStreamError']
+    export const isChatStreamError = (obj?: { __typename?: any } | null): obj is ChatStreamError => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isChatStreamError"')
+      return ChatStreamError_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ChatStreamCatchupChunks_possibleTypes: string[] = ['ChatStreamCatchupChunks']
+    export const isChatStreamCatchupChunks = (obj?: { __typename?: any } | null): obj is ChatStreamCatchupChunks => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isChatStreamCatchupChunks"')
+      return ChatStreamCatchupChunks_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const SendChatMessageResult_possibleTypes: string[] = ['SendChatMessageResult']
+    export const isSendChatMessageResult = (obj?: { __typename?: any } | null): obj is SendChatMessageResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSendChatMessageResult"')
+      return SendChatMessageResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentChatEvent_possibleTypes: string[] = ['AgentChatEvent']
+    export const isAgentChatEvent = (obj?: { __typename?: any } | null): obj is AgentChatEvent => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatEvent"')
+      return AgentChatEvent_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const StartWorkspaceSetupChatResult_possibleTypes: string[] = ['StartWorkspaceSetupChatResult']
+    export const isStartWorkspaceSetupChatResult = (obj?: { __typename?: any } | null): obj is StartWorkspaceSetupChatResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isStartWorkspaceSetupChatResult"')
+      return StartWorkspaceSetupChatResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentTurnEvaluation_possibleTypes: string[] = ['AgentTurnEvaluation']
+    export const isAgentTurnEvaluation = (obj?: { __typename?: any } | null): obj is AgentTurnEvaluation => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentTurnEvaluation"')
+      return AgentTurnEvaluation_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentTurn_possibleTypes: string[] = ['AgentTurn']
+    export const isAgentTurn = (obj?: { __typename?: any } | null): obj is AgentTurn => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentTurn"')
+      return AgentTurn_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const WorkspaceAiStats_possibleTypes: string[] = ['WorkspaceAiStats']
+    export const isWorkspaceAiStats = (obj?: { __typename?: any } | null): obj is WorkspaceAiStats => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceAiStats"')
+      return WorkspaceAiStats_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const EnqueueJobResult_possibleTypes: string[] = ['EnqueueJobResult']
+    export const isEnqueueJobResult = (obj?: { __typename?: any } | null): obj is EnqueueJobResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isEnqueueJobResult"')
+      return EnqueueJobResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const EnqueueJobsResult_possibleTypes: string[] = ['EnqueueJobsResult']
+    export const isEnqueueJobsResult = (obj?: { __typename?: any } | null): obj is EnqueueJobsResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isEnqueueJobsResult"')
+      return EnqueueJobsResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AppKeyValue_possibleTypes: string[] = ['AppKeyValue']
+    export const isAppKeyValue = (obj?: { __typename?: any } | null): obj is AppKeyValue => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAppKeyValue"')
+      return AppKeyValue_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const CalendarChannel_possibleTypes: string[] = ['CalendarChannel']
+    export const isCalendarChannel = (obj?: { __typename?: any } | null): obj is CalendarChannel => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCalendarChannel"')
+      return CalendarChannel_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MessageFolder_possibleTypes: string[] = ['MessageFolder']
+    export const isMessageFolder = (obj?: { __typename?: any } | null): obj is MessageFolder => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageFolder"')
+      return MessageFolder_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MetadataTranslation_possibleTypes: string[] = ['MetadataTranslation']
+    export const isMetadataTranslation = (obj?: { __typename?: any } | null): obj is MetadataTranslation => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMetadataTranslation"')
+      return MetadataTranslation_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TimelineActivityTypeEmitThrough_possibleTypes: string[] = ['TimelineActivityTypeEmitThrough']
+    export const isTimelineActivityTypeEmitThrough = (obj?: { __typename?: any } | null): obj is TimelineActivityTypeEmitThrough => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTimelineActivityTypeEmitThrough"')
+      return TimelineActivityTypeEmitThrough_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TimelineActivityTypeEmit_possibleTypes: string[] = ['TimelineActivityTypeEmit']
+    export const isTimelineActivityTypeEmit = (obj?: { __typename?: any } | null): obj is TimelineActivityTypeEmit => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTimelineActivityTypeEmit"')
+      return TimelineActivityTypeEmit_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TimelineActivityType_possibleTypes: string[] = ['TimelineActivityType']
+    export const isTimelineActivityType = (obj?: { __typename?: any } | null): obj is TimelineActivityType => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTimelineActivityType"')
+      return TimelineActivityType_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const CollectionHash_possibleTypes: string[] = ['CollectionHash']
+    export const isCollectionHash = (obj?: { __typename?: any } | null): obj is CollectionHash => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCollectionHash"')
+      return CollectionHash_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MinimalObjectMetadata_possibleTypes: string[] = ['MinimalObjectMetadata']
+    export const isMinimalObjectMetadata = (obj?: { __typename?: any } | null): obj is MinimalObjectMetadata => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalObjectMetadata"')
+      return MinimalObjectMetadata_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MinimalView_possibleTypes: string[] = ['MinimalView']
+    export const isMinimalView = (obj?: { __typename?: any } | null): obj is MinimalView => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalView"')
+      return MinimalView_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MinimalMetadata_possibleTypes: string[] = ['MinimalMetadata']
+    export const isMinimalMetadata = (obj?: { __typename?: any } | null): obj is MinimalMetadata => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalMetadata"')
+      return MinimalMetadata_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const Query_possibleTypes: string[] = ['Query']
+    export const isQuery = (obj?: { __typename?: any } | null): obj is Query => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isQuery"')
+      return Query_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const Mutation_possibleTypes: string[] = ['Mutation']
+    export const isMutation = (obj?: { __typename?: any } | null): obj is Mutation => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMutation"')
+      return Mutation_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const Subscription_possibleTypes: string[] = ['Subscription']
+    export const isSubscription = (obj?: { __typename?: any } | null): obj is Subscription => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSubscription"')
+      return Subscription_possibleTypes.includes(obj.__typename)
+    }
+    
 
 export const enumApplicationRegistrationSourceType = {
    NPM: 'NPM' as const,
@@ -9818,6 +9861,7 @@ export const enumEngineComponentKey = {
    SAVE_DASHBOARD_LAYOUT: 'SAVE_DASHBOARD_LAYOUT' as const,
    CANCEL_DASHBOARD_LAYOUT: 'CANCEL_DASHBOARD_LAYOUT' as const,
    DUPLICATE_DASHBOARD: 'DUPLICATE_DASHBOARD' as const,
+   DUPLICATE_MESSAGE_LIST: 'DUPLICATE_MESSAGE_LIST' as const,
    ACTIVATE_WORKFLOW: 'ACTIVATE_WORKFLOW' as const,
    DEACTIVATE_WORKFLOW: 'DEACTIVATE_WORKFLOW' as const,
    DISCARD_DRAFT_WORKFLOW: 'DISCARD_DRAFT_WORKFLOW' as const,
@@ -9885,6 +9929,20 @@ export const enumObjectOpenRecordIn = {
    SIDE_PANEL: 'SIDE_PANEL' as const,
    RECORD_PAGE: 'RECORD_PAGE' as const,
    USER_CHOICE: 'USER_CHOICE' as const
+}
+
+export const enumMetadataReadability = {
+   OPEN: 'OPEN' as const,
+   PRIVATE: 'PRIVATE' as const,
+   INHERITED: 'INHERITED' as const,
+   APPLICATION: 'APPLICATION' as const,
+   SYSTEM: 'SYSTEM' as const
+}
+
+export const enumMetadataWritability = {
+   OPEN: 'OPEN' as const,
+   APPLICATION: 'APPLICATION' as const,
+   SYSTEM: 'SYSTEM' as const
 }
 
 export const enumOpenRecordIn = {

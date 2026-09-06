@@ -9,6 +9,7 @@ import { RecordTableCellPortals } from '@/object-record/record-table/record-tabl
 import { RecordTableAggregateFooter } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooter';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { RecordTableVirtualizedDataChangedEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedDataChangedEffect';
+import { RecordTableVirtualizedJunctionDataChangedEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedJunctionDataChangedEffect';
 import { RecordTableVirtualizedSSESubscribeEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedSSESubscribeEffect';
 import { RecordTableVirtualizedRowTreadmillEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedRowTreadmillEffect';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -39,6 +40,7 @@ export const RecordTableNoRecordGroupBody = () => {
         )}
         <RecordTableVirtualizedRowTreadmillEffect />
         <RecordTableVirtualizedDataChangedEffect />
+        <RecordTableVirtualizedJunctionDataChangedEffect />
         <RecordTableVirtualizedSSESubscribeEffect />
       </RecordTableBodyNoRecordGroupDragDropContextProvider>
     </RecordTableNoRecordGroupBodyContextProvider>

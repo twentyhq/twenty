@@ -195,6 +195,7 @@ export {
   FieldMetadataSettingsOnClickAction,
   HTTPMethod,
   IndexType,
+  MetadataReadability,
   MetadataWritability,
   NavigationMenuItemType,
   NumberDataType,
