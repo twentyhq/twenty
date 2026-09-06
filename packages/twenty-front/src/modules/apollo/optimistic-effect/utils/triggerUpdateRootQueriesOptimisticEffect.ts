@@ -3,6 +3,7 @@ import { type ApolloCache, type StoreObject } from '@apollo/client';
 import { triggerUpdateGroupByQueriesOptimisticEffect } from '@/apollo/optimistic-effect/group-by/utils/triggerUpdateGroupByQueriesOptimisticEffect';
 import { sortCachedObjectEdges } from '@/apollo/optimistic-effect/utils/sortCachedObjectEdges';
 import { type CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
+import { encodeCursor } from '@/apollo/utils/encodeCursor';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
@@ -11,23 +12,16 @@ import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRe
 import { getEdgeTypename, isDefined } from 'twenty-shared/utils';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
-export type RecordUpdate = {
-  currentRecord: RecordGqlNode;
-  updatedRecord: RecordGqlNode;
-};
-
-// Adds each updated record to the cached lists it now matches, removes it from
-// the ones it no longer matches, and keeps their counts in step.
 export const triggerUpdateRootQueriesOptimisticEffect = ({
   cache,
   objectMetadataItem,
   objectMetadataItems,
-  recordUpdates,
+  updatedRecords,
 }: {
   cache: ApolloCache;
   objectMetadataItem: EnrichedObjectMetadataItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
-  recordUpdates: RecordUpdate[];
+  updatedRecords: RecordGqlNode[];
 }) => {
   cache.modify<StoreObject>({
     fields: {
@@ -62,13 +56,17 @@ export const triggerUpdateRootQueriesOptimisticEffect = ({
             objectMetadataItems,
           });
 
+        // The count follows the edges rather than the filter alone: the same
+        // change can reach a list several times (a record update, then the
+        // detach of a relation it cascaded to), and only an edge that actually
+        // comes or goes may move the count.
         let rootQueryNextEdges = [
           ...(readField<RecordGqlRefEdge[]>('edges', rootQueryConnection) ??
             []),
         ];
         let totalCountDelta = 0;
 
-        for (const { currentRecord, updatedRecord } of recordUpdates) {
+        for (const updatedRecord of updatedRecords) {
           const updatedRecordIndexInRootQueryEdges =
             rootQueryNextEdges.findIndex(
               (cachedEdge) =>
@@ -76,16 +74,7 @@ export const triggerUpdateRootQueriesOptimisticEffect = ({
             );
           const updatedRecordFoundInRootQueryEdges =
             updatedRecordIndexInRootQueryEdges > -1;
-
-          // A record listed by this query matched it before the update, even
-          // when the cached record lacks the fields the filter reads.
-          const currentRecordMatches =
-            updatedRecordFoundInRootQueryEdges ||
-            isMatchingRootQueryFilter(currentRecord);
           const updatedRecordMatches = isMatchingRootQueryFilter(updatedRecord);
-
-          totalCountDelta +=
-            (updatedRecordMatches ? 1 : 0) - (currentRecordMatches ? 1 : 0);
 
           if (updatedRecordMatches && !updatedRecordFoundInRootQueryEdges) {
             const updatedRecordNodeReference = toReference(updatedRecord);
@@ -94,13 +83,15 @@ export const triggerUpdateRootQueriesOptimisticEffect = ({
               rootQueryNextEdges.push({
                 __typename: getEdgeTypename(objectMetadataItem.nameSingular),
                 node: updatedRecordNodeReference,
-                cursor: '',
+                cursor: encodeCursor(updatedRecord),
               });
+              totalCountDelta += 1;
             }
           }
 
           if (!updatedRecordMatches && updatedRecordFoundInRootQueryEdges) {
             rootQueryNextEdges.splice(updatedRecordIndexInRootQueryEdges, 1);
+            totalCountDelta -= 1;
           }
         }
 
@@ -133,7 +124,7 @@ export const triggerUpdateRootQueriesOptimisticEffect = ({
     objectMetadataItem,
     objectMetadataItems,
     operation: 'update',
-    records: recordUpdates.map(({ updatedRecord }) => updatedRecord),
+    records: updatedRecords,
     shouldMatchRootQueryFilter: true,
   });
 };

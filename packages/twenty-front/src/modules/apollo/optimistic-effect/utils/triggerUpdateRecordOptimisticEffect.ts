@@ -41,6 +41,6 @@ export const triggerUpdateRecordOptimisticEffect = ({
     cache,
     objectMetadataItem,
     objectMetadataItems,
-    recordUpdates: [{ currentRecord, updatedRecord }],
+    updatedRecords: [updatedRecord],
   });
 };

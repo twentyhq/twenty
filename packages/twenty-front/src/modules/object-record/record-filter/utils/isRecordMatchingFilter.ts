@@ -51,6 +51,7 @@ import {
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { computePossibleMorphGqlFieldForFieldName } from '@/object-record/cache/utils/computePossibleMorphGqlFieldForFieldName';
+import { isObjectRecordConnection } from '@/object-record/cache/utils/isObjectRecordConnection';
 
 const isLeafFilter = (
   filter: RecordGqlOperationFilter,
@@ -161,7 +162,11 @@ const isRecordMatchingNestedRelationFilter = ({
 
   // A to-many relation matches when any of its loaded records does, the way
   // the backend EXISTS does.
-  return getLoadedRelationRecords(relationRecord).some(
+  return getLoadedRelationRecords({
+    relationRecord,
+    relationTargetObjectNameSingular:
+      relationTargetObjectMetadataItem.nameSingular,
+  }).some(
     (relatedRecord) =>
       isObject(relatedRecord) && isRecordMatchingNestedFilter(relatedRecord),
   );
@@ -170,15 +175,21 @@ const isRecordMatchingNestedRelationFilter = ({
 // A relation value is a single record for a to-one relation, and for a to-many
 // relation either an array of records or a connection, depending on whether
 // the record comes from the store or from a GraphQL response.
-const getLoadedRelationRecords = (relationRecord: object): unknown[] => {
+const getLoadedRelationRecords = ({
+  relationRecord,
+  relationTargetObjectNameSingular,
+}: {
+  relationRecord: object;
+  relationTargetObjectNameSingular: string;
+}): unknown[] => {
   if (Array.isArray(relationRecord)) {
     return relationRecord;
   }
 
-  if ('edges' in relationRecord && Array.isArray(relationRecord.edges)) {
-    return relationRecord.edges.map((edge: unknown) =>
-      isObject(edge) && 'node' in edge ? edge.node : undefined,
-    );
+  if (
+    isObjectRecordConnection(relationTargetObjectNameSingular, relationRecord)
+  ) {
+    return relationRecord.edges?.map((edge) => edge.node) ?? [];
   }
 
   return [relationRecord];

@@ -48,26 +48,6 @@ export const triggerAttachRelationOptimisticEffect = ({
     targetObjectMetadataItem.nameSingular,
   );
 
-  const readTargetRecordFromCache = () =>
-    getRecordFromCache({
-      cache,
-      objectMetadataItem: targetObjectMetadataItem,
-      objectMetadataItems,
-      recordId: targetRecordId,
-      objectPermissionsByObjectMetadataId,
-    });
-
-  const currentTargetRecordNode = getRecordNodeFromRecord({
-    objectMetadataItems,
-    objectMetadataItem: targetObjectMetadataItem,
-    record: readTargetRecordFromCache(),
-    computeReferences: false,
-  });
-
-  if (!isDefined(currentTargetRecordNode)) {
-    return;
-  }
-
   const targetRecordCacheId = cache.identify({
     id: targetRecordId,
     __typename: targetRecordTypeName,
@@ -137,7 +117,13 @@ export const triggerAttachRelationOptimisticEffect = ({
     },
   });
 
-  const newCachedRecord = readTargetRecordFromCache();
+  const newCachedRecord = getRecordFromCache({
+    cache,
+    objectMetadataItem: targetObjectMetadataItem,
+    objectMetadataItems,
+    recordId: targetRecordId,
+    objectPermissionsByObjectMetadataId,
+  });
 
   if (!isDefined(newCachedRecord)) {
     return;
@@ -160,21 +146,18 @@ export const triggerAttachRelationOptimisticEffect = ({
     cache,
     objectMetadataItem: targetObjectMetadataItem,
     objectMetadataItems,
-    recordUpdates: [
-      {
-        currentRecord: currentTargetRecordNode,
-        updatedRecord: isDefined(newCachedRecordNode[fieldNameOnTargetRecord])
-          ? newCachedRecordNode
-          : {
-              ...newCachedRecordNode,
-              [fieldNameOnTargetRecord]: buildRelationValueFromSourceRecord({
-                sourceObjectNameSingular,
-                sourceRecord,
-                targetObjectMetadataItem,
-                fieldNameOnTargetRecord,
-              }),
-            },
-      },
+    updatedRecords: [
+      isDefined(newCachedRecordNode[fieldNameOnTargetRecord])
+        ? newCachedRecordNode
+        : {
+            ...newCachedRecordNode,
+            [fieldNameOnTargetRecord]: buildRelationValueFromSourceRecord({
+              sourceObjectNameSingular,
+              sourceRecord,
+              targetObjectMetadataItem,
+              fieldNameOnTargetRecord,
+            }),
+          },
     ],
   });
 };

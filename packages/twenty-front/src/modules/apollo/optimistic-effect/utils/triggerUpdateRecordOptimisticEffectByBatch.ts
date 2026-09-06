@@ -27,17 +27,12 @@ export const triggerUpdateRecordOptimisticEffectByBatch = ({
   >;
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
 }) => {
-  const recordUpdates = currentRecords.map((currentRecord, index) => ({
-    currentRecord,
-    updatedRecord: updatedRecords[index],
-  }));
-
-  for (const { currentRecord, updatedRecord } of recordUpdates) {
+  for (const [index, currentRecord] of currentRecords.entries()) {
     triggerUpdateRelationsOptimisticEffect({
       cache,
       sourceObjectMetadataItem: objectMetadataItem,
       currentSourceRecord: currentRecord,
-      updatedSourceRecord: updatedRecord,
+      updatedSourceRecord: updatedRecords[index],
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
       upsertRecordsInStore,
@@ -48,6 +43,6 @@ export const triggerUpdateRecordOptimisticEffectByBatch = ({
     cache,
     objectMetadataItem,
     objectMetadataItems,
-    recordUpdates,
+    updatedRecords,
   });
 };

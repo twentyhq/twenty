@@ -37,26 +37,6 @@ export const triggerDetachRelationOptimisticEffect = ({
     targetObjectMetadataItem.nameSingular,
   );
 
-  const readTargetRecordFromCache = () =>
-    getRecordFromCache({
-      cache,
-      objectMetadataItem: targetObjectMetadataItem,
-      objectMetadataItems,
-      recordId: targetRecordId,
-      objectPermissionsByObjectMetadataId,
-    });
-
-  const currentTargetRecordNode = getRecordNodeFromRecord({
-    objectMetadataItems,
-    objectMetadataItem: targetObjectMetadataItem,
-    record: readTargetRecordFromCache(),
-    computeReferences: false,
-  });
-
-  if (!isDefined(currentTargetRecordNode)) {
-    return;
-  }
-
   const targetRecordCacheId = cache.identify({
     id: targetRecordId,
     __typename: targetRecordTypeName,
@@ -96,7 +76,13 @@ export const triggerDetachRelationOptimisticEffect = ({
     },
   });
 
-  const newCachedRecord = readTargetRecordFromCache();
+  const newCachedRecord = getRecordFromCache({
+    cache,
+    objectMetadataItem: targetObjectMetadataItem,
+    objectMetadataItems,
+    recordId: targetRecordId,
+    objectPermissionsByObjectMetadataId,
+  });
 
   if (!isDefined(newCachedRecord)) {
     return;
@@ -119,11 +105,6 @@ export const triggerDetachRelationOptimisticEffect = ({
     cache,
     objectMetadataItem: targetObjectMetadataItem,
     objectMetadataItems,
-    recordUpdates: [
-      {
-        currentRecord: currentTargetRecordNode,
-        updatedRecord: newCachedRecordNode,
-      },
-    ],
+    updatedRecords: [newCachedRecordNode],
   });
 };
