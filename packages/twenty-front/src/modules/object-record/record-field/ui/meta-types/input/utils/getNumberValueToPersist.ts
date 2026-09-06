@@ -1,4 +1,5 @@
 import { isNull } from '@sniptt/guards';
+import { type FieldNumberVariant } from 'twenty-shared/types';
 
 import {
   canBeCastAsNumberOrNull,
@@ -7,7 +8,7 @@ import {
 
 type GetNumberValueToPersistArgs = {
   newValue: string;
-  numberType?: string;
+  numberType?: FieldNumberVariant;
 };
 
 type GetNumberValueToPersistResult = {
@@ -20,13 +21,24 @@ export const getNumberValueToPersist = ({
   numberType,
 }: GetNumberValueToPersistArgs): GetNumberValueToPersistResult => {
   if (numberType === 'percentage') {
-    const newValueEscaped = newValue.replaceAll('%', '');
+    const trimmedValue = newValue.trim();
 
-    if (!canBeCastAsNumberOrNull(newValueEscaped)) {
+    if (trimmedValue === '%') {
       return { success: false };
     }
 
-    const castedValue = castAsNumberOrNull(newValueEscaped);
+    const valueWithoutPercent = trimmedValue.endsWith('%')
+      ? trimmedValue.slice(0, -1).trim()
+      : trimmedValue;
+
+    if (
+      valueWithoutPercent.includes('%') ||
+      !canBeCastAsNumberOrNull(valueWithoutPercent)
+    ) {
+      return { success: false };
+    }
+
+    const castedValue = castAsNumberOrNull(valueWithoutPercent);
 
     if (!isNull(castedValue)) {
       return { success: true, value: castedValue / 100 };

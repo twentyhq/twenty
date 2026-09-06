@@ -80,5 +80,48 @@ describe('getNumberValueToPersist', () => {
 
       expect(result).toEqual({ success: false });
     });
+
+    it('should return success false when input is only a % symbol', () => {
+      const result = getNumberValueToPersist({
+        newValue: '%',
+        numberType: 'percentage',
+      });
+
+      expect(result).toEqual({ success: false });
+    });
+
+    it('should return success false when % is in the middle', () => {
+      const result = getNumberValueToPersist({
+        newValue: '1%2',
+        numberType: 'percentage',
+      });
+
+      expect(result).toEqual({ success: false });
+    });
+
+    it('should return success false when multiple % symbols are present', () => {
+      expect(
+        getNumberValueToPersist({
+          newValue: '%%50',
+          numberType: 'percentage',
+        }),
+      ).toEqual({ success: false });
+
+      expect(
+        getNumberValueToPersist({
+          newValue: '50%%',
+          numberType: 'percentage',
+        }),
+      ).toEqual({ success: false });
+    });
+
+    it('should handle percentage with surrounding whitespace', () => {
+      const result = getNumberValueToPersist({
+        newValue: '  50 %  ',
+        numberType: 'percentage',
+      });
+
+      expect(result).toEqual({ success: true, value: 0.5 });
+    });
   });
 });
