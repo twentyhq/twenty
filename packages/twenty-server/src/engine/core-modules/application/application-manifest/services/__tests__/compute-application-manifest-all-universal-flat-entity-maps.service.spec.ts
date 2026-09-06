@@ -22,7 +22,7 @@ describe('ComputeApplicationManifestAllUniversalFlatEntityMapsService', () => {
     id: 'app-id-1',
     universalIdentifier: 'app-universal-id-1',
     sourceType: 'CUSTOM',
-  } as FlatApplication;
+  } as unknown as FlatApplication;
 
   const now = '2026-01-01T00:00:00.000Z';
   const workspaceId = 'ws-id-1';
@@ -47,14 +47,14 @@ describe('ComputeApplicationManifestAllUniversalFlatEntityMapsService', () => {
     pageLayoutTabs: [],
     commandMenuItems: [],
     timelineActivityTypes: [],
-  };
+  } as unknown as Manifest;
 
   it('computes index defined on an app-defined custom object', () => {
     const objectUniversalIdentifier = 'custom-obj-uuid';
     const fieldUniversalIdentifier = 'custom-field-uuid';
     const indexUniversalIdentifier = 'custom-index-uuid';
 
-    const manifest: Manifest = {
+    const manifest = {
       ...baseEmptyManifest,
       objects: [
         {
@@ -87,7 +87,7 @@ describe('ComputeApplicationManifestAllUniversalFlatEntityMapsService', () => {
           ],
         },
       ],
-    };
+    } as unknown as Manifest;
 
     const fromAllFlatEntityMaps = createEmptyAllFlatEntityMaps();
     const result = service.compute({
@@ -130,7 +130,7 @@ describe('ComputeApplicationManifestAllUniversalFlatEntityMapsService', () => {
       labelPlural: 'Companies',
       applicationUniversalIdentifier:
         TWENTY_STANDARD_APPLICATION.universalIdentifier,
-    } as FlatObjectMetadata;
+    } as unknown as FlatObjectMetadata;
 
     const existingAllFlatEntityMaps = createEmptyAllFlatEntityMaps();
 
@@ -138,7 +138,7 @@ describe('ComputeApplicationManifestAllUniversalFlatEntityMapsService', () => {
       standardCompanyUniversalIdentifier
     ] = existingStandardCompanyObject;
 
-    const manifest: Manifest = {
+    const manifest = {
       ...baseEmptyManifest,
       fields: [
         {
@@ -163,7 +163,7 @@ describe('ComputeApplicationManifestAllUniversalFlatEntityMapsService', () => {
           ],
         },
       ],
-    };
+    } as unknown as Manifest;
 
     const fromAllFlatEntityMaps = createEmptyAllFlatEntityMaps();
 
@@ -206,7 +206,7 @@ describe('ComputeApplicationManifestAllUniversalFlatEntityMapsService', () => {
       nameSingular: 'company',
       applicationUniversalIdentifier:
         TWENTY_STANDARD_APPLICATION.universalIdentifier,
-    } as FlatObjectMetadata;
+    } as unknown as FlatObjectMetadata;
 
     const existingAllFlatEntityMaps = createEmptyAllFlatEntityMaps();
 
@@ -214,7 +214,7 @@ describe('ComputeApplicationManifestAllUniversalFlatEntityMapsService', () => {
       standardCompanyUniversalIdentifier
     ] = existingStandardCompanyObject;
 
-    const manifest: Manifest = {
+    const manifest = {
       ...baseEmptyManifest,
       indexes: [
         {
@@ -228,7 +228,7 @@ describe('ComputeApplicationManifestAllUniversalFlatEntityMapsService', () => {
           ],
         },
       ],
-    };
+    } as unknown as Manifest;
 
     expect(() =>
       service.compute({
@@ -244,7 +244,7 @@ describe('ComputeApplicationManifestAllUniversalFlatEntityMapsService', () => {
   });
 
   it('throws when index references an unknown object', () => {
-    const manifest: Manifest = {
+    const manifest = {
       ...baseEmptyManifest,
       indexes: [
         {
@@ -258,7 +258,7 @@ describe('ComputeApplicationManifestAllUniversalFlatEntityMapsService', () => {
           ],
         },
       ],
-    };
+    } as unknown as Manifest;
 
     expect(() =>
       service.compute({
