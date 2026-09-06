@@ -16,13 +16,17 @@ import {
 } from '@nestjs/common';
 
 import { Request } from 'express';
-import { type CreditAvailability } from 'twenty-shared/application';
+import {
+  type CreditAvailability,
+  type CreditUnavailableReason,
+} from 'twenty-shared/application';
 import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AppBillingService } from 'src/engine/core-modules/billing/app-billing/app-billing.service';
 import { ChargeDto } from 'src/engine/core-modules/billing/app-billing/dtos/charge.dto';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { type SubscriptionInactiveReason } from 'src/engine/core-modules/billing/types/subscription-inactive-reason.type';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
@@ -33,6 +37,15 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 // throttle: application-access tokens are JWTs usable outside the runtime.
 const APP_BILLING_CHARGE_THROTTLE_LIMIT = 1000;
 const APP_BILLING_CHARGE_THROTTLE_TTL_MS = 60_000;
+
+const CREDIT_UNAVAILABLE_REASON_BY_SERVER_REASON: Record<
+  SubscriptionInactiveReason | 'NO_CREDITS',
+  CreditUnavailableReason
+> = {
+  WORKSPACE_SUSPENDED: 'workspace-suspended',
+  NO_SUBSCRIPTION: 'no-subscription',
+  NO_CREDITS: 'no-credits',
+};
 
 @Controller(`${ApiPath.App}/billing`)
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
@@ -63,9 +76,20 @@ export class AppBillingController {
       APP_BILLING_CHARGE_THROTTLE_TTL_MS,
     );
 
-    return this.billingUsageService.getCreditAvailability({
-      workspaceId: request.workspace.id,
-    });
+    const creditAvailability =
+      await this.billingUsageService.getCreditAvailability(
+        request.workspace.id,
+      );
+
+    return creditAvailability.hasAvailableCredits
+      ? { hasAvailableCredits: true }
+      : {
+          hasAvailableCredits: false,
+          reason:
+            CREDIT_UNAVAILABLE_REASON_BY_SERVER_REASON[
+              creditAvailability.reason
+            ],
+        };
   }
 
   @Post('charge')

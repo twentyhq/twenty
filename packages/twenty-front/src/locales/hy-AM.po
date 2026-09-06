@@ -279,6 +279,12 @@ msgstr "{0} / {1}"
 msgid "{0} opted out of this topic"
 msgstr "{0} հրաժարվել են այս թեմայից"
 
+#. js-lingui-id: 55frRG
+#. placeholder {0}: index + 1
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "{0} retries"
+msgstr "{0} կրկնափորձեր"
+
 #. js-lingui-id: fvImQM
 #. placeholder {0}: formatNumber(contextStoreNumberOfSelectedRecords)
 #. placeholder {0}: formatNumber(totalCount ?? 0)
@@ -477,6 +483,11 @@ msgstr "{grantedCreditsDisplay} կրեդիտ"
 msgid "{headersCount} headers received"
 msgstr "Ստացվել է {headersCount} վերնագիր"
 
+#. js-lingui-id: 4xzh1W
+#: src/modules/object-record/record-list/components/RecordListRow.tsx
+msgid "{hiddenFieldCount, plural, one {# more populated field available} other {# more populated fields available}}"
+msgstr "{hiddenFieldCount, plural, one {# լրացված դաշտ ևս հասանելի է} other {# լրացված դաշտեր ևս հասանելի են}}"
+
 #. js-lingui-id: pEl0a0
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{hours, plural, one {{hours} hour} other {{hours} hours}}"
@@ -664,11 +675,11 @@ msgstr "{unitCount, plural, one {Շաբաթ} other {Շաբաթներ}}"
 msgid "{unitCount, plural, one {Year} other {Years}}"
 msgstr "{unitCount, plural, one {Տարի} other {Տարիներ}}"
 
-#. js-lingui-id: ITVweg
+#. js-lingui-id: YdwR4T
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
-msgid "{visibleFieldsCount} shown"
-msgstr "Ցուցադրվում է {visibleFieldsCount}"
+msgid "{visibleFieldsCount} selected"
+msgstr "{visibleFieldsCount} ընտրված"
 
 #. js-lingui-id: WjjsAL
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
@@ -751,6 +762,11 @@ msgstr "0 */1 * * *"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationItemTableRow.tsx
 msgid "1 Object"
 msgstr "1 Օբյեկտ"
+
+#. js-lingui-id: lKmQeh
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "1 retry"
+msgstr "1 կրկնափորձ"
 
 #. js-lingui-id: Mkh9C8
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -1730,7 +1746,7 @@ msgid "Administrators"
 msgstr "Ադմինիստրատորներ"
 
 #. js-lingui-id: sxkWRg
-#: src/modules/navigation/components/SettingsNavigationDrawer.tsx
+#: src/modules/navigation/components/SettingsNavigationDrawerContent.tsx
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 msgid "Advanced"
 msgstr "Ընդլայնված"
@@ -4901,6 +4917,11 @@ msgstr "Համատեքստի պատուհանը պետք է լինի դրակա�
 msgid "Continue"
 msgstr "Շարունակել"
 
+#. js-lingui-id: gOOpXW
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "Continue on failure"
+msgstr "Շարունակել ձախողման դեպքում"
+
 #. js-lingui-id: YsnqkW
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator.tsx
 msgid "Continue on iteration failure"
@@ -6802,6 +6823,7 @@ msgstr "Անջատել «մուտք գործել որպես» ֆունկցիան
 
 #. js-lingui-id: E/QGRL
 #: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Disabled"
 msgstr "Անջատված"
 
@@ -6943,11 +6965,6 @@ msgstr "Դոմեյն"
 #: src/modules/settings/domains/hooks/useSettingsCustomDomain.ts
 msgid "Domain already taken"
 msgstr "Դոմեյնը արդեն զբաղված է"
-
-#. js-lingui-id: eNcdvk
-#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
-msgid "Domain links are stored as a bare domain name, so twenty.com and https://www.twenty.com are the same value"
-msgstr "Դոմենի հղումները պահվում են որպես մերկ դոմենի անուն, ուստի twenty.com և https://www.twenty.com նույն արժեքն են"
 
 #. js-lingui-id: XoBD/+
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
@@ -11120,6 +11137,11 @@ msgstr "Kanban"
 msgid "Kanban widget"
 msgstr "Կանբան վիջեթ"
 
+#. js-lingui-id: LHkoee
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "Keep executing the next nodes even if this one fails"
+msgstr "Շարունակել գործարկել հաջորդ հանգույցները, նույնիսկ եթե սա ձախողվի"
+
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
 msgid "Key"
@@ -13902,6 +13924,12 @@ msgstr "Հանգույց"
 msgid "Node options"
 msgstr "Հանգույցի ընտրանքներ"
 
+#. js-lingui-id: D8py3o
+#: src/modules/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation.ts
+#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
+msgid "Node settings"
+msgstr "Հանգույցի կարգավորումներ"
+
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
@@ -14374,6 +14402,11 @@ msgstr "Միայն npm-ում հրապարակված հավելվածների ս
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Only date & participants will be shared with your team."
 msgstr "Միայն ամսաթիվը և մասնակիցները կկիսվեն ձեր թիմի հետ։"
+
+#. js-lingui-id: kiuQlM
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "Only enable for steps that are safe to run twice: a failed attempt may already have written data or sent messages."
+msgstr "Միացրեք միայն այն քայլերի համար, որոնք անվտանգ է երկու անգամ գործարկել. անհաջող փորձն արդեն կարող է տվյալներ գրած կամ հաղորդագրություններ ուղարկած լինել։"
 
 #. js-lingui-id: aluwJP
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
@@ -16472,6 +16505,11 @@ msgstr "Կրկին փորձել"
 msgid "Retry All Failed"
 msgstr "Կրկին գործարկել բոլոր ձախողվածները"
 
+#. js-lingui-id: s/LEE/
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "Retry on failure"
+msgstr "Կրկնել ձախողման դեպքում"
+
 #. js-lingui-id: ZbpKL+
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 msgid "Return Value"
@@ -18447,6 +18485,11 @@ msgstr "Դադարեցնել թելադրումը"
 #: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
 msgid "Stop impersonating"
 msgstr "Դադարեցնել ներկայացումը"
+
+#. js-lingui-id: juzGVI
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
+msgid "Store the full URL or just the domain"
+msgstr "Պահպանել ամբողջական URL-ը կամ միայն տիրույթը"
 
 #. js-lingui-id: GGiaAW
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx

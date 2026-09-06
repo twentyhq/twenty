@@ -268,6 +268,7 @@ export class ApplicationManifestMigrationService {
         manifest,
         workspaceId,
         ownerFlatApplication,
+        inferDeletionFromMissingEntities,
       });
     }
 
@@ -281,10 +282,12 @@ export class ApplicationManifestMigrationService {
     manifest,
     workspaceId,
     ownerFlatApplication,
+    inferDeletionFromMissingEntities,
   }: {
     manifest: Manifest;
     workspaceId: string;
     ownerFlatApplication: FlatApplication;
+    inferDeletionFromMissingEntities: boolean;
   }) {
     const {
       flatRoleMaps: refreshedFlatRoleMaps,
@@ -345,8 +348,14 @@ export class ApplicationManifestMigrationService {
 
     await this.applicationService.update(ownerFlatApplication.id, {
       workspaceId,
-      settingsCustomTabFrontComponentId,
-      uninstallLogicFunctionId,
+      ...(isDefined(settingsCustomTabFrontComponentId) ||
+      inferDeletionFromMissingEntities
+        ? { settingsCustomTabFrontComponentId }
+        : {}),
+      ...(isDefined(uninstallLogicFunctionId) ||
+      inferDeletionFromMissingEntities
+        ? { uninstallLogicFunctionId }
+        : {}),
       ...(isDefined(defaultRoleId) ? { defaultRoleId } : {}),
     });
   }

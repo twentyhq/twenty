@@ -279,6 +279,12 @@ msgstr "{0} de {1}"
 msgid "{0} opted out of this topic"
 msgstr "{0} s'han donat de baixa d'aquest tema"
 
+#. js-lingui-id: 55frRG
+#. placeholder {0}: index + 1
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "{0} retries"
+msgstr "{0} reintents"
+
 #. js-lingui-id: fvImQM
 #. placeholder {0}: formatNumber(contextStoreNumberOfSelectedRecords)
 #. placeholder {0}: formatNumber(totalCount ?? 0)
@@ -477,6 +483,11 @@ msgstr "{grantedCreditsDisplay} crèdits"
 msgid "{headersCount} headers received"
 msgstr "S'han rebut {headersCount} capçaleres"
 
+#. js-lingui-id: 4xzh1W
+#: src/modules/object-record/record-list/components/RecordListRow.tsx
+msgid "{hiddenFieldCount, plural, one {# more populated field available} other {# more populated fields available}}"
+msgstr "{hiddenFieldCount, plural, one {# camp emplenat més disponible} other {# camps emplenats més disponibles}}]}]} 银雀് ഇവിടെ? Wait malformed? Need valid. Let's craft.{"
+
 #. js-lingui-id: pEl0a0
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{hours, plural, one {{hours} hour} other {{hours} hours}}"
@@ -664,11 +675,11 @@ msgstr "{unitCount, plural, one {Setmana} other {Setmanes}}"
 msgid "{unitCount, plural, one {Year} other {Years}}"
 msgstr "{unitCount, plural, one {Any} other {Anys}}"
 
-#. js-lingui-id: ITVweg
+#. js-lingui-id: YdwR4T
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
-msgid "{visibleFieldsCount} shown"
-msgstr "{visibleFieldsCount} mostrats"
+msgid "{visibleFieldsCount} selected"
+msgstr "{visibleFieldsCount} seleccionats"
 
 #. js-lingui-id: WjjsAL
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
@@ -751,6 +762,11 @@ msgstr "0 */1 * * *"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationItemTableRow.tsx
 msgid "1 Object"
 msgstr "1 objecte"
+
+#. js-lingui-id: lKmQeh
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "1 retry"
+msgstr "1 reintent"
 
 #. js-lingui-id: Mkh9C8
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -885,6 +901,11 @@ msgstr "Ja hi ha un esborrany existent"
 #: src/modules/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton.tsx
 msgid "A draft already exists for this workflow. Are you sure you want to erase it?"
 msgstr "Ja hi ha un esborrany existent per aquest flux de treball. Estàs segur que vols esborrar-lo?"
+
+#. js-lingui-id: K3NJnJ
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "A payment method is needed to keep your workspace active."
+msgstr ""
 
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1161,6 +1182,11 @@ msgstr "Afegeix \"{trimmedName}\" a les opcions"
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
 msgid "Add a {objectLabelSingular}"
 msgstr "Afegeix un {objectLabelSingular}"
+
+#. js-lingui-id: rUVyfz
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Add a card below to update your billing details and retry your payment."
+msgstr ""
 
 #. js-lingui-id: 7W8nJr
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationEditor.tsx
@@ -1474,6 +1500,11 @@ msgstr "Afegeix o elimina usuaris"
 msgid "Add Output Field"
 msgstr "Afegeix camp de sortida"
 
+#. js-lingui-id: lRpmgk
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Add payment method"
+msgstr ""
+
 #. js-lingui-id: aYtHO6
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
@@ -1730,7 +1761,7 @@ msgid "Administrators"
 msgstr "Administradors"
 
 #. js-lingui-id: sxkWRg
-#: src/modules/navigation/components/SettingsNavigationDrawer.tsx
+#: src/modules/navigation/components/SettingsNavigationDrawerContent.tsx
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 msgid "Advanced"
 msgstr "Avançat"
@@ -3618,6 +3649,7 @@ msgstr "No pots escanejar? Copia la"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/billing/components/AddCreditCardModal.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
@@ -4900,6 +4932,11 @@ msgstr "La finestra de context ha de ser un nombre enter positiu"
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Continue"
 msgstr "Continua"
+
+#. js-lingui-id: gOOpXW
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "Continue on failure"
+msgstr "Continua en cas d'error"
 
 #. js-lingui-id: YsnqkW
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator.tsx
@@ -6802,6 +6839,7 @@ msgstr "Desactiva la suplantació"
 
 #. js-lingui-id: E/QGRL
 #: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Disabled"
 msgstr "Desactivat"
 
@@ -6943,11 +6981,6 @@ msgstr "Domini"
 #: src/modules/settings/domains/hooks/useSettingsCustomDomain.ts
 msgid "Domain already taken"
 msgstr "Domini ja ocupat"
-
-#. js-lingui-id: eNcdvk
-#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
-msgid "Domain links are stored as a bare domain name, so twenty.com and https://www.twenty.com are the same value"
-msgstr "Els enllaços de domini s'emmagatzemen com a nom de domini nu, de manera que twenty.com i https://www.twenty.com tenen el mateix valor"
 
 #. js-lingui-id: XoBD/+
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
@@ -9624,6 +9657,11 @@ msgstr "Cerca global"
 msgid "Go back"
 msgstr "Torna enrere"
 
+#. js-lingui-id: y0SPQU
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+msgid "Go to billing"
+msgstr ""
+
 #. js-lingui-id: Hb4Cgz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -11138,6 +11176,11 @@ msgstr "Kanban"
 msgid "Kanban widget"
 msgstr "Giny Kanban"
 
+#. js-lingui-id: LHkoee
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "Keep executing the next nodes even if this one fails"
+msgstr "Continua executant els nodes següents encara que aquest falli"
+
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
 msgid "Key"
@@ -11377,11 +11420,6 @@ msgstr "Cognom"
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "Last name can not be empty"
 msgstr "El cognom no pot estar buit"
-
-#. js-lingui-id: s0kiVA
-#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
-msgid "Last payment failed. Please contact your admin."
-msgstr "L'últim pagament va fallar. Si us plau, contacta amb el teu administrador."
 
 #. js-lingui-id: 3u/3zO
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
@@ -13920,6 +13958,12 @@ msgstr "Node"
 msgid "Node options"
 msgstr "Opcions del node"
 
+#. js-lingui-id: D8py3o
+#: src/modules/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation.ts
+#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
+msgid "Node settings"
+msgstr "Configuració del node"
+
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
@@ -14392,6 +14436,11 @@ msgstr "Només es poden reclamar d'aquesta manera les aplicacions publicades a n
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Only date & participants will be shared with your team."
 msgstr "Només la data i els participants seran compartits amb el teu equip."
+
+#. js-lingui-id: kiuQlM
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "Only enable for steps that are safe to run twice: a failed attempt may already have written data or sent messages."
+msgstr "Activa-ho només per als passos que sigui segur executar dues vegades: és possible que un intent fallit ja hagi escrit dades o enviat missatges."
 
 #. js-lingui-id: aluwJP
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
@@ -14947,6 +14996,21 @@ msgstr "En pausa"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Payment issue"
 msgstr "Problema de pagament"
+
+#. js-lingui-id: twOnMk
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Payment method added."
+msgstr ""
+
+#. js-lingui-id: uIMn/N
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Payment method added. Retrying your payment..."
+msgstr ""
+
+#. js-lingui-id: OvqmUS
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+msgid "Payment successful."
+msgstr ""
 
 #. js-lingui-id: CcK+Ft
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -16489,6 +16553,11 @@ msgstr "Reintentar"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Retry All Failed"
 msgstr "Reintentar tot el fallat"
+
+#. js-lingui-id: s/LEE/
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "Retry on failure"
+msgstr "Torna-ho a provar en cas d'error"
 
 #. js-lingui-id: ZbpKL+
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
@@ -18466,6 +18535,11 @@ msgstr "Atura la dictació"
 msgid "Stop impersonating"
 msgstr "Aturar usurpació d'identitat"
 
+#. js-lingui-id: juzGVI
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
+msgid "Store the full URL or just the domain"
+msgstr "Emmagatzema l'URL completa o només el domini"
+
 #. js-lingui-id: GGiaAW
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "Strategy"
@@ -19325,6 +19399,11 @@ msgstr "Hi ha columnes requerides que no coincideixen o s'han ignorat. Vols cont
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "There are still some rows that contain errors. Rows with errors will be ignored when submitting."
 msgstr "Encara hi ha files que contenen errors. Les files amb errors s'ignoraran en enviar."
+
+#. js-lingui-id: PpLJq1
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "There is a billing issue. Please contact your admin."
+msgstr ""
 
 #. js-lingui-id: CA9PTn
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -20767,6 +20846,11 @@ msgstr "Actualitza la vista"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
 msgstr "Actualitza la configuració del teu compte. Configureu qualsevol combinació d'IMAP, SMTP i CalDAV segons calgui."
+
+#. js-lingui-id: JlP83A
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Update your payment method"
+msgstr ""
 
 #. js-lingui-id: x4Xp3c
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
@@ -22444,6 +22528,11 @@ msgstr "El vostre interval de facturació canviarà immediatament a mensual i la
 #: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "Your billing interval will switch to yearly immediately and your trial will continue. When it ends, you will be charged ${yearlyPrice} per user per year billed annually."
 msgstr "El vostre interval de facturació canviarà immediatament a anual i la prova continuarà. Quan acabi, se us cobraran ${yearlyPrice} per usuari i any amb facturació anual."
+
+#. js-lingui-id: u1O1GV
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+msgid "Your card was saved, but the payment still needs attention."
+msgstr ""
 
 #. js-lingui-id: mmGBWT
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx

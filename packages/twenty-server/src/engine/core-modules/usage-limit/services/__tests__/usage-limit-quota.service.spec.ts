@@ -13,6 +13,8 @@ import {
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
+import { UsageLimitEntitlementProvider } from 'src/engine/core-modules/usage-limit/interfaces/usage-limit-entitlement-provider.service';
+import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { type UsageLimitCounterScope } from 'src/engine/core-modules/usage-limit/types/usage-limit-counter-scope.type';
@@ -40,8 +42,13 @@ const ALLOWANCE_PERIOD = {
 };
 
 class TestCreditAllowanceProvider extends CreditAllowanceProvider {
+  isCreditAllowanceEnabled = jest.fn().mockResolvedValue(true);
   getCreditAllowancePeriod = jest.fn().mockResolvedValue(null);
   getCreditAllowance = jest.fn().mockResolvedValue(null);
+}
+
+class TestUsageLimitEntitlementProvider extends UsageLimitEntitlementProvider {
+  hasIntraWorkspaceLimitEntitlement = jest.fn();
 }
 
 const buildLimitCounterScope = (
@@ -76,12 +83,13 @@ const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
 describe('UsageLimitQuotaService', () => {
   let service: UsageLimitQuotaService;
   let creditAllowanceProvider: TestCreditAllowanceProvider;
+  let entitlementProvider: TestUsageLimitEntitlementProvider;
 
   const cacheStorage = {
     mget: jest.fn().mockResolvedValue([]),
     mset: jest.fn().mockResolvedValue(undefined),
     runScript: jest.fn().mockResolvedValue([]),
-    del: jest.fn().mockResolvedValue(undefined),
+    mdel: jest.fn().mockResolvedValue(undefined),
   };
 
   const workspaceCacheService = {
@@ -139,6 +147,10 @@ describe('UsageLimitQuotaService', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     creditAllowanceProvider = new TestCreditAllowanceProvider();
+    entitlementProvider = new TestUsageLimitEntitlementProvider();
+    entitlementProvider.hasIntraWorkspaceLimitEntitlement.mockResolvedValue(
+      true,
+    );
     cacheStorage.mget.mockResolvedValue([]);
     cacheStorage.runScript.mockResolvedValue([]);
     clickHouseService.selectOrThrow.mockResolvedValue([]);
@@ -153,6 +165,7 @@ describe('UsageLimitQuotaService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsageLimitQuotaService,
+        UsageLimitEntitlementService,
         {
           provide: CacheStorageNamespace.EngineUsageLimit,
           useValue: cacheStorage,
@@ -164,7 +177,10 @@ describe('UsageLimitQuotaService', () => {
         {
           provide: DiscoveryService,
           useValue: {
-            getProviders: () => [{ instance: creditAllowanceProvider }],
+            getProviders: () => [
+              { instance: creditAllowanceProvider },
+              { instance: entitlementProvider },
+            ],
           },
         },
       ],
@@ -172,6 +188,7 @@ describe('UsageLimitQuotaService', () => {
 
     service = module.get<UsageLimitQuotaService>(UsageLimitQuotaService);
     service.onModuleInit();
+    module.get(UsageLimitEntitlementService).onModuleInit();
   });
 
   it('admits on a warm counter with budget left', async () => {
@@ -250,14 +267,31 @@ describe('UsageLimitQuotaService', () => {
     });
   });
 
-  it('reports an exhausted limit over the exhausted allowance', async () => {
+  it('reports the exhausted allowance over an exhausted limit', async () => {
     setLimits([buildLimit({})]);
     setAllowance(2_000_000);
     cacheStorage.mget.mockResolvedValue([0, 0]);
 
     await expect(assertQuotaNotExhausted()).rejects.toMatchObject({
+      exhaustedScope: expect.objectContaining({ exhaustedKind: 'allowance' }),
+    });
+  });
+
+  it('builds no allowance counter when the provider reports it disabled', async () => {
+    setLimits([buildLimit({})]);
+    setAllowance(2_000_000);
+    creditAllowanceProvider.isCreditAllowanceEnabled.mockResolvedValue(false);
+    cacheStorage.mget.mockResolvedValue([0]);
+
+    await expect(assertQuotaNotExhausted()).rejects.toMatchObject({
       exhaustedScope: expect.objectContaining({ exhaustedKind: 'limit' }),
     });
+    expect(cacheStorage.mget).toHaveBeenCalledWith([
+      expect.not.stringContaining(':allowance:'),
+    ]);
+    expect(
+      creditAllowanceProvider.getCreditAllowancePeriod,
+    ).not.toHaveBeenCalled();
   });
 
   it('skips warming an allowance whose period rolled over since the read', async () => {
@@ -305,7 +339,18 @@ describe('UsageLimitQuotaService', () => {
     expect(cacheStorage.runScript).toHaveBeenCalledWith(
       expect.objectContaining({ args: ['[50,7]'] }),
     );
-    expect(exhausted).toBeNull();
+    expect(exhausted).toEqual([]);
+  });
+
+  it('consumes an invalid cost as zero instead of crediting the counter', async () => {
+    setLimits([buildLimit({})]);
+    cacheStorage.runScript.mockResolvedValue([1, 950]);
+
+    await consumeQuota(-50, Number.NaN);
+
+    expect(cacheStorage.runScript).toHaveBeenCalledWith(
+      expect.objectContaining({ args: ['[0]'] }),
+    );
   });
 
   it('debits the allowance counter with the credit cost on consume', async () => {
@@ -318,7 +363,20 @@ describe('UsageLimitQuotaService', () => {
     expect(cacheStorage.runScript).toHaveBeenCalledWith(
       expect.objectContaining({ args: ['[7,50]'] }),
     );
-    expect(exhausted).toMatchObject({ exhaustedKind: 'allowance' });
+    expect(exhausted).toMatchObject([{ exhaustedKind: 'allowance' }]);
+  });
+
+  it('reports every exhausted counter on consume', async () => {
+    setLimits([buildLimit({})]);
+    setAllowance(2_000_000);
+    cacheStorage.runScript.mockResolvedValue([1, 0, 1, -5]);
+
+    const { exhausted } = await consumeQuota(50);
+
+    expect(exhausted).toMatchObject([
+      { exhaustedKind: 'limit' },
+      { exhaustedKind: 'allowance' },
+    ]);
   });
 
   it('warms a cold counter before consuming it', async () => {
@@ -334,7 +392,47 @@ describe('UsageLimitQuotaService', () => {
     expect(cacheStorage.runScript).toHaveBeenCalledWith(
       expect.objectContaining({ args: ['[50]'] }),
     );
-    expect(exhausted).toBeNull();
+    expect(exhausted).toEqual([]);
+  });
+
+  describe('intra-workspace limit entitlement', () => {
+    it('does not check entitlement when only workspace-scope quota rows exist', async () => {
+      setLimits([buildLimit({})]);
+      cacheStorage.mget.mockResolvedValue([250]);
+
+      await assertQuotaNotExhausted();
+
+      expect(
+        entitlementProvider.hasIntraWorkspaceLimitEntitlement,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('enforces only workspace-scope quota rows when not entitled', async () => {
+      entitlementProvider.hasIntraWorkspaceLimitEntitlement.mockResolvedValue(
+        false,
+      );
+      setLimits([
+        buildLimit({ id: 'ws' }),
+        buildLimit({ id: 'uw', spenderType: 'userWorkspace' }),
+      ]);
+      cacheStorage.mget.mockResolvedValue([250]);
+
+      await assertQuotaNotExhausted();
+
+      expect(cacheStorage.mget.mock.calls[0][0]).toHaveLength(1);
+    });
+
+    it('enforces intra-workspace quota rows when entitled', async () => {
+      setLimits([
+        buildLimit({ id: 'ws' }),
+        buildLimit({ id: 'uw', spenderType: 'userWorkspace' }),
+      ]);
+      cacheStorage.mget.mockResolvedValue([250, 250]);
+
+      await assertQuotaNotExhausted();
+
+      expect(cacheStorage.mget.mock.calls[0][0]).toHaveLength(2);
+    });
   });
 
   describe('dropAllowanceCounter', () => {
@@ -343,18 +441,81 @@ describe('UsageLimitQuotaService', () => {
 
       await service.dropAllowanceCounter('workspace-1');
 
-      expect(cacheStorage.del).toHaveBeenCalledWith(
+      expect(cacheStorage.mdel).toHaveBeenCalledWith([
         buildAllowanceCounterKey({
           workspaceId: 'workspace-1',
           periodStart: ALLOWANCE_PERIOD.periodStart,
         }),
-      );
+      ]);
     });
 
     it('does nothing when no allowance exists', async () => {
       await service.dropAllowanceCounter('workspace-1');
 
-      expect(cacheStorage.del).not.toHaveBeenCalled();
+      expect(cacheStorage.mdel).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('dropIntraWorkspaceLimitCounters', () => {
+    it('drops every intra-workspace quota counter under the warm lock', async () => {
+      setLimits([
+        buildLimit({ id: 'workspace-month' }),
+        buildLimit({
+          id: 'member-month',
+          spenderType: 'userWorkspace',
+          spenderId: 'user-1',
+        }),
+        buildLimit({
+          id: 'agent-week',
+          spenderType: 'agent',
+          periodUnit: 'week',
+        }),
+        buildLimit({
+          id: 'member-speed',
+          spenderType: 'userWorkspace',
+          limitKind: 'speed',
+          periodUnit: 'second',
+          meter: 'quantity',
+        }),
+      ]);
+
+      await service.dropIntraWorkspaceLimitCounters('workspace-1');
+
+      expect(cacheLockService.withLock).toHaveBeenCalledWith(
+        expect.any(Function),
+        buildQuotaWarmLockKey('workspace-1'),
+        expect.anything(),
+      );
+      expect(cacheStorage.mdel).toHaveBeenCalledWith([
+        buildQuotaCounterKey({
+          workspaceId: 'workspace-1',
+          resourceType: UsageResourceType.AI,
+          operationType: UsageOperationType.AI_CHAT_TOKEN,
+          spenderType: 'userWorkspace',
+          spenderId: 'user-1',
+          meter: 'creditsUsedMicro',
+          periodUnit: 'month',
+          periodStart: MONTH_PERIOD.periodStart,
+        }),
+        buildQuotaCounterKey({
+          workspaceId: 'workspace-1',
+          resourceType: UsageResourceType.AI,
+          operationType: UsageOperationType.AI_CHAT_TOKEN,
+          spenderType: 'agent',
+          spenderId: '',
+          meter: 'creditsUsedMicro',
+          periodUnit: 'week',
+          periodStart: WEEK_PERIOD.periodStart,
+        }),
+      ]);
+    });
+
+    it('does nothing when the workspace only has workspace-scoped limits', async () => {
+      setLimits([buildLimit({})]);
+
+      await service.dropIntraWorkspaceLimitCounters('workspace-1');
+
+      expect(cacheStorage.mdel).not.toHaveBeenCalled();
     });
   });
 
@@ -367,7 +528,7 @@ describe('UsageLimitQuotaService', () => {
         buildQuotaWarmLockKey('workspace-1'),
         expect.anything(),
       );
-      expect(cacheStorage.del).toHaveBeenCalledWith(
+      expect(cacheStorage.mdel).toHaveBeenCalledWith([
         buildQuotaCounterKey({
           workspaceId: 'workspace-1',
           resourceType: UsageResourceType.AI,
@@ -378,7 +539,7 @@ describe('UsageLimitQuotaService', () => {
           periodUnit: 'month',
           periodStart: MONTH_PERIOD.periodStart,
         }),
-      );
+      ]);
     });
 
     it('ignores a speed limit', async () => {
@@ -386,7 +547,7 @@ describe('UsageLimitQuotaService', () => {
         buildLimitCounterScope({ limitKind: 'speed', periodUnit: 'second' }),
       );
 
-      expect(cacheStorage.del).not.toHaveBeenCalled();
+      expect(cacheStorage.mdel).not.toHaveBeenCalled();
     });
 
     it('dels without the lock when acquiring it times out', async () => {
@@ -399,7 +560,7 @@ describe('UsageLimitQuotaService', () => {
 
       await service.dropLimitCounter(buildLimitCounterScope());
 
-      expect(cacheStorage.del).toHaveBeenCalledTimes(1);
+      expect(cacheStorage.mdel).toHaveBeenCalledTimes(1);
     });
   });
 

@@ -104,7 +104,7 @@ export class MessageCampaignDeliveryService {
       }
 
       const creditContext =
-        await this.emailBillingService.resolveEmailCreditContext(workspaceId);
+        await this.emailBillingService.getEmailCreditContext(workspaceId);
 
       if (creditContext.hasCredits) {
         const refusal = await this.findSendSlotRefusal(workspaceId);
@@ -331,7 +331,7 @@ export class MessageCampaignDeliveryService {
     data,
     messageRepository,
     sendContext: { campaign, person, claimToken },
-    creditContext: { hasCredits, currentBillingSubscription },
+    creditContext: { hasCredits },
   }: {
     data: SendCampaignEmailJobData;
     messageRepository: WorkspaceRepository<MessageWorkspaceEntity>;
@@ -425,7 +425,6 @@ export class MessageCampaignDeliveryService {
         workspaceId,
         sentEmailCount: 1,
         userWorkspaceId,
-        currentBillingSubscription,
       })
       .catch((error) => {
         this.logger.error(

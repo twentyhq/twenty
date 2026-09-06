@@ -203,8 +203,10 @@ export class BillingPortalWorkspaceService {
       );
     }
 
-    const setupIntent =
-      await this.stripeCustomerService.createSetupIntent(stripeCustomerId);
+    const setupIntent = await this.stripeCustomerService.createSetupIntent({
+      stripeCustomerId,
+      workspaceId: workspace.id,
+    });
 
     assertIsDefinedOrThrow(
       setupIntent.client_secret,

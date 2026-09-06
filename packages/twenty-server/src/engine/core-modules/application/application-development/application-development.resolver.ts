@@ -4,7 +4,7 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
-import { Args, Mutation } from '@nestjs/graphql';
+import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -14,6 +14,7 @@ import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationDevelopmentService } from 'src/engine/core-modules/application/application-development/application-development.service';
 import { ApplicationFileUploadService } from 'src/engine/core-modules/application/application-development/application-file-upload.service';
+import { ApplicationExportDTO } from 'src/engine/core-modules/application/application-development/dtos/application-export.dto';
 import { ApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/application.input';
 import { CompleteApplicationFileUploadsResultDTO } from 'src/engine/core-modules/application/application-development/dtos/complete-application-file-uploads-result.dto';
 import { CompleteApplicationFileUploadsInput } from 'src/engine/core-modules/application/application-development/dtos/complete-application-file-uploads.input';
@@ -21,6 +22,7 @@ import { CreateApplicationFileUploadsResultDTO } from 'src/engine/core-modules/a
 import { CreateApplicationFileUploadsInput } from 'src/engine/core-modules/application/application-development/dtos/create-application-file-uploads.input';
 import { CreateDevelopmentApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/create-development-application.input';
 import { DevelopmentApplicationDTO } from 'src/engine/core-modules/application/application-development/dtos/development-application.dto';
+import { ExportApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/export-application.input';
 import { UploadApplicationFileInput } from 'src/engine/core-modules/application/application-development/dtos/upload-application-file.input';
 import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
@@ -55,6 +57,17 @@ export class ApplicationDevelopmentResolver {
     return this.applicationDevelopmentService.createDevelopmentApplication({
       universalIdentifier,
       name,
+      workspaceId,
+    });
+  }
+
+  @Query(() => ApplicationExportDTO)
+  async exportApplication(
+    @Args() { universalIdentifier }: ExportApplicationInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ApplicationExportDTO> {
+    return this.applicationDevelopmentService.exportApplication({
+      universalIdentifier,
       workspaceId,
     });
   }

@@ -279,6 +279,12 @@ msgstr "{1} dan {0}"
 msgid "{0} opted out of this topic"
 msgstr "{0} kishi ushbu mavzudan voz kechgan"
 
+#. js-lingui-id: 55frRG
+#. placeholder {0}: index + 1
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "{0} retries"
+msgstr "{0} marta qayta urinish"
+
 #. js-lingui-id: fvImQM
 #. placeholder {0}: formatNumber(contextStoreNumberOfSelectedRecords)
 #. placeholder {0}: formatNumber(totalCount ?? 0)
@@ -477,6 +483,11 @@ msgstr "{grantedCreditsDisplay} kreditlar"
 msgid "{headersCount} headers received"
 msgstr "{headersCount} ta sarlavha qabul qilindi"
 
+#. js-lingui-id: 4xzh1W
+#: src/modules/object-record/record-list/components/RecordListRow.tsx
+msgid "{hiddenFieldCount, plural, one {# more populated field available} other {# more populated fields available}}"
+msgstr "{hiddenFieldCount, plural, one {# ta qo‘shimcha to‘ldirilgan maydon mavjud} other {# ta qo‘shimcha to‘ldirilgan maydon mavjud}}"
+
 #. js-lingui-id: pEl0a0
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{hours, plural, one {{hours} hour} other {{hours} hours}}"
@@ -664,11 +675,11 @@ msgstr "{unitCount, plural, one {Hafta} other {Haftalar}}"
 msgid "{unitCount, plural, one {Year} other {Years}}"
 msgstr "{unitCount, plural, one {Yil} other {Yillar}}"
 
-#. js-lingui-id: ITVweg
+#. js-lingui-id: YdwR4T
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
-msgid "{visibleFieldsCount} shown"
-msgstr "{visibleFieldsCount} tasi ko‘rsatilgan"
+msgid "{visibleFieldsCount} selected"
+msgstr "{visibleFieldsCount} ta tanlandi"
 
 #. js-lingui-id: WjjsAL
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
@@ -751,6 +762,11 @@ msgstr "0 */1 * * *"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationItemTableRow.tsx
 msgid "1 Object"
 msgstr "1 ta obyekt"
+
+#. js-lingui-id: lKmQeh
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "1 retry"
+msgstr "1 marta qayta urinish"
 
 #. js-lingui-id: Mkh9C8
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -1730,7 +1746,7 @@ msgid "Administrators"
 msgstr "Administratorlar"
 
 #. js-lingui-id: sxkWRg
-#: src/modules/navigation/components/SettingsNavigationDrawer.tsx
+#: src/modules/navigation/components/SettingsNavigationDrawerContent.tsx
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 msgid "Advanced"
 msgstr "Kengaytirilgan"
@@ -4901,6 +4917,11 @@ msgstr "Kontekst oynasi musbat butun son bo‘lishi kerak"
 msgid "Continue"
 msgstr "Davom etish"
 
+#. js-lingui-id: gOOpXW
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "Continue on failure"
+msgstr "Muvaffaqiyatsizlik yuz bersa ham davom ettirish"
+
 #. js-lingui-id: YsnqkW
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator.tsx
 msgid "Continue on iteration failure"
@@ -6802,6 +6823,7 @@ msgstr "Boshqa foydalanuvchi nomidan ishlashni (impersonation) o‘chirish"
 
 #. js-lingui-id: E/QGRL
 #: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Disabled"
 msgstr "O‘chirilgan"
 
@@ -6943,11 +6965,6 @@ msgstr "Domen"
 #: src/modules/settings/domains/hooks/useSettingsCustomDomain.ts
 msgid "Domain already taken"
 msgstr "Domen allaqachon band qilingan"
-
-#. js-lingui-id: eNcdvk
-#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
-msgid "Domain links are stored as a bare domain name, so twenty.com and https://www.twenty.com are the same value"
-msgstr "Domen havolalari yalang‘och domen nomi sifatida saqlanadi, shuning uchun twenty.com va https://www.twenty.com bir xil qiymatdir"
 
 #. js-lingui-id: XoBD/+
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
@@ -11120,6 +11137,11 @@ msgstr "Kanban"
 msgid "Kanban widget"
 msgstr "Kanban vidjeti"
 
+#. js-lingui-id: LHkoee
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "Keep executing the next nodes even if this one fails"
+msgstr "Bu tugun muvaffaqiyatsiz tugasa ham, keyingi tugunlarni bajarishda davom eting"
+
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
 msgid "Key"
@@ -13902,6 +13924,12 @@ msgstr "Tugun"
 msgid "Node options"
 msgstr "Tugun parametrlari"
 
+#. js-lingui-id: D8py3o
+#: src/modules/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation.ts
+#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
+msgid "Node settings"
+msgstr "Tugun sozlamalari"
+
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
@@ -14374,6 +14402,11 @@ msgstr "Bu tarzda faqat npm’da chop etilgan ilovalarning egaligini tasdiqlash 
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Only date & participants will be shared with your team."
 msgstr "Faqat sana va ishtirokchilar jamoangiz bilan bo‘lishiladi."
+
+#. js-lingui-id: kiuQlM
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "Only enable for steps that are safe to run twice: a failed attempt may already have written data or sent messages."
+msgstr "Faqat ikki marta bajarish xavfsiz bo‘lgan qadamlar uchun yoqing: muvaffaqiyatsiz urinish allaqachon ma’lumot yozgan yoki xabarlar yuborgan bo‘lishi mumkin."
 
 #. js-lingui-id: aluwJP
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
@@ -16472,6 +16505,11 @@ msgstr "Qayta urinish"
 msgid "Retry All Failed"
 msgstr "Muvaffaqiyatsizlarning barchasini qayta ishga tushirish"
 
+#. js-lingui-id: s/LEE/
+#: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
+msgid "Retry on failure"
+msgstr "Muvaffaqiyatsizlikda qayta urinib ko‘ring"
+
 #. js-lingui-id: ZbpKL+
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 msgid "Return Value"
@@ -18447,6 +18485,11 @@ msgstr "Diktantni to‘xtatish"
 #: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
 msgid "Stop impersonating"
 msgstr "Nomidan ishlashni to‘xtatish"
+
+#. js-lingui-id: juzGVI
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
+msgid "Store the full URL or just the domain"
+msgstr "To‘liq URL yoki faqat domenni saqlang"
 
 #. js-lingui-id: GGiaAW
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx

@@ -261,6 +261,8 @@ type Object {
   isUIReadOnly: Boolean! @deprecated(reason: "Use isUIEditable")
   isSearchable: Boolean!
   openRecordIn: ObjectOpenRecordIn!
+  readability: MetadataReadability!
+  writability: MetadataWritability!
   applicationId: UUID!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -291,6 +293,20 @@ enum ObjectOpenRecordIn {
   SIDE_PANEL
   RECORD_PAGE
   USER_CHOICE
+}
+
+enum MetadataReadability {
+  OPEN
+  PRIVATE
+  INHERITED
+  APPLICATION
+  SYSTEM
+}
+
+enum MetadataWritability {
+  OPEN
+  APPLICATION
+  SYSTEM
 }
 
 input CursorPaging {
@@ -1385,6 +1401,7 @@ type ApplicationConnectionProvider {
   name: String!
   displayName: String!
   oauth: ApplicationConnectionProviderOAuthConfig
+  logoUrl: String
 }
 
 type BillingSubscriptionSchedulePhaseItem {
@@ -1595,6 +1612,27 @@ enum NavigationMenuItemType {
   PAGE_LAYOUT
 }
 
+type JobStatus {
+  jobId: String!
+  state: JobState!
+  attemptsMade: Int!
+  failedReason: String
+  enqueuedAt: Float!
+  startedAt: Float
+  finishedAt: Float
+}
+
+"""Job state in the queue"""
+enum JobState {
+  COMPLETED
+  FAILED
+  ACTIVE
+  WAITING
+  DELAYED
+  PRIORITIZED
+  WAITING_CHILDREN
+}
+
 type ObjectRecordEventProperties {
   updatedFields: [String!]
   before: JSON
@@ -1645,6 +1683,7 @@ type EventSubscription {
   eventStreamId: String!
   objectRecordEventsWithQueryIds: [ObjectRecordEventWithQueryIds!]!
   metadataEvents: [MetadataEvent!]!
+  queueJobEvents: [JobStatus!]!
 }
 
 type UserSession {
@@ -1741,6 +1780,50 @@ type UsageAnalytics {
   userDailyUsage: UsageUserDaily
 }
 
+type UsageLimit {
+  id: UUID!
+  resourceType: UsageResourceType!
+  operationType: UsageOperationType!
+  spenderType: String!
+  spenderId: String
+  limitKind: String!
+  periodCount: Int!
+  periodUnit: String!
+  meter: String!
+  limitValue: BigInt!
+  burstValue: BigInt
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum UsageResourceType {
+  AI
+  WORKFLOW
+  APP
+  STORAGE
+  API
+  LOGIC_FUNCTION
+  EMAIL
+}
+
+enum UsageOperationType {
+  ALL
+  AI_CHAT_TOKEN
+  AI_WORKFLOW_TOKEN
+  WORKFLOW_EXECUTION
+  CODE_EXECUTION
+  WEB_SEARCH
+  CALL_RECORDING
+  EMAIL_SEND
+  API_REQUEST
+  SUBSCRIPTION
+}
+
+"""
+The `BigInt` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
 type ApprovedAccessDomain {
   id: UUID!
   domain: String!
@@ -1820,50 +1903,6 @@ type ConnectedAccountPublicDTO {
   connectionParameters: PublicImapSmtpCaldavConnectionParameters
 }
 
-type UsageLimit {
-  id: UUID!
-  resourceType: UsageResourceType!
-  operationType: UsageOperationType!
-  spenderType: String!
-  spenderId: String
-  limitKind: String!
-  periodCount: Int!
-  periodUnit: String!
-  meter: String!
-  limitValue: BigInt!
-  burstValue: BigInt
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-enum UsageResourceType {
-  AI
-  WORKFLOW
-  APP
-  STORAGE
-  API
-  LOGIC_FUNCTION
-  EMAIL
-}
-
-enum UsageOperationType {
-  ALL
-  AI_CHAT_TOKEN
-  AI_WORKFLOW_TOKEN
-  WORKFLOW_EXECUTION
-  CODE_EXECUTION
-  WEB_SEARCH
-  CALL_RECORDING
-  EMAIL_SEND
-  API_REQUEST
-  SUBSCRIPTION
-}
-
-"""
-The `BigInt` scalar type represents non-fractional signed whole numeric values.
-"""
-scalar BigInt
-
 type FeatureFlag {
   key: FeatureFlagKey!
   value: Boolean!
@@ -1877,11 +1916,10 @@ enum FeatureFlagKey {
   IS_JUNCTION_RELATIONS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
-  IS_WORKFLOW_VERSION_IN_CORE_ENABLED
   IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED
-  IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED
   IS_API_RATE_LIMIT_V2_ENABLED
   IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED
+  IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED
 }
 
 type WorkspaceUrls {
@@ -2308,6 +2346,7 @@ type Field {
   isActive: Boolean
   isSystem: Boolean
   isUIEditable: Boolean
+  writability: MetadataWritability
   isUIReadOnly: Boolean @deprecated(reason: "Use isUIEditable")
   isNullable: Boolean
   isUnique: Boolean
@@ -2489,6 +2528,7 @@ enum BillingEntitlementKey {
   CUSTOM_DOMAIN
   RLS
   AUDIT_LOGS
+  USAGE_LIMIT
 }
 
 type DomainRecord {
@@ -2637,6 +2677,40 @@ type ApplicationAuthorization {
   lastAuthorizedAt: DateTime
   lastUsedAt: DateTime!
   createdAt: DateTime!
+}
+
+type ApplicationExportApplication {
+  universalIdentifier: String!
+  displayName: String!
+  sourceType: ApplicationRegistrationSourceType!
+}
+
+type ApplicationExportCoverageEntry {
+  metadataName: String!
+  universalIdentifier: String!
+  status: ApplicationExportCoverageStatus!
+  reason: String
+}
+
+enum ApplicationExportCoverageStatus {
+  EXPORTED
+  ENGINE_DERIVED
+  EXCLUDED
+  UNSUPPORTED
+  FOREIGN_OWNED
+}
+
+type ApplicationExportFile {
+  folder: String!
+  path: String!
+  content: String!
+}
+
+type ApplicationExport {
+  application: ApplicationExportApplication!
+  manifest: JSON!
+  coverage: [ApplicationExportCoverageEntry!]!
+  files: [ApplicationExportFile!]!
 }
 
 type File {
@@ -3225,27 +3299,6 @@ type EnqueueJobsResult {
   jobIds: [String!]!
 }
 
-type JobStatus {
-  jobId: String!
-  state: JobState!
-  attemptsMade: Int!
-  failedReason: String
-  enqueuedAt: Float!
-  startedAt: Float
-  finishedAt: Float
-}
-
-"""Job state in the queue"""
-enum JobState {
-  COMPLETED
-  FAILED
-  ACTIVE
-  WAITING
-  DELAYED
-  PRIORITIZED
-  WAITING_CHILDREN
-}
-
 type AppKeyValue {
   key: String!
   value: JSON
@@ -3582,6 +3635,7 @@ type Query {
   getAutoCompleteAddress(address: String!, token: String!, country: String, isFieldCity: Boolean): [AutocompleteResult!]!
   getAddressDetails(placeId: String!, token: String!): PlaceDetailsResult!
   findManyPublicDomains: [PublicDomain!]!
+  exportApplication(universalIdentifier: UUID!): ApplicationExport!
   currentUserApplicationAuthorizations: [ApplicationAuthorization!]!
 }
 
@@ -3702,12 +3756,8 @@ type Mutation {
   refreshEnterpriseValidityToken: Boolean!
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO!
   setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
-  uploadEmailAttachmentFile(file: Upload!): FileWithSignedUrl!
-  uploadAiChatFile(file: Upload!): FileWithSignedUrl!
-  uploadWorkflowFile(file: Upload!): FileWithSignedUrl!
   uploadWorkspaceLogo(file: Upload!): FileWithSignedUrl!
   uploadWorkspaceMemberProfilePicture(file: Upload!): FileWithSignedUrl!
-  uploadFilesFieldFile(file: Upload!, fieldMetadataId: String!): FileWithSignedUrl!
   uploadFilesFieldFileByUniversalIdentifier(file: Upload!, fieldMetadataUniversalIdentifier: String!): FileWithSignedUrl!
   upsertUsageLimit(input: UpsertUsageLimitInput!): UsageLimit!
   deleteUsageLimit(usageLimitId: UUID!): Boolean!

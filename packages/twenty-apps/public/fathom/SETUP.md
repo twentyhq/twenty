@@ -51,7 +51,18 @@ to the workspace that made the connection, so no per-workspace domain is needed.
    yarn twenty dev
    ```
 
-5. Open [http://localhost:2020](http://localhost:2020), log in with the default development credentials: `tim@apple.dev` / `tim@apple.dev`, and connect Fathom from Settings. The connection hook registers the signed webhook.
+5. Open [http://localhost:2020](http://localhost:2020), log in with the default development credentials: `tim@apple.dev` / `tim@apple.dev`, and connect Fathom from Settings. The connection hook registers the signed webhook and starts a 31-day import.
+
+6. Import older history when needed with an authenticated request:
+
+   ```bash
+   curl -X POST https://<development-host>/s/fathom/backfill \
+     -H "Authorization: Bearer <api-key-or-access-token>" \
+     -H "Content-Type: application/json" \
+     -d '{"days": 30}'
+   ```
+
+   The import runs through the requesting user's Fathom connection.
 
 ## Verifying your setup
 
