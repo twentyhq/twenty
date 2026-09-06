@@ -13,7 +13,6 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { buildJobStatus } from 'src/engine/core-modules/message-queue/utils/build-job-status.util';
-import { isTerminalJobState } from 'src/engine/core-modules/message-queue/utils/is-terminal-job-state.util';
 
 @Injectable()
 export class ApplicationInstallJobService {
@@ -32,31 +31,18 @@ export class ApplicationInstallJobService {
     workspaceId: string;
     userWorkspaceId: string;
   }): Promise<{ jobId: string }> {
-    const jobId = buildInstallApplicationJobId({
-      workspaceId,
-      universalIdentifier,
-    });
-
-    const runningJobStatus = await this.findJobStatus(jobId);
-
-    if (
-      isDefined(runningJobStatus) &&
-      !isTerminalJobState(runningJobStatus.state)
-    ) {
-      return { jobId };
-    }
-
     const registration =
       await this.marketplaceQueryService.findRegistrationByUniversalIdentifier(
         universalIdentifier,
       );
 
-    if (isDefined(runningJobStatus)) {
-      // A finished job keeps its id until retention evicts it, and BullMQ
-      // silently drops a job whose id is already taken
-      await this.workspaceQueueService.removeJob(jobId);
-    }
+    const jobId = buildInstallApplicationJobId({
+      workspaceId,
+      universalIdentifier,
+    });
 
+    // The queue ignores a job whose id it already holds, so the id is what
+    // keeps a second trigger from installing the same application twice
     await this.workspaceQueueService.bulkAdd<TriggerInstallApplicationJobData>(
       TriggerInstallApplicationJob.name,
       [
@@ -86,20 +72,15 @@ export class ApplicationInstallJobService {
     universalIdentifier: string;
     workspaceId: string;
   }): Promise<JobStatusDTO | null> {
-    const jobStatus = await this.findJobStatus(
-      buildInstallApplicationJobId({ workspaceId, universalIdentifier }),
-    );
+    const jobId = buildInstallApplicationJobId({
+      workspaceId,
+      universalIdentifier,
+    });
 
-    return jobStatus ?? null;
-  }
-
-  private async findJobStatus(
-    jobId: string,
-  ): Promise<JobStatusDTO | undefined> {
     const job = (await this.workspaceQueueService.getJobs([jobId]))[jobId];
 
     if (!isDefined(job)) {
-      return undefined;
+      return null;
     }
 
     return buildJobStatus({ jobId, job });

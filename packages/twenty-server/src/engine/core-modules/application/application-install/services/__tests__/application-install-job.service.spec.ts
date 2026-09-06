@@ -17,7 +17,6 @@ describe('ApplicationInstallJobService', () => {
   const workspaceQueueService = {
     bulkAdd: jest.fn(),
     getJobs: jest.fn().mockResolvedValue({}),
-    removeJob: jest.fn(),
   } as unknown as MessageQueueService;
 
   const service = new ApplicationInstallJobService(
@@ -25,31 +24,17 @@ describe('ApplicationInstallJobService', () => {
     workspaceQueueService,
   );
 
-  const triggerInstall = () =>
-    service.triggerInstallApplicationJob({
-      universalIdentifier: UNIVERSAL_IDENTIFIER,
-      workspaceId: WORKSPACE_ID,
-      userWorkspaceId: 'user-workspace-id',
-    });
-
-  const mockQueuedJob = (state: string) =>
-    jest.spyOn(workspaceQueueService, 'getJobs').mockResolvedValue({
-      [JOB_ID]: {
-        id: JOB_ID,
-        data: {},
-        state,
-        attemptsMade: 1,
-        timestamp: 1,
-      },
-    } as never);
-
   beforeEach(() => {
     jest.clearAllMocks();
     jest.spyOn(workspaceQueueService, 'getJobs').mockResolvedValue({});
   });
 
   it('queues an installation under a job id derived from the workspace and the application', async () => {
-    const result = await triggerInstall();
+    const result = await service.triggerInstallApplicationJob({
+      universalIdentifier: UNIVERSAL_IDENTIFIER,
+      workspaceId: WORKSPACE_ID,
+      userWorkspaceId: 'user-workspace-id',
+    });
 
     expect(result).toEqual({ jobId: JOB_ID });
     expect(workspaceQueueService.bulkAdd).toHaveBeenCalledWith(
@@ -72,27 +57,16 @@ describe('ApplicationInstallJobService', () => {
     );
   });
 
-  it('does not queue a second installation while the first one is running', async () => {
-    mockQueuedJob('active');
-
-    const result = await triggerInstall();
-
-    expect(result).toEqual({ jobId: JOB_ID });
-    expect(workspaceQueueService.bulkAdd).not.toHaveBeenCalled();
-    expect(workspaceQueueService.removeJob).not.toHaveBeenCalled();
-  });
-
-  it('removes the previous finished job before reusing its id', async () => {
-    mockQueuedJob('completed');
-
-    await triggerInstall();
-
-    expect(workspaceQueueService.removeJob).toHaveBeenCalledWith(JOB_ID);
-    expect(workspaceQueueService.bulkAdd).toHaveBeenCalled();
-  });
-
   it('reads back the status of the installation job of an application', async () => {
-    mockQueuedJob('failed');
+    jest.spyOn(workspaceQueueService, 'getJobs').mockResolvedValue({
+      [JOB_ID]: {
+        id: JOB_ID,
+        data: {},
+        state: 'active',
+        attemptsMade: 1,
+        timestamp: 1,
+      },
+    } as never);
 
     expect(
       await service.findInstallApplicationJobStatus({
@@ -101,7 +75,7 @@ describe('ApplicationInstallJobService', () => {
       }),
     ).toEqual({
       jobId: JOB_ID,
-      state: JobStateEnum.FAILED,
+      state: JobStateEnum.ACTIVE,
       attemptsMade: 1,
       failedReason: undefined,
       enqueuedAt: 1,

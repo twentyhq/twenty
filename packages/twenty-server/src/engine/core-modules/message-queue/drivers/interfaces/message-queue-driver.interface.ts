@@ -58,7 +58,6 @@ export interface MessageQueueDriver {
     queueName: MessageQueue,
     jobIds: string[],
   ): Promise<Partial<Record<string, QueueJobDetails<T>>>>;
-  removeJob?(queueName: MessageQueue, jobId: string): Promise<void>;
 }
 
 export type QueueJobToAdd<T extends MessageQueueJobData> = {

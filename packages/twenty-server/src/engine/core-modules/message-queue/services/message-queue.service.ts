@@ -58,14 +58,6 @@ export class MessageQueueService {
     return this.driver.getJobs(this.queueName, jobIds);
   }
 
-  removeJob(jobId: string): Promise<void> {
-    if (typeof this.driver.removeJob !== 'function') {
-      return Promise.resolve();
-    }
-
-    return this.driver.removeJob(this.queueName, jobId);
-  }
-
   getInFlightJobs<T extends MessageQueueJobData>(): Promise<
     InFlightQueueJob<T>[]
   > {
