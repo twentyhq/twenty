@@ -72,6 +72,7 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { EmailAliasManagerModule } from 'src/modules/connected-account/email-alias-manager/email-alias-manager.module';
@@ -130,6 +131,8 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     ConnectionProviderModule,
     ApplicationConnectionsModule,
     WorkspaceCacheModule,
+    // AppTokensController's JwtAuthGuard resolves through this module
+    WorkspaceCacheStorageModule,
     CoreEntityCacheModule,
     SecureHttpClientModule,
     EnterpriseModule,
