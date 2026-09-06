@@ -132,7 +132,9 @@ export const SettingsApplicationDetailAboutTab = ({
       return null;
     }
 
-    if (!isInstalled) {
+    // A running install job wins over the installed branches: the application row
+    // exists from the start of the install, well before the app is usable
+    if (!isInstalled || isInstalling === true) {
       return (
         <Button
           Icon={IconDownload}
