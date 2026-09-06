@@ -136,7 +136,7 @@ export class MessageCampaignDeliveryService {
         .scheduleRefresh({ workspaceId, campaignId })
         .catch((error) => {
           this.logger.error(
-            `Campaign ${campaignId} could not schedule a statistics refresh: ${
+            `Campaign ${campaignId} of workspace ${workspaceId} could not schedule a statistics refresh: ${
               error instanceof Error ? error.message : String(error)
             }`,
           );
