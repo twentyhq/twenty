@@ -33,6 +33,18 @@ describe('runWithTimeout', () => {
     expect(await resultPromise).toBe('fallback');
   });
 
+  it('should not build the timeout value when the operation wins, so callers do not log a timeout that never happened', async () => {
+    const buildTimeoutValue = vi.fn(() => 'fallback');
+
+    await runWithTimeout({
+      operation: Promise.resolve('context'),
+      timeoutMs: 1000,
+      buildTimeoutValue,
+    });
+
+    expect(buildTimeoutValue).not.toHaveBeenCalled();
+  });
+
   it('should propagate a rejected operation', async () => {
     await expect(
       runWithTimeout({
