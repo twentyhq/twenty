@@ -11,6 +11,7 @@ import { RecordTableWidgetViewLoadEffect } from '@/object-record/record-table-wi
 import { MISSING_RECORD_TABLE_WIDGET_PAGE_LAYOUT_ID } from '@/object-record/record-table-widget/constants/MissingRecordTableWidgetPageLayoutId';
 import {
   RecordTableWidgetContext,
+  type RecordTableWidgetJunctionCreateThrough,
   type RecordTableWidgetNestedRelationCreateThrough,
 } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
@@ -33,6 +34,7 @@ type RecordTableWidgetProviderProps = PropsWithChildren<{
   instanceIdSuffix?: string;
   contextStoreViewType?: ContextStoreViewType;
   nestedRelationCreateThrough?: RecordTableWidgetNestedRelationCreateThrough;
+  junctionCreateThrough?: RecordTableWidgetJunctionCreateThrough;
 }>;
 
 export const RecordTableWidgetProvider = ({
@@ -43,6 +45,7 @@ export const RecordTableWidgetProvider = ({
   instanceIdSuffix,
   contextStoreViewType,
   nestedRelationCreateThrough,
+  junctionCreateThrough,
   children,
 }: RecordTableWidgetProviderProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -113,6 +116,7 @@ export const RecordTableWidgetProvider = ({
       pageLayoutId,
       widgetId,
       nestedRelationCreateThrough,
+      junctionCreateThrough,
       updateViewDraftField,
       updateViewDraft,
     }),
@@ -121,6 +125,7 @@ export const RecordTableWidgetProvider = ({
       pageLayoutId,
       widgetId,
       nestedRelationCreateThrough,
+      junctionCreateThrough,
       updateViewDraftField,
       updateViewDraft,
     ],

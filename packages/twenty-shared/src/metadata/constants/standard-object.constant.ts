@@ -458,7 +458,13 @@ export const STANDARD_OBJECTS = {
         objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageList,
         fields: STANDARD_OBJECT_FIELDS.messageList,
-        viewFieldNames: ['name', 'members', 'campaigns', 'createdAt'],
+        viewFieldNames: [
+          'name',
+          'description',
+          'members',
+          'campaigns',
+          'createdAt',
+        ],
       }),
     },
   },
@@ -941,6 +947,25 @@ export const STANDARD_OBJECTS = {
           system: 'System',
         },
       }),
+      messageListRecordPageMembers: {
+        universalIdentifier: 'bef79e8e-9ef3-4458-81ed-78a299e2566f',
+        viewFields: {
+          name: {
+            universalIdentifier: 'a4f0d7b4-3956-44a6-8bb2-df45a699609b',
+          },
+          emails: {
+            universalIdentifier: '180e9cbb-34c2-4e27-8648-2915be88a50e',
+          },
+          company: {
+            universalIdentifier: '3db54119-df4d-449b-91c9-22fca1e5d599',
+          },
+        },
+        viewFilters: {
+          listMembershipsListIsCurrentRecord: {
+            universalIdentifier: '256dceea-a9b5-42b7-8461-a6ce62e7fa6c',
+          },
+        },
+      },
     },
   },
   task: {
