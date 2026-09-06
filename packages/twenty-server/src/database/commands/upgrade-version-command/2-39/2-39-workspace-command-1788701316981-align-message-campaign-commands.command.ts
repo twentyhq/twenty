@@ -17,7 +17,7 @@ import { createStandardCommandMenuItemFlatMetadata } from 'src/engine/workspace-
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.39.0', 1788619058944)
+@RegisteredWorkspaceCommand('2.39.0', 1788701316981)
 @Command({
   name: 'upgrade:2-39:align-message-campaign-commands',
   description:
