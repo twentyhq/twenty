@@ -41,7 +41,7 @@ describe('retrySlackCallWhenRateLimited', () => {
     expect(call).toHaveBeenCalledTimes(2);
   });
 
-  it('should rethrow when Retry-After is longer than the wait budget', async () => {
+  it('should rethrow when Retry-After is longer than the retry budget', async () => {
     const call = vi.fn().mockRejectedValue(buildRateLimitedError(60));
 
     await expect(retrySlackCallWhenRateLimited(call)).rejects.toThrow(
@@ -64,6 +64,21 @@ describe('retrySlackCallWhenRateLimited', () => {
     await assertion;
 
     expect(call).toHaveBeenCalledTimes(2);
+  });
+
+  it('should not retry when the first attempt already spent the budget', async () => {
+    vi.useFakeTimers();
+
+    const call = vi.fn().mockImplementation(async () => {
+      vi.advanceTimersByTime(3500);
+
+      throw buildRateLimitedError(1);
+    });
+
+    await expect(retrySlackCallWhenRateLimited(call)).rejects.toThrow(
+      'rate limited, retry in 1 seconds',
+    );
+    expect(call).toHaveBeenCalledTimes(1);
   });
 
   it('should not retry an error that is not a rate limit', async () => {

@@ -1,4 +1,4 @@
-import { SLACK_RATE_LIMIT_RETRY_MAX_WAIT_MS } from 'src/logic-functions/constants/slack-rate-limit-retry-max-wait-ms';
+import { SLACK_RATE_LIMIT_RETRY_BUDGET_MS } from 'src/logic-functions/constants/slack-rate-limit-retry-budget-ms';
 import { isSlackRateLimitedError } from 'src/logic-functions/utils/is-slack-rate-limited-error';
 
 // the client rejects rate limited calls outright, which is right for reads but
@@ -6,6 +6,8 @@ import { isSlackRateLimitedError } from 'src/logic-functions/utils/is-slack-rate
 export const retrySlackCallWhenRateLimited = async <TResult>(
   call: () => Promise<TResult>,
 ): Promise<TResult> => {
+  const startedAtMs = Date.now();
+
   try {
     return await call();
   } catch (error) {
@@ -15,7 +17,7 @@ export const retrySlackCallWhenRateLimited = async <TResult>(
 
     const waitMs = error.retryAfter * 1000;
 
-    if (waitMs > SLACK_RATE_LIMIT_RETRY_MAX_WAIT_MS) {
+    if (Date.now() - startedAtMs + waitMs > SLACK_RATE_LIMIT_RETRY_BUDGET_MS) {
       throw error;
     }
 

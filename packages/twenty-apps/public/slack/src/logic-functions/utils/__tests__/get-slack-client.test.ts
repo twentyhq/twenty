@@ -28,7 +28,7 @@ describe('getSlackClient', () => {
     await getSlackClient();
 
     expect(webClientMock).toHaveBeenCalledWith('xoxb-token', {
-      timeout: 5000,
+      timeout: 3000,
       retryConfig: { retries: 1, factor: 1, minTimeout: 250, maxTimeout: 250 },
       rejectRateLimitedCalls: true,
     });

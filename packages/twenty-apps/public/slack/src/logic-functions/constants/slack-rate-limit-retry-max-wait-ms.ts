@@ -1,1 +1,0 @@
-export const SLACK_RATE_LIMIT_RETRY_MAX_WAIT_MS = 5 * 1000;
