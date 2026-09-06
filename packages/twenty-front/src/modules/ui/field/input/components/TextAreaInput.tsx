@@ -25,7 +25,10 @@ export type TextAreaInputProps = {
   copyButton?: boolean;
 };
 
-const StyledTextAreaContainer = styled.div`
+const StyledTextAreaContainer = styled.div<{ hasCopyButton?: boolean }>`
+  flex: 1;
+  width: 100%;
+
   > textarea {
     align-items: center;
     background-color: transparent;
@@ -50,7 +53,8 @@ const StyledTextAreaContainer = styled.div`
     padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
     resize: none;
 
-    width: calc(100% - ${themeCssVariables.spacing[7]});
+    width: ${({ hasCopyButton }) =>
+      hasCopyButton ? `calc(100% - ${themeCssVariables.spacing[7]})` : '100%'};
   }
 `;
 
@@ -113,7 +117,7 @@ export const TextAreaInput = ({
 
   return (
     <>
-      <StyledTextAreaContainer>
+      <StyledTextAreaContainer hasCopyButton={copyButton}>
         <TextareaAutosize
           placeholder={placeholder}
           disabled={disabled}

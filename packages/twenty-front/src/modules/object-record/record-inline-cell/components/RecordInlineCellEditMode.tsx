@@ -13,6 +13,7 @@ import {
   flip,
   offset,
   shift,
+  size,
   useFloating,
   type MiddlewareState,
 } from '@floating-ui/react';
@@ -25,7 +26,9 @@ const StyledInlineCellEditModeContainer = styled.div`
   background: transparent;
   display: flex;
   height: 24px;
+  left: 0;
   position: absolute;
+  top: 0;
 
   width: 100%;
 `;
@@ -83,6 +86,14 @@ export const RecordInlineCellEditMode = ({
               crossAxis: -5,
             },
       ),
+      size({
+        apply({ rects, elements, availableWidth }) {
+          if (!isCentered && rects.reference.width > 0) {
+            elements.floating.style.minWidth = `${rects.reference.width}px`;
+          }
+          elements.floating.style.maxWidth = `${availableWidth}px`;
+        },
+      }),
       shift({ padding: 8 }),
       setFieldInputLayoutDirectionMiddleware,
     ],
