@@ -3,15 +3,15 @@ import {
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
 
-import {
-  PageLayoutTabLayoutMode,
-  PageLayoutType,
-  type PageLayoutWidgetGridPosition,
-  WidgetType,
-} from 'twenty-shared/types';
+import { PageLayoutType, WidgetType } from 'twenty-shared/types';
 import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
 import {
+  CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP,
+  CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE,
+  CONDITIONAL_DISPLAY_DEVICE_DESKTOP,
+  CONDITIONAL_DISPLAY_DEVICE_MOBILE,
   TAB_PROPS,
+  VERTICAL_LIST_LAYOUT_POSITIONS,
   WIDGET_PROPS,
 } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
 import {
@@ -19,51 +19,59 @@ import {
   type StandardPageLayoutTabConfig,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-page-layout-config.type';
 
-export const MESSAGE_LIST_GRID_LAYOUT_POSITIONS = {
-  LEFT_COLUMN: {
-    layoutMode: PageLayoutTabLayoutMode.GRID,
-    row: 0,
-    column: 0,
-    rowSpan: 12,
-    columnSpan: 6,
-  },
-  RIGHT_COLUMN: {
-    layoutMode: PageLayoutTabLayoutMode.GRID,
-    row: 0,
-    column: 6,
-    rowSpan: 12,
-    columnSpan: 6,
-  },
-} as const satisfies Record<string, PageLayoutWidgetGridPosition>;
+const MEMBERS_WIDGET_PROPS = {
+  title: 'Members',
+  type: WidgetType.FIELD,
+  fieldUniversalIdentifier:
+    STANDARD_OBJECTS.messageList.fields.members.universalIdentifier,
+  fieldDisplayMode: FieldDisplayMode.TABLE,
+  embeddedViewUniversalIdentifier:
+    STANDARD_OBJECTS.person.views.messageListRecordPageMembers
+      .universalIdentifier,
+} as const;
 
+// Like the note and task pages, the members table sits under the fields in
+// the side panel and on mobile, and gets a tab of its own in full screen.
 const MESSAGE_LIST_PAGE_TABS = {
   home: {
     universalIdentifier:
       STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage.tabs.home
         .universalIdentifier,
     ...TAB_PROPS.home,
-    layoutMode: PageLayoutTabLayoutMode.GRID,
     widgets: {
       fields: {
         universalIdentifier:
           STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage.tabs
             .home.widgets.fields.universalIdentifier,
         ...WIDGET_PROPS.fields,
-        position: MESSAGE_LIST_GRID_LAYOUT_POSITIONS.LEFT_COLUMN,
       },
       members: {
         universalIdentifier:
           STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage.tabs
             .home.widgets.members.universalIdentifier,
-        title: 'Members',
-        type: WidgetType.FIELD,
-        position: MESSAGE_LIST_GRID_LAYOUT_POSITIONS.RIGHT_COLUMN,
-        fieldUniversalIdentifier:
-          STANDARD_OBJECTS.messageList.fields.members.universalIdentifier,
-        fieldDisplayMode: FieldDisplayMode.TABLE,
-        embeddedViewUniversalIdentifier:
-          STANDARD_OBJECTS.person.views.messageListRecordPageMembers
-            .universalIdentifier,
+        ...MEMBERS_WIDGET_PROPS,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
+        conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_MOBILE,
+        conditionalAvailabilityExpression:
+          CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE,
+      },
+    },
+  },
+  members: {
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage.tabs
+        .members.universalIdentifier,
+    ...TAB_PROPS.members,
+    widgets: {
+      members: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage.tabs
+            .members.widgets.members.universalIdentifier,
+        ...MEMBERS_WIDGET_PROPS,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
+        conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_DESKTOP,
+        conditionalAvailabilityExpression:
+          CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP,
       },
     },
   },

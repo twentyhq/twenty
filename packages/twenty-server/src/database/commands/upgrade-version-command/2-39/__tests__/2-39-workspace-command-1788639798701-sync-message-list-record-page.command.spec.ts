@@ -9,9 +9,14 @@ import { SyncMessageListRecordPageCommand } from 'src/database/commands/upgrade-
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { MESSAGE_LIST_GRID_LAYOUT_POSITIONS } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-message-list-page-layout.config';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import {
+  CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP,
+  CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE,
+  CONDITIONAL_DISPLAY_DEVICE_DESKTOP,
+  CONDITIONAL_DISPLAY_DEVICE_MOBILE,
+} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
+import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 jest.mock(
@@ -27,7 +32,6 @@ const STANDARD_APPLICATION = {
   id: '20202020-0000-0000-0000-0000000000aa',
   universalIdentifier: '20202020-0000-0000-0000-0000000000bb',
 };
-const OTHER_APPLICATION_ID = '20202020-0000-0000-0000-0000000000cc';
 
 const LIST = STANDARD_OBJECTS.messageList;
 const LIST_MEMBER = STANDARD_OBJECTS.messageListMember;
@@ -52,6 +56,7 @@ const MEMBERS_VIEW_FILTER_UNIVERSAL_IDENTIFIER =
   PERSON.views.messageListRecordPageMembers.viewFilters
     .listMembershipsListIsCurrentRecord.universalIdentifier;
 const MEMBERS_VIEW_ID = '20202020-0000-0000-0000-000000000010';
+const OTHER_VIEW_ID = '20202020-0000-0000-0000-000000000099';
 
 const STANDARD_MEMBERS_VIEW_FIELDS = MEMBERS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.map(
   (universalIdentifier, position) => ({
@@ -69,8 +74,56 @@ const HOME_TAB_UNIVERSAL_IDENTIFIER =
   LIST_RECORD_PAGE.tabs.home.universalIdentifier;
 const FIELDS_WIDGET_UNIVERSAL_IDENTIFIER =
   LIST_RECORD_PAGE.tabs.home.widgets.fields.universalIdentifier;
-const MEMBERS_WIDGET_UNIVERSAL_IDENTIFIER =
+const HOME_MEMBERS_WIDGET_UNIVERSAL_IDENTIFIER =
   LIST_RECORD_PAGE.tabs.home.widgets.members.universalIdentifier;
+const MEMBERS_TAB_UNIVERSAL_IDENTIFIER =
+  LIST_RECORD_PAGE.tabs.members.universalIdentifier;
+const MEMBERS_TAB_WIDGET_UNIVERSAL_IDENTIFIER =
+  LIST_RECORD_PAGE.tabs.members.widgets.members.universalIdentifier;
+
+const MEMBERS_FIELD_METADATA_ID = '20202020-0000-0000-0000-000000000030';
+
+const STANDARD_MEMBERS_TAB = {
+  universalIdentifier: MEMBERS_TAB_UNIVERSAL_IDENTIFIER,
+  title: 'Members',
+  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+};
+
+const buildTableConfiguration = (viewId?: string) => ({
+  configurationType: WidgetConfigurationType.FIELD,
+  fieldMetadataId: MEMBERS_FIELD_METADATA_ID,
+  fieldDisplayMode: FieldDisplayMode.TABLE,
+  ...(viewId ? { viewId } : {}),
+});
+
+const buildTableUniversalConfiguration = (viewId?: string) => ({
+  configurationType: WidgetConfigurationType.FIELD,
+  fieldMetadataId: LIST.fields.members.universalIdentifier,
+  fieldDisplayMode: FieldDisplayMode.TABLE,
+  ...(viewId ? { viewId } : {}),
+});
+
+const STANDARD_HOME_MEMBERS_WIDGET = {
+  universalIdentifier: HOME_MEMBERS_WIDGET_UNIVERSAL_IDENTIFIER,
+  configuration: buildTableConfiguration(MEMBERS_VIEW_ID),
+  universalConfiguration: buildTableUniversalConfiguration(
+    MEMBERS_VIEW_UNIVERSAL_IDENTIFIER,
+  ),
+  conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_MOBILE,
+  conditionalAvailabilityExpression:
+    CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE,
+};
+
+const STANDARD_MEMBERS_TAB_WIDGET = {
+  universalIdentifier: MEMBERS_TAB_WIDGET_UNIVERSAL_IDENTIFIER,
+  configuration: buildTableConfiguration(MEMBERS_VIEW_ID),
+  universalConfiguration: buildTableUniversalConfiguration(
+    MEMBERS_VIEW_UNIVERSAL_IDENTIFIER,
+  ),
+  conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_DESKTOP,
+  conditionalAvailabilityExpression:
+    CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP,
+};
 
 const buildMaps = <TEntity extends { universalIdentifier: string }>(
   entities: TEntity[],
@@ -80,17 +133,22 @@ const buildMaps = <TEntity extends { universalIdentifier: string }>(
   ),
 });
 
-const buildHomeTab = (overrides: Record<string, unknown> = {}) => ({
+const buildHomeTab = () => ({
   id: '20202020-0000-0000-0000-000000000020',
   universalIdentifier: HOME_TAB_UNIVERSAL_IDENTIFIER,
   applicationId: STANDARD_APPLICATION.id,
   overrides: null,
   isActive: true,
   layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-  widgetUniversalIdentifiers: [
-    FIELDS_WIDGET_UNIVERSAL_IDENTIFIER,
-    MEMBERS_WIDGET_UNIVERSAL_IDENTIFIER,
-  ],
+});
+
+const buildMembersTab = (overrides: Record<string, unknown> = {}) => ({
+  id: '20202020-0000-0000-0000-000000000023',
+  universalIdentifier: MEMBERS_TAB_UNIVERSAL_IDENTIFIER,
+  applicationId: STANDARD_APPLICATION.id,
+  overrides: null,
+  isActive: true,
+  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   ...overrides,
 });
 
@@ -100,23 +158,23 @@ const buildFieldsWidget = () => ({
   applicationId: STANDARD_APPLICATION.id,
   overrides: null,
   isActive: true,
-  position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 0 },
   configuration: { configurationType: WidgetConfigurationType.FIELDS },
   universalConfiguration: {
     configurationType: WidgetConfigurationType.FIELDS,
   },
 });
 
-const buildMembersWidget = (overrides: Record<string, unknown> = {}) => ({
+const buildHomeMembersWidget = (overrides: Record<string, unknown> = {}) => ({
   id: '20202020-0000-0000-0000-000000000022',
-  universalIdentifier: MEMBERS_WIDGET_UNIVERSAL_IDENTIFIER,
+  universalIdentifier: HOME_MEMBERS_WIDGET_UNIVERSAL_IDENTIFIER,
   applicationId: STANDARD_APPLICATION.id,
   overrides: null,
   isActive: true,
-  position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 1 },
+  conditionalDisplay: null,
+  conditionalAvailabilityExpression: null,
   configuration: {
     configurationType: WidgetConfigurationType.FIELD,
-    fieldMetadataId: '20202020-0000-0000-0000-000000000030',
+    fieldMetadataId: MEMBERS_FIELD_METADATA_ID,
     fieldDisplayMode: FieldDisplayMode.CARD,
   },
   universalConfiguration: {
@@ -126,6 +184,40 @@ const buildMembersWidget = (overrides: Record<string, unknown> = {}) => ({
   },
   ...overrides,
 });
+
+const buildMembersTabWidget = (overrides: Record<string, unknown> = {}) => ({
+  id: '20202020-0000-0000-0000-000000000024',
+  universalIdentifier: MEMBERS_TAB_WIDGET_UNIVERSAL_IDENTIFIER,
+  applicationId: STANDARD_APPLICATION.id,
+  overrides: null,
+  isActive: true,
+  conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_DESKTOP,
+  conditionalAvailabilityExpression:
+    CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP,
+  configuration: buildTableConfiguration(MEMBERS_VIEW_ID),
+  universalConfiguration: buildTableUniversalConfiguration(
+    MEMBERS_VIEW_UNIVERSAL_IDENTIFIER,
+  ),
+  ...overrides,
+});
+
+const EXISTING_MEMBERS_METADATA = {
+  existingFieldUniversalIdentifiers: [DESCRIPTION_FIELD_UNIVERSAL_IDENTIFIER],
+  existingViews: [
+    {
+      id: MEMBERS_VIEW_ID,
+      universalIdentifier: MEMBERS_VIEW_UNIVERSAL_IDENTIFIER,
+    },
+  ],
+  existingViewFields: [
+    ...STANDARD_MEMBERS_VIEW_FIELDS,
+    {
+      universalIdentifier: DESCRIPTION_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 1,
+    },
+  ],
+  existingViewFilters: [MEMBERS_VIEW_FILTER_UNIVERSAL_IDENTIFIER],
+};
 
 describe('SyncMessageListRecordPageCommand', () => {
   let command: SyncMessageListRecordPageCommand;
@@ -160,6 +252,11 @@ describe('SyncMessageListRecordPageCommand', () => {
           },
         ]),
         flatViewFilterMaps: buildMaps([STANDARD_MEMBERS_VIEW_FILTER]),
+        flatPageLayoutTabMaps: buildMaps([STANDARD_MEMBERS_TAB]),
+        flatPageLayoutWidgetMaps: buildMaps([
+          STANDARD_HOME_MEMBERS_WIDGET,
+          STANDARD_MEMBERS_TAB_WIDGET,
+        ]),
       },
     } as unknown as ReturnType<
       typeof computeTwentyStandardApplicationAllFlatEntityMaps
@@ -206,8 +303,11 @@ describe('SyncMessageListRecordPageCommand', () => {
       deletedAt?: string;
     }[],
     existingViewFilters = [] as string[],
-    homeTab = buildHomeTab() as ReturnType<typeof buildHomeTab> | undefined,
-    membersWidget = buildMembersWidget(),
+    tabs = [buildHomeTab()] as Record<string, unknown>[],
+    widgets = [buildFieldsWidget(), buildHomeMembersWidget()] as Record<
+      string,
+      unknown
+    >[],
   } = {}) => {
     const listIndexView = {
       id: '20202020-0000-0000-0000-000000000011',
@@ -243,11 +343,12 @@ describe('SyncMessageListRecordPageCommand', () => {
           universalIdentifier,
         })),
       ),
-      flatPageLayoutTabMaps: buildMaps(homeTab ? [homeTab] : []),
-      flatPageLayoutWidgetMaps: buildMaps([
-        buildFieldsWidget(),
-        membersWidget,
-      ]),
+      flatPageLayoutTabMaps: buildMaps(
+        tabs as { universalIdentifier: string }[],
+      ),
+      flatPageLayoutWidgetMaps: buildMaps(
+        widgets as { universalIdentifier: string }[],
+      ),
     });
   };
 
@@ -255,7 +356,28 @@ describe('SyncMessageListRecordPageCommand', () => {
     validateBuildAndRunLegacyWorkspaceMigrationMock.mock.calls[0][0]
       .allFlatEntityOperationByMetadataName;
 
-  it('creates the description field, the members view and moves the layout to the grid', async () => {
+  const expectHomeMembersWidgetAlignedWithStandard = (
+    widgetUpdate: unknown,
+    viewId = MEMBERS_VIEW_ID,
+  ) =>
+    expect(widgetUpdate).toEqual(
+      expect.objectContaining({
+        universalIdentifier: HOME_MEMBERS_WIDGET_UNIVERSAL_IDENTIFIER,
+        configuration: expect.objectContaining({
+          fieldDisplayMode: FieldDisplayMode.TABLE,
+          viewId,
+        }),
+        universalConfiguration: expect.objectContaining({
+          fieldDisplayMode: FieldDisplayMode.TABLE,
+          viewId: MEMBERS_VIEW_UNIVERSAL_IDENTIFIER,
+        }),
+        conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_MOBILE,
+        conditionalAvailabilityExpression:
+          CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE,
+      }),
+    );
+
+  it('creates the metadata and the members tab, and turns the home members widget into a mobile table', async () => {
     mockWorkspaceCache({
       existingViewFields: [
         { universalIdentifier: NAME_VIEW_FIELD_UNIVERSAL_IDENTIFIER, position: 0 },
@@ -293,51 +415,28 @@ describe('SyncMessageListRecordPageCommand', () => {
     expect(payload.viewFilter.flatEntityToCreate).toEqual([
       STANDARD_MEMBERS_VIEW_FILTER,
     ]);
-    expect(payload.pageLayoutTab.flatEntityToUpdate).toEqual([
-      expect.objectContaining({
-        universalIdentifier: HOME_TAB_UNIVERSAL_IDENTIFIER,
-        layoutMode: PageLayoutTabLayoutMode.GRID,
-      }),
+    expect(payload.pageLayoutTab.flatEntityToCreate).toEqual([
+      STANDARD_MEMBERS_TAB,
     ]);
-    expect(payload.pageLayoutWidget.flatEntityToUpdate).toEqual([
-      expect.objectContaining({
-        universalIdentifier: FIELDS_WIDGET_UNIVERSAL_IDENTIFIER,
-        position: MESSAGE_LIST_GRID_LAYOUT_POSITIONS.LEFT_COLUMN,
-      }),
-      expect.objectContaining({
-        universalIdentifier: MEMBERS_WIDGET_UNIVERSAL_IDENTIFIER,
-        position: MESSAGE_LIST_GRID_LAYOUT_POSITIONS.RIGHT_COLUMN,
-        configuration: expect.objectContaining({
-          fieldDisplayMode: FieldDisplayMode.TABLE,
-          viewId: MEMBERS_VIEW_ID,
-        }),
-        universalConfiguration: expect.objectContaining({
-          fieldDisplayMode: FieldDisplayMode.TABLE,
-          viewId: MEMBERS_VIEW_UNIVERSAL_IDENTIFIER,
-        }),
-      }),
+    expect(payload.pageLayoutTab.flatEntityToUpdate).toEqual([]);
+    expect(payload.pageLayoutWidget.flatEntityToCreate).toEqual([
+      STANDARD_MEMBERS_TAB_WIDGET,
     ]);
+    expect(payload.pageLayoutWidget.flatEntityToUpdate).toHaveLength(1);
+    expectHomeMembersWidgetAlignedWithStandard(
+      payload.pageLayoutWidget.flatEntityToUpdate[0],
+    );
   });
 
   it('embeds the existing members view when it was already created', async () => {
-    const existingMembersViewId = '20202020-0000-0000-0000-000000000099';
-
     mockWorkspaceCache({
-      existingFieldUniversalIdentifiers: [DESCRIPTION_FIELD_UNIVERSAL_IDENTIFIER],
+      ...EXISTING_MEMBERS_METADATA,
       existingViews: [
         {
-          id: existingMembersViewId,
+          id: OTHER_VIEW_ID,
           universalIdentifier: MEMBERS_VIEW_UNIVERSAL_IDENTIFIER,
         },
       ],
-      existingViewFields: [
-        ...STANDARD_MEMBERS_VIEW_FIELDS,
-        {
-          universalIdentifier: DESCRIPTION_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
-          position: 1,
-        },
-      ],
-      existingViewFilters: [MEMBERS_VIEW_FILTER_UNIVERSAL_IDENTIFIER],
     });
 
     await runOnWorkspace();
@@ -348,18 +447,65 @@ describe('SyncMessageListRecordPageCommand', () => {
     expect(payload.view.flatEntityToCreate).toEqual([]);
     expect(payload.viewField.flatEntityToCreate).toEqual([]);
     expect(payload.viewFilter.flatEntityToCreate).toEqual([]);
-    expect(payload.pageLayoutWidget.flatEntityToUpdate[1]).toEqual(
-      expect.objectContaining({
-        configuration: expect.objectContaining({
-          viewId: existingMembersViewId,
-        }),
-      }),
+    expect(payload.pageLayoutTab.flatEntityToCreate).toEqual([
+      STANDARD_MEMBERS_TAB,
+    ]);
+    expectHomeMembersWidgetAlignedWithStandard(
+      payload.pageLayoutWidget.flatEntityToUpdate[0],
+      OTHER_VIEW_ID,
     );
   });
 
-  it('leaves a customized layout untouched but still adds the metadata', async () => {
+  it('attaches the view to a members tab provisioned before the view existed', async () => {
     mockWorkspaceCache({
-      homeTab: buildHomeTab({ applicationId: OTHER_APPLICATION_ID }),
+      tabs: [buildHomeTab(), buildMembersTab()],
+      widgets: [
+        buildFieldsWidget(),
+        buildHomeMembersWidget({
+          conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_MOBILE,
+          conditionalAvailabilityExpression:
+            CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE,
+          configuration: buildTableConfiguration(),
+          universalConfiguration: buildTableUniversalConfiguration(),
+        }),
+        buildMembersTabWidget({
+          configuration: buildTableConfiguration(),
+          universalConfiguration: buildTableUniversalConfiguration(),
+        }),
+      ],
+    });
+
+    await runOnWorkspace();
+
+    const payload = getMigrationPayload();
+
+    expect(payload.pageLayoutTab.flatEntityToCreate).toEqual([]);
+    expect(payload.pageLayoutWidget.flatEntityToCreate).toEqual([]);
+    expect(payload.pageLayoutWidget.flatEntityToUpdate).toEqual([
+      expect.objectContaining({
+        universalIdentifier: HOME_MEMBERS_WIDGET_UNIVERSAL_IDENTIFIER,
+        configuration: buildTableConfiguration(MEMBERS_VIEW_ID),
+        universalConfiguration: buildTableUniversalConfiguration(
+          MEMBERS_VIEW_UNIVERSAL_IDENTIFIER,
+        ),
+      }),
+      expect.objectContaining({
+        universalIdentifier: MEMBERS_TAB_WIDGET_UNIVERSAL_IDENTIFIER,
+        configuration: buildTableConfiguration(MEMBERS_VIEW_ID),
+        universalConfiguration: buildTableUniversalConfiguration(
+          MEMBERS_VIEW_UNIVERSAL_IDENTIFIER,
+        ),
+        conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_DESKTOP,
+      }),
+    ]);
+  });
+
+  it('leaves a customized members widget untouched but still adds the metadata and the tab', async () => {
+    mockWorkspaceCache({
+      widgets: [
+        buildFieldsWidget(),
+        buildHomeMembersWidget({ overrides: { title: 'People' } }),
+      ],
     });
 
     await runOnWorkspace();
@@ -367,21 +513,34 @@ describe('SyncMessageListRecordPageCommand', () => {
     const payload = getMigrationPayload();
 
     expect(payload.fieldMetadata.flatEntityToCreate).toHaveLength(1);
-    expect(payload.pageLayoutTab.flatEntityToUpdate).toEqual([]);
+    expect(payload.pageLayoutTab.flatEntityToCreate).toEqual([
+      STANDARD_MEMBERS_TAB,
+    ]);
+    expect(payload.pageLayoutWidget.flatEntityToCreate).toEqual([
+      STANDARD_MEMBERS_TAB_WIDGET,
+    ]);
     expect(payload.pageLayoutWidget.flatEntityToUpdate).toEqual([]);
   });
 
-  it('leaves a tab that is no longer a vertical list untouched', async () => {
+  it('leaves a widget embedding another view untouched', async () => {
     mockWorkspaceCache({
-      homeTab: buildHomeTab({ layoutMode: PageLayoutTabLayoutMode.CANVAS }),
+      ...EXISTING_MEMBERS_METADATA,
+      tabs: [buildHomeTab(), buildMembersTab()],
+      widgets: [
+        buildFieldsWidget(),
+        buildHomeMembersWidget({
+          configuration: buildTableConfiguration(OTHER_VIEW_ID),
+          universalConfiguration: buildTableUniversalConfiguration(
+            OTHER_VIEW_ID,
+          ),
+        }),
+        buildMembersTabWidget(),
+      ],
     });
 
     await runOnWorkspace();
 
-    const payload = getMigrationPayload();
-
-    expect(payload.pageLayoutTab.flatEntityToUpdate).toEqual([]);
-    expect(payload.pageLayoutWidget.flatEntityToUpdate).toEqual([]);
+    expect(validateBuildAndRunLegacyWorkspaceMigrationMock).not.toHaveBeenCalled();
   });
 
   it('does not embed or refill a soft-deleted members view', async () => {
@@ -407,8 +566,30 @@ describe('SyncMessageListRecordPageCommand', () => {
         universalIdentifier: DESCRIPTION_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
       }),
     ]);
-    expect(payload.pageLayoutTab.flatEntityToUpdate).toEqual([]);
+    expect(payload.pageLayoutTab.flatEntityToCreate).toEqual([]);
+    expect(payload.pageLayoutWidget.flatEntityToCreate).toEqual([]);
     expect(payload.pageLayoutWidget.flatEntityToUpdate).toEqual([]);
+  });
+
+  it('does not recreate a soft-deleted members tab', async () => {
+    mockWorkspaceCache({
+      ...EXISTING_MEMBERS_METADATA,
+      tabs: [
+        buildHomeTab(),
+        buildMembersTab({ deletedAt: '2026-01-01T00:00:00.000Z' }),
+      ],
+    });
+
+    await runOnWorkspace();
+
+    const payload = getMigrationPayload();
+
+    expect(payload.pageLayoutTab.flatEntityToCreate).toEqual([]);
+    expect(payload.pageLayoutWidget.flatEntityToCreate).toEqual([]);
+    expect(payload.pageLayoutWidget.flatEntityToUpdate).toHaveLength(1);
+    expectHomeMembersWidgetAlignedWithStandard(
+      payload.pageLayoutWidget.flatEntityToUpdate[0],
+    );
   });
 
   it('does not recreate a soft-deleted description column', async () => {
@@ -434,52 +615,8 @@ describe('SyncMessageListRecordPageCommand', () => {
     ).toEqual(MEMBERS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS);
   });
 
-  it('does nothing when everything is already in place', async () => {
-    mockWorkspaceCache({
-      existingFieldUniversalIdentifiers: [DESCRIPTION_FIELD_UNIVERSAL_IDENTIFIER],
-      existingViews: [
-        {
-          id: MEMBERS_VIEW_ID,
-          universalIdentifier: MEMBERS_VIEW_UNIVERSAL_IDENTIFIER,
-        },
-      ],
-      existingViewFields: [
-        ...STANDARD_MEMBERS_VIEW_FIELDS,
-        {
-          universalIdentifier: DESCRIPTION_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
-          position: 1,
-        },
-      ],
-      existingViewFilters: [MEMBERS_VIEW_FILTER_UNIVERSAL_IDENTIFIER],
-      homeTab: buildHomeTab({ layoutMode: PageLayoutTabLayoutMode.GRID }),
-      membersWidget: buildMembersWidget({
-        configuration: {
-          configurationType: WidgetConfigurationType.FIELD,
-          fieldMetadataId: '20202020-0000-0000-0000-000000000030',
-          fieldDisplayMode: FieldDisplayMode.TABLE,
-          viewId: MEMBERS_VIEW_ID,
-        },
-      }),
-    });
-
-    await runOnWorkspace();
-
-    expect(validateBuildAndRunLegacyWorkspaceMigrationMock).not.toHaveBeenCalled();
-  });
-
-  it('leaves a table widget embedding another view untouched but still adds the metadata', async () => {
-    mockWorkspaceCache({
-      homeTab: buildHomeTab({ layoutMode: PageLayoutTabLayoutMode.GRID }),
-      membersWidget: buildMembersWidget({
-        position: MESSAGE_LIST_GRID_LAYOUT_POSITIONS.RIGHT_COLUMN,
-        configuration: {
-          configurationType: WidgetConfigurationType.FIELD,
-          fieldMetadataId: '20202020-0000-0000-0000-000000000030',
-          fieldDisplayMode: FieldDisplayMode.TABLE,
-          viewId: '20202020-0000-0000-0000-000000000099',
-        },
-      }),
-    });
+  it('adds the metadata but no layout when the list record page does not exist', async () => {
+    mockWorkspaceCache({ tabs: [], widgets: [] });
 
     await runOnWorkspace();
 
@@ -487,46 +624,33 @@ describe('SyncMessageListRecordPageCommand', () => {
 
     expect(payload.fieldMetadata.flatEntityToCreate).toHaveLength(1);
     expect(payload.view.flatEntityToCreate).toHaveLength(1);
-    expect(payload.pageLayoutTab.flatEntityToUpdate).toEqual([]);
+    expect(payload.pageLayoutTab.flatEntityToCreate).toEqual([]);
+    expect(payload.pageLayoutWidget.flatEntityToCreate).toEqual([]);
     expect(payload.pageLayoutWidget.flatEntityToUpdate).toEqual([]);
   });
 
-  it('embeds the members view in a grid table widget provisioned before the view existed', async () => {
+  it('does nothing when everything is already in place', async () => {
     mockWorkspaceCache({
-      homeTab: buildHomeTab({ layoutMode: PageLayoutTabLayoutMode.GRID }),
-      membersWidget: buildMembersWidget({
-        position: MESSAGE_LIST_GRID_LAYOUT_POSITIONS.RIGHT_COLUMN,
-        configuration: {
-          configurationType: WidgetConfigurationType.FIELD,
-          fieldMetadataId: '20202020-0000-0000-0000-000000000030',
-          fieldDisplayMode: FieldDisplayMode.TABLE,
-        },
-      }),
+      ...EXISTING_MEMBERS_METADATA,
+      tabs: [buildHomeTab(), buildMembersTab()],
+      widgets: [
+        buildFieldsWidget(),
+        buildHomeMembersWidget({
+          conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_MOBILE,
+          conditionalAvailabilityExpression:
+            CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE,
+          configuration: buildTableConfiguration(MEMBERS_VIEW_ID),
+          universalConfiguration: buildTableUniversalConfiguration(
+            MEMBERS_VIEW_UNIVERSAL_IDENTIFIER,
+          ),
+        }),
+        buildMembersTabWidget(),
+      ],
     });
 
     await runOnWorkspace();
 
-    const payload = getMigrationPayload();
-
-    expect(payload.view.flatEntityToCreate).toEqual([
-      expect.objectContaining({
-        universalIdentifier: MEMBERS_VIEW_UNIVERSAL_IDENTIFIER,
-      }),
-    ]);
-    // The tab already sits on the grid, only the widget gets its view.
-    expect(payload.pageLayoutTab.flatEntityToUpdate).toEqual([]);
-    expect(payload.pageLayoutWidget.flatEntityToUpdate).toEqual([
-      expect.objectContaining({
-        universalIdentifier: FIELDS_WIDGET_UNIVERSAL_IDENTIFIER,
-      }),
-      expect.objectContaining({
-        universalIdentifier: MEMBERS_WIDGET_UNIVERSAL_IDENTIFIER,
-        configuration: expect.objectContaining({
-          fieldDisplayMode: FieldDisplayMode.TABLE,
-          viewId: MEMBERS_VIEW_ID,
-        }),
-      }),
-    ]);
+    expect(validateBuildAndRunLegacyWorkspaceMigrationMock).not.toHaveBeenCalled();
   });
 
   it('does not write metadata in dry-run mode', async () => {

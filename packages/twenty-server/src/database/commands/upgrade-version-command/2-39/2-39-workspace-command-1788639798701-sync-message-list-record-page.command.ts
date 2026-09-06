@@ -3,7 +3,7 @@ import {
   STANDARD_OBJECTS,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
-import { PageLayoutTabLayoutMode, ViewKey } from 'twenty-shared/types';
+import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -24,14 +24,14 @@ import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-
 import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { MESSAGE_LIST_GRID_LAYOUT_POSITIONS } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-message-list-page-layout.config';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const LIST = STANDARD_OBJECTS.messageList;
 const LIST_MEMBER = STANDARD_OBJECTS.messageListMember;
 const PERSON = STANDARD_OBJECTS.person;
-const LIST_RECORD_PAGE = STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage;
+const LIST_RECORD_PAGE =
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage;
 
 const DESCRIPTION_FIELD_UNIVERSAL_IDENTIFIER =
   LIST.fields.description.universalIdentifier;
@@ -49,22 +49,30 @@ const MEMBERS_VIEW_FILTER_UNIVERSAL_IDENTIFIERS = Object.values(
 
 const HOME_TAB_UNIVERSAL_IDENTIFIER =
   LIST_RECORD_PAGE.tabs.home.universalIdentifier;
-const FIELDS_WIDGET_UNIVERSAL_IDENTIFIER =
-  LIST_RECORD_PAGE.tabs.home.widgets.fields.universalIdentifier;
-const MEMBERS_WIDGET_UNIVERSAL_IDENTIFIER =
+const HOME_MEMBERS_WIDGET_UNIVERSAL_IDENTIFIER =
   LIST_RECORD_PAGE.tabs.home.widgets.members.universalIdentifier;
+const MEMBERS_TAB_UNIVERSAL_IDENTIFIER =
+  LIST_RECORD_PAGE.tabs.members.universalIdentifier;
+const MEMBERS_TAB_WIDGET_UNIVERSAL_IDENTIFIER =
+  LIST_RECORD_PAGE.tabs.members.widgets.members.universalIdentifier;
 
 type RecordPageOperations = {
-  pageLayoutTabsToUpdate: FlatPageLayoutTab[];
+  pageLayoutTabsToCreate: FlatPageLayoutTab[];
+  pageLayoutWidgetsToCreate: FlatPageLayoutWidget[];
   pageLayoutWidgetsToUpdate: FlatPageLayoutWidget[];
-  skipReason?: 'missing' | 'customized' | 'already migrated';
+};
+
+const EMPTY_RECORD_PAGE_OPERATIONS: RecordPageOperations = {
+  pageLayoutTabsToCreate: [],
+  pageLayoutWidgetsToCreate: [],
+  pageLayoutWidgetsToUpdate: [],
 };
 
 @RegisteredWorkspaceCommand('2.39.0', 1788639798701)
 @Command({
   name: 'upgrade:2-39:sync-message-list-record-page',
   description:
-    'Add the messageList description field and its all lists view column, create the list members table view on person scoped through messageListMember, and move the uncustomized list record page to a two column grid embedding that view in the members widget.',
+    'Add the messageList description field and its all lists view column, create the list members table view on person scoped through messageListMember, and give the list record page its members tab: the table fills a full screen tab of its own and sits under the fields in the side panel.',
 })
 export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -144,12 +152,12 @@ export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceComman
       flatViewMaps.byUniversalIdentifier[MEMBERS_VIEW_UNIVERSAL_IDENTIFIER];
 
     // A soft-deleted members view cannot be recreated under its identifier and
-    // must not be embedded, so the workspace keeps its current members widget.
+    // must not be embedded, so the workspace keeps its current record page.
     const isMembersViewDeleted = isDefined(existingMembersView?.deletedAt);
 
     if (isMembersViewDeleted) {
       this.logger.warn(
-        `The list members view was deleted in workspace ${workspaceId}, leaving the members widget untouched`,
+        `The list members view was deleted in workspace ${workspaceId}, leaving the record page untouched`,
       );
     }
 
@@ -190,26 +198,31 @@ export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceComman
       ? undefined
       : (existingMembersView ?? viewsToCreate[0]);
 
-    const { pageLayoutTabsToUpdate, pageLayoutWidgetsToUpdate, skipReason } =
-      this.computeRecordPageOperations({
-        flatPageLayoutTabMaps,
-        flatPageLayoutWidgetMaps,
-        membersView,
-        standardApplicationId: twentyStandardFlatApplication.id,
-      });
-
-    if (isDefined(skipReason)) {
-      this.logger.log(
-        `messageList record page is ${skipReason} for workspace ${workspaceId}, leaving its layout untouched`,
-      );
-    }
+    const {
+      pageLayoutTabsToCreate,
+      pageLayoutWidgetsToCreate,
+      pageLayoutWidgetsToUpdate,
+    } = isDefined(membersView)
+      ? this.computeRecordPageOperations({
+          workspaceId,
+          flatPageLayoutTabMaps,
+          flatPageLayoutWidgetMaps,
+          standardFlatPageLayoutTabMaps:
+            standardAllFlatEntityMaps.flatPageLayoutTabMaps,
+          standardFlatPageLayoutWidgetMaps:
+            standardAllFlatEntityMaps.flatPageLayoutWidgetMaps,
+          membersView,
+          standardApplicationId: twentyStandardFlatApplication.id,
+        })
+      : EMPTY_RECORD_PAGE_OPERATIONS;
 
     const totalOperationCount =
       fieldsToCreate.length +
       viewsToCreate.length +
       viewFieldsToCreate.length +
       viewFiltersToCreate.length +
-      pageLayoutTabsToUpdate.length +
+      pageLayoutTabsToCreate.length +
+      pageLayoutWidgetsToCreate.length +
       pageLayoutWidgetsToUpdate.length;
 
     if (totalOperationCount === 0) {
@@ -221,7 +234,7 @@ export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceComman
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: ${fieldsToCreate.length} field(s), ${viewsToCreate.length} view(s), ${viewFieldsToCreate.length} view column(s), ${viewFiltersToCreate.length} view filter(s), ${pageLayoutTabsToUpdate.length} tab update(s), ${pageLayoutWidgetsToUpdate.length} widget update(s)`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: ${fieldsToCreate.length} field(s), ${viewsToCreate.length} view(s), ${viewFieldsToCreate.length} view column(s), ${viewFiltersToCreate.length} view filter(s), ${pageLayoutTabsToCreate.length} tab(s), ${pageLayoutWidgetsToCreate.length} widget creation(s), ${pageLayoutWidgetsToUpdate.length} widget update(s)`,
     );
 
     if (isDryRun) {
@@ -257,12 +270,12 @@ export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceComman
               flatEntityToUpdate: [],
             },
             pageLayoutTab: {
-              flatEntityToCreate: [],
+              flatEntityToCreate: pageLayoutTabsToCreate,
               flatEntityToDelete: [],
-              flatEntityToUpdate: pageLayoutTabsToUpdate,
+              flatEntityToUpdate: [],
             },
             pageLayoutWidget: {
-              flatEntityToCreate: [],
+              flatEntityToCreate: pageLayoutWidgetsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: pageLayoutWidgetsToUpdate,
             },
@@ -365,118 +378,172 @@ export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceComman
     ];
   }
 
-  // Only a layout still exactly as twenty-standard provisioned it is moved to
-  // the grid: a workspace that edited its list page keeps what it built.
+  // The members tab is new, so it is created wherever the list record page
+  // exists. The two members widgets are only aligned with the standard shape
+  // while they are still as twenty-standard provisioned them: a workspace that
+  // edited a widget, or pointed it at another view, keeps what it built.
   private computeRecordPageOperations({
+    workspaceId,
     flatPageLayoutTabMaps,
     flatPageLayoutWidgetMaps,
+    standardFlatPageLayoutTabMaps,
+    standardFlatPageLayoutWidgetMaps,
     membersView,
     standardApplicationId,
   }: {
+    workspaceId: string;
     flatPageLayoutTabMaps: FlatEntityMaps<FlatPageLayoutTab>;
     flatPageLayoutWidgetMaps: FlatEntityMaps<FlatPageLayoutWidget>;
-    membersView: FlatView | undefined;
+    standardFlatPageLayoutTabMaps: FlatEntityMaps<FlatPageLayoutTab>;
+    standardFlatPageLayoutWidgetMaps: FlatEntityMaps<FlatPageLayoutWidget>;
+    membersView: FlatView;
     standardApplicationId: string;
   }): RecordPageOperations {
     const homeTab =
       flatPageLayoutTabMaps.byUniversalIdentifier[HOME_TAB_UNIVERSAL_IDENTIFIER];
-    const fieldsWidget =
-      flatPageLayoutWidgetMaps.byUniversalIdentifier[
-        FIELDS_WIDGET_UNIVERSAL_IDENTIFIER
-      ];
-    const membersWidget =
-      flatPageLayoutWidgetMaps.byUniversalIdentifier[
-        MEMBERS_WIDGET_UNIVERSAL_IDENTIFIER
-      ];
 
-    if (
-      !isDefined(homeTab) ||
-      !isDefined(fieldsWidget) ||
-      !isDefined(membersWidget) ||
-      !isDefined(membersView) ||
-      membersWidget.configuration.configurationType !==
-        WidgetConfigurationType.FIELD ||
-      membersWidget.universalConfiguration.configurationType !==
-        WidgetConfigurationType.FIELD
-    ) {
-      return {
-        pageLayoutTabsToUpdate: [],
-        pageLayoutWidgetsToUpdate: [],
-        skipReason: 'missing',
-      };
+    if (!isDefined(homeTab)) {
+      this.logger.log(
+        `messageList record page does not exist for workspace ${workspaceId}, leaving its layout untouched`,
+      );
+
+      return EMPTY_RECORD_PAGE_OPERATIONS;
     }
 
-    const isMembersWidgetEmbeddingView =
-      membersWidget.configuration.fieldDisplayMode === FieldDisplayMode.TABLE &&
-      isDefined(membersWidget.configuration.viewId);
+    const existingMembersTab =
+      flatPageLayoutTabMaps.byUniversalIdentifier[
+        MEMBERS_TAB_UNIVERSAL_IDENTIFIER
+      ];
 
-    const isMembersWidgetEmbeddingMembersView =
-      isMembersWidgetEmbeddingView &&
-      membersWidget.configuration.viewId === membersView.id;
-
-    if (
-      homeTab.layoutMode === PageLayoutTabLayoutMode.GRID &&
-      isMembersWidgetEmbeddingMembersView
-    ) {
-      return {
-        pageLayoutTabsToUpdate: [],
-        pageLayoutWidgetsToUpdate: [],
-        skipReason: 'already migrated',
-      };
+    if (isDefined(existingMembersTab?.deletedAt)) {
+      this.logger.log(
+        `The members tab was deleted from the list record page in workspace ${workspaceId}, not recreating it`,
+      );
     }
 
-    const isCustomized = [homeTab, fieldsWidget, membersWidget].some(
-      (flatEntity) =>
-        flatEntity.applicationId !== standardApplicationId ||
-        isDefined(flatEntity.overrides) ||
-        !flatEntity.isActive,
+    const isMembersTabAvailable =
+      !isDefined(existingMembersTab) || !isDefined(existingMembersTab.deletedAt);
+
+    const pageLayoutTabsToCreate = isMembersTabAvailable
+      ? getStandardFlatEntitiesToCreateOrThrow<FlatPageLayoutTab>({
+          standardFlatEntityMaps: standardFlatPageLayoutTabMaps,
+          existingFlatEntityMaps: flatPageLayoutTabMaps,
+          universalIdentifiers: [MEMBERS_TAB_UNIVERSAL_IDENTIFIER],
+        })
+      : [];
+
+    const pageLayoutWidgetsToCreate = isMembersTabAvailable
+      ? getStandardFlatEntitiesToCreateOrThrow<FlatPageLayoutWidget>({
+          standardFlatEntityMaps: standardFlatPageLayoutWidgetMaps,
+          existingFlatEntityMaps: flatPageLayoutWidgetMaps,
+          universalIdentifiers: [MEMBERS_TAB_WIDGET_UNIVERSAL_IDENTIFIER],
+        })
+      : [];
+
+    const pageLayoutWidgetsToUpdate = [
+      HOME_MEMBERS_WIDGET_UNIVERSAL_IDENTIFIER,
+      MEMBERS_TAB_WIDGET_UNIVERSAL_IDENTIFIER,
+    ].flatMap((widgetUniversalIdentifier) =>
+      this.computeMembersWidgetUpdate({
+        workspaceId,
+        existingWidget:
+          flatPageLayoutWidgetMaps.byUniversalIdentifier[
+            widgetUniversalIdentifier
+          ],
+        standardWidget:
+          standardFlatPageLayoutWidgetMaps.byUniversalIdentifier[
+            widgetUniversalIdentifier
+          ],
+        membersView,
+        standardApplicationId,
+      }),
     );
 
-    // A layout provisioned from the current standard config by an earlier
-    // upgrade step already sits on the grid, with a table widget that could
-    // not embed the members view since it did not exist yet.
-    const isStandardLayoutMode =
-      homeTab.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST ||
-      homeTab.layoutMode === PageLayoutTabLayoutMode.GRID;
+    return {
+      pageLayoutTabsToCreate,
+      pageLayoutWidgetsToCreate,
+      pageLayoutWidgetsToUpdate,
+    };
+  }
 
-    if (
-      isCustomized ||
-      !isStandardLayoutMode ||
-      homeTab.widgetUniversalIdentifiers.length !== 2 ||
-      isMembersWidgetEmbeddingView
-    ) {
-      return {
-        pageLayoutTabsToUpdate: [],
-        pageLayoutWidgetsToUpdate: [],
-        skipReason: 'customized',
-      };
+  private computeMembersWidgetUpdate({
+    workspaceId,
+    existingWidget,
+    standardWidget,
+    membersView,
+    standardApplicationId,
+  }: {
+    workspaceId: string;
+    existingWidget: FlatPageLayoutWidget | undefined;
+    standardWidget: FlatPageLayoutWidget | undefined;
+    membersView: FlatView;
+    standardApplicationId: string;
+  }): FlatPageLayoutWidget[] {
+    if (!isDefined(existingWidget)) {
+      return [];
     }
 
-    return {
-      pageLayoutTabsToUpdate:
-        homeTab.layoutMode === PageLayoutTabLayoutMode.GRID
-          ? []
-          : [{ ...homeTab, layoutMode: PageLayoutTabLayoutMode.GRID }],
-      pageLayoutWidgetsToUpdate: [
-        {
-          ...fieldsWidget,
-          position: MESSAGE_LIST_GRID_LAYOUT_POSITIONS.LEFT_COLUMN,
+    if (!isDefined(standardWidget)) {
+      throw new Error(
+        `Standard application is missing the list record page widget ${existingWidget.universalIdentifier}`,
+      );
+    }
+
+    if (
+      existingWidget.configuration.configurationType !==
+        WidgetConfigurationType.FIELD ||
+      existingWidget.universalConfiguration.configurationType !==
+        WidgetConfigurationType.FIELD
+    ) {
+      return [];
+    }
+
+    const { configuration, universalConfiguration } = existingWidget;
+
+    const isCustomized =
+      existingWidget.applicationId !== standardApplicationId ||
+      isDefined(existingWidget.overrides) ||
+      !existingWidget.isActive ||
+      (isDefined(configuration.viewId) &&
+        configuration.viewId !== membersView.id);
+
+    if (isCustomized) {
+      this.logger.log(
+        `The list record page widget ${existingWidget.universalIdentifier} was customized in workspace ${workspaceId}, leaving it untouched`,
+      );
+
+      return [];
+    }
+
+    const isAlignedWithStandard =
+      configuration.fieldDisplayMode === FieldDisplayMode.TABLE &&
+      configuration.viewId === membersView.id &&
+      existingWidget.conditionalAvailabilityExpression ===
+        standardWidget.conditionalAvailabilityExpression &&
+      JSON.stringify(existingWidget.conditionalDisplay) ===
+        JSON.stringify(standardWidget.conditionalDisplay);
+
+    if (isAlignedWithStandard) {
+      return [];
+    }
+
+    return [
+      {
+        ...existingWidget,
+        configuration: {
+          ...configuration,
+          fieldDisplayMode: FieldDisplayMode.TABLE,
+          viewId: membersView.id,
         },
-        {
-          ...membersWidget,
-          position: MESSAGE_LIST_GRID_LAYOUT_POSITIONS.RIGHT_COLUMN,
-          configuration: {
-            ...membersWidget.configuration,
-            fieldDisplayMode: FieldDisplayMode.TABLE,
-            viewId: membersView.id,
-          },
-          universalConfiguration: {
-            ...membersWidget.universalConfiguration,
-            fieldDisplayMode: FieldDisplayMode.TABLE,
-            viewId: membersView.universalIdentifier,
-          },
+        universalConfiguration: {
+          ...universalConfiguration,
+          fieldDisplayMode: FieldDisplayMode.TABLE,
+          viewId: MEMBERS_VIEW_UNIVERSAL_IDENTIFIER,
         },
-      ],
-    };
+        conditionalDisplay: standardWidget.conditionalDisplay,
+        conditionalAvailabilityExpression:
+          standardWidget.conditionalAvailabilityExpression,
+      },
+    ];
   }
 }
