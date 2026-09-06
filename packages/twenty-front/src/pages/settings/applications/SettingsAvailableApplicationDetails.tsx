@@ -62,6 +62,7 @@ export const SettingsAvailableApplicationDetails = () => {
   );
   const { requestInstall, install, isInstalling, modalInstanceId } =
     useInstallMarketplaceAppWithPermissionValidation({
+      universalIdentifier: availableApplicationId,
       onCompleted: handleInstallCompleted,
     });
   const { upgrade, isUpgrading } = useUpgradeApplication();
@@ -119,14 +120,6 @@ export const SettingsAvailableApplicationDetails = () => {
     isDefined(latestAvailableVersion) &&
     isDefined(currentVersion) &&
     isNewerSemver(latestAvailableVersion, currentVersion);
-
-  const handleInstall = async () => {
-    if (isDefined(detail)) {
-      await install({
-        universalIdentifier: detail.universalIdentifier,
-      });
-    }
-  };
 
   const handleUpgrade = async () => {
     if (!isDefined(registrationId) || !isDefined(latestAvailableVersion)) {
@@ -329,7 +322,7 @@ export const SettingsAvailableApplicationDetails = () => {
         appDisplayName={displayName}
         appLogoUrl={detail?.logoUrl ?? undefined}
         defaultRole={defaultRole}
-        onAuthorize={handleInstall}
+        onAuthorize={install}
         isInstalling={isInstalling}
       />
     </CurrentApplicationContext.Provider>

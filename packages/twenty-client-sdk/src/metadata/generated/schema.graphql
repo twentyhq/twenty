@@ -3578,6 +3578,7 @@ type Query {
   githubClaimAuthorizationUrl(applicationRegistrationId: String!): String!
   findManyApplications: [Application!]!
   findOneApplication(id: UUID, universalIdentifier: UUID): Application!
+  findInstallApplicationJobStatus(universalIdentifier: String!): JobStatus
   findManyMarketplaceApps(universalIdentifiers: [String!]): [MarketplaceApp!]!
   findMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
   publicMarketplaceApps(isVetted: Boolean! = true): [MarketplaceApp!]!
@@ -4771,8 +4772,6 @@ input UpdateApplicationRegistrationVariablePayload {
 
 input TriggerInstallApplicationJobInput {
   universalIdentifier: String!
-  version: String
-  jobId: String
 }
 
 input UpdateApplicationInput {

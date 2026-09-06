@@ -501,6 +501,18 @@ export class BullMQDriver
     );
   }
 
+  async removeJob(queueName: MessageQueue, jobId: string): Promise<void> {
+    if (!this.queueMap[queueName]) {
+      throw new Error(
+        `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
+      );
+    }
+
+    const job = await this.queueMap[queueName].getJob(jobId);
+
+    await job?.remove();
+  }
+
   private async getJobDetails<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     jobId: string,

@@ -8,7 +8,6 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -16,10 +15,7 @@ import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { TriggerInstallApplicationJobInput } from 'src/engine/core-modules/application/application-install/dtos/trigger-install-application-job.input';
 import { TriggerInstallApplicationJobResultDTO } from 'src/engine/core-modules/application/application-install/dtos/trigger-install-application-job-result.dto';
-import {
-  TriggerInstallApplicationJob,
-  type TriggerInstallApplicationJobData,
-} from 'src/engine/core-modules/application/application-install/jobs/trigger-install-application.job';
+import { ApplicationInstallJobService } from 'src/engine/core-modules/application/application-install/services/application-install-job.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { UninstallApplicationInput } from 'src/engine/core-modules/application/application-manifest/dtos/uninstall-application.input';
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
@@ -32,9 +28,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { JobStatusDTO } from 'src/engine/core-modules/message-queue/dtos/job-status.dto';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -58,8 +52,7 @@ export class ApplicationInstallResolver {
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly marketplaceQueryService: MarketplaceQueryService,
     private readonly metricsService: MetricsService,
-    @InjectMessageQueue(MessageQueue.workspaceQueue)
-    private readonly workspaceQueueService: MessageQueueService,
+    private readonly applicationInstallJobService: ApplicationInstallJobService,
   ) {}
 
   @Query(() => [ApplicationDTO])
@@ -130,38 +123,27 @@ export class ApplicationInstallResolver {
   @Mutation(() => TriggerInstallApplicationJobResultDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   async triggerInstallApplicationJob(
-    @Args('input') input: TriggerInstallApplicationJobInput,
+    @Args('input') { universalIdentifier }: TriggerInstallApplicationJobInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<TriggerInstallApplicationJobResultDTO> {
-    const registration =
-      await this.marketplaceQueryService.findRegistrationByUniversalIdentifier(
-        input.universalIdentifier,
-      );
+    return this.applicationInstallJobService.triggerInstallApplicationJob({
+      universalIdentifier,
+      workspaceId: workspace.id,
+      userWorkspaceId,
+    });
+  }
 
-    const jobId = input.jobId ?? v4();
-
-    await this.workspaceQueueService.bulkAdd<TriggerInstallApplicationJobData>(
-      TriggerInstallApplicationJob.name,
-      [
-        {
-          data: {
-            applicationRegistrationId: registration.id,
-            version: input.version,
-            workspaceId: workspace.id,
-          },
-          jobId,
-        },
-      ],
-      {
-        broadcastTo: {
-          workspaceId: workspace.id,
-          userWorkspaceId,
-        },
-      },
-    );
-
-    return { jobId };
+  @Query(() => JobStatusDTO, { nullable: true })
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  async findInstallApplicationJobStatus(
+    @Args('universalIdentifier') universalIdentifier: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<JobStatusDTO | null> {
+    return this.applicationInstallJobService.findInstallApplicationJobStatus({
+      universalIdentifier,
+      workspaceId: workspace.id,
+    });
   }
 
   private async installRegisteredApplication(params: {

@@ -38,11 +38,13 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
 
   const { copyToClipboard } = useCopyToClipboard();
 
-  const { requestInstall, install, isInstalling, modalInstanceId } =
-    useInstallMarketplaceAppWithPermissionValidation();
-
   const installable =
     isDefined(isInstalled) && isDefined(universalIdentifier) && !isInstalled;
+
+  const { requestInstall, install, isInstalling, modalInstanceId } =
+    useInstallMarketplaceAppWithPermissionValidation({
+      universalIdentifier: installable ? universalIdentifier : undefined,
+    });
 
   const { data: detailData } = useQuery(FindMarketplaceAppDetailDocument, {
     variables: { universalIdentifier: universalIdentifier ?? '' },
@@ -53,12 +55,6 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
   const displayName = detail?.name ?? '';
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
-
-  const handleInstall = async () => {
-    if (installable) {
-      await install({ universalIdentifier });
-    }
-  };
 
   return (
     <StyledButtonGroup>
@@ -76,7 +72,7 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
             appDisplayName={displayName}
             appLogoUrl={detail?.logoUrl ?? undefined}
             defaultRole={defaultRole}
-            onAuthorize={handleInstall}
+            onAuthorize={install}
             isInstalling={isInstalling}
           />
         </>

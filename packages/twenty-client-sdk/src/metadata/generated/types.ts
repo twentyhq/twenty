@@ -7311,6 +7311,15 @@ export default {
                     ]
                 }
             ],
+            "findInstallApplicationJobStatus": [
+                154,
+                {
+                    "universalIdentifier": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "findManyMarketplaceApps": [
                 232,
                 {
@@ -12156,12 +12165,6 @@ export default {
         },
         "TriggerInstallApplicationJobInput": {
             "universalIdentifier": [
-                1
-            ],
-            "version": [
-                1
-            ],
-            "jobId": [
                 1
             ],
             "__typename": [

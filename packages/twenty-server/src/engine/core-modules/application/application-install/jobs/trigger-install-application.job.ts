@@ -5,7 +5,6 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 
 export type TriggerInstallApplicationJobData = {
   applicationRegistrationId: string;
-  version?: string;
   workspaceId: string;
 };
 
@@ -19,7 +18,6 @@ export class TriggerInstallApplicationJob {
   async handle(data: TriggerInstallApplicationJobData): Promise<void> {
     await this.applicationInstallService.installApplication({
       appRegistrationId: data.applicationRegistrationId,
-      version: data.version,
       workspaceId: data.workspaceId,
     });
   }

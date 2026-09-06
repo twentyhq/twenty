@@ -13,7 +13,6 @@ describe('TriggerInstallApplicationJob', () => {
 
   const jobData: TriggerInstallApplicationJobData = {
     applicationRegistrationId: 'application-registration-id',
-    version: '1.0.0',
     workspaceId: 'workspace-id',
   };
 
@@ -26,7 +25,6 @@ describe('TriggerInstallApplicationJob', () => {
 
     expect(applicationInstallService.installApplication).toHaveBeenCalledWith({
       appRegistrationId: jobData.applicationRegistrationId,
-      version: jobData.version,
       workspaceId: jobData.workspaceId,
     });
   });
