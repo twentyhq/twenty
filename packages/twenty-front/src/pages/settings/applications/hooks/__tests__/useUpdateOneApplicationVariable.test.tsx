@@ -26,7 +26,9 @@ const KEY = 'API_KEY';
 const OLD_VALUE = 'old';
 const NEW_VALUE = 'new';
 
-const buildApplication = (variableValue: string): Application => ({
+const buildApplication = (
+  variableValue: string,
+): Omit<Application, 'state'> => ({
   __typename: 'Application',
   id: APP_ID,
   name: 'Test App',

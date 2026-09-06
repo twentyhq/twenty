@@ -532,6 +532,7 @@ type Application {
   logoFileId: UUID
   version: String
   universalIdentifier: String!
+  state: ApplicationState! @deprecated(reason: "Use findInstallApplicationJobStatus")
   packageJsonChecksum: String
   packageJsonFileId: UUID
   yarnLockChecksum: String
@@ -551,6 +552,13 @@ type Application {
   applicationVariables: [ApplicationVariable!]!
   applicationRegistration: ApplicationRegistrationSummary
   logoUrl: String
+}
+
+enum ApplicationState {
+  INSTALLING
+  INSTALLED
+  UPGRADING
+  UNINSTALLING
 }
 
 type TwoFactorAuthenticationMethodSummary {
