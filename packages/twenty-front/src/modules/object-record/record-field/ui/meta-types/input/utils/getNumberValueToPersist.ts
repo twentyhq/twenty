@@ -1,5 +1,6 @@
 import { isNull } from '@sniptt/guards';
-import { type FieldNumberVariant } from 'twenty-shared/types';
+
+import { type FieldNumberVariant } from '@/object-record/record-field/ui/types/FieldMetadata';
 
 import {
   canBeCastAsNumberOrNull,
