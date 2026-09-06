@@ -467,6 +467,30 @@ describe('SyncMessageListRecordPageCommand', () => {
     expect(validateBuildAndRunLegacyWorkspaceMigrationMock).not.toHaveBeenCalled();
   });
 
+  it('leaves a table widget embedding another view untouched but still adds the metadata', async () => {
+    mockWorkspaceCache({
+      homeTab: buildHomeTab({ layoutMode: PageLayoutTabLayoutMode.GRID }),
+      membersWidget: buildMembersWidget({
+        position: MESSAGE_LIST_GRID_LAYOUT_POSITIONS.RIGHT_COLUMN,
+        configuration: {
+          configurationType: WidgetConfigurationType.FIELD,
+          fieldMetadataId: '20202020-0000-0000-0000-000000000030',
+          fieldDisplayMode: FieldDisplayMode.TABLE,
+          viewId: '20202020-0000-0000-0000-000000000099',
+        },
+      }),
+    });
+
+    await runOnWorkspace();
+
+    const payload = getMigrationPayload();
+
+    expect(payload.fieldMetadata.flatEntityToCreate).toHaveLength(1);
+    expect(payload.view.flatEntityToCreate).toHaveLength(1);
+    expect(payload.pageLayoutTab.flatEntityToUpdate).toEqual([]);
+    expect(payload.pageLayoutWidget.flatEntityToUpdate).toEqual([]);
+  });
+
   it('embeds the members view in a grid table widget provisioned before the view existed', async () => {
     mockWorkspaceCache({
       homeTab: buildHomeTab({ layoutMode: PageLayoutTabLayoutMode.GRID }),
