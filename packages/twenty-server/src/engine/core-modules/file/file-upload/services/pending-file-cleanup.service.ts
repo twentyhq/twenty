@@ -79,6 +79,9 @@ export class PendingFileCleanupService {
 
   // Staging copies from upload_file land as UPLOADED temporary files, so the
   // PENDING reaper never sees them. Delete leftovers that were never attached.
+  // Object first: a failed storage delete leaves the row for the next tick.
+  // PENDING cleanup cannot do this — it must claim the row while still
+  // PENDING so a late complete cannot revive it.
   async cleanupStaleMcpUploadFiles(): Promise<number> {
     const staleThreshold = new Date(Date.now() - PENDING_FILE_MAX_AGE_MS);
 
@@ -96,6 +99,10 @@ export class PendingFileCleanupService {
 
     for (const file of staleFiles) {
       try {
+        // Skips the blob and returns if the application is gone; the row
+        // is still deleted below.
+        await this.deleteMcpUploadStorageObject(file);
+
         const { affected } = await this.fileRepository.delete({
           id: file.id,
           path: Like(`${MCP_UPLOAD_FILE_PATH_PREFIX}%`),
@@ -104,8 +111,6 @@ export class PendingFileCleanupService {
         if (!isDefined(affected) || affected === 0) {
           continue;
         }
-
-        await this.deleteMcpUploadStorageObject(file);
 
         deletedCount++;
       } catch (error) {
