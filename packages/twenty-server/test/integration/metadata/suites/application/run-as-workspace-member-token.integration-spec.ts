@@ -29,7 +29,7 @@ const buildRolelessManifest = (): Manifest => ({
   }),
   application: {
     universalIdentifier: ROLELESS_APP_UNIVERSAL_IDENTIFIER,
-    defaultRoleUniversalIdentifier: undefined,
+    defaultRoleUniversalIdentifier: randomUUID(),
     displayName: 'Roleless Test Application',
     description: 'Application that declares no role',
     applicationVariables: {},
@@ -38,6 +38,15 @@ const buildRolelessManifest = (): Manifest => ({
   },
   roles: [],
 });
+
+// The manifest type requires a default role identifier, so the roleless state
+// is produced on the row the endpoint actually reads.
+const clearApplicationDefaultRole = async (applicationId: string) => {
+  await globalThis.testDataSource.query(
+    `UPDATE core."application" SET "defaultRoleId" = NULL WHERE id = $1`,
+    [applicationId],
+  );
+};
 
 const findApplicationId = async (
   universalIdentifier: string,
@@ -117,6 +126,8 @@ describe('POST /app/tokens/run-as-workspace-member', () => {
     });
 
     expect(rolelessApplicationId).toBeTruthy();
+
+    await clearApplicationDefaultRole(rolelessApplicationId);
 
     // An API key carries no user, so the token it generates is application-only.
     const applicationOnly = await generateApplicationToken({
