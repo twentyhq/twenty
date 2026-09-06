@@ -515,7 +515,6 @@ type Application {
   logoFileId: UUID
   version: String
   universalIdentifier: String!
-  state: ApplicationState!
   packageJsonChecksum: String
   packageJsonFileId: UUID
   yarnLockChecksum: String
@@ -535,13 +534,6 @@ type Application {
   applicationVariables: [ApplicationVariable!]!
   applicationRegistration: ApplicationRegistrationSummary
   logoUrl: String
-}
-
-enum ApplicationState {
-  INSTALLING
-  INSTALLED
-  UPGRADING
-  UNINSTALLING
 }
 
 type TwoFactorAuthenticationMethodSummary {
@@ -3848,6 +3840,7 @@ type Mutation {
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
   installApplication(universalIdentifier: String!, version: String): Application!
+  triggerInstallApplicationJob(input: TriggerInstallApplicationJobInput!): TriggerInstallApplicationJobResult!
   updateApplication(id: UUID!, input: UpdateApplicationInput!): Application!
   uninstallApplication(universalIdentifier: String!): Boolean!
   syncMarketplaceCatalog: Boolean!
@@ -5258,4 +5251,14 @@ input LogicFunctionLogsInput {
   name: String
   id: UUID
   universalIdentifier: UUID
+}
+
+input TriggerInstallApplicationJobInput {
+  universalIdentifier: String!
+  version: String
+  jobId: String
+}
+
+type TriggerInstallApplicationJobResult {
+  jobId: String!
 }

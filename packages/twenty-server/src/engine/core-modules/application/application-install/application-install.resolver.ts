@@ -8,11 +8,18 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
+import { TriggerInstallApplicationJobInput } from 'src/engine/core-modules/application/application-install/dtos/trigger-install-application-job.input';
+import { TriggerInstallApplicationJobResultDTO } from 'src/engine/core-modules/application/application-install/dtos/trigger-install-application-job-result.dto';
+import {
+  TriggerInstallApplicationJob,
+  type TriggerInstallApplicationJobData,
+} from 'src/engine/core-modules/application/application-install/jobs/trigger-install-application.job';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { UninstallApplicationInput } from 'src/engine/core-modules/application/application-manifest/dtos/uninstall-application.input';
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
@@ -25,8 +32,12 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
@@ -47,6 +58,8 @@ export class ApplicationInstallResolver {
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly marketplaceQueryService: MarketplaceQueryService,
     private readonly metricsService: MetricsService,
+    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    private readonly workspaceQueueService: MessageQueueService,
   ) {}
 
   @Query(() => [ApplicationDTO])
@@ -112,6 +125,43 @@ export class ApplicationInstallResolver {
       universalIdentifier,
       workspaceId: workspace.id,
     });
+  }
+
+  @Mutation(() => TriggerInstallApplicationJobResultDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  async triggerInstallApplicationJob(
+    @Args('input') input: TriggerInstallApplicationJobInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<TriggerInstallApplicationJobResultDTO> {
+    const registration =
+      await this.marketplaceQueryService.findRegistrationByUniversalIdentifier(
+        input.universalIdentifier,
+      );
+
+    const jobId = input.jobId ?? v4();
+
+    await this.workspaceQueueService.bulkAdd<TriggerInstallApplicationJobData>(
+      TriggerInstallApplicationJob.name,
+      [
+        {
+          data: {
+            applicationRegistrationId: registration.id,
+            version: input.version,
+            workspaceId: workspace.id,
+          },
+          jobId,
+        },
+      ],
+      {
+        broadcastTo: {
+          workspaceId: workspace.id,
+          userWorkspaceId,
+        },
+      },
+    );
+
+    return { jobId };
   }
 
   private async installRegisteredApplication(params: {

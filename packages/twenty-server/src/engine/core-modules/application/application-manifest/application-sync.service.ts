@@ -356,34 +356,12 @@ export class ApplicationSyncService {
       );
     }
 
-    const shouldTransitionState =
-      application.state === ApplicationState.INSTALLED;
-
-    try {
-      if (shouldTransitionState) {
-        await this.applicationService.update(application.id, {
-          state: ApplicationState.UNINSTALLING,
-          workspaceId,
-        });
-      }
-
-      return await this.runUninstall({
-        application,
-        workspaceId,
-        applicationUniversalIdentifier,
-        shouldRunUninstallHook,
-      });
-    } catch (error) {
-      if (shouldTransitionState) {
-        await this.applicationService.revertStateToInstalledBestEffort({
-          applicationId: application.id,
-          universalIdentifier: applicationUniversalIdentifier,
-          workspaceId,
-        });
-      }
-
-      throw error;
-    }
+    return await this.runUninstall({
+      application,
+      workspaceId,
+      applicationUniversalIdentifier,
+      shouldRunUninstallHook,
+    });
   }
 
   private async runUninstall({

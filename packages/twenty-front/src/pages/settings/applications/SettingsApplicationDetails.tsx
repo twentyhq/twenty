@@ -1,6 +1,6 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { AppChip } from '@/applications/components/AppChip';
-import { useRefetchOnApplicationLifecycleSettled } from '@/applications/hooks/useRefetchOnApplicationLifecycleSettled';
+import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
 import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
@@ -72,7 +72,7 @@ export const SettingsApplicationDetails = () => {
     skip: !applicationId,
   });
 
-  useRefetchOnApplicationLifecycleSettled({ applicationId, refetch });
+  useRefetchOnApplicationOperation({ applicationId, refetch });
 
   const application = data?.findOneApplication;
 
@@ -318,7 +318,6 @@ export const SettingsApplicationDetails = () => {
             canBeUninstalled={application.canBeUninstalled}
             onUninstall={handleUninstall}
             isUninstalling={isUninstalling}
-            state={application.state}
           />
         );
       case 'content':
