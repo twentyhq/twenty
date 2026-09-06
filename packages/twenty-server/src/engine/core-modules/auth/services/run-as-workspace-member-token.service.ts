@@ -24,15 +24,18 @@ export class RunAsWorkspaceMemberTokenService {
     applicationId,
     workspaceId,
     workspaceMemberId,
+    isDelegatedToUser,
     requestWorkspaceMemberId,
   }: {
     applicationId: string;
     workspaceId: string;
     workspaceMemberId: string;
+    isDelegatedToUser: boolean;
     requestWorkspaceMemberId: string | null;
   }): Promise<AuthToken> {
     if (
       !canApplicationTokenRunAsWorkspaceMember({
+        isDelegatedToUser,
         requestWorkspaceMemberId,
         workspaceMemberId,
       })
@@ -66,7 +69,10 @@ export class RunAsWorkspaceMemberTokenService {
     if (!isDefined(userWorkspace)) {
       throw new AuthException(
         'Workspace member has no user workspace in this workspace.',
-        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+        AuthExceptionCode.USER_NOT_FOUND,
+        {
+          userFriendlyMessage: msg`Workspace member has no access to this workspace.`,
+        },
       );
     }
 

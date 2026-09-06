@@ -59,6 +59,7 @@ export class AppTokensController {
       applicationId: request.application.id,
       workspaceId: request.workspace.id,
       workspaceMemberId: body.workspaceMemberId,
+      isDelegatedToUser: isDefined(request.userWorkspaceId),
       requestWorkspaceMemberId: request.workspaceMemberId ?? null,
     });
   }

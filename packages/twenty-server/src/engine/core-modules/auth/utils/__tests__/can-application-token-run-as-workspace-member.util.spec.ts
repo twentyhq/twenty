@@ -7,6 +7,7 @@ describe('canApplicationTokenRunAsWorkspaceMember', () => {
   it('should allow an application-only token to act as any member', () => {
     expect(
       canApplicationTokenRunAsWorkspaceMember({
+        isDelegatedToUser: false,
         requestWorkspaceMemberId: null,
         workspaceMemberId: WORKSPACE_MEMBER_ID,
       }),
@@ -16,6 +17,7 @@ describe('canApplicationTokenRunAsWorkspaceMember', () => {
   it('should allow a delegated token to act as the member it was issued for', () => {
     expect(
       canApplicationTokenRunAsWorkspaceMember({
+        isDelegatedToUser: true,
         requestWorkspaceMemberId: WORKSPACE_MEMBER_ID,
         workspaceMemberId: WORKSPACE_MEMBER_ID,
       }),
@@ -25,7 +27,18 @@ describe('canApplicationTokenRunAsWorkspaceMember', () => {
   it('should refuse a delegated token acting as another member', () => {
     expect(
       canApplicationTokenRunAsWorkspaceMember({
+        isDelegatedToUser: true,
         requestWorkspaceMemberId: OTHER_WORKSPACE_MEMBER_ID,
+        workspaceMemberId: WORKSPACE_MEMBER_ID,
+      }),
+    ).toBe(false);
+  });
+
+  it('should refuse a delegated token whose member is unresolved', () => {
+    expect(
+      canApplicationTokenRunAsWorkspaceMember({
+        isDelegatedToUser: true,
+        requestWorkspaceMemberId: null,
         workspaceMemberId: WORKSPACE_MEMBER_ID,
       }),
     ).toBe(false);
