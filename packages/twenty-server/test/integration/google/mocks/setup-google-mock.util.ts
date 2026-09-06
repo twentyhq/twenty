@@ -34,6 +34,7 @@ export type GoogleMock = {
     events: calendar_v3.Schema$Event[],
     options?: { nextSyncToken?: string },
   ) => void;
+  getCalendarEventListRequestCount: () => number;
   rateLimitMessageList: (retryAfterIso: string) => void;
   rateLimitCalendarEventList: () => void;
   failMessageList: (failure: GoogleApiFailure) => void;
@@ -78,11 +79,16 @@ export const setupGoogleMock = ({
   const sentMessages: Array<{ raw: string; threadId?: string }> = [];
   const draftMessages: Array<{ raw: string; threadId?: string }> = [];
   const createdCalendarEvents: calendar_v3.Schema$Event[] = [];
+  let calendarEventListRequestCount = 0;
 
   const httpMock = setupHttpMock(
     ...googleTokenHandlers(),
     ...googleIdentityHandlers(handle, aliases),
-    ...googleCalendarEventsHandlers([], 'mock-calendar-sync-token'),
+    ...googleCalendarEventsHandlers(
+      [],
+      'mock-calendar-sync-token',
+      () => calendarEventListRequestCount++,
+    ),
     ...gmailMailboxHandlers(inbox, labelStore),
     http.post('*/gmail/v1/users/me/messages/send', async ({ request }) => {
       const body = (await request.json()) as { raw: string; threadId?: string };
@@ -154,7 +160,15 @@ export const setupGoogleMock = ({
     serveCalendarEvents: (
       events,
       { nextSyncToken = 'mock-calendar-sync-token' } = {},
-    ) => httpMock.use(...googleCalendarEventsHandlers(events, nextSyncToken)),
+    ) =>
+      httpMock.use(
+        ...googleCalendarEventsHandlers(
+          events,
+          nextSyncToken,
+          () => calendarEventListRequestCount++,
+        ),
+      ),
+    getCalendarEventListRequestCount: () => calendarEventListRequestCount,
     rateLimitMessageList: (retryAfterIso) =>
       httpMock.use(
         http.get('*/gmail/v1/users/me/messages', () =>

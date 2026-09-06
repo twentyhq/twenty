@@ -15,6 +15,7 @@ describe('CalendarEventWebhookSyncService', () => {
         update: jest.fn().mockReturnThis(),
         set: jest.fn().mockReturnThis(),
         where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
         returning: jest.fn().mockReturnThis(),
         execute,
       })),
@@ -40,9 +41,76 @@ describe('CalendarEventWebhookSyncService', () => {
       }),
     ).resolves.toEqual({ shouldRetry: true });
 
-    expect(calendarFetchEventsService.fetchCalendarEvents).not.toHaveBeenCalled();
+    expect(
+      calendarFetchEventsService.fetchCalendarEvents,
+    ).not.toHaveBeenCalled();
     expect(
       calendarEventsImportService.processCalendarEventsImport,
     ).not.toHaveBeenCalled();
+  });
+
+  it('does not retry a webhook sync while the channel is throttled', async () => {
+    const execute = jest.fn().mockResolvedValue({ raw: [] });
+    const calendarChannelRepository = {
+      createQueryBuilder: jest.fn(() => ({
+        update: jest.fn().mockReturnThis(),
+        set: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        returning: jest.fn().mockReturnThis(),
+        execute,
+      })),
+      findOne: jest.fn().mockResolvedValue({
+        syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
+        syncStageStartedAt: new Date(),
+        throttleFailureCount: 1,
+      }),
+    };
+    const service = new CalendarEventWebhookSyncService(
+      {} as CacheStorageService,
+      calendarChannelRepository as unknown as Repository<CalendarChannelEntity>,
+      {} as CalendarFetchEventsService,
+      {} as CalendarEventsImportService,
+    );
+
+    await expect(
+      service.processCalendarEventWebhookSync({
+        calendarChannelId: 'calendar-channel-id',
+        workspaceId: 'workspace-id',
+      }),
+    ).resolves.toEqual({ shouldRetry: false });
+
+    expect(execute).not.toHaveBeenCalled();
+  });
+
+  it('retries a webhook sync while another throttled sync is still active', async () => {
+    const execute = jest.fn().mockResolvedValue({ raw: [] });
+    const calendarChannelRepository = {
+      createQueryBuilder: jest.fn(() => ({
+        update: jest.fn().mockReturnThis(),
+        set: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        returning: jest.fn().mockReturnThis(),
+        execute,
+      })),
+      findOne: jest.fn().mockResolvedValue({
+        syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_ONGOING,
+        syncStageStartedAt: new Date(),
+        throttleFailureCount: 1,
+      }),
+    };
+    const service = new CalendarEventWebhookSyncService(
+      {} as CacheStorageService,
+      calendarChannelRepository as unknown as Repository<CalendarChannelEntity>,
+      {} as CalendarFetchEventsService,
+      {} as CalendarEventsImportService,
+    );
+
+    await expect(
+      service.processCalendarEventWebhookSync({
+        calendarChannelId: 'calendar-channel-id',
+        workspaceId: 'workspace-id',
+      }),
+    ).resolves.toEqual({ shouldRetry: true });
   });
 });

@@ -1,5 +1,7 @@
 import { Scope } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -37,12 +39,13 @@ export class CalendarEventWebhookSyncJob {
 
   @Process(CalendarEventWebhookSyncJob.name)
   async handle(data: CalendarEventWebhookSyncJobData): Promise<void> {
-    const latestWebhookEventId = await this.cacheStorage.get<string>(
+    const [latestWebhookEventId] = await this.cacheStorage.mget<string>([
       getCalendarEventWebhookSyncDebounceCacheKey(data),
-    );
+    ]);
 
     if (
-      latestWebhookEventId !== undefined &&
+      isDefined(data.webhookEventId) &&
+      isDefined(latestWebhookEventId) &&
       latestWebhookEventId !== data.webhookEventId
     ) {
       return;
@@ -66,7 +69,6 @@ export class CalendarEventWebhookSyncJob {
         webhookEventId: data.webhookEventId,
       },
       {
-        id: `${CalendarEventWebhookSyncJob.name}-${data.calendarChannelId}`,
         delay: this.getRetryDelay(data.retryAttempt ?? 0),
         retryLimit: CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_LIMIT,
         backoff: {

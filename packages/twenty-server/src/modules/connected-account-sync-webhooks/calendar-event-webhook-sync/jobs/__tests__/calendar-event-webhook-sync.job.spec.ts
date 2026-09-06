@@ -11,7 +11,9 @@ describe('CalendarEventWebhookSyncJob', () => {
         .mockResolvedValue({ shouldRetry: true }),
     };
     const connectedAccountSyncWebhookQueueService = { add: jest.fn() };
-    const cacheStorage = { get: jest.fn().mockResolvedValue(undefined) };
+    const cacheStorage = {
+      mget: jest.fn().mockResolvedValue(['most-recent-webhook-event-id']),
+    };
     const job = new CalendarEventWebhookSyncJob(
       calendarEventWebhookSyncService as unknown as CalendarEventWebhookSyncService,
       connectedAccountSyncWebhookQueueService as unknown as MessageQueueService,
@@ -32,7 +34,6 @@ describe('CalendarEventWebhookSyncJob', () => {
       },
       expect.objectContaining({
         delay: 5_000,
-        id: `${CalendarEventWebhookSyncJob.name}-calendar-channel-id`,
       }),
     );
   });
@@ -44,7 +45,7 @@ describe('CalendarEventWebhookSyncJob', () => {
         .mockResolvedValue({ shouldRetry: false }),
     };
     const connectedAccountSyncWebhookQueueService = { add: jest.fn() };
-    const cacheStorage = { get: jest.fn().mockResolvedValue(undefined) };
+    const cacheStorage = { mget: jest.fn().mockResolvedValue([undefined]) };
     const job = new CalendarEventWebhookSyncJob(
       calendarEventWebhookSyncService as unknown as CalendarEventWebhookSyncService,
       connectedAccountSyncWebhookQueueService as unknown as MessageQueueService,
@@ -59,13 +60,69 @@ describe('CalendarEventWebhookSyncJob', () => {
     expect(connectedAccountSyncWebhookQueueService.add).not.toHaveBeenCalled();
   });
 
+  it('processes the most recent webhook notification', async () => {
+    const calendarEventWebhookSyncService = {
+      processCalendarEventWebhookSync: jest
+        .fn()
+        .mockResolvedValue({ shouldRetry: false }),
+    };
+    const connectedAccountSyncWebhookQueueService = { add: jest.fn() };
+    const cacheStorage = {
+      mget: jest.fn().mockResolvedValue(['most-recent-webhook-event-id']),
+    };
+    const job = new CalendarEventWebhookSyncJob(
+      calendarEventWebhookSyncService as unknown as CalendarEventWebhookSyncService,
+      connectedAccountSyncWebhookQueueService as unknown as MessageQueueService,
+      cacheStorage as unknown as CacheStorageService,
+    );
+
+    await job.handle({
+      calendarChannelId: 'calendar-channel-id',
+      workspaceId: 'workspace-id',
+      webhookEventId: 'most-recent-webhook-event-id',
+    });
+
+    expect(
+      calendarEventWebhookSyncService.processCalendarEventWebhookSync,
+    ).toHaveBeenCalledWith({
+      calendarChannelId: 'calendar-channel-id',
+      workspaceId: 'workspace-id',
+      webhookEventId: 'most-recent-webhook-event-id',
+    });
+  });
+
+  it('processes a notification when no debounce token is available', async () => {
+    const calendarEventWebhookSyncService = {
+      processCalendarEventWebhookSync: jest
+        .fn()
+        .mockResolvedValue({ shouldRetry: false }),
+    };
+    const connectedAccountSyncWebhookQueueService = { add: jest.fn() };
+    const cacheStorage = { mget: jest.fn().mockResolvedValue([undefined]) };
+    const job = new CalendarEventWebhookSyncJob(
+      calendarEventWebhookSyncService as unknown as CalendarEventWebhookSyncService,
+      connectedAccountSyncWebhookQueueService as unknown as MessageQueueService,
+      cacheStorage as unknown as CacheStorageService,
+    );
+
+    await job.handle({
+      calendarChannelId: 'calendar-channel-id',
+      workspaceId: 'workspace-id',
+      webhookEventId: 'webhook-event-id',
+    });
+
+    expect(
+      calendarEventWebhookSyncService.processCalendarEventWebhookSync,
+    ).toHaveBeenCalled();
+  });
+
   it('does not process an outdated webhook notification', async () => {
     const calendarEventWebhookSyncService = {
       processCalendarEventWebhookSync: jest.fn(),
     };
     const connectedAccountSyncWebhookQueueService = { add: jest.fn() };
     const cacheStorage = {
-      get: jest.fn().mockResolvedValue('most-recent-webhook-event-id'),
+      mget: jest.fn().mockResolvedValue(['most-recent-webhook-event-id']),
     };
     const job = new CalendarEventWebhookSyncJob(
       calendarEventWebhookSyncService as unknown as CalendarEventWebhookSyncService,

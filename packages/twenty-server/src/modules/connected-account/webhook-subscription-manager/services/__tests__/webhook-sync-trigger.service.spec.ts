@@ -35,8 +35,54 @@ describe('WebhookSyncTriggerService', () => {
         webhookEventId,
         workspaceId: 'workspace-id',
       },
-      expect.objectContaining({ delay: CALENDAR_EVENT_WEBHOOK_SYNC_DEBOUNCE_MS }),
+      expect.objectContaining({
+        delay: CALENDAR_EVENT_WEBHOOK_SYNC_DEBOUNCE_MS,
+      }),
     );
+    expect(
+      connectedAccountSyncWebhookQueueService.add.mock.invocationCallOrder[0],
+    ).toBeLessThan(cacheStorage.set.mock.invocationCallOrder[0]);
     expect(cacheTtl).toBe(CALENDAR_EVENT_WEBHOOK_SYNC_DEBOUNCE_CACHE_TTL_MS);
+  });
+
+  it('does not replace the latest token when queueing fails', async () => {
+    const connectedAccountSyncWebhookQueueService = {
+      add: jest.fn().mockRejectedValue(new Error('Queue unavailable')),
+    };
+    const cacheStorage = { set: jest.fn() };
+    const service = new WebhookSyncTriggerService(
+      {} as MessageQueueService,
+      connectedAccountSyncWebhookQueueService as unknown as MessageQueueService,
+      cacheStorage as unknown as CacheStorageService,
+      {} as Repository<MessageChannelEntity>,
+    );
+
+    await expect(
+      service.triggerCalendarSync('calendar-channel-id', 'workspace-id'),
+    ).rejects.toThrow('Queue unavailable');
+
+    expect(cacheStorage.set).not.toHaveBeenCalled();
+  });
+
+  it('clears a stale token when storing the new token fails', async () => {
+    const connectedAccountSyncWebhookQueueService = { add: jest.fn() };
+    const cacheStorage = {
+      set: jest.fn().mockRejectedValue(new Error('Cache unavailable')),
+      del: jest.fn().mockResolvedValue(undefined),
+    };
+    const service = new WebhookSyncTriggerService(
+      {} as MessageQueueService,
+      connectedAccountSyncWebhookQueueService as unknown as MessageQueueService,
+      cacheStorage as unknown as CacheStorageService,
+      {} as Repository<MessageChannelEntity>,
+    );
+
+    await expect(
+      service.triggerCalendarSync('calendar-channel-id', 'workspace-id'),
+    ).rejects.toThrow('Cache unavailable');
+
+    expect(cacheStorage.del).toHaveBeenCalledWith(
+      'calendar-event-webhook-sync-debounce:workspace-id:calendar-channel-id',
+    );
   });
 });

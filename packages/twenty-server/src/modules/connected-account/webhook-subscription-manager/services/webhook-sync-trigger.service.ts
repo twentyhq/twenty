@@ -90,15 +90,10 @@ export class WebhookSyncTriggerService {
     workspaceId: string,
   ): Promise<void> {
     const webhookEventId = v4();
-
-    await this.cacheStorage.set(
-      getCalendarEventWebhookSyncDebounceCacheKey({
-        calendarChannelId,
-        workspaceId,
-      }),
-      webhookEventId,
-      CALENDAR_EVENT_WEBHOOK_SYNC_DEBOUNCE_CACHE_TTL_MS,
-    );
+    const debounceCacheKey = getCalendarEventWebhookSyncDebounceCacheKey({
+      calendarChannelId,
+      workspaceId,
+    });
 
     await this.connectedAccountSyncWebhookQueueService.add<CalendarEventWebhookSyncJobData>(
       CalendarEventWebhookSyncJob.name,
@@ -113,5 +108,18 @@ export class WebhookSyncTriggerService {
         },
       },
     );
+
+    try {
+      await this.cacheStorage.set(
+        debounceCacheKey,
+        webhookEventId,
+        CALENDAR_EVENT_WEBHOOK_SYNC_DEBOUNCE_CACHE_TTL_MS,
+      );
+    } catch (error) {
+      // Let the delayed job fetch instead of discarding itself against a stale token.
+      await this.cacheStorage.del(debounceCacheKey).catch(() => undefined);
+
+      throw error;
+    }
   }
 }

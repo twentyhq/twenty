@@ -12,6 +12,8 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
 import { CalendarFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-fetch-events.service';
 import { CALENDAR_EVENT_WEBHOOK_SYNC_INLINE_IMPORT_MAX_EVENTS } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-inline-import-max-events.constant';
+import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
+import { toIsoStringOrNull } from 'src/utils/date/toIsoStringOrNull';
 
 export type CalendarEventWebhookSyncResult = {
   shouldRetry: boolean;
@@ -37,6 +39,24 @@ export class CalendarEventWebhookSyncService {
     calendarChannelId: string;
     workspaceId: string;
   }): Promise<CalendarEventWebhookSyncResult> {
+    const calendarChannelBeforeScheduling =
+      await this.findSyncEnabledCalendarChannel({
+        calendarChannelId,
+        workspaceId,
+      });
+
+    if (
+      isDefined(calendarChannelBeforeScheduling) &&
+      calendarChannelBeforeScheduling.syncStage ===
+        CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING &&
+      isThrottled(
+        toIsoStringOrNull(calendarChannelBeforeScheduling.syncStageStartedAt),
+        calendarChannelBeforeScheduling.throttleFailureCount,
+      )
+    ) {
+      return { shouldRetry: false };
+    }
+
     const isCalendarChannelScheduled =
       await this.markCalendarChannelAsListFetchScheduledIfPending({
         calendarChannelId,
@@ -54,11 +74,7 @@ export class CalendarEventWebhookSyncService {
       );
 
       return {
-        shouldRetry:
-          isDefined(calendarChannel) &&
-          calendarChannel.syncStage !==
-            CalendarChannelSyncStage.PENDING_CONFIGURATION &&
-          calendarChannel.syncStage !== CalendarChannelSyncStage.FAILED,
+        shouldRetry: this.shouldRetryWebhookSync(calendarChannel),
       };
     }
 
@@ -106,6 +122,27 @@ export class CalendarEventWebhookSyncService {
       .execute();
 
     return updateResult.raw.length > 0;
+  }
+
+  private shouldRetryWebhookSync(
+    calendarChannel: CalendarChannelEntity | null,
+  ): boolean {
+    if (!isDefined(calendarChannel)) {
+      return false;
+    }
+
+    switch (calendarChannel.syncStage) {
+      case CalendarChannelSyncStage.PENDING_CONFIGURATION:
+      case CalendarChannelSyncStage.FAILED:
+        return false;
+      case CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING:
+        return !isThrottled(
+          toIsoStringOrNull(calendarChannel.syncStageStartedAt),
+          calendarChannel.throttleFailureCount,
+        );
+      default:
+        return true;
+    }
   }
 
   private async findSyncEnabledCalendarChannel({
