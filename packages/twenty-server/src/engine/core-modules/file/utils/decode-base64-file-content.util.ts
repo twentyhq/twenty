@@ -12,6 +12,16 @@ import {
 const DATA_URL_BASE64_PREFIX = /^data:[^;]*;base64,/i;
 const BASE64_PAYLOAD = /^[A-Za-z0-9+/]*={0,2}$/;
 
+const getDecodedBase64ByteLength = (payload: string): number => {
+  const paddingLength = payload.endsWith('==')
+    ? 2
+    : payload.endsWith('=')
+      ? 1
+      : 0;
+
+  return Math.floor((payload.length * 3) / 4) - paddingLength;
+};
+
 const getMaxInMemoryFileSizeBytes = (): number => {
   const maxFileSizeBytes = bytes(settings.storage.maxFileSize);
 
@@ -46,7 +56,7 @@ export const decodeBase64FileContentOrThrow = (
     );
   }
 
-  const estimatedDecodedSize = Math.floor((strippedContent.length * 3) / 4);
+  const estimatedDecodedSize = getDecodedBase64ByteLength(strippedContent);
 
   if (estimatedDecodedSize > maxFileSizeBytes) {
     throw new FileUploadException(

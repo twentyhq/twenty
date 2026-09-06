@@ -25,8 +25,11 @@ export class PendingFileCleanupCronJob {
   )
   async handle(): Promise<void> {
     try {
-      const deletedCount =
+      const pendingDeletedCount =
         await this.pendingFileCleanupService.cleanupStalePendingFiles();
+      const mcpUploadDeletedCount =
+        await this.pendingFileCleanupService.cleanupStaleMcpUploadFiles();
+      const deletedCount = pendingDeletedCount + mcpUploadDeletedCount;
 
       if (deletedCount > 0) {
         this.logger.log(

@@ -11,6 +11,7 @@ import { settings } from 'src/engine/constants/settings';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageException } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { MCP_UPLOAD_FOLDER } from 'src/engine/core-modules/file/constants/mcp-upload-folder.constant';
 import { FileUploadException } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
 import { checkFilename } from 'src/engine/core-modules/file/utils/check-file-name.utils';
@@ -20,8 +21,6 @@ import { UploadFileToolInputZodSchema } from 'src/engine/core-modules/tool/tools
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
-
-const MCP_UPLOAD_RESOURCE_FOLDER = 'mcp-upload';
 
 @Injectable()
 export class UploadFileTool implements Tool {
@@ -51,8 +50,10 @@ export class UploadFileTool implements Tool {
         );
 
       const fileId = v4();
-      const { ext } = buildFileInfo(sanitizedFilename);
-      const name = `${fileId}${isNonEmptyString(ext) ? `.${ext}` : ''}`;
+      const { ext: extension } = buildFileInfo(sanitizedFilename);
+      const name = isNonEmptyString(extension)
+        ? `${fileId}.${extension}`
+        : fileId;
 
       const savedFile = await this.fileStorageService.writeFile({
         sourceFile: fileBuffer,
@@ -60,7 +61,7 @@ export class UploadFileTool implements Tool {
         applicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
         workspaceId: context.workspaceId,
-        resourcePath: `${MCP_UPLOAD_RESOURCE_FOLDER}/${name}`,
+        resourcePath: `${MCP_UPLOAD_FOLDER}/${name}`,
         fileId,
         settings: {
           isTemporaryFile: true,

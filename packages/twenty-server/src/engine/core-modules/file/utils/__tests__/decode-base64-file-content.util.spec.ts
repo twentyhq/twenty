@@ -28,6 +28,12 @@ describe('decodeBase64FileContentOrThrow', () => {
     );
   });
 
+  it('should accept a padded payload whose decoded size equals the max', () => {
+    expect(
+      decodeBase64FileContentOrThrow(Buffer.from('a').toString('base64'), 1),
+    ).toEqual(Buffer.from('a'));
+  });
+
   it('should reject content larger than the max decoded size', () => {
     expect(() =>
       decodeBase64FileContentOrThrow(

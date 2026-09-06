@@ -14,7 +14,10 @@ export class McpInstructionBuilderService {
     private readonly skillService: SkillService,
   ) {}
 
-  async buildInstructions(workspaceId: string): Promise<string> {
+  async buildInstructions(
+    workspaceId: string,
+    canUploadFile: boolean,
+  ): Promise<string> {
     const [{ flatObjectMetadataMaps }, allSkills] = await Promise.all([
       this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps({
         workspaceId,
@@ -35,6 +38,6 @@ export class McpInstructionBuilderService {
         ? allSkills.map((skill) => skill.name).join(', ')
         : undefined;
 
-    return buildMcpServerInstructions(objectNames, skillNames);
+    return buildMcpServerInstructions(objectNames, skillNames, canUploadFile);
   }
 }
