@@ -318,8 +318,6 @@ export type Application = {
   packageJsonChecksum?: Maybe<Scalars['String']['output']>;
   packageJsonFileId?: Maybe<Scalars['UUID']['output']>;
   settingsCustomTabFrontComponentId?: Maybe<Scalars['UUID']['output']>;
-  /** @deprecated Use findInstallApplicationJobStatus */
-  state: ApplicationState;
   universalIdentifier: Scalars['String']['output'];
   version?: Maybe<Scalars['String']['output']>;
   yarnLockChecksum?: Maybe<Scalars['String']['output']>;
@@ -483,13 +481,6 @@ export type ApplicationRegistrationVariable = {
   updatedAt: Scalars['DateTime']['output'];
   value?: Maybe<Scalars['String']['output']>;
 };
-
-export enum ApplicationState {
-  INSTALLED = 'INSTALLED',
-  INSTALLING = 'INSTALLING',
-  UNINSTALLING = 'UNINSTALLING',
-  UPGRADING = 'UPGRADING'
-}
 
 export type ApplicationTokenPair = {
   __typename?: 'ApplicationTokenPair';

@@ -23,7 +23,7 @@ import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 type InstalledApplicationForContentTab = Omit<
   Application,
-  'objects' | 'frontComponents' | 'commandMenuItems' | 'state'
+  'objects' | 'frontComponents' | 'commandMenuItems'
 > & {
   objects: { id: string }[];
   frontComponents?: {
