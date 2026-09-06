@@ -9,15 +9,15 @@ import { Avatar } from 'twenty-ui/data-display';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-type RecordTableWidgetNestedRelationPickerMenuItemProps = {
+type RecordTableWidgetRelationPickerMenuItemProps = {
   relationRecord: SelectableItem;
   onSelect: (relationRecordId: string) => void;
 };
 
-export const RecordTableWidgetNestedRelationPickerMenuItem = ({
+export const RecordTableWidgetRelationPickerMenuItem = ({
   relationRecord,
   onSelect,
-}: RecordTableWidgetNestedRelationPickerMenuItemProps) => {
+}: RecordTableWidgetRelationPickerMenuItemProps) => {
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
   );
