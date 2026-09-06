@@ -31,6 +31,7 @@ import { NavigateAppTool } from 'src/engine/core-modules/tool/tools/navigate-too
 import { ExtractJsonPathsTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/extract-json-paths-tool';
 import { SearchOutputTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/search-output-tool';
 import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
+import { UploadFileTool } from 'src/engine/core-modules/tool/tools/upload-file-tool/upload-file-tool';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -49,6 +50,7 @@ export class ActionToolProvider implements ToolProvider {
     private readonly findConnectedAccountsTool: FindConnectedAccountsTool,
     private readonly createCalendarEventTool: CreateCalendarEventTool,
     private readonly searchHelpCenterTool: SearchHelpCenterTool,
+    private readonly uploadFileTool: UploadFileTool,
     private readonly codeInterpreterTool: CodeInterpreterTool,
     private readonly navigateAppTool: NavigateAppTool,
     private readonly extractJsonPathsTool: ExtractJsonPathsTool,
@@ -65,6 +67,7 @@ export class ActionToolProvider implements ToolProvider {
       ['find_connected_accounts', this.findConnectedAccountsTool],
       ['create_calendar_event', this.createCalendarEventTool],
       ['search_help_center', this.searchHelpCenterTool],
+      ['upload_file', this.uploadFileTool],
       ['code_interpreter', this.codeInterpreterTool],
       ['navigate_app', this.navigateAppTool],
       ['extract_json_paths', this.extractJsonPathsTool],
@@ -146,6 +149,24 @@ export class ActionToolProvider implements ToolProvider {
         this.buildDescriptor(
           'create_calendar_event',
           this.createCalendarEventTool,
+          includeSchemas,
+          context.locale,
+        ),
+      );
+    }
+
+    const hasUploadFilePermission =
+      await this.permissionsService.hasToolPermission(
+        context.rolePermissionConfig,
+        context.workspaceId,
+        PermissionFlagType.UPLOAD_FILE,
+      );
+
+    if (hasUploadFilePermission) {
+      descriptors.push(
+        this.buildDescriptor(
+          'upload_file',
+          this.uploadFileTool,
           includeSchemas,
           context.locale,
         ),

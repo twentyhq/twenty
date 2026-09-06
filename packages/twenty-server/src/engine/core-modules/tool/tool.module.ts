@@ -18,6 +18,7 @@ import { NavigateAppTool } from 'src/engine/core-modules/tool/tools/navigate-too
 import { ExtractJsonPathsTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/extract-json-paths-tool';
 import { SearchOutputTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/search-output-tool';
 import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
+import { UploadFileTool } from 'src/engine/core-modules/tool/tools/upload-file-tool/upload-file-tool';
 import { ToolOutputSpillService } from 'src/engine/core-modules/tool/services/tool-output-spill.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
@@ -54,6 +55,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     CreateCalendarEventTool,
     EmailComposerService,
     SearchHelpCenterTool,
+    UploadFileTool,
     CodeInterpreterTool,
     NavigateAppTool,
     ExtractJsonPathsTool,
@@ -69,6 +71,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     CreateCalendarEventTool,
     EmailComposerService,
     SearchHelpCenterTool,
+    UploadFileTool,
     CodeInterpreterTool,
     NavigateAppTool,
     ExtractJsonPathsTool,
