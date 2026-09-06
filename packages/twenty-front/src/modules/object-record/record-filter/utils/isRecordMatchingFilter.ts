@@ -116,6 +116,26 @@ const isNestedRelationFilter = (
   isObject(filterValue) &&
   Object.keys(filterValue).some((key) => !UUID_FILTER_OPERATOR_KEYS.has(key));
 
+// A record fetched through a relation often carries the related record
+// without its join column, like { list: { id } } and no listId.
+const getJoinColumnValue = ({
+  record,
+  joinColumnName,
+}: {
+  record: Record<string, any>;
+  joinColumnName: string;
+}) => {
+  if (record[joinColumnName] !== undefined) {
+    return record[joinColumnName];
+  }
+
+  const relationRecord = record[joinColumnName.slice(0, -'Id'.length)];
+
+  return isObject(relationRecord)
+    ? (relationRecord.id ?? null)
+    : relationRecord;
+};
+
 const isRecordMatchingNestedRelationFilter = ({
   relationRecord,
   nestedFilter,
@@ -547,7 +567,7 @@ export const isRecordMatchingFilter = ({
         if (isJoinColumn) {
           return isMatchingUUIDFilter({
             uuidFilter: filterValue as UUIDFilter,
-            value: record[filterKey],
+            value: getJoinColumnValue({ record, joinColumnName: filterKey }),
           });
         }
 
