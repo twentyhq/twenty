@@ -1778,9 +1778,16 @@ msgstr "Can't impersonate user via api key"
 
 #. js-lingui-id: PpmWQv
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Cancel"
 msgstr "Cancel"
+
+#. js-lingui-id: CYhiCW
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Cancel Campaign"
+msgstr "Cancel Campaign"
 
 #. js-lingui-id: 7g3N+g
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3295,15 +3302,29 @@ msgstr "Due Date"
 #. js-lingui-id: pcd2n0
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Duplicate"
 msgstr "Duplicate"
+
+#. js-lingui-id: uv/ryv
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Duplicate Campaign"
+msgstr "Duplicate Campaign"
 
 #. js-lingui-id: zC/oFa
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Duplicate Dashboard"
 msgstr "Duplicate Dashboard"
+
+#. js-lingui-id: Sr1mqj
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Duplicate List"
+msgstr "Duplicate List"
 
 #. js-lingui-id: UrzTjS
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -3797,6 +3818,11 @@ msgstr "Failed to delete record."
 #: src/modules/dashboard/exceptions/dashboard.exception.ts
 msgid "Failed to duplicate dashboard."
 msgstr "Failed to duplicate dashboard."
+
+#. js-lingui-id: UiaZiQ
+#: src/modules/emailing/exceptions/message-list.exception.ts
+msgid "Failed to duplicate list."
+msgstr "Failed to duplicate list."
 
 #. js-lingui-id: srkEOV
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -6111,6 +6137,11 @@ msgstr "List Members"
 msgctxt "view.name"
 msgid "List Members Table"
 msgstr "List Members Table"
+
+#. js-lingui-id: 92F/Is
+#: src/modules/emailing/exceptions/message-list.exception.ts
+msgid "List not found."
+msgstr "List not found."
 
 #. js-lingui-id: GRxWmN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
