@@ -145,6 +145,25 @@ describe('applyPullWrites', () => {
     ).rejects.toThrow('same file path');
   });
 
+  it('should refuse a plan that leaves the application directory', async () => {
+    await expect(
+      applyPullWrites({
+        appPath,
+        writes: [buildWrite('../escape.ts', 'export default 1;')],
+        deletions: [],
+      }),
+    ).rejects.toThrow('leaves the application directory');
+    await expect(
+      applyPullWrites({
+        appPath,
+        writes: [],
+        deletions: [
+          { universalIdentifier: 'x', relativePath: 'src/../../escape.ts' },
+        ],
+      }),
+    ).rejects.toThrow('leaves the application directory');
+  });
+
   it('should refuse to delete a folder standing where a planned file goes', async () => {
     await mkdir(join(appPath, 'src/pet.object.ts'), { recursive: true });
 

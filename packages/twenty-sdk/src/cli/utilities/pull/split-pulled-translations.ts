@@ -4,13 +4,15 @@ import {
   buildLocaleCatalog,
   type LocaleCatalogEntry,
 } from '@/cli/utilities/translations/locale-catalog-format';
+import { isSupportedLocale } from '@/cli/utilities/translations/is-supported-locale';
 import { type MessageDescriptor } from '@/sdk/front-component/translations/message';
 import { type Manifest } from 'twenty-shared/application';
 import { generateMessageId } from 'twenty-shared/i18n';
+import { type AppLocale } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 export type PulledLocaleCatalog = {
-  locale: string;
+  locale: AppLocale;
   authored: Record<string, string | Record<string, string>>;
   compiled: Record<string, string>;
 };
@@ -37,12 +39,16 @@ export const splitPulledTranslations = async ({
   );
 
   return Object.entries(manifest.translations ?? {})
+    .filter(
+      (entry): entry is [AppLocale, Record<string, string>] =>
+        isSupportedLocale(entry[0]) && isDefined(entry[1]),
+    )
     .sort(([left], [right]) => left.localeCompare(right))
     .map(([locale, messages]) => {
       const entries: LocaleCatalogEntry[] = [];
       const compiled: Record<string, string> = {};
 
-      for (const [messageId, translation] of Object.entries(messages ?? {})) {
+      for (const [messageId, translation] of Object.entries(messages)) {
         const descriptor = descriptorByMessageId.get(messageId);
 
         if (isDefined(descriptor)) {

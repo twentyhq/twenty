@@ -7,15 +7,9 @@ import {
   COMPILED_LOCALES_DIR,
   LOCALES_DIR,
 } from '@/cli/utilities/translations/constants';
+import { isSupportedLocale } from '@/cli/utilities/translations/is-supported-locale';
 import { type TranslationsManifest } from 'twenty-shared/application';
-import {
-  APP_LOCALES,
-  SOURCE_LOCALE,
-  type AppLocale,
-} from 'twenty-shared/translations';
-
-const isSupportedLocale = (locale: string): locale is AppLocale =>
-  Object.prototype.hasOwnProperty.call(APP_LOCALES, locale);
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 const readCompiledCatalogs = async (
   appPath: string,

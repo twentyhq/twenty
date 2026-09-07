@@ -3,7 +3,7 @@ import {
   type TranslationWritePlan,
 } from '@/cli/utilities/pull/plan-translation-writes';
 import { compileApplicationTranslations } from '@/cli/utilities/translations/compile-application-translations';
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { type Manifest } from 'twenty-shared/application';
@@ -173,6 +173,69 @@ describe('planTranslationWrites', () => {
       deletions: ['locales/compiled/fr-FR.json'],
     });
     expect(plan.compiledEntryCountByLocale).toEqual({});
+  });
+
+  it('should promote entries whose source landed since the last pull without touching other local edits', async () => {
+    const appPath = await createAppPath();
+    const noContentId = generateMessageId('No content yet');
+    const catalog = buildManifest({
+      'fr-FR': {
+        [PET_LABEL_ID]: 'Animal',
+        [noContentId]: 'Rien pour le moment',
+      },
+    });
+
+    const firstPlan = await planTranslationWrites({
+      appPath,
+      manifest: catalog,
+      baseManifest: null,
+      frontComponentSourcePaths: [],
+    });
+
+    await materialize(appPath, firstPlan);
+    await writeFile(
+      join(appPath, 'locales/fr-FR.json'),
+      JSON.stringify({ 'objectMetadata.labelSingular': { Pet: 'Bête' } }),
+    );
+
+    const componentPath = join(appPath, 'card.front-component.tsx');
+
+    await writeFile(
+      componentPath,
+      `
+      import { t } from 'twenty-sdk/front-component';
+
+      const Component = () => t('No content yet');
+
+      export default defineFrontComponent({ component: Component });
+      `,
+    );
+
+    const plan = await planTranslationWrites({
+      appPath,
+      manifest: catalog,
+      baseManifest: catalog,
+      frontComponentSourcePaths: [componentPath],
+    });
+
+    expect(describePlan(plan)).toEqual({
+      writes: ['regenerate locales/fr-FR.json'],
+      deletions: ['locales/compiled/fr-FR.json'],
+    });
+    expect(JSON.parse(plan.writes[0].content)).toEqual({
+      'No content yet': 'Rien pour le moment',
+      'objectMetadata.labelSingular': { Pet: 'Bête' },
+    });
+    expect(plan.compiledEntryCountByLocale).toEqual({});
+
+    await materialize(appPath, plan);
+
+    expect(
+      JSON.parse(await readFile(join(appPath, 'locales/fr-FR.json'), 'utf8')),
+    ).toEqual({
+      'No content yet': 'Rien pour le moment',
+      'objectMetadata.labelSingular': { Pet: 'Bête' },
+    });
   });
 
   it('should only write the compiled file for a locale with no decodable entry', async () => {

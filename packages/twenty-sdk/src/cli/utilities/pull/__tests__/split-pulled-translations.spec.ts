@@ -137,6 +137,21 @@ describe('splitPulledTranslations', () => {
     ]);
   });
 
+  it('should ignore locales the platform does not support, including path-shaped keys', async () => {
+    const catalogs = await splitPulledTranslations({
+      manifest: buildManifest({
+        translations: {
+          'fr-FR': { [PET_LABEL_ID]: 'Animal' },
+          klingon: { [PET_LABEL_ID]: 'targh' },
+          '../../escape': { [PET_LABEL_ID]: 'nope' },
+        },
+      }),
+      frontComponentSourcePaths: [],
+    });
+
+    expect(catalogs.map(({ locale }) => locale)).toEqual(['fr-FR']);
+  });
+
   it('should order locales and return nothing for an export without translations', async () => {
     const catalogs = await splitPulledTranslations({
       manifest: buildManifest({
