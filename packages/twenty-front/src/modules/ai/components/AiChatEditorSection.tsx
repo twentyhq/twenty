@@ -5,9 +5,11 @@ import { EditorContent } from '@tiptap/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Callout } from 'twenty-ui/feedback';
+import { IconAlertTriangle } from 'twenty-ui/icon';
 
-import { AiChatBanner } from '@/ai/components/AiChatBanner';
 import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
 import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
 import { AIChatNoMoreBillingCreditsBanner } from '@/ai/components/AIChatNoMoreBillingCreditsBanner';
@@ -30,11 +32,15 @@ import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCre
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
 import { agentChatPendingQuestionComponentSelector } from '@/ai/states/selectors/agentChatPendingQuestionComponentSelector';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { Select } from '@/ui/input/components/Select';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type SelectOption } from 'twenty-ui/input';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { SETTINGS_AI_TABS } from '~/pages/settings/ai/constants/SettingsAiTabs';
 
 const StyledInputArea = styled.div<{ isMobile: boolean }>`
   align-items: flex-end;
@@ -65,6 +71,10 @@ const StyledInputBox = styled.div<{ isMobile: boolean }>`
     border-color: ${themeCssVariables.color.blue};
     box-shadow: 0px 0px 0px 3px ${themeCssVariables.color.transparent.blue2};
   }
+`;
+
+const StyledCalloutContainer = styled.div`
+  width: 100%;
 `;
 
 const StyledEditorWrapper = styled.div<{ isMobile: boolean }>`
@@ -146,6 +156,10 @@ const StyledRightButtonsContainer = styled.div`
 
 export const AiChatEditorSection = () => {
   const { t } = useLingui();
+  const navigateSettings = useNavigateSettings();
+  const hasAiSettingsPermission = useHasPermissionFlag(
+    PermissionFlagType.AI_SETTINGS,
+  );
   const isMobile = useIsMobile();
   const isComposerCentered = useIsAiChatComposerCentered();
   const hasReachedAiChatCreditsCap = useHasReachedAiChatCreditsCap();
@@ -191,10 +205,33 @@ export const AiChatEditorSection = () => {
       <StyledInputArea isMobile={isMobile}>
         <AgentChatContextPreview />
         {hasNoEnabledModels && (
-          <AiChatBanner
-            message={t`No AI models are enabled in this workspace.`}
-            variant="warning"
-          />
+          <StyledCalloutContainer>
+            <Callout
+              variant="warning"
+              Icon={IconAlertTriangle}
+              title={t`AI isn't enabled`}
+              description={
+                hasAiSettingsPermission
+                  ? t`Enable an AI model in workspace settings to start chatting.`
+                  : t`Ask your workspace admin to enable an AI model.`
+              }
+              action={
+                hasAiSettingsPermission
+                  ? {
+                      label: t`Configure models`,
+                      onClick: () =>
+                        navigateSettings(
+                          SettingsPath.AI,
+                          undefined,
+                          undefined,
+                          undefined,
+                          SETTINGS_AI_TABS.TABS_IDS.MODELS,
+                        ),
+                    }
+                  : undefined
+              }
+            />
+          </StyledCalloutContainer>
         )}
         {hasReachedAiChatCreditsCap && <AIChatNoMoreBillingCreditsBanner />}
         {isDefined(pendingQuestion) ? (
