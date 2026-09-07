@@ -11,8 +11,9 @@ type Checkers = Parameters<typeof checker>[0];
 
 import { THEME_CSS_FILE_NAME_BY_SCHEME } from './design-tokens/themeCssFileNameByScheme';
 import packageJson from './package.json';
+import { isDefined } from './src/utilities/utils/isDefined';
 
-const isVitest = Boolean(process.env.VITEST);
+const isVitest = isDefined(process.env.VITEST);
 
 const entries = Object.keys(packageJson.exports)
   .filter((el) => !el.endsWith('.css'))
