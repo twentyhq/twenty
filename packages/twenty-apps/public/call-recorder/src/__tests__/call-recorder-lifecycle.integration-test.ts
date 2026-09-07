@@ -44,8 +44,8 @@ const RESTRICTED_TITLE_PLACEHOLDER =
   'FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED';
 
 // The app's generated client only covers the objects the app uses, but test
-// seeding also needs calendarChannelEventAssociations (see below); this hits
-// the workspace GraphQL API directly with the test API key.
+// fixture discovery needs fields that are not part of the app schema; this
+// hits the workspace GraphQL API directly with the test API key.
 const workspaceGraphql = async (
   query: string,
   variables: Record<string, unknown> = {},
@@ -69,45 +69,81 @@ const workspaceGraphql = async (
   return payload.data;
 };
 
-// Calendar events are only readable when a calendar channel with
-// SHARE_EVERYTHING visibility claims them, exactly like events coming from a
-// real calendar sync. The dev seeds provide such a channel; it is found by
-// following a fully visible seeded event to its channel association.
-const discoverShareEverythingChannelId = async (): Promise<string> => {
-  const eventsData = await workspaceGraphql(
-    `query { calendarEvents(first: 30) { edges { node { id title } } } }`,
-  );
-  const visibleEvent = eventsData.calendarEvents.edges
-    .map((edge: any) => edge.node)
-    .find(
-      (node: any) =>
-        node.title !== null && node.title !== RESTRICTED_TITLE_PLACEHOLDER,
+type CalendarEventFixture = {
+  id: string;
+  title: string;
+  startsAt: string;
+  endsAt: string;
+  iCalUid: string;
+  isCanceled: boolean;
+  isFullDay: boolean;
+  callRecorderPreference: string | null;
+  conferenceLink: {
+    primaryLinkLabel: string;
+    primaryLinkUrl: string;
+    secondaryLinks: Array<{ label: string; url: string }> | null;
+  };
+};
+
+const discoverVisibleCalendarEventFixtures = async (): Promise<
+  CalendarEventFixture[]
+> => {
+  const fixtures: CalendarEventFixture[] = [];
+  let after: string | null = null;
+
+  do {
+    const eventsData = await workspaceGraphql(
+      `query ($after: String) {
+        calendarEvents(first: 200, after: $after) {
+          edges {
+            node {
+              id
+              title
+              startsAt
+              endsAt
+              iCalUid
+              isCanceled
+              isFullDay
+              callRecorderPreference
+              conferenceLink {
+                primaryLinkLabel
+                primaryLinkUrl
+                secondaryLinks { label url }
+              }
+            }
+          }
+          pageInfo { hasNextPage endCursor }
+        }
+      }`,
+      { after },
+    );
+    const connection = eventsData.calendarEvents;
+
+    fixtures.push(
+      ...connection.edges
+        .map((edge: any) => edge.node)
+        .filter(
+          (node: CalendarEventFixture) =>
+            node.title !== RESTRICTED_TITLE_PLACEHOLDER &&
+            /^event\d+@calendar\.twentycrm\.com$/.test(node.iCalUid),
+        ),
     );
 
-  if (visibleEvent === undefined) {
+    after = connection.pageInfo.hasNextPage
+      ? connection.pageInfo.endCursor
+      : null;
+  } while (
+    after !== null &&
+    fixtures.length < CALENDAR_EVENT_UPDATE_BATCH_SIZE + 1
+  );
+
+  if (fixtures.length < CALENDAR_EVENT_UPDATE_BATCH_SIZE + 1) {
     throw new Error(
-      'No fully visible seeded calendar event found; run the dev seeds before the integration tests',
+      `Only ${fixtures.length} fully visible seeded calendar events found; run the dev seeds before the integration tests`,
     );
   }
 
-  const associationsData = await workspaceGraphql(
-    `query ($calendarEventId: UUID) {
-      calendarChannelEventAssociations(
-        filter: { calendarEventId: { eq: $calendarEventId } }
-        first: 1
-      ) { edges { node { calendarChannelId } } }
-    }`,
-    { calendarEventId: visibleEvent.id },
-  );
-  const channelId =
-    associationsData.calendarChannelEventAssociations.edges[0]?.node
-      ?.calendarChannelId;
-
-  if (channelId === undefined) {
-    throw new Error('Seeded visible calendar event has no channel association');
-  }
-
-  return channelId;
+  return fixtures;
 };
 
 const inOneHour = () => new Date(Date.now() + 60 * 60 * 1000).toISOString();
@@ -325,8 +361,8 @@ const buildTranscriptDoneWebhook = ({
 });
 
 // ---------------------------------------------------------------------------
-// Test workspace helpers: real rows in the test database, destroyed after
-// each scenario.
+// Test workspace helpers: real rows in the test database, cleaned up or
+// restored after each scenario.
 // ---------------------------------------------------------------------------
 
 describe('call recorder app lifecycle (integration)', () => {
@@ -334,11 +370,10 @@ describe('call recorder app lifecycle (integration)', () => {
   // Twenty API traffic always uses the real fetch.
   let client: CoreApiClient;
   let workspaceId: string;
-  let shareEverythingChannelId: string;
+  let availableCalendarEventFixtures: CalendarEventFixture[];
   let recall: FakeRecallApi;
-  const createdCalendarEventIds: string[] = [];
+  const borrowedCalendarEventFixtures: CalendarEventFixture[] = [];
   const createdCallRecordingIds: string[] = [];
-  const createdAssociationIds: string[] = [];
 
   const readWorkspaceIdFromApiKey = (): string => {
     const apiKey = process.env[WORKSPACE_API_KEY_ENV] ?? '';
@@ -352,7 +387,8 @@ describe('call recorder app lifecycle (integration)', () => {
   beforeAll(async () => {
     client = new CoreApiClient();
     workspaceId = readWorkspaceIdFromApiKey();
-    shareEverythingChannelId = await discoverShareEverythingChannelId();
+    availableCalendarEventFixtures =
+      await discoverVisibleCalendarEventFixtures();
   });
 
   beforeEach(() => {
@@ -392,11 +428,14 @@ describe('call recorder app lifecycle (integration)', () => {
   });
 
   const destroyCreatedRows = async (): Promise<void> => {
+    const borrowedCalendarEventIds = borrowedCalendarEventFixtures.map(
+      ({ id }) => id,
+    );
     const callRecordingsForCreatedCalendarEvents =
-      createdCalendarEventIds.length === 0
+      borrowedCalendarEventIds.length === 0
         ? []
         : await findCallRecordings({
-            calendarEventId: { in: createdCalendarEventIds },
+            calendarEventId: { in: borrowedCalendarEventIds },
           });
     const callRecordingIds = [
       ...new Set([
@@ -413,44 +452,58 @@ describe('call recorder app lifecycle (integration)', () => {
         .catch(() => {});
     }
 
-    for (const associationId of createdAssociationIds) {
-      await workspaceGraphql(
-        `mutation ($id: UUID!) {
-          destroyCalendarChannelEventAssociation(id: $id) { id }
-        }`,
-        { id: associationId },
-      ).catch(() => {});
-    }
-
-    for (const calendarEventId of createdCalendarEventIds) {
+    for (const fixture of borrowedCalendarEventFixtures) {
       await client
         .mutation({
-          destroyCalendarEvent: { __args: { id: calendarEventId }, id: true },
+          updateCalendarEvent: {
+            __args: {
+              id: fixture.id,
+              data: {
+                title: fixture.title,
+                startsAt: fixture.startsAt,
+                endsAt: fixture.endsAt,
+                iCalUid: fixture.iCalUid,
+                isCanceled: fixture.isCanceled,
+                isFullDay: fixture.isFullDay,
+                callRecorderPreference: fixture.callRecorderPreference,
+                conferenceLink: fixture.conferenceLink,
+              },
+            },
+            id: true,
+          },
         })
         .catch(() => {});
     }
 
-    createdCalendarEventIds.length = 0;
+    borrowedCalendarEventFixtures.length = 0;
     createdCallRecordingIds.length = 0;
-    createdAssociationIds.length = 0;
   };
 
   const createCalendarEvent = async (
     overrides: Record<string, unknown> = {},
   ): Promise<string> => {
-    const calendarEventId = randomUUID();
+    const fixture =
+      availableCalendarEventFixtures[borrowedCalendarEventFixtures.length];
+
+    if (fixture === undefined) {
+      throw new Error('No visible seeded calendar event fixture available');
+    }
+
+    borrowedCalendarEventFixtures.push(fixture);
 
     await client.mutation({
-      createCalendarEvent: {
+      updateCalendarEvent: {
         __args: {
+          id: fixture.id,
           data: {
-            id: calendarEventId,
             title: 'Customer Sync (call recorder integration test)',
             startsAt: inOneHour(),
             endsAt: inTwoHours(),
-            iCalUid: `call-recorder-test-${calendarEventId}`,
+            iCalUid: `call-recorder-test-${fixture.id}`,
+            isCanceled: false,
+            isFullDay: false,
             conferenceLink: {
-              primaryLinkUrl: `https://meet.google.com/${calendarEventId}`,
+              primaryLinkUrl: `https://meet.google.com/${fixture.id}`,
             },
             callRecorderPreference: 'ON',
             ...overrides,
@@ -459,28 +512,8 @@ describe('call recorder app lifecycle (integration)', () => {
         id: true,
       },
     });
-    createdCalendarEventIds.push(calendarEventId);
 
-    // Without a SHARE_EVERYTHING channel association the event would be
-    // invisible to every query, like an event no calendar sync produced.
-    const associationData = await workspaceGraphql(
-      `mutation ($data: CalendarChannelEventAssociationCreateInput!) {
-        createCalendarChannelEventAssociation(data: $data) { id }
-      }`,
-      {
-        data: {
-          calendarChannelId: shareEverythingChannelId,
-          calendarEventId,
-          eventExternalId: `call-recorder-test-${calendarEventId}`,
-        },
-      },
-    );
-
-    createdAssociationIds.push(
-      associationData.createCalendarChannelEventAssociation.id,
-    );
-
-    return calendarEventId;
+    return fixture.id;
   };
 
   const createPendingCallRecording = async ({
