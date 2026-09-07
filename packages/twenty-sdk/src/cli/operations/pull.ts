@@ -23,6 +23,7 @@ import {
 import { scanProjectDefineFiles } from '@/cli/utilities/pull/scan-project-define-files';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { join } from 'node:path';
+import { type TranslationsManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 export type AppPullOptions = {
@@ -41,6 +42,7 @@ export type AppPullResult = {
   skipped: SkippedPullEntity[];
   coverage: ApplicationExportCoverageEntry[];
   unreadableRelativePaths: string[];
+  translations: TranslationsManifest | undefined;
   hadBase: boolean;
 };
 
@@ -186,6 +188,7 @@ const innerAppPull = async (
       unreadableRelativePaths: scannedFiles
         .filter((scannedFile) => !scannedFile.isReadable)
         .map((scannedFile) => scannedFile.relativePath),
+      translations: manifest.translations,
       hadBase: isDefined(baseManifest),
     },
   };

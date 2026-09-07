@@ -44,6 +44,18 @@ export class ApplicationTranslationCacheService {
     return catalogsByLocale?.[locale] ?? EMPTY_CATALOG;
   }
 
+  async getCatalogsByLocale(
+    applicationRegistrationId: string,
+  ): Promise<ApplicationCatalogsByLocale> {
+    const catalogsByLocale =
+      await this.catalogsMemoizer.memoizePromiseAndExecute(
+        this.getCacheKey(applicationRegistrationId),
+        () => this.loadCatalogsByLocale(applicationRegistrationId),
+      );
+
+    return catalogsByLocale ?? {};
+  }
+
   async invalidate(applicationRegistrationId: string): Promise<void> {
     await this.catalogsMemoizer.clearKeys(
       this.getCacheKey(applicationRegistrationId),
