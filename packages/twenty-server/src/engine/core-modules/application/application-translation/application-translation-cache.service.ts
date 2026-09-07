@@ -35,13 +35,11 @@ export class ApplicationTranslationCacheService {
     applicationRegistrationId: string;
     locale: keyof typeof APP_LOCALES;
   }): Promise<Record<string, string>> {
-    const catalogsByLocale =
-      await this.catalogsMemoizer.memoizePromiseAndExecute(
-        this.getCacheKey(applicationRegistrationId),
-        () => this.loadCatalogsByLocale(applicationRegistrationId),
-      );
+    const catalogsByLocale = await this.getCatalogsByLocale(
+      applicationRegistrationId,
+    );
 
-    return catalogsByLocale?.[locale] ?? EMPTY_CATALOG;
+    return catalogsByLocale[locale] ?? EMPTY_CATALOG;
   }
 
   async getCatalogsByLocale(
