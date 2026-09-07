@@ -23,8 +23,6 @@ export const buildNameFlatFieldMetadataForCustomObject = ({
     type: FieldMetadataType.TEXT,
     isLabelSyncedWithName: false,
     isUnique: false,
-    // Label identifier of a custom object: the object-create side effect
-    // provisions its searchFieldMetadata row.
     isSearchable: true,
     universalIdentifier: getFieldUniversalIdentifier({
       applicationUniversalIdentifier,

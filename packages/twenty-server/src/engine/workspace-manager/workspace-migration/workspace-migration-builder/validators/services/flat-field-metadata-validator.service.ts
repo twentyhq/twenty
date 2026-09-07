@@ -401,7 +401,7 @@ export class FlatFieldMetadataValidatorService {
             flatFieldMetadataToValidate,
             flatObjectMetadata: parentFlatObjectMetadata,
             flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
-            skipTsVectorCheck: true,
+            remainingFlatFieldMetadataMaps: remainingFlatEntityMapsToValidate,
           }),
         );
       }
