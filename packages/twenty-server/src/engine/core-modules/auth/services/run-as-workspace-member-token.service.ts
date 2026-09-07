@@ -11,7 +11,6 @@ import {
 import { RUN_AS_WORKSPACE_MEMBER_TOKEN_EXPIRES_IN } from 'src/engine/core-modules/auth/constants/run-as-workspace-member-token-expires-in.constant';
 import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
-import { canApplicationTokenRunAsWorkspaceMember } from 'src/engine/core-modules/auth/utils/can-application-token-run-as-workspace-member.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 
 @Injectable()
@@ -27,13 +26,11 @@ export class RunAsWorkspaceMemberTokenService {
     workspaceId,
     workspaceMemberId,
     isDelegatedToUser,
-    requestWorkspaceMemberId,
   }: {
     application: Pick<FlatApplication, 'id' | 'defaultRoleId'>;
     workspaceId: string;
     workspaceMemberId: string;
     isDelegatedToUser: boolean;
-    requestWorkspaceMemberId: string | null;
   }): Promise<AuthToken> {
     // Permissions for an application acting as a member are the intersection of
     // both roles, and resolveRoleIdsForUser falls back to the member's role
@@ -49,18 +46,14 @@ export class RunAsWorkspaceMemberTokenService {
       );
     }
 
-    if (
-      !canApplicationTokenRunAsWorkspaceMember({
-        isDelegatedToUser,
-        requestWorkspaceMemberId,
-        workspaceMemberId,
-      })
-    ) {
+    // A token already issued for a user has nothing left to narrow, so the only
+    // thing this endpoint could give it is a fresh expiry on its own scope.
+    if (isDelegatedToUser) {
       throw new AuthException(
-        'An application token issued for a user can only act as that user.',
+        'An application token issued for a user cannot request a member-scoped token.',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
         {
-          userFriendlyMessage: msg`This application cannot act as another workspace member.`,
+          userFriendlyMessage: msg`This application is already acting for a user and cannot request access as a workspace member.`,
         },
       );
     }

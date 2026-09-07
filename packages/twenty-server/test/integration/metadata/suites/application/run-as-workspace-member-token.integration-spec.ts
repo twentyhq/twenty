@@ -185,14 +185,16 @@ describe('POST /app/tokens/run-as-workspace-member', () => {
     expect(response.body.token.length).toBeGreaterThan(0);
   });
 
-  it('should issue a token when a delegated caller asks for its own member', async () => {
+  // Granting this would only reset the caller's own expiry, since a delegated
+  // token already reaches exactly what the issued one would.
+  it('should refuse a delegated caller asking for its own member', async () => {
     const response = await runAsWorkspaceMember({
       token: delegatedToken,
       workspaceMemberId: DELEGATED_WORKSPACE_MEMBER_ID,
     });
 
-    expect(response.status).toBe(200);
-    expect(typeof response.body.token).toBe('string');
+    expect(response.status).toBe(403);
+    expect(response.body.token).toBeUndefined();
   });
 
   it('should refuse a delegated caller asking for another member', async () => {
