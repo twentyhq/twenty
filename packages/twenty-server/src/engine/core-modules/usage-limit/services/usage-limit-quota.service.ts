@@ -534,7 +534,6 @@ export class UsageLimitQuotaService implements OnModuleInit {
           )) ?? null
         );
       } catch (error) {
-        // A billing lookup failure must not take the calendar limits down with it
         this.logger.warn(
           `Could not read the allowance period for workspace ${workspaceId}, skipping its allowance-period limits: ${error instanceof Error ? error.message : 'unknown error'}`,
         );
