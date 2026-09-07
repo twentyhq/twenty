@@ -38,6 +38,8 @@ import { MessageCampaignRecoveryService } from 'src/modules/emailing/services/me
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
 import { MessageCampaignDeliveryFeedbackService } from 'src/modules/emailing/services/message-campaign-delivery-feedback.service';
+import { MessageCampaignBatchDeliveryService } from 'src/modules/emailing/services/message-campaign-batch-delivery.service';
+import { CampaignSendSlotService } from 'src/modules/emailing/services/campaign-send-slot.service';
 import { MessageCampaignDeliveryService } from 'src/modules/emailing/services/message-campaign-delivery.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignMaterializationService } from 'src/modules/emailing/services/message-campaign-materialization.service';
@@ -77,7 +79,9 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     EmailBillingService,
     MessageCampaignService,
     MessageCampaignAudienceService,
+    CampaignSendSlotService,
     MessageCampaignDeliveryService,
+    MessageCampaignBatchDeliveryService,
     MessageCampaignDeliveryFeedbackService,
     MessageCampaignLifecycleService,
     MessageCampaignMaterializationService,
@@ -106,7 +110,9 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     EmailingDomainSenderService,
     EmailBillingService,
     MessageCampaignService,
+    CampaignSendSlotService,
     MessageCampaignDeliveryService,
+    MessageCampaignBatchDeliveryService,
     MessageCampaignDeliveryFeedbackService,
     MessageCampaignMaterializationService,
     MessageCampaignDraftService,
