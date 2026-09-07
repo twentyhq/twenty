@@ -38,6 +38,7 @@ export class ApplicationConnectionAuthFailureService {
       applicationId,
       workspaceId,
       provider: ConnectedAccountProvider.APP,
+      archivedAt: IsNull(),
     };
 
     const account = await this.connectedAccountRepository.findOne({
@@ -57,7 +58,7 @@ export class ApplicationConnectionAuthFailureService {
     // Every reconnect rewrites lastCredentialsRefreshedAt, so matching on the
     // value we read drops a report that describes an already-replaced token
     // instead of resurrecting a failure the reconnect just cleared.
-    await this.connectedAccountRepository.update(
+    const updateResult = await this.connectedAccountRepository.update(
       {
         ...scopedWhere,
         lastCredentialsRefreshedAt: isDefined(
@@ -68,5 +69,20 @@ export class ApplicationConnectionAuthFailureService {
       },
       { authFailedAt: new Date(), authFailedReason: reason },
     );
+
+    if (updateResult.affected === 0) {
+      const currentAccount = await this.connectedAccountRepository.findOne({
+        where: scopedWhere,
+      });
+
+      if (!isDefined(currentAccount)) {
+        throw new ConnectionProviderException(
+          `Connection ${id} not found`,
+          ConnectionProviderExceptionCode.CONNECTION_NOT_FOUND,
+        );
+      }
+      // A reconnect superseded the report while it was in flight; the failure
+      // described the old credential, so dropping it is correct.
+    }
   }
 }
