@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { EnsoViewerScopeModule } from 'src/modules/enso/record-visibility/enso-viewer-scope.module';
 import { EnsoLeadLookupResolver } from 'src/modules/enso/record-lookup/resolvers/enso-lead-lookup.resolver';
 import { EnsoLeadLookupService } from 'src/modules/enso/record-lookup/services/enso-lead-lookup.service';
 import { EnsoPostHogService } from 'src/modules/enso/routing-availability/services/enso-posthog.service';
@@ -12,7 +12,7 @@ import { EnsoPostHogService } from 'src/modules/enso/routing-availability/servic
 // GlobalWorkspaceOrmManager and the cache storage providers are global, so
 // neither needs importing here.
 @Module({
-  imports: [UserRoleModule],
+  imports: [EnsoViewerScopeModule],
   providers: [
     EnsoLeadLookupResolver,
     EnsoLeadLookupService,

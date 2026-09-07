@@ -7,11 +7,32 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 export const filterAndSortNavigationMenuItems = (
   navigationMenuItems: NavigationMenuItem[],
   views: Pick<View, 'id' | 'objectMetadataId' | 'key'>[],
-  objectMetadataItems: Pick<EnrichedObjectMetadataItem, 'id' | 'isActive'>[],
+  objectMetadataItems: Pick<
+    EnrichedObjectMetadataItem,
+    'id' | 'isActive' | 'nameSingular'
+  >[],
+  // Objects this viewer keeps read access to but should not carry in the
+  // sidebar — see ensoViewerScope. Empty for anyone unscoped.
+  hiddenObjectNameSingulars: string[] = [],
 ): NavigationMenuItem[] => {
   const activeObjectMetadataItems = objectMetadataItems.filter(
     (meta) => meta.isActive,
   );
+
+  const isHiddenObject = (objectMetadataId: string | null | undefined) => {
+    if (hiddenObjectNameSingulars.length === 0 || !isDefined(objectMetadataId)) {
+      return false;
+    }
+
+    const objectMetadataItem = activeObjectMetadataItems.find(
+      (meta) => meta.id === objectMetadataId,
+    );
+
+    return (
+      isDefined(objectMetadataItem) &&
+      hiddenObjectNameSingulars.includes(objectMetadataItem.nameSingular)
+    );
+  };
 
   return navigationMenuItems
     .filter((item) => {
@@ -29,7 +50,8 @@ export const filterAndSortNavigationMenuItems = (
           isDefined(item.targetObjectMetadataId) &&
           activeObjectMetadataItems.some(
             (meta) => meta.id === item.targetObjectMetadataId,
-          )
+          ) &&
+          !isHiddenObject(item.targetObjectMetadataId)
         );
       }
       if (item.type === NavigationMenuItemType.VIEW) {
@@ -41,7 +63,8 @@ export const filterAndSortNavigationMenuItems = (
           isDefined(view) &&
           activeObjectMetadataItems.some(
             (meta) => meta.id === view.objectMetadataId,
-          )
+          ) &&
+          !isHiddenObject(view.objectMetadataId)
         );
       }
       if (item.type === NavigationMenuItemType.RECORD) {
@@ -51,7 +74,8 @@ export const filterAndSortNavigationMenuItems = (
           isDefined(item.targetRecordIdentifier) &&
           activeObjectMetadataItems.some(
             (meta) => meta.id === item.targetObjectMetadataId,
-          )
+          ) &&
+          !isHiddenObject(item.targetObjectMetadataId)
         );
       }
       return false;

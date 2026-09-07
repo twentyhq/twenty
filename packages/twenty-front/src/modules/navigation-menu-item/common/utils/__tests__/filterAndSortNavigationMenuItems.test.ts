@@ -291,4 +291,81 @@ describe('filterAndSortNavigationMenuItems', () => {
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe('folder-1');
   });
+  // Record-scoped viewers keep READ access to these objects but should not
+  // carry them in the sidebar, so the exclusion has to happen here rather than
+  // through object permissions. See ensoViewerScope.
+  describe('hidden objects for record-scoped viewers', () => {
+    it('should filter out object items whose object is hidden', () => {
+      const navigationMenuItem = {
+        id: 'item-id',
+        type: NavigationMenuItemType.OBJECT,
+        targetObjectMetadataId: 'metadata-id',
+        position: 1,
+      } as NavigationMenuItem;
+
+      const result = filterAndSortNavigationMenuItems(
+        [navigationMenuItem],
+        [],
+        [mockObjectMetadataItem],
+        ['person'],
+      );
+
+      expect(result).toEqual([]);
+    });
+
+    it('should filter out view items whose object is hidden', () => {
+      const navigationMenuItem = {
+        id: 'item-id',
+        type: NavigationMenuItemType.VIEW,
+        viewId: 'view-id',
+        position: 1,
+      } as NavigationMenuItem;
+
+      const result = filterAndSortNavigationMenuItems(
+        [navigationMenuItem],
+        [mockView],
+        [mockObjectMetadataItem],
+        ['person'],
+      );
+
+      expect(result).toEqual([]);
+    });
+
+    it('should keep object items when the hidden list names a different object', () => {
+      const navigationMenuItem = {
+        id: 'item-id',
+        type: NavigationMenuItemType.OBJECT,
+        targetObjectMetadataId: 'metadata-id',
+        position: 1,
+      } as NavigationMenuItem;
+
+      const result = filterAndSortNavigationMenuItems(
+        [navigationMenuItem],
+        [],
+        [mockObjectMetadataItem],
+        ['sequenceRun'],
+      );
+
+      expect(result).toEqual([navigationMenuItem]);
+    });
+
+    it('should keep everything when the hidden list is empty', () => {
+      const navigationMenuItem = {
+        id: 'item-id',
+        type: NavigationMenuItemType.OBJECT,
+        targetObjectMetadataId: 'metadata-id',
+        position: 1,
+      } as NavigationMenuItem;
+
+      const result = filterAndSortNavigationMenuItems(
+        [navigationMenuItem],
+        [],
+        [mockObjectMetadataItem],
+        [],
+      );
+
+      expect(result).toEqual([navigationMenuItem]);
+    });
+  });
+
 });

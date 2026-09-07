@@ -7,7 +7,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import {
   type EnsoLeadLookupMatchDTO,
@@ -23,7 +22,7 @@ import {
   maskEmail,
   maskPhone,
 } from 'src/modules/enso/record-lookup/utils/mask-identity.util';
-import { getEnsoScopedRoleIds } from 'src/modules/enso/record-visibility/utils/get-enso-scoped-role-ids.util';
+import { EnsoViewerScopeService } from 'src/modules/enso/record-visibility/services/enso-viewer-scope.service';
 import { EnsoPostHogService } from 'src/modules/enso/routing-availability/services/enso-posthog.service';
 
 type PersonRow = {
@@ -87,7 +86,7 @@ export class EnsoLeadLookupService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly ensoPostHogService: EnsoPostHogService,
-    private readonly userRoleService: UserRoleService,
+    private readonly ensoViewerScopeService: EnsoViewerScopeService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleEnsoLookup)
     private readonly cacheStorage: CacheStorageService,
   ) {}
@@ -103,7 +102,7 @@ export class EnsoLeadLookupService {
 
     // Someone who already sees every record has nothing to learn here, and the
     // audit trail should not fill up with admins searching their own CRM.
-    const isViewerScoped = await this.isViewerScoped({
+    const isViewerScoped = await this.ensoViewerScopeService.isViewerScoped({
       workspaceId,
       userWorkspaceId,
     });
@@ -160,33 +159,6 @@ export class EnsoLeadLookupService {
       remainingLookupsToday: remainingBefore,
       isViewerScoped: true,
     };
-  }
-
-  private async isViewerScoped({
-    workspaceId,
-    userWorkspaceId,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string;
-  }): Promise<boolean> {
-    const scopedRoleIds = getEnsoScopedRoleIds();
-
-    if (scopedRoleIds.size === 0) {
-      return false;
-    }
-
-    try {
-      const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
-        workspaceId,
-        userWorkspaceId,
-      });
-
-      return scopedRoleIds.has(roleId);
-    } catch {
-      // No role resolved means no scoped role, and a lookup is the wrong place
-      // to surface a permissions misconfiguration.
-      return false;
-    }
   }
 
   private resolveMatchMode(searchTerm: string): MatchMode {

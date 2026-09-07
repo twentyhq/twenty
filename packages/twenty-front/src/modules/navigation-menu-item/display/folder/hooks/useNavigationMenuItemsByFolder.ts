@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
+import { useEnsoViewerScope } from '@/enso/viewer-scope/hooks/useEnsoViewerScope';
 import { filterAndSortNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterAndSortNavigationMenuItems';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
@@ -25,6 +26,7 @@ type NavigationMenuItemFolderEntry = Pick<
 export const useNavigationMenuItemsByFolder = () => {
   const views = useAtomStateValue(viewsSelector);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+  const { hiddenNavigationObjectNameSingulars } = useEnsoViewerScope();
 
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     useNavigationMenuItemsData();
@@ -87,7 +89,14 @@ export const useNavigationMenuItemsByFolder = () => {
         itemsInFolder,
         views,
         objectMetadataItems,
+        hiddenNavigationObjectNameSingulars,
       );
+
+      // A folder that had children but has none this viewer may see is left
+      // out entirely rather than opening onto an empty list.
+      if (itemsInFolder.length > 0 && sortedItems.length === 0) {
+        return acc;
+      }
 
       acc.push({
         id: folder.id,
