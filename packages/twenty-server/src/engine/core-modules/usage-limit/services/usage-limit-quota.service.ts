@@ -14,6 +14,8 @@ import {
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { CONSUME_QUOTA_COUNTERS_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/consume-quota-counters-script.constant';
 import {
   UsageLimitException,
@@ -56,6 +58,12 @@ type AllowanceSumRow = {
   total: string | number | null;
 };
 
+type QuotaEnforcement = {
+  operation: 'assert' | 'consume';
+  resourceType: UsageResourceType;
+  cost?: QuotaCost;
+};
+
 type QuotaConsumeArgs = {
   workspaceId: string;
   resourceType: UsageResourceType;
@@ -78,6 +86,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
     private readonly usagePeriodService: UsagePeriodService,
     private readonly discoveryService: DiscoveryService,
     private readonly usageLimitEntitlementService: UsageLimitEntitlementService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   onModuleInit() {
@@ -283,6 +292,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
       return this.admitOnFailure({
         error,
         workspaceId: args.workspaceId,
+        enforcement: { operation: 'assert', resourceType: args.resourceType },
         admitted: [],
       });
     }
@@ -321,6 +331,11 @@ export class UsageLimitQuotaService implements OnModuleInit {
       return this.admitOnFailure({
         error,
         workspaceId: args.workspaceId,
+        enforcement: {
+          operation: 'consume',
+          resourceType: args.resourceType,
+          cost,
+        },
         admitted: [],
       });
     }
@@ -378,10 +393,12 @@ export class UsageLimitQuotaService implements OnModuleInit {
   private admitOnFailure<TAdmitted>({
     error,
     workspaceId,
+    enforcement,
     admitted,
   }: {
     error: unknown;
     workspaceId: string;
+    enforcement?: QuotaEnforcement;
     admitted: TAdmitted;
   }): TAdmitted {
     if (
@@ -395,7 +412,33 @@ export class UsageLimitQuotaService implements OnModuleInit {
       `Usage quota enforcement degraded for workspace ${workspaceId}: ${error instanceof Error ? error.message : 'unknown error'}`,
     );
 
+    if (isDefined(enforcement)) {
+      this.countAdmitOnFailure(enforcement);
+    }
+
     return admitted;
+  }
+
+  private countAdmitOnFailure({
+    operation,
+    resourceType,
+    cost,
+  }: QuotaEnforcement): void {
+    const attributes = { operation, resourceType };
+
+    this.metricsService.incrementCounterBy({
+      key: MetricsKeys.UsageLimitQuotaAdmittedOnFailure,
+      amount: 1,
+      attributes,
+    });
+
+    if (isDefined(cost) && cost.creditsUsedMicro > 0) {
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.UsageLimitQuotaAdmittedOnFailureCreditsMicro,
+        amount: cost.creditsUsedMicro,
+        attributes,
+      });
+    }
   }
 
   private async buildCounters(args: QuotaConsumeArgs): Promise<QuotaCounter[]> {
