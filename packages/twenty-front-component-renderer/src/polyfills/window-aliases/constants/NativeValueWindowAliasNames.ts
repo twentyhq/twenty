@@ -1,3 +1,5 @@
+// Aliased by reference rather than bound: these are namespaces and
+// constructors, and a bound constructor is not the same class.
 export const NATIVE_VALUE_WINDOW_ALIAS_NAMES = [
   'console',
   'crypto',

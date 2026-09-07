@@ -1,5 +1,6 @@
 export const NATIVE_FUNCTION_WINDOW_ALIAS_NAMES = [
-  'fetch',
+  'requestAnimationFrame',
+  'cancelAnimationFrame',
   'queueMicrotask',
   'setTimeout',
   'clearTimeout',

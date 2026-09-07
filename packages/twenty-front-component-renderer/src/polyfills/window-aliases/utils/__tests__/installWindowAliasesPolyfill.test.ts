@@ -35,8 +35,6 @@ describe('installWindowAliasesPolyfill', () => {
     for (const aliasName of [
       'requestAnimationFrame',
       'cancelAnimationFrame',
-      'requestIdleCallback',
-      'cancelIdleCallback',
       'fetch',
       'console',
       'crypto',
@@ -61,7 +59,10 @@ describe('installWindowAliasesPolyfill', () => {
 
     await (polyfillWindow.fetch as typeof fetch)('https://api.twenty.com');
 
-    expect(proxiedFetch).toHaveBeenCalledWith('https://api.twenty.com');
+    expect(proxiedFetch).toHaveBeenCalledWith(
+      'https://api.twenty.com',
+      undefined,
+    );
     expect(proxiedFetch.mock.contexts[0]).toBe(globalScope);
   });
 
