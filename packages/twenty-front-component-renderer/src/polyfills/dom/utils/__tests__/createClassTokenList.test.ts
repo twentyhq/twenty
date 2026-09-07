@@ -379,6 +379,40 @@ describe('createClassTokenList', () => {
       expect('add' in classTokenList).toBe(true);
     });
 
+    it('should not treat keys beyond the array index range as indices', () => {
+      const element = new FakeElement();
+      element.setAttribute('class', 'first second');
+      const classTokenList = createClassTokenList(element);
+
+      const outOfRangeKey = String(2 ** 32);
+
+      expect(
+        (classTokenList as unknown as Record<string, unknown>)[outOfRangeKey],
+      ).toBeUndefined();
+      expect(outOfRangeKey in classTokenList).toBe(false);
+    });
+
+    it('should reject numeric writes so enumeration stays consistent', () => {
+      const element = new FakeElement();
+      element.setAttribute('class', 'first second');
+      const classTokenList = createClassTokenList(element);
+
+      expect(() => {
+        (classTokenList as unknown as Record<number, string>)[5] = 'expando';
+      }).toThrow(TypeError);
+
+      element.setAttribute('class', 'a b c d e f');
+
+      expect(Object.keys(classTokenList)).toEqual([
+        '0',
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+      ]);
+    });
+
     it('should convert item indices the way an unsigned long conversion does', () => {
       const element = new FakeElement();
       element.setAttribute('class', 'first second');

@@ -2,6 +2,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkerClassTokenList } from '@/polyfills/dom/types/WorkerClassTokenList';
 
+const MAX_ARRAY_INDEX = 2 ** 32 - 2;
+
 const parseIndexPropertyKey = (property: string | symbol): number | null => {
   if (typeof property !== 'string') {
     return null;
@@ -12,6 +14,7 @@ const parseIndexPropertyKey = (property: string | symbol): number | null => {
   const isCanonicalIndexKey =
     Number.isInteger(tokenIndex) &&
     tokenIndex >= 0 &&
+    tokenIndex <= MAX_ARRAY_INDEX &&
     String(tokenIndex) === property;
 
   return isCanonicalIndexKey ? tokenIndex : null;
@@ -57,6 +60,10 @@ export const createIndexedClassTokenList = (
         configurable: true,
       };
     },
+    defineProperty: (tokenList, property, descriptor) =>
+      isDefined(parseIndexPropertyKey(property))
+        ? false
+        : Reflect.defineProperty(tokenList, property, descriptor),
     ownKeys: (tokenList) => [
       ...Array.from({ length: tokenList.length }, (_, tokenIndex) =>
         String(tokenIndex),
