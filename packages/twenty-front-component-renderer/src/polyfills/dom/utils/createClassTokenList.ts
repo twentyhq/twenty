@@ -1,19 +1,19 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ClassAttributeTargetElement } from '@/polyfills/dom/types/ClassAttributeTargetElement';
+import { type ElementWithAttributes } from '@/polyfills/dom/types/ElementWithAttributes';
 import { type WorkerClassTokenList } from '@/polyfills/dom/types/WorkerClassTokenList';
 import { createIndexedClassTokenList } from '@/polyfills/dom/utils/createIndexedClassTokenList';
+import { normalizeItemIndex } from '@/polyfills/dom/utils/normalizeItemIndex';
 import { parseClassTokenList } from '@/polyfills/dom/utils/parseClassTokenList';
 import { serializeClassTokenList } from '@/polyfills/dom/utils/serializeClassTokenList';
-import { toClassTokenIndex } from '@/polyfills/dom/utils/toClassTokenIndex';
 import { toValidClassTokenOrThrow } from '@/polyfills/dom/utils/toValidClassTokenOrThrow';
 
-class ClassTokenList implements WorkerClassTokenList {
+class ClassTokenListImplementation implements WorkerClassTokenList {
   readonly [index: number]: string;
 
-  private readonly element!: ClassAttributeTargetElement;
+  private readonly element!: ElementWithAttributes;
 
-  constructor(element: ClassAttributeTargetElement) {
+  constructor(element: ElementWithAttributes) {
     Object.defineProperty(this, 'element', {
       value: element,
       enumerable: false,
@@ -108,7 +108,7 @@ class ClassTokenList implements WorkerClassTokenList {
   }
 
   item(index: number): string | null {
-    return this.readCurrentTokens()[toClassTokenIndex(index)] ?? null;
+    return this.readCurrentTokens()[normalizeItemIndex(index)] ?? null;
   }
 
   supports(): boolean {
@@ -156,6 +156,6 @@ class ClassTokenList implements WorkerClassTokenList {
 }
 
 export const createClassTokenList = (
-  element: ClassAttributeTargetElement,
+  element: ElementWithAttributes,
 ): WorkerClassTokenList =>
-  createIndexedClassTokenList(new ClassTokenList(element));
+  createIndexedClassTokenList(new ClassTokenListImplementation(element));

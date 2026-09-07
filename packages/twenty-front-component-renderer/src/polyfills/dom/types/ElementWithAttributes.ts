@@ -1,4 +1,4 @@
-export type ClassAttributeTargetElement = {
+export type ElementWithAttributes = {
   getAttribute: (attributeName: string) => string | null;
   setAttribute: (attributeName: string, attributeValue: string) => void;
 };

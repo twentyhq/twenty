@@ -3,31 +3,29 @@ import { type ElementLike } from '@/polyfills/dom/types/ElementLike';
 import { iterateElementSubtree } from '@/polyfills/dom/utils/iterateElementSubtree';
 import { parseClassTokenList } from '@/polyfills/dom/utils/parseClassTokenList';
 
-const hasEveryClassNameToken = (
+const hasEveryClassToken = (
   element: ElementLike,
-  classNameTokens: string[],
+  classTokens: string[],
 ): boolean => {
   const elementTokens = (element.getAttribute?.('class') ?? '').split(
     ASCII_WHITESPACE_REGEX,
   );
 
-  return classNameTokens.every((classNameToken) =>
-    elementTokens.includes(classNameToken),
-  );
+  return classTokens.every((classToken) => elementTokens.includes(classToken));
 };
 
 export const installGetElementsByClassName = (installTarget: object): void => {
   Object.defineProperty(installTarget, 'getElementsByClassName', {
     value: function (this: ElementLike, classNames: string) {
-      const classNameTokens = parseClassTokenList(String(classNames));
+      const classTokens = parseClassTokenList(String(classNames));
 
       const matches: ElementLike[] = [];
 
-      if (classNameTokens.length > 0) {
+      if (classTokens.length > 0) {
         for (const currentNode of iterateElementSubtree(this)) {
           if (
             currentNode !== this &&
-            hasEveryClassNameToken(currentNode, classNameTokens)
+            hasEveryClassToken(currentNode, classTokens)
           ) {
             matches.push(currentNode);
           }

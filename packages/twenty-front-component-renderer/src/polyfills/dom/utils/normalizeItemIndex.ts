@@ -1,4 +1,4 @@
-export const toClassTokenIndex = (index: number): number => {
+export const normalizeItemIndex = (index: number): number => {
   const numericIndex = Number(index);
 
   if (!Number.isFinite(numericIndex)) {

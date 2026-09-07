@@ -2,9 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkerClassTokenList } from '@/polyfills/dom/types/WorkerClassTokenList';
 
-const toTokenIndexFromPropertyKey = (
-  property: string | symbol,
-): number | null => {
+const parseIndexPropertyKey = (property: string | symbol): number | null => {
   if (typeof property !== 'string') {
     return null;
   }
@@ -26,21 +24,21 @@ export const createIndexedClassTokenList = (
 ): WorkerClassTokenList =>
   new Proxy(classTokenList, {
     get: (tokenList, property, receiver) => {
-      const tokenIndex = toTokenIndexFromPropertyKey(property);
+      const tokenIndex = parseIndexPropertyKey(property);
 
       return isDefined(tokenIndex)
         ? (tokenList.item(tokenIndex) ?? undefined)
         : Reflect.get(tokenList, property, receiver);
     },
     has: (tokenList, property) => {
-      const tokenIndex = toTokenIndexFromPropertyKey(property);
+      const tokenIndex = parseIndexPropertyKey(property);
 
       return isDefined(tokenIndex)
         ? tokenIndex < tokenList.length
         : Reflect.has(tokenList, property);
     },
     getOwnPropertyDescriptor: (tokenList, property) => {
-      const tokenIndex = toTokenIndexFromPropertyKey(property);
+      const tokenIndex = parseIndexPropertyKey(property);
 
       if (!isDefined(tokenIndex)) {
         return Reflect.getOwnPropertyDescriptor(tokenList, property);

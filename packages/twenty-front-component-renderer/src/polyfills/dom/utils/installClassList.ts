@@ -1,18 +1,18 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ClassAttributeTargetElement } from '@/polyfills/dom/types/ClassAttributeTargetElement';
+import { type ElementWithAttributes } from '@/polyfills/dom/types/ElementWithAttributes';
 import { type WorkerClassTokenList } from '@/polyfills/dom/types/WorkerClassTokenList';
 import { createClassTokenList } from '@/polyfills/dom/utils/createClassTokenList';
-import { throwOnPrototypeReceiver } from '@/polyfills/utils/throwOnPrototypeReceiver';
+import { throwOnPrototypeAccess } from '@/polyfills/utils/throwOnPrototypeAccess';
 
 export const installClassList = (elementPrototype: object): void => {
   const classTokenListByElement = new WeakMap<
-    ClassAttributeTargetElement,
+    ElementWithAttributes,
     WorkerClassTokenList
   >();
 
   const resolveClassTokenList = (
-    element: ClassAttributeTargetElement,
+    element: ElementWithAttributes,
   ): WorkerClassTokenList => {
     const existingClassTokenList = classTokenListByElement.get(element);
 
@@ -27,13 +27,13 @@ export const installClassList = (elementPrototype: object): void => {
   };
 
   Object.defineProperty(elementPrototype, 'classList', {
-    get(this: ClassAttributeTargetElement) {
-      throwOnPrototypeReceiver(this, elementPrototype);
+    get(this: ElementWithAttributes) {
+      throwOnPrototypeAccess(this, elementPrototype);
 
       return resolveClassTokenList(this);
     },
-    set(this: ClassAttributeTargetElement, newValue: unknown) {
-      throwOnPrototypeReceiver(this, elementPrototype);
+    set(this: ElementWithAttributes, newValue: unknown) {
+      throwOnPrototypeAccess(this, elementPrototype);
 
       this.setAttribute('class', String(newValue));
     },
