@@ -58,9 +58,6 @@ export const cancelScheduledRecallBots = async ({
     );
   }
 
-  // Only a run that freed at least one bot continues. A row whose bot was
-  // cleared drops out of the query, so the chain always makes real progress,
-  // and a Recall outage stops it here and leaves the rest to the daily retry.
   return {
     canceledCallRecordingIds,
     failedCallRecordingIds,

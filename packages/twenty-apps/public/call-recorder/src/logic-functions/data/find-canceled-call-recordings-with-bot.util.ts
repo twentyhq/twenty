@@ -13,8 +13,6 @@ export const findCanceledCallRecordingsWithBot = async (
   const maximumPageCount = Math.ceil(limit / TWENTY_PAGE_SIZE);
   let startedPageCount = 0;
 
-  // Paging stops at the slice the caller can process, so a large cancellation
-  // backlog does not get read in full on every run.
   const canceledCallRecordings = await findCallRecordingsByFilter(
     client,
     {

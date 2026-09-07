@@ -44,15 +44,11 @@ export const useAutosaveApplicationVariable = ({
         });
 
         if (isSaved) {
-          // Awaited so the queue serializes the follow-up work of consecutive
-          // saves; two toggles in a row must not sync concurrently.
           await onSaveSuccessRef.current?.(value);
 
           return;
         }
 
-        // A newer value is already queued, so rolling back to this one would
-        // fight the toggle the user just made.
         if (isSupersededValue()) {
           return;
         }

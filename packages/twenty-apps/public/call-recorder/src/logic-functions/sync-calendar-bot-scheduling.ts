@@ -34,9 +34,6 @@ export const syncCalendarBotSchedulingHandler =
     const client = new CoreApiClient();
     const openCallRecordings = await findOpenScheduledCallRecordings(client);
 
-    // The request status is what stops a new bot being scheduled, so it is
-    // flipped inline; deleting the bots is throttleable Recall work and runs as
-    // a retryable job instead of blocking the settings toggle.
     const canceledCallRecordingCount =
       await cancelOpenScheduledCallRecordingRequests(
         client,

@@ -28,8 +28,6 @@ export const scheduleRecallBotForCallRecording = async (
     return false;
   }
 
-  // Recovery paths reach this function without consulting the policy, so the
-  // workspace switch is enforced here rather than only at reconciliation.
   if (!isCalendarBotSchedulingEnabled()) {
     return false;
   }

@@ -20,7 +20,6 @@ export const cancelRecallBotForCanceledCallRecording = async ({
   callRecordingId: string;
   externalBotId: string;
 }): Promise<CancelRecallBotForCanceledCallRecordingOutcome> => {
-  // Calendar reconciliation can reactivate the request while this job is running.
   const latestCallRecording = (
     await findCallRecordingsByIds(client, [callRecordingId])
   )[0];

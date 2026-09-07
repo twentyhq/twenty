@@ -1272,7 +1272,6 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(
         (await fetchCallRecording(callRecordingId)).recordingRequestStatus,
       ).toBe('CANCELED');
-      // The toggle must not wait on Recall, so the bot is still alive here.
       expect(recall.deletedBotIds).not.toContain(botId);
 
       await cancelScheduledRecallBotsHandler();
@@ -1292,8 +1291,6 @@ describe('call recorder app lifecycle (integration)', () => {
 
       recall.failRecallRemovals = true;
 
-      // A full slice proves the chain stops on failure rather than re-enqueueing
-      // itself forever against an unchanged backlog.
       const result = await cancelScheduledRecallBots({ client, sliceSize: 1 });
 
       expect(result.canceledCallRecordingIds).toEqual([]);
