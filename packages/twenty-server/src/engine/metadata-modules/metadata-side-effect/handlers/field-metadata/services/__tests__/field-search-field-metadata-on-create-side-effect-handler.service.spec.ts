@@ -200,19 +200,6 @@ describe('FieldSearchFieldMetadataOnCreateSideEffectHandlerService', () => {
     expect(result.status).toBe('noop');
   });
 
-  it('should be a noop when a pending row already targets the field', () => {
-    const result = handler.buildSideEffects(
-      buildArgs({
-        isSearchable: true,
-        pendingSearchFieldMetadataCreatesByFieldUniversalIdentifier: {
-          [FIELD_UNIVERSAL_IDENTIFIER]: { position: 0 },
-        },
-      }),
-    );
-
-    expect(result.status).toBe('noop');
-  });
-
   it('should be a noop when the object has no search vector field', () => {
     const result = handler.buildSideEffects(
       buildArgs({ isSearchable: true, hasTsVectorField: false }),

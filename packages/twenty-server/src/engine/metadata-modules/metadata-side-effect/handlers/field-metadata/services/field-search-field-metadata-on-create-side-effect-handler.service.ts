@@ -49,7 +49,7 @@ export class FieldSearchFieldMetadataOnCreateSideEffectHandlerService extends Me
       });
     }
 
-    // The object-create side effect owns the label identifier's row.
+    // The object side effects own the label identifier's row.
     if (
       parentFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
       flatFieldMetadata.universalIdentifier
@@ -63,16 +63,6 @@ export class FieldSearchFieldMetadataOnCreateSideEffectHandlerService extends Me
           parentFlatObjectMetadata.universalIdentifier,
         allFlatEntityOperationRecordByMetadataName,
       });
-
-    if (
-      pendingFlatSearchFieldMetadatas.some(
-        (pendingFlatSearchFieldMetadata) =>
-          pendingFlatSearchFieldMetadata.fieldMetadataUniversalIdentifier ===
-          flatFieldMetadata.universalIdentifier,
-      )
-    ) {
-      return { status: 'noop' };
-    }
 
     const fieldByUniversalIdentifier: Partial<
       Record<string, MetadataUniversalFlatEntity<'fieldMetadata'>>
