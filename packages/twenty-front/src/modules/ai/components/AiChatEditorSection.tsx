@@ -20,7 +20,6 @@ import { AiChatDictationEffect } from '@/ai/dictation/components/AiChatDictation
 import { AiChatDictationHint } from '@/ai/dictation/components/AiChatDictationHint';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatEditorFocusEffect } from '@/ai/components/internal/AiChatEditorFocusEffect';
-import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useAiChatEditor } from '@/ai/hooks/useAiChatEditor';
@@ -191,7 +190,6 @@ export const AiChatEditorSection = () => {
       />
       <AiChatEmptyState isCentered={isComposerCentered} />
       <AiChatStandaloneError />
-      <AiChatSkeletonLoader />
 
       <StyledInputArea isMobile={isMobile}>
         <AgentChatContextPreview />
