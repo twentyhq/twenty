@@ -5,6 +5,10 @@ import { QUEUE_JOB_BROWSER_EVENT_NAME } from '@/queue-job/constants/QueueJobBrow
 import { useTrackedQueueJob } from '@/queue-job/hooks/useTrackedQueueJob';
 import { JobState, type JobStatus } from '~/generated-metadata/graphql';
 
+type TrackedQueueJobProps = {
+  runningJob?: { jobId: string; context: string };
+};
+
 const FIRST_JOB_ID = 'install-application.workspace-id.application-first';
 const SECOND_JOB_ID = 'install-application.workspace-id.application-second';
 const CONTEXT = 'application-universal-identifier';
@@ -120,9 +124,9 @@ describe('useTrackedQueueJob', () => {
     const onQueueJobSettled = jest.fn();
 
     const { result, rerender } = renderHook(
-      ({ runningJob }: { runningJob?: { jobId: string; context: string } }) =>
+      ({ runningJob }: TrackedQueueJobProps) =>
         useTrackedQueueJob<string>({ runningJob, onQueueJobSettled }),
-      { initialProps: { runningJob: undefined } },
+      { initialProps: {} as TrackedQueueJobProps },
     );
 
     act(() => {
