@@ -1,4 +1,5 @@
 import { clsx } from 'clsx';
+import { OverflowingTextWithTooltip } from '@ui/surfaces/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 import { useTheme } from '@ui/theme-constants';
 import { Button } from '@ui/input/Button/Button';
 import { type IconComponent } from '@ui/icon/types/IconComponent';
@@ -40,7 +41,13 @@ export const InlineBanner = ({
     >
       <div className={styles.bannerContent}>
         <LeftIcon size={theme.icon.size.md} />
-        <span className={styles.bannerText}>{message}</span>
+        <div className={styles.bannerText}>
+          <OverflowingTextWithTooltip
+            isFocusable
+            text={<>{message}</>}
+            tooltipContent={message}
+          />
+        </div>
       </div>
       {button && !button.hidden && (
         <Button
