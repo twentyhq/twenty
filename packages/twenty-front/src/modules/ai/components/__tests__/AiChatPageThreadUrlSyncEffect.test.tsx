@@ -6,6 +6,7 @@ import { AppPath } from 'twenty-shared/types';
 
 import { AiChatPageThreadUrlSyncEffect } from '@/ai/components/AiChatPageThreadUrlSyncEffect';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -14,6 +15,11 @@ import {
 const switchThreadWithDraftMock = jest.fn((toThreadId: string) => {
   jotaiStore.set(currentAiChatThreadState.atom, toThreadId);
 });
+const switchToNewChatMock = jest.fn();
+
+jest.mock('@/ai/hooks/useSwitchToNewAiChat', () => ({
+  useSwitchToNewAiChat: () => ({ switchToNewChat: switchToNewChatMock }),
+}));
 
 jest.mock('@/ai/hooks/useSwitchAgentChatThreadWithDraft', () => ({
   useSwitchAgentChatThreadWithDraft: () => ({
@@ -63,6 +69,35 @@ describe('AiChatPageThreadUrlSyncEffect', () => {
     renderEffectAt(`/chat/${THREAD_A}`);
 
     expect(switchThreadWithDraftMock).toHaveBeenCalledWith(THREAD_A);
+  });
+
+  it('recovers a missing chat only after the thread list has loaded', () => {
+    renderEffectAt(`/chat/${THREAD_A}`);
+
+    expect(switchToNewChatMock).not.toHaveBeenCalled();
+
+    act(() => {
+      jotaiStore.set(metadataStoreState.atomFamily('agentChatThreads'), {
+        current: [],
+        draft: [],
+        status: 'up-to-date',
+      });
+    });
+
+    expect(switchToNewChatMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps an archived chat URL when the thread exists in metadata', () => {
+    jotaiStore.set(metadataStoreState.atomFamily('agentChatThreads'), {
+      current: [{ id: THREAD_A, deletedAt: '2026-09-07T00:00:00Z' }],
+      draft: [],
+      status: 'up-to-date',
+    });
+
+    renderEffectAt(`/chat/${THREAD_A}`);
+
+    expect(switchThreadWithDraftMock).toHaveBeenCalledWith(THREAD_A);
+    expect(switchToNewChatMock).not.toHaveBeenCalled();
   });
 
   it('should adopt the thread the browser navigated to', () => {

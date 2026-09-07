@@ -17,11 +17,11 @@ type SeedRow = {
 
 describe('seedAgents', () => {
   it.each([
-    [SEED_APPLE_WORKSPACE_ID, 3, 22],
-    [SEED_YCOMBINATOR_WORKSPACE_ID, 1, 4],
+    [SEED_APPLE_WORKSPACE_ID, 3, 22, 11],
+    [SEED_YCOMBINATOR_WORKSPACE_ID, 1, 4, 2],
   ])(
     'keeps messages, turns, and parts in their owning conversation for %s',
-    async (workspaceId, threadCount, messageCount) => {
+    async (workspaceId, threadCount, messageCount, turnCount) => {
       const tables = new Map<string, SeedRow[]>();
       let tableName: string;
       const queryBuilder = {
@@ -69,6 +69,7 @@ describe('seedAgents', () => {
       expect(threads).toHaveLength(threadCount);
       expect(messages).toHaveLength(messageCount);
       expect(parts).toHaveLength(messageCount);
+      expect(turns).toHaveLength(turnCount);
       expect(queryBuilder.where).toHaveBeenCalledWith(
         'id = :threadId AND "workspaceId" = :workspaceId',
         { threadId: threads[0].id, workspaceId },
