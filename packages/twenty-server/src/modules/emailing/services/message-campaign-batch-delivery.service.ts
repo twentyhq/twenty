@@ -173,8 +173,11 @@ export class MessageCampaignBatchDeliveryService {
 
     // Suppressed recipients are resolved before the slots are asked for, so a
     // batch full of unsubscribed addresses does not spend send capacity that
-    // the recipients it actually has could have used. The set is handed to the
-    // sender so it does not resolve suppression a second time.
+    // the recipients it actually has could have used. This only sizes the
+    // charge: the sender resolves suppression again at the handoff, and anyone
+    // who unsubscribes in between is dropped there. That leaves the batch
+    // having paid for a slot it did not use, which costs throughput rather than
+    // mailing someone who opted out.
     const blockedAddresses =
       await this.emailingDomainSenderService.findBlockedRecipientAddresses({
         workspaceId,
@@ -229,7 +232,6 @@ export class MessageCampaignBatchDeliveryService {
       campaign: campaignStillRunning,
       claimToken,
       claimedRecipients,
-      blockedAddresses,
     });
   }
 
@@ -306,13 +308,11 @@ export class MessageCampaignBatchDeliveryService {
     campaign,
     claimToken,
     claimedRecipients,
-    blockedAddresses,
   }: {
     data: SendCampaignEmailBatchJobData;
     campaign: MessageCampaignWorkspaceEntity;
     claimToken: string;
     claimedRecipients: BatchRecipient[];
-    blockedAddresses: Set<string>;
   }): Promise<void> {
     const { workspaceId, campaignId, emailingDomainId } = data;
 
@@ -360,7 +360,6 @@ export class MessageCampaignBatchDeliveryService {
           replacements: replacementsByDeliveryId.get(recipient.messageId) ?? {},
         })),
         unsubscribeTopicId: campaign.unsubscribeTopicId ?? undefined,
-        blockedAddresses,
       })
       .catch(async (error) => {
         const { shouldRetry } = await this.recordBatchFailure({

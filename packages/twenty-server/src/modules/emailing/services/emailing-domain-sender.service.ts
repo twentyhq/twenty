@@ -94,7 +94,6 @@ export class EmailingDomainSenderService {
     template,
     recipients,
     unsubscribeTopicId,
-    blockedAddresses: precomputedBlockedAddresses,
   }: {
     workspaceId: string;
     emailingDomainId: string;
@@ -103,7 +102,6 @@ export class EmailingDomainSenderService {
     template: EmailingDomainEmailTemplate;
     recipients: EmailingDomainBatchRecipient[];
     unsubscribeTopicId?: string;
-    blockedAddresses?: Set<string>;
   }): Promise<CampaignBatchSendOutcome> {
     const emailingDomain = await this.findEmailingDomainByIdOrThrow(
       workspaceId,
@@ -112,14 +110,15 @@ export class EmailingDomainSenderService {
 
     this.assertDomainCanSend(emailingDomain, from);
 
-    const blockedAddresses =
-      precomputedBlockedAddresses ??
-      (await this.findBlockedRecipientAddresses({
-        workspaceId,
-        sendKind,
-        emailAddresses: recipients.map((recipient) => recipient.email),
-        unsubscribeTopicId,
-      }));
+    // Resolved here, immediately before the handoff, and never taken from the
+    // caller: everything between choosing recipients and sending them is time
+    // in which one of them can unsubscribe.
+    const blockedAddresses = await this.findBlockedRecipientAddresses({
+      workspaceId,
+      sendKind,
+      emailAddresses: recipients.map((recipient) => recipient.email),
+      unsubscribeTopicId,
+    });
 
     const deliverableRecipients: EmailingDomainBatchRecipient[] = [];
     const deliverableRecipientIndexes: number[] = [];
@@ -174,9 +173,10 @@ export class EmailingDomainSenderService {
     };
   }
 
-  // Exposed so a caller can tell who is actually deliverable before spending
-  // anything on their behalf; sendEmailBatch takes the result back rather than
-  // resolving it a second time.
+  // Exposed so a caller can tell who is deliverable before spending anything on
+  // their behalf. It is an estimate for that purpose only: sendEmailBatch
+  // resolves suppression again at the handoff, and that later answer is the one
+  // that decides who is mailed.
   async findBlockedRecipientAddresses({
     workspaceId,
     sendKind,
