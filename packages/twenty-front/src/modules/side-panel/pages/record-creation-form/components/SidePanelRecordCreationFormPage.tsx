@@ -11,6 +11,7 @@ import { recordCreationFormRequestComponentState } from '@/side-panel/pages/reco
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useState } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type JsonValue } from 'type-fest';
@@ -73,6 +74,8 @@ const SidePanelRecordCreationForm = ({
   const [recordCreationFormDraft, setRecordCreationFormDraft] =
     useAtomComponentState(recordCreationFormDraftComponentState);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const draftRecord = recordCreationFormDraft ?? initialDraftRecord;
 
   const { recordFormFieldMetadataItems } = useRecordFormFieldMetadataItems({
@@ -94,6 +97,11 @@ const SidePanelRecordCreationForm = ({
   };
 
   const handleCreateClick = () => {
+    if (isSubmitting) {
+      return;
+    }
+
+    setIsSubmitting(true);
     settleRecordCreationDraft({
       requestId,
       draftRecord: computeRecordFormCreateRecordInput({
@@ -126,6 +134,7 @@ const SidePanelRecordCreationForm = ({
             accent="blue"
             size="small"
             onClick={handleCreateClick}
+            disabled={isSubmitting}
             dataTestId="record-creation-form-create-button"
           />,
         ]}

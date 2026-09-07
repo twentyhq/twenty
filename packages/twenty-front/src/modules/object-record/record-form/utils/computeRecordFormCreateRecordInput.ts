@@ -31,7 +31,8 @@ export const computeRecordFormCreateRecordInput = ({
   fieldMetadataItems: FieldMetadataItem[];
   objectMetadataItems: EnrichedObjectMetadataItem[];
 }): Partial<ObjectRecord> => {
-  const createRecordInput: Partial<ObjectRecord> = { ...draftRecord };
+  const gqlFieldNamesToOmit = new Set<string>();
+  const morphJoinColumnValuesToSet: Record<string, string> = {};
 
   for (const fieldMetadataItem of fieldMetadataItems) {
     if (fieldMetadataItem.type !== FieldMetadataType.MORPH_RELATION) {
@@ -40,20 +41,14 @@ export const computeRecordFormCreateRecordInput = ({
 
     const gqlFieldName = getFieldMetadataItemGqlFieldName(fieldMetadataItem);
 
-    if (!(gqlFieldName in createRecordInput)) {
+    if (!(gqlFieldName in draftRecord)) {
       continue;
     }
 
-    const draftValue = createRecordInput[gqlFieldName];
-
-    delete createRecordInput[gqlFieldName];
-
+    const draftValue = draftRecord[gqlFieldName];
     const morphRelationType = fieldMetadataItem.morphRelations?.[0]?.type;
 
-    if (
-      !isMorphRelationDraftValue(draftValue) ||
-      !isDefined(morphRelationType)
-    ) {
+    if (!isDefined(morphRelationType)) {
       continue;
     }
 
@@ -62,18 +57,33 @@ export const computeRecordFormCreateRecordInput = ({
       fieldName: fieldMetadataItem.name,
       relationType: morphRelationType,
       objectMetadataItems,
-      targetRecordId: draftValue.id,
-      targetObjectMetadataId: draftValue.targetObjectMetadataId,
+      ...(isMorphRelationDraftValue(draftValue)
+        ? {
+            targetRecordId: draftValue.id,
+            targetObjectMetadataId: draftValue.targetObjectMetadataId,
+          }
+        : {}),
     });
+
+    gqlFieldNamesToOmit.add(gqlFieldName);
 
     for (const [joinColumnName, joinColumnValue] of Object.entries(
       updateInput,
     )) {
+      gqlFieldNamesToOmit.add(joinColumnName);
+
       if (isDefined(joinColumnValue)) {
-        createRecordInput[joinColumnName] = joinColumnValue;
+        morphJoinColumnValuesToSet[joinColumnName] = joinColumnValue;
       }
     }
   }
 
-  return createRecordInput;
+  return {
+    ...Object.fromEntries(
+      Object.entries(draftRecord).filter(
+        ([gqlFieldName]) => !gqlFieldNamesToOmit.has(gqlFieldName),
+      ),
+    ),
+    ...morphJoinColumnValuesToSet,
+  };
 };

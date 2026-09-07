@@ -205,7 +205,7 @@ export const useCreateNewIndexRecord = ({
       const createdRecord = await requestRecordCreation({
         initialDraftRecord: recordInput,
         createRecord: (draftRecord) =>
-          createIndexRecord({ ...draftRecord, ...recordInput }),
+          createIndexRecord({ ...recordInput, ...draftRecord }),
       });
 
       return createdRecord ?? undefined;

@@ -1,7 +1,6 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { isFieldMetadataReadOnlyByPermissions } from '@/object-record/read-only/utils/internal/isFieldMetadataReadOnlyByPermissions';
 import { computeRecordFormFieldMetadataItems } from '@/object-record/record-form/utils/computeRecordFormFieldMetadataItems';
 import { recordFormPageLayoutByObjectMetadataIdFamilySelector } from '@/page-layout/states/selectors/recordFormPageLayoutByObjectMetadataIdFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -29,12 +28,7 @@ export const useRecordFormFieldMetadataItems = ({
     recordFormFieldMetadataItems: computeRecordFormFieldMetadataItems({
       recordFormPageLayout,
       fieldMetadataItems: objectMetadataItem.fields,
-    }).filter(
-      (fieldMetadataItem) =>
-        !isFieldMetadataReadOnlyByPermissions({
-          objectPermissions,
-          fieldMetadataId: fieldMetadataItem.id,
-        }),
-    ),
+      restrictedFields: objectPermissions.restrictedFields,
+    }),
   };
 };

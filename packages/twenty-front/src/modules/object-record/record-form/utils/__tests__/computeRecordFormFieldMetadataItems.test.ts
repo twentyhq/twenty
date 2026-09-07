@@ -62,6 +62,7 @@ describe('computeRecordFormFieldMetadataItems', () => {
         },
       ]),
       fieldMetadataItems: [NAME_FIELD, CODE_FIELD],
+      restrictedFields: {},
     });
 
     expect(result.map((field) => field.name)).toEqual(['name', 'code']);
@@ -85,6 +86,7 @@ describe('computeRecordFormFieldMetadataItems', () => {
         },
       ]),
       fieldMetadataItems: [NAME_FIELD, CODE_FIELD, CITY_FIELD],
+      restrictedFields: {},
     });
 
     expect(result.map((field) => field.name)).toEqual(['name', 'code', 'city']);
@@ -118,6 +120,7 @@ describe('computeRecordFormFieldMetadataItems', () => {
         },
       ]),
       fieldMetadataItems: [NAME_FIELD, CODE_FIELD, CITY_FIELD],
+      restrictedFields: {},
     });
 
     expect(result.map((field) => field.name)).toEqual(['name']);
@@ -135,8 +138,31 @@ describe('computeRecordFormFieldMetadataItems', () => {
         },
       ]),
       fieldMetadataItems: [NAME_FIELD],
+      restrictedFields: {},
     });
 
     expect(result.map((field) => field.name)).toEqual(['name']);
+  });
+
+  it('should drop fields the user cannot update, keeping explicitly allowed and unrestricted ones', () => {
+    const result = computeRecordFormFieldMetadataItems({
+      recordFormPageLayout: buildPageLayout([
+        {
+          position: 10,
+          widgets: [
+            buildFormFieldWidget({ fieldMetadataId: 'field-name', index: 0 }),
+            buildFormFieldWidget({ fieldMetadataId: 'field-code', index: 1 }),
+            buildFormFieldWidget({ fieldMetadataId: 'field-city', index: 2 }),
+          ],
+        },
+      ]),
+      fieldMetadataItems: [NAME_FIELD, CODE_FIELD, CITY_FIELD],
+      restrictedFields: {
+        'field-code': { canRead: true, canUpdate: false },
+        'field-city': { canRead: true, canUpdate: true },
+      },
+    });
+
+    expect(result.map((field) => field.name)).toEqual(['name', 'city']);
   });
 });

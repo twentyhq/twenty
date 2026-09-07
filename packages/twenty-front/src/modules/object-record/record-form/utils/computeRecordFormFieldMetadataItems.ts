@@ -1,6 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   PageLayoutTabLayoutMode,
@@ -45,15 +46,19 @@ export const computeRecordFormFieldMetadataItems = <
 >({
   recordFormPageLayout,
   fieldMetadataItems,
+  restrictedFields,
 }: {
   recordFormPageLayout: RecordFormLayout;
   fieldMetadataItems: TFieldMetadataItem[];
+  restrictedFields: RestrictedFieldsPermissions;
 }): TFieldMetadataItem[] => {
   const fieldMetadataItemById = new Map(
-    fieldMetadataItems.map((fieldMetadataItem) => [
-      fieldMetadataItem.id,
-      fieldMetadataItem,
-    ]),
+    fieldMetadataItems
+      .filter(
+        (fieldMetadataItem) =>
+          restrictedFields[fieldMetadataItem.id]?.canUpdate !== false,
+      )
+      .map((fieldMetadataItem) => [fieldMetadataItem.id, fieldMetadataItem]),
   );
 
   return [...recordFormPageLayout.tabs]

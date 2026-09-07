@@ -26,10 +26,11 @@ describe('computeRecordFormCreateRecordInput', () => {
     });
   });
 
-  it('drops a cleared morph relation value without emitting join columns', () => {
+  it('strips caller-seeded join columns when the user clears the morph relation', () => {
     const createRecordInput = computeRecordFormCreateRecordInput({
       draftRecord: {
         name: 'Rex',
+        polymorphicOwnerRocketId: 'caller-seeded-id',
         polymorphicOwner: null,
       },
       fieldMetadataItems: petObjectMetadataItem.fields,
@@ -37,6 +38,26 @@ describe('computeRecordFormCreateRecordInput', () => {
     });
 
     expect(createRecordInput).toEqual({ name: 'Rex' });
+  });
+
+  it('strips stale join columns when the user replaces the morph target', () => {
+    const createRecordInput = computeRecordFormCreateRecordInput({
+      draftRecord: {
+        name: 'Rex',
+        polymorphicOwnerSurveyResultId: 'caller-seeded-id',
+        polymorphicOwner: {
+          targetObjectMetadataId: rocketObjectMetadataId,
+          id: 'record-id',
+        },
+      },
+      fieldMetadataItems: petObjectMetadataItem.fields,
+      objectMetadataItems,
+    });
+
+    expect(createRecordInput).toEqual({
+      name: 'Rex',
+      polymorphicOwnerRocketId: 'record-id',
+    });
   });
 
   it('keeps non-morph draft values untouched, including caller-provided keys', () => {
