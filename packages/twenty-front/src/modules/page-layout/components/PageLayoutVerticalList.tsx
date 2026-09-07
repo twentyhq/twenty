@@ -94,7 +94,7 @@ export const PageLayoutVerticalList = ({
   const { isInPinnedTab, isMobile, isSideColumnContext } =
     useIsSideColumnContext();
 
-  // The migration skips tabs with multiple stored widgets, even if only one is visible.
+  // Preserve Canvas sizing for layouts skipped by the persisted migration.
   const isLegacyCanvasViewport =
     layoutMode === PageLayoutTabLayoutMode.CANVAS &&
     widgets.length === 1 &&

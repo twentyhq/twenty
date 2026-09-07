@@ -180,6 +180,38 @@ describe('FlatPageLayoutWidgetValidatorService', () => {
     },
   );
 
+  it.each(['base', 'override'] as const)(
+    'does not infer an order for a Timeline with a null %s position',
+    async (positionSource) => {
+      const timeline = {
+        ...buildWidget({
+          universalIdentifier: 'timeline',
+          index: 0,
+          type: WidgetType.TIMELINE,
+        }),
+        ...(positionSource === 'base'
+          ? { position: null }
+          : { universalOverrides: { position: null } }),
+      };
+      const fitContentWidget = buildWidget({
+        universalIdentifier: 'fit-content',
+        index: 1,
+      });
+
+      const timelineResult = await validateCreation({
+        widget: timeline,
+        siblingWidgets: [fitContentWidget],
+      });
+      const fitContentResult = await validateCreation({
+        widget: fitContentWidget,
+        siblingWidgets: [timeline],
+      });
+
+      expect(timelineResult.errors).toEqual([]);
+      expect(fitContentResult.errors).toEqual([]);
+    },
+  );
+
   it('rejects a new Timeline with no position when the tab already has a viewport widget', async () => {
     const result = await validateCreation({
       widget: {

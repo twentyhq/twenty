@@ -313,10 +313,6 @@ export class FlatPageLayoutWidgetValidatorService {
 
     const isTabViewportWidget = this.isViewportFillingWidget(widget);
 
-    const widgetIndex =
-      widget.position?.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST
-        ? widget.position.index
-        : 0;
     const activeSiblingWidgets = relatedWidgets
       .map((relatedWidget) => this.getEffectiveWidget(relatedWidget))
       .filter(
@@ -345,14 +341,21 @@ export class FlatPageLayoutWidgetValidatorService {
       });
     }
 
+    if (widget.position?.layoutMode !== PageLayoutTabLayoutMode.VERTICAL_LIST) {
+      return errors;
+    }
+
+    const widgetIndex = widget.position.index;
     const hasInvalidWidgetOrdering = activeSiblingWidgets.some(
       (siblingWidget) => {
-        const siblingIndex =
-          siblingWidget.position?.layoutMode ===
+        if (
+          siblingWidget.position?.layoutMode !==
           PageLayoutTabLayoutMode.VERTICAL_LIST
-            ? siblingWidget.position.index
-            : 0;
+        ) {
+          return false;
+        }
 
+        const siblingIndex = siblingWidget.position.index;
         const isSiblingTabViewport =
           this.isViewportFillingWidget(siblingWidget);
 
