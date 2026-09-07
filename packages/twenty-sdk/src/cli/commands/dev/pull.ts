@@ -49,6 +49,7 @@ export class AppPullCommand {
       coverage: result.data.coverage,
       localOnlyRelativePaths: result.data.localOnlyRelativePaths,
       unreadableRelativePaths: result.data.unreadableRelativePaths,
+      translations: result.data.translations,
       verbose: options.verbose,
     });
 
