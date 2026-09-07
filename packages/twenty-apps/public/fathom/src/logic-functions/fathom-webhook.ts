@@ -11,6 +11,7 @@ import { FATHOM_WEBHOOK_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-ide
 import { type FathomWebhookRegistration } from 'src/logic-functions/types/fathom-webhook-registration.type';
 import { getFathomWebhookRegistrationKey } from 'src/logic-functions/utils/get-fathom-webhook-registration-key.util';
 import { listFathomConnections } from 'src/logic-functions/utils/list-fathom-connections.util';
+import { resolveCallRecordingShareWith } from 'src/logic-functions/utils/resolve-call-recording-share-with.util';
 import { syncFathomMeetingToCallRecording } from 'src/logic-functions/utils/sync-fathom-meeting-to-call-recording.util';
 
 type FathomWebhookResult =
@@ -98,7 +99,8 @@ export const fathomWebhookHandler = async (
   const syncResult = await syncFathomMeetingToCallRecording({
     coreApiClient: new CoreApiClient({ runAs: 'application' }),
     meeting: meetingParseResult.value,
-    connection,
+    connectedAccountId,
+    shareWith: resolveCallRecordingShareWith(connection),
   });
 
   return { success: true, ...syncResult };

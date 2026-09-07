@@ -154,7 +154,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
           <AppTooltip
             key={mode}
             anchorSelect={`[data-tooltip-id='${tooltipId}-${mode}']`}
-            content={label}
+            title={label}
             delay={TooltipDelay.noDelay}
             place={TooltipPosition.Right}
             positionStrategy="fixed"

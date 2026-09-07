@@ -5,7 +5,6 @@ export type CallRecordingSyncFields = {
   title?: string;
   status?: 'PROCESSING' | 'COMPLETED';
   recordingRequestStatus?: 'REQUESTED';
-  externalRecordingId?: string;
   startedAt?: string;
   endedAt?: string;
   transcript?: TranscriptEntry[];

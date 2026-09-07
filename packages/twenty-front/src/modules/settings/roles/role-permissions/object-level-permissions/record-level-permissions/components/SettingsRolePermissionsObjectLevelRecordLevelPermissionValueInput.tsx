@@ -225,7 +225,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
           </StyledContainer>
           <AppTooltip
             anchorSelect={`#${tooltipId}`}
-            content={fullLabel}
+            title={fullLabel}
             delay={TooltipDelay.shortDelay}
             noArrow
             place="bottom"

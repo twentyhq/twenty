@@ -1314,11 +1314,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   private isRecordSharingEnabled(): boolean {
-    return (
-      this.options.internalContext.featureFlagsMap[
-        FeatureFlagKey.IS_RECORD_SHARING_ENABLED
-      ] === true
-    );
+    return this.options.internalContext.featureFlagsMap[
+      FeatureFlagKey.IS_RECORD_SHARING_ENABLED
+    ];
   }
 
   private async resolveWritableRecordIds({

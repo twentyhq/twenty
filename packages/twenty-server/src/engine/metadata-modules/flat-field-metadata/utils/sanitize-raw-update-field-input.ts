@@ -65,6 +65,12 @@ export const sanitizeRawUpdateFieldInput = ({
     }
   }
 
+  if (
+    (updatedEditableFieldProperties.isSearchable as boolean | null) === null
+  ) {
+    updatedEditableFieldProperties.isSearchable = false;
+  }
+
   updatedEditableFieldProperties.options = !isDefined(
     updatedEditableFieldProperties.options,
   )
