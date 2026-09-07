@@ -1212,8 +1212,57 @@ describe('call recorder app lifecycle (integration)', () => {
 
       expect(result).toEqual({
         skipped: true,
-        reason: 'no relevant calendar event change',
+        reason: 'preference change on a meeting whose bot is already due',
       });
+    });
+
+    it('clears an On set by hand on a meeting that already ended', async () => {
+      const calendarEventId = await createCalendarEvent({
+        startsAt: hoursAgo(3),
+        endsAt: hoursAgo(2),
+        callRecorderPreference: 'ON',
+      });
+
+      const result = await deliverCalendarEventUpdate({
+        calendarEventId,
+        updatedFields: ['callRecorderPreference'],
+        before: { callRecorderPreference: null },
+        after: { callRecorderPreference: 'ON' },
+      });
+
+      expect(result).toEqual(expect.objectContaining({ reconciled: true }));
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
+      expect(
+        await findCallRecordings({
+          calendarEventId: { in: [calendarEventId] },
+        }),
+      ).toEqual([]);
+    });
+
+    it('clears an On set by hand while the workspace recording switch is off', async () => {
+      vi.stubEnv(
+        CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME,
+        'false',
+      );
+
+      const calendarEventId = await createCalendarEvent({
+        callRecorderPreference: 'ON',
+      });
+
+      const result = await deliverCalendarEventUpdate({
+        calendarEventId,
+        updatedFields: ['callRecorderPreference'],
+        before: { callRecorderPreference: null },
+        after: { callRecorderPreference: 'ON' },
+      });
+
+      expect(result).toEqual(expect.objectContaining({ reconciled: true }));
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
+      expect(
+        await findCallRecordings({
+          calendarEventId: { in: [calendarEventId] },
+        }),
+      ).toEqual([]);
     });
 
     it('schedules a bot and marks the event On when a user clears an Off', async () => {
