@@ -6,6 +6,8 @@ import {
   type WidgetType,
 } from 'twenty-shared/types';
 
+import { type FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
+
 export type StandardPageLayoutWidgetConfig = {
   universalIdentifier: string;
   title?: string;
@@ -14,6 +16,8 @@ export type StandardPageLayoutWidgetConfig = {
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
   conditionalAvailabilityExpression?: string | null;
   fieldUniversalIdentifier?: string;
+  fieldDisplayMode?: FieldDisplayMode;
+  embeddedViewUniversalIdentifier?: string;
 };
 
 export type StandardPageLayoutTabConfig = {
@@ -42,6 +46,8 @@ export type StandardRecordPageWidgetConfig = {
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
   conditionalAvailabilityExpression?: string | null;
   fieldUniversalIdentifier?: string;
+  fieldDisplayMode?: FieldDisplayMode;
+  embeddedViewUniversalIdentifier?: string;
 };
 
 export type StandardRecordPageTabConfig = {

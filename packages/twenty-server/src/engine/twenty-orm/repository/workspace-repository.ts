@@ -1004,6 +1004,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return { identifiers: [], generatedMaps: [], raw: [] };
     }
 
+    const writableRecordIds = await this.resolveWritableRecordIds({
+      ids: inputs.map((input) => input.id),
+      operationType: 'update',
+    });
+    const writableInputs = inputs.filter((input) =>
+      writableRecordIds.has(input.id),
+    );
+
     const recordsBefore: ObjectRecord[] = [];
     const recordsAfter: ObjectRecord[] = [];
     const generatedMaps: ObjectRecord[] = [];
@@ -1015,7 +1023,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const rawBeforeByInputIndex: ObjectRecord[][] = [];
     const existingRecordsMapById: Record<string, ObjectRecord> = {};
 
-    for (const input of inputs) {
+    for (const input of writableInputs) {
       const rawBefore = await this.buildIdsEventSnapshotQueryBuilder([
         input.id,
       ]).getMany<ObjectRecord>({ noFormatting: true });
@@ -1031,7 +1039,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       }
     }
 
-    let dataByInputIndex = inputs.map((input) => input.data);
+    let dataByInputIndex = writableInputs.map((input) => input.data);
     let filesFieldFileIds = null;
 
     const filesFieldDiff =
@@ -1053,7 +1061,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       dataByInputIndex = enriched.entities as Partial<ObjectRecord>[];
     }
 
-    for (const [index, input] of inputs.entries()) {
+    for (const [index, input] of writableInputs.entries()) {
       const { id: _id, ...setColumns } = this.formatWriteData(
         dataByInputIndex[index],
       );
@@ -1240,6 +1248,31 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     )
       .where({ id: In(ids) })
       .withDeleted();
+  }
+
+  private async resolveWritableRecordIds({
+    ids,
+    operationType,
+  }: {
+    ids: string[];
+    operationType: OperationType;
+  }): Promise<Set<string>> {
+    if (this.options.shouldBypassPermissionChecks) {
+      return new Set(ids);
+    }
+
+    const queryBuilder = this.createQueryBuilder()
+      .where({ id: In(ids) })
+      .withDeleted();
+
+    this.applyRowLevelPermissionPredicates(queryBuilder, operationType);
+    queryBuilder.select(['id']);
+
+    const rows = await queryBuilder.getMany<ObjectRecord>({
+      noFormatting: true,
+    });
+
+    return new Set(rows.map((row) => String(row.id)));
   }
 
   async runMutation({

@@ -4,6 +4,7 @@ import { ApplicationApi } from '@/cli/utilities/api/application-api';
 import { FileApi } from '@/cli/utilities/api/file-api';
 import { LogicFunctionApi } from '@/cli/utilities/api/logic-function-api';
 import { SchemaApi } from '@/cli/utilities/api/schema-api';
+import { type ApplicationExport } from '@/cli/utilities/pull/application-export-type';
 import { type Manifest } from 'twenty-shared/application';
 import {
   type MetadataValidationErrorResponse,
@@ -95,6 +96,12 @@ export class ApiService {
     >
   > {
     return this.applicationApi.syncApplication(manifest, options);
+  }
+
+  exportApplication(
+    universalIdentifier: string,
+  ): Promise<ApiResponse<ApplicationExport>> {
+    return this.applicationApi.exportApplication(universalIdentifier);
   }
 
   uninstallApplication(universalIdentifier: string): Promise<ApiResponse> {

@@ -1,4 +1,3 @@
-import { useGetIsMetadataItemFromStandardApplication } from '@/object-metadata/hooks/useGetIsMetadataItemFromStandardApplication';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
@@ -44,9 +43,6 @@ export const FieldsWidgetFieldItem = ({
   instanceId,
   onMouseEnter,
 }: FieldsWidgetFieldItemProps) => {
-  const getIsMetadataItemFromStandardApplication =
-    useGetIsMetadataItemFromStandardApplication();
-
   const fieldDefinition = formatFieldMetadataItemAsColumnDefinition({
     field: fieldMetadataItem,
     position: globalIndex,
@@ -67,13 +63,10 @@ export const FieldsWidgetFieldItem = ({
         isDisplayModeFixHeight: true,
         isRecordFieldReadOnly: isRecordFieldReadOnly({
           isRecordReadOnly,
-          isSystemObject: objectMetadataItem.isSystem,
           objectPermissions: getObjectPermissionsFromMapByObjectMetadataId({
             objectPermissionsByObjectMetadataId,
             objectMetadataId: objectMetadataItem.id,
           }),
-          isFieldFromStandardApplication:
-            getIsMetadataItemFromStandardApplication(fieldMetadataItem),
           fieldMetadataItem,
           fieldDefinition,
           objectPermissionsByObjectMetadataId,

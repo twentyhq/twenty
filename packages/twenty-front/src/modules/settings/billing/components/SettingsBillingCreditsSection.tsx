@@ -14,6 +14,7 @@ import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPha
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -118,12 +119,16 @@ const StyledCreditUsageFooterActions = styled.div`
 
 export const SettingsBillingCreditsSection = ({
   currentBillingSubscription,
+  onManageBilling,
+  isManageBillingDisabled,
   onUpdatePayment,
   isUpdatePaymentDisabled,
 }: {
   currentBillingSubscription: NonNullable<
     CurrentWorkspace['currentBillingSubscription']
   >;
+  onManageBilling: () => void;
+  isManageBillingDisabled: boolean;
   onUpdatePayment: () => void;
   isUpdatePaymentDisabled: boolean;
 }) => {
@@ -149,9 +154,7 @@ export const SettingsBillingCreditsSection = ({
   const { getIntervalLabel } = useBillingWording();
 
   const isTrialing = subscriptionStatus === SubscriptionStatus.Trialing;
-  const shouldUpdatePayment =
-    subscriptionStatus === SubscriptionStatus.PastDue ||
-    subscriptionStatus === SubscriptionStatus.Unpaid;
+  const shouldUpdatePayment = isSubscriptionPaymentOverdue(subscriptionStatus);
   const { [PermissionFlagType.WORKSPACE]: hasPermissionToEndTrialPeriod } =
     usePermissionFlagMap();
 
@@ -242,8 +245,8 @@ export const SettingsBillingCreditsSection = ({
             shouldRedirectToManageBilling={isCancellationScheduled}
             shouldRedirectToUpdatePayment={shouldUpdatePayment}
             canEndTrialPeriod={hasPermissionToEndTrialPeriod}
-            onManageBilling={onUpdatePayment}
-            isManageBillingDisabled={isUpdatePaymentDisabled}
+            onManageBilling={onManageBilling}
+            isManageBillingDisabled={isManageBillingDisabled}
             onUpdatePayment={onUpdatePayment}
             isUpdatePaymentDisabled={isUpdatePaymentDisabled}
             canCancelCreditPackSwitch={canCancelCreditPackSwitch}

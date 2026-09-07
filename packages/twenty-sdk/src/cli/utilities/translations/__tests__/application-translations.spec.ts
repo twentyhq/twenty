@@ -159,8 +159,33 @@ describe('compileApplicationTranslations', () => {
     });
   });
 
-  it('returns no locales when there is no locales directory', async () => {
+  it('declares nothing when there is no locales directory, so the sync leaves stored translations alone', async () => {
     const appPath = await mkdtemp(join(tmpdir(), 'twenty-translations-empty-'));
+
+    expect(await compileApplicationTranslations(appPath)).toBeUndefined();
+  });
+
+  it('declares zero locales when the locales directory exists but holds none', async () => {
+    const appPath = await mkdtemp(
+      join(tmpdir(), 'twenty-translations-no-locale-'),
+    );
+
+    await mkdir(join(appPath, 'locales'), { recursive: true });
+
+    expect(await compileApplicationTranslations(appPath)).toEqual({});
+  });
+
+  it('declares zero locales when only the source locale is present', async () => {
+    const appPath = await mkdtemp(
+      join(tmpdir(), 'twenty-translations-source-only-'),
+    );
+    const localesDir = join(appPath, 'locales');
+
+    await mkdir(localesDir, { recursive: true });
+    await writeFile(
+      join(localesDir, 'en.json'),
+      JSON.stringify({ Company: 'Company' }),
+    );
 
     expect(await compileApplicationTranslations(appPath)).toEqual({});
   });
