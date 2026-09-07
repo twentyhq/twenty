@@ -348,17 +348,11 @@ export class FieldMetadataService {
       );
     }
 
-    const { flatFieldMetadataMaps: recomputedFlatFieldMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps'],
-        },
-      );
-
     return findFlatEntityByUniversalIdentifierOrThrow({
       universalIdentifier: flatFieldMetadatasToUpdate[0].universalIdentifier,
-      flatEntityMaps: recomputedFlatFieldMetadataMaps,
+      flatEntityMaps:
+        validateAndBuildResult.appliedAllFlatEntityMaps
+          ?.flatFieldMetadataMaps ?? existingFlatFieldMetadataMaps,
     });
   }
 
@@ -456,21 +450,15 @@ export class FieldMetadataService {
       );
     }
 
-    const { flatFieldMetadataMaps: recomputedFlatFieldMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps'],
-        },
-      );
-
     return findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow(
       {
         universalIdentifiers: allTranspiledTranspilationInputs.map(
           ({ result: { flatFieldMetadatas } }) =>
             flatFieldMetadatas[0].universalIdentifier,
         ),
-        flatEntityMaps: recomputedFlatFieldMetadataMaps,
+        flatEntityMaps:
+          validateAndBuildResult.appliedAllFlatEntityMaps
+            ?.flatFieldMetadataMaps ?? existingFlatFieldMetadataMaps,
       },
     );
   }

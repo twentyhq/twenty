@@ -51,6 +51,10 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     } catch (error) {
       this.logger.error(error);
       this.logger.error(error.stack);
+
+      // Without this the command exits 0 on a half-seeded workspace, and every
+      // later suite fails on missing roles and auth context instead of here.
+      throw error;
     }
   }
 }
