@@ -368,6 +368,17 @@ describe('createClassTokenList', () => {
       expect(JSON.stringify(classTokenList)).toBe('{"0":"first","1":"second"}');
     });
 
+    it('should report indexed properties through the in operator', () => {
+      const element = new FakeElement();
+      element.setAttribute('class', 'first second');
+      const classTokenList = createClassTokenList(element);
+
+      expect('0' in classTokenList).toBe(true);
+      expect('1' in classTokenList).toBe(true);
+      expect('2' in classTokenList).toBe(false);
+      expect('add' in classTokenList).toBe(true);
+    });
+
     it('should convert item indices the way an unsigned long conversion does', () => {
       const element = new FakeElement();
       element.setAttribute('class', 'first second');

@@ -2,7 +2,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type ClassAttributeTargetElement } from '@/polyfills/dom/types/ClassAttributeTargetElement';
 import { type WorkerClassTokenList } from '@/polyfills/dom/types/WorkerClassTokenList';
+import { createIndexedClassTokenList } from '@/polyfills/dom/utils/createIndexedClassTokenList';
 import { parseClassTokenList } from '@/polyfills/dom/utils/parseClassTokenList';
+import { serializeClassTokenList } from '@/polyfills/dom/utils/serializeClassTokenList';
 import { toClassTokenIndex } from '@/polyfills/dom/utils/toClassTokenIndex';
 import { toValidClassTokenOrThrow } from '@/polyfills/dom/utils/toValidClassTokenOrThrow';
 
@@ -23,11 +25,13 @@ class ClassTokenList implements WorkerClassTokenList {
   }
 
   private writeTokens(tokens: string[]): void {
-    if (tokens.length === 0 && !isDefined(this.element.getAttribute('class'))) {
+    const hasNoClassAttribute = !isDefined(this.element.getAttribute('class'));
+
+    if (tokens.length === 0 && hasNoClassAttribute) {
       return;
     }
 
-    this.element.setAttribute('class', [...new Set(tokens)].join(' '));
+    this.element.setAttribute('class', serializeClassTokenList(tokens));
   }
 
   get length(): number {
@@ -69,17 +73,15 @@ class ClassTokenList implements WorkerClassTokenList {
       return shouldBePresent;
     }
 
-    if (shouldBePresent) {
-      this.writeTokens([...currentTokens, tokenToToggle]);
-
-      return true;
-    }
-
     this.writeTokens(
-      currentTokens.filter((currentToken) => currentToken !== tokenToToggle),
+      shouldBePresent
+        ? [...currentTokens, tokenToToggle]
+        : currentTokens.filter(
+            (currentToken) => currentToken !== tokenToToggle,
+          ),
     );
 
-    return false;
+    return shouldBePresent;
   }
 
   replace(oldToken: string, newToken: string): boolean {
@@ -153,72 +155,7 @@ class ClassTokenList implements WorkerClassTokenList {
   }
 }
 
-const toIndexedPropertyPosition = (
-  property: string | symbol,
-): number | null => {
-  if (typeof property !== 'string') {
-    return null;
-  }
-
-  const propertyPosition = Number(property);
-
-  if (
-    !Number.isInteger(propertyPosition) ||
-    propertyPosition < 0 ||
-    String(propertyPosition) !== property
-  ) {
-    return null;
-  }
-
-  return propertyPosition;
-};
-
 export const createClassTokenList = (
   element: ClassAttributeTargetElement,
 ): WorkerClassTokenList =>
-  new Proxy(new ClassTokenList(element), {
-    get: (target, property, receiver) => {
-      const propertyPosition = toIndexedPropertyPosition(property);
-
-      if (!isDefined(propertyPosition)) {
-        return Reflect.get(target, property, receiver);
-      }
-
-      return target.item(propertyPosition) ?? undefined;
-    },
-    has: (target, property) => {
-      const propertyPosition = toIndexedPropertyPosition(property);
-
-      if (!isDefined(propertyPosition)) {
-        return Reflect.has(target, property);
-      }
-
-      return propertyPosition < target.length;
-    },
-    getOwnPropertyDescriptor: (target, property) => {
-      const propertyPosition = toIndexedPropertyPosition(property);
-
-      if (!isDefined(propertyPosition)) {
-        return Reflect.getOwnPropertyDescriptor(target, property);
-      }
-
-      const token = target.item(propertyPosition);
-
-      if (token === null) {
-        return undefined;
-      }
-
-      return {
-        value: token,
-        writable: false,
-        enumerable: true,
-        configurable: true,
-      };
-    },
-    ownKeys: (target) => [
-      ...Array.from({ length: target.length }, (_, tokenIndex) =>
-        String(tokenIndex),
-      ),
-      ...Reflect.ownKeys(target),
-    ],
-  });
+  createIndexedClassTokenList(new ClassTokenList(element));
