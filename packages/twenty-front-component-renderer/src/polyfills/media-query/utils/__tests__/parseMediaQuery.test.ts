@@ -127,9 +127,9 @@ describe('parseMediaQuery', () => {
     expect(parseMediaQuery('(__proto__: 1)')).toBeNull();
     expect(parseMediaQuery('(min-width: 600constructor)')).toBeNull();
     expect(parseMediaQuery('(resolution: 2constructor)')).toBeNull();
-    expect(parseMediaQuery('garbage')).toBeNull();
     expect(parseMediaQuery('not')).toBeNull();
     expect(parseMediaQuery('(prefers-color-scheme: solarized)')).toBeNull();
+    expect(parseMediaQuery('(prefers-color-scheme: no-preference)')).toBeNull();
     expect(parseMediaQuery('(min-width: 600px) and screen')).toBeNull();
   });
 
@@ -224,5 +224,21 @@ describe('parseMediaQuery', () => {
       parseMediaQuery('(min-width: 600px)and(max-width: 900px)'),
     ).toBeNull();
     expect(parseMediaQuery('not(min-width: 1px)')).toBeNull();
+  });
+
+  it('should treat an unknown media type as valid but never matching', () => {
+    expect(parseMediaQuery('garbage')).toEqual({
+      isNegated: false,
+      matchesMediaType: false,
+      conditions: [],
+    });
+    expect(parseMediaQuery('not tablet')).toEqual({
+      isNegated: true,
+      matchesMediaType: false,
+      conditions: [],
+    });
+    expect(parseMediaQuery('12px')).toBeNull();
+    expect(parseMediaQuery('not and')).toBeNull();
+    expect(parseMediaQuery('not not')).toBeNull();
   });
 });

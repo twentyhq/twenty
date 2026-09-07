@@ -3,10 +3,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CSS_WHITESPACE_CHARACTER_CLASS } from '@/polyfills/media-query/constants/CssWhitespaceCharacterClass';
 import { MATCHING_MEDIA_TYPES } from '@/polyfills/media-query/constants/MatchingMediaTypes';
-import { NON_MATCHING_MEDIA_TYPES } from '@/polyfills/media-query/constants/NonMatchingMediaTypes';
 import { type ParsedMediaQuery } from '@/polyfills/media-query/types/ParsedMediaQuery';
 import { type ParsedMediaQueryCondition } from '@/polyfills/media-query/types/ParsedMediaQueryCondition';
 import { isMediaQueryConditionPart } from '@/polyfills/media-query/utils/isMediaQueryConditionPart';
+import { isMediaQueryTypeIdentifier } from '@/polyfills/media-query/utils/isMediaQueryTypeIdentifier';
 import { parseMediaQueryCondition } from '@/polyfills/media-query/utils/parseMediaQueryCondition';
 import { parseMediaQueryModifier } from '@/polyfills/media-query/utils/parseMediaQueryModifier';
 
@@ -71,7 +71,7 @@ export const parseMediaQuery = (
       continue;
     }
 
-    if (NON_MATCHING_MEDIA_TYPES.has(currentPart)) {
+    if (isMediaQueryTypeIdentifier(currentPart)) {
       matchesMediaType = false;
       continue;
     }
