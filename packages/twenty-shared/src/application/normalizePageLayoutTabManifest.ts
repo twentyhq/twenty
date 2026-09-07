@@ -193,11 +193,13 @@ export const normalizePageLayoutTabManifest = ({
     if (
       viewportWidgets.length === 1 &&
       pageLayoutTab.widgets.some(
-        ({ position }) =>
-          position.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST &&
+        (widget) =>
+          widget !== viewportWidgets[0] &&
+          widget.position.layoutMode ===
+            PageLayoutTabLayoutMode.VERTICAL_LIST &&
           viewportWidgets[0].position.layoutMode ===
             PageLayoutTabLayoutMode.VERTICAL_LIST &&
-          position.index > viewportWidgets[0].position.index,
+          widget.position.index >= viewportWidgets[0].position.index,
       )
     ) {
       errors.push(

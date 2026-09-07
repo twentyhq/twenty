@@ -214,6 +214,41 @@ describe('normalizePageLayoutTabManifest', () => {
       },
     },
   ])('viewport constraints with $name', ({ viewport }) => {
+    it('rejects a fit-content sibling with the same explicit index', () => {
+      expect(
+        normalizePageLayoutTabManifest({
+          pageLayoutTabManifest: {
+            ...tab,
+            widgets: [
+              {
+                ...widget,
+                universalIdentifier: 'fit-content-widget',
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                  index: 0,
+                },
+              },
+              {
+                ...widget,
+                ...viewport,
+                position: {
+                  ...viewport.position,
+                  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                  index: 0,
+                },
+              },
+            ],
+          },
+          pageLayoutType: undefined,
+        }),
+      ).toEqual({
+        status: 'fail',
+        errors: [
+          'Page layout tab "Details" must place its TAB_VIEWPORT widget last.',
+        ],
+      });
+    });
+
     it.each([
       { duplicate: true, error: 'can contain only one TAB_VIEWPORT widget' },
       { duplicate: false, error: 'must place its TAB_VIEWPORT widget last' },
