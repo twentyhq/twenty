@@ -10,8 +10,10 @@ import { CallRecorderPreference } from 'src/constants/call-recorder-preference';
 import { CALENDAR_EVENT_RECONCILIATION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type RemovedCallRecorderOccurrence } from 'src/logic-functions/types/removed-call-recorder-occurrence.type';
 import { buildCallRecorderPolicyResult } from 'src/logic-functions/domain/build-call-recorder-policy-result.util';
+import { computeCallRecordingIdForMeeting } from 'src/logic-functions/domain/compute-call-recording-id-for-meeting.util';
 import { computeRealMeetingKey } from 'src/logic-functions/domain/compute-real-meeting-key.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
+import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
 import { resolveConferenceLinkUrl } from 'src/logic-functions/domain/resolve-conference-link-url.util';
@@ -83,14 +85,14 @@ const handler = async (
 
   const client = new CoreApiClient();
 
-  // Skips only the echo of the app's own On write; an On the policy cannot honor reconciles and is cleared.
+  // Skips only the echo of the app's own On write; any other blank/On change reconciles, which schedules a missing bot or clears an On the policy cannot honor.
   if (
     isPreferenceChangeBetweenBlankAndOn(event) &&
-    (await isCallRecorderBotDueForCalendarEvent(client, event.recordId))
+    (await isRecordingOnAlreadyHonored(client, event.recordId))
   ) {
     return {
       skipped: true,
-      reason: 'preference change on a meeting whose bot is already due',
+      reason: 'preference change on a meeting whose bot is already requested',
     };
   }
 
@@ -181,7 +183,7 @@ const isPreferenceChangeBetweenBlankAndOn = (
   );
 };
 
-const isCallRecorderBotDueForCalendarEvent = async (
+const isRecordingOnAlreadyHonored = async (
   client: CoreApiClient,
   calendarEventId: string,
 ): Promise<boolean> => {
@@ -189,10 +191,23 @@ const isCallRecorderBotDueForCalendarEvent = async (
     await fetchCalendarEventsByIds(client, [calendarEventId])
   )[0];
 
-  return (
-    !isUndefined(calendarEvent) &&
-    buildCallRecorderPolicyResult(calendarEvent, new Date()).shouldRequestBot
-  );
+  if (isUndefined(calendarEvent)) {
+    return false;
+  }
+
+  const policyResult = buildCallRecorderPolicyResult(calendarEvent, new Date());
+
+  if (!policyResult.shouldRequestBot) {
+    return false;
+  }
+
+  const policyManagedCallRecording = (
+    await findCallRecordingsByIds(client, [
+      computeCallRecordingIdForMeeting(policyResult.realMeetingKey),
+    ])
+  )[0];
+
+  return !isUndefined(policyManagedCallRecording);
 };
 
 const hasKeyFieldChange = (updatedFields: string[]): boolean =>

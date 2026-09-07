@@ -1212,8 +1212,32 @@ describe('call recorder app lifecycle (integration)', () => {
 
       expect(result).toEqual({
         skipped: true,
-        reason: 'preference change on a meeting whose bot is already due',
+        reason: 'preference change on a meeting whose bot is already requested',
       });
+    });
+
+    it('schedules a bot when a user sets On on an eligible meeting that has none yet', async () => {
+      const calendarEventId = await createCalendarEvent({
+        callRecorderPreference: 'ON',
+      });
+
+      const result = await deliverCalendarEventUpdate({
+        calendarEventId,
+        updatedFields: ['callRecorderPreference'],
+        before: { callRecorderPreference: null },
+        after: { callRecorderPreference: 'ON' },
+      });
+
+      expect(result).toEqual(expect.objectContaining({ reconciled: true }));
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
+
+      const callRecording = (
+        await findCallRecordings({ calendarEventId: { in: [calendarEventId] } })
+      )[0];
+
+      expect(callRecording).toBeDefined();
+      expect(callRecording.recordingRequestStatus).toBe('REQUESTED');
+      expect(callRecording.externalBotId).toBeTruthy();
     });
 
     it('clears an On set by hand on a meeting that already ended', async () => {
