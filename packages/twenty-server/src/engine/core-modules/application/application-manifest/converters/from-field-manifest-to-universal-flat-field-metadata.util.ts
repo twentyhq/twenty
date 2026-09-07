@@ -1,4 +1,5 @@
 import { type FieldManifest } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 import {
   FieldMetadataType,
   MetadataWritability,
@@ -52,6 +53,34 @@ const getRelationTargetUniversalIdentifiers = (
   };
 };
 
+// Tri-state: an explicit manifest value is authoritative; the label
+// identifier of a searchable object defaults to true (the object-create side
+// effect provisions its row, so both sides must agree or every re-sync would
+// diff isSearchable and drop that row); everything else resolves to null,
+// meaning unspecified — the sync comparison preserves the workspace's current
+// state instead of force-reverting it, which is what keeps a relabel additive
+// (the previous label identifier stays searchable).
+const resolveManifestFieldIsSearchable = ({
+  fieldManifest,
+  objectLabelIdentifierFieldMetadataUniversalIdentifier,
+  objectIsSearchable,
+}: {
+  fieldManifest: FieldManifest;
+  objectLabelIdentifierFieldMetadataUniversalIdentifier?: string | null;
+  objectIsSearchable?: boolean;
+}): boolean | null => {
+  if (isDefined(fieldManifest.isSearchable)) {
+    return fieldManifest.isSearchable;
+  }
+
+  const isLabelIdentifierOfSearchableObject =
+    (objectIsSearchable ?? true) &&
+    fieldManifest.universalIdentifier ===
+      objectLabelIdentifierFieldMetadataUniversalIdentifier;
+
+  return isLabelIdentifierOfSearchableObject ? true : null;
+};
+
 export const fromFieldManifestToUniversalFlatFieldMetadata = ({
   fieldManifest,
   applicationUniversalIdentifier,
@@ -100,20 +129,11 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     writability: fieldManifest.writability ?? MetadataWritability.OPEN,
     isNullable: fieldManifest.isNullable ?? true,
     isUnique: fieldManifest.isUnique ?? false,
-    // Tri-state: an explicit manifest value wins; the label identifier of a
-    // searchable object defaults to true (the object-create side effect
-    // provisions its row, so both sides must agree or every re-sync would
-    // diff isSearchable and drop that row); anything else resolves to null,
-    // meaning unspecified — the sync comparison preserves the workspace's
-    // current state instead of force-reverting it, which is what keeps a
-    // relabel additive (the previous label identifier stays searchable).
-    isSearchable:
-      fieldManifest.isSearchable ??
-      ((objectIsSearchable ?? true) &&
-      fieldManifest.universalIdentifier ===
-        objectLabelIdentifierFieldMetadataUniversalIdentifier
-        ? true
-        : null),
+    isSearchable: resolveManifestFieldIsSearchable({
+      fieldManifest,
+      objectLabelIdentifierFieldMetadataUniversalIdentifier,
+      objectIsSearchable,
+    }),
     isLabelSyncedWithName: fieldManifest.isLabelSyncedWithName ?? false,
     morphId:
       fieldManifest.type === FieldMetadataType.MORPH_RELATION
