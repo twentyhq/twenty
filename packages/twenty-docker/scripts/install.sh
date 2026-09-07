@@ -49,6 +49,7 @@ function download {
   local url=$1
   local dest=$2
   if ! curl -fsSL --retry 3 --retry-delay 2 -o "$dest" "$url"; then
+    rm -f "$dest"
     echo -e "\t❌ Failed to download $url"
     echo -e "\t\tIf this is a 404, the release may be incomplete; anything else is usually GitHub"
     echo -e "\t\trate limiting your network, in which case retrying in a minute will work."
@@ -57,13 +58,13 @@ function download {
 }
 
 # Use environment variables VERSION and BRANCH, with defaults if not set
-version=${VERSION:-$(curl -fsS "https://hub.docker.com/v2/repositories/twentycrm/twenty/tags" | grep -o '"name":"[^"]*"' | grep -v 'latest' | cut -d'"' -f4 | sort -V | tail -n1)}
+version=${VERSION:-$(curl -fsS --retry 3 --retry-delay 2 "https://hub.docker.com/v2/repositories/twentycrm/twenty/tags?page_size=100" | grep -o '"name":"[^"]*"' | grep -v 'latest' | cut -d'"' -f4 | sort -V | tail -n1)}
 if [ -z "$version" ]; then
   echo -e "\t❌ Unable to resolve the latest release from Docker Hub. Check your network, or set VERSION explicitly."
   exit 1
 fi
-# Release tags are namespaced since twenty/v2.9.1; deriving the branch from the
-# image tag also keeps docker-compose.yml and the image in lockstep.
+# Release tags are namespaced since twenty/v2.9.1, older releases are not supported.
+# Deriving the branch from the image tag also keeps docker-compose.yml and the image in lockstep.
 branch=${BRANCH:-twenty/$version}
 
 echo "🚀 Using docker version $version and Github branch $branch"
