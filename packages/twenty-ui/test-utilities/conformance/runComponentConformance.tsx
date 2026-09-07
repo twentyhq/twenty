@@ -83,7 +83,7 @@ export const runComponentConformance = ({
     });
 
     itUnlessSkipped(
-      'consoleWarnings',
+      'consoleErrorsAndWarnings',
       'renders without console errors or warnings',
       () => {
         render(compose({}));
