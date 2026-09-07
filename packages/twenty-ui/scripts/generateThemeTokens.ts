@@ -1,6 +1,6 @@
 import { spawnSync } from 'node:child_process';
-import { writeFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
+import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { MAIN_COLOR_TOKENS } from '../design-tokens/color/mainColors';
@@ -92,32 +92,51 @@ const sourceOutputs = [
 const isCheckMode = process.argv.includes('--check');
 const outputPaths = sourceOutputs.map(({ path }) => path);
 
-for (const { path, content } of sourceOutputs) {
-  writeFileSync(path, content, 'utf-8');
-}
+const readIfPresent = (path: string) =>
+  existsSync(path) ? readFileSync(path, 'utf-8') : undefined;
 
-// oxfmt reformats CSS as well as TypeScript, so the committed artifacts are its
-// output rather than the builders'.
-const formatResult = spawnSync('npx', ['oxfmt', ...outputPaths], {
-  cwd: packageRoot,
-  stdio: 'inherit',
-});
-if (formatResult.status !== 0) {
-  throw new Error('oxfmt failed on the generated theme files');
-}
+const writeAndFormatOutputs = () => {
+  for (const { path, content } of sourceOutputs) {
+    writeFileSync(path, content, 'utf-8');
+  }
+
+  // oxfmt reformats CSS as well as TypeScript, so the committed artifacts are
+  // its output rather than the builders'.
+  const formatResult = spawnSync('npx', ['oxfmt', ...outputPaths], {
+    cwd: packageRoot,
+    stdio: 'inherit',
+  });
+  if (formatResult.status !== 0) {
+    throw new Error('oxfmt failed on the generated theme files');
+  }
+};
+
+// Formatting has to happen on the real paths, because oxfmt resolves the
+// repository .oxfmtrc.jsonc from the file location, so check mode restores
+// what was there rather than leaving the working tree edited.
+const committedContents = isCheckMode ? outputPaths.map(readIfPresent) : [];
+
+writeAndFormatOutputs();
 
 if (isCheckMode) {
-  const diffResult = spawnSync(
-    'git',
-    ['diff', '--exit-code', '--', ...outputPaths],
-    {
-      cwd: packageRoot,
-      stdio: 'inherit',
-    },
+  const staleOutputPaths = outputPaths.filter(
+    (path, index) => readIfPresent(path) !== committedContents[index],
   );
-  if (diffResult.status !== 0) {
+
+  for (const [index, path] of outputPaths.entries()) {
+    const committedContent = committedContents[index];
+    if (committedContent === undefined) {
+      rmSync(path, { force: true });
+      continue;
+    }
+    writeFileSync(path, committedContent, 'utf-8');
+  }
+
+  if (staleOutputPaths.length > 0) {
     process.stderr.write(
-      '::error::Generated theme artifacts are stale. Run: npx nx generateTokens twenty-ui\n',
+      `::error::Generated theme artifacts are stale: ${staleOutputPaths
+        .map((path) => relative(packageRoot, path))
+        .join(', ')}. Run: npx nx generateTokens twenty-ui\n`,
     );
     process.exit(1);
   }
