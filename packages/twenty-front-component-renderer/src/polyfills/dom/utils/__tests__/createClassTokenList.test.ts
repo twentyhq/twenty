@@ -17,6 +17,10 @@ class FakeElement {
   setAttribute(attributeName: string, attributeValue: string): void {
     this.attributes.set(attributeName, attributeValue);
   }
+
+  removeAttribute(attributeName: string): void {
+    this.attributes.delete(attributeName);
+  }
 }
 
 type TokenMutator = [

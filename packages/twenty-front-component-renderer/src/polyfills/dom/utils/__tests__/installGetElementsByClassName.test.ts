@@ -25,7 +25,10 @@ class FakeElement {
   }
 }
 
-installClassAttributeAccessors(FakeElement.prototype);
+installClassAttributeAccessors({
+  elementPrototype: FakeElement.prototype,
+  remoteElementPrototypes: [],
+});
 installGetElementsByClassName(FakeElement.prototype);
 
 type ClassNameQueryResult = FakeElement[] & {

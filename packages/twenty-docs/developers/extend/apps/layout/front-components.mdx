@@ -794,11 +794,9 @@ Elements can measure themselves: the host mirrors geometry into the sandbox, so 
 | `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY` | Work, reporting the **browser viewport**; your widget's own size is `document.body.clientWidth` / `clientHeight` |
 | `window.getComputedStyle()` | Returns the element's inline styles only, never the host-computed cascade |
 | `ResizeObserver`, `IntersectionObserver` | `ReferenceError` (`typeof` guards do work) |
-| `MutationObserver` | Works, including `subtree`, `attributeFilter`, old values and `takeRecords()`, with one gap noted below |
+| `MutationObserver` | Works, including `subtree`, `attributeFilter`, old values and `takeRecords()` |
 
 Positioning from `getBoundingClientRect` now works, but anything watching size changes through `ResizeObserver` (recharts `ResponsiveContainer`, Floating UI's `autoUpdate`) still does not. Prefer CSS for layout anyway: your stylesheet reaches the real page, so flexbox, grid, `aspect-ratio`, `clamp()` and `@container` behave normally, with no frame lag.
-
-The one `MutationObserver` gap: a `class` write on an element you rendered reaches the page through the `className` property rather than the attribute, so it never produces a record. Watch your own state instead of observing the attribute.
 
 <Note>
 `requestAnimationFrame`, `fetch`, `setTimeout` and `queueMicrotask` work without the `window.` prefix. Only `window.requestAnimationFrame(...)` and friends throw.

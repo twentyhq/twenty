@@ -27,6 +27,7 @@ import { installStorageBridge } from '@/polyfills/storage/utils/installStorageBr
 import { exposeGlobals } from '@/utils/exposeGlobals';
 import { installStylePropertyOnRemoteElements } from '@/remote/elements/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementAttributes } from '@/remote/elements/utils/patchRemoteElementAttributes';
+import { resolveRemoteElementPrototypes } from '@/remote/elements/utils/resolveRemoteElementPrototypes';
 import { buildFrontComponentHostCommunicationApiFromThreadImports } from '@/remote/worker/thread/utils/buildFrontComponentHostCommunicationApiFromThreadImports';
 import { handleCommandConfirmationModalResult } from '@/remote/worker/thread/utils/handleCommandConfirmationModalResult';
 import { installErrorEventBridge } from '@/remote/worker/thread/utils/installErrorEventBridge';
@@ -44,7 +45,10 @@ installErrorEventBridge();
 installDocumentGetElementById(document);
 installGetElementsByClassName(Element.prototype);
 installGetElementsByClassName(document);
-installClassAttributeAccessors(Element.prototype);
+installClassAttributeAccessors({
+  elementPrototype: Element.prototype,
+  remoteElementPrototypes: resolveRemoteElementPrototypes(),
+});
 installLocalStyleOnBaseElements(Element.prototype);
 
 installGetComputedStyle(toGlobalScopeRecord(globalThis));

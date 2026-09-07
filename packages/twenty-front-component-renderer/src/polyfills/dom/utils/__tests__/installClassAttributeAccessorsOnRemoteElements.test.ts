@@ -3,6 +3,7 @@ import '@/remote/generated/remote-elements';
 import { installClassAttributeAccessors } from '@/polyfills/dom/utils/installClassAttributeAccessors';
 import { installGetElementsByClassName } from '@/polyfills/dom/utils/installGetElementsByClassName';
 import { patchRemoteElementAttributes } from '@/remote/elements/utils/patchRemoteElementAttributes';
+import { resolveRemoteElementPrototypes } from '@/remote/elements/utils/resolveRemoteElementPrototypes';
 
 const createHtmlDivElement = (): HTMLElement =>
   document.createElement('html-div');
@@ -10,7 +11,10 @@ const createHtmlDivElement = (): HTMLElement =>
 describe('installClassAttributeAccessors on remote elements', () => {
   beforeAll(() => {
     patchRemoteElementAttributes();
-    installClassAttributeAccessors(Element.prototype);
+    installClassAttributeAccessors({
+      elementPrototype: Element.prototype,
+      remoteElementPrototypes: resolveRemoteElementPrototypes(),
+    });
     installGetElementsByClassName(Element.prototype);
   });
 
@@ -43,7 +47,53 @@ describe('installClassAttributeAccessors on remote elements', () => {
     expect(element.className).toBe('second');
   });
 
-  it('should not produce a mutation record because the write goes through the remote property', async () => {
+  it('should read an empty className on a fresh element while the attribute stays absent', () => {
+    const element = createHtmlDivElement();
+
+    expect(element.className).toBe('');
+    expect(element.getAttribute('class')).toBeNull();
+    expect(element.hasAttribute('class')).toBe(false);
+  });
+
+  it('should append through className without an undefined token', () => {
+    const element = createHtmlDivElement();
+
+    element.className += ' x';
+
+    expect(element.className).toBe(' x');
+    expect(element.classList.contains('x')).toBe(true);
+    expect(element.classList.contains('undefined')).toBe(false);
+  });
+
+  it('should clear the class attribute when className is assigned null', () => {
+    const element = createHtmlDivElement();
+    element.className = 'present';
+
+    (element as { className: unknown }).className = null;
+
+    expect(element.hasAttribute('class')).toBe(false);
+    expect(element.className).toBe('');
+  });
+
+  it('should forward class writes to the host as the className property', () => {
+    const element = createHtmlDivElement();
+    const updateRemoteProperty = jest.spyOn(
+      element as unknown as {
+        updateRemoteProperty: (propertyName: string, value?: unknown) => void;
+      },
+      'updateRemoteProperty',
+    );
+
+    element.classList.add('first');
+    element.removeAttribute('class');
+
+    expect(updateRemoteProperty.mock.calls).toEqual([
+      ['className', 'first'],
+      ['className', undefined],
+    ]);
+  });
+
+  it('should produce a mutation record for a classList write', async () => {
     const element = createHtmlDivElement();
     element.className = 'initial';
 
@@ -59,7 +109,8 @@ describe('installClassAttributeAccessors on remote elements', () => {
     await Promise.resolve();
 
     expect(element.className).toBe('initial added');
-    expect(deliveries).toHaveLength(0);
+    expect(deliveries).toHaveLength(1);
+    expect(deliveries[0][0].attributeName).toBe('class');
 
     observer.disconnect();
   });

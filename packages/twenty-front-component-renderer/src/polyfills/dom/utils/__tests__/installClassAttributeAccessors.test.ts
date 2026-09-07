@@ -6,7 +6,10 @@ import { installClassAttributeAccessors } from '@/polyfills/dom/utils/installCla
 import { installMutationObserver } from '@/polyfills/dom/utils/installMutationObserver';
 
 const createSandboxDocument = (polyfillWindow = new Window()): Document => {
-  installClassAttributeAccessors(polyfillWindow.Element.prototype);
+  installClassAttributeAccessors({
+    elementPrototype: polyfillWindow.Element.prototype,
+    remoteElementPrototypes: [],
+  });
 
   return polyfillWindow.document as unknown as Document;
 };
@@ -35,6 +38,18 @@ describe('installClassAttributeAccessors', () => {
       element.className = 'from-property';
 
       expect(element.getAttribute('class')).toBe('from-property');
+    });
+
+    it('should clear the class attribute when className is assigned null', () => {
+      const document = createSandboxDocument();
+
+      const element = document.createElement('div');
+      element.className = 'present';
+
+      (element as { className: unknown }).className = null;
+
+      expect(element.hasAttribute('class')).toBe(false);
+      expect(element.className).toBe('');
     });
 
     it('should stringify non string assignments like the DOM does', () => {
