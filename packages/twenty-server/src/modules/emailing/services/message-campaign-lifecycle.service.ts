@@ -68,6 +68,30 @@ export class MessageCampaignLifecycleService {
     );
   }
 
+  // Returns null once the campaign is gone or canceled, which is how the send
+  // paths stop working a campaign they already claimed rows for.
+  async findRunningCampaign(
+    campaignId: string,
+  ): Promise<MessageCampaignWorkspaceEntity | null> {
+    const campaignRepository = this.workspaceOrmManager.getRepository(
+      MessageCampaignWorkspaceEntity,
+      { shouldBypassPermissionChecks: true },
+    );
+
+    const campaign = await campaignRepository.findOne({
+      where: { id: campaignId },
+    });
+
+    if (
+      !isDefined(campaign) ||
+      campaign.status === MessageCampaignStatus.CANCELED
+    ) {
+      return null;
+    }
+
+    return campaign;
+  }
+
   async cancelCampaignOrThrow({
     workspaceId,
     userWorkspaceId,

@@ -8,18 +8,12 @@ import { CLAIMABLE_CAMPAIGN_DELIVERY_STATES } from 'src/engine/core-modules/emai
 import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-backoff.constant';
 import { CAMPAIGN_SEND_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-limit.constant';
 import { SEND_SLOT_RETRY } from 'src/engine/core-modules/emailing-domain/constants/send-slot-retry.constant';
+import { type SendSlotRefusal } from 'src/engine/core-modules/emailing-domain/types/send-slot-refusal.type';
 import { computeSendSlotBackoffMs } from 'src/modules/emailing/utils/compute-send-slot-backoff-ms.util';
 import { CAMPAIGN_DELIVERY_CLAIM_TTL_MS } from 'src/engine/core-modules/emailing-domain/constants/campaign-delivery-claim-ttl-ms.constant';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import {
-  UsageLimitException,
-  UsageLimitExceptionCode,
-} from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
-import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/services/usage-limit-speed.service';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { CAMPAIGN_DELIVERY_STATE } from 'src/engine/core-modules/emailing-domain/constants/campaign-delivery-state.constant';
 import { CAMPAIGN_FAILURE_REASON } from 'src/engine/core-modules/emailing-domain/constants/campaign-failure-reason.constant';
 import { CAMPAIGN_SKIP_REASON } from 'src/engine/core-modules/emailing-domain/constants/campaign-skip-reason.constant';
@@ -32,6 +26,8 @@ import { type SendCampaignEmailJobData } from 'src/engine/core-modules/emailing-
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { SKIP_EVENT_EMISSION } from 'src/modules/emailing/constants/skip-event-emission.constant';
+import { CampaignSendSlotService } from 'src/modules/emailing/services/campaign-send-slot.service';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { type EmailCreditContext } from 'src/modules/emailing/types/email-credit-context.type';
@@ -53,10 +49,6 @@ type SendContext = {
   claimToken: string;
 };
 
-type SendSlotRefusal = { retryDelayMs: number; windowMs: number };
-
-const SKIP_EVENT_EMISSION = { shouldSkipEventEmission: true };
-
 @Injectable()
 export class MessageCampaignDeliveryService {
   private readonly logger = new Logger(MessageCampaignDeliveryService.name);
@@ -70,7 +62,7 @@ export class MessageCampaignDeliveryService {
     private readonly campaignVariableService: CampaignVariableService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
-    private readonly usageLimitSpeedService: UsageLimitSpeedService,
+    private readonly campaignSendSlotService: CampaignSendSlotService,
     @InjectMessageQueue(MessageQueue.campaignQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -95,7 +87,9 @@ export class MessageCampaignDeliveryService {
         await this.emailBillingService.getEmailCreditContext(workspaceId);
 
       if (creditContext.hasCredits) {
-        const refusal = await this.findSendSlotRefusal(workspaceId);
+        const refusal = await this.campaignSendSlotService.findSendSlotRefusal({
+          workspaceId,
+        });
 
         if (isDefined(refusal)) {
           await this.requeueRateLimitedSendJob({ data, refusal });
@@ -104,7 +98,10 @@ export class MessageCampaignDeliveryService {
         }
       }
 
-      const campaign = await this.findRunningCampaign(campaignId);
+      const campaign =
+        await this.messageCampaignLifecycleService.findRunningCampaign(
+          campaignId,
+        );
 
       if (!isDefined(campaign)) {
         return;
@@ -144,60 +141,6 @@ export class MessageCampaignDeliveryService {
         campaignId,
       });
     }, buildSystemAuthContext(workspaceId));
-  }
-
-  private async findRunningCampaign(
-    campaignId: string,
-  ): Promise<MessageCampaignWorkspaceEntity | null> {
-    const campaignRepository = this.workspaceOrmManager.getRepository(
-      MessageCampaignWorkspaceEntity,
-      { shouldBypassPermissionChecks: true },
-    );
-
-    const campaign = await campaignRepository.findOne({
-      where: { id: campaignId },
-    });
-
-    if (
-      !isDefined(campaign) ||
-      campaign.status === MessageCampaignStatus.CANCELED
-    ) {
-      return null;
-    }
-
-    return campaign;
-  }
-
-  private async findSendSlotRefusal(
-    workspaceId: string,
-  ): Promise<SendSlotRefusal | null> {
-    try {
-      await this.usageLimitSpeedService.consumeOrThrow({
-        resourceType: UsageResourceType.EMAIL,
-        operationType: UsageOperationType.EMAIL_SEND,
-        authContext: buildSystemAuthContext(workspaceId),
-      });
-
-      return null;
-    } catch (error) {
-      if (
-        !(error instanceof UsageLimitException) ||
-        error.code !== UsageLimitExceptionCode.RATE_LIMITED
-      ) {
-        throw error;
-      }
-
-      return {
-        retryDelayMs: Math.max(
-          error.exhaustedScope?.retryAfterMs ?? 0,
-          SEND_SLOT_RETRY.minDelayMs,
-        ),
-        windowMs:
-          error.exhaustedScope?.periodUnit === 'second'
-            ? (error.exhaustedScope.periodCount ?? 0) * 1000
-            : 0,
-      };
-    }
   }
 
   private async requeueRateLimitedSendJob({

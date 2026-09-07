@@ -23,6 +23,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { SKIP_EVENT_EMISSION } from 'src/modules/emailing/constants/skip-event-emission.constant';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { type CampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/campaign-recipient.type';
@@ -45,8 +46,6 @@ const MATERIALIZATION_CHUNK_SIZE = 500;
 // Campaign rows are machine-generated and nothing subscribes to them: no
 // webhook, workflow trigger or timeline activity. Emitting would cost a
 // snapshot SELECT of every row written plus a timeline row per recipient.
-const SKIP_EVENT_EMISSION = { shouldSkipEventEmission: true };
-
 type CampaignMessageRow = {
   recipient: CampaignMessageRecipient;
   messageId: string;

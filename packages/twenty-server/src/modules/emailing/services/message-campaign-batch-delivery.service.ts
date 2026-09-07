@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource, In } from 'typeorm';
-import { MessageCampaignStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -17,21 +16,17 @@ import { CAMPAIGN_SKIP_REASON } from 'src/engine/core-modules/emailing-domain/co
 import { CLAIMABLE_CAMPAIGN_DELIVERY_STATES } from 'src/engine/core-modules/emailing-domain/constants/claimable-campaign-delivery-states.constant';
 import { SEND_SLOT_RETRY } from 'src/engine/core-modules/emailing-domain/constants/send-slot-retry.constant';
 import { type SendCampaignEmailBatchJobData } from 'src/engine/core-modules/emailing-domain/types/send-campaign-email-batch-job-data.type';
+import { type SendSlotRefusal } from 'src/engine/core-modules/emailing-domain/types/send-slot-refusal.type';
 import { applyReplacementTags } from 'src/engine/core-modules/emailing-domain/utils/apply-replacement-tags.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import {
-  UsageLimitException,
-  UsageLimitExceptionCode,
-} from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
-import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/services/usage-limit-speed.service';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { SKIP_EVENT_EMISSION } from 'src/modules/emailing/constants/skip-event-emission.constant';
+import { CampaignSendSlotService } from 'src/modules/emailing/services/campaign-send-slot.service';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
@@ -51,10 +46,6 @@ import { resolveCampaignSendFailure } from 'src/modules/emailing/utils/resolve-c
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
-
-const SKIP_EVENT_EMISSION = { shouldSkipEventEmission: true };
-
-type SendSlotRefusal = { retryDelayMs: number; windowMs: number };
 
 type BatchRecipient = SendCampaignEmailBatchJobData['recipients'][number];
 
@@ -77,7 +68,7 @@ export class MessageCampaignBatchDeliveryService {
     private readonly campaignVariableService: CampaignVariableService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
-    private readonly usageLimitSpeedService: UsageLimitSpeedService,
+    private readonly campaignSendSlotService: CampaignSendSlotService,
   ) {}
 
   async processSendBatchJob(
@@ -86,7 +77,10 @@ export class MessageCampaignBatchDeliveryService {
     const { workspaceId, campaignId } = data;
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const campaign = await this.findRunningCampaign(campaignId);
+      const campaign =
+        await this.messageCampaignLifecycleService.findRunningCampaign(
+          campaignId,
+        );
       const creditContext =
         await this.emailBillingService.getEmailCreditContext(workspaceId);
 
@@ -177,10 +171,11 @@ export class MessageCampaignBatchDeliveryService {
       return;
     }
 
-    const sendSlotRefusal = await this.findSendSlotRefusal({
-      workspaceId,
-      requestedSlotCount: claimedRecipients.length,
-    });
+    const sendSlotRefusal =
+      await this.campaignSendSlotService.findSendSlotRefusal({
+        workspaceId,
+        requestedSlotCount: claimedRecipients.length,
+      });
 
     if (isDefined(sendSlotRefusal)) {
       await this.deferRateLimitedBatch({
@@ -193,9 +188,10 @@ export class MessageCampaignBatchDeliveryService {
       return;
     }
 
-    const campaignStillRunning = await this.findRunningCampaign(
-      data.campaignId,
-    );
+    const campaignStillRunning =
+      await this.messageCampaignLifecycleService.findRunningCampaign(
+        data.campaignId,
+      );
 
     if (!isDefined(campaignStillRunning)) {
       await this.settleWholeBatchAs({
@@ -212,47 +208,9 @@ export class MessageCampaignBatchDeliveryService {
     await this.deliverBatch({
       data,
       campaign: campaignStillRunning,
-      creditContext,
       claimToken,
       claimedRecipients,
     });
-  }
-
-  private async findSendSlotRefusal({
-    workspaceId,
-    requestedSlotCount,
-  }: {
-    workspaceId: string;
-    requestedSlotCount: number;
-  }): Promise<SendSlotRefusal | null> {
-    try {
-      await this.usageLimitSpeedService.consumeOrThrow({
-        resourceType: UsageResourceType.EMAIL,
-        operationType: UsageOperationType.EMAIL_SEND,
-        authContext: buildSystemAuthContext(workspaceId),
-        cost: requestedSlotCount,
-      });
-
-      return null;
-    } catch (error) {
-      if (
-        !(error instanceof UsageLimitException) ||
-        error.code !== UsageLimitExceptionCode.RATE_LIMITED
-      ) {
-        throw error;
-      }
-
-      return {
-        retryDelayMs: Math.max(
-          error.exhaustedScope?.retryAfterMs ?? 0,
-          SEND_SLOT_RETRY.minDelayMs,
-        ),
-        windowMs:
-          error.exhaustedScope?.periodUnit === 'second'
-            ? (error.exhaustedScope.periodCount ?? 0) * 1000
-            : 0,
-      };
-    }
   }
 
   private async deferRateLimitedBatch({
@@ -310,17 +268,15 @@ export class MessageCampaignBatchDeliveryService {
   private async deliverBatch({
     data,
     campaign,
-    creditContext,
     claimToken,
     claimedRecipients,
   }: {
     data: SendCampaignEmailBatchJobData;
     campaign: MessageCampaignWorkspaceEntity;
-    creditContext: EmailCreditContext;
     claimToken: string;
     claimedRecipients: BatchRecipient[];
   }): Promise<void> {
-    const { workspaceId, campaignId, emailingDomainId, userWorkspaceId } = data;
+    const { workspaceId, campaignId, emailingDomainId } = data;
 
     const { template, variableNames } = await compileCampaignBatchTemplate({
       subjectTemplate: campaign.subject ?? '',
@@ -382,7 +338,6 @@ export class MessageCampaignBatchDeliveryService {
     try {
       await this.settleDeliveredBatch({
         data,
-        creditContext,
         claimToken,
         claimedRecipients,
         outcome: providerOutcome,
@@ -398,7 +353,6 @@ export class MessageCampaignBatchDeliveryService {
 
   private async settleDeliveredBatch({
     data,
-    creditContext,
     claimToken,
     claimedRecipients,
     outcome,
@@ -406,7 +360,6 @@ export class MessageCampaignBatchDeliveryService {
     replacementsByDeliveryId,
   }: {
     data: SendCampaignEmailBatchJobData;
-    creditContext: EmailCreditContext;
     claimToken: string;
     claimedRecipients: BatchRecipient[];
     outcome: CampaignBatchSendOutcome;
@@ -529,28 +482,6 @@ export class MessageCampaignBatchDeliveryService {
         error instanceof Error ? error.message : String(error)
       }`,
     );
-  }
-
-  private async findRunningCampaign(
-    campaignId: string,
-  ): Promise<MessageCampaignWorkspaceEntity | null> {
-    const campaignRepository = this.workspaceOrmManager.getRepository(
-      MessageCampaignWorkspaceEntity,
-      { shouldBypassPermissionChecks: true },
-    );
-
-    const campaign = await campaignRepository.findOne({
-      where: { id: campaignId },
-    });
-
-    if (
-      !isDefined(campaign) ||
-      campaign.status === MessageCampaignStatus.CANCELED
-    ) {
-      return null;
-    }
-
-    return campaign;
   }
 
   private async claimBatch({
