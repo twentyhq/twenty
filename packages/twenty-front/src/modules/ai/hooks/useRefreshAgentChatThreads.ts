@@ -13,40 +13,37 @@ export const useRefreshAgentChatThreads = () => {
   const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const refreshAgentChatThreads = useCallback(async () => {
-    const storeEntryBeforeRequest = store.get(
-      metadataStoreState.atomFamily('agentChatThreads'),
-    );
-    const result = await client
-      .query({
-        query: GetChatThreadsDocument,
-        fetchPolicy: 'network-only',
-      })
-      .catch(() => undefined);
+    while (true) {
+      const storeEntryBeforeRequest = store.get(
+        metadataStoreState.atomFamily('agentChatThreads'),
+      );
+      const result = await client
+        .query({
+          query: GetChatThreadsDocument,
+          fetchPolicy: 'network-only',
+        })
+        .catch(() => undefined);
 
-    const agentChatThreads = result?.data?.chatThreads;
+      const agentChatThreads = result?.data?.chatThreads;
 
-    if (!isDefined(agentChatThreads)) {
-      return undefined;
+      if (!isDefined(agentChatThreads)) {
+        return undefined;
+      }
+
+      // Retry with a fresh server snapshot when a local or subscription update
+      // arrives during the request.
+      if (
+        store.get(metadataStoreState.atomFamily('agentChatThreads')) !==
+        storeEntryBeforeRequest
+      ) {
+        continue;
+      }
+
+      replaceDraft('agentChatThreads', agentChatThreads);
+      applyChanges();
+
+      return agentChatThreads;
     }
-
-    // A newer local or subscription update owns the store when it arrives
-    // while this request is in flight.
-    const currentStoreEntry = store.get(
-      metadataStoreState.atomFamily('agentChatThreads'),
-    );
-
-    if (currentStoreEntry !== storeEntryBeforeRequest) {
-      return (
-        currentStoreEntry.status === 'draft-pending'
-          ? currentStoreEntry.draft
-          : currentStoreEntry.current
-      ) as typeof agentChatThreads;
-    }
-
-    replaceDraft('agentChatThreads', agentChatThreads);
-    applyChanges();
-
-    return agentChatThreads;
   }, [client, store, replaceDraft, applyChanges]);
 
   return { refreshAgentChatThreads };

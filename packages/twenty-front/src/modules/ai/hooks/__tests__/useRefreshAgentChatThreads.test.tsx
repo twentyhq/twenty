@@ -59,19 +59,24 @@ describe('useRefreshAgentChatThreads', () => {
     });
   });
 
-  it('ignores a response when the store changed during the request', async () => {
+  it('retries when the store changes during the request', async () => {
     const store = createStore();
     const newerThread = buildThread('thread-1', 'Newer title');
     const staleThread = buildThread('thread-1', 'Stale title');
+    const serverOnlyThread = buildThread('thread-2', 'Server thread');
     let resolveQuery: (value: {
       data: { chatThreads: AgentChatThread[] };
     }) => void = () => undefined;
 
-    queryMock.mockReturnValue(
-      new Promise((resolve) => {
-        resolveQuery = resolve;
-      }),
-    );
+    queryMock
+      .mockReturnValueOnce(
+        new Promise((resolve) => {
+          resolveQuery = resolve;
+        }),
+      )
+      .mockResolvedValueOnce({
+        data: { chatThreads: [newerThread, serverOnlyThread] },
+      });
     const { result } = renderHook(() => useRefreshAgentChatThreads(), {
       wrapper: getWrapper(store),
     });
@@ -93,10 +98,11 @@ describe('useRefreshAgentChatThreads', () => {
       refreshedThreads = await refreshPromise;
     });
 
-    expect(refreshedThreads).toEqual([newerThread]);
+    expect(refreshedThreads).toEqual([newerThread, serverOnlyThread]);
+    expect(queryMock).toHaveBeenCalledTimes(2);
     expect(
       store.get(metadataStoreState.atomFamily('agentChatThreads')).current,
-    ).toEqual([newerThread]);
+    ).toEqual([newerThread, serverOnlyThread]);
   });
 
   it('applies server updates and removals when the store has not changed', async () => {
