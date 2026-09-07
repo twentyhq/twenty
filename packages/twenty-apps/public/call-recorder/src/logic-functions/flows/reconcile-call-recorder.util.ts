@@ -20,6 +20,7 @@ import {
 import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/schedule-recall-bot-for-call-recording.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { fetchCalendarEventsByStartsAtValues } from 'src/logic-functions/data/fetch-calendar-events-by-starts-at-values.util';
+import { markCalendarEventsRecordingOn } from 'src/logic-functions/data/mark-calendar-events-recording-on.util';
 import { findCallRecordingsByCalendarEventIds } from 'src/logic-functions/data/find-call-recordings-by-calendar-event-ids.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
@@ -247,12 +248,16 @@ const reconcileActiveMeeting = async ({
   )[0];
 
   if (!isUndefined(existingCallRecording)) {
-    return updatePolicyManagedCallRecording({
+    const reconciliationResult = await updatePolicyManagedCallRecording({
       client,
       existingCallRecording,
       representativeCalendarEvent,
       realMeetingKey: meetingPolicyResult.realMeetingKey,
     });
+
+    await markRequestingCalendarEventsRecordingOn(client, meetingPolicyResult);
+
+    return reconciliationResult;
   }
 
   const manualOpenCallRecording = await findManualOpenCallRecording({
@@ -269,12 +274,34 @@ const reconcileActiveMeeting = async ({
     };
   }
 
-  return createPolicyManagedCallRecording({
+  const reconciliationResult = await createPolicyManagedCallRecording({
     client,
     callRecordingId,
     representativeCalendarEvent,
     realMeetingKey: meetingPolicyResult.realMeetingKey,
   });
+
+  await markRequestingCalendarEventsRecordingOn(client, meetingPolicyResult);
+
+  return reconciliationResult;
+};
+
+const markRequestingCalendarEventsRecordingOn = async (
+  client: CoreApiClient,
+  meetingPolicyResult: CallRecorderPolicyResultForMeeting,
+): Promise<void> => {
+  try {
+    await markCalendarEventsRecordingOn(
+      client,
+      meetingPolicyResult.requestingCalendarEventIds,
+    );
+  } catch (error) {
+    console.warn(
+      `[call-recorder] failed to mark the calendar events of meeting ${meetingPolicyResult.realMeetingKey} as recording on: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+  }
 };
 
 const updatePolicyManagedCallRecording = async ({
