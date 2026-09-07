@@ -16,13 +16,22 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type ComponentConformanceCase } from './types/ComponentConformanceCase';
 import { type ComponentConformanceOptions } from './types/ComponentConformanceOptions';
+import { hideGlobals } from './utils/hideGlobals';
 
 const CONFORMANCE_TEST_ID = 'conformance-root';
 const CONFORMANCE_CLASS_NAME = 'conformance-consumer-class';
 const CONFORMANCE_DATA_ATTRIBUTE_VALUE = 'conformance-data-value';
 const CONFORMANCE_ARIA_LABEL = 'conformance-aria-label';
 const CONFORMANCE_STYLE = { marginTop: '7px' };
-const SERVER_HIDDEN_GLOBALS = ['window', 'document', 'navigator'] as const;
+const SERVER_HIDDEN_GLOBALS = [
+  'window',
+  'document',
+  'navigator',
+  'CSS',
+  'Node',
+  'Element',
+  'HTMLElement',
+] as const;
 
 export const runComponentConformance = ({
   name,
@@ -73,12 +82,16 @@ export const runComponentConformance = ({
       consoleWarnSpy.mockRestore();
     });
 
-    itUnlessSkipped('consoleOutput', 'renders without console output', () => {
-      render(compose({}));
+    itUnlessSkipped(
+      'consoleWarnings',
+      'renders without console errors or warnings',
+      () => {
+        render(compose({}));
 
-      expect(consoleErrorSpy).not.toHaveBeenCalled();
-      expect(consoleWarnSpy).not.toHaveBeenCalled();
-    });
+        expect(consoleErrorSpy).not.toHaveBeenCalled();
+        expect(consoleWarnSpy).not.toHaveBeenCalled();
+      },
+    );
 
     itUnlessSkipped('ref', 'forwards ref to the root DOM node', () => {
       const ref = createRef<Element>();
@@ -119,13 +132,17 @@ export const runComponentConformance = ({
       }
     });
 
-    itUnlessSkipped('style', 'merges the consumer style', () => {
-      render(compose({ style: CONFORMANCE_STYLE }));
+    itUnlessSkipped(
+      'style',
+      'applies the consumer style to the root node',
+      () => {
+        render(compose({ style: CONFORMANCE_STYLE }));
 
-      expect(screen.getByTestId(CONFORMANCE_TEST_ID)).toHaveStyle(
-        CONFORMANCE_STYLE,
-      );
-    });
+        expect(screen.getByTestId(CONFORMANCE_TEST_ID)).toHaveStyle(
+          CONFORMANCE_STYLE,
+        );
+      },
+    );
 
     itUnlessSkipped('unmount', 'unmounts cleanly', () => {
       const { unmount } = render(compose({}));
@@ -135,17 +152,16 @@ export const runComponentConformance = ({
     });
 
     itUnlessSkipped('serverRender', 'renders to a string without a DOM', () => {
-      for (const globalName of SERVER_HIDDEN_GLOBALS) {
-        vi.stubGlobal(globalName, undefined);
-      }
+      const restoreGlobals = hideGlobals(SERVER_HIDDEN_GLOBALS);
 
       try {
         expect(() => renderToString(compose({}))).not.toThrow();
       } finally {
-        vi.unstubAllGlobals();
+        restoreGlobals();
       }
 
       expect(consoleErrorSpy).not.toHaveBeenCalled();
+      expect(consoleWarnSpy).not.toHaveBeenCalled();
     });
   });
 };

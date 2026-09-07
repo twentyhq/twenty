@@ -1,5 +1,5 @@
 export type ComponentConformanceCase =
-  | 'consoleOutput'
+  | 'consoleWarnings'
   | 'ref'
   | 'dataAttributes'
   | 'ariaAttributes'
