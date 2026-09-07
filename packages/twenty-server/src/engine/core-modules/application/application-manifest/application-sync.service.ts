@@ -215,6 +215,7 @@ export class ApplicationSyncService {
       workspaceId,
       manifest,
       applicationRegistrationId,
+      persistVersion: false,
     });
 
     const ownerFlatApplication: FlatApplication = application;
