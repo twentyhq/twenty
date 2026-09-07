@@ -6,6 +6,7 @@ import { isIndexedDbAvailable } from '@/ui/utilities/state/jotai/utils/isIndexed
 import { logError } from '~/utils/logError';
 
 const INDEXED_DB_STORE_NAME = 'keyval';
+const STORAGE_VERSION_KEY = '__storageVersion';
 
 type CrossTabMessage<ValueType> =
   | { type: 'set'; key: string; value: ValueType }
@@ -45,6 +46,7 @@ const createCrossTabChannel = (cacheName: string): BroadcastChannel | null => {
 
 export const createIndexedDbBackedJotaiStorage = <ValueType>(
   cacheName: string,
+  { version }: { version?: number } = {},
 ): IndexedDbBackedJotaiStorage<ValueType> => {
   const memoryMap = new Map<string, ValueType>();
   const idbStore = createIndexedDbStore(cacheName);
@@ -133,9 +135,28 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(
     }
 
     try {
+      if (isDefined(version)) {
+        const persistedVersion = await idb.get<number>(
+          STORAGE_VERSION_KEY,
+          idbStore,
+        );
+
+        if (persistedVersion !== version) {
+          await idb.clear(idbStore);
+          await idb.set(STORAGE_VERSION_KEY, version, idbStore);
+          isHydrated = true;
+
+          return;
+        }
+      }
+
       const persistedEntries = await idb.entries<string, ValueType>(idbStore);
 
       for (const [key, value] of persistedEntries) {
+        if (key === STORAGE_VERSION_KEY) {
+          continue;
+        }
+
         memoryMap.set(key, value);
       }
     } catch (error) {
@@ -154,6 +175,10 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(
 
     try {
       await idb.clear(idbStore);
+
+      if (isDefined(version)) {
+        await idb.set(STORAGE_VERSION_KEY, version, idbStore);
+      }
     } catch (error) {
       logError(error);
     }
