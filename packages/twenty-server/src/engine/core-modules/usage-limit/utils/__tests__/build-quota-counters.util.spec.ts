@@ -28,6 +28,11 @@ const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
   ...overrides,
 });
 
+const ALLOWANCE_PERIOD = {
+  periodStart: new Date('2026-08-15T09:00:00.000Z'),
+  periodEnd: new Date('2026-09-15T09:00:00.000Z'),
+};
+
 const buildCounters = ({ limits }: { limits: FlatUsageLimit[] }) =>
   buildQuotaCounters({
     limits,
@@ -35,7 +40,11 @@ const buildCounters = ({ limits }: { limits: FlatUsageLimit[] }) =>
     workspaceId: 'workspace-1',
     resourceType: UsageResourceType.AI,
     operationType: UsageOperationType.AI_CHAT_TOKEN,
-    periodByUnit: { month: MONTH_PERIOD, week: WEEK_PERIOD },
+    periodByUnit: {
+      month: MONTH_PERIOD,
+      week: WEEK_PERIOD,
+      allowancePeriod: ALLOWANCE_PERIOD,
+    },
   });
 
 describe('buildQuotaCounters', () => {
@@ -112,6 +121,20 @@ describe('buildQuotaCounters', () => {
     expect(counters.map((counter) => counter.spenderType)).toEqual([
       'userWorkspace',
       'workspace',
+    ]);
+  });
+
+  it('keys an allowance-period limit on the allowance period', () => {
+    const counters = buildCounters({
+      limits: [buildLimit({ periodUnit: 'allowancePeriod' })],
+    });
+
+    expect(counters).toMatchObject([
+      {
+        key: `{workspace-1}:quota:AI:AI_CHAT_TOKEN:workspace:-:creditsUsedMicro:allowancePeriod:${ALLOWANCE_PERIOD.periodStart.getTime()}`,
+        periodStart: ALLOWANCE_PERIOD.periodStart,
+        periodEnd: ALLOWANCE_PERIOD.periodEnd,
+      },
     ]);
   });
 

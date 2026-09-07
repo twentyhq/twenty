@@ -126,6 +126,12 @@ export class UsageLimitQuotaService implements OnModuleInit {
     };
   }
 
+  async hasCreditAllowancePeriod(workspaceId: string): Promise<boolean> {
+    return isDefined(
+      await this.creditAllowanceProvider?.getCreditAllowancePeriod(workspaceId),
+    );
+  }
+
   async dropAllowanceCounter(workspaceId: string): Promise<void> {
     const period =
       await this.creditAllowanceProvider?.getCreditAllowancePeriod(workspaceId);
@@ -153,7 +159,10 @@ export class UsageLimitQuotaService implements OnModuleInit {
     const keys = buildIntraWorkspaceLimitCounterKeys({
       workspaceId,
       limits,
-      periodByUnit: this.getCurrentPeriodsByUnit(limits),
+      periodByUnit: await this.findCurrentPeriodsByUnit({
+        workspaceId,
+        quotaLimits: limits.filter((limit) => limit.limitKind === 'quota'),
+      }),
     });
 
     if (keys.length === 0) {
@@ -171,9 +180,14 @@ export class UsageLimitQuotaService implements OnModuleInit {
       return;
     }
 
-    const period = this.usagePeriodService.getCurrentPeriod(
-      usageLimit.periodUnit,
-    );
+    const period = await this.findCurrentPeriod({
+      workspaceId: usageLimit.workspaceId,
+      periodUnit: usageLimit.periodUnit,
+    });
+
+    if (!isDefined(period)) {
+      return;
+    }
 
     await this.delUnderWarmLock({
       workspaceId: usageLimit.workspaceId,
@@ -435,7 +449,10 @@ export class UsageLimitQuotaService implements OnModuleInit {
       workspaceId,
       resourceType,
       operationType,
-      periodByUnit: this.getCurrentPeriodsByUnit(quotaLimits),
+      periodByUnit: await this.findCurrentPeriodsByUnit({
+        workspaceId,
+        quotaLimits,
+      }),
     });
   }
 
@@ -470,9 +487,13 @@ export class UsageLimitQuotaService implements OnModuleInit {
     };
   }
 
-  private getCurrentPeriodsByUnit(
-    quotaLimits: FlatUsageLimit[],
-  ): Partial<Record<PeriodUnit, UsagePeriod>> {
+  private async findCurrentPeriodsByUnit({
+    workspaceId,
+    quotaLimits,
+  }: {
+    workspaceId: string;
+    quotaLimits: FlatUsageLimit[];
+  }): Promise<Partial<Record<PeriodUnit, UsagePeriod>>> {
     const periodUnits = [
       ...new Set(
         quotaLimits
@@ -484,12 +505,36 @@ export class UsageLimitQuotaService implements OnModuleInit {
       ),
     ];
 
-    return Object.fromEntries(
-      periodUnits.map((periodUnit) => [
+    const periods = await Promise.all(
+      periodUnits.map(async (periodUnit) => ({
         periodUnit,
-        this.usagePeriodService.getCurrentPeriod(periodUnit),
-      ]),
+        period: await this.findCurrentPeriod({ workspaceId, periodUnit }),
+      })),
     );
+
+    return Object.fromEntries(
+      periods
+        .filter(({ period }) => isDefined(period))
+        .map(({ periodUnit, period }) => [periodUnit, period]),
+    );
+  }
+
+  private async findCurrentPeriod({
+    workspaceId,
+    periodUnit,
+  }: {
+    workspaceId: string;
+    periodUnit: AnchoredPeriodUnit;
+  }): Promise<UsagePeriod | null> {
+    if (periodUnit === 'allowancePeriod') {
+      return (
+        (await this.creditAllowanceProvider?.getCreditAllowancePeriod(
+          workspaceId,
+        )) ?? null
+      );
+    }
+
+    return this.usagePeriodService.getCurrentPeriod(periodUnit);
   }
 
   private async findQuotaLimits({
@@ -711,6 +756,12 @@ export class UsageLimitQuotaService implements OnModuleInit {
     workspaceId: string;
     counter: LimitQuotaCounter;
   }): Promise<QuotaConsumptionRow[]> {
+    const periodClause =
+      counter.periodUnit === 'allowancePeriod'
+        ? 'AND periodStart = {periodStart:DateTime64(3)}'
+        : `AND toStartOfDay(timestamp, 'UTC') >= {periodStart:DateTime64(3)}
+         AND toStartOfDay(timestamp, 'UTC') < {periodEnd:DateTime64(3)}`;
+
     return this.clickHouseService.selectOrThrow<QuotaConsumptionRow>(
       `SELECT operationType, userWorkspaceId, apiKeyId, applicationId, agentId,
               workflowId, logicFunctionId,
@@ -719,8 +770,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
        FROM usageEvent
        WHERE workspaceId = {workspaceId:String}
          AND resourceType = {resourceType:String}
-         AND toStartOfDay(timestamp, 'UTC') >= {periodStart:DateTime64(3)}
-         AND toStartOfDay(timestamp, 'UTC') < {periodEnd:DateTime64(3)}
+         ${periodClause}
        GROUP BY operationType, userWorkspaceId, apiKeyId, applicationId, agentId,
                 workflowId, logicFunctionId`,
       {

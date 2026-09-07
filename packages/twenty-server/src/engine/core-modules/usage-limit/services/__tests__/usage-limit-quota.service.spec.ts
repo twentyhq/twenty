@@ -309,6 +309,88 @@ describe('UsageLimitQuotaService', () => {
     expect(cacheStorage.mset).toHaveBeenCalledWith([]);
   });
 
+  describe('allowance-period limits', () => {
+    const allowancePeriodLimit = buildLimit({
+      id: 'allowance-period',
+      periodUnit: 'allowancePeriod',
+      limitValue: 800,
+    });
+
+    it('warms the counter from the consumption of the allowance period', async () => {
+      setLimits([allowancePeriodLimit]);
+      setAllowance(2_000);
+      creditAllowanceProvider.isCreditAllowanceEnabled.mockResolvedValue(false);
+      cacheStorage.mget.mockResolvedValue([undefined]);
+      clickHouseService.selectOrThrow.mockResolvedValue([
+        {
+          operationType: UsageOperationType.AI_CHAT_TOKEN,
+          userWorkspaceId: 'user-1',
+          apiKeyId: '',
+          applicationId: '',
+          agentId: '',
+          workflowId: '',
+          logicFunctionId: '',
+          creditsUsedMicro: '150',
+          quantity: '0',
+        },
+      ]);
+
+      await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
+
+      expect(clickHouseService.selectOrThrow).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'AND periodStart = {periodStart:DateTime64(3)}',
+        ),
+        expect.objectContaining({
+          periodStart: expect.stringContaining('2026-08-15'),
+        }),
+      );
+      expect(cacheStorage.mset).toHaveBeenCalledWith([
+        expect.objectContaining({ value: 650 }),
+      ]);
+    });
+
+    it('builds no counter for an allowance-period limit without an allowance', async () => {
+      setLimits([allowancePeriodLimit]);
+      creditAllowanceProvider.isCreditAllowanceEnabled.mockResolvedValue(false);
+
+      await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
+
+      expect(cacheStorage.mget).not.toHaveBeenCalled();
+    });
+
+    it('reports an exhausted allowance-period limit', async () => {
+      setLimits([allowancePeriodLimit]);
+      setAllowance(2_000);
+      creditAllowanceProvider.isCreditAllowanceEnabled.mockResolvedValue(false);
+      cacheStorage.mget.mockResolvedValue([0]);
+
+      await expect(assertQuotaNotExhausted()).rejects.toMatchObject({
+        exhaustedScope: expect.objectContaining({
+          exhaustedKind: 'limit',
+          limitValue: 800,
+          periodUnit: 'allowancePeriod',
+        }),
+      });
+    });
+  });
+
+  describe('hasCreditAllowancePeriod', () => {
+    it('answers true when the provider knows the period', async () => {
+      setAllowance(2_000);
+
+      await expect(
+        service.hasCreditAllowancePeriod('workspace-1'),
+      ).resolves.toBe(true);
+    });
+
+    it('answers false without a period', async () => {
+      await expect(
+        service.hasCreditAllowancePeriod('workspace-1'),
+      ).resolves.toBe(false);
+    });
+  });
+
   it('admits when the counters cannot be read', async () => {
     setLimits([buildLimit({})]);
     cacheStorage.mget.mockRejectedValue(new Error('Socket closed'));
@@ -540,6 +622,35 @@ describe('UsageLimitQuotaService', () => {
           periodStart: MONTH_PERIOD.periodStart,
         }),
       ]);
+    });
+
+    it('keys an allowance-period limit on the allowance period', async () => {
+      setAllowance(2_000_000);
+
+      await service.dropLimitCounter(
+        buildLimitCounterScope({ periodUnit: 'allowancePeriod' }),
+      );
+
+      expect(cacheStorage.mdel).toHaveBeenCalledWith([
+        buildQuotaCounterKey({
+          workspaceId: 'workspace-1',
+          resourceType: UsageResourceType.AI,
+          operationType: UsageOperationType.AI_CHAT_TOKEN,
+          spenderType: 'workspace',
+          spenderId: '',
+          meter: 'creditsUsedMicro',
+          periodUnit: 'allowancePeriod',
+          periodStart: ALLOWANCE_PERIOD.periodStart,
+        }),
+      ]);
+    });
+
+    it('does nothing for an allowance-period limit when no allowance exists', async () => {
+      await service.dropLimitCounter(
+        buildLimitCounterScope({ periodUnit: 'allowancePeriod' }),
+      );
+
+      expect(cacheStorage.mdel).not.toHaveBeenCalled();
     });
 
     it('ignores a speed limit', async () => {
