@@ -1,8 +1,4 @@
 #!/bin/bash
-# Exercises install.sh and 1-click.sh against the real Docker Hub and GitHub.
-# Usage: install.test.sh <git ref>
-# <git ref> is where the scripts under test fetch docker-compose.yml, .env.example and
-# install.sh from: the pull request head sha in CI, any pushed branch or sha locally.
 set -euo pipefail
 
 scripts_dir=$(cd "$(dirname "$0")" && pwd)
@@ -22,7 +18,6 @@ function fail {
   exit 1
 }
 
-# Answers the directory prompt, declines to start the containers, and captures output and exit status
 function run_install {
   local directory=$1
   shift

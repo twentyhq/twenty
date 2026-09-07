@@ -167,8 +167,6 @@ jobs:
         env:
           LC_ALL: C.UTF-8
         run: shellcheck --shell=bash --severity=error packages/twenty-docker/scripts/*.sh
-      # The scripts download docker-compose.yml, .env.example and install.sh from GitHub,
-      # so they are pointed at this pull request's head to exercise its own files.
       - name: Run install scripts against the pull request head
         run: bash packages/twenty-docker/scripts/install.test.sh "${{ github.event.pull_request.head.sha }}"
   ci-test-docker-status-check:
