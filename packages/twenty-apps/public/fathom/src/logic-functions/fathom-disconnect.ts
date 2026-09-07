@@ -9,6 +9,7 @@ import { createFathomClient } from 'src/logic-functions/utils/create-fathom-clie
 import { deleteStaleFathomWebhook } from 'src/logic-functions/utils/delete-stale-fathom-webhook.util';
 import { getFathomConnectionClaimKey } from 'src/logic-functions/utils/get-fathom-connection-claim-key.util';
 import { getFathomWebhookRegistrationKey } from 'src/logic-functions/utils/get-fathom-webhook-registration-key.util';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 export const fathomDisconnectHandler = async (
   payload: FathomConnectionHookPayload,
@@ -30,10 +31,22 @@ export const fathomDisconnectHandler = async (
 
   const connection = await getConnection(payload.connectedAccountId);
 
-  await deleteStaleFathomWebhook({
-    fathomClient: createFathomClient(connection.accessToken),
-    webhookId: registration.webhookId,
-  });
+  try {
+    await deleteStaleFathomWebhook({
+      fathomClient: createFathomClient(connection.accessToken),
+      webhookId: registration.webhookId,
+    });
+  } catch (error) {
+    // Twenty deletes the connected account right after this hook, so the
+    // registration left behind is keyed on an id that never comes back and this
+    // log line is the only record of the webhook still live in Fathom.
+    console.error(
+      `[fathom] leaked webhook ${registration.webhookId} for connected account ${payload.connectedAccountId}: ${toErrorMessage(error)}`,
+    );
+
+    throw error;
+  }
+
   await kv.delete(registrationKey);
   await kv.delete(getFathomConnectionClaimKey(payload.connectedAccountId), {
     scope: 'SERVER',
