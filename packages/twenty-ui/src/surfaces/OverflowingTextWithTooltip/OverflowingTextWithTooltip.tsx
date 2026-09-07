@@ -6,7 +6,11 @@ import { clsx } from 'clsx';
 import { LinkifiedText } from '@ui/typography/LinkifiedText/LinkifiedText';
 import { Text } from '@ui/typography/Text/Text';
 import { isDefined } from '@ui/utilities/utils/isDefined';
-import { AppTooltip, TooltipDelay } from '@ui/surfaces/AppTooltip/AppTooltip';
+import {
+  AppTooltip,
+  TooltipDelay,
+  TooltipPosition,
+} from '@ui/surfaces/AppTooltip/AppTooltip';
 
 import styles from './OverflowingTextWithTooltip.module.scss';
 
@@ -15,6 +19,7 @@ type OverflowingTextWithTooltipProps = {
   isTooltipMultiline?: boolean;
   displayedMaxRows?: number;
   tooltipDelay?: TooltipDelay;
+  tooltipPlace?: TooltipPosition;
   alwaysShowTooltip?: boolean;
 } & (
   | {
@@ -34,6 +39,7 @@ export const OverflowingTextWithTooltip = ({
   displayedMaxRows,
   tooltipContent,
   tooltipDelay = TooltipDelay.mediumDelay,
+  tooltipPlace = TooltipPosition.Bottom,
   alwaysShowTooltip = false,
 }: OverflowingTextWithTooltipProps) => {
   const textElementId = `title-id-${useId().replace(/:/g, '')}`;
@@ -115,7 +121,7 @@ export const OverflowingTextWithTooltip = ({
               anchorSelect={`#${textElementId}`}
               offset={5}
               noArrow
-              place="bottom"
+              place={tooltipPlace}
               positionStrategy="absolute"
               delay={tooltipDelay}
               isOpen={true}

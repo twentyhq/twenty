@@ -1,6 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -32,15 +32,24 @@ const getConnectedAccountRefreshAccessTokenExceptionUserFriendlyMessage = (
 };
 
 export class ConnectedAccountRefreshAccessTokenException extends CustomException<ConnectedAccountRefreshAccessTokenExceptionCode> {
+  cause?: unknown;
+
   constructor(
     message: string,
     code: ConnectedAccountRefreshAccessTokenExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
+    {
+      userFriendlyMessage,
+      cause,
+    }: { userFriendlyMessage?: MessageDescriptor; cause?: unknown } = {},
   ) {
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??
         getConnectedAccountRefreshAccessTokenExceptionUserFriendlyMessage(code),
     });
+
+    if (isDefined(cause)) {
+      this.cause = cause;
+    }
   }
 }

@@ -1,7 +1,10 @@
 import { isUndefined } from '@sniptt/guards';
 
 type CreateApplicationVariableSaveQueueParams = {
-  saveValue: (value: string) => Promise<void>;
+  saveValue: (
+    value: string,
+    isSupersededValue: () => boolean,
+  ) => Promise<void>;
 };
 
 export const createApplicationVariableSaveQueue = ({
@@ -23,7 +26,7 @@ export const createApplicationVariableSaveQueue = ({
 
         queuedValue = undefined;
 
-        await saveValue(valueToSave);
+        await saveValue(valueToSave, () => !isUndefined(queuedValue));
       }
     } finally {
       isSaving = false;

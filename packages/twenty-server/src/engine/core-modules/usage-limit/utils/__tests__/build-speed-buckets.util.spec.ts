@@ -331,4 +331,38 @@ describe('buildSpeedBuckets with limits configured', () => {
       }),
     ]);
   });
+  it('builds a workspace bucket and a server-wide bucket for an email send, narrowest first', () => {
+    const systemContext = { type: 'system', workspace } as WorkspaceAuthContext;
+
+    const buckets = buildSpeedBuckets({
+      speedLimitDefaults: [
+        {
+          spenderType: 'workspace',
+          counterScope: 'perWorkspace',
+          maxTokens: 50,
+          windowMs: 10_000,
+          isOverridable: true,
+        },
+        {
+          spenderType: 'workspace',
+          counterScope: 'crossWorkspace',
+          maxTokens: 100,
+          windowMs: 10_000,
+          isOverridable: false,
+        },
+      ],
+      limits: [],
+      authContext: systemContext,
+      resourceType: UsageResourceType.EMAIL,
+      operationType: UsageOperationType.EMAIL_SEND,
+    });
+
+    // A send has to fit both, and the workspace bucket comes first so a refusal
+    // names it rather than the server-wide one.
+    expect(buckets.map((bucket) => bucket.key)).toEqual([
+      '{workspace-1}:speed:EMAIL:EMAIL_SEND:workspace:-:10',
+      '{server}:speed:EMAIL:EMAIL_SEND:workspace:-:10',
+    ]);
+    expect(buckets.map((bucket) => bucket.burst)).toEqual([50, 100]);
+  });
 });

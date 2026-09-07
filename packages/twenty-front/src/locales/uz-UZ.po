@@ -483,6 +483,11 @@ msgstr "{grantedCreditsDisplay} kreditlar"
 msgid "{headersCount} headers received"
 msgstr "{headersCount} ta sarlavha qabul qilindi"
 
+#. js-lingui-id: 4xzh1W
+#: src/modules/object-record/record-list/components/RecordListRow.tsx
+msgid "{hiddenFieldCount, plural, one {# more populated field available} other {# more populated fields available}}"
+msgstr "{hiddenFieldCount, plural, one {# ta qo‘shimcha to‘ldirilgan maydon mavjud} other {# ta qo‘shimcha to‘ldirilgan maydon mavjud}}"
+
 #. js-lingui-id: pEl0a0
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{hours, plural, one {{hours} hour} other {{hours} hours}}"
@@ -670,11 +675,11 @@ msgstr "{unitCount, plural, one {Hafta} other {Haftalar}}"
 msgid "{unitCount, plural, one {Year} other {Years}}"
 msgstr "{unitCount, plural, one {Yil} other {Yillar}}"
 
-#. js-lingui-id: ITVweg
+#. js-lingui-id: YdwR4T
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
-msgid "{visibleFieldsCount} shown"
-msgstr "{visibleFieldsCount} tasi ko‘rsatilgan"
+msgid "{visibleFieldsCount} selected"
+msgstr "{visibleFieldsCount} ta tanlandi"
 
 #. js-lingui-id: WjjsAL
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
@@ -896,6 +901,11 @@ msgstr "Qoralama allaqachon mavjud"
 #: src/modules/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton.tsx
 msgid "A draft already exists for this workflow. Are you sure you want to erase it?"
 msgstr "Ushbu ish jarayoni uchun qoralama allaqachon mavjud. Uni o‘chirib tashlashga ishonchingiz komilmi?"
+
+#. js-lingui-id: K3NJnJ
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "A payment method is needed to keep your workspace active."
+msgstr "Ish joyingiz faol bo‘lib qolishi uchun to‘lov usuli kerak."
 
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1172,6 +1182,11 @@ msgstr "\"{trimmedName}\" ni variantlarga qo‘shish"
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
 msgid "Add a {objectLabelSingular}"
 msgstr "{objectLabelSingular} qo‘shish"
+
+#. js-lingui-id: rUVyfz
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Add a card below to update your billing details and retry your payment."
+msgstr "Hisob-kitob ma’lumotlaringizni yangilash va to‘lovni qayta amalga oshirish uchun quyida karta qo‘shing."
 
 #. js-lingui-id: 7W8nJr
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationEditor.tsx
@@ -1485,6 +1500,11 @@ msgstr "Foydalanuvchilarni qoʻshish yoki olib tashlash"
 msgid "Add Output Field"
 msgstr "Chiqish maydoni qo‘shish"
 
+#. js-lingui-id: lRpmgk
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Add payment method"
+msgstr "Toʻlov usulini qoʻshish"
+
 #. js-lingui-id: aYtHO6
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
@@ -1741,7 +1761,7 @@ msgid "Administrators"
 msgstr "Administratorlar"
 
 #. js-lingui-id: sxkWRg
-#: src/modules/navigation/components/SettingsNavigationDrawer.tsx
+#: src/modules/navigation/components/SettingsNavigationDrawerContent.tsx
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 msgid "Advanced"
 msgstr "Kengaytirilgan"
@@ -3629,6 +3649,7 @@ msgstr "Skan qila olmayapsizmi? Quyidagini nusxa oling"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/billing/components/AddCreditCardModal.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
@@ -6961,11 +6982,6 @@ msgstr "Domen"
 msgid "Domain already taken"
 msgstr "Domen allaqachon band qilingan"
 
-#. js-lingui-id: eNcdvk
-#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
-msgid "Domain links are stored as a bare domain name, so twenty.com and https://www.twenty.com are the same value"
-msgstr "Domen havolalari yalang‘och domen nomi sifatida saqlanadi, shuning uchun twenty.com va https://www.twenty.com bir xil qiymatdir"
-
 #. js-lingui-id: XoBD/+
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
 msgid "Domain Setup"
@@ -9641,6 +9657,11 @@ msgstr "Global qidiruv"
 msgid "Go back"
 msgstr "Orqaga qaytish"
 
+#. js-lingui-id: y0SPQU
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+msgid "Go to billing"
+msgstr "To‘lov bo‘limiga o‘tish"
+
 #. js-lingui-id: Hb4Cgz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -11381,11 +11402,6 @@ msgstr "Familiya"
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "Last name can not be empty"
 msgstr "Familiya boʻsh boʻlishi mumkin emas"
-
-#. js-lingui-id: s0kiVA
-#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
-msgid "Last payment failed. Please contact your admin."
-msgstr "Oxirgi toʻlov amalga oshmadi. Iltimos, administratoringiz bilan bogʻlaning."
 
 #. js-lingui-id: 3u/3zO
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
@@ -14963,6 +14979,21 @@ msgstr "Pauza qilingan"
 msgid "Payment issue"
 msgstr "To‘lov muammosi"
 
+#. js-lingui-id: twOnMk
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Payment method added."
+msgstr "To‘lov usuli qo‘shildi."
+
+#. js-lingui-id: uIMn/N
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Payment method added. Retrying your payment..."
+msgstr "To‘lov usuli qo‘shildi. To‘lovingiz qayta urinib ko‘rilmoqda..."
+
+#. js-lingui-id: OvqmUS
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+msgid "Payment successful."
+msgstr "To‘lov muvaffaqiyatli amalga oshirildi."
+
 #. js-lingui-id: CcK+Ft
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "PDF"
@@ -18486,6 +18517,11 @@ msgstr "Diktantni to‘xtatish"
 msgid "Stop impersonating"
 msgstr "Nomidan ishlashni to‘xtatish"
 
+#. js-lingui-id: juzGVI
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
+msgid "Store the full URL or just the domain"
+msgstr "To‘liq URL yoki faqat domenni saqlang"
+
 #. js-lingui-id: GGiaAW
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "Strategy"
@@ -19323,6 +19359,11 @@ msgstr "Moslashtirilmagan yoki eʼtiborsiz qoldirilgan majburiy ustunlar bor. Da
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "There are still some rows that contain errors. Rows with errors will be ignored when submitting."
 msgstr "Hali ham xatolarni oʻz ichiga olgan ayrim qatorlar mavjud. Xatolari bor qatorlar yuborilganda eʼtiborsiz qoldiriladi."
+
+#. js-lingui-id: PpLJq1
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "There is a billing issue. Please contact your admin."
+msgstr "Hisob-kitob bilan bog‘liq muammo bor. Iltimos, administratoringiz bilan bog‘laning."
 
 #. js-lingui-id: CA9PTn
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -20764,6 +20805,11 @@ msgstr "Ko‘rinishni yangilash"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
 msgstr "Hisobingiz konfiguratsiyasini yangilang. Kerak bo‘lganda IMAP, SMTP va CalDAV ning istalgan kombinatsiyasini sozlang."
+
+#. js-lingui-id: JlP83A
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Update your payment method"
+msgstr "To‘lov usulingizni yangilash"
 
 #. js-lingui-id: x4Xp3c
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
@@ -22437,6 +22483,11 @@ msgstr "Hisob-kitob davri darhol oylikka o‘zgaradi va sinov muddati davom etad
 #: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "Your billing interval will switch to yearly immediately and your trial will continue. When it ends, you will be charged ${yearlyPrice} per user per year billed annually."
 msgstr "Hisob-kitob davri darhol yillikka o‘zgaradi va sinov muddati davom etadi. U tugaganda, har bir foydalanuvchi uchun yiliga ${yearlyPrice} miqdorida, har yili hisob-kitob qilinadi."
+
+#. js-lingui-id: u1O1GV
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+msgid "Your card was saved, but the payment still needs attention."
+msgstr "Kartangiz saqlandi, ammo to‘lov hali ham e’tibor talab qiladi."
 
 #. js-lingui-id: mmGBWT
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx

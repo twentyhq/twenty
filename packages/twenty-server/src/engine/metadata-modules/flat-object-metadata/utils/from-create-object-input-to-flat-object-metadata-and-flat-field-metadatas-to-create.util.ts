@@ -1,5 +1,9 @@
 import { getFieldUniversalIdentifier } from 'twenty-shared/application';
-import { MetadataWritability, ObjectOpenRecordIn } from 'twenty-shared/types';
+import {
+  MetadataReadability,
+  MetadataWritability,
+  ObjectOpenRecordIn,
+} from 'twenty-shared/types';
 import {
   capitalize,
   isDefined,
@@ -72,6 +76,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       isUIEditable: true,
       isUICreatable: true,
       writability: MetadataWritability.OPEN,
+      readability: MetadataReadability.OPEN,
       isSystem: false,
       labelPlural: capitalize(createObjectInput.labelPlural),
       labelSingular: capitalize(createObjectInput.labelSingular),

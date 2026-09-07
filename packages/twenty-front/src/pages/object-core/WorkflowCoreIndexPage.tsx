@@ -12,8 +12,13 @@ import { CommandMenuComponentInstanceContext } from '@/command-menu/states/conte
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { CoreObjectTable } from '@/object-core/components/CoreObjectTable';
+import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { CoreObjectTableAddNewRow } from '@/object-core/components/CoreObjectTableAddNewRow';
+import { getDeletedRecordIdsFromOperation } from '@/object-core/utils/getDeletedRecordIdsFromOperation';
+import { CoreWorkflowsSelectionToContextStoreEffect } from '@/object-core/workflows/components/CoreWorkflowsSelectionToContextStoreEffect';
+import { useCoreWorkflowsSelection } from '@/object-core/workflows/hooks/useCoreWorkflowsSelection';
 import { useCreateCoreWorkflow } from '@/object-core/workflows/hooks/useCreateCoreWorkflow';
+import { useHydrateSelectedWorkflowRecords } from '@/object-core/workflows/hooks/useHydrateSelectedWorkflowRecords';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import { isUsableCoreWorkflowFilterRule } from '@/object-core/workflows/utils/isUsableCoreWorkflowFilterRule';
 import { RecordIndexEmptyStateDisplay } from '@/object-record/record-index/components/RecordIndexEmptyStateDisplay';
@@ -69,6 +74,26 @@ export const WorkflowCoreIndexPage = () => {
   const { createCoreWorkflow, canCreateCoreWorkflow, isCreatingCoreWorkflow } =
     useCreateCoreWorkflow();
 
+  const {
+    displayedCoreWorkflows,
+    selectedRowIds,
+    selectedWorkspaceWorkflowIds,
+    toggleRow,
+    selectRows,
+    forgetDeletedWorkspaceWorkflows,
+  } = useCoreWorkflowsSelection({ coreWorkflows });
+
+  useHydrateSelectedWorkflowRecords(selectedWorkspaceWorkflowIds);
+
+  useListenToObjectRecordOperationBrowserEvent({
+    objectMetadataItemId: objectMetadataItem.id,
+    operationTypes: ['delete-one', 'delete-many'],
+    onObjectRecordOperationBrowserEvent: (detail) =>
+      forgetDeletedWorkspaceWorkflows(
+        getDeletedRecordIdsFromOperation(detail.operation),
+      ),
+  });
+
   const coreWorkflowsFilterSettings = useAtomStateValue(
     coreWorkflowsFilterSettingsState,
   );
@@ -79,7 +104,7 @@ export const WorkflowCoreIndexPage = () => {
 
   const hasError = isDefined(error);
 
-  const isEmpty = !loading && !hasError && coreWorkflows.length === 0;
+  const isEmpty = !loading && !hasError && displayedCoreWorkflows.length === 0;
 
   useEffect(() => {
     if (inView && hasNextPage && !loading) {
@@ -153,10 +178,17 @@ export const WorkflowCoreIndexPage = () => {
               <CoreObjectTable
                 tableId={tableId}
                 columns={WORKFLOW_CORE_TABLE_COLUMNS}
-                items={coreWorkflows}
+                items={displayedCoreWorkflows}
                 getItemKey={(workflow) => workflow.id}
                 getItemLink={getCoreWorkflowLink}
                 initialSort={CORE_WORKFLOWS_INITIAL_SORT}
+                selection={{
+                  selectedRowIds,
+                  onToggleRow: toggleRow,
+                  onToggleAllRows: selectRows,
+                  isItemSelectable: (coreWorkflow) =>
+                    isDefined(coreWorkflow.workspaceWorkflowId),
+                }}
               />
               {canCreateCoreWorkflow && (
                 <CoreObjectTableAddNewRow
@@ -168,6 +200,9 @@ export const WorkflowCoreIndexPage = () => {
               {hasNextPage && <StyledFetchMoreSentinel ref={fetchMoreRef} />}
             </>
           )}
+          <CoreWorkflowsSelectionToContextStoreEffect
+            selectedWorkspaceWorkflowIds={selectedWorkspaceWorkflowIds}
+          />
         </StyledTableContainer>
       </PageCardLayout>
     </>

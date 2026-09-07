@@ -85,6 +85,7 @@ export const prefillFrontComponentCommandMenuItems = async ({
         isPinned: definition.isPinned ?? false,
         availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
         conditionalAvailabilityExpression: null,
+        conditionalPinnedExpression: null,
         availabilityObjectMetadataId: null,
         availabilityObjectMetadataUniversalIdentifier: null,
         navigationTargetObjectMetadataId: null,
