@@ -2,52 +2,15 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ParsedMediaQueryCondition } from '@/polyfills/media-query/types/ParsedMediaQueryCondition';
-import { parseMediaQueryColorSchemeCondition } from '@/polyfills/media-query/utils/parseMediaQueryColorSchemeCondition';
-import { parseMediaQueryComparisonPrefix } from '@/polyfills/media-query/utils/parseMediaQueryComparisonPrefix';
-import { parseMediaQueryDevicePixelRatioValue } from '@/polyfills/media-query/utils/parseMediaQueryDevicePixelRatioValue';
-import { parseMediaQueryLengthToPixels } from '@/polyfills/media-query/utils/parseMediaQueryLengthToPixels';
-import { parseMediaQueryOrientationCondition } from '@/polyfills/media-query/utils/parseMediaQueryOrientationCondition';
-import { parseMediaQueryResolutionToDevicePixelRatio } from '@/polyfills/media-query/utils/parseMediaQueryResolutionToDevicePixelRatio';
+import { parseMediaQueryBooleanCondition } from '@/polyfills/media-query/utils/parseMediaQueryBooleanCondition';
+import { parseMediaQueryPlainCondition } from '@/polyfills/media-query/utils/parseMediaQueryPlainCondition';
+import { parseMediaQueryRangeCondition } from '@/polyfills/media-query/utils/parseMediaQueryRangeCondition';
 
 const CONDITION_WRAPPING_PARENTHESES_PATTERN = /^\(([\s\S]*)\)$/;
 
-const WEBKIT_FEATURE_PREFIX = '-webkit-';
-
-const WEBKIT_ALLOWED_BASE_FEATURE_NAME = 'device-pixel-ratio';
-
-type MediaQueryNumericFeature = {
-  source: Extract<ParsedMediaQueryCondition, { kind: 'numeric' }>['source'];
-  parseValue: (featureValue: string) => number | null;
-};
-
-const MEDIA_QUERY_NUMERIC_FEATURES = new Map<string, MediaQueryNumericFeature>([
-  [
-    'width',
-    { source: 'componentWidth', parseValue: parseMediaQueryLengthToPixels },
-  ],
-  [
-    'height',
-    { source: 'componentHeight', parseValue: parseMediaQueryLengthToPixels },
-  ],
-  [
-    'device-pixel-ratio',
-    {
-      source: 'devicePixelRatio',
-      parseValue: parseMediaQueryDevicePixelRatioValue,
-    },
-  ],
-  [
-    'resolution',
-    {
-      source: 'devicePixelRatio',
-      parseValue: parseMediaQueryResolutionToDevicePixelRatio,
-    },
-  ],
-]);
-
 export const parseMediaQueryCondition = (
   conditionString: string,
-): ParsedMediaQueryCondition | null => {
+): ParsedMediaQueryCondition[] | null => {
   const conditionMatch = conditionString.match(
     CONDITION_WRAPPING_PARENTHESES_PATTERN,
   );
@@ -56,12 +19,18 @@ export const parseMediaQueryCondition = (
     return null;
   }
 
-  const [, conditionContent] = conditionMatch;
+  const conditionContent = conditionMatch[1].trim();
   const colonIndex = conditionContent.indexOf(':');
   const hasFeatureNameValueSeparator = colonIndex !== -1;
 
   if (!hasFeatureNameValueSeparator) {
-    return null;
+    const booleanCondition = parseMediaQueryBooleanCondition(conditionContent);
+
+    if (isDefined(booleanCondition)) {
+      return [booleanCondition];
+    }
+
+    return parseMediaQueryRangeCondition(conditionContent);
   }
 
   const featureName = conditionContent.slice(0, colonIndex).trim();
@@ -71,41 +40,10 @@ export const parseMediaQueryCondition = (
     return null;
   }
 
-  if (featureName === 'prefers-color-scheme') {
-    return parseMediaQueryColorSchemeCondition(featureValue);
-  }
+  const plainCondition = parseMediaQueryPlainCondition({
+    featureName,
+    featureValue,
+  });
 
-  if (featureName === 'orientation') {
-    return parseMediaQueryOrientationCondition(featureValue);
-  }
-
-  const isWebkitPrefixed = featureName.startsWith(WEBKIT_FEATURE_PREFIX);
-  const unprefixedFeatureName = isWebkitPrefixed
-    ? featureName.slice(WEBKIT_FEATURE_PREFIX.length)
-    : featureName;
-
-  const { comparison, baseFeatureName } = parseMediaQueryComparisonPrefix(
-    unprefixedFeatureName,
-  );
-
-  if (
-    isWebkitPrefixed &&
-    baseFeatureName !== WEBKIT_ALLOWED_BASE_FEATURE_NAME
-  ) {
-    return null;
-  }
-
-  const numericFeature = MEDIA_QUERY_NUMERIC_FEATURES.get(baseFeatureName);
-
-  if (!isDefined(numericFeature)) {
-    return null;
-  }
-
-  const value = numericFeature.parseValue(featureValue);
-
-  if (!isDefined(value)) {
-    return null;
-  }
-
-  return { kind: 'numeric', source: numericFeature.source, comparison, value };
+  return isDefined(plainCondition) ? [plainCondition] : null;
 };

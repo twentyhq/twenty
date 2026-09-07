@@ -11,6 +11,14 @@ export const evaluateParsedMediaQueryCondition = ({
   condition,
   environment,
 }: EvaluateParsedMediaQueryConditionInput): boolean => {
+  if (condition.kind === 'always-matching') {
+    return true;
+  }
+
+  if (condition.kind === 'non-zero') {
+    return environment[condition.source] !== 0;
+  }
+
   if (condition.kind === 'color-scheme') {
     return condition.value === environment.colorScheme;
   }
@@ -27,6 +35,14 @@ export const evaluateParsedMediaQueryCondition = ({
 
   if (condition.comparison === 'max') {
     return environmentValue <= condition.value;
+  }
+
+  if (condition.comparison === 'greater-than') {
+    return environmentValue > condition.value;
+  }
+
+  if (condition.comparison === 'less-than') {
+    return environmentValue < condition.value;
   }
 
   return environmentValue === condition.value;

@@ -256,4 +256,28 @@ describe('installMatchMediaPolyfill', () => {
       matchMedia('not (prefers-color-scheme: no-preference)').matches,
     ).toBe(false);
   });
+
+  it('should evaluate range syntax against the environment', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+    setEnvironment({ componentWidth: 700, componentHeight: 300 });
+
+    expect(matchMedia('(width >= 600px)').matches).toBe(true);
+    expect(matchMedia('(400px <= width <= 800px)').matches).toBe(true);
+    expect(matchMedia('(width < 700px)').matches).toBe(false);
+    expect(matchMedia('(height > 300px)').matches).toBe(false);
+    expect(matchMedia('(height >= 300px)').matches).toBe(true);
+  });
+
+  it('should evaluate features in boolean context', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+
+    expect(matchMedia('(width)').matches).toBe(false);
+    expect(matchMedia('(orientation)').matches).toBe(true);
+    expect(matchMedia('(prefers-color-scheme)').matches).toBe(true);
+
+    setEnvironment({ componentWidth: 1024 });
+
+    expect(matchMedia('(width)').matches).toBe(true);
+    expect(matchMedia('not (width)').matches).toBe(false);
+  });
 });
