@@ -48,13 +48,14 @@ trap on_exit EXIT
 function download {
   local url=$1
   local dest=$2
-  if ! curl -fsSL --retry 3 --retry-delay 2 -o "$dest" "$url"; then
-    rm -f "$dest"
+  if ! curl -fsSL --retry 3 --retry-delay 2 -o "$dest.tmp" "$url"; then
+    rm -f "$dest.tmp"
     echo -e "\t❌ Failed to download $url"
     echo -e "\t\tIf this is a 404, the release may be incomplete; anything else is usually GitHub"
     echo -e "\t\trate limiting your network, in which case retrying in a minute will work."
     exit 1
   fi
+  mv "$dest.tmp" "$dest"
 }
 
 # Use environment variables VERSION and BRANCH, with defaults if not set

@@ -12,13 +12,14 @@ pull_branch=${BRANCH:-twenty/$pull_version}
 
 install_url="https://raw.githubusercontent.com/twentyhq/twenty/$pull_branch/packages/twenty-docker/scripts/install.sh"
 
-if ! curl -fsSL --retry 3 --retry-delay 2 -o twenty_install.sh "$install_url"; then
-  rm -f twenty_install.sh
+if ! curl -fsSL --retry 3 --retry-delay 2 -o twenty_install.sh.tmp "$install_url"; then
+  rm -f twenty_install.sh.tmp
   echo "Error: Failed to download the install script from $install_url"
   echo "If this is a 404, the release may be incomplete; anything else is usually GitHub"
   echo "rate limiting your network, in which case retrying in a minute will work."
   exit 1
 fi
+mv twenty_install.sh.tmp twenty_install.sh
 
 chmod +x twenty_install.sh
 # Pass the resolved values down so the tagged install.sh does not resolve them again
