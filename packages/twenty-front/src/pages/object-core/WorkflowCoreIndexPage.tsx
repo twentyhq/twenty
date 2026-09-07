@@ -6,6 +6,11 @@ import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 
+import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
+import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
+import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
+import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
+import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { CoreObjectTable } from '@/object-core/components/CoreObjectTable';
 import { CoreObjectTableAddNewRow } from '@/object-core/components/CoreObjectTableAddNewRow';
 import { CoreObjectTableCreateButton } from '@/object-core/components/CoreObjectTableCreateButton';
@@ -95,6 +100,18 @@ export const WorkflowCoreIndexPage = () => {
             title={objectMetadataItem.labelPlural}
             actionButton={
               <>
+                <CommandMenuComponentInstanceContext.Provider
+                  value={{
+                    instanceId: getCommandMenuIdFromRecordIndexId(tableId),
+                  }}
+                >
+                  <CommandMenuContextProvider
+                    displayType="button"
+                    containerType={CommandMenuItemContainerType.IndexPageHeader}
+                  >
+                    <PinnedCommandMenuItemButtons />
+                  </CommandMenuContextProvider>
+                </CommandMenuComponentInstanceContext.Provider>
                 <CoreWorkflowsFilterBar />
                 <SidePanelToggleButton />
               </>
