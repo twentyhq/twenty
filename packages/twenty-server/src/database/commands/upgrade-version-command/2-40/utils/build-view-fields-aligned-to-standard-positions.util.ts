@@ -1,19 +1,37 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { computeViewFieldPositionsAlignedToStandard } from 'src/database/commands/upgrade-version-command/2-25/utils/compute-view-field-positions-aligned-to-standard.util';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
-import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 
-export const buildViewFieldsAlignedToStandardPositions = ({
+type StandardViewField = {
+  universalIdentifier: string;
+  position: number;
+  viewUniversalIdentifier: string;
+};
+
+type ExistingViewField = {
+  universalIdentifier: string;
+  position: number;
+  deletedAt: string | null;
+};
+
+export const buildViewFieldsAlignedToStandardPositions = <
+  TViewField extends ExistingViewField,
+>({
   existingView,
   flatViewFieldMaps,
   standardFlatViewFieldMaps,
 }: {
-  existingView: FlatView;
-  flatViewFieldMaps: FlatEntityMaps<FlatViewField>;
-  standardFlatViewFieldMaps: FlatEntityMaps<FlatViewField>;
-}): FlatViewField[] => {
+  existingView: {
+    universalIdentifier: string;
+    viewFieldUniversalIdentifiers: readonly string[];
+  };
+  flatViewFieldMaps: {
+    byUniversalIdentifier: Partial<Record<string, TViewField>>;
+  };
+  standardFlatViewFieldMaps: {
+    byUniversalIdentifier: Partial<Record<string, StandardViewField>>;
+  };
+}): TViewField[] => {
   const standardPositionByUniversalIdentifier = Object.fromEntries(
     Object.values(standardFlatViewFieldMaps.byUniversalIdentifier)
       .filter(isDefined)
@@ -32,7 +50,8 @@ export const buildViewFieldsAlignedToStandardPositions = ({
       (viewFieldUniversalIdentifier) =>
         flatViewFieldMaps.byUniversalIdentifier[viewFieldUniversalIdentifier],
     )
-    .filter(isDefined);
+    .filter(isDefined)
+    .filter((viewField) => !isDefined(viewField.deletedAt));
 
   return computeViewFieldPositionsAlignedToStandard({
     existingViewFields: existingViewFields.map(
@@ -51,5 +70,5 @@ export const buildViewFieldsAlignedToStandardPositions = ({
         ? { ...existingViewField, position }
         : null;
     })
-    .filter((viewField): viewField is FlatViewField => isDefined(viewField));
+    .filter(isDefined);
 };

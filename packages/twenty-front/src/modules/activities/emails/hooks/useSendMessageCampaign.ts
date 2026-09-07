@@ -75,11 +75,7 @@ export const useSendMessageCampaign = () => {
         formatNumber,
       }).join(', ');
 
-      if (queuedCount === 0) {
-        enqueueErrorSnackBar({
-          message: t`No recipients to send to (${skipReasons})`,
-        });
-      } else if (isNonEmptyString(scheduledAt)) {
+      if (isNonEmptyString(scheduledAt)) {
         const sendTime = formatCampaignSendTime({
           value: scheduledAt,
           timeZone,
@@ -92,6 +88,10 @@ export const useSendMessageCampaign = () => {
           message: wasAlreadyScheduled
             ? t`Campaign moved to ${sendTime}`
             : t`Campaign scheduled for ${sendTime}`,
+        });
+      } else if (queuedCount === 0) {
+        enqueueErrorSnackBar({
+          message: t`No recipients to send to (${skipReasons})`,
         });
       } else {
         const queuedMessage = plural(queuedCount, {

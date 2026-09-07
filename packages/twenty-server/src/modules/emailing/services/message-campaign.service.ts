@@ -184,6 +184,7 @@ export class MessageCampaignService {
         roleId,
         from,
         to: MessageCampaignStatus.SENDING,
+        scheduledAt: null,
         fromScheduledAt,
       });
 

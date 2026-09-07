@@ -103,21 +103,43 @@ export class MessageCampaignRecoveryService {
         continue;
       }
 
-      const released =
-        await this.messageCampaignLifecycleService.transitionCampaignStatus({
-          workspaceId,
-          campaignId: campaign.id,
-          from: MessageCampaignStatus.SCHEDULED,
-          to: MessageCampaignStatus.DRAFT,
-          scheduledAt: null,
-          fromScheduledAt: campaign.scheduledAt,
-        });
-
-      if (released) {
-        this.logger.warn(
-          `Campaign ${campaign.id} of workspace ${workspaceId} was still scheduled for ${campaign.scheduledAt.toISOString()} with no send job left and was released back to draft`,
+      await this.releaseOverdueScheduledCampaign({
+        workspaceId,
+        campaignId: campaign.id,
+        scheduledAt: campaign.scheduledAt,
+      }).catch((error) => {
+        this.logger.error(
+          `Failed to release overdue campaign ${campaign.id} of workspace ${workspaceId}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
         );
-      }
+      });
+    }
+  }
+
+  private async releaseOverdueScheduledCampaign({
+    workspaceId,
+    campaignId,
+    scheduledAt,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+    scheduledAt: Date;
+  }): Promise<void> {
+    const released =
+      await this.messageCampaignLifecycleService.transitionCampaignStatus({
+        workspaceId,
+        campaignId,
+        from: MessageCampaignStatus.SCHEDULED,
+        to: MessageCampaignStatus.DRAFT,
+        scheduledAt: null,
+        fromScheduledAt: scheduledAt,
+      });
+
+    if (released) {
+      this.logger.warn(
+        `Campaign ${campaignId} of workspace ${workspaceId} was still scheduled for ${scheduledAt.toISOString()} with no send job left and was released back to draft`,
+      );
     }
   }
 

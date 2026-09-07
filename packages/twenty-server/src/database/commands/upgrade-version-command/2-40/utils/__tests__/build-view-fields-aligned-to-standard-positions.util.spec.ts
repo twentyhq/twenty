@@ -1,34 +1,30 @@
 import { buildViewFieldsAlignedToStandardPositions } from 'src/database/commands/upgrade-version-command/2-40/utils/build-view-fields-aligned-to-standard-positions.util';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
-import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 
 const VIEW_UNIVERSAL_IDENTIFIER = 'view-1';
 
 const buildViewField = (
   universalIdentifier: string,
   position: number,
-): FlatViewField =>
-  ({
-    universalIdentifier,
-    position,
-    viewUniversalIdentifier: VIEW_UNIVERSAL_IDENTIFIER,
-  }) as FlatViewField;
+  deletedAt: string | null = null,
+) => ({
+  universalIdentifier,
+  position,
+  deletedAt,
+  viewUniversalIdentifier: VIEW_UNIVERSAL_IDENTIFIER,
+});
 
 const buildMaps = (
-  viewFields: FlatViewField[],
-): FlatEntityMaps<FlatViewField> =>
-  ({
-    byUniversalIdentifier: Object.fromEntries(
-      viewFields.map((viewField) => [viewField.universalIdentifier, viewField]),
-    ),
-  }) as FlatEntityMaps<FlatViewField>;
+  viewFields: ReturnType<typeof buildViewField>[],
+) => ({
+  byUniversalIdentifier: Object.fromEntries(
+    viewFields.map((viewField) => [viewField.universalIdentifier, viewField]),
+  ),
+});
 
-const buildView = (viewFieldUniversalIdentifiers: string[]): FlatView =>
-  ({
-    universalIdentifier: VIEW_UNIVERSAL_IDENTIFIER,
-    viewFieldUniversalIdentifiers,
-  }) as FlatView;
+const buildView = (viewFieldUniversalIdentifiers: string[]) => ({
+  universalIdentifier: VIEW_UNIVERSAL_IDENTIFIER,
+  viewFieldUniversalIdentifiers,
+});
 
 describe('buildViewFieldsAlignedToStandardPositions', () => {
   it('shifts the columns a newly inserted one displaced', () => {
@@ -64,6 +60,25 @@ describe('buildViewFieldsAlignedToStandardPositions', () => {
     });
 
     expect(updates).toEqual([]);
+  });
+
+  it('keeps a column the user removed from taking up a position slot', () => {
+    const updates = buildViewFieldsAlignedToStandardPositions({
+      existingView: buildView(['status', 'removed', 'sentAt']),
+      flatViewFieldMaps: buildMaps([
+        buildViewField('status', 0),
+        buildViewField('removed', 1, '2026-01-01T00:00:00.000Z'),
+        buildViewField('sentAt', 2),
+      ]),
+      standardFlatViewFieldMaps: buildMaps([
+        buildViewField('status', 0),
+        buildViewField('sentAt', 1),
+      ]),
+    });
+
+    expect(updates).toEqual([
+      expect.objectContaining({ universalIdentifier: 'sentAt', position: 1 }),
+    ]);
   });
 
   it('moves a column the standard application does not know about below the standard ones', () => {
