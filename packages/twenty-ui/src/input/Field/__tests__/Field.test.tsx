@@ -25,6 +25,7 @@ runComponentConformance({
   refInstanceOf: HTMLLabelElement,
   wrapper: FieldRootWrapper,
   ownClassName: labelStyles.label,
+  renderPropTagName: 'label',
 });
 
 runComponentConformance({

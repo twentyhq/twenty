@@ -5,5 +5,6 @@ export type ComponentConformanceCase =
   | 'ariaAttributes'
   | 'className'
   | 'style'
+  | 'renderProp'
   | 'unmount'
   | 'serverRender';

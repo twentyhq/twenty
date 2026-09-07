@@ -1,5 +1,11 @@
 import { render, screen } from '@testing-library/react';
-import { cloneElement, createRef, type ReactElement } from 'react';
+import {
+  cloneElement,
+  createElement,
+  createRef,
+  type HTMLAttributes,
+  type ReactElement,
+} from 'react';
 import { renderToString } from 'react-dom/server';
 import {
   afterEach,
@@ -20,6 +26,7 @@ import { hideGlobals } from './utils/hideGlobals';
 
 const CONFORMANCE_TEST_ID = 'conformance-root';
 const CONFORMANCE_CLASS_NAME = 'conformance-consumer-class';
+const CONFORMANCE_RENDER_CLASS_NAME = 'conformance-render-class';
 const CONFORMANCE_DATA_ATTRIBUTE_VALUE = 'conformance-data-value';
 const CONFORMANCE_ARIA_LABEL = 'conformance-aria-label';
 const CONFORMANCE_STYLE = { marginTop: '7px' };
@@ -39,6 +46,7 @@ export const runComponentConformance = ({
   refInstanceOf,
   wrapper: Wrapper,
   ownClassName,
+  renderPropTagName = 'span',
   skip = [],
 }: ComponentConformanceOptions) => {
   const compose = (probeProps: Record<string, unknown>): ReactElement => {
@@ -141,6 +149,64 @@ export const runComponentConformance = ({
         expect(screen.getByTestId(CONFORMANCE_TEST_ID)).toHaveStyle(
           CONFORMANCE_STYLE,
         );
+      },
+    );
+
+    itUnlessSkipped('renderProp', 'renders the element given to render', () => {
+      const ref = createRef<Element>();
+
+      render(
+        compose({
+          ref,
+          className: CONFORMANCE_CLASS_NAME,
+          render: createElement(renderPropTagName, {
+            className: CONFORMANCE_RENDER_CLASS_NAME,
+            'data-conformance-render': CONFORMANCE_DATA_ATTRIBUTE_VALUE,
+          }),
+        }),
+      );
+
+      const rootNode = screen.getByTestId(CONFORMANCE_TEST_ID);
+
+      expect(rootNode.tagName).toBe(renderPropTagName.toUpperCase());
+      expect(rootNode).toHaveAttribute(
+        'data-conformance-render',
+        CONFORMANCE_DATA_ATTRIBUTE_VALUE,
+      );
+      expect(rootNode).toHaveClass(
+        CONFORMANCE_CLASS_NAME,
+        CONFORMANCE_RENDER_CLASS_NAME,
+      );
+      expect(ref.current).toBe(rootNode);
+
+      if (isDefined(ownClassName)) {
+        expect(rootNode).toHaveClass(ownClassName);
+      }
+    });
+
+    itUnlessSkipped(
+      'renderProp',
+      'renders the element returned by the render function',
+      () => {
+        render(
+          compose({
+            className: CONFORMANCE_CLASS_NAME,
+            render: (renderProps: HTMLAttributes<HTMLElement>) =>
+              createElement(renderPropTagName, {
+                ...renderProps,
+                'data-conformance-render': CONFORMANCE_DATA_ATTRIBUTE_VALUE,
+              }),
+          }),
+        );
+
+        const rootNode = screen.getByTestId(CONFORMANCE_TEST_ID);
+
+        expect(rootNode.tagName).toBe(renderPropTagName.toUpperCase());
+        expect(rootNode).toHaveAttribute(
+          'data-conformance-render',
+          CONFORMANCE_DATA_ATTRIBUTE_VALUE,
+        );
+        expect(rootNode).toHaveClass(CONFORMANCE_CLASS_NAME);
       },
     );
 

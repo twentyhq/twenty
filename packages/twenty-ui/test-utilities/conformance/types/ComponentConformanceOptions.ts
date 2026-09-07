@@ -1,4 +1,9 @@
-import { type ComponentType, type ReactElement, type ReactNode } from 'react';
+import {
+  type ComponentType,
+  type JSX,
+  type ReactElement,
+  type ReactNode,
+} from 'react';
 
 import { type ComponentConformanceCase } from './ComponentConformanceCase';
 
@@ -8,5 +13,6 @@ export type ComponentConformanceOptions = {
   refInstanceOf: new () => Element;
   wrapper?: ComponentType<{ children: ReactNode }>;
   ownClassName?: string;
+  renderPropTagName?: keyof JSX.IntrinsicElements;
   skip?: ComponentConformanceCase[];
 };
