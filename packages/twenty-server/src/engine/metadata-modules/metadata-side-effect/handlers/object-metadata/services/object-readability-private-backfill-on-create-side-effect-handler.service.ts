@@ -2,7 +2,6 @@ import { msg, t } from '@lingui/core/macro';
 import { Injectable } from '@nestjs/common';
 
 import { MetadataReadability } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { findBackfillSharingRulesAfterOperations } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/find-backfill-sharing-rules-after-operations.util';
@@ -15,35 +14,24 @@ import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-
 import { getEffectiveReadability } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-readability.util';
 
 @Injectable()
-export class ObjectReadabilityPrivateBackfillOnUpdateSideEffectHandlerService extends MetadataSideEffectHandler(
+export class ObjectReadabilityPrivateBackfillOnCreateSideEffectHandlerService extends MetadataSideEffectHandler(
   {
-    operation: 'update',
+    operation: 'create',
     metadataName: 'objectMetadata',
-    name: 'objectReadabilityPrivateBackfillOnUpdate',
+    name: 'objectReadabilityPrivateBackfillOnCreate',
     description:
-      'An object whose effective readability becomes PRIVATE hides every record from everyone who holds no share row, so the transition is refused unless the object keeps, after this same migration, at least one active sharing rule without criteria granting EVERYONE or a ROLE. Existing rules are read from the sharing rule maps, minus the ones deleted here, and rules created here count too. Noop when the effective readability does not become PRIVATE, and on system builds, which carry their own backfill.',
+      'An object created PRIVATE hides every record from everyone who holds no share row, which reaches the API through application manifests only, so the creation is refused unless the same migration creates at least one active sharing rule without criteria granting EVERYONE or a ROLE on it. Noop on other readability levels and on system builds, which carry their own backfill.',
   },
 ) {
   buildSideEffects({
-    flatEntity: updatedFlatObjectMetadata,
+    flatEntity: createdFlatObjectMetadata,
     allFlatEntityOperationRecordByMetadataName,
     relatedFlatEntityMaps,
     context,
   }: BuildSideEffectsArgs<'objectMetadata'>): MetadataSideEffectResult {
-    if (context.buildOptions.isSystemBuild) {
-      return { status: 'noop' };
-    }
-
-    const existingFlatObjectMetadata =
-      relatedFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
-        updatedFlatObjectMetadata.universalIdentifier
-      ];
-
     if (
-      !isDefined(existingFlatObjectMetadata) ||
-      getEffectiveReadability(updatedFlatObjectMetadata) !==
-        MetadataReadability.PRIVATE ||
-      getEffectiveReadability(existingFlatObjectMetadata) ===
+      context.buildOptions.isSystemBuild ||
+      getEffectiveReadability(createdFlatObjectMetadata) !==
         MetadataReadability.PRIVATE
     ) {
       return { status: 'noop' };
@@ -52,7 +40,7 @@ export class ObjectReadabilityPrivateBackfillOnUpdateSideEffectHandlerService ex
     const hasBackfillSharingRule =
       findBackfillSharingRulesAfterOperations({
         objectMetadataUniversalIdentifier:
-          updatedFlatObjectMetadata.universalIdentifier,
+          createdFlatObjectMetadata.universalIdentifier,
         flatSharingRuleMaps: relatedFlatEntityMaps.flatSharingRuleMaps,
         allFlatEntityOperationRecordByMetadataName,
       }).length > 0;
@@ -61,22 +49,22 @@ export class ObjectReadabilityPrivateBackfillOnUpdateSideEffectHandlerService ex
       return { status: 'noop' };
     }
 
-    const objectLabel = updatedFlatObjectMetadata.labelPlural;
+    const objectLabel = createdFlatObjectMetadata.labelPlural;
 
     return {
       status: 'fail',
-      type: 'update',
+      type: 'create',
       metadataName: 'objectMetadata',
       flatEntityMinimalInformation: {
-        universalIdentifier: updatedFlatObjectMetadata.universalIdentifier,
-        nameSingular: updatedFlatObjectMetadata.nameSingular,
-        namePlural: updatedFlatObjectMetadata.namePlural,
+        universalIdentifier: createdFlatObjectMetadata.universalIdentifier,
+        nameSingular: createdFlatObjectMetadata.nameSingular,
+        namePlural: createdFlatObjectMetadata.namePlural,
       } as Partial<MetadataFlatEntity<'objectMetadata'>>,
       errors: [
         {
           code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-          message: t`Cannot make ${objectLabel} private without a backfill sharing rule: nobody would be able to read the records`,
-          userFriendlyMessage: msg`Making ${objectLabel} private needs a sharing rule that keeps everyone or a role reading the records`,
+          message: t`Cannot create ${objectLabel} as private without a backfill sharing rule: nobody would be able to read the records`,
+          userFriendlyMessage: msg`Creating ${objectLabel} as private needs a sharing rule that keeps everyone or a role reading the records`,
         },
       ],
     };

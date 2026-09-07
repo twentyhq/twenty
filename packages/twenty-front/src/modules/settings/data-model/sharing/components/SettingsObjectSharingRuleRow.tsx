@@ -14,8 +14,8 @@ import { settingsDraftSharingRuleFamilyState } from '@/settings/data-model/shari
 import { Select } from '@/ui/input/components/Select';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import {
-  type RecordShareAccessLevel,
   type SharingRule,
+  type SharingRuleAccessLevel,
 } from '~/generated-metadata/graphql';
 
 const StyledRowContainer = styled.div`
@@ -56,6 +56,7 @@ type SettingsObjectSharingRuleRowProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
   hasOrganizationPlan: boolean;
   isReadOnly: boolean;
+  isLastBackfillRule: boolean;
 };
 
 export const SettingsObjectSharingRuleRow = ({
@@ -63,6 +64,7 @@ export const SettingsObjectSharingRuleRow = ({
   objectMetadataItem,
   hasOrganizationPlan,
   isReadOnly,
+  isLastBackfillRule,
 }: SettingsObjectSharingRuleRowProps) => {
   const { t } = useLingui();
   const accessLevelOptions = useSharingRuleAccessLevelOptions();
@@ -75,6 +77,7 @@ export const SettingsObjectSharingRuleRow = ({
   const [isEditingCriteria, setIsEditingCriteria] = useState(false);
 
   const criteriaCount = sharingRule.rowLevelPermissionPredicates?.length ?? 0;
+  const isLocked = isReadOnly || isLastBackfillRule;
 
   const handleEditCriteria = () => {
     setSettingsDraftSharingRule({
@@ -93,7 +96,11 @@ export const SettingsObjectSharingRuleRow = ({
         <StyledName>{sharingRule.name}</StyledName>
         <StyledGrantee>{getSharingRuleGranteeLabel(sharingRule)}</StyledGrantee>
         <StyledCriteriaCount>
-          {criteriaCount === 0 ? t`All records` : t`${criteriaCount} criteria`}
+          {isLastBackfillRule
+            ? t`Keeps every record readable while the object is private`
+            : criteriaCount === 0
+              ? t`All records`
+              : t`${criteriaCount} criteria`}
         </StyledCriteriaCount>
         <Select
           dropdownId={`sharing-rule-${sharingRule.id}-access-level`}
@@ -102,14 +109,14 @@ export const SettingsObjectSharingRuleRow = ({
           value={sharingRule.accessLevel}
           disabled={isReadOnly}
           selectSizeVariant="small"
-          onChange={(accessLevel: RecordShareAccessLevel) =>
+          onChange={(accessLevel: SharingRuleAccessLevel) =>
             updateSharingRule({ id: sharingRule.id, accessLevel })
           }
         />
         <Toggle
           aria-label={t`Active`}
           value={sharingRule.isActive}
-          disabled={isReadOnly}
+          disabled={isLocked}
           toggleSize="small"
           onChange={(isActive) =>
             updateSharingRule({ id: sharingRule.id, isActive })
@@ -119,7 +126,7 @@ export const SettingsObjectSharingRuleRow = ({
           Icon={IconFilter}
           aria-label={t`Edit criteria`}
           title={t`Edit criteria`}
-          disabled={isReadOnly}
+          disabled={isLocked}
           active={isEditingCriteria}
           onClick={() =>
             isEditingCriteria
@@ -131,7 +138,7 @@ export const SettingsObjectSharingRuleRow = ({
           Icon={IconTrash}
           aria-label={t`Delete`}
           title={t`Delete`}
-          disabled={isReadOnly}
+          disabled={isLocked}
           onClick={() => deleteSharingRule(sharingRule.id)}
         />
       </StyledRow>

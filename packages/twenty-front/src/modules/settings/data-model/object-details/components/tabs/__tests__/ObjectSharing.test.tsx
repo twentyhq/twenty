@@ -13,9 +13,9 @@ import { SHARING_RULES } from '@/settings/data-model/sharing/graphql/queries/sha
 import {
   FindManyCommandMenuItemsDocument,
   MetadataReadability,
-  RecordShareAccessLevel,
   RecordSharePrincipalType,
   RowLevelPermissionPredicateOperand,
+  SharingRuleAccessLevel,
   UpdateOneObjectMetadataItemDocument,
 } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -94,7 +94,7 @@ const buildSharingRule = (
     name: string;
     granteePrincipalType: RecordSharePrincipalType;
     granteePrincipalId: string | null;
-    accessLevel: RecordShareAccessLevel;
+    accessLevel: SharingRuleAccessLevel;
     rowLevelPermissionPredicates: object[];
   }>,
 ) => ({
@@ -106,7 +106,7 @@ const buildSharingRule = (
   granteePrincipalType: RecordSharePrincipalType.EVERYONE,
   granteePrincipalId: null,
   granteeRoleId: null,
-  accessLevel: RecordShareAccessLevel.READ,
+  accessLevel: SharingRuleAccessLevel.READ,
   isActive: true,
   rowLevelPermissionPredicates: [],
   rowLevelPermissionPredicateGroups: [],
@@ -120,7 +120,7 @@ const sharingRules = [
     name: 'Jane edits her tasks',
     granteePrincipalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
     granteePrincipalId: JANE_MEMBER_ID,
-    accessLevel: RecordShareAccessLevel.READ_WRITE,
+    accessLevel: SharingRuleAccessLevel.READ_WRITE,
     rowLevelPermissionPredicates: [
       {
         __typename: 'RowLevelPermissionPredicate',
@@ -155,7 +155,10 @@ const commandMenuItemsMock: MockedResponse = {
   result: { data: { commandMenuItems: [] } },
 };
 
-const renderObjectSharing = (apolloMocks: MockedResponse[]) => {
+const renderObjectSharing = (
+  apolloMocks: MockedResponse[],
+  objectMetadataItem: EnrichedObjectMetadataItem = taskObjectMetadataItem,
+) => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks: [sharingRulesMock, commandMenuItemsMock, ...apolloMocks],
     onInitializeJotaiStore: (store) => {
@@ -172,7 +175,7 @@ const renderObjectSharing = (apolloMocks: MockedResponse[]) => {
 
   return render(
     <I18nProvider i18n={i18n}>
-      <ObjectSharing objectMetadataItem={taskObjectMetadataItem} />
+      <ObjectSharing objectMetadataItem={objectMetadataItem} />
     </I18nProvider>,
     { wrapper: Wrapper },
   );
@@ -240,7 +243,7 @@ describe('ObjectSharing', () => {
               readability: MetadataReadability.PRIVATE,
               backfillSharingRule: {
                 granteePrincipalType: RecordSharePrincipalType.EVERYONE,
-                accessLevel: RecordShareAccessLevel.READ_WRITE,
+                accessLevel: SharingRuleAccessLevel.READ_WRITE,
               },
             },
           },
@@ -264,13 +267,35 @@ describe('ObjectSharing', () => {
 
     await user.selectOptions(
       within(dialog).getByRole('combobox', { name: 'Access level' }),
-      RecordShareAccessLevel.READ_WRITE,
+      SharingRuleAccessLevel.READ_WRITE,
     );
     await user.click(
       within(dialog).getByRole('button', { name: 'Make private' }),
     );
 
     await waitFor(() => expect(updateResult).toHaveBeenCalled());
+  });
+
+  it('locks the last rule keeping every record readable on a private object', async () => {
+    renderObjectSharing([], {
+      ...taskObjectMetadataItem,
+      readability: MetadataReadability.PRIVATE,
+    });
+
+    expect(await screen.findByText('Everyone reads')).toBeVisible();
+    expect(
+      screen.getByText(
+        'Keeps every record readable while the object is private',
+      ),
+    ).toBeVisible();
+
+    const [everyoneDeleteButton, janeDeleteButton] = screen.getAllByRole(
+      'button',
+      { name: 'Delete' },
+    );
+
+    expect(everyoneDeleteButton).toBeDisabled();
+    expect(janeDeleteButton).toBeEnabled();
   });
 
   it('deletes a rule', async () => {

@@ -20,6 +20,8 @@ const READABILITY_LEVELS_RESERVED_TO_SYSTEM_BUILDS: MetadataReadability[] = [
   MetadataReadability.APPLICATION,
   MetadataReadability.SYSTEM,
 ];
+const READABILITY_LEVELS_OVERRIDABLE_ON_STANDARD_OBJECTS: MetadataReadability[] =
+  [MetadataReadability.OPEN, MetadataReadability.PRIVATE];
 
 @Injectable()
 export class FlatObjectMetadataValidatorService {
@@ -100,6 +102,24 @@ export class FlatObjectMetadataValidatorService {
         code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         message: t`Readability ${updatedEffectiveReadability} can only be set by the system`,
         userFriendlyMessage: msg`This readability level cannot be chosen for an object`,
+      });
+    }
+
+    if (
+      !buildOptions.isSystemBuild &&
+      hasEffectiveReadabilityChanged &&
+      belongsToTwentyStandardApp(existingFlatObjectMetadata) &&
+      (!READABILITY_LEVELS_OVERRIDABLE_ON_STANDARD_OBJECTS.includes(
+        existingFlatObjectMetadata.readability,
+      ) ||
+        !READABILITY_LEVELS_OVERRIDABLE_ON_STANDARD_OBJECTS.includes(
+          updatedEffectiveReadability,
+        ))
+    ) {
+      validationResult.errors.push({
+        code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        message: t`A standard object can only be switched between OPEN and PRIVATE`,
+        userFriendlyMessage: msg`The level of this object is set by the application declaring it`,
       });
     }
 

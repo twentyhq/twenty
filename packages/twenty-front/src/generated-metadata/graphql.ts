@@ -594,7 +594,7 @@ export enum AxisNameDisplay {
 }
 
 export type BackfillSharingRuleInput = {
-  accessLevel: RecordShareAccessLevel;
+  accessLevel: SharingRuleAccessLevel;
   granteePrincipalType: RecordSharePrincipalType;
   granteeRoleId?: InputMaybe<Scalars['UUID']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;

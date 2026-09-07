@@ -17,8 +17,8 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import {
   type CreateSharingRuleInput,
-  RecordShareAccessLevel,
   RecordSharePrincipalType,
+  SharingRuleAccessLevel,
 } from '~/generated-metadata/graphql';
 
 const NEW_SHARING_RULE_GRANTEE_DROPDOWN_ID = 'new-sharing-rule-grantee';
@@ -33,6 +33,11 @@ const StyledForm = styled.div`
 const StyledGranteeContainer = styled.div`
   flex: 1;
   min-width: 0;
+`;
+
+const StyledHint = styled.span`
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 const toGrantee = (
@@ -74,7 +79,7 @@ export const SettingsObjectSharingRuleForm = ({
 
   const [name, setName] = useState('');
   const [principal, setPrincipal] = useState<ShareRecordPrincipal | null>(null);
-  const [accessLevel, setAccessLevel] = useState(RecordShareAccessLevel.READ);
+  const [accessLevel, setAccessLevel] = useState(SharingRuleAccessLevel.READ);
 
   const handleSelectPrincipal = (selectedPrincipal: ShareRecordPrincipal) => {
     closeDropdown(NEW_SHARING_RULE_GRANTEE_DROPDOWN_ID);
@@ -90,6 +95,7 @@ export const SettingsObjectSharingRuleForm = ({
       objectMetadataId,
       name: isNonEmptyString(name.trim()) ? name.trim() : principal.label,
       accessLevel,
+      isActive: false,
       ...toGrantee(principal),
     });
     onCreated();
@@ -137,6 +143,7 @@ export const SettingsObjectSharingRuleForm = ({
         disabled={!isDefined(principal)}
         onClick={handleCreate}
       />
+      <StyledHint>{t`The rule starts inactive: set its criteria, then activate it.`}</StyledHint>
     </StyledForm>
   );
 };

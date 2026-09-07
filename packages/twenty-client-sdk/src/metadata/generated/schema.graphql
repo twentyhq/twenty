@@ -4658,7 +4658,7 @@ input UpdateObjectPayload {
 input BackfillSharingRuleInput {
   granteePrincipalType: RecordSharePrincipalType!
   granteeRoleId: UUID
-  accessLevel: RecordShareAccessLevel!
+  accessLevel: SharingRuleAccessLevel!
   name: String
 }
 

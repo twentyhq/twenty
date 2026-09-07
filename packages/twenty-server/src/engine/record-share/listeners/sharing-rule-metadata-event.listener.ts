@@ -12,13 +12,14 @@ import {
   RecalculateSharingRuleRecordSharesJob,
   type RecalculateSharingRuleRecordSharesJobData,
 } from 'src/engine/record-share/jobs/recalculate-sharing-rule-record-shares.job';
+import {
+  type ObjectMetadataUpdatedEvent,
+  isObjectMetadataUpdatedEvent,
+} from 'src/engine/record-share/utils/is-object-metadata-updated-event.util';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
 import { computeMetadataEventName } from 'src/engine/subscriptions/metadata-event/utils/compute-metadata-event-name.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import {
-  type MetadataEvent,
-  type UpdateMetadataEvent,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
+import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 
 const SHARING_RULE_EVENTS = 'metadata.sharingRule.*';
 const PREDICATE_EVENTS = 'metadata.rowLevelPermissionPredicate.*';
@@ -53,14 +54,6 @@ const resolveParentSharingRuleIds = (event: MetadataEvent): string[] =>
       event.type === 'deleted' ? undefined : event.properties.after,
     ),
   ].filter(isDefined);
-
-type ObjectMetadataUpdatedEvent = MetadataEvent &
-  UpdateMetadataEvent<'objectMetadata'>;
-
-const isObjectMetadataUpdatedEvent = (
-  event: MetadataEvent,
-): event is ObjectMetadataUpdatedEvent =>
-  event.metadataName === 'objectMetadata' && event.type === 'updated';
 
 const isTurnedPrivate = (event: ObjectMetadataUpdatedEvent): boolean =>
   getEffectiveReadability(event.properties.after) ===

@@ -15,8 +15,8 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import {
   type BackfillSharingRuleInput,
   MetadataReadability,
-  RecordShareAccessLevel,
   RecordSharePrincipalType,
+  SharingRuleAccessLevel,
 } from '~/generated-metadata/graphql';
 
 const PRIVATE_READABILITY_MODAL_ID = 'object-sharing-private-confirmation';
@@ -53,7 +53,7 @@ export const SettingsObjectSharingLevelSection = ({
     EVERYONE_GRANTEE_VALUE,
   );
   const [backfillAccessLevel, setBackfillAccessLevel] = useState(
-    RecordShareAccessLevel.READ,
+    SharingRuleAccessLevel.READ,
   );
 
   const { readability } = objectMetadataItem;

@@ -4,8 +4,8 @@ import { Type } from 'class-transformer';
 import {
   MetadataReadability,
   ObjectOpenRecordIn,
-  RecordShareAccessLevel,
   RecordSharePrincipalType,
+  SharingRuleAccessLevel,
 } from 'twenty-shared/types';
 import {
   IsBoolean,
@@ -21,7 +21,6 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
 import { MetadataTranslationOverrideInput } from 'src/engine/metadata-modules/metadata-translation/dtos/metadata-translation-override.input';
-import { SHARING_RULE_ACCESS_LEVELS } from 'src/engine/metadata-modules/sharing-rule/constants/sharing-rule-access-levels.constant';
 
 export const BACKFILL_SHARING_RULE_GRANTEE_PRINCIPAL_TYPES = [
   RecordSharePrincipalType.EVERYONE,
@@ -40,10 +39,10 @@ export class BackfillSharingRuleInput {
   @Field(() => UUIDScalarType, { nullable: true })
   granteeRoleId?: string | null;
 
-  @IsIn(SHARING_RULE_ACCESS_LEVELS)
+  @IsEnum(SharingRuleAccessLevel)
   @IsNotEmpty()
-  @Field(() => RecordShareAccessLevel)
-  accessLevel: RecordShareAccessLevel;
+  @Field(() => SharingRuleAccessLevel)
+  accessLevel: SharingRuleAccessLevel;
 
   @IsString()
   @IsOptional()

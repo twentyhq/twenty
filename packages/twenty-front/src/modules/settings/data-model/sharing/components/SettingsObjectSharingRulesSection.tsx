@@ -9,6 +9,8 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { SettingsObjectSharingRuleForm } from '@/settings/data-model/sharing/components/SettingsObjectSharingRuleForm';
 import { SettingsObjectSharingRuleRow } from '@/settings/data-model/sharing/components/SettingsObjectSharingRuleRow';
 import { useSharingRules } from '@/settings/data-model/sharing/hooks/useSharingRules';
+import { isBackfillSharingRule } from '@/settings/data-model/sharing/utils/isBackfillSharingRule';
+import { MetadataReadability } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -36,6 +38,12 @@ export const SettingsObjectSharingRulesSection = ({
   const { sharingRules, loading } = useSharingRules(objectMetadataItem.id);
   const [isCreating, setIsCreating] = useState(false);
 
+  const backfillSharingRuleCount = sharingRules.filter(
+    isBackfillSharingRule,
+  ).length;
+  const isObjectPrivate =
+    objectMetadataItem.readability === MetadataReadability.PRIVATE;
+
   return (
     <StyledContainer>
       {sharingRules.map((sharingRule) => (
@@ -45,6 +53,11 @@ export const SettingsObjectSharingRulesSection = ({
           objectMetadataItem={objectMetadataItem}
           hasOrganizationPlan={hasOrganizationPlan}
           isReadOnly={isReadOnly}
+          isLastBackfillRule={
+            isObjectPrivate &&
+            backfillSharingRuleCount === 1 &&
+            isBackfillSharingRule(sharingRule)
+          }
         />
       ))}
       {!loading && sharingRules.length === 0 && (

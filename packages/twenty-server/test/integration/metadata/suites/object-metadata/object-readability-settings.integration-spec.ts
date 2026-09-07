@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
+import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlAPIRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
@@ -13,9 +14,11 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { deleteSharingRule } from 'test/integration/metadata/suites/sharing-rule/utils/delete-sharing-rule.util';
 import { findSharingRules } from 'test/integration/metadata/suites/sharing-rule/utils/find-sharing-rules.util';
+import { updateSharingRule } from 'test/integration/metadata/suites/sharing-rule/utils/update-sharing-rule.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { enqueueJobAndDrain } from 'test/integration/utils/enqueue-job-and-drain.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
   FeatureFlagKey,
@@ -23,6 +26,8 @@ import {
   MetadataReadability,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
+  RecordShareRowCause,
+  SharingRuleAccessLevel,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -30,10 +35,16 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import {
+  RebuildOwnerRecordSharesJob,
+  type RebuildOwnerRecordSharesJobData,
+} from 'src/engine/record-share/jobs/rebuild-owner-record-shares.job';
+import {
   RecalculateSharingRuleRecordSharesJob,
   type RecalculateSharingRuleRecordSharesJobData,
 } from 'src/engine/record-share/jobs/recalculate-sharing-rule-record-shares.job';
+import { type RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const OBJECT_SINGULAR = 'sharingSettingsListing';
 const OBJECT_PLURAL = 'sharingSettingsListings';
@@ -136,10 +147,18 @@ describe('Object readability settings', () => {
 
       expect(response.body.errors).toBeUndefined();
     }
+
+    await setRecordSharingEnabled(true);
   });
 
   afterAll(async () => {
-    await setRecordSharingEnabled(false);
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: objectMetadataId,
+        updatePayload: { readability: MetadataReadability.OPEN },
+      },
+    });
 
     if (isDefined(backfillSharingRuleId)) {
       await deleteSharingRule({ input: { id: backfillSharingRuleId } });
@@ -161,6 +180,7 @@ describe('Object readability settings', () => {
       },
     });
     await deleteOneObjectMetadata({ input: { idToDelete: objectMetadataId } });
+    await setRecordSharingEnabled(false);
   });
 
   it('refuses to make an object PRIVATE without a backfill sharing rule', async () => {
@@ -199,6 +219,79 @@ describe('Object readability settings', () => {
     },
   );
 
+  it('rebuilds the owner rows when the owner field is set and clears them when it is cleared', async () => {
+    const recordShareService =
+      getAppProviderByClassName<RecordShareService>('RecordShareService');
+    const [ownedRecordId] = RECORD_IDS;
+    const ownerRowsOf = async () =>
+      (
+        await recordShareService.findByRecord({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          objectMetadataId,
+          recordId: ownedRecordId,
+        })
+      ).filter(
+        (recordShare) => recordShare.rowCause === RecordShareRowCause.OWNER,
+      );
+    const rebuildOwnerRows = () =>
+      enqueueJobAndDrain<RebuildOwnerRecordSharesJobData>(
+        MessageQueue.recordShareQueue,
+        RebuildOwnerRecordSharesJob.name,
+        { workspaceId: SEED_APPLE_WORKSPACE_ID, objectMetadataId },
+      );
+
+    const ownerResponse = await makeGraphqlAPIRequest(
+      updateOneOperationFactory({
+        objectMetadataSingularName: OBJECT_SINGULAR,
+        gqlFields: 'id',
+        recordId: ownedRecordId,
+        data: { ownerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY },
+      }),
+    );
+
+    expect(ownerResponse.body.errors).toBeUndefined();
+    expect(await ownerRowsOf()).toEqual([]);
+
+    const { data, errors } = await updateOneObjectMetadata({
+      expectToFail: false,
+      gqlFields: READABILITY_GQL_FIELDS,
+      input: {
+        idToUpdate: objectMetadataId,
+        updatePayload: { ownerFieldMetadataId },
+      },
+    });
+
+    expect(errors).toBeUndefined();
+    expect(data.updateOneObject.ownerFieldMetadataId).toBe(
+      ownerFieldMetadataId,
+    );
+
+    await rebuildOwnerRows();
+
+    expect(await ownerRowsOf()).toEqual([
+      expect.objectContaining({
+        principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        accessLevel: RecordShareAccessLevel.FULL,
+        sourceId: ownedRecordId,
+      }),
+    ]);
+
+    const { data: clearedData } = await updateOneObjectMetadata({
+      expectToFail: false,
+      gqlFields: READABILITY_GQL_FIELDS,
+      input: {
+        idToUpdate: objectMetadataId,
+        updatePayload: { ownerFieldMetadataId: null },
+      },
+    });
+
+    expect(clearedData.updateOneObject.ownerFieldMetadataId).toBeNull();
+
+    await rebuildOwnerRows();
+
+    expect(await ownerRowsOf()).toEqual([]);
+  });
+
   it('makes the object PRIVATE with a role backfill rule created in the same migration', async () => {
     const { data, errors } = await updateOneObjectMetadata({
       expectToFail: false,
@@ -210,7 +303,7 @@ describe('Object readability settings', () => {
           backfillSharingRule: {
             granteePrincipalType: RecordSharePrincipalType.ROLE,
             granteeRoleId: memberRoleId,
-            accessLevel: RecordShareAccessLevel.READ,
+            accessLevel: SharingRuleAccessLevel.READ,
           },
         },
       },
@@ -228,7 +321,7 @@ describe('Object readability settings', () => {
       name: 'Member',
       granteePrincipalType: RecordSharePrincipalType.ROLE,
       granteeRoleId: memberRoleId,
-      accessLevel: RecordShareAccessLevel.READ,
+      accessLevel: SharingRuleAccessLevel.READ,
       isActive: true,
       rowLevelPermissionPredicates: [],
     });
@@ -247,8 +340,6 @@ describe('Object readability settings', () => {
         sharingRuleIds: [backfillSharingRuleId],
       },
     );
-    await setRecordSharingEnabled(true);
-
     const memberResponse =
       await makeGraphqlAPIRequestWithMemberRole(findManyOperation);
 
@@ -259,35 +350,30 @@ describe('Object readability settings', () => {
 
     expect(adminResponse.body.errors).toBeUndefined();
     expect(readRecordIds(adminResponse)).toEqual([]);
-
-    await setRecordSharingEnabled(false);
   });
 
-  it('sets and clears the owner field through updateOneObject', async () => {
-    const { data, errors } = await updateOneObjectMetadata({
-      expectToFail: false,
-      gqlFields: READABILITY_GQL_FIELDS,
-      input: {
-        idToUpdate: objectMetadataId,
-        updatePayload: { ownerFieldMetadataId },
-      },
+  it('refuses to deactivate or delete the last backfill rule while the object is private', async () => {
+    jestExpectToBeDefined(backfillSharingRuleId);
+
+    const { errors: deactivateErrors } = await updateSharingRule({
+      expectToFail: true,
+      input: { id: backfillSharingRuleId, isActive: false },
     });
 
-    expect(errors).toBeUndefined();
-    expect(data.updateOneObject.ownerFieldMetadataId).toBe(
-      ownerFieldMetadataId,
-    );
+    expect(JSON.stringify(deactivateErrors)).toContain('private');
 
-    const { data: clearedData } = await updateOneObjectMetadata({
-      expectToFail: false,
-      gqlFields: READABILITY_GQL_FIELDS,
-      input: {
-        idToUpdate: objectMetadataId,
-        updatePayload: { ownerFieldMetadataId: null },
-      },
+    const { errors: deleteErrors } = await deleteSharingRule({
+      expectToFail: true,
+      input: { id: backfillSharingRuleId },
     });
 
-    expect(clearedData.updateOneObject.ownerFieldMetadataId).toBeNull();
+    expect(JSON.stringify(deleteErrors)).toContain('private');
+
+    const { data } = await findSharingRules({ input: { objectMetadataId } });
+
+    expect(data.sharingRules).toEqual([
+      expect.objectContaining({ id: backfillSharingRuleId, isActive: true }),
+    ]);
   });
 
   describe('standard object', () => {
@@ -342,7 +428,7 @@ describe('Object readability settings', () => {
             readability: MetadataReadability.PRIVATE,
             backfillSharingRule: {
               granteePrincipalType: RecordSharePrincipalType.EVERYONE,
-              accessLevel: RecordShareAccessLevel.READ_WRITE,
+              accessLevel: SharingRuleAccessLevel.READ_WRITE,
             },
           },
         },
@@ -366,8 +452,24 @@ describe('Object readability settings', () => {
       expect(newCompanySharingRules[0]).toMatchObject({
         name: 'Everyone',
         granteePrincipalType: RecordSharePrincipalType.EVERYONE,
-        accessLevel: RecordShareAccessLevel.READ_WRITE,
+        accessLevel: SharingRuleAccessLevel.READ_WRITE,
       });
+    });
+
+    it('refuses a level on a standard object the application did not leave to the workspace', async () => {
+      const attachmentObjectMetadataId = (
+        await findStandardObject('attachment')
+      ).id;
+
+      const { errors } = await updateOneObjectMetadata({
+        expectToFail: true,
+        input: {
+          idToUpdate: attachmentObjectMetadataId,
+          updatePayload: { readability: MetadataReadability.OPEN },
+        },
+      });
+
+      expect(JSON.stringify(errors)).toContain('OPEN and PRIVATE');
     });
 
     it('drops the override when the level goes back to the standard value', async () => {

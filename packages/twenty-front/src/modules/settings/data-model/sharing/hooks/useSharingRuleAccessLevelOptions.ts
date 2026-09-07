@@ -1,12 +1,14 @@
-import { useRecordShareAccessLevelOptions } from '@/record-share/hooks/useRecordShareAccessLevelOptions';
-import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
+import { type SelectOption } from 'twenty-ui/input';
 
-const SHARING_RULE_ACCESS_LEVELS = [
-  RecordShareAccessLevel.READ,
-  RecordShareAccessLevel.READ_WRITE,
-];
+import { SharingRuleAccessLevel } from '~/generated-metadata/graphql';
 
-export const useSharingRuleAccessLevelOptions = () =>
-  useRecordShareAccessLevelOptions().filter((option) =>
-    SHARING_RULE_ACCESS_LEVELS.includes(option.value),
-  );
+export const useSharingRuleAccessLevelOptions =
+  (): SelectOption<SharingRuleAccessLevel>[] => {
+    const { t } = useLingui();
+
+    return [
+      { value: SharingRuleAccessLevel.READ, label: t`Can view` },
+      { value: SharingRuleAccessLevel.READ_WRITE, label: t`Can edit` },
+    ];
+  };
