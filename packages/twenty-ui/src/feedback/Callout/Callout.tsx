@@ -32,6 +32,7 @@ const CALLOUT_ICON_VARIANT_CLASS_NAMES: Record<CalloutVariant, string> = {
 };
 
 export type CalloutProps = {
+  className?: string;
   variant: CalloutVariant;
   title: string;
   description: string;
@@ -39,12 +40,15 @@ export type CalloutProps = {
   action?: {
     label: string;
     onClick: () => void;
+    disabled?: boolean;
+    Icon?: IconComponent;
   };
   isClosable?: boolean;
   onClose?: () => void;
 };
 
 export const Callout = ({
+  className,
   variant,
   title,
   description,
@@ -73,6 +77,7 @@ export const Callout = ({
       className={clsx(
         styles.container,
         CALLOUT_CONTAINER_VARIANT_CLASS_NAMES[variant],
+        className,
       )}
     >
       <div className={styles.header}>
@@ -108,6 +113,8 @@ export const Callout = ({
             type="button"
             title={action.label}
             onClick={action.onClick}
+            disabled={action.disabled}
+            Icon={action.Icon}
           />
         </div>
       )}

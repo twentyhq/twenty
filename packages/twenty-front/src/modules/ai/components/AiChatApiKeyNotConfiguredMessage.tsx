@@ -1,4 +1,4 @@
-import { AiChatBanner } from '@/ai/components/AiChatBanner';
+import { AiChatCallout } from '@/ai/components/AiChatCallout';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -18,12 +18,14 @@ export const AiChatApiKeyNotConfiguredMessage = () => {
   };
 
   return (
-    <AiChatBanner
-      message={t`AI not configured. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY in your environment.`}
-      variant="warning"
-      buttonTitle={t`View Docs`}
-      buttonIcon={IconExternalLink}
-      buttonOnClick={handleDocsClick}
+    <AiChatCallout
+      title={t`AI isn't configured`}
+      description={t`Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY in your environment.`}
+      action={{
+        label: t`View Docs`,
+        Icon: IconExternalLink,
+        onClick: handleDocsClick,
+      }}
     />
   );
 };
