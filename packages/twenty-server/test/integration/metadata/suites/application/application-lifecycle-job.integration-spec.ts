@@ -111,6 +111,10 @@ describe('Application lifecycle jobs', () => {
       manifest: buildBaseManifest({ appId, roleId }),
       expectToFail: false,
     });
+
+    // setupApplicationForSync leaves fake timers on, which would stall the
+    // polling in waitForAllJobsToFinish
+    jest.useRealTimers();
   }, 60000);
 
   afterEach(async () => {
