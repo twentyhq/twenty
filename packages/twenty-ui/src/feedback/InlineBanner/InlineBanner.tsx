@@ -10,10 +10,13 @@ import styles from './InlineBanner.module.scss';
 type InlineBannerProps = {
   color?: BannerColor;
   message: string;
+  embedded?: boolean;
   button?: {
     title?: string;
     onClick?: () => void;
     hidden?: boolean;
+    disabled?: boolean;
+    Icon?: IconComponent;
   };
   LeftIcon?: IconComponent;
   className?: string;
@@ -22,6 +25,7 @@ type InlineBannerProps = {
 export const InlineBanner = ({
   color,
   message,
+  embedded = false,
   button,
   LeftIcon = IconInfoCircle,
   className,
@@ -30,7 +34,7 @@ export const InlineBanner = ({
 
   return (
     <Banner
-      className={clsx(styles.banner, className)}
+      className={clsx(styles.banner, embedded && styles.embedded, className)}
       color={color}
       variant={'secondary'}
     >
@@ -45,6 +49,8 @@ export const InlineBanner = ({
           accent={color}
           title={button?.title}
           onClick={button?.onClick}
+          disabled={button.disabled}
+          Icon={button.Icon}
         />
       )}
     </Banner>

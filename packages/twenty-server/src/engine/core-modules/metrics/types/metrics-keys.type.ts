@@ -60,6 +60,8 @@ export enum MetricsKeys {
   CommonApiQueryRateLimited = 'common-api-query/rate-limited',
   CommonApiApplicationQueryRateLimited = 'common-api-query/application-rate-limited',
   JobEnqueueApplicationRateLimited = 'job/enqueue-application-rate-limited',
+  UsageLimitQuotaAdmittedOnFailure = 'usage-limit-quota/admitted-on-failure',
+  UsageLimitQuotaAdmittedOnFailureCreditsMicro = 'usage-limit-quota/admitted-on-failure-credits-micro',
   JobCompleted = 'job/completed',
   JobFailed = 'job/failed',
   JobStalled = 'job/stalled',

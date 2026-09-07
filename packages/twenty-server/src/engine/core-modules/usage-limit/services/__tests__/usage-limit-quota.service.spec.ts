@@ -8,6 +8,8 @@ import {
   CacheLockExceptionCode,
 } from 'src/engine/core-modules/cache-lock/exceptions/cache-lock.exception';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import {
   UsageLimitException,
   UsageLimitExceptionCode,
@@ -113,6 +115,10 @@ describe('UsageLimitQuotaService', () => {
     findCurrentPeriodsByUnit: jest.fn(),
   };
 
+  const metricsService = {
+    incrementCounterBy: jest.fn(),
+  };
+
   let periodByUnit: Partial<Record<PeriodUnit, UsagePeriod>>;
 
   const setLimits = (limits: FlatUsageLimit[]) => {
@@ -184,6 +190,7 @@ describe('UsageLimitQuotaService', () => {
         { provide: CacheLockService, useValue: cacheLockService },
         { provide: ClickHouseService, useValue: clickHouseService },
         { provide: UsagePeriodService, useValue: usagePeriodService },
+        { provide: MetricsService, useValue: metricsService },
         {
           provide: DiscoveryService,
           useValue: {
@@ -370,6 +377,37 @@ describe('UsageLimitQuotaService', () => {
     cacheStorage.mget.mockRejectedValue(new Error('Socket closed'));
 
     await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
+    expect(metricsService.incrementCounterBy).toHaveBeenCalledTimes(1);
+    expect(metricsService.incrementCounterBy).toHaveBeenCalledWith({
+      key: MetricsKeys.UsageLimitQuotaAdmittedOnFailure,
+      amount: 1,
+      attributes: { operation: 'assert', resourceType: UsageResourceType.AI },
+    });
+  });
+
+  it('counts the credits admitted when a consume fails', async () => {
+    setLimits([buildLimit({})]);
+    cacheStorage.mget.mockRejectedValue(new Error('Socket closed'));
+
+    await expect(consumeQuota(50, 7)).resolves.toEqual({ exhausted: [] });
+    expect(metricsService.incrementCounterBy).toHaveBeenCalledWith({
+      key: MetricsKeys.UsageLimitQuotaAdmittedOnFailure,
+      amount: 1,
+      attributes: { operation: 'consume', resourceType: UsageResourceType.AI },
+    });
+    expect(metricsService.incrementCounterBy).toHaveBeenCalledWith({
+      key: MetricsKeys.UsageLimitQuotaAdmittedOnFailureCreditsMicro,
+      amount: 50,
+      attributes: { operation: 'consume', resourceType: UsageResourceType.AI },
+    });
+  });
+
+  it('does not count an admit on a successful consume', async () => {
+    setLimits([buildLimit({})]);
+    cacheStorage.runScript.mockResolvedValue([1, 500]);
+
+    await expect(consumeQuota(50)).resolves.toEqual({ exhausted: [] });
+    expect(metricsService.incrementCounterBy).not.toHaveBeenCalled();
   });
 
   it('admits when the warm query fails instead of granting a fresh budget', async () => {
@@ -643,6 +681,16 @@ describe('UsageLimitQuotaService', () => {
         service.getAllowanceRemainingMicro('workspace-1'),
       ).resolves.toBeNull();
       expect(cacheStorage.mget).not.toHaveBeenCalled();
+    });
+
+    it('does not count a failed read as an admit', async () => {
+      setAllowance(2_000_000);
+      cacheStorage.mget.mockRejectedValue(new Error('Socket closed'));
+
+      await expect(
+        service.getAllowanceRemainingMicro('workspace-1'),
+      ).resolves.toBeNull();
+      expect(metricsService.incrementCounterBy).not.toHaveBeenCalled();
     });
   });
 });
