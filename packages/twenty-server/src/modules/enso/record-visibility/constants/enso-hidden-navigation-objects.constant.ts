@@ -9,10 +9,21 @@
 // `workspaceMember` cannot be revoked at all: Twenty forces canRead=true on it
 // for every role.
 export const ENSO_HIDDEN_NAVIGATION_OBJECT_NAME_SINGULARS = [
+  // Audit trails, marketing bookkeeping, workspace directory.
   'sequenceRun',
   'dealStateHistory',
   'marketingEnrollment',
-  'personProjectConsentEvent',
   'workspaceMember',
   'projectRoutingMember',
+  // The Consent, Projects and Activities folders. Assignments, consents and
+  // touches are things a manager reads and writes ON a contact or a deal, in
+  // the relation panels of a record they own — not tables they browse. Hiding
+  // every child empties each folder, and an emptied folder is dropped.
+  'personProjectConsent',
+  'personProjectConsentEvent',
+  'project',
+  'personProjectAssignment',
+  'companyProjectAssignment',
+  'inboundActivity',
+  'outboundActivity',
 ];
