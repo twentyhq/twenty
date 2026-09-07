@@ -178,7 +178,7 @@ import { EraseObjectNavigationCommandMenuItemPayloadsSlowInstanceCommand } from 
 import { ReshapeUsageLimitPeriodFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788367160891-reshape-usage-limit-period';
 import { AddLogoToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788542613404-add-logo-to-connection-provider';
 import { AddReadabilityToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788548844925-add-readability-to-object-metadata';
-import { AddAuthFailedReasonToConnectedAccountFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788781233982-add-auth-failed-reason-to-connected-account';
+import { AddAuthFailedReasonToConnectedAccountFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788781233982-add-auth-failed-reason-to-connected-account';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
