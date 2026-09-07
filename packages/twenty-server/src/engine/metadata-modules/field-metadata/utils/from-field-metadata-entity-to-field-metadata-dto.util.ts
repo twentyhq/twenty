@@ -1,15 +1,15 @@
+import { type DerivedFieldMetadataIds } from 'src/engine/metadata-modules/derived-field-metadata-ids/types/derived-field-metadata-ids.type';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 // isUnique and isSearchable are derived from IndexMetadata and
 // SearchFieldMetadata rather than stored on the field entity; callers that
 // need accurate values (e.g. the REST controller) pass the precomputed
-// Set<fieldMetadataId>s. Callers in pure-entity contexts that don't care
-// about them can omit the sets.
+// fieldMetadataId sets. Callers in pure-entity contexts that don't care about
+// them can omit them.
 export const fromFieldMetadataEntityToFieldMetadataDto = (
   entity: FieldMetadataEntity,
-  uniqueFieldMetadataIds?: ReadonlySet<string>,
-  searchableFieldMetadataIds?: ReadonlySet<string>,
+  derivedFieldMetadataIds?: DerivedFieldMetadataIds,
 ): FieldMetadataDTO => ({
   id: entity.id,
   universalIdentifier: entity.universalIdentifier,
@@ -26,8 +26,10 @@ export const fromFieldMetadataEntityToFieldMetadataDto = (
   isUIReadOnly: !entity.isUIEditable,
   writability: entity.writability,
   isNullable: entity.isNullable ?? false,
-  isUnique: uniqueFieldMetadataIds?.has(entity.id) ?? false,
-  isSearchable: searchableFieldMetadataIds?.has(entity.id) ?? false,
+  isUnique:
+    derivedFieldMetadataIds?.uniqueFieldMetadataIds.has(entity.id) ?? false,
+  isSearchable:
+    derivedFieldMetadataIds?.searchableFieldMetadataIds.has(entity.id) ?? false,
   defaultValue: entity.defaultValue ?? undefined,
   options: entity.options ?? undefined,
   settings: entity.settings ?? undefined,

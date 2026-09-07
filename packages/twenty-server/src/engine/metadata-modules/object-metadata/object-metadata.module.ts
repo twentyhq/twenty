@@ -9,10 +9,9 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { DerivedFieldMetadataIdsModule } from 'src/engine/metadata-modules/derived-field-metadata-ids/derived-field-metadata-ids.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
-import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/index-metadata.module';
-import { SearchFieldMetadataModule } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.module';
 import { ObjectMetadataController } from 'src/engine/metadata-modules/object-metadata/controllers/object-metadata.controller';
 import { MostlyEmptyFieldsService } from 'src/engine/metadata-modules/object-metadata/mostly-empty-fields.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -45,8 +44,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ApplicationTranslationModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeORMModule,
-    IndexMetadataModule,
-    SearchFieldMetadataModule,
+    DerivedFieldMetadataIdsModule,
     PermissionsModule,
     WorkspaceDataSourceModule,
     WorkspaceMigrationModule,

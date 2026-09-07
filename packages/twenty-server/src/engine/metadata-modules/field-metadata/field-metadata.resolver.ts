@@ -28,6 +28,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { DerivedFieldMetadataIdsService } from 'src/engine/metadata-modules/derived-field-metadata-ids/services/derived-field-metadata-ids.service';
 import { CreateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import {
@@ -48,8 +49,6 @@ import { applyMetadataFilterToQueryBuilder } from 'src/engine/metadata-modules/p
 import { findManyWithCursorPagination } from 'src/engine/metadata-modules/pagination/utils/find-many-with-cursor-pagination.util';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
-import { SearchableFieldMetadataIdsService } from 'src/engine/metadata-modules/flat-search-field-metadata/services/searchable-field-metadata-ids.service';
-import { UniqueFieldMetadataIdsService } from 'src/engine/metadata-modules/index-metadata/services/unique-field-metadata-ids.service';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
@@ -74,8 +73,7 @@ export class FieldMetadataResolver {
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    private readonly uniqueFieldMetadataIdsService: UniqueFieldMetadataIdsService,
-    private readonly searchableFieldMetadataIdsService: SearchableFieldMetadataIdsService,
+    private readonly derivedFieldMetadataIdsService: DerivedFieldMetadataIdsService,
   ) {}
 
   @UseGuards(NoPermissionGuard)
@@ -111,11 +109,8 @@ export class FieldMetadataResolver {
       alias: 'fieldMetadata',
       paging,
     });
-    const [uniqueFieldMetadataIds, searchableFieldMetadataIds] =
-      await Promise.all([
-        this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
-        this.searchableFieldMetadataIdsService.getForWorkspace(workspaceId),
-      ]);
+    const derivedFieldMetadataIds =
+      await this.derivedFieldMetadataIdsService.getForWorkspace(workspaceId);
 
     return {
       ...connection,
@@ -123,8 +118,7 @@ export class FieldMetadataResolver {
         ...edge,
         node: fromFieldMetadataEntityToFieldMetadataDto(
           edge.node,
-          uniqueFieldMetadataIds,
-          searchableFieldMetadataIds,
+          derivedFieldMetadataIds,
         ),
       })),
     };
@@ -150,16 +144,12 @@ export class FieldMetadataResolver {
       );
     }
 
-    const [uniqueFieldMetadataIds, searchableFieldMetadataIds] =
-      await Promise.all([
-        this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
-        this.searchableFieldMetadataIdsService.getForWorkspace(workspaceId),
-      ]);
+    const derivedFieldMetadataIds =
+      await this.derivedFieldMetadataIdsService.getForWorkspace(workspaceId);
 
     return fromFieldMetadataEntityToFieldMetadataDto(
       fieldMetadata,
-      uniqueFieldMetadataIds,
-      searchableFieldMetadataIds,
+      derivedFieldMetadataIds,
     );
   }
 
