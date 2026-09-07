@@ -111,33 +111,37 @@ export const buildRecordShareInputsForCreatedRecords = ({
   authContext,
   apiKeyRoleMap,
   isRecordSharingEnabled,
-  shareWith = [],
+  shareWith,
 }: {
   recordIds: string[];
   objectMetadataId: string;
   authContext: WorkspaceAuthContext;
   apiKeyRoleMap: Record<string, string>;
   isRecordSharingEnabled: boolean;
-  shareWith?: ShareWithInput[];
+  shareWith?: ShareWithInput[] | null;
 }): RecordShareInput[] => {
-  if (
-    !isUserAuthContext(authContext) &&
-    !isRecordSharingEnabled &&
-    !isNonEmptyArray(shareWith)
-  ) {
-    return recordIds.map((recordId) => ({
-      recordId,
-      objectMetadataId,
-      principalId: EVERYONE_PRINCIPAL_ID,
-      principalType: RecordSharePrincipalType.EVERYONE,
-      accessLevel: RecordShareAccessLevel.FULL,
-      rowCause: RecordShareRowCause.APPLICATION,
-      sourceId: objectMetadataId,
-    }));
+  const shareWithEntries = shareWith ?? [];
+  // A record created while the flag is off is readable by everyone today and
+  // must stay so once the flag turns on, whoever created it
+  const everyoneFullRows =
+    !isRecordSharingEnabled && !isNonEmptyArray(shareWithEntries)
+      ? recordIds.map((recordId) => ({
+          recordId,
+          objectMetadataId,
+          principalId: EVERYONE_PRINCIPAL_ID,
+          principalType: RecordSharePrincipalType.EVERYONE,
+          accessLevel: RecordShareAccessLevel.FULL,
+          rowCause: RecordShareRowCause.APPLICATION,
+          sourceId: objectMetadataId,
+        }))
+      : [];
+
+  if (!isUserAuthContext(authContext) && isNonEmptyArray(everyoneFullRows)) {
+    return everyoneFullRows;
   }
 
   const creatorRoleId = resolveCreatorRoleId({ authContext, apiKeyRoleMap });
-  const shareWithPrincipals = shareWith
+  const shareWithPrincipals = shareWithEntries
     .map(resolveShareWithPrincipal)
     .map((shareWithPrincipal) =>
       shareWithPrincipal.principalId === creatorRoleId
@@ -145,18 +149,21 @@ export const buildRecordShareInputsForCreatedRecords = ({
         : shareWithPrincipal,
     );
 
-  return recordIds.flatMap((recordId) => [
-    ...buildCreatorRows({
-      authContext,
-      apiKeyRoleMap,
-      recordId,
-      shareWithPrincipals,
-    }).map((creatorRow) => ({ recordId, objectMetadataId, ...creatorRow })),
-    ...shareWithPrincipals.map((shareWithPrincipal) => ({
-      recordId,
-      objectMetadataId,
-      ...shareWithPrincipal,
-      ...resolveShareWithRowOrigin({ authContext, recordId }),
-    })),
-  ]);
+  return [
+    ...recordIds.flatMap((recordId) => [
+      ...buildCreatorRows({
+        authContext,
+        apiKeyRoleMap,
+        recordId,
+        shareWithPrincipals,
+      }).map((creatorRow) => ({ recordId, objectMetadataId, ...creatorRow })),
+      ...shareWithPrincipals.map((shareWithPrincipal) => ({
+        recordId,
+        objectMetadataId,
+        ...shareWithPrincipal,
+        ...resolveShareWithRowOrigin({ authContext, recordId }),
+      })),
+    ]),
+    ...everyoneFullRows,
+  ];
 };
