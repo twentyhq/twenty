@@ -4,21 +4,11 @@ import { RECORD_LIST_ROW_FIELD_ANCHOR_CLASS_NAME } from '@/object-record/record-
 import { recordListHoveredFieldMetadataItemIdComponentState } from '@/object-record/record-list/states/recordListHoveredFieldMetadataItemIdComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledTooltipContent = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-`;
 
 export const RecordListFieldTooltip = () => {
-  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
 
   const { fieldDefinitionByFieldMetadataItemId } =
@@ -48,22 +38,12 @@ export const RecordListFieldTooltip = () => {
     <AppTooltip
       key={visibleRecordFieldIds}
       anchorSelect={`.${RECORD_LIST_ROW_FIELD_ANCHOR_CLASS_NAME}`}
+      title={hoveredFieldDefinition?.label}
+      Icon={FieldIcon ?? undefined}
       noArrow
       place="bottom"
       positionStrategy="fixed"
       delay={TooltipDelay.shortDelay}
-    >
-      {isDefined(hoveredFieldDefinition) && (
-        <StyledTooltipContent>
-          {isDefined(FieldIcon) && (
-            <FieldIcon
-              size={theme.icon.size.sm}
-              stroke={theme.icon.stroke.sm}
-            />
-          )}
-          {hoveredFieldDefinition.label}
-        </StyledTooltipContent>
-      )}
-    </AppTooltip>
+    />
   );
 };
