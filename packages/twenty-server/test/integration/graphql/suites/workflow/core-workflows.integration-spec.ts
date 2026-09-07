@@ -92,6 +92,18 @@ describe('coreWorkflows (e2e)', () => {
       .find((workflow) => workflow.workspaceWorkflowId === workflowId);
   };
 
+  const findCoreWorkflowByName = async (
+    name: string,
+  ): Promise<CoreWorkflow | undefined> => {
+    const response = await graphql(CORE_WORKFLOWS_QUERY);
+
+    expect(response.body.errors).toBeUndefined();
+
+    return (response.body.data.coreWorkflows.edges as { node: CoreWorkflow }[])
+      .map((edge) => edge.node)
+      .find((workflow) => workflow.name === name);
+  };
+
   const waitForCoreWorkflow = async (
     predicate: (workflow: CoreWorkflow | undefined) => boolean,
   ): Promise<CoreWorkflow | undefined> => {
@@ -492,6 +504,131 @@ describe('coreWorkflows (e2e)', () => {
     const secondPage = secondPageResponse.body.data.coreWorkflows;
 
     expect(secondPage.edges[0].node.id).not.toBe(firstPage.edges[0].node.id);
+  });
+
+  it('should not list a workflow once it is soft-deleted', async () => {
+    const softDeletedName = 'Core Workflows Soft Deleted';
+
+    const createResponse = await graphql(
+      `
+        mutation CreateWorkflow($name: String!) {
+          createWorkflow(data: { name: $name }) {
+            id
+          }
+        }
+      `,
+      { name: softDeletedName },
+    );
+
+    expect(createResponse.body.errors).toBeUndefined();
+
+    const softDeletedWorkflowId = createResponse.body.data.createWorkflow.id;
+
+    const versionResponse = await graphql(
+      `
+        query GetWorkflow($id: UUID!) {
+          workflow(filter: { id: { eq: $id } }) {
+            versions {
+              edges {
+                node {
+                  id
+                }
+              }
+            }
+          }
+        }
+      `,
+      { id: softDeletedWorkflowId },
+    );
+
+    const softDeletedVersionId =
+      versionResponse.body.data.workflow.versions.edges[0].node.id;
+
+    await updateWorkflowVersionTrigger({
+      workflowVersionId: softDeletedVersionId,
+      trigger: {
+        name: 'Manual Trigger',
+        type: 'MANUAL',
+        settings: { outputSchema: {} },
+        nextStepIds: [],
+        position: { x: 0, y: 0 },
+      },
+    });
+
+    await graphql(
+      `
+        mutation CreateWorkflowVersionStep(
+          $input: CreateWorkflowVersionStepInput!
+        ) {
+          createWorkflowVersionStep(input: $input) {
+            stepsDiff
+          }
+        }
+      `,
+      {
+        input: {
+          workflowVersionId: softDeletedVersionId,
+          stepType: 'FIND_RECORDS',
+          parentStepId: 'trigger',
+          position: { x: 200, y: 0 },
+        },
+      },
+    );
+
+    const activateResponse = await graphql(
+      `
+        mutation ActivateWorkflowVersion($workflowVersionId: UUID!) {
+          activateWorkflowVersion(workflowVersionId: $workflowVersionId)
+        }
+      `,
+      { workflowVersionId: softDeletedVersionId },
+    );
+
+    expect(activateResponse.body.errors).toBeUndefined();
+
+    for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt++) {
+      const listed = await findCoreWorkflowByName(softDeletedName);
+
+      if (listed?.statuses.includes('ACTIVE') === true) {
+        break;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+    }
+
+    const deleteResponse = await graphql(
+      `
+        mutation DeleteWorkflow($id: UUID!) {
+          deleteWorkflow(id: $id) {
+            id
+          }
+        }
+      `,
+      { id: softDeletedWorkflowId },
+    );
+
+    expect(deleteResponse.body.errors).toBeUndefined();
+
+    for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt++) {
+      if (!isDefined(await findCoreWorkflowByName(softDeletedName))) {
+        break;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+    }
+
+    expect(await findCoreWorkflowByName(softDeletedName)).toBeUndefined();
+
+    await graphql(
+      `
+        mutation DestroyWorkflow($id: UUID!) {
+          destroyWorkflow(id: $id) {
+            id
+          }
+        }
+      `,
+      { id: softDeletedWorkflowId },
+    );
   });
 
   it('should not list the workflow once it is destroyed', async () => {
