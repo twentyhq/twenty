@@ -6,13 +6,14 @@ import {
 import {
   APP_DISPLAY_NAME,
   DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  FATHOM_RECORDING_IMPORT_OBJECT_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
 export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: `${APP_DISPLAY_NAME} default role`,
   description:
-    'Reads calendar events to match Fathom meetings and writes transcripts, summaries, action items, and metadata to CallRecording records.',
+    'Reads calendar events, manages Fathom recording imports, and writes canonical recording data to CallRecording records.',
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
@@ -46,6 +47,14 @@ export default defineApplicationRole({
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
+    },
+    {
+      objectUniversalIdentifier:
+        FATHOM_RECORDING_IMPORT_OBJECT_UNIVERSAL_IDENTIFIER,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: true,
     },
   ],
   fieldPermissions: [],
