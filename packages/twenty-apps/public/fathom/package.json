@@ -20,7 +20,8 @@
   },
   "dependencies": {
     "@sniptt/guards": "^0.2.0",
-    "fathom-typescript": "0.0.43"
+    "fathom-typescript": "0.0.43",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",

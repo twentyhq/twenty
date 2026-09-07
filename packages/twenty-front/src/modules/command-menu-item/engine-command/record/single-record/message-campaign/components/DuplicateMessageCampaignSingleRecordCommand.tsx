@@ -1,6 +1,5 @@
-import { t } from '@lingui/core/macro';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
@@ -48,7 +47,7 @@ export const DuplicateMessageCampaignSingleRecordCommand = () => {
 
     await createMessageCampaign({
       id: duplicatedCampaignId,
-      name: t`${campaign.name} (copy)`,
+      name: appendCopySuffix(campaign.name),
       subject: campaign.subject,
       bodyTemplate: campaign.bodyTemplate,
       fromAddress: campaign.fromAddress,
