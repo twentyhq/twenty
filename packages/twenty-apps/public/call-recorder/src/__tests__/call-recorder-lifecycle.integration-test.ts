@@ -11,12 +11,16 @@ import {
   vi,
 } from 'vitest';
 
+import { CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-calendar-bot-scheduling-enabled-env-var-name';
 import { CALENDAR_EVENT_UPDATE_BATCH_SIZE } from 'src/logic-functions/constants/calendar-event-update-batch-size';
 import { cancelCallRecordingRequest } from 'src/logic-functions/flows/cancel-call-recording-request.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
 import { retryFailedRecallCancellations } from 'src/logic-functions/flows/retry-failed-recall-cancellations.util';
 import { scheduleRecallBotsForPendingCallRecordings } from 'src/logic-functions/flows/schedule-recall-bots-for-pending-call-recordings.util';
 import { processRecallWebhookHandler } from 'src/logic-functions/process-recall-webhook';
+import { cancelScheduledRecallBotsHandler } from 'src/logic-functions/cancel-scheduled-recall-bots';
+import { cancelScheduledRecallBots } from 'src/logic-functions/flows/cancel-scheduled-recall-bots.util';
+import { syncCalendarBotSchedulingHandler } from 'src/logic-functions/sync-calendar-bot-scheduling';
 import reconcileCalendarEventLogicFunction from 'src/logic-functions/reconcile-call-recorder-calendar-event';
 
 // ---------------------------------------------------------------------------
@@ -169,6 +173,7 @@ class FakeRecallApi {
   artifactImportRequests: object[] = [];
   failNextDelete = false;
   failCalendarEventUpdates = false;
+  failRecallRemovals = false;
 
   seedBot(bot: FakeRecallBot): void {
     this.bots.set(bot.id, bot);
@@ -239,8 +244,21 @@ class FakeRecallApi {
 
     const botIdMatch = requestUrl.match(/\/bot\/([^/]+)\/$/);
 
+    const ejectedBotIdMatch = requestUrl.match(/\/bot\/([^/]+)\/leave_call\/$/);
+
+    if (method === 'POST' && ejectedBotIdMatch !== null) {
+      if (this.failRecallRemovals) {
+        return jsonResponse(400, {});
+      }
+
+      this.bots.delete(ejectedBotIdMatch[1]);
+      this.deletedBotIds.push(ejectedBotIdMatch[1]);
+
+      return new Response(null, { status: 204 });
+    }
+
     if (method === 'DELETE' && botIdMatch !== null) {
-      if (this.failNextDelete) {
+      if (this.failNextDelete || this.failRecallRemovals) {
         this.failNextDelete = false;
 
         return jsonResponse(400, {});
@@ -1230,6 +1248,161 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(callRecording).toBeDefined();
       expect(callRecording.recordingRequestStatus).toBe('REQUESTED');
       expect(callRecording.externalBotId).toBeTruthy();
+    });
+
+    it('clears an On the meeting no longer earns', async () => {
+      const { calendarEventId, callRecordingId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
+
+      await client.mutation({
+        updateCalendarEvent: {
+          __args: { id: calendarEventId, data: { isCanceled: true } },
+          id: true,
+        },
+      });
+
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [calendarEventId],
+      });
+
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
+      expect(
+        (await fetchCallRecording(callRecordingId)).recordingRequestStatus,
+      ).toBe('CANCELED');
+    });
+
+    it('keeps the On of a meeting that was actually recorded', async () => {
+      const calendarEventId = await createCalendarEvent({
+        startsAt: hoursAgo(3),
+        endsAt: hoursAgo(2),
+      });
+
+      await createPendingCallRecording({
+        calendarEventId,
+        status: 'COMPLETED',
+      });
+
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [calendarEventId],
+      });
+
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
+    });
+  });
+
+  describe('workspace recording switch', () => {
+    const turnRecordingOff = () =>
+      vi.stubEnv(
+        CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME,
+        'false',
+      );
+
+    it('cancels the request inline and leaves the Recall bot to the enqueued job', async () => {
+      const { callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      turnRecordingOff();
+
+      const result = await syncCalendarBotSchedulingHandler();
+
+      expect(result).toEqual(
+        expect.objectContaining({ outcome: 'scheduled-bots-canceled' }),
+      );
+      expect(
+        (await fetchCallRecording(callRecordingId)).recordingRequestStatus,
+      ).toBe('CANCELED');
+      expect(recall.deletedBotIds).not.toContain(botId);
+
+      await cancelScheduledRecallBotsHandler();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.externalBotId).toBeFalsy();
+      expect(recall.deletedBotIds).toContain(botId);
+    });
+
+    it('stops the cancellation chain when Recall is down, leaving the bot to the daily retry', async () => {
+      const { callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      turnRecordingOff();
+      await syncCalendarBotSchedulingHandler();
+
+      recall.failRecallRemovals = true;
+
+      const result = await cancelScheduledRecallBots({ client, sliceSize: 1 });
+
+      expect(result.canceledCallRecordingIds).toEqual([]);
+      expect(result.failedCallRecordingIds).toEqual([callRecordingId]);
+      expect(result.hasMore).toBe(false);
+      expect((await fetchCallRecording(callRecordingId)).externalBotId).toBe(
+        botId,
+      );
+    });
+
+    it('does not schedule a bot for a request the cancellation missed', async () => {
+      const calendarEventId = await createCalendarEvent();
+      const callRecordingId = await createPendingCallRecording({
+        calendarEventId,
+      });
+
+      turnRecordingOff();
+
+      await runPendingRecoveryCron();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.externalBotId).toBeFalsy();
+      expect(recall.botForCallRecording(callRecordingId)).toBeUndefined();
+    });
+
+    it('schedules nothing for an upcoming meeting while turned off', async () => {
+      turnRecordingOff();
+
+      const calendarEventId = await createCalendarEvent();
+
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [calendarEventId],
+      });
+
+      expect(
+        await findCallRecordings({
+          calendarEventId: { in: [calendarEventId] },
+        }),
+      ).toEqual([]);
+      expect(recall.bots.size).toBe(0);
+    });
+
+    it('clears the Recording Bot preference of the meetings it paused', async () => {
+      const { calendarEventId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
+
+      turnRecordingOff();
+      await syncCalendarBotSchedulingHandler();
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [calendarEventId],
+      });
+
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
+    });
+
+    it('enqueues the upcoming-events sweep when turned back on', async () => {
+      vi.stubEnv(
+        CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME,
+        'true',
+      );
+
+      await expect(syncCalendarBotSchedulingHandler()).resolves.toEqual({
+        outcome: 'sweep-enqueued',
+      });
     });
   });
 });
