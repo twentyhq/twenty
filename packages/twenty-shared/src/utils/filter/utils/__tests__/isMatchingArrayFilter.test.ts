@@ -120,6 +120,22 @@ describe('isMatchingArrayFilter', () => {
         }),
       ).toBe(false);
     });
+
+    it('should treat a pattern without percent signs as a whole-string ILIKE match', () => {
+      expect(
+        isMatchingArrayFilter({
+          arrayFilter: { containsIlike: 'test' },
+          value: ['TEST'],
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingArrayFilter({
+          arrayFilter: { containsIlike: 'test' },
+          value: ['test item'],
+        }),
+      ).toBe(false);
+    });
   });
 
   describe('error handling', () => {
