@@ -46,6 +46,11 @@ export const themeCssVariables = {
     iconStrikeMedium: 'var(--t-text-icon-strike-medium)',
     iconStrikeBold: 'var(--t-text-icon-strike-bold)',
   },
+  tooltip: {
+    background: 'var(--t-tooltip-background)',
+    color: 'var(--t-tooltip-color)',
+    descriptionColor: 'var(--t-tooltip-description-color)',
+  },
   animation: {
     duration: {
       instant: 'var(--t-animation-duration-instant)',

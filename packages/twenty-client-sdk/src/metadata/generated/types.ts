@@ -4676,6 +4676,9 @@ export default {
             "isUnique": [
                 8
             ],
+            "isSearchable": [
+                8
+            ],
             "defaultValue": [
                 9
             ],
@@ -12377,6 +12380,9 @@ export default {
             "isUnique": [
                 8
             ],
+            "isSearchable": [
+                8
+            ],
             "defaultValue": [
                 9
             ],
@@ -12448,6 +12454,9 @@ export default {
                 8
             ],
             "isUnique": [
+                8
+            ],
+            "isSearchable": [
                 8
             ],
             "defaultValue": [

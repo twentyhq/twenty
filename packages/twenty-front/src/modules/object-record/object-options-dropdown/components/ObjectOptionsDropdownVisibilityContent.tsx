@@ -117,7 +117,7 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
                 createPortal(
                   <AppTooltip
                     anchorSelect="#workspace-visibility-option"
-                    content={t`Workspace views require manage views permission`}
+                    title={t`Workspace views require manage views permission`}
                     positionStrategy="fixed"
                   />,
                   document.body,

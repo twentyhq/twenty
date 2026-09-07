@@ -50,7 +50,7 @@ export const SettingsApplicationVariableLabelRow = ({
           />
           <AppTooltip
             anchorSelect={`#${tooltipId}`}
-            content={description}
+            title={description}
             offset={5}
             noArrow
             place="bottom"

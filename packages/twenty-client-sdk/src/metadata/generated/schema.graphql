@@ -1909,6 +1909,7 @@ type FeatureFlag {
 enum FeatureFlagKey {
   IS_APP_CLAIMING_ENABLED
   IS_UNIQUE_INDEXES_ENABLED
+  IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_JSON_FILTER_ENABLED
   IS_EMAIL_GROUP_ENABLED
   IS_JUNCTION_RELATIONS_ENABLED
@@ -2357,6 +2358,7 @@ type Field {
   isUIReadOnly: Boolean @deprecated(reason: "Use isUIEditable")
   isNullable: Boolean
   isUnique: Boolean
+  isSearchable: Boolean
   defaultValue: JSON
   options: JSON
   settings: JSON
@@ -4853,6 +4855,7 @@ input CreateFieldInput {
   isUIReadOnly: Boolean
   isNullable: Boolean
   isUnique: Boolean
+  isSearchable: Boolean
   defaultValue: JSON
   options: JSON
   settings: JSON
@@ -4883,6 +4886,7 @@ input UpdateFieldInput {
   isUIReadOnly: Boolean
   isNullable: Boolean
   isUnique: Boolean
+  isSearchable: Boolean
   defaultValue: JSON
   options: JSON
   settings: JSON
