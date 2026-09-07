@@ -542,6 +542,19 @@ describe('readabilityObjectRecordsPermissions', () => {
     beforeAll(async () => {
       await setObjectReadability(objectMetadataId, MetadataReadability.PRIVATE);
       await setRecordSharingEnabled(false);
+
+      const response = await makeGraphqlAPIRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: OBJECT_SINGULAR,
+          gqlFields: RECORD_GQL_FIELDS,
+          data: {
+            id: RECORD_IDS.SHARED_FULL_WITH_EVERYONE,
+            name: 'SHARED_FULL_WITH_EVERYONE',
+          },
+        }),
+      );
+
+      expect(response.body.errors).toBeUndefined();
     });
 
     it('should return every record', async () => {
@@ -549,12 +562,7 @@ describe('readabilityObjectRecordsPermissions', () => {
 
       expect(response.body.errors).toBeUndefined();
       expect(collectIds(response.body.data[OBJECT_PLURAL].edges)).toEqual(
-        [
-          RECORD_IDS.SHARED_READ_WITH_JONY,
-          RECORD_IDS.SHARED_READ_WRITE_WITH_MEMBER_ROLE,
-          RECORD_IDS.SHARED_FULL_WITH_ADMIN_ROLE,
-          RECORD_IDS.UNSHARED,
-        ].sort(),
+        Object.values(RECORD_IDS).sort(),
       );
     });
   });
