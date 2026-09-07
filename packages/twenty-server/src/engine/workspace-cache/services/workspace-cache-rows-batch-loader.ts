@@ -60,6 +60,31 @@ const buildFetchKey = (
     ? `${entityName}:${serializeWhereClause(where)}`
     : entityName;
 
+const mergeOrderClauses = (
+  existingOrder: OrderClause | undefined,
+  newOrder: OrderClause | undefined,
+  entityName: CacheFetchableEntityName,
+): OrderClause | undefined => {
+  if (!isDefined(existingOrder)) {
+    return isDefined(newOrder) ? { ...newOrder } : undefined;
+  }
+
+  if (!isDefined(newOrder)) {
+    return existingOrder;
+  }
+
+  for (const [key, direction] of Object.entries(newOrder)) {
+    if (isDefined(existingOrder[key]) && existingOrder[key] !== direction) {
+      throw new WorkspaceCacheException(
+        `Conflicting order clauses for entity "${entityName}" on field "${key}": "${existingOrder[key]}" vs "${direction}"`,
+        WorkspaceCacheExceptionCode.INVALID_PARAMETERS,
+      );
+    }
+  }
+
+  return { ...existingOrder, ...newOrder };
+};
+
 type PlannedFetch = {
   entityName: CacheFetchableEntityName;
   where?: WhereClause;
@@ -122,7 +147,11 @@ export class WorkspaceCacheRowsBatchLoader {
           } else {
             plannedFetch.columns = null;
             if (isDefined(order)) {
-              plannedFetch.order = { ...plannedFetch.order, ...order };
+              plannedFetch.order = mergeOrderClauses(
+                plannedFetch.order,
+                order,
+                entityName,
+              );
             }
           }
           continue;
@@ -141,7 +170,11 @@ export class WorkspaceCacheRowsBatchLoader {
         }
 
         if (isDefined(order)) {
-          plannedFetch.order = { ...plannedFetch.order, ...order };
+          plannedFetch.order = mergeOrderClauses(
+            plannedFetch.order,
+            order,
+            entityName,
+          );
         }
 
         if (plannedFetch.columns === null) {
