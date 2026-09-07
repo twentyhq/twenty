@@ -103,7 +103,7 @@ export const AiChatBanner = ({
       {isDefined(tooltipMessage) && (
         <AppTooltip
           anchorSelect={`[data-tooltip-id='${tooltipId}']`}
-          content={tooltipMessage}
+          title={tooltipMessage}
           place="bottom"
         />
       )}

@@ -1,19 +1,19 @@
 .positioner {
-  // the tooltip never intercepts pointer events unless clickable,
+  // the tooltip never intercepts pointer events unless interactive,
   // like react-tooltip's core styles
   pointer-events: none;
   z-index: var(--t-last-layer-z-index);
 }
 
 .tooltip {
-  background-color: var(--t-gray-scale-gray12);
+  background-color: var(--t-tooltip-background);
   border-radius: var(--t-border-radius-md);
   box-shadow: var(--t-box-shadow-light);
-  color: var(--t-gray-scale-gray1);
+  color: var(--t-tooltip-color);
   font-size: var(--t-font-size-sm);
   font-weight: var(--t-font-weight-regular);
   overflow: visible;
-  padding: var(--t-spacing-2);
+  padding: var(--t-spacing-1) var(--t-spacing-2);
   word-break: break-word;
   width: max-content;
   max-width: 100%;
@@ -30,11 +30,33 @@
   }
 }
 
-.compactContent {
-  padding: var(--t-spacing-1) var(--t-spacing-1_5);
+.textContent {
+  display: flex;
+  flex-direction: column;
+  line-height: var(--t-spacing-4);
 }
 
-.clickable {
+.title {
+  align-items: center;
+  display: flex;
+  font-weight: var(--t-font-weight-medium);
+  gap: var(--t-spacing-1);
+  min-width: 0;
+}
+
+.icon {
+  flex-shrink: 0;
+  height: calc(var(--t-icon-size-sm) * 1px);
+  width: calc(var(--t-icon-size-sm) * 1px);
+}
+
+.description {
+  color: var(--t-tooltip-description-color);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.interactive {
   pointer-events: auto;
 }
 

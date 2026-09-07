@@ -3,11 +3,13 @@ import { ANIMATION } from './Animation';
 import { ICON } from './Icon';
 import { MODAL } from './Modal';
 import { TEXT } from './Text';
+import { TOOLTIP } from './Tooltip';
 
 export const THEME_COMMON = {
   icon: ICON,
   modal: MODAL,
   text: TEXT,
+  tooltip: TOOLTIP,
   animation: ANIMATION,
   spacingMultiplicator: 4,
   spacing: (...args: number[]) =>
