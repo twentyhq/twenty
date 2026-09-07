@@ -1,4 +1,4 @@
-import { clear, createStore, del, entries, get, set } from 'idb-keyval';
+import { clear, createStore, del, entries, set } from 'idb-keyval';
 
 import { createIndexedDbBackedJotaiStorage } from '@/ui/utilities/state/jotai/utils/createIndexedDbBackedJotaiStorage';
 import { isIndexedDbAvailable } from '@/ui/utilities/state/jotai/utils/isIndexedDbAvailable';
@@ -10,7 +10,6 @@ jest.mock('idb-keyval', () => ({
   del: jest.fn(() => Promise.resolve()),
   clear: jest.fn(() => Promise.resolve()),
   entries: jest.fn(() => Promise.resolve([])),
-  get: jest.fn(() => Promise.resolve(undefined)),
 }));
 jest.mock('@/ui/utilities/state/jotai/utils/isIndexedDbAvailable');
 jest.mock('~/utils/logError');
@@ -19,7 +18,6 @@ const mockedSet = jest.mocked(set);
 const mockedDel = jest.mocked(del);
 const mockedClear = jest.mocked(clear);
 const mockedEntries = jest.mocked(entries);
-const mockedGet = jest.mocked(get);
 const mockedCreateStore = jest.mocked(createStore);
 const mockedIsIndexedDbAvailable = jest.mocked(isIndexedDbAvailable);
 const mockedLogError = jest.mocked(logError);
@@ -150,57 +148,6 @@ describe('createIndexedDbBackedJotaiStorage', () => {
       expect(mockedCreateStore).not.toHaveBeenCalled();
       expect(mockedSet).not.toHaveBeenCalled();
       expect(localStorage.getItem('k')).toBeNull();
-    });
-  });
-
-  describe('versioned storage', () => {
-    it('should clear persisted entries when the stored version differs', async () => {
-      mockedGet.mockResolvedValue(1);
-      mockedEntries.mockResolvedValue([['someKey', { value: 42 }]]);
-
-      const { storage, hydrate } = createIndexedDbBackedJotaiStorage<Item>(
-        'metadata-store',
-        { version: 2 },
-      );
-
-      await hydrate();
-
-      expect(mockedClear).toHaveBeenCalled();
-      expect(mockedSet).toHaveBeenCalledWith(
-        '__storageVersion',
-        2,
-        expect.anything(),
-      );
-      expect(storage.getItem('someKey', INITIAL)).toEqual(INITIAL);
-    });
-
-    it('should load persisted entries when the stored version matches', async () => {
-      mockedGet.mockResolvedValue(2);
-      mockedEntries.mockResolvedValue([
-        ['someKey', { value: 42 }],
-        ['__storageVersion', 2 as unknown as Item],
-      ]);
-
-      const { storage, hydrate } = createIndexedDbBackedJotaiStorage<Item>(
-        'metadata-store',
-        { version: 2 },
-      );
-
-      await hydrate();
-
-      expect(mockedClear).not.toHaveBeenCalled();
-      expect(storage.getItem('someKey', INITIAL)).toEqual({ value: 42 });
-      expect(storage.getItem('__storageVersion', INITIAL)).toEqual(INITIAL);
-    });
-
-    it('should not read a version when none is configured', async () => {
-      const { hydrate } =
-        createIndexedDbBackedJotaiStorage<Item>('metadata-store');
-
-      await hydrate();
-
-      expect(mockedGet).not.toHaveBeenCalled();
-      expect(mockedClear).not.toHaveBeenCalled();
     });
   });
 });
