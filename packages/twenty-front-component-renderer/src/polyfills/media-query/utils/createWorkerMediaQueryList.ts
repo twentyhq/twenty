@@ -21,6 +21,7 @@ type CreateWorkerMediaQueryListInput = {
 };
 
 type ChangeListenerRegistration = {
+  nativeListener: EventListenerOrEventListenerObject;
   cleanUp: () => void;
 };
 
@@ -107,9 +108,8 @@ class WorkerMediaQueryListImplementation extends EventTarget {
     listener: EventListenerOrEventListenerObject | null,
     options?: EventListenerOptions | boolean | null,
   ): void {
-    super.removeEventListener(type, listener, options ?? undefined);
-
     if (type !== CHANGE_EVENT_TYPE || !isDefined(listener)) {
+      super.removeEventListener(type, listener, options ?? undefined);
       return;
     }
 
@@ -122,7 +122,15 @@ class WorkerMediaQueryListImplementation extends EventTarget {
           resolveEventListenerCapture(pendingRegistration.options) !== capture,
       );
 
-    this.#untrackChangeListener(listener, capture);
+    const hasRegistration =
+      this.#changeListenerRegistrations.get(listener)?.has(capture) === true;
+
+    if (!hasRegistration) {
+      super.removeEventListener(type, listener, options ?? undefined);
+      return;
+    }
+
+    this.#removeChangeListenerRegistration(listener, capture);
   }
 
   override dispatchEvent(event: Event): boolean {
@@ -168,26 +176,29 @@ class WorkerMediaQueryListImplementation extends EventTarget {
       return;
     }
 
-    super.addEventListener(CHANGE_EVENT_TYPE, listener, { capture: isCapture });
-
     const removeRegistration = () => {
-      super.removeEventListener(CHANGE_EVENT_TYPE, listener, {
-        capture: isCapture,
-      });
-      this.#untrackChangeListener(listener, isCapture);
+      this.#removeChangeListenerRegistration(listener, isCapture);
     };
-    const cleanUpFunctions: (() => void)[] = [];
 
-    if (once === true) {
-      super.addEventListener(CHANGE_EVENT_TYPE, removeRegistration, {
-        capture: isCapture,
-      });
-      cleanUpFunctions.push(() => {
-        super.removeEventListener(CHANGE_EVENT_TYPE, removeRegistration, {
-          capture: isCapture,
-        });
-      });
-    }
+    const nativeListener: EventListenerOrEventListenerObject =
+      once === true
+        ? (event: Event) => {
+            removeRegistration();
+
+            if (isFunction(listener)) {
+              listener.call(this, event);
+              return;
+            }
+
+            listener.handleEvent(event);
+          }
+        : listener;
+
+    super.addEventListener(CHANGE_EVENT_TYPE, nativeListener, {
+      capture: isCapture,
+    });
+
+    const cleanUpFunctions: (() => void)[] = [];
 
     if (isDefined(signal)) {
       signal.addEventListener('abort', removeRegistration, { once: true });
@@ -201,6 +212,7 @@ class WorkerMediaQueryListImplementation extends EventTarget {
       new Map<boolean, ChangeListenerRegistration>();
 
     registrationsByCapture.set(isCapture, {
+      nativeListener,
       cleanUp: () => {
         for (const cleanUpFunction of cleanUpFunctions) {
           cleanUpFunction();
@@ -209,6 +221,24 @@ class WorkerMediaQueryListImplementation extends EventTarget {
     });
     this.#changeListenerRegistrations.set(listener, registrationsByCapture);
     this.#ensureEnvironmentSubscription();
+  }
+
+  #removeChangeListenerRegistration(
+    listener: EventListenerOrEventListenerObject,
+    capture: boolean,
+  ): void {
+    const registration = this.#changeListenerRegistrations
+      .get(listener)
+      ?.get(capture);
+
+    if (!isDefined(registration)) {
+      return;
+    }
+
+    super.removeEventListener(CHANGE_EVENT_TYPE, registration.nativeListener, {
+      capture,
+    });
+    this.#untrackChangeListener(listener, capture);
   }
 
   #untrackChangeListener(

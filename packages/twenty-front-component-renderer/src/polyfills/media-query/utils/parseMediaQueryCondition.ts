@@ -5,6 +5,7 @@ import { type ParsedMediaQueryCondition } from '@/polyfills/media-query/types/Pa
 import { parseMediaQueryBooleanCondition } from '@/polyfills/media-query/utils/parseMediaQueryBooleanCondition';
 import { parseMediaQueryPlainCondition } from '@/polyfills/media-query/utils/parseMediaQueryPlainCondition';
 import { parseMediaQueryRangeCondition } from '@/polyfills/media-query/utils/parseMediaQueryRangeCondition';
+import { trimCssWhitespace } from '@/polyfills/media-query/utils/trimCssWhitespace';
 
 const CONDITION_WRAPPING_PARENTHESES_PATTERN = /^\(([\s\S]*)\)$/;
 
@@ -19,7 +20,7 @@ export const parseMediaQueryCondition = (
     return null;
   }
 
-  const conditionContent = conditionMatch[1].trim();
+  const conditionContent = trimCssWhitespace(conditionMatch[1]);
   const colonIndex = conditionContent.indexOf(':');
   const hasFeatureNameValueSeparator = colonIndex !== -1;
 
@@ -33,8 +34,10 @@ export const parseMediaQueryCondition = (
     return parseMediaQueryRangeCondition(conditionContent);
   }
 
-  const featureName = conditionContent.slice(0, colonIndex).trim();
-  const featureValue = conditionContent.slice(colonIndex + 1).trim();
+  const featureName = trimCssWhitespace(conditionContent.slice(0, colonIndex));
+  const featureValue = trimCssWhitespace(
+    conditionContent.slice(colonIndex + 1),
+  );
 
   if (!isNonEmptyString(featureName) || !isNonEmptyString(featureValue)) {
     return null;

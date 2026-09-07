@@ -6,6 +6,7 @@ import { createMediaQueryRangeCondition } from '@/polyfills/media-query/utils/cr
 import { isLessThanMediaQueryRangeOperator } from '@/polyfills/media-query/utils/isLessThanMediaQueryRangeOperator';
 import { isMediaQueryRangeOperator } from '@/polyfills/media-query/utils/isMediaQueryRangeOperator';
 import { parseMediaQueryNumericFeatureName } from '@/polyfills/media-query/utils/parseMediaQueryNumericFeatureName';
+import { trimCssWhitespace } from '@/polyfills/media-query/utils/trimCssWhitespace';
 
 const RANGE_CONDITION_PATTERN = new RegExp(
   `^(.+?)${CSS_WHITESPACE_CHARACTER_CLASS}*(<=|>=|<|>|=)${CSS_WHITESPACE_CHARACTER_CLASS}*(.+?)(?:${CSS_WHITESPACE_CHARACTER_CLASS}*(<=|>=|<|>)${CSS_WHITESPACE_CHARACTER_CLASS}*(.+?))?$`,
@@ -33,7 +34,9 @@ export const parseMediaQueryRangeCondition = (
     return null;
   }
 
-  const leftFeatureName = parseMediaQueryNumericFeatureName(leftOperand.trim());
+  const leftFeatureName = parseMediaQueryNumericFeatureName(
+    trimCssWhitespace(leftOperand),
+  );
 
   if (isDefined(leftFeatureName)) {
     if (leftFeatureName.comparison !== 'exact' || isDefined(secondOperator)) {
@@ -51,7 +54,7 @@ export const parseMediaQueryRangeCondition = (
   }
 
   const middleFeatureName = parseMediaQueryNumericFeatureName(
-    middleOperand.trim(),
+    trimCssWhitespace(middleOperand),
   );
 
   if (

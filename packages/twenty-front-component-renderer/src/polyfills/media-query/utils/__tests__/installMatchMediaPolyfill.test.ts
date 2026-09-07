@@ -271,4 +271,11 @@ describe('installMatchMediaPolyfill', () => {
     expect(matchMedia('(width)').matches).toBe(true);
     expect(matchMedia('not (width)').matches).toBe(false);
   });
+
+  it('should not treat a non-CSS whitespace query as an empty query list', () => {
+    const { matchMedia } = setupMatchMedia();
+
+    expect(matchMedia('\u00a0').matches).toBe(false);
+    expect(matchMedia('   ').matches).toBe(true);
+  });
 });
