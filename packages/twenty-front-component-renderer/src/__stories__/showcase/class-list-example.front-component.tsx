@@ -2,9 +2,6 @@ import { defineFrontComponent } from 'twenty-sdk/define';
 import { useRef, useState } from 'react';
 
 type ClassListReport = {
-  isMemoized: boolean;
-  containsMapboxClass: boolean;
-  containsRemovedClass: boolean;
   tokens: string[];
   value: string;
 };
@@ -21,8 +18,6 @@ const ClassListComponent = () => {
       return;
     }
 
-    const classListBeforeOperations = container.classList;
-
     container.classList.add('mapboxgl-map');
     container.classList.add('added-then-removed', 'kept');
     container.classList.remove('added-then-removed');
@@ -30,9 +25,6 @@ const ClassListComponent = () => {
     container.classList.replace('kept', 'replaced');
 
     setClassListReport({
-      isMemoized: classListBeforeOperations === container.classList,
-      containsMapboxClass: container.classList.contains('mapboxgl-map'),
-      containsRemovedClass: container.classList.contains('added-then-removed'),
       tokens: Array.from(container.classList),
       value: container.classList.value,
     });

@@ -67,9 +67,6 @@ const mutationObserverTest: Story['play'] = async ({ canvasElement }) => {
 };
 
 const EXPECTED_CLASS_LIST_REPORT = {
-  isMemoized: true,
-  containsMapboxClass: true,
-  containsRemovedClass: false,
   tokens: ['initial-class', 'mapboxgl-map', 'replaced', 'toggled-on'],
   value: 'initial-class mapboxgl-map replaced toggled-on',
 };

@@ -1,16 +1,16 @@
 import '@/remote/generated/remote-elements';
 
-import { installClassList } from '@/polyfills/dom/utils/installClassList';
+import { installClassAttributeAccessors } from '@/polyfills/dom/utils/installClassAttributeAccessors';
 import { installGetElementsByClassName } from '@/polyfills/dom/utils/installGetElementsByClassName';
 import { patchRemoteElementAttributes } from '@/remote/elements/utils/patchRemoteElementAttributes';
 
 const createHtmlDivElement = (): HTMLElement =>
   document.createElement('html-div');
 
-describe('installClassList on remote elements', () => {
+describe('installClassAttributeAccessors on remote elements', () => {
   beforeAll(() => {
     patchRemoteElementAttributes();
-    installClassList(Element.prototype);
+    installClassAttributeAccessors(Element.prototype);
     installGetElementsByClassName(Element.prototype);
   });
 

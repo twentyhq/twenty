@@ -1,4 +1,4 @@
-import { installClassName } from '../installClassName';
+import { installClassAttributeAccessors } from '../installClassAttributeAccessors';
 import { installGetElementsByClassName } from '../installGetElementsByClassName';
 
 class FakeElement {
@@ -25,7 +25,7 @@ class FakeElement {
   }
 }
 
-installClassName(FakeElement.prototype);
+installClassAttributeAccessors(FakeElement.prototype);
 installGetElementsByClassName(FakeElement.prototype);
 
 type ClassNameQueryResult = FakeElement[] & {
