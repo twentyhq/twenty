@@ -1,11 +1,12 @@
 import { useCallback } from 'react';
 
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type FlatView } from '@/metadata-store/types/FlatView';
 import { type FlatViewGroup } from '@/metadata-store/types/FlatViewGroup';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { usePerformViewEntityApiPersistOperation } from '@/views/hooks/internal/usePerformViewEntityApiPersistOperation';
 import { useViewsSideEffectsOnViewGroups } from '@/views/hooks/useViewsSideEffectsOnViewGroups';
-import { viewPendingDeletionRequestCountByIdState } from '@/views/states/viewPendingDeletionRequestCountByIdState';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { CrudOperationType } from 'twenty-shared/types';
@@ -23,6 +24,7 @@ export const usePerformViewApiPersist = () => {
   const [createViewMutation] = useMutation(CreateViewDocument);
   const [destroyViewMutation] = useMutation(DestroyViewDocument);
   const store = useStore();
+  const { removeFromDraft, applyChanges } = useUpdateMetadataStoreDraft();
   const { triggerViewGroupOptimisticEffectAtViewCreation } =
     useViewsSideEffectsOnViewGroups();
 
@@ -103,43 +105,33 @@ export const usePerformViewApiPersist = () => {
     ): Promise<
       MetadataRequestResult<Awaited<ReturnType<typeof destroyViewMutation>>>
     > => {
-      const pendingDeletionRequestCountAtom =
-        viewPendingDeletionRequestCountByIdState.atom;
+      const viewsStoreAtom = metadataStoreState.atomFamily('views');
+      const previousViewsEntry = store.get(viewsStoreAtom);
 
-      store.set(pendingDeletionRequestCountAtom, (pendingRequestCounts) => ({
-        ...pendingRequestCounts,
-        [variables.id]: (pendingRequestCounts[variables.id] ?? 0) + 1,
-      }));
+      removeFromDraft({ key: 'views', itemIds: [variables.id] });
+      applyChanges();
 
-      try {
-        return await performViewEntityApiPersistOperation({
-          persist: () =>
-            destroyViewMutation({
-              variables,
-            }),
-          applyResultToDraft: (_result, { removeFromDraft }) =>
-            removeFromDraft({ key: 'views', itemIds: [variables.id] }),
-          operationType: CrudOperationType.DELETE,
-        });
-      } finally {
-        store.set(pendingDeletionRequestCountAtom, (pendingRequestCounts) => {
-          const {
-            [variables.id]: pendingRequestCount,
-            ...remainingPendingRequestCounts
-          } = pendingRequestCounts;
-
-          if (pendingRequestCount > 1) {
-            return {
-              ...remainingPendingRequestCounts,
-              [variables.id]: pendingRequestCount - 1,
-            };
+      return performViewEntityApiPersistOperation({
+        persist: async () => {
+          try {
+            return await destroyViewMutation({ variables });
+          } catch (error) {
+            store.set(viewsStoreAtom, previousViewsEntry);
+            throw error;
           }
-
-          return remainingPendingRequestCounts;
-        });
-      }
+        },
+        applyResultToDraft: (_result, { removeFromDraft }) =>
+          removeFromDraft({ key: 'views', itemIds: [variables.id] }),
+        operationType: CrudOperationType.DELETE,
+      });
     },
-    [destroyViewMutation, performViewEntityApiPersistOperation, store],
+    [
+      destroyViewMutation,
+      performViewEntityApiPersistOperation,
+      store,
+      removeFromDraft,
+      applyChanges,
+    ],
   );
 
   return {
