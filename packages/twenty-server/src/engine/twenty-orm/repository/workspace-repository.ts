@@ -963,6 +963,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       this.formatResult<ObjectRecord[]>(formattedRecords),
     );
 
+    await this.validateInheritedParentsAreWritableOrThrow(formattedRecords);
+
     const sql = buildInsertStatement({
       tableShape: this.options.tableShape,
       columnNames,
@@ -1060,6 +1062,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       filesFieldFileIds = enriched.fileIds;
       dataByInputIndex = enriched.entities as Partial<ObjectRecord>[];
     }
+
+    await this.validateInheritedParentsAreWritableOrThrow(
+      dataByInputIndex.map((data) => this.formatWriteData(data)),
+    );
 
     for (const [index, input] of writableInputs.entries()) {
       const { id: _id, ...setColumns } = this.formatWriteData(
@@ -1250,6 +1256,71 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       .withDeleted();
   }
 
+  // Re-parenting a child, or creating one under a parent, is a write on that
+  // parent: the destination must grant the caller at least READ_WRITE
+  private async validateInheritedParentsAreWritableOrThrow(
+    records: Record<string, unknown>[],
+  ): Promise<void> {
+    if (
+      this.options.shouldBypassPermissionChecks ||
+      !this.isRecordSharingEnabled() ||
+      this.options.flatObjectMetadata.readability !==
+        MetadataReadability.INHERITED ||
+      isOwningApplicationAuthContext({
+        authContext: this.options.authContext,
+        owningApplicationId: this.options.flatObjectMetadata.applicationId,
+      })
+    ) {
+      return;
+    }
+
+    for (const parent of this.resolveInheritedReadabilityParents(
+      this.options.flatObjectMetadata,
+    )) {
+      const parentIds = [
+        ...new Set(
+          records
+            .map((record) => record[parent.joinColumnName])
+            .filter(isNonEmptyString),
+        ),
+      ];
+
+      if (parentIds.length === 0) {
+        continue;
+      }
+
+      const parentRepository = this.options.getRepositoryForObjectMetadataId(
+        parent.parentFlatObjectMetadata.id,
+      );
+      const queryBuilder = parentRepository
+        .createQueryBuilder()
+        .where({ id: In(parentIds) })
+        .withDeleted();
+
+      parentRepository.applyWriteRowLevelPermissions(queryBuilder, 'update');
+      queryBuilder.select(['id']);
+
+      const writableParentRows = await queryBuilder.getMany<ObjectRecord>({
+        noFormatting: true,
+      });
+
+      if (writableParentRows.length !== parentIds.length) {
+        throw new PermissionsException(
+          `${PermissionsExceptionMessage.PERMISSION_DENIED}: the "${parent.parentFlatObjectMetadata.nameSingular}" record a "${this.options.flatObjectMetadata.nameSingular}" is attached to is not writable`,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+        );
+      }
+    }
+  }
+
+  private isRecordSharingEnabled(): boolean {
+    return (
+      this.options.internalContext.featureFlagsMap[
+        FeatureFlagKey.IS_RECORD_SHARING_ENABLED
+      ] === true
+    );
+  }
+
   private async resolveWritableRecordIds({
     ids,
     operationType,
@@ -1362,6 +1433,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         ),
         'Updated record does not satisfy row-level security constraints of your current role',
       );
+
+      await this.validateInheritedParentsAreWritableOrThrow([setColumns]);
     }
 
     const mutationResult = await this.morphAndExecute({
@@ -1675,10 +1748,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     flatObjectMetadata: FlatObjectMetadata;
     operationType: OperationType;
   }): void {
-    const isRecordSharingEnabled =
-      this.options.internalContext.featureFlagsMap[
-        FeatureFlagKey.IS_RECORD_SHARING_ENABLED
-      ] === true;
+    const isRecordSharingEnabled = this.isRecordSharingEnabled();
     const isOwningApplication = isOwningApplicationAuthContext({
       authContext: this.options.authContext,
       owningApplicationId: flatObjectMetadata.applicationId,
