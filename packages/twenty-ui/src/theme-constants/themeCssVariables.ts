@@ -1,5 +1,5 @@
-// Theme CSS variable accessor, mirrored token-for-token from twenty-ui.
-// Kept in sync by the theme parity test (src/theme-constants/__tests__).
+// Generated from design-tokens by scripts/generateThemeTokens.ts.
+// Do not edit manually. Regenerate with: npx nx generateTokens twenty-ui.
 export const themeCssVariables = {
   icon: {
     size: {
@@ -13,11 +13,6 @@ export const themeCssVariables = {
       md: 'var(--t-icon-stroke-md)',
       lg: 'var(--t-icon-stroke-lg)',
     },
-  },
-  tooltip: {
-    background: 'var(--t-tooltip-background)',
-    color: 'var(--t-tooltip-color)',
-    descriptionColor: 'var(--t-tooltip-description-color)',
   },
   modal: {
     size: {
@@ -50,6 +45,11 @@ export const themeCssVariables = {
     iconStrikeLight: 'var(--t-text-icon-strike-light)',
     iconStrikeMedium: 'var(--t-text-icon-strike-medium)',
     iconStrikeBold: 'var(--t-text-icon-strike-bold)',
+  },
+  tooltip: {
+    background: 'var(--t-tooltip-background)',
+    color: 'var(--t-tooltip-color)',
+    descriptionColor: 'var(--t-tooltip-description-color)',
   },
   animation: {
     duration: {
@@ -324,12 +324,12 @@ export const themeCssVariables = {
   },
   IllustrationIcon: {
     color: {
-      blue: 'var(--t--illustration-icon-color-blue)',
-      gray: 'var(--t--illustration-icon-color-gray)',
+      blue: 'var(--t-illustration-icon-color-blue)',
+      gray: 'var(--t-illustration-icon-color-gray)',
     },
     fill: {
-      blue: 'var(--t--illustration-icon-fill-blue)',
-      gray: 'var(--t--illustration-icon-fill-gray)',
+      blue: 'var(--t-illustration-icon-fill-blue)',
+      gray: 'var(--t-illustration-icon-fill-gray)',
     },
   },
   grayScale: {

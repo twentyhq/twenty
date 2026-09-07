@@ -6,6 +6,20 @@
   "tags": ["scope:shared"],
   "targets": {
     "build": { "dependsOn": ["^build"], "outputs": ["{projectRoot}/dist"] },
+    "generateTokens": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "tsx {projectRoot}/scripts/generateThemeTokens.ts"
+      }
+    },
+    "generate:check": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "tsx {projectRoot}/scripts/generateThemeTokens.ts --check"
+      }
+    },
     "generateBarrels": {
       "executor": "nx:run-commands",
       "cache": true,

@@ -6010,6 +6010,11 @@ msgstr "Սյունային գծապատկերի համար պահանջվում 
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr "\"{widgetTitle}\" սյունային գծապատկերի վիջեթի համար պահանջվում է դասավորություն (layout)"
 
+#. js-lingui-id: cI7XDa
+#: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
+msgid "Limits scoped below the workspace require the Organization plan."
+msgstr "Աշխատանքային տարածքից ցածր սահմանված սահմանափակումների համար պահանջվում է Organization փաթեթը."
+
 #. js-lingui-id: sAG9OB
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
@@ -10814,6 +10819,11 @@ msgstr "Այս ենթադոմեյնը արդեն զբաղված է։"
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This suppressed address no longer exists."
 msgstr "Այս արգելված հասցեն այլևս գոյություն չունի։"
+
+#. js-lingui-id: qm7uMm
+#: src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util.ts
+msgid "This SVG is too large to be processed."
+msgstr "Այս SVG-ը չափազանց մեծ է մշակման համար։"
 
 #. js-lingui-id: 0GMgIa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts

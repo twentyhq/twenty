@@ -1,10 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { STATIC_COLORS } from '@ui/theme/constants/StaticColors';
 import { THEME_DARK } from '@ui/theme/constants/ThemeDark';
 import { THEME_LIGHT } from '@ui/theme/constants/ThemeLight';
-import { TOOLTIP } from '@ui/theme/constants/Tooltip';
 
 import { themeCssVariables } from '../themeCssVariables';
 
@@ -28,7 +26,6 @@ const EXPECTED_COLORS = Object.fromEntries(
 
 describe('static colors', () => {
   it('has exactly twelve canonical steps per palette in both themes', () => {
-    expect(STATIC_COLORS).toEqual(EXPECTED_COLORS);
     expect(THEME_LIGHT.color.static).toEqual(EXPECTED_COLORS);
     expect(THEME_DARK.color.static).toEqual(EXPECTED_COLORS);
     expect(Object.keys(themeCssVariables.color.static)).toEqual(
@@ -37,13 +34,12 @@ describe('static colors', () => {
   });
 
   it('uses the fixed palette for tooltip colors in both themes', () => {
-    expect(TOOLTIP).toEqual({
-      background: STATIC_COLORS.black12,
-      color: STATIC_COLORS.white12,
-      descriptionColor: STATIC_COLORS.white11,
+    expect(THEME_LIGHT.tooltip).toEqual({
+      background: EXPECTED_COLORS.black12,
+      color: EXPECTED_COLORS.white12,
+      descriptionColor: EXPECTED_COLORS.white11,
     });
-    expect(THEME_LIGHT.tooltip).toEqual(TOOLTIP);
-    expect(THEME_DARK.tooltip).toEqual(TOOLTIP);
+    expect(THEME_DARK.tooltip).toEqual(THEME_LIGHT.tooltip);
   });
 });
 
@@ -64,13 +60,13 @@ describe.each(['light', 'dark'])('%s theme CSS', (mode) => {
     },
   );
 
-  it('aliases tooltip semantic tokens to the fixed palette', () => {
+  it('resolves tooltip semantic tokens from the fixed palette', () => {
     expect(css).toContain(
-      '--t-tooltip-background: var(--t-color-static-black12);',
+      `--t-tooltip-background: ${EXPECTED_COLORS.black12};`,
     );
-    expect(css).toContain('--t-tooltip-color: var(--t-color-static-white12);');
+    expect(css).toContain(`--t-tooltip-color: ${EXPECTED_COLORS.white12};`);
     expect(css).toContain(
-      '--t-tooltip-description-color: var(--t-color-static-white11);',
+      `--t-tooltip-description-color: ${EXPECTED_COLORS.white11};`,
     );
     expect(themeCssVariables.tooltip).toEqual({
       background: 'var(--t-tooltip-background)',

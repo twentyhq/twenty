@@ -159,7 +159,7 @@ export const RecordInlineCellContainer = () => {
                   <AppTooltip
                     anchorSelect={`[data-tooltip-id='${tooltipAnchorId}']`}
                     title={label}
-                    description={fieldDescription}
+                    description={fieldDescription ?? undefined}
                     delay={TooltipDelay.longDelay}
                     noArrow
                     place="bottom"

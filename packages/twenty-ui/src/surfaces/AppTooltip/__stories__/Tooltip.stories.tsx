@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { IconInfoCircle } from '@ui/icon';
 import {
@@ -14,6 +14,26 @@ import {
   TooltipDelay,
   TooltipPosition,
 } from '../AppTooltip';
+
+const CUSTOM_CONTENT = (
+  <span>
+    <strong>Custom</strong> formatted content
+  </span>
+);
+
+const findTooltip = async (canvasElement: HTMLElement) => {
+  const tooltip = await within(canvasElement.ownerDocument.body).findByRole(
+    'tooltip',
+    undefined,
+    { timeout: 5000 },
+  );
+
+  await waitFor(() => expect(tooltip).toBeVisible(), { timeout: 5000 });
+
+  return tooltip;
+};
+
+const onCustomActionClick = fn();
 
 const meta: Meta<typeof Tooltip> = {
   title: 'UI/Surfaces/Tooltip',
@@ -42,6 +62,30 @@ const meta: Meta<typeof Tooltip> = {
       <Tooltip {...args} />
     </>
   ),
+  play: async ({ canvasElement, args }) => {
+    await userEvent.hover(within(canvasElement).getByRole('button'));
+
+    const tooltip = await findTooltip(canvasElement);
+
+    expect(tooltip.parentElement).toHaveStyle({
+      maxWidth: args.maxWidth ?? '300px',
+    });
+    if (args.title) {
+      expect(within(tooltip).getByText(args.title)).toBeVisible();
+    }
+    if (args.description) {
+      expect(within(tooltip).getByText(args.description)).toBeVisible();
+    }
+    if (args.Icon) {
+      expect(tooltip.querySelector('svg')).toHaveAttribute(
+        'aria-hidden',
+        'true',
+      );
+    }
+    expect(
+      tooltip.querySelector(':scope > [aria-hidden="true"]') !== null,
+    ).toBe(args.noArrow === false);
+  },
 };
 
 export default meta;
@@ -65,13 +109,11 @@ export const WithDescription: Story = {
   play: async ({ canvasElement }) => {
     await userEvent.hover(within(canvasElement).getByRole('button'));
 
-    const tooltip = await within(canvasElement.ownerDocument.body).findByRole(
-      'tooltip',
-      undefined,
-      { timeout: 5000 },
-    );
+    expect(
+      within(canvasElement.ownerDocument.body).queryByRole('tooltip'),
+    ).not.toBeInTheDocument();
 
-    await waitFor(() => expect(tooltip).toBeVisible(), { timeout: 5000 });
+    const tooltip = await findTooltip(canvasElement);
     expect(within(tooltip).getByText('Amount')).toBeVisible();
     expect(
       within(tooltip).getByText('The amount of this opportunity'),
@@ -93,19 +135,26 @@ export const DescriptionOnly: Story = {
 };
 
 export const KeyboardFocus: Story = {
-  args: WithDescription.args,
+  args: {
+    description: 'The amount of this opportunity',
+    delay: TooltipDelay.longDelay,
+  },
   decorators: [ComponentDecorator],
   play: async ({ canvasElement }) => {
     await userEvent.tab();
 
     expect(within(canvasElement).getByRole('button')).toHaveFocus();
-    const tooltip = await within(canvasElement.ownerDocument.body).findByRole(
-      'tooltip',
-      undefined,
-      { timeout: 5000 },
-    );
+    const tooltip = await findTooltip(canvasElement);
 
-    await waitFor(() => expect(tooltip).toBeVisible(), { timeout: 5000 });
+    expect(tooltip).toHaveTextContent('The amount of this opportunity');
+
+    await userEvent.tab();
+
+    await waitFor(() =>
+      expect(
+        within(canvasElement.ownerDocument.body).queryByRole('tooltip'),
+      ).not.toBeInTheDocument(),
+    );
   },
 };
 
@@ -127,17 +176,95 @@ export const CustomContent: Story = {
   args: {
     title: undefined,
     description: undefined,
+    children: CUSTOM_CONTENT,
+  },
+  decorators: [ComponentDecorator],
+  play: async ({ canvasElement }) => {
+    await userEvent.hover(within(canvasElement).getByRole('button'));
+
+    expect(await findTooltip(canvasElement)).toHaveTextContent(
+      'Custom formatted content',
+    );
+  },
+};
+
+export const InteractiveCustomContent: Story = {
+  args: {
+    title: undefined,
+    description: undefined,
+    interactive: true,
     children: (
-      <span>
-        <strong>Custom</strong> formatted content
-      </span>
+      <button type="button" onClick={onCustomActionClick}>
+        Show more
+      </button>
     ),
   },
   decorators: [ComponentDecorator],
+  play: async ({ canvasElement }) => {
+    await userEvent.hover(within(canvasElement).getByRole('button'));
+
+    const tooltip = await findTooltip(canvasElement);
+
+    await userEvent.hover(tooltip);
+    await userEvent.click(
+      within(tooltip).getByRole('button', { name: 'Show more' }),
+    );
+    expect(onCustomActionClick).toHaveBeenCalledTimes(1);
+    expect(tooltip).toBeVisible();
+
+    await userEvent.unhover(tooltip);
+
+    await waitFor(() =>
+      expect(
+        within(canvasElement.ownerDocument.body).queryByRole('tooltip'),
+      ).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const LongTitle: Story = {
+  args: {
+    title: 'LongUnbrokenFieldName'.repeat(10),
+    Icon: IconInfoCircle,
+  },
+  decorators: [ComponentDecorator],
+  play: async ({ canvasElement }) => {
+    await userEvent.hover(within(canvasElement).getByRole('button'));
+
+    const tooltip = await findTooltip(canvasElement);
+
+    expect(tooltip.scrollWidth).toBeLessThanOrEqual(tooltip.clientWidth);
+    expect(tooltip.getBoundingClientRect().width).toBeLessThanOrEqual(300);
+  },
+};
+
+export const Hidden: Story = {
+  args: { hidden: true, isOpen: true },
+  decorators: [ComponentDecorator],
+  play: async ({ canvasElement }) => {
+    await userEvent.hover(within(canvasElement).getByRole('button'));
+
+    expect(
+      within(canvasElement.ownerDocument.body).queryByRole('tooltip'),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const Empty: Story = {
+  args: { title: '', description: '', Icon: IconInfoCircle, isOpen: true },
+  decorators: [ComponentDecorator],
+  play: async ({ canvasElement }) => {
+    await userEvent.hover(within(canvasElement).getByRole('button'));
+
+    expect(
+      within(canvasElement.ownerDocument.body).queryByRole('tooltip'),
+    ).not.toBeInTheDocument();
+  },
 };
 
 export const Catalog: CatalogStory<Story, typeof Tooltip> = {
   args: { isOpen: true },
+  play: undefined,
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
     catalog: {
@@ -158,7 +285,7 @@ export const Catalog: CatalogStory<Story, typeof Tooltip> = {
                   title: undefined,
                   description: undefined,
                   Icon: undefined,
-                  children: CustomContent.args?.children,
+                  children: CUSTOM_CONTENT,
                 }
               : {
                   anchorSelect: `#tooltip-${example}`,

@@ -42,6 +42,11 @@
   font-weight: var(--t-font-weight-medium);
   gap: var(--t-spacing-1);
   min-width: 0;
+
+  span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
 }
 
 .icon {
