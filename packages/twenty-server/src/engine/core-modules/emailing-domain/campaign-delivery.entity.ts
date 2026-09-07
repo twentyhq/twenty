@@ -32,6 +32,9 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
   where: `"state" = 'SENDING'`,
 })
 @Index('IDX_CAMPAIGN_DELIVERY_COUNTS', ['workspaceId', 'campaignId', 'state'])
+@Index('IDX_CAMPAIGN_DELIVERY_CLAIM_TOKEN', ['workspaceId', 'claimToken'], {
+  where: '"claimToken" IS NOT NULL',
+})
 @Index(
   'IDX_CAMPAIGN_DELIVERY_PROVIDER_MESSAGE_ID',
   ['workspaceId', 'providerMessageId'],
