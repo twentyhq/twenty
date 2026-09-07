@@ -305,9 +305,7 @@ describe('UsageLimitQuotaService', () => {
   });
 
   it('skips warming an allowance whose period rolled over since the read', async () => {
-    creditAllowanceProvider.getCreditAllowancePeriod.mockResolvedValue(
-      ALLOWANCE_PERIOD,
-    );
+    periodByUnit.allowancePeriod = ALLOWANCE_PERIOD;
     creditAllowanceProvider.getCreditAllowance.mockResolvedValue({
       allowanceMicro: 100,
       periodStart: new Date('2026-09-15T09:00:00.000Z'),
