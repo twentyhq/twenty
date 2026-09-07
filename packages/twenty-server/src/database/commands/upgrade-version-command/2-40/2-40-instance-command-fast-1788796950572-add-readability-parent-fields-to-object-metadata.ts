@@ -3,7 +3,7 @@ import { type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.39.0', 1788560886501)
+@RegisteredInstanceCommand('2.40.0', 1788796950572)
 export class AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand
   implements FastInstanceCommand
 {

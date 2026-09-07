@@ -4,6 +4,7 @@ import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/w
 import { SyncRecordShareObjectCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788794677636-sync-record-share-object.command';
 import { MakeCallRecordingPrivateCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788796528218-make-call-recording-private.command';
 import { BackfillCallRecordingSharesCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788796528219-backfill-call-recording-shares.command';
+import { MakeStandardChildObjectsInheritedCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788796950573-make-standard-child-objects-inherited.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { RecordShareModule } from 'src/engine/record-share/record-share.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -25,6 +26,7 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     SyncRecordShareObjectCommand,
     MakeCallRecordingPrivateCommand,
     BackfillCallRecordingSharesCommand,
+    MakeStandardChildObjectsInheritedCommand,
   ],
 })
 export class V2_40_UpgradeVersionCommandModule {}

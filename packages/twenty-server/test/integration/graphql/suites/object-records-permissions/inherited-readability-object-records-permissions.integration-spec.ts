@@ -233,7 +233,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
       expect(attachmentsResponse.body.errors).toBeUndefined();
       expect(
         collectIds(attachmentsResponse.body.data.attachments.edges),
-      ).toEqual([ORPHAN_ATTACHMENT_ID, PERSON_ATTACHMENT_ID].sort());
+      ).toEqual([PERSON_ATTACHMENT_ID]);
       expect(noteTargetsResponse.body.errors).toBeUndefined();
       expect(noteTargetsResponse.body.data.noteTargets.edges).toHaveLength(0);
     });
@@ -245,7 +245,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
 
       expect(response.body.errors).toBeUndefined();
       expect(collectIds(response.body.data.attachments.edges)).toEqual(
-        [ORPHAN_ATTACHMENT_ID, PERSON_ATTACHMENT_ID].sort(),
+        [PERSON_ATTACHMENT_ID],
       );
     });
 
