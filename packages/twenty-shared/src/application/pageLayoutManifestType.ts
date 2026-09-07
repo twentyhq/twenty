@@ -14,7 +14,6 @@ export type PageLayoutWidgetManifest = SyncableEntityOptions & {
   type: `${WidgetType}`;
   objectUniversalIdentifier?: string;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay;
-  // Legacy vertical-list positions stay accepted during manifest compatibility.
   position?: PageLayoutWidgetPosition;
   heightBehavior?: `${PageLayoutWidgetVerticalListHeightBehavior}`;
   configuration: PageLayoutWidgetUniversalConfiguration;
@@ -29,7 +28,6 @@ export type PageLayoutTabManifest = SyncableEntityOptions & {
   title: string;
   position: number;
   icon?: string;
-  // Legacy CANVAS tabs stay accepted until existing apps have migrated.
   layoutMode?: PageLayoutTabLayoutMode;
   widgets?: PageLayoutWidgetManifest[];
   pageLayoutUniversalIdentifier?: string;

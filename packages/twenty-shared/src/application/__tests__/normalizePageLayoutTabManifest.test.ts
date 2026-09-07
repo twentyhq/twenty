@@ -54,7 +54,7 @@ describe('normalizePageLayoutTabManifest', () => {
     },
   );
 
-  it('derives layout and widget order without changing its input', () => {
+  it('derives omitted positions and preserves explicit indices without changing its input', () => {
     const input: PageLayoutTabManifest = {
       ...tab,
       widgets: [
@@ -96,7 +96,7 @@ describe('normalizePageLayoutTabManifest', () => {
             universalIdentifier: 'second-widget',
             position: {
               layoutMode: 'VERTICAL_LIST',
-              index: 1,
+              index: 99,
               heightBehavior: 'TAB_VIEWPORT',
             },
           },
@@ -106,7 +106,7 @@ describe('normalizePageLayoutTabManifest', () => {
     expect(JSON.stringify(input)).toBe(original);
   });
 
-  it('preserves a legacy nested height behavior and replaces its index', () => {
+  it('preserves a legacy nested height behavior and index', () => {
     const result = normalizePageLayoutTabManifest({
       pageLayoutTabManifest: {
         ...tab,
@@ -132,12 +132,47 @@ describe('normalizePageLayoutTabManifest', () => {
           {
             position: {
               layoutMode: 'VERTICAL_LIST',
-              index: 0,
+              index: 99,
               heightBehavior: 'TAB_VIEWPORT',
             },
           },
         ],
       },
+    });
+  });
+
+  it('uses explicit indices rather than array order for legacy viewport placement', () => {
+    const pageLayoutTabManifest: PageLayoutTabManifest = {
+      ...tab,
+      widgets: [
+        {
+          ...widget,
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            index: 99,
+            heightBehavior:
+              PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+          },
+        },
+        {
+          ...widget,
+          universalIdentifier: 'second-widget',
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            index: 2,
+          },
+        },
+      ],
+    };
+
+    expect(
+      normalizePageLayoutTabManifest({
+        pageLayoutTabManifest,
+        pageLayoutType: undefined,
+      }),
+    ).toEqual({
+      status: 'success',
+      pageLayoutTab: pageLayoutTabManifest,
     });
   });
 
@@ -165,7 +200,7 @@ describe('normalizePageLayoutTabManifest', () => {
       viewport: {
         position: {
           layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-          index: 99,
+          index: 0,
           heightBehavior:
             PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
         },
@@ -260,7 +295,7 @@ describe('normalizePageLayoutTabManifest', () => {
     },
   );
 
-  it('converts legacy grid positions when authoring a vertical list', () => {
+  it('rejects a conflicting grid position instead of changing its layout', () => {
     expect(
       normalizePageLayoutTabManifest({
         pageLayoutTabManifest: {
@@ -281,10 +316,10 @@ describe('normalizePageLayoutTabManifest', () => {
         pageLayoutType: undefined,
       }),
     ).toMatchObject({
-      status: 'success',
-      pageLayoutTab: {
-        widgets: [{ position: { layoutMode: 'VERTICAL_LIST', index: 0 } }],
-      },
+      status: 'fail',
+      errors: [
+        'Page layout widget "App" uses a GRID position, but its parent tab "Details" uses VERTICAL_LIST.',
+      ],
     });
   });
 
@@ -411,7 +446,7 @@ describe('normalizePageLayoutTabManifest', () => {
   it.each<PageLayoutWidgetManifest['position']>([
     undefined,
     { layoutMode: PageLayoutTabLayoutMode.CANVAS },
-  ])('converts single-widget Canvas with position %s', (position) => {
+  ])('preserves single-widget Canvas with position %s', (position) => {
     const result = normalizePageLayoutTabManifest({
       pageLayoutTabManifest: {
         ...tab,
@@ -423,13 +458,11 @@ describe('normalizePageLayoutTabManifest', () => {
     expect(result).toMatchObject({
       status: 'success',
       pageLayoutTab: {
-        layoutMode: 'VERTICAL_LIST',
+        layoutMode: 'CANVAS',
         widgets: [
           {
             position: {
-              layoutMode: 'VERTICAL_LIST',
-              index: 0,
-              heightBehavior: 'TAB_VIEWPORT',
+              layoutMode: 'CANVAS',
             },
           },
         ],

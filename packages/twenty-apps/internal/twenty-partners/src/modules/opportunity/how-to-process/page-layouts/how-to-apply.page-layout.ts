@@ -17,13 +17,12 @@ export default definePageLayout({
       title: 'How to apply',
       position: 0,
       icon: 'IconListCheck',
-      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
       widgets: [
         {
           universalIdentifier: HOW_TO_APPLY_PAGE_WIDGET_ID,
           title: 'How to apply',
           type: 'FRONT_COMPONENT',
-          heightBehavior: 'TAB_VIEWPORT',
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier: HOW_TO_APPLY_FRONT_COMPONENT_ID,

@@ -86,19 +86,9 @@ export const normalizePageLayoutTabManifest = ({
     return { status: 'fail', errors };
   }
 
-  const isLegacyCanvasTab =
-    layoutMode === PageLayoutTabLayoutMode.CANVAS &&
-    widgets.length === 1 &&
-    (!isDefined(widgets[0].position) ||
-      widgets[0].position.layoutMode === PageLayoutTabLayoutMode.CANVAS);
-
-  const normalizedLayoutMode = isLegacyCanvasTab
-    ? PageLayoutTabLayoutMode.VERTICAL_LIST
-    : layoutMode;
-
   const pageLayoutTab: NormalizedPageLayoutTabManifest = {
     ...pageLayoutTabManifest,
-    layoutMode: normalizedLayoutMode,
+    layoutMode,
     widgets: widgets.map(
       (
         {
@@ -109,33 +99,21 @@ export const normalizePageLayoutTabManifest = ({
         }: PageLayoutWidgetManifest & { gridPosition?: GridPosition },
         index,
       ): NormalizedPageLayoutWidgetManifest => {
-        if (normalizedLayoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST) {
-          const resolvedHeightBehavior = isLegacyCanvasTab
-            ? PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT
-            : (heightBehavior ??
-              (position?.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST
-                ? position.heightBehavior
-                : undefined));
-
+        if (isDefined(position)) {
           return {
             ...widget,
-            position: {
-              layoutMode: normalizedLayoutMode,
-              index,
-              ...(isDefined(resolvedHeightBehavior)
+            position:
+              position.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST &&
+              isDefined(heightBehavior)
                 ? {
+                    ...position,
                     heightBehavior:
                       PageLayoutWidgetVerticalListHeightBehavior[
-                        resolvedHeightBehavior
+                        heightBehavior
                       ],
                   }
-                : {}),
-            },
+                : position,
           };
-        }
-
-        if (isDefined(position)) {
-          return { ...widget, position };
         }
 
         if (isDefined(gridPosition)) {
@@ -148,39 +126,55 @@ export const normalizePageLayoutTabManifest = ({
           };
         }
 
-        switch (normalizedLayoutMode) {
+        switch (layoutMode) {
           case PageLayoutTabLayoutMode.GRID:
             return {
               ...widget,
               position: {
-                layoutMode: normalizedLayoutMode,
+                layoutMode,
                 row: 0,
                 column: 0,
                 rowSpan: DEFAULT_WIDGET_SIZE.default.h,
                 columnSpan: DEFAULT_WIDGET_SIZE.default.w,
               },
             };
+          case PageLayoutTabLayoutMode.VERTICAL_LIST:
+            return {
+              ...widget,
+              position: {
+                layoutMode,
+                index,
+                ...(isDefined(heightBehavior)
+                  ? {
+                      heightBehavior:
+                        PageLayoutWidgetVerticalListHeightBehavior[
+                          heightBehavior
+                        ],
+                    }
+                  : {}),
+              },
+            };
           case PageLayoutTabLayoutMode.CANVAS:
             return {
               ...widget,
-              position: { layoutMode: normalizedLayoutMode },
+              position: { layoutMode },
             };
           default:
-            return assertUnreachable(normalizedLayoutMode);
+            return assertUnreachable(layoutMode);
         }
       },
     ),
   };
 
   for (const widget of pageLayoutTab.widgets) {
-    if (widget.position.layoutMode !== normalizedLayoutMode) {
+    if (widget.position.layoutMode !== layoutMode) {
       errors.push(
-        `Page layout widget "${widget.title}" uses a ${widget.position.layoutMode} position, but its parent tab "${pageLayoutTab.title}" uses ${normalizedLayoutMode}.`,
+        `Page layout widget "${widget.title}" uses a ${widget.position.layoutMode} position, but its parent tab "${pageLayoutTab.title}" uses ${layoutMode}.`,
       );
     }
   }
 
-  if (normalizedLayoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST) {
+  if (layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST) {
     const viewportWidgets = pageLayoutTab.widgets.filter(
       ({ type, position }) =>
         position.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST &&
@@ -198,8 +192,13 @@ export const normalizePageLayoutTabManifest = ({
 
     if (
       viewportWidgets.length === 1 &&
-      viewportWidgets[0] !==
-        pageLayoutTab.widgets[pageLayoutTab.widgets.length - 1]
+      pageLayoutTab.widgets.some(
+        ({ position }) =>
+          position.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST &&
+          viewportWidgets[0].position.layoutMode ===
+            PageLayoutTabLayoutMode.VERTICAL_LIST &&
+          position.index > viewportWidgets[0].position.index,
+      )
     ) {
       errors.push(
         `Page layout tab "${pageLayoutTab.title}" must place its TAB_VIEWPORT widget last.`,

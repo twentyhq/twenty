@@ -21,6 +21,7 @@ import {
   MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION,
   isRelationFieldManifest,
 } from '@/cli/utilities/build/manifest/utils/manifest-validation-helpers';
+import { getPageLayoutDeprecationWarnings } from '@/cli/utilities/build/manifest/utils/get-page-layout-deprecation-warnings';
 import { validateTimelineActivityTypes } from '@/cli/utilities/build/manifest/utils/validate-timeline-activity-types';
 
 const VALID_RELATION_TYPES: string[] = [
@@ -243,7 +244,7 @@ const invalidUniversalIdentifierVersions = (
 
 export const manifestValidate = (manifest: Manifest) => {
   const errors: string[] = [];
-  const warnings: string[] = [];
+  const warnings = getPageLayoutDeprecationWarnings(manifest);
 
   const universalIdentifiers = findUniversalIdentifiers(manifest);
 

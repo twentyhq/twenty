@@ -76,21 +76,19 @@ describe('application manifest page layouts', () => {
     });
 
   it.each(['nested', 'standalone'])(
-    'normalizes a legacy %s tab and its widget together',
+    'preserves a legacy %s tab and its widget together',
     (location) => {
       const result = compute(tab, location);
 
       expect(
         result.flatPageLayoutTabMaps.byUniversalIdentifier.tab,
-      ).toMatchObject({ layoutMode: 'VERTICAL_LIST' });
+      ).toMatchObject({ layoutMode: 'CANVAS' });
       expect(
         result.flatPageLayoutWidgetMaps.byUniversalIdentifier.widget,
       ).toMatchObject({
         pageLayoutTabUniversalIdentifier: 'tab',
         position: {
-          layoutMode: 'VERTICAL_LIST',
-          index: 0,
-          heightBehavior: 'TAB_VIEWPORT',
+          layoutMode: 'CANVAS',
         },
       });
     },

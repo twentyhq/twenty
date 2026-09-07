@@ -17,13 +17,13 @@ export default definePageLayout({
       title: 'My Case Studies',
       position: 0,
       icon: 'IconBriefcase',
-      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
       widgets: [
         {
           universalIdentifier: MY_CASE_STUDIES_PAGE_WIDGET_ID,
           title: 'My Case Studies',
           type: 'FRONT_COMPONENT',
-          heightBehavior: 'TAB_VIEWPORT',
+          position: { layoutMode: PageLayoutTabLayoutMode.CANVAS },
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:

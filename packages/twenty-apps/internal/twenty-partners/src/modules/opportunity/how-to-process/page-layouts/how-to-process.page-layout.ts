@@ -17,13 +17,12 @@ export default definePageLayout({
       title: 'How to process',
       position: 0,
       icon: 'IconListCheck',
-      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
       widgets: [
         {
           universalIdentifier: HOW_TO_PROCESS_PAGE_WIDGET_ID,
           title: 'How to process',
           type: 'FRONT_COMPONENT',
-          heightBehavior: 'TAB_VIEWPORT',
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:

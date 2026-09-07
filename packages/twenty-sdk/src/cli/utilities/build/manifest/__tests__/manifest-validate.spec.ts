@@ -659,6 +659,90 @@ describe('manifestValidate', () => {
     });
   });
 
+  describe('page layout deprecation warnings', () => {
+    it.each(['nested', 'standalone'])(
+      'warns without changing a legacy %s manifest',
+      (location) => {
+        const legacyTab: PageLayoutTabManifest = {
+          universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000012',
+          title: 'Legacy canvas',
+          position: 0,
+          layoutMode: PageLayoutTabLayoutMode.CANVAS,
+          widgets: [],
+        };
+        const manifest: Manifest = {
+          ...validManifest,
+          pageLayouts:
+            location === 'nested'
+              ? [
+                  {
+                    universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000010',
+                    name: 'Record page',
+                    type: 'RECORD_PAGE',
+                    tabs: [legacyTab],
+                  },
+                ]
+              : [],
+          pageLayoutTabs: location === 'standalone' ? [legacyTab] : [],
+        };
+        const original = JSON.stringify(manifest);
+        const result = manifestValidate(manifest);
+
+        expect(result.isValid).toBe(true);
+        expect(result.warnings).toEqual([
+          expect.stringContaining('uses deprecated CANVAS'),
+        ]);
+        expect(result.warnings[0]).toContain(
+          "heightBehavior to 'TAB_VIEWPORT'",
+        );
+        expect(JSON.stringify(manifest)).toBe(original);
+      },
+    );
+
+    it.each(['position', 'gridPosition'])(
+      'warns about legacy %s with a replacement',
+      (positionKey) => {
+        const result = manifestValidate({
+          ...validManifest,
+          pageLayoutTabs: [
+            {
+              universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000012',
+              title: 'Details',
+              position: 0,
+              layoutMode:
+                positionKey === 'position'
+                  ? PageLayoutTabLayoutMode.VERTICAL_LIST
+                  : PageLayoutTabLayoutMode.GRID,
+              widgets: [
+                {
+                  universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000013',
+                  title: 'Timeline',
+                  type: 'TIMELINE',
+                  configuration: { configurationType: 'TIMELINE' },
+                  [positionKey]:
+                    positionKey === 'position'
+                      ? {
+                          layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                          index: 99,
+                        }
+                      : { row: 2, column: 3, rowSpan: 4, columnSpan: 5 },
+                },
+              ],
+            },
+          ],
+        });
+
+        expect(result.isValid).toBe(true);
+        expect(result.warnings).toHaveLength(1);
+        expect(result.warnings[0]).toContain(
+          positionKey === 'position'
+            ? 'Order the widgets array by position.index'
+            : "Use position with layoutMode: 'GRID'",
+        );
+      },
+    );
+  });
+
   describe('page layout widget height behavior validation', () => {
     const makePageLayout = (
       layoutMode: PageLayoutTabLayoutMode,
