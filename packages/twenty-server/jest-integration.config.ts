@@ -40,6 +40,9 @@ const jestConfig: JestConfigWithTsJest = {
   setupFilesAfterEnv: ['<rootDir>/test/integration/utils/setup-wait-for-all-jobs-between-tests.ts'],
   testTimeout: 20000,
   maxWorkers: 1,
+  // Suites share one worker and never release their module registry, so heap
+  // climbs across a shard until a large fixture tips it over the limit.
+  workerIdleMemoryLimit: '4GB',
   // jsdom 29 and msw ship ESM-only transitive deps (parse5, entities,
   // tough-cookie, @exodus/bytes via html-encoding-sniffer, @csstools/@asamuzakjp
   // css engine, @mswjs/interceptors and friends); let swc transform them
