@@ -28,6 +28,7 @@ import { getSyncErrorRecoveryHint } from '@/cli/utilities/error/get-sync-error-r
 import { getGraphQLErrorMessage } from '@/cli/utilities/error/parse-server-error';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
+import { formatUploadFailures } from '@/cli/utilities/file/format-upload-failures';
 import { runSafe } from '@/cli/utilities/run-safe';
 import {
   APP_ERROR_CODES,
@@ -324,6 +325,8 @@ const innerAppDevOnce = async (
   const fileUploader = new FileUploader({
     appPath,
     applicationUniversalIdentifier: manifest.application.universalIdentifier,
+    onEmptyFileSkipped: (builtPath) =>
+      onProgress?.(`Skipped ${builtPath}: the built file is empty`),
   });
 
   const uploadFailures = await fileUploader.uploadFiles(
@@ -338,12 +341,7 @@ const innerAppDevOnce = async (
       success: false,
       error: {
         code: APP_ERROR_CODES.SYNC_FAILED,
-        message: uploadFailures
-          .map(
-            (failure) =>
-              `Failed to upload ${failure.builtPath}: ${failure.error}`,
-          )
-          .join('\n'),
+        message: formatUploadFailures(uploadFailures).join('\n'),
       },
     };
   }
