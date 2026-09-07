@@ -10820,6 +10820,11 @@ msgstr "תת-דומיין זה כבר תפוס."
 msgid "This suppressed address no longer exists."
 msgstr "כתובת זו ברשימת הדיכוי אינה קיימת עוד."
 
+#. js-lingui-id: qm7uMm
+#: src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util.ts
+msgid "This SVG is too large to be processed."
+msgstr "קובץ SVG זה גדול מדי לעיבוד."
+
 #. js-lingui-id: 0GMgIa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"

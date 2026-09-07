@@ -4,6 +4,7 @@ import { In } from 'typeorm';
 
 import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
 import { SEND_CAMPAIGN_EMAIL_JOB } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import { CLAIMABLE_CAMPAIGN_DELIVERY_STATES } from 'src/engine/core-modules/emailing-domain/constants/claimable-campaign-delivery-states.constant';
 import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-backoff.constant';
 import { CAMPAIGN_SEND_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-limit.constant';
 import { CAMPAIGN_DELIVERY_CLAIM_TTL_MS } from 'src/engine/core-modules/emailing-domain/constants/campaign-delivery-claim-ttl-ms.constant';
@@ -34,6 +35,7 @@ import { EmailBillingService } from 'src/modules/emailing/services/email-billing
 import { type EmailCreditContext } from 'src/modules/emailing/types/email-credit-context.type';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
+import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { resolveCampaignSendFailure } from 'src/modules/emailing/utils/resolve-campaign-send-failure.util';
 import { renderCampaignEmail } from 'src/modules/emailing/utils/render-campaign-email.util';
@@ -71,6 +73,7 @@ export class MessageCampaignDeliveryService {
     private readonly emailBillingService: EmailBillingService,
     private readonly campaignVariableService: CampaignVariableService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
+    private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
     private readonly usageLimitSpeedService: UsageLimitSpeedService,
     @InjectMessageQueue(MessageQueue.campaignQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -86,20 +89,15 @@ export class MessageCampaignDeliveryService {
         return;
       }
 
-      const claimableCount = await this.campaignDeliveryRepository.count(
+      const isStillClaimable = await this.campaignDeliveryRepository.existsBy(
         workspaceId,
         {
-          where: {
-            id: data.messageId,
-            state: In([
-              CAMPAIGN_DELIVERY_STATE.QUEUED,
-              CAMPAIGN_DELIVERY_STATE.FAILED,
-            ]),
-          },
+          id: data.messageId,
+          state: In(CLAIMABLE_CAMPAIGN_DELIVERY_STATES),
         },
       );
 
-      if (claimableCount === 0) {
+      if (!isStillClaimable) {
         return;
       }
 
@@ -133,6 +131,16 @@ export class MessageCampaignDeliveryService {
         sendContext,
         creditContext,
       });
+
+      await this.messageCampaignStatisticsService
+        .scheduleRefresh({ workspaceId, campaignId })
+        .catch((error) => {
+          this.logger.error(
+            `Campaign ${campaignId} of workspace ${workspaceId} could not schedule a statistics refresh: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
+          );
+        });
 
       await this.messageCampaignLifecycleService.finalizeCampaignIfComplete({
         workspaceId,
@@ -250,10 +258,7 @@ export class MessageCampaignDeliveryService {
       workspaceId,
       {
         id: messageId,
-        state: In([
-          CAMPAIGN_DELIVERY_STATE.QUEUED,
-          CAMPAIGN_DELIVERY_STATE.FAILED,
-        ]),
+        state: In(CLAIMABLE_CAMPAIGN_DELIVERY_STATES),
       },
       {
         state: CAMPAIGN_DELIVERY_STATE.FAILED,
@@ -546,10 +551,7 @@ export class MessageCampaignDeliveryService {
       workspaceId,
       {
         id: messageId,
-        state: In([
-          CAMPAIGN_DELIVERY_STATE.QUEUED,
-          CAMPAIGN_DELIVERY_STATE.FAILED,
-        ]),
+        state: In(CLAIMABLE_CAMPAIGN_DELIVERY_STATES),
       },
       {
         state: CAMPAIGN_DELIVERY_STATE.SENDING,

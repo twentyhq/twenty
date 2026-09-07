@@ -80,7 +80,10 @@ export const useMobileNavigationBarItems = (): {
         onClick: () => {
           closeSidePanelMenu();
           closeSettingsDrawer();
-          navigate(AppPath.Home);
+          // Leaving settings replaces its entry the way desktop does, so that
+          // going back does not drop the user straight into the settings they
+          // just left.
+          navigate(AppPath.Home, { replace: isSettingsDrawer });
         },
       },
       {

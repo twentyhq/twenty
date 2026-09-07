@@ -10820,6 +10820,11 @@ msgstr "Questo sottodominio è già in uso."
 msgid "This suppressed address no longer exists."
 msgstr "Questo indirizzo soppresso non esiste più."
 
+#. js-lingui-id: qm7uMm
+#: src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util.ts
+msgid "This SVG is too large to be processed."
+msgstr "Questo SVG è troppo grande per essere elaborato."
+
 #. js-lingui-id: 0GMgIa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"

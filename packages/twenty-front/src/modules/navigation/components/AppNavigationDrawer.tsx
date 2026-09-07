@@ -24,9 +24,13 @@ export const AppNavigationDrawer = ({
 
   return (
     <NavigationDrawer className={className}>
-      <NavigationDrawerFixedContent>
-        <MainNavigationDrawerModeSwitcher />
-      </NavigationDrawerFixedContent>
+      {/* Mobile switches modes from the navigation bar at the bottom of the
+          screen, so a second switcher inside the drawer only repeats it. */}
+      {!isMobile && (
+        <NavigationDrawerFixedContent>
+          <MainNavigationDrawerModeSwitcher />
+        </NavigationDrawerFixedContent>
+      )}
 
       {isSettingsDrawer ? (
         <SettingsNavigationDrawerContent />

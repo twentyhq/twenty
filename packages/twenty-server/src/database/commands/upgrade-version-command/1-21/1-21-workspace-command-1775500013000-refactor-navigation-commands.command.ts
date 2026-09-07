@@ -230,6 +230,7 @@ export class RefactorNavigationCommandsCommand extends ProvisionedWorkspaceComma
         availabilityType: commandMenuItem.availabilityType,
         conditionalAvailabilityExpression:
           commandMenuItem.conditionalAvailabilityExpression ?? null,
+        conditionalPinnedExpression: null,
         frontComponentId: null,
         frontComponentUniversalIdentifier: null,
         engineComponentKey: EngineComponentKey.NAVIGATION,
