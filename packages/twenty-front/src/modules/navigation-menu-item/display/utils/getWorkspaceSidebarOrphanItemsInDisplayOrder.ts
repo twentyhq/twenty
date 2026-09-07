@@ -4,6 +4,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
+import { isNavigationMenuItemFolderEmptied } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolderEmptied';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
@@ -38,6 +39,21 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
 
   return flatWorkspaceItems.reduce<NavigationMenuItem[]>((acc, item) => {
     if (isNavigationMenuItemFolder(item)) {
+      // Folders are emitted from the raw list, so a folder whose every child
+      // was filtered out for this viewer has to be dropped here — nothing
+      // downstream reconsiders it. Layout customization keeps them, so an
+      // admin can still reorganise a folder they cannot see into.
+      if (
+        !includeInaccessibleObjectBackedItems &&
+        isNavigationMenuItemFolderEmptied({
+          folderId: item.id,
+          allItems: workspaceNavigationMenuItems,
+          visibleItems: workspaceNavigationMenuItemsSorted,
+        })
+      ) {
+        return acc;
+      }
+
       acc.push({
         ...item,
         icon: item.icon ?? FOLDER_ICON_DEFAULT,

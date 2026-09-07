@@ -4,6 +4,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { useEnsoViewerScope } from '@/enso/viewer-scope/hooks/useEnsoViewerScope';
 import { filterAndSortNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterAndSortNavigationMenuItems';
+import { isNavigationMenuItemFolderEmptied } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolderEmptied';
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -21,26 +22,20 @@ export const useSortedNavigationMenuItems = () => {
     useReadableObjectMetadataItems();
   const { hiddenNavigationObjectNameSingulars } = useEnsoViewerScope();
 
-  // A folder whose every child is hidden would otherwise sit in the sidebar as
-  // an empty row — Twenty never permission-filters folders, so nothing else
-  // removes it.
   const dropEmptyFolders = (
     items: NavigationMenuItem[],
     allItems: NavigationMenuItem[],
     visibleItems: NavigationMenuItem[],
   ) =>
-    items.filter((item) => {
-      if (item.type !== NavigationMenuItemType.FOLDER) {
-        return true;
-      }
-
-      const hasAnyChild = allItems.some((other) => other.folderId === item.id);
-      const hasVisibleChild = visibleItems.some(
-        (other) => other.folderId === item.id,
-      );
-
-      return !hasAnyChild || hasVisibleChild;
-    });
+    items.filter(
+      (item) =>
+        item.type !== NavigationMenuItemType.FOLDER ||
+        !isNavigationMenuItemFolderEmptied({
+          folderId: item.id,
+          allItems,
+          visibleItems,
+        }),
+    );
 
   const allNavigationMenuItems = useMemo(
     () => [...workspaceNavigationMenuItems, ...navigationMenuItems],
