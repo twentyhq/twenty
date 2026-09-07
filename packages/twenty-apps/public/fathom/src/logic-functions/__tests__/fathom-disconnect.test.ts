@@ -25,9 +25,8 @@ vi.mock('fathom-typescript', () => ({
   },
 }));
 
-const { fathomDisconnectHandler } = await import(
-  'src/logic-functions/fathom-disconnect'
-);
+const { fathomDisconnectHandler } =
+  await import('src/logic-functions/fathom-disconnect');
 
 const payload = {
   connectionProviderId: 'provider-1',
