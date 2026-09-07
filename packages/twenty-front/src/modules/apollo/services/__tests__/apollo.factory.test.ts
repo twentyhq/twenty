@@ -309,10 +309,15 @@ describe('ApolloFactory', () => {
   // the end of the session rather than something the client can retry.
   it('should sign out on an unauthenticated response', async () => {
     fetchMock.mockResponse(UNAUTHENTICATED_RESPONSE);
+    mockOnUnauthenticatedError.mockImplementation(clearSessionGeneration);
+    rotateSessionGeneration();
+
+    expect(getSessionGeneration()).not.toBeNull();
 
     await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
 
     expect(mockOnUnauthenticatedError).toHaveBeenCalledTimes(1);
+    expect(getSessionGeneration()).toBeNull();
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
@@ -335,6 +340,8 @@ describe('ApolloFactory', () => {
     rotateSessionGeneration();
     const requestSessionGeneration = getSessionGeneration();
     const request = makeRequest();
+
+    expect(requestSessionGeneration).not.toBeNull();
 
     await requestStarted;
     rotateSessionGeneration();

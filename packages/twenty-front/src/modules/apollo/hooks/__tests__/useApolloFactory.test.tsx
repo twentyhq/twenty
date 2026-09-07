@@ -1,14 +1,11 @@
 import { gql } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { act, renderHook } from '@testing-library/react';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { useApolloFactory } from '@/apollo/hooks/useApolloFactory';
-import {
-  clearSessionGeneration,
-  getSessionGeneration,
-  rotateSessionGeneration,
-} from '@/auth/utils/sessionGeneration';
+import { clearSessionGeneration } from '@/auth/utils/sessionGeneration';
 
 enableFetchMocks();
 
@@ -57,6 +54,8 @@ describe('useApolloFactory', () => {
   });
 
   it('should navigate to /welcome on unauthenticated error', async () => {
+    expect.assertions(4);
+
     const errors = [
       {
         extensions: {
@@ -72,12 +71,14 @@ describe('useApolloFactory', () => {
         }),
       }),
     );
-    rotateSessionGeneration();
 
     const { result } = renderHook(
       () => {
         const location = useLocation();
-        return { factory: useApolloFactory(), location };
+        return {
+          factory: useApolloFactory(),
+          location,
+        };
       },
       {
         wrapper: Wrapper,
@@ -85,6 +86,8 @@ describe('useApolloFactory', () => {
     );
 
     expect(result.current.location.pathname).toBe('/opportunities');
+
+    let mutationError: unknown;
 
     try {
       await act(async () => {
@@ -99,11 +102,11 @@ describe('useApolloFactory', () => {
         });
       });
     } catch (error) {
-      expect(error).toBeDefined();
-
-      expect(mockNavigate).toHaveBeenCalled();
-      expect(mockNavigate).toHaveBeenCalledWith('/welcome');
-      expect(getSessionGeneration()).toBeNull();
+      mutationError = error;
     }
+
+    expect(mutationError).toBeInstanceOf(CombinedGraphQLErrors);
+    expect(mockNavigate).toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith('/welcome');
   });
 });

@@ -4,6 +4,10 @@ import { Provider as JotaiProvider } from 'jotai';
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { useRedeemSsoExchangeToken } from '@/auth/hooks/useRedeemSsoExchangeToken';
+import {
+  clearSessionGeneration,
+  getSessionGeneration,
+} from '@/auth/utils/sessionGeneration';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   jotaiStore,
@@ -46,6 +50,7 @@ describe('useRedeemSsoExchangeToken', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     localStorage.clear();
+    clearSessionGeneration();
     resetJotaiStore();
 
     (useSnackBar as jest.Mock).mockReturnValue({
@@ -88,6 +93,7 @@ describe('useRedeemSsoExchangeToken', () => {
     await result.current.redeemSsoExchangeToken('sso-exchange-token');
 
     expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(true);
+    expect(getSessionGeneration()).not.toBeNull();
   });
 
   it('should leave the session inactive when the exchange fails', async () => {
@@ -100,6 +106,7 @@ describe('useRedeemSsoExchangeToken', () => {
     await result.current.redeemSsoExchangeToken('sso-exchange-token');
 
     expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(false);
+    expect(getSessionGeneration()).toBeNull();
   });
 
   it('should snackbar when redemption fails', async () => {

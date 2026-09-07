@@ -197,8 +197,12 @@ export class ApolloFactory implements ApolloManager {
       };
 
       const errorLink = new ErrorLink(({ error, operation }) => {
+        const requestSessionGeneration =
+          operation.getContext().sessionGeneration;
+        // Missing context must keep sign-out behavior if the link chain changes.
         const isResponseFromCurrentSession =
-          operation.getContext().sessionGeneration === getSessionGeneration();
+          requestSessionGeneration === undefined ||
+          requestSessionGeneration === getSessionGeneration();
 
         if (CombinedGraphQLErrors.is(error)) {
           onErrorCb?.(error.errors);
