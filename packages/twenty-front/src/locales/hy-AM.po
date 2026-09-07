@@ -902,6 +902,11 @@ msgstr "Սևագիրն արդեն գոյություն ունի"
 msgid "A draft already exists for this workflow. Are you sure you want to erase it?"
 msgstr "Այս աշխատանքահոսքի համար սևագիր արդեն գոյություն ունի։ Վստա՞հ եք, որ ցանկանում եք ջնջել այն։"
 
+#. js-lingui-id: K3NJnJ
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "A payment method is needed to keep your workspace active."
+msgstr "Աշխատանքային տարածքը ակտիվ պահելու համար անհրաժեշտ է վճարման մեթոդ։"
+
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
@@ -1177,6 +1182,11 @@ msgstr "Ավելացնել \"{trimmedName}\"-ը տարբերակների ցու�
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
 msgid "Add a {objectLabelSingular}"
 msgstr "Ավելացնել {objectLabelSingular}"
+
+#. js-lingui-id: rUVyfz
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Add a card below to update your billing details and retry your payment."
+msgstr "Ավելացրեք քարտ ստորև՝ ձեր վճարային տվյալները թարմացնելու և վճարումը կրկին փորձելու համար։"
 
 #. js-lingui-id: 7W8nJr
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationEditor.tsx
@@ -1489,6 +1499,11 @@ msgstr "Ավելացնել կամ հեռացնել օգտատերերին"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Add Output Field"
 msgstr "Ավելացնել ելքային դաշտ"
+
+#. js-lingui-id: lRpmgk
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Add payment method"
+msgstr "Ավելացնել վճարման մեթոդ"
 
 #. js-lingui-id: aYtHO6
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -3634,6 +3649,7 @@ msgstr "Չե՞ք կարող սկանավորել․ Պատճենեք"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/billing/components/AddCreditCardModal.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
@@ -9641,6 +9657,11 @@ msgstr "Համընդհանուր որոնում"
 msgid "Go back"
 msgstr "Վերադառնալ"
 
+#. js-lingui-id: y0SPQU
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+msgid "Go to billing"
+msgstr "Անցնել վճարումների բաժին"
+
 #. js-lingui-id: Hb4Cgz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -11381,11 +11402,6 @@ msgstr "Ազգանուն"
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "Last name can not be empty"
 msgstr "Ազգանունը չի կարող լինել դատարկ"
-
-#. js-lingui-id: s0kiVA
-#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
-msgid "Last payment failed. Please contact your admin."
-msgstr "Վերջին վճարումը ձախողվել է։ Խնդրում ենք կապվել ձեր ադմինիստրատորի հետ։"
 
 #. js-lingui-id: 3u/3zO
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
@@ -14962,6 +14978,21 @@ msgstr "Դադարեցված"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Payment issue"
 msgstr "Վճարման խնդիր"
+
+#. js-lingui-id: twOnMk
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Payment method added."
+msgstr "Վճարման մեթոդն ավելացվել է։"
+
+#. js-lingui-id: uIMn/N
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Payment method added. Retrying your payment..."
+msgstr "Վճարման մեթոդն ավելացվել է։ Վճարումը կրկին փորձվում է..."
+
+#. js-lingui-id: OvqmUS
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+msgid "Payment successful."
+msgstr "Վճարումը հաջողությամբ կատարվել է։"
 
 #. js-lingui-id: CcK+Ft
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -19329,6 +19360,11 @@ msgstr "Կան պարտադիր սյունակներ, որոնք չեն համա
 msgid "There are still some rows that contain errors. Rows with errors will be ignored when submitting."
 msgstr "Դեռևս կան տողեր, որոնք պարունակում են սխալներ։ Սխալներով տողերը չեն հաշվի առնվի ուղարկելիս։"
 
+#. js-lingui-id: PpLJq1
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "There is a billing issue. Please contact your admin."
+msgstr "Վճարումների հետ կապված խնդիր կա։ Խնդրում ենք կապվել ձեր ադմինիստրատորի հետ։"
+
 #. js-lingui-id: CA9PTn
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "There is a payment issue with your subscription. Please update your payment method."
@@ -20769,6 +20805,11 @@ msgstr "Թարմացնել դիտումը"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
 msgstr "Թարմացրեք ձեր հաշվի կազմաձևումը։ Կազմաձևեք IMAP-ի, SMTP-ի և CalDAV-ի ցանկացած համադրություն՝ ըստ անհրաժեշտության։"
+
+#. js-lingui-id: JlP83A
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Update your payment method"
+msgstr "Թարմացրեք ձեր վճարման մեթոդը"
 
 #. js-lingui-id: x4Xp3c
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
@@ -22442,6 +22483,11 @@ msgstr "Ձեր հաշիվագրումների միջակայքը անմիջապ�
 #: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "Your billing interval will switch to yearly immediately and your trial will continue. When it ends, you will be charged ${yearlyPrice} per user per year billed annually."
 msgstr "Ձեր հաշիվագրումների միջակայքը անմիջապես կփոխվի տարեկան, և ձեր փորձնական շրջանը կշարունակվի։ Երբ այն ավարտվի, ձեզանից կգանձվի տարեկան ${yearlyPrice} մեկ օգտվողի դիմաց՝ տարեկան հաշվարկմամբ։"
+
+#. js-lingui-id: u1O1GV
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+msgid "Your card was saved, but the payment still needs attention."
+msgstr "Ձեր քարտը պահպանվել է, բայց վճարումը դեռ ուշադրության կարիք ունի։"
 
 #. js-lingui-id: mmGBWT
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
