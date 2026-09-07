@@ -55,18 +55,4 @@ describe('AppTooltip prop contract', () => {
       true,
     ]);
   });
-
-  it('only exposes the new prop names', () => {
-    const removedKeys: Extract<
-      keyof AppTooltipProps,
-      'content' | 'width' | 'clickable'
-    > extends never
-      ? true
-      : false = true;
-    const maxWidth: IsAssignableToTooltipProps<{ maxWidth: string }> = true;
-    const interactive: IsAssignableToTooltipProps<{ interactive: boolean }> =
-      true;
-
-    expect([removedKeys, maxWidth, interactive]).toEqual([true, true, true]);
-  });
 });

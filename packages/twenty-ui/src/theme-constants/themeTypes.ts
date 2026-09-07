@@ -346,32 +346,6 @@ export type ThemeType = {
     gray12: string;
   };
   color: {
-    static: {
-      white1: string;
-      white2: string;
-      white3: string;
-      white4: string;
-      white5: string;
-      white6: string;
-      white7: string;
-      white8: string;
-      white9: string;
-      white10: string;
-      white11: string;
-      white12: string;
-      black1: string;
-      black2: string;
-      black3: string;
-      black4: string;
-      black5: string;
-      black6: string;
-      black7: string;
-      black8: string;
-      black9: string;
-      black10: string;
-      black11: string;
-      black12: string;
-    };
     red: string;
     ruby: string;
     crimson: string;

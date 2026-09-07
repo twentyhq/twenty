@@ -29,10 +29,8 @@ import { TURQUOISE_COLOR_TOKENS } from './turquoise';
 import { VIOLET_COLOR_TOKENS } from './violet';
 import { YELLOW_COLOR_TOKENS } from './yellow';
 import { MAIN_COLOR_TOKENS } from './mainColors';
-import { STATIC_COLOR_TOKENS } from './static';
 
 export const COLOR_TOKENS = {
-  static: STATIC_COLOR_TOKENS,
   ...MAIN_COLOR_TOKENS,
   ...YELLOW_COLOR_TOKENS.scale,
   ...GREEN_COLOR_TOKENS.scale,

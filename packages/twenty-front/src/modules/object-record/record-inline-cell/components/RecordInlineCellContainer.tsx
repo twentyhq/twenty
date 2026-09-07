@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
-import { isNonEmptyString } from '@sniptt/guards';
-import { useContext, useId } from 'react';
+import { useContext } from 'react';
+import { FieldDescriptionTooltip } from '@/object-record/record-field/ui/components/FieldDescriptionTooltip';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -56,13 +56,6 @@ const StyledLabelContainer = styled.div<{ width?: number }>`
   width: ${({ width }) => (width !== undefined ? `${width}px` : 'auto')};
 `;
 
-const StyledLabel = styled.span`
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
 const StyledInlineCellBaseContainer = styled.div<{ readonly: boolean }>`
   align-items: center;
   box-sizing: border-box;
@@ -82,8 +75,6 @@ export const RecordInlineCellContainer = () => {
   const { readonly, IconLabel, label, labelWidth, showLabel } =
     useRecordInlineCellContext();
   const { theme } = useContext(ThemeContext);
-  const tooltipAnchorId = useId();
-  const descriptionId = `${tooltipAnchorId}-description`;
 
   const { recordId, fieldDefinition, onMouseEnter, onMouseLeave, anchorId } =
     useContext(FieldContext);
@@ -113,10 +104,6 @@ export const RecordInlineCellContainer = () => {
     fieldName: fieldDefinition?.metadata?.fieldName,
   })}`;
 
-  const fieldDescription = fieldDefinition?.metadata?.description;
-  const hasFieldDescription =
-    isNonEmptyString(label) && isNonEmptyString(fieldDescription);
-
   return (
     <StyledInlineCellBaseContainer
       readonly={readonly ?? false}
@@ -131,44 +118,18 @@ export const RecordInlineCellContainer = () => {
             </StyledIconContainer>
           )}
           {showLabel && (
-            <>
-              <StyledLabelContainer
-                width={labelWidth}
-                data-tooltip-id={
-                  hasFieldDescription ? tooltipAnchorId : undefined
-                }
-                aria-describedby={
-                  hasFieldDescription ? descriptionId : undefined
-                }
-                tabIndex={hasFieldDescription ? 0 : undefined}
-              >
-                {hasFieldDescription ? (
-                  <StyledLabel>{label}</StyledLabel>
-                ) : (
+            <StyledLabelContainer width={labelWidth}>
+              <FieldDescriptionTooltip
+                label={label}
+                description={fieldDefinition?.metadata?.description}
+                fallback={
                   <OverflowingTextWithTooltip
                     text={label}
                     displayedMaxRows={1}
                   />
-                )}
-              </StyledLabelContainer>
-              {hasFieldDescription && (
-                <>
-                  <span id={descriptionId} hidden>
-                    {fieldDescription}
-                  </span>
-                  <AppTooltip
-                    anchorSelect={`[data-tooltip-id='${tooltipAnchorId}']`}
-                    title={label}
-                    description={fieldDescription ?? undefined}
-                    delay={TooltipDelay.longDelay}
-                    noArrow
-                    place="bottom"
-                    positionStrategy="fixed"
-                    maxWidth="300px"
-                  />
-                </>
-              )}
-            </>
+                }
+              />
+            </StyledLabelContainer>
           )}
           {/* TODO: Displaying Tooltips on the board is causing performance issues https://react-tooltip.com/docs/examples/render */}
           {!showLabel && (
