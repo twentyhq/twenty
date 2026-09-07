@@ -39,7 +39,7 @@ type SettingsObjectSearchSectionProps = {
   isReadOnly: boolean;
 };
 
-type IndexedFieldEntry = {
+type SearchFieldEntry = {
   id: string;
   label: string;
   icon?: string | null;
@@ -64,7 +64,7 @@ const StyledButtonContainer = styled.div`
   justify-content: flex-end;
 `;
 
-const INDEXED_FIELDS_GRID_TEMPLATE_COLUMNS = 'minmax(0, 1fr) 148px 40px';
+const SEARCH_FIELDS_GRID_TEMPLATE_COLUMNS = 'minmax(0, 1fr) 148px 40px';
 
 const ADD_SEARCH_FIELD_DROPDOWN_ID = 'settings-object-add-search-field';
 
@@ -72,9 +72,9 @@ const ADD_SEARCH_FIELD_DROPDOWN_ID = 'settings-object-add-search-field';
 // soon as the mutation resolves, so the section reacts immediately; the
 // searchFieldMetadata rows only provide the display order, with rows still
 // pending (freshly toggled on) appended at the end.
-const extractIndexedFields = (
+const extractSearchFields = (
   objectMetadataItem: EnrichedObjectMetadataItem,
-): IndexedFieldEntry[] => {
+): SearchFieldEntry[] => {
   const positionByFieldMetadataId = new Map(
     objectMetadataItem.searchFieldMetadatas.map((searchFieldMetadata) => [
       searchFieldMetadata.fieldMetadataId,
@@ -101,7 +101,7 @@ const extractIndexedFields = (
           fieldType: field.type,
           isLabelIdentifier:
             objectMetadataItem.labelIdentifierFieldMetadataId === field.id,
-        }) satisfies IndexedFieldEntry,
+        }) satisfies SearchFieldEntry,
     );
 };
 
@@ -126,17 +126,17 @@ export const SettingsObjectSearchSection = ({
   );
   const [searchTerm, setSearchTerm] = useState('');
 
-  const indexedFields = useMemo(
-    () => extractIndexedFields(objectMetadataItem),
+  const searchFields = useMemo(
+    () => extractSearchFields(objectMetadataItem),
     [objectMetadataItem],
   );
 
   const isEditable =
     isConfigurableSearchFieldsEnabled && !isReadOnly && isSearchable;
 
-  const indexedFieldIds = useMemo(
-    () => new Set(indexedFields.map((entry) => entry.id)),
-    [indexedFields],
+  const searchFieldIds = useMemo(
+    () => new Set(searchFields.map((entry) => entry.id)),
+    [searchFields],
   );
 
   const addableFields = useMemo(
@@ -144,17 +144,17 @@ export const SettingsObjectSearchSection = ({
       objectMetadataItem.fields.filter(
         (field) =>
           field.isActive === true &&
-          !indexedFieldIds.has(field.id) &&
+          !searchFieldIds.has(field.id) &&
           canBeSearchable(field),
       ),
-    [objectMetadataItem.fields, indexedFieldIds],
+    [objectMetadataItem.fields, searchFieldIds],
   );
 
-  const filteredIndexedFields = searchTerm
-    ? indexedFields.filter((entry) =>
+  const filteredSearchFields = searchTerm
+    ? searchFields.filter((entry) =>
         entry.label.toLowerCase().includes(searchTerm.toLowerCase()),
       )
-    : indexedFields;
+    : searchFields;
 
   const handleToggleSearchable = async (value: boolean) => {
     setIsSearchable(value);
@@ -197,29 +197,27 @@ export const SettingsObjectSearchSection = ({
           />
         </Card>
       )}
-      {indexedFields.length > 0 && (
+      {searchFields.length > 0 && (
         <>
           <SettingsTextInput
-            instanceId="indexed-fields-search"
+            instanceId="search-fields-filter"
             LeftIcon={IconSearch}
-            placeholder={t`Search across indexed fields...`}
+            placeholder={t`Search fields...`}
             value={searchTerm}
             onChange={setSearchTerm}
           />
           <Table>
-            <TableRow
-              gridTemplateColumns={INDEXED_FIELDS_GRID_TEMPLATE_COLUMNS}
-            >
+            <TableRow gridTemplateColumns={SEARCH_FIELDS_GRID_TEMPLATE_COLUMNS}>
               <TableHeader>{t`Name`}</TableHeader>
               <TableHeader>{t`Data type`}</TableHeader>
               <TableHeader></TableHeader>
             </TableRow>
-            {filteredIndexedFields.map((entry) => {
+            {filteredSearchFields.map((entry) => {
               const FieldIcon = getIcon(entry.icon);
               return (
                 <TableRow
                   key={entry.id}
-                  gridTemplateColumns={INDEXED_FIELDS_GRID_TEMPLATE_COLUMNS}
+                  gridTemplateColumns={SEARCH_FIELDS_GRID_TEMPLATE_COLUMNS}
                 >
                   <TableCell
                     color={theme.font.color.primary}
