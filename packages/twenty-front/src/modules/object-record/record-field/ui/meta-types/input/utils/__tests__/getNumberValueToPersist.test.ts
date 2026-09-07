@@ -37,6 +37,24 @@ describe('getNumberValueToPersist', () => {
     ).toEqual({ success: false });
   });
 
+  it('should not persist a percentage with a percent sign that is not a trailing suffix', () => {
+    expect(
+      getNumberValueToPersist({
+        newValue: '5%0',
+        numberType: 'percentage',
+      }),
+    ).toEqual({ success: false });
+  });
+
+  it('should not persist a percentage with more than one trailing percent sign', () => {
+    expect(
+      getNumberValueToPersist({
+        newValue: '50%%',
+        numberType: 'percentage',
+      }),
+    ).toEqual({ success: false });
+  });
+
   it('should persist a plain number', () => {
     expect(
       getNumberValueToPersist({

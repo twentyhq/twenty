@@ -20,7 +20,7 @@ export const getNumberValueToPersist = ({
   numberType,
 }: GetNumberValueToPersistParams): NumberValueToPersistResult => {
   const valueToCast =
-    numberType === 'percentage' ? newValue.replaceAll('%', '') : newValue;
+    numberType === 'percentage' ? newValue.replace(/%$/, '') : newValue;
 
   if (!canBeCastAsNumberOrNull(valueToCast)) {
     return { success: false };

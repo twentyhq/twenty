@@ -25,47 +25,37 @@ export const NumberFieldInput = () => {
       numberType: fieldDefinition.metadata.settings?.type,
     });
 
+  const getFieldInputEventArgs = (
+    persistResult: ReturnType<typeof persistNumberValue>,
+  ) =>
+    persistResult.success
+      ? { newValue: persistResult.value, skipPersist: false }
+      : { skipPersist: true };
+
   const handleEnter = (newText: string) => {
-    const { success, value } = persistNumberValue(newText);
-
-    const shouldNotPersist = !success;
-
-    onEnter?.({ newValue: value, skipPersist: shouldNotPersist });
+    onEnter?.(getFieldInputEventArgs(persistNumberValue(newText)));
   };
 
   const handleEscape = (newText: string) => {
-    const { success, value } = persistNumberValue(newText);
-
-    const shouldNotPersist = !success;
-
-    onEscape?.({ newValue: value, skipPersist: shouldNotPersist });
+    onEscape?.(getFieldInputEventArgs(persistNumberValue(newText)));
   };
 
   const handleClickOutside = (
     event: MouseEvent | TouchEvent,
     newText: string,
   ) => {
-    const { success, value } = persistNumberValue(newText);
-
-    const shouldNotPersist = !success;
-
-    onClickOutside?.({ newValue: value, skipPersist: shouldNotPersist, event });
+    onClickOutside?.({
+      ...getFieldInputEventArgs(persistNumberValue(newText)),
+      event,
+    });
   };
 
   const handleTab = (newText: string) => {
-    const { success, value } = persistNumberValue(newText);
-
-    const shouldNotPersist = !success;
-
-    onTab?.({ newValue: value, skipPersist: shouldNotPersist });
+    onTab?.(getFieldInputEventArgs(persistNumberValue(newText)));
   };
 
   const handleShiftTab = (newText: string) => {
-    const { success, value } = persistNumberValue(newText);
-
-    const shouldNotPersist = !success;
-
-    onShiftTab?.({ newValue: value, skipPersist: shouldNotPersist });
+    onShiftTab?.(getFieldInputEventArgs(persistNumberValue(newText)));
   };
 
   const handleChange = (newText: string) => {
