@@ -333,6 +333,8 @@ export default defineLogicFunction({
 
 Para chamar rotas HTTP do aplicativo ou ler e gravar registros da Twenty a partir de um front component, use `RestApiClient` de `twenty-client-sdk/rest`. Ele envia caminhos `/s/...` para a URL base das funções do seu workspace e qualquer outro caminho, incluindo `/rest/...`, para `TWENTY_API_URL`.
 
+Ele sempre atua como a pessoa que está visualizando a página. `runAs: 'application'` é uma opção apenas de função de lógica: um componente nunca recebe o token do seu próprio aplicativo, portanto, solicitá-lo aqui gera um erro. Coloque o trabalho que precisa do acesso do próprio aplicativo atrás de uma função de lógica e chame-a em vez disso.
+
 | Método                            | Descrição                                                                       |
 | --------------------------------- | ------------------------------------------------------------------------------- |
 | `get(path, options?)`             | Envia uma requisição `GET`                                                      |
@@ -407,14 +409,15 @@ export default defineFrontComponent({
 
 Hooks disponíveis:
 
-| Hook                                          | Retorna               | Descrição                                                                           |
-| --------------------------------------------- | --------------------- | ----------------------------------------------------------------------------------- |
-| `useUserId()`                                 | `string` ou `null`    | O ID do usuário atual                                                               |
-| `useSelectedRecordIds()`                      | `string[]`            | Todos os IDs dos registros selecionados (array vazio se nenhum estiver selecionado) |
-| `useRecordId()`                               | `string` ou `null`    | **Obsoleto.** Use `useSelectedRecordIds()` em vez disso                             |
-| `useFrontComponentId()`                       | `string`              | O ID desta instância do componente                                                  |
-| `useColorScheme()`                            | `'light'` ou `'dark'` | O esquema de cores ativo da interface do host (`System` já está resolvido)          |
-| `useFrontComponentExecutionContext(selector)` | varia                 | Acesse o contexto de execução completo com uma função seletora                      |
+| Hook                                          | Retorna               | Descrição                                                                                         |
+| --------------------------------------------- | --------------------- | ------------------------------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` ou `null`    | O ID do usuário atual                                                                             |
+| `useSelectedRecordIds()`                      | `string[]`            | Todos os IDs dos registros selecionados (array vazio se nenhum estiver selecionado)               |
+| `useRecordId()`                               | `string` ou `null`    | **Obsoleto.** Use `useSelectedRecordIds()` em vez disso                                           |
+| `useFrontComponentId()`                       | `string`              | O ID desta instância do componente                                                                |
+| `useTimelineActivityId()`                     | `string` ou `null`    | O ID da atividade atual da linha do tempo ao renderizar uma linha personalizada da linha do tempo |
+| `useColorScheme()`                            | `'light'` ou `'dark'` | O esquema de cores ativo da interface do host (`System` já está resolvido)                        |
+| `useFrontComponentExecutionContext(selector)` | varia                 | Acesse o contexto de execução completo com uma função seletora                                    |
 
 ## Variáveis de aplicação
 
@@ -445,10 +448,10 @@ Variáveis secretas (`isSecret: true`) **não** são expostas aos componentes de
 
 As seguintes variáveis de sistema estão sempre disponíveis via `process.env`:
 
-| Variável                  | Descrição                                                     |
-| ------------------------- | ------------------------------------------------------------- |
-| `TWENTY_API_URL`          | URL base da API principal da Twenty                           |
-| `TWENTY_APP_ACCESS_TOKEN` | Token de curta duração limitado ao escopo do papel do seu app |
+| Variável                  | Descrição                                                                                                                                                                                                  |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `TWENTY_API_URL`          | URL base da API principal da Twenty                                                                                                                                                                        |
+| `TWENTY_APP_ACCESS_TOKEN` | Token de curta duração com escopo limitado à interseção entre a função da pessoa conectada e a do seu aplicativo, de modo que um componente nunca possa fazer mais do que a pessoa que o está visualizando |
 
 ### `TWENTY_FUNCTIONS_URL`
 

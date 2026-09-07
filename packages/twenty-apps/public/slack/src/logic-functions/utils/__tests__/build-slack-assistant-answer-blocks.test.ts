@@ -5,19 +5,14 @@ import { buildSlackAssistantAnswerBlocks } from 'src/logic-functions/utils/build
 const REQUEST_ID = '3f77d0b1-30a1-4c3d-9d02-2f2a9f6f9d10';
 
 describe('buildSlackAssistantAnswerBlocks', () => {
-  it('should render the answer as a markdown block followed by a duration footer and feedback buttons', () => {
+  it('should render the answer as a markdown block followed by feedback buttons', () => {
     expect(
       buildSlackAssistantAnswerBlocks({
         responseText: 'All done.',
-        durationMilliseconds: 3000,
         requestId: REQUEST_ID,
       }),
     ).toEqual([
       { type: 'markdown', text: 'All done.' },
-      {
-        type: 'context',
-        elements: [{ type: 'mrkdwn', text: 'Answered in 3s' }],
-      },
       {
         type: 'context_actions',
         block_id: REQUEST_ID,
@@ -49,7 +44,6 @@ describe('buildSlackAssistantAnswerBlocks', () => {
 
     const [markdownBlock] = buildSlackAssistantAnswerBlocks({
       responseText,
-      durationMilliseconds: 1000,
       requestId: REQUEST_ID,
     });
 

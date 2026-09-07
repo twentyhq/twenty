@@ -212,15 +212,16 @@ export const createLinearIssueHandler = async (input: {
 
 Každé připojení má:
 
-| Pole              | Popis                                                                                                      |
-| ----------------- | ---------------------------------------------------------------------------------------------------------- |
-| `id`              | Jedinečné ID řádku; předejte do `getConnection(id)` pro opětovné načtení jednoho záznamu                   |
-| `visibility`      | `'user'` (soukromé pro jednoho člena pracovního prostoru) nebo `'workspace'` (sdílené se všemi členy)      |
-| `scopes`          | Oprávnění OAuth udělená poskytovatelem (odlišná od `visibility` — ty spolu nesouvisejí)                    |
-| `userWorkspaceId` | ID `userWorkspace` vlastníka — užitečné pro výběr "připojení uživatele požadavku" ve spouštěčích tras HTTP |
-| `accessToken`     | Aktuální přístupový token OAuth (v případě vypršení je automaticky obnoven)                                |
-| `name` / `handle` | Zobrazovaný název připojení (automaticky odvozený při OAuth callbacku, uživatelem přejmenovatelný)         |
-| `authFailedAt`    | Nastaveno, když poslední obnovení selhalo; uživatel se musí znovu připojit                                 |
+| Pole              | Popis                                                                                                                                                                                                                                     |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`              | Jedinečné ID řádku; předejte do `getConnection(id)` pro opětovné načtení jednoho záznamu                                                                                                                                                  |
+| `visibility`      | `'user'` (soukromé pro jednoho člena pracovního prostoru) nebo `'workspace'` (sdílené se všemi členy)                                                                                                                                     |
+| `scopes`          | Oprávnění OAuth udělená poskytovatelem (odlišná od `visibility` — ty spolu nesouvisejí)                                                                                                                                                   |
+| `userWorkspaceId` | ID `userWorkspace` vlastníka — užitečné pro výběr "připojení uživatele požadavku" ve spouštěčích tras HTTP                                                                                                                                |
+| `accessToken`     | Aktuální přístupový token OAuth (v případě vypršení je automaticky obnoven)                                                                                                                                                               |
+| `name`            | Zobrazovaný název připojení (automaticky odvozený při OAuth callbacku, uživatelem přejmenovatelný)                                                                                                                                        |
+| `handle`          | e-mail, který je připojen na předcházející účet, aktualizován při každém opětovném propojení; vyřešeno z OIDC `id_token` vráceno při výměně tokenu, spadne se zpět na spojovací e-mail dvaceti uživatelů, pokud jej poskytovatel nevrátí. |
+| `authFailedAt`    | Nastaveno, když poslední obnovení selhalo; uživatel se musí znovu připojit                                                                                                                                                                |
 
 Hlavní body:
 

@@ -97,7 +97,7 @@ Das Gleiche gilt für Frontend-Komponenten, die Werte über `getApplicationVaria
 
 Die mit [`defineApplicationRole()`](/l/de/developers/extend/apps/config/roles) deklarierte Rolle steuert, worauf die Logikfunktionen und Frontend-Komponenten der App zugreifen können:
 
-* Das zur Laufzeit als `TWENTY_APP_ACCESS_TOKEN` injizierte Token wird aus dieser Rolle abgeleitet.
+* Die zur Laufzeit in Ihre Logikfunktionen injizierten Token werden aus dieser Rolle abgeleitet. Ein Aufruf, der als Person agiert, wird zusätzlich durch die Möglichkeiten dieser Person eingeschränkt und kann daher niemals eine der beiden Berechtigungen überschreiten. Siehe [Wessen Zugriff ein Aufruf verwendet](/l/de/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
 * Der typisierte API-Client ist auf die dieser Rolle gewährten Berechtigungen beschränkt.
 * Befolgen Sie das Least-Privilege-Prinzip: Deklarieren Sie nur die Berechtigungen, die Ihre Funktionen benötigen.
 

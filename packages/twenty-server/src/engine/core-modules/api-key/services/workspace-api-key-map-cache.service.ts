@@ -4,27 +4,28 @@ import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/wo
 
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { fromApiKeyEntityToFlat } from 'src/engine/core-modules/api-key/utils/from-api-key-entity-to-flat.util';
-import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
+import { type WorkspaceCacheRowsRequirement } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
+
+const API_KEY_ROWS_REQUIREMENT = {
+  apiKey: true,
+} as const satisfies WorkspaceCacheRowsRequirement;
 
 @Injectable()
 @WorkspaceCache('apiKeyMap', { packingPonderation: 1 })
 export class WorkspaceApiKeyMapCacheService extends WorkspaceCacheProvider<
   Record<string, FlatApiKey>
 > {
-  constructor(
-    @InjectWorkspaceScopedRepository(ApiKeyEntity)
-    private readonly apiKeyRepository: WorkspaceScopedRepository<ApiKeyEntity>,
-  ) {
-    super();
-  }
+  override readonly rowsRequirement = API_KEY_ROWS_REQUIREMENT;
 
-  async computeForCache(
-    workspaceId: string,
-  ): Promise<Record<string, FlatApiKey>> {
-    const apiKeys = await this.apiKeyRepository.find(workspaceId);
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<typeof API_KEY_ROWS_REQUIREMENT>): Record<
+    string,
+    FlatApiKey
+  > {
+    const { apiKey: apiKeys } = rows;
 
     return apiKeys.reduce(
       (map, apiKey) => {

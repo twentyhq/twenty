@@ -22,7 +22,9 @@ import { type JSX, useState } from 'react';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
-import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
+import { RouteContextStoreProvider } from '@/context-store/components/RouteContextStoreProvider';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
@@ -97,18 +99,22 @@ const Providers = () => {
               <WorkspaceProviderEffect />
               <UserContextProvider>
                 <ApolloCoreClientMockedProvider>
-                  <PreComputedChipGeneratorsProvider>
-                    <FullHeightStorybookLayout>
-                      <HelmetProvider>
-                        <IconsProvider>
-                          <RecordComponentInstanceContextsWrapper componentInstanceId="storybook-test-record">
-                            <MinimalMetadataGate />
-                          </RecordComponentInstanceContextsWrapper>
-                        </IconsProvider>
-                      </HelmetProvider>
-                    </FullHeightStorybookLayout>
-                  </PreComputedChipGeneratorsProvider>
-                  <MainContextStoreProvider />
+                  <ContextStoreComponentInstanceContext.Provider
+                    value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
+                  >
+                    <PreComputedChipGeneratorsProvider>
+                      <FullHeightStorybookLayout>
+                        <HelmetProvider>
+                          <IconsProvider>
+                            <RecordComponentInstanceContextsWrapper componentInstanceId="storybook-test-record">
+                              <MinimalMetadataGate />
+                            </RecordComponentInstanceContextsWrapper>
+                          </IconsProvider>
+                        </HelmetProvider>
+                      </FullHeightStorybookLayout>
+                    </PreComputedChipGeneratorsProvider>
+                    <RouteContextStoreProvider />
+                  </ContextStoreComponentInstanceContext.Provider>
                 </ApolloCoreClientMockedProvider>
               </UserContextProvider>
             </ClientConfigProvider>

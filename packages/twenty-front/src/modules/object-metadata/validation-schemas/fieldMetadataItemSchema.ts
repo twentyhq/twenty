@@ -2,7 +2,11 @@ import { z } from 'zod';
 
 import { metadataLabelSchema } from '@/object-metadata/validation-schemas/metadataLabelSchema';
 import { themeColorSchema } from 'twenty-ui/utilities';
-import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
+import {
+  FieldMetadataType,
+  MetadataWritability,
+  RelationType,
+} from '~/generated-metadata/graphql';
 import { camelCaseStringSchema } from '~/utils/validation-schemas/camelCaseStringSchema';
 
 export const fieldMetadataItemSchema = (existingLabels?: string[]) => {
@@ -50,6 +54,7 @@ export const fieldMetadataItemSchema = (existingLabels?: string[]) => {
     isUnique: z.boolean(),
     isSystem: z.boolean(),
     isUIEditable: z.boolean(),
+    writability: z.enum(MetadataWritability).nullable().optional(),
     label: metadataLabelSchema(existingLabels),
     isLabelSyncedWithName: z.boolean(),
     morphId: z.string().nullable().optional(),

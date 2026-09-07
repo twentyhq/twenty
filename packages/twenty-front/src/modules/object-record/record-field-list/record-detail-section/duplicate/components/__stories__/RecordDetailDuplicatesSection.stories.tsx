@@ -24,7 +24,6 @@ const meta: Meta<typeof RecordDetailDuplicatesSection> = {
             targetObjectNameSingular: 'company',
           },
           layoutType: PageLayoutType.RECORD_PAGE,
-          isInSidePanel: false,
         }}
       >
         <Story />

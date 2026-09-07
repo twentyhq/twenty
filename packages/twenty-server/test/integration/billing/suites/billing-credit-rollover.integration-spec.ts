@@ -3,13 +3,15 @@ import request from 'supertest';
 import { createMockStripeInvoiceFinalizedData } from 'test/integration/billing/utils/create-mock-stripe-invoice-finalized-data.util';
 import {
   getBillingUsageCacheService,
-  getMirroredCreditBalance,
   getSeededBillingWorkspaceId,
   insertCreditGrant,
   listCreditGrants,
+  quitBillingFixtureRedis,
+  readAllowanceCounter,
   resetBillingCreditState,
   setupResourceCreditSubscription,
   TEST_STRIPE_CUSTOMER_ID,
+  warmAllowanceCounter,
 } from 'test/integration/billing/utils/billing-credit-fixtures.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
@@ -19,8 +21,8 @@ import { type BillingUsageService } from 'src/engine/core-modules/billing/servic
 const client = request(`http://localhost:${APP_PORT}`);
 
 // Whole calendar months, anchored so the period the transition opens is the
-// one running right now. The mirror column and the ledger both filter on now(),
-// so periods fixed in the past would read as expired and assert nothing.
+// one running right now. The ledger filters on now(), so periods fixed in the
+// past would read as expired and assert nothing.
 const PERIOD_BOUNDARY = startOfMonth(new Date());
 const CLOSING_PERIOD_START = subMonths(PERIOD_BOUNDARY, 1);
 const CLOSING_PERIOD_END = PERIOD_BOUNDARY;
@@ -78,6 +80,10 @@ describe('Billing credit rollover (integration)', () => {
   afterEach(async () => {
     usageSpy?.mockRestore();
     await resetBillingCreditState(workspaceId);
+  });
+
+  afterAll(async () => {
+    await quitBillingFixtureRedis();
   });
 
   it('carries the unspent allowance into the next period', async () => {
@@ -175,14 +181,6 @@ describe('Billing credit rollover (integration)', () => {
     ).toBe(ALLOWANCE_MICRO);
   });
 
-  it('mirrors the resulting balance onto the billing customer', async () => {
-    usageSpy.mockResolvedValue(300_000);
-
-    await postInvoiceFinalized().expect(200);
-
-    expect(await getMirroredCreditBalance(workspaceId)).toBe(700_000);
-  });
-
   // A redelivery must not hand out the credits a second time.
   it('is idempotent when Stripe redelivers the same invoice', async () => {
     usageSpy.mockResolvedValue(300_000);
@@ -197,7 +195,6 @@ describe('Billing credit rollover (integration)', () => {
     expect(
       afterSecond.reduce((total, grant) => total + grant.amountMicro, 0),
     ).toBe(afterFirst.reduce((total, grant) => total + grant.amountMicro, 0));
-    expect(await getMirroredCreditBalance(workspaceId)).toBe(700_000);
   });
 
   // Returning normally would answer 200 and Stripe would never redeliver, so
@@ -208,16 +205,12 @@ describe('Billing credit rollover (integration)', () => {
     await postInvoiceFinalized().expect(500);
 
     expect(await listCreditGrants(workspaceId)).toHaveLength(0);
-    expect(await getMirroredCreditBalance(workspaceId)).toBe(0);
   });
 
-  it('adds the carried balance to a warm usage counter', async () => {
+  it('adds the carried balance to a warm available-credits counter', async () => {
     usageSpy.mockResolvedValue(300_000);
     const cache = getBillingUsageCacheService();
 
-    // The counter is keyed by the period the subscription is currently in,
-    // which is the one the invoice is closing: Stripe moves the subscription
-    // forward in a separate event.
     await cache.warmAvailableCredits(
       workspaceId,
       CLOSING_PERIOD_START,
@@ -232,10 +225,7 @@ describe('Billing credit rollover (integration)', () => {
     ).toBe(120_000 + 700_000);
   });
 
-  // Stripe redelivers events it already handled. Rebuilding on that redelivery
-  // would drop a counter that is already correct and recompute it from
-  // ClickHouse, handing back every credit whose usage has not been ingested yet.
-  it('leaves a warm counter alone when a successful delivery is repeated', async () => {
+  it('leaves a warm available-credits counter alone when a successful delivery is repeated', async () => {
     usageSpy.mockResolvedValue(300_000);
     const cache = getBillingUsageCacheService();
 
@@ -258,6 +248,21 @@ describe('Billing credit rollover (integration)', () => {
     expect(
       await cache.getAvailableCredits(workspaceId, CLOSING_PERIOD_START),
     ).toBe(afterFirst);
+  });
+
+  it('drops the allowance counter on the period transition', async () => {
+    usageSpy.mockResolvedValue(300_000);
+
+    // The counter is keyed by the period the subscription is currently in,
+    // which is the one the invoice is closing: Stripe moves the subscription
+    // forward in a separate event.
+    await warmAllowanceCounter(workspaceId, CLOSING_PERIOD_START, 120_000);
+
+    await postInvoiceFinalized().expect(200);
+
+    expect(
+      await readAllowanceCounter(workspaceId, CLOSING_PERIOD_START),
+    ).toBeNull();
   });
 
   // A subscription anchored on the 31st runs January 31 to February 28. Once

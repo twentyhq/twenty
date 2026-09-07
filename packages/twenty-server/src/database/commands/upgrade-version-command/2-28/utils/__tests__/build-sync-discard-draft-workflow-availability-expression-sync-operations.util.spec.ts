@@ -60,6 +60,7 @@ const buildDiscardDraftWorkflowCommandMenuItem = ({
   isPinned: DISCARD_DRAFT_WORKFLOW_DEFINITION.isPinned,
   availabilityType: DISCARD_DRAFT_WORKFLOW_DEFINITION.availabilityType,
   conditionalAvailabilityExpression,
+  conditionalPinnedExpression: null,
   frontComponentId: null,
   frontComponentUniversalIdentifier: null,
   engineComponentKey: DISCARD_DRAFT_WORKFLOW_DEFINITION.engineComponentKey,
@@ -69,6 +70,8 @@ const buildDiscardDraftWorkflowCommandMenuItem = ({
   availabilityObjectMetadataId: 'workflow-object-metadata-id',
   availabilityObjectMetadataUniversalIdentifier:
     DISCARD_DRAFT_WORKFLOW_DEFINITION.availabilityObjectMetadataUniversalIdentifier,
+  navigationTargetObjectMetadataId: null,
+  navigationTargetObjectMetadataUniversalIdentifier: null,
   pageLayoutId: null,
   pageLayoutUniversalIdentifier: null,
   isActive: true,

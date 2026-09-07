@@ -283,6 +283,28 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 
 Identificatorul este `universalIdentifier` al resolver-ului din manifestul dvs. Înregistrați acel URL la furnizor.
 
+**Răspunsul la un GET de verificare.** Unii furnizori verifică un punct final înainte de a livra către acesta, trimițând un `GET` care conține o provocare la același URL către care vor trimite ulterior evenimente prin `POST` — WhatsApp Cloud API de la Meta este unul dintre aceștia. O rută de server răspunde numai la `POST`, cu excepția cazului în care specifici altfel, așa că declară ambele metode:
+
+```ts
+serverRouteTriggerSettings: {
+  forwardedRequestHeaders: ['x-hub-signature-256'],
+  httpMethods: ['GET', 'POST'],
+}
+```
+
+Provocarea ajunge în `event.queryStringParameters`, iar returnarea unui `Response` o retransmite furnizorului în aceeași cerere. Un corp de tip șir este trimis ca `text/plain`, ceea ce așteaptă acești furnizori:
+
+```ts
+const handler = async (event: RoutePayload) => {
+  if (event.requestContext.http.method === 'GET') {
+    return new Response(event.queryStringParameters['hub.challenge']);
+  }
+  // …handle the delivered event
+};
+```
+
+`httpMethods` înlocuiește valoarea implicită, în loc să se adauge la aceasta, astfel încât doar `['GET']` face ca ruta să respingă `POST`. Sunt acceptate numai `GET` și `POST`. Lăsați-o nesetată, cu excepția cazului în care furnizorul are nevoie de al doilea verb: o rută care declară `GET` își va executa resolverul pentru orice apelant neautentificat, inclusiv pentru crawlerele și serviciile de desfășurare a linkurilor care trimit `GET` fără solicitare. Orice pentru care platforma nu are o metodă primește răspunsul `405`, fără ca resolverul să fie vreodată executat.
+
 <Note>
 **Aplicația trebuie revendicată și instalată în spațiul de lucru al proprietarului.** Deoarece resolverul rulează în **spațiul de lucru al proprietarului** (spațiul de lucru care deține înregistrarea aplicației), un declanșator de rută de server funcționează doar după ce aplicația a fost *revendicată* — adică are un spațiu de lucru al proprietarului — **și** acea aplicație este **instalată în spațiul de lucru al proprietarului**. Până când ambele condiții sunt adevărate, resolverul nu are unde să ruleze, astfel ruta nu poate fi apelată. O aplicație care expune o funcție logică `serverRouteTriggerSettings` nu poate fi, așadar, listată în marketplace până când nu este revendicată și instalată în spațiul de lucru al proprietarului.
 </Note>
@@ -425,6 +447,78 @@ const handler = async (event: PersonDestroyedEvent) => {
   };
 };
 ```
+
+#### Contextul execuției.
+
+Fiecare gestionar primește un al doilea argument care descrie execuția propriu-zisă, indiferent de ce a declanșat-o. În timp ce primul argument își schimbă forma pentru fiecare declanșator, acesta nu se schimbă:
+
+```ts
+import type { LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
+
+const handler = async (
+  event: DatabaseEventPayload,
+  { workspaceId, workspaceMemberId }: LogicFunctionExecutionContext,
+) => {
+  if (workspaceMemberId === null) {
+    throw new Error('This function must be triggered by a person');
+  }
+
+  return { reviewedBy: workspaceMemberId, workspaceId };
+};
+```
+
+| Câmp                | Tip              | Descriere                                                                                              |
+| ------------------- | ---------------- | ------------------------------------------------------------------------------------------------------ |
+| `workspaceId`       | `string`         | Spațiul de lucru căruia îi aparține execuția.                                                          |
+| `userWorkspaceId`   | `string \| null` | Persoana care a declanșat execuția, ca membru al acestui spațiu de lucru.                              |
+| `workspaceMemberId` | `string \| null` | Aceeași persoană ca înregistrare de membru al spațiului de lucru, la care conectați înregistrări.      |
+| `retryCount`        | `number`         | `0` la prima încercare. Consultați [sarcini de fundal](/l/ro/developers/extend/apps/logic/background-jobs). |
+| `maxRetries`        | `number`         | Limita superioară a reîncercărilor solicitate de aplicație.                                            |
+
+`userWorkspaceId` și `workspaceMemberId` sunt `null` atunci când nimeni nu a declanșat execuția: programările cron, hookurile de instalare și webhookurile neautentificate nu au nicio persoană în spatele lor. De asemenea, sunt `null` atunci când persoana nu are o înregistrare de membru al spațiului de lucru sau când aceasta a fost ștearsă.
+
+<Note>
+**Contextul vă indică cine a declanșat execuția.** Ceea ce poate *face* execuția este o declarație separată, mai jos.
+</Note>
+
+#### Ale cui accesări le utilizează un apel
+
+Fiecare client — `CoreApiClient`, `MetadataApiClient` și `RestApiClient` — acționează ca persoana care a declanșat execuția: rolul acesteia se intersectează cu cel al aplicației dvs., astfel încât apelul nu poate face niciodată mai mult decât poate face oricare dintre voi. Acesta este comportamentul implicit și înseamnă că o persoană nu poate folosi niciodată aplicația dvs. pentru a-și depăși propriile permisiuni.
+
+Când nimeni nu a declanșat execuția, nu există nicio persoană în numele căreia să se acționeze, astfel încât același client revine la accesul propriu al aplicației dvs.: programările cron, hookurile de instalare și webhookurile neautentificate nu necesită o gestionare specială.
+
+Unele apeluri au nevoie în mod legitim de accesul propriu al aplicației chiar și atunci când o persoană *se află* în spatele execuției — de exemplu, pentru a citi înregistrările de configurare ale aplicației dvs. sau pentru a efectua lucrări pe care persoana respectivă nu le-ar putea face singură. Creați un al doilea client pentru acestea:
+
+```ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const asPerson = new CoreApiClient();
+const asApplication = new CoreApiClient({ runAs: 'application' });
+
+const handler = async (event: DatabaseEventPayload) => {
+  // config records only your app may read
+  const { slackUserLinks } = await asApplication.query({ ... });
+
+  // created as the person, so it is attributed and permission-checked
+  await asPerson.mutation({ createNote: { ... } });
+};
+```
+
+Creați-le pe amândouă o singură dată, la nivel de modul, iar fiecare loc de apel indică apoi accesul utilizat prin clientul pe care îl apelează. `RestApiClient` acceptă aceeași opțiune:
+
+```ts
+import { RestApiClient } from 'twenty-client-sdk/rest';
+
+const asApplication = new RestApiClient({ runAs: 'application' });
+```
+
+<Note>
+**O execuție pe care nu a declanșat-o nimeni acționează ca aplicația dvs.** Programările cron, hookurile de instalare și webhookurile neautentificate nu au nicio persoană în spatele lor, astfel încât clientul implicit revine la accesul propriu al aplicației dvs. și continuă să funcționeze. `runAs: 'application'` este necesar doar când doriți acel acces într-o execuție pe care o persoană *a* declanșat-o.
+
+Verificați `context.workspaceMemberId` atunci când o funcție se comportă diferit în funcție de existența unei persoane în spatele ei, de exemplu pentru a atribui o înregistrare.
+</Note>
+
+Ajutoarele SDK care accesează resursele proprii ale aplicației dvs. folosesc întotdeauna accesul acesteia și ignoră `runAs`: [stocarea cheie-valoare](/l/ro/developers/extend/apps/logic/key-value-store), [conexiunile](/l/ro/developers/extend/apps/logic/connections), `runAgent`, `getPublicAssetUrl` și taxarea creditelor.
 
 #### Expunerea unei funcții ca instrument AI sau ca acțiune în fluxul de lucru
 
@@ -620,6 +714,45 @@ const handler = async (params: { parentMessageId?: string }) => {
 **Hook-uri de instalare** — handleri pre-instalare, post-instalare și dezinstalare — partajează acest runtime, dar sunt declarați cu propriile lor funcții `define` și nu folosesc setări de declanșare. Consultați [Hook-uri de instalare](/l/ro/developers/extend/apps/config/install-hooks) pentru `definePreInstallLogicFunction`, `definePostInstallLogicFunction` și `defineUninstallLogicFunction`.
 </Note>
 
+## Creați o activitate pe cronologie.
+
+Utilizați `createTimelineActivity()` pentru a publica un eveniment de domeniu explicit dintr-o funcție logică. Definiți mai întâi evenimentul ca [tip de activitate pe cronologie](/l/ro/developers/extend/apps/data/timeline-activity-types), apoi faceți referire la tip și la obiecte prin identificatorii lor universali stabili:
+
+```ts
+import { createTimelineActivity } from 'twenty-sdk/logic-function';
+
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  happensAt: new Date().toISOString(),
+  properties: {
+    deliveryProvider: 'postal-service',
+  },
+});
+```
+
+Twenty convertește identificatorii universali în ID-urile metadatelor specifice instalării, validează că tipul de activitate pe cronologie aparține aplicației apelante și captează metadatele sale de prezentare în noua activitate.
+
+Parametrii de intrare obligatorii sunt `timelineActivityTypeUniversalIdentifier`, `targetObjectUniversalIdentifier` și `targetRecordId`. De asemenea, puteți furniza `happensAt`, `properties` și `workspaceMemberId`. `happensAt` controlează poziția și ora afișată a evenimentului pe cronologie; în mod implicit, este momentul creării.
+
+Pentru a asocia o altă înregistrare cu evenimentul, furnizați împreună `linkedRecordId` și `linkedObjectMetadataUniversalIdentifier`. În plus, puteți furniza `linkedRecordCachedName` ca alternativă istorică pentru afișare:
+
+```ts
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  linkedObjectMetadataUniversalIdentifier: RECIPIENT_UNIVERSAL_IDENTIFIER,
+  linkedRecordId: recipientId,
+  linkedRecordCachedName: recipientName,
+});
+```
+
+Rolul funcției logice trebuie să aibă permisiunea de scriere pentru obiectul standard `timelineActivity`. Păstrați tipurile explicite de evenimente nelegate de o `action`; un tip legat de o acțiune primește deja evenimente de audit automate și, în caz contrar, ar produce rânduri duplicate.
+
 ## Clienți API tipizați (twenty-client-sdk)
 
 Pachetul `twenty-client-sdk` oferă doi clienți GraphQL tipați pentru a interacționa cu API-ul Twenty din funcțiile de logică și componentele Front.
@@ -701,7 +834,7 @@ setCompany(result.company);
 </Accordion>
 <Accordion title="MetadataApiClient" description="Configurația spațiului de lucru, aplicații și încărcări de fișiere">
 
-`MetadataApiClient` este livrat preconstruit împreună cu SDK-ul (nu este necesară generarea). Interoghează endpointul `/metadata` pentru configurarea spațiului de lucru, aplicații și încărcări de fișiere.
+`MetadataApiClient` este livrat preconstruit împreună cu SDK-ul (nu este necesară generarea). Interoghează endpointul `/metadata` pentru configurarea spațiului de lucru, aplicații și încărcări de fișiere. Acceptă aceeași opțiune `runAs` ca `CoreApiClient` — consultați [Ale cui accesări le utilizează un apel](#whose-access-a-call-uses).
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -755,7 +888,7 @@ console.log(uploadedFile);
 | ---------------------------------- | -------- | ------------------------------------------------------------------- |
 | `fileBuffer`                       | `Buffer` | Conținutul brut al fișierului                                       |
 | `filename`                         | `string` | Numele fișierului (folosit pentru stocare și afișare)               |
-| `contentType`                      | `string` | Tipul MIME (implicit `application/octet-stream` dacă este omis)     |
+| `contentType`                      | `șir`    | Tipul MIME (implicit `application/octet-stream` dacă este omis)     |
 | `fieldMetadataUniversalIdentifier` | `șir`    | `universalIdentifier` al câmpului de tip fișier de pe obiectul dvs. |
 
 Puncte cheie:
@@ -769,7 +902,8 @@ Puncte cheie:
   Când codul dvs. rulează pe Twenty (funcții de logică sau componente Front), platforma injectează acreditările ca variabile de mediu:
 
   * `TWENTY_API_URL` — URL-ul de bază al API-ului Twenty
-  * `TWENTY_APP_ACCESS_TOKEN` — Cheie cu durată scurtă, limitată la rolul implicit de funcție al aplicației
+  * `TWENTY_APP_ACCESS_TOKEN` — Cheie cu durată scurtă pentru accesul implicit: rolul unei persoane se intersectează cu cel al aplicației dvs. atunci când cineva se află în spatele execuției, iar rolul propriu al aplicației dvs. atunci când nu se află nimeni. Persoana este cea care a declanșat execuția într-o funcție logică sau cea care privește pagina într-o componentă front-end.
+  * `TWENTY_APP_APPLICATION_ACCESS_TOKEN` — Cheie cu durată scurtă, limitată numai la rolul propriu al aplicației dvs. Numai funcții logice, injectată întotdeauna acolo și utilizată de `runAs: 'application'`.
 
-  Nu trebuie să le transmiteți clienților — aceștia citesc automat din `process.env`. Permisiunile cheii API sunt determinate de rolul declarat cu `defineApplicationRole()` (sau referențiat prin `defaultRoleUniversalIdentifier` în `application-config.ts`).
+  Nu trebuie să transmiteți aceste valori clienților — aceștia citesc automat din `process.env`, iar [Ale cui accesări le utilizează un apel](#whose-access-a-call-uses) explică alegerea dintre ele. Permisiunile proprii ale aplicației dvs. sunt determinate de rolul declarat cu `defineApplicationRole()` (sau referențiat prin `defaultRoleUniversalIdentifier` în `application-config.ts`); o execuție care acționează ca o persoană nu poate depăși niciodată acel rol sau rolul persoanei.
 </Note>

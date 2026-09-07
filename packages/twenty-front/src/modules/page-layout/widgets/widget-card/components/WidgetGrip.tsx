@@ -1,8 +1,16 @@
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
+import { isDefined } from 'twenty-shared/utils';
 import { IconGripVertical } from 'twenty-ui/icon';
 import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
+import {
+  type MouseEvent as ReactMouseEvent,
+  type PointerEvent as ReactPointerEvent,
+  useContext,
+  useState,
+} from 'react';
+
+const DRAG_CLICK_SUPPRESSION_DISTANCE = 5;
 
 const StyledGripContainerBase = styled.div`
   align-items: center;
@@ -28,16 +36,45 @@ const StyledGripContainer = motion.create(StyledGripContainerBase);
 
 type WidgetGripProps = {
   className?: string;
-  onClick?: (e: React.MouseEvent) => void;
 };
 
-export const WidgetGrip = ({ className, onClick }: WidgetGripProps) => {
+export const WidgetGrip = ({ className }: WidgetGripProps) => {
   const { theme } = useContext(ThemeContext);
+  // Only pointerdown is tracked: the compatibility mousedown that touch fires
+  // afterwards reports the release point, which would hide every drag.
+  const [pointerDownPosition, setPointerDownPosition] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+
+  const handlePointerDown = (event: ReactPointerEvent) => {
+    event.currentTarget.setPointerCapture(event.pointerId);
+    setPointerDownPosition({
+      x: event.clientX,
+      y: event.clientY,
+    });
+  };
+
+  const handleClick = (event: ReactMouseEvent) => {
+    setPointerDownPosition(null);
+
+    if (
+      isDefined(pointerDownPosition) &&
+      Math.hypot(
+        event.clientX - pointerDownPosition.x,
+        event.clientY - pointerDownPosition.y,
+      ) > DRAG_CLICK_SUPPRESSION_DISTANCE
+    ) {
+      event.stopPropagation();
+    }
+  };
+
   return (
     <StyledGripContainer
       layout
       className={className}
-      onClick={onClick}
+      onPointerDown={handlePointerDown}
+      onClick={handleClick}
       initial={{ width: 0, opacity: 0 }}
       animate={{ width: 20, opacity: 1 }}
       exit={{ width: 0, opacity: 0 }}

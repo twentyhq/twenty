@@ -13,7 +13,7 @@ import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorato
 const TEXT_FILTER: StepFilter = {
   id: 'filter-1',
   stepFilterGroupId: 'filter-group-1',
-  stepOutputKey: 'company.name',
+  stepOutputKey: '{{company.name}}',
   type: 'text',
   operand: ViewFilterOperand.CONTAINS,
   value: 'Acme',
@@ -23,7 +23,7 @@ const TEXT_FILTER: StepFilter = {
 const NUMBER_FILTER: StepFilter = {
   id: 'filter-2',
   stepFilterGroupId: 'filter-group-1',
-  stepOutputKey: 'company.employees',
+  stepOutputKey: '{{company.employees}}',
   type: 'number',
   operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
   value: '100',

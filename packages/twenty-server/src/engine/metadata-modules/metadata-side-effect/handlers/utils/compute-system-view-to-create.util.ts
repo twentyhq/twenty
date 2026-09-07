@@ -3,6 +3,7 @@ import {
   getSystemViewUniversalIdentifier,
   type SystemViewKey,
 } from 'twenty-shared/application';
+import { VIEW_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
 import {
   ViewKey,
   ViewOpenRecordIn,
@@ -11,6 +12,7 @@ import {
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
+import { INDEX_VIEW_NAME } from 'src/engine/metadata-modules/view/constants/index-view-name.constant';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 
@@ -24,10 +26,12 @@ type SystemViewObjectMetadata = Pick<
 const SYSTEM_VIEW_PROPERTIES_BY_VIEW_KEY = {
   [SYSTEM_VIEW_KEYS.INDEX]: {
     type: ViewType.TABLE,
-    computeName: () => 'All {objectLabelPlural}',
+    icon: VIEW_TYPE_DEFAULT_ICONS[ViewType.TABLE],
+    computeName: () => INDEX_VIEW_NAME,
   },
   [SYSTEM_VIEW_KEYS.FIELDS_WIDGET]: {
     type: ViewType.FIELDS_WIDGET,
+    icon: 'IconList',
     computeName: (objectMetadata: SystemViewObjectMetadata) =>
       `${objectMetadata.labelSingular} Record Page Fields`,
   },
@@ -35,6 +39,7 @@ const SYSTEM_VIEW_PROPERTIES_BY_VIEW_KEY = {
   SystemViewKey,
   {
     type: ViewType;
+    icon: string;
     computeName: (objectMetadata: SystemViewObjectMetadata) => string;
   }
 >;
@@ -48,7 +53,8 @@ export const computeSystemViewToCreate = ({
   objectMetadata: SystemViewObjectMetadata;
   viewKey: SystemViewKey;
 }): UniversalFlatView & { id: string } => {
-  const { type, computeName } = SYSTEM_VIEW_PROPERTIES_BY_VIEW_KEY[viewKey];
+  const { type, icon, computeName } =
+    SYSTEM_VIEW_PROPERTIES_BY_VIEW_KEY[viewKey];
   const createdAt = new Date().toISOString();
 
   return {
@@ -58,7 +64,7 @@ export const computeSystemViewToCreate = ({
     // Only INDEX is a persisted key; FIELDS_WIDGET exists solely in the
     // universal identifier derivation.
     key: viewKey === SYSTEM_VIEW_KEYS.INDEX ? ViewKey.INDEX : null,
-    icon: 'IconList',
+    icon,
     type,
     createdAt,
     updatedAt: createdAt,

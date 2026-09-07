@@ -16,7 +16,7 @@ describe('shouldExecuteStep', () => {
       settings: {
         errorHandlingOptions: {
           continueOnFailure: { value: false },
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
         },
       },
       nextStepIds: ['step-3'],
@@ -27,7 +27,7 @@ describe('shouldExecuteStep', () => {
       settings: {
         errorHandlingOptions: {
           continueOnFailure: { value: false },
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
         },
       },
       nextStepIds: ['step-3'],
@@ -38,7 +38,7 @@ describe('shouldExecuteStep', () => {
       settings: {
         errorHandlingOptions: {
           continueOnFailure: { value: false },
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
         },
       },
       nextStepIds: [],
@@ -248,7 +248,7 @@ describe('shouldExecuteStep', () => {
           },
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
           outputSchema: {},
         },
@@ -302,7 +302,7 @@ describe('shouldExecuteStep', () => {
         settings: {
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
         },
         nextStepIds: ['step-3'],
@@ -314,7 +314,7 @@ describe('shouldExecuteStep', () => {
         settings: {
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
         },
         nextStepIds: [],
@@ -369,7 +369,7 @@ describe('shouldExecuteStep', () => {
         settings: {
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
         },
         nextStepIds: ['step-4'],
@@ -380,7 +380,7 @@ describe('shouldExecuteStep', () => {
         settings: {
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
         },
         nextStepIds: ['step-4'],
@@ -391,7 +391,7 @@ describe('shouldExecuteStep', () => {
         settings: {
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
         },
         nextStepIds: ['step-4'],
@@ -402,7 +402,7 @@ describe('shouldExecuteStep', () => {
         settings: {
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
         },
         nextStepIds: [],

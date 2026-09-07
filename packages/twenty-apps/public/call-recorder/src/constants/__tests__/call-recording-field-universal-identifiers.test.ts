@@ -1,8 +1,10 @@
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 import { describe, expect, it } from 'vitest';
 
-import { CALL_RECORDING_AUDIO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-audio-field-universal-identifier';
-import { CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-video-field-universal-identifier';
+import {
+  CALL_RECORDING_AUDIO_FIELD_UNIVERSAL_IDENTIFIER,
+  CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
 
 // This test is nothing more than a sanity check to ensure that the universal identifiers for the call recording media fields are correct.
 describe('call recording field universal identifiers', () => {

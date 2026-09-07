@@ -84,7 +84,7 @@ export class ApiService {
 
   syncApplication(
     manifest: Manifest,
-    options?: { dryRun?: boolean },
+    options?: { dryRun?: boolean; inferDeletionFromMissingEntities?: boolean },
   ): Promise<
     ApiResponse<
       {
@@ -143,5 +143,17 @@ export class ApiService {
 
   uploadFile(...args: Parameters<FileApi['uploadFile']>) {
     return this.fileApi.uploadFile(...args);
+  }
+
+  createApplicationFileUploads(
+    ...args: Parameters<FileApi['createApplicationFileUploads']>
+  ) {
+    return this.fileApi.createApplicationFileUploads(...args);
+  }
+
+  completeApplicationFileUploads(
+    ...args: Parameters<FileApi['completeApplicationFileUploads']>
+  ) {
+    return this.fileApi.completeApplicationFileUploads(...args);
   }
 }

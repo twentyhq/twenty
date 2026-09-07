@@ -134,4 +134,33 @@ describe('IMAP/SMTP outbound messaging (integration)', () => {
       ]),
     );
   }, 300000);
+
+  it('refuses to send from an address the account has not verified', async () => {
+    const subject = `IMAP/SMTP rejected sender ${randomUUID()}`;
+
+    const result = await sendEmail({
+      connectedAccountId,
+      fromHandle: 'not-my-alias@acme.test',
+      to: HANDLE,
+      subject,
+      body: '<p>SMTP rejected body</p>',
+    });
+
+    expect(result).toMatchObject({
+      success: false,
+      error: expect.stringContaining(
+        'is not the connected account handle nor one of its verified aliases',
+      ),
+    });
+    expect(
+      await findRecordNodesByFilter<{ id: string }>(
+        'message',
+        'messages',
+        'id',
+        {
+          subject: { eq: subject },
+        },
+      ),
+    ).toEqual([]);
+  }, 300000);
 });

@@ -7,12 +7,10 @@ import { commonQueryRunnerToRestApiExceptionHandler } from 'src/engine/api/commo
 import { RestInputRequestParserException } from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { throttlerToRestApiExceptionHandler } from 'src/engine/core-modules/throttler/utils/throttler-to-rest-api-exception-handler.util';
-import {
-  TwentyORMException,
-  TwentyORMExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { TwentyOrmV2Exception } from 'src/engine/twenty-orm-v2/exceptions/twenty-orm-v2.exception';
-import { isTwentyOrmV2UserInputError } from 'src/engine/twenty-orm-v2/utils/twenty-orm-v2-to-user-input-error.util';
+import { UsageLimitException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
+import { usageLimitToRestApiExceptionHandler } from 'src/engine/core-modules/usage-limit/utils/usage-limit-to-rest-api-exception-handler.util';
+import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { isTwentyOrmUserInputError } from 'src/engine/twenty-orm/utils/is-twenty-orm-user-input-error.util';
 
 interface QueryFailedErrorWithCode extends QueryFailedError {
   code: string;
@@ -26,13 +24,12 @@ export const workspaceQueryRunnerRestApiExceptionHandler = (
       return commonQueryRunnerToRestApiExceptionHandler(error);
     case error instanceof RestInputRequestParserException:
       throw new BadRequestException(error.message);
+    case error instanceof UsageLimitException:
+      return usageLimitToRestApiExceptionHandler(error);
     case error instanceof ThrottlerException:
       return throttlerToRestApiExceptionHandler(error);
-    case error instanceof TwentyORMException &&
-      error.code === TwentyORMExceptionCode.INVALID_INPUT:
-      throw new BadRequestException(error.message);
-    case error instanceof TwentyOrmV2Exception &&
-      isTwentyOrmV2UserInputError(error):
+    case error instanceof TwentyOrmException &&
+      isTwentyOrmUserInputError(error):
       throw new BadRequestException(error.message);
     default:
       throw error;

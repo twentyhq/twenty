@@ -40,4 +40,16 @@ export const buildMessageStandardFlatIndexMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  headerMessageIdIndex: createStandardIndexFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      indexName: 'headerMessageIdIndex',
+      relatedFieldNames: ['headerMessageId'],
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
 });

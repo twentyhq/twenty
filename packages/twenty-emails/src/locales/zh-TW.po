@@ -115,7 +115,7 @@ msgstr "您好,"
 #: src/emails/clean-suspended-workspace.email.tsx
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Hi {userName},"
-msgstr "嗨 {userName},"
+msgstr "嗨 {userName}，"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -241,7 +241,7 @@ msgstr "設置您的密碼🗝"
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Start a new workspace"
-msgstr "開始新的工作區"
+msgstr "建立新的工作區"
 
 #. js-lingui-explicit-id
 #: src/emails/test.email.tsx

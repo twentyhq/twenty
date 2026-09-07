@@ -5,7 +5,7 @@ import {
 } from 'twenty-sdk/define';
 
 import { APP_DISPLAY_NAME } from 'src/constants/app-display-name';
-import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/constants/default-role-universal-identifier';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
 export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
@@ -68,5 +68,8 @@ export default defineApplicationRole({
   permissionFlagUniversalIdentifiers: [
     SystemPermissionFlag.UPLOAD_FILE,
     SystemPermissionFlag.AI,
+    // The settings front component reads and writes the app's own application
+    // variables through the metadata API, which is gated behind this flag.
+    SystemPermissionFlag.APPLICATIONS,
   ],
 });

@@ -76,6 +76,12 @@ t({ message: 'Open', context: 'window' });
 <Trans context="card-title">Untitled</Trans>
 ```
 
+Strings contextuais aparecem nos catálogos de configurações regionais como um grupo indexado pelo seu
+contexto: `"\<context>": { "\<message>": "\<translation>" }`. Os rótulos do manifesto são
+contextuais por definição — cada um traz o papel de metadados que desempenha
+(`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …), por isso
+a mesma palavra pode ser traduzida de forma diferente como nome de objeto e como nome de visualização.
+
 ## Extraindo e traduzindo
 
 Execute o comando extracto a partir do diretório do seu aplicativo:
@@ -94,9 +100,17 @@ string de origem. Preencha as traduções:
 {
   "Loading postcard…": "Chargement de la carte…",
   "Hi {name}": "Bonjour {name}",
-  "Saved {count} cards": "{count} cartes enregistrées"
+  "Saved {count} cards": "{count} cartes enregistrées",
+  "door": {
+    "Open": "Ouvrir"
+  },
+  "objectMetadata.labelSingular": {
+    "Postcard": "Carte postale"
+  }
 }
 ```
+
+Strings sem contexto são entradas simples; strings contextuais — incluindo cada rótulo de manifesto — são aninhadas sob sua chave de contexto.
 
 Espaços reservados como `{name}` são substituídos no tempo de execução — mantenha-os na tradução
 . Qualquer cadeia de caracteres deixada vazia retorna ao texto de origem.
@@ -111,14 +125,11 @@ cada seqüência de caracteres contra seu catálogo, voltando à fonte quando um
 estiver faltando. Mudar o idioma no host faz com que as strings de `Trans` e
 `useTranslate().t` sejam renderizadas novamente em tempo real.
 
-Como os catálogos são compilados no tempo de construção, atualizar uma tradução significa
-reexecutar `vinte dev:build` (e redistribuir), o mesmo que qualquer outra mudança.
-
-<Note>
-As traduções são compiladas por `vinte dev:build` (e `vinte aplicam`). O relógio
-contínuo `vinte dev` mostra strings de origem, então teste saída localizada
-com uma compilação única.
-</Note>
+Os rótulos do manifesto são compilados a cada sincronização — `twenty dev:build`, `twenty apply`
+e também durante a observação contínua de `twenty dev` — portanto, editar um arquivo de localidade e
+sincronizar é suficiente para ver o novo texto. Os catálogos de componentes do front-end são incorporados a
+cada pacote de componentes no momento da compilação, portanto, alterar um deles ainda exige
+executar novamente `twenty dev:build` (e reimplantar).
 
 O conteúdo de texto (children) de `Trans` pode se estender por várias linhas — os espaços em branco são colapsados da
 mesma forma que o JSX os colapsa, portanto, ambos são extraídos para a chave `Welcome back`:

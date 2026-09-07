@@ -12,7 +12,7 @@ import {
   errorResponse,
   failureResponse,
   resolvePartnerFromRequest,
-} from 'src/modules/partner/self-service/services/resolve-partner-from-request.service';
+} from 'src/modules/shared/http/resolve-partner-from-request.service';
 
 export type SubmitContentForReviewResult =
   | { ok: true; status: 'UNDER_CUSTOMER_PARTNER_REVIEW' }
@@ -41,7 +41,10 @@ export const submitPartnerContentForReview = async (
 
   try {
     const client = buildAppClient();
-    const content = await queryContentOwnerAndStatus(client, parsed.data.recordId);
+    const content = await queryContentOwnerAndStatus(
+      client,
+      parsed.data.recordId,
+    );
 
     if (!content || content.partnerId !== resolved.partnerId) {
       return errorResponse('FORBIDDEN');

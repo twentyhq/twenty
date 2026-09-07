@@ -11,8 +11,11 @@ import { FileFolder } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
 import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
@@ -34,8 +37,6 @@ import {
 import { type SdkClientGenerationTrigger } from 'src/engine/core-modules/sdk-client/types/sdk-client-generation-trigger.type';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const SDK_CLIENT_ARCHIVE_NAME = 'twenty-client-sdk.zip';
 const SDK_CLIENT_GENERATION_RETRY_LIMIT = 3;
@@ -46,16 +47,12 @@ export class SdkClientGenerationService {
 
   constructor(
     private readonly fileStorageService: FileStorageService,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceSchemaFactory: WorkspaceSchemaFactory,
     private readonly applicationService: ApplicationService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     private readonly metricsService: MetricsService,
   ) {}
 
@@ -222,21 +219,10 @@ export class SdkClientGenerationService {
         settings: { isTemporaryFile: false, toDelete: false },
       });
 
-      await this.applicationRepository.update(
-        { id: applicationId, workspaceId },
-        {
-          isSdkLayerStale: true,
-          sdkClientCoreChecksum,
-        },
-      );
-
-      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-        'flatApplicationMaps',
-      ]);
-
-      await this.broadcastSdkClientCoreChecksumUpdate({
+      await this.storeSdkClientCoreChecksum({
         workspaceId,
         applicationId,
+        applicationUniversalIdentifier,
         sdkClientCoreChecksum,
       });
 
@@ -251,38 +237,36 @@ export class SdkClientGenerationService {
     }
   }
 
-  private async broadcastSdkClientCoreChecksumUpdate({
+  private async storeSdkClientCoreChecksum({
     workspaceId,
     applicationId,
+    applicationUniversalIdentifier,
     sdkClientCoreChecksum,
   }: {
     workspaceId: string;
     applicationId: string;
+    applicationUniversalIdentifier: string;
     sdkClientCoreChecksum: string;
   }): Promise<void> {
     try {
-      await this.workspaceEventBroadcaster.broadcast({
+      await this.applicationService.update(applicationId, {
+        isSdkLayerStale: true,
+        sdkClientCoreChecksum,
         workspaceId,
-        events: [
-          {
-            type: 'updated',
-            entityName: 'application',
-            recordId: applicationId,
-            properties: {
-              updatedFields: ['sdkClientCoreChecksum'],
-              after: {
-                id: applicationId,
-                sdkClientCoreChecksum,
-              },
-            },
-          },
-        ],
       });
     } catch (error) {
-      this.logger.warn(
-        `Failed to broadcast SDK client core checksum update for application ${applicationId} in workspace ${workspaceId}`,
-        error,
-      );
+      if (
+        error instanceof ApplicationException &&
+        error.code === ApplicationExceptionCode.APPLICATION_NOT_FOUND
+      ) {
+        this.logger.warn(
+          `Skipped SDK client checksum write for application ${applicationUniversalIdentifier} in workspace ${workspaceId}: the application no longer exists`,
+        );
+
+        return;
+      }
+
+      throw error;
     }
   }
 

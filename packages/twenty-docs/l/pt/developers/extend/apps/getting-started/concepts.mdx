@@ -54,9 +54,9 @@ your-app/
 
 ## Sandboxing
 
-* **Funções lógicas** são executadas em processos Node.js isolados no servidor. Elas acessam dados apenas por meio do cliente de API tipado, restrito às permissões do papel do aplicativo.
+* **Funções lógicas** são executadas em processos Node.js isolados no servidor. Eles acessam dados apenas por meio do cliente de API tipado, que atua como a pessoa que disparou a execução ou como o próprio app. Consulte [Qual acesso uma chamada usa](/l/pt/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
 * **Componentes de front-end** executam em Web Workers usando Remote DOM — isolados da página principal, mas renderizando elementos DOM nativos (não iframes). Eles se comunicam com o Twenty por meio de uma API de host com passagem de mensagens.
-* **Permissões** são aplicadas no nível da API. O token de tempo de execução (`TWENTY_APP_ACCESS_TOKEN`) é derivado do papel definido em `defineApplication()`.
+* **Permissões** são aplicadas no nível da API. Dois tokens de runtime são inseridos, ambos derivados da função declarada com `defineApplicationRole()`; o padrão é ainda mais limitado ao que a pessoa que disparou a execução pode fazer quando há alguém por trás da execução.
 
 ## Ciclo de vida do aplicativo
 

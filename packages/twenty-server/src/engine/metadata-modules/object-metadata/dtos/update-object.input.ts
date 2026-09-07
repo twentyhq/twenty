@@ -14,6 +14,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
+import { MetadataTranslationOverrideInput } from 'src/engine/metadata-modules/metadata-translation/dtos/metadata-translation-override.input';
 
 @InputType()
 export class UpdateObjectPayload {
@@ -88,6 +89,12 @@ export class UpdateObjectPayload {
   @IsOptional()
   @Field(() => ObjectOpenRecordIn, { nullable: true })
   openRecordIn?: ObjectOpenRecordIn;
+
+  @Type(() => MetadataTranslationOverrideInput)
+  @ValidateNested({ each: true })
+  @IsOptional()
+  @Field(() => [MetadataTranslationOverrideInput], { nullable: true })
+  translations?: MetadataTranslationOverrideInput[];
 }
 
 @InputType()

@@ -11,7 +11,6 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
-import { tokenPairState } from '@/auth/states/tokenPairState';
 import { appVersionState } from '@/client-config/states/appVersionState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -28,7 +27,6 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
   const apolloRef = useRef<ApolloFactory | null>(null);
 
   const navigate = useNavigate();
-  const setTokenPair = useSetAtomState(tokenPairState);
   const setIsCookieAuthActive = useSetAtomState(isCookieAuthActiveState);
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
@@ -68,11 +66,7 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
       currentWorkspaceMember: currentWorkspaceMember,
       currentWorkspace: currentWorkspace,
       appVersion,
-      onTokenPairChange: (tokenPair) => {
-        setTokenPair(tokenPair);
-      },
       onUnauthenticatedError: () => {
-        setTokenPair(null);
         setIsCookieAuthActive(false);
         setCurrentUser(null);
         setCurrentWorkspaceMember(null);
@@ -115,7 +109,6 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
     return apolloRef.current.getClient();
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    setTokenPair,
     setCurrentUser,
     setCurrentWorkspaceMember,
     setCurrentWorkspace,

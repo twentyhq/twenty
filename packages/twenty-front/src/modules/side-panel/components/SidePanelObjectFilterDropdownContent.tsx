@@ -20,6 +20,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 const ALL_OBJECTS_ITEM_ID = 'all-objects';
 
@@ -66,10 +67,13 @@ export const SidePanelObjectFilterDropdownContent = ({
     ALL_OBJECTS_ITEM_ID,
     ...displayedObjects.map((item) => item.nameSingular),
   ];
+  const scopedSelectableListId = useWorkspaceSurfaceScopedComponentInstanceId(
+    OBJECT_FILTER_DROPDOWN_ID,
+  );
 
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    OBJECT_FILTER_DROPDOWN_ID,
+    scopedSelectableListId,
   );
 
   return (

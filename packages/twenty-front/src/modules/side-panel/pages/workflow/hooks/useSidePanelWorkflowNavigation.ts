@@ -1,4 +1,6 @@
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
+import { getWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { sidePanelWorkflowIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowIdComponentState';
 import { sidePanelWorkflowRunIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowRunIdComponentState';
 import { sidePanelWorkflowStepIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowStepIdComponentState';
@@ -13,6 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   IconBolt,
   type IconComponent,
+  IconSettings,
   IconSettingsAutomation,
 } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
@@ -67,13 +70,33 @@ export const useSidePanelWorkflowNavigation = () => {
   );
 
   const openWorkflowEditStepInSidePanel = useCallback(
-    (
-      workflowId: string,
-      title: string,
-      icon: IconComponent,
-      stepId?: string,
-    ) => {
+    ({
+      workflowId,
+      title,
+      icon,
+      stepId,
+      initialStepTab,
+    }: {
+      workflowId: string;
+      title: string;
+      icon: IconComponent;
+      stepId?: string;
+      initialStepTab?: { tabListComponentId: string; tabId: string };
+    }) => {
       const pageId = v4();
+
+      if (isDefined(initialStepTab)) {
+        store.set(
+          activeTabIdComponentState.atomFamily({
+            instanceId: getWorkspaceSurfaceScopedComponentInstanceId({
+              componentInstanceId: initialStepTab.tabListComponentId,
+              surfaceType: 'side-panel',
+              surfaceInstanceId: pageId,
+            }),
+          }),
+          initialStepTab.tabId,
+        );
+      }
 
       store.set(
         sidePanelWorkflowIdComponentState.atomFamily({
@@ -102,6 +125,41 @@ export const useSidePanelWorkflowNavigation = () => {
         page: SidePanelPages.WorkflowStepEdit,
         pageTitle: title,
         pageIcon: icon,
+        pageId,
+      });
+    },
+    [navigateSidePanel, store],
+  );
+
+  const openWorkflowStepSettingsInSidePanel = useCallback(
+    ({ workflowId, stepId }: { workflowId: string; stepId: string }) => {
+      const pageId = v4();
+
+      store.set(
+        sidePanelWorkflowIdComponentState.atomFamily({
+          instanceId: pageId,
+        }),
+        workflowId,
+      );
+
+      store.set(
+        sidePanelWorkflowStepIdComponentState.atomFamily({
+          instanceId: pageId,
+        }),
+        stepId,
+      );
+
+      store.set(
+        workflowSelectedNodeComponentState.atomFamily({
+          instanceId: workflowId,
+        }),
+        stepId,
+      );
+
+      navigateSidePanel({
+        page: SidePanelPages.WorkflowStepSettings,
+        pageTitle: t`Node settings`,
+        pageIcon: IconSettings,
         pageId,
       });
     },
@@ -247,6 +305,7 @@ export const useSidePanelWorkflowNavigation = () => {
     openWorkflowTriggerTypeInSidePanel,
     openWorkflowCreateStepInSidePanel,
     openWorkflowEditStepInSidePanel,
+    openWorkflowStepSettingsInSidePanel,
     openWorkflowEditStepTypeInSidePanel,
     openWorkflowViewStepInSidePanel,
     openWorkflowRunViewStepInSidePanel,

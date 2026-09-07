@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import {
   type ClickHouseInsertOptions,
   ClickHouseService,
-} from 'src/database/clickHouse/clickHouse.service';
+} from 'src/database/clickhouse/clickhouse.service';
 import { type EventSink } from 'src/engine/core-modules/event-logs/ingest/event-sink';
 import {
   type WorkspaceEventEnvelope,

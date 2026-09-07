@@ -9,6 +9,7 @@ import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { type EachTestingContext } from 'twenty-shared/testing';
 import {
   FieldMetadataType,
+  MetadataWritability,
   RelationType,
   ViewSortDirection,
 } from '~/generated-metadata/graphql';
@@ -43,6 +44,7 @@ const objectMetadataItemWithPositionField: EnrichedObjectMetadataItem = {
   isSystem: false,
   isUIEditable: true,
   isUICreatable: true,
+  writability: MetadataWritability.OPEN,
   openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
   isRemote: false,
   isSearchable: false,
@@ -98,7 +100,7 @@ const turnSortsIntoOrderByTestUseCases: TurnSortsIntoOrderTestContext[] = [
           direction: ViewSortDirection.ASC,
         },
       ],
-      expected: [{ field1: 'AscNullsFirst' }, { position: 'AscNullsFirst' }],
+      expected: [{ field1: 'AscNullsLast' }, { position: 'AscNullsFirst' }],
     },
   },
   {
@@ -121,7 +123,7 @@ const turnSortsIntoOrderByTestUseCases: TurnSortsIntoOrderTestContext[] = [
         },
       ],
       expected: [
-        { field1: 'AscNullsFirst' },
+        { field1: 'AscNullsLast' },
         { field2: 'DescNullsLast' },
         { position: 'AscNullsFirst' },
       ],
@@ -207,6 +209,7 @@ describe('turnSortsIntoOrderBy', () => {
       isSystem: false,
       isUIEditable: true,
       isUICreatable: true,
+      writability: MetadataWritability.OPEN,
       openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
       isRemote: false,
       isSearchable: false,
@@ -259,6 +262,7 @@ describe('turnSortsIntoOrderBy', () => {
       isSystem: false,
       isUIEditable: true,
       isUICreatable: true,
+      writability: MetadataWritability.OPEN,
       openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
       isRemote: false,
       isSearchable: false,
@@ -281,7 +285,7 @@ describe('turnSortsIntoOrderBy', () => {
       ]);
 
       expect(result).toEqual([
-        { company: { name: 'AscNullsFirst' } },
+        { company: { name: 'AscNullsLast' } },
         { position: 'AscNullsFirst' },
       ]);
     });
@@ -317,7 +321,7 @@ describe('turnSortsIntoOrderBy', () => {
       const result = turnSortsIntoOrderBy(personObjectMetadataItem, sorts, []);
 
       expect(result).toEqual([
-        { companyId: 'AscNullsFirst' },
+        { companyId: 'AscNullsLast' },
         { position: 'AscNullsFirst' },
       ]);
     });

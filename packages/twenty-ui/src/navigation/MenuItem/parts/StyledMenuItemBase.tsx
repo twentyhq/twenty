@@ -46,7 +46,6 @@ export const StyledMenuItemBase = forwardRef<
       data-hover-background-disabled={isHoverBackgroundDisabled || undefined}
       data-disabled={disabled || undefined}
       data-focused={focused || undefined}
-      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...rest}
     >
       {children}
@@ -61,12 +60,7 @@ type StyledStaticDivProps = ComponentPropsWithoutRef<'div'>;
 const createStyledDiv = (classNameFromModule: string, displayName: string) => {
   const StyledDiv = forwardRef<HTMLDivElement, StyledStaticDivProps>(
     ({ className, children, ...rest }, ref) => (
-      <div
-        ref={ref}
-        className={clsx(classNameFromModule, className)}
-        // oxlint-disable-next-line react/jsx-props-no-spreading
-        {...rest}
-      >
+      <div ref={ref} className={clsx(classNameFromModule, className)} {...rest}>
         {children}
       </div>
     ),
@@ -147,7 +141,6 @@ export const StyledHoverableMenuItemBase = forwardRef<
         isIconDisplayedOnHoverOnly || undefined
       }
       data-cursor={cursor}
-      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...rest}
     >
       {children}

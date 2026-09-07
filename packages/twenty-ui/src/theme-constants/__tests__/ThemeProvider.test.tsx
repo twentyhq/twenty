@@ -1,6 +1,8 @@
 import { render } from '@testing-library/react';
 
-import { ThemeProvider } from '../ThemeProvider';
+import { ThemeProvider, type ThemeType } from '../ThemeProvider';
+import { themeCssVariables } from '../themeCssVariables';
+import { useTheme } from '../useTheme';
 
 const readInlineScale = () =>
   document.documentElement.style.getPropertyValue('--t-scale-user');
@@ -77,5 +79,67 @@ describe('ThemeProvider scale', () => {
     unmount();
 
     expect(readInlineScale()).toBe('1.25');
+  });
+});
+
+describe('ThemeProvider token resolution', () => {
+  let latestTheme: ThemeType | undefined;
+
+  const ThemeSpy = () => {
+    latestTheme = useTheme();
+    return null;
+  };
+
+  const mockResolvedTokens = (resolvedTokens: Record<string, string>) => {
+    jest.spyOn(window, 'getComputedStyle').mockReturnValue({
+      getPropertyValue: (property: string) => resolvedTokens[property] ?? '',
+    } as CSSStyleDeclaration);
+  };
+
+  const renderThemeSpy = () =>
+    render(
+      <ThemeProvider colorScheme="light">
+        <ThemeSpy />
+      </ThemeProvider>,
+    );
+
+  beforeEach(() => {
+    latestTheme = undefined;
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('should keep the CSS variable reference when no custom property resolves', () => {
+    mockResolvedTokens({});
+
+    renderThemeSpy();
+
+    expect(latestTheme?.icon.size.md).toBe(themeCssVariables.icon.size.md);
+    expect(latestTheme?.font.color.primary).toBe(
+      themeCssVariables.font.color.primary,
+    );
+  });
+
+  it('should resolve numeric custom properties and keep the reference for the rest', () => {
+    mockResolvedTokens({ '--t-icon-size-md': '16' });
+
+    renderThemeSpy();
+
+    expect(latestTheme?.icon.size.md).toBe(16);
+    expect(latestTheme?.icon.size.sm).toBe(themeCssVariables.icon.size.sm);
+  });
+
+  it('should resolve string custom properties to their computed value', () => {
+    mockResolvedTokens({
+      '--t-font-color-primary': '#181d27',
+      '--t-border-radius-sm': '4px',
+    });
+
+    renderThemeSpy();
+
+    expect(latestTheme?.font.color.primary).toBe('#181d27');
+    expect(latestTheme?.border.radius.sm).toBe('4px');
   });
 });

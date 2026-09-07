@@ -8,7 +8,10 @@ import {
 
 describe('saveProfileSchema', () => {
   it('accepts a valid partial payload', () => {
-    const parsed = saveProfileSchema.safeParse({ name: 'Nine Dots Ventures', city: 'Paris' });
+    const parsed = saveProfileSchema.safeParse({
+      name: 'Nine Dots Ventures',
+      city: 'Paris',
+    });
     expect(parsed.success).toBe(true);
   });
 
@@ -22,7 +25,14 @@ describe('saveProfileSchema', () => {
   });
 
   it('rejects an unknown key (validationStage)', () => {
-    const parsed = saveProfileSchema.safeParse({ validationStage: 'VALIDATED' });
+    const parsed = saveProfileSchema.safeParse({
+      validationStage: 'VALIDATED',
+    });
+    expect(parsed.success).toBe(false);
+  });
+
+  it('rejects an unknown key (superPartner)', () => {
+    const parsed = saveProfileSchema.safeParse({ superPartner: true });
     expect(parsed.success).toBe(false);
   });
 
@@ -49,27 +59,35 @@ describe('saveProfileSchema', () => {
 
   it('rejects a negative hourlyRate amount', () => {
     expect(
-      saveProfileSchema.safeParse({ hourlyRate: { amountMicros: -1, currencyCode: 'USD' } }).success,
+      saveProfileSchema.safeParse({
+        hourlyRate: { amountMicros: -1, currencyCode: 'USD' },
+      }).success,
     ).toBe(false);
   });
 
   it('rejects a non-ISO currency code', () => {
     expect(
-      saveProfileSchema.safeParse({ hourlyRate: { amountMicros: 100, currencyCode: 'DOLLARS' } })
-        .success,
+      saveProfileSchema.safeParse({
+        hourlyRate: { amountMicros: 100, currencyCode: 'DOLLARS' },
+      }).success,
     ).toBe(false);
   });
 
   it('rejects a lowercase currency code (USD only)', () => {
     expect(
-      saveProfileSchema.safeParse({ hourlyRate: { amountMicros: 100, currencyCode: 'usd' } })
-        .success,
+      saveProfileSchema.safeParse({
+        hourlyRate: { amountMicros: 100, currencyCode: 'usd' },
+      }).success,
     ).toBe(false);
   });
 
   it('accepts null for clearable country and enum fields', () => {
     expect(
-      saveProfileSchema.safeParse({ country: null, typeOfTeam: null, availability: null }).success,
+      saveProfileSchema.safeParse({
+        country: null,
+        typeOfTeam: null,
+        availability: null,
+      }).success,
     ).toBe(true);
   });
 });
@@ -85,12 +103,16 @@ describe('validateProfileOptionValues', () => {
   });
 
   it('rejects an unknown language', () => {
-    const result = validateProfileOptionValues({ languagesSpoken: ['ENGLISH', 'KLINGON'] });
+    const result = validateProfileOptionValues({
+      languagesSpoken: ['ENGLISH', 'KLINGON'],
+    });
     expect(result).toEqual({ error: 'Unknown language: KLINGON' });
   });
 
   it('rejects an unknown partner scope', () => {
-    const result = validateProfileOptionValues({ partnerScope: ['NOT_A_SCOPE'] });
+    const result = validateProfileOptionValues({
+      partnerScope: ['NOT_A_SCOPE'],
+    });
     expect(result?.error).toContain('NOT_A_SCOPE');
   });
 
@@ -103,12 +125,16 @@ describe('validateProfileOptionValues', () => {
   });
 
   it('rejects an unknown region', () => {
-    const result = validateProfileOptionValues({ region: ['EUROPE', 'ATLANTIS'] });
+    const result = validateProfileOptionValues({
+      region: ['EUROPE', 'ATLANTIS'],
+    });
     expect(result).toEqual({ error: 'Unknown region: ATLANTIS' });
   });
 
   it('accepts known regions', () => {
-    expect(validateProfileOptionValues({ region: ['EUROPE', 'MENA'] })).toBeNull();
+    expect(
+      validateProfileOptionValues({ region: ['EUROPE', 'MENA'] }),
+    ).toBeNull();
   });
 });
 
@@ -125,9 +151,15 @@ describe('buildPartnerUpdateData', () => {
       calendarLink: 'https://cal.example.com/nine-dots',
     });
 
-    expect(data.website).toEqual({ primaryLinkUrl: 'https://ninedots.example.com' });
-    expect(data.linkedin).toEqual({ primaryLinkUrl: 'https://linkedin.com/company/nine-dots' });
-    expect(data.calendarLink).toEqual({ primaryLinkUrl: 'https://cal.example.com/nine-dots' });
+    expect(data.website).toEqual({
+      primaryLinkUrl: 'https://ninedots.example.com',
+    });
+    expect(data.linkedin).toEqual({
+      primaryLinkUrl: 'https://linkedin.com/company/nine-dots',
+    });
+    expect(data.calendarLink).toEqual({
+      primaryLinkUrl: 'https://cal.example.com/nine-dots',
+    });
   });
 
   it('maps a null LINKS field to null (clearing it)', () => {
@@ -141,8 +173,14 @@ describe('buildPartnerUpdateData', () => {
       projectBudgetMin: { amountMicros: 1000000000, currencyCode: 'USD' },
     });
 
-    expect(data.hourlyRate).toEqual({ amountMicros: 150000000, currencyCode: 'USD' });
-    expect(data.projectBudgetMin).toEqual({ amountMicros: 1000000000, currencyCode: 'USD' });
+    expect(data.hourlyRate).toEqual({
+      amountMicros: 150000000,
+      currencyCode: 'USD',
+    });
+    expect(data.projectBudgetMin).toEqual({
+      amountMicros: 1000000000,
+      currencyCode: 'USD',
+    });
   });
 
   it('maps a null CURRENCY field to null (clearing it)', () => {
@@ -177,13 +215,14 @@ describe('buildPartnerUpdateData', () => {
   });
 
   it('maps region values as provided', () => {
-    expect(buildPartnerUpdateData({ region: ['EUROPE', 'MENA'] }).region).toEqual([
-      'EUROPE',
-      'MENA',
-    ]);
+    expect(
+      buildPartnerUpdateData({ region: ['EUROPE', 'MENA'] }).region,
+    ).toEqual(['EUROPE', 'MENA']);
   });
 
   it('leaves region off the payload when absent', () => {
-    expect('region' in buildPartnerUpdateData({ name: 'Nine Dots Ventures' })).toBe(false);
+    expect(
+      'region' in buildPartnerUpdateData({ name: 'Nine Dots Ventures' }),
+    ).toBe(false);
   });
 });

@@ -2,36 +2,39 @@ import { Injectable } from '@nestjs/common';
 
 import { IsNull, Not } from 'typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
-import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
+import { type WorkspaceCacheRowsRequirement } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
+
+const API_KEY_ROLE_ROWS_REQUIREMENT = {
+  roleTarget: {
+    columns: ['apiKeyId', 'roleId'],
+    where: { apiKeyId: Not(IsNull()) },
+  },
+} as const satisfies WorkspaceCacheRowsRequirement;
 
 @Injectable()
 @WorkspaceCache('apiKeyRoleMap', { packingPonderation: 1 })
 export class WorkspaceApiKeyRoleMapCacheService extends WorkspaceCacheProvider<
   Record<string, string>
 > {
-  constructor(
-    @InjectWorkspaceScopedRepository(RoleTargetEntity)
-    private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
-  ) {
-    super();
-  }
+  override readonly rowsRequirement = API_KEY_ROLE_ROWS_REQUIREMENT;
 
-  async computeForCache(workspaceId: string): Promise<Record<string, string>> {
-    const roleTargetsMap = await this.roleTargetRepository.find(workspaceId, {
-      where: {
-        apiKeyId: Not(IsNull()),
-      },
-    });
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof API_KEY_ROLE_ROWS_REQUIREMENT
+  >): Record<string, string> {
+    const { roleTarget: roleTargets } = rows;
 
-    return roleTargetsMap.reduce(
-      (acc, roleTarget) => {
-        if (roleTarget.apiKeyId) {
-          acc[roleTarget.apiKeyId] = roleTarget.roleId;
+    return roleTargets.reduce(
+      (acc, { apiKeyId, roleId }) => {
+        if (isDefined(apiKeyId)) {
+          acc[apiKeyId] = roleId;
         }
 
         return acc;

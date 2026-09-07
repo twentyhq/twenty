@@ -5,7 +5,10 @@ import {
   makeTab,
   makeWidget,
 } from '@/page-layout/testing/pageLayoutDraftFixtures';
-import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
+import {
+  PageLayoutTabLayoutMode,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 
 const indicesOf = (draft: DraftPageLayout, tabIndex: number) =>
   draft.tabs[tabIndex].widgets.map((widget) =>
@@ -152,5 +155,50 @@ describe('moveWidgetToTabInDraft', () => {
         destinationTabId: 'tab-2',
       }),
     ).toBe(draft);
+  });
+
+  it('returns the draft unchanged when moving a viewport-filling widget into a tab that already has one', () => {
+    const notesWidget = {
+      ...makeWidget('notes', 0),
+      type: WidgetType.NOTES,
+    };
+    const emailsWidget = {
+      ...makeWidget('emails', 0, 'tab-2'),
+      type: WidgetType.EMAILS,
+    };
+    const draft = makeDraft([
+      makeTab('tab-1', [notesWidget]),
+      makeTab('tab-2', [emailsWidget], 1),
+    ]);
+
+    expect(
+      moveWidgetToTabInDraft(draft, {
+        widgetId: 'notes',
+        destinationTabId: 'tab-2',
+      }),
+    ).toBe(draft);
+  });
+
+  it('moves a fit-content widget into a tab that has a viewport-filling widget', () => {
+    const fieldsWidget = makeWidget('fields', 0);
+    const emailsWidget = {
+      ...makeWidget('emails', 0, 'tab-2'),
+      type: WidgetType.EMAILS,
+    };
+    const draft = makeDraft([
+      makeTab('tab-1', [fieldsWidget]),
+      makeTab('tab-2', [emailsWidget], 1),
+    ]);
+
+    const result = moveWidgetToTabInDraft(draft, {
+      widgetId: 'fields',
+      destinationTabId: 'tab-2',
+    });
+
+    expect(result.tabs[0].widgets).toHaveLength(0);
+    expect(result.tabs[1].widgets.map(({ id }) => id)).toEqual([
+      'fields',
+      'emails',
+    ]);
   });
 });

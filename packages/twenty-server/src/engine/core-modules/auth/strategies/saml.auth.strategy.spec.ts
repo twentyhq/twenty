@@ -2,7 +2,7 @@
 
 import { type Request } from 'express';
 
-import { type SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { type SsoService } from 'src/engine/core-modules/sso/services/sso.service';
 
 import { SamlAuthStrategy } from './saml.auth.strategy';
 
@@ -48,11 +48,11 @@ describe('SamlAuthStrategy.validate', () => {
 
   beforeEach(() => {
     const ssoService = {
-      findSSOIdentityProviderById: jest.fn(),
-      isSAMLIdentityProvider: jest.fn(),
+      findSsoIdentityProviderById: jest.fn(),
+      isSamlIdentityProvider: jest.fn(),
       buildIssuerURL: jest.fn(),
       buildCallbackUrl: jest.fn(),
-    } as unknown as SSOService;
+    } as unknown as SsoService;
 
     strategy = new SamlAuthStrategy(ssoService);
   });

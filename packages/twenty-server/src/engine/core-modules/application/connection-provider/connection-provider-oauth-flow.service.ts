@@ -19,12 +19,14 @@ import {
 import { buildAppOAuthCallbackUrl } from 'src/engine/core-modules/application/connection-provider/utils/build-callback-url.util';
 import { computePkceChallenge } from 'src/engine/core-modules/application/connection-provider/utils/compute-pkce-challenge.util';
 import { exchangeCodeForToken } from 'src/engine/core-modules/application/connection-provider/utils/exchange-code-for-token.util';
+import { extractEmailFromIdTokenClaims } from 'src/engine/core-modules/application/connection-provider/utils/extract-email-from-id-token-claims.util';
 import { generatePkceVerifier } from 'src/engine/core-modules/application/connection-provider/utils/generate-pkce-verifier.util';
 import { type AppOAuthStateJwtPayload } from 'src/engine/core-modules/auth/types/app-oauth-state-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 
@@ -65,6 +67,8 @@ export class ConnectionProviderOAuthFlowService {
     private readonly connectionProviderLifecycleHookService: ConnectionProviderLifecycleHookService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
   ) {}
 
   async startAuthorizationFlow(
@@ -182,6 +186,7 @@ export class ConnectionProviderOAuthFlowService {
       provider,
       tokenResponse,
       workspaceId: statePayload.workspaceId,
+      userId: statePayload.userId,
       userWorkspaceId: statePayload.userWorkspaceId,
       visibility: statePayload.visibility,
       reconnectingConnectedAccountId:
@@ -235,10 +240,38 @@ export class ConnectionProviderOAuthFlowService {
     return this.twentyConfigService.get('SERVER_URL');
   }
 
+  private async resolveConnectedAccountHandle({
+    tokenResponse,
+    userId,
+  }: {
+    tokenResponse: TokenExchangeResponse;
+    userId: string;
+  }): Promise<string> {
+    const idTokenEmail = isDefined(tokenResponse.idToken)
+      ? extractEmailFromIdTokenClaims(tokenResponse.idToken)
+      : null;
+
+    if (isDefined(idTokenEmail)) {
+      return idTokenEmail;
+    }
+
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    if (!isDefined(user)) {
+      throw new ConnectionProviderException(
+        'User not found',
+        ConnectionProviderExceptionCode.INVALID_STATE,
+      );
+    }
+
+    return user.email;
+  }
+
   private async persistConnectedAccount({
     provider,
     tokenResponse,
     workspaceId,
+    userId,
     userWorkspaceId,
     visibility,
     reconnectingConnectedAccountId,
@@ -246,6 +279,7 @@ export class ConnectionProviderOAuthFlowService {
     provider: OAuthConnectionProvider;
     tokenResponse: TokenExchangeResponse;
     workspaceId: string;
+    userId: string;
     userWorkspaceId: string;
     visibility: 'user' | 'workspace';
     reconnectingConnectedAccountId: string | null;
@@ -259,6 +293,11 @@ export class ConnectionProviderOAuthFlowService {
         workspaceId,
       });
 
+    const handle = await this.resolveConnectedAccountHandle({
+      tokenResponse,
+      userId,
+    });
+
     const sharedFields = {
       accessToken: encryptedAccessToken,
       refreshToken: encryptedRefreshToken,
@@ -266,6 +305,7 @@ export class ConnectionProviderOAuthFlowService {
       lastCredentialsRefreshedAt: new Date(),
       authFailedAt: null,
       visibility,
+      handle,
     };
 
     if (isDefined(reconnectingConnectedAccountId)) {
@@ -290,7 +330,6 @@ export class ConnectionProviderOAuthFlowService {
 
     const created = this.connectedAccountRepository.create({
       ...sharedFields,
-      handle: name,
       name,
       visibility,
       provider: ConnectedAccountProvider.APP,

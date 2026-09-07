@@ -9,7 +9,7 @@ import {
   type FlatIndexFieldMetadata,
   type FlatIndexMetadata,
 } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
+import { IndexType } from 'twenty-shared/types';
 import { computeFlatIndexNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/compute-flat-index-name.util';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';

@@ -1,4 +1,4 @@
-import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
+import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
 import { type EventCommonPropertiesType } from 'src/engine/core-modules/event-logs/emit/common.type';
 import {
   type TrackEventName,

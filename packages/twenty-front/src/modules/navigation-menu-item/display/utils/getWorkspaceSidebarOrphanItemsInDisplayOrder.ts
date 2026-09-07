@@ -57,18 +57,22 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
         return acc;
       }
 
-      if (includeInaccessibleObjectBackedItems) {
-        acc.push(rowSource);
-        return acc;
-      }
-
       const objectMetadataItem = getObjectMetadataForNavigationMenuItem(
         rowSource,
         objectMetadataItems,
         views,
       );
+
+      if (!isDefined(objectMetadataItem)) {
+        return acc;
+      }
+
+      if (includeInaccessibleObjectBackedItems) {
+        acc.push(rowSource);
+        return acc;
+      }
+
       if (
-        isDefined(objectMetadataItem) &&
         getObjectPermissionsForObject(
           objectPermissionsByObjectMetadataId,
           objectMetadataItem.id,

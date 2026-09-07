@@ -12,7 +12,6 @@ import { isArray } from '@sniptt/guards';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
@@ -27,11 +26,12 @@ import { UpsertFieldsWidgetInput } from 'src/engine/metadata-modules/view-field-
 import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
 import { FieldsWidgetUpsertService } from 'src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service';
 import { ViewFieldGroupService } from 'src/engine/metadata-modules/view-field-group/services/view-field-group.service';
-import { resolveViewFieldGroupName } from 'src/engine/metadata-modules/view-field-group/utils/resolve-view-field-group-name.util';
+import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 
 @MetadataResolver(() => ViewFieldGroupDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter)
@@ -40,7 +40,7 @@ export class ViewFieldGroupResolver {
   constructor(
     private readonly viewFieldGroupService: ViewFieldGroupService,
     private readonly fieldsWidgetUpsertService: FieldsWidgetUpsertService,
-    private readonly i18nService: I18nService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
   @ResolveField(() => String)
@@ -49,27 +49,22 @@ export class ViewFieldGroupResolver {
     @Context() context: { loaders: IDataloaders } & I18nContext,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<string> {
-    const i18n = this.i18nService.getI18nInstance(context.req.locale);
+    const i18nContext =
+      await this.applicationTranslationCatalogService.buildEffectiveEntityI18nContext(
+        {
+          applicationId: viewFieldGroup.applicationId,
+          loaders: context.loaders,
+          locale: context.req.locale,
+          workspaceId: workspace.id,
+        },
+      );
 
-    const standardApplicationId =
-      await context.loaders.standardApplicationIdLoader.load({
-        workspaceId: workspace.id,
-      });
-
-    const applicationCatalog =
-      await context.loaders.applicationTranslationCatalogLoader.load({
-        applicationId: viewFieldGroup.applicationId,
-        workspaceId: workspace.id,
-        locale: context.req.locale,
-      });
-
-    return resolveViewFieldGroupName({
-      name: viewFieldGroup.name,
-      applicationId: viewFieldGroup.applicationId,
-      twentyStandardApplicationId: standardApplicationId,
+    return resolveEffectiveEntityProperty({
+      metadataName: 'viewFieldGroup',
+      baseValue: viewFieldGroup.name,
       overrides: viewFieldGroup.overrides,
-      i18nInstance: i18n,
-      applicationCatalog,
+      property: 'name',
+      i18nContext,
     });
   }
 

@@ -21,16 +21,16 @@ const buildDeps = ({
 }) => {
   const getRepositoryMock = jest.fn();
 
-  getRepositoryMock.mockResolvedValueOnce({
+  getRepositoryMock.mockReturnValueOnce({
     findOne: jest.fn().mockResolvedValue(workflow),
   });
 
-  getRepositoryMock.mockResolvedValueOnce({
+  getRepositoryMock.mockReturnValueOnce({
     find: jest.fn().mockResolvedValue(versions),
   });
 
   return {
-    globalWorkspaceOrmManager: {
+    workspaceOrmManager: {
       executeInWorkspaceContext: jest
         .fn()
         .mockImplementation(async (fn) => fn()),
@@ -54,28 +54,19 @@ describe('get_workflow_current_version tool', () => {
     });
 
     const tool = createGetWorkflowCurrentVersionTool(
-      deps as unknown as Pick<
-        WorkflowToolDependencies,
-        'globalWorkspaceOrmManager'
-      >,
+      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
       context,
     );
 
     await tool.execute({ workflowId: WORKFLOW_ID });
 
-    expect(
-      deps.globalWorkspaceOrmManager.getRepository,
-    ).toHaveBeenNthCalledWith(
+    expect(deps.workspaceOrmManager.getRepository).toHaveBeenNthCalledWith(
       1,
-      WORKSPACE_ID,
       'workflow',
       context.rolePermissionConfig,
     );
-    expect(
-      deps.globalWorkspaceOrmManager.getRepository,
-    ).toHaveBeenNthCalledWith(
+    expect(deps.workspaceOrmManager.getRepository).toHaveBeenNthCalledWith(
       2,
-      WORKSPACE_ID,
       'workflowVersion',
       context.rolePermissionConfig,
     );
@@ -106,10 +97,7 @@ describe('get_workflow_current_version tool', () => {
     });
 
     const tool = createGetWorkflowCurrentVersionTool(
-      deps as unknown as Pick<
-        WorkflowToolDependencies,
-        'globalWorkspaceOrmManager'
-      >,
+      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
       context,
     );
 
@@ -132,10 +120,7 @@ describe('get_workflow_current_version tool', () => {
     const deps = buildDeps({ workflow: null, versions: [] });
 
     const tool = createGetWorkflowCurrentVersionTool(
-      deps as unknown as Pick<
-        WorkflowToolDependencies,
-        'globalWorkspaceOrmManager'
-      >,
+      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
       context,
     );
 
@@ -150,10 +135,7 @@ describe('get_workflow_current_version tool', () => {
     const deps = buildDeps({ workflow: { id: WORKFLOW_ID }, versions: [] });
 
     const tool = createGetWorkflowCurrentVersionTool(
-      deps as unknown as Pick<
-        WorkflowToolDependencies,
-        'globalWorkspaceOrmManager'
-      >,
+      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
       context,
     );
 

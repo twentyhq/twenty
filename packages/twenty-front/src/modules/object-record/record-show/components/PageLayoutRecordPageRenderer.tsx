@@ -1,50 +1,51 @@
 import { RecordPageSidePanelCommandMenu } from '@/command-menu-item/components/RecordPageSidePanelCommandMenu';
 import { RecordPageSidePanelPinnedCommandMenuItems } from '@/command-menu-item/components/RecordPageSidePanelPinnedCommandMenuItems';
+import { RecordPageSidePanelWidgetCommandMenuItems } from '@/command-menu-item/components/RecordPageSidePanelWidgetCommandMenuItems';
 import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
 import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreTargetedRecordsEffect';
-import { RecordShowEffect } from '@/object-record/record-show/components/RecordShowEffect';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
 import { usePageLayoutIdForRecord } from '@/page-layout/hooks/usePageLayoutIdForRecord';
+import { PageLayoutIdContext } from '@/page-layout/states/currentPageLayoutIdState';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
-import { sidePanelWidgetFooterCommandMenuItemsState } from '@/ui/layout/side-panel/states/sidePanelWidgetFooterCommandMenuItemsState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledShowPageBannerContainer = styled.div`
+  flex-shrink: 0;
   z-index: 1;
 `;
 
 const StyledShowPageRightContainer = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
-  height: 100%;
   justify-content: start;
-  overflow: auto;
+  min-height: 0;
+  overflow: hidden;
   width: 100%;
 `;
 
-const StyledContentContainer = styled.div<{ isInSidePanel: boolean }>`
+const StyledContentContainer = styled.div`
   background: ${themeCssVariables.background.primary};
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
 `;
 
 export const PageLayoutRecordPageRenderer = ({
   targetRecordIdentifier,
-  isInSidePanel,
 }: {
   targetRecordIdentifier: TargetRecordIdentifier;
-  isInSidePanel: boolean;
 }) => {
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
   const recordDeletedAt = useAtomFamilySelectorValue(
     recordStoreFamilySelector,
     {
@@ -58,27 +59,8 @@ export const PageLayoutRecordPageRenderer = ({
     targetObjectNameSingular: targetRecordIdentifier.targetObjectNameSingular,
   });
 
-  const sidePanelWidgetFooterCommandMenuItems = useAtomStateValue(
-    sidePanelWidgetFooterCommandMenuItemsState,
-  );
-
-  const pinnedWidgetCommandMenuItems =
-    sidePanelWidgetFooterCommandMenuItems.filter(
-      (commandMenuItem) => commandMenuItem.isPinned !== false,
-    );
-
-  // A widget that contributes footer actions, such as the email composer,
-  // supersedes the record's own actions rather than doubling up with them.
-  const hasPinnedWidgetCommandMenuItems =
-    pinnedWidgetCommandMenuItems.length > 0;
-
   return (
-    <>
-      <RecordShowEffect
-        objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
-        recordId={targetRecordIdentifier.id}
-      />
-
+    <PageLayoutIdContext.Provider value={pageLayoutId}>
       <RecordShowContainerContextStoreTargetedRecordsEffect
         recordId={targetRecordIdentifier.id}
       />
@@ -92,8 +74,8 @@ export const PageLayoutRecordPageRenderer = ({
         </StyledShowPageBannerContainer>
       )}
 
-      <StyledShowPageRightContainer>
-        <StyledContentContainer isInSidePanel={isInSidePanel}>
+      <StyledShowPageRightContainer data-record-show-page-body="">
+        <StyledContentContainer>
           <LayoutRenderingProvider
             value={{
               targetRecordIdentifier: {
@@ -106,7 +88,6 @@ export const PageLayoutRecordPageRenderer = ({
                 CoreObjectNameSingular.Dashboard
                   ? PageLayoutType.DASHBOARD
                   : PageLayoutType.RECORD_PAGE,
-              isInSidePanel,
             }}
           >
             {isDefined(pageLayoutId) && (
@@ -119,25 +100,12 @@ export const PageLayoutRecordPageRenderer = ({
           <SidePanelFooter
             actions={[
               <RecordPageSidePanelCommandMenu key="options" />,
-              ...(hasPinnedWidgetCommandMenuItems
-                ? pinnedWidgetCommandMenuItems.map((commandMenuItem) => (
-                    <Button
-                      key={commandMenuItem.id}
-                      size="small"
-                      variant="primary"
-                      accent={commandMenuItem.isPrimaryCTA ? 'blue' : 'default'}
-                      title={commandMenuItem.label}
-                      Icon={commandMenuItem.Icon}
-                      hotkeys={commandMenuItem.hotkeys}
-                      onClick={commandMenuItem.onClick}
-                      disabled={commandMenuItem.disabled}
-                    />
-                  ))
-                : [<RecordPageSidePanelPinnedCommandMenuItems key="pinned" />]),
+              <RecordPageSidePanelWidgetCommandMenuItems key="widget" />,
+              <RecordPageSidePanelPinnedCommandMenuItems key="pinned" />,
             ]}
           />
         )}
       </StyledShowPageRightContainer>
-    </>
+    </PageLayoutIdContext.Provider>
   );
 };

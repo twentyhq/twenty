@@ -4,12 +4,14 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { useHasCurrentViewNonReadableFields } from '@/object-record/record-index/hooks/useHasCurrentViewNonReadableFields';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewType } from '@/views/types/ViewType';
 
 export const RecordIndexViewBar = () => {
-  const recordIndexViewType = useAtomStateValue(recordIndexViewTypeState);
+  const recordIndexViewType = useAtomComponentStateValue(
+    recordIndexViewTypeState,
+  );
 
   const { objectNamePlural, recordIndexId, objectMetadataItem } =
     useRecordIndexContextOrThrow();

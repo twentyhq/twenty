@@ -6,4 +6,5 @@ export type MaterializeCampaignJobData = {
   messageChannelId: string;
   emailingDomainId: string;
   recipients: CampaignRecipient[];
+  userWorkspaceId: string;
 };

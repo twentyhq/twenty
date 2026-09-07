@@ -106,6 +106,7 @@ export class DraftEmailTool implements Tool {
   private async createDraft(data: ComposedEmail): Promise<void> {
     await this.messageOutboundService.createDraft(
       {
+        fromHandle: data.fromHandle,
         to: data.recipients.to,
         cc: data.recipients.cc.length > 0 ? data.recipients.cc : undefined,
         bcc: data.recipients.bcc.length > 0 ? data.recipients.bcc : undefined,

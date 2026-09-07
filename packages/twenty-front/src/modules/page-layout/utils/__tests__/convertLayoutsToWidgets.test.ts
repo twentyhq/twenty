@@ -2,9 +2,9 @@ import {
   AggregateOperations,
   GraphOrderBy,
   PageLayoutTabLayoutMode,
+  type PageLayoutWidget,
   WidgetConfigurationType,
   WidgetType,
-  type PageLayoutWidget,
 } from '~/generated-metadata/graphql';
 import { convertLayoutsToWidgets } from '@/page-layout/utils/convertLayoutsToWidgets';
 
@@ -20,7 +20,9 @@ describe('convertLayoutsToWidgets', () => {
       title: 'Widget 1',
       type: WidgetType.GRAPH,
       objectMetadataId: null,
-      gridPosition: {
+      position: {
+        __typename: 'PageLayoutWidgetGridPosition' as const,
+        layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 0,
         column: 0,
         rowSpan: 2,
@@ -46,7 +48,9 @@ describe('convertLayoutsToWidgets', () => {
       title: 'Widget 2',
       type: WidgetType.GRAPH,
       objectMetadataId: null,
-      gridPosition: {
+      position: {
+        __typename: 'PageLayoutWidgetGridPosition' as const,
+        layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 0,
         column: 2,
         rowSpan: 2,
@@ -76,7 +80,9 @@ describe('convertLayoutsToWidgets', () => {
 
     const result = convertLayoutsToWidgets(mockWidgets, layouts);
 
-    expect(result[0].gridPosition).toEqual({
+    expect(result[0].position).toEqual({
+      __typename: 'PageLayoutWidgetGridPosition' as const,
+      layoutMode: PageLayoutTabLayoutMode.GRID,
       column: 2,
       row: 3,
       columnSpan: 4,
@@ -90,7 +96,9 @@ describe('convertLayoutsToWidgets', () => {
       columnSpan: 4,
       rowSpan: 5,
     });
-    expect(result[1].gridPosition).toEqual({
+    expect(result[1].position).toEqual({
+      __typename: 'PageLayoutWidgetGridPosition' as const,
+      layoutMode: PageLayoutTabLayoutMode.GRID,
       column: 6,
       row: 7,
       columnSpan: 8,
@@ -113,7 +121,9 @@ describe('convertLayoutsToWidgets', () => {
 
     const result = convertLayoutsToWidgets(mockWidgets, layouts);
 
-    expect(result[1].gridPosition).toEqual({
+    expect(result[1].position).toEqual({
+      __typename: 'PageLayoutWidgetGridPosition' as const,
+      layoutMode: PageLayoutTabLayoutMode.GRID,
       column: 0,
       row: 0,
       columnSpan: 2,
@@ -128,7 +138,9 @@ describe('convertLayoutsToWidgets', () => {
 
     const result = convertLayoutsToWidgets(mockWidgets, layouts);
 
-    expect(result[0].gridPosition).toEqual({
+    expect(result[0].position).toEqual({
+      __typename: 'PageLayoutWidgetGridPosition' as const,
+      layoutMode: PageLayoutTabLayoutMode.GRID,
       column: 0,
       row: 4,
       columnSpan: 1,

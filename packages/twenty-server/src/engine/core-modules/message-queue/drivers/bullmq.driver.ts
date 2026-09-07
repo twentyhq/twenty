@@ -4,24 +4,30 @@ import {
   type OnModuleInit,
 } from '@nestjs/common';
 
+import { type EventEmitter2 } from '@nestjs/event-emitter';
 import * as Sentry from '@sentry/node';
 import {
+  type Job,
   type JobsOptions,
   MetricsTime,
   Queue,
   type QueueOptions,
   Worker,
 } from 'bullmq';
+import { type JobState as BullMQJobState } from 'bullmq/dist/esm/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import {
   type QueueCronJobOptions,
   type QueueJobOptions,
+  type QueueJobRecipient,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import {
   type InFlightQueueJob,
   type MessageQueueDriver,
+  type QueueJobDetails,
+  type QueueJobToAdd,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 import {
   type MessageQueueJob,
@@ -29,9 +35,11 @@ import {
 } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
+import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { type QueueJobChangedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-changed-event.type';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -39,6 +47,10 @@ import { applyWorkspaceSentryContextFromJobData } from 'src/engine/core-modules/
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type BullMQDriverOptions = QueueOptions;
+
+type BullMQJobsOptions = JobsOptions & {
+  broadcastTo?: QueueJobRecipient;
+};
 
 const V4_LENGTH = 36;
 
@@ -62,6 +74,7 @@ export class BullMQDriver
     private options: BullMQDriverOptions,
     private metricsService: MetricsService,
     private twentyConfigService: TwentyConfigService,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   onModuleInit() {
@@ -221,6 +234,8 @@ export class BullMQDriver
             data: job.data,
             id: job.id ?? '',
             name: job.name,
+            retryLimit: Math.max(0, (job.opts.attempts ?? 1) - 1),
+            updateData: (data) => job.updateData(data),
             abortSignal,
           });
           const timeEnd = performance.now();
@@ -231,6 +246,16 @@ export class BullMQDriver
           );
         }),
       workerOptions,
+    );
+
+    this.workerMap[queueName].on('active', (job) =>
+      this.emitJobChange({ queueName, job, state: 'active' }),
+    );
+    this.workerMap[queueName].on('completed', (job) =>
+      this.emitJobChange({ queueName, job, state: 'completed' }),
+    );
+    this.workerMap[queueName].on('failed', (job) =>
+      this.emitJobChange({ queueName, job, state: 'failed' }),
     );
 
     this.workerMap[queueName].on('completed', (job) => {
@@ -327,19 +352,57 @@ export class BullMQDriver
     );
   }
 
+  private emitJobChange({
+    queueName,
+    job,
+    state,
+  }: {
+    queueName: MessageQueue;
+    job: Job | undefined;
+    state: BullMQJobState;
+  }): void {
+    if (!isDefined(job) || !isDefined(this.getBroadcastTo(job))) {
+      return;
+    }
+
+    const jobDetails = this.buildQueueJobDetails({ job, state });
+
+    if (!isDefined(jobDetails)) {
+      return;
+    }
+
+    this.eventEmitter.emit(QUEUE_JOB_CHANGED_EVENT, {
+      queueName,
+      job: jobDetails,
+    } satisfies QueueJobChangedEvent);
+  }
+
+  private getBroadcastTo(job: Job): QueueJobRecipient | undefined {
+    const { broadcastTo }: BullMQJobsOptions = job.opts;
+
+    return broadcastTo;
+  }
+
   private buildJobsOptions({
     queueName,
     options,
   }: {
     queueName: MessageQueue;
     options?: QueueJobOptions;
-  }): JobsOptions {
+  }): BullMQJobsOptions {
     return {
       // We suffix the id with V4() to make sure ids are unique so we can add a waiting job when a job related with the same option.id is running
       jobId: options?.id ? `${options.id}-${v4()}` : undefined,
       priority:
         options?.priority ?? MESSAGE_QUEUE_WORKER_CONFIG[queueName].priority,
       attempts: 1 + (options?.retryLimit || 0),
+      backoff: options?.backoff
+        ? {
+            type: options.backoff.strategy,
+            delay: options.backoff.initialDelayMilliseconds,
+            jitter: options.backoff.jitter,
+          }
+        : undefined,
       removeOnComplete: {
         age: QUEUE_RETENTION.completedMaxAge,
         count: QUEUE_RETENTION.completedMaxCount,
@@ -349,6 +412,7 @@ export class BullMQDriver
         count: QUEUE_RETENTION.failedMaxCount,
       },
       delay: options?.delay,
+      broadcastTo: options?.broadcastTo,
     };
   }
 
@@ -357,7 +421,7 @@ export class BullMQDriver
     jobName: string,
     data: T,
     options?: QueueJobOptions,
-  ): Promise<void> {
+  ): Promise<string | undefined> {
     if (!this.queueMap[queueName]) {
       throw new Error(
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
@@ -379,39 +443,106 @@ export class BullMQDriver
 
     const queueOptions = this.buildJobsOptions({ queueName, options });
 
-    await this.queueMap[queueName].add(jobName, data, queueOptions);
+    const job = await this.queueMap[queueName].add(jobName, data, queueOptions);
+
+    return job.id;
   }
 
-  async bulkAdd<T>(
+  async bulkAdd<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     jobName: string,
-    dataItems: T[],
+    jobs: QueueJobToAdd<T>[],
     options?: QueueJobOptions,
-  ): Promise<void> {
+  ): Promise<string[]> {
     if (!this.queueMap[queueName]) {
       throw new Error(
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
       );
     }
 
-    if (dataItems.length === 0) {
-      return;
+    if (jobs.length === 0) {
+      return [];
     }
 
     const queueOptions = this.buildJobsOptions({ queueName, options });
 
-    await this.queueMap[queueName].addBulk(
-      dataItems.map((data, index) => ({
+    const addedJobs = await this.queueMap[queueName].addBulk(
+      jobs.map(({ data, jobId }, index) => ({
         name: jobName,
         data,
         opts: {
           ...queueOptions,
-          jobId: queueOptions.jobId
-            ? `${queueOptions.jobId}-${index}`
-            : undefined,
+          jobId:
+            jobId ??
+            (queueOptions.jobId ? `${queueOptions.jobId}-${index}` : undefined),
         },
       })),
     );
+
+    return addedJobs.map((job) => job.id).filter(isDefined);
+  }
+
+  async getJobs<T extends MessageQueueJobData>(
+    queueName: MessageQueue,
+    jobIds: string[],
+  ): Promise<Partial<Record<string, QueueJobDetails<T>>>> {
+    if (!this.queueMap[queueName]) {
+      throw new Error(
+        `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
+      );
+    }
+
+    const jobs = await Promise.all(
+      jobIds.map((jobId) => this.getJobDetails<T>(queueName, jobId)),
+    );
+
+    return Object.fromEntries(
+      jobs.filter(isDefined).map((job) => [job.id, job]),
+    );
+  }
+
+  private async getJobDetails<T extends MessageQueueJobData>(
+    queueName: MessageQueue,
+    jobId: string,
+  ): Promise<QueueJobDetails<T> | undefined> {
+    const job = await this.queueMap[queueName].getJob(jobId);
+
+    if (!isDefined(job)) {
+      return undefined;
+    }
+
+    const state = await job.getState();
+
+    // BullMQ reports 'unknown' for a job whose record was evicted by retention
+    if (state === 'unknown') {
+      return undefined;
+    }
+
+    return this.buildQueueJobDetails<T>({ job, state });
+  }
+
+  private buildQueueJobDetails<T extends MessageQueueJobData>({
+    job,
+    state,
+  }: {
+    job: Job;
+    state: BullMQJobState;
+  }): QueueJobDetails<T> | undefined {
+    if (!isDefined(job.id)) {
+      return undefined;
+    }
+
+    return {
+      id: job.id,
+      data: job.data,
+      state,
+      attemptsMade: job.attemptsMade,
+      failedReason: job.failedReason,
+      timestamp: job.timestamp,
+      processedOn: job.processedOn,
+      finishedOn: job.finishedOn,
+      broadcastTo: this.getBroadcastTo(job),
+    };
   }
 
   async getInFlightJobs<T extends MessageQueueJobData>(

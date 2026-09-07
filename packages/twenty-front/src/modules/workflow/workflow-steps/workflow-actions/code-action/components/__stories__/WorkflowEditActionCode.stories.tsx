@@ -26,7 +26,7 @@ const DEFAULT_ACTION: WorkflowCodeAction = {
     outputSchema: {},
     errorHandlingOptions: {
       retryOnFailure: {
-        value: false,
+        value: 0,
       },
       continueOnFailure: {
         value: false,
@@ -65,7 +65,7 @@ const CONFIGURED_ACTION: WorkflowCodeAction = {
     },
     errorHandlingOptions: {
       retryOnFailure: {
-        value: true,
+        value: 3,
       },
       continueOnFailure: {
         value: false,

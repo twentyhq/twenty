@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { closestCenter } from '@dnd-kit/collision';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableHeaderAddColumnButton } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderAddColumnButton';
 import { RecordTableHeaderCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCell';
@@ -40,6 +41,7 @@ export const RecordTableHeaderDnd = () => {
           group={RECORD_TABLE_HEADER_DROPPABLE_ID}
           disabled={isRecordTableColumnHeadersReadOnly}
           restrictMovementTo="x"
+          collisionDetector={closestCenter}
         >
           <RecordTableHeaderFirstScrollableCell
             firstScrollableRecordField={firstScrollableRecordField}
@@ -62,6 +64,7 @@ export const RecordTableHeaderDnd = () => {
             group={RECORD_TABLE_HEADER_DROPPABLE_ID}
             disabled={isRecordTableColumnHeadersReadOnly}
             restrictMovementTo="x"
+            collisionDetector={closestCenter}
           >
             <RecordTableHeaderCell
               key={recordField.fieldMetadataItemId}

@@ -1,10 +1,13 @@
 export enum SidePanelPages {
   CommandMenuDisplay = 'command-menu-display',
+  // Deprecated: use AppPath.RecordShowPage through the routed-page API.
   ViewRecord = 'view-record',
+  // Deprecated: use AppPath.RecordIndexPage through the routed-page API.
   ViewRecords = 'view-records',
   MergeRecords = 'merge-records',
   UpdateRecords = 'update-records',
   EditRichText = 'edit-rich-text',
+  // Deprecated: use AskAI.
   Copilot = 'copilot',
   WorkflowTriggerSelectType = 'workflow-trigger-select-type',
   WorkflowStepCreate = 'workflow-step-create',
@@ -12,10 +15,12 @@ export enum SidePanelPages {
   WorkflowStepView = 'workflow-step-view',
   WorkflowStepEdit = 'workflow-step-edit',
   WorkflowRunStepView = 'workflow-run-step-view',
+  WorkflowStepSettings = 'workflow-step-settings',
   SearchRecords = 'search-records',
   AskAI = 'ask-ai',
   PageLayoutDashboardWidgetTypeSelect = 'page-layout-dashboard-widget-type-select',
   PageLayoutTabSettings = 'page-layout-tab-settings',
+  PageLayoutWidgetSettings = 'page-layout-widget-settings',
   DashboardChartSettings = 'dashboard-chart-settings',
   DashboardIframeSettings = 'dashboard-iframe-settings',
   DashboardRecordTableSettings = 'dashboard-record-table-settings',
@@ -27,6 +32,14 @@ export enum SidePanelPages {
   CommandMenuEdit = 'command-menu-edit',
   PageLayoutRecordPageWidgetTypeSelect = 'page-layout-record-page-widget-type-select',
   ComposeEmail = 'compose-email',
+  ComposeCalendarEvent = 'compose-calendar-event',
+  CreateRelatedRecord = 'create-related-record',
+  SendCampaign = 'send-campaign',
   SendCampaignTest = 'send-campaign-test',
+  WorkflowVersions = 'workflow-versions',
+  WorkflowVersion = 'workflow-version',
   EmailBlockSettings = 'email-block-settings',
+  SettingsMetadataTranslations = 'settings-metadata-translations',
+  RoutedPage = 'routed-page',
+  WorkflowCoreFilters = 'workflow-core-filters',
 }

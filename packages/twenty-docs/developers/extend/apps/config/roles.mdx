@@ -209,4 +209,5 @@ Notes:
 - Start from the scaffolded role, then progressively restrict it — the default grants broad read access, which is rarely what you want in production.
 - Replace `objectPermissions` and `fieldPermissions` with the exact objects and fields your functions actually need.
 - `permissionFlagUniversalIdentifiers` control access to platform-level capabilities. Keep them minimal.
+- A permission flag your app declares with `definePermissionFlag()` carries a `permissionType`: `'tool'` (the default) for a capability an agent or a user can be granted, `'settings'` for a flag that unlocks a settings area.
 - See a working example: [`examples/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts).

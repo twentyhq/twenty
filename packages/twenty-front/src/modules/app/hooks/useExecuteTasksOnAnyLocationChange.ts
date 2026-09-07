@@ -14,6 +14,7 @@ import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pa
 import { pageLayoutIsInitializedComponentState } from '@/page-layout/states/pageLayoutIsInitializedComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
+import { toDraftPageLayout } from '@/page-layout/utils/toDraftPageLayout';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -38,13 +39,7 @@ export const useExecuteTasksOnAnyLocationChange = () => {
           pageLayoutDraftComponentState.atomFamily({
             instanceId: pageLayoutId,
           }),
-          {
-            id: pageLayoutPersisted.id,
-            name: pageLayoutPersisted.name,
-            type: pageLayoutPersisted.type,
-            objectMetadataId: pageLayoutPersisted.objectMetadataId,
-            tabs: pageLayoutPersisted.tabs,
-          },
+          toDraftPageLayout(pageLayoutPersisted),
         );
 
         const tabLayouts = convertPageLayoutToTabLayouts(pageLayoutPersisted);

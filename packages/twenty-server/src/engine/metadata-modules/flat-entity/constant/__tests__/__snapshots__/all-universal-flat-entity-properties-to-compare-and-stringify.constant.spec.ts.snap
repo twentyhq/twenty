@@ -24,6 +24,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     "propertiesToCompare": [
       "key",
       "description",
+      "label",
       "isSecret",
       "isDeprecated",
       "type",
@@ -42,7 +43,9 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "isPinned",
       "availabilityType",
       "conditionalAvailabilityExpression",
+      "conditionalPinnedExpression",
       "availabilityObjectMetadataUniversalIdentifier",
+      "navigationTargetObjectMetadataUniversalIdentifier",
       "engineComponentKey",
       "payload",
       "hotKeys",
@@ -59,6 +62,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     "propertiesToCompare": [
       "name",
       "displayName",
+      "logo",
       "type",
       "oauthConfig",
       "onConnectLogicFunctionUniversalIdentifier",
@@ -183,6 +187,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "overrides",
       "isUIEditable",
       "writability",
+      "readability",
       "isUICreatable",
       "isSearchable",
       "imageIdentifierFieldMetadataUniversalIdentifier",
@@ -208,6 +213,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "type",
       "objectMetadataUniversalIdentifier",
       "defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier",
+      "isFirstTabPinned",
       "deletedAt",
     ],
     "propertiesToStringify": [],
@@ -231,7 +237,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "title",
       "type",
       "objectMetadataUniversalIdentifier",
-      "gridPosition",
       "position",
       "universalConfiguration",
       "deletedAt",
@@ -242,7 +247,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "universalOverrides",
     ],
     "propertiesToStringify": [
-      "gridPosition",
       "position",
       "universalConfiguration",
       "conditionalDisplay",
@@ -333,6 +337,25 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "isActive",
     ],
     "propertiesToStringify": [],
+  },
+  "timelineActivityType": {
+    "propertiesToCompare": [
+      "name",
+      "label",
+      "action",
+      "icon",
+      "frontComponentUniversalIdentifier",
+      "objectUniversalIdentifier",
+      "targetRelationFieldUniversalIdentifier",
+      "triggerFieldUniversalIdentifiers",
+      "happensAtFieldUniversalIdentifier",
+      "replacesTimelineActivityTypeUniversalIdentifier",
+      "isActive",
+      "overrides",
+    ],
+    "propertiesToStringify": [
+      "overrides",
+    ],
   },
   "view": {
     "propertiesToCompare": [

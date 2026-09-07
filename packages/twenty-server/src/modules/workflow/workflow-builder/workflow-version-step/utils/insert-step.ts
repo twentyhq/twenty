@@ -5,7 +5,7 @@ import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
-import { type WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/WorkflowStepCreationOptions';
+import { type WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/WorkflowStepConnectionOptions';
 import { type WorkflowIteratorActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-action-settings.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
@@ -14,6 +14,7 @@ export const insertStep = ({
   existingSteps,
   existingTrigger,
   insertedStep,
+  additionalCreatedSteps = [],
   nextStepId,
   parentStepId,
   parentStepConnectionOptions,
@@ -21,6 +22,7 @@ export const insertStep = ({
   existingSteps: WorkflowAction[];
   existingTrigger: WorkflowTrigger | null;
   insertedStep: WorkflowAction;
+  additionalCreatedSteps?: WorkflowAction[];
   nextStepId?: string;
   parentStepId?: string;
   parentStepConnectionOptions?: WorkflowStepConnectionOptions;
@@ -43,13 +45,29 @@ export const insertStep = ({
         updatedTrigger: existingTrigger,
       };
 
+  const isInsertedStepIfElse = insertedStep.type === WorkflowActionType.IF_ELSE;
+  const nextStepIds = isDefined(nextStepId) ? [nextStepId] : undefined;
   const updatedInsertedStep = {
     ...insertedStep,
-    nextStepIds: nextStepId ? [nextStepId] : undefined,
+    nextStepIds: isInsertedStepIfElse ? undefined : nextStepIds,
   };
+  const branchStepIds = isInsertedStepIfElse
+    ? insertedStep.settings.input.branches.flatMap(
+        (branch) => branch.nextStepIds,
+      )
+    : [];
+  const updatedAdditionalSteps = additionalCreatedSteps.map((step) =>
+    isDefined(nextStepId) && branchStepIds.includes(step.id)
+      ? { ...step, nextStepIds }
+      : step,
+  );
 
   return {
-    updatedSteps: [...updatedSteps, updatedInsertedStep],
+    updatedSteps: [
+      ...updatedSteps,
+      updatedInsertedStep,
+      ...updatedAdditionalSteps,
+    ],
     updatedTrigger,
     updatedInsertedStep,
   };
@@ -172,6 +190,59 @@ const updateStepsWithOptions = ({
   let updatedSteps = steps;
 
   switch (parentStepConnectionOptions.connectedStepType) {
+    case WorkflowActionType.IF_ELSE: {
+      const parentStep = steps.find((step) => step.id === parentStepId);
+
+      if (parentStep?.type !== WorkflowActionType.IF_ELSE) {
+        throw new WorkflowVersionStepException(
+          `Step ${parentStepId} is not an If/Else action`,
+          WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+        );
+      }
+
+      const branchId = parentStepConnectionOptions.settings.branchId;
+      const branch = parentStep.settings.input.branches.find(
+        (branch) => branch.id === branchId,
+      );
+
+      if (
+        !isDefined(branch) ||
+        (isDefined(nextStepId) && !branch.nextStepIds.includes(nextStepId))
+      ) {
+        throw new WorkflowVersionStepException(
+          `Cannot insert a step on branch ${branchId}`,
+          WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+        );
+      }
+
+      const updatedParentStep = {
+        ...parentStep,
+        settings: {
+          ...parentStep.settings,
+          input: {
+            ...parentStep.settings.input,
+            branches: parentStep.settings.input.branches.map((branch) =>
+              branch.id === branchId
+                ? {
+                    ...branch,
+                    nextStepIds: isDefined(nextStepId)
+                      ? branch.nextStepIds.map((stepId) =>
+                          stepId === nextStepId ? insertedStepId : stepId,
+                        )
+                      : [...branch.nextStepIds, insertedStepId],
+                  }
+                : branch,
+            ),
+          },
+        },
+      };
+
+      updatedSteps = steps.map((step) =>
+        step.id === parentStepId ? updatedParentStep : step,
+      );
+
+      break;
+    }
     case WorkflowActionType.ITERATOR:
       if (!parentStepConnectionOptions.settings.isConnectedToLoop) {
         break;

@@ -29,6 +29,7 @@ export const registerDevCommands = (program: Command): void => {
       debounceMs?: string;
       dryRun?: boolean;
       force?: boolean;
+      delete: boolean;
     },
   ) => {
     if (options.dryRun && !options.once) {
@@ -55,6 +56,7 @@ export const registerDevCommands = (program: Command): void => {
         verbose,
         apply: !options.dryRun,
         force: options.force,
+        inferDeletionFromMissingEntities: options.delete,
       });
 
       return;
@@ -67,6 +69,7 @@ export const registerDevCommands = (program: Command): void => {
         ? parseInt(options.debounceMs, 10)
         : undefined,
       force: options.force,
+      inferDeletionFromMissingEntities: options.delete,
     });
   };
 
@@ -85,6 +88,10 @@ export const registerDevCommands = (program: Command): void => {
       '-f, --force',
       'Apply destructive changes (deletes) without confirmation',
     )
+    .option(
+      '--no-delete',
+      'Keep entities that are missing from your source instead of deleting them',
+    )
     .option('--debounceMs <ms>', 'Debounce in ms (default: 1 000)')
     .option('-v, --verbose', 'Show detailed logs')
     .option('-d, --debug', 'Show detailed logs (alias for --verbose)')
@@ -93,13 +100,21 @@ export const registerDevCommands = (program: Command): void => {
   program
     .command('plan [appPath]')
     .description('Preview metadata changes without applying them')
+    .option(
+      '--no-delete',
+      'Keep entities that are missing from your source instead of deleting them',
+    )
     .option('-v, --verbose', 'Show detailed logs')
     .action(
-      async (appPath: string | undefined, options: { verbose?: boolean }) => {
+      async (
+        appPath: string | undefined,
+        options: { delete: boolean; verbose?: boolean },
+      ) => {
         await devOnceCommand.execute({
           appPath: formatPath(appPath),
           verbose: options.verbose,
           apply: false,
+          inferDeletionFromMissingEntities: options.delete,
         });
       },
     );
@@ -111,17 +126,22 @@ export const registerDevCommands = (program: Command): void => {
       '-f, --force',
       'Apply destructive changes (deletes) without confirmation',
     )
+    .option(
+      '--no-delete',
+      'Keep entities that are missing from your source instead of deleting them',
+    )
     .option('-v, --verbose', 'Show detailed logs')
     .action(
       async (
         appPath: string | undefined,
-        options: { force?: boolean; verbose?: boolean },
+        options: { force?: boolean; delete: boolean; verbose?: boolean },
       ) => {
         await devOnceCommand.execute({
           appPath: formatPath(appPath),
           verbose: options.verbose,
           apply: true,
           force: options.force,
+          inferDeletionFromMissingEntities: options.delete,
         });
       },
     );

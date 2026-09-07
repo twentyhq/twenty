@@ -1,46 +1,40 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, Repository } from 'typeorm';
+import { IsNull } from 'typeorm';
 
-import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
+import { isDefined } from 'twenty-shared/utils';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';
+
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatWebhookMaps } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook-maps.type';
 import { fromWebhookEntityToFlatWebhook } from 'src/engine/metadata-modules/flat-webhook/utils/from-webhook-entity-to-flat-webhook.util';
-import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
+const FLAT_WEBHOOK_ROWS_REQUIREMENT = {
+  webhook: { columns: true, where: { deletedAt: IsNull() } },
+  application: ['id', 'universalIdentifier', 'deletedAt'],
+} as const;
+
 @Injectable()
 @WorkspaceCache('flatWebhookMaps', { packingPonderation: 1 })
-export class WorkspaceFlatWebhookMapCacheService extends WorkspaceCacheProvider<FlatWebhookMaps> {
-  constructor(
-    @InjectWorkspaceScopedRepository(WebhookEntity)
-    private readonly webhookRepository: WorkspaceScopedRepository<WebhookEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
-  ) {
-    super();
-  }
+export class WorkspaceFlatWebhookMapCacheService extends MetadataFlatEntityMapsCacheProvider<'webhook'> {
+  override readonly rowsRequirement = FLAT_WEBHOOK_ROWS_REQUIREMENT;
 
-  async computeForCache(workspaceId: string): Promise<FlatWebhookMaps> {
-    const [webhooks, applications] = await Promise.all([
-      this.webhookRepository.find(workspaceId, {
-        where: { deletedAt: IsNull() },
-      }),
-      this.applicationRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-      }),
-    ]);
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_WEBHOOK_ROWS_REQUIREMENT
+  >): FlatWebhookMaps {
+    const { webhook: webhooks, application: applications } = rows;
 
     const applicationIdToUniversalIdentifierMap =
-      createIdToUniversalIdentifierMap(applications);
+      createIdToUniversalIdentifierMap(
+        applications.filter((application) => !isDefined(application.deletedAt)),
+      );
 
     const flatWebhookMaps = createEmptyFlatEntityMaps();
 

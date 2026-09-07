@@ -24,9 +24,10 @@ import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/compani
 import { mockedTaskRecords } from '~/testing/mock-data/generated/data/tasks/mock-tasks-data';
 import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/metadata/objects/mock-objects-metadata';
 import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
-import { mockedBackendCommandMenuItems } from '~/testing/mock-data/command-menu-items';
+import { mockedCommandMenuItems } from '~/testing/mock-data/generated/metadata/command-menu-items/mock-command-menu-items-data';
 
 import { type Task } from '@/activities/types/Task';
+import { getJunctionRecordsFromRecord } from '@/object-record/record-field/ui/utils/junction/getJunctionRecordsFromRecord';
 import { FIND_MINIMAL_METADATA } from '@/metadata-store/graphql/queries/findMinimalMetadata';
 import {
   getConnectionTypename,
@@ -221,7 +222,7 @@ export const graphqlMocks = {
     }),
     metadataGraphql.query('FindManyCommandMenuItems', () => {
       return HttpResponse.json({
-        data: { commandMenuItems: mockedBackendCommandMenuItems },
+        data: { commandMenuItems: mockedCommandMenuItems },
       });
     }),
     graphql.query('SearchPeople', () => {
@@ -446,16 +447,16 @@ export const graphqlMocks = {
       });
     }),
     graphql.query('FindManyTaskTargets', () => {
-      const taskTargetNodes = flatTaskRecords.flatMap(
-        (task) => task.taskTargets ?? [],
+      const taskTargetNodes = flatTaskRecords.flatMap((task) =>
+        getJunctionRecordsFromRecord({
+          record: task,
+          junctionFieldName: 'taskTargets',
+        }),
       );
 
       return HttpResponse.json({
         data: {
-          taskTargets: wrapRecordsAsConnection(
-            'taskTarget',
-            taskTargetNodes as Record<string, unknown>[],
-          ),
+          taskTargets: wrapRecordsAsConnection('taskTarget', taskTargetNodes),
         },
       });
     }),

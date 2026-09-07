@@ -4,6 +4,8 @@ export type GenerateCallRecordingSummaryResult = {
     | 'no-transcript'
     | 'not-app-recording'
     | 'already-summarized'
+    | 'not-summarizable'
     | 'empty-summary'
+    | 'save-error'
     | 'generated';
 };

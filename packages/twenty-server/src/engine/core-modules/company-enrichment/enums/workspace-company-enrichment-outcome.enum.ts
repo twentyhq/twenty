@@ -1,8 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql';
 
-// Members are lowercase on purpose: the GraphQL enum serializes member names,
-// and these must match the WorkspaceCompanyEnrichmentResult outcome literals
-// shared with the frontend.
+// Lowercase on purpose: GraphQL serializes member names, which must match the shared WorkspaceEnrichmentResult outcome literals.
 export enum WorkspaceCompanyEnrichmentOutcome {
   matched = 'matched',
   unavailable = 'unavailable',

@@ -194,6 +194,15 @@ export class ApplicationRegistrationEntity {
   })
   aboutDescription: string | null;
 
+  // Free text: app pricing is tiered, per-minute, per-match with minimums, so
+  // a single rate cannot express it. Shown on the marketplace listing.
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.38.0_AddPricingDescriptionToApplicationRegistrationFastInstanceCommand_1788340844000',
+  })
+  pricingDescription: string | null;
+
   @Column({ nullable: true, type: 'text' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:

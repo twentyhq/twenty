@@ -30,6 +30,7 @@ type CallRecordingNode = {
 export const findCallRecordingsByFilter = async (
   client: CoreApiClient,
   filter: Record<string, unknown>,
+  shouldStartPageRequest: () => boolean = () => true,
 ): Promise<CallRecordingRecord[]> => {
   const callRecordingNodes = await fetchAllNodes<CallRecordingNode>(
     async (afterCursor) => {
@@ -69,6 +70,7 @@ export const findCallRecordingsByFilter = async (
         | ConnectionPage<CallRecordingNode>
         | undefined;
     },
+    shouldStartPageRequest,
   );
 
   return callRecordingNodes.map((callRecording) => ({

@@ -12,3 +12,8 @@ export interface AwsSesDriverConfig extends BaseDriverConfig {
   secretAccessKey?: string;
   sessionToken?: string;
 }
+
+export interface ResendDriverConfig extends BaseDriverConfig {
+  driver: EmailingDomainDriver.RESEND;
+  domainRegion?: string;
+}

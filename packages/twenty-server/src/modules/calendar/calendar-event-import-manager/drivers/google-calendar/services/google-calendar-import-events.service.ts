@@ -46,11 +46,14 @@ export class GoogleCalendarImportEventsService {
               throw parseGaxiosError(error);
             }
 
-            throw parseGoogleCalendarError({
-              code: status,
-              reason: error.response?.data?.error?.errors?.[0].reason || '',
-              message: error.response?.data?.error?.errors?.[0].message || '',
-            });
+            throw parseGoogleCalendarError(
+              {
+                code: status,
+                reason: error.response?.data?.error?.errors?.[0].reason || '',
+                message: error.response?.data?.error?.errors?.[0].message || '',
+              },
+              { cause: error },
+            );
           }),
       ),
     );

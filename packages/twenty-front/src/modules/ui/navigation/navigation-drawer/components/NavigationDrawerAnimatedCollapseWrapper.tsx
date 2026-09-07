@@ -23,24 +23,21 @@ export const NavigationDrawerAnimatedCollapseWrapper = ({
   const isSettingsPage = useIsSettingsPage();
   const isNavigationDrawerExpanded = useIsNavigationDrawerContentExpanded();
 
-  if (isSettingsPage) {
-    return children;
-  }
+  const shouldShowContent = isSettingsPage || isNavigationDrawerExpanded;
 
-  const animate: AnimationControls | TargetAndTransition =
-    isNavigationDrawerExpanded
-      ? {
-          opacity: 1,
-          width: 'auto',
-          height: 'auto',
-          pointerEvents: 'auto',
-        }
-      : {
-          opacity: 0,
-          width: 0,
-          height: 0,
-          pointerEvents: 'none',
-        };
+  const animate: AnimationControls | TargetAndTransition = shouldShowContent
+    ? {
+        opacity: 1,
+        width: 'auto',
+        height: 'auto',
+        pointerEvents: 'auto',
+      }
+    : {
+        opacity: 0,
+        width: 0,
+        height: 0,
+        pointerEvents: 'none',
+      };
 
   return (
     <StyledAnimatedContainer

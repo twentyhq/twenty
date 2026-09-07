@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
 
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
-import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { DashboardsBlockEditor } from '@/page-layout/widgets/standalone-rich-text/components/DashboardsBlockEditor';
 import { StandaloneRichTextWidgetAutoFocusEffect } from '@/page-layout/widgets/standalone-rich-text/components/StandaloneRichTextWidgetAutoFocusEffect';
@@ -27,6 +27,7 @@ type StandaloneRichTextEditorContentProps = {
   widget: PageLayoutWidget;
   currentBody: string;
   isEditable: boolean;
+  shouldFocus: boolean;
   containerElement: HTMLDivElement | null;
 };
 
@@ -34,6 +35,7 @@ export const StandaloneRichTextEditorContent = ({
   widget,
   currentBody,
   isEditable,
+  shouldFocus,
   containerElement,
 }: StandaloneRichTextEditorContentProps) => {
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget();
@@ -43,23 +45,17 @@ export const StandaloneRichTextEditorContent = ({
   const isDashboardInEditModeState = useAtomComponentStateCallbackState(
     isDashboardInEditModeComponentState,
   );
-  const pageLayoutEditingWidgetIdState = useAtomComponentStateCallbackState(
-    pageLayoutEditingWidgetIdComponentState,
-  );
-
   const store = useStore();
 
   const shouldPersistDraft = useCallback(() => {
     const isDashboardInEditMode = store.get(isDashboardInEditModeState);
-    const editingWidgetId = store.get(pageLayoutEditingWidgetIdState);
-
-    return isDashboardInEditMode && editingWidgetId === widget.id;
-  }, [
-    isDashboardInEditModeState,
-    pageLayoutEditingWidgetIdState,
-    widget.id,
-    store,
-  ]);
+    const isLayoutCustomizationModeEnabled = store.get(
+      isLayoutCustomizationModeEnabledState.atom,
+    );
+    return (
+      isEditable && (isDashboardInEditMode || isLayoutCustomizationModeEnabled)
+    );
+  }, [isDashboardInEditModeState, isEditable, store]);
 
   const [initialContent] = useState(() =>
     filterSupportedBlocks(parseInitialBlocknote(currentBody)),
@@ -116,7 +112,7 @@ export const StandaloneRichTextEditorContent = ({
   return (
     <>
       <StandaloneRichTextWidgetAutoFocusEffect
-        shouldFocus={isEditable}
+        shouldFocus={shouldFocus}
         editor={editor}
         containerElement={containerElement}
       />
@@ -126,7 +122,6 @@ export const StandaloneRichTextEditorContent = ({
         onChange={handleEditorChange}
         editor={editor}
         readonly={!isEditable}
-        boundaryElement={containerElement}
       />
     </>
   );

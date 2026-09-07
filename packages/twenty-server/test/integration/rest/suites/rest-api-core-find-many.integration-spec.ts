@@ -7,7 +7,7 @@ import {
 } from 'test/integration/constants/test-person-ids.constants';
 import {
   TEST_PRIMARY_LINK_URL,
-  TEST_PRIMARY_LINK_URL_WIITHOUT_TRAILING_SLASH,
+  TEST_PRIMARY_LINK_URL_AS_DOMAIN,
 } from 'test/integration/constants/test-primary-link-url.constant';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
@@ -364,7 +364,7 @@ describe('Core REST API Find Many endpoint', () => {
 
     expect(person.company).toBeDefined();
     expect(person.company.domainName.primaryLinkUrl).toBe(
-      TEST_PRIMARY_LINK_URL_WIITHOUT_TRAILING_SLASH,
+      TEST_PRIMARY_LINK_URL_AS_DOMAIN,
     );
 
     expect(person.company.people).not.toBeDefined();
@@ -375,5 +375,132 @@ describe('Core REST API Find Many endpoint', () => {
       method: 'get',
       path: '/people?depth=2',
     }).expect(400);
+  });
+
+  describe('cursor pagination ordered by a relation field', () => {
+    it('should continue past the first page when depth loads the ordered relation', async () => {
+      const ids: string[] = [];
+      let startingAfter: string | undefined = undefined;
+
+      for (let iteration = 0; iteration < 10; iteration++) {
+        const path: string =
+          '/people?order_by=company.name[AscNullsLast]&limit=2&depth=1' +
+          (startingAfter ? `&starting_after=${startingAfter}` : '');
+        const response = await makeRestAPIRequest({
+          method: 'get',
+          path,
+        }).expect(200);
+
+        ids.push(
+          ...response.body.data.people.map(
+            (person: { id: string }) => person.id,
+          ),
+        );
+
+        if (!response.body.pageInfo.hasNextPage) {
+          break;
+        }
+
+        startingAfter = response.body.pageInfo.endCursor;
+      }
+
+      expect(ids).toHaveLength(testPersonIds.length);
+      expect(new Set(ids).size).toBe(testPersonIds.length);
+    });
+
+    // Cursors read relation orderBy values from the ordering join itself, so
+    // continuation must not require any depth (issue #24333)
+    it('should continue past the first page at depth 0', async () => {
+      const ids: string[] = [];
+      let startingAfter: string | undefined = undefined;
+
+      for (let iteration = 0; iteration < 10; iteration++) {
+        const path: string =
+          '/people?order_by=company.name[AscNullsLast]&limit=2&depth=0' +
+          (startingAfter ? `&starting_after=${startingAfter}` : '');
+        const response = await makeRestAPIRequest({
+          method: 'get',
+          path,
+        }).expect(200);
+
+        ids.push(
+          ...response.body.data.people.map(
+            (person: { id: string }) => person.id,
+          ),
+        );
+
+        if (!response.body.pageInfo.hasNextPage) {
+          break;
+        }
+
+        startingAfter = response.body.pageInfo.endCursor;
+      }
+
+      expect(ids).toHaveLength(testPersonIds.length);
+      expect(new Set(ids).size).toBe(testPersonIds.length);
+    });
+  });
+
+  describe('cursor pagination ordered by a nullable field', () => {
+    const datedOpportunityCloseDates = [
+      '2026-03-01T00:00:00.000Z',
+      '2026-03-02T00:00:00.000Z',
+      '2026-03-03T00:00:00.000Z',
+    ];
+    const opportunityCount = datedOpportunityCloseDates.length + 2;
+
+    beforeAll(async () => {
+      await deleteAllRecords('opportunity');
+
+      for (const [index, closeDate] of datedOpportunityCloseDates.entries()) {
+        await makeRestAPIRequest({
+          method: 'post',
+          path: '/opportunities',
+          body: { name: `REST dated opportunity ${index + 1}`, closeDate },
+        });
+      }
+
+      for (const index of [1, 2]) {
+        await makeRestAPIRequest({
+          method: 'post',
+          path: '/opportunities',
+          body: { name: `REST undated opportunity ${index}` },
+        });
+      }
+    });
+
+    afterAll(async () => {
+      await deleteAllRecords('opportunity');
+    });
+
+    it('should return every record when paginating with starting_after', async () => {
+      const ids: string[] = [];
+      let startingAfter: string | undefined = undefined;
+
+      for (let iteration = 0; iteration < 10; iteration++) {
+        const path: string =
+          '/opportunities?order_by=closeDate[AscNullsLast]&limit=2' +
+          (startingAfter ? `&starting_after=${startingAfter}` : '');
+        const response = await makeRestAPIRequest({
+          method: 'get',
+          path,
+        }).expect(200);
+
+        ids.push(
+          ...response.body.data.opportunities.map(
+            (opportunity: { id: string }) => opportunity.id,
+          ),
+        );
+
+        if (!response.body.pageInfo.hasNextPage) {
+          break;
+        }
+
+        startingAfter = response.body.pageInfo.endCursor;
+      }
+
+      expect(ids).toHaveLength(opportunityCount);
+      expect(new Set(ids).size).toBe(opportunityCount);
+    });
   });
 });

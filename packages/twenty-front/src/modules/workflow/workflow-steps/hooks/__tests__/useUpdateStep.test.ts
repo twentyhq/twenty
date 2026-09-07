@@ -39,7 +39,7 @@ describe('useUpdateStep', () => {
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: {
-            value: true,
+            value: 3,
           },
           continueOnFailure: {
             value: true,

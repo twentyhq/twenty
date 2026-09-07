@@ -111,6 +111,77 @@ test('assertCliGuidanceSplit passes on current state', () => {
   assert.deepStrictEqual(collectFailures(crossDocContracts.assertCliGuidanceSplit), []);
 });
 
+test('assertCliGuidanceSplit catches deprecated dev --once guidance', () => {
+  const cliAndSyncPath = path.join(
+    PLUGIN_ROOT,
+    'references',
+    'manage-app',
+    'cli-and-sync.md',
+  );
+
+  withFileMutation(
+    cliAndSyncPath,
+    (contents) => contents.replace('yarn twenty apply', 'yarn twenty dev --once'),
+    () => {
+      const failures = collectFailures(crossDocContracts.assertCliGuidanceSplit);
+
+      assert.ok(
+        failures.some((failure) => failure.includes('yarn twenty dev --once')),
+      );
+    },
+  );
+});
+
+test('assertCliGuidanceSplit catches deprecated guidance outside the CLI reference', () => {
+  const manageSkillPath = path.join(
+    PLUGIN_ROOT,
+    'skills',
+    'manage-app',
+    'SKILL.md',
+  );
+
+  withFileMutation(
+    manageSkillPath,
+    (contents) => `${contents}\nRun yarn twenty dev --once after editing.\n`,
+    () => {
+      const failures = collectFailures(crossDocContracts.assertCliGuidanceSplit);
+
+      assert.ok(
+        failures.some(
+          (failure) =>
+            failure.includes('skills/manage-app/SKILL.md') &&
+            failure.includes('yarn twenty dev --once'),
+        ),
+      );
+    },
+  );
+});
+
+test('assertCliGuidanceSplit catches stale one-shot sync terminology', () => {
+  const standalonePagesPath = path.join(
+    PLUGIN_ROOT,
+    'references',
+    'develop-app',
+    'standalone-pages.md',
+  );
+
+  withFileMutation(
+    standalonePagesPath,
+    (contents) => `${contents}\nUse one-shot sync for verification.\n`,
+    () => {
+      const failures = collectFailures(crossDocContracts.assertCliGuidanceSplit);
+
+      assert.ok(
+        failures.some(
+          (failure) =>
+            failure.includes('references/develop-app/standalone-pages.md') &&
+            failure.includes('one-shot sync'),
+        ),
+      );
+    },
+  );
+});
+
 test('assertTestingGuidance passes on current state', () => {
   assert.deepStrictEqual(collectFailures(crossDocContracts.assertTestingGuidance), []);
 });

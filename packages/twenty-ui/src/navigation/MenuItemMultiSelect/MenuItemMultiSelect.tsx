@@ -15,7 +15,7 @@ type MenuItemMultiSelectProps = {
   isKeySelected?: boolean;
   withIconContainer?: boolean;
   text: string;
-  className: string;
+  className?: string;
   onSelectChange?: (selected: boolean) => void;
 };
 

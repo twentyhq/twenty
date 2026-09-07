@@ -9,6 +9,10 @@ on:
   workflow_call:
   push:
     branches: ['main']
+    paths-ignore:
+      - 'packages/twenty-front/src/locales/**'
+      - 'packages/twenty-emails/src/locales/**'
+      - 'packages/twenty-server/src/engine/core-modules/i18n/locales/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}

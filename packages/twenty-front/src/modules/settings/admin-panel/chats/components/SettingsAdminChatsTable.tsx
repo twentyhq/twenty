@@ -44,7 +44,7 @@ export const SettingsAdminChatsTable = ({
           align="right"
           initialSort={{
             fieldName: AdminChatThreadSortField.CREATED_AT,
-            orderBy: 'DescNullsLast',
+            direction: 'desc',
           }}
         />
       </TableRow>

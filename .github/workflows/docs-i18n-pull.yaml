@@ -81,6 +81,12 @@ jobs:
         env:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
+      - name: Normalize translations in Crowdin
+        if: github.event_name != 'pull_request' && (inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        run: npx tsx packages/twenty-utils/crowdin-normalizer/normalize-crowdin-translations.ts --project=2 --apply --rules=escaped-inline-code-tags || echo "::warning::translation normalization failed (non-blocking)"
+        env:
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
       # Pull docs translations from Crowdin one language at a time
       # This avoids build timeout issues when processing all languages at once
       - name: Pull translated docs from Crowdin

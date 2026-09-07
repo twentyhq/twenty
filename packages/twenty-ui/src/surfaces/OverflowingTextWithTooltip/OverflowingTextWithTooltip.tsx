@@ -1,17 +1,16 @@
-import {
-  type CSSProperties,
-  type ReactNode,
-  useId,
-  useRef,
-  useState,
-} from 'react';
+import { type ReactNode, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { LinkifiedText } from '@ui/typography/LinkifiedText/LinkifiedText';
+import { Text } from '@ui/typography/Text/Text';
 import { isDefined } from '@ui/utilities/utils/isDefined';
-import { AppTooltip, TooltipDelay } from '@ui/surfaces/AppTooltip/AppTooltip';
+import {
+  AppTooltip,
+  TooltipDelay,
+  TooltipPosition,
+} from '@ui/surfaces/AppTooltip/AppTooltip';
 
 import styles from './OverflowingTextWithTooltip.module.scss';
 
@@ -20,6 +19,7 @@ type OverflowingTextWithTooltipProps = {
   isTooltipMultiline?: boolean;
   displayedMaxRows?: number;
   tooltipDelay?: TooltipDelay;
+  tooltipPlace?: TooltipPosition;
   alwaysShowTooltip?: boolean;
 } & (
   | {
@@ -39,6 +39,7 @@ export const OverflowingTextWithTooltip = ({
   displayedMaxRows,
   tooltipContent,
   tooltipDelay = TooltipDelay.mediumDelay,
+  tooltipPlace = TooltipPosition.Bottom,
   alwaysShowTooltip = false,
 }: OverflowingTextWithTooltipProps) => {
   const textElementId = `title-id-${useId().replace(/:/g, '')}`;
@@ -77,29 +78,24 @@ export const OverflowingTextWithTooltip = ({
   return (
     <>
       {isDefined(displayedMaxRows) ? (
-        <div
+        <Text
+          lineClamp={displayedMaxRows || 1}
           data-testid="tooltip"
           data-content-overflowing={isTitleOverflowing ? '' : undefined}
           className={clsx(
             styles.overflowingMultilineText,
             size === 'large' && styles.large,
           )}
-          style={
-            {
-              '--displayed-max-rows': displayedMaxRows
-                ? displayedMaxRows.toString()
-                : '1',
-            } as CSSProperties
-          }
           ref={textRef}
           id={textElementId}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
           {isNonEmptyString(text) ? <LinkifiedText text={text} /> : text}
-        </div>
+        </Text>
       ) : (
-        <div
+        <Text
+          truncate
           data-testid="tooltip"
           data-content-overflowing={isTitleOverflowing ? '' : undefined}
           className={clsx(
@@ -112,7 +108,7 @@ export const OverflowingTextWithTooltip = ({
           onMouseLeave={handleMouseLeave}
         >
           {isNonEmptyString(text) ? <LinkifiedText text={text} /> : text}
-        </div>
+        </Text>
       )}
 
       {shouldRenderTooltip &&
@@ -125,7 +121,7 @@ export const OverflowingTextWithTooltip = ({
               anchorSelect={`#${textElementId}`}
               offset={5}
               noArrow
-              place="bottom"
+              place={tooltipPlace}
               positionStrategy="absolute"
               delay={tooltipDelay}
               isOpen={true}

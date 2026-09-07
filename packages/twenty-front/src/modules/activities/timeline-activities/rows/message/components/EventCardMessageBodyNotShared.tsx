@@ -11,10 +11,8 @@ const StyledEmailBodyNotSharedContainer = styled.div`
   color: ${themeCssVariables.font.color.light};
   display: flex;
   flex-direction: column;
-
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
-
   gap: ${themeCssVariables.spacing[3]};
   height: 80px;
   justify-content: center;
@@ -39,17 +37,15 @@ export const EventCardMessageBodyNotShared = ({
   notSharedByFullName,
 }: {
   notSharedByFullName: string;
-}) => {
-  return (
-    <StyledEmailBodyNotSharedContainer>
-      <StyledEmailBodyNotShared>
-        <StyledEmailBodyNotSharedIconContainer>
-          <IconLock />
-        </StyledEmailBodyNotSharedIconContainer>
-        <span>
-          <Trans>Not shared by {notSharedByFullName}</Trans>
-        </span>
-      </StyledEmailBodyNotShared>
-    </StyledEmailBodyNotSharedContainer>
-  );
-};
+}) => (
+  <StyledEmailBodyNotSharedContainer>
+    <StyledEmailBodyNotShared>
+      <StyledEmailBodyNotSharedIconContainer>
+        <IconLock />
+      </StyledEmailBodyNotSharedIconContainer>
+      <span>
+        <Trans>Not shared by {notSharedByFullName}</Trans>
+      </span>
+    </StyledEmailBodyNotShared>
+  </StyledEmailBodyNotSharedContainer>
+);

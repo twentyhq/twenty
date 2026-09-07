@@ -1,23 +1,10 @@
-import { type Alias } from 'typeorm/query-builder/Alias';
-import { type RelationMetadata } from 'typeorm/metadata/RelationMetadata';
+import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
-import { isDefined } from 'twenty-shared/utils';
-
-type QueryBuilderWithJoinAttributes = {
-  expressionMap: {
-    joinAttributes: {
-      alias: Pick<Alias, 'name'>;
-      relation?: Pick<RelationMetadata, 'isOneToMany' | 'isManyToMany'>;
-    }[];
-  };
-};
-
+// Aliases whose join can duplicate root rows: to-many joins break row-level LIMIT
 export const getNonToOneJoinAliases = (
-  queryBuilder: QueryBuilderWithJoinAttributes,
+  queryBuilder: WorkspaceSelectQueryBuilder,
 ): string[] =>
-  queryBuilder.expressionMap.joinAttributes
-    .filter(
-      ({ relation }) =>
-        !isDefined(relation) || relation.isOneToMany || relation.isManyToMany,
-    )
-    .map(({ alias }) => alias.name);
+  queryBuilder
+    .getJoinAliases()
+    .filter(({ isToMany }) => isToMany)
+    .map(({ name }) => name);

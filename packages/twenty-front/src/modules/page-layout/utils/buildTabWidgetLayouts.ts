@@ -1,4 +1,4 @@
-import { type Layouts } from 'react-grid-layout';
+import { type ResponsiveLayouts } from 'react-grid-layout';
 import { DEFAULT_WIDGET_SIZE } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -24,7 +24,9 @@ const getWidgetMinimumSize = (widget: PageLayoutWidget) => {
   return DEFAULT_WIDGET_SIZE.minimum;
 };
 
-export const buildTabWidgetLayouts = (widgets: PageLayoutWidget[]): Layouts => {
+export const buildTabWidgetLayouts = (
+  widgets: PageLayoutWidget[],
+): ResponsiveLayouts => {
   const layouts = widgets.map((widget) => {
     const minimumSize = getWidgetMinimumSize(widget);
     const gridPos = getWidgetGridPosition(widget);

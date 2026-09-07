@@ -2,7 +2,10 @@ import { MockedProvider } from '@apollo/client/testing/react';
 import { act, render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { StrictMode } from 'react';
-import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
+import {
+  type WorkspaceCompanyEnrichment,
+  type WorkspacePersonEnrichment,
+} from 'twenty-shared/workspace';
 
 import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
@@ -13,6 +16,7 @@ import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSk
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { isCompanyEnrichmentFetchInFlightState } from '@/onboarding/states/isCompanyEnrichmentFetchInFlightState';
+import { personEnrichmentState } from '@/onboarding/states/personEnrichmentState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -252,6 +256,41 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
 
     expect(capturedVariablesList.length).toBeGreaterThan(0);
     expect(capturedVariablesList[0].companyContext).toBeUndefined();
+    expect(capturedVariablesList[0].personContext).toBeUndefined();
+  });
+
+  it('should pass the stored person enrichment as the personContext variable when one is stored', async () => {
+    const personEnrichment: WorkspacePersonEnrichment = {
+      email: 'ada@acme.com',
+      enrichedAt: '2026-07-21T10:00:00.000Z',
+      fullName: 'Ada Lovelace',
+      jobTitle: 'Head of Sales',
+      jobTitleLevels: [],
+      jobCompanyName: null,
+      industry: null,
+      headline: null,
+      linkedinUrl: null,
+      skills: [],
+      locality: null,
+      region: null,
+      country: null,
+    };
+
+    jotaiStore.set(personEnrichmentState.atom, personEnrichment);
+
+    const capturedVariablesList: Record<string, unknown>[] = [];
+    renderKickoffEffect([
+      buildKickoffMock({
+        outcome: 'STARTED',
+        captureVariables: (variables) => {
+          capturedVariablesList.push(variables);
+        },
+      }),
+    ]);
+
+    await flushMutation();
+
+    expect(capturedVariablesList[0].personContext).toEqual(personEnrichment);
   });
 
   it('should not touch the chat state when the chat is unavailable', async () => {

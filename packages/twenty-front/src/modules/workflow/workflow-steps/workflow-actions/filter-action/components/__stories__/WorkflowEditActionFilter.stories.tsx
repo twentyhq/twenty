@@ -24,7 +24,7 @@ const DEFAULT_ACTION: WorkflowFilterAction = {
     outputSchema: {},
     errorHandlingOptions: {
       retryOnFailure: {
-        value: false,
+        value: 0,
       },
       continueOnFailure: {
         value: false,
@@ -50,7 +50,7 @@ const CONFIGURED_ACTION: WorkflowFilterAction = {
         {
           id: 'filter-1',
           stepFilterGroupId: 'filter-group-1',
-          stepOutputKey: 'company.name',
+          stepOutputKey: '{{company.name}}',
           operand: ViewFilterOperand.CONTAINS,
           value: 'Acme',
           type: 'string',
@@ -60,7 +60,7 @@ const CONFIGURED_ACTION: WorkflowFilterAction = {
     outputSchema: {},
     errorHandlingOptions: {
       retryOnFailure: {
-        value: false,
+        value: 0,
       },
       continueOnFailure: {
         value: false,

@@ -97,7 +97,7 @@ const config = JSON.parse(process.env.PROVIDER_CONFIG ?? '{}'); // '{"retries":3
 
 [`defineApplicationRole()`](/l/ko/developers/extend/apps/config/roles)로 선언된 역할은 앱의 로직 함수와 프런트엔드 컴포넌트가 무엇에 접근할 수 있는지를 제어합니다:
 
-* `TWENTY_APP_ACCESS_TOKEN`로 주입되는 런타임 토큰은 이 역할에서 파생됩니다.
+* 로직 함수에 주입되는 런타임 토큰은 이 역할에서 파생됩니다. 사용자 권한으로 작동하는 호출은 해당 사용자가 할 수 있는 작업으로 더욱 제한되므로, 어느 쪽의 권한도 초과할 수 없습니다. [호출이 사용하는 액세스 권한](/l/ko/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses)을 참조하세요.
 * 타입드 API 클라이언트는 해당 역할에 부여된 권한으로 제한됩니다.
 * 최소 권한 원칙을 따르세요: 함수에 필요한 권한만 선언하세요.
 

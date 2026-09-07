@@ -4,7 +4,10 @@ import {
   ViewFilterOperand as RecordFilterOperand,
 } from '@/types';
 import { type RecordFilter } from '@/utils';
-import { turnRecordFilterIntoRecordGqlOperationFilter } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
+import {
+  type FieldShared,
+  turnRecordFilterIntoRecordGqlOperationFilter,
+} from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
 
 const fields = [
   { id: 'f-text', name: 'name', type: FieldMetadataType.TEXT, label: 'Name' },
@@ -65,6 +68,7 @@ const fields = [
       {
         type: RelationType.MANY_TO_ONE,
         targetObjectMetadata: {
+          id: 'o-person',
           nameSingular: 'person',
           namePlural: 'people',
         },
@@ -72,6 +76,7 @@ const fields = [
       {
         type: RelationType.MANY_TO_ONE,
         targetObjectMetadata: {
+          id: 'o-company',
           nameSingular: 'company',
           namePlural: 'companies',
         },
@@ -1181,5 +1186,126 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
         },
       });
     });
+  });
+});
+
+describe('turnRecordFilterIntoRecordGqlOperationFilter - traversed morph relations', () => {
+  const CURRENT_CLIENT_ID = '11111111-1111-4111-8111-111111111111';
+
+  const morphFrom = {
+    id: 'f-from-morph',
+    name: 'from',
+    type: FieldMetadataType.MORPH_RELATION,
+    label: 'From',
+    relation: { sourceObjectMetadata: { id: 'o-transaction' } },
+    morphRelations: [
+      {
+        type: RelationType.MANY_TO_ONE,
+        targetObjectMetadata: {
+          id: 'o-wallet',
+          nameSingular: 'wallet',
+          namePlural: 'wallets',
+        },
+      },
+      {
+        type: RelationType.MANY_TO_ONE,
+        targetObjectMetadata: {
+          id: 'o-trading-account',
+          nameSingular: 'tradingAccount',
+          namePlural: 'tradingAccounts',
+        },
+      },
+    ],
+  };
+
+  const plainFrom = {
+    id: 'f-from-plain',
+    name: 'from',
+    type: FieldMetadataType.RELATION,
+    label: 'From',
+    relation: { sourceObjectMetadata: { id: 'o-transaction' } },
+  };
+
+  const tradingAccountClient = {
+    id: 'f-trading-account-client',
+    name: 'client',
+    type: FieldMetadataType.RELATION,
+    label: 'Client',
+    relation: { sourceObjectMetadata: { id: 'o-trading-account' } },
+  };
+
+  const traversedFieldMetadataItemById = new Map<string, FieldShared>([
+    [morphFrom.id, morphFrom],
+    [plainFrom.id, plainFrom],
+    [tradingAccountClient.id, tradingAccountClient],
+  ]);
+
+  const makeTraversedFilter = (fieldMetadataId: string) =>
+    ({
+      id: 'test-filter',
+      fieldMetadataId,
+      value: JSON.stringify({
+        selectedRecordIds: [],
+        isCurrentRecordSelected: true,
+      }),
+      type: 'RELATION',
+      operand: RecordFilterOperand.IS,
+      relationTargetFieldMetadataId: tradingAccountClient.id,
+    }) as RecordFilter;
+
+  const clientPageDependencies = {
+    timeZone: 'UTC',
+    currentRecord: {
+      id: CURRENT_CLIENT_ID,
+      objectMetadataNameSingular: 'client',
+    },
+  };
+
+  it('should scope a traversed filter through a plain relation', () => {
+    const result = turnRecordFilterIntoRecordGqlOperationFilter({
+      filterValueDependencies: clientPageDependencies,
+      recordFilter: makeTraversedFilter(plainFrom.id),
+      fieldMetadataItemById: traversedFieldMetadataItemById,
+    });
+
+    expect(result).toEqual({
+      from: { clientId: { in: [CURRENT_CLIENT_ID] } },
+    });
+  });
+
+  it('should scope a traversed filter through the morph branch the traversal continues from', () => {
+    const result = turnRecordFilterIntoRecordGqlOperationFilter({
+      filterValueDependencies: clientPageDependencies,
+      recordFilter: makeTraversedFilter(morphFrom.id),
+      fieldMetadataItemById: traversedFieldMetadataItemById,
+    });
+
+    expect(result).toEqual({
+      fromTradingAccount: { clientId: { in: [CURRENT_CLIENT_ID] } },
+    });
+  });
+
+  it('should throw when no morph branch targets the traversed object', () => {
+    const unrelatedTargetField = {
+      id: 'f-unrelated',
+      name: 'owner',
+      type: FieldMetadataType.RELATION,
+      label: 'Owner',
+      relation: { sourceObjectMetadata: { id: 'o-invoice' } },
+    };
+
+    expect(() =>
+      turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies: clientPageDependencies,
+        recordFilter: {
+          ...makeTraversedFilter(morphFrom.id),
+          relationTargetFieldMetadataId: unrelatedTargetField.id,
+        } as RecordFilter,
+        fieldMetadataItemById: new Map<string, FieldShared>([
+          ...traversedFieldMetadataItemById,
+          [unrelatedTargetField.id, unrelatedTargetField],
+        ]),
+      }),
+    ).toThrow('No morph relation on field from targets the traversed object');
   });
 });
