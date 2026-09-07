@@ -21,7 +21,7 @@ import { WorkspaceCacheException } from 'src/engine/workspace-cache/exceptions/w
 export class UsagePeriodService implements OnModuleInit {
   private readonly logger = new Logger(UsagePeriodService.name);
 
-  private creditAllowanceProvider: CreditAllowanceProvider | null = null;
+  private creditAllowanceProvider: CreditAllowanceProvider;
 
   constructor(private readonly discoveryService: DiscoveryService) {}
 
@@ -33,7 +33,7 @@ export class UsagePeriodService implements OnModuleInit {
 
   async hasAllowancePeriod(workspaceId: string): Promise<boolean> {
     return isDefined(
-      await this.creditAllowanceProvider?.getCreditAllowancePeriod(workspaceId),
+      await this.creditAllowanceProvider.getCreditAllowancePeriod(workspaceId),
     );
   }
 
@@ -49,10 +49,8 @@ export class UsagePeriodService implements OnModuleInit {
     }
 
     try {
-      return (
-        (await this.creditAllowanceProvider?.getCreditAllowancePeriod(
-          workspaceId,
-        )) ?? null
+      return await this.creditAllowanceProvider.getCreditAllowancePeriod(
+        workspaceId,
       );
     } catch (error) {
       if (error instanceof WorkspaceCacheException) {

@@ -67,7 +67,7 @@ type QuotaConsumeArgs = {
 export class UsageLimitQuotaService implements OnModuleInit {
   private readonly logger = new Logger(UsageLimitQuotaService.name);
 
-  private creditAllowanceProvider: CreditAllowanceProvider | null = null;
+  private creditAllowanceProvider: CreditAllowanceProvider;
 
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineUsageLimit)
@@ -126,7 +126,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
 
   async dropAllowanceCounter(workspaceId: string): Promise<void> {
     const period =
-      await this.creditAllowanceProvider?.getCreditAllowancePeriod(workspaceId);
+      await this.creditAllowanceProvider.getCreditAllowancePeriod(workspaceId);
 
     if (!isDefined(period)) {
       return;
@@ -344,9 +344,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
     const allowance = exhaustedCounters.some(
       (counter) => counter.kind === 'allowance',
     )
-      ? ((await this.creditAllowanceProvider?.getCreditAllowance(
-          args.workspaceId,
-        )) ?? null)
+      ? await this.creditAllowanceProvider.getCreditAllowance(args.workspaceId)
       : null;
 
     return exhaustedCounters.map((counter) =>
@@ -451,11 +449,10 @@ export class UsageLimitQuotaService implements OnModuleInit {
   private async buildAllowanceCounter(
     workspaceId: string,
   ): Promise<AllowanceQuotaCounter | null> {
-    const creditAllowanceProvider = this.creditAllowanceProvider;
-
     if (
-      !isDefined(creditAllowanceProvider) ||
-      !(await creditAllowanceProvider.isCreditAllowanceEnabled(workspaceId))
+      !(await this.creditAllowanceProvider.isCreditAllowanceEnabled(
+        workspaceId,
+      ))
     ) {
       return null;
     }
@@ -622,7 +619,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
     }
 
     const allowance =
-      await this.creditAllowanceProvider?.getCreditAllowance(workspaceId);
+      await this.creditAllowanceProvider.getCreditAllowance(workspaceId);
 
     if (
       !isDefined(allowance) ||
