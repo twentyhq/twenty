@@ -1,3 +1,4 @@
+import { type MockedResponse } from '@apollo/client/testing';
 import { MockedProvider } from '@apollo/client/testing/react';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
@@ -45,9 +46,9 @@ const buildJobStatusMock = (
 });
 
 const buildWrapper =
-  (mocks: unknown[]) =>
+  (mocks: MockedResponse[]) =>
   ({ children }: { children: ReactNode }) => (
-    <MockedProvider mocks={mocks as never}>{children}</MockedProvider>
+    <MockedProvider mocks={mocks}>{children}</MockedProvider>
   );
 
 describe('useUninstallApplication', () => {
