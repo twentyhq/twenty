@@ -18,7 +18,7 @@ import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggr
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
 
 const DEFAULT_DELAY_BETWEEN_MUTATIONS_MS = 50;
@@ -224,6 +224,8 @@ export const useIncrementalDeleteManyRecords = <T>({
     let totalDeletedCount = 0;
     const allDeletedRecordIds: string[] = [];
 
+    let deletionError: unknown;
+
     try {
       await incrementalFetchAndMutate(
         async ({ recordIds, totalCount, abortSignal }) => {
@@ -235,13 +237,11 @@ export const useIncrementalDeleteManyRecords = <T>({
           updateProgress(totalDeletedCount, totalCount);
         },
       );
-    } finally {
-      // A failing batch leaves the earlier ones deleted, so what did go through
-      // is reported before the error propagates.
-      await refetchAggregateQueries({
-        objectMetadataNamePlural: objectMetadataItem.namePlural,
-      });
+    } catch (error) {
+      deletionError = error;
+    }
 
+    if (isNonEmptyArray(allDeletedRecordIds)) {
       removeNavigationMenuItemsByTargetRecordIds(allDeletedRecordIds);
 
       dispatchObjectRecordOperationBrowserEvent({
@@ -251,6 +251,18 @@ export const useIncrementalDeleteManyRecords = <T>({
           deletedRecordIds: allDeletedRecordIds,
         },
       });
+    }
+
+    await refetchAggregateQueries({
+      objectMetadataNamePlural: objectMetadataItem.namePlural,
+    }).catch((refetchError: unknown) => {
+      if (!isDefined(deletionError)) {
+        throw refetchError;
+      }
+    });
+
+    if (isDefined(deletionError)) {
+      throw deletionError;
     }
 
     return totalDeletedCount;
