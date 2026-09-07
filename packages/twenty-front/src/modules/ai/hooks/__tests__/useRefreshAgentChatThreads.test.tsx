@@ -57,11 +57,10 @@ describe('useRefreshAgentChatThreads', () => {
     });
   });
 
-  it('preserves newer store updates while adding threads from the response', async () => {
+  it('ignores a response when the store changed during the request', async () => {
     const store = createStore();
     const newerThread = buildThread('thread-1', 'Newer title');
     const staleThread = buildThread('thread-1', 'Stale title');
-    const missingThread = buildThread('thread-2', 'Missing thread');
     let resolveQuery: (value: {
       data: { chatThreads: AgentChatThread[] };
     }) => void = () => undefined;
@@ -86,16 +85,42 @@ describe('useRefreshAgentChatThreads', () => {
     });
 
     await act(async () => {
-      resolveQuery({ data: { chatThreads: [staleThread, missingThread] } });
+      resolveQuery({ data: { chatThreads: [staleThread] } });
       await refreshPromise;
     });
 
     expect(
       store.get(metadataStoreState.atomFamily('agentChatThreads')).current,
-    ).toEqual([newerThread, missingThread]);
+    ).toEqual([newerThread]);
   });
 
-  it('finishes an empty initial load when the request fails', async () => {
+  it('applies server updates and removals when the store has not changed', async () => {
+    const store = createStore();
+    const staleThread = buildThread('thread-1', 'Stale title');
+    const refreshedThread = buildThread('thread-1', 'Refreshed title');
+    const removedThread = buildThread('thread-2', 'Removed thread');
+    store.set(metadataStoreState.atomFamily('agentChatThreads'), {
+      current: [staleThread, removedThread],
+      draft: [],
+      status: 'up-to-date',
+    });
+    queryMock.mockResolvedValue({
+      data: { chatThreads: [refreshedThread] },
+    });
+    const { result } = renderHook(() => useRefreshAgentChatThreads(), {
+      wrapper: getWrapper(store),
+    });
+
+    await act(async () => {
+      await result.current.refreshAgentChatThreads();
+    });
+
+    expect(
+      store.get(metadataStoreState.atomFamily('agentChatThreads')).current,
+    ).toEqual([refreshedThread]);
+  });
+
+  it('keeps the store empty so initialization can retry a failed request', async () => {
     const store = createStore();
     queryMock.mockRejectedValue(new Error('Network error'));
     const { result } = renderHook(() => useRefreshAgentChatThreads(), {
@@ -110,7 +135,7 @@ describe('useRefreshAgentChatThreads', () => {
       store.get(metadataStoreState.atomFamily('agentChatThreads')),
     ).toMatchObject({
       current: [],
-      status: 'up-to-date',
+      status: 'empty',
     });
   });
 });

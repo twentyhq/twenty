@@ -28,6 +28,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
+const AGENT_CHAT_THREADS_REFRESH_RETRY_DELAY_MS = 3000;
+
 export const AgentChatThreadInitializationEffect = () => {
   const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
@@ -59,7 +61,31 @@ export const AgentChatThreadInitializationEffect = () => {
       return;
     }
 
-    void refreshAgentChatThreads();
+    let isActive = true;
+    let retryTimeoutId: number | undefined;
+
+    const refreshUntilLoaded = async () => {
+      const agentChatThreads = await refreshAgentChatThreads();
+
+      if (!isActive || isDefined(agentChatThreads)) {
+        return;
+      }
+
+      retryTimeoutId = window.setTimeout(
+        () => void refreshUntilLoaded(),
+        AGENT_CHAT_THREADS_REFRESH_RETRY_DELAY_MS,
+      );
+    };
+
+    void refreshUntilLoaded();
+
+    return () => {
+      isActive = false;
+
+      if (isDefined(retryTimeoutId)) {
+        window.clearTimeout(retryTimeoutId);
+      }
+    };
   }, [storeEntry.status, hasAiPermission, refreshAgentChatThreads]);
 
   useEffect(() => {
