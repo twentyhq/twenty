@@ -1,17 +1,18 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
-import { IconEdit, IconSparkles } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { AiChatCloseButton } from '@/ai/components/AiChatCloseButton';
-import { AiChatCollapseButton } from '@/ai/components/AiChatCollapseButton';
-import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
+import { AiChatPageThreadHeader } from '@/ai/components/AiChatPageThreadHeader';
+import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
+import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
+import { currentAiChatThreadSelector } from '@/ai/states/selectors/currentAiChatThreadSelector';
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
 import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledHeader = styled.header`
   align-items: center;
@@ -20,9 +21,9 @@ const StyledHeader = styled.header`
   box-sizing: border-box;
   display: flex;
   flex-shrink: 0;
-  gap: ${themeCssVariables.spacing['0.5']};
+  gap: ${themeCssVariables.spacing[2]};
   height: ${SIDE_PANEL_TOP_BAR_HEIGHT}px;
-  padding: 0 ${themeCssVariables.spacing[2]};
+  padding: 0 ${themeCssVariables.spacing[3]};
 `;
 
 const StyledHeaderTitle = styled.div`
@@ -31,7 +32,7 @@ const StyledHeaderTitle = styled.div`
   display: flex;
   flex: 1;
   font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
+  font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
   overflow: hidden;
@@ -46,42 +47,33 @@ type AiChatPageHeaderProps = {
 
 export const AiChatPageHeader = ({ isOnboarding }: AiChatPageHeaderProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useNavigationDrawerExpanded();
-  const { switchToNewChat } = useSwitchToNewAiChat();
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadSelector);
 
   return (
     <StyledHeader>
       {!isNavigationDrawerExpanded && !isMobile && (
         <NavigationDrawerCollapseButton direction="right" />
       )}
-      <StyledHeaderTitle>
-        <IconSparkles size={theme.icon.size.md} />
-        {isOnboarding ? t`Onboarding` : t`Ask AI`}
-      </StyledHeaderTitle>
-      {/* The onboarding conversation is single-threaded: switching or
-          starting threads would abandon the workspace setup. */}
-      {!isOnboarding && (
-        <IconButton
-          Icon={IconEdit}
-          size="small"
-          variant="tertiary"
-          onClick={() => switchToNewChat()}
-          ariaLabel={t`New conversation`}
+      {isDefined(currentAiChatThread) && !isOnboarding ? (
+        <AiChatPageThreadHeader
+          key={currentAiChatThread.id}
+          thread={currentAiChatThread}
         />
+      ) : (
+        <StyledHeaderTitle>
+          {isOnboarding ? t`Onboarding` : t`New chat`}
+        </StyledHeaderTitle>
       )}
-      {/* Collapsing back into the side panel is a desktop notion; on mobile
-          the page is left outright, so it closes the way the side panel does,
-          down to the same button. */}
       {isMobile ? (
         <AiChatCloseButton variant="primary" />
       ) : (
-        <>
-          <AiChatCollapseButton />
-          {isOnboarding && <AiChatCloseButton />}
-        </>
+        isOnboarding && <AiChatCloseButton />
       )}
+      <AiChatThreadDeleteConfirmationModal
+        surface={AI_CHAT_THREAD_ACTIONS_SURFACE.PAGE_HEADER}
+      />
     </StyledHeader>
   );
 };
