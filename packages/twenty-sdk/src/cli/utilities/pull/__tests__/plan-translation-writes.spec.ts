@@ -309,6 +309,42 @@ describe('planTranslationWrites', () => {
     });
   });
 
+  it('should never delete the files of a locale the export still lists, even with a malformed catalog', async () => {
+    const appPath = await createAppPath();
+
+    await pullFresh(appPath);
+
+    const plan = await planTranslationWrites({
+      appPath,
+      manifest: buildManifest({
+        'fr-FR': 'not a catalog',
+        'de-DE': { [PET_LABEL_ID]: 'Haustier' },
+      }),
+      baseManifest: buildManifest(EXPORTED_TRANSLATIONS),
+      frontComponentSourcePaths: [],
+    });
+
+    expect(describePlan(plan)).toEqual({ writes: [], deletions: [] });
+  });
+
+  it('should only delete the files of a locale the base recorded with a valid catalog', async () => {
+    const appPath = await createAppPath();
+
+    await pullFresh(appPath);
+
+    const plan = await planTranslationWrites({
+      appPath,
+      manifest: buildManifest({ 'de-DE': { [PET_LABEL_ID]: 'Haustier' } }),
+      baseManifest: buildManifest({
+        'fr-FR': ['not a catalog'],
+        'de-DE': { [PET_LABEL_ID]: 'Haustier' },
+      }),
+      frontComponentSourcePaths: [],
+    });
+
+    expect(describePlan(plan)).toEqual({ writes: [], deletions: [] });
+  });
+
   it('should only write the compiled file for a locale with no decodable entry', async () => {
     const appPath = await createAppPath();
 

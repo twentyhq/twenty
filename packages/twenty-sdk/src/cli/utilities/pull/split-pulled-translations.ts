@@ -4,18 +4,13 @@ import {
   buildLocaleCatalog,
   type LocaleCatalogEntry,
 } from '@/cli/utilities/translations/locale-catalog-format';
+import { isLocaleCatalog } from '@/cli/utilities/translations/is-locale-catalog';
 import { isSupportedLocale } from '@/cli/utilities/translations/is-supported-locale';
 import { type MessageDescriptor } from '@/sdk/front-component/translations/message';
 import { type Manifest } from 'twenty-shared/application';
 import { generateMessageId } from 'twenty-shared/i18n';
 import { type AppLocale } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
-
-const isLocaleCatalog = (value: unknown): value is Record<string, string> =>
-  isDefined(value) &&
-  typeof value === 'object' &&
-  !Array.isArray(value) &&
-  Object.values(value).every((translation) => typeof translation === 'string');
 
 export type PulledLocaleCatalog = {
   locale: AppLocale;

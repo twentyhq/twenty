@@ -11,6 +11,8 @@ import {
   COMPILED_LOCALES_DIR,
   LOCALES_DIR,
 } from '@/cli/utilities/translations/constants';
+import { isLocaleCatalog } from '@/cli/utilities/translations/is-locale-catalog';
+import { isSupportedLocale } from '@/cli/utilities/translations/is-supported-locale';
 import {
   buildLocaleCatalog,
   flattenLocaleCatalog,
@@ -137,7 +139,7 @@ export const planTranslationWrites = async ({
     manifest,
     frontComponentSourcePaths,
   });
-  const exportedLocales = new Set<string>(catalogs.map(({ locale }) => locale));
+  const exportedLocales = new Set(Object.keys(exportedTranslations));
   const baseTranslations: LocaleCatalogs = isLocaleCatalogs(
     baseManifest?.translations,
   )
@@ -230,8 +232,12 @@ export const planTranslationWrites = async ({
     }
   }
 
-  for (const locale of Object.keys(baseTranslations)) {
-    if (exportedLocales.has(locale)) {
+  for (const [locale, baseCatalog] of Object.entries(baseTranslations)) {
+    if (
+      exportedLocales.has(locale) ||
+      !isSupportedLocale(locale) ||
+      !isLocaleCatalog(baseCatalog)
+    ) {
       continue;
     }
 
