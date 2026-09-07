@@ -433,6 +433,12 @@ exports[`Application export - data model exports the whole application as a stab
     {
       "metadataName": "view",
       "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<OPEN_TICKETS_VIEW>",
+    },
+    {
+      "metadataName": "view",
+      "reason": null,
       "status": "ENGINE_DERIVED",
       "universalIdentifier": "<PROJECT_FIELDS_WIDGET_ENGINE_VIEW>",
     },
@@ -453,6 +459,18 @@ exports[`Application export - data model exports the whole application as a stab
       "reason": null,
       "status": "ENGINE_DERIVED",
       "universalIdentifier": "<TICKET_INDEX_ENGINE_VIEW>",
+    },
+    {
+      "metadataName": "viewField",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<OPEN_TICKETS_PROJECT_VIEW_FIELD>",
+    },
+    {
+      "metadataName": "viewField",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<OPEN_TICKETS_TITLE_VIEW_FIELD>",
     },
     {
       "metadataName": "viewField",
@@ -483,6 +501,12 @@ exports[`Application export - data model exports the whole application as a stab
       "reason": null,
       "status": "ENGINE_DERIVED",
       "universalIdentifier": "<PROJECT_FIELDS_WIDGET_ENGINE_VIEW_FIELD_updatedBy>",
+    },
+    {
+      "metadataName": "viewField",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<PROJECT_INDEX_DELETED_AT_VIEW_FIELD>",
     },
     {
       "metadataName": "viewField",
@@ -609,6 +633,36 @@ exports[`Application export - data model exports the whole application as a stab
       "reason": null,
       "status": "ENGINE_DERIVED",
       "universalIdentifier": "<TICKET_INDEX_ENGINE_VIEW_FIELD_updatedBy>",
+    },
+    {
+      "metadataName": "viewFieldGroup",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<OPEN_TICKETS_TRIAGE_FIELD_GROUP>",
+    },
+    {
+      "metadataName": "viewFilter",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<OPEN_TICKETS_TITLE_FILTER>",
+    },
+    {
+      "metadataName": "viewFilterGroup",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<OPEN_TICKETS_NOT_FILTER_GROUP>",
+    },
+    {
+      "metadataName": "viewGroup",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<OPEN_TICKETS_OPEN_GROUP>",
+    },
+    {
+      "metadataName": "viewSort",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<OPEN_TICKETS_TITLE_SORT>",
     },
   ],
   "randomlyIdentifiedByKindAndStatus": {
@@ -776,7 +830,86 @@ exports[`Application export - data model exports the whole application as a stab
       "export.ticket.title": "Titre du ticket",
     },
   },
-  "viewFields": [],
-  "views": [],
+  "viewFields": [
+    {
+      "fieldMetadataUniversalIdentifier": "<PROJECT_deletedAt_ENGINE_FIELD>",
+      "isVisible": true,
+      "position": 10,
+      "size": 180,
+      "universalIdentifier": "<PROJECT_INDEX_DELETED_AT_VIEW_FIELD>",
+      "viewUniversalIdentifier": "<PROJECT_INDEX_ENGINE_VIEW>",
+    },
+  ],
+  "views": [
+    {
+      "anyFieldFilterValue": "urgent",
+      "fieldGroups": [
+        {
+          "isVisible": true,
+          "name": "Triage",
+          "position": 0,
+          "universalIdentifier": "<OPEN_TICKETS_TRIAGE_FIELD_GROUP>",
+        },
+      ],
+      "fields": [
+        {
+          "aggregateOperation": "COUNT",
+          "fieldMetadataUniversalIdentifier": "<TICKET_TITLE_FIELD>",
+          "isVisible": true,
+          "position": 0,
+          "size": 240,
+          "universalIdentifier": "<OPEN_TICKETS_TITLE_VIEW_FIELD>",
+        },
+        {
+          "fieldMetadataUniversalIdentifier": "<TICKET_PROJECT_FIELD>",
+          "isVisible": false,
+          "position": 1,
+          "size": 0,
+          "universalIdentifier": "<OPEN_TICKETS_PROJECT_VIEW_FIELD>",
+        },
+      ],
+      "filterGroups": [
+        {
+          "logicalOperator": "NOT",
+          "universalIdentifier": "<OPEN_TICKETS_NOT_FILTER_GROUP>",
+        },
+      ],
+      "filters": [
+        {
+          "fieldMetadataUniversalIdentifier": "<TICKET_TITLE_FIELD>",
+          "operand": "CONTAINS",
+          "positionInViewFilterGroup": 0,
+          "universalIdentifier": "<OPEN_TICKETS_TITLE_FILTER>",
+          "value": "bug",
+          "viewFilterGroupUniversalIdentifier": "<OPEN_TICKETS_NOT_FILTER_GROUP>",
+        },
+      ],
+      "groups": [
+        {
+          "fieldValue": "open",
+          "isVisible": true,
+          "position": 0,
+          "universalIdentifier": "<OPEN_TICKETS_OPEN_GROUP>",
+        },
+      ],
+      "icon": "IconTicket",
+      "isCompact": true,
+      "name": "Open tickets",
+      "objectUniversalIdentifier": "<TICKET_OBJECT>",
+      "openRecordIn": "SIDE_PANEL",
+      "position": 1,
+      "shouldHideEmptyGroups": false,
+      "sorts": [
+        {
+          "direction": "DESC",
+          "fieldMetadataUniversalIdentifier": "<TICKET_TITLE_FIELD>",
+          "universalIdentifier": "<OPEN_TICKETS_TITLE_SORT>",
+        },
+      ],
+      "type": "TABLE",
+      "universalIdentifier": "<OPEN_TICKETS_VIEW>",
+      "visibility": "WORKSPACE",
+    },
+  ],
 }
 `;

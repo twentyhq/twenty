@@ -5,6 +5,12 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { exportApplication } from 'test/integration/metadata/suites/application/utils/export-application.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { createOneViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-view-filter.util';
+import { destroyOneViewFilter } from 'test/integration/metadata/suites/view-filter/utils/destroy-one-view-filter.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
+import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
   type FieldManifest,
   getFieldUniversalIdentifier,
@@ -18,15 +24,22 @@ import {
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
   type ObjectManifest,
+  type StandaloneViewFieldManifest,
   SYSTEM_VIEW_KEYS,
   type TranslationsManifest,
   TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+  type ViewManifest,
 } from 'twenty-shared/application';
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import {
+  AggregateOperations,
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,
+  ViewFilterGroupLogicalOperator,
+  ViewFilterOperand,
+  ViewSortDirection,
+  ViewType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { version as getUuidVersion } from 'uuid';
@@ -47,6 +60,15 @@ const PROJECT_TICKETS_FIELD_ID = '7e3d1c2b-0006-4a7b-8c9d-0e1f2a3b4c5d';
 const COMPANY_TAGLINE_FIELD_ID = '7e3d1c2b-0007-4a7b-8c9d-0e1f2a3b4c5d';
 const INDEX_ID = '7e3d1c2b-0008-4a7b-8c9d-0e1f2a3b4c5d';
 const INDEX_FIELD_ID = '7e3d1c2b-0009-4a7b-8c9d-0e1f2a3b4c5d';
+const OPEN_TICKETS_VIEW_ID = '7e3d1c2b-0010-4a7b-8c9d-0e1f2a3b4c5d';
+const TITLE_VIEW_FIELD_ID = '7e3d1c2b-0011-4a7b-8c9d-0e1f2a3b4c5d';
+const PROJECT_VIEW_FIELD_ID = '7e3d1c2b-0012-4a7b-8c9d-0e1f2a3b4c5d';
+const VIEW_FIELD_GROUP_ID = '7e3d1c2b-0013-4a7b-8c9d-0e1f2a3b4c5d';
+const VIEW_FILTER_GROUP_ID = '7e3d1c2b-0014-4a7b-8c9d-0e1f2a3b4c5d';
+const VIEW_FILTER_ID = '7e3d1c2b-0015-4a7b-8c9d-0e1f2a3b4c5d';
+const VIEW_SORT_ID = '7e3d1c2b-0016-4a7b-8c9d-0e1f2a3b4c5d';
+const VIEW_GROUP_ID = '7e3d1c2b-0017-4a7b-8c9d-0e1f2a3b4c5d';
+const PROJECT_INDEX_VIEW_FIELD_ID = '7e3d1c2b-0018-4a7b-8c9d-0e1f2a3b4c5d';
 
 const ENGINE_DERIVED_FIELD_NAMES = [
   'id',
@@ -94,6 +116,15 @@ const buildIdentifierNames = (): Map<string, string> => {
     [PROJECT_TICKETS_FIELD_ID, 'PROJECT_TICKETS_FIELD'],
     [COMPANY_TAGLINE_FIELD_ID, 'COMPANY_TAGLINE_FIELD'],
     [INDEX_ID, 'TICKET_TITLE_INDEX'],
+    [OPEN_TICKETS_VIEW_ID, 'OPEN_TICKETS_VIEW'],
+    [TITLE_VIEW_FIELD_ID, 'OPEN_TICKETS_TITLE_VIEW_FIELD'],
+    [PROJECT_VIEW_FIELD_ID, 'OPEN_TICKETS_PROJECT_VIEW_FIELD'],
+    [VIEW_FIELD_GROUP_ID, 'OPEN_TICKETS_TRIAGE_FIELD_GROUP'],
+    [VIEW_FILTER_GROUP_ID, 'OPEN_TICKETS_NOT_FILTER_GROUP'],
+    [VIEW_FILTER_ID, 'OPEN_TICKETS_TITLE_FILTER'],
+    [VIEW_SORT_ID, 'OPEN_TICKETS_TITLE_SORT'],
+    [VIEW_GROUP_ID, 'OPEN_TICKETS_OPEN_GROUP'],
+    [PROJECT_INDEX_VIEW_FIELD_ID, 'PROJECT_INDEX_DELETED_AT_VIEW_FIELD'],
     [
       getIndexFieldUniversalIdentifier({
         applicationUniversalIdentifier: TEST_APP_ID,
@@ -416,6 +447,88 @@ const FIXTURE_TRANSLATIONS: TranslationsManifest = {
   },
 };
 
+const openTicketsView: ViewManifest = {
+  universalIdentifier: OPEN_TICKETS_VIEW_ID,
+  name: 'Open tickets',
+  objectUniversalIdentifier: ticketObject.universalIdentifier,
+  type: ViewType.TABLE,
+  icon: 'IconTicket',
+  position: 1,
+  isCompact: true,
+  anyFieldFilterValue: 'urgent',
+  fields: [
+    {
+      universalIdentifier: TITLE_VIEW_FIELD_ID,
+      fieldMetadataUniversalIdentifier: TICKET_TITLE_FIELD_ID,
+      position: 0,
+      size: 240,
+      aggregateOperation: AggregateOperations.COUNT,
+    },
+    {
+      universalIdentifier: PROJECT_VIEW_FIELD_ID,
+      fieldMetadataUniversalIdentifier: TICKET_PROJECT_FIELD_ID,
+      position: 1,
+      isVisible: false,
+    },
+  ],
+  fieldGroups: [
+    {
+      universalIdentifier: VIEW_FIELD_GROUP_ID,
+      name: 'Triage',
+      position: 0,
+    },
+  ],
+  filterGroups: [
+    {
+      universalIdentifier: VIEW_FILTER_GROUP_ID,
+      logicalOperator: ViewFilterGroupLogicalOperator.NOT,
+    },
+  ],
+  filters: [
+    {
+      universalIdentifier: VIEW_FILTER_ID,
+      fieldMetadataUniversalIdentifier: TICKET_TITLE_FIELD_ID,
+      operand: ViewFilterOperand.CONTAINS,
+      value: 'bug',
+      viewFilterGroupUniversalIdentifier: VIEW_FILTER_GROUP_ID,
+      positionInViewFilterGroup: 0,
+    },
+  ],
+  sorts: [
+    {
+      universalIdentifier: VIEW_SORT_ID,
+      fieldMetadataUniversalIdentifier: TICKET_TITLE_FIELD_ID,
+      direction: ViewSortDirection.DESC,
+    },
+  ],
+  groups: [
+    {
+      universalIdentifier: VIEW_GROUP_ID,
+      fieldValue: 'open',
+      position: 0,
+    },
+  ],
+};
+
+const PROJECT_INDEX_VIEW_ID = getSystemViewUniversalIdentifier({
+  objectMetadataApplicationUniversalIdentifier: TEST_APP_ID,
+  objectUniversalIdentifier: PROJECT_OBJECT_ID,
+  viewKey: SYSTEM_VIEW_KEYS.INDEX,
+});
+
+const projectIndexViewField: StandaloneViewFieldManifest = {
+  universalIdentifier: PROJECT_INDEX_VIEW_FIELD_ID,
+  viewUniversalIdentifier: PROJECT_INDEX_VIEW_ID,
+  fieldMetadataUniversalIdentifier: getFieldUniversalIdentifier({
+    applicationUniversalIdentifier: TEST_APP_ID,
+    objectUniversalIdentifier: PROJECT_OBJECT_ID,
+    name: 'deletedAt',
+  }),
+  position: 10,
+  isVisible: true,
+  size: 180,
+};
+
 const manifest = buildBaseManifest({
   appId: TEST_APP_ID,
   roleId: TEST_ROLE_ID,
@@ -435,6 +548,8 @@ const manifest = buildBaseManifest({
         ],
       },
     ],
+    views: [openTicketsView],
+    viewFields: [projectIndexViewField],
   },
 });
 
@@ -574,6 +689,12 @@ describe('Application export - data model', () => {
         }),
       ),
     ).toBe(ApplicationExportCoverageStatus.ENGINE_DERIVED);
+    expect(statusOf(PROJECT_INDEX_VIEW_ID)).toBe(
+      ApplicationExportCoverageStatus.ENGINE_DERIVED,
+    );
+    expect(statusOf(PROJECT_INDEX_VIEW_FIELD_ID)).toBe(
+      ApplicationExportCoverageStatus.EXPORTED,
+    );
   }, 60000);
 
   it('round-trips the raw export through an additive dry-run sync without any action', async () => {
@@ -630,5 +751,102 @@ describe('Application export - data model', () => {
 
     expect(dryRun.errors).toBeUndefined();
     expect(dryRun.data.syncApplication.actions).toEqual([]);
+  }, 60000);
+
+  it('should round-trip a view with a filter created through the metadata API in the workspace Custom application without any action', async () => {
+    const { objects } = await findManyObjectMetadata({
+      expectToFail: false,
+      input: { filter: {}, paging: { first: 1000 } },
+      gqlFields: `
+        id
+        nameSingular
+        fieldsList {
+          id
+          name
+        }
+      `,
+    });
+    const personObject = objects.find(
+      ({ nameSingular }) => nameSingular === 'person',
+    );
+
+    jestExpectToBeDefined(personObject);
+
+    const personJobTitleField = personObject.fieldsList?.find(
+      ({ name }) => name === 'jobTitle',
+    );
+
+    jestExpectToBeDefined(personJobTitleField);
+
+    const { data: applicationsData } = await findManyApplications({
+      expectToFail: false,
+    });
+    const customApplication = applicationsData.findManyApplications.find(
+      ({ name }) => name === WORKSPACE_CUSTOM_APPLICATION_NAME,
+    );
+
+    jestExpectToBeDefined(customApplication);
+
+    const { data: createdViewData } = await createOneView({
+      expectToFail: false,
+      input: {
+        name: 'Export Custom Application People',
+        objectMetadataId: personObject.id,
+        type: ViewType.TABLE,
+        icon: 'IconUser',
+      },
+    });
+    const createdViewId = createdViewData.createView.id;
+
+    try {
+      const { data: createdViewFilterData } = await createOneViewFilter({
+        expectToFail: false,
+        input: {
+          viewId: createdViewId,
+          fieldMetadataId: personJobTitleField.id,
+          operand: ViewFilterOperand.CONTAINS,
+          value: 'Engineer',
+        },
+      });
+      const createdViewFilterId = createdViewFilterData.createViewFilter.id;
+
+      try {
+        const { data } = await exportApplication({
+          universalIdentifier: customApplication.universalIdentifier,
+          expectToFail: false,
+        });
+
+        expect(data.exportApplication.manifest.views).toContainEqual(
+          expect.objectContaining({
+            name: 'Export Custom Application People',
+            objectUniversalIdentifier:
+              STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
+            filters: [
+              expect.objectContaining({
+                operand: ViewFilterOperand.CONTAINS,
+                value: 'Engineer',
+              }),
+            ],
+          }),
+        );
+
+        const dryRun = await syncApplication({
+          manifest: data.exportApplication.manifest,
+          dryRun: true,
+          inferDeletionFromMissingEntities: false,
+          expectToFail: false,
+        });
+
+        expect(dryRun.errors).toBeUndefined();
+        expect(dryRun.data.syncApplication.actions).toEqual([]);
+      } finally {
+        await destroyOneViewFilter({
+          expectToFail: false,
+          input: { id: createdViewFilterId },
+        });
+      }
+    } finally {
+      await destroyOneView({ expectToFail: false, viewId: createdViewId });
+    }
   }, 60000);
 });
