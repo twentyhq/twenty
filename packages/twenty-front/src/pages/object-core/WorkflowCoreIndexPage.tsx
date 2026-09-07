@@ -143,7 +143,10 @@ export const WorkflowCoreIndexPage = () => {
                 initialSort={CORE_WORKFLOWS_INITIAL_SORT}
                 firstColumnAction={
                   canCreateCoreWorkflow ? (
-                    <CoreObjectTableCreateButton onClick={createCoreWorkflow} />
+                    <CoreObjectTableCreateButton
+                      ariaLabel={t`New ${objectMetadataItem.labelSingular}`}
+                      onClick={createCoreWorkflow}
+                    />
                   ) : undefined
                 }
               />

@@ -9,10 +9,12 @@ const StyledContainer = styled.div`
 `;
 
 type CoreObjectTableCreateButtonProps = {
+  ariaLabel: string;
   onClick: () => void;
 };
 
 export const CoreObjectTableCreateButton = ({
+  ariaLabel,
   onClick,
 }: CoreObjectTableCreateButtonProps) => (
   <StyledContainer>
@@ -20,6 +22,7 @@ export const CoreObjectTableCreateButton = ({
       Icon={IconPlus}
       size="small"
       accent="tertiary"
+      aria-label={ariaLabel}
       onClick={onClick}
     />
   </StyledContainer>
