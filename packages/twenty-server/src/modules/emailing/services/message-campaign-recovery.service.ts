@@ -129,7 +129,11 @@ export class MessageCampaignRecoveryService {
 
         const orphanedCount =
           await this.messageCampaignLifecycleService.failOrphanedQueuedDeliveries(
-            { workspaceId, campaignId },
+            {
+              workspaceId,
+              campaignId,
+              untouchedSince: new Date(staleSince),
+            },
           );
 
         if (orphanedCount > 0) {

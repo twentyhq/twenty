@@ -144,12 +144,19 @@ export class MessageCampaignLifecycleService {
   // A campaign whose send jobs were lost keeps rows QUEUED forever, and QUEUED
   // counts as unfinished, so the campaign would sit in SENDING with nothing
   // left to move it. Failing them lets it terminalise and names why.
+  //
+  // untouchedSince is what separates an abandoned row from a live one: a batch
+  // being deferred by the rate limiter re-queues its rows on every attempt, so
+  // it keeps bumping updatedAt while its job waits. Only rows nothing has
+  // touched for the whole stale window have no job left to run them.
   async failOrphanedQueuedDeliveries({
     workspaceId,
     campaignId,
+    untouchedSince,
   }: {
     workspaceId: string;
     campaignId: string;
+    untouchedSince: Date;
   }): Promise<number> {
     return this.settleDeliveries({
       workspaceId,
@@ -158,6 +165,7 @@ export class MessageCampaignLifecycleService {
         state: CAMPAIGN_DELIVERY_STATE.QUEUED,
         sentAt: IsNull(),
         providerMessageId: IsNull(),
+        updatedAt: LessThan(untouchedSince),
       },
       update: {
         state: CAMPAIGN_DELIVERY_STATE.FAILED,

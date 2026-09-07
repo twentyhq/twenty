@@ -261,23 +261,23 @@ export class MessageCampaignBatchDeliveryService {
       windowMs: sendSlotRefusal.windowMs,
     });
 
-    for (const chunk of chunks) {
-      await this.messageQueueService.add<SendCampaignEmailBatchJobData>(
-        SEND_CAMPAIGN_EMAIL_BATCH_JOB,
-        {
+    await this.messageQueueService.bulkAdd<SendCampaignEmailBatchJobData>(
+      SEND_CAMPAIGN_EMAIL_BATCH_JOB,
+      chunks.map((chunk) => ({
+        data: {
           ...data,
           recipients: chunk,
           // A split batch starts its own retry budget: it was never refused at
           // this size, and inheriting the count would fail it early.
           rateLimitedAttemptCount: chunks.length > 1 ? 0 : attemptCount,
         },
-        {
-          delay,
-          retryLimit: CAMPAIGN_SEND_RETRY_LIMIT,
-          backoff: CAMPAIGN_SEND_RETRY_BACKOFF,
-        },
-      );
-    }
+      })),
+      {
+        delay,
+        retryLimit: CAMPAIGN_SEND_RETRY_LIMIT,
+        backoff: CAMPAIGN_SEND_RETRY_BACKOFF,
+      },
+    );
   }
 
   private async deliverBatch({
@@ -368,7 +368,14 @@ export class MessageCampaignBatchDeliveryService {
         replacementsByDeliveryId,
       });
     } catch (error) {
-      await this.failClaimsAlreadyHandedToProvider({ workspaceId, claimToken });
+      await this.settleClaimsAlreadyHandedToProvider({
+        workspaceId,
+        claimToken,
+        settlements: resolveCampaignBatchSettlements({
+          claimedRecipients,
+          outcome: providerOutcome,
+        }),
+      });
 
       throw error;
     }
@@ -617,22 +624,37 @@ export class MessageCampaignBatchDeliveryService {
     );
   }
 
-  private async failClaimsAlreadyHandedToProvider({
+  // Settling threw after the provider had already taken the batch, so the rows
+  // still hold their claim. Recording them all one way is wrong in both
+  // directions: sent would count recipients the provider rejected, and failed
+  // is claimable and would mail the accepted ones again. Each row is settled by
+  // what the batch resolved for it, and only the accepted ones are marked sent.
+  private async settleClaimsAlreadyHandedToProvider({
     workspaceId,
     claimToken,
+    settlements,
   }: {
     workspaceId: string;
     claimToken: string;
+    settlements: CampaignDeliverySettlement[];
   }): Promise<void> {
-    await this.campaignDeliveryRepository.update(
-      workspaceId,
-      { claimToken },
-      {
-        state: CAMPAIGN_DELIVERY_STATE.SENT,
-        failureReason: CAMPAIGN_FAILURE_REASON.SETTLEMENT_LOST,
-        claimToken: null,
-        claimExpiresAt: null,
-      },
-    );
+    for (const settlement of settlements) {
+      const wasAcceptedByProvider =
+        settlement.state === CAMPAIGN_DELIVERY_STATE.SENT;
+
+      await this.campaignDeliveryRepository.update(
+        workspaceId,
+        { id: settlement.deliveryId, claimToken },
+        {
+          state: settlement.state,
+          skipReason: settlement.skipReason,
+          failureReason: wasAcceptedByProvider
+            ? CAMPAIGN_FAILURE_REASON.SETTLEMENT_LOST
+            : settlement.failureReason,
+          claimToken: null,
+          claimExpiresAt: null,
+        },
+      );
+    }
   }
 }

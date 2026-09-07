@@ -9,6 +9,8 @@ import { type SendSlotRefusal } from 'src/engine/core-modules/emailing-domain/ty
 import { CAMPAIGN_FAILURE_REASON } from 'src/engine/core-modules/emailing-domain/constants/campaign-failure-reason.constant';
 import { CLAIMABLE_CAMPAIGN_DELIVERY_STATES } from 'src/engine/core-modules/emailing-domain/constants/claimable-campaign-delivery-states.constant';
 import { MessageCampaignBatchDeliveryService } from 'src/modules/emailing/services/message-campaign-batch-delivery.service';
+import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 
 const WORKSPACE_ID = 'ec9b0b2a-4c02-4d1e-9f2a-9b1c0a5d7e31';
 const CAMPAIGN_ID = 'b1f0c6d5-3f9b-4a4e-9a5c-2f7d8e6b4a10';
@@ -61,6 +63,9 @@ const buildHarness = () => {
   };
 
   const messageRepository = { update: jest.fn(async () => ({ affected: 1 })) };
+  const associationRepository = {
+    update: jest.fn(async () => ({ affected: 1 })),
+  };
   const personRepository = {
     find: jest.fn(async () => [{ id: 'person-0' }, { id: 'person-1' }]),
   };
@@ -69,9 +74,17 @@ const buildHarness = () => {
     executeInWorkspaceContext: jest.fn(
       async (callback: () => Promise<unknown>) => callback(),
     ),
-    getRepository: jest.fn((entity: unknown) =>
-      entity === undefined ? messageRepository : personRepository,
-    ),
+    getRepository: jest.fn((entity: unknown) => {
+      if (entity === MessageWorkspaceEntity) {
+        return messageRepository;
+      }
+
+      if (entity === MessageChannelMessageAssociationWorkspaceEntity) {
+        return associationRepository;
+      }
+
+      return personRepository;
+    }),
   };
 
   const emailingDomainSenderService = { sendEmailBatch: jest.fn() };
@@ -101,12 +114,12 @@ const buildHarness = () => {
     ),
   };
   const messageQueueService = {
-    add: jest.fn(
+    bulkAdd: jest.fn(
       async (
         _jobName: string,
-        _jobData: { recipients: unknown[] },
+        _jobs: { data: { recipients: unknown[] } }[],
         _options?: unknown,
-      ) => undefined,
+      ) => [],
     ),
   };
   const dataSource = {
@@ -135,6 +148,9 @@ const buildHarness = () => {
     messageCampaignLifecycleService,
     campaignSendSlotService,
     messageQueueService,
+    messageRepository,
+    associationRepository,
+    emailBillingService,
   };
 };
 
@@ -213,11 +229,7 @@ describe('MessageCampaignBatchDeliveryService', () => {
     harness.claimedIds.push('message-0');
     harness.emailingDomainSenderService.sendEmailBatch.mockResolvedValue({
       entries: [
-        {
-          email: 'person0@example.com',
-          messageId: 'provider-0',
-          errorMessage: null,
-        },
+        { recipientIndex: 0, messageId: 'provider-0', errorMessage: null },
       ],
       suppressedRecipientIndexes: [],
     });
@@ -241,6 +253,66 @@ describe('MessageCampaignBatchDeliveryService', () => {
     expect(CLAIMABLE_CAMPAIGN_DELIVERY_STATES).not.toContain(rescuedState);
   });
 
+  it('records the message, the association and the billing for a delivered batch', async () => {
+    const harness = buildHarness();
+
+    harness.claimedIds.push('message-0');
+    harness.emailingDomainSenderService.sendEmailBatch.mockResolvedValue({
+      entries: [
+        { recipientIndex: 0, messageId: 'provider-0', errorMessage: null },
+      ],
+      suppressedRecipientIndexes: [],
+    });
+
+    await harness.service.processSendBatchJob(buildJobData(1));
+
+    expect(harness.messageRepository.update).toHaveBeenCalledWith(
+      'message-0',
+      expect.objectContaining({ headerMessageId: 'provider-0' }),
+    );
+    expect(harness.associationRepository.update).toHaveBeenCalledWith(
+      { messageId: 'message-0' },
+      expect.objectContaining({ messageExternalId: 'provider-0' }),
+    );
+    expect(harness.emailBillingService.billSentEmails).toHaveBeenCalledWith(
+      expect.objectContaining({ sentEmailCount: 1 }),
+    );
+  });
+
+  it('does not count a recipient the provider rejected as sent when settling throws', async () => {
+    const harness = buildHarness();
+
+    harness.claimedIds.push('message-0', 'message-1');
+    harness.emailingDomainSenderService.sendEmailBatch.mockResolvedValue({
+      entries: [
+        { recipientIndex: 0, messageId: 'provider-0', errorMessage: null },
+        { recipientIndex: 1, messageId: null, errorMessage: 'rejected' },
+      ],
+      suppressedRecipientIndexes: [],
+    });
+    harness.dataSource.query.mockRejectedValue(new Error('settle exploded'));
+
+    await expect(
+      harness.service.processSendBatchJob(buildJobData(2)),
+    ).rejects.toThrow('settle exploded');
+
+    const rescueByDeliveryId = new Map(
+      harness.campaignDeliveryRepository.update.mock.calls
+        .filter(([, criteria]) => 'id' in (criteria as Record<string, unknown>))
+        .map(([, criteria, update]) => [
+          (criteria as { id: string }).id,
+          update,
+        ]),
+    );
+
+    expect(rescueByDeliveryId.get('message-0')?.state).toBe(
+      CAMPAIGN_DELIVERY_STATE.SENT,
+    );
+    expect(rescueByDeliveryId.get('message-1')?.state).not.toBe(
+      CAMPAIGN_DELIVERY_STATE.SENT,
+    );
+  });
+
   it('splits a rate-limited batch the workspace limit could never admit whole', async () => {
     const harness = buildHarness();
 
@@ -253,11 +325,11 @@ describe('MessageCampaignBatchDeliveryService', () => {
 
     await harness.service.processSendBatchJob(buildJobData(3));
 
-    expect(harness.messageQueueService.add).toHaveBeenCalledTimes(3);
+    expect(harness.messageQueueService.bulkAdd).toHaveBeenCalledTimes(1);
 
     const requeuedRecipientCounts =
-      harness.messageQueueService.add.mock.calls.map(
-        ([, jobData]) => jobData.recipients.length,
+      harness.messageQueueService.bulkAdd.mock.calls[0][1].map(
+        (job) => job.data.recipients.length,
       );
 
     expect(requeuedRecipientCounts).toEqual([1, 1, 1]);
@@ -275,6 +347,8 @@ describe('MessageCampaignBatchDeliveryService', () => {
 
     await harness.service.processSendBatchJob(buildJobData(2));
 
-    expect(harness.messageQueueService.add).toHaveBeenCalledTimes(1);
+    expect(harness.messageQueueService.bulkAdd.mock.calls[0][1]).toHaveLength(
+      1,
+    );
   });
 });
