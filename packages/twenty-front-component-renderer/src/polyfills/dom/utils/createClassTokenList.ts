@@ -9,11 +9,13 @@ import { toValidClassTokenOrThrow } from '@/polyfills/dom/utils/toValidClassToke
 class ClassTokenList implements WorkerClassTokenList {
   readonly [index: number]: string;
 
-  private readonly element: ClassAttributeTargetElement;
+  private readonly element!: ClassAttributeTargetElement;
 
   constructor(element: ClassAttributeTargetElement) {
-    this.element = element;
-    Object.defineProperty(this, 'element', { enumerable: false });
+    Object.defineProperty(this, 'element', {
+      value: element,
+      enumerable: false,
+    });
   }
 
   private readCurrentTokens(): string[] {
