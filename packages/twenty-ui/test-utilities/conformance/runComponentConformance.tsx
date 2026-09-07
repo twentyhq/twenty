@@ -168,7 +168,7 @@ export const runComponentConformance = ({
 
       const rootNode = screen.getByTestId(CONFORMANCE_TEST_ID);
 
-      expect(rootNode.tagName).toBe(renderPropTagName.toUpperCase());
+      expect(rootNode.localName).toBe(renderPropTagName);
       expect(rootNode).toHaveAttribute(
         'data-conformance-render',
         CONFORMANCE_DATA_ATTRIBUTE_VALUE,
@@ -188,8 +188,11 @@ export const runComponentConformance = ({
       'renderProp',
       'renders the element returned by the render function',
       () => {
+        const ref = createRef<Element>();
+
         render(
           compose({
+            ref,
             className: CONFORMANCE_CLASS_NAME,
             render: (renderProps: HTMLAttributes<HTMLElement>) =>
               createElement(renderPropTagName, {
@@ -201,12 +204,13 @@ export const runComponentConformance = ({
 
         const rootNode = screen.getByTestId(CONFORMANCE_TEST_ID);
 
-        expect(rootNode.tagName).toBe(renderPropTagName.toUpperCase());
+        expect(rootNode.localName).toBe(renderPropTagName);
         expect(rootNode).toHaveAttribute(
           'data-conformance-render',
           CONFORMANCE_DATA_ATTRIBUTE_VALUE,
         );
         expect(rootNode).toHaveClass(CONFORMANCE_CLASS_NAME);
+        expect(ref.current).toBe(rootNode);
       },
     );
 
