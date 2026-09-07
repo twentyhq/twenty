@@ -9,6 +9,7 @@ import svgr from 'vite-plugin-svgr';
 
 type Checkers = Parameters<typeof checker>[0];
 
+import { THEME_CSS_FILE_NAME_BY_SCHEME } from './design-tokens/themeCssFileNameByScheme';
 import packageJson from './package.json';
 
 const entries = Object.keys(packageJson.exports)
@@ -115,8 +116,7 @@ export default defineConfig(({ command }) => {
         closeBundle() {
           const distDir = path.resolve(__dirname, 'dist');
           fs.mkdirSync(distDir, { recursive: true });
-          const themeCssFiles = ['theme-light.css', 'theme-dark.css'];
-          for (const file of themeCssFiles) {
+          for (const file of Object.values(THEME_CSS_FILE_NAME_BY_SCHEME)) {
             fs.copyFileSync(
               path.resolve(__dirname, `src/theme-constants/${file}`),
               path.resolve(distDir, file),

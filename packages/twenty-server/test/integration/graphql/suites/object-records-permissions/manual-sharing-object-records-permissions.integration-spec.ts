@@ -10,8 +10,10 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { upsertFieldPermissions } from 'test/integration/metadata/suites/field-permission/utils/upsert-field-permissions.util';
 import { setObjectReadability } from 'test/integration/metadata/suites/object-metadata/utils/set-object-readability.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { makeMetadataAPIRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
@@ -177,6 +179,14 @@ const ownerShareFor = (recordId: string, workspaceMemberId: string) => ({
 const ownerRowFor = (recordId: string, workspaceMemberId: string) => ({
   recordId,
   ...ownerShareFor(recordId, workspaceMemberId),
+});
+
+const creatorShareFor = (workspaceMemberId: string) => ({
+  principalId: workspaceMemberId,
+  principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+  accessLevel: RecordShareAccessLevel.FULL,
+  rowCause: RecordShareRowCause.MANUAL,
+  sourceId: workspaceMemberId,
 });
 
 const setRecordSharingEnabled = (value: boolean) =>
@@ -346,12 +356,18 @@ describe('manualSharingObjectRecordsPermissions', () => {
       await setRecordSharingEnabled(true);
     });
 
-    it('should give the owner field value the OWNER row instead of the creator', async () => {
+    it('should give the owner field value the OWNER row and keep a FULL grant for the creator', async () => {
       const recordId = await createRecordAsJonyOwnedByJane();
 
-      expect(await findRecordShares(recordId)).toEqual([
-        expect.objectContaining(ownerRowFor(recordId, JANE)),
-      ]);
+      const recordShares = await findRecordShares(recordId);
+
+      expect(recordShares).toHaveLength(2);
+      expect(recordShares).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining(ownerRowFor(recordId, JANE)),
+          expect.objectContaining(creatorShareFor(JONY)),
+        ]),
+      );
 
       expect(
         readRecordIds(await makeGraphqlAPIRequest(findManyOperation(recordId))),
@@ -362,7 +378,7 @@ describe('manualSharingObjectRecordsPermissions', () => {
             findManyOperation(recordId),
           ),
         ),
-      ).toEqual([]);
+      ).toEqual([recordId]);
     });
 
     it('should let the owner share at READ, then at READ_WRITE, and unshare', async () => {
@@ -469,8 +485,9 @@ describe('manualSharingObjectRecordsPermissions', () => {
     it('should refuse shareRecord from a READ holder and recordShares from a stranger', async () => {
       const recordId = await createRecordAsJonyOwnedByJane();
 
-      const strangerResponse = await makeMetadataAPIRequestWithMemberRole(
+      const strangerResponse = await makeMetadataAPIRequest(
         recordSharesOperation({ objectMetadataId, recordId }),
+        APPLE_PHIL_GUEST_ACCESS_TOKEN,
       );
 
       expect(strangerResponse.body.errors[0].message).toBe(
@@ -496,13 +513,7 @@ describe('manualSharingObjectRecordsPermissions', () => {
 
       expect(readerListResponse.body.errors).toBeUndefined();
       expect(readerListResponse.body.data.recordShares).toEqual({
-        shares: expect.arrayContaining([
-          expect.objectContaining(ownerShareFor(recordId, JANE)),
-          expect.objectContaining({
-            principalId: JONY,
-            accessLevel: RecordShareAccessLevel.READ,
-          }),
-        ]),
+        shares: [],
         viewerAccessLevel: RecordShareAccessLevel.READ,
       });
 
@@ -535,12 +546,17 @@ describe('manualSharingObjectRecordsPermissions', () => {
 
       expect(transferResponse.body.errors).toBeUndefined();
       expect(transferResponse.body.data.transferRecordOwnership).toEqual({
-        shares: [expect.objectContaining(ownerShareFor(recordId, JONY))],
+        shares: expect.arrayContaining([
+          expect.objectContaining(ownerShareFor(recordId, JONY)),
+          expect.objectContaining(creatorShareFor(JONY)),
+        ]),
         viewerAccessLevel: null,
       });
-      expect(await findRecordShares(recordId)).toEqual([
-        expect.objectContaining(ownerRowFor(recordId, JONY)),
-      ]);
+      expect(
+        (await findRecordShares(recordId)).filter(
+          (recordShare) => recordShare.rowCause === RecordShareRowCause.OWNER,
+        ),
+      ).toEqual([expect.objectContaining(ownerRowFor(recordId, JONY))]);
       expect(
         readRecordIds(await makeGraphqlAPIRequest(findManyOperation(recordId))),
       ).toEqual([]);
@@ -559,16 +575,18 @@ describe('manualSharingObjectRecordsPermissions', () => {
         id: recordId,
         ownerId: JANE,
       });
-      expect(await findRecordShares(recordId)).toEqual([
-        expect.objectContaining(ownerRowFor(recordId, JANE)),
-      ]);
+      expect(
+        (await findRecordShares(recordId)).filter(
+          (recordShare) => recordShare.rowCause === RecordShareRowCause.OWNER,
+        ),
+      ).toEqual([expect.objectContaining(ownerRowFor(recordId, JANE))]);
       expect(
         readRecordIds(
           await makeGraphqlAPIRequestWithMemberRole(
             findManyOperation(recordId),
           ),
         ),
-      ).toEqual([]);
+      ).toEqual([recordId]);
     });
   });
 
@@ -598,9 +616,89 @@ describe('manualSharingObjectRecordsPermissions', () => {
 
       expect(response.body.errors).toBeUndefined();
       expect(response.body.data.unshareRecord).toEqual({
-        shares: [expect.objectContaining(ownerShareFor(recordId, JANE))],
+        shares: expect.arrayContaining([
+          expect.objectContaining(ownerShareFor(recordId, JANE)),
+        ]),
         viewerAccessLevel: RecordShareAccessLevel.FULL,
       });
+      expect(
+        response.body.data.unshareRecord.shares.filter(
+          (share: { rowCause: RecordShareRowCause }) =>
+            share.rowCause === RecordShareRowCause.OWNER,
+        ),
+      ).toHaveLength(1);
+    });
+
+    it('should replace every manual grant of the principal on shareRecord, whoever granted it', async () => {
+      const recordId = await createRecordAsJonyOwnedByJane();
+
+      const response = await makeMetadataAPIRequest(
+        shareRecordOperation({
+          objectMetadataId,
+          recordId,
+          shareWith: [
+            {
+              workspaceMemberId: JONY,
+              accessLevel: RecordShareAccessLevel.READ,
+            },
+          ],
+        }),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(
+        response.body.data.shareRecord.shares.filter(
+          (share: { principalId: string }) => share.principalId === JONY,
+        ),
+      ).toEqual([
+        expect.objectContaining({
+          accessLevel: RecordShareAccessLevel.READ,
+          sourceId: JANE,
+        }),
+      ]);
+    });
+
+    it('should refuse transferRecordOwnership when the role cannot update the owner field', async () => {
+      const recordId = await createRecordAsJonyOwnedByJane();
+      const memberRole = await findOneRoleByLabel({ label: 'Member' });
+      const setOwnerFieldUpdatable = (canUpdateFieldValue: boolean | null) =>
+        upsertFieldPermissions({
+          expectToFail: false,
+          input: {
+            roleId: memberRole.id,
+            fieldPermissions: [
+              {
+                objectMetadataId,
+                fieldMetadataId: ownerFieldMetadataId,
+                canReadFieldValue: null,
+                canUpdateFieldValue,
+              },
+            ],
+          },
+        });
+
+      await setOwnerFieldUpdatable(false);
+
+      try {
+        const response = await makeMetadataAPIRequestWithMemberRole(
+          transferRecordOwnershipOperation({
+            objectMetadataId,
+            recordId,
+            workspaceMemberId: JONY,
+          }),
+        );
+
+        expect(response.body.errors[0].message).toBe(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+        );
+        expect(await findRecordShares(recordId)).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining(ownerRowFor(recordId, JANE)),
+          ]),
+        );
+      } finally {
+        await setOwnerFieldUpdatable(null);
+      }
     });
 
     it('should refuse transferRecordOwnership from a READ holder', async () => {
@@ -663,7 +761,7 @@ describe('manualSharingObjectRecordsPermissions', () => {
       );
     });
 
-    it('should move the OWNER row on a connect-form owner update and keep it on disconnect', async () => {
+    it('should move the OWNER row on a connect-form owner update and turn it into a manual grant on disconnect', async () => {
       const recordId = await createRecordAsJonyOwnedByJane();
 
       const connectResponse = await makeGraphqlAPIRequest(
@@ -680,9 +778,11 @@ describe('manualSharingObjectRecordsPermissions', () => {
         id: recordId,
         ownerId: JONY,
       });
-      expect(await findRecordShares(recordId)).toEqual([
-        expect.objectContaining(ownerRowFor(recordId, JONY)),
-      ]);
+      expect(
+        (await findRecordShares(recordId)).filter(
+          (recordShare) => recordShare.rowCause === RecordShareRowCause.OWNER,
+        ),
+      ).toEqual([expect.objectContaining(ownerRowFor(recordId, JONY))]);
 
       const disconnectResponse = await makeGraphqlAPIRequestWithMemberRole(
         updateOneOperationFactory({
@@ -698,9 +798,25 @@ describe('manualSharingObjectRecordsPermissions', () => {
         id: recordId,
         ownerId: null,
       });
-      expect(await findRecordShares(recordId)).toEqual([
-        expect.objectContaining(ownerRowFor(recordId, JONY)),
-      ]);
+
+      const recordSharesAfterDisconnect = await findRecordShares(recordId);
+
+      expect(
+        recordSharesAfterDisconnect.filter(
+          (recordShare) => recordShare.rowCause === RecordShareRowCause.OWNER,
+        ),
+      ).toHaveLength(0);
+      expect(recordSharesAfterDisconnect).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            recordId,
+            principalId: JONY,
+            accessLevel: RecordShareAccessLevel.FULL,
+            rowCause: RecordShareRowCause.MANUAL,
+            sourceId: recordId,
+          }),
+        ]),
+      );
     });
 
     it('should not let a READ_WRITE holder take ownership', async () => {
@@ -756,9 +872,11 @@ describe('manualSharingObjectRecordsPermissions', () => {
         'Feature flag "IS_RECORD_SHARING_ENABLED" is not enabled for this workspace',
       );
       expect(response.body.data).toBeNull();
-      expect(await findRecordShares(recordId)).toEqual([
-        expect.objectContaining(ownerRowFor(recordId, JANE)),
-      ]);
+      expect(await findRecordShares(recordId)).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining(ownerRowFor(recordId, JANE)),
+        ]),
+      );
     });
   });
 });
