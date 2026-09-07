@@ -1335,6 +1335,29 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(recall.bots.size).toBe(0);
     });
 
+    it('clears the Recording Bot preference of the meetings it cancels', async () => {
+      const { calendarEventId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
+
+      turnRecordingOff();
+      await syncCalendarBotSchedulingHandler();
+
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
+    });
+
+    it('leaves an explicit Off alone when it clears the preference', async () => {
+      const calendarEventId = await createCalendarEvent({
+        callRecorderPreference: 'OFF',
+      });
+
+      turnRecordingOff();
+      await syncCalendarBotSchedulingHandler();
+
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('OFF');
+    });
+
     it('enqueues the upcoming-events sweep when turned back on', async () => {
       vi.stubEnv(
         CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME,

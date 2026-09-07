@@ -8,7 +8,9 @@ import {
 } from 'src/constants/universal-identifiers';
 import { SYNC_CALENDAR_BOT_SCHEDULING_ROUTE_PATH } from 'src/constants/sync-calendar-bot-scheduling-route-path';
 import { cancelOpenScheduledCallRecordingRequests } from 'src/logic-functions/data/cancel-open-scheduled-call-recording-requests.util';
+import { clearCalendarEventsRecordingOn } from 'src/logic-functions/data/clear-calendar-events-recording-on.util';
 import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
+import { fetchUpcomingCalendarEventIds } from 'src/logic-functions/data/fetch-upcoming-calendar-event-ids.util';
 import { findOpenScheduledCallRecordings } from 'src/logic-functions/data/find-open-scheduled-call-recordings.util';
 import { isCalendarBotSchedulingEnabled } from 'src/logic-functions/utils/is-calendar-bot-scheduling-enabled.util';
 
@@ -41,6 +43,8 @@ export const syncCalendarBotSchedulingHandler =
         () => true,
       );
 
+    await clearUpcomingCalendarEventsRecordingOn(client);
+
     await enqueueLogicFunctionJobs({
       logicFunctionUniversalIdentifier:
         CANCEL_SCHEDULED_RECALL_BOTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
@@ -49,6 +53,25 @@ export const syncCalendarBotSchedulingHandler =
 
     return { outcome: 'scheduled-bots-canceled', canceledCallRecordingCount };
   };
+
+const clearUpcomingCalendarEventsRecordingOn = async (
+  client: CoreApiClient,
+): Promise<void> => {
+  try {
+    const upcomingCalendarEventIds = await fetchUpcomingCalendarEventIds(
+      client,
+      new Date(),
+    );
+
+    await clearCalendarEventsRecordingOn(client, upcomingCalendarEventIds);
+  } catch (error) {
+    console.warn(
+      `[call-recorder] failed to clear the Recording Bot preference of upcoming calendar events: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+  }
+};
 
 export default defineLogicFunction({
   universalIdentifier:

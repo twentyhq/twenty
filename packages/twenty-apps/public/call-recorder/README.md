@@ -34,8 +34,9 @@ blank.
 
 The **Record my calendar meetings** toggle in the app settings is on
 by default. Turn it off to stop scheduling bots for upcoming meetings and cancel
-every recording that is already scheduled. Turn it back on and the app sweeps
-upcoming meetings to schedule bots again.
+every recording that is already scheduled; the Recording Bot field of those
+meetings goes back to blank, and an Off you set yourself is left alone. Turn it
+back on and the app sweeps upcoming meetings to schedule bots again.
 
 ## 🎥 Supported meeting platforms
 
