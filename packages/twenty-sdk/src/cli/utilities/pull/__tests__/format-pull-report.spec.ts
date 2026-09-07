@@ -143,4 +143,22 @@ describe('formatPullReport', () => {
     );
     expect(report).toContain('src/objects/unpushed.object.ts');
   });
+
+  it('should warn that published translations were not written and point at the locales folder', () => {
+    const report = buildReport({
+      translations: {
+        'fr-FR': { greeting: 'Bonjour' },
+        en: { greeting: 'Hello' },
+      },
+    });
+
+    expect(report).toMatch(/^Published translations \(en, fr-FR\).*locales\//m);
+  });
+
+  it('should stay silent about translations when the workspace has none', () => {
+    expect(buildReport()).not.toContain('Published translations');
+    expect(buildReport({ translations: { en: {} } })).not.toContain(
+      'Published translations',
+    );
+  });
 });
