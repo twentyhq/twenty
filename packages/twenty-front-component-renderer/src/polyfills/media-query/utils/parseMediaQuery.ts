@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { CSS_WHITESPACE_CHARACTER_CLASS } from '@/polyfills/media-query/constants/CssWhitespaceCharacterClass';
 import { MATCHING_MEDIA_TYPES } from '@/polyfills/media-query/constants/MatchingMediaTypes';
 import { NON_MATCHING_MEDIA_TYPES } from '@/polyfills/media-query/constants/NonMatchingMediaTypes';
 import { type ParsedMediaQuery } from '@/polyfills/media-query/types/ParsedMediaQuery';
@@ -9,12 +10,22 @@ import { isMediaQueryConditionPart } from '@/polyfills/media-query/utils/isMedia
 import { parseMediaQueryCondition } from '@/polyfills/media-query/utils/parseMediaQueryCondition';
 import { parseMediaQueryModifier } from '@/polyfills/media-query/utils/parseMediaQueryModifier';
 
-const MEDIA_QUERY_PART_SEPARATOR_PATTERN = /\s+and\s+/;
+const MEDIA_QUERY_PART_SEPARATOR_PATTERN = new RegExp(
+  `${CSS_WHITESPACE_CHARACTER_CLASS}+and${CSS_WHITESPACE_CHARACTER_CLASS}+`,
+);
+
+const CLOSING_PARENTHESIS_AND_PATTERN = new RegExp(
+  `\\)${CSS_WHITESPACE_CHARACTER_CLASS}*and${CSS_WHITESPACE_CHARACTER_CLASS}+`,
+  'g',
+);
 
 export const parseMediaQuery = (
   mediaQueryString: string,
 ): ParsedMediaQuery | null => {
-  const normalizedQuery = mediaQueryString.trim().toLowerCase();
+  const normalizedQuery = mediaQueryString
+    .trim()
+    .toLowerCase()
+    .replace(CLOSING_PARENTHESIS_AND_PATTERN, ') and ');
 
   if (!isNonEmptyString(normalizedQuery)) {
     return null;

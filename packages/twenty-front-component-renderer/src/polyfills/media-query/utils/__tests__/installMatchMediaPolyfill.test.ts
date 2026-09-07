@@ -223,4 +223,16 @@ describe('installMatchMediaPolyfill', () => {
     expect(typeof globalScope.matchMedia).toBe('function');
     expect(globalScope.matchMedia).toBe(polyfillWindow.matchMedia);
   });
+
+  it('should evaluate queries formatted with CSS whitespace', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+    setEnvironment({ componentWidth: 700 });
+
+    expect(matchMedia('(min-width:\n600px)').matches).toBe(true);
+    expect(matchMedia('not\tprint').matches).toBe(true);
+    expect(matchMedia('(min-width: 600px)and (max-width: 900px)').matches).toBe(
+      true,
+    );
+    expect(matchMedia('screen and\u00a0(min-width: 1px)').matches).toBe(false);
+  });
 });
