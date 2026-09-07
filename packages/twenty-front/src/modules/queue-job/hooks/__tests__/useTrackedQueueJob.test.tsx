@@ -5,49 +5,51 @@ import { QUEUE_JOB_BROWSER_EVENT_NAME } from '@/queue-job/constants/QueueJobBrow
 import { useTrackedQueueJob } from '@/queue-job/hooks/useTrackedQueueJob';
 import { JobState, type JobStatus } from '~/generated-metadata/graphql';
 
-const JOB_ID = 'install-application.workspace-id.application';
+const FIRST_JOB_ID = 'install-application.workspace-id.application-first';
+const SECOND_JOB_ID = 'install-application.workspace-id.application-second';
+const CONTEXT = 'application-universal-identifier';
 
-const buildJobStatus = (state: JobState): JobStatus => ({
-  jobId: JOB_ID,
+const buildJobStatus = (jobId: string, state: JobState): JobStatus => ({
+  jobId,
   state,
   attemptsMade: 1,
   enqueuedAt: 1,
 });
 
+const dispatchJobStatus = (jobId: string, state: JobState) => {
+  act(() => {
+    dispatchBrowserEvent<JobStatus>(
+      QUEUE_JOB_BROWSER_EVENT_NAME,
+      buildJobStatus(jobId, state),
+    );
+  });
+};
+
 describe('useTrackedQueueJob', () => {
-  it('settles a tracked job on its terminal browser event', () => {
+  it('settles a tracked job on its terminal browser event with its context', () => {
     const onQueueJobSettled = jest.fn();
 
     const { result } = renderHook(() =>
-      useTrackedQueueJob({ onQueueJobSettled }),
+      useTrackedQueueJob<string>({ onQueueJobSettled }),
     );
 
     act(() => {
-      result.current.trackJob(JOB_ID);
+      result.current.trackJob({ jobId: FIRST_JOB_ID, context: CONTEXT });
     });
 
-    expect(result.current.activeJobId).toBe(JOB_ID);
+    expect(result.current.activeJobId).toBe(FIRST_JOB_ID);
 
-    act(() => {
-      dispatchBrowserEvent<JobStatus>(
-        QUEUE_JOB_BROWSER_EVENT_NAME,
-        buildJobStatus(JobState.ACTIVE),
-      );
-    });
+    dispatchJobStatus(FIRST_JOB_ID, JobState.ACTIVE);
 
-    expect(result.current.activeJobId).toBe(JOB_ID);
+    expect(result.current.activeJobId).toBe(FIRST_JOB_ID);
     expect(onQueueJobSettled).not.toHaveBeenCalled();
 
-    act(() => {
-      dispatchBrowserEvent<JobStatus>(
-        QUEUE_JOB_BROWSER_EVENT_NAME,
-        buildJobStatus(JobState.COMPLETED),
-      );
-    });
+    dispatchJobStatus(FIRST_JOB_ID, JobState.COMPLETED);
 
     expect(result.current.activeJobId).toBeUndefined();
     expect(onQueueJobSettled).toHaveBeenCalledWith(
-      buildJobStatus(JobState.COMPLETED),
+      buildJobStatus(FIRST_JOB_ID, JobState.COMPLETED),
+      CONTEXT,
     );
   });
 
@@ -55,21 +57,20 @@ describe('useTrackedQueueJob', () => {
     const onQueueJobSettled = jest.fn();
 
     const { result } = renderHook(() =>
-      useTrackedQueueJob({ runningJobId: JOB_ID, onQueueJobSettled }),
+      useTrackedQueueJob<string>({
+        runningJob: { jobId: FIRST_JOB_ID, context: CONTEXT },
+        onQueueJobSettled,
+      }),
     );
 
-    expect(result.current.activeJobId).toBe(JOB_ID);
+    expect(result.current.activeJobId).toBe(FIRST_JOB_ID);
 
-    act(() => {
-      dispatchBrowserEvent<JobStatus>(
-        QUEUE_JOB_BROWSER_EVENT_NAME,
-        buildJobStatus(JobState.FAILED),
-      );
-    });
+    dispatchJobStatus(FIRST_JOB_ID, JobState.FAILED);
 
     expect(result.current.activeJobId).toBeUndefined();
     expect(onQueueJobSettled).toHaveBeenCalledWith(
-      buildJobStatus(JobState.FAILED),
+      buildJobStatus(FIRST_JOB_ID, JobState.FAILED),
+      CONTEXT,
     );
   });
 
@@ -77,46 +78,66 @@ describe('useTrackedQueueJob', () => {
     const onQueueJobSettled = jest.fn();
 
     const { result } = renderHook(() =>
-      useTrackedQueueJob({ onQueueJobSettled }),
+      useTrackedQueueJob<string>({ onQueueJobSettled }),
     );
 
     act(() => {
-      result.current.trackJob(JOB_ID);
+      result.current.trackJob({ jobId: FIRST_JOB_ID, context: CONTEXT });
     });
-    act(() => {
-      dispatchBrowserEvent<JobStatus>(QUEUE_JOB_BROWSER_EVENT_NAME, {
-        ...buildJobStatus(JobState.COMPLETED),
-        jobId: 'install-application.workspace-id.other-application',
-      });
-    });
+    dispatchJobStatus(SECOND_JOB_ID, JobState.COMPLETED);
 
-    expect(result.current.activeJobId).toBe(JOB_ID);
+    expect(result.current.activeJobId).toBe(FIRST_JOB_ID);
     expect(onQueueJobSettled).not.toHaveBeenCalled();
   });
 
-  it('tracks a newly triggered job after a previous one settled', () => {
+  it('does not fall back to a settled running job after a retried job settles', () => {
     const onQueueJobSettled = jest.fn();
 
     const { result } = renderHook(() =>
-      useTrackedQueueJob({ onQueueJobSettled }),
+      useTrackedQueueJob<string>({
+        runningJob: { jobId: FIRST_JOB_ID, context: CONTEXT },
+        onQueueJobSettled,
+      }),
     );
 
-    act(() => {
-      result.current.trackJob(JOB_ID);
-    });
-    act(() => {
-      dispatchBrowserEvent<JobStatus>(
-        QUEUE_JOB_BROWSER_EVENT_NAME,
-        buildJobStatus(JobState.COMPLETED),
-      );
-    });
+    dispatchJobStatus(FIRST_JOB_ID, JobState.FAILED);
 
     expect(result.current.activeJobId).toBeUndefined();
 
     act(() => {
-      result.current.trackJob(JOB_ID);
+      result.current.trackJob({ jobId: SECOND_JOB_ID, context: CONTEXT });
     });
 
-    expect(result.current.activeJobId).toBe(JOB_ID);
+    expect(result.current.activeJobId).toBe(SECOND_JOB_ID);
+
+    dispatchJobStatus(SECOND_JOB_ID, JobState.COMPLETED);
+
+    expect(result.current.activeJobId).toBeUndefined();
+    expect(onQueueJobSettled).toHaveBeenCalledTimes(2);
+  });
+
+  it('settles with the context the job was tracked with', () => {
+    const onQueueJobSettled = jest.fn();
+
+    const { result, rerender } = renderHook(
+      ({ runningJob }: { runningJob?: { jobId: string; context: string } }) =>
+        useTrackedQueueJob<string>({ runningJob, onQueueJobSettled }),
+      { initialProps: { runningJob: undefined } },
+    );
+
+    act(() => {
+      result.current.trackJob({ jobId: FIRST_JOB_ID, context: CONTEXT });
+    });
+
+    rerender({
+      runningJob: { jobId: SECOND_JOB_ID, context: 'other-application' },
+    });
+
+    dispatchJobStatus(FIRST_JOB_ID, JobState.COMPLETED);
+
+    expect(onQueueJobSettled).toHaveBeenCalledWith(
+      buildJobStatus(FIRST_JOB_ID, JobState.COMPLETED),
+      CONTEXT,
+    );
   });
 });

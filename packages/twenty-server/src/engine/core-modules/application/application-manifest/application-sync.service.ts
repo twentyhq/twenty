@@ -62,12 +62,14 @@ export class ApplicationSyncService {
     applicationRegistrationId,
     dryRun = false,
     inferDeletionFromMissingEntities = true,
+    persistVersion = true,
   }: {
     workspaceId: string;
     manifest: Manifest;
     applicationRegistrationId?: string;
     dryRun?: boolean;
     inferDeletionFromMissingEntities?: boolean;
+    persistVersion?: boolean;
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
@@ -78,6 +80,7 @@ export class ApplicationSyncService {
           workspaceId,
           manifest,
           applicationRegistrationId,
+          persistVersion,
         });
 
     let syncResult: {
@@ -231,10 +234,12 @@ export class ApplicationSyncService {
     workspaceId,
     manifest,
     applicationRegistrationId,
+    persistVersion,
   }: {
     workspaceId: string;
     manifest: Manifest;
     applicationRegistrationId?: string;
+    persistVersion: boolean;
   }): Promise<ApplicationEntity> {
     const name = manifest.application.displayName;
     const packageJson = JSON.parse(
@@ -273,7 +278,7 @@ export class ApplicationSyncService {
         name,
         description: manifest.application.description,
         logo: manifest.application.logo ?? manifest.application.logoUrl ?? null,
-        version: packageJson.version,
+        ...(persistVersion ? { version: packageJson.version } : {}),
         packageJsonChecksum: manifest.application.packageJsonChecksum,
         yarnLockChecksum: manifest.application.yarnLockChecksum,
         billing: manifest.application.billing ?? {},

@@ -45,7 +45,7 @@ export const useUninstallApplication = ({
       : undefined;
 
   const handleUninstallJobSettled = useCallback(
-    (jobStatus: TrackedJobStatus) => {
+    (jobStatus: TrackedJobStatus, trackedUninstallIdentifier: string) => {
       if (jobStatus.state === JobState.FAILED) {
         enqueueErrorSnackBar({
           message: isNonEmptyString(jobStatus.failedReason)
@@ -62,7 +62,8 @@ export const useUninstallApplication = ({
               installedApplications:
                 currentWorkspace.installedApplications.filter(
                   (application) =>
-                    application.universalIdentifier !== universalIdentifier,
+                    application.universalIdentifier !==
+                    trackedUninstallIdentifier,
                 ),
             }
           : currentWorkspace,
@@ -78,12 +79,14 @@ export const useUninstallApplication = ({
       enqueueSuccessSnackBar,
       onCompleted,
       setCurrentWorkspace,
-      universalIdentifier,
     ],
   );
 
   const { activeJobId, trackJob } = useTrackedQueueJob({
-    runningJobId,
+    runningJob:
+      isDefined(runningJobId) && isDefined(universalIdentifier)
+        ? { jobId: runningJobId, context: universalIdentifier }
+        : undefined,
     onQueueJobSettled: handleUninstallJobSettled,
   });
 
@@ -97,7 +100,11 @@ export const useUninstallApplication = ({
         variables: { input: { universalIdentifier } },
       });
 
-      trackJob(data?.triggerUninstallApplicationJob.jobId);
+      const jobId = data?.triggerUninstallApplicationJob.jobId;
+
+      if (isDefined(jobId)) {
+        trackJob({ jobId, context: universalIdentifier });
+      }
     } catch (error) {
       const graphqlMessage = error instanceof Error ? error.message : undefined;
 

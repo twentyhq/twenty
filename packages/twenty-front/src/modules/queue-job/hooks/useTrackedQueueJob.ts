@@ -4,39 +4,56 @@ import { isTerminalJobState } from '@/queue-job/utils/isTerminalJobState';
 import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-type UseTrackedQueueJobArgs = {
-  runningJobId?: string;
-  onQueueJobSettled: (jobStatus: TrackedJobStatus) => void | Promise<void>;
+type TrackedQueueJob<TContext> = {
+  jobId: string;
+  context: TContext;
 };
 
-export const useTrackedQueueJob = ({
-  runningJobId,
-  onQueueJobSettled,
-}: UseTrackedQueueJobArgs) => {
-  const [triggeredJobId, setTriggeredJobId] = useState<string>();
-  const [settledJobId, setSettledJobId] = useState<string>();
+type UseTrackedQueueJobArgs<TContext> = {
+  runningJob?: TrackedQueueJob<TContext>;
+  onQueueJobSettled: (
+    jobStatus: TrackedJobStatus,
+    context: TContext,
+  ) => void | Promise<void>;
+};
 
-  const trackedJobId = triggeredJobId ?? runningJobId;
-  const activeJobId =
-    isDefined(trackedJobId) && trackedJobId !== settledJobId
-      ? trackedJobId
+export const useTrackedQueueJob = <TContext>({
+  runningJob,
+  onQueueJobSettled,
+}: UseTrackedQueueJobArgs<TContext>) => {
+  const [triggeredJob, setTriggeredJob] = useState<TrackedQueueJob<TContext>>();
+  const [settledJobIds, setSettledJobIds] = useState<string[]>([]);
+
+  const trackedJob = triggeredJob ?? runningJob;
+  const activeJob =
+    isDefined(trackedJob) && !settledJobIds.includes(trackedJob.jobId)
+      ? trackedJob
       : undefined;
+  const activeJobId = activeJob?.jobId;
+  const activeJobContext = activeJob?.context;
 
   const handleQueueJobEvent = useCallback(
     (jobStatus: TrackedJobStatus) => {
-      if (!isTerminalJobState(jobStatus.state)) {
+      if (
+        !isTerminalJobState(jobStatus.state) ||
+        !isDefined(activeJobId) ||
+        !isDefined(activeJobContext)
+      ) {
         return;
       }
 
-      setSettledJobId(jobStatus.jobId);
-      setTriggeredJobId((currentTriggeredJobId) =>
-        currentTriggeredJobId === jobStatus.jobId
+      setSettledJobIds((currentSettledJobIds) => [
+        ...currentSettledJobIds,
+        jobStatus.jobId,
+      ]);
+      setTriggeredJob((currentTriggeredJob) =>
+        currentTriggeredJob?.jobId === jobStatus.jobId
           ? undefined
-          : currentTriggeredJobId,
+          : currentTriggeredJob,
       );
-      void onQueueJobSettled(jobStatus);
+      void onQueueJobSettled(jobStatus, activeJobContext);
     },
-    [onQueueJobSettled],
+    [activeJobContext, activeJobId, onQueueJobSettled],
   );
 
   useListenToQueueJob({
@@ -44,9 +61,8 @@ export const useTrackedQueueJob = ({
     onQueueJobEvent: handleQueueJobEvent,
   });
 
-  const trackJob = (jobId?: string) => {
-    setSettledJobId(undefined);
-    setTriggeredJobId(jobId);
+  const trackJob = (job: TrackedQueueJob<TContext>) => {
+    setTriggeredJob(job);
   };
 
   return { activeJobId, trackJob };

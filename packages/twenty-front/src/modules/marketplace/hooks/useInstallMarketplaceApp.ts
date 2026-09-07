@@ -53,11 +53,7 @@ export const useInstallMarketplaceApp = ({
       : undefined;
 
   const handleInstallJobSettled = useCallback(
-    async (jobStatus: TrackedJobStatus) => {
-      if (!isDefined(universalIdentifier)) {
-        return;
-      }
-
+    async (jobStatus: TrackedJobStatus, trackedUniversalIdentifier: string) => {
       if (jobStatus.state === JobState.FAILED) {
         enqueueErrorSnackBar({
           message: isNonEmptyString(jobStatus.failedReason)
@@ -73,7 +69,7 @@ export const useInstallMarketplaceApp = ({
 
       try {
         const result = await findInstalledApplication({
-          variables: { universalIdentifier },
+          variables: { universalIdentifier: trackedUniversalIdentifier },
         });
 
         installedApplication = result.data?.findOneApplication;
@@ -112,12 +108,14 @@ export const useInstallMarketplaceApp = ({
       findInstalledApplication,
       onCompleted,
       setCurrentWorkspace,
-      universalIdentifier,
     ],
   );
 
   const { activeJobId, trackJob } = useTrackedQueueJob({
-    runningJobId,
+    runningJob:
+      isDefined(runningJobId) && isDefined(universalIdentifier)
+        ? { jobId: runningJobId, context: universalIdentifier }
+        : undefined,
     onQueueJobSettled: handleInstallJobSettled,
   });
 
@@ -131,7 +129,11 @@ export const useInstallMarketplaceApp = ({
         variables: { input: { universalIdentifier } },
       });
 
-      trackJob(data?.triggerInstallApplicationJob.jobId);
+      const jobId = data?.triggerInstallApplicationJob.jobId;
+
+      if (isDefined(jobId)) {
+        trackJob({ jobId, context: universalIdentifier });
+      }
     } catch (error) {
       const graphqlMessage = error instanceof Error ? error.message : undefined;
 
