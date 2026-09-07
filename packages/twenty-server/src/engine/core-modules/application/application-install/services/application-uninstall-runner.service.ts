@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
@@ -21,21 +22,14 @@ export class ApplicationUninstallRunnerService {
     universalIdentifier: string;
     workspaceId: string;
   }): Promise<void> {
-    const application = await this.applicationService.findByUniversalIdentifier(
-      {
-        universalIdentifier,
-        workspaceId,
-      },
-    );
-
-    const attributes = {
-      universal_identifier: universalIdentifier,
-      app_name: application?.name ?? 'unknown',
-      source_type: application?.sourceType ?? 'unknown',
-      version: application?.version ?? 'unknown',
-    };
+    let application: ApplicationEntity | null = null;
 
     try {
+      application = await this.applicationService.findByUniversalIdentifier({
+        universalIdentifier,
+        workspaceId,
+      });
+
       await this.applicationSyncService.uninstallApplication({
         applicationUniversalIdentifier: universalIdentifier,
         workspaceId,
@@ -45,7 +39,7 @@ export class ApplicationUninstallRunnerService {
         key: MetricsKeys.AppUninstallFailed,
         amount: 1,
         attributes: {
-          ...attributes,
+          ...this.buildMetricsAttributes({ universalIdentifier, application }),
           error_code:
             error instanceof ApplicationException ? error.code : 'UNKNOWN',
         },
@@ -57,7 +51,25 @@ export class ApplicationUninstallRunnerService {
     this.metricsService.incrementCounterBy({
       key: MetricsKeys.AppUninstallSucceeded,
       amount: 1,
-      attributes,
+      attributes: this.buildMetricsAttributes({
+        universalIdentifier,
+        application,
+      }),
     });
+  }
+
+  private buildMetricsAttributes({
+    universalIdentifier,
+    application,
+  }: {
+    universalIdentifier: string;
+    application: ApplicationEntity | null;
+  }) {
+    return {
+      universal_identifier: universalIdentifier,
+      app_name: application?.name ?? 'unknown',
+      source_type: application?.sourceType ?? 'unknown',
+      version: application?.version ?? 'unknown',
+    };
   }
 }

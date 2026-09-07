@@ -36,6 +36,12 @@ export const useTrackedQueueJob = ({
       }
 
       setSettledJobId(jobStatus.jobId);
+      // A settled trigger must stop shadowing a job the server reports later
+      setTriggeredJobId((currentTriggeredJobId) =>
+        currentTriggeredJobId === jobStatus.jobId
+          ? undefined
+          : currentTriggeredJobId,
+      );
       void onQueueJobSettled(jobStatus);
     },
     [onQueueJobSettled],

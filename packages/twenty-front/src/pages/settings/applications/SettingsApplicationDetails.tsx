@@ -5,6 +5,7 @@ import { useResolvedApplicationDescription } from '@/applications/hooks/useResol
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useInstallMarketplaceApp } from '@/marketplace/hooks/useInstallMarketplaceApp';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -130,6 +131,12 @@ export const SettingsApplicationDetails = () => {
   const screenshots = getScreenshots();
 
   const { upgrade, isUpgrading } = useUpgradeApplication();
+
+  // The row exists from the start of the install, so this page can be reached
+  // while the install job is still running
+  const { isInstalling } = useInstallMarketplaceApp({
+    universalIdentifier: application?.universalIdentifier,
+  });
 
   const canInstallMarketplaceApps = useHasPermissionFlag(
     PermissionFlagType.APPLICATIONS,
@@ -295,6 +302,7 @@ export const SettingsApplicationDetails = () => {
                 : undefined
             }
             isInstalled={true}
+            isInstalling={isInstalling}
             canInstallMarketplaceApps={canInstallMarketplaceApps}
             hasUpdate={hasUpdate}
             onUpgrade={handleUpgrade}

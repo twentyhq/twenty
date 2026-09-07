@@ -269,6 +269,12 @@ export class ApplicationInstallService {
 
     const isVersionUpgrade = isDefined(existingApplication);
 
+    // The row is created before the manifest is applied and only gets its
+    // version once the install completed, so a versionless row is a crashed
+    // first install being retried
+    const hasNeverCompletedInstall =
+      isVersionUpgrade && !isDefined(existingApplication.version);
+
     const previousVersion = existingApplication?.version ?? undefined;
 
     const newVersion = resolvedPackage.packageJson.version;
@@ -389,7 +395,7 @@ export class ApplicationInstallService {
         `Failed to install app ${appRegistration.universalIdentifier}: ${error}`,
       );
 
-      if (!isVersionUpgrade) {
+      if (!isVersionUpgrade || hasNeverCompletedInstall) {
         // Rollback of a failed fresh install: the app never finished
         // installing, so the uninstall hook must not run.
         await this.applicationSyncService.uninstallApplication({

@@ -4,7 +4,10 @@ import { type FlatApplication } from '@/metadata-store/types/FlatApplication';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-const QUERY_ONLY_APPLICATION_FIELDS = ['logo'];
+// The logo url only exists on the query, and the version is what flips the
+// detail page out of its installing or upgradable state once a lifecycle job
+// has applied the manifest
+const REFETCH_TRIGGERING_APPLICATION_FIELDS = ['logo', 'version'];
 
 type UseRefetchOnApplicationLifecycleSettledArgs = {
   applicationId?: string;
@@ -39,11 +42,12 @@ export const useRefetchOnApplicationOperation = ({
       const updatedFields =
         operation.type === 'update' ? (operation.updatedFields ?? []) : [];
 
-      const hasChangedQueryOnlyField = updatedFields.some((updatedField) =>
-        QUERY_ONLY_APPLICATION_FIELDS.includes(updatedField),
+      const hasChangedRefetchTriggeringField = updatedFields.some(
+        (updatedField) =>
+          REFETCH_TRIGGERING_APPLICATION_FIELDS.includes(updatedField),
       );
 
-      if (operation.type !== 'create' && !hasChangedQueryOnlyField) {
+      if (operation.type !== 'create' && !hasChangedRefetchTriggeringField) {
         return;
       }
 
