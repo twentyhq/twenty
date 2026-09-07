@@ -86,6 +86,12 @@ const installApplication = async ({
   return findApplicationId(universalIdentifier);
 };
 
+const queryCurrentUser = (token: string) =>
+  request(global.app.getHttpServer())
+    .post('/metadata')
+    .set('Authorization', `Bearer ${token}`)
+    .send({ query: 'query CurrentUser { currentUser { id } }' });
+
 const runAsWorkspaceMember = ({
   token,
   workspaceMemberId,
@@ -239,6 +245,25 @@ describe('POST /app/tokens/run-as-workspace-member', () => {
 
     expect(response.status).toBe(400);
     expect(response.body.token).toBeUndefined();
+  });
+
+  it('should refuse the issued token on endpoints bound to the member identity', async () => {
+    const { body } = await runAsWorkspaceMember({
+      token: applicationOnlyToken,
+      workspaceMemberId: OTHER_WORKSPACE_MEMBER_ID,
+    });
+
+    const response = await queryCurrentUser(body.token);
+
+    expect(response.body.data?.currentUser).toBeFalsy();
+    expect(response.body.errors).toBeDefined();
+  });
+
+  it('should keep serving those endpoints to a token the member signed in for', async () => {
+    const response = await queryCurrentUser(delegatedToken);
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.currentUser.id).toBeTruthy();
   });
 
   it('should reject an unauthenticated request', async () => {

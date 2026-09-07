@@ -24,9 +24,16 @@ import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto'
 import { RunAsWorkspaceMemberTokenDto } from 'src/engine/core-modules/auth/dto/run-as-workspace-member-token.dto';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { RunAsWorkspaceMemberTokenService } from 'src/engine/core-modules/auth/services/run-as-workspace-member-token.service';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+
+// Belt-and-suspenders on top of LogicFunctionExecutorService's execution
+// throttle: application-access tokens are JWTs usable outside the runtime, and
+// this route mints credentials.
+const RUN_AS_WORKSPACE_MEMBER_THROTTLE_LIMIT = 1000;
+const RUN_AS_WORKSPACE_MEMBER_THROTTLE_TTL_MS = 60_000;
 
 @Controller(`${ApiPath.App}/tokens`)
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
@@ -35,6 +42,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 export class AppTokensController {
   constructor(
     private readonly runAsWorkspaceMemberTokenService: RunAsWorkspaceMemberTokenService,
+    private readonly throttlerService: ThrottlerService,
   ) {}
 
   // A webhook gives a logic function no user context, so a function acting on
@@ -56,6 +64,13 @@ export class AppTokensController {
         },
       );
     }
+
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      `${request.workspace.id}-${request.application.id}-run-as-workspace-member`,
+      1,
+      RUN_AS_WORKSPACE_MEMBER_THROTTLE_LIMIT,
+      RUN_AS_WORKSPACE_MEMBER_THROTTLE_TTL_MS,
+    );
 
     return this.runAsWorkspaceMemberTokenService.generateAccessToken({
       application: request.application,

@@ -22,6 +22,7 @@ export type RawAuthContext = {
     impersonatedUserWorkspaceId?: string;
   };
   tokenType?: JwtTokenTypeEnum;
+  isActingAsWorkspaceMember?: boolean;
   // When the user last proved their identity. Only sessions can express this:
   // a JWT's iat is its renewal time, not the moment the user authenticated.
   authenticatedAt?: Date;

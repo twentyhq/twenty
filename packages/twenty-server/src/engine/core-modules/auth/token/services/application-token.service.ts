@@ -45,25 +45,28 @@ export class ApplicationTokenService {
     applicationId,
     userWorkspaceId,
     userId,
+    isActingAsWorkspaceMember,
+    expiresIn,
   }: {
     workspaceId: string;
     applicationId: string;
     userWorkspaceId?: string;
     userId?: string;
+    isActingAsWorkspaceMember?: boolean;
+    expiresIn?: string;
   }): Promise<AuthToken> {
     await this.validateWorkspaceAndApplication(workspaceId, applicationId);
-
-    const expiresIn = this.twentyConfigService.get(
-      'APPLICATION_ACCESS_TOKEN_EXPIRES_IN',
-    );
 
     return this.signApplicationToken({
       workspaceId,
       applicationId,
       userWorkspaceId,
       userId,
+      isActingAsWorkspaceMember,
       tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
-      expiresIn,
+      expiresIn:
+        expiresIn ??
+        this.twentyConfigService.get('APPLICATION_ACCESS_TOKEN_EXPIRES_IN'),
     });
   }
 
@@ -287,6 +290,7 @@ export class ApplicationTokenService {
     applicationId,
     userWorkspaceId,
     userId,
+    isActingAsWorkspaceMember,
     tokenType,
     expiresIn,
     workspaceDeletionRequestTimestamp,
@@ -295,6 +299,7 @@ export class ApplicationTokenService {
     applicationId: string;
     userWorkspaceId?: string;
     userId?: string;
+    isActingAsWorkspaceMember?: boolean;
     tokenType:
       | JwtTokenTypeEnum.APPLICATION_ACCESS
       | JwtTokenTypeEnum.APPLICATION_REFRESH;
@@ -315,6 +320,7 @@ export class ApplicationTokenService {
         : {}),
       ...(userWorkspaceId ? { userWorkspaceId } : {}),
       ...(userId ? { userId } : {}),
+      ...(isActingAsWorkspaceMember ? { isActingAsWorkspaceMember } : {}),
     };
 
     return {

@@ -380,6 +380,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       context.user = userContext.user;
       context.userWorkspace = userContext.userWorkspace;
       context.userWorkspaceId = userContext.userWorkspace.id;
+      context.isActingAsWorkspaceMember = payload.isActingAsWorkspaceMember;
 
       if (
         workspace.activationStatus ===

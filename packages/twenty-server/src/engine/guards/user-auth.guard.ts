@@ -14,6 +14,13 @@ export class UserAuthGuard implements CanActivate {
       return false;
     }
 
+    // An application acting as a workspace member borrows that person's
+    // permissions to read their data, but is not them: endpoints bound to a
+    // human identity are outside what the member delegated.
+    if (request.isActingAsWorkspaceMember) {
+      return false;
+    }
+
     return request.user !== undefined;
   }
 }

@@ -8,6 +8,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { RUN_AS_WORKSPACE_MEMBER_TOKEN_EXPIRES_IN } from 'src/engine/core-modules/auth/constants/run-as-workspace-member-token-expires-in.constant';
 import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { canApplicationTokenRunAsWorkspaceMember } from 'src/engine/core-modules/auth/utils/can-application-token-run-as-workspace-member.util';
@@ -99,6 +100,8 @@ export class RunAsWorkspaceMemberTokenService {
       applicationId: application.id,
       userId: workspaceMember.userId,
       userWorkspaceId: userWorkspace.id,
+      isActingAsWorkspaceMember: true,
+      expiresIn: RUN_AS_WORKSPACE_MEMBER_TOKEN_EXPIRES_IN,
     });
   }
 }
