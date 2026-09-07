@@ -153,8 +153,6 @@ describe('installClassAttributeAccessors', () => {
       ]);
     });
 
-    // Remote elements map the class attribute onto the className property, which
-    // never reaches the polyfill attribute hook, so only base elements emit this
     it('should emit a MutationObserver attributes record for a classList write on a base element', async () => {
       const polyfillWindow = new Window();
       const globalScope: Record<string, unknown> = { window: polyfillWindow };

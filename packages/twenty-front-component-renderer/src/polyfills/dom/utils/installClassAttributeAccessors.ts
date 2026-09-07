@@ -27,9 +27,6 @@ export const installClassAttributeAccessors = (
     return createdClassTokenList;
   };
 
-  // Reading an attribute-backed accessor off the prototype itself would
-  // materialize the polyfill attribute map on the prototype, where every
-  // element created afterwards would then share it
   const throwOnPrototypeAccess = (accessedObject: unknown): void => {
     if (accessedObject === elementPrototype) {
       throw new TypeError('Illegal invocation');
@@ -55,8 +52,6 @@ export const installClassAttributeAccessors = (
     });
   };
 
-  // className only reaches base elements: remote elements define their own
-  // accessor closer on the prototype chain, backed by the remote property
   defineClassAttributeAccessor(
     'className',
     (element) => element.getAttribute('class') ?? '',

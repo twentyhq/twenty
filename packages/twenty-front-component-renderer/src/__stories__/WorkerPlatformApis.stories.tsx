@@ -89,8 +89,6 @@ const classListTest: Story['play'] = async ({ canvasElement }) => {
     expectedValue: EXPECTED_CLASS_LIST_REPORT,
   });
 
-  // The container class reaches the host as a property update while the report
-  // reaches it as an attribute update, so the two can land a tick apart
   await waitFor(
     () => {
       expect(canvas.getByTestId('class-list-container').className).toBe(

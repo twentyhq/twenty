@@ -66,8 +66,6 @@ const INDEXED_CLASS_TOKEN_LIST_PROXY_HANDLER: ProxyHandler<WorkerClassTokenList>
     ],
   };
 
-// A DOMTokenList exposes its tokens as numeric properties, and only a proxy can
-// serve those from a live class attribute read
 export const createIndexedClassTokenList = (
   classTokenList: WorkerClassTokenList,
 ): WorkerClassTokenList =>
