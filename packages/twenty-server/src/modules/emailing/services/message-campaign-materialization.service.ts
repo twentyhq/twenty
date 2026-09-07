@@ -1,6 +1,6 @@
 import { CAMPAIGN_SEND_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-limit.constant';
 import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-backoff.constant';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
 import { CAMPAIGN_DELIVERY_STATE } from 'src/engine/core-modules/emailing-domain/constants/campaign-delivery-state.constant';
@@ -55,10 +55,6 @@ type CampaignMessageRow = {
 
 @Injectable()
 export class MessageCampaignMaterializationService {
-  private readonly logger = new Logger(
-    MessageCampaignMaterializationService.name,
-  );
-
   constructor(
     @InjectWorkspaceScopedRepository(CampaignDeliveryEntity)
     private readonly campaignDeliveryRepository: WorkspaceScopedRepository<CampaignDeliveryEntity>,

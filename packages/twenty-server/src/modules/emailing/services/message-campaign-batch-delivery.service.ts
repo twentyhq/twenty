@@ -422,7 +422,7 @@ export class MessageCampaignBatchDeliveryService {
   }: {
     deliveryId: string;
     providerMessageId: string;
-    template: { subject: string; text: string };
+    template: EmailingDomainEmailTemplate;
     replacements: Record<string, string>;
   }): Promise<void> {
     const messageRepository = this.workspaceOrmManager.getRepository(
