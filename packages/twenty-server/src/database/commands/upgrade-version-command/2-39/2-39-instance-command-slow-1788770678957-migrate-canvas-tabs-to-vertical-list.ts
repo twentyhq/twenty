@@ -4,6 +4,7 @@ import { DataSource, QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type AmbiguousCanvasTabCount = {
   ambiguousTabCount: string;
@@ -64,6 +65,8 @@ export class MigrateCanvasTabsToVerticalListSlowInstanceCommand implements SlowI
   private readonly logger = new Logger(
     MigrateCanvasTabsToVerticalListSlowInstanceCommand.name,
   );
+
+  constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
 
   public async runDataMigration(dataSource: DataSource): Promise<void> {
     await dataSource.query(CREATE_MIGRATION_BACKUP_TABLE_QUERY);
@@ -162,6 +165,27 @@ export class MigrateCanvasTabsToVerticalListSlowInstanceCommand implements SlowI
       FROM migrated_widgets
       WHERE tab."id" = migrated_widgets."pageLayoutTabId"
     `);
+
+    await this.flushPageLayoutCaches(dataSource);
+  }
+
+  private async flushPageLayoutCaches(
+    dataSource: DataSource | QueryRunner,
+  ): Promise<void> {
+    // Backups retain the affected workspaces if a previous cache flush failed.
+    const workspaces = (await dataSource.query(`
+      SELECT DISTINCT tab."workspaceId"
+      FROM "core"."canvasTabToVerticalListMigrationBackup" backup
+      JOIN "core"."pageLayoutTab" tab
+        ON tab."id" = backup."pageLayoutTabId"
+    `)) as { workspaceId: string }[];
+
+    for (const { workspaceId } of workspaces) {
+      await this.workspaceCacheService.flush(workspaceId, [
+        'flatPageLayoutTabMaps',
+        'flatPageLayoutWidgetMaps',
+      ]);
+    }
   }
 
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -240,6 +264,8 @@ export class MigrateCanvasTabsToVerticalListSlowInstanceCommand implements SlowI
       FROM restored_widgets
       WHERE tab."id" = restored_widgets."pageLayoutTabId"
     `);
+
+    await this.flushPageLayoutCaches(queryRunner);
 
     await queryRunner.query(
       `DROP TABLE "core"."canvasTabToVerticalListMigrationBackup"`,

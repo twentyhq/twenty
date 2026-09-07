@@ -3,6 +3,7 @@ import { DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { MigrateCanvasTabsToVerticalListSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-slow-1788770678957-migrate-canvas-tabs-to-vertical-list';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 jest.useRealTimers();
 
@@ -24,6 +25,8 @@ describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () 
   let workspaceId: string;
   let applicationId: string;
   let pageLayoutId: string;
+
+  const workspaceCacheService = { flush: jest.fn() };
 
   const seedTab = async ({
     layoutMode,
@@ -158,7 +161,9 @@ describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () 
     });
     await dataSource.initialize();
 
-    command = new MigrateCanvasTabsToVerticalListSlowInstanceCommand();
+    command = new MigrateCanvasTabsToVerticalListSlowInstanceCommand(
+      workspaceCacheService as unknown as WorkspaceCacheService,
+    );
 
     const [source] = (await dataSource.query(
       `SELECT "workspaceId", "applicationId"
@@ -177,6 +182,8 @@ describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () 
   }, 30000);
 
   beforeEach(async () => {
+    workspaceCacheService.flush.mockReset().mockResolvedValue(undefined);
+
     queryRunner = dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -211,6 +218,53 @@ describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () 
 
   afterAll(async () => {
     await dataSource?.destroy();
+  });
+
+  it('retries cache invalidation after the rows have already been migrated', async () => {
+    const canvasTab = await seedTab({
+      layoutMode: 'CANVAS',
+      widgetIsActiveValues: [true],
+    });
+    const cacheError = new Error('Cache unavailable');
+
+    workspaceCacheService.flush.mockRejectedValueOnce(cacheError);
+
+    await expect(command.runDataMigration(dataSource)).rejects.toThrow(
+      cacheError,
+    );
+    expect(await readTabLayoutMode(canvasTab.tabId)).toBe('VERTICAL_LIST');
+
+    workspaceCacheService.flush.mockClear();
+
+    await command.runDataMigration(dataSource);
+
+    expect(workspaceCacheService.flush).toHaveBeenCalledWith(workspaceId, [
+      'flatPageLayoutTabMaps',
+      'flatPageLayoutWidgetMaps',
+    ]);
+    expect(
+      await readTabAndWidgetState({
+        tabId: canvasTab.tabId,
+        widgetId: canvasTab.widgetIds[0],
+      }),
+    ).toMatchObject({
+      layoutMode: 'VERTICAL_LIST',
+      position: {
+        layoutMode: 'VERTICAL_LIST',
+        index: 0,
+        heightBehavior: 'TAB_VIEWPORT',
+      },
+    });
+
+    workspaceCacheService.flush.mockClear();
+
+    await runDown();
+
+    expect(await readTabLayoutMode(canvasTab.tabId)).toBe('CANVAS');
+    expect(workspaceCacheService.flush).toHaveBeenCalledWith(workspaceId, [
+      'flatPageLayoutTabMaps',
+      'flatPageLayoutWidgetMaps',
+    ]);
   });
 
   it('migrates only eligible Canvas tabs and rolls back only the rows it changed', async () => {
