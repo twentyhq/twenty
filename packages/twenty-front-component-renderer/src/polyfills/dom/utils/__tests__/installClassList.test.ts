@@ -1,14 +1,9 @@
 import { HOOKS, Window } from '@remote-dom/polyfill';
 
-import { type WorkerMutationObserver } from '@/polyfills/dom/types/WorkerMutationObserver';
-import { type WorkerMutationObserverCallback } from '@/polyfills/dom/types/WorkerMutationObserverCallback';
 import { type WorkerMutationRecord } from '@/polyfills/dom/types/WorkerMutationRecord';
+import { type createMutationObserverClass } from '@/polyfills/dom/utils/createMutationObserverClass';
 import { installClassList } from '@/polyfills/dom/utils/installClassList';
 import { installMutationObserver } from '@/polyfills/dom/utils/installMutationObserver';
-
-type WorkerMutationObserverConstructor = new (
-  callback: WorkerMutationObserverCallback,
-) => WorkerMutationObserver;
 
 const createSandboxDocument = (polyfillWindow = new Window()): Document => {
   installClassList(polyfillWindow.Element.prototype);
@@ -29,7 +24,7 @@ describe('installClassList', () => {
 
   it('should refuse a read on the prototype itself', () => {
     const polyfillWindow = new Window();
-    installClassList(polyfillWindow.Element.prototype);
+    createSandboxDocument(polyfillWindow);
 
     expect(
       () =>
@@ -114,8 +109,9 @@ describe('installClassList', () => {
     installMutationObserver({ globalScope });
 
     const document = createSandboxDocument(polyfillWindow);
-    const MutationObserver =
-      globalScope.MutationObserver as WorkerMutationObserverConstructor;
+    const MutationObserver = globalScope.MutationObserver as ReturnType<
+      typeof createMutationObserverClass
+    >;
     const deliveries: WorkerMutationRecord[][] = [];
 
     const element = document.createElement('div');

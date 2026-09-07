@@ -1,31 +1,32 @@
-import { ASCII_WHITESPACE_REGEX } from '@/polyfills/dom/constants/AsciiWhitespaceRegex';
 import { type ElementLike } from '@/polyfills/dom/types/ElementLike';
 import { iterateElementSubtree } from '@/polyfills/dom/utils/iterateElementSubtree';
 import { parseClassTokenList } from '@/polyfills/dom/utils/parseClassTokenList';
 
-const hasEveryClassToken = (
+const hasEveryClassNameToken = (
   element: ElementLike,
-  classTokens: string[],
+  classNameTokens: string[],
 ): boolean => {
-  const elementTokens = (element.getAttribute?.('class') ?? '').split(
-    ASCII_WHITESPACE_REGEX,
+  const elementTokens = parseClassTokenList(
+    element.getAttribute?.('class') ?? '',
   );
 
-  return classTokens.every((classToken) => elementTokens.includes(classToken));
+  return classNameTokens.every((classNameToken) =>
+    elementTokens.includes(classNameToken),
+  );
 };
 
 export const installGetElementsByClassName = (installTarget: object): void => {
   Object.defineProperty(installTarget, 'getElementsByClassName', {
     value: function (this: ElementLike, classNames: string) {
-      const classTokens = parseClassTokenList(String(classNames));
+      const classNameTokens = parseClassTokenList(String(classNames));
 
       const matches: ElementLike[] = [];
 
-      if (classTokens.length > 0) {
+      if (classNameTokens.length > 0) {
         for (const currentNode of iterateElementSubtree(this)) {
           if (
             currentNode !== this &&
-            hasEveryClassToken(currentNode, classTokens)
+            hasEveryClassNameToken(currentNode, classNameTokens)
           ) {
             matches.push(currentNode);
           }

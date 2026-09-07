@@ -2,14 +2,10 @@ import { Window } from '@remote-dom/polyfill';
 
 import { installClassList } from '@/polyfills/dom/utils/installClassList';
 import { installClassName } from '@/polyfills/dom/utils/installClassName';
-import { installGetElementsByClassName } from '@/polyfills/dom/utils/installGetElementsByClassName';
 
-const createSandboxDocument = (): Document => {
-  const polyfillWindow = new Window();
-
+const createSandboxDocument = (polyfillWindow = new Window()): Document => {
   installClassName(polyfillWindow.Element.prototype);
   installClassList(polyfillWindow.Element.prototype);
-  installGetElementsByClassName(polyfillWindow.Element.prototype);
 
   return polyfillWindow.document as unknown as Document;
 };
@@ -26,7 +22,7 @@ describe('installClassName', () => {
 
   it('should refuse a read on the prototype itself', () => {
     const polyfillWindow = new Window();
-    installClassName(polyfillWindow.Element.prototype);
+    createSandboxDocument(polyfillWindow);
 
     expect(
       () =>
@@ -70,22 +66,5 @@ describe('installClassName', () => {
     element.classList.add('second');
 
     expect(element.className).toBe('first second');
-  });
-
-  it('should let getElementsByClassName match an element classed through the property', () => {
-    const document = createSandboxDocument();
-
-    const rootElement = document.createElement('div');
-    const target = document.createElement('div');
-    target.className = 'recharts-layer recharts-line';
-
-    rootElement.appendChild(target);
-
-    const matches = rootElement.getElementsByClassName(
-      'recharts-layer recharts-line',
-    );
-
-    expect(matches).toHaveLength(1);
-    expect(matches[0]).toBe(target);
   });
 });

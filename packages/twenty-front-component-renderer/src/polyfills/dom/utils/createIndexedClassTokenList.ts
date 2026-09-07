@@ -1,3 +1,4 @@
+import { isNonNegativeInteger, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkerClassTokenList } from '@/polyfills/dom/types/WorkerClassTokenList';
@@ -5,27 +6,22 @@ import { type WorkerClassTokenList } from '@/polyfills/dom/types/WorkerClassToke
 const MAX_ARRAY_INDEX = 2 ** 32 - 2;
 
 const parseIndexPropertyKey = (property: string | symbol): number | null => {
-  if (typeof property !== 'string') {
+  if (!isString(property)) {
     return null;
   }
 
   const tokenIndex = Number(property);
 
   const isCanonicalIndexKey =
-    Number.isInteger(tokenIndex) &&
-    tokenIndex >= 0 &&
+    isNonNegativeInteger(tokenIndex) &&
     tokenIndex <= MAX_ARRAY_INDEX &&
     String(tokenIndex) === property;
 
   return isCanonicalIndexKey ? tokenIndex : null;
 };
 
-// A DOMTokenList exposes its tokens as numeric properties, and only a proxy can
-// serve those from a live class attribute read
-export const createIndexedClassTokenList = (
-  classTokenList: WorkerClassTokenList,
-): WorkerClassTokenList =>
-  new Proxy(classTokenList, {
+const INDEXED_CLASS_TOKEN_LIST_PROXY_HANDLER: ProxyHandler<WorkerClassTokenList> =
+  {
     get: (tokenList, property, receiver) => {
       const tokenIndex = parseIndexPropertyKey(property);
 
@@ -37,7 +33,7 @@ export const createIndexedClassTokenList = (
       const tokenIndex = parseIndexPropertyKey(property);
 
       return isDefined(tokenIndex)
-        ? tokenIndex < tokenList.length
+        ? tokenList.item(tokenIndex) !== null
         : Reflect.has(tokenList, property);
     },
     getOwnPropertyDescriptor: (tokenList, property) => {
@@ -65,9 +61,14 @@ export const createIndexedClassTokenList = (
         ? false
         : Reflect.defineProperty(tokenList, property, descriptor),
     ownKeys: (tokenList) => [
-      ...Array.from({ length: tokenList.length }, (_, tokenIndex) =>
-        String(tokenIndex),
-      ),
+      ...Array.from(tokenList.keys(), String),
       ...Reflect.ownKeys(tokenList),
     ],
-  });
+  };
+
+// A DOMTokenList exposes its tokens as numeric properties, and only a proxy can
+// serve those from a live class attribute read
+export const createIndexedClassTokenList = (
+  classTokenList: WorkerClassTokenList,
+): WorkerClassTokenList =>
+  new Proxy(classTokenList, INDEXED_CLASS_TOKEN_LIST_PROXY_HANDLER);

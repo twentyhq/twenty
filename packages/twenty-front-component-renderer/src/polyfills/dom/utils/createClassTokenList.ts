@@ -25,9 +25,7 @@ class ClassTokenList implements WorkerClassTokenList {
   }
 
   private writeTokens(tokens: string[]): void {
-    const hasNoClassAttribute = !isDefined(this.element.getAttribute('class'));
-
-    if (tokens.length === 0 && hasNoClassAttribute) {
+    if (tokens.length === 0 && !isDefined(this.element.getAttribute('class'))) {
       return;
     }
 

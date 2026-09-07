@@ -4,6 +4,12 @@ import { createClassTokenList } from '@/polyfills/dom/utils/createClassTokenList
 class FakeElement {
   private attributes = new Map<string, string>();
 
+  constructor(classAttribute?: string) {
+    if (classAttribute !== undefined) {
+      this.attributes.set('class', classAttribute);
+    }
+  }
+
   getAttribute(attributeName: string): string | null {
     return this.attributes.get(attributeName) ?? null;
   }
@@ -28,19 +34,6 @@ const TOKEN_MUTATORS: TokenMutator[] = [
   ],
 ];
 
-const expectDomException = (callback: () => void, exceptionName: string) => {
-  let thrownError: unknown = null;
-
-  try {
-    callback();
-  } catch (error) {
-    thrownError = error;
-  }
-
-  expect(thrownError).toBeInstanceOf(DOMException);
-  expect((thrownError as DOMException).name).toBe(exceptionName);
-};
-
 describe('createClassTokenList', () => {
   describe('add', () => {
     it('should create the class attribute when adding to an element without one', () => {
@@ -53,8 +46,7 @@ describe('createClassTokenList', () => {
     });
 
     it('should append tokens while preserving existing ones', () => {
-      const element = new FakeElement();
-      element.setAttribute('class', 'first');
+      const element = new FakeElement('first');
       const classTokenList = createClassTokenList(element);
 
       classTokenList.add('second', 'third');
@@ -63,8 +55,7 @@ describe('createClassTokenList', () => {
     });
 
     it('should not duplicate a token that is already present', () => {
-      const element = new FakeElement();
-      element.setAttribute('class', 'first second');
+      const element = new FakeElement('first second');
       const classTokenList = createClassTokenList(element);
 
       classTokenList.add('first');
@@ -73,8 +64,7 @@ describe('createClassTokenList', () => {
     });
 
     it('should normalize surrounding whitespace when rewriting the attribute', () => {
-      const element = new FakeElement();
-      element.setAttribute('class', '  first \t second  ');
+      const element = new FakeElement('  first \t second  ');
       const classTokenList = createClassTokenList(element);
 
       classTokenList.add('third');
@@ -86,7 +76,9 @@ describe('createClassTokenList', () => {
       const element = new FakeElement();
       const classTokenList = createClassTokenList(element);
 
-      expectDomException(() => classTokenList.add('valid', ''), 'SyntaxError');
+      expect(() => classTokenList.add('valid', '')).toThrow(
+        expect.objectContaining({ name: 'SyntaxError' }),
+      );
 
       expect(element.getAttribute('class')).toBeNull();
     });
@@ -94,8 +86,7 @@ describe('createClassTokenList', () => {
 
   describe('remove', () => {
     it('should remove the requested tokens and keep the others', () => {
-      const element = new FakeElement();
-      element.setAttribute('class', 'first second third');
+      const element = new FakeElement('first second third');
       const classTokenList = createClassTokenList(element);
 
       classTokenList.remove('first', 'third');
@@ -104,8 +95,7 @@ describe('createClassTokenList', () => {
     });
 
     it('should leave an empty attribute after removing the last token', () => {
-      const element = new FakeElement();
-      element.setAttribute('class', 'only');
+      const element = new FakeElement('only');
       const classTokenList = createClassTokenList(element);
 
       classTokenList.remove('only');
@@ -133,8 +123,7 @@ describe('createClassTokenList', () => {
     });
 
     it('should remove a present token and return false', () => {
-      const element = new FakeElement();
-      element.setAttribute('class', 'open');
+      const element = new FakeElement('open');
       const classTokenList = createClassTokenList(element);
 
       expect(classTokenList.toggle('open')).toBe(false);
@@ -142,8 +131,7 @@ describe('createClassTokenList', () => {
     });
 
     it('should keep a present token when forced on', () => {
-      const element = new FakeElement();
-      element.setAttribute('class', 'open');
+      const element = new FakeElement('open');
       const classTokenList = createClassTokenList(element);
 
       expect(classTokenList.toggle('open', true)).toBe(true);
@@ -161,8 +149,7 @@ describe('createClassTokenList', () => {
 
   describe('replace', () => {
     it('should replace a token in place', () => {
-      const element = new FakeElement();
-      element.setAttribute('class', 'first second third');
+      const element = new FakeElement('first second third');
       const classTokenList = createClassTokenList(element);
 
       expect(classTokenList.replace('second', 'replaced')).toBe(true);
@@ -170,8 +157,7 @@ describe('createClassTokenList', () => {
     });
 
     it('should return false without mutating when the old token is absent', () => {
-      const element = new FakeElement();
-      element.setAttribute('class', ' first ');
+      const element = new FakeElement(' first ');
       const classTokenList = createClassTokenList(element);
 
       expect(classTokenList.replace('absent', 'replaced')).toBe(false);
@@ -179,8 +165,7 @@ describe('createClassTokenList', () => {
     });
 
     it('should collapse duplicates of the new token like the ordered set replace', () => {
-      const element = new FakeElement();
-      element.setAttribute('class', 'first second third');
+      const element = new FakeElement('first second third');
       const classTokenList = createClassTokenList(element);
 
       expect(classTokenList.replace('third', 'first')).toBe(true);
@@ -190,17 +175,15 @@ describe('createClassTokenList', () => {
     it('should validate the replacement token', () => {
       const classTokenList = createClassTokenList(new FakeElement());
 
-      expectDomException(
-        () => classTokenList.replace('old', 'has space'),
-        'InvalidCharacterError',
+      expect(() => classTokenList.replace('old', 'has space')).toThrow(
+        expect.objectContaining({ name: 'InvalidCharacterError' }),
       );
     });
   });
 
   describe('contains', () => {
     it('should report token presence without throwing on invalid tokens', () => {
-      const element = new FakeElement();
-      element.setAttribute('class', 'present');
+      const element = new FakeElement('present');
       const classTokenList = createClassTokenList(element);
 
       expect(classTokenList.contains('present')).toBe(true);
@@ -212,8 +195,7 @@ describe('createClassTokenList', () => {
 
   describe('item and length', () => {
     it('should expose tokens by index and count them deduplicated', () => {
-      const element = new FakeElement();
-      element.setAttribute('class', ' first  second first ');
+      const element = new FakeElement(' first  second first ');
       const classTokenList = createClassTokenList(element);
 
       expect(classTokenList.length).toBe(2);
@@ -225,8 +207,7 @@ describe('createClassTokenList', () => {
 
   describe('value and toString', () => {
     it('should return the raw attribute value', () => {
-      const element = new FakeElement();
-      element.setAttribute('class', ' raw  value ');
+      const element = new FakeElement(' raw  value ');
       const classTokenList = createClassTokenList(element);
 
       expect(classTokenList.value).toBe(' raw  value ');
@@ -254,8 +235,7 @@ describe('createClassTokenList', () => {
 
   describe('iteration', () => {
     it('should iterate tokens with the spread operator and for of', () => {
-      const element = new FakeElement();
-      element.setAttribute('class', 'first second');
+      const element = new FakeElement('first second');
       const classTokenList = createClassTokenList(element);
 
       expect([...classTokenList]).toEqual(['first', 'second']);
@@ -270,8 +250,7 @@ describe('createClassTokenList', () => {
     });
 
     it('should expose entries, keys and values iterators', () => {
-      const element = new FakeElement();
-      element.setAttribute('class', 'first second');
+      const element = new FakeElement('first second');
       const classTokenList = createClassTokenList(element);
 
       expect([...classTokenList.entries()]).toEqual([
@@ -283,8 +262,7 @@ describe('createClassTokenList', () => {
     });
 
     it('should call the forEach callback with token, index, list and thisArg', () => {
-      const element = new FakeElement();
-      element.setAttribute('class', 'first second');
+      const element = new FakeElement('first second');
       const classTokenList = createClassTokenList(element);
       const thisArg = { marker: true };
       const calls: unknown[][] = [];
@@ -320,8 +298,7 @@ describe('createClassTokenList', () => {
     });
 
     it('should not rewrite the attribute when forcing a present token on', () => {
-      const element = new FakeElement();
-      element.setAttribute('class', ' first  second ');
+      const element = new FakeElement(' first  second ');
       const setAttribute = jest.spyOn(element, 'setAttribute');
       const classTokenList = createClassTokenList(element);
 
@@ -332,8 +309,7 @@ describe('createClassTokenList', () => {
     });
 
     it('should not rewrite the attribute when forcing an absent token off', () => {
-      const element = new FakeElement();
-      element.setAttribute('class', ' first  second ');
+      const element = new FakeElement(' first  second ');
       const setAttribute = jest.spyOn(element, 'setAttribute');
       const classTokenList = createClassTokenList(element);
 
@@ -346,8 +322,7 @@ describe('createClassTokenList', () => {
 
   describe('indexed access', () => {
     it('should expose tokens as indexed properties', () => {
-      const element = new FakeElement();
-      element.setAttribute('class', 'first second');
+      const element = new FakeElement('first second');
       const classTokenList = createClassTokenList(element);
 
       expect(classTokenList[0]).toBe('first');
@@ -356,8 +331,7 @@ describe('createClassTokenList', () => {
     });
 
     it('should support the array like idioms that read length and indices', () => {
-      const element = new FakeElement();
-      element.setAttribute('class', 'first second');
+      const element = new FakeElement('first second');
       const classTokenList = createClassTokenList(element);
 
       expect(Array.prototype.slice.call(classTokenList)).toEqual([
@@ -369,8 +343,7 @@ describe('createClassTokenList', () => {
     });
 
     it('should report indexed properties through the in operator', () => {
-      const element = new FakeElement();
-      element.setAttribute('class', 'first second');
+      const element = new FakeElement('first second');
       const classTokenList = createClassTokenList(element);
 
       expect('0' in classTokenList).toBe(true);
@@ -380,8 +353,7 @@ describe('createClassTokenList', () => {
     });
 
     it('should not treat keys beyond the array index range as indices', () => {
-      const element = new FakeElement();
-      element.setAttribute('class', 'first second');
+      const element = new FakeElement('first second');
       const classTokenList = createClassTokenList(element);
 
       const outOfRangeKey = String(2 ** 32);
@@ -393,8 +365,7 @@ describe('createClassTokenList', () => {
     });
 
     it('should reject numeric writes so enumeration stays consistent', () => {
-      const element = new FakeElement();
-      element.setAttribute('class', 'first second');
+      const element = new FakeElement('first second');
       const classTokenList = createClassTokenList(element);
 
       expect(() => {
@@ -414,8 +385,7 @@ describe('createClassTokenList', () => {
     });
 
     it('should convert item indices the way an unsigned long conversion does', () => {
-      const element = new FakeElement();
-      element.setAttribute('class', 'first second');
+      const element = new FakeElement('first second');
       const classTokenList = createClassTokenList(element);
 
       expect(classTokenList.item(1.5)).toBe('second');
@@ -443,9 +413,8 @@ describe('createClassTokenList', () => {
       ])('should throw for %p', (invalidToken, exceptionName) => {
         const classTokenList = createClassTokenList(new FakeElement());
 
-        expectDomException(
-          () => callWithToken(classTokenList, invalidToken),
-          exceptionName,
+        expect(() => callWithToken(classTokenList, invalidToken)).toThrow(
+          expect.objectContaining({ name: exceptionName }),
         );
       });
     },
