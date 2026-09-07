@@ -43,9 +43,28 @@ function on_exit {
 }
 trap on_exit EXIT
 
+# Download a file, failing loudly instead of writing an HTTP error page to disk.
+# curl retries 429/5xx on its own; raw.githubusercontent.com throttles by IP.
+function download {
+  local url=$1
+  local dest=$2
+  if ! curl -fsSL --retry 3 --retry-delay 2 -o "$dest" "$url"; then
+    echo -e "\t❌ Failed to download $url"
+    echo -e "\t\tIf this is a 404, the release may be incomplete; anything else is usually GitHub"
+    echo -e "\t\trate limiting your network, in which case retrying in a minute will work."
+    exit 1
+  fi
+}
+
 # Use environment variables VERSION and BRANCH, with defaults if not set
-version=${VERSION:-$(curl -s "https://hub.docker.com/v2/repositories/twentycrm/twenty/tags" | grep -o '"name":"[^"]*"' | grep -v 'latest' | cut -d'"' -f4 | sort -V | tail -n1)}
-branch=${BRANCH:-$(curl -s https://api.github.com/repos/twentyhq/twenty/tags | grep '"name":' | head -n 1 | cut -d '"' -f 4)}
+version=${VERSION:-$(curl -fsS "https://hub.docker.com/v2/repositories/twentycrm/twenty/tags" | grep -o '"name":"[^"]*"' | grep -v 'latest' | cut -d'"' -f4 | sort -V | tail -n1)}
+if [ -z "$version" ]; then
+  echo -e "\t❌ Unable to resolve the latest release from Docker Hub. Check your network, or set VERSION explicitly."
+  exit 1
+fi
+# Release tags are namespaced since twenty/v2.9.1; deriving the branch from the
+# image tag also keeps docker-compose.yml and the image in lockstep.
+branch=${BRANCH:-twenty/$version}
 
 echo "🚀 Using docker version $version and Github branch $branch"
 
@@ -74,11 +93,11 @@ mkdir -p "$dir_name" && cd "$dir_name" || { echo "❌ Failed to create/access di
 
 # Copy twenty/packages/twenty-docker/docker-compose.yml in it
 echo -e "\t• Copying docker-compose.yml"
-curl -sLo docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/$branch/packages/twenty-docker/docker-compose.yml
+download "https://raw.githubusercontent.com/twentyhq/twenty/$branch/packages/twenty-docker/docker-compose.yml" docker-compose.yml
 
 # Copy twenty/packages/twenty-docker/.env.example to .env
 echo -e "\t• Setting up .env file"
-curl -sLo .env https://raw.githubusercontent.com/twentyhq/twenty/$branch/packages/twenty-docker/.env.example
+download "https://raw.githubusercontent.com/twentyhq/twenty/$branch/packages/twenty-docker/.env.example" .env
 
 # Replace TAG=latest by TAG=<latest_release or version input>
 if [[ $(uname) == "Darwin" ]]; then
