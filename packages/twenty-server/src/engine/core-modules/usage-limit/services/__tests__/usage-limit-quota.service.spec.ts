@@ -17,6 +17,8 @@ import { UsageLimitEntitlementProvider } from 'src/engine/core-modules/usage-lim
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
+import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
+import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usage-period.type';
 import { type UsageLimitCounterScope } from 'src/engine/core-modules/usage-limit/types/usage-limit-counter-scope.type';
 import { buildAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-allowance-counter-key.util';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
@@ -107,8 +109,11 @@ describe('UsageLimitQuotaService', () => {
   };
 
   const usagePeriodService = {
-    getCurrentPeriod: jest.fn(),
+    findCurrentPeriod: jest.fn(),
+    findCurrentPeriodsByUnit: jest.fn(),
   };
+
+  let periodByUnit: Partial<Record<PeriodUnit, UsagePeriod>>;
 
   const setLimits = (limits: FlatUsageLimit[]) => {
     workspaceCacheService.getOrRecompute.mockResolvedValue({
@@ -119,6 +124,7 @@ describe('UsageLimitQuotaService', () => {
   };
 
   const setAllowance = (allowanceMicro: number | null) => {
+    periodByUnit.allowancePeriod = ALLOWANCE_PERIOD;
     creditAllowanceProvider.getCreditAllowancePeriod.mockResolvedValue(
       ALLOWANCE_PERIOD,
     );
@@ -154,9 +160,13 @@ describe('UsageLimitQuotaService', () => {
     cacheStorage.mget.mockResolvedValue([]);
     cacheStorage.runScript.mockResolvedValue([]);
     clickHouseService.selectOrThrow.mockResolvedValue([]);
-    usagePeriodService.getCurrentPeriod.mockImplementation(
-      (periodUnit: string) =>
-        periodUnit === 'week' ? WEEK_PERIOD : MONTH_PERIOD,
+    periodByUnit = { month: MONTH_PERIOD, week: WEEK_PERIOD };
+    usagePeriodService.findCurrentPeriod.mockImplementation(
+      async ({ periodUnit }: { periodUnit: PeriodUnit }) =>
+        periodByUnit[periodUnit] ?? null,
+    );
+    usagePeriodService.findCurrentPeriodsByUnit.mockImplementation(
+      async () => periodByUnit,
     );
     workspaceCacheService.getOrRecompute.mockResolvedValue({
       usageLimits: { byResourceType: {} },
@@ -356,21 +366,6 @@ describe('UsageLimitQuotaService', () => {
       ]);
     });
 
-    it('keeps the calendar limits when the allowance period lookup fails', async () => {
-      setLimits([buildLimit({ id: 'month' }), allowancePeriodLimit]);
-      creditAllowanceProvider.isCreditAllowanceEnabled.mockResolvedValue(false);
-      creditAllowanceProvider.getCreditAllowancePeriod.mockRejectedValue(
-        new Error('billing down'),
-      );
-      cacheStorage.mget.mockResolvedValue([250]);
-
-      await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
-
-      expect(cacheStorage.mget).toHaveBeenCalledWith([
-        expect.stringContaining(':month:'),
-      ]);
-    });
-
     it('builds no counter for an allowance-period limit without an allowance', async () => {
       setLimits([allowancePeriodLimit]);
       creditAllowanceProvider.isCreditAllowanceEnabled.mockResolvedValue(false);
@@ -393,22 +388,6 @@ describe('UsageLimitQuotaService', () => {
           periodUnit: 'allowancePeriod',
         }),
       });
-    });
-  });
-
-  describe('hasCreditAllowancePeriod', () => {
-    it('answers true when the provider knows the period', async () => {
-      setAllowance(2_000);
-
-      await expect(
-        service.hasCreditAllowancePeriod('workspace-1'),
-      ).resolves.toBe(true);
-    });
-
-    it('answers false without a period', async () => {
-      await expect(
-        service.hasCreditAllowancePeriod('workspace-1'),
-      ).resolves.toBe(false);
     });
   });
 
