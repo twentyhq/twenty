@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
@@ -7,6 +7,7 @@ import {
   ConnectedAccountProvider,
   MessageChannelSyncStage,
   type MessageChannelVisibility,
+  WebhookSubscriptionChannelType,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 import { EntityManager, Repository } from 'typeorm';
@@ -39,6 +40,11 @@ import {
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
+import { WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-creation-retry-limit.constant';
+import {
+  CreateWebhookSubscriptionJob,
+  type CreateWebhookSubscriptionJobData,
+} from 'src/modules/connected-account/webhook-subscription-manager/jobs/create-webhook-subscription.job';
 
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
@@ -50,12 +56,16 @@ import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class MicrosoftAPIsService {
+  private readonly logger = new Logger(MicrosoftAPIsService.name);
+
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly calendarQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.webhookQueue)
+    private readonly webhookQueueService: MessageQueueService,
     private readonly accountsToReconnectService: AccountsToReconnectService,
     private readonly messagingChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
@@ -301,6 +311,12 @@ export class MicrosoftAPIsService {
                 messageChannelId: messageChannel.id,
               },
             );
+            await this.enqueueWebhookSubscriptionCreation({
+              channelType: WebhookSubscriptionChannelType.MESSAGING,
+              channelId: messageChannel.id,
+              isSyncEnabled: messageChannel.isSyncEnabled,
+              workspaceId,
+            });
             this.onboardingRecentMessagesImportService
               .importRecentMessages({
                 messageChannelId: messageChannel.id,
@@ -333,10 +349,50 @@ export class MicrosoftAPIsService {
               workspaceId,
             },
           );
+          await this.enqueueWebhookSubscriptionCreation({
+            channelType: WebhookSubscriptionChannelType.CALENDAR,
+            channelId: calendarChannel.id,
+            isSyncEnabled: calendarChannel.isSyncEnabled,
+            workspaceId,
+          });
         }
       }
 
       return newOrExistingConnectedAccountId;
     }, authContext);
+  }
+
+  private async enqueueWebhookSubscriptionCreation({
+    channelType,
+    channelId,
+    isSyncEnabled,
+    workspaceId,
+  }: {
+    channelType: WebhookSubscriptionChannelType;
+    channelId: string;
+    isSyncEnabled: boolean;
+    workspaceId: string;
+  }): Promise<void> {
+    if (
+      !isSyncEnabled ||
+      !this.twentyConfigService.get(
+        'IS_CONNECTED_ACCOUNT_WEBHOOK_SUBSCRIPTION_ENABLED',
+      )
+    ) {
+      return;
+    }
+
+    try {
+      await this.webhookQueueService.add<CreateWebhookSubscriptionJobData>(
+        CreateWebhookSubscriptionJob.name,
+        { channelType, channelId, workspaceId },
+        { retryLimit: WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT },
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Failed to enqueue webhook subscription job for ${channelType} channel ${channelId}`,
+        error,
+      );
+    }
   }
 }

@@ -2,7 +2,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import {
-  ConnectedAccountProvider,
   WebhookSubscriptionChannelType,
   WebhookSubscriptionStatus,
 } from 'twenty-shared/types';
@@ -16,18 +15,14 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { WEBHOOK_CAPABLE_PROVIDERS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-capable-providers.constant';
+import { WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-creation-retry-limit.constant';
 import {
   CreateWebhookSubscriptionJob,
   type CreateWebhookSubscriptionJobData,
 } from 'src/modules/connected-account/webhook-subscription-manager/jobs/create-webhook-subscription.job';
 
 const WEBHOOK_BACKFILL_SPACING_MS = 2000;
-const WEBHOOK_BACKFILL_RETRY_LIMIT = 3;
-
-const WEBHOOK_CAPABLE_PROVIDERS = [
-  ConnectedAccountProvider.GOOGLE,
-  ConnectedAccountProvider.MICROSOFT,
-];
 
 @Command({
   name: 'connected-account:create-webhook-subscription',
@@ -125,7 +120,7 @@ export class CreateWebhookSubscriptionForConnectedAccountCommand extends Provisi
         { channelType, channelId, workspaceId },
         {
           delay: this.enqueueCursorMs,
-          retryLimit: WEBHOOK_BACKFILL_RETRY_LIMIT,
+          retryLimit: WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT,
         },
       );
 

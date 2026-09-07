@@ -1,6 +1,6 @@
 import {
-  type RecordShareAccessLevel,
   RecordSharePrincipalType,
+  SharingRuleAccessLevel,
 } from 'twenty-shared/types';
 import {
   Column,
@@ -16,12 +16,11 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ADD_SHARING_RULE_TABLE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-39/add-sharing-rule-table-upgrade-command-name.constant';
+import { ADD_SHARING_RULE_TABLE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-40/add-sharing-rule-table-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
-import { SHARING_RULE_ACCESS_LEVELS } from 'src/engine/metadata-modules/sharing-rule/constants/sharing-rule-access-levels.constant';
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
@@ -74,9 +73,9 @@ export class SharingRuleEntity
   @Column({
     nullable: false,
     type: 'enum',
-    enum: SHARING_RULE_ACCESS_LEVELS,
+    enum: Object.values(SharingRuleAccessLevel),
   })
-  accessLevel: RecordShareAccessLevel;
+  accessLevel: SharingRuleAccessLevel;
 
   @Column({ nullable: false, type: 'boolean', default: true })
   isActive: boolean;

@@ -1,5 +1,5 @@
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
-import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
+import { MetadataWritability } from '~/generated-metadata/graphql';
 
 describe('isRecordFieldReadOnly', () => {
   const mockObjectPermissions = {
@@ -14,7 +14,7 @@ describe('isRecordFieldReadOnly', () => {
     fieldMetadataItem: {
       id: 'field-123',
       isUIEditable: true,
-      type: FieldMetadataType.TEXT,
+      writability: MetadataWritability.OPEN,
     },
   };
 
@@ -73,83 +73,37 @@ describe('isRecordFieldReadOnly', () => {
     expect(result).toBe(false);
   });
 
-  it('should return true when field is from the standard application on a system object', () => {
+  it('should return true when the field writability is SYSTEM', () => {
     const result = isRecordFieldReadOnly({
       ...mockParams,
-      isSystemObject: true,
-      isFieldFromStandardApplication: true,
-    });
-
-    expect(result).toBe(true);
-  });
-
-  it('should return false when field is not from the standard application on a system object', () => {
-    const result = isRecordFieldReadOnly({
-      ...mockParams,
-      isSystemObject: true,
-      isFieldFromStandardApplication: false,
-    });
-
-    expect(result).toBe(false);
-  });
-
-  it('should return true when field application is not resolved on a system object', () => {
-    const result = isRecordFieldReadOnly({
-      ...mockParams,
-      isSystemObject: true,
-    });
-
-    expect(result).toBe(true);
-  });
-
-  it('should return false for a junction target field on a system object', () => {
-    const result = isRecordFieldReadOnly({
-      ...mockParams,
-      isSystemObject: true,
-      isFieldFromStandardApplication: true,
       fieldMetadataItem: {
         ...mockParams.fieldMetadataItem,
-        type: FieldMetadataType.RELATION,
-        settings: { junctionTargetFieldId: 'target-field-123' },
-      },
-    });
-
-    expect(result).toBe(false);
-  });
-
-  it('should return true for a plain relation field on a system object', () => {
-    const result = isRecordFieldReadOnly({
-      ...mockParams,
-      isSystemObject: true,
-      isFieldFromStandardApplication: true,
-      fieldMetadataItem: {
-        ...mockParams.fieldMetadataItem,
-        type: FieldMetadataType.RELATION,
-        settings: { relationType: RelationType.ONE_TO_MANY },
+        writability: MetadataWritability.SYSTEM,
       },
     });
 
     expect(result).toBe(true);
   });
 
-  it('should keep a junction target field read-only when the record is read-only', () => {
+  it('should return true when the field writability is APPLICATION', () => {
     const result = isRecordFieldReadOnly({
       ...mockParams,
-      isRecordReadOnly: true,
-      isSystemObject: true,
       fieldMetadataItem: {
         ...mockParams.fieldMetadataItem,
-        type: FieldMetadataType.RELATION,
-        settings: { junctionTargetFieldId: 'target-field-123' },
+        writability: MetadataWritability.APPLICATION,
       },
     });
 
     expect(result).toBe(true);
   });
 
-  it('should return false when isSystemObject is not provided', () => {
+  it('should treat a missing field writability as OPEN', () => {
     const result = isRecordFieldReadOnly({
       ...mockParams,
+      fieldMetadataItem: {
+        ...mockParams.fieldMetadataItem,
+        writability: undefined,
+      },
     });
 
     expect(result).toBe(false);

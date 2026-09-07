@@ -11,7 +11,7 @@ import {
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   FieldMetadataType,
-  RecordShareAccessLevel,
+  SharingRuleAccessLevel,
   RecordSharePrincipalType,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
@@ -47,7 +47,7 @@ const everyoneRuleManifest: SharingRuleManifest = {
   objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
   name: 'Everyone reads people',
   granteePrincipalType: RecordSharePrincipalType.EVERYONE,
-  accessLevel: RecordShareAccessLevel.READ,
+  accessLevel: SharingRuleAccessLevel.READ,
 };
 
 const roleRuleManifest: SharingRuleManifest = {
@@ -57,7 +57,7 @@ const roleRuleManifest: SharingRuleManifest = {
   description: 'Rule exercising declarative criteria',
   granteePrincipalType: RecordSharePrincipalType.ROLE,
   granteeRoleUniversalIdentifier: TEST_ROLE_ID,
-  accessLevel: RecordShareAccessLevel.READ_WRITE,
+  accessLevel: SharingRuleAccessLevel.READ_WRITE,
   rowLevelPermissionPredicates: [
     {
       universalIdentifier: TEST_PREDICATE_ID,
@@ -185,7 +185,7 @@ describe('Manifest sync - sharing rules', () => {
       granteePrincipalType: RecordSharePrincipalType.EVERYONE,
       granteeRoleId: null,
       granteePrincipalId: null,
-      accessLevel: RecordShareAccessLevel.READ,
+      accessLevel: SharingRuleAccessLevel.READ,
       isActive: true,
       objectMetadataId: personObjectId,
       applicationId,
@@ -195,7 +195,7 @@ describe('Manifest sync - sharing rules', () => {
       granteePrincipalType: RecordSharePrincipalType.ROLE,
       granteeRoleId: roleId,
       granteePrincipalId: null,
-      accessLevel: RecordShareAccessLevel.READ_WRITE,
+      accessLevel: SharingRuleAccessLevel.READ_WRITE,
     });
 
     const predicateRows = await findPredicateRows();

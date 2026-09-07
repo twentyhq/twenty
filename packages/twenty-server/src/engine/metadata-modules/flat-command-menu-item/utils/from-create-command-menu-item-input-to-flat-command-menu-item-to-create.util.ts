@@ -88,6 +88,8 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
       createCommandMenuItemInput.availabilityObjectMetadataId ?? null,
     conditionalAvailabilityExpression:
       createCommandMenuItemInput.conditionalAvailabilityExpression ?? null,
+    conditionalPinnedExpression:
+      createCommandMenuItemInput.conditionalPinnedExpression ?? null,
     availabilityObjectMetadataUniversalIdentifier,
     navigationTargetObjectMetadataId,
     navigationTargetObjectMetadataUniversalIdentifier,

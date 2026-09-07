@@ -180,7 +180,10 @@ export type { ServerVariables } from './server-variables.type';
 export type { ServerRouteDispatchResult } from './serverRouteDispatchResultType';
 export type { ServerRouteTriggerSettings } from './serverRouteTriggerSettingsType';
 export type { SettingsFrontComponentApplicationManifest } from './settingsFrontComponentApplicationType';
-export type { SharingRuleManifest } from './sharingRuleManifestType';
+export type {
+  SharingRuleManifestGranteePrincipalType,
+  SharingRuleManifest,
+} from './sharingRuleManifestType';
 export type { SkillManifest } from './skillManifestType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';

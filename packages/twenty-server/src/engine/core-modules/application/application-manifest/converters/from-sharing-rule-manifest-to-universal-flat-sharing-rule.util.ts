@@ -20,7 +20,7 @@ export const fromSharingRuleManifestToUniversalFlatSharingRule = ({
   granteePrincipalType: sharingRuleManifest.granteePrincipalType,
   granteeRoleUniversalIdentifier:
     sharingRuleManifest.granteeRoleUniversalIdentifier ?? null,
-  granteePrincipalId: sharingRuleManifest.granteePrincipalId ?? null,
+  granteePrincipalId: null,
   accessLevel: sharingRuleManifest.accessLevel,
   isActive: sharingRuleManifest.isActive ?? true,
   rowLevelPermissionPredicateUniversalIdentifiers: [],

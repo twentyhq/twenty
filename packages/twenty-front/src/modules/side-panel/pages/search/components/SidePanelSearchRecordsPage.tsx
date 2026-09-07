@@ -116,11 +116,11 @@ export const SidePanelSearchRecordsPage = () => {
           place="left-start"
           offset={16}
           noArrow
-          clickable
+          interactive
           isOpen
           delay={TooltipDelay.noDelay}
           className={previewTooltipClass}
-          width={`${SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH}px`}
+          maxWidth={`${SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH}px`}
         >
           <SidePanelSearchRecordPreviewCard
             key={previewedItem.recordId}

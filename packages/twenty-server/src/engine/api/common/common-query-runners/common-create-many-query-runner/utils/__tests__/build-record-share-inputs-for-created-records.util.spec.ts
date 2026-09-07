@@ -87,7 +87,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
       ]);
     });
 
-    it('should give the owner field value the OWNER row instead of the creator', () => {
+    it('should give the owner field value the OWNER row and keep a FULL grant for the creator', () => {
       expect(
         buildRecordShareInputsForCreatedRecords({
           recordIds: ['record-1'],
@@ -109,10 +109,39 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           rowCause: RecordShareRowCause.OWNER,
           sourceId: 'record-1',
         },
+        {
+          recordId: 'record-1',
+          objectMetadataId: OBJECT_METADATA_ID,
+          principalId: WORKSPACE_MEMBER_ID,
+          principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+          accessLevel: RecordShareAccessLevel.FULL,
+          rowCause: RecordShareRowCause.MANUAL,
+          sourceId: WORKSPACE_MEMBER_ID,
+        },
       ]);
     });
 
-    it('should fall back to the creator rule when the owner field value is null', () => {
+    it('should write only the OWNER row when the creator owns the record', () => {
+      expect(
+        buildRecordShareInputsForCreatedRecords({
+          recordIds: ['record-1'],
+          objectMetadataId: OBJECT_METADATA_ID,
+          authContext: userAuthContext,
+          apiKeyRoleMap,
+          isRecordSharingEnabled,
+          ownerWorkspaceMemberIdByRecordId: {
+            'record-1': WORKSPACE_MEMBER_ID,
+          },
+        }),
+      ).toEqual([
+        expect.objectContaining({
+          principalId: WORKSPACE_MEMBER_ID,
+          rowCause: RecordShareRowCause.OWNER,
+        }),
+      ]);
+    });
+
+    it('should keep the api key role grant next to the owner row and fall back to it when the owner is null', () => {
       expect(
         buildRecordShareInputsForCreatedRecords({
           recordIds: ['record-1', 'record-2'],
@@ -137,6 +166,13 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           principalId: OTHER_WORKSPACE_MEMBER_ID,
           principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
           rowCause: RecordShareRowCause.OWNER,
+        }),
+        expect.objectContaining({
+          recordId: 'record-2',
+          principalId: API_KEY_ROLE_ID,
+          principalType: RecordSharePrincipalType.ROLE,
+          accessLevel: RecordShareAccessLevel.FULL,
+          rowCause: RecordShareRowCause.MANUAL,
         }),
       ]);
     });
@@ -268,7 +304,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
       ]);
     });
 
-    it('should skip the creator role row when shareWith already names that role', () => {
+    it('should keep the creator role at FULL when shareWith names it at a lower level', () => {
       expect(
         buildRecordShareInputsForCreatedRecords({
           recordIds: ['record-1'],
@@ -289,7 +325,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           principalId: APPLICATION_ROLE_ID,
           principalType: RecordSharePrincipalType.ROLE,
-          accessLevel: RecordShareAccessLevel.READ,
+          accessLevel: RecordShareAccessLevel.FULL,
           rowCause: RecordShareRowCause.APPLICATION,
           sourceId: APPLICATION_ID,
         },
