@@ -1303,6 +1303,11 @@ msgstr "Lägg till en videokonferenslänk"
 msgid "Add account"
 msgstr "Lägg till konto"
 
+#. js-lingui-id: dGjQL8
+#: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
+msgid "Add an API key to enable AI."
+msgstr ""
+
 #. js-lingui-id: W5wF8J
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to the point of contact first"
@@ -1950,11 +1955,6 @@ msgstr "AI-förbrukning över tid."
 msgid "AI Model"
 msgstr "AI-modell"
 
-#. js-lingui-id: Sfwld8
-#: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
-msgid "AI not configured. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY in your environment."
-msgstr "AI är inte konfigurerat. Ställ in OPENAI_API_KEY, ANTHROPIC_API_KEY eller XAI_API_KEY i din miljö."
-
 #. js-lingui-id: jwOWhc
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "AI request prep"
@@ -2017,6 +2017,16 @@ msgstr "AI-användning per användare"
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "AI Usage by Workspace"
 msgstr "AI-användning per arbetsyta"
+
+#. js-lingui-id: YfXPCQ
+#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
+msgid "AI usage limit reached. Ask an admin to upgrade the plan."
+msgstr ""
+
+#. js-lingui-id: wBA/cx
+#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
+msgid "AI usage limit reached. Contact support to upgrade."
+msgstr ""
 
 #. js-lingui-id: KLyZ6L
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -2605,7 +2615,7 @@ msgid "Application not listed on the marketplace. It was shared via a direct lin
 msgstr "Den här appen är inte listad på marknadsplatsen. Den delades via en direktlänk"
 
 #. js-lingui-id: +tE2x9
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/modules/settings/applications/hooks/useUninstallApplication.ts
 msgid "Application successfully uninstalled."
 msgstr ""
 
@@ -2798,6 +2808,11 @@ msgstr "Stigande"
 #: src/modules/side-panel/hooks/useOpenAskAiPageInSidePanel.ts
 msgid "Ask AI"
 msgstr "Fråga AI"
+
+#. js-lingui-id: HiVVqo
+#: src/modules/ai/components/AiChatEditorSection.tsx
+msgid "Ask your workspace admin to enable an AI model."
+msgstr ""
 
 #. js-lingui-id: mc9nK2
 #: src/modules/ai/hooks/useAiChatEditor.ts
@@ -4657,6 +4672,11 @@ msgstr "Konfigurera hur det här objektet visas i sökresultaten"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Configure IMAP settings to receive and sync your emails."
 msgstr "Konfigurera IMAP-inställningar för att ta emot och synkronisera dina e-postmeddelanden."
+
+#. js-lingui-id: pE9JCI
+#: src/modules/ai/components/AiChatEditorSection.tsx
+msgid "Configure models"
+msgstr ""
 
 #. js-lingui-id: gk/8eh
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -8196,7 +8216,8 @@ msgid "Error transferring the enterprise key"
 msgstr "Fel vid överföring av Enterprise-nyckeln"
 
 #. js-lingui-id: 5Vy8D1
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/modules/settings/applications/hooks/useUninstallApplication.ts
+#: src/modules/settings/applications/hooks/useUninstallApplication.ts
 msgid "Error uninstalling application."
 msgstr ""
 
@@ -8721,6 +8742,7 @@ msgstr "Kunde inte få svar"
 
 #. js-lingui-id: qZwtAi
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
+#: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 msgid "Failed to install the application."
 msgstr "Det gick inte att installera applikationen."
 
@@ -8759,6 +8781,12 @@ msgstr "Det gick inte att läsa in fler chattar."
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
 msgid "Failed to load server administrators."
 msgstr "Det gick inte att läsa in serveradministratörer."
+
+#. js-lingui-id: OsNlev
+#: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
+#: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
+msgid "Failed to load the application."
+msgstr ""
 
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
@@ -10768,7 +10796,6 @@ msgstr "Installerade appar"
 
 #. js-lingui-id: wJJ+Wy
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Installing..."
 msgstr "Installerar..."
@@ -13284,10 +13311,14 @@ msgid "No AI consumption recorded for this user."
 msgstr "Ingen AI-förbrukning har registrerats för den här användaren."
 
 #. js-lingui-id: 1GMOHe
-#: src/modules/ai/components/AiChatEditorSection.tsx
 #: src/modules/ai/hooks/useAgentChat.ts
 msgid "No AI models are enabled in this workspace."
 msgstr "Inga AI-modeller är aktiverade i den här arbetsytan."
+
+#. js-lingui-id: zcsNvp
+#: src/modules/ai/components/AiChatEditorSection.tsx
+msgid "No AI models are enabled."
+msgstr ""
 
 #. js-lingui-id: 42kV9p
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -17567,6 +17598,11 @@ msgstr "Välj åtgärd"
 msgid "Select Action"
 msgstr "Välj åtgärd"
 
+#. js-lingui-id: TM0KpN
+#: src/modules/object-core/components/CoreObjectTable.tsx
+msgid "Select all loaded rows"
+msgstr ""
+
 #. js-lingui-id: /fhMKz
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn.tsx
 msgid "Select all rows"
@@ -17648,6 +17684,7 @@ msgid "Select options"
 msgstr "Välj alternativ"
 
 #. js-lingui-id: 9c44h0
+#: src/modules/object-core/components/CoreObjectTable.tsx
 #: src/modules/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox.tsx
 msgid "Select row"
 msgstr "Välj rad"
@@ -20586,7 +20623,6 @@ msgstr "Avinstallera denna app från alla arbetsytor innan du tar bort den"
 
 #. js-lingui-id: ItfvBz
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Uninstalling..."
 msgstr "Avinstallerar..."
 
@@ -21074,7 +21110,6 @@ msgid "Upgrading subscription..."
 msgstr "Uppgraderar prenumeration..."
 
 #. js-lingui-id: +Gi3x1
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Upgrading..."
 msgstr "Uppgraderar..."
@@ -22587,31 +22622,10 @@ msgstr "Du kommer att sluta få dessa mejl."
 msgid "You're about to change your workspace subdomain. This action will log out all users."
 msgstr "Du håller på att ändra din arbetsytas subdomän. Denna åtgärd kommer att logga ut alla användare."
 
-#. js-lingui-id: Z5uTAF
+#. js-lingui-id: 6x8lJe
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid ""
-"You've hit your usage limit. \n"
-"Reach to our support team to upgrade."
+msgid "You’ve reached your AI usage limit."
 msgstr ""
-"Du har nått din användningsgräns. \n"
-"Kontakta vårt supportteam för att uppgradera."
-
-#. js-lingui-id: NTyvVW
-#. placeholder {0}: nextResourceCreditsAmount ?? ''
-#. placeholder {1}: nextResourceCreditPrice ?? ''
-#. placeholder {2}: nextTierInterval ?? ''
-#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid ""
-"You've hit your usage limit. \n"
-"Upgrade to {0} credits for ${1}/{2}."
-msgstr ""
-"Du har nått din användningsgräns. \n"
-"Uppgradera till {0} krediter för ${1}/{2}."
-
-#. js-lingui-id: yZ0wRS
-#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "You've hit your usage limit. Subscribe for more usage."
-msgstr "Du har nått din användningsgräns. Prenumerera för att kunna använda mer."
 
 #. js-lingui-id: tOPGvO
 #: src/modules/apollo/services/apollo.factory.ts
@@ -22748,11 +22762,6 @@ msgstr "Din arbetsyta har inte en aktiv prenumeration."
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
 msgid "Your workspace doesn't have an active subscription. Please contact your admin."
 msgstr "Din arbetsyta har inte en aktiv prenumeration. Vänligen kontakta din administratör."
-
-#. js-lingui-id: fAVJ0D
-#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "Your workspace hit its AI usage limit. Ask an admin to upgrade the plan."
-msgstr "Din arbetsyta har nått sin AI-användningsgräns. Be en admin att uppgradera planen."
 
 #. js-lingui-id: RhNbPE
 #: src/modules/settings/billing/components/SettingsBillingContent.tsx
