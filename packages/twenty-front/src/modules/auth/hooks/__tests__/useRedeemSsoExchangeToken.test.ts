@@ -4,10 +4,8 @@ import { Provider as JotaiProvider } from 'jotai';
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { useRedeemSsoExchangeToken } from '@/auth/hooks/useRedeemSsoExchangeToken';
-import {
-  clearSessionGeneration,
-  getSessionGeneration,
-} from '@/auth/utils/sessionGeneration';
+import { clearSessionGeneration } from '@/auth/utils/clearSessionGeneration';
+import { getSessionGeneration } from '@/auth/utils/getSessionGeneration';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   jotaiStore,

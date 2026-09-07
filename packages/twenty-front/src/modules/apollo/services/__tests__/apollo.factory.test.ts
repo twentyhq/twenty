@@ -3,11 +3,9 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 
 import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
-import {
-  clearSessionGeneration,
-  getSessionGeneration,
-  rotateSessionGeneration,
-} from '@/auth/utils/sessionGeneration';
+import { clearSessionGeneration } from '@/auth/utils/clearSessionGeneration';
+import { getSessionGeneration } from '@/auth/utils/getSessionGeneration';
+import { rotateSessionGeneration } from '@/auth/utils/rotateSessionGeneration';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import {
   AUTO_SELECT_FAST_MODEL_ID,

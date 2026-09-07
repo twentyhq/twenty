@@ -1,8 +1,6 @@
-import {
-  clearSessionGeneration,
-  getSessionGeneration,
-  rotateSessionGeneration,
-} from '@/auth/utils/sessionGeneration';
+import { clearSessionGeneration } from '@/auth/utils/clearSessionGeneration';
+import { getSessionGeneration } from '@/auth/utils/getSessionGeneration';
+import { rotateSessionGeneration } from '@/auth/utils/rotateSessionGeneration';
 
 describe('sessionGeneration', () => {
   beforeEach(() => {

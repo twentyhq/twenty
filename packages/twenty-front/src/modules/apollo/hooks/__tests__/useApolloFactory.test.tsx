@@ -5,11 +5,9 @@ import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { useApolloFactory } from '@/apollo/hooks/useApolloFactory';
-import {
-  clearSessionGeneration,
-  getSessionGeneration,
-  rotateSessionGeneration,
-} from '@/auth/utils/sessionGeneration';
+import { clearSessionGeneration } from '@/auth/utils/clearSessionGeneration';
+import { getSessionGeneration } from '@/auth/utils/getSessionGeneration';
+import { rotateSessionGeneration } from '@/auth/utils/rotateSessionGeneration';
 
 enableFetchMocks();
 

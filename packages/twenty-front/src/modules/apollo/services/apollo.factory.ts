@@ -12,7 +12,7 @@ import UploadHttpLink from 'apollo-upload-client/UploadHttpLink.mjs';
 
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
-import { getSessionGeneration } from '@/auth/utils/sessionGeneration';
+import { getSessionGeneration } from '@/auth/utils/getSessionGeneration';
 import { logDebug } from '~/utils/logDebug';
 
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
