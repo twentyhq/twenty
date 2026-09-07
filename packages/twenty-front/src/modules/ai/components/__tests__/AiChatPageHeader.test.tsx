@@ -192,6 +192,80 @@ describe('AiChatPageHeader', () => {
     expect(screen.getByText('Other chat')).toBeVisible();
   });
 
+  it.each(['{Enter}', '{Tab}', '{Shift>}{Tab}{/Shift}'])(
+    'saves once and leaves the rename editor on %s',
+    async (key) => {
+      const user = userEvent.setup();
+      render(<AiChatPageHeader isOnboarding={false} />, { wrapper: Wrapper });
+
+      await user.click(screen.getByRole('button', { name: 'Chat actions' }));
+      await user.click(screen.getByText('Rename'));
+      await user.clear(screen.getByRole('textbox'));
+      await user.type(screen.getByRole('textbox'), 'Qualified leads');
+      await user.keyboard(key);
+
+      expect(renameChatThread).toHaveBeenCalledTimes(1);
+      expect(renameChatThread).toHaveBeenCalledWith(
+        THREAD.id,
+        'Qualified leads',
+      );
+      expect(screen.queryByRole('textbox')).toBeNull();
+    },
+  );
+
+  it('saves when clicking outside without swallowing the next action', async () => {
+    const user = userEvent.setup();
+    render(<AiChatPageHeader isOnboarding={false} />, { wrapper: Wrapper });
+
+    await user.click(screen.getByRole('button', { name: 'Chat actions' }));
+    await user.click(screen.getByText('Rename'));
+    await user.clear(screen.getByRole('textbox'));
+    await user.type(screen.getByRole('textbox'), 'Qualified leads');
+    await user.click(screen.getByRole('button', { name: /^New chat/ }));
+
+    expect(renameChatThread).toHaveBeenCalledTimes(1);
+    expect(renameChatThread).toHaveBeenCalledWith(THREAD.id, 'Qualified leads');
+    expect(screen.queryByRole('textbox')).toBeNull();
+    expect(switchToNewChat).toHaveBeenCalledTimes(1);
+  });
+
+  it('discards the draft on Escape without saving', async () => {
+    const user = userEvent.setup();
+    render(<AiChatPageHeader isOnboarding={false} />, { wrapper: Wrapper });
+
+    await user.click(screen.getByRole('button', { name: 'Chat actions' }));
+    await user.click(screen.getByText('Rename'));
+    await user.clear(screen.getByRole('textbox'));
+    await user.type(screen.getByRole('textbox'), 'Discard this{Escape}');
+
+    expect(renameChatThread).not.toHaveBeenCalled();
+    expect(screen.queryByRole('textbox')).toBeNull();
+    expect(screen.getByText('Best leads')).toBeVisible();
+  });
+
+  it('preserves the draft for retry when saving fails', async () => {
+    renameChatThread.mockResolvedValueOnce(false);
+    const user = userEvent.setup();
+    render(<AiChatPageHeader isOnboarding={false} />, { wrapper: Wrapper });
+
+    await user.click(screen.getByRole('button', { name: 'Chat actions' }));
+    await user.click(screen.getByText('Rename'));
+    await user.clear(screen.getByRole('textbox'));
+    await user.type(screen.getByRole('textbox'), 'Qualified leads{Enter}');
+
+    expect(screen.getByRole('textbox')).toHaveValue('Qualified leads');
+    expect(screen.getByRole('textbox')).not.toHaveFocus();
+    await user.click(screen.getByRole('textbox'));
+    await user.keyboard('{Enter}');
+
+    expect(renameChatThread).toHaveBeenCalledTimes(2);
+    expect(renameChatThread).toHaveBeenLastCalledWith(
+      THREAD.id,
+      'Qualified leads',
+    );
+    expect(screen.queryByRole('textbox')).toBeNull();
+  });
+
   it('requires confirmation before deleting the current chat', async () => {
     const user = userEvent.setup();
     render(<AiChatPageHeader isOnboarding={false} />, { wrapper: Wrapper });

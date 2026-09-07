@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
 import { Button, IconButton } from 'twenty-ui/input';
@@ -11,7 +12,7 @@ import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActio
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
-import { TitleInput } from '@/ui/input/components/TitleInput';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
@@ -62,16 +63,30 @@ export const AiChatPageThreadHeader = ({
     <>
       <StyledTitle>
         {isRenaming ? (
-          <TitleInput
-            instanceId={`ai-chat-page-thread-title-${thread.id}`}
+          <TextInput
             value={draftTitle}
             onChange={setDraftTitle}
-            onEnter={() => commitRename(draftTitle)}
-            onEscape={cancelRename}
-            onClickOutside={() => commitRename(draftTitle)}
+            onFocus={(event) => event.target.select()}
+            onBlur={() => commitRename(draftTitle)}
+            onKeyDown={(event) => {
+              if (event.nativeEvent.isComposing || event.keyCode === 229) {
+                return;
+              }
+              if (event.key === Key.Enter) {
+                event.preventDefault();
+                event.stopPropagation();
+                event.currentTarget.blur();
+              } else if (event.key === Key.Escape) {
+                event.preventDefault();
+                event.stopPropagation();
+                cancelRename();
+              }
+            }}
             placeholder={t`Chat name`}
             sizeVariant="sm"
-            shouldFocus
+            autoGrow
+            inheritFontStyles
+            autoFocus
           />
         ) : (
           <OverflowingTextWithTooltip text={displayTitle} />
