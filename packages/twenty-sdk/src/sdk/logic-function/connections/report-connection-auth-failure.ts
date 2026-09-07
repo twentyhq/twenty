@@ -6,10 +6,6 @@ const REPORT_APP_CONNECTION_AUTH_FAILURE_MUTATION = `
   }
 `;
 
-// Marks one of the app's own connections as auth-failed, so the settings row
-// flips to "Reconnect needed" and `getConnection` starts throwing
-// `AppConnectionAuthFailedError`. Reconnecting clears it. Report only
-// definitive auth rejections, never transient network errors.
 export const reportConnectionAuthFailure = async ({
   connectionId,
   reason,
