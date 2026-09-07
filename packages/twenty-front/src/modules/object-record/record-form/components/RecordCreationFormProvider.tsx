@@ -30,8 +30,9 @@ export const RecordCreationFormProvider = ({
   const store = useStore();
   const { navigateSidePanelMenu } = useSidePanelMenu();
 
-  const [pendingRecordCreation, setPendingRecordCreation] =
-    useState<PendingRecordCreation | null>(null);
+  const [pendingRecordCreations, setPendingRecordCreations] = useState<
+    PendingRecordCreation[]
+  >([]);
 
   const settleRecordCreationDraft = useCallback(
     ({
@@ -41,14 +42,20 @@ export const RecordCreationFormProvider = ({
       requestId: string;
       draftRecord: Partial<ObjectRecord> | null;
     }) => {
-      setPendingRecordCreation((pendingRecordCreation) => {
-        if (pendingRecordCreation?.requestId !== requestId) {
-          return pendingRecordCreation;
+      setPendingRecordCreations((pendingRecordCreations) => {
+        const pendingRecordCreation = pendingRecordCreations.find(
+          (candidate) => candidate.requestId === requestId,
+        );
+
+        if (!isDefined(pendingRecordCreation)) {
+          return pendingRecordCreations;
         }
 
         pendingRecordCreation.settle(draftRecord);
 
-        return null;
+        return pendingRecordCreations.filter(
+          (candidate) => candidate.requestId !== requestId,
+        );
       });
     },
     [],
@@ -76,11 +83,10 @@ export const RecordCreationFormProvider = ({
       );
 
       return new Promise<Partial<ObjectRecord> | null>((resolve) => {
-        setPendingRecordCreation((previousRecordCreation) => {
-          previousRecordCreation?.settle(null);
-
-          return { requestId, settle: resolve };
-        });
+        setPendingRecordCreations((pendingRecordCreations) => [
+          ...pendingRecordCreations,
+          { requestId, settle: resolve },
+        ]);
 
         navigateSidePanelMenu({
           page: SidePanelPages.RecordCreationForm,
@@ -108,12 +114,13 @@ export const RecordCreationFormProvider = ({
   return (
     <RecordCreationFormContext.Provider value={contextValue}>
       {children}
-      {isDefined(pendingRecordCreation) && (
+      {pendingRecordCreations.map(({ requestId }) => (
         <RecordCreationFormCancellationEffect
-          requestId={pendingRecordCreation.requestId}
+          key={requestId}
+          requestId={requestId}
           onCancel={cancelPendingRecordCreation}
         />
-      )}
+      ))}
     </RecordCreationFormContext.Provider>
   );
 };
