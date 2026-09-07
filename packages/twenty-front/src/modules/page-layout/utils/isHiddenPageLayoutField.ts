@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 type IsHiddenPageLayoutFieldParams = {
   fieldMetadataIdsOrNames: (string | undefined)[];
   hiddenFieldMetadataIdsOrNames: string[];
@@ -9,6 +11,6 @@ export const isHiddenPageLayoutField = ({
 }: IsHiddenPageLayoutFieldParams) =>
   fieldMetadataIdsOrNames.some(
     (fieldMetadataIdOrName) =>
-      fieldMetadataIdOrName !== undefined &&
+      isDefined(fieldMetadataIdOrName) &&
       hiddenFieldMetadataIdsOrNames.includes(fieldMetadataIdOrName),
   );
