@@ -27,7 +27,7 @@ jest.mock('@/ai/components/ToolStepRenderer', () => ({
 }));
 
 jest.mock('@/ai/components/LazyMarkdownRenderer', () => ({
-  LazyMarkdownRenderer: ({ text }: { text: string }) => (
+  MarkdownContent: ({ text }: { text: string }) => (
     <div data-testid="markdown-renderer">{text}</div>
   ),
 }));

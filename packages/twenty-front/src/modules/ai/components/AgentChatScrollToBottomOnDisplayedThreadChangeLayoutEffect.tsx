@@ -1,5 +1,5 @@
 import { useStore } from 'jotai';
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
@@ -30,7 +30,7 @@ export const AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect =
       scrollWrapperScrollBottomComponentState,
     );
 
-    useEffect(() => {
+    useLayoutEffect(() => {
       if (!store.get(agentChatIsInitialScrollPendingOnThreadChangeState.atom)) {
         return;
       }

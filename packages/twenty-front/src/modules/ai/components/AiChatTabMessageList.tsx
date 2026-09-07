@@ -1,3 +1,4 @@
+import { MarkdownLoadingSkeleton } from '@/ai/components/LazyMarkdownRenderer';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { AiChatErrorUnderMessageList } from '@/ai/components/AiChatErrorUnderMessageList';
 import { AiChatLastMessageWithStreamingState } from '@/ai/components/AiChatLastMessageWithStreamingState';
@@ -17,7 +18,7 @@ import { ScrollWrapperComponentInstanceContext } from '@/ui/utilities/scroll/sta
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
+import { Suspense, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -76,27 +77,35 @@ export const AiChatTabMessageList = () => {
     <ScrollWrapperComponentInstanceContext.Provider
       value={{ instanceId: scrollWrapperInstanceId }}
     >
-      <StyledScrollWrapperContainer
-        style={{
-          visibility: agentChatIsInitialScrollPendingOnThreadChange
-            ? 'hidden'
-            : 'visible',
-        }}
-      >
-        <ScrollWrapper componentInstanceId={scrollWrapperInstanceId}>
+      <Suspense
+        fallback={
           <StyledMessageListContent>
-            {messageListPreamble}
-            <AiChatNonLastMessageIdsList />
-            <AiChatLastMessageWithStreamingState />
-            <AiChatPendingResponseIndicator />
-            <AiChatErrorUnderMessageList />
+            <MarkdownLoadingSkeleton />
           </StyledMessageListContent>
-          <AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect />
-          <AgentChatPinScrollToBottomOnMountLayoutEffect />
-          <AgentChatStreamingAutoScrollEffect />
-        </ScrollWrapper>
-        <AiChatScrollToBottomButton />
-      </StyledScrollWrapperContainer>
+        }
+      >
+        <StyledScrollWrapperContainer
+          style={{
+            visibility: agentChatIsInitialScrollPendingOnThreadChange
+              ? 'hidden'
+              : 'visible',
+          }}
+        >
+          <ScrollWrapper componentInstanceId={scrollWrapperInstanceId}>
+            <StyledMessageListContent>
+              {messageListPreamble}
+              <AiChatNonLastMessageIdsList />
+              <AiChatLastMessageWithStreamingState />
+              <AiChatPendingResponseIndicator />
+              <AiChatErrorUnderMessageList />
+            </StyledMessageListContent>
+            <AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect />
+            <AgentChatPinScrollToBottomOnMountLayoutEffect />
+            <AgentChatStreamingAutoScrollEffect />
+          </ScrollWrapper>
+          <AiChatScrollToBottomButton />
+        </StyledScrollWrapperContainer>
+      </Suspense>
     </ScrollWrapperComponentInstanceContext.Provider>
   );
 };

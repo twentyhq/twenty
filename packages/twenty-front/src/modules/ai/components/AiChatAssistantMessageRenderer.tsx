@@ -5,7 +5,7 @@ import { RoutingStatusDisplay } from '@/ai/components/RoutingStatusDisplay';
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
 
 import { AiChatQuestionStatusRenderer } from '@/ai/components/AiChatQuestionStatusRenderer';
-import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
+import { MarkdownContent } from '@/ai/components/LazyMarkdownRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
 import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
 import { isCodeInterpreterToolPart } from '@/ai/utils/isCodeInterpreterToolPart';
@@ -34,7 +34,7 @@ const MessagePartRenderer = ({
 }) => {
   switch (part.type) {
     case 'text':
-      return <LazyMarkdownRenderer text={part.text} />;
+      return <MarkdownContent text={part.text} />;
     case 'data-routing-status':
       return <RoutingStatusDisplay data={part.data} />;
     case 'data-compaction':

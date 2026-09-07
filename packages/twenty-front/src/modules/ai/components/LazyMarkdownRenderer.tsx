@@ -121,7 +121,7 @@ const MarkdownRenderer = lazy(async () => {
   };
 });
 
-const LoadingSkeleton = () => {
+export const MarkdownLoadingSkeleton = () => {
   const { theme } = useContext(ThemeContext);
   return (
     <SkeletonTheme
@@ -150,7 +150,7 @@ const MemoizedMarkdownBlock = memo(
   (previousProps, nextProps) => previousProps.blockText === nextProps.blockText,
 );
 
-export const LazyMarkdownRenderer = ({ text }: { text: string }) => {
+export const MarkdownContent = ({ text }: { text: string }) => {
   // Not state: the blocks are a pure function of `text`, the ref only caches
   // the previous split so streaming appends skip re-tokenizing settled blocks.
   // oxlint-disable-next-line twenty/no-state-useref
@@ -168,11 +168,15 @@ export const LazyMarkdownRenderer = ({ text }: { text: string }) => {
       className="markdown-section"
       data-replay-ignore-mutations="true"
     >
-      <Suspense fallback={<LoadingSkeleton />}>
-        {markdownBlocks.map((blockText, blockIndex) => (
-          <MemoizedMarkdownBlock key={blockIndex} blockText={blockText} />
-        ))}
-      </Suspense>
+      {markdownBlocks.map((blockText, blockIndex) => (
+        <MemoizedMarkdownBlock key={blockIndex} blockText={blockText} />
+      ))}
     </StyledMarkdownContainer>
   );
 };
+
+export const LazyMarkdownRenderer = ({ text }: { text: string }) => (
+  <Suspense fallback={<MarkdownLoadingSkeleton />}>
+    <MarkdownContent text={text} />
+  </Suspense>
+);

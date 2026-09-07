@@ -1,6 +1,9 @@
-import { render } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
+import type * as React from 'react';
+import { AiChatNonLastMessageIdsList } from '@/ai/components/AiChatNonLastMessageIdsList';
+import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 
 import { AiChatTabMessageList } from '@/ai/components/AiChatTabMessageList';
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
@@ -25,7 +28,7 @@ jest.mock('@/ui/utilities/scroll/components/ScrollWrapper', () => ({
 }));
 
 jest.mock('@/ai/components/AiChatNonLastMessageIdsList', () => ({
-  AiChatNonLastMessageIdsList: () => null,
+  AiChatNonLastMessageIdsList: jest.fn(() => null),
 }));
 jest.mock('@/ai/components/AiChatLastMessageWithStreamingState', () => ({
   AiChatLastMessageWithStreamingState: () => null,
@@ -42,14 +45,26 @@ jest.mock(
     AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect: () => null,
   }),
 );
+const mockPinScrollToBottom = jest.fn();
+
 jest.mock(
   '@/ai/components/AgentChatPinScrollToBottomOnMountLayoutEffect',
-  () => ({
-    AgentChatPinScrollToBottomOnMountLayoutEffect: () => null,
-  }),
+  () => {
+    const { useLayoutEffect } = jest.requireActual<typeof React>('react');
+    return {
+      AgentChatPinScrollToBottomOnMountLayoutEffect: () => {
+        useLayoutEffect(mockPinScrollToBottom, []);
+        return null;
+      },
+    };
+  },
 );
 jest.mock('@/ai/components/AgentChatStreamingAutoScrollEffect', () => ({
   AgentChatStreamingAutoScrollEffect: () => null,
+}));
+
+jest.mock('@/ai/components/LazyMarkdownRenderer', () => ({
+  MarkdownLoadingSkeleton: () => <div role="status">Loading conversation</div>,
 }));
 
 const INSTANCE_ID = 'aiChatTabMessageListPreambleTest';
@@ -98,5 +113,53 @@ describe('AiChatTabMessageList preamble branch', () => {
 
     expect(getByTestId('preamble')).toBeInTheDocument();
     expect(queryByTestId('initial-loading-indicator')).not.toBeInTheDocument();
+  });
+});
+
+describe('AiChatTabMessageList loading', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    resetJotaiStore();
+    jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
+    jotaiStore.set(
+      agentChatMessagesComponentFamilyState.atomFamily({
+        instanceId: INSTANCE_ID,
+        familyKey: { threadId: THREAD_ID },
+      }),
+      [{ id: 'message-1', role: 'user', parts: [] }],
+    );
+  });
+
+  it('shows one placeholder and waits for message content before positioning the conversation', async () => {
+    let finishLoading = () => {};
+    let isLoaded = false;
+    const loading = new Promise<void>((resolve) => {
+      finishLoading = resolve;
+    });
+
+    jest.mocked(AiChatNonLastMessageIdsList).mockImplementation(() => {
+      if (!isLoaded) {
+        throw loading;
+      }
+      return Array.from({ length: 16 }, (_, index) => (
+        <div key={index}>Message {index + 1}</div>
+      ));
+    });
+
+    renderPreambleBranch();
+
+    expect(screen.getAllByRole('status')).toHaveLength(1);
+    expect(screen.queryByText('Message 1')).not.toBeInTheDocument();
+    expect(mockPinScrollToBottom).not.toHaveBeenCalled();
+
+    await act(async () => {
+      isLoaded = true;
+      finishLoading();
+      await loading;
+    });
+
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(screen.getAllByText(/^Message /)).toHaveLength(16);
+    expect(mockPinScrollToBottom).toHaveBeenCalled();
   });
 });
