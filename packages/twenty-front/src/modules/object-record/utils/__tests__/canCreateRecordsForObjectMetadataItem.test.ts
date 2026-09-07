@@ -84,6 +84,30 @@ describe('canCreateRecordsForObjectMetadataItem', () => {
     expect(result).toBe(false);
   });
 
+  it('should return false when canCreateObjectRecords is explicitly false', () => {
+    const result = canCreateRecordsForObjectMetadataItem({
+      objectPermissions: {
+        ...objectPermissionsAllowingUpdate,
+        canCreateObjectRecords: false,
+      },
+      objectMetadataItem: creatableObjectMetadataItem,
+    });
+
+    expect(result).toBe(false);
+  });
+
+  it('should return true when canCreateObjectRecords is explicitly true and object is creatable/editable', () => {
+    const result = canCreateRecordsForObjectMetadataItem({
+      objectPermissions: {
+        ...objectPermissionsAllowingUpdate,
+        canCreateObjectRecords: true,
+      },
+      objectMetadataItem: creatableObjectMetadataItem,
+    });
+
+    expect(result).toBe(true);
+  });
+
   it('should not require object permissions to be provided', () => {
     const result = canCreateRecordsForObjectMetadataItem({
       objectMetadataItem: creatableObjectMetadataItem,

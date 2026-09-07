@@ -27,6 +27,7 @@ describe('useGetObjectPermissionDerivedStates', () => {
 
     const {
       objectHasReadRevoked,
+      objectHasCreateRevoked,
       objectHasUpdateRevoked,
       objectHasDeleteRevoked,
       objectHasDestroyRevoked,
@@ -36,6 +37,7 @@ describe('useGetObjectPermissionDerivedStates', () => {
     );
 
     expect(objectHasReadRevoked).toEqual(true);
+    expect(objectHasCreateRevoked).toEqual(true);
     expect(objectHasUpdateRevoked).toEqual(true);
     expect(objectHasDeleteRevoked).toEqual(true);
     expect(objectHasDestroyRevoked).toEqual(true);
@@ -55,6 +57,7 @@ describe('useGetObjectPermissionDerivedStates', () => {
 
     const {
       objectHasReadGranted,
+      objectHasCreateGranted,
       objectHasUpdateGranted,
       objectHasDeleteGranted,
       objectHasDestroyGranted,
@@ -64,6 +67,7 @@ describe('useGetObjectPermissionDerivedStates', () => {
     );
 
     expect(objectHasReadGranted).toEqual(true);
+    expect(objectHasCreateGranted).toEqual(true);
     expect(objectHasUpdateGranted).toEqual(true);
     expect(objectHasDeleteGranted).toEqual(true);
     expect(objectHasDestroyGranted).toEqual(true);

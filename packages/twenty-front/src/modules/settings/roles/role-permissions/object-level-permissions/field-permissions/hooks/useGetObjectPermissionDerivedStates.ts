@@ -1,6 +1,7 @@
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
+import { type ObjectPermission } from '~/generated-metadata/graphql';
 
 export const useGetObjectPermissionDerivedStates = ({
   roleId,
@@ -16,7 +17,9 @@ export const useGetObjectPermissionDerivedStates = ({
     const objectPermission = settingsDraftRole.objectPermissions?.find(
       (objectPermissionToFind) =>
         objectPermissionToFind.objectMetadataId === objectMetadataItemId,
-    );
+    ) as
+      | (ObjectPermission & { canCreateObjectRecords?: boolean | null })
+      | undefined;
 
     const isObjectPermissionDefined = isDefined(objectPermission);
 
@@ -25,7 +28,8 @@ export const useGetObjectPermissionDerivedStates = ({
       !isDefined(objectPermission.canReadObjectRecords) &&
       !isDefined(objectPermission.canUpdateObjectRecords) &&
       !isDefined(objectPermission.canSoftDeleteObjectRecords) &&
-      !isDefined(objectPermission.canDestroyObjectRecords);
+      !isDefined(objectPermission.canDestroyObjectRecords) &&
+      !isDefined(objectPermission.canCreateObjectRecords);
 
     const readIsRestrictedOnAllObjectsByDefault =
       settingsDraftRole.canReadAllObjectRecords === false;
@@ -64,6 +68,18 @@ export const useGetObjectPermissionDerivedStates = ({
     const objectHasNoOverrideOnRead =
       !isObjectPermissionDefined ||
       (!objectHasReadGranted && !objectHasReadRevoked);
+
+    const objectHasCreateGranted =
+      isObjectPermissionDefined &&
+      objectPermission.canCreateObjectRecords === true;
+
+    const objectHasCreateRevoked =
+      isObjectPermissionDefined &&
+      objectPermission.canCreateObjectRecords === false;
+
+    const objectHasNoOverrideOnCreate =
+      !isObjectPermissionDefined ||
+      (!objectHasCreateGranted && !objectHasCreateRevoked);
 
     const objectHasUpdateGranted =
       updateIsRestrictedOnAllObjectsByDefault &&
@@ -109,6 +125,7 @@ export const useGetObjectPermissionDerivedStates = ({
 
     const objectHasNoOverrideOnObjectPermission =
       objectHasNoOverrideOnRead &&
+      objectHasNoOverrideOnCreate &&
       objectHasNoOverrideOnUpdate &&
       objectHasNoOverrideOnDelete &&
       objectHasNoOverrideOnDestroy;
@@ -186,10 +203,12 @@ export const useGetObjectPermissionDerivedStates = ({
       cannotAllowFieldUpdateRestrict,
       cannotAllowFieldReadRestrict,
       objectHasReadRevoked,
+      objectHasCreateRevoked,
       objectHasUpdateRevoked,
       objectHasDeleteRevoked,
       objectHasDestroyRevoked,
       objectHasReadGranted,
+      objectHasCreateGranted,
       objectHasUpdateGranted,
       objectHasDeleteGranted,
       objectHasDestroyGranted,

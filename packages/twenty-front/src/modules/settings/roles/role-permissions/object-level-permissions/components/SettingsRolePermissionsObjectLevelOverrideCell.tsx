@@ -9,6 +9,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { type ObjectPermission } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -42,16 +43,29 @@ export const SettingsRolePermissionsObjectLevelOverrideCell = ({
       objectPermission.objectMetadataId === objectMetadataItem.id,
   );
 
-  const permissionValue = objectPermission?.[objectPermissionKey];
+  const permissionValue = (
+    objectPermission as
+      | (ObjectPermission & { canCreateObjectRecords?: boolean | null })
+      | undefined
+  )?.[objectPermissionKey];
 
   const isOverridden = (
     objectPermissionKey: SettingsRoleObjectPermissionKey,
   ) => {
-    const rolePermission = permissionMappings[objectPermissionKey];
+    const rolePermission =
+      objectPermissionKey in permissionMappings
+        ? permissionMappings[
+            objectPermissionKey as keyof typeof permissionMappings
+          ]
+        : undefined;
+
+    const globalPermissionValue: boolean = isDefined(rolePermission)
+      ? Boolean(settingsDraftRole[rolePermission])
+      : true;
 
     return (
       isDefined(permissionValue) &&
-      !!settingsDraftRole[rolePermission] !== !!permissionValue
+      globalPermissionValue !== permissionValue
     );
   };
 

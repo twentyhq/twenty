@@ -3,7 +3,9 @@ import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObje
 import { type ObjectPermission } from '~/generated-metadata/graphql';
 
 type CanCreateRecordsForObjectMetadataItemParams = {
-  objectPermissions?: ObjectPermission;
+  objectPermissions?: ObjectPermission & {
+    canCreateObjectRecords?: boolean | null;
+  };
   objectMetadataItem: Pick<
     EnrichedObjectMetadataItem,
     'isUICreatable' | 'isUIEditable' | 'isRemote' | 'writability'
@@ -17,12 +19,15 @@ type CanCreateRecordsForObjectMetadataItemParams = {
 // rules the user session out regardless of the affordance flags.
 // Creation requires effective editability because today's inline creation UX
 // creates a blank record that the user must then be able to edit.
-// There is no CREATE permission yet, so canUpdateObjectRecords (checked
-// through isObjectMetadataReadOnly) acts as a proxy.
+// When canCreateObjectRecords is explicitly false, creation is disabled.
 export const canCreateRecordsForObjectMetadataItem = ({
   objectPermissions,
   objectMetadataItem,
 }: CanCreateRecordsForObjectMetadataItemParams): boolean => {
+  if (objectPermissions?.canCreateObjectRecords === false) {
+    return false;
+  }
+
   return (
     objectMetadataItem.isUICreatable &&
     !isObjectMetadataReadOnly({ objectPermissions, objectMetadataItem })
