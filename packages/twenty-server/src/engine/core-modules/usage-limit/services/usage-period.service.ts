@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
+import { Injectable, type OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
@@ -15,12 +15,9 @@ import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit
 import { getCalendarDayPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-day-period.util';
 import { getCalendarMonthPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-month-period.util';
 import { getCalendarWeekPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-week-period.util';
-import { WorkspaceCacheException } from 'src/engine/workspace-cache/exceptions/workspace-cache.exception';
 
 @Injectable()
 export class UsagePeriodService implements OnModuleInit {
-  private readonly logger = new Logger(UsagePeriodService.name);
-
   private creditAllowanceProvider: CreditAllowanceProvider;
 
   constructor(private readonly discoveryService: DiscoveryService) {}
@@ -48,21 +45,7 @@ export class UsagePeriodService implements OnModuleInit {
       return this.getCalendarPeriod(periodUnit);
     }
 
-    try {
-      return await this.creditAllowanceProvider.getCreditAllowancePeriod(
-        workspaceId,
-      );
-    } catch (error) {
-      if (error instanceof WorkspaceCacheException) {
-        throw error;
-      }
-
-      this.logger.warn(
-        `Could not read the allowance period for workspace ${workspaceId}, skipping its allowance-period limits: ${error instanceof Error ? error.message : 'unknown error'}`,
-      );
-
-      return null;
-    }
+    return this.creditAllowanceProvider.getCreditAllowancePeriod(workspaceId);
   }
 
   async findCurrentPeriodsByUnit({
