@@ -34,6 +34,13 @@ export const Default: Story = {
     await expect(
       within(canvasElement.ownerDocument.body).queryByRole('tooltip'),
     ).not.toBeInTheDocument();
+    await userEvent.tab();
+    await expect(canvas.getByText(args.message)).toHaveFocus();
+    await expect(
+      within(canvasElement.ownerDocument.body).queryByRole('tooltip'),
+    ).not.toBeInTheDocument();
+    await userEvent.tab();
+    await expect(button).toHaveFocus();
     await expect(button).toBeEnabled();
     await userEvent.click(button);
     await expect(args.button?.onClick).toHaveBeenCalledTimes(1);
@@ -108,6 +115,38 @@ export const TruncatedMessage: Story = {
       await within(canvasElement.ownerDocument.body).findByRole('tooltip'),
     ).toHaveTextContent(args.message);
     await userEvent.unhover(message);
+    await userEvent.tab();
+    await expect(message).toHaveFocus();
+    await expect(
+      await within(canvasElement.ownerDocument.body).findByRole('tooltip'),
+    ).toHaveTextContent(args.message);
+    await userEvent.hover(message);
+    await userEvent.unhover(message);
+    await expect(
+      within(canvasElement.ownerDocument.body).getByRole('tooltip'),
+    ).toHaveTextContent(args.message);
+    await userEvent.keyboard('{Escape}');
+    await expect(message).toHaveFocus();
+    await expect(
+      within(canvasElement.ownerDocument.body).queryByRole('tooltip'),
+    ).not.toBeInTheDocument();
+    await userEvent.tab();
+    await expect(
+      canvas.getByRole('button', { name: /Reconnect/ }),
+    ).toHaveFocus();
+    await userEvent.tab({ shift: true });
+    await expect(
+      await within(canvasElement.ownerDocument.body).findByRole('tooltip'),
+    ).toHaveTextContent(args.message);
+    await userEvent.tab();
+    await expect(
+      within(canvasElement.ownerDocument.body).queryByRole('tooltip'),
+    ).not.toBeInTheDocument();
+    await userEvent.pointer({ keys: '[TouchA]', target: message });
+    await expect(message).toHaveFocus();
+    await expect(
+      await within(canvasElement.ownerDocument.body).findByRole('tooltip'),
+    ).toHaveTextContent(args.message);
     await userEvent.click(canvas.getByRole('button', { name: /Reconnect/ }));
     await expect(args.button?.onClick).toHaveBeenCalledTimes(1);
   },

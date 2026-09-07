@@ -1,4 +1,6 @@
 .overflowingMultilineText {
+  @include focus-ring;
+
   cursor: inherit;
   font-family: inherit;
   font-size: inherit;
@@ -15,6 +17,8 @@
 }
 
 .overflowingText {
+  @include focus-ring;
+
   cursor: inherit;
   font-family: inherit;
   font-size: inherit;

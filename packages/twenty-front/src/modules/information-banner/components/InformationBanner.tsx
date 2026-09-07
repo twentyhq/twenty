@@ -71,6 +71,7 @@ export const InformationBanner = ({
           <StyledContent hasCloseButton={!!onClose}>
             <StyledText>
               <OverflowingTextWithTooltip
+                isFocusable
                 text={<>{message}</>}
                 tooltipContent={message}
               />

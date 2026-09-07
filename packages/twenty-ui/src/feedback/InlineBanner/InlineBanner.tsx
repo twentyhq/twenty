@@ -43,6 +43,7 @@ export const InlineBanner = ({
         <LeftIcon size={theme.icon.size.md} />
         <div className={styles.bannerText}>
           <OverflowingTextWithTooltip
+            isFocusable
             text={<>{message}</>}
             tooltipContent={message}
           />
