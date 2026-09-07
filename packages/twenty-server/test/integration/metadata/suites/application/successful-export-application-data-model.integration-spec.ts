@@ -8,6 +8,7 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import {
   type FieldManifest,
   type ObjectManifest,
+  type TranslationsManifest,
   TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
 } from 'twenty-shared/application';
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
@@ -99,10 +100,18 @@ const companyTaglineField: FieldManifest = {
   objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
 };
 
+const FIXTURE_TRANSLATIONS: TranslationsManifest = {
+  'fr-FR': {
+    'export.ticket.title': 'Titre du ticket',
+    'export.ticket.project': 'Projet',
+  },
+};
+
 const manifest = buildBaseManifest({
   appId: TEST_APP_ID,
   roleId: TEST_ROLE_ID,
   overrides: {
+    translations: FIXTURE_TRANSLATIONS,
     objects: [ticketObject, projectObject],
     fields: [companyTaglineField],
     indexes: [
@@ -153,6 +162,7 @@ describe('Application export - data model', () => {
       displayName: 'Test Application',
       sourceType: 'LOCAL',
     });
+    expect(exported.manifest.translations).toEqual(FIXTURE_TRANSLATIONS);
     expect(exported.manifest.application.defaultRoleUniversalIdentifier).toBe(
       TEST_ROLE_ID,
     );

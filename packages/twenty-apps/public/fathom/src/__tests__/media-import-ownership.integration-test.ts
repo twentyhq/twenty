@@ -1,43 +1,10 @@
 import { randomUUID } from 'node:crypto';
-import { CoreApiClient } from 'twenty-client-sdk/core';
-import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { describe, expect, it } from 'vitest';
 
-import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { createFathomApplicationCoreApiClient } from 'src/__tests__/utils/create-fathom-application-core-api-client.util';
 import { claimFathomMediaImport } from 'src/logic-functions/utils/claim-fathom-media-import.util';
 import { updateFathomRecordingImport } from 'src/logic-functions/utils/update-fathom-recording-import.util';
-
-const createFathomApplicationCoreApiClient =
-  async (): Promise<CoreApiClient> => {
-    const metadataApiClient = new MetadataApiClient();
-    const applicationsResult = await metadataApiClient.query({
-      findManyApplications: {
-        id: true,
-        universalIdentifier: true,
-      },
-    });
-    const fathomApplication = applicationsResult.findManyApplications.find(
-      (application) =>
-        application.universalIdentifier === APPLICATION_UNIVERSAL_IDENTIFIER,
-    );
-
-    if (!fathomApplication) {
-      throw new Error('Expected the Fathom application to be installed');
-    }
-
-    const applicationTokenResult = await metadataApiClient.mutation({
-      generateApplicationToken: {
-        __args: { applicationId: fathomApplication.id },
-        applicationAccessToken: { token: true },
-      },
-    });
-
-    return new CoreApiClient({
-      headers: {
-        Authorization: `Bearer ${applicationTokenResult.generateApplicationToken.applicationAccessToken.token}`,
-      },
-    });
-  };
+import { updateFathomMediaDownloadId } from 'src/logic-functions/utils/update-fathom-media-download-id.util';
 
 describe('Fathom recording import ownership', () => {
   it.each([
@@ -124,15 +91,29 @@ describe('Fathom recording import ownership', () => {
         }),
       ).toBe(false);
 
+      const replacementDownloadId = randomUUID();
+
+      expect(
+        await updateFathomMediaDownloadId({
+          coreApiClient,
+          writeContext,
+          downloadId: replacementDownloadId,
+        }),
+      ).toBe(false);
+
       const current = await coreApiClient.query({
         fathomRecordingImport: {
           __args: { filter: { id: { eq: fathomRecordingImportId } } },
           mediaFailureReason: true,
+          mediaDownloadId: true,
         },
       });
 
       expect(current.fathomRecordingImport?.mediaFailureReason).toBe(
         'download_expired',
+      );
+      expect(current.fathomRecordingImport?.mediaDownloadId).not.toBe(
+        replacementDownloadId,
       );
     } finally {
       await coreApiClient.mutation({

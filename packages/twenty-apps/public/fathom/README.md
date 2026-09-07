@@ -27,6 +27,11 @@ emails do not need to match.
 - Fathom generates the downloadable video in the background, so a recording
   stays in Processing for a few minutes after its transcript arrives, until its
   media lands or is settled as unavailable.
+- A daily reconciliation pass scans local Call Recordings started in the last
+  seven days and resumes media imports inactive for at least 30 minutes.
+- Media imports respect Fathom's Retry-After delay for up to three retries.
+  Continued throttling leaves the import unfinished for the daily recovery
+  pass; recordings outside its seven-day window need Sync Fathom Call.
 - Media is skipped for recordings above 500 MB, for recordings Fathom has no
   downloadable media for, and for limited-access shares that the connected
   account may view but not download. Fathom records the reason internally so
@@ -38,3 +43,10 @@ emails do not need to match.
   scopes so Fathom receives the new registration.
 
 Development setup lives in [SETUP.md](SETUP.md).
+
+## Reliability limits
+
+Import pacing is best-effort: concurrent jobs can reserve overlapping slots.
+After Fathom creates a download, Twenty retries saving its ID up to three total
+attempts. A crash or failed save can still cause a later retry to request another
+download generation; provider creation and local persistence are not atomic.
