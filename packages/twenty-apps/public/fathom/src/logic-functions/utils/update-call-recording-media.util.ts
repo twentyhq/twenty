@@ -2,7 +2,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type CallRecordingSyncFields } from 'src/logic-functions/types/call-recording-sync-fields.type';
 import { type FathomMediaWriteContext } from 'src/logic-functions/types/fathom-media-write-context.type';
-import { isDefined } from 'src/utils/is-defined';
+import { buildFathomMediaWriteFence } from 'src/logic-functions/utils/build-fathom-media-write-fence.util';
 
 export const updateCallRecordingMedia = async ({
   coreApiClient,
@@ -20,14 +20,7 @@ export const updateCallRecordingMedia = async ({
       __args: {
         filter: {
           id: { eq: callRecordingId },
-          fathomRecordingImports: {
-            id: { eq: writeContext.fathomRecordingImportId },
-            connectedAccountId: { eq: writeContext.connectedAccountId },
-            mediaImportClaimedAt: { eq: writeContext.claimedAt },
-            mediaDownloadId: isDefined(writeContext.downloadId)
-              ? { eq: writeContext.downloadId }
-              : { is: 'NULL' },
-          },
+          fathomRecordingImports: buildFathomMediaWriteFence(writeContext),
         },
         data: fields,
       },

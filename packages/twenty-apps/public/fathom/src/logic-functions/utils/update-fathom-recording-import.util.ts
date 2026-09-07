@@ -2,7 +2,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type FathomRecordingImportFields } from 'src/logic-functions/types/fathom-recording-import-fields.type';
 import { type FathomMediaWriteContext } from 'src/logic-functions/types/fathom-media-write-context.type';
-import { isDefined } from 'src/utils/is-defined';
+import { buildFathomMediaWriteFence } from 'src/logic-functions/utils/build-fathom-media-write-fence.util';
 
 export const updateFathomRecordingImport = async ({
   coreApiClient,
@@ -19,14 +19,7 @@ export const updateFathomRecordingImport = async ({
   const result = await coreApiClient.mutation({
     updateFathomRecordingImports: {
       __args: {
-        filter: {
-          id: { eq: writeContext.fathomRecordingImportId },
-          connectedAccountId: { eq: writeContext.connectedAccountId },
-          mediaImportClaimedAt: { eq: writeContext.claimedAt },
-          mediaDownloadId: isDefined(writeContext.downloadId)
-            ? { eq: writeContext.downloadId }
-            : { is: 'NULL' },
-        },
+        filter: buildFathomMediaWriteFence(writeContext),
         data: fields,
       },
       id: true,
