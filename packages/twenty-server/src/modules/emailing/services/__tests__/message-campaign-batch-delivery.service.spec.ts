@@ -296,20 +296,53 @@ describe('MessageCampaignBatchDeliveryService', () => {
       harness.service.processSendBatchJob(buildJobData(2)),
     ).rejects.toThrow('settle exploded');
 
-    const rescueByDeliveryId = new Map(
-      harness.campaignDeliveryRepository.update.mock.calls
-        .filter(([, criteria]) => 'id' in (criteria as Record<string, unknown>))
-        .map(([, criteria, update]) => [
-          (criteria as { id: string }).id,
-          update,
-        ]),
+    const rescueCalls =
+      harness.campaignDeliveryRepository.update.mock.calls.filter(
+        ([, criteria]) => 'id' in (criteria as Record<string, unknown>),
+      );
+
+    const acceptedCall = rescueCalls.find(
+      ([, , update]) => update.state === CAMPAIGN_DELIVERY_STATE.SENT,
     );
 
-    expect(rescueByDeliveryId.get('message-0')?.state).toBe(
-      CAMPAIGN_DELIVERY_STATE.SENT,
+    expect((acceptedCall?.[1] as { id: { value: string[] } }).id.value).toEqual(
+      ['message-0'],
     );
-    expect(rescueByDeliveryId.get('message-1')?.state).not.toBe(
-      CAMPAIGN_DELIVERY_STATE.SENT,
+
+    const rejectedCall = rescueCalls.find(
+      ([, criteria]) => (criteria as { id: unknown }).id === 'message-1',
+    );
+
+    expect(rejectedCall?.[2].state).toBe(CAMPAIGN_DELIVERY_STATE.FAILED);
+  });
+
+  it('releases the accepted rows before the rejected ones, so a half-failed rescue cannot re-send', async () => {
+    const harness = buildHarness();
+
+    harness.claimedIds.push('message-0', 'message-1');
+    harness.emailingDomainSenderService.sendEmailBatch.mockResolvedValue({
+      entries: [
+        { recipientIndex: 0, messageId: 'provider-0', errorMessage: null },
+        { recipientIndex: 1, messageId: null, errorMessage: 'rejected' },
+      ],
+      suppressedRecipientIndexes: [],
+    });
+    harness.dataSource.query.mockRejectedValue(new Error('settle exploded'));
+
+    await expect(
+      harness.service.processSendBatchJob(buildJobData(2)),
+    ).rejects.toThrow('settle exploded');
+
+    const rescueCalls =
+      harness.campaignDeliveryRepository.update.mock.calls.filter(
+        ([, criteria]) => 'id' in (criteria as Record<string, unknown>),
+      );
+
+    // Whatever the rescue does not finish is re-queued by the finally block, so
+    // the row the provider took has to be released by the first write.
+    expect(rescueCalls[0][2].state).toBe(CAMPAIGN_DELIVERY_STATE.SENT);
+    expect(rescueCalls[0][2].failureReason).toBe(
+      CAMPAIGN_FAILURE_REASON.SETTLEMENT_LOST,
     );
   });
 

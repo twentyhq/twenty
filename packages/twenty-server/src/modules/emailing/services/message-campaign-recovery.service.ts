@@ -12,6 +12,13 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
 
 const SENDING_STALE_THRESHOLD_MS = 60 * 60 * 1000;
 
+// Deliberately far longer than the stale threshold. A delivery row is only
+// touched when a batch claims, defers or settles it, so a queue that is merely
+// backed up or a worker outage leaves live rows untouched for as long as it
+// lasts. Orphaning them needs to be slower than any outage worth riding out,
+// because the cost of being wrong is failing recipients whose jobs were coming.
+const ORPHANED_QUEUED_THRESHOLD_MS = 24 * 60 * 60 * 1000;
+
 @Injectable()
 export class MessageCampaignRecoveryService {
   private readonly logger = new Logger(MessageCampaignRecoveryService.name);
@@ -132,7 +139,9 @@ export class MessageCampaignRecoveryService {
             {
               workspaceId,
               campaignId,
-              untouchedSince: new Date(staleSince),
+              untouchedSince: new Date(
+                Date.now() - ORPHANED_QUEUED_THRESHOLD_MS,
+              ),
             },
           );
 

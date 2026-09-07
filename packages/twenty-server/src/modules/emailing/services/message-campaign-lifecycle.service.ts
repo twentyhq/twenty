@@ -145,10 +145,10 @@ export class MessageCampaignLifecycleService {
   // counts as unfinished, so the campaign would sit in SENDING with nothing
   // left to move it. Failing them lets it terminalise and names why.
   //
-  // untouchedSince is what separates an abandoned row from a live one: a batch
-  // being deferred by the rate limiter re-queues its rows on every attempt, so
-  // it keeps bumping updatedAt while its job waits. Only rows nothing has
-  // touched for the whole stale window have no job left to run them.
+  // untouchedSince is what separates an abandoned row from a live one. A row is
+  // touched whenever a batch claims, defers or settles it, so anything still
+  // being worked keeps moving; the caller passes a window long enough that a
+  // backed-up queue or a worker outage does not look like abandonment.
   async failOrphanedQueuedDeliveries({
     workspaceId,
     campaignId,

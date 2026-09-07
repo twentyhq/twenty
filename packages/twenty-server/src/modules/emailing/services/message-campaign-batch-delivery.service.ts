@@ -627,8 +627,12 @@ export class MessageCampaignBatchDeliveryService {
   // Settling threw after the provider had already taken the batch, so the rows
   // still hold their claim. Recording them all one way is wrong in both
   // directions: sent would count recipients the provider rejected, and failed
-  // is claimable and would mail the accepted ones again. Each row is settled by
-  // what the batch resolved for it, and only the accepted ones are marked sent.
+  // is claimable and would mail the accepted ones again.
+  //
+  // The rows the provider accepted are released first, in one statement. If the
+  // second write then fails, the finally block re-queues whatever is still
+  // claimed, and only recipients the provider never delivered to are in that
+  // set, so a retry cannot re-send mail that already went out.
   private async settleClaimsAlreadyHandedToProvider({
     workspaceId,
     claimToken,
@@ -638,9 +642,27 @@ export class MessageCampaignBatchDeliveryService {
     claimToken: string;
     settlements: CampaignDeliverySettlement[];
   }): Promise<void> {
+    const acceptedDeliveryIds = settlements
+      .filter((settlement) => settlement.state === CAMPAIGN_DELIVERY_STATE.SENT)
+      .map((settlement) => settlement.deliveryId);
+
+    if (acceptedDeliveryIds.length > 0) {
+      await this.campaignDeliveryRepository.update(
+        workspaceId,
+        { id: In(acceptedDeliveryIds), claimToken },
+        {
+          state: CAMPAIGN_DELIVERY_STATE.SENT,
+          failureReason: CAMPAIGN_FAILURE_REASON.SETTLEMENT_LOST,
+          claimToken: null,
+          claimExpiresAt: null,
+        },
+      );
+    }
+
     for (const settlement of settlements) {
-      const wasAcceptedByProvider =
-        settlement.state === CAMPAIGN_DELIVERY_STATE.SENT;
+      if (settlement.state === CAMPAIGN_DELIVERY_STATE.SENT) {
+        continue;
+      }
 
       await this.campaignDeliveryRepository.update(
         workspaceId,
@@ -648,9 +670,7 @@ export class MessageCampaignBatchDeliveryService {
         {
           state: settlement.state,
           skipReason: settlement.skipReason,
-          failureReason: wasAcceptedByProvider
-            ? CAMPAIGN_FAILURE_REASON.SETTLEMENT_LOST
-            : settlement.failureReason,
+          failureReason: settlement.failureReason,
           claimToken: null,
           claimExpiresAt: null,
         },
