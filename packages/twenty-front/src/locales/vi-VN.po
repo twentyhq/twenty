@@ -229,12 +229,6 @@ msgstr ""
 msgid "{0, plural, one {You do not have permission to access the {fieldsList} field} other {You do not have permission to access the {fieldsList} fields}}"
 msgstr "{0, plural, other {Bạn không có quyền truy cập vào trường {fieldsList}}}"
 
-#. js-lingui-id: wqtZLy
-#. placeholder {0}: campaign.name
-#: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/DuplicateMessageCampaignSingleRecordCommand.tsx
-msgid "{0} (copy)"
-msgstr ""
-
 #. js-lingui-id: 6lE3tD
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
