@@ -10,11 +10,11 @@ import {
 } from 'twenty-ui/feedback';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
 import { Button, IconButton } from 'twenty-ui/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledText = styled.div`
-  overflow: hidden;
-  text-overflow: ellipsis;
+  min-width: 0;
 `;
 
 const StyledInvertedIconButton = styled(IconButton)`
@@ -28,6 +28,7 @@ const StyledContent = styled.div<{ hasCloseButton: boolean }>`
   gap: ${themeCssVariables.spacing[3]};
   justify-content: center;
   margin-left: ${({ hasCloseButton }) => (hasCloseButton ? '24px' : '0')};
+  min-width: 0;
 `;
 
 export const InformationBanner = ({
@@ -68,7 +69,12 @@ export const InformationBanner = ({
       {informationBannerIsOpen && (
         <Banner color={color} variant={variant}>
           <StyledContent hasCloseButton={!!onClose}>
-            <StyledText>{message}</StyledText>
+            <StyledText>
+              <OverflowingTextWithTooltip
+                text={<>{message}</>}
+                tooltipContent={message}
+              />
+            </StyledText>
             {buttonTitle && buttonOnClick && (
               <Button
                 variant="secondary"

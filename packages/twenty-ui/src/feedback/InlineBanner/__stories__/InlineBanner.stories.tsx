@@ -30,6 +30,10 @@ export const Default: Story = {
       name: /Configure models/,
     });
 
+    await userEvent.hover(canvas.getByText(args.message));
+    await expect(
+      within(canvasElement.ownerDocument.body).queryByRole('tooltip'),
+    ).not.toBeInTheDocument();
     await expect(button).toBeEnabled();
     await userEvent.click(button);
     await expect(args.button?.onClick).toHaveBeenCalledTimes(1);
@@ -82,5 +86,29 @@ export const Embedded: Story = {
     message: 'No AI models are enabled.',
     button: { title: 'Configure models', onClick: fn() },
     embedded: true,
+  },
+};
+
+export const TruncatedMessage: Story = {
+  args: {
+    color: 'blue',
+    message:
+      'Sync lost with mailbox tim@apple.dev. Please reconnect for updates:',
+    button: { title: 'Reconnect', onClick: fn() },
+  },
+  parameters: { container: { width: 320 } },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const message = canvas.getByText(args.message);
+
+    await expect(message.scrollWidth).toBeGreaterThan(message.clientWidth);
+    await expect(getComputedStyle(message).whiteSpace).toBe('nowrap');
+    await userEvent.hover(message);
+    await expect(
+      await within(canvasElement.ownerDocument.body).findByRole('tooltip'),
+    ).toHaveTextContent(args.message);
+    await userEvent.unhover(message);
+    await userEvent.click(canvas.getByRole('button', { name: 'Reconnect' }));
+    await expect(args.button?.onClick).toHaveBeenCalledTimes(1);
   },
 };
