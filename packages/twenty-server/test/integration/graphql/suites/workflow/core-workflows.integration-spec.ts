@@ -655,6 +655,14 @@ describe('coreWorkflows (e2e)', () => {
     expect(deletedWorkflowStatuses).toEqual(['DEACTIVATED']);
 
     for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt++) {
+      if (!isDefined(await findCoreWorkflowByName(softDeletedName))) {
+        break;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+    }
+
+    for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt++) {
       expect(await findCoreWorkflowByName(softDeletedName)).toBeUndefined();
 
       await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
