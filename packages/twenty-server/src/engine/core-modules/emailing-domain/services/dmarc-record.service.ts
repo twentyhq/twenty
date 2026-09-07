@@ -6,10 +6,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { DMARC_RECORD_PREFIX } from 'src/engine/core-modules/emailing-domain/constants/dmarc-record-prefix.constant';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { buildDmarcVerificationRecord } from 'src/engine/core-modules/emailing-domain/utils/build-dmarc-verification-record.util';
-import { findDmarcPolicyInTxtRecords } from 'src/engine/core-modules/emailing-domain/utils/find-dmarc-policy-in-txt-records.util';
+import { containsDmarcPolicy } from 'src/engine/core-modules/emailing-domain/utils/contains-dmarc-policy.util';
 import { getDmarcLookupDomains } from 'src/engine/core-modules/emailing-domain/utils/get-dmarc-lookup-domains.util';
-
-const MISSING_RECORD_DNS_CODES = ['ENOTFOUND', 'ENODATA'];
+import { isMissingDnsRecordError } from 'src/engine/core-modules/emailing-domain/utils/is-missing-dns-record-error.util';
 
 @Injectable()
 export class DmarcRecordService {
@@ -22,9 +21,11 @@ export class DmarcRecordService {
       return emailingDomain;
     }
 
-    const isPolicyMissing = await this.isPolicyMissing(emailingDomain.domain);
+    const canOfferDmarcRecord = await this.canOfferDmarcRecord(
+      emailingDomain.domain,
+    );
 
-    if (!isPolicyMissing) {
+    if (!canOfferDmarcRecord) {
       return emailingDomain;
     }
 
@@ -37,14 +38,12 @@ export class DmarcRecordService {
     };
   }
 
-  // Publishing a second record at _dmarc makes receivers discard every policy
-  // for the domain (RFC 7489 6.6.3), so the record is only ever offered once a
-  // lookup proves none exists. An inconclusive lookup keeps it hidden.
-  private async isPolicyMissing(domain: string): Promise<boolean> {
+  private async canOfferDmarcRecord(domain: string): Promise<boolean> {
     for (const lookupDomain of getDmarcLookupDomains(domain)) {
-      const policyState = await this.findPolicyState(lookupDomain);
+      const hasResolvedWithoutPolicy =
+        await this.hasResolvedWithoutPolicy(lookupDomain);
 
-      if (policyState !== 'absent') {
+      if (!hasResolvedWithoutPolicy) {
         return false;
       }
     }
@@ -52,28 +51,23 @@ export class DmarcRecordService {
     return true;
   }
 
-  private async findPolicyState(
-    domain: string,
-  ): Promise<'present' | 'absent' | 'unknown'> {
+  private async hasResolvedWithoutPolicy(domain: string): Promise<boolean> {
     try {
       const txtRecords = await resolveTxt(`${DMARC_RECORD_PREFIX}.${domain}`);
 
-      return findDmarcPolicyInTxtRecords(txtRecords) ? 'present' : 'absent';
+      return !containsDmarcPolicy(txtRecords);
     } catch (error) {
-      const code =
-        error instanceof Error && 'code' in error ? String(error.code) : '';
-
-      if (MISSING_RECORD_DNS_CODES.includes(code)) {
-        return 'absent';
+      if (isMissingDnsRecordError(error)) {
+        return true;
       }
 
       this.logger.warn(
-        `Could not resolve the DMARC record of ${domain}: ${
+        `Could not resolve the DMARC record of ${domain}, assuming a policy is already published: ${
           error instanceof Error ? error.message : String(error)
         }`,
       );
 
-      return 'unknown';
+      return false;
     }
   }
 }

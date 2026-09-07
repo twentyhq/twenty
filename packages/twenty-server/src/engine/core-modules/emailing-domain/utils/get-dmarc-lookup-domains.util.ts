@@ -1,11 +1,10 @@
 import psl from 'psl';
+import { isDefined } from 'twenty-shared/utils';
 
 export const getDmarcLookupDomains = (domain: string): string[] => {
-  const parsed = psl.parse(domain);
-  const organizationalDomain =
-    'domain' in parsed && parsed.domain !== null ? parsed.domain : null;
+  const organizationalDomain = psl.get(domain);
 
-  if (organizationalDomain === null || organizationalDomain === domain) {
+  if (!isDefined(organizationalDomain) || organizationalDomain === domain) {
     return [domain];
   }
 
