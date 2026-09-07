@@ -1,8 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource } from 'typeorm';
+import { DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { MigrateCanvasTabsToVerticalListSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-slow-1788603039076-migrate-canvas-tabs-to-vertical-list';
+import { MigrateCanvasTabsToVerticalListSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-slow-1788770678957-migrate-canvas-tabs-to-vertical-list';
 
 jest.useRealTimers();
 
@@ -19,6 +19,7 @@ type TabAndWidgetState = {
 
 describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () => {
   let dataSource: DataSource;
+  let queryRunner: QueryRunner;
   let command: MigrateCanvasTabsToVerticalListSlowInstanceCommand;
   let workspaceId: string;
   let applicationId: string;
@@ -144,15 +145,7 @@ describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () 
   };
 
   const runDown = async (): Promise<void> => {
-    const queryRunner = dataSource.createQueryRunner();
-
-    await queryRunner.connect();
-
-    try {
-      await command.down(queryRunner);
-    } finally {
-      await queryRunner.release();
-    }
+    await command.down(queryRunner);
   };
 
   beforeAll(async () => {
@@ -184,6 +177,17 @@ describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () 
   }, 30000);
 
   beforeEach(async () => {
+    queryRunner = dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    // The instance command also touches seeded layouts and an existing backup table.
+    jest
+      .spyOn(dataSource, 'query')
+      .mockImplementation((query, parameters) =>
+        queryRunner.query(query, parameters),
+      );
+
     pageLayoutId = v4();
 
     await dataSource.query(
@@ -200,17 +204,9 @@ describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () 
   });
 
   afterEach(async () => {
-    const [{ backupTable }] = (await dataSource.query(
-      `SELECT to_regclass('core."canvasTabToVerticalListMigrationBackup"') AS "backupTable"`,
-    )) as { backupTable: string | null }[];
-
-    if (isDefined(backupTable)) {
-      await runDown();
-    }
-
-    await dataSource.query(`DELETE FROM "core"."pageLayout" WHERE "id" = $1`, [
-      pageLayoutId,
-    ]);
+    jest.restoreAllMocks();
+    await queryRunner.rollbackTransaction();
+    await queryRunner.release();
   });
 
   afterAll(async () => {
@@ -300,14 +296,7 @@ describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () 
       widgetPosition: detachedCanvasWidgetPosition,
     });
 
-    await dataSource.query(`
-      CREATE TABLE "core"."canvasTabToVerticalListMigrationBackup" (
-        "pageLayoutTabId" uuid PRIMARY KEY,
-        "pageLayoutWidgetId" uuid NOT NULL UNIQUE,
-        "pageLayoutWidgetPosition" jsonb
-      )
-    `);
-
+    await command.up(queryRunner);
     await command.runDataMigration(dataSource);
 
     await expect(
@@ -407,6 +396,7 @@ describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () 
       },
     });
 
+    await command.runDataMigration(dataSource);
     await runDown();
 
     await expect(
@@ -473,4 +463,217 @@ describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () 
       });
     }
   }, 60000);
+
+  it('leaves Canvas tabs receiving widgets through overrides unchanged', async () => {
+    const firstTab = await seedTab({
+      layoutMode: 'CANVAS',
+      widgetIsActiveValues: [true],
+    });
+    const secondTab = await seedTab({
+      layoutMode: 'CANVAS',
+      widgetIsActiveValues: [true],
+    });
+
+    for (const [sourceTab, destinationTab] of [
+      [firstTab, secondTab],
+      [secondTab, firstTab],
+    ]) {
+      await dataSource.query(
+        `UPDATE "core"."pageLayoutWidget" SET "overrides" = $1 WHERE "id" = $2`,
+        [
+          {
+            pageLayoutTabId: destinationTab.tabId,
+            position: { layoutMode: 'CANVAS' },
+          },
+          sourceTab.widgetIds[0],
+        ],
+      );
+    }
+
+    await command.runDataMigration(dataSource);
+
+    for (const [sourceTab, destinationTab] of [
+      [firstTab, secondTab],
+      [secondTab, firstTab],
+    ]) {
+      await expect(
+        readTabAndWidgetState({
+          tabId: sourceTab.tabId,
+          widgetId: sourceTab.widgetIds[0],
+        }),
+      ).resolves.toEqual({
+        layoutMode: 'CANVAS',
+        position: { layoutMode: 'CANVAS' },
+        overrides: {
+          pageLayoutTabId: destinationTab.tabId,
+          position: { layoutMode: 'CANVAS' },
+        },
+      });
+    }
+  });
+
+  it('does not roll back a widget moved to a native vertical-list tab', async () => {
+    const originalTab = await seedTab({
+      layoutMode: 'CANVAS',
+      widgetIsActiveValues: [true],
+    });
+    const destinationTab = await seedTab({
+      layoutMode: 'VERTICAL_LIST',
+      widgetIsActiveValues: [],
+    });
+
+    await command.runDataMigration(dataSource);
+
+    const replacementTab = await seedTab({
+      layoutMode: 'VERTICAL_LIST',
+      widgetIsActiveValues: [true],
+      widgetPosition: { layoutMode: 'VERTICAL_LIST', index: 0 },
+    });
+
+    await dataSource.query(
+      `UPDATE "core"."pageLayoutWidget" SET "pageLayoutTabId" = $1 WHERE "id" = $2`,
+      [destinationTab.tabId, originalTab.widgetIds[0]],
+    );
+    await dataSource.query(
+      `UPDATE "core"."pageLayoutWidget" SET "pageLayoutTabId" = $1 WHERE "id" = $2`,
+      [originalTab.tabId, replacementTab.widgetIds[0]],
+    );
+
+    await runDown();
+
+    await expect(
+      readTabAndWidgetState({
+        tabId: destinationTab.tabId,
+        widgetId: originalTab.widgetIds[0],
+      }),
+    ).resolves.toEqual({
+      layoutMode: 'VERTICAL_LIST',
+      overrides: null,
+      position: {
+        layoutMode: 'VERTICAL_LIST',
+        index: 0,
+        heightBehavior: 'TAB_VIEWPORT',
+      },
+    });
+    await expect(readTabLayoutMode(originalTab.tabId)).resolves.toBe(
+      'VERTICAL_LIST',
+    );
+  });
+
+  it.each([null, { position: { layoutMode: 'CANVAS' } }])(
+    'preserves position overrides changed after migration from %j',
+    async (widgetOverrides) => {
+      const tab = await seedTab({
+        layoutMode: 'CANVAS',
+        widgetIsActiveValues: [true],
+        widgetOverrides,
+      });
+
+      await command.runDataMigration(dataSource);
+
+      const updatedOverrides = {
+        position: {
+          layoutMode: 'VERTICAL_LIST',
+          index: 0,
+          heightBehavior: 'FIT_CONTENT',
+        },
+      };
+
+      await dataSource.query(
+        `UPDATE "core"."pageLayoutWidget" SET "overrides" = $1 WHERE "id" = $2`,
+        [updatedOverrides, tab.widgetIds[0]],
+      );
+
+      await runDown();
+
+      await expect(
+        readTabAndWidgetState({
+          tabId: tab.tabId,
+          widgetId: tab.widgetIds[0],
+        }),
+      ).resolves.toEqual({
+        layoutMode: 'VERTICAL_LIST',
+        overrides: updatedOverrides,
+        position: {
+          layoutMode: 'VERTICAL_LIST',
+          index: 0,
+          heightBehavior: 'TAB_VIEWPORT',
+        },
+      });
+    },
+  );
+
+  it('preserves a migrated position override when its widget moves to another tab', async () => {
+    const tab = await seedTab({
+      layoutMode: 'CANVAS',
+      widgetIsActiveValues: [true],
+      widgetOverrides: { position: { layoutMode: 'CANVAS' } },
+    });
+    const destinationTab = await seedTab({
+      layoutMode: 'VERTICAL_LIST',
+      widgetIsActiveValues: [],
+    });
+
+    await command.runDataMigration(dataSource);
+    await dataSource.query(
+      `UPDATE "core"."pageLayoutWidget"
+       SET "overrides" = "overrides" || jsonb_build_object('pageLayoutTabId', $1::text)
+       WHERE "id" = $2`,
+      [destinationTab.tabId, tab.widgetIds[0]],
+    );
+
+    await runDown();
+
+    await expect(
+      readTabAndWidgetState({ tabId: tab.tabId, widgetId: tab.widgetIds[0] }),
+    ).resolves.toMatchObject({
+      layoutMode: 'VERTICAL_LIST',
+      overrides: {
+        pageLayoutTabId: destinationTab.tabId,
+        position: {
+          layoutMode: 'VERTICAL_LIST',
+          index: 0,
+          heightBehavior: 'TAB_VIEWPORT',
+        },
+      },
+    });
+  });
+
+  it('preserves tabs receiving an inactive widget through an override after migration', async () => {
+    const tab = await seedTab({
+      layoutMode: 'CANVAS',
+      widgetIsActiveValues: [true],
+    });
+
+    await command.runDataMigration(dataSource);
+
+    const incomingWidgetTab = await seedTab({
+      layoutMode: 'VERTICAL_LIST',
+      widgetIsActiveValues: [false],
+      widgetPosition: { layoutMode: 'VERTICAL_LIST', index: 0 },
+      widgetOverrides: {
+        pageLayoutTabId: tab.tabId,
+        position: {
+          layoutMode: 'VERTICAL_LIST',
+          index: 0,
+          heightBehavior: 'FIT_CONTENT',
+        },
+      },
+    });
+
+    await runDown();
+
+    await expect(readTabLayoutMode(tab.tabId)).resolves.toBe('VERTICAL_LIST');
+    await expect(
+      readTabAndWidgetState({
+        tabId: incomingWidgetTab.tabId,
+        widgetId: incomingWidgetTab.widgetIds[0],
+      }),
+    ).resolves.toMatchObject({
+      overrides: {
+        pageLayoutTabId: tab.tabId,
+        position: { layoutMode: 'VERTICAL_LIST' },
+      },
+    });
+  });
 });

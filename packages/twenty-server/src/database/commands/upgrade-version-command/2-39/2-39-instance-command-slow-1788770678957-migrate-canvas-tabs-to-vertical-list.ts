@@ -9,6 +9,30 @@ type AmbiguousCanvasTabCount = {
   ambiguousTabCount: string;
 };
 
+const ELIGIBLE_CANVAS_TABS_QUERY = `
+  SELECT tab."id"
+  FROM "core"."pageLayoutTab" tab
+  JOIN "core"."pageLayoutWidget" widget
+    ON widget."pageLayoutTabId" = tab."id"
+  WHERE tab."layoutMode" = 'CANVAS'
+    AND tab."deletedAt" IS NULL
+    AND NOT EXISTS (
+      SELECT 1
+      FROM "core"."pageLayoutWidget" incoming_widget
+      WHERE incoming_widget."overrides"->>'pageLayoutTabId' = tab."id"::text
+        AND incoming_widget."pageLayoutTabId" <> tab."id"
+        AND incoming_widget."deletedAt" IS NULL
+    )
+  GROUP BY tab."id"
+  HAVING COUNT(widget."id") FILTER (
+    WHERE widget."deletedAt" IS NULL
+  ) = 1
+    AND COUNT(widget."id") FILTER (
+      WHERE widget."deletedAt" IS NULL
+        AND widget."isActive" = true
+    ) = 1
+`;
+
 const CREATE_MIGRATION_BACKUP_TABLE_QUERY = `
   CREATE TABLE IF NOT EXISTS "core"."canvasTabToVerticalListMigrationBackup" (
     "pageLayoutTabId" uuid PRIMARY KEY,
@@ -35,7 +59,7 @@ const CREATE_MIGRATION_BACKUP_TABLE_QUERY = `
     ALTER COLUMN "pageLayoutWidgetPositionOverrideWasMigrated" SET NOT NULL;
 `;
 
-@RegisteredInstanceCommand('2.39.0', 1788603039076, { type: 'slow' })
+@RegisteredInstanceCommand('2.39.0', 1788770678957, { type: 'slow' })
 export class MigrateCanvasTabsToVerticalListSlowInstanceCommand implements SlowInstanceCommand {
   private readonly logger = new Logger(
     MigrateCanvasTabsToVerticalListSlowInstanceCommand.name,
@@ -46,46 +70,21 @@ export class MigrateCanvasTabsToVerticalListSlowInstanceCommand implements SlowI
 
     const [ambiguousCanvasTabCount] = (await dataSource.query(`
       SELECT COUNT(*)::text AS "ambiguousTabCount"
-      FROM (
-        SELECT tab."id"
-        FROM "core"."pageLayoutTab" tab
-        LEFT JOIN "core"."pageLayoutWidget" widget
-          ON widget."pageLayoutTabId" = tab."id"
-        WHERE tab."layoutMode" = 'CANVAS'
-          AND tab."deletedAt" IS NULL
-        GROUP BY tab."id"
-        HAVING COUNT(widget."id") FILTER (
-          WHERE widget."deletedAt" IS NULL
-        ) <> 1
-          OR COUNT(widget."id") FILTER (
-            WHERE widget."deletedAt" IS NULL
-              AND widget."isActive" = true
-          ) <> 1
-      ) ambiguous_tabs
+      FROM "core"."pageLayoutTab" tab
+      WHERE tab."layoutMode" = 'CANVAS'
+        AND tab."deletedAt" IS NULL
+        AND tab."id" NOT IN (${ELIGIBLE_CANVAS_TABS_QUERY})
     `)) as AmbiguousCanvasTabCount[];
 
     if (Number(ambiguousCanvasTabCount?.ambiguousTabCount ?? 0) > 0) {
       this.logger.warn(
-        `Leaving ${ambiguousCanvasTabCount.ambiguousTabCount} empty, inactive, or multi-widget Canvas tab(s) unchanged`,
+        `Leaving ${ambiguousCanvasTabCount.ambiguousTabCount} Canvas tab(s) with ambiguous widget placement unchanged`,
       );
     }
 
     await dataSource.query(`
       WITH eligible_tabs AS MATERIALIZED (
-        SELECT tab."id"
-        FROM "core"."pageLayoutTab" tab
-        JOIN "core"."pageLayoutWidget" widget
-          ON widget."pageLayoutTabId" = tab."id"
-        WHERE tab."layoutMode" = 'CANVAS'
-          AND tab."deletedAt" IS NULL
-        GROUP BY tab."id"
-        HAVING COUNT(widget."id") FILTER (
-          WHERE widget."deletedAt" IS NULL
-        ) = 1
-          AND COUNT(widget."id") FILTER (
-            WHERE widget."deletedAt" IS NULL
-              AND widget."isActive" = true
-          ) = 1
+        ${ELIGIBLE_CANVAS_TABS_QUERY}
       ), eligible_widgets AS (
         SELECT
           eligible_tabs."id" AS "pageLayoutTabId",
@@ -183,6 +182,7 @@ export class MigrateCanvasTabsToVerticalListSlowInstanceCommand implements SlowI
           ON tab."id" = backup."pageLayoutTabId"
         JOIN "core"."pageLayoutWidget" widget
           ON widget."id" = backup."pageLayoutWidgetId"
+          AND widget."pageLayoutTabId" = backup."pageLayoutTabId"
         WHERE tab."layoutMode" = 'VERTICAL_LIST'
           AND tab."deletedAt" IS NULL
           AND widget."deletedAt" IS NULL
@@ -199,7 +199,12 @@ export class MigrateCanvasTabsToVerticalListSlowInstanceCommand implements SlowI
                 'index', 0,
                 'heightBehavior', 'TAB_VIEWPORT'
               )
-            ELSE true
+              AND (
+                NOT COALESCE(widget."overrides" ? 'pageLayoutTabId', false)
+                OR widget."overrides"->>'pageLayoutTabId' = tab."id"::text
+              )
+            ELSE widget."overrides"->'position' IS NOT DISTINCT FROM
+              backup."pageLayoutWidgetPositionOverride"
           END
           AND (
             SELECT COUNT(*)
@@ -207,6 +212,13 @@ export class MigrateCanvasTabsToVerticalListSlowInstanceCommand implements SlowI
             WHERE sibling."pageLayoutTabId" = tab."id"
               AND sibling."deletedAt" IS NULL
           ) = 1
+          AND NOT EXISTS (
+            SELECT 1
+            FROM "core"."pageLayoutWidget" incoming_widget
+            WHERE incoming_widget."overrides"->>'pageLayoutTabId' = tab."id"::text
+              AND incoming_widget."pageLayoutTabId" <> tab."id"
+              AND incoming_widget."deletedAt" IS NULL
+          )
       ), restored_widgets AS (
         UPDATE "core"."pageLayoutWidget" widget
         SET "position" = widgets_to_restore."pageLayoutWidgetPosition",
@@ -221,7 +233,7 @@ export class MigrateCanvasTabsToVerticalListSlowInstanceCommand implements SlowI
         END
         FROM widgets_to_restore
         WHERE widget."id" = widgets_to_restore."pageLayoutWidgetId"
-        RETURNING widget."pageLayoutTabId"
+        RETURNING widgets_to_restore."pageLayoutTabId"
       )
       UPDATE "core"."pageLayoutTab" tab
       SET "layoutMode" = 'CANVAS'
