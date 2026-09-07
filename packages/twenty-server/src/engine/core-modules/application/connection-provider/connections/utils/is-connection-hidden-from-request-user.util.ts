@@ -2,9 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
-// A request-user can only see or act on their own user-visibility
-// credentials. Workspace-shared ones are open to anyone in the workspace,
-// and cron has no request user, so it sees all.
+// Background executions carry no request user, so nothing is hidden from them.
 export const isConnectionHiddenFromRequestUser = ({
   account,
   requestUserWorkspaceId,

@@ -1,7 +1,8 @@
-import { UseGuards, UsePipes } from '@nestjs/common';
+import { UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
 import { Args, ID, Mutation, Query } from '@nestjs/graphql';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { ConnectionProviderGraphqlApiExceptionInterceptor } from 'src/engine/core-modules/application/connection-provider/interceptors/connection-provider-graphql-api-exception.interceptor';
 import { AppConnectionObjectDto } from 'src/engine/core-modules/application/connection-provider/connections/dtos/app-connection.object';
 import { ListAppConnectionsInput } from 'src/engine/core-modules/application/connection-provider/connections/dtos/list-app-connections.input';
 import { ReportAppConnectionAuthFailureInput } from 'src/engine/core-modules/application/connection-provider/connections/dtos/report-app-connection-auth-failure.input';
@@ -11,12 +12,13 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
+@UseInterceptors(ConnectionProviderGraphqlApiExceptionInterceptor)
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
 export class ApplicationConnectionsResolver {
@@ -65,7 +67,7 @@ export class ApplicationConnectionsResolver {
     userWorkspaceId: string | undefined,
     @Args('input') input: ReportAppConnectionAuthFailureInput,
   ): Promise<boolean> {
-    await this.authFailureService.reportAuthFailure({
+    await this.authFailureService.reportAuthFailureOrThrow({
       applicationId: application.id,
       workspaceId: workspace.id,
       requestUserWorkspaceId: userWorkspaceId ?? null,
