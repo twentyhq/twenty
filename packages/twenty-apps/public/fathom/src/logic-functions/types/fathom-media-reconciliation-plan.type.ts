@@ -1,8 +1,8 @@
 import { type CallRecordingMediaState } from 'src/logic-functions/types/call-recording-media-state.type';
-import { type CallRecordingReference } from 'src/logic-functions/types/call-recording-reference.type';
+import { type FathomRecordingImportReference } from 'src/logic-functions/types/fathom-recording-import-reference.type';
 
 export type FathomMediaReconciliationPlan = {
-  callRecordingsToComplete: CallRecordingReference[];
+  callRecordingsToComplete: FathomRecordingImportReference[];
   importGroups: Array<{
     connectedAccountId: string;
     callRecordingIdsToRequest: string[];
@@ -30,9 +30,9 @@ export type FathomMediaReconciliationPage = {
 };
 
 export type DisconnectedFathomMediaReconciliationPlan = {
-  callRecordingsToSettle: CallRecordingReference[];
-  callRecordingsToSettleAndComplete: CallRecordingReference[];
-  callRecordingsToSettleAndFail: CallRecordingReference[];
-  callRecordingsToComplete: CallRecordingReference[];
-  callRecordingsToFail: CallRecordingReference[];
+  callRecordingsToSettle: FathomRecordingImportReference[];
+  callRecordingsToSettleAndComplete: FathomRecordingImportReference[];
+  callRecordingsToSettleAndFail: FathomRecordingImportReference[];
+  callRecordingsToComplete: FathomRecordingImportReference[];
+  callRecordingsToFail: FathomRecordingImportReference[];
 };

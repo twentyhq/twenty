@@ -23,6 +23,13 @@ const buildCallRecording = (
   ...overrides,
 });
 
+const buildReference = (callRecordingId: string) => ({
+  callRecordingId,
+  callRecordingUpdatedAt: '2026-09-04T12:00:00.000Z',
+  fathomRecordingImportId: 'fathom-recording-import-id',
+  fathomRecordingImportUpdatedAt: '2026-09-04T12:01:00.000Z',
+});
+
 describe('buildFathomMediaReconciliationPlan', () => {
   it('completes settled recordings and groups missing imports by account', () => {
     const plan = buildFathomMediaReconciliationPlan({
@@ -51,14 +58,8 @@ describe('buildFathomMediaReconciliationPlan', () => {
 
     expect(plan).toEqual({
       callRecordingsToComplete: [
-        {
-          id: 'video-ready',
-          updatedAt: '2026-09-04T12:00:00.000Z',
-        },
-        {
-          id: 'failure-settled',
-          updatedAt: '2026-09-04T12:00:00.000Z',
-        },
+        buildReference('video-ready'),
+        buildReference('failure-settled'),
       ],
       importGroups: [
         {

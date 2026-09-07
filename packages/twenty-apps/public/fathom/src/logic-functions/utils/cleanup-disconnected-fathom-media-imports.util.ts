@@ -1,5 +1,6 @@
 import { isNonEmptyArray } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'src/utils/is-defined';
 
 import { FATHOM_MEDIA_FAILURE_REASON } from 'src/constants/fathom-media-failure-reason.constant';
 import { buildDisconnectedFathomMediaReconciliationPlan } from 'src/logic-functions/utils/build-disconnected-fathom-media-reconciliation-plan.util';
@@ -18,7 +19,7 @@ export const cleanupDisconnectedFathomMediaImports = async ({
   if (connections.some(({ id }) => id === connectedAccountId)) {
     return {
       candidateCount: 0,
-      updatedCallRecordingCount: 0,
+      updatedRecordingCount: 0,
       shouldContinue: false,
       skipped: true,
     };
@@ -31,77 +32,115 @@ export const cleanupDisconnectedFathomMediaImports = async ({
   const plan = buildDisconnectedFathomMediaReconciliationPlan(
     page.callRecordings,
   );
-  let updatedCallRecordingCount = 0;
+  let updatedRecordingCount = 0;
   const clearedImportFields = {
-    fathomMediaDownloadId: null,
-    fathomMediaImportClaimedAt: null,
-    fathomMediaUploadCheckpoint: null,
+    mediaDownloadId: null,
+    mediaImportClaimedAt: null,
+    mediaUploadCheckpoint: null,
   };
   const settledData = {
     ...clearedImportFields,
-    fathomMediaFailureReason:
+    mediaFailureReason:
       FATHOM_MEDIA_FAILURE_REASON.CONNECTED_ACCOUNT_UNAVAILABLE,
   };
-  const processingFilter = { status: { eq: 'PROCESSING' } };
   const updates = [
     {
       callRecordings: plan.callRecordingsToSettleAndComplete,
-      filter: processingFilter,
-      data: { ...settledData, status: 'COMPLETED' },
+      importData: settledData,
+      status: 'COMPLETED',
     },
     {
       callRecordings: plan.callRecordingsToSettleAndFail,
-      filter: processingFilter,
-      data: { ...settledData, status: 'FAILED' },
+      importData: settledData,
+      status: 'FAILED',
     },
     {
       callRecordings: plan.callRecordingsToSettle,
-      filter: {},
-      data: settledData,
+      importData: settledData,
     },
     {
       callRecordings: plan.callRecordingsToComplete,
-      filter: processingFilter,
-      data: { ...clearedImportFields, status: 'COMPLETED' },
+      importData: clearedImportFields,
+      status: 'COMPLETED',
     },
     {
       callRecordings: plan.callRecordingsToFail,
-      filter: processingFilter,
-      data: { ...clearedImportFields, status: 'FAILED' },
+      importData: clearedImportFields,
+      status: 'FAILED',
     },
   ];
 
-  for (const { callRecordings, filter, data } of updates) {
+  for (const { callRecordings, importData, status } of updates) {
     if (!isNonEmptyArray(callRecordings)) {
       continue;
     }
 
-    const result = await coreApiClient.mutation({
+    const importResult = await coreApiClient.mutation({
+      updateFathomRecordingImports: {
+        __args: {
+          filter: {
+            connectedAccountId: { eq: connectedAccountId },
+            or: callRecordings.map((reference) => ({
+              id: { eq: reference.fathomRecordingImportId },
+              updatedAt: {
+                eq: reference.fathomRecordingImportUpdatedAt,
+              },
+            })),
+          },
+          data: importData,
+        },
+        id: true,
+      },
+    });
+    const updatedImportIds = new Set(
+      (importResult.updateFathomRecordingImports ?? []).map(
+        ({ id }: { id: string }) => id,
+      ),
+    );
+
+    if (!isDefined(status)) {
+      updatedRecordingCount += updatedImportIds.size;
+      continue;
+    }
+
+    const callRecordingsWithUpdatedImports = callRecordings.filter(
+      ({ fathomRecordingImportId }) =>
+        updatedImportIds.has(fathomRecordingImportId),
+    );
+
+    if (!isNonEmptyArray(callRecordingsWithUpdatedImports)) {
+      continue;
+    }
+
+    const callRecordingResult = await coreApiClient.mutation({
       updateCallRecordings: {
         __args: {
           filter: {
-            ...filter,
-            fathomConnectedAccountId: { eq: connectedAccountId },
-            or: callRecordings.map(({ id, updatedAt }) => ({
-              id: { eq: id },
-              updatedAt: { eq: updatedAt },
+            status: { eq: 'PROCESSING' },
+            or: callRecordingsWithUpdatedImports.map((reference) => ({
+              id: { eq: reference.callRecordingId },
+              updatedAt: { eq: reference.callRecordingUpdatedAt },
+              fathomRecordingImports: {
+                id: { eq: reference.fathomRecordingImportId },
+                connectedAccountId: { eq: connectedAccountId },
+              },
             })),
           },
-          data,
+          data: { status },
         },
         id: true,
       },
     });
 
-    updatedCallRecordingCount += result.updateCallRecordings?.length ?? 0;
+    updatedRecordingCount +=
+      callRecordingResult.updateCallRecordings?.length ?? 0;
   }
 
   return {
     candidateCount: page.callRecordings.length,
-    updatedCallRecordingCount,
+    updatedRecordingCount,
     shouldContinue:
-      page.hasNextPage ||
-      updatedCallRecordingCount < page.callRecordings.length,
+      page.hasNextPage || updatedRecordingCount < page.callRecordings.length,
     skipped: false,
   };
 };

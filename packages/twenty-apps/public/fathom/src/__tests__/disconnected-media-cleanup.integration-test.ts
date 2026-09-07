@@ -4,6 +4,8 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { functionExecute } from 'twenty-sdk/cli';
 import { describe, expect, it } from 'vitest';
 
+import { createFathomApplicationCoreApiClient } from 'src/__tests__/utils/create-fathom-application-core-api-client.util';
+
 describe('Fathom disconnected media cleanup', () => {
   it.each([
     { description: 'null media', video: null, audio: null },
@@ -12,6 +14,8 @@ describe('Fathom disconnected media cleanup', () => {
     'settles an empty transcript with $description',
     async ({ video, audio }) => {
       const coreApiClient = new CoreApiClient();
+      const applicationCoreApiClient =
+        await createFathomApplicationCoreApiClient();
       const callRecordingId = randomUUID();
       const connectedAccountId = randomUUID();
 
@@ -25,8 +29,21 @@ describe('Fathom disconnected media cleanup', () => {
               transcript: [],
               video,
               audio,
-              fathomConnectedAccountId: connectedAccountId,
-              fathomMediaDownloadId: randomUUID(),
+            },
+          },
+          id: true,
+        },
+      });
+
+      await applicationCoreApiClient.mutation({
+        createFathomRecordingImport: {
+          __args: {
+            data: {
+              id: callRecordingId,
+              callRecordingId,
+              recordingId: randomUUID(),
+              connectedAccountId,
+              mediaDownloadId: randomUUID(),
             },
           },
           id: true,
@@ -47,7 +64,7 @@ describe('Fathom disconnected media cleanup', () => {
         expect(result.data.status).toBe('SUCCESS');
         expect(result.data.data).toEqual({
           candidateCount: 1,
-          updatedCallRecordingCount: 1,
+          updatedRecordingCount: 1,
           shouldContinue: false,
           skipped: false,
         });
@@ -56,19 +73,22 @@ describe('Fathom disconnected media cleanup', () => {
           callRecording: {
             __args: { filter: { id: { eq: callRecordingId } } },
             status: true,
-            fathomMediaFailureReason: true,
-            fathomMediaDownloadId: true,
-            fathomMediaImportClaimedAt: true,
+          },
+          fathomRecordingImport: {
+            __args: { filter: { id: { eq: callRecordingId } } },
+            mediaFailureReason: true,
+            mediaDownloadId: true,
+            mediaImportClaimedAt: true,
           },
         });
 
-        expect(current.callRecording).toMatchObject({
-          status: 'FAILED',
-          fathomMediaFailureReason: 'connected_account_unavailable',
-          fathomMediaImportClaimedAt: null,
+        expect(current.callRecording?.status).toBe('FAILED');
+        expect(current.fathomRecordingImport).toMatchObject({
+          mediaFailureReason: 'connected_account_unavailable',
+          mediaImportClaimedAt: null,
         });
         expect(
-          isNonEmptyString(current.callRecording?.fathomMediaDownloadId),
+          isNonEmptyString(current.fathomRecordingImport?.mediaDownloadId),
         ).toBe(false);
       } finally {
         await coreApiClient.mutation({

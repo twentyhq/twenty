@@ -23,14 +23,20 @@ export const findStaleFathomMediaImports = async ({
       __args: {
         filter: {
           and: [
-            { fathomConnectedAccountId: { is: 'NOT_NULL' } },
-            { updatedAt: { lte: run.staleBefore } },
+            {
+              fathomRecordingImports: {
+                connectedAccountId: { is: 'NOT_NULL' },
+                updatedAt: { lte: run.staleBefore },
+              },
+            },
             {
               or: [
                 { startedAt: { gte: run.startedAfter } },
                 {
-                  fathomConnectedAccountId: {
-                    notIn: activeConnectedAccountIds,
+                  fathomRecordingImports: {
+                    connectedAccountId: {
+                      notIn: activeConnectedAccountIds,
+                    },
                   },
                 },
               ],
@@ -41,7 +47,9 @@ export const findStaleFathomMediaImports = async ({
             {
               or: [
                 {
-                  fathomMediaFailureReason: { is: 'NULL' },
+                  fathomRecordingImports: {
+                    mediaFailureReason: { is: 'NULL' },
+                  },
                   video: { is: 'NULL' },
                   audio: { is: 'NULL' },
                 },
@@ -51,13 +59,19 @@ export const findStaleFathomMediaImports = async ({
                   or: [
                     { video: { is: 'NOT_NULL' } },
                     { audio: { is: 'NOT_NULL' } },
-                    { fathomMediaFailureReason: { is: 'NOT_NULL' } },
+                    {
+                      fathomRecordingImports: {
+                        mediaFailureReason: { is: 'NOT_NULL' },
+                      },
+                    },
                   ],
                 },
                 {
                   status: { eq: 'PROCESSING' },
-                  fathomConnectedAccountId: {
-                    notIn: activeConnectedAccountIds,
+                  fathomRecordingImports: {
+                    connectedAccountId: {
+                      notIn: activeConnectedAccountIds,
+                    },
                   },
                 },
               ],

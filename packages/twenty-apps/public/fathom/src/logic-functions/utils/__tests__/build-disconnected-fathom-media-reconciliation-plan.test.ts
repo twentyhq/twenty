@@ -23,6 +23,13 @@ const buildCallRecording = (
   ...overrides,
 });
 
+const buildReference = (callRecordingId: string) => ({
+  callRecordingId,
+  callRecordingUpdatedAt: '2026-09-04T12:00:00.000Z',
+  fathomRecordingImportId: 'fathom-recording-import-id',
+  fathomRecordingImportUpdatedAt: '2026-09-04T12:01:00.000Z',
+});
+
 describe('buildDisconnectedFathomMediaReconciliationPlan', () => {
   it('settles missing media and completes imports only when a transcript exists', () => {
     const plan = buildDisconnectedFathomMediaReconciliationPlan([
@@ -47,36 +54,15 @@ describe('buildDisconnectedFathomMediaReconciliationPlan', () => {
     ]);
 
     expect(plan).toEqual({
-      callRecordingsToSettle: [
-        {
-          id: 'ready-to-settle',
-          updatedAt: '2026-09-04T12:00:00.000Z',
-        },
-      ],
+      callRecordingsToSettle: [buildReference('ready-to-settle')],
       callRecordingsToSettleAndComplete: [
-        {
-          id: 'ready-to-settle-and-complete',
-          updatedAt: '2026-09-04T12:00:00.000Z',
-        },
+        buildReference('ready-to-settle-and-complete'),
       ],
       callRecordingsToSettleAndFail: [
-        {
-          id: 'missing-media-without-transcript',
-          updatedAt: '2026-09-04T12:00:00.000Z',
-        },
+        buildReference('missing-media-without-transcript'),
       ],
-      callRecordingsToComplete: [
-        {
-          id: 'ready-to-complete',
-          updatedAt: '2026-09-04T12:00:00.000Z',
-        },
-      ],
-      callRecordingsToFail: [
-        {
-          id: 'processing-without-transcript',
-          updatedAt: '2026-09-04T12:00:00.000Z',
-        },
-      ],
+      callRecordingsToComplete: [buildReference('ready-to-complete')],
+      callRecordingsToFail: [buildReference('processing-without-transcript')],
     });
   });
 });

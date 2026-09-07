@@ -1,7 +1,10 @@
+import { isDefined } from 'src/utils/is-defined';
+
 import {
   type DisconnectedFathomMediaReconciliationPlan,
   type FathomMediaReconciliationCandidate,
 } from 'src/logic-functions/types/fathom-media-reconciliation-plan.type';
+import { buildFathomRecordingImportReference } from 'src/logic-functions/utils/build-fathom-recording-import-reference.util';
 import { isFathomMediaSettled } from 'src/logic-functions/utils/is-fathom-media-settled.util';
 
 export const buildDisconnectedFathomMediaReconciliationPlan = (
@@ -16,10 +19,11 @@ export const buildDisconnectedFathomMediaReconciliationPlan = (
   };
 
   for (const callRecording of callRecordings) {
-    const reference = {
-      id: callRecording.id,
-      updatedAt: callRecording.updatedAt,
-    };
+    const reference = buildFathomRecordingImportReference(callRecording);
+
+    if (!isDefined(reference)) {
+      continue;
+    }
 
     const isSettled = isFathomMediaSettled(callRecording);
     const isProcessing = callRecording.status === 'PROCESSING';

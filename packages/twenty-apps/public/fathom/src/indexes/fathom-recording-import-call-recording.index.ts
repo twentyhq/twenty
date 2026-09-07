@@ -10,8 +10,7 @@ import {
 export default defineIndex({
   universalIdentifier:
     FATHOM_RECORDING_IMPORT_CALL_RECORDING_INDEX_UNIVERSAL_IDENTIFIER,
-  objectUniversalIdentifier:
-    FATHOM_RECORDING_IMPORT_OBJECT_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: FATHOM_RECORDING_IMPORT_OBJECT_UNIVERSAL_IDENTIFIER,
   isUnique: true,
   fields: [
     {
