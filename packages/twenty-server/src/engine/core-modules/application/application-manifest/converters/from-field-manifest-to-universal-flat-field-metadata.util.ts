@@ -53,13 +53,11 @@ const getRelationTargetUniversalIdentifiers = (
   };
 };
 
-// Tri-state: an explicit manifest value is authoritative; the label
-// identifier of a searchable object defaults to true (the object-create side
-// effect provisions its row, so both sides must agree or every re-sync would
-// diff isSearchable and drop that row); everything else resolves to null,
-// meaning unspecified — the sync comparison preserves the workspace's current
-// state instead of force-reverting it, which is what keeps a relabel additive
-// (the previous label identifier stays searchable).
+// An omitted manifest value means the default, like isUnique: false for
+// every field except the label identifier of a searchable object, which the
+// engine always indexes (the object-create side effect provisions its row,
+// so both sides must agree or every re-sync would diff isSearchable and
+// drop that row).
 const resolveManifestFieldIsSearchable = ({
   fieldManifest,
   objectLabelIdentifierFieldMetadataUniversalIdentifier,
@@ -68,17 +66,16 @@ const resolveManifestFieldIsSearchable = ({
   fieldManifest: FieldManifest;
   objectLabelIdentifierFieldMetadataUniversalIdentifier?: string | null;
   objectIsSearchable?: boolean;
-}): boolean | null => {
+}): boolean => {
   if (isDefined(fieldManifest.isSearchable)) {
     return fieldManifest.isSearchable;
   }
 
-  const isLabelIdentifierOfSearchableObject =
+  return (
     (objectIsSearchable ?? true) &&
     fieldManifest.universalIdentifier ===
-      objectLabelIdentifierFieldMetadataUniversalIdentifier;
-
-  return isLabelIdentifierOfSearchableObject ? true : null;
+      objectLabelIdentifierFieldMetadataUniversalIdentifier
+  );
 };
 
 export const fromFieldManifestToUniversalFlatFieldMetadata = ({

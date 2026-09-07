@@ -65,6 +65,15 @@ export const sanitizeRawUpdateFieldInput = ({
     }
   }
 
+  // GraphQL lets a client send an explicit null despite the DTO's
+  // boolean | undefined typing; normalize it to false so a null never
+  // reaches the boolean-typed flat entity nor bypasses validation.
+  if (
+    (updatedEditableFieldProperties.isSearchable as boolean | null) === null
+  ) {
+    updatedEditableFieldProperties.isSearchable = false;
+  }
+
   updatedEditableFieldProperties.options = !isDefined(
     updatedEditableFieldProperties.options,
   )

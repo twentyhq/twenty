@@ -188,7 +188,7 @@ export class FieldMetadataEntity<
   // source of truth and carries position/isSystemSideEffect that a boolean
   // cannot express. The state change rides on a side-effect
   // searchFieldMetadata create/delete.
-  isSearchable: boolean | null;
+  isSearchable: boolean;
 
   @Column({ default: false })
   isLabelSyncedWithName: boolean;

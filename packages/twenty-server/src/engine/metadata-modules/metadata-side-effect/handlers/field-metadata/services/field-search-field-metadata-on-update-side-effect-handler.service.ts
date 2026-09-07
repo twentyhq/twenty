@@ -37,14 +37,13 @@ export class FieldSearchFieldMetadataOnUpdateSideEffectHandlerService extends Me
     }
 
     const searchabilityHasFlipped =
-      (existingFlatFieldMetadata.isSearchable === true) !==
-      (flatFieldMetadata.isSearchable === true);
+      existingFlatFieldMetadata.isSearchable !== flatFieldMetadata.isSearchable;
 
     if (!searchabilityHasFlipped) {
       return { status: 'noop' };
     }
 
-    if (flatFieldMetadata.isSearchable !== true) {
+    if (!flatFieldMetadata.isSearchable) {
       return this.buildDeleteOperations({
         searchFieldMetadataUniversalIdentifiers:
           existingFlatFieldMetadata.searchFieldMetadataUniversalIdentifiers,

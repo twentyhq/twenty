@@ -141,11 +141,7 @@ export class FlatFieldMetadataValidatorService {
       });
     }
 
-    // Presence check, not isDefined: an explicit `isSearchable: null` merges
-    // into the flat entity and reads as false downstream (the side-effect
-    // handler deletes the backing row), so it must go through the same
-    // validation as an explicit false — notably the label-identifier guard.
-    if (flatEntityUpdate.isSearchable !== undefined) {
+    if (isDefined(flatEntityUpdate.isSearchable)) {
       validationResult.errors.push(
         ...validateSearchableFlatFieldMetadata({
           flatFieldMetadataToValidate,
