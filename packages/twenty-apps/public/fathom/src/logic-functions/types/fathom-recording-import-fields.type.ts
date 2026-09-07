@@ -1,3 +1,5 @@
+import { type FathomMediaUploadCheckpoint } from 'src/logic-functions/types/fathom-media-upload-checkpoint.type';
+
 export type FathomRecordingImportFields = {
   callRecordingId?: string;
   recordingId?: string;
@@ -5,5 +7,5 @@ export type FathomRecordingImportFields = {
   mediaDownloadId?: string | null;
   mediaFailureReason?: string | null;
   mediaImportClaimedAt?: string | null;
-  mediaUploadCheckpoint?: unknown | null;
+  mediaUploadCheckpoint?: FathomMediaUploadCheckpoint | null;
 };
