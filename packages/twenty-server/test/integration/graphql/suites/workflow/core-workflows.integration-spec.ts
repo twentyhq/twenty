@@ -603,7 +603,7 @@ describe('coreWorkflows (e2e)', () => {
     for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt++) {
       activated = await findCoreWorkflowByName(softDeletedName);
 
-      if (activated?.statuses.includes('ACTIVE') === true) {
+      if (activated?.statuses.includes('ACTIVE')) {
         break;
       }
 
@@ -645,7 +645,7 @@ describe('coreWorkflows (e2e)', () => {
       deletedWorkflowStatuses =
         deletedWorkflowResponse.body.data?.workflow?.statuses;
 
-      if (deletedWorkflowStatuses?.includes('DEACTIVATED') === true) {
+      if (deletedWorkflowStatuses?.includes('DEACTIVATED')) {
         break;
       }
 
