@@ -243,6 +243,42 @@ describe('FlatPageLayoutWidgetValidatorService', () => {
     );
   });
 
+  it.each([true, false])(
+    'checks the effective tab of an overridden viewport widget (moved into tab: %s)',
+    async (isMovedIntoTab) => {
+      const otherTabUniversalIdentifier =
+        '00000000-0000-4000-8000-000000000002';
+      const result = await validateCreation({
+        widget: buildWidget({
+          universalIdentifier: 'viewport',
+          index: 0,
+          heightBehavior:
+            PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+        }),
+        siblingWidgets: [
+          {
+            ...buildWidget({
+              universalIdentifier: 'moved-viewport',
+              index: 1,
+              heightBehavior:
+                PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+            }),
+            pageLayoutTabUniversalIdentifier: isMovedIntoTab
+              ? otherTabUniversalIdentifier
+              : TAB_UNIVERSAL_IDENTIFIER,
+            universalOverrides: {
+              pageLayoutTabUniversalIdentifier: isMovedIntoTab
+                ? TAB_UNIVERSAL_IDENTIFIER
+                : otherTabUniversalIdentifier,
+            },
+          },
+        ],
+      });
+
+      expect(result.errors).toHaveLength(isMovedIntoTab ? 1 : 0);
+    },
+  );
+
   it('ignores a viewport widget explicitly detached from its original tab', async () => {
     const result = await validateCreation({
       widget: buildWidget({

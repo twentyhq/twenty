@@ -314,6 +314,13 @@ export class FlatPageLayoutWidgetValidatorService {
     const isTabViewportWidget = this.isViewportFillingWidget(widget);
 
     const activeSiblingWidgets = relatedWidgets
+      .filter(
+        (relatedWidget) =>
+          relatedWidget.pageLayoutTabUniversalIdentifier ===
+            widget.pageLayoutTabUniversalIdentifier ||
+          relatedWidget.universalOverrides?.pageLayoutTabUniversalIdentifier ===
+            widget.pageLayoutTabUniversalIdentifier,
+      )
       .map((relatedWidget) => this.getEffectiveWidget(relatedWidget))
       .filter(
         (relatedWidget) =>
