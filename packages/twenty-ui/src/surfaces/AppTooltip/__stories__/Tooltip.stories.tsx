@@ -264,7 +264,15 @@ export const Empty: Story = {
 
 export const Catalog: CatalogStory<Story, typeof Tooltip> = {
   args: { isOpen: true },
-  play: undefined,
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await waitFor(() => expect(body.getAllByRole('tooltip')).toHaveLength(5));
+
+    for (const tooltip of body.getAllByRole('tooltip')) {
+      await waitFor(() => expect(tooltip).toBeVisible());
+    }
+  },
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
     catalog: {
