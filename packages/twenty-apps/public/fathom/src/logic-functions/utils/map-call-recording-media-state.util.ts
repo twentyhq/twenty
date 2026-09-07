@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { type z } from 'zod';
 
 import {
@@ -34,7 +34,7 @@ export const mapCallRecordingMediaState = (
       node.video?.some((file) => isNonEmptyString(file.fileId)) ?? false,
     hasAudio:
       node.audio?.some((file) => isNonEmptyString(file.fileId)) ?? false,
-    hasTranscript: Array.isArray(node.transcript) && node.transcript.length > 0,
+    hasTranscript: isNonEmptyArray(node.transcript),
     hasSummary:
       isNonEmptyString(node.summary?.markdown) ||
       isDefined(node.summary?.blocknote),
