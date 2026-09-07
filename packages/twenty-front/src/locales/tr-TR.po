@@ -164,7 +164,7 @@ msgstr "[boş dize]"
 #. placeholder {2}: formatNumber(counts.duplicateEmails)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0, plural, one {{1} duplicate} other {{2} duplicates}}"
-msgstr ""
+msgstr "{0, plural, one {{1} yinelenen} other {{2} yinelenen}}"
 
 #. js-lingui-id: Z2fCN4
 #. placeholder {0}: failedResults.length
@@ -188,7 +188,7 @@ msgstr "{0, plural, one {{1} iş yeniden denenemedi} other {{2} iş yeniden dene
 #. placeholder {2}: formatNumber(audiencePreview.sendable)
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "{0, plural, one {{1} recipient} other {{2} recipients}}"
-msgstr ""
+msgstr "{0, plural, one {{1} alıcı} other {{2} alıcı}}"
 
 #. js-lingui-id: 0LMb5P
 #. placeholder {0}: Math.abs(days)
@@ -221,7 +221,7 @@ msgstr ""
 #. placeholder {2}: canceled.canceledMessageCount
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "{0, plural, one {Campaign canceled, {1} pending email stopped} other {Campaign canceled, {2} pending emails stopped}}"
-msgstr ""
+msgstr "{0, plural, one {Kampanya iptal edildi, {1} bekleyen e-posta durduruldu} other {Kampanya iptal edildi, {2} bekleyen e-posta durduruldu}}"
 
 #. js-lingui-id: WTc9VY
 #. placeholder {0}: restriction.fieldNames.length
@@ -233,7 +233,7 @@ msgstr "{0, plural, one {{fieldsList} alanına erişim izniniz yok} other {{fiel
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} bounced or complained"
-msgstr ""
+msgstr "{0} geri döndü veya şikayette bulundu."
 
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(nextCreditsByPeriod, { decimals: 2, })
@@ -264,7 +264,7 @@ msgstr "{0}, {loadBalancePoolObjectLabel} ile ilişkili değil. Dengelemek için
 #. placeholder {1}: excludedReasons.join(', ')
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "{0} in the list, skipping {1}"
-msgstr ""
+msgstr "{0} listede, {1} atlanıyor"
 
 #. js-lingui-id: T8aKxO
 #. placeholder {0}: layout.name
@@ -301,7 +301,7 @@ msgstr "{0} bu konudan çıkış yaptı"
 #. placeholder {0}: formatNumber(counts.overCap)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} over the recipient limit"
-msgstr ""
+msgstr "{0} alıcı sınırının üzerinde"
 
 #. js-lingui-id: 55frRG
 #. placeholder {0}: index + 1
@@ -355,7 +355,7 @@ msgstr "{0} widget"
 #. placeholder {0}: formatNumber(counts.withoutEmail)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} without an email address"
-msgstr ""
+msgstr "{0} e-posta adresi olmadan"
 
 #. js-lingui-id: 2UKfhY
 #. placeholder {0}: selectedItemNames.length
@@ -593,12 +593,12 @@ msgstr "{positionLabel} kaydı önceliklidir"
 #. placeholder {1}: formatNumber(queuedCount)
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "{queuedCount, plural, one {Campaign queued to {0} recipient} other {Campaign queued to {1} recipients}}"
-msgstr ""
+msgstr "{queuedCount, plural, one {Kampanya {0} alıcı için kuyruğa alındı} other {Kampanya {1} alıcı için kuyruğa alındı}}"
 
 #. js-lingui-id: cMTWxR
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "{queuedMessage}, skipping {skipReasons}"
-msgstr ""
+msgstr "{queuedMessage}, {skipReasons} atlanıyor"
 
 #. js-lingui-id: 5d0hY6
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -1306,7 +1306,7 @@ msgstr "Yeni hesap"
 #. js-lingui-id: dGjQL8
 #: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
 msgid "Add an API key to enable AI."
-msgstr ""
+msgstr "Yapay zekayı etkinleştirmek için bir API anahtarı ekleyin."
 
 #. js-lingui-id: W5wF8J
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
@@ -2021,12 +2021,12 @@ msgstr "Çalışma Alanına Göre Yapay Zeka Kullanımı"
 #. js-lingui-id: YfXPCQ
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Ask an admin to upgrade the plan."
-msgstr ""
+msgstr "Yapay zeka kullanım sınırına ulaşıldı. Planı yükseltmesi için bir yöneticiden isteyin."
 
 #. js-lingui-id: wBA/cx
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Contact support to upgrade."
-msgstr ""
+msgstr "Yapay zeka kullanım sınırına ulaşıldı. Yükseltmek için destek ekibiyle iletişime geçin."
 
 #. js-lingui-id: KLyZ6L
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -2812,7 +2812,7 @@ msgstr "AI Sor"
 #. js-lingui-id: HiVVqo
 #: src/modules/ai/components/AiChatEditorSection.tsx
 msgid "Ask your workspace admin to enable an AI model."
-msgstr ""
+msgstr "Bir AI modelini etkinleştirmesi için çalışma alanı yöneticinize başvurun."
 
 #. js-lingui-id: mc9nK2
 #: src/modules/ai/hooks/useAiChatEditor.ts
@@ -3709,7 +3709,7 @@ msgstr "İptal"
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Cancel Campaign"
-msgstr ""
+msgstr "Kampanyayı iptal et"
 
 #. js-lingui-id: J8nuSF
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -4676,7 +4676,7 @@ msgstr "E-postalarınızı almak ve senkronize etmek için IMAP ayarlarını yap
 #. js-lingui-id: pE9JCI
 #: src/modules/ai/components/AiChatEditorSection.tsx
 msgid "Configure models"
-msgstr ""
+msgstr "Modelleri yapılandır"
 
 #. js-lingui-id: gk/8eh
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -5369,7 +5369,7 @@ msgstr "Benzersiz değerleri say"
 #. js-lingui-id: tKTq/b
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "Counting recipients..."
-msgstr ""
+msgstr "Alıcılar sayılıyor..."
 
 #. js-lingui-id: JNCzPW
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
@@ -7635,7 +7635,7 @@ msgstr "E-postalar ve Takvim"
 #. js-lingui-id: VJ5blF
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Emails already handed to the provider cannot be recalled. This stops everything still waiting to be sent."
-msgstr ""
+msgstr "Sağlayıcıya zaten teslim edilmiş e-postalar geri çağrılamaz. Bu işlem, hâlâ gönderilmeyi bekleyen her şeyi durdurur."
 
 #. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
@@ -8658,12 +8658,12 @@ msgstr "Sağlayıcı eklenemedi"
 #. js-lingui-id: ScvpVb
 #: src/modules/object-record/record-table-widget/components/RecordTableWidgetJunctionAddNewRow.tsx
 msgid "Failed to add record"
-msgstr ""
+msgstr "Kayıt eklenemedi"
 
 #. js-lingui-id: Y9Y+x3
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "Failed to cancel campaign"
-msgstr ""
+msgstr "Kampanya iptal edilemedi"
 
 #. js-lingui-id: E2CkaQ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -8719,7 +8719,7 @@ msgstr "Gösterge paneli çoğaltılamadı"
 #. js-lingui-id: 6e1GS3
 #: src/modules/command-menu-item/engine-command/record/single-record/message-list/hooks/useDuplicateMessageList.ts
 msgid "Failed to duplicate list"
-msgstr ""
+msgstr "Liste çoğaltılamadı"
 
 #. js-lingui-id: WYXxQF
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
@@ -8787,7 +8787,7 @@ msgstr "Sunucu yöneticileri yüklenemedi."
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 msgid "Failed to load the application."
-msgstr ""
+msgstr "Uygulama yüklenemedi."
 
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
@@ -11845,7 +11845,7 @@ msgstr "Liste"
 #. js-lingui-id: Wfj8PH
 #: src/modules/command-menu-item/engine-command/record/single-record/message-list/components/DuplicateMessageListSingleRecordCommand.tsx
 msgid "List duplicated with {memberCount, plural, one {# member} other {# members}}"
-msgstr ""
+msgstr "Liste {memberCount, plural, one {# üye} other {# üye}} ile çoğaltıldı"
 
 #. js-lingui-id: 3xTn5L
 #: src/modules/views/types/ViewType.ts
@@ -13320,7 +13320,7 @@ msgstr "Bu çalışma alanında hiçbir Yapay Zeka modeli etkin değil."
 #. js-lingui-id: zcsNvp
 #: src/modules/ai/components/AiChatEditorSection.tsx
 msgid "No AI models are enabled."
-msgstr ""
+msgstr "Hiçbir AI modeli etkinleştirilmedi."
 
 #. js-lingui-id: 42kV9p
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -13775,7 +13775,7 @@ msgstr "Bu paket için herhangi bir köken beyanı bulunamadı. Onu GitHub Actio
 #. js-lingui-id: m1OG2V
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "No recipients to send to ({skipReasons})"
-msgstr ""
+msgstr "Gönderilecek alıcı yok ({skipReasons})"
 
 #. js-lingui-id: V/+aTW
 #: src/modules/object-record/record-field/ui/form-types/components/FormMorphRelationToOneFieldInput.tsx
@@ -13887,7 +13887,7 @@ msgstr "Gönderen yok"
 #. js-lingui-id: 5UEIxk
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 msgid "No sending address is available. Connect a verified sending domain in Settings before this campaign can go out."
-msgstr ""
+msgstr "Kullanılabilir gönderim adresi yok. Bu kampanya gönderilmeden önce Ayarlar'dan doğrulanmış bir gönderim alan adı bağlayın."
 
 #. js-lingui-id: JkPTT8
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
@@ -15939,7 +15939,7 @@ msgstr "Alıcı"
 #. js-lingui-id: F+BB7w
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "Recipient count unavailable"
-msgstr ""
+msgstr "Alıcı sayısı kullanılamıyor"
 
 #. js-lingui-id: p8GO5h
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -17601,7 +17601,7 @@ msgstr "Eylem Seç"
 #. js-lingui-id: TM0KpN
 #: src/modules/object-core/components/CoreObjectTable.tsx
 msgid "Select all loaded rows"
-msgstr ""
+msgstr "Yüklenen tüm satırları seç"
 
 #. js-lingui-id: /fhMKz
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn.tsx
@@ -17758,12 +17758,12 @@ msgstr "Takımınıza davet e-postası gönderin"
 #. js-lingui-id: WRLt0i
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "Send campaign"
-msgstr ""
+msgstr "Kampanya gönder"
 
 #. js-lingui-id: b7hiQs
 #: src/modules/side-panel/hooks/useOpenSendCampaignInSidePanel.ts
 msgid "Send Campaign"
-msgstr ""
+msgstr "Kampanya gönder"
 
 #. js-lingui-id: 65dxv8
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -17821,7 +17821,7 @@ msgstr "İstek gönderiliyor..."
 #. js-lingui-id: 2l+PSH
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "Sending starts right away and cannot be undone."
-msgstr ""
+msgstr "Gönderim hemen başlar ve geri alınamaz."
 
 #. js-lingui-id: IoAuJG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -22621,7 +22621,7 @@ msgstr "Çalışma alanı alt alan adınızı değiştirmek üzeresiniz. Bu işl
 #. js-lingui-id: 6x8lJe
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "You’ve reached your AI usage limit."
-msgstr ""
+msgstr "AI kullanım sınırınıza ulaştınız."
 
 #. js-lingui-id: tOPGvO
 #: src/modules/apollo/services/apollo.factory.ts

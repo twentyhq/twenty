@@ -164,7 +164,7 @@ msgstr ""
 #. placeholder {2}: formatNumber(counts.duplicateEmails)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0, plural, one {{1} duplicate} other {{2} duplicates}}"
-msgstr ""
+msgstr "{0, plural, one {{1} duplikát} few {{2} duplikáty} many {{2} duplikátu} other {{2} duplikátů}}"
 
 #. js-lingui-id: Z2fCN4
 #. placeholder {0}: failedResults.length
@@ -188,7 +188,7 @@ msgstr "{0, plural, one {{1} úloha nelze znovu spustit} few {{2} úlohy nelze z
 #. placeholder {2}: formatNumber(audiencePreview.sendable)
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "{0, plural, one {{1} recipient} other {{2} recipients}}"
-msgstr ""
+msgstr "{0, plural, one {{1} příjemce} few {{2} příjemci} many {{2} příjemce} other {{2} příjemců}}"
 
 #. js-lingui-id: 0LMb5P
 #. placeholder {0}: Math.abs(days)
@@ -221,7 +221,7 @@ msgstr "{0, plural, one {# pracovní prostor selhal nebo je pozadu} few {# praco
 #. placeholder {2}: canceled.canceledMessageCount
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "{0, plural, one {Campaign canceled, {1} pending email stopped} other {Campaign canceled, {2} pending emails stopped}}"
-msgstr ""
+msgstr "{0, plural, one {Kampaň zrušena, odesílání {1} čekajícího e-mailu zastaveno} few {Kampaň zrušena, odesílání {2} čekajících e-mailů zastaveno} many {Kampaň zrušena, odesílání {2} čekajícího e-mailu zastaveno} other {Kampaň zrušena, odesílání {2} čekajících e-mailů zastaveno}}"
 
 #. js-lingui-id: WTc9VY
 #. placeholder {0}: restriction.fieldNames.length
@@ -233,7 +233,7 @@ msgstr "{0, plural, one {Nemáte povolení pro přístup k poli {fieldsList}} fe
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} bounced or complained"
-msgstr ""
+msgstr "{0} vrácených nebo s nahlášenou stížností},{"
 
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(nextCreditsByPeriod, { decimals: 2, })
@@ -264,7 +264,7 @@ msgstr "{0} nemají žádný vztah k {loadBalancePoolObjectLabel}. Vyberte jiný
 #. placeholder {1}: excludedReasons.join(', ')
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "{0} in the list, skipping {1}"
-msgstr ""
+msgstr "{0} v seznamu, přeskakuje se {1}"
 
 #. js-lingui-id: T8aKxO
 #. placeholder {0}: layout.name
@@ -301,7 +301,7 @@ msgstr "{0} zrušilo odběr tohoto tématu"
 #. placeholder {0}: formatNumber(counts.overCap)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} over the recipient limit"
-msgstr ""
+msgstr "{0} nad limitem příjemců"
 
 #. js-lingui-id: 55frRG
 #. placeholder {0}: index + 1
@@ -355,7 +355,7 @@ msgstr "{0, plural, one {# widget} few {# widgety} many {# widgetů} other {# wi
 #. placeholder {0}: formatNumber(counts.withoutEmail)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} without an email address"
-msgstr ""
+msgstr "{0} bez e-mailové adresy"
 
 #. js-lingui-id: 2UKfhY
 #. placeholder {0}: selectedItemNames.length
@@ -593,12 +593,12 @@ msgstr "Záznam {positionLabel} má prioritu"
 #. placeholder {1}: formatNumber(queuedCount)
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "{queuedCount, plural, one {Campaign queued to {0} recipient} other {Campaign queued to {1} recipients}}"
-msgstr ""
+msgstr "{queuedCount, plural, one {Kampaň zařazena do fronty pro {0} příjemce} few {Kampaň zařazena do fronty pro {1} příjemce} many {Kampaň zařazena do fronty pro {1} příjemce} other {Kampaň zařazena do fronty pro {1} příjemců}}"
 
 #. js-lingui-id: cMTWxR
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "{queuedMessage}, skipping {skipReasons}"
-msgstr ""
+msgstr "{queuedMessage}, přeskakuje se {skipReasons}"
 
 #. js-lingui-id: 5d0hY6
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -1306,7 +1306,7 @@ msgstr "Přidat účet"
 #. js-lingui-id: dGjQL8
 #: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
 msgid "Add an API key to enable AI."
-msgstr ""
+msgstr "Přidejte klíč API pro povolení AI."
 
 #. js-lingui-id: W5wF8J
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
@@ -2021,12 +2021,12 @@ msgstr "Využití AI podle pracovního prostoru"
 #. js-lingui-id: YfXPCQ
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Ask an admin to upgrade the plan."
-msgstr ""
+msgstr "Byl dosažen limit využití AI. Požádejte správce o upgrade tarifu."
 
 #. js-lingui-id: wBA/cx
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Contact support to upgrade."
-msgstr ""
+msgstr "Byl dosažen limit využití AI. Kontaktujte podporu pro upgrade."
 
 #. js-lingui-id: KLyZ6L
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -2812,7 +2812,7 @@ msgstr "Zeptejte se AI"
 #. js-lingui-id: HiVVqo
 #: src/modules/ai/components/AiChatEditorSection.tsx
 msgid "Ask your workspace admin to enable an AI model."
-msgstr ""
+msgstr "Požádejte správce svého pracovního prostoru o povolení modelu AI."
 
 #. js-lingui-id: mc9nK2
 #: src/modules/ai/hooks/useAiChatEditor.ts
@@ -3709,7 +3709,7 @@ msgstr "Storno"
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Cancel Campaign"
-msgstr ""
+msgstr "Zrušit kampaň"
 
 #. js-lingui-id: J8nuSF
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -4676,7 +4676,7 @@ msgstr "Konfigurujte nastavení IMAP pro přijímání a synchronizaci vašich e
 #. js-lingui-id: pE9JCI
 #: src/modules/ai/components/AiChatEditorSection.tsx
 msgid "Configure models"
-msgstr ""
+msgstr "Konfigurovat modely"
 
 #. js-lingui-id: gk/8eh
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -5369,7 +5369,7 @@ msgstr "Počet unikátních hodnot"
 #. js-lingui-id: tKTq/b
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "Counting recipients..."
-msgstr ""
+msgstr "Počítání příjemců..."
 
 #. js-lingui-id: JNCzPW
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
@@ -7635,7 +7635,7 @@ msgstr "E-maily a kalendář"
 #. js-lingui-id: VJ5blF
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Emails already handed to the provider cannot be recalled. This stops everything still waiting to be sent."
-msgstr ""
+msgstr "E-maily, které již byly předány poskytovateli, nelze vzít zpět. Tím se zastaví vše, co ještě čeká na odeslání."
 
 #. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
@@ -8658,12 +8658,12 @@ msgstr "Nepodařilo se přidat poskytovatele"
 #. js-lingui-id: ScvpVb
 #: src/modules/object-record/record-table-widget/components/RecordTableWidgetJunctionAddNewRow.tsx
 msgid "Failed to add record"
-msgstr ""
+msgstr "Záznam se nepodařilo přidat"
 
 #. js-lingui-id: Y9Y+x3
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "Failed to cancel campaign"
-msgstr ""
+msgstr "Nepodařilo se zrušit kampaň"
 
 #. js-lingui-id: E2CkaQ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -8719,7 +8719,7 @@ msgstr "Nepodařilo se duplikovat ovládací panel"
 #. js-lingui-id: 6e1GS3
 #: src/modules/command-menu-item/engine-command/record/single-record/message-list/hooks/useDuplicateMessageList.ts
 msgid "Failed to duplicate list"
-msgstr ""
+msgstr "Seznam se nepodařilo duplikovat"
 
 #. js-lingui-id: WYXxQF
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
@@ -8787,7 +8787,7 @@ msgstr "Nepodařilo se načíst administrátory serveru."
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 msgid "Failed to load the application."
-msgstr ""
+msgstr "Aplikaci se nepodařilo načíst."
 
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
@@ -11845,7 +11845,7 @@ msgstr "Seznam"
 #. js-lingui-id: Wfj8PH
 #: src/modules/command-menu-item/engine-command/record/single-record/message-list/components/DuplicateMessageListSingleRecordCommand.tsx
 msgid "List duplicated with {memberCount, plural, one {# member} other {# members}}"
-msgstr ""
+msgstr "Seznam byl duplikován s {memberCount, plural, one {# členem} few {# členy} many {# člena} other {# členů}}"
 
 #. js-lingui-id: 3xTn5L
 #: src/modules/views/types/ViewType.ts
@@ -13320,7 +13320,7 @@ msgstr "V tomto pracovním prostoru nejsou povoleny žádné AI modely."
 #. js-lingui-id: zcsNvp
 #: src/modules/ai/components/AiChatEditorSection.tsx
 msgid "No AI models are enabled."
-msgstr ""
+msgstr "Nejsou povoleny žádné modely AI."
 
 #. js-lingui-id: 42kV9p
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -13775,7 +13775,7 @@ msgstr "Pro tento balíček nebylo nalezeno žádné potvrzení o původu (prove
 #. js-lingui-id: m1OG2V
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "No recipients to send to ({skipReasons})"
-msgstr ""
+msgstr "Žádní příjemci, kterým lze odeslat ({skipReasons})"
 
 #. js-lingui-id: V/+aTW
 #: src/modules/object-record/record-field/ui/form-types/components/FormMorphRelationToOneFieldInput.tsx
@@ -13887,7 +13887,7 @@ msgstr "Žádný odesílatel"
 #. js-lingui-id: 5UEIxk
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 msgid "No sending address is available. Connect a verified sending domain in Settings before this campaign can go out."
-msgstr ""
+msgstr "Není k dispozici žádná odesílací adresa. Než bude možné tuto kampaň odeslat, připojte v Nastavení ověřenou odesílací doménu."
 
 #. js-lingui-id: JkPTT8
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
@@ -15939,7 +15939,7 @@ msgstr "Příjemce"
 #. js-lingui-id: F+BB7w
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "Recipient count unavailable"
-msgstr ""
+msgstr "Počet příjemců není k dispozici"
 
 #. js-lingui-id: p8GO5h
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -17601,7 +17601,7 @@ msgstr "Vybrat akci"
 #. js-lingui-id: TM0KpN
 #: src/modules/object-core/components/CoreObjectTable.tsx
 msgid "Select all loaded rows"
-msgstr ""
+msgstr "Vybrat všechny načtené řádky"
 
 #. js-lingui-id: /fhMKz
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn.tsx
@@ -17758,12 +17758,12 @@ msgstr "Pošlete pozvánku e-mailem vašemu týmu"
 #. js-lingui-id: WRLt0i
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "Send campaign"
-msgstr ""
+msgstr "Odeslat kampaň"
 
 #. js-lingui-id: b7hiQs
 #: src/modules/side-panel/hooks/useOpenSendCampaignInSidePanel.ts
 msgid "Send Campaign"
-msgstr ""
+msgstr "Odeslat kampaň"
 
 #. js-lingui-id: 65dxv8
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -17821,7 +17821,7 @@ msgstr "Odesílání požadavku..."
 #. js-lingui-id: 2l+PSH
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "Sending starts right away and cannot be undone."
-msgstr ""
+msgstr "Odesílání začne ihned a nelze ho vrátit zpět."
 
 #. js-lingui-id: IoAuJG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -22621,7 +22621,7 @@ msgstr "Chystáte se změnit subdoménu své pracovní oblasti. Tato akce odhlá
 #. js-lingui-id: 6x8lJe
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "You’ve reached your AI usage limit."
-msgstr ""
+msgstr "Dosáhli jste limitu využití AI."
 
 #. js-lingui-id: tOPGvO
 #: src/modules/apollo/services/apollo.factory.ts

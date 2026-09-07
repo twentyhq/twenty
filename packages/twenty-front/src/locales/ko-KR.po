@@ -164,7 +164,7 @@ msgstr "[빈 문자열]"
 #. placeholder {2}: formatNumber(counts.duplicateEmails)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0, plural, one {{1} duplicate} other {{2} duplicates}}"
-msgstr ""
+msgstr "{0, plural, other {{1}개의 중복 항목}}"
 
 #. js-lingui-id: Z2fCN4
 #. placeholder {0}: failedResults.length
@@ -188,7 +188,7 @@ msgstr "{0, plural, other {{2}개의 작업을 재시도할 수 없습니다}}"
 #. placeholder {2}: formatNumber(audiencePreview.sendable)
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "{0, plural, one {{1} recipient} other {{2} recipients}}"
-msgstr ""
+msgstr "{0, plural, other {{1}명의 수신자}}"
 
 #. js-lingui-id: 0LMb5P
 #. placeholder {0}: Math.abs(days)
@@ -221,7 +221,7 @@ msgstr "{0, plural, other {실패했거나 뒤처진 워크스페이스 #개}}"
 #. placeholder {2}: canceled.canceledMessageCount
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "{0, plural, one {Campaign canceled, {1} pending email stopped} other {Campaign canceled, {2} pending emails stopped}}"
-msgstr ""
+msgstr "{0, plural, other {캠페인이 취소되었으며, 대기 중인 이메일 {1}개가 중지되었습니다}}"
 
 #. js-lingui-id: WTc9VY
 #. placeholder {0}: restriction.fieldNames.length
@@ -233,7 +233,7 @@ msgstr "{0, plural, other {귀하는 {fieldsList} 필드를 액세스할 권한�
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} bounced or complained"
-msgstr ""
+msgstr "{0}명 반송 또는 불만 제기됨"
 
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(nextCreditsByPeriod, { decimals: 2, })
@@ -264,7 +264,7 @@ msgstr "{0}은(는) {loadBalancePoolObjectLabel}과(와) 아무 관련이 없습
 #. placeholder {1}: excludedReasons.join(', ')
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "{0} in the list, skipping {1}"
-msgstr ""
+msgstr "목록에 {0}명, {1} 제외"
 
 #. js-lingui-id: T8aKxO
 #. placeholder {0}: layout.name
@@ -301,7 +301,7 @@ msgstr "{0}명이 이 주제 수신을 거부했습니다"
 #. placeholder {0}: formatNumber(counts.overCap)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} over the recipient limit"
-msgstr ""
+msgstr "{0}명이 수신자 한도를 초과함"
 
 #. js-lingui-id: 55frRG
 #. placeholder {0}: index + 1
@@ -355,7 +355,7 @@ msgstr "위젯 {0}개"
 #. placeholder {0}: formatNumber(counts.withoutEmail)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} without an email address"
-msgstr ""
+msgstr "{0}명에게 이메일 주소가 없음"
 
 #. js-lingui-id: 2UKfhY
 #. placeholder {0}: selectedItemNames.length
@@ -593,12 +593,12 @@ msgstr "{positionLabel} 레코드가 우선순위를 가집니다"
 #. placeholder {1}: formatNumber(queuedCount)
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "{queuedCount, plural, one {Campaign queued to {0} recipient} other {Campaign queued to {1} recipients}}"
-msgstr ""
+msgstr "{queuedCount, plural, other {캠페인이 {0}명의 수신자에게 대기열에 추가됨}}"
 
 #. js-lingui-id: cMTWxR
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "{queuedMessage}, skipping {skipReasons}"
-msgstr ""
+msgstr "{queuedMessage}, {skipReasons} 제외"
 
 #. js-lingui-id: 5d0hY6
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -1306,7 +1306,7 @@ msgstr "계정 추가"
 #. js-lingui-id: dGjQL8
 #: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
 msgid "Add an API key to enable AI."
-msgstr ""
+msgstr "AI를 활성화하려면 API 키를 추가하세요."
 
 #. js-lingui-id: W5wF8J
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
@@ -2021,12 +2021,12 @@ msgstr "워크스페이스별 AI 사용량"
 #. js-lingui-id: YfXPCQ
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Ask an admin to upgrade the plan."
-msgstr ""
+msgstr "AI 사용 한도에 도달했습니다. 관리자가 플랜을 업그레이드하도록 요청하세요."
 
 #. js-lingui-id: wBA/cx
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Contact support to upgrade."
-msgstr ""
+msgstr "AI 사용 한도에 도달했습니다. 업그레이드하려면 지원팀에 문의하세요."
 
 #. js-lingui-id: KLyZ6L
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -2812,7 +2812,7 @@ msgstr "AI에게 질문하기"
 #. js-lingui-id: HiVVqo
 #: src/modules/ai/components/AiChatEditorSection.tsx
 msgid "Ask your workspace admin to enable an AI model."
-msgstr ""
+msgstr "워크스페이스 관리자에게 AI 모델을 활성화해 달라고 요청하세요."
 
 #. js-lingui-id: mc9nK2
 #: src/modules/ai/hooks/useAiChatEditor.ts
@@ -3709,7 +3709,7 @@ msgstr "취소"
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Cancel Campaign"
-msgstr ""
+msgstr "캠페인 취소"
 
 #. js-lingui-id: J8nuSF
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -4676,7 +4676,7 @@ msgstr "IMAP 설정을 구성하여 이메일을 수신하고 동기화하세요
 #. js-lingui-id: pE9JCI
 #: src/modules/ai/components/AiChatEditorSection.tsx
 msgid "Configure models"
-msgstr ""
+msgstr "모델 구성"
 
 #. js-lingui-id: gk/8eh
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -5369,7 +5369,7 @@ msgstr "고유 값 개수"
 #. js-lingui-id: tKTq/b
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "Counting recipients..."
-msgstr ""
+msgstr "수신자 수를 계산하는 중..."
 
 #. js-lingui-id: JNCzPW
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
@@ -7635,7 +7635,7 @@ msgstr "이메일 및 캘린더"
 #. js-lingui-id: VJ5blF
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Emails already handed to the provider cannot be recalled. This stops everything still waiting to be sent."
-msgstr ""
+msgstr "이미 제공업체에 전달된 이메일은 회수할 수 없습니다. 이렇게 하면 아직 전송 대기 중인 모든 이메일의 전송이 중지됩니다."
 
 #. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
@@ -8658,12 +8658,12 @@ msgstr "공급자를 추가하지 못했습니다"
 #. js-lingui-id: ScvpVb
 #: src/modules/object-record/record-table-widget/components/RecordTableWidgetJunctionAddNewRow.tsx
 msgid "Failed to add record"
-msgstr ""
+msgstr "레코드 추가에 실패했습니다"
 
 #. js-lingui-id: Y9Y+x3
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "Failed to cancel campaign"
-msgstr ""
+msgstr "캠페인 취소에 실패했습니다"
 
 #. js-lingui-id: E2CkaQ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -8719,7 +8719,7 @@ msgstr "대시보드 복제에 실패했습니다"
 #. js-lingui-id: 6e1GS3
 #: src/modules/command-menu-item/engine-command/record/single-record/message-list/hooks/useDuplicateMessageList.ts
 msgid "Failed to duplicate list"
-msgstr ""
+msgstr "목록 복제에 실패했습니다"
 
 #. js-lingui-id: WYXxQF
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
@@ -8787,7 +8787,7 @@ msgstr "서버 관리자를 불러오지 못했습니다."
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 msgid "Failed to load the application."
-msgstr ""
+msgstr "애플리케이션을 로드하지 못했습니다."
 
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
@@ -11845,7 +11845,7 @@ msgstr "목록"
 #. js-lingui-id: Wfj8PH
 #: src/modules/command-menu-item/engine-command/record/single-record/message-list/components/DuplicateMessageListSingleRecordCommand.tsx
 msgid "List duplicated with {memberCount, plural, one {# member} other {# members}}"
-msgstr ""
+msgstr "{memberCount, plural, other {#명의 구성원으로 목록이 복제됨}}"
 
 #. js-lingui-id: 3xTn5L
 #: src/modules/views/types/ViewType.ts
@@ -13320,7 +13320,7 @@ msgstr "이 워크스페이스에서는 사용 설정된 AI 모델이 없습니�
 #. js-lingui-id: zcsNvp
 #: src/modules/ai/components/AiChatEditorSection.tsx
 msgid "No AI models are enabled."
-msgstr ""
+msgstr "활성화된 AI 모델이 없습니다."
 
 #. js-lingui-id: 42kV9p
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -13775,7 +13775,7 @@ msgstr "이 패키지에 대한 출처 증명이 없습니다. npm trusted publi
 #. js-lingui-id: m1OG2V
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "No recipients to send to ({skipReasons})"
-msgstr ""
+msgstr "보낼 수신자가 없습니다({skipReasons})"
 
 #. js-lingui-id: V/+aTW
 #: src/modules/object-record/record-field/ui/form-types/components/FormMorphRelationToOneFieldInput.tsx
@@ -13887,7 +13887,7 @@ msgstr "보낸 사람 없음"
 #. js-lingui-id: 5UEIxk
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 msgid "No sending address is available. Connect a verified sending domain in Settings before this campaign can go out."
-msgstr ""
+msgstr "사용 가능한 전송 주소가 없습니다. 이 캠페인을 전송하려면 먼저 설정에서 인증된 전송 도메인을 연결하세요."
 
 #. js-lingui-id: JkPTT8
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
@@ -15939,7 +15939,7 @@ msgstr "수신자"
 #. js-lingui-id: F+BB7w
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "Recipient count unavailable"
-msgstr ""
+msgstr "수신자 수를 확인할 수 없음"
 
 #. js-lingui-id: p8GO5h
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -17601,7 +17601,7 @@ msgstr "작업 선택"
 #. js-lingui-id: TM0KpN
 #: src/modules/object-core/components/CoreObjectTable.tsx
 msgid "Select all loaded rows"
-msgstr ""
+msgstr "로드된 모든 행 선택"
 
 #. js-lingui-id: /fhMKz
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn.tsx
@@ -17758,12 +17758,12 @@ msgstr "팀에 초대 이메일 보내기"
 #. js-lingui-id: WRLt0i
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "Send campaign"
-msgstr ""
+msgstr "캠페인 보내기"
 
 #. js-lingui-id: b7hiQs
 #: src/modules/side-panel/hooks/useOpenSendCampaignInSidePanel.ts
 msgid "Send Campaign"
-msgstr ""
+msgstr "캠페인 보내기"
 
 #. js-lingui-id: 65dxv8
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -17821,7 +17821,7 @@ msgstr "요청 보내는 중..."
 #. js-lingui-id: 2l+PSH
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "Sending starts right away and cannot be undone."
-msgstr ""
+msgstr "전송은 즉시 시작되며 취소할 수 없습니다."
 
 #. js-lingui-id: IoAuJG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -22621,7 +22621,7 @@ msgstr "워크스페이스 서브도메인을 변경하려고 합니다. 이 작
 #. js-lingui-id: 6x8lJe
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "You’ve reached your AI usage limit."
-msgstr ""
+msgstr "AI 사용 한도에 도달했습니다."
 
 #. js-lingui-id: tOPGvO
 #: src/modules/apollo/services/apollo.factory.ts

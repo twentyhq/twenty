@@ -164,7 +164,7 @@ msgstr "[șir gol]"
 #. placeholder {2}: formatNumber(counts.duplicateEmails)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0, plural, one {{1} duplicate} other {{2} duplicates}}"
-msgstr ""
+msgstr "{0, plural, one {{1} duplicat} few {{2} duplicate} other {{2} duplicate}}"
 
 #. js-lingui-id: Z2fCN4
 #. placeholder {0}: failedResults.length
@@ -221,7 +221,7 @@ msgstr "{0, plural, one {# spațiu de lucru eșuat sau rămas în urmă} few {# 
 #. placeholder {2}: canceled.canceledMessageCount
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "{0, plural, one {Campaign canceled, {1} pending email stopped} other {Campaign canceled, {2} pending emails stopped}}"
-msgstr ""
+msgstr "{0, plural, one {Campanie anulată, {1} e-mail în așteptare oprit} few {Campanie anulată, {2} e-mailuri în așteptare oprite} other {Campanie anulată, {2} e-mailuri în așteptare oprite}}"
 
 #. js-lingui-id: WTc9VY
 #. placeholder {0}: restriction.fieldNames.length
@@ -233,7 +233,7 @@ msgstr "{0, plural, one {Nu aveți permisiunea de a accesa câmpul {fieldsList}}
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} bounced or complained"
-msgstr ""
+msgstr "{0} respinse sau cu reclamații."
 
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(nextCreditsByPeriod, { decimals: 2, })
@@ -264,7 +264,7 @@ msgstr "{0} nu au nicio relație cu {loadBalancePoolObjectLabel}. Alegeți un al
 #. placeholder {1}: excludedReasons.join(', ')
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "{0} in the list, skipping {1}"
-msgstr ""
+msgstr "{0} în listă, se omit {1}"
 
 #. js-lingui-id: T8aKxO
 #. placeholder {0}: layout.name
@@ -301,7 +301,7 @@ msgstr "{0} s-au dezabonat de la acest subiect"
 #. placeholder {0}: formatNumber(counts.overCap)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} over the recipient limit"
-msgstr ""
+msgstr "{0} peste limita de destinatari"
 
 #. js-lingui-id: 55frRG
 #. placeholder {0}: index + 1
@@ -355,7 +355,7 @@ msgstr "{0} widgeturi"
 #. placeholder {0}: formatNumber(counts.withoutEmail)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} without an email address"
-msgstr ""
+msgstr "{0} fără o adresă de e-mail"
 
 #. js-lingui-id: 2UKfhY
 #. placeholder {0}: selectedItemNames.length
@@ -593,12 +593,12 @@ msgstr "Înregistrarea {positionLabel} are prioritate"
 #. placeholder {1}: formatNumber(queuedCount)
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "{queuedCount, plural, one {Campaign queued to {0} recipient} other {Campaign queued to {1} recipients}}"
-msgstr ""
+msgstr "{queuedCount, plural, one {Campania a fost pusă în coadă pentru {0} destinatar} few {Campania a fost pusă în coadă pentru {1} destinatari} other {Campania a fost pusă în coadă pentru {1} destinatari}}"
 
 #. js-lingui-id: cMTWxR
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "{queuedMessage}, skipping {skipReasons}"
-msgstr ""
+msgstr "{queuedMessage}, se omit {skipReasons}"
 
 #. js-lingui-id: 5d0hY6
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -1306,7 +1306,7 @@ msgstr "Adaugă cont"
 #. js-lingui-id: dGjQL8
 #: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
 msgid "Add an API key to enable AI."
-msgstr ""
+msgstr "Adăugați o cheie API pentru a activa AI."
 
 #. js-lingui-id: W5wF8J
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
@@ -2021,12 +2021,12 @@ msgstr "Utilizare AI după spațiu de lucru"
 #. js-lingui-id: YfXPCQ
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Ask an admin to upgrade the plan."
-msgstr ""
+msgstr "Limita de utilizare AI a fost atinsă. Rugați un administrator să actualizeze planul."
 
 #. js-lingui-id: wBA/cx
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Contact support to upgrade."
-msgstr ""
+msgstr "Limita de utilizare AI a fost atinsă. Contactați asistența pentru a actualiza planul."
 
 #. js-lingui-id: KLyZ6L
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -2812,7 +2812,7 @@ msgstr "Întreabă AI"
 #. js-lingui-id: HiVVqo
 #: src/modules/ai/components/AiChatEditorSection.tsx
 msgid "Ask your workspace admin to enable an AI model."
-msgstr ""
+msgstr "Cereți administratorului spațiului de lucru să activeze un model AI."
 
 #. js-lingui-id: mc9nK2
 #: src/modules/ai/hooks/useAiChatEditor.ts
@@ -3709,7 +3709,7 @@ msgstr "Anulare"
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Cancel Campaign"
-msgstr ""
+msgstr "Anulați campania"
 
 #. js-lingui-id: J8nuSF
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -4676,7 +4676,7 @@ msgstr "Configurați setările IMAP pentru a primi și sincroniza emailurile."
 #. js-lingui-id: pE9JCI
 #: src/modules/ai/components/AiChatEditorSection.tsx
 msgid "Configure models"
-msgstr ""
+msgstr "Configurați modelele"
 
 #. js-lingui-id: gk/8eh
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -5369,7 +5369,7 @@ msgstr "Numără valorile unice"
 #. js-lingui-id: tKTq/b
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "Counting recipients..."
-msgstr ""
+msgstr "Se numără destinatarii..."
 
 #. js-lingui-id: JNCzPW
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
@@ -7635,7 +7635,7 @@ msgstr "E-mailuri & Calendar"
 #. js-lingui-id: VJ5blF
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Emails already handed to the provider cannot be recalled. This stops everything still waiting to be sent."
-msgstr ""
+msgstr "E-mailurile deja predate furnizorului nu pot fi retrase. Această acțiune oprește tot ce încă așteaptă să fie trimis."
 
 #. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
@@ -8658,12 +8658,12 @@ msgstr "Eroare la adăugarea furnizorului"
 #. js-lingui-id: ScvpVb
 #: src/modules/object-record/record-table-widget/components/RecordTableWidgetJunctionAddNewRow.tsx
 msgid "Failed to add record"
-msgstr ""
+msgstr "Adăugarea înregistrării a eșuat"
 
 #. js-lingui-id: Y9Y+x3
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "Failed to cancel campaign"
-msgstr ""
+msgstr "Anularea campaniei a eșuat"
 
 #. js-lingui-id: E2CkaQ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -8719,7 +8719,7 @@ msgstr "Duplicarea tabloului de bord a eșuat"
 #. js-lingui-id: 6e1GS3
 #: src/modules/command-menu-item/engine-command/record/single-record/message-list/hooks/useDuplicateMessageList.ts
 msgid "Failed to duplicate list"
-msgstr ""
+msgstr "Duplicarea listei a eșuat"
 
 #. js-lingui-id: WYXxQF
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
@@ -8787,7 +8787,7 @@ msgstr "Încărcarea administratorilor serverului a eșuat."
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 msgid "Failed to load the application."
-msgstr ""
+msgstr "Încărcarea aplicației a eșuat."
 
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
@@ -11845,7 +11845,7 @@ msgstr "Listă"
 #. js-lingui-id: Wfj8PH
 #: src/modules/command-menu-item/engine-command/record/single-record/message-list/components/DuplicateMessageListSingleRecordCommand.tsx
 msgid "List duplicated with {memberCount, plural, one {# member} other {# members}}"
-msgstr ""
+msgstr "Lista a fost duplicată cu {memberCount, plural, one {# membru} few {# membri} other {# membri}}"
 
 #. js-lingui-id: 3xTn5L
 #: src/modules/views/types/ViewType.ts
@@ -13320,7 +13320,7 @@ msgstr "Nu există modele AI activate în acest spațiu de lucru."
 #. js-lingui-id: zcsNvp
 #: src/modules/ai/components/AiChatEditorSection.tsx
 msgid "No AI models are enabled."
-msgstr ""
+msgstr "Nu este activat niciun model AI."
 
 #. js-lingui-id: 42kV9p
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -13775,7 +13775,7 @@ msgstr "Nu a fost găsită nicio atestare de proveniență pentru acest pachet. 
 #. js-lingui-id: m1OG2V
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "No recipients to send to ({skipReasons})"
-msgstr ""
+msgstr "Nu există destinatari cărora să li se trimită ({skipReasons})"
 
 #. js-lingui-id: V/+aTW
 #: src/modules/object-record/record-field/ui/form-types/components/FormMorphRelationToOneFieldInput.tsx
@@ -13887,7 +13887,7 @@ msgstr "Niciun expeditor"
 #. js-lingui-id: 5UEIxk
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 msgid "No sending address is available. Connect a verified sending domain in Settings before this campaign can go out."
-msgstr ""
+msgstr "Nu este disponibilă nicio adresă de expediere. Conectați un domeniu de expediere verificat în Setări înainte ca această campanie să poată fi trimisă."
 
 #. js-lingui-id: JkPTT8
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
@@ -15939,7 +15939,7 @@ msgstr "Destinatar"
 #. js-lingui-id: F+BB7w
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "Recipient count unavailable"
-msgstr ""
+msgstr "Numărul de destinatari nu este disponibil"
 
 #. js-lingui-id: p8GO5h
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -17601,7 +17601,7 @@ msgstr "Selectează acțiunea"
 #. js-lingui-id: TM0KpN
 #: src/modules/object-core/components/CoreObjectTable.tsx
 msgid "Select all loaded rows"
-msgstr ""
+msgstr "Selectați toate rândurile încărcate"
 
 #. js-lingui-id: /fhMKz
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn.tsx
@@ -17758,12 +17758,12 @@ msgstr "Trimite un email de invitație echipei tale"
 #. js-lingui-id: WRLt0i
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "Send campaign"
-msgstr ""
+msgstr "Trimiteți campania"
 
 #. js-lingui-id: b7hiQs
 #: src/modules/side-panel/hooks/useOpenSendCampaignInSidePanel.ts
 msgid "Send Campaign"
-msgstr ""
+msgstr "Trimiteți campania"
 
 #. js-lingui-id: 65dxv8
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -17821,7 +17821,7 @@ msgstr "Se trimite cererea..."
 #. js-lingui-id: 2l+PSH
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "Sending starts right away and cannot be undone."
-msgstr ""
+msgstr "Trimiterea începe imediat și nu poate fi anulată."
 
 #. js-lingui-id: IoAuJG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -22621,7 +22621,7 @@ msgstr "Sunteți pe punctul de a schimba subdomeniul spațiului dumneavoastră d
 #. js-lingui-id: 6x8lJe
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "You’ve reached your AI usage limit."
-msgstr ""
+msgstr "Ați atins limita de utilizare AI."
 
 #. js-lingui-id: tOPGvO
 #: src/modules/apollo/services/apollo.factory.ts

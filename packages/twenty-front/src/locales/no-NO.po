@@ -164,7 +164,7 @@ msgstr "[tom streng]"
 #. placeholder {2}: formatNumber(counts.duplicateEmails)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0, plural, one {{1} duplicate} other {{2} duplicates}}"
-msgstr ""
+msgstr "{0, plural, one {{1} duplikat} other {{2} duplikater}}"
 
 #. js-lingui-id: Z2fCN4
 #. placeholder {0}: failedResults.length
@@ -188,7 +188,7 @@ msgstr "{0, plural, one {{1} jobb kunne ikke prøves på nytt} other {{2} jobber
 #. placeholder {2}: formatNumber(audiencePreview.sendable)
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "{0, plural, one {{1} recipient} other {{2} recipients}}"
-msgstr ""
+msgstr "{0, plural, one {{1} mottaker} other {{2} mottakere}}"
 
 #. js-lingui-id: 0LMb5P
 #. placeholder {0}: Math.abs(days)
@@ -221,7 +221,7 @@ msgstr "{0, plural, one {# arbeidsområde har feilet eller er på etterskudd} ot
 #. placeholder {2}: canceled.canceledMessageCount
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "{0, plural, one {Campaign canceled, {1} pending email stopped} other {Campaign canceled, {2} pending emails stopped}}"
-msgstr ""
+msgstr "{0, plural, one {Kampanje avbrutt, {1} ventende e-post stoppet} other {Kampanje avbrutt, {2} ventende e-poster stoppet}}"
 
 #. js-lingui-id: WTc9VY
 #. placeholder {0}: restriction.fieldNames.length
@@ -233,7 +233,7 @@ msgstr "{0, plural, one {Du har ikke tillatelse til å få tilgang til feltet {f
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} bounced or complained"
-msgstr ""
+msgstr "{0} som returnerte eller klaget."
 
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(nextCreditsByPeriod, { decimals: 2, })
@@ -264,7 +264,7 @@ msgstr "{0} har ingen relasjon til {loadBalancePoolObjectLabel}. Velg et annet o
 #. placeholder {1}: excludedReasons.join(', ')
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "{0} in the list, skipping {1}"
-msgstr ""
+msgstr "{0} i listen, hopper over {1}"
 
 #. js-lingui-id: T8aKxO
 #. placeholder {0}: layout.name
@@ -301,7 +301,7 @@ msgstr "{0} har valgt bort dette emnet"
 #. placeholder {0}: formatNumber(counts.overCap)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} over the recipient limit"
-msgstr ""
+msgstr "{0} over mottakergrensen"
 
 #. js-lingui-id: 55frRG
 #. placeholder {0}: index + 1
@@ -355,7 +355,7 @@ msgstr "{0} widgeter"
 #. placeholder {0}: formatNumber(counts.withoutEmail)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} without an email address"
-msgstr ""
+msgstr "{0} uten e-postadresse"
 
 #. js-lingui-id: 2UKfhY
 #. placeholder {0}: selectedItemNames.length
@@ -593,12 +593,12 @@ msgstr "{positionLabel}-oppføringen har prioritet"
 #. placeholder {1}: formatNumber(queuedCount)
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "{queuedCount, plural, one {Campaign queued to {0} recipient} other {Campaign queued to {1} recipients}}"
-msgstr ""
+msgstr "{queuedCount, plural, one {Kampanje satt i kø til {0} mottaker} other {Kampanje satt i kø til {1} mottakere}}"
 
 #. js-lingui-id: cMTWxR
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "{queuedMessage}, skipping {skipReasons}"
-msgstr ""
+msgstr "{queuedMessage}, hopper over {skipReasons}"
 
 #. js-lingui-id: 5d0hY6
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -1306,7 +1306,7 @@ msgstr "Legg til konto"
 #. js-lingui-id: dGjQL8
 #: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
 msgid "Add an API key to enable AI."
-msgstr ""
+msgstr "Legg til en API-nøkkel for å aktivere AI."
 
 #. js-lingui-id: W5wF8J
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
@@ -2021,12 +2021,12 @@ msgstr "AI-bruk etter arbeidsområde"
 #. js-lingui-id: YfXPCQ
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Ask an admin to upgrade the plan."
-msgstr ""
+msgstr "AI-bruksgrensen er nådd. Be en administrator om å oppgradere planen."
 
 #. js-lingui-id: wBA/cx
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Contact support to upgrade."
-msgstr ""
+msgstr "AI-bruksgrensen er nådd. Kontakt brukerstøtte for å oppgradere."
 
 #. js-lingui-id: KLyZ6L
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -2812,7 +2812,7 @@ msgstr "Spør AI"
 #. js-lingui-id: HiVVqo
 #: src/modules/ai/components/AiChatEditorSection.tsx
 msgid "Ask your workspace admin to enable an AI model."
-msgstr ""
+msgstr "Be arbeidsområdeadministratoren din om å aktivere en AI-modell."
 
 #. js-lingui-id: mc9nK2
 #: src/modules/ai/hooks/useAiChatEditor.ts
@@ -3709,7 +3709,7 @@ msgstr "Avbryt"
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Cancel Campaign"
-msgstr ""
+msgstr "Avbryt kampanje"
 
 #. js-lingui-id: J8nuSF
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -4676,7 +4676,7 @@ msgstr "Konfigurer IMAP-innstillinger for å motta og synkronisere e-postene din
 #. js-lingui-id: pE9JCI
 #: src/modules/ai/components/AiChatEditorSection.tsx
 msgid "Configure models"
-msgstr ""
+msgstr "Konfigurer modeller"
 
 #. js-lingui-id: gk/8eh
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -5369,7 +5369,7 @@ msgstr "Tell unike verdier"
 #. js-lingui-id: tKTq/b
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "Counting recipients..."
-msgstr ""
+msgstr "Teller mottakere..."
 
 #. js-lingui-id: JNCzPW
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
@@ -7635,7 +7635,7 @@ msgstr "E-poster og kalender"
 #. js-lingui-id: VJ5blF
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Emails already handed to the provider cannot be recalled. This stops everything still waiting to be sent."
-msgstr ""
+msgstr "E-poster som allerede er overlevert til leverandøren, kan ikke tilbakekalles. Dette stopper alt som fortsatt venter på å bli sendt."
 
 #. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
@@ -8658,12 +8658,12 @@ msgstr "Kunne ikke legge til tilbyder"
 #. js-lingui-id: ScvpVb
 #: src/modules/object-record/record-table-widget/components/RecordTableWidgetJunctionAddNewRow.tsx
 msgid "Failed to add record"
-msgstr ""
+msgstr "Kunne ikke legge til oppføring"
 
 #. js-lingui-id: Y9Y+x3
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "Failed to cancel campaign"
-msgstr ""
+msgstr "Kunne ikke avbryte kampanje"
 
 #. js-lingui-id: E2CkaQ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -8719,7 +8719,7 @@ msgstr "Kunne ikke duplisere dashbordet"
 #. js-lingui-id: 6e1GS3
 #: src/modules/command-menu-item/engine-command/record/single-record/message-list/hooks/useDuplicateMessageList.ts
 msgid "Failed to duplicate list"
-msgstr ""
+msgstr "Kunne ikke duplisere listen"
 
 #. js-lingui-id: WYXxQF
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
@@ -8787,7 +8787,7 @@ msgstr "Kunne ikke laste serveradministratorer."
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 msgid "Failed to load the application."
-msgstr ""
+msgstr "Kunne ikke laste inn applikasjonen."
 
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
@@ -11845,7 +11845,7 @@ msgstr "Liste"
 #. js-lingui-id: Wfj8PH
 #: src/modules/command-menu-item/engine-command/record/single-record/message-list/components/DuplicateMessageListSingleRecordCommand.tsx
 msgid "List duplicated with {memberCount, plural, one {# member} other {# members}}"
-msgstr ""
+msgstr "Listen ble duplisert med {memberCount, plural, one {# medlem} other {# medlemmer}}"
 
 #. js-lingui-id: 3xTn5L
 #: src/modules/views/types/ViewType.ts
@@ -13320,7 +13320,7 @@ msgstr "Ingen AI-modeller er aktivert i dette arbeidsområdet."
 #. js-lingui-id: zcsNvp
 #: src/modules/ai/components/AiChatEditorSection.tsx
 msgid "No AI models are enabled."
-msgstr ""
+msgstr "Ingen AI-modeller er aktivert."
 
 #. js-lingui-id: 42kV9p
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -13775,7 +13775,7 @@ msgstr "Det ble ikke funnet noen proveniensattest for denne pakken. Publiser den
 #. js-lingui-id: m1OG2V
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "No recipients to send to ({skipReasons})"
-msgstr ""
+msgstr "Ingen mottakere å sende til ({skipReasons})"
 
 #. js-lingui-id: V/+aTW
 #: src/modules/object-record/record-field/ui/form-types/components/FormMorphRelationToOneFieldInput.tsx
@@ -13887,7 +13887,7 @@ msgstr "Ingen avsender"
 #. js-lingui-id: 5UEIxk
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 msgid "No sending address is available. Connect a verified sending domain in Settings before this campaign can go out."
-msgstr ""
+msgstr "Ingen avsenderadresse er tilgjengelig. Koble til et verifisert avsenderdomene i Innstillinger før denne kampanjen kan sendes."
 
 #. js-lingui-id: JkPTT8
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
@@ -15939,7 +15939,7 @@ msgstr "Mottaker"
 #. js-lingui-id: F+BB7w
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "Recipient count unavailable"
-msgstr ""
+msgstr "Antall mottakere er ikke tilgjengelig"
 
 #. js-lingui-id: p8GO5h
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -17601,7 +17601,7 @@ msgstr "Velg handling"
 #. js-lingui-id: TM0KpN
 #: src/modules/object-core/components/CoreObjectTable.tsx
 msgid "Select all loaded rows"
-msgstr ""
+msgstr "Velg alle innlastede rader"
 
 #. js-lingui-id: /fhMKz
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn.tsx
@@ -17758,12 +17758,12 @@ msgstr "Send en invitasjonse-post til teamet ditt"
 #. js-lingui-id: WRLt0i
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "Send campaign"
-msgstr ""
+msgstr "Send kampanje"
 
 #. js-lingui-id: b7hiQs
 #: src/modules/side-panel/hooks/useOpenSendCampaignInSidePanel.ts
 msgid "Send Campaign"
-msgstr ""
+msgstr "Send kampanje"
 
 #. js-lingui-id: 65dxv8
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -17821,7 +17821,7 @@ msgstr "Sender forespørsel..."
 #. js-lingui-id: 2l+PSH
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "Sending starts right away and cannot be undone."
-msgstr ""
+msgstr "Sendingen starter med en gang og kan ikke angres."
 
 #. js-lingui-id: IoAuJG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -22621,7 +22621,7 @@ msgstr "Du er i ferd med å endre arbeidsområdets subdomene. Denne handlingen v
 #. js-lingui-id: 6x8lJe
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "You’ve reached your AI usage limit."
-msgstr ""
+msgstr "Du har nådd grensen for AI-bruk."
 
 #. js-lingui-id: tOPGvO
 #: src/modules/apollo/services/apollo.factory.ts
