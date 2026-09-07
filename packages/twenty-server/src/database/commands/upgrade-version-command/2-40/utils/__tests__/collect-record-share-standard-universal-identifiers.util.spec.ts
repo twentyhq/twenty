@@ -2,7 +2,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { collectRecordShareStandardUniversalIdentifiers } from 'src/database/commands/upgrade-version-command/2-39/utils/collect-record-share-standard-universal-identifiers.util';
+import { collectRecordShareStandardUniversalIdentifiers } from 'src/database/commands/upgrade-version-command/2-40/utils/collect-record-share-standard-universal-identifiers.util';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
 describe('collectRecordShareStandardUniversalIdentifiers', () => {

@@ -1,7 +1,7 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type RecordShareStandardUniversalIdentifiers } from 'src/database/commands/upgrade-version-command/2-39/types/record-share-standard-universal-identifiers.type';
+import { type RecordShareStandardUniversalIdentifiers } from 'src/database/commands/upgrade-version-command/2-40/types/record-share-standard-universal-identifiers.type';
 import { type TwentyStandardAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/types/twenty-standard-all-flat-entity-maps.type';
 
 const RECORD_SHARE_OBJECT_UNIVERSAL_IDENTIFIER =

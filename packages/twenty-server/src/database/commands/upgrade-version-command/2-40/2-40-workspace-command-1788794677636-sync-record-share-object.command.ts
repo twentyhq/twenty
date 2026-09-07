@@ -6,7 +6,7 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
-import { collectRecordShareStandardUniversalIdentifiers } from 'src/database/commands/upgrade-version-command/2-39/utils/collect-record-share-standard-universal-identifiers.util';
+import { collectRecordShareStandardUniversalIdentifiers } from 'src/database/commands/upgrade-version-command/2-40/utils/collect-record-share-standard-universal-identifiers.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -16,9 +16,9 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.39.0', 1788725371892)
+@RegisteredWorkspaceCommand('2.40.0', 1788794677636)
 @Command({
-  name: 'upgrade:2-39:sync-record-share-object',
+  name: 'upgrade:2-40:sync-record-share-object',
   description:
     'Create the recordShare standard object in existing workspaces',
 })
