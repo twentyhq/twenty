@@ -33,6 +33,20 @@ const ELIGIBLE_CANVAS_TABS_QUERY = `
     AND COUNT(widget."id") FILTER (
       WHERE widget."deletedAt" IS NULL
         AND widget."isActive" = true
+        AND (
+          widget."position" IS NULL
+          OR widget."position" = 'null'::jsonb
+          OR widget."position"->>'layoutMode' = 'CANVAS'
+        )
+        AND (
+          widget."overrides"->'position' IS NULL
+          OR widget."overrides"->'position' = 'null'::jsonb
+          OR widget."overrides"->'position'->>'layoutMode' = 'CANVAS'
+        )
+        AND (
+          NOT COALESCE(widget."overrides" ? 'pageLayoutTabId', false)
+          OR widget."overrides"->>'pageLayoutTabId' = tab."id"::text
+        )
     ) = 1
 `;
 
@@ -95,6 +109,7 @@ export class MigrateCanvasTabsToVerticalListSlowInstanceCommand implements SlowI
       );
     }
 
+    // Backups and row updates commit atomically, so retries must not remigrate backed-up widgets.
     await dataSource.query(`
       WITH eligible_tabs AS MATERIALIZED (
         ${ELIGIBLE_CANVAS_TABS_QUERY}
@@ -105,14 +120,8 @@ export class MigrateCanvasTabsToVerticalListSlowInstanceCommand implements SlowI
           widget."position" AS "pageLayoutWidgetPosition",
           widget."overrides"->'position' AS "pageLayoutWidgetPositionOverride",
           widget."overrides"->'pageLayoutTabId' AS "pageLayoutWidgetTabOverride",
-          COALESCE(
-            COALESCE(widget."overrides" ? 'position', false)
-              AND (
-                NOT COALESCE(widget."overrides" ? 'pageLayoutTabId', false)
-                OR widget."overrides"->>'pageLayoutTabId' = widget."pageLayoutTabId"::text
-              ),
-            false
-          ) AS "pageLayoutWidgetPositionOverrideWasMigrated"
+          COALESCE(widget."overrides" ? 'position', false)
+            AS "pageLayoutWidgetPositionOverrideWasMigrated"
         FROM eligible_tabs
         JOIN "core"."pageLayoutWidget" widget
           ON widget."pageLayoutTabId" = eligible_tabs."id"
@@ -137,21 +146,7 @@ export class MigrateCanvasTabsToVerticalListSlowInstanceCommand implements SlowI
           "pageLayoutWidgetPositionOverrideWasMigrated"
         FROM eligible_widgets
         ON CONFLICT DO NOTHING
-        RETURNING "pageLayoutTabId", "pageLayoutWidgetId"
-      ), widgets_to_migrate AS (
-        SELECT
-          eligible_widgets."pageLayoutTabId",
-          eligible_widgets."pageLayoutWidgetId",
-          eligible_widgets."pageLayoutWidgetPositionOverrideWasMigrated"
-        FROM eligible_widgets
-        WHERE eligible_widgets."pageLayoutTabId" IN (
-          SELECT "pageLayoutTabId" FROM backed_up_widgets
-        ) OR EXISTS (
-          SELECT 1
-          FROM "core"."canvasTabToVerticalListMigrationBackup" backup
-          WHERE backup."pageLayoutTabId" = eligible_widgets."pageLayoutTabId"
-            AND backup."pageLayoutWidgetId" = eligible_widgets."pageLayoutWidgetId"
-        )
+        RETURNING "pageLayoutWidgetId", "pageLayoutWidgetPositionOverrideWasMigrated"
       ), migrated_widgets AS (
         UPDATE "core"."pageLayoutWidget" widget
         SET "position" = jsonb_build_object(
@@ -160,7 +155,7 @@ export class MigrateCanvasTabsToVerticalListSlowInstanceCommand implements SlowI
           'heightBehavior', 'TAB_VIEWPORT'
         ),
         "overrides" = CASE
-          WHEN widgets_to_migrate."pageLayoutWidgetPositionOverrideWasMigrated" THEN jsonb_set(
+          WHEN backed_up_widgets."pageLayoutWidgetPositionOverrideWasMigrated" THEN jsonb_set(
             widget."overrides",
             '{position}',
             jsonb_build_object(
@@ -171,8 +166,8 @@ export class MigrateCanvasTabsToVerticalListSlowInstanceCommand implements SlowI
           )
           ELSE widget."overrides"
         END
-        FROM widgets_to_migrate
-        WHERE widget."id" = widgets_to_migrate."pageLayoutWidgetId"
+        FROM backed_up_widgets
+        WHERE widget."id" = backed_up_widgets."pageLayoutWidgetId"
         RETURNING widget."pageLayoutTabId"
       )
       UPDATE "core"."pageLayoutTab" tab

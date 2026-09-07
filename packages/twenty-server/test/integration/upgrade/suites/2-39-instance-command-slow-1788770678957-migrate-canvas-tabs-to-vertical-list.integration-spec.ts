@@ -37,7 +37,7 @@ describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () 
     layoutMode: 'CANVAS' | 'VERTICAL_LIST';
     widgetIsActiveValues: boolean[];
     widgetOverrides?: Record<string, unknown> | null;
-    widgetPosition?: Record<string, unknown>;
+    widgetPosition?: Record<string, unknown> | null;
   }): Promise<SeededTab> => {
     const tabId = v4();
 
@@ -219,6 +219,179 @@ describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () 
   afterAll(async () => {
     await dataSource?.destroy();
   });
+
+  it.each([
+    { widgetPosition: { layoutMode: 'GRID', row: 2, column: 1 } },
+    { widgetPosition: { layoutMode: 'VERTICAL_LIST', index: 4 } },
+    {
+      widgetOverrides: { position: { layoutMode: 'GRID', row: 2, column: 1 } },
+    },
+    {
+      widgetOverrides: { position: { layoutMode: 'VERTICAL_LIST', index: 4 } },
+    },
+  ])('preserves authored non-Canvas positions %j', async (widgetOptions) => {
+    const tab = await seedTab({
+      layoutMode: 'CANVAS',
+      widgetIsActiveValues: [true],
+      ...widgetOptions,
+    });
+    const originalState = await readTabAndWidgetState({
+      tabId: tab.tabId,
+      widgetId: tab.widgetIds[0],
+    });
+
+    await command.runDataMigration(dataSource);
+
+    expect(
+      await readTabAndWidgetState({
+        tabId: tab.tabId,
+        widgetId: tab.widgetIds[0],
+      }),
+    ).toEqual(originalState);
+
+    await runDown();
+
+    expect(
+      await readTabAndWidgetState({
+        tabId: tab.tabId,
+        widgetId: tab.widgetIds[0],
+      }),
+    ).toEqual(originalState);
+  });
+
+  it.each([null, { position: null }])(
+    'migrates and restores missing positions with overrides %j',
+    async (widgetOverrides) => {
+      const tab = await seedTab({
+        layoutMode: 'CANVAS',
+        widgetIsActiveValues: [true],
+        widgetPosition: null,
+        widgetOverrides,
+      });
+      const originalState = await readTabAndWidgetState({
+        tabId: tab.tabId,
+        widgetId: tab.widgetIds[0],
+      });
+
+      await command.runDataMigration(dataSource);
+
+      expect(await readTabLayoutMode(tab.tabId)).toBe('VERTICAL_LIST');
+
+      await runDown();
+
+      expect(
+        await readTabAndWidgetState({
+          tabId: tab.tabId,
+          widgetId: tab.widgetIds[0],
+        }),
+      ).toEqual(originalState);
+    },
+  );
+
+  it.each([null, { position: { layoutMode: 'CANVAS' } }])(
+    'preserves overrides edited before retrying a backed-up Canvas tab from %j',
+    async (widgetOverrides) => {
+      const tab = await seedTab({
+        layoutMode: 'CANVAS',
+        widgetIsActiveValues: [true],
+        widgetOverrides,
+      });
+
+      await command.runDataMigration(dataSource);
+      await dataSource.query(
+        `UPDATE "core"."pageLayoutTab" SET "layoutMode" = 'CANVAS' WHERE "id" = $1`,
+        [tab.tabId],
+      );
+      await dataSource.query(
+        `UPDATE "core"."pageLayoutWidget"
+         SET "position" = '{"layoutMode":"CANVAS"}'::jsonb, "overrides" = $1
+         WHERE "id" = $2`,
+        [
+          isDefined(widgetOverrides)
+            ? { title: 'Edited title' }
+            : {
+                position: {
+                  layoutMode: 'CANVAS',
+                  preservedValue: 'New position',
+                },
+              },
+          tab.widgetIds[0],
+        ],
+      );
+      const editedState = await readTabAndWidgetState({
+        tabId: tab.tabId,
+        widgetId: tab.widgetIds[0],
+      });
+
+      await command.runDataMigration(dataSource);
+
+      expect(
+        await readTabAndWidgetState({
+          tabId: tab.tabId,
+          widgetId: tab.widgetIds[0],
+        }),
+      ).toEqual(editedState);
+
+      await runDown();
+
+      expect(
+        await readTabAndWidgetState({
+          tabId: tab.tabId,
+          widgetId: tab.widgetIds[0],
+        }),
+      ).toEqual(editedState);
+    },
+  );
+
+  it.each([false, true])(
+    'preserves outgoing tab overrides with a position override: %s',
+    async (hasPositionOverride) => {
+      const destinationTab = await seedTab({
+        layoutMode: 'CANVAS',
+        widgetIsActiveValues: [true],
+      });
+      const sourceTab = await seedTab({
+        layoutMode: 'CANVAS',
+        widgetIsActiveValues: [true],
+        widgetOverrides: {
+          pageLayoutTabId: destinationTab.tabId,
+          ...(hasPositionOverride
+            ? { position: { layoutMode: 'CANVAS' } }
+            : {}),
+        },
+      });
+      const originalStates = await Promise.all(
+        [sourceTab, destinationTab].map((tab) =>
+          readTabAndWidgetState({
+            tabId: tab.tabId,
+            widgetId: tab.widgetIds[0],
+          }),
+        ),
+      );
+
+      await command.runDataMigration(dataSource);
+
+      for (const [index, tab] of [sourceTab, destinationTab].entries()) {
+        expect(
+          await readTabAndWidgetState({
+            tabId: tab.tabId,
+            widgetId: tab.widgetIds[0],
+          }),
+        ).toEqual(originalStates[index]);
+      }
+
+      await runDown();
+
+      for (const [index, tab] of [sourceTab, destinationTab].entries()) {
+        expect(
+          await readTabAndWidgetState({
+            tabId: tab.tabId,
+            widgetId: tab.widgetIds[0],
+          }),
+        ).toEqual(originalStates[index]);
+      }
+    },
+  );
 
   it('preserves a backed-up widget moved to another Canvas tab before a retry', async () => {
     const originalTab = await seedTab({
@@ -445,13 +618,9 @@ describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () 
         widgetId: movedCanvasWidgetTab.widgetIds[0],
       }),
     ).resolves.toEqual({
-      layoutMode: 'VERTICAL_LIST',
+      layoutMode: 'CANVAS',
       overrides: movedCanvasWidgetOverrides,
-      position: {
-        layoutMode: 'VERTICAL_LIST',
-        index: 0,
-        heightBehavior: 'TAB_VIEWPORT',
-      },
+      position: movedCanvasWidgetPosition,
     });
     await expect(
       readTabAndWidgetState({
@@ -459,13 +628,9 @@ describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () 
         widgetId: detachedCanvasWidgetTab.widgetIds[0],
       }),
     ).resolves.toEqual({
-      layoutMode: 'VERTICAL_LIST',
+      layoutMode: 'CANVAS',
       overrides: detachedCanvasWidgetOverrides,
-      position: {
-        layoutMode: 'VERTICAL_LIST',
-        index: 0,
-        heightBehavior: 'TAB_VIEWPORT',
-      },
+      position: detachedCanvasWidgetPosition,
     });
     await expect(readTabLayoutMode(emptyCanvasTab.tabId)).resolves.toBe(
       'CANVAS',
