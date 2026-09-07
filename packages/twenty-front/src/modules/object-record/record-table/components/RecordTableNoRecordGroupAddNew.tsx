@@ -57,6 +57,10 @@ export const RecordTableNoRecordGroupAddNew = () => {
         ...recordInput,
       });
 
+      if (!isDefined(createdRecord)) {
+        return;
+      }
+
       upsertRecordsInStore({ partialRecords: [createdRecord] });
 
       if (isDefined(totalNumberOfRecordsToVirtualize)) {
