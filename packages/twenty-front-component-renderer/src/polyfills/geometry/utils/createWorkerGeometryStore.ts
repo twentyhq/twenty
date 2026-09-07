@@ -7,11 +7,11 @@ import { GEOMETRY_TRANSPORT_FAILURE_WARNING } from '@/polyfills/geometry/constan
 import { GEOMETRY_VIEWPORT_LISTENER_FAILURE_WARNING } from '@/polyfills/geometry/constants/GeometryViewportListenerFailureWarning';
 import { type GeometryObservationTransport } from '@/polyfills/geometry/types/GeometryObservationTransport';
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
-import { areViewportGeometrySnapshotsEqual } from '@/polyfills/geometry/utils/areViewportGeometrySnapshotsEqual';
 import { isElementUnderRemoteRoot } from '@/polyfills/geometry/utils/isElementUnderRemoteRoot';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
 import { type GeometryUpdateBatch } from '@/types/GeometryUpdateBatch';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
+import { arePrimitiveRecordsEqual } from '@/utils/arePrimitiveRecordsEqual';
 
 export const createWorkerGeometryStore = (): WorkerGeometryStore => {
   const elementSnapshots = new Map<string, ElementGeometrySnapshot>();
@@ -130,10 +130,9 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
     let hasViewportChanged = false;
 
     if (isDefined(batch.viewport)) {
-      hasViewportChanged = !areViewportGeometrySnapshotsEqual(
-        viewportSnapshot,
-        batch.viewport,
-      );
+      hasViewportChanged =
+        !isDefined(viewportSnapshot) ||
+        !arePrimitiveRecordsEqual(viewportSnapshot, batch.viewport);
       viewportSnapshot = batch.viewport;
     }
 

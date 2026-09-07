@@ -1,15 +1,10 @@
 import { Window } from '@remote-dom/polyfill';
 
-import { type MediaQueryEnvironment } from '@/polyfills/media-query/types/MediaQueryEnvironment';
 import { type MediaQueryEnvironmentListener } from '@/polyfills/media-query/types/MediaQueryEnvironmentListener';
 import { type createWorkerMediaQueryList as CreateWorkerMediaQueryList } from '@/polyfills/media-query/utils/createWorkerMediaQueryList';
+import { createMediaQueryEnvironmentFixture } from '@/testing/createMediaQueryEnvironmentFixture';
 
-const ENVIRONMENT: MediaQueryEnvironment = {
-  componentWidth: 0,
-  componentHeight: 0,
-  devicePixelRatio: 1,
-  colorScheme: 'light',
-};
+const ENVIRONMENT = createMediaQueryEnvironmentFixture();
 
 const polyfillWindow = new Window();
 

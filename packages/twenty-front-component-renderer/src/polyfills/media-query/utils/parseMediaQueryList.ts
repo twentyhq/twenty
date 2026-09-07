@@ -1,18 +1,20 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { MATCH_ALL_PARSED_MEDIA_QUERY } from '@/polyfills/media-query/constants/MatchAllParsedMediaQuery';
 import { type ParsedMediaQuery } from '@/polyfills/media-query/types/ParsedMediaQuery';
 import { parseMediaQuery } from '@/polyfills/media-query/utils/parseMediaQuery';
+
+const MATCH_ALL_MEDIA_QUERY = 'all';
 
 export const parseMediaQueryList = (
   mediaQueryListString: string,
 ): ParsedMediaQuery[] => {
-  if (!isNonEmptyString(mediaQueryListString.trim())) {
-    return [MATCH_ALL_PARSED_MEDIA_QUERY];
-  }
+  const isEmptyMediaQueryList = !isNonEmptyString(mediaQueryListString.trim());
+  const mediaQueryListToParse = isEmptyMediaQueryList
+    ? MATCH_ALL_MEDIA_QUERY
+    : mediaQueryListString;
 
-  return mediaQueryListString
+  return mediaQueryListToParse
     .split(',')
     .map((mediaQueryString) => parseMediaQuery(mediaQueryString))
     .filter(isDefined);
