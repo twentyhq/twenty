@@ -5101,8 +5101,8 @@ export type QueryFindClaimableApplicationRegistrationArgs = {
 
 
 export type QueryFindInstallApplicationJobStatusArgs = {
-  universalIdentifier: Scalars['String']['input'];
   jobId?: InputMaybe<Scalars['String']['input']>;
+  universalIdentifier: Scalars['String']['input'];
 };
 
 
@@ -5138,8 +5138,8 @@ export type QueryFindOneLogicFunctionArgs = {
 
 
 export type QueryFindUninstallApplicationJobStatusArgs = {
-  universalIdentifier: Scalars['String']['input'];
   jobId?: InputMaybe<Scalars['String']['input']>;
+  universalIdentifier: Scalars['String']['input'];
 };
 
 
