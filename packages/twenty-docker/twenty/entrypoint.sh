@@ -21,6 +21,10 @@ setup_and_migrate_db() {
     fi
 
     if ! yarn command:prod upgrade; then
+        if [ "${EXIT_ON_UPGRADE_FAILURE}" = "true" ]; then
+            echo "Error: Upgrade completed with errors and EXIT_ON_UPGRADE_FAILURE is set, aborting startup. Run 'yarn command:prod upgrade:status --failed-only' for details."
+            exit 1
+        fi
         echo "Warning: Upgrade completed with errors. Some workspaces may not be fully migrated. Check logs for details."
     fi
 
