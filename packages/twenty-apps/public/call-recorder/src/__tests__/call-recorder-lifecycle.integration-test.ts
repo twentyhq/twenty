@@ -1467,6 +1467,49 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
     });
 
+    it('restores the bot when a user sets On after a pause left a canceled request', async () => {
+      const { calendarEventId, callRecordingId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      turnRecordingOff();
+      await syncCalendarBotSchedulingHandler();
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [calendarEventId],
+      });
+
+      expect(
+        (await fetchCallRecording(callRecordingId)).recordingRequestStatus,
+      ).toBe('CANCELED');
+
+      vi.unstubAllEnvs();
+
+      await client.mutation({
+        updateCalendarEvent: {
+          __args: {
+            id: calendarEventId,
+            data: { callRecorderPreference: 'ON' },
+          },
+          id: true,
+        },
+      });
+
+      const result = await deliverCalendarEventUpdate({
+        calendarEventId,
+        updatedFields: ['callRecorderPreference'],
+        before: { callRecorderPreference: null },
+        after: { callRecorderPreference: 'ON' },
+      });
+
+      expect(result).toEqual(expect.objectContaining({ reconciled: true }));
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.recordingRequestStatus).toBe('REQUESTED');
+      expect(callRecording.externalBotId).toBeTruthy();
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
+    });
+
     it('enqueues the upcoming-events sweep when turned back on', async () => {
       vi.stubEnv(
         CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME,

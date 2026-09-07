@@ -7,6 +7,7 @@ import {
 } from 'twenty-sdk/define';
 
 import { CallRecorderPreference } from 'src/constants/call-recorder-preference';
+import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CALENDAR_EVENT_RECONCILIATION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type RemovedCallRecorderOccurrence } from 'src/logic-functions/types/removed-call-recorder-occurrence.type';
 import { buildCallRecorderPolicyResult } from 'src/logic-functions/domain/build-call-recorder-policy-result.util';
@@ -207,7 +208,10 @@ const isRecordingOnAlreadyHonored = async (
     ])
   )[0];
 
-  return !isUndefined(policyManagedCallRecording);
+  return (
+    policyManagedCallRecording?.recordingRequestStatus ===
+    CallRecordingRequestStatus.REQUESTED
+  );
 };
 
 const hasKeyFieldChange = (updatedFields: string[]): boolean =>
