@@ -99,6 +99,11 @@ describe('installMatchMediaPolyfill', () => {
     expect(matchMedia('(min-width >= 600px)').matches).toBe(false);
     expect(matchMedia('garbage').matches).toBe(false);
     expect(matchMedia(undefined).matches).toBe(false);
+    expect(matchMedia('(constructor: 1)').matches).toBe(false);
+    expect(matchMedia('(__proto__: 1)').matches).toBe(false);
+    expect(matchMedia('(max-__proto__: 2)').matches).toBe(false);
+    expect(matchMedia('not (min-width: 600constructor)').matches).toBe(false);
+    expect(matchMedia('not (resolution: 2constructor)').matches).toBe(false);
     expect(matchMedia('garbage').media).toBe('garbage');
   });
 

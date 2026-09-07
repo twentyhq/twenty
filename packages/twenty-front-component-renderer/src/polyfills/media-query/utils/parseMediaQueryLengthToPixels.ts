@@ -21,7 +21,7 @@ export const parseMediaQueryLengthToPixels = (
     return isZeroLength ? 0 : null;
   }
 
-  const pixelsPerUnit = MEDIA_QUERY_LENGTH_UNIT_TO_PIXELS[unit];
+  const pixelsPerUnit = MEDIA_QUERY_LENGTH_UNIT_TO_PIXELS.get(unit);
 
   if (!isDefined(pixelsPerUnit)) {
     return null;

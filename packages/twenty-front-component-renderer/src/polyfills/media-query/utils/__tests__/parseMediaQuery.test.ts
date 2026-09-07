@@ -123,6 +123,10 @@ describe('parseMediaQuery', () => {
     expect(parseMediaQuery('(min-width: 600)')).toBeNull();
     expect(parseMediaQuery('(min-width >= 600px)')).toBeNull();
     expect(parseMediaQuery('(min-width: 600vw)')).toBeNull();
+    expect(parseMediaQuery('(constructor: 1)')).toBeNull();
+    expect(parseMediaQuery('(__proto__: 1)')).toBeNull();
+    expect(parseMediaQuery('(min-width: 600constructor)')).toBeNull();
+    expect(parseMediaQuery('(resolution: 2constructor)')).toBeNull();
     expect(parseMediaQuery('garbage')).toBeNull();
     expect(parseMediaQuery('not')).toBeNull();
     expect(parseMediaQuery('(prefers-color-scheme: solarized)')).toBeNull();
