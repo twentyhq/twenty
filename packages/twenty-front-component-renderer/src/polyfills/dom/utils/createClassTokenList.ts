@@ -123,21 +123,21 @@ class ClassTokenList implements WorkerClassTokenList {
     ) => void,
     thisArgument?: unknown,
   ): void {
-    for (const [tokenIndex, token] of this.readCurrentTokens().entries()) {
+    Array.prototype.forEach.call(this, (token: string, tokenIndex: number) => {
       callback.call(thisArgument, token, tokenIndex, this);
-    }
+    });
   }
 
   entries(): IterableIterator<[number, string]> {
-    return this.readCurrentTokens().entries();
+    return Array.prototype.entries.call(this);
   }
 
   keys(): IterableIterator<number> {
-    return this.readCurrentTokens().keys();
+    return Array.prototype.keys.call(this);
   }
 
   values(): IterableIterator<string> {
-    return this.readCurrentTokens().values();
+    return Array.prototype.values.call(this);
   }
 
   toString(): string {
@@ -149,7 +149,7 @@ class ClassTokenList implements WorkerClassTokenList {
   }
 
   [Symbol.iterator](): IterableIterator<string> {
-    return this.readCurrentTokens().values();
+    return this.values();
   }
 }
 

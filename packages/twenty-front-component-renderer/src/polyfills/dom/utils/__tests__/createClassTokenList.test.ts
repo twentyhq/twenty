@@ -276,6 +276,84 @@ describe('createClassTokenList', () => {
         [thisArg, 'second', 1, classTokenList],
       ]);
     });
+
+    it('should keep a values iterator live across a class change', () => {
+      const element = new FakeElement('first second');
+      const classTokenList = createClassTokenList(element);
+      const valuesIterator = classTokenList.values();
+
+      expect(valuesIterator.next().value).toBe('first');
+
+      element.setAttribute('class', 'first replacement third');
+
+      expect([...valuesIterator]).toEqual(['replacement', 'third']);
+    });
+
+    it('should keep entries and keys iterators live across a class change', () => {
+      const element = new FakeElement('first second');
+      const classTokenList = createClassTokenList(element);
+      const entriesIterator = classTokenList.entries();
+      const keysIterator = classTokenList.keys();
+
+      entriesIterator.next();
+      keysIterator.next();
+
+      element.setAttribute('class', 'first replacement third');
+
+      expect([...entriesIterator]).toEqual([
+        [1, 'replacement'],
+        [2, 'third'],
+      ]);
+      expect([...keysIterator]).toEqual([1, 2]);
+    });
+
+    it('should let for of observe a class change made inside the loop', () => {
+      const element = new FakeElement('first second');
+      const classTokenList = createClassTokenList(element);
+      const iterated: string[] = [];
+
+      for (const token of classTokenList) {
+        iterated.push(token);
+
+        if (token === 'first') {
+          element.setAttribute('class', 'first replacement third');
+        }
+      }
+
+      expect(iterated).toEqual(['first', 'replacement', 'third']);
+    });
+
+    it('should skip the shifted token when forEach removes the current one', () => {
+      const element = new FakeElement('first second third');
+      const classTokenList = createClassTokenList(element);
+      const visited: string[] = [];
+
+      classTokenList.forEach((token) => {
+        visited.push(token);
+
+        if (token === 'first') {
+          classTokenList.remove('first');
+        }
+      });
+
+      expect(visited).toEqual(['first', 'third']);
+    });
+
+    it('should not extend a forEach pass with a token added during it', () => {
+      const element = new FakeElement('first second');
+      const classTokenList = createClassTokenList(element);
+      const visited: string[] = [];
+
+      classTokenList.forEach((token) => {
+        visited.push(token);
+
+        if (token === 'first') {
+          classTokenList.add('third');
+        }
+      });
+
+      expect(visited).toEqual(['first', 'second']);
+    });
   });
 
   describe('supports', () => {
