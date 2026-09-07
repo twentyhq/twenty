@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { buildFlatSearchFieldMetadataForField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/build-flat-search-field-metadata-for-field.util';
 import { findTsVectorFlatFieldMetadataForObject } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/find-ts-vector-flat-field-metadata-for-object.util';
-import { buildSearchVectorFlatFieldMetadataForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-search-vector-flat-field-metadata-for-custom-object.util';
 import { buildFieldSideEffectParentNotFoundFailure } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-field-side-effect-parent-not-found-failure.util';
 import { getPendingFlatSearchFieldMetadataCreatesForObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/get-pending-flat-search-field-metadata-creates-for-object.util';
 import { resolveParentFlatObjectMetadataAfterStateForFieldSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/resolve-parent-flat-object-metadata-after-state-for-field-side-effect.util';
@@ -14,6 +13,7 @@ import {
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
+import { buildSearchVectorFlatFieldMetadataForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-search-vector-flat-field-metadata-for-custom-object.util';
 
 @Injectable()
 export class FieldSearchFieldMetadataOnCreateSideEffectHandlerService extends MetadataSideEffectHandler(
@@ -29,15 +29,8 @@ export class FieldSearchFieldMetadataOnCreateSideEffectHandlerService extends Me
     flatEntity: flatFieldMetadata,
     allFlatEntityOperationRecordByMetadataName,
     relatedFlatEntityMaps,
-    context,
   }: BuildSideEffectsArgs<'fieldMetadata'>): MetadataSideEffectResult {
     if (flatFieldMetadata.isSearchable !== true) {
-      return { status: 'noop' };
-    }
-
-    // System builds (standard application, upgrade flows) declare their
-    // searchFieldMetadata rows explicitly alongside the fields.
-    if (context.buildOptions.isSystemBuild) {
       return { status: 'noop' };
     }
 

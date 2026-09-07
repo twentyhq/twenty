@@ -14,7 +14,6 @@ const EXISTING_SEARCH_FIELD_METADATA_UNIVERSAL_IDENTIFIER =
 
 const buildArgs = ({
   isSearchable,
-  isSystemBuild = false,
   isLabelIdentifier = false,
   hasTsVectorField = true,
   parentIsPendingCreate = false,
@@ -22,7 +21,6 @@ const buildArgs = ({
   pendingSearchFieldMetadataCreatesByFieldUniversalIdentifier = {},
 }: {
   isSearchable: boolean;
-  isSystemBuild?: boolean;
   isLabelIdentifier?: boolean;
   hasTsVectorField?: boolean;
   parentIsPendingCreate?: boolean;
@@ -128,7 +126,6 @@ const buildArgs = ({
         ),
       },
     },
-    context: { buildOptions: { isSystemBuild } },
   }) as unknown as BuildSideEffectsArgs<'fieldMetadata'>;
 
 describe('FieldSearchFieldMetadataOnCreateSideEffectHandlerService', () => {
@@ -191,14 +188,6 @@ describe('FieldSearchFieldMetadataOnCreateSideEffectHandlerService', () => {
 
   it('should be a noop when the field is created non-searchable', () => {
     const result = handler.buildSideEffects(buildArgs({ isSearchable: false }));
-
-    expect(result.status).toBe('noop');
-  });
-
-  it('should be a noop on system builds, which declare their rows explicitly', () => {
-    const result = handler.buildSideEffects(
-      buildArgs({ isSearchable: true, isSystemBuild: true }),
-    );
 
     expect(result.status).toBe('noop');
   });
