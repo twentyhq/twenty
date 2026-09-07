@@ -62,9 +62,8 @@ export const retryFailedRecallCancellations = async ({
       )
       .map((callRecording) => callRecording.id),
   );
-  const externalBotIdByCallRecordingId = await lookupRecoverableExternalBotIds(
-    recoverableCallRecordingIds,
-  );
+  const externalBotIdByCallRecordingId =
+    await lookupRecoverableExternalBotIds(recoverableCallRecordingIds);
   const canceledExternalBotCallRecordingIds: string[] = [];
 
   for (const callRecording of canceledCallRecordings) {
