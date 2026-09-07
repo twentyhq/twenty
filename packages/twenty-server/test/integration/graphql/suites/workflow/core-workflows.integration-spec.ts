@@ -68,10 +68,11 @@ describe('coreWorkflows (e2e)', () => {
   let workflowId: string;
   let firstVersionId: string;
   let alreadyDestroyed = false;
+  let softDeletedWorkflowId: string | undefined;
 
-  const findCoreWorkflow = async (
+  const listCoreWorkflows = async (
     filter?: CoreWorkflowFilter,
-  ): Promise<CoreWorkflow | undefined> => {
+  ): Promise<CoreWorkflow[]> => {
     const response = await graphql(CORE_WORKFLOWS_QUERY, { filter });
 
     expect(response.body.errors).toBeUndefined();
@@ -87,22 +88,20 @@ describe('coreWorkflows (e2e)', () => {
       expect(totalCount).toBe(edges.length);
     }
 
-    return edges
-      .map((edge) => edge.node)
-      .find((workflow) => workflow.workspaceWorkflowId === workflowId);
+    return edges.map((edge) => edge.node);
   };
+
+  const findCoreWorkflow = async (
+    filter?: CoreWorkflowFilter,
+  ): Promise<CoreWorkflow | undefined> =>
+    (await listCoreWorkflows(filter)).find(
+      (workflow) => workflow.workspaceWorkflowId === workflowId,
+    );
 
   const findCoreWorkflowByName = async (
     name: string,
-  ): Promise<CoreWorkflow | undefined> => {
-    const response = await graphql(CORE_WORKFLOWS_QUERY);
-
-    expect(response.body.errors).toBeUndefined();
-
-    return (response.body.data.coreWorkflows.edges as { node: CoreWorkflow }[])
-      .map((edge) => edge.node)
-      .find((workflow) => workflow.name === name);
-  };
+  ): Promise<CoreWorkflow | undefined> =>
+    (await listCoreWorkflows()).find((workflow) => workflow.name === name);
 
   const waitForCoreWorkflow = async (
     predicate: (workflow: CoreWorkflow | undefined) => boolean,
@@ -153,6 +152,19 @@ describe('coreWorkflows (e2e)', () => {
   });
 
   afterAll(async () => {
+    if (isDefined(softDeletedWorkflowId)) {
+      await graphql(
+        `
+          mutation DestroyWorkflow($id: UUID!) {
+            destroyWorkflow(id: $id) {
+              id
+            }
+          }
+        `,
+        { id: softDeletedWorkflowId },
+      );
+    }
+
     if (alreadyDestroyed) {
       return;
     }
@@ -522,7 +534,7 @@ describe('coreWorkflows (e2e)', () => {
 
     expect(createResponse.body.errors).toBeUndefined();
 
-    const softDeletedWorkflowId = createResponse.body.data.createWorkflow.id;
+    softDeletedWorkflowId = createResponse.body.data.createWorkflow.id;
 
     const versionResponse = await graphql(
       `
@@ -586,15 +598,19 @@ describe('coreWorkflows (e2e)', () => {
 
     expect(activateResponse.body.errors).toBeUndefined();
 
-    for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt++) {
-      const listed = await findCoreWorkflowByName(softDeletedName);
+    let activated: CoreWorkflow | undefined;
 
-      if (listed?.statuses.includes('ACTIVE') === true) {
+    for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt++) {
+      activated = await findCoreWorkflowByName(softDeletedName);
+
+      if (activated?.statuses.includes('ACTIVE') === true) {
         break;
       }
 
       await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
     }
+
+    expect(activated?.statuses).toEqual(['ACTIVE']);
 
     const deleteResponse = await graphql(
       `
@@ -609,26 +625,40 @@ describe('coreWorkflows (e2e)', () => {
 
     expect(deleteResponse.body.errors).toBeUndefined();
 
+    let deletedWorkflowStatuses: string[] | undefined;
+
     for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt++) {
-      if (!isDefined(await findCoreWorkflowByName(softDeletedName))) {
+      const deletedWorkflowResponse = await graphql(
+        `
+          query DeletedWorkflow($id: UUID!) {
+            workflow(
+              filter: { id: { eq: $id }, not: { deletedAt: { is: "NULL" } } }
+            ) {
+              id
+              statuses
+            }
+          }
+        `,
+        { id: softDeletedWorkflowId },
+      );
+
+      deletedWorkflowStatuses =
+        deletedWorkflowResponse.body.data?.workflow?.statuses;
+
+      if (deletedWorkflowStatuses?.includes('DEACTIVATED') === true) {
         break;
       }
 
       await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
     }
 
-    expect(await findCoreWorkflowByName(softDeletedName)).toBeUndefined();
+    expect(deletedWorkflowStatuses).toEqual(['DEACTIVATED']);
 
-    await graphql(
-      `
-        mutation DestroyWorkflow($id: UUID!) {
-          destroyWorkflow(id: $id) {
-            id
-          }
-        }
-      `,
-      { id: softDeletedWorkflowId },
-    );
+    for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt++) {
+      expect(await findCoreWorkflowByName(softDeletedName)).toBeUndefined();
+
+      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+    }
   });
 
   it('should not list the workflow once it is destroyed', async () => {
