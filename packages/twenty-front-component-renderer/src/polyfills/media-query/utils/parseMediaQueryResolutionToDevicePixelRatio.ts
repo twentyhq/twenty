@@ -13,7 +13,7 @@ export const parseMediaQueryResolutionToDevicePixelRatio = (
   }
 
   const devicePixelRatioPerUnit =
-    MEDIA_QUERY_RESOLUTION_UNIT_TO_DEVICE_PIXEL_RATIO[resolutionParts.unit];
+    MEDIA_QUERY_RESOLUTION_UNIT_TO_DEVICE_PIXEL_RATIO.get(resolutionParts.unit);
 
   if (!isDefined(devicePixelRatioPerUnit)) {
     return null;

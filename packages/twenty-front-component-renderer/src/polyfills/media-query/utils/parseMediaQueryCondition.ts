@@ -20,27 +20,30 @@ type MediaQueryNumericFeature = {
   parseValue: (featureValue: string) => number | null;
 };
 
-const MEDIA_QUERY_NUMERIC_FEATURES: Record<
-  string,
-  MediaQueryNumericFeature | undefined
-> = {
-  width: {
-    source: 'componentWidth',
-    parseValue: parseMediaQueryLengthToPixels,
-  },
-  height: {
-    source: 'componentHeight',
-    parseValue: parseMediaQueryLengthToPixels,
-  },
-  'device-pixel-ratio': {
-    source: 'devicePixelRatio',
-    parseValue: parseMediaQueryDevicePixelRatioValue,
-  },
-  resolution: {
-    source: 'devicePixelRatio',
-    parseValue: parseMediaQueryResolutionToDevicePixelRatio,
-  },
-};
+const MEDIA_QUERY_NUMERIC_FEATURES = new Map<string, MediaQueryNumericFeature>([
+  [
+    'width',
+    { source: 'componentWidth', parseValue: parseMediaQueryLengthToPixels },
+  ],
+  [
+    'height',
+    { source: 'componentHeight', parseValue: parseMediaQueryLengthToPixels },
+  ],
+  [
+    'device-pixel-ratio',
+    {
+      source: 'devicePixelRatio',
+      parseValue: parseMediaQueryDevicePixelRatioValue,
+    },
+  ],
+  [
+    'resolution',
+    {
+      source: 'devicePixelRatio',
+      parseValue: parseMediaQueryResolutionToDevicePixelRatio,
+    },
+  ],
+]);
 
 export const parseMediaQueryCondition = (
   conditionString: string,
@@ -92,7 +95,7 @@ export const parseMediaQueryCondition = (
     return null;
   }
 
-  const numericFeature = MEDIA_QUERY_NUMERIC_FEATURES[baseFeatureName];
+  const numericFeature = MEDIA_QUERY_NUMERIC_FEATURES.get(baseFeatureName);
 
   if (!isDefined(numericFeature)) {
     return null;
