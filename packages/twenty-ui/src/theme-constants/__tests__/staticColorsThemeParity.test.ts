@@ -33,11 +33,11 @@ describe('static colors', () => {
     );
   });
 
-  it('uses the fixed palette for tooltip colors in both themes', () => {
+  it('keeps the translucent tooltip and readable text consistent in both themes', () => {
     expect(THEME_LIGHT.tooltip).toEqual({
-      background: EXPECTED_COLORS.black12,
+      background: EXPECTED_COLORS.black11,
       color: EXPECTED_COLORS.white12,
-      descriptionColor: EXPECTED_COLORS.white11,
+      descriptionColor: 'color(display-p3 1 1 1 / 0.64)',
     });
     expect(THEME_DARK.tooltip).toEqual(THEME_LIGHT.tooltip);
   });
@@ -60,13 +60,13 @@ describe.each(['light', 'dark'])('%s theme CSS', (mode) => {
     },
   );
 
-  it('resolves tooltip semantic tokens from the fixed palette', () => {
+  it('keeps tooltip semantic tokens in sync', () => {
     expect(css).toContain(
-      `--t-tooltip-background: ${EXPECTED_COLORS.black12};`,
+      `--t-tooltip-background: ${EXPECTED_COLORS.black11};`,
     );
     expect(css).toContain(`--t-tooltip-color: ${EXPECTED_COLORS.white12};`);
     expect(css).toContain(
-      `--t-tooltip-description-color: ${EXPECTED_COLORS.white11};`,
+      '--t-tooltip-description-color: color(display-p3 1 1 1 / 0.64);',
     );
     expect(themeCssVariables.tooltip).toEqual({
       background: 'var(--t-tooltip-background)',

@@ -6,6 +6,7 @@
 }
 
 .tooltip {
+  backdrop-filter: var(--t-blur-strong);
   background-color: var(--t-tooltip-background);
   border-radius: var(--t-border-radius-md);
   box-sizing: border-box;

@@ -23,9 +23,9 @@
   --t-text-icon-strike-light: 1.6;
   --t-text-icon-strike-medium: 2;
   --t-text-icon-strike-bold: 2.5;
-  --t-tooltip-background: color(display-p3 0 0 0 / 1);
+  --t-tooltip-background: color(display-p3 0 0 0 / 0.72);
   --t-tooltip-color: color(display-p3 1 1 1 / 1);
-  --t-tooltip-description-color: color(display-p3 1 1 1 / 0.592);
+  --t-tooltip-description-color: color(display-p3 1 1 1 / 0.64);
   --t-animation-duration-instant: 0.075;
   --t-animation-duration-fast: 0.15;
   --t-animation-duration-normal: 0.3;
