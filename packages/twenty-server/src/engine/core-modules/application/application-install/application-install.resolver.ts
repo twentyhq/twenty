@@ -150,7 +150,8 @@ export class ApplicationInstallResolver {
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   async findInstallApplicationJobStatus(
     @Args('universalIdentifier') universalIdentifier: string,
-    @Args('jobId', { nullable: true }) jobId: string | undefined,
+    @Args('jobId', { type: () => String, nullable: true })
+    jobId: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<JobStatusDTO | null> {
     return this.applicationLifecycleJobService.findInstallApplicationJobStatus({
@@ -164,7 +165,8 @@ export class ApplicationInstallResolver {
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   async findUninstallApplicationJobStatus(
     @Args('universalIdentifier') universalIdentifier: string,
-    @Args('jobId', { nullable: true }) jobId: string | undefined,
+    @Args('jobId', { type: () => String, nullable: true })
+    jobId: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<JobStatusDTO | null> {
     return this.applicationLifecycleJobService.findUninstallApplicationJobStatus(

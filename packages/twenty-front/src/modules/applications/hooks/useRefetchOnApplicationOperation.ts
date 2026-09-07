@@ -9,7 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 // has applied the manifest
 const REFETCH_TRIGGERING_APPLICATION_FIELDS = ['logo', 'version'];
 
-type UseRefetchOnApplicationLifecycleSettledArgs = {
+type UseRefetchOnApplicationOperationArgs = {
   applicationId?: string;
   refetch: () => void;
 };
@@ -17,7 +17,7 @@ type UseRefetchOnApplicationLifecycleSettledArgs = {
 export const useRefetchOnApplicationOperation = ({
   applicationId,
   refetch,
-}: UseRefetchOnApplicationLifecycleSettledArgs) => {
+}: UseRefetchOnApplicationOperationArgs) => {
   const onApplicationOperation = useCallback(
     ({ operation }: MetadataOperationBrowserEventDetail<FlatApplication>) => {
       if (operation.type === 'delete') {
