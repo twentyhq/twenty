@@ -75,7 +75,10 @@ describe('ApplicationLifecycleJobService', () => {
     it('reports the already waiting installation when the queue skips the add', async () => {
       jest.spyOn(workspaceQueueService, 'add').mockResolvedValue(undefined);
       jest.spyOn(workspaceQueueService, 'getInFlightJobs').mockResolvedValue([
-        { id: UNINSTALL_JOB_ID, data: {} },
+        {
+          id: `install-application.${WORKSPACE_ID}.other-application`,
+          data: {},
+        },
         { id: INSTALL_JOB_ID, data: {} },
       ]);
 
@@ -85,6 +88,22 @@ describe('ApplicationLifecycleJobService', () => {
           userWorkspaceId: 'user-workspace-id',
         }),
       ).toEqual({ jobId: INSTALL_JOB_ID });
+    });
+
+    it('refuses to queue an installation while an uninstallation is in flight', async () => {
+      jest
+        .spyOn(workspaceQueueService, 'getInFlightJobs')
+        .mockResolvedValue([{ id: UNINSTALL_JOB_ID, data: {} }]);
+
+      await expect(
+        service.triggerInstallApplicationJob({
+          ...target,
+          userWorkspaceId: 'user-workspace-id',
+        }),
+      ).rejects.toThrow(
+        `Cannot install application ${UNIVERSAL_IDENTIFIER} while its uninstall is in progress`,
+      );
+      expect(workspaceQueueService.add).not.toHaveBeenCalled();
     });
 
     it('fails when the queue skipped the add and no installation is in flight', async () => {
@@ -121,6 +140,22 @@ describe('ApplicationLifecycleJobService', () => {
         target,
         { id: UNINSTALL_JOB_ID_PREFIX, broadcastTo: BROADCAST_TO },
       );
+    });
+
+    it('refuses to queue an uninstallation while an installation is in flight', async () => {
+      jest
+        .spyOn(workspaceQueueService, 'getInFlightJobs')
+        .mockResolvedValue([{ id: INSTALL_JOB_ID, data: {} }]);
+
+      await expect(
+        service.triggerUninstallApplicationJob({
+          ...target,
+          userWorkspaceId: 'user-workspace-id',
+        }),
+      ).rejects.toThrow(
+        `Cannot uninstall application ${UNIVERSAL_IDENTIFIER} while its install is in progress`,
+      );
+      expect(workspaceQueueService.add).not.toHaveBeenCalled();
     });
 
     it('does not queue anything when the application is not installed', async () => {
@@ -166,6 +201,46 @@ describe('ApplicationLifecycleJobService', () => {
       expect(workspaceQueueService.getJobs).toHaveBeenCalledWith([
         UNINSTALL_JOB_ID,
       ]);
+    });
+
+    it('reads back a tracked job whatever its state', async () => {
+      jest.spyOn(workspaceQueueService, 'getJobs').mockResolvedValue({
+        [INSTALL_JOB_ID]: {
+          id: INSTALL_JOB_ID,
+          data: {},
+          state: 'completed',
+          attemptsMade: 1,
+          timestamp: 1,
+          processedOn: 2,
+          finishedOn: 3,
+        },
+      } as never);
+
+      expect(
+        await service.findInstallApplicationJobStatus({
+          ...target,
+          jobId: INSTALL_JOB_ID,
+        }),
+      ).toEqual({
+        jobId: INSTALL_JOB_ID,
+        state: JobStateEnum.COMPLETED,
+        attemptsMade: 1,
+        failedReason: undefined,
+        enqueuedAt: 1,
+        startedAt: 2,
+        finishedAt: 3,
+      });
+      expect(workspaceQueueService.getInFlightJobs).not.toHaveBeenCalled();
+    });
+
+    it('ignores a tracked job id that does not belong to the application', async () => {
+      expect(
+        await service.findInstallApplicationJobStatus({
+          ...target,
+          jobId: `install-application.other-workspace.${UNIVERSAL_IDENTIFIER}-${SUFFIX}`,
+        }),
+      ).toBeNull();
+      expect(workspaceQueueService.getJobs).not.toHaveBeenCalled();
     });
 
     it('returns no status when no job of the operation is in flight', async () => {

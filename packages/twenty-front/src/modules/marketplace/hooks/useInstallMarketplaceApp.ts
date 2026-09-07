@@ -1,5 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useTrackedQueueJob } from '@/queue-job/hooks/useTrackedQueueJob';
+import { type TrackedJobStatus } from '@/queue-job/types/TrackedJobStatus';
 import { isTerminalJobState } from '@/queue-job/utils/isTerminalJobState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -13,7 +14,6 @@ import {
   FindOneApplicationByUniversalIdentifierDocument,
   type FindOneApplicationByUniversalIdentifierQuery,
   JobState,
-  type JobStatus,
   TriggerInstallApplicationJobDocument,
 } from '~/generated-metadata/graphql';
 
@@ -45,6 +45,25 @@ export const useInstallMarketplaceApp = ({
       fetchPolicy: 'network-only',
     },
   );
+  const [findInstallApplicationJobStatus] = useLazyQuery(
+    FindInstallApplicationJobStatusDocument,
+    { fetchPolicy: 'network-only' },
+  );
+
+  const fetchInstallJobStatus = useCallback(
+    async (jobId: string) => {
+      if (!isDefined(universalIdentifier)) {
+        return undefined;
+      }
+
+      const { data } = await findInstallApplicationJobStatus({
+        variables: { universalIdentifier, jobId },
+      });
+
+      return data?.findInstallApplicationJobStatus;
+    },
+    [findInstallApplicationJobStatus, universalIdentifier],
+  );
 
   const runningJobStatus = jobStatusData?.findInstallApplicationJobStatus;
   const runningJobId =
@@ -53,7 +72,7 @@ export const useInstallMarketplaceApp = ({
       : undefined;
 
   const handleInstallJobSettled = useCallback(
-    async (jobStatus: JobStatus) => {
+    async (jobStatus: TrackedJobStatus) => {
       if (!isDefined(universalIdentifier)) {
         return;
       }
@@ -118,6 +137,7 @@ export const useInstallMarketplaceApp = ({
 
   const { activeJobId, trackJob } = useTrackedQueueJob({
     runningJobId,
+    fetchJobStatus: fetchInstallJobStatus,
     onQueueJobSettled: handleInstallJobSettled,
   });
 

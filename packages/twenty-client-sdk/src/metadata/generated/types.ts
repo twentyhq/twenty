@@ -7325,6 +7325,9 @@ export default {
                     "universalIdentifier": [
                         1,
                         "String!"
+                    ],
+                    "jobId": [
+                        1
                     ]
                 }
             ],
@@ -7334,6 +7337,9 @@ export default {
                     "universalIdentifier": [
                         1,
                         "String!"
+                    ],
+                    "jobId": [
+                        1
                     ]
                 }
             ],

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -31,6 +32,20 @@ import { getQueueJobIdPrefix } from 'src/engine/core-modules/message-queue/utils
 type LifecycleJobTarget = {
   universalIdentifier: string;
   workspaceId: string;
+};
+
+type LifecycleJobStatusTarget = LifecycleJobTarget & {
+  // A job the caller is already tracking: read it back whatever its state,
+  // where the prefix lookup only ever finds jobs still in flight
+  jobId?: string;
+};
+
+const CONFLICTING_OPERATION: Record<
+  ApplicationLifecycleOperation,
+  ApplicationLifecycleOperation
+> = {
+  install: 'uninstall',
+  uninstall: 'install',
 };
 
 @Injectable()
@@ -87,13 +102,13 @@ export class ApplicationLifecycleJobService {
   }
 
   findInstallApplicationJobStatus(
-    target: LifecycleJobTarget,
+    target: LifecycleJobStatusTarget,
   ): Promise<JobStatusDTO | null> {
     return this.findLifecycleJobStatus({ operation: 'install', ...target });
   }
 
   findUninstallApplicationJobStatus(
-    target: LifecycleJobTarget,
+    target: LifecycleJobStatusTarget,
   ): Promise<JobStatusDTO | null> {
     return this.findLifecycleJobStatus({ operation: 'uninstall', ...target });
   }
@@ -111,6 +126,28 @@ export class ApplicationLifecycleJobService {
     data: TData;
     userWorkspaceId: string;
   }): Promise<{ jobId: string }> {
+    const conflictingOperation = CONFLICTING_OPERATION[operation];
+    const conflictingJobId = await this.findInFlightJobId(
+      buildApplicationLifecycleJobId({
+        operation: conflictingOperation,
+        workspaceId,
+        universalIdentifier,
+      }),
+    );
+
+    if (isDefined(conflictingJobId)) {
+      throw new ApplicationException(
+        `Cannot ${operation} application ${universalIdentifier} while its ${conflictingOperation} is in progress`,
+        ApplicationExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage:
+            operation === 'install'
+              ? msg`This application is being uninstalled. Please wait for it to finish before installing it again.`
+              : msg`This application is being installed. Please wait for it to finish before uninstalling it.`,
+        },
+      );
+    }
+
     const jobIdPrefix = buildApplicationLifecycleJobId({
       operation,
       workspaceId,
@@ -139,16 +176,19 @@ export class ApplicationLifecycleJobService {
     operation,
     universalIdentifier,
     workspaceId,
-  }: LifecycleJobTarget & {
+    jobId: trackedJobId,
+  }: LifecycleJobStatusTarget & {
     operation: ApplicationLifecycleOperation;
   }): Promise<JobStatusDTO | null> {
-    const jobId = await this.findInFlightJobId(
-      buildApplicationLifecycleJobId({
-        operation,
-        workspaceId,
-        universalIdentifier,
-      }),
-    );
+    const jobIdPrefix = buildApplicationLifecycleJobId({
+      operation,
+      workspaceId,
+      universalIdentifier,
+    });
+
+    const jobId = isDefined(trackedJobId)
+      ? this.matchTrackedJobId({ trackedJobId, jobIdPrefix })
+      : await this.findInFlightJobId(jobIdPrefix);
 
     if (!isDefined(jobId)) {
       return null;
@@ -157,6 +197,20 @@ export class ApplicationLifecycleJobService {
     const job = (await this.workspaceQueueService.getJobs([jobId]))[jobId];
 
     return isDefined(job) ? buildJobStatus({ jobId, job }) : null;
+  }
+
+  // The prefix carries the workspace, so a job id from another workspace or
+  // another application never resolves
+  private matchTrackedJobId({
+    trackedJobId,
+    jobIdPrefix,
+  }: {
+    trackedJobId: string;
+    jobIdPrefix: string;
+  }): string | undefined {
+    return getQueueJobIdPrefix(trackedJobId) === jobIdPrefix
+      ? trackedJobId
+      : undefined;
   }
 
   private async findInFlightJobId(

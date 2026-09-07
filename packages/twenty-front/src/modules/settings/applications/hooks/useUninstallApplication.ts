@@ -1,9 +1,10 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useTrackedQueueJob } from '@/queue-job/hooks/useTrackedQueueJob';
+import { type TrackedJobStatus } from '@/queue-job/types/TrackedJobStatus';
 import { isTerminalJobState } from '@/queue-job/utils/isTerminalJobState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useMutation, useQuery } from '@apollo/client/react';
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
@@ -11,7 +12,6 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   FindUninstallApplicationJobStatusDocument,
   JobState,
-  type JobStatus,
   TriggerUninstallApplicationJobDocument,
 } from '~/generated-metadata/graphql';
 
@@ -37,6 +37,25 @@ export const useUninstallApplication = ({
       fetchPolicy: 'network-only',
     },
   );
+  const [findUninstallApplicationJobStatus] = useLazyQuery(
+    FindUninstallApplicationJobStatusDocument,
+    { fetchPolicy: 'network-only' },
+  );
+
+  const fetchUninstallJobStatus = useCallback(
+    async (jobId: string) => {
+      if (!isDefined(universalIdentifier)) {
+        return undefined;
+      }
+
+      const { data } = await findUninstallApplicationJobStatus({
+        variables: { universalIdentifier, jobId },
+      });
+
+      return data?.findUninstallApplicationJobStatus;
+    },
+    [findUninstallApplicationJobStatus, universalIdentifier],
+  );
 
   const runningJobStatus = jobStatusData?.findUninstallApplicationJobStatus;
   const runningJobId =
@@ -45,7 +64,7 @@ export const useUninstallApplication = ({
       : undefined;
 
   const handleUninstallJobSettled = useCallback(
-    (jobStatus: JobStatus) => {
+    (jobStatus: TrackedJobStatus) => {
       if (jobStatus.state === JobState.FAILED) {
         enqueueErrorSnackBar({
           message: isNonEmptyString(jobStatus.failedReason)
@@ -84,6 +103,7 @@ export const useUninstallApplication = ({
 
   const { activeJobId, trackJob } = useTrackedQueueJob({
     runningJobId,
+    fetchJobStatus: fetchUninstallJobStatus,
     onQueueJobSettled: handleUninstallJobSettled,
   });
 
