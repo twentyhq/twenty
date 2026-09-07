@@ -11,15 +11,24 @@ import { isDefined } from 'src/utils/is-defined';
 export const mapCallRecordingMediaState = (
   node: z.infer<typeof callRecordingMediaStateNodeSchema>,
 ): CallRecordingMediaState => {
+  const recordingImport = node.fathomRecordingImports?.edges[0]?.node;
   const uploadCheckpointResult = fathomMediaUploadCheckpointSchema.safeParse(
-    node.fathomMediaUploadCheckpoint,
+    recordingImport?.mediaUploadCheckpoint,
   );
 
   return {
     id: node.id,
     updatedAt: node.updatedAt,
-    externalRecordingId: isNonEmptyString(node.externalRecordingId)
-      ? node.externalRecordingId
+    fathomRecordingImportId: isNonEmptyString(recordingImport?.id)
+      ? recordingImport.id
+      : undefined,
+    fathomRecordingImportUpdatedAt: isNonEmptyString(
+      recordingImport?.updatedAt,
+    )
+      ? recordingImport.updatedAt
+      : undefined,
+    recordingId: isNonEmptyString(recordingImport?.recordingId)
+      ? recordingImport.recordingId
       : undefined,
     hasVideo:
       node.video?.some((file) => isNonEmptyString(file.fileId)) ?? false,
@@ -29,14 +38,14 @@ export const mapCallRecordingMediaState = (
     hasSummary:
       isNonEmptyString(node.summary?.markdown) ||
       isDefined(node.summary?.blocknote),
-    failureReason: isNonEmptyString(node.fathomMediaFailureReason)
-      ? node.fathomMediaFailureReason
+    failureReason: isNonEmptyString(recordingImport?.mediaFailureReason)
+      ? recordingImport.mediaFailureReason
       : undefined,
-    connectedAccountId: isNonEmptyString(node.fathomConnectedAccountId)
-      ? node.fathomConnectedAccountId
+    connectedAccountId: isNonEmptyString(recordingImport?.connectedAccountId)
+      ? recordingImport.connectedAccountId
       : undefined,
-    downloadId: isNonEmptyString(node.fathomMediaDownloadId)
-      ? node.fathomMediaDownloadId
+    downloadId: isNonEmptyString(recordingImport?.mediaDownloadId)
+      ? recordingImport.mediaDownloadId
       : undefined,
     uploadCheckpoint: uploadCheckpointResult.success
       ? uploadCheckpointResult.data

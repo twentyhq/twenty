@@ -12,16 +12,36 @@ export const fathomMediaUploadCheckpointSchema = z.object({
   kind: fathomMediaKindSchema,
 });
 
+const fathomRecordingImportSchema = z.object({
+  id: z.string(),
+  updatedAt: z.string(),
+  recordingId: z.string().nullable().optional(),
+  connectedAccountId: z.string().nullable().optional(),
+  mediaDownloadId: z.string().nullable().optional(),
+  mediaFailureReason: z.string().nullable().optional(),
+  mediaImportClaimedAt: z.string().nullable().optional(),
+  mediaUploadCheckpoint: z.unknown().nullable().optional(),
+});
+
+const fathomRecordingImportsConnectionSchema = z
+  .object({
+    edges: z.array(
+      z
+        .object({
+          node: fathomRecordingImportSchema.nullable().optional(),
+        })
+        .nullable(),
+    ),
+  })
+  .nullable()
+  .optional();
+
 export const callRecordingMediaStateNodeSchema = z.object({
   id: z.string(),
   updatedAt: z.string(),
-  externalRecordingId: z.string().nullable().optional(),
   video: z.array(fileSchema).nullable().optional(),
   audio: z.array(fileSchema).nullable().optional(),
-  fathomMediaFailureReason: z.string().nullable().optional(),
-  fathomConnectedAccountId: z.string().nullable().optional(),
-  fathomMediaDownloadId: z.string().nullable().optional(),
-  fathomMediaUploadCheckpoint: z.unknown().nullable().optional(),
+  fathomRecordingImports: fathomRecordingImportsConnectionSchema,
   transcript: z.unknown().nullable().optional(),
   summary: z
     .object({

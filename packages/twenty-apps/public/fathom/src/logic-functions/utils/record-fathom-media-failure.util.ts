@@ -18,6 +18,6 @@ export const recordFathomMediaFailure = async ({
     coreApiClient,
     callRecordingId,
     writeContext,
-    fields: { fathomMediaFailureReason: reason },
+    fields: { mediaFailureReason: reason },
   });
 };

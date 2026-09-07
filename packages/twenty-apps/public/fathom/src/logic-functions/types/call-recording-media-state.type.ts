@@ -3,7 +3,9 @@ import { type FathomMediaUploadCheckpoint } from 'src/logic-functions/types/fath
 export type CallRecordingMediaState = {
   id: string;
   updatedAt: string;
-  externalRecordingId: string | undefined;
+  fathomRecordingImportId: string | undefined;
+  fathomRecordingImportUpdatedAt: string | undefined;
+  recordingId: string | undefined;
   hasVideo: boolean;
   hasAudio: boolean;
   hasTranscript: boolean;

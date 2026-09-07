@@ -8,16 +8,27 @@ describe('mapCallRecordingMediaState', () => {
       mapCallRecordingMediaState({
         id: 'call-recording-id',
         updatedAt: '2026-09-05T00:00:00.000Z',
-        externalRecordingId: 'recording-id',
         video: [{ fileId: 'video-file-id' }],
         audio: [{ fileId: null }],
-        fathomMediaFailureReason: 'failure-reason',
-        fathomConnectedAccountId: 'connected-account-id',
-        fathomMediaDownloadId: 'download-id',
-        fathomMediaUploadCheckpoint: {
-          downloadId: 'download-id',
-          fileId: 'video-file-id',
-          kind: 'video',
+        fathomRecordingImports: {
+          edges: [
+            {
+              node: {
+                id: 'fathom-recording-import-id',
+                updatedAt: '2026-09-05T00:01:00.000Z',
+                recordingId: 'recording-id',
+                mediaFailureReason: 'failure-reason',
+                connectedAccountId: 'connected-account-id',
+                mediaDownloadId: 'download-id',
+                mediaImportClaimedAt: '2026-09-05T00:00:30.000Z',
+                mediaUploadCheckpoint: {
+                  downloadId: 'download-id',
+                  fileId: 'video-file-id',
+                  kind: 'video',
+                },
+              },
+            },
+          ],
         },
         transcript: [{}],
         summary: { markdown: 'Summary', blocknote: null },
@@ -25,7 +36,9 @@ describe('mapCallRecordingMediaState', () => {
     ).toEqual({
       id: 'call-recording-id',
       updatedAt: '2026-09-05T00:00:00.000Z',
-      externalRecordingId: 'recording-id',
+      fathomRecordingImportId: 'fathom-recording-import-id',
+      fathomRecordingImportUpdatedAt: '2026-09-05T00:01:00.000Z',
+      recordingId: 'recording-id',
       hasVideo: true,
       hasAudio: false,
       hasTranscript: true,
@@ -46,16 +59,26 @@ describe('mapCallRecordingMediaState', () => {
       mapCallRecordingMediaState({
         id: 'call-recording-id',
         updatedAt: '2026-09-05T00:00:00.000Z',
-        externalRecordingId: '',
         video: [{ fileId: '' }, {}, { fileId: null }],
         audio: null,
-        fathomMediaFailureReason: '',
-        fathomConnectedAccountId: null,
-        fathomMediaDownloadId: null,
-        fathomMediaUploadCheckpoint: {
-          downloadId: 'download-id',
-          fileId: '',
-          kind: 'video',
+        fathomRecordingImports: {
+          edges: [
+            {
+              node: {
+                id: '',
+                updatedAt: '',
+                recordingId: '',
+                mediaFailureReason: '',
+                connectedAccountId: null,
+                mediaDownloadId: null,
+                mediaUploadCheckpoint: {
+                  downloadId: 'download-id',
+                  fileId: '',
+                  kind: 'video',
+                },
+              },
+            },
+          ],
         },
         transcript: {},
         summary: { markdown: '', blocknote: null },
@@ -63,7 +86,9 @@ describe('mapCallRecordingMediaState', () => {
     ).toEqual({
       id: 'call-recording-id',
       updatedAt: '2026-09-05T00:00:00.000Z',
-      externalRecordingId: undefined,
+      fathomRecordingImportId: undefined,
+      fathomRecordingImportUpdatedAt: undefined,
+      recordingId: undefined,
       hasVideo: false,
       hasAudio: false,
       hasTranscript: false,
@@ -79,6 +104,7 @@ describe('mapCallRecordingMediaState', () => {
     const mediaState = mapCallRecordingMediaState({
       id: 'call-recording-id',
       updatedAt: '2026-09-05T00:00:00.000Z',
+      fathomRecordingImports: null,
       summary: { markdown: null, blocknote: {} },
     });
 

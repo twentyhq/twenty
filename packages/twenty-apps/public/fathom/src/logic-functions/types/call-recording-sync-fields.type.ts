@@ -1,5 +1,4 @@
 import { type CallRecordingMediaFile } from 'src/logic-functions/types/call-recording-media-file.type';
-import { type FathomMediaUploadCheckpoint } from 'src/logic-functions/types/fathom-media-upload-checkpoint.type';
 import { type TranscriptEntry } from 'src/logic-functions/types/transcript-entry.type';
 
 export type CallRecordingSyncFields = {
@@ -12,11 +11,6 @@ export type CallRecordingSyncFields = {
   transcript?: TranscriptEntry[];
   video?: CallRecordingMediaFile[];
   audio?: CallRecordingMediaFile[];
-  fathomMediaFailureReason?: string | null;
-  fathomConnectedAccountId?: string;
-  fathomMediaDownloadId?: string | null;
-  fathomMediaImportClaimedAt?: string | null;
-  fathomMediaUploadCheckpoint?: FathomMediaUploadCheckpoint | null;
   summary?: { markdown: string; blocknote: null };
   calendarEventId?: string;
 };

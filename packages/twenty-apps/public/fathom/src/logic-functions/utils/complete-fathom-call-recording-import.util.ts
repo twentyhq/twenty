@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -18,6 +19,8 @@ export const completeFathomCallRecordingImport = async ({
 
   if (
     !isDefined(callRecording) ||
+    !isNonEmptyString(callRecording.fathomRecordingImportId) ||
+    !isNonEmptyString(callRecording.fathomRecordingImportUpdatedAt) ||
     !isFathomCallRecordingImportComplete(callRecording)
   ) {
     return false;
@@ -30,6 +33,12 @@ export const completeFathomCallRecordingImport = async ({
           id: { eq: callRecordingId },
           updatedAt: { eq: callRecording.updatedAt },
           status: { eq: 'PROCESSING' },
+          fathomRecordingImports: {
+            id: { eq: callRecording.fathomRecordingImportId },
+            updatedAt: {
+              eq: callRecording.fathomRecordingImportUpdatedAt,
+            },
+          },
         },
         data: { status: 'COMPLETED' },
       },

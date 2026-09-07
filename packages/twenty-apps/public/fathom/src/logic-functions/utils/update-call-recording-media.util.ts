@@ -13,25 +13,21 @@ export const updateCallRecordingMedia = async ({
   coreApiClient: Pick<CoreApiClient, 'mutation'>;
   callRecordingId: string;
   writeContext: FathomMediaWriteContext;
-  fields: Pick<
-    CallRecordingSyncFields,
-    | 'video'
-    | 'audio'
-    | 'fathomMediaFailureReason'
-    | 'fathomMediaDownloadId'
-    | 'fathomMediaUploadCheckpoint'
-  >;
+  fields: Pick<CallRecordingSyncFields, 'video' | 'audio'>;
 }): Promise<boolean> => {
   const result = await coreApiClient.mutation({
     updateCallRecordings: {
       __args: {
         filter: {
           id: { eq: callRecordingId },
-          fathomConnectedAccountId: { eq: writeContext.connectedAccountId },
-          fathomMediaImportClaimedAt: { eq: writeContext.claimedAt },
-          fathomMediaDownloadId: isDefined(writeContext.downloadId)
-            ? { eq: writeContext.downloadId }
-            : { is: 'NULL' },
+          fathomRecordingImports: {
+            id: { eq: writeContext.fathomRecordingImportId },
+            connectedAccountId: { eq: writeContext.connectedAccountId },
+            mediaImportClaimedAt: { eq: writeContext.claimedAt },
+            mediaDownloadId: isDefined(writeContext.downloadId)
+              ? { eq: writeContext.downloadId }
+              : { is: 'NULL' },
+          },
         },
         data: fields,
       },

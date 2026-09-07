@@ -87,7 +87,6 @@ export const importFathomMediaFile = async ({
 
   const wasCheckpointSaved = await updateFathomMediaUploadCheckpoint({
     coreApiClient,
-    callRecordingId,
     writeContext,
     uploadCheckpoint: { downloadId, fileId, kind },
   });
