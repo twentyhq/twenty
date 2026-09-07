@@ -6010,6 +6010,11 @@ msgstr "Layout krävs för stapeldiagram"
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr "Layout krävs för stapeldiagramwidgeten \"{widgetTitle}\""
 
+#. js-lingui-id: cI7XDa
+#: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
+msgid "Limits scoped below the workspace require the Organization plan."
+msgstr "Gränser som är begränsade till nivån under arbetsytan kräver Organization-planen."
+
 #. js-lingui-id: sAG9OB
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
@@ -10820,6 +10825,11 @@ msgstr "Denna underdomän är redan upptagen."
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This suppressed address no longer exists."
 msgstr "Denna spärrade adress finns inte längre."
+
+#. js-lingui-id: qm7uMm
+#: src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util.ts
+msgid "This SVG is too large to be processed."
+msgstr "Den här SVG-filen är för stor för att kunna bearbetas."
 
 #. js-lingui-id: 0GMgIa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts

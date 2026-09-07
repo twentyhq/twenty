@@ -1,20 +1,10 @@
 import { randomUUID } from 'node:crypto';
 
-import gql from 'graphql-tag';
 import request from 'supertest';
-import { makeMetadataAPIRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
+import { uploadFileWithDirectUpload } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 
 const TEST_WORKSPACE_SCHEMA = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
-
-const uploadAiChatFileMutation = gql`
-  mutation UploadAiChatFile($file: Upload!) {
-    uploadAiChatFile(file: $file) {
-      id
-      path
-    }
-  }
-`;
 
 type McpToolCallResult = {
   content?: Array<{ type: string; text: string }>;
@@ -80,19 +70,15 @@ describe('agent chat files in record CRUD tools (integration)', () => {
   beforeAll(async () => {
     jest.useRealTimers();
 
-    const response = await makeMetadataAPIRequestWithFileUpload(
-      { query: uploadAiChatFileMutation, variables: { file: null } },
-      {
-        field: 'file',
-        buffer: Buffer.from('%PDF-1.4 chat upload'),
-        filename: 'chat-upload.pdf',
-        contentType: 'application/pdf',
-      },
-    );
+    const uploadedFile = await uploadFileWithDirectUpload({
+      filename: 'chat-upload.pdf',
+      content: Buffer.from('%PDF-1.4 chat upload'),
+      fileFolder: 'AgentChat',
+    });
 
-    chatFileId = response.body.data.uploadAiChatFile.id;
+    chatFileId = uploadedFile.id;
 
-    expect(response.body.data.uploadAiChatFile.path).toContain('agent-chat/');
+    expect(uploadedFile.path).toContain('agent-chat/');
   });
 
   afterAll(async () => {

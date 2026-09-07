@@ -62,6 +62,7 @@ export class EventStreamResolver {
         eventStreamId: variables.eventStreamId,
         objectRecordEventsWithQueryIds: payload.objectRecordEventsWithQueryIds,
         metadataEvents: payload.metadataEvents,
+        queueJobEvents: payload.queueJobEvents ?? [],
       };
     },
   })

@@ -6010,6 +6010,11 @@ msgstr "Layoutet er påkrævet for søjlediagrammet"
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr "Layoutet er påkrævet for søjlediagram-widgetten \"{widgetTitle}\""
 
+#. js-lingui-id: cI7XDa
+#: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
+msgid "Limits scoped below the workspace require the Organization plan."
+msgstr "Grænser, der er afgrænset under arbejdsområdet, kræver Organization-abonnementet."
+
 #. js-lingui-id: sAG9OB
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
@@ -10814,6 +10819,11 @@ msgstr "Dette underdomæne er allerede taget."
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This suppressed address no longer exists."
 msgstr "Denne adresse på undertrykkelseslisten findes ikke længere."
+
+#. js-lingui-id: qm7uMm
+#: src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util.ts
+msgid "This SVG is too large to be processed."
+msgstr "Denne SVG er for stor til at blive behandlet."
 
 #. js-lingui-id: 0GMgIa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts

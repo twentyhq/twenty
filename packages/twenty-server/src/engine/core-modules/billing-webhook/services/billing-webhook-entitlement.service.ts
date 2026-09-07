@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
+import { isEntitlementGrantedByStripeEvent } from 'src/engine/core-modules/billing-webhook/utils/is-entitlement-granted-by-stripe-event.util';
 import { transformStripeEntitlementUpdatedEventToDatabaseEntitlement } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-entitlement-updated-event-to-database-entitlement.util';
 import {
   BillingException,
@@ -15,6 +16,7 @@ import {
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { RowLevelPermissionPredicateGroupService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate-group.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -28,6 +30,7 @@ export class BillingWebhookEntitlementService {
     @InjectWorkspaceScopedRepository(BillingEntitlementEntity)
     private readonly billingEntitlementRepository: WorkspaceScopedRepository<BillingEntitlementEntity>,
     private readonly rowLevelPermissionPredicateGroupService: RowLevelPermissionPredicateGroupService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
 
   async processStripeEvent(
@@ -70,6 +73,17 @@ export class BillingWebhookEntitlementService {
 
     if (isRowLevelPermissionDisabled) {
       await this.rowLevelPermissionPredicateGroupService.deleteAllRowLevelPermissionPredicateGroups(
+        workspaceId,
+      );
+    }
+
+    if (
+      isEntitlementGrantedByStripeEvent({
+        data,
+        key: BillingEntitlementKey.USAGE_LIMIT,
+      })
+    ) {
+      await this.usageLimitQuotaService.dropIntraWorkspaceLimitCounters(
         workspaceId,
       );
     }

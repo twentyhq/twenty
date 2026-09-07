@@ -1,59 +1,94 @@
+import { RECORD_LIST_ROW_OVERFLOW_CHIP_SLOT_WIDTH } from '@/object-record/record-list/constants/RecordListRowOverflowChipSlotWidth';
 import { computeRecordListDisplayedFields } from '@/object-record/record-list/utils/computeRecordListDisplayedFields';
 
 describe('computeRecordListDisplayedFields', () => {
-  it('accounts for row padding when calculating field breakpoints', () => {
-    expect(computeRecordListDisplayedFields(408).displayedFieldCount).toBe(1);
-    expect(computeRecordListDisplayedFields(576).displayedFieldCount).toBe(2);
-  });
-
-  it('keeps one narrowed field on rows too tight for a full-width one', () => {
-    expect(computeRecordListDisplayedFields(407).displayedFieldCount).toBe(1);
-    expect(computeRecordListDisplayedFields(332).displayedFieldCount).toBe(1);
-  });
-
-  it('returns no field when not even a narrowed one fits', () => {
-    expect(computeRecordListDisplayedFields(331).displayedFieldCount).toBe(0);
-    expect(computeRecordListDisplayedFields(0).displayedFieldCount).toBe(0);
-  });
-
-  it('caps the displayed field count at the visible field limit', () => {
-    expect(computeRecordListDisplayedFields(10_000).displayedFieldCount).toBe(
-      6,
-    );
-  });
-
-  it('gives fields their full width as soon as the row can afford it', () => {
-    expect(computeRecordListDisplayedFields(408).displayedFieldMaxWidth).toBe(
-      156,
-    );
+  it('shows every field while they can fit at their minimum width', () => {
     expect(
-      computeRecordListDisplayedFields(10_000).displayedFieldMaxWidth,
+      computeRecordListDisplayedFields({
+        rowWidth: 524,
+        populatedFieldCount: 3,
+      }),
+    ).toEqual({
+      displayedFieldCount: 3,
+      displayedFieldMaxWidth: 100,
+    });
+  });
+
+  it('uses an overflow chip only after every field can no longer fit', () => {
+    expect(
+      computeRecordListDisplayedFields({
+        rowWidth: 523,
+        populatedFieldCount: 4,
+      }),
+    ).toEqual({
+      displayedFieldCount: 3,
+      displayedFieldMaxWidth: 82,
+    });
+  });
+
+  it('returns no field when not even a minimum-width field fits', () => {
+    expect(
+      computeRecordListDisplayedFields({
+        rowWidth: 331,
+        populatedFieldCount: 7,
+      }).displayedFieldCount,
+    ).toBe(0);
+  });
+
+  it('does not cap the number of fields that fit', () => {
+    expect(
+      computeRecordListDisplayedFields({
+        rowWidth: 10_000,
+        populatedFieldCount: 58,
+      }).displayedFieldCount,
+    ).toBe(58);
+  });
+
+  it('gives fields their full width when the row can afford it', () => {
+    expect(
+      computeRecordListDisplayedFields({
+        rowWidth: 408,
+        populatedFieldCount: 1,
+      }).displayedFieldMaxWidth,
     ).toBe(156);
   });
 
-  it('narrows the field to its slot on rows below the full-width breakpoint', () => {
-    // A 390px viewport leaves a 342px row, so the single field gets 90px.
-    expect(computeRecordListDisplayedFields(342).displayedFieldMaxWidth).toBe(
-      90,
-    );
+  it('narrows fields to fill the available row width', () => {
+    expect(
+      computeRecordListDisplayedFields({
+        rowWidth: 342,
+        populatedFieldCount: 2,
+      }).displayedFieldMaxWidth,
+    ).toBe(90);
   });
 
-  // Row padding 12 + label 176 + gap 12 + hidden-count chip 40.
-  const WIDTH_RESERVED_AROUND_FIELDS = 240;
-  const GAP_BEFORE_EACH_FIELD = 12;
+  const WIDTH_RESERVED_BEFORE_FIELDS = 200;
+  const FIELD_GAP_WIDTH = 12;
 
-  it.each([332, 342, 380, 407, 408, 500, 576, 900, 1200])(
-    'never promises a %ipx row more field width than it has',
+  it.each([240, 280, 331, 332, 342, 407, 408, 523, 524, 900, 1200])(
+    'never promises a %ipx row more width than it has',
     (rowWidth) => {
-      const { displayedFieldCount, displayedFieldMaxWidth } =
-        computeRecordListDisplayedFields(rowWidth);
+      for (const populatedFieldCount of [0, 1, 2, 3, 7, 20]) {
+        const { displayedFieldCount, displayedFieldMaxWidth } =
+          computeRecordListDisplayedFields({ rowWidth, populatedFieldCount });
 
-      const widthTakenByFields =
-        displayedFieldCount * (displayedFieldMaxWidth + GAP_BEFORE_EACH_FIELD);
+        const hiddenFieldCount = populatedFieldCount - displayedFieldCount;
+        const displayedFieldsGapWidth =
+          Math.max(displayedFieldCount - 1, 0) * FIELD_GAP_WIDTH;
+        const overflowChipWidth =
+          hiddenFieldCount > 0
+            ? RECORD_LIST_ROW_OVERFLOW_CHIP_SLOT_WIDTH +
+              (displayedFieldCount > 0 ? FIELD_GAP_WIDTH : 0)
+            : 0;
 
-      expect(widthTakenByFields).toBeLessThanOrEqual(
-        rowWidth - WIDTH_RESERVED_AROUND_FIELDS,
-      );
+        const rowContentWidth =
+          WIDTH_RESERVED_BEFORE_FIELDS +
+          displayedFieldCount * displayedFieldMaxWidth +
+          displayedFieldsGapWidth +
+          overflowChipWidth;
+
+        expect(rowContentWidth).toBeLessThanOrEqual(rowWidth);
+      }
     },
   );
 });

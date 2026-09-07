@@ -4,7 +4,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
+import { type EventStreamData } from 'src/engine/subscriptions/types/event-stream-data.type';
 import { type EventStreamPayload } from 'src/engine/subscriptions/types/event-stream-payload.type';
+import { type QueueJobEvent } from 'src/engine/subscriptions/types/queue-job-event.type';
 import { type WorkspaceBroadcastEvent } from 'src/engine/subscriptions/workspace-event-broadcaster/types/workspace-broadcast-event.type';
 
 @Injectable()
@@ -27,26 +29,7 @@ export class WorkspaceEventBroadcaster {
       return;
     }
 
-    const activeStreamIds =
-      await this.eventStreamService.getActiveStreamIds(workspaceId);
-
-    if (activeStreamIds.length === 0) {
-      return;
-    }
-
-    const streamsData = await this.eventStreamService.getStreamsData(
-      workspaceId,
-      activeStreamIds,
-    );
-
-    const streamIdsToRemove: string[] = [];
-
-    for (const [streamChannelId, streamData] of streamsData) {
-      if (!isDefined(streamData)) {
-        streamIdsToRemove.push(streamChannelId);
-        continue;
-      }
-
+    await this.publishToActiveStreams(workspaceId, (streamData) => {
       const streamUserWorkspaceId = streamData.authContext.userWorkspaceId;
 
       const metadataEventsForStream = events
@@ -72,13 +55,67 @@ export class WorkspaceEventBroadcaster {
         }));
 
       if (metadataEventsForStream.length === 0) {
-        continue;
+        return undefined;
       }
 
-      const payload: EventStreamPayload = {
+      return {
         objectRecordEventsWithQueryIds: [],
         metadataEvents: metadataEventsForStream,
       };
+    });
+  }
+
+  async broadcastQueueJobEvent({
+    workspaceId,
+    userWorkspaceId,
+    queueJobEvent,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    queueJobEvent: QueueJobEvent;
+  }): Promise<void> {
+    await this.publishToActiveStreams(workspaceId, (streamData) =>
+      streamData.authContext.userWorkspaceId === userWorkspaceId
+        ? {
+            objectRecordEventsWithQueryIds: [],
+            metadataEvents: [],
+            queueJobEvents: [queueJobEvent],
+          }
+        : undefined,
+    );
+  }
+
+  private async publishToActiveStreams(
+    workspaceId: string,
+    buildPayloadForStream: (
+      streamData: EventStreamData,
+    ) => EventStreamPayload | undefined,
+  ): Promise<void> {
+    const activeStreamIds =
+      await this.eventStreamService.getActiveStreamIds(workspaceId);
+
+    if (activeStreamIds.length === 0) {
+      return;
+    }
+
+    const streamsData = await this.eventStreamService.getStreamsData(
+      workspaceId,
+      activeStreamIds,
+    );
+
+    const streamIdsToRemove: string[] = [];
+
+    for (const [streamChannelId, streamData] of streamsData) {
+      if (!isDefined(streamData)) {
+        streamIdsToRemove.push(streamChannelId);
+        continue;
+      }
+
+      const payload = buildPayloadForStream(streamData);
+
+      if (!isDefined(payload)) {
+        continue;
+      }
 
       await this.subscriptionService.publishToEventStream({
         workspaceId,

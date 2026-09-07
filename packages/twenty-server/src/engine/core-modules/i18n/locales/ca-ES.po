@@ -6010,6 +6010,11 @@ msgstr "La disposició és obligatòria per al gràfic de barres"
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr "La disposició és obligatòria per al giny de gràfic de barres \"{widgetTitle}\""
 
+#. js-lingui-id: cI7XDa
+#: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
+msgid "Limits scoped below the workspace require the Organization plan."
+msgstr "Els límits definits per sota de l'espai de treball requereixen el pla Organization."
+
 #. js-lingui-id: sAG9OB
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
@@ -10814,6 +10819,11 @@ msgstr "Aquest subdomini ja està ocupat."
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This suppressed address no longer exists."
 msgstr "Aquesta adreça suprimida ja no existeix."
+
+#. js-lingui-id: qm7uMm
+#: src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util.ts
+msgid "This SVG is too large to be processed."
+msgstr "Aquest SVG és massa gran per processar-lo."
 
 #. js-lingui-id: 0GMgIa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts

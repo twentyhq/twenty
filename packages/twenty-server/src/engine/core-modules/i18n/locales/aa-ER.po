@@ -6010,6 +6010,11 @@ msgstr "crwdns105832:0crwdne105832:0"
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr "crwdns105834:0{widgetTitle}crwdne105834:0"
 
+#. js-lingui-id: cI7XDa
+#: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
+msgid "Limits scoped below the workspace require the Organization plan."
+msgstr "crwdns141897:0crwdne141897:0"
+
 #. js-lingui-id: sAG9OB
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
@@ -10814,6 +10819,11 @@ msgstr "crwdns65740:0crwdne65740:0"
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This suppressed address no longer exists."
 msgstr "crwdns136111:0crwdne136111:0"
+
+#. js-lingui-id: qm7uMm
+#: src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util.ts
+msgid "This SVG is too large to be processed."
+msgstr "crwdns141907:0crwdne141907:0"
 
 #. js-lingui-id: 0GMgIa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
