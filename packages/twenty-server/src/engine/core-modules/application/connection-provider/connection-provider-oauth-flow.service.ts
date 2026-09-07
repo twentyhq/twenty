@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, QueryFailedError, Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
+import { isUniqueViolationError } from 'src/engine/api/graphql/workspace-query-runner/utils/is-unique-violation-error.util';
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
@@ -365,7 +365,7 @@ export class ConnectionProviderOAuthFlowService {
     try {
       return await this.connectedAccountRepository.save(created);
     } catch (error) {
-      if (this.isUniqueViolation(error)) {
+      if (isUniqueViolationError(error)) {
         throw new ConnectionProviderException(
           `User workspace ${userWorkspaceId} already has a connected account for provider ${provider.id}`,
           ConnectionProviderExceptionCode.CONNECTED_ACCOUNT_ALREADY_EXISTS,
@@ -401,13 +401,5 @@ export class ConnectionProviderOAuthFlowService {
         ConnectionProviderExceptionCode.CONNECTED_ACCOUNT_ALREADY_EXISTS,
       );
     }
-  }
-
-  private isUniqueViolation(error: unknown): boolean {
-    return (
-      error instanceof QueryFailedError &&
-      'code' in error &&
-      error.code === POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION
-    );
   }
 }

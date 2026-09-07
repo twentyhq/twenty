@@ -37,6 +37,8 @@ const getConnectionProviderExceptionUserFriendlyMessage = (
       return msg`The logic function to run on disconnect failed.`;
     case ConnectionProviderExceptionCode.CONNECTED_ACCOUNT_ALREADY_EXISTS:
       return msg`You already have a connection for this provider. Open it and use Reconnect to refresh it or change its visibility.`;
+    case ConnectionProviderExceptionCode.AUTHORIZATION_DENIED:
+      return msg`The provider did not authorize the connection.`;
     default:
       assertUnreachable(code);
   }

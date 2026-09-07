@@ -92,4 +92,22 @@ describe('App OAuth callback endpoint', () => {
       expect.any(String),
     );
   }, 60000);
+
+  it('redirects a denied authorization to the application page with a friendly message', async () => {
+    const response = await callback({
+      error: 'access_denied',
+      error_description: 'User declined',
+      state: await signState(),
+    });
+
+    expect(response.status).toBe(302);
+
+    const location = new URL(response.headers.location);
+
+    expect(location.hostname).toMatch(/^apple\./);
+    expect(location.pathname).toBe(`/settings/applications/${applicationId}`);
+    expect(location.searchParams.get('errorMessage')).toBe(
+      'The provider did not authorize the connection.',
+    );
+  }, 60000);
 });

@@ -175,21 +175,12 @@ export class ConnectionProviderOAuthController {
     let workspace: WorkspaceEntity | null = null;
     let applicationId: string | null = null;
 
-    if (errorParam) {
+    if (!isNonEmptyString(state)) {
       return this.redirectToError(
         res,
-        new Error(
-          `OAuth provider returned error: ${errorParam}${errorDescription ? `: ${errorDescription}` : ''}`,
-        ),
-        workspace,
-      );
-    }
-
-    if (!code || !state) {
-      return this.redirectToError(
-        res,
-        new Error(
-          'OAuth callback is missing the `code` or `state` query parameter',
+        new ConnectionProviderException(
+          'OAuth callback is missing the `state` query parameter',
+          ConnectionProviderExceptionCode.INVALID_REQUEST,
         ),
         workspace,
       );
@@ -210,6 +201,20 @@ export class ConnectionProviderOAuthController {
         throw new ConnectionProviderException(
           `Workspace ${statePayload.workspaceId} not found for OAuth callback`,
           ConnectionProviderExceptionCode.PROVIDER_NOT_FOUND,
+        );
+      }
+
+      if (isNonEmptyString(errorParam)) {
+        throw new ConnectionProviderException(
+          `OAuth provider returned error: ${errorParam}${isNonEmptyString(errorDescription) ? `: ${errorDescription}` : ''}`,
+          ConnectionProviderExceptionCode.AUTHORIZATION_DENIED,
+        );
+      }
+
+      if (!isNonEmptyString(code)) {
+        throw new ConnectionProviderException(
+          'OAuth callback is missing the `code` query parameter',
+          ConnectionProviderExceptionCode.INVALID_REQUEST,
         );
       }
 
