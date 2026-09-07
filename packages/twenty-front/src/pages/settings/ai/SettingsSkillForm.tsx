@@ -531,7 +531,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
                               />
                               <AppTooltip
                                 anchorSelect="#info-circle-id-skill-name"
-                                content={apiNameTooltipText}
+                                title={apiNameTooltipText}
                                 offset={5}
                                 noArrow
                                 place="bottom"

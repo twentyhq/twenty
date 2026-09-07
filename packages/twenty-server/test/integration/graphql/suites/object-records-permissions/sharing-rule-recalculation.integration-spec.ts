@@ -20,6 +20,7 @@ import {
   FeatureFlagKey,
   MetadataReadability,
   RecordShareAccessLevel,
+  SharingRuleAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
   RowLevelPermissionPredicateOperand,
@@ -200,7 +201,7 @@ describe('sharing rule recalculation', () => {
       granteePrincipalType: RecordSharePrincipalType.EVERYONE,
       granteeRoleId: null,
       granteePrincipalId: null,
-      accessLevel: RecordShareAccessLevel.READ,
+      accessLevel: SharingRuleAccessLevel.READ,
       isActive: true,
     });
 

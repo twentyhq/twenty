@@ -3,12 +3,14 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { RecordSharePrincipalType } from 'twenty-shared/types';
+import {
+  RecordSharePrincipalType,
+  SharingRuleAccessLevel,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-and-related-flat-entity-maps-for-validation.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { SHARING_RULE_ACCESS_LEVELS } from 'src/engine/metadata-modules/sharing-rule/constants/sharing-rule-access-levels.constant';
 import { SharingRuleExceptionCode } from 'src/engine/metadata-modules/sharing-rule/exceptions/sharing-rule.exception';
 import { type UniversalFlatSharingRule } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-sharing-rule.type';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
@@ -169,7 +171,9 @@ export class FlatSharingRuleValidatorService {
       });
     }
 
-    if (!SHARING_RULE_ACCESS_LEVELS.includes(sharingRule.accessLevel)) {
+    if (
+      !Object.values(SharingRuleAccessLevel).includes(sharingRule.accessLevel)
+    ) {
       validationResult.errors.push({
         code: SharingRuleExceptionCode.INVALID_SHARING_RULE_INPUT,
         message: t`Sharing rule access level must be READ or READ_WRITE`,

@@ -4,18 +4,21 @@ import {
   type RowLevelPermissionPredicateManifest,
 } from '@/application/roleManifestType';
 import {
-  type RecordShareAccessLevel,
   type RecordSharePrincipalType,
+  type SharingRuleAccessLevel,
 } from '@/types';
+
+export type SharingRuleManifestGranteePrincipalType =
+  | RecordSharePrincipalType.EVERYONE
+  | RecordSharePrincipalType.ROLE;
 
 export type SharingRuleManifest = SyncableEntityOptions & {
   objectUniversalIdentifier: string;
   name: string;
   description?: string;
-  granteePrincipalType: RecordSharePrincipalType;
+  granteePrincipalType: SharingRuleManifestGranteePrincipalType;
   granteeRoleUniversalIdentifier?: string;
-  granteePrincipalId?: string;
-  accessLevel: RecordShareAccessLevel;
+  accessLevel: SharingRuleAccessLevel;
   isActive?: boolean;
   rowLevelPermissionPredicates?: RowLevelPermissionPredicateManifest[];
   rowLevelPermissionPredicateGroups?: RowLevelPermissionPredicateGroupManifest[];

@@ -9,7 +9,7 @@ import {
   IsUUID,
 } from 'class-validator';
 import {
-  RecordShareAccessLevel,
+  SharingRuleAccessLevel,
   RecordSharePrincipalType,
 } from 'twenty-shared/types';
 
@@ -48,10 +48,10 @@ export class UpdateSharingRuleInput {
   @Field(() => UUIDScalarType, { nullable: true })
   granteeRoleId?: string | null;
 
-  @IsEnum(RecordShareAccessLevel)
+  @IsEnum(SharingRuleAccessLevel)
   @IsOptional()
-  @Field(() => RecordShareAccessLevel, { nullable: true })
-  accessLevel?: RecordShareAccessLevel;
+  @Field(() => SharingRuleAccessLevel, { nullable: true })
+  accessLevel?: SharingRuleAccessLevel;
 
   @IsBoolean()
   @IsOptional()

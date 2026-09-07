@@ -4,6 +4,8 @@ import { type ObjectLiteral } from 'typeorm';
 import { buildRecordShareCondition } from 'src/engine/twenty-orm/utils/build-record-share-condition.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
+const ALWAYS_FALSE_SQL = '(1=0)';
+
 export type InheritedReadabilityParentGate =
   | { kind: 'open' }
   | { kind: 'denied' }
@@ -42,10 +44,6 @@ export const buildInheritedReadabilityCondition = ({
   const quoteColumn = (joinColumnName: string) =>
     `${quotedTableAlias}.${escapeIdentifier(joinColumnName)}`;
 
-  const noParentCondition = `(${parents
-    .map(({ joinColumnName }) => `${quoteColumn(joinColumnName)} IS NULL`)
-    .join(' AND ')})`;
-
   const parentConditions = parents.flatMap(({ joinColumnName, gate }) => {
     const notNullCondition = `${quoteColumn(joinColumnName)} IS NOT NULL`;
 
@@ -80,8 +78,12 @@ export const buildInheritedReadabilityCondition = ({
     }
   });
 
+  if (parentConditions.length === 0) {
+    return { sql: ALWAYS_FALSE_SQL, parameters: {} };
+  }
+
   return {
-    sql: `(${[noParentCondition, ...parentConditions].join(' OR ')})`,
+    sql: `(${parentConditions.join(' OR ')})`,
     parameters,
   };
 };

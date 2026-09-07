@@ -8,6 +8,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { getEffectiveOwnerFieldMetadataId } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-owner-field-metadata-id.util';
 
 export type OwnerField = {
+  id: string;
   name: string;
   joinColumnName: string;
 };
@@ -36,6 +37,7 @@ export const findOwnerField = ({
 
   return isDefined(ownerFlatFieldMetadata)
     ? {
+        id: ownerFlatFieldMetadata.id,
         name: ownerFlatFieldMetadata.name,
         joinColumnName: computeMorphOrRelationFieldJoinColumnName({
           name: ownerFlatFieldMetadata.name,

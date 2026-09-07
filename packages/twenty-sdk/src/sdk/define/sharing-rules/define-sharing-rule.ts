@@ -1,6 +1,6 @@
 import {
-  RecordShareAccessLevel,
   RecordSharePrincipalType,
+  SharingRuleAccessLevel,
 } from 'twenty-shared/types';
 
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
@@ -22,39 +22,28 @@ export const defineSharingRule: DefineEntity<SharingRuleConfig> = (config) => {
     errors.push('SharingRule must have an objectUniversalIdentifier');
   }
 
-  if (
-    config.accessLevel !== RecordShareAccessLevel.READ &&
-    config.accessLevel !== RecordShareAccessLevel.READ_WRITE
-  ) {
+  if (!Object.values(SharingRuleAccessLevel).includes(config.accessLevel)) {
     errors.push('SharingRule accessLevel must be READ or READ_WRITE');
   }
 
   switch (config.granteePrincipalType) {
     case RecordSharePrincipalType.EVERYONE: {
-      if (config.granteeRoleUniversalIdentifier || config.granteePrincipalId) {
-        errors.push('SharingRule granting everyone must not name a grantee');
+      if (config.granteeRoleUniversalIdentifier) {
+        errors.push('SharingRule granting everyone must not name a role');
       }
       break;
     }
     case RecordSharePrincipalType.ROLE: {
-      if (!config.granteeRoleUniversalIdentifier || config.granteePrincipalId) {
+      if (!config.granteeRoleUniversalIdentifier) {
         errors.push(
-          'SharingRule granting a role must have a granteeRoleUniversalIdentifier and no granteePrincipalId',
-        );
-      }
-      break;
-    }
-    case RecordSharePrincipalType.WORKSPACE_MEMBER: {
-      if (!config.granteePrincipalId || config.granteeRoleUniversalIdentifier) {
-        errors.push(
-          'SharingRule granting a workspace member must have a granteePrincipalId and no granteeRoleUniversalIdentifier',
+          'SharingRule granting a role must have a granteeRoleUniversalIdentifier',
         );
       }
       break;
     }
     default: {
       errors.push(
-        `SharingRule granteePrincipalType ${config.granteePrincipalType} is not supported`,
+        `SharingRule granteePrincipalType ${config.granteePrincipalType} is not supported in a manifest: a workspace member id has no meaning outside the workspace it was copied from, grant everyone or a role`,
       );
     }
   }

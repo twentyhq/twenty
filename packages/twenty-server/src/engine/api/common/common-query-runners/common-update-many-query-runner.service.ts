@@ -123,6 +123,16 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         ownerWorkspaceMemberIdByRecordId,
         transactionScope,
       });
+      await this.recordShareService.convertOwnerRowsToManual({
+        workspaceId: authContext.workspace.id,
+        objectMetadataId: flatObjectMetadata.id,
+        recordIds: updatedRecords
+          .filter(
+            (record) => !isDefined(record[updatedOwnerField.joinColumnName]),
+          )
+          .map((record) => record.id),
+        transactionScope,
+      });
     }
 
     if (isDefined(args.selectedFieldsResult.relations)) {

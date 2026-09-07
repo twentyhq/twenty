@@ -361,15 +361,20 @@ export class FlatRowLevelPermissionPredicateValidatorService {
   }: {
     predicate: Pick<
       UniversalFlatRowLevelPermissionPredicate,
-      'roleUniversalIdentifier' | 'sharingRuleUniversalIdentifier'
+      | 'roleUniversalIdentifier'
+      | 'sharingRuleUniversalIdentifier'
+      | 'workspaceMemberFieldMetadataUniversalIdentifier'
     >;
     flatRoleMaps: AllUniversalFlatEntityMaps['flatRoleMaps'] | undefined;
     flatSharingRuleMaps:
       | AllUniversalFlatEntityMaps['flatSharingRuleMaps']
       | undefined;
   }) {
-    const { roleUniversalIdentifier, sharingRuleUniversalIdentifier } =
-      predicate;
+    const {
+      roleUniversalIdentifier,
+      sharingRuleUniversalIdentifier,
+      workspaceMemberFieldMetadataUniversalIdentifier,
+    } = predicate;
 
     if (
       isDefined(roleUniversalIdentifier) ===
@@ -411,15 +416,27 @@ export class FlatRowLevelPermissionPredicateValidatorService {
           })
         : undefined;
 
-    return isDefined(sharingRule)
-      ? []
-      : [
+    if (!isDefined(sharingRule)) {
+      return [
+        {
+          code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+          message: t`Sharing rule not found`,
+          userFriendlyMessage: msg`Sharing rule not found`,
+        },
+      ];
+    }
+
+    // a rule is materialized once for every grantee, so a value that depends on
+    // who is reading has no single answer to store
+    return isDefined(workspaceMemberFieldMetadataUniversalIdentifier)
+      ? [
           {
             code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
-            message: t`Sharing rule not found`,
-            userFriendlyMessage: msg`Sharing rule not found`,
+            message: t`A sharing rule predicate cannot depend on the current workspace member`,
+            userFriendlyMessage: msg`A sharing rule cannot use a value taken from the current workspace member`,
           },
-        ];
+        ]
+      : [];
   }
 
   // A row level permission predicate compiles without a current record, so a

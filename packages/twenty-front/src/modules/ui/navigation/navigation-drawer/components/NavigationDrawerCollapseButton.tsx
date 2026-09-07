@@ -51,7 +51,7 @@ export const NavigationDrawerCollapseButton = ({
       />
       <AppTooltip
         anchorSelect={`[data-tooltip-id='${tooltipId}'] > button`}
-        content={label}
+        title={label}
         delay={TooltipDelay.longDelay}
         place={TooltipPosition.Bottom}
         offset={5}

@@ -18,7 +18,6 @@ export const EXPECTED_MANIFEST: Manifest = {
   permissionFlags: [],
   sharingRules: [],
   skills: [],
-  translations: {},
   agents: [],
   publicAssets: [],
   indexes: [],

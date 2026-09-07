@@ -1,19 +1,26 @@
 import { randomBytes } from 'node:crypto';
 
-import {
-  type MetadataReadability,
-  type RecordShareAccessLevel,
-} from 'twenty-shared/types';
+import { type RecordShareAccessLevel } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
-import { resolveRecordShareGateKind } from 'src/engine/record-share/utils/resolve-record-share-gate-kind.util';
+import {
+  buildInheritedReadabilityCondition,
+  type InheritedReadabilityParentGate,
+} from 'src/engine/twenty-orm/utils/build-inherited-readability-condition.util';
 import { buildRecordShareCondition } from 'src/engine/twenty-orm/utils/build-record-share-condition.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-export type LinkedObjectReadability = {
+const LINKED_RECORD_ID_COLUMN_NAME = 'linkedRecordId';
+
+export type LinkedObjectGate = {
   objectMetadataId: string;
-  readability: MetadataReadability;
-  isOwningApplication: boolean;
+  gate: InheritedReadabilityParentGate;
+};
+
+type InheritedLinkedObjectGate = {
+  objectMetadataId: string;
+  gate: Extract<InheritedReadabilityParentGate, { kind: 'inherited' }>;
 };
 
 export const buildLinkedRecordGuardCondition = ({
@@ -27,33 +34,32 @@ export const buildLinkedRecordGuardCondition = ({
   recordShareTableExpression: string;
   principalIds: string[];
   accessLevels: RecordShareAccessLevel[];
-  linkedObjects: LinkedObjectReadability[];
+  linkedObjects: LinkedObjectGate[];
 }): { sql: string; parameters: ObjectLiteral } | undefined => {
   const deniedObjectMetadataIds: string[] = [];
   const privateObjectMetadataIds: string[] = [];
+  const inheritedLinkedObjects: InheritedLinkedObjectGate[] = [];
 
-  for (const {
-    objectMetadataId,
-    readability,
-    isOwningApplication,
-  } of linkedObjects) {
-    const gateKind = resolveRecordShareGateKind({
-      readability,
-      isOwningApplication,
-    });
-
-    if (gateKind === 'deny') {
-      deniedObjectMetadataIds.push(objectMetadataId);
-    }
-
-    if (gateKind === 'private') {
-      privateObjectMetadataIds.push(objectMetadataId);
+  for (const { objectMetadataId, gate } of linkedObjects) {
+    switch (gate.kind) {
+      case 'open':
+        break;
+      case 'denied':
+        deniedObjectMetadataIds.push(objectMetadataId);
+        break;
+      case 'private':
+        privateObjectMetadataIds.push(objectMetadataId);
+        break;
+      case 'inherited':
+        inheritedLinkedObjects.push({ objectMetadataId, gate });
+        break;
     }
   }
 
   if (
     deniedObjectMetadataIds.length === 0 &&
-    privateObjectMetadataIds.length === 0
+    privateObjectMetadataIds.length === 0 &&
+    inheritedLinkedObjects.length === 0
   ) {
     return undefined;
   }
@@ -72,6 +78,7 @@ export const buildLinkedRecordGuardCondition = ({
     [nonOpenObjectMetadataIdsParameterName]: [
       ...deniedObjectMetadataIds,
       ...privateObjectMetadataIds,
+      ...inheritedLinkedObjects.map(({ objectMetadataId }) => objectMetadataId),
     ],
   };
 
@@ -81,7 +88,7 @@ export const buildLinkedRecordGuardCondition = ({
       recordShareTableExpression,
       principalIds,
       accessLevels,
-      recordIdExpression: `${quotedTableAlias}."linkedRecordId"`,
+      recordIdExpression: `${quotedTableAlias}.${escapeIdentifier(LINKED_RECORD_ID_COLUMN_NAME)}`,
       objectMetadataIdExpression: linkedObjectMetadataIdSql,
       objectMetadataIds: privateObjectMetadataIds,
     });
@@ -93,6 +100,29 @@ export const buildLinkedRecordGuardCondition = ({
       [privateObjectMetadataIdsParameterName]: privateObjectMetadataIds,
     });
   }
+
+  inheritedLinkedObjects.forEach(({ objectMetadataId, gate }, index) => {
+    const inheritedCondition = buildInheritedReadabilityCondition({
+      tableAlias,
+      recordShareTableExpression,
+      principalIds,
+      accessLevels,
+      parents: [{ joinColumnName: LINKED_RECORD_ID_COLUMN_NAME, gate }],
+    });
+
+    if (!isDefined(inheritedCondition)) {
+      return;
+    }
+
+    const inheritedObjectMetadataIdParameterName = `linkedRecordGuardInheritedObjectMetadataId_${parameterSuffix}_${index}`;
+
+    conditions.push(
+      `(${linkedObjectMetadataIdSql} = :${inheritedObjectMetadataIdParameterName} AND ${inheritedCondition.sql})`,
+    );
+    Object.assign(parameters, inheritedCondition.parameters, {
+      [inheritedObjectMetadataIdParameterName]: objectMetadataId,
+    });
+  });
 
   return { sql: `(${conditions.join(' OR ')})`, parameters };
 };

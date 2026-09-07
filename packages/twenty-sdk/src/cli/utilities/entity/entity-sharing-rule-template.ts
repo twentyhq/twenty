@@ -3,8 +3,8 @@ import { v4 as uuidv4 } from 'uuid';
 export const getSharingRuleBaseFile = ({ name }: { name: string }) =>
   `import {
   defineSharingRule,
-  RecordShareAccessLevel,
   RecordSharePrincipalType,
+  SharingRuleAccessLevel,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/define';
 
@@ -14,6 +14,6 @@ export default defineSharingRule({
   objectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
   granteePrincipalType: RecordSharePrincipalType.EVERYONE,
-  accessLevel: RecordShareAccessLevel.READ,
+  accessLevel: SharingRuleAccessLevel.READ,
 });
 `;

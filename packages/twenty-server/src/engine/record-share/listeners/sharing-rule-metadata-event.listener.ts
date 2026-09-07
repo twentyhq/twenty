@@ -152,7 +152,7 @@ export class SharingRuleMetadataEventListener {
         RecalculateSharingRuleRecordSharesJob.name,
         { workspaceId, sharingRuleIds: [sharingRuleId] },
         {
-          id: `${RecalculateSharingRuleRecordSharesJob.name}-${sharingRuleId}`,
+          id: `${RecalculateSharingRuleRecordSharesJob.name}-${workspaceId}-${sharingRuleId}`,
           retryLimit: 3,
         },
       );

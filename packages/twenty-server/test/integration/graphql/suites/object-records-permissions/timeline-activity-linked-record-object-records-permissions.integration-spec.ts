@@ -6,6 +6,7 @@ import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destr
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlAPIRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { setObjectReadability } from 'test/integration/metadata/suites/object-metadata/utils/set-object-readability.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
@@ -18,6 +19,7 @@ import {
   MetadataReadability,
   RecordShareAccessLevel,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type RecordShareService } from 'src/engine/record-share/services/record-share.service';
@@ -27,7 +29,10 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 const PERSON_ID = randomUUID();
 const NOTE_ID = randomUUID();
 const NOTE_TARGET_ID = randomUUID();
+const ATTACHMENT_ID = randomUUID();
 const NOTE_TITLE = 'Private note on a person';
+const ATTACHMENT_NAME = 'attachment-of-the-private-note.pdf';
+const LINKED_RECORD_IDS: string[] = [NOTE_ID, ATTACHMENT_ID];
 
 type TimelineActivityRow = {
   id: string;
@@ -44,7 +49,7 @@ const personTimelineOperation = findManyOperationFactory({
   orderBy: [{ happensAt: 'DescNullsFirst' }],
 });
 
-const readLinkedNoteActivities = (response: {
+const readLinkedActivities = (response: {
   body: {
     errors?: unknown;
     data: { timelineActivities: { edges: { node: TimelineActivityRow }[] } };
@@ -54,8 +59,22 @@ const readLinkedNoteActivities = (response: {
 
   return response.body.data.timelineActivities.edges
     .map((edge) => edge.node)
-    .filter((activity) => activity.linkedRecordId === NOTE_ID);
+    .filter(
+      (activity) =>
+        isDefined(activity.linkedRecordId) &&
+        LINKED_RECORD_IDS.includes(activity.linkedRecordId),
+    );
 };
+
+const noteActivity = expect.objectContaining({
+  linkedRecordId: NOTE_ID,
+  linkedRecordCachedName: NOTE_TITLE,
+});
+
+const attachmentActivity = expect.objectContaining({
+  linkedRecordId: ATTACHMENT_ID,
+  linkedRecordCachedName: ATTACHMENT_NAME,
+});
 
 const shareNoteWithJonyOperation = (noteObjectMetadataId: string) => ({
   query: gql`
@@ -110,6 +129,23 @@ const createRecordAsAdmin = async (
   expect(response.body.errors).toBeUndefined();
 };
 
+const updateRecordAsAdmin = async (
+  objectMetadataSingularName: string,
+  recordId: string,
+  data: object,
+) => {
+  const response = await makeGraphqlAPIRequest(
+    updateOneOperationFactory({
+      objectMetadataSingularName,
+      gqlFields: 'id',
+      recordId,
+      data,
+    }),
+  );
+
+  expect(response.body.errors).toBeUndefined();
+};
+
 const destroyRecordAsAdmin = (
   objectMetadataSingularName: string,
   recordId: string,
@@ -154,6 +190,16 @@ describe('timelineActivityLinkedRecordObjectRecordsPermissions', () => {
       noteId: NOTE_ID,
       targetPersonId: PERSON_ID,
     });
+    await createRecordAsAdmin('attachment', {
+      id: ATTACHMENT_ID,
+      name: ATTACHMENT_NAME,
+      targetPersonId: PERSON_ID,
+    });
+    // Moving the attachment onto the note leaves its activities on the person timeline while the note becomes its only parent
+    await updateRecordAsAdmin('attachment', ATTACHMENT_ID, {
+      targetPersonId: null,
+      targetNoteId: NOTE_ID,
+    });
     await waitForAllJobsToFinish();
   });
 
@@ -170,35 +216,39 @@ describe('timelineActivityLinkedRecordObjectRecordsPermissions', () => {
       ).map((recordShare) => recordShare.id),
     );
     await setObjectReadability(noteObjectMetadataId, MetadataReadability.OPEN);
+    await destroyRecordAsAdmin('attachment', ATTACHMENT_ID);
     await destroyRecordAsAdmin('noteTarget', NOTE_TARGET_ID);
     await destroyRecordAsAdmin('note', NOTE_ID);
     await destroyRecordAsAdmin('person', PERSON_ID);
     await waitForAllJobsToFinish();
   });
 
-  it('should show the private note activity on the person timeline to the note owner', async () => {
+  it('should show the private note and its attachment activities on the person timeline to the note owner', async () => {
     expect(
-      readLinkedNoteActivities(
+      readLinkedActivities(
         await makeGraphqlAPIRequest(personTimelineOperation),
       ),
-    ).toEqual([
-      expect.objectContaining({
-        linkedRecordId: NOTE_ID,
-        linkedRecordCachedName: NOTE_TITLE,
-        linkedObjectMetadataId: noteObjectMetadataId,
-      }),
-    ]);
+    ).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          linkedRecordId: NOTE_ID,
+          linkedRecordCachedName: NOTE_TITLE,
+          linkedObjectMetadataId: noteObjectMetadataId,
+        }),
+        attachmentActivity,
+      ]),
+    );
   });
 
-  it('should hide the private note activity from a member holding no row on the note', async () => {
+  it('should hide the private note and its inherited attachment activities from a member holding no row on the note', async () => {
     expect(
-      readLinkedNoteActivities(
+      readLinkedActivities(
         await makeGraphqlAPIRequestWithMemberRole(personTimelineOperation),
       ),
     ).toEqual([]);
   });
 
-  it('should show the activity to the member once the note is shared with them', async () => {
+  it('should show both activities to the member once the note is shared with them', async () => {
     const shareResponse = await makeMetadataAPIRequest(
       shareNoteWithJonyOperation(noteObjectMetadataId),
     );
@@ -206,18 +256,13 @@ describe('timelineActivityLinkedRecordObjectRecordsPermissions', () => {
     expect(shareResponse.body.errors).toBeUndefined();
 
     expect(
-      readLinkedNoteActivities(
+      readLinkedActivities(
         await makeGraphqlAPIRequestWithMemberRole(personTimelineOperation),
       ),
-    ).toEqual([
-      expect.objectContaining({
-        linkedRecordId: NOTE_ID,
-        linkedRecordCachedName: NOTE_TITLE,
-      }),
-    ]);
+    ).toEqual(expect.arrayContaining([noteActivity, attachmentActivity]));
   });
 
-  it('should show the activity to everyone when record sharing is disabled', async () => {
+  it('should show both activities to everyone when record sharing is disabled', async () => {
     await deleteRecordsByIds(
       'recordShare',
       (
@@ -236,14 +281,9 @@ describe('timelineActivityLinkedRecordObjectRecordsPermissions', () => {
     await setRecordSharingEnabled(false);
 
     expect(
-      readLinkedNoteActivities(
+      readLinkedActivities(
         await makeGraphqlAPIRequestWithMemberRole(personTimelineOperation),
       ),
-    ).toEqual([
-      expect.objectContaining({
-        linkedRecordId: NOTE_ID,
-        linkedRecordCachedName: NOTE_TITLE,
-      }),
-    ]);
+    ).toEqual(expect.arrayContaining([noteActivity, attachmentActivity]));
   });
 });

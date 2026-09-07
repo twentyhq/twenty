@@ -13,11 +13,13 @@ import { createSharingRule } from 'test/integration/metadata/suites/sharing-rule
 import { deleteSharingRule } from 'test/integration/metadata/suites/sharing-rule/utils/delete-sharing-rule.util';
 import { findSharingRules } from 'test/integration/metadata/suites/sharing-rule/utils/find-sharing-rules.util';
 import { updateSharingRule } from 'test/integration/metadata/suites/sharing-rule/utils/update-sharing-rule.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
-  RecordShareAccessLevel,
+  FeatureFlagKey,
   RecordSharePrincipalType,
   RowLevelPermissionPredicateOperand,
+  SharingRuleAccessLevel,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -27,6 +29,13 @@ const RULE_PREDICATE_GQL_FIELDS = {
   predicates: SHARING_RULE_PREDICATE_GQL_FIELDS,
   predicateGroups: SHARING_RULE_PREDICATE_GROUP_GQL_FIELDS,
 };
+
+const setRecordSharingEnabled = (value: boolean) =>
+  updateFeatureFlag({
+    featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
+    value,
+    expectToFail: false,
+  });
 
 const countPredicateRows = async (sharingRuleId: string): Promise<number> => {
   const rows = await globalThis.testDataSource.query(
@@ -45,6 +54,8 @@ describe('Sharing rule CRUD', () => {
   let sharingRuleId: string | undefined;
 
   beforeAll(async () => {
+    await setRecordSharingEnabled(true);
+
     const { data: objectData } = await createOneObjectMetadata({
       expectToFail: false,
       input: getMockCreateObjectInput({
@@ -109,6 +120,7 @@ describe('Sharing rule CRUD', () => {
       expectToFail: false,
       input: { idToDelete: objectMetadataId },
     });
+    await setRecordSharingEnabled(false);
   });
 
   it('creates a rule without criteria, lists it and updates its access level', async () => {
@@ -118,7 +130,7 @@ describe('Sharing rule CRUD', () => {
         objectMetadataId,
         name: 'Everyone reads listings',
         granteePrincipalType: RecordSharePrincipalType.EVERYONE,
-        accessLevel: RecordShareAccessLevel.READ,
+        accessLevel: SharingRuleAccessLevel.READ,
       },
     });
 
@@ -132,7 +144,7 @@ describe('Sharing rule CRUD', () => {
       granteePrincipalType: RecordSharePrincipalType.EVERYONE,
       granteePrincipalId: null,
       granteeRoleId: null,
-      accessLevel: RecordShareAccessLevel.READ,
+      accessLevel: SharingRuleAccessLevel.READ,
       isActive: true,
       rowLevelPermissionPredicates: [],
       rowLevelPermissionPredicateGroups: [],
@@ -152,7 +164,7 @@ describe('Sharing rule CRUD', () => {
       expectToFail: false,
       input: {
         id: sharingRuleId,
-        accessLevel: RecordShareAccessLevel.READ_WRITE,
+        accessLevel: SharingRuleAccessLevel.READ_WRITE,
         granteePrincipalType: RecordSharePrincipalType.ROLE,
         granteeRoleId: roleId,
       },
@@ -161,7 +173,7 @@ describe('Sharing rule CRUD', () => {
     expect(updateErrors).toBeUndefined();
     expect(updateData.updateSharingRule).toMatchObject({
       id: sharingRuleId,
-      accessLevel: RecordShareAccessLevel.READ_WRITE,
+      accessLevel: SharingRuleAccessLevel.READ_WRITE,
       granteePrincipalType: RecordSharePrincipalType.ROLE,
       granteeRoleId: roleId,
     });
@@ -241,7 +253,7 @@ describe('Sharing rule CRUD', () => {
         objectMetadataId,
         name: 'Role without a role',
         granteePrincipalType: RecordSharePrincipalType.ROLE,
-        accessLevel: RecordShareAccessLevel.READ,
+        accessLevel: SharingRuleAccessLevel.READ,
       },
     });
 
@@ -254,7 +266,29 @@ describe('Sharing rule CRUD', () => {
     ]);
   });
 
-  it('refuses the rule mutations to a member without the data model permission', async () => {
+  it('refuses a rule granting a workspace member that is not in the workspace', async () => {
+    const { errors } = await createSharingRule({
+      expectToFail: true,
+      input: {
+        objectMetadataId,
+        name: 'Stale member rule',
+        granteePrincipalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+        granteePrincipalId: '20202020-0000-4000-8000-000000000000',
+        accessLevel: SharingRuleAccessLevel.READ,
+      },
+    });
+
+    expect(errors).toEqual([
+      expect.objectContaining({
+        extensions: expect.objectContaining({
+          code: 'NOT_FOUND',
+          subCode: 'WORKSPACE_MEMBER_NOT_FOUND',
+        }),
+      }),
+    ]);
+  });
+
+  it('refuses the rule mutations to a member without the roles permission', async () => {
     const { errors } = await createSharingRule({
       expectToFail: true,
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
@@ -262,7 +296,7 @@ describe('Sharing rule CRUD', () => {
         objectMetadataId,
         name: 'Member rule',
         granteePrincipalType: RecordSharePrincipalType.EVERYONE,
-        accessLevel: RecordShareAccessLevel.READ,
+        accessLevel: SharingRuleAccessLevel.READ,
       },
     });
 
@@ -316,5 +350,27 @@ describe('Sharing rule CRUD', () => {
     ]);
 
     sharingRuleId = undefined;
+  });
+
+  it('refuses the rule query and mutations while record sharing is off', async () => {
+    await setRecordSharingEnabled(false);
+
+    try {
+      const { errors } = await createSharingRule({
+        expectToFail: true,
+        input: {
+          objectMetadataId,
+          name: 'Rule with the flag off',
+          granteePrincipalType: RecordSharePrincipalType.EVERYONE,
+          accessLevel: SharingRuleAccessLevel.READ,
+        },
+      });
+
+      expect(errors[0].message).toBe(
+        'Feature flag "IS_RECORD_SHARING_ENABLED" is not enabled for this workspace',
+      );
+    } finally {
+      await setRecordSharingEnabled(true);
+    }
   });
 });

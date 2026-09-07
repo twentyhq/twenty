@@ -5,6 +5,11 @@ import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { CoreObjectTable } from '@/object-core/components/CoreObjectTable';
+import { CoreWorkflowsSelectionToContextStoreEffect } from '@/object-core/workflows/components/CoreWorkflowsSelectionToContextStoreEffect';
+import { useCoreWorkflowsSelection } from '@/object-core/workflows/hooks/useCoreWorkflowsSelection';
+import { useHydrateSelectedWorkflowRecords } from '@/object-core/workflows/hooks/useHydrateSelectedWorkflowRecords';
+import { getDeletedRecordIdsFromOperation } from '@/object-core/utils/getDeletedRecordIdsFromOperation';
+import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { CoreWorkflowsFilterBar } from '@/object-core/workflows/components/CoreWorkflowsFilterBar';
 import { WORKFLOW_CORE_TABLE_COLUMNS } from '@/object-core/workflows/constants/WorkflowCoreTableColumns';
 import {
@@ -53,6 +58,26 @@ export const WorkflowCoreIndexPage = () => {
 
   const { ref: fetchMoreRef, inView } = useInView();
 
+  const {
+    displayedCoreWorkflows,
+    selectedRowIds,
+    selectedWorkspaceWorkflowIds,
+    toggleRow,
+    selectRows,
+    forgetDeletedWorkspaceWorkflows,
+  } = useCoreWorkflowsSelection({ coreWorkflows });
+
+  useHydrateSelectedWorkflowRecords(selectedWorkspaceWorkflowIds);
+
+  useListenToObjectRecordOperationBrowserEvent({
+    objectMetadataItemId: objectMetadataItem.id,
+    operationTypes: ['delete-one', 'delete-many'],
+    onObjectRecordOperationBrowserEvent: (detail) =>
+      forgetDeletedWorkspaceWorkflows(
+        getDeletedRecordIdsFromOperation(detail.operation),
+      ),
+  });
+
   useEffect(() => {
     if (inView && hasNextPage && !loading) {
       void fetchNextPage();
@@ -82,12 +107,22 @@ export const WorkflowCoreIndexPage = () => {
           <CoreObjectTable
             tableId={tableId}
             columns={WORKFLOW_CORE_TABLE_COLUMNS}
-            items={coreWorkflows}
+            items={displayedCoreWorkflows}
             getItemKey={(workflow) => workflow.id}
             getItemLink={getCoreWorkflowLink}
             initialSort={CORE_WORKFLOWS_INITIAL_SORT}
+            selection={{
+              selectedRowIds,
+              onToggleRow: toggleRow,
+              onToggleAllRows: selectRows,
+              isItemSelectable: (coreWorkflow) =>
+                isDefined(coreWorkflow.workspaceWorkflowId),
+            }}
           />
           {hasNextPage && <StyledFetchMoreSentinel ref={fetchMoreRef} />}
+          <CoreWorkflowsSelectionToContextStoreEffect
+            selectedWorkspaceWorkflowIds={selectedWorkspaceWorkflowIds}
+          />
         </StyledTableContainer>
       </PageCardLayout>
     </>

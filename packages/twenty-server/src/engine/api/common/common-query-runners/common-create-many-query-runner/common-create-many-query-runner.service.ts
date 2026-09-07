@@ -7,7 +7,7 @@ import {
   MetadataReadability,
   ObjectRecord,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   Brackets,
   FindOptionsRelations,
@@ -24,6 +24,7 @@ import { buildWhereConditions } from 'src/engine/api/common/common-query-runners
 import { categorizeRecords } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/categorize-records.util';
 import { getConflictingFields } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-conflicting-fields.util';
 import { validateShareWithArg } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/validate-share-with-arg.util';
+import { validateShareWithPrincipalsOrThrow } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/validate-share-with-principals-or-throw.util';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -91,6 +92,20 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         isRecordSharingEnabled: this.isRecordSharingEnabled(queryRunnerContext),
         shareWith: args.shareWith,
       });
+
+      if (isNonEmptyArray(args.shareWith)) {
+        const { flatWorkspaceMemberMaps, flatRoleMaps } =
+          await this.workspaceCacheService.getOrRecompute(
+            queryRunnerContext.authContext.workspace.id,
+            ['flatWorkspaceMemberMaps', 'flatRoleMaps'],
+          );
+
+        validateShareWithPrincipalsOrThrow({
+          shareWith: args.shareWith,
+          flatWorkspaceMemberMaps,
+          flatRoleMaps,
+        });
+      }
     }
 
     if (

@@ -60,10 +60,16 @@ export class ManualRecordShareService {
   async findRecordShares(target: RecordShareTarget): Promise<RecordSharesDTO> {
     await this.findFlatObjectMetadataOrThrow(target);
 
-    return this.listRecordSharesOrThrow(
+    const recordShares = await this.listRecordSharesOrThrow(
       target,
       Object.values(RecordShareAccessLevel),
     );
+
+    // the ACL names every grantee and who granted them: only a FULL holder may
+    // read it, the other holders learn their own level
+    return recordShares.viewerAccessLevel === RecordShareAccessLevel.FULL
+      ? recordShares
+      : { shares: [], viewerAccessLevel: recordShares.viewerAccessLevel };
   }
 
   async shareRecord({
@@ -92,7 +98,6 @@ export class ManualRecordShareService {
                 objectMetadataId,
                 recordId,
                 principalId: principal.principalId,
-                sourceId: authContext.workspaceMemberId,
                 transactionScope,
               });
             }
@@ -178,7 +183,11 @@ export class ManualRecordShareService {
         workspaceId,
       });
 
-    if (!objectsPermissions[objectMetadataId]?.canUpdateObjectRecords) {
+    if (
+      !objectsPermissions[objectMetadataId]?.canUpdateObjectRecords ||
+      objectsPermissions[objectMetadataId].restrictedFields[ownerField.id]
+        ?.canUpdate === false
+    ) {
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,

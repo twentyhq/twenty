@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
@@ -26,6 +27,7 @@ import { EmailingOngoingStaleCronJob } from 'src/modules/emailing/crons/jobs/ema
 import { ReconcileCampaignStatsCronCommand } from 'src/modules/emailing/crons/commands/reconcile-campaign-stats.cron.command';
 import { ReconcileCampaignStatsCronJob } from 'src/modules/emailing/crons/jobs/reconcile-campaign-stats.cron.job';
 import { EmailingSendResolver } from 'src/modules/emailing/resolvers/emailing-send.resolver';
+import { MessageListResolver } from 'src/modules/emailing/resolvers/message-list.resolver';
 import { MessageSuppressionResolver } from 'src/modules/emailing/resolvers/message-suppression.resolver';
 import { UnsubscribeTopicResolver } from 'src/modules/emailing/resolvers/unsubscribe-topic.resolver';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
@@ -37,10 +39,13 @@ import { MessageCampaignRecoveryService } from 'src/modules/emailing/services/me
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
 import { MessageCampaignDeliveryFeedbackService } from 'src/modules/emailing/services/message-campaign-delivery-feedback.service';
+import { MessageCampaignBatchDeliveryService } from 'src/modules/emailing/services/message-campaign-batch-delivery.service';
+import { CampaignSendSlotService } from 'src/modules/emailing/services/campaign-send-slot.service';
 import { MessageCampaignDeliveryService } from 'src/modules/emailing/services/message-campaign-delivery.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignMaterializationService } from 'src/modules/emailing/services/message-campaign-materialization.service';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
+import { MessageListDuplicationService } from 'src/modules/emailing/services/message-list-duplication.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscribe-topic.service';
 import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool';
@@ -48,6 +53,7 @@ import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-co
 
 @Module({
   imports: [
+    ActorModule,
     EmailingDomainModule,
     ThrottlerModule,
     MessageChannelMetadataModule,
@@ -77,7 +83,9 @@ import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-co
     EmailBillingService,
     MessageCampaignService,
     MessageCampaignAudienceService,
+    CampaignSendSlotService,
     MessageCampaignDeliveryService,
+    MessageCampaignBatchDeliveryService,
     MessageCampaignDeliveryFeedbackService,
     MessageCampaignLifecycleService,
     MessageCampaignMaterializationService,
@@ -89,6 +97,8 @@ import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-co
     EmailingDomainSenderService,
     SaveCampaignTool,
     EmailingSendResolver,
+    MessageListDuplicationService,
+    MessageListResolver,
     MessageSuppressionResolver,
     UnsubscribeTopicResolver,
     provideWorkspaceScopedRepository(EmailingDomainEntity),
@@ -104,7 +114,9 @@ import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-co
     EmailingDomainSenderService,
     EmailBillingService,
     MessageCampaignService,
+    CampaignSendSlotService,
     MessageCampaignDeliveryService,
+    MessageCampaignBatchDeliveryService,
     MessageCampaignDeliveryFeedbackService,
     MessageCampaignMaterializationService,
     MessageCampaignDraftService,
