@@ -4,8 +4,7 @@ import { SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR } from 'src/logic-functions/consta
 import { SLACK_ASSISTANT_EMPTY_RESPONSE_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-empty-response-failure-text';
 import { SLACK_ASSISTANT_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-failure-text';
 
-// Only failures the member can act on get their own reply; everything else
-// stays generic so no internal error text reaches Slack.
+// Unmapped failures stay generic so no internal error text reaches Slack.
 export const getSlackAssistantFailureText = (errorMessage: string): string => {
   if (errorMessage === SLACK_ASSISTANT_DEADLINE_ERROR) {
     return SLACK_ASSISTANT_DEADLINE_FAILURE_TEXT;

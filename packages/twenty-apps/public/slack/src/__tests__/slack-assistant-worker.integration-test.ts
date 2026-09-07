@@ -354,7 +354,7 @@ describe('Slack assistant worker', () => {
       requestText: 'summarize every opportunity we opened this year',
     });
 
-    await slackAssistantWorkerHandler(
+    const result = await slackAssistantWorkerHandler(
       buildRequestCreatedEvent({
         ...request,
         slackChannelId: CHANNEL_ID,
@@ -363,6 +363,10 @@ describe('Slack assistant worker', () => {
       }),
     );
 
+    expect(result).toEqual({
+      failed: true,
+      reason: SLACK_ASSISTANT_DEADLINE_ERROR,
+    });
     expect(slack.messagesIn(CHANNEL_ID)).toEqual([
       expect.objectContaining({
         text: SLACK_ASSISTANT_DEADLINE_FAILURE_TEXT,
