@@ -1,9 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { CSS_WHITESPACE_CHARACTER_CLASS } from '@/polyfills/media-query/constants/CssWhitespaceCharacterClass';
+import { type MediaQueryComparisonOperator } from '@/polyfills/media-query/types/MediaQueryComparisonOperator';
 import { type ParsedMediaQueryCondition } from '@/polyfills/media-query/types/ParsedMediaQueryCondition';
 import { createMediaQueryRangeCondition } from '@/polyfills/media-query/utils/createMediaQueryRangeCondition';
-import { isLessThanMediaQueryRangeOperator } from '@/polyfills/media-query/utils/isLessThanMediaQueryRangeOperator';
 import { isMediaQueryRangeOperator } from '@/polyfills/media-query/utils/isMediaQueryRangeOperator';
 import { parseMediaQueryNumericFeatureName } from '@/polyfills/media-query/utils/parseMediaQueryNumericFeatureName';
 import { trimCssWhitespace } from '@/polyfills/media-query/utils/trimCssWhitespace';
@@ -11,6 +11,20 @@ import { trimCssWhitespace } from '@/polyfills/media-query/utils/trimCssWhitespa
 const RANGE_CONDITION_PATTERN = new RegExp(
   `^(.+?)${CSS_WHITESPACE_CHARACTER_CLASS}*(<=|>=|<|>|=)${CSS_WHITESPACE_CHARACTER_CLASS}*(.+?)(?:${CSS_WHITESPACE_CHARACTER_CLASS}*(<=|>=|<|>)${CSS_WHITESPACE_CHARACTER_CLASS}*(.+?))?$`,
 );
+
+const FLIPPED_COMPARISON_OPERATORS: Record<
+  MediaQueryComparisonOperator,
+  MediaQueryComparisonOperator
+> = {
+  '<': '>',
+  '<=': '>=',
+  '>': '<',
+  '>=': '<=',
+  '=': '=',
+};
+
+const isLessThanOperator = (operator: MediaQueryComparisonOperator): boolean =>
+  operator === '<' || operator === '<=';
 
 export const parseMediaQueryRangeCondition = (
   conditionContent: string,
@@ -39,14 +53,13 @@ export const parseMediaQueryRangeCondition = (
   );
 
   if (isDefined(leftFeatureName)) {
-    if (leftFeatureName.comparison !== 'exact' || isDefined(secondOperator)) {
+    if (leftFeatureName.operator !== '=' || isDefined(secondOperator)) {
       return null;
     }
 
     const condition = createMediaQueryRangeCondition({
       feature: leftFeatureName.feature,
       operator: firstOperator,
-      isFeatureNameOnLeft: true,
       valueString: middleOperand,
     });
 
@@ -57,17 +70,13 @@ export const parseMediaQueryRangeCondition = (
     trimCssWhitespace(middleOperand),
   );
 
-  if (
-    !isDefined(middleFeatureName) ||
-    middleFeatureName.comparison !== 'exact'
-  ) {
+  if (!isDefined(middleFeatureName) || middleFeatureName.operator !== '=') {
     return null;
   }
 
   const firstCondition = createMediaQueryRangeCondition({
     feature: middleFeatureName.feature,
-    operator: firstOperator,
-    isFeatureNameOnLeft: false,
+    operator: FLIPPED_COMPARISON_OPERATORS[firstOperator],
     valueString: leftOperand,
   });
 
@@ -82,8 +91,7 @@ export const parseMediaQueryRangeCondition = (
   if (
     firstOperator === '=' ||
     !isMediaQueryRangeOperator(secondOperator) ||
-    isLessThanMediaQueryRangeOperator(firstOperator) !==
-      isLessThanMediaQueryRangeOperator(secondOperator)
+    isLessThanOperator(firstOperator) !== isLessThanOperator(secondOperator)
   ) {
     return null;
   }
@@ -91,7 +99,6 @@ export const parseMediaQueryRangeCondition = (
   const secondCondition = createMediaQueryRangeCondition({
     feature: middleFeatureName.feature,
     operator: secondOperator,
-    isFeatureNameOnLeft: true,
     valueString: rightOperand,
   });
 

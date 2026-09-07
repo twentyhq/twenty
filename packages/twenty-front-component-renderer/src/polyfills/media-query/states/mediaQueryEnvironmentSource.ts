@@ -6,5 +6,6 @@ import { subscribeToFrontComponentExecutionContextUpdates } from '@/remote/worke
 export const mediaQueryEnvironmentSource = createMediaQueryEnvironmentSource({
   geometryStore: workerGeometryStore,
   getColorScheme: getFrontComponentColorScheme,
-  subscribeToColorSchemeUpdates: subscribeToFrontComponentExecutionContextUpdates,
+  subscribeToColorSchemeUpdates:
+    subscribeToFrontComponentExecutionContextUpdates,
 });

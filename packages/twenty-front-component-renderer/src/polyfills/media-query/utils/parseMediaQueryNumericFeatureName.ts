@@ -1,12 +1,36 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { MEDIA_QUERY_NUMERIC_FEATURES } from '@/polyfills/media-query/constants/MediaQueryNumericFeatures';
+import { type MediaQueryComparisonOperator } from '@/polyfills/media-query/types/MediaQueryComparisonOperator';
 import { type ParsedMediaQueryNumericFeatureName } from '@/polyfills/media-query/types/ParsedMediaQueryNumericFeatureName';
-import { parseMediaQueryComparisonPrefix } from '@/polyfills/media-query/utils/parseMediaQueryComparisonPrefix';
 
 const WEBKIT_FEATURE_PREFIX = '-webkit-';
 
 const WEBKIT_ALLOWED_BASE_FEATURE_NAME = 'device-pixel-ratio';
+
+const MINIMUM_FEATURE_PREFIX = 'min-';
+
+const MAXIMUM_FEATURE_PREFIX = 'max-';
+
+const parseComparisonPrefix = (
+  featureName: string,
+): { operator: MediaQueryComparisonOperator; baseFeatureName: string } => {
+  if (featureName.startsWith(MINIMUM_FEATURE_PREFIX)) {
+    return {
+      operator: '>=',
+      baseFeatureName: featureName.slice(MINIMUM_FEATURE_PREFIX.length),
+    };
+  }
+
+  if (featureName.startsWith(MAXIMUM_FEATURE_PREFIX)) {
+    return {
+      operator: '<=',
+      baseFeatureName: featureName.slice(MAXIMUM_FEATURE_PREFIX.length),
+    };
+  }
+
+  return { operator: '=', baseFeatureName: featureName };
+};
 
 export const parseMediaQueryNumericFeatureName = (
   featureName: string,
@@ -16,7 +40,7 @@ export const parseMediaQueryNumericFeatureName = (
     ? featureName.slice(WEBKIT_FEATURE_PREFIX.length)
     : featureName;
 
-  const { comparison, baseFeatureName } = parseMediaQueryComparisonPrefix(
+  const { operator, baseFeatureName } = parseComparisonPrefix(
     unprefixedFeatureName,
   );
 
@@ -33,5 +57,5 @@ export const parseMediaQueryNumericFeatureName = (
     return null;
   }
 
-  return { comparison, feature };
+  return { operator, feature };
 };

@@ -1,9 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { MEDIA_QUERY_KEYWORD_FEATURES } from '@/polyfills/media-query/constants/MediaQueryKeywordFeatures';
 import { type ParsedMediaQueryCondition } from '@/polyfills/media-query/types/ParsedMediaQueryCondition';
-import { parseMediaQueryColorSchemeCondition } from '@/polyfills/media-query/utils/parseMediaQueryColorSchemeCondition';
 import { parseMediaQueryNumericFeatureName } from '@/polyfills/media-query/utils/parseMediaQueryNumericFeatureName';
-import { parseMediaQueryOrientationCondition } from '@/polyfills/media-query/utils/parseMediaQueryOrientationCondition';
 
 type ParseMediaQueryPlainConditionInput = {
   featureName: string;
@@ -14,12 +13,12 @@ export const parseMediaQueryPlainCondition = ({
   featureName,
   featureValue,
 }: ParseMediaQueryPlainConditionInput): ParsedMediaQueryCondition | null => {
-  if (featureName === 'prefers-color-scheme') {
-    return parseMediaQueryColorSchemeCondition(featureValue);
-  }
+  const keywordFeature = MEDIA_QUERY_KEYWORD_FEATURES.get(featureName);
 
-  if (featureName === 'orientation') {
-    return parseMediaQueryOrientationCondition(featureValue);
+  if (isDefined(keywordFeature)) {
+    return keywordFeature.values.has(featureValue)
+      ? { kind: 'keyword', featureName, value: featureValue }
+      : null;
   }
 
   const numericFeatureName = parseMediaQueryNumericFeatureName(featureName);
@@ -37,7 +36,7 @@ export const parseMediaQueryPlainCondition = ({
   return {
     kind: 'numeric',
     source: numericFeatureName.feature.source,
-    comparison: numericFeatureName.comparison,
+    operator: numericFeatureName.operator,
     value,
   };
 };
