@@ -461,7 +461,7 @@ export const NavigationDrawerItem = ({
       {!isExpanded && !isMobile && (
         <AppTooltip
           anchorSelect={`#${navigationItemId}`}
-          content={label}
+          title={label}
           place={TooltipPosition.Right}
           delay={TooltipDelay.noDelay}
           positionStrategy="fixed"

@@ -46,6 +46,11 @@ export type ThemeType = {
     iconStrikeMedium: number;
     iconStrikeBold: number;
   };
+  tooltip: {
+    background: string;
+    color: string;
+    descriptionColor: string;
+  };
   animation: {
     duration: {
       instant: number;

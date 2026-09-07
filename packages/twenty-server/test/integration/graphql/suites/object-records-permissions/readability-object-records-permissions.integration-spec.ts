@@ -361,12 +361,10 @@ describe('readabilityObjectRecordsPermissions', () => {
 
       expect(response.body.errors).toBeUndefined();
 
-      const groupedNames = response.body.data[GROUP_BY_RESPONSE_KEY]
-        .flatMap(
-          (group: { groupByDimensionValues: string[] }) =>
-            group.groupByDimensionValues,
-        )
-        .sort();
+      const groupedNames = response.body.data[GROUP_BY_RESPONSE_KEY].flatMap(
+        (group: { groupByDimensionValues: string[] }) =>
+          group.groupByDimensionValues,
+      ).sort();
 
       expect(groupedNames).toEqual([
         'SHARED_FULL_WITH_EVERYONE',

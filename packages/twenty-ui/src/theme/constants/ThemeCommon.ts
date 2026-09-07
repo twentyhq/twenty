@@ -48,6 +48,11 @@ export const THEME_COMMON = {
     iconStrikeMedium: 2,
     iconStrikeBold: 2.5,
   },
+  tooltip: {
+    background: 'color(display-p3 0 0 0 / 0.72)',
+    color: 'color(display-p3 1 1 1 / 1)',
+    descriptionColor: 'color(display-p3 1 1 1 / 0.64)',
+  },
   animation: {
     duration: {
       instant: 0.075,
