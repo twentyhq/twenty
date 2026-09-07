@@ -3,13 +3,24 @@
   margin-bottom: var(--t-spacing-4);
 }
 
+.banner.gray {
+  background: var(--t-background-transparent-light);
+  color: var(--t-font-color-secondary);
+}
+
 .bannerContent {
   align-items: center;
   display: flex;
   flex: 1;
   gap: var(--t-spacing-2);
+  min-width: 0;
+
+  > svg {
+    flex-shrink: 0;
+  }
 }
 
 .bannerText {
   flex: 1;
+  overflow-wrap: anywhere;
 }

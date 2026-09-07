@@ -1,6 +1,5 @@
 declare const classNames: {
   readonly container: 'container';
-  readonly fullWidth: 'fullWidth';
   readonly containerInfo: 'containerInfo';
   readonly containerWarning: 'containerWarning';
   readonly containerSuccess: 'containerSuccess';

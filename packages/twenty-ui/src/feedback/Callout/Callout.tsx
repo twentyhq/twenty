@@ -32,7 +32,6 @@ const CALLOUT_ICON_VARIANT_CLASS_NAMES: Record<CalloutVariant, string> = {
 };
 
 export type CalloutProps = {
-  fullWidth?: boolean;
   variant: CalloutVariant;
   title: string;
   description: string;
@@ -40,15 +39,12 @@ export type CalloutProps = {
   action?: {
     label: string;
     onClick: () => void;
-    disabled?: boolean;
-    Icon?: IconComponent;
   };
   isClosable?: boolean;
   onClose?: () => void;
 };
 
 export const Callout = ({
-  fullWidth = false,
   variant,
   title,
   description,
@@ -77,7 +73,6 @@ export const Callout = ({
       className={clsx(
         styles.container,
         CALLOUT_CONTAINER_VARIANT_CLASS_NAMES[variant],
-        fullWidth && styles.fullWidth,
       )}
     >
       <div className={styles.header}>
@@ -113,8 +108,6 @@ export const Callout = ({
             type="button"
             title={action.label}
             onClick={action.onClick}
-            disabled={action.disabled}
-            Icon={action.Icon}
           />
         </div>
       )}

@@ -8,12 +8,14 @@ import { Banner, type BannerColor } from '@ui/feedback/Banner/Banner';
 import styles from './InlineBanner.module.scss';
 
 type InlineBannerProps = {
-  color?: BannerColor;
+  color?: BannerColor | 'gray';
   message: string;
   button?: {
     title?: string;
     onClick?: () => void;
     hidden?: boolean;
+    disabled?: boolean;
+    Icon?: IconComponent;
   };
   LeftIcon?: IconComponent;
   className?: string;
@@ -30,8 +32,12 @@ export const InlineBanner = ({
 
   return (
     <Banner
-      className={clsx(styles.banner, className)}
-      color={color}
+      className={clsx(
+        styles.banner,
+        color === 'gray' && styles.gray,
+        className,
+      )}
+      color={color === 'gray' ? undefined : color}
       variant={'secondary'}
     >
       <div className={styles.bannerContent}>
@@ -42,9 +48,11 @@ export const InlineBanner = ({
         <Button
           size="small"
           variant="secondary"
-          accent={color}
+          accent={color === 'gray' ? 'default' : color}
           title={button?.title}
           onClick={button?.onClick}
+          disabled={button.disabled}
+          Icon={button.Icon}
         />
       )}
     </Banner>

@@ -1,4 +1,4 @@
-import { AiChatCallout } from '@/ai/components/AiChatCallout';
+import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
 import { useAiChatEndTrialPeriod } from '@/ai/hooks/useAiChatEndTrialPeriod';
 import { AddCreditCardModal } from '@/settings/billing/components/AddCreditCardModal';
 import { StartSubscriptionConfirmationModal } from '@/settings/billing/components/StartSubscriptionConfirmationModal';
@@ -48,18 +48,11 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
 
   if (!hasPermissionToManageBilling) {
     return (
-      <AiChatCallout
-        title={t`AI usage limit reached`}
-        description={t`Ask an admin to upgrade the plan.`}
+      <AiChatInlineBanner
+        message={t`AI usage limit reached. Ask an admin to upgrade the plan.`}
       />
     );
   }
-
-  const description = isTrialing
-    ? t`Subscribe for more usage.`
-    : isDefined(nextPrice)
-      ? t`Upgrade to ${nextResourceCreditsAmount ?? ''} credits for $${nextResourceCreditPrice ?? ''}/${nextTierInterval ?? ''}.`
-      : t`Contact our support team to upgrade.`;
 
   const buttonTitle = isTrialing
     ? hasPaymentMethod === false
@@ -77,13 +70,16 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
 
   return (
     <>
-      <AiChatCallout
-        title={t`AI usage limit reached`}
-        description={description}
-        action={
+      <AiChatInlineBanner
+        message={
+          isTrialing || isDefined(nextPrice)
+            ? t`You’ve reached your AI usage limit.`
+            : t`AI usage limit reached. Contact support to upgrade.`
+        }
+        button={
           isDefined(buttonTitle) && isDefined(handleButtonClick)
             ? {
-                label: buttonTitle,
+                title: buttonTitle,
                 onClick: handleButtonClick,
                 disabled:
                   (isTrialing && isEndTrialLoading) ||

@@ -8,7 +8,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AiChatCallout } from '@/ai/components/AiChatCallout';
+import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
 import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
 import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
 import { AIChatNoMoreBillingCreditsBanner } from '@/ai/components/AIChatNoMoreBillingCreditsBanner';
@@ -200,17 +200,16 @@ export const AiChatEditorSection = () => {
       <StyledInputArea isMobile={isMobile}>
         <AgentChatContextPreview />
         {hasNoEnabledModels && (
-          <AiChatCallout
-            title={t`AI isn't enabled`}
-            description={
+          <AiChatInlineBanner
+            message={
               hasAiSettingsPermission
-                ? t`Enable an AI model in workspace settings to start chatting.`
+                ? t`No AI models are enabled.`
                 : t`Ask your workspace admin to enable an AI model.`
             }
-            action={
+            button={
               hasAiSettingsPermission
                 ? {
-                    label: t`Configure models`,
+                    title: t`Configure models`,
                     onClick: () =>
                       navigateSettings(
                         SettingsPath.AI,
