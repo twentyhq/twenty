@@ -17,7 +17,7 @@ export const validateShareWithArg = ({
 }: {
   authContext: WorkspaceAuthContext;
   isRecordSharingEnabled: boolean;
-  shareWith?: ShareWithInput[];
+  shareWith?: ShareWithInput[] | null;
 }): void => {
   if (
     isRecordSharingEnabled &&
@@ -33,5 +33,17 @@ export const validateShareWithArg = ({
     );
   }
 
-  shareWith?.forEach(resolveShareWithPrincipal);
+  const principalIds = (shareWith ?? []).map(
+    (shareWithEntry) => resolveShareWithPrincipal(shareWithEntry).principalId,
+  );
+
+  if (new Set(principalIds).size !== principalIds.length) {
+    throw new CommonQueryRunnerException(
+      'shareWith names the same principal more than once',
+      CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+      {
+        userFriendlyMessage: msg`shareWith names the same principal more than once`,
+      },
+    );
+  }
 };
