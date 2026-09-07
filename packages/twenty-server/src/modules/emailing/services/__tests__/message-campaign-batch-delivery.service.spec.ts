@@ -50,6 +50,20 @@ const buildJobData = (recipientCount: number) => ({
   ),
 });
 
+// buildCampaignDeliverySettleQuery passes the settlement columns as parallel
+// arrays; this reads one back as rows.
+const decodeSettleCall = (parameters: unknown[]) => {
+  const [ids, states, , failureReasons, providerMessageIds] =
+    parameters as string[][];
+
+  return ids.map((id, index) => ({
+    deliveryId: id,
+    state: states[index],
+    failureReason: failureReasons[index],
+    providerMessageId: providerMessageIds[index],
+  }));
+};
+
 const buildHarness = () => {
   const claimedIds: string[] = [];
 
@@ -136,7 +150,9 @@ const buildHarness = () => {
     ),
   };
   const dataSource = {
-    query: jest.fn(async () => claimedIds.map((id) => ({ id }))),
+    query: jest.fn(async (_sql: string, _parameters: unknown[]) =>
+      claimedIds.map((id) => ({ id })),
+    ),
   };
 
   const buildService = async () => {
@@ -258,7 +274,7 @@ describe('MessageCampaignBatchDeliveryService', () => {
     ).rejects.toThrow('Upstream hiccup');
   });
 
-  it('leaves mail the provider accepted in a state no retry can claim again', async () => {
+  it('keeps mail the provider accepted out of any state a retry could claim', async () => {
     const harness = buildHarness();
 
     harness.claimedIds.push('message-0');
@@ -268,24 +284,83 @@ describe('MessageCampaignBatchDeliveryService', () => {
       ],
       suppressedRecipientIndexes: [],
     });
-    harness.dataSource.query.mockRejectedValue(new Error('settle exploded'));
+    // The settle statement fails once; the rescue reruns it.
+    harness.dataSource.query
+      .mockRejectedValueOnce(new Error('settle exploded'))
+      .mockResolvedValue([{ id: 'message-0' }]);
 
     await expect(
       (await harness.buildService()).processSendBatchJob(buildJobData(1)),
     ).rejects.toThrow('settle exploded');
 
-    const rescueCall =
-      harness.campaignDeliveryRepository.update.mock.calls.find(
-        ([, , update]) =>
-          (update as { failureReason?: string }).failureReason ===
-          CAMPAIGN_FAILURE_REASON.SETTLEMENT_LOST,
-      );
+    const [rescued] = decodeSettleCall(
+      harness.dataSource.query.mock.calls[1][1],
+    );
 
-    expect(rescueCall).toBeDefined();
+    expect(CLAIMABLE_CAMPAIGN_DELIVERY_STATES).not.toContain(rescued.state);
+    // Keeping the provider id is what lets a later bounce or delivery webhook
+    // still find this row.
+    expect(rescued.providerMessageId).toBe('provider-0');
+    expect(rescued.failureReason).toBe(CAMPAIGN_FAILURE_REASON.SETTLEMENT_LOST);
+  });
 
-    const rescuedState = (rescueCall?.[2] as { state: string }).state;
+  it('does not count a recipient the provider rejected as sent when settling throws', async () => {
+    const harness = buildHarness();
 
-    expect(CLAIMABLE_CAMPAIGN_DELIVERY_STATES).not.toContain(rescuedState);
+    harness.claimedIds.push('message-0', 'message-1');
+    harness.emailingDomainSenderService.sendEmailBatch.mockResolvedValue({
+      entries: [
+        { recipientIndex: 0, messageId: 'provider-0', errorMessage: null },
+        { recipientIndex: 1, messageId: null, errorMessage: 'rejected' },
+      ],
+      suppressedRecipientIndexes: [],
+    });
+    harness.dataSource.query
+      .mockRejectedValueOnce(new Error('settle exploded'))
+      .mockResolvedValue([]);
+
+    await expect(
+      (await harness.buildService()).processSendBatchJob(buildJobData(2)),
+    ).rejects.toThrow('settle exploded');
+
+    const rescuedRows = harness.dataSource.query.mock.calls
+      .slice(1)
+      .flatMap(([, parameters]) => decodeSettleCall(parameters));
+
+    expect(
+      rescuedRows.find((row) => row.deliveryId === 'message-0')?.state,
+    ).toBe(CAMPAIGN_DELIVERY_STATE.SENT);
+    expect(
+      rescuedRows.find((row) => row.deliveryId === 'message-1')?.state,
+    ).toBe(CAMPAIGN_DELIVERY_STATE.FAILED);
+  });
+
+  it('settles the accepted rows before the rejected ones, so a half-failed rescue cannot re-send', async () => {
+    const harness = buildHarness();
+
+    harness.claimedIds.push('message-0', 'message-1');
+    harness.emailingDomainSenderService.sendEmailBatch.mockResolvedValue({
+      entries: [
+        { recipientIndex: 0, messageId: 'provider-0', errorMessage: null },
+        { recipientIndex: 1, messageId: null, errorMessage: 'rejected' },
+      ],
+      suppressedRecipientIndexes: [],
+    });
+    harness.dataSource.query
+      .mockRejectedValueOnce(new Error('settle exploded'))
+      .mockResolvedValue([]);
+
+    await expect(
+      (await harness.buildService()).processSendBatchJob(buildJobData(2)),
+    ).rejects.toThrow('settle exploded');
+
+    // Whatever the rescue does not reach is re-queued by the finally block, so
+    // the rows the provider took have to be settled by the first of the two.
+    const [acceptedFirst] = decodeSettleCall(
+      harness.dataSource.query.mock.calls[1][1],
+    );
+
+    expect(acceptedFirst.deliveryId).toBe('message-0');
   });
 
   it('records the message, the association and the billing for a delivered batch', async () => {
@@ -311,73 +386,6 @@ describe('MessageCampaignBatchDeliveryService', () => {
     );
     expect(harness.emailBillingService.billSentEmails).toHaveBeenCalledWith(
       expect.objectContaining({ sentEmailCount: 1 }),
-    );
-  });
-
-  it('does not count a recipient the provider rejected as sent when settling throws', async () => {
-    const harness = buildHarness();
-
-    harness.claimedIds.push('message-0', 'message-1');
-    harness.emailingDomainSenderService.sendEmailBatch.mockResolvedValue({
-      entries: [
-        { recipientIndex: 0, messageId: 'provider-0', errorMessage: null },
-        { recipientIndex: 1, messageId: null, errorMessage: 'rejected' },
-      ],
-      suppressedRecipientIndexes: [],
-    });
-    harness.dataSource.query.mockRejectedValue(new Error('settle exploded'));
-
-    await expect(
-      (await harness.buildService()).processSendBatchJob(buildJobData(2)),
-    ).rejects.toThrow('settle exploded');
-
-    const rescueCalls =
-      harness.campaignDeliveryRepository.update.mock.calls.filter(
-        ([, criteria]) => 'id' in (criteria as Record<string, unknown>),
-      );
-
-    const acceptedCall = rescueCalls.find(
-      ([, , update]) => update.state === CAMPAIGN_DELIVERY_STATE.SENT,
-    );
-
-    expect((acceptedCall?.[1] as { id: { value: string[] } }).id.value).toEqual(
-      ['message-0'],
-    );
-
-    const rejectedCall = rescueCalls.find(
-      ([, criteria]) => (criteria as { id: unknown }).id === 'message-1',
-    );
-
-    expect(rejectedCall?.[2].state).toBe(CAMPAIGN_DELIVERY_STATE.FAILED);
-  });
-
-  it('releases the accepted rows before the rejected ones, so a half-failed rescue cannot re-send', async () => {
-    const harness = buildHarness();
-
-    harness.claimedIds.push('message-0', 'message-1');
-    harness.emailingDomainSenderService.sendEmailBatch.mockResolvedValue({
-      entries: [
-        { recipientIndex: 0, messageId: 'provider-0', errorMessage: null },
-        { recipientIndex: 1, messageId: null, errorMessage: 'rejected' },
-      ],
-      suppressedRecipientIndexes: [],
-    });
-    harness.dataSource.query.mockRejectedValue(new Error('settle exploded'));
-
-    await expect(
-      (await harness.buildService()).processSendBatchJob(buildJobData(2)),
-    ).rejects.toThrow('settle exploded');
-
-    const rescueCalls =
-      harness.campaignDeliveryRepository.update.mock.calls.filter(
-        ([, criteria]) => 'id' in (criteria as Record<string, unknown>),
-      );
-
-    // Whatever the rescue does not finish is re-queued by the finally block, so
-    // the row the provider took has to be released by the first write.
-    expect(rescueCalls[0][2].state).toBe(CAMPAIGN_DELIVERY_STATE.SENT);
-    expect(rescueCalls[0][2].failureReason).toBe(
-      CAMPAIGN_FAILURE_REASON.SETTLEMENT_LOST,
     );
   });
 

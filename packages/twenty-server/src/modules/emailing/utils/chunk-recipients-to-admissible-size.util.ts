@@ -1,3 +1,5 @@
+import chunk from 'lodash.chunk';
+
 // The batch size is chosen from the instance-wide send limit, but the bucket
 // that admits it can be a lower per-workspace override. A batch costing more
 // than that limit is refused at any moment, so waiting longer never helps and
@@ -16,11 +18,5 @@ export const chunkRecipientsToAdmissibleSize = <TRecipient>({
     return [recipients];
   }
 
-  const chunks: TRecipient[][] = [];
-
-  for (let index = 0; index < recipients.length; index += admissibleSize) {
-    chunks.push(recipients.slice(index, index + admissibleSize));
-  }
-
-  return chunks;
+  return chunk(recipients, admissibleSize);
 };

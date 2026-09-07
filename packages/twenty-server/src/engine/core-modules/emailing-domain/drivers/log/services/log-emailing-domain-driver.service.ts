@@ -187,7 +187,7 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
     );
 
     return {
-      entries: batchToSend.recipients.map((recipient) => {
+      entries: batchToSend.recipients.map((recipient, index) => {
         const messageId = `log-${v4()}`;
 
         this.logger.log(
@@ -205,7 +205,7 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
             }`,
         );
 
-        return { email: recipient.email, messageId, errorMessage: null };
+        return { recipientIndex: index, messageId, errorMessage: null };
       }),
     };
   }

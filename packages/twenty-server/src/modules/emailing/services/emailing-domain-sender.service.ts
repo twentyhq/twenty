@@ -25,7 +25,6 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { type CampaignBatchSendOutcome } from 'src/modules/emailing/types/campaign-batch-send-outcome.type';
 import { type DeliverableRecipients } from 'src/engine/core-modules/emailing-domain/types/deliverable-recipients.type';
 import { isSuppressionBlockingSend } from 'src/engine/core-modules/emailing-domain/utils/is-suppression-blocking-send.util';
-import { mapDriverEntriesToRecipientIndexes } from 'src/modules/emailing/utils/map-driver-entries-to-recipient-indexes.util';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -174,11 +173,11 @@ export class EmailingDomainSenderService {
       });
 
     return {
-      entries: mapDriverEntriesToRecipientIndexes({
-        entries,
-        deliverableRecipients,
-        deliverableRecipientIndexes,
-      }),
+      entries: entries.map((entry) => ({
+        recipientIndex: deliverableRecipientIndexes[entry.recipientIndex],
+        messageId: entry.messageId,
+        errorMessage: entry.errorMessage,
+      })),
       suppressedRecipientIndexes,
     };
   }

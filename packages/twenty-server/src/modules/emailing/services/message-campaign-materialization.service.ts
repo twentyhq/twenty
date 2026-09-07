@@ -43,9 +43,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 const MATERIALIZATION_CHUNK_SIZE = 500;
 
-// Campaign rows are machine-generated and nothing subscribes to them: no
-// webhook, workflow trigger or timeline activity. Emitting would cost a
-// snapshot SELECT of every row written plus a timeline row per recipient.
 type CampaignMessageRow = {
   recipient: CampaignMessageRecipient;
   messageId: string;
@@ -227,7 +224,7 @@ export class MessageCampaignMaterializationService {
           null,
         );
 
-        await this.insertMessagesBeforeTheirDeliveries({
+        await this.insertCampaignMessages({
           campaignId,
           messageChannelId,
           fromAddress: campaign.fromAddress?.primaryEmail ?? '',
@@ -372,7 +369,7 @@ export class MessageCampaignMaterializationService {
     );
   }
 
-  private async insertMessagesBeforeTheirDeliveries({
+  private async insertCampaignMessages({
     campaignId,
     messageChannelId,
     fromAddress,

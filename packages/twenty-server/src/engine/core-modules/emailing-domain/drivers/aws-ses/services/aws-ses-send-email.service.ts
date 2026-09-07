@@ -176,12 +176,12 @@ export class AwsSesSendEmailService {
       const results = response.BulkEmailEntryResults ?? [];
 
       return {
-        entries: input.recipients.map((recipient, index) => {
+        entries: input.recipients.map((_recipient, index) => {
           const result = results[index];
 
           if (!isDefined(result)) {
             return {
-              email: recipient.email,
+              recipientIndex: index,
               messageId: null,
               errorMessage: 'SES returned no result for this destination',
             };
@@ -189,7 +189,7 @@ export class AwsSesSendEmailService {
 
           if (!isDefined(result.MessageId)) {
             return {
-              email: recipient.email,
+              recipientIndex: index,
               messageId: null,
               errorMessage:
                 result.Error ??
@@ -198,7 +198,7 @@ export class AwsSesSendEmailService {
           }
 
           return {
-            email: recipient.email,
+            recipientIndex: index,
             messageId: result.MessageId,
             errorMessage: null,
           };

@@ -228,13 +228,13 @@ export class ResendDriver implements EmailingDomainDriverInterface {
     const { data } = await this.resendApiClientService.sendEmailBatch(payloads);
 
     return {
-      entries: batchToSend.recipients.map((recipient, index) => {
+      entries: batchToSend.recipients.map((_recipient, index) => {
         const id = data?.[index]?.id;
 
         return isNonEmptyString(id)
-          ? { email: recipient.email, messageId: id, errorMessage: null }
+          ? { recipientIndex: index, messageId: id, errorMessage: null }
           : {
-              email: recipient.email,
+              recipientIndex: index,
               messageId: null,
               errorMessage: 'Resend returned no id for this destination',
             };

@@ -12,11 +12,11 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
 
 const SENDING_STALE_THRESHOLD_MS = 60 * 60 * 1000;
 
-// Deliberately far longer than the stale threshold. A delivery row is only
-// touched when a batch claims, defers or settles it, so a queue that is merely
-// backed up or a worker outage leaves live rows untouched for as long as it
-// lasts. Orphaning them needs to be slower than any outage worth riding out,
-// because the cost of being wrong is failing recipients whose jobs were coming.
+// Must exceed the longest a live row can legitimately sit untouched: a batch
+// deferred by the rate limiter re-queues its rows for up to
+// SEND_SLOT_RETRY.attemptLimit backoffs of maxDelayMs, and a backed-up queue or
+// a worker outage holds rows that were never claimed at all. Being wrong here
+// fails recipients whose jobs were still coming.
 const ORPHANED_QUEUED_THRESHOLD_MS = 24 * 60 * 60 * 1000;
 
 @Injectable()
