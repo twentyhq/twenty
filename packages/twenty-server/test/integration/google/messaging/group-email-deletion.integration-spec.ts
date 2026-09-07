@@ -44,6 +44,7 @@ describe('Gmail group email deletion (integration)', () => {
   setupGoogleMock({ handle: HANDLE, inbox });
 
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
+  let groupEmailSubjectsBeforeCleanup: string[];
   let groupEmailSubjectsAfterCleanup: string[];
   let personalSubjectsAfterCleanup: string[];
 
@@ -53,7 +54,14 @@ describe('Gmail group email deletion (integration)', () => {
       handle: HANDLE,
     });
 
+    await updateMessageChannel(channel.channelId, {
+      excludeGroupEmails: false,
+    });
+
     await runMessageChannelSync(channel.channelId);
+
+    groupEmailSubjectsBeforeCleanup =
+      await findImportedMessageSubjects(groupEmailSubjects);
 
     await updateMessageChannel(channel.channelId, {
       excludeGroupEmails: true,
@@ -70,6 +78,12 @@ describe('Gmail group email deletion (integration)', () => {
   afterAll(async () => {
     jest.restoreAllMocks();
     await channel?.cleanup().catch(() => undefined);
+  });
+
+  it('imports the group emails while they are still allowed', () => {
+    expect(groupEmailSubjectsBeforeCleanup).toEqual(
+      [...groupEmailSubjects].sort(),
+    );
   });
 
   it('removes every group email from a mailbox spanning more than one deletion page', () => {
