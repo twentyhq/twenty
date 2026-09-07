@@ -8,6 +8,7 @@ import {
   type FieldsWidgetGroupField,
 } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { HiddenPageLayoutFieldsContext } from '@/page-layout/contexts/HiddenPageLayoutFieldsContext';
+import { isHiddenPageLayoutField } from '@/page-layout/utils/isHiddenPageLayoutField';
 import { buildDefaultFieldsWidgetGroups } from '@/page-layout/widgets/fields/utils/buildDefaultFieldsWidgetGroups';
 import { filterDraftGroupsForDisplay } from '@/page-layout/widgets/fields/utils/filterDraftGroupsForDisplay';
 import { useViewById } from '@/views/hooks/useViewById';
@@ -50,8 +51,10 @@ export const useFieldsWidgetGroups = ({
 
     const visibleFields = objectMetadataItem.fields.filter(
       (field) =>
-        !hiddenFieldMetadataIdsOrNames.includes(field.id) &&
-        !hiddenFieldMetadataIdsOrNames.includes(field.name),
+        !isHiddenPageLayoutField({
+          fieldMetadataIdsOrNames: [field.id, field.name],
+          hiddenFieldMetadataIdsOrNames,
+        }),
     );
 
     const activeFields = visibleFields.filter((field) => field.isActive);

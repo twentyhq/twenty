@@ -4,6 +4,7 @@ import {
   type FieldsWidgetGroupField,
 } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { HiddenPageLayoutFieldsContext } from '@/page-layout/contexts/HiddenPageLayoutFieldsContext';
+import { isHiddenPageLayoutField } from '@/page-layout/utils/isHiddenPageLayoutField';
 import { getHiddenFieldsFromGroups } from '@/page-layout/widgets/fields/utils/getHiddenFieldsFromGroups';
 import { useViewById } from '@/views/hooks/useViewById';
 import { useContext, useMemo } from 'react';
@@ -35,8 +36,10 @@ export const useFieldsWidgetHiddenFields = ({
     const activeFields = objectMetadataItem.fields.filter(
       (field) =>
         field.isActive &&
-        !hiddenFieldMetadataIdsOrNames.includes(field.id) &&
-        !hiddenFieldMetadataIdsOrNames.includes(field.name),
+        !isHiddenPageLayoutField({
+          fieldMetadataIdsOrNames: [field.id, field.name],
+          hiddenFieldMetadataIdsOrNames,
+        }),
     );
 
     if (isDefined(view) && isNonEmptyArray(view.viewFieldGroups)) {
