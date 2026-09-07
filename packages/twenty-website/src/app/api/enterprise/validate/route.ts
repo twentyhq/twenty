@@ -6,18 +6,20 @@ import {
   evaluateValidityTokenEmissionRateLimit,
   getAutoReleaseDays,
   getEnterpriseConfigError,
+  getGracePeriodDays,
   getStripeClient,
   getSubscriptionCurrentPeriodEnd,
+  getSubscriptionCurrentPeriodStart,
   parseInstanceType,
   resolveServerBinding,
+  resolveSubscriptionLicenseState,
   SERVER_BINDING_OUTCOME,
   signValidityToken,
+  SUBSCRIPTION_LICENSE_OUTCOME,
   verifyEnterpriseKey,
 } from '@/platform/enterprise';
 
 export const dynamic = 'force-dynamic';
-
-const ACTIVATABLE_STATUSES = new Set(['active', 'trialing']);
 
 type InstanceMetadata = {
   serverId?: string;
@@ -65,12 +67,21 @@ export async function POST(request: Request) {
     const stripe = getStripeClient();
     const subscription = await stripe.subscriptions.retrieve(payload.sub);
 
-    if (!ACTIVATABLE_STATUSES.has(subscription.status)) {
+    const licenseState = resolveSubscriptionLicenseState({
+      status: subscription.status,
+      currentPeriodStart: getSubscriptionCurrentPeriodStart(subscription),
+      gracePeriodDays: getGracePeriodDays(),
+    });
+
+    if (licenseState.outcome === SUBSCRIPTION_LICENSE_OUTCOME.REJECTED) {
       return NextResponse.json(
         { error: 'Subscription is not active', status: subscription.status },
         { status: 403 },
       );
     }
+
+    const isInGracePeriod =
+      licenseState.outcome === SUBSCRIPTION_LICENSE_OUTCOME.GRACE;
 
     const serverId = instanceMetadata?.serverId;
     const instanceType = parseInstanceType(instanceMetadata?.instanceType);
@@ -130,6 +141,7 @@ export async function POST(request: Request) {
 
     const validityToken = signValidityToken(payload.sub, {
       subscriptionCancelAt: effectiveCancelAt,
+      graceExpiresAt: licenseState.graceExpiresAt,
     });
 
     return NextResponse.json({
@@ -139,6 +151,8 @@ export async function POST(request: Request) {
       subscriptionStatus: subscription.status,
       instanceType,
       isBillable: binding.isBillable,
+      isInGracePeriod,
+      graceExpiresAt: licenseState.graceExpiresAt,
     });
   } catch (error: unknown) {
     console.error('Enterprise key validation failed', error);

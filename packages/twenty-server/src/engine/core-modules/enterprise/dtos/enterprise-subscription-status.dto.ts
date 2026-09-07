@@ -21,4 +21,10 @@ export class EnterpriseSubscriptionStatusDTO {
 
   @Field(() => Boolean)
   isCancellationScheduled: boolean;
+
+  @Field(() => Boolean)
+  isInGracePeriod: boolean;
+
+  @Field(() => Date, { nullable: true })
+  graceExpiresAt: Date | null;
 }

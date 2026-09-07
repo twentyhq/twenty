@@ -60,6 +60,8 @@ type SubscriptionStatus = {
   cancelAt: string | null;
   currentPeriodEnd: string | null;
   isCancellationScheduled: boolean;
+  isInGracePeriod: boolean;
+  graceExpiresAt: string | null;
 };
 
 const StyledStatusDot = styled.div<{ isActive: boolean }>`
@@ -231,6 +233,16 @@ export const SettingsEnterprise = ({
   const currentPeriodEnd = isDefined(subscriptionStatus?.currentPeriodEnd)
     ? new Date(subscriptionStatus.currentPeriodEnd)
     : null;
+
+  const isInGracePeriod = subscriptionStatus?.isInGracePeriod === true;
+
+  const graceExpiresAt = isDefined(subscriptionStatus?.graceExpiresAt)
+    ? new Date(subscriptionStatus.graceExpiresAt)
+    : null;
+
+  const graceExpiresAtDate = isDefined(graceExpiresAt)
+    ? graceExpiresAt.toLocaleDateString()
+    : '';
 
   const cancelAtDate =
     isCancelScheduled && isDefined(cancelAt)
@@ -865,7 +877,11 @@ export const SettingsEnterprise = ({
           <Section>
             <H2Title
               title={t`Enterprise License`}
-              description={t`There is a payment issue with your subscription. Please update your payment method.`}
+              description={
+                isInGracePeriod
+                  ? t`A payment on your subscription failed. Your enterprise features stay active while we retry it.`
+                  : t`There is a payment issue with your subscription. Your enterprise features are disabled until it is resolved.`
+              }
             />
             <SubscriptionInfoContainer>
               <SubscriptionInfoRowContainer
@@ -873,17 +889,45 @@ export const SettingsEnterprise = ({
                 Icon={IconCheck}
                 currentValue={
                   <StyledStatusContainer>
-                    <StyledStatusDot isActive={false} />
+                    <StyledStatusDot isActive={isInGracePeriod} />
                     <Trans>Payment issue</Trans>
                   </StyledStatusContainer>
                 }
               />
+              {isInGracePeriod && isDefined(graceExpiresAt) && (
+                <SubscriptionInfoRowContainer
+                  label={t`Features active until`}
+                  Icon={IconCalendarRepeat}
+                  currentValue={graceExpiresAtDate}
+                />
+              )}
+              <SubscriptionInfoRowContainer
+                label={t`Billing history`}
+                Icon={IconCreditCard}
+                currentValue={
+                  <Button
+                    title={t`View invoices`}
+                    variant="secondary"
+                    size="small"
+                    onClick={openBillingPortal}
+                  />
+                }
+              />
             </SubscriptionInfoContainer>
+            {isInGracePeriod && (
+              <StyledCancellationNotice>
+                {t`Update your payment method before ${graceExpiresAtDate} to avoid losing access.`}
+              </StyledCancellationNotice>
+            )}
           </Section>
           <Section>
             <H2Title
               title={t`Update payment method`}
-              description={t`Fix the payment issue to keep your enterprise features active.`}
+              description={
+                isInGracePeriod
+                  ? t`Fix the payment issue to keep your enterprise features active.`
+                  : t`Fix the payment issue to restore your enterprise features.`
+              }
             />
             <Button
               Icon={IconCreditCard}

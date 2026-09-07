@@ -9,6 +9,8 @@ export const ENTERPRISE_SUBSCRIPTION_STATUS = gql`
       cancelAt
       currentPeriodEnd
       isCancellationScheduled
+      isInGracePeriod
+      graceExpiresAt
     }
   }
 `;
