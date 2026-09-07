@@ -5,6 +5,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import type { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationUninstallRunnerService } from 'src/engine/core-modules/application/application-install/services/application-uninstall-runner.service';
+import type { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import type { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
@@ -22,11 +23,15 @@ describe('ApplicationUninstallRunnerService', () => {
   const metricsService = {
     incrementCounterBy: jest.fn(),
   } as unknown as MetricsService;
+  const cacheLockService = {
+    withLock: jest.fn((fn: () => Promise<unknown>) => fn()),
+  } as unknown as CacheLockService;
 
   const service = new ApplicationUninstallRunnerService(
     applicationService,
     applicationSyncService,
     metricsService,
+    cacheLockService,
   );
 
   const target = {
@@ -38,9 +43,14 @@ describe('ApplicationUninstallRunnerService', () => {
     jest.clearAllMocks();
   });
 
-  it('uninstalls the application and counts the success', async () => {
+  it('uninstalls the application under the lifecycle lock and counts the success', async () => {
     await service.uninstallApplication(target);
 
+    expect(cacheLockService.withLock).toHaveBeenCalledWith(
+      expect.any(Function),
+      `app-install:${target.workspaceId}:${target.universalIdentifier}`,
+      { ttl: 60_000, ms: 500, maxRetries: 120 },
+    );
     expect(applicationSyncService.uninstallApplication).toHaveBeenCalledWith({
       applicationUniversalIdentifier: target.universalIdentifier,
       workspaceId: target.workspaceId,

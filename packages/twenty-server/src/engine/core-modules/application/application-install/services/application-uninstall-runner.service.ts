@@ -4,6 +4,9 @@ import { ApplicationSyncService } from 'src/engine/core-modules/application/appl
 import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { APPLICATION_LIFECYCLE_LOCK_OPTIONS } from 'src/engine/core-modules/application/application-install/constants/application-lifecycle-lock-options.constant';
+import { buildApplicationLifecycleLockKey } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-lock-key.util';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
@@ -13,9 +16,24 @@ export class ApplicationUninstallRunnerService {
     private readonly applicationService: ApplicationService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly metricsService: MetricsService,
+    private readonly cacheLockService: CacheLockService,
   ) {}
 
-  async uninstallApplication({
+  uninstallApplication({
+    universalIdentifier,
+    workspaceId,
+  }: {
+    universalIdentifier: string;
+    workspaceId: string;
+  }): Promise<void> {
+    return this.cacheLockService.withLock(
+      () => this.runUninstall({ universalIdentifier, workspaceId }),
+      buildApplicationLifecycleLockKey({ workspaceId, universalIdentifier }),
+      APPLICATION_LIFECYCLE_LOCK_OPTIONS,
+    );
+  }
+
+  private async runUninstall({
     universalIdentifier,
     workspaceId,
   }: {

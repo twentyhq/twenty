@@ -30,6 +30,8 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { APPLICATION_LIFECYCLE_LOCK_OPTIONS } from 'src/engine/core-modules/application/application-install/constants/application-lifecycle-lock-options.constant';
+import { buildApplicationLifecycleLockKey } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-lock-key.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
@@ -104,8 +106,6 @@ export class ApplicationInstallService {
       return true;
     }
 
-    const lockKey = `app-install:${params.workspaceId}:${appRegistration.universalIdentifier}`;
-
     return this.cacheLockService.withLock(
       () =>
         this.doInstallApplication(appRegistration, {
@@ -114,8 +114,11 @@ export class ApplicationInstallService {
           skipWorkspaceCompatibilityCheck:
             params.skipWorkspaceCompatibilityCheck,
         }),
-      lockKey,
-      { ttl: 60_000, ms: 500, maxRetries: 120 },
+      buildApplicationLifecycleLockKey({
+        workspaceId: params.workspaceId,
+        universalIdentifier: appRegistration.universalIdentifier,
+      }),
+      APPLICATION_LIFECYCLE_LOCK_OPTIONS,
     );
   }
 
