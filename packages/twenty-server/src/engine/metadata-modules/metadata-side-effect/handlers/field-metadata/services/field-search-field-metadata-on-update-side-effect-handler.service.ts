@@ -149,11 +149,6 @@ export class FieldSearchFieldMetadataOnUpdateSideEffectHandlerService extends Me
         -1,
       ) + 1;
 
-    // The util hardcodes isSystemSideEffect: true. The row is the engine's
-    // backing materialization of the field-level flag, like the unique
-    // backing index. A caller-owned row would let the app-sync deletion sweep
-    // collect it on the next sync, since manifests declare the flag, not the
-    // row.
     const searchFieldMetadata = buildFlatSearchFieldMetadataForField({
       flatObjectMetadata: existingFlatObjectMetadata,
       flatFieldMetadata: {

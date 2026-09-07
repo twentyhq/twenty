@@ -77,8 +77,6 @@ const buildTestObject = ({
   ],
 });
 
-// Fix regression guard: a non-searchable object whose label identifier omits
-// isSearchable must not default it to true, or the sync fails validation.
 const MUTED_TEST_OBJECT: ObjectManifest = {
   universalIdentifier: MUTED_OBJECT_UNIVERSAL_IDENTIFIER,
   labelIdentifierFieldMetadataUniversalIdentifier:
@@ -213,8 +211,6 @@ describe('Application manifest sync with field-level isSearchable', () => {
     const { searchFieldMetadataList: rowsAfterResync } =
       await findSearchFieldMetadataList();
 
-    // Convergence: an unchanged manifest must not diff isSearchable and
-    // delete/recreate the rows it had just provisioned.
     expect(rowsAfterResync).toEqual(rowsBeforeResync);
   }, 60000);
 
@@ -245,7 +241,6 @@ describe('Application manifest sync with field-level isSearchable', () => {
 
     expect(searchByNickname.data.search.edges).toHaveLength(0);
 
-    // The label identifier stays searchable throughout.
     const searchByName = await search({
       searchInput: RECORD_NAME_VALUE,
       includedObjectNameSingulars: [OBJECT_NAME_SINGULAR],

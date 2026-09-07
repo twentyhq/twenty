@@ -46,9 +46,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeORMModule,
     DerivedFieldMetadataIdsModule,
-    // Keeps IndexMetadataResolver registered in the DI container: this is its
-    // only remaining import path since DerivedFieldMetadataIdsModule took over
-    // the derived-ids exports.
     IndexMetadataModule,
     PermissionsModule,
     WorkspaceDataSourceModule,

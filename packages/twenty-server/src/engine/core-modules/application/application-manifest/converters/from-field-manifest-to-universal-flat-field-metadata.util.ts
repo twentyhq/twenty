@@ -53,11 +53,6 @@ const getRelationTargetUniversalIdentifiers = (
   };
 };
 
-// An omitted manifest value means the default, like isUnique: false for
-// every field except the label identifier of a searchable object, which the
-// engine always indexes (the object-create side effect provisions its row,
-// so both sides must agree or every re-sync would diff isSearchable and
-// drop that row).
 const resolveManifestFieldIsSearchable = ({
   fieldManifest,
   objectLabelIdentifierFieldMetadataUniversalIdentifier,

@@ -148,9 +148,6 @@ describe('Application manifest sync - search field metadata on label identifier 
       }),
     );
 
-    // An omitted field-level isSearchable means false for a non-label field,
-    // so the previous `name` surface is dropped by the relabel; a manifest
-    // that wants to keep it declares `isSearchable: true` (next test).
     expect(await searchRecordIds(RECORD_NAME_VALUE)).toEqual([]);
     expect(await searchRecordIds(RECORD_TOTO_VALUE)).toEqual([recordId]);
   }, 120000);

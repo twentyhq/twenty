@@ -150,9 +150,6 @@ describe('FieldSearchFieldMetadataOnUpdateSideEffectHandlerService', () => {
     });
   });
 
-  // Handlers in one batch all read the same pre-batch maps, so rows created
-  // by sibling side effects only exist in the operation record; ignoring them
-  // would hand out the same position twice.
   it('should append after rows already created earlier in the same batch', () => {
     const result = handler.buildSideEffects(
       buildArgs({
@@ -223,8 +220,6 @@ describe('FieldSearchFieldMetadataOnUpdateSideEffectHandlerService', () => {
     ).toEqual([FIELD_SEARCH_FIELD_METADATA_UNIVERSAL_IDENTIFIER]);
   });
 
-  // Guards #2764: a no-op here is what lets a searchFieldMetadata row keep its
-  // position, and later its weight, across an unrelated field update.
   it('should be a noop when isSearchable stays true', () => {
     const result = handler.buildSideEffects(
       buildArgs({

@@ -49,7 +49,6 @@ export class FieldSearchFieldMetadataOnCreateSideEffectHandlerService extends Me
       });
     }
 
-    // The object side effects own the label identifier's row.
     if (
       parentFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
       flatFieldMetadata.universalIdentifier
@@ -87,12 +86,6 @@ export class FieldSearchFieldMetadataOnCreateSideEffectHandlerService extends Me
         ?.flatEntityToCreate[parentFlatObjectMetadata.universalIdentifier],
     );
 
-    // When the object is created in the same batch, the object-create side
-    // effect provisions its searchVector field, but handler ordering within
-    // the batch is unspecified: that pending create may not be visible here
-    // yet. Its universal identifier is deterministic, so reference it instead
-    // of losing the row to the race (it no-ops into the same field once both
-    // operations land).
     const tsVectorFieldMetadataUniversalIdentifier =
       findTsVectorFlatFieldMetadataForObject({
         fieldUniversalIdentifiers:
@@ -124,9 +117,6 @@ export class FieldSearchFieldMetadataOnCreateSideEffectHandlerService extends Me
         )
         .filter(isDefined);
 
-    // Same-batch object creation may still owe the label identifier its row
-    // (position 0, created by the object-create side effect); leave that slot
-    // free when it has not been accumulated yet.
     const labelIdentifierRowIsStillPending =
       parentIsPendingCreate &&
       isDefined(
@@ -148,11 +138,6 @@ export class FieldSearchFieldMetadataOnCreateSideEffectHandlerService extends Me
         labelIdentifierRowIsStillPending ? 0 : -1,
       ) + 1;
 
-    // The util hardcodes isSystemSideEffect: true. The row is the engine's
-    // backing materialization of the field-level flag, like the unique
-    // backing index. A caller-owned row would let the app-sync deletion sweep
-    // collect it on the next sync, since manifests declare the flag, not the
-    // row.
     const searchFieldMetadata = buildFlatSearchFieldMetadataForField({
       flatObjectMetadata: parentFlatObjectMetadata,
       flatFieldMetadata: {

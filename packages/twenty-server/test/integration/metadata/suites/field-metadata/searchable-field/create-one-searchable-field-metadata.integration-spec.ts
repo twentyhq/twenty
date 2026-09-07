@@ -90,12 +90,9 @@ describe('Field metadata creation with isSearchable', () => {
         searchFieldMetadata.fieldMetadataId === createOneField.id,
     );
 
-    // The label identifier row is provisioned at object creation; the new row
-    // is appended strictly after the pre-existing maximum, never tied with it.
     expect(createdRow).toBeDefined();
     expect(createdRow?.position).toBe(maxPositionBeforeCreate + 1);
 
-    // The entity-backed fields query derives isSearchable from the same rows.
     const { fields } = await findManyFieldsMetadata({
       expectToFail: false,
       input: {

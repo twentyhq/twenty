@@ -175,7 +175,6 @@ export class FieldMetadataEntity<
   @Column({ nullable: true, default: true, type: 'boolean' })
   isNullable: boolean | null;
 
-  // Derived at flat-entity cache build time from the existence of a
   // single-field UNIQUE IndexMetadata covering this field — never persisted
   // on this entity. Kept on the type so flat-entity consumers continue to
   // read field.isUnique without per-call derivation; the PG column was
@@ -183,11 +182,6 @@ export class FieldMetadataEntity<
   isUnique: boolean | null;
 
   // Derived at flat-entity cache build time from the existence of a
-  // SearchFieldMetadata row targeting this field — never persisted on this
-  // entity, for the same reason as isUnique above: searchFieldMetadata is the
-  // source of truth and carries position/isSystemSideEffect that a boolean
-  // cannot express. The state change rides on a side-effect
-  // searchFieldMetadata create/delete.
   isSearchable: boolean;
 
   @Column({ default: false })

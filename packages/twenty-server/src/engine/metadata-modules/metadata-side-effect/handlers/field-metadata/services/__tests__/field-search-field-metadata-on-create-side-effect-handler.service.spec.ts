@@ -208,9 +208,6 @@ describe('FieldSearchFieldMetadataOnCreateSideEffectHandlerService', () => {
     expect(result.status).toBe('noop');
   });
 
-  // Handler ordering within a batch is unspecified: the searchVector field
-  // provisioned by the object-create side effect may not be accumulated yet
-  // when this handler runs for a sibling field.
   it('should reference the deterministic searchVector field when the object is created in the same batch', () => {
     const result = handler.buildSideEffects(
       buildArgs({

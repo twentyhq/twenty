@@ -385,11 +385,6 @@ export class FlatFieldMetadataValidatorService {
         }),
       );
 
-      // System builds declare searchable state consistently with the rows
-      // they provision (e.g. junction objects whose label identifier is the
-      // id field), and a label identifier is searchable by definition, so
-      // only user-driven creation of a non-label searchable field needs
-      // validating here.
       if (
         flatFieldMetadataToValidate.isSearchable === true &&
         !buildOptions.isSystemBuild &&

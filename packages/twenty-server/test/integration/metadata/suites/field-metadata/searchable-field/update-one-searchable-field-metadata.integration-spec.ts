@@ -156,7 +156,6 @@ describe('Field metadata isSearchable toggling', () => {
     );
 
     expect(createdRow).toBeDefined();
-    // Strictly after the pre-toggle maximum, never tied with an existing row.
     expect(createdRow?.position).toBe(maxPositionBeforeToggle + 1);
 
     const searchAfterToggle = await search({
@@ -191,8 +190,6 @@ describe('Field metadata isSearchable toggling', () => {
         searchFieldMetadata.fieldMetadataId === toggledFieldMetadataId,
     );
 
-    // Same row, same position: what lets a row keep its position, and later
-    // its weight, across re-assertions of the flag.
     expect(rowAfterNoop).toEqual(rowBeforeNoop);
   });
 
@@ -247,10 +244,6 @@ describe('Field metadata isSearchable toggling', () => {
   it('should reject an explicit isSearchable null on the label identifier', async () => {
     await findSearchFieldMetadataList();
 
-    // Regression: input sanitization normalizes a raw GraphQL null to false,
-    // so it must hit the label-identifier guard like an explicit false. The
-    // DTO types the flag as boolean | undefined, so the null a client can
-    // send has to be forced past the TS type.
     const nullIsSearchablePayload = {
       isSearchable: null,
     } as unknown as Omit<UpdateFieldInput, 'workspaceId' | 'id'>;

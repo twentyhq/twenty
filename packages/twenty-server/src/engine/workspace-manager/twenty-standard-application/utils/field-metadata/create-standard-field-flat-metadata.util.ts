@@ -91,9 +91,6 @@ export const createStandardFieldFlatMetadata = <
     isSystemSideEffect: name in PARTIAL_SYSTEM_FLAT_FIELD_METADATAS,
     isNullable,
     isUnique,
-    // Mirrors the searchFieldMetadata rows the standard application declares
-    // for this object. Both sides must agree or every sync would diff
-    // isSearchable and delete the rows it just created.
     isSearchable: searchFields.some((searchField) => searchField.name === name),
     isUIEditable,
     writability:

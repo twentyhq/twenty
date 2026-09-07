@@ -68,10 +68,6 @@ const SEARCH_FIELDS_GRID_TEMPLATE_COLUMNS = 'minmax(0, 1fr) 148px 40px';
 
 const ADD_SEARCH_FIELD_DROPDOWN_ID = 'settings-object-add-search-field';
 
-// Rows derive from field.isSearchable, which the metadata store updates as
-// soon as the mutation resolves, so the section reacts immediately; the
-// searchFieldMetadata rows only provide the display order, with rows still
-// pending (freshly toggled on) appended at the end.
 const extractSearchFields = (
   objectMetadataItem: EnrichedObjectMetadataItem,
 ): SearchFieldEntry[] => {

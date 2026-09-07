@@ -27,18 +27,11 @@ export const validateSearchableFlatFieldMetadata = ({
     | 'applicationUniversalIdentifier'
   >;
   flatFieldMetadataMaps: MetadataUniversalFlatEntityMaps<'fieldMetadata'>;
-  // Creation validates entity by entity, so the object's TS_VECTOR field can
-  // still be a pending create of the same batch (provisioned by the
-  // object-create side effect). Passing the not-yet-validated creates lets the
-  // check see it instead of being skipped altogether.
   remainingFlatFieldMetadataMaps?: MetadataUniversalFlatEntityMaps<'fieldMetadata'>;
 }): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
 
   if (flatFieldMetadataToValidate.isSearchable !== true) {
-    // The label identifier is searchable by definition: it is what a record is
-    // matched and displayed by, so removing it would leave the object with a
-    // search vector that does not contain its own title.
     if (
       flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
       flatFieldMetadataToValidate.universalIdentifier
@@ -61,8 +54,6 @@ export const validateSearchableFlatFieldMetadata = ({
     });
   }
 
-  // UUID passes isSearchableFieldType so that junction objects, whose label
-  // identifier is the id field, can be indexed. The id field itself never is.
   if (isPrimaryKeyFlatFieldMetadata(flatFieldMetadataToValidate)) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,

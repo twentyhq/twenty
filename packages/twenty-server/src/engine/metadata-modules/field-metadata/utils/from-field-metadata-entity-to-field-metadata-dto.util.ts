@@ -2,11 +2,6 @@ import { type DerivedFieldMetadataIds } from 'src/engine/metadata-modules/derive
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
-// isUnique and isSearchable are derived from IndexMetadata and
-// SearchFieldMetadata rather than stored on the field entity; callers that
-// need accurate values (e.g. the REST controller) pass the precomputed
-// fieldMetadataId sets. Callers in pure-entity contexts that don't care about
-// them can omit them.
 export const fromFieldMetadataEntityToFieldMetadataDto = (
   entity: FieldMetadataEntity,
   derivedFieldMetadataIds?: DerivedFieldMetadataIds,
