@@ -224,30 +224,34 @@ export const useIncrementalDeleteManyRecords = <T>({
     let totalDeletedCount = 0;
     const allDeletedRecordIds: string[] = [];
 
-    await incrementalFetchAndMutate(
-      async ({ recordIds, totalCount, abortSignal }) => {
-        await deleteManyRecordsBatch(recordIds, abortSignal);
+    try {
+      await incrementalFetchAndMutate(
+        async ({ recordIds, totalCount, abortSignal }) => {
+          await deleteManyRecordsBatch(recordIds, abortSignal);
 
-        allDeletedRecordIds.push(...recordIds);
-        totalDeletedCount += recordIds.length;
+          allDeletedRecordIds.push(...recordIds);
+          totalDeletedCount += recordIds.length;
 
-        updateProgress(totalDeletedCount, totalCount);
-      },
-    );
+          updateProgress(totalDeletedCount, totalCount);
+        },
+      );
+    } finally {
+      // A failing batch leaves the earlier ones deleted, so what did go through
+      // is reported before the error propagates.
+      await refetchAggregateQueries({
+        objectMetadataNamePlural: objectMetadataItem.namePlural,
+      });
 
-    await refetchAggregateQueries({
-      objectMetadataNamePlural: objectMetadataItem.namePlural,
-    });
+      removeNavigationMenuItemsByTargetRecordIds(allDeletedRecordIds);
 
-    removeNavigationMenuItemsByTargetRecordIds(allDeletedRecordIds);
-
-    dispatchObjectRecordOperationBrowserEvent({
-      objectMetadataItem,
-      operation: {
-        type: 'delete-many',
-        deletedRecordIds: allDeletedRecordIds,
-      },
-    });
+      dispatchObjectRecordOperationBrowserEvent({
+        objectMetadataItem,
+        operation: {
+          type: 'delete-many',
+          deletedRecordIds: allDeletedRecordIds,
+        },
+      });
+    }
 
     return totalDeletedCount;
   };
