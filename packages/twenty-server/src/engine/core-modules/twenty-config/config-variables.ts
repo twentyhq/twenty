@@ -107,6 +107,16 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
+      'Make the upgrade command exit successfully even when some workspaces failed to upgrade, so the server still boots. By default a workspace failure makes the command exit with code 1, which aborts the server container startup.',
+    isEnvOnly: true,
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  UPGRADE_CONTINUE_ON_WORKSPACE_FAILURE = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
       'Lock workspace schema DDL changes (for hot upgrades). Blocks sign-up, workspace deletion, and all metadata schema changes.',
     isEnvOnly: true,
     type: ConfigVariableType.BOOLEAN,

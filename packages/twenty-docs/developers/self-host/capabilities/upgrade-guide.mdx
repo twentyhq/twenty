@@ -93,7 +93,7 @@ Summary
 
 If the upgrade fails on some workspaces, the server will not advance past the failing step. Restarting the server (`docker compose up -d`) will retry the upgrade from where it left off.
 
-By default the server container still starts when the upgrade fails on some workspaces, and logs a warning. Set `EXIT_ON_UPGRADE_FAILURE=true` to make the container exit with code 1 instead, so your orchestrator surfaces the failed upgrade rather than serving a partially migrated instance.
+When the upgrade fails on any workspace, the `upgrade` command exits with code 1 and the server container does not start, so your orchestrator surfaces the failed upgrade rather than serving a partially migrated instance. To let the server start anyway and keep serving the workspaces that upgraded successfully, set `UPGRADE_CONTINUE_ON_WORKSPACE_FAILURE=true`. This is an environment-only setting.
 
 To quickly identify problems, run:
 

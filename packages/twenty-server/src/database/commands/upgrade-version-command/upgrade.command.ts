@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CommandShutdownService } from 'src/database/commands/command-runners/command-shutdown.service';
 import { CommandLogger } from 'src/database/commands/logger';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
 import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
@@ -36,6 +37,7 @@ export class UpgradeCommand extends CommandRunner {
     protected readonly upgradeSequenceRunnerService: UpgradeSequenceRunnerService,
     protected readonly upgradeStatusService: UpgradeStatusService,
     protected readonly commandShutdownService: CommandShutdownService,
+    protected readonly twentyConfigService: TwentyConfigService,
   ) {
     super();
     this.logger = new CommandLogger({
@@ -181,6 +183,20 @@ export class UpgradeCommand extends CommandRunner {
       );
 
       if (totalFailures > 0) {
+        if (
+          this.twentyConfigService.get('UPGRADE_CONTINUE_ON_WORKSPACE_FAILURE')
+        ) {
+          this.logger.warn(
+            formatUpgradeLog({
+              humanMessage: `Upgrade completed with ${totalFailures} workspace failure(s), exiting successfully because UPGRADE_CONTINUE_ON_WORKSPACE_FAILURE is set`,
+              event: 'completed-with-failures',
+              logFields: { totalFailures },
+            }),
+          );
+
+          return;
+        }
+
         throw new Error(
           `Upgrade completed with ${totalFailures} workspace failure(s)`,
         );
