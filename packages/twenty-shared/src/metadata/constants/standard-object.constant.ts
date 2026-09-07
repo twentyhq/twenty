@@ -970,6 +970,22 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
+  recordShare: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.recordShare,
+    fields: STANDARD_OBJECT_FIELDS.recordShare,
+    indexes: {
+      recordPrincipalCauseSourceUniqueIndex: {
+        universalIdentifier: '4580f104-47a7-4110-87a8-26cb6f63ce7b',
+      },
+      principalIdIndex: {
+        universalIdentifier: '66fbc3d2-6126-4e29-a306-dbe9995bf062',
+      },
+      sourceIdIndex: {
+        universalIdentifier: '21b84593-c647-40ce-bdf4-a8b4ac658f57',
+      },
+    },
+    views: {},
+  },
   task: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task,
     fields: STANDARD_OBJECT_FIELDS.task,

@@ -68,10 +68,11 @@ describe('coreWorkflows (e2e)', () => {
   let workflowId: string;
   let firstVersionId: string;
   let alreadyDestroyed = false;
+  let softDeletedWorkflowId: string | undefined;
 
-  const findCoreWorkflow = async (
+  const listCoreWorkflows = async (
     filter?: CoreWorkflowFilter,
-  ): Promise<CoreWorkflow | undefined> => {
+  ): Promise<CoreWorkflow[]> => {
     const response = await graphql(CORE_WORKFLOWS_QUERY, { filter });
 
     expect(response.body.errors).toBeUndefined();
@@ -87,10 +88,20 @@ describe('coreWorkflows (e2e)', () => {
       expect(totalCount).toBe(edges.length);
     }
 
-    return edges
-      .map((edge) => edge.node)
-      .find((workflow) => workflow.workspaceWorkflowId === workflowId);
+    return edges.map((edge) => edge.node);
   };
+
+  const findCoreWorkflow = async (
+    filter?: CoreWorkflowFilter,
+  ): Promise<CoreWorkflow | undefined> =>
+    (await listCoreWorkflows(filter)).find(
+      (workflow) => workflow.workspaceWorkflowId === workflowId,
+    );
+
+  const findCoreWorkflowByName = async (
+    name: string,
+  ): Promise<CoreWorkflow | undefined> =>
+    (await listCoreWorkflows()).find((workflow) => workflow.name === name);
 
   const waitForCoreWorkflow = async (
     predicate: (workflow: CoreWorkflow | undefined) => boolean,
@@ -141,6 +152,19 @@ describe('coreWorkflows (e2e)', () => {
   });
 
   afterAll(async () => {
+    if (isDefined(softDeletedWorkflowId)) {
+      await graphql(
+        `
+          mutation DestroyWorkflow($id: UUID!) {
+            destroyWorkflow(id: $id) {
+              id
+            }
+          }
+        `,
+        { id: softDeletedWorkflowId },
+      );
+    }
+
     if (alreadyDestroyed) {
       return;
     }
@@ -492,6 +516,157 @@ describe('coreWorkflows (e2e)', () => {
     const secondPage = secondPageResponse.body.data.coreWorkflows;
 
     expect(secondPage.edges[0].node.id).not.toBe(firstPage.edges[0].node.id);
+  });
+
+  it('should not list a workflow once it is soft-deleted', async () => {
+    const softDeletedName = 'Core Workflows Soft Deleted';
+
+    const createResponse = await graphql(
+      `
+        mutation CreateWorkflow($name: String!) {
+          createWorkflow(data: { name: $name }) {
+            id
+          }
+        }
+      `,
+      { name: softDeletedName },
+    );
+
+    expect(createResponse.body.errors).toBeUndefined();
+
+    softDeletedWorkflowId = createResponse.body.data.createWorkflow.id;
+
+    const versionResponse = await graphql(
+      `
+        query GetWorkflow($id: UUID!) {
+          workflow(filter: { id: { eq: $id } }) {
+            versions {
+              edges {
+                node {
+                  id
+                }
+              }
+            }
+          }
+        }
+      `,
+      { id: softDeletedWorkflowId },
+    );
+
+    const softDeletedVersionId =
+      versionResponse.body.data.workflow.versions.edges[0].node.id;
+
+    await updateWorkflowVersionTrigger({
+      workflowVersionId: softDeletedVersionId,
+      trigger: {
+        name: 'Manual Trigger',
+        type: 'MANUAL',
+        settings: { outputSchema: {} },
+        nextStepIds: [],
+        position: { x: 0, y: 0 },
+      },
+    });
+
+    await graphql(
+      `
+        mutation CreateWorkflowVersionStep(
+          $input: CreateWorkflowVersionStepInput!
+        ) {
+          createWorkflowVersionStep(input: $input) {
+            stepsDiff
+          }
+        }
+      `,
+      {
+        input: {
+          workflowVersionId: softDeletedVersionId,
+          stepType: 'FIND_RECORDS',
+          parentStepId: 'trigger',
+          position: { x: 200, y: 0 },
+        },
+      },
+    );
+
+    const activateResponse = await graphql(
+      `
+        mutation ActivateWorkflowVersion($workflowVersionId: UUID!) {
+          activateWorkflowVersion(workflowVersionId: $workflowVersionId)
+        }
+      `,
+      { workflowVersionId: softDeletedVersionId },
+    );
+
+    expect(activateResponse.body.errors).toBeUndefined();
+
+    let activated: CoreWorkflow | undefined;
+
+    for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt++) {
+      activated = await findCoreWorkflowByName(softDeletedName);
+
+      if (activated?.statuses.includes('ACTIVE')) {
+        break;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+    }
+
+    expect(activated?.statuses).toEqual(['ACTIVE']);
+
+    const deleteResponse = await graphql(
+      `
+        mutation DeleteWorkflow($id: UUID!) {
+          deleteWorkflow(id: $id) {
+            id
+          }
+        }
+      `,
+      { id: softDeletedWorkflowId },
+    );
+
+    expect(deleteResponse.body.errors).toBeUndefined();
+
+    let deletedWorkflowStatuses: string[] | undefined;
+
+    for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt++) {
+      const deletedWorkflowResponse = await graphql(
+        `
+          query DeletedWorkflow($id: UUID!) {
+            workflow(
+              filter: { id: { eq: $id }, not: { deletedAt: { is: "NULL" } } }
+            ) {
+              id
+              statuses
+            }
+          }
+        `,
+        { id: softDeletedWorkflowId },
+      );
+
+      deletedWorkflowStatuses =
+        deletedWorkflowResponse.body.data?.workflow?.statuses;
+
+      if (deletedWorkflowStatuses?.includes('DEACTIVATED')) {
+        break;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+    }
+
+    expect(deletedWorkflowStatuses).toEqual(['DEACTIVATED']);
+
+    for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt++) {
+      if (!isDefined(await findCoreWorkflowByName(softDeletedName))) {
+        break;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+    }
+
+    for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt++) {
+      expect(await findCoreWorkflowByName(softDeletedName)).toBeUndefined();
+
+      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+    }
   });
 
   it('should not list the workflow once it is destroyed', async () => {

@@ -350,7 +350,6 @@ export interface Application {
     logoFileId?: Scalars['UUID']
     version?: Scalars['String']
     universalIdentifier: Scalars['String']
-    state: ApplicationState
     packageJsonChecksum?: Scalars['String']
     packageJsonFileId?: Scalars['UUID']
     yarnLockChecksum?: Scalars['String']
@@ -372,8 +371,6 @@ export interface Application {
     logoUrl?: Scalars['String']
     __typename: 'Application'
 }
-
-export type ApplicationState = 'INSTALLING' | 'INSTALLED' | 'UPGRADING' | 'UNINSTALLING'
 
 export interface TwoFactorAuthenticationMethodSummary {
     twoFactorAuthenticationMethodId: Scalars['UUID']
@@ -1536,7 +1533,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_API_RATE_LIMIT_V2_ENABLED' | 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' | 'IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED'
+export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_API_RATE_LIMIT_V2_ENABLED' | 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' | 'IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -1954,6 +1951,16 @@ export interface MarketplaceAppDetail {
     __typename: 'MarketplaceAppDetail'
 }
 
+export interface TriggerInstallApplicationJobResult {
+    jobId: Scalars['String']
+    __typename: 'TriggerInstallApplicationJobResult'
+}
+
+export interface TriggerUninstallApplicationJobResult {
+    jobId: Scalars['String']
+    __typename: 'TriggerUninstallApplicationJobResult'
+}
+
 export interface WorkspaceCompanyEnrichmentResult {
     outcome: WorkspaceCompanyEnrichmentOutcome
     enrichment?: Scalars['JSON']
@@ -1983,6 +1990,7 @@ export interface Field {
     isUIReadOnly?: Scalars['Boolean']
     isNullable?: Scalars['Boolean']
     isUnique?: Scalars['Boolean']
+    isSearchable?: Scalars['Boolean']
     defaultValue?: Scalars['JSON']
     options?: Scalars['JSON']
     settings?: Scalars['JSON']
@@ -3134,6 +3142,8 @@ export interface Query {
     githubClaimAuthorizationUrl: Scalars['String']
     findManyApplications: Application[]
     findOneApplication: Application
+    findInstallApplicationJobStatus?: JobStatus
+    findUninstallApplicationJobStatus?: JobStatus
     findManyMarketplaceApps: MarketplaceApp[]
     findMarketplaceAppDetail: MarketplaceAppDetail
     publicMarketplaceApps: MarketplaceApp[]
@@ -3320,6 +3330,8 @@ export interface Mutation {
     /** @deprecated Use installApplication instead */
     installMarketplaceApp: Scalars['Boolean']
     installApplication: Application
+    triggerInstallApplicationJob: TriggerInstallApplicationJobResult
+    triggerUninstallApplicationJob: TriggerUninstallApplicationJobResult
     updateApplication: Application
     uninstallApplication: Scalars['Boolean']
     syncMarketplaceCatalog: Scalars['Boolean']
@@ -3824,7 +3836,6 @@ export interface ApplicationGenqlSelection{
     logoFileId?: boolean | number
     version?: boolean | number
     universalIdentifier?: boolean | number
-    state?: boolean | number
     packageJsonChecksum?: boolean | number
     packageJsonFileId?: boolean | number
     yarnLockChecksum?: boolean | number
@@ -5486,6 +5497,18 @@ export interface MarketplaceAppDetailGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface TriggerInstallApplicationJobResultGenqlSelection{
+    jobId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface TriggerUninstallApplicationJobResultGenqlSelection{
+    jobId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface WorkspaceCompanyEnrichmentResultGenqlSelection{
     outcome?: boolean | number
     enrichment?: boolean | number
@@ -5512,6 +5535,7 @@ export interface FieldGenqlSelection{
     isUIReadOnly?: boolean | number
     isNullable?: boolean | number
     isUnique?: boolean | number
+    isSearchable?: boolean | number
     defaultValue?: boolean | number
     options?: boolean | number
     settings?: boolean | number
@@ -6723,6 +6747,8 @@ export interface QueryGenqlSelection{
     githubClaimAuthorizationUrl?: { __args: {applicationRegistrationId: Scalars['String']} }
     findManyApplications?: ApplicationGenqlSelection
     findOneApplication?: (ApplicationGenqlSelection & { __args?: {id?: (Scalars['UUID'] | null), universalIdentifier?: (Scalars['UUID'] | null)} })
+    findInstallApplicationJobStatus?: (JobStatusGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
+    findUninstallApplicationJobStatus?: (JobStatusGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
     findManyMarketplaceApps?: (MarketplaceAppGenqlSelection & { __args?: {universalIdentifiers?: (Scalars['String'][] | null)} })
     findMarketplaceAppDetail?: (MarketplaceAppDetailGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
     publicMarketplaceApps?: (MarketplaceAppGenqlSelection & { __args: {isVetted: Scalars['Boolean']} })
@@ -6948,6 +6974,8 @@ export interface MutationGenqlSelection{
     /** @deprecated Use installApplication instead */
     installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
     installApplication?: (ApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} })
+    triggerInstallApplicationJob?: (TriggerInstallApplicationJobResultGenqlSelection & { __args: {input: TriggerInstallApplicationJobInput} })
+    triggerUninstallApplicationJob?: (TriggerUninstallApplicationJobResultGenqlSelection & { __args: {input: TriggerUninstallApplicationJobInput} })
     updateApplication?: (ApplicationGenqlSelection & { __args: {id: Scalars['UUID'], input: UpdateApplicationInput} })
     uninstallApplication?: { __args: {universalIdentifier: Scalars['String']} }
     syncMarketplaceCatalog?: boolean | number
@@ -7337,13 +7365,17 @@ export interface UpdateApplicationRegistrationVariableInput {id: Scalars['String
 
 export interface UpdateApplicationRegistrationVariablePayload {value?: (Scalars['String'] | null),resetValue?: (Scalars['Boolean'] | null),description?: (Scalars['String'] | null)}
 
+export interface TriggerInstallApplicationJobInput {universalIdentifier: Scalars['String']}
+
+export interface TriggerUninstallApplicationJobInput {universalIdentifier: Scalars['String']}
+
 export interface UpdateApplicationInput {autoUpgrade?: (Scalars['Boolean'] | null)}
 
 export interface CreateOneFieldMetadataInput {
 /** The record to create */
 field: CreateFieldInput}
 
-export interface CreateFieldInput {type: FieldMetadataType,name: Scalars['String'],label: Scalars['String'],description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),isSystem?: (Scalars['Boolean'] | null),isUIEditable?: (Scalars['Boolean'] | null),isUIReadOnly?: (Scalars['Boolean'] | null),isNullable?: (Scalars['Boolean'] | null),isUnique?: (Scalars['Boolean'] | null),defaultValue?: (Scalars['JSON'] | null),options?: (Scalars['JSON'] | null),settings?: (Scalars['JSON'] | null),objectMetadataId: Scalars['UUID'],isLabelSyncedWithName?: (Scalars['Boolean'] | null),isRemoteCreation?: (Scalars['Boolean'] | null),relationCreationPayload?: (Scalars['JSON'] | null),morphRelationsCreationPayload?: (Scalars['JSON'][] | null)}
+export interface CreateFieldInput {type: FieldMetadataType,name: Scalars['String'],label: Scalars['String'],description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),isSystem?: (Scalars['Boolean'] | null),isUIEditable?: (Scalars['Boolean'] | null),isUIReadOnly?: (Scalars['Boolean'] | null),isNullable?: (Scalars['Boolean'] | null),isUnique?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),defaultValue?: (Scalars['JSON'] | null),options?: (Scalars['JSON'] | null),settings?: (Scalars['JSON'] | null),objectMetadataId: Scalars['UUID'],isLabelSyncedWithName?: (Scalars['Boolean'] | null),isRemoteCreation?: (Scalars['Boolean'] | null),relationCreationPayload?: (Scalars['JSON'] | null),morphRelationsCreationPayload?: (Scalars['JSON'][] | null)}
 
 export interface UpdateOneFieldMetadataInput {
 /** The id of the record to update */
@@ -7351,7 +7383,7 @@ id: Scalars['UUID'],
 /** The record to update */
 update: UpdateFieldInput}
 
-export interface UpdateFieldInput {universalIdentifier?: (Scalars['String'] | null),name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),isSystem?: (Scalars['Boolean'] | null),isUIEditable?: (Scalars['Boolean'] | null),isUIReadOnly?: (Scalars['Boolean'] | null),isNullable?: (Scalars['Boolean'] | null),isUnique?: (Scalars['Boolean'] | null),defaultValue?: (Scalars['JSON'] | null),options?: (Scalars['JSON'] | null),settings?: (Scalars['JSON'] | null),objectMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),morphRelationsUpdatePayload?: (Scalars['JSON'][] | null),translations?: (MetadataTranslationOverrideInput[] | null)}
+export interface UpdateFieldInput {universalIdentifier?: (Scalars['String'] | null),name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),isSystem?: (Scalars['Boolean'] | null),isUIEditable?: (Scalars['Boolean'] | null),isUIReadOnly?: (Scalars['Boolean'] | null),isNullable?: (Scalars['Boolean'] | null),isUnique?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),defaultValue?: (Scalars['JSON'] | null),options?: (Scalars['JSON'] | null),settings?: (Scalars['JSON'] | null),objectMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),morphRelationsUpdatePayload?: (Scalars['JSON'][] | null),translations?: (MetadataTranslationOverrideInput[] | null)}
 
 export interface DeleteOneFieldInput {
 /** The id of the field to delete. */
@@ -8825,6 +8857,22 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const TriggerInstallApplicationJobResult_possibleTypes: string[] = ['TriggerInstallApplicationJobResult']
+    export const isTriggerInstallApplicationJobResult = (obj?: { __typename?: any } | null): obj is TriggerInstallApplicationJobResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerInstallApplicationJobResult"')
+      return TriggerInstallApplicationJobResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TriggerUninstallApplicationJobResult_possibleTypes: string[] = ['TriggerUninstallApplicationJobResult']
+    export const isTriggerUninstallApplicationJobResult = (obj?: { __typename?: any } | null): obj is TriggerUninstallApplicationJobResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerUninstallApplicationJobResult"')
+      return TriggerUninstallApplicationJobResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const WorkspaceCompanyEnrichmentResult_possibleTypes: string[] = ['WorkspaceCompanyEnrichmentResult']
     export const isWorkspaceCompanyEnrichmentResult = (obj?: { __typename?: any } | null): obj is WorkspaceCompanyEnrichmentResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceCompanyEnrichmentResult"')
@@ -9982,13 +10030,6 @@ export const enumRowLevelPermissionPredicateOperand = {
    VECTOR_SEARCH: 'VECTOR_SEARCH' as const
 }
 
-export const enumApplicationState = {
-   INSTALLING: 'INSTALLING' as const,
-   INSTALLED: 'INSTALLED' as const,
-   UPGRADING: 'UPGRADING' as const,
-   UNINSTALLING: 'UNINSTALLING' as const
-}
-
 export const enumPermissionFlagType = {
    API_KEYS_AND_WEBHOOKS: 'API_KEYS_AND_WEBHOOKS' as const,
    WORKSPACE: 'WORKSPACE' as const,
@@ -10347,6 +10388,7 @@ export const enumEmailConnectionSecurity = {
 export const enumFeatureFlagKey = {
    IS_APP_CLAIMING_ENABLED: 'IS_APP_CLAIMING_ENABLED' as const,
    IS_UNIQUE_INDEXES_ENABLED: 'IS_UNIQUE_INDEXES_ENABLED' as const,
+   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
    IS_JSON_FILTER_ENABLED: 'IS_JSON_FILTER_ENABLED' as const,
    IS_EMAIL_GROUP_ENABLED: 'IS_EMAIL_GROUP_ENABLED' as const,
    IS_JUNCTION_RELATIONS_ENABLED: 'IS_JUNCTION_RELATIONS_ENABLED' as const,
@@ -10355,7 +10397,8 @@ export const enumFeatureFlagKey = {
    IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED: 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' as const,
    IS_API_RATE_LIMIT_V2_ENABLED: 'IS_API_RATE_LIMIT_V2_ENABLED' as const,
    IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED: 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' as const,
-   IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED: 'IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED' as const
+   IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED: 'IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED' as const,
+   IS_RECORD_CREATION_FORM_ENABLED: 'IS_RECORD_CREATION_FORM_ENABLED' as const
 }
 
 export const enumIdentityProviderType = {

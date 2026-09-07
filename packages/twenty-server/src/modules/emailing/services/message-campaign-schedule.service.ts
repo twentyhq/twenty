@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { MessageCampaignStatus } from 'twenty-shared/types';
 
 import { withWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-backoff.constant';
+import { CAMPAIGN_SEND_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-limit.constant';
 import {
   EmailingDomainException,
   EmailingDomainExceptionCode,
@@ -37,9 +39,7 @@ export class MessageCampaignScheduleService {
     campaignId: string;
     scheduledAt: Date;
   }): Promise<SendCampaignResult> {
-    const delayMs = scheduledAt.getTime() - Date.now();
-
-    if (delayMs <= 0) {
+    if (scheduledAt.getTime() <= Date.now()) {
       throw new EmailingDomainException(
         `Campaign ${campaignId} cannot be scheduled for ${scheduledAt.toISOString()}, which is not in the future`,
         EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE,
@@ -85,7 +85,11 @@ export class MessageCampaignScheduleService {
           userWorkspaceId,
           scheduledAt: scheduledAt.toISOString(),
         },
-        { delay: delayMs },
+        {
+          delay: Math.max(scheduledAt.getTime() - Date.now(), 0),
+          retryLimit: CAMPAIGN_SEND_RETRY_LIMIT,
+          backoff: CAMPAIGN_SEND_RETRY_BACKOFF,
+        },
       )
       .catch(async (error) => {
         await this.messageCampaignLifecycleService.transitionCampaignStatus({
@@ -130,25 +134,11 @@ export class MessageCampaignScheduleService {
           return;
         }
 
-        const prepared = await this.messageCampaignService
-          .prepareCampaignSendOrThrow({
+        const prepared =
+          await this.messageCampaignService.prepareCampaignSendOrThrow({
             workspaceId,
             userWorkspaceId,
             campaignId,
-          })
-          .catch(async (error) => {
-            await this.messageCampaignLifecycleService.transitionCampaignStatus(
-              {
-                workspaceId,
-                campaignId,
-                from: MessageCampaignStatus.SCHEDULED,
-                fromScheduledAt: scheduledAtDate,
-                to: MessageCampaignStatus.DRAFT,
-                scheduledAt: null,
-              },
-            );
-
-            throw error;
           });
 
         await this.messageCampaignService.claimAndMaterializeOrThrow({
