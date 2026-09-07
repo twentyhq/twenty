@@ -19,6 +19,7 @@ import {
   assertUnreachable,
   getPageLayoutWidgetHeightBehavior,
   isDefined,
+  isPlainObject,
 } from '@/utils';
 
 export const normalizePageLayoutTabManifest = ({
@@ -52,21 +53,21 @@ export const normalizePageLayoutTabManifest = ({
   }
 
   for (const widget of widgets) {
+    const heightBehaviors = [
+      widget.heightBehavior,
+      isPlainObject(widget.position) && 'heightBehavior' in widget.position
+        ? widget.position.heightBehavior
+        : undefined,
+    ].filter(isDefined);
+
     if (
-      isDefined(widget.heightBehavior) &&
+      heightBehaviors.length > 0 &&
       layoutMode !== PageLayoutTabLayoutMode.VERTICAL_LIST
     ) {
       errors.push(
         `Page layout widget "${widget.title}" defines heightBehavior, but its parent tab "${pageLayoutTabManifest.title}" uses ${layoutMode}. heightBehavior is only supported for VERTICAL_LIST tabs.`,
       );
     }
-
-    const heightBehaviors = [
-      widget.heightBehavior,
-      widget.position?.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST
-        ? widget.position.heightBehavior
-        : undefined,
-    ].filter(isDefined);
 
     for (const heightBehavior of heightBehaviors) {
       if (

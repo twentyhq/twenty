@@ -572,6 +572,45 @@ describe('normalizePageLayoutTabManifest', () => {
     },
   );
 
+  it.each([
+    {
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      row: 0,
+      column: 0,
+      rowSpan: 1,
+      columnSpan: 1,
+    },
+    { layoutMode: PageLayoutTabLayoutMode.CANVAS },
+  ])(
+    'rejects nested heightBehavior in $layoutMode JSON positions',
+    (position) => {
+      const pageLayoutTabManifest = JSON.parse(
+        JSON.stringify({
+          ...tab,
+          layoutMode: position.layoutMode,
+          widgets: [
+            {
+              ...widget,
+              position: { ...position, heightBehavior: 'TAB_VIEWPORT' },
+            },
+          ],
+        }),
+      );
+
+      expect(
+        normalizePageLayoutTabManifest({
+          pageLayoutTabManifest,
+          pageLayoutType: undefined,
+        }),
+      ).toEqual({
+        status: 'fail',
+        errors: [
+          `Page layout widget "App" defines heightBehavior, but its parent tab "Details" uses ${position.layoutMode}. heightBehavior is only supported for VERTICAL_LIST tabs.`,
+        ],
+      });
+    },
+  );
+
   it('rejects an invalid nested height behavior', () => {
     const pageLayoutTabManifest = JSON.parse(
       JSON.stringify({
