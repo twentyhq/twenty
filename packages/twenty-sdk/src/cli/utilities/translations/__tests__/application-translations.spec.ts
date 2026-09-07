@@ -69,6 +69,25 @@ describe('collectTranslatableStrings', () => {
   // Pins every manifest collection the shared registry maps, so a change to
   // TRANSLATABLE_PROPERTIES_BY_METADATA_NAME that silently drops a collection
   // shows up here rather than as an app shipping untranslatable strings.
+  it('collects the fields declared inline on an object', () => {
+    const manifest = buildManifest({
+      objects: [
+        {
+          labelSingular: 'Pet',
+          labelPlural: 'Pets',
+          fields: [{ label: 'Age', description: 'In years' }],
+        },
+      ],
+    });
+
+    expect(collectTranslatableStrings(manifest)).toEqual(
+      expect.arrayContaining([
+        { message: 'Age', context: 'fieldMetadata.label' },
+        { message: 'In years', context: 'fieldMetadata.description' },
+      ]),
+    );
+  });
+
   it('collects every translatable property of every mapped manifest collection', () => {
     const manifest = buildManifest({
       objects: [
@@ -188,5 +207,63 @@ describe('compileApplicationTranslations', () => {
     );
 
     expect(await compileApplicationTranslations(appPath)).toEqual({});
+  });
+
+  it('merges compiled catalogs and lets an authored entry win on the same id', async () => {
+    const appPath = await mkdtemp(join(tmpdir(), 'twenty-translations-merge-'));
+    const localesDir = join(appPath, 'locales');
+    await mkdir(join(localesDir, 'compiled'), { recursive: true });
+    await writeFile(
+      join(localesDir, 'fr-FR.json'),
+      JSON.stringify({ Company: 'Entreprise' }),
+    );
+    await writeFile(
+      join(localesDir, 'compiled', 'fr-FR.json'),
+      JSON.stringify({
+        [generateMessageId('Company')]: 'Société',
+        zzzzzz: 'orphan',
+      }),
+    );
+
+    expect(await compileApplicationTranslations(appPath)).toEqual({
+      'fr-FR': {
+        [generateMessageId('Company')]: 'Entreprise',
+        zzzzzz: 'orphan',
+      },
+    });
+  });
+
+  it('declares a locale that only has a compiled catalog', async () => {
+    const appPath = await mkdtemp(
+      join(tmpdir(), 'twenty-translations-compiled-only-'),
+    );
+    await mkdir(join(appPath, 'locales', 'compiled'), { recursive: true });
+    await writeFile(
+      join(appPath, 'locales', 'compiled', 'de-DE.json'),
+      JSON.stringify({ zzzzzz: 'Waise' }),
+    );
+
+    expect(await compileApplicationTranslations(appPath)).toEqual({
+      'de-DE': { zzzzzz: 'Waise' },
+    });
+  });
+
+  it('skips empty compiled entries and compiled files of unsupported locales', async () => {
+    const appPath = await mkdtemp(
+      join(tmpdir(), 'twenty-translations-compiled-skip-'),
+    );
+    await mkdir(join(appPath, 'locales', 'compiled'), { recursive: true });
+    await writeFile(
+      join(appPath, 'locales', 'compiled', 'fr-FR.json'),
+      JSON.stringify({ aaaaaa: '', bbbbbb: 'kept' }),
+    );
+    await writeFile(
+      join(appPath, 'locales', 'compiled', 'klingon.json'),
+      JSON.stringify({ cccccc: 'nuqneH' }),
+    );
+
+    expect(await compileApplicationTranslations(appPath)).toEqual({
+      'fr-FR': { bbbbbb: 'kept' },
+    });
   });
 });

@@ -72,6 +72,12 @@ export const collectTranslatableStrings = (
 
   // Tab and widget titles live nested under pageLayouts[].tabs[], not in the
   // flat pageLayoutTabs array, so walk the tree to reach them.
+  for (const objectManifest of manifest.objects ?? []) {
+    for (const field of objectManifest.fields ?? []) {
+      addEntityStrings(field, 'fieldMetadata');
+    }
+  }
+
   for (const pageLayout of manifest.pageLayouts ?? []) {
     for (const tab of pageLayout.tabs ?? []) {
       addEntityStrings(tab, 'pageLayoutTab');
