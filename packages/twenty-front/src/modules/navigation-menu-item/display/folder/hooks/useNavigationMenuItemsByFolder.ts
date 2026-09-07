@@ -4,7 +4,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { useEnsoViewerScope } from '@/enso/viewer-scope/hooks/useEnsoViewerScope';
 import { filterAndSortNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterAndSortNavigationMenuItems';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
-import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -25,7 +25,11 @@ type NavigationMenuItemFolderEntry = Pick<
 
 export const useNavigationMenuItemsByFolder = () => {
   const views = useAtomStateValue(viewsSelector);
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+  // The client receives every object's metadata regardless of readability,
+  // so this has to be the readable subset: otherwise a folder whose children
+  // are all unreadable still counts as having visible children.
+  const { readableObjectMetadataItems: objectMetadataItems } =
+    useReadableObjectMetadataItems();
   const { hiddenNavigationObjectNameSingulars } = useEnsoViewerScope();
 
   const { navigationMenuItems, workspaceNavigationMenuItems } =

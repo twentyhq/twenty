@@ -20,7 +20,10 @@ export const filterAndSortNavigationMenuItems = (
   );
 
   const isHiddenObject = (objectMetadataId: string | null | undefined) => {
-    if (hiddenObjectNameSingulars.length === 0 || !isDefined(objectMetadataId)) {
+    if (
+      hiddenObjectNameSingulars.length === 0 ||
+      !isDefined(objectMetadataId)
+    ) {
       return false;
     }
 

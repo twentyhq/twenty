@@ -367,5 +367,4 @@ describe('filterAndSortNavigationMenuItems', () => {
       expect(result).toEqual([navigationMenuItem]);
     });
   });
-
 });
