@@ -37,6 +37,7 @@ const TEXT_FIELD_MANIFEST: Required<
   isUIEditable: false,
   writability: MetadataWritability.APPLICATION,
   isUnique: true,
+  isSearchable: true,
   isLabelSyncedWithName: true,
   objectUniversalIdentifier: OBJECT_UID,
 };
@@ -56,6 +57,7 @@ const RELATION_FIELD_MANIFEST: Required<
   isUIEditable: true,
   writability: MetadataWritability.OPEN,
   isUnique: false,
+  isSearchable: false,
   isLabelSyncedWithName: false,
   objectUniversalIdentifier: OBJECT_UID,
   relationTargetFieldMetadataUniversalIdentifier: TARGET_FIELD_UID,

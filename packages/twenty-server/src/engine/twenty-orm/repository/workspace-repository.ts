@@ -1668,7 +1668,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const isRecordSharingEnabled =
       this.options.internalContext.featureFlagsMap[
         FeatureFlagKey.IS_RECORD_SHARING_ENABLED
-      ] === true;
+      ];
     const isOwningApplication = isOwningApplicationAuthContext({
       authContext: this.options.authContext,
       owningApplicationId: flatObjectMetadata.applicationId,
