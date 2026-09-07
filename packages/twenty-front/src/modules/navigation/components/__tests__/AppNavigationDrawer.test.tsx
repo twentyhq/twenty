@@ -61,4 +61,16 @@ describe('AppNavigationDrawer', () => {
       modeSwitcher,
     );
   });
+
+  it('leaves mode switching to the navigation bar on mobile', () => {
+    jest.mocked(useIsMobile).mockReturnValue(true);
+    jest.mocked(useIsSettingsDrawer).mockReturnValue(true);
+
+    render(<AppNavigationDrawer />);
+
+    expect(screen.getByText('Settings content')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Navigation modes' }),
+    ).not.toBeInTheDocument();
+  });
 });

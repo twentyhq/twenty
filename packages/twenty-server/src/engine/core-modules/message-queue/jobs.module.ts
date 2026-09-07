@@ -15,6 +15,8 @@ import { BillingReminderModule } from 'src/engine/core-modules/billing/reminders
 import { BillingReminderCronJob } from 'src/engine/core-modules/billing/reminders/crons/billing-reminder.cron.job';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
+import { TriggerInstallApplicationJob } from 'src/engine/core-modules/application/application-install/jobs/trigger-install-application.job';
+import { TriggerUninstallApplicationJob } from 'src/engine/core-modules/application/application-install/jobs/trigger-uninstall-application.job';
 import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
@@ -30,6 +32,7 @@ import { MaterializeCampaignChunkJob } from 'src/modules/emailing/jobs/materiali
 import { MaterializeCampaignJob } from 'src/modules/emailing/jobs/materialize-campaign.job';
 import { ReconcileWorkspaceCampaignStatsJob } from 'src/modules/emailing/jobs/reconcile-workspace-campaign-stats.job';
 import { RefreshCampaignStatsJob } from 'src/modules/emailing/jobs/refresh-campaign-stats.job';
+import { SendCampaignEmailBatchJob } from 'src/modules/emailing/jobs/send-campaign-email-batch.job';
 import { SendCampaignEmailJob } from 'src/modules/emailing/jobs/send-campaign-email.job';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { EventLogIngestionModule } from 'src/engine/core-modules/event-logs/ingest/event-log-ingestion.module';
@@ -116,6 +119,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     CleanOnboardingWorkspacesJob,
     EmailSenderJob,
     SendCampaignEmailJob,
+    SendCampaignEmailBatchJob,
     MaterializeCampaignJob,
     MaterializeCampaignChunkJob,
     RefreshCampaignStatsJob,
@@ -129,6 +133,8 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     UpgradeApplicationsJob,
     InstallOnboardingAppsJob,
     InstallPreInstalledAppsJob,
+    TriggerInstallApplicationJob,
+    TriggerUninstallApplicationJob,
   ],
 })
 export class JobsModule {

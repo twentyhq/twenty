@@ -90,6 +90,7 @@ export class WorkspaceDataSource {
     };
     const result = await this.runInClientTransaction((executor) =>
       work({
+        workspaceId: this.internalContext.workspaceId,
         getRepository: <T extends ObjectLiteral = ObjectRecord>(
           nameSingular: string,
           rolePermissionConfig?: RolePermissionConfig,
