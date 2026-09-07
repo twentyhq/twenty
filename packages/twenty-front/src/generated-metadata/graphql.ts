@@ -3988,6 +3988,9 @@ export type MutationTransferRecordOwnershipArgs = {
   objectMetadataId: Scalars['UUID']['input'];
   recordId: Scalars['UUID']['input'];
   workspaceMemberId: Scalars['UUID']['input'];
+};
+
+
 export type MutationTriggerInstallApplicationJobArgs = {
   input: TriggerInstallApplicationJobInput;
 };
