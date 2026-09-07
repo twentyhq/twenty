@@ -345,8 +345,29 @@ describe('UsageLimitQuotaService', () => {
           periodStart: expect.stringContaining('2026-08-15'),
         }),
       );
+      expect(clickHouseService.selectOrThrow).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'AND timestamp >= {periodStart:DateTime64(3)} - INTERVAL 1 DAY',
+        ),
+        expect.anything(),
+      );
       expect(cacheStorage.mset).toHaveBeenCalledWith([
         expect.objectContaining({ value: 650 }),
+      ]);
+    });
+
+    it('keeps the calendar limits when the allowance period lookup fails', async () => {
+      setLimits([buildLimit({ id: 'month' }), allowancePeriodLimit]);
+      creditAllowanceProvider.isCreditAllowanceEnabled.mockResolvedValue(false);
+      creditAllowanceProvider.getCreditAllowancePeriod.mockRejectedValue(
+        new Error('billing down'),
+      );
+      cacheStorage.mget.mockResolvedValue([250]);
+
+      await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
+
+      expect(cacheStorage.mget).toHaveBeenCalledWith([
+        expect.stringContaining(':month:'),
       ]);
     });
 

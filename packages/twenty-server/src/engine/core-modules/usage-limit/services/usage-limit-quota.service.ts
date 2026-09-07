@@ -527,11 +527,20 @@ export class UsageLimitQuotaService implements OnModuleInit {
     periodUnit: AnchoredPeriodUnit;
   }): Promise<UsagePeriod | null> {
     if (periodUnit === 'allowancePeriod') {
-      return (
-        (await this.creditAllowanceProvider?.getCreditAllowancePeriod(
-          workspaceId,
-        )) ?? null
-      );
+      try {
+        return (
+          (await this.creditAllowanceProvider?.getCreditAllowancePeriod(
+            workspaceId,
+          )) ?? null
+        );
+      } catch (error) {
+        // A billing lookup failure must not take the calendar limits down with it
+        this.logger.warn(
+          `Could not read the allowance period for workspace ${workspaceId}, skipping its allowance-period limits: ${error instanceof Error ? error.message : 'unknown error'}`,
+        );
+
+        return null;
+      }
     }
 
     return this.usagePeriodService.getCurrentPeriod(periodUnit);
@@ -756,9 +765,13 @@ export class UsageLimitQuotaService implements OnModuleInit {
     workspaceId: string;
     counter: LimitQuotaCounter;
   }): Promise<QuotaConsumptionRow[]> {
+    // An event only carries a period once the cache holds it, so bounding the
+    // timestamp lets the primary key prune without changing the result
     const periodClause =
       counter.periodUnit === 'allowancePeriod'
-        ? 'AND periodStart = {periodStart:DateTime64(3)}'
+        ? `AND periodStart = {periodStart:DateTime64(3)}
+         AND timestamp >= {periodStart:DateTime64(3)} - INTERVAL 1 DAY
+         AND timestamp < {periodEnd:DateTime64(3)} + INTERVAL 1 DAY`
         : `AND toStartOfDay(timestamp, 'UTC') >= {periodStart:DateTime64(3)}
          AND toStartOfDay(timestamp, 'UTC') < {periodEnd:DateTime64(3)}`;
 
