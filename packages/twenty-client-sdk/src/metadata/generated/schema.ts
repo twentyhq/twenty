@@ -7401,7 +7401,7 @@ export interface RowLevelPermissionPredicateGroupInput {id?: (Scalars['UUID'] | 
 
 export interface SendEmailViaDomainInput {emailingDomainId: Scalars['String'],to: Scalars['String'][],cc?: (Scalars['String'][] | null),bcc?: (Scalars['String'][] | null),subject: Scalars['String'],text: Scalars['String'],html?: (Scalars['String'] | null),from: Scalars['String'],replyTo?: (Scalars['String'][] | null)}
 
-export interface SendMessageCampaignInput {campaignId: Scalars['String']}
+export interface SendMessageCampaignInput {campaignId: Scalars['String'],scheduledAt?: (Scalars['DateTime'] | null)}
 
 export interface CancelMessageCampaignInput {campaignId: Scalars['String']}
 

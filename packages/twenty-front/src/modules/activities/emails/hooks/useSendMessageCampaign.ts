@@ -3,11 +3,16 @@ import { useMutation } from '@apollo/client/react';
 
 import { SEND_MESSAGE_CAMPAIGN } from '@/activities/emails/graphql/mutations/sendMessageCampaign';
 import { buildExcludedRecipientReasons } from '@/activities/emails/utils/buildExcludedRecipientReasons';
+import { formatCampaignSendTime } from '@/activities/emails/utils/formatCampaignSendTime';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { plural, t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { MessageCampaignStatus } from 'twenty-shared/types';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import {
   type SendMessageCampaignMutation,
   type SendMessageCampaignMutationVariables,
@@ -15,6 +20,8 @@ import {
 
 type SendMessageCampaignParams = {
   campaignId: string;
+  scheduledAt?: string;
+  wasAlreadyScheduled?: boolean;
 };
 
 export const useSendMessageCampaign = () => {
@@ -26,13 +33,17 @@ export const useSendMessageCampaign = () => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const { formatNumber } = useNumberFormat();
+  const { dateFormat, timeFormat, timeZone } = useDateTimeFormat();
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   const sendMessageCampaign = async ({
     campaignId,
+    scheduledAt,
+    wasAlreadyScheduled = false,
   }: SendMessageCampaignParams): Promise<boolean> => {
     try {
       const result = await sendMessageCampaignMutation({
-        variables: { input: { campaignId } },
+        variables: { input: { campaignId, scheduledAt } },
       });
 
       const queued = result.data?.sendMessageCampaign;
@@ -50,7 +61,10 @@ export const useSendMessageCampaign = () => {
           {
             __typename: 'MessageCampaign',
             id: campaignId,
-            status: MessageCampaignStatus.SENDING,
+            status: isNonEmptyString(scheduledAt)
+              ? MessageCampaignStatus.SCHEDULED
+              : MessageCampaignStatus.SENDING,
+            scheduledAt: scheduledAt ?? null,
           },
         ],
       });
@@ -64,6 +78,20 @@ export const useSendMessageCampaign = () => {
       if (queuedCount === 0) {
         enqueueErrorSnackBar({
           message: t`No recipients to send to (${skipReasons})`,
+        });
+      } else if (isNonEmptyString(scheduledAt)) {
+        const sendTime = formatCampaignSendTime({
+          value: scheduledAt,
+          timeZone,
+          dateFormat,
+          timeFormat,
+          localeCatalog,
+        });
+
+        enqueueSuccessSnackBar({
+          message: wasAlreadyScheduled
+            ? t`Campaign moved to ${sendTime}`
+            : t`Campaign scheduled for ${sendTime}`,
         });
       } else {
         const queuedMessage = plural(queuedCount, {

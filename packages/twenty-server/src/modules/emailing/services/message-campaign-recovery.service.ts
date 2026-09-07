@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { In, LessThan, MoreThan } from 'typeorm';
 import { MessageCampaignStatus } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -18,6 +19,8 @@ const SENDING_STALE_THRESHOLD_MS = 60 * 60 * 1000;
 // a worker outage holds rows that were never claimed at all. Being wrong here
 // fails recipients whose jobs were still coming.
 const ORPHANED_QUEUED_THRESHOLD_MS = 24 * 60 * 60 * 1000;
+
+const OVERDUE_SCHEDULED_THRESHOLD_MS = 60 * 60 * 1000;
 
 @Injectable()
 export class MessageCampaignRecoveryService {
@@ -69,6 +72,52 @@ export class MessageCampaignRecoveryService {
           }`,
         );
       });
+    }
+  }
+
+  async releaseOverdueScheduledCampaigns({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<void> {
+    const overdueSince = new Date(Date.now() - OVERDUE_SCHEDULED_THRESHOLD_MS);
+
+    const overdueCampaigns =
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const campaignRepository = this.workspaceOrmManager.getRepository(
+          MessageCampaignWorkspaceEntity,
+          { shouldBypassPermissionChecks: true },
+        );
+
+        return campaignRepository.find({
+          where: {
+            status: MessageCampaignStatus.SCHEDULED,
+            scheduledAt: LessThan(overdueSince),
+          },
+          select: { id: true, scheduledAt: true },
+        });
+      }, buildSystemAuthContext(workspaceId));
+
+    for (const campaign of overdueCampaigns) {
+      if (!isDefined(campaign.scheduledAt)) {
+        continue;
+      }
+
+      const released =
+        await this.messageCampaignLifecycleService.transitionCampaignStatus({
+          workspaceId,
+          campaignId: campaign.id,
+          from: MessageCampaignStatus.SCHEDULED,
+          to: MessageCampaignStatus.DRAFT,
+          scheduledAt: null,
+          fromScheduledAt: campaign.scheduledAt,
+        });
+
+      if (released) {
+        this.logger.warn(
+          `Campaign ${campaign.id} of workspace ${workspaceId} was still scheduled for ${campaign.scheduledAt.toISOString()} with no send job left and was released back to draft`,
+        );
+      }
     }
   }
 

@@ -43,6 +43,16 @@ export class EmailingOngoingStaleCronJob {
             }`,
           );
         });
+
+      await this.messageCampaignRecoveryService
+        .releaseOverdueScheduledCampaigns({ workspaceId: workspace.id })
+        .catch((error) => {
+          this.logger.error(
+            `[${EmailingOngoingStaleCronJob.name}] Cannot release overdue scheduled campaigns of workspace ${workspace.id}: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
+          );
+        });
     }
   }
 }
