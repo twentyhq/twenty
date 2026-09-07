@@ -35,6 +35,8 @@ const getConnectionProviderExceptionUserFriendlyMessage = (
       return msg`The logic function to run on disconnect was not found.`;
     case ConnectionProviderExceptionCode.ON_DISCONNECT_LOGIC_FUNCTION_FAILED:
       return msg`The logic function to run on disconnect failed.`;
+    case ConnectionProviderExceptionCode.CONNECTED_ACCOUNT_ALREADY_EXISTS:
+      return msg`You already have a connection for this provider. Open it and use Reconnect to refresh it or change its visibility.`;
     default:
       assertUnreachable(code);
   }

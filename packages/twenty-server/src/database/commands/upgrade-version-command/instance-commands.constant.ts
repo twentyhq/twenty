@@ -178,6 +178,7 @@ import { EraseObjectNavigationCommandMenuItemPayloadsSlowInstanceCommand } from 
 import { ReshapeUsageLimitPeriodFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788367160891-reshape-usage-limit-period';
 import { AddLogoToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788542613404-add-logo-to-connection-provider';
 import { AddReadabilityToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788548844925-add-readability-to-object-metadata';
+import { EnforceOneAppConnectionPerUserSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-slow-1788778467183-enforce-one-app-connection-per-user';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -358,4 +359,5 @@ export const INSTANCE_COMMANDS = [
   AddReadabilityToObjectMetadataFastInstanceCommand,
   AddCommandMenuItemConditionalPinnedExpressionFastInstanceCommand,
   AddCampaignDeliveryClaimTokenIndexFastInstanceCommand,
+  EnforceOneAppConnectionPerUserSlowInstanceCommand,
 ];

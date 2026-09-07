@@ -1,6 +1,7 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 
 import { type Request } from 'express';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { AppPath } from 'twenty-shared/types';
 
 import {
@@ -10,8 +11,9 @@ import {
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { type CustomException } from 'src/utils/custom-exception';
+import { CustomException } from 'src/utils/custom-exception';
 
 @Injectable()
 export class GuardRedirectService {
@@ -20,6 +22,7 @@ export class GuardRedirectService {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly domainsServerConfigService: DomainServerConfigService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
+    private readonly i18nService: I18nService,
   ) {}
 
   dispatchErrorFromGuard(
@@ -86,7 +89,7 @@ export class GuardRedirectService {
     workspace,
     pathname,
   }: {
-    error: Error | AuthException;
+    error: Error | CustomException;
     workspace: {
       id?: string;
       subdomain: string;
@@ -97,10 +100,7 @@ export class GuardRedirectService {
   }) {
     this.captureException(error, workspace.id);
 
-    const errorMessage =
-      error instanceof AuthException
-        ? error.message
-        : `Authentication error: ${error instanceof Error ? error.message : String(error)}`;
+    const errorMessage = this.getErrorMessage(error);
 
     return this.workspaceDomainsService.computeWorkspaceRedirectErrorUrl(
       errorMessage,
@@ -111,5 +111,19 @@ export class GuardRedirectService {
       },
       pathname,
     );
+  }
+
+  private getErrorMessage(error: Error | CustomException): string {
+    if (error instanceof AuthException) {
+      return error.message;
+    }
+
+    if (error instanceof CustomException) {
+      return this.i18nService
+        .getI18nInstance(SOURCE_LOCALE)
+        ._(error.userFriendlyMessage);
+    }
+
+    return `Authentication error: ${error.message}`;
   }
 }

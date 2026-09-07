@@ -255,7 +255,7 @@ const conn =
 const conn = connections.find((c) => c.visibility === 'workspace');
 ```
 
-Multiple connections per (user, provider) are allowed, so the same user can hold "Personal Linear" and "Work Linear" side by side.
+Each user holds at most one connection per provider. Adding a second one is rejected; the **Reconnect** action on the connection page refreshes the credential or changes its visibility.
 
 </Accordion>
 

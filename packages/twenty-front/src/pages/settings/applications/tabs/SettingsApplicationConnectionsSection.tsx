@@ -104,7 +104,8 @@ export const SettingsApplicationConnectionsSection = ({
   const { triggerAppOAuth } = useTriggerAppOAuth();
   const { connectionProviders, loading } =
     useFindApplicationConnectionProviders(applicationId);
-  const { accounts: connectedAccounts } = useMyAppConnectedAccounts();
+  const { accounts: connectedAccounts, loading: isLoadingConnectedAccounts } =
+    useMyAppConnectedAccounts();
 
   if (loading || connectionProviders.length === 0) {
     return null;
@@ -213,20 +214,22 @@ export const SettingsApplicationConnectionsSection = ({
                 </StyledTableRowsContainer>
               </Table>
             )}
-            {isClientCredentialsConfigured && (
-              <StyledFooter>
-                <AddConnectionDropdown
-                  provider={provider}
-                  onPick={(visibility) =>
-                    triggerAppOAuth({
-                      applicationId,
-                      providerName: provider.name,
-                      visibility,
-                    })
-                  }
-                />
-              </StyledFooter>
-            )}
+            {isClientCredentialsConfigured &&
+              !isLoadingConnectedAccounts &&
+              providerConnections.length === 0 && (
+                <StyledFooter>
+                  <AddConnectionDropdown
+                    provider={provider}
+                    onPick={(visibility) =>
+                      triggerAppOAuth({
+                        applicationId,
+                        providerName: provider.name,
+                        visibility,
+                      })
+                    }
+                  />
+                </StyledFooter>
+              )}
           </Section>
         );
       })}

@@ -1,6 +1,7 @@
 import { Controller, Get, Logger, Query, Res, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { type Response } from 'express';
 import { ApiPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -152,7 +153,14 @@ export class ConnectionProviderOAuthController {
         error instanceof Error ? error.stack : undefined,
       );
 
-      return this.redirectToError(res, error, workspace);
+      return this.redirectToError(
+        res,
+        error,
+        workspace,
+        isNonEmptyString(applicationId)
+          ? getSettingsPath(SettingsPath.ApplicationDetail, { applicationId })
+          : undefined,
+      );
     }
   }
 
@@ -231,6 +239,7 @@ export class ConnectionProviderOAuthController {
     res: Response,
     error: unknown,
     workspace: WorkspaceEntity | null,
+    pathname = getSettingsPath(SettingsPath.Accounts),
   ) {
     return res.redirect(
       this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
@@ -242,7 +251,7 @@ export class ConnectionProviderOAuthController {
             this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
           customDomain: workspace?.customDomain ?? null,
         },
-        pathname: getSettingsPath(SettingsPath.Accounts),
+        pathname,
       }),
     );
   }

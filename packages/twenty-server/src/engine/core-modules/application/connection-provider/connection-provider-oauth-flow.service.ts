@@ -1,11 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
@@ -96,6 +97,12 @@ export class ConnectionProviderOAuthFlowService {
           ConnectionProviderExceptionCode.FORBIDDEN,
         );
       }
+    } else {
+      await this.throwIfUserAlreadyConnected({
+        connectionProviderId: connectionProvider.id,
+        userWorkspaceId,
+        workspaceId,
+      });
     }
 
     const { clientId } =
@@ -322,6 +329,12 @@ export class ConnectionProviderOAuthFlowService {
       });
     }
 
+    await this.throwIfUserAlreadyConnected({
+      connectionProviderId: provider.id,
+      userWorkspaceId,
+      workspaceId,
+    });
+
     const existingCount = await this.connectedAccountRepository.count({
       where: { connectionProviderId: provider.id, workspaceId },
     });
@@ -339,6 +352,47 @@ export class ConnectionProviderOAuthFlowService {
       userWorkspaceId,
     });
 
-    return this.connectedAccountRepository.save(created);
+    try {
+      return await this.connectedAccountRepository.save(created);
+    } catch (error) {
+      if (this.isUniqueViolation(error)) {
+        throw new ConnectionProviderException(
+          `User workspace ${userWorkspaceId} already has a connected account for provider ${provider.id}`,
+          ConnectionProviderExceptionCode.CONNECTED_ACCOUNT_ALREADY_EXISTS,
+        );
+      }
+
+      throw error;
+    }
+  }
+
+  private async throwIfUserAlreadyConnected({
+    connectionProviderId,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    connectionProviderId: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const existing = await this.connectedAccountRepository.findOne({
+      where: { connectionProviderId, userWorkspaceId, workspaceId },
+      select: { id: true },
+    });
+
+    if (isDefined(existing)) {
+      throw new ConnectionProviderException(
+        `User workspace ${userWorkspaceId} already has connected account ${existing.id} for provider ${connectionProviderId}`,
+        ConnectionProviderExceptionCode.CONNECTED_ACCOUNT_ALREADY_EXISTS,
+      );
+    }
+  }
+
+  private isUniqueViolation(error: unknown): boolean {
+    return (
+      error instanceof QueryFailedError &&
+      'code' in error &&
+      error.code === POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION
+    );
   }
 }

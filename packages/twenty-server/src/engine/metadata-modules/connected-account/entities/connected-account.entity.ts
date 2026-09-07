@@ -25,9 +25,13 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
 export type ConnectedAccountVisibility = 'user' | 'workspace';
 
 @Entity({ name: 'connectedAccount', schema: 'core' })
-@Index('IDX_CONNECTED_ACCOUNT_CONNECTION_PROVIDER_ID', ['connectionProviderId'])
 @Index('IDX_CONNECTED_ACCOUNT_APPLICATION_ID', ['applicationId'])
 @Index('IDX_CONNECTED_ACCOUNT_HANDLE_PROVIDER', ['handle', 'provider'])
+@Index(
+  'IDX_CONNECTED_ACCOUNT_PROVIDER_USER_WORKSPACE_UNIQUE',
+  ['connectionProviderId', 'userWorkspaceId'],
+  { unique: true, where: '"connectionProviderId" IS NOT NULL' },
+)
 @Check(
   'CHK_connectedAccount_accessToken_encrypted',
   `"accessToken" IS NULL OR "accessToken" LIKE 'enc:v2:%'`,
