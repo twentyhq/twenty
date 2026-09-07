@@ -21,20 +21,14 @@ export const buildRecordShareStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'recordPrincipalCauseSourceUniqueIndex',
-      relatedFieldNames: ['recordId', 'principalId', 'rowCause', 'sourceId'],
+      relatedFieldNames: [
+        'objectMetadataId',
+        'recordId',
+        'principalId',
+        'rowCause',
+        'sourceId',
+      ],
       isUnique: true,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  objectRecordIndex: createStandardIndexFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      indexName: 'objectRecordIndex',
-      relatedFieldNames: ['objectMetadataId', 'recordId'],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

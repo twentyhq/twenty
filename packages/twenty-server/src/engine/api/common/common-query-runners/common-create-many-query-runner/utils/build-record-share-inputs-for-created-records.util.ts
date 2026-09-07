@@ -136,7 +136,14 @@ export const buildRecordShareInputsForCreatedRecords = ({
     }));
   }
 
-  const shareWithPrincipals = shareWith.map(resolveShareWithPrincipal);
+  const creatorRoleId = resolveCreatorRoleId({ authContext, apiKeyRoleMap });
+  const shareWithPrincipals = shareWith
+    .map(resolveShareWithPrincipal)
+    .map((shareWithPrincipal) =>
+      shareWithPrincipal.principalId === creatorRoleId
+        ? { ...shareWithPrincipal, accessLevel: RecordShareAccessLevel.FULL }
+        : shareWithPrincipal,
+    );
 
   return recordIds.flatMap((recordId) => [
     ...buildCreatorRows({

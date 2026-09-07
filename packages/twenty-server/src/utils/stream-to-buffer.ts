@@ -1,5 +1,7 @@
 import { type Readable } from 'stream';
 
+import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
+
 export const streamToBuffer = async (
   stream: Readable,
   maxSizeBytes?: number,
@@ -37,11 +39,7 @@ export const streamToBuffer = async (
           isResolved = true;
           cleanup();
           stream.destroy();
-          reject(
-            new Error(
-              `Stream exceeds maximum allowed size of ${maxSizeBytes} bytes`,
-            ),
-          );
+          reject(new StreamSizeExceededError(maxSizeBytes));
 
           return;
         }

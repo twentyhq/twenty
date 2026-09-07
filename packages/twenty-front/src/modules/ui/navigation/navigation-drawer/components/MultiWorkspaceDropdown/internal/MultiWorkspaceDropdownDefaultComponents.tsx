@@ -33,6 +33,7 @@ import {
   IconLogout,
   IconMessage,
   IconPlus,
+  IconSettings,
   IconSwitchHorizontal,
   IconUserPlus,
 } from 'twenty-ui/icon';
@@ -44,6 +45,7 @@ import {
 } from 'twenty-ui/navigation';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -72,8 +74,15 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   );
 
   const { openRecordInPreference } = useOpenRecordInPreference();
+  const navigateSettings = useNavigateSettings();
 
-  const canDisplaySidePanel = !useIsMobile();
+  const isMobile = useIsMobile();
+  const canDisplaySidePanel = !isMobile;
+
+  const handleSettings = () => {
+    closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
+    navigateSettings(SettingsPath.ProfilePage);
+  };
 
   const handleSupport = () => {
     window.FrontChat?.('show');
@@ -188,6 +197,15 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
         </>
       )}
       <DropdownMenuItemsContainer>
+        {/* Desktop reaches settings from the drawer's mode switcher, which
+            mobile does not render, so the workspace menu is where it lives. */}
+        {isMobile && (
+          <MenuItem
+            LeftIcon={IconSettings}
+            text={t`Settings`}
+            onClick={handleSettings}
+          />
+        )}
         <MenuItem
           LeftIcon={colorSchemeList.find(({ id }) => id === colorScheme)?.icon}
           text={t`Theme`}
