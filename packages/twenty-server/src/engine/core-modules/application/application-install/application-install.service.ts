@@ -368,6 +368,11 @@ export class ApplicationInstallService {
         persistVersion: false,
       });
 
+      await this.applicationService.update(application.id, {
+        version: newVersion,
+        workspaceId: params.workspaceId,
+      });
+
       await this.runPostInstallHook({
         manifest: resolvedPackage.manifest,
         workspaceId: params.workspaceId,
@@ -385,11 +390,6 @@ export class ApplicationInstallService {
           preventVersionDowngrade: true,
         },
       );
-
-      await this.applicationService.update(application.id, {
-        version: newVersion,
-        workspaceId: params.workspaceId,
-      });
 
       this.logger.log(
         `Successfully installed app ${universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
