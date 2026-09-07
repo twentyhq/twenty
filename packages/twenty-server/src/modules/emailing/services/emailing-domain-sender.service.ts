@@ -94,6 +94,7 @@ export class EmailingDomainSenderService {
     template,
     recipients,
     unsubscribeTopicId,
+    blockedAddresses: precomputedBlockedAddresses,
   }: {
     workspaceId: string;
     emailingDomainId: string;
@@ -102,6 +103,7 @@ export class EmailingDomainSenderService {
     template: EmailingDomainEmailTemplate;
     recipients: EmailingDomainBatchRecipient[];
     unsubscribeTopicId?: string;
+    blockedAddresses?: Set<string>;
   }): Promise<CampaignBatchSendOutcome> {
     const emailingDomain = await this.findEmailingDomainByIdOrThrow(
       workspaceId,
@@ -110,24 +112,14 @@ export class EmailingDomainSenderService {
 
     this.assertDomainCanSend(emailingDomain, from);
 
-    const suppressions =
-      await this.messageSuppressionService.findApplicableSuppressions({
+    const blockedAddresses =
+      precomputedBlockedAddresses ??
+      (await this.findBlockedRecipientAddresses({
         workspaceId,
+        sendKind,
         emailAddresses: recipients.map((recipient) => recipient.email),
         unsubscribeTopicId,
-      });
-
-    const blockedAddresses = new Set(
-      suppressions
-        .filter((suppression) =>
-          isSuppressionBlockingSend({
-            sendKind,
-            suppression,
-            unsubscribeTopicId,
-          }),
-        )
-        .map((suppression) => suppression.emailAddress),
-    );
+      }));
 
     const deliverableRecipients: EmailingDomainBatchRecipient[] = [];
     const deliverableRecipientIndexes: number[] = [];
@@ -180,6 +172,40 @@ export class EmailingDomainSenderService {
       })),
       suppressedRecipientIndexes,
     };
+  }
+
+  // Exposed so a caller can tell who is actually deliverable before spending
+  // anything on their behalf; sendEmailBatch takes the result back rather than
+  // resolving it a second time.
+  async findBlockedRecipientAddresses({
+    workspaceId,
+    sendKind,
+    emailAddresses,
+    unsubscribeTopicId,
+  }: {
+    workspaceId: string;
+    sendKind: EmailingDomainSendKind;
+    emailAddresses: string[];
+    unsubscribeTopicId?: string;
+  }): Promise<Set<string>> {
+    const suppressions =
+      await this.messageSuppressionService.findApplicableSuppressions({
+        workspaceId,
+        emailAddresses,
+        unsubscribeTopicId,
+      });
+
+    return new Set(
+      suppressions
+        .filter((suppression) =>
+          isSuppressionBlockingSend({
+            sendKind,
+            suppression,
+            unsubscribeTopicId,
+          }),
+        )
+        .map((suppression) => suppression.emailAddress),
+    );
   }
 
   private async findEmailGroupChannel(

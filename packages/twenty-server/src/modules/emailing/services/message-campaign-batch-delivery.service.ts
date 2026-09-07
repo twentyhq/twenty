@@ -171,11 +171,30 @@ export class MessageCampaignBatchDeliveryService {
       return;
     }
 
-    const sendSlotRefusal =
-      await this.campaignSendSlotService.findSendSlotRefusal({
+    // Suppressed recipients are resolved before the slots are asked for, so a
+    // batch full of unsubscribed addresses does not spend send capacity that
+    // the recipients it actually has could have used. The set is handed to the
+    // sender so it does not resolve suppression a second time.
+    const blockedAddresses =
+      await this.emailingDomainSenderService.findBlockedRecipientAddresses({
         workspaceId,
-        requestedSlotCount: claimedRecipients.length,
+        sendKind: 'MARKETING',
+        emailAddresses: claimedRecipients.map((recipient) => recipient.email),
+        unsubscribeTopicId: campaign.unsubscribeTopicId ?? undefined,
       });
+
+    const deliverableRecipientCount = claimedRecipients.filter(
+      (recipient) =>
+        !blockedAddresses.has(recipient.email.trim().toLowerCase()),
+    ).length;
+
+    const sendSlotRefusal =
+      deliverableRecipientCount === 0
+        ? null
+        : await this.campaignSendSlotService.findSendSlotRefusal({
+            workspaceId,
+            requestedSlotCount: deliverableRecipientCount,
+          });
 
     if (isDefined(sendSlotRefusal)) {
       await this.deferRateLimitedBatch({
@@ -210,6 +229,7 @@ export class MessageCampaignBatchDeliveryService {
       campaign: campaignStillRunning,
       claimToken,
       claimedRecipients,
+      blockedAddresses,
     });
   }
 
@@ -286,11 +306,13 @@ export class MessageCampaignBatchDeliveryService {
     campaign,
     claimToken,
     claimedRecipients,
+    blockedAddresses,
   }: {
     data: SendCampaignEmailBatchJobData;
     campaign: MessageCampaignWorkspaceEntity;
     claimToken: string;
     claimedRecipients: BatchRecipient[];
+    blockedAddresses: Set<string>;
   }): Promise<void> {
     const { workspaceId, campaignId, emailingDomainId } = data;
 
@@ -338,6 +360,7 @@ export class MessageCampaignBatchDeliveryService {
           replacements: replacementsByDeliveryId.get(recipient.messageId) ?? {},
         })),
         unsubscribeTopicId: campaign.unsubscribeTopicId ?? undefined,
+        blockedAddresses,
       })
       .catch(async (error) => {
         const { shouldRetry } = await this.recordBatchFailure({

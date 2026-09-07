@@ -114,7 +114,10 @@ const buildHarness = () => {
     }),
   };
 
-  const emailingDomainSenderService = { sendEmailBatch: jest.fn() };
+  const emailingDomainSenderService = {
+    sendEmailBatch: jest.fn(),
+    findBlockedRecipientAddresses: jest.fn(async () => new Set<string>()),
+  };
   const emailBillingService = {
     getEmailCreditContext: jest.fn(async () => ({ hasCredits: true })),
     billSentEmails: jest.fn(async () => undefined),
@@ -387,6 +390,46 @@ describe('MessageCampaignBatchDeliveryService', () => {
     expect(harness.emailBillingService.billSentEmails).toHaveBeenCalledWith(
       expect.objectContaining({ sentEmailCount: 1 }),
     );
+  });
+
+  it('asks for slots for the deliverable recipients only, not the suppressed ones', async () => {
+    const harness = buildHarness();
+
+    harness.claimedIds.push('message-0', 'message-1', 'message-2');
+    harness.emailingDomainSenderService.findBlockedRecipientAddresses.mockResolvedValue(
+      new Set(['person1@example.com', 'person2@example.com']),
+    );
+    harness.emailingDomainSenderService.sendEmailBatch.mockResolvedValue({
+      entries: [
+        { recipientIndex: 0, messageId: 'provider-0', errorMessage: null },
+      ],
+      suppressedRecipientIndexes: [1, 2],
+    });
+
+    await (await harness.buildService()).processSendBatchJob(buildJobData(3));
+
+    expect(
+      harness.campaignSendSlotService.findSendSlotRefusal,
+    ).toHaveBeenCalledWith(expect.objectContaining({ requestedSlotCount: 1 }));
+  });
+
+  it('spends no send capacity at all when every recipient is suppressed', async () => {
+    const harness = buildHarness();
+
+    harness.claimedIds.push('message-0');
+    harness.emailingDomainSenderService.findBlockedRecipientAddresses.mockResolvedValue(
+      new Set(['person0@example.com']),
+    );
+    harness.emailingDomainSenderService.sendEmailBatch.mockResolvedValue({
+      entries: [],
+      suppressedRecipientIndexes: [0],
+    });
+
+    await (await harness.buildService()).processSendBatchJob(buildJobData(1));
+
+    expect(
+      harness.campaignSendSlotService.findSendSlotRefusal,
+    ).not.toHaveBeenCalled();
   });
 
   it('splits a rate-limited batch the workspace limit could never admit whole', async () => {
