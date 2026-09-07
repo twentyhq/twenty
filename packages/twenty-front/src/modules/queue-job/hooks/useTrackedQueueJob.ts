@@ -2,7 +2,8 @@ import { QUEUE_JOB_STATUS_POLL_INTERVAL_MS } from '@/queue-job/constants/QueueJo
 import { useListenToQueueJob } from '@/queue-job/hooks/useListenToQueueJob';
 import { type TrackedJobStatus } from '@/queue-job/types/TrackedJobStatus';
 import { isTerminalJobState } from '@/queue-job/utils/isTerminalJobState';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { atom, useAtomValue, useStore } from 'jotai';
+import { useCallback, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseTrackedQueueJobArgs = {
@@ -21,10 +22,13 @@ export const useTrackedQueueJob = ({
   onQueueJobSettled,
 }: UseTrackedQueueJobArgs) => {
   const [triggeredJobId, setTriggeredJobId] = useState<string>();
-  const [settledJobId, setSettledJobId] = useState<string>();
   // A browser event and a poll response can settle the same job in one tick,
-  // before the settled state has re-rendered
-  const settledJobIdRef = useRef<string | undefined>(undefined);
+  // before a re-render, so the settled id is read and written synchronously
+  const [settledJobIdAtom] = useState(() =>
+    atom<string | undefined>(undefined),
+  );
+  const store = useStore();
+  const settledJobId = useAtomValue(settledJobIdAtom);
 
   const trackedJobId = triggeredJobId ?? runningJobId;
   const activeJobId =
@@ -36,13 +40,12 @@ export const useTrackedQueueJob = ({
     (jobStatus: TrackedJobStatus) => {
       if (
         !isTerminalJobState(jobStatus.state) ||
-        settledJobIdRef.current === jobStatus.jobId
+        store.get(settledJobIdAtom) === jobStatus.jobId
       ) {
         return;
       }
 
-      settledJobIdRef.current = jobStatus.jobId;
-      setSettledJobId(jobStatus.jobId);
+      store.set(settledJobIdAtom, jobStatus.jobId);
       // A settled trigger must stop shadowing a job the server reports later
       setTriggeredJobId((currentTriggeredJobId) =>
         currentTriggeredJobId === jobStatus.jobId
@@ -51,7 +54,7 @@ export const useTrackedQueueJob = ({
       );
       void onQueueJobSettled(jobStatus);
     },
-    [onQueueJobSettled],
+    [onQueueJobSettled, settledJobIdAtom, store],
   );
 
   useListenToQueueJob({
@@ -90,8 +93,7 @@ export const useTrackedQueueJob = ({
   }, [activeJobId, fetchJobStatus, handleQueueJobEvent]);
 
   const trackJob = (jobId?: string) => {
-    settledJobIdRef.current = undefined;
-    setSettledJobId(undefined);
+    store.set(settledJobIdAtom, undefined);
     setTriggeredJobId(jobId);
   };
 
