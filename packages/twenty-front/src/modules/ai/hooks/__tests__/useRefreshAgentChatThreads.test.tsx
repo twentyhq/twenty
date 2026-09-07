@@ -3,6 +3,7 @@ import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { clearMetadataStoreStorage } from '@/metadata-store/storage/metadataStoreStorage';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
@@ -33,7 +34,8 @@ const getWrapper = (store: ReturnType<typeof createStore>) =>
   };
 
 describe('useRefreshAgentChatThreads', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    await clearMetadataStoreStorage();
     jest.clearAllMocks();
   });
 
@@ -84,11 +86,14 @@ describe('useRefreshAgentChatThreads', () => {
       });
     });
 
+    let refreshedThreads: AgentChatThread[] | undefined;
+
     await act(async () => {
       resolveQuery({ data: { chatThreads: [staleThread] } });
-      await refreshPromise;
+      refreshedThreads = await refreshPromise;
     });
 
+    expect(refreshedThreads).toEqual([newerThread]);
     expect(
       store.get(metadataStoreState.atomFamily('agentChatThreads')).current,
     ).toEqual([newerThread]);

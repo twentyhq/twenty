@@ -31,11 +31,16 @@ export const useRefreshAgentChatThreads = () => {
 
     // A newer local or subscription update owns the store when it arrives
     // while this request is in flight.
-    if (
-      store.get(metadataStoreState.atomFamily('agentChatThreads')) !==
-      storeEntryBeforeRequest
-    ) {
-      return agentChatThreads;
+    const currentStoreEntry = store.get(
+      metadataStoreState.atomFamily('agentChatThreads'),
+    );
+
+    if (currentStoreEntry !== storeEntryBeforeRequest) {
+      return (
+        currentStoreEntry.status === 'draft-pending'
+          ? currentStoreEntry.draft
+          : currentStoreEntry.current
+      ) as typeof agentChatThreads;
     }
 
     replaceDraft('agentChatThreads', agentChatThreads);
