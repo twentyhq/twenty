@@ -6,7 +6,7 @@ import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
-export enum SSOExceptionCode {
+export enum SsoExceptionCode {
   USER_NOT_FOUND = 'USER_NOT_FOUND',
   IDENTITY_PROVIDER_NOT_FOUND = 'IDENTITY_PROVIDER_NOT_FOUND',
   INVALID_ISSUER_URL = 'INVALID_ISSUER_URL',
@@ -15,34 +15,34 @@ export enum SSOExceptionCode {
   SSO_DISABLE = 'SSO_DISABLE',
 }
 
-const getSSOExceptionUserFriendlyMessage = (code: SSOExceptionCode) => {
+const getSsoExceptionUserFriendlyMessage = (code: SsoExceptionCode) => {
   switch (code) {
-    case SSOExceptionCode.USER_NOT_FOUND:
+    case SsoExceptionCode.USER_NOT_FOUND:
       return msg`User not found.`;
-    case SSOExceptionCode.IDENTITY_PROVIDER_NOT_FOUND:
+    case SsoExceptionCode.IDENTITY_PROVIDER_NOT_FOUND:
       return msg`Identity provider not found.`;
-    case SSOExceptionCode.INVALID_ISSUER_URL:
+    case SsoExceptionCode.INVALID_ISSUER_URL:
       return msg`Invalid issuer URL.`;
-    case SSOExceptionCode.INVALID_IDP_TYPE:
+    case SsoExceptionCode.INVALID_IDP_TYPE:
       return msg`Invalid identity provider type.`;
-    case SSOExceptionCode.UNKNOWN_SSO_CONFIGURATION_ERROR:
+    case SsoExceptionCode.UNKNOWN_SSO_CONFIGURATION_ERROR:
       return msg`SSO configuration error.`;
-    case SSOExceptionCode.SSO_DISABLE:
+    case SsoExceptionCode.SSO_DISABLE:
       return msg`SSO is disabled.`;
     default:
       assertUnreachable(code);
   }
 };
 
-export class SSOException extends CustomException<SSOExceptionCode> {
+export class SsoException extends CustomException<SsoExceptionCode> {
   constructor(
     message: string,
-    code: SSOExceptionCode,
+    code: SsoExceptionCode,
     { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? getSSOExceptionUserFriendlyMessage(code),
+        userFriendlyMessage ?? getSsoExceptionUserFriendlyMessage(code),
     });
   }
 }

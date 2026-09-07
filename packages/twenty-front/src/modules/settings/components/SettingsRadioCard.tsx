@@ -6,7 +6,7 @@ import { Radio } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRadioCardContentContainer = styled.div`
-  > * {
+  > div {
     align-items: center;
     border: 1px solid ${themeCssVariables.border.color.medium};
     border-radius: ${themeCssVariables.border.radius.sm};

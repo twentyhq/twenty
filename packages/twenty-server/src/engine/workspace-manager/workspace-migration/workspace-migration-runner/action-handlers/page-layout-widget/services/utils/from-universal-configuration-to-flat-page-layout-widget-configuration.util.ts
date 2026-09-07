@@ -297,8 +297,11 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     }
 
     case WidgetConfigurationType.FRONT_COMPONENT: {
-      const { frontComponentUniversalIdentifier, configurationType } =
-        universalConfiguration;
+      const {
+        frontComponentUniversalIdentifier,
+        configurationType,
+        headerCommandMenuItemUniversalIdentifiers,
+      } = universalConfiguration;
 
       if (!isDefined(frontComponentUniversalIdentifier)) {
         throw new FlatEntityMapsException(
@@ -322,6 +325,20 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
       return {
         configurationType,
         frontComponentId: flatFrontComponent.id,
+        headerCommandMenuItemUniversalIdentifiers,
+      };
+    }
+
+    case WidgetConfigurationType.FORM_FIELD: {
+      const { fieldMetadataId: fieldMetadataUniversalIdentifier, ...rest } =
+        universalConfiguration;
+
+      return {
+        ...rest,
+        fieldMetadataId: resolveFieldMetadataIdOrThrow({
+          fieldMetadataUniversalIdentifier,
+          flatFieldMetadataMaps,
+        }),
       };
     }
 
@@ -349,28 +366,21 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
           })
         : undefined;
 
-      let viewId: string | undefined = undefined;
-
-      if (isDefined(viewUniversalIdentifier)) {
-        const flatView = findFlatEntityByUniversalIdentifier({
-          flatEntityMaps: flatViewMaps,
-          universalIdentifier: viewUniversalIdentifier,
-        });
-
-        if (!isDefined(flatView)) {
-          throw new FlatEntityMapsException(
-            `View not found for universal identifier: ${viewUniversalIdentifier}`,
-            FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-          );
-        }
-
-        viewId = flatView.id;
-      }
+      // Standard views are not synced together with page layouts: an upgrade
+      // step can create a widget before a later step creates the view it
+      // embeds. The widget is then created without a view, which renders
+      // empty until the view lands, instead of failing the whole migration.
+      const flatView = isDefined(viewUniversalIdentifier)
+        ? findFlatEntityByUniversalIdentifier({
+            flatEntityMaps: flatViewMaps,
+            universalIdentifier: viewUniversalIdentifier,
+          })
+        : undefined;
 
       return {
         ...rest,
         fieldMetadataId,
-        viewId,
+        viewId: flatView?.id,
         ...(isDefined(nestedRelationFieldMetadataId)
           ? { nestedRelationFieldMetadataId }
           : {}),

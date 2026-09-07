@@ -11,14 +11,9 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCreditGrantEntity } from 'src/engine/core-modules/billing/entities/billing-credit-grant.entity';
-import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
+import { type BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-
-// Shared with the backfill instance command so the two are safe in either
-// order: whichever runs first claims the key, the other is a no-op.
-const LEGACY_BALANCE_IDEMPOTENCY_KEY_PREFIX = 'backfill-credit-balance:';
 
 export type CreateBillingCreditGrantParams = {
   workspaceId: string;
@@ -69,8 +64,6 @@ export class BillingCreditGrantService {
   constructor(
     @InjectWorkspaceScopedRepository(BillingCreditGrantEntity)
     private readonly billingCreditGrantRepository: WorkspaceScopedRepository<BillingCreditGrantEntity>,
-    @InjectWorkspaceScopedRepository(BillingCustomerEntity)
-    private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
   ) {}
 
   // Returns null when idempotencyKey has already been used, so callers can tell
@@ -160,52 +153,6 @@ export class BillingCreditGrantService {
     }
 
     return total;
-  }
-
-  // Moves a not-yet-backfilled balance into the ledger before anything writes
-  // to it. Without this the first grant recomputes the mirror column from a
-  // ledger that does not hold the legacy balance yet, erasing it.
-  // Remove along with creditBalanceMicro.
-  async materializeLegacyBalance({
-    workspaceId,
-    effectiveAt,
-    expiresAt,
-  }: {
-    workspaceId: string;
-    effectiveAt: Date;
-    expiresAt: Date;
-  }): Promise<void> {
-    if (await this.hasAnyGrant(workspaceId)) {
-      return;
-    }
-
-    const legacyBalanceMicro = await this.getMirroredBalanceMicro(workspaceId);
-
-    if (legacyBalanceMicro <= 0) {
-      return;
-    }
-
-    await this.createGrant({
-      workspaceId,
-      amountMicro: legacyBalanceMicro,
-      type: BillingCreditGrantType.ROLLOVER,
-      effectiveAt,
-      expiresAt,
-      reason: 'Backfilled from billingCustomer.creditBalanceMicro',
-      idempotencyKey: `${LEGACY_BALANCE_IDEMPOTENCY_KEY_PREFIX}${workspaceId}`,
-    });
-  }
-
-  // What a workspace can actually spend, which is the ledger except in the
-  // window between this release deploying and its backfill running: until a
-  // workspace has any grant at all, its balance still only exists in the
-  // mirror column. Remove along with creditBalanceMicro.
-  async getSpendableCreditsMicro(workspaceId: string): Promise<number> {
-    if (await this.hasAnyGrant(workspaceId)) {
-      return this.getActiveCreditsMicro(workspaceId);
-    }
-
-    return this.getMirroredBalanceMicro(workspaceId);
   }
 
   // Grants that were spendable at any point during the given period.
@@ -332,21 +279,5 @@ export class BillingCreditGrantService {
     });
 
     return grant ?? null;
-  }
-
-  // Whether the ledger has taken over from billingCustomer.creditBalanceMicro
-  // for this workspace. Public so the mirror write can refuse to overwrite a
-  // balance the backfill has not reached yet.
-  async hasAnyGrant(workspaceId: string): Promise<boolean> {
-    return this.billingCreditGrantRepository.exists(workspaceId, { where: {} });
-  }
-
-  private async getMirroredBalanceMicro(workspaceId: string): Promise<number> {
-    const billingCustomer = await this.billingCustomerRepository.findOne(
-      workspaceId,
-      { select: { creditBalanceMicro: true }, where: {} },
-    );
-
-    return billingCustomer?.creditBalanceMicro ?? 0;
   }
 }

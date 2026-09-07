@@ -13,6 +13,9 @@ import { resolveEffectiveEntity } from 'src/engine/metadata-modules/utils/resolv
 // resolve-flat-entity-overridable-properties), with standardOverrides renamed
 // to overrides. The unified resolver must reproduce these byte-for-byte across
 // the corpus below — this is the safety net for the whole override unification.
+// One deliberate amendment since freezing: workspace translations now resolve
+// before the custom-entity short-circuit, so custom entities can carry
+// per-locale translations; both frozen resolvers were updated to match.
 
 type Locale = keyof typeof APP_LOCALES | undefined;
 
@@ -29,17 +32,6 @@ const frozenResolveObjectOverride = (
 ): string => {
   const safeLocale = locale ?? SOURCE_LOCALE;
 
-  if (!isStandardApp && !isDefined(applicationCatalog)) {
-    return objectMetadata[labelKey] ?? '';
-  }
-
-  if (
-    (labelKey === 'icon' || labelKey === 'color') &&
-    isDefined(objectMetadata.overrides?.[labelKey])
-  ) {
-    return objectMetadata.overrides[labelKey];
-  }
-
   if (
     isDefined(objectMetadata.overrides?.translations) &&
     labelKey !== 'icon' &&
@@ -51,6 +43,17 @@ const frozenResolveObjectOverride = (
     if (isDefined(translationValue)) {
       return translationValue;
     }
+  }
+
+  if (!isStandardApp && !isDefined(applicationCatalog)) {
+    return objectMetadata[labelKey] ?? '';
+  }
+
+  if (
+    (labelKey === 'icon' || labelKey === 'color') &&
+    isDefined(objectMetadata.overrides?.[labelKey])
+  ) {
+    return objectMetadata.overrides[labelKey];
   }
 
   if (isNonEmptyString(objectMetadata.overrides?.[labelKey])) {
@@ -78,14 +81,6 @@ const frozenResolveFieldOverride = (
 ): string => {
   const safeLocale = locale ?? SOURCE_LOCALE;
 
-  if (!isStandardApp && !isDefined(applicationCatalog)) {
-    return fieldMetadata[labelKey] ?? '';
-  }
-
-  if (labelKey === 'icon' && isDefined(fieldMetadata.overrides?.icon)) {
-    return fieldMetadata.overrides.icon;
-  }
-
   if (isDefined(fieldMetadata.overrides?.translations) && labelKey !== 'icon') {
     const translationValue =
       fieldMetadata.overrides.translations[safeLocale]?.[labelKey];
@@ -93,6 +88,14 @@ const frozenResolveFieldOverride = (
     if (isDefined(translationValue)) {
       return translationValue;
     }
+  }
+
+  if (!isStandardApp && !isDefined(applicationCatalog)) {
+    return fieldMetadata[labelKey] ?? '';
+  }
+
+  if (labelKey === 'icon' && isDefined(fieldMetadata.overrides?.icon)) {
+    return fieldMetadata.overrides.icon;
   }
 
   if (isNonEmptyString(fieldMetadata.overrides?.[labelKey])) {

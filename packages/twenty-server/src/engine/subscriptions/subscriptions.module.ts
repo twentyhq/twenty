@@ -1,9 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ProcessNestedRelationsV2Helper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations-v2.helper';
-import { ProcessNestedRelationsOrmV2Helper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations-orm-v2.helper';
-import { TwentyORMV2Module } from 'src/engine/twenty-orm-v2/twenty-orm-v2.module';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
 import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fields/common-select-fields-helper';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
@@ -22,6 +19,7 @@ import { MetadataEventPublisher } from 'src/engine/subscriptions/metadata-event/
 import { MetadataEventResolutionService } from 'src/engine/subscriptions/metadata-event/services/metadata-event-resolution.service';
 import { MetadataEventsToDbListener } from 'src/engine/subscriptions/metadata-event/metadata-events-to-db.listener';
 import { ObjectRecordEventPublisher } from 'src/engine/subscriptions/object-record-event/object-record-event-publisher';
+import { QueueJobEventListener } from 'src/engine/subscriptions/queue-job-event/queue-job-event.listener';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -29,7 +27,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 @Global()
 @Module({
   imports: [
-    TwentyORMV2Module,
     RedisClientModule,
     CacheStorageModule,
     CacheLockModule,
@@ -51,9 +48,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     MetadataEventEmitter,
     MetadataEventsToDbListener,
     WorkspaceEventBroadcaster,
+    QueueJobEventListener,
     ProcessNestedRelationsHelper,
-    ProcessNestedRelationsV2Helper,
-    ProcessNestedRelationsOrmV2Helper,
     CommonSelectFieldsHelper,
   ],
   exports: [

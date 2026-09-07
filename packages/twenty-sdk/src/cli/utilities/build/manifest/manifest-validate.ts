@@ -2,25 +2,23 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { validate as uuidValidate, version as uuidVersion } from 'uuid';
 
 import {
-  type FieldManifest,
   type Manifest,
   type PageLayoutWidgetManifest,
 } from 'twenty-shared/application';
 import {
-  FieldMetadataType,
   GRAPH_WIDGET_CONFIGURATION_TYPES,
   type GraphWidgetConfigurationType,
   type PageLayoutWidgetUniversalConfiguration,
   RelationType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-
-const MIN_UUID_VERSION = 4;
-
-const RELATION_FIELD_TYPES: string[] = [
-  FieldMetadataType.RELATION,
-  FieldMetadataType.MORPH_RELATION,
-];
+import {
+  getDuplicateValues,
+  type ManifestField,
+  MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION,
+  isRelationFieldManifest,
+} from '@/cli/utilities/build/manifest/utils/manifest-validation-helpers';
+import { validateTimelineActivityTypes } from '@/cli/utilities/build/manifest/utils/validate-timeline-activity-types';
 
 const VALID_RELATION_TYPES: string[] = [
   RelationType.MANY_TO_ONE,
@@ -42,21 +40,6 @@ const isGraphWidgetConfiguration = (
     (configurationType) =>
       configurationType === configuration.configurationType,
   );
-
-const extractDuplicates = (values: string[]): string[] => {
-  const seen = new Set<string>();
-  const duplicates = new Set<string>();
-
-  for (const value of values) {
-    if (seen.has(value)) {
-      duplicates.add(value);
-    } else {
-      seen.add(value);
-    }
-  }
-
-  return Array.from(duplicates);
-};
 
 const findUniversalIdentifiers = (obj: object): string[] => {
   const universalIdentifiers: string[] = [];
@@ -89,20 +72,15 @@ const findUniversalIdentifiers = (obj: object): string[] => {
   return universalIdentifiers;
 };
 
-const validateRelationFields = (
-  fields: Pick<FieldManifest, 'type' | 'name' | 'universalSettings'>[],
-): string[] => {
+const validateRelationFields = (fields: ManifestField[]): string[] => {
   const errors: string[] = [];
 
   for (const field of fields) {
-    if (!RELATION_FIELD_TYPES.includes(field.type)) {
+    if (!isRelationFieldManifest(field)) {
       continue;
     }
 
-    const settings = field.universalSettings as
-      | { relationType?: string; joinColumnName?: string | null }
-      | null
-      | undefined;
+    const settings = field.universalSettings;
 
     if (!settings?.relationType) {
       errors.push(
@@ -197,10 +175,10 @@ const invalidUniversalIdentifierVersions = (
 
     const version = uuidVersion(identifier);
 
-    if (version < MIN_UUID_VERSION) {
+    if (version < MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION) {
       errors.push(
         `Universal identifier "${identifier}" is UUID version ${version}. ` +
-          `Only UUID version ${MIN_UUID_VERSION} or higher is allowed.`,
+          `Only UUID version ${MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION} or higher is allowed.`,
       );
     }
   }
@@ -214,7 +192,7 @@ export const manifestValidate = (manifest: Manifest) => {
 
   const universalIdentifiers = findUniversalIdentifiers(manifest);
 
-  const duplicates = extractDuplicates(universalIdentifiers);
+  const duplicates = getDuplicateValues(universalIdentifiers);
 
   if (duplicates.length > 0) {
     errors.push(`Duplicate universal identifiers: ${duplicates.join(', ')}`);
@@ -229,10 +207,7 @@ export const manifestValidate = (manifest: Manifest) => {
     );
   }
 
-  const allFields: Pick<
-    FieldManifest,
-    'type' | 'name' | 'universalSettings'
-  >[] = [
+  const allFields: ManifestField[] = [
     ...manifest.fields,
     ...manifest.objects.flatMap((object) => object.fields),
   ];
@@ -240,6 +215,8 @@ export const manifestValidate = (manifest: Manifest) => {
   errors.push(...validateRelationFields(allFields));
 
   errors.push(...validateGraphWidgets(collectPageLayoutWidgets(manifest)));
+
+  errors.push(...validateTimelineActivityTypes(manifest));
 
   return { errors, warnings, isValid: errors.length === 0 };
 };

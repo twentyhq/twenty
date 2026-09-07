@@ -236,7 +236,7 @@ describe('MCP tool execution (integration)', () => {
   describe('group_by_note_targets (morph relation column)', () => {
     let createdCompanyAId: string | undefined;
     let createdCompanyBId: string | undefined;
-    let createdNoteId: string | undefined;
+    const createdNoteIds: string[] = [];
     const createdNoteTargetIds: string[] = [];
 
     beforeAll(async () => {
@@ -254,13 +254,6 @@ describe('MCP tool execution (integration)', () => {
 
       createdCompanyBId = companyB.id;
 
-      const note = await executeWorkspaceTool<CreatedRecord>(
-        TOOL_NAMES.createNote,
-        { title: `mcp-group-by-note-${randomUUID()}` },
-      );
-
-      createdNoteId = note.id;
-
       // Two targets on company A, one on company B — the grouped counts
       // we'll assert against later.
       const targetCompanyIds = [
@@ -270,9 +263,16 @@ describe('MCP tool execution (integration)', () => {
       ];
 
       for (const targetCompanyId of targetCompanyIds) {
+        const note = await executeWorkspaceTool<CreatedRecord>(
+          TOOL_NAMES.createNote,
+          { title: `mcp-group-by-note-${randomUUID()}` },
+        );
+
+        createdNoteIds.push(note.id);
+
         const noteTarget = await executeWorkspaceTool<CreatedRecord>(
           TOOL_NAMES.createNoteTarget,
-          { noteId: createdNoteId, targetCompanyId },
+          { noteId: note.id, targetCompanyId },
         );
 
         createdNoteTargetIds.push(noteTarget.id);
@@ -283,8 +283,8 @@ describe('MCP tool execution (integration)', () => {
       if (createdNoteTargetIds.length > 0) {
         await deleteRecordsByIds('noteTarget', createdNoteTargetIds);
       }
-      if (createdNoteId) {
-        await deleteRecordsByIds('note', [createdNoteId]);
+      if (createdNoteIds.length > 0) {
+        await deleteRecordsByIds('note', createdNoteIds);
       }
 
       const companyIds = [createdCompanyAId, createdCompanyBId].filter(
@@ -354,7 +354,7 @@ describe('MCP tool execution (integration)', () => {
           aggregateOperation: 'COUNT',
           // Scope to the noteTargets we created so other seeded rows don't
           // leak into the counts.
-          noteId: { eq: createdNoteId },
+          noteId: { in: createdNoteIds },
         },
       );
 

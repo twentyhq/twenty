@@ -4,21 +4,23 @@ import type {
   ObjectRecordCreateEvent,
 } from 'twenty-sdk/define';
 
-import { findPartnerByMember } from 'src/modules/application/graphql/queries/find-partner-by-member';
-import { getPartnerOwner } from 'src/modules/shared/graphql/queries/get-partner-owner';
 import { findDuplicateApplication } from 'src/modules/application/graphql/queries/find-duplicate-application';
 import { deleteApplication } from 'src/modules/application/graphql/mutations/delete-application';
 import { updateApplication } from 'src/modules/application/graphql/mutations/update-application';
+import { findPartnerByMember } from 'src/modules/shared/graphql/queries/find-partner-by-member';
+import { getPartnerOwner } from 'src/modules/shared/graphql/queries/get-partner-owner';
+import { grantOpportunityVisibility } from 'src/modules/shared/services/grant-opportunity-visibility.service';
 
 type ApplicationCreatedProperties = DatabaseEventPayload<
   ObjectRecordCreateEvent<CoreSchema.Application>
 >['properties'];
 
-// A partner self-applies via the "Apply to brief as partner" workflow: a Create Record action
-// makes an Application with the opportunity set, createdBy = the clicking member and
-// partnerUser = that member (mandatory — the Partner role's RLS rejects the insert otherwise),
-// but no partner. Resolve the partner from createdBy and complete the candidacy. The name is
-// set by on-application-set-name, which fires on the partnerId update below.
+// The app route POST /apply-to-brief creates the Application with partnerId and
+// partnerUserId already set, so this service skips the candidacy stamp and only grants
+// opportunity read access. It still serves the admin path: an invite or an import sets
+// partnerId but no partnerUserId, and this service stamps the partner's user so RLS
+// doesn't hide the row from its own partner. The createdBy-based self-apply branch below
+// is a fallback for rows created by a member without a partner set.
 export async function resolveCandidacy(
   client: CoreApiClient,
   after: ApplicationCreatedProperties['after'],
@@ -26,15 +28,23 @@ export async function resolveCandidacy(
   const applicationId = after?.id;
   if (!applicationId) return {};
 
+  const opportunityId = after.opportunityId;
+
   // Admin path (invite/import): without partnerUser, RLS hides the row from its own partner.
   if (after.partnerId) {
-    if (after.partnerUserId) return {};
+    if (after.partnerUserId) {
+      await grantOpportunityVisibility(client, opportunityId, [
+        after.partnerUserId,
+      ]);
+      return {};
+    }
 
     const ownerRes = await getPartnerOwner(client, after.partnerId);
-    const partnerUserId = ownerRes.partner?.partnerUserId;
+    const partnerUserId = ownerRes.partners?.edges?.[0]?.node?.partnerUserId;
     if (!partnerUserId) return { skipped: true, reason: 'partner_has_no_user' };
 
     await updateApplication(client, applicationId, { partnerUserId });
+    await grantOpportunityVisibility(client, opportunityId, [partnerUserId]);
     return { stamped: partnerUserId };
   }
 
@@ -45,25 +55,26 @@ export async function resolveCandidacy(
   const partnerId = partnerRes.partners?.edges?.[0]?.node?.id;
   if (!partnerId) return {}; // creator isn't a partner (e.g. admin) — leave it
 
-  const opportunityId = after.opportunityId;
   if (opportunityId) {
     const existingRes = await findDuplicateApplication(client, opportunityId, partnerId);
     const existingId = existingRes.applications?.edges?.find(
       (edge) => edge.node?.id && edge.node.id !== applicationId,
     )?.node?.id;
     if (existingId) {
+      // No grant here on purpose: the kept row's own member holds it. A second member of
+      // the same partner never sees the first member's application either (partnerUser IS me).
       await deleteApplication(client, applicationId);
       return { duplicate: true, keptExisting: existingId };
     }
   }
+  // ponytail: dedupe by (opportunity, partner) above; two near-simultaneous creates could still both pass before either stamps — acceptable.
 
-  const now = new Date().toISOString();
   await updateApplication(client, applicationId, {
     partnerId,
     partnerUserId: memberId,
     state: 'APPLIED',
-    lastActivityAt: now,
   });
-  // ponytail: dedupe by (opportunity, partner) above; two near-simultaneous creates could still both pass before either stamps — acceptable.
+  await grantOpportunityVisibility(client, opportunityId, [memberId]);
+
   return { applied: true, partnerId };
 }

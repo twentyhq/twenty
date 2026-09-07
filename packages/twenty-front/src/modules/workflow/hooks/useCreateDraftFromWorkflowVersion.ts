@@ -1,3 +1,4 @@
+import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
@@ -46,6 +47,8 @@ export const useCreateDraftFromWorkflowVersion = () => {
         },
       ],
     });
+
+    await invalidateCoreWorkflowVersions(apolloCoreClient);
 
     return result?.data?.createDraftFromWorkflowVersion.id;
   };

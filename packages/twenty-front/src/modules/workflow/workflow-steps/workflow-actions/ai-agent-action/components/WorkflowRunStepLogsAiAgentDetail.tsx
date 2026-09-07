@@ -4,10 +4,10 @@ import { Fragment } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type AiAgentStepLogDetails } from 'twenty-shared/workflow';
 import {
-  IconBrain,
   IconClock,
   IconCoins,
   IconCpu,
+  IconLego,
   IconTool,
   IconWorld,
 } from 'twenty-ui/icon';
@@ -127,7 +127,7 @@ export const WorkflowRunStepLogsAiAgentDetail = ({
       <StyledSummaryCard>
         <StyledSummaryHeader>
           <StyledHeaderLeft>
-            <IconBrain size={16} />
+            <IconLego size={16} />
             <StyledTitle>{t`AI agent run`}</StyledTitle>
           </StyledHeaderLeft>
           <StyledBadgeGroup>

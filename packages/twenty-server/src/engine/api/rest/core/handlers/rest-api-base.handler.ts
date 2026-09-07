@@ -26,7 +26,7 @@ import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
@@ -138,7 +138,7 @@ export abstract class RestApiBaseHandler {
     depth?: Depth | undefined;
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }): Promise<CommonSelectedFields> {
     const { objectsPermissions } =
       await this.getObjectsPermissions(authContext);
@@ -181,7 +181,7 @@ export abstract class RestApiBaseHandler {
   ): Promise<{
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
     objectIdByNameSingular: Record<string, string>;
   }> {
@@ -206,17 +206,20 @@ export abstract class RestApiBaseHandler {
       }
     }
 
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId: workspace.id,
-          flatMapsKeys: [
-            'flatObjectMetadataMaps',
-            'flatFieldMetadataMaps',
-            'flatIndexMaps',
-          ],
-        },
-      );
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMapsOrm: flatFieldMetadataMaps,
+      flatIndexMaps,
+    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId: workspace.id,
+        flatMapsKeys: [
+          'flatObjectMetadataMaps',
+          'flatFieldMetadataMapsOrm',
+          'flatIndexMaps',
+        ],
+      },
+    );
 
     if (!isDefined(flatObjectMetadataMaps)) {
       throw new BadRequestException(

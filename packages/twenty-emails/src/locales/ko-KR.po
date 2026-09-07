@@ -86,7 +86,7 @@ msgstr "비활성화"
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Enabled"
-msgstr "사용 설정됨"
+msgstr "활성화됨"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

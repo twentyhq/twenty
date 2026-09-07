@@ -67,7 +67,7 @@ export class InstallOnboardingAppsJob {
   }): Promise<boolean> {
     try {
       const registration =
-        await this.applicationRegistrationService.findOneByUniversalIdentifier(
+        await this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
           universalIdentifier,
         );
 

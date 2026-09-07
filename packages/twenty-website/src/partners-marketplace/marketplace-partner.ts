@@ -35,7 +35,20 @@ export type MarketplacePartner = {
   city: string;
   country: string;
   skills: readonly string[];
+  superPartner: boolean;
   services: readonly PartnerService[];
   portfolio: readonly PartnerCaseStudy[];
   clients: readonly PartnerClient[];
+};
+
+export const PARTNER_TIERS = ['ADVANCED', 'INTERMEDIATE', 'NEW'] as const;
+
+export type PartnerTier = (typeof PARTNER_TIERS)[number];
+
+export type RankedMarketplacePartner = MarketplacePartner & {
+  partnerTier: PartnerTier | null;
+  serviceCount: number;
+  approvedCaseStudyCount: number;
+  approvedCaseStudyWithCoverCount: number;
+  rotationKey: string;
 };

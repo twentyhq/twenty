@@ -1,5 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isFieldMetadataReadOnlyByPermissions } from '@/object-record/read-only/utils/internal/isFieldMetadataReadOnlyByPermissions';
+import { isMetadataWritabilityRestricted } from '@/object-record/read-only/utils/internal/isMetadataWritabilityRestricted';
 import { isOneToManyRelationFieldReadOnlyDueToTargetUpdatePermission } from '@/object-record/read-only/utils/isOneToManyRelationFieldReadOnlyDueToTargetUpdatePermission';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -14,9 +15,10 @@ type ObjectPermissionsByObjectMetadataId = Record<
 
 type IsRecordFieldReadOnlyParams = {
   isRecordReadOnly: boolean;
-  isSystemObject?: boolean;
-  isFieldFromStandardApplication?: boolean;
-  fieldMetadataItem: Pick<FieldMetadataItem, 'id' | 'isUIEditable'>;
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'id' | 'isUIEditable' | 'writability'
+  >;
   objectPermissions: ObjectPermission;
   fieldDefinition?: FieldDefinition<FieldMetadata>;
   objectPermissionsByObjectMetadataId?: ObjectPermissionsByObjectMetadataId;
@@ -25,8 +27,6 @@ type IsRecordFieldReadOnlyParams = {
 export const isRecordFieldReadOnly = ({
   objectPermissions,
   isRecordReadOnly,
-  isSystemObject,
-  isFieldFromStandardApplication,
   fieldMetadataItem,
   fieldDefinition,
   objectPermissionsByObjectMetadataId,
@@ -44,15 +44,10 @@ export const isRecordFieldReadOnly = ({
       objectPermissionsByObjectMetadataId,
     });
 
-  // Keep system-object standard fields read-only. If the application origin
-  // cannot be resolved yet, fail closed until metadata finishes loading.
-  const isReadOnlyStandardFieldOnSystemObject =
-    isSystemObject === true && isFieldFromStandardApplication !== false;
-
   return (
     isRecordReadOnly ||
-    isReadOnlyStandardFieldOnSystemObject ||
     !(fieldMetadataItem.isUIEditable ?? true) ||
+    isMetadataWritabilityRestricted(fieldMetadataItem.writability) ||
     fieldReadOnlyByPermissions ||
     oneToManyTargetReadOnly
   );

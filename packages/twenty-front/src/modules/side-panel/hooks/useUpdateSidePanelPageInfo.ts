@@ -1,7 +1,6 @@
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { useCallback } from 'react';
-import { type IconComponent, IconDotsVertical } from 'twenty-ui/icon';
+import { type IconComponent } from 'twenty-ui/icon';
 import { useStore } from 'jotai';
 
 export const useUpdateSidePanelPageInfo = () => {
@@ -14,16 +13,6 @@ export const useUpdateSidePanelPageInfo = () => {
       pageTitle?: string;
       pageIcon?: IconComponent;
     }) => {
-      const sidePanelPageInfo = store.get(sidePanelPageInfoState.atom);
-
-      const newSidePanelPageInfo = {
-        ...sidePanelPageInfo,
-        title: pageTitle ?? sidePanelPageInfo.title ?? '',
-        Icon: pageIcon ?? sidePanelPageInfo.Icon ?? IconDotsVertical,
-      };
-
-      store.set(sidePanelPageInfoState.atom, newSidePanelPageInfo);
-
       const sidePanelNavigationStack = store.get(
         sidePanelNavigationStackState.atom,
       );
@@ -37,10 +26,9 @@ export const useUpdateSidePanelPageInfo = () => {
       const newSidePanelNavigationStack = [
         ...sidePanelNavigationStack.slice(0, -1),
         {
-          page: lastSidePanelNavigationStackItem.page,
-          pageTitle: newSidePanelPageInfo.title,
-          pageIcon: newSidePanelPageInfo.Icon,
-          pageId: lastSidePanelNavigationStackItem.pageId,
+          ...lastSidePanelNavigationStackItem,
+          pageTitle: pageTitle ?? lastSidePanelNavigationStackItem.pageTitle,
+          pageIcon: pageIcon ?? lastSidePanelNavigationStackItem.pageIcon,
         },
       ];
 

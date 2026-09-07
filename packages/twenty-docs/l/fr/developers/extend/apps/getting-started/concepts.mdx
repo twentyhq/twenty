@@ -54,9 +54,9 @@ your-app/
 
 ## Exécution en bac à sable
 
-* **Les fonctions logiques** s’exécutent dans des processus Node.js isolés sur le serveur. Elles n’accèdent aux données qu’au moyen du client d’API typé, limité par les autorisations du rôle de l’application.
+* **Les fonctions logiques** s’exécutent dans des processus Node.js isolés sur le serveur. Ils accèdent uniquement aux données via le client d’API typé, qui agit soit en tant que personne ayant déclenché l’exécution, soit en tant que l’application elle-même. Consultez [Les accès utilisés par un appel](/l/fr/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
 * **Les composants frontaux** s’exécutent dans des Web Workers en utilisant Remote DOM — isolés en bac à sable de la page principale mais rendant des éléments DOM natifs (pas d’iframes). Ils communiquent avec Twenty via une API hôte de passage de messages.
-* **Les autorisations** sont appliquées au niveau de l’API. Le jeton d’exécution (`TWENTY_APP_ACCESS_TOKEN`) est dérivé du rôle défini dans `defineApplication()`.
+* **Les autorisations** sont appliquées au niveau de l’API. Deux jetons d’exécution sont injectés, tous deux dérivés du rôle déclaré avec `defineApplicationRole()` ; le jeton par défaut est davantage restreint à ce que la personne ayant déclenché l’exécution peut faire lorsqu’une personne est à l’origine de l’exécution.
 
 ## Cycle de vie de l’application
 

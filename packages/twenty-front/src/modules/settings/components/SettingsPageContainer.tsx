@@ -1,4 +1,5 @@
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useScrollRestoration } from '@/ui/utilities/scroll/hooks/useScrollRestoration';
 import { styled } from '@linaria/react';
@@ -24,6 +25,7 @@ const getMatchingSettingsPath = (pathname: string) =>
 const StyledSettingsPageContainer = styled.div<{
   width?: number;
   isMobile?: boolean;
+  isInSidePanel?: boolean;
   overflow?: 'auto' | 'visible';
 }>`
   box-sizing: border-box;
@@ -33,8 +35,10 @@ const StyledSettingsPageContainer = styled.div<{
   margin: 0 auto;
   max-width: ${SETTINGS_CONTENT_MAX_WIDTH}px;
   overflow: ${({ overflow = 'auto' }) => overflow};
-  padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[8]}
-    ${themeCssVariables.spacing[8]};
+  padding: ${({ isInSidePanel }) =>
+    isInSidePanel
+      ? `${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[8]}`
+      : `${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[8]} ${themeCssVariables.spacing[8]}`};
   padding-bottom: ${themeCssVariables.spacing[20]};
   width: ${({ width, isMobile }) => {
     if (isDefined(width)) {
@@ -55,6 +59,7 @@ export const SettingsPageContainer = ({
   overflow?: 'auto' | 'visible';
 }) => {
   const isMobile = useIsMobile();
+  const workspaceSurface = useWorkspaceSurface();
   const location = useLocation();
   const settingsPath = getMatchingSettingsPath(location.pathname);
 
@@ -64,7 +69,11 @@ export const SettingsPageContainer = ({
 
   return (
     <ScrollWrapper componentInstanceId={componentInstanceId}>
-      <StyledSettingsPageContainer isMobile={isMobile} overflow={overflow}>
+      <StyledSettingsPageContainer
+        isMobile={isMobile}
+        isInSidePanel={workspaceSurface.type === 'side-panel'}
+        overflow={overflow}
+      >
         {children}
       </StyledSettingsPageContainer>
     </ScrollWrapper>

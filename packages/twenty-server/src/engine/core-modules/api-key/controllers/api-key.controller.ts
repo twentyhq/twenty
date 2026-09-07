@@ -67,9 +67,12 @@ export class ApiKeyController {
     return this.apiKeyService.findById(id, workspace.id);
   }
 
-  // Minting an API key requires an ACCESS token — derived PLAYGROUND tokens
-  // and API keys must not escalate into a long-lived credential.
-  @UseGuards(RequireAccessTokenGuard)
+  // Creating a key assigns it a role, so it also requires ROLES to prevent
+  // binding a role above the caller's own.
+  @UseGuards(
+    RequireAccessTokenGuard,
+    SettingsPermissionGuard(PermissionFlagType.ROLES),
+  )
   @Post()
   async create(
     @Body() createApiKeyDto: CreateApiKeyInput,

@@ -137,7 +137,6 @@ export class PieChartDataService {
             groupByField,
             subFieldName: configuration.groupBySubFieldName,
           },
-          workspaceId,
           authContext,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,

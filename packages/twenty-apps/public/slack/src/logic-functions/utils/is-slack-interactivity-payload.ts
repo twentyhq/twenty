@@ -10,6 +10,11 @@ const isTeam = (value: unknown): boolean =>
   (isObject<Record<string, unknown>, unknown>(value) &&
     isOptionalString(value.id));
 
+const isUser = (value: unknown): boolean =>
+  isUndefined(value) ||
+  (isObject<Record<string, unknown>, unknown>(value) &&
+    isOptionalString(value.id));
+
 const isInteractionAction = (value: unknown): boolean =>
   isObject<Record<string, unknown>, unknown>(value) &&
   isOptionalString(value.action_id) &&
@@ -26,6 +31,8 @@ export const isSlackInteractivityPayload = (
   return (
     isOptionalString(value.type) &&
     isTeam(value.team) &&
+    isUser(value.user) &&
+    isOptionalString(value.response_url) &&
     (isUndefined(value.actions) ||
       (isArray(value.actions) && value.actions.every(isInteractionAction)))
   );

@@ -13,7 +13,6 @@ export const RecordPageSidePanelCommandMenu = () => {
     <>
       {contextStoreCurrentObjectMetadataItemId && (
         <CommandMenuContextProvider
-          isInSidePanel={true}
           displayType="dropdownItem"
           containerType={
             CommandMenuItemContainerType.CommandMenuShowPageDropdown

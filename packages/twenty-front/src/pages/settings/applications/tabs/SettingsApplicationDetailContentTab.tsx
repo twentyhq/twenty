@@ -16,6 +16,9 @@ import {
   type ApplicationContentRow,
   SettingsApplicationContentSubtable,
 } from '~/pages/settings/applications/components/SettingsApplicationContentSubtable';
+import { useInstalledTimelineActivityTypes } from '~/pages/settings/applications/hooks/useInstalledTimelineActivityTypes';
+import { getSettingsApplicationTimelineActivityTypes } from '~/pages/settings/applications/utils/getSettingsApplicationTimelineActivityTypes';
+import { filterSettingsApplicationTimelineActivityTypes } from '~/pages/settings/applications/utils/filterSettingsApplicationTimelineActivityTypes';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 type InstalledApplicationForContentTab = Omit<
@@ -59,6 +62,11 @@ export const SettingsApplicationDetailContentTab = ({
   applicationInfo,
 }: SettingsApplicationDetailContentTabProps) => {
   const { t } = useLingui();
+  const isInstalledApplication = isDefined(installedApplication);
+
+  const { installedTimelineActivityTypes } = useInstalledTimelineActivityTypes({
+    isInstalledApplication,
+  });
 
   const { objectRows, fieldRows } =
     useComputeObjectAndFieldsContentForApplication({
@@ -152,6 +160,33 @@ export const SettingsApplicationDetailContentTab = ({
   const [searchTerm, setSearchTerm] = useState('');
   const normalizedSearch = normalizeSearchText(searchTerm);
 
+  const timelineActivityTypes = getSettingsApplicationTimelineActivityTypes({
+    applicationId,
+    isInstalledApplication,
+    installedTimelineActivityTypes,
+    manifestTimelineActivityTypes: manifestContent?.timelineActivityTypes ?? [],
+  });
+  const filteredTimelineActivityTypes =
+    filterSettingsApplicationTimelineActivityTypes({
+      timelineActivityTypes,
+      searchTerm,
+    });
+  const timelineActivityTypeRows: ApplicationContentRow[] =
+    filteredTimelineActivityTypes.map((timelineActivityType) => ({
+      key: timelineActivityType.id,
+      name: timelineActivityType.label,
+      icon: timelineActivityType.icon ?? undefined,
+      secondary: isDefined(timelineActivityType.action)
+        ? `${timelineActivityType.name} · ${timelineActivityType.action}`
+        : timelineActivityType.name,
+      link: isInstalledApplication
+        ? getSettingsPath(SettingsPath.ApplicationTimelineActivityTypeDetail, {
+            applicationId,
+            timelineActivityTypeId: timelineActivityType.id,
+          })
+        : undefined,
+    }));
+
   const filtered = {
     objects: filterRows(objectRows, normalizedSearch),
     fields: filterRows(fieldRows, normalizedSearch),
@@ -179,7 +214,8 @@ export const SettingsApplicationDetailContentTab = ({
     filtered.agents.length > 0 ||
     filtered.skills.length > 0 ||
     filtered.roles.length > 0 ||
-    filtered.connectionProviders.length > 0;
+    filtered.connectionProviders.length > 0 ||
+    timelineActivityTypeRows.length > 0;
 
   if (!hasData && !hasLayout && !hasLogic && normalizedSearch === '') {
     return null;
@@ -293,6 +329,12 @@ export const SettingsApplicationDetailContentTab = ({
             <SettingsApplicationContentSubtable
               title={t`Connection providers`}
               rows={filtered.connectionProviders}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
+            />
+            <SettingsApplicationContentSubtable
+              title={t`Timeline activity types`}
+              rows={timelineActivityTypeRows}
               applicationId={applicationId}
               fallbackApplicationData={fallbackApplicationData}
             />

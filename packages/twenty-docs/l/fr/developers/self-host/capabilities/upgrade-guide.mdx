@@ -25,6 +25,10 @@ Si vous utilisez Docker Compose, suivez ces étapes :
 
 Le serveur exécute automatiquement au démarrage toutes les migrations de mise à niveau requises. Aucune commande manuelle n'est nécessaire.
 
+## Mise à niveau vers v2.34+ — PostgreSQL 15 minimum
+
+Twenty v2.34 nécessite PostgreSQL 15 ou une version ultérieure. La configuration officielle de Docker Compose utilise PostgreSQL 16. Si votre instance se connecte à une base de données gérée en externe, mettez-la à niveau avant de démarrer le serveur v2.34.
+
 ## Mises à niveau entre versions (v1.23+)
 
 À partir de **v1.23**, Twenty prend en charge les mises à niveau entre versions. Vous pouvez passer directement de n'importe quelle version prise en charge à la dernière version sans devoir passer par chaque version intermédiaire.

@@ -6,7 +6,7 @@ import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billin
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 export type UpdateSubscriptionQuantityJobData = { workspaceId: string };
@@ -20,17 +20,16 @@ export class UpdateSubscriptionQuantityJob {
 
   constructor(
     private readonly billingSubscriptionUpdateService: BillingSubscriptionUpdateService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   @Process(UpdateSubscriptionQuantityJob.name)
   async handle(data: UpdateSubscriptionQuantityJobData): Promise<void> {
     const authContext = buildSystemAuthContext(data.workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceMemberRepository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-          data.workspaceId,
+        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
           'workspaceMember',
           { shouldBypassPermissionChecks: true },
         );

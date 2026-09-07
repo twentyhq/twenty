@@ -2,16 +2,20 @@ import { randomUUID } from 'node:crypto';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+
 import { gmailMessage } from 'test/integration/google/mocks/gmail-message.util';
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { createCalendarEvent } from 'test/integration/utils/create-calendar-event.util';
 import { findImportedCalendarEventTitles } from 'test/integration/utils/find-imported-records.util';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
+import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 import { sendEmail } from 'test/integration/utils/send-email.util';
 
 const HANDLE = 'gmail-outbound@apple.dev';
+const ALIAS = 'gmail-outbound-alias@apple.dev';
 const RECIPIENTS = {
   to: 'to-recipient@example.com',
   cc: 'cc-recipient@example.com',
@@ -50,6 +54,7 @@ const DRAFT_MESSAGE = gmailMessage({
 describe('Gmail outbound messaging and calendar creation (integration)', () => {
   const google = setupGoogleMock({
     handle: HANDLE,
+    aliases: [ALIAS],
     inbox: [PARENT_MESSAGE, DRAFT_MESSAGE],
   });
 
@@ -217,6 +222,50 @@ describe('Gmail outbound messaging and calendar creation (integration)', () => {
     expect(association.messageChannelId).toBe(channel.channelId);
     expect(association.messageExternalId).not.toBe(DRAFT_MESSAGE.id);
     expect(result.messageThreadId).toEqual(expect.any(String));
+  }, 60000);
+
+  it('imports the verified aliases during sync and sends from one of them', async () => {
+    const connectedAccount = await getCoreRepository<ConnectedAccountEntity>(
+      ConnectedAccountEntity,
+    ).findOneByOrFail({ id: channel.connectedAccountId });
+
+    expect(connectedAccount.handleAliases).toEqual([ALIAS]);
+
+    const subject = `Gmail alias outbound ${randomUUID()}`;
+
+    const result = await sendEmail({
+      connectedAccountId: channel.connectedAccountId,
+      fromHandle: ALIAS,
+      to: RECIPIENTS.to,
+      subject,
+      body: '<p>Gmail alias body</p>',
+    });
+
+    expect(result).toMatchObject({ success: true });
+
+    const [{ raw }] = google.sentMessages.slice(-1);
+
+    expect(raw).toContain(`<${ALIAS}>`);
+  }, 60000);
+
+  it('refuses to send from an address the account has not verified', async () => {
+    const sentMessageCount = google.sentMessages.length;
+
+    const result = await sendEmail({
+      connectedAccountId: channel.connectedAccountId,
+      fromHandle: 'not-my-alias@apple.dev',
+      to: RECIPIENTS.to,
+      subject: `Gmail rejected sender ${randomUUID()}`,
+      body: '<p>Gmail rejected body</p>',
+    });
+
+    expect(result).toMatchObject({
+      success: false,
+      error: expect.stringContaining(
+        'is not the connected account handle nor one of its verified aliases',
+      ),
+    });
+    expect(google.sentMessages).toHaveLength(sentMessageCount);
   }, 60000);
 
   it('creates and persists a calendar event with invitations and conferencing', async () => {

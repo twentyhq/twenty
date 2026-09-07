@@ -1,3 +1,4 @@
+import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -12,24 +13,45 @@ type FormFieldInputInnerContainerProps = {
   readonly?: boolean;
   preventFocusStackUpdate?: boolean;
   formFieldInputInstanceId: string;
+  variant?: FormFieldInputVariant;
 };
 
 const StyledFormFieldInputInnerContainer = styled.div<
-  Omit<FormFieldInputInnerContainerProps, 'formFieldInputInstanceId'>
+  Omit<FormFieldInputInnerContainerProps, 'formFieldInputInstanceId'> & {
+    $variant: FormFieldInputVariant;
+  }
 >`
   align-items: ${({ multiline }) => (multiline ? 'flex-start' : 'center')};
-  background-color: ${themeCssVariables.background.transparent.lighter};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-bottom-left-radius: ${themeCssVariables.border.radius.md};
-  border-bottom-right-radius: ${({ multiline, hasRightElement }) =>
-    multiline || !hasRightElement ? themeCssVariables.border.radius.md : '0'};
-  border-right: ${({ multiline, hasRightElement }) =>
-    multiline || !hasRightElement
-      ? `1px solid ${themeCssVariables.border.color.medium}`
-      : 'none'};
-  border-top-left-radius: ${themeCssVariables.border.radius.md};
-  border-top-right-radius: ${({ multiline, hasRightElement }) =>
-    multiline || !hasRightElement ? themeCssVariables.border.radius.md : '0'};
+  background-color: ${({ $variant }) =>
+    $variant === 'transparent'
+      ? 'transparent'
+      : themeCssVariables.background.transparent.lighter};
+  border: ${({ $variant }) =>
+    $variant === 'transparent'
+      ? 'none'
+      : `1px solid ${themeCssVariables.border.color.medium}`};
+  border-bottom-left-radius: ${({ $variant }) =>
+    $variant === 'transparent' ? '0' : themeCssVariables.border.radius.md};
+  border-bottom-right-radius: ${({ multiline, hasRightElement, $variant }) =>
+    $variant === 'transparent'
+      ? '0'
+      : multiline || !hasRightElement
+        ? themeCssVariables.border.radius.md
+        : '0'};
+  border-right: ${({ multiline, hasRightElement, $variant }) =>
+    $variant === 'transparent'
+      ? 'none'
+      : multiline || !hasRightElement
+        ? `1px solid ${themeCssVariables.border.color.medium}`
+        : 'none'};
+  border-top-left-radius: ${({ $variant }) =>
+    $variant === 'transparent' ? '0' : themeCssVariables.border.radius.md};
+  border-top-right-radius: ${({ multiline, hasRightElement, $variant }) =>
+    $variant === 'transparent'
+      ? '0'
+      : multiline || !hasRightElement
+        ? themeCssVariables.border.radius.md
+        : '0'};
   box-sizing: border-box;
   display: flex;
   justify-content: space-between;
@@ -44,10 +66,12 @@ const StyledFormFieldInputInnerContainer = styled.div<
 
   &:hover,
   &[data-open='true'] {
-    background-color: ${({ hoverable }) =>
-      hoverable
-        ? themeCssVariables.background.transparent.light
-        : themeCssVariables.background.transparent.lighter};
+    background-color: ${({ hoverable, $variant }) =>
+      $variant === 'transparent'
+        ? 'transparent'
+        : hoverable
+          ? themeCssVariables.background.transparent.light
+          : themeCssVariables.background.transparent.lighter};
   }
 `;
 
@@ -65,6 +89,7 @@ export const FormFieldInputInnerContainer = forwardRef(
       preventFocusStackUpdate = false,
       onClick,
       formFieldInputInstanceId,
+      variant = 'default',
     }: HTMLAttributes<HTMLDivElement> & FormFieldInputInnerContainerProps,
     ref: Ref<HTMLDivElement>,
   ) => {
@@ -107,6 +132,7 @@ export const FormFieldInputInnerContainer = forwardRef(
         hoverable={hoverable}
         multiline={multiline}
         readonly={readonly}
+        $variant={variant}
         onFocus={handleFocus}
         onBlur={handleBlur}
         onClick={onClick}

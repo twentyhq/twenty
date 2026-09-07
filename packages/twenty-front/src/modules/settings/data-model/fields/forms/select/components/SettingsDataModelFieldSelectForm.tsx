@@ -68,7 +68,7 @@ type SettingsDataModelFieldSelectFormProps = {
 };
 
 const StyledContainerWrapper = styled.div`
-  > * {
+  > div {
     padding-bottom: 14px;
   }
 `;
@@ -128,7 +128,7 @@ const StyledIconPointContainer = styled.span`
 `;
 
 const StyledFooterContainer = styled.div`
-  > * {
+  > div {
     background-color: ${themeCssVariables.background.secondary};
     padding: ${themeCssVariables.spacing[1]};
   }
@@ -203,7 +203,10 @@ export const SettingsDataModelFieldSelectForm = ({
 
       const optionsWithNew = [...initialOptions, newOption];
 
-      setFormValue('options', optionsWithNew, { shouldDirty: true });
+      setFormValue('options', optionsWithNew, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
       setHasAppliedNewOption(true);
     }
   }, [searchParams, hasAppliedNewOption, initialOptions, setFormValue]);
@@ -301,13 +304,19 @@ export const SettingsDataModelFieldSelectForm = ({
   const handleAddOption = () => {
     const newOptions = getOptionsWithNewOption();
 
-    setFormValue('options', newOptions, { shouldDirty: true });
+    setFormValue('options', newOptions, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
   };
 
   const handleInputEnter = () => {
     const newOptions = getOptionsWithNewOption();
 
-    setFormValue('options', newOptions, { shouldDirty: true });
+    setFormValue('options', newOptions, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
   };
 
   return (

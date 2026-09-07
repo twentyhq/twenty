@@ -4,8 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { PageLayoutType } from 'twenty-shared/types';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class DashboardSyncService {
   private readonly logger = new Logger(DashboardSyncService.name);
 
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
@@ -63,19 +63,16 @@ export class DashboardSyncService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     try {
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const dashboardRepository =
-            await this.globalWorkspaceOrmManager.getRepository(
-              workspaceId,
-              'dashboard',
-              { shouldBypassPermissionChecks: true },
-            );
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const dashboardRepository = this.workspaceOrmManager.getRepository(
+          'dashboard',
+          {
+            shouldBypassPermissionChecks: true,
+          },
+        );
 
-          await dashboardRepository.update({ pageLayoutId }, { updatedAt });
-        },
-        authContext,
-      );
+        await dashboardRepository.update({ pageLayoutId }, { updatedAt });
+      }, authContext);
     } catch (error) {
       this.logger.error(
         `Failed to update dashboard updatedAt for page layout ${pageLayoutId}: ${error}`,

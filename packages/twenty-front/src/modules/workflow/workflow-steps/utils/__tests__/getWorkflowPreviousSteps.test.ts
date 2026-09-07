@@ -17,7 +17,7 @@ describe('getWorkflowPreviousSteps', () => {
           },
           outputSchema: {},
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: true },
           },
         },
@@ -35,7 +35,7 @@ describe('getWorkflowPreviousSteps', () => {
           },
           outputSchema: {},
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: true },
           },
         },
@@ -53,7 +53,7 @@ describe('getWorkflowPreviousSteps', () => {
           },
           outputSchema: {},
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: true },
           },
         },
@@ -71,7 +71,7 @@ describe('getWorkflowPreviousSteps', () => {
           },
           outputSchema: {},
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: true },
           },
         },

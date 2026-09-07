@@ -1,27 +1,10 @@
-import { AttachmentUploadTrigger } from '@/activities/files/components/AttachmentUploadTrigger';
-import { useCanUploadAttachmentFiles } from '@/activities/files/hooks/useCanUploadAttachmentFiles';
-import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
+import { useAttachFileRelatedRecordAction } from '@/activities/files/hooks/useAttachFileRelatedRecordAction';
+import { WidgetActionRelatedRecord } from '@/page-layout/widgets/components/WidgetActionRelatedRecord';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { t } from '@lingui/core/macro';
-import { IconPlus } from 'twenty-ui/icon';
 
 export const WidgetActionFileAttach = () => {
   const targetRecord = useTargetRecord();
-  const { canUploadFiles } = useCanUploadAttachmentFiles(targetRecord);
+  const binding = useAttachFileRelatedRecordAction({ targetRecord });
 
-  if (!canUploadFiles) {
-    return null;
-  }
-
-  return (
-    <AttachmentUploadTrigger targetableObject={targetRecord}>
-      {({ openFilePicker }) => (
-        <WidgetCardHeaderActionButton
-          Icon={IconPlus}
-          label={t`Add file`}
-          onClick={openFilePicker}
-        />
-      )}
-    </AttachmentUploadTrigger>
-  );
+  return <WidgetActionRelatedRecord binding={binding} />;
 };

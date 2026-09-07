@@ -14,8 +14,8 @@ import {
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
-import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
-import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
+import { GoogleApiRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
+import { MicrosoftApiRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
 
 // Tokens flowing through this service can be in two states depending on
 // where they enter the pipeline. We model both shapes explicitly so the
@@ -44,8 +44,8 @@ export class ConnectedAccountRefreshTokensService {
   );
 
   constructor(
-    private readonly googleAPIRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
-    private readonly microsoftAPIRefreshAccessTokenService: MicrosoftAPIRefreshAccessTokenService,
+    private readonly googleApiRefreshAccessTokenService: GoogleApiRefreshAccessTokenService,
+    private readonly microsoftApiRefreshAccessTokenService: MicrosoftApiRefreshAccessTokenService,
     private readonly appOAuthRefreshAccessTokenService: AppOAuthRefreshAccessTokenService,
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
     @InjectRepository(ConnectedAccountEntity)
@@ -195,11 +195,11 @@ export class ConnectedAccountRefreshTokensService {
     try {
       switch (connectedAccount.provider) {
         case ConnectedAccountProvider.GOOGLE:
-          return await this.googleAPIRefreshAccessTokenService.refreshTokens(
+          return await this.googleApiRefreshAccessTokenService.refreshTokens(
             refreshToken,
           );
         case ConnectedAccountProvider.MICROSOFT:
-          return await this.microsoftAPIRefreshAccessTokenService.refreshTokens(
+          return await this.microsoftApiRefreshAccessTokenService.refreshTokens(
             refreshToken,
           );
         case ConnectedAccountProvider.APP:

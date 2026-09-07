@@ -28,7 +28,6 @@ import {
 import { isQueryCanceledError } from 'src/engine/api/graphql/workspace-query-runner/utils/is-query-canceled-error.util';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { STANDARD_OBJECTS_BY_PRIORITY_RANK } from 'src/engine/core-modules/search/constants/standard-objects-by-priority-rank';
 import { type ObjectRecordFilterInput } from 'src/engine/core-modules/search/dtos/object-record-filter-input';
 import { type SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
@@ -52,11 +51,12 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { getEffectiveImageIdentifierFieldMetadataId } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-image-identifier-field-metadata-id.util';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 
 type LastRanks = { tsRankCD: number; tsRank: number };
 
@@ -72,10 +72,10 @@ export class SearchService {
   private readonly logger = new Logger(SearchService.name);
 
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly fileUrlService: FileUrlService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly i18nService: I18nService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
   async getAllRecordsWithObjectMetadataItems({
@@ -87,11 +87,9 @@ export class SearchService {
     limit,
     filter,
     after,
-    workspaceId,
   }: {
     flatObjectMetadatas: FlatObjectMetadata[];
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    workspaceId: string;
   } & SearchArgs) {
     const filteredObjectMetadataItems = this.filterObjectMetadataItems({
       flatObjectMetadatas,
@@ -110,7 +108,7 @@ export class SearchService {
     for (const objectMetadataItemChunk of filteredObjectMetadataItemsChunks) {
       const recordsWithObjectMetadataItems = await Promise.all(
         objectMetadataItemChunk.map(async (flatObjectMetadata) => {
-          return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+          return this.workspaceOrmManager.executeInWorkspaceContext(
             async () => {
               const context = getWorkspaceContext();
               const rolePermissionConfig =
@@ -121,8 +119,7 @@ export class SearchService {
                 }) ?? undefined;
 
               const repository =
-                await this.globalWorkspaceOrmManager.getRepository<ObjectRecord>(
-                  workspaceId,
+                this.workspaceOrmManager.getRepository<ObjectRecord>(
                   flatObjectMetadata.nameSingular,
                   rolePermissionConfig,
                 );
@@ -373,7 +370,7 @@ export class SearchService {
       .setParameter('searchTerms', searchTerms)
       .setParameter('searchTermsOr', searchTermsOr)
       .take(limit + 1) // We take one more to check if hasNextPage is true
-      .getRawMany();
+      .getRawMany<ObjectRecord & { tsRank: number; tsRankCD: number }>();
   }
 
   private async buildIlikeFallbackQuery<Entity extends ObjectLiteral>({
@@ -398,7 +395,7 @@ export class SearchService {
     );
 
     try {
-      return await this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
+      return await this.workspaceOrmManager.runInWorkspaceTransaction(
         async (transactionScope) => {
           await transactionScope.executeRawQuery(
             `SELECT set_config('statement_timeout', $1, true)`,
@@ -475,7 +472,7 @@ export class SearchService {
           const rawResults = await queryBuilder
             .orderBy(`"${flatObjectMetadata.nameSingular}"."id"`, 'ASC')
             .take(limit)
-            .getRawMany();
+            .getRawMany<ObjectRecord>();
 
           return rawResults.map((record) => ({
             ...record,
@@ -807,13 +804,15 @@ export class SearchService {
                 overrides: objectMetadataItem.overrides,
                 property: 'labelSingular',
                 i18nContext:
-                  await this.i18nService.buildEffectiveEntityI18nContext({
-                    applicationId:
-                      objectMetadataItem.applicationId ?? undefined,
-                    loaders,
-                    locale,
-                    workspaceId,
-                  }),
+                  await this.applicationTranslationCatalogService.buildEffectiveEntityI18nContext(
+                    {
+                      applicationId:
+                        objectMetadataItem.applicationId ?? undefined,
+                      loaders,
+                      locale,
+                      workspaceId,
+                    },
+                  ),
               }),
             ] as const,
         ),

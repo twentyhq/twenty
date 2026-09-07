@@ -10,7 +10,7 @@ import { In, Repository } from 'typeorm';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
@@ -18,7 +18,7 @@ import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/s
 @Injectable()
 export class ApplyCalendarEventsVisibilityRestrictionsService {
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(UserWorkspaceEntity)
@@ -34,11 +34,10 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
   ) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const calendarChannelEventAssociationRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
-            workspaceId,
+          this.workspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
             'calendarChannelEventAssociation',
           );
 

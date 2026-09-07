@@ -1,6 +1,10 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const lastShowPageRecordIdState = createAtomState<string | null>({
+export const lastShowPageRecordIdState = createAtomComponentState<
+  string | null
+>({
   key: 'lastShowPageRecordIdState',
   defaultValue: null,
+  componentInstanceContext: ContextStoreComponentInstanceContext,
 });

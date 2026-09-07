@@ -23,6 +23,7 @@ export enum TargetFunction {
   DefinePageLayout = 'definePageLayout',
   DefinePageLayoutTab = 'definePageLayoutTab',
   DefineCommandMenuItem = 'defineCommandMenuItem',
+  DefineTimelineActivityType = 'defineTimelineActivityType',
 }
 
 export enum ManifestEntityKey {
@@ -44,6 +45,7 @@ export enum ManifestEntityKey {
   PageLayouts = 'pageLayouts',
   PageLayoutTabs = 'pageLayoutTabs',
   CommandMenuItems = 'commandMenuItems',
+  TimelineActivityTypes = 'timelineActivityTypes',
 }
 
 export type EntityFilePaths = Record<ManifestEntityKey, string[]>;
@@ -80,6 +82,8 @@ export const TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING: Record<
   [TargetFunction.DefinePageLayout]: ManifestEntityKey.PageLayouts,
   [TargetFunction.DefinePageLayoutTab]: ManifestEntityKey.PageLayoutTabs,
   [TargetFunction.DefineCommandMenuItem]: ManifestEntityKey.CommandMenuItems,
+  [TargetFunction.DefineTimelineActivityType]:
+    ManifestEntityKey.TimelineActivityTypes,
 };
 
 const computeIsTargetFunctionCall = (node: ts.Node): string | undefined => {

@@ -101,6 +101,7 @@ export class FrontComponentSharedDependenciesController {
     try {
       await pipeline(fileResponse.stream, res);
     } catch (error) {
+      fileResponse.stream.destroy();
       this.logger.error(
         'Shared dependencies bundle stream failed mid-transfer',
         { error },

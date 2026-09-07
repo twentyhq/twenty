@@ -84,6 +84,29 @@ export default defineField({
 **Cyklické importy:** obě relační pole odkazují na `universalIdentifier` toho druhého. Abyste předešli problémům s cyklickými importy, exportujte ID polí jako pojmenované konstanty z každého souboru a v druhém je importujte. Build systém je vyřeší v době kompilace.
 </Note>
 
+## Propojovací vztahy
+
+Propojovací objekt spojuje jeden zdrojový záznam s jedním nebo více cílovými záznamy. Například `PostCardRecipient` může obsahovat vztah `postCard` i vztah `recipient`. V poli `ONE_TO_MANY` zdrojového objektu nastavte `junctionTargetFieldUniversalIdentifier` na pole vztahu v propojovacím objektu, které ukazuje na cíl:
+
+```ts
+export default defineField({
+  universalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCardRecipients',
+  label: 'Post Card Recipients',
+  relationTargetObjectMetadataUniversalIdentifier:
+    POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+    junctionTargetFieldUniversalIdentifier: RECIPIENT_FIELD_ID,
+  },
+});
+```
+
+`RECIPIENT_FIELD_ID` musí identifikovat vztah `MANY_TO_ONE` nebo morfní vztah v propojovacím objektu. Systému Twenty udává, který související záznam je cílem, když funkce, jako je [rozvětvení aktivity časové osy](/l/cs/developers/extend/apps/data/timeline-activity-types#automatic-and-explicit-events), prochází propojovacím objektem.
+
 ## Vazby na standardní objekty
 
 Chcete-li vytvořit relaci s vestavěným objektem Twenty (Person, Company atd.), použijte `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
@@ -122,14 +145,15 @@ export default defineField({
 
 ## Vlastnosti relačních polí
 
-| Vlastnost                                         | Povinné           | Popis                                                                                             |
-| ------------------------------------------------- | ----------------- | ------------------------------------------------------------------------------------------------- |
-| `type`                                            | Ano               | Musí být `FieldType.RELATION`                                                                     |
-| `relationTargetObjectMetadataUniversalIdentifier` | Ano               | `universalIdentifier` cílového objektu                                                            |
-| `relationTargetFieldMetadataUniversalIdentifier`  | Ano               | `universalIdentifier` odpovídajícího pole na cílovém objektu                                      |
-| `universalSettings.relationType`                  | Ano               | `RelationType.MANY_TO_ONE` nebo `RelationType.ONE_TO_MANY`                                        |
-| `universalSettings.onDelete`                      | Pouze MANY_TO_ONE | Co se stane, když je smazán odkazovaný záznam: `CASCADE`, `SET_NULL`, `RESTRICT` nebo `NO_ACTION` |
-| `universalSettings.joinColumnName`                | Pouze MANY_TO_ONE | Název databázového sloupce pro cizí klíč (např. `postCardId`)                                     |
+| Vlastnost                                                  | Povinné                           | Popis                                                                                             |
+| ---------------------------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `type`                                                     | Ano                               | Musí být `FieldType.RELATION`                                                                     |
+| `relationTargetObjectMetadataUniversalIdentifier`          | Ano                               | `universalIdentifier` cílového objektu                                                            |
+| `relationTargetFieldMetadataUniversalIdentifier`           | Ano                               | `universalIdentifier` odpovídajícího pole na cílovém objektu                                      |
+| `universalSettings.relationType`                           | Ano                               | `RelationType.MANY_TO_ONE` nebo `RelationType.ONE_TO_MANY`                                        |
+| `universalSettings.onDelete`                               | Pouze MANY_TO_ONE                 | Co se stane, když je smazán odkazovaný záznam: `CASCADE`, `SET_NULL`, `RESTRICT` nebo `NO_ACTION` |
+| `universalSettings.joinColumnName`                         | Pouze MANY_TO_ONE                 | Název databázového sloupce pro cizí klíč (např. `postCardId`)                                     |
+| `universalSettings.junctionTargetFieldUniversalIdentifier` | Pouze pro propojovací ONE_TO_MANY | Pole vztahu v propojovacím objektu, které ukazuje na cíl rozvětvení                               |
 
 ## Vložená relační pole
 

@@ -10,7 +10,7 @@ import {
 import { LastUsedPill } from '@/auth/sign-in-up/components/internal/LastUsedPill';
 import { SignInUpEmailField } from '@/auth/sign-in-up/components/internal/SignInUpEmailField';
 import { SignInUpPasswordField } from '@/auth/sign-in-up/components/internal/SignInUpPasswordField';
-import { StyledSSOButtonContainer } from '@/auth/sign-in-up/components/internal/SignInUpSSOButtonStyles';
+import { StyledSsoButtonContainer } from '@/auth/sign-in-up/components/internal/SignInUpSsoButtonStyles';
 import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
@@ -160,7 +160,7 @@ export const SignInUpWithCredentials = ({
               signInUpMode={signInUpMode}
             />
           )}
-          <StyledSSOButtonContainer>
+          <StyledSsoButtonContainer>
             <MainButton
               title={buttonTitle}
               type="submit"
@@ -175,7 +175,7 @@ export const SignInUpWithCredentials = ({
             {isSignUpBlockedByDDLLock && (
               <InputHint>{t`Sign-up is temporarily unavailable during maintenance.`}</InputHint>
             )}
-          </StyledSSOButtonContainer>
+          </StyledSsoButtonContainer>
         </StyledForm>
       )}
     </>

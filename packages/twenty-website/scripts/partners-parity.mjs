@@ -21,7 +21,7 @@ const browser = await launchBrowser();
 // rhythm and show overflow, so the two read as one continuous frame across the
 // seam. If a future refactor of the `:has(+ [data-connect-up])` rule breaks
 // this, the corner markers re-clip and the frame splits.
-const partners = await openPage(browser, `${NEW_BASE}/partners`, {
+const partners = await openPage(browser, `${NEW_BASE}/partners/become`, {
   viewport: { width: 1440, height: 1400 },
   settleMs: 500,
 });
@@ -103,10 +103,11 @@ assert(
 );
 
 // The closing sign-off: a tall centred panel whose heading carries both faces
-// (serif + sans accent). "Become a partner" is the application-modal trigger (a
-// button, no href); "Find a partner" links to the (Wave-B) marketplace, the
-// same dangle the hero already carries. The body is measure-constrained so it
-// breaks across two lines rather than running the panel width.
+// (serif + sans accent). The page recruits partners only, so the panel carries
+// exactly ONE cta — "Become a partner", the application-modal trigger (a
+// button, no href). A second, buyer-facing cta here is the regression this
+// guards. The body is measure-constrained so it breaks across lines rather
+// than running the panel width.
 const signoff = await partners.evaluate(() => {
   const heading = [...document.querySelectorAll('h2')].find((node) =>
     /Ready to grow/.test(node.textContent ?? ''),
@@ -116,17 +117,14 @@ const signoff = await partners.evaluate(() => {
   const become = ctas.find((node) =>
     /Become a partner/i.test(node.textContent ?? ''),
   );
-  const find = ctas.find((node) =>
-    /Find a partner/i.test(node.textContent ?? ''),
-  );
   const body = [...(section?.querySelectorAll('p') ?? [])].find((node) =>
-    /partner ecosystem/.test(node.textContent ?? ''),
+    /certify real builders/.test(node.textContent ?? ''),
   );
   return {
     headingText: (heading?.textContent ?? '').replace(/\s+/g, ' ').trim(),
     becomeTag: become?.tagName.toLowerCase() ?? '',
     becomeHref: become?.getAttribute('href') ?? null,
-    findHref: find?.getAttribute('href') ?? '',
+    ctaCount: ctas.length,
     bodyWidth: body ? Math.round(body.getBoundingClientRect().width) : 0,
     sectionHeight: section
       ? Math.round(section.getBoundingClientRect().height)
@@ -146,9 +144,9 @@ assert(
   `${signoff.becomeTag} href=${signoff.becomeHref}`,
 );
 assert(
-  'signoff find-a-partner links to the marketplace',
-  signoff.findHref.endsWith('/partners/list'),
-  signoff.findHref,
+  'signoff carries exactly one cta',
+  signoff.ctaCount === 1,
+  `${signoff.ctaCount} ctas`,
 );
 assert(
   'signoff body is measure-constrained',
@@ -230,8 +228,13 @@ async function heroH1(path) {
 }
 
 assert(
+  'partners/become hero h1',
+  (await heroH1('/partners/become')).includes('our partner'),
+  'missing',
+);
+assert(
   'partners hero h1',
-  (await heroH1('/partners')).includes('our partner'),
+  (await heroH1('/partners')).includes('48 hours'),
   'missing',
 );
 assert(
@@ -249,5 +252,46 @@ assert(
   (await heroH1('/customers')).includes('on Twenty'),
   'missing',
 );
+
+// The lead page's directory zone is an anchor target two files depend on: the
+// hero CTA jumps to it and a partner profile's back link returns to it.
+const leadPage = await openPage(browser, `${NEW_BASE}/partners`, {
+  viewport: { width: 1440, height: 1000 },
+  settleMs: 500,
+});
+const directoryAnchor = await leadPage.evaluate(() => {
+  const zone = document.getElementById('partner-directory');
+  const cta = document.querySelector('main a[href="#partner-directory"]');
+  return { hasCta: cta !== null, hasZone: zone !== null };
+});
+await leadPage.close();
+
+assert(
+  'partners directory anchor target',
+  directoryAnchor.hasZone,
+  `#partner-directory present=${directoryAnchor.hasZone}`,
+);
+assert(
+  'partners hero links to the directory anchor',
+  directoryAnchor.hasCta,
+  `anchor cta present=${directoryAnchor.hasCta}`,
+);
+
+// /partners/list folded into the lead page; both the bare and the
+// locale-prefixed URL were in the sitemap, so both must keep their 308.
+const legacyListPaths = ['/partners/list', '/fr/partners/list'];
+const legacyListResponses = await Promise.all(
+  legacyListPaths.map((path) =>
+    fetch(`${NEW_BASE}${path}`, { redirect: 'manual' }),
+  ),
+);
+legacyListResponses.forEach((response, index) => {
+  const location = response.headers.get('location') ?? '';
+  assert(
+    `${legacyListPaths[index]} redirects to the lead page`,
+    response.status === 308 && location.endsWith('/partners'),
+    `${response.status} -> ${location}`,
+  );
+});
 
 await finish(browser);

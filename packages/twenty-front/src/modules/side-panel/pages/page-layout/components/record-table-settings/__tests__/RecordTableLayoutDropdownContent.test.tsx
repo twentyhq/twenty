@@ -10,7 +10,6 @@ const OBJECT_METADATA_ID = '11111111-1111-4111-8111-111111111111';
 
 const mockHandleLayoutChange = jest.fn();
 const mockCloseDropdown = jest.fn();
-const mockUseIsFeatureEnabled = jest.fn();
 const mockIsAvailableAsGroupByField = jest.fn();
 const mockIsAvailableAsCalendarField = jest.fn();
 
@@ -68,9 +67,6 @@ jest.mock(
     useAtomComponentStateValue: jest.fn(() => null),
   }),
 );
-jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: (...args: unknown[]) => mockUseIsFeatureEnabled(...args),
-}));
 jest.mock('twenty-ui/navigation', () => ({
   MenuItemSelect: ({
     contextualText,
@@ -114,7 +110,6 @@ const layoutLabels = () =>
 describe('RecordTableLayoutDropdownContent', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseIsFeatureEnabled.mockReturnValue(true);
     mockIsAvailableAsGroupByField.mockReturnValue(true);
     mockIsAvailableAsCalendarField.mockReturnValue(true);
   });
@@ -123,14 +118,6 @@ describe('RecordTableLayoutDropdownContent', () => {
     renderDropdown();
 
     expect(layoutLabels()).toEqual(['Table', 'Kanban', 'List', 'Calendar']);
-  });
-
-  it('should hide the list layout while the feature flag is off', () => {
-    mockUseIsFeatureEnabled.mockReturnValue(false);
-
-    renderDropdown();
-
-    expect(layoutLabels()).toEqual(['Table', 'Kanban', 'Calendar']);
   });
 
   it('should mark the current layout as selected', () => {

@@ -65,12 +65,12 @@ export class WorkflowRunnerWorkspaceService {
     source: ActorMetadata;
     workflowRunId?: string;
   }) {
-    const canFeatureBeUsed =
-      await this.billingUsageService.canFeatureBeUsed(workspaceId);
+    const subscriptionInactiveReason =
+      await this.billingUsageService.getSubscriptionInactiveReason(workspaceId);
 
-    if (!canFeatureBeUsed) {
+    if (isDefined(subscriptionInactiveReason)) {
       this.logger.log(
-        'Cannot execute billed function, there is no subscription for this workspace',
+        `Cannot execute billed function for this workspace: ${subscriptionInactiveReason}`,
       );
     }
 

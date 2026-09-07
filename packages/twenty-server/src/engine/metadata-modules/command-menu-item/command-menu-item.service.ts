@@ -6,7 +6,6 @@ import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type ObjectMetadataLoaderPayload } from 'src/engine/dataloaders/dataloader.service';
 import {
   CommandMenuItemException,
@@ -19,7 +18,6 @@ import { type CreateCommandMenuItemInput } from 'src/engine/metadata-modules/com
 import { type UpdateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/update-command-menu-item.input';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { interpolateNavigationCommandMenuItemField } from 'src/engine/metadata-modules/command-menu-item/utils/interpolate-navigation-command-menu-item-field.util';
-import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-create-command-menu-item-input-to-flat-command-menu-item-to-create.util';
 import { fromDeleteCommandMenuItemInputToFlatCommandMenuItemOrThrow } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-delete-command-menu-item-input-to-flat-command-menu-item-or-throw.util';
@@ -32,6 +30,7 @@ import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metad
 import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 
 @Injectable()
 export class CommandMenuItemService {
@@ -39,7 +38,7 @@ export class CommandMenuItemService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
-    private readonly i18nService: I18nService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
   async findAll(workspaceId: string): Promise<CommandMenuItemDTO[]> {
@@ -433,13 +432,13 @@ export class CommandMenuItemService {
   }): Promise<ObjectMetadataDTO | null> {
     if (
       commandMenuItem.engineComponentKey !== EngineComponentKey.NAVIGATION ||
-      !isObjectMetadataCommandMenuItemPayload(commandMenuItem.payload)
+      !isDefined(commandMenuItem.navigationTargetObjectMetadataId)
     ) {
       return null;
     }
 
     return objectMetadataLoader.load({
-      objectMetadataId: commandMenuItem.payload.objectMetadataItemId,
+      objectMetadataId: commandMenuItem.navigationTargetObjectMetadataId,
       workspaceId,
     });
   }
@@ -462,12 +461,15 @@ export class CommandMenuItemService {
     workspaceId: string;
     locale: keyof typeof APP_LOCALES | undefined;
   }): Promise<string | undefined> {
-    const i18nContext = await this.i18nService.buildEffectiveEntityI18nContext({
-      applicationId: commandMenuItem.applicationId,
-      loaders,
-      locale,
-      workspaceId,
-    });
+    const i18nContext =
+      await this.applicationTranslationCatalogService.buildEffectiveEntityI18nContext(
+        {
+          applicationId: commandMenuItem.applicationId,
+          loaders,
+          locale,
+          workspaceId,
+        },
+      );
 
     const effectiveValue = resolveEffectiveEntityProperty({
       metadataName: 'commandMenuItem',
@@ -506,12 +508,14 @@ export class CommandMenuItemService {
       // The navigated-to object may belong to a different application than the
       // command menu item pointing at it.
       objectMetadataI18nContext:
-        await this.i18nService.buildEffectiveEntityI18nContext({
-          applicationId: objectMetadata.applicationId,
-          loaders,
-          locale,
-          workspaceId,
-        }),
+        await this.applicationTranslationCatalogService.buildEffectiveEntityI18nContext(
+          {
+            applicationId: objectMetadata.applicationId,
+            loaders,
+            locale,
+            workspaceId,
+          },
+        ),
     });
   }
 

@@ -16,9 +16,10 @@ import { RecordTableHeader } from '@/object-record/record-table/record-table-hea
 import { recordTableWidthComponentState } from '@/object-record/record-table/states/recordTableWidthComponentState';
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
-import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-record/record-table/states/shouldCompactRecordTableFirstColumnComponentState';
+import { useRecordTableFirstColumnWidthOverride } from '@/object-record/record-table/hooks/useRecordTableFirstColumnWidthOverride';
 import { computeVisibleRecordFieldsWidthOnTable } from '@/object-record/record-table/utils/computeVisibleRecordFieldsWidthOnTable';
 import { RecordTableVirtualizedDataChangedEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedDataChangedEffect';
+import { RecordTableVirtualizedJunctionDataChangedEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedJunctionDataChangedEffect';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { useMemo } from 'react';
@@ -66,9 +67,7 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
 
   const isResizing = isDefined(resizedFieldMetadataId);
 
-  const shouldCompactRecordTableFirstColumn = useAtomComponentStateValue(
-    shouldCompactRecordTableFirstColumnComponentState,
-  );
+  const firstColumnWidthOverride = useRecordTableFirstColumnWidthOverride();
 
   const resizeOffsetToAddOnlyIfItMakesTableContainerGrow = isResizing
     ? resizeFieldOffset > 0
@@ -79,7 +78,7 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
   const totalColumnsBorderWidth = visibleRecordFields.length;
 
   const { visibleRecordFieldsWidth } = computeVisibleRecordFieldsWidthOnTable({
-    shouldCompactFirstColumn: shouldCompactRecordTableFirstColumn,
+    firstColumnWidthOverride,
     visibleRecordFields,
   });
 
@@ -134,6 +133,7 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
       <RecordTableColumnWidthEffect />
       <RecordTableWidthEffect />
       <RecordTableVirtualizedDataChangedEffect />
+      <RecordTableVirtualizedJunctionDataChangedEffect />
     </StyledEmptyStateContainer>
   );
 };

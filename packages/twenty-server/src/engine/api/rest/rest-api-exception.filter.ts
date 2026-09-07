@@ -8,6 +8,7 @@ import {
 import { type Response } from 'express';
 
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
+import { hasRestResponse } from 'src/engine/core-modules/exception-handler/utils/has-rest-response.util';
 
 @Catch()
 export class RestApiExceptionFilter implements ExceptionFilter {
@@ -18,6 +19,10 @@ export class RestApiExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
+
+    if (hasRestResponse(exception)) {
+      response.set(exception.getResponseHeaders());
+    }
 
     const statusCode =
       exception instanceof HttpException ? exception.getStatus() : 400; // should actually default to 500 but we dont have input validation yet and dont want to be flooded with errors from input https://github.com/twentyhq/core-team-issues/issues/1027

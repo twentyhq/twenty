@@ -24,8 +24,8 @@ import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/e
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
-import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
@@ -66,7 +66,7 @@ export class BillingWebhookSubscriptionService {
     private readonly workspaceService: WorkspaceService,
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
     private readonly billingUsageCacheService: BillingUsageCacheService,
-    private readonly billingCreditService: BillingCreditService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -115,10 +115,6 @@ export class BillingWebhookSubscriptionService {
         skipUpdateIfNoValuesChanged: true,
       },
     );
-
-    // Credits can be granted before this row exists, and those writes mirrored
-    // onto nothing. The row is here now, so put the ledger balance on it.
-    await this.billingCreditService.reconcileMirroredBalance(workspaceId);
 
     const liveCustomerSubscriptions =
       await this.stripeSubscriptionScheduleService.listCustomerNotEndedSubscriptionsWithSchedule(
@@ -195,6 +191,8 @@ export class BillingWebhookSubscriptionService {
       'currentBillingSubscription',
     ]);
 
+    await this.usageLimitQuotaService.dropAllowanceCounter(workspace.id);
+
     const shouldSuspendWorkspace = allLiveSubscriptions.every(
       (customerSubscription) =>
         this.shouldSuspendWorkspace(customerSubscription),
@@ -223,7 +221,7 @@ export class BillingWebhookSubscriptionService {
       if (!isDefined(refreshedWorkspace.deletedAt)) {
         switch (refreshedWorkspace.activationStatus) {
           case WorkspaceActivationStatus.PENDING_CREATION:
-            await this.workspaceService.deleteWorkspace(workspaceId);
+            await this.workspaceService.deleteWorkspace(workspaceId, true);
             break;
           case WorkspaceActivationStatus.ACTIVE:
             await this.workspaceService.suspendWorkspace(workspaceId);

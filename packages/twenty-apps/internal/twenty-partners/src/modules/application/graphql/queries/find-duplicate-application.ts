@@ -14,7 +14,7 @@ export function findDuplicateApplication(
         },
         first: 1,
       },
-      edges: { node: { id: true } },
+      edges: { node: { id: true, pitch: true, state: true } },
     },
   });
 }

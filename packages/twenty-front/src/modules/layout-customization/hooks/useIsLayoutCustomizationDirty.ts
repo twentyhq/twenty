@@ -9,7 +9,7 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { recordTableWidgetViewPersistedComponentState } from '@/page-layout/states/recordTableWidgetViewPersistedComponentState';
-import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
+import { toDraftPageLayout } from '@/page-layout/utils/toDraftPageLayout';
 import { atom, useAtomValue } from 'jotai';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -43,17 +43,7 @@ export const useIsLayoutCustomizationDirty = () => {
             continue;
           }
 
-          const persistedAsDraft: DraftPageLayout = {
-            id: persisted.id,
-            name: persisted.name,
-            type: persisted.type,
-            objectMetadataId: persisted.objectMetadataId,
-            tabs: persisted.tabs,
-            defaultTabToFocusOnMobileAndSidePanelId:
-              persisted.defaultTabToFocusOnMobileAndSidePanelId,
-          };
-
-          if (!isDeeplyEqual(draft, persistedAsDraft)) {
+          if (!isDeeplyEqual(draft, toDraftPageLayout(persisted))) {
             return true;
           }
 

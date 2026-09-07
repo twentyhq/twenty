@@ -37,7 +37,7 @@ export const oneSucceededWorkflowRunQueryResult = {
               },
               errorHandlingOptions: {
                 retryOnFailure: {
-                  value: false,
+                  value: 0,
                 },
                 continueOnFailure: {
                   value: false,
@@ -66,7 +66,7 @@ export const oneSucceededWorkflowRunQueryResult = {
               },
               errorHandlingOptions: {
                 retryOnFailure: {
-                  value: false,
+                  value: 0,
                 },
                 continueOnFailure: {
                   value: false,
@@ -186,7 +186,7 @@ export const oneSucceededWorkflowRunQueryResult = {
               },
               errorHandlingOptions: {
                 retryOnFailure: {
-                  value: false,
+                  value: 0,
                 },
                 continueOnFailure: {
                   value: false,
@@ -321,7 +321,7 @@ export const oneSucceededWorkflowRunQueryResult = {
               },
               errorHandlingOptions: {
                 retryOnFailure: {
-                  value: false,
+                  value: 0,
                 },
                 continueOnFailure: {
                   value: false,
@@ -4504,7 +4504,7 @@ export const oneSucceededWorkflowRunQueryResult = {
             },
             errorHandlingOptions: {
               retryOnFailure: {
-                value: false,
+                value: 0,
               },
               continueOnFailure: {
                 value: false,
@@ -4533,7 +4533,7 @@ export const oneSucceededWorkflowRunQueryResult = {
             },
             errorHandlingOptions: {
               retryOnFailure: {
-                value: false,
+                value: 0,
               },
               continueOnFailure: {
                 value: false,
@@ -4653,7 +4653,7 @@ export const oneSucceededWorkflowRunQueryResult = {
             },
             errorHandlingOptions: {
               retryOnFailure: {
-                value: false,
+                value: 0,
               },
               continueOnFailure: {
                 value: false,
@@ -4788,7 +4788,7 @@ export const oneSucceededWorkflowRunQueryResult = {
             },
             errorHandlingOptions: {
               retryOnFailure: {
-                value: false,
+                value: 0,
               },
               continueOnFailure: {
                 value: false,

@@ -7,7 +7,7 @@ import { type CursorPageFlags } from 'src/engine/api/types/cursor-page-flags.typ
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { type OrderByValuesByRecordId } from 'src/engine/api/utils/build-order-by-values-by-record-id.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const getPageInfo = ({
@@ -24,7 +24,7 @@ export const getPageInfo = ({
   pageInfo: CursorPageFlags;
   flatObjectMetadata: FlatObjectMetadata;
   flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   orderByValuesByRecordId?: OrderByValuesByRecordId;
 }): CommonPageInfo => {
   const encodeRecordCursor = (record: ObjectRecord) =>

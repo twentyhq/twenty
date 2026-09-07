@@ -1,4 +1,10 @@
-import { Field, Float, HideField, ObjectType } from '@nestjs/graphql';
+import {
+  Field,
+  Float,
+  HideField,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql';
 
 import {
   IsBoolean,
@@ -12,14 +18,16 @@ import {
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
+import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import { type CommandMenuItemOverrides } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
-import {
-  type CommandMenuItemPayload,
-  CommandMenuItemPayloadUnion,
-} from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item-payload.union';
+import { CommandMenuItemPayloadUnion } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item-payload.union';
+import { type PathCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/types/path-command-menu-item-payload.type';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
+
+registerEnumType(CommandMenuItemAvailabilityType, {
+  name: 'CommandMenuItemAvailabilityType',
+});
 
 @ObjectType('CommandMenuItem')
 export class CommandMenuItemDTO {
@@ -75,7 +83,7 @@ export class CommandMenuItemDTO {
 
   @IsOptional()
   @Field(() => CommandMenuItemPayloadUnion, { nullable: true })
-  payload?: CommandMenuItemPayload;
+  payload?: PathCommandMenuItemPayload;
 
   @IsString({ each: true })
   @IsOptional()
@@ -87,10 +95,20 @@ export class CommandMenuItemDTO {
   @Field({ nullable: true })
   conditionalAvailabilityExpression?: string;
 
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  conditionalPinnedExpression?: string;
+
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
   availabilityObjectMetadataId?: string;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  navigationTargetObjectMetadataId?: string;
 
   @IsUUID()
   @IsOptional()

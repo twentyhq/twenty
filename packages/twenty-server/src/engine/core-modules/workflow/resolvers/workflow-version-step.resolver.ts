@@ -73,6 +73,7 @@ export class WorkflowVersionStepResolver {
       id: account.id,
       handle: account.handle,
       provider: account.provider,
+      handleAliases: account.handleAliases,
     };
   }
 

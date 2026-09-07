@@ -283,6 +283,28 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 
 識別子は、マニフェストに記載されている resolver の `universalIdentifier` です。 その URL をプロバイダーに登録します。
 
+**検証用 GET への応答。** 一部のプロバイダーは、後でイベントを `POST` する同じ URL にチャレンジを含む `GET` を送信して、配信先のエンドポイントを事前に検証します。Meta の WhatsApp Cloud API はその一例です。 特に指定しない限り、サーバールートは `POST` にのみ応答するため、両方のメソッドを宣言します。
+
+```ts
+serverRouteTriggerSettings: {
+  forwardedRequestHeaders: ['x-hub-signature-256'],
+  httpMethods: ['GET', 'POST'],
+}
+```
+
+チャレンジは `event.queryStringParameters` で受信され、`Response` を返すと、同じリクエストでプロバイダーにチャレンジが返されます。 文字列のボディは `text/plain` として送信され、これはこれらのプロバイダーが想定する形式です。
+
+```ts
+const handler = async (event: RoutePayload) => {
+  if (event.requestContext.http.method === 'GET') {
+    return new Response(event.queryStringParameters['hub.challenge']);
+  }
+  // …handle the delivered event
+};
+```
+
+`httpMethods` はデフォルトに追加するのではなく置き換えるため、`['GET']` のみを指定すると、ルートは `POST` を拒否します。 サポートされているのは `GET` と `POST` のみです。 プロバイダーが2つ目の動詞を必要とする場合を除き、未設定のままにしてください。`GET` を宣言するルートでは、認証されていないすべての呼び出し元（予告なく `GET` を送信するクローラーやリンク展開ツールを含む）によってリゾルバーが実行されます。 プラットフォームにメソッドが存在しないものには、リゾルバーが実行されることなく `405` が返されます。
+
 <Note>
 **アプリケーションは所有者ワークスペースでクレームされ、インストールされている必要があります。** リゾルバーは **所有者ワークスペース**（アプリケーション登録を所有しているワークスペース）上で実行されるため、サーバールートトリガーが動作するのは、アプリケーションが*クレーム*されている、つまり所有者ワークスペースを持っていること **かつ** そのアプリケーションが **所有者ワークスペースにインストールされている** 場合のみです。 この2つの条件がどちらも満たされるまでは、リゾルバーを実行する場所が存在しないため、ルートをディスパッチできません。 したがって、`serverRouteTriggerSettings` ロジック関数を公開するアプリケーションは、所有者ワークスペースでクレームされインストールされるまで、マーケットプレイスに掲載することはできません。
 </Note>
@@ -425,6 +447,78 @@ const handler = async (event: PersonDestroyedEvent) => {
   };
 };
 ```
+
+#### 実行コンテキスト
+
+すべてのハンドラーは、何によってトリガーされたかにかかわらず、実行自体を説明する2番目の引数を受け取ります。  最初の引数はトリガーごとに形式が変わりますが、こちらは変わりません：
+
+```ts
+import type { LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
+
+const handler = async (
+  event: DatabaseEventPayload,
+  { workspaceId, workspaceMemberId }: LogicFunctionExecutionContext,
+) => {
+  if (workspaceMemberId === null) {
+    throw new Error('This function must be triggered by a person');
+  }
+
+  return { reviewedBy: workspaceMemberId, workspaceId };
+};
+```
+
+| フィールド               | タイプ              | 説明                                                                                  |
+| ------------------- | ---------------- | ----------------------------------------------------------------------------------- |
+| `workspaceId`       | `string`         | 実行が属するワークスペース。                                                                      |
+| `userWorkspaceId`   | `string \| null` | このワークスペースにおけるメンバーシップとしての、実行をトリガーした人物。                                               |
+| `workspaceMemberId` | `string \| null` | ワークスペースメンバーのレコードとしての同じ人物であり、レコードをリンクする対象です。                                         |
+| `retryCount`        | `number`         | 最初の試行では `0`。 [バックグラウンドジョブ](/l/ja/developers/extend/apps/logic/background-jobs)を参照してください。 |
+| `maxRetries`        | `number`         | アプリケーションが要求する再試行回数の上限。                                                              |
+
+誰も実行をトリガーしていない場合、`userWorkspaceId` と `workspaceMemberId` は `null` です。cron スケジュール、インストールフック、および認証されていない Webhook には、それに対応する人物がいません。 その人物にワークスペースメンバーのレコードがない場合、またはそのレコードが削除されている場合も、これらは `null` です。
+
+<Note>
+**コンテキストは、誰が実行をトリガーしたかを示します。** 実行で*できること*は、以下で説明する別の宣言です。
+</Note>
+
+#### 呼び出しで使用されるアクセス権
+
+すべてのクライアント（`CoreApiClient`、`MetadataApiClient`、`RestApiClient`）は、実行をトリガーした人物として動作します。その人物のロールとアプリケーションのロールの共通部分が適用されるため、呼び出しでできることは、どちらか一方ができることを超えません。 これがデフォルトであり、人物がアプリを使用して自身の権限を超えることは決してできないことを意味します。
+
+誰も実行をトリガーしていない場合、動作する人物がいないため、同じクライアントはアプリケーション自身のアクセス権にフォールバックします。cron スケジュール、インストールフック、および認証されていない Webhook には特別な処理は必要ありません。
+
+人物が実行の背後に*いる*場合でも、アプリケーション自身のアクセス権を正当に必要とする呼び出しがあります。たとえば、アプリの設定レコードの読み取りや、その人物自身では実行できない作業です。 そのために2つ目のクライアントを作成します：
+
+```ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const asPerson = new CoreApiClient();
+const asApplication = new CoreApiClient({ runAs: 'application' });
+
+const handler = async (event: DatabaseEventPayload) => {
+  // config records only your app may read
+  const { slackUserLinks } = await asApplication.query({ ... });
+
+  // created as the person, so it is attributed and permission-checked
+  await asPerson.mutation({ createNote: { ... } });
+};
+```
+
+両方をモジュールスコープで一度だけ作成し、各呼び出し箇所では、呼び出すクライアントによって使用するアクセス権を指定します。 `RestApiClient` も同じオプションを受け取ります：
+
+```ts
+import { RestApiClient } from 'twenty-client-sdk/rest';
+
+const asApplication = new RestApiClient({ runAs: 'application' });
+```
+
+<Note>
+**誰にもトリガーされていない実行は、アプリケーションとして動作します。** cron スケジュール、インストールフック、および認証されていない Webhook には、それに対応する人物がいないため、デフォルトのクライアントはアプリケーション自身のアクセス権にフォールバックして動作し続けます。 `runAs: 'application'` が必要なのは、人物が実行をトリガーした場合にそのアクセス権を使用したいときだけです。
+
+たとえばレコードの帰属先を指定するためなど、誰かが背後にいるかどうかによって関数の動作が異なる場合は、`context.workspaceMemberId` を確認してください。
+</Note>
+
+アプリケーション自身のリソースにアクセスする SDK ヘルパーは、常にそのアクセス権を使用し、`runAs` を無視します。[キー値ストア](/l/ja/developers/extend/apps/logic/key-value-store)、[接続](/l/ja/developers/extend/apps/logic/connections)、`runAgent`、`getPublicAssetUrl`、およびクレジットの請求が該当します。
 
 #### 関数を AI ツールまたはワークフロー アクションとして公開する
 
@@ -620,6 +714,45 @@ const handler = async (params: { parentMessageId?: string }) => {
 **インストールフック** — pre-install、post-install、uninstall の各ハンドラー — はこのランタイムを共有しますが、それぞれ独自の define 関数で宣言され、トリガー設定は受け取りません。 `definePreInstallLogicFunction`、`definePostInstallLogicFunction`、`defineUninstallLogicFunction` については、[インストールフック](/l/ja/developers/extend/apps/config/install-hooks) を参照してください。
 </Note>
 
+## タイムラインアクティビティを作成する
+
+`createTimelineActivity()` を使用して、ロジック関数から明示的なドメインイベントを公開します。 まずイベントを[タイムラインアクティビティタイプ](/l/ja/developers/extend/apps/data/timeline-activity-types)として定義し、次に安定したユニバーサル識別子でタイプとオブジェクトを指定します:
+
+```ts
+import { createTimelineActivity } from 'twenty-sdk/logic-function';
+
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  happensAt: new Date().toISOString(),
+  properties: {
+    deliveryProvider: 'postal-service',
+  },
+});
+```
+
+Twenty はユニバーサル識別子をインストール固有のメタデータ ID に解決し、タイムラインアクティビティタイプが呼び出し元のアプリに属していることを検証して、新しいアクティビティにその表示メタデータのスナップショットを保存します。
+
+必須の入力は `timelineActivityTypeUniversalIdentifier`、`targetObjectUniversalIdentifier`、および `targetRecordId` です。 `happensAt`、`properties`、および `workspaceMemberId` も指定できます。 `happensAt` はタイムライン内のイベントの位置と表示時刻を制御します。デフォルトは作成時刻です。
+
+別のレコードをイベントに関連付けるには、`linkedRecordId` と `linkedObjectMetadataUniversalIdentifier` を一緒に指定します。 履歴表示用のフォールバックとして、`linkedRecordCachedName` を追加で指定することもできます:
+
+```ts
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  linkedObjectMetadataUniversalIdentifier: RECIPIENT_UNIVERSAL_IDENTIFIER,
+  linkedRecordId: recipientId,
+  linkedRecordCachedName: recipientName,
+});
+```
+
+ロジック関数のロールには、標準の `timelineActivity` オブジェクトに対する書き込み権限が必要です。 明示的なイベントタイプは `action` にバインドしないでください。アクションにバインドされたタイプはすでに自動監査イベントを受け取るため、そうしない場合は重複した行が生成されます。
+
 ## 型付き API クライアント（`twenty-client-sdk`）
 
 `twenty-client-sdk` パッケージは、ロジック関数やフロントコンポーネントから Twenty API とやり取りするための、型付き GraphQL クライアントを 2 つ提供します。
@@ -701,7 +834,7 @@ setCompany(result.company);
 </Accordion>
 <Accordion title="MetadataApiClient" description="ワークスペースの設定、アプリケーション、ファイルアップロード">
 
-`MetadataApiClient` は SDK に同梱されており、あらかじめビルド済みです（生成は不要）。 ワークスペースの設定、アプリケーション、ファイルアップロードのために `/metadata` エンドポイントに対してクエリを実行します。
+`MetadataApiClient` は SDK に同梱されており、あらかじめビルド済みです（生成は不要）。 ワークスペースの設定、アプリケーション、ファイルアップロードのために `/metadata` エンドポイントに対してクエリを実行します。 これは `CoreApiClient` と同じ `runAs` オプションを受け取ります。詳細は[呼び出しで使用されるアクセス権](#whose-access-a-call-uses)を参照してください。
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -769,7 +902,8 @@ console.log(uploadedFile);
   コードが Twenty 上で実行される際（ロジック関数やフロントコンポーネント）、プラットフォームは認証情報を環境変数として注入します:
 
   * `TWENTY_API_URL` — Twenty API のベース URL
-  * `TWENTY_APP_ACCESS_TOKEN` — アプリケーションのデフォルト関数ロールにスコープされた短命のキー
+  * `TWENTY_APP_ACCESS_TOKEN` — デフォルトのアクセス権用の短命のキーです。誰かが実行の背後にいる場合はその人物のロールとアプリケーションのロールの共通部分、誰もいない場合はアプリケーション自身のロールが適用されます。 ロジック関数では実行をトリガーした人、フロントコンポーネントではページを見ている人が、その人物です。
+  * `TWENTY_APP_APPLICATION_ACCESS_TOKEN` — アプリケーション自身のロールのみにスコープされた短命のキーです。 ロジック関数でのみ使用され、常にそこに注入されます。また、`runAs: 'application'` が使用するものです。
 
-  これらをクライアントに渡す必要はありません — 自動的に `process.env` から読み取ります。 API キーの権限は、`defineApplicationRole()` で宣言されたロール（または `application-config.ts` の `defaultRoleUniversalIdentifier` で参照されるロール）によって決まります。
+  これらをクライアントに渡す必要は**ありません**。クライアントは `process.env` から自動的に読み取り、どちらを選択するかについては[呼び出しで使用されるアクセス権](#whose-access-a-call-uses)で説明しています。 アプリケーション自身の権限は、`defineApplicationRole()` で宣言されたロール（または `application-config.ts` の `defaultRoleUniversalIdentifier` で参照されるロール）によって決まります。人物として動作する実行は、そのロールもその人物のロールも超えることはできません。
 </Note>

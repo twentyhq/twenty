@@ -3,7 +3,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ClickHouseModule } from 'src/database/clickHouse/clickHouse.module';
+import { ClickHouseModule } from 'src/database/clickhouse/clickhouse.module';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { BillingGaugeService } from 'src/engine/core-modules/billing/billing-gauge.service';
@@ -31,6 +31,8 @@ import { BillingPriceService } from 'src/engine/core-modules/billing/services/bi
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
 import { BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing/services/billing-subscription-phase.service';
+import { BillingCreditAllowanceProvider } from 'src/engine/core-modules/billing/services/billing-credit-allowance-provider.service';
+import { BillingUsageLimitEntitlementProvider } from 'src/engine/core-modules/billing/services/billing-usage-limit-entitlement-provider.service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
@@ -50,6 +52,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
@@ -78,6 +81,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ]),
     MetricsModule,
     EnterpriseModule,
+    UsageLimitModule,
     WorkspaceIteratorModule,
   ],
   providers: [
@@ -98,6 +102,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingSyncPlansDataCommand,
     BillingUsageService,
     BillingUsageCacheService,
+    BillingCreditAllowanceProvider,
+    BillingUsageLimitEntitlementProvider,
     BillingPriceService,
     BillingCreditRolloverService,
     BillingCreditGrantService,

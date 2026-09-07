@@ -1,17 +1,13 @@
-import { useComposeEmailForTargetRecord } from '@/activities/emails/hooks/useComposeEmailForTargetRecord';
-import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
-import { t } from '@lingui/core/macro';
-import { IconPlus } from 'twenty-ui/icon';
+import { useComposeEmailRelatedRecordAction } from '@/activities/emails/hooks/useComposeEmailRelatedRecordAction';
+import { WidgetActionRelatedRecord } from '@/page-layout/widgets/components/WidgetActionRelatedRecord';
+import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 
 export const WidgetActionEmailCompose = () => {
-  const { openComposer, loading } = useComposeEmailForTargetRecord();
+  const targetRecord = useTargetRecord();
+  const binding = useComposeEmailRelatedRecordAction({
+    targetRecord,
+    isPermissionGated: false,
+  });
 
-  return (
-    <WidgetCardHeaderActionButton
-      Icon={IconPlus}
-      label={t`Compose`}
-      onClick={openComposer}
-      disabled={loading}
-    />
-  );
+  return <WidgetActionRelatedRecord binding={binding} />;
 };

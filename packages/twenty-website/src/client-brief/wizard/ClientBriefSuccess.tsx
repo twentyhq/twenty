@@ -3,8 +3,8 @@
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 
-import { Body, Heading } from '@/ui';
 import { spacing } from '@/tokens';
+import { Body, Button, Heading } from '@/ui';
 
 import { CLIENT_BRIEF_COPY } from '../client-brief-copy';
 
@@ -18,7 +18,11 @@ const SuccessView = styled.div`
   }
 `;
 
-export function ClientBriefSuccess() {
+const Actions = styled.div`
+  align-self: flex-end;
+`;
+
+export function ClientBriefSuccess({ onDismiss }: { onDismiss?: () => void }) {
   const { i18n } = useLingui();
 
   return (
@@ -30,6 +34,16 @@ export function ClientBriefSuccess() {
         <Body muted size="md">
           {i18n._(CLIENT_BRIEF_COPY.successBody)}
         </Body>
+        {onDismiss !== undefined && (
+          <Actions>
+            <Button
+              label={i18n._(CLIENT_BRIEF_COPY.successDone)}
+              onClick={onDismiss}
+              type="button"
+              variant="filled"
+            />
+          </Actions>
+        )}
       </SuccessView>
     </>
   );

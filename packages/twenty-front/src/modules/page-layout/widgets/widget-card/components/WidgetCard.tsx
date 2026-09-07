@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
+import { isWidgetCardFlushInViewMode } from '@/page-layout/widgets/utils/isWidgetCardFlushInViewMode';
 
 type WidgetCardStyledProps = {
   variant: WidgetCardVariant;
@@ -10,7 +11,6 @@ type WidgetCardStyledProps = {
   isDragging: boolean;
   isResizing: boolean;
   headerLess?: boolean;
-  isLastWidget?: boolean;
   hasClickHandler: boolean;
 };
 
@@ -23,55 +23,52 @@ const computeBorderColor = (
   if (props.isEditable && (props.isEditing || props.isDragging)) {
     return themeCssVariables.color.blue;
   }
-  if (props.variant === 'dashboard' || props.variant === 'standalone') {
+  if (props.variant === 'framed') {
     return themeCssVariables.border.color.light;
   }
   return 'transparent';
 };
 
+const shouldUseSecondaryBackground = (
+  props: Pick<WidgetCardStyledProps, 'variant' | 'isEditable' | 'isDragging'>,
+) => (props.isEditable && props.isDragging) || props.variant === 'framed';
+
+// The card is the single owner of how far its header and body are inset:
+// WidgetCardHeader and WidgetCardContent both read these, widget bodies never
+// declare their own inline padding.
 // oxlint-disable-next-line twenty/sort-css-properties-alphabetically
 const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
+  --widget-card-padding-inline: ${({ variant, isEditable }) =>
+    isWidgetCardFlushInViewMode({ variant, isEditable })
+      ? themeCssVariables.spacing[4]
+      : themeCssVariables.spacing[2]};
+  --widget-card-title-padding-top: ${({ variant, isEditable }) =>
+    isWidgetCardFlushInViewMode({ variant, isEditable })
+      ? themeCssVariables.spacing[3]
+      : themeCssVariables.spacing[2]};
+
   background: ${(props) => {
     if (props.isEditable && props.isDragging) {
       return `linear-gradient(0deg, ${themeCssVariables.background.transparent.lighter} 0%, ${themeCssVariables.background.transparent.lighter} 100%), ${themeCssVariables.background.secondary}`;
     }
-    if (
-      props.variant === 'dashboard' ||
-      props.variant === 'standalone' ||
-      (props.variant === 'side-column' && props.isEditable)
-    ) {
-      return themeCssVariables.background.secondary;
-    }
-    if (props.variant === 'record-page') {
-      return themeCssVariables.background.primary;
-    }
-    return 'none';
+    return shouldUseSecondaryBackground(props)
+      ? themeCssVariables.background.secondary
+      : 'transparent';
   }};
 
+  // Declared only when the card actually paints a surface, so a transparent
+  // card leaves the layout container's value in place for its content to read.
+  &[data-secondary-background='true'] {
+    --record-card-background-color: ${themeCssVariables.background.secondary};
+  }
+
   border: ${(props) =>
-    props.variant === 'dashboard' ||
-    props.variant === 'standalone' ||
-    props.variant === 'record-page' ||
-    props.isEditable
+    props.variant === 'framed' || props.isEditable
       ? `1px solid ${computeBorderColor(props)}`
       : 'none'};
 
-  border-bottom: ${(props) => {
-    const { variant, isEditable, isLastWidget } = props;
-
-    if (variant === 'side-column' && !isEditable) {
-      return isLastWidget !== true
-        ? `1px solid ${themeCssVariables.border.color.light}`
-        : 'none';
-    }
-
-    return `1px solid ${computeBorderColor(props)}`;
-  }};
   border-radius: ${({ variant, isEditable }) =>
-    variant === 'dashboard' ||
-    variant === 'standalone' ||
-    variant === 'record-page' ||
-    isEditable
+    variant === 'framed' || isEditable
       ? themeCssVariables.border.radius.md
       : '0'};
 
@@ -92,33 +89,19 @@ const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
 
   flex-direction: column;
 
-  height: 100%;
+  height: var(--widget-height, 100%);
 
-  padding: ${({ variant, isEditable, headerLess }) => {
-    if (
-      (variant === 'dashboard' || variant === 'standalone') &&
-      headerLess === true
-    )
-      return '0';
-    if (variant === 'dashboard' || variant === 'standalone')
-      return themeCssVariables.spacing[2];
-    if (variant === 'side-column' && !isEditable)
-      return themeCssVariables.spacing[3];
-    if (variant === 'record-page' || isEditable)
-      return themeCssVariables.spacing[2];
-    return '0';
-  }};
+  padding: ${({ variant, headerLess }) =>
+    variant === 'framed' && headerLess !== true
+      ? themeCssVariables.spacing[2]
+      : '0'};
 
   position: relative;
 
   width: 100%;
 
   &:hover {
-    // border-color shorthand must precede border-bottom-color longhand for correct CSS cascade
     border-color: ${(props) => {
-      if (props.variant === 'solo') {
-        return computeBorderColor(props);
-      }
       if (
         props.isEditable &&
         !props.isDragging &&
@@ -127,29 +110,6 @@ const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
       ) {
         return themeCssVariables.border.color.strong;
       }
-      return computeBorderColor(props);
-    }};
-
-    border-bottom-color: ${(props) => {
-      if (props.variant === 'solo') {
-        return computeBorderColor(props);
-      }
-
-      const { variant, isEditable } = props;
-
-      if (variant === 'side-column' && !isEditable) {
-        return themeCssVariables.border.color.light;
-      }
-
-      if (
-        props.isEditable &&
-        !props.isDragging &&
-        !props.isEditing &&
-        !props.isResizing
-      ) {
-        return themeCssVariables.border.color.strong;
-      }
-
       return computeBorderColor(props);
     }};
   }
@@ -162,7 +122,6 @@ export type WidgetCardProps = {
   isDragging: boolean;
   isResizing: boolean;
   headerLess?: boolean;
-  isLastWidget?: boolean;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
   className?: string;
   children?: React.ReactNode;
@@ -179,7 +138,6 @@ export const WidgetCard = ({
   isDragging,
   isResizing,
   headerLess,
-  isLastWidget,
   onClick,
   className,
   children,
@@ -196,8 +154,12 @@ export const WidgetCard = ({
       isDragging={isDragging}
       isResizing={isResizing}
       headerLess={headerLess}
-      isLastWidget={isLastWidget}
       hasClickHandler={isDefined(onClick)}
+      data-secondary-background={shouldUseSecondaryBackground({
+        variant,
+        isEditable,
+        isDragging,
+      })}
       onClick={onClick}
       className={className}
       onMouseEnter={onMouseEnter}

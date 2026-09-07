@@ -17,6 +17,7 @@ import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-age
 import { type RunAsWorkspaceMemberContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-as-workspace-member-context.type';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
 import {
   AiException,
   AiExceptionCode,
@@ -118,8 +119,8 @@ export class AgentRunService {
     };
 
     try {
-      const executionResult = await this.agentAsyncExecutorService.executeAgent(
-        {
+      const executionResult = await withDedicatedAiTrace(() =>
+        this.agentAsyncExecutorService.executeAgent({
           agent,
           messages,
           baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
@@ -131,7 +132,7 @@ export class AgentRunService {
           runAsRoleId: runAsContext?.roleId,
           operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
           toolLoadingStrategy: 'lazy',
-        },
+        }),
       );
 
       if (executionResult.hasNoMoreAvailableCredits) {

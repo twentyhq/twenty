@@ -4,15 +4,14 @@ import { enqueueSnackbar } from 'twenty-sdk/front-component';
 
 import { MY_PROFILE_FRONT_COMPONENT_ID } from 'src/modules/partner/self-service/constants/my-profile.constants';
 import { callAppRoute } from 'src/modules/shared/front-components/call-app-route';
+import { COLORS, FONT } from 'src/modules/shared/front-components/palette';
 
 import { MarkdownEditor } from './my-profile/markdown-editor';
 import { ProfilePictureUpload } from './my-profile/profile-picture-upload';
 import {
   ChipMultiSelect,
-  COLORS,
   CurrencyInput,
   Field,
-  FONT,
   SelectInput,
   TagInput,
   TextInput,

@@ -16,6 +16,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/input';
@@ -48,9 +49,14 @@ export const MultiSelectInput = ({
     selectableListComponentInstanceId,
   );
 
+  const scopedSelectableListComponentInstanceId =
+    useWorkspaceSurfaceScopedComponentInstanceId(
+      selectableListComponentInstanceId,
+    );
+
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    selectableListComponentInstanceId,
+    scopedSelectableListComponentInstanceId,
   );
 
   const [searchFilter, setSearchFilter] = useState('');

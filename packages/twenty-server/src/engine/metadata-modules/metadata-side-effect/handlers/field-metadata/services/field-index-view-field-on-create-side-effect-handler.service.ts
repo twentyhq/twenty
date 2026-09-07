@@ -34,12 +34,10 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
   },
 ) {
   buildSideEffects({
-    flatEntity: flatFieldMetadata,
+    flatEntity: sourceFlatFieldMetadata,
     allFlatEntityOperationRecordByMetadataName,
     relatedFlatEntityMaps,
   }: BuildSideEffectsArgs<'fieldMetadata'>): MetadataSideEffectResult {
-    const sourceFlatFieldMetadata =
-      flatFieldMetadata as UniversalFlatFieldMetadata;
     const { objectMetadataUniversalIdentifier } = sourceFlatFieldMetadata;
 
     const parentFlatObjectMetadata =

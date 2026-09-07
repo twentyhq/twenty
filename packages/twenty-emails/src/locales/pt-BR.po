@@ -31,7 +31,7 @@ msgstr "{senderName} (<0>{senderEmail}</0>): Por favor, valide este domínio par
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "A heads up before your trial ends"
-msgstr "Um aviso antes de o seu período de testes terminar"
+msgstr "Um aviso antes do fim da sua avaliação"
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -302,7 +302,7 @@ msgstr "Visite o site do Twenty"
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "We don't like surprise charges, so here's a friendly heads up."
-msgstr "Também não gostamos de cobranças inesperadas, então aqui vai um lembrete amigável."
+msgstr "Não gostamos de cobranças inesperadas, então aqui vai um aviso amigável."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -322,17 +322,17 @@ msgstr "Seu plano anual de <0>{workspaceDisplayName}</0> será renovado em {form
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}."
-msgstr "Seu período de testes gratuito de <0>{workspaceDisplayName}</0> termina em {formattedDate}."
+msgstr "Sua avaliação gratuita de <0>{workspaceDisplayName}</0> termina em {formattedDate}."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
-msgstr "Seu período de testes gratuito de <0>{workspaceDisplayName}</0> termina em {formattedDate}. A menos que você cancele antes disso, o cartão em arquivo será cobrado pelo seu plano anual."
+msgstr "Sua avaliação gratuita de <0>{workspaceDisplayName}</0> termina em {formattedDate}. A menos que você cancele antes disso, o cartão cadastrado será cobrado pelo seu plano anual."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
-msgstr "Seu período de testes gratuito de <0>{workspaceDisplayName}</0> termina em {formattedDate}. A menos que você cancele antes disso, o cartão em arquivo será cobrado pelo seu plano mensal."
+msgstr "Sua avaliação gratuita de <0>{workspaceDisplayName}</0> termina em {formattedDate}. A menos que você cancele antes disso, o cartão cadastrado será cobrado pelo seu plano mensal."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -342,7 +342,7 @@ msgstr "Seu plano será renovado em breve"
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Your trial is ending soon"
-msgstr "Seu período de testes terminará em breve"
+msgstr "Seu período de avaliação terminará em breve"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx

@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { firstFileUrl, resolvePartnerPictureUrl } from './profile-picture';
+import {
+  firstFileUrl,
+  resolveCoverUrl,
+  resolvePartnerPictureUrl,
+} from './profile-picture';
 
 describe('firstFileUrl', () => {
   it('returns the first file url', () => {
@@ -34,5 +38,26 @@ describe('resolvePartnerPictureUrl', () => {
     expect(resolvePartnerPictureUrl(null, null)).toBeNull();
     expect(resolvePartnerPictureUrl(undefined, undefined)).toBeNull();
     expect(resolvePartnerPictureUrl([], null)).toBeNull();
+  });
+});
+
+describe('resolveCoverUrl', () => {
+  it('prefers the pasted url over the uploaded file', () => {
+    expect(
+      resolveCoverUrl('https://x/pasted.png', [{ url: 'https://x/file.png' }]),
+    ).toBe('https://x/pasted.png');
+  });
+  it('treats the TEXT default and whitespace as no pasted url', () => {
+    expect(resolveCoverUrl('', [{ url: 'https://x/file.png' }])).toBe(
+      'https://x/file.png',
+    );
+    expect(resolveCoverUrl('   ', [{ url: 'https://x/file.png' }])).toBe(
+      'https://x/file.png',
+    );
+  });
+  it('returns null when neither source has a url', () => {
+    expect(resolveCoverUrl('', null)).toBeNull();
+    expect(resolveCoverUrl(null, [])).toBeNull();
+    expect(resolveCoverUrl(undefined, [{ url: null }])).toBeNull();
   });
 });

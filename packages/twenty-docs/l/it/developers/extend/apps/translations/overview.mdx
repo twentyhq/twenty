@@ -126,13 +126,11 @@ ogni stringa rispetto al proprio catalogo, facendo fallback alla sorgente quando
 una traduzione manca. Cambiare lingua nell'host esegue nuovamente il render delle stringhe `Trans` e
 `useTranslate().t` in tempo reale.
 
-Poiché i cataloghi vengono compilati in fase di build, aggiornare una traduzione significa
-eseguire nuovamente `twenty dev:build` (e ridistribuire), come per qualsiasi altra modifica.
-
-<Note>
-Le traduzioni vengono compilate da `twenty dev:build` (e `twenty apply`). La modalità watch continua di `twenty dev` mostra le stringhe sorgente, quindi testa l’output localizzato
-con una build una tantum.
-</Note>
+Le etichette del manifest vengono compilate a ogni sincronizzazione — `twenty dev:build`, `twenty apply`
+e anche il monitoraggio continuo di `twenty dev` — quindi è sufficiente modificare un file di lingua e
+sincronizzare per vedere il nuovo testo. I cataloghi dei componenti Front vengono incorporati in
+ogni bundle di componenti al momento della build, quindi modificarne uno significa comunque
+rieseguire `twenty dev:build` (e ridistribuire).
 
 I figli di testo di `Trans` possono estendersi su più righe — gli spazi bianchi vengono compressi
 nello stesso modo in cui JSX li comprime, quindi entrambe queste varianti vengono estratte con la chiave `Welcome back`:

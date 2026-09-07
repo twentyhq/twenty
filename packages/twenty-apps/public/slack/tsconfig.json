@@ -18,7 +18,7 @@
     "strictBindCallApply": false,
     "target": "es2020",
     "module": "esnext",
-    "lib": ["es2020", "dom"],
+    "lib": ["es2020", "es2022.intl", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "resolveJsonModule": true,

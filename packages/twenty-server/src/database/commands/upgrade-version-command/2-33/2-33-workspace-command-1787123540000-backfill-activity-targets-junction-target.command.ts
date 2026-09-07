@@ -18,6 +18,13 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
+// These identifiers predate deterministic system relation identifiers and
+// remain in standard workspaces provisioned before that migration.
+const LEGACY_NOTE_TARGET_PERSON_FIELD_UNIVERSAL_IDENTIFIER =
+  '20202020-38ca-4aab-92f5-8a605ca2e4c5';
+const LEGACY_TASK_TARGET_PERSON_FIELD_UNIVERSAL_IDENTIFIER =
+  '20202020-c8a0-4e85-a016-87e2349cfbec';
+
 // The junction target points at one member of the target morph. Consumers expand
 // the whole morph group from it, so any member identifies the polymorphic edge.
 const ACTIVITY_JUNCTIONS = [
@@ -25,15 +32,19 @@ const ACTIVITY_JUNCTIONS = [
     label: 'note.noteTargets',
     junctionRelationFieldUniversalIdentifier:
       STANDARD_OBJECTS.note.fields.noteTargets.universalIdentifier,
-    junctionTargetFieldUniversalIdentifier:
+    junctionTargetFieldUniversalIdentifiers: [
       STANDARD_OBJECTS.noteTarget.fields.targetPerson.universalIdentifier,
+      LEGACY_NOTE_TARGET_PERSON_FIELD_UNIVERSAL_IDENTIFIER,
+    ],
   },
   {
     label: 'task.taskTargets',
     junctionRelationFieldUniversalIdentifier:
       STANDARD_OBJECTS.task.fields.taskTargets.universalIdentifier,
-    junctionTargetFieldUniversalIdentifier:
+    junctionTargetFieldUniversalIdentifiers: [
       STANDARD_OBJECTS.taskTarget.fields.targetPerson.universalIdentifier,
+      LEGACY_TASK_TARGET_PERSON_FIELD_UNIVERSAL_IDENTIFIER,
+    ],
   },
 ] as const;
 
@@ -188,7 +199,7 @@ export class BackfillActivityTargetsJunctionTargetCommand extends ProvisionedWor
     const {
       label,
       junctionRelationFieldUniversalIdentifier,
-      junctionTargetFieldUniversalIdentifier,
+      junctionTargetFieldUniversalIdentifiers,
     } = activityJunction;
 
     const junctionRelationFlatFieldMetadata =
@@ -221,9 +232,12 @@ export class BackfillActivityTargetsJunctionTargetCommand extends ProvisionedWor
     }
 
     const junctionTargetFlatFieldMetadata =
-      flatFieldMetadataMaps.byUniversalIdentifier[
-        junctionTargetFieldUniversalIdentifier
-      ];
+      junctionTargetFieldUniversalIdentifiers
+        .map(
+          (universalIdentifier) =>
+            flatFieldMetadataMaps.byUniversalIdentifier[universalIdentifier],
+        )
+        .find(isDefined);
 
     if (!isDefined(junctionTargetFlatFieldMetadata)) {
       this.logger.warn(

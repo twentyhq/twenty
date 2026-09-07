@@ -11,7 +11,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { RecordIdentifierDTO } from 'src/engine/metadata-modules/navigation-menu-item/dtos/record-identifier.dto';
 import { getMinimalSelectForRecordIdentifier } from 'src/engine/metadata-modules/navigation-menu-item/utils/get-minimal-select-for-record-identifier.util';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
@@ -21,7 +21,7 @@ import { FileFolder } from 'twenty-shared/types';
 export class NavigationMenuItemRecordIdentifierService {
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly fileUrlService: FileUrlService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
@@ -66,52 +66,50 @@ export class NavigationMenuItemRecordIdentifierService {
         workspace: { id: workspaceId },
       } as WorkspaceAuthContext);
 
-    const record =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const context = getWorkspaceContext();
-          const rolePermissionConfig = resolveRolePermissionConfig({
-            authContext: context.authContext,
-            userWorkspaceRoleMap: context.userWorkspaceRoleMap,
-            apiKeyRoleMap: context.apiKeyRoleMap,
-          });
+    const record = await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const context = getWorkspaceContext();
+        const rolePermissionConfig = resolveRolePermissionConfig({
+          authContext: context.authContext,
+          userWorkspaceRoleMap: context.userWorkspaceRoleMap,
+          apiKeyRoleMap: context.apiKeyRoleMap,
+        });
 
-          if (!rolePermissionConfig) {
-            return null;
-          }
+        if (!rolePermissionConfig) {
+          return null;
+        }
 
-          const repository = await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            objectMetadata.nameSingular,
-            rolePermissionConfig,
-          );
+        const repository = this.workspaceOrmManager.getRepository(
+          objectMetadata.nameSingular,
+          rolePermissionConfig,
+        );
 
-          const alias = objectMetadata.nameSingular;
-          const queryBuilder = repository.createQueryBuilder(alias);
+        const alias = objectMetadata.nameSingular;
+        const queryBuilder = repository.createQueryBuilder(alias);
 
-          queryBuilder.select([]);
+        queryBuilder.select([]);
 
-          for (const column of minimalSelectColumns) {
-            queryBuilder.addSelect(`"${alias}"."${column}"`, column);
-          }
+        for (const column of minimalSelectColumns) {
+          queryBuilder.addSelect(`"${alias}"."${column}"`, column);
+        }
 
-          const rawResult = await queryBuilder
-            .where(`"${alias}".id = :id`, { id: targetRecordId })
-            .getRawOne();
+        const rawResult = await queryBuilder
+          .where(`"${alias}".id = :id`, { id: targetRecordId })
+          .getRawOne();
 
-          if (!isDefined(rawResult)) {
-            return null;
-          }
+        if (!isDefined(rawResult)) {
+          return null;
+        }
 
-          return formatResult<Record<string, unknown>>(
-            rawResult,
-            objectMetadata,
-            flatObjectMetadataMaps,
-            flatFieldMetadataMaps,
-          );
-        },
-        resolvedAuthContext,
-      );
+        return formatResult<Record<string, unknown>>(
+          rawResult,
+          objectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        );
+      },
+      resolvedAuthContext,
+    );
 
     if (!isDefined(record)) {
       return null;

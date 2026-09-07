@@ -154,6 +154,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
 
   return (
     <SettingsPageLayout
+      pageTitle={displayNameDraft ?? displayName}
       title={
         <SettingsEditableTitle
           instanceId="email-group-display-name"

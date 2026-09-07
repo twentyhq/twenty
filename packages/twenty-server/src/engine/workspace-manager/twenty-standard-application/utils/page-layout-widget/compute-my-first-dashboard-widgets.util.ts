@@ -3,6 +3,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   AggregateOperations,
   PageLayoutTabLayoutMode,
+  WidgetType,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
@@ -12,7 +13,6 @@ import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/e
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import {
   type CreateStandardPageLayoutWidgetArgs,
   createStandardPageLayoutWidgetFlatMetadata,
@@ -230,7 +230,6 @@ const createWelcomeRichText = ({
       widgetName: 'welcomeRichText',
       title: 'Untitled Rich Text',
       type: WidgetType.STANDALONE_RICH_TEXT,
-      gridPosition: { row: 0, column: 0, rowSpan: 6, columnSpan: 6 },
       position: {
         layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 0,
@@ -267,7 +266,6 @@ const createDealsByCompany = ({
       widgetName: 'dealsByCompany',
       title: 'Deals by Company',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 0, column: 6, rowSpan: 6, columnSpan: 6 },
       position: {
         layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 0,
@@ -332,7 +330,6 @@ const createPipelineValueByStage = ({
       widgetName: 'pipelineValueByStage',
       title: 'Pipeline Value by Stage',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 6, column: 0, rowSpan: 6, columnSpan: 6 },
       position: {
         layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 6,
@@ -410,7 +407,6 @@ const createRevenueTimeline = ({
       widgetName: 'revenueTimeline',
       title: 'Revenue Timeline',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 6, column: 6, rowSpan: 6, columnSpan: 6 },
       position: {
         layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 6,
@@ -477,7 +473,6 @@ const createOpportunitiesByOwner = ({
       widgetName: 'opportunitiesByOwner',
       title: 'Opportunities by Owner',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 12, column: 0, rowSpan: 6, columnSpan: 6 },
       position: {
         layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 12,
@@ -554,7 +549,6 @@ const createStockMarketIframe = ({
       widgetName: 'stockMarketIframe',
       title: 'Stock market (Iframe)',
       type: WidgetType.IFRAME,
-      gridPosition: { row: 12, column: 6, rowSpan: 8, columnSpan: 6 },
       position: {
         layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 12,
@@ -604,7 +598,6 @@ const createDealsCreatedThisMonth = ({
       widgetName: 'dealsCreatedThisMonth',
       title: 'Deals created this month',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 18, column: 0, rowSpan: 2, columnSpan: 3 },
       position: {
         layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 18,
@@ -673,7 +666,6 @@ const createDealValueCreatedThisMonth = ({
       widgetName: 'dealValueCreatedThisMonth',
       title: 'Deal value created this month',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 18, column: 3, rowSpan: 2, columnSpan: 3 },
       position: {
         layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 18,

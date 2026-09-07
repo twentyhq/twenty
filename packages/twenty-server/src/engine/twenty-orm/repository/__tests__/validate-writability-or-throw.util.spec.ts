@@ -41,6 +41,11 @@ const otherApplicationContext = {
   application: { id: 'app-2' },
 } as WorkspaceAuthContext;
 
+const systemContext = {
+  type: 'system',
+  workspace: { id: 'workspace-1' },
+} as WorkspaceAuthContext;
+
 const apiKeyContext = {
   type: 'apiKey',
   workspace: { id: 'workspace-1' },
@@ -55,6 +60,25 @@ const userContextCarryingApplication = {
   workspaceMemberId: 'workspace-member-1',
   workspaceMember: { id: 'workspace-member-1' },
   application: { id: OWNING_APPLICATION_ID },
+} as WorkspaceAuthContext;
+
+const plainUserContext = {
+  type: 'user',
+  workspace: { id: 'workspace-1' },
+  userWorkspaceId: 'user-workspace-1',
+  user: { id: 'user-1' },
+  workspaceMemberId: 'workspace-member-1',
+  workspaceMember: { id: 'workspace-member-1' },
+} as WorkspaceAuthContext;
+
+const otherApplicationUserContext = {
+  type: 'user',
+  workspace: { id: 'workspace-1' },
+  userWorkspaceId: 'user-workspace-1',
+  user: { id: 'user-1' },
+  workspaceMemberId: 'workspace-member-1',
+  workspaceMember: { id: 'workspace-member-1' },
+  application: { id: 'app-2' },
 } as WorkspaceAuthContext;
 
 const validate = ({
@@ -112,11 +136,29 @@ describe('validateWritabilityOrThrow', () => {
     ).toThrow(/not writable/);
   });
 
-  it('should refuse a user context on an APPLICATION object', () => {
+  it('should let the owning application write while serving a person', () => {
     expect(() =>
       validate({
         objectWritability: MetadataWritability.APPLICATION,
         authContext: userContextCarryingApplication,
+      }),
+    ).not.toThrow();
+  });
+
+  it('should refuse a plain session on an APPLICATION object', () => {
+    expect(() =>
+      validate({
+        objectWritability: MetadataWritability.APPLICATION,
+        authContext: plainUserContext,
+      }),
+    ).toThrow();
+  });
+
+  it('should refuse another application serving a person on an APPLICATION object', () => {
+    expect(() =>
+      validate({
+        objectWritability: MetadataWritability.APPLICATION,
+        authContext: otherApplicationUserContext,
       }),
     ).toThrow(/not writable/);
   });
@@ -139,20 +181,55 @@ describe('validateWritabilityOrThrow', () => {
     ).toThrow(/not writable/);
   });
 
-  it('should refuse every caller on a SYSTEM object', () => {
+  it('should refuse every token-bound caller on a SYSTEM object', () => {
+    for (const authContext of [
+      applicationContext,
+      userContextCarryingApplication,
+      plainUserContext,
+      apiKeyContext,
+      undefined,
+    ]) {
+      expect(() =>
+        validate({
+          objectWritability: MetadataWritability.SYSTEM,
+          authContext,
+        }),
+      ).toThrow(/not writable/);
+    }
+  });
+
+  it('should let a system context write a SYSTEM object', () => {
     expect(() =>
       validate({
         objectWritability: MetadataWritability.SYSTEM,
-        authContext: applicationContext,
+        authContext: systemContext,
       }),
-    ).toThrow(/not writable/);
+    ).not.toThrow();
+  });
+
+  it('should let a system context write an APPLICATION object', () => {
+    expect(() =>
+      validate({
+        objectWritability: MetadataWritability.APPLICATION,
+        authContext: systemContext,
+      }),
+    ).not.toThrow();
+  });
+
+  it('should let a system context write a SYSTEM field', () => {
+    expect(() =>
+      validate({
+        fieldWritability: MetadataWritability.SYSTEM,
+        authContext: systemContext,
+      }),
+    ).not.toThrow();
   });
 
   it('should enforce field writability even when the object is OPEN', () => {
     expect(() =>
       validate({
         fieldWritability: MetadataWritability.APPLICATION,
-        authContext: userContextCarryingApplication,
+        authContext: plainUserContext,
       }),
     ).toThrow(/field "status".*not writable/);
   });

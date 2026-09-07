@@ -166,7 +166,7 @@ msgstr "Administrer abonnement"
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
-msgstr "Du trenger ikke å gjøre noe hvis du ønsker å fortsette. Hvis du heller ikke vil fornye, kan du når som helst avbryte før den tid."
+msgstr "Du trenger ikke å gjøre noe hvis du ønsker å fortsette. Hvis du ikke vil fornye, kan du når som helst avbryte før den tid."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -181,7 +181,7 @@ msgstr "Aktiver det på nytt innen de neste {remainingDays} {dayOrDays}, så kan
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Reactivate workspace"
-msgstr "Aktiver arbeidsområde på nytt"
+msgstr "Aktiver arbeidsområdet på nytt"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

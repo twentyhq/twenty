@@ -1,8 +1,10 @@
+import { type CollisionDetector } from '@dnd-kit/abstract';
+import { defaultCollisionDetection } from '@dnd-kit/collision';
 import {
   RestrictToHorizontalAxis,
   RestrictToVerticalAxis,
 } from '@dnd-kit/abstract/modifiers';
-import { useSortable } from '@dnd-kit/react/sortable';
+import { type UseSortableInput, useSortable } from '@dnd-kit/react/sortable';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -55,8 +57,10 @@ const StyledSortableRoot = styled.div<{
 `;
 
 type DragDropItemSortableCellProps = {
-  accept?: string;
+  accept?: UseSortableInput['accept'];
+  allowNativeDragWhenDisabled?: boolean;
   children: ReactNode;
+  collisionDetector?: CollisionDetector;
   data?: Record<string, unknown>;
   disabled?: boolean;
   fadeSourceWhileDragging?: boolean;
@@ -75,7 +79,9 @@ type DragDropItemSortableCellProps = {
 
 export const DragDropItemSortableCell = ({
   accept,
+  allowNativeDragWhenDisabled = false,
   children,
+  collisionDetector = defaultCollisionDetection,
   data,
   disabled = false,
   fadeSourceWhileDragging = false,
@@ -96,6 +102,7 @@ export const DragDropItemSortableCell = ({
     type,
     accept,
     collisionPriority: SORTABLE_COLLISION_PRIORITY,
+    collisionDetector,
     // Sortable metadata stays authoritative over consumer data so drag
     // handlers always resolve the cell's real group and position.
     data: {
@@ -122,7 +129,17 @@ export const DragDropItemSortableCell = ({
         $fill={fill}
         $isDragSourceFaded={fadeSourceWhileDragging && isDragSource}
         $isDraggingHighlighted={highlightWhileDragging && isDragging}
-        onDragStart={preventNativeDragStart}
+        // dnd-kit's accessibility plugin stamps role="button" and tabindex on
+        // any registered draggable that declares neither, so a disabled cell
+        // would join the tab order and make pointer automation resolve clicks
+        // on its content to a disabled button. Declaring both opts out.
+        role={disabled ? 'none' : undefined}
+        tabIndex={disabled ? -1 : undefined}
+        onDragStart={
+          disabled && allowNativeDragWhenDisabled
+            ? undefined
+            : preventNativeDragStart
+        }
       >
         {children}
       </StyledSortableRoot>

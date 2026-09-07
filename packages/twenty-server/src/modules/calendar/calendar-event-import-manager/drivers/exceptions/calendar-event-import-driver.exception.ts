@@ -1,6 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -41,15 +41,24 @@ const getCalendarEventImportDriverExceptionUserFriendlyMessage = (
 };
 
 export class CalendarEventImportDriverException extends CustomException<CalendarEventImportDriverExceptionCode> {
+  cause?: unknown;
+
   constructor(
     message: string,
     code: CalendarEventImportDriverExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
+    {
+      userFriendlyMessage,
+      cause,
+    }: { userFriendlyMessage?: MessageDescriptor; cause?: unknown } = {},
   ) {
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??
         getCalendarEventImportDriverExceptionUserFriendlyMessage(code),
     });
+
+    if (isDefined(cause)) {
+      this.cause = cause;
+    }
   }
 }

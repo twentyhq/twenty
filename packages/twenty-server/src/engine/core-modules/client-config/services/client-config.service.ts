@@ -220,6 +220,9 @@ export class ClientConfigService {
         environment: this.twentyConfigService.get('SENTRY_ENVIRONMENT'),
         release: this.twentyConfigService.get('APP_VERSION'),
         dsn: this.twentyConfigService.get('SENTRY_FRONT_DSN'),
+        tracesSampleRate: this.twentyConfigService.get(
+          'SENTRY_FRONT_TRACES_SAMPLE_RATE',
+        ),
       },
       captcha: {
         provider: captchaProvider ? captchaProvider : undefined,

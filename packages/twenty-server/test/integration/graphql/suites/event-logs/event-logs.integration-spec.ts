@@ -7,7 +7,7 @@ import {
 } from '@clickhouse/client';
 import request from 'supertest';
 
-import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
+import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';

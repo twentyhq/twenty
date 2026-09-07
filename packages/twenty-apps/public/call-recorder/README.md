@@ -7,6 +7,7 @@
 - **Recordings on every meeting**
 - **A Call Recording tab**
 - **A per-meeting on/off switch**
+- **Customizable in-meeting recording notices**
 - **AI meeting summaries**
 - **Built for AI & automation**
 
@@ -34,6 +35,10 @@ The recording bot can only join meetings on these platforms:
 Events whose conference link points to any other platform (e.g. ro.am, Daily,
 Whereby) or that only have a dial-in number are **ignored** — no bot is
 scheduled, since it can't join the call.
+
+Recording notices are supported in Zoom, Google Meet, and Microsoft Teams.
+Workspace admins can turn them off or customize their text in the Call Recorder
+app settings. Webex and GoTo Meeting do not support bot chat messages.
 
 ## 📌 Heads up
 

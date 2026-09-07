@@ -12,7 +12,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 const DEFAULT_STEP_FILTER: StepFilter = {
   id: 'filter-1',
   stepFilterGroupId: 'filter-group-1',
-  stepOutputKey: 'company.name',
+  stepOutputKey: '{{company.name}}',
   type: 'text',
   operand: ViewFilterOperand.CONTAINS,
   value: '',
@@ -22,7 +22,7 @@ const DEFAULT_STEP_FILTER: StepFilter = {
 const GREATER_THAN_FILTER: StepFilter = {
   id: 'filter-1',
   stepFilterGroupId: 'filter-group-1',
-  stepOutputKey: 'company.employees',
+  stepOutputKey: '{{company.employees}}',
   type: 'number',
   operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
   value: '100',

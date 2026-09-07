@@ -1,11 +1,11 @@
-import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
+import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { interpolateNavigationCommandMenuItemField } from 'src/engine/metadata-modules/command-menu-item/utils/interpolate-navigation-command-menu-item-field.util';
 import {
   NAVIGATION_INTERPOLATED_ICON,
   NAVIGATION_INTERPOLATED_LABEL,
   NAVIGATION_INTERPOLATED_SHORT_LABEL,
-} from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util';
+} from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util';
 
 const mockI18nInstance = {
   _: (messageId: string) => messageId,
@@ -32,7 +32,7 @@ const baseCommandMenuItem = {
   position: 1,
   isPinned: false,
   availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-  payload: { objectMetadataItemId: 'obj-id-1' },
+  navigationTargetObjectMetadataId: 'obj-id-1',
   workspaceId: 'ws-id-1',
   isActive: true,
   isSystemSideEffect: false,
@@ -78,7 +78,7 @@ describe('interpolateNavigationCommandMenuItemField', () => {
     const nonNavigationItem = {
       ...baseCommandMenuItem,
       engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
-      payload: undefined,
+      navigationTargetObjectMetadataId: undefined,
       label: 'Create New Record',
     };
 
@@ -152,10 +152,10 @@ describe('interpolateNavigationCommandMenuItemField', () => {
     expect(result).toBe('IconCustom');
   });
 
-  it('should return raw value when payload has no objectMetadataItemId', () => {
+  it('should return raw value when the item has no navigation target', () => {
     const itemWithPathPayload = {
       ...baseCommandMenuItem,
-      payload: { path: '/settings/profile' },
+      navigationTargetObjectMetadataId: undefined,
     };
 
     const result = interpolateNavigationCommandMenuItemField({

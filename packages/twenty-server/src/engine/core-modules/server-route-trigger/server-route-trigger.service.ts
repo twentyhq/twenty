@@ -24,6 +24,7 @@ import {
   buildRouteTriggerResponse,
   type RouteTriggerResponse,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
+import { DEFAULT_SERVER_ROUTE_HTTP_METHODS } from 'src/engine/core-modules/server-route-trigger/constants/default-server-route-http-methods.constant';
 import {
   ServerRouteTriggerException,
   ServerRouteTriggerExceptionCode,
@@ -65,6 +66,19 @@ export class ServerRouteTriggerService {
       throw new ServerRouteTriggerException(
         `Server resolver function ${resolverLogicFunctionUniversalIdentifier} not found`,
         ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      );
+    }
+
+    const allowedHttpMethods =
+      resolver.serverRouteTriggerSettings?.httpMethods ??
+      DEFAULT_SERVER_ROUTE_HTTP_METHODS;
+
+    if (
+      !allowedHttpMethods.some((httpMethod) => httpMethod === request.method)
+    ) {
+      throw new ServerRouteTriggerException(
+        `Server resolver function ${resolverLogicFunctionUniversalIdentifier} does not accept ${request.method} requests`,
+        ServerRouteTriggerExceptionCode.METHOD_NOT_ALLOWED,
       );
     }
 

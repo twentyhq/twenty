@@ -12,7 +12,6 @@ export const ChipFieldDisplay = () => {
     maxWidth,
     triggerEvent,
     onRecordChipClick,
-    isLabelIdentifierCompact,
   } = useChipFieldDisplay();
 
   if (!isDefined(recordValue)) {
@@ -26,7 +25,6 @@ export const ChipFieldDisplay = () => {
       record={recordValue}
       size={ChipSize.Small}
       to={labelIdentifierLink}
-      isLabelHidden={isLabelIdentifierCompact ?? false}
       forceDisableClick={disableChipClick}
       triggerEvent={triggerEvent}
       onClick={onRecordChipClick}

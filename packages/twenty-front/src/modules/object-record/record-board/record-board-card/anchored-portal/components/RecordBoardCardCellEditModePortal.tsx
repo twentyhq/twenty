@@ -6,6 +6,7 @@ import { RECORD_BOARD_CARD_INPUT_ID_PREFIX } from '@/object-record/record-board/
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { useRecordBoardCardMetadataFromPosition } from '@/object-record/record-board/record-board-card/hooks/useRecordBoardCardMetadataFromPosition';
 import { recordBoardCardEditModePositionComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardEditModePositionComponentState';
+import { isRecordBoardCellsNonEditableComponentState } from '@/object-record/record-board/states/isRecordBoardCellsNonEditableComponentState';
 import { FieldInput } from '@/object-record/record-field/ui/components/FieldInput';
 import { RecordInlineCellAnchoredPortal } from '@/object-record/record-inline-cell/components/RecordInlineCellAnchoredPortal';
 import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
@@ -20,11 +21,16 @@ export const RecordBoardCardCellEditModePortal = () => {
     recordBoardCardEditModePositionComponentState,
   );
 
+  const isRecordBoardCellsNonEditable = useAtomComponentStateValue(
+    isRecordBoardCellsNonEditableComponentState,
+  );
+
   const { editedFieldMetadataItem } = useRecordBoardCardMetadataFromPosition();
 
   if (
     !isDefined(recordBoardCardEditModePosition) ||
-    !isDefined(editedFieldMetadataItem)
+    !isDefined(editedFieldMetadataItem) ||
+    isRecordBoardCellsNonEditable
   ) {
     return null;
   }

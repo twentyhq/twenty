@@ -116,10 +116,12 @@ export class LocalChildProcessRunnerService {
               }
             });
           } else {
-            // Fallback: read payload from argv[2] (JSON) and print to stdout
+            // Fallback for a runner started without IPC: the context travels as
+            // argv[3] because the script is written once, before any run exists.
             const json = process.argv[2];
             payload = json ? JSON.parse(json) : undefined;
-            const out = await handlerFn(payload, { retryCount: 0, maxRetries: 0 });
+            const contextJson = process.argv[3];
+            const out = await handlerFn(payload, contextJson ? JSON.parse(contextJson) : undefined);
             process.stdout.write(JSON.stringify({ ok: true, result: out }), () => process.exit(0));
           }
         } catch (error) {

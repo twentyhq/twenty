@@ -7,7 +7,7 @@ import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMar
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useQuery } from '@apollo/client/react';
@@ -21,14 +21,14 @@ import { InlineBanner } from 'twenty-ui/feedback';
 import {
   IconBook,
   IconBox,
+  IconBrandTypescript,
   IconCommand,
   IconEyeOff,
-  IconGraph,
   IconInfoCircle,
   IconLego,
+  IconLayoutGridAdd,
   IconListDetails,
   IconLock,
-  IconShield,
 } from 'twenty-ui/icon';
 import {
   ApplicationRegistrationSourceType,
@@ -150,13 +150,13 @@ export const SettingsAvailableApplicationDetails = () => {
       many: t`fields`,
     },
     {
-      icon: IconCommand,
+      icon: IconBrandTypescript,
       count: (manifest?.logicFunctions ?? []).length,
       one: t`logic function`,
       many: t`logic functions`,
     },
     {
-      icon: IconGraph,
+      icon: IconLayoutGridAdd,
       count: (manifest?.frontComponents ?? []).filter(
         (fc) =>
           !(manifest?.commandMenuItems ?? [])
@@ -179,7 +179,7 @@ export const SettingsAvailableApplicationDetails = () => {
       many: t`commands`,
     },
     {
-      icon: IconShield,
+      icon: IconLock,
       count: (detail?.roles ?? []).filter(
         (role) =>
           role.universalIdentifier !== detail?.defaultRoleUniversalIdentifier,
@@ -222,6 +222,7 @@ export const SettingsAvailableApplicationDetails = () => {
             displayName={displayName}
             description={description}
             aboutDescription={detail.aboutDescription ?? undefined}
+            pricingDescription={detail.pricingDescription ?? undefined}
             screenshots={detail.galleryImages}
             author={detail.author ?? 'Unknown'}
             category={detail.category ?? undefined}
@@ -246,6 +247,7 @@ export const SettingsAvailableApplicationDetails = () => {
             hasUpdate={hasUpdate}
             onUpgrade={handleUpgrade}
             isUpgrading={isUpgrading}
+            state={application?.state}
           />
         );
       case 'content':
@@ -303,6 +305,12 @@ export const SettingsAvailableApplicationDetails = () => {
             chipOnly
           />
         }
+        secondaryBar={
+          <SettingsTabBar
+            tabs={tabs}
+            componentInstanceId={AVAILABLE_APPLICATION_DETAIL_ID}
+          />
+        }
       >
         <SettingsPageContainer>
           {isUnlisted && (
@@ -311,10 +319,6 @@ export const SettingsAvailableApplicationDetails = () => {
               message={t`Application not listed on the marketplace. It was shared via a direct link`}
             />
           )}
-          <TabList
-            tabs={tabs}
-            componentInstanceId={AVAILABLE_APPLICATION_DETAIL_ID}
-          />
           {renderActiveTabContent()}
         </SettingsPageContainer>
       </SettingsPageLayout>

@@ -29,6 +29,7 @@ const mockClientConfig = {
     environment: 'development',
     release: '1.0.0',
     dsn: undefined,
+    tracesSampleRate: 0.1,
   },
   captcha: {
     provider: undefined,

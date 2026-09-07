@@ -1,20 +1,19 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { createPath, useNavigate } from 'react-router-dom';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { getSidePanelCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getSidePanelCommandMenuDropdownIdFromCommandMenuId';
+import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 type NavigateToRecordPageParams = {
   objectNameSingular: string;
@@ -23,67 +22,72 @@ type NavigateToRecordPageParams = {
 
 export const useNavigateToRecordPageFromSidePanel = () => {
   const store = useStore();
-  const navigate = useNavigateApp();
+  const navigate = useNavigate();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { closeDropdown } = useCloseDropdown();
+  const workspaceSurface = useWorkspaceSurface();
 
   const sidePanelPageInstanceId = useComponentInstanceStateContext(
     SidePanelPageComponentInstanceContext,
   )?.instanceId;
 
-  const parentViewState = useAtomComponentStateCallbackState(
-    contextStoreRecordShowParentViewComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
-  );
-
   const navigateToRecordPage = useCallback(
     ({ objectNameSingular, recordId }: NavigateToRecordPageParams) => {
-      const activeTabId = store.get(
-        activeTabIdComponentState.atomFamily({
-          instanceId: getShowPageTabListComponentId({
-            pageId: sidePanelPageInstanceId,
-            targetObjectId: recordId,
-          }),
-        }),
-      );
-
-      const tabIdToOpen =
-        activeTabId === 'home'
-          ? objectNameSingular === CoreObjectNameSingular.Note ||
-            objectNameSingular === CoreObjectNameSingular.Task
-            ? 'richText'
-            : 'timeline'
-          : activeTabId;
-
-      store.set(
-        activeTabIdComponentState.atomFamily({
-          instanceId: getShowPageTabListComponentId({
-            targetObjectId: recordId,
-          }),
-        }),
-        tabIdToOpen,
-      );
-
-      const parentView = store.get(parentViewState);
-
-      if (
-        isDefined(parentView) &&
-        parentView.parentViewObjectNameSingular !== objectNameSingular
-      ) {
-        store.set(parentViewState, undefined);
-      }
-
-      store.set(sidePanelNavigationStackState.atom, []);
-
-      navigate(AppPath.RecordShowPage, {
+      const navigationStack = store.get(sidePanelNavigationStackState.atom);
+      const currentRoutedLocation = navigationStack.at(-1)?.routedLocation;
+      const currentRoutedPath = isDefined(currentRoutedLocation)
+        ? createPath(currentRoutedLocation)
+        : undefined;
+      const recordPath = getAppPath(AppPath.RecordShowPage, {
         objectNameSingular,
         objectRecordId: recordId,
       });
 
+      const isExpandingCurrentRoutedRecord =
+        currentRoutedLocation?.pathname === recordPath;
+
+      const fallbackTabId =
+        objectNameSingular === CoreObjectNameSingular.Note ||
+        objectNameSingular === CoreObjectNameSingular.Task
+          ? 'richText'
+          : 'timeline';
+      const destinationPath =
+        isExpandingCurrentRoutedRecord && isDefined(currentRoutedPath)
+          ? currentRoutedPath
+          : `${recordPath}#${encodeURIComponent(fallbackTabId)}`;
+
+      const panelParentViewState = isDefined(sidePanelPageInstanceId)
+        ? contextStoreRecordShowParentViewComponentState.atomFamily({
+            instanceId: sidePanelPageInstanceId,
+          })
+        : undefined;
+      const parentView = isDefined(panelParentViewState)
+        ? store.get(panelParentViewState)
+        : undefined;
+
+      store.set(
+        contextStoreRecordShowParentViewComponentState.atomFamily({
+          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+        }),
+        isDefined(parentView) &&
+          parentView.parentViewObjectNameSingular === objectNameSingular
+          ? parentView
+          : undefined,
+      );
+
+      navigate(destinationPath, { surface: 'main' });
+
       if (isDefined(sidePanelPageInstanceId)) {
+        const baseCommandMenuInstanceId =
+          computeRecordShowComponentInstanceId(recordId);
+        const commandMenuInstanceId =
+          workspaceSurface.type === 'side-panel'
+            ? `${baseCommandMenuInstanceId}-${workspaceSurface.instanceId}`
+            : baseCommandMenuInstanceId;
+
         closeDropdown(
           getSidePanelCommandMenuDropdownIdFromCommandMenuId(
-            sidePanelPageInstanceId,
+            commandMenuInstanceId,
           ),
         );
       }
@@ -94,9 +98,10 @@ export const useNavigateToRecordPageFromSidePanel = () => {
       closeDropdown,
       closeSidePanelMenu,
       navigate,
-      parentViewState,
       sidePanelPageInstanceId,
       store,
+      workspaceSurface.instanceId,
+      workspaceSurface.type,
     ],
   );
 

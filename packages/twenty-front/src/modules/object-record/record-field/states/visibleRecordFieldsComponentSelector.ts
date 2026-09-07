@@ -68,7 +68,6 @@ const filterVisibleAndReadableRecordFields = (
       const isActive =
         isLabelIdentifier ||
         isActiveFieldMetadataItem({
-          objectNameSingular: objectMetadataItem.nameSingular,
           fieldMetadata: fieldMetadataItem,
         });
 

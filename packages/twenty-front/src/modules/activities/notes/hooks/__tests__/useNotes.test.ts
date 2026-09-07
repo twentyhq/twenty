@@ -5,8 +5,9 @@ import { type ActivityTargetableObject } from '@/activities/types/ActivityTarget
 
 jest.mock('@/activities/hooks/useActivities', () => ({
   useActivities: jest.fn(() => ({
-    activities: [{ id: '1', content: 'Example Note' }],
+    activities: [{ id: '1', content: 'Example Note', __typename: 'Note' }],
     loading: false,
+    fetchMoreActivities: jest.fn(),
   })),
 }));
 
@@ -29,7 +30,7 @@ describe('useNotes', () => {
     const { result } = renderHook(() => useNotes(mockTargetableObject));
 
     expect(result.current.notes).toEqual([
-      { id: '1', content: 'Example Note' },
+      { id: '1', content: 'Example Note', __typename: 'Note' },
     ]);
     expect(result.current.loading).toBe(false);
   });
