@@ -51,23 +51,26 @@ function download {
   if ! curl -fsSL --retry 3 --retry-delay 2 -o "$dest.tmp" "$url"; then
     rm -f "$dest.tmp"
     echo -e "\t❌ Failed to download $url"
-    echo -e "\t\tIf this is a 404, the release may be incomplete; anything else is usually GitHub"
-    echo -e "\t\trate limiting your network, in which case retrying in a minute will work."
+    echo -e "\t\tIf this is a 404, the twenty/<version> ref does not exist: releases that predate the twenty/ tag namespace (v2.9.0 and older) are not supported."
+    echo -e "\t\tAnything else is usually GitHub rate limiting your network, in which case retrying in a minute will work."
     exit 1
   fi
   mv "$dest.tmp" "$dest"
 }
 
 # Use environment variables VERSION and BRANCH, with defaults if not set
-# "latest" is only an alias of the newest release, resolve it to the real tag
-[[ "$VERSION" == "latest" ]] && unset VERSION
-version=${VERSION:-$(curl -fsS --retry 3 --retry-delay 2 "https://hub.docker.com/v2/repositories/twentycrm/twenty/tags?page_size=100" | grep -o '"name":"[^"]*"' | grep -v 'latest' | cut -d'"' -f4 | sort -V | tail -n1)}
+release_tag_pattern='^v[0-9]+\.[0-9]+\.[0-9]+$'
+if [[ -n "$VERSION" && ! "$VERSION" =~ $release_tag_pattern ]]; then
+  echo -e "\t❌ VERSION must be a full release tag such as v2.38.1, omit it to install the latest release."
+  exit 1
+fi
+version=${VERSION:-$(curl -fsS --retry 3 --retry-delay 2 "https://hub.docker.com/v2/repositories/twentycrm/twenty/tags?page_size=100" | grep -o '"name":"[^"]*"' | cut -d'"' -f4 | grep -E "$release_tag_pattern" | sort -V | tail -n1)}
 if [ -z "$version" ]; then
   echo -e "\t❌ Unable to resolve the latest release from Docker Hub. Check your network, or set VERSION explicitly."
   exit 1
 fi
-# Release tags are namespaced since twenty/v2.9.1, older releases are not supported.
-# Deriving the branch from the image tag also keeps docker-compose.yml and the image in lockstep.
+# Releases that predate the twenty/ tag namespace (v2.9.0 and older) are not supported.
+# Deriving the branch from the image tag keeps docker-compose.yml and the image in lockstep.
 branch=${BRANCH:-twenty/$version}
 
 echo "🚀 Using docker version $version and Github branch $branch"
