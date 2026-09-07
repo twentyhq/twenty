@@ -1,3 +1,4 @@
+import { isNonEmptyArray } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type CallRecordingSyncFields } from 'src/logic-functions/types/call-recording-sync-fields.type';
@@ -55,7 +56,7 @@ export const upsertCallRecording = async ({
     },
   });
 
-  if ((result.updateCallRecordings ?? []).length === 0) {
+  if (!isNonEmptyArray(result.updateCallRecordings)) {
     throw new Error('Fathom recording changed during import; retry the import');
   }
 
