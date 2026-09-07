@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import { MessageParticipantRole } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -47,45 +48,35 @@ export class MessagingDeleteGroupEmailMessagesService {
             'messageChannelMessageAssociation',
           );
 
-        const firstRecord =
-          await messageChannelMessageAssociationRepository.findOne({
-            where: { messageChannelId },
-            order: { id: 'ASC' },
-          });
-
-        if (!firstRecord) {
-          this.logger.debug(
-            `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannelId} - No message associations found`,
-          );
-
-          return 0;
-        }
-
-        let cursorId: string | undefined = firstRecord.id;
+        let cursorId: string | undefined;
         let totalDeletedCount = 0;
 
-        while (isDefined(cursorId)) {
+        for (;;) {
+          const batchQueryBuilder = messageChannelMessageAssociationRepository
+            .createQueryBuilder('mcma')
+            .select('mcma.id', 'mcmaId')
+            .addSelect('mcma.messageId', 'messageId')
+            .addSelect('mcma.messageExternalId', 'messageExternalId')
+            .addSelect('participant.handle', 'participantHandle')
+            .innerJoin('mcma.message', 'message')
+            .innerJoin(
+              'message.messageParticipants',
+              'participant',
+              'participant.role = :role',
+            )
+            .setParameter('role', MessageParticipantRole.FROM)
+            .where('mcma.messageChannelId = :messageChannelId', {
+              messageChannelId,
+            })
+            .orderBy('mcma.id', 'ASC')
+            .take(MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_BATCH_SIZE);
+
+          if (isDefined(cursorId)) {
+            batchQueryBuilder.andWhere('mcma.id > :cursorId', { cursorId });
+          }
+
           const batch: MessageBatchRawResult[] =
-            await messageChannelMessageAssociationRepository
-              .createQueryBuilder('mcma')
-              .select('mcma.id', 'mcmaId')
-              .addSelect('mcma.messageId', 'messageId')
-              .addSelect('mcma.messageExternalId', 'messageExternalId')
-              .addSelect('participant.handle', 'participantHandle')
-              .innerJoin('mcma.message', 'message')
-              .innerJoin(
-                'message.messageParticipants',
-                'participant',
-                'participant.role = :role',
-              )
-              .setParameter('role', MessageParticipantRole.FROM)
-              .where('mcma.messageChannelId = :messageChannelId', {
-                messageChannelId,
-              })
-              .andWhere('mcma.id >= :cursorId', { cursorId })
-              .orderBy('mcma.id', 'ASC')
-              .take(MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_BATCH_SIZE)
-              .getRawMany<MessageBatchRawResult>();
+            await batchQueryBuilder.getRawMany<MessageBatchRawResult>();
 
           if (batch.length === 0) {
             break;
@@ -135,7 +126,15 @@ export class MessagingDeleteGroupEmailMessagesService {
             break;
           }
 
-          cursorId = batch[batch.length - 1].mcmaId;
+          const nextCursorId = batch[batch.length - 1].mcmaId;
+
+          if (!isNonEmptyString(nextCursorId)) {
+            throw new Error(
+              `Message channel ${messageChannelId} group email deletion could not read a cursor from its last row, aborting to avoid an unbounded scan`,
+            );
+          }
+
+          cursorId = nextCursorId;
         }
 
         this.logger.log(

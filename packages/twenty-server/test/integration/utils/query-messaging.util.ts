@@ -70,6 +70,7 @@ type MessageChannelUpdate = {
   messageFolderImportPolicy?: MessageFolderImportPolicy;
   isSyncEnabled?: boolean;
   isContactAutoCreationEnabled?: boolean;
+  excludeGroupEmails?: boolean;
 };
 
 type CalendarChannelUpdate = {
