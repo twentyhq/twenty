@@ -1665,14 +1665,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     flatObjectMetadata: FlatObjectMetadata;
     operationType: OperationType;
   }): void {
-    if (
-      !this.options.internalContext.featureFlagsMap[
+    const isRecordSharingEnabled =
+      this.options.internalContext.featureFlagsMap[
         FeatureFlagKey.IS_RECORD_SHARING_ENABLED
-      ]
-    ) {
-      return;
-    }
-
+      ] === true;
     const isOwningApplication = isOwningApplicationAuthContext({
       authContext: this.options.authContext,
       owningApplicationId: flatObjectMetadata.applicationId,
@@ -1683,17 +1679,21 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       case MetadataReadability.INHERITED:
         return;
       case MetadataReadability.SYSTEM:
+        // recordShare rows are SYSTEM and hold the whole ACL, so they stay
+        // unreadable whether or not the workspace has enabled record sharing
         this.denyAccessForAlias({ queryBuilder, alias, flatObjectMetadata });
 
         return;
       case MetadataReadability.APPLICATION:
-        if (!isOwningApplication) {
+        if (isRecordSharingEnabled && !isOwningApplication) {
           this.denyAccessForAlias({ queryBuilder, alias, flatObjectMetadata });
         }
 
         return;
       case MetadataReadability.PRIVATE:
-        if (isOwningApplication) {
+        // the owning application syncs and backfills every record of its
+        // object, so it reads them all instead of holding share rows
+        if (!isRecordSharingEnabled || isOwningApplication) {
           return;
         }
 
