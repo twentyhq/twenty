@@ -2,6 +2,7 @@ import { TerminalOutput } from '@/ai/components/TerminalOutput';
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { useLingui } from '@lingui/react/macro';
+import { Tag } from 'twenty-ui/data-display';
 import {
   IconChevronDown,
   IconChevronUp,
@@ -27,7 +28,7 @@ const StyledContainer = styled.div`
   overflow: hidden;
 `;
 
-const StyledHeader = styled.div<{ status: 'success' | 'error' | 'running' }>`
+const StyledHeader = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.secondary};
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -47,31 +48,6 @@ const StyledHeaderRight = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledStatusBadge = styled.div<{
-  status: 'success' | 'error' | 'running';
-}>`
-  align-items: center;
-  background: ${({ status }) =>
-    status === 'success'
-      ? themeCssVariables.background.transparent.success
-      : status === 'error'
-        ? themeCssVariables.background.transparent.danger
-        : themeCssVariables.background.transparent.medium};
-  border-radius: ${themeCssVariables.border.radius.pill};
-  color: ${({ status }) =>
-    status === 'success'
-      ? themeCssVariables.color.turquoise
-      : status === 'error'
-        ? themeCssVariables.color.red
-        : themeCssVariables.font.color.secondary};
-  corner-shape: round;
-  display: flex;
-  font-size: ${themeCssVariables.font.size.xs};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${themeCssVariables.spacing[1]};
-  padding: ${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTitle = styled.span`
@@ -233,16 +209,25 @@ export const CodeExecutionDisplay = ({
 
   return (
     <StyledContainer>
-      <StyledHeader status={status}>
+      <StyledHeader>
         <StyledHeaderLeft>
           <IconCode size={theme.icon.size.md} />
           <StyledTitle>{t`Python Code Execution`}</StyledTitle>
         </StyledHeaderLeft>
         <StyledHeaderRight>
-          <StyledStatusBadge status={status}>
-            <StatusIcon size={theme.icon.size.sm} />
-            {statusText}
-          </StyledStatusBadge>
+          <Tag
+            color={
+              status === 'success'
+                ? 'turquoise'
+                : status === 'error'
+                  ? 'red'
+                  : 'gray'
+            }
+            text={statusText}
+            Icon={StatusIcon}
+            weight="medium"
+            preventShrink
+          />
         </StyledHeaderRight>
       </StyledHeader>
 
