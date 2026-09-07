@@ -353,7 +353,7 @@ configured.
 - **Answer feedback.** Short answers end with Slack's native thumbs up / thumbs
   down buttons. A click stores a Positive or Negative rating on the matching
   Slack Assistant Request record (last click wins). Very long answers fall back
-  to a plain markdown message without buttons.
+  to a plain message without buttons.
 - **Thread memory.** After a successful reply the bot stays active in that
   thread, so follow-ups need no mention. Channel threads stay active for 24
   hours after the last reply (each reply renews it); DM threads never expire.

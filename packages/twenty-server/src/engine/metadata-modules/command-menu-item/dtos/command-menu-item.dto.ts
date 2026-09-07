@@ -95,6 +95,11 @@ export class CommandMenuItemDTO {
   @Field({ nullable: true })
   conditionalAvailabilityExpression?: string;
 
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  conditionalPinnedExpression?: string;
+
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })

@@ -71,10 +71,11 @@ export class WorkspaceEventBroadcaster {
     queueJobEvent,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId?: string;
     queueJobEvent: QueueJobEvent;
   }): Promise<void> {
     await this.publishToActiveStreams(workspaceId, (streamData) =>
+      !isDefined(userWorkspaceId) ||
       streamData.authContext.userWorkspaceId === userWorkspaceId
         ? {
             objectRecordEventsWithQueryIds: [],

@@ -1,5 +1,5 @@
 import {
-  RecordShareAccessLevel,
+  SharingRuleAccessLevel,
   RecordSharePrincipalType,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
@@ -26,7 +26,7 @@ describe('fromSharingRuleManifestToUniversalFlatSharingRule', () => {
           objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
           name: 'Admins see everything',
           granteePrincipalType: RecordSharePrincipalType.EVERYONE,
-          accessLevel: RecordShareAccessLevel.READ,
+          accessLevel: SharingRuleAccessLevel.READ,
         },
       }),
     ).toEqual({
@@ -38,7 +38,7 @@ describe('fromSharingRuleManifestToUniversalFlatSharingRule', () => {
       granteePrincipalType: RecordSharePrincipalType.EVERYONE,
       granteeRoleUniversalIdentifier: null,
       granteePrincipalId: null,
-      accessLevel: RecordShareAccessLevel.READ,
+      accessLevel: SharingRuleAccessLevel.READ,
       isActive: true,
       rowLevelPermissionPredicateUniversalIdentifiers: [],
       rowLevelPermissionPredicateGroupUniversalIdentifiers: [],
@@ -60,7 +60,7 @@ describe('fromSharingRuleManifestToUniversalFlatSharingRule', () => {
           description: 'Every sales member reads every deal',
           granteePrincipalType: RecordSharePrincipalType.ROLE,
           granteeRoleUniversalIdentifier: ROLE_UNIVERSAL_IDENTIFIER,
-          accessLevel: RecordShareAccessLevel.READ_WRITE,
+          accessLevel: SharingRuleAccessLevel.READ_WRITE,
           isActive: false,
         },
       }),
@@ -69,7 +69,7 @@ describe('fromSharingRuleManifestToUniversalFlatSharingRule', () => {
       granteePrincipalType: RecordSharePrincipalType.ROLE,
       granteeRoleUniversalIdentifier: ROLE_UNIVERSAL_IDENTIFIER,
       granteePrincipalId: null,
-      accessLevel: RecordShareAccessLevel.READ_WRITE,
+      accessLevel: SharingRuleAccessLevel.READ_WRITE,
       isActive: false,
     });
   });

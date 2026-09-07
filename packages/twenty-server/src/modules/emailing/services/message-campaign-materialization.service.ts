@@ -12,20 +12,21 @@ import chunk from 'lodash.chunk';
 import { In, type ObjectLiteral, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import {
-  MATERIALIZE_CAMPAIGN_CHUNK_JOB,
-  SEND_CAMPAIGN_EMAIL_JOB,
-} from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import { MATERIALIZE_CAMPAIGN_CHUNK_JOB } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import { SEND_CAMPAIGN_EMAIL_BATCH_JOB } from 'src/engine/core-modules/emailing-domain/constants/send-campaign-email-batch-job.constant';
+import { resolveCampaignSendBatchSize } from 'src/engine/core-modules/emailing-domain/utils/resolve-campaign-send-batch-size.util';
 import { type MaterializeCampaignChunkJobData } from 'src/engine/core-modules/emailing-domain/types/materialize-campaign-chunk-job-data.type';
 import { type MaterializeCampaignJobData } from 'src/engine/core-modules/emailing-domain/types/materialize-campaign-job-data.type';
-import { type SendCampaignEmailJobData } from 'src/engine/core-modules/emailing-domain/types/send-campaign-email-job-data.type';
+import { type SendCampaignEmailBatchJobData } from 'src/engine/core-modules/emailing-domain/types/send-campaign-email-batch-job-data.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { SKIP_EVENT_EMISSION } from 'src/modules/emailing/constants/skip-event-emission.constant';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { type CampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/campaign-recipient.type';
@@ -48,11 +49,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 const MATERIALIZATION_CHUNK_SIZE = 500;
 
-// Campaign rows are machine-generated and nothing subscribes to them: no
-// webhook, workflow trigger or timeline activity. Emitting would cost a
-// snapshot SELECT of every row written plus a timeline row per recipient.
-const SKIP_EVENT_EMISSION = { shouldSkipEventEmission: true };
-
 type CampaignMessageRow = {
   recipient: CampaignMessageRecipient;
   messageId: string;
@@ -73,6 +69,9 @@ export class MessageCampaignMaterializationService {
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly messageChannelRecordShareService: MessageChannelRecordShareService,
     private readonly recordShareService: RecordShareService,
+    @InjectMessageQueue(MessageQueue.campaignSendQueue)
+    private readonly campaignSendQueueService: MessageQueueService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async processMaterializeJob({
@@ -235,7 +234,7 @@ export class MessageCampaignMaterializationService {
           null,
         );
 
-        await this.insertMessagesBeforeTheirDeliveries({
+        await this.insertCampaignMessages({
           workspaceId,
           campaignId,
           messageChannelId,
@@ -249,6 +248,16 @@ export class MessageCampaignMaterializationService {
           }),
         });
       }
+
+      // Driven by the whole chunk rather than by the recipients that still
+      // needed message rows: a retry after a failed upsert sees their messages
+      // already materialized, and those recipients would otherwise never get a
+      // delivery row and never be sent.
+      await this.upsertQueuedDeliveries({
+        workspaceId,
+        campaignId,
+        recipients,
+      });
 
       await this.enqueueSendJobs({
         workspaceId,
@@ -345,17 +354,23 @@ export class MessageCampaignMaterializationService {
       return;
     }
 
-    await this.messageQueueService.bulkAdd<SendCampaignEmailJobData>(
-      SEND_CAMPAIGN_EMAIL_JOB,
-      recipients.map((recipient) => ({
+    const batchSize = resolveCampaignSendBatchSize(
+      this.twentyConfigService.get('EMAIL_SEND_RATE_LIMITING_LIMIT'),
+    );
+
+    await this.campaignSendQueueService.bulkAdd<SendCampaignEmailBatchJobData>(
+      SEND_CAMPAIGN_EMAIL_BATCH_JOB,
+      chunk(recipients, batchSize).map((batch) => ({
         data: {
           workspaceId,
           campaignId,
-          messageId: recipient.messageId,
-          personId: recipient.personId,
-          recipientEmail: recipient.email,
           emailingDomainId,
           userWorkspaceId,
+          recipients: batch.map((recipient) => ({
+            messageId: recipient.messageId,
+            personId: recipient.personId,
+            email: recipient.email,
+          })),
         },
       })),
       {
@@ -365,7 +380,7 @@ export class MessageCampaignMaterializationService {
     );
   }
 
-  private async insertMessagesBeforeTheirDeliveries({
+  private async insertCampaignMessages({
     workspaceId,
     campaignId,
     messageChannelId,
@@ -408,6 +423,20 @@ export class MessageCampaignMaterializationService {
         temporaryExternalId: v4(),
       })),
     });
+  }
+
+  private async upsertQueuedDeliveries({
+    workspaceId,
+    campaignId,
+    recipients,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+    recipients: CampaignMessageRecipient[];
+  }): Promise<void> {
+    if (recipients.length === 0) {
+      return;
+    }
 
     await this.campaignDeliveryRepository.upsert(
       workspaceId,

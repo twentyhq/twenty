@@ -1,0 +1,1 @@
+export const CAMPAIGN_SEND_BATCH_SIZE = 50;

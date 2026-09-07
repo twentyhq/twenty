@@ -20,6 +20,9 @@ const INHERITED_STANDARD_OBJECT_PARENT_FIELDS = {
   taskTarget: STANDARD_OBJECT_FIELDS.taskTarget.task,
   messageThreadTarget: STANDARD_OBJECT_FIELDS.messageThreadTarget.messageThread,
   calendarEventTarget: STANDARD_OBJECT_FIELDS.calendarEventTarget.calendarEvent,
+  messageParticipant: STANDARD_OBJECT_FIELDS.messageParticipant.message,
+  calendarEventParticipant:
+    STANDARD_OBJECT_FIELDS.calendarEventParticipant.calendarEvent,
 } as const;
 
 describe('Standard object readability', () => {
@@ -146,20 +149,14 @@ describe('Standard object readability', () => {
     ).toEqual([{ joinColumnName: 'noteId', parentNameSingular: 'note' }]);
   });
 
-  it('leaves every other standard object OPEN', () => {
+  it('leaves every other standard object OPEN for readability', () => {
     const readabilities = new Set(
       otherStandardFlatObjectMetadatas.map(
         (flatObjectMetadata) => flatObjectMetadata.readability,
       ),
     );
-    const writabilities = new Set(
-      otherStandardFlatObjectMetadatas.map(
-        (flatObjectMetadata) => flatObjectMetadata.writability,
-      ),
-    );
 
     expect(otherStandardFlatObjectMetadatas.length).toBeGreaterThan(0);
     expect([...readabilities]).toEqual([MetadataReadability.OPEN]);
-    expect([...writabilities]).toEqual([MetadataWritability.OPEN]);
   });
 });

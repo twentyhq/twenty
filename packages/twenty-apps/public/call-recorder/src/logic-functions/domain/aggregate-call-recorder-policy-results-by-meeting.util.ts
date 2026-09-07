@@ -1,9 +1,13 @@
+import { CallRecorderPreference } from 'src/constants/call-recorder-preference';
 import { type CallRecorderPolicyResultForCalendarEvent } from 'src/logic-functions/types/call-recorder-policy-result-for-calendar-event.type';
 import { type CallRecorderPolicyResultForMeeting } from 'src/logic-functions/types/call-recorder-policy-result-for-meeting.type';
 
 type CallRecorderPolicyResultForMeetingInput = Pick<
   CallRecorderPolicyResultForCalendarEvent,
-  'calendarEventId' | 'realMeetingKey' | 'shouldRequestBot'
+  | 'calendarEventId'
+  | 'realMeetingKey'
+  | 'shouldRequestBot'
+  | 'callRecorderPreference'
 >;
 
 export const aggregateCallRecorderPolicyResultsByMeeting = (
@@ -18,6 +22,7 @@ export const aggregateCallRecorderPolicyResultsByMeeting = (
     calendarEventId,
     realMeetingKey,
     shouldRequestBot,
+    callRecorderPreference,
   } of perCalendarEventPolicyResults) {
     const meetingPolicyResult = meetingPolicyResultsByMeetingKey.get(
       realMeetingKey,
@@ -26,9 +31,14 @@ export const aggregateCallRecorderPolicyResultsByMeeting = (
       shouldRequestBot: false,
       calendarEventIds: [],
       requestingCalendarEventIds: [],
+      calendarEventIdsWithRecordingOn: [],
     };
 
     meetingPolicyResult.calendarEventIds.push(calendarEventId);
+
+    if (callRecorderPreference === CallRecorderPreference.ON) {
+      meetingPolicyResult.calendarEventIdsWithRecordingOn.push(calendarEventId);
+    }
 
     if (shouldRequestBot) {
       meetingPolicyResult.shouldRequestBot = true;

@@ -30,12 +30,14 @@ const PERSON_ID = randomUUID();
 const NOTE_ATTACHMENT_ID = randomUUID();
 const PERSON_ATTACHMENT_ID = randomUUID();
 const ORPHAN_ATTACHMENT_ID = randomUUID();
+const MEMBER_ATTACHMENT_ID = randomUUID();
 const NOTE_TARGET_ID = randomUUID();
 
 const ATTACHMENT_IDS = [
   NOTE_ATTACHMENT_ID,
   PERSON_ATTACHMENT_ID,
   ORPHAN_ATTACHMENT_ID,
+  MEMBER_ATTACHMENT_ID,
 ];
 
 const collectIds = (edges: { node: { id: string } }[]): string[] =>
@@ -233,7 +235,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
       expect(attachmentsResponse.body.errors).toBeUndefined();
       expect(
         collectIds(attachmentsResponse.body.data.attachments.edges),
-      ).toEqual([ORPHAN_ATTACHMENT_ID, PERSON_ATTACHMENT_ID].sort());
+      ).toEqual([PERSON_ATTACHMENT_ID]);
       expect(noteTargetsResponse.body.errors).toBeUndefined();
       expect(noteTargetsResponse.body.data.noteTargets.edges).toHaveLength(0);
     });
@@ -244,9 +246,9 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
       );
 
       expect(response.body.errors).toBeUndefined();
-      expect(collectIds(response.body.data.attachments.edges)).toEqual(
-        [ORPHAN_ATTACHMENT_ID, PERSON_ATTACHMENT_ID].sort(),
-      );
+      expect(collectIds(response.body.data.attachments.edges)).toEqual([
+        PERSON_ATTACHMENT_ID,
+      ]);
     });
 
     it('should hide the note itself and with it its nested children', async () => {
@@ -277,7 +279,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
       });
     });
 
-    it('should show the attachment and the note target hanging off the note', async () => {
+    it('should show the attachment and the note target hanging off the note and keep the orphan hidden', async () => {
       const attachmentsResponse = await makeGraphqlAPIRequestWithMemberRole(
         findAttachmentsOperation,
       );
@@ -292,11 +294,11 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
       expect(attachmentsResponse.body.errors).toBeUndefined();
       expect(
         collectIds(attachmentsResponse.body.data.attachments.edges),
-      ).toEqual([...ATTACHMENT_IDS].sort());
+      ).toEqual([NOTE_ATTACHMENT_ID, PERSON_ATTACHMENT_ID].sort());
       expect(orderedAttachmentsResponse.body.errors).toBeUndefined();
       expect(
         collectIds(orderedAttachmentsResponse.body.data.attachments.edges),
-      ).toEqual([...ATTACHMENT_IDS].sort());
+      ).toEqual([NOTE_ATTACHMENT_ID, PERSON_ATTACHMENT_ID].sort());
       expect(noteTargetsResponse.body.errors).toBeUndefined();
       expect(
         collectIds(noteTargetsResponse.body.data.noteTargets.edges),
@@ -340,6 +342,33 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
       expect(deleteResponse.body.data?.deleteAttachment ?? null).toBeNull();
       expect(deleteResponse.body.errors).toBeDefined();
     });
+
+    it('should refuse to attach a new or an existing attachment to the note with READ access on it', async () => {
+      const createResponse = await makeGraphqlAPIRequestWithMemberRole(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'attachment',
+          gqlFields: 'id',
+          data: {
+            id: MEMBER_ATTACHMENT_ID,
+            name: 'member-attachment.pdf',
+            targetNoteId: NOTE_ID,
+          },
+        }),
+      );
+      const moveResponse = await makeGraphqlAPIRequestWithMemberRole(
+        updateOneOperationFactory({
+          objectMetadataSingularName: 'attachment',
+          gqlFields: 'id',
+          recordId: PERSON_ATTACHMENT_ID,
+          data: { targetPersonId: null, targetNoteId: NOTE_ID },
+        }),
+      );
+
+      expect(createResponse.body.data?.createAttachment ?? null).toBeNull();
+      expect(createResponse.body.errors[0].message).toContain('not writable');
+      expect(moveResponse.body.data?.updateAttachment ?? null).toBeNull();
+      expect(moveResponse.body.errors[0].message).toContain('not writable');
+    });
   });
 
   describe('with a READ_WRITE share row on the note for the member role', () => {
@@ -377,6 +406,37 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
         id: NOTE_ATTACHMENT_ID,
         name: 'renamed-by-member.pdf',
       });
+    });
+
+    it('should attach a new and an existing attachment to the note', async () => {
+      const createResponse = await makeGraphqlAPIRequestWithMemberRole(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'attachment',
+          gqlFields: 'id',
+          data: {
+            id: MEMBER_ATTACHMENT_ID,
+            name: 'member-attachment.pdf',
+            targetNoteId: NOTE_ID,
+          },
+        }),
+      );
+      const moveResponse = await makeGraphqlAPIRequestWithMemberRole(
+        updateOneOperationFactory({
+          objectMetadataSingularName: 'attachment',
+          gqlFields: 'id',
+          recordId: PERSON_ATTACHMENT_ID,
+          data: { targetPersonId: null, targetNoteId: NOTE_ID },
+        }),
+      );
+
+      expect(createResponse.body.errors).toBeUndefined();
+      expect(createResponse.body.data.createAttachment.id).toBe(
+        MEMBER_ATTACHMENT_ID,
+      );
+      expect(moveResponse.body.errors).toBeUndefined();
+      expect(moveResponse.body.data.updateAttachment.id).toBe(
+        PERSON_ATTACHMENT_ID,
+      );
     });
   });
 

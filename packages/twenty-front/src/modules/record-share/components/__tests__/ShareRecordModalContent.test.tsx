@@ -307,15 +307,17 @@ describe('ShareRecordModalContent', () => {
     );
   });
 
-  it('is read only when the viewer does not hold full access', async () => {
-    renderModalContent([buildRecordSharesMock(RecordShareAccessLevel.READ)]);
+  it('shows a viewer without full access their own level and no grants', async () => {
+    renderModalContent([
+      buildRecordSharesMock(RecordShareAccessLevel.READ_WRITE, []),
+    ]);
 
     expect(
       await screen.findByText(
-        'Only members with full access can change who this record is shared with.',
+        'You can view and edit this record. Only members with full access can see and change who it is shared with.',
       ),
     ).toBeVisible();
-    expect(screen.getByText('Everyone')).toBeVisible();
+    expect(screen.queryByText('Everyone')).not.toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: /^Share/ }),
     ).not.toBeInTheDocument();

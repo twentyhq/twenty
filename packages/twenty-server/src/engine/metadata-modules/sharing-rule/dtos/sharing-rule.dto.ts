@@ -1,13 +1,15 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import {
-  RecordShareAccessLevel,
   RecordSharePrincipalType,
+  SharingRuleAccessLevel,
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { RowLevelPermissionPredicateGroupDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate-group.dto';
 import { RowLevelPermissionPredicateDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate.dto';
+
+registerEnumType(SharingRuleAccessLevel, { name: 'SharingRuleAccessLevel' });
 
 @ObjectType('SharingRule')
 export class SharingRuleDTO {
@@ -38,8 +40,8 @@ export class SharingRuleDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   granteeRoleId: string | null;
 
-  @Field(() => RecordShareAccessLevel)
-  accessLevel: RecordShareAccessLevel;
+  @Field(() => SharingRuleAccessLevel)
+  accessLevel: SharingRuleAccessLevel;
 
   @Field()
   isActive: boolean;

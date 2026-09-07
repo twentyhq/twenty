@@ -7,6 +7,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export type OwnerField = {
+  id: string;
   name: string;
   joinColumnName: string;
 };
@@ -29,6 +30,7 @@ export const findOwnerField = ({
 
   return isDefined(ownerFlatFieldMetadata)
     ? {
+        id: ownerFlatFieldMetadata.id,
         name: ownerFlatFieldMetadata.name,
         joinColumnName: computeMorphOrRelationFieldJoinColumnName({
           name: ownerFlatFieldMetadata.name,

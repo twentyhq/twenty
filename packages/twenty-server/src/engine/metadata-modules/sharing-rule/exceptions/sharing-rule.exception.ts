@@ -11,6 +11,7 @@ export const SharingRuleExceptionCode = appendCommonExceptionCode({
   INVALID_SHARING_RULE_INPUT: 'INVALID_SHARING_RULE_INPUT',
   OBJECT_METADATA_NOT_FOUND: 'OBJECT_METADATA_NOT_FOUND',
   ROLE_NOT_FOUND: 'ROLE_NOT_FOUND',
+  WORKSPACE_MEMBER_NOT_FOUND: 'WORKSPACE_MEMBER_NOT_FOUND',
 } as const);
 
 const sharingRuleExceptionUserFriendlyMessages: Record<
@@ -21,6 +22,7 @@ const sharingRuleExceptionUserFriendlyMessages: Record<
   INVALID_SHARING_RULE_INPUT: msg`Invalid sharing rule input.`,
   OBJECT_METADATA_NOT_FOUND: msg`Object metadata not found.`,
   ROLE_NOT_FOUND: msg`Role not found.`,
+  WORKSPACE_MEMBER_NOT_FOUND: msg`Workspace member not found.`,
   INTERNAL_SERVER_ERROR: msg`An unexpected error occurred.`,
 };
 

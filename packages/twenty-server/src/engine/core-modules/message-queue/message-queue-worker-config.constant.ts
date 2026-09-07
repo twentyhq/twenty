@@ -76,6 +76,15 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
       boundedShutdownDrain: false,
     },
   },
+  [MessageQueue.campaignSendQueue]: {
+    priority: 6,
+    workerOptions: {
+      concurrency: 10,
+      lockDuration: 30_000,
+      maxStalledCount: 1,
+      boundedShutdownDrain: false,
+    },
+  },
   [MessageQueue.calendarQueue]: {
     priority: 4,
     workerOptions: {
@@ -199,7 +208,8 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 5,
     workerOptions: {
       concurrency: 1,
-      lockDuration: 30_000,
+      // one job rewrites the rows of a whole object, so it may outlive the default lock
+      lockDuration: 300_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
     },
