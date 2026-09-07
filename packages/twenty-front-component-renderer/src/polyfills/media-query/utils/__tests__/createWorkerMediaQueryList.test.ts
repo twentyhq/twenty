@@ -1,37 +1,54 @@
-import { type MediaQueryEnvironmentListener } from '@/polyfills/media-query/types/MediaQueryEnvironmentListener';
-import { createMediaQueryEnvironmentFixture } from '@/testing/createMediaQueryEnvironmentFixture';
-import { createWorkerMediaQueryList } from '../createWorkerMediaQueryList';
+import { Window } from '@remote-dom/polyfill';
 
-const ENVIRONMENT = createMediaQueryEnvironmentFixture();
+import { type createWorkerMediaQueryList as CreateWorkerMediaQueryList } from '@/polyfills/media-query/utils/createWorkerMediaQueryList';
 
-const setupMediaQueryList = (initialMatches = false) => {
-  let matches = initialMatches;
-  const environmentListeners = new Set<MediaQueryEnvironmentListener>();
+const polyfillWindow = new Window();
+
+let createWorkerMediaQueryList: typeof CreateWorkerMediaQueryList;
+
+beforeAll(async () => {
+  Object.defineProperty(globalThis, 'EventTarget', {
+    value: polyfillWindow.EventTarget,
+    writable: true,
+    configurable: true,
+  });
+  Object.defineProperty(globalThis, 'Event', {
+    value: polyfillWindow.Event,
+    writable: true,
+    configurable: true,
+  });
+
+  ({ createWorkerMediaQueryList } =
+    await import('@/polyfills/media-query/utils/createWorkerMediaQueryList'));
+});
+
+const setupMediaQueryList = () => {
+  let matches = false;
+  const environmentListeners = new Set<() => void>();
   const unsubscribe = jest.fn();
+  const reportListenerError = jest.fn();
 
-  const subscribeToEnvironmentUpdates = jest.fn(
-    (listener: MediaQueryEnvironmentListener) => {
-      environmentListeners.add(listener);
+  const subscribeToEnvironmentUpdates = jest.fn((listener: () => void) => {
+    environmentListeners.add(listener);
 
-      return () => {
-        environmentListeners.delete(listener);
-        unsubscribe();
-      };
-    },
-  );
+    return () => {
+      environmentListeners.delete(listener);
+      unsubscribe();
+    };
+  });
 
   const mediaQueryList = createWorkerMediaQueryList({
     media: '(min-width: 600px)',
-    readEnvironment: () => ENVIRONMENT,
     evaluateMatches: () => matches,
     subscribeToEnvironmentUpdates,
+    reportListenerError,
   });
 
   const setMatches = (nextMatches: boolean) => {
     matches = nextMatches;
 
     for (const environmentListener of [...environmentListeners]) {
-      environmentListener(ENVIRONMENT);
+      environmentListener();
     }
   };
 
@@ -40,10 +57,17 @@ const setupMediaQueryList = (initialMatches = false) => {
     setMatches,
     subscribeToEnvironmentUpdates,
     unsubscribe,
+    reportListenerError,
   };
 };
 
 describe('createWorkerMediaQueryList', () => {
+  it('should extend the EventTarget the worker ships with', () => {
+    const { mediaQueryList } = setupMediaQueryList();
+
+    expect(mediaQueryList).toBeInstanceOf(polyfillWindow.EventTarget);
+  });
+
   it('should expose live matches without any listener attached', () => {
     const { mediaQueryList, setMatches } = setupMediaQueryList();
 
@@ -95,7 +119,7 @@ describe('createWorkerMediaQueryList', () => {
     }).not.toThrow();
   });
 
-  it('should notify listeners registered through the deprecated addListener alias', () => {
+  it('should dispatch events carrying media and matches', () => {
     const { mediaQueryList, setMatches } = setupMediaQueryList();
     const changeListener = jest.fn();
 
@@ -103,13 +127,14 @@ describe('createWorkerMediaQueryList', () => {
 
     setMatches(true);
     expect(changeListener).toHaveBeenCalledTimes(1);
-    expect(changeListener).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: 'change',
-        media: '(min-width: 600px)',
-        matches: true,
-      }),
+    expect(changeListener.mock.calls[0][0]).toBeInstanceOf(
+      polyfillWindow.Event,
     );
+    expect(changeListener.mock.calls[0][0]).toMatchObject({
+      type: 'change',
+      media: '(min-width: 600px)',
+      matches: true,
+    });
 
     mediaQueryList.removeListener(changeListener);
 
@@ -150,136 +175,22 @@ describe('createWorkerMediaQueryList', () => {
     expect(invocationOrder).toEqual(['first', 'onchange', 'last']);
   });
 
-  it('should invoke a once listener a single time and release the subscription', () => {
-    const { mediaQueryList, setMatches, unsubscribe } = setupMediaQueryList();
-    const changeListener = jest.fn();
-
-    mediaQueryList.addEventListener('change', changeListener, { once: true });
-
-    setMatches(true);
-    setMatches(false);
-
-    expect(changeListener).toHaveBeenCalledTimes(1);
-    expect(unsubscribe).toHaveBeenCalledTimes(1);
-  });
-
-  it('should detach a listener when its abort signal fires', () => {
-    const { mediaQueryList, setMatches, unsubscribe } = setupMediaQueryList();
-    const abortController = new AbortController();
-    const changeListener = jest.fn();
-
-    mediaQueryList.addEventListener('change', changeListener, {
-      signal: abortController.signal,
-    });
-
-    abortController.abort();
-    setMatches(true);
-
-    expect(changeListener).not.toHaveBeenCalled();
-    expect(unsubscribe).toHaveBeenCalledTimes(1);
-  });
-
-  it('should notify listeners passed as an object with handleEvent', () => {
+  it('should keep the onchange position when the handler is reassigned', () => {
     const { mediaQueryList, setMatches } = setupMediaQueryList();
-    const handleEvent = jest.fn();
+    const invocationOrder: string[] = [];
 
-    mediaQueryList.addEventListener('change', { handleEvent });
-
-    setMatches(true);
-
-    expect(handleEvent).toHaveBeenCalledTimes(1);
-  });
-
-  it('should keep notifying remaining listeners when one of them throws', () => {
-    const { mediaQueryList, setMatches } = setupMediaQueryList();
-
-    const throwingListener = jest.fn(() => {
-      throw new Error('listener failure');
-    });
-    const secondListener = jest.fn();
-
-    mediaQueryList.addEventListener('change', throwingListener);
-    mediaQueryList.addEventListener('change', secondListener);
-
-    expect(() => setMatches(true)).not.toThrow();
-    expect(secondListener).toHaveBeenCalledTimes(1);
-  });
-
-  it('should not invoke a listener removed by an earlier listener during dispatch', () => {
-    const { mediaQueryList, setMatches } = setupMediaQueryList();
-
-    const secondListener = jest.fn();
-    const firstListener = jest.fn(() => {
-      mediaQueryList.removeEventListener('change', secondListener);
-    });
-
-    mediaQueryList.addEventListener('change', firstListener);
-    mediaQueryList.addEventListener('change', secondListener);
+    mediaQueryList.addEventListener('change', () =>
+      invocationOrder.push('first'),
+    );
+    mediaQueryList.onchange = () => invocationOrder.push('initial');
+    mediaQueryList.addEventListener('change', () =>
+      invocationOrder.push('last'),
+    );
+    mediaQueryList.onchange = () => invocationOrder.push('reassigned');
 
     setMatches(true);
 
-    expect(firstListener).toHaveBeenCalledTimes(1);
-    expect(secondListener).not.toHaveBeenCalled();
-  });
-});
-
-describe('createWorkerMediaQueryList listener registry', () => {
-  it('should keep a re-added listener alive after its once registration was removed', () => {
-    const { mediaQueryList, setMatches } = setupMediaQueryList();
-    const changeListener = jest.fn();
-
-    mediaQueryList.addEventListener('change', changeListener, { once: true });
-    mediaQueryList.removeEventListener('change', changeListener);
-    mediaQueryList.addEventListener('change', changeListener);
-
-    setMatches(true);
-    setMatches(false);
-    setMatches(true);
-
-    expect(changeListener).toHaveBeenCalledTimes(3);
-  });
-
-  it('should keep a re-added listener alive after its previous abort signal fires', () => {
-    const { mediaQueryList, setMatches } = setupMediaQueryList();
-    const abortController = new AbortController();
-    const changeListener = jest.fn();
-
-    mediaQueryList.addEventListener('change', changeListener, {
-      signal: abortController.signal,
-    });
-    mediaQueryList.removeEventListener('change', changeListener);
-    mediaQueryList.addEventListener('change', changeListener);
-    abortController.abort();
-
-    setMatches(true);
-
-    expect(changeListener).toHaveBeenCalledTimes(1);
-  });
-
-  it('should keep notifying a capture listener after a non-capture removal', () => {
-    const { mediaQueryList, setMatches } = setupMediaQueryList();
-    const changeListener = jest.fn();
-
-    mediaQueryList.addEventListener('change', changeListener, true);
-    mediaQueryList.removeEventListener('change', changeListener);
-
-    setMatches(true);
-    setMatches(false);
-
-    expect(changeListener).toHaveBeenCalledTimes(2);
-  });
-
-  it('should keep the environment subscription when a removal does not match the registration', () => {
-    const { mediaQueryList, setMatches, unsubscribe } = setupMediaQueryList();
-    const changeListener = jest.fn();
-
-    mediaQueryList.addEventListener('change', changeListener);
-    mediaQueryList.removeEventListener('change', changeListener, true);
-
-    setMatches(true);
-
-    expect(changeListener).toHaveBeenCalledTimes(1);
-    expect(unsubscribe).not.toHaveBeenCalled();
+    expect(invocationOrder).toEqual(['first', 'reassigned', 'last']);
   });
 
   it('should invoke a function that is both the onchange handler and a listener twice', () => {
@@ -321,56 +232,56 @@ describe('createWorkerMediaQueryList listener registry', () => {
     expect(mediaQueryList.onchange).toBe(changeListener);
   });
 
-  it('should keep the onchange position when the handler is reassigned', () => {
-    const { mediaQueryList, setMatches } = setupMediaQueryList();
-    const invocationOrder: string[] = [];
+  it('should invoke a once listener a single time and release the subscription', () => {
+    const { mediaQueryList, setMatches, unsubscribe } = setupMediaQueryList();
+    const changeListener = jest.fn();
 
-    mediaQueryList.addEventListener('change', () =>
-      invocationOrder.push('first'),
-    );
-    mediaQueryList.onchange = () => invocationOrder.push('initial');
-    mediaQueryList.addEventListener('change', () =>
-      invocationOrder.push('last'),
-    );
-    mediaQueryList.onchange = () => invocationOrder.push('reassigned');
+    mediaQueryList.addEventListener('change', changeListener, { once: true });
 
     setMatches(true);
+    setMatches(false);
 
-    expect(invocationOrder).toEqual(['first', 'reassigned', 'last']);
+    expect(changeListener).toHaveBeenCalledTimes(1);
+    expect(unsubscribe).toHaveBeenCalledTimes(1);
   });
 
-  it('should store a non-callable onchange handler without invoking it', () => {
+  it('should invoke a listener registered plainly and with once exactly once per change', () => {
     const { mediaQueryList, setMatches } = setupMediaQueryList();
-    const handler = { handleEvent: jest.fn() };
+    const changeListener = jest.fn();
 
-    mediaQueryList.onchange = handler as unknown as Parameters<
-      typeof mediaQueryList.addListener
-    >[0];
+    mediaQueryList.addEventListener('change', changeListener);
+    mediaQueryList.addEventListener('change', changeListener, { once: true });
 
     setMatches(true);
-
-    expect(mediaQueryList.onchange).toBe(handler);
-    expect(handler.handleEvent).not.toHaveBeenCalled();
-  });
-
-  it('should not invoke a listener added during dispatch until the next change', () => {
-    const { mediaQueryList, setMatches } = setupMediaQueryList();
-    const lateListener = jest.fn();
-
-    mediaQueryList.addEventListener('change', () => {
-      mediaQueryList.addEventListener('change', lateListener);
-    });
-
-    setMatches(true);
-    expect(lateListener).not.toHaveBeenCalled();
+    expect(changeListener).toHaveBeenCalledTimes(1);
 
     setMatches(false);
-    expect(lateListener).toHaveBeenCalledTimes(1);
+    expect(changeListener).toHaveBeenCalledTimes(2);
+  });
+
+  it('should keep a re-added listener alive after its once registration was removed', () => {
+    const { mediaQueryList, setMatches } = setupMediaQueryList();
+    const changeListener = jest.fn();
+
+    mediaQueryList.addEventListener('change', changeListener, { once: true });
+    mediaQueryList.removeEventListener('change', changeListener);
+    mediaQueryList.addEventListener('change', changeListener);
+
+    setMatches(true);
+    setMatches(false);
+    setMatches(true);
+
+    expect(changeListener).toHaveBeenCalledTimes(3);
   });
 
   it('should keep firing a once listener that re-registers itself', () => {
     const { mediaQueryList, setMatches } = setupMediaQueryList();
+    const MAXIMUM_INVOCATIONS = 10;
     const changeListener = jest.fn(() => {
+      if (changeListener.mock.calls.length >= MAXIMUM_INVOCATIONS) {
+        return;
+      }
+
       mediaQueryList.addEventListener('change', changeListener, { once: true });
     });
 
@@ -381,6 +292,22 @@ describe('createWorkerMediaQueryList listener registry', () => {
     setMatches(true);
 
     expect(changeListener).toHaveBeenCalledTimes(3);
+  });
+
+  it('should detach a listener when its abort signal fires', () => {
+    const { mediaQueryList, setMatches, unsubscribe } = setupMediaQueryList();
+    const abortController = new AbortController();
+    const changeListener = jest.fn();
+
+    mediaQueryList.addEventListener('change', changeListener, {
+      signal: abortController.signal,
+    });
+
+    abortController.abort();
+    setMatches(true);
+
+    expect(changeListener).not.toHaveBeenCalled();
+    expect(unsubscribe).toHaveBeenCalledTimes(1);
   });
 
   it('should ignore a listener whose signal is already aborted', () => {
@@ -401,6 +328,23 @@ describe('createWorkerMediaQueryList listener registry', () => {
     expect(liveListener).toHaveBeenCalledTimes(1);
   });
 
+  it('should keep a re-added listener alive after its previous abort signal fires', () => {
+    const { mediaQueryList, setMatches } = setupMediaQueryList();
+    const abortController = new AbortController();
+    const changeListener = jest.fn();
+
+    mediaQueryList.addEventListener('change', changeListener, {
+      signal: abortController.signal,
+    });
+    mediaQueryList.removeEventListener('change', changeListener);
+    mediaQueryList.addEventListener('change', changeListener);
+    abortController.abort();
+
+    setMatches(true);
+
+    expect(changeListener).toHaveBeenCalledTimes(1);
+  });
+
   it('should accept null listener options', () => {
     const { mediaQueryList, setMatches } = setupMediaQueryList();
     const changeListener = jest.fn();
@@ -418,18 +362,85 @@ describe('createWorkerMediaQueryList listener registry', () => {
     expect(changeListener).toHaveBeenCalledTimes(1);
   });
 
-  it('should remove a once listener that stops immediate propagation', () => {
-    const { mediaQueryList, setMatches, unsubscribe } = setupMediaQueryList();
-    const changeListener = jest.fn((event: Event) => {
-      event.stopImmediatePropagation();
-    });
+  it('should notify listeners passed as an object with handleEvent', () => {
+    const { mediaQueryList, setMatches } = setupMediaQueryList();
+    const handleEvent = jest.fn();
 
-    mediaQueryList.addEventListener('change', changeListener, { once: true });
+    mediaQueryList.addEventListener('change', { handleEvent });
 
     setMatches(true);
-    setMatches(false);
 
-    expect(changeListener).toHaveBeenCalledTimes(1);
+    expect(handleEvent).toHaveBeenCalledTimes(1);
+  });
+
+  it('should report a throwing listener and keep notifying the remaining ones', () => {
+    const { mediaQueryList, setMatches, reportListenerError } =
+      setupMediaQueryList();
+    const listenerFailure = new Error('listener failure');
+    const throwingListener = jest.fn(() => {
+      throw listenerFailure;
+    });
+    const secondListener = jest.fn();
+
+    mediaQueryList.addEventListener('change', throwingListener);
+    mediaQueryList.addEventListener('change', secondListener);
+
+    expect(() => setMatches(true)).not.toThrow();
+    expect(reportListenerError).toHaveBeenCalledWith(listenerFailure);
+    expect(secondListener).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not invoke a listener removed by an earlier listener during dispatch', () => {
+    const { mediaQueryList, setMatches } = setupMediaQueryList();
+
+    const secondListener = jest.fn();
+    const firstListener = jest.fn(() => {
+      mediaQueryList.removeEventListener('change', secondListener);
+    });
+
+    mediaQueryList.addEventListener('change', firstListener);
+    mediaQueryList.addEventListener('change', secondListener);
+
+    setMatches(true);
+
+    expect(firstListener).toHaveBeenCalledTimes(1);
+    expect(secondListener).not.toHaveBeenCalled();
+  });
+
+  it('should not invoke a listener added during dispatch until the next change', () => {
+    const { mediaQueryList, setMatches } = setupMediaQueryList();
+    const lateListener = jest.fn();
+
+    mediaQueryList.addEventListener('change', () => {
+      mediaQueryList.addEventListener('change', lateListener);
+    });
+
+    setMatches(true);
+    expect(lateListener).not.toHaveBeenCalled();
+
+    setMatches(false);
+    expect(lateListener).toHaveBeenCalledTimes(1);
+  });
+
+  it('should stop at a listener that stops immediate propagation and still remove it when once', () => {
+    const { mediaQueryList, setMatches, unsubscribe } = setupMediaQueryList();
+    const stoppingListener = jest.fn((event: Event) => {
+      event.stopImmediatePropagation();
+    });
+    const laterListener = jest.fn();
+
+    mediaQueryList.addEventListener('change', stoppingListener, { once: true });
+    mediaQueryList.addEventListener('change', laterListener);
+
+    setMatches(true);
+    expect(stoppingListener).toHaveBeenCalledTimes(1);
+    expect(laterListener).not.toHaveBeenCalled();
+
+    setMatches(false);
+    expect(stoppingListener).toHaveBeenCalledTimes(1);
+    expect(laterListener).toHaveBeenCalledTimes(1);
+
+    mediaQueryList.removeEventListener('change', laterListener);
     expect(unsubscribe).toHaveBeenCalledTimes(1);
   });
 });

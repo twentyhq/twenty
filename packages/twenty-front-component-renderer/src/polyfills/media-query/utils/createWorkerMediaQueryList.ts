@@ -1,81 +1,68 @@
-import { isFunction, isObject } from '@sniptt/guards';
+import { isFunction } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type MediaQueryEnvironment } from '@/polyfills/media-query/types/MediaQueryEnvironment';
-import { type MediaQueryEnvironmentListener } from '@/polyfills/media-query/types/MediaQueryEnvironmentListener';
 import { type WorkerMediaQueryList } from '@/polyfills/media-query/types/WorkerMediaQueryList';
+import { type WorkerMediaQueryListEvent } from '@/polyfills/media-query/types/WorkerMediaQueryListEvent';
 import { type WorkerMediaQueryListener } from '@/polyfills/media-query/types/WorkerMediaQueryListener';
 import { createWorkerMediaQueryListEvent } from '@/polyfills/media-query/utils/createWorkerMediaQueryListEvent';
 import { resolveAddEventListenerOptions } from '@/polyfills/utils/resolveAddEventListenerOptions';
-import { resolveEventListenerCapture } from '@/polyfills/utils/resolveEventListenerCapture';
 
 const CHANGE_EVENT_TYPE = 'change';
 
 type CreateWorkerMediaQueryListInput = {
   media: string;
-  readEnvironment: () => MediaQueryEnvironment;
-  evaluateMatches: (environment: MediaQueryEnvironment) => boolean;
-  subscribeToEnvironmentUpdates: (
-    listener: MediaQueryEnvironmentListener,
-  ) => () => void;
+  evaluateMatches: () => boolean;
+  subscribeToEnvironmentUpdates: (listener: () => void) => () => void;
+  reportListenerError: (error: unknown) => void;
 };
 
 type ChangeListenerRegistration = {
-  nativeListener: EventListenerOrEventListenerObject;
-  cleanUp: () => void;
-};
-
-type PendingChangeListenerRegistration = {
   listener: EventListenerOrEventListenerObject;
-  options?: AddEventListenerOptions | boolean | null;
+  once: boolean;
+  removeAbortListener: (() => void) | null;
 };
 
 class WorkerMediaQueryListImplementation extends EventTarget {
   readonly media: string;
 
-  #readEnvironment: () => MediaQueryEnvironment;
-  #evaluateMatches: (environment: MediaQueryEnvironment) => boolean;
-  #subscribeToEnvironmentUpdates: (
-    listener: MediaQueryEnvironmentListener,
-  ) => () => void;
+  #evaluateMatches: () => boolean;
+  #subscribeToEnvironmentUpdates: (listener: () => void) => () => void;
+  #reportListenerError: (error: unknown) => void;
 
-  #changeListenerRegistrations = new Map<
-    EventListenerOrEventListenerObject,
-    Map<boolean, ChangeListenerRegistration>
-  >();
-  #pendingChangeListenerRegistrations: PendingChangeListenerRegistration[] = [];
-  #changeEventDispatchDepth = 0;
-  #onchangeHandler: WorkerMediaQueryListener | EventListenerObject | null =
-    null;
+  #changeListenerRegistrations: ChangeListenerRegistration[] = [];
+  #onchangeHandler: WorkerMediaQueryListener | null = null;
   #onchangeInvoker: EventListener | null = null;
   #lastNotifiedMatches: boolean | null = null;
   #unsubscribeFromEnvironmentUpdates: (() => void) | null = null;
 
   constructor({
     media,
-    readEnvironment,
     evaluateMatches,
     subscribeToEnvironmentUpdates,
+    reportListenerError,
   }: CreateWorkerMediaQueryListInput) {
     super();
 
     this.media = media;
-    this.#readEnvironment = readEnvironment;
     this.#evaluateMatches = evaluateMatches;
     this.#subscribeToEnvironmentUpdates = subscribeToEnvironmentUpdates;
+    this.#reportListenerError = reportListenerError;
+
+    super.addEventListener(CHANGE_EVENT_TYPE, (event) => {
+      this.#invokeChangeListeners(event);
+    });
   }
 
   get matches(): boolean {
-    return this.#evaluateMatches(this.#readEnvironment());
+    return this.#evaluateMatches();
   }
 
   get onchange(): WorkerMediaQueryListener | null {
-    return this.#onchangeHandler as WorkerMediaQueryListener | null;
+    return this.#onchangeHandler;
   }
 
   set onchange(handler: WorkerMediaQueryListener | null) {
-    this.#onchangeHandler =
-      isFunction(handler) || isObject(handler) ? handler : null;
+    this.#onchangeHandler = isFunction(handler) ? handler : null;
 
     if (isDefined(this.#onchangeHandler)) {
       this.#ensureOnchangeInvoker();
@@ -95,12 +82,34 @@ class WorkerMediaQueryListImplementation extends EventTarget {
       return;
     }
 
-    if (this.#changeEventDispatchDepth > 0) {
-      this.#pendingChangeListenerRegistrations.push({ listener, options });
+    const { once, signal } = resolveAddEventListenerOptions(options);
+
+    if (
+      signal?.aborted === true ||
+      isDefined(this.#findChangeListenerRegistration(listener))
+    ) {
       return;
     }
 
-    this.#registerChangeListener(listener, options);
+    const registration: ChangeListenerRegistration = {
+      listener,
+      once: once === true,
+      removeAbortListener: null,
+    };
+
+    if (isDefined(signal)) {
+      const handleAbort = () => {
+        this.#removeChangeListenerRegistration(registration);
+      };
+
+      signal.addEventListener('abort', handleAbort, { once: true });
+      registration.removeAbortListener = () => {
+        signal.removeEventListener('abort', handleAbort);
+      };
+    }
+
+    this.#changeListenerRegistrations.push(registration);
+    this.#ensureEnvironmentSubscription();
   }
 
   override removeEventListener(
@@ -113,41 +122,10 @@ class WorkerMediaQueryListImplementation extends EventTarget {
       return;
     }
 
-    const capture = resolveEventListenerCapture(options);
+    const registration = this.#findChangeListenerRegistration(listener);
 
-    this.#pendingChangeListenerRegistrations =
-      this.#pendingChangeListenerRegistrations.filter(
-        (pendingRegistration) =>
-          pendingRegistration.listener !== listener ||
-          resolveEventListenerCapture(pendingRegistration.options) !== capture,
-      );
-
-    const hasRegistration =
-      this.#changeListenerRegistrations.get(listener)?.has(capture) === true;
-
-    if (!hasRegistration) {
-      super.removeEventListener(type, listener, options ?? undefined);
-      return;
-    }
-
-    this.#removeChangeListenerRegistration(listener, capture);
-  }
-
-  override dispatchEvent(event: Event): boolean {
-    if (event.type !== CHANGE_EVENT_TYPE) {
-      return super.dispatchEvent(event);
-    }
-
-    this.#changeEventDispatchDepth += 1;
-
-    try {
-      return super.dispatchEvent(event);
-    } finally {
-      this.#changeEventDispatchDepth -= 1;
-
-      if (this.#changeEventDispatchDepth === 0) {
-        this.#flushPendingChangeListenerRegistrations();
-      }
+    if (isDefined(registration)) {
+      this.#removeChangeListenerRegistration(registration);
     }
   }
 
@@ -159,116 +137,60 @@ class WorkerMediaQueryListImplementation extends EventTarget {
     this.removeEventListener(CHANGE_EVENT_TYPE, listener as EventListener);
   }
 
-  #registerChangeListener(
+  #findChangeListenerRegistration(
     listener: EventListenerOrEventListenerObject,
-    options?: AddEventListenerOptions | boolean | null,
-  ): void {
-    const { capture, once, signal } = resolveAddEventListenerOptions(options);
-    const isCapture = capture === true;
-
-    if (signal?.aborted === true) {
-      return;
-    }
-
-    if (
-      this.#changeListenerRegistrations.get(listener)?.has(isCapture) === true
-    ) {
-      return;
-    }
-
-    const removeRegistration = () => {
-      this.#removeChangeListenerRegistration(listener, isCapture);
-    };
-
-    const nativeListener: EventListenerOrEventListenerObject =
-      once === true
-        ? (event: Event) => {
-            removeRegistration();
-
-            if (isFunction(listener)) {
-              listener.call(this, event);
-              return;
-            }
-
-            listener.handleEvent(event);
-          }
-        : listener;
-
-    super.addEventListener(CHANGE_EVENT_TYPE, nativeListener, {
-      capture: isCapture,
-    });
-
-    const cleanUpFunctions: (() => void)[] = [];
-
-    if (isDefined(signal)) {
-      signal.addEventListener('abort', removeRegistration, { once: true });
-      cleanUpFunctions.push(() => {
-        signal.removeEventListener('abort', removeRegistration);
-      });
-    }
-
-    const registrationsByCapture =
-      this.#changeListenerRegistrations.get(listener) ??
-      new Map<boolean, ChangeListenerRegistration>();
-
-    registrationsByCapture.set(isCapture, {
-      nativeListener,
-      cleanUp: () => {
-        for (const cleanUpFunction of cleanUpFunctions) {
-          cleanUpFunction();
-        }
-      },
-    });
-    this.#changeListenerRegistrations.set(listener, registrationsByCapture);
-    this.#ensureEnvironmentSubscription();
+  ): ChangeListenerRegistration | undefined {
+    return this.#changeListenerRegistrations.find(
+      (registration) => registration.listener === listener,
+    );
   }
 
   #removeChangeListenerRegistration(
-    listener: EventListenerOrEventListenerObject,
-    capture: boolean,
+    registration: ChangeListenerRegistration,
   ): void {
-    const registration = this.#changeListenerRegistrations
-      .get(listener)
-      ?.get(capture);
+    const registrationIndex =
+      this.#changeListenerRegistrations.indexOf(registration);
 
-    if (!isDefined(registration)) {
+    if (registrationIndex === -1) {
       return;
     }
 
-    super.removeEventListener(CHANGE_EVENT_TYPE, registration.nativeListener, {
-      capture,
-    });
-    this.#untrackChangeListener(listener, capture);
-  }
-
-  #untrackChangeListener(
-    listener: EventListenerOrEventListenerObject,
-    capture: boolean,
-  ): void {
-    const registrationsByCapture =
-      this.#changeListenerRegistrations.get(listener);
-    const registration = registrationsByCapture?.get(capture);
-
-    if (!isDefined(registrationsByCapture) || !isDefined(registration)) {
-      return;
-    }
-
-    registrationsByCapture.delete(capture);
-
-    if (registrationsByCapture.size === 0) {
-      this.#changeListenerRegistrations.delete(listener);
-    }
-
-    registration.cleanUp();
+    this.#changeListenerRegistrations.splice(registrationIndex, 1);
+    registration.removeAbortListener?.();
     this.#releaseEnvironmentSubscriptionIfUnused();
   }
 
-  #flushPendingChangeListenerRegistrations(): void {
-    const pendingRegistrations = this.#pendingChangeListenerRegistrations;
-    this.#pendingChangeListenerRegistrations = [];
+  #invokeChangeListeners(event: Event): void {
+    for (const registration of [...this.#changeListenerRegistrations]) {
+      if (!this.#changeListenerRegistrations.includes(registration)) {
+        continue;
+      }
 
-    for (const { listener, options } of pendingRegistrations) {
-      this.#registerChangeListener(listener, options);
+      if (registration.once) {
+        this.#removeChangeListenerRegistration(registration);
+      }
+
+      this.#invokeChangeListener(registration.listener, event);
+
+      if (event.cancelBubble) {
+        return;
+      }
+    }
+  }
+
+  #invokeChangeListener(
+    listener: EventListenerOrEventListenerObject,
+    event: Event,
+  ): void {
+    try {
+      if (isFunction(listener)) {
+        listener.call(this, event);
+        return;
+      }
+
+      listener.handleEvent(event);
+    } catch (error) {
+      this.#reportListenerError(error);
     }
   }
 
@@ -278,11 +200,7 @@ class WorkerMediaQueryListImplementation extends EventTarget {
     }
 
     const onchangeInvoker: EventListener = (event) => {
-      const handler = this.#onchangeHandler;
-
-      if (isFunction(handler)) {
-        handler.call(this, event as Parameters<WorkerMediaQueryListener>[0]);
-      }
+      this.#onchangeHandler?.call(this, event as WorkerMediaQueryListEvent);
     };
 
     this.#onchangeInvoker = onchangeInvoker;
@@ -305,17 +223,16 @@ class WorkerMediaQueryListImplementation extends EventTarget {
 
     this.#lastNotifiedMatches = this.matches;
     this.#unsubscribeFromEnvironmentUpdates =
-      this.#subscribeToEnvironmentUpdates((environment) => {
-        this.#handleEnvironmentUpdate(environment);
+      this.#subscribeToEnvironmentUpdates(() => {
+        this.#handleEnvironmentUpdate();
       });
   }
 
   #releaseEnvironmentSubscriptionIfUnused(): void {
-    if (this.#changeListenerRegistrations.size > 0) {
-      return;
-    }
-
-    if (!isDefined(this.#unsubscribeFromEnvironmentUpdates)) {
+    if (
+      this.#changeListenerRegistrations.length > 0 ||
+      !isDefined(this.#unsubscribeFromEnvironmentUpdates)
+    ) {
       return;
     }
 
@@ -323,8 +240,8 @@ class WorkerMediaQueryListImplementation extends EventTarget {
     this.#unsubscribeFromEnvironmentUpdates = null;
   }
 
-  #handleEnvironmentUpdate(environment: MediaQueryEnvironment): void {
-    const nextMatches = this.#evaluateMatches(environment);
+  #handleEnvironmentUpdate(): void {
+    const nextMatches = this.#evaluateMatches();
 
     if (nextMatches === this.#lastNotifiedMatches) {
       return;
