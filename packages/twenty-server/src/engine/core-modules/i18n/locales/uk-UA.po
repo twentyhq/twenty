@@ -10578,6 +10578,7 @@ msgid "This campaign no longer exists."
 msgstr "Ця кампанія більше не існує."
 
 #. js-lingui-id: 5MvgEo
+#: src/modules/emailing/utils/compile-campaign-batch-template.util.ts
 #: src/modules/emailing/utils/compile-campaign-email-content.util.ts
 msgid "This campaign's email content is invalid."
 msgstr "Вміст електронного листа цієї кампанії є недійсним."

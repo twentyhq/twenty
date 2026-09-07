@@ -10578,6 +10578,7 @@ msgid "This campaign no longer exists."
 msgstr "Αυτή η καμπάνια δεν υπάρχει πλέον."
 
 #. js-lingui-id: 5MvgEo
+#: src/modules/emailing/utils/compile-campaign-batch-template.util.ts
 #: src/modules/emailing/utils/compile-campaign-email-content.util.ts
 msgid "This campaign's email content is invalid."
 msgstr "Το περιεχόμενο του email αυτής της καμπάνιας δεν είναι έγκυρο."
