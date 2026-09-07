@@ -9,6 +9,8 @@ import { MemoryRouter } from 'react-router-dom';
 import { AiChatPageHeader } from '@/ai/components/AiChatPageHeader';
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import {
@@ -114,11 +116,34 @@ describe('AiChatPageHeader', () => {
     ).toBeNull();
   });
 
-  it('keeps New chat hidden when typing has saved a draft without messages', () => {
-    setThreads([{ ...THREAD, lastMessageAt: null, conversationSize: 0 }]);
+  it.each([0, 100])(
+    'keeps New chat hidden without messages regardless of token usage (%s)',
+    (conversationSize) => {
+      setThreads([{ ...THREAD, lastMessageAt: null, conversationSize }]);
+      render(<AiChatPageHeader isOnboarding={false} />, { wrapper: Wrapper });
+
+      expect(screen.queryByRole('button', { name: /^New chat/ })).toBeNull();
+    },
+  );
+
+  it('shows New chat as soon as messages load without a last-message timestamp', () => {
+    setThreads([{ ...THREAD, lastMessageAt: null }]);
+    jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD.id);
     render(<AiChatPageHeader isOnboarding={false} />, { wrapper: Wrapper });
 
     expect(screen.queryByRole('button', { name: /^New chat/ })).toBeNull();
+
+    act(() => {
+      jotaiStore.set(
+        agentChatMessagesComponentFamilyState.atomFamily({
+          instanceId: 'ai-chat-header-test',
+          familyKey: { threadId: THREAD.id },
+        }),
+        [{ id: 'message-1', role: 'user', parts: [] }],
+      );
+    });
+
+    expect(screen.getByRole('button', { name: /^New chat/ })).toBeVisible();
   });
 
   it('keeps onboarding single-threaded', () => {

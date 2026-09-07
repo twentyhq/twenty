@@ -56,9 +56,7 @@ export const AiChatPageThreadHeader = ({
     agentChatHasMessageComponentSelector,
   );
   const hasConversation =
-    agentChatHasMessage ||
-    isDefined(thread.lastMessageAt) ||
-    thread.conversationSize > 0;
+    agentChatHasMessage || isDefined(thread.lastMessageAt);
 
   return (
     <>
