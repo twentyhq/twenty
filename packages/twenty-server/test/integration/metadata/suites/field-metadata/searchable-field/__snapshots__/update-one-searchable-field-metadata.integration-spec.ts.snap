@@ -1,0 +1,112 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Field metadata isSearchable toggling should reject an explicit isSearchable null on the label identifier 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_MUTATION_NOT_ALLOWED",
+              "message": "Label identifier field cannot be removed from search",
+              "userFriendlyMessage": "Label identifier field cannot be removed from search",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "name",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Label identifier field cannot be removed from search",
+  },
+  "message": "Multiple validation errors occurred while updating field",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Field metadata isSearchable toggling should reject removing the label identifier from search 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_MUTATION_NOT_ALLOWED",
+              "message": "Label identifier field cannot be removed from search",
+              "userFriendlyMessage": "Label identifier field cannot be removed from search",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "name",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Label identifier field cannot be removed from search",
+  },
+  "message": "Multiple validation errors occurred while updating field",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Field metadata isSearchable toggling should reject turning on isSearchable for a non-searchable type 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Field type NUMBER is not supported for search",
+              "userFriendlyMessage": "This field type cannot be searched",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "toggledNumberField",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "This field type cannot be searched",
+  },
+  "message": "Multiple validation errors occurred while updating field",
+  "name": "GraphQLError",
+}
+`;
