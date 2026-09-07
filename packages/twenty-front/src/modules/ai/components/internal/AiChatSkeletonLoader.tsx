@@ -1,3 +1,4 @@
+import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
@@ -12,7 +13,7 @@ import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSk
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-const StyledSkeletonContainer = styled.div`
+const StyledSkeletonContainer = styled(StyledAiChatContentContainer)`
   display: flex;
   flex: 1;
   flex-direction: column;

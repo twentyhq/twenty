@@ -1,3 +1,4 @@
+import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { AiChatErrorUnderMessageList } from '@/ai/components/AiChatErrorUnderMessageList';
 import { AiChatLastMessageWithStreamingState } from '@/ai/components/AiChatLastMessageWithStreamingState';
 import { AiChatNonLastMessageIdsList } from '@/ai/components/AiChatNonLastMessageIdsList';
@@ -29,15 +30,16 @@ const StyledScrollWrapperContainer = styled.div`
   width: 100%;
 `;
 
-const StyledPreambleOutsideScrollContainer = styled.div`
+const StyledPreambleOutsideScrollContainer = styled(
+  StyledAiChatContentContainer,
+)`
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   padding: ${themeCssVariables.spacing[4]};
-  width: 100%;
 `;
 
-const StyledMessageListContent = styled.div`
+const StyledMessageListContent = styled(StyledAiChatContentContainer)`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};

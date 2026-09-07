@@ -1,3 +1,4 @@
+import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { useState } from 'react';
 
 import { styled } from '@linaria/react';
@@ -36,7 +37,9 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type SelectOption } from 'twenty-ui/input';
 
-const StyledInputArea = styled.div<{ isMobile: boolean }>`
+const StyledInputArea = styled(StyledAiChatContentContainer)<{
+  isMobile: boolean;
+}>`
   align-items: flex-end;
   background: ${themeCssVariables.background.primary};
   display: flex;
