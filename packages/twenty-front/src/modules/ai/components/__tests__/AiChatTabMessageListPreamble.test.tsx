@@ -39,20 +39,14 @@ jest.mock('@/ai/components/AiChatErrorUnderMessageList', () => ({
 jest.mock('@/ai/components/AiChatScrollToBottomButton', () => ({
   AiChatScrollToBottomButton: () => null,
 }));
-jest.mock(
-  '@/ai/components/AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect',
-  () => ({
-    AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect: () => null,
-  }),
-);
 const mockPinScrollToBottom = jest.fn();
 
 jest.mock(
-  '@/ai/components/AgentChatPinScrollToBottomOnMountLayoutEffect',
+  '@/ai/components/AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect',
   () => {
     const { useLayoutEffect } = jest.requireActual<typeof React>('react');
     return {
-      AgentChatPinScrollToBottomOnMountLayoutEffect: () => {
+      AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect: () => {
         useLayoutEffect(mockPinScrollToBottom, []);
         return null;
       },

@@ -51,6 +51,7 @@ export const useShouldShowAiChatEmptyState = () => {
     (agentChatMessagesLoading && !skipMessagesSkeletonUntilLoaded);
 
   return (
+    isOnNewChatSlot &&
     !isMobile &&
     !hasMessages &&
     !isDefined(agentChatError) &&

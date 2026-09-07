@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
@@ -11,7 +11,7 @@ export const AiChatPageThreadUrlSyncEffect = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const { switchThreadWithDraft } = useSwitchAgentChatThreadWithDraft();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!isDefined(threadId) || !isValidUuid(threadId)) {
       return;
     }
