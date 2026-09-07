@@ -100,6 +100,11 @@ export const ConfirmationModal = ({
     useState<string>('');
   const [isValidValue, setIsValidValue] = useState(!confirmationValue);
 
+  const resetConfirmationState = () => {
+    setInputConfirmationValue('');
+    setIsValidValue(!confirmationValue);
+  };
+
   const handleInputConfimrationValueChange = (value: string) => {
     setInputConfirmationValue(value);
     isValueMatchingInput(confirmationValue, value);
@@ -115,11 +120,13 @@ export const ConfirmationModal = ({
   const { closeModal } = useModal();
 
   const handleConfirmClick = () => {
+    resetConfirmationState();
     closeModal(modalInstanceId);
     onConfirmClick();
   };
 
   const handleCancelClick = () => {
+    resetConfirmationState();
     closeModal(modalInstanceId);
     onClose?.();
   };
@@ -134,6 +141,7 @@ export const ConfirmationModal = ({
     <ModalStatefulWrapper
       modalInstanceId={modalInstanceId}
       onClose={() => {
+        resetConfirmationState();
         onClose?.();
       }}
       onEnter={handleEnter}
