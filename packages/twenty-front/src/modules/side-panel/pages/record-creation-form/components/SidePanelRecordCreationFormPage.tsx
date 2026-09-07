@@ -4,12 +4,13 @@ import { useRecordCreationFormSettle } from '@/object-record/record-form/hooks/u
 import { useRecordFormFieldMetadataItems } from '@/object-record/record-form/hooks/useRecordFormFieldMetadataItems';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
+import { recordCreationFormDraftComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormDraftComponentState';
 import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
 import { type JsonValue } from 'type-fest';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
@@ -65,23 +66,25 @@ const SidePanelRecordCreationForm = ({
   const { settleRecordCreationDraft } = useRecordCreationFormSettle();
   const { goBackFromSidePanel } = useSidePanelHistory();
 
-  const [draftRecord, setDraftRecord] =
-    useState<Partial<ObjectRecord>>(initialDraftRecord);
+  const [recordCreationFormDraft, setRecordCreationFormDraft] =
+    useAtomComponentState(recordCreationFormDraftComponentState);
+
+  const draftRecord = recordCreationFormDraft ?? initialDraftRecord;
 
   const { recordFormFieldMetadataItems } = useRecordFormFieldMetadataItems({
     objectMetadataItem,
   });
 
   const handleFieldValueChange = (gqlFieldName: string, value: JsonValue) => {
-    setDraftRecord((previousDraftRecord) => ({
-      ...previousDraftRecord,
+    setRecordCreationFormDraft((previousDraftRecord) => ({
+      ...(previousDraftRecord ?? initialDraftRecord),
       [gqlFieldName]: value,
     }));
   };
 
   const handleFieldValueClear = (gqlFieldName: string) => {
-    setDraftRecord((previousDraftRecord) => ({
-      ...previousDraftRecord,
+    setRecordCreationFormDraft((previousDraftRecord) => ({
+      ...(previousDraftRecord ?? initialDraftRecord),
       [gqlFieldName]: null,
     }));
   };
