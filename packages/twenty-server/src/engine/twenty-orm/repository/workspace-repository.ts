@@ -1886,11 +1886,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return;
     }
 
+    const accessLevels = resolveRequiredRecordShareAccessLevels('select');
     const condition = buildLinkedRecordGuardCondition({
       tableAlias: alias,
       recordShareTableExpression: this.getRecordShareTableExpression(),
       principalIds,
-      accessLevels: resolveRequiredRecordShareAccessLevels('select'),
+      accessLevels,
       linkedObjects: Object.values(
         this.options.internalContext.flatObjectMetadataMaps
           .byUniversalIdentifier,
@@ -1898,10 +1899,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         .filter(isDefined)
         .map((linkedFlatObjectMetadata) => ({
           objectMetadataId: linkedFlatObjectMetadata.id,
-          readability: linkedFlatObjectMetadata.readability,
-          isOwningApplication: this.isOwningApplicationAuthContext(
-            linkedFlatObjectMetadata,
-          ),
+          gate: this.resolveInheritedReadabilityParentGate({
+            tableAlias: alias,
+            joinColumnName: 'linkedRecordId',
+            parentFlatObjectMetadata: linkedFlatObjectMetadata,
+            principalIds,
+            accessLevels,
+            depth: 0,
+          }),
         })),
     });
 

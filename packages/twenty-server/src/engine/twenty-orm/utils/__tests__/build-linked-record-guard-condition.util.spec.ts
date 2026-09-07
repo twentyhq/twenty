@@ -1,31 +1,19 @@
-import {
-  MetadataReadability,
-  RecordShareAccessLevel,
-} from 'twenty-shared/types';
+import { RecordShareAccessLevel } from 'twenty-shared/types';
 
 import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
 import {
   buildLinkedRecordGuardCondition,
-  type LinkedObjectReadability,
+  type LinkedObjectGate,
 } from 'src/engine/twenty-orm/utils/build-linked-record-guard-condition.util';
 
 const RECORD_SHARE_TABLE_EXPRESSION = '"workspace_abc"."recordShare"';
 const PRINCIPAL_IDS = ['principal-1', 'principal-2'];
 const ACCESS_LEVELS = [RecordShareAccessLevel.READ];
 const NOTE_OBJECT_METADATA_ID = 'note-object-metadata-id';
+const ATTACHMENT_OBJECT_METADATA_ID = 'attachment-object-metadata-id';
 const RECORD_SHARE_OBJECT_METADATA_ID = 'record-share-object-metadata-id';
 
-const linkedObject = (
-  objectMetadataId: string,
-  readability: MetadataReadability,
-  isOwningApplication = false,
-): LinkedObjectReadability => ({
-  objectMetadataId,
-  readability,
-  isOwningApplication,
-});
-
-const build = (linkedObjects: LinkedObjectReadability[]) =>
+const build = (linkedObjects: LinkedObjectGate[]) =>
   buildLinkedRecordGuardCondition({
     tableAlias: 'timelineActivity',
     recordShareTableExpression: RECORD_SHARE_TABLE_EXPRESSION,
@@ -35,21 +23,22 @@ const build = (linkedObjects: LinkedObjectReadability[]) =>
   });
 
 describe('buildLinkedRecordGuardCondition', () => {
-  it('should return nothing when every object is OPEN, INHERITED or owned by the caller', () => {
+  it('should return nothing when every linked object is open', () => {
     expect(
       build([
-        linkedObject('person', MetadataReadability.OPEN),
-        linkedObject('noteTarget', MetadataReadability.INHERITED),
-        linkedObject('callRecording', MetadataReadability.PRIVATE, true),
-        linkedObject('appObject', MetadataReadability.APPLICATION, true),
+        { objectMetadataId: 'person', gate: { kind: 'open' } },
+        { objectMetadataId: 'callRecording', gate: { kind: 'open' } },
       ]),
     ).toBeUndefined();
   });
 
-  it('should let through null and OPEN linked objects and gate a PRIVATE one on a share row keyed on the linked columns', () => {
+  it('should let through null and open linked objects and gate a private one on a share row keyed on the linked columns', () => {
     const condition = build([
-      linkedObject('person', MetadataReadability.OPEN),
-      linkedObject(NOTE_OBJECT_METADATA_ID, MetadataReadability.PRIVATE),
+      { objectMetadataId: 'person', gate: { kind: 'open' } },
+      {
+        objectMetadataId: NOTE_OBJECT_METADATA_ID,
+        gate: { kind: 'private', objectMetadataId: NOTE_OBJECT_METADATA_ID },
+      },
     ]);
 
     expect(condition).toBeDefined();
@@ -68,10 +57,13 @@ describe('buildLinkedRecordGuardCondition', () => {
     });
   });
 
-  it('should deny SYSTEM and foreign APPLICATION linked objects with the NOT IN clause alone', () => {
+  it('should deny denied linked objects with the NOT IN clause alone', () => {
     const condition = build([
-      linkedObject(RECORD_SHARE_OBJECT_METADATA_ID, MetadataReadability.SYSTEM),
-      linkedObject('appObject', MetadataReadability.APPLICATION),
+      {
+        objectMetadataId: RECORD_SHARE_OBJECT_METADATA_ID,
+        gate: { kind: 'denied' },
+      },
+      { objectMetadataId: 'appObject', gate: { kind: 'denied' } },
     ]);
 
     expect(condition).toBeDefined();
@@ -83,10 +75,54 @@ describe('buildLinkedRecordGuardCondition', () => {
     });
   });
 
-  it('should list denied and PRIVATE objects together in the NOT IN clause', () => {
+  it('should gate an inherited linked object on the readability of the linked record itself', () => {
     const condition = build([
-      linkedObject(RECORD_SHARE_OBJECT_METADATA_ID, MetadataReadability.SYSTEM),
-      linkedObject(NOTE_OBJECT_METADATA_ID, MetadataReadability.PRIVATE),
+      {
+        objectMetadataId: ATTACHMENT_OBJECT_METADATA_ID,
+        gate: {
+          kind: 'inherited',
+          parentTableAlias: 'timelineActivity_linkedRecordId',
+          parentTableExpression: '"workspace_abc"."attachment"',
+          parentCondition: {
+            sql: '("timelineActivity_linkedRecordId"."targetNoteId" IS NOT NULL AND :sharedNote)',
+            parameters: { sharedNote: true },
+          },
+        },
+      },
+    ]);
+
+    expect(condition).toBeDefined();
+    expect(
+      compileNamedParameters(condition!.sql, condition!.parameters),
+    ).toEqual({
+      text: '("timelineActivity"."linkedObjectMetadataId" IS NULL OR "timelineActivity"."linkedObjectMetadataId" NOT IN ($1) OR ("timelineActivity"."linkedObjectMetadataId" = $2 AND (("timelineActivity"."linkedRecordId" IS NOT NULL AND EXISTS (SELECT 1 FROM "workspace_abc"."attachment" AS "timelineActivity_linkedRecordId" WHERE "timelineActivity_linkedRecordId"."id" = "timelineActivity"."linkedRecordId" AND ("timelineActivity_linkedRecordId"."targetNoteId" IS NOT NULL AND $3))))))',
+      values: [
+        ATTACHMENT_OBJECT_METADATA_ID,
+        ATTACHMENT_OBJECT_METADATA_ID,
+        true,
+      ],
+    });
+  });
+
+  it('should list denied, private and inherited objects together in the NOT IN clause', () => {
+    const condition = build([
+      {
+        objectMetadataId: RECORD_SHARE_OBJECT_METADATA_ID,
+        gate: { kind: 'denied' },
+      },
+      {
+        objectMetadataId: NOTE_OBJECT_METADATA_ID,
+        gate: { kind: 'private', objectMetadataId: NOTE_OBJECT_METADATA_ID },
+      },
+      {
+        objectMetadataId: ATTACHMENT_OBJECT_METADATA_ID,
+        gate: {
+          kind: 'inherited',
+          parentTableAlias: 'timelineActivity_linkedRecordId',
+          parentTableExpression: '"workspace_abc"."attachment"',
+          parentCondition: { sql: '(1=1)', parameters: {} },
+        },
+      },
     ]);
 
     expect(condition).toBeDefined();
@@ -96,11 +132,10 @@ describe('buildLinkedRecordGuardCondition', () => {
       condition!.parameters,
     );
 
-    expect(values.slice(0, 4)).toEqual([
+    expect(values.slice(0, 3)).toEqual([
       RECORD_SHARE_OBJECT_METADATA_ID,
       NOTE_OBJECT_METADATA_ID,
-      NOTE_OBJECT_METADATA_ID,
-      NOTE_OBJECT_METADATA_ID,
+      ATTACHMENT_OBJECT_METADATA_ID,
     ]);
   });
 });
