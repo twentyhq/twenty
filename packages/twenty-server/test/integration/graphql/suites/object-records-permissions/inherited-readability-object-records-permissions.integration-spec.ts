@@ -244,9 +244,9 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
       );
 
       expect(response.body.errors).toBeUndefined();
-      expect(collectIds(response.body.data.attachments.edges)).toEqual(
-        [PERSON_ATTACHMENT_ID],
-      );
+      expect(collectIds(response.body.data.attachments.edges)).toEqual([
+        PERSON_ATTACHMENT_ID,
+      ]);
     });
 
     it('should hide the note itself and with it its nested children', async () => {
@@ -277,7 +277,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
       });
     });
 
-    it('should show the attachment and the note target hanging off the note', async () => {
+    it('should show the attachment and the note target hanging off the note and keep the orphan hidden', async () => {
       const attachmentsResponse = await makeGraphqlAPIRequestWithMemberRole(
         findAttachmentsOperation,
       );
@@ -292,11 +292,11 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
       expect(attachmentsResponse.body.errors).toBeUndefined();
       expect(
         collectIds(attachmentsResponse.body.data.attachments.edges),
-      ).toEqual([...ATTACHMENT_IDS].sort());
+      ).toEqual([NOTE_ATTACHMENT_ID, PERSON_ATTACHMENT_ID].sort());
       expect(orderedAttachmentsResponse.body.errors).toBeUndefined();
       expect(
         collectIds(orderedAttachmentsResponse.body.data.attachments.edges),
-      ).toEqual([...ATTACHMENT_IDS].sort());
+      ).toEqual([NOTE_ATTACHMENT_ID, PERSON_ATTACHMENT_ID].sort());
       expect(noteTargetsResponse.body.errors).toBeUndefined();
       expect(
         collectIds(noteTargetsResponse.body.data.noteTargets.edges),
