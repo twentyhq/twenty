@@ -160,6 +160,33 @@ describe('AiChatPageHeader', () => {
     expect(screen.getByRole('button', { name: /^New chat/ })).toBeVisible();
   });
 
+  it('checks the header thread for messages while a different conversation is displayed', () => {
+    setThreads([{ ...THREAD, lastMessageAt: null }]);
+    jotaiStore.set(agentChatDisplayedThreadState.atom, 'previous-thread');
+    jotaiStore.set(
+      agentChatMessagesComponentFamilyState.atomFamily({
+        instanceId: 'ai-chat-header-test',
+        familyKey: { threadId: 'previous-thread' },
+      }),
+      [{ id: 'previous-message', role: 'user', parts: [] }],
+    );
+    render(<AiChatPageHeader isOnboarding={false} />, { wrapper: Wrapper });
+
+    expect(screen.queryByRole('button', { name: /^New chat/ })).toBeNull();
+
+    act(() => {
+      jotaiStore.set(
+        agentChatMessagesComponentFamilyState.atomFamily({
+          instanceId: 'ai-chat-header-test',
+          familyKey: { threadId: THREAD.id },
+        }),
+        [{ id: 'current-message', role: 'user', parts: [] }],
+      );
+    });
+
+    expect(screen.getByRole('button', { name: /^New chat/ })).toBeVisible();
+  });
+
   it('keeps onboarding single-threaded', () => {
     render(<AiChatPageHeader isOnboarding />, { wrapper: Wrapper });
 

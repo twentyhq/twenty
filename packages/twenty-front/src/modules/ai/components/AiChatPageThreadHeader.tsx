@@ -12,10 +12,9 @@ import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActio
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
-import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
+import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
 const StyledTitle = styled.div`
@@ -60,11 +59,12 @@ export const AiChatPageThreadHeader = ({
     commitRename,
   } = useAiChatThreadRename({ ...thread, title });
   const displayTitle = title || t`New chat`;
-  const agentChatHasMessage = useAtomComponentSelectorValue(
-    agentChatHasMessageComponentSelector,
+  const agentChatMessages = useAtomComponentFamilyStateValue(
+    agentChatMessagesComponentFamilyState,
+    { threadId: thread.id },
   );
   const hasConversation =
-    agentChatHasMessage || isDefined(thread.lastMessageAt);
+    agentChatMessages.length > 0 || isDefined(thread.lastMessageAt);
 
   return (
     <>

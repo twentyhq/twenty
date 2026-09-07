@@ -71,6 +71,10 @@ const seedChatThreads = async ({
   }
 
   const now = new Date();
+  const title =
+    workspaceId === SEED_APPLE_WORKSPACE_ID
+      ? 'Explore your workspace'
+      : 'Portfolio performance';
 
   await queryRunner.manager
     .createQueryBuilder()
@@ -89,14 +93,22 @@ const seedChatThreads = async ({
         id: threadId,
         workspaceId,
         userWorkspaceId,
-        title:
-          workspaceId === SEED_APPLE_WORKSPACE_ID
-            ? 'Explore your workspace'
-            : 'Portfolio performance',
+        title,
         createdAt: now,
         updatedAt: now,
       },
     ])
+    .execute();
+
+  await queryRunner.manager
+    .createQueryBuilder()
+    .update(`${schemaName}.${agentChatThreadTableName}`)
+    .set({ title })
+    .where('id = :threadId AND "workspaceId" = :workspaceId', {
+      threadId,
+      workspaceId,
+    })
+    .andWhere('title IS NULL')
     .execute();
 
   if (workspaceId === SEED_APPLE_WORKSPACE_ID) {

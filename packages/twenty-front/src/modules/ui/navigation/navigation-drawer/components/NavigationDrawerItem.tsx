@@ -235,7 +235,8 @@ const StyledRightOptionsVisbility = styled.div`
   width: 1px;
 
   &[data-visible='true'],
-  .navigation-drawer-item:hover & {
+  .navigation-drawer-item:hover &,
+  .navigation-drawer-item:focus-within & {
     clip-path: unset;
     display: flex;
     height: unset;

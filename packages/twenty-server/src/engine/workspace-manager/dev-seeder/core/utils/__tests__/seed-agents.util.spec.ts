@@ -26,19 +26,25 @@ describe('seedAgents', () => {
       let tableName: string;
       const queryBuilder = {
         insert: jest.fn().mockReturnThis(),
-        into: jest.fn((name: string) => {
-          tableName = name;
-
-          return queryBuilder;
-        }),
+        update: jest.fn().mockReturnThis(),
+        set: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        into: jest.fn().mockReturnThis(),
         orIgnore: jest.fn().mockReturnThis(),
-        values: jest.fn((rows: SeedRow[]) => {
-          tables.set(tableName, [...(tables.get(tableName) ?? []), ...rows]);
-
-          return queryBuilder;
-        }),
+        values: jest.fn().mockReturnThis(),
         execute: jest.fn().mockResolvedValue({}),
       };
+      queryBuilder.into.mockImplementation((name: string) => {
+        tableName = name;
+
+        return queryBuilder;
+      });
+      queryBuilder.values.mockImplementation((rows: SeedRow[]) => {
+        tables.set(tableName, [...(tables.get(tableName) ?? []), ...rows]);
+
+        return queryBuilder;
+      });
       const queryRunner = {
         manager: { createQueryBuilder: () => queryBuilder },
       } as unknown as QueryRunner;
@@ -63,6 +69,11 @@ describe('seedAgents', () => {
       expect(threads).toHaveLength(threadCount);
       expect(messages).toHaveLength(messageCount);
       expect(parts).toHaveLength(messageCount);
+      expect(queryBuilder.where).toHaveBeenCalledWith(
+        'id = :threadId AND "workspaceId" = :workspaceId',
+        { threadId: threads[0].id, workspaceId },
+      );
+      expect(queryBuilder.andWhere).toHaveBeenCalledWith('title IS NULL');
       expect(new Set(turns.map((turn) => turn.id)).size).toBe(turns.length);
       for (const message of messages) {
         expect(threads).toContainEqual(
