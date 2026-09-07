@@ -1,3 +1,4 @@
+import { createMediaQueryEnvironmentFixture } from '@/testing/createMediaQueryEnvironmentFixture';
 import { createWorkerGeometryStoreStub } from '@/testing/createWorkerGeometryStoreStub';
 import { createViewportGeometrySnapshotFixture } from '@/testing/createViewportGeometrySnapshotFixture';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
@@ -69,12 +70,9 @@ describe('createMediaQueryEnvironmentSource', () => {
   it('should read zeroed defaults before the first viewport snapshot', () => {
     const { environmentSource } = setupEnvironmentSource();
 
-    expect(environmentSource.readEnvironment()).toEqual({
-      componentWidth: 0,
-      componentHeight: 0,
-      devicePixelRatio: 1,
-      colorScheme: 'light',
-    });
+    expect(environmentSource.readEnvironment()).toEqual(
+      createMediaQueryEnvironmentFixture(),
+    );
   });
 
   it('should measure the component box rather than the host browser window', () => {
@@ -88,12 +86,12 @@ describe('createMediaQueryEnvironmentSource', () => {
       rootContainerClientHeight: 600,
     });
 
-    expect(environmentSource.readEnvironment()).toEqual({
-      componentWidth: 350,
-      componentHeight: 600,
-      devicePixelRatio: 1,
-      colorScheme: 'light',
-    });
+    expect(environmentSource.readEnvironment()).toEqual(
+      createMediaQueryEnvironmentFixture({
+        componentWidth: 350,
+        componentHeight: 600,
+      }),
+    );
   });
 
   it('should pass the updated environment to its listeners', () => {
@@ -105,12 +103,9 @@ describe('createMediaQueryEnvironmentSource', () => {
 
     pushViewportSnapshot({ rootContainerClientWidth: 1024 });
 
-    expect(environmentUpdateListener).toHaveBeenCalledWith({
-      componentWidth: 1024,
-      componentHeight: 0,
-      devicePixelRatio: 1,
-      colorScheme: 'light',
-    });
+    expect(environmentUpdateListener).toHaveBeenCalledWith(
+      createMediaQueryEnvironmentFixture({ componentWidth: 1024 }),
+    );
   });
 
   it('should notify on a component size change', () => {

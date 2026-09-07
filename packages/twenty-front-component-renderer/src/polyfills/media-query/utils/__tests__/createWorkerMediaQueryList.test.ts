@@ -1,13 +1,8 @@
-import { type MediaQueryEnvironment } from '@/polyfills/media-query/types/MediaQueryEnvironment';
 import { type MediaQueryEnvironmentListener } from '@/polyfills/media-query/types/MediaQueryEnvironmentListener';
+import { createMediaQueryEnvironmentFixture } from '@/testing/createMediaQueryEnvironmentFixture';
 import { createWorkerMediaQueryList } from '../createWorkerMediaQueryList';
 
-const ENVIRONMENT: MediaQueryEnvironment = {
-  componentWidth: 0,
-  componentHeight: 0,
-  devicePixelRatio: 1,
-  colorScheme: 'light',
-};
+const ENVIRONMENT = createMediaQueryEnvironmentFixture();
 
 const setupMediaQueryList = (initialMatches = false) => {
   let matches = initialMatches;

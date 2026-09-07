@@ -1,17 +1,13 @@
 import { type MediaQueryEnvironment } from '@/polyfills/media-query/types/MediaQueryEnvironment';
 import { type MediaQueryEnvironmentListener } from '@/polyfills/media-query/types/MediaQueryEnvironmentListener';
 import { type WorkerMediaQueryList } from '@/polyfills/media-query/types/WorkerMediaQueryList';
+import { createMediaQueryEnvironmentFixture } from '@/testing/createMediaQueryEnvironmentFixture';
 import { installMatchMediaPolyfill } from '../installMatchMediaPolyfill';
 
 type MatchMediaFunction = (query: unknown) => WorkerMediaQueryList;
 
 const setupMatchMedia = () => {
-  let environment: MediaQueryEnvironment = {
-    componentWidth: 0,
-    componentHeight: 0,
-    devicePixelRatio: 1,
-    colorScheme: 'light',
-  };
+  let environment = createMediaQueryEnvironmentFixture();
 
   const environmentUpdateListeners = new Set<MediaQueryEnvironmentListener>();
 
@@ -210,12 +206,7 @@ describe('installMatchMediaPolyfill', () => {
     installMatchMediaPolyfill({
       globalScope,
       environmentSource: {
-        readEnvironment: () => ({
-          componentWidth: 0,
-          componentHeight: 0,
-          devicePixelRatio: 1,
-          colorScheme: 'light',
-        }),
+        readEnvironment: () => createMediaQueryEnvironmentFixture(),
         subscribeToEnvironmentUpdates: () => () => {},
       },
     });

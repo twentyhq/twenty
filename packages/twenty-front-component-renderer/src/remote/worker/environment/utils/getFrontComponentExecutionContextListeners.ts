@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { FRONT_COMPONENT_LISTENERS_KEY } from 'twenty-sdk/front-component-renderer';
 
 export const getFrontComponentExecutionContextListeners = (): Set<
@@ -5,7 +7,7 @@ export const getFrontComponentExecutionContextListeners = (): Set<
 > => {
   const globalScope = globalThis as Record<string, unknown>;
 
-  if (!globalScope[FRONT_COMPONENT_LISTENERS_KEY]) {
+  if (!isDefined(globalScope[FRONT_COMPONENT_LISTENERS_KEY])) {
     globalScope[FRONT_COMPONENT_LISTENERS_KEY] = new Set<() => void>();
   }
 

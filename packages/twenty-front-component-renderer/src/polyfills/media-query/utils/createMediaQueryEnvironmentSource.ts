@@ -2,7 +2,7 @@ import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeome
 import { type MediaQueryEnvironment } from '@/polyfills/media-query/types/MediaQueryEnvironment';
 import { type MediaQueryEnvironmentListener } from '@/polyfills/media-query/types/MediaQueryEnvironmentListener';
 import { type MediaQueryEnvironmentSource } from '@/polyfills/media-query/types/MediaQueryEnvironmentSource';
-import { areMediaQueryEnvironmentsEqual } from '@/polyfills/media-query/utils/areMediaQueryEnvironmentsEqual';
+import { arePrimitiveRecordsEqual } from '@/utils/arePrimitiveRecordsEqual';
 
 type CreateMediaQueryEnvironmentSourceInput = {
   geometryStore: WorkerGeometryStore;
@@ -28,22 +28,16 @@ export const createMediaQueryEnvironmentSource = ({
     };
   };
 
-  let lastNotifiedEnvironment = readEnvironment();
+  let lastEnvironment = readEnvironment();
 
   const handleUpstreamUpdate = () => {
-    if (environmentUpdateListeners.size === 0) {
-      return;
-    }
-
     const nextEnvironment = readEnvironment();
 
-    if (
-      areMediaQueryEnvironmentsEqual(nextEnvironment, lastNotifiedEnvironment)
-    ) {
+    if (arePrimitiveRecordsEqual(nextEnvironment, lastEnvironment)) {
       return;
     }
 
-    lastNotifiedEnvironment = nextEnvironment;
+    lastEnvironment = nextEnvironment;
 
     for (const environmentUpdateListener of [...environmentUpdateListeners]) {
       environmentUpdateListener(nextEnvironment);
@@ -58,10 +52,6 @@ export const createMediaQueryEnvironmentSource = ({
     subscribeToEnvironmentUpdates: (
       listener: MediaQueryEnvironmentListener,
     ) => {
-      if (environmentUpdateListeners.size === 0) {
-        lastNotifiedEnvironment = readEnvironment();
-      }
-
       environmentUpdateListeners.add(listener);
 
       return () => {
