@@ -13,7 +13,8 @@ import { MarketplaceModule } from 'src/engine/core-modules/application/applicati
 import { ApplicationInstallResolver } from 'src/engine/core-modules/application/application-install/application-install.resolver';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { InstallApplicationCommand } from 'src/engine/core-modules/application/application-install/commands/install-application.command';
-import { ApplicationInstallJobService } from 'src/engine/core-modules/application/application-install/services/application-install-job.service';
+import { ApplicationLifecycleJobService } from 'src/engine/core-modules/application/application-install/services/application-lifecycle-job.service';
+import { ApplicationUninstallRunnerService } from 'src/engine/core-modules/application/application-install/services/application-uninstall-runner.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { LogicFunctionModule } from 'src/engine/core-modules/logic-function/logic-function.module';
@@ -46,9 +47,10 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   providers: [
     ApplicationInstallResolver,
     ApplicationInstallService,
-    ApplicationInstallJobService,
+    ApplicationLifecycleJobService,
+    ApplicationUninstallRunnerService,
     InstallApplicationCommand,
   ],
-  exports: [ApplicationInstallService],
+  exports: [ApplicationInstallService, ApplicationUninstallRunnerService],
 })
 export class ApplicationInstallModule {}

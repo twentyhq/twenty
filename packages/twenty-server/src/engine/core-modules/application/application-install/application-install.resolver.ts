@@ -15,18 +15,17 @@ import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { TriggerInstallApplicationJobInput } from 'src/engine/core-modules/application/application-install/dtos/trigger-install-application-job.input';
 import { TriggerInstallApplicationJobResultDTO } from 'src/engine/core-modules/application/application-install/dtos/trigger-install-application-job-result.dto';
-import { ApplicationInstallJobService } from 'src/engine/core-modules/application/application-install/services/application-install-job.service';
-import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
+import { TriggerUninstallApplicationJobInput } from 'src/engine/core-modules/application/application-install/dtos/trigger-uninstall-application-job.input';
+import { TriggerUninstallApplicationJobResultDTO } from 'src/engine/core-modules/application/application-install/dtos/trigger-uninstall-application-job-result.dto';
+import { ApplicationLifecycleJobService } from 'src/engine/core-modules/application/application-install/services/application-lifecycle-job.service';
+import { ApplicationUninstallRunnerService } from 'src/engine/core-modules/application/application-install/services/application-uninstall-runner.service';
 import { UninstallApplicationInput } from 'src/engine/core-modules/application/application-manifest/dtos/uninstall-application.input';
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
-import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { UpdateApplicationInput } from 'src/engine/core-modules/application/dtos/update-application.input';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { JobStatusDTO } from 'src/engine/core-modules/message-queue/dtos/job-status.dto';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -49,10 +48,9 @@ export class ApplicationInstallResolver {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly applicationInstallService: ApplicationInstallService,
-    private readonly applicationSyncService: ApplicationSyncService,
     private readonly marketplaceQueryService: MarketplaceQueryService,
-    private readonly metricsService: MetricsService,
-    private readonly applicationInstallJobService: ApplicationInstallJobService,
+    private readonly applicationLifecycleJobService: ApplicationLifecycleJobService,
+    private readonly applicationUninstallRunnerService: ApplicationUninstallRunnerService,
   ) {}
 
   @Query(() => [ApplicationDTO])
@@ -127,7 +125,21 @@ export class ApplicationInstallResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<TriggerInstallApplicationJobResultDTO> {
-    return this.applicationInstallJobService.triggerInstallApplicationJob({
+    return this.applicationLifecycleJobService.triggerInstallApplicationJob({
+      universalIdentifier,
+      workspaceId: workspace.id,
+      userWorkspaceId,
+    });
+  }
+
+  @Mutation(() => TriggerUninstallApplicationJobResultDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  async triggerUninstallApplicationJob(
+    @Args('input') { universalIdentifier }: TriggerUninstallApplicationJobInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<TriggerUninstallApplicationJobResultDTO> {
+    return this.applicationLifecycleJobService.triggerUninstallApplicationJob({
       universalIdentifier,
       workspaceId: workspace.id,
       userWorkspaceId,
@@ -140,10 +152,21 @@ export class ApplicationInstallResolver {
     @Args('universalIdentifier') universalIdentifier: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<JobStatusDTO | null> {
-    return this.applicationInstallJobService.findInstallApplicationJobStatus({
+    return this.applicationLifecycleJobService.findInstallApplicationJobStatus({
       universalIdentifier,
       workspaceId: workspace.id,
     });
+  }
+
+  @Query(() => JobStatusDTO, { nullable: true })
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  async findUninstallApplicationJobStatus(
+    @Args('universalIdentifier') universalIdentifier: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<JobStatusDTO | null> {
+    return this.applicationLifecycleJobService.findUninstallApplicationJobStatus(
+      { universalIdentifier, workspaceId: workspace.id },
+    );
   }
 
   private async installRegisteredApplication(params: {
@@ -189,43 +212,9 @@ export class ApplicationInstallResolver {
     @Args() { universalIdentifier }: UninstallApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    const application = await this.applicationService.findByUniversalIdentifier(
-      {
-        universalIdentifier,
-        workspaceId,
-      },
-    );
-
-    const attributes = {
-      universal_identifier: universalIdentifier,
-      app_name: application?.name ?? 'unknown',
-      source_type: application?.sourceType ?? 'unknown',
-      version: application?.version ?? 'unknown',
-    };
-
-    try {
-      await this.applicationSyncService.uninstallApplication({
-        applicationUniversalIdentifier: universalIdentifier,
-        workspaceId,
-      });
-    } catch (error) {
-      this.metricsService.incrementCounterBy({
-        key: MetricsKeys.AppUninstallFailed,
-        amount: 1,
-        attributes: {
-          ...attributes,
-          error_code:
-            error instanceof ApplicationException ? error.code : 'UNKNOWN',
-        },
-      });
-
-      throw error;
-    }
-
-    this.metricsService.incrementCounterBy({
-      key: MetricsKeys.AppUninstallSucceeded,
-      amount: 1,
-      attributes,
+    await this.applicationUninstallRunnerService.uninstallApplication({
+      universalIdentifier,
+      workspaceId,
     });
 
     return true;

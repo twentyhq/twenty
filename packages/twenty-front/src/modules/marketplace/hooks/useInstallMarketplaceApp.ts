@@ -1,12 +1,12 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useListenToQueueJob } from '@/queue-job/hooks/useListenToQueueJob';
+import { useTrackedQueueJob } from '@/queue-job/hooks/useTrackedQueueJob';
 import { isTerminalJobState } from '@/queue-job/utils/isTerminalJobState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLazyQuery, useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   FindInstallApplicationJobStatusDocument,
@@ -29,8 +29,6 @@ export const useInstallMarketplaceApp = ({
   onCompleted,
 }: UseInstallMarketplaceAppArgs = {}) => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
-  const [triggeredJobId, setTriggeredJobId] = useState<string>();
-  const [handledJobId, setHandledJobId] = useState<string>();
   const [triggerInstallApplicationJob, { loading: isTriggeringInstall }] =
     useMutation(TriggerInstallApplicationJobDocument);
   const [findInstalledApplication] = useLazyQuery(
@@ -39,8 +37,6 @@ export const useInstallMarketplaceApp = ({
   );
   const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
 
-  // The installation job id is deterministic, so an installation started before
-  // a page reload is picked back up here instead of looking idle
   const { data: jobStatusData } = useQuery(
     FindInstallApplicationJobStatusDocument,
     {
@@ -56,42 +52,8 @@ export const useInstallMarketplaceApp = ({
       ? runningJobStatus.jobId
       : undefined;
 
-  const trackedJobId = triggeredJobId ?? runningJobId;
-  const installationJobId =
-    isDefined(trackedJobId) && trackedJobId !== handledJobId
-      ? trackedJobId
-      : undefined;
-
-  const install = async (): Promise<void> => {
-    if (!isDefined(universalIdentifier)) {
-      return;
-    }
-
-    setHandledJobId(undefined);
-
-    try {
-      const { data } = await triggerInstallApplicationJob({
-        variables: { input: { universalIdentifier } },
-      });
-
-      setTriggeredJobId(data?.triggerInstallApplicationJob.jobId);
-    } catch (error) {
-      const graphqlMessage = error instanceof Error ? error.message : undefined;
-
-      enqueueErrorSnackBar({
-        message: graphqlMessage ?? t`Failed to install the application.`,
-      });
-    }
-  };
-
-  const handleQueueJobEvent = useCallback(
+  const handleInstallJobSettled = useCallback(
     async (jobStatus: JobStatus) => {
-      if (!isTerminalJobState(jobStatus.state)) {
-        return;
-      }
-
-      setHandledJobId(jobStatus.jobId);
-
       if (!isDefined(universalIdentifier)) {
         return;
       }
@@ -154,13 +116,33 @@ export const useInstallMarketplaceApp = ({
     ],
   );
 
-  useListenToQueueJob({
-    jobId: installationJobId,
-    onQueueJobEvent: handleQueueJobEvent,
+  const { activeJobId, trackJob } = useTrackedQueueJob({
+    runningJobId,
+    onQueueJobSettled: handleInstallJobSettled,
   });
+
+  const install = async (): Promise<void> => {
+    if (!isDefined(universalIdentifier)) {
+      return;
+    }
+
+    try {
+      const { data } = await triggerInstallApplicationJob({
+        variables: { input: { universalIdentifier } },
+      });
+
+      trackJob(data?.triggerInstallApplicationJob.jobId);
+    } catch (error) {
+      const graphqlMessage = error instanceof Error ? error.message : undefined;
+
+      enqueueErrorSnackBar({
+        message: graphqlMessage ?? t`Failed to install the application.`,
+      });
+    }
+  };
 
   return {
     install,
-    isInstalling: isTriggeringInstall || isDefined(installationJobId),
+    isInstalling: isTriggeringInstall || isDefined(activeJobId),
   };
 };

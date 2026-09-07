@@ -16,6 +16,7 @@ import { BillingReminderCronJob } from 'src/engine/core-modules/billing/reminder
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { TriggerInstallApplicationJob } from 'src/engine/core-modules/application/application-install/jobs/trigger-install-application.job';
+import { TriggerUninstallApplicationJob } from 'src/engine/core-modules/application/application-install/jobs/trigger-uninstall-application.job';
 import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
@@ -131,6 +132,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     InstallOnboardingAppsJob,
     InstallPreInstalledAppsJob,
     TriggerInstallApplicationJob,
+    TriggerUninstallApplicationJob,
   ],
 })
 export class JobsModule {
