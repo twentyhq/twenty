@@ -47,7 +47,7 @@ const createOneOperation = ({
   shareWith,
 }: {
   data: { id: string; name: string };
-  shareWith?: ShareWithInput[];
+  shareWith?: ShareWithInput[] | null;
 }) => ({
   query: gql`
     mutation CreateOneShareWithTestObject(
@@ -282,6 +282,43 @@ describe('createShareWithObjectRecordsPermissions', () => {
           ownerRowFor(recordId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE),
         ),
       ]);
+    });
+
+    it('should treat a null shareWith as omitted for a member', async () => {
+      const recordId = trackRecordId();
+
+      const response = await makeGraphqlAPIRequest(
+        createOneOperation({
+          data: { id: recordId, name: 'null shareWith' },
+          shareWith: null,
+        }),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(await findRecordShares(recordId)).toEqual([
+        expect.objectContaining(
+          ownerRowFor(recordId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE),
+        ),
+      ]);
+    });
+
+    it('should refuse a shareWith naming the same principal twice', async () => {
+      const recordId = trackRecordId();
+
+      const response = await makeGraphqlAPIRequest(
+        createOneOperation({
+          data: { id: recordId, name: 'duplicate principal' },
+          shareWith: [
+            { roleId: memberRoleId, accessLevel: RecordShareAccessLevel.READ },
+            { roleId: memberRoleId, accessLevel: RecordShareAccessLevel.FULL },
+          ],
+        }),
+      );
+
+      expect(JSON.stringify(response.body.errors)).toContain(
+        'shareWith names the same principal more than once',
+      );
+      expect(await findRecordShares(recordId)).toEqual([]);
     });
 
     it('should add a MANUAL role row next to the owner row', async () => {
@@ -616,7 +653,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
       ]);
     });
 
-    it('should still give the creating member the owner row only', async () => {
+    it('should give the creating member the owner row and everyone FULL access, so the record stays open once the flag turns on', async () => {
       const recordId = trackRecordId();
 
       const response = await makeGraphqlAPIRequest(
@@ -627,11 +664,19 @@ describe('createShareWithObjectRecordsPermissions', () => {
 
       expect(response.body.errors).toBeUndefined();
 
-      expect(await findRecordShares(recordId)).toEqual([
-        expect.objectContaining(
-          ownerRowFor(recordId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE),
-        ),
-      ]);
+      expect(await findRecordShares(recordId)).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining(
+            ownerRowFor(recordId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE),
+          ),
+          expect.objectContaining({
+            recordId,
+            principalId: EVERYONE_PRINCIPAL_ID,
+            accessLevel: RecordShareAccessLevel.FULL,
+          }),
+        ]),
+      );
+      expect(await findRecordShares(recordId)).toHaveLength(2);
     });
   });
 

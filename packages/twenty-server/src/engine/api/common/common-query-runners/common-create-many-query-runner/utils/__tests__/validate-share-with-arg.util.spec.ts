@@ -116,6 +116,35 @@ describe('validateShareWithArg', () => {
     });
   });
 
+  it('should treat a null shareWith as omitted for a user', () => {
+    expect(() =>
+      validateShareWithArg({
+        authContext: userAuthContext,
+        isRecordSharingEnabled: true,
+        shareWith: null,
+      }),
+    ).not.toThrow();
+  });
+
+  it('should reject the same principal named twice', () => {
+    expect(() =>
+      validateShareWithArg({
+        authContext: userAuthContext,
+        isRecordSharingEnabled: true,
+        shareWith: [
+          {
+            workspaceMemberId: OTHER_WORKSPACE_MEMBER_ID,
+            accessLevel: RecordShareAccessLevel.READ,
+          },
+          {
+            workspaceMemberId: OTHER_WORKSPACE_MEMBER_ID,
+            accessLevel: RecordShareAccessLevel.FULL,
+          },
+        ],
+      }),
+    ).toThrow('shareWith names the same principal more than once');
+  });
+
   it('should reject an entry targeting no principal', () => {
     expect(() =>
       validateShareWithArg({
