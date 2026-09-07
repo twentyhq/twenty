@@ -65,7 +65,7 @@ export const useCreateNewIndexRecord = ({
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const { shouldOpenRecordCreationForm, requestRecordCreationDraft } =
+  const { shouldOpenRecordCreationForm, requestRecordCreation } =
     useRecordCreationForm({ objectMetadataItem });
 
   const navigate = useNavigateApp();
@@ -202,19 +202,15 @@ export const useCreateNewIndexRecord = ({
         return createIndexRecord(recordInput);
       }
 
-      const draftRecord = await requestRecordCreationDraft(recordInput);
+      const createdRecord = await requestRecordCreation({
+        initialDraftRecord: recordInput,
+        createRecord: (draftRecord) =>
+          createIndexRecord({ ...draftRecord, ...recordInput }),
+      });
 
-      if (!isDefined(draftRecord)) {
-        return undefined;
-      }
-
-      return createIndexRecord({ ...draftRecord, ...recordInput });
+      return createdRecord ?? undefined;
     },
-    [
-      createIndexRecord,
-      requestRecordCreationDraft,
-      shouldOpenRecordCreationForm,
-    ],
+    [createIndexRecord, requestRecordCreation, shouldOpenRecordCreationForm],
   );
 
   return {

@@ -17,7 +17,10 @@ import { v4 } from 'uuid';
 
 type PendingRecordCreation = {
   requestId: string;
-  settle: (draftRecord: Partial<ObjectRecord> | null) => void;
+  objectMetadataLabelSingular: string;
+  createRecord: (draftRecord: Partial<ObjectRecord>) => Promise<ObjectRecord>;
+  resolve: (createdRecord: ObjectRecord | null) => void;
+  isSettling: boolean;
 };
 
 type RecordCreationFormProviderProps = {
@@ -35,39 +38,86 @@ export const RecordCreationFormProvider = ({
   >([]);
 
   const settleRecordCreationDraft = useCallback(
-    ({
+    async ({
       requestId,
       draftRecord,
     }: {
       requestId: string;
       draftRecord: Partial<ObjectRecord> | null;
     }) => {
-      setPendingRecordCreations((pendingRecordCreations) => {
-        const pendingRecordCreation = pendingRecordCreations.find(
-          (candidate) => candidate.requestId === requestId,
+      const pendingRecordCreation = pendingRecordCreations.find(
+        (candidate) => candidate.requestId === requestId,
+      );
+
+      if (
+        !isDefined(pendingRecordCreation) ||
+        pendingRecordCreation.isSettling
+      ) {
+        return;
+      }
+
+      if (draftRecord === null) {
+        pendingRecordCreation.resolve(null);
+
+        setPendingRecordCreations((previousPendingRecordCreations) =>
+          previousPendingRecordCreations.filter(
+            (candidate) => candidate.requestId !== requestId,
+          ),
         );
 
-        if (!isDefined(pendingRecordCreation)) {
-          return pendingRecordCreations;
-        }
+        return;
+      }
 
-        pendingRecordCreation.settle(draftRecord);
+      setPendingRecordCreations((previousPendingRecordCreations) =>
+        previousPendingRecordCreations.map((candidate) =>
+          candidate.requestId === requestId
+            ? { ...candidate, isSettling: true }
+            : candidate,
+        ),
+      );
 
-        return pendingRecordCreations.filter(
-          (candidate) => candidate.requestId !== requestId,
+      try {
+        const createdRecord =
+          await pendingRecordCreation.createRecord(draftRecord);
+
+        pendingRecordCreation.resolve(createdRecord);
+
+        setPendingRecordCreations((previousPendingRecordCreations) =>
+          previousPendingRecordCreations.filter(
+            (candidate) => candidate.requestId !== requestId,
+          ),
         );
-      });
+      } catch {
+        setPendingRecordCreations((previousPendingRecordCreations) =>
+          previousPendingRecordCreations.map((candidate) =>
+            candidate.requestId === requestId
+              ? { ...candidate, isSettling: false }
+              : candidate,
+          ),
+        );
+
+        navigateSidePanelMenu({
+          page: SidePanelPages.RecordCreationForm,
+          pageTitle: t`New ${pendingRecordCreation.objectMetadataLabelSingular}`,
+          pageIcon: IconPlus,
+          pageId: requestId,
+        });
+      }
     },
-    [],
+    [navigateSidePanelMenu, pendingRecordCreations],
   );
 
-  const requestRecordCreationDraft = useCallback(
+  const requestRecordCreation = useCallback(
     ({
       objectMetadataItem,
       initialDraftRecord,
+      createRecord,
     }: {
       objectMetadataItem: EnrichedObjectMetadataItem;
       initialDraftRecord?: Partial<ObjectRecord>;
+      createRecord: (
+        draftRecord: Partial<ObjectRecord>,
+      ) => Promise<ObjectRecord>;
     }) => {
       const requestId = v4();
 
@@ -82,10 +132,16 @@ export const RecordCreationFormProvider = ({
         },
       );
 
-      return new Promise<Partial<ObjectRecord> | null>((resolve) => {
-        setPendingRecordCreations((pendingRecordCreations) => [
-          ...pendingRecordCreations,
-          { requestId, settle: resolve },
+      return new Promise<ObjectRecord | null>((resolve) => {
+        setPendingRecordCreations((previousPendingRecordCreations) => [
+          ...previousPendingRecordCreations,
+          {
+            requestId,
+            objectMetadataLabelSingular: objectMetadataItem.labelSingular,
+            createRecord,
+            resolve,
+            isSettling: false,
+          },
         ]);
 
         navigateSidePanelMenu({
@@ -107,8 +163,8 @@ export const RecordCreationFormProvider = ({
   );
 
   const contextValue = useMemo<RecordCreationFormContextValue>(
-    () => ({ requestRecordCreationDraft, settleRecordCreationDraft }),
-    [requestRecordCreationDraft, settleRecordCreationDraft],
+    () => ({ requestRecordCreation, settleRecordCreationDraft }),
+    [requestRecordCreation, settleRecordCreationDraft],
   );
 
   return (

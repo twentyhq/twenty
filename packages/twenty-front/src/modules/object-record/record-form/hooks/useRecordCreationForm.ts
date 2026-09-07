@@ -27,18 +27,25 @@ export const useRecordCreationForm = ({
     isDefined(recordCreationFormContext) &&
     isNonEmptyArray(recordFormFieldMetadataItems);
 
-  const requestRecordCreationDraft = useCallback(
-    (initialDraftRecord?: Partial<ObjectRecord>) =>
+  const requestRecordCreation = useCallback(
+    ({
+      initialDraftRecord,
+      createRecord,
+    }: {
+      initialDraftRecord?: Partial<ObjectRecord>;
+      createRecord: (
+        draftRecord: Partial<ObjectRecord>,
+      ) => Promise<ObjectRecord>;
+    }) =>
       isDefined(recordCreationFormContext)
-        ? recordCreationFormContext.requestRecordCreationDraft({
+        ? recordCreationFormContext.requestRecordCreation({
             objectMetadataItem,
             initialDraftRecord,
+            createRecord,
           })
-        : Promise.resolve<Partial<ObjectRecord> | null>(
-            initialDraftRecord ?? {},
-          ),
+        : createRecord(initialDraftRecord ?? {}),
     [recordCreationFormContext, objectMetadataItem],
   );
 
-  return { shouldOpenRecordCreationForm, requestRecordCreationDraft };
+  return { shouldOpenRecordCreationForm, requestRecordCreation };
 };

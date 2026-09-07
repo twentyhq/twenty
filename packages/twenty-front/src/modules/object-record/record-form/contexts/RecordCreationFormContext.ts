@@ -3,10 +3,11 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { createContext } from 'react';
 
 export type RecordCreationFormContextValue = {
-  requestRecordCreationDraft: (params: {
+  requestRecordCreation: (params: {
     objectMetadataItem: EnrichedObjectMetadataItem;
     initialDraftRecord?: Partial<ObjectRecord>;
-  }) => Promise<Partial<ObjectRecord> | null>;
+    createRecord: (draftRecord: Partial<ObjectRecord>) => Promise<ObjectRecord>;
+  }) => Promise<ObjectRecord | null>;
   settleRecordCreationDraft: (params: {
     requestId: string;
     draftRecord: Partial<ObjectRecord> | null;

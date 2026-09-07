@@ -1,7 +1,9 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordFormFieldInputs } from '@/object-record/record-form/components/RecordFormFieldInputs';
 import { useRecordCreationFormSettle } from '@/object-record/record-form/hooks/useRecordCreationFormSettle';
 import { useRecordFormFieldMetadataItems } from '@/object-record/record-form/hooks/useRecordFormFieldMetadataItems';
+import { computeRecordFormCreateRecordInput } from '@/object-record/record-form/utils/computeRecordFormCreateRecordInput';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { recordCreationFormDraftComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormDraftComponentState';
@@ -63,6 +65,8 @@ const SidePanelRecordCreationForm = ({
     objectId: objectMetadataId,
   });
 
+  const { objectMetadataItems } = useObjectMetadataItems();
+
   const { settleRecordCreationDraft } = useRecordCreationFormSettle();
   const { goBackFromSidePanel } = useSidePanelHistory();
 
@@ -90,7 +94,14 @@ const SidePanelRecordCreationForm = ({
   };
 
   const handleCreateClick = () => {
-    settleRecordCreationDraft({ requestId, draftRecord });
+    settleRecordCreationDraft({
+      requestId,
+      draftRecord: computeRecordFormCreateRecordInput({
+        draftRecord,
+        fieldMetadataItems: recordFormFieldMetadataItems,
+        objectMetadataItems,
+      }),
+    });
     goBackFromSidePanel();
   };
 
