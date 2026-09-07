@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -12,6 +12,7 @@ import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByTh
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import {
   jotaiStore,
@@ -116,6 +117,19 @@ describe('AiChatPageHeader', () => {
     ).toBeNull();
   });
 
+  it('does not label an existing chat as new while its metadata loads', () => {
+    setThreads([]);
+    render(<AiChatPageHeader isOnboarding={false} />, { wrapper: Wrapper });
+
+    expect(screen.queryByText('New chat')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Chat actions' })).toBeNull();
+
+    act(() => setThreads([THREAD]));
+
+    expect(screen.getByText('Best leads')).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Chat actions' })).toBeVisible();
+  });
+
   it.each([0, 100])(
     'keeps New chat hidden without messages regardless of token usage (%s)',
     (conversationSize) => {
@@ -153,6 +167,40 @@ describe('AiChatPageHeader', () => {
     expect(screen.queryByRole('button', { name: /^New chat/ })).toBeNull();
     expect(screen.queryByRole('button', { name: 'Chat actions' })).toBeNull();
     expect(screen.getByRole('button', { name: 'Close chat' })).toBeVisible();
+  });
+
+  it('uses the generated title before metadata refreshes and prefers later renames', async () => {
+    setThreads([{ ...THREAD, title: null }]);
+    const user = userEvent.setup();
+    render(<AiChatPageHeader isOnboarding={false} />, { wrapper: Wrapper });
+
+    act(() => {
+      jotaiStore.set(
+        currentAiChatThreadTitleComponentFamilyState.atomFamily({
+          instanceId: 'ai-chat-header-test',
+          familyKey: { threadId: THREAD.id },
+        }),
+        'Generated title',
+      );
+    });
+
+    expect(screen.getByText('Generated title')).toBeVisible();
+    await user.click(screen.getByRole('button', { name: 'Chat actions' }));
+    await user.click(screen.getByText('Rename'));
+    expect(screen.getByRole('textbox')).toHaveValue('Generated title');
+    await user.keyboard('{Enter}');
+    expect(renameChatThread).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole('button', { name: 'Chat actions' }));
+    await user.click(screen.getByText('Delete'));
+    expect(
+      within(screen.getByRole('dialog')).getByText('Generated title'),
+    ).toBeVisible();
+    await user.click(screen.getByRole('button', { name: /^Cancel/ }));
+
+    act(() => setThreads([{ ...THREAD, title: 'Renamed title' }]));
+    expect(screen.getByText('Renamed title')).toBeVisible();
+    expect(screen.queryByText('Generated title')).toBeNull();
   });
 
   it('offers archive and unarchive even when the current chat is filtered out of the sidebar', async () => {

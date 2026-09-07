@@ -1,3 +1,4 @@
+import uniqBy from 'lodash.uniqby';
 import { type QueryRunner } from 'typeorm';
 
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
@@ -152,7 +153,6 @@ const seedChatMessages = async ({
 }: SeedChatMessagesArgs) => {
   let messageIds: string[];
   let partIds: string[];
-  let turnIds: string[];
   let messages: Array<{
     id: string;
     workspaceId: string;
@@ -183,7 +183,7 @@ const seedChatMessages = async ({
       AGENT_CHAT_MESSAGE_PART_DATA_SEED_IDS.APPLE_MESSAGE_1_PART_1,
       AGENT_CHAT_MESSAGE_PART_DATA_SEED_IDS.APPLE_MESSAGE_2_PART_1,
     ];
-    turnIds = ['20202020-0000-4000-8000-000000000061'];
+    const turnIds = ['20202020-0000-4000-8000-000000000061'];
     messages = [
       {
         id: messageIds[0],
@@ -236,7 +236,7 @@ const seedChatMessages = async ({
       AGENT_CHAT_MESSAGE_PART_DATA_SEED_IDS.YCOMBINATOR_MESSAGE_3_PART_1,
       AGENT_CHAT_MESSAGE_PART_DATA_SEED_IDS.YCOMBINATOR_MESSAGE_4_PART_1,
     ];
-    turnIds = [
+    const turnIds = [
       '20202020-0000-4000-8000-000000000071',
       '20202020-0000-4000-8000-000000000072',
     ];
@@ -382,7 +382,6 @@ const seedChatMessages = async ({
       for (const exchange of conversation.exchanges) {
         const turnId = `20202020-0000-4000-8000-${String(seedId++).padStart(12, '0')}`;
 
-        turnIds.push(turnId);
         for (const [index, textContent] of exchange.entries()) {
           const messageId = `20202020-0000-4000-8000-${String(seedId++).padStart(12, '0')}`;
           const partId = `20202020-0000-4000-8000-${String(seedId++).padStart(12, '0')}`;
@@ -411,11 +410,11 @@ const seedChatMessages = async ({
     }
   }
 
-  const turns = turnIds.map((id, index) => ({
-    id,
+  const turns = uniqBy(messages, 'turnId').map((message) => ({
+    id: message.turnId,
     workspaceId,
-    threadId: messages[index * 2].threadId,
-    createdAt: messages[index * 2].createdAt,
+    threadId: message.threadId,
+    createdAt: message.createdAt,
   }));
 
   await queryRunner.manager

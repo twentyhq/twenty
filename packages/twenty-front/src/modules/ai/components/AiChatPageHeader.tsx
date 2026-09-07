@@ -8,7 +8,9 @@ import { AiChatCloseButton } from '@/ai/components/AiChatCloseButton';
 import { AiChatPageThreadHeader } from '@/ai/components/AiChatPageThreadHeader';
 import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
-import { currentAiChatThreadSelector } from '@/ai/states/selectors/currentAiChatThreadSelector';
+import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { currentAiChatThreadDataSelector } from '@/ai/states/selectors/currentAiChatThreadDataSelector';
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
 import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
@@ -49,21 +51,27 @@ export const AiChatPageHeader = ({ isOnboarding }: AiChatPageHeaderProps) => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useNavigationDrawerExpanded();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadSelector);
+  const currentAiChatThreadData = useAtomStateValue(
+    currentAiChatThreadDataSelector,
+  );
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const isNewChat =
+    !isDefined(currentAiChatThread) ||
+    currentAiChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
 
   return (
     <StyledHeader>
       {!isNavigationDrawerExpanded && !isMobile && (
         <NavigationDrawerCollapseButton direction="right" />
       )}
-      {isDefined(currentAiChatThread) && !isOnboarding ? (
+      {isDefined(currentAiChatThreadData) && !isOnboarding ? (
         <AiChatPageThreadHeader
-          key={currentAiChatThread.id}
-          thread={currentAiChatThread}
+          key={currentAiChatThreadData.id}
+          thread={currentAiChatThreadData}
         />
       ) : (
         <StyledHeaderTitle>
-          {isOnboarding ? t`Onboarding` : t`New chat`}
+          {isOnboarding ? t`Onboarding` : isNewChat ? t`New chat` : null}
         </StyledHeaderTitle>
       )}
       {isMobile ? (

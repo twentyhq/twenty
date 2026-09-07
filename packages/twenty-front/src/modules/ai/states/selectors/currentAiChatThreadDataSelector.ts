@@ -3,10 +3,10 @@ import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
-export const currentAiChatThreadSelector = createAtomSelector<
+export const currentAiChatThreadDataSelector = createAtomSelector<
   FlatAgentChatThread | undefined
 >({
-  key: 'currentAiChatThreadSelector',
+  key: 'currentAiChatThreadDataSelector',
   get: ({ get }) => {
     const currentThreadId = get(currentAiChatThreadState);
     const storeItem = get(metadataStoreState, 'agentChatThreads');

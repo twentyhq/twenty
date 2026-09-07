@@ -11,8 +11,10 @@ import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
+import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
@@ -44,6 +46,11 @@ export const AiChatPageThreadHeader = ({
 }: AiChatPageThreadHeaderProps) => {
   const { t } = useLingui();
   const { switchToNewChat } = useSwitchToNewAiChat();
+  const currentAiChatThreadTitle = useAtomComponentFamilyStateValue(
+    currentAiChatThreadTitleComponentFamilyState,
+    { threadId: thread.id },
+  );
+  const title = thread.title ?? currentAiChatThreadTitle;
   const {
     isRenaming,
     draftTitle,
@@ -51,8 +58,8 @@ export const AiChatPageThreadHeader = ({
     startRename,
     cancelRename,
     commitRename,
-  } = useAiChatThreadRename(thread);
-  const displayTitle = thread.title || t`New chat`;
+  } = useAiChatThreadRename({ ...thread, title });
+  const displayTitle = title || t`New chat`;
   const agentChatHasMessage = useAtomComponentSelectorValue(
     agentChatHasMessageComponentSelector,
   );
