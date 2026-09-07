@@ -28,6 +28,32 @@ const tab: PageLayoutTabManifest = {
 };
 
 describe('normalizePageLayoutTabManifest', () => {
+  describe.each(['UNSUPPORTED', '', 42, {}])(
+    'with invalid layoutMode %s in JSON input',
+    (layoutMode) => {
+      it.each([{ widgets: [] }, { widgets: [widget] }])(
+        'returns a validation error with widgets $widgets',
+        ({ widgets }) => {
+          const pageLayoutTabManifest = JSON.parse(
+            JSON.stringify({ ...tab, layoutMode, widgets }),
+          );
+
+          expect(
+            normalizePageLayoutTabManifest({
+              pageLayoutTabManifest,
+              pageLayoutType: undefined,
+            }),
+          ).toEqual({
+            status: 'fail',
+            errors: [
+              `Page layout tab "Details" defines unsupported layoutMode "${layoutMode}". Expected GRID, VERTICAL_LIST or CANVAS.`,
+            ],
+          });
+        },
+      );
+    },
+  );
+
   it('derives layout and widget order without changing its input', () => {
     const input: PageLayoutTabManifest = {
       ...tab,

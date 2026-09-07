@@ -38,6 +38,19 @@ export const normalizePageLayoutTabManifest = ({
   const widgets = pageLayoutTabManifest.widgets ?? [];
   const errors: string[] = [];
 
+  if (
+    !Object.values(PageLayoutTabLayoutMode).some(
+      (supportedLayoutMode) => supportedLayoutMode === layoutMode,
+    )
+  ) {
+    return {
+      status: 'fail',
+      errors: [
+        `Page layout tab "${pageLayoutTabManifest.title}" defines unsupported layoutMode "${layoutMode}". Expected GRID, VERTICAL_LIST or CANVAS.`,
+      ],
+    };
+  }
+
   for (const widget of widgets) {
     if (
       isDefined(widget.heightBehavior) &&

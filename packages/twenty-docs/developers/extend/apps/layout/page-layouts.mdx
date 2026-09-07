@@ -75,7 +75,7 @@ The following authoring shapes are deprecated. Use their replacements in new and
 | `position` on a `VERTICAL_LIST` widget, including `position.heightBehavior` | Widget array order and optional top-level `heightBehavior` |
 | Legacy `gridPosition` | `position: { layoutMode: PageLayoutTabLayoutMode.GRID, row, column, rowSpan, columnSpan }` |
 
-During compatibility, the tab and widget array determine vertical-list layout and order. A nested `position.heightBehavior` is a fallback when top-level `heightBehavior` is omitted; the top-level value wins when both are present. Canvas manifests convert automatically only when the tab has exactly one widget. Empty and multi-widget Canvas tabs remain unchanged and need an explicit layout decision before conversion.
+During compatibility, the tab and widget array determine vertical-list layout and order. A nested `position.heightBehavior` is a fallback when top-level `heightBehavior` is omitted; the top-level value wins when both are present. For `GRID` widgets, `position` takes precedence over legacy `gridPosition` when both are present, matching the existing installation behavior. Canvas manifests convert automatically only when the tab has exactly one widget. Empty and multi-widget Canvas tabs remain unchanged and need an explicit layout decision before conversion.
 
 Removal has no scheduled release yet. The compatibility paths stay in place until:
 
