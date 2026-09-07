@@ -31,7 +31,7 @@ export const hideGlobals = (globalNames: readonly string[]) => {
   const hiddenGlobals: HiddenGlobal[] = [];
 
   const restoreGlobals = () => {
-    for (const hiddenGlobal of hiddenGlobals) {
+    for (const hiddenGlobal of [...hiddenGlobals].reverse()) {
       restoreGlobal(hiddenGlobal);
     }
   };
