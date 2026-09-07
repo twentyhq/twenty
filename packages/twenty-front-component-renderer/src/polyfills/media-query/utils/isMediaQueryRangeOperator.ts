@@ -1,7 +1,14 @@
-import { MEDIA_QUERY_RANGE_OPERATORS } from '@/polyfills/media-query/constants/MediaQueryRangeOperators';
-import { type MediaQueryRangeOperator } from '@/polyfills/media-query/types/MediaQueryRangeOperator';
+import { type MediaQueryComparisonOperator } from '@/polyfills/media-query/types/MediaQueryComparisonOperator';
+
+const MEDIA_QUERY_RANGE_OPERATORS = new Set<string>([
+  '<',
+  '<=',
+  '>',
+  '>=',
+  '=',
+]);
 
 export const isMediaQueryRangeOperator = (
   value: string,
-): value is MediaQueryRangeOperator =>
-  MEDIA_QUERY_RANGE_OPERATORS.has(value as MediaQueryRangeOperator);
+): value is MediaQueryComparisonOperator =>
+  MEDIA_QUERY_RANGE_OPERATORS.has(value);

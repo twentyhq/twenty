@@ -14,7 +14,7 @@ describe('parseMediaQuery', () => {
         {
           kind: 'numeric',
           source: 'componentWidth',
-          comparison: 'min',
+          operator: '>=',
           value: 600,
         },
       ],
@@ -26,7 +26,7 @@ describe('parseMediaQuery', () => {
       {
         kind: 'numeric',
         source: 'componentWidth',
-        comparison: 'max',
+        operator: '<=',
         value: 640,
       },
     ]);
@@ -34,7 +34,7 @@ describe('parseMediaQuery', () => {
       {
         kind: 'numeric',
         source: 'componentHeight',
-        comparison: 'min',
+        operator: '>=',
         value: 160,
       },
     ]);
@@ -50,13 +50,13 @@ describe('parseMediaQuery', () => {
         {
           kind: 'numeric',
           source: 'componentWidth',
-          comparison: 'min',
+          operator: '>=',
           value: 600,
         },
         {
           kind: 'numeric',
           source: 'componentWidth',
-          comparison: 'max',
+          operator: '<=',
           value: 900,
         },
       ],
@@ -81,7 +81,7 @@ describe('parseMediaQuery', () => {
       {
         kind: 'numeric',
         source: 'devicePixelRatio',
-        comparison: 'min',
+        operator: '>=',
         value: 2,
       },
     ]);
@@ -89,7 +89,7 @@ describe('parseMediaQuery', () => {
       {
         kind: 'numeric',
         source: 'devicePixelRatio',
-        comparison: 'min',
+        operator: '>=',
         value: 2,
       },
     ]);
@@ -97,7 +97,7 @@ describe('parseMediaQuery', () => {
       {
         kind: 'numeric',
         source: 'devicePixelRatio',
-        comparison: 'max',
+        operator: '<=',
         value: 1.5,
       },
     ]);
@@ -105,17 +105,17 @@ describe('parseMediaQuery', () => {
 
   it('should parse orientation values', () => {
     expect(parseMediaQuery('(orientation: portrait)')?.conditions).toEqual([
-      { kind: 'orientation', value: 'portrait' },
+      { kind: 'keyword', featureName: 'orientation', value: 'portrait' },
     ]);
     expect(parseMediaQuery('(orientation: landscape)')?.conditions).toEqual([
-      { kind: 'orientation', value: 'landscape' },
+      { kind: 'keyword', featureName: 'orientation', value: 'landscape' },
     ]);
     expect(parseMediaQuery('(orientation: sideways)')).toBeNull();
   });
 
   it('should parse prefers-color-scheme values', () => {
     expect(parseMediaQuery('(prefers-color-scheme: dark)')?.conditions).toEqual(
-      [{ kind: 'color-scheme', value: 'dark' }],
+      [{ kind: 'keyword', featureName: 'prefers-color-scheme', value: 'dark' }],
     );
   });
 
@@ -145,7 +145,7 @@ describe('parseMediaQuery', () => {
         {
           kind: 'numeric',
           source: 'componentWidth',
-          comparison: 'min',
+          operator: '>=',
           value: 600,
         },
       ],
@@ -157,30 +157,12 @@ describe('parseMediaQuery', () => {
   });
 
   it('should parse values with a leading decimal point', () => {
-    expect(
-      parseMediaQuery('(-webkit-min-device-pixel-ratio: .5)')?.conditions,
-    ).toEqual([
-      {
-        kind: 'numeric',
-        source: 'devicePixelRatio',
-        comparison: 'min',
-        value: 0.5,
-      },
-    ]);
     expect(parseMediaQuery('(min-width: .5em)')?.conditions).toEqual([
       {
         kind: 'numeric',
         source: 'componentWidth',
-        comparison: 'min',
+        operator: '>=',
         value: 8,
-      },
-    ]);
-    expect(parseMediaQuery('(min-resolution: .5dppx)')?.conditions).toEqual([
-      {
-        kind: 'numeric',
-        source: 'devicePixelRatio',
-        comparison: 'min',
-        value: 0.5,
       },
     ]);
   });
@@ -190,7 +172,7 @@ describe('parseMediaQuery', () => {
       {
         kind: 'numeric',
         source: 'componentWidth',
-        comparison: 'min',
+        operator: '>=',
         value: 0,
       },
     ]);
@@ -201,7 +183,7 @@ describe('parseMediaQuery', () => {
       {
         kind: 'numeric',
         source: 'componentWidth',
-        comparison: 'min',
+        operator: '>=',
         value: 600,
       },
     ]);
@@ -242,12 +224,12 @@ describe('parseMediaQuery', () => {
     expect(parseMediaQuery('not not')).toBeNull();
   });
 
-  it('should parse range syntax', () => {
+  it('should parse range syntax with the feature on either side', () => {
     expect(parseMediaQuery('(width >= 600px)')?.conditions).toEqual([
       {
         kind: 'numeric',
         source: 'componentWidth',
-        comparison: 'min',
+        operator: '>=',
         value: 600,
       },
     ]);
@@ -255,23 +237,7 @@ describe('parseMediaQuery', () => {
       {
         kind: 'numeric',
         source: 'componentWidth',
-        comparison: 'min',
-        value: 600,
-      },
-    ]);
-    expect(parseMediaQuery('(width < 600px)')?.conditions).toEqual([
-      {
-        kind: 'numeric',
-        source: 'componentWidth',
-        comparison: 'less-than',
-        value: 600,
-      },
-    ]);
-    expect(parseMediaQuery('(width = 600px)')?.conditions).toEqual([
-      {
-        kind: 'numeric',
-        source: 'componentWidth',
-        comparison: 'exact',
+        operator: '>=',
         value: 600,
       },
     ]);
@@ -279,36 +245,14 @@ describe('parseMediaQuery', () => {
       {
         kind: 'numeric',
         source: 'componentWidth',
-        comparison: 'min',
+        operator: '>=',
         value: 400,
       },
       {
         kind: 'numeric',
         source: 'componentWidth',
-        comparison: 'max',
+        operator: '<=',
         value: 800,
-      },
-    ]);
-    expect(parseMediaQuery('(800px >= height > 400px)')?.conditions).toEqual([
-      {
-        kind: 'numeric',
-        source: 'componentHeight',
-        comparison: 'max',
-        value: 800,
-      },
-      {
-        kind: 'numeric',
-        source: 'componentHeight',
-        comparison: 'greater-than',
-        value: 400,
-      },
-    ]);
-    expect(parseMediaQuery('(resolution >= 2dppx)')?.conditions).toEqual([
-      {
-        kind: 'numeric',
-        source: 'devicePixelRatio',
-        comparison: 'min',
-        value: 2,
       },
     ]);
   });

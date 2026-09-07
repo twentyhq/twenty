@@ -10,12 +10,10 @@ const MATCH_ALL_MEDIA_QUERY = 'all';
 export const parseMediaQueryList = (
   mediaQueryListString: string,
 ): ParsedMediaQuery[] => {
-  const isEmptyMediaQueryList = !isNonEmptyString(
-    trimCssWhitespace(mediaQueryListString),
-  );
-  const mediaQueryListToParse = isEmptyMediaQueryList
-    ? MATCH_ALL_MEDIA_QUERY
-    : mediaQueryListString;
+  const trimmedMediaQueryListString = trimCssWhitespace(mediaQueryListString);
+  const mediaQueryListToParse = isNonEmptyString(trimmedMediaQueryListString)
+    ? trimmedMediaQueryListString
+    : MATCH_ALL_MEDIA_QUERY;
 
   return mediaQueryListToParse
     .split(',')

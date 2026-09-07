@@ -5,7 +5,6 @@ import { CSS_WHITESPACE_CHARACTER_CLASS } from '@/polyfills/media-query/constant
 import { MATCHING_MEDIA_TYPES } from '@/polyfills/media-query/constants/MatchingMediaTypes';
 import { type ParsedMediaQuery } from '@/polyfills/media-query/types/ParsedMediaQuery';
 import { type ParsedMediaQueryCondition } from '@/polyfills/media-query/types/ParsedMediaQueryCondition';
-import { isMediaQueryConditionPart } from '@/polyfills/media-query/utils/isMediaQueryConditionPart';
 import { isMediaQueryTypeIdentifier } from '@/polyfills/media-query/utils/isMediaQueryTypeIdentifier';
 import { parseMediaQueryCondition } from '@/polyfills/media-query/utils/parseMediaQueryCondition';
 import { parseMediaQueryModifier } from '@/polyfills/media-query/utils/parseMediaQueryModifier';
@@ -39,7 +38,7 @@ export const parseMediaQuery = (
     trimCssWhitespace(firstQueryPart),
   );
 
-  if (modifier === 'only' && isMediaQueryConditionPart(remainingFirstPart)) {
+  if (modifier === 'only' && remainingFirstPart.startsWith('(')) {
     return null;
   }
 
@@ -52,7 +51,7 @@ export const parseMediaQuery = (
     const currentPart = trimCssWhitespace(queryPart);
     const isFirstQueryPart = partIndex === 0;
 
-    if (isMediaQueryConditionPart(currentPart)) {
+    if (currentPart.startsWith('(')) {
       const parsedConditions = parseMediaQueryCondition(currentPart);
 
       if (!isDefined(parsedConditions)) {

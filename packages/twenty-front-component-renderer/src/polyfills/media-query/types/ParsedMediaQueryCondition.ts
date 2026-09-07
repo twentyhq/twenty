@@ -1,12 +1,11 @@
-import { type MediaQueryComparison } from '@/polyfills/media-query/types/MediaQueryComparison';
+import { type MediaQueryComparisonOperator } from '@/polyfills/media-query/types/MediaQueryComparisonOperator';
 import { type MediaQueryNumericSource } from '@/polyfills/media-query/types/MediaQueryNumericSource';
-import { type MediaQueryOrientation } from '@/polyfills/media-query/types/MediaQueryOrientation';
 
 export type ParsedMediaQueryCondition =
   | {
       kind: 'numeric';
       source: MediaQueryNumericSource;
-      comparison: MediaQueryComparison;
+      operator: MediaQueryComparisonOperator;
       value: number;
     }
   | {
@@ -17,10 +16,7 @@ export type ParsedMediaQueryCondition =
       kind: 'always-matching';
     }
   | {
-      kind: 'color-scheme';
-      value: 'light' | 'dark';
-    }
-  | {
-      kind: 'orientation';
-      value: MediaQueryOrientation;
+      kind: 'keyword';
+      featureName: string;
+      value: string;
     };
