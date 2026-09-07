@@ -4,21 +4,19 @@ import { isDefined } from 'twenty-shared/utils';
 import { MAX_OBSERVED_GEOMETRY_ELEMENTS } from '@/constants/MaxObservedGeometryElements';
 import { GEOMETRY_OBSERVATION_LIMIT_WARNING } from '@/polyfills/geometry/constants/GeometryObservationLimitWarning';
 import { GEOMETRY_TRANSPORT_FAILURE_WARNING } from '@/polyfills/geometry/constants/GeometryTransportFailureWarning';
-import { GEOMETRY_VIEWPORT_LISTENER_FAILURE_WARNING } from '@/polyfills/geometry/constants/GeometryViewportListenerFailureWarning';
 import { type GeometryObservationTransport } from '@/polyfills/geometry/types/GeometryObservationTransport';
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
 import { isElementUnderRemoteRoot } from '@/polyfills/geometry/utils/isElementUnderRemoteRoot';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
 import { type GeometryUpdateBatch } from '@/types/GeometryUpdateBatch';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
-import { arePrimitiveRecordsEqual } from '@/utils/arePrimitiveRecordsEqual';
 
 export const createWorkerGeometryStore = (): WorkerGeometryStore => {
   const elementSnapshots = new Map<string, ElementGeometrySnapshot>();
   const enrolledRemoteElementIds = new WeakMap<object, string>();
   const observedRemoteElementIds = new Set<string>();
   const pendingObservationIds = new Set<string>();
-  const viewportUpdateListeners = new Set<() => void>();
+  const geometryUpdateListeners = new Set<() => void>();
 
   let rootElement: object | null = null;
   let transport: GeometryObservationTransport | null = null;
@@ -26,7 +24,6 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
   let hasScheduledObservationFlush = false;
   let hasWarnedAboutObservationLimit = false;
   let hasWarnedAboutTransportFailure = false;
-  let hasWarnedAboutViewportListenerFailure = false;
 
   const warnAboutTransportFailure = (): void => {
     if (hasWarnedAboutTransportFailure) {
@@ -35,25 +32,6 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
 
     hasWarnedAboutTransportFailure = true;
     console.warn(GEOMETRY_TRANSPORT_FAILURE_WARNING);
-  };
-
-  const warnAboutViewportListenerFailure = (error: unknown): void => {
-    if (hasWarnedAboutViewportListenerFailure) {
-      return;
-    }
-
-    hasWarnedAboutViewportListenerFailure = true;
-    console.warn(GEOMETRY_VIEWPORT_LISTENER_FAILURE_WARNING, error);
-  };
-
-  const notifyViewportUpdateListeners = (): void => {
-    for (const viewportUpdateListener of [...viewportUpdateListeners]) {
-      try {
-        viewportUpdateListener();
-      } catch (error) {
-        warnAboutViewportListenerFailure(error);
-      }
-    }
   };
 
   const flushPendingObservations = (): void => {
@@ -127,12 +105,7 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
   };
 
   const applyGeometryBatch = (batch: GeometryUpdateBatch): void => {
-    let hasViewportChanged = false;
-
     if (isDefined(batch.viewport)) {
-      hasViewportChanged =
-        !isDefined(viewportSnapshot) ||
-        !arePrimitiveRecordsEqual(viewportSnapshot, batch.viewport);
       viewportSnapshot = batch.viewport;
     }
 
@@ -163,8 +136,8 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
       }
     }
 
-    if (hasViewportChanged) {
-      notifyViewportUpdateListeners();
+    for (const geometryUpdateListener of [...geometryUpdateListeners]) {
+      geometryUpdateListener();
     }
   };
 
@@ -178,11 +151,11 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
     },
     applyGeometryBatch,
     getViewportSnapshot: () => viewportSnapshot,
-    subscribeToViewportUpdates: (listener: () => void) => {
-      viewportUpdateListeners.add(listener);
+    subscribeToGeometryUpdates: (listener: () => void) => {
+      geometryUpdateListeners.add(listener);
 
       return () => {
-        viewportUpdateListeners.delete(listener);
+        geometryUpdateListeners.delete(listener);
       };
     },
     resolveElementSnapshot,

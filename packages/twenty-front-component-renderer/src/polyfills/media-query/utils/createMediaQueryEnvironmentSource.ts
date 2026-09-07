@@ -1,8 +1,8 @@
+import { fastDeepEqual } from 'twenty-shared/utils';
+
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
 import { type MediaQueryEnvironment } from '@/polyfills/media-query/types/MediaQueryEnvironment';
-import { type MediaQueryEnvironmentListener } from '@/polyfills/media-query/types/MediaQueryEnvironmentListener';
 import { type MediaQueryEnvironmentSource } from '@/polyfills/media-query/types/MediaQueryEnvironmentSource';
-import { arePrimitiveRecordsEqual } from '@/utils/arePrimitiveRecordsEqual';
 
 type CreateMediaQueryEnvironmentSourceInput = {
   geometryStore: WorkerGeometryStore;
@@ -15,9 +15,9 @@ export const createMediaQueryEnvironmentSource = ({
   getColorScheme,
   subscribeToColorSchemeUpdates,
 }: CreateMediaQueryEnvironmentSourceInput): MediaQueryEnvironmentSource => {
-  const environmentUpdateListeners = new Set<MediaQueryEnvironmentListener>();
+  const environmentUpdateListeners = new Set<() => void>();
 
-  const readEnvironment = (): MediaQueryEnvironment => {
+  const readUpstreamEnvironment = (): MediaQueryEnvironment => {
     const viewportSnapshot = geometryStore.getViewportSnapshot();
 
     return {
@@ -28,30 +28,28 @@ export const createMediaQueryEnvironmentSource = ({
     };
   };
 
-  let lastEnvironment = readEnvironment();
+  let environment = readUpstreamEnvironment();
 
   const handleUpstreamUpdate = () => {
-    const nextEnvironment = readEnvironment();
+    const nextEnvironment = readUpstreamEnvironment();
 
-    if (arePrimitiveRecordsEqual(nextEnvironment, lastEnvironment)) {
+    if (fastDeepEqual(nextEnvironment, environment)) {
       return;
     }
 
-    lastEnvironment = nextEnvironment;
+    environment = nextEnvironment;
 
     for (const environmentUpdateListener of [...environmentUpdateListeners]) {
-      environmentUpdateListener(nextEnvironment);
+      environmentUpdateListener();
     }
   };
 
-  geometryStore.subscribeToViewportUpdates(handleUpstreamUpdate);
+  geometryStore.subscribeToGeometryUpdates(handleUpstreamUpdate);
   subscribeToColorSchemeUpdates(handleUpstreamUpdate);
 
   return {
-    readEnvironment,
-    subscribeToEnvironmentUpdates: (
-      listener: MediaQueryEnvironmentListener,
-    ) => {
+    readEnvironment: () => environment,
+    subscribeToEnvironmentUpdates: (listener) => {
       environmentUpdateListeners.add(listener);
 
       return () => {
