@@ -2,7 +2,7 @@ import { QUEUE_JOB_STATUS_POLL_INTERVAL_MS } from '@/queue-job/constants/QueueJo
 import { useListenToQueueJob } from '@/queue-job/hooks/useListenToQueueJob';
 import { type TrackedJobStatus } from '@/queue-job/types/TrackedJobStatus';
 import { isTerminalJobState } from '@/queue-job/utils/isTerminalJobState';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseTrackedQueueJobArgs = {
@@ -22,6 +22,9 @@ export const useTrackedQueueJob = ({
 }: UseTrackedQueueJobArgs) => {
   const [triggeredJobId, setTriggeredJobId] = useState<string>();
   const [settledJobId, setSettledJobId] = useState<string>();
+  // A browser event and a poll response can settle the same job in one tick,
+  // before the settled state has re-rendered
+  const settledJobIdRef = useRef<string | undefined>(undefined);
 
   const trackedJobId = triggeredJobId ?? runningJobId;
   const activeJobId =
@@ -31,10 +34,14 @@ export const useTrackedQueueJob = ({
 
   const handleQueueJobEvent = useCallback(
     (jobStatus: TrackedJobStatus) => {
-      if (!isTerminalJobState(jobStatus.state)) {
+      if (
+        !isTerminalJobState(jobStatus.state) ||
+        settledJobIdRef.current === jobStatus.jobId
+      ) {
         return;
       }
 
+      settledJobIdRef.current = jobStatus.jobId;
       setSettledJobId(jobStatus.jobId);
       // A settled trigger must stop shadowing a job the server reports later
       setTriggeredJobId((currentTriggeredJobId) =>
@@ -83,6 +90,7 @@ export const useTrackedQueueJob = ({
   }, [activeJobId, fetchJobStatus, handleQueueJobEvent]);
 
   const trackJob = (jobId?: string) => {
+    settledJobIdRef.current = undefined;
     setSettledJobId(undefined);
     setTriggeredJobId(jobId);
   };

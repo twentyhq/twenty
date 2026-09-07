@@ -1,8 +1,5 @@
-import {
-  buildQueueJobIdWithSuffix,
-  getQueueJobIdPrefix,
-  isQueueJobIdAlreadyWaiting,
-} from 'src/engine/core-modules/message-queue/utils/get-queue-job-id-prefix.util';
+import { buildQueueJobIdWithSuffix } from 'src/engine/core-modules/message-queue/utils/build-queue-job-id-with-suffix.util';
+import { getQueueJobIdPrefix } from 'src/engine/core-modules/message-queue/utils/get-queue-job-id-prefix.util';
 
 const PREFIX = 'install-application.workspace-id.application-id';
 const SUFFIX = '5c98b035-5b09-4550-a4fb-b52056c494d1';
@@ -24,27 +21,5 @@ describe('getQueueJobIdPrefix', () => {
     expect(getQueueJobIdPrefix('workspace-id.custom-job-id')).toBe(
       'workspace-id.custom-job-id',
     );
-  });
-});
-
-describe('isQueueJobIdAlreadyWaiting', () => {
-  it('matches a waiting job on its exact id or on its prefix', () => {
-    const waitingJobIds = [`${PREFIX}-${SUFFIX}`, 'workspace-id.custom-job-id'];
-
-    expect(
-      isQueueJobIdAlreadyWaiting({ waitingJobIds, jobIdOrPrefix: PREFIX }),
-    ).toBe(true);
-    expect(
-      isQueueJobIdAlreadyWaiting({
-        waitingJobIds,
-        jobIdOrPrefix: 'workspace-id.custom-job-id',
-      }),
-    ).toBe(true);
-    expect(
-      isQueueJobIdAlreadyWaiting({
-        waitingJobIds,
-        jobIdOrPrefix: 'install-application.workspace-id.other-application',
-      }),
-    ).toBe(false);
   });
 });

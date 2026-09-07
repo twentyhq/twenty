@@ -21,6 +21,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { type JobStatusDTO } from 'src/engine/core-modules/message-queue/dtos/job-status.dto';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { type MessageQueueJobData } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
@@ -53,6 +54,7 @@ export class ApplicationLifecycleJobService {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly marketplaceQueryService: MarketplaceQueryService,
+    private readonly cacheLockService: CacheLockService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly workspaceQueueService: MessageQueueService,
   ) {}
@@ -114,6 +116,35 @@ export class ApplicationLifecycleJobService {
   }
 
   private async triggerLifecycleJob<TData extends MessageQueueJobData>({
+    operation,
+    jobName,
+    data,
+    universalIdentifier,
+    workspaceId,
+    userWorkspaceId,
+  }: LifecycleJobTarget & {
+    operation: ApplicationLifecycleOperation;
+    jobName: string;
+    data: TData;
+    userWorkspaceId: string;
+  }): Promise<{ jobId: string }> {
+    // The conflict check and the add are two queue round trips, so concurrent
+    // requests for one application are serialized behind a lock
+    return this.cacheLockService.withLock(
+      () =>
+        this.enqueueLifecycleJob({
+          operation,
+          jobName,
+          data,
+          universalIdentifier,
+          workspaceId,
+          userWorkspaceId,
+        }),
+      `application-lifecycle-job:${workspaceId}:${universalIdentifier}`,
+    );
+  }
+
+  private async enqueueLifecycleJob<TData extends MessageQueueJobData>({
     operation,
     jobName,
     data,

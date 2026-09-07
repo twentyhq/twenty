@@ -41,10 +41,8 @@ import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-que
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type QueueJobChangedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-changed-event.type';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
-import {
-  buildQueueJobIdWithSuffix,
-  isQueueJobIdAlreadyWaiting,
-} from 'src/engine/core-modules/message-queue/utils/get-queue-job-id-prefix.util';
+import { buildQueueJobIdWithSuffix } from 'src/engine/core-modules/message-queue/utils/build-queue-job-id-with-suffix.util';
+import { isQueueJobIdAlreadyWaiting } from 'src/engine/core-modules/message-queue/utils/is-queue-job-id-already-waiting.util';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { applyWorkspaceSentryContextFromJobData } from 'src/engine/core-modules/sentry/utils/apply-workspace-sentry-context-from-job-data.util';

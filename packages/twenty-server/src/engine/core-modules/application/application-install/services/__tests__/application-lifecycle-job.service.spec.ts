@@ -3,6 +3,7 @@ import { TriggerInstallApplicationJob } from 'src/engine/core-modules/applicatio
 import { TriggerUninstallApplicationJob } from 'src/engine/core-modules/application/application-install/jobs/trigger-uninstall-application.job';
 import type { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
 import type { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import type { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { JobStateEnum } from 'src/engine/core-modules/message-queue/enums/job-state.enum';
 import type { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 
@@ -33,9 +34,14 @@ describe('ApplicationLifecycleJobService', () => {
     getInFlightJobs: jest.fn(),
   } as unknown as MessageQueueService;
 
+  const cacheLockService = {
+    withLock: jest.fn((fn: () => Promise<unknown>) => fn()),
+  } as unknown as CacheLockService;
+
   const service = new ApplicationLifecycleJobService(
     applicationService,
     marketplaceQueryService,
+    cacheLockService,
     workspaceQueueService,
   );
 
@@ -62,6 +68,10 @@ describe('ApplicationLifecycleJobService', () => {
       });
 
       expect(result).toEqual({ jobId: INSTALL_JOB_ID });
+      expect(cacheLockService.withLock).toHaveBeenCalledWith(
+        expect.any(Function),
+        `application-lifecycle-job:${WORKSPACE_ID}:${UNIVERSAL_IDENTIFIER}`,
+      );
       expect(workspaceQueueService.add).toHaveBeenCalledWith(
         TriggerInstallApplicationJob.name,
         {
