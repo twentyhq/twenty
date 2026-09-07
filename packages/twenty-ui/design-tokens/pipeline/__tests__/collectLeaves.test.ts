@@ -48,4 +48,17 @@ describe('collectLeaves', () => {
       "is marked unit: 'number' but its values do not parse as numbers",
     );
   });
+
+  it.each(['', '   ', 'Infinity'])(
+    'throws when a leaf marked unit number holds "%s"',
+    (value) => {
+      expect(() =>
+        collectLeaves({
+          spacingMultiplicator: { light: value, dark: '4', unit: 'number' },
+        }),
+      ).toThrow(
+        "is marked unit: 'number' but its values do not parse as numbers",
+      );
+    },
+  );
 });

@@ -22,7 +22,13 @@ export const buildLeafTree = ({
       node[segment] = child;
       node = child;
     }
-    node[leaf.path[leaf.path.length - 1]] = leafValue(leaf);
+    const leafKey = leaf.path[leaf.path.length - 1];
+    if (node[leafKey] !== undefined) {
+      throw new Error(
+        `Token path collision at "${leaf.path.join('.')}": "${leafKey}" is already defined.`,
+      );
+    }
+    node[leafKey] = leafValue(leaf);
   }
   return tree;
 };

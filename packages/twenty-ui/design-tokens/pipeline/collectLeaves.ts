@@ -46,12 +46,15 @@ const assertUniqueVarNames = (leaves: CollectedTokenLeaf[]) => {
   }
 };
 
+const isFiniteNumericValue = (value: string) =>
+  value.trim() !== '' && Number.isFinite(Number(value));
+
 const assertNumericLeavesParse = (leaves: CollectedTokenLeaf[]) => {
   for (const leaf of leaves) {
     if (leaf.unit !== 'number') {
       continue;
     }
-    if (Number.isNaN(Number(leaf.light)) || Number.isNaN(Number(leaf.dark))) {
+    if (!isFiniteNumericValue(leaf.light) || !isFiniteNumericValue(leaf.dark)) {
       throw new Error(
         `Token "${leaf.path.join('.')}" is marked unit: 'number' but its values do not parse as numbers: light "${leaf.light}" / dark "${leaf.dark}".`,
       );

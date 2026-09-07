@@ -34,4 +34,16 @@ describe('buildLeafTree', () => {
       }),
     ).toThrow('Token path collision at "border.radius.md"');
   });
+
+  it('throws when a leaf would replace an existing subtree', () => {
+    expect(() =>
+      buildLeafTree({
+        leaves: [
+          leafAt(['border', 'radius', 'md']),
+          leafAt(['border', 'radius']),
+        ],
+        leafValue: (leaf) => leaf.light,
+      }),
+    ).toThrow('Token path collision at "border.radius"');
+  });
 });

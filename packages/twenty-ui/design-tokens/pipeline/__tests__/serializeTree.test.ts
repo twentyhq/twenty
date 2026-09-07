@@ -18,8 +18,14 @@ describe('serializeTree', () => {
 
   it('quotes keys that are not valid identifiers', () => {
     expect(serializeTree({ node: { '0.5': "'2px'" }, separator: ',' })).toBe(
-      "{\n  '0.5': '2px',\n}",
+      '{\n  "0.5": \'2px\',\n}',
     );
+  });
+
+  it('escapes a key that would otherwise break out of its quotes', () => {
+    expect(
+      serializeTree({ node: { 'we"ird\\': "'2px'" }, separator: ',' }),
+    ).toBe('{\n  "we\\"ird\\\\": \'2px\',\n}');
   });
 
   it('uses semicolons when serializing a type tree', () => {
