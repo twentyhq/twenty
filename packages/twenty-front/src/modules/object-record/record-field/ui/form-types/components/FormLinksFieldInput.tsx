@@ -1,19 +1,26 @@
-import { t } from '@lingui/core/macro';
-import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
+import { FormArrayFieldInput } from '@/object-record/record-field/ui/form-types/components/FormArrayFieldInput';
 import { FormNestedFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormNestedFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { type FieldLinksDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
-import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import {
+  type FieldArrayValue,
+  type FormFieldLinksValue,
+} from '@/object-record/record-field/ui/types/FieldMetadata';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
+import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { Field } from 'twenty-ui/input';
 
 type FormLinksFieldInputProps = {
   label?: string;
-  defaultValue?: FieldLinksValue;
-  onChange: (value: FieldLinksValue) => void;
+  defaultValue?: FormFieldLinksValue;
+  onChange: (value: FormFieldLinksValue) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
   placeholder?: string;
+  maxNumberOfValues?: number | null;
 };
 
 export const FormLinksFieldInput = ({
@@ -23,16 +30,41 @@ export const FormLinksFieldInput = ({
   readonly,
   VariablePicker,
   placeholder,
+  maxNumberOfValues,
 }: FormLinksFieldInputProps) => {
+  const allowsSecondaryLinks = maxNumberOfValues !== 1;
+  const secondaryLinks = defaultValue?.secondaryLinks;
+
+  const maxSecondaryLinkCount = isDefined(maxNumberOfValues)
+    ? maxNumberOfValues - 1
+    : undefined;
+
   const handleChange =
     (field: keyof FieldLinksDraftValue) => (updatedLinksPart: string) => {
       const updatedLinks = {
         primaryLinkLabel: defaultValue?.primaryLinkLabel ?? '',
         primaryLinkUrl: defaultValue?.primaryLinkUrl ?? '',
+        secondaryLinks: secondaryLinks ?? null,
         [field]: updatedLinksPart,
       };
       onChange(updatedLinks);
     };
+
+  const secondaryLinkUrls = isStandaloneVariableString(secondaryLinks)
+    ? secondaryLinks
+    : (secondaryLinks ?? []).map((link) => link.url ?? '');
+
+  const handleSecondaryLinksChange = (
+    updatedUrls: FieldArrayValue | string,
+  ) => {
+    onChange({
+      primaryLinkLabel: defaultValue?.primaryLinkLabel ?? '',
+      primaryLinkUrl: defaultValue?.primaryLinkUrl ?? '',
+      secondaryLinks: isStandaloneVariableString(updatedUrls)
+        ? updatedUrls
+        : updatedUrls.map((url) => ({ url, label: null })),
+    });
+  };
 
   return (
     <FormFieldInputContainer>
@@ -54,6 +86,16 @@ export const FormLinksFieldInput = ({
           readonly={readonly}
           VariablePicker={VariablePicker}
         />
+        {allowsSecondaryLinks && (
+          <FormArrayFieldInput
+            label={t`Secondary Links`}
+            defaultValue={secondaryLinkUrls}
+            onChange={handleSecondaryLinksChange}
+            readonly={readonly}
+            VariablePicker={VariablePicker}
+            maxItemCount={maxSecondaryLinkCount}
+          />
+        )}
       </FormNestedFieldInputContainer>
     </FormFieldInputContainer>
   );
