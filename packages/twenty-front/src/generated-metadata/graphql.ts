@@ -1423,7 +1423,7 @@ export type CreateRoleInput = {
 };
 
 export type CreateSharingRuleInput = {
-  accessLevel: RecordShareAccessLevel;
+  accessLevel: SharingRuleAccessLevel;
   description?: InputMaybe<Scalars['String']['input']>;
   granteePrincipalId?: InputMaybe<Scalars['UUID']['input']>;
   granteePrincipalType: RecordSharePrincipalType;
@@ -5881,7 +5881,7 @@ export type ShareWithInput = {
 
 export type SharingRule = {
   __typename?: 'SharingRule';
-  accessLevel: RecordShareAccessLevel;
+  accessLevel: SharingRuleAccessLevel;
   applicationId: Scalars['UUID']['output'];
   createdAt: Scalars['DateTime']['output'];
   description?: Maybe<Scalars['String']['output']>;
@@ -5897,6 +5897,11 @@ export type SharingRule = {
   universalIdentifier: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
+
+export enum SharingRuleAccessLevel {
+  READ = 'READ',
+  READ_WRITE = 'READ_WRITE'
+}
 
 export type SignUp = {
   __typename?: 'SignUp';
@@ -6421,7 +6426,7 @@ export type UpdateRolePayload = {
 };
 
 export type UpdateSharingRuleInput = {
-  accessLevel?: InputMaybe<RecordShareAccessLevel>;
+  accessLevel?: InputMaybe<SharingRuleAccessLevel>;
   description?: InputMaybe<Scalars['String']['input']>;
   granteePrincipalId?: InputMaybe<Scalars['UUID']['input']>;
   granteePrincipalType?: InputMaybe<RecordSharePrincipalType>;

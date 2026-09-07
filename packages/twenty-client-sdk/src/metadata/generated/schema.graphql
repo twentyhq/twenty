@@ -3562,12 +3562,17 @@ type SharingRule {
   granteePrincipalType: RecordSharePrincipalType!
   granteePrincipalId: UUID
   granteeRoleId: UUID
-  accessLevel: RecordShareAccessLevel!
+  accessLevel: SharingRuleAccessLevel!
   isActive: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
   rowLevelPermissionPredicates: [RowLevelPermissionPredicate!]
   rowLevelPermissionPredicateGroups: [RowLevelPermissionPredicateGroup!]
+}
+
+enum SharingRuleAccessLevel {
+  READ
+  READ_WRITE
 }
 
 type Query {
@@ -5203,7 +5208,7 @@ input CreateSharingRuleInput {
   granteePrincipalType: RecordSharePrincipalType!
   granteePrincipalId: UUID
   granteeRoleId: UUID
-  accessLevel: RecordShareAccessLevel!
+  accessLevel: SharingRuleAccessLevel!
   isActive: Boolean
 }
 
@@ -5214,7 +5219,7 @@ input UpdateSharingRuleInput {
   granteePrincipalType: RecordSharePrincipalType
   granteePrincipalId: UUID
   granteeRoleId: UUID
-  accessLevel: RecordShareAccessLevel
+  accessLevel: SharingRuleAccessLevel
   isActive: Boolean
 }
 

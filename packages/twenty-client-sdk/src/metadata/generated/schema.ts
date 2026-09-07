@@ -3110,7 +3110,7 @@ export interface SharingRule {
     granteePrincipalType: RecordSharePrincipalType
     granteePrincipalId?: Scalars['UUID']
     granteeRoleId?: Scalars['UUID']
-    accessLevel: RecordShareAccessLevel
+    accessLevel: SharingRuleAccessLevel
     isActive: Scalars['Boolean']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
@@ -3118,6 +3118,8 @@ export interface SharingRule {
     rowLevelPermissionPredicateGroups?: RowLevelPermissionPredicateGroup[]
     __typename: 'SharingRule'
 }
+
+export type SharingRuleAccessLevel = 'READ' | 'READ_WRITE'
 
 export interface Query {
     navigationMenuItems: NavigationMenuItem[]
@@ -7582,9 +7584,9 @@ export interface UpdateCalendarChannelInput {id: Scalars['UUID'],update: UpdateC
 
 export interface UpdateCalendarChannelInputUpdates {visibility?: (CalendarChannelVisibility | null),isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),contactAutoCreationPolicy?: (CalendarChannelContactAutoCreationPolicy | null),isSyncEnabled?: (Scalars['Boolean'] | null)}
 
-export interface CreateSharingRuleInput {objectMetadataId: Scalars['UUID'],name: Scalars['String'],description?: (Scalars['String'] | null),granteePrincipalType: RecordSharePrincipalType,granteePrincipalId?: (Scalars['UUID'] | null),granteeRoleId?: (Scalars['UUID'] | null),accessLevel: RecordShareAccessLevel,isActive?: (Scalars['Boolean'] | null)}
+export interface CreateSharingRuleInput {objectMetadataId: Scalars['UUID'],name: Scalars['String'],description?: (Scalars['String'] | null),granteePrincipalType: RecordSharePrincipalType,granteePrincipalId?: (Scalars['UUID'] | null),granteeRoleId?: (Scalars['UUID'] | null),accessLevel: SharingRuleAccessLevel,isActive?: (Scalars['Boolean'] | null)}
 
-export interface UpdateSharingRuleInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),description?: (Scalars['String'] | null),granteePrincipalType?: (RecordSharePrincipalType | null),granteePrincipalId?: (Scalars['UUID'] | null),granteeRoleId?: (Scalars['UUID'] | null),accessLevel?: (RecordShareAccessLevel | null),isActive?: (Scalars['Boolean'] | null)}
+export interface UpdateSharingRuleInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),description?: (Scalars['String'] | null),granteePrincipalType?: (RecordSharePrincipalType | null),granteePrincipalId?: (Scalars['UUID'] | null),granteeRoleId?: (Scalars['UUID'] | null),accessLevel?: (SharingRuleAccessLevel | null),isActive?: (Scalars['Boolean'] | null)}
 
 
 /** Grants access on the record to exactly one of a workspace member, a role or everyone */
@@ -10840,6 +10842,11 @@ export const enumRecordShareRowCause = {
    MANUAL: 'MANUAL' as const,
    RULE: 'RULE' as const,
    APPLICATION: 'APPLICATION' as const
+}
+
+export const enumSharingRuleAccessLevel = {
+   READ: 'READ' as const,
+   READ_WRITE: 'READ_WRITE' as const
 }
 
 export const enumEventLogTable = {

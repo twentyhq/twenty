@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -11,6 +12,7 @@ import { type FlatSharingRule } from 'src/engine/metadata-modules/flat-sharing-r
 import { fromCreateSharingRuleInputToFlatSharingRuleOrThrow } from 'src/engine/metadata-modules/flat-sharing-rule/utils/from-create-sharing-rule-input-to-flat-sharing-rule-or-throw.util';
 import { fromFlatSharingRuleToSharingRuleDto } from 'src/engine/metadata-modules/flat-sharing-rule/utils/from-flat-sharing-rule-to-sharing-rule-dto.util';
 import { fromUpdateSharingRuleInputToFlatSharingRuleOrThrow } from 'src/engine/metadata-modules/flat-sharing-rule/utils/from-update-sharing-rule-input-to-flat-sharing-rule-or-throw.util';
+import { validateSharingRuleGranteeWorkspaceMemberOrThrow } from 'src/engine/metadata-modules/flat-sharing-rule/utils/validate-sharing-rule-grantee-workspace-member-or-throw.util';
 import { type CreateSharingRuleInput } from 'src/engine/metadata-modules/sharing-rule/dtos/create-sharing-rule.input';
 import { type SharingRuleDTO } from 'src/engine/metadata-modules/sharing-rule/dtos/sharing-rule.dto';
 import { type UpdateSharingRuleInput } from 'src/engine/metadata-modules/sharing-rule/dtos/update-sharing-rule.input';
@@ -18,6 +20,7 @@ import {
   SharingRuleException,
   SharingRuleExceptionCode,
 } from 'src/engine/metadata-modules/sharing-rule/exceptions/sharing-rule.exception';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -27,6 +30,7 @@ export class SharingRuleService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly applicationService: ApplicationService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async findByObjectMetadataId({
@@ -81,6 +85,11 @@ export class SharingRuleService {
         flatRoleMaps,
       });
 
+    await this.validateGranteeWorkspaceMemberOrThrow({
+      workspaceId,
+      flatSharingRule: flatSharingRuleToCreate,
+    });
+
     await this.runSharingRuleMigrationOrThrow({
       workspaceId,
       applicationUniversalIdentifier:
@@ -126,6 +135,11 @@ export class SharingRuleService {
         flatRoleMaps,
       });
 
+    await this.validateGranteeWorkspaceMemberOrThrow({
+      workspaceId,
+      flatSharingRule: flatSharingRuleToUpdate,
+    });
+
     await this.runSharingRuleMigrationOrThrow({
       workspaceId,
       applicationUniversalIdentifier:
@@ -136,6 +150,32 @@ export class SharingRuleService {
     });
 
     return this.findByIdOrThrow({ id: input.id, workspaceId });
+  }
+
+  private async validateGranteeWorkspaceMemberOrThrow({
+    workspaceId,
+    flatSharingRule,
+  }: {
+    workspaceId: string;
+    flatSharingRule: FlatSharingRule;
+  }): Promise<void> {
+    if (
+      flatSharingRule.granteePrincipalType !==
+      RecordSharePrincipalType.WORKSPACE_MEMBER
+    ) {
+      return;
+    }
+
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    validateSharingRuleGranteeWorkspaceMemberOrThrow({
+      granteePrincipalType: flatSharingRule.granteePrincipalType,
+      granteePrincipalId: flatSharingRule.granteePrincipalId,
+      flatWorkspaceMemberMaps,
+    });
   }
 
   async delete({
