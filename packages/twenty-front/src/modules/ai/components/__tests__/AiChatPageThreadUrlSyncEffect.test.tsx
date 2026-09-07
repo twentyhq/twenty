@@ -16,9 +16,16 @@ const switchThreadWithDraftMock = jest.fn((toThreadId: string) => {
   jotaiStore.set(currentAiChatThreadState.atom, toThreadId);
 });
 const switchToNewChatMock = jest.fn();
+const refreshAgentChatThreadsMock = jest.fn();
 
 jest.mock('@/ai/hooks/useSwitchToNewAiChat', () => ({
   useSwitchToNewAiChat: () => ({ switchToNewChat: switchToNewChatMock }),
+}));
+
+jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
+  useRefreshAgentChatThreads: () => ({
+    refreshAgentChatThreads: refreshAgentChatThreadsMock,
+  }),
 }));
 
 jest.mock('@/ai/hooks/useSwitchAgentChatThreadWithDraft', () => ({
@@ -59,6 +66,7 @@ const renderEffectAt = (initialPath: string) =>
 describe('AiChatPageThreadUrlSyncEffect', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    refreshAgentChatThreadsMock.mockResolvedValue([]);
     resetJotaiStore();
     navigateToThread = undefined;
   });
@@ -71,12 +79,13 @@ describe('AiChatPageThreadUrlSyncEffect', () => {
     expect(switchThreadWithDraftMock).toHaveBeenCalledWith(THREAD_A);
   });
 
-  it('recovers a missing chat only after the thread list has loaded', () => {
+  it('recovers a missing chat only after refreshing the loaded thread list', async () => {
     renderEffectAt(`/chat/${THREAD_A}`);
 
     expect(switchToNewChatMock).not.toHaveBeenCalled();
+    expect(refreshAgentChatThreadsMock).not.toHaveBeenCalled();
 
-    act(() => {
+    await act(async () => {
       jotaiStore.set(metadataStoreState.atomFamily('agentChatThreads'), {
         current: [],
         draft: [],
@@ -84,7 +93,24 @@ describe('AiChatPageThreadUrlSyncEffect', () => {
       });
     });
 
+    expect(refreshAgentChatThreadsMock).toHaveBeenCalledTimes(1);
     expect(switchToNewChatMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps a valid chat URL found by refreshing a stale thread list', async () => {
+    refreshAgentChatThreadsMock.mockResolvedValue([{ id: THREAD_A }]);
+    jotaiStore.set(metadataStoreState.atomFamily('agentChatThreads'), {
+      current: [{ id: THREAD_B }],
+      draft: [],
+      status: 'up-to-date',
+    });
+
+    await act(async () => {
+      renderEffectAt(`/chat/${THREAD_A}`);
+    });
+
+    expect(refreshAgentChatThreadsMock).toHaveBeenCalledTimes(1);
+    expect(switchToNewChatMock).not.toHaveBeenCalled();
   });
 
   it('keeps an archived chat URL when the thread exists in metadata', () => {
@@ -97,6 +123,7 @@ describe('AiChatPageThreadUrlSyncEffect', () => {
     renderEffectAt(`/chat/${THREAD_A}`);
 
     expect(switchThreadWithDraftMock).toHaveBeenCalledWith(THREAD_A);
+    expect(refreshAgentChatThreadsMock).not.toHaveBeenCalled();
     expect(switchToNewChatMock).not.toHaveBeenCalled();
   });
 
