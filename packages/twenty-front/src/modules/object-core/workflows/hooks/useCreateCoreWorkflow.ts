@@ -4,6 +4,7 @@ import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useBuildRecordInputFromRLSPredicates } from '@/object-record/hooks/useBuildRecordInputFromRLSPredicates';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
@@ -23,6 +24,11 @@ export const useCreateCoreWorkflow = () => {
   const { createOneRecord } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Workflow,
   });
+
+  const { buildRecordInputFromRLSPredicates } =
+    useBuildRecordInputFromRLSPredicates({
+      objectMetadataItem,
+    });
 
   const [isCreatingCoreWorkflow, setIsCreatingCoreWorkflow] = useState(false);
 
@@ -45,7 +51,10 @@ export const useCreateCoreWorkflow = () => {
     const workflowId = v4();
 
     try {
-      await createOneRecord({ id: workflowId });
+      await createOneRecord({
+        id: workflowId,
+        ...buildRecordInputFromRLSPredicates(),
+      });
     } catch (error) {
       logError(error);
       enqueueErrorSnackBar({ message: t`Failed to create workflow` });
@@ -59,7 +68,13 @@ export const useCreateCoreWorkflow = () => {
       objectNameSingular: CoreObjectNameSingular.Workflow,
       objectRecordId: workflowId,
     });
-  }, [createOneRecord, navigate, enqueueErrorSnackBar, isCreatingCoreWorkflow]);
+  }, [
+    buildRecordInputFromRLSPredicates,
+    createOneRecord,
+    navigate,
+    enqueueErrorSnackBar,
+    isCreatingCoreWorkflow,
+  ]);
 
   return { createCoreWorkflow, canCreateCoreWorkflow, isCreatingCoreWorkflow };
 };

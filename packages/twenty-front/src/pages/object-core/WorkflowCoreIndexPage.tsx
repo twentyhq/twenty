@@ -104,7 +104,11 @@ export const WorkflowCoreIndexPage = () => {
 
   const hasError = isDefined(error);
 
-  const isEmpty = !loading && !hasError && displayedCoreWorkflows.length === 0;
+  const isEmpty =
+    !loading &&
+    !hasError &&
+    !hasNextPage &&
+    displayedCoreWorkflows.length === 0;
 
   useEffect(() => {
     if (inView && hasNextPage && !loading) {
