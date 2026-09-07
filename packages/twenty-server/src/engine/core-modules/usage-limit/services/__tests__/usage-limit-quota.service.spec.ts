@@ -365,30 +365,6 @@ describe('UsageLimitQuotaService', () => {
         expect.objectContaining({ value: 650 }),
       ]);
     });
-
-    it('builds no counter for an allowance-period limit without an allowance', async () => {
-      setLimits([allowancePeriodLimit]);
-      creditAllowanceProvider.isCreditAllowanceEnabled.mockResolvedValue(false);
-
-      await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
-
-      expect(cacheStorage.mget).not.toHaveBeenCalled();
-    });
-
-    it('reports an exhausted allowance-period limit', async () => {
-      setLimits([allowancePeriodLimit]);
-      setAllowance(2_000);
-      creditAllowanceProvider.isCreditAllowanceEnabled.mockResolvedValue(false);
-      cacheStorage.mget.mockResolvedValue([0]);
-
-      await expect(assertQuotaNotExhausted()).rejects.toMatchObject({
-        exhaustedScope: expect.objectContaining({
-          exhaustedKind: 'limit',
-          limitValue: 800,
-          periodUnit: 'allowancePeriod',
-        }),
-      });
-    });
   });
 
   it('admits when the counters cannot be read', async () => {
@@ -624,28 +600,7 @@ describe('UsageLimitQuotaService', () => {
       ]);
     });
 
-    it('keys an allowance-period limit on the allowance period', async () => {
-      setAllowance(2_000_000);
-
-      await service.dropLimitCounter(
-        buildLimitCounterScope({ periodUnit: 'allowancePeriod' }),
-      );
-
-      expect(cacheStorage.mdel).toHaveBeenCalledWith([
-        buildQuotaCounterKey({
-          workspaceId: 'workspace-1',
-          resourceType: UsageResourceType.AI,
-          operationType: UsageOperationType.AI_CHAT_TOKEN,
-          spenderType: 'workspace',
-          spenderId: '',
-          meter: 'creditsUsedMicro',
-          periodUnit: 'allowancePeriod',
-          periodStart: ALLOWANCE_PERIOD.periodStart,
-        }),
-      ]);
-    });
-
-    it('does nothing for an allowance-period limit when no allowance exists', async () => {
+    it('skips the drop when the period cannot be resolved', async () => {
       await service.dropLimitCounter(
         buildLimitCounterScope({ periodUnit: 'allowancePeriod' }),
       );

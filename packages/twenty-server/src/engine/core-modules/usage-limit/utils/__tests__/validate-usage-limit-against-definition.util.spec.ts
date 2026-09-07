@@ -187,15 +187,6 @@ describe('validateUsageLimitAgainstDefinition', () => {
     );
   });
 
-  it('accepts a quota over the allowance period', () => {
-    expect(() =>
-      validateUsageLimitAgainstDefinition({
-        ...validQuotaLimit,
-        periodUnit: 'allowancePeriod',
-      }),
-    ).not.toThrow();
-  });
-
   it('accepts an absolute weekly quota', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({

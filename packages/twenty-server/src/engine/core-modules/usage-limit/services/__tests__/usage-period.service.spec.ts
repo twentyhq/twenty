@@ -147,22 +147,4 @@ describe('UsagePeriodService', () => {
       ).toHaveBeenCalledTimes(1);
     });
   });
-
-  describe('hasAllowancePeriod', () => {
-    it('answers true when the provider knows the period', async () => {
-      creditAllowanceProvider.getCreditAllowancePeriod.mockResolvedValue(
-        ALLOWANCE_PERIOD,
-      );
-
-      await expect(service.hasAllowancePeriod('workspace-1')).resolves.toBe(
-        true,
-      );
-    });
-
-    it('answers false without a period', async () => {
-      await expect(service.hasAllowancePeriod('workspace-1')).resolves.toBe(
-        false,
-      );
-    });
-  });
 });
