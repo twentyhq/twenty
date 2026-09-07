@@ -1249,6 +1249,49 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(callRecording.recordingRequestStatus).toBe('REQUESTED');
       expect(callRecording.externalBotId).toBeTruthy();
     });
+
+    it('clears an On the meeting no longer earns', async () => {
+      const { calendarEventId, callRecordingId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
+
+      await client.mutation({
+        updateCalendarEvent: {
+          __args: { id: calendarEventId, data: { isCanceled: true } },
+          id: true,
+        },
+      });
+
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [calendarEventId],
+      });
+
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
+      expect(
+        (await fetchCallRecording(callRecordingId)).recordingRequestStatus,
+      ).toBe('CANCELED');
+    });
+
+    it('keeps the On of a meeting that was actually recorded', async () => {
+      const calendarEventId = await createCalendarEvent({
+        startsAt: hoursAgo(3),
+        endsAt: hoursAgo(2),
+      });
+
+      await createPendingCallRecording({
+        calendarEventId,
+        status: 'COMPLETED',
+      });
+
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [calendarEventId],
+      });
+
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
+    });
   });
 
   describe('workspace recording switch', () => {
@@ -1335,7 +1378,7 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(recall.bots.size).toBe(0);
     });
 
-    it('clears the Recording Bot preference of the meetings it cancels', async () => {
+    it('clears the Recording Bot preference of the meetings it paused', async () => {
       const { calendarEventId } =
         await scheduleRecordingThroughCalendarReconciliation();
 
@@ -1343,19 +1386,12 @@ describe('call recorder app lifecycle (integration)', () => {
 
       turnRecordingOff();
       await syncCalendarBotSchedulingHandler();
-
-      expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
-    });
-
-    it('leaves an explicit Off alone when it clears the preference', async () => {
-      const calendarEventId = await createCalendarEvent({
-        callRecorderPreference: 'OFF',
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [calendarEventId],
       });
 
-      turnRecordingOff();
-      await syncCalendarBotSchedulingHandler();
-
-      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('OFF');
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
     });
 
     it('enqueues the upcoming-events sweep when turned back on', async () => {

@@ -8,9 +8,7 @@ import {
 } from 'src/constants/universal-identifiers';
 import { SYNC_CALENDAR_BOT_SCHEDULING_ROUTE_PATH } from 'src/constants/sync-calendar-bot-scheduling-route-path';
 import { cancelOpenScheduledCallRecordingRequests } from 'src/logic-functions/data/cancel-open-scheduled-call-recording-requests.util';
-import { clearCalendarEventsRecordingOn } from 'src/logic-functions/data/clear-calendar-events-recording-on.util';
 import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
-import { fetchUpcomingCalendarEventIds } from 'src/logic-functions/data/fetch-upcoming-calendar-event-ids.util';
 import { findOpenScheduledCallRecordings } from 'src/logic-functions/data/find-open-scheduled-call-recordings.util';
 import { isCalendarBotSchedulingEnabled } from 'src/logic-functions/utils/is-calendar-bot-scheduling-enabled.util';
 
@@ -43,42 +41,27 @@ export const syncCalendarBotSchedulingHandler =
         () => true,
       );
 
-    await clearUpcomingCalendarEventsRecordingOn(client);
-
     await enqueueLogicFunctionJobs({
       logicFunctionUniversalIdentifier:
         CANCEL_SCHEDULED_RECALL_BOTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
       payloads: [{}],
     });
 
+    await enqueueLogicFunctionJobs({
+      logicFunctionUniversalIdentifier:
+        SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+      payloads: [{}],
+    });
+
     return { outcome: 'scheduled-bots-canceled', canceledCallRecordingCount };
   };
-
-const clearUpcomingCalendarEventsRecordingOn = async (
-  client: CoreApiClient,
-): Promise<void> => {
-  try {
-    const upcomingCalendarEventIds = await fetchUpcomingCalendarEventIds(
-      client,
-      new Date(),
-    );
-
-    await clearCalendarEventsRecordingOn(client, upcomingCalendarEventIds);
-  } catch (error) {
-    console.warn(
-      `[call-recorder] failed to clear the Recording Bot preference of upcoming calendar events: ${
-        error instanceof Error ? error.message : String(error)
-      }`,
-    );
-  }
-};
 
 export default defineLogicFunction({
   universalIdentifier:
     SYNC_CALENDAR_BOT_SCHEDULING_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'sync-calendar-bot-scheduling',
   description:
-    'Applies the calendar bot scheduling setting: cancels every open recording request and enqueues Recall bot cleanup when it is off, or sweeps upcoming meetings when it is back on.',
+    'Applies the calendar bot scheduling setting: cancels every open recording request and enqueues Recall bot cleanup when it is off, then sweeps upcoming meetings either way.',
   timeoutSeconds: 900,
   handler: syncCalendarBotSchedulingHandler,
   httpRouteTriggerSettings: {
