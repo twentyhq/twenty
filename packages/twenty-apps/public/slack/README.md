@@ -9,7 +9,7 @@
 
 ## 💳 Billing
 
-The app's logic function executions are free: no per-seat, per-message or per-event charge. Assistant answers use AI credits on the model's token usage.
+**Free to run**: no per-seat, per-message or per-event charge. Assistant answers use AI credits on the model's token usage.
 
 ## 📌 Getting started
 
