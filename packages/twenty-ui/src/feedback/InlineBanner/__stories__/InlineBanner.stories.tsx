@@ -108,7 +108,7 @@ export const TruncatedMessage: Story = {
       await within(canvasElement.ownerDocument.body).findByRole('tooltip'),
     ).toHaveTextContent(args.message);
     await userEvent.unhover(message);
-    await userEvent.click(canvas.getByRole('button', { name: 'Reconnect' }));
+    await userEvent.click(canvas.getByRole('button', { name: /Reconnect/ }));
     await expect(args.button?.onClick).toHaveBeenCalledTimes(1);
   },
 };
