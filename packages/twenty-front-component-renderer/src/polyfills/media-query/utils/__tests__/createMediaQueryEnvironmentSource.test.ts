@@ -8,16 +8,16 @@ const setupEnvironmentSource = () => {
   let viewportSnapshot: ViewportGeometrySnapshot | null = null;
   let colorScheme: 'light' | 'dark' = 'light';
 
-  const viewportUpdateListeners = new Set<() => void>();
+  const geometryUpdateListeners = new Set<() => void>();
   const colorSchemeSourceListeners = new Set<() => void>();
 
   const geometryStore = createWorkerGeometryStoreStub({
     getViewportSnapshot: jest.fn(() => viewportSnapshot),
-    subscribeToViewportUpdates: jest.fn((listener: () => void) => {
-      viewportUpdateListeners.add(listener);
+    subscribeToGeometryUpdates: jest.fn((listener: () => void) => {
+      geometryUpdateListeners.add(listener);
 
       return () => {
-        viewportUpdateListeners.delete(listener);
+        geometryUpdateListeners.delete(listener);
       };
     }),
   });
@@ -42,8 +42,8 @@ const setupEnvironmentSource = () => {
       ...overrides,
     });
 
-    for (const viewportUpdateListener of viewportUpdateListeners) {
-      viewportUpdateListener();
+    for (const geometryUpdateListener of geometryUpdateListeners) {
+      geometryUpdateListener();
     }
   };
 
@@ -94,31 +94,21 @@ describe('createMediaQueryEnvironmentSource', () => {
     );
   });
 
-  it('should pass the updated environment to its listeners', () => {
+  it('should notify on a component size change with the environment already updated', () => {
     const { environmentSource, pushViewportSnapshot } =
       setupEnvironmentSource();
-    const environmentUpdateListener = jest.fn();
-
-    environmentSource.subscribeToEnvironmentUpdates(environmentUpdateListener);
-
-    pushViewportSnapshot({ rootContainerClientWidth: 1024 });
-
-    expect(environmentUpdateListener).toHaveBeenCalledWith(
-      createMediaQueryEnvironmentFixture({ componentWidth: 1024 }),
+    const environmentUpdateListener = jest.fn(() =>
+      environmentSource.readEnvironment(),
     );
-  });
-
-  it('should notify on a component size change', () => {
-    const { environmentSource, pushViewportSnapshot } =
-      setupEnvironmentSource();
-    const environmentUpdateListener = jest.fn();
 
     environmentSource.subscribeToEnvironmentUpdates(environmentUpdateListener);
 
     pushViewportSnapshot({ rootContainerClientWidth: 1024 });
 
     expect(environmentUpdateListener).toHaveBeenCalledTimes(1);
-    expect(environmentSource.readEnvironment().componentWidth).toBe(1024);
+    expect(environmentUpdateListener).toHaveReturnedWith(
+      createMediaQueryEnvironmentFixture({ componentWidth: 1024 }),
+    );
   });
 
   it('should not notify on scroll-only viewport updates', () => {
