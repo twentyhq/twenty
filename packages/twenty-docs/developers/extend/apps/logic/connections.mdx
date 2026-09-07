@@ -227,7 +227,7 @@ Each connection has:
 | `name`              | The connection's display name (auto-derived at OAuth callback, user-renameable)                                                                                                                                            |
 | `handle`            | The connected upstream account's email, refreshed on each reconnect; resolved from the OIDC `id_token` returned at token exchange, falling back to the connecting Twenty user's email when the provider doesn't return one |
 | `authFailedAt`      | Set when the most recent refresh failed, or when the app reported the credential dead via `reportConnectionAuthFailure`; the user must reconnect                                                                           |
-| `authFailedReason`  | Human-readable explanation for `authFailedAt`, when the reporter gave one; shown on the connection detail page in settings                                                                                                  |
+| `authFailedReason`  | Human-readable explanation for `authFailedAt`, when the reporter gave one; shown on the connection detail page in settings                                                                                                 |
 
 Key points:
 
@@ -254,6 +254,8 @@ await reportConnectionAuthFailure({
 This sets `authFailedAt` and the optional reason on the connection. The settings row flips to **Reconnect needed** with a Reconnect button, the connection detail page shows the reason, and `getConnection` starts throwing `AppConnectionAuthFailedError` for that row. The flag and reason clear automatically when the user reconnects. A `reason` longer than 1000 characters is rejected, so truncate provider payloads before passing them.
 
 Only report failures that a reconnect would actually fix (an `invalid_auth`-class rejection from the provider), never transient network errors. An app can only report its own connections, and a request user can only report their own user-visibility credentials.
+
+The mutation behind this helper ships with Twenty 2.40.0, so calling it against an older server fails. If your app uses it, declare the dependency in your `package.json`: `"engines": { "twenty": ">=2.40.0" }`.
 
 </Accordion>
 
