@@ -1,3 +1,5 @@
+import { getDataSourceToken } from '@nestjs/typeorm';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { EMAIL_DOCUMENT_SCHEMA_VERSION } from 'twenty-shared/utils';
 
 import {
@@ -8,7 +10,18 @@ import { CAMPAIGN_DELIVERY_STATE } from 'src/engine/core-modules/emailing-domain
 import { type SendSlotRefusal } from 'src/engine/core-modules/emailing-domain/types/send-slot-refusal.type';
 import { CAMPAIGN_FAILURE_REASON } from 'src/engine/core-modules/emailing-domain/constants/campaign-failure-reason.constant';
 import { CLAIMABLE_CAMPAIGN_DELIVERY_STATES } from 'src/engine/core-modules/emailing-domain/constants/claimable-campaign-delivery-states.constant';
+import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
+import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { CampaignSendSlotService } from 'src/modules/emailing/services/campaign-send-slot.service';
+import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
+import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
+import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { MessageCampaignBatchDeliveryService } from 'src/modules/emailing/services/message-campaign-batch-delivery.service';
+import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
+import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 
@@ -126,21 +139,43 @@ const buildHarness = () => {
     query: jest.fn(async () => claimedIds.map((id) => ({ id }))),
   };
 
-  const service = new MessageCampaignBatchDeliveryService(
-    campaignDeliveryRepository as never,
-    dataSource as never,
-    messageQueueService as never,
-    workspaceOrmManager as never,
-    emailingDomainSenderService as never,
-    emailBillingService as never,
-    campaignVariableService as never,
-    messageCampaignLifecycleService as never,
-    messageCampaignStatisticsService as never,
-    campaignSendSlotService as never,
-  );
+  const buildService = async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        MessageCampaignBatchDeliveryService,
+        {
+          provide: getWorkspaceScopedRepositoryToken(CampaignDeliveryEntity),
+          useValue: campaignDeliveryRepository,
+        },
+        { provide: getDataSourceToken(), useValue: dataSource },
+        {
+          provide: getQueueToken(MessageQueue.campaignSendQueue),
+          useValue: messageQueueService,
+        },
+        { provide: WorkspaceOrmManager, useValue: workspaceOrmManager },
+        {
+          provide: EmailingDomainSenderService,
+          useValue: emailingDomainSenderService,
+        },
+        { provide: EmailBillingService, useValue: emailBillingService },
+        { provide: CampaignVariableService, useValue: campaignVariableService },
+        {
+          provide: MessageCampaignLifecycleService,
+          useValue: messageCampaignLifecycleService,
+        },
+        {
+          provide: MessageCampaignStatisticsService,
+          useValue: messageCampaignStatisticsService,
+        },
+        { provide: CampaignSendSlotService, useValue: campaignSendSlotService },
+      ],
+    }).compile();
+
+    return module.get(MessageCampaignBatchDeliveryService);
+  };
 
   return {
-    service,
+    buildService,
     claimedIds,
     campaignDeliveryRepository,
     dataSource,
@@ -173,7 +208,7 @@ describe('MessageCampaignBatchDeliveryService', () => {
     );
 
     await expect(
-      harness.service.processSendBatchJob(buildJobData(2)),
+      (await harness.buildService()).processSendBatchJob(buildJobData(2)),
     ).resolves.toBeUndefined();
 
     expect(
@@ -192,7 +227,7 @@ describe('MessageCampaignBatchDeliveryService', () => {
       ),
     );
 
-    await harness.service.processSendBatchJob(buildJobData(1));
+    await (await harness.buildService()).processSendBatchJob(buildJobData(1));
 
     const settleCall =
       harness.campaignDeliveryRepository.update.mock.calls.find(
@@ -219,7 +254,7 @@ describe('MessageCampaignBatchDeliveryService', () => {
     );
 
     await expect(
-      harness.service.processSendBatchJob(buildJobData(1)),
+      (await harness.buildService()).processSendBatchJob(buildJobData(1)),
     ).rejects.toThrow('Upstream hiccup');
   });
 
@@ -236,7 +271,7 @@ describe('MessageCampaignBatchDeliveryService', () => {
     harness.dataSource.query.mockRejectedValue(new Error('settle exploded'));
 
     await expect(
-      harness.service.processSendBatchJob(buildJobData(1)),
+      (await harness.buildService()).processSendBatchJob(buildJobData(1)),
     ).rejects.toThrow('settle exploded');
 
     const rescueCall =
@@ -264,7 +299,7 @@ describe('MessageCampaignBatchDeliveryService', () => {
       suppressedRecipientIndexes: [],
     });
 
-    await harness.service.processSendBatchJob(buildJobData(1));
+    await (await harness.buildService()).processSendBatchJob(buildJobData(1));
 
     expect(harness.messageRepository.update).toHaveBeenCalledWith(
       'message-0',
@@ -293,7 +328,7 @@ describe('MessageCampaignBatchDeliveryService', () => {
     harness.dataSource.query.mockRejectedValue(new Error('settle exploded'));
 
     await expect(
-      harness.service.processSendBatchJob(buildJobData(2)),
+      (await harness.buildService()).processSendBatchJob(buildJobData(2)),
     ).rejects.toThrow('settle exploded');
 
     const rescueCalls =
@@ -330,7 +365,7 @@ describe('MessageCampaignBatchDeliveryService', () => {
     harness.dataSource.query.mockRejectedValue(new Error('settle exploded'));
 
     await expect(
-      harness.service.processSendBatchJob(buildJobData(2)),
+      (await harness.buildService()).processSendBatchJob(buildJobData(2)),
     ).rejects.toThrow('settle exploded');
 
     const rescueCalls =
@@ -356,7 +391,7 @@ describe('MessageCampaignBatchDeliveryService', () => {
       limitValue: 1,
     });
 
-    await harness.service.processSendBatchJob(buildJobData(3));
+    await (await harness.buildService()).processSendBatchJob(buildJobData(3));
 
     expect(harness.messageQueueService.bulkAdd).toHaveBeenCalledTimes(1);
 
@@ -378,7 +413,7 @@ describe('MessageCampaignBatchDeliveryService', () => {
       limitValue: 50,
     });
 
-    await harness.service.processSendBatchJob(buildJobData(2));
+    await (await harness.buildService()).processSendBatchJob(buildJobData(2));
 
     expect(harness.messageQueueService.bulkAdd.mock.calls[0][1]).toHaveLength(
       1,
