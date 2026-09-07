@@ -38,7 +38,7 @@ export const UsageLimit: Story = {
 
 export const UsageLimitLoading: Story = {
   args: {
-    ...UsageLimit.args,
+    message: 'You’ve reached your AI usage limit.',
     button: { title: 'Upgrade', onClick: () => {}, disabled: true },
   },
 };
@@ -61,6 +61,13 @@ export const ApiKeyNotConfigured: Story = {
 };
 
 export const NarrowComposer: Story = {
-  args: ApiKeyNotConfigured.args,
+  args: {
+    message: 'Add an API key to enable AI.',
+    button: {
+      title: 'View Docs',
+      Icon: IconExternalLink,
+      onClick: () => {},
+    },
+  },
   parameters: { container: { width: 320 } },
 };

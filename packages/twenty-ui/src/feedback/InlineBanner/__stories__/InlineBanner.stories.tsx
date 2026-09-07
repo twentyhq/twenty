@@ -68,10 +68,19 @@ export const DocumentationAction: Story = {
 };
 
 export const Narrow: Story = {
-  args: Default.args,
+  args: {
+    color: 'danger',
+    message: 'No AI models are enabled.',
+    button: { title: 'Configure models', onClick: fn() },
+  },
   parameters: { container: { width: 320 } },
 };
 
 export const Embedded: Story = {
-  args: { ...Default.args, color: 'danger', embedded: true },
+  args: {
+    color: 'danger',
+    message: 'No AI models are enabled.',
+    button: { title: 'Configure models', onClick: fn() },
+    embedded: true,
+  },
 };
