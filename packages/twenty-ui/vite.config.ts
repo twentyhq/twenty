@@ -12,6 +12,8 @@ type Checkers = Parameters<typeof checker>[0];
 import { THEME_CSS_FILE_NAME_BY_SCHEME } from './design-tokens/themeCssFileNameByScheme';
 import packageJson from './package.json';
 
+const isVitest = Boolean(process.env.VITEST);
+
 const entries = Object.keys(packageJson.exports)
   .filter((el) => !el.endsWith('.css'))
   .map((module) => `src/${module}/index.ts`);
@@ -110,9 +112,10 @@ export default defineConfig(({ command }) => {
       // sass-embedded). CI/build relies on the ambient src/scss-modules.d.ts.
       sassDts({ esmExport: true, legacyFileFormat: true }),
       dts(dtsConfig),
-      checker(checkersConfig),
+      ...(isVitest ? [] : [checker(checkersConfig)]),
       {
         name: 'copy-theme-css',
+        apply: 'build',
         closeBundle() {
           const distDir = path.resolve(__dirname, 'dist');
           fs.mkdirSync(distDir, { recursive: true });
