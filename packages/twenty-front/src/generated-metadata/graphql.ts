@@ -8833,6 +8833,13 @@ export type ApplicationConnectionProvidersQueryVariables = Exact<{
 
 export type ApplicationConnectionProvidersQuery = { __typename?: 'Query', applicationConnectionProviders: Array<{ __typename?: 'ApplicationConnectionProvider', id: string, applicationId: string, type: string, name: string, displayName: string, logoUrl?: string | null, oauth?: { __typename?: 'ApplicationConnectionProviderOAuthConfig', scopes: Array<string>, isClientCredentialsConfigured: boolean } | null }> };
 
+export type FindUninstallApplicationJobStatusQueryVariables = Exact<{
+  universalIdentifier: Scalars['String']['input'];
+}>;
+
+
+export type FindUninstallApplicationJobStatusQuery = { __typename?: 'Query', findUninstallApplicationJobStatus?: { __typename?: 'JobStatus', jobId: string, state: JobState, failedReason?: string | null } | null };
+
 export type BillingPriceLicensedFragmentFragment = { __typename?: 'BillingPriceLicensed', stripePriceId: string, unitAmount: number, recurringInterval: SubscriptionInterval, priceUsageType: BillingUsageType, creditAmount?: number | null };
 
 export type BillingPriceMeteredFragmentFragment = { __typename?: 'BillingPriceMetered', priceUsageType: BillingUsageType, recurringInterval: SubscriptionInterval, stripePriceId: string, tiers: Array<{ __typename?: 'BillingPriceTier', flatAmount?: number | null, unitAmount?: number | null, upTo?: number | null }> };
@@ -8840,13 +8847,6 @@ export type BillingPriceMeteredFragmentFragment = { __typename?: 'BillingPriceMe
 export type BillingSubscriptionSchedulePhaseFragmentFragment = { __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> };
 
 export type BillingSubscriptionSchedulePhaseItemFragmentFragment = { __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null };
-
-export type FindUninstallApplicationJobStatusQueryVariables = Exact<{
-  universalIdentifier: Scalars['String']['input'];
-}>;
-
-
-export type FindUninstallApplicationJobStatusQuery = { __typename?: 'Query', findUninstallApplicationJobStatus?: { __typename?: 'JobStatus', jobId: string, state: JobState, failedReason?: string | null } | null };
 
 export type CancelSwitchBillingIntervalMutationVariables = Exact<{ [key: string]: never; }>;
 
