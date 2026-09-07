@@ -49,10 +49,12 @@ describe('Field.Label', () => {
       .spyOn(console, 'error')
       .mockImplementation(() => undefined);
 
-    expect(() => render(<Field.Label>Label</Field.Label>)).toThrow(
-      'Base UI: FieldRootContext is missing',
-    );
-
-    consoleErrorSpy.mockRestore();
+    try {
+      expect(() => render(<Field.Label>Label</Field.Label>)).toThrow(
+        'Base UI: FieldRootContext is missing',
+      );
+    } finally {
+      consoleErrorSpy.mockRestore();
+    }
   });
 });
