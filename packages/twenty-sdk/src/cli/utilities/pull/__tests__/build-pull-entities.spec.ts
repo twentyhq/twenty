@@ -1,6 +1,22 @@
 import { buildPullEntities } from '@/cli/utilities/pull/build-pull-entities';
-import { type Manifest } from 'twenty-shared/application';
-import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
+import {
+  VIEW_ENUM_BINDINGS,
+  VIEW_FIELD_ENUM_BINDINGS,
+} from '@/cli/utilities/pull/write-define-file';
+import {
+  type Manifest,
+  type StandaloneViewFieldManifest,
+  type ViewManifest,
+} from 'twenty-shared/application';
+import {
+  STANDARD_OBJECT_FIELDS,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-shared/metadata';
+import {
+  AggregateOperations,
+  ViewSortDirection,
+  ViewType,
+} from 'twenty-shared/types';
 import { describe, expect, it } from 'vitest';
 
 const APP_UID = '11111111-1111-4111-8111-111111111111';
@@ -10,6 +26,10 @@ const COMPANY_FIELD_UID = '44444444-4444-4444-8444-444444444444';
 const INDEX_UID = '55555555-5555-4555-8555-555555555555';
 const JUNCTION_UID = '66666666-6666-4666-8666-666666666666';
 const JUNCTION_ID_FIELD_UID = '77777777-7777-4777-8777-777777777777';
+const VIEW_UID = '88888888-8888-4888-8888-888888888888';
+const VIEW_FIELD_UID = '99999999-9999-4999-8999-999999999999';
+const VIEW_SORT_UID = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+const INLINE_VIEW_FIELD_UID = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
 
 const buildManifest = (overrides: Partial<Manifest> = {}): Manifest =>
   ({
@@ -53,6 +73,43 @@ const buildManifest = (overrides: Partial<Manifest> = {}): Manifest =>
     indexes: [],
     ...overrides,
   }) as unknown as Manifest;
+
+const buildViewManifest = (
+  overrides: Partial<ViewManifest> = {},
+): ViewManifest => ({
+  universalIdentifier: VIEW_UID,
+  name: 'All pets',
+  objectUniversalIdentifier: PET_UID,
+  type: ViewType.TABLE,
+  kanbanAggregateOperation: AggregateOperations.COUNT,
+  fields: [
+    {
+      universalIdentifier: INLINE_VIEW_FIELD_UID,
+      fieldMetadataUniversalIdentifier: PET_NAME_FIELD_UID,
+      position: 0,
+      aggregateOperation: AggregateOperations.COUNT,
+    },
+  ],
+  sorts: [
+    {
+      universalIdentifier: VIEW_SORT_UID,
+      fieldMetadataUniversalIdentifier: PET_NAME_FIELD_UID,
+      direction: ViewSortDirection.ASC,
+    },
+  ],
+  ...overrides,
+});
+
+const buildViewFieldManifest = (
+  overrides: Partial<StandaloneViewFieldManifest> = {},
+): StandaloneViewFieldManifest => ({
+  universalIdentifier: VIEW_FIELD_UID,
+  viewUniversalIdentifier: VIEW_UID,
+  fieldMetadataUniversalIdentifier: PET_NAME_FIELD_UID,
+  position: 1,
+  aggregateOperation: AggregateOperations.COUNT,
+  ...overrides,
+});
 
 describe('buildPullEntities', () => {
   it('should strip the checksums the build recomputes from the application config', () => {
@@ -158,5 +215,188 @@ describe('buildPullEntities', () => {
     expect(
       skipped.find((entry) => entry.universalIdentifier === INDEX_UID)?.reason,
     ).toBe('its object is not part of the written source');
+  });
+
+  it('should write a view verbatim into src/views with the view enum bindings and its object as parent', () => {
+    const viewManifest = buildViewManifest();
+    const { entities, skipped } = buildPullEntities(
+      buildManifest({ views: [viewManifest] }),
+    );
+    const view = entities.find((entity) => entity.kind === 'view');
+
+    expect(skipped).toEqual([]);
+    expect(view?.universalIdentifier).toBe(VIEW_UID);
+    expect(view?.definer).toBe('defineView');
+    expect(view?.config).toEqual(viewManifest);
+    expect(view?.enumBindings).toEqual(VIEW_ENUM_BINDINGS);
+    expect(view?.parentName).toBe('pet');
+    expect(
+      `${view?.defaultFolder}/${view?.fileBaseName}${view?.fileSuffix}`,
+    ).toBe('src/views/all-pets.view.ts');
+  });
+
+  it('should give a view on a standard object that object as parent', () => {
+    const { entities } = buildPullEntities(
+      buildManifest({
+        views: [
+          buildViewManifest({
+            objectUniversalIdentifier:
+              STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
+          }),
+        ],
+      }),
+    );
+    const view = entities.find((entity) => entity.kind === 'view');
+
+    expect(view?.parentName).toBe('person');
+  });
+
+  it('should name a view whose name has no kebab-case form after its identifier prefix', () => {
+    const { entities } = buildPullEntities(
+      buildManifest({ views: [buildViewManifest({ name: '!!!' })] }),
+    );
+    const view = entities.find((entity) => entity.kind === 'view');
+
+    expect(view?.fileBaseName).toBe('88888888');
+  });
+
+  it('should cap the file name of a view with an overlong name', () => {
+    const { entities } = buildPullEntities(
+      buildManifest({
+        views: [
+          buildViewManifest({ name: `${'Ab'.repeat(39)} ${'c'.repeat(300)}` }),
+        ],
+      }),
+    );
+    const view = entities.find((entity) => entity.kind === 'view');
+
+    expect(view?.fileBaseName).toBe(`${'ab-'.repeat(26)}ab`);
+    expect(view?.fileBaseName).toHaveLength(80);
+  });
+
+  it('should prefix a view named after a Windows reserved device name with its identifier', () => {
+    const { entities } = buildPullEntities(
+      buildManifest({ views: [buildViewManifest({ name: 'Con' })] }),
+    );
+    const view = entities.find((entity) => entity.kind === 'view');
+
+    expect(view?.fileBaseName).toBe('88888888-con');
+  });
+
+  it('should write a standalone view field into src/view-fields named after the manifest object and field it points to', () => {
+    const viewFieldManifest = buildViewFieldManifest();
+    const { entities, skipped } = buildPullEntities(
+      buildManifest({
+        views: [buildViewManifest()],
+        viewFields: [viewFieldManifest],
+      }),
+    );
+    const viewField = entities.find((entity) => entity.kind === 'viewField');
+
+    expect(skipped).toEqual([]);
+    expect(viewField?.universalIdentifier).toBe(VIEW_FIELD_UID);
+    expect(viewField?.definer).toBe('defineViewField');
+    expect(viewField?.config).toEqual(viewFieldManifest);
+    expect(viewField?.enumBindings).toEqual(VIEW_FIELD_ENUM_BINDINGS);
+    expect(viewField?.parentName).toBeNull();
+    expect(
+      `${viewField?.defaultFolder}/${viewField?.fileBaseName}${viewField?.fileSuffix}`,
+    ).toBe('src/view-fields/pet-name.view-field.ts');
+  });
+
+  it('should name a standalone view field pointing at a manifest field on a standard object after that object', () => {
+    const { entities } = buildPullEntities(
+      buildManifest({
+        views: [buildViewManifest()],
+        viewFields: [
+          buildViewFieldManifest({
+            fieldMetadataUniversalIdentifier: COMPANY_FIELD_UID,
+          }),
+        ],
+      }),
+    );
+    const viewField = entities.find((entity) => entity.kind === 'viewField');
+
+    expect(viewField?.fileBaseName).toBe('company-cared-for-pets');
+  });
+
+  it('should name a standalone view field pointing at a standard field after the standard object and field', () => {
+    const { entities } = buildPullEntities(
+      buildManifest({
+        views: [buildViewManifest()],
+        viewFields: [
+          buildViewFieldManifest({
+            fieldMetadataUniversalIdentifier:
+              STANDARD_OBJECT_FIELDS.person.jobTitle.universalIdentifier,
+          }),
+        ],
+      }),
+    );
+    const viewField = entities.find((entity) => entity.kind === 'viewField');
+
+    expect(viewField?.fileBaseName).toBe('person-job-title');
+  });
+
+  it('should name a standalone view field pointing at an unknown field after its identifier prefix', () => {
+    const { entities } = buildPullEntities(
+      buildManifest({
+        views: [buildViewManifest()],
+        viewFields: [
+          buildViewFieldManifest({
+            fieldMetadataUniversalIdentifier: 'a-field-of-another-application',
+          }),
+        ],
+      }),
+    );
+    const viewField = entities.find((entity) => entity.kind === 'viewField');
+
+    expect(viewField?.fileBaseName).toBe('99999999');
+  });
+
+  it('should build a manifest that has no views and viewFields properties without producing view entities', () => {
+    const {
+      views: _views,
+      viewFields: _viewFields,
+      ...manifestWithoutViews
+    } = buildManifest({
+      views: [buildViewManifest()],
+      viewFields: [buildViewFieldManifest()],
+    });
+
+    const { entities, skipped } = buildPullEntities(
+      manifestWithoutViews as unknown as Manifest,
+    );
+
+    expect(skipped).toEqual([]);
+    expect(entities.map((entity) => entity.kind)).toEqual([
+      'application',
+      'object',
+      'field',
+    ]);
+  });
+
+  it('should never skip a view or a view field, even when their object or field is unknown', () => {
+    const { entities, skipped } = buildPullEntities(
+      buildManifest({
+        objects: [],
+        views: [
+          buildViewManifest({
+            objectUniversalIdentifier: 'an-object-of-another-application',
+          }),
+        ],
+        viewFields: [
+          buildViewFieldManifest({
+            fieldMetadataUniversalIdentifier: 'a-field-of-another-application',
+          }),
+        ],
+      }),
+    );
+    const view = entities.find((entity) => entity.kind === 'view');
+
+    expect(skipped).toEqual([]);
+    expect(entities.map((entity) => entity.kind)).toEqual(
+      expect.arrayContaining(['view', 'viewField']),
+    );
+    expect(view?.parentName).toBeNull();
   });
 });

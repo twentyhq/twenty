@@ -6,6 +6,7 @@ import {
 } from '@/cli/utilities/pull/build-pull-entities';
 import { type ScannedDefineFile } from '@/cli/utilities/pull/scan-project-define-files';
 import { writeDefineFile } from '@/cli/utilities/pull/write-define-file';
+import { kebabCase } from '@/cli/utilities/string/kebab-case';
 import { dirname, posix } from 'node:path';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
@@ -40,6 +41,8 @@ const ENTITY_KEY_BY_KIND: Record<PullEntityKind, ManifestEntityKey> = {
   object: ManifestEntityKey.Objects,
   field: ManifestEntityKey.Fields,
   index: ManifestEntityKey.Indexes,
+  view: ManifestEntityKey.Views,
+  viewField: ManifestEntityKey.ViewFields,
 };
 
 const toPosixPath = (value: string): string => value.split('\\').join('/');
@@ -94,7 +97,7 @@ const resolveFileBaseNames = (entities: PullEntity[]): Map<string, string> => {
 
     const qualifiedNames = collidingEntities.map((entity) =>
       isDefined(entity.parentName)
-        ? `${entity.parentName}-${entity.fileBaseName}`
+        ? `${kebabCase(entity.parentName)}-${entity.fileBaseName}`
         : entity.fileBaseName,
     );
     const hasUniqueQualifiedNames =
