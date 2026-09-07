@@ -116,13 +116,7 @@ const writeAndFormatOutputs = () => {
 // what was there rather than leaving the working tree edited.
 const committedContents = isCheckMode ? outputPaths.map(readIfPresent) : [];
 
-writeAndFormatOutputs();
-
-if (isCheckMode) {
-  const staleOutputPaths = outputPaths.filter(
-    (path, index) => readIfPresent(path) !== committedContents[index],
-  );
-
+const restoreCommittedOutputs = () => {
   for (const [index, path] of outputPaths.entries()) {
     const committedContent = committedContents[index];
     if (committedContent === undefined) {
@@ -131,15 +125,30 @@ if (isCheckMode) {
     }
     writeFileSync(path, committedContent, 'utf-8');
   }
+};
 
-  if (staleOutputPaths.length > 0) {
-    process.stderr.write(
-      `::error::Generated theme artifacts are stale: ${staleOutputPaths
-        .map((path) => relative(packageRoot, path))
-        .join(', ')}. Run: npx nx generateTokens twenty-ui\n`,
+let staleOutputPaths: string[] = [];
+
+if (isCheckMode) {
+  try {
+    writeAndFormatOutputs();
+    staleOutputPaths = outputPaths.filter(
+      (path, index) => readIfPresent(path) !== committedContents[index],
     );
-    process.exit(1);
+  } finally {
+    restoreCommittedOutputs();
   }
+} else {
+  writeAndFormatOutputs();
+}
+
+if (staleOutputPaths.length > 0) {
+  process.stderr.write(
+    `::error::Generated theme artifacts are stale: ${staleOutputPaths
+      .map((path) => relative(packageRoot, path))
+      .join(', ')}. Run: npx nx generateTokens twenty-ui\n`,
+  );
+  process.exit(1);
 }
 
 console.log(`Generated theme artifacts from ${leaves.length} design tokens.`);
