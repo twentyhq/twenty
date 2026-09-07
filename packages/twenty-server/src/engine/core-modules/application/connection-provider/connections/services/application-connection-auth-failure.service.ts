@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { IsNull, Repository } from 'typeorm';
@@ -6,6 +6,8 @@ import { IsNull, Repository } from 'typeorm';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
+import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { isConnectionHiddenFromRequestUser } from 'src/engine/core-modules/application/connection-provider/connections/utils/is-connection-hidden-from-request-user.util';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
@@ -17,11 +19,6 @@ type ReportAuthFailureArgs = {
   reason: string | null;
 };
 
-// Lets an app mark one of its own connections as auth-failed, for providers
-// whose tokens never go through the platform refresh flow (a revoked Slack
-// bot token, for example, only ever fails at call time inside the app).
-// The reconnect flow clears the flag the same way it does for refresh
-// failures.
 @Injectable()
 export class ApplicationConnectionAuthFailureService {
   constructor(
@@ -29,7 +26,7 @@ export class ApplicationConnectionAuthFailureService {
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
   ) {}
 
-  async reportAuthFailure({
+  async reportAuthFailureOrThrow({
     applicationId,
     workspaceId,
     requestUserWorkspaceId,
@@ -47,20 +44,20 @@ export class ApplicationConnectionAuthFailureService {
       where: scopedWhere,
     });
 
-    if (!isDefined(account)) {
-      throw new NotFoundException(`Connection ${id} not found`);
-    }
-
     if (
+      !isDefined(account) ||
       isConnectionHiddenFromRequestUser({ account, requestUserWorkspaceId })
     ) {
-      throw new NotFoundException(`Connection ${id} not found`);
+      throw new ConnectionProviderException(
+        `Connection ${id} not found`,
+        ConnectionProviderExceptionCode.CONNECTION_NOT_FOUND,
+      );
     }
 
-    // Guard against a reconnect racing this report: every reconnect bumps
-    // lastCredentialsRefreshedAt, so a report describing the pre-reconnect
-    // token matches zero rows instead of resurrecting a cleared failure.
-    const updateResult = await this.connectedAccountRepository.update(
+    // Every reconnect rewrites lastCredentialsRefreshedAt, so matching on the
+    // value we read drops a report that describes an already-replaced token
+    // instead of resurrecting a failure the reconnect just cleared.
+    await this.connectedAccountRepository.update(
       {
         ...scopedWhere,
         lastCredentialsRefreshedAt: isDefined(
@@ -71,17 +68,5 @@ export class ApplicationConnectionAuthFailureService {
       },
       { authFailedAt: new Date(), authFailedReason: reason },
     );
-
-    if (updateResult.affected === 0) {
-      const currentAccount = await this.connectedAccountRepository.findOne({
-        where: scopedWhere,
-      });
-
-      if (!isDefined(currentAccount)) {
-        throw new NotFoundException(`Connection ${id} not found`);
-      }
-      // A reconnect superseded the report while it was in flight; the
-      // failure described the old credential, so dropping it is correct.
-    }
   }
 }
