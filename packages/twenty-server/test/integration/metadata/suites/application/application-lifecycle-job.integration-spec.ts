@@ -155,9 +155,10 @@ describe('Application lifecycle jobs', () => {
     try {
       const jobId = await triggerUninstallApplicationJob();
 
+      // Jobs carry the queue priority, so a not-yet-started job is prioritized
       expect(await findUninstallApplicationJobStatus()).toMatchObject({
         jobId,
-        state: JobStateEnum.WAITING,
+        state: JobStateEnum.PRIORITIZED,
       });
 
       expect(await triggerUninstallApplicationJob()).toBe(jobId);

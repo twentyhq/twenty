@@ -447,8 +447,13 @@ export class BullMQDriver
     return job.id;
   }
 
+  // Every queue enqueues with a priority, which files a not-yet-started job
+  // under prioritized rather than waiting
   private async getWaitingJobIds(queueName: MessageQueue): Promise<string[]> {
-    const waitingJobs = await this.queueMap[queueName].getJobs(['waiting']);
+    const waitingJobs = await this.queueMap[queueName].getJobs([
+      'waiting',
+      'prioritized',
+    ]);
 
     return waitingJobs.map((job) => job.id).filter(isDefined);
   }

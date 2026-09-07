@@ -95,7 +95,7 @@ describe('BullMQDriver deduplication', () => {
       ]);
 
       expect(mockGetJobs).toHaveBeenCalledTimes(1);
-      expect(mockGetJobs).toHaveBeenCalledWith(['waiting']);
+      expect(mockGetJobs).toHaveBeenCalledWith(['waiting', 'prioritized']);
       expect(
         mockAddBulk.mock.calls[0][0].map(
           (job: { opts: { jobId?: string } }) => job.opts.jobId,
