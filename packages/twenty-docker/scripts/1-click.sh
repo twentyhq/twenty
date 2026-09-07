@@ -10,7 +10,6 @@ if [[ -z "$pull_version" ]]; then
   echo "Error: Unable to fetch the latest version tag. Please check your network connection or the Docker Hub API response."
   exit 1
 fi
-# Releases that predate the twenty/ tag namespace (v2.9.0 and older) are not supported
 pull_branch=${BRANCH:-twenty/$pull_version}
 
 install_url="https://raw.githubusercontent.com/twentyhq/twenty/$pull_branch/packages/twenty-docker/scripts/install.sh"
@@ -25,7 +24,6 @@ fi
 mv twenty_install.sh.tmp twenty_install.sh
 
 chmod +x twenty_install.sh
-# Pass the resolved values down so the tagged install.sh does not resolve them again
 VERSION="$pull_version" BRANCH="$pull_branch" ./twenty_install.sh
 install_status=$?
 

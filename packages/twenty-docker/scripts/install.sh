@@ -69,7 +69,6 @@ if [ -z "$version" ]; then
   echo -e "\t❌ Unable to resolve the latest release from Docker Hub. Check your network, or set VERSION explicitly."
   exit 1
 fi
-# Releases that predate the twenty/ tag namespace (v2.9.0 and older) are not supported.
 # Deriving the branch from the image tag keeps docker-compose.yml and the image in lockstep.
 branch=${BRANCH:-twenty/$version}
 
