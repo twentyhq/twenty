@@ -12,7 +12,9 @@ export type MessageCampaign = {
   status: MessageCampaignStatus;
   sentAt: string | null;
   sentCount: number;
+  deliveredCount: number;
   failedCount: number;
+  skippedCount: number;
   bouncedCount: number;
   complainedCount: number;
 };

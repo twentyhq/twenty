@@ -7,7 +7,6 @@ type SerializableApplication = Pick<
   | 'name'
   | 'description'
   | 'version'
-  | 'state'
   | 'applicationRegistrationId'
   | 'sdkClientCoreChecksum'
 >;
@@ -20,7 +19,6 @@ export const serializeApplicationForBroadcast = (
   name: application.name,
   description: application.description ?? null,
   version: application.version ?? null,
-  state: application.state,
   applicationRegistrationId: application.applicationRegistrationId ?? null,
   sdkClientCoreChecksum: application.sdkClientCoreChecksum ?? null,
 });

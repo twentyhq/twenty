@@ -1783,9 +1783,16 @@ msgstr "API 키를 통해 사용자를 가장할 수 없습니다."
 
 #. js-lingui-id: PpmWQv
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Cancel"
 msgstr "취소"
+
+#. js-lingui-id: CYhiCW
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Cancel Campaign"
+msgstr ""
 
 #. js-lingui-id: 7g3N+g
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3185,6 +3192,7 @@ msgstr "설명"
 
 #. js-lingui-id: m+O/bO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Description"
 msgstr "설명"
@@ -3299,15 +3307,29 @@ msgstr "마감일"
 #. js-lingui-id: pcd2n0
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Duplicate"
 msgstr "복제"
+
+#. js-lingui-id: uv/ryv
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Duplicate Campaign"
+msgstr ""
 
 #. js-lingui-id: zC/oFa
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Duplicate Dashboard"
 msgstr "대시보드 복제"
+
+#. js-lingui-id: Sr1mqj
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Duplicate List"
+msgstr ""
 
 #. js-lingui-id: UrzTjS
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -3802,6 +3824,11 @@ msgstr "레코드 삭제 실패."
 msgid "Failed to duplicate dashboard."
 msgstr "대시보드 복제에 실패했습니다."
 
+#. js-lingui-id: UiaZiQ
+#: src/modules/emailing/exceptions/message-list.exception.ts
+msgid "Failed to duplicate list."
+msgstr ""
+
 #. js-lingui-id: srkEOV
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "Failed to exchange the authorization code for an access token."
@@ -4212,6 +4239,11 @@ msgstr "SDK 클라이언트 아카이브에서 파일을 찾을 수 없습니다
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "File not found."
 msgstr "파일을 찾을 수 없음."
+
+#. js-lingui-id: eAFKw+
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
+msgid "File storage did not confirm the processed file. Please retry."
+msgstr ""
 
 #. js-lingui-id: MtzD8b
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
@@ -6010,6 +6042,11 @@ msgstr "막대 차트에는 레이아웃이 필수입니다"
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr "막대 차트 위젯 \"{widgetTitle}\"에는 레이아웃이 필수입니다"
 
+#. js-lingui-id: cI7XDa
+#: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
+msgid "Limits scoped below the workspace require the Organization plan."
+msgstr "워크스페이스 하위 범위의 제한에는 Organization 플랜이 필요합니다."
+
 #. js-lingui-id: sAG9OB
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
@@ -6099,6 +6136,17 @@ msgstr "목록 멤버 레코드 위치"
 msgctxt "objectMetadata.labelPlural"
 msgid "List Members"
 msgstr "목록 멤버"
+
+#. js-lingui-id: SGXb+l
+#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-person-views.util.ts
+msgctxt "view.name"
+msgid "List Members Table"
+msgstr ""
+
+#. js-lingui-id: 92F/Is
+#: src/modules/emailing/exceptions/message-list.exception.ts
+msgid "List not found."
+msgstr ""
 
 #. js-lingui-id: GRxWmN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
@@ -6285,6 +6333,12 @@ msgstr "회원"
 msgctxt "fieldMetadata.label"
 msgid "Members"
 msgstr "회원"
+
+#. js-lingui-id: DbgpIO
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgctxt "pageLayoutTab.title"
+msgid "Members"
+msgstr ""
 
 #. js-lingui-id: CBMkZg
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -8434,6 +8488,7 @@ msgstr "여기에서는 관계 필터가 지원되지 않습니다"
 #. js-lingui-id: L8AY9P
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 msgid "Relation filters can only traverse one relation deep"
 msgstr "관계 필터는 한 단계의 관계까지만 탐색할 수 있습니다"
 
@@ -10080,6 +10135,11 @@ msgstr "이 위젯에 구성된 필드를 찾을 수 없습니다."
 msgid "The field you are trying to set permissions for could not be found. It may have been deleted."
 msgstr "설정하려는 필드를 찾을 수 없습니다. 삭제되었을 수 있습니다."
 
+#. js-lingui-id: APJkak
+#: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
+msgid "The file changed while it was being processed."
+msgstr ""
+
 #. js-lingui-id: bAGU1r
 #: src/engine/core-modules/file/utils/extract-file-info-or-throw.utils.ts
 msgid "The file extension doesn't match the file content. Please check that your file is not corrupted and has the correct extension."
@@ -10518,6 +10578,7 @@ msgid "This campaign no longer exists."
 msgstr "이 캠페인은 더 이상 존재하지 않습니다."
 
 #. js-lingui-id: 5MvgEo
+#: src/modules/emailing/utils/compile-campaign-batch-template.util.ts
 #: src/modules/emailing/utils/compile-campaign-email-content.util.ts
 msgid "This campaign's email content is invalid."
 msgstr "이 캠페인의 이메일 콘텐츠가 유효하지 않습니다."
@@ -10633,6 +10694,11 @@ msgstr "이 파일 형식은 지원되지 않습니다."
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "This file has already been uploaded."
 msgstr "이 파일은 이미 업로드되었습니다."
+
+#. js-lingui-id: VGePIR
+#: src/engine/core-modules/file/file-upload/services/file-upload-target.service.ts
+msgid "This file path is too long to upload."
+msgstr ""
 
 #. js-lingui-id: 6ekAtL
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
@@ -10815,6 +10881,11 @@ msgstr "이 하위 도메인은 이미 사용 중입니다."
 msgid "This suppressed address no longer exists."
 msgstr "이 수신 거부된 주소는 더 이상 존재하지 않습니다."
 
+#. js-lingui-id: qm7uMm
+#: src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util.ts
+msgid "This SVG is too large to be processed."
+msgstr "이 SVG는 처리하기에 너무 큽니다."
+
 #. js-lingui-id: 0GMgIa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"
@@ -10829,6 +10900,11 @@ msgstr "이 유형의 레코드는 병합할 수 없습니다."
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This universal identifier is already claimed by another registration."
 msgstr "이 범용 식별자는 다른 등록에서 이미 사용 중임."
+
+#. js-lingui-id: xL5g9G
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
+msgid "This upload expired before it was confirmed. Please upload the file again."
+msgstr ""
 
 #. js-lingui-id: GEN5Cv
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
@@ -12091,6 +12167,12 @@ msgstr "수요일"
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
 msgid "Welcome to Twenty: Please Confirm Your Email"
 msgstr "Twenty에 오신 것을 환영합니다: 이메일을 확인해 주세요"
+
+#. js-lingui-id: 80/6BQ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "What this list is for"
+msgstr ""
 
 #. js-lingui-id: ofdfh5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts

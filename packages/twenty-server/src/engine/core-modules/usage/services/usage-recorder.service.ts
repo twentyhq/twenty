@@ -30,7 +30,7 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
   private readonly buffer = new UsageRollupBuffer(MAX_BUFFERED_ROLLUPS);
   private flushTimer: NodeJS.Timeout | null = null;
   private pendingFlush: Promise<void> = Promise.resolve();
-  private creditAllowanceProvider: CreditAllowanceProvider | null = null;
+  private creditAllowanceProvider: CreditAllowanceProvider;
 
   constructor(
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
@@ -175,7 +175,7 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
   ): Promise<Date | undefined> {
     const period =
-      await this.creditAllowanceProvider?.getCreditAllowancePeriod(workspaceId);
+      await this.creditAllowanceProvider.getCreditAllowancePeriod(workspaceId);
 
     return period?.periodStart;
   }

@@ -12,6 +12,7 @@ import {
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { isIntraWorkspaceScoped } from 'src/engine/core-modules/usage-limit/utils/is-intra-workspace-scoped.util';
@@ -41,6 +42,7 @@ export class UsageLimitService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly usageLimitEntitlementService: UsageLimitEntitlementService,
+    private readonly usagePeriodService: UsagePeriodService,
   ) {}
 
   async findAll(workspaceId: string): Promise<UsageLimitEntity[]> {
@@ -65,6 +67,16 @@ export class UsageLimitService {
       throw new UsageLimitException(
         'Intra-workspace usage limits require the Organization plan',
         UsageLimitExceptionCode.LIMIT_NOT_ENTITLED,
+      );
+    }
+
+    if (
+      input.periodUnit === 'allowancePeriod' &&
+      !(await this.usagePeriodService.hasAllowancePeriod(workspaceId))
+    ) {
+      throw new UsageLimitException(
+        'A limit over the allowance period needs a current billing period',
+        UsageLimitExceptionCode.LIMIT_INVALID,
       );
     }
 
