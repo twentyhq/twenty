@@ -1,14 +1,12 @@
-import { isHiddenWorkspaceWorkflowRunRelationField } from '@/object-core/workflows/utils/isHiddenWorkspaceWorkflowRunRelationField';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import {
   type FieldsWidgetGroup,
   type FieldsWidgetGroupField,
 } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
+import { HiddenPageLayoutFieldsContext } from '@/page-layout/contexts/HiddenPageLayoutFieldsContext';
 import { getHiddenFieldsFromGroups } from '@/page-layout/widgets/fields/utils/getHiddenFieldsFromGroups';
 import { useViewById } from '@/views/hooks/useViewById';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useMemo } from 'react';
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { useContext, useMemo } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 type UseFieldsWidgetHiddenFieldsParams = {
@@ -25,8 +23,8 @@ export const useFieldsWidgetHiddenFields = ({
     objectNameSingular,
   });
 
-  const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
+  const hiddenFieldMetadataIdsOrNames = useContext(
+    HiddenPageLayoutFieldsContext,
   );
 
   const hiddenFields = useMemo<FieldsWidgetGroupField[]>(() => {
@@ -37,11 +35,8 @@ export const useFieldsWidgetHiddenFields = ({
     const activeFields = objectMetadataItem.fields.filter(
       (field) =>
         field.isActive &&
-        !isHiddenWorkspaceWorkflowRunRelationField({
-          objectNameSingular,
-          fieldName: field.name,
-          isWorkflowCoreIndexPageEnabled,
-        }),
+        !hiddenFieldMetadataIdsOrNames.includes(field.id) &&
+        !hiddenFieldMetadataIdsOrNames.includes(field.name),
     );
 
     if (isDefined(view) && isNonEmptyArray(view.viewFieldGroups)) {
@@ -103,12 +98,7 @@ export const useFieldsWidgetHiddenFields = ({
     }
 
     return [];
-  }, [
-    objectMetadataItem,
-    view,
-    objectNameSingular,
-    isWorkflowCoreIndexPageEnabled,
-  ]);
+  }, [objectMetadataItem, view, hiddenFieldMetadataIdsOrNames]);
 
   return { hiddenFields };
 };

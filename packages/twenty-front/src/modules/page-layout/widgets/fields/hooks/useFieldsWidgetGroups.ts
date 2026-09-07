@@ -7,13 +7,11 @@ import {
   type FieldsWidgetGroup,
   type FieldsWidgetGroupField,
 } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
+import { HiddenPageLayoutFieldsContext } from '@/page-layout/contexts/HiddenPageLayoutFieldsContext';
 import { buildDefaultFieldsWidgetGroups } from '@/page-layout/widgets/fields/utils/buildDefaultFieldsWidgetGroups';
 import { filterDraftGroupsForDisplay } from '@/page-layout/widgets/fields/utils/filterDraftGroupsForDisplay';
-import { isHiddenWorkspaceWorkflowRunRelationField } from '@/object-core/workflows/utils/isHiddenWorkspaceWorkflowRunRelationField';
 import { useViewById } from '@/views/hooks/useViewById';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useMemo } from 'react';
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { useContext, useMemo } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 type UseFieldsWidgetGroupsParams = {
@@ -38,8 +36,8 @@ export const useFieldsWidgetGroups = ({
   const workspaceCustomApplicationId =
     currentWorkspace?.workspaceCustomApplication?.id;
 
-  const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
+  const hiddenFieldMetadataIdsOrNames = useContext(
+    HiddenPageLayoutFieldsContext,
   );
 
   const { groups, displayMode } = useMemo<{
@@ -52,11 +50,8 @@ export const useFieldsWidgetGroups = ({
 
     const visibleFields = objectMetadataItem.fields.filter(
       (field) =>
-        !isHiddenWorkspaceWorkflowRunRelationField({
-          objectNameSingular,
-          fieldName: field.name,
-          isWorkflowCoreIndexPageEnabled,
-        }),
+        !hiddenFieldMetadataIdsOrNames.includes(field.id) &&
+        !hiddenFieldMetadataIdsOrNames.includes(field.name),
     );
 
     const activeFields = visibleFields.filter((field) => field.isActive);
@@ -164,8 +159,7 @@ export const useFieldsWidgetGroups = ({
     };
   }, [
     objectMetadataItem,
-    objectNameSingular,
-    isWorkflowCoreIndexPageEnabled,
+    hiddenFieldMetadataIdsOrNames,
     labelIdentifierFieldMetadataItem,
     view,
     viewId,
