@@ -1,5 +1,6 @@
 import { useSetAtom } from 'jotai';
 import { useEffect } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -29,7 +30,7 @@ export const CoreWorkflowsSelectionToContextStoreEffect = ({
   useEffect(() => {
     const selectedRecordIds = selectedWorkspaceWorkflowIdsKey
       .split(',')
-      .filter((selectedRecordId) => selectedRecordId !== '');
+      .filter(isNonEmptyString);
 
     setTargetedRecordsRule({ mode: 'selection', selectedRecordIds });
     setNumberOfSelectedRecords(selectedRecordIds.length);
