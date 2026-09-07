@@ -208,7 +208,8 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 5,
     workerOptions: {
       concurrency: 1,
-      lockDuration: 30_000,
+      // one job rewrites the rows of a whole object, so it may outlive the default lock
+      lockDuration: 300_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
     },

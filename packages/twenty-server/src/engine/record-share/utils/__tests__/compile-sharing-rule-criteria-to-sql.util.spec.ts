@@ -9,12 +9,14 @@ import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metada
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
 import {
   SHARING_RULE_MATCH_ALL_SQL,
+  SHARING_RULE_MATCH_NONE_SQL,
   compileSharingRuleCriteriaToSql,
 } from 'src/engine/record-share/utils/compile-sharing-rule-criteria-to-sql.util';
 
 const OBJECT_ID = 'object-1';
 const FIELD_ID = 'field-1';
 const CRITERIA_RULE_ID = 'criteria-rule-1';
+const MEMBER_VALUE_RULE_ID = 'member-value-rule-1';
 const OPEN_RULE_ID = 'open-rule-1';
 
 const buildMaps = (
@@ -67,6 +69,22 @@ const flatRowLevelPermissionPredicateMaps = buildMaps([
     positionInRowLevelPermissionPredicateGroup: null,
     deletedAt: null,
   },
+  {
+    id: 'predicate-2',
+    universalIdentifier: 'predicate-2',
+    roleId: null,
+    sharingRuleId: MEMBER_VALUE_RULE_ID,
+    objectMetadataId: OBJECT_ID,
+    fieldMetadataId: FIELD_ID,
+    operand: 'IS',
+    value: null,
+    subFieldName: null,
+    workspaceMemberFieldMetadataId: FIELD_ID,
+    workspaceMemberSubFieldName: null,
+    rowLevelPermissionPredicateGroupId: null,
+    positionInRowLevelPermissionPredicateGroup: null,
+    deletedAt: null,
+  },
 ]) as unknown as FlatRowLevelPermissionPredicateMaps;
 
 const flatRowLevelPermissionPredicateGroupMaps =
@@ -86,6 +104,13 @@ describe('compileSharingRuleCriteriaToSql', () => {
   it('should match every record for a rule without criteria', () => {
     expect(compile(OPEN_RULE_ID)).toEqual({
       sql: SHARING_RULE_MATCH_ALL_SQL,
+      parameters: {},
+    });
+  });
+
+  it('should match no record for a rule whose criteria read the current workspace member', () => {
+    expect(compile(MEMBER_VALUE_RULE_ID)).toEqual({
+      sql: SHARING_RULE_MATCH_NONE_SQL,
       parameters: {},
     });
   });

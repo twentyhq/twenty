@@ -105,7 +105,7 @@ export class SharingRuleRecordEventListener {
           sharingRuleIds: [sharingRuleId],
         },
         {
-          id: `${RecalculateSharingRuleRecordSharesJob.name}-${sharingRuleId}`,
+          id: `${RecalculateSharingRuleRecordSharesJob.name}-${batchEvent.workspaceId}-${sharingRuleId}`,
           retryLimit: 3,
         },
       );

@@ -32,18 +32,29 @@ export const compileSharingRuleCriteriaToSql = ({
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
 }): CompiledSharingRuleCriteria => {
-  const hasCriteria = Object.values(
+  const criteria = Object.values(
     flatRowLevelPermissionPredicateMaps.byUniversalIdentifier,
-  ).some(
-    (predicate) =>
-      isDefined(predicate) &&
-      predicate.sharingRuleId === sharingRuleId &&
-      predicate.objectMetadataId === objectMetadata.id &&
-      !isDefined(predicate.deletedAt),
-  );
+  )
+    .filter(isDefined)
+    .filter(
+      (predicate) =>
+        predicate.sharingRuleId === sharingRuleId &&
+        predicate.objectMetadataId === objectMetadata.id &&
+        !isDefined(predicate.deletedAt),
+    );
 
-  if (!hasCriteria) {
+  if (criteria.length === 0) {
     return { sql: SHARING_RULE_MATCH_ALL_SQL, parameters: {} };
+  }
+
+  // a value taken from the reading member has no single answer to
+  // materialize, so such a predicate must never widen the rule by vanishing
+  if (
+    criteria.some((predicate) =>
+      isDefined(predicate.workspaceMemberFieldMetadataId),
+    )
+  ) {
+    return { sql: SHARING_RULE_MATCH_NONE_SQL, parameters: {} };
   }
 
   const recordFilter = buildRowLevelPermissionRecordFilterForParent({

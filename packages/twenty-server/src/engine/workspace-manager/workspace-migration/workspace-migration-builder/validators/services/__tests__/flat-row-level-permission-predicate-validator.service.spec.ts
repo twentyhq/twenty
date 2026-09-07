@@ -25,15 +25,21 @@ const buildPredicate = ({
   operand,
   value,
   workspaceMemberFieldMetadataUniversalIdentifier = null,
+  parent = { roleUniversalIdentifier: ROLE_UNIVERSAL_IDENTIFIER },
 }: {
   operand: RowLevelPermissionPredicateOperand;
   value: unknown;
   workspaceMemberFieldMetadataUniversalIdentifier?: string | null;
+  parent?:
+    | { roleUniversalIdentifier: string }
+    | { sharingRuleUniversalIdentifier: string };
 }) => ({
   universalIdentifier: PREDICATE_UNIVERSAL_IDENTIFIER,
   fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
   objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-  roleUniversalIdentifier: ROLE_UNIVERSAL_IDENTIFIER,
+  roleUniversalIdentifier: null,
+  sharingRuleUniversalIdentifier: null,
+  ...parent,
   rowLevelPermissionPredicateGroupUniversalIdentifier: null,
   operand,
   value,
@@ -54,6 +60,9 @@ const relatedMaps = (fieldType: FieldMetadataType) => ({
     { universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER },
   ]),
   flatRoleMaps: mapsFrom([{ universalIdentifier: ROLE_UNIVERSAL_IDENTIFIER }]),
+  flatSharingRuleMaps: mapsFrom([
+    { universalIdentifier: SHARING_RULE_UNIVERSAL_IDENTIFIER },
+  ]),
 });
 
 const buildCreationArgs = ({
@@ -61,17 +70,22 @@ const buildCreationArgs = ({
   operand,
   value,
   workspaceMemberFieldMetadataUniversalIdentifier = null,
+  parent,
 }: {
   fieldType: FieldMetadataType;
   operand: RowLevelPermissionPredicateOperand;
   value: unknown;
   workspaceMemberFieldMetadataUniversalIdentifier?: string | null;
+  parent?:
+    | { roleUniversalIdentifier: string }
+    | { sharingRuleUniversalIdentifier: string };
 }) =>
   ({
     flatEntityToValidate: buildPredicate({
       operand,
       value,
       workspaceMemberFieldMetadataUniversalIdentifier,
+      parent,
     }),
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatRowLevelPermissionPredicateMaps: mapsFrom([]),
@@ -197,6 +211,28 @@ describe('FlatRowLevelPermissionPredicateValidatorService', () => {
       );
 
       expect(result.errors).toEqual([]);
+    });
+
+    it('should refuse a sharing rule predicate whose value comes from the current workspace member', () => {
+      const result = service.validateFlatRowLevelPermissionPredicateCreation(
+        buildCreationArgs({
+          fieldType: FieldMetadataType.RELATION,
+          operand: RowLevelPermissionPredicateOperand.IS,
+          value: null,
+          workspaceMemberFieldMetadataUniversalIdentifier:
+            FIELD_UNIVERSAL_IDENTIFIER,
+          parent: {
+            sharingRuleUniversalIdentifier: SHARING_RULE_UNIVERSAL_IDENTIFIER,
+          },
+        }),
+      );
+
+      expect(result.errors).toEqual([
+        expect.objectContaining({
+          message:
+            'A sharing rule predicate cannot depend on the current workspace member',
+        }),
+      ]);
     });
 
     it('should skip validation when the value is resolved from the workspace member', () => {

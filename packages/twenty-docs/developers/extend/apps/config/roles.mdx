@@ -216,7 +216,9 @@ export default defineSharingRule({
 Rules are materialized into `recordShare` rows by a background job rather than at read time, so
 they are eventually consistent: creating, updating or deleting a rule, changing a record's criteria
 fields, or making an object `PRIVATE` queues a recalculation, and the records a grantee sees catch up
-once that job has run.
+once that job has run. Because a rule is materialized once for every grantee, its criteria cannot use
+a value taken from the current workspace member (the "me" predicates roles allow); grant a role
+instead.
 
 ## The default function role
 
