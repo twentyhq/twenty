@@ -139,14 +139,23 @@ export const computeSeedObjectDefaultViewOperationsByApplication = ({
         }
 
         applicationBucket.viewFieldsToCreate.push({
-          ...flatViewField,
+          fieldMetadataUniversalIdentifier:
+            flatViewField.fieldMetadataUniversalIdentifier,
           viewUniversalIdentifier: seededViewUniversalIdentifier,
           viewFieldGroupUniversalIdentifier: null,
+          createdAt: flatViewField.createdAt,
+          updatedAt: flatViewField.updatedAt,
+          deletedAt: null,
+          universalIdentifier: seededViewFieldUniversalIdentifier,
+          isVisible: flatViewField.isVisible,
+          size: flatViewField.size,
+          position: flatViewField.position,
+          aggregateOperation: flatViewField.aggregateOperation,
+          isActive: flatViewField.isActive,
+          isSystemSideEffect: false,
           universalOverrides: null,
           applicationUniversalIdentifier:
             seededViewApplicationUniversalIdentifier,
-          universalIdentifier: seededViewFieldUniversalIdentifier,
-          isSystemSideEffect: false,
         });
       }
     }

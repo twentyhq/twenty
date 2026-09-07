@@ -4,7 +4,7 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import {
   type SeedOperationsByApplication,
   computeSeedObjectDefaultViewOperationsByApplication,
-} from 'src/database/commands/upgrade-version-command/2-39/utils/compute-seed-object-default-view-operations.util';
+} from 'src/database/commands/upgrade-version-command/2-40/utils/compute-seed-object-default-view-operations.util';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -13,9 +13,9 @@ import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-m
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.39.0', 1788791137000)
+@RegisteredWorkspaceCommand('2.40.0', 1788791137000)
 @Command({
-  name: 'upgrade:2-39:seed-object-default-view',
+  name: 'upgrade:2-40:seed-object-default-view',
   description:
     'Seed one regular table view per object alongside its engine-owned INDEX view. The seeded view copies the INDEX view field layout once and is written with isSystemSideEffect: false under the workspace-custom application, so the user owns it and no application sync reaps it. The INDEX view stays the neutral target that "See all" links filter against; pointing navigation at the seeded view is a separate client-side change. Idempotent per entity on deterministic identifiers: the seeded view and each copied view field are gated independently, so a retry after a partial failure creates only what is missing. Converges with objectSeededViewOnCreate, which seeds the same identifiers for workspace-custom objects at creation.',
 })

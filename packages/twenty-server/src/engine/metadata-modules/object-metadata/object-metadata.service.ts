@@ -427,6 +427,8 @@ export class ObjectMetadataService {
           isSystemBuild: false,
           applicationUniversalIdentifier:
             resolvedOwnerFlatApplication.universalIdentifier,
+          workspaceCustomApplicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
