@@ -125,6 +125,44 @@ describe('getBarChartLayout', () => {
       );
     });
 
+    it('widens the left margin to fit long category labels instead of truncating them to the minimum', () => {
+      const longLabel = 'Achraf Benjelloun';
+
+      const result = getBarChartLayout({
+        ...baseParams,
+        layout: BarChartLayout.HORIZONTAL,
+        xAxisLabel: undefined,
+        yAxisLabel: undefined,
+        data: [{ category: longLabel, value: 10 }],
+      });
+
+      expect(result.margins.left).toBeGreaterThan(75);
+      expect(result.margins.left).toBeLessThanOrEqual(
+        TEXT_MARGIN_LIMITS.max.left,
+      );
+      expect(result.axisLeftConfiguration.format(longLabel)).toBe(longLabel);
+    });
+
+    it('caps the left margin and still truncates labels that exceed the maximum margin', () => {
+      const veryLongLabel = 'A'.repeat(40);
+
+      const result = getBarChartLayout({
+        ...baseParams,
+        layout: BarChartLayout.HORIZONTAL,
+        xAxisLabel: undefined,
+        yAxisLabel: undefined,
+        data: [{ category: veryLongLabel, value: 10 }],
+      });
+
+      expect(result.margins.left).toBe(TEXT_MARGIN_LIMITS.max.left);
+      expect(result.axisLeftConfiguration.format(veryLongLabel)).toMatch(
+        /\.\.\.$/,
+      );
+      expect(
+        result.axisLeftConfiguration.format(veryLongLabel).length,
+      ).toBeLessThan(veryLongLabel.length);
+    });
+
     it('keeps explicit range bounds as value domain', () => {
       const result = getBarChartLayout({
         ...baseParams,
