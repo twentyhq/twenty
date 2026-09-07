@@ -53,13 +53,13 @@ export const parseMediaQuery = (
     const isFirstQueryPart = partIndex === 0;
 
     if (isMediaQueryConditionPart(currentPart)) {
-      const parsedCondition = parseMediaQueryCondition(currentPart);
+      const parsedConditions = parseMediaQueryCondition(currentPart);
 
-      if (!isDefined(parsedCondition)) {
+      if (!isDefined(parsedConditions)) {
         return null;
       }
 
-      conditions.push(parsedCondition);
+      conditions.push(...parsedConditions);
       continue;
     }
 

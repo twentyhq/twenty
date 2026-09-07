@@ -1,1 +1,6 @@
-export type MediaQueryComparison = 'min' | 'max' | 'exact';
+export type MediaQueryComparison =
+  | 'min'
+  | 'max'
+  | 'exact'
+  | 'greater-than'
+  | 'less-than';
