@@ -8,6 +8,7 @@ import { CoreObjectTable } from '@/object-core/components/CoreObjectTable';
 import { CoreWorkflowsSelectionToContextStoreEffect } from '@/object-core/workflows/components/CoreWorkflowsSelectionToContextStoreEffect';
 import { useCoreWorkflowsSelection } from '@/object-core/workflows/hooks/useCoreWorkflowsSelection';
 import { useHydrateSelectedWorkflowRecords } from '@/object-core/workflows/hooks/useHydrateSelectedWorkflowRecords';
+import { getDeletedRecordIdsFromOperation } from '@/object-core/utils/getDeletedRecordIdsFromOperation';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { CoreWorkflowsFilterBar } from '@/object-core/workflows/components/CoreWorkflowsFilterBar';
 import { WORKFLOW_CORE_TABLE_COLUMNS } from '@/object-core/workflows/constants/WorkflowCoreTableColumns';
@@ -73,9 +74,7 @@ export const WorkflowCoreIndexPage = () => {
     operationTypes: ['delete-one', 'delete-many'],
     onObjectRecordOperationBrowserEvent: (detail) =>
       forgetDeletedWorkspaceWorkflows(
-        'deletedRecordIds' in detail.operation
-          ? detail.operation.deletedRecordIds
-          : [],
+        getDeletedRecordIdsFromOperation(detail.operation),
       ),
   });
 

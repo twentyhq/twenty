@@ -20,6 +20,7 @@ export const useHydrateSelectedWorkflowRecords = (
   useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.Workflow,
     filter: { id: { in: selectedWorkspaceWorkflowIds } },
+    limit: Math.max(selectedWorkspaceWorkflowIds.length, 1),
     skip: selectedWorkspaceWorkflowIds.length === 0,
     onCompleted: handleCompleted,
   });
