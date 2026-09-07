@@ -368,10 +368,17 @@ export class ApplicationInstallService {
         persistVersion: false,
       });
 
-      await this.applicationService.update(application.id, {
-        version: newVersion,
-        workspaceId: params.workspaceId,
-      });
+      const isPostInstallHookSynchronous =
+        resolvedPackage.manifest.application.postInstallLogicFunction
+          ?.shouldRunSynchronously === true;
+
+      if (!isPostInstallHookSynchronous) {
+        await this.markInstallCompleted({
+          applicationId: application.id,
+          version: newVersion,
+          workspaceId: params.workspaceId,
+        });
+      }
 
       await this.runPostInstallHook({
         manifest: resolvedPackage.manifest,
@@ -381,6 +388,14 @@ export class ApplicationInstallService {
         isVersionUpgrade,
         universalIdentifier,
       });
+
+      if (isPostInstallHookSynchronous) {
+        await this.markInstallCompleted({
+          applicationId: application.id,
+          version: newVersion,
+          workspaceId: params.workspaceId,
+        });
+      }
 
       await this.applicationManifestApplyService.refreshRegistrationFromManifest(
         {
@@ -500,6 +515,21 @@ export class ApplicationInstallService {
         ApplicationExceptionCode.PRE_INSTALL_ERROR,
       );
     }
+  }
+
+  private async markInstallCompleted({
+    applicationId,
+    version,
+    workspaceId,
+  }: {
+    applicationId: string;
+    version: string;
+    workspaceId: string;
+  }): Promise<void> {
+    await this.applicationService.update(applicationId, {
+      version,
+      workspaceId,
+    });
   }
 
   private async runPostInstallHook(params: {
