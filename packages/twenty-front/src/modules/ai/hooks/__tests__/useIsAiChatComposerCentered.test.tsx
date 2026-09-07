@@ -58,6 +58,13 @@ describe('useIsAiChatComposerCentered', () => {
     expect(result.current).toBe(true);
   });
 
+  it('centers a new draft even if the previous conversation was still loading', () => {
+    jotaiStore.set(agentChatMessagesLoadingState.atom, true);
+    const { result } = renderForSurface();
+
+    expect(result.current).toBe(true);
+  });
+
   it('keeps an existing conversation bottom-aligned before, during and after fetching messages', () => {
     jotaiStore.set(currentAiChatThreadState.atom, 'existing-thread');
     jotaiStore.set(agentChatDisplayedThreadState.atom, 'existing-thread');
