@@ -42,11 +42,19 @@ const CREATE_MIGRATION_BACKUP_TABLE_QUERY = `
     "pageLayoutWidgetId" uuid NOT NULL UNIQUE,
     "pageLayoutWidgetPosition" jsonb,
     "pageLayoutWidgetPositionOverride" jsonb,
+    "pageLayoutWidgetTabOverride" jsonb,
+    "pageLayoutWidgetTabOverrideWasBackedUp" boolean NOT NULL DEFAULT false,
     "pageLayoutWidgetPositionOverrideWasMigrated" boolean NOT NULL
   );
 
   ALTER TABLE "core"."canvasTabToVerticalListMigrationBackup"
     ADD COLUMN IF NOT EXISTS "pageLayoutWidgetPositionOverride" jsonb;
+
+  ALTER TABLE "core"."canvasTabToVerticalListMigrationBackup"
+    ADD COLUMN IF NOT EXISTS "pageLayoutWidgetTabOverride" jsonb;
+
+  ALTER TABLE "core"."canvasTabToVerticalListMigrationBackup"
+    ADD COLUMN IF NOT EXISTS "pageLayoutWidgetTabOverrideWasBackedUp" boolean NOT NULL DEFAULT false;
 
   ALTER TABLE "core"."canvasTabToVerticalListMigrationBackup"
     ADD COLUMN IF NOT EXISTS "pageLayoutWidgetPositionOverrideWasMigrated" boolean;
@@ -96,6 +104,7 @@ export class MigrateCanvasTabsToVerticalListSlowInstanceCommand implements SlowI
           widget."id" AS "pageLayoutWidgetId",
           widget."position" AS "pageLayoutWidgetPosition",
           widget."overrides"->'position' AS "pageLayoutWidgetPositionOverride",
+          widget."overrides"->'pageLayoutTabId' AS "pageLayoutWidgetTabOverride",
           COALESCE(
             COALESCE(widget."overrides" ? 'position', false)
               AND (
@@ -114,6 +123,8 @@ export class MigrateCanvasTabsToVerticalListSlowInstanceCommand implements SlowI
           "pageLayoutWidgetId",
           "pageLayoutWidgetPosition",
           "pageLayoutWidgetPositionOverride",
+          "pageLayoutWidgetTabOverride",
+          "pageLayoutWidgetTabOverrideWasBackedUp",
           "pageLayoutWidgetPositionOverrideWasMigrated"
         )
         SELECT
@@ -121,6 +132,8 @@ export class MigrateCanvasTabsToVerticalListSlowInstanceCommand implements SlowI
           "pageLayoutWidgetId",
           "pageLayoutWidgetPosition",
           "pageLayoutWidgetPositionOverride",
+          "pageLayoutWidgetTabOverride",
+          true,
           "pageLayoutWidgetPositionOverrideWasMigrated"
         FROM eligible_widgets
         ON CONFLICT DO NOTHING
@@ -218,16 +231,15 @@ export class MigrateCanvasTabsToVerticalListSlowInstanceCommand implements SlowI
             'index', 0,
             'heightBehavior', 'TAB_VIEWPORT'
           )
+          AND backup."pageLayoutWidgetTabOverrideWasBackedUp"
+          AND widget."overrides"->'pageLayoutTabId' IS NOT DISTINCT FROM
+            backup."pageLayoutWidgetTabOverride"
           AND CASE
             WHEN backup."pageLayoutWidgetPositionOverrideWasMigrated" THEN
               widget."overrides"->'position' = jsonb_build_object(
                 'layoutMode', 'VERTICAL_LIST',
                 'index', 0,
                 'heightBehavior', 'TAB_VIEWPORT'
-              )
-              AND (
-                NOT COALESCE(widget."overrides" ? 'pageLayoutTabId', false)
-                OR widget."overrides"->>'pageLayoutTabId' = tab."id"::text
               )
             ELSE widget."overrides"->'position' IS NOT DISTINCT FROM
               backup."pageLayoutWidgetPositionOverride"

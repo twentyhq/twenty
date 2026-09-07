@@ -698,40 +698,64 @@ describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () 
     },
   );
 
-  it('preserves a migrated position override when its widget moves to another tab', async () => {
+  it.each([null, { position: { layoutMode: 'CANVAS' } }])(
+    'preserves a widget moved through a tab override after migrating from %j',
+    async (widgetOverrides) => {
+      const tab = await seedTab({
+        layoutMode: 'CANVAS',
+        widgetIsActiveValues: [true],
+        widgetOverrides,
+      });
+      const destinationTab = await seedTab({
+        layoutMode: 'VERTICAL_LIST',
+        widgetIsActiveValues: [],
+      });
+
+      await command.runDataMigration(dataSource);
+      await dataSource.query(
+        `UPDATE "core"."pageLayoutWidget"
+         SET "overrides" = COALESCE(NULLIF("overrides", 'null'::jsonb), '{}'::jsonb) || jsonb_build_object('pageLayoutTabId', $1::text)
+         WHERE "id" = $2`,
+        [destinationTab.tabId, tab.widgetIds[0]],
+      );
+
+      const stateBeforeRollback = await readTabAndWidgetState({
+        tabId: tab.tabId,
+        widgetId: tab.widgetIds[0],
+      });
+
+      await runDown();
+
+      await expect(
+        readTabAndWidgetState({ tabId: tab.tabId, widgetId: tab.widgetIds[0] }),
+      ).resolves.toEqual(stateBeforeRollback);
+    },
+  );
+
+  it('does not roll back legacy backups without the original tab override', async () => {
     const tab = await seedTab({
       layoutMode: 'CANVAS',
       widgetIsActiveValues: [true],
-      widgetOverrides: { position: { layoutMode: 'CANVAS' } },
-    });
-    const destinationTab = await seedTab({
-      layoutMode: 'VERTICAL_LIST',
-      widgetIsActiveValues: [],
     });
 
     await command.runDataMigration(dataSource);
-    await dataSource.query(
-      `UPDATE "core"."pageLayoutWidget"
-       SET "overrides" = "overrides" || jsonb_build_object('pageLayoutTabId', $1::text)
-       WHERE "id" = $2`,
-      [destinationTab.tabId, tab.widgetIds[0]],
-    );
+    await dataSource.query(`
+      ALTER TABLE "core"."canvasTabToVerticalListMigrationBackup"
+        DROP COLUMN "pageLayoutWidgetTabOverride",
+        DROP COLUMN "pageLayoutWidgetTabOverrideWasBackedUp"
+    `);
 
+    const stateBeforeRetry = await readTabAndWidgetState({
+      tabId: tab.tabId,
+      widgetId: tab.widgetIds[0],
+    });
+
+    await command.runDataMigration(dataSource);
     await runDown();
 
     await expect(
       readTabAndWidgetState({ tabId: tab.tabId, widgetId: tab.widgetIds[0] }),
-    ).resolves.toMatchObject({
-      layoutMode: 'VERTICAL_LIST',
-      overrides: {
-        pageLayoutTabId: destinationTab.tabId,
-        position: {
-          layoutMode: 'VERTICAL_LIST',
-          index: 0,
-          heightBehavior: 'TAB_VIEWPORT',
-        },
-      },
-    });
+    ).resolves.toEqual(stateBeforeRetry);
   });
 
   it('preserves tabs receiving an inactive widget through an override after migration', async () => {
