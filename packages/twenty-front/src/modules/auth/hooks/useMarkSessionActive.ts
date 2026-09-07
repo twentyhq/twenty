@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 
 import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { isPendingServerSignOutState } from '@/auth/states/isPendingServerSignOutState';
+import { rotateSessionGeneration } from '@/auth/utils/sessionGeneration';
 
 // The auth mutations set the session cookie server-side, which the client
 // cannot read, so every flow that authenticates has to record that a session
@@ -11,6 +12,7 @@ export const useMarkSessionActive = () => {
   const store = useStore();
 
   return useCallback(() => {
+    rotateSessionGeneration();
     store.set(isCookieAuthActiveState.atom, true);
     store.set(isPendingServerSignOutState.atom, false);
   }, [store]);

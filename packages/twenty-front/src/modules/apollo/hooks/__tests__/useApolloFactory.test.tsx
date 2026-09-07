@@ -4,6 +4,11 @@ import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { useApolloFactory } from '@/apollo/hooks/useApolloFactory';
+import {
+  clearSessionGeneration,
+  getSessionGeneration,
+  rotateSessionGeneration,
+} from '@/auth/utils/sessionGeneration';
 
 enableFetchMocks();
 
@@ -32,6 +37,12 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 );
 
 describe('useApolloFactory', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    fetchMock.resetMocks();
+    clearSessionGeneration();
+  });
+
   it('should work as expected', () => {
     const { result } = renderHook(() => useApolloFactory(), {
       wrapper: Wrapper,
@@ -61,6 +72,7 @@ describe('useApolloFactory', () => {
         }),
       }),
     );
+    rotateSessionGeneration();
 
     const { result } = renderHook(
       () => {
@@ -91,6 +103,7 @@ describe('useApolloFactory', () => {
 
       expect(mockNavigate).toHaveBeenCalled();
       expect(mockNavigate).toHaveBeenCalledWith('/welcome');
+      expect(getSessionGeneration()).toBeNull();
     }
   });
 });

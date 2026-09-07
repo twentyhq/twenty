@@ -12,6 +12,7 @@ import UploadHttpLink from 'apollo-upload-client/UploadHttpLink.mjs';
 
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
+import { getSessionGeneration } from '@/auth/utils/sessionGeneration';
 import { logDebug } from '~/utils/logDebug';
 
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
@@ -99,6 +100,7 @@ export class ApolloFactory implements ApolloManager {
         const locale = this.currentWorkspaceMember?.locale ?? i18n.locale;
 
         return {
+          sessionGeneration: getSessionGeneration(),
           headers: {
             ...headers,
             ...optionHeaders,
@@ -195,11 +197,16 @@ export class ApolloFactory implements ApolloManager {
       };
 
       const errorLink = new ErrorLink(({ error, operation }) => {
+        const isResponseFromCurrentSession =
+          operation.getContext().sessionGeneration === getSessionGeneration();
+
         if (CombinedGraphQLErrors.is(error)) {
           onErrorCb?.(error.errors);
           for (const graphQLError of error.errors) {
             if (isUnauthenticatedGraphQLError(graphQLError)) {
-              onUnauthenticatedError?.();
+              if (isResponseFromCurrentSession) {
+                onUnauthenticatedError?.();
+              }
 
               return;
             }
@@ -240,7 +247,9 @@ export class ApolloFactory implements ApolloManager {
             this.isRestOperation(operation) &&
             this.isAuthenticationError(error)
           ) {
-            onUnauthenticatedError?.();
+            if (isResponseFromCurrentSession) {
+              onUnauthenticatedError?.();
+            }
 
             return;
           }

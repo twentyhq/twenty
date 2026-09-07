@@ -3,6 +3,11 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 
 import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
+import {
+  clearSessionGeneration,
+  getSessionGeneration,
+  rotateSessionGeneration,
+} from '@/auth/utils/sessionGeneration';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import {
   AUTO_SELECT_FAST_MODEL_ID,
@@ -138,6 +143,7 @@ describe('ApolloFactory', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     fetchMock.resetMocks();
+    clearSessionGeneration();
   });
 
   it('should create an instance of ApolloFactory', () => {
@@ -308,6 +314,37 @@ describe('ApolloFactory', () => {
 
     expect(mockOnUnauthenticatedError).toHaveBeenCalledTimes(1);
     expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('should ignore an unauthenticated response from an older session', async () => {
+    let markRequestStarted!: () => void;
+    const requestStarted = new Promise<void>((resolve) => {
+      markRequestStarted = resolve;
+    });
+    let releaseResponse!: (response: { body: string }) => void;
+    const pendingResponse = new Promise<{ body: string }>((resolve) => {
+      releaseResponse = resolve;
+    });
+
+    fetchMock.mockResponse(() => {
+      markRequestStarted();
+
+      return pendingResponse;
+    });
+
+    rotateSessionGeneration();
+    const requestSessionGeneration = getSessionGeneration();
+    const request = makeRequest();
+
+    await requestStarted;
+    rotateSessionGeneration();
+
+    expect(getSessionGeneration()).not.toBe(requestSessionGeneration);
+
+    releaseResponse({ body: UNAUTHENTICATED_RESPONSE });
+
+    await expect(request).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+    expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
   });
 
   it('should leave a permission denial alone', async () => {

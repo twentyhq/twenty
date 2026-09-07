@@ -32,6 +32,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { clearSessionLocalStorageKeys } from '@/auth/utils/clearSessionLocalStorageKeys';
 import { broadcastSignOutToOtherTabs } from '@/auth/utils/crossTabSignOut';
+import { clearSessionGeneration } from '@/auth/utils/sessionGeneration';
 import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -126,6 +127,7 @@ export const useAuth = () => {
     store.set(currentWorkspaceState.atom, null);
     store.set(currentWorkspaceMemberState.atom, null);
     store.set(currentUserWorkspaceState.atom, null);
+    clearSessionGeneration();
     clearSessionLocalStorageKeys();
     setLastAuthenticateWorkspaceDomain(null);
     window.location.assign(AppPath.SignInUp);

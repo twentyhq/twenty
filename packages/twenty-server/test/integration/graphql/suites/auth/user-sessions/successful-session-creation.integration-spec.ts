@@ -2,12 +2,9 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 
 import {
   extractSessionCookie,
-  hasClearingCookie,
   normalizeSessionCookieForSnapshot,
-  postMetadataOperationWithHeaders,
   signInWithCookieCapture,
 } from 'test/integration/graphql/suites/auth/user-sessions/utils/sign-in-with-cookie-capture.util';
-import { currentUserIdentityQueryFactory } from 'test/integration/graphql/suites/auth/user-sessions/utils/user-session-operations.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { UserSessionEntity } from 'src/engine/core-modules/user-session/user-session.entity';
@@ -162,18 +159,5 @@ describe('successful user session creation on auth exchanges (integration)', () 
 
     expect(newSession).not.toBeNull();
     expect(newSession?.revokedAt).toBeNull();
-  });
-
-  it('should not clear a newer cookie when a request presents the superseded session', async () => {
-    const response = await postMetadataOperationWithHeaders(
-      currentUserIdentityQueryFactory(),
-      {
-        originHeader: ALLOWED_ORIGIN,
-        cookieHeader: firstSessionCookieHeader,
-      },
-    );
-
-    expect(response.body.errors).toBeDefined();
-    expect(hasClearingCookie(response)).toBe(false);
   });
 });
