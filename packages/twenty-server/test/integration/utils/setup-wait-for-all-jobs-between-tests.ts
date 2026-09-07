@@ -16,8 +16,4 @@ afterEach(async () => {
 
 afterAll(async () => {
   await closeQueueConnections();
-
-  // Every suite shares one worker and V8 only collects lazily as the heap cap
-  // rises, so without this the floor climbs all shard until a suite is refused.
-  global.gc?.();
 }, WAIT_FOR_JOBS_HOOK_TIMEOUT_MS);
