@@ -6,7 +6,7 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { findOneObjectMetadataWithSearchFieldMetadataList } from 'test/integration/metadata/suites/object-metadata/utils/find-one-object-metadata-with-search-field-metadata-list.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('Field metadata creation with isSearchable', () => {
@@ -138,13 +138,7 @@ describe('Field metadata creation with isSearchable', () => {
       },
     });
 
-    expect(errors).toBeDefined();
-    const [firstError] = errors;
-
-    expect(firstError).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny(firstError),
-    );
-    expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 });
 
@@ -206,12 +200,6 @@ describe('Field metadata creation with isSearchable on a non-searchable object',
       },
     });
 
-    expect(errors).toBeDefined();
-    const [firstError] = errors;
-
-    expect(firstError).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny(firstError),
-    );
-    expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 });

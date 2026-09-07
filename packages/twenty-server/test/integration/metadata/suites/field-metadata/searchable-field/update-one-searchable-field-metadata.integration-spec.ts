@@ -6,7 +6,7 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { findOneObjectMetadataWithSearchFieldMetadataList } from 'test/integration/metadata/suites/object-metadata/utils/find-one-object-metadata-with-search-field-metadata-list.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
@@ -239,21 +239,16 @@ describe('Field metadata isSearchable toggling', () => {
       gqlFields: `id`,
     });
 
-    expect(errors).toBeDefined();
-    const [firstError] = errors;
-
-    expect(firstError).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny(firstError),
-    );
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 
   it('should reject an explicit isSearchable null on the label identifier', async () => {
     await findSearchFieldMetadataList();
 
-    // Regression: null merges into the flat entity and reads as false
-    // downstream, so it must not bypass the label-identifier guard. The DTO
-    // types the flag as boolean | undefined, so the raw GraphQL null a client
-    // can send has to be forced past the TS type.
+    // Regression: input sanitization normalizes a raw GraphQL null to false,
+    // so it must hit the label-identifier guard like an explicit false. The
+    // DTO types the flag as boolean | undefined, so the null a client can
+    // send has to be forced past the TS type.
     const nullIsSearchablePayload = {
       isSearchable: null,
     } as unknown as Omit<UpdateFieldInput, 'workspaceId' | 'id'>;
@@ -267,12 +262,7 @@ describe('Field metadata isSearchable toggling', () => {
       gqlFields: `id`,
     });
 
-    expect(errors).toBeDefined();
-    const [firstError] = errors;
-
-    expect(firstError).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny(firstError),
-    );
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 
   it('should reject turning on isSearchable for a non-searchable type', async () => {
@@ -285,12 +275,6 @@ describe('Field metadata isSearchable toggling', () => {
       gqlFields: `id`,
     });
 
-    expect(errors).toBeDefined();
-    const [firstError] = errors;
-
-    expect(firstError).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny(firstError),
-    );
-    expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 });
