@@ -164,7 +164,7 @@ msgstr "[șir gol]"
 #. placeholder {2}: formatNumber(counts.duplicateEmails)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0, plural, one {{1} duplicate} other {{2} duplicates}}"
-msgstr ""
+msgstr "{0, plural, one {{1} duplicat} few {{2} duplicate} other {{2} duplicate}}"
 
 #. js-lingui-id: Z2fCN4
 #. placeholder {0}: failedResults.length
@@ -221,19 +221,13 @@ msgstr "{0, plural, one {# spațiu de lucru eșuat sau rămas în urmă} few {# 
 #. placeholder {2}: canceled.canceledMessageCount
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "{0, plural, one {Campaign canceled, {1} pending email stopped} other {Campaign canceled, {2} pending emails stopped}}"
-msgstr ""
+msgstr "{0, plural, one {Campanie anulată, {1} e-mail în așteptare oprit} few {Campanie anulată, {2} e-mailuri în așteptare oprite} other {Campanie anulată, {2} e-mailuri în așteptare oprite}}"
 
 #. js-lingui-id: WTc9VY
 #. placeholder {0}: restriction.fieldNames.length
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
 msgid "{0, plural, one {You do not have permission to access the {fieldsList} field} other {You do not have permission to access the {fieldsList} fields}}"
 msgstr "{0, plural, one {Nu aveți permisiunea de a accesa câmpul {fieldsList}} few {Nu aveți permisiunea de a accesa câmpurile {fieldsList}} other {Nu aveți permisiunea de a accesa câmpurile {fieldsList}}}"
-
-#. js-lingui-id: wqtZLy
-#. placeholder {0}: campaign.name
-#: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/DuplicateMessageCampaignSingleRecordCommand.tsx
-msgid "{0} (copy)"
-msgstr ""
 
 #. js-lingui-id: 6lE3tD
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
@@ -17723,7 +17717,7 @@ msgstr "Trimite un email de invitație echipei tale"
 #. js-lingui-id: WRLt0i
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "Send campaign"
-msgstr ""
+msgstr "Trimiteți campania"
 
 #. js-lingui-id: b7hiQs
 #: src/modules/side-panel/hooks/useOpenSendCampaignInSidePanel.ts

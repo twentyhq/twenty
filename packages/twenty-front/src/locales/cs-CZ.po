@@ -164,7 +164,7 @@ msgstr ""
 #. placeholder {2}: formatNumber(counts.duplicateEmails)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0, plural, one {{1} duplicate} other {{2} duplicates}}"
-msgstr ""
+msgstr "{0, plural, one {{1} duplikát} few {{2} duplikáty} many {{2} duplikátu} other {{2} duplikátů}}"
 
 #. js-lingui-id: Z2fCN4
 #. placeholder {0}: failedResults.length
@@ -188,7 +188,7 @@ msgstr "{0, plural, one {{1} úloha nelze znovu spustit} few {{2} úlohy nelze z
 #. placeholder {2}: formatNumber(audiencePreview.sendable)
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "{0, plural, one {{1} recipient} other {{2} recipients}}"
-msgstr ""
+msgstr "{0, plural, one {{1} příjemce} few {{2} příjemci} many {{2} příjemce} other {{2} příjemců}}"
 
 #. js-lingui-id: 0LMb5P
 #. placeholder {0}: Math.abs(days)
@@ -221,19 +221,13 @@ msgstr "{0, plural, one {# pracovní prostor selhal nebo je pozadu} few {# praco
 #. placeholder {2}: canceled.canceledMessageCount
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "{0, plural, one {Campaign canceled, {1} pending email stopped} other {Campaign canceled, {2} pending emails stopped}}"
-msgstr ""
+msgstr "{0, plural, one {Kampaň zrušena, odesílání {1} čekajícího e-mailu zastaveno} few {Kampaň zrušena, odesílání {2} čekajících e-mailů zastaveno} many {Kampaň zrušena, odesílání {2} čekajícího e-mailu zastaveno} other {Kampaň zrušena, odesílání {2} čekajících e-mailů zastaveno}}"
 
 #. js-lingui-id: WTc9VY
 #. placeholder {0}: restriction.fieldNames.length
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
 msgid "{0, plural, one {You do not have permission to access the {fieldsList} field} other {You do not have permission to access the {fieldsList} fields}}"
 msgstr "{0, plural, one {Nemáte povolení pro přístup k poli {fieldsList}} few {Nemáte povolení pro přístup k polím {fieldsList}} many {Nemáte povolení pro přístup k polím {fieldsList}} other {Nemáte povolení pro přístup k polím {fieldsList}}}"
-
-#. js-lingui-id: wqtZLy
-#. placeholder {0}: campaign.name
-#: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/DuplicateMessageCampaignSingleRecordCommand.tsx
-msgid "{0} (copy)"
-msgstr ""
 
 #. js-lingui-id: 6lE3tD
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
@@ -17723,7 +17717,7 @@ msgstr "Pošlete pozvánku e-mailem vašemu týmu"
 #. js-lingui-id: WRLt0i
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "Send campaign"
-msgstr ""
+msgstr "Odeslat kampaň"
 
 #. js-lingui-id: b7hiQs
 #: src/modules/side-panel/hooks/useOpenSendCampaignInSidePanel.ts

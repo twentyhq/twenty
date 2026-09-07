@@ -164,7 +164,7 @@ msgstr "[empty string]"
 #. placeholder {2}: formatNumber(counts.duplicateEmails)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0, plural, one {{1} duplicate} other {{2} duplicates}}"
-msgstr ""
+msgstr "{0, plural, zero {{2} نسخة مكررة} one {{1} نسخة مكررة} two {{2} نسختان مكررتان} few {{2} نسخ مكررة} many {{2} نسخة مكررة} other {{2} نسخة مكررة}}"
 
 #. js-lingui-id: Z2fCN4
 #. placeholder {0}: failedResults.length
@@ -188,7 +188,7 @@ msgstr "{0, plural, zero {لا توجد وظائف لم تتم إعادة محا
 #. placeholder {2}: formatNumber(audiencePreview.sendable)
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "{0, plural, one {{1} recipient} other {{2} recipients}}"
-msgstr ""
+msgstr "{0, plural, zero {{2} مستلم} one {{1} مستلم} two {{2} مستلمان} few {{2} مستلمين} many {{2} مستلمًا} other {{2} مستلم}}"
 
 #. js-lingui-id: 0LMb5P
 #. placeholder {0}: Math.abs(days)
@@ -221,19 +221,13 @@ msgstr "{0, plural, zero {لا مساحات عمل فاشلة أو متأخرة}
 #. placeholder {2}: canceled.canceledMessageCount
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "{0, plural, one {Campaign canceled, {1} pending email stopped} other {Campaign canceled, {2} pending emails stopped}}"
-msgstr ""
+msgstr "{0, plural, zero {تم إلغاء الحملة، وتم إيقاف {2} رسالة بريد إلكتروني معلقة} one {تم إلغاء الحملة، وتم إيقاف {1} رسالة بريد إلكتروني معلقة} two {تم إلغاء الحملة، وتم إيقاف {2} رسالتين بريد إلكتروني معلقتين} few {تم إلغاء الحملة، وتم إيقاف {2} رسائل بريد إلكتروني معلقة} many {تم إلغاء الحملة، وتم إيقاف {2} رسالة بريد إلكتروني معلقة} other {تم إلغاء الحملة، وتم إيقاف {2} رسالة بريد إلكتروني معلقة}}"
 
 #. js-lingui-id: WTc9VY
 #. placeholder {0}: restriction.fieldNames.length
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
 msgid "{0, plural, one {You do not have permission to access the {fieldsList} field} other {You do not have permission to access the {fieldsList} fields}}"
 msgstr "{0, plural, zero {ليس لديك إذن للوصول إلى حقل {fieldsList}} one {ليس لديك إذن للوصول إلى حقل {fieldsList}} two {ليس لديك إذن للوصول إلى الحقول {fieldsList}} few {ليس لديك إذن للوصول إلى الحقول {fieldsList}} many {ليس لديك إذن للوصول إلى الحقول {fieldsList}} other {ليس لديك إذن للوصول إلى الحقول {fieldsList}}}"
-
-#. js-lingui-id: wqtZLy
-#. placeholder {0}: campaign.name
-#: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/DuplicateMessageCampaignSingleRecordCommand.tsx
-msgid "{0} (copy)"
-msgstr ""
 
 #. js-lingui-id: 6lE3tD
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
@@ -17723,7 +17717,7 @@ msgstr "أرسل دعوة عبر البريد الإلكتروني إلى فري
 #. js-lingui-id: WRLt0i
 #: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "Send campaign"
-msgstr ""
+msgstr "إرسال الحملة"
 
 #. js-lingui-id: b7hiQs
 #: src/modules/side-panel/hooks/useOpenSendCampaignInSidePanel.ts
