@@ -7,8 +7,8 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
 import { splitViewFieldPositionUpdates } from 'src/database/commands/upgrade-version-command/2-25/utils/split-view-field-position-updates.util';
-import { buildViewFieldsAlignedToStandardPositions } from 'src/database/commands/upgrade-version-command/2-39/utils/build-view-fields-aligned-to-standard-positions.util';
-import { buildMessageCampaignSchedulingAvailabilityUpdates } from 'src/database/commands/upgrade-version-command/2-39/utils/build-message-campaign-scheduling-availability-updates.util';
+import { buildViewFieldsAlignedToStandardPositions } from 'src/database/commands/upgrade-version-command/2-40/utils/build-view-fields-aligned-to-standard-positions.util';
+import { buildMessageCampaignSchedulingAvailabilityUpdates } from 'src/database/commands/upgrade-version-command/2-40/utils/build-message-campaign-scheduling-availability-updates.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -34,9 +34,9 @@ const CAMPAIGN_VIEW_UNIVERSAL_IDENTIFIERS = [
   CAMPAIGN.views.messageCampaignRecordPageFields.universalIdentifier,
 ];
 
-@RegisteredWorkspaceCommand('2.39.0', 1788783100000)
+@RegisteredWorkspaceCommand('2.40.0', 1788802705247)
 @Command({
-  name: 'upgrade:2-39:add-message-campaign-scheduled-at',
+  name: 'upgrade:2-40:add-message-campaign-scheduled-at',
   description:
     'Add the scheduledAt field to messageCampaign, surface it in the all campaigns view and the record page, and let Cancel Campaign and Send Test act on a scheduled campaign',
 })

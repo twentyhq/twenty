@@ -1,4 +1,4 @@
-import { buildViewFieldsAlignedToStandardPositions } from 'src/database/commands/upgrade-version-command/2-39/utils/build-view-fields-aligned-to-standard-positions.util';
+import { buildViewFieldsAlignedToStandardPositions } from 'src/database/commands/upgrade-version-command/2-40/utils/build-view-fields-aligned-to-standard-positions.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
