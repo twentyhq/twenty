@@ -46,6 +46,24 @@ describe('getFirstNonEmptyLineOfRichTextSegments', () => {
       { text: 'that', styles: { underline: true } },
     ]);
   });
+
+  it('keeps a space between two styled words', () => {
+    const input: PartialBlock[] = [
+      {
+        content: [
+          { text: 'Hello', type: 'text', styles: { bold: true } },
+          { text: ' ', type: 'text', styles: {} },
+          { text: 'World', type: 'text', styles: { bold: true } },
+        ],
+      },
+    ];
+
+    expect(
+      getFirstNonEmptyLineOfRichTextSegments(input)
+        .map((segment) => segment.text)
+        .join(''),
+    ).toBe('Hello World');
+  });
 });
 
 describe('getRichTextPreviewSegmentStyle', () => {
@@ -53,16 +71,8 @@ describe('getRichTextPreviewSegmentStyle', () => {
     expect(getRichTextPreviewSegmentStyle({ strike: true })).toEqual({
       textDecorationLine: 'line-through',
     });
-  });
-
-  it('maps underline and strike onto one text-decoration-line', () => {
     expect(
-      getRichTextPreviewSegmentStyle({
-        underline: true,
-        strike: true,
-      }),
-    ).toEqual({
-      textDecorationLine: 'underline line-through',
-    });
+      getRichTextPreviewSegmentStyle({ underline: true, strike: true }),
+    ).toEqual({ textDecorationLine: 'underline line-through' });
   });
 });

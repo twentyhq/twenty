@@ -78,7 +78,7 @@ const getSegmentsFromInline = (
     return inline.content.flatMap(getSegmentsFromInline);
   }
 
-  if (!isDefined(inline.text) || inline.text.trim() === '') {
+  if (!isDefined(inline.text) || inline.text === '') {
     return [];
   }
 
@@ -117,8 +117,9 @@ export const getFirstNonEmptyLineOfRichTextSegments = (
 
   for (const block of blocks) {
     const segments = getSegmentsFromContent(block.content);
+    const lineText = segments.map((segment) => segment.text).join('');
 
-    if (segments.length > 0) {
+    if (lineText.trim() !== '') {
       return segments;
     }
   }
