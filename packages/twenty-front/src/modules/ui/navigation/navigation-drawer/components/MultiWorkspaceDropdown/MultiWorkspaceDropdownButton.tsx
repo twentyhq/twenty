@@ -6,7 +6,9 @@ import { MultiWorkspaceDropdownOpenRecordInComponents } from '@/ui/navigation/na
 import { MultiWorkspaceDropdownThemesComponents } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents';
 import { MultiWorkspaceDropdownWorkspacesListComponents } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents';
 import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/constants/MultiWorkspaceDropdownId';
+import { MULTI_WORKSPACE_DROPDOWN_MOBILE_BOUNDARY_PADDING } from '@/ui/navigation/navigation-drawer/constants/MultiWorkspaceDropdownMobileBoundaryPadding';
 import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo } from 'react';
@@ -24,6 +26,7 @@ export const MultiWorkspaceDropdownButton = ({
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
+  const isMobile = useIsMobile();
 
   const DropdownComponents = useMemo(() => {
     switch (multiWorkspaceDropdown) {
@@ -41,6 +44,19 @@ export const MultiWorkspaceDropdownButton = ({
   return (
     <Dropdown
       dropdownId={MULTI_WORKSPACE_DROPDOWN_ID}
+      // The trigger spans the whole row so the panel can overlay it. Aligned
+      // to the row's end that lands on the drawer edge on desktop, but on
+      // mobile the row is the full screen and the panel drifted away from the
+      // workspace name it belongs to.
+      dropdownPlacement={isMobile ? 'bottom-start' : 'bottom-end'}
+      middlewareBoundaryPadding={
+        isMobile
+          ? {
+              left: MULTI_WORKSPACE_DROPDOWN_MOBILE_BOUNDARY_PADDING,
+              right: MULTI_WORKSPACE_DROPDOWN_MOBILE_BOUNDARY_PADDING,
+            }
+          : undefined
+      }
       dropdownOffset={
         // The drawer trigger is full width and the panel sits over it; the
         // icon-only trigger is too small for that, so the panel drops below.

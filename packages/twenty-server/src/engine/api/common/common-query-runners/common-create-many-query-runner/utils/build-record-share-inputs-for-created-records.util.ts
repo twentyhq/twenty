@@ -88,19 +88,33 @@ const buildCreatorRows = ({
   ownerWorkspaceMemberId: string | null | undefined;
   shareWithPrincipals: Pick<RecordShareInput, 'principalId'>[];
 }): RecordShareInputForRecord[] => {
-  if (isDefined(ownerWorkspaceMemberId)) {
-    return [
-      buildOwnerRow({ workspaceMemberId: ownerWorkspaceMemberId, recordId }),
-    ];
-  }
+  const ownerRows = isDefined(ownerWorkspaceMemberId)
+    ? [buildOwnerRow({ workspaceMemberId: ownerWorkspaceMemberId, recordId })]
+    : [];
 
   if (isUserAuthContext(authContext)) {
-    return [
-      buildOwnerRow({
-        workspaceMemberId: authContext.workspaceMemberId,
-        recordId,
-      }),
-    ];
+    if (!isDefined(ownerWorkspaceMemberId)) {
+      return [
+        buildOwnerRow({
+          workspaceMemberId: authContext.workspaceMemberId,
+          recordId,
+        }),
+      ];
+    }
+
+    // handing the record to someone else must not lock its creator out
+    return ownerWorkspaceMemberId === authContext.workspaceMemberId
+      ? ownerRows
+      : [
+          ...ownerRows,
+          {
+            principalId: authContext.workspaceMemberId,
+            principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+            accessLevel: RecordShareAccessLevel.FULL,
+            rowCause: RecordShareRowCause.MANUAL,
+            sourceId: authContext.workspaceMemberId,
+          },
+        ];
   }
 
   const creatorRoleId = resolveCreatorRoleId({ authContext, apiKeyRoleMap });
@@ -111,10 +125,11 @@ const buildCreatorRows = ({
       (shareWithPrincipal) => shareWithPrincipal.principalId === creatorRoleId,
     )
   ) {
-    return [];
+    return ownerRows;
   }
 
   return [
+    ...ownerRows,
     {
       principalId: creatorRoleId,
       principalType: RecordSharePrincipalType.ROLE,
@@ -157,7 +172,14 @@ export const buildRecordShareInputsForCreatedRecords = ({
     }));
   }
 
-  const shareWithPrincipals = shareWith.map(resolveShareWithPrincipal);
+  const creatorRoleId = resolveCreatorRoleId({ authContext, apiKeyRoleMap });
+  const shareWithPrincipals = shareWith
+    .map(resolveShareWithPrincipal)
+    .map((shareWithPrincipal) =>
+      shareWithPrincipal.principalId === creatorRoleId
+        ? { ...shareWithPrincipal, accessLevel: RecordShareAccessLevel.FULL }
+        : shareWithPrincipal,
+    );
 
   return recordIds.flatMap((recordId) => [
     ...buildCreatorRows({

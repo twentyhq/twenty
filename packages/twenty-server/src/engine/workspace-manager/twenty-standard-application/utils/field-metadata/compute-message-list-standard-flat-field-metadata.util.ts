@@ -229,6 +229,29 @@ export const buildMessageListStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  description: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'description',
+      type: FieldMetadataType.TEXT,
+      label: i18nLabel(
+        msg({ message: `Description`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `What this list is for`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconFileDescription',
+      isNullable: true,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   members: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
