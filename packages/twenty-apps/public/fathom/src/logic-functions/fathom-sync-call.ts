@@ -13,6 +13,7 @@ import { hydrateFathomMeeting } from 'src/logic-functions/utils/hydrate-fathom-m
 import { listFathomConnectionsForRequest } from 'src/logic-functions/utils/list-fathom-connections-for-request.util';
 import { listFathomMeetings } from 'src/logic-functions/utils/list-fathom-meetings.util';
 import { serializeFathomMeeting } from 'src/logic-functions/utils/serialize-fathom-meeting.util';
+import { resolveCallRecordingShareWith } from 'src/logic-functions/utils/resolve-call-recording-share-with.util';
 import { syncFathomMeetingToCallRecording } from 'src/logic-functions/utils/sync-fathom-meeting-to-call-recording.util';
 
 const fathomSyncCallInputSchema: InputJsonSchema = {
@@ -80,7 +81,9 @@ export const fathomSyncCallHandler = async (
         fathomClient,
         serializedMeeting: serializeFathomMeeting(meeting),
       }),
-      connection,
+      connectedAccountId: connection.id,
+      shareWith: resolveCallRecordingShareWith(connection),
+      retryMedia: true,
     });
 
     return { success: true, recordingId, ...syncResult };

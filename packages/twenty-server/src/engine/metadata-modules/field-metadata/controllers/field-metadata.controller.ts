@@ -30,6 +30,8 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { DerivedFieldMetadataIdsService } from 'src/engine/metadata-modules/derived-field-metadata-ids/services/derived-field-metadata-ids.service';
+import { type DerivedFieldMetadataIds } from 'src/engine/metadata-modules/derived-field-metadata-ids/types/derived-field-metadata-ids.type';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
@@ -53,7 +55,6 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/utils/to-legacy-field-metadata-response.util';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
-import { UniqueFieldMetadataIdsService } from 'src/engine/metadata-modules/index-metadata/services/unique-field-metadata-ids.service';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 
 @Controller(`${ApiPath.Rest}/metadata/fields`)
@@ -75,7 +76,7 @@ export class FieldMetadataController {
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly uniqueFieldMetadataIdsService: UniqueFieldMetadataIdsService,
+    private readonly derivedFieldMetadataIdsService: DerivedFieldMetadataIdsService,
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
@@ -83,12 +84,12 @@ export class FieldMetadataController {
   // locale, through the one resolver the GraphQL read path uses.
   private async toPresentedFieldDtos({
     fields,
-    uniqueFieldMetadataIds,
+    derivedFieldMetadataIds,
     locale,
     workspaceId,
   }: {
     fields: FieldMetadataEntity[];
-    uniqueFieldMetadataIds: ReadonlySet<string>;
+    derivedFieldMetadataIds: DerivedFieldMetadataIds;
     locale: keyof typeof APP_LOCALES | undefined;
     workspaceId: string;
   }): Promise<FieldMetadataDTO[]> {
@@ -103,7 +104,7 @@ export class FieldMetadataController {
       );
 
     return resolvedFields.map((field) =>
-      fromFieldMetadataEntityToFieldMetadataDto(field, uniqueFieldMetadataIds),
+      fromFieldMetadataEntityToFieldMetadataDto(field, derivedFieldMetadataIds),
     );
   }
 
@@ -119,8 +120,8 @@ export class FieldMetadataController {
       request,
     });
 
-    const uniqueFieldMetadataIds =
-      await this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId);
+    const derivedFieldMetadataIds =
+      await this.derivedFieldMetadataIdsService.getForWorkspace(workspaceId);
 
     const result: {
       data: FieldMetadataDTO[];
@@ -129,7 +130,7 @@ export class FieldMetadataController {
     } = {
       data: await this.toPresentedFieldDtos({
         fields: items,
-        uniqueFieldMetadataIds,
+        derivedFieldMetadataIds,
         locale,
         workspaceId,
       }),
@@ -159,11 +160,11 @@ export class FieldMetadataController {
       );
     }
 
-    const uniqueFieldMetadataIds =
-      await this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId);
+    const derivedFieldMetadataIds =
+      await this.derivedFieldMetadataIdsService.getForWorkspace(workspaceId);
     const [result] = await this.toPresentedFieldDtos({
       fields: [field],
-      uniqueFieldMetadataIds,
+      derivedFieldMetadataIds,
       locale,
       workspaceId,
     });

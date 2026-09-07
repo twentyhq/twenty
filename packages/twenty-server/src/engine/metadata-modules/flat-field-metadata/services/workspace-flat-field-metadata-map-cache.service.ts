@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyArray } from 'twenty-shared/utils';
+
 import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -152,6 +154,9 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends MetadataFlatEntit
         flatEntity: {
           ...flatFieldMetadata,
           isUnique: uniqueFieldMetadataIds.has(fieldMetadataEntity.id),
+          isSearchable: isNonEmptyArray(
+            searchFieldMetadatas.byFieldMetadataId.get(fieldMetadataEntity.id),
+          ),
         },
         flatEntityMapsToMutate: flatFieldMetadataMaps,
       });

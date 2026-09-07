@@ -53,6 +53,11 @@ describe('recordShare object', () => {
   });
 
   afterAll(async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
+      value: false,
+      expectToFail: false,
+    });
     await recordShareService.deleteBySourceId({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       sourceId,

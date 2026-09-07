@@ -28,6 +28,7 @@ bash packages/twenty-utils/setup-dev-env.sh   # Postgres/Redis + DB init; only f
 yarn start                                    # front + server + worker
 
 npx jest path/to/file.spec.ts --config=packages/<pkg>/jest.config.mjs   # single test file (preferred)
+npx vitest run --root packages/twenty-ui --project unit <file>          # twenty-ui runs on vitest, not jest
 npx nx test twenty-server                     # package unit tests (same for twenty-front, ...)
 npx nx run twenty-server:test:integration:with-db-reset
 npx nx storybook:build twenty-front && npx nx storybook:test twenty-front

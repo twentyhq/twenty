@@ -1,16 +1,15 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import {
-  getConnection,
-  RetryableLogicFunctionError,
-} from 'twenty-sdk/logic-function';
+import { getConnection } from 'twenty-sdk/logic-function';
 import { isDefined } from 'src/utils/is-defined';
 
 import { FATHOM_BACKFILL_BATCH_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type SerializedFathomMeeting } from 'src/logic-functions/types/serialized-fathom-meeting.type';
+import { buildRetryableFathomError } from 'src/logic-functions/utils/build-retryable-fathom-error.util';
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
 import { hydrateFathomMeeting } from 'src/logic-functions/utils/hydrate-fathom-meeting.util';
 import { isTransientFathomError } from 'src/logic-functions/utils/is-transient-fathom-error.util';
+import { resolveCallRecordingShareWith } from 'src/logic-functions/utils/resolve-call-recording-share-with.util';
 import { syncFathomMeetingToCallRecording } from 'src/logic-functions/utils/sync-fathom-meeting-to-call-recording.util';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
@@ -32,7 +31,10 @@ export const fathomBackfillBatchHandler = async (payload: {
       // Only a RetryableLogicFunctionError makes the platform retry, so a rate
       // limit or a Fathom outage is rethrown as one.
       if (isTransientFathomError(error)) {
-        throw new RetryableLogicFunctionError(toErrorMessage(error));
+        throw buildRetryableFathomError({
+          operation: `hydrate recording ${serializedMeeting.recordingId}`,
+          error,
+        });
       }
 
       // One unreadable recording must not cost the rest of the batch.
@@ -54,9 +56,13 @@ export const fathomBackfillBatchHandler = async (payload: {
       await syncFathomMeetingToCallRecording({
         coreApiClient,
         meeting,
-        connection,
+        connectedAccountId: payload.connectedAccountId,
+        shareWith: resolveCallRecordingShareWith(connection),
       }).catch((error: unknown) => {
-        throw new RetryableLogicFunctionError(toErrorMessage(error));
+        throw buildRetryableFathomError({
+          operation: `sync recording ${serializedMeeting.recordingId}`,
+          error,
+        });
       }),
     );
   }
