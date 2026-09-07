@@ -4,6 +4,8 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+// Remove with the workspace workflow and workflowVersion objects, once the
+// core migration owns them.
 export const useFieldsWidgetFields = (
   objectMetadataItem: EnrichedObjectMetadataItem | undefined,
 ): FieldMetadataItem[] => {

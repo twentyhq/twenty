@@ -23,6 +23,8 @@ export const useWidgetVisibilityContext = (): WidgetVisibilityContext => {
     targetRecordIdentifier?.id ?? '',
   );
 
+  // Remove with the workspace workflow and workflowVersion objects, once the
+  // core migration owns them.
   const hiddenFieldMetadataIdsOrNames =
     useHiddenWorkspaceWorkflowRunRelationFields(
       targetRecordIdentifier?.targetObjectNameSingular,

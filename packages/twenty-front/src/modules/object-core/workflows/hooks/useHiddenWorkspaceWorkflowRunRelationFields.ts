@@ -5,6 +5,8 @@ import { isHiddenWorkspaceWorkflowRunRelationField } from '@/object-core/workflo
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
+// Remove with the workspace workflow and workflowVersion objects, once the
+// core migration owns them.
 export const useHiddenWorkspaceWorkflowRunRelationFields = (
   objectNameSingular: string | undefined,
 ) => {

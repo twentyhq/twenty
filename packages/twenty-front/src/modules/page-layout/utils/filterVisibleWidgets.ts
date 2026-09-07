@@ -12,6 +12,8 @@ export const filterVisibleWidgets = ({
   widgets,
   context,
 }: FilterVisibleWidgetsParams): PageLayoutTab['widgets'] => {
+  // Remove with the workspace workflow and workflowVersion objects, once the
+  // core migration owns them.
   const hiddenFieldMetadataIdsOrNames =
     context.hiddenFieldMetadataIdsOrNames ?? [];
 
