@@ -247,7 +247,12 @@ describe('Manifest update - page layout tabs (standalone)', () => {
             extensions: expect.objectContaining({ code: 'BAD_USER_INPUT' }),
           }),
         ]);
-        expect(await findStandardPersonPageLayoutTabs()).toHaveLength(0);
+        const applicationTabs = await globalThis.testDataSource.query(
+          `SELECT id FROM core."pageLayoutTab" WHERE "applicationId" = $1`,
+          [testApplicationId],
+        );
+
+        expect(applicationTabs).toHaveLength(0);
       },
     );
   });
