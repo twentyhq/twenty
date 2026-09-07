@@ -48,6 +48,7 @@ describe('NavigationMenuItemFolderSubItem', () => {
 
     await userEvent.click(screen.getByText('Q3 deck'));
 
+    expect(windowOpen).toHaveBeenCalledTimes(1);
     expect(windowOpen).toHaveBeenCalledWith(
       'https://google.com/search',
       '_blank',
