@@ -1,6 +1,5 @@
 import { SSE_LIVENESS_CHECK_INTERVAL_IN_MS } from '@/sse-db-event/constants/SseLivenessCheckIntervalInMs';
 import { SSE_LIVENESS_TIMEOUT_IN_MS } from '@/sse-db-event/constants/SseLivenessTimeoutInMs';
-import { activeQueryListenersState } from '@/sse-db-event/states/activeQueryListenersState';
 import { lastSseEventReceivedTimestampState } from '@/sse-db-event/states/lastSseEventReceivedTimestampState';
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
@@ -31,7 +30,6 @@ export const SSEKeepAliveEffect = () => {
       const timeSinceLastEvent = Date.now() - lastTimestamp;
 
       if (timeSinceLastEvent > SSE_LIVENESS_TIMEOUT_IN_MS) {
-        store.set(activeQueryListenersState.atom, []);
         store.set(shouldDestroyEventStreamState.atom, true);
       }
     }, SSE_LIVENESS_CHECK_INTERVAL_IN_MS);

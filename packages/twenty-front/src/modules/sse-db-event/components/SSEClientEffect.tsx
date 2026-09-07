@@ -5,19 +5,15 @@ import { useResyncMetadataStore } from '@/metadata-store/hooks/useResyncMetadata
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
 import { SSE_RESYNC_DEBOUNCE_TIME_IN_MS } from '@/sse-db-event/constants/SseResyncDebounceTimeInMs';
 import { useHandleSseClientConnectionRetry } from '@/sse-db-event/hooks/useHandleSseClientConnectionRetry';
-import { activeQueryListenersState } from '@/sse-db-event/states/activeQueryListenersState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { isNonEmptyArray } from '@sniptt/guards';
 import { createClient } from 'graphql-sse';
 import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { useStore } from 'jotai';
 
 export const SSEClientEffect = () => {
-  const store = useStore();
   const isLogged = useIsLogged();
   const [sseClient, setSseClient] = useAtomState(sseClientState);
   const { resyncMetadataStore } = useResyncMetadataStore();
@@ -33,22 +29,11 @@ export const SSEClientEffect = () => {
     onBrowserEvent: debouncedResyncMetadataStore,
   });
 
-  const handleSSEClientConnected = useCallback(
-    (reconnected: boolean) => {
-      const currentActiveQueryListeners = store.get(
-        activeQueryListenersState.atom,
-      );
-
-      if (isNonEmptyArray(currentActiveQueryListeners)) {
-        store.set(activeQueryListenersState.atom, []);
-      }
-
-      if (reconnected) {
-        dispatchBrowserEvent(SSE_CLIENT_RECONNECTED_EVENT_NAME);
-      }
-    },
-    [store],
-  );
+  const handleSSEClientConnected = useCallback((reconnected: boolean) => {
+    if (reconnected) {
+      dispatchBrowserEvent(SSE_CLIENT_RECONNECTED_EVENT_NAME);
+    }
+  }, []);
 
   const { handleSseClientConnectionRetry } =
     useHandleSseClientConnectionRetry();
@@ -73,7 +58,6 @@ export const SSEClientEffect = () => {
     isLogged,
     setSseClient,
     sseClient,
-    store,
     handleSseClientConnectionRetry,
   ]);
 
