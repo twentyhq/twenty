@@ -3,45 +3,27 @@ import { getShiftedRecordCalendarDateTime } from '@/object-record/record-drag/ut
 const timeZone = 'Europe/Paris';
 
 describe('getShiftedRecordCalendarDateTime', () => {
-  it('moves a timed event by the rendered day offset and preserves duration', () => {
+  it('moves a date-time by the day offset without changing the time', () => {
     expect(
       getShiftedRecordCalendarDateTime({
         dayOffset: 3,
         startDateTime: '2026-07-08T15:59:00Z',
-        endDateTime: '2026-07-10T18:59:00Z',
         timeZone,
       }),
     ).toEqual({
       startDateTime: '2026-07-11T15:59:00Z',
-      endDateTime: '2026-07-13T18:59:00Z',
     });
   });
 
-  it('moves a continuation fragment by its visual anchor', () => {
-    expect(
-      getShiftedRecordCalendarDateTime({
-        dayOffset: 1,
-        startDateTime: '2026-07-08T15:59:00Z',
-        endDateTime: '2026-07-10T18:59:00Z',
-        timeZone,
-      }),
-    ).toEqual({
-      startDateTime: '2026-07-09T15:59:00Z',
-      endDateTime: '2026-07-11T18:59:00Z',
-    });
-  });
-
-  it('lands on the requested local time and preserves duration across DST', () => {
+  it('preserves the local time across DST', () => {
     expect(
       getShiftedRecordCalendarDateTime({
         dayOffset: 1,
         startDateTime: '2026-03-28T09:00:00Z',
-        endDateTime: '2026-03-28T11:00:00Z',
         timeZone,
       }),
     ).toEqual({
       startDateTime: '2026-03-29T08:00:00Z',
-      endDateTime: '2026-03-29T10:00:00Z',
     });
   });
 
@@ -50,53 +32,10 @@ describe('getShiftedRecordCalendarDateTime', () => {
       getShiftedRecordCalendarDateTime({
         dayOffset: 1,
         startDateTime: '2026-10-25T01:30:00Z',
-        endDateTime: '2026-10-25T02:30:00Z',
         timeZone,
       }),
     ).toEqual({
       startDateTime: '2026-10-26T01:30:00Z',
-      endDateTime: '2026-10-26T02:30:00Z',
-    });
-  });
-
-  it('keeps the local start time when a continuation moves across DST', () => {
-    expect(
-      getShiftedRecordCalendarDateTime({
-        dayOffset: 1,
-        startDateTime: '2026-03-28T09:00:00Z',
-        endDateTime: '2026-03-30T10:00:00Z',
-        timeZone,
-      }),
-    ).toEqual({
-      startDateTime: '2026-03-29T08:00:00Z',
-      endDateTime: '2026-03-31T09:00:00Z',
-    });
-  });
-
-  it('does not synthesize an end when it is unusable', () => {
-    expect(
-      getShiftedRecordCalendarDateTime({
-        dayOffset: 1,
-        startDateTime: '2026-07-08T15:59:00Z',
-        endDateTime: 'not-a-date',
-        timeZone,
-      }),
-    ).toEqual({
-      startDateTime: '2026-07-09T15:59:00Z',
-    });
-  });
-
-  it('shifts an end that is equal to the start', () => {
-    expect(
-      getShiftedRecordCalendarDateTime({
-        dayOffset: 1,
-        startDateTime: '2026-07-08T15:59:00Z',
-        endDateTime: '2026-07-08T15:59:00Z',
-        timeZone,
-      }),
-    ).toEqual({
-      startDateTime: '2026-07-09T15:59:00Z',
-      endDateTime: '2026-07-09T15:59:00Z',
     });
   });
 

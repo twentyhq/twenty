@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { type Manifest } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
@@ -82,6 +83,7 @@ export class ApplicationManifestMigrationService {
       pageLayouts: [],
       pageLayoutTabs: [],
       commandMenuItems: [],
+      timelineActivityTypes: [],
     };
 
     const now = new Date().toISOString();
@@ -110,6 +112,11 @@ export class ApplicationManifestMigrationService {
       this.computeManifestFlatEntityMapsService.compute({
         manifest: preInstallOnlyManifest,
         ownerFlatApplication,
+        fromAllFlatEntityMaps,
+        isLogicFunctionPrebuiltModeEnabled:
+          featureFlagsMap[
+            FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
+          ],
         now,
         workspaceId,
       });
@@ -163,11 +170,13 @@ export class ApplicationManifestMigrationService {
     workspaceId,
     ownerFlatApplication,
     dryRun = false,
+    inferDeletionFromMissingEntities = true,
   }: {
     manifest: Manifest;
     workspaceId: string;
     ownerFlatApplication: FlatApplication;
     dryRun?: boolean;
+    inferDeletionFromMissingEntities?: boolean;
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
@@ -189,8 +198,7 @@ export class ApplicationManifestMigrationService {
       ApplicationManifestMigrationService.name,
     );
 
-    const { featureFlagsMap: _featureFlagsMap, ...existingAllFlatEntityMaps } =
-      cacheResult;
+    const { featureFlagsMap, ...existingAllFlatEntityMaps } = cacheResult;
 
     const fromAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
       applicationIds: [ownerFlatApplication.id],
@@ -201,6 +209,11 @@ export class ApplicationManifestMigrationService {
       this.computeManifestFlatEntityMapsService.compute({
         manifest,
         ownerFlatApplication,
+        fromAllFlatEntityMaps,
+        isLogicFunctionPrebuiltModeEnabled:
+          featureFlagsMap[
+            FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
+          ],
         now,
         workspaceId,
       });
@@ -211,7 +224,9 @@ export class ApplicationManifestMigrationService {
         toAllUniversalFlatEntityMaps,
         buildOptions: {
           isSystemBuild: false,
-          inferDeletionFromMissingEntities: true,
+          inferDeletionFromMissingEntities: inferDeletionFromMissingEntities
+            ? true
+            : undefined,
           applicationUniversalIdentifier:
             ownerFlatApplication.universalIdentifier,
         },
@@ -253,6 +268,7 @@ export class ApplicationManifestMigrationService {
         manifest,
         workspaceId,
         ownerFlatApplication,
+        inferDeletionFromMissingEntities,
       });
     }
 
@@ -266,10 +282,12 @@ export class ApplicationManifestMigrationService {
     manifest,
     workspaceId,
     ownerFlatApplication,
+    inferDeletionFromMissingEntities,
   }: {
     manifest: Manifest;
     workspaceId: string;
     ownerFlatApplication: FlatApplication;
+    inferDeletionFromMissingEntities: boolean;
   }) {
     const {
       flatRoleMaps: refreshedFlatRoleMaps,
@@ -330,8 +348,14 @@ export class ApplicationManifestMigrationService {
 
     await this.applicationService.update(ownerFlatApplication.id, {
       workspaceId,
-      settingsCustomTabFrontComponentId,
-      uninstallLogicFunctionId,
+      ...(isDefined(settingsCustomTabFrontComponentId) ||
+      inferDeletionFromMissingEntities
+        ? { settingsCustomTabFrontComponentId }
+        : {}),
+      ...(isDefined(uninstallLogicFunctionId) ||
+      inferDeletionFromMissingEntities
+        ? { uninstallLogicFunctionId }
+        : {}),
       ...(isDefined(defaultRoleId) ? { defaultRoleId } : {}),
     });
   }

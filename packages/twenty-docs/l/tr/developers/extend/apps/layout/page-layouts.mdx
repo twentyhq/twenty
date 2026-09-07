@@ -53,9 +53,10 @@ export default definePageLayout({
 
 * `type`, `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` veya `'STANDALONE_PAGE'` değerlerinden biridir. Belirli bir nesnenin ayrıntı görünümünü özelleştirmek için `'RECORD_PAGE'` kullanın.
 * `objectUniversalIdentifier`, bu düzenin hangi nesneye uygulanacağını belirtir.
-* Her `tab`, bir `title`, `position` ve `layoutMode` ile sayfanın bir bölümünü tanımlar: kayıt sayfaları ve bağımsız sayfalar için `VERTICAL_LIST`, panolar için `GRID`. Bir `VERTICAL_LIST` sekmesinde tek bir bileşen tam genişlikte görüntülenir ve tüm sekmeyi kaplar; birden fazla bileşen varsa kartlar halinde üst üste dizilir. Bir `GRID` sekmesi, bileşenlerinin sayısı ne olursa olsun, bunları her zaman 12 sütunlu bir ızgarada kartlar olarak düzenler; bu nedenle, bir bileşenin sayfayı doldurmasını istediğinizde `VERTICAL_LIST` seçin.
+* Her `tab`, bir `title`, `position` ve `layoutMode` ile sayfanın bir bölümünü tanımlar: kayıt sayfaları ve bağımsız sayfalar için `VERTICAL_LIST`, panolar için `GRID` ve sekmenin görüntü alanını doldurması gereken tek bir widget için `CANVAS`. Bir `VERTICAL_LIST` sekmesi widget'ları dikey olarak sıralar. Zaman çizelgeleri, dosyalar, notlar, görevler ve iş akışları gibi kendi kaydırmalarını yöneten yerleşik widget'lar tek bir görüntü alanını doldurur; alanlar, ön bileşenler, grafikler ve içeriğe sığan diğer widget'lar ise içeriklerinde veya yapılandırılmış yüksekliklerinde oluşturulur. Bir `GRID` sekmesi, widget'larını her zaman 12 sütunlu bir ızgarada kartlar olarak düzenler. Bir `CANVAS` widget'ının açıkça belirtilmiş bir konumu yoktur; bir canvas sekmesi birden fazla widget içeriyorsa, görüntü alanını doldurmak yerine içerik yüksekliklerinde işlenirler.
 * `layoutMode` değerini açıkça ayarlayın. Bunu atlamak, bir `STANDALONE_PAGE` üzerinde size `VERTICAL_LIST` ve diğer her yerde `GRID` verir; bu da, bir kayıt sayfasında nadiren istediğiniz davranıştır.
 * Bir sekmenin içindeki her `widget`, bir [ön uç bileşeni](/l/tr/developers/extend/apps/layout/front-components), bir ilişki listesi veya diğer yerleşik widget türlerini oluşturabilir.
+* Bir `FRONT_COMPONENT` pencere öğesi, `headerCommandMenuItemUniversalIdentifiers` özelliğini aynı uygulamadaki komut menüsü öğelerinin evrensel tanımlayıcılarından oluşan sıralı bir diziye ayarlayabilir. Bu eylemler, pencere öğesi kart başlığında simge düğmeleri olarak görünür ve komut düzeyindeki kullanılabilirliklerini ve izin denetimlerini korur. Tanımlayıcılar benzersiz olmalı ve uygulama yüklendiğinde çözümlenebilmelidir.
 * Sekmelerdeki `position`, sıralarını kontrol eder. Özel sekmeleri yerleşik olanların sonrasına yerleştirmek için daha yüksek değerler kullanın (ör. 50).
 
 ### Alan bileşenleri
@@ -136,8 +137,10 @@ export default definePageLayoutTab({
   Her yerleşim girdisi ayrıca `tabs` ve bunların `widgets` ögelerini de açığa çıkarır, böylece herhangi bir düzeye başvurabilirsiniz:
 
   ```ts
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.universalIdentifier
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets.fields.universalIdentifier
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home
+    .universalIdentifier;
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets
+    .fields.universalIdentifier;
   ```
 
   Kısa bir takma ad `STANDARD_PAGE_LAYOUT` da kullanılabilir:

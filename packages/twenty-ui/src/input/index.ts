@@ -71,6 +71,8 @@ export type {
 export { IconButton } from './IconButton/IconButton';
 export type { IconButtonGroupProps } from './IconButtonGroup/IconButtonGroup';
 export { IconButtonGroup } from './IconButtonGroup/IconButtonGroup';
+export type { IconButtonWithTooltipProps } from './IconButtonWithTooltip/IconButtonWithTooltip';
+export { IconButtonWithTooltip } from './IconButtonWithTooltip/IconButtonWithTooltip';
 export { IconListViewGrip } from './IconListViewGrip/IconListViewGrip';
 export { InputHint } from './InputHint/InputHint';
 export { InputLabel } from './InputLabel/InputLabel';

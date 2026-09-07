@@ -13,8 +13,10 @@ import {
   wrapLanguageModel,
   type LanguageModel,
   type LanguageModelMiddleware,
+  type TranscriptionModel,
 } from 'ai';
 import { type AiSdkPackage } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   AI_SDK_ANTHROPIC,
@@ -28,9 +30,12 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 import { sanitizeGeminiToolResultRefsMiddleware } from 'src/engine/metadata-modules/ai/ai-models/middleware/sanitize-gemini-tool-result-refs.middleware';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
+import { getTranscriptionModelFactory } from 'src/engine/metadata-modules/ai/ai-models/utils/get-transcription-model-factory.util';
 
 export type AiSdkProviderInstance = {
   createModel: (modelId: string) => LanguageModel;
+  // Absent on providers with no speech-to-text API.
+  createTranscriptionModel?: (modelId: string) => TranscriptionModel;
   rawProvider: unknown;
   sdkPackage: AiSdkPackage;
 };
@@ -88,6 +93,21 @@ export class SdkProviderFactoryService {
     this.providerInstances.clear();
   }
 
+  private toProviderInstance(
+    provider: unknown,
+    sdkPackage: AiSdkPackage,
+    createModel: (modelId: string) => LanguageModel,
+  ): AiSdkProviderInstance {
+    const createTranscriptionModel = getTranscriptionModelFactory(provider);
+
+    return {
+      createModel,
+      ...(isDefined(createTranscriptionModel) && { createTranscriptionModel }),
+      rawProvider: provider,
+      sdkPackage,
+    };
+  }
+
   private buildProviderInstance(
     config: AiProviderConfig,
   ): AiSdkProviderInstance {
@@ -125,17 +145,13 @@ export class SdkProviderFactoryService {
       ...(config.baseUrl && { baseURL: config.baseUrl }),
     });
 
-    return {
-      createModel: (modelId: string) => {
-        const model = (provider as CallableFunction)(modelId);
+    return this.toProviderInstance(provider, config.npm, (modelId: string) => {
+      const model = (provider as CallableFunction)(modelId);
 
-        return options?.middleware
-          ? wrapLanguageModel({ model, middleware: options.middleware })
-          : model;
-      },
-      rawProvider: provider,
-      sdkPackage: config.npm,
-    };
+      return options?.middleware
+        ? wrapLanguageModel({ model, middleware: options.middleware })
+        : model;
+    });
   }
 
   private buildXaiProvider(config: AiProviderConfig): AiSdkProviderInstance {
@@ -144,11 +160,9 @@ export class SdkProviderFactoryService {
       ...(config.baseUrl && { baseURL: config.baseUrl }),
     });
 
-    return {
-      createModel: (modelId: string) => provider.responses(modelId),
-      rawProvider: provider,
-      sdkPackage: AI_SDK_XAI,
-    };
+    return this.toProviderInstance(provider, AI_SDK_XAI, (modelId: string) =>
+      provider.responses(modelId),
+    );
   }
 
   private buildBedrockProvider(
@@ -182,11 +196,11 @@ export class SdkProviderFactoryService {
         }),
     });
 
-    return {
-      createModel: (modelId: string) => provider(modelId),
-      rawProvider: provider,
-      sdkPackage: AI_SDK_BEDROCK,
-    };
+    return this.toProviderInstance(
+      provider,
+      AI_SDK_BEDROCK,
+      (modelId: string) => provider(modelId),
+    );
   }
 
   private buildOpenAiCompatibleProvider(
@@ -202,11 +216,11 @@ export class SdkProviderFactoryService {
       ...(config.apiKey && { apiKey: config.apiKey }),
     });
 
-    return {
-      createModel: (modelId: string) => provider(modelId),
-      rawProvider: provider,
-      sdkPackage: AI_SDK_OPENAI_COMPATIBLE,
-    };
+    return this.toProviderInstance(
+      provider,
+      AI_SDK_OPENAI_COMPATIBLE,
+      (modelId: string) => provider(modelId),
+    );
   }
 
   private buildAzureProvider(config: AiProviderConfig): AiSdkProviderInstance {
@@ -219,10 +233,8 @@ export class SdkProviderFactoryService {
       ...(config.apiKey && { apiKey: config.apiKey }),
     });
 
-    return {
-      createModel: (modelId: string) => provider(modelId),
-      rawProvider: provider,
-      sdkPackage: AI_SDK_AZURE,
-    };
+    return this.toProviderInstance(provider, AI_SDK_AZURE, (modelId: string) =>
+      provider(modelId),
+    );
   }
 }

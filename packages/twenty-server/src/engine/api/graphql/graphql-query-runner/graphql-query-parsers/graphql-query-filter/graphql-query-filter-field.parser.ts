@@ -18,7 +18,7 @@ import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/fie
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -29,11 +29,11 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 
 import { GraphqlQueryFilterConditionParser } from './graphql-query-filter-condition.parser';
-import { type RecordQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/types/record-query-builder.type';
+import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
 export class GraphqlQueryFilterFieldParser {
   private flatObjectMetadata: FlatObjectMetadata;
-  private flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  private flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   private flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
   private fieldIdByName: Record<string, string>;
   private fieldIdByJoinColumnName: Record<string, string>;
@@ -41,7 +41,7 @@ export class GraphqlQueryFilterFieldParser {
 
   constructor(
     flatObjectMetadata: FlatObjectMetadata,
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>,
     depth = 0,
   ) {
@@ -61,7 +61,7 @@ export class GraphqlQueryFilterFieldParser {
 
   public parse(
     queryBuilder: WhereExpressionBuilder,
-    outerQueryBuilder: RecordQueryBuilder,
+    outerQueryBuilder: WorkspaceSelectQueryBuilder,
     objectNameSingular: string,
     key: string,
     // oxlint-disable-next-line typescript/no-explicit-any
@@ -100,16 +100,19 @@ export class GraphqlQueryFilterFieldParser {
     if (
       isReferencedByFieldName &&
       isMorphOrRelationFlatFieldMetadata(fieldMetadata) &&
-      fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE
+      (fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE ||
+        fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
     ) {
-      return this.parseRelationSubFilter(
+      return this.parseRelationSubFilter({
         queryBuilder,
         outerQueryBuilder,
-        objectNameSingular,
+        parentAlias: objectNameSingular,
         fieldMetadata,
         filterValue,
         isFirst,
-      );
+        isToManyRelation:
+          fieldMetadata.settings.relationType === RelationType.ONE_TO_MANY,
+      });
     }
 
     if (isCompositeFieldMetadataType(fieldMetadata.type)) {
@@ -142,14 +145,23 @@ export class GraphqlQueryFilterFieldParser {
     }
   }
 
-  private parseRelationSubFilter(
-    queryBuilder: WhereExpressionBuilder,
-    outerQueryBuilder: RecordQueryBuilder,
-    parentAlias: string,
-    fieldMetadata: FlatFieldMetadata,
-    filterValue: Partial<ObjectRecordFilter>,
-    isFirst: boolean,
-  ): void {
+  private parseRelationSubFilter({
+    queryBuilder,
+    outerQueryBuilder,
+    parentAlias,
+    fieldMetadata,
+    filterValue,
+    isFirst,
+    isToManyRelation,
+  }: {
+    queryBuilder: WhereExpressionBuilder;
+    outerQueryBuilder: WorkspaceSelectQueryBuilder;
+    parentAlias: string;
+    fieldMetadata: OrmFlatFieldMetadata;
+    filterValue: Partial<ObjectRecordFilter>;
+    isFirst: boolean;
+    isToManyRelation: boolean;
+  }): void {
     if (this.depth >= MAX_RELATION_FILTER_DEPTH) {
       throw new GraphqlQueryRunnerException(
         `Relation filter nesting deeper than ${MAX_RELATION_FILTER_DEPTH} hop is not supported`,
@@ -190,6 +202,54 @@ export class GraphqlQueryFilterFieldParser {
       );
     }
 
+    const childConditionParser = new GraphqlQueryFilterConditionParser(
+      targetObjectMetadata,
+      this.flatFieldMetadataMaps,
+      this.flatObjectMetadataMaps,
+      this.depth + 1,
+    );
+
+    // A join on a to-many relation would duplicate root rows, which the
+    // find-many runner rejects, so the related rows are matched through a
+    // correlated EXISTS instead.
+    if (isToManyRelation) {
+      // The EXISTS is correlated with the root alias, so a to-many filter
+      // reached through a joined to-one relation would match the wrong rows.
+      if (parentAlias !== outerQueryBuilder.alias) {
+        throw new GraphqlQueryRunnerException(
+          `To-many relation filter on "${fieldMetadata.name}" must apply to the root object`,
+          GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+          {
+            userFriendlyMessage: msg`Relation filters can only traverse one relation deep`,
+          },
+        );
+      }
+
+      const existsToken = outerQueryBuilder.addRelationExistsFilter({
+        relationFieldName: fieldMetadata.name,
+        applyWhere: (nestedQueryBuilder) => {
+          nestedQueryBuilder.where(
+            new Brackets((subQb) => {
+              childConditionParser.applyFilterEntriesToWhereBrackets(
+                subQb,
+                nestedQueryBuilder,
+                nestedQueryBuilder.alias,
+                filterValue,
+              );
+            }),
+          );
+        },
+      });
+
+      if (isFirst) {
+        queryBuilder.where(existsToken);
+      } else {
+        queryBuilder.andWhere(existsToken);
+      }
+
+      return;
+    }
+
     const joinAlias = fieldMetadata.name;
 
     addRelationJoinAliasToQueryBuilder({
@@ -197,13 +257,6 @@ export class GraphqlQueryFilterFieldParser {
       parentAlias,
       relationName: joinAlias,
     });
-
-    const childConditionParser = new GraphqlQueryFilterConditionParser(
-      targetObjectMetadata,
-      this.flatFieldMetadataMaps,
-      this.flatObjectMetadataMaps,
-      this.depth + 1,
-    );
 
     const subBrackets = new Brackets((subQb) => {
       childConditionParser.applyFilterEntriesToWhereBrackets(
@@ -223,7 +276,7 @@ export class GraphqlQueryFilterFieldParser {
 
   private parseCompositeFieldForFilter(
     queryBuilder: WhereExpressionBuilder,
-    fieldMetadata: FlatFieldMetadata,
+    fieldMetadata: OrmFlatFieldMetadata,
     objectNameSingular: string,
     // oxlint-disable-next-line typescript/no-explicit-any
     fieldValue: any,

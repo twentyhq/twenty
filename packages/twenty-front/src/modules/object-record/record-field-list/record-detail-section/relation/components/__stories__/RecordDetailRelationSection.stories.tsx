@@ -41,7 +41,6 @@ const meta: Meta<typeof RecordDetailRelationSection> = {
             targetObjectNameSingular: 'company',
           },
           layoutType: PageLayoutType.RECORD_PAGE,
-          isInSidePanel: false,
         }}
       >
         <ContextStoreComponentInstanceContext.Provider

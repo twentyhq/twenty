@@ -97,7 +97,7 @@ Il en va de même pour les composants front qui lisent les valeurs via `getAppli
 
 Le rôle déclaré avec [`defineApplicationRole()`](/l/fr/developers/extend/apps/config/roles) contrôle ce à quoi les fonctions logiques de l’application et les composants front peuvent accéder :
 
-* Le jeton d'exécution injecté sous `TWENTY_APP_ACCESS_TOKEN` est dérivé de ce rôle.
+* Les jetons d'exécution injectés dans vos fonctions logiques sont dérivés de ce rôle. Un appel agissant en tant que personne est davantage limité par ce que cette personne peut faire, de sorte qu'il ne peut jamais dépasser l'un ou l'autre. Voir [Les accès qu'un appel utilise](/l/fr/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
 * Le client d'API typé est limité aux autorisations accordées à ce rôle.
 * Appliquez le principe du moindre privilège : déclarez uniquement les autorisations dont vos fonctions ont besoin.
 

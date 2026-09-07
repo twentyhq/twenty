@@ -12,6 +12,23 @@ export type { AppConnection } from './appConnectionType';
 export type { AppKeyValueScope } from './appKeyValueScopeType';
 export type { AppKeyValue } from './appKeyValueType';
 export type {
+  RecurringChargePeriod,
+  RecurringChargeUnit,
+  RecurringCharge,
+  RecurringCharges,
+  ApplicationBilling,
+} from './applicationBillingType';
+export {
+  RECURRING_CHARGE_PERIODS,
+  isRecurringChargePeriod,
+  RECURRING_CHARGE_UNITS,
+  isRecurringChargeUnit,
+  MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT,
+  MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_PERIOD,
+  isRecurringChargeAmount,
+  isRecurringCharge,
+} from './applicationBillingType';
+export type {
   KnownApplicationCategory,
   ApplicationCategory,
 } from './applicationCategoryType';
@@ -29,12 +46,18 @@ export type {
 } from './applicationVariablesType';
 export { APPLICATION_VARIABLE_FIELD_METADATA_TYPES } from './applicationVariablesType';
 export type { AssetManifest } from './assetManifestType';
+export type {
+  BillableOperationManifest,
+  BillableOperations,
+} from './billableOperationsType';
 export type { ConnectionProviderManifest } from './connectionProviderManifestType';
 export type { ConnectionProviderType } from './connectionProviderType';
+export { APPLICATION_FILE_UPLOAD_BATCH_SIZE } from './constants/ApplicationFileUploadBatchSize';
 export { ASSETS_DIR } from './constants/AssetDirectory';
 export { DEFAULT_API_KEY_NAME } from './constants/DefaultApiKeyName';
 export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';
 export { DEFAULT_APP_ACCESS_TOKEN_NAME } from './constants/DefaultAppAccessTokenName';
+export { DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME } from './constants/DefaultAppApplicationAccessTokenName';
 export { DEFAULT_FUNCTIONS_URL_NAME } from './constants/DefaultFunctionsUrlName';
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH } from './constants/FrontComponentSharedDependenciesBuiltPath';
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from './constants/FrontComponentSharedDependenciesImportSpecifier';
@@ -43,20 +66,20 @@ export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
 export { TWENTY_STANDARD_APPLICATION_NAME } from './constants/TwentyStandardApplicationName';
 export { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from './constants/TwentyStandardApplicationUniversalIdentifier';
+export type {
+  CreditUnavailableReason,
+  CreditAvailability,
+} from './creditAvailabilityType';
+export { CREDIT_UNAVAILABLE_REASONS } from './creditAvailabilityType';
 export { computeDeterministicUuid } from './deterministic-identifier/compute-deterministic-uuid.util';
 export type { DeterministicEntityNamespace } from './deterministic-identifier/deterministic-entity-namespace.type';
 export { getAgentUniversalIdentifier } from './deterministic-identifier/get-agent-universal-identifier.util';
 export { getApplicationVariableUniversalIdentifier } from './deterministic-identifier/get-application-variable-universal-identifier.util';
-export {
-  getGlobalCommandMenuItemUniversalIdentifier,
-  getGlobalObjectContextCommandMenuItemUniversalIdentifier,
-  getRecordSelectionCommandMenuItemUniversalIdentifier,
-  getNavigationCommandUniversalIdentifier,
-} from './deterministic-identifier/get-command-menu-item-universal-identifier.util';
 export { getConnectionProviderUniversalIdentifier } from './deterministic-identifier/get-connection-provider-universal-identifier.util';
 export { getFieldPermissionUniversalIdentifier } from './deterministic-identifier/get-field-permission-universal-identifier.util';
 export { getFieldUniversalIdentifier } from './deterministic-identifier/get-field-universal-identifier.util';
 export { getFrontComponentUniversalIdentifier } from './deterministic-identifier/get-front-component-universal-identifier.util';
+export { getIndexFieldUniversalIdentifier } from './deterministic-identifier/get-index-field-universal-identifier.util';
 export { getIndexUniversalIdentifier } from './deterministic-identifier/get-index-universal-identifier.util';
 export { getLogicFunctionUniversalIdentifier } from './deterministic-identifier/get-logic-function-universal-identifier.util';
 export {
@@ -75,8 +98,11 @@ export { getRoleUniversalIdentifier } from './deterministic-identifier/get-role-
 export { getSearchFieldUniversalIdentifier } from './deterministic-identifier/get-search-field-universal-identifier.util';
 export { getSelectOptionUniversalIdentifier } from './deterministic-identifier/get-select-option-universal-identifier.util';
 export { getSkillUniversalIdentifier } from './deterministic-identifier/get-skill-universal-identifier.util';
+export { getSystemFormFieldPageLayoutWidgetUniversalIdentifier } from './deterministic-identifier/get-system-form-field-page-layout-widget-universal-identifier.util';
+export { getSystemNavigationCommandMenuItemUniversalIdentifier } from './deterministic-identifier/get-system-navigation-command-menu-item-universal-identifier.util';
 export { getSystemPageLayoutTabUniversalIdentifier } from './deterministic-identifier/get-system-page-layout-tab-universal-identifier.util';
 export { getSystemPageLayoutWidgetUniversalIdentifier } from './deterministic-identifier/get-system-page-layout-widget-universal-identifier.util';
+export { getSystemRecordFormPageLayoutUniversalIdentifier } from './deterministic-identifier/get-system-record-form-page-layout-universal-identifier.util';
 export { getSystemRecordPageLayoutUniversalIdentifier } from './deterministic-identifier/get-system-record-page-layout-universal-identifier.util';
 export { getSystemRelationFieldUniversalIdentifier } from './deterministic-identifier/get-system-relation-field-universal-identifier.util';
 export { getSystemViewFieldGroupUniversalIdentifier } from './deterministic-identifier/get-system-view-field-group-universal-identifier.util';
@@ -95,6 +121,11 @@ export type {
   EnqueueJobOptions,
   EnqueueJobInput,
   EnqueueJobResult,
+  EnqueueJobItem,
+  EnqueueJobsInput,
+  EnqueueJobsResult,
+  JobStatusState,
+  JobStatusResult,
 } from './enqueueJobType';
 export { SyncableEntity } from './enums/syncable-entities.enum';
 export type {
@@ -152,8 +183,18 @@ export type { SettingsFrontComponentApplicationManifest } from './settingsFrontC
 export type { SkillManifest } from './skillManifestType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
+export type {
+  TimelineActivityTypeEmitThroughManifest,
+  TimelineActivityTypeEmitManifest,
+  TimelineActivityTypeManifest,
+} from './timelineActivityTypeManifestType';
 export type { ToolTriggerSettings } from './toolTriggerSettingsType';
 export type { UninstallLogicFunctionApplicationManifest } from './uninstallLogicFunctionApplicationType';
+export type { UsageOperationTypeValue } from './usageOperationTypesType';
+export {
+  USAGE_OPERATION_TYPES,
+  isUsageOperationTypeValue,
+} from './usageOperationTypesType';
 export {
   serializeApplicationVariableValue,
   deserializeApplicationVariableValue,

@@ -97,7 +97,7 @@ Același lucru se aplică și componentelor de interfață care citesc valori pr
 
 Rolul declarat cu [`defineApplicationRole()`](/l/ro/developers/extend/apps/config/roles) controlează la ce pot avea acces funcțiile logice și componentele de interfață ale aplicației:
 
-* Tokenul de runtime injectat ca `TWENTY_APP_ACCESS_TOKEN` este derivat din acest rol.
+* Tokenurile de runtime injectate în funcțiile dvs. de logică sunt derivate din acest rol. Un apel care acționează ca o persoană este restrâns suplimentar la ceea ce poate face acea persoană, astfel încât nu poate depăși niciodată niciuna dintre cele două limite. Consultați [Ce acces utilizează un apel](/l/ro/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
 * Clientul API tipizat este restricționat la permisiunile acordate acelui rol.
 * Respectați principiul celui mai mic privilegiu: declarați doar permisiunile de care au nevoie funcțiile.
 

@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { EMAIL_RECIPIENT_MEMBER_SUGGESTIONS_LIMIT } from '@/activities/emails/recipients/constants/EmailRecipientMemberSuggestionsLimit';
 import { EMAIL_RECIPIENT_PEOPLE_SUGGESTIONS_LIMIT } from '@/activities/emails/recipients/constants/EmailRecipientPeopleSuggestionsLimit';
 import { type EmailComposerContextRecord } from '@/activities/emails/recipients/types/EmailComposerContextRecord';
+import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
 import { type EmailRecipientPerson } from '@/activities/emails/recipients/types/EmailRecipientPerson';
 import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEmailRecipientKey';
 import { getEmailRecipientPersonFromRecord } from '@/activities/emails/recipients/utils/getEmailRecipientPersonFromRecord';
@@ -18,7 +19,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 export type EmailRecipientSuggestion = {
   suggestionId: string;
-  recipient: { address: string; displayName?: string };
+  recipient: EmailRecipient;
   label: string;
   secondaryText: string;
   avatarUrl: string | null;
@@ -38,6 +39,7 @@ const getSuggestion = ({
   secondaryText,
   avatarUrl,
   avatarColorSeed,
+  personId,
 }: {
   suggestionId: string;
   fullName: string;
@@ -45,11 +47,13 @@ const getSuggestion = ({
   secondaryText: string;
   avatarUrl: string | null;
   avatarColorSeed: string;
+  personId?: string;
 }): EmailRecipientSuggestion => ({
   suggestionId,
   recipient: {
     address,
     displayName: isNonEmptyString(fullName) ? fullName : undefined,
+    personId,
   },
   label: isNonEmptyString(fullName) ? fullName : address,
   secondaryText,
@@ -67,6 +71,7 @@ const getPersonSuggestion = (
     secondaryText: person.primaryEmail,
     avatarUrl: person.avatarUrl,
     avatarColorSeed: person.id,
+    personId: person.id,
   });
 
 export const useEmailRecipientSuggestions = ({

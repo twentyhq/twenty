@@ -25,11 +25,21 @@ export class ApplicationManifestApplyService {
     manifest,
     applicationRegistrationId,
     application,
+    forceSdkClientGeneration = false,
+    inferDeletionFromMissingEntities = true,
   }: {
     workspaceId: string;
     manifest: Manifest;
     applicationRegistrationId?: string;
-    application: ApplicationEntity;
+    application: Pick<
+      ApplicationEntity,
+      'id' | 'universalIdentifier' | 'version'
+    >;
+    inferDeletionFromMissingEntities?: boolean;
+    // Installs and upgrades force regeneration so function-only upgrades pick
+    // up SDK-level changes; dev sync relies on first-apply/schema-change to
+    // avoid regenerating on every save.
+    forceSdkClientGeneration?: boolean;
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
@@ -44,9 +54,10 @@ export class ApplicationManifestApplyService {
         workspaceId,
         manifest,
         applicationRegistrationId,
+        inferDeletionFromMissingEntities,
       });
 
-    if (isFirstApply || hasSchemaMetadataChanged) {
+    if (forceSdkClientGeneration || isFirstApply || hasSchemaMetadataChanged) {
       await this.sdkClientGenerationService.generateSdkClientForApplication({
         workspaceId,
         applicationId: application.id,

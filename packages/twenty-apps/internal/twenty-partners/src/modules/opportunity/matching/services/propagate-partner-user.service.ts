@@ -5,7 +5,7 @@ import type {
 } from 'twenty-sdk/define';
 
 import { collectAll } from 'src/modules/shared/utils/paginate.util';
-import { getCompanyPartnerUser } from 'src/modules/opportunity/matching/graphql/queries/get-company-partner-user';
+import { getCompanyPartnerUser } from 'src/modules/shared/graphql/queries/get-company-partner-user';
 import { getOpportunityCascadeFields } from 'src/modules/opportunity/matching/graphql/queries/get-opportunity-cascade-fields';
 import { getPartnerOwner } from 'src/modules/shared/graphql/queries/get-partner-owner';
 import { findOpportunityStillUsingCompany } from 'src/modules/opportunity/matching/graphql/queries/find-opportunity-still-using-company';
@@ -71,8 +71,9 @@ export async function propagatePartnerUser(
 
     if (!removedMemberId || !companyId) {
       const oppResult = await getOpportunityCascadeFields(client, opportunityId);
-      removedMemberId = removedMemberId ?? oppResult.opportunity?.partnerUserId ?? null;
-      companyId = companyId ?? oppResult.opportunity?.companyId ?? null;
+      const opportunity = oppResult.opportunities?.edges?.[0]?.node;
+      removedMemberId = removedMemberId ?? opportunity?.partnerUserId ?? null;
+      companyId = companyId ?? opportunity?.companyId ?? null;
     }
 
     await updateOpportunityPartnerUser(client, opportunityId, null);
@@ -96,7 +97,7 @@ export async function propagatePartnerUser(
 
     // Clear the company (only if it belongs to this member) and every person stamped for them.
     const companyResult = await getCompanyPartnerUser(client, companyId);
-    if (companyResult.company?.partnerUserId === removedMemberId) {
+    if (companyResult.companies?.edges?.[0]?.node?.partnerUserId === removedMemberId) {
       await updateCompanyPartnerUser(client, companyId, null);
     }
 
@@ -115,7 +116,7 @@ export async function propagatePartnerUser(
 
   // ── Assign / reassign ────────────────────────────────────────────────────────
   const partnerResult = await getPartnerOwner(client, partnerId);
-  const partnerUserId = partnerResult.partner?.partnerUserId;
+  const partnerUserId = partnerResult.partners?.edges?.[0]?.node?.partnerUserId;
   if (!partnerUserId) return { cascaded: false, reason: 'partner_has_no_user' };
 
   await updateOpportunityPartnerUser(client, opportunityId, partnerUserId);
@@ -128,7 +129,7 @@ export async function propagatePartnerUser(
   // here would steal the company (and its contacts) from the other partner and expose their
   // data. Stamp only the opportunity in that case and leave the company/people alone.
   const companyResult = await getCompanyPartnerUser(client, companyId);
-  const companyOwner = companyResult.company?.partnerUserId;
+  const companyOwner = companyResult.companies?.edges?.[0]?.node?.partnerUserId;
   if (companyOwner && companyOwner !== partnerUserId) {
     return { cascaded: true, partnerUserId, companyShared: true };
   }

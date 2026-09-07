@@ -1,10 +1,13 @@
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  CoreObjectTableBody,
+  CoreObjectTableRow,
+} from '@/object-core/components/CoreObjectTableRow';
 import { type CoreObjectTableColumn } from '@/object-core/types/CoreObjectTableColumn';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
-import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
@@ -62,9 +65,9 @@ export const CoreObjectTable = <TItem,>({
           ),
         )}
       </TableRow>
-      <TableBody>
+      <CoreObjectTableBody>
         {items.map((item) => (
-          <TableRow
+          <CoreObjectTableRow
             key={getItemKey(item)}
             gridTemplateColumns={gridTemplateColumns}
             to={getItemLink?.(item)}
@@ -74,9 +77,9 @@ export const CoreObjectTable = <TItem,>({
                 {column.renderCell(item)}
               </TableCell>
             ))}
-          </TableRow>
+          </CoreObjectTableRow>
         ))}
-      </TableBody>
+      </CoreObjectTableBody>
     </Table>
   );
 };

@@ -116,13 +116,17 @@ export class UpgradeApplicationCommand extends CommandRunner {
       ? Array.from(options.workspaceId)
       : undefined;
 
-    const { appRegistration, targetVersion, applicationsToUpgrade } =
-      await this.applicationUpgradeService.findApplicationsToUpgrade({
-        applicationRegistrationId: registration.id,
-        onlyAutoUpgrade: false,
-        workspaceIds,
-        workspaceCountLimit: options.workspaceCountLimit,
-      });
+    const {
+      appRegistration,
+      targetVersion,
+      applicationsToUpgrade,
+      skippedNonProvisionedWorkspaceIds,
+    } = await this.applicationUpgradeService.findApplicationsToUpgrade({
+      applicationRegistrationId: registration.id,
+      onlyAutoUpgrade: false,
+      workspaceIds,
+      workspaceCountLimit: options.workspaceCountLimit,
+    });
 
     if (!isDefined(targetVersion)) {
       this.logger.warn(
@@ -130,6 +134,12 @@ export class UpgradeApplicationCommand extends CommandRunner {
       );
 
       return;
+    }
+
+    if (skippedNonProvisionedWorkspaceIds.length > 0) {
+      this.logger.warn(
+        `Skipping ${skippedNonProvisionedWorkspaceIds.length} non provisioned workspace(s): ${skippedNonProvisionedWorkspaceIds.join(', ')}`,
+      );
     }
 
     const impactedWorkspaceIds = applicationsToUpgrade.map(

@@ -84,6 +84,29 @@ export default defineField({
 **Döngüsel içe aktarmalar:** Her iki ilişki alanı da birbirlerinin `universalIdentifier` değerine referans verir. Döngüsel içe aktarma sorunlarından kaçınmak için, alan kimliklerinizi her dosyadan adlandırılmış sabitler olarak dışa aktarın ve diğerinde içe aktarın. Derleme sistemi bunları derleme zamanında çözer.
 </Note>
 
+## Bağlantı ilişkileri
+
+Bir bağlantı nesnesi, bir kaynak kaydını bir veya daha fazla hedef kayda bağlar. Örneğin, `PostCardRecipient` hem bir `postCard` ilişkisini hem de bir `recipient` ilişkisini tutabilir. Kaynak nesnenin `ONE_TO_MANY` alanında, `junctionTargetFieldUniversalIdentifier` değerini bağlantı nesnesinde hedefi işaret eden ilişki alanına ayarlayın:
+
+```ts
+export default defineField({
+  universalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCardRecipients',
+  label: 'Post Card Recipients',
+  relationTargetObjectMetadataUniversalIdentifier:
+    POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+    junctionTargetFieldUniversalIdentifier: RECIPIENT_FIELD_ID,
+  },
+});
+```
+
+`RECIPIENT_FIELD_ID`, bağlantı nesnesindeki bir `MANY_TO_ONE` veya morph ilişkisini tanımlamalıdır. [zaman çizelgesi etkinliği yayılımı](/l/tr/developers/extend/apps/data/timeline-activity-types#automatic-and-explicit-events) gibi bir özellik bağlantı nesnesinden geçtiğinde, Twenty'ye hangi ilişkili kaydın hedef olduğunu bildirir.
+
 ## Standart nesnelerle ilişkilendirme
 
 Yerleşik bir Twenty nesnesiyle (Person, Company, vb.) ilişki oluşturmak için `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` kullanın:
@@ -122,14 +145,15 @@ export default defineField({
 
 ## İlişki alanı özellikleri
 
-| Özellik                                           | Zorunlu              | Açıklama                                                                                     |
-| ------------------------------------------------- | -------------------- | -------------------------------------------------------------------------------------------- |
-| `type`                                            | Evet                 | `FieldType.RELATION` olmalıdır                                                               |
-| `relationTargetObjectMetadataUniversalIdentifier` | Evet                 | Hedef nesnenin `universalIdentifier` değeri                                                  |
-| `relationTargetFieldMetadataUniversalIdentifier`  | Evet                 | Hedef nesnedeki eşleşen alanın `universalIdentifier` değeri                                  |
-| `universalSettings.relationType`                  | Evet                 | `RelationType.MANY_TO_ONE` veya `RelationType.ONE_TO_MANY`                                   |
-| `universalSettings.onDelete`                      | Yalnızca MANY_TO_ONE | Başvurulan kayıt silindiğinde ne olacağı: `CASCADE`, `SET_NULL`, `RESTRICT` veya `NO_ACTION` |
-| `universalSettings.joinColumnName`                | Yalnızca MANY_TO_ONE | Yabancı anahtar için veritabanı sütun adı (örn. `postCardId`)                                |
+| Özellik                                                    | Zorunlu                               | Açıklama                                                                                     |
+| ---------------------------------------------------------- | ------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `type`                                                     | Evet                                  | `FieldType.RELATION` olmalıdır                                                               |
+| `relationTargetObjectMetadataUniversalIdentifier`          | Evet                                  | Hedef nesnenin `universalIdentifier` değeri                                                  |
+| `relationTargetFieldMetadataUniversalIdentifier`           | Evet                                  | Hedef nesnedeki eşleşen alanın `universalIdentifier` değeri                                  |
+| `universalSettings.relationType`                           | Evet                                  | `RelationType.MANY_TO_ONE` veya `RelationType.ONE_TO_MANY`                                   |
+| `universalSettings.onDelete`                               | Yalnızca MANY_TO_ONE                  | Başvurulan kayıt silindiğinde ne olacağı: `CASCADE`, `SET_NULL`, `RESTRICT` veya `NO_ACTION` |
+| `universalSettings.joinColumnName`                         | Yalnızca MANY_TO_ONE                  | Yabancı anahtar için veritabanı sütun adı (örn. `postCardId`)                                |
+| `universalSettings.junctionTargetFieldUniversalIdentifier` | Yalnızca bağlantı nesnesi ONE_TO_MANY | Yayılım hedefini işaret eden bağlantı nesnesindeki ilişki alanı                              |
 
 ## Satır içi ilişki alanları
 

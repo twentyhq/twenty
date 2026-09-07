@@ -192,6 +192,13 @@ export class LambdaExecutorManagerService {
 
     await this.cacheLockService.withLock(
       async () => {
+        if (
+          (await this.getInstalledBundleChecksum(flatLogicFunction)) ===
+          checksum
+        ) {
+          return;
+        }
+
         const compiledCode =
           await this.logicFunctionResourceService.getBuiltCode({
             workspaceId: flatLogicFunction.workspaceId,

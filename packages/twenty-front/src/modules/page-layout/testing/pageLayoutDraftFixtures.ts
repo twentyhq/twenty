@@ -18,7 +18,6 @@ export const makeWidget = (
     title: id,
     isActive: true,
     type: WidgetType.FIELDS,
-    gridPosition: { column: 0, columnSpan: 1, row: 0, rowSpan: 1 },
     configuration: { __typename: 'FieldsConfiguration' as const },
     position: {
       __typename: 'PageLayoutWidgetVerticalListPosition' as const,
@@ -60,5 +59,6 @@ export const makeDraft = (
   name: 'Test Layout',
   type: PageLayoutType.RECORD_PAGE,
   objectMetadataId: null,
+  isFirstTabPinned: true,
   tabs,
 });

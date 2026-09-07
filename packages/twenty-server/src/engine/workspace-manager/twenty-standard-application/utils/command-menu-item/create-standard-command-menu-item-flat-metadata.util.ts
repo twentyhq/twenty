@@ -62,6 +62,10 @@ export const createStandardCommandMenuItemFlatMetadata = ({
     availabilityType: definition.availabilityType,
     conditionalAvailabilityExpression:
       definition.conditionalAvailabilityExpression ?? null,
+    conditionalPinnedExpression:
+      'conditionalPinnedExpression' in definition
+        ? definition.conditionalPinnedExpression
+        : null,
     frontComponentId: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: definition.engineComponentKey,
@@ -74,6 +78,8 @@ export const createStandardCommandMenuItemFlatMetadata = ({
     availabilityObjectMetadataId: resolvedObjectMetadataId,
     availabilityObjectMetadataUniversalIdentifier:
       resolvedObjectMetadataUniversalIdentifier,
+    navigationTargetObjectMetadataId: null,
+    navigationTargetObjectMetadataUniversalIdentifier: null,
     pageLayoutId: null,
     pageLayoutUniversalIdentifier: null,
     isActive: true,

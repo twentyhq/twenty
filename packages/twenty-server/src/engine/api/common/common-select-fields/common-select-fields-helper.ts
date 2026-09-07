@@ -7,7 +7,7 @@ import { getRelationsSelectFields } from 'src/engine/api/common/common-select-fi
 import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
@@ -23,7 +23,7 @@ export class CommonSelectFieldsHelper {
   }: {
     objectsPermissions: ObjectsPermissions;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     flatObjectMetadata: FlatObjectMetadata;
     depth: Depth | undefined;
     onlyUseLabelIdentifierFieldsInRelations?: boolean;

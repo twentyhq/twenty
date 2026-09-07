@@ -43,10 +43,30 @@ const CALENDAR_EVENT_RECORD_PAGE_VIEW_FIELD_GROUP_UNIVERSAL_IDENTIFIERS =
       .viewFieldGroups,
   );
 
+// Pinned to the fields this command shipped with. It runs before the
+// calendarEventTargets junction exists, so reading the live view would make it
+// create a view field for a field the workspace does not have yet.
+const CALENDAR_EVENT_RECORD_PAGE_VIEW_FIELD_NAMES = [
+  'title',
+  'startsAt',
+  'endsAt',
+  'isFullDay',
+  'isCanceled',
+  'conferenceLink',
+  'location',
+  'description',
+  'externalCreatedAt',
+  'externalUpdatedAt',
+  'iCalUid',
+  'conferenceSolution',
+] as const satisfies readonly (keyof typeof STANDARD_OBJECTS.calendarEvent.views.calendarEventRecordPageFields.viewFields)[];
+
 const CALENDAR_EVENT_RECORD_PAGE_VIEW_FIELD_UNIVERSAL_IDENTIFIERS =
-  getUniversalIdentifiers(
-    STANDARD_OBJECTS.calendarEvent.views.calendarEventRecordPageFields
-      .viewFields,
+  CALENDAR_EVENT_RECORD_PAGE_VIEW_FIELD_NAMES.map((viewFieldName) =>
+    toPre231RecordPageUniversalIdentifier(
+      STANDARD_OBJECTS.calendarEvent.views.calendarEventRecordPageFields
+        .viewFields[viewFieldName].universalIdentifier,
+    ),
   );
 
 const CALENDAR_EVENT_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = [

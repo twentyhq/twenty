@@ -24,19 +24,10 @@ import {
   getUpdateManyResponse200,
   getUpdateOneResponse200,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const computeBatchPath = (
   item: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>,
-  _flatObjectMetadataMaps: Pick<
-    AllFlatEntityMaps,
-    'flatObjectMetadataMaps'
-  >['flatObjectMetadataMaps'],
-  _flatFieldMetadataMaps: Pick<
-    AllFlatEntityMaps,
-    'flatFieldMetadataMaps'
-  >['flatFieldMetadataMaps'],
 ): OpenAPIV3_1.PathItemObject => {
   return {
     post: {
@@ -59,14 +50,6 @@ export const computeBatchPath = (
 
 export const computeManyResultPath = (
   item: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>,
-  _flatObjectMetadataMaps: Pick<
-    AllFlatEntityMaps,
-    'flatObjectMetadataMaps'
-  >['flatObjectMetadataMaps'],
-  _flatFieldMetadataMaps: Pick<
-    AllFlatEntityMaps,
-    'flatFieldMetadataMaps'
-  >['flatFieldMetadataMaps'],
 ): OpenAPIV3_1.PathItemObject => {
   return {
     get: {
@@ -137,14 +120,6 @@ export const computeManyResultPath = (
 
 export const computeSingleResultPath = (
   item: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>,
-  _flatObjectMetadataMaps: Pick<
-    AllFlatEntityMaps,
-    'flatObjectMetadataMaps'
-  >['flatObjectMetadataMaps'],
-  _flatFieldMetadataMaps: Pick<
-    AllFlatEntityMaps,
-    'flatFieldMetadataMaps'
-  >['flatFieldMetadataMaps'],
 ): OpenAPIV3_1.PathItemObject => {
   return {
     get: {
@@ -216,14 +191,6 @@ export const computeOpenApiPath = (
 
 export const computeDuplicatesResultPath = (
   item: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>,
-  _flatObjectMetadataMaps: Pick<
-    AllFlatEntityMaps,
-    'flatObjectMetadataMaps'
-  >['flatObjectMetadataMaps'],
-  _flatFieldMetadataMaps: Pick<
-    AllFlatEntityMaps,
-    'flatFieldMetadataMaps'
-  >['flatFieldMetadataMaps'],
 ): OpenAPIV3_1.PathItemObject => {
   return {
     post: {
@@ -244,14 +211,6 @@ export const computeDuplicatesResultPath = (
 
 export const computeRestoreOneResultPath = (
   item: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>,
-  _flatObjectMetadataMaps: Pick<
-    AllFlatEntityMaps,
-    'flatObjectMetadataMaps'
-  >['flatObjectMetadataMaps'],
-  _flatFieldMetadataMaps: Pick<
-    AllFlatEntityMaps,
-    'flatFieldMetadataMaps'
-  >['flatFieldMetadataMaps'],
 ): OpenAPIV3_1.PathItemObject => {
   return {
     patch: {
@@ -273,14 +232,6 @@ export const computeRestoreOneResultPath = (
 
 export const computeRestoreManyResultPath = (
   item: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>,
-  _flatObjectMetadataMaps: Pick<
-    AllFlatEntityMaps,
-    'flatObjectMetadataMaps'
-  >['flatObjectMetadataMaps'],
-  _flatFieldMetadataMaps: Pick<
-    AllFlatEntityMaps,
-    'flatFieldMetadataMaps'
-  >['flatFieldMetadataMaps'],
 ): OpenAPIV3_1.PathItemObject => {
   return {
     patch: {
@@ -302,14 +253,6 @@ export const computeRestoreManyResultPath = (
 
 export const computeMergeManyResultPath = (
   item: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>,
-  _flatObjectMetadataMaps: Pick<
-    AllFlatEntityMaps,
-    'flatObjectMetadataMaps'
-  >['flatObjectMetadataMaps'],
-  _flatFieldMetadataMaps: Pick<
-    AllFlatEntityMaps,
-    'flatFieldMetadataMaps'
-  >['flatFieldMetadataMaps'],
 ): OpenAPIV3_1.PathItemObject => {
   return {
     patch: {
@@ -329,14 +272,6 @@ export const computeMergeManyResultPath = (
 
 export const computeGroupByResultPath = (
   item: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>,
-  _flatObjectMetadataMaps: Pick<
-    AllFlatEntityMaps,
-    'flatObjectMetadataMaps'
-  >['flatObjectMetadataMaps'],
-  _flatFieldMetadataMaps: Pick<
-    AllFlatEntityMaps,
-    'flatFieldMetadataMaps'
-  >['flatFieldMetadataMaps'],
 ): OpenAPIV3_1.PathItemObject => {
   return {
     get: {

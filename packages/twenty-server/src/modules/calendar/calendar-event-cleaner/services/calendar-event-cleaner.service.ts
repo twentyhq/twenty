@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThan } from 'typeorm';
 
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
@@ -14,9 +14,7 @@ const CALENDAR_CLEANUP_PAGE_SIZE = 500;
 export class CalendarEventCleanerService {
   private readonly logger = new Logger(CalendarEventCleanerService.name);
 
-  constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-  ) {}
+  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
   async deleteCalendarChannelEventAssociationsByChannelId({
     workspaceId,
@@ -27,9 +25,9 @@ export class CalendarEventCleanerService {
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        await this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
+        await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const calendarChannelEventAssociationRepository =
               transactionScope.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
@@ -64,12 +62,74 @@ export class CalendarEventCleanerService {
     );
   }
 
+  public async deleteOrphanedCalendarEvents({
+    calendarEventIds,
+    workspaceId,
+  }: {
+    calendarEventIds: string[];
+    workspaceId: string;
+  }) {
+    if (calendarEventIds.length === 0) {
+      return;
+    }
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        await this.workspaceOrmManager.runInWorkspaceTransaction(
+          async (transactionScope) => {
+            const calendarEventRepository =
+              transactionScope.getRepository<CalendarEventWorkspaceEntity>(
+                'calendarEvent',
+              );
+            const calendarChannelEventAssociationRepository =
+              transactionScope.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+                'calendarChannelEventAssociation',
+              );
+
+            for (
+              let index = 0;
+              index < calendarEventIds.length;
+              index += CALENDAR_CLEANUP_PAGE_SIZE
+            ) {
+              const pageIds = calendarEventIds.slice(
+                index,
+                index + CALENDAR_CLEANUP_PAGE_SIZE,
+              );
+
+              const associations =
+                await calendarChannelEventAssociationRepository.find({
+                  where: { calendarEventId: In(pageIds) },
+                  select: { calendarEventId: true },
+                });
+
+              const referencedEventIds = new Set(
+                associations.map(({ calendarEventId }) => calendarEventId),
+              );
+
+              const orphanEventIds = pageIds.filter(
+                (eventId) => !referencedEventIds.has(eventId),
+              );
+
+              if (orphanEventIds.length > 0) {
+                await calendarEventRepository.delete(orphanEventIds);
+              }
+            }
+          },
+        );
+      },
+      authContext,
+      { lite: true },
+    );
+  }
+
   public async cleanWorkspaceCalendarEvents(workspaceId: string) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        await this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
+        await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const calendarEventRepository =
               transactionScope.getRepository<CalendarEventWorkspaceEntity>(

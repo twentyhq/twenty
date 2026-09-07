@@ -49,7 +49,7 @@ import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/
 import { BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
-import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
+import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
 import {
   extractCacheCreationTokens,
@@ -72,6 +72,7 @@ import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/
 import { buildFullSystemPrompt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-full-system-prompt.util';
 import { hasNoAssistantMessage } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-no-assistant-message.util';
 import { hasSucceededWorkspaceSetupCompletion } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-succeeded-workspace-setup-completion.util';
+import { collectUploadedFileReferences } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-uploaded-file-references.util';
 import { extractCodeInterpreterFiles } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
 import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-timestamps.util';
 import {
@@ -276,6 +277,8 @@ export class ChatExecutionService {
 
     const isCodeInterpreterEnabled = this.codeInterpreterService.isEnabled();
 
+    const uploadedFiles = collectUploadedFileReferences(messages);
+
     let processedMessages: ExtendedUIMessage[] = replaceUnsupportedFileParts(
       messages,
       modelConfig.modalities,
@@ -321,7 +324,10 @@ export class ChatExecutionService {
       toolCatalog,
       skillCatalog,
       preloadedTools: preloadedToolNames,
-      storedFiles,
+      uploadedFilesContext: {
+        uploadedFiles,
+        codeInterpreterFiles: storedFiles,
+      },
       workspaceInstructions: workspace.aiAdditionalInstructions ?? undefined,
       userContext,
       isWorkspaceSetupThread,
@@ -418,9 +424,7 @@ export class ChatExecutionService {
         registeredModel.modelId,
         { usage, cacheCreationTokens },
       );
-      const creditsUsedMicro = Math.round(
-        convertDollarsToBillingCredits(costInDollars),
-      );
+      const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
 
       await this.aiBillingService.emitAiTokenUsageEvent(
         workspace.id,
@@ -548,16 +552,18 @@ export class ChatExecutionService {
         });
 
         const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
-          await this.aiBillingService.decrementAndCheckAvailableCredits(
-            registeredModel.modelId,
-            {
+          await this.aiBillingService.decrementAndCheckAvailableCredits({
+            modelId: registeredModel.modelId,
+            billingInput: {
               usage: step.usage,
               cacheCreationTokens: extractCacheCreationTokens(
                 step.providerMetadata,
               ),
             },
-            workspace.id,
-          );
+            workspaceId: workspace.id,
+            operationType: UsageOperationType.AI_CHAT_TOKEN,
+            spenders: { userWorkspaceId },
+          });
 
         if (stepHasNoMoreAvailableCredits) {
           hasNoMoreAvailableCredits = true;

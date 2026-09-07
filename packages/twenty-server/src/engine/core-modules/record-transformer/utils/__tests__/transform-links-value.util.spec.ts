@@ -2,9 +2,9 @@ import { transformLinksValue } from 'src/engine/core-modules/record-transformer/
 
 describe('transformLinksValue', () => {
   it('should handle null/undefined/empty object values', () => {
-    expect(transformLinksValue(null)).toBeNull();
-    expect(transformLinksValue(undefined)).toBeUndefined();
-    expect(transformLinksValue({})).toEqual({
+    expect(transformLinksValue({ input: null })).toBeNull();
+    expect(transformLinksValue({ input: undefined })).toBeUndefined();
+    expect(transformLinksValue({ input: {} })).toEqual({
       primaryLinkLabel: null,
       primaryLinkUrl: null,
       secondaryLinks: null,
@@ -25,7 +25,7 @@ describe('transformLinksValue', () => {
         secondaryLinks: null,
       };
 
-      expect(transformLinksValue(input)).toEqual(expected);
+      expect(transformLinksValue({ input })).toEqual(expected);
     });
 
     it('should remove trailing slash', () => {
@@ -41,7 +41,7 @@ describe('transformLinksValue', () => {
         secondaryLinks: null,
       };
 
-      expect(transformLinksValue(input)).toEqual(expected);
+      expect(transformLinksValue({ input })).toEqual(expected);
     });
 
     it('should work fine without protocol', () => {
@@ -57,7 +57,7 @@ describe('transformLinksValue', () => {
         secondaryLinks: null,
       };
 
-      expect(transformLinksValue(input)).toEqual(expected);
+      expect(transformLinksValue({ input })).toEqual(expected);
     });
 
     it('should work fine with www', () => {
@@ -73,7 +73,7 @@ describe('transformLinksValue', () => {
         secondaryLinks: null,
       };
 
-      expect(transformLinksValue(input)).toEqual(expected);
+      expect(transformLinksValue({ input })).toEqual(expected);
     });
 
     it('should preserve percent-encoded payloads when normalizing imported URLs', () => {
@@ -101,7 +101,71 @@ describe('transformLinksValue', () => {
         ]),
       };
 
-      expect(transformLinksValue(input)).toEqual(expected);
+      expect(transformLinksValue({ input })).toEqual(expected);
+    });
+  });
+
+  describe('url-typed field', () => {
+    it('should keep the whole url, exactly like a field with no variant set', () => {
+      const input = {
+        primaryLinkUrl: 'HTTPS://WWW.EXAMPLE.COM/careers?utm=1',
+        primaryLinkLabel: 'Example',
+        secondaryLinks: null,
+      };
+
+      expect(transformLinksValue({ input, settings: { type: 'url' } })).toEqual(
+        transformLinksValue({ input }),
+      );
+      expect(
+        transformLinksValue({ input, settings: { type: 'url' } })
+          ?.primaryLinkUrl,
+      ).toBe('https://www.example.com/careers?utm=1');
+    });
+  });
+
+  describe('domain-typed field', () => {
+    const settings = { type: 'domain' } as const;
+
+    it('should reduce every spelling of a domain to the same value', () => {
+      const spellings = [
+        'example.com',
+        'www.example.com',
+        'HTTPS://WWW.EXAMPLE.COM/',
+        'http://example.com/careers?utm=1',
+      ];
+
+      const normalized = spellings.map(
+        (primaryLinkUrl) =>
+          transformLinksValue({
+            input: { primaryLinkUrl, primaryLinkLabel: 'Example' },
+            settings,
+          })?.primaryLinkUrl,
+      );
+
+      expect(normalized).toEqual([
+        'example.com',
+        'example.com',
+        'example.com',
+        'example.com',
+      ]);
+    });
+
+    it('should reduce secondary links to bare domains', () => {
+      const input = {
+        primaryLinkUrl: 'https://example.com',
+        primaryLinkLabel: 'Example',
+        secondaryLinks: JSON.stringify([
+          { url: 'https://www.example-old.com/about', label: 'Old domain' },
+        ]),
+      };
+
+      expect(transformLinksValue({ input, settings })).toEqual({
+        primaryLinkUrl: 'example.com',
+        primaryLinkLabel: 'Example',
+        secondaryLinks: JSON.stringify([
+          { url: 'example-old.com', label: 'Old domain' },
+        ]),
+      });
     });
   });
 });

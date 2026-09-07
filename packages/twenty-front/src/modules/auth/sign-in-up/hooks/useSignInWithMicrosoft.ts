@@ -2,7 +2,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
-import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
+import { type SocialSsoSignInUpActionType } from '@/auth/types/socialSsoSignInUp.type';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useSignInWithMicrosoft = () => {
@@ -17,7 +17,7 @@ export const useSignInWithMicrosoft = () => {
     signInWithMicrosoft: ({
       action,
     }: {
-      action: SocialSSOSignInUpActionType;
+      action: SocialSsoSignInUpActionType;
     }) =>
       signInWithMicrosoft({
         workspaceInviteHash,

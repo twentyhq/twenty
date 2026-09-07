@@ -1,68 +1,46 @@
+import { type WidgetContentPadding } from '@/page-layout/widgets/utils/getWidgetContentPadding';
+import { isWidgetCardFlushInViewMode } from '@/page-layout/widgets/utils/isWidgetCardFlushInViewMode';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { STACKED_WIDGET_MAX_HEIGHT } from '~/modules/page-layout/widgets/constants/StackedWidgetMaxHeight';
 import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
+
+const VERTICAL_LIST_IFRAME_HEIGHT = '40rem';
 
 type WidgetCardContentStyledProps = {
   variant: WidgetCardVariant;
   hasHeader: boolean;
   isEditable: boolean;
-  isInVerticalListTab: boolean;
-  isMobile: boolean;
-  hasBoundedHeight: boolean;
+  isFixedHeight: boolean;
+  contentPadding: WidgetContentPadding;
 };
 
-const StyledRecordWidgetOutline = styled.div`
-  border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  overflow: hidden;
-`;
-
 const StyledWidgetCardContent = styled.div<WidgetCardContentStyledProps>`
-  background-color: ${({ variant, isInVerticalListTab, isMobile }) =>
-    variant === 'record-page' && isInVerticalListTab && !isMobile
-      ? themeCssVariables.background.secondary
-      : 'transparent'};
-  border: ${({ variant, isEditable }) =>
-    variant === 'record-page' || (variant === 'side-column' && isEditable)
-      ? `1px solid ${themeCssVariables.border.color.medium}`
-      : 'none'};
-  border-radius: ${({ variant, isEditable }) =>
-    variant === 'record-page' || (variant === 'side-column' && isEditable)
-      ? themeCssVariables.border.radius.md
-      : '0'};
   box-sizing: border-box;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
 
-  height: ${({ hasBoundedHeight }) => (hasBoundedHeight ? 'auto' : '100%')};
+  height: ${({ isFixedHeight }) =>
+    isFixedHeight ? VERTICAL_LIST_IFRAME_HEIGHT : 'var(--widget-height, 100%)'};
 
-  margin-top: ${({ hasHeader }) =>
-    hasHeader ? themeCssVariables.spacing[2] : '0'};
+  margin-top: ${({ hasHeader, variant }) =>
+    hasHeader && variant === 'framed' ? themeCssVariables.spacing[2] : '0'};
 
-  max-height: ${({ hasBoundedHeight }) =>
-    hasBoundedHeight ? `${STACKED_WIDGET_MAX_HEIGHT}px` : 'none'};
+  min-height: ${({ isFixedHeight }) =>
+    isFixedHeight ? VERTICAL_LIST_IFRAME_HEIGHT : '0'};
 
-  overflow: ${({ hasBoundedHeight }) => (hasBoundedHeight ? 'auto' : 'hidden')};
+  overflow: ${({ isFixedHeight }) =>
+    isFixedHeight ? 'clip' : 'var(--widget-card-content-overflow, hidden)'};
 
-  padding: ${({ variant, isEditable }) => {
-    if (variant === 'dashboard' || variant === 'standalone')
-      return themeCssVariables.spacing[2];
-    if (
-      variant === 'record-page' ||
-      (variant === 'side-column' && isEditable)
-    ) {
-      return themeCssVariables.spacing[2];
-    }
-    return '0';
-  }};
+  padding-block: ${({ contentPadding, hasHeader, isEditable, variant }) =>
+    contentPadding === 'none'
+      ? '0'
+      : hasHeader && isWidgetCardFlushInViewMode({ isEditable, variant })
+        ? `${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[2]}`
+        : themeCssVariables.spacing[2]};
+  padding-inline: ${({ contentPadding }) =>
+    contentPadding === 'none' ? '0' : 'var(--widget-card-padding-inline)'};
 
   &:empty {
-    border: none;
-    border-radius: 0;
     margin-top: 0;
     padding: 0;
   }
@@ -72,11 +50,9 @@ type WidgetCardContentProps = {
   variant: WidgetCardVariant;
   hasHeader: boolean;
   isEditable: boolean;
-  isInVerticalListTab: boolean;
-  isMobile: boolean;
   hasInteractiveContent?: boolean;
-  hasBoundedHeight?: boolean;
-  className?: string;
+  isFixedHeight?: boolean;
+  contentPadding?: WidgetContentPadding;
   children?: React.ReactNode;
 };
 
@@ -84,11 +60,9 @@ export const WidgetCardContent = ({
   variant,
   hasHeader,
   isEditable,
-  isInVerticalListTab,
-  isMobile,
   hasInteractiveContent = false,
-  hasBoundedHeight = false,
-  className,
+  isFixedHeight = false,
+  contentPadding = 'default',
   children,
 }: WidgetCardContentProps) => {
   const handleContentClick = (event: React.MouseEvent) => {
@@ -104,17 +78,11 @@ export const WidgetCardContent = ({
       variant={variant}
       hasHeader={hasHeader}
       isEditable={isEditable}
-      isInVerticalListTab={isInVerticalListTab}
-      isMobile={isMobile}
-      hasBoundedHeight={hasBoundedHeight}
-      className={className}
+      isFixedHeight={isFixedHeight}
+      contentPadding={contentPadding}
       onClick={handleContentClick}
     >
-      {hasInteractiveContent ? (
-        <StyledRecordWidgetOutline>{children}</StyledRecordWidgetOutline>
-      ) : (
-        children
-      )}
+      {children}
     </StyledWidgetCardContent>
   );
 };

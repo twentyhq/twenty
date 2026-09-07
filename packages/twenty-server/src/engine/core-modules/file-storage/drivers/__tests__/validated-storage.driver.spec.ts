@@ -7,6 +7,7 @@ import { ValidatedStorageDriver } from 'src/engine/core-modules/file-storage/dri
 
 const createMockDriver = (): jest.Mocked<StorageDriver> => ({
   readFile: jest.fn().mockResolvedValue(Readable.from([])),
+  readFilePrefix: jest.fn().mockResolvedValue(Buffer.alloc(0)),
   writeFile: jest.fn().mockResolvedValue(undefined),
   writeFileStream: jest.fn().mockResolvedValue(undefined),
   getFileMetadata: jest.fn().mockResolvedValue(null),
@@ -154,6 +155,21 @@ describe('ValidatedStorageDriver', () => {
       expect(mockDelegate.writeFileStream).toHaveBeenCalledWith(params);
     });
 
+    it('should delegate readFilePrefix', async () => {
+      mockDelegate.readFilePrefix.mockResolvedValue(Buffer.from('abc'));
+
+      const result = await driver.readFilePrefix({
+        filePath: 'folder/file.txt',
+        byteCount: 3,
+      });
+
+      expect(result).toEqual(Buffer.from('abc'));
+      expect(mockDelegate.readFilePrefix).toHaveBeenCalledWith({
+        filePath: 'folder/file.txt',
+        byteCount: 3,
+      });
+    });
+
     it('should delegate getFileMetadata', async () => {
       mockDelegate.getFileMetadata.mockResolvedValue({ size: 1024 });
 
@@ -198,6 +214,16 @@ describe('ValidatedStorageDriver', () => {
       });
 
       expect(mockDelegate.readFile).not.toHaveBeenCalled();
+    });
+
+    it('should reject readFilePrefix with traversal', async () => {
+      await expect(
+        driver.readFilePrefix({ filePath: '../etc/passwd', byteCount: 16 }),
+      ).rejects.toMatchObject({
+        code: FileStorageExceptionCode.ACCESS_DENIED,
+      });
+
+      expect(mockDelegate.readFilePrefix).not.toHaveBeenCalled();
     });
 
     it('should reject writeFile with traversal', async () => {

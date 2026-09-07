@@ -4,6 +4,7 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 const createRecordsQuery = gql`
@@ -103,6 +104,9 @@ describe('upsert (createMany with upsert:true)', () => {
   });
 
   afterEach(async () => {
+    // The global wait-for-jobs afterEach runs after this one, so drain jobs first or the deletion migration can deadlock against them.
+    await waitForAllJobsToFinish();
+
     await updateOneObjectMetadata({
       expectToFail: false,
       input: {

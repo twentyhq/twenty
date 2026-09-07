@@ -1,4 +1,5 @@
 import { getMissingCreateCalendarEventScopes } from '@/accounts/utils/hasMissingCreateCalendarEventScopes';
+import { isCalendarCreationEnabledForAccount } from '@/activities/calendar/utils/isCalendarCreationEnabledForAccount';
 import { FormBooleanFieldToggleInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldToggleInput';
 import { FormDateTimeFieldInput } from '@/object-record/record-field/ui/form-types/components/FormDateTimeFieldInput';
 import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
@@ -17,17 +18,12 @@ import { useCalendarEventForm } from '@/workflow/workflow-steps/workflow-actions
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
-import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
+import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/feedback';
 import { type SelectOption } from 'twenty-ui/input';
 import { IconPlus } from 'twenty-ui/icon';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-
-const CALENDAR_CAPABLE_PROVIDERS = [
-  ConnectedAccountProvider.GOOGLE,
-  ConnectedAccountProvider.MICROSOFT,
-];
 
 type WorkflowEditActionCreateCalendarEventProps = {
   action: WorkflowCreateCalendarEventAction;
@@ -65,13 +61,7 @@ export const WorkflowEditActionCreateCalendarEvent = ({
   const redirectUrl = `/object/workflow/${workflowVisualizerWorkflowId}`;
 
   const connectedAccountOptions: SelectOption<string>[] = myAccounts
-    .filter((account) => {
-      if (account.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV) {
-        return isDefined(account.connectionParameters?.CALDAV);
-      }
-
-      return CALENDAR_CAPABLE_PROVIDERS.includes(account.provider);
-    })
+    .filter(isCalendarCreationEnabledForAccount)
     .map((account) => ({ label: account.handle, value: account.id }));
 
   const selectedAccount = myAccounts.find(

@@ -1,10 +1,12 @@
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { TaskList } from '@/activities/tasks/components/TaskList';
 import { type Task } from '@/activities/types/Task';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import groupBy from 'lodash.groupby';
 import { isDefined } from 'twenty-shared/utils';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -32,6 +34,14 @@ export const TaskGroupsContent = ({
   onCreateTask,
   tasks,
 }: TaskGroupsContentProps) => {
+  const { objectMetadataItem: taskObjectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.Task,
+  });
+
+  const taskStatusOptions = taskObjectMetadataItem.fields.find(
+    (field) => field.name === 'status',
+  )?.options;
+
   const isTasksEmpty = tasks.length === 0;
 
   if (isLoading && isTasksEmpty) {
@@ -68,9 +78,23 @@ export const TaskGroupsContent = ({
 
   return (
     <StyledContainer>
-      {sortedTasksByStatus.map(([status, tasksByStatus]: [string, Task[]]) => (
-        <TaskList key={status} title={status} tasks={tasksByStatus} />
-      ))}
+      {sortedTasksByStatus.map(
+        ([status, tasksByStatus]: [string, Task[]], index) => {
+          const statusOption = taskStatusOptions?.find(
+            (option) => option.value === status,
+          );
+
+          return (
+            <TaskList
+              key={status}
+              title={statusOption?.label ?? status}
+              titleColor={statusOption?.color ?? 'transparent'}
+              tasks={tasksByStatus}
+              isFirst={index === 0}
+            />
+          );
+        },
+      )}
     </StyledContainer>
   );
 };

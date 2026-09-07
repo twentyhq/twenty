@@ -8,7 +8,7 @@ msgstr ""
 "Language: tr\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-20 10:17\n"
+"PO-Revision-Date: 2026-08-28 16:20\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -72,6 +72,11 @@ msgstr "{labelText} filtresi"
 #: src/partners-marketplace/FilterDropdown.tsx
 msgid "{labelText} filter, {0} selected"
 msgstr "{labelText} filtresi, {0} seçili"
+
+#. js-lingui-id: WWLSqV
+#: src/partners-marketplace/FilterBar.tsx
+msgid "{totalCount, plural, one {# certified partner ready to take on your project} other {# certified partners ready to take on your project}}"
+msgstr "{totalCount, plural, one {# projenizi üstlenmeye hazır sertifikalı iş ortağı} other {# projenizi üstlenmeye hazır sertifikalı iş ortağı}}"
 
 #. js-lingui-id: 0Qb9by
 #: src/case-studies/case-study-stories.ts
@@ -718,7 +723,7 @@ msgstr "Yeni bir bakım modu, yöneticilerin hassas işlemler sırasında çalı
 #. js-lingui-id: iIggw/
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "A new onboarding experience"
-msgstr ""
+msgstr "Yeni bir ilk kullanım deneyimi."
 
 #. js-lingui-id: P5BDuh
 #: src/case-studies/case-study-stories.ts
@@ -752,7 +757,7 @@ msgstr "Gerçek bir hazırlık ortamı"
 #. js-lingui-id: DbvKWj
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "A rebuilt setup flow guides new teams through workspace creation, contact import, and teammate invitations."
-msgstr ""
+msgstr "Yeniden oluşturulan bir kurulum akışı, yeni ekipleri çalışma alanı oluşturma, kişi içe aktarma ve ekip arkadaşı davetleri boyunca yönlendirir."
 
 #. js-lingui-id: WjUlJr
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -870,12 +875,12 @@ msgstr "Nesneler ve alanlar ekleyin"
 #. js-lingui-id: jRsHwI
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Add objects, views, records, links, and folders to Favorites from a dedicated sidebar panel."
-msgstr ""
+msgstr "Nesneleri, görünümleri, kayıtları, bağlantıları ve klasörleri özel bir kenar çubuğu panelinden Favoriler'e ekleyin."
 
 #. js-lingui-id: e20nHx
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Add recipients with autocomplete, person matching, duplicate detection, and inline email validation."
-msgstr ""
+msgstr "Otomatik tamamlama, kişi eşleştirme, yinelenen algılama ve satır içi e-posta doğrulaması ile alıcılar ekleyin."
 
 #. js-lingui-id: ZuoQMi
 #: src/platform/releases/ReleaseNotes.tsx
@@ -974,6 +979,16 @@ msgstr "Afganistan 🇦🇫"
 #: src/partners-marketplace/served-geo-labels.ts
 msgid "Africa"
 msgstr "Afrika"
+
+#. js-lingui-id: 7X/+39
+#: src/sections/faq/partner-faq.data.ts
+msgid "Agencies and freelancers apply through the Twenty partner program page, which lists the requirements and carries the application form."
+msgstr "Ajanslar ve serbest çalışanlar, gereksinimlerin listelendiği ve başvuru formunun yer aldığı Twenty iş ortağı programı sayfası üzerinden başvurur."
+
+#. js-lingui-id: CHjiD2
+#: src/sections/partner-lead/PartnerBecomeStrip.tsx
+msgid "Agencies and freelancers can apply to join the certified directory."
+msgstr "Ajanslar ve serbest çalışanlar sertifikalı dizine katılmak için başvurabilir."
 
 #. js-lingui-id: NmHsVh
 #: src/partner-application/data/partner-team-type-options.ts
@@ -1275,7 +1290,7 @@ msgstr "Ermenistan 🇦🇲"
 #. js-lingui-id: GYKCBW
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Ask AI to build or reconfigure dashboards and views from your workspace data."
-msgstr ""
+msgstr "Yapay zekâdan çalışma alanı verilerinizle panolar ve görünümler oluşturmasını veya yeniden yapılandırmasını isteyin."
 
 #. js-lingui-id: S+Q+1d
 #: src/sections/product-hero/ProductHero.tsx
@@ -1291,6 +1306,11 @@ msgstr "Sağlam bir CRM'yi bir araya getirin, üzerinde iterasyon yapın ve uyar
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Assign owners and due dates"
 msgstr "Sahipler ve bitiş tarihleri atayın"
+
+#. js-lingui-id: eo0HU7
+#: src/sections/faq/become-partner-faq.data.ts
+msgid "At least one shipped Twenty implementation — customer or internal — with a link that shows the work. Solo freelancers and agencies both qualify."
+msgstr "Çalışmayı gösteren bir bağlantıyla birlikte, müşteri için veya şirket içi en az bir yayına alınmış Twenty uygulaması. Tek başına çalışan serbest çalışanlar ve ajanslar da uygundur."
 
 #. js-lingui-id: awzjg/
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1408,6 +1428,7 @@ msgstr "dahi ol!"
 
 #. js-lingui-id: 6ZCRfT
 #: src/sections/partner-signoff/PartnerSignoff.tsx
+#: src/sections/partner-lead/PartnerBecomeStrip.tsx
 #: src/sections/partner-hero/PartnerHero.tsx
 msgid "Become a partner"
 msgstr "İş ortağı olun"
@@ -1416,6 +1437,16 @@ msgstr "İş ortağı olun"
 #: src/platform/routing/static-website-routes.ts
 msgid "Become a Twenty Partner — Apply"
 msgstr "Twenty İş Ortağı olun — Başvurun"
+
+#. js-lingui-id: 8x+SS7
+#: src/platform/routing/static-website-routes.ts
+msgid "Become a Twenty Partner — Join the Open Source CRM Ecosystem"
+msgstr "Twenty İş Ortağı Olun — Açık Kaynak CRM Ekosistemine Katılın"
+
+#. js-lingui-id: r8MUXZ
+#: src/sections/faq/BecomePartnerFaq.tsx
+msgid "Becoming *a Twenty partner*"
+msgstr "*Twenty iş ortağı* olmak"
 
 #. js-lingui-id: 83Wi6G
 #: src/sections/home-stepper/data/stepper.data.ts
@@ -1457,10 +1488,15 @@ msgstr "Benjamin Reynolds"
 msgid "Bertrams"
 msgstr "Bertrams"
 
+#. js-lingui-id: CrZWSz
+#: src/partner-application/partner-application-copy.ts
+msgid "Best proof first: a live Twenty instance URL, a public repo, or a YouTube link. Loom, Drive and file links are accepted but slower to review."
+msgstr "Önce en iyi kanıt: canlı bir Twenty örneği URL'si, herkese açık bir repo veya bir YouTube bağlantısı. Loom, Drive ve dosya bağlantıları kabul edilir ancak incelenmeleri daha uzun sürer."
+
 #. js-lingui-id: BSmDFu
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Better sorted kanban boards"
-msgstr ""
+msgstr "Daha iyi sıralanmış Kanban panoları"
 
 #. js-lingui-id: mzTjnf
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -1529,13 +1565,14 @@ msgstr "Brezilya 🇧🇷"
 
 #. js-lingui-id: hKAV/O
 #: src/sections/pricing-engagement-band/PricingEngagementBand.tsx
+#: src/sections/partner-hero/BrowseDirectoryButton.tsx
 msgid "Browse partners"
 msgstr "İş ortaklarına göz atın"
 
-#. js-lingui-id: bmk2dj
-#: src/platform/routing/static-website-routes.ts
-msgid "Browse Twenty's certified partners — the agencies and individuals who migrate, customise, host, and support the open source CRM across regions, languages, and deployment models."
-msgstr "Bölgeler, diller ve dağıtım modelleri genelinde açık kaynak CRM'i taşıyan, özelleştiren, barındıran ve destekleyen ajanslar ile bireysel uzmanlar olan Twenty'nin sertifikalı iş ortaklarına göz atın."
+#. js-lingui-id: jkVxe+
+#: src/sections/partner-lead/PartnerDirectory.tsx
+msgid "Browse the *certified partners*"
+msgstr "*Sertifikalı iş ortaklarına* göz atın"
 
 #. js-lingui-id: VX4eI/
 #: src/partner-application/data/partner-country-options.ts
@@ -1575,7 +1612,7 @@ msgstr "Canlı CRM verilerinden özel panolar oluşturun. Anlaşmalar, hesaplar,
 #. js-lingui-id: IQcVFZ
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Build dashboards with AI"
-msgstr ""
+msgstr "Yapay zekâ ile panolar oluşturun."
 
 #. js-lingui-id: rdvFK9
 #: src/sections/why-twenty-editorial/editorials.data.ts
@@ -1627,6 +1664,11 @@ msgstr "Tedarikçi bağımlılığından yanan AC&T, gerçekten sahip oldukları
 msgid "Burundi 🇧🇮"
 msgstr "Burundi 🇧🇮"
 
+#. js-lingui-id: s61NQg
+#: src/sections/faq/become-partner-faq.data.ts
+msgid "Buyers submit a project brief with scope, timeline, and budget. We hand-pick the certified partners who fit and make the introduction within 48 hours."
+msgstr "Alıcılar kapsam, zaman çizelgesi ve bütçeyi içeren bir proje özeti gönderir. Uygun sertifikalı iş ortaklarını özenle seçer ve 48 saat içinde tanıştırırız."
+
 #. js-lingui-id: L40Ae7
 #: src/partner-application/partner-application-copy.ts
 msgid "Calendar / booking link"
@@ -1646,6 +1688,11 @@ msgstr "Kamboçya 🇰🇭"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Cameroon 🇨🇲"
 msgstr "Kamerun 🇨🇲"
+
+#. js-lingui-id: lhDlM3
+#: src/sections/faq/partner-faq.data.ts
+msgid "Can a partner run my migration?"
+msgstr "Bir iş ortağı geçişimi gerçekleştirebilir mi?"
 
 #. js-lingui-id: wCALve
 #: src/sections/faq/faq.data.ts
@@ -1714,6 +1761,16 @@ msgstr "Kategori"
 msgid "Central African Republic 🇨🇫"
 msgstr "Orta Afrika Cumhuriyeti 🇨🇫"
 
+#. js-lingui-id: n6B8ue
+#: src/sections/faq/become-partner-faq.data.ts
+msgid "Certification, plus a directory profile your clients can verify. The best partners also receive client briefs matched to their scope."
+msgstr "Sertifikasyonun yanı sıra müşterilerinizin doğrulayabileceği bir dizin profili. En iyi iş ortakları ayrıca kapsamlarıyla eşleşen müşteri özetleri alır."
+
+#. js-lingui-id: 4W4gsr
+#: src/sections/partner-hero/PartnerLeadHero.tsx
+msgid "Certified partners who set up your CRM to match how your company works, from the migration to the custom apps."
+msgstr "Geçişten özel uygulamalara kadar CRM'nizi şirketinizin çalışma biçimine uygun şekilde kuran sertifikalı iş ortakları."
+
 #. js-lingui-id: iI3Dq9
 #: src/partner-application/data/partner-country-options.ts
 msgid "Chad 🇹🇩"
@@ -1758,7 +1815,7 @@ msgstr "Bir ekip arkadaşını çalışma alanına davet ederken rolü doğrudan
 #. js-lingui-id: FcSFIg
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Choose between abbreviated and full values for number widgets on dashboards."
-msgstr ""
+msgstr "Panolardaki sayı parçacıkları için kısaltılmış ve tam değerler arasında seçim yapın."
 
 #. js-lingui-id: geiXTM
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1773,7 +1830,7 @@ msgstr "Her alanda tarihlerin nasıl görüntüleneceğini, kullanım durumunuza
 #. js-lingui-id: uOuvkn
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Choose which part of a name or address field a view should sort by directly from the sort chip."
-msgstr ""
+msgstr "Bir görünümün ad veya adres alanının hangi bölümüne göre sıralama yapacağını doğrudan sıralama çipinden seçin."
 
 #. js-lingui-id: lAAXeW
 #: src/partner-application/partner-application-copy.ts
@@ -1794,7 +1851,12 @@ msgstr "Filtreleri temizle"
 #. js-lingui-id: zwMBoX
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Clearer dashboard numbers"
-msgstr ""
+msgstr "Daha anlaşılır pano sayıları"
+
+#. js-lingui-id: +W4YRD
+#: src/sections/faq/become-partner-faq.data.ts
+msgid "Click Become a partner and complete the short application: who you are, what you cover, and one real Twenty project with proof. We review every application against real, shipped work — acceptance is selective."
+msgstr "İş ortağı olun'a tıklayın ve kısa başvuruyu doldurun: kimsiniz, neleri kapsıyorsunuz ve kanıt içeren gerçek bir Twenty projesi. Her başvuruyu tamamlanmış gerçek işler üzerinden inceliyoruz — kabul seçicidir."
 
 #. js-lingui-id: yz7wBu
 #: src/partners-marketplace/CaseStudyModal.tsx
@@ -2073,7 +2135,7 @@ msgstr "Kopyala"
 #. js-lingui-id: gqCWGE
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Copy a call recording's transcript or video link directly from the record page."
-msgstr ""
+msgstr "Bir çağrı kaydının dökümünü veya video bağlantısını doğrudan kayıt sayfasından kopyalayın."
 
 #. js-lingui-id: 7qTWwB
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -2150,7 +2212,7 @@ msgstr "Yeni Panolar özelliğiyle, çalışma alanı verilerinizi kullanarak ö
 #. js-lingui-id: sSow0u
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Create events on connected Google or Microsoft calendars from AI and workflows, with optional Meet or Teams links."
-msgstr ""
+msgstr "İsteğe bağlı Meet veya Teams bağlantılarıyla, yapay zekâ ve iş akışlarından bağlı Google veya Microsoft takvimlerinde etkinlikler oluşturun."
 
 #. js-lingui-id: YxktRb
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2175,7 +2237,7 @@ msgstr "Kayıt Oluştur"
 #. js-lingui-id: w0KavK
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Create synced calendar events"
-msgstr ""
+msgstr "Senkronize takvim etkinlikleri oluşturun"
 
 #. js-lingui-id: oS1RiS
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -2366,6 +2428,11 @@ msgstr "Özel düzenler"
 msgid "Custom objects"
 msgstr "Özel nesneler"
 
+#. js-lingui-id: 14p823
+#: src/sections/partner-lead/partner-services.data.ts
+msgid "Custom objects, workflows and apps built on the platform."
+msgstr "Platform üzerinde oluşturulmuş özel nesneler, iş akışları ve uygulamalar."
+
 #. js-lingui-id: y5pLQH
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Custom sidebar"
@@ -2423,6 +2490,11 @@ msgstr "Müşteriler"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Customization"
 msgstr "Özelleştirme"
+
+#. js-lingui-id: hiB8fo
+#: src/sections/partner-lead/partner-services.data.ts
+msgid "Customization & apps"
+msgstr "Özelleştirme ve uygulamalar"
 
 #. js-lingui-id: 4urq82
 #: src/sections/compare/compare-data.ts
@@ -2568,6 +2640,11 @@ msgstr "Demolar"
 msgid "Denmark 🇩🇰"
 msgstr "Danimarka 🇩🇰"
 
+#. js-lingui-id: w9Q2vI
+#: src/sections/partner-lead/partner-services.data.ts
+msgid "Deploy, upgrade and operate Twenty on your own infrastructure."
+msgstr "Twenty'yi kendi altyapınızda dağıtın, yükseltin ve çalıştırın."
+
 #. js-lingui-id: 59TXqJ
 #: src/partner-application/partner-application-copy.ts
 msgid "Describe a real Twenty project (customer or internal): who it was for, what you built, and how you used the areas you selected. Min. {TWENTY_EXPERIENCE_NOTES_MIN_LENGTH} characters."
@@ -2629,6 +2706,11 @@ msgstr "Dijital ve Bilgi Direktörü, Elevate Consulting"
 msgid "Director, W3villa Technologies, Partner"
 msgstr "Direktör, W3villa Technologies, İş Ortağı"
 
+#. js-lingui-id: GhgbAN
+#: src/sections/partner-lead/PartnerDirectory.tsx
+msgid "Directory"
+msgstr "Dizin"
+
 #. js-lingui-id: 30qcNY
 #: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
@@ -2649,12 +2731,12 @@ msgstr "Yenilikleri keşfedin"
 #. js-lingui-id: /Gu7LB
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Display related records as a full table directly inside a record page layout."
-msgstr ""
+msgstr "İlişkili kayıtları doğrudan bir kayıt sayfası düzeni içinde tam tablo olarak görüntüleyin."
 
 #. js-lingui-id: wPD3lD
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Display related records as a table, kanban board, calendar, or grouped table directly inside a record page."
-msgstr ""
+msgstr "İlişkili kayıtları doğrudan bir kayıt sayfasında tablo, kanban panosu, takvim veya gruplandırılmış tablo olarak görüntüleyin."
 
 #. js-lingui-id: rHLwDO
 #: src/partner-application/data/partner-country-options.ts
@@ -2665,6 +2747,16 @@ msgstr "Cibuti 🇩🇯"
 #: src/sections/faq/faq.data.ts
 msgid "Do I need a developer to customize Twenty?"
 msgstr "Twenty'yi özelleştirmek için bir geliştiriciye ihtiyacım var mı?"
+
+#. js-lingui-id: ISZL/U
+#: src/sections/faq/partner-faq.data.ts
+msgid "Do partners support self-hosting?"
+msgstr "İş ortakları öz barındırmayı destekliyor mu?"
+
+#. js-lingui-id: xSh4Vw
+#: src/sections/faq/become-partner-faq.data.ts
+msgid "Does it cost anything?"
+msgstr "Herhangi bir ücret var mı?"
 
 #. js-lingui-id: Zx22Ih
 #: src/sections/faq/faq.data.ts
@@ -2689,6 +2781,7 @@ msgstr "Başka birisinin ekosistemine kilitlenmeyin. Twenty'nin geliştirici den
 #. js-lingui-id: DPfwMq
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 #: src/partner-application/partner-application-copy.ts
+#: src/client-brief/client-brief-copy.ts
 msgid "Done"
 msgstr "Bitti"
 
@@ -2710,7 +2803,7 @@ msgstr "Bir e-posta dizisi için iş akışı taslağı oluştur"
 #. js-lingui-id: jp1S8f
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Drag a column edge to resize every column in a kanban view, with the width saved for that view."
-msgstr ""
+msgstr "Bir kanban görünümündeki her sütunu yeniden boyutlandırmak için sütun kenarını sürükleyin; genişlik o görünüm için kaydedilir."
 
 #. js-lingui-id: q7M3jo
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2720,12 +2813,12 @@ msgstr "Ekibinizin gerçekte çalışma şeklini yansıtacak kayıt sayfaları, 
 #. js-lingui-id: bm5qja
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Drag kanban column headers into the order that works best for your team."
-msgstr ""
+msgstr "Kanban sütun başlıklarını ekibiniz için en uygun sıraya sürükleyin."
 
 #. js-lingui-id: cfThV+
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Drag widgets between tabs"
-msgstr ""
+msgstr "Parçacıkları sekmeler arasında sürükleyin"
 
 #. js-lingui-id: fPma12
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -2791,7 +2884,7 @@ msgstr "Her çalışma alanı artık daha güvenli bir deneyim için özel bir a
 #. js-lingui-id: eBNtzO
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Easier favorites"
-msgstr ""
+msgstr "Daha kolay favoriler"
 
 #. js-lingui-id: s+5p5k
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2816,12 +2909,12 @@ msgstr "Eylemleri düzenle"
 #. js-lingui-id: 0cnnX+
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Edit long-form text directly inside record page widgets with automatic saving."
-msgstr ""
+msgstr "Otomatik kaydetme özelliğiyle uzun biçimli metni doğrudan kayıt sayfası parçacıklarında düzenleyin."
 
 #. js-lingui-id: G/FRR4
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Editable text widgets"
-msgstr ""
+msgstr "Düzenlenebilir metin parçacıkları"
 
 #. js-lingui-id: 4CJ4xV
 #: src/case-studies/case-study-catalog.ts
@@ -2876,7 +2969,7 @@ msgstr "E-posta ve Sohbet"
 #. js-lingui-id: oj7GrD
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Email forwarding"
-msgstr ""
+msgstr "E-posta yönlendirme"
 
 #. js-lingui-id: rc8HEz
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3090,6 +3183,11 @@ msgstr "Eğitim materyali bile kutlamaya değer bir özellik."
 msgid "Every new release of Twenty, the #1 Open Source CRM, with changelogs, demos, and the highlights teams care about most."
 msgstr "Twenty'nin her yeni sürümü, #1 Açık Kaynak CRM, değişiklik günlükleri, demolar ve ekiplerin en çok önemsediği öne çıkanlarla birlikte."
 
+#. js-lingui-id: xt/iek
+#: src/sections/faq/partner-faq.data.ts
+msgid "Every partner is certified by Twenty and reviewed on delivered projects, technical depth, and customer feedback before joining the directory."
+msgstr "Her iş ortağı, dizine katılmadan önce Twenty tarafından sertifikalandırılır ve tamamlanan projeleri, teknik derinliği ve müşteri geri bildirimleri açısından incelenir."
+
 #. js-lingui-id: rkZTD7
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Every thread, on the right record."
@@ -3251,7 +3349,7 @@ msgstr "Muhtemelen bizi karşılaştırdığınız CRM’lere karşı özellik b
 #. js-lingui-id: DMFb0o
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Featured apps"
-msgstr ""
+msgstr "Öne çıkan uygulamalar"
 
 #. js-lingui-id: 3oXVPw
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -3323,6 +3421,11 @@ msgstr "Uygulamaları kategoriye göre filtreleyin"
 msgid "Filter by Multi-Select"
 msgstr "Çoklu Seçime göre filtrele"
 
+#. js-lingui-id: V5L7Y4
+#: src/sections/partner-lead/PartnerDirectory.tsx
+msgid "Filter by region, language, and specialty, then read a profile and book a call with the partner yourself."
+msgstr "Bölgeye, dile ve uzmanlığa göre filtreleyin; ardından bir profili okuyun ve iş ortağıyla kendiniz bir görüşme planlayın."
+
 #. js-lingui-id: bOidm7
 #: src/partners-marketplace/FilterBar.tsx
 msgid "Filter partners"
@@ -3331,7 +3434,7 @@ msgstr "İş ortaklarını filtrele"
 #. js-lingui-id: EOUC8o
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Filter records using fields from a related object, such as People whose Company name contains a specific value."
-msgstr ""
+msgstr "Şirket adı belirli bir değer içeren Kişiler gibi, ilişkili bir nesnenin alanlarını kullanarak kayıtları filtreleyin."
 
 #. js-lingui-id: kUUNrw
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3341,53 +3444,37 @@ msgstr "Bir webhook’un döndürdüğü içeriği filtreleyerek URL’nize yaln
 #. js-lingui-id: +UmKPb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Filter through relationships"
-msgstr ""
+msgstr "İlişkiler üzerinden filtreleme"
 
 #. js-lingui-id: xbs4q4
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Filter, archive, and manage conversations from the AI chat list."
-msgstr ""
+msgstr "Yapay zekâ sohbet listesinden konuşmaları filtreleyin, arşivleyin ve yönetin."
 
 #. js-lingui-id: iabLgo
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Filtered metrics from any object"
 msgstr "Herhangi bir nesneden filtrelenmiş metrikler"
 
-#. js-lingui-id: sRUAXp
-#: src/platform/routing/static-website-routes.ts
-msgid "Find a certified Twenty partner to migrate, customise, and operate your open source CRM, or join the ecosystem and grow your practice with us."
-msgstr "Açık kaynak CRM'inizi taşımak, özelleştirmek ve işletmek için sertifikalı bir Twenty ortağı bulun veya ekosisteme katılın ve bizimle birlikte uygulamanızı büyütün."
-
-#. js-lingui-id: TJ7HQl
-#: src/sections/partner-signoff/PartnerSignoff.tsx
-#: src/sections/partner-hero/PartnerHero.tsx
-msgid "Find a partner"
-msgstr "Bir iş ortağı bulun"
-
 #. js-lingui-id: MD032e
 #: src/sections/menu/data/menu.ts
 msgid "Find a Twenty partner"
 msgstr "Bir Twenty ortağı bulun"
 
-#. js-lingui-id: S6CEQ9
+#. js-lingui-id: AwJQl7
 #: src/platform/routing/static-website-routes.ts
-msgid "Find a Twenty Partner — Open Source CRM Marketplace"
-msgstr "Bir Twenty İş Ortağı bulun — Açık Kaynak CRM Pazaryeri"
+msgid "Find a Twenty Partner — Certified Open Source CRM Experts"
+msgstr "Bir Twenty İş Ortağı Bulun — Sertifikalı Açık Kaynak CRM Uzmanları"
 
 #. js-lingui-id: RiVrPY
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Find and install featured apps such as People Data Labs, Last Contact, and Call Recorder directly from the marketplace."
-msgstr ""
+msgstr "People Data Labs, Last Contact ve Call Recorder gibi öne çıkan uygulamaları doğrudan pazaryerinden bulun ve yükleyin."
 
 #. js-lingui-id: wHyJkT
 #: src/sections/pricing-engagement-band/PricingEngagementBand.tsx
 msgid "Find the right partner to implement, customize, and tailor Twenty to your team."
 msgstr "Twenty'yi ekibinize uyarlayıp uygulayacak doğru ortağı bulun."
-
-#. js-lingui-id: 5asqas
-#: src/partners-marketplace/MarketplaceHeader.tsx
-msgid "Find your *Twenty partner*"
-msgstr "*Twenty iş ortağınızı* bulun"
 
 #. js-lingui-id: 9V48qi
 #: src/partner-application/data/partner-country-options.ts
@@ -3476,7 +3563,7 @@ msgstr "Yirmi yıl boyunca CRM aynı anlama geliyordu: aramaları kaydetmek, anl
 #. js-lingui-id: Z0PcL7
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Forward shared inboxes such as support@yourcompany.com into Twenty without connecting a full mailbox."
-msgstr ""
+msgstr "Tam bir posta kutusu bağlamadan support@yourcompany.com gibi paylaşılan gelen kutularını Twenty'ye yönlendirin."
 
 #. js-lingui-id: UCoxP5
 #: src/sections/testimonials/partner-testimonials.data.ts
@@ -3490,6 +3577,11 @@ msgstr "Kurucu, Nine Dots Ventures"
 #: src/sections/testimonials/partner-testimonials.data.ts
 msgid "Founder, Wintactix"
 msgstr "Kurucu, Wintactix"
+
+#. js-lingui-id: iAVWWq
+#: src/sections/partner-lead/PartnerServicesExplainer.tsx
+msgid "Four kinds of work, delivered by teams that build on Twenty every day."
+msgstr "Her gün Twenty üzerinde çalışan ekiplerin sunduğu dört tür hizmet."
 
 #. js-lingui-id: 671GY5
 #: src/partner-application/data/partner-country-options.ts
@@ -3638,8 +3730,15 @@ msgstr "Almanca"
 msgid "Germany 🇩🇪"
 msgstr "Almanya 🇩🇪"
 
+#. js-lingui-id: WoPlNk
+#: src/sections/partner-hero/PartnerHero.tsx
+msgid "Get certified as a Twenty partner: a vetted badge, a directory profile your clients can check, and matched client briefs for the best partners."
+msgstr "Twenty iş ortağı olarak sertifika alın: incelenmiş bir rozet, müşterilerinizin kontrol edebileceği bir dizin profili ve en iyi iş ortakları için eşleşen müşteri özetleri."
+
 #. js-lingui-id: b+jRGN
-#: src/partners-marketplace/MarketplaceMatchCard.tsx
+#: src/sections/partner-lead/PartnerDirectoryPanel.tsx
+#: src/sections/partner-hero/PartnerLeadHero.tsx
+#: src/client-brief/ClientBriefModal.tsx
 msgid "Get matched"
 msgstr "Eşleşme al"
 
@@ -3725,12 +3824,12 @@ msgstr "Grenada 🇬🇩"
 #. js-lingui-id: c7mbFb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Group records by relationships"
-msgstr ""
+msgstr "Kayıtları ilişkilere göre gruplandırın"
 
 #. js-lingui-id: lAlV+Q
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Group table and kanban views by a related record, such as an account owner or company."
-msgstr ""
+msgstr "Tablo ve kanban görünümlerini hesap sahibi veya şirket gibi ilişkili bir kayda göre gruplandırın."
 
 #. js-lingui-id: MCLWq4
 #: src/sections/helped/helped.data.ts
@@ -3809,6 +3908,11 @@ msgstr "Değişiklikleri gizle"
 msgid "Hindi"
 msgstr "Hintçe"
 
+#. js-lingui-id: 6NGgln
+#: src/sections/partner-hero/PartnerLeadHero.tsx
+msgid "Hire the people who *build on Twenty*"
+msgstr "*Twenty üzerinde geliştirme yapan* kişileri işe alın"
+
 #. js-lingui-id: qfSbUb
 #: src/case-studies/case-study-stories.ts
 msgid "His approach was unconventional. Instead of mapping fields manually, scripting transforms, and validating data step by step, he handed the job to agentic AI tools with a brief: where the data lives, the GitHub repo for the target platform, and the Railway deployment. Start, and only return if something breaks beyond a 70% confidence fix."
@@ -3875,6 +3979,31 @@ msgstr "AC&T Education Migration ve Flycoder, kapanan bir satıcı CRM'ini, %90'
 #: src/case-studies/case-study-stories.ts
 msgid "How Alternative Partners migrated from Salesforce to self-hosted Twenty using agentic AI in the implementation loop: fast migration, durable ownership."
 msgstr "Alternative Partners, uygulama döngüsünde ajan temelli yapay zeka kullanarak Salesforce'tan self-hosted Twenty'ye nasıl geçti: hızlı taşıma, kalıcı mülkiyet."
+
+#. js-lingui-id: Xtipai
+#: src/sections/faq/partner-faq.data.ts
+msgid "How are partners vetted?"
+msgstr "İş ortakları nasıl incelenir?"
+
+#. js-lingui-id: rdK0XI
+#: src/sections/faq/become-partner-faq.data.ts
+msgid "How do client briefs reach me?"
+msgstr "Müşteri özetleri bana nasıl ulaşır?"
+
+#. js-lingui-id: YEWCmQ
+#: src/sections/faq/become-partner-faq.data.ts
+msgid "How do I apply?"
+msgstr "Nasıl başvururum?"
+
+#. js-lingui-id: 8Cnrle
+#: src/sections/faq/partner-faq.data.ts
+msgid "How do I become a partner?"
+msgstr "Nasıl iş ortağı olurum?"
+
+#. js-lingui-id: eNrG1o
+#: src/sections/faq/partner-faq.data.ts
+msgid "How does matching work?"
+msgstr "Eşleştirme nasıl çalışır?"
 
 #. js-lingui-id: +MLOVo
 #: src/case-studies/case-study-stories.ts
@@ -3969,7 +4098,7 @@ msgstr "Şirketiniz Microsoft 365 üzerinde yaşıyor ve zaten Power Platform ku
 #. js-lingui-id: zMq4mR
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Image attachments now show a thumbnail inside file field chips, so they are easier to identify at a glance."
-msgstr ""
+msgstr "Görüntü ekleri artık dosya alanı çiplerinde küçük resim gösterir; böylece bir bakışta tanımlanmaları kolaylaşır."
 
 #. js-lingui-id: Grur3I
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4008,7 +4137,7 @@ msgstr "İskelet yükleme uygulanarak veri alınırken yer tutucu içerik göste
 #. js-lingui-id: F+7508
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Import larger CSV and spreadsheet files through AI chat with more reliable relation matching and bulk updates."
-msgstr ""
+msgstr "Daha güvenilir ilişki eşleştirmesi ve toplu güncellemelerle, daha büyük CSV ve elektronik tablo dosyalarını yapay zekâ sohbeti üzerinden içe aktarın."
 
 #. js-lingui-id: WxaeWx
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4152,12 +4281,12 @@ msgstr "Sonsuz kaydırma, faturanın aksine hâlâ çok yakında geliyor."
 #. js-lingui-id: w8vi/L
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Inline image previews"
-msgstr ""
+msgstr "Satır içi görüntü önizlemeleri"
 
 #. js-lingui-id: /eL+82
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Inspect AI calls, code output, HTTP requests, and emails for every step of a workflow run."
-msgstr ""
+msgstr "Bir iş akışı çalıştırmasının her adımındaki yapay zekâ çağrılarını, kod çıktısını, HTTP isteklerini ve e-postaları inceleyin."
 
 #. js-lingui-id: TKQ7K+
 #: src/apps-marketplace/AppDetail.tsx
@@ -4340,16 +4469,16 @@ msgstr "Ekosistemimize katılın ve işletmelerin müşteri verilerini açık ka
 msgid "Join our growing partner ecosystem"
 msgstr "Büyüyen iş ortağı ekosistemimize katılın"
 
-#. js-lingui-id: VQIurp
-#: src/sections/partner-signoff/PartnerSignoff.tsx
-msgid "Join our partner ecosystem and help businesses take control of their CRM."
-msgstr "İş ortağı ekosistemimize katılın ve işletmelerin CRM’lerini kontrol altına almalarına yardımcı olun."
-
 #. js-lingui-id: m/pXki
 #: src/sections/customers-catalog-signoff/CustomersCatalogSignoff.tsx
 #: src/sections/case-study-detail/CustomersCaseStudySignoff.tsx
 msgid "Join the teams that chose to own their CRM. Start building with Twenty today."
 msgstr "CRM’lerine sahip olmayı seçen ekiplere katılın. Bugün Twenty ile inşa etmeye başlayın."
+
+#. js-lingui-id: DqW4G2
+#: src/platform/routing/static-website-routes.ts
+msgid "Join the Twenty partner ecosystem: implement, migrate, and support the #1 open source CRM, and grow your practice with the teams building it."
+msgstr "Twenty iş ortağı ekosistemine katılın: 1 numaralı açık kaynak CRM'i uygulayın, taşıyın ve destekleyin; onu geliştiren ekiplerle çalışarak faaliyetlerinizi büyütün."
 
 #. js-lingui-id: QbxNys
 #: src/partner-application/data/partner-country-options.ts
@@ -4515,6 +4644,11 @@ msgstr "Daha fazla bilgi edinin"
 msgid "Learn more about {0}"
 msgstr "{0} hakkında daha fazla bilgi edinin"
 
+#. js-lingui-id: s7B7gx
+#: src/sections/partner-lead/PartnerBecomeStrip.tsx
+msgid "Learn more about the partner program"
+msgstr "İş ortağı programı hakkında daha fazla bilgi edinin"
+
 #. js-lingui-id: wB0DGn
 #: src/partner-application/data/partner-country-options.ts
 msgid "Lebanon 🇱🇧"
@@ -4569,11 +4703,6 @@ msgstr "Herhangi bir normal nesnede olduğu gibi, görevlerinize ve şirketlerin
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Link field"
 msgstr "Bağlantı alanı"
-
-#. js-lingui-id: YOe6r4
-#: src/partner-application/partner-application-copy.ts
-msgid "Link that shows the work (Loom, GitHub, Notion, Drive, public write-up…). No public workspace? Share a short Loom."
-msgstr "Çalışmanızı gösteren bağlantı (Loom, GitHub, Notion, Drive, herkese açık yazı vb.). Herkese açık bir çalışma alanınız yok mu? Kısa bir Loom paylaşın."
 
 #. js-lingui-id: gggTBm
 #: src/sections/footer/footer.data.ts
@@ -4630,7 +4759,7 @@ msgstr "Canlı veri ve yapay zekayla oluşturuldu"
 #. js-lingui-id: WxYx+e
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Live email and calendar tabs"
-msgstr ""
+msgstr "Canlı e-posta ve takvim sekmeleri"
 
 #. js-lingui-id: GObQuL
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -4655,6 +4784,7 @@ msgstr "Form yükleniyor…"
 
 #. js-lingui-id: Pwqkdw
 #: src/partner-application/PartnerApplicationModal.tsx
+#: src/client-brief/ClientBriefModal.tsx
 msgid "Loading…"
 msgstr "Yükleniyor…"
 
@@ -4680,6 +4810,11 @@ msgstr "Kilitlenme"
 #: src/sections/menu/components/MenuDrawer.tsx
 msgid "Log in"
 msgstr "Giriş yap"
+
+#. js-lingui-id: LE5a4y
+#: src/sections/partner-hero/PartnerHero.tsx
+msgid "Looking to hire a partner?"
+msgstr "Bir iş ortağıyla çalışmak mı istiyorsunuz?"
 
 #. js-lingui-id: 8xX9yd
 #: src/sections/product-feature/TasksVisual/data/tasks.ts
@@ -4778,7 +4913,6 @@ msgid "Mar"
 msgstr "Mar"
 
 #. js-lingui-id: Zt5PUS
-#: src/partners-marketplace/MarketplaceHeader.tsx
 #: src/apps-marketplace/AppsMarketplaceHeader.tsx
 msgid "Marketplace"
 msgstr "Pazar Yeri"
@@ -4862,6 +4996,11 @@ msgstr "Microsoft o365 Entegrasyonu"
 #: src/sections/compare/compare-data.ts
 msgid "Middleware licensed separately"
 msgstr "Ara yazılım ayrı lisanslanır"
+
+#. js-lingui-id: u6h8ps
+#: src/sections/partner-lead/partner-services.data.ts
+msgid "Migration"
+msgstr "Geçiş"
 
 #. js-lingui-id: so04x6
 #: src/case-studies/case-study-stories.ts
@@ -4951,7 +5090,7 @@ msgstr "Daha güçlü arama"
 #. js-lingui-id: p8VzrC
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "More visual dashboard views"
-msgstr ""
+msgstr "Daha görsel pano görünümleri"
 
 #. js-lingui-id: LAFO4Y
 #: src/partner-application/data/partner-country-options.ts
@@ -4966,17 +5105,22 @@ msgstr "Morph Many İlişkiler"
 #. js-lingui-id: FaszS0
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Move cards between kanban columns without removing the view's active sort."
-msgstr ""
+msgstr "Görünümün etkin sıralamasını kaldırmadan kartları kanban sütunları arasında taşıyın."
 
 #. js-lingui-id: XsEFUP
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Move through command bar results to see the fields that matter before opening a record."
-msgstr ""
+msgstr "Bir kaydı açmadan önce önemli alanları görmek için komut çubuğu sonuçlarında gezinin."
 
 #. js-lingui-id: qpfkDL
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Move widgets between record page tabs with drag and drop, including directly onto an empty tab."
-msgstr ""
+msgstr "Boş bir sekmenin üzerine doğrudan bırakma da dahil olmak üzere, sürükleyip bırakarak parçacıkları kayıt sayfası sekmeleri arasında taşıyın."
+
+#. js-lingui-id: iTpW7h
+#: src/sections/partner-lead/partner-services.data.ts
+msgid "Move your data out of Salesforce, HubSpot or spreadsheets."
+msgstr "Verilerinizi Salesforce, HubSpot veya elektronik tablolardan taşıyın."
 
 #. js-lingui-id: EwJDrS
 #: src/partner-application/data/partner-country-options.ts
@@ -5092,7 +5236,7 @@ msgstr "Yeni Dizi alanı türü"
 #. js-lingui-id: gy5v+A
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "New emails and calendar events now appear on record pages without a manual refresh."
-msgstr ""
+msgstr "Yeni e-postalar ve takvim etkinlikleri artık manuel yenileme olmadan kayıt sayfalarında görünür."
 
 #. js-lingui-id: DNUCGO
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
@@ -5102,7 +5246,7 @@ msgstr "Yeni alanlar"
 #. js-lingui-id: DmbQpA
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "New objects now start with a record page layout and fields view ready to customize."
-msgstr ""
+msgstr "Yeni nesneler artık özelleştirmeye hazır bir kayıt sayfası düzeni ve alan görünümüyle başlar."
 
 #. js-lingui-id: BcCzLv
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
@@ -5210,6 +5354,11 @@ msgstr "Artık başkasının yapısını kiralamak yok"
 msgid "No partners match your filters"
 msgstr "Hiçbir iş ortağı filtrelerinize uymuyor"
 
+#. js-lingui-id: KoCaEV
+#: src/partners-marketplace/FilterBar.tsx
+msgid "No partners to show right now"
+msgstr "Şu anda gösterilecek iş ortağı yok"
+
 #. js-lingui-id: nDjC8E
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "No session ID provided. Please complete the checkout first."
@@ -5219,6 +5368,11 @@ msgstr "Oturum kimliği sağlanmadı. Lütfen önce ödeme adımını tamamlayı
 #: src/case-studies/case-study-catalog.ts
 msgid "No-code"
 msgstr "Kod yok"
+
+#. js-lingui-id: rNCZhO
+#: src/sections/faq/become-partner-faq.data.ts
+msgid "No. Applying and being listed are free. You set your own rates and keep what you bill."
+msgstr "Hayır. Başvuru yapmak ve listelenmek ücretsizdir. Kendi ücretlerinizi belirlersiniz ve faturalandırdığınız tutarı alırsınız."
 
 #. js-lingui-id: SiZ/7E
 #: src/sections/faq/faq.data.ts
@@ -5354,6 +5508,11 @@ msgstr "Bu sayfada"
 msgid "On Twenty"
 msgstr "Twenty üzerinde"
 
+#. js-lingui-id: sRJVQ1
+#: src/sections/partner-lead/partner-services.data.ts
+msgid "Onboard your team and design your sales process."
+msgstr "Ekibinizi işe alıştırın ve satış sürecinizi tasarlayın."
+
 #. js-lingui-id: gukxZ5
 #: src/sections/compare/compare-data.ts
 msgid "Onboarding"
@@ -5446,7 +5605,7 @@ msgstr "Organization, kullanıcı başına 19 $"
 #. js-lingui-id: 6yVLtC
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Organized AI chats"
-msgstr ""
+msgstr "Düzenli yapay zekâ sohbetleri"
 
 #. js-lingui-id: /IX/7x
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -5741,7 +5900,7 @@ msgstr "İlk kullanım sunumunu hazırla"
 #. js-lingui-id: zhFhSW
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Preview records while you search"
-msgstr ""
+msgstr "Arama yaparken kayıtları önizleyin"
 
 #. js-lingui-id: DHhJ7s
 #: src/partners-marketplace/CaseStudyModal.tsx
@@ -5899,6 +6058,12 @@ msgstr "Q1 2026"
 msgid "Qatar 🇶🇦"
 msgstr "Katar 🇶🇦"
 
+#. js-lingui-id: enzGAL
+#: src/sections/faq/PartnerFaq.tsx
+#: src/sections/faq/BecomePartnerFaq.tsx
+msgid "Questions"
+msgstr "Sorular"
+
 #. js-lingui-id: OialmJ
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Quickly identify who created a given record and what was the origin of the creation, whether it was through a CSV import, an API, or manual input."
@@ -5913,6 +6078,11 @@ msgstr "Teklife dayalı"
 #: src/partners-marketplace/PartnerRatesPanel.tsx
 msgid "Rates"
 msgstr "Ücretler"
+
+#. js-lingui-id: F4EefJ
+#: src/sections/faq/partner-faq.data.ts
+msgid "Rates vary by partner and scope. Each partner profile lists their published rates, and you can compare before booking a call."
+msgstr "Ücretler iş ortağına ve kapsama göre değişir. Her iş ortağı profilinde yayımlanmış ücretleri listelenir ve bir görüşme planlamadan önce karşılaştırabilirsiniz."
 
 #. js-lingui-id: zXRspj
 #: src/platform/releases/ReleaseNotes.tsx
@@ -5953,7 +6123,7 @@ msgstr "Twenty ile *büyümeye hazır mısınız?*"
 #. js-lingui-id: weCYiW
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Ready-to-use object pages"
-msgstr ""
+msgstr "Kullanıma hazır nesne sayfaları"
 
 #. js-lingui-id: zTY2by
 #: src/platform/routing/static-website-routes.ts
@@ -6009,12 +6179,12 @@ msgstr "Kayıtlar"
 #. js-lingui-id: duvxlo
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Recurring events from connected Google calendars now stay in sync with Twenty."
-msgstr ""
+msgstr "Bağlı Google takvimlerindeki yinelenen etkinlikler artık Twenty ile senkronize kalır."
 
 #. js-lingui-id: r3Tq0N
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Recurring Google Calendar events"
-msgstr ""
+msgstr "Yinelenen Google Takvim etkinlikleri"
 
 #. js-lingui-id: q45OlW
 #: src/partners-marketplace/PartnerReachFacts.tsx
@@ -6040,7 +6210,7 @@ msgstr "Kayıt Sayfasında İlişki Alanları"
 #. js-lingui-id: Bg5IzU
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Relation tables on record pages"
-msgstr ""
+msgstr "Kayıt sayfalarındaki ilişki tabloları"
 
 #. js-lingui-id: plY6Rp
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6061,7 +6231,7 @@ msgstr "Sürümler"
 #. js-lingui-id: 9nnpPJ
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Reliable AI data imports"
-msgstr ""
+msgstr "Güvenilir yapay zekâ veri içe aktarmaları"
 
 #. js-lingui-id: BkBq/5
 #. placeholder {0}: pill.text
@@ -6082,7 +6252,7 @@ msgstr "Ekleri yeniden adlandırın, indirin ve silin"
 #. js-lingui-id: 7wBrBJ
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Reorder kanban columns"
-msgstr ""
+msgstr "Kanban sütunlarını yeniden sıralayın"
 
 #. js-lingui-id: t9yxlZ
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -6117,7 +6287,7 @@ msgstr "Düzenleri varsayılana sıfırlayın, sekme simgelerini seçin ve kısa
 #. js-lingui-id: YgVdyA
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Resizable kanban columns"
-msgstr ""
+msgstr "Yeniden boyutlandırılabilir kanban sütunları"
 
 #. js-lingui-id: tpLAlL
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6142,7 +6312,7 @@ msgstr "REST ve GraphQL API’leri dahil"
 #. js-lingui-id: fbiZYk
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Restart a failed workflow run from the step that failed instead of running everything again."
-msgstr ""
+msgstr "Her şeyi yeniden çalıştırmak yerine başarısız olan bir iş akışı çalıştırmasını başarısız olduğu adımdan yeniden başlatın."
 
 #. js-lingui-id: kx0s+n
 #: src/case-studies/case-study-stories.ts
@@ -6157,7 +6327,7 @@ msgstr "Retro 2015"
 #. js-lingui-id: dB1hYH
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Retry failed workflows"
-msgstr ""
+msgstr "Başarısız iş akışlarını yeniden deneyin"
 
 #. js-lingui-id: H0dEn+
 #: src/app-preview/stage/FlyingTrafficLights.tsx
@@ -6203,7 +6373,7 @@ msgstr "Zengin metin düzenleri"
 #. js-lingui-id: k5VLHK
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Richer relation layouts"
-msgstr ""
+msgstr "Daha zengin ilişki düzenleri"
 
 #. js-lingui-id: /gaSVU
 #: src/case-studies/case-study-stories.ts
@@ -6558,6 +6728,11 @@ msgstr "Self-hosted olması, AC&T'nin hiçbir satıcı riski taşımadığı anl
 msgid "Self-hosted means control"
 msgstr "Self-hosted kontrol demektir"
 
+#. js-lingui-id: L6yOTN
+#: src/sections/partner-lead/partner-services.data.ts
+msgid "Self-hosted operations"
+msgstr "Öz barındırmalı operasyonlar"
+
 #. js-lingui-id: WxVgfh
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Self-hosted workspaces can now track usage more cleanly with usage-based billing support."
@@ -6629,6 +6804,7 @@ msgid "Serbia 🇷🇸"
 msgstr "Sırbistan 🇷🇸"
 
 #. js-lingui-id: MILoeL
+#: src/sections/partner-lead/PartnerServicesExplainer.tsx
 #: src/partners-marketplace/PartnerServices.tsx
 msgid "Services"
 msgstr "Hizmetler"
@@ -6643,10 +6819,15 @@ msgstr "Seyşeller 🇸🇨"
 msgid "Shape records to your business"
 msgstr "Kayıtları işinize göre şekillendirin"
 
+#. js-lingui-id: 3PvOYS
+#: src/sections/faq/partner-faq.data.ts
+msgid "Share a short brief on your project, timeline, and budget. We hand-pick certified partners who fit and introduce you within 48 hours."
+msgstr "Projeniz, zaman çizelgeniz ve bütçeniz hakkında kısa bir özet paylaşın. Uygun sertifikalı iş ortaklarını özenle seçer ve sizi 48 saat içinde tanıştırırız."
+
 #. js-lingui-id: vn7QMM
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Share call insights"
-msgstr ""
+msgstr "Çağrı içgörülerini paylaşın"
 
 #. js-lingui-id: XawGZE
 #: src/client-brief/client-brief-copy.ts
@@ -6681,17 +6862,12 @@ msgstr "Daha az göster"
 #. js-lingui-id: 41IhZl
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Show records in dashboard widgets as grouped tables, kanban boards, or calendars instead of flat tables only."
-msgstr ""
+msgstr "Kayıtları pano parçacıklarında yalnızca düz tablolar yerine gruplandırılmış tablolar, kanban panoları veya takvimler olarak gösterin."
 
 #. js-lingui-id: RhU4bB
 #: src/partners-marketplace/FilterBar.tsx
 msgid "Showing {visibleCount} of {totalCount} partners"
 msgstr "{totalCount} iş ortağından {visibleCount} tanesi gösteriliyor"
-
-#. js-lingui-id: I89wN/
-#: src/partners-marketplace/FilterBar.tsx
-msgid "Showing all {totalCount} partners"
-msgstr "Tüm {totalCount} iş ortağı gösteriliyor"
 
 #. js-lingui-id: 9k9PMD
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6786,12 +6962,12 @@ msgstr "Akıllı kalıplar, kısayollar ve düzenler, günlük görevleri daha h
 #. js-lingui-id: yp+1TH
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Smarter email recipients"
-msgstr ""
+msgstr "Daha akıllı e-posta alıcıları"
 
 #. js-lingui-id: E/7H9X
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Smarter record assignment"
-msgstr ""
+msgstr "Daha akıllı kayıt atama"
 
 #. js-lingui-id: GUqjZ0
 #: src/sections/footer/FooterBottom.tsx
@@ -6842,7 +7018,7 @@ msgstr "Bazı ekip arkadaşı değişiklikleri artık anında görünüyor; böy
 #. js-lingui-id: tzdMJX
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Sort composite fields"
-msgstr ""
+msgstr "Bileşik alanları sıralayın"
 
 #. js-lingui-id: tiFPjk
 #: src/sections/compare/CompareCostTable.tsx
@@ -6965,7 +7141,7 @@ msgstr "Ekibinizin çalışma alanından en iyi şekilde yararlanmasına yardım
 #. js-lingui-id: 6xMwu3
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Step-by-step workflow logs"
-msgstr ""
+msgstr "Adım adım iş akışı günlükleri"
 
 #. js-lingui-id: jKt86V
 #: src/sections/faq/Faq.tsx
@@ -7004,8 +7180,8 @@ msgid "Subdomain (yourco.twenty.com)"
 msgstr "Alt alan (yourco.twenty.com)"
 
 #. js-lingui-id: 578pU6
-#: src/partners-marketplace/PartnerProfileCtas.tsx
-#: src/partners-marketplace/MarketplaceBriefPrompt.tsx
+#: src/app/[locale]/(site)/partners/page.tsx
+#: src/app/[locale]/(site)/partners/profile/[slug]/page.tsx
 msgid "Submit a brief"
 msgstr "Kısa bir özet gönder"
 
@@ -7044,6 +7220,11 @@ msgstr "Başarı planı ek ücreti"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Sudan 🇸🇩"
 msgstr "Sudan 🇸🇩"
+
+#. js-lingui-id: 388eZi
+#: src/partners-marketplace/marketplace-copy.ts
+msgid "Super partner"
+msgstr "Süper iş ortağı"
 
 #. js-lingui-id: XYLcNv
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -7199,6 +7380,11 @@ msgid ""
 msgstr ""
 "İhtiyacınızı bize söyleyin\n"
 "*Biz doğru iş ortağını bulalım*"
+
+#. js-lingui-id: cgFMCg
+#: src/platform/routing/static-website-routes.ts
+msgid "Tell us what you need and get matched with a certified Twenty partner in 48 hours, or browse the directory of agencies and consultants who migrate, customise, and operate the open source CRM."
+msgstr "Neye ihtiyacınız olduğunu bize söyleyin; 48 saat içinde sertifikalı bir Twenty iş ortağıyla eşleşin veya açık kaynak CRM'i taşıyan, özelleştiren ve işleten ajanslar ile danışmanların dizinine göz atın."
 
 #. js-lingui-id: kjnQvE
 #: src/partners-marketplace/MarketplaceBriefPrompt.tsx
@@ -7612,6 +7798,11 @@ msgstr "Her sürümü, en yeni özelliklerin değişiklik günlükleri, öne ç�
 msgid "Track relationships, manage pipelines, and take action quickly with an intuitive CRM that helps your team move faster from day one with confidence."
 msgstr "İlişkileri takip edin, boru hatlarını yönetin ve sezgisel bir CRM ile hızlıca aksiyona geçin; ekibinizin ilk günden itibaren güvenle daha hızlı hareket etmesine yardımcı olun."
 
+#. js-lingui-id: OYcL1T
+#: src/sections/partner-lead/partner-services.data.ts
+msgid "Training & RevOps"
+msgstr "Eğitim ve RevOps"
+
 #. js-lingui-id: MtCqjl
 #: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
@@ -7793,11 +7984,6 @@ msgstr "Twenty her şeyi basitleştirir. Temiz, sezgisel ve Notion gibi hissetti
 msgid "Twenty partner ecosystem"
 msgstr "Twenty iş ortağı ekosistemi"
 
-#. js-lingui-id: 4SJucz
-#: src/platform/routing/static-website-routes.ts
-msgid "Twenty Partners — Certified Open Source CRM Implementers"
-msgstr "Twenty İş Ortakları — Sertifikalı Açık Kaynak CRM Uygulayıcıları"
-
 #. js-lingui-id: vD7S1X
 #. placeholder {0}: LATEST_RELEASE.release
 #. placeholder {1}: LATEST_RELEASE.title
@@ -7874,11 +8060,6 @@ msgstr "Twenty ve SAP Sales Cloud"
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty vs SAP Sales Cloud Pricing — The Real Cost Compared"
 msgstr "Twenty ve SAP Sales Cloud Fiyatlandırması — Gerçek Maliyet Karşılaştırması"
-
-#. js-lingui-id: abTOgp
-#: src/partners-marketplace/MarketplaceHeader.tsx
-msgid "Twenty's certified partners help teams migrate, customise, and operate the open source CRM across regions, languages, and deployment models. Browse profiles and book a call, or <0>tell us what you need</0> and we'll match you."
-msgstr "Twenty'nin sertifikalı iş ortakları, ekiplerin bölgeler, diller ve dağıtım modelleri genelinde açık kaynak CRM'i taşımalarına, özelleştirmelerine ve işletmelerine yardımcı olur. Profillere göz atın ve bir görüşme ayarlayın veya <0>ihtiyacınızı bize söyleyin</0>, biz de sizi eşleştirelim."
 
 #. js-lingui-id: tuvLv1
 #: src/platform/releases/ReleaseNotes.tsx
@@ -8211,10 +8392,20 @@ msgstr "W3villa Technologies, sorunu bir geçici çözümle değil, doğru şeki
 msgid "W3villa used Twenty as a production-grade framework for the data model, permissions, authentication, and workflow engine they would otherwise have rebuilt themselves."
 msgstr "W3villa, aksi takdirde kendilerinin yeniden inşa edeceği veri modeli, izinler, kimlik doğrulama ve iş akışı motoru için Twenty'yi üretim düzeyinde bir çerçeve olarak kullandı."
 
+#. js-lingui-id: +uJeMJ
+#: src/sections/partner-lead/PartnerBecomeStrip.tsx
+msgid "Want to *offer* Twenty services?"
+msgstr "Twenty hizmetleri *sunmak* ister misiniz?"
+
 #. js-lingui-id: k1Pevc
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "We are pleased to reopen the cloud subscription to everyone. No more waiting!"
 msgstr "Bulut aboneliğini herkes için yeniden açmaktan memnuniyet duyuyoruz. Artık beklemek yok!"
+
+#. js-lingui-id: CtEyix
+#: src/sections/partner-signoff/PartnerSignoff.tsx
+msgid "We certify real builders only. Every application is reviewed against a shipped Twenty project — send yours with proof."
+msgstr "Yalnızca gerçek geliştiricileri sertifikalandırıyoruz. Her başvuru, tamamlanmış bir Twenty projesine göre incelenir — siz de kanıtıyla birlikte gönderin."
 
 #. js-lingui-id: 8CHatv
 #: src/partner-application/partner-application-copy.ts
@@ -8246,15 +8437,15 @@ msgstr "Uygulama performansını artırdık; her sayfada 500 ms’den fazla geci
 msgid "We have significantly enhanced our search performance, making it feel instantaneous when searching for records such as people, companies, or tasks."
 msgstr "Kişiler, şirketler veya görevler gibi kayıtları ararken neredeyse anında hissettirecek şekilde arama performansımızı önemli ölçüde iyileştirdik."
 
+#. js-lingui-id: d4cXeX
+#: src/sections/faq/become-partner-faq.data.ts
+msgid "We review your delivered projects, technical depth, and customer feedback before you join the directory. Certified partners carry the badge on their profile."
+msgstr "Dizine katılmadan önce tamamladığınız projeleri, teknik derinliğinizi ve müşteri geri bildirimlerini inceliyoruz. Sertifikalı iş ortakları profillerinde rozeti taşır."
+
 #. js-lingui-id: l7iJRt
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "We started a major ⌘K revamp that now understands the context to display appropriate actions. For example, on a record page, you can add the record as a favorite, or if you select multiple records on an index, you can export them as a CSV."
 msgstr "Artık bağlamı anlayarak uygun eylemleri gösteren büyük bir ⌘K yenilemesi başlattık. Örneğin, bir kayıt sayfasında kaydı favorilere ekleyebilir veya bir indekste birden çok kayıt seçerseniz bunları CSV olarak dışa aktarabilirsiniz."
-
-#. js-lingui-id: d5CWI6
-#: src/sections/partner-hero/PartnerHero.tsx
-msgid "We're building the #1 Open Source CRM, but we can't do it alone. Join our partner ecosystem and grow with us."
-msgstr "#1 Açık Kaynak CRM'yi inşa ediyoruz, ancak bunu tek başımıza yapamayız. İş ortağı ekosistemimize katılın ve bizimle birlikte büyüyün."
 
 #. js-lingui-id: DFlq8J
 #: src/platform/releases/ReleaseNotes.tsx
@@ -8307,11 +8498,21 @@ msgstr "Web sitesi"
 msgid "Website or GitHub *"
 msgstr "Web sitesi veya GitHub *"
 
+#. js-lingui-id: KINqeH
+#: src/sections/partner-lead/PartnerServicesExplainer.tsx
+msgid "What a Twenty partner does"
+msgstr "Bir Twenty iş ortağının yaptıkları"
+
 #. js-lingui-id: Lx0cVD
 #: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
 msgid "What an admin can do without writing code."
 msgstr "Bir yöneticinin kod yazmadan yapabildiği her şey."
+
+#. js-lingui-id: va07TZ
+#: src/sections/faq/become-partner-faq.data.ts
+msgid "What are the requirements?"
+msgstr "Gereksinimler nelerdir?"
 
 #. js-lingui-id: Z34FQq
 #: src/case-studies/case-study-stories.ts
@@ -8322,6 +8523,16 @@ msgstr "Olivier'i ikna eden şey, platformun esnekliği ve gittiği yön oldu. �
 #: src/sections/compare/compare-data.ts
 msgid "What costs extra over there"
 msgstr "Orada fazladan neye para veriyorsunuz"
+
+#. js-lingui-id: iGY4LD
+#: src/sections/faq/become-partner-faq.data.ts
+msgid "What do I get as a partner?"
+msgstr "İş ortağı olarak ne elde ederim?"
+
+#. js-lingui-id: VkIKlY
+#: src/sections/faq/partner-faq.data.ts
+msgid "What do partners charge?"
+msgstr "İş ortakları ne ücret alır?"
 
 #. js-lingui-id: SMBgOd
 #: src/client-brief/client-brief-copy.ts
@@ -8362,6 +8573,11 @@ msgid ""
 "What does\n"
 "*SAP Sales Cloud* really cost?"
 msgstr "*SAP Sales Cloud* gerçekte neye mal olur?"
+
+#. js-lingui-id: MIVJ8U
+#: src/sections/faq/become-partner-faq.data.ts
+msgid "What does certification involve?"
+msgstr "Sertifikasyon neleri içerir?"
 
 #. js-lingui-id: phiBjc
 #: src/sections/faq/faq.data.ts
@@ -8591,7 +8807,7 @@ msgstr "İş akışları"
 #. js-lingui-id: fUwLtb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Workflows can pick records randomly, in round-robin order, or by choosing the least-loaded assignee."
-msgstr ""
+msgstr "İş akışları kayıtları rastgele, döngüsel sırayla veya en az yüklü atananı seçerek seçebilir."
 
 #. js-lingui-id: OteDxj
 #: src/case-studies/case-study-stories.ts
@@ -8602,6 +8818,11 @@ msgstr "*Gerçekte kullanılan* iş akışları"
 #: src/case-studies/case-study-stories.ts
 msgid "Workflows that actually get used"
 msgstr "Gerçekten kullanılan iş akışları"
+
+#. js-lingui-id: k7EuGf
+#: src/sections/faq/PartnerFaq.tsx
+msgid "Working with *a Twenty partner*"
+msgstr "*Bir Twenty iş ortağıyla* çalışmak"
 
 #. js-lingui-id: pmUArF
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
@@ -8693,6 +8914,16 @@ msgstr "Evet. Her Cloud çalışma alanı yerel bir MCP sunucusuyla birlikte gel
 #: src/sections/faq/faq.data.ts
 msgid "Yes. Import your data via CSV, or use our API for 50,000+ records. Our partners can handle the full migration for you."
 msgstr "Evet. Verilerinizi CSV ile içe aktarın veya 50.000+ kayıt için API'mizi kullanın. İş ortaklarımız, sizin için tam taşıma sürecini yönetebilir."
+
+#. js-lingui-id: xsbHte
+#: src/sections/faq/partner-faq.data.ts
+msgid "Yes. Migration partners move your data out of Salesforce, HubSpot, or spreadsheets, and can own the full cutover for you."
+msgstr "Evet. Geçiş iş ortakları verilerinizi Salesforce, HubSpot veya elektronik tablolardan taşır ve tüm geçiş sürecini sizin için üstlenebilir."
+
+#. js-lingui-id: DaIKN4
+#: src/sections/faq/partner-faq.data.ts
+msgid "Yes. Some partners specialise in deploying, upgrading, and operating self-hosted Twenty instances on your own infrastructure."
+msgstr "Evet. Bazı iş ortakları, kendi altyapınızda öz barındırmalı Twenty örneklerini dağıtma, yükseltme ve işletme konusunda uzmanlaşmıştır."
 
 #. js-lingui-id: 8m0eN9
 #: src/sections/faq/faq.data.ts

@@ -16,7 +16,6 @@ import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
@@ -33,6 +32,7 @@ import { NavigationMenuItemGraphqlApiExceptionInterceptor } from 'src/engine/met
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 
 @UseGuards(WorkspaceAuthGuard)
 @UseInterceptors(
@@ -43,7 +43,7 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
 export class NavigationMenuItemResolver {
   constructor(
     private readonly navigationMenuItemService: NavigationMenuItemService,
-    private readonly i18nService: I18nService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
   @ResolveField(() => String, { nullable: true })
@@ -64,12 +64,15 @@ export class NavigationMenuItemResolver {
       // translate and no override to arbitrate against.
       overrides: undefined,
       property: 'name',
-      i18nContext: await this.i18nService.buildEffectiveEntityI18nContext({
-        applicationId: navigationMenuItem.applicationId,
-        loaders: context.loaders,
-        locale: context.req.locale,
-        workspaceId: workspace.id,
-      }),
+      i18nContext:
+        await this.applicationTranslationCatalogService.buildEffectiveEntityI18nContext(
+          {
+            applicationId: navigationMenuItem.applicationId,
+            loaders: context.loaders,
+            locale: context.req.locale,
+            workspaceId: workspace.id,
+          },
+        ),
     });
   }
 

@@ -1,46 +1,42 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-cache-maps.type';
 import { fromApplicationVariableEntityToFlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/utils/from-application-variable-entity-to-flat-application-variable.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
+import { type WorkspaceCacheRowsRequirement } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
+const APPLICATION_VARIABLE_ROWS_REQUIREMENT = {
+  applicationVariable: true,
+  application: ['id', 'universalIdentifier', 'deletedAt'],
+} as const satisfies WorkspaceCacheRowsRequirement;
+
 @Injectable()
 @WorkspaceCache('applicationVariableMaps', { packingPonderation: 1 })
 export class WorkspaceApplicationVariableMapCacheService extends WorkspaceCacheProvider<ApplicationVariableCacheMaps> {
-  constructor(
-    @InjectRepository(ApplicationVariableEntity)
-    private readonly applicationVariableRepository: Repository<ApplicationVariableEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
-  ) {
-    super();
-  }
+  override readonly rowsRequirement = APPLICATION_VARIABLE_ROWS_REQUIREMENT;
 
-  async computeForCache(
-    workspaceId: string,
-  ): Promise<ApplicationVariableCacheMaps> {
-    const [applicationVariableEntities, applications] = await Promise.all([
-      this.applicationVariableRepository.find({
-        where: { workspaceId },
-      }),
-      this.applicationRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-      }),
-    ]);
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof APPLICATION_VARIABLE_ROWS_REQUIREMENT
+  >): ApplicationVariableCacheMaps {
+    const {
+      applicationVariable: applicationVariableEntities,
+      application: applications,
+    } = rows;
 
     const applicationIdToUniversalIdentifierMap =
-      createIdToUniversalIdentifierMap(applications);
+      createIdToUniversalIdentifierMap(
+        applications.filter((application) => !isDefined(application.deletedAt)),
+      );
 
     const applicationVariableMaps = createEmptyFlatEntityMaps();
 

@@ -25,6 +25,10 @@ cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {pos
 
 服务器在启动时会自动运行所有所需的升级迁移。 无需手动执行任何命令。
 
+## 升级到 v2.34+ — 最低要求 PostgreSQL 15
+
+Twenty v2.34 要求 PostgreSQL 15 或更高版本。 官方 Docker Compose 配置使用 PostgreSQL 16。 如果您的实例连接到外部托管的数据库，请在启动 v2.34 服务器之前对其进行升级。
+
 ## 跨版本升级（v1.23+）
 
 自 **v1.23** 起，Twenty 支持跨版本升级。 您可以从任意受支持的版本直接跳到最新版本，而无需逐一经过每个中间版本。

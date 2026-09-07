@@ -26,6 +26,7 @@ const PAGES = [
   '/pricing',
   '/customers',
   '/partners',
+  '/partners/become',
   '/why-twenty',
   '/releases',
 ];

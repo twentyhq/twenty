@@ -20,6 +20,7 @@ import { formatMessageFromHeader } from 'src/modules/messaging/message-outbound-
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type DeliverableRecipients } from 'src/engine/core-modules/emailing-domain/types/deliverable-recipients.type';
+import { isSuppressionBlockingSend } from 'src/engine/core-modules/emailing-domain/utils/is-suppression-blocking-send.util';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -168,26 +169,27 @@ export class EmailingDomainSenderService {
       ...(emailContent.bcc ?? []),
     ];
 
-    const suppressedAddresses =
-      await this.messageSuppressionService.getSuppressedAddresses(
+    const suppressions =
+      await this.messageSuppressionService.findApplicableSuppressions({
         workspaceId,
-        allRecipients,
-      );
+        emailAddresses: allRecipients,
+        unsubscribeTopicId: emailContent.unsubscribeTopicId,
+      });
 
-    const listUnsubscribedAddresses = await this.getListUnsubscribedAddresses(
-      workspaceId,
-      allRecipients,
-      emailContent.unsubscribeTopicId,
+    const blockedAddresses = new Set(
+      suppressions
+        .filter((suppression) =>
+          isSuppressionBlockingSend({
+            sendKind: emailContent.sendKind,
+            suppression,
+            unsubscribeTopicId: emailContent.unsubscribeTopicId,
+          }),
+        )
+        .map((suppression) => suppression.emailAddress),
     );
 
-    const isDeliverable = (address: string): boolean => {
-      const normalizedAddress = address.trim().toLowerCase();
-
-      return (
-        !suppressedAddresses.has(normalizedAddress) &&
-        !listUnsubscribedAddresses.has(normalizedAddress)
-      );
-    };
+    const isDeliverable = (address: string): boolean =>
+      !blockedAddresses.has(address.trim().toLowerCase());
 
     const to = emailContent.to.filter(isDeliverable);
 
@@ -203,21 +205,5 @@ export class EmailingDomainSenderService {
       cc: emailContent.cc?.filter(isDeliverable),
       bcc: emailContent.bcc?.filter(isDeliverable),
     };
-  }
-
-  private async getListUnsubscribedAddresses(
-    workspaceId: string,
-    recipients: string[],
-    unsubscribeTopicId: string | undefined,
-  ): Promise<Set<string>> {
-    if (!isNonEmptyString(unsubscribeTopicId)) {
-      return new Set();
-    }
-
-    return this.messageSuppressionService.getTopicSuppressedAddresses(
-      workspaceId,
-      recipients,
-      unsubscribeTopicId,
-    );
   }
 }

@@ -1,5 +1,6 @@
 import {
   ViewFilterOperand,
+  ViewSortDirection,
   ViewType,
   defineView,
   getFieldUniversalIdentifier,
@@ -11,6 +12,7 @@ import {
   PARTNER_SCOPE_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_TWENTY_EXPERIENCE_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_TWENTY_EXPERIENCE_NOTES_FIELD_UNIVERSAL_IDENTIFIER,
+  PARTNER_TWENTY_EXPERIENCE_PROOF_LINK_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_VALIDATION_STAGE_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/modules/partner/constants/partner-field-universal-identifiers';
 import {
@@ -31,7 +33,6 @@ const PARTNER_CREATED_AT_FIELD_ID = getFieldUniversalIdentifier({
   name: 'createdAt',
 });
 
-// Naming: partner onboarding applicants — distinct from the Application object's "Applications" view.
 export default defineView({
   universalIdentifier: PARTNER_APPLICATIONS_VIEW_UNIVERSAL_IDENTIFIER,
   name: 'Partner Applications',
@@ -49,13 +50,15 @@ export default defineView({
     },
     {
       universalIdentifier: 'c145da29-b040-4070-a726-562460b315c3',
-      fieldMetadataUniversalIdentifier: PARTNER_COUNTRY_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        PARTNER_COUNTRY_FIELD_UNIVERSAL_IDENTIFIER,
       position: 1,
       isVisible: true,
     },
     {
       universalIdentifier: '88d68442-514d-43a5-b974-8aa22b65cac8',
-      fieldMetadataUniversalIdentifier: PARTNER_SCOPE_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        PARTNER_SCOPE_FIELD_UNIVERSAL_IDENTIFIER,
       position: 2,
       isVisible: true,
       size: 200,
@@ -77,16 +80,24 @@ export default defineView({
       size: 280,
     },
     {
+      universalIdentifier: '2cb2cbe2-887a-4f7b-8aef-d44af8c4de96',
+      fieldMetadataUniversalIdentifier:
+        PARTNER_TWENTY_EXPERIENCE_PROOF_LINK_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 5,
+      isVisible: true,
+      size: 240,
+    },
+    {
       universalIdentifier: '835c9a7e-72ec-46c5-8d90-39a02998f561',
       fieldMetadataUniversalIdentifier: PARTNER_CREATED_AT_FIELD_ID,
-      position: 5,
+      position: 6,
       isVisible: true,
       size: 180,
     },
     {
       universalIdentifier: '0175e169-377c-4ff5-b0f0-c3359cac48d9',
       fieldMetadataUniversalIdentifier: PARTNER_USER_ON_PARTNER_FIELD_ID,
-      position: 6,
+      position: 7,
       isVisible: true,
       size: 200,
     },
@@ -98,6 +109,13 @@ export default defineView({
         PARTNER_VALIDATION_STAGE_FIELD_UNIVERSAL_IDENTIFIER,
       operand: ViewFilterOperand.IS,
       value: ['APPLICATION'],
+    },
+  ],
+  sorts: [
+    {
+      universalIdentifier: '5224d99e-32f4-4900-8e6c-e01d4979a2bd',
+      fieldMetadataUniversalIdentifier: PARTNER_CREATED_AT_FIELD_ID,
+      direction: ViewSortDirection.DESC,
     },
   ],
 });

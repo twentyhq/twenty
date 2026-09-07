@@ -1,8 +1,9 @@
 import { extractFieldMetadataIdsFromWidget } from '@/page-layout/utils/extractFieldMetadataIdsFromWidget';
 import {
+  PageLayoutTabLayoutMode,
   type PageLayoutWidget,
-  WidgetType,
   type WidgetConfiguration,
+  WidgetType,
 } from '~/generated-metadata/graphql';
 import {
   TEST_AGGREGATE_CHART_CONFIGURATION,
@@ -29,7 +30,14 @@ const createMockWidget = (
   type: WidgetType.GRAPH,
   title: 'Test',
   objectMetadataId: null,
-  gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
+  position: {
+    __typename: 'PageLayoutWidgetGridPosition' as const,
+    layoutMode: PageLayoutTabLayoutMode.GRID,
+    row: 0,
+    column: 0,
+    rowSpan: 1,
+    columnSpan: 1,
+  },
   pageLayoutTabId: 'tab-1',
   createdAt: '2024-01-01',
   updatedAt: '2024-01-01',

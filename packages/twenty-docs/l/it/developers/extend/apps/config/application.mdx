@@ -97,7 +97,7 @@ Lo stesso vale per i componenti front-end che leggono i valori tramite `getAppli
 
 Il ruolo dichiarato con [`defineApplicationRole()`](/l/it/developers/extend/apps/config/roles) controlla a cosa possono accedere le funzioni di logica e i componenti di interfaccia dell'app:
 
-* Il token di runtime iniettato come `TWENTY_APP_ACCESS_TOKEN` è derivato da questo ruolo.
+* I token di runtime iniettati nelle funzioni logiche sono derivati da questo ruolo. Una chiamata che agisce come una persona è ulteriormente limitata a ciò che tale persona può fare, quindi non può mai superare nessuno dei due. Vedi [L'accesso utilizzato da una chiamata](/l/it/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
 * Il client API tipizzato è limitato alle autorizzazioni concesse a quel ruolo.
 * Segui il principio del privilegio minimo: dichiara solo le autorizzazioni necessarie alle tue funzioni.
 

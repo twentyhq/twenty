@@ -73,7 +73,7 @@ import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permi
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { fromUserWorkspacePermissionsToUserWorkspacePermissionsDto } from 'src/engine/metadata-modules/role/utils/fromUserWorkspacePermissionsToUserWorkspacePermissionsDto';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -102,7 +102,7 @@ export class UserResolver {
     private readonly permissionsService: PermissionsService,
     private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   private async getUserWorkspacePermissions({
@@ -405,23 +405,19 @@ export class UserResolver {
     const authContext = buildSystemAuthContext(workspace.id);
 
     const workspaceMemberToDelete =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const workspaceMemberRepository =
-            await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-              workspace.id,
-              'workspaceMember',
-              { shouldBypassPermissionChecks: true },
-            );
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workspaceMemberRepository =
+          this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
 
-          return workspaceMemberRepository.findOne({
-            where: {
-              id: workspaceMemberIdToDelete,
-            },
-          });
-        },
-        authContext,
-      );
+        return workspaceMemberRepository.findOne({
+          where: {
+            id: workspaceMemberIdToDelete,
+          },
+        });
+      }, authContext);
 
     if (!isDefined(workspaceMemberToDelete)) {
       throw new BadRequestException(
@@ -511,9 +507,8 @@ export class UserResolver {
     });
 
     const workspaceMemberRepository =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () =>
-        this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-          workspace.id,
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () =>
+        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
           'workspaceMember',
           {
             shouldBypassPermissionChecks: true,
@@ -522,7 +517,7 @@ export class UserResolver {
       );
 
     const workspaceMember =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(() =>
+      await this.workspaceOrmManager.executeInWorkspaceContext(() =>
         workspaceMemberRepository.findOne({
           where: {
             id: input.workspaceMemberId,
@@ -540,7 +535,7 @@ export class UserResolver {
         ...(input.update as Partial<WorkspaceMemberWorkspaceEntity>),
       };
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(() =>
+    await this.workspaceOrmManager.executeInWorkspaceContext(() =>
       workspaceMemberRepository.save(workspaceMemberUpdatePayload),
     );
 

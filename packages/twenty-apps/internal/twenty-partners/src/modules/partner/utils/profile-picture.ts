@@ -18,3 +18,14 @@ export function resolvePartnerPictureUrl(
 ): string | null {
   return firstFileUrl(files) ?? legacyLinkUrl ?? null;
 }
+
+// Cover has the same two sources as the picture, in the opposite order: a
+// pasted URL wins over an uploaded file. coverImageUrl is TEXT, so it reads
+// back as '' when unset — `??` would hand that empty string to the caller and
+// hide the uploaded file behind it.
+export function resolveCoverUrl(
+  pastedUrl: string | null | undefined,
+  files: ReadonlyArray<FileItemRead> | null | undefined,
+): string | null {
+  return (pastedUrl ?? '').trim() || firstFileUrl(files);
+}

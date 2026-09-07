@@ -6,7 +6,7 @@ export const protectChatReferencesForMarkdown = (text: string): string => {
   const segments = getChatReferenceSegments(text);
 
   if (segments.length === 1 && typeof segments[0] === 'string') {
-    return text;
+    return segments[0];
   }
 
   return segments

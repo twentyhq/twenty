@@ -1,5 +1,7 @@
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
 import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
+import { useWorkspaceSurfaceHeaderPortal } from '@/ui/layout/hooks/useWorkspaceSurfaceHeaderPortal';
 import {
   Breadcrumb,
   type BreadcrumbProps,
@@ -9,6 +11,7 @@ import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawe
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -79,6 +82,18 @@ const StyledRight = styled.div<{ centerTitle?: boolean }>`
   width: 100%;
 `;
 
+const StyledSurfaceTitle = styled(StyledTitle)`
+  overflow: hidden;
+  width: 100%;
+`;
+
+const StyledSurfaceActions = styled.div`
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
 export const PageCardHeader = ({
   links,
   breadcrumb,
@@ -91,6 +106,8 @@ export const PageCardHeader = ({
 }: PageCardHeaderProps) => {
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useNavigationDrawerExpanded();
+  const workspaceSurface = useWorkspaceSurface();
+  const workspaceSurfaceHeaderPortal = useWorkspaceSurfaceHeaderPortal();
 
   const hasTitleContent = isDefined(icon) || isDefined(title) || isDefined(tag);
   const shouldCenterTitle = centerTitle && hasTitleContent;
@@ -102,6 +119,39 @@ export const PageCardHeader = ({
       {tag}
     </>
   );
+
+  const surfaceTitleContent = isDefined(breadcrumb) ? (
+    breadcrumb
+  ) : hasTitleContent ? (
+    titleContent
+  ) : isDefined(links) ? (
+    <Breadcrumb links={links} />
+  ) : null;
+
+  if (workspaceSurface.type === 'side-panel') {
+    return (
+      <>
+        {isDefined(workspaceSurfaceHeaderPortal.title) &&
+          isDefined(surfaceTitleContent) &&
+          createPortal(
+            <StyledSurfaceTitle titleColor={titleColor}>
+              {surfaceTitleContent}
+            </StyledSurfaceTitle>,
+            workspaceSurfaceHeaderPortal.title,
+          )}
+        {isDefined(workspaceSurfaceHeaderPortal.actions) &&
+          isDefined(actionButton) &&
+          createPortal(
+            <StyledSurfaceActions
+              data-click-outside-id={PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID}
+            >
+              {actionButton}
+            </StyledSurfaceActions>,
+            workspaceSurfaceHeaderPortal.actions,
+          )}
+      </>
+    );
+  }
 
   return (
     <StyledHeader centerTitle={shouldCenterTitle}>

@@ -18,7 +18,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
@@ -46,6 +45,7 @@ import { ViewService } from 'src/engine/metadata-modules/view/services/view.serv
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 import { ViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-permission.guard';
 import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-permission.guard';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 
 @MetadataResolver(() => ViewDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter)
@@ -54,7 +54,7 @@ export class ViewResolver {
   constructor(
     private readonly viewService: ViewService,
     private readonly viewWidgetUpsertService: ViewWidgetUpsertService,
-    private readonly i18nService: I18nService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
   @ResolveField(() => String)
@@ -63,12 +63,15 @@ export class ViewResolver {
     @Context() context: { loaders: IDataloaders } & I18nContext,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<string> {
-    const i18nContext = await this.i18nService.buildEffectiveEntityI18nContext({
-      applicationId: view.applicationId,
-      loaders: context.loaders,
-      locale: context.req.locale,
-      workspaceId: workspace.id,
-    });
+    const i18nContext =
+      await this.applicationTranslationCatalogService.buildEffectiveEntityI18nContext(
+        {
+          applicationId: view.applicationId,
+          loaders: context.loaders,
+          locale: context.req.locale,
+          workspaceId: workspace.id,
+        },
+      );
 
     return resolveViewName({
       view,
@@ -108,12 +111,14 @@ export class ViewResolver {
     }
 
     const objectI18nContext =
-      await this.i18nService.buildEffectiveEntityI18nContext({
-        applicationId: objectMetadata.applicationId,
-        loaders: context.loaders,
-        locale: context.req.locale,
-        workspaceId: workspace.id,
-      });
+      await this.applicationTranslationCatalogService.buildEffectiveEntityI18nContext(
+        {
+          applicationId: objectMetadata.applicationId,
+          loaders: context.loaders,
+          locale: context.req.locale,
+          workspaceId: workspace.id,
+        },
+      );
 
     return buildViewNameObjectLabels({
       viewName: view.name,

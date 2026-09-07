@@ -66,7 +66,7 @@ ${ZERO_SPECIFICITY_COMMENT}
   *,
   *::before,
   *::after {
-    corner-shape: var(--t-corner-shape, squircle);
+    corner-shape: var(--t-corner-shape, superellipse(2.2));
   }
 }
 `;

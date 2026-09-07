@@ -23,7 +23,7 @@ export const computeStandardMessageChannelMessageAssociationViews = (
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,
-        icon: 'IconList',
+        icon: 'IconTable',
       },
     }),
     messageChannelMessageAssociationRecordPageFields:
@@ -36,7 +36,7 @@ export const computeStandardMessageChannelMessageAssociationViews = (
           type: ViewType.FIELDS_WIDGET,
           key: null,
           position: 0,
-          icon: 'IconList',
+          icon: 'IconListDetails',
         },
       }),
   };

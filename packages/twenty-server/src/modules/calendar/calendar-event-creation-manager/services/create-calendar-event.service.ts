@@ -58,18 +58,23 @@ export class CreateCalendarEventService {
     createdEvent: FetchedCalendarEvent,
     data: ComposedCalendarEvent,
     workspaceId: string,
-  ): Promise<void> {
+  ): Promise<string | null> {
     try {
-      await this.calendarSaveEventsService.saveCalendarEventsAndEnqueueContactCreationJob(
-        [createdEvent],
-        data.calendarChannel,
-        data.connectedAccount,
-        workspaceId,
-      );
+      const { calendarEventIds } =
+        await this.calendarSaveEventsService.saveCalendarEventsAndEnqueueContactCreationJob(
+          [createdEvent],
+          data.calendarChannel,
+          data.connectedAccount,
+          workspaceId,
+        );
+
+      return calendarEventIds[0] ?? null;
     } catch (persistenceError) {
       this.logger.warn(
         `Failed to persist created calendar event (sync will recover): ${persistenceError}`,
       );
+
+      return null;
     }
   }
 }

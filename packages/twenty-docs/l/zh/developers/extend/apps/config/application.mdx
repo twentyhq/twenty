@@ -97,7 +97,7 @@ const config = JSON.parse(process.env.PROVIDER_CONFIG ?? '{}'); // '{"retries":3
 
 使用 [`defineApplicationRole()`](/l/zh/developers/extend/apps/config/roles) 声明的角色控制应用的逻辑函数和前端组件可以访问的内容：
 
-* 作为 `TWENTY_APP_ACCESS_TOKEN` 注入的运行时令牌来源于该角色。
+* 注入到您的逻辑函数中的运行时令牌来源于该角色。 以某个人的身份执行的调用会进一步受限于该人能够执行的操作，因此其权限永远不会超过两者中的任一方。 请参阅[调用使用谁的访问权限](/l/zh/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses)。
 * 类型化 API 客户端将受限于授予该角色的权限。
 * 遵循最小权限原则：只声明你的函数所需的权限。
 

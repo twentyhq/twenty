@@ -23,6 +23,7 @@ import { type ObjectConfig } from '@/sdk/define/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
+import { type TimelineActivityTypeConfig } from '@/sdk/define/timeline-activity-types/timeline-activity-type-config';
 import { type ViewConfig } from '@/sdk/define/views/view-config';
 import { readFile } from 'node:fs/promises';
 import { basename, extname, join, relative } from 'path';
@@ -50,6 +51,7 @@ import {
   type RoleManifest,
   type SkillManifest,
   type StandaloneViewFieldManifest,
+  type TimelineActivityTypeManifest,
   type ViewManifest,
 } from 'twenty-shared/application';
 import {
@@ -117,6 +119,7 @@ export const buildManifest = async (
   const pageLayouts: PageLayoutManifest[] = [];
   const pageLayoutTabs: PageLayoutTabManifest[] = [];
   const commandMenuItems: CommandMenuItemManifest[] = [];
+  const timelineActivityTypes: TimelineActivityTypeManifest[] = [];
   const postInstallLogicFunctions: PostInstallLogicFunctionApplicationManifest[] =
     [];
   const preInstallLogicFunctions: PreInstallLogicFunctionApplicationManifest[] =
@@ -143,6 +146,7 @@ export const buildManifest = async (
   const pageLayoutsFilePaths: string[] = [];
   const pageLayoutTabsFilePaths: string[] = [];
   const commandMenuItemsFilePaths: string[] = [];
+  const timelineActivityTypesFilePaths: string[] = [];
 
   for (const filePath of filePaths) {
     const fileContent = await readFile(filePath, 'utf-8');
@@ -492,6 +496,19 @@ export const buildManifest = async (
         commandMenuItemsFilePaths.push(relativePath);
         break;
       }
+      case ManifestEntityKey.TimelineActivityTypes: {
+        const extract =
+          await extractManifestFromFile<TimelineActivityTypeConfig>({
+            appPath,
+            filePath,
+          });
+
+        timelineActivityTypes.push(extract.config);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        timelineActivityTypesFilePaths.push(relativePath);
+        break;
+      }
       case ManifestEntityKey.PublicAssets: {
         // Public assets are handled below
         break;
@@ -575,10 +592,8 @@ export const buildManifest = async (
     errors.push('Only one defineApplicationRole is allowed per application');
   }
 
-  const {
-    sharedDependencies,
-    errors: sharedDependenciesErrors,
-  } = await extractFrontComponentSharedDependencies(appPath);
+  const { sharedDependencies, errors: sharedDependenciesErrors } =
+    await extractFrontComponentSharedDependencies(appPath);
 
   errors.push(...sharedDependenciesErrors);
 
@@ -672,6 +687,7 @@ export const buildManifest = async (
         pageLayouts: pageLayouts.sort(byId),
         pageLayoutTabs: pageLayoutTabs.sort(byId),
         commandMenuItems: commandMenuItems.sort(byId),
+        timelineActivityTypes: timelineActivityTypes.sort(byId),
       };
 
   const entityFilePaths: EntityFilePaths = {
@@ -693,6 +709,7 @@ export const buildManifest = async (
     pageLayouts: pageLayoutsFilePaths,
     pageLayoutTabs: pageLayoutTabsFilePaths,
     commandMenuItems: commandMenuItemsFilePaths,
+    timelineActivityTypes: timelineActivityTypesFilePaths,
   };
 
   return { manifest, filePaths: entityFilePaths, errors, warnings };

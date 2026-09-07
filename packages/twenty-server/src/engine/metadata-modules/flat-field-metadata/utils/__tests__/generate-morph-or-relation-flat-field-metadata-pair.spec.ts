@@ -7,6 +7,7 @@ import {
 } from 'twenty-shared/types';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import {
   generateMorphOrRelationFlatFieldMetadataPair,
@@ -25,17 +26,20 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   version: null,
   workspaceId: 'workspace-id',
   sourceType: ApplicationRegistrationSourceType.LOCAL,
+  state: ApplicationState.INSTALLED,
   sourcePath: '',
   packageJsonChecksum: null,
   packageJsonFileId: null,
   yarnLockChecksum: null,
   yarnLockFileId: null,
   availablePackages: {},
+  billing: {},
   logicFunctionLayerId: null,
   defaultRoleId: null,
   defaultRole: null,
   settingsCustomTabFrontComponentId: null,
   uninstallLogicFunctionId: null,
+  uninstallHookCompletedForRequestedAt: null,
   canBeUninstalled: false,
   autoUpgrade: false,
   applicationRegistrationId: null,

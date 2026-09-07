@@ -14,9 +14,8 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
-import { v4 } from 'uuid';
 
 import { t } from '@lingui/core/macro';
 import { type AllowedAddressSubField } from 'twenty-shared/types';
@@ -114,7 +113,6 @@ export const AddressInput = ({
     placeAutocompleteData,
     tokenForPlaceApi,
     typeOfAddressForAutocomplete,
-    setTokenForPlaceApi,
     setTypeOfAddressForAutocomplete,
     getAutocompletePlaceData,
     autoFillInputsFromPlaceDetails,
@@ -148,10 +146,6 @@ export const AddressInput = ({
       onChange?.(updatedAddress);
 
       if (field === 'addressStreet1' || field === 'addressCity') {
-        const token = tokenForPlaceApi ?? v4();
-        if (token !== tokenForPlaceApi) {
-          setTokenForPlaceApi(token);
-        }
         const countryCode = findCountryCodeByCountryName(
           updatedAddress.addressCountry ?? '',
         );
@@ -159,19 +153,16 @@ export const AddressInput = ({
           setTypeOfAddressForAutocomplete(field);
         }
         const isFieldCity = field === 'addressCity';
-        getAutocompletePlaceData(
-          updatedAddressPart,
-          token,
-          countryCode,
+        getAutocompletePlaceData({
+          address: updatedAddressPart,
+          country: countryCode,
           isFieldCity,
-        );
+        });
       }
     },
     [
       internalValue,
       onChange,
-      tokenForPlaceApi,
-      setTokenForPlaceApi,
       findCountryCodeByCountryName,
       typeOfAddressForAutocomplete,
       setTypeOfAddressForAutocomplete,
@@ -261,9 +252,7 @@ export const AddressInput = ({
 
   const validAutocompleteData = useMemo(
     () =>
-      placeAutocompleteData && placeAutocompleteData.length > 0
-        ? placeAutocompleteData
-        : null,
+      isNonEmptyArray(placeAutocompleteData) ? placeAutocompleteData : null,
     [placeAutocompleteData],
   );
 

@@ -1,19 +1,22 @@
 import { msg } from '@lingui/core/macro';
 import { Injectable, Logger } from '@nestjs/common';
-import { type ActorMetadata } from 'twenty-shared/types';
+import {
+  type ActorMetadata,
+  CommandMenuItemAvailabilityType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { buildCoreDispatchIds } from 'src/engine/core-modules/workflow/utils/build-core-dispatch-ids.util';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
-import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/global-workspace-datasource/types/workspace-transaction-scope.type';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
@@ -55,7 +58,7 @@ export class WorkflowTriggerWorkspaceService {
   private readonly logger = new Logger(WorkflowTriggerWorkspaceService.name);
 
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly codeStepBuildService: CodeStepBuildService,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
@@ -100,72 +103,65 @@ export class WorkflowTriggerWorkspaceService {
   ) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const workflowVersionRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-            workspaceId,
-            'workflowVersion',
-            { shouldBypassPermissionChecks: true },
-          );
-
-        const workflowVersionNullable = await workflowVersionRepository.findOne(
-          {
-            where: { id: workflowVersionId },
-          },
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowVersionRepository =
+        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+          'workflowVersion',
+          { shouldBypassPermissionChecks: true },
         );
 
-        const workflowVersion =
-          await this.workflowCommonWorkspaceService.getValidWorkflowVersionOrFail(
-            workflowVersionNullable,
-          );
+      const workflowVersionNullable = await workflowVersionRepository.findOne({
+        where: { id: workflowVersionId },
+      });
 
-        const workflowRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-            workspaceId,
-            'workflow',
-            { shouldBypassPermissionChecks: true },
-          );
-
-        const workflow = await workflowRepository.findOne({
-          where: { id: workflowVersion.workflowId },
-        });
-
-        if (!workflow) {
-          throw new WorkflowTriggerException(
-            'No workflow found',
-            WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
-          );
-        }
-
-        assertVersionCanBeActivated(workflowVersion, workflow);
-
-        await this.assertPickRecordLoadBalanceConfigIsValid({
-          steps: workflowVersion.steps ?? [],
-          workspaceId,
-        });
-
-        await this.codeStepBuildService.buildCodeStepsFromSourceForSteps({
-          workspaceId,
-          steps: workflowVersion.steps ?? [],
-        });
-
-        await this.codeStepBuildService.switchCodeStepLogicFunctionsToPrebuilt({
-          workspaceId,
-          steps: workflowVersion.steps ?? [],
-        });
-
-        await this.performActivationSteps(
-          workflow,
-          workflowVersion,
-          workflowVersionRepository,
-          workspaceId,
+      const workflowVersion =
+        await this.workflowCommonWorkspaceService.getValidWorkflowVersionOrFail(
+          workflowVersionNullable,
         );
 
-        return true;
-      },
-      authContext,
-    );
+      const workflowRepository =
+        this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+          'workflow',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      const workflow = await workflowRepository.findOne({
+        where: { id: workflowVersion.workflowId },
+      });
+
+      if (!workflow) {
+        throw new WorkflowTriggerException(
+          'No workflow found',
+          WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
+        );
+      }
+
+      assertVersionCanBeActivated(workflowVersion, workflow);
+
+      await this.assertPickRecordLoadBalanceConfigIsValid({
+        steps: workflowVersion.steps ?? [],
+        workspaceId,
+      });
+
+      await this.codeStepBuildService.buildCodeStepsFromSourceForSteps({
+        workspaceId,
+        steps: workflowVersion.steps ?? [],
+      });
+
+      await this.codeStepBuildService.switchCodeStepLogicFunctionsToPrebuilt({
+        workspaceId,
+        steps: workflowVersion.steps ?? [],
+      });
+
+      await this.performActivationSteps(
+        workflow,
+        workflowVersion,
+        workflowVersionRepository,
+        workspaceId,
+      );
+
+      return true;
+    }, authContext);
   }
 
   private async assertPickRecordLoadBalanceConfigIsValid({
@@ -209,25 +205,21 @@ export class WorkflowTriggerWorkspaceService {
   ) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const workflowVersionRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-            workspaceId,
-            'workflowVersion',
-            { shouldBypassPermissionChecks: true },
-          );
-
-        await this.performDeactivationSteps(
-          workflowVersionId,
-          workflowVersionRepository,
-          workspaceId,
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowVersionRepository =
+        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+          'workflowVersion',
+          { shouldBypassPermissionChecks: true },
         );
 
-        return true;
-      },
-      authContext,
-    );
+      await this.performDeactivationSteps(
+        workflowVersionId,
+        workflowVersionRepository,
+        workspaceId,
+      );
+
+      return true;
+    }, authContext);
   }
 
   async stopWorkflowRun(workflowRunId: string, workspaceId: string) {
@@ -248,7 +240,7 @@ export class WorkflowTriggerWorkspaceService {
     workflowVersionId: string,
     workspaceId: string,
     transactionScope: WorkspaceTransactionScope,
-  ): Promise<void> {
+  ): Promise<string | null> {
     const workflowVersion = await transactionScope
       .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
         shouldBypassPermissionChecks: true,
@@ -256,14 +248,21 @@ export class WorkflowTriggerWorkspaceService {
       .findOne({ where: { id: workflowVersionId } });
 
     if (!isDefined(workflowVersion)) {
-      return;
+      return null;
     }
 
-    await this.workflowVersionCoreSyncService.mirrorWorkflowVersionWrite({
-      workspaceId,
-      transactionScope,
-      workflowVersion,
-    });
+    const mirrorResult =
+      await this.workflowVersionCoreSyncService.mirrorWorkflowVersionWrite({
+        workspaceId,
+        transactionScope,
+        workflowVersion,
+      });
+
+    return (
+      mirrorResult?.coreWorkflowVersionId ??
+      workflowVersion.coreWorkflowVersionId ??
+      null
+    );
   }
 
   private async performActivationSteps(
@@ -291,7 +290,7 @@ export class WorkflowTriggerWorkspaceService {
       workspaceId,
     );
 
-    await this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
+    await this.workspaceOrmManager.runInWorkspaceTransaction(
       async (transactionScope) => {
         const transactionalWorkflowRepository =
           transactionScope.getRepository<WorkflowWorkspaceEntity>('workflow', {
@@ -346,14 +345,16 @@ export class WorkflowTriggerWorkspaceService {
           { status: WorkflowVersionStatus.ACTIVE },
         );
 
-        await this.mirrorVersionStatusChangeInTransaction(
-          workflowVersion.id,
-          workspaceId,
-          transactionScope,
-        );
+        const mirroredCoreWorkflowVersionId =
+          await this.mirrorVersionStatusChangeInTransaction(
+            workflowVersion.id,
+            workspaceId,
+            transactionScope,
+          );
 
         await this.enableAutomatedTrigger(workflowVersion, workspaceId, {
           transactionScope,
+          coreWorkflowVersionId: mirroredCoreWorkflowVersionId,
         });
       },
     );
@@ -389,7 +390,7 @@ export class WorkflowTriggerWorkspaceService {
 
     await this.deleteCommandMenuItem(workflowVersion, workspaceId);
 
-    await this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
+    await this.workspaceOrmManager.runInWorkspaceTransaction(
       async (transactionScope) => {
         await transactionScope
           .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
@@ -551,6 +552,7 @@ export class WorkflowTriggerWorkspaceService {
     workspaceId: string,
     transactionContext?: {
       transactionScope: WorkspaceTransactionScope;
+      coreWorkflowVersionId?: string | null;
     },
   ) {
     assertWorkflowVersionTriggerIsDefined(workflowVersion);
@@ -588,6 +590,12 @@ export class WorkflowTriggerWorkspaceService {
           workspaceId,
           workflowId: workflowVersion.workflowId,
           pattern,
+          ...buildCoreDispatchIds({
+            coreWorkflowVersionId:
+              transactionContext?.coreWorkflowVersionId ??
+              workflowVersion.coreWorkflowVersionId,
+            workspaceWorkflowVersionId: workflowVersion.id,
+          }),
         };
 
         await this.cacheStorageService.hashSetIfExists({

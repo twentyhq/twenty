@@ -13,6 +13,7 @@ export const APPLICATION_FRAGMENT = gql`
     description
     logoUrl
     version
+    state
     universalIdentifier
     applicationRegistrationId
     applicationRegistration {
@@ -31,6 +32,7 @@ export const APPLICATION_FRAGMENT = gql`
       key
       value
       description
+      label
       isSecret
       isDeprecated
       type

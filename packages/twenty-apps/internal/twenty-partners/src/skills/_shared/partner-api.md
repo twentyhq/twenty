@@ -70,7 +70,7 @@ query ListPartners($after: String) {
       id name slug introduction
       languagesSpoken country region city
       deploymentExpertise partnerScope skills typeOfTeam
-      partnerTier ranking
+      partnerTier
       twentyExperience twentyExperienceNotes
       hourlyRate { amountMicros currencyCode }
       projectBudgetMin { amountMicros currencyCode }

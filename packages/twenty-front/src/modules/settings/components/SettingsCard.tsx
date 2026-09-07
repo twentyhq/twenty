@@ -32,13 +32,13 @@ const StyledCardWrapper = styled.div<{
     disabled ? 'not-allowed' : clickable ? 'pointer' : 'default'};
   width: 100%;
 
-  > * {
+  > div {
     color: inherit;
   }
 `;
 
 const StyledCardContentContainer = styled.div`
-  > * {
+  > div {
     display: flex;
     flex-direction: column;
     gap: ${themeCssVariables.spacing[2]};

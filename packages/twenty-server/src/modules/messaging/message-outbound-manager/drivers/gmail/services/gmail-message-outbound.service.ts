@@ -13,6 +13,7 @@ import { type SendMessageInput } from 'src/modules/messaging/message-outbound-ma
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
 import { extractMessageIdFromBuffer } from 'src/modules/messaging/message-outbound-manager/utils/extract-message-id-from-buffer.util';
 import { formatMessageFromHeader } from 'src/modules/messaging/message-outbound-manager/utils/format-message-from-header.util';
+import { getConnectedAccountSendableHandleOrThrow } from 'src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util';
 import { toMailComposerOptions } from 'src/modules/messaging/message-outbound-manager/utils/to-mail-composer-options.util';
 
 @Injectable()
@@ -163,15 +164,12 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
       auth: oAuth2Client,
     });
 
-    const { data: gmailData } = await gmailClient.users.getProfile({
-      userId: 'me',
-    });
-
-    const fromEmail = gmailData.emailAddress;
-
-    if (!isNonEmptyString(fromEmail)) {
-      throw new Error('Gmail profile did not return an email address');
-    }
+    const fromEmail = isNonEmptyString(sendMessageInput.fromHandle)
+      ? getConnectedAccountSendableHandleOrThrow({
+          connectedAccount,
+          requestedFromHandle: sendMessageInput.fromHandle,
+        })
+      : connectedAccount.handle;
 
     const { data: peopleData } = await peopleClient.people.get({
       resourceName: 'people/me',

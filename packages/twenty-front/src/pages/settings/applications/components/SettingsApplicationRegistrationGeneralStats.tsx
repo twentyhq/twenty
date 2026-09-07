@@ -16,7 +16,7 @@ export const SettingsApplicationRegistrationGeneralStats = ({
     <Section>
       <H2Title
         title={t`Install Stats`}
-        description={t`Usage across all workspaces on this server`}
+        description={t`Usage across all non-deleted workspaces on this server`}
       />
       <SettingsApplicationRegistrationInstallStats
         registration={registration}

@@ -1,8 +1,12 @@
 import { Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
-import { type MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
+import {
+  type MessageQueueDriver,
+  type QueueJobToAdd,
+} from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 import {
   type MessageQueueJob,
   type MessageQueueJobData,
@@ -23,22 +27,31 @@ export class SyncDriver implements MessageQueueDriver {
     queueName: MessageQueue,
     jobName: string,
     data: T,
-  ): Promise<void> {
-    await this.processJob(queueName, this.createJob(jobName, data));
+  ): Promise<string | undefined> {
+    const job = this.createJob(jobName, data);
+
+    await this.processJob(queueName, job);
+
+    return job.id;
   }
 
   async bulkAdd<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     jobName: string,
-    dataItems: T[],
-  ): Promise<void> {
+    jobs: QueueJobToAdd<T>[],
+  ): Promise<string[]> {
     let firstError: unknown = undefined;
+    const jobIds: string[] = [];
 
     // Each payload is an independent job in BullMQ, so a failing one must not
     // prevent the others from being processed
-    for (const data of dataItems) {
+    for (const { data, jobId } of jobs) {
+      const job = this.createJob(jobName, data, jobId);
+
+      jobIds.push(job.id);
+
       try {
-        await this.processJob(queueName, this.createJob(jobName, data));
+        await this.processJob(queueName, job);
       } catch (error) {
         firstError = firstError ?? error;
       }
@@ -47,6 +60,8 @@ export class SyncDriver implements MessageQueueDriver {
     if (isDefined(firstError)) {
       throw firstError;
     }
+
+    return jobIds;
   }
 
   async addCron<T extends MessageQueueJobData | undefined>({
@@ -92,9 +107,10 @@ export class SyncDriver implements MessageQueueDriver {
   private createJob<T extends MessageQueueJobData | undefined>(
     name: string,
     data: T,
+    jobId?: string,
   ): MessageQueueJob<T> {
     const job: MessageQueueJob<T> = {
-      id: '',
+      id: jobId ?? v4(),
       name,
       data,
       retryLimit: 0,

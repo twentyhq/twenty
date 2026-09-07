@@ -3,19 +3,21 @@ import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomRes
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
 import { EmptyInboxPlaceholder } from '@/activities/emails/components/EmptyInboxPlaceholder';
+import { StyledWidgetContentContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { styled } from '@linaria/react';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type TimelineThread } from '~/generated/graphql';
 
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
+const StyledContainer = styled(StyledWidgetContentContainer)`
   gap: ${themeCssVariables.spacing[6]};
-  height: 100%;
-  overflow: auto;
-  padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[6]}
-    ${themeCssVariables.spacing[2]};
+  overflow: hidden;
+`;
+
+const StyledSection = styled(Section)`
+  display: flex;
+  flex: 1;
+  min-height: 0;
 `;
 
 type EmailsCardContentProps = {
@@ -45,17 +47,17 @@ export const EmailsCardContent = ({
 
   return (
     <StyledContainer>
-      <Section>
-        <ActivityList>
+      <StyledSection>
+        <ActivityList isScrollable>
           {timelineThreads.map((thread) => (
             <EmailThreadPreview key={thread.id} thread={thread} />
           ))}
+          <CustomResolverFetchMoreLoader
+            loading={isFetchingMore}
+            onLastRowVisible={onLastRowVisible}
+          />
         </ActivityList>
-        <CustomResolverFetchMoreLoader
-          loading={isFetchingMore}
-          onLastRowVisible={onLastRowVisible}
-        />
-      </Section>
+      </StyledSection>
     </StyledContainer>
   );
 };

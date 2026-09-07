@@ -26,14 +26,14 @@ const StyledCardContainer = styled.div`
   flex: 1 1 0;
   min-width: 0;
 
-  > * {
+  > div {
     border-radius: ${themeCssVariables.border.radius.md};
     color: ${themeCssVariables.font.color.primary};
   }
 `;
 
 const StyledCardContentContainer = styled.div`
-  > * {
+  > div {
     padding: ${themeCssVariables.spacing[2]};
   }
 `;

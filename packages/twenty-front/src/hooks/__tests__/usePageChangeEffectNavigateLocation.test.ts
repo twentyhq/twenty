@@ -3,7 +3,7 @@ import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePat
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useQuery } from '@apollo/client/react';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getAppPath, getSettingsPath } from 'twenty-shared/utils';
@@ -67,14 +67,33 @@ const setupMockUseQuery = (result?: { data?: unknown; loading?: boolean }) => {
   } as ReturnType<typeof useQuery>);
 };
 
-jest.mock('react-router-dom');
-const setupMockUseParams = (
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useLocation: jest.fn(),
+}));
+
+const setupMockUseLocation = (
+  loc: AppPath,
   objectNamePlural?: string,
   pageLayoutId?: string,
 ) => {
-  jest.mocked(useParams).mockReturnValueOnce({
-    objectNamePlural: objectNamePlural ?? '',
-    pageLayoutId,
+  const pathname =
+    loc === AppPath.RecordIndexPage
+      ? getAppPath(AppPath.RecordIndexPage, {
+          objectNamePlural: objectNamePlural ?? 'default-object',
+        })
+      : loc === AppPath.PageLayoutPage && pageLayoutId
+        ? getAppPath(AppPath.PageLayoutPage, { pageLayoutId })
+        : loc === AppPath.PageLayoutPage
+          ? '/page-layout'
+          : loc;
+
+  jest.mocked(useLocation).mockReturnValueOnce({
+    pathname,
+    search: '',
+    hash: '',
+    state: null,
+    key: 'test-location',
   });
 };
 
@@ -473,9 +492,10 @@ describe('usePageChangeEffectNavigateLocation', () => {
       setupMockIsLogged(isLogged);
       setupMockIsOnAWorkspace(isOnAWorkspace ?? true);
       setupMockUseQuery(useQueryResult);
-      setupMockUseParams(objectNamePluralFromParams, pageLayoutId);
+      setupMockUseLocation(loc, objectNamePluralFromParams, pageLayoutId);
       setupMockState(
-        objectNamePluralFromMetadata,
+        objectNamePluralFromMetadata ??
+          (loc === AppPath.RecordIndexPage ? 'default-object' : undefined),
         verifyEmailRedirectPath,
         returnToPath,
         undefined,
@@ -536,7 +556,7 @@ describe('usePageChangeEffectNavigateLocation — authenticated with no current 
       setupMockIsLogged(true);
       setupMockIsOnAWorkspace(true);
       setupMockUseQuery();
-      setupMockUseParams();
+      setupMockUseLocation(loc);
       setupMockState(undefined, undefined, undefined, null);
 
       expect(usePageChangeEffectNavigateLocation()).toEqual(AppPath.SignInUp);

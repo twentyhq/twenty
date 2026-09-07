@@ -22,7 +22,7 @@ type DeleteWorkflowInput = z.infer<typeof deleteWorkflowSchema>;
 export const createDeleteWorkflowTool = (
   deps: Pick<
     WorkflowToolDependencies,
-    'globalWorkspaceOrmManager' | 'workflowCommonService'
+    'workspaceOrmManager' | 'workflowCommonService'
   >,
   context: DeleteWorkflowToolContext,
 ) => ({
@@ -38,19 +38,15 @@ export const createDeleteWorkflowTool = (
       const authContext = buildSystemAuthContext(workspaceId);
 
       const deleteResult =
-        await deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
-          async () => {
-            const workflowRepository =
-              await deps.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-                workspaceId,
-                'workflow',
-                context.rolePermissionConfig,
-              );
+        await deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
+          const workflowRepository =
+            deps.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+              'workflow',
+              context.rolePermissionConfig,
+            );
 
-            return workflowRepository.softDelete(workflowId);
-          },
-          authContext,
-        );
+          return workflowRepository.softDelete(workflowId);
+        }, authContext);
 
       if (!isDefined(deleteResult.affected)) {
         return {

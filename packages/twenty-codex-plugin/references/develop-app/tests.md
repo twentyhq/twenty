@@ -1,6 +1,6 @@
 # Tests
 
-Tests use the `*.spec.ts` extension and live in sibling `__tests__/` folders next to the code they cover, matching Twenty backend conventions. Write them where `yarn twenty dev --once` does not validate correctness.
+Tests use the `*.spec.ts` extension and live in sibling `__tests__/` folders next to the code they cover, matching Twenty backend conventions. Write them where `yarn twenty apply` does not validate correctness.
 
 Always write a test file for every util or function. Whenever you create or modify a file in `src/utils/` (or any other testable function file), you MUST create or update its sibling `__tests__/<name>.spec.ts`. A util or function without a spec file is incomplete.
 
@@ -31,7 +31,7 @@ src/utils/__tests__/map-bar.util.spec.ts
 
 ## Running Tests
 
-Integration tests build, deploy, install, and uninstall the app on whatever server `TWENTY_API_URL` points to. The scaffold defaults to the dev instance (`http://localhost:2020`), so running them there adds and then removes the app from the workspace you sync to with `yarn twenty dev --once`. Always run them against the isolated test instance instead — a separate container, database, and port (`2021`) that does not affect your running dev instance:
+Integration tests build, deploy, install, and uninstall the app on whatever server `TWENTY_API_URL` points to. The scaffold defaults to the dev instance (`http://localhost:2020`), so running them there adds and then removes the app from the workspace you sync to with `yarn twenty apply`. Always run them against the isolated test instance instead — a separate container, database, and port (`2021`) that does not affect your running dev instance:
 
 ```bash
 # Start the isolated test instance (once).

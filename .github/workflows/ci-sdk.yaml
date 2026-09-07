@@ -18,9 +18,11 @@ jobs:
     with:
       files: |
         packages/twenty-sdk/**
+        packages/twenty-client-sdk/**
         packages/twenty-server/**
         .github/workflows/ci-sdk.yaml
         !packages/twenty-sdk/package.json
+        !packages/twenty-client-sdk/package.json
   sdk-test:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'

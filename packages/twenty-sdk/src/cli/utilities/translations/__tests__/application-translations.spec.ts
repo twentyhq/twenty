@@ -83,6 +83,7 @@ describe('collectTranslatableStrings', () => {
       pageLayoutTabs: [{ title: 'Telemetry' }],
       commandMenuItems: [{ label: 'Launch Rocket', shortLabel: 'Launch' }],
       navigationMenuItems: [{ name: 'Missions' }],
+      timelineActivityTypes: [{ label: 'Launched a rocket' }],
       pageLayouts: [
         {
           name: 'Mission Control Layout',
@@ -103,6 +104,10 @@ describe('collectTranslatableStrings', () => {
         { message: 'Launch Rocket', context: 'commandMenuItem.label' },
         { message: 'Launch', context: 'commandMenuItem.shortLabel' },
         { message: 'Missions', context: 'navigationMenuItem.name' },
+        {
+          message: 'Launched a rocket',
+          context: 'timelineActivityType.label',
+        },
         { message: 'Mission Control Layout', context: 'pageLayout.name' },
         { message: 'Overview', context: 'pageLayoutTab.title' },
         { message: 'Fuel level', context: 'pageLayoutWidget.title' },
@@ -154,9 +159,9 @@ describe('compileApplicationTranslations', () => {
     });
   });
 
-  it('returns undefined when there is no locales directory', async () => {
+  it('returns no locales when there is no locales directory', async () => {
     const appPath = await mkdtemp(join(tmpdir(), 'twenty-translations-empty-'));
 
-    expect(await compileApplicationTranslations(appPath)).toBeUndefined();
+    expect(await compileApplicationTranslations(appPath)).toEqual({});
   });
 });

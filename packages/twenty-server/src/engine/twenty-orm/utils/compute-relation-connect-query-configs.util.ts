@@ -13,7 +13,7 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import {
   buildFieldMapsFromFlatObjectMetadata,
   type FieldMapsForObject,
@@ -27,8 +27,8 @@ import {
 } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
 import { type RelationConnectQueryFieldsByEntityIndex } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
 import {
-  TwentyORMException,
-  TwentyORMExceptionCode,
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { formatCompositeField } from 'src/engine/twenty-orm/utils/format-data.util';
 import { getAssociatedRelationFieldName } from 'src/engine/twenty-orm/utils/get-associated-relation-field-name.util';
@@ -38,7 +38,7 @@ export const computeRelationConnectQueryConfigs = (
   entities: Record<string, unknown>[],
   flatObjectMetadata: FlatObjectMetadata,
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
   flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>,
   relationConnectQueryFieldsByEntityIndex: RelationConnectQueryFieldsByEntityIndex,
 ) => {
@@ -122,7 +122,7 @@ const updateConnectQueryConfigs = (
 const createConnectQueryConfig = (
   connectFieldName: string,
   recordToConnectCondition: UniqueConstraintCondition,
-  uniqueConstraintFields: FlatFieldMetadata<FieldMetadataType>[],
+  uniqueConstraintFields: OrmFlatFieldMetadata<FieldMetadataType>[],
   targetObjectNameSingular: string,
   entityIndex: number,
 ) => {
@@ -143,13 +143,13 @@ const computeRecordToConnectCondition = (
   connectObject: ConnectObject,
   flatObjectMetadata: FlatObjectMetadata,
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
   flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>,
   entity: Record<string, unknown>,
   fieldMaps: FieldMapsForObject,
 ): {
   recordToConnectCondition: UniqueConstraintCondition;
-  uniqueConstraintFields: FlatFieldMetadata<FieldMetadataType>[];
+  uniqueConstraintFields: OrmFlatFieldMetadata<FieldMetadataType>[];
   targetObjectNameSingular: string;
 } => {
   const field = findFlatEntityByIdInFlatEntityMaps({
@@ -165,9 +165,9 @@ const computeRecordToConnectCondition = (
   ) {
     const objectMetadataNameSingular = flatObjectMetadata.nameSingular;
 
-    throw new TwentyORMException(
+    throw new TwentyOrmException(
       `Connect is not allowed for ${connectFieldName} on ${flatObjectMetadata.nameSingular}`,
-      TwentyORMExceptionCode.CONNECT_NOT_ALLOWED,
+      TwentyOrmExceptionCode.CONNECT_NOT_ALLOWED,
       {
         userFriendlyMessage: msg`Connect is not allowed for ${connectFieldName} on ${objectMetadataNameSingular}`,
       },
@@ -183,9 +183,9 @@ const computeRecordToConnectCondition = (
     : undefined;
 
   if (!isDefined(targetObjectMetadata)) {
-    throw new TwentyORMException(
+    throw new TwentyOrmException(
       `Target object metadata not found for ${connectFieldName}`,
-      TwentyORMExceptionCode.MALFORMED_METADATA,
+      TwentyOrmExceptionCode.MALFORMED_METADATA,
       {
         userFriendlyMessage: msg`Target object metadata not found for ${connectFieldName}`,
       },
@@ -212,7 +212,7 @@ const computeRecordToConnectCondition = (
 
 const checkUniqueConstraintFullyPopulated = (
   flatObjectMetadata: FlatObjectMetadata,
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
   flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>,
   connectObject: ConnectObject,
   connectFieldName: string,
@@ -234,11 +234,11 @@ const checkUniqueConstraintFullyPopulated = (
   }));
 
   const uniqueConstraintsFields = getUniqueConstraintsFields<
-    FlatFieldMetadata,
+    OrmFlatFieldMetadata,
     {
       id: string;
       indexMetadatas: typeof indexMetadatas;
-      fields: FlatFieldMetadata[];
+      fields: OrmFlatFieldMetadata[];
     }
   >({
     id: flatObjectMetadata.id,
@@ -254,9 +254,9 @@ const checkUniqueConstraintFullyPopulated = (
   );
 
   if (!hasUniqueConstraintFieldFullyPopulated) {
-    throw new TwentyORMException(
+    throw new TwentyOrmException(
       `Missing required fields: at least one unique constraint have to be fully populated for '${connectFieldName}'.`,
-      TwentyORMExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR,
+      TwentyOrmExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR,
       {
         userFriendlyMessage: msg`Missing required fields: at least one unique constraint have to be fully populated for '${connectFieldName}'.`,
       },
@@ -269,9 +269,9 @@ const checkUniqueConstraintFullyPopulated = (
       .find((uniqueConstraintField) => uniqueConstraintField.name === key);
 
     if (!isDefined(field)) {
-      throw new TwentyORMException(
+      throw new TwentyOrmException(
         `Field ${key} is not a unique constraint field for '${connectFieldName}'.`,
-        TwentyORMExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR,
+        TwentyOrmExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR,
       );
     }
 
@@ -287,9 +287,9 @@ const checkNoRelationFieldConflictOrThrow = (
     isDefined(entity[fieldName]) && isDefined(entity[`${fieldName}Id`]);
 
   if (hasRelationFieldConflict) {
-    throw new TwentyORMException(
+    throw new TwentyOrmException(
       `${fieldName} and ${fieldName}Id cannot be both provided.`,
-      TwentyORMExceptionCode.CONNECT_NOT_ALLOWED,
+      TwentyOrmExceptionCode.CONNECT_NOT_ALLOWED,
       {
         userFriendlyMessage: msg`${fieldName} and ${fieldName}Id cannot be both provided.`,
       },
@@ -298,7 +298,7 @@ const checkNoRelationFieldConflictOrThrow = (
 };
 
 const computeUniqueConstraintCondition = (
-  uniqueConstraintFields: FlatFieldMetadata<FieldMetadataType>[],
+  uniqueConstraintFields: OrmFlatFieldMetadata<FieldMetadataType>[],
   connectObject: ConnectObject,
 ): UniqueConstraintCondition => {
   return uniqueConstraintFields.reduce((acc, uniqueConstraintField) => {
@@ -326,7 +326,7 @@ const computeUniqueConstraintCondition = (
 
 const checkUniqueConstraintsAreSameOrThrow = (
   relationConnectQueryConfig: RelationConnectQueryConfig,
-  uniqueConstraintFields: FlatFieldMetadata<FieldMetadataType>[],
+  uniqueConstraintFields: OrmFlatFieldMetadata<FieldMetadataType>[],
 ) => {
   if (
     !fastDeepEqual(
@@ -336,9 +336,9 @@ const checkUniqueConstraintsAreSameOrThrow = (
   ) {
     const connectFieldName = relationConnectQueryConfig.connectFieldName;
 
-    throw new TwentyORMException(
+    throw new TwentyOrmException(
       `Expected the same constraint fields to be used consistently across all operations for ${relationConnectQueryConfig.connectFieldName}.`,
-      TwentyORMExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR,
+      TwentyOrmExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR,
       {
         userFriendlyMessage: msg`Expected the same constraint fields to be used consistently across all operations for ${connectFieldName}.`,
       },

@@ -190,6 +190,7 @@ export const useClientConfig = (): UseClientConfigResult => {
         dsn: clientConfig?.sentry?.dsn,
         release: clientConfig?.sentry?.release,
         environment: clientConfig?.sentry?.environment,
+        tracesSampleRate: clientConfig?.sentry?.tracesSampleRate,
       });
 
       setCaptcha({

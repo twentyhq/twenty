@@ -19,7 +19,6 @@ import { PageLayoutUpdateService } from 'src/engine/metadata-modules/page-layout
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
-import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -28,7 +27,6 @@ import { DashboardSyncModule } from 'src/modules/dashboard-sync/dashboard-sync.m
 @Module({
   imports: [
     TypeOrmModule.forFeature([PageLayoutEntity, WorkspaceEntity]),
-    TwentyORMModule,
     PermissionsModule,
     FeatureFlagModule,
     I18nModule,

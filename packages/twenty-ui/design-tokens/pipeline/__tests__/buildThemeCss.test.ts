@@ -60,6 +60,15 @@ describe('buildThemeCss', () => {
     expect(squircleBlock).not.toContain('--t-border-radius-rounded');
   });
 
+  it('uses K 2.2 universally while preserving the --t-corner-shape opt-out', () => {
+    const squircleBlock = extractSquircleBlock(
+      buildThemeCss({ leaves: radiusLeaves, scheme: 'light' }),
+    );
+    expect(squircleBlock).toContain(
+      'corner-shape: var(--t-corner-shape, superellipse(2.2));',
+    );
+  });
+
   it('throws when a round radius token is missing from the source', () => {
     expect(() =>
       buildThemeCss({

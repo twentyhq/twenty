@@ -1,8 +1,8 @@
 import { BubbleMenuIconButton } from '@/advanced-text-editor/components/BubbleMenuIconButton';
 import { EditLinkPopover } from '@/advanced-text-editor/components/EditLinkPopover';
 import { StyledBubbleMenuContainer } from '@/advanced-text-editor/components/StyledBubbleMenuContainer';
+import { useLiveEditorState } from '@/advanced-text-editor/hooks/useLiveEditorState';
 import { type Editor } from '@tiptap/core';
-import { useEditorState } from '@tiptap/react';
 import { BubbleMenu } from '@tiptap/react/menus';
 import { IconExternalLink, IconLinkOff } from 'twenty-ui/icon';
 import { getSafeUrl } from 'twenty-shared/utils';
@@ -12,13 +12,10 @@ type LinkBubbleMenuProps = {
 };
 
 export const LinkBubbleMenu = ({ editor }: LinkBubbleMenuProps) => {
-  const state = useEditorState({
-    editor,
-    selector: (ctx) => {
-      return {
-        linkHref: ctx.editor.getAttributes('link').href || '',
-      };
-    },
+  const state = useLiveEditorState(editor, (currentEditor) => {
+    return {
+      linkHref: currentEditor.getAttributes('link').href || '',
+    };
   });
 
   const handleShouldShow = () => {

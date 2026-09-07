@@ -4,9 +4,10 @@ import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThan } from 'typeorm';
 
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { ParticipantTargetReconciliationService } from 'src/modules/match-participant/participant-target-reconciliation.service';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
@@ -17,7 +18,8 @@ const ORPHAN_CLEANUP_PAGE_SIZE = 500;
 export class MessagingMessageCleanerService {
   private readonly logger = new Logger(MessagingMessageCleanerService.name);
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly participantTargetReconciliationService: ParticipantTargetReconciliationService,
   ) {}
 
   async deleteMessagesChannelMessageAssociationsAndRelatedOrphans({
@@ -31,9 +33,9 @@ export class MessagingMessageCleanerService {
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        await this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
+        await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const messageRepository =
               transactionScope.getRepository<MessageWorkspaceEntity>('message');
@@ -109,11 +111,18 @@ export class MessagingMessageCleanerService {
                   this.findReferencedThreadIds(messageRepository, threadIds),
               );
 
-              if (orphanThreadIds.length <= 0) {
-                continue;
+              if (orphanThreadIds.length > 0) {
+                await messageThreadRepository.delete(orphanThreadIds);
               }
 
-              await messageThreadRepository.delete(orphanThreadIds);
+              await this.participantTargetReconciliationService.reconcileMessageThreadTargets(
+                {
+                  messageThreadIds: candidateThreadIds.filter(
+                    (threadId) => !orphanThreadIds.includes(threadId),
+                  ),
+                  transactionScope,
+                },
+              );
             }
           },
         );
@@ -132,9 +141,9 @@ export class MessagingMessageCleanerService {
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        await this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
+        await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const messageChannelMessageAssociationRepository =
               transactionScope.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
@@ -172,9 +181,9 @@ export class MessagingMessageCleanerService {
   public async cleanOrphanMessagesAndThreads(workspaceId: string) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        await this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
+        await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const messageThreadRepository =
               transactionScope.getRepository<MessageThreadWorkspaceEntity>(
@@ -198,7 +207,33 @@ export class MessagingMessageCleanerService {
 
                 return page.map(({ id }) => id);
               },
-              (ids) => messageRepository.delete(ids),
+              async (ids) => {
+                const messagesToDelete = await messageRepository.find({
+                  where: { id: In(ids) },
+                  select: { messageThreadId: true },
+                });
+                const candidateThreadIds = [
+                  ...new Set(
+                    messagesToDelete
+                      .map(({ messageThreadId }) => messageThreadId)
+                      .filter(isDefined),
+                  ),
+                ];
+
+                await messageRepository.delete(ids);
+
+                const survivingThreadIds = await this.findReferencedThreadIds(
+                  messageRepository,
+                  candidateThreadIds,
+                );
+
+                await this.participantTargetReconciliationService.reconcileMessageThreadTargets(
+                  {
+                    messageThreadIds: survivingThreadIds,
+                    transactionScope,
+                  },
+                );
+              },
               (pageIds) =>
                 this.filterOrphans(pageIds, (ids) =>
                   this.findReferencedMessageIds(
@@ -249,6 +284,10 @@ export class MessagingMessageCleanerService {
     messageRepository: WorkspaceRepository<MessageWorkspaceEntity>,
     threadIds: string[],
   ): Promise<string[]> {
+    if (threadIds.length === 0) {
+      return [];
+    }
+
     const messages = await messageRepository.find({
       where: { messageThreadId: In(threadIds) },
       select: { messageThreadId: true },

@@ -102,10 +102,10 @@ Once all edits for the change are complete, run lint and typecheck once at the e
 ```bash
 yarn twenty dev:typecheck
 yarn lint
-yarn twenty dev --once
+yarn twenty apply
 ```
 
-`yarn twenty dev:typecheck` checks generated app types and `yarn lint` checks local lint rules. `yarn twenty dev --once` then builds the app and pushes entity definitions to the active remote; if any definition is invalid, the sync reports the error. Run all three a single time once every edit is done, not repeatedly after each step.
+`yarn twenty dev:typecheck` checks generated app types and `yarn lint` checks local lint rules. `yarn twenty apply` then builds the app and pushes entity definitions to the active remote; if any definition is invalid, the sync reports the error. Run all three a single time once every edit is done, not repeatedly after each step.
 
 When the user explicitly asks to run tests, follow `tests.md`: unit tests may use the package's unit-test script, and the full suite must run with `TWENTY_API_URL=http://localhost:2021` against the isolated test instance.
 

@@ -1,8 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type LanguageModel } from 'ai';
+import { type LanguageModel, type TranscriptionModel } from 'ai';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type AiSdkPackage } from 'twenty-shared/ai';
 
+import { MAX_SEATS_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/enterprise/constants/max-seats-without-enterprise-key.constant';
+import { CustomAiProviderAccessService } from 'src/engine/core-modules/enterprise/services/custom-ai-provider-access.service';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
@@ -13,8 +16,12 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AiModelPreferencesService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-preferences.service';
 import { ProviderConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-config.service';
-import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
+import {
+  SdkProviderFactoryService,
+  type AiSdkProviderInstance,
+} from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
+import { type AiTranscriptionModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-transcription-model-config.type';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
 import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
@@ -23,7 +30,7 @@ import {
   AUTO_SELECT_FAST_MODEL_ID,
   AUTO_SELECT_SMART_MODEL_ID,
 } from 'twenty-shared/constants';
-import { isAutoSelectModelId } from 'twenty-shared/utils';
+import { isAutoSelectModelId, isDefined } from 'twenty-shared/utils';
 
 import { DEFAULT_MAX_OUTPUT_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-max-output-tokens.const';
 import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
@@ -45,47 +52,75 @@ export interface RegisteredAiModel {
   modelsDevName?: string;
 }
 
+export type RegisteredAiTranscriptionModel = {
+  modelId: string;
+  sdkPackage: AiSdkPackage;
+  model: TranscriptionModel;
+  providerName: string;
+};
+
 @Injectable()
 export class AiModelRegistryService {
   private readonly logger = new Logger(AiModelRegistryService.name);
   private modelRegistry: Map<string, RegisteredAiModel> = new Map();
   private modelConfigCache: Map<string, AiModelConfig> = new Map();
+  // Kept out of modelRegistry and modelConfigCache so transcription models can
+  // never surface in the chat model picker or reach token costing.
+  private transcriptionRegistry: Map<string, RegisteredAiTranscriptionModel> =
+    new Map();
+  private transcriptionConfigCache: Map<string, AiTranscriptionModelConfig> =
+    new Map();
   private providerModelDefCache: Map<
     string,
     { providerName: string; modelDef: AiProviderModelConfig }
   > = new Map();
   private currentConfigHash: string | null = null;
+  private areCustomProvidersRegistered = true;
 
   constructor(
     private readonly providerConfigService: ProviderConfigService,
     private readonly sdkProviderFactory: SdkProviderFactoryService,
     private readonly preferencesService: AiModelPreferencesService,
     private readonly configGroupHashService: ConfigGroupHashService,
+    private readonly customAiProviderAccessService: CustomAiProviderAccessService,
   ) {}
 
   // The registry is rebuilt lazily whenever the LLM-group config hash changes,
   // so any mutation to an LLM-tagged config variable is picked up automatically
-  // on the next read — no explicit refresh from callers needed.
+  // on the next read — no explicit refresh from callers needed. Seats are not
+  // part of that hash, so the custom-provider entitlement is compared alongside
+  // it: an instance that grows past the threshold loses its custom models on the
+  // next read rather than waiting for an unrelated config change.
   private ensureFresh(): void {
     const configHash = this.configGroupHashService.computeHash(
       ConfigVariablesGroup.LLM,
     );
+    const areCustomProvidersAllowed =
+      this.customAiProviderAccessService.getCachedHasAccess();
 
-    if (configHash === this.currentConfigHash) {
+    if (
+      configHash === this.currentConfigHash &&
+      areCustomProvidersAllowed === this.areCustomProvidersRegistered
+    ) {
       return;
     }
 
-    this.buildModelRegistry();
+    this.buildModelRegistry(areCustomProvidersAllowed);
     this.currentConfigHash = configHash;
+    this.areCustomProvidersRegistered = areCustomProvidersAllowed;
   }
 
-  private buildModelRegistry(): void {
+  private buildModelRegistry(areCustomProvidersAllowed: boolean): void {
     this.modelRegistry.clear();
     this.sdkProviderFactory.clearCache();
     this.modelConfigCache.clear();
+    this.transcriptionRegistry.clear();
+    this.transcriptionConfigCache.clear();
     this.providerModelDefCache.clear();
 
-    const providers = this.providerConfigService.getResolvedProviders();
+    const providers = this.providerConfigService.getResolvedProviders({
+      includeCustomProviders: areCustomProvidersAllowed,
+    });
 
     this.registerModelsFromProviders(providers);
   }
@@ -112,6 +147,18 @@ export class AiModelRegistryService {
       for (const modelDef of models) {
         const compositeId = buildCompositeModelId(providerKey, modelDef.name);
 
+        if (modelDef.kind === 'transcription') {
+          this.registerTranscriptionModel({
+            compositeId,
+            providerKey,
+            config,
+            modelDef,
+            sdkInstance,
+          });
+
+          continue;
+        }
+
         this.modelConfigCache.set(
           compositeId,
           this.toAiModelConfig(compositeId, config, modelDef),
@@ -134,6 +181,99 @@ export class AiModelRegistryService {
         }
       }
     }
+  }
+
+  private registerTranscriptionModel({
+    compositeId,
+    providerKey,
+    config,
+    modelDef,
+    sdkInstance,
+  }: {
+    compositeId: string;
+    providerKey: string;
+    config: AiProviderConfig;
+    modelDef: AiProviderModelConfig;
+    sdkInstance: AiSdkProviderInstance | undefined;
+  }): void {
+    // An omitted price bills nothing while the provider still charges, so the
+    // model is refused rather than run for free. An explicit 0 is allowed.
+    if (!isDefined(modelDef.costPerMinute)) {
+      this.logger.error(
+        `Skipping transcription model "${compositeId}": costPerMinute is required`,
+      );
+
+      return;
+    }
+
+    this.transcriptionConfigCache.set(compositeId, {
+      modelId: compositeId,
+      sdkPackage: config.npm,
+      label: modelDef.label,
+      description: modelDef.description ?? compositeId,
+      dataResidency: config.dataResidency,
+      costPerMinute: modelDef.costPerMinute,
+      isDeprecated: modelDef.isDeprecated,
+    });
+
+    if (!sdkInstance) {
+      return;
+    }
+
+    const createTranscriptionModel = sdkInstance.createTranscriptionModel;
+
+    if (!isDefined(createTranscriptionModel)) {
+      this.logger.warn(
+        `Skipping transcription model "${compositeId}": ${config.npm} exposes no transcription API`,
+      );
+
+      return;
+    }
+
+    this.transcriptionRegistry.set(compositeId, {
+      modelId: compositeId,
+      sdkPackage: config.npm,
+      model: createTranscriptionModel(modelDef.name),
+      providerName: providerKey,
+    });
+  }
+
+  getTranscriptionModel(
+    modelId: string,
+  ): RegisteredAiTranscriptionModel | undefined {
+    this.ensureFresh();
+
+    return this.transcriptionRegistry.get(modelId);
+  }
+
+  getAvailableTranscriptionModels(): RegisteredAiTranscriptionModel[] {
+    this.ensureFresh();
+
+    return Array.from(this.transcriptionRegistry.values());
+  }
+
+  // Registration order follows the provider config, so the first entry is the
+  // one an operator listed first.
+  getDefaultTranscriptionModel(): RegisteredAiTranscriptionModel | undefined {
+    return this.getAvailableTranscriptionModels().find(
+      (model) =>
+        this.getTranscriptionModelConfig(model.modelId)?.isDeprecated !== true,
+    );
+  }
+
+  getTranscriptionModelConfig(
+    modelId: string,
+  ): AiTranscriptionModelConfig | undefined {
+    this.ensureFresh();
+
+    return this.transcriptionConfigCache.get(modelId);
+  }
+
+  // Deliberately the same rule as getDefaultTranscriptionModel: a registry
+  // holding only deprecated models would otherwise advertise cloud dictation
+  // that every request without an explicit model id then fails to resolve.
+  hasTranscriptionModel(): boolean {
+    return isDefined(this.getDefaultTranscriptionModel());
   }
 
   private toAiModelConfig(
@@ -263,9 +403,31 @@ export class AiModelRegistryService {
     }
 
     throw new AiException(
-      `Model with ID ${modelId} not found`,
+      this.buildModelNotFoundMessage(modelId),
       AiExceptionCode.AGENT_EXECUTION_FAILED,
     );
+  }
+
+  // A model that disappeared because the instance outgrew the complimentary
+  // threshold looks exactly like a typo from the caller's side, so the reason is
+  // spelled out rather than leaving an operator to guess at a missing model.
+  private buildModelNotFoundMessage(modelId: string): string {
+    const message = `Model with ID ${modelId} not found`;
+
+    if (this.areCustomProvidersRegistered) {
+      return message;
+    }
+
+    const [providerName] = modelId.split('/');
+    const isCustomProviderModel =
+      isNonEmptyString(providerName) &&
+      !this.providerConfigService.getCatalogProviderNames().has(providerName);
+
+    if (!isCustomProviderModel) {
+      return message;
+    }
+
+    return `${message}. Custom AI providers require a valid enterprise key above ${MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats.`;
   }
 
   private createDefaultConfigForCustomModel(

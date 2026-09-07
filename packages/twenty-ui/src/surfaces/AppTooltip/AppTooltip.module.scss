@@ -18,8 +18,6 @@
   word-break: break-word;
   width: max-content;
   max-width: 100%;
-  // react-tooltip showed tooltips at 0.9 opacity with 0.15s fades
-  opacity: 0.9;
   will-change: opacity;
   transition: opacity 0.15s ease-out;
 
@@ -37,26 +35,43 @@
   pointer-events: auto;
 }
 
+// the background is translucent, so the arrow has to sit flush outside the
+// popup: any overlap composites the two layers and shows up as a darker shape
 .arrow {
+  --tooltip-arrow-size: 6px;
+
   position: absolute;
-  width: 8px;
-  height: 8px;
   background: inherit;
-  transform: rotate(45deg);
+
+  &[data-side='top'],
+  &[data-side='bottom'] {
+    width: calc(2 * var(--tooltip-arrow-size));
+    height: var(--tooltip-arrow-size);
+  }
+
+  &[data-side='left'],
+  &[data-side='right'] {
+    width: var(--tooltip-arrow-size);
+    height: calc(2 * var(--tooltip-arrow-size));
+  }
 
   &[data-side='top'] {
-    bottom: -4px;
+    bottom: calc(-1 * var(--tooltip-arrow-size));
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
   }
 
   &[data-side='bottom'] {
-    top: -4px;
+    top: calc(-1 * var(--tooltip-arrow-size));
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
   }
 
   &[data-side='left'] {
-    right: -4px;
+    right: calc(-1 * var(--tooltip-arrow-size));
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
   }
 
   &[data-side='right'] {
-    left: -4px;
+    left: calc(-1 * var(--tooltip-arrow-size));
+    clip-path: polygon(100% 0, 100% 100%, 0 50%);
   }
 }
