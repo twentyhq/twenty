@@ -52,6 +52,17 @@ describe('Field metadata creation with isSearchable', () => {
   });
 
   it('should create a searchable field whose values reach global search', async () => {
+    const { searchFieldMetadataList: rowsBeforeCreate } =
+      await findOneObjectMetadataWithSearchFieldMetadataList({
+        objectMetadataId: testObjectMetadataId,
+      });
+
+    const maxPositionBeforeCreate = Math.max(
+      ...rowsBeforeCreate.map(
+        (searchFieldMetadata) => searchFieldMetadata.position,
+      ),
+    );
+
     const {
       data: { createOneField },
     } = await createOneFieldMetadata({
@@ -80,15 +91,9 @@ describe('Field metadata creation with isSearchable', () => {
     );
 
     // The label identifier row is provisioned at object creation; the new row
-    // is appended after it.
+    // is appended strictly after the pre-existing maximum, never tied with it.
     expect(createdRow).toBeDefined();
-    expect(createdRow?.position).toBe(
-      Math.max(
-        ...searchFieldMetadataList.map(
-          (searchFieldMetadata) => searchFieldMetadata.position,
-        ),
-      ),
-    );
+    expect(createdRow?.position).toBe(maxPositionBeforeCreate + 1);
 
     // The entity-backed fields query derives isSearchable from the same rows.
     const { fields } = await findManyFieldsMetadata({

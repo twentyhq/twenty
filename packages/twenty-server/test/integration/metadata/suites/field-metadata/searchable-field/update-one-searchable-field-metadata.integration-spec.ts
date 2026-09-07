@@ -129,6 +129,13 @@ describe('Field metadata isSearchable toggling', () => {
 
     expect(searchBeforeToggle.data.search.edges.length).toBe(0);
 
+    const rowsBeforeToggle = await findSearchFieldMetadataList();
+    const maxPositionBeforeToggle = Math.max(
+      ...rowsBeforeToggle.map(
+        (searchFieldMetadata) => searchFieldMetadata.position,
+      ),
+    );
+
     const {
       data: { updateOneField },
     } = await updateOneFieldMetadata({
@@ -149,13 +156,8 @@ describe('Field metadata isSearchable toggling', () => {
     );
 
     expect(createdRow).toBeDefined();
-    expect(createdRow?.position).toBe(
-      Math.max(
-        ...searchFieldMetadataList.map(
-          (searchFieldMetadata) => searchFieldMetadata.position,
-        ),
-      ),
-    );
+    // Strictly after the pre-toggle maximum, never tied with an existing row.
+    expect(createdRow?.position).toBe(maxPositionBeforeToggle + 1);
 
     const searchAfterToggle = await search({
       searchInput: RECORD_TOGGLED_VALUE,

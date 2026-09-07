@@ -12,6 +12,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { DerivedFieldMetadataIdsModule } from 'src/engine/metadata-modules/derived-field-metadata-ids/derived-field-metadata-ids.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/index-metadata.module';
 import { ObjectMetadataController } from 'src/engine/metadata-modules/object-metadata/controllers/object-metadata.controller';
 import { MostlyEmptyFieldsService } from 'src/engine/metadata-modules/object-metadata/mostly-empty-fields.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -45,6 +46,10 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeORMModule,
     DerivedFieldMetadataIdsModule,
+    // Keeps IndexMetadataResolver registered in the DI container: this is its
+    // only remaining import path since DerivedFieldMetadataIdsModule took over
+    // the derived-ids exports.
+    IndexMetadataModule,
     PermissionsModule,
     WorkspaceDataSourceModule,
     WorkspaceMigrationModule,

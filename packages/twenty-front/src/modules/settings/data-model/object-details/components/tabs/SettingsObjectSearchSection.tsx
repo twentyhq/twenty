@@ -132,7 +132,9 @@ export const SettingsObjectSearchSection = ({
   );
 
   const isEditable =
-    isConfigurableSearchFieldsEnabled && !isReadOnly && isSearchable;
+    isConfigurableSearchFieldsEnabled &&
+    !isReadOnly &&
+    objectMetadataItem.isSearchable;
 
   const searchFieldIds = useMemo(
     () => new Set(searchFields.map((entry) => entry.id)),
