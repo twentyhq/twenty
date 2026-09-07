@@ -40,6 +40,7 @@ import { type EmailCreditContext } from 'src/modules/emailing/types/email-credit
 import { buildCampaignBatchReplacements } from 'src/modules/emailing/utils/build-campaign-batch-replacements.util';
 import { buildCampaignDeliverySettleQuery } from 'src/modules/emailing/utils/build-campaign-delivery-settle-query.util';
 import { compileCampaignBatchTemplate } from 'src/modules/emailing/utils/compile-campaign-batch-template.util';
+import { chunkRecipientsToAdmissibleSize } from 'src/modules/emailing/utils/chunk-recipients-to-admissible-size.util';
 import { computeSendSlotBackoffMs } from 'src/modules/emailing/utils/compute-send-slot-backoff-ms.util';
 import { resolveCampaignBatchSettlements } from 'src/modules/emailing/utils/resolve-campaign-batch-settlements.util';
 import { resolveCampaignSendFailure } from 'src/modules/emailing/utils/resolve-campaign-send-failure.util';
@@ -246,23 +247,37 @@ export class MessageCampaignBatchDeliveryService {
       state: CAMPAIGN_DELIVERY_STATE.QUEUED,
     });
 
-    await this.messageQueueService.add<SendCampaignEmailBatchJobData>(
-      SEND_CAMPAIGN_EMAIL_BATCH_JOB,
-      {
-        ...data,
-        recipients: claimedRecipients,
-        rateLimitedAttemptCount: attemptCount,
-      },
-      {
-        delay: computeSendSlotBackoffMs({
-          attemptCount,
-          retryDelayMs: sendSlotRefusal.retryDelayMs,
-          windowMs: sendSlotRefusal.windowMs,
-        }),
-        retryLimit: CAMPAIGN_SEND_RETRY_LIMIT,
-        backoff: CAMPAIGN_SEND_RETRY_BACKOFF,
-      },
-    );
+    // A workspace whose limit is below this batch can never admit it whole, so
+    // re-queueing the same size would defer until the attempt limit and fail
+    // recipients the provider would have taken. Split it to what fits instead.
+    const chunks = chunkRecipientsToAdmissibleSize({
+      recipients: claimedRecipients,
+      limitValue: sendSlotRefusal.limitValue,
+    });
+
+    const delay = computeSendSlotBackoffMs({
+      attemptCount,
+      retryDelayMs: sendSlotRefusal.retryDelayMs,
+      windowMs: sendSlotRefusal.windowMs,
+    });
+
+    for (const chunk of chunks) {
+      await this.messageQueueService.add<SendCampaignEmailBatchJobData>(
+        SEND_CAMPAIGN_EMAIL_BATCH_JOB,
+        {
+          ...data,
+          recipients: chunk,
+          // A split batch starts its own retry budget: it was never refused at
+          // this size, and inheriting the count would fail it early.
+          rateLimitedAttemptCount: chunks.length > 1 ? 0 : attemptCount,
+        },
+        {
+          delay,
+          retryLimit: CAMPAIGN_SEND_RETRY_LIMIT,
+          backoff: CAMPAIGN_SEND_RETRY_BACKOFF,
+        },
+      );
+    }
   }
 
   private async deliverBatch({
@@ -324,7 +339,7 @@ export class MessageCampaignBatchDeliveryService {
         unsubscribeTopicId: campaign.unsubscribeTopicId ?? undefined,
       })
       .catch(async (error) => {
-        await this.recordBatchFailure({
+        const { shouldRetry } = await this.recordBatchFailure({
           workspaceId,
           campaignId,
           claimToken,
@@ -332,8 +347,16 @@ export class MessageCampaignBatchDeliveryService {
           error,
         });
 
-        throw error;
+        if (shouldRetry) {
+          throw error;
+        }
+
+        return null;
       });
+
+    if (!isDefined(providerOutcome)) {
+      return;
+    }
 
     try {
       await this.settleDeliveredBatch({
@@ -464,7 +487,7 @@ export class MessageCampaignBatchDeliveryService {
     claimToken: string;
     claimedRecipients: BatchRecipient[];
     error: unknown;
-  }): Promise<void> {
+  }): Promise<{ shouldRetry: boolean }> {
     const { state, skipReason, failureReason, shouldRetry } =
       resolveCampaignSendFailure(error);
 
@@ -482,6 +505,8 @@ export class MessageCampaignBatchDeliveryService {
         error instanceof Error ? error.message : String(error)
       }`,
     );
+
+    return { shouldRetry };
   }
 
   private async claimBatch({
@@ -603,8 +628,8 @@ export class MessageCampaignBatchDeliveryService {
       workspaceId,
       { claimToken },
       {
-        state: CAMPAIGN_DELIVERY_STATE.FAILED,
-        failureReason: CAMPAIGN_FAILURE_REASON.UNKNOWN,
+        state: CAMPAIGN_DELIVERY_STATE.SENT,
+        failureReason: CAMPAIGN_FAILURE_REASON.SETTLEMENT_LOST,
         claimToken: null,
         claimExpiresAt: null,
       },

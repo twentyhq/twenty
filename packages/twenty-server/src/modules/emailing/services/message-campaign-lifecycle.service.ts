@@ -8,7 +8,7 @@ import { CAMPAIGN_SKIP_REASON } from 'src/engine/core-modules/emailing-domain/co
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
-import { type FindOptionsWhere, In, LessThan } from 'typeorm';
+import { type FindOptionsWhere, In, IsNull, LessThan } from 'typeorm';
 
 import {
   EmailingDomainException,
@@ -139,6 +139,33 @@ export class MessageCampaignLifecycleService {
     });
 
     return { campaignId, canceledMessageCount };
+  }
+
+  // A campaign whose send jobs were lost keeps rows QUEUED forever, and QUEUED
+  // counts as unfinished, so the campaign would sit in SENDING with nothing
+  // left to move it. Failing them lets it terminalise and names why.
+  async failOrphanedQueuedDeliveries({
+    workspaceId,
+    campaignId,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+  }): Promise<number> {
+    return this.settleDeliveries({
+      workspaceId,
+      criteria: {
+        campaignId,
+        state: CAMPAIGN_DELIVERY_STATE.QUEUED,
+        sentAt: IsNull(),
+        providerMessageId: IsNull(),
+      },
+      update: {
+        state: CAMPAIGN_DELIVERY_STATE.FAILED,
+        failureReason: CAMPAIGN_FAILURE_REASON.ORPHANED,
+        claimToken: null,
+        claimExpiresAt: null,
+      },
+    });
   }
 
   async failDeliveriesWithExpiredClaims({

@@ -127,6 +127,17 @@ export class MessageCampaignRecoveryService {
           );
         }
 
+        const orphanedCount =
+          await this.messageCampaignLifecycleService.failOrphanedQueuedDeliveries(
+            { workspaceId, campaignId },
+          );
+
+        if (orphanedCount > 0) {
+          this.logger.warn(
+            `Campaign ${campaignId} of workspace ${workspaceId} had ${orphanedCount} message(s) queued with no send job left and they were failed`,
+          );
+        }
+
         await this.messageCampaignLifecycleService.finalizeCampaignIfComplete({
           workspaceId,
           campaignId,

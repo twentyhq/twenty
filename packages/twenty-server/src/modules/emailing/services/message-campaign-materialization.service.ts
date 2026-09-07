@@ -228,7 +228,6 @@ export class MessageCampaignMaterializationService {
         );
 
         await this.insertMessagesBeforeTheirDeliveries({
-          workspaceId,
           campaignId,
           messageChannelId,
           fromAddress: campaign.fromAddress?.primaryEmail ?? '',
@@ -241,6 +240,16 @@ export class MessageCampaignMaterializationService {
           }),
         });
       }
+
+      // Driven by the whole chunk rather than by the recipients that still
+      // needed message rows: a retry after a failed upsert sees their messages
+      // already materialized, and those recipients would otherwise never get a
+      // delivery row and never be sent.
+      await this.upsertQueuedDeliveries({
+        workspaceId,
+        campaignId,
+        recipients,
+      });
 
       await this.enqueueSendJobs({
         workspaceId,
@@ -364,7 +373,6 @@ export class MessageCampaignMaterializationService {
   }
 
   private async insertMessagesBeforeTheirDeliveries({
-    workspaceId,
     campaignId,
     messageChannelId,
     fromAddress,
@@ -373,7 +381,6 @@ export class MessageCampaignMaterializationService {
     now,
     recipients,
   }: {
-    workspaceId: string;
     campaignId: string;
     messageChannelId: string;
     fromAddress: string;
@@ -396,6 +403,20 @@ export class MessageCampaignMaterializationService {
         temporaryExternalId: v4(),
       })),
     });
+  }
+
+  private async upsertQueuedDeliveries({
+    workspaceId,
+    campaignId,
+    recipients,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+    recipients: CampaignMessageRecipient[];
+  }): Promise<void> {
+    if (recipients.length === 0) {
+      return;
+    }
 
     await this.campaignDeliveryRepository.upsert(
       workspaceId,

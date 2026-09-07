@@ -52,6 +52,7 @@ export class CampaignSendSlotService {
           error.exhaustedScope?.periodUnit === 'second'
             ? (error.exhaustedScope.periodCount ?? 0) * 1000
             : 0,
+        limitValue: error.exhaustedScope?.limitValue ?? null,
       };
     }
   }
