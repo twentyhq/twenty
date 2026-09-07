@@ -3,7 +3,9 @@ import { type ComponentProps } from 'react';
 import { InlineBanner } from 'twenty-ui/feedback';
 
 const StyledInlineBanner = styled(InlineBanner)`
-  margin-bottom: 0;
+  && {
+    margin-bottom: 0;
+  }
 `;
 
 type AiChatInlineBannerProps = Pick<
@@ -15,5 +17,5 @@ export const AiChatInlineBanner = ({
   message,
   button,
 }: AiChatInlineBannerProps) => (
-  <StyledInlineBanner color="gray" message={message} button={button} />
+  <StyledInlineBanner color="danger" message={message} button={button} />
 );
