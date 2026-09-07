@@ -1,5 +1,5 @@
 import {
-  RecordShareAccessLevel,
+  SharingRuleAccessLevel,
   RecordSharePrincipalType,
 } from 'twenty-shared/types';
 
@@ -29,7 +29,7 @@ const buildCreationArgs = (
     granteePrincipalType: RecordSharePrincipalType;
     granteeRoleUniversalIdentifier: string | null;
     granteePrincipalId: string | null;
-    accessLevel: RecordShareAccessLevel;
+    accessLevel: SharingRuleAccessLevel;
   }> = {},
 ) =>
   ({
@@ -42,7 +42,7 @@ const buildCreationArgs = (
       granteePrincipalType: RecordSharePrincipalType.EVERYONE,
       granteeRoleUniversalIdentifier: null,
       granteePrincipalId: null,
-      accessLevel: RecordShareAccessLevel.READ,
+      accessLevel: SharingRuleAccessLevel.READ,
       isActive: true,
       rowLevelPermissionPredicateUniversalIdentifiers: [],
       rowLevelPermissionPredicateGroupUniversalIdentifiers: [],
@@ -75,7 +75,7 @@ describe('FlatSharingRuleValidatorService', () => {
         buildCreationArgs({
           granteePrincipalType: RecordSharePrincipalType.ROLE,
           granteeRoleUniversalIdentifier: ROLE_UNIVERSAL_IDENTIFIER,
-          accessLevel: RecordShareAccessLevel.READ_WRITE,
+          accessLevel: SharingRuleAccessLevel.READ_WRITE,
         }),
       ).errors,
     ).toEqual([]);
@@ -90,7 +90,7 @@ describe('FlatSharingRuleValidatorService', () => {
     ],
     [
       'the FULL access level',
-      { accessLevel: RecordShareAccessLevel.FULL },
+      { accessLevel: 'FULL' as SharingRuleAccessLevel },
       'Sharing rule access level must be READ or READ_WRITE',
     ],
     [

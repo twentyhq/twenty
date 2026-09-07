@@ -902,6 +902,11 @@ msgstr "Nacrt već postoji"
 msgid "A draft already exists for this workflow. Are you sure you want to erase it?"
 msgstr "Nacrt već postoji za ovaj tok posla. Da li ste sigurni da želite da ga izbrišete?"
 
+#. js-lingui-id: K3NJnJ
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "A payment method is needed to keep your workspace active."
+msgstr "Potreban je način plaćanja da bi vaš radni prostor ostao aktivan."
+
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
@@ -1177,6 +1182,11 @@ msgstr "Dodaj \"{trimmedName}\" u opcije"
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
 msgid "Add a {objectLabelSingular}"
 msgstr "Dodaj {objectLabelSingular}"
+
+#. js-lingui-id: rUVyfz
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Add a card below to update your billing details and retry your payment."
+msgstr "Dodajte karticu ispod da biste ažurirali podatke za naplatu i ponovo pokušali plaćanje."
 
 #. js-lingui-id: 7W8nJr
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationEditor.tsx
@@ -1489,6 +1499,11 @@ msgstr "Dodajte ili uklonite korisnike"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Add Output Field"
 msgstr "Dodaj izlazno polje"
+
+#. js-lingui-id: lRpmgk
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Add payment method"
+msgstr "Dodajte način plaćanja"
 
 #. js-lingui-id: aYtHO6
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -3634,6 +3649,7 @@ msgstr "Ne možete da skenirate? Kopirajte"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/billing/components/AddCreditCardModal.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
@@ -9641,6 +9657,11 @@ msgstr "Globalna pretraga"
 msgid "Go back"
 msgstr "Nazad"
 
+#. js-lingui-id: y0SPQU
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+msgid "Go to billing"
+msgstr "Idite na naplatu"
+
 #. js-lingui-id: Hb4Cgz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -11381,11 +11402,6 @@ msgstr "Prezime"
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "Last name can not be empty"
 msgstr "Prezime ne može biti prazno"
-
-#. js-lingui-id: s0kiVA
-#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
-msgid "Last payment failed. Please contact your admin."
-msgstr "Poslednje plaćanje nije uspelo. Molimo vas kontaktirajte administratora."
 
 #. js-lingui-id: 3u/3zO
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
@@ -14962,6 +14978,21 @@ msgstr "Pauzirano"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Payment issue"
 msgstr "Problem sa plaćanjem"
+
+#. js-lingui-id: twOnMk
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Payment method added."
+msgstr "Način plaćanja je dodat."
+
+#. js-lingui-id: uIMn/N
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Payment method added. Retrying your payment..."
+msgstr "Način plaćanja je dodat. Ponovni pokušaj plaćanja..."
+
+#. js-lingui-id: OvqmUS
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+msgid "Payment successful."
+msgstr "Plaćanje je uspešno."
 
 #. js-lingui-id: CcK+Ft
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -19329,6 +19360,11 @@ msgstr "Postoje obavezne kolone koje nisu uparene ili ignorisane. Da li želite 
 msgid "There are still some rows that contain errors. Rows with errors will be ignored when submitting."
 msgstr "Još uvek postoje redovi koji sadrže greške. Redovi sa greškama će biti ignorisani prilikom podnošenja."
 
+#. js-lingui-id: PpLJq1
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "There is a billing issue. Please contact your admin."
+msgstr "Postoji problem sa naplatom. Obratite se svom administratoru."
+
 #. js-lingui-id: CA9PTn
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "There is a payment issue with your subscription. Please update your payment method."
@@ -20769,6 +20805,11 @@ msgstr "Ažurirajte prikaz"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
 msgstr "Ažurirajte konfiguraciju vašeg naloga. Podesite bilo koju kombinaciju IMAP, SMTP i CalDAV po potrebi."
+
+#. js-lingui-id: JlP83A
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Update your payment method"
+msgstr "Ažurirajte svoj način plaćanja"
 
 #. js-lingui-id: x4Xp3c
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
@@ -22442,6 +22483,11 @@ msgstr "Vaš interval naplate će odmah biti prebačen na mesečni i vaš probni
 #: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "Your billing interval will switch to yearly immediately and your trial will continue. When it ends, you will be charged ${yearlyPrice} per user per year billed annually."
 msgstr "Vaš interval naplate će odmah biti prebačen na godišnji i vaš probni period će se nastaviti. Kada se završi, biće vam naplaćeno ${yearlyPrice} po korisniku godišnje, sa godišnjom naplatom."
+
+#. js-lingui-id: u1O1GV
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+msgid "Your card was saved, but the payment still needs attention."
+msgstr "Vaša kartica je sačuvana, ali plaćanje i dalje zahteva pažnju."
 
 #. js-lingui-id: mmGBWT
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx

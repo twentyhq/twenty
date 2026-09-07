@@ -1,2 +1,0 @@
-export const ADD_OBJECT_METADATA_OWNER_FIELD_UPGRADE_COMMAND_NAME =
-  '2.39.0_AddOwnerFieldToObjectMetadataFastInstanceCommand_1788576273808';

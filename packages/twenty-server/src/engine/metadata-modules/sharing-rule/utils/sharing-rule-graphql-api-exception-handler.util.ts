@@ -19,6 +19,7 @@ export const sharingRuleGraphqlApiExceptionHandler = (
     case SharingRuleExceptionCode.SHARING_RULE_NOT_FOUND:
     case SharingRuleExceptionCode.OBJECT_METADATA_NOT_FOUND:
     case SharingRuleExceptionCode.ROLE_NOT_FOUND:
+    case SharingRuleExceptionCode.WORKSPACE_MEMBER_NOT_FOUND:
       throw new NotFoundError(error);
     case SharingRuleExceptionCode.INTERNAL_SERVER_ERROR:
       throw new InternalServerError(error);

@@ -361,7 +361,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
       expect(await findRecordShares(recordId)).toHaveLength(2);
     });
 
-    it('should skip the api key role row when shareWith already names that role', async () => {
+    it('should keep the api key role at FULL when shareWith names it at a lower level', async () => {
       const recordId = trackRecordId();
 
       const response = await makeGraphqlAPIRequestWithApiKey(
@@ -380,7 +380,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
           recordId,
           principalId: adminRoleId,
           principalType: RecordSharePrincipalType.ROLE,
-          accessLevel: RecordShareAccessLevel.READ,
+          accessLevel: RecordShareAccessLevel.FULL,
           rowCause: RecordShareRowCause.MANUAL,
           sourceId: recordId,
         }),

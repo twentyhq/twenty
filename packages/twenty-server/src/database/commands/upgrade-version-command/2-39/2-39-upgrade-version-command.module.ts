@@ -4,49 +4,46 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { ConvertLogicFunctionsToPrebuiltCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788338950836-convert-logic-functions-to-prebuilt.command';
 import { BackfillRecordFormCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788524477000-backfill-record-form.command';
-import { SyncRecordShareObjectCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788553681056-sync-record-share-object.command';
-import { MakeCallRecordingPrivateCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788555747635-make-call-recording-private.command';
-import { BackfillCallRecordingSharesCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788555749940-backfill-call-recording-shares.command';
-import { BackfillChannelRecordSharesCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788561701130-backfill-channel-record-shares.command';
-import { MakeMessagingAndCalendarPrivateCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788573079880-make-messaging-and-calendar-private.command';
-import { AddShareRecordCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788576900000-add-share-record-command-menu-item.command';
+import { BackfillMessageListJunctionTargetsCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788616074386-backfill-message-list-junction-targets.command';
+import { CreateMessageListMemberViewCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788616075386-create-message-list-member-view.command';
+import { MarkPlatformOwnedStandardObjectsSystemCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788616958245-mark-platform-owned-standard-objects-system.command';
+import { SyncMessageListRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788639798701-sync-message-list-record-page.command';
+import { AddDuplicateMessageListCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788639976437-add-duplicate-message-list-command-menu-item.command';
+import { AlignMessageCampaignCommandsCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788701316981-align-message-campaign-commands.command';
+import { AddDuplicateMessageCampaignCommandCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788701641813-add-duplicate-message-campaign-command.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
-import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { RecordShareModule } from 'src/engine/record-share/record-share.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workspace-schema-migration-runner-action-handlers.module';
-import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-common.module';
-import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 
 @Module({
   imports: [
     ApplicationModule,
-    CalendarCommonModule,
     FeatureFlagModule,
-    MessagingCommonModule,
-    RecordShareModule,
+    TypeOrmModule.forFeature([FieldMetadataEntity]),
     TypeORMModule,
-    TypeOrmModule.forFeature([MessageChannelEntity, CalendarChannelEntity]),
     WorkspaceCacheModule,
     WorkspaceIteratorModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationModule,
+    WorkspaceMigrationRunnerModule,
     WorkspaceSchemaMigrationRunnerActionHandlersModule,
   ],
   providers: [
     ConvertLogicFunctionsToPrebuiltCommand,
     BackfillRecordFormCommand,
-    SyncRecordShareObjectCommand,
-    MakeCallRecordingPrivateCommand,
-    BackfillCallRecordingSharesCommand,
-    BackfillChannelRecordSharesCommand,
-    MakeMessagingAndCalendarPrivateCommand,
-    AddShareRecordCommandMenuItemCommand,
+    BackfillMessageListJunctionTargetsCommand,
+    CreateMessageListMemberViewCommand,
+    MarkPlatformOwnedStandardObjectsSystemCommand,
+    SyncMessageListRecordPageCommand,
+    AddDuplicateMessageListCommandMenuItemCommand,
+    AlignMessageCampaignCommandsCommand,
+    AddDuplicateMessageCampaignCommandCommand,
   ],
 })
 export class V2_39_UpgradeVersionCommandModule {}

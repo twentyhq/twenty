@@ -9,8 +9,8 @@ import {
   IsUUID,
 } from 'class-validator';
 import {
-  RecordShareAccessLevel,
   RecordSharePrincipalType,
+  SharingRuleAccessLevel,
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -47,10 +47,10 @@ export class CreateSharingRuleInput {
   @Field(() => UUIDScalarType, { nullable: true })
   granteeRoleId?: string | null;
 
-  @IsEnum(RecordShareAccessLevel)
+  @IsEnum(SharingRuleAccessLevel)
   @IsNotEmpty()
-  @Field(() => RecordShareAccessLevel)
-  accessLevel: RecordShareAccessLevel;
+  @Field(() => SharingRuleAccessLevel)
+  accessLevel: SharingRuleAccessLevel;
 
   @IsBoolean()
   @IsOptional()

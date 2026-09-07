@@ -27,6 +27,7 @@ export const fromObjectMetadataEntityToObjectMetadataDto = (
   readability: entity.readability,
   readabilityParentFieldUniversalIdentifiers:
     entity.readabilityParentFieldUniversalIdentifiers,
+  writability: entity.writability,
   isLabelSyncedWithName: entity.isLabelSyncedWithName,
   workspaceId: entity.workspaceId,
   labelIdentifierFieldMetadataId:

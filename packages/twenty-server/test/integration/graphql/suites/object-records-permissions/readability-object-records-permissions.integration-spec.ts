@@ -18,6 +18,7 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { setObjectReadability } from 'test/integration/metadata/suites/object-metadata/utils/set-object-readability.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
@@ -310,6 +311,52 @@ describe('readabilityObjectRecordsPermissions', () => {
       );
     });
 
+    it('should keep the role as the ceiling: a share row grants nothing the role refuses', async () => {
+      const memberRole = await findOneRoleByLabel({ label: 'Member' });
+      const setMemberCanReadObjectRecords = (canReadObjectRecords: boolean) =>
+        upsertObjectPermissions({
+          expectToFail: false,
+          input: {
+            roleId: memberRole.id,
+            objectPermissions: [
+              {
+                objectMetadataId,
+                canReadObjectRecords,
+                canUpdateObjectRecords: canReadObjectRecords,
+                canSoftDeleteObjectRecords: canReadObjectRecords,
+                canDestroyObjectRecords: canReadObjectRecords,
+              },
+            ],
+          },
+        });
+
+      await setMemberCanReadObjectRecords(false);
+
+      try {
+        const response =
+          await makeGraphqlAPIRequestWithMemberRole(findManyOperation);
+
+        expect(response.body.errors).toBeDefined();
+        expect(response.body.data?.[OBJECT_PLURAL] ?? null).toBeNull();
+      } finally {
+        await setMemberCanReadObjectRecords(true);
+      }
+
+      const restoredResponse =
+        await makeGraphqlAPIRequestWithMemberRole(findManyOperation);
+
+      expect(restoredResponse.body.errors).toBeUndefined();
+      expect(
+        collectIds(restoredResponse.body.data[OBJECT_PLURAL].edges),
+      ).toEqual(
+        [
+          RECORD_IDS.SHARED_READ_WITH_JONY,
+          RECORD_IDS.SHARED_READ_WRITE_WITH_MEMBER_ROLE,
+          RECORD_IDS.SHARED_FULL_WITH_EVERYONE,
+        ].sort(),
+      );
+    });
+
     it('should only return records shared with the api key role or everyone', async () => {
       const response = await makeGraphqlAPIRequestWithApiKey(findManyOperation);
 
@@ -342,12 +389,10 @@ describe('readabilityObjectRecordsPermissions', () => {
 
       expect(response.body.errors).toBeUndefined();
 
-      const groupedNames = response.body.data[GROUP_BY_RESPONSE_KEY]
-        .flatMap(
-          (group: { groupByDimensionValues: string[] }) =>
-            group.groupByDimensionValues,
-        )
-        .sort();
+      const groupedNames = response.body.data[GROUP_BY_RESPONSE_KEY].flatMap(
+        (group: { groupByDimensionValues: string[] }) =>
+          group.groupByDimensionValues,
+      ).sort();
 
       expect(groupedNames).toEqual([
         'SHARED_FULL_WITH_EVERYONE',
@@ -523,6 +568,19 @@ describe('readabilityObjectRecordsPermissions', () => {
     beforeAll(async () => {
       await setObjectReadability(objectMetadataId, MetadataReadability.PRIVATE);
       await setRecordSharingEnabled(false);
+
+      const response = await makeGraphqlAPIRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: OBJECT_SINGULAR,
+          gqlFields: RECORD_GQL_FIELDS,
+          data: {
+            id: RECORD_IDS.SHARED_FULL_WITH_EVERYONE,
+            name: 'SHARED_FULL_WITH_EVERYONE',
+          },
+        }),
+      );
+
+      expect(response.body.errors).toBeUndefined();
     });
 
     it('should return every record', async () => {
@@ -530,12 +588,7 @@ describe('readabilityObjectRecordsPermissions', () => {
 
       expect(response.body.errors).toBeUndefined();
       expect(collectIds(response.body.data[OBJECT_PLURAL].edges)).toEqual(
-        [
-          RECORD_IDS.SHARED_READ_WITH_JONY,
-          RECORD_IDS.SHARED_READ_WRITE_WITH_MEMBER_ROLE,
-          RECORD_IDS.SHARED_FULL_WITH_ADMIN_ROLE,
-          RECORD_IDS.UNSHARED,
-        ].sort(),
+        Object.values(RECORD_IDS).sort(),
       );
     });
   });

@@ -10820,6 +10820,11 @@ msgstr "Ushbu subdomen allaqachon band qilingan."
 msgid "This suppressed address no longer exists."
 msgstr "Bu cheklangan manzil endi mavjud emas."
 
+#. js-lingui-id: qm7uMm
+#: src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util.ts
+msgid "This SVG is too large to be processed."
+msgstr "Bu SVG qayta ishlash uchun juda katta."
+
 #. js-lingui-id: 0GMgIa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"

@@ -171,8 +171,9 @@ Notes:
 ## Sharing rules
 
 Roles decide what a member may _open_; on objects whose readability is `PRIVATE`, a **sharing rule**
-decides which records they _see_ by granting a principal (everyone, a role, or a workspace member)
-`READ` or `READ_WRITE` access to the records that match its criteria. Criteria reuse the same
+decides which records they _see_ by granting a principal (everyone or a role; a single workspace
+member can only be granted from the workspace itself, since a member id has no meaning in another
+workspace) `READ` or `READ_WRITE` access to the records that match its criteria. Criteria reuse the same
 `rowLevelPermissionPredicates` and `rowLevelPermissionPredicateGroups` shape as roles, nested under
 the rule instead of a role; a rule without criteria matches every record of the object. Rules ship at
 the top level of the manifest with `defineSharingRule`, and a rule with criteria only syncs on plans
@@ -181,9 +182,9 @@ that include row-level security:
 ```ts src/sharing-rules/sales-reads-deals.ts
 import {
   defineSharingRule,
-  RecordShareAccessLevel,
   RecordSharePrincipalType,
   RowLevelPermissionPredicateOperand,
+  SharingRuleAccessLevel,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/define';
 
@@ -196,7 +197,7 @@ export default defineSharingRule({
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
   granteePrincipalType: RecordSharePrincipalType.ROLE,
   granteeRoleUniversalIdentifier: SALES_ROLE_UNIVERSAL_IDENTIFIER,
-  accessLevel: RecordShareAccessLevel.READ,
+  accessLevel: SharingRuleAccessLevel.READ,
   rowLevelPermissionPredicates: [
     {
       universalIdentifier: 'a7f6e5d4-3c2b-4109-9876-777777777777',

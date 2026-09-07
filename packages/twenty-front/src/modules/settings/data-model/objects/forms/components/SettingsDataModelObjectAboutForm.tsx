@@ -338,7 +338,7 @@ export const SettingsDataModelObjectAboutForm = ({
                                   />
                                   <AppTooltip
                                     anchorSelect={`#${infoCircleElementId}${fieldName}`}
-                                    content={tooltip}
+                                    title={tooltip}
                                     offset={5}
                                     noArrow
                                     place="bottom"

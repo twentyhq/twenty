@@ -21,6 +21,7 @@ import {
 } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
+import { MetadataWritability } from '~/generated-metadata/graphql';
 
 const SYSTEM_PERMISSION_FLAG_BY_UNIVERSAL_IDENTIFIER = Object.fromEntries(
   Object.entries(SystemPermissionFlag).map(([key, uuid]) => [
@@ -216,6 +217,7 @@ const buildObjectMetadataItemsFromMarketplaceApp = (
         isUIEditable: true,
         isUICreatable: true,
         readability: MetadataReadability.OPEN,
+        writability: MetadataWritability.OPEN,
         openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
         isLabelSyncedWithName: false,
         labelIdentifierFieldMetadataId: '',

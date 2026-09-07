@@ -1,8 +1,6 @@
 import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { type UsageLimitEntitlementProvider } from 'src/engine/core-modules/usage-limit/interfaces/usage-limit-entitlement-provider.service';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { findEnforceableLimits } from 'src/engine/core-modules/usage-limit/utils/find-enforceable-limits.util';
@@ -13,7 +11,7 @@ import { isIntraWorkspaceScoped } from 'src/engine/core-modules/usage-limit/util
 export class UsageLimitEntitlementService implements OnModuleInit {
   private readonly logger = new Logger(UsageLimitEntitlementService.name);
 
-  private entitlementProvider: UsageLimitEntitlementProvider | null = null;
+  private entitlementProvider: UsageLimitEntitlementProvider;
 
   constructor(private readonly discoveryService: DiscoveryService) {}
 
@@ -24,9 +22,9 @@ export class UsageLimitEntitlementService implements OnModuleInit {
   }
 
   async isIntraWorkspaceLimitEntitled(workspaceId: string): Promise<boolean> {
-    return isDefined(this.entitlementProvider)
-      ? this.entitlementProvider.hasIntraWorkspaceLimitEntitlement(workspaceId)
-      : true;
+    return this.entitlementProvider.hasIntraWorkspaceLimitEntitlement(
+      workspaceId,
+    );
   }
 
   async findEnforceableLimits({
