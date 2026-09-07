@@ -1,9 +1,9 @@
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
-import { useDeleteCoreWorkflows } from '@/object-core/workflows/hooks/useDeleteCoreWorkflows';
 import { getDeletableSelectedCoreWorkflows } from '@/object-core/workflows/utils/getDeletableSelectedCoreWorkflows';
 import { toggleRowIdInSelection } from '@/object-core/utils/toggleRowIdInSelection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -23,12 +23,6 @@ export const useCoreWorkflowsSelection = <
   const [deletedCoreWorkflowIds, setDeletedCoreWorkflowIds] = useState<
     string[]
   >([]);
-
-  const {
-    deleteCoreWorkflows,
-    canDeleteCoreWorkflows,
-    isDeletingCoreWorkflows,
-  } = useDeleteCoreWorkflows();
 
   const coreWorkflowsFilterSettings = useAtomStateValue(
     coreWorkflowsFilterSettingsState,
@@ -58,20 +52,26 @@ export const useCoreWorkflowsSelection = <
   const toggleRow = (rowId: string) =>
     selectRows(toggleRowIdInSelection({ selectedRowIds, rowId }));
 
-  const deleteSelectedCoreWorkflows = async () => {
-    const coreWorkflowIdsToDelete = deletableSelectedCoreWorkflows.map(
-      (deletableCoreWorkflow) => deletableCoreWorkflow.coreWorkflowId,
-    );
+  const forgetDeletedWorkspaceWorkflows = (
+    deletedWorkspaceWorkflowIds: string[],
+  ) => {
+    const coreWorkflowIdsToForget = coreWorkflows
+      .filter(
+        (coreWorkflow) =>
+          isDefined(coreWorkflow.workspaceWorkflowId) &&
+          deletedWorkspaceWorkflowIds.includes(
+            coreWorkflow.workspaceWorkflowId,
+          ),
+      )
+      .map((coreWorkflow) => coreWorkflow.id);
 
-    const hasDeleted = await deleteCoreWorkflows(selectedWorkspaceWorkflowIds);
-
-    if (!hasDeleted) {
+    if (coreWorkflowIdsToForget.length === 0) {
       return;
     }
 
     setDeletedCoreWorkflowIds((previousDeletedCoreWorkflowIds) => [
       ...previousDeletedCoreWorkflowIds,
-      ...coreWorkflowIdsToDelete,
+      ...coreWorkflowIdsToForget,
     ]);
     selectRows([]);
   };
@@ -82,8 +82,6 @@ export const useCoreWorkflowsSelection = <
     selectedWorkspaceWorkflowIds,
     toggleRow,
     selectRows,
-    deleteSelectedCoreWorkflows,
-    canDeleteCoreWorkflows,
-    isDeletingCoreWorkflows,
+    forgetDeletedWorkspaceWorkflows,
   };
 };

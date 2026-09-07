@@ -79,13 +79,19 @@ jest.mock('react-intersection-observer', () => ({
   useInView: () => ({ ref: jest.fn(), inView: false }),
 }));
 
-jest.mock('@/object-core/workflows/hooks/useDeleteCoreWorkflows', () => ({
-  useDeleteCoreWorkflows: () => ({
-    deleteCoreWorkflows: jest.fn(),
-    canDeleteCoreWorkflows: true,
-    isDeletingCoreWorkflows: false,
+jest.mock(
+  '@/object-core/workflows/hooks/useHydrateSelectedWorkflowRecords',
+  () => ({
+    useHydrateSelectedWorkflowRecords: () => undefined,
   }),
-}));
+);
+
+jest.mock(
+  '@/object-core/workflows/components/CoreWorkflowsSelectionToContextStoreEffect',
+  () => ({
+    CoreWorkflowsSelectionToContextStoreEffect: () => null,
+  }),
+);
 
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
   useAtomStateValue: () => ({}),
@@ -105,10 +111,6 @@ jest.mock('@/ui/layout/page/components/PageCardLayout', () => ({
 
 jest.mock('@/ui/utilities/page-title/components/PageTitle', () => ({
   PageTitle: () => null,
-}));
-
-jest.mock('@/ui/layout/modal/components/ConfirmationModal', () => ({
-  ConfirmationModal: () => null,
 }));
 
 describe('RecordIndexPage workspace surface composition', () => {

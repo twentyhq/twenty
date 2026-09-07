@@ -3,20 +3,10 @@ import { Provider as JotaiProvider } from 'jotai';
 
 import { useCoreWorkflowsSelection } from '@/object-core/workflows/hooks/useCoreWorkflowsSelection';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 type CoreWorkflowRow = Pick<CoreWorkflow, 'id' | 'workspaceWorkflowId'>;
-
-const mockDeleteCoreWorkflows = jest.fn();
-
-jest.mock('@/object-core/workflows/hooks/useDeleteCoreWorkflows', () => ({
-  useDeleteCoreWorkflows: () => ({
-    deleteCoreWorkflows: mockDeleteCoreWorkflows,
-    canDeleteCoreWorkflows: true,
-    isDeletingCoreWorkflows: false,
-  }),
-}));
 
 const coreWorkflows: CoreWorkflowRow[] = [
   { id: 'core-1', workspaceWorkflowId: 'workspace-1' },
@@ -36,12 +26,7 @@ const renderSelection = () =>
   );
 
 describe('useCoreWorkflowsSelection', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    mockDeleteCoreWorkflows.mockResolvedValue(true);
-  });
-
-  it('should map selected rows to the workspace workflows to delete', () => {
+  it('should map selected rows to the workspace workflows the command menu targets', () => {
     const { result } = renderSelection();
 
     act(() => {
@@ -53,7 +38,7 @@ describe('useCoreWorkflowsSelection', () => {
     ]);
   });
 
-  it('should not offer a workflow without a workspace record for deletion', () => {
+  it('should not target a workflow that has no workspace record', () => {
     const { result } = renderSelection();
 
     act(() => {
@@ -64,19 +49,17 @@ describe('useCoreWorkflowsSelection', () => {
     expect(result.current.selectedWorkspaceWorkflowIds).toEqual([]);
   });
 
-  it('should remove the deleted workflows from the list and clear the selection', async () => {
+  it('should drop the deleted rows and clear the selection when a deletion is reported', () => {
     const { result } = renderSelection();
 
     act(() => {
       result.current.toggleRow('core-1');
     });
 
-    await act(async () => {
-      await result.current.deleteSelectedCoreWorkflows();
+    act(() => {
+      result.current.forgetDeletedWorkspaceWorkflows(['workspace-1']);
     });
 
-    expect(mockDeleteCoreWorkflows).toHaveBeenCalledTimes(1);
-    expect(mockDeleteCoreWorkflows).toHaveBeenCalledWith(['workspace-1']);
     expect(
       result.current.displayedCoreWorkflows.map(
         (coreWorkflow) => coreWorkflow.id,
@@ -85,32 +68,26 @@ describe('useCoreWorkflowsSelection', () => {
     expect(result.current.selectedRowIds).toEqual([]);
   });
 
-  it('should keep the rows and the selection when the deletion fails', async () => {
-    mockDeleteCoreWorkflows.mockResolvedValue(false);
-
+  it('should ignore a deletion that targets rows it is not showing', () => {
     const { result } = renderSelection();
 
     act(() => {
       result.current.toggleRow('core-1');
     });
 
-    await act(async () => {
-      await result.current.deleteSelectedCoreWorkflows();
+    act(() => {
+      result.current.forgetDeletedWorkspaceWorkflows(['workspace-elsewhere']);
     });
 
     expect(result.current.displayedCoreWorkflows).toHaveLength(3);
     expect(result.current.selectedRowIds).toEqual(['core-1']);
   });
 
-  it('should keep a deleted workflow hidden once the mirror drops its workspace record', async () => {
+  it('should keep a deleted workflow hidden once the mirror drops its workspace record', () => {
     const { result, rerender } = renderSelection();
 
     act(() => {
-      result.current.toggleRow('core-1');
-    });
-
-    await act(async () => {
-      await result.current.deleteSelectedCoreWorkflows();
+      result.current.forgetDeletedWorkspaceWorkflows(['workspace-1']);
     });
 
     rerender({
@@ -157,6 +134,5 @@ describe('useCoreWorkflowsSelection', () => {
     });
 
     expect(result.current.selectedRowIds).toEqual([]);
-    expect(result.current.selectedWorkspaceWorkflowIds).toEqual([]);
   });
 });
