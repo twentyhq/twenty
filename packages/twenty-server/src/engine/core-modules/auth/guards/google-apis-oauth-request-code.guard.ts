@@ -52,8 +52,8 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
         messageVisibility: request.query.messageVisibility,
         skipMessageChannelConfiguration:
           request.query.skipMessageChannelConfiguration,
-        shouldRequestEmailForwardingScopes:
-          request.query.shouldRequestEmailForwardingScopes,
+        emailForwardingMessageChannelId:
+          request.query.emailForwardingMessageChannelId,
         loginHint: request.query.loginHint,
         userId: userId,
         workspaceId: workspaceId,

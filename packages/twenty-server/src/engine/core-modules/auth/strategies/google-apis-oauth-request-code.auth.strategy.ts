@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { type VerifyCallback } from 'passport-google-oauth20';
 
 import { GoogleAPIsOauthCommonStrategy } from 'src/engine/core-modules/auth/strategies/google-apis-oauth-common.auth.strategy';
 import { getGoogleApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes';
+import { getGoogleEmailForwardingOauthScopes } from 'src/engine/core-modules/auth/utils/get-google-email-forwarding-oauth-scopes';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type GoogleApiScopeConfig = {
@@ -19,15 +21,20 @@ export class GoogleAPIsOauthRequestCodeStrategy extends GoogleAPIsOauthCommonStr
 
   // oxlint-disable-next-line typescript/no-explicit-any
   authenticate(req: any, options: any) {
+    const emailForwardingMessageChannelId =
+      req.params.emailForwardingMessageChannelId;
+    const isEmailForwardingGrant = isNonEmptyString(
+      emailForwardingMessageChannelId,
+    );
+
     options = {
       ...options,
-      accessType: 'offline',
+      accessType: isEmailForwardingGrant ? 'online' : 'offline',
       prompt: 'consent',
       loginHint: req.params.loginHint,
-      scope: getGoogleApisOauthScopes({
-        shouldRequestEmailForwardingScopes:
-          req.params.shouldRequestEmailForwardingScopes === 'true',
-      }),
+      scope: isEmailForwardingGrant
+        ? getGoogleEmailForwardingOauthScopes()
+        : getGoogleApisOauthScopes(),
       state: JSON.stringify({
         transientToken: req.params.transientToken,
         redirectLocation: req.params.redirectLocation,
@@ -35,8 +42,7 @@ export class GoogleAPIsOauthRequestCodeStrategy extends GoogleAPIsOauthCommonStr
         messageVisibility: req.params.messageVisibility,
         skipMessageChannelConfiguration:
           req.params.skipMessageChannelConfiguration,
-        shouldRequestEmailForwardingScopes:
-          req.params.shouldRequestEmailForwardingScopes,
+        emailForwardingMessageChannelId,
       }),
     };
 

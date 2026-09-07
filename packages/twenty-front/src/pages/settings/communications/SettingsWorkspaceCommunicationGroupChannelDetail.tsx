@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useDeleteEmailGroupChannel } from '@/settings/accounts/hooks/useDeleteEmailGroupChannel';
+import { useEmailGroupForwardingSetup } from '@/settings/accounts/hooks/useEmailGroupForwardingSetup';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { useUpdateEmailGroupChannel } from '@/settings/accounts/hooks/useUpdateEmailGroupChannel';
 import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTitle';
@@ -28,7 +29,7 @@ import {
   GetEmailingDomainsDocument,
 } from '~/generated-metadata/graphql';
 import { Status } from 'twenty-ui/data-display';
-import { IconCopy, IconTrash } from 'twenty-ui/icon';
+import { IconCopy, IconSettingsAutomation, IconTrash } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -77,6 +78,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
   const { updateEmailGroupChannel, loading: updatingDisplayName } =
     useUpdateEmailGroupChannel();
   const { data: emailingDomainsData } = useQuery(GetEmailingDomainsDocument);
+  const { getSetupStatus } = useEmailGroupForwardingSetup();
 
   const [displayNameDraft, setDisplayNameDraft] = useState<string | null>(null);
 
@@ -117,6 +119,8 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
   const isDomainVerified = domainStatus === EmailingDomainStatus.VERIFIED;
 
   const displayName = channel.displayName ?? '';
+
+  const isForwardingProvisioned = getSetupStatus(channel.id) === 'PROVISIONED';
 
   const handleDisplayNameSave = async () => {
     if (!isDefined(displayNameDraft) || displayNameDraft === displayName) {
@@ -208,6 +212,23 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
           <H2Title
             title={t`Forwarding address`}
             description={t`Set up forwarding from the source address to this destination.`}
+            adornment={
+              isForwardingProvisioned ? (
+                <Status color="green" text={t`Automatic`} />
+              ) : (
+                <Button
+                  Icon={IconSettingsAutomation}
+                  title={t`Set up automatically`}
+                  size="small"
+                  variant="secondary"
+                  onClick={() =>
+                    navigateSettings(SettingsPath.EmailGroupChannelForwarding, {
+                      messageChannelId: channel.id,
+                    })
+                  }
+                />
+              )
+            }
           />
           <StyledForwardingRow>
             <StyledForwardingInputContainer>

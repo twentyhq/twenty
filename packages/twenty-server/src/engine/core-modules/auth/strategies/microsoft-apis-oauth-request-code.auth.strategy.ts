@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { type VerifyCallback } from 'passport-google-oauth20';
 
 import { MicrosoftAPIsOauthCommonStrategy } from 'src/engine/core-modules/auth/strategies/microsoft-apis-oauth-common.auth.strategy';
 import { getMicrosoftApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes';
+import { getMicrosoftEmailForwardingOauthScopes } from 'src/engine/core-modules/auth/utils/get-microsoft-email-forwarding-oauth-scopes';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -19,10 +21,9 @@ export class MicrosoftAPIsOauthRequestCodeStrategy extends MicrosoftAPIsOauthCom
       accessType: 'offline',
       prompt: 'select_account',
       loginHint: req.params.loginHint,
-      scope: getMicrosoftApisOauthScopes({
-        shouldRequestEmailForwardingScopes:
-          req.params.shouldRequestEmailForwardingScopes === 'true',
-      }),
+      scope: isNonEmptyString(req.params.emailForwardingMessageChannelId)
+        ? getMicrosoftEmailForwardingOauthScopes()
+        : getMicrosoftApisOauthScopes(),
       state: JSON.stringify({
         transientToken: req.params.transientToken,
         redirectLocation: req.params.redirectLocation,
@@ -30,8 +31,8 @@ export class MicrosoftAPIsOauthRequestCodeStrategy extends MicrosoftAPIsOauthCom
         messageVisibility: req.params.messageVisibility,
         skipMessageChannelConfiguration:
           req.params.skipMessageChannelConfiguration,
-        shouldRequestEmailForwardingScopes:
-          req.params.shouldRequestEmailForwardingScopes,
+        emailForwardingMessageChannelId:
+          req.params.emailForwardingMessageChannelId,
       }),
     };
 

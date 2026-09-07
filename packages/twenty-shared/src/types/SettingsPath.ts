@@ -30,6 +30,7 @@ export enum SettingsPath {
   CustomDomain = 'general/custom-domain',
   WorkspaceCommunications = 'communications',
   EmailGroupChannelDetail = 'email/email-group/:messageChannelId',
+  EmailGroupChannelForwarding = 'email/email-group/:messageChannelId/forwarding',
   NewEmailGroupChannel = 'email/new-email-group',
   NewUnsubscribeTopic = 'email/new-unsubscribe-topic',
   UnsubscribeTopicDetail = 'email/unsubscribe-topic/:unsubscribeTopicId',

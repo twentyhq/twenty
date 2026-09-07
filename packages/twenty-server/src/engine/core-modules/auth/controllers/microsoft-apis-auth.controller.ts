@@ -8,9 +8,15 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { Response } from 'express';
-import { ApiPath, AppPath, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import {
+  ApiPath,
+  AppPath,
+  ConnectedAccountProvider,
+  SettingsPath,
+} from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
@@ -18,6 +24,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
+import { EmailForwardingProvisioningService } from 'src/engine/core-modules/email-forwarding/services/email-forwarding-provisioning.service';
 import { MicrosoftAPIsOauthExchangeCodeForTokenGuard } from 'src/engine/core-modules/auth/guards/microsoft-apis-oauth-exchange-code-for-token.guard';
 import { MicrosoftAPIsOauthRequestCodeGuard } from 'src/engine/core-modules/auth/guards/microsoft-apis-oauth-request-code.guard';
 import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/microsoft-apis.service';
@@ -42,6 +49,7 @@ export class MicrosoftAPIsAuthController {
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly onboardingService: OnboardingService,
     private readonly guardRedirectService: GuardRedirectService,
+    private readonly emailForwardingProvisioningService: EmailForwardingProvisioningService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
@@ -81,7 +89,7 @@ export class MicrosoftAPIsAuthController {
         calendarVisibility,
         messageVisibility,
         skipMessageChannelConfiguration,
-        shouldRequestEmailForwardingScopes,
+        emailForwardingMessageChannelId,
       } = user;
 
       const { workspaceMemberId, userId, workspaceId } =
@@ -97,6 +105,27 @@ export class MicrosoftAPIsAuthController {
       workspace = await this.workspaceRepository.findOneBy({
         id: workspaceId,
       });
+
+      if (isNonEmptyString(emailForwardingMessageChannelId)) {
+        const failureReason =
+          await this.emailForwardingProvisioningService.provisionFromOauthGrant(
+            {
+              messageChannelId: emailForwardingMessageChannelId,
+              workspaceId,
+              userId,
+              provider: ConnectedAccountProvider.MICROSOFT,
+              accessToken,
+            },
+          );
+
+        return res.redirect(
+          this.buildEmailForwardingRedirectUrl({
+            workspace,
+            messageChannelId: emailForwardingMessageChannelId,
+            failureReason,
+          }),
+        );
+      }
 
       if (emails.length === 0) {
         throw new AuthException(
@@ -118,7 +147,6 @@ export class MicrosoftAPIsAuthController {
           calendarVisibility,
           messageVisibility,
           skipMessageChannelConfiguration,
-          shouldRequestEmailForwardingScopes,
         });
 
       if (userId) {
@@ -162,5 +190,40 @@ export class MicrosoftAPIsAuthController {
         }),
       );
     }
+  }
+
+  private buildEmailForwardingRedirectUrl({
+    workspace,
+    messageChannelId,
+    failureReason,
+  }: {
+    workspace: WorkspaceEntity | null;
+    messageChannelId: string;
+    failureReason: string | null;
+  }): string {
+    if (!isDefined(workspace)) {
+      throw new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    const relativeUrl = isDefined(failureReason)
+      ? getSettingsPath(
+          SettingsPath.EmailGroupChannelForwarding,
+          { messageChannelId },
+          { forwardingError: failureReason },
+        )
+      : getSettingsPath(
+          SettingsPath.EmailGroupChannelDetail,
+          { messageChannelId },
+          { forwardingProvisioned: 'true' },
+        );
+
+    const { pathname, searchParams, hash } = parseRelativeUrl(relativeUrl);
+
+    return this.workspaceDomainsService
+      .buildWorkspaceURL({ workspace, pathname, searchParams, hash })
+      .toString();
   }
 }

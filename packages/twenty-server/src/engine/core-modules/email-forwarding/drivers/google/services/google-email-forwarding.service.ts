@@ -8,6 +8,8 @@ import {
   EmailForwardingDriverException,
   EmailForwardingDriverExceptionCode,
 } from 'src/engine/core-modules/email-forwarding/drivers/exceptions/email-forwarding-driver.exception';
+import { GOOGLE_DIRECTORY_RETRY_COUNT } from 'src/engine/core-modules/email-forwarding/drivers/google/constants/google-directory-retry-count.constant';
+import { GOOGLE_DIRECTORY_RETRY_DELAY_MS } from 'src/engine/core-modules/email-forwarding/drivers/google/constants/google-directory-retry-delay-ms.constant';
 import { parseGoogleEmailForwardingError } from 'src/engine/core-modules/email-forwarding/drivers/google/utils/parse-google-email-forwarding-error.util';
 import { type EmailForwardingDriverInterface } from 'src/engine/core-modules/email-forwarding/drivers/interfaces/email-forwarding-driver.interface';
 import { type CreateForwardingAddressInput } from 'src/engine/core-modules/email-forwarding/drivers/types/create-forwarding-address-input.type';
@@ -34,8 +36,8 @@ export class GoogleEmailForwardingService implements EmailForwardingDriverInterf
       );
     }
 
-    await this.allowExternalDelivery(accessToken, sourceAddress);
     await this.addDestinationMember(directory, group.id, destinationAddress);
+    await this.allowExternalDelivery(accessToken, sourceAddress);
   }
 
   async deleteForwardingAddress({
@@ -138,19 +140,34 @@ export class GoogleEmailForwardingService implements EmailForwardingDriverInterf
       auth: this.getAuthClient(accessToken),
     });
 
-    try {
-      await groupsSettings.groups.patch({
-        groupUniqueId: sourceAddress,
-        requestBody: {
-          allowExternalMembers: 'true',
-          whoCanPostMessage: 'ANYONE_CAN_POST',
-          messageModerationLevel: 'MODERATE_NONE',
-        },
-      });
-    } catch (error) {
-      throw parseGoogleEmailForwardingError(error as GaxiosError, {
-        cause: error as Error,
-      });
+    // A newly created group is not readable across Google's replicas straight away,
+    // so the settings write can bounce before the group becomes visible.
+    for (let attempt = 1; attempt <= GOOGLE_DIRECTORY_RETRY_COUNT; attempt++) {
+      try {
+        await groupsSettings.groups.patch({
+          groupUniqueId: sourceAddress,
+          requestBody: {
+            allowExternalMembers: 'true',
+            whoCanPostMessage: 'ANYONE_CAN_POST',
+            messageModerationLevel: 'MODERATE_NONE',
+          },
+        });
+
+        return;
+      } catch (error) {
+        const status = (error as GaxiosError).response?.status;
+        const isNotPropagatedYet = status === 404 || status === 503;
+
+        if (!isNotPropagatedYet || attempt === GOOGLE_DIRECTORY_RETRY_COUNT) {
+          throw parseGoogleEmailForwardingError(error as GaxiosError, {
+            cause: error as Error,
+          });
+        }
+
+        await new Promise((resolve) =>
+          setTimeout(resolve, GOOGLE_DIRECTORY_RETRY_DELAY_MS),
+        );
+      }
     }
   }
 
@@ -159,19 +176,33 @@ export class GoogleEmailForwardingService implements EmailForwardingDriverInterf
     groupId: string,
     destinationAddress: string,
   ): Promise<void> {
-    try {
-      await directory.members.insert({
-        groupKey: groupId,
-        requestBody: { email: destinationAddress, role: 'MEMBER' },
-      });
-    } catch (error) {
-      if ((error as GaxiosError).response?.status === 409) {
-        return;
-      }
+    for (let attempt = 1; attempt <= GOOGLE_DIRECTORY_RETRY_COUNT; attempt++) {
+      try {
+        await directory.members.insert({
+          groupKey: groupId,
+          requestBody: { email: destinationAddress, role: 'MEMBER' },
+        });
 
-      throw parseGoogleEmailForwardingError(error as GaxiosError, {
-        cause: error as Error,
-      });
+        return;
+      } catch (error) {
+        const status = (error as GaxiosError).response?.status;
+
+        if (status === 409) {
+          return;
+        }
+
+        const isNotPropagatedYet = status === 404 || status === 503;
+
+        if (!isNotPropagatedYet || attempt === GOOGLE_DIRECTORY_RETRY_COUNT) {
+          throw parseGoogleEmailForwardingError(error as GaxiosError, {
+            cause: error as Error,
+          });
+        }
+
+        await new Promise((resolve) =>
+          setTimeout(resolve, GOOGLE_DIRECTORY_RETRY_DELAY_MS),
+        );
+      }
     }
   }
 }

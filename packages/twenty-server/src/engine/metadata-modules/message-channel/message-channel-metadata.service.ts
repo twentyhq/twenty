@@ -17,7 +17,7 @@ import {
   MessageChannelVisibility,
 } from 'twenty-shared/types';
 
-import { EmailForwardingService } from 'src/engine/core-modules/email-forwarding/services/email-forwarding.service';
+import { EmailForwardingSetupService } from 'src/engine/core-modules/email-forwarding/services/email-forwarding-setup.service';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
@@ -25,6 +25,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
 import { CreateEmailGroupChannelOutput } from 'src/engine/metadata-modules/message-channel/dtos/create-email-group-channel.output';
+import { EmailGroupForwardingSetupDTO } from 'src/engine/metadata-modules/message-channel/dtos/email-group-forwarding-setup.dto';
 import { MessageChannelDTO } from 'src/engine/metadata-modules/message-channel/dtos/message-channel.dto';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import {
@@ -45,7 +46,7 @@ export class MessageChannelMetadataService {
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailingDomainService: EmailingDomainService,
-    private readonly emailForwardingService: EmailForwardingService,
+    private readonly emailForwardingSetupService: EmailForwardingSetupService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
@@ -301,17 +302,7 @@ export class MessageChannelMetadataService {
       pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
     });
 
-    const forwardingFailureReason =
-      await this.emailForwardingService.createForwardingAddress({
-        workspaceId,
-        sourceAddress: handle,
-        destinationAddress: forwardingAddress,
-        displayName: isNonEmptyString(trimmedDisplayName)
-          ? trimmedDisplayName
-          : handle,
-      });
-
-    return { messageChannel, forwardingAddress, forwardingFailureReason };
+    return { messageChannel, forwardingAddress };
   }
 
   async getOrCreateEmailGroupChannel({
@@ -439,14 +430,6 @@ export class MessageChannelMetadataService {
       connectedAccount?.handle ?? '',
     )?.toLowerCase();
 
-    if (isNonEmptyString(connectedAccount?.handle)) {
-      await this.emailForwardingService.deleteForwardingAddress({
-        workspaceId,
-        sourceAddress: connectedAccount.handle,
-        destinationAddress: messageChannel.handle,
-      });
-    }
-
     await this.connectedAccountMetadataService.delete({
       id: messageChannel.connectedAccountId,
       workspaceId,
@@ -459,6 +442,62 @@ export class MessageChannelMetadataService {
       await this.emailingDomainService.deleteEmailingDomainByDomainIfExists(
         workspaceId,
         sendDomain,
+      );
+    }
+
+    return messageChannel;
+  }
+
+  async dismissEmailGroupChannelForwarding({
+    id,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    id: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    await this.verifyEmailGroupOwnership({ id, userWorkspaceId, workspaceId });
+
+    await this.emailForwardingSetupService.setStatus({
+      workspaceId,
+      messageChannelId: id,
+      status: 'DISMISSED',
+    });
+
+    return true;
+  }
+
+  async findEmailGroupForwardingSetups(
+    workspaceId: string,
+  ): Promise<EmailGroupForwardingSetupDTO[]> {
+    const setupByChannelId =
+      await this.emailForwardingSetupService.findAllByWorkspaceId(workspaceId);
+
+    return Object.entries(setupByChannelId).map(
+      ([messageChannelId, status]) => ({ messageChannelId, status }),
+    );
+  }
+
+  private async verifyEmailGroupOwnership({
+    id,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    id: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<MessageChannelEntity> {
+    const messageChannel = await this.verifyOwnership({
+      id,
+      userWorkspaceId,
+      workspaceId,
+    });
+
+    if (messageChannel.type !== MessageChannelType.EMAIL_GROUP) {
+      throw new MessageChannelException(
+        `Message channel ${id} is not an email group`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
       );
     }
 

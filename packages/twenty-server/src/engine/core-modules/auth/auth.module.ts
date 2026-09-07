@@ -68,6 +68,7 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { EmailForwardingModule } from 'src/engine/core-modules/email-forwarding/email-forwarding.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
@@ -118,6 +119,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     ImpersonationAuthorizationModule,
     MetricsModule,
     PermissionsModule,
+    EmailForwardingModule,
     TwoFactorAuthenticationModule,
     ApiKeyModule,
     EventLogEmitterModule,

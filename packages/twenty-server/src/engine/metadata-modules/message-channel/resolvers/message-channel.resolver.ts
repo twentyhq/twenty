@@ -21,6 +21,7 @@ import { ConnectedAccountPublicDTO } from 'src/engine/metadata-modules/connected
 import { CreateEmailGroupChannelInput } from 'src/engine/metadata-modules/message-channel/dtos/create-email-group-channel.input';
 import { UpdateEmailGroupChannelInput } from 'src/engine/metadata-modules/message-channel/dtos/update-email-group-channel.input';
 import { CreateEmailGroupChannelOutput } from 'src/engine/metadata-modules/message-channel/dtos/create-email-group-channel.output';
+import { EmailGroupForwardingSetupDTO } from 'src/engine/metadata-modules/message-channel/dtos/email-group-forwarding-setup.dto';
 import { MessageChannelDTO } from 'src/engine/metadata-modules/message-channel/dtos/message-channel.dto';
 import { UpdateMessageChannelInput } from 'src/engine/metadata-modules/message-channel/dtos/update-message-channel.input';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -210,5 +211,27 @@ export class MessageChannelResolver {
       userWorkspaceId,
       workspaceId: workspace.id,
     });
+  }
+
+  @Query(() => [EmailGroupForwardingSetupDTO])
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKSPACE))
+  async emailGroupForwardingSetups(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<EmailGroupForwardingSetupDTO[]> {
+    return this.messageChannelMetadataService.findEmailGroupForwardingSetups(
+      workspace.id,
+    );
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKSPACE))
+  async dismissEmailGroupChannelForwarding(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<boolean> {
+    return this.messageChannelMetadataService.dismissEmailGroupChannelForwarding(
+      { id, userWorkspaceId, workspaceId: workspace.id },
+    );
   }
 }

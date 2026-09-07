@@ -24,7 +24,6 @@ type CreateEmailGroupChannelResult = {
       contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy;
     };
     forwardingAddress: string;
-    forwardingFailureReason: string | null;
   };
 };
 

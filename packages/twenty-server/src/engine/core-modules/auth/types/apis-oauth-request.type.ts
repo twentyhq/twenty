@@ -24,6 +24,6 @@ export type APIsOAuthRequest = Omit<
     calendarVisibility?: CalendarChannelVisibility;
     messageVisibility?: MessageChannelVisibility;
     skipMessageChannelConfiguration?: boolean;
-    shouldRequestEmailForwardingScopes?: boolean;
+    emailForwardingMessageChannelId?: string;
   };
 };

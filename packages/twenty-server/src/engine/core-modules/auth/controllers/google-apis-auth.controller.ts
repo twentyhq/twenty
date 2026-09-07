@@ -8,9 +8,14 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { Response } from 'express';
-import { ApiPath, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import {
+  ApiPath,
+  ConnectedAccountProvider,
+  SettingsPath,
+} from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
@@ -18,6 +23,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
+import { EmailForwardingProvisioningService } from 'src/engine/core-modules/email-forwarding/services/email-forwarding-provisioning.service';
 import { GoogleAPIsOauthExchangeCodeForTokenGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth-exchange-code-for-token.guard';
 import { GoogleAPIsOauthRequestCodeGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth-request-code.guard';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
@@ -42,6 +48,7 @@ export class GoogleAPIsAuthController {
     private readonly onboardingService: OnboardingService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly guardRedirectService: GuardRedirectService,
+    private readonly emailForwardingProvisioningService: EmailForwardingProvisioningService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
@@ -81,6 +88,7 @@ export class GoogleAPIsAuthController {
         calendarVisibility,
         messageVisibility,
         skipMessageChannelConfiguration,
+        emailForwardingMessageChannelId,
       } = user;
 
       const { workspaceMemberId, userId, workspaceId } =
@@ -96,6 +104,27 @@ export class GoogleAPIsAuthController {
       workspace = await this.workspaceRepository.findOneBy({
         id: workspaceId,
       });
+
+      if (isNonEmptyString(emailForwardingMessageChannelId)) {
+        const failureReason =
+          await this.emailForwardingProvisioningService.provisionFromOauthGrant(
+            {
+              messageChannelId: emailForwardingMessageChannelId,
+              workspaceId,
+              userId,
+              provider: ConnectedAccountProvider.GOOGLE,
+              accessToken,
+            },
+          );
+
+        return res.redirect(
+          this.buildEmailForwardingRedirectUrl({
+            workspace,
+            messageChannelId: emailForwardingMessageChannelId,
+            failureReason,
+          }),
+        );
+      }
 
       const handle = emails[0].value.toLowerCase();
 
@@ -153,5 +182,40 @@ export class GoogleAPIsAuthController {
         }),
       );
     }
+  }
+
+  private buildEmailForwardingRedirectUrl({
+    workspace,
+    messageChannelId,
+    failureReason,
+  }: {
+    workspace: WorkspaceEntity | null;
+    messageChannelId: string;
+    failureReason: string | null;
+  }): string {
+    if (!isDefined(workspace)) {
+      throw new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    const relativeUrl = isDefined(failureReason)
+      ? getSettingsPath(
+          SettingsPath.EmailGroupChannelForwarding,
+          { messageChannelId },
+          { forwardingError: failureReason },
+        )
+      : getSettingsPath(
+          SettingsPath.EmailGroupChannelDetail,
+          { messageChannelId },
+          { forwardingProvisioned: 'true' },
+        );
+
+    const { pathname, searchParams, hash } = parseRelativeUrl(relativeUrl);
+
+    return this.workspaceDomainsService
+      .buildWorkspaceURL({ workspace, pathname, searchParams, hash })
+      .toString();
   }
 }

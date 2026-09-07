@@ -40,8 +40,7 @@ export class GoogleAPIsOauthExchangeCodeForTokenStrategy extends GoogleAPIsOauth
       calendarVisibility: state?.calendarVisibility,
       messageVisibility: state?.messageVisibility,
       skipMessageChannelConfiguration: state?.skipMessageChannelConfiguration,
-      shouldRequestEmailForwardingScopes:
-        state?.shouldRequestEmailForwardingScopes,
+      emailForwardingMessageChannelId: state?.emailForwardingMessageChannelId,
     };
 
     done(null, user);

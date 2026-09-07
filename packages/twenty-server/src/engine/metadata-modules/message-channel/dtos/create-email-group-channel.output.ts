@@ -9,9 +9,4 @@ export class CreateEmailGroupChannelOutput {
 
   @Field()
   forwardingAddress: string;
-
-  // Set when an email forwarding provider is connected but could not provision the
-  // address, so the channel still exists and the manual instructions stay usable.
-  @Field(() => String, { nullable: true })
-  forwardingFailureReason: string | null;
 }

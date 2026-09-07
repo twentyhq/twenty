@@ -38,14 +38,14 @@ export const useTriggerApisOAuth = () => {
         calendarVisibility,
         loginHint,
         skipMessageChannelConfiguration,
-        shouldRequestEmailForwardingScopes,
+        emailForwardingMessageChannelId,
       }: {
         redirectLocation?: AppPath | string;
         messageVisibility?: MessageChannelVisibility;
         calendarVisibility?: CalendarChannelVisibility;
         loginHint?: string;
         skipMessageChannelConfiguration?: boolean;
-        shouldRequestEmailForwardingScopes?: boolean;
+        emailForwardingMessageChannelId?: string;
       } = {},
     ) => {
       const authServerUrl = REACT_APP_SERVER_BASE_URL;
@@ -75,8 +75,8 @@ export const useTriggerApisOAuth = () => {
         ? `&skipMessageChannelConfiguration=${skipMessageChannelConfiguration}`
         : '';
 
-      params += shouldRequestEmailForwardingScopes
-        ? `&shouldRequestEmailForwardingScopes=${shouldRequestEmailForwardingScopes}`
+      params += emailForwardingMessageChannelId
+        ? `&emailForwardingMessageChannelId=${emailForwardingMessageChannelId}`
         : '';
 
       redirect(`${authServerUrl}/auth/${getProviderUrl(provider)}?${params}`);

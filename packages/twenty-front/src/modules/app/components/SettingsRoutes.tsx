@@ -130,6 +130,14 @@ const SettingsNewEmailGroupChannel = lazy(() =>
   ),
 );
 
+const SettingsWorkspaceEmailGroupChannelForwarding = lazy(() =>
+  import('~/pages/settings/communications/SettingsWorkspaceEmailGroupChannelForwarding').then(
+    (module) => ({
+      default: module.SettingsWorkspaceEmailGroupChannelForwarding,
+    }),
+  ),
+);
+
 const SettingsObjectDetailPage = lazy(() =>
   import('~/pages/settings/data-model/SettingsObjectDetailPage').then(
     (module) => ({
@@ -764,6 +772,10 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.EmailGroupChannelDetail}
         element={<SettingsWorkspaceCommunicationGroupChannelDetail />}
+      />
+      <Route
+        path={SettingsPath.EmailGroupChannelForwarding}
+        element={<SettingsWorkspaceEmailGroupChannelForwarding />}
       />
       <Route
         path={SettingsPath.NewUnsubscribeTopic}

@@ -46,8 +46,7 @@ export class MicrosoftAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
         calendarVisibility: state.calendarVisibility,
         messageVisibility: state.messageVisibility,
         skipMessageChannelConfiguration: state.skipMessageChannelConfiguration,
-        shouldRequestEmailForwardingScopes:
-          state.shouldRequestEmailForwardingScopes,
+        emailForwardingMessageChannelId: state.emailForwardingMessageChannelId,
       });
 
       return (await super.canActivate(context)) as boolean;
