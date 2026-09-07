@@ -17,6 +17,7 @@ import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
@@ -321,6 +322,52 @@ describe('readabilityObjectRecordsPermissions', () => {
 
       expect(response.body.errors).toBeUndefined();
       expect(collectIds(response.body.data[OBJECT_PLURAL].edges)).toEqual(
+        [
+          RECORD_IDS.SHARED_READ_WITH_JONY,
+          RECORD_IDS.SHARED_READ_WRITE_WITH_MEMBER_ROLE,
+          RECORD_IDS.SHARED_FULL_WITH_EVERYONE,
+        ].sort(),
+      );
+    });
+
+    it('should keep the role as the ceiling: a share row grants nothing the role refuses', async () => {
+      const memberRole = await findOneRoleByLabel({ label: 'Member' });
+      const setMemberCanReadObjectRecords = (canReadObjectRecords: boolean) =>
+        upsertObjectPermissions({
+          expectToFail: false,
+          input: {
+            roleId: memberRole.id,
+            objectPermissions: [
+              {
+                objectMetadataId,
+                canReadObjectRecords,
+                canUpdateObjectRecords: canReadObjectRecords,
+                canSoftDeleteObjectRecords: canReadObjectRecords,
+                canDestroyObjectRecords: canReadObjectRecords,
+              },
+            ],
+          },
+        });
+
+      await setMemberCanReadObjectRecords(false);
+
+      try {
+        const response =
+          await makeGraphqlAPIRequestWithMemberRole(findManyOperation);
+
+        expect(response.body.errors).toBeDefined();
+        expect(response.body.data?.[OBJECT_PLURAL] ?? null).toBeNull();
+      } finally {
+        await setMemberCanReadObjectRecords(true);
+      }
+
+      const restoredResponse =
+        await makeGraphqlAPIRequestWithMemberRole(findManyOperation);
+
+      expect(restoredResponse.body.errors).toBeUndefined();
+      expect(
+        collectIds(restoredResponse.body.data[OBJECT_PLURAL].edges),
+      ).toEqual(
         [
           RECORD_IDS.SHARED_READ_WITH_JONY,
           RECORD_IDS.SHARED_READ_WRITE_WITH_MEMBER_ROLE,
