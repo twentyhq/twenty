@@ -315,6 +315,7 @@ export type { SerializedRelation } from './SerializedRelation.type';
 export { SERIALIZED_RELATION_BRAND } from './SerializedRelation.type';
 export { ServerFileFolder } from './ServerFileFolder';
 export { SettingsPath } from './SettingsPath';
+export { SharingRuleAccessLevel } from './SharingRuleAccessLevel';
 export { SidePanelPages } from './SidePanelPages';
 export type { Sources } from './SourcesType';
 export type {

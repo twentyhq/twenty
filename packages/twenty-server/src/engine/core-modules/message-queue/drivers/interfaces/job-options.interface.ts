@@ -6,7 +6,7 @@ export type QueueJobBackoffOptions = {
 
 export type QueueJobRecipient = {
   workspaceId: string;
-  userWorkspaceId: string;
+  userWorkspaceId?: string;
 };
 
 export interface QueueJobOptions {

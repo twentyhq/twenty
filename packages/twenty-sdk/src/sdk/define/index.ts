@@ -45,6 +45,7 @@ export type { SharingRuleManifest } from 'twenty-shared/application';
 export {
   RecordShareAccessLevel,
   RecordSharePrincipalType,
+  SharingRuleAccessLevel,
 } from 'twenty-shared/types';
 
 export {

@@ -1,4 +1,3 @@
-import { useGetIsMetadataItemFromStandardApplication } from '@/object-metadata/hooks/useGetIsMetadataItemFromStandardApplication';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
@@ -30,8 +29,6 @@ export const useFieldWidgetActionVisibility = ({
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { objectMetadataItems } = useObjectMetadataItems();
-  const getIsMetadataItemFromStandardApplication =
-    useGetIsMetadataItemFromStandardApplication();
 
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId: targetRecord.id,
@@ -77,13 +74,10 @@ export const useFieldWidgetActionVisibility = ({
 
   const isFieldReadOnly = isRecordFieldReadOnly({
     isRecordReadOnly,
-    isSystemObject: objectMetadataItem.isSystem,
     objectPermissions: getObjectPermissionsFromMapByObjectMetadataId({
       objectPermissionsByObjectMetadataId,
       objectMetadataId: objectMetadataItem.id,
     }),
-    isFieldFromStandardApplication:
-      getIsMetadataItemFromStandardApplication(fieldMetadataItem),
     fieldMetadataItem,
     fieldDefinition,
     objectPermissionsByObjectMetadataId,

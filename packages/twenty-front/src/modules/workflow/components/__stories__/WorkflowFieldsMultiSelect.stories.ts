@@ -3,7 +3,10 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  FieldMetadataType,
+  MetadataWritability,
+} from '~/generated-metadata/graphql';
 
 const meta: Meta<typeof WorkflowFieldsMultiSelect> = {
   title: 'Modules/Workflow/WorkflowFieldsMultiSelect',
@@ -74,6 +77,7 @@ const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
   isUIEditable: true,
   isUICreatable: true,
   readability: MetadataReadability.OPEN,
+  writability: MetadataWritability.OPEN,
   openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
   isActive: true,
   createdAt: '',

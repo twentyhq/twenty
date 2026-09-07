@@ -84,7 +84,6 @@ export const EXPECTED_MANIFEST: Manifest = {
   ],
   sharingRules: [],
   skills: [],
-  translations: {},
   agents: [],
   application: {
     applicationVariables: {

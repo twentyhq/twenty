@@ -49,7 +49,7 @@ describe('buildInheritedReadabilityCondition', () => {
     );
 
     expect(sql).toContain(
-      '(("attachment"."targetPersonId" IS NULL AND "attachment"."targetNoteId" IS NULL) OR "attachment"."targetPersonId" IS NOT NULL OR ("attachment"."targetNoteId" IS NOT NULL AND EXISTS (SELECT 1 FROM "workspace_abc"."recordShare" AS "attachment_recordShare" WHERE "attachment_recordShare"."recordId" = "attachment"."targetNoteId"',
+      '("attachment"."targetPersonId" IS NOT NULL OR ("attachment"."targetNoteId" IS NOT NULL AND EXISTS (SELECT 1 FROM "workspace_abc"."recordShare" AS "attachment_recordShare" WHERE "attachment_recordShare"."recordId" = "attachment"."targetNoteId"',
     );
     expect(countOccurrences(sql, 'EXISTS')).toBe(1);
     expect(sql).not.toContain('"attachment"."targetPersonId" IS NOT NULL AND');
@@ -58,13 +58,22 @@ describe('buildInheritedReadabilityCondition', () => {
     );
   });
 
-  it('should only let rows without any parent through when every parent is denied', () => {
+  it('should deny every row when every parent is denied', () => {
     const condition = build([
       { joinColumnName: 'targetNoteId', gate: { kind: 'denied' } },
     ]);
 
+    expect(condition).toEqual({ sql: '(1=0)', parameters: {} });
+  });
+
+  it('should hide rows whose every parent column is null', () => {
+    const condition = build([
+      { joinColumnName: 'targetPersonId', gate: { kind: 'open' } },
+      { joinColumnName: 'targetNoteId', gate: { kind: 'denied' } },
+    ]);
+
     expect(condition).toEqual({
-      sql: '(("attachment"."targetNoteId" IS NULL))',
+      sql: '("attachment"."targetPersonId" IS NOT NULL)',
       parameters: {},
     });
   });
@@ -86,7 +95,7 @@ describe('buildInheritedReadabilityCondition', () => {
     ]);
 
     expect(condition).toEqual({
-      sql: '(("attachment"."targetNoteId" IS NULL) OR ("attachment"."targetNoteId" IS NOT NULL AND EXISTS (SELECT 1 FROM "workspace_abc"."note" AS "attachment_targetNoteId" WHERE "attachment_targetNoteId"."id" = "attachment"."targetNoteId" AND "attachment_targetNoteId"."companyId" IS NOT NULL)))',
+      sql: '(("attachment"."targetNoteId" IS NOT NULL AND EXISTS (SELECT 1 FROM "workspace_abc"."note" AS "attachment_targetNoteId" WHERE "attachment_targetNoteId"."id" = "attachment"."targetNoteId" AND "attachment_targetNoteId"."companyId" IS NOT NULL)))',
       parameters: { nested: 'value' },
     });
   });

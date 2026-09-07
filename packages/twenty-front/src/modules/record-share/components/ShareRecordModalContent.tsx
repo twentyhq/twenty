@@ -47,6 +47,10 @@ export const ShareRecordModalContent = ({
   const { unshareRecord } = useUnshareRecord({ objectMetadataId, recordId });
 
   const canEdit = viewerAccessLevel === RecordShareAccessLevel.FULL;
+  const viewerAccessLabel =
+    viewerAccessLevel === RecordShareAccessLevel.READ_WRITE
+      ? t`You can view and edit this record.`
+      : t`You can view this record.`;
 
   const shareWithPrincipalOf = (share: (typeof shares)[number]) => {
     switch (share.principalType) {
@@ -80,7 +84,8 @@ export const ShareRecordModalContent = ({
         />
       ) : (
         <StyledNotice>
-          {t`Only members with full access can change who this record is shared with.`}
+          {viewerAccessLabel}{' '}
+          {t`Only members with full access can see and change who it is shared with.`}
         </StyledNotice>
       )}
       <StyledGrantList>

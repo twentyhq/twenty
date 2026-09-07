@@ -27,7 +27,7 @@ const SURFACES_ENTRIES: GalleryEntry[] = [
         <span id="gallery-tooltip-anchor">Tooltip anchor</span>
         <AppTooltip
           anchorSelect="#gallery-tooltip-anchor"
-          content="Tooltip content"
+          title="Tooltip content"
           isOpen={true}
         />
       </>

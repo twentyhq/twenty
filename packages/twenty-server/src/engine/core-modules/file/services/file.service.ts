@@ -233,7 +233,10 @@ export class FileService {
 
     if (isDefined(presignedUrl)) {
       // The storage provider serves presigned downloads directly and handles
-      // Range requests without proxying the file through the server.
+      // Range requests without proxying the file through the server. It can
+      // only echo the response-* overrides set above, so this path carries no
+      // X-Content-Type-Options: nosniff; the headers it does carry pin the
+      // type sniffed at upload and attach anything not inline-safe.
       return { type: 'redirect', presignedUrl };
     }
 
