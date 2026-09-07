@@ -179,6 +179,79 @@ describe('Manifest update - page layout tabs (standalone)', () => {
     });
   }, 60000);
 
+  describe.each(['nested', 'standalone'])('invalid %s tab', (location) => {
+    it.each([
+      {
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        heightBehavior: 'TAB_VIEPORT',
+        message: 'unsupported heightBehavior "TAB_VIEPORT"',
+      },
+      {
+        layoutMode: PageLayoutTabLayoutMode.CANVAS,
+        heightBehavior: 'TAB_VIEWPORT',
+        message: 'heightBehavior is only supported for VERTICAL_LIST tabs',
+      },
+    ])(
+      'returns an input error for $layoutMode with $heightBehavior',
+      async ({ layoutMode, heightBehavior, message }) => {
+        const pageLayoutTab = {
+          universalIdentifier: TEST_TAB_ID,
+          title: 'Invalid tab',
+          position: 1000,
+          layoutMode,
+          widgets: [
+            {
+              universalIdentifier: TEST_WIDGET_ID,
+              title: 'Timeline',
+              type: 'TIMELINE',
+              heightBehavior,
+              configuration: { configurationType: 'TIMELINE' },
+            },
+          ],
+        };
+        const manifest: Manifest = JSON.parse(
+          JSON.stringify({
+            ...buildManifest(),
+            pageLayouts:
+              location === 'nested'
+                ? [
+                    {
+                      universalIdentifier: uuidv4(),
+                      name: 'Invalid page',
+                      type: 'STANDALONE_PAGE',
+                      tabs: [pageLayoutTab],
+                    },
+                  ]
+                : [],
+            pageLayoutTabs:
+              location === 'standalone'
+                ? [
+                    {
+                      ...pageLayoutTab,
+                      pageLayoutUniversalIdentifier:
+                        STANDARD_PERSON_PAGE_LAYOUT_UNIVERSAL_ID,
+                    },
+                  ]
+                : [],
+          }),
+        );
+
+        const { errors } = await syncApplication({
+          manifest,
+          expectToFail: true,
+        });
+
+        expect(errors).toEqual([
+          expect.objectContaining({
+            message: expect.stringContaining(message),
+            extensions: expect.objectContaining({ code: 'BAD_USER_INPUT' }),
+          }),
+        ]);
+        expect(await findStandardPersonPageLayoutTabs()).toHaveLength(0);
+      },
+    );
+  });
+
   it('should preserve a legacy Canvas tab without replacing its widget on subsequent sync', async () => {
     const buildLegacyCanvasPageLayoutTab = () => ({
       universalIdentifier: TEST_TAB_ID,
