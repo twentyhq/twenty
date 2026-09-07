@@ -205,7 +205,11 @@ export const AppTooltip = ({
       clearTimeout(hideDelayTimerRef.current);
     };
 
-    const handleAnchorLeave = () => {
+    const handleAnchorLeave = (anchorElement: Element) => {
+      if (anchorElement.contains(anchorElement.ownerDocument.activeElement)) {
+        return;
+      }
+
       clearTimeout(hideDelayTimerRef.current);
       hideDelayTimerRef.current = setTimeout(() => {
         if (isHoveringTooltipRef.current) {
@@ -218,7 +222,7 @@ export const AppTooltip = ({
 
     const removeListeners = anchorElements.map((anchorElement) => {
       const handleEnter = () => handleAnchorEnter(anchorElement);
-      const handleLeave = () => handleAnchorLeave();
+      const handleLeave = () => handleAnchorLeave(anchorElement);
 
       // mouseover/mouseout instead of mouseenter/mouseleave to replicate
       // react-tooltip's default open and close events
@@ -251,6 +255,9 @@ export const AppTooltip = ({
 
   const handleTooltipMouseLeave = () => {
     isHoveringTooltipRef.current = false;
+    if (activeAnchor?.contains(activeAnchor.ownerDocument.activeElement)) {
+      return;
+    }
     clearTimeout(hideDelayTimerRef.current);
     hideDelayTimerRef.current = setTimeout(() => {
       if (isHoveringTooltipRef.current) {

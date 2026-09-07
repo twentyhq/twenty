@@ -63,10 +63,18 @@ export const KeyboardFocus: Story = {
     await userEvent.tab();
     expect(firstLabel).toHaveFocus();
     expect(firstLabel).toHaveAccessibleDescription('The company website URL');
+    await userEvent.hover(firstLabel);
+    await userEvent.unhover(firstLabel);
     const tooltip = await body.findByRole('tooltip', undefined, {
       timeout: 5000,
     });
     await waitFor(() => expect(tooltip).toBeVisible());
+
+    await userEvent.hover(firstLabel);
+    await userEvent.unhover(firstLabel);
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    expect(tooltip).toBeVisible();
+    expect(firstLabel).toHaveFocus();
 
     await userEvent.tab();
     expect(secondLabel).toHaveFocus();
