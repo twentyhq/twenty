@@ -134,9 +134,9 @@ const discoverVisibleCalendarEventFixtures = async (): Promise<
       : null;
   } while (after !== null);
 
-  if (fixtures.length < CALENDAR_EVENT_UPDATE_BATCH_SIZE + 1) {
+  if (fixtures.length === 0) {
     throw new Error(
-      `Only ${fixtures.length} fully visible seeded calendar events found; run the dev seeds before the integration tests`,
+      'No fully visible seeded calendar events found; run the dev seeds before the integration tests',
     );
   }
 
@@ -426,6 +426,7 @@ describe('call recorder app lifecycle (integration)', () => {
   });
 
   const destroyCreatedRows = async (): Promise<void> => {
+    const calendarEventRestoreErrors: Error[] = [];
     const borrowedCalendarEventIds = borrowedCalendarEventFixtures.map(
       ({ id }) => id,
     );
@@ -451,8 +452,8 @@ describe('call recorder app lifecycle (integration)', () => {
     }
 
     for (const fixture of borrowedCalendarEventFixtures) {
-      await client
-        .mutation({
+      try {
+        await client.mutation({
           updateCalendarEvent: {
             __args: {
               id: fixture.id,
@@ -469,12 +470,24 @@ describe('call recorder app lifecycle (integration)', () => {
             },
             id: true,
           },
-        })
-        .catch(() => {});
+        });
+      } catch (error) {
+        calendarEventRestoreErrors.push(
+          error instanceof Error ? error : new Error(String(error)),
+        );
+      }
     }
 
     borrowedCalendarEventFixtures.length = 0;
     createdCallRecordingIds.length = 0;
+
+    if (calendarEventRestoreErrors.length > 0) {
+      throw new Error(
+        `Failed to restore borrowed calendar event fixtures: ${calendarEventRestoreErrors
+          .map(({ message }) => message)
+          .join('; ')}`,
+      );
+    }
   };
 
   const createCalendarEvent = async (
@@ -1061,6 +1074,19 @@ describe('call recorder app lifecycle (integration)', () => {
     });
 
     it('marks every blank copy of the same meeting On, past the update batch size in one go', async () => {
+      const requiredCalendarEventFixtureCount =
+        CALENDAR_EVENT_UPDATE_BATCH_SIZE + 1;
+      const availableCalendarEventFixtureCount =
+        availableCalendarEventFixtures.length - nextCalendarEventFixtureIndex;
+
+      if (
+        availableCalendarEventFixtureCount < requiredCalendarEventFixtureCount
+      ) {
+        throw new Error(
+          `Batch boundary test requires ${requiredCalendarEventFixtureCount} fully visible seeded calendar events, but only ${availableCalendarEventFixtureCount} remain`,
+        );
+      }
+
       const startsAt = inOneHour();
       const endsAt = inTwoHours();
       const conferenceLink = {
@@ -1070,7 +1096,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       for (
         let copyIndex = 0;
-        copyIndex < CALENDAR_EVENT_UPDATE_BATCH_SIZE + 1;
+        copyIndex < requiredCalendarEventFixtureCount;
         copyIndex += 1
       ) {
         calendarEventIds.push(
