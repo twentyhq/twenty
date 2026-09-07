@@ -19,6 +19,7 @@ jobs:
       files: |
         packages/twenty-docker/**
         docker-compose.yml
+        .github/workflows/ci-test-docker-compose.yaml
   test-compose:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
@@ -154,11 +155,27 @@ jobs:
             echo "Still waiting... (${count}/300s) [HTTP ${status}]"
             sleep 1
           done
+  test-install-scripts:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - name: Lint scripts
+        env:
+          LC_ALL: C.UTF-8
+        run: shellcheck --shell=bash --severity=error packages/twenty-docker/scripts/*.sh
+      # The scripts download docker-compose.yml, .env.example and install.sh from GitHub,
+      # so they are pointed at this pull request's head to exercise its own files.
+      - name: Run install scripts against the pull request head
+        run: bash packages/twenty-docker/scripts/install.test.sh "${{ github.event.pull_request.head.sha }}"
   ci-test-docker-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    needs: [changed-files-check, test-compose, test-app-dev]
+    needs: [changed-files-check, test-compose, test-app-dev, test-install-scripts]
     steps:
       - name: Fail job if any needs failed
         if: contains(needs.*.result, 'failure')
