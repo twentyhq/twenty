@@ -93,7 +93,7 @@ export const CampaignDetailsFields = ({
               embedded
               color="danger"
               LeftIcon={IconAlertTriangle}
-              message={t`No sending address is available. Connect a verified sending domain in Settings before this campaign can go out.`}
+              message={t`No sending address. Connect a verified domain in Settings.`}
             />
           </StyledWarningContainer>
         )
