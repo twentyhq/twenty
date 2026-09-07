@@ -195,4 +195,34 @@ describe('parseMediaQuery', () => {
       },
     ]);
   });
+
+  it('should accept CSS whitespace inside conditions and after modifiers', () => {
+    expect(parseMediaQuery('(min-width:\n600px)')?.conditions).toEqual([
+      {
+        kind: 'numeric',
+        source: 'componentWidth',
+        comparison: 'min',
+        value: 600,
+      },
+    ]);
+    expect(parseMediaQuery('not\tprint')).toEqual({
+      isNegated: true,
+      matchesMediaType: false,
+      conditions: [],
+    });
+    expect(
+      parseMediaQuery('only\nscreen and (min-width: 0)')?.matchesMediaType,
+    ).toBe(true);
+    expect(
+      parseMediaQuery('(min-width: 600px)and (max-width: 900px)')?.conditions,
+    ).toHaveLength(2);
+  });
+
+  it('should reject whitespace that CSS does not recognize', () => {
+    expect(parseMediaQuery('screen and\u00a0(min-width: 1px)')).toBeNull();
+    expect(
+      parseMediaQuery('(min-width: 600px)and(max-width: 900px)'),
+    ).toBeNull();
+    expect(parseMediaQuery('not(min-width: 1px)')).toBeNull();
+  });
 });

@@ -1,26 +1,33 @@
+import { isDefined } from 'twenty-shared/utils';
+
+import { CSS_WHITESPACE_CHARACTER_CLASS } from '@/polyfills/media-query/constants/CssWhitespaceCharacterClass';
 import { type ParsedMediaQueryModifier } from '@/polyfills/media-query/types/ParsedMediaQueryModifier';
 
-const NOT_MODIFIER_PREFIX = 'not ';
-const ONLY_MODIFIER_PREFIX = 'only ';
+const NOT_MODIFIER_PATTERN = new RegExp(
+  `^not${CSS_WHITESPACE_CHARACTER_CLASS}+`,
+);
+const ONLY_MODIFIER_PATTERN = new RegExp(
+  `^only${CSS_WHITESPACE_CHARACTER_CLASS}+`,
+);
 
 export const parseMediaQueryModifier = (
   firstQueryPart: string,
 ): ParsedMediaQueryModifier => {
-  if (firstQueryPart.startsWith(NOT_MODIFIER_PREFIX)) {
+  const notModifierMatch = firstQueryPart.match(NOT_MODIFIER_PATTERN);
+
+  if (isDefined(notModifierMatch)) {
     return {
       modifier: 'not',
-      remainingFirstPart: firstQueryPart
-        .slice(NOT_MODIFIER_PREFIX.length)
-        .trim(),
+      remainingFirstPart: firstQueryPart.slice(notModifierMatch[0].length),
     };
   }
 
-  if (firstQueryPart.startsWith(ONLY_MODIFIER_PREFIX)) {
+  const onlyModifierMatch = firstQueryPart.match(ONLY_MODIFIER_PATTERN);
+
+  if (isDefined(onlyModifierMatch)) {
     return {
       modifier: 'only',
-      remainingFirstPart: firstQueryPart
-        .slice(ONLY_MODIFIER_PREFIX.length)
-        .trim(),
+      remainingFirstPart: firstQueryPart.slice(onlyModifierMatch[0].length),
     };
   }
 

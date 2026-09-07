@@ -9,7 +9,7 @@ import { parseMediaQueryLengthToPixels } from '@/polyfills/media-query/utils/par
 import { parseMediaQueryOrientationCondition } from '@/polyfills/media-query/utils/parseMediaQueryOrientationCondition';
 import { parseMediaQueryResolutionToDevicePixelRatio } from '@/polyfills/media-query/utils/parseMediaQueryResolutionToDevicePixelRatio';
 
-const CONDITION_WRAPPING_PARENTHESES_PATTERN = /^\((.*)\)$/;
+const CONDITION_WRAPPING_PARENTHESES_PATTERN = /^\(([\s\S]*)\)$/;
 
 const WEBKIT_FEATURE_PREFIX = '-webkit-';
 
