@@ -27,6 +27,7 @@ export class ApplicationManifestApplyService {
     application,
     forceSdkClientGeneration = false,
     inferDeletionFromMissingEntities = true,
+    persistVersion,
   }: {
     workspaceId: string;
     manifest: Manifest;
@@ -40,6 +41,7 @@ export class ApplicationManifestApplyService {
     // up SDK-level changes; dev sync relies on first-apply/schema-change to
     // avoid regenerating on every save.
     forceSdkClientGeneration?: boolean;
+    persistVersion?: boolean;
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
@@ -55,6 +57,7 @@ export class ApplicationManifestApplyService {
         manifest,
         applicationRegistrationId,
         inferDeletionFromMissingEntities,
+        persistVersion,
       });
 
     if (forceSdkClientGeneration || isFirstApply || hasSchemaMetadataChanged) {
