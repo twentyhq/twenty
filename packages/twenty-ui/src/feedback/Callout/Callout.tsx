@@ -32,7 +32,7 @@ const CALLOUT_ICON_VARIANT_CLASS_NAMES: Record<CalloutVariant, string> = {
 };
 
 export type CalloutProps = {
-  className?: string;
+  fullWidth?: boolean;
   variant: CalloutVariant;
   title: string;
   description: string;
@@ -48,7 +48,7 @@ export type CalloutProps = {
 };
 
 export const Callout = ({
-  className,
+  fullWidth = false,
   variant,
   title,
   description,
@@ -77,7 +77,7 @@ export const Callout = ({
       className={clsx(
         styles.container,
         CALLOUT_CONTAINER_VARIANT_CLASS_NAMES[variant],
-        className,
+        fullWidth && styles.fullWidth,
       )}
     >
       <div className={styles.header}>

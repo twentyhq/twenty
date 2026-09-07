@@ -1,10 +1,5 @@
-import { styled } from '@linaria/react';
 import { Callout, type CalloutProps } from 'twenty-ui/feedback';
 import { IconAlertTriangle } from 'twenty-ui/icon';
-
-const StyledCallout = styled(Callout)`
-  max-width: none;
-`;
 
 type AiChatCalloutProps = Pick<
   CalloutProps,
@@ -16,7 +11,8 @@ export const AiChatCallout = ({
   description,
   action,
 }: AiChatCalloutProps) => (
-  <StyledCallout
+  <Callout
+    fullWidth
     title={title}
     description={description}
     action={action}

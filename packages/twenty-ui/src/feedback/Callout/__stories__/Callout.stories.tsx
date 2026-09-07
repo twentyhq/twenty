@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -26,8 +27,46 @@ export const Default: Story = {
       'Because this workflow is not using a manual trigger, the form will not open on top of the interface. To fill it, open the corresponding workflow run and complete the form there.',
     action: {
       label: 'Learn more',
-      onClick: () => {},
+      onClick: fn(),
     },
+  },
+  decorators: [ComponentDecorator],
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const action = await canvas.findByRole('button', { name: 'Learn more' });
+
+    await expect(action).toBeEnabled();
+    await userEvent.click(action);
+    await expect(args.action?.onClick).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const DisabledAction: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
+  args: {
+    ...Default.args,
+    action: {
+      label: 'Learn more',
+      onClick: fn(),
+      disabled: true,
+    },
+  },
+  decorators: [ComponentDecorator],
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const action = await canvas.findByRole('button', { name: 'Learn more' });
+
+    await expect(action).toBeDisabled();
+    await userEvent.click(action);
+    await expect(args.action?.onClick).not.toHaveBeenCalled();
+  },
+};
+
+export const FullWidth: Story = {
+  args: { ...Default.args, fullWidth: true },
+  parameters: {
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
+    container: { width: 744 },
   },
   decorators: [ComponentDecorator],
 };
