@@ -34,7 +34,9 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
   background: ${({ isUser }) =>
     isUser ? themeCssVariables.background.tertiary : 'transparent'};
   border-radius: ${({ isUser }) =>
-    isUser ? themeCssVariables.border.radius.sm : '0'};
+    isUser
+      ? `calc(${themeCssVariables.border.radius.md} + ${themeCssVariables.spacing[1]})`
+      : '0'};
   color: ${({ isUser }) =>
     isUser
       ? themeCssVariables.font.color.secondary
