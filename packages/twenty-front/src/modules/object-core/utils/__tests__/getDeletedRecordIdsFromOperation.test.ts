@@ -19,12 +19,9 @@ describe('getDeletedRecordIdsFromOperation', () => {
     ).toEqual(['workspace-1']);
   });
 
-  it('should return nothing for an operation that deletes no record', () => {
-    expect(
-      getDeletedRecordIdsFromOperation({
-        type: 'create-one',
-        createdRecord: { id: 'workspace-1' } as never,
-      }),
-    ).toEqual([]);
+  it('should return nothing for an operation that carries no deleted ids', () => {
+    expect(getDeletedRecordIdsFromOperation({ type: 'destroy-one' })).toEqual(
+      [],
+    );
   });
 });
