@@ -121,7 +121,7 @@ export class MigrateCanvasTabsToVerticalListSlowInstanceCommand implements SlowI
           "pageLayoutWidgetPositionOverride",
           "pageLayoutWidgetPositionOverrideWasMigrated"
         FROM eligible_widgets
-        ON CONFLICT ("pageLayoutTabId") DO NOTHING
+        ON CONFLICT DO NOTHING
         RETURNING "pageLayoutTabId", "pageLayoutWidgetId"
       ), widgets_to_migrate AS (
         SELECT

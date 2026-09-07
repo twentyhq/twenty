@@ -220,6 +220,47 @@ describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () 
     await dataSource?.destroy();
   });
 
+  it('preserves a backed-up widget moved to another Canvas tab before a retry', async () => {
+    const originalTab = await seedTab({
+      layoutMode: 'CANVAS',
+      widgetIsActiveValues: [true],
+    });
+    const destinationTab = await seedTab({
+      layoutMode: 'CANVAS',
+      widgetIsActiveValues: [],
+    });
+
+    await command.runDataMigration(dataSource);
+
+    await dataSource.query(
+      `UPDATE "core"."pageLayoutWidget"
+       SET "pageLayoutTabId" = $1, "position" = '{"layoutMode":"CANVAS"}'::jsonb
+       WHERE "id" = $2`,
+      [destinationTab.tabId, originalTab.widgetIds[0]],
+    );
+
+    await command.runDataMigration(dataSource);
+
+    const movedWidgetState = await readTabAndWidgetState({
+      tabId: destinationTab.tabId,
+      widgetId: originalTab.widgetIds[0],
+    });
+
+    expect(movedWidgetState).toMatchObject({
+      layoutMode: 'CANVAS',
+      position: { layoutMode: 'CANVAS' },
+    });
+
+    await runDown();
+
+    expect(
+      await readTabAndWidgetState({
+        tabId: destinationTab.tabId,
+        widgetId: originalTab.widgetIds[0],
+      }),
+    ).toEqual(movedWidgetState);
+  });
+
   it('retries cache invalidation after the rows have already been migrated', async () => {
     const canvasTab = await seedTab({
       layoutMode: 'CANVAS',
