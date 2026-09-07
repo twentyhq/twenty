@@ -241,6 +241,14 @@ describe('parseMediaQuery', () => {
         value: 600,
       },
     ]);
+    expect(parseMediaQuery('(width = 600px)')?.conditions).toEqual([
+      {
+        kind: 'numeric',
+        source: 'componentWidth',
+        operator: '=',
+        value: 600,
+      },
+    ]);
     expect(parseMediaQuery('(400px <= width <= 800px)')?.conditions).toEqual([
       {
         kind: 'numeric',
@@ -253,6 +261,20 @@ describe('parseMediaQuery', () => {
         source: 'componentWidth',
         operator: '<=',
         value: 800,
+      },
+    ]);
+    expect(parseMediaQuery('(800px >= height > 400px)')?.conditions).toEqual([
+      {
+        kind: 'numeric',
+        source: 'componentHeight',
+        operator: '<=',
+        value: 800,
+      },
+      {
+        kind: 'numeric',
+        source: 'componentHeight',
+        operator: '>',
+        value: 400,
       },
     ]);
   });

@@ -86,6 +86,7 @@ describe('installMatchMediaPolyfill', () => {
     expect(matchMedia('(width >= 600px)').matches).toBe(true);
     expect(matchMedia('(400px <= width <= 800px)').matches).toBe(true);
     expect(matchMedia('(width < 700px)').matches).toBe(false);
+    expect(matchMedia('(width = 700px)').matches).toBe(true);
     expect(matchMedia('(height > 300px)').matches).toBe(false);
   });
 
