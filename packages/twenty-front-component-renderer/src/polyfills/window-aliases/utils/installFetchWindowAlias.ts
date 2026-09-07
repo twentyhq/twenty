@@ -6,7 +6,6 @@ import { resolvePolyfillWindow } from '@/polyfills/utils/resolvePolyfillWindow';
 export const installFetchWindowAlias = (
   globalScope: Record<string, unknown>,
 ): void => {
-  // Resolved at call time so the alias reaches a host fetch proxy installed later
   const delegateToCurrentGlobalFetch = (
     input: RequestInfo | URL,
     init?: RequestInit,
