@@ -10,6 +10,7 @@ import { assertFlatApplicationIsExportable } from 'src/engine/core-modules/appli
 import { classifyApplicationFlatEntities } from 'src/engine/core-modules/application/application-manifest/utils/classify-application-flat-entities.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import { reconstructDataModelManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-data-model-manifest.util';
+import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -33,7 +34,10 @@ const findUniversalIdentifierById = ({
 
 @Injectable()
 export class ApplicationManifestExportService {
-  constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
+  constructor(
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
+  ) {}
 
   async exportApplication({
     workspaceId,
@@ -70,6 +74,11 @@ export class ApplicationManifestExportService {
     const { objects, fields, indexes, coverage } = reconstructDataModelManifest(
       { applicationAllFlatEntityMaps },
     );
+    const translations = isDefined(flatApplication.applicationRegistrationId)
+      ? await this.applicationTranslationCacheService.getCatalogsByLocale(
+          flatApplication.applicationRegistrationId,
+        )
+      : undefined;
 
     const manifest: Manifest = {
       application: fromFlatApplicationToApplicationManifest({
@@ -97,6 +106,7 @@ export class ApplicationManifestExportService {
       pageLayoutTabs: [],
       commandMenuItems: [],
       timelineActivityTypes: [],
+      ...(isDefined(translations) ? { translations } : {}),
     };
 
     return {
