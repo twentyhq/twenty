@@ -3,11 +3,7 @@ import { type ParsedMediaQueryCondition } from '@/polyfills/media-query/types/Pa
 export const parseMediaQueryColorSchemeCondition = (
   featureValue: string,
 ): ParsedMediaQueryCondition | null => {
-  if (
-    featureValue === 'light' ||
-    featureValue === 'dark' ||
-    featureValue === 'no-preference'
-  ) {
+  if (featureValue === 'light' || featureValue === 'dark') {
     return { kind: 'color-scheme', value: featureValue };
   }
 

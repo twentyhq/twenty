@@ -10,7 +10,7 @@ export type ParsedMediaQueryCondition =
     }
   | {
       kind: 'color-scheme';
-      value: 'light' | 'dark' | 'no-preference';
+      value: 'light' | 'dark';
     }
   | {
       kind: 'orientation';

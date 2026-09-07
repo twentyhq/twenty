@@ -235,4 +235,25 @@ describe('installMatchMediaPolyfill', () => {
     );
     expect(matchMedia('screen and\u00a0(min-width: 1px)').matches).toBe(false);
   });
+
+  it('should negate an unknown media type like browsers do', () => {
+    const { matchMedia } = setupMatchMedia();
+
+    expect(matchMedia('garbage').matches).toBe(false);
+    expect(matchMedia('not garbage').matches).toBe(true);
+    expect(matchMedia('not tablet').matches).toBe(true);
+    expect(matchMedia('only tablet').matches).toBe(false);
+    expect(matchMedia('not 12px').matches).toBe(false);
+  });
+
+  it('should never match no-preference, even when negated', () => {
+    const { matchMedia } = setupMatchMedia();
+
+    expect(matchMedia('(prefers-color-scheme: no-preference)').matches).toBe(
+      false,
+    );
+    expect(
+      matchMedia('not (prefers-color-scheme: no-preference)').matches,
+    ).toBe(false);
+  });
 });
