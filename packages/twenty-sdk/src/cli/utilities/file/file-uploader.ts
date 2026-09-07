@@ -39,32 +39,18 @@ export class FileUploader {
   private apiService = new ApiService();
   private applicationUniversalIdentifier: string;
   private appPath: string;
-  private onEmptyFileSkipped: ((builtPath: string) => void) | undefined;
 
   constructor(options: {
     applicationUniversalIdentifier: string;
     appPath: string;
-    onEmptyFileSkipped?: (builtPath: string) => void;
   }) {
     this.applicationUniversalIdentifier =
       options.applicationUniversalIdentifier;
     this.appPath = options.appPath;
-    this.onEmptyFileSkipped = options.onEmptyFileSkipped;
   }
 
-  async uploadFiles(
-    filesToUpload: FileToUpload[],
-  ): Promise<FileUploadFailure[]> {
+  async uploadFiles(files: FileToUpload[]): Promise<FileUploadFailure[]> {
     const failures: FileUploadFailure[] = [];
-    const files = filesToUpload.filter((file) => {
-      if (!this.isEmptyFile(file)) {
-        return true;
-      }
-
-      this.onEmptyFileSkipped?.(file.builtPath);
-
-      return false;
-    });
 
     for (
       let index = 0;
@@ -202,10 +188,6 @@ export class FileUploader {
     });
 
     return failures;
-  }
-
-  private isEmptyFile({ builtPath }: FileToUpload): boolean {
-    return fs.statSync(path.join(this.appPath, builtPath)).size === 0;
   }
 
   private failWholeBatch(

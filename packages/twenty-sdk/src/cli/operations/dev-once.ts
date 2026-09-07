@@ -29,6 +29,10 @@ import { getGraphQLErrorMessage } from '@/cli/utilities/error/parse-server-error
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
 import { formatUploadFailures } from '@/cli/utilities/file/format-upload-failures';
+import {
+  formatSkippedEmptyFile,
+  partitionEmptyBuiltFiles,
+} from '@/cli/utilities/file/partition-empty-built-files';
 import { runSafe } from '@/cli/utilities/run-safe';
 import {
   APP_ERROR_CODES,
@@ -219,9 +223,19 @@ const innerAppDevOnce = async (
 
   await writeManifestToOutput(appPath, manifest);
 
+  const { filesToUpload, skippedFiles } = partitionEmptyBuiltFiles({
+    appPath,
+    files: Array.from(buildResult.builtFileInfos.values()).map(
+      (builtFileInfo) => ({
+        builtPath: builtFileInfo.builtPath,
+        fileFolder: builtFileInfo.fileFolder,
+      }),
+    ),
+  });
+
   const makeData = (): AppDevOnceResult => ({
     outputDir: path.join(appPath, OUTPUT_DIR),
-    fileCount: buildResult.builtFileInfos.size,
+    fileCount: filesToUpload.length,
     applicationDisplayName: manifest.application.displayName,
     applicationUniversalIdentifier: manifest.application.universalIdentifier,
     applied: apply,
@@ -318,23 +332,20 @@ const innerAppDevOnce = async (
     };
   }
 
+  for (const { builtPath } of skippedFiles) {
+    onProgress?.(formatSkippedEmptyFile(builtPath));
+  }
+
   onProgress?.(
-    `Uploading ${buildResult.builtFileInfos.size} file${buildResult.builtFileInfos.size === 1 ? '' : 's'}...`,
+    `Uploading ${filesToUpload.length} file${filesToUpload.length === 1 ? '' : 's'}...`,
   );
 
   const fileUploader = new FileUploader({
     appPath,
     applicationUniversalIdentifier: manifest.application.universalIdentifier,
-    onEmptyFileSkipped: (builtPath) =>
-      onProgress?.(`Skipped ${builtPath}: the built file is empty`),
   });
 
-  const uploadFailures = await fileUploader.uploadFiles(
-    Array.from(buildResult.builtFileInfos.values()).map((builtFileInfo) => ({
-      builtPath: builtFileInfo.builtPath,
-      fileFolder: builtFileInfo.fileFolder,
-    })),
-  );
+  const uploadFailures = await fileUploader.uploadFiles(filesToUpload);
 
   if (uploadFailures.length > 0) {
     return {

@@ -4,6 +4,10 @@ import {
 } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
 import { formatUploadFailures } from '@/cli/utilities/file/format-upload-failures';
+import {
+  formatSkippedEmptyFile,
+  partitionEmptyBuiltFiles,
+} from '@/cli/utilities/file/partition-empty-built-files';
 import { type FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -23,6 +27,7 @@ export class UploadFilesOrchestratorStep {
   private state: OrchestratorState;
   private notify: () => void;
   private verbose: boolean;
+  private appPath: string | null = null;
   private uploadedCount = 0;
   private failedCount = 0;
   private totalQueued = 0;
@@ -48,16 +53,12 @@ export class UploadFilesOrchestratorStep {
   initialize(input: { appPath: string; universalIdentifier: string }): void {
     const step = this.state.steps.uploadFiles;
 
+    this.appPath = input.appPath;
     step.output = {
       ...step.output,
       fileUploader: new FileUploader({
         appPath: input.appPath,
         applicationUniversalIdentifier: input.universalIdentifier,
-        onEmptyFileSkipped: (builtPath) =>
-          this.state.addEvent({
-            message: `Skipped ${builtPath}: the built file is empty`,
-            status: 'info',
-          }),
       }),
     };
     step.status = 'in_progress';
@@ -125,11 +126,34 @@ export class UploadFilesOrchestratorStep {
     );
   }
 
-  private queueUploads(files: QueuedUpload[]): void {
+  private queueUploads(queuedFiles: QueuedUpload[]): void {
     const step = this.state.steps.uploadFiles;
     const fileUploader = step.output.fileUploader;
 
-    if (!isDefined(fileUploader) || files.length === 0) {
+    if (
+      !isDefined(fileUploader) ||
+      !isDefined(this.appPath) ||
+      queuedFiles.length === 0
+    ) {
+      return;
+    }
+
+    const { filesToUpload: files, skippedFiles } = partitionEmptyBuiltFiles({
+      appPath: this.appPath,
+      files: queuedFiles,
+    });
+
+    for (const { builtPath, sourcePath } of skippedFiles) {
+      this.state.addEvent({
+        message: formatSkippedEmptyFile(builtPath),
+        status: 'info',
+      });
+      this.state.updateEntityStatus(sourcePath, 'success');
+    }
+
+    if (files.length === 0) {
+      this.notify();
+
       return;
     }
 

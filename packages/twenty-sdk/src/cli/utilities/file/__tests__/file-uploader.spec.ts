@@ -256,51 +256,6 @@ describe('FileUploader.uploadFiles', () => {
     ]);
   });
 
-  it('should leave an empty built file out of the batch and tell the caller', async () => {
-    const emptyBuiltPath = join(OUTPUT_DIR, 'empty.lock');
-    const onEmptyFileSkipped = vi.fn();
-
-    await writeFile(join(appPath, emptyBuiltPath), '');
-
-    const failures = await new FileUploader({
-      appPath,
-      applicationUniversalIdentifier: 'application-uid',
-      onEmptyFileSkipped,
-    }).uploadFiles([
-      ...filesToUpload,
-      { builtPath: emptyBuiltPath, fileFolder: FileFolder.BuiltLogicFunction },
-    ]);
-
-    expect(failures).toEqual([]);
-    expect(onEmptyFileSkipped).toHaveBeenCalledTimes(1);
-    expect(onEmptyFileSkipped).toHaveBeenCalledWith(emptyBuiltPath);
-    expect(
-      mockCreateApplicationFileUploads.mock.calls[0][0].files.map(
-        ({ filePath }: { filePath: string }) => filePath,
-      ),
-    ).toEqual(['handler.mjs', 'component.js']);
-    expect(mockPutFileToUploadUrl).toHaveBeenCalledTimes(2);
-  });
-
-  it('should not call the api at all when every file is empty', async () => {
-    const emptyBuiltPath = join(OUTPUT_DIR, 'empty.lock');
-    const onEmptyFileSkipped = vi.fn();
-
-    await writeFile(join(appPath, emptyBuiltPath), '');
-
-    const failures = await new FileUploader({
-      appPath,
-      applicationUniversalIdentifier: 'application-uid',
-      onEmptyFileSkipped,
-    }).uploadFiles([
-      { builtPath: emptyBuiltPath, fileFolder: FileFolder.BuiltLogicFunction },
-    ]);
-
-    expect(failures).toEqual([]);
-    expect(onEmptyFileSkipped).toHaveBeenCalledWith(emptyBuiltPath);
-    expect(mockCreateApplicationFileUploads).not.toHaveBeenCalled();
-  });
-
   it('should not call the api at all when there is nothing to upload', async () => {
     const failures = await buildUploader().uploadFiles([]);
 
