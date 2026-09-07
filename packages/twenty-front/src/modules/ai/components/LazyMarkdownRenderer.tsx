@@ -131,23 +131,7 @@ const LoadingSkeleton = () => {
     >
       <StyledSkeletonContainer>
         <Skeleton
-          width="70%"
-          height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
-        />
-
-        <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
-        <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
-        <Skeleton
-          width="90%"
-          height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-        />
-
-        <Skeleton
-          width="85%"
-          height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-        />
-        <Skeleton
-          width="80%"
+          width={200}
           height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
         />
       </StyledSkeletonContainer>
