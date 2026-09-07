@@ -86,7 +86,8 @@ export class MessagingDeleteGroupEmailMessagesService {
             senders
               .filter(
                 (sender) =>
-                  isNonEmptyString(sender.handle) && isGroupEmail(sender.handle),
+                  isNonEmptyString(sender.handle) &&
+                  isGroupEmail(sender.handle),
               )
               .map((sender) => sender.messageId),
           );
