@@ -5,7 +5,11 @@ import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { useApolloFactory } from '@/apollo/hooks/useApolloFactory';
-import { clearSessionGeneration } from '@/auth/utils/sessionGeneration';
+import {
+  clearSessionGeneration,
+  getSessionGeneration,
+  rotateSessionGeneration,
+} from '@/auth/utils/sessionGeneration';
 
 enableFetchMocks();
 
@@ -54,7 +58,11 @@ describe('useApolloFactory', () => {
   });
 
   it('should navigate to /welcome on unauthenticated error', async () => {
-    expect.assertions(4);
+    expect.assertions(6);
+
+    rotateSessionGeneration();
+
+    expect(getSessionGeneration()).not.toBeNull();
 
     const errors = [
       {
@@ -106,6 +114,7 @@ describe('useApolloFactory', () => {
     }
 
     expect(mutationError).toBeInstanceOf(CombinedGraphQLErrors);
+    expect(getSessionGeneration()).toBeNull();
     expect(mockNavigate).toHaveBeenCalled();
     expect(mockNavigate).toHaveBeenCalledWith('/welcome');
   });

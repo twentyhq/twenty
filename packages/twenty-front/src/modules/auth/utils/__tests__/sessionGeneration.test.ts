@@ -44,4 +44,18 @@ describe('sessionGeneration', () => {
     expect(firstGeneration).not.toBeNull();
     expect(getSessionGeneration()).not.toBe(firstGeneration);
   });
+
+  it('should not replace an unpersisted generation with a stale stored one', () => {
+    rotateSessionGeneration();
+    const persistedGeneration = getSessionGeneration();
+
+    jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('Storage is read-only');
+    });
+
+    rotateSessionGeneration();
+
+    expect(getSessionGeneration()).not.toBeNull();
+    expect(getSessionGeneration()).not.toBe(persistedGeneration);
+  });
 });

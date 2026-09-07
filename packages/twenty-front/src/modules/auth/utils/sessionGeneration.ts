@@ -2,8 +2,13 @@ import { v4 as uuidv4 } from 'uuid';
 
 const SESSION_GENERATION_LOCAL_STORAGE_KEY = 'authSessionGeneration';
 let inMemorySessionGeneration: string | null = null;
+let hasUnpersistedSessionGeneration = false;
 
 export const getSessionGeneration = (): string | null => {
+  if (hasUnpersistedSessionGeneration) {
+    return inMemorySessionGeneration;
+  }
+
   try {
     // Direct reads observe another tab's rotation immediately; persisted Jotai
     // state only reads storage when the atom initializes.
@@ -23,7 +28,10 @@ export const rotateSessionGeneration = (): void => {
       SESSION_GENERATION_LOCAL_STORAGE_KEY,
       inMemorySessionGeneration,
     );
-  } catch {}
+    hasUnpersistedSessionGeneration = false;
+  } catch {
+    hasUnpersistedSessionGeneration = true;
+  }
 };
 
 export const clearSessionGeneration = (): void => {
@@ -31,5 +39,8 @@ export const clearSessionGeneration = (): void => {
 
   try {
     localStorage.removeItem(SESSION_GENERATION_LOCAL_STORAGE_KEY);
-  } catch {}
+    hasUnpersistedSessionGeneration = false;
+  } catch {
+    hasUnpersistedSessionGeneration = true;
+  }
 };
