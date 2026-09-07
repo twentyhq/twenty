@@ -76,6 +76,14 @@ export const useTriggerEventStreamCreation = () => {
 
     let hasReceivedFirstEvent = false;
 
+    const requestDestroyIfStillCurrent = () => {
+      if (store.get(sseEventStreamIdState.atom) !== newSseEventStreamId) {
+        return;
+      }
+
+      store.set(shouldDestroyEventStreamState.atom, true);
+    };
+
     const handleFirstEventReceived = () => {
       if (hasReceivedFirstEvent) {
         return;
@@ -122,7 +130,7 @@ export const useTriggerEventStreamCreation = () => {
               );
             }
 
-            store.set(shouldDestroyEventStreamState.atom, true);
+            requestDestroyIfStillCurrent();
 
             return;
           }
@@ -165,10 +173,10 @@ export const useTriggerEventStreamCreation = () => {
         },
         error: (error) => {
           captureException(error);
-          store.set(shouldDestroyEventStreamState.atom, true);
+          requestDestroyIfStillCurrent();
         },
         complete: () => {
-          store.set(shouldDestroyEventStreamState.atom, true);
+          requestDestroyIfStillCurrent();
         },
       },
     );
