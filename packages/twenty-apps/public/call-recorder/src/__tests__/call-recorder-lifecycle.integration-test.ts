@@ -132,10 +132,7 @@ const discoverVisibleCalendarEventFixtures = async (): Promise<
     after = connection.pageInfo.hasNextPage
       ? connection.pageInfo.endCursor
       : null;
-  } while (
-    after !== null &&
-    fixtures.length < CALENDAR_EVENT_UPDATE_BATCH_SIZE + 1
-  );
+  } while (after !== null);
 
   if (fixtures.length < CALENDAR_EVENT_UPDATE_BATCH_SIZE + 1) {
     throw new Error(
@@ -371,6 +368,7 @@ describe('call recorder app lifecycle (integration)', () => {
   let client: CoreApiClient;
   let workspaceId: string;
   let availableCalendarEventFixtures: CalendarEventFixture[];
+  let nextCalendarEventFixtureIndex = 0;
   let recall: FakeRecallApi;
   const borrowedCalendarEventFixtures: CalendarEventFixture[] = [];
   const createdCallRecordingIds: string[] = [];
@@ -483,12 +481,13 @@ describe('call recorder app lifecycle (integration)', () => {
     overrides: Record<string, unknown> = {},
   ): Promise<string> => {
     const fixture =
-      availableCalendarEventFixtures[borrowedCalendarEventFixtures.length];
+      availableCalendarEventFixtures[nextCalendarEventFixtureIndex];
 
     if (fixture === undefined) {
       throw new Error('No visible seeded calendar event fixture available');
     }
 
+    nextCalendarEventFixtureIndex += 1;
     borrowedCalendarEventFixtures.push(fixture);
 
     await client.mutation({
