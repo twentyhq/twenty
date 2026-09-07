@@ -1,5 +1,4 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useHiddenWorkspaceWorkflowRunRelationFields } from '@/object-core/workflows/hooks/useHiddenWorkspaceWorkflowRunRelationFields';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -8,6 +7,7 @@ import {
   type FieldsWidgetGroup,
   type FieldsWidgetGroupField,
 } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
+import { useFieldsWidgetFields } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetFields';
 import { buildDefaultFieldsWidgetGroups } from '@/page-layout/widgets/fields/utils/buildDefaultFieldsWidgetGroups';
 import { filterDraftGroupsForDisplay } from '@/page-layout/widgets/fields/utils/filterDraftGroupsForDisplay';
 import { useViewById } from '@/views/hooks/useViewById';
@@ -36,8 +36,7 @@ export const useFieldsWidgetGroups = ({
   const workspaceCustomApplicationId =
     currentWorkspace?.workspaceCustomApplication?.id;
 
-  const hiddenFieldMetadataIdsOrNames =
-    useHiddenWorkspaceWorkflowRunRelationFields(objectNameSingular);
+  const visibleFields = useFieldsWidgetFields(objectMetadataItem);
 
   const { groups, displayMode } = useMemo<{
     groups: FieldsWidgetGroup[];
@@ -46,10 +45,6 @@ export const useFieldsWidgetGroups = ({
     if (!isDefined(objectMetadataItem)) {
       return { groups: [], displayMode: 'grouped' };
     }
-
-    const visibleFields = objectMetadataItem.fields.filter(
-      (field) => !hiddenFieldMetadataIdsOrNames.includes(field.name),
-    );
 
     const activeFields = visibleFields.filter((field) => field.isActive);
 
@@ -156,7 +151,7 @@ export const useFieldsWidgetGroups = ({
     };
   }, [
     objectMetadataItem,
-    hiddenFieldMetadataIdsOrNames,
+    visibleFields,
     labelIdentifierFieldMetadataItem,
     view,
     viewId,
