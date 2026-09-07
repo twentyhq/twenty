@@ -9,4 +9,5 @@ export type APIsOAuthState = {
   calendarVisibility?: CalendarChannelVisibility;
   messageVisibility?: MessageChannelVisibility;
   skipMessageChannelConfiguration?: boolean;
+  shouldRequestEmailForwardingScopes?: boolean;
 };

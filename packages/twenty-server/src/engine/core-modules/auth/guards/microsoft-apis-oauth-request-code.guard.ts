@@ -66,6 +66,8 @@ export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
         messageVisibility: request.query.messageVisibility,
         skipMessageChannelConfiguration:
           request.query.skipMessageChannelConfiguration,
+        shouldRequestEmailForwardingScopes:
+          request.query.shouldRequestEmailForwardingScopes,
         loginHint: request.query.loginHint,
       });
 

@@ -57,6 +57,8 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
         calendarVisibility: state.calendarVisibility,
         messageVisibility: state.messageVisibility,
         skipMessageChannelConfiguration: state.skipMessageChannelConfiguration,
+        shouldRequestEmailForwardingScopes:
+          state.shouldRequestEmailForwardingScopes,
       });
 
       return (await super.canActivate(context)) as boolean;

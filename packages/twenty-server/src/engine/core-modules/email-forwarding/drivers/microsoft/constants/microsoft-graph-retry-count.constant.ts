@@ -1,0 +1,1 @@
+export const MICROSOFT_GRAPH_RETRY_COUNT = 5;

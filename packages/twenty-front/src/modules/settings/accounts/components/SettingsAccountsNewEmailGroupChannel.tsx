@@ -8,6 +8,8 @@ import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 
 import { useCreateEmailGroupChannel } from '@/settings/accounts/hooks/useCreateEmailGroupChannel';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { isNonEmptyString } from '@sniptt/guards';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -18,6 +20,7 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
   const { createEmailGroupChannel, loading } = useCreateEmailGroupChannel();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const [handle, setHandle] = useState('');
   const [displayName, setDisplayName] = useState('');
@@ -34,12 +37,28 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
     const messageChannelId =
       result.data?.createEmailGroupChannel.messageChannel.id;
 
+    const forwardingFailureReason =
+      result.data?.createEmailGroupChannel.forwardingFailureReason;
+
+    if (isNonEmptyString(forwardingFailureReason)) {
+      enqueueErrorSnackBar({
+        message: t`Automatic forwarding could not be set up: ${forwardingFailureReason} Set the forwarding up manually from this page.`,
+      });
+    }
+
     if (messageChannelId) {
       navigate(SettingsPath.EmailGroupChannelDetail, {
         messageChannelId,
       });
     }
-  }, [createEmailGroupChannel, displayName, handle, navigate]);
+  }, [
+    createEmailGroupChannel,
+    displayName,
+    enqueueErrorSnackBar,
+    handle,
+    navigate,
+    t,
+  ]);
 
   return (
     <SettingsPageLayout

@@ -13,6 +13,7 @@ type APIsOAuthRequestExtraParams = {
   userId?: string;
   workspaceId?: string;
   skipMessageChannelConfiguration?: string;
+  shouldRequestEmailForwardingScopes?: string;
 };
 
 export const setRequestExtraParams = (
@@ -28,6 +29,7 @@ export const setRequestExtraParams = (
     userId,
     workspaceId,
     skipMessageChannelConfiguration,
+    shouldRequestEmailForwardingScopes,
   } = params;
 
   if (!transientToken) {
@@ -66,5 +68,10 @@ export const setRequestExtraParams = (
   if (skipMessageChannelConfiguration) {
     request.params.skipMessageChannelConfiguration =
       skipMessageChannelConfiguration;
+  }
+
+  if (shouldRequestEmailForwardingScopes) {
+    request.params.shouldRequestEmailForwardingScopes =
+      shouldRequestEmailForwardingScopes;
   }
 };

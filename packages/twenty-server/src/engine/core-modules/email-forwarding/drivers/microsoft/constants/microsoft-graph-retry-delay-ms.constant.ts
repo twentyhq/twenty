@@ -1,0 +1,1 @@
+export const MICROSOFT_GRAPH_RETRY_DELAY_MS = 3000;

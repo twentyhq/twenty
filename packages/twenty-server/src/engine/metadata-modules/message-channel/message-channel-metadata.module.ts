@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { EmailForwardingModule } from 'src/engine/core-modules/email-forwarding/email-forwarding.module';
 import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -19,6 +20,7 @@ import { MessagingImportManagerModule } from 'src/modules/messaging/message-impo
     ConnectedAccountMetadataModule,
     MessagingImportManagerModule,
     EmailingDomainModule,
+    EmailForwardingModule,
     WorkspaceEventEmitterModule,
   ],
   providers: [

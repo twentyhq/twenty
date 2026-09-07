@@ -13,6 +13,7 @@ export const CREATE_EMAIL_GROUP_CHANNEL = gql`
         contactAutoCreationPolicy
       }
       forwardingAddress
+      forwardingFailureReason
     }
   }
 `;

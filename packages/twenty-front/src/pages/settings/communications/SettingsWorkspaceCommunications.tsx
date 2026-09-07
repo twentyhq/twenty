@@ -3,6 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
+import { SettingsWorkspaceEmailForwardingSection } from '@/settings/workspace/components/SettingsWorkspaceEmailForwardingSection';
 import { SettingsWorkspaceEmailGroupSection } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupSection';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
@@ -91,6 +92,7 @@ export const SettingsWorkspaceCommunications = () => {
             tabs={[]}
           />
         </Section>
+        <SettingsWorkspaceEmailForwardingSection />
         <SettingsWorkspaceEmailGroupSection />
         <Section>
           <H2Title

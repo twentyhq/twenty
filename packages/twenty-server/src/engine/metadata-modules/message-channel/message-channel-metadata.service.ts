@@ -17,6 +17,7 @@ import {
   MessageChannelVisibility,
 } from 'twenty-shared/types';
 
+import { EmailForwardingService } from 'src/engine/core-modules/email-forwarding/services/email-forwarding.service';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
@@ -44,6 +45,7 @@ export class MessageChannelMetadataService {
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailingDomainService: EmailingDomainService,
+    private readonly emailForwardingService: EmailForwardingService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
@@ -299,7 +301,17 @@ export class MessageChannelMetadataService {
       pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
     });
 
-    return { messageChannel, forwardingAddress };
+    const forwardingFailureReason =
+      await this.emailForwardingService.createForwardingAddress({
+        workspaceId,
+        sourceAddress: handle,
+        destinationAddress: forwardingAddress,
+        displayName: isNonEmptyString(trimmedDisplayName)
+          ? trimmedDisplayName
+          : handle,
+      });
+
+    return { messageChannel, forwardingAddress, forwardingFailureReason };
   }
 
   async getOrCreateEmailGroupChannel({
@@ -426,6 +438,14 @@ export class MessageChannelMetadataService {
     const sendDomain = getDomainFromEmail(
       connectedAccount?.handle ?? '',
     )?.toLowerCase();
+
+    if (isNonEmptyString(connectedAccount?.handle)) {
+      await this.emailForwardingService.deleteForwardingAddress({
+        workspaceId,
+        sourceAddress: connectedAccount.handle,
+        destinationAddress: messageChannel.handle,
+      });
+    }
 
     await this.connectedAccountMetadataService.delete({
       id: messageChannel.connectedAccountId,

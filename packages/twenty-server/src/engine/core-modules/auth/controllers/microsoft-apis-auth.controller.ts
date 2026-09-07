@@ -81,6 +81,7 @@ export class MicrosoftAPIsAuthController {
         calendarVisibility,
         messageVisibility,
         skipMessageChannelConfiguration,
+        shouldRequestEmailForwardingScopes,
       } = user;
 
       const { workspaceMemberId, userId, workspaceId } =
@@ -117,6 +118,7 @@ export class MicrosoftAPIsAuthController {
           calendarVisibility,
           messageVisibility,
           skipMessageChannelConfiguration,
+          shouldRequestEmailForwardingScopes,
         });
 
       if (userId) {

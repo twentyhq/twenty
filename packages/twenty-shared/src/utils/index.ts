@@ -193,6 +193,7 @@ export {
   getEdgeTypename,
   getGroupByConnectionTypename,
 } from './graphql/graphql-get-typename.util';
+export { hasEmailForwardingScopes } from './hasEmailForwardingScopes';
 export { getImageAbsoluteURI } from './image/getImageAbsoluteURI';
 export { getLinkFaviconUrl } from './image/getLinkFaviconUrl';
 export {

@@ -87,6 +87,7 @@ export class MicrosoftAPIsService {
     calendarVisibility: CalendarChannelVisibility | undefined;
     messageVisibility: MessageChannelVisibility | undefined;
     skipMessageChannelConfiguration?: boolean;
+    shouldRequestEmailForwardingScopes?: boolean;
   }): Promise<string> {
     const {
       handle,
@@ -96,9 +97,12 @@ export class MicrosoftAPIsService {
       calendarVisibility,
       messageVisibility,
       skipMessageChannelConfiguration,
+      shouldRequestEmailForwardingScopes,
     } = input;
 
-    const scopes = getMicrosoftApisOauthScopes();
+    const scopes = getMicrosoftApisOauthScopes({
+      shouldRequestEmailForwardingScopes,
+    });
 
     const authContext = buildSystemAuthContext(workspaceId);
 
