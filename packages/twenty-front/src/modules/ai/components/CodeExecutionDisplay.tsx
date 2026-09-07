@@ -10,9 +10,6 @@ import {
   IconCopy,
   IconDownload,
   IconFile,
-  IconPlayerPlay,
-  IconSquareRoundedCheck,
-  IconSquareRoundedX,
 } from 'twenty-ui/icon';
 import { CodeEditor, LightIconButton } from 'twenty-ui/input';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
@@ -191,13 +188,6 @@ export const CodeExecutionDisplay = ({
       ? 'success'
       : 'error';
 
-  const StatusIcon =
-    status === 'success'
-      ? IconSquareRoundedCheck
-      : status === 'error'
-        ? IconSquareRoundedX
-        : IconPlayerPlay;
-
   const statusText = isRunning
     ? t`Running...`
     : exitCode === 0
@@ -224,7 +214,6 @@ export const CodeExecutionDisplay = ({
                   : 'gray'
             }
             text={statusText}
-            Icon={StatusIcon}
             weight="medium"
             preventShrink
           />
