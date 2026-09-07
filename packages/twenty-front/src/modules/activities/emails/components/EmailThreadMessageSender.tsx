@@ -46,7 +46,7 @@ export const EmailThreadMessageSender = ({
         </StyledThreadMessageSentAt>
         <AppTooltip
           anchorSelect={`#${tooltipId}`}
-          content={formatToHumanReadableDate(sentAt)}
+          title={formatToHumanReadableDate(sentAt)}
           place={TooltipPosition.Top}
         />
       </>

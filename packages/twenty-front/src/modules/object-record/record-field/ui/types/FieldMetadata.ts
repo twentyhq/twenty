@@ -13,6 +13,7 @@ import { z } from 'zod';
 import { type RelationType } from '~/generated-metadata/graphql';
 
 type BaseFieldMetadata = {
+  description?: string | null;
   fieldName: string;
   objectMetadataNameSingular?: string;
   applicationId?: string | null;

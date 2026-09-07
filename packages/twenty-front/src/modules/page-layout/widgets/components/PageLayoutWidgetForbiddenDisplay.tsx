@@ -43,7 +43,7 @@ export const PageLayoutWidgetForbiddenDisplay = ({
       </div>
       <AppTooltip
         anchorSelect={`#${tooltipId}`}
-        content={getTooltipContent()}
+        title={getTooltipContent()}
         place="top"
       />
     </>
