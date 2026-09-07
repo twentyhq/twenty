@@ -162,18 +162,6 @@ export const SurfacesPreact: Story = createGalleryStory(
   'preact',
 );
 
-// KNOWN ISSUE (TDD) golden test: an open Modal (base-ui Dialog portal) hangs
-// the React-runtime render — the gallery status must never mount. Works under
-// Preact (see ModalOpenPreact). When fixed, flip this story to the strict
-// zero-failure play used by ModalOpenPreact.
-const modalOpenHangTest: Story['play'] = async ({ canvasElement }) => {
-  const canvas = within(canvasElement);
-
-  await expect(
-    canvas.findByTestId('gallery-status', {}, { timeout: 10000 }),
-  ).rejects.toThrow();
-};
-
 const modalOpenTest: Story['play'] = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
 
@@ -193,7 +181,7 @@ const modalOpenTest: Story['play'] = async ({ canvasElement }) => {
 
 export const ModalOpenReact: Story = {
   ...createGalleryStory('twenty-ui-modal-open-gallery'),
-  play: modalOpenHangTest,
+  play: modalOpenTest,
 };
 export const ModalOpenPreact: Story = {
   ...createGalleryStory('twenty-ui-modal-open-gallery', 'preact'),
