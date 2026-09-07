@@ -8,7 +8,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { type Manifest } from 'twenty-shared/application';
 import { generateMessageId } from 'twenty-shared/i18n';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
 const PET_LABEL_ID = generateMessageId('Pet', 'objectMetadata.labelSingular');
 
@@ -37,7 +37,15 @@ const EXPORTED_TRANSLATIONS = {
   'de-DE': { [PET_LABEL_ID]: 'Haustier' },
 };
 
-const createAppPath = () => mkdtemp(join(tmpdir(), 'plan-translation-writes-'));
+const createdAppPaths: string[] = [];
+
+const createAppPath = async () => {
+  const appPath = await mkdtemp(join(tmpdir(), 'plan-translation-writes-'));
+
+  createdAppPaths.push(appPath);
+
+  return appPath;
+};
 
 const materialize = async (appPath: string, plan: TranslationWritePlan) => {
   for (const write of plan.writes) {
@@ -74,6 +82,14 @@ const pullFresh = async (appPath: string) => {
 };
 
 describe('planTranslationWrites', () => {
+  afterEach(async () => {
+    await Promise.all(
+      createdAppPaths
+        .splice(0)
+        .map((appPath) => rm(appPath, { recursive: true, force: true })),
+    );
+  });
+
   it('should write the readable file and the compiled remainder of every exported locale on a fresh pull', async () => {
     const appPath = await createAppPath();
 
@@ -235,6 +251,61 @@ describe('planTranslationWrites', () => {
     ).toEqual({
       'No content yet': 'Rien pour le moment',
       'objectMetadata.labelSingular': { Pet: 'Bête' },
+    });
+  });
+
+  it('should leave a locally added compiled entry alone when nothing became decodable', async () => {
+    const appPath = await createAppPath();
+
+    await pullFresh(appPath);
+
+    const compiledPath = join(appPath, 'locales/compiled/fr-FR.json');
+
+    await writeFile(
+      compiledPath,
+      JSON.stringify({ zzzzzz: 'orphan', yyyyyy: 'added by hand' }),
+    );
+
+    const plan = await planTranslationWrites({
+      appPath,
+      manifest: buildManifest(EXPORTED_TRANSLATIONS),
+      baseManifest: buildManifest(EXPORTED_TRANSLATIONS),
+      frontComponentSourcePaths: [],
+    });
+
+    expect(describePlan(plan)).toEqual({ writes: [], deletions: [] });
+    expect(JSON.parse(await readFile(compiledPath, 'utf8'))).toEqual({
+      zzzzzz: 'orphan',
+      yyyyyy: 'added by hand',
+    });
+  });
+
+  it('should treat a base or an export whose translations are not a record as saying nothing', async () => {
+    const appPath = await createAppPath();
+
+    await pullFresh(appPath);
+
+    const brokenBasePlan = await planTranslationWrites({
+      appPath,
+      manifest: buildManifest(EXPORTED_TRANSLATIONS),
+      baseManifest: buildManifest(
+        'not a record' as unknown as Record<string, unknown>,
+      ),
+      frontComponentSourcePaths: [],
+    });
+
+    expect(describePlan(brokenBasePlan)).toEqual({ writes: [], deletions: [] });
+
+    const brokenExportPlan = await planTranslationWrites({
+      appPath,
+      manifest: buildManifest(['fr-FR'] as unknown as Record<string, unknown>),
+      baseManifest: buildManifest(EXPORTED_TRANSLATIONS),
+      frontComponentSourcePaths: [],
+    });
+
+    expect(describePlan(brokenExportPlan)).toEqual({
+      writes: [],
+      deletions: [],
     });
   });
 

@@ -11,6 +11,12 @@ import { generateMessageId } from 'twenty-shared/i18n';
 import { type AppLocale } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
+const isLocaleCatalog = (value: unknown): value is Record<string, string> =>
+  isDefined(value) &&
+  typeof value === 'object' &&
+  !Array.isArray(value) &&
+  Object.values(value).every((translation) => typeof translation === 'string');
+
 export type PulledLocaleCatalog = {
   locale: AppLocale;
   authored: Record<string, string | Record<string, string>>;
@@ -41,7 +47,7 @@ export const splitPulledTranslations = async ({
   return Object.entries(manifest.translations ?? {})
     .filter(
       (entry): entry is [AppLocale, Record<string, string>] =>
-        isSupportedLocale(entry[0]) && isDefined(entry[1]),
+        isSupportedLocale(entry[0]) && isLocaleCatalog(entry[1]),
     )
     .sort(([left], [right]) => left.localeCompare(right))
     .map(([locale, messages]) => {

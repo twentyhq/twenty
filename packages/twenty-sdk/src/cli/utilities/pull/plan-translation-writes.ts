@@ -37,6 +37,9 @@ type LocaleFile = {
 
 type LocaleCatalogs = Partial<Record<string, Record<string, string>>>;
 
+const isLocaleCatalogs = (value: unknown): value is LocaleCatalogs =>
+  isDefined(value) && typeof value === 'object' && !Array.isArray(value);
+
 const serializeLocaleFile = (value: unknown): string =>
   `${JSON.stringify(value, null, 2)}\n`;
 
@@ -68,9 +71,15 @@ const promoteDecodedEntries = ({
   existingAuthoredContent: string | null;
   existingCompiledContent: string | null;
 }): Record<string, string | Record<string, string>> | null => {
+  const authoredMessageIds = new Set(
+    flattenLocaleCatalog(catalog.authored).map((entry) =>
+      generateMessageId(entry.message, entry.context),
+    ),
+  );
   const promotedMessageIds = new Set(
     Object.keys(parseLocaleFile(existingCompiledContent)).filter(
-      (messageId) => !(messageId in catalog.compiled),
+      (messageId) =>
+        !(messageId in catalog.compiled) && authoredMessageIds.has(messageId),
     ),
   );
 
@@ -120,7 +129,7 @@ export const planTranslationWrites = async ({
   const compiledEntryCountByLocale: Record<string, number> = {};
   const exportedTranslations = manifest.translations;
 
-  if (!isDefined(exportedTranslations)) {
+  if (!isLocaleCatalogs(exportedTranslations)) {
     return { writes, deletions, compiledEntryCountByLocale };
   }
 
@@ -129,7 +138,11 @@ export const planTranslationWrites = async ({
     frontComponentSourcePaths,
   });
   const exportedLocales = new Set<string>(catalogs.map(({ locale }) => locale));
-  const baseTranslations: LocaleCatalogs = baseManifest?.translations ?? {};
+  const baseTranslations: LocaleCatalogs = isLocaleCatalogs(
+    baseManifest?.translations,
+  )
+    ? baseManifest.translations
+    : {};
   const currentTranslations: LocaleCatalogs = exportedTranslations;
 
   for (const catalog of catalogs) {
