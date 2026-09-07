@@ -1,3 +1,5 @@
+import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
+
 import { type FrontComponentStorageSnapshots } from '@/types/FrontComponentStorageSnapshots';
 import { type MediaRecorderCapabilities } from '@/types/MediaSession';
 import { type SdkClientSources } from '@/types/SdkClientSources';
@@ -14,6 +16,7 @@ export type HostToWorkerRenderContext = {
   hostFetchOrigins?: string[];
   applicationVariables?: Record<string, string>;
   initialViewportGeometry?: ViewportGeometrySnapshot;
+  initialExecutionContext?: FrontComponentExecutionContext;
   storageSnapshots?: FrontComponentStorageSnapshots;
   // MediaRecorder.isTypeSupported is synchronous, so the worker polyfill
   // answers from this snapshot instead of a round trip to the host.

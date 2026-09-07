@@ -7,6 +7,7 @@ import { frontComponentStorageBridges } from '@/polyfills/storage/states/frontCo
 import { attachRemoteRenderRootToWorkerDocument } from '@/remote/worker/rendering/utils/attachRemoteRenderRootToWorkerDocument';
 import { installHostFetchProxy } from '@/remote/worker/fetch-proxy/utils/installHostFetchProxy';
 import { loadFrontComponentModule } from '@/remote/worker/module-loading/utils/loadFrontComponentModule';
+import { setFrontComponentExecutionContext } from '@/remote/worker/environment/utils/setFrontComponentExecutionContext';
 import { setWorkerEnvironmentVariablesFromRenderContext } from '@/remote/worker/environment/utils/setWorkerEnvironmentVariablesFromRenderContext';
 import { type HostFetchFunction } from '@/types/HostFetchFunction';
 import { type HostToWorkerRenderContext } from '@/types/HostToWorkerRenderContext';
@@ -39,6 +40,10 @@ export const renderFrontComponent = async ({
     workerGeometryStore.applyGeometryBatch({
       viewport: renderContext.initialViewportGeometry,
     });
+  }
+
+  if (isDefined(renderContext.initialExecutionContext)) {
+    setFrontComponentExecutionContext(renderContext.initialExecutionContext);
   }
 
   if (isDefined(renderContext.mediaRecorderCapabilities)) {
