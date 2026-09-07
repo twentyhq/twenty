@@ -137,6 +137,8 @@ describe('DRAFT_EMAIL workflow action on Microsoft (integration)', () => {
   it('attaches files to the drafted message', async () => {
     const subject = `Microsoft workflow draft with attachment ${randomUUID()}`;
     const file = await uploadAttachmentFile('draft-attachment.txt');
+    const attachmentsBefore = microsoft.createdAttachments.length;
+    const messagesBefore = microsoft.createdMessages.length;
 
     const workflowRun = await runWorkflowActionStep({
       name: 'Microsoft draft email with attachment workflow',
@@ -155,19 +157,23 @@ describe('DRAFT_EMAIL workflow action on Microsoft (integration)', () => {
       stepStatus: 'SUCCESS',
     });
 
-    const [lastCreatedAttachment] = microsoft.createdAttachments.slice(-1);
-
-    expect(lastCreatedAttachment).toMatchObject({
-      '@odata.type': '#microsoft.graph.fileAttachment',
-      name: 'draft-attachment.txt',
-      contentBytes: ATTACHMENT_CONTENT.toString('base64'),
-    });
+    expect(microsoft.createdAttachments.slice(attachmentsBefore)).toMatchObject(
+      [
+        {
+          messageId: `microsoft-message-${messagesBefore + 1}`,
+          '@odata.type': '#microsoft.graph.fileAttachment',
+          name: 'draft-attachment.txt',
+          contentBytes: ATTACHMENT_CONTENT.toString('base64'),
+        },
+      ],
+    );
     expect(microsoft.sentMessageIds).toEqual([]);
   }, 60000);
 
   it('attaches files to a drafted reply', async () => {
     const subject = `Microsoft workflow reply draft with attachment ${randomUUID()}`;
     const file = await uploadAttachmentFile('reply-attachment.txt');
+    const attachmentsBefore = microsoft.createdAttachments.length;
 
     const workflowRun = await runWorkflowActionStep({
       name: 'Microsoft draft reply with attachment workflow',
@@ -187,14 +193,16 @@ describe('DRAFT_EMAIL workflow action on Microsoft (integration)', () => {
       stepStatus: 'SUCCESS',
     });
 
-    const [lastCreatedAttachment] = microsoft.createdAttachments.slice(-1);
-
-    expect(lastCreatedAttachment).toMatchObject({
-      messageId: 'microsoft-reply-message',
-      '@odata.type': '#microsoft.graph.fileAttachment',
-      name: 'reply-attachment.txt',
-      contentBytes: ATTACHMENT_CONTENT.toString('base64'),
-    });
+    expect(microsoft.createdAttachments.slice(attachmentsBefore)).toMatchObject(
+      [
+        {
+          messageId: 'microsoft-reply-message',
+          '@odata.type': '#microsoft.graph.fileAttachment',
+          name: 'reply-attachment.txt',
+          contentBytes: ATTACHMENT_CONTENT.toString('base64'),
+        },
+      ],
+    );
     expect(microsoft.sentMessageIds).toEqual([]);
   }, 60000);
 });

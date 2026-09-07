@@ -127,6 +127,17 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
       microsoftClient,
       messageId: draftMessage.id,
       attachments: sendMessageInput.attachments,
+    }).catch(async (error) => {
+      await microsoftClient
+        .api(`/me/messages/${draftMessage.id}`)
+        .delete()
+        .catch((deletionError) =>
+          this.logger.warn(
+            `Failed to delete Microsoft draft ${draftMessage.id} after its attachments failed to upload: ${deletionError}`,
+          ),
+        );
+
+      throw error;
     });
 
     return draftMessage;
