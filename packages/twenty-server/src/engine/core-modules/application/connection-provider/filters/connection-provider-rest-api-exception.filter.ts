@@ -42,9 +42,7 @@ const connectionProviderExceptionCodeToHttpStatus = (
 
 @Injectable()
 @Catch(ConnectionProviderException)
-export class ConnectionProviderRestApiExceptionFilter
-  implements ExceptionFilter
-{
+export class ConnectionProviderRestApiExceptionFilter implements ExceptionFilter {
   constructor(
     private readonly httpExceptionHandlerService: HttpExceptionHandlerService,
   ) {}
