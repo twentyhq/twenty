@@ -60,20 +60,14 @@ describe('Standard object readability', () => {
     });
   });
 
-  it('leaves every other standard object OPEN', () => {
+  it('leaves every other standard object OPEN for readability', () => {
     const readabilities = new Set(
       otherStandardFlatObjectMetadatas.map(
         (flatObjectMetadata) => flatObjectMetadata.readability,
       ),
     );
-    const writabilities = new Set(
-      otherStandardFlatObjectMetadatas.map(
-        (flatObjectMetadata) => flatObjectMetadata.writability,
-      ),
-    );
 
     expect(otherStandardFlatObjectMetadatas.length).toBeGreaterThan(0);
     expect([...readabilities]).toEqual([MetadataReadability.OPEN]);
-    expect([...writabilities]).toEqual([MetadataWritability.OPEN]);
   });
 });

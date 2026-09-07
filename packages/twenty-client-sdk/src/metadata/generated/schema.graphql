@@ -116,6 +116,7 @@ type CommandMenuItem {
   payload: CommandMenuItemPayload
   hotKeys: [String!]
   conditionalAvailabilityExpression: String
+  conditionalPinnedExpression: String
   availabilityObjectMetadataId: UUID
   navigationTargetObjectMetadataId: UUID
   pageLayoutId: UUID
@@ -149,6 +150,7 @@ enum EngineComponentKey {
   SAVE_DASHBOARD_LAYOUT
   CANCEL_DASHBOARD_LAYOUT
   DUPLICATE_DASHBOARD
+  DUPLICATE_MESSAGE_LIST
   ACTIVATE_WORKFLOW
   DEACTIVATE_WORKFLOW
   DISCARD_DRAFT_WORKFLOW
@@ -179,6 +181,8 @@ enum EngineComponentKey {
   COMPOSE_CAMPAIGN
   SEND_MESSAGE_CAMPAIGN
   SEND_MESSAGE_CAMPAIGN_TEST
+  CANCEL_MESSAGE_CAMPAIGN
+  DUPLICATE_MESSAGE_CAMPAIGN
   EMAIL_BLOCK_SETTINGS
   GO_TO_PEOPLE
   GO_TO_COMPANIES
@@ -262,6 +266,7 @@ type Object {
   isSearchable: Boolean!
   openRecordIn: ObjectOpenRecordIn!
   readability: MetadataReadability!
+  writability: MetadataWritability!
   applicationId: UUID!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -298,6 +303,12 @@ enum MetadataReadability {
   OPEN
   PRIVATE
   INHERITED
+  APPLICATION
+  SYSTEM
+}
+
+enum MetadataWritability {
+  OPEN
   APPLICATION
   SYSTEM
 }
@@ -524,7 +535,6 @@ type Application {
   logoFileId: UUID
   version: String
   universalIdentifier: String!
-  state: ApplicationState!
   packageJsonChecksum: String
   packageJsonFileId: UUID
   yarnLockChecksum: String
@@ -544,13 +554,6 @@ type Application {
   applicationVariables: [ApplicationVariable!]!
   applicationRegistration: ApplicationRegistrationSummary
   logoUrl: String
-}
-
-enum ApplicationState {
-  INSTALLING
-  INSTALLED
-  UPGRADING
-  UNINSTALLING
 }
 
 type TwoFactorAuthenticationMethodSummary {
@@ -2307,6 +2310,14 @@ type MarketplaceAppDetail {
   manifest: JSON @deprecated(reason: "Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead")
 }
 
+type TriggerInstallApplicationJobResult {
+  jobId: String!
+}
+
+type TriggerUninstallApplicationJobResult {
+  jobId: String!
+}
+
 type WorkspaceCompanyEnrichmentResult {
   outcome: WorkspaceCompanyEnrichmentOutcome!
   enrichment: JSON
@@ -2338,6 +2349,7 @@ type Field {
   isActive: Boolean
   isSystem: Boolean
   isUIEditable: Boolean
+  writability: MetadataWritability
   isUIReadOnly: Boolean @deprecated(reason: "Use isUIEditable")
   isNullable: Boolean
   isUnique: Boolean
@@ -2898,6 +2910,7 @@ type CampaignAudiencePreviewDTO {
   withoutEmail: Int!
   duplicateEmails: Int!
   overCap: Int!
+  hardSuppressed: Int!
   globallyUnsubscribed: Int!
   topicUnsubscribed: Int!
   sendable: Int!
@@ -2916,6 +2929,16 @@ type SendMessageCampaignOutputDTO {
   campaignId: String!
   queuedCount: Int!
   audience: CampaignAudiencePreviewDTO!
+}
+
+type DuplicatedMessageList {
+  id: UUID!
+  name: String
+  description: String
+  position: Float!
+  memberCount: Float!
+  createdAt: String!
+  updatedAt: String!
 }
 
 type MessageSuppression {
@@ -3564,6 +3587,8 @@ type Query {
   githubClaimAuthorizationUrl(applicationRegistrationId: String!): String!
   findManyApplications: [Application!]!
   findOneApplication(id: UUID, universalIdentifier: UUID): Application!
+  findInstallApplicationJobStatus(universalIdentifier: String!): JobStatus
+  findUninstallApplicationJobStatus(universalIdentifier: String!): JobStatus
   findManyMarketplaceApps(universalIdentifiers: [String!]): [MarketplaceApp!]!
   findMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
   publicMarketplaceApps(isVetted: Boolean! = true): [MarketplaceApp!]!
@@ -3858,6 +3883,8 @@ type Mutation {
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
   installApplication(universalIdentifier: String!, version: String): Application!
+  triggerInstallApplicationJob(input: TriggerInstallApplicationJobInput!): TriggerInstallApplicationJobResult!
+  triggerUninstallApplicationJob(input: TriggerUninstallApplicationJobInput!): TriggerUninstallApplicationJobResult!
   updateApplication(id: UUID!, input: UpdateApplicationInput!): Application!
   uninstallApplication(universalIdentifier: String!): Boolean!
   syncMarketplaceCatalog: Boolean!
@@ -3884,6 +3911,7 @@ type Mutation {
   sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
   cancelMessageCampaign(input: CancelMessageCampaignInput!): CancelMessageCampaignOutputDTO!
   sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
+  duplicateMessageList(id: UUID!): DuplicatedMessageList!
   createMessageSuppression(input: CreateMessageSuppressionInput!): MessageSuppression!
   deleteMessageSuppression(id: UUID!): Boolean!
   createUnsubscribeTopic(input: CreateUnsubscribeTopicInput!): UnsubscribeTopic!
@@ -4635,6 +4663,7 @@ input CreateCommandMenuItemInput {
   availabilityType: CommandMenuItemAvailabilityType
   hotKeys: [String!]
   conditionalAvailabilityExpression: String
+  conditionalPinnedExpression: String
   availabilityObjectMetadataId: UUID
   payload: JSON
   navigationTargetObjectMetadataId: UUID
@@ -4751,6 +4780,14 @@ input UpdateApplicationRegistrationVariablePayload {
   value: String
   resetValue: Boolean
   description: String
+}
+
+input TriggerInstallApplicationJobInput {
+  universalIdentifier: String!
+}
+
+input TriggerUninstallApplicationJobInput {
+  universalIdentifier: String!
 }
 
 input UpdateApplicationInput {

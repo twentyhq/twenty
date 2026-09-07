@@ -1783,9 +1783,16 @@ msgstr "لا يمكن تقمص دور المستخدم عبر مفتاح API"
 
 #. js-lingui-id: PpmWQv
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Cancel"
 msgstr "إلغاء"
+
+#. js-lingui-id: CYhiCW
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Cancel Campaign"
+msgstr ""
 
 #. js-lingui-id: 7g3N+g
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3185,6 +3192,7 @@ msgstr "الوصف"
 
 #. js-lingui-id: m+O/bO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Description"
 msgstr "الوصف"
@@ -3299,15 +3307,29 @@ msgstr "تاريخ الاستحقاق"
 #. js-lingui-id: pcd2n0
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Duplicate"
 msgstr "تكرار"
+
+#. js-lingui-id: uv/ryv
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Duplicate Campaign"
+msgstr ""
 
 #. js-lingui-id: zC/oFa
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Duplicate Dashboard"
 msgstr "تكرار لوحة القيادة"
+
+#. js-lingui-id: Sr1mqj
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Duplicate List"
+msgstr ""
 
 #. js-lingui-id: UrzTjS
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -3802,6 +3824,11 @@ msgstr "فشل حذف السجل."
 msgid "Failed to duplicate dashboard."
 msgstr "فشل في تكرار لوحة القيادة."
 
+#. js-lingui-id: UiaZiQ
+#: src/modules/emailing/exceptions/message-list.exception.ts
+msgid "Failed to duplicate list."
+msgstr ""
+
 #. js-lingui-id: srkEOV
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "Failed to exchange the authorization code for an access token."
@@ -4212,6 +4239,11 @@ msgstr "الملف غير موجود في أرشيف عميل SDK."
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "File not found."
 msgstr "الملف غير موجود."
+
+#. js-lingui-id: eAFKw+
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
+msgid "File storage did not confirm the processed file. Please retry."
+msgstr ""
 
 #. js-lingui-id: MtzD8b
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
@@ -6105,6 +6137,17 @@ msgctxt "objectMetadata.labelPlural"
 msgid "List Members"
 msgstr "أعضاء القائمة"
 
+#. js-lingui-id: SGXb+l
+#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-person-views.util.ts
+msgctxt "view.name"
+msgid "List Members Table"
+msgstr ""
+
+#. js-lingui-id: 92F/Is
+#: src/modules/emailing/exceptions/message-list.exception.ts
+msgid "List not found."
+msgstr ""
+
 #. js-lingui-id: GRxWmN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -6290,6 +6333,12 @@ msgstr "الأعضاء"
 msgctxt "fieldMetadata.label"
 msgid "Members"
 msgstr "الأعضاء"
+
+#. js-lingui-id: DbgpIO
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgctxt "pageLayoutTab.title"
+msgid "Members"
+msgstr ""
 
 #. js-lingui-id: CBMkZg
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -8439,6 +8488,7 @@ msgstr "عامل تصفية العلاقة غير مدعوم هنا"
 #. js-lingui-id: L8AY9P
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 msgid "Relation filters can only traverse one relation deep"
 msgstr "يمكن لعوامل تصفية العلاقة التنقل عبر علاقة واحدة فقط في العمق"
 
@@ -10085,6 +10135,11 @@ msgstr "يتعذر العثور على الحقل المُكوَّن لهذا ا
 msgid "The field you are trying to set permissions for could not be found. It may have been deleted."
 msgstr "لم يتم العثور على الحقل الذي تحاول تعيين الأذونات له. ربما تم حذفه."
 
+#. js-lingui-id: APJkak
+#: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
+msgid "The file changed while it was being processed."
+msgstr ""
+
 #. js-lingui-id: bAGU1r
 #: src/engine/core-modules/file/utils/extract-file-info-or-throw.utils.ts
 msgid "The file extension doesn't match the file content. Please check that your file is not corrupted and has the correct extension."
@@ -10523,6 +10578,7 @@ msgid "This campaign no longer exists."
 msgstr "هذه الحملة لم تعد موجودة."
 
 #. js-lingui-id: 5MvgEo
+#: src/modules/emailing/utils/compile-campaign-batch-template.util.ts
 #: src/modules/emailing/utils/compile-campaign-email-content.util.ts
 msgid "This campaign's email content is invalid."
 msgstr "محتوى البريد الإلكتروني لهذه الحملة غير صالح."
@@ -10638,6 +10694,11 @@ msgstr "صيغة هذا الملف غير مدعومة."
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "This file has already been uploaded."
 msgstr "تم تحميل هذا الملف بالفعل."
+
+#. js-lingui-id: VGePIR
+#: src/engine/core-modules/file/file-upload/services/file-upload-target.service.ts
+msgid "This file path is too long to upload."
+msgstr ""
 
 #. js-lingui-id: 6ekAtL
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
@@ -10820,6 +10881,11 @@ msgstr "هذا النطاق الفرعي مستخدم بالفعل."
 msgid "This suppressed address no longer exists."
 msgstr "هذا العنوان المحظور لم يعد موجودًا."
 
+#. js-lingui-id: qm7uMm
+#: src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util.ts
+msgid "This SVG is too large to be processed."
+msgstr "ملف SVG هذا كبير جدًا بحيث يتعذر معالجته."
+
 #. js-lingui-id: 0GMgIa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"
@@ -10834,6 +10900,11 @@ msgstr "لا يمكن دمج هذا النوع من السجلات."
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This universal identifier is already claimed by another registration."
 msgstr "هذا المعرّف العالمي محجوز بالفعل من قبل تسجيل آخر."
+
+#. js-lingui-id: xL5g9G
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
+msgid "This upload expired before it was confirmed. Please upload the file again."
+msgstr ""
 
 #. js-lingui-id: GEN5Cv
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
@@ -12096,6 +12167,12 @@ msgstr "الأربعاء"
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
 msgid "Welcome to Twenty: Please Confirm Your Email"
 msgstr "مرحبًا بك في Twenty: يرجى تأكيد بريدك الإلكتروني"
+
+#. js-lingui-id: 80/6BQ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "What this list is for"
+msgstr ""
 
 #. js-lingui-id: ofdfh5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts

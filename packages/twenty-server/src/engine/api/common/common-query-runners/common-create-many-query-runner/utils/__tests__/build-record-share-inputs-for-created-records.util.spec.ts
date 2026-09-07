@@ -214,7 +214,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
       ]);
     });
 
-    it('should skip the creator role row when shareWith already names that role', () => {
+    it('should keep the creator role at FULL when shareWith names it at a lower level', () => {
       expect(
         buildRecordShareInputsForCreatedRecords({
           recordIds: ['record-1'],
@@ -235,7 +235,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           principalId: APPLICATION_ROLE_ID,
           principalType: RecordSharePrincipalType.ROLE,
-          accessLevel: RecordShareAccessLevel.READ,
+          accessLevel: RecordShareAccessLevel.FULL,
           rowCause: RecordShareRowCause.APPLICATION,
           sourceId: APPLICATION_ID,
         },

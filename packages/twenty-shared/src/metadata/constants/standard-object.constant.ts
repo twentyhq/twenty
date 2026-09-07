@@ -458,7 +458,13 @@ export const STANDARD_OBJECTS = {
         objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageList,
         fields: STANDARD_OBJECT_FIELDS.messageList,
-        viewFieldNames: ['name', 'members', 'campaigns', 'createdAt'],
+        viewFieldNames: [
+          'name',
+          'description',
+          'members',
+          'campaigns',
+          'createdAt',
+        ],
       }),
     },
   },
@@ -473,6 +479,14 @@ export const STANDARD_OBJECTS = {
       personListUniqueIndex: {
         universalIdentifier: 'e5497dc2-1d72-418c-a389-a0645ca0195a',
       },
+    },
+    views: {
+      allMessageListMembers: buildStandardObjectIndexView({
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageListMember,
+        fields: STANDARD_OBJECT_FIELDS.messageListMember,
+        viewFieldNames: ['id', 'person', 'list', 'createdAt'],
+      }),
     },
   },
   messageChannelMessageAssociation: {
@@ -933,6 +947,25 @@ export const STANDARD_OBJECTS = {
           system: 'System',
         },
       }),
+      messageListRecordPageMembers: {
+        universalIdentifier: 'bef79e8e-9ef3-4458-81ed-78a299e2566f',
+        viewFields: {
+          name: {
+            universalIdentifier: 'a4f0d7b4-3956-44a6-8bb2-df45a699609b',
+          },
+          emails: {
+            universalIdentifier: '180e9cbb-34c2-4e27-8648-2915be88a50e',
+          },
+          company: {
+            universalIdentifier: '3db54119-df4d-449b-91c9-22fca1e5d599',
+          },
+        },
+        viewFilters: {
+          listMembershipsListIsCurrentRecord: {
+            universalIdentifier: '256dceea-a9b5-42b7-8461-a6ce62e7fa6c',
+          },
+        },
+      },
     },
   },
   recordShare: {
@@ -941,9 +974,6 @@ export const STANDARD_OBJECTS = {
     indexes: {
       recordPrincipalCauseSourceUniqueIndex: {
         universalIdentifier: '4580f104-47a7-4110-87a8-26cb6f63ce7b',
-      },
-      objectRecordIndex: {
-        universalIdentifier: '77a8982d-99bc-4a47-9c0c-d2056d7a7d44',
       },
       principalIdIndex: {
         universalIdentifier: '66fbc3d2-6126-4e29-a306-dbe9995bf062',
