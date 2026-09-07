@@ -1,5 +1,4 @@
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -23,7 +22,6 @@ type CoreObjectTableProps<TItem> = {
   getItemKey: (item: TItem) => string;
   getItemLink?: (item: TItem) => string | undefined;
   initialSort?: TableMetadata<TItem>['initialSort'];
-  firstColumnAction?: ReactNode;
 };
 
 const isSortableColumn = <TItem,>(
@@ -38,7 +36,6 @@ export const CoreObjectTable = <TItem,>({
   getItemKey,
   getItemLink,
   initialSort,
-  firstColumnAction,
 }: CoreObjectTableProps<TItem>) => {
   const { t } = useLingui();
 
@@ -49,7 +46,7 @@ export const CoreObjectTable = <TItem,>({
   return (
     <Table>
       <TableRow gridTemplateColumns={gridTemplateColumns}>
-        {columns.map((column, columnIndex) =>
+        {columns.map((column) =>
           isSortableColumn(column) ? (
             <SortableTableHeader
               key={column.fieldName}
@@ -59,13 +56,11 @@ export const CoreObjectTable = <TItem,>({
               align={column.align}
               initialSort={initialSort}
               Icon={column.FieldIcon}
-              action={columnIndex === 0 ? firstColumnAction : undefined}
             />
           ) : (
             <TableHeader key={column.fieldName} align={column.align}>
               {isDefined(column.FieldIcon) && <column.FieldIcon size={14} />}
               <TableHeaderText>{t(column.fieldLabel)}</TableHeaderText>
-              {columnIndex === 0 && firstColumnAction}
             </TableHeader>
           ),
         )}

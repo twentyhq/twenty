@@ -13,7 +13,6 @@ import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/compon
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { CoreObjectTable } from '@/object-core/components/CoreObjectTable';
 import { CoreObjectTableAddNewRow } from '@/object-core/components/CoreObjectTableAddNewRow';
-import { CoreObjectTableCreateButton } from '@/object-core/components/CoreObjectTableCreateButton';
 import { useCreateCoreWorkflow } from '@/object-core/workflows/hooks/useCreateCoreWorkflow';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import { isUsableCoreWorkflowFilterRule } from '@/object-core/workflows/utils/isUsableCoreWorkflowFilterRule';
@@ -158,14 +157,6 @@ export const WorkflowCoreIndexPage = () => {
                 getItemKey={(workflow) => workflow.id}
                 getItemLink={getCoreWorkflowLink}
                 initialSort={CORE_WORKFLOWS_INITIAL_SORT}
-                firstColumnAction={
-                  canCreateCoreWorkflow ? (
-                    <CoreObjectTableCreateButton
-                      ariaLabel={t`New ${objectMetadataItem.labelSingular}`}
-                      onClick={createCoreWorkflow}
-                    />
-                  ) : undefined
-                }
               />
               {canCreateCoreWorkflow && (
                 <CoreObjectTableAddNewRow
