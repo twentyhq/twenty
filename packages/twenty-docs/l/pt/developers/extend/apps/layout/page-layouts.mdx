@@ -53,9 +53,10 @@ export default definePageLayout({
 
 * `type` é um dos seguintes: `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` ou `'STANDALONE_PAGE'`. Use `'RECORD_PAGE'` para personalizar a visualização de detalhes de um objeto específico.
 * `objectUniversalIdentifier` especifica a qual objeto este layout se aplica.
-* Cada `tab` define uma seção da página com um `title`, `position` e `layoutMode`: `VERTICAL_LIST` para páginas de registro e páginas independentes, `GRID` para dashboards. Em uma aba `VERTICAL_LIST`, um único widget é renderizado em largura total e ocupa toda a aba; com vários widgets, eles são empilhados como cards. Uma aba `GRID` sempre distribui seus widgets como cards em uma grade de 12 colunas, independentemente da quantidade, portanto escolha `VERTICAL_LIST` quando quiser que um único widget preencha a página.
+* Cada `tab` define uma seção da página com um `title`, `position` e `layoutMode`: `VERTICAL_LIST` para páginas de registro e páginas independentes, `GRID` para dashboards e `CANVAS` para um único widget que deve preencher a janela de visualização da aba. Uma aba `VERTICAL_LIST` empilha widgets verticalmente. Widgets integrados que gerenciam sua própria rolagem, como linhas do tempo, arquivos, notas, tarefas e fluxos de trabalho, preenchem uma janela de visualização; campos, componentes de front, gráficos e outros widgets fit-content são renderizados na altura de seu conteúdo ou na altura configurada. Uma aba `GRID` sempre organiza seus widgets como cartões em uma grade de 12 colunas. Um widget `CANVAS` não tem posição explícita; se uma aba de canvas contiver vários widgets, eles serão renderizados na altura do conteúdo, em vez de preencherem a viewport.
 * Defina `layoutMode` explicitamente. Omití-lo faz com que você obtenha `VERTICAL_LIST` em uma `STANDALONE_PAGE` e `GRID` em todos os outros casos, o que raramente é o que você deseja em uma página de registro.
 * Cada `widget` dentro de uma aba pode renderizar um [front component](/l/pt/developers/extend/apps/layout/front-components), uma lista de relações ou outros tipos de widget nativos.
+* Um widget `FRONT_COMPONENT` pode definir `headerCommandMenuItemUniversalIdentifiers` como uma matriz ordenada de identificadores universais de itens de menu de comandos do mesmo app. Essas ações aparecem como botões de ícone no cabeçalho do cartão do widget e mantêm suas verificações de disponibilidade e permissões no nível do comando. Os identificadores devem ser exclusivos e devem ser resolvidos quando o app for instalado.
 * `position` nas abas controla sua ordem. Use valores mais altos (por exemplo, 50) para colocar abas personalizadas após as nativas.
 
 ### Widgets de campos
@@ -136,8 +137,10 @@ export default definePageLayoutTab({
   Cada entrada de layout também expõe suas `tabs` e seus `widgets`, para que você possa fazer referência a qualquer nível:
 
   ```ts
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.universalIdentifier
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets.fields.universalIdentifier
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home
+    .universalIdentifier;
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets
+    .fields.universalIdentifier;
   ```
 
   Um alias abreviado `STANDARD_PAGE_LAYOUT` também está disponível:

@@ -19,6 +19,7 @@ import {
 } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
 import { formatUpgradeLog } from 'src/engine/core-modules/upgrade/utils/format-upgrade-log.util';
+import { isUpgradeWorkspaceCursorValidForSegment } from 'src/engine/core-modules/upgrade/utils/is-upgrade-workspace-cursor-valid-for-segment.util';
 import { UpgradeAwareEntityMetadataAdapter } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-entity-metadata.adapter';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
@@ -279,9 +280,6 @@ export class UpgradeSequenceRunnerService {
       await this.upgradeMigrationService.getWorkspaceLastAttemptedCommandNameOrThrow(
         allProvisionedWorkspaceIds,
       );
-    const precedingStep =
-      startCursor > 0 ? sequence[startCursor - 1] : undefined;
-
     const invalidWorkspaces: Array<{
       workspaceId: string;
       cursorName: string;
@@ -295,16 +293,15 @@ export class UpgradeSequenceRunnerService {
           stepName: workspaceCursor.name,
         });
 
-      const isWithinSegment =
-        cursorPosition >= startCursor && cursorPosition <= endCursor;
+      const isWorkspaceCursorValid = isUpgradeWorkspaceCursorValidForSegment({
+        sequence,
+        cursorPosition,
+        workspaceCursorStatus: workspaceCursor.status,
+        startCursor,
+        endCursor,
+      });
 
-      const isAtPrecedingInstanceCommandCompleted =
-        isDefined(precedingStep) &&
-        precedingStep.kind !== 'workspace' &&
-        cursorPosition === startCursor - 1 &&
-        workspaceCursor.status === 'completed';
-
-      if (!isWithinSegment && !isAtPrecedingInstanceCommandCompleted) {
+      if (!isWorkspaceCursorValid) {
         invalidWorkspaces.push({
           workspaceId,
           cursorName: workspaceCursor.name,

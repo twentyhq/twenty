@@ -17,7 +17,6 @@ export const CardFooter = ({
     <div
       className={clsx(styles.cardFooter, className)}
       data-no-divider={divider === false || undefined}
-      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...rest}
     >
       {children}

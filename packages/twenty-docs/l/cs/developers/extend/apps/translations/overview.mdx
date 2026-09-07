@@ -74,6 +74,8 @@ t({ message: 'Open', context: 'window' });
 <Trans context="card-title">Untitled</Trans>
 ```
 
+Kontextové řetězce se v jazykových katalozích objevují jako skupina s klíčem podle svého kontextu: `"\<context>": { "\<message>": "\<translation>" }`. Štítky manifestu jsou kontextové již svou konstrukcí — každý z nich nese roli metadat, kterou plní (`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …), takže stejné slovo se může přeložit odlišně jako název objektu a jako název zobrazení.
+
 ## Extrahování a překládání
 
 Spusťte příkaz pro extrakci z adresáře své aplikace:
@@ -92,9 +94,17 @@ zdrojové řetězce. Doplňte překlady:
 {
   "Loading postcard…": "Chargement de la carte…",
   "Hi {name}": "Bonjour {name}",
-  "Saved {count} cards": "{count} cartes enregistrées"
+  "Saved {count} cards": "{count} cartes enregistrées",
+  "door": {
+    "Open": "Ouvrir"
+  },
+  "objectMetadata.labelSingular": {
+    "Postcard": "Carte postale"
+  }
 }
 ```
+
+Řetězce bez kontextu jsou ploché položky; kontextové řetězce — včetně každého štítku manifestu — jsou vnořené pod svým kontextovým klíčem.
 
 Zástupné symboly jako `{name}` jsou nahrazeny za běhu — ponechejte je v
 překladu. Jakýkoli řetězec ponechaný prázdný spadne zpět na zdrojový text.
@@ -108,13 +118,11 @@ jazykovou verzi (locale) z vykonávacího kontextu (aktuální jazyk hostitele)
 každý řetězec podle svého katalogu, přičemž při chybějícím překladu spadne zpět na zdroj. Přepnutí jazyka v hostiteli znovu vykreslí řetězce `Trans` a
 `useTranslate().t` v reálném čase.
 
-Protože katalogy jsou kompilovány v době buildu, aktualizace překladu znamená
-znovu spustit `twenty dev:build` (a znovu nasadit) stejně jako jakoukoli jinou změnu.
-
-<Note>
-Překlady jsou kompilovány příkazy `twenty dev:build` (a `twenty apply`). Nepřetržité sledování `twenty dev` zobrazuje zdrojové řetězce, takže lokalizovaný výstup
-otestujte pomocí jednorázového buildu.
-</Note>
+Popisky manifestu se kompilují při každé synchronizaci — stejně při `twenty dev:build`, `twenty apply`
+jako při průběžném sledování pomocí `twenty dev` — takže pro zobrazení nového textu stačí upravit soubor lokalizace a
+provést synchronizaci. Katalogy komponent Front se při sestavení začleňují do
+každého balíčku komponent, takže změna některého z nich stále znamená
+znovu spustit `twenty dev:build` (a znovu nasadit).
 
 Textoví potomci `Trans` mohou být na více řádcích — bílé znaky se slučují
 stejně jako je slučuje JSX, takže oba tyto případy se extrahují pod klíčem `Welcome back`:

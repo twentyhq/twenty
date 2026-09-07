@@ -69,10 +69,17 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
       return;
     }
 
-    navigateApp(AppPath.RecordShowPage, {
-      objectNameSingular: objectMetadataItem.nameSingular,
-      objectRecordId: firstRecord.id,
-    });
+    // Customizing a layout takes over the whole page, so it is the main outlet
+    // that has to move even when this settings page is hosted in the panel.
+    navigateApp(
+      AppPath.RecordShowPage,
+      {
+        objectNameSingular: objectMetadataItem.nameSingular,
+        objectRecordId: firstRecord.id,
+      },
+      undefined,
+      { surface: 'main' },
+    );
   };
 
   const handleResetPageLayout = () => {

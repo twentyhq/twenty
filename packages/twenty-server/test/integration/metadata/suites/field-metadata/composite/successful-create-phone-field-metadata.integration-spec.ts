@@ -17,7 +17,9 @@ const FIELD_NAME = 'phonenumber';
 type TestCaseInputAndExpected = Partial<
   Omit<PhonesMetadata, 'additionalPhones'>
 > & {
-  additionalPhones?: Array<Partial<AdditionalPhoneMetadata>> | null;
+  additionalPhones?: Array<
+    Partial<Record<keyof AdditionalPhoneMetadata, string | null>>
+  > | null;
 };
 
 type CreatePhoneFieldMetadataTestCase = {
@@ -183,6 +185,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<CreatePhoneFieldMetadataTestCase
           additionalPhones: [
             {
               callingCode: '+1',
+              countryCode: null,
               number: '123456789',
             },
           ],
@@ -212,7 +215,9 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<CreatePhoneFieldMetadataTestCase
           primaryPhoneCallingCode: '',
           primaryPhoneCountryCode: '' as CountryCode,
           primaryPhoneNumber: '',
-          additionalPhones: [{}],
+          additionalPhones: [
+            { callingCode: null, countryCode: null, number: null },
+          ],
         },
       },
     },
@@ -289,7 +294,11 @@ describe('successful create phone field metadata test suite', () => {
             primaryPhoneNumber
             primaryPhoneCountryCode
             primaryPhoneCallingCode
-            additionalPhones
+            additionalPhones {
+              number
+              callingCode
+              countryCode
+            }
             __typename
           }
         `,

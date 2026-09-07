@@ -12,14 +12,14 @@ import {
   tableDataSortedBylabelInDescendingOrder,
 } from '~/testing/mock-data/tableData';
 
-import { type OrderBy } from 'twenty-shared/types';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
+import { type ArraySortDirection } from 'twenty-shared/types';
 
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 
 const createSortedWrapper = (
   fieldName: keyof MockedTableType,
-  orderBy: OrderBy,
+  direction: ArraySortDirection,
 ) => {
   const store = createStore();
   store.set(
@@ -28,7 +28,7 @@ const createSortedWrapper = (
     }),
     {
       fieldName: fieldName as string,
-      orderBy,
+      direction,
     },
   );
   const Wrapper = ({ children }: { children: ReactNode }) => (
@@ -42,7 +42,7 @@ describe('useSortedArray hook', () => {
     const { result } = renderHook(
       () => useSortedArray(tableData, mockedTableMetadata),
       {
-        wrapper: createSortedWrapper('labelPlural', 'AscNullsLast'),
+        wrapper: createSortedWrapper('labelPlural', 'asc'),
       },
     );
 
@@ -55,7 +55,7 @@ describe('useSortedArray hook', () => {
     const { result } = renderHook(
       () => useSortedArray(tableData, mockedTableMetadata),
       {
-        wrapper: createSortedWrapper('labelPlural', 'DescNullsLast'),
+        wrapper: createSortedWrapper('labelPlural', 'desc'),
       },
     );
 
@@ -68,7 +68,7 @@ describe('useSortedArray hook', () => {
     const { result } = renderHook(
       () => useSortedArray(tableData, mockedTableMetadata),
       {
-        wrapper: createSortedWrapper('fieldsCount', 'AscNullsLast'),
+        wrapper: createSortedWrapper('fieldsCount', 'asc'),
       },
     );
 
@@ -81,7 +81,7 @@ describe('useSortedArray hook', () => {
     const { result } = renderHook(
       () => useSortedArray(tableData, mockedTableMetadata),
       {
-        wrapper: createSortedWrapper('fieldsCount', 'DescNullsLast'),
+        wrapper: createSortedWrapper('fieldsCount', 'desc'),
       },
     );
 

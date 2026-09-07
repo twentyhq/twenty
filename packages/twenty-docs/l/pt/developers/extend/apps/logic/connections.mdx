@@ -212,15 +212,16 @@ export const createLinearIssueHandler = async (input: {
 
 Cada conexão tem:
 
-| Campo             | Descrição                                                                                                                  |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `id`              | ID de linha exclusivo; passe para `getConnection(id)` para buscar novamente um único registro                              |
-| `visibility`      | `'user'` (privada para um membro do workspace) ou `'workspace'` (compartilhada com todos os membros)                       |
-| `scopes`          | Permissões OAuth concedidas pelo provedor de origem (distintas de `visibility` — não têm relação)                          |
-| `userWorkspaceId` | O id de userWorkspace do proprietário — útil para selecionar "a conexão do usuário da requisição" em gatilhos de rota HTTP |
-| `accessToken`     | Token de acesso OAuth recente (atualizado automaticamente se estiver expirado)                                             |
-| `name` / `handle` | O nome de exibição da conexão (derivado automaticamente no callback do OAuth, renomeável pelo usuário)                     |
-| `authFailedAt`    | Definido quando a atualização mais recente falhou; o usuário deve reconectar                                               |
+| Campo             | Descrição                                                                                                                                                                                           |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`              | ID de linha exclusivo; passe para `getConnection(id)` para buscar novamente um único registro                                                                                                       |
+| `visibility`      | `'user'` (privada para um membro do workspace) ou `'workspace'` (compartilhada com todos os membros)                                                                                                |
+| `scopes`          | Permissões OAuth concedidas pelo provedor de origem (distintas de `visibility` — não têm relação)                                                                                                   |
+| `userWorkspaceId` | O id de userWorkspace do proprietário — útil para selecionar "a conexão do usuário da requisição" em gatilhos de rota HTTP                                                                          |
+| `accessToken`     | Token de acesso OAuth recente (atualizado automaticamente se estiver expirado)                                                                                                                      |
+| `nome`            | O nome de exibição da conexão (derivado automaticamente no callback do OAuth, renomeável pelo usuário)                                                                                              |
+| `ligar`           | O e-mail da conta de upstream foi atualizado em cada reconexão; resolvido do OIDC `id_token` retornado na troca de token, retornando para o e-mail de 20 usuários quando o provedor não retornar um |
+| `authFailedAt`    | Definido quando a atualização mais recente falhou; o usuário deve reconectar                                                                                                                        |
 
 Pontos-chave:
 

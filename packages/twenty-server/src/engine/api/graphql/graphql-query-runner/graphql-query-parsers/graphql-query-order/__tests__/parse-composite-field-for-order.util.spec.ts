@@ -124,7 +124,7 @@ describe('parseCompositeFieldForOrder', () => {
   });
 
   describe('pagination direction handling', () => {
-    it('should reverse order direction for backward pagination', () => {
+    it('should reverse order direction and nulls placement for backward pagination', () => {
       const fieldMetadata = {
         type: FieldMetadataType.FULL_NAME,
         name: 'name',
@@ -140,7 +140,7 @@ describe('parseCompositeFieldForOrder', () => {
       expect(result).toEqual({
         'person.nameFirstName': {
           order: 'DESC',
-          nulls: 'NULLS FIRST',
+          nulls: 'NULLS LAST',
           useLower: true,
           castToText: false,
         },

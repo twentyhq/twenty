@@ -8,13 +8,13 @@ import GraphQLJSON from 'graphql-type-json';
 import {
   PageLayoutWidgetConditionalDisplay,
   PageLayoutWidgetPosition,
+  WidgetType,
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { PageLayoutWidgetPositionUnion } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget-position.union';
 import { WidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/dtos/widget-configuration.interface';
 import { type PageLayoutWidgetOverrides } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 
 registerEnumType(WidgetType, { name: 'WidgetType' });
@@ -61,11 +61,10 @@ export class PageLayoutWidgetDTO {
   objectMetadataId?: string;
 
   @Field(() => GridPositionDTO, {
-    nullable: false,
-    deprecationReason:
-      'Use `position` instead. Will be removed in a future release.',
+    nullable: true,
+    deprecationReason: 'Use `position` instead.',
   })
-  gridPosition: GridPositionDTO;
+  gridPosition?: GridPositionDTO | null;
 
   @Field(() => PageLayoutWidgetPositionUnion, { nullable: true })
   position?: PageLayoutWidgetPosition | null;

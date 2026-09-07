@@ -249,7 +249,7 @@ const PARTIAL_SEARCH_VECTOR_FIELD = {
   isSystem: true,
   isSystemSideEffect: true,
   isUIEditable: false,
-  writability: MetadataWritability.OPEN,
+  writability: MetadataWritability.SYSTEM,
   isLabelSyncedWithName: false,
   defaultValue: null,
   options: null,

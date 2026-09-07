@@ -88,7 +88,7 @@ When the user says "prod", "production", or "workspace de prod", identify the ta
 
 # Development Sync
 
-Always use one-shot sync to synchronize app changes with the active remote:
+Always use bounded apply to synchronize app changes with the active remote:
 
 ```bash
 yarn twenty apply
@@ -96,14 +96,14 @@ yarn twenty apply
 
 Do not use bare `yarn twenty dev` (watch mode). Run `yarn twenty apply` each time changes need to be synced.
 
-One-shot sync requires an authenticated remote. If authentication fails, re-add or switch the remote before retrying.
+Bounded apply requires an authenticated remote. If authentication fails, re-add or switch the remote before retrying.
 
 # Troubleshooting
 
 Start by identifying which layer is failing:
 
 - Remote/authentication.
-- Dev sync or one-shot sync.
+- Dev sync or bounded apply.
 - Build/package generation.
 - Deploy/upload/install.
 - Runtime function execution.

@@ -107,7 +107,7 @@ export class RestApiCoreController {
     res.status(200).send(result);
   }
 
-  @Patch('restore/*path')
+  @Patch('*path/restore')
   async handleApiRestore(
     @Req() request: AuthenticatedRequest,
     @Res() res: Response,

@@ -1,22 +1,23 @@
 import {
-  type GridPosition,
   type PageLayoutTabLayoutMode,
+  type PageLayoutType,
   type PageLayoutWidgetConditionalDisplay,
   type PageLayoutWidgetPosition,
+  type WidgetType,
 } from 'twenty-shared/types';
 
-import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { type PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import { type FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
 
 export type StandardPageLayoutWidgetConfig = {
   universalIdentifier: string;
   title?: string;
   type?: WidgetType;
-  gridPosition?: GridPosition;
   position?: PageLayoutWidgetPosition;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
   conditionalAvailabilityExpression?: string | null;
   fieldUniversalIdentifier?: string;
+  fieldDisplayMode?: FieldDisplayMode;
+  embeddedViewUniversalIdentifier?: string;
 };
 
 export type StandardPageLayoutTabConfig = {
@@ -41,11 +42,12 @@ export type StandardRecordPageWidgetConfig = {
   universalIdentifier: string;
   title: string;
   type: WidgetType;
-  gridPosition: GridPosition;
   position?: PageLayoutWidgetPosition;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
   conditionalAvailabilityExpression?: string | null;
   fieldUniversalIdentifier?: string;
+  fieldDisplayMode?: FieldDisplayMode;
+  embeddedViewUniversalIdentifier?: string;
 };
 
 export type StandardRecordPageTabConfig = {

@@ -19,9 +19,10 @@ import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guar
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconPencil, IconPlus } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { IconButton } from 'twenty-ui/input';
 import { RelationType } from '~/generated-metadata/graphql';
 
 type FieldWidgetRelationEditActionProps = {
@@ -83,15 +84,21 @@ export const FieldWidgetRelationEditAction = ({
     ? relationValue.length > 0
     : isDefined(relationValue);
 
-  const triggerIcon =
+  const isEditAction =
     fieldDefinition.metadata.relationType === RelationType.MANY_TO_ONE ||
-    hasAtLeastOneRelationRecord
-      ? IconPencil
-      : IconPlus;
+    hasAtLeastOneRelationRecord;
+
+  const triggerIcon = isEditAction ? IconPencil : IconPlus;
+  const triggerLabel = isEditAction ? t`Edit relation` : t`Add relation`;
 
   const dropdownTriggerClickableComponent = (
     <StyledEditButtonWrapper>
-      <LightIconButton Icon={triggerIcon} accent="secondary" />
+      <IconButton
+        Icon={triggerIcon}
+        variant="tertiary"
+        size="small"
+        ariaLabel={triggerLabel}
+      />
     </StyledEditButtonWrapper>
   );
 

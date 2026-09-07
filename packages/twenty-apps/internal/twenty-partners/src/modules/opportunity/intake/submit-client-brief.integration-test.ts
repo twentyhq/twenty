@@ -9,7 +9,9 @@ process.env.PARTNER_APPLICATION_SECRET = TEST_SECRET;
 
 const client = new CoreApiClient();
 
-const baseInput = (overrides: Partial<SubmitClientBriefInput> = {}): SubmitClientBriefInput => ({
+const baseInput = (
+  overrides: Partial<SubmitClientBriefInput> = {},
+): SubmitClientBriefInput => ({
   firstName: 'Jane',
   lastName: 'Smith',
   email: `jane.brief.${Date.now()}@example.com`,
@@ -29,13 +31,19 @@ const createdCompanyIds: string[] = [];
 
 async function cleanup(): Promise<void> {
   for (const id of createdOpportunityIds.splice(0)) {
-    await client.mutation({ destroyOpportunity: { __args: { id }, id: true } }).catch(() => {});
+    await client
+      .mutation({ destroyOpportunity: { __args: { id }, id: true } })
+      .catch(() => {});
   }
   for (const id of createdPersonIds.splice(0)) {
-    await client.mutation({ destroyPerson: { __args: { id }, id: true } }).catch(() => {});
+    await client
+      .mutation({ destroyPerson: { __args: { id }, id: true } })
+      .catch(() => {});
   }
   for (const id of createdCompanyIds.splice(0)) {
-    await client.mutation({ destroyCompany: { __args: { id }, id: true } }).catch(() => {});
+    await client
+      .mutation({ destroyCompany: { __args: { id }, id: true } })
+      .catch(() => {});
   }
 }
 
@@ -50,7 +58,8 @@ async function trackCreatedOpportunity(opportunityId: string): Promise<void> {
     },
   });
 
-  if (fetched.opportunity?.company?.id) createdCompanyIds.push(fetched.opportunity.company.id);
+  if (fetched.opportunity?.company?.id)
+    createdCompanyIds.push(fetched.opportunity.company.id);
   if (fetched.opportunity?.pointOfContact?.id) {
     createdPersonIds.push(fetched.opportunity.pointOfContact.id);
   }
@@ -61,7 +70,9 @@ afterEach(async () => {
 });
 
 beforeAll(async () => {
-  await client.query({ opportunities: { __args: { first: 1 }, edges: { node: { id: true } } } });
+  await client.query({
+    opportunities: { __args: { first: 1 }, edges: { node: { id: true } } },
+  });
 });
 
 describe('submit-client-brief handler', () => {
@@ -70,7 +81,7 @@ describe('submit-client-brief handler', () => {
     expect(result).toEqual({ ok: false, reason: 'unauthorized' });
   });
 
-  it('creates an unlisted opportunity with marketplace brief name suffix', async () => {
+  it('creates a listed opportunity with marketplace brief name suffix', async () => {
     const input = baseInput({
       requirements: 'French UI',
       hostingType: 'CLOUD',
@@ -101,7 +112,7 @@ describe('submit-client-brief handler', () => {
     expect(opp?.need).toBe(input.need);
     expect(opp?.requirements).toContain('French UI');
     expect(opp?.requirements).toContain('Additional context:');
-    expect(opp?.isListed).toBe(false);
+    expect(opp?.isListed).toBe(true);
     expect(opp?.stage).toBe('NEW');
     expect(opp?.company?.name).toBe(input.companyName);
     expect(opp?.pointOfContact?.emails?.primaryEmail).toBe(input.email);
@@ -110,8 +121,12 @@ describe('submit-client-brief handler', () => {
   it('creates a second opportunity for the same company with different need', async () => {
     const companyName = `Repeat Co ${Date.now()}`;
     const email = `repeat.${Date.now()}@example.com`;
-    const first = await handler(authedEvent(baseInput({ companyName, email, need: 'Project A' })));
-    const second = await handler(authedEvent(baseInput({ companyName, email, need: 'Project B' })));
+    const first = await handler(
+      authedEvent(baseInput({ companyName, email, need: 'Project A' })),
+    );
+    const second = await handler(
+      authedEvent(baseInput({ companyName, email, need: 'Project B' })),
+    );
     expect(first.ok && second.ok).toBe(true);
     if (!first.ok || !second.ok) return;
     expect(first.opportunityId).not.toBe(second.opportunityId);

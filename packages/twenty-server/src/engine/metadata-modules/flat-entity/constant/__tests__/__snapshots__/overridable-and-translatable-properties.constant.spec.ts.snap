@@ -58,6 +58,10 @@ exports[`registry-derived override property maps derives the overridable propert
   "rowLevelPermissionPredicateGroup": [],
   "searchFieldMetadata": [],
   "skill": [],
+  "timelineActivityType": [
+    "label",
+    "icon",
+  ],
   "view": [
     "name",
     "type",
@@ -98,43 +102,39 @@ exports[`registry-derived override property maps derives the overridable propert
 
 exports[`registry-derived override property maps derives the translatable properties for every metadata entity 1`] = `
 {
-  "agent": [],
-  "applicationVariable": [],
-  "commandMenuItem": [],
-  "connectionProvider": [],
+  "commandMenuItem": [
+    "label",
+    "shortLabel",
+  ],
   "fieldMetadata": [
+    "label",
     "description",
+  ],
+  "navigationMenuItem": [
+    "name",
+  ],
+  "objectMetadata": [
+    "labelSingular",
+    "labelPlural",
+    "description",
+  ],
+  "pageLayout": [
+    "name",
+  ],
+  "pageLayoutTab": [
+    "title",
+  ],
+  "pageLayoutWidget": [
+    "title",
+  ],
+  "timelineActivityType": [
     "label",
   ],
-  "fieldPermission": [],
-  "frontComponent": [],
-  "index": [],
-  "logicFunction": [],
-  "navigationMenuItem": [],
-  "objectMetadata": [
-    "description",
-    "labelPlural",
-    "labelSingular",
+  "view": [
+    "name",
   ],
-  "objectPermission": [],
-  "pageLayout": [],
-  "pageLayoutTab": [],
-  "pageLayoutWidget": [],
-  "permissionFlag": [],
-  "role": [],
-  "rolePermissionFlag": [],
-  "roleTarget": [],
-  "rowLevelPermissionPredicate": [],
-  "rowLevelPermissionPredicateGroup": [],
-  "searchFieldMetadata": [],
-  "skill": [],
-  "view": [],
-  "viewField": [],
-  "viewFieldGroup": [],
-  "viewFilter": [],
-  "viewFilterGroup": [],
-  "viewGroup": [],
-  "viewSort": [],
-  "webhook": [],
+  "viewFieldGroup": [
+    "name",
+  ],
 }
 `;

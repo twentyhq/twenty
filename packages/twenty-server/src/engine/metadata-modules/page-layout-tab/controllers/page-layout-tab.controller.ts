@@ -14,12 +14,15 @@ import {
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { ApiPath } from 'twenty-shared/types';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/paginate-metadata-rest-items.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -47,7 +50,10 @@ import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/works
   WorkspaceMigrationRunnerRestApiExceptionFilter,
 )
 export class PageLayoutTabController {
-  constructor(private readonly pageLayoutTabService: PageLayoutTabService) {}
+  constructor(
+    private readonly pageLayoutTabService: PageLayoutTabService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
+  ) {}
 
   @Get()
   @UseGuards(NoPermissionGuard)
@@ -55,6 +61,7 @@ export class PageLayoutTabController {
     @Req() request: AuthenticatedRequest,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Query('pageLayoutId') pageLayoutId: string,
+    @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ) {
     if (!isDefined(pageLayoutId)) {
       throw new PageLayoutTabException(
@@ -70,7 +77,18 @@ export class PageLayoutTabController {
       pageLayoutId,
     });
 
-    return paginateMetadataRestItems({ items, request });
+    return paginateMetadataRestItems({
+      items:
+        await this.applicationTranslationCatalogService.resolveTranslatablePropertiesForEntities(
+          {
+            metadataName: 'pageLayoutTab',
+            entities: items,
+            locale,
+            workspaceId: workspace.id,
+          },
+        ),
+      request,
+    });
   }
 
   @Get(':id')
@@ -78,11 +96,24 @@ export class PageLayoutTabController {
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ): Promise<PageLayoutTabDTO | null> {
-    return this.pageLayoutTabService.findByIdOrThrow({
+    const pageLayoutTab = await this.pageLayoutTabService.findByIdOrThrow({
       id,
       workspaceId: workspace.id,
     });
+
+    const [resolvedPageLayoutTab] =
+      await this.applicationTranslationCatalogService.resolveTranslatablePropertiesForEntities(
+        {
+          metadataName: 'pageLayoutTab',
+          entities: [pageLayoutTab],
+          locale,
+          workspaceId: workspace.id,
+        },
+      );
+
+    return resolvedPageLayoutTab;
   }
 
   @Post()

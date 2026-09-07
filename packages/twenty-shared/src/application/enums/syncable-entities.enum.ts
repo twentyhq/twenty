@@ -13,4 +13,5 @@ export enum SyncableEntity {
   PageLayout = 'pageLayout',
   PageLayoutTab = 'pageLayoutTab',
   CommandMenuItem = 'commandMenuItem',
+  TimelineActivityType = 'timelineActivityType',
 }

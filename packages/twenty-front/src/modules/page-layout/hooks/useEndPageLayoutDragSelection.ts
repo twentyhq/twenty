@@ -46,13 +46,12 @@ export const useEndPageLayoutDragSelection = (
       );
 
       if (isDefined(draggedBounds)) {
-        store.set(pageLayoutDraggedAreaState, draggedBounds);
-        store.set(pageLayoutEditingWidgetIdState, null);
-
         navigatePageLayoutSidePanel({
           sidePanelPage: SidePanelPages.PageLayoutDashboardWidgetTypeSelect,
           resetNavigationStack: true,
         });
+        store.set(pageLayoutDraggedAreaState, draggedBounds);
+        store.set(pageLayoutEditingWidgetIdState, null);
       }
     }
 

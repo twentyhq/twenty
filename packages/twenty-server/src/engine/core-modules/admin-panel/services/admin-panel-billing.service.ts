@@ -202,9 +202,7 @@ export class AdminPanelBillingService {
     const stripeCustomerId =
       customer?.stripeCustomerId ?? subscription?.stripeCustomerId ?? null;
     const creditBalance = toDisplayCredits(
-      await this.billingCreditGrantService.getSpendableCreditsMicro(
-        workspaceId,
-      ),
+      await this.billingCreditGrantService.getActiveCreditsMicro(workspaceId),
     );
 
     if (!subscription) {

@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
 import { AgentChatProvider } from '@/ai/components/AgentChatProvider';
+import { ApplicationsLoadEffect } from '@/applications/components/ApplicationsLoadEffect';
 import { TrackPageViewEffect } from '@/analytics/components/TrackPageViewEffect';
 import { SharedAppProviders } from '@/app/components/SharedAppProviders';
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
@@ -13,7 +14,8 @@ import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
 import { RequestFreshCaptchaTokenEffect } from '@/captcha/components/RequestFreshCaptchaTokenEffect';
 import { CommandMenuConfirmationModalManager } from '@/command-menu-item/confirmation-modal/components/CommandMenuConfirmationModalManager';
 import { CommandRunner } from '@/command-menu-item/engine-command/components/CommandRunner';
-import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ErrorMessageEffect } from '@/error-handler/components/ErrorMessageEffect';
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
 import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components/IsMinimalMetadataReadyEffect';
@@ -54,31 +56,35 @@ export const WorkspaceAppProviders = () => {
             <ApolloCoreProvider>
               <ApolloAdminProvider>
                 <SSEProvider>
+                  <ApplicationsLoadEffect />
                   <UserThemeProviderEffect />
                   <UserUiScaleProviderEffect />
-                  <SnackBarProvider>
-                    <ErrorMessageEffect />
-                    <AgentChatProvider>
-                      <DialogComponentInstanceContext.Provider
-                        value={{ instanceId: 'dialog-manager' }}
-                      >
-                        <DialogManager>
-                          <StrictMode>
-                            <PromiseRejectionEffect />
-                            <EndTrialAfterPaymentMethodGater />
-                            <GotoHotkeysEffectsProvider />
-                            <PageTitle title={pageTitle} />
-                            <PageFavicon />
-                            <Outlet />
-                            <GlobalFilePreviewModal />
-                            <CommandMenuConfirmationModalManager />
-                            <CommandRunner />
-                          </StrictMode>
-                        </DialogManager>
-                      </DialogComponentInstanceContext.Provider>
-                    </AgentChatProvider>
-                  </SnackBarProvider>
-                  <MainContextStoreProvider />
+                  <ContextStoreComponentInstanceContext.Provider
+                    value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
+                  >
+                    <SnackBarProvider>
+                      <ErrorMessageEffect />
+                      <AgentChatProvider>
+                        <DialogComponentInstanceContext.Provider
+                          value={{ instanceId: 'dialog-manager' }}
+                        >
+                          <DialogManager>
+                            <StrictMode>
+                              <PromiseRejectionEffect />
+                              <EndTrialAfterPaymentMethodGater />
+                              <GotoHotkeysEffectsProvider />
+                              <PageTitle title={pageTitle} />
+                              <PageFavicon />
+                              <Outlet />
+                              <GlobalFilePreviewModal />
+                              <CommandMenuConfirmationModalManager />
+                              <CommandRunner />
+                            </StrictMode>
+                          </DialogManager>
+                        </DialogComponentInstanceContext.Provider>
+                      </AgentChatProvider>
+                    </SnackBarProvider>
+                  </ContextStoreComponentInstanceContext.Provider>
                   <SupportChatEffect />
                   <InitializeQueryParamStateEffect />
                   <TrackPageViewEffect />

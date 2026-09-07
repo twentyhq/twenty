@@ -10,14 +10,14 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconInfoCircle, IconLockOpen } from 'twenty-ui/icon';
+import { IconInfoCircle, IconLock } from 'twenty-ui/icon';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -194,9 +194,8 @@ export const SettingsWorkspaceMember = () => {
               children: `${member.name.firstName} ${member.name.lastName}`,
             },
           ]}
-        >
-          <SettingsPageContainer>
-            <TabList
+          secondaryBar={
+            <SettingsTabBar
               tabs={[
                 {
                   id: SETTINGS_WORKSPACE_MEMBER_TABS.TABS_IDS.INFOS,
@@ -206,12 +205,14 @@ export const SettingsWorkspaceMember = () => {
                 {
                   id: SETTINGS_WORKSPACE_MEMBER_TABS.TABS_IDS.PERMISSIONS,
                   title: t`Permissions`,
-                  Icon: IconLockOpen,
+                  Icon: IconLock,
                 },
               ]}
               componentInstanceId={tabListComponentId}
             />
-
+          }
+        >
+          <SettingsPageContainer>
             {activeTabId === SETTINGS_WORKSPACE_MEMBER_TABS.TABS_IDS.INFOS && (
               <MemberInfosTab
                 member={member}

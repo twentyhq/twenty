@@ -98,7 +98,7 @@ export const SettingsAgentSettingsTab = ({
       <StyledFormContainer>
         <StyledIconNameRow>
           <IconPicker
-            selectedIconKey={formValues.icon || 'IconRobot'}
+            selectedIconKey={formValues.icon || 'IconLego'}
             onChange={({ iconKey }) => {
               onFieldChange('icon', iconKey);
             }}

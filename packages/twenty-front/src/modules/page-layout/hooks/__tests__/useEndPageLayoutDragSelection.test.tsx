@@ -1,6 +1,7 @@
 import { useEndPageLayoutDragSelection } from '@/page-layout/hooks/useEndPageLayoutDragSelection';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutSelectedCellsComponentState } from '@/page-layout/states/pageLayoutSelectedCellsComponentState';
+import { type PageLayoutDraggedArea } from '@/page-layout/types/page-layout-dragged-area';
 import { calculateGridBoundsFromSelectedCells } from '@/page-layout/utils/calculateGridBoundsFromSelectedCells';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -21,7 +22,7 @@ jest.mock('../../utils/calculateGridBoundsFromSelectedCells');
 
 const createTestStore = (
   initialSelectedCells?: Set<string>,
-  initialDraggedArea?: any,
+  initialDraggedArea?: PageLayoutDraggedArea,
 ) => {
   const store = createStore();
   if (isDefined(initialSelectedCells)) {
@@ -53,59 +54,75 @@ describe('useEndPageLayoutDragSelection', () => {
     });
   });
 
-  it('should handle drag selection end with valid bounds', () => {
-    const mockBounds = { x: 0, y: 0, w: 2, h: 2 };
-    (calculateGridBoundsFromSelectedCells as jest.Mock).mockReturnValue(
-      mockBounds,
-    );
+  it.each([false, true])(
+    'keeps the selected area when interrupting a closing panel: %s',
+    (isPanelClosing) => {
+      const mockBounds = { x: 0, y: 0, w: 2, h: 2 };
+      (calculateGridBoundsFromSelectedCells as jest.Mock).mockReturnValue(
+        mockBounds,
+      );
 
-    const store = createTestStore(new Set(['0-0', '0-1', '1-0', '1-1']), null);
+      const store = createTestStore(
+        new Set(['0-0', '0-1', '1-0', '1-1']),
+        null,
+      );
+      if (isPanelClosing) {
+        mockNavigatePageLayoutSidePanel.mockImplementationOnce(() => {
+          store.set(
+            pageLayoutDraggedAreaComponentState.atomFamily({
+              instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+            }),
+            null,
+          );
+        });
+      }
 
-    const { result } = renderHook(
-      () => ({
-        endDragSelection: useEndPageLayoutDragSelection(
-          PAGE_LAYOUT_TEST_INSTANCE_ID,
-        ),
-        selectedCells: useAtomComponentStateValue(
-          pageLayoutSelectedCellsComponentState,
-          PAGE_LAYOUT_TEST_INSTANCE_ID,
-        ),
-        draggedArea: useAtomComponentStateValue(
-          pageLayoutDraggedAreaComponentState,
-          PAGE_LAYOUT_TEST_INSTANCE_ID,
-        ),
-      }),
-      {
-        wrapper: ({ children }: { children: ReactNode }) => (
-          <PageLayoutTestWrapper store={store}>
-            {children}
-          </PageLayoutTestWrapper>
-        ),
-      },
-    );
+      const { result } = renderHook(
+        () => ({
+          endDragSelection: useEndPageLayoutDragSelection(
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
+          selectedCells: useAtomComponentStateValue(
+            pageLayoutSelectedCellsComponentState,
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
+          draggedArea: useAtomComponentStateValue(
+            pageLayoutDraggedAreaComponentState,
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
+        }),
+        {
+          wrapper: ({ children }: { children: ReactNode }) => (
+            <PageLayoutTestWrapper store={store}>
+              {children}
+            </PageLayoutTestWrapper>
+          ),
+        },
+      );
 
-    expect(result.current.selectedCells.size).toBe(4);
-    expect(result.current.draggedArea).toBeNull();
+      expect(result.current.selectedCells.size).toBe(4);
+      expect(result.current.draggedArea).toBeNull();
 
-    act(() => {
-      result.current.endDragSelection.endPageLayoutDragSelection();
-    });
+      act(() => {
+        result.current.endDragSelection.endPageLayoutDragSelection();
+      });
 
-    expect(calculateGridBoundsFromSelectedCells).toHaveBeenCalledWith([
-      '0-0',
-      '0-1',
-      '1-0',
-      '1-1',
-    ]);
+      expect(calculateGridBoundsFromSelectedCells).toHaveBeenCalledWith([
+        '0-0',
+        '0-1',
+        '1-0',
+        '1-1',
+      ]);
 
-    expect(result.current.draggedArea).toEqual(mockBounds);
-    expect(result.current.selectedCells.size).toBe(0);
+      expect(result.current.draggedArea).toEqual(mockBounds);
+      expect(result.current.selectedCells.size).toBe(0);
 
-    expect(mockNavigatePageLayoutSidePanel).toHaveBeenCalledWith({
-      sidePanelPage: SidePanelPages.PageLayoutDashboardWidgetTypeSelect,
-      resetNavigationStack: true,
-    });
-  });
+      expect(mockNavigatePageLayoutSidePanel).toHaveBeenCalledWith({
+        sidePanelPage: SidePanelPages.PageLayoutDashboardWidgetTypeSelect,
+        resetNavigationStack: true,
+      });
+    },
+  );
 
   it('should not navigate when no cells are selected', () => {
     (calculateGridBoundsFromSelectedCells as jest.Mock).mockReturnValue(null);

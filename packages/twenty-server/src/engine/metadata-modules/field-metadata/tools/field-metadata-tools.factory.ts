@@ -29,6 +29,27 @@ const FIELD_STRIP_WHEN_FALSE = ['isLabelSyncedWithName'];
 // isUIEditable defaults to true, so only the non-default false value is informative
 const FIELD_STRIP_WHEN_TRUE = ['isUIEditable'];
 
+const RELATION_TYPE_DESCRIPTION =
+  'Relation direction from the perspective of the object the field is created on. ' +
+  "MANY_TO_ONE: the field points to a single target record; this object owns the foreign key and gets a writable '<fieldName>Id' on its create/update inputs. Use it for 'belongs to one' fields. " +
+  "ONE_TO_MANY: the field is a read-only collection of target records; records are linked by writing the inverse '<fieldName>Id' on the target object.";
+
+const RelationCreationPayloadSchema = z.object({
+  type: z.nativeEnum(RelationType).describe(RELATION_TYPE_DESCRIPTION),
+  targetObjectMetadataId: z.string().uuid().describe('Target object ID'),
+  targetFieldLabel: z
+    .string()
+    .describe(
+      'Display label of the inverse relation field created on the target object',
+    ),
+  targetFieldIcon: z
+    .string()
+    .optional()
+    .describe(
+      'Tabler icon name for the inverse field (e.g. IconBuildingSkyscraper). Falls back to the relation default.',
+    ),
+});
+
 const GetFieldMetadataInputSchema = z.object({
   id: z.uuid().optional().describe('Field ID. Returns one field if set.'),
   objectMetadataId: z.uuid().optional().describe('Filter by object ID.'),
@@ -75,10 +96,9 @@ const CreateFieldMetadataInputSchema = z.object({
     .optional()
     .describe('Sync label with name'),
   isRemoteCreation: z.boolean().optional().describe('Remote field creation'),
-  relationCreationPayload: z
-    .unknown()
-    .optional()
-    .describe('Relation creation payload'),
+  relationCreationPayload: RelationCreationPayloadSchema.optional().describe(
+    'Required when type is RELATION. Defines the relation direction and the inverse field created on the target object.',
+  ),
 });
 
 const UpdateFieldMetadataInputSchema = z.object({
@@ -134,7 +154,7 @@ const CreateManyRelationFieldsInputSchema = z.object({
           .string()
           .optional()
           .describe('Tabler icon name for the relation field (e.g. IconUsers)'),
-        type: z.nativeEnum(RelationType).describe('MANY_TO_ONE or ONE_TO_MANY'),
+        type: z.nativeEnum(RelationType).describe(RELATION_TYPE_DESCRIPTION),
         targetObjectMetadataId: z.string().uuid().describe('Target object ID'),
         targetFieldLabel: z.string().describe('Inverse field label'),
         targetFieldIcon: z

@@ -5,26 +5,29 @@ import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-r
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/constants/non-terminal-call-recording-statuses';
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
-import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import {
   fetchAllNodes,
   type ConnectionPage,
 } from 'src/logic-functions/data/fetch-all-nodes.util';
-import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
+import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
+import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
+import { type ConvergeDivergedCallRecordingsResult } from 'src/logic-functions/flows/converge-diverged-call-recordings-result.type';
+import { runCallRecordingArtifactImportWithClaim } from 'src/logic-functions/flows/run-call-recording-artifact-import-with-claim.util';
+import { settleCallRecordingImport } from 'src/logic-functions/flows/settle-call-recording-import.util';
+import {
+  syncCallRecording,
+  type SyncCallRecordingResult,
+  type SyncableCallRecording,
+} from 'src/logic-functions/flows/sync-call-recording.util';
+import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
 import {
   listScheduledRecallBots,
   type RecallScheduledBot,
 } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
 import { type RecallBotSnapshot } from 'src/logic-functions/recall-api/recall-bot-snapshot.type';
-import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
+import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
-import { type ConvergeDivergedCallRecordingsResult } from 'src/logic-functions/flows/converge-diverged-call-recordings-result.type';
-import {
-  syncCallRecording,
-  type SyncableCallRecording,
-} from 'src/logic-functions/flows/sync-call-recording.util';
-import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 
 const CONVERGENCE_LOOKBACK_DAYS = 7;
 const CONVERGENCE_BOT_LIST_LOOKBACK_DAYS = CONVERGENCE_LOOKBACK_DAYS + 1;
@@ -135,10 +138,7 @@ export const convergeDivergedCallRecordings = async ({
   for (const candidate of orderedActionableCandidates) {
     const listedBot = listedRecallBotsById.get(candidate.externalBotId);
 
-    if (
-      isUndefined(listedBot) &&
-      remainingPerRecordingFallbackCount === 0
-    ) {
+    if (isUndefined(listedBot) && remainingPerRecordingFallbackCount === 0) {
       console.warn(
         `[call-recorder] skipping Recall bot ${candidate.externalBotId} for call recording ${candidate.id}: per-recording convergence fallback budget exhausted`,
       );
@@ -155,7 +155,6 @@ export const convergeDivergedCallRecordings = async ({
       candidate,
       externalBotId: candidate.externalBotId,
       listedBot,
-      now,
       result,
     });
   }
@@ -275,14 +274,12 @@ const convergeCallRecording = async ({
   candidate,
   externalBotId,
   listedBot,
-  now,
   result,
 }: {
   client: CoreApiClient;
   candidate: DivergedCallRecordingCandidate;
   externalBotId: string;
   listedBot: RecallBotSnapshot | undefined;
-  now: Date;
   result: ConvergeDivergedCallRecordingsResult;
 }): Promise<void> => {
   const botResult = isUndefined(listedBot)
@@ -308,19 +305,47 @@ const convergeCallRecording = async ({
     return;
   }
 
-  const syncResult = await syncCallRecording({
-    client,
-    callRecording: candidate,
-    bot: botResult.bot,
-    treatRecordingAsDone: false,
-    requestedAt: now.toISOString(),
-  });
+  const callRecordingSyncResults: SyncCallRecordingResult[] = [];
 
-  if (syncResult.updated) {
+  for (const artifactImportScope of ['transcript', 'media'] as const) {
+    const artifactImportClaimedAt = new Date();
+    const artifactImportExecution =
+      await runCallRecordingArtifactImportWithClaim({
+        client,
+        callRecordingId: candidate.id,
+        scope: artifactImportScope,
+        now: artifactImportClaimedAt,
+        runImport: (callRecording) =>
+          syncCallRecording({
+            client,
+            callRecording,
+            bot: botResult.bot,
+            treatRecordingAsDone: false,
+            requestedAt: artifactImportClaimedAt.toISOString(),
+            artifactScope: artifactImportScope,
+          }),
+      });
+
+    if (artifactImportExecution.status === 'executed') {
+      callRecordingSyncResults.push(artifactImportExecution.result);
+    }
+  }
+
+  const hasCompletedImport = await settleCallRecordingImport(client, {
+    callRecordingId: candidate.id,
+  });
+  const hasUpdatedCallRecording = callRecordingSyncResults.some(
+    (callRecordingSyncResult) => callRecordingSyncResult.updated,
+  );
+  const hasRequestedTranscript = callRecordingSyncResults.some(
+    (callRecordingSyncResult) => callRecordingSyncResult.requestedTranscript,
+  );
+
+  if (hasUpdatedCallRecording || hasCompletedImport) {
     result.updatedCallRecordingIds.push(candidate.id);
   }
 
-  if (syncResult.requestedTranscript) {
+  if (hasRequestedTranscript) {
     result.requestedTranscriptCallRecordingIds.push(candidate.id);
   }
 };
@@ -366,8 +391,7 @@ const listRecallBotsByIdForConvergence = async (
 
   const listResult = await listScheduledRecallBots({
     joinAtAfter: new Date(
-      now.getTime() -
-        CONVERGENCE_BOT_LIST_LOOKBACK_DAYS * 24 * 60 * 60 * 1000,
+      now.getTime() - CONVERGENCE_BOT_LIST_LOOKBACK_DAYS * 24 * 60 * 60 * 1000,
     ).toISOString(),
     joinAtBefore: new Date(
       now.getTime() + CONVERGENCE_BOT_LIST_LOOKAHEAD_MILLISECONDS,

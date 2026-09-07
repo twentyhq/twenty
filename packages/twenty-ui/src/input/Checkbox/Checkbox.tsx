@@ -1,6 +1,6 @@
 import { Checkbox as CheckboxPrimitive } from '@base-ui/react/checkbox';
 import { clsx } from 'clsx';
-import * as React from 'react';
+import { type ChangeEvent } from 'react';
 
 import { IconCheck, IconMinus } from '@ui/icon/components/TablerIcons';
 
@@ -31,7 +31,7 @@ type CheckboxProps = {
   checked: boolean;
   indeterminate?: boolean;
   hoverable?: boolean;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
   onCheckedChange?: (value: boolean) => void;
   variant?: CheckboxVariant;
   size?: CheckboxSize;
@@ -60,16 +60,9 @@ export const Checkbox = ({
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledby,
 }: CheckboxProps) => {
-  const [isInternalChecked, setIsInternalChecked] =
-    React.useState<boolean>(false);
-
-  React.useEffect(() => {
-    setIsInternalChecked(checked ?? false);
-  }, [checked]);
-
   return (
     <CheckboxPrimitive.Root
-      checked={isInternalChecked}
+      checked={checked}
       indeterminate={indeterminate}
       disabled={disabled}
       id={id}
@@ -79,10 +72,9 @@ export const Checkbox = ({
       data-testid="input-checkbox"
       onCheckedChange={(value, eventDetails) => {
         onChange?.(
-          eventDetails.event as unknown as React.ChangeEvent<HTMLInputElement>,
+          eventDetails.event as unknown as ChangeEvent<HTMLInputElement>,
         );
         onCheckedChange?.(value);
-        setIsInternalChecked(value);
       }}
       className={clsx(
         styles.root,

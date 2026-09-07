@@ -13,8 +13,8 @@ type PageLayoutWidgetDndProviderProps = {
 
 // Mounted in both view and edit mode so toggling edit mode does not remount the
 // layout subtree (which would reset scroll position and widget-local state).
-// Widget sortables and drop targets only render while editing, so the provider
-// is inert in view mode.
+// Widget sortables are disabled and their terminal drop target is detached in
+// view mode, so the provider is inert there.
 export const PageLayoutWidgetDndProvider = ({
   children,
 }: PageLayoutWidgetDndProviderProps) => {

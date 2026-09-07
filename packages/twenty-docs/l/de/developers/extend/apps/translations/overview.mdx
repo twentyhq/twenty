@@ -76,6 +76,8 @@ t({ message: 'Open', context: 'window' });
 <Trans context="card-title">Untitled</Trans>
 ```
 
+Kontextbezogene Zeichenketten erscheinen in Gebietsschema-Katalogen als Gruppe, die über ihren Kontext geschlüsselt ist: `"\<context>": { "\<message>": "\<translation>" }`. Manifestbeschriftungen sind ihrer Konstruktion nach kontextabhängig – jede von ihnen trägt die Rolle, die sie in den Metadaten spielt (`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …), sodass dasselbe Wort sich als Objektname und als Ansichtsname unterschiedlich übersetzen kann.
+
 ## Extrahieren und Übersetzen
 
 Führen Sie den Extract-Befehl aus Ihrem App-Verzeichnis aus:
@@ -93,9 +95,17 @@ Zeichenketten aus Ihrem Front-Komponenten-Quellcode in `locales/\<locale>.json`,
 {
   "Loading postcard…": "Chargement de la carte…",
   "Hi {name}": "Bonjour {name}",
-  "Saved {count} cards": "{count} cartes enregistrées"
+  "Saved {count} cards": "{count} cartes enregistrées",
+  "door": {
+    "Open": "Ouvrir"
+  },
+  "objectMetadata.labelSingular": {
+    "Postcard": "Carte postale"
+  }
 }
 ```
+
+Kontextfreie Zeichenketten sind flache Einträge; kontextbezogene Zeichenketten – einschließlich jeder Manifestbeschriftung – sind unter ihrem Kontextschlüssel verschachtelt.
 
 Platzhalter wie `{name}` werden zur Laufzeit ersetzt – behalten Sie sie in der
 Übersetzung bei. Jede Zeichenkette, die leer bleibt, fällt auf den Quelltext zurück.
@@ -108,14 +118,11 @@ jede Zeichenkette gegen ihren Katalog auf, wobei auf die Quelle zurückgegriffen
 wird, wenn eine Übersetzung fehlt. Das Umschalten der Sprache im Host rendert `Trans`- und
 `useTranslate().t`-Zeichenketten live neu.
 
-Da Kataloge zur Build-Zeit kompiliert werden, bedeutet das Aktualisieren einer Übersetzung,
-`twenty dev:build` erneut auszuführen (und erneut bereitzustellen), genau wie bei jeder anderen Änderung.
-
-<Note>
-Übersetzungen werden durch `twenty dev:build` (und `twenty apply`) kompiliert. Der
-kontinuierliche `twenty dev`-Watch zeigt Quellzeichenketten an, daher sollten Sie die lokalisierte Ausgabe
-mit einem einmaligen Build testen.
-</Note>
+Manifest-Bezeichnungen werden bei jeder Synchronisierung kompiliert – bei `twenty dev:build`, `twenty apply`
+und der fortlaufenden `twenty dev`-Überwachung –, sodass das Bearbeiten einer Locale-Datei und
+das Synchronisieren ausreichen, um den neuen Text zu sehen. Front-Komponentenkataloge werden zur Build-Zeit in
+jedes Komponenten-Bundle integriert, sodass das Ändern eines davon weiterhin das
+erneute Ausführen von `twenty dev:build` (und ein erneutes Deployment) erfordert.
 
 `Trans`-Text-Children können sich über mehrere Zeilen erstrecken – Leerraum wird auf dieselbe Weise zusammengefasst, wie JSX ihn zusammenfasst, sodass beide zum Schlüssel `Welcome back` extrahiert werden:
 

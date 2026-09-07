@@ -52,6 +52,7 @@ export enum SettingsPath {
   ApplicationLogicFunctionDetail = 'applications/:applicationId/logicFunctions/:logicFunctionId',
   ApplicationFrontComponentDetail = 'applications/:applicationId/frontComponents/:frontComponentId',
   ApplicationCommandMenuItemDetail = 'applications/:applicationId/commandMenuItems/:commandMenuItemId',
+  ApplicationTimelineActivityTypeDetail = 'applications/:applicationId/timelineActivityTypes/:timelineActivityTypeId',
   ApplicationViewDetail = 'applications/:applicationId/views/:viewUniversalIdentifier',
   ApplicationPageLayoutDetail = 'applications/:applicationId/pageLayouts/:pageLayoutUniversalIdentifier',
   AvailableApplicationDetail = 'applications/available/:availableApplicationId',
@@ -69,7 +70,7 @@ export enum SettingsPath {
   Integrations = 'integrations',
   Security = 'general#security',
   Logs = 'general#logs',
-  NewSSOIdentityProvider = 'security/sso/new',
+  NewSsoIdentityProvider = 'security/sso/new',
 
   AdminPanel = 'admin-panel',
   AdminPanelEnterprise = 'admin-panel#enterprise',

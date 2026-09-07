@@ -2,15 +2,11 @@ import {
   STANDARD_OBJECTS,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
-import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
+import { PageLayoutTabLayoutMode, WidgetType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import {
-  GRID_POSITIONS,
-  VERTICAL_LIST_LAYOUT_POSITIONS,
-} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
+import { VERTICAL_LIST_LAYOUT_POSITIONS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
 const WORKSPACE_ID = '20202020-1111-4111-8111-111111111111';
@@ -49,7 +45,7 @@ describe('CalendarEvent standard metadata build', () => {
       (viewField) => viewField.fieldMetadataUniversalIdentifier,
     );
 
-    expect(viewFieldFieldUniversalIdentifiers).toHaveLength(12);
+    expect(viewFieldFieldUniversalIdentifiers).toHaveLength(13);
     expect(viewFieldFieldUniversalIdentifiers).toEqual(
       expect.arrayContaining([
         STANDARD_OBJECTS.calendarEvent.fields.title.universalIdentifier,
@@ -61,6 +57,8 @@ describe('CalendarEvent standard metadata build', () => {
           .universalIdentifier,
         STANDARD_OBJECTS.calendarEvent.fields.location.universalIdentifier,
         STANDARD_OBJECTS.calendarEvent.fields.description.universalIdentifier,
+        STANDARD_OBJECTS.calendarEvent.fields.calendarEventTargets
+          .universalIdentifier,
         STANDARD_OBJECTS.calendarEvent.fields.externalCreatedAt
           .universalIdentifier,
         STANDARD_OBJECTS.calendarEvent.fields.externalUpdatedAt
@@ -91,6 +89,8 @@ describe('CalendarEvent standard metadata build', () => {
       STANDARD_OBJECTS.calendarEvent.fields.conferenceLink.universalIdentifier,
       STANDARD_OBJECTS.calendarEvent.fields.location.universalIdentifier,
       STANDARD_OBJECTS.calendarEvent.fields.description.universalIdentifier,
+      STANDARD_OBJECTS.calendarEvent.fields.calendarEventTargets
+        .universalIdentifier,
     ]);
 
     expect(
@@ -204,7 +204,6 @@ describe('CalendarEvent standard metadata build', () => {
       title: 'Summary',
       type: WidgetType.CALL_RECORDING_SUMMARY,
       pageLayoutTabUniversalIdentifier: summaryTabUniversalIdentifier,
-      gridPosition: GRID_POSITIONS.FULL_WIDTH,
       position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
       universalConfiguration: {
         configurationType: WidgetConfigurationType.CALL_RECORDING_SUMMARY,
@@ -239,7 +238,6 @@ describe('CalendarEvent standard metadata build', () => {
       title: 'Transcript',
       type: WidgetType.CALL_RECORDING_TRANSCRIPT,
       pageLayoutTabUniversalIdentifier: callRecordingTabUniversalIdentifier,
-      gridPosition: GRID_POSITIONS.FULL_WIDTH,
       position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
       universalConfiguration: {
         configurationType: WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT,

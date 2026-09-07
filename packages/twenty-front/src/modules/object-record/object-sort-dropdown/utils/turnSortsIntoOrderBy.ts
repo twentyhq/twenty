@@ -36,9 +36,10 @@ export const turnSortsIntoOrderBy = (
         return undefined;
       }
 
+      // Nulls last in both directions so a sparse column doesn't open with a wall of empty rows
       const direction: OrderBy =
         sort.direction === ViewSortDirection.ASC
-          ? 'AscNullsFirst'
+          ? 'AscNullsLast'
           : 'DescNullsLast';
 
       if (correspondingField.type === FieldMetadataType.RELATION) {

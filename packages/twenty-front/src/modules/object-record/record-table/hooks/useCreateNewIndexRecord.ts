@@ -13,6 +13,7 @@ import { newRecordTitleCellToOpenState } from '@/object-record/record-title-cell
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -50,6 +51,7 @@ export const useCreateNewIndexRecord = ({
   );
 
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
+  const workspaceSurface = useWorkspaceSurface();
 
   const openRecordIn = useResolveOpenRecordIn(objectMetadataItem.nameSingular);
 
@@ -91,7 +93,14 @@ export const useCreateNewIndexRecord = ({
         ...mergedRecordInput,
       });
 
-      if (openRecordIn === OpenRecordIn.SIDE_PANEL) {
+      if (workspaceSurface.type === 'side-panel') {
+        openRecordInSidePanel({
+          recordId,
+          objectNameSingular: objectMetadataItem.nameSingular,
+          isNewRecord: true,
+          resetNavigationStack: false,
+        });
+      } else if (openRecordIn === OpenRecordIn.SIDE_PANEL) {
         openRecordInSidePanel({
           recordId,
           objectNameSingular: objectMetadataItem.nameSingular,
@@ -168,6 +177,7 @@ export const useCreateNewIndexRecord = ({
       recordIndexRecordIdsByGroupCallbackState,
       upsertRecordsInStore,
       closeSidePanelMenu,
+      workspaceSurface.type,
     ],
   );
 

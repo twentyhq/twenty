@@ -141,6 +141,7 @@ const deriveAllMetadataEventsFromUpdateAction = ({
     case 'viewSort':
     case 'webhook':
     case 'connectionProvider':
+    case 'timelineActivityType':
     case 'searchFieldMetadata': {
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(
         flatAction.metadataName,

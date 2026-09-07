@@ -6,6 +6,7 @@ import { TWENTY_ICONS_BASE_URL } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
+  IsNull,
   QueryFailedError,
   Repository,
   type DataSource,
@@ -37,6 +38,8 @@ import {
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
 import { MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/auth/constants/max-workspaces-without-enterprise-key.constants';
+import { getSignUpWithoutWorkspaceDecision } from 'src/engine/core-modules/auth/utils/get-sign-up-without-workspace-decision.util';
+import { hasProvisionedSignUpDestination } from 'src/engine/core-modules/auth/utils/has-provisioned-sign-up-destination.util';
 import { DEFAULT_DPA_REGION } from 'src/engine/core-modules/dpa/config/dpa-region-config.constant';
 import { DpaAgreementEntity } from 'src/engine/core-modules/dpa/entities/dpa-agreement.entity';
 import { DpaAgreementType } from 'src/engine/core-modules/dpa/enums/dpa-agreement-type.enum';
@@ -50,6 +53,7 @@ import {
 } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -92,6 +96,7 @@ export class SignInUpService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationService: ApplicationService,
     private readonly fileCorePictureService: FileCorePictureService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly enterprisePlanService: EnterprisePlanService,
     private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly billingCreditService: BillingCreditService,
@@ -482,6 +487,55 @@ export class SignInUpService {
     }
   }
 
+  // Enforced here rather than at workspace creation so a restricted instance
+  // stops accumulating verified users that can never reach a workspace.
+  private async assertSignUpWithoutWorkspaceAllowed(
+    email: string,
+  ): Promise<void> {
+    const decision = getSignUpWithoutWorkspaceDecision({
+      isMultiWorkspaceEnabled: this.twentyConfigService.get(
+        'IS_MULTIWORKSPACE_ENABLED',
+      ),
+      isWorkspaceCreationLimitedToServerAdmins: this.twentyConfigService.get(
+        'IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS',
+      ),
+      workspaceCount: await this.workspaceRepository.count(),
+    });
+
+    if (decision === 'allowed') {
+      return;
+    }
+
+    if (
+      decision === 'requiresDestination' &&
+      (await this.hasProvisionedDestination(email))
+    ) {
+      return;
+    }
+
+    throw new AuthException(
+      'New workspace setup is disabled',
+      AuthExceptionCode.SIGNUP_DISABLED,
+    );
+  }
+
+  private async hasProvisionedDestination(email: string): Promise<boolean> {
+    // Invitations are read directly instead of through the sign-in picker,
+    // which hides HIDDEN workspaces: that is a listing rule, not a statement
+    // that the invitee has nowhere to land.
+    const invitations =
+      await this.workspaceInvitationService.findInvitationsByEmail(email);
+
+    if (hasProvisionedSignUpDestination(invitations)) {
+      return true;
+    }
+
+    const { availableWorkspacesForSignUp } =
+      await this.userWorkspaceService.findAvailableWorkspacesByEmail(email);
+
+    return hasProvisionedSignUpDestination(availableWorkspacesForSignUp);
+  }
+
   private async hasServerAdmin(): Promise<boolean> {
     const adminCount = await this.userRepository.count({
       where: { canAccessFullAdminPanel: true },
@@ -548,6 +602,92 @@ export class SignInUpService {
     );
   }
 
+  private async deleteInferredWorkspaceLogo({
+    fileId,
+    workspaceId,
+  }: {
+    fileId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    try {
+      await this.fileCorePictureService.deleteCorePicture({
+        fileId,
+        workspaceId,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to clean up inferred logo for workspace ${workspaceId}`,
+        error,
+      );
+      this.exceptionHandlerService.captureExceptions([error], {
+        workspace: { id: workspaceId },
+        additionalData: { source: 'inferred-workspace-logo-cleanup' },
+      });
+    }
+  }
+
+  private async uploadInferredWorkspaceLogo({
+    email,
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    email: string;
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }): Promise<string | undefined> {
+    let uploadedLogoFileId: string | undefined;
+
+    try {
+      const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainFromEmailOrThrow(email)}`;
+      const logoFile =
+        await this.fileCorePictureService.uploadWorkspaceLogoFromUrl({
+          imageUrl: logoUrl,
+          workspaceId,
+          applicationUniversalIdentifier,
+        });
+
+      if (!isDefined(logoFile)) {
+        return;
+      }
+
+      uploadedLogoFileId = logoFile.id;
+
+      const updateResult = await this.workspaceRepository.update(
+        { id: workspaceId, logoFileId: IsNull() },
+        { logoFileId: logoFile.id },
+      );
+
+      if ((updateResult.affected ?? 0) === 0) {
+        await this.deleteInferredWorkspaceLogo({
+          fileId: logoFile.id,
+          workspaceId,
+        });
+
+        return;
+      }
+
+      return logoFile.id;
+    } catch (error) {
+      this.logger.error(
+        `Failed to upload inferred logo for workspace ${workspaceId}`,
+        error,
+      );
+      this.exceptionHandlerService.captureExceptions([error], {
+        workspace: { id: workspaceId },
+        additionalData: { source: 'inferred-workspace-logo' },
+      });
+
+      if (isDefined(uploadedLogoFileId)) {
+        await this.deleteInferredWorkspaceLogo({
+          fileId: uploadedLogoFileId,
+          workspaceId,
+        });
+      }
+
+      return;
+    }
+  }
+
   async signUpOnNewWorkspace(
     userData: ExistingUserOrPartialUserWithPicture['userData'],
     options?: { displayName?: string; subdomain?: string },
@@ -597,8 +737,8 @@ export class SignInUpService {
     const workspaceCustomApplicationId = v4();
 
     try {
-      const { user, workspace } = await this.dataSource.transaction(
-        async (entityManager) => {
+      const { user, workspace, customApplicationUniversalIdentifier } =
+        await this.dataSource.transaction(async (entityManager) => {
           const queryRunner = entityManager.queryRunner as QueryRunner;
 
           const workspaceToCreate = this.workspaceRepository.create({
@@ -628,26 +768,6 @@ export class SignInUpService {
               queryRunner,
             );
 
-          if (isWorkEmailFound) {
-            const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainFromEmailOrThrow(email)}`;
-            const logoFile =
-              await this.fileCorePictureService.uploadWorkspaceLogoFromUrl({
-                imageUrl: logoUrl,
-                workspaceId,
-                applicationUniversalIdentifier:
-                  customApplication.universalIdentifier,
-                queryRunner,
-              });
-
-            if (isDefined(logoFile)) {
-              await queryRunner.manager.update(
-                WorkspaceEntity,
-                { id: workspaceId },
-                { logoFileId: logoFile.id },
-              );
-            }
-          }
-
           const isExistingUser = userData.type === 'existingUser';
           const user = isExistingUser
             ? userData.existingUser
@@ -670,6 +790,7 @@ export class SignInUpService {
                 : userData.newUserWithPicture.picture,
               applicationUniversalIdentifier:
                 customApplication.universalIdentifier,
+              locale: user.locale,
             },
             queryRunner,
           );
@@ -717,9 +838,25 @@ export class SignInUpService {
             );
           }
 
-          return { user, workspace };
-        },
-      );
+          return {
+            user,
+            workspace,
+            customApplicationUniversalIdentifier:
+              customApplication.universalIdentifier,
+          };
+        });
+
+      if (isWorkEmailFound) {
+        const inferredLogoFileId = await this.uploadInferredWorkspaceLogo({
+          email,
+          workspaceId,
+          applicationUniversalIdentifier: customApplicationUniversalIdentifier,
+        });
+
+        if (isDefined(inferredLogoFileId)) {
+          workspace.logoFileId = inferredLogoFileId;
+        }
+      }
 
       void this.eventLogEmitterService
         .createContext({ workspaceId })
@@ -771,7 +908,7 @@ export class SignInUpService {
       );
     }
 
-    await this.assertSignUpEnabled();
+    await this.assertSignUpWithoutWorkspaceAllowed(newUserParams.email);
 
     const shouldGrantServerAdmin = !(await this.hasServerAdmin());
 

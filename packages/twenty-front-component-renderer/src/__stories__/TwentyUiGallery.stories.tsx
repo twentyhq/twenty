@@ -234,3 +234,31 @@ export const TypographyPreact: Story = createGalleryStory(
   'twenty-ui-typography-gallery',
   'preact',
 );
+
+const themeTokenTest: Story['play'] = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+
+  const iconWrapper = await canvas.findByTestId(
+    'theme-token-icon-wrapper',
+    {},
+    { timeout: 30000 },
+  );
+
+  await waitFor(() => {
+    const iconBox = iconWrapper.getBoundingClientRect();
+
+    expect(Math.round(iconBox.width)).toBe(16);
+    expect(Math.round(iconBox.height)).toBe(16);
+  });
+
+  expect(errorHandler).not.toHaveBeenCalled();
+};
+
+export const ThemeTokensReact: Story = {
+  ...createGalleryStory('twenty-ui-theme-tokens'),
+  play: themeTokenTest,
+};
+export const ThemeTokensPreact: Story = {
+  ...createGalleryStory('twenty-ui-theme-tokens', 'preact'),
+  play: themeTokenTest,
+};

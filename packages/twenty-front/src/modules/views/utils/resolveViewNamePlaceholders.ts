@@ -1,5 +1,9 @@
-import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
+import {
+  buildObjectMetadataLabelPlaceholderValues,
+  interpolateMessagePlaceholders,
+} from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
+import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
 
 export const resolveViewNamePlaceholders = (
   viewName: string | undefined,
@@ -9,7 +13,8 @@ export const resolveViewNamePlaceholders = (
     return viewName ?? '';
   }
 
-  return viewName
-    .replace('{objectLabelPlural}', objectMetadataItem.labelPlural)
-    .replace('{objectLabelSingular}', objectMetadataItem.labelSingular);
+  return interpolateMessagePlaceholders(
+    viewName,
+    buildObjectMetadataLabelPlaceholderValues(objectMetadataItem),
+  );
 };

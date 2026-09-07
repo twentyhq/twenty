@@ -4,10 +4,9 @@ import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { getTranslationCatalogKey } from '@/sdk/front-component/translations/message';
 import { collectTranslatableStrings } from '@/cli/utilities/translations/collect-translatable-strings';
 import { compileApplicationTranslations } from '@/cli/utilities/translations/compile-application-translations';
-import { generateMessageId } from '@/cli/utilities/translations/generate-message-id';
+import { generateMessageId } from 'twenty-shared/i18n';
 import { type Manifest } from 'twenty-shared/application';
 
 const buildManifest = (overrides: Record<string, unknown>): Manifest =>
@@ -54,12 +53,66 @@ describe('collectTranslatableStrings', () => {
       ],
     });
 
-    expect(collectTranslatableStrings(manifest)).toEqual([
-      'A company',
-      'Companies',
-      'Company',
-      'Name',
-    ]);
+    expect(collectTranslatableStrings(manifest)).toEqual(
+      expect.arrayContaining([
+        { message: 'Company', context: 'objectMetadata.labelSingular' },
+        { message: 'Companies', context: 'objectMetadata.labelPlural' },
+        { message: 'A company', context: 'objectMetadata.description' },
+        { message: 'Name', context: 'fieldMetadata.label' },
+        { message: 'Name', context: 'fieldMetadata.description' },
+        // the same string in two roles is two entries now
+        { message: 'Company', context: 'fieldMetadata.label' },
+      ]),
+    );
+  });
+
+  // Pins every manifest collection the shared registry maps, so a change to
+  // TRANSLATABLE_PROPERTIES_BY_METADATA_NAME that silently drops a collection
+  // shows up here rather than as an app shipping untranslatable strings.
+  it('collects every translatable property of every mapped manifest collection', () => {
+    const manifest = buildManifest({
+      objects: [
+        {
+          labelSingular: 'Rocket',
+          labelPlural: 'Rockets',
+          description: 'A rocket',
+        },
+      ],
+      fields: [{ label: 'Thrust', description: 'Newtons' }],
+      views: [{ name: 'All Rockets' }],
+      pageLayoutTabs: [{ title: 'Telemetry' }],
+      commandMenuItems: [{ label: 'Launch Rocket', shortLabel: 'Launch' }],
+      navigationMenuItems: [{ name: 'Missions' }],
+      timelineActivityTypes: [{ label: 'Launched a rocket' }],
+      pageLayouts: [
+        {
+          name: 'Mission Control Layout',
+          tabs: [{ title: 'Overview', widgets: [{ title: 'Fuel level' }] }],
+        },
+      ],
+    });
+
+    expect(collectTranslatableStrings(manifest)).toEqual(
+      expect.arrayContaining([
+        { message: 'Rocket', context: 'objectMetadata.labelSingular' },
+        { message: 'Rockets', context: 'objectMetadata.labelPlural' },
+        { message: 'A rocket', context: 'objectMetadata.description' },
+        { message: 'Thrust', context: 'fieldMetadata.label' },
+        { message: 'Newtons', context: 'fieldMetadata.description' },
+        { message: 'All Rockets', context: 'view.name' },
+        { message: 'Telemetry', context: 'pageLayoutTab.title' },
+        { message: 'Launch Rocket', context: 'commandMenuItem.label' },
+        { message: 'Launch', context: 'commandMenuItem.shortLabel' },
+        { message: 'Missions', context: 'navigationMenuItem.name' },
+        {
+          message: 'Launched a rocket',
+          context: 'timelineActivityType.label',
+        },
+        { message: 'Mission Control Layout', context: 'pageLayout.name' },
+        { message: 'Overview', context: 'pageLayoutTab.title' },
+        { message: 'Fuel level', context: 'pageLayoutWidget.title' },
+      ]),
+    );
   });
 });
 
@@ -95,7 +148,7 @@ describe('compileApplicationTranslations', () => {
     await writeFile(
       join(localesDir, 'fr-FR.json'),
       JSON.stringify({
-        [getTranslationCatalogKey('Open', 'door')]: 'Ouvrir',
+        door: { Open: 'Ouvrir' },
       }),
     );
 
@@ -106,9 +159,9 @@ describe('compileApplicationTranslations', () => {
     });
   });
 
-  it('returns undefined when there is no locales directory', async () => {
+  it('returns no locales when there is no locales directory', async () => {
     const appPath = await mkdtemp(join(tmpdir(), 'twenty-translations-empty-'));
 
-    expect(await compileApplicationTranslations(appPath)).toBeUndefined();
+    expect(await compileApplicationTranslations(appPath)).toEqual({});
   });
 });

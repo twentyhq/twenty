@@ -4,9 +4,10 @@ import { LogicFunctionLogs } from '@/logic-functions/components/LogicFunctionLog
 import { LogicFunctionTestInputInitEffect } from '@/logic-functions/components/LogicFunctionTestInputInitEffect';
 import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogicFunction';
 import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFunction';
-import { InputLabel } from '@/ui/input/components/InputLabel';
+import { InputLabel } from 'twenty-ui/input';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type WorkflowLogicFunctionAction } from '@/workflow/types/Workflow';
 import { WorkflowExpectedOutputBodyInput } from '@/workflow/workflow-steps/components/WorkflowExpectedOutputBodyInput';
@@ -80,7 +81,9 @@ export const WorkflowEditActionLogicFunction = ({
 
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
-    WORKFLOW_LOGIC_FUNCTION_ACTION_TAB_LIST_COMPONENT_ID,
+    useWorkspaceSurfaceScopedComponentInstanceId(
+      WORKFLOW_LOGIC_FUNCTION_ACTION_TAB_LIST_COMPONENT_ID,
+    ),
   );
 
   const functionInput = useMemo(() => {

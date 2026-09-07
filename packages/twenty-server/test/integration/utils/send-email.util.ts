@@ -4,6 +4,7 @@ import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/m
 
 type SendEmailInput = {
   connectedAccountId: string;
+  fromHandle?: string;
   to: string;
   cc?: string;
   bcc?: string;

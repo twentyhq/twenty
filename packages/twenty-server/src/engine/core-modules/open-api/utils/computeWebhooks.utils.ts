@@ -2,20 +2,11 @@ import { type OpenAPIV3_1 } from 'openapi-types';
 import { capitalize } from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const computeWebhooks = (
   type: DatabaseEventAction,
   item: Pick<FlatObjectMetadata, 'nameSingular'>,
-  _flatObjectMetadataMaps: Pick<
-    AllFlatEntityMaps,
-    'flatObjectMetadataMaps'
-  >['flatObjectMetadataMaps'],
-  _flatFieldMetadataMaps: Pick<
-    AllFlatEntityMaps,
-    'flatFieldMetadataMaps'
-  >['flatFieldMetadataMaps'],
 ): OpenAPIV3_1.PathItemObject => {
   const updatedFields = {
     type: 'array',

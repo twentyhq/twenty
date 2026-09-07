@@ -42,6 +42,39 @@ const createMockWorkspaceEventBatch = (
 });
 
 describe('transformEventBatchToEventPayloads', () => {
+  describe('triggering person', () => {
+    it('should name the person whose mutation raised the event', () => {
+      const workspaceEventBatch = createMockWorkspaceEventBatch({
+        events: [
+          createMockEvent({
+            userId: 'user-1',
+            userWorkspaceId: 'user-workspace-1',
+          }),
+        ],
+      });
+
+      const [jobData] = transformEventBatchToEventPayloads({
+        workspaceEventBatch,
+        logicFunctions: [createMockLogicFunction()],
+      });
+
+      expect(jobData).toMatchObject({
+        userId: 'user-1',
+        userWorkspaceId: 'user-workspace-1',
+      });
+    });
+
+    it('should name nobody for a mutation with no user behind it', () => {
+      const [jobData] = transformEventBatchToEventPayloads({
+        workspaceEventBatch: createMockWorkspaceEventBatch(),
+        logicFunctions: [createMockLogicFunction()],
+      });
+
+      expect(jobData).not.toHaveProperty('userId');
+      expect(jobData).not.toHaveProperty('userWorkspaceId');
+    });
+  });
+
   describe('basic transformation', () => {
     it('should transform a single event batch with a single logic function', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch();

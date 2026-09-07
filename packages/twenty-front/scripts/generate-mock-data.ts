@@ -1,6 +1,7 @@
 /* oxlint-disable no-console */
 import { generateApiKeys } from './mock-data/generate-api-keys.js';
 import { generateBillingPlans } from './mock-data/generate-billing-plans.js';
+import { generateCommandMenuItems } from './mock-data/generate-command-menu-items.js';
 import { generateObjectMetadata } from './mock-data/generate-object-metadata.js';
 import { generateMinimalMetadata } from './mock-data/generate-minimal-metadata.js';
 import { generateRecordData } from './mock-data/generate-record-data.js';
@@ -18,6 +19,7 @@ const main = async () => {
   await generateRoles(token);
   await generateViews(token);
   await generateNavigationMenuItems(token);
+  await generateCommandMenuItems(token);
 
   try {
     await generateBillingPlans(token);

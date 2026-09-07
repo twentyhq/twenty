@@ -84,6 +84,29 @@ export default defineField({
 **Zyklische Importe:** Beide Relationsfelder referenzieren gegenseitig den `universalIdentifier` des jeweils anderen. Um Probleme mit zyklischen Importen zu vermeiden, exportieren Sie Ihre Feld-IDs als benannte Konstanten aus jeder Datei und importieren Sie sie in der jeweils anderen. Das Build-System löst dies zur Kompilierzeit auf.
 </Note>
 
+## Verknüpfungsbeziehungen (Junction)
+
+Ein Verknüpfungsobjekt (Junction) verbindet einen Quelldatensatz mit einem oder mehreren Zieldatensätzen. Beispielsweise kann `PostCardRecipient` sowohl eine `postCard`-Beziehung als auch eine `recipient`-Beziehung enthalten. Legen Sie im `ONE_TO_MANY`-Feld des Quellobjekts `junctionTargetFieldUniversalIdentifier` auf das Beziehungsfeld des Verknüpfungsobjekts fest, das auf das Ziel verweist:
+
+```ts
+export default defineField({
+  universalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCardRecipients',
+  label: 'Post Card Recipients',
+  relationTargetObjectMetadataUniversalIdentifier:
+    POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+    junctionTargetFieldUniversalIdentifier: RECIPIENT_FIELD_ID,
+  },
+});
+```
+
+`RECIPIENT_FIELD_ID` muss eine `MANY_TO_ONE`- oder morphische Beziehung auf dem Verknüpfungsobjekt identifizieren. Damit wird Twenty mitgeteilt, welcher verknüpfte Datensatz das Ziel ist, wenn eine Funktion wie die [Auffächerung von Timeline-Aktivitäten](/l/de/developers/extend/apps/data/timeline-activity-types#automatic-and-explicit-events) die Verknüpfung durchläuft.
+
 ## Relationen zu Standardobjekten
 
 Um eine Relation mit einem integrierten Twenty-Objekt (Person, Company usw.) zu erstellen, verwenden Sie `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
@@ -122,14 +145,15 @@ export default defineField({
 
 ## Eigenschaften von Relationsfeldern
 
-| Eigenschaft                                       | Erforderlich        | Beschreibung                                                                                                     |
-| ------------------------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `type`                                            | Ja                  | Muss `FieldType.RELATION` sein                                                                                   |
-| `relationTargetObjectMetadataUniversalIdentifier` | Ja                  | Der `universalIdentifier` des Zielobjekts                                                                        |
-| `relationTargetFieldMetadataUniversalIdentifier`  | Ja                  | Der `universalIdentifier` des entsprechenden Felds auf dem Zielobjekt                                            |
-| `universalSettings.relationType`                  | Ja                  | `RelationType.MANY_TO_ONE` oder `RelationType.ONE_TO_MANY`                                                       |
-| `universalSettings.onDelete`                      | Nur für MANY_TO_ONE | Was passiert, wenn der referenzierte Datensatz gelöscht wird: `CASCADE`, `SET_NULL`, `RESTRICT` oder `NO_ACTION` |
-| `universalSettings.joinColumnName`                | Nur für MANY_TO_ONE | Datenbankspaltenname für den Fremdschlüssel (z. B. `postCardId`)                                                 |
+| Eigenschaft                                                | Erforderlich               | Beschreibung                                                                                                     |
+| ---------------------------------------------------------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `type`                                                     | Ja                         | Muss `FieldType.RELATION` sein                                                                                   |
+| `relationTargetObjectMetadataUniversalIdentifier`          | Ja                         | Der `universalIdentifier` des Zielobjekts                                                                        |
+| `relationTargetFieldMetadataUniversalIdentifier`           | Ja                         | Der `universalIdentifier` des entsprechenden Felds auf dem Zielobjekt                                            |
+| `universalSettings.relationType`                           | Ja                         | `RelationType.MANY_TO_ONE` oder `RelationType.ONE_TO_MANY`                                                       |
+| `universalSettings.onDelete`                               | Nur für MANY_TO_ONE        | Was passiert, wenn der referenzierte Datensatz gelöscht wird: `CASCADE`, `SET_NULL`, `RESTRICT` oder `NO_ACTION` |
+| `universalSettings.joinColumnName`                         | Nur für MANY_TO_ONE        | Datenbankspaltenname für den Fremdschlüssel (z. B. `postCardId`)                                                 |
+| `universalSettings.junctionTargetFieldUniversalIdentifier` | Nur Junction-`ONE_TO_MANY` | Beziehungsfeld auf dem Verknüpfungsobjekt, das auf das Auffächerungsziel verweist                                |
 
 ## Inline-Relationsfelder
 

@@ -21,11 +21,15 @@ describe('getTabsByDisplayMode', () => {
     updatedAt: '2024-01-01T00:00:00.000Z',
   });
 
-  const createMockPageLayout = (tabs: PageLayoutTab[]): DraftPageLayout => ({
+  const createMockPageLayout = (
+    tabs: PageLayoutTab[],
+    isFirstTabPinned = true,
+  ): DraftPageLayout => ({
     id: 'page-layout-1',
     name: 'Test Layout',
     type: PageLayoutType.RECORD_PAGE,
     objectMetadataId: null,
+    isFirstTabPinned,
     tabs,
   });
 
@@ -43,6 +47,7 @@ describe('getTabsByDisplayMode', () => {
         pageLayoutType: pageLayout.type,
         isMobile: true,
         isInSidePanel: false,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
 
       expect(result.tabsToRenderInTabList).toEqual(tabs);
@@ -58,6 +63,7 @@ describe('getTabsByDisplayMode', () => {
         pageLayoutType: pageLayout.type,
         isMobile: true,
         isInSidePanel: false,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
 
       expect(result.pinnedLeftTab).toBeUndefined();
@@ -71,6 +77,7 @@ describe('getTabsByDisplayMode', () => {
         pageLayoutType: pageLayout.type,
         isMobile: true,
         isInSidePanel: false,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
 
       expect(result.tabsToRenderInTabList).toEqual([]);
@@ -86,6 +93,7 @@ describe('getTabsByDisplayMode', () => {
         pageLayoutType: pageLayout.type,
         isMobile: true,
         isInSidePanel: false,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
 
       expect(result.tabsToRenderInTabList).toEqual(tabs);
@@ -107,6 +115,7 @@ describe('getTabsByDisplayMode', () => {
         pageLayoutType: pageLayout.type,
         isMobile: false,
         isInSidePanel: true,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
 
       expect(result.tabsToRenderInTabList).toEqual(tabs);
@@ -122,6 +131,7 @@ describe('getTabsByDisplayMode', () => {
         pageLayoutType: pageLayout.type,
         isMobile: false,
         isInSidePanel: true,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
 
       expect(result.pinnedLeftTab).toBeUndefined();
@@ -135,6 +145,7 @@ describe('getTabsByDisplayMode', () => {
         pageLayoutType: pageLayout.type,
         isMobile: false,
         isInSidePanel: true,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
 
       expect(result.tabsToRenderInTabList).toEqual([]);
@@ -150,6 +161,7 @@ describe('getTabsByDisplayMode', () => {
         pageLayoutType: pageLayout.type,
         isMobile: false,
         isInSidePanel: true,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
 
       expect(result.tabsToRenderInTabList).toEqual(tabs);
@@ -171,6 +183,7 @@ describe('getTabsByDisplayMode', () => {
         pageLayoutType: pageLayout.type,
         isMobile: false,
         isInSidePanel: false,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
 
       expect(result.pinnedLeftTab).toBeDefined();
@@ -192,6 +205,7 @@ describe('getTabsByDisplayMode', () => {
         pageLayoutType: pageLayout.type,
         isMobile: false,
         isInSidePanel: false,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
 
       expect(result.pinnedLeftTab).toBeDefined();
@@ -206,6 +220,7 @@ describe('getTabsByDisplayMode', () => {
         pageLayoutType: pageLayout.type,
         isMobile: false,
         isInSidePanel: false,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
 
       expect(result.pinnedLeftTab).toBeUndefined();
@@ -221,6 +236,7 @@ describe('getTabsByDisplayMode', () => {
         pageLayoutType: pageLayout.type,
         isMobile: false,
         isInSidePanel: false,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
 
       expect(result.pinnedLeftTab).toBeUndefined();
@@ -236,6 +252,7 @@ describe('getTabsByDisplayMode', () => {
         pageLayoutType: pageLayout.type,
         isMobile: false,
         isInSidePanel: false,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
 
       expect(result.tabsToRenderInTabList).toEqual([]);
@@ -251,6 +268,7 @@ describe('getTabsByDisplayMode', () => {
         pageLayoutType: pageLayout.type,
         isMobile: false,
         isInSidePanel: false,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
 
       expect(result.pinnedLeftTab?.id).toBe('tab-1');
@@ -269,12 +287,14 @@ describe('getTabsByDisplayMode', () => {
         pageLayoutType: pageLayout.type,
         isMobile: true,
         isInSidePanel: false,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
       const resultDesktop = getTabsByDisplayMode({
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
         isInSidePanel: false,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
 
       expect(resultMobile.tabsToRenderInTabList).toEqual(tabs);
@@ -293,12 +313,14 @@ describe('getTabsByDisplayMode', () => {
         pageLayoutType: pageLayout.type,
         isMobile: true,
         isInSidePanel: false,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
       const resultDesktop = getTabsByDisplayMode({
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
         isInSidePanel: false,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
 
       expect(resultMobile.tabsToRenderInTabList).toEqual(tabs);
@@ -318,6 +340,7 @@ describe('getTabsByDisplayMode', () => {
         pageLayoutType: pageLayout.type,
         isMobile: false,
         isInSidePanel: false,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
 
       expect(pageLayout.tabs).toHaveLength(originalTabsLength);
@@ -336,6 +359,7 @@ describe('getTabsByDisplayMode', () => {
         pageLayoutType: pageLayout.type,
         isMobile: false,
         isInSidePanel: false,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
 
       expect(result.pinnedLeftTab).toBeUndefined();
@@ -355,12 +379,14 @@ describe('getTabsByDisplayMode', () => {
         pageLayoutType: pageLayout.type,
         isMobile: false,
         isInSidePanel: false,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
       const result2 = getTabsByDisplayMode({
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
         isInSidePanel: false,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
 
       expect(result1).toEqual(result2);
@@ -375,12 +401,14 @@ describe('getTabsByDisplayMode', () => {
         pageLayoutType: pageLayout.type,
         isMobile: true,
         isInSidePanel: false,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
       const desktopResult = getTabsByDisplayMode({
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
         isInSidePanel: false,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
 
       expect(mobileResult.tabsToRenderInTabList.length).toBe(2);
@@ -399,12 +427,14 @@ describe('getTabsByDisplayMode', () => {
         pageLayoutType: pageLayout.type,
         isMobile: true,
         isInSidePanel: false,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
       const desktopResult = getTabsByDisplayMode({
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
         isInSidePanel: false,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
 
       expect(mobileResult.tabsToRenderInTabList).toEqual(tabs);
@@ -425,24 +455,49 @@ describe('getTabsByDisplayMode', () => {
         pageLayoutType: pageLayout.type,
         isMobile: true,
         isInSidePanel: true,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
       const resultOnlyMobile = getTabsByDisplayMode({
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: true,
         isInSidePanel: false,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
       const resultOnlySidePanel = getTabsByDisplayMode({
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
         isInSidePanel: true,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
       });
 
       expect(resultBothTrue).toEqual(resultOnlyMobile);
       expect(resultBothTrue).toEqual(resultOnlySidePanel);
       expect(resultBothTrue.tabsToRenderInTabList).toEqual(tabs);
       expect(resultBothTrue.pinnedLeftTab).toBeUndefined();
+    });
+  });
+
+  describe('when the first tab is unpinned', () => {
+    it('should return every tab in tabsToRenderInTabList', () => {
+      const tabs = [
+        createMockTab('tab-1'),
+        createMockTab('tab-2'),
+        createMockTab('tab-3'),
+      ];
+      const pageLayout = createMockPageLayout(tabs, false);
+
+      const result = getTabsByDisplayMode({
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
+        isMobile: false,
+        isInSidePanel: false,
+        isFirstTabPinned: pageLayout.isFirstTabPinned,
+      });
+
+      expect(result.tabsToRenderInTabList).toEqual(tabs);
+      expect(result.pinnedLeftTab).toBeUndefined();
     });
   });
 
@@ -457,6 +512,7 @@ describe('getTabsByDisplayMode', () => {
         pageLayoutType: PageLayoutType.RECORD_PAGE,
         isMobile: false,
         isInSidePanel: false,
+        isFirstTabPinned: true,
       });
 
       expect(result.pinnedLeftTab?.id).toBe('tab-2');

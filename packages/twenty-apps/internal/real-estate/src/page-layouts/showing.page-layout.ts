@@ -1,7 +1,4 @@
-import {
-  definePageLayout,
-  PageLayoutTabLayoutMode,
-} from 'twenty-sdk/define';
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
 import { SHOWING_UNIVERSAL_IDENTIFIER } from '../objects/showing.object';
 import { SHOWING_RECORD_PAGE_FIELDS_VIEW_ID } from '../views/showing-record-page-fields.view';
 
@@ -34,7 +31,7 @@ export default definePageLayout({
       title: 'Timeline',
       position: 20,
       icon: 'IconTimelineEvent',
-      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       widgets: [
         {
           universalIdentifier: '75a5ebcf-0962-4eb5-810a-49a9da3b4e39',

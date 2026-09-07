@@ -31,6 +31,7 @@ export const FRONT_COMPONENT_STORY_DEFAULT_EXECUTION_CONTEXT: FrontComponentExec
     userId: null,
     recordId: null,
     selectedRecordIds: [],
+    timelineActivityId: null,
     colorScheme: 'light',
   };
 

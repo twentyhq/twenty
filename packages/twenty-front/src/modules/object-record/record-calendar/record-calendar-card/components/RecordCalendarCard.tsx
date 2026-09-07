@@ -7,8 +7,8 @@ import { RecordCalendarCardBody } from '@/object-record/record-calendar/record-c
 import { RecordCalendarCardHeader } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCardHeader';
 import { RecordDragMultiDragStack } from '@/object-record/record-drag/components/RecordDragMultiDragStack';
 import { RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardClickOutsideId';
-import { RECORD_CALENDAR_CARD_INPUT_ID_PREFIX } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardInputIdPrefix';
 import { RecordCalendarCardComponentInstanceContext } from '@/object-record/record-calendar/record-calendar-card/states/contexts/RecordCalendarCardComponentInstanceContext';
+import { getRecordCalendarCardInstanceIdPrefix } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardInstanceIdPrefix';
 import { isRecordCalendarCardSelectedComponentFamilyState } from '@/object-record/record-calendar/record-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { RecordCard } from '@/object-record/record-card/components/RecordCard';
@@ -47,11 +47,13 @@ const StyledCardContainer = styled.div<{ isPrimaryMultiDrag?: boolean }>`
 
 type RecordCalendarCardProps = {
   recordId: string;
+  calendarDay: string;
   isDragOverlay?: boolean;
 };
 
 export const RecordCalendarCard = ({
   recordId,
+  calendarDay,
   isDragOverlay = false,
 }: RecordCalendarCardProps) => {
   const { currentView } = useGetCurrentViewOnly();
@@ -132,11 +134,13 @@ export const RecordCalendarCard = ({
   return (
     <RecordCalendarCardComponentInstanceContext.Provider
       value={{
-        instanceId: recordId,
+        instanceId: `${recordId}-${calendarDay}`,
       }}
     >
       <RecordFieldsScopeContextProvider
-        value={{ scopeInstanceId: RECORD_CALENDAR_CARD_INPUT_ID_PREFIX }}
+        value={{
+          scopeInstanceId: getRecordCalendarCardInstanceIdPrefix(calendarDay),
+        }}
       >
         <StyledContainer onContextMenu={handleContextMenuOpen}>
           <StyledRecordCardContainer>
@@ -161,6 +165,7 @@ export const RecordCalendarCard = ({
                 >
                   <RecordCalendarCardBody
                     recordId={recordId}
+                    calendarDay={calendarDay}
                     isRecordReadOnly={false}
                   />
                 </AnimatedEaseInOut>
@@ -169,8 +174,14 @@ export const RecordCalendarCard = ({
           </StyledRecordCardContainer>
           {!isDragOverlay && (
             <>
-              <RecordCalendarCardCellHoveredPortal recordId={recordId} />
-              <RecordCalendarCardCellEditModePortal recordId={recordId} />
+              <RecordCalendarCardCellHoveredPortal
+                recordId={recordId}
+                calendarDay={calendarDay}
+              />
+              <RecordCalendarCardCellEditModePortal
+                recordId={recordId}
+                calendarDay={calendarDay}
+              />
             </>
           )}
         </StyledContainer>

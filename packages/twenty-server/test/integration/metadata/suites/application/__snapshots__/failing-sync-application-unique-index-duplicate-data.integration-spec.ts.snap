@@ -28,6 +28,7 @@ exports[`Sync application should surface the root cause when a unique index cann
         "universalIdentifier": Any<String>,
         "updatedAt": Any<String>,
       },
+      "id": Any<String>,
       "metadataName": "index",
       "type": "create",
     },

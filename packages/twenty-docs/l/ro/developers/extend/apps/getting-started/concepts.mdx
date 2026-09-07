@@ -54,9 +54,9 @@ your-app/
 
 ## Izolare (sandboxing)
 
-* **Funcțiile logice** rulează în procese Node.js izolate pe server. Acestea accesează datele doar prin clientul API tipizat, limitat de permisiunile rolului aplicației.
+* **Funcțiile logice** rulează în procese Node.js izolate pe server. Acestea accesează datele numai prin clientul API tipizat, care acționează fie ca persoana care a declanșat execuția, fie ca aplicația în sine. Consultați [Ce acces utilizează un apel](/l/ro/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
 * **Componentele front-end** rulează în Web Workers folosind Remote DOM — izolate de pagina principală, dar randând elemente DOM native (nu iframes). Acestea comunică cu Twenty printr-un API al gazdei bazat pe transmiterea de mesaje.
-* **Permisiunile** sunt aplicate la nivelul API-ului. Tokenul de rulare (`TWENTY_APP_ACCESS_TOKEN`) este derivat din rolul definit în `defineApplication()`.
+* **Permisiunile** sunt aplicate la nivelul API-ului. Sunt injectate două tokenuri de execuție, ambele derivate din rolul declarat cu `defineApplicationRole()`; cel implicit este restrâns suplimentar la ceea ce poate face persoana care a declanșat execuția, ori de câte ori o persoană se află în spatele execuției.
 
 ## Ciclul de viață al aplicației
 

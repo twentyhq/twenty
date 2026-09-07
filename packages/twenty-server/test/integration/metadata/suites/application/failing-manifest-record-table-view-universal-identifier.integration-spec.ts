@@ -32,7 +32,8 @@ describe('Failing manifest sync - RECORD_TABLE widget with unknown view universa
       name: 'Test Application',
       description:
         'App for testing a RECORD_TABLE widget referencing an unknown view universal identifier',
-      sourcePath: 'test-manifest-record-table-unknown-view-universal-identifier',
+      sourcePath:
+        'test-manifest-record-table-unknown-view-universal-identifier',
     });
   }, 60000);
 
@@ -55,7 +56,7 @@ describe('Failing manifest sync - RECORD_TABLE widget with unknown view universa
                 universalIdentifier: TEST_TAB_ID,
                 title: 'Tables',
                 position: 0,
-                layoutMode: PageLayoutTabLayoutMode.CANVAS,
+                layoutMode: PageLayoutTabLayoutMode.GRID,
                 widgets: [
                   {
                     universalIdentifier: TEST_WIDGET_ID,
@@ -63,7 +64,8 @@ describe('Failing manifest sync - RECORD_TABLE widget with unknown view universa
                     type: 'RECORD_TABLE',
                     objectUniversalIdentifier:
                       PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
-                    gridPosition: {
+                    position: {
+                      layoutMode: PageLayoutTabLayoutMode.GRID,
                       row: 0,
                       column: 0,
                       rowSpan: 4,

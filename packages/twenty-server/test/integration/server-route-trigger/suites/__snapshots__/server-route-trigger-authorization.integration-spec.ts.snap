@@ -1,5 +1,33 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`ServerRouteTrigger authorization (integration) GET /webhooks/server/:universalIdentifier (public, unauthenticated) answers 404, not 405, for an identifier that resolves to nothing 1`] = `
+{
+  "body": {
+    "code": "LOGIC_FUNCTION_NOT_FOUND",
+    "error": "Error",
+    "messages": [
+      "Server resolver function 1a1f983f-5c1a-4c60-a3c8-7d0e2a4a11a1 not found",
+    ],
+    "statusCode": 404,
+  },
+  "status": 404,
+}
+`;
+
+exports[`ServerRouteTrigger authorization (integration) GET /webhooks/server/:universalIdentifier (public, unauthenticated) rejects a GET on a resolver that did not declare it 1`] = `
+{
+  "body": {
+    "code": "METHOD_NOT_ALLOWED",
+    "error": "Error",
+    "messages": [
+      "Server resolver function 2b2f983f-5c1a-4c60-a3c8-7d0e2a4a22b2 does not accept GET requests",
+    ],
+    "statusCode": 405,
+  },
+  "status": 405,
+}
+`;
+
 exports[`ServerRouteTrigger authorization (integration) POST /webhooks/server/:universalIdentifier (public, unauthenticated) rejects a server-route-exposed resolver that requires authentication before executing it 1`] = `
 {
   "body": {

@@ -2,19 +2,17 @@ import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
+import { MISSING_RECORD_TABLE_WIDGET_PAGE_LAYOUT_ID } from '@/object-record/record-table-widget/constants/MissingRecordTableWidgetPageLayoutId';
 import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
+import { getViewPersistTarget } from '@/object-record/record-table-widget/utils/getViewPersistTarget';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
-import { useRecordTableWidgetFieldUpdate } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetFieldUpdate';
 import { constructViewFromRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/constructViewFromRecordTableWidgetViewSnapshot';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
+import { usePerformViewFieldApiPersist } from '@/views/hooks/internal/usePerformViewFieldApiPersist';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-
-const MISSING_RECORD_TABLE_WIDGET_PAGE_LAYOUT_ID =
-  '__missing_record_table_widget_page_layout__';
 
 export const useViewFieldAggregateOperation = () => {
   const { fieldMetadataId } = useContext(
@@ -33,10 +31,10 @@ export const useViewFieldAggregateOperation = () => {
     ? undefined
     : recordTableWidgetViewDraft[recordTableWidgetContext.widgetId];
 
+  const persistTarget = getViewPersistTarget(recordTableWidgetContext);
+
   const shouldUseRecordTableWidgetDraft =
-    isDefined(recordTableWidgetContext) &&
-    recordTableWidgetContext.isPageLayoutInEditMode &&
-    isDefined(draftSnapshot);
+    persistTarget.target === 'pageLayoutDraft' && isDefined(draftSnapshot);
 
   const currentViewForAggregateOperation = shouldUseRecordTableWidgetDraft
     ? constructViewFromRecordTableWidgetViewSnapshot(draftSnapshot)
@@ -46,15 +44,7 @@ export const useViewFieldAggregateOperation = () => {
     (viewField) => viewField.fieldMetadataId === fieldMetadataId,
   );
 
-  const { performViewFieldAPIUpdate } = usePerformViewFieldAPIPersist();
-
-  const { handleFieldUpdated: handleRecordTableWidgetFieldUpdated } =
-    useRecordTableWidgetFieldUpdate({
-      pageLayoutId:
-        recordTableWidgetContext?.pageLayoutId ??
-        MISSING_RECORD_TABLE_WIDGET_PAGE_LAYOUT_ID,
-      widgetId: recordTableWidgetContext?.widgetId ?? '',
-    });
+  const { performViewFieldApiUpdate } = usePerformViewFieldApiPersist();
 
   const updateViewFieldAggregateOperation = async (
     aggregateOperation: ExtendedAggregateOperations | null,
@@ -70,14 +60,21 @@ export const useViewFieldAggregateOperation = () => {
             aggregateOperation,
           );
 
-    if (shouldUseRecordTableWidgetDraft) {
-      handleRecordTableWidgetFieldUpdated(currentViewField.id, {
+    if (
+      persistTarget.target === 'pageLayoutDraft' &&
+      shouldUseRecordTableWidgetDraft
+    ) {
+      persistTarget.widgetContext.updateViewDraftField(currentViewField.id, {
         aggregateOperation: aggregateOperationForPersistence,
       });
       return;
     }
 
-    await performViewFieldAPIUpdate([
+    if (persistTarget.target !== 'api') {
+      return;
+    }
+
+    await performViewFieldApiUpdate([
       {
         input: {
           id: currentViewField.id,

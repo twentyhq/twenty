@@ -53,9 +53,10 @@ export default definePageLayout({
 
 * `type` è uno tra `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` o `'STANDALONE_PAGE'`. Usa `'RECORD_PAGE'` per personalizzare la vista dei dettagli di un oggetto specifico.
 * `objectUniversalIdentifier` specifica a quale oggetto si applica questo layout.
-* Ogni `tab` definisce una sezione della pagina con `title`, `position` e `layoutMode`: `VERTICAL_LIST` per le pagine dei record e le pagine autonome, `GRID` per le dashboard. In una scheda `VERTICAL_LIST`, un singolo widget viene visualizzato a tutta larghezza e occupa l’intera scheda; con più widget, vengono impilati come card. Una scheda `GRID` dispone sempre i widget come card su una griglia a 12 colonne, qualunque sia il loro numero, quindi scegli `VERTICAL_LIST` quando vuoi che un widget riempia la pagina.
+* Ogni `tab` definisce una sezione della pagina con `title`, `position` e `layoutMode`: `VERTICAL_LIST` per le pagine dei record e le pagine autonome, `GRID` per le dashboard e `CANVAS` per un singolo widget che deve riempire il viewport della tab. Una tab `VERTICAL_LIST` dispone i widget verticalmente. I widget integrati che gestiscono il proprio scorrimento, come cronologie, file, note, attività e flussi di lavoro, riempiono un viewport; campi, componenti front, grafici e altri widget fit-content vengono visualizzati all'altezza del contenuto o configurata. Una tab `GRID` dispone sempre i widget come schede su una griglia di 12 colonne. Un widget `CANVAS` non ha una posizione esplicita; se una scheda canvas contiene più widget, questi vengono renderizzati alla loro altezza del contenuto anziché riempire il viewport.
 * Imposta esplicitamente `layoutMode`. Ometterlo imposta `VERTICAL_LIST` su una `STANDALONE_PAGE` e `GRID` altrove, il che raramente è ciò che vuoi per la pagina di un record.
 * Ogni `widget` all'interno di una scheda può renderizzare un [front component](/l/it/developers/extend/apps/layout/front-components), un elenco di relazioni o altri tipi di widget integrati.
+* Un widget `FRONT_COMPONENT` può impostare `headerCommandMenuItemUniversalIdentifiers` su un array ordinato di identificatori universali degli elementi del menu di comandi della stessa app. Queste azioni vengono visualizzate come pulsanti con icona nell'intestazione della scheda del widget e mantengono la disponibilità a livello di comando e i controlli delle autorizzazioni. Gli identificatori devono essere univoci e devono essere risolti quando l'app viene installata.
 * `position` sulle schede controlla il loro ordine. Usa valori più alti (ad es., 50) per posizionare le schede personalizzate dopo quelle integrate.
 
 ### Widget dei campi
@@ -136,8 +137,10 @@ export default definePageLayoutTab({
   Ogni voce di layout espone anche i propri `tabs` e i relativi `widgets`, così puoi fare riferimento a qualsiasi livello:
 
   ```ts
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.universalIdentifier
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets.fields.universalIdentifier
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home
+    .universalIdentifier;
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets
+    .fields.universalIdentifier;
   ```
 
   È disponibile anche un alias breve `STANDARD_PAGE_LAYOUT`:

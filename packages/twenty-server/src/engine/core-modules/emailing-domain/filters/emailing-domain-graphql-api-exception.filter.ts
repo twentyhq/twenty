@@ -25,7 +25,10 @@ export class EmailingDomainGraphqlApiExceptionFilter implements ExceptionFilter 
         throw new ForbiddenError(exception);
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_FOUND:
         throw new NotFoundError(exception);
+      case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS:
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE:
+      case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_CANCELABLE:
+      case EmailingDomainExceptionCode.EMAILING_DOMAIN_UNSUBSCRIBE_NOT_READY:
       case EmailingDomainExceptionCode.EMAILING_DOMAIN_NOT_VERIFIED:
         throw new UserInputError(exception);
       default: {

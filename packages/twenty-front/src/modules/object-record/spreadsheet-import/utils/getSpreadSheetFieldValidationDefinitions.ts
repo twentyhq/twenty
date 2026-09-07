@@ -6,12 +6,14 @@ import { parsePhoneNumberWithError } from 'libphonenumber-js';
 import { RATING_VALUES } from 'twenty-shared/constants';
 import {
   absoluteUrlSchema,
+  isValidDomain,
   emailSchema,
   getCountryCodesForCallingCode,
   isDefined,
   isValidCountryCode,
   isValidUuid,
 } from 'twenty-shared/utils';
+import { type FieldLinksVariant } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const getNumberValidationDefinition = (
@@ -41,7 +43,13 @@ export const getSpreadSheetFieldValidationDefinitions = (
   type: FieldMetadataType,
   fieldName: string,
   subFieldKey?: string,
+  linksVariant?: FieldLinksVariant,
 ): SpreadsheetImportFieldValidationDefinition[] => {
+  const isValidLinkUrl = (url: string) =>
+    linksVariant === 'domain'
+      ? isValidDomain(url)
+      : absoluteUrlSchema.safeParse(url).success;
+
   switch (type) {
     case FieldMetadataType.NUMBER:
       return [getNumberValidationDefinition(fieldName)];
@@ -105,7 +113,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
               rule: 'function',
               isValid: (primaryLinkUrl: string) => {
                 if (!isDefined(primaryLinkUrl)) return true;
-                return absoluteUrlSchema.safeParse(primaryLinkUrl).success;
+                return isValidLinkUrl(primaryLinkUrl);
               },
               errorMessage: `${fieldName} ${t`is not a valid URL`}`,
               level: 'error',
@@ -121,7 +129,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
                   const secondaryLinks = JSON.parse(stringifiedSecondaryLinks);
                   return secondaryLinks.every((link: { url: string }) => {
                     if (!isDefined(link.url)) return true;
-                    return absoluteUrlSchema.safeParse(link.url).success;
+                    return isValidLinkUrl(link.url);
                   });
                 } catch {
                   return false;

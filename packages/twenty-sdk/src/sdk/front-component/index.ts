@@ -18,6 +18,7 @@ export type { UseTranslateResult } from './hooks/useTranslate';
 export { useLocale } from './hooks/useLocale';
 export { useRecordId } from './hooks/useRecordId';
 export { useSelectedRecordIds } from './hooks/useSelectedRecordIds';
+export { useTimelineActivityId } from './hooks/useTimelineActivityId';
 export { useUserId } from './hooks/useUserId';
 export { msg } from './translations/msg';
 export { t } from './translations/t';

@@ -41,6 +41,9 @@ import {
 import { FieldMetadataRestApiExceptionFilter } from 'src/engine/metadata-modules/field-metadata/filters/field-metadata-rest-api-exception.filter';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-field-metadata-dto.util';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
+import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import {
   toLegacyFieldMetadataCreateResponse,
   toLegacyFieldMetadataDeleteResponse,
@@ -73,12 +76,42 @@ export class FieldMetadataController {
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly uniqueFieldMetadataIdsService: UniqueFieldMetadataIdsService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
+
+  // REST returns the same labels the app renders: resolved for the caller's
+  // locale, through the one resolver the GraphQL read path uses.
+  private async toPresentedFieldDtos({
+    fields,
+    uniqueFieldMetadataIds,
+    locale,
+    workspaceId,
+  }: {
+    fields: FieldMetadataEntity[];
+    uniqueFieldMetadataIds: ReadonlySet<string>;
+    locale: keyof typeof APP_LOCALES | undefined;
+    workspaceId: string;
+  }): Promise<FieldMetadataDTO[]> {
+    const resolvedFields =
+      await this.applicationTranslationCatalogService.resolveTranslatablePropertiesForEntities(
+        {
+          metadataName: 'fieldMetadata',
+          entities: fields,
+          locale,
+          workspaceId,
+        },
+      );
+
+    return resolvedFields.map((field) =>
+      fromFieldMetadataEntityToFieldMetadataDto(field, uniqueFieldMetadataIds),
+    );
+  }
 
   @Get()
   async findMany(
     @Req() request: AuthenticatedRequest,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ) {
     const { items, pageInfo, totalCount } = await paginateByIdCursor({
       repository: this.fieldMetadataRepository,
@@ -94,9 +127,12 @@ export class FieldMetadataController {
       pageInfo: RestCursorPageInfo;
       totalCount: number;
     } = {
-      data: items.map((item) =>
-        fromFieldMetadataEntityToFieldMetadataDto(item, uniqueFieldMetadataIds),
-      ),
+      data: await this.toPresentedFieldDtos({
+        fields: items,
+        uniqueFieldMetadataIds,
+        locale,
+        workspaceId,
+      }),
       pageInfo,
       totalCount,
     };
@@ -110,6 +146,7 @@ export class FieldMetadataController {
   async findOne(
     @Param('id', new ParseUUIDPipe()) id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ) {
     const field = await this.fieldMetadataRepository.findOne({
       where: { id, workspaceId },
@@ -124,10 +161,12 @@ export class FieldMetadataController {
 
     const uniqueFieldMetadataIds =
       await this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId);
-    const result = fromFieldMetadataEntityToFieldMetadataDto(
-      field,
+    const [result] = await this.toPresentedFieldDtos({
+      fields: [field],
       uniqueFieldMetadataIds,
-    );
+      locale,
+      workspaceId,
+    });
 
     return (await this.isNewMetadataFormat(workspaceId))
       ? result

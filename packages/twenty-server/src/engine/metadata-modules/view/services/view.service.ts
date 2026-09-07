@@ -1,12 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { ViewType, ViewVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -47,7 +44,6 @@ export class ViewService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
-    private readonly i18nService: I18nService,
   ) {}
 
   async createOne({
@@ -377,44 +373,6 @@ export class ViewService {
       ...existingFlatView,
       deletedAt: now,
     });
-  }
-
-  processViewNameWithTemplate(
-    viewName: string,
-    isCustom: boolean,
-    objectLabelPlural?: string,
-    locale?: keyof typeof APP_LOCALES,
-  ): string {
-    if (viewName.includes('{objectLabelPlural}') && objectLabelPlural) {
-      const messageId = generateMessageId(viewName);
-      const translatedTemplate = this.i18nService.translateMessage({
-        messageId,
-        values: {
-          objectLabelPlural,
-        },
-        locale: locale ?? SOURCE_LOCALE,
-      });
-
-      if (translatedTemplate !== messageId) {
-        return translatedTemplate;
-      }
-
-      return viewName.replace('{objectLabelPlural}', objectLabelPlural);
-    }
-
-    if (!isCustom) {
-      const messageId = generateMessageId(viewName);
-      const translatedMessage = this.i18nService.translateMessage({
-        messageId,
-        locale: locale ?? SOURCE_LOCALE,
-      });
-
-      if (translatedMessage !== messageId) {
-        return translatedMessage;
-      }
-    }
-
-    return viewName;
   }
 
   private isViewVisibleToUser(

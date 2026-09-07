@@ -16,6 +16,7 @@ const MORPH_RELATION_FIELD_UNIVERSAL_IDENTIFIER =
   '20202020-4444-4444-8444-000000000004';
 const RICH_TEXT_FIELD_UNIVERSAL_IDENTIFIER =
   '20202020-5555-4555-8555-000000000005';
+const TEXT_FIELD_UNIVERSAL_IDENTIFIER = '20202020-6666-4666-8666-000000000006';
 const UNKNOWN_FIELD_UNIVERSAL_IDENTIFIER =
   '20202020-9999-4999-8999-000000000009';
 
@@ -50,6 +51,10 @@ const flatFieldMetadataMaps = {
     [RICH_TEXT_FIELD_UNIVERSAL_IDENTIFIER]: flatFieldMetadata(
       RICH_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
       FieldMetadataType.RICH_TEXT,
+    ),
+    [TEXT_FIELD_UNIVERSAL_IDENTIFIER]: flatFieldMetadata(
+      TEXT_FIELD_UNIVERSAL_IDENTIFIER,
+      FieldMetadataType.TEXT,
     ),
   },
 } as unknown as MetadataUniversalFlatEntityMaps<'fieldMetadata'>;
@@ -140,6 +145,20 @@ describe('validateChartFilter', () => {
       expect(errors[0].message).toContain('DATE');
     },
   );
+
+  it('should accept a text operand on a RELATION field whose target field is a TEXT field', () => {
+    const errors = validateFilter([
+      {
+        fieldMetadataUniversalIdentifier: RELATION_FIELD_UNIVERSAL_IDENTIFIER,
+        relationTargetFieldMetadataUniversalIdentifier:
+          TEXT_FIELD_UNIVERSAL_IDENTIFIER,
+        operand: ViewFilterOperand.DOES_NOT_CONTAIN,
+        value: 'foo',
+      },
+    ]);
+
+    expect(errors).toHaveLength(0);
+  });
 
   it('should validate a MORPH_RELATION filter without a target against relation operands', () => {
     const errors = validateFilter([

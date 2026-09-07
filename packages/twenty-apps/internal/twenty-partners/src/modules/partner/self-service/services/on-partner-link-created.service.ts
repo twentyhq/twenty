@@ -5,7 +5,7 @@ import {
 } from 'twenty-sdk/define';
 
 import { updatePartnerLink } from 'src/modules/partner/self-service/graphql/mutations/update-partner-link';
-import { findPartnerByMember } from 'src/modules/partner/self-service/graphql/queries/find-partner-by-member';
+import { findPartnerByMember } from 'src/modules/shared/graphql/queries/find-partner-by-member';
 import { stampPartnerUserFromPartner } from 'src/modules/partner/self-service/services/stamp-partner-user-on-child.service';
 
 export const onPartnerLinkCreated = async (

@@ -5,16 +5,16 @@ export const getUpdatedTabLayouts = (
   activeTabId: string,
   newLayout: { i: string; x: number; y: number; w: number; h: number },
 ): TabLayouts => {
-  const currentTabLayouts = allTabLayouts[activeTabId] ?? {
-    desktop: [],
-    mobile: [],
-  };
+  const currentTabLayouts = allTabLayouts[activeTabId];
 
   return {
     ...allTabLayouts,
     [activeTabId]: {
-      desktop: [...currentTabLayouts.desktop, newLayout],
-      mobile: [...currentTabLayouts.mobile, { ...newLayout, w: 1, x: 0 }],
+      desktop: [...(currentTabLayouts?.desktop ?? []), newLayout],
+      mobile: [
+        ...(currentTabLayouts?.mobile ?? []),
+        { ...newLayout, w: 1, x: 0 },
+      ],
     },
   };
 };

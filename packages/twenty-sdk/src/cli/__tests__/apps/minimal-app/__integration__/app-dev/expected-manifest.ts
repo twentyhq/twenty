@@ -4,6 +4,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 export const EXPECTED_MANIFEST: Manifest = {
   commandMenuItems: [],
+  timelineActivityTypes: [],
   application: {
     universalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000001',
     displayName: 'Root App',
@@ -16,6 +17,7 @@ export const EXPECTED_MANIFEST: Manifest = {
   },
   permissionFlags: [],
   skills: [],
+  translations: {},
   agents: [],
   publicAssets: [],
   indexes: [],

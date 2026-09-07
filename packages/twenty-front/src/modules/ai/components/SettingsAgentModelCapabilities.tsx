@@ -1,12 +1,11 @@
 import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { InputLabel } from '@/ui/input/components/InputLabel';
+import { InputLabel, Checkbox } from 'twenty-ui/input';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBrandX, IconWorld } from 'twenty-ui/icon';
-import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

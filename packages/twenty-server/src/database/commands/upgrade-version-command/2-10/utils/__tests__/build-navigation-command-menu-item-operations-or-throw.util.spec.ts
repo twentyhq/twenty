@@ -1,12 +1,11 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-import { v5 } from 'uuid';
 
 import { buildNavigationCommandMenuItemOperationsOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/build-navigation-command-menu-item-operations-or-throw.util';
-import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import {
-  buildNavigationFlatCommandMenuItem,
-  NAVIGATION_COMMAND_UUID_NAMESPACE,
-} from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util';
+  buildLegacyNavigationFlatCommandMenuItem,
+  getLegacyNavigationCommandUniversalIdentifier,
+} from 'src/database/commands/upgrade-version-command/utils/build-legacy-navigation-flat-command-menu-item.util';
+import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
@@ -43,7 +42,7 @@ const buildExistingNavigationItem = ({
   nameSingular: string;
   position: number;
 }): FlatCommandMenuItem =>
-  buildNavigationFlatCommandMenuItem({
+  buildLegacyNavigationFlatCommandMenuItem({
     objectMetadata: {
       id: objectId,
       universalIdentifier: objectUniversalIdentifier,
@@ -78,7 +77,7 @@ describe('buildNavigationCommandMenuItemOperationsOrThrow', () => {
 
     expect(result.flatEntityToCreate).toHaveLength(1);
     expect(result.flatEntityToCreate[0].universalIdentifier).toBe(
-      v5('call-recording', NAVIGATION_COMMAND_UUID_NAMESPACE),
+      getLegacyNavigationCommandUniversalIdentifier('call-recording'),
     );
     expect(result.flatEntityToCreate[0].position).toBe(0);
     expect(result.flatEntityToCreate[0].payload).toEqual({

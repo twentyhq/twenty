@@ -13,7 +13,6 @@ import { RecordTableGroupByDropdownContent } from '@/side-panel/pages/page-layou
 import { RecordTableLayoutDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableLayoutDropdownContent';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -22,11 +21,7 @@ import {
   IconEyeOff,
   IconLayoutList,
 } from 'twenty-ui/icon';
-import {
-  FeatureFlagKey,
-  ViewCalendarLayout,
-  ViewType,
-} from '~/generated-metadata/graphql';
+import { ViewCalendarLayout, ViewType } from '~/generated-metadata/graphql';
 
 type WidgetViewLayoutSettingsRowsProps = {
   pageLayoutId: string;
@@ -51,10 +46,6 @@ export const WidgetViewLayoutSettingsRows = ({
   isLayoutRowHidden = false,
 }: WidgetViewLayoutSettingsRowsProps) => {
   const { t } = useLingui();
-
-  const isCalendarWeekViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
-  );
 
   const { handleShouldHideEmptyGroupsChange } =
     useRecordTableWidgetLayoutCallbacks({
@@ -164,7 +155,7 @@ export const WidgetViewLayoutSettingsRows = ({
           />
         </SelectableListItem>
       )}
-      {isCalendarLayout && isCalendarWeekViewEnabled && (
+      {isCalendarLayout && (
         <SelectableListItem itemId="record-table-calendar-layout">
           <CommandMenuItemDropdown
             Icon={IconCalendar}

@@ -9,9 +9,7 @@ export type FlatCreatePageLayoutAction =
   BaseFlatCreateWorkspaceMigrationAction<'pageLayout'>;
 
 export type UniversalCreatePageLayoutAction =
-  BaseUniversalCreateWorkspaceMigrationAction<'pageLayout'> & {
-    tabIdByUniversalIdentifier?: Record<string, string>;
-  };
+  BaseUniversalCreateWorkspaceMigrationAction<'pageLayout'>;
 
 export type FlatUpdatePageLayoutAction =
   BaseFlatUpdateWorkspaceMigrationAction<'pageLayout'>;

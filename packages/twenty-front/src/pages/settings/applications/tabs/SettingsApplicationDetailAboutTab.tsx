@@ -15,6 +15,7 @@ import {
   SettingsApplicationAboutSidebar,
 } from '@/settings/applications/components/SettingsApplicationAboutSidebar';
 import { SettingsApplicationScreenshotGallery } from '@/settings/applications/components/SettingsApplicationScreenshotGallery';
+import { ApplicationState } from '~/generated-metadata/graphql';
 
 const UNINSTALL_APPLICATION_MODAL_ID = 'uninstall-application-modal';
 
@@ -22,6 +23,7 @@ type SettingsApplicationDetailAboutTabProps = {
   displayName: string;
   description?: string;
   aboutDescription?: string;
+  pricingDescription?: string;
   screenshots?: string[];
   author?: string;
   category?: string;
@@ -39,6 +41,7 @@ type SettingsApplicationDetailAboutTabProps = {
   canBeUninstalled?: boolean;
   onUninstall?: () => void;
   isUninstalling?: boolean;
+  state?: ApplicationState;
 };
 
 const StyledContentContainer = styled.div`
@@ -98,6 +101,7 @@ export const SettingsApplicationDetailAboutTab = ({
   displayName,
   description,
   aboutDescription,
+  pricingDescription,
   screenshots,
   author,
   category,
@@ -115,6 +119,7 @@ export const SettingsApplicationDetailAboutTab = ({
   canBeUninstalled,
   onUninstall,
   isUninstalling,
+  state,
 }: SettingsApplicationDetailAboutTabProps) => {
   const { openModal } = useModal();
 
@@ -125,9 +130,36 @@ export const SettingsApplicationDetailAboutTab = ({
     description ??
     t`No description available for this application`;
 
+  const getTransitionalAction = () => {
+    switch (state) {
+      case ApplicationState.INSTALLING:
+        return { Icon: IconDownload, title: t`Installing...` };
+      case ApplicationState.UPGRADING:
+        return { Icon: IconUpload, title: t`Upgrading...` };
+      case ApplicationState.UNINSTALLING:
+        return { Icon: IconTrash, title: t`Uninstalling...` };
+      default:
+        return null;
+    }
+  };
+
   const getActionButton = () => {
     if (!canInstallMarketplaceApps) {
       return null;
+    }
+
+    const transitionalAction = getTransitionalAction();
+
+    if (isDefined(transitionalAction)) {
+      return (
+        <Button
+          Icon={transitionalAction.Icon}
+          title={transitionalAction.title}
+          variant={'secondary'}
+          accent={'blue'}
+          disabled={true}
+        />
+      );
     }
 
     if (!isInstalled) {
@@ -206,6 +238,7 @@ export const SettingsApplicationDetailAboutTab = ({
 
         <SettingsApplicationAboutSidebar
           actionButton={getActionButton()}
+          pricingDescription={pricingDescription}
           author={author}
           category={category}
           contentEntries={contentEntries}
