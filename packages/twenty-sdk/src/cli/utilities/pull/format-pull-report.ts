@@ -4,6 +4,8 @@ import {
   type PullDeletion,
   type PullWrite,
 } from '@/cli/utilities/pull/plan-pull-writes';
+import { type TranslationsManifest } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
 const MAX_LISTED_IDENTIFIERS = 20;
 
@@ -65,6 +67,7 @@ export const formatPullReport = ({
   coverage,
   localOnlyRelativePaths,
   unreadableRelativePaths = [],
+  translations = {},
   verbose = false,
 }: {
   writes: PullWrite[];
@@ -74,6 +77,7 @@ export const formatPullReport = ({
   coverage: ApplicationExportCoverageEntry[];
   localOnlyRelativePaths: string[];
   unreadableRelativePaths?: string[];
+  translations?: TranslationsManifest;
   verbose?: boolean;
 }): string => {
   const lines: string[] = [
@@ -160,6 +164,20 @@ export const formatPullReport = ({
         }
       }
     }
+  }
+
+  const publishedTranslationLocales = Object.entries(translations)
+    .filter(
+      ([, messages]) => isDefined(messages) && Object.keys(messages).length > 0,
+    )
+    .map(([locale]) => locale)
+    .sort();
+
+  if (publishedTranslationLocales.length > 0) {
+    lines.push(
+      '',
+      `Published translations (${publishedTranslationLocales.join(', ')}) not written: pull cannot restore them yet, and pushing this tree replaces them with the contents of locales/.`,
+    );
   }
 
   return lines.join('\n');

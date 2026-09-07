@@ -289,7 +289,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
   describe('with record sharing disabled', () => {
     const isRecordSharingEnabled = false;
 
-    it('should still give a user the FULL owner row', () => {
+    it('should give a user the FULL owner row and an EVERYONE FULL row, so the record stays open once the flag turns on', () => {
       expect(
         buildRecordShareInputsForCreatedRecords({
           recordIds: ['record-1'],
@@ -297,12 +297,14 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           authContext: userAuthContext,
           apiKeyRoleMap,
           isRecordSharingEnabled,
+          shareWith: null,
         }),
       ).toEqual([
         expect.objectContaining({
           principalId: WORKSPACE_MEMBER_ID,
           rowCause: RecordShareRowCause.OWNER,
         }),
+        everyoneFullRowFor('record-1'),
       ]);
     });
 
