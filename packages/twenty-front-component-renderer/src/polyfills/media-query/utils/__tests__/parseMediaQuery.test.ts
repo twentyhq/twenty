@@ -338,4 +338,11 @@ describe('parseMediaQuery', () => {
     expect(parseMediaQuery('(min-width)')).toBeNull();
     expect(parseMediaQuery('(hover)')).toBeNull();
   });
+
+  it('should reject non-CSS whitespace anywhere in a condition', () => {
+    expect(parseMediaQuery('(\u00a0width >= 600px)')).toBeNull();
+    expect(parseMediaQuery('(min-width:\u00a0600px)')).toBeNull();
+    expect(parseMediaQuery('(min-width: 600px\u00a0)')).toBeNull();
+    expect(parseMediaQuery('\u00a0screen')).toBeNull();
+  });
 });

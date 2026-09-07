@@ -417,4 +417,19 @@ describe('createWorkerMediaQueryList listener registry', () => {
 
     expect(changeListener).toHaveBeenCalledTimes(1);
   });
+
+  it('should remove a once listener that stops immediate propagation', () => {
+    const { mediaQueryList, setMatches, unsubscribe } = setupMediaQueryList();
+    const changeListener = jest.fn((event: Event) => {
+      event.stopImmediatePropagation();
+    });
+
+    mediaQueryList.addEventListener('change', changeListener, { once: true });
+
+    setMatches(true);
+    setMatches(false);
+
+    expect(changeListener).toHaveBeenCalledTimes(1);
+    expect(unsubscribe).toHaveBeenCalledTimes(1);
+  });
 });

@@ -9,6 +9,7 @@ import { isMediaQueryConditionPart } from '@/polyfills/media-query/utils/isMedia
 import { isMediaQueryTypeIdentifier } from '@/polyfills/media-query/utils/isMediaQueryTypeIdentifier';
 import { parseMediaQueryCondition } from '@/polyfills/media-query/utils/parseMediaQueryCondition';
 import { parseMediaQueryModifier } from '@/polyfills/media-query/utils/parseMediaQueryModifier';
+import { trimCssWhitespace } from '@/polyfills/media-query/utils/trimCssWhitespace';
 
 const MEDIA_QUERY_PART_SEPARATOR_PATTERN = new RegExp(
   `${CSS_WHITESPACE_CHARACTER_CLASS}+and${CSS_WHITESPACE_CHARACTER_CLASS}+`,
@@ -22,8 +23,7 @@ const CLOSING_PARENTHESIS_AND_PATTERN = new RegExp(
 export const parseMediaQuery = (
   mediaQueryString: string,
 ): ParsedMediaQuery | null => {
-  const normalizedQuery = mediaQueryString
-    .trim()
+  const normalizedQuery = trimCssWhitespace(mediaQueryString)
     .toLowerCase()
     .replace(CLOSING_PARENTHESIS_AND_PATTERN, ') and ');
 
@@ -36,7 +36,7 @@ export const parseMediaQuery = (
   );
 
   const { modifier, remainingFirstPart } = parseMediaQueryModifier(
-    firstQueryPart.trim(),
+    trimCssWhitespace(firstQueryPart),
   );
 
   if (modifier === 'only' && isMediaQueryConditionPart(remainingFirstPart)) {
@@ -49,7 +49,7 @@ export const parseMediaQuery = (
   const conditions: ParsedMediaQueryCondition[] = [];
 
   for (const [partIndex, queryPart] of queryParts.entries()) {
-    const currentPart = queryPart.trim();
+    const currentPart = trimCssWhitespace(queryPart);
     const isFirstQueryPart = partIndex === 0;
 
     if (isMediaQueryConditionPart(currentPart)) {

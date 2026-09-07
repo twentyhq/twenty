@@ -4,6 +4,7 @@ import { type MediaQueryNumericFeature } from '@/polyfills/media-query/types/Med
 import { type MediaQueryRangeOperator } from '@/polyfills/media-query/types/MediaQueryRangeOperator';
 import { type ParsedMediaQueryCondition } from '@/polyfills/media-query/types/ParsedMediaQueryCondition';
 import { resolveMediaQueryRangeComparison } from '@/polyfills/media-query/utils/resolveMediaQueryRangeComparison';
+import { trimCssWhitespace } from '@/polyfills/media-query/utils/trimCssWhitespace';
 
 type CreateMediaQueryRangeConditionInput = {
   feature: MediaQueryNumericFeature;
@@ -18,7 +19,7 @@ export const createMediaQueryRangeCondition = ({
   isFeatureNameOnLeft,
   valueString,
 }: CreateMediaQueryRangeConditionInput): ParsedMediaQueryCondition | null => {
-  const value = feature.parseValue(valueString.trim());
+  const value = feature.parseValue(trimCssWhitespace(valueString));
 
   if (!isDefined(value)) {
     return null;
