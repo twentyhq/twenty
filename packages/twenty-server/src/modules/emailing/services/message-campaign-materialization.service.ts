@@ -235,6 +235,7 @@ export class MessageCampaignMaterializationService {
         );
 
         await this.insertCampaignMessages({
+          workspaceId,
           campaignId,
           messageChannelId,
           fromAddress: campaign.fromAddress?.primaryEmail ?? '',
@@ -380,6 +381,7 @@ export class MessageCampaignMaterializationService {
   }
 
   private async insertCampaignMessages({
+    workspaceId,
     campaignId,
     messageChannelId,
     fromAddress,
@@ -388,6 +390,7 @@ export class MessageCampaignMaterializationService {
     now,
     recipients,
   }: {
+    workspaceId: string;
     campaignId: string;
     messageChannelId: string;
     fromAddress: string;
