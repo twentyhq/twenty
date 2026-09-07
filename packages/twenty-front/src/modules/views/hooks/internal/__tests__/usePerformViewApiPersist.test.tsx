@@ -15,6 +15,7 @@ import { metadataStoreStorage } from '@/metadata-store/storage/metadataStoreStor
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { usePerformViewApiPersist } from '@/views/hooks/internal/usePerformViewApiPersist';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { viewPendingDeletionRequestCountByIdState } from '@/views/states/viewPendingDeletionRequestCountByIdState';
 import {
   DestroyViewDocument,
   type DestroyViewMutation,
@@ -123,6 +124,9 @@ describe('usePerformViewApiPersist', () => {
 
     expect(screen.queryByText(viewToDestroy.name)).not.toBeInTheDocument();
     expect(store.get(viewsStoreAtom).current).toEqual([]);
+    expect(store.get(viewPendingDeletionRequestCountByIdState.atom)).toEqual(
+      {},
+    );
   });
 
   it('shows the view after failure without committing unrelated metadata drafts', async () => {
@@ -305,7 +309,7 @@ describe('usePerformViewApiPersist', () => {
   });
 
   it('keeps the view hidden until overlapping deletion requests settle', async () => {
-    const { result } = renderViewDeletion([
+    const { result, store } = renderViewDeletion([
       {
         request: destroyRequest,
         delay: 20,
@@ -338,5 +342,66 @@ describe('usePerformViewApiPersist', () => {
       await secondPromise;
     });
     expect(screen.getByText(viewToDestroy.name)).toBeInTheDocument();
+    expect(store.get(viewPendingDeletionRequestCountByIdState.atom)).toEqual(
+      {},
+    );
+  });
+
+  it('cleans up a settled deletion without clearing another pending view', async () => {
+    const otherView = {
+      ...viewToDestroy,
+      id: 'other-view-id',
+      name: 'Other view',
+    };
+    const { result, store } = renderViewDeletion([
+      {
+        request: destroyRequest,
+        delay: 20,
+        result: { data: { destroyView: true } },
+      },
+      {
+        request: {
+          query: DestroyViewDocument,
+          variables: { id: otherView.id },
+        },
+        delay: 100,
+        error: new Error('Other deletion failed'),
+      },
+    ]);
+
+    act(() => {
+      setTestViewsInMetadataStore(store, [viewToDestroy, otherView]);
+    });
+
+    let firstPromise: ReturnType<typeof result.current.performViewApiDestroy>;
+    let secondPromise: ReturnType<typeof result.current.performViewApiDestroy>;
+    act(() => {
+      firstPromise = result.current.performViewApiDestroy({
+        id: viewToDestroy.id,
+      });
+      secondPromise = result.current.performViewApiDestroy({
+        id: otherView.id,
+      });
+    });
+
+    await act(async () => {
+      await firstPromise;
+    });
+
+    expect(screen.queryByText(viewToDestroy.name)).not.toBeInTheDocument();
+    expect(screen.queryByText(otherView.name)).not.toBeInTheDocument();
+    expect(store.get(viewPendingDeletionRequestCountByIdState.atom)).toEqual({
+      [otherView.id]: 1,
+    });
+
+    await act(async () => {
+      await secondPromise;
+    });
+
+    expect(screen.queryByText(viewToDestroy.name)).not.toBeInTheDocument();
+    expect(screen.getByText(otherView.name)).toBeInTheDocument();
+    expect(store.get(viewPendingDeletionRequestCountByIdState.atom)).toEqual(
+      {},
+    );
   });
 });

@@ -8,7 +8,7 @@ import { type FlatViewFilterGroup } from '@/metadata-store/types/FlatViewFilterG
 import { type FlatViewGroup } from '@/metadata-store/types/FlatViewGroup';
 import { type FlatViewSort } from '@/metadata-store/types/FlatViewSort';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
-import { viewPendingDeletionRequestCountFamilyState } from '@/views/states/viewPendingDeletionRequestCountFamilyState';
+import { viewPendingDeletionRequestCountByIdState } from '@/views/states/viewPendingDeletionRequestCountByIdState';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { resolveViewNamePlaceholders } from '@/views/utils/resolveViewNamePlaceholders';
 
@@ -16,10 +16,12 @@ export const viewsSelector = createAtomSelector<ViewWithRelations[]>({
   key: 'viewsSelector',
   get: ({ get }) => {
     const allFlatViews = get(metadataStoreState, 'views').current as FlatView[];
+    const pendingDeletionRequestCounts = get(
+      viewPendingDeletionRequestCountByIdState,
+    );
     const flatViews = allFlatViews.filter(
       (view) =>
-        view.isActive &&
-        get(viewPendingDeletionRequestCountFamilyState, view.id) === 0,
+        view.isActive && (pendingDeletionRequestCounts[view.id] ?? 0) === 0,
     );
     const flatObjectMetadataItems = get(
       metadataStoreState,

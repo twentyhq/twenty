@@ -5,7 +5,7 @@ import { type FlatViewGroup } from '@/metadata-store/types/FlatViewGroup';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { usePerformViewEntityApiPersistOperation } from '@/views/hooks/internal/usePerformViewEntityApiPersistOperation';
 import { useViewsSideEffectsOnViewGroups } from '@/views/hooks/useViewsSideEffectsOnViewGroups';
-import { viewPendingDeletionRequestCountFamilyState } from '@/views/states/viewPendingDeletionRequestCountFamilyState';
+import { viewPendingDeletionRequestCountByIdState } from '@/views/states/viewPendingDeletionRequestCountByIdState';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { CrudOperationType } from 'twenty-shared/types';
@@ -104,12 +104,12 @@ export const usePerformViewApiPersist = () => {
       MetadataRequestResult<Awaited<ReturnType<typeof destroyViewMutation>>>
     > => {
       const pendingDeletionRequestCountAtom =
-        viewPendingDeletionRequestCountFamilyState.atomFamily(variables.id);
+        viewPendingDeletionRequestCountByIdState.atom;
 
-      store.set(
-        pendingDeletionRequestCountAtom,
-        (pendingRequestCount) => pendingRequestCount + 1,
-      );
+      store.set(pendingDeletionRequestCountAtom, (pendingRequestCounts) => ({
+        ...pendingRequestCounts,
+        [variables.id]: (pendingRequestCounts[variables.id] ?? 0) + 1,
+      }));
 
       try {
         return await performViewEntityApiPersistOperation({
@@ -122,10 +122,21 @@ export const usePerformViewApiPersist = () => {
           operationType: CrudOperationType.DELETE,
         });
       } finally {
-        store.set(
-          pendingDeletionRequestCountAtom,
-          (pendingRequestCount) => pendingRequestCount - 1,
-        );
+        store.set(pendingDeletionRequestCountAtom, (pendingRequestCounts) => {
+          const {
+            [variables.id]: pendingRequestCount,
+            ...remainingPendingRequestCounts
+          } = pendingRequestCounts;
+
+          if (pendingRequestCount > 1) {
+            return {
+              ...remainingPendingRequestCounts,
+              [variables.id]: pendingRequestCount - 1,
+            };
+          }
+
+          return remainingPendingRequestCounts;
+        });
       }
     },
     [destroyViewMutation, performViewEntityApiPersistOperation, store],
