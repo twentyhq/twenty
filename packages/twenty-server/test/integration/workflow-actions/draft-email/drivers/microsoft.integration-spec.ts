@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
+import { uploadFileWithDirectUpload } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
 import { setupMicrosoftMock } from 'test/integration/microsoft/mocks/setup-microsoft-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
@@ -14,6 +15,24 @@ const RECIPIENTS = {
   to: 'to-recipient@example.com',
   cc: 'cc-recipient@example.com',
   bcc: 'bcc-recipient@example.com',
+};
+const ATTACHMENT_CONTENT = Buffer.from('draft attachment content');
+const PARENT_INTERNET_MESSAGE_ID = '<microsoft-parent@example.com>';
+
+const uploadAttachmentFile = async (filename: string) => {
+  const uploadedFile = await uploadFileWithDirectUpload({
+    filename,
+    content: ATTACHMENT_CONTENT,
+    fileFolder: 'Workflow',
+  });
+
+  return {
+    id: uploadedFile.id,
+    name: filename,
+    size: uploadedFile.size,
+    type: 'text/plain',
+    createdAt: uploadedFile.createdAt,
+  };
 };
 
 describe('DRAFT_EMAIL workflow action on Microsoft (integration)', () => {
@@ -111,6 +130,70 @@ describe('DRAFT_EMAIL workflow action on Microsoft (integration)', () => {
     expect(lastCreatedMessage).toMatchObject({
       subject,
       from: { emailAddress: { address: ALIAS } },
+    });
+    expect(microsoft.sentMessageIds).toEqual([]);
+  }, 60000);
+
+  it('attaches files to the drafted message', async () => {
+    const subject = `Microsoft workflow draft with attachment ${randomUUID()}`;
+    const file = await uploadAttachmentFile('draft-attachment.txt');
+
+    const workflowRun = await runWorkflowActionStep({
+      name: 'Microsoft draft email with attachment workflow',
+      stepType: 'DRAFT_EMAIL',
+      input: {
+        connectedAccountId: channel.connectedAccountId,
+        recipients: { to: RECIPIENTS.to, cc: '', bcc: '' },
+        subject,
+        body: '<p>Microsoft workflow draft body</p>',
+        files: [file],
+      },
+    });
+
+    expect(workflowRun).toMatchObject({
+      status: 'COMPLETED',
+      stepStatus: 'SUCCESS',
+    });
+
+    const [lastCreatedAttachment] = microsoft.createdAttachments.slice(-1);
+
+    expect(lastCreatedAttachment).toMatchObject({
+      '@odata.type': '#microsoft.graph.fileAttachment',
+      name: 'draft-attachment.txt',
+      contentBytes: ATTACHMENT_CONTENT.toString('base64'),
+    });
+    expect(microsoft.sentMessageIds).toEqual([]);
+  }, 60000);
+
+  it('attaches files to a drafted reply', async () => {
+    const subject = `Microsoft workflow reply draft with attachment ${randomUUID()}`;
+    const file = await uploadAttachmentFile('reply-attachment.txt');
+
+    const workflowRun = await runWorkflowActionStep({
+      name: 'Microsoft draft reply with attachment workflow',
+      stepType: 'DRAFT_EMAIL',
+      input: {
+        connectedAccountId: channel.connectedAccountId,
+        recipients: { to: RECIPIENTS.to, cc: '', bcc: '' },
+        subject,
+        body: '<p>Microsoft workflow reply draft body</p>',
+        files: [file],
+        inReplyTo: PARENT_INTERNET_MESSAGE_ID,
+      },
+    });
+
+    expect(workflowRun).toMatchObject({
+      status: 'COMPLETED',
+      stepStatus: 'SUCCESS',
+    });
+
+    const [lastCreatedAttachment] = microsoft.createdAttachments.slice(-1);
+
+    expect(lastCreatedAttachment).toMatchObject({
+      messageId: 'microsoft-reply-message',
+      '@odata.type': '#microsoft.graph.fileAttachment',
+      name: 'reply-attachment.txt',
+      contentBytes: ATTACHMENT_CONTENT.toString('base64'),
     });
     expect(microsoft.sentMessageIds).toEqual([]);
   }, 60000);

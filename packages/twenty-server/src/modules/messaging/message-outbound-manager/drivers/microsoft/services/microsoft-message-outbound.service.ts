@@ -12,6 +12,12 @@ import { type Client as MicrosoftGraphClient } from '@microsoft/microsoft-graph-
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+type MicrosoftDraftMessage = {
+  id: string;
+  internetMessageId?: string;
+  conversationId?: string;
+};
+
 @Injectable()
 export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
   private readonly logger = new Logger(MicrosoftMessageOutboundService.name);
@@ -96,11 +102,7 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
     microsoftClient: MicrosoftGraphClient;
     sendMessageInput: SendMessageInput;
     connectedAccount: ConnectedAccountEntity;
-  }): Promise<{
-    id: string;
-    internetMessageId?: string;
-    conversationId?: string;
-  }> {
+  }): Promise<MicrosoftDraftMessage> {
     const parentMessageGraphId = sendMessageInput.inReplyTo
       ? await this.findMessageByInternetMessageId({
           microsoftClient,
@@ -113,23 +115,30 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
       connectedAccount,
     });
 
-    if (isDefined(parentMessageGraphId)) {
-      const reply = await microsoftClient
-        .api(`/me/messages/${parentMessageGraphId}/createReply`)
-        .post({});
+    const draftMessage = isDefined(parentMessageGraphId)
+      ? await this.createReplyDraftMessage({
+          microsoftClient,
+          parentMessageGraphId,
+          message,
+        })
+      : await this.createNewDraftMessage({ microsoftClient, message });
 
-      const patched = await microsoftClient
-        .api(`/me/messages/${reply.id}`)
-        .patch(message);
+    await this.postAttachmentsToMessageCollection({
+      microsoftClient,
+      messageId: draftMessage.id,
+      attachments: sendMessageInput.attachments,
+    });
 
-      return {
-        id: reply.id,
-        internetMessageId:
-          patched?.internetMessageId ?? reply.internetMessageId,
-        conversationId: patched?.conversationId ?? reply.conversationId,
-      };
-    }
+    return draftMessage;
+  }
 
+  private async createNewDraftMessage({
+    microsoftClient,
+    message,
+  }: {
+    microsoftClient: MicrosoftGraphClient;
+    message: Record<string, unknown>;
+  }): Promise<MicrosoftDraftMessage> {
     const response = await microsoftClient.api('/me/messages').post(message);
 
     return {
@@ -137,6 +146,53 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
       internetMessageId: response.internetMessageId,
       conversationId: response.conversationId,
     };
+  }
+
+  private async createReplyDraftMessage({
+    microsoftClient,
+    parentMessageGraphId,
+    message,
+  }: {
+    microsoftClient: MicrosoftGraphClient;
+    parentMessageGraphId: string;
+    message: Record<string, unknown>;
+  }): Promise<MicrosoftDraftMessage> {
+    const reply = await microsoftClient
+      .api(`/me/messages/${parentMessageGraphId}/createReply`)
+      .post({});
+
+    const patched = await microsoftClient
+      .api(`/me/messages/${reply.id}`)
+      .patch(message);
+
+    return {
+      id: reply.id,
+      internetMessageId: patched?.internetMessageId ?? reply.internetMessageId,
+      conversationId: patched?.conversationId ?? reply.conversationId,
+    };
+  }
+
+  private async postAttachmentsToMessageCollection({
+    microsoftClient,
+    messageId,
+    attachments,
+  }: {
+    microsoftClient: MicrosoftGraphClient;
+    messageId: string;
+    attachments: SendMessageInput['attachments'];
+  }): Promise<void> {
+    if (!isDefined(attachments)) {
+      return;
+    }
+
+    for (const attachment of attachments) {
+      await microsoftClient.api(`/me/messages/${messageId}/attachments`).post({
+        '@odata.type': '#microsoft.graph.fileAttachment',
+        name: attachment.filename,
+        contentType: attachment.contentType,
+        contentBytes: attachment.content.toString('base64'),
+      });
+    }
   }
 
   private async findMessageByInternetMessageId({
@@ -188,17 +244,6 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
       toRecipients: toMicrosoftRecipients(sendMessageInput.to),
       ccRecipients: toMicrosoftRecipients(sendMessageInput.cc),
       bccRecipients: toMicrosoftRecipients(sendMessageInput.bcc),
-      ...(sendMessageInput.attachments &&
-      sendMessageInput.attachments.length > 0
-        ? {
-            attachments: sendMessageInput.attachments.map((attachment) => ({
-              '@odata.type': '#microsoft.graph.fileAttachment',
-              name: attachment.filename,
-              contentType: attachment.contentType,
-              contentBytes: attachment.content.toString('base64'),
-            })),
-          }
-        : {}),
     };
   }
 }
