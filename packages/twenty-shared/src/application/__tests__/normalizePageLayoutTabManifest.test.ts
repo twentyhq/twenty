@@ -379,6 +379,36 @@ describe('normalizePageLayoutTabManifest', () => {
   );
 
   it.each<PageLayoutWidgetManifest['position']>([
+    {
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      row: 1,
+      column: 2,
+      rowSpan: 3,
+      columnSpan: 4,
+    },
+    { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 0 },
+  ])(
+    'rejects a conflicting position %j on a single-widget Canvas tab',
+    (position) => {
+      expect(
+        normalizePageLayoutTabManifest({
+          pageLayoutTabManifest: {
+            ...tab,
+            layoutMode: PageLayoutTabLayoutMode.CANVAS,
+            widgets: [{ ...widget, position }],
+          },
+          pageLayoutType: undefined,
+        }),
+      ).toEqual({
+        status: 'fail',
+        errors: [
+          `Page layout widget "App" uses a ${position?.layoutMode} position, but its parent tab "Details" uses CANVAS.`,
+        ],
+      });
+    },
+  );
+
+  it.each<PageLayoutWidgetManifest['position']>([
     undefined,
     { layoutMode: PageLayoutTabLayoutMode.CANVAS },
   ])('converts single-widget Canvas with position %s', (position) => {

@@ -87,7 +87,10 @@ export const normalizePageLayoutTabManifest = ({
   }
 
   const isLegacyCanvasTab =
-    layoutMode === PageLayoutTabLayoutMode.CANVAS && widgets.length === 1;
+    layoutMode === PageLayoutTabLayoutMode.CANVAS &&
+    widgets.length === 1 &&
+    (!isDefined(widgets[0].position) ||
+      widgets[0].position.layoutMode === PageLayoutTabLayoutMode.CANVAS);
 
   const normalizedLayoutMode = isLegacyCanvasTab
     ? PageLayoutTabLayoutMode.VERTICAL_LIST
