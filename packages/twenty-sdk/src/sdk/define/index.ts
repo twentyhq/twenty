@@ -43,7 +43,6 @@ export { defineSharingRule } from '@/sdk/define/sharing-rules/define-sharing-rul
 export type { SharingRuleConfig } from '@/sdk/define/sharing-rules/sharing-rule-config';
 export type { SharingRuleManifest } from 'twenty-shared/application';
 export {
-  RecordShareAccessLevel,
   RecordSharePrincipalType,
   SharingRuleAccessLevel,
 } from 'twenty-shared/types';
