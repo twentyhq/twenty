@@ -1,3 +1,6 @@
+# "latest" is only an alias of the newest release, resolve it to the real tag
+[[ "$VERSION" == "latest" ]] && unset VERSION
+
 pull_version=${VERSION:-$(curl -fsS --retry 3 --retry-delay 2 "https://hub.docker.com/v2/repositories/twentycrm/twenty/tags?page_size=100" | grep -o '"name":"[^"]*"' | grep -v 'latest' | cut -d'"' -f4 | sort -V | tail -n1)}
 
 if [[ -z "$pull_version" ]]; then

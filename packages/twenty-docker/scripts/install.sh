@@ -58,6 +58,8 @@ function download {
 }
 
 # Use environment variables VERSION and BRANCH, with defaults if not set
+# "latest" is only an alias of the newest release, resolve it to the real tag
+[[ "$VERSION" == "latest" ]] && unset VERSION
 version=${VERSION:-$(curl -fsS --retry 3 --retry-delay 2 "https://hub.docker.com/v2/repositories/twentycrm/twenty/tags?page_size=100" | grep -o '"name":"[^"]*"' | grep -v 'latest' | cut -d'"' -f4 | sort -V | tail -n1)}
 if [ -z "$version" ]; then
   echo -e "\t❌ Unable to resolve the latest release from Docker Hub. Check your network, or set VERSION explicitly."
