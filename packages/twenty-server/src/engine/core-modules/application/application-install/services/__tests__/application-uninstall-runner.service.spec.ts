@@ -43,6 +43,23 @@ describe('ApplicationUninstallRunnerService', () => {
     jest.clearAllMocks();
   });
 
+  it('counts a lock acquisition failure as a failed uninstall', async () => {
+    jest
+      .spyOn(cacheLockService, 'withLock')
+      .mockRejectedValueOnce(new Error('Failed to acquire lock'));
+
+    await expect(service.uninstallApplication(target)).rejects.toThrow(
+      'Failed to acquire lock',
+    );
+    expect(applicationSyncService.uninstallApplication).not.toHaveBeenCalled();
+    expect(metricsService.incrementCounterBy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        key: MetricsKeys.AppUninstallFailed,
+        attributes: expect.objectContaining({ error_code: 'UNKNOWN' }),
+      }),
+    );
+  });
+
   it('uninstalls the application under the lifecycle lock and counts the success', async () => {
     await service.uninstallApplication(target);
 

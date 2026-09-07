@@ -19,21 +19,7 @@ export class ApplicationUninstallRunnerService {
     private readonly cacheLockService: CacheLockService,
   ) {}
 
-  uninstallApplication({
-    universalIdentifier,
-    workspaceId,
-  }: {
-    universalIdentifier: string;
-    workspaceId: string;
-  }): Promise<void> {
-    return this.cacheLockService.withLock(
-      () => this.runUninstall({ universalIdentifier, workspaceId }),
-      buildApplicationLifecycleLockKey({ workspaceId, universalIdentifier }),
-      APPLICATION_LIFECYCLE_LOCK_OPTIONS,
-    );
-  }
-
-  private async runUninstall({
+  async uninstallApplication({
     universalIdentifier,
     workspaceId,
   }: {
@@ -42,16 +28,23 @@ export class ApplicationUninstallRunnerService {
   }): Promise<void> {
     let application: ApplicationEntity | null = null;
 
+    // The lock sits inside the try so that failing to acquire it is counted
+    // as a failed uninstall like any other failure
     try {
       application = await this.applicationService.findByUniversalIdentifier({
         universalIdentifier,
         workspaceId,
       });
 
-      await this.applicationSyncService.uninstallApplication({
-        applicationUniversalIdentifier: universalIdentifier,
-        workspaceId,
-      });
+      await this.cacheLockService.withLock(
+        () =>
+          this.applicationSyncService.uninstallApplication({
+            applicationUniversalIdentifier: universalIdentifier,
+            workspaceId,
+          }),
+        buildApplicationLifecycleLockKey({ workspaceId, universalIdentifier }),
+        APPLICATION_LIFECYCLE_LOCK_OPTIONS,
+      );
     } catch (error) {
       this.metricsService.incrementCounterBy({
         key: MetricsKeys.AppUninstallFailed,
