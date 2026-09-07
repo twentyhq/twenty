@@ -132,6 +132,136 @@ describe('normalizePageLayoutTabManifest', () => {
     });
   });
 
+  describe.each<{ name: string; viewport: Partial<PageLayoutWidgetManifest> }>([
+    { name: 'explicit height', viewport: { heightBehavior: 'TAB_VIEWPORT' } },
+    {
+      name: 'legacy nested height',
+      viewport: {
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+          index: 99,
+          heightBehavior:
+            PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+        },
+      },
+    },
+    {
+      name: 'widget type default',
+      viewport: {
+        type: 'TIMELINE',
+        configuration: { configurationType: 'TIMELINE' },
+      },
+    },
+  ])('viewport constraints with $name', ({ viewport }) => {
+    it.each([
+      { duplicate: true, error: 'can contain only one TAB_VIEWPORT widget' },
+      { duplicate: false, error: 'must place its TAB_VIEWPORT widget last' },
+    ])('rejects a layout that $error', ({ duplicate, error }) => {
+      expect(
+        normalizePageLayoutTabManifest({
+          pageLayoutTabManifest: {
+            ...tab,
+            widgets: [
+              { ...widget, ...viewport },
+              {
+                ...widget,
+                ...(duplicate ? viewport : {}),
+                universalIdentifier: 'second-widget',
+              },
+            ],
+          },
+          pageLayoutType: undefined,
+        }),
+      ).toEqual({
+        status: 'fail',
+        errors: [`Page layout tab "Details" ${error}.`],
+      });
+    });
+  });
+
+  it('accepts an explicit fit-content override followed by a default viewport widget', () => {
+    expect(
+      normalizePageLayoutTabManifest({
+        pageLayoutTabManifest: {
+          ...tab,
+          widgets: [
+            {
+              ...widget,
+              type: 'TIMELINE',
+              configuration: { configurationType: 'TIMELINE' },
+              heightBehavior: 'FIT_CONTENT',
+            },
+            {
+              ...widget,
+              universalIdentifier: 'second-widget',
+              type: 'TIMELINE',
+              configuration: { configurationType: 'TIMELINE' },
+            },
+          ],
+        },
+        pageLayoutType: undefined,
+      }),
+    ).toMatchObject({ status: 'success' });
+  });
+
+  it.each([PageLayoutTabLayoutMode.GRID, PageLayoutTabLayoutMode.CANVAS])(
+    'rejects a vertical-list position in an authored %s tab',
+    (layoutMode) => {
+      expect(
+        normalizePageLayoutTabManifest({
+          pageLayoutTabManifest: {
+            ...tab,
+            layoutMode,
+            widgets: [
+              {
+                ...widget,
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                  index: 0,
+                },
+              },
+              { ...widget, universalIdentifier: 'second-widget' },
+            ],
+          },
+          pageLayoutType: undefined,
+        }),
+      ).toEqual({
+        status: 'fail',
+        errors: [
+          `Page layout widget "App" uses a VERTICAL_LIST position, but its parent tab "Details" uses ${layoutMode}.`,
+        ],
+      });
+    },
+  );
+
+  it('converts legacy grid positions when authoring a vertical list', () => {
+    expect(
+      normalizePageLayoutTabManifest({
+        pageLayoutTabManifest: {
+          ...tab,
+          widgets: [
+            {
+              ...widget,
+              position: {
+                layoutMode: PageLayoutTabLayoutMode.GRID,
+                row: 0,
+                column: 0,
+                rowSpan: 1,
+                columnSpan: 12,
+              },
+            },
+          ],
+        },
+        pageLayoutType: undefined,
+      }),
+    ).toMatchObject({
+      status: 'success',
+      pageLayoutTab: {
+        widgets: [{ position: { layoutMode: 'VERTICAL_LIST', index: 0 } }],
+      },
+    });
+  });
+
   it.each([
     undefined,
     PageLayoutType.DASHBOARD,

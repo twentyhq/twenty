@@ -13,8 +13,13 @@ import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
   PageLayoutWidgetVerticalListHeightBehavior,
+  WidgetType,
 } from '@/types';
-import { assertUnreachable, isDefined } from '@/utils';
+import {
+  assertUnreachable,
+  getPageLayoutWidgetHeightBehavior,
+  isDefined,
+} from '@/utils';
 
 export const normalizePageLayoutTabManifest = ({
   pageLayoutTabManifest,
@@ -75,82 +80,120 @@ export const normalizePageLayoutTabManifest = ({
     ? PageLayoutTabLayoutMode.VERTICAL_LIST
     : layoutMode;
 
-  return {
-    status: 'success',
-    pageLayoutTab: {
-      ...pageLayoutTabManifest,
-      layoutMode: normalizedLayoutMode,
-      widgets: widgets.map(
-        (
-          {
-            heightBehavior,
-            position,
-            gridPosition,
-            ...widget
-          }: PageLayoutWidgetManifest & { gridPosition?: GridPosition },
-          index,
-        ): NormalizedPageLayoutWidgetManifest => {
-          if (normalizedLayoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST) {
-            const resolvedHeightBehavior = isLegacyCanvasTab
-              ? PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT
-              : (heightBehavior ??
-                (position?.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST
-                  ? position.heightBehavior
-                  : undefined));
+  const pageLayoutTab: NormalizedPageLayoutTabManifest = {
+    ...pageLayoutTabManifest,
+    layoutMode: normalizedLayoutMode,
+    widgets: widgets.map(
+      (
+        {
+          heightBehavior,
+          position,
+          gridPosition,
+          ...widget
+        }: PageLayoutWidgetManifest & { gridPosition?: GridPosition },
+        index,
+      ): NormalizedPageLayoutWidgetManifest => {
+        if (normalizedLayoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST) {
+          const resolvedHeightBehavior = isLegacyCanvasTab
+            ? PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT
+            : (heightBehavior ??
+              (position?.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST
+                ? position.heightBehavior
+                : undefined));
 
+          return {
+            ...widget,
+            position: {
+              layoutMode: normalizedLayoutMode,
+              index,
+              ...(isDefined(resolvedHeightBehavior)
+                ? {
+                    heightBehavior:
+                      PageLayoutWidgetVerticalListHeightBehavior[
+                        resolvedHeightBehavior
+                      ],
+                  }
+                : {}),
+            },
+          };
+        }
+
+        if (isDefined(position)) {
+          return { ...widget, position };
+        }
+
+        if (isDefined(gridPosition)) {
+          return {
+            ...widget,
+            position: {
+              layoutMode: PageLayoutTabLayoutMode.GRID,
+              ...gridPosition,
+            },
+          };
+        }
+
+        switch (normalizedLayoutMode) {
+          case PageLayoutTabLayoutMode.GRID:
             return {
               ...widget,
               position: {
                 layoutMode: normalizedLayoutMode,
-                index,
-                ...(isDefined(resolvedHeightBehavior)
-                  ? {
-                      heightBehavior:
-                        PageLayoutWidgetVerticalListHeightBehavior[
-                          resolvedHeightBehavior
-                        ],
-                    }
-                  : {}),
+                row: 0,
+                column: 0,
+                rowSpan: DEFAULT_WIDGET_SIZE.default.h,
+                columnSpan: DEFAULT_WIDGET_SIZE.default.w,
               },
             };
-          }
-
-          if (isDefined(position)) {
-            return { ...widget, position };
-          }
-
-          if (isDefined(gridPosition)) {
+          case PageLayoutTabLayoutMode.CANVAS:
             return {
               ...widget,
-              position: {
-                layoutMode: PageLayoutTabLayoutMode.GRID,
-                ...gridPosition,
-              },
+              position: { layoutMode: normalizedLayoutMode },
             };
-          }
-
-          switch (normalizedLayoutMode) {
-            case PageLayoutTabLayoutMode.GRID:
-              return {
-                ...widget,
-                position: {
-                  layoutMode: normalizedLayoutMode,
-                  row: 0,
-                  column: 0,
-                  rowSpan: DEFAULT_WIDGET_SIZE.default.h,
-                  columnSpan: DEFAULT_WIDGET_SIZE.default.w,
-                },
-              };
-            case PageLayoutTabLayoutMode.CANVAS:
-              return {
-                ...widget,
-                position: { layoutMode: normalizedLayoutMode },
-              };
-            default:
-              return assertUnreachable(normalizedLayoutMode);
-          }
-        },
-      ),
-    },
+          default:
+            return assertUnreachable(normalizedLayoutMode);
+        }
+      },
+    ),
   };
+
+  for (const widget of pageLayoutTab.widgets) {
+    if (widget.position.layoutMode !== normalizedLayoutMode) {
+      errors.push(
+        `Page layout widget "${widget.title}" uses a ${widget.position.layoutMode} position, but its parent tab "${pageLayoutTab.title}" uses ${normalizedLayoutMode}.`,
+      );
+    }
+  }
+
+  if (normalizedLayoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST) {
+    const viewportWidgets = pageLayoutTab.widgets.filter(
+      ({ type, position }) =>
+        position.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST &&
+        getPageLayoutWidgetHeightBehavior({
+          widgetType: WidgetType[type],
+          heightBehavior: position.heightBehavior,
+        }) === PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+    );
+
+    if (viewportWidgets.length > 1) {
+      errors.push(
+        `Page layout tab "${pageLayoutTab.title}" can contain only one TAB_VIEWPORT widget.`,
+      );
+    }
+
+    if (
+      viewportWidgets.length === 1 &&
+      viewportWidgets[0] !==
+        pageLayoutTab.widgets[pageLayoutTab.widgets.length - 1]
+    ) {
+      errors.push(
+        `Page layout tab "${pageLayoutTab.title}" must place its TAB_VIEWPORT widget last.`,
+      );
+    }
+  }
+
+  if (errors.length > 0) {
+    return { status: 'fail', errors };
+  }
+
+  return { status: 'success', pageLayoutTab };
 };
