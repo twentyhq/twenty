@@ -10820,6 +10820,11 @@ msgstr "Bu alt alan adı zaten alınmış."
 msgid "This suppressed address no longer exists."
 msgstr "Bu engellenmiş adres artık mevcut değil."
 
+#. js-lingui-id: qm7uMm
+#: src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util.ts
+msgid "This SVG is too large to be processed."
+msgstr "Bu SVG işlenemeyecek kadar büyük."
+
 #. js-lingui-id: 0GMgIa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"

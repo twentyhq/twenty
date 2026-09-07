@@ -16,7 +16,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.39.0', 1788553681056)
+@RegisteredWorkspaceCommand('2.39.0', 1788725371892)
 @Command({
   name: 'upgrade:2-39:sync-record-share-object',
   description:
@@ -53,20 +53,6 @@ export class SyncRecordShareObjectCommand extends ProvisionedWorkspaceCommandRun
     ) {
       this.logger.warn(
         `person object not found for workspace ${workspaceId}, skipping recordShare object sync`,
-      );
-
-      return;
-    }
-
-    if (
-      isDefined(
-        flatObjectMetadataMaps.byUniversalIdentifier[
-          STANDARD_OBJECTS.recordShare.universalIdentifier
-        ],
-      )
-    ) {
-      this.logger.warn(
-        `recordShare object already exists for workspace ${workspaceId}, skipping`,
       );
 
       return;
@@ -119,7 +105,22 @@ export class SyncRecordShareObjectCommand extends ProvisionedWorkspaceCommandRun
         flatEntityToUpdate: [],
       },
     };
-    const creationSummary = `the recordShare object with ${allFlatEntityOperationByMetadataName.fieldMetadata.flatEntityToCreate.length} field(s) and ${allFlatEntityOperationByMetadataName.index.flatEntityToCreate.length} index(es)`;
+    const totalOperationCount = Object.values(
+      allFlatEntityOperationByMetadataName,
+    ).reduce(
+      (total, operations) => total + operations.flatEntityToCreate.length,
+      0,
+    );
+
+    if (totalOperationCount === 0) {
+      this.logger.log(
+        `recordShare standard metadata already exists for workspace ${workspaceId}, skipping`,
+      );
+
+      return;
+    }
+
+    const creationSummary = `${allFlatEntityOperationByMetadataName.objectMetadata.flatEntityToCreate.length} recordShare object(s), ${allFlatEntityOperationByMetadataName.fieldMetadata.flatEntityToCreate.length} field(s) and ${allFlatEntityOperationByMetadataName.index.flatEntityToCreate.length} index(es)`;
 
     if (isDryRun) {
       this.logger.log(

@@ -1,4 +1,5 @@
 import { CAMPAIGN_DELIVERY_STATE } from 'src/engine/core-modules/emailing-domain/constants/campaign-delivery-state.constant';
+import { UNFINISHED_CAMPAIGN_DELIVERY_STATES } from 'src/engine/core-modules/emailing-domain/constants/unfinished-campaign-delivery-states.constant';
 import { type CampaignCountGroup } from 'src/engine/core-modules/emailing-domain/types/campaign-count-group.type';
 import { type CampaignCounts } from 'src/engine/core-modules/emailing-domain/types/campaign-counts.type';
 
@@ -25,9 +26,9 @@ export const computeCampaignCounts = ({
 }): CampaignCounts =>
   groups.reduce<CampaignCounts>((counts, group) => {
     const total = Number(group.total);
-    const isInProgress =
-      group.state === CAMPAIGN_DELIVERY_STATE.QUEUED ||
-      group.state === CAMPAIGN_DELIVERY_STATE.SENDING;
+    const isInProgress = UNFINISHED_CAMPAIGN_DELIVERY_STATES.includes(
+      group.state,
+    );
 
     return {
       totalCount: counts.totalCount + total,
