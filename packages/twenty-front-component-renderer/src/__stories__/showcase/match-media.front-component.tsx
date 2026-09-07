@@ -1,6 +1,32 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
+import { useEffect, useState } from 'react';
+
+const DARK_COLOR_SCHEME_QUERY = '(prefers-color-scheme: dark)';
 
 const MatchMediaComponent = () => {
+  const [colorSchemeChangeCount, setColorSchemeChangeCount] = useState(0);
+
+  useEffect(() => {
+    const darkColorSchemeMediaQueryList = window.matchMedia(
+      DARK_COLOR_SCHEME_QUERY,
+    );
+    const handleColorSchemeChange = () => {
+      setColorSchemeChangeCount((count) => count + 1);
+    };
+
+    darkColorSchemeMediaQueryList.addEventListener(
+      'change',
+      handleColorSchemeChange,
+    );
+
+    return () => {
+      darkColorSchemeMediaQueryList.removeEventListener(
+        'change',
+        handleColorSchemeChange,
+      );
+    };
+  }, []);
+
   const ownWidth = document.body.clientWidth;
   const ownHeight = document.body.clientHeight;
 
@@ -16,7 +42,7 @@ const MatchMediaComponent = () => {
   const emptyQueryInListMatches = String(
     window.matchMedia(`(min-width: ${ownWidth + 1}px),`).matches,
   );
-  const colorScheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+  const colorScheme = window.matchMedia(DARK_COLOR_SCHEME_QUERY).matches
     ? 'dark'
     : 'light';
   const expectedOrientation = ownHeight >= ownWidth ? 'portrait' : 'landscape';
@@ -45,6 +71,9 @@ const MatchMediaComponent = () => {
         orientation matches: {orientationMatches}
       </p>
       <p data-testid="match-media-color-scheme">color scheme: {colorScheme}</p>
+      <p data-testid="match-media-color-scheme-change-count">
+        color scheme changes: {colorSchemeChangeCount}
+      </p>
     </div>
   );
 };

@@ -145,3 +145,48 @@ describe('@remote-dom/polyfill mutation hooks contract the worker MutationObserv
     expect(parent.childNodes.item(1)).toBeUndefined();
   });
 });
+
+describe('@remote-dom/polyfill EventTarget contract the worker MediaQueryList compensates for, which a remote-dom upgrade should surface', () => {
+  it('invokes a listener added during dispatch in that same dispatch', () => {
+    const { EventTarget: PolyfillEventTarget, Event: PolyfillEvent } =
+      new Window();
+    const target = new PolyfillEventTarget();
+    const lateListener = jest.fn();
+
+    target.addEventListener('change', () => {
+      target.addEventListener('change', lateListener);
+    });
+    target.dispatchEvent(new PolyfillEvent('change'));
+
+    expect(lateListener).toHaveBeenCalledTimes(1);
+  });
+
+  it('registers a once listener beside a plain registration of the same callback', () => {
+    const { EventTarget: PolyfillEventTarget, Event: PolyfillEvent } =
+      new Window();
+    const target = new PolyfillEventTarget();
+    const listener = jest.fn();
+
+    target.addEventListener('change', listener);
+    target.addEventListener('change', listener, { once: true });
+    target.dispatchEvent(new PolyfillEvent('change'));
+
+    expect(listener).toHaveBeenCalledTimes(2);
+  });
+
+  it('registers a listener whose signal is already aborted', () => {
+    const { EventTarget: PolyfillEventTarget, Event: PolyfillEvent } =
+      new Window();
+    const target = new PolyfillEventTarget();
+    const abortController = new AbortController();
+    const listener = jest.fn();
+
+    abortController.abort();
+    target.addEventListener('change', listener, {
+      signal: abortController.signal,
+    });
+    target.dispatchEvent(new PolyfillEvent('change'));
+
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+});

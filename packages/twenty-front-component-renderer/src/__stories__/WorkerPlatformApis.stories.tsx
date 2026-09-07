@@ -1,10 +1,12 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import {
   errorHandler,
   FRONT_COMPONENT_STORY_DEFAULT_ARGS,
   FRONT_COMPONENT_STORY_DEFAULT_EXECUTION_CONTEXT,
+  hostApiMocks,
   resetFrontComponentStoryMocks,
 } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { MOUNT_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
@@ -160,3 +162,81 @@ export const MatchMediaDarkColorScheme: Story = createStory({
     },
   },
 });
+
+const MatchMediaColorSchemeToggle = () => {
+  const [colorScheme, setColorScheme] = useState<'light' | 'dark'>('light');
+
+  return (
+    <>
+      <button
+        type="button"
+        data-testid="match-media-toggle-color-scheme"
+        onClick={() =>
+          setColorScheme((currentColorScheme) =>
+            currentColorScheme === 'light' ? 'dark' : 'light',
+          )
+        }
+      >
+        Toggle color scheme
+      </button>
+      <FrontComponentRenderer
+        componentUrl={getBuiltStoryComponentPathForRender(
+          'match-media.front-component',
+        )}
+        applicationAccessToken={
+          FRONT_COMPONENT_STORY_DEFAULT_ARGS.applicationAccessToken
+        }
+        executionContext={{
+          ...FRONT_COMPONENT_STORY_DEFAULT_EXECUTION_CONTEXT,
+          colorScheme,
+        }}
+        frontComponentHostCommunicationApi={hostApiMocks}
+        onError={errorHandler}
+        colorScheme={colorScheme}
+      />
+    </>
+  );
+};
+
+export const MatchMediaColorSchemeChange: Story = {
+  render: () => <MatchMediaColorSchemeToggle />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByTestId(
+      'match-media-component',
+      {},
+      { timeout: MOUNT_TIMEOUT },
+    );
+
+    await waitFor(
+      () => {
+        expect(
+          canvas.getByTestId('match-media-color-scheme'),
+        ).toHaveTextContent('color scheme: light');
+      },
+      { timeout: MOUNT_TIMEOUT },
+    );
+    expect(
+      canvas.getByTestId('match-media-color-scheme-change-count'),
+    ).toHaveTextContent('color scheme changes: 0');
+
+    await userEvent.click(
+      canvas.getByTestId('match-media-toggle-color-scheme'),
+    );
+
+    await waitFor(
+      () => {
+        expect(
+          canvas.getByTestId('match-media-color-scheme'),
+        ).toHaveTextContent('color scheme: dark');
+        expect(
+          canvas.getByTestId('match-media-color-scheme-change-count'),
+        ).toHaveTextContent('color scheme changes: 1');
+      },
+      { timeout: MOUNT_TIMEOUT },
+    );
+
+    expect(errorHandler).not.toHaveBeenCalled();
+  },
+};
