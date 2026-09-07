@@ -447,8 +447,6 @@ export class BullMQDriver
     return job.id;
   }
 
-  // Every queue enqueues with a priority, which files a not-yet-started job
-  // under prioritized rather than waiting
   private async getWaitingJobIds(queueName: MessageQueue): Promise<string[]> {
     const waitingJobs = await this.queueMap[queueName].getJobs([
       'waiting',
@@ -458,8 +456,6 @@ export class BullMQDriver
     return waitingJobs.map((job) => job.id).filter(isDefined);
   }
 
-  // Same guarantee as add: at most one waiting job per caller-provided id, but
-  // the waiting jobs are read once for the whole batch
   private async filterOutAlreadyWaitingJobs<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     jobs: QueueJobToAdd<T>[],

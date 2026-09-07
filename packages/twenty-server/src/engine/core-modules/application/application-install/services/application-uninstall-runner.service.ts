@@ -28,8 +28,6 @@ export class ApplicationUninstallRunnerService {
   }): Promise<void> {
     let application: ApplicationEntity | null = null;
 
-    // The lock sits inside the try so that failing to acquire it is counted
-    // as a failed uninstall like any other failure
     try {
       application = await this.applicationService.findByUniversalIdentifier({
         universalIdentifier,

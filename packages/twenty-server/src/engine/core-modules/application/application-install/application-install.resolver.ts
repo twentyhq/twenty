@@ -30,7 +30,6 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { JobStatusDTO } from 'src/engine/core-modules/message-queue/dtos/job-status.dto';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
@@ -123,12 +122,10 @@ export class ApplicationInstallResolver {
   async triggerInstallApplicationJob(
     @Args('input') { universalIdentifier }: TriggerInstallApplicationJobInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<TriggerInstallApplicationJobResultDTO> {
     return this.applicationLifecycleJobService.triggerInstallApplicationJob({
       universalIdentifier,
       workspaceId: workspace.id,
-      userWorkspaceId,
     });
   }
 
@@ -137,12 +134,10 @@ export class ApplicationInstallResolver {
   async triggerUninstallApplicationJob(
     @Args('input') { universalIdentifier }: TriggerUninstallApplicationJobInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<TriggerUninstallApplicationJobResultDTO> {
     return this.applicationLifecycleJobService.triggerUninstallApplicationJob({
       universalIdentifier,
       workspaceId: workspace.id,
-      userWorkspaceId,
     });
   }
 
@@ -150,13 +145,10 @@ export class ApplicationInstallResolver {
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   async findInstallApplicationJobStatus(
     @Args('universalIdentifier') universalIdentifier: string,
-    @Args('jobId', { type: () => String, nullable: true })
-    jobId: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<JobStatusDTO | null> {
     return this.applicationLifecycleJobService.findInstallApplicationJobStatus({
       universalIdentifier,
-      jobId,
       workspaceId: workspace.id,
     });
   }
@@ -165,12 +157,10 @@ export class ApplicationInstallResolver {
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   async findUninstallApplicationJobStatus(
     @Args('universalIdentifier') universalIdentifier: string,
-    @Args('jobId', { type: () => String, nullable: true })
-    jobId: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<JobStatusDTO | null> {
     return this.applicationLifecycleJobService.findUninstallApplicationJobStatus(
-      { universalIdentifier, jobId, workspaceId: workspace.id },
+      { universalIdentifier, workspaceId: workspace.id },
     );
   }
 

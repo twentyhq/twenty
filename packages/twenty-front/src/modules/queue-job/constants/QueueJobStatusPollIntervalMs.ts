@@ -1,1 +1,0 @@
-export const QUEUE_JOB_STATUS_POLL_INTERVAL_MS = 5000;

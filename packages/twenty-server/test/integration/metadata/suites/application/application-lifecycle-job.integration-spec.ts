@@ -36,13 +36,9 @@ const TRIGGER_UNINSTALL_APPLICATION_JOB = gql`
 `;
 
 const FIND_UNINSTALL_APPLICATION_JOB_STATUS = gql`
-  query FindUninstallApplicationJobStatus(
-    $universalIdentifier: String!
-    $jobId: String
-  ) {
+  query FindUninstallApplicationJobStatus($universalIdentifier: String!) {
     findUninstallApplicationJobStatus(
       universalIdentifier: $universalIdentifier
-      jobId: $jobId
     ) {
       jobId
       state
@@ -68,10 +64,10 @@ describe('Application lifecycle jobs', () => {
     return response.body.data.triggerUninstallApplicationJob.jobId as string;
   };
 
-  const findUninstallApplicationJobStatus = async (jobId?: string) => {
+  const findUninstallApplicationJobStatus = async () => {
     const response = await makeMetadataAPIRequest({
       query: FIND_UNINSTALL_APPLICATION_JOB_STATUS,
-      variables: { universalIdentifier: appId, jobId },
+      variables: { universalIdentifier: appId },
     });
 
     expect(response.body.errors).toBeUndefined();
@@ -112,8 +108,6 @@ describe('Application lifecycle jobs', () => {
       expectToFail: false,
     });
 
-    // setupApplicationForSync leaves fake timers on, which would stall the
-    // polling in waitForAllJobsToFinish
     jest.useRealTimers();
   }, 60000);
 
@@ -132,10 +126,6 @@ describe('Application lifecycle jobs', () => {
 
     await waitForAllJobsToFinish();
 
-    expect(await findUninstallApplicationJobStatus(jobId)).toMatchObject({
-      jobId,
-      state: JobStateEnum.COMPLETED,
-    });
     expect(await findUninstallApplicationJobStatus()).toBeNull();
 
     const { data } = await findManyApplications({ expectToFail: false });
@@ -148,14 +138,11 @@ describe('Application lifecycle jobs', () => {
   }, 60000);
 
   it('reports the waiting uninstall job and refuses a conflicting install', async () => {
-    // Pausing the queue keeps the job waiting so the in-flight paths can be
-    // observed deterministically
     await workspaceQueue.pause();
 
     try {
       const jobId = await triggerUninstallApplicationJob();
 
-      // Jobs carry the queue priority, so a not-yet-started job is prioritized
       expect(await findUninstallApplicationJobStatus()).toMatchObject({
         jobId,
         state: JobStateEnum.PRIORITIZED,

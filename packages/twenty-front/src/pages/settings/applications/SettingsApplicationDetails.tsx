@@ -132,8 +132,6 @@ export const SettingsApplicationDetails = () => {
 
   const { upgrade, isUpgrading } = useUpgradeApplication();
 
-  // The row exists from the start of the install, so this page can be reached
-  // while the install job is still running
   const { isInstalling } = useInstallMarketplaceApp({
     universalIdentifier: application?.universalIdentifier,
   });

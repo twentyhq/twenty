@@ -4,9 +4,6 @@ import { type FlatApplication } from '@/metadata-store/types/FlatApplication';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-// The logo url only exists on the query, and the version is what flips the
-// detail page out of its installing or upgradable state once a lifecycle job
-// has applied the manifest
 const REFETCH_TRIGGERING_APPLICATION_FIELDS = ['logo', 'version'];
 
 type UseRefetchOnApplicationOperationArgs = {

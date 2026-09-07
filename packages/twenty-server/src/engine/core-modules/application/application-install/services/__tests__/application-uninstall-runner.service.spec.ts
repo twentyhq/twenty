@@ -65,7 +65,7 @@ describe('ApplicationUninstallRunnerService', () => {
 
     expect(cacheLockService.withLock).toHaveBeenCalledWith(
       expect.any(Function),
-      `app-install:${target.workspaceId}:${target.universalIdentifier}`,
+      `application-lifecycle:${target.workspaceId}:${target.universalIdentifier}`,
       { ttl: 60_000, ms: 500, maxRetries: 120 },
     );
     expect(applicationSyncService.uninstallApplication).toHaveBeenCalledWith({

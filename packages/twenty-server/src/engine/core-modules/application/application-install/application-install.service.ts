@@ -272,9 +272,6 @@ export class ApplicationInstallService {
 
     const isVersionUpgrade = isDefined(existingApplication);
 
-    // The row is created before the manifest is applied and only gets its
-    // version once the install completed, so a versionless row is a crashed
-    // first install being retried
     const hasNeverCompletedInstall =
       isVersionUpgrade && !isDefined(existingApplication.version);
 

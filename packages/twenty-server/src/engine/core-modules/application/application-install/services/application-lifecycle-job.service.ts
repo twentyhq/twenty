@@ -35,12 +35,6 @@ type LifecycleJobTarget = {
   workspaceId: string;
 };
 
-type LifecycleJobStatusTarget = LifecycleJobTarget & {
-  // A job the caller is already tracking: read it back whatever its state,
-  // where the prefix lookup only ever finds jobs still in flight
-  jobId?: string;
-};
-
 const CONFLICTING_OPERATION: Record<
   ApplicationLifecycleOperation,
   ApplicationLifecycleOperation
@@ -62,10 +56,7 @@ export class ApplicationLifecycleJobService {
   async triggerInstallApplicationJob({
     universalIdentifier,
     workspaceId,
-    userWorkspaceId,
-  }: LifecycleJobTarget & { userWorkspaceId: string }): Promise<{
-    jobId: string;
-  }> {
+  }: LifecycleJobTarget): Promise<{ jobId: string }> {
     const registration =
       await this.marketplaceQueryService.findRegistrationByUniversalIdentifier(
         universalIdentifier,
@@ -77,17 +68,13 @@ export class ApplicationLifecycleJobService {
       data: { applicationRegistrationId: registration.id, workspaceId },
       universalIdentifier,
       workspaceId,
-      userWorkspaceId,
     });
   }
 
   async triggerUninstallApplicationJob({
     universalIdentifier,
     workspaceId,
-    userWorkspaceId,
-  }: LifecycleJobTarget & { userWorkspaceId: string }): Promise<{
-    jobId: string;
-  }> {
+  }: LifecycleJobTarget): Promise<{ jobId: string }> {
     await this.applicationService.findOneApplicationOrThrow({
       universalIdentifier,
       workspaceId,
@@ -99,37 +86,32 @@ export class ApplicationLifecycleJobService {
       data: { universalIdentifier, workspaceId },
       universalIdentifier,
       workspaceId,
-      userWorkspaceId,
     });
   }
 
   findInstallApplicationJobStatus(
-    target: LifecycleJobStatusTarget,
+    target: LifecycleJobTarget,
   ): Promise<JobStatusDTO | null> {
     return this.findLifecycleJobStatus({ operation: 'install', ...target });
   }
 
   findUninstallApplicationJobStatus(
-    target: LifecycleJobStatusTarget,
+    target: LifecycleJobTarget,
   ): Promise<JobStatusDTO | null> {
     return this.findLifecycleJobStatus({ operation: 'uninstall', ...target });
   }
 
-  private async triggerLifecycleJob<TData extends MessageQueueJobData>({
+  private triggerLifecycleJob<TData extends MessageQueueJobData>({
     operation,
     jobName,
     data,
     universalIdentifier,
     workspaceId,
-    userWorkspaceId,
   }: LifecycleJobTarget & {
     operation: ApplicationLifecycleOperation;
     jobName: string;
     data: TData;
-    userWorkspaceId: string;
   }): Promise<{ jobId: string }> {
-    // The conflict check and the add are two queue round trips, so concurrent
-    // requests for one application are serialized behind a lock
     return this.cacheLockService.withLock(
       () =>
         this.enqueueLifecycleJob({
@@ -138,7 +120,6 @@ export class ApplicationLifecycleJobService {
           data,
           universalIdentifier,
           workspaceId,
-          userWorkspaceId,
         }),
       `application-lifecycle-job:${workspaceId}:${universalIdentifier}`,
     );
@@ -150,12 +131,10 @@ export class ApplicationLifecycleJobService {
     data,
     universalIdentifier,
     workspaceId,
-    userWorkspaceId,
   }: LifecycleJobTarget & {
     operation: ApplicationLifecycleOperation;
     jobName: string;
     data: TData;
-    userWorkspaceId: string;
   }): Promise<{ jobId: string }> {
     const conflictingOperation = CONFLICTING_OPERATION[operation];
     const conflictingJobId = await this.findInFlightJobId(
@@ -185,12 +164,10 @@ export class ApplicationLifecycleJobService {
       universalIdentifier,
     });
 
-    // The queue skips the add when a job for this prefix is already waiting,
-    // in which case the waiting job is the one to report
     const jobId =
       (await this.workspaceQueueService.add<TData>(jobName, data, {
         id: jobIdPrefix,
-        broadcastTo: { workspaceId, userWorkspaceId },
+        broadcastTo: { workspaceId },
       })) ?? (await this.findInFlightJobId(jobIdPrefix));
 
     if (!isDefined(jobId)) {
@@ -207,19 +184,16 @@ export class ApplicationLifecycleJobService {
     operation,
     universalIdentifier,
     workspaceId,
-    jobId: trackedJobId,
-  }: LifecycleJobStatusTarget & {
+  }: LifecycleJobTarget & {
     operation: ApplicationLifecycleOperation;
   }): Promise<JobStatusDTO | null> {
-    const jobIdPrefix = buildApplicationLifecycleJobId({
-      operation,
-      workspaceId,
-      universalIdentifier,
-    });
-
-    const jobId = isDefined(trackedJobId)
-      ? this.matchTrackedJobId({ trackedJobId, jobIdPrefix })
-      : await this.findInFlightJobId(jobIdPrefix);
+    const jobId = await this.findInFlightJobId(
+      buildApplicationLifecycleJobId({
+        operation,
+        workspaceId,
+        universalIdentifier,
+      }),
+    );
 
     if (!isDefined(jobId)) {
       return null;
@@ -228,20 +202,6 @@ export class ApplicationLifecycleJobService {
     const job = (await this.workspaceQueueService.getJobs([jobId]))[jobId];
 
     return isDefined(job) ? buildJobStatus({ jobId, job }) : null;
-  }
-
-  // The prefix carries the workspace, so a job id from another workspace or
-  // another application never resolves
-  private matchTrackedJobId({
-    trackedJobId,
-    jobIdPrefix,
-  }: {
-    trackedJobId: string;
-    jobIdPrefix: string;
-  }): string | undefined {
-    return getQueueJobIdPrefix(trackedJobId) === jobIdPrefix
-      ? trackedJobId
-      : undefined;
   }
 
   private async findInFlightJobId(

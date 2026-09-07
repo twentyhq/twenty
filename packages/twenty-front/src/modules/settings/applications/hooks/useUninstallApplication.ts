@@ -4,7 +4,7 @@ import { type TrackedJobStatus } from '@/queue-job/types/TrackedJobStatus';
 import { isTerminalJobState } from '@/queue-job/utils/isTerminalJobState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useLazyQuery, useMutation, useQuery } from '@apollo/client/react';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
@@ -36,25 +36,6 @@ export const useUninstallApplication = ({
       skip: !isDefined(universalIdentifier),
       fetchPolicy: 'network-only',
     },
-  );
-  const [findUninstallApplicationJobStatus] = useLazyQuery(
-    FindUninstallApplicationJobStatusDocument,
-    { fetchPolicy: 'network-only' },
-  );
-
-  const fetchUninstallJobStatus = useCallback(
-    async (jobId: string) => {
-      if (!isDefined(universalIdentifier)) {
-        return undefined;
-      }
-
-      const { data } = await findUninstallApplicationJobStatus({
-        variables: { universalIdentifier, jobId },
-      });
-
-      return data?.findUninstallApplicationJobStatus;
-    },
-    [findUninstallApplicationJobStatus, universalIdentifier],
   );
 
   const runningJobStatus = jobStatusData?.findUninstallApplicationJobStatus;
@@ -103,7 +84,6 @@ export const useUninstallApplication = ({
 
   const { activeJobId, trackJob } = useTrackedQueueJob({
     runningJobId,
-    fetchJobStatus: fetchUninstallJobStatus,
     onQueueJobSettled: handleUninstallJobSettled,
   });
 

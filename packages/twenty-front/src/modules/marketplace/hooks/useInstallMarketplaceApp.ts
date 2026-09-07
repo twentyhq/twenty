@@ -45,25 +45,6 @@ export const useInstallMarketplaceApp = ({
       fetchPolicy: 'network-only',
     },
   );
-  const [findInstallApplicationJobStatus] = useLazyQuery(
-    FindInstallApplicationJobStatusDocument,
-    { fetchPolicy: 'network-only' },
-  );
-
-  const fetchInstallJobStatus = useCallback(
-    async (jobId: string) => {
-      if (!isDefined(universalIdentifier)) {
-        return undefined;
-      }
-
-      const { data } = await findInstallApplicationJobStatus({
-        variables: { universalIdentifier, jobId },
-      });
-
-      return data?.findInstallApplicationJobStatus;
-    },
-    [findInstallApplicationJobStatus, universalIdentifier],
-  );
 
   const runningJobStatus = jobStatusData?.findInstallApplicationJobStatus;
   const runningJobId =
@@ -137,7 +118,6 @@ export const useInstallMarketplaceApp = ({
 
   const { activeJobId, trackJob } = useTrackedQueueJob({
     runningJobId,
-    fetchJobStatus: fetchInstallJobStatus,
     onQueueJobSettled: handleInstallJobSettled,
   });
 
