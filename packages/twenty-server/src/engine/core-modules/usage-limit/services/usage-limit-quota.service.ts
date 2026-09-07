@@ -460,8 +460,10 @@ export class UsageLimitQuotaService implements OnModuleInit {
       return null;
     }
 
-    const period =
-      await creditAllowanceProvider.getCreditAllowancePeriod(workspaceId);
+    const period = await this.usagePeriodService.findCurrentPeriod({
+      workspaceId,
+      periodUnit: 'allowancePeriod',
+    });
 
     if (!isDefined(period)) {
       return null;
