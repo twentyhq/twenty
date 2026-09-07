@@ -1,6 +1,6 @@
 declare const classNames: {
   readonly banner: 'banner';
-  readonly gray: 'gray';
+  readonly embedded: 'embedded';
   readonly bannerContent: 'bannerContent';
   readonly bannerText: 'bannerText';
 };

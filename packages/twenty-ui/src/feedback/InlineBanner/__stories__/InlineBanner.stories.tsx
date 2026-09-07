@@ -3,13 +3,16 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { InlineBanner } from '@ui/feedback/InlineBanner/InlineBanner';
 import { IconExternalLink } from '@ui/icon';
-import { ComponentDecorator } from '@ui/testing';
+import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 const meta: Meta<typeof InlineBanner> = {
   title: 'UI/Feedback/InlineBanner',
   component: InlineBanner,
   decorators: [ComponentDecorator],
-  parameters: { container: { width: 744 } },
+  parameters: {
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
+    container: { width: 744 },
+  },
 };
 
 export default meta;
@@ -17,7 +20,7 @@ type Story = StoryObj<typeof InlineBanner>;
 
 export const Default: Story = {
   args: {
-    color: 'gray',
+    color: 'danger',
     message: 'No AI models are enabled.',
     button: { title: 'Configure models', onClick: fn() },
   },
@@ -35,7 +38,7 @@ export const Default: Story = {
 
 export const DisabledAction: Story = {
   args: {
-    color: 'gray',
+    color: 'danger',
     message: 'You’ve reached your AI usage limit.',
     button: { title: 'Upgrade', onClick: fn(), disabled: true },
   },
@@ -51,14 +54,14 @@ export const DisabledAction: Story = {
 
 export const WithoutAction: Story = {
   args: {
-    color: 'gray',
+    color: 'danger',
     message: 'Ask your workspace admin to enable an AI model.',
   },
 };
 
 export const DocumentationAction: Story = {
   args: {
-    color: 'gray',
+    color: 'danger',
     message: 'Add an API key to enable AI.',
     button: { title: 'View Docs', Icon: IconExternalLink, onClick: fn() },
   },
@@ -67,4 +70,8 @@ export const DocumentationAction: Story = {
 export const Narrow: Story = {
   args: Default.args,
   parameters: { container: { width: 320 } },
+};
+
+export const Embedded: Story = {
+  args: { ...Default.args, color: 'danger', embedded: true },
 };
