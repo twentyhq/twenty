@@ -218,7 +218,7 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
           offset={8}
           delay={TooltipDelay.noDelay}
           className={hoverCardTooltipClass}
-          width="320px"
+          maxWidth="320px"
           isOpen={true}
         >
           <SettingsAiModelHoverCard model={hoveredModel} />

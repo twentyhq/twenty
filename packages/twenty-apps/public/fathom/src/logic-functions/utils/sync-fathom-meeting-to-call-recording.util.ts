@@ -1,25 +1,33 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Meeting } from 'fathom-typescript/sdk/models/shared';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
-import { type AppConnection } from 'twenty-sdk/logic-function';
 
+import { type CallRecordingShareWith } from 'src/logic-functions/types/call-recording-share-with.type';
 import { type CallRecordingSyncFields } from 'src/logic-functions/types/call-recording-sync-fields.type';
+import { buildFathomCallRecordingUpsertFields } from 'src/logic-functions/utils/build-fathom-call-recording-upsert-fields.util';
+import { completeFathomCallRecordingImport } from 'src/logic-functions/utils/complete-fathom-call-recording-import.util';
 import { computeCallRecordingIdForFathomMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-fathom-meeting.util';
+import { enqueueFathomMediaDownloadRequest } from 'src/logic-functions/utils/enqueue-fathom-media-download-request.util';
+import { findCallRecordingMediaState } from 'src/logic-functions/utils/find-call-recording-media-state.util';
 import { findMatchingCalendarEvent } from 'src/logic-functions/utils/find-matching-calendar-event.util';
 import { formatFathomSummary } from 'src/logic-functions/utils/format-fathom-summary.util';
 import { getFathomMeetingTitle } from 'src/logic-functions/utils/get-fathom-meeting-title.util';
 import { mapFathomTranscriptToEntries } from 'src/logic-functions/utils/map-fathom-transcript-to-entries.util';
-import { resolveCallRecordingShareWith } from 'src/logic-functions/utils/resolve-call-recording-share-with.util';
 import { upsertCallRecording } from 'src/logic-functions/utils/upsert-call-recording.util';
+import { upsertFathomRecordingImport } from 'src/logic-functions/utils/upsert-fathom-recording-import.util';
 
 export const syncFathomMeetingToCallRecording = async ({
   coreApiClient,
   meeting,
-  connection,
+  connectedAccountId,
+  shareWith,
+  retryMedia = false,
 }: {
   coreApiClient: Pick<CoreApiClient, 'query' | 'mutation'>;
   meeting: Meeting;
-  connection: Pick<AppConnection, 'visibility' | 'workspaceMemberId'>;
+  connectedAccountId: string;
+  shareWith: CallRecordingShareWith[];
+  retryMedia?: boolean;
 }): Promise<{
   callRecordingId: string;
   calendarEventId?: string;
@@ -35,14 +43,16 @@ export const syncFathomMeetingToCallRecording = async ({
     meeting,
   });
   const title = getFathomMeetingTitle(meeting);
-  // Fathom exposes no pending state, so a summary still missing when we sync is
-  // one it never generated: waiting on it would strand the recording.
-  const isComplete = transcriptEntries.length > 0;
-  const fields: CallRecordingSyncFields = {
+  const callRecordingId = computeCallRecordingIdForFathomMeeting(
+    meeting.recordingId,
+  );
+  const existingCallRecording = await findCallRecordingMediaState({
+    coreApiClient,
+    callRecordingId,
+  });
+  const sharedFields: CallRecordingSyncFields = {
     ...(isNonEmptyString(title) ? { title } : {}),
-    status: isComplete ? 'COMPLETED' : 'PROCESSING',
     recordingRequestStatus: 'REQUESTED',
-    externalRecordingId: String(meeting.recordingId),
     startedAt: meeting.recordingStartTime.toISOString(),
     endedAt: meeting.recordingEndTime.toISOString(),
     ...(transcriptEntries.length === 0
@@ -53,15 +63,46 @@ export const syncFathomMeetingToCallRecording = async ({
       : {}),
     ...(calendarEventId === undefined ? {} : { calendarEventId }),
   };
-  const callRecordingId = computeCallRecordingIdForFathomMeeting(
-    meeting.recordingId,
-  );
+  const {
+    createCallRecordingFields,
+    updateCallRecordingFields,
+    recordingImportFields,
+    isMediaDownloadRequestNeeded,
+  } = buildFathomCallRecordingUpsertFields({
+    sharedFields,
+    existingCallRecording,
+    connectedAccountId,
+    callRecordingId,
+    recordingId: String(meeting.recordingId),
+    retryMedia,
+  });
+
   const upsertResult = await upsertCallRecording({
     coreApiClient,
     callRecordingId,
-    fields,
-    shareWith: resolveCallRecordingShareWith(connection),
+    createFields: createCallRecordingFields,
+    updateFields: updateCallRecordingFields,
+    expectedUpdatedAt: existingCallRecording?.updatedAt,
+    shareWith,
   });
+
+  await upsertFathomRecordingImport({
+    coreApiClient,
+    fathomRecordingImportId: callRecordingId,
+    fields: recordingImportFields,
+    expectedUpdatedAt: existingCallRecording?.fathomRecordingImportUpdatedAt,
+  });
+
+  await completeFathomCallRecordingImport({
+    coreApiClient,
+    callRecordingId,
+  });
+  if (upsertResult.created || isMediaDownloadRequestNeeded) {
+    await enqueueFathomMediaDownloadRequest({
+      callRecordingId,
+      connectedAccountId,
+    });
+  }
 
   return {
     callRecordingId,
