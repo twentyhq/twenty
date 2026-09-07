@@ -8,7 +8,7 @@ import { parseClassTokenList } from '@/polyfills/dom/utils/parseClassTokenList';
 import { serializeClassTokenList } from '@/polyfills/dom/utils/serializeClassTokenList';
 import { toValidClassTokenOrThrow } from '@/polyfills/dom/utils/toValidClassTokenOrThrow';
 
-class ClassTokenListImplementation implements WorkerClassTokenList {
+class ClassTokenList implements WorkerClassTokenList {
   readonly [index: number]: string;
 
   private readonly element!: ElementWithAttributes;
@@ -158,4 +158,4 @@ class ClassTokenListImplementation implements WorkerClassTokenList {
 export const createClassTokenList = (
   element: ElementWithAttributes,
 ): WorkerClassTokenList =>
-  createIndexedClassTokenList(new ClassTokenListImplementation(element));
+  createIndexedClassTokenList(new ClassTokenList(element));
