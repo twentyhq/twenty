@@ -16,6 +16,8 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
+import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
+import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { INTERNAL_SERVER_ERROR } from 'src/engine/middlewares/constants/default-error-message.constant';
@@ -35,6 +37,8 @@ const DEAD_SESSION_COOKIE_EXCEPTION_CODES = new Set<string>([
   AuthExceptionCode.WORKSPACE_NOT_FOUND,
 ]);
 
+const SUPERSEDED_SESSION_COOKIE_CLEAR_GRACE_PERIOD_MS = 60 * 1000;
+
 @Injectable()
 export class MiddlewareService {
   constructor(
@@ -44,6 +48,7 @@ export class MiddlewareService {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly userSessionCookieService: UserSessionCookieService,
+    private readonly userSessionService: UserSessionService,
   ) {}
 
   public isTokenPresent(request: Request): boolean {
@@ -133,7 +138,7 @@ export class MiddlewareService {
     bindDataToRequestObject(data, request, metadataVersion);
   }
 
-  private clearDeadSessionCookie(request: Request, error: unknown) {
+  private async clearDeadSessionCookie(request: Request, error: unknown) {
     const isCookieAuthenticated = !isNonEmptyString(
       this.jwtWrapperService.extractJwtFromRequest()(request),
     );
@@ -142,11 +147,36 @@ export class MiddlewareService {
       error instanceof AuthException &&
       DEAD_SESSION_COOKIE_EXCEPTION_CODES.has(error.code);
 
+    const sessionToken =
+      this.userSessionCookieService.extractSessionTokenFromRequest(request);
+
     if (
       !isCookieAuthenticated ||
       !isDeadCredential ||
-      !isDefined(request.res)
+      !isDefined(request.res) ||
+      !isDefined(sessionToken)
     ) {
+      return;
+    }
+
+    try {
+      const session =
+        await this.userSessionService.findSessionByToken(sessionToken);
+
+      const wasRecentlySuperseded =
+        session?.revokedReason === UserSessionRevokedReason.Superseded &&
+        isDefined(session.revokedAt) &&
+        Date.now() - session.revokedAt.getTime() <
+          SUPERSEDED_SESSION_COOKIE_CLEAR_GRACE_PERIOD_MS;
+
+      // A concurrent sign-in has already replaced this cookie. Expiring its
+      // name here could arrive later and delete the newly issued session.
+      if (wasRecentlySuperseded) {
+        return;
+      }
+    } catch {
+      // Clearing is destructive when responses race, so preserve the browser's
+      // current cookie if the server cannot establish why this one is invalid.
       return;
     }
 
@@ -171,7 +201,7 @@ export class MiddlewareService {
       // the request continue unauthenticated builds the schema without the
       // workspace, so the client gets "Cannot query field" instead of an auth
       // error and never learns its session was revoked.
-      this.clearDeadSessionCookie(request, error);
+      await this.clearDeadSessionCookie(request, error);
 
       throw error;
     }
