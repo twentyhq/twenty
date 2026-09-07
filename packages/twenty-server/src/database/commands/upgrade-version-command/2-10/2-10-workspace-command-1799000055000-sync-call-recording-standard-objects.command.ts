@@ -140,6 +140,7 @@ const buildLegacyCalendarEventRecordingPreferenceFieldMetadata = ({
   isSystemSideEffect: false,
   isNullable: false,
   isUnique: false,
+  isSearchable: false,
   isUIEditable: true,
   writability: MetadataWritability.OPEN,
   isLabelSyncedWithName: false,
