@@ -918,6 +918,59 @@ Key points:
 - Uses the field's `universalIdentifier` (not its workspace-specific ID), so your upload code works across any workspace where your app is installed.
 - The returned `url` is a signed URL you can use to access the uploaded file.
 
+#### Sharing records
+
+On a `PRIVATE` object, a record is readable only by the members holding a share row on it. `MetadataApiClient` exposes the four sharing operations. They act as the person behind the run: listing or changing the shares of a record needs `FULL` access on it, and handing it to another owner also needs update rights on the owner field.
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+const metadataClient = new MetadataApiClient();
+
+// Grant a member read access and a role write access on one record
+await metadataClient.mutation({
+  shareRecord: {
+    __args: {
+      objectMetadataId,
+      recordId,
+      shareWith: [
+        { workspaceMemberId, accessLevel: 'READ' },
+        { roleId, accessLevel: 'READ_WRITE' },
+      ],
+    },
+    shares: { principalId: true, principalType: true, accessLevel: true },
+    viewerAccessLevel: true,
+  },
+});
+
+// Revoke a principal
+await metadataClient.mutation({
+  unshareRecord: {
+    __args: { objectMetadataId, recordId, principalId: workspaceMemberId },
+    viewerAccessLevel: true,
+  },
+});
+
+// Hand the record to another owner: they get full access, the previous owner keeps theirs as a manual grant
+await metadataClient.mutation({
+  transferRecordOwnership: {
+    __args: { objectMetadataId, recordId, workspaceMemberId: newOwnerId },
+    viewerAccessLevel: true,
+  },
+});
+
+// List who holds access
+const { recordShares } = await metadataClient.query({
+  recordShares: {
+    __args: { objectMetadataId, recordId },
+    shares: { principalId: true, principalType: true, accessLevel: true, rowCause: true },
+    viewerAccessLevel: true,
+  },
+});
+```
+
+Each `shareWith` entry names exactly one target, `workspaceMemberId`, `roleId` or `everyone: true`, with an `accessLevel` of `READ`, `READ_WRITE` or `FULL`. Sharing the same principal again replaces its previous grant. `recordShares` returns the rows to a `FULL` holder only; a `READ` or `READ_WRITE` holder gets an empty list with their own `viewerAccessLevel`, and a caller without access is refused.
+
 </Accordion>
 </AccordionGroup>
 
