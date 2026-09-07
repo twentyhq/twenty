@@ -1,7 +1,6 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibilityContext';
 import { evaluateWidgetVisibility } from '@/page-layout/utils/evaluateWidgetVisibility';
-import { isHiddenPageLayoutField } from '@/page-layout/utils/isHiddenPageLayoutField';
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
 
 type FilterVisibleWidgetsParams = {
@@ -19,10 +18,9 @@ export const filterVisibleWidgets = ({
   return widgets.filter((widget) => {
     if (
       isFieldWidget(widget) &&
-      isHiddenPageLayoutField({
-        fieldMetadataIdsOrNames: [widget.configuration.fieldMetadataId],
-        hiddenFieldMetadataIdsOrNames,
-      })
+      hiddenFieldMetadataIdsOrNames.includes(
+        widget.configuration.fieldMetadataId,
+      )
     ) {
       return false;
     }

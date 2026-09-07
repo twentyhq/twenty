@@ -4,9 +4,7 @@ import { RecordPageSidePanelWidgetCommandMenuItems } from '@/command-menu-item/c
 import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
 import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreTargetedRecordsEffect';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { useHiddenWorkspaceWorkflowRunRelationFields } from '@/object-core/workflows/hooks/useHiddenWorkspaceWorkflowRunRelationFields';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
-import { HiddenPageLayoutFieldsContext } from '@/page-layout/contexts/HiddenPageLayoutFieldsContext';
 import { usePageLayoutIdForRecord } from '@/page-layout/hooks/usePageLayoutIdForRecord';
 import { PageLayoutIdContext } from '@/page-layout/states/currentPageLayoutIdState';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -56,10 +54,6 @@ export const PageLayoutRecordPageRenderer = ({
     },
   ) as string | null;
 
-  const hiddenPageLayoutFields = useHiddenWorkspaceWorkflowRunRelationFields(
-    targetRecordIdentifier.targetObjectNameSingular,
-  );
-
   const { pageLayoutId } = usePageLayoutIdForRecord({
     id: targetRecordIdentifier.id,
     targetObjectNameSingular: targetRecordIdentifier.targetObjectNameSingular,
@@ -96,13 +90,9 @@ export const PageLayoutRecordPageRenderer = ({
                   : PageLayoutType.RECORD_PAGE,
             }}
           >
-            <HiddenPageLayoutFieldsContext.Provider
-              value={hiddenPageLayoutFields}
-            >
-              {isDefined(pageLayoutId) && (
-                <PageLayoutRenderer pageLayoutId={pageLayoutId} />
-              )}
-            </HiddenPageLayoutFieldsContext.Provider>
+            {isDefined(pageLayoutId) && (
+              <PageLayoutRenderer pageLayoutId={pageLayoutId} />
+            )}
           </LayoutRenderingProvider>
         </StyledContentContainer>
 

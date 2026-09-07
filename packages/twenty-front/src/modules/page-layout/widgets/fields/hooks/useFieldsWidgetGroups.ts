@@ -1,4 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useHiddenWorkspaceWorkflowRunRelationFields } from '@/object-core/workflows/hooks/useHiddenWorkspaceWorkflowRunRelationFields';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -7,12 +8,10 @@ import {
   type FieldsWidgetGroup,
   type FieldsWidgetGroupField,
 } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
-import { HiddenPageLayoutFieldsContext } from '@/page-layout/contexts/HiddenPageLayoutFieldsContext';
-import { isHiddenPageLayoutField } from '@/page-layout/utils/isHiddenPageLayoutField';
 import { buildDefaultFieldsWidgetGroups } from '@/page-layout/widgets/fields/utils/buildDefaultFieldsWidgetGroups';
 import { filterDraftGroupsForDisplay } from '@/page-layout/widgets/fields/utils/filterDraftGroupsForDisplay';
 import { useViewById } from '@/views/hooks/useViewById';
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 type UseFieldsWidgetGroupsParams = {
@@ -37,9 +36,8 @@ export const useFieldsWidgetGroups = ({
   const workspaceCustomApplicationId =
     currentWorkspace?.workspaceCustomApplication?.id;
 
-  const hiddenFieldMetadataIdsOrNames = useContext(
-    HiddenPageLayoutFieldsContext,
-  );
+  const hiddenFieldMetadataIdsOrNames =
+    useHiddenWorkspaceWorkflowRunRelationFields(objectNameSingular);
 
   const { groups, displayMode } = useMemo<{
     groups: FieldsWidgetGroup[];
@@ -50,11 +48,7 @@ export const useFieldsWidgetGroups = ({
     }
 
     const visibleFields = objectMetadataItem.fields.filter(
-      (field) =>
-        !isHiddenPageLayoutField({
-          fieldMetadataIdsOrNames: [field.id, field.name],
-          hiddenFieldMetadataIdsOrNames,
-        }),
+      (field) => !hiddenFieldMetadataIdsOrNames.includes(field.name),
     );
 
     const activeFields = visibleFields.filter((field) => field.isActive);

@@ -3,11 +3,10 @@ import {
   type FieldsWidgetGroup,
   type FieldsWidgetGroupField,
 } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
-import { HiddenPageLayoutFieldsContext } from '@/page-layout/contexts/HiddenPageLayoutFieldsContext';
-import { isHiddenPageLayoutField } from '@/page-layout/utils/isHiddenPageLayoutField';
+import { useHiddenWorkspaceWorkflowRunRelationFields } from '@/object-core/workflows/hooks/useHiddenWorkspaceWorkflowRunRelationFields';
 import { getHiddenFieldsFromGroups } from '@/page-layout/widgets/fields/utils/getHiddenFieldsFromGroups';
 import { useViewById } from '@/views/hooks/useViewById';
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 type UseFieldsWidgetHiddenFieldsParams = {
@@ -24,9 +23,8 @@ export const useFieldsWidgetHiddenFields = ({
     objectNameSingular,
   });
 
-  const hiddenFieldMetadataIdsOrNames = useContext(
-    HiddenPageLayoutFieldsContext,
-  );
+  const hiddenFieldMetadataIdsOrNames =
+    useHiddenWorkspaceWorkflowRunRelationFields(objectNameSingular);
 
   const hiddenFields = useMemo<FieldsWidgetGroupField[]>(() => {
     if (!isDefined(objectMetadataItem)) {
@@ -35,11 +33,7 @@ export const useFieldsWidgetHiddenFields = ({
 
     const activeFields = objectMetadataItem.fields.filter(
       (field) =>
-        field.isActive &&
-        !isHiddenPageLayoutField({
-          fieldMetadataIdsOrNames: [field.id, field.name],
-          hiddenFieldMetadataIdsOrNames,
-        }),
+        field.isActive && !hiddenFieldMetadataIdsOrNames.includes(field.name),
     );
 
     if (isDefined(view) && isNonEmptyArray(view.viewFieldGroups)) {

@@ -1,11 +1,11 @@
+import { useHiddenWorkspaceWorkflowRunRelationFields } from '@/object-core/workflows/hooks/useHiddenWorkspaceWorkflowRunRelationFields';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { HiddenPageLayoutFieldsContext } from '@/page-layout/contexts/HiddenPageLayoutFieldsContext';
 import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibilityContext';
 import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVisibilityContext';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -23,9 +23,10 @@ export const useWidgetVisibilityContext = (): WidgetVisibilityContext => {
     targetRecordIdentifier?.id ?? '',
   );
 
-  const hiddenFieldMetadataIdsOrNames = useContext(
-    HiddenPageLayoutFieldsContext,
-  );
+  const hiddenFieldMetadataIdsOrNames =
+    useHiddenWorkspaceWorkflowRunRelationFields(
+      targetRecordIdentifier?.targetObjectNameSingular,
+    );
 
   return useMemo(
     () => ({
