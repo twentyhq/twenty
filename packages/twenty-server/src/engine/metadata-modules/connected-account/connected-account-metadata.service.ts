@@ -185,6 +185,14 @@ export class ConnectedAccountMetadataService {
     const connectedAccountIds = connectedAccounts.map((account) => account.id);
 
     await this.repository.manager.transaction(async (entityManager) => {
+      // Archived first: app connections are unique per (provider, owner) among
+      // live rows only, so the custodian may already hold the same provider.
+      await entityManager.update(
+        ConnectedAccountEntity,
+        { id: In(connectedAccountIds), workspaceId, archivedAt: IsNull() },
+        { archivedAt: new Date() },
+      );
+
       await entityManager.update(
         ConnectedAccountEntity,
         { id: In(connectedAccountIds), workspaceId },
@@ -194,12 +202,6 @@ export class ConnectedAccountMetadataService {
           refreshToken: null,
           connectionParameters: null,
         },
-      );
-
-      await entityManager.update(
-        ConnectedAccountEntity,
-        { id: In(connectedAccountIds), workspaceId, archivedAt: IsNull() },
-        { archivedAt: new Date() },
       );
 
       await entityManager.update(

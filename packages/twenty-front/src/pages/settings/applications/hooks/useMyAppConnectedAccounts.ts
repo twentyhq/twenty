@@ -1,7 +1,7 @@
 import { useApolloClient, useQuery } from '@apollo/client/react';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
+import { isActiveAppConnectedAccount } from '~/pages/settings/applications/utils/isActiveAppConnectedAccount';
 import {
   MyConnectedAccountsDocument,
   type MyConnectedAccountsQuery,
@@ -32,9 +32,8 @@ export const useMyAppConnectedAccounts = () => {
   // can't unify the two without help.
   const accounts = (
     (data as MyConnectedAccountsQuery | undefined)?.myConnectedAccounts ?? []
-  ).filter(
-    (account): account is AppConnectedAccount =>
-      account.provider === ConnectedAccountProvider.APP,
+  ).filter((account): account is AppConnectedAccount =>
+    isActiveAppConnectedAccount(account),
   );
 
   return { accounts, loading, refetch };

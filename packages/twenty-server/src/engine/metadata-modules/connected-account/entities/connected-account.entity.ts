@@ -30,7 +30,10 @@ export type ConnectedAccountVisibility = 'user' | 'workspace';
 @Index(
   'IDX_CONNECTED_ACCOUNT_PROVIDER_USER_WORKSPACE_UNIQUE',
   ['connectionProviderId', 'userWorkspaceId'],
-  { unique: true, where: '"connectionProviderId" IS NOT NULL' },
+  {
+    unique: true,
+    where: '"connectionProviderId" IS NOT NULL AND "archivedAt" IS NULL',
+  },
 )
 @Check(
   'CHK_connectedAccount_accessToken_encrypted',

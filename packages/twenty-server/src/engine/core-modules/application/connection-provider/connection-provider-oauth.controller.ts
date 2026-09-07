@@ -173,6 +173,7 @@ export class ConnectionProviderOAuthController {
     @Res() res: Response,
   ) {
     let workspace: WorkspaceEntity | null = null;
+    let applicationId: string | null = null;
 
     if (errorParam) {
       return this.redirectToError(
@@ -195,22 +196,29 @@ export class ConnectionProviderOAuthController {
     }
 
     try {
-      const { workspaceId, applicationId, redirectLocation } =
-        await this.oauthProviderFlowService.completeAuthorizationFlow({
-          code,
+      const { statePayload, provider } =
+        await this.oauthProviderFlowService.resolveCallbackContextOrThrow(
           state,
-        });
+        );
 
+      applicationId = provider.applicationId;
       workspace = await this.workspaceRepository.findOneBy({
-        id: workspaceId,
+        id: statePayload.workspaceId,
       });
 
       if (!workspace) {
         throw new ConnectionProviderException(
-          `Workspace ${workspaceId} not found after OAuth callback`,
+          `Workspace ${statePayload.workspaceId} not found for OAuth callback`,
           ConnectionProviderExceptionCode.PROVIDER_NOT_FOUND,
         );
       }
+
+      const { redirectLocation } =
+        await this.oauthProviderFlowService.completeAuthorizationFlow({
+          code,
+          statePayload,
+          provider,
+        });
 
       const { pathname, searchParams, hash } = parseRelativeUrl(
         redirectLocation ||
@@ -231,7 +239,14 @@ export class ConnectionProviderOAuthController {
 
       return res.redirect(url.toString());
     } catch (error) {
-      return this.redirectToError(res, error, workspace);
+      return this.redirectToError(
+        res,
+        error,
+        workspace,
+        isNonEmptyString(applicationId)
+          ? getSettingsPath(SettingsPath.ApplicationDetail, { applicationId })
+          : undefined,
+      );
     }
   }
 

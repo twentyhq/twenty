@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { QueryFailedError, Repository } from 'typeorm';
+import { IsNull, QueryFailedError, Repository } from 'typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -43,15 +43,17 @@ type AuthorizeArgs = {
   redirectLocation: string | null;
 };
 
-type CallbackArgs = {
+type CallbackContext = {
+  statePayload: AppOAuthStateJwtPayload;
+  provider: OAuthConnectionProvider;
+};
+
+type CallbackArgs = CallbackContext & {
   code: string;
-  state: string;
 };
 
 type CallbackResult = {
   connectedAccountId: string;
-  workspaceId: string;
-  applicationId: string;
   redirectLocation: string | null;
 };
 
@@ -151,8 +153,10 @@ export class ConnectionProviderOAuthFlowService {
     return { authorizationUrl: authorizationUrl.toString() };
   }
 
-  async completeAuthorizationFlow(args: CallbackArgs): Promise<CallbackResult> {
-    const statePayload = await this.verifyState(args.state);
+  // Resolved before the token exchange so a failing callback can still be
+  // redirected to the right workspace and application.
+  async resolveCallbackContextOrThrow(state: string): Promise<CallbackContext> {
+    const statePayload = await this.verifyState(state);
 
     const provider = await this.oauthProviderService.findOneByIdOrThrow(
       statePayload.connectionProviderId,
@@ -160,6 +164,14 @@ export class ConnectionProviderOAuthFlowService {
 
     assertOAuthProvider(provider);
 
+    return { statePayload, provider };
+  }
+
+  async completeAuthorizationFlow({
+    code,
+    statePayload,
+    provider,
+  }: CallbackArgs): Promise<CallbackResult> {
     const { clientId, clientSecret } =
       await this.oauthProviderService.getClientCredentials(provider);
 
@@ -173,7 +185,7 @@ export class ConnectionProviderOAuthFlowService {
         tokenEndpoint: provider.oauthConfig.tokenEndpoint,
         clientId,
         clientSecret,
-        code: args.code,
+        code,
         redirectUri: callbackUrl,
         codeVerifier: statePayload.codeVerifier,
         contentType: provider.oauthConfig.tokenRequestContentType,
@@ -208,8 +220,6 @@ export class ConnectionProviderOAuthFlowService {
 
     return {
       connectedAccountId: connectedAccount.id,
-      workspaceId: statePayload.workspaceId,
-      applicationId: provider.applicationId,
       redirectLocation: statePayload.redirectLocation,
     };
   }
@@ -376,7 +386,12 @@ export class ConnectionProviderOAuthFlowService {
     workspaceId: string;
   }): Promise<void> {
     const existing = await this.connectedAccountRepository.findOne({
-      where: { connectionProviderId, userWorkspaceId, workspaceId },
+      where: {
+        connectionProviderId,
+        userWorkspaceId,
+        workspaceId,
+        archivedAt: IsNull(),
+      },
       select: { id: true },
     });
 
