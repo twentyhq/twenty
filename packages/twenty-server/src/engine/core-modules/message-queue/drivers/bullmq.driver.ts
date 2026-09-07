@@ -41,6 +41,10 @@ import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-que
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type QueueJobChangedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-changed-event.type';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
+import {
+  buildQueueJobIdWithSuffix,
+  isQueueJobIdAlreadyWaiting,
+} from 'src/engine/core-modules/message-queue/utils/get-queue-job-id-prefix.util';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { applyWorkspaceSentryContextFromJobData } from 'src/engine/core-modules/sentry/utils/apply-workspace-sentry-context-from-job-data.util';
@@ -51,8 +55,6 @@ export type BullMQDriverOptions = QueueOptions;
 type BullMQJobsOptions = JobsOptions & {
   broadcastTo?: QueueJobRecipient;
 };
-
-const V4_LENGTH = 36;
 
 export class BullMQDriver
   implements MessageQueueDriver, OnModuleDestroy, OnModuleInit
@@ -391,8 +393,9 @@ export class BullMQDriver
     options?: QueueJobOptions;
   }): BullMQJobsOptions {
     return {
-      // We suffix the id with V4() to make sure ids are unique so we can add a waiting job when a job related with the same option.id is running
-      jobId: options?.id ? `${options.id}-${v4()}` : undefined,
+      jobId: options?.id
+        ? buildQueueJobIdWithSuffix({ jobIdPrefix: options.id, suffix: v4() })
+        : undefined,
       priority:
         options?.priority ?? MESSAGE_QUEUE_WORKER_CONFIG[queueName].priority,
       attempts: 1 + (options?.retryLimit || 0),
@@ -403,18 +406,14 @@ export class BullMQDriver
             jitter: options.backoff.jitter,
           }
         : undefined,
-      removeOnComplete: options?.removeOnComplete
-        ? true
-        : {
-            age: QUEUE_RETENTION.completedMaxAge,
-            count: QUEUE_RETENTION.completedMaxCount,
-          },
-      removeOnFail: options?.removeOnFail
-        ? true
-        : {
-            age: QUEUE_RETENTION.failedMaxAge,
-            count: QUEUE_RETENTION.failedMaxCount,
-          },
+      removeOnComplete: {
+        age: QUEUE_RETENTION.completedMaxAge,
+        count: QUEUE_RETENTION.completedMaxCount,
+      },
+      removeOnFail: {
+        age: QUEUE_RETENTION.failedMaxAge,
+        count: QUEUE_RETENTION.failedMaxCount,
+      },
       delay: options?.delay,
       broadcastTo: options?.broadcastTo,
     };
@@ -434,13 +433,11 @@ export class BullMQDriver
 
     // This ensures only one waiting job can be queued for a specific option.id
     if (options?.id && !options?.allowDuplicatedPrefixes) {
-      const waitingJobs = await this.queueMap[queueName].getJobs(['waiting']);
+      const waitingJobIds = await this.getWaitingJobIds(queueName);
 
-      const isJobAlreadyWaiting = waitingJobs.some(
-        (job) => job.id?.slice(0, -(V4_LENGTH + 1)) === options.id,
-      );
-
-      if (isJobAlreadyWaiting) {
+      if (
+        isQueueJobIdAlreadyWaiting({ waitingJobIds, jobIdOrPrefix: options.id })
+      ) {
         return;
       }
     }
@@ -450,6 +447,31 @@ export class BullMQDriver
     const job = await this.queueMap[queueName].add(jobName, data, queueOptions);
 
     return job.id;
+  }
+
+  private async getWaitingJobIds(queueName: MessageQueue): Promise<string[]> {
+    const waitingJobs = await this.queueMap[queueName].getJobs(['waiting']);
+
+    return waitingJobs.map((job) => job.id).filter(isDefined);
+  }
+
+  // Same guarantee as add: at most one waiting job per caller-provided id, but
+  // the waiting jobs are read once for the whole batch
+  private async filterOutAlreadyWaitingJobs<T extends MessageQueueJobData>(
+    queueName: MessageQueue,
+    jobs: QueueJobToAdd<T>[],
+  ): Promise<QueueJobToAdd<T>[]> {
+    if (!jobs.some((job) => isDefined(job.jobId))) {
+      return jobs;
+    }
+
+    const waitingJobIds = await this.getWaitingJobIds(queueName);
+
+    return jobs.filter(
+      ({ jobId }) =>
+        !isDefined(jobId) ||
+        !isQueueJobIdAlreadyWaiting({ waitingJobIds, jobIdOrPrefix: jobId }),
+    );
   }
 
   async bulkAdd<T extends MessageQueueJobData>(
@@ -464,14 +486,18 @@ export class BullMQDriver
       );
     }
 
-    if (jobs.length === 0) {
+    const jobsToAdd = options?.allowDuplicatedPrefixes
+      ? jobs
+      : await this.filterOutAlreadyWaitingJobs(queueName, jobs);
+
+    if (jobsToAdd.length === 0) {
       return [];
     }
 
     const queueOptions = this.buildJobsOptions({ queueName, options });
 
     const addedJobs = await this.queueMap[queueName].addBulk(
-      jobs.map(({ data, jobId }, index) => ({
+      jobsToAdd.map(({ data, jobId }, index) => ({
         name: jobName,
         data,
         opts: {

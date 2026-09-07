@@ -8,11 +8,16 @@ import {
   type TriggerInstallApplicationJobData,
 } from 'src/engine/core-modules/application/application-install/jobs/trigger-install-application.job';
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { type JobStatusDTO } from 'src/engine/core-modules/message-queue/dtos/job-status.dto';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { buildJobStatus } from 'src/engine/core-modules/message-queue/utils/build-job-status.util';
+import { getQueueJobIdPrefix } from 'src/engine/core-modules/message-queue/utils/get-queue-job-id-prefix.util';
 
 @Injectable()
 export class ApplicationInstallJobService {
@@ -36,34 +41,35 @@ export class ApplicationInstallJobService {
         universalIdentifier,
       );
 
-    const jobId = buildInstallApplicationJobId({
+    const jobIdPrefix = buildInstallApplicationJobId({
       workspaceId,
       universalIdentifier,
     });
 
-    // The queue ignores a job whose id it already holds, so the id is what
-    // keeps a second trigger from installing the same application twice. The
-    // finished job is dropped right away so the id is free for the next install
-    await this.workspaceQueueService.bulkAdd<TriggerInstallApplicationJobData>(
-      TriggerInstallApplicationJob.name,
-      [
+    // The queue skips the add when an install for this prefix is already
+    // waiting, in which case the waiting job is the one to report
+    const jobId =
+      (await this.workspaceQueueService.add<TriggerInstallApplicationJobData>(
+        TriggerInstallApplicationJob.name,
         {
-          data: {
-            applicationRegistrationId: registration.id,
-            workspaceId,
-          },
-          jobId,
-        },
-      ],
-      {
-        broadcastTo: {
+          applicationRegistrationId: registration.id,
           workspaceId,
-          userWorkspaceId,
         },
-        removeOnComplete: true,
-        removeOnFail: true,
-      },
-    );
+        {
+          id: jobIdPrefix,
+          broadcastTo: {
+            workspaceId,
+            userWorkspaceId,
+          },
+        },
+      )) ?? (await this.findInFlightInstallJobId(jobIdPrefix));
+
+    if (!isDefined(jobId)) {
+      throw new ApplicationException(
+        `Could not queue the installation of application ${universalIdentifier}`,
+        ApplicationExceptionCode.APPLICATION_INSTALLATION_FAILED,
+      );
+    }
 
     return { jobId };
   }
@@ -75,17 +81,27 @@ export class ApplicationInstallJobService {
     universalIdentifier: string;
     workspaceId: string;
   }): Promise<JobStatusDTO | null> {
-    const jobId = buildInstallApplicationJobId({
-      workspaceId,
-      universalIdentifier,
-    });
+    const jobId = await this.findInFlightInstallJobId(
+      buildInstallApplicationJobId({ workspaceId, universalIdentifier }),
+    );
 
-    const job = (await this.workspaceQueueService.getJobs([jobId]))[jobId];
-
-    if (!isDefined(job)) {
+    if (!isDefined(jobId)) {
       return null;
     }
 
-    return buildJobStatus({ jobId, job });
+    const job = (await this.workspaceQueueService.getJobs([jobId]))[jobId];
+
+    return isDefined(job) ? buildJobStatus({ jobId, job }) : null;
+  }
+
+  private async findInFlightInstallJobId(
+    jobIdPrefix: string,
+  ): Promise<string | undefined> {
+    const inFlightJobs = await this.workspaceQueueService.getInFlightJobs();
+
+    return inFlightJobs
+      .map((job) => job.id)
+      .filter(isDefined)
+      .find((jobId) => getQueueJobIdPrefix(jobId) === jobIdPrefix);
   }
 }

@@ -6,7 +6,8 @@ import type { MessageQueueService } from 'src/engine/core-modules/message-queue/
 
 const WORKSPACE_ID = 'workspace-id';
 const UNIVERSAL_IDENTIFIER = 'application-universal-identifier';
-const JOB_ID = `install-application.${WORKSPACE_ID}.${UNIVERSAL_IDENTIFIER}`;
+const JOB_ID_PREFIX = `install-application.${WORKSPACE_ID}.${UNIVERSAL_IDENTIFIER}`;
+const QUEUED_JOB_ID = `${JOB_ID_PREFIX}-5c98b035-5b09-4550-a4fb-b52056c494d1`;
 
 describe('ApplicationInstallJobService', () => {
   const marketplaceQueryService = {
@@ -15,8 +16,9 @@ describe('ApplicationInstallJobService', () => {
       .mockResolvedValue({ id: 'application-registration-id' }),
   } as unknown as MarketplaceQueryService;
   const workspaceQueueService = {
-    bulkAdd: jest.fn(),
-    getJobs: jest.fn().mockResolvedValue({}),
+    add: jest.fn(),
+    getJobs: jest.fn(),
+    getInFlightJobs: jest.fn(),
   } as unknown as MessageQueueService;
 
   const service = new ApplicationInstallJobService(
@@ -24,45 +26,65 @@ describe('ApplicationInstallJobService', () => {
     workspaceQueueService,
   );
 
-  beforeEach(() => {
-    jest.clearAllMocks();
-    jest.spyOn(workspaceQueueService, 'getJobs').mockResolvedValue({});
-  });
-
-  it('queues an installation under a job id derived from the workspace and the application', async () => {
-    const result = await service.triggerInstallApplicationJob({
+  const triggerInstall = () =>
+    service.triggerInstallApplicationJob({
       universalIdentifier: UNIVERSAL_IDENTIFIER,
       workspaceId: WORKSPACE_ID,
       userWorkspaceId: 'user-workspace-id',
     });
 
-    expect(result).toEqual({ jobId: JOB_ID });
-    expect(workspaceQueueService.bulkAdd).toHaveBeenCalledWith(
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.spyOn(workspaceQueueService, 'add').mockResolvedValue(QUEUED_JOB_ID);
+    jest.spyOn(workspaceQueueService, 'getInFlightJobs').mockResolvedValue([]);
+    jest.spyOn(workspaceQueueService, 'getJobs').mockResolvedValue({});
+  });
+
+  it('queues an installation deduplicated on the workspace and application prefix', async () => {
+    const result = await triggerInstall();
+
+    expect(result).toEqual({ jobId: QUEUED_JOB_ID });
+    expect(workspaceQueueService.add).toHaveBeenCalledWith(
       TriggerInstallApplicationJob.name,
-      [
-        {
-          data: {
-            applicationRegistrationId: 'application-registration-id',
-            workspaceId: WORKSPACE_ID,
-          },
-          jobId: JOB_ID,
-        },
-      ],
       {
+        applicationRegistrationId: 'application-registration-id',
+        workspaceId: WORKSPACE_ID,
+      },
+      {
+        id: JOB_ID_PREFIX,
         broadcastTo: {
           workspaceId: WORKSPACE_ID,
           userWorkspaceId: 'user-workspace-id',
         },
-        removeOnComplete: true,
-        removeOnFail: true,
       },
     );
   });
 
-  it('reads back the status of the installation job of an application', async () => {
+  it('reports the already waiting installation when the queue skips the add', async () => {
+    jest.spyOn(workspaceQueueService, 'add').mockResolvedValue(undefined);
+    jest.spyOn(workspaceQueueService, 'getInFlightJobs').mockResolvedValue([
+      { id: 'other-job-id', data: {} },
+      { id: QUEUED_JOB_ID, data: {} },
+    ]);
+
+    expect(await triggerInstall()).toEqual({ jobId: QUEUED_JOB_ID });
+  });
+
+  it('fails when the queue skipped the add and no installation is in flight', async () => {
+    jest.spyOn(workspaceQueueService, 'add').mockResolvedValue(undefined);
+
+    await expect(triggerInstall()).rejects.toThrow(
+      `Could not queue the installation of application ${UNIVERSAL_IDENTIFIER}`,
+    );
+  });
+
+  it('reads back the status of the in-flight installation job', async () => {
+    jest
+      .spyOn(workspaceQueueService, 'getInFlightJobs')
+      .mockResolvedValue([{ id: QUEUED_JOB_ID, data: {} }]);
     jest.spyOn(workspaceQueueService, 'getJobs').mockResolvedValue({
-      [JOB_ID]: {
-        id: JOB_ID,
+      [QUEUED_JOB_ID]: {
+        id: QUEUED_JOB_ID,
         data: {},
         state: 'active',
         attemptsMade: 1,
@@ -76,7 +98,7 @@ describe('ApplicationInstallJobService', () => {
         workspaceId: WORKSPACE_ID,
       }),
     ).toEqual({
-      jobId: JOB_ID,
+      jobId: QUEUED_JOB_ID,
       state: JobStateEnum.ACTIVE,
       attemptsMade: 1,
       failedReason: undefined,
@@ -84,14 +106,20 @@ describe('ApplicationInstallJobService', () => {
       startedAt: undefined,
       finishedAt: undefined,
     });
+    expect(workspaceQueueService.getJobs).toHaveBeenCalledWith([QUEUED_JOB_ID]);
   });
 
-  it('returns no status when the application was never installed', async () => {
+  it('returns no status when no installation of the application is in flight', async () => {
+    jest
+      .spyOn(workspaceQueueService, 'getInFlightJobs')
+      .mockResolvedValue([{ id: 'other-job-id', data: {} }]);
+
     expect(
       await service.findInstallApplicationJobStatus({
         universalIdentifier: UNIVERSAL_IDENTIFIER,
         workspaceId: WORKSPACE_ID,
       }),
     ).toBeNull();
+    expect(workspaceQueueService.getJobs).not.toHaveBeenCalled();
   });
 });
