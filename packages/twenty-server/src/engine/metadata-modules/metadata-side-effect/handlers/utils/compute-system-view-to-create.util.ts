@@ -44,26 +44,35 @@ const SYSTEM_VIEW_PROPERTIES_BY_VIEW_KEY = {
   }
 >;
 
-export const computeSystemViewToCreate = ({
-  objectMetadata,
+export const buildBaseUniversalFlatView = ({
+  objectMetadataUniversalIdentifier,
   applicationUniversalIdentifier,
-  viewKey,
-}: {
-  applicationUniversalIdentifier: string;
-  objectMetadata: SystemViewObjectMetadata;
-  viewKey: SystemViewKey;
-}): UniversalFlatView & { id: string } => {
-  const { type, icon, computeName } =
-    SYSTEM_VIEW_PROPERTIES_BY_VIEW_KEY[viewKey];
+  universalIdentifier,
+  name,
+  key,
+  icon,
+  type,
+  position,
+  isSystemSideEffect,
+}: Pick<
+  UniversalFlatView,
+  | 'objectMetadataUniversalIdentifier'
+  | 'applicationUniversalIdentifier'
+  | 'universalIdentifier'
+  | 'name'
+  | 'key'
+  | 'icon'
+  | 'type'
+  | 'position'
+  | 'isSystemSideEffect'
+>): UniversalFlatView & { id: string } => {
   const createdAt = new Date().toISOString();
 
   return {
     id: v4(),
-    objectMetadataUniversalIdentifier: objectMetadata.universalIdentifier,
-    name: computeName(objectMetadata),
-    // Only INDEX is a persisted key; FIELDS_WIDGET exists solely in the
-    // universal identifier derivation.
-    key: viewKey === SYSTEM_VIEW_KEYS.INDEX ? ViewKey.INDEX : null,
+    objectMetadataUniversalIdentifier,
+    name,
+    key,
     icon,
     type,
     createdAt,
@@ -81,17 +90,12 @@ export const computeSystemViewToCreate = ({
     kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
     mainGroupByFieldMetadataUniversalIdentifier: null,
     openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
-    position: 0,
-    universalIdentifier: getSystemViewUniversalIdentifier({
-      objectMetadataApplicationUniversalIdentifier:
-        applicationUniversalIdentifier,
-      objectUniversalIdentifier: objectMetadata.universalIdentifier,
-      viewKey,
-    }),
+    position,
+    universalIdentifier,
     visibility: ViewVisibility.WORKSPACE,
     createdByUserWorkspaceId: null,
     isActive: true,
-    isSystemSideEffect: true,
+    isSystemSideEffect,
     universalOverrides: null,
     viewFieldUniversalIdentifiers: [],
     viewFieldGroupUniversalIdentifiers: [],
@@ -101,4 +105,36 @@ export const computeSystemViewToCreate = ({
     viewSortUniversalIdentifiers: [],
     applicationUniversalIdentifier,
   };
+};
+
+export const computeSystemViewToCreate = ({
+  objectMetadata,
+  applicationUniversalIdentifier,
+  viewKey,
+}: {
+  applicationUniversalIdentifier: string;
+  objectMetadata: SystemViewObjectMetadata;
+  viewKey: SystemViewKey;
+}): UniversalFlatView & { id: string } => {
+  const { type, icon, computeName } =
+    SYSTEM_VIEW_PROPERTIES_BY_VIEW_KEY[viewKey];
+
+  return buildBaseUniversalFlatView({
+    objectMetadataUniversalIdentifier: objectMetadata.universalIdentifier,
+    applicationUniversalIdentifier,
+    universalIdentifier: getSystemViewUniversalIdentifier({
+      objectMetadataApplicationUniversalIdentifier:
+        applicationUniversalIdentifier,
+      objectUniversalIdentifier: objectMetadata.universalIdentifier,
+      viewKey,
+    }),
+    name: computeName(objectMetadata),
+    // Only INDEX is a persisted key; FIELDS_WIDGET exists solely in the
+    // universal identifier derivation.
+    key: viewKey === SYSTEM_VIEW_KEYS.INDEX ? ViewKey.INDEX : null,
+    icon,
+    type,
+    position: 0,
+    isSystemSideEffect: true,
+  });
 };
