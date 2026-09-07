@@ -58,20 +58,11 @@ export type AppTooltipProps = {
   interactive?: boolean;
   maxWidth?: string;
   isOpen?: boolean;
-} & (
-  | {
-      title?: string;
-      Icon?: IconComponent;
-      description?: string;
-      children?: never;
-    }
-  | {
-      title?: never;
-      Icon?: never;
-      description?: never;
-      children: React.ReactNode;
-    }
-);
+  title?: string;
+  Icon?: IconComponent;
+  description?: string;
+  children?: React.ReactNode;
+};
 
 export const AppTooltip = ({
   anchorSelect,
@@ -276,17 +267,20 @@ export const AppTooltip = ({
   const hasDescription = isNonEmptyString(description);
   const renderedContent =
     hasTitle || hasDescription ? (
-      <div className={styles.textContent}>
-        {hasTitle && (
-          <div className={styles.title}>
-            {isDefined(Icon) && <Icon className={styles.icon} aria-hidden />}
-            <span>{title}</span>
-          </div>
-        )}
-        {hasDescription && (
-          <div className={styles.description}>{description}</div>
-        )}
-      </div>
+      <>
+        <div className={styles.textContent}>
+          {hasTitle && (
+            <div className={styles.title}>
+              {isDefined(Icon) && <Icon className={styles.icon} aria-hidden />}
+              <span>{title}</span>
+            </div>
+          )}
+          {hasDescription && (
+            <div className={styles.description}>{description}</div>
+          )}
+        </div>
+        {children}
+      </>
     ) : (
       children
     );

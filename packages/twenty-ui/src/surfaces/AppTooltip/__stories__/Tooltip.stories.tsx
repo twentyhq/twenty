@@ -188,6 +188,29 @@ export const CustomContent: Story = {
   },
 };
 
+export const WithDescriptionAndCustomContent: Story = {
+  args: {
+    title: 'Amount',
+    description: 'The amount of this opportunity',
+    Icon: IconInfoCircle,
+    children: CUSTOM_CONTENT,
+  },
+  decorators: [ComponentDecorator],
+  play: async ({ canvasElement }) => {
+    await userEvent.hover(within(canvasElement).getByRole('button'));
+
+    const tooltip = await findTooltip(canvasElement);
+
+    expect(within(tooltip).getByText('Amount')).toBeVisible();
+    expect(
+      within(tooltip).getByText('The amount of this opportunity'),
+    ).toBeVisible();
+    expect(within(tooltip).getByText('Custom')).toBeVisible();
+    expect(tooltip).toHaveTextContent('Custom formatted content');
+    expect(tooltip.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
+  },
+};
+
 export const InteractiveCustomContent: Story = {
   args: {
     title: undefined,
@@ -267,7 +290,7 @@ export const Catalog: CatalogStory<Story, typeof Tooltip> = {
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
 
-    await waitFor(() => expect(body.getAllByRole('tooltip')).toHaveLength(5));
+    await waitFor(() => expect(body.getAllByRole('tooltip')).toHaveLength(6));
 
     for (const tooltip of body.getAllByRole('tooltip')) {
       await waitFor(() => expect(tooltip).toBeVisible());
@@ -285,6 +308,7 @@ export const Catalog: CatalogStory<Story, typeof Tooltip> = {
             'icon',
             'description-only',
             'custom',
+            'combined',
           ],
           props: (example: string) =>
             example === 'custom'
@@ -300,8 +324,11 @@ export const Catalog: CatalogStory<Story, typeof Tooltip> = {
                   title: example === 'description-only' ? '' : 'Amount',
                   description:
                     example === 'title' ? '' : 'The amount of this opportunity',
-                  Icon: example === 'icon' ? IconInfoCircle : undefined,
-                  children: undefined,
+                  Icon:
+                    example === 'icon' || example === 'combined'
+                      ? IconInfoCircle
+                      : undefined,
+                  children: example === 'combined' ? CUSTOM_CONTENT : undefined,
                 },
         },
       ],

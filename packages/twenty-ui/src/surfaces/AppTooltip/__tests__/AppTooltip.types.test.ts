@@ -9,7 +9,7 @@ type IsAssignableToTooltipProps<Props> = Props extends AppTooltipProps
   : false;
 
 describe('AppTooltip prop contract', () => {
-  it('accepts standard text or custom children separately', () => {
+  it('accepts standard text or custom children on their own', () => {
     const title: IsAssignableToTooltipProps<{ title: string }> = true;
     const description: IsAssignableToTooltipProps<{ description: string }> =
       true;
@@ -28,21 +28,32 @@ describe('AppTooltip prop contract', () => {
     ]);
   });
 
-  it('rejects mixing custom children with any standard content prop', () => {
+  it('accepts custom children alongside standard content props', () => {
     const title: IsAssignableToTooltipProps<{
       title: string;
       children: ReactElement;
-    }> = false;
+    }> = true;
     const description: IsAssignableToTooltipProps<{
       description: string;
       children: ReactElement;
-    }> = false;
+    }> = true;
     const icon: IsAssignableToTooltipProps<{
       Icon: IconComponent;
       children: ReactElement;
-    }> = false;
+    }> = true;
+    const combined: IsAssignableToTooltipProps<{
+      title: string;
+      description: string;
+      Icon: IconComponent;
+      children: ReactElement;
+    }> = true;
 
-    expect([title, description, icon]).toEqual([false, false, false]);
+    expect([title, description, icon, combined]).toEqual([
+      true,
+      true,
+      true,
+      true,
+    ]);
   });
 
   it('only exposes the new prop names', () => {
