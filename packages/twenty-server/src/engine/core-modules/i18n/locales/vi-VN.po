@@ -6010,6 +6010,11 @@ msgstr "Bố cục là bắt buộc cho biểu đồ cột"
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr "Bố cục là bắt buộc cho tiện ích biểu đồ cột \"{widgetTitle}\""
 
+#. js-lingui-id: cI7XDa
+#: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
+msgid "Limits scoped below the workspace require the Organization plan."
+msgstr "Các giới hạn được áp dụng bên dưới không gian làm việc yêu cầu gói Tổ chức."
+
 #. js-lingui-id: sAG9OB
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
@@ -10814,6 +10819,11 @@ msgstr "Tên miền phụ này đã được sử dụng."
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This suppressed address no longer exists."
 msgstr "Địa chỉ bị chặn gửi này không còn tồn tại."
+
+#. js-lingui-id: qm7uMm
+#: src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util.ts
+msgid "This SVG is too large to be processed."
+msgstr "SVG này quá lớn để xử lý."
 
 #. js-lingui-id: 0GMgIa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts

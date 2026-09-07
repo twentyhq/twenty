@@ -1,5 +1,6 @@
 import {
   FieldMetadataType,
+  MetadataReadability,
   MetadataWritability,
   ObjectOpenRecordIn,
 } from 'twenty-shared/types';
@@ -173,6 +174,7 @@ export const mockPersonFlatObjectMetadata = (
   isUIEditable: true,
   isUICreatable: true,
   writability: MetadataWritability.OPEN,
+  readability: MetadataReadability.OPEN,
   openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
   applicationUniversalIdentifier: 'test-application-id',
   fieldUniversalIdentifiers: mockFieldMetadatas.map(

@@ -6010,6 +6010,11 @@ msgstr "Für das Balkendiagramm ist ein Layout erforderlich."
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr "Für das Balkendiagramm-Widget \"{widgetTitle}\" ist ein Layout erforderlich."
 
+#. js-lingui-id: cI7XDa
+#: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
+msgid "Limits scoped below the workspace require the Organization plan."
+msgstr "Unterhalb des Arbeitsbereichs geltende Limits erfordern den Organization-Tarif."
+
 #. js-lingui-id: sAG9OB
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
@@ -10814,6 +10819,11 @@ msgstr "Diese Subdomain ist bereits vergeben."
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This suppressed address no longer exists."
 msgstr "Diese unterdrückte E-Mail-Adresse existiert nicht mehr."
+
+#. js-lingui-id: qm7uMm
+#: src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util.ts
+msgid "This SVG is too large to be processed."
+msgstr "Diese SVG ist zu groß, um verarbeitet zu werden."
 
 #. js-lingui-id: 0GMgIa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts

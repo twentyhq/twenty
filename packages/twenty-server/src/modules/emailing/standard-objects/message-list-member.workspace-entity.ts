@@ -8,5 +8,6 @@ export class MessageListMemberWorkspaceEntity extends BaseWorkspaceEntity {
   listId: string;
   person: EntityRelation<PersonWorkspaceEntity>;
   personId: string;
+  position: number;
   searchVector: string;
 }

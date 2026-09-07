@@ -1,4 +1,3 @@
-import { useGetIsMetadataItemFromStandardApplication } from '@/object-metadata/hooks/useGetIsMetadataItemFromStandardApplication';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
@@ -54,8 +53,6 @@ export const RecordFieldList = ({
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { objectMetadataItems } = useObjectMetadataItems();
-  const getIsMetadataItemFromStandardApplication =
-    useGetIsMetadataItemFromStandardApplication();
 
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular,
@@ -111,14 +108,11 @@ export const RecordFieldList = ({
                 isDisplayModeFixHeight: true,
                 isRecordFieldReadOnly: isRecordFieldReadOnly({
                   isRecordReadOnly,
-                  isSystemObject: objectMetadataItem.isSystem,
                   objectPermissions:
                     getObjectPermissionsFromMapByObjectMetadataId({
                       objectPermissionsByObjectMetadataId,
                       objectMetadataId: objectMetadataItem.id,
                     }),
-                  isFieldFromStandardApplication:
-                    getIsMetadataItemFromStandardApplication(fieldMetadataItem),
                   fieldMetadataItem,
                   fieldDefinition,
                   objectPermissionsByObjectMetadataId,
@@ -185,14 +179,11 @@ export const RecordFieldList = ({
                 isDisplayModeFixHeight: true,
                 isRecordFieldReadOnly: isRecordFieldReadOnly({
                   isRecordReadOnly,
-                  isSystemObject: objectMetadataItem.isSystem,
                   objectPermissions:
                     getObjectPermissionsFromMapByObjectMetadataId({
                       objectPermissionsByObjectMetadataId,
                       objectMetadataId: objectMetadataItem.id,
                     }),
-                  isFieldFromStandardApplication:
-                    getIsMetadataItemFromStandardApplication(fieldMetadataItem),
                   fieldMetadataItem,
                   fieldDefinition,
                   objectPermissionsByObjectMetadataId,

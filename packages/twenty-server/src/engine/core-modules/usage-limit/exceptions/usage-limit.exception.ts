@@ -10,6 +10,7 @@ export enum UsageLimitExceptionCode {
   RATE_LIMITED = 'RATE_LIMITED',
   QUOTA_EXHAUSTED = 'QUOTA_EXHAUSTED',
   LIMIT_INVALID = 'LIMIT_INVALID',
+  LIMIT_NOT_ENTITLED = 'LIMIT_NOT_ENTITLED',
 }
 
 const getUsageLimitExceptionUserFriendlyMessage = (
@@ -22,6 +23,8 @@ const getUsageLimitExceptionUserFriendlyMessage = (
       return msg`Usage quota exhausted for this period.`;
     case UsageLimitExceptionCode.LIMIT_INVALID:
       return msg`This limit cannot be saved.`;
+    case UsageLimitExceptionCode.LIMIT_NOT_ENTITLED:
+      return msg`Limits scoped below the workspace require the Organization plan.`;
     default:
       assertUnreachable(code);
   }

@@ -26,6 +26,7 @@ export const parseGmailApiError = (
       return new MessageImportDriverException(
         gmailApiError.message,
         MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+        { cause: error },
       );
     }
 
@@ -36,6 +37,7 @@ export const parseGmailApiError = (
       return new MessageImportDriverException(
         gmailApiError.message,
         MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+        { cause: error },
       );
     }
 
@@ -43,6 +45,7 @@ export const parseGmailApiError = (
       return new MessageImportDriverException(
         gmailApiError.message,
         MessageImportDriverExceptionCode.UNKNOWN,
+        { cause: error },
       );
     }
   }
@@ -51,6 +54,7 @@ export const parseGmailApiError = (
     return new MessageImportDriverException(
       gmailApiError.message,
       MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
+      { cause: error },
     );
   }
 
@@ -59,6 +63,7 @@ export const parseGmailApiError = (
       gmailApiError.message,
       MessageImportDriverExceptionCode.TEMPORARY_ERROR,
       {
+        cause: error,
         throttleRetryAfter: parseGmailErrorRetryAfter(gmailApiError.message),
       },
     );
@@ -67,5 +72,6 @@ export const parseGmailApiError = (
   return new MessageImportDriverException(
     gmailApiError.message,
     MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+    { cause: error },
   );
 };
