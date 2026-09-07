@@ -100,7 +100,15 @@ export const ConfirmationModal = ({
     useState<string>('');
   const [isValidValue, setIsValidValue] = useState(!confirmationValue);
 
+  const isValueMatchingInput = useDebouncedCallback(
+    (value?: string, inputValue?: string) => {
+      setIsValidValue(Boolean(value && inputValue && value === inputValue));
+    },
+    250,
+  );
+
   const resetConfirmationState = () => {
+    isValueMatchingInput.cancel();
     setInputConfirmationValue('');
     setIsValidValue(!confirmationValue);
   };
@@ -109,13 +117,6 @@ export const ConfirmationModal = ({
     setInputConfirmationValue(value);
     isValueMatchingInput(confirmationValue, value);
   };
-
-  const isValueMatchingInput = useDebouncedCallback(
-    (value?: string, inputValue?: string) => {
-      setIsValidValue(Boolean(value && inputValue && value === inputValue));
-    },
-    250,
-  );
 
   const { closeModal } = useModal();
 
