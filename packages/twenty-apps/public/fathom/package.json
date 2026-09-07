@@ -5,6 +5,7 @@
   "engines": {
     "node": "^24.5.0",
     "npm": "please-use-yarn",
+    "twenty": ">=2.38.0",
     "yarn": ">=4.0.2"
   },
   "keywords": [],
@@ -20,14 +21,15 @@
   },
   "dependencies": {
     "@sniptt/guards": "^0.2.0",
-    "fathom-typescript": "0.0.43"
+    "fathom-typescript": "0.0.43",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "oxlint": "^0.16.0",
-    "twenty-client-sdk": "2.35.0",
-    "twenty-sdk": "2.35.0",
+    "twenty-client-sdk": "2.38.0",
+    "twenty-sdk": "2.38.0",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^4.0.0"

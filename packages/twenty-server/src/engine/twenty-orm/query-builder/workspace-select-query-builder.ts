@@ -858,7 +858,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
           this.buildRelationExistsCondition({
             relationFieldName: columnName,
             relationShape,
-            where: value,
+            applyWhere: (nestedBuilder) => nestedBuilder.where(value),
             parameters,
           }),
         );
@@ -915,15 +915,50 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return { sql: conditions.join(' AND '), parameters };
   }
 
+  // Registers a correlated EXISTS on a relation and returns the token to place
+  // in a where clause; the caller writes the related table's condition on the
+  // nested builder, whose alias names that table. Unlike a join, an EXISTS never
+  // duplicates root rows, so this is how a to-many relation gets filtered.
+  addRelationExistsFilter({
+    relationFieldName,
+    applyWhere,
+  }: {
+    relationFieldName: string;
+    applyWhere: (nestedBuilder: WorkspaceSelectQueryBuilder) => void;
+  }): string {
+    const relationShape =
+      this.tableShape.relationShapeByFieldName[relationFieldName];
+
+    if (!isDefined(relationShape)) {
+      throw new TwentyOrmException(
+        `Unknown relation "${relationFieldName}" on "${this.tableShape.nameSingular}"`,
+        TwentyOrmExceptionCode.UNKNOWN_RELATION,
+      );
+    }
+
+    const parameters: Record<string, unknown> = {};
+
+    const token = this.buildRelationExistsCondition({
+      relationFieldName,
+      relationShape,
+      applyWhere,
+      parameters,
+    });
+
+    this.setParameters(parameters);
+
+    return token;
+  }
+
   private buildRelationExistsCondition({
     relationFieldName,
     relationShape,
-    where,
+    applyWhere,
     parameters,
   }: {
     relationFieldName: string;
     relationShape: WorkspaceTableShape['relationShapeByFieldName'][string];
-    where: ObjectWhereLike;
+    applyWhere: (nestedBuilder: WorkspaceSelectQueryBuilder) => void;
     parameters: Record<string, unknown>;
   }): string {
     const targetTableShape = this.context.tableShapeByObjectMetadataId(
@@ -953,7 +988,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       tableShape: targetTableShape,
     });
 
-    nestedBuilder.where(where);
+    applyWhere(nestedBuilder);
 
     Object.assign(parameters, nestedBuilder.parameters);
 

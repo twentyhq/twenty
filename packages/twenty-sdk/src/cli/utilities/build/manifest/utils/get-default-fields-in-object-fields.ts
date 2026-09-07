@@ -1,3 +1,4 @@
+import { isEngineDerivedLabelIdentifier } from '@/sdk/define/objects/is-engine-derived-label-identifier';
 import type { ObjectConfig } from '@/sdk/define/objects/object-config';
 import {
   getFieldUniversalIdentifier,
@@ -44,7 +45,16 @@ export const getDefaultFieldsInObjectFields = ({
     applicationUniversalIdentifier,
   });
 
-  if (!objectConfigFieldNames.includes(defaultNameObjectField.name)) {
+  const labelIdentifiesAnEngineDerivedField = isEngineDerivedLabelIdentifier({
+    fields: objectConfig.fields,
+    labelIdentifierFieldMetadataUniversalIdentifier:
+      objectConfig.labelIdentifierFieldMetadataUniversalIdentifier,
+  });
+
+  if (
+    !objectConfigFieldNames.includes(defaultNameObjectField.name) &&
+    !labelIdentifiesAnEngineDerivedField
+  ) {
     objectFieldsWithDefaults.push(defaultNameObjectField);
   }
 

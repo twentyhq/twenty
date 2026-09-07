@@ -1,3 +1,4 @@
+import { type CallRecordingMediaFile } from 'src/logic-functions/types/call-recording-media-file.type';
 import { type TranscriptEntry } from 'src/logic-functions/types/transcript-entry.type';
 
 export type CallRecordingSyncFields = {
@@ -8,6 +9,8 @@ export type CallRecordingSyncFields = {
   startedAt?: string;
   endedAt?: string;
   transcript?: TranscriptEntry[];
+  video?: CallRecordingMediaFile[];
+  audio?: CallRecordingMediaFile[];
   summary?: { markdown: string; blocknote: null };
   calendarEventId?: string;
 };
