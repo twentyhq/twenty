@@ -1,11 +1,16 @@
 ---
-title: Forward a Shared Inbox from Any Mail Provider
-description: Send mail from any IMAP or SMTP mailbox into a Twenty email channel.
+title: Forward a Shared Inbox from Any Email Provider
+description: Point a shared inbox at a Twenty email channel, whatever mail provider you use.
 ---
 
-An email channel gives your workspace a shared address, like `contact@yourcompany.com`. Mail sent to that address has to reach Twenty somehow. You do that by forwarding it to the private address Twenty gives you.
+Twenty picks up shared-inbox mail by having your provider send a copy of every incoming message to a private address that Twenty generates for you. Set that up once and the inbox flows into your workspace.
 
-This page covers everything that is not Microsoft 365 or Google Workspace: Zoho, Fastmail, Proton, cPanel hosting, your own Postfix server, and so on. The idea is identical everywhere. Only the menu names change.
+This page covers every provider. Microsoft 365 and Google Workspace have enough quirks to deserve their own walkthroughs:
+
+- [Microsoft 365](/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-microsoft-365)
+- [Google Workspace](/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-google-workspace)
+
+For anything else, keep reading.
 
 ## Part 1: Create the channel in Twenty
 
@@ -18,7 +23,7 @@ This page covers everything that is not Microsoft 365 or Google Workspace: Zoho,
 />
 
 3. In **Source Email Address**, type the shared address you want to receive mail at, for example `contact@yourcompany.com`.
-4. In **Display Name**, type the name recipients see, for example `Twenty Contact`.
+4. In **Display Name**, type the name recipients see.
 5. Click **Save**.
 
 <img
@@ -26,7 +31,7 @@ This page covers everything that is not Microsoft 365 or Google Workspace: Zoho,
   style={{ width: '100%' }}
 />
 
-6. Twenty now shows a **Forwarding address**. It looks like `ch_2cd282d193b5@inbound.twenty.com`. Click **Copy**.
+6. Twenty now shows a **Forwarding address**. It ends in `@inbound.twenty.com`. Click **Copy**.
 
 <img
   src="/images/user-guide/emails/inbound-channels/05-twenty-forwarding-address.png"
@@ -38,80 +43,46 @@ This page covers everything that is not Microsoft 365 or Google Workspace: Zoho,
   same one, or their mail will land in the same place.
 </Note>
 
-## Part 2: Find the forwarding setting
+## Part 2: Pick the right kind of forwarding
 
-Every provider has this feature. They just name it differently. Look for whichever of these you can find:
+Most providers offer more than one way to send mail onwards, and only one of them works properly.
 
-- **Forwarding** or **Auto-forward**
-- **Redirect**
-- **Forwarders** (common in cPanel and other hosting panels)
-- **Aliases** or **Address routing**
-- **Filters** or **Rules**, with an action called _forward to_ or _redirect to_
+Twenty reads the `From` header of whatever arrives to work out who wrote the message. That is how a message gets linked to the right person and company.
 
-Once you find it, the job is the same everywhere:
+- **Server-side forwarding or redirecting** leaves the original sender in place. Your customer stays the sender, the message lands on their record, and replies go back to them. Some providers call this **Redirect**, others just call it **Forwarding**. This is the one you want.
+- **Forwarding as an attachment**, or any rule that composes a brand new message, replaces the sender with your own address. Every conversation then looks like you wrote it, and nothing matches a contact.
 
-1. Add the forwarding address you copied from Twenty as the destination.
-2. Choose the option that **keeps a copy** in the original mailbox, so your team can still read the inbox normally.
-3. Save.
-
-Two things to get right:
+So: use the automatic forwarding setting in your mail account or server. Do not build a rule that wraps the message up and sends it on as something new.
 
 <Warning>
-  Forward, do not redirect-and-delete. Twenty needs the original message headers
-  to thread replies correctly, and your team still wants the mail in their own
-  inbox.
+  Also avoid rules that strip attachments or convert messages to plain text.
+  Twenty stores whatever it is handed.
 </Warning>
 
-<Warning>
-  Do not forward through a rule that strips attachments or converts to plain
-  text. Twenty stores whatever it receives.
-</Warning>
+Wherever you can, tick the option that **keeps a copy** in the original mailbox, so your team can still work the inbox normally.
 
-## Common setups
+## Part 3: Find your provider
 
-### cPanel and similar hosting panels
+Pick yours and follow their instructions, using the forwarding address you copied in Part 1 as the destination.
 
-1. Open **Email → Forwarders**.
-2. Click **Add Forwarder**.
-3. Address to forward: `contact`, with your domain selected.
-4. Destination: **Forward to Email Address**, then paste the Twenty forwarding address.
-5. Click **Add Forwarder**.
+| Provider               | Their guide                                                                                                                                                  |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Amazon SES             | [Forward incoming email to an external destination](https://aws.amazon.com/blogs/messaging-and-targeting/forward-incoming-email-to-an-external-destination/) |
+| Amazon WorkMail        | [Email rules](https://docs.aws.amazon.com/workmail/latest/userguide/email-rules.html)                                                                        |
+| Bluehost               | [Create account and domain forwarders](https://www.bluehost.com/help/article/create-account-and-domain-forwarders)                                           |
+| cPanel                 | [Forwarders](https://docs.cpanel.net/cpanel/email/forwarders/)                                                                                               |
+| DreamHost              | [Add a forward-only email address](https://help.dreamhost.com/hc/en-us/articles/215724207-Add-a-forward-only-email-address)                                  |
+| Exchange (self-hosted) | [Configure email forwarding for a mailbox](https://learn.microsoft.com/en-us/exchange/recipients/user-mailboxes/email-forwarding)                            |
+| GoDaddy                | [Forward incoming email to another address](https://www.godaddy.com/help/forward-incoming-email-to-another-email-address-32282)                              |
+| iCloud Mail            | [Forward email on iCloud.com](https://support.apple.com/en-us/102376)                                                                                        |
+| Namecheap              | [Set up free email forwarding](https://www.namecheap.com/support/knowledgebase/article.aspx/308/2214/how-to-set-up-free-email-forwarding)                    |
+| OVHcloud               | [Email redirection](https://help.ovhcloud.com/csm/en-emails-redirection)                                                                                     |
+| Rackspace              | [Set up Rackspace email forwarding](https://docs.rackspace.com/docs/set-up-rackspace-email-forwarding)                                                       |
+| Zoho Mail              | [Email forwarding](https://www.zoho.com/mail/help/email-forwarding.html)                                                                                     |
 
-A cPanel forwarder on its own does not keep a copy. To keep one, add a second forwarder pointing back at a real mailbox, or use **Email → Filters** with a _Deliver to folder_ rule alongside the forward.
+Not on the list? You can almost certainly still connect it. In nearly every mail product the setting hides under a name like **Forwarding**, **Redirect**, **Forwarders**, **Aliases**, **Rules** or **Filters**, in either the mailbox settings or the domain settings.
 
-### Servers that support Sieve (Dovecot, Zimbra, Migadu, and others)
-
-Add this rule to the mailbox. The `:copy` keeps the original in place.
-
-```
-require ["copy"];
-
-redirect :copy "ch_2cd282d193b5@inbound.twenty.com";
-```
-
-### Your own Postfix server
-
-Add a virtual alias that delivers to both the real mailbox and Twenty:
-
-```
-# /etc/postfix/virtual
-contact@yourcompany.com  contact@yourcompany.com, ch_2cd282d193b5@inbound.twenty.com
-```
-
-Then rebuild and reload:
-
-```bash
-postmap /etc/postfix/virtual
-systemctl reload postfix
-```
-
-Make sure `virtual_alias_maps = hash:/etc/postfix/virtual` is set in `main.cf`.
-
-### Providers that verify the destination first
-
-Some providers (Proton and a few others) email a confirmation link or code to the destination before forwarding starts. Twenty cannot show you that code, so those providers will not work through their own forwarding UI. Use a server-side rule instead, or move the address to a provider that lets an admin set forwarding directly.
-
-## Part 3: Test it
+## Part 4: Test it
 
 Send an email from an outside address (a personal Gmail works) to `contact@yourcompany.com`. It should show up in Twenty within a minute or two.
 
@@ -123,6 +94,13 @@ Send an email from an outside address (a personal Gmail works) to `contact@yourc
   dropped.
 </Accordion>
 
+<Accordion title="Mail arrives, but every message looks like it came from us">
+  The rule is rebuilding the message instead of passing it along, so your
+  address ends up in the `From` header. Switch to your provider's plain
+  forwarding or redirect setting, and turn off any "forward as attachment"
+  option.
+</Accordion>
+
 <Accordion title="The sender gets a bounce about forwarding not being allowed">
   Your provider blocks automatic forwarding to outside domains. Look for a
   security or anti-spam setting that allows external forwarding, and allow it
@@ -130,8 +108,8 @@ Send an email from an outside address (a personal Gmail works) to `contact@yourc
 </Accordion>
 
 <Accordion title="Mail disappeared from the original inbox">
-  The rule redirects instead of copying. Change it to keep a copy, or add a
-  second rule that delivers to the inbox.
+  The rule moves messages on instead of copying them. Change it to keep a copy,
+  or add a second rule that delivers to the inbox.
 </Accordion>
 
 <Accordion title="The channel receives mail but cannot send">
@@ -139,5 +117,3 @@ Send an email from an outside address (a personal Gmail works) to `contact@yourc
   the channel's **Sending domain** section, which means adding the DNS records
   Twenty lists there.
 </Accordion>
-
-Using Microsoft or Google? See [Microsoft 365](/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-microsoft-365) or [Google Workspace](/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-google-workspace).
