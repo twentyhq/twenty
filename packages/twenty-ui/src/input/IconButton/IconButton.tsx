@@ -69,11 +69,13 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
         // to the DOM as an inert attribute. Keep forwarding it for DOM parity.
         {...{ to }}
       >
-        {Icon && (
+        {Icon ? (
           <Icon size={theme.icon.size.md} aria-hidden={!!resolvedAriaLabel} />
-        )}
+        ) : null}
         {children}
       </button>
     );
   },
 );
+
+IconButton.displayName = 'IconButton';
