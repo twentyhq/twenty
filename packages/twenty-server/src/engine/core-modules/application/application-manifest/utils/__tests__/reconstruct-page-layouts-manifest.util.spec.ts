@@ -51,6 +51,9 @@ const ENGINE_TAB_UID = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
 const EXTRA_TAB_UID = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
 const COMPANY_TAB_UID = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
 const EXPORTED_OBJECT_UNIVERSAL_IDENTIFIERS = new Set([PET_UID]);
+const UNKNOWN_REFERENCE: Record<string, string> = {
+  workflowUniversalIdentifier: MISSING_UID,
+};
 
 const buildMaps = ({
   objects = [],
@@ -811,6 +814,16 @@ describe('reconstructPageLayoutsManifest', () => {
             pageLayoutTabUniversalIdentifier: OVERVIEW_TAB_UID,
           }),
           buildFlatPageLayoutWidget({
+            pageLayoutWidgetManifest: buildNotesWidgetManifest(
+              'unknown-reference-widget',
+            ),
+            pageLayoutTabUniversalIdentifier: OVERVIEW_TAB_UID,
+            universalConfiguration: {
+              ...UNKNOWN_REFERENCE,
+              configurationType: WidgetConfigurationType.NOTES,
+            },
+          }),
+          buildFlatPageLayoutWidget({
             pageLayoutWidgetManifest: {
               ...buildNotesWidgetManifest('missing-front-component-widget'),
               type: 'FRONT_COMPONENT',
@@ -862,6 +875,9 @@ describe('reconstructPageLayoutsManifest', () => {
     );
     expect(statusOf(coverage, 'grouped-chart-widget')?.status).toBe(
       ApplicationExportCoverageStatus.EXPORTED,
+    );
+    expect(reasonOf(coverage, 'unknown-reference-widget')).toBe(
+      'page layout widget referencing metadata this export cannot resolve (workflowUniversalIdentifier)',
     );
   });
 

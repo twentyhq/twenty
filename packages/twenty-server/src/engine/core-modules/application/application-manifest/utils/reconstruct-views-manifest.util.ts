@@ -50,14 +50,6 @@ export const reconstructViewsManifest = ({
   coverage: ApplicationExportCoverageEntry[];
 } => {
   const coverage: ApplicationExportCoverageEntry[] = [];
-  const applicationObjectUniversalIdentifiers = new Set(
-    Object.values(
-      applicationAllFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .map(({ universalIdentifier }) => universalIdentifier),
-  );
-
   const parentViewStatusByUniversalIdentifier = new Map<string, ParentStatus>();
   const exportedFlatViews: FlatView[] = [];
 
@@ -79,9 +71,9 @@ export const reconstructViewsManifest = ({
 
     const unsupportedReason = getUnsupportedViewReason({
       flatView,
-      applicationObjectUniversalIdentifiers,
-      exportedObjectUniversalIdentifiers,
+      applicationAllFlatEntityMaps,
       allFlatEntityMaps,
+      exportedObjectUniversalIdentifiers,
     });
 
     if (isDefined(unsupportedReason)) {

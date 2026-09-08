@@ -13,6 +13,8 @@ type ReferencedMetadataName =
   | 'frontComponent'
   | 'commandMenuItem';
 
+const UNIVERSAL_IDENTIFIER_KEY_PATTERN = /UniversalIdentifiers?$/;
+
 const NULLABLE_REFERENCE_KEYS = new Set([
   'viewId',
   'viewUniversalIdentifier',
@@ -28,7 +30,7 @@ const NOT_EXPORTED_YET_METADATA_NAMES: ReferencedMetadataName[] = [
 
 const getReferencedMetadataName = (
   key: string,
-): ReferencedMetadataName | undefined => {
+): ReferencedMetadataName | 'unknown' | undefined => {
   if (
     key === 'fieldMetadataId' ||
     key === 'nestedRelationFieldMetadataId' ||
@@ -50,7 +52,7 @@ const getReferencedMetadataName = (
     return 'commandMenuItem';
   }
 
-  return undefined;
+  return UNIVERSAL_IDENTIFIER_KEY_PATTERN.test(key) ? 'unknown' : undefined;
 };
 
 const getFlatEntityMaps = ({
@@ -145,6 +147,10 @@ const findUnresolvableReferenceReason = ({
       }
 
       continue;
+    }
+
+    if (metadataName === 'unknown') {
+      return `page layout widget referencing metadata this export cannot resolve (${key})`;
     }
 
     for (const universalIdentifier of Array.isArray(child) ? child : [child]) {
