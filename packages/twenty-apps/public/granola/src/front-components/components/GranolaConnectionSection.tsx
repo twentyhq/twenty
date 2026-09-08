@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useId, useState } from 'react';
 import { t } from 'twenty-sdk/front-component';
+import { isDefined } from 'twenty-sdk/utils';
 import { Status } from 'twenty-ui/data-display';
 import { IconKey } from 'twenty-ui/icon';
 import { Button, LightButton } from 'twenty-ui/input';
@@ -15,6 +16,7 @@ import { StyledSettingsCard } from 'src/front-components/components/StyledSettin
 import { StyledSettingsSectionStack } from 'src/front-components/components/StyledSettingsSectionStack';
 import { StyledSettingsTextInput } from 'src/front-components/components/StyledSettingsTextInput';
 import { type GranolaConnectionStatus } from 'src/front-components/types/granola-connection-status.type';
+import { getGranolaKeyType } from 'src/front-components/utils/get-granola-key-type.util';
 
 const StyledKeyForm = styled.form`
   display: flex;
@@ -35,10 +37,19 @@ type GranolaConnectionSectionProps = {
   onRetry: () => void;
 };
 
-const getConnectionDescription = (status: GranolaConnectionStatus) =>
-  status.isConnected
-    ? t('Connected to Granola.')
-    : (status.error ?? t('Granola rejected the saved key.'));
+const getConnectionDescription = (status: GranolaConnectionStatus) => {
+  if (!status.isConnected) {
+    return status.error ?? t('Granola rejected the saved key.');
+  }
+
+  if (!isDefined(status.registration)) {
+    return t('Connected to Granola.');
+  }
+
+  return getGranolaKeyType(status.registration.scopes) === 'workspace'
+    ? t('Workspace key. Syncs public workspace notes and shared spaces.')
+    : t('Personal key. Syncs your notes and notes shared with you.');
+};
 
 export const GranolaConnectionSection = ({
   status,
@@ -115,7 +126,7 @@ export const GranolaConnectionSection = ({
               inputId={inputId}
               errorMessage={connectError}
               hint={t(
-                'Workspace keys sync notes shared with the whole workspace. Personal keys also sync your own notes.',
+                'Workspace keys sync notes shared with the whole workspace. Personal keys also sync your own notes. The key type is detected automatically.',
               )}
             >
               <StyledSettingsTextInput

@@ -7,6 +7,7 @@ import {
   useColorScheme,
   useFrontComponentId,
 } from 'twenty-sdk/front-component';
+import { isDefined } from 'twenty-sdk/utils';
 import { THEME_DARK, THEME_LIGHT } from 'twenty-ui/theme';
 import {
   ThemeContext,
@@ -15,9 +16,11 @@ import {
 } from 'twenty-ui/theme-constants';
 
 import { GranolaConnectionSection } from 'src/front-components/components/GranolaConnectionSection';
+import { GranolaLiveSyncSection } from 'src/front-components/components/GranolaLiveSyncSection';
 import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { type GranolaConnectionStatus } from 'src/front-components/types/granola-connection-status.type';
 import { fetchGranolaConnectionStatusOrThrow } from 'src/front-components/utils/fetch-granola-connection-status-or-throw.util';
+import { registerGranolaWebhookOrThrow } from 'src/front-components/utils/register-granola-webhook-or-throw.util';
 import { saveGranolaApiKeyOrThrow } from 'src/front-components/utils/save-granola-api-key-or-throw.util';
 
 const StyledContainer = styled.div`
@@ -40,21 +43,60 @@ type GranolaSettingsState =
   | { step: 'unavailable' }
   | { step: 'ready'; status: GranolaConnectionStatus };
 
+const shouldSetUpLiveSync = (status: GranolaConnectionStatus) =>
+  status.isConnected &&
+  status.canManage &&
+  status.needsRegistration &&
+  !isDefined(status.registration);
+
 export const GranolaSettings = () => {
   const colorScheme = useColorScheme();
   const frontComponentId = useFrontComponentId();
   const [state, setState] = useState<GranolaSettingsState>({ step: 'loading' });
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectError, setConnectError] = useState<string | undefined>();
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [registrationError, setRegistrationError] = useState<
+    string | undefined
+  >();
 
-  const loadConnectionStatus = async () => {
+  const refreshConnectionStatus = async () => {
     try {
-      setState({
-        step: 'ready',
-        status: await fetchGranolaConnectionStatusOrThrow(),
-      });
+      const status = await fetchGranolaConnectionStatusOrThrow();
+
+      setState({ step: 'ready', status });
+
+      return status;
     } catch {
       setState({ step: 'unavailable' });
+
+      return undefined;
+    }
+  };
+
+  const registerLiveSync = async () => {
+    setIsRegistering(true);
+    setRegistrationError(undefined);
+
+    try {
+      await registerGranolaWebhookOrThrow();
+    } catch (error) {
+      setRegistrationError(
+        error instanceof Error
+          ? error.message
+          : t('Could not set up live sync. Try again.'),
+      );
+    }
+
+    await refreshConnectionStatus();
+    setIsRegistering(false);
+  };
+
+  const loadConnectionStatus = async () => {
+    const status = await refreshConnectionStatus();
+
+    if (isDefined(status) && shouldSetUpLiveSync(status)) {
+      await registerLiveSync();
     }
   };
 
@@ -101,13 +143,30 @@ export const GranolaSettings = () => {
           </StyledNotice>
         )}
         {state.step === 'ready' && (
-          <GranolaConnectionSection
-            status={state.status}
-            isConnecting={isConnecting}
-            connectError={connectError}
-            onConnect={handleConnect}
-            onRetry={loadConnectionStatus}
-          />
+          <>
+            <GranolaConnectionSection
+              status={state.status}
+              isConnecting={isConnecting}
+              connectError={connectError}
+              onConnect={handleConnect}
+              onRetry={refreshConnectionStatus}
+            />
+            {state.status.isConnected && !state.status.canManage && (
+              <StyledNotice>
+                {t(
+                  'Only members who can manage applications can change live sync, folders, and imports.',
+                )}
+              </StyledNotice>
+            )}
+            {state.status.isConnected && state.status.canManage && (
+              <GranolaLiveSyncSection
+                status={state.status}
+                isRegistering={isRegistering}
+                registrationError={registrationError}
+                onRegister={registerLiveSync}
+              />
+            )}
+          </>
         )}
       </StyledContainer>
     </ThemeContext.Provider>
