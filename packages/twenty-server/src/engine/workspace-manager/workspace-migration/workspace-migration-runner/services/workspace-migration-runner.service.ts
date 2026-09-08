@@ -280,9 +280,6 @@ export class WorkspaceMigrationRunnerService {
         flatMapsKeys: allFlatEntityMapsKeys,
       });
 
-    // The cache hands out its own live objects and actions are applied to the
-    // maps through mutation, so the run works on a private copy: the shared
-    // cache must keep reflecting committed state until invalidation.
     const cloneStart = performance.now();
 
     let allFlatEntityMaps = structuredClone(cachedAllFlatEntityMaps);

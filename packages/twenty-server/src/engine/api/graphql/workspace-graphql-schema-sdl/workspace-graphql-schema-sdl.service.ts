@@ -130,8 +130,6 @@ export class WorkspaceGraphqlSchemaSDLService {
       SCHEMA_SDL_CACHE_DEPENDENCIES,
     );
 
-    // The stored SDL is keyed by the cache hashes, which do not describe
-    // caller-provided maps, so those neither read nor write it.
     const shouldUseStoredSdl = !isDefined(flatEntityMapsOverride);
 
     let sdl = shouldUseStoredSdl
