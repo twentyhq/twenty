@@ -129,7 +129,7 @@ export const SettingsApplicationConnectionDetail = () => {
       ? connection.name
       : (connection?.handle ?? t`Connection`);
   const deleteModalId = `delete-application-connection-modal-${connectedAccountId}`;
-  const changeVisibilityModalId = `change-application-connection-visibility-modal-${connectedAccountId}`;
+  const shareWithWorkspaceModalId = `share-application-connection-with-workspace-modal-${connectedAccountId}`;
   const applicationSettingsPath = getSettingsPath(
     SettingsPath.ApplicationDetail,
     { applicationId },
@@ -336,7 +336,7 @@ export const SettingsApplicationConnectionDetail = () => {
                     Icon={IconUsers}
                     variant="secondary"
                     accent="default"
-                    onClick={() => openModal(changeVisibilityModalId)}
+                    onClick={() => openModal(shareWithWorkspaceModalId)}
                   />
                 )}
                 <Button
@@ -388,7 +388,7 @@ export const SettingsApplicationConnectionDetail = () => {
               loading={isDeleting}
             />
             <ConfirmationModal
-              modalInstanceId={changeVisibilityModalId}
+              modalInstanceId={shareWithWorkspaceModalId}
               title={t`Share with workspace?`}
               subtitle={
                 <Trans>

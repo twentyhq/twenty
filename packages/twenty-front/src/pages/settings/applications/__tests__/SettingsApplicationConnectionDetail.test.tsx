@@ -171,7 +171,7 @@ describe('SettingsApplicationConnectionDetail', () => {
     );
 
     expect(mockOpenModal).toHaveBeenCalledWith(
-      'change-application-connection-visibility-modal-account-1',
+      'share-application-connection-with-workspace-modal-account-1',
     );
 
     fireEvent.click(
