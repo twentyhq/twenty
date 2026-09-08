@@ -28,12 +28,12 @@ const StyledPanel = styled.div`
   overflow: hidden;
 `;
 
-const StyledCenteredChatContainer = styled.div`
+const StyledChatContainer = styled.div`
+  --ai-chat-content-max-width: 768px;
+
   display: flex;
   flex: 1;
   flex-direction: column;
-  margin: 0 auto;
-  max-width: 768px;
   min-height: 0;
   width: 100%;
 `;
@@ -50,7 +50,7 @@ export const AiChatPage = () => {
       <AiChatPageContinueInSidePanelEffect />
       {shouldOpenAiChatAfterOnboarding && <WorkspaceSetupChatKickoffEffect />}
       <AiChatPageHeader isOnboarding={shouldOpenAiChatAfterOnboarding} />
-      <StyledCenteredChatContainer>
+      <StyledChatContainer>
         <AiChatMessageListPreambleContext.Provider
           value={
             shouldOpenAiChatAfterOnboarding ? (
@@ -62,7 +62,7 @@ export const AiChatPage = () => {
             <AiChatTab />
           </AiChatSurfaceContext.Provider>
         </AiChatMessageListPreambleContext.Provider>
-      </StyledCenteredChatContainer>
+      </StyledChatContainer>
     </StyledPanel>
   );
 };

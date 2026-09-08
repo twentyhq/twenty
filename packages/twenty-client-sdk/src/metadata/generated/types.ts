@@ -100,7 +100,7 @@ export default {
         401,
         413,
         530,
-        555
+        556
     ],
     "types": {
         "BillingProductDTO": {
@@ -3603,6 +3603,9 @@ export default {
             "authFailedAt": [
                 4
             ],
+            "authFailedReason": [
+                1
+            ],
             "archivedAt": [
                 4
             ],
@@ -4219,6 +4222,9 @@ export default {
                 1
             ],
             "authFailedAt": [
+                1
+            ],
+            "authFailedReason": [
                 1
             ],
             "__typename": [
@@ -9606,6 +9612,15 @@ export default {
                     ]
                 }
             ],
+            "reportAppConnectionAuthFailure": [
+                8,
+                {
+                    "input": [
+                        543,
+                        "ReportAppConnectionAuthFailureInput!"
+                    ]
+                }
+            ],
             "createChatThread": [
                 357
             ],
@@ -9631,7 +9646,7 @@ export default {
                         1
                     ],
                     "fileAttachments": [
-                        543,
+                        544,
                         "[FileAttachmentInput!]"
                     ]
                 }
@@ -9660,14 +9675,14 @@ export default {
                         "UUID!"
                     ],
                     "answers": [
-                        544,
+                        545,
                         "[AgentChatQuestionAnswerInput!]!"
                     ],
                     "modelId": [
                         1
                     ],
                     "fileAttachments": [
-                        543,
+                        544,
                         "[FileAttachmentInput!]"
                     ]
                 }
@@ -9745,7 +9760,7 @@ export default {
                 355,
                 {
                     "input": [
-                        545,
+                        546,
                         "CreateSkillInput!"
                     ]
                 }
@@ -9754,7 +9769,7 @@ export default {
                 355,
                 {
                     "input": [
-                        546,
+                        547,
                         "UpdateSkillInput!"
                     ]
                 }
@@ -9812,7 +9827,7 @@ export default {
                 384,
                 {
                     "input": [
-                        547,
+                        548,
                         "UpdateTimelineActivityTypeInput!"
                     ]
                 }
@@ -9830,7 +9845,7 @@ export default {
                 272,
                 {
                     "input": [
-                        548,
+                        549,
                         "GetAuthorizationUrlForSSOInput!"
                     ]
                 }
@@ -9996,7 +10011,7 @@ export default {
                 275,
                 {
                     "input": [
-                        549
+                        550
                     ]
                 }
             ],
@@ -10174,7 +10189,7 @@ export default {
                 8,
                 {
                     "input": [
-                        550,
+                        551,
                         "UpdateWorkspaceMemberSettingsInput!"
                     ]
                 }
@@ -10208,7 +10223,7 @@ export default {
                 227,
                 {
                     "input": [
-                        551,
+                        552,
                         "SetupOIDCSsoInput!"
                     ]
                 }
@@ -10217,7 +10232,7 @@ export default {
                 227,
                 {
                     "input": [
-                        552,
+                        553,
                         "SetupSAMLSsoInput!"
                     ]
                 }
@@ -10226,7 +10241,7 @@ export default {
                 223,
                 {
                     "input": [
-                        553,
+                        554,
                         "DeleteSsoInput!"
                     ]
                 }
@@ -10235,7 +10250,7 @@ export default {
                 224,
                 {
                     "input": [
-                        554,
+                        555,
                         "EditSsoInput!"
                     ]
                 }
@@ -10264,7 +10279,7 @@ export default {
                 351,
                 {
                     "type": [
-                        555,
+                        556,
                         "AnalyticsType!"
                     ],
                     "name": [
@@ -10307,7 +10322,7 @@ export default {
                 341,
                 {
                     "input": [
-                        556,
+                        557,
                         "CreateCalendarEventInput!"
                     ]
                 }
@@ -10316,7 +10331,7 @@ export default {
                 350,
                 {
                     "input": [
-                        557,
+                        558,
                         "SendEmailInput!"
                     ]
                 }
@@ -10338,7 +10353,7 @@ export default {
                         "String!"
                     ],
                     "connectionParameters": [
-                        559,
+                        560,
                         "EmailAccountConnectionParameters!"
                     ],
                     "id": [
@@ -10350,7 +10365,7 @@ export default {
                 188,
                 {
                     "input": [
-                        561,
+                        562,
                         "UpdateLabPublicFeatureFlagInput!"
                     ]
                 }
@@ -10443,7 +10458,7 @@ export default {
                         "String!"
                     ],
                     "files": [
-                        562,
+                        563,
                         "[ApplicationFileUploadRequestInput!]!"
                     ]
                 }
@@ -13055,6 +13070,17 @@ export default {
                 1
             ]
         },
+        "ReportAppConnectionAuthFailureInput": {
+            "id": [
+                221
+            ],
+            "reason": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "FileAttachmentInput": {
             "id": [
                 3
@@ -13309,7 +13335,7 @@ export default {
                 1
             ],
             "files": [
-                558
+                559
             ],
             "__typename": [
                 1
@@ -13331,13 +13357,13 @@ export default {
                 1
             ],
             "IMAP": [
-                560
+                561
             ],
             "SMTP": [
-                560
+                561
             ],
             "CALDAV": [
-                560
+                561
             ],
             "__typename": [
                 1
@@ -13402,7 +13428,7 @@ export default {
                 264,
                 {
                     "input": [
-                        564,
+                        565,
                         "LogicFunctionLogsInput!"
                     ]
                 }
