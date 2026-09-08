@@ -38,7 +38,7 @@ A Twenty app's **config layer** is what describes the app *to the platform* — 
     `defineApplication` — identity, default role, variables, marketplace metadata.
   </Card>
   <Card title="Roles & Permissions" icon="shield-halved" href="/developers/extend/apps/config/roles">
-    `defineRole` — declare what your app's logic functions can read and write.
+    `defineRole` and `defineSharingRule` — declare what your app's logic functions can read and write, and which records a role or everyone can see.
   </Card>
   <Card title="Install Hooks" icon="wrench" href="/developers/extend/apps/config/install-hooks">
     `definePreInstallLogicFunction`, `definePostInstallLogicFunction`, and `defineUninstallLogicFunction` — back up data, seed defaults, validate upgrades, clean up on removal.
