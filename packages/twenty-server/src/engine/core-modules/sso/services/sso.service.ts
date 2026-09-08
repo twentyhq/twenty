@@ -3,7 +3,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Issuer } from 'openid-client';
+import { custom, Issuer } from 'openid-client';
 import { Repository } from 'typeorm';
 
 import {
@@ -14,6 +14,7 @@ import {
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { createSsrfSafeAgent } from 'src/engine/core-modules/secure-http-client/utils/create-ssrf-safe-agent.util';
 import {
   SsoException,
   SsoExceptionCode,
@@ -34,7 +35,24 @@ export class SsoService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly billingService: BillingService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
-  ) {}
+  ) {
+    // Issuer.discover() makes its own outbound request to an admin-supplied
+    // URL, outside SecureHttpClientService. This is openid-client's only
+    // hook to route it through the same SSRF-safe agents, and it's static
+    // on Issuer, so setting it once here also covers the Issuer.discover()
+    // call in OidcAuthGuard.
+    Issuer[custom.http_options] = (url) => {
+      if (!this.twentyConfigService.get('OUTBOUND_HTTP_SAFE_MODE_ENABLED')) {
+        return {};
+      }
+
+      return {
+        agent: createSsrfSafeAgent(
+          url.protocol === 'https:' ? 'https' : 'http',
+        ),
+      };
+    };
+  }
 
   private async isSsoEnabled(workspaceId: string) {
     const isSsoBillingEnabled = await this.billingService.hasEntitlement(
