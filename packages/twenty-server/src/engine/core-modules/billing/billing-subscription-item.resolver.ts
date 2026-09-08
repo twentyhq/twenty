@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { BillingSubscriptionItemDTO } from 'src/engine/core-modules/billing/dtos/billing-subscription-item.dto';
+import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
@@ -29,7 +30,29 @@ export class BillingSubscriptionItemResolver {
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
+    @InjectRepository(BillingPriceEntity)
+    private readonly billingPriceRepository: Repository<BillingPriceEntity>,
   ) {}
+
+  // The amount this item is actually charged, which is not the catalog amount for
+  // its plan once pricing changes: superseded prices keep billing the workspaces
+  // already on them.
+  @ResolveField(() => Number, { nullable: true })
+  async unitAmount(
+    @Parent() billingSubscriptionItem: BillingSubscriptionItemEntity,
+  ): Promise<number | null> {
+    const billingPrice = await this.billingPriceRepository.findOne({
+      where: { stripePriceId: billingSubscriptionItem.stripePriceId },
+    });
+
+    if (!isDefined(billingPrice?.unitAmount)) {
+      return null;
+    }
+
+    const unitAmount = Number(billingPrice.unitAmount);
+
+    return Number.isFinite(unitAmount) ? unitAmount : null;
+  }
 
   // Derived from the live credit balance instead of read from the stored
   // column: a persisted flag that every balance-mutating path must remember to

@@ -25,6 +25,7 @@ export const mockBillingPlans = {
               recurringInterval: 'Month',
               priceUsageType: 'LICENSED',
               creditAmount: null,
+              isSellable: true,
             },
             {
               __typename: 'BillingPriceLicensed',
@@ -33,6 +34,7 @@ export const mockBillingPlans = {
               recurringInterval: 'Year',
               priceUsageType: 'LICENSED',
               creditAmount: null,
+              isSellable: true,
             },
           ],
         },
@@ -318,6 +320,7 @@ export const mockBillingPlans = {
               recurringInterval: 'Month',
               priceUsageType: 'LICENSED',
               creditAmount: null,
+              isSellable: true,
             },
             {
               __typename: 'BillingPriceLicensed',
@@ -326,6 +329,7 @@ export const mockBillingPlans = {
               recurringInterval: 'Year',
               priceUsageType: 'LICENSED',
               creditAmount: null,
+              isSellable: true,
             },
           ],
         },

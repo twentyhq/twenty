@@ -19,6 +19,9 @@ export class BillingSubscriptionItemDTO {
   @Field(() => String)
   stripePriceId: string;
 
+  @Field(() => Number, { nullable: true })
+  unitAmount: number | null;
+
   @Field(() => BillingProductDTO)
   billingProduct: BillingProductDTO;
 }

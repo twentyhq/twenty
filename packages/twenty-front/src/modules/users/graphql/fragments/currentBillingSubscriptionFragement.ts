@@ -18,6 +18,7 @@ export const CURRENT_BILLING_SUBSCRIPTION_FRAGMENT = gql`
       hasReachedCurrentPeriodCap
       quantity
       stripePriceId
+      unitAmount
       billingProduct {
         name
         description
@@ -26,6 +27,7 @@ export const CURRENT_BILLING_SUBSCRIPTION_FRAGMENT = gql`
           productKey
           planKey
           priceUsageBased
+          isLegacy
         }
       }
     }

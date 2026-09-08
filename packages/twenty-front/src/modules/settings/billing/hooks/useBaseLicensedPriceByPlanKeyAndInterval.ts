@@ -4,6 +4,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { findOrThrow } from 'twenty-shared/utils';
 import { useBaseProductByPlanKey } from '@/settings/billing/hooks/useBaseProductByPlanKey';
+import { isSellableBillingPrice } from '@/settings/billing/utils/isSellableBillingPrice';
 
 export const useBaseLicensedPriceByPlanKeyAndInterval = () => {
   const { getBaseProductByPlanKey } = useBaseProductByPlanKey();
@@ -18,7 +19,8 @@ export const useBaseLicensedPriceByPlanKeyAndInterval = () => {
 
     return findOrThrow(
       baseProduct.prices,
-      (price) => price.recurringInterval === interval,
+      (price) =>
+        price.recurringInterval === interval && isSellableBillingPrice(price),
       new Error('Base licensed price not found'),
     );
   };
