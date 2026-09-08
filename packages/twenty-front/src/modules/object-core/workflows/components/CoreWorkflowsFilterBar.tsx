@@ -62,7 +62,7 @@ export const CoreWorkflowsFilterBar = () => {
       <IconButton
         Icon={IconFilter}
         variant="secondary"
-        size="medium"
+        size="small"
         ariaLabel={t`Filter`}
         onClick={openCoreWorkflowFiltersSidePanel}
       />

@@ -178,22 +178,23 @@ export const runFathomMediaImport = async (rawPayload: unknown) => {
     } catch (error) {
       const retryDelay = getFathomRetryAfterDelay({ error, now: new Date() });
 
-      if (
-        isDefined(retryDelay) &&
-        (payload.rateLimitAttempt ?? 0) < MAX_RATE_LIMIT_RETRIES
-      ) {
+      const rateLimitAttempt = payload.rateLimitAttempt ?? 0;
+
+      if (isDefined(retryDelay)) {
+        if (rateLimitAttempt >= MAX_RATE_LIMIT_RETRIES) {
+          return { success: true, outcome: 'deferred' };
+        }
+
         await enqueueNextAttempt({
           downloadId: writeContext.downloadId ?? undefined,
-          rateLimitAttempt: (payload.rateLimitAttempt ?? 0) + 1,
+          rateLimitAttempt: rateLimitAttempt + 1,
           delay: retryDelay,
         });
 
         return { success: true, outcome: 'rate-limited' };
       }
 
-      const failureReason = isDefined(retryDelay)
-        ? 'rate_limit_exhausted'
-        : getFathomMediaFailureReasonForError(error);
+      const failureReason = getFathomMediaFailureReasonForError(error);
 
       if (!isDefined(failureReason)) {
         throw error;
