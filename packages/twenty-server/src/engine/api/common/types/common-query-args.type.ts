@@ -13,7 +13,7 @@ import {
   type CommonSelectedFields,
   type CommonSelectedFieldsResult,
 } from 'src/engine/api/common/types/common-selected-fields-result.type';
-import { type ShareWithInput } from 'src/engine/api/common/types/share-with-input.type';
+import { type ShareWithInput } from 'src/engine/record-share/types/share-with-input.type';
 
 export enum CommonQueryNames {
   FIND_ONE = 'findOne',
