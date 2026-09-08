@@ -503,6 +503,12 @@ msgstr "Acceptat"
 msgid "Access denied."
 msgstr "Acces refuzat."
 
+#. js-lingui-id: Va0+qg
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Access level"
+msgstr ""
+
 #. js-lingui-id: Bk+qoW
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Access token not found."
@@ -865,6 +871,12 @@ msgstr "Rolul cheii API nu a fost găsit."
 msgctxt "fieldMetadata.label"
 msgid "Apostrophe and dot"
 msgstr "Apostrof și punct"
+
+#. js-lingui-id: 5nw74G
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Application"
+msgstr ""
 
 #. js-lingui-id: 1WWVFC
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -1783,9 +1795,16 @@ msgstr "Nu se poate impersona utilizatorul prin cheia API"
 
 #. js-lingui-id: PpmWQv
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Cancel"
 msgstr "Anulare"
+
+#. js-lingui-id: CYhiCW
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Cancel Campaign"
+msgstr ""
 
 #. js-lingui-id: 7g3N+g
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -2625,6 +2644,7 @@ msgstr "Creează vizualizare"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -2663,6 +2683,7 @@ msgstr "Metadatele câmpului creat, metadatele obiectului părinte nu au fost g�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -2698,6 +2719,7 @@ msgstr "Data creării"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -2878,6 +2900,7 @@ msgstr "Formatul datei"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -3154,6 +3177,7 @@ msgstr "Șters {objectLabelPlural}"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -3185,6 +3209,7 @@ msgstr "Descriere"
 
 #. js-lingui-id: m+O/bO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Description"
 msgstr "Descriere"
@@ -3299,15 +3324,29 @@ msgstr "Data scadenței"
 #. js-lingui-id: pcd2n0
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Duplicate"
 msgstr "Duplicat"
+
+#. js-lingui-id: uv/ryv
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Duplicate Campaign"
+msgstr ""
 
 #. js-lingui-id: zC/oFa
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Duplicate Dashboard"
 msgstr "Duplicați tabloul de bord"
+
+#. js-lingui-id: Sr1mqj
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Duplicate List"
+msgstr ""
 
 #. js-lingui-id: UrzTjS
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -3684,6 +3723,12 @@ msgctxt "fieldMetadata.description"
 msgid "Events linked to the workspace member"
 msgstr "Evenimente legate de membrul spațiului de lucru"
 
+#. js-lingui-id: fVkHAH
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Everyone"
+msgstr ""
+
 #. js-lingui-id: b3ictS
 #: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
 msgid "Exactly one of \"groups\" or \"fields\" must be provided"
@@ -3801,6 +3846,11 @@ msgstr "Ștergerea înregistrării a eșuat."
 #: src/modules/dashboard/exceptions/dashboard.exception.ts
 msgid "Failed to duplicate dashboard."
 msgstr "Duplicarea tabloului de bord a eșuat."
+
+#. js-lingui-id: UiaZiQ
+#: src/modules/emailing/exceptions/message-list.exception.ts
+msgid "Failed to duplicate list."
+msgstr ""
 
 #. js-lingui-id: srkEOV
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -4098,6 +4148,7 @@ msgstr "Câmp folosit pentru căutarea full-text"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -4212,6 +4263,11 @@ msgstr "Fișierul nu a fost găsit în arhiva clientului SDK."
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "File not found."
 msgstr "Fișierul nu a fost găsit."
+
+#. js-lingui-id: eAFKw+
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
+msgid "File storage did not confirm the processed file. Please retry."
+msgstr ""
 
 #. js-lingui-id: MtzD8b
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
@@ -4386,6 +4442,12 @@ msgstr "frontComponentId nu trebuie setat pentru cheia componentei motorului {en
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "frontComponentId must not be set when engineComponentKey is TRIGGER_WORKFLOW_VERSION"
 msgstr "frontComponentId nu trebuie setat când engineComponentKey este TRIGGER_WORKFLOW_VERSION"
+
+#. js-lingui-id: mbshN9
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Full"
+msgstr ""
 
 #. js-lingui-id: DnqPI8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -4705,6 +4767,7 @@ msgstr "UID iCal"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -4739,6 +4802,7 @@ msgstr "Id"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5857,6 +5921,12 @@ msgstr "Cheia nu poate fi modificată"
 msgid "Key is required"
 msgstr "Cheia este necesară"
 
+#. js-lingui-id: 6hoCbx
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Kind of principal receiving the access"
+msgstr ""
+
 #. js-lingui-id: 6sFS+I
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util.ts
@@ -5954,6 +6024,7 @@ msgstr "Id-ul ultimei versiuni publicate"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5988,6 +6059,7 @@ msgstr "Ultima oară când înregistrarea a fost schimbată"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -6009,6 +6081,11 @@ msgstr "Layoutul este obligatoriu pentru diagrama cu bare"
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr "Layoutul este obligatoriu pentru widgetul cu diagramă cu bare \"{widgetTitle}\""
+
+#. js-lingui-id: cI7XDa
+#: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
+msgid "Limits scoped below the workspace require the Organization plan."
+msgstr "Limitele definite sub nivelul spațiului de lucru necesită abonamentul Organizație."
 
 #. js-lingui-id: sAG9OB
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
@@ -6100,6 +6177,17 @@ msgctxt "objectMetadata.labelPlural"
 msgid "List Members"
 msgstr "Membri ai listei"
 
+#. js-lingui-id: SGXb+l
+#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-person-views.util.ts
+msgctxt "view.name"
+msgid "List Members Table"
+msgstr ""
+
+#. js-lingui-id: 92F/Is
+#: src/modules/emailing/exceptions/message-list.exception.ts
+msgid "List not found."
+msgstr ""
+
 #. js-lingui-id: GRxWmN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -6190,6 +6278,12 @@ msgstr "Funcția logică nu a fost găsită."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Logic function with same universal identifier already exists"
 msgstr "Funcția logică cu același identificator universal există deja"
+
+#. js-lingui-id: paJTob
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Manual"
+msgstr ""
 
 #. js-lingui-id: dgxlIJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -6285,6 +6379,12 @@ msgstr "Membri"
 msgctxt "fieldMetadata.label"
 msgid "Members"
 msgstr "Membri"
+
+#. js-lingui-id: DbgpIO
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgctxt "pageLayoutTab.title"
+msgid "Members"
+msgstr ""
 
 #. js-lingui-id: CBMkZg
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -7249,6 +7349,12 @@ msgstr "Eticheta obiectului este prea lungă"
 msgid "Object label is too short"
 msgstr "Eticheta obiectului este prea scurtă"
 
+#. js-lingui-id: gB0eae
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Object metadata ID"
+msgstr ""
+
 #. js-lingui-id: xrblgA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
@@ -7293,6 +7399,12 @@ msgstr "Metadatele obiectului nu au fost găsite."
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "Object not found."
 msgstr "Obiectul nu a fost găsit."
+
+#. js-lingui-id: zWTotA
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Object of the shared record"
+msgstr ""
 
 #. js-lingui-id: 4ib9PY
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
@@ -7666,6 +7778,7 @@ msgstr "Oportunități deținute"
 
 #. js-lingui-id: l/RVZK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Owner"
 msgstr "Proprietar"
@@ -7675,6 +7788,12 @@ msgstr "Proprietar"
 msgctxt "pageLayoutWidget.title"
 msgid "Owner"
 msgstr "Proprietar"
+
+#. js-lingui-id: ZeJb73
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Owner, sharing rule or application that granted the access"
+msgstr ""
 
 #. js-lingui-id: s3wAxw
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
@@ -8119,6 +8238,7 @@ msgstr "Punct de Contact"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -8210,6 +8330,18 @@ msgstr "Câmpul de grupare al axei principale este obligatoriu pentru diagrama l
 msgid "Primary axis group by field is required for line chart widget \"{widgetTitle}\""
 msgstr "Câmpul de grupare al axei principale este obligatoriu pentru widgetul cu diagramă liniară \"{widgetTitle}\""
 
+#. js-lingui-id: RY0T63
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Principal ID"
+msgstr ""
+
+#. js-lingui-id: OGUlI6
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Principal type"
+msgstr ""
+
 #. js-lingui-id: cTz6/1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -8299,6 +8431,18 @@ msgstr "Limita de rată a fost atinsă. Vă rugăm să încercați mai târziu."
 msgid "Raw SQL queries are not allowed."
 msgstr "Interogările SQL brute nu sunt permise."
 
+#. js-lingui-id: 0PWREF
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Read"
+msgstr ""
+
+#. js-lingui-id: ZsNi6Y
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Read and write"
+msgstr ""
+
 #. js-lingui-id: KX0Su8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -8322,10 +8466,34 @@ msgstr "Destinatari"
 msgid "Record does not satisfy security constraints."
 msgstr "Înregistrarea nu îndeplinește constrângerile de securitate."
 
+#. js-lingui-id: a2mBTT
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Record ID"
+msgstr ""
+
 #. js-lingui-id: 4R+xJM
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Record not found."
 msgstr "Înregistrarea nu a fost găsită."
+
+#. js-lingui-id: 9ZMtCZ
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelSingular"
+msgid "Record share"
+msgstr ""
+
+#. js-lingui-id: 806WTv
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Record share position"
+msgstr ""
+
+#. js-lingui-id: d7Q0Lz
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelPlural"
+msgid "Record shares"
+msgstr ""
 
 #. js-lingui-id: LVUF8D
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
@@ -8433,6 +8601,7 @@ msgstr "Filtrul de relație nu este acceptat aici"
 
 #. js-lingui-id: L8AY9P
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 msgid "Relation filters can only traverse one relation deep"
 msgstr "Filtrele de relație pot parcurge doar o singură relație în profunzime"
@@ -8637,6 +8806,7 @@ msgstr "Rol"
 
 #. js-lingui-id: YHMiZJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Role"
 msgstr "Rol"
@@ -8799,6 +8969,12 @@ msgstr "Ruta nu a fost găsită."
 msgid "Route path already exists."
 msgstr "Calea rutei există deja."
 
+#. js-lingui-id: dFzdKL
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Row cause"
+msgstr ""
+
 #. js-lingui-id: /ruB5e
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Row level permission predicate already exists"
@@ -8866,6 +9042,12 @@ msgstr "Predicatul de permisiune la nivel de rând de actualizat nu a fost găsi
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Row level permission predicate with this universal identifier already exists"
 msgstr "Predicatul de permisiune la nivel de rând cu acest identificator universal există deja"
+
+#. js-lingui-id: 2feo6q
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Rule"
+msgstr ""
 
 #. js-lingui-id: F1qT/F
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -9011,6 +9193,7 @@ msgstr "Vector căutare"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -9249,6 +9432,12 @@ msgctxt "fieldMetadata.label"
 msgid "Settings"
 msgstr "Setări"
 
+#. js-lingui-id: yS/zBf
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Shared record"
+msgstr ""
+
 #. js-lingui-id: e1k+No
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Sign up is disabled."
@@ -9352,6 +9541,12 @@ msgstr "Calea către componenta sursă este invalidă"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Source handler path is invalid"
 msgstr "Calea către handlerul sursă este invalidă"
+
+#. js-lingui-id: kQeWQ3
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Source ID"
+msgstr ""
 
 #. js-lingui-id: OmgwCE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
@@ -10011,6 +10206,7 @@ msgstr "Manifestului connection-provider îi lipsesc câmpurile necesare."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -10079,6 +10275,11 @@ msgstr "Câmpul configurat pentru acest widget nu a putut fi găsit."
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "The field you are trying to set permissions for could not be found. It may have been deleted."
 msgstr "Câmpul pentru care încercați să setați permisiuni nu a putut fi găsit. Este posibil să fi fost șters."
+
+#. js-lingui-id: APJkak
+#: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
+msgid "The file changed while it was being processed."
+msgstr ""
 
 #. js-lingui-id: bAGU1r
 #: src/engine/core-modules/file/utils/extract-file-info-or-throw.utils.ts
@@ -10408,6 +10609,7 @@ msgstr "Starea versiunii fluxului de lucru"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -10502,6 +10704,16 @@ msgstr "Această aplicație necesită o versiune mai nouă decât cea la care a 
 msgid "This application is already owned by a workspace."
 msgstr "Această aplicație este deja deținută de un spațiu de lucru."
 
+#. js-lingui-id: HfhpFw
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being installed. Please wait for it to finish before uninstalling it."
+msgstr ""
+
+#. js-lingui-id: 63s1OL
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being uninstalled. Please wait for it to finish before installing it again."
+msgstr ""
+
 #. js-lingui-id: SRnMG0
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign cannot be sent. It may be missing a sender, subject or recipient list, or it was already sent."
@@ -10518,6 +10730,7 @@ msgid "This campaign no longer exists."
 msgstr "Această campanie nu mai există."
 
 #. js-lingui-id: 5MvgEo
+#: src/modules/emailing/utils/compile-campaign-batch-template.util.ts
 #: src/modules/emailing/utils/compile-campaign-email-content.util.ts
 msgid "This campaign's email content is invalid."
 msgstr "Conținutul acestui e-mail de campanie nu este valid."
@@ -10633,6 +10846,11 @@ msgstr "Acest format de fișier nu este acceptat."
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "This file has already been uploaded."
 msgstr "Acest fișier a fost deja încărcat."
+
+#. js-lingui-id: VGePIR
+#: src/engine/core-modules/file/file-upload/services/file-upload-target.service.ts
+msgid "This file path is too long to upload."
+msgstr ""
 
 #. js-lingui-id: 6ekAtL
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
@@ -10815,6 +11033,11 @@ msgstr "Acest subdomeniu este deja luat."
 msgid "This suppressed address no longer exists."
 msgstr "Această adresă suprimată nu mai există."
 
+#. js-lingui-id: qm7uMm
+#: src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util.ts
+msgid "This SVG is too large to be processed."
+msgstr "Acest SVG este prea mare pentru a fi procesat."
+
 #. js-lingui-id: 0GMgIa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"
@@ -10829,6 +11052,11 @@ msgstr "Acest tip de înregistrare nu poate fi îmbinat."
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This universal identifier is already claimed by another registration."
 msgstr "Acest identificator universal este deja rezervat de o altă înregistrare."
+
+#. js-lingui-id: xL5g9G
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
+msgid "This upload expired before it was confirmed. Please upload the file again."
+msgstr ""
 
 #. js-lingui-id: GEN5Cv
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
@@ -11381,6 +11609,7 @@ msgstr "a actualizat o sarcină asociată"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -12092,6 +12321,18 @@ msgstr "miercuri"
 msgid "Welcome to Twenty: Please Confirm Your Email"
 msgstr "Bine ați venit la Twenty: Vă rugăm să confirmați adresa de e-mail"
 
+#. js-lingui-id: lKboI8
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "What the principal may do with the record"
+msgstr ""
+
+#. js-lingui-id: 80/6BQ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "What this list is for"
+msgstr ""
+
 #. js-lingui-id: ofdfh5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -12127,6 +12368,24 @@ msgstr "Dacă identificatorul este blocat pentru un singur membru al spațiului 
 msgctxt "fieldMetadata.description"
 msgid "Whether this message is an unsent draft synced from the provider"
 msgstr "Dacă acest mesaj este o ciornă netrimisă sincronizată de la furnizor"
+
+#. js-lingui-id: 5JE8rv
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.description"
+msgid "Who may read a record of a private object"
+msgstr ""
+
+#. js-lingui-id: 8pSHTA
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Who receives the access"
+msgstr ""
+
+#. js-lingui-id: /paixI
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Why the access was granted"
+msgstr ""
 
 #. js-lingui-id: OHlJ1X
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts
@@ -12545,6 +12804,7 @@ msgstr "Membru al spațiului de lucru"
 
 #. js-lingui-id: gfOHib
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Workspace member"
 msgstr "Membru al spațiului de lucru"

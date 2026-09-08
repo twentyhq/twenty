@@ -4,22 +4,24 @@ import {
   type OnModuleInit,
 } from '@nestjs/common';
 
-import v8 from 'v8';
-
+import { type EventEmitter2 } from '@nestjs/event-emitter';
 import * as Sentry from '@sentry/node';
 import {
+  type Job,
   type JobsOptions,
   MetricsTime,
   Queue,
   type QueueOptions,
   Worker,
 } from 'bullmq';
+import { type JobState as BullMQJobState } from 'bullmq/dist/esm/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import {
   type QueueCronJobOptions,
   type QueueJobOptions,
+  type QueueJobRecipient,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import {
   type InFlightQueueJob,
@@ -33,10 +35,14 @@ import {
 } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
+import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { type QueueJobChangedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-changed-event.type';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
+import { buildQueueJobIdWithSuffix } from 'src/engine/core-modules/message-queue/utils/build-queue-job-id-with-suffix.util';
+import { isQueueJobIdAlreadyWaiting } from 'src/engine/core-modules/message-queue/utils/is-queue-job-id-already-waiting.util';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { applyWorkspaceSentryContextFromJobData } from 'src/engine/core-modules/sentry/utils/apply-workspace-sentry-context-from-job-data.util';
@@ -44,8 +50,9 @@ import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/
 
 export type BullMQDriverOptions = QueueOptions;
 
-const V4_LENGTH = 36;
-const BYTES_PER_MEGABYTE = 1024 * 1024;
+type BullMQJobsOptions = JobsOptions & {
+  broadcastTo?: QueueJobRecipient;
+};
 
 export class BullMQDriver
   implements MessageQueueDriver, OnModuleDestroy, OnModuleInit
@@ -67,6 +74,7 @@ export class BullMQDriver
     private options: BullMQDriverOptions,
     private metricsService: MetricsService,
     private twentyConfigService: TwentyConfigService,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   onModuleInit() {
@@ -214,10 +222,6 @@ export class BullMQDriver
 
           // TODO: Correctly support for job.id
           const timeStart = performance.now();
-          // TODO: diagnostic only — remove once the worker OOM root cause is
-          // confirmed. Attribute heap growth to job types, including jobs that
-          // throw under memory pressure (logged from the finally below).
-          const heapUsedBeforeBytes = v8.getHeapStatistics().used_heap_size;
           const workspaceId = job.data?.workspaceId;
           const workspaceSuffix = workspaceId
             ? ` [workspace=${workspaceId}]`
@@ -226,32 +230,32 @@ export class BullMQDriver
           this.logger.log(
             `Processing job ${job.id} with name ${job.name} on queue ${queueName}${workspaceSuffix}`,
           );
+          await handler({
+            data: job.data,
+            id: job.id ?? '',
+            name: job.name,
+            retryLimit: Math.max(0, (job.opts.attempts ?? 1) - 1),
+            updateData: (data) => job.updateData(data),
+            abortSignal,
+          });
+          const timeEnd = performance.now();
+          const executionTime = timeEnd - timeStart;
 
-          let jobSucceeded = false;
-
-          try {
-            await handler({
-              data: job.data,
-              id: job.id ?? '',
-              name: job.name,
-              retryLimit: Math.max(0, (job.opts.attempts ?? 1) - 1),
-              updateData: (data) => job.updateData(data),
-              abortSignal,
-            });
-            jobSucceeded = true;
-          } finally {
-            const executionTime = performance.now() - timeStart;
-            const heapUsedAfterBytes = v8.getHeapStatistics().used_heap_size;
-            const heapDeltaMegabytes =
-              (heapUsedAfterBytes - heapUsedBeforeBytes) / BYTES_PER_MEGABYTE;
-            const heapUsedMegabytes = heapUsedAfterBytes / BYTES_PER_MEGABYTE;
-
-            this.logger.log(
-              `Job ${job.id} with name ${job.name} ${jobSucceeded ? 'processed' : 'failed'} on queue ${queueName} in ${executionTime.toFixed(2)}ms${workspaceSuffix} heapDeltaMB=${heapDeltaMegabytes.toFixed(1)} heapUsedMB=${heapUsedMegabytes.toFixed(0)}`,
-            );
-          }
+          this.logger.log(
+            `Job ${job.id} with name ${job.name} processed on queue ${queueName} in ${executionTime.toFixed(2)}ms${workspaceSuffix}`,
+          );
         }),
       workerOptions,
+    );
+
+    this.workerMap[queueName].on('active', (job) =>
+      this.emitJobChange({ queueName, job, state: 'active' }),
+    );
+    this.workerMap[queueName].on('completed', (job) =>
+      this.emitJobChange({ queueName, job, state: 'completed' }),
+    );
+    this.workerMap[queueName].on('failed', (job) =>
+      this.emitJobChange({ queueName, job, state: 'failed' }),
     );
 
     this.workerMap[queueName].on('completed', (job) => {
@@ -348,16 +352,48 @@ export class BullMQDriver
     );
   }
 
+  private emitJobChange({
+    queueName,
+    job,
+    state,
+  }: {
+    queueName: MessageQueue;
+    job: Job | undefined;
+    state: BullMQJobState;
+  }): void {
+    if (!isDefined(job) || !isDefined(this.getBroadcastTo(job))) {
+      return;
+    }
+
+    const jobDetails = this.buildQueueJobDetails({ job, state });
+
+    if (!isDefined(jobDetails)) {
+      return;
+    }
+
+    this.eventEmitter.emit(QUEUE_JOB_CHANGED_EVENT, {
+      queueName,
+      job: jobDetails,
+    } satisfies QueueJobChangedEvent);
+  }
+
+  private getBroadcastTo(job: Job): QueueJobRecipient | undefined {
+    const { broadcastTo }: BullMQJobsOptions = job.opts;
+
+    return broadcastTo;
+  }
+
   private buildJobsOptions({
     queueName,
     options,
   }: {
     queueName: MessageQueue;
     options?: QueueJobOptions;
-  }): JobsOptions {
+  }): BullMQJobsOptions {
     return {
-      // We suffix the id with V4() to make sure ids are unique so we can add a waiting job when a job related with the same option.id is running
-      jobId: options?.id ? `${options.id}-${v4()}` : undefined,
+      jobId: options?.id
+        ? buildQueueJobIdWithSuffix({ jobIdPrefix: options.id, suffix: v4() })
+        : undefined,
       priority:
         options?.priority ?? MESSAGE_QUEUE_WORKER_CONFIG[queueName].priority,
       attempts: 1 + (options?.retryLimit || 0),
@@ -377,6 +413,7 @@ export class BullMQDriver
         count: QUEUE_RETENTION.failedMaxCount,
       },
       delay: options?.delay,
+      broadcastTo: options?.broadcastTo,
     };
   }
 
@@ -394,13 +431,11 @@ export class BullMQDriver
 
     // This ensures only one waiting job can be queued for a specific option.id
     if (options?.id && !options?.allowDuplicatedPrefixes) {
-      const waitingJobs = await this.queueMap[queueName].getJobs(['waiting']);
+      const waitingJobIds = await this.getWaitingJobIds(queueName);
 
-      const isJobAlreadyWaiting = waitingJobs.some(
-        (job) => job.id?.slice(0, -(V4_LENGTH + 1)) === options.id,
-      );
-
-      if (isJobAlreadyWaiting) {
+      if (
+        isQueueJobIdAlreadyWaiting({ waitingJobIds, jobIdOrPrefix: options.id })
+      ) {
         return;
       }
     }
@@ -410,6 +445,32 @@ export class BullMQDriver
     const job = await this.queueMap[queueName].add(jobName, data, queueOptions);
 
     return job.id;
+  }
+
+  private async getWaitingJobIds(queueName: MessageQueue): Promise<string[]> {
+    const waitingJobs = await this.queueMap[queueName].getJobs([
+      'waiting',
+      'prioritized',
+    ]);
+
+    return waitingJobs.map((job) => job.id).filter(isDefined);
+  }
+
+  private async filterOutAlreadyWaitingJobs<T extends MessageQueueJobData>(
+    queueName: MessageQueue,
+    jobs: QueueJobToAdd<T>[],
+  ): Promise<QueueJobToAdd<T>[]> {
+    if (!jobs.some((job) => isDefined(job.jobId))) {
+      return jobs;
+    }
+
+    const waitingJobIds = await this.getWaitingJobIds(queueName);
+
+    return jobs.filter(
+      ({ jobId }) =>
+        !isDefined(jobId) ||
+        !isQueueJobIdAlreadyWaiting({ waitingJobIds, jobIdOrPrefix: jobId }),
+    );
   }
 
   async bulkAdd<T extends MessageQueueJobData>(
@@ -424,14 +485,18 @@ export class BullMQDriver
       );
     }
 
-    if (jobs.length === 0) {
+    const jobsToAdd = options?.allowDuplicatedPrefixes
+      ? jobs
+      : await this.filterOutAlreadyWaitingJobs(queueName, jobs);
+
+    if (jobsToAdd.length === 0) {
       return [];
     }
 
     const queueOptions = this.buildJobsOptions({ queueName, options });
 
     const addedJobs = await this.queueMap[queueName].addBulk(
-      jobs.map(({ data, jobId }, index) => ({
+      jobsToAdd.map(({ data, jobId }, index) => ({
         name: jobName,
         data,
         opts: {
@@ -471,7 +536,7 @@ export class BullMQDriver
   ): Promise<QueueJobDetails<T> | undefined> {
     const job = await this.queueMap[queueName].getJob(jobId);
 
-    if (!isDefined(job) || !isDefined(job.id)) {
+    if (!isDefined(job)) {
       return undefined;
     }
 
@@ -479,6 +544,20 @@ export class BullMQDriver
 
     // BullMQ reports 'unknown' for a job whose record was evicted by retention
     if (state === 'unknown') {
+      return undefined;
+    }
+
+    return this.buildQueueJobDetails<T>({ job, state });
+  }
+
+  private buildQueueJobDetails<T extends MessageQueueJobData>({
+    job,
+    state,
+  }: {
+    job: Job;
+    state: BullMQJobState;
+  }): QueueJobDetails<T> | undefined {
+    if (!isDefined(job.id)) {
       return undefined;
     }
 
@@ -491,6 +570,7 @@ export class BullMQDriver
       timestamp: job.timestamp,
       processedOn: job.processedOn,
       finishedOn: job.finishedOn,
+      broadcastTo: this.getBroadcastTo(job),
     };
   }
 

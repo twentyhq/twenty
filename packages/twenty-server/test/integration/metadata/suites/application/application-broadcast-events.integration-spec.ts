@@ -17,7 +17,6 @@ const APPLICATION_PAYLOAD_KEYS = [
   'id',
   'name',
   'sdkClientCoreChecksum',
-  'state',
   'universalIdentifier',
   'version',
 ];
@@ -108,7 +107,6 @@ describe('Application broadcast events', () => {
     expect(applicationCreatedEvent?.properties.after).toMatchObject({
       id: applicationCreatedEvent?.recordId,
       name: 'Broadcast test application',
-      state: expect.any(String),
     });
 
     const applicationRegistrationId = registrationCreatedEvent?.recordId;

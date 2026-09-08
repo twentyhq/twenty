@@ -153,6 +153,14 @@ msgstr ""
 msgid "[empty string]"
 msgstr ""
 
+#. js-lingui-id: gJXeRg
+#. placeholder {0}: counts.duplicateEmails
+#. placeholder {1}: formatNumber(counts.duplicateEmails)
+#. placeholder {2}: formatNumber(counts.duplicateEmails)
+#: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
+msgid "{0, plural, one {{1} duplicate} other {{2} duplicates}}"
+msgstr ""
+
 #. js-lingui-id: Z2fCN4
 #. placeholder {0}: failedResults.length
 #. placeholder {1}: failedResults.length
@@ -167,6 +175,14 @@ msgstr ""
 #. placeholder {2}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
 msgid "{0, plural, one {{1} job could not be retried} other {{2} jobs could not be retried}}"
+msgstr ""
+
+#. js-lingui-id: 5pucMh
+#. placeholder {0}: audiencePreview.sendable
+#. placeholder {1}: formatNumber(audiencePreview.sendable)
+#. placeholder {2}: formatNumber(audiencePreview.sendable)
+#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+msgid "{0, plural, one {{1} recipient} other {{2} recipients}}"
 msgstr ""
 
 #. js-lingui-id: 0LMb5P
@@ -194,10 +210,24 @@ msgstr ""
 msgid "{0, plural, one {# workspace failed or behind} other {# workspaces failed or behind}}"
 msgstr ""
 
+#. js-lingui-id: V5p/Lu
+#. placeholder {0}: canceled.canceledMessageCount
+#. placeholder {1}: canceled.canceledMessageCount
+#. placeholder {2}: canceled.canceledMessageCount
+#: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
+msgid "{0, plural, one {Campaign canceled, {1} pending email stopped} other {Campaign canceled, {2} pending emails stopped}}"
+msgstr ""
+
 #. js-lingui-id: WTc9VY
 #. placeholder {0}: restriction.fieldNames.length
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
 msgid "{0, plural, one {You do not have permission to access the {fieldsList} field} other {You do not have permission to access the {fieldsList} fields}}"
+msgstr ""
+
+#. js-lingui-id: 6lE3tD
+#. placeholder {0}: formatNumber(counts.hardSuppressed)
+#: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
+msgid "{0} bounced or complained"
 msgstr ""
 
 #. js-lingui-id: dNIJYp
@@ -212,12 +242,6 @@ msgstr ""
 msgid "{0} days"
 msgstr ""
 
-#. js-lingui-id: okrK9q
-#. placeholder {0}: preview.duplicateEmails
-#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
-msgid "{0} duplicate"
-msgstr ""
-
 #. js-lingui-id: stCODw
 #. placeholder {0}: appObject.fields.length
 #: src/modules/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication.ts
@@ -230,17 +254,11 @@ msgstr ""
 msgid "{0} have no relation to {loadBalancePoolObjectLabel}. Pick a different object to balance by."
 msgstr ""
 
-#. js-lingui-id: TDB80r
-#. placeholder {0}: preview.totalMembers
-#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
-msgid "{0} in this list"
-msgstr ""
-
-#. js-lingui-id: /PXxEG
-#. placeholder {0}: preview.totalMembers
-#. placeholder {1}: preview.sendable
-#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
-msgid "{0} in this list, {1} sendable ({breakdown})"
+#. js-lingui-id: crgYwP
+#. placeholder {0}: formatNumber(audiencePreview.totalMembers)
+#. placeholder {1}: excludedReasons.join(', ')
+#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+msgid "{0} in the list, skipping {1}"
 msgstr ""
 
 #. js-lingui-id: T8aKxO
@@ -269,9 +287,15 @@ msgid "{0} of {1}"
 msgstr ""
 
 #. js-lingui-id: BzvoVr
-#. placeholder {0}: preview.topicUnsubscribed
-#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
+#. placeholder {0}: formatNumber(counts.topicUnsubscribed)
+#: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} opted out of this topic"
+msgstr ""
+
+#. js-lingui-id: q1Pok/
+#. placeholder {0}: formatNumber(counts.overCap)
+#: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
+msgid "{0} over the recipient limit"
 msgstr ""
 
 #. js-lingui-id: 55frRG
@@ -299,8 +323,8 @@ msgid "{0} shown"
 msgstr ""
 
 #. js-lingui-id: nZUq+6
-#. placeholder {0}: preview.globallyUnsubscribed
-#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
+#. placeholder {0}: formatNumber(counts.globallyUnsubscribed)
+#: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} unsubscribed from everything"
 msgstr ""
 
@@ -322,10 +346,10 @@ msgstr ""
 msgid "{0} widgets"
 msgstr ""
 
-#. js-lingui-id: Aixgij
-#. placeholder {0}: preview.withoutEmail
-#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
-msgid "{0} without email"
+#. js-lingui-id: eehF34
+#. placeholder {0}: formatNumber(counts.withoutEmail)
+#: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
+msgid "{0} without an email address"
 msgstr ""
 
 #. js-lingui-id: 2UKfhY
@@ -478,6 +502,11 @@ msgstr ""
 msgid "{headersCount} headers received"
 msgstr ""
 
+#. js-lingui-id: 4xzh1W
+#: src/modules/object-record/record-list/components/RecordListRow.tsx
+msgid "{hiddenFieldCount, plural, one {# more populated field available} other {# more populated fields available}}"
+msgstr ""
+
 #. js-lingui-id: pEl0a0
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{hours, plural, one {{hours} hour} other {{hours} hours}}"
@@ -552,6 +581,18 @@ msgstr ""
 #. js-lingui-id: HpUf/k
 #: src/modules/object-record/record-merge/components/MergeSettingsTab.tsx
 msgid "{positionLabel} record holds priority"
+msgstr ""
+
+#. js-lingui-id: 2V2T+0
+#. placeholder {0}: formatNumber(queuedCount)
+#. placeholder {1}: formatNumber(queuedCount)
+#: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
+msgid "{queuedCount, plural, one {Campaign queued to {0} recipient} other {Campaign queued to {1} recipients}}"
+msgstr ""
+
+#. js-lingui-id: cMTWxR
+#: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
+msgid "{queuedMessage}, skipping {skipReasons}"
 msgstr ""
 
 #. js-lingui-id: 5d0hY6
@@ -665,10 +706,10 @@ msgstr ""
 msgid "{unitCount, plural, one {Year} other {Years}}"
 msgstr ""
 
-#. js-lingui-id: ITVweg
+#. js-lingui-id: YdwR4T
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
-msgid "{visibleFieldsCount} shown"
+msgid "{visibleFieldsCount} selected"
 msgstr ""
 
 #. js-lingui-id: WjjsAL
@@ -890,6 +931,11 @@ msgstr ""
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow-versions/components/UseAsDraftWorkflowVersionSingleRecordCommand.tsx
 #: src/modules/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton.tsx
 msgid "A draft already exists for this workflow. Are you sure you want to erase it?"
+msgstr ""
+
+#. js-lingui-id: K3NJnJ
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "A payment method is needed to keep your workspace active."
 msgstr ""
 
 #. js-lingui-id: oO3ZQX
@@ -1168,6 +1214,11 @@ msgstr ""
 msgid "Add a {objectLabelSingular}"
 msgstr ""
 
+#. js-lingui-id: rUVyfz
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Add a card below to update your billing details and retry your payment."
+msgstr ""
+
 #. js-lingui-id: 7W8nJr
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationEditor.tsx
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
@@ -1245,6 +1296,11 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
 msgid "Add account"
+msgstr ""
+
+#. js-lingui-id: dGjQL8
+#: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
+msgid "Add an API key to enable AI."
 msgstr ""
 
 #. js-lingui-id: W5wF8J
@@ -1443,6 +1499,7 @@ msgstr ""
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker.tsx
 #: src/modules/object-record/record-picker/single-record-picker/components/SingleRecordPickerMenuItemsWithSearch.tsx
 #: src/modules/object-record/record-picker/single-record-picker/components/SingleRecordPickerMenuItemsWithSearch.tsx
+#: src/modules/object-record/record-table-widget/components/RecordTableWidgetJunctionAddNewRow.tsx
 #: src/modules/object-record/record-table-widget/components/RecordTableWidgetNestedRelationAddNewRow.tsx
 #: src/modules/object-record/record-table/components/RecordTableNoRecordGroupAddNew.tsx
 msgid "Add New"
@@ -1478,6 +1535,11 @@ msgstr ""
 #. js-lingui-id: 7YdkgZ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Add Output Field"
+msgstr ""
+
+#. js-lingui-id: lRpmgk
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Add payment method"
 msgstr ""
 
 #. js-lingui-id: aYtHO6
@@ -1736,7 +1798,7 @@ msgid "Administrators"
 msgstr ""
 
 #. js-lingui-id: sxkWRg
-#: src/modules/navigation/components/SettingsNavigationDrawer.tsx
+#: src/modules/navigation/components/SettingsNavigationDrawerContent.tsx
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 msgid "Advanced"
 msgstr ""
@@ -1826,7 +1888,7 @@ msgid "Aggregate Chart"
 msgstr ""
 
 #. js-lingui-id: jsQZMk
-#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+#: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 #: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
@@ -1886,11 +1948,6 @@ msgstr ""
 #. js-lingui-id: kNfr85
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "AI Model"
-msgstr ""
-
-#. js-lingui-id: Sfwld8
-#: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
-msgid "AI not configured. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY in your environment."
 msgstr ""
 
 #. js-lingui-id: jwOWhc
@@ -1954,6 +2011,16 @@ msgstr ""
 #. js-lingui-id: jyqPfh
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "AI Usage by Workspace"
+msgstr ""
+
+#. js-lingui-id: YfXPCQ
+#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
+msgid "AI usage limit reached. Ask an admin to upgrade the plan."
+msgstr ""
+
+#. js-lingui-id: wBA/cx
+#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
+msgid "AI usage limit reached. Contact support to upgrade."
 msgstr ""
 
 #. js-lingui-id: KLyZ6L
@@ -2543,7 +2610,7 @@ msgid "Application not listed on the marketplace. It was shared via a direct lin
 msgstr ""
 
 #. js-lingui-id: +tE2x9
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/modules/settings/applications/hooks/useUninstallApplication.ts
 msgid "Application successfully uninstalled."
 msgstr ""
 
@@ -2735,6 +2802,11 @@ msgstr ""
 #: src/modules/side-panel/components/SidePanelAskAiInfo.tsx
 #: src/modules/side-panel/hooks/useOpenAskAiPageInSidePanel.ts
 msgid "Ask AI"
+msgstr ""
+
+#. js-lingui-id: HiVVqo
+#: src/modules/ai/components/AiChatEditorSection.tsx
+msgid "Ask your workspace admin to enable an AI model."
 msgstr ""
 
 #. js-lingui-id: mc9nK2
@@ -3598,16 +3670,6 @@ msgstr ""
 msgid "Calls"
 msgstr ""
 
-#. js-lingui-id: 06mPlO
-#: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
-msgid "Campaign queued to {queuedCount} recipient(s)"
-msgstr ""
-
-#. js-lingui-id: 6nG/xd
-#: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
-msgid "Campaign queued to {queuedCount} recipient(s), {skippedCount} skipped"
-msgstr ""
-
 #. js-lingui-id: msssZq
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Can't change API names for standard objects"
@@ -3624,6 +3686,7 @@ msgstr ""
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/billing/components/AddCreditCardModal.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
@@ -3635,6 +3698,12 @@ msgstr ""
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Cancel"
+msgstr ""
+
+#. js-lingui-id: C4uQHu
+#: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
+msgid "Cancel Campaign"
 msgstr ""
 
 #. js-lingui-id: J8nuSF
@@ -4599,6 +4668,11 @@ msgstr ""
 msgid "Configure IMAP settings to receive and sync your emails."
 msgstr ""
 
+#. js-lingui-id: pE9JCI
+#: src/modules/ai/components/AiChatEditorSection.tsx
+msgid "Configure models"
+msgstr ""
+
 #. js-lingui-id: gk/8eh
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Configure SMTP settings to send emails from your account."
@@ -5287,6 +5361,11 @@ msgstr ""
 msgid "Count unique values"
 msgstr ""
 
+#. js-lingui-id: tKTq/b
+#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+msgid "Counting recipients..."
+msgstr ""
+
 #. js-lingui-id: JNCzPW
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
@@ -5301,6 +5380,7 @@ msgid "create"
 msgstr ""
 
 #. js-lingui-id: hYgDIe
+#: src/modules/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 msgid "Create"
@@ -6956,11 +7036,6 @@ msgstr ""
 msgid "Domain already taken"
 msgstr ""
 
-#. js-lingui-id: eNcdvk
-#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
-msgid "Domain links are stored as a bare domain name, so twenty.com and https://www.twenty.com are the same value"
-msgstr ""
-
 #. js-lingui-id: XoBD/+
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
 msgid "Domain Setup"
@@ -7552,6 +7627,11 @@ msgstr ""
 msgid "Emails & Calendar"
 msgstr ""
 
+#. js-lingui-id: VJ5blF
+#: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
+msgid "Emails already handed to the provider cannot be recalled. This stops everything still waiting to be sent."
+msgstr ""
+
 #. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Emails from the blocklist will be ignored. Manage blocklist on the \"Accounts\" setting page."
@@ -8132,7 +8212,8 @@ msgid "Error transferring the enterprise key"
 msgstr ""
 
 #. js-lingui-id: 5Vy8D1
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/modules/settings/applications/hooks/useUninstallApplication.ts
+#: src/modules/settings/applications/hooks/useUninstallApplication.ts
 msgid "Error uninstalling application."
 msgstr ""
 
@@ -8569,6 +8650,16 @@ msgstr ""
 msgid "Failed to add provider"
 msgstr ""
 
+#. js-lingui-id: ScvpVb
+#: src/modules/object-record/record-table-widget/components/RecordTableWidgetJunctionAddNewRow.tsx
+msgid "Failed to add record"
+msgstr ""
+
+#. js-lingui-id: Y9Y+x3
+#: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
+msgid "Failed to cancel campaign"
+msgstr ""
+
 #. js-lingui-id: E2CkaQ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Failed to claim ownership."
@@ -8620,6 +8711,11 @@ msgstr ""
 msgid "Failed to duplicate dashboard"
 msgstr ""
 
+#. js-lingui-id: 6e1GS3
+#: src/modules/command-menu-item/engine-command/record/single-record/message-list/hooks/useDuplicateMessageList.ts
+msgid "Failed to duplicate list"
+msgstr ""
+
 #. js-lingui-id: WYXxQF
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
 msgid "Failed to duplicate workflow"
@@ -8641,6 +8737,7 @@ msgid "Failed to get response"
 msgstr ""
 
 #. js-lingui-id: qZwtAi
+#: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 msgid "Failed to install the application."
 msgstr ""
@@ -8679,6 +8776,12 @@ msgstr ""
 #. js-lingui-id: VxZSi+
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
 msgid "Failed to load server administrators."
+msgstr ""
+
+#. js-lingui-id: OsNlev
+#: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
+#: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
+msgid "Failed to load the application."
 msgstr ""
 
 #. js-lingui-id: nKkohy
@@ -9421,6 +9524,7 @@ msgstr ""
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "From"
@@ -9634,6 +9738,11 @@ msgstr ""
 #. js-lingui-id: CKyk7Q
 #: src/modules/onboarding/components/OnboardingHeader.tsx
 msgid "Go back"
+msgstr ""
+
+#. js-lingui-id: y0SPQU
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+msgid "Go to billing"
 msgstr ""
 
 #. js-lingui-id: Hb4Cgz
@@ -10017,8 +10126,8 @@ msgid "Hire a partner to help you implement and customize Twenty."
 msgstr ""
 
 #. js-lingui-id: i0qMbr
-#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
+#: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 msgid "Home"
 msgstr ""
 
@@ -10660,7 +10769,6 @@ msgstr ""
 
 #. js-lingui-id: wJJ+Wy
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Installing..."
 msgstr ""
@@ -11372,11 +11480,6 @@ msgstr ""
 msgid "Last name can not be empty"
 msgstr ""
 
-#. js-lingui-id: s0kiVA
-#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
-msgid "Last payment failed. Please contact your admin."
-msgstr ""
-
 #. js-lingui-id: 3u/3zO
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "Last payment failed. Please update your billing details."
@@ -11706,8 +11809,14 @@ msgstr ""
 
 #. js-lingui-id: 2BBAbc
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
+#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 #: src/modules/views/types/ViewType.ts
 msgid "List"
+msgstr ""
+
+#. js-lingui-id: Wfj8PH
+#: src/modules/command-menu-item/engine-command/record/single-record/message-list/components/DuplicateMessageListSingleRecordCommand.tsx
+msgid "List duplicated with {memberCount, plural, one {# member} other {# members}}"
 msgstr ""
 
 #. js-lingui-id: 3xTn5L
@@ -12841,6 +12950,9 @@ msgstr ""
 
 #. js-lingui-id: 6WSYbN
 #. placeholder {0}: objectMetadataItem.labelSingular
+#. placeholder {0}: pendingRecordCreation.objectMetadataLabelSingular
+#: src/modules/object-record/record-form/components/RecordCreationFormProvider.tsx
+#: src/modules/object-record/record-form/components/RecordCreationFormProvider.tsx
 #: src/modules/side-panel/hooks/useOpenRecordInSidePanel.ts
 msgid "New {0}"
 msgstr ""
@@ -13173,9 +13285,13 @@ msgid "No AI consumption recorded for this user."
 msgstr ""
 
 #. js-lingui-id: 1GMOHe
-#: src/modules/ai/components/AiChatEditorSection.tsx
 #: src/modules/ai/hooks/useAgentChat.ts
 msgid "No AI models are enabled in this workspace."
+msgstr ""
+
+#. js-lingui-id: zcsNvp
+#: src/modules/ai/components/AiChatEditorSection.tsx
+msgid "No AI models are enabled."
 msgstr ""
 
 #. js-lingui-id: 42kV9p
@@ -13511,6 +13627,7 @@ msgstr ""
 
 #. js-lingui-id: nivaRq
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "No list"
 msgstr ""
 
@@ -13627,9 +13744,9 @@ msgstr ""
 msgid "No provenance attestation was found for this package. Publish it from GitHub Actions with npm trusted publishing, then try claiming again."
 msgstr ""
 
-#. js-lingui-id: 5sv+ia
+#. js-lingui-id: m1OG2V
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
-msgid "No recipients to send to ({skippedCount} skipped)"
+msgid "No recipients to send to ({skipReasons})"
 msgstr ""
 
 #. js-lingui-id: V/+aTW
@@ -13735,7 +13852,13 @@ msgstr ""
 
 #. js-lingui-id: Ylz+jb
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "No sender"
+msgstr ""
+
+#. js-lingui-id: 5UEIxk
+#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
+msgid "No sending address is available. Connect a verified sending domain in Settings before this campaign can go out."
 msgstr ""
 
 #. js-lingui-id: JkPTT8
@@ -13745,6 +13868,7 @@ msgstr ""
 
 #. js-lingui-id: eeoVfm
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 msgid "No subject"
 msgstr ""
 
@@ -14953,6 +15077,21 @@ msgstr ""
 msgid "Payment issue"
 msgstr ""
 
+#. js-lingui-id: twOnMk
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Payment method added."
+msgstr ""
+
+#. js-lingui-id: uIMn/N
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Payment method added. Retrying your payment..."
+msgstr ""
+
+#. js-lingui-id: OvqmUS
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+msgid "Payment successful."
+msgstr ""
+
 #. js-lingui-id: CcK+Ft
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "PDF"
@@ -15769,12 +15908,18 @@ msgstr ""
 msgid "Recipient"
 msgstr ""
 
+#. js-lingui-id: F+BB7w
+#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+msgid "Recipient count unavailable"
+msgstr ""
+
 #. js-lingui-id: p8GO5h
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
 msgid "recipient@example.com"
 msgstr ""
 
 #. js-lingui-id: yPrbsy
+#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Recipients"
 msgstr ""
@@ -16858,7 +17003,7 @@ msgstr ""
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
-#: src/modules/object-record/record-table-widget/components/RecordTableWidgetNestedRelationPickerDropdownContent.tsx
+#: src/modules/object-record/record-table-widget/components/RecordTableWidgetRelationPickerDropdownContent.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/side-panel/hooks/useOpenRecordsSearchPageInSidePanel.ts
@@ -17425,6 +17570,11 @@ msgstr ""
 msgid "Select Action"
 msgstr ""
 
+#. js-lingui-id: TM0KpN
+#: src/modules/object-core/components/CoreObjectTable.tsx
+msgid "Select all loaded rows"
+msgstr ""
+
 #. js-lingui-id: /fhMKz
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn.tsx
 msgid "Select all rows"
@@ -17506,6 +17656,7 @@ msgid "Select options"
 msgstr ""
 
 #. js-lingui-id: 9c44h0
+#: src/modules/object-core/components/CoreObjectTable.tsx
 #: src/modules/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox.tsx
 msgid "Select row"
 msgstr ""
@@ -17576,6 +17727,16 @@ msgstr ""
 msgid "Send an invite email to your team"
 msgstr ""
 
+#. js-lingui-id: WRLt0i
+#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+msgid "Send campaign"
+msgstr ""
+
+#. js-lingui-id: b7hiQs
+#: src/modules/side-panel/hooks/useOpenSendCampaignInSidePanel.ts
+msgid "Send Campaign"
+msgstr ""
+
 #. js-lingui-id: 65dxv8
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Send email"
@@ -17627,6 +17788,11 @@ msgstr ""
 #. js-lingui-id: asU5VT
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
 msgid "Sending request..."
+msgstr ""
+
+#. js-lingui-id: 2l+PSH
+#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+msgid "Sending starts right away and cannot be undone."
 msgstr ""
 
 #. js-lingui-id: IoAuJG
@@ -17769,7 +17935,7 @@ msgid "Setting up your <0>database</0>..."
 msgstr ""
 
 #. js-lingui-id: Tz0i8g
-#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+#: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -17779,6 +17945,7 @@ msgstr ""
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
@@ -18476,6 +18643,11 @@ msgstr ""
 msgid "Stop impersonating"
 msgstr ""
 
+#. js-lingui-id: juzGVI
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
+msgid "Store the full URL or just the domain"
+msgstr ""
+
 #. js-lingui-id: GGiaAW
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "Strategy"
@@ -18576,6 +18748,7 @@ msgstr ""
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Subject"
 msgstr ""
@@ -19250,11 +19423,6 @@ msgstr ""
 msgid "The transcript is being prepared…"
 msgstr ""
 
-#. js-lingui-id: qrhV2s
-#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
-msgid "The unsubscribe topic this email belongs to. Recipients who opted out of it are skipped, and the unsubscribe link is scoped to it."
-msgstr ""
-
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "The values of this field"
@@ -19304,6 +19472,11 @@ msgstr ""
 #. js-lingui-id: luL9RX
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "There are still some rows that contain errors. Rows with errors will be ignored when submitting."
+msgstr ""
+
+#. js-lingui-id: PpLJq1
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "There is a billing issue. Please contact your admin."
 msgstr ""
 
 #. js-lingui-id: CA9PTn
@@ -20388,7 +20561,6 @@ msgstr ""
 
 #. js-lingui-id: ItfvBz
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Uninstalling..."
 msgstr ""
 
@@ -20748,6 +20920,11 @@ msgstr ""
 msgid "Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
 msgstr ""
 
+#. js-lingui-id: JlP83A
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Update your payment method"
+msgstr ""
+
 #. js-lingui-id: x4Xp3c
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
@@ -20871,7 +21048,6 @@ msgid "Upgrading subscription..."
 msgstr ""
 
 #. js-lingui-id: +Gi3x1
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Upgrading..."
 msgstr ""
@@ -22384,26 +22560,9 @@ msgstr ""
 msgid "You're about to change your workspace subdomain. This action will log out all users."
 msgstr ""
 
-#. js-lingui-id: Z5uTAF
+#. js-lingui-id: 6x8lJe
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid ""
-"You've hit your usage limit. \n"
-"Reach to our support team to upgrade."
-msgstr ""
-
-#. js-lingui-id: NTyvVW
-#. placeholder {0}: nextResourceCreditsAmount ?? ''
-#. placeholder {1}: nextResourceCreditPrice ?? ''
-#. placeholder {2}: nextTierInterval ?? ''
-#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid ""
-"You've hit your usage limit. \n"
-"Upgrade to {0} credits for ${1}/{2}."
-msgstr ""
-
-#. js-lingui-id: yZ0wRS
-#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "You've hit your usage limit. Subscribe for more usage."
+msgid "You’ve reached your AI usage limit."
 msgstr ""
 
 #. js-lingui-id: tOPGvO
@@ -22419,6 +22578,11 @@ msgstr ""
 #. js-lingui-id: R6FfrK
 #: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "Your billing interval will switch to yearly immediately and your trial will continue. When it ends, you will be charged ${yearlyPrice} per user per year billed annually."
+msgstr ""
+
+#. js-lingui-id: u1O1GV
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+msgid "Your card was saved, but the payment still needs attention."
 msgstr ""
 
 #. js-lingui-id: mmGBWT
@@ -22535,11 +22699,6 @@ msgstr ""
 #. js-lingui-id: QBTEtW
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
 msgid "Your workspace doesn't have an active subscription. Please contact your admin."
-msgstr ""
-
-#. js-lingui-id: fAVJ0D
-#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "Your workspace hit its AI usage limit. Ask an admin to upgrade the plan."
 msgstr ""
 
 #. js-lingui-id: RhNbPE

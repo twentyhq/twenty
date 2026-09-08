@@ -1530,6 +1530,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "deletedAt": {
         "universalIdentifier": "717071cc-9630-5fe6-8d6a-22d4f0ae0d43",
       },
+      "description": {
+        "universalIdentifier": "2484463a-12e0-411e-9586-81892bd7721c",
+      },
       "id": {
         "universalIdentifier": "1bb14df7-602a-542c-b26e-c63f7454a7ee",
       },
@@ -1570,6 +1573,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "createdAt": {
             "universalIdentifier": "69d178f4-f4b8-5bc2-a01b-bfc21f3a753a",
+          },
+          "description": {
+            "universalIdentifier": "1169ccfe-9136-5574-96d4-5a0855316cd4",
           },
           "members": {
             "universalIdentifier": "8e64ce89-0910-58df-a896-ccbe514f3913",
@@ -1623,6 +1629,25 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
     },
     "universalIdentifier": "27773d24-8ce3-40f8-aa6c-1f590f2c08d2",
+    "views": {
+      "allMessageListMembers": {
+        "universalIdentifier": "3644ee45-c77f-5d55-a358-b982e0bfcb24",
+        "viewFields": {
+          "createdAt": {
+            "universalIdentifier": "a682eecd-e89c-5101-b3e2-b4d8153e2e75",
+          },
+          "id": {
+            "universalIdentifier": "9b3e754c-a529-5e1b-9da2-fc72bbd3af1e",
+          },
+          "list": {
+            "universalIdentifier": "fa1c5fad-d1e0-5aaf-8dfa-6f3c01c99463",
+          },
+          "person": {
+            "universalIdentifier": "d3bd59ad-04b8-55b1-8322-d7bd90be4064",
+          },
+        },
+      },
+    },
   },
   "messageParticipant": {
     "fields": {
@@ -2396,6 +2421,25 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
         },
       },
+      "messageListRecordPageMembers": {
+        "universalIdentifier": "bef79e8e-9ef3-4458-81ed-78a299e2566f",
+        "viewFields": {
+          "company": {
+            "universalIdentifier": "3db54119-df4d-449b-91c9-22fca1e5d599",
+          },
+          "emails": {
+            "universalIdentifier": "180e9cbb-34c2-4e27-8648-2915be88a50e",
+          },
+          "name": {
+            "universalIdentifier": "a4f0d7b4-3956-44a6-8bb2-df45a699609b",
+          },
+        },
+        "viewFilters": {
+          "listMembershipsListIsCurrentRecord": {
+            "universalIdentifier": "256dceea-a9b5-42b7-8461-a6ce62e7fa6c",
+          },
+        },
+      },
       "personRecordPageFields": {
         "universalIdentifier": "7f34ab76-9b33-595a-bd22-d8d434147c8e",
         "viewFieldGroups": {
@@ -2470,6 +2514,68 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
         },
       },
     },
+  },
+  "recordShare": {
+    "fields": {
+      "accessLevel": {
+        "universalIdentifier": "943b9926-9620-43de-8a46-8ebfee74dea3",
+      },
+      "createdAt": {
+        "universalIdentifier": "5a199f71-d282-50bf-9456-dd9d05579dc3",
+      },
+      "createdBy": {
+        "universalIdentifier": "558a8d87-de8e-540f-8fa9-9c413656e588",
+      },
+      "deletedAt": {
+        "universalIdentifier": "a25180d7-c4ea-516d-9406-24831210a118",
+      },
+      "id": {
+        "universalIdentifier": "e5a5509c-f262-558d-a698-d148516b4dea",
+      },
+      "objectMetadataId": {
+        "universalIdentifier": "504cec47-6aae-4e5b-85fd-1581b62602e3",
+      },
+      "position": {
+        "universalIdentifier": "db40ca46-5ea0-535d-b3bc-a3000fc61584",
+      },
+      "principalId": {
+        "universalIdentifier": "c1849ee2-1d2a-409e-800d-16fc16621257",
+      },
+      "principalType": {
+        "universalIdentifier": "556161f6-1a01-478e-8f01-acc413102e44",
+      },
+      "recordId": {
+        "universalIdentifier": "01edb657-6339-475c-b581-784a0c3e0509",
+      },
+      "rowCause": {
+        "universalIdentifier": "be27640e-f739-4d07-8979-dba4526e406a",
+      },
+      "searchVector": {
+        "universalIdentifier": "80a32ec3-1583-5383-acb6-c9373a57761f",
+      },
+      "sourceId": {
+        "universalIdentifier": "534a2244-9feb-4d21-afd9-c9a20052b300",
+      },
+      "updatedAt": {
+        "universalIdentifier": "413637e8-c0e3-5315-9238-6fd36c91ba58",
+      },
+      "updatedBy": {
+        "universalIdentifier": "52dd5a05-1197-5a77-a7fb-90b15e61cda9",
+      },
+    },
+    "indexes": {
+      "principalIdIndex": {
+        "universalIdentifier": "66fbc3d2-6126-4e29-a306-dbe9995bf062",
+      },
+      "recordPrincipalCauseSourceUniqueIndex": {
+        "universalIdentifier": "4580f104-47a7-4110-87a8-26cb6f63ce7b",
+      },
+      "sourceIdIndex": {
+        "universalIdentifier": "21b84593-c647-40ce-bdf4-a8b4ac658f57",
+      },
+    },
+    "universalIdentifier": "fecdb92c-d150-4544-81f8-f1158d18a7a2",
+    "views": {},
   },
   "task": {
     "fields": {

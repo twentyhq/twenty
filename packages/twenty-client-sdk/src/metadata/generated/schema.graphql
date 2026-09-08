@@ -116,6 +116,7 @@ type CommandMenuItem {
   payload: CommandMenuItemPayload
   hotKeys: [String!]
   conditionalAvailabilityExpression: String
+  conditionalPinnedExpression: String
   availabilityObjectMetadataId: UUID
   navigationTargetObjectMetadataId: UUID
   pageLayoutId: UUID
@@ -149,6 +150,7 @@ enum EngineComponentKey {
   SAVE_DASHBOARD_LAYOUT
   CANCEL_DASHBOARD_LAYOUT
   DUPLICATE_DASHBOARD
+  DUPLICATE_MESSAGE_LIST
   ACTIVATE_WORKFLOW
   DEACTIVATE_WORKFLOW
   DISCARD_DRAFT_WORKFLOW
@@ -179,6 +181,8 @@ enum EngineComponentKey {
   COMPOSE_CAMPAIGN
   SEND_MESSAGE_CAMPAIGN
   SEND_MESSAGE_CAMPAIGN_TEST
+  CANCEL_MESSAGE_CAMPAIGN
+  DUPLICATE_MESSAGE_CAMPAIGN
   EMAIL_BLOCK_SETTINGS
   GO_TO_PEOPLE
   GO_TO_COMPANIES
@@ -261,6 +265,8 @@ type Object {
   isUIReadOnly: Boolean! @deprecated(reason: "Use isUIEditable")
   isSearchable: Boolean!
   openRecordIn: ObjectOpenRecordIn!
+  readability: MetadataReadability!
+  writability: MetadataWritability!
   applicationId: UUID!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -291,6 +297,20 @@ enum ObjectOpenRecordIn {
   SIDE_PANEL
   RECORD_PAGE
   USER_CHOICE
+}
+
+enum MetadataReadability {
+  OPEN
+  PRIVATE
+  INHERITED
+  APPLICATION
+  SYSTEM
+}
+
+enum MetadataWritability {
+  OPEN
+  APPLICATION
+  SYSTEM
 }
 
 input CursorPaging {
@@ -515,7 +535,6 @@ type Application {
   logoFileId: UUID
   version: String
   universalIdentifier: String!
-  state: ApplicationState!
   packageJsonChecksum: String
   packageJsonFileId: UUID
   yarnLockChecksum: String
@@ -535,13 +554,6 @@ type Application {
   applicationVariables: [ApplicationVariable!]!
   applicationRegistration: ApplicationRegistrationSummary
   logoUrl: String
-}
-
-enum ApplicationState {
-  INSTALLING
-  INSTALLED
-  UPGRADING
-  UNINSTALLING
 }
 
 type TwoFactorAuthenticationMethodSummary {
@@ -1385,6 +1397,7 @@ type ApplicationConnectionProvider {
   name: String!
   displayName: String!
   oauth: ApplicationConnectionProviderOAuthConfig
+  logoUrl: String
 }
 
 type BillingSubscriptionSchedulePhaseItem {
@@ -1595,6 +1608,27 @@ enum NavigationMenuItemType {
   PAGE_LAYOUT
 }
 
+type JobStatus {
+  jobId: String!
+  state: JobState!
+  attemptsMade: Int!
+  failedReason: String
+  enqueuedAt: Float!
+  startedAt: Float
+  finishedAt: Float
+}
+
+"""Job state in the queue"""
+enum JobState {
+  COMPLETED
+  FAILED
+  ACTIVE
+  WAITING
+  DELAYED
+  PRIORITIZED
+  WAITING_CHILDREN
+}
+
 type ObjectRecordEventProperties {
   updatedFields: [String!]
   before: JSON
@@ -1645,6 +1679,7 @@ type EventSubscription {
   eventStreamId: String!
   objectRecordEventsWithQueryIds: [ObjectRecordEventWithQueryIds!]!
   metadataEvents: [MetadataEvent!]!
+  queueJobEvents: [JobStatus!]!
 }
 
 type UserSession {
@@ -1849,6 +1884,7 @@ type ConnectedAccountPublicDTO {
   provider: String!
   lastCredentialsRefreshedAt: DateTime
   authFailedAt: DateTime
+  authFailedReason: String
   archivedAt: DateTime
   handleAliases: [String!]
   scopes: [String!]
@@ -1871,6 +1907,7 @@ type FeatureFlag {
 enum FeatureFlagKey {
   IS_APP_CLAIMING_ENABLED
   IS_UNIQUE_INDEXES_ENABLED
+  IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_JSON_FILTER_ENABLED
   IS_EMAIL_GROUP_ENABLED
   IS_JUNCTION_RELATIONS_ENABLED
@@ -1880,6 +1917,8 @@ enum FeatureFlagKey {
   IS_API_RATE_LIMIT_V2_ENABLED
   IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED
   IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED
+  IS_RECORD_CREATION_FORM_ENABLED
+  IS_RECORD_SHARING_ENABLED
 }
 
 type WorkspaceUrls {
@@ -2132,6 +2171,7 @@ type AppConnection {
   accessToken: String!
   scopes: [String!]!
   authFailedAt: String
+  authFailedReason: String
 }
 
 type ResendEmailVerificationToken {
@@ -2274,6 +2314,14 @@ type MarketplaceAppDetail {
   manifest: JSON @deprecated(reason: "Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead")
 }
 
+type TriggerInstallApplicationJobResult {
+  jobId: String!
+}
+
+type TriggerUninstallApplicationJobResult {
+  jobId: String!
+}
+
 type WorkspaceCompanyEnrichmentResult {
   outcome: WorkspaceCompanyEnrichmentOutcome!
   enrichment: JSON
@@ -2305,9 +2353,11 @@ type Field {
   isActive: Boolean
   isSystem: Boolean
   isUIEditable: Boolean
+  writability: MetadataWritability
   isUIReadOnly: Boolean @deprecated(reason: "Use isUIEditable")
   isNullable: Boolean
   isUnique: Boolean
+  isSearchable: Boolean
   defaultValue: JSON
   options: JSON
   settings: JSON
@@ -2486,6 +2536,7 @@ enum BillingEntitlementKey {
   CUSTOM_DOMAIN
   RLS
   AUDIT_LOGS
+  USAGE_LIMIT
 }
 
 type DomainRecord {
@@ -2864,6 +2915,7 @@ type CampaignAudiencePreviewDTO {
   withoutEmail: Int!
   duplicateEmails: Int!
   overCap: Int!
+  hardSuppressed: Int!
   globallyUnsubscribed: Int!
   topicUnsubscribed: Int!
   sendable: Int!
@@ -2882,6 +2934,16 @@ type SendMessageCampaignOutputDTO {
   campaignId: String!
   queuedCount: Int!
   audience: CampaignAudiencePreviewDTO!
+}
+
+type DuplicatedMessageList {
+  id: UUID!
+  name: String
+  description: String
+  position: Float!
+  memberCount: Float!
+  createdAt: String!
+  updatedAt: String!
 }
 
 type MessageSuppression {
@@ -3256,27 +3318,6 @@ type EnqueueJobsResult {
   jobIds: [String!]!
 }
 
-type JobStatus {
-  jobId: String!
-  state: JobState!
-  attemptsMade: Int!
-  failedReason: String
-  enqueuedAt: Float!
-  startedAt: Float
-  finishedAt: Float
-}
-
-"""Job state in the queue"""
-enum JobState {
-  COMPLETED
-  FAILED
-  ACTIVE
-  WAITING
-  DELAYED
-  PRIORITIZED
-  WAITING_CHILDREN
-}
-
 type AppKeyValue {
   key: String!
   value: JSON
@@ -3551,6 +3592,8 @@ type Query {
   githubClaimAuthorizationUrl(applicationRegistrationId: String!): String!
   findManyApplications: [Application!]!
   findOneApplication(id: UUID, universalIdentifier: UUID): Application!
+  findInstallApplicationJobStatus(universalIdentifier: String!): JobStatus
+  findUninstallApplicationJobStatus(universalIdentifier: String!): JobStatus
   findManyMarketplaceApps(universalIdentifiers: [String!]): [MarketplaceApp!]!
   findMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
   publicMarketplaceApps(isVetted: Boolean! = true): [MarketplaceApp!]!
@@ -3734,12 +3777,8 @@ type Mutation {
   refreshEnterpriseValidityToken: Boolean!
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO!
   setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
-  uploadEmailAttachmentFile(file: Upload!): FileWithSignedUrl!
-  uploadAiChatFile(file: Upload!): FileWithSignedUrl!
-  uploadWorkflowFile(file: Upload!): FileWithSignedUrl!
   uploadWorkspaceLogo(file: Upload!): FileWithSignedUrl!
   uploadWorkspaceMemberProfilePicture(file: Upload!): FileWithSignedUrl!
-  uploadFilesFieldFile(file: Upload!, fieldMetadataId: String!): FileWithSignedUrl!
   uploadFilesFieldFileByUniversalIdentifier(file: Upload!, fieldMetadataUniversalIdentifier: String!): FileWithSignedUrl!
   upsertUsageLimit(input: UpsertUsageLimitInput!): UsageLimit!
   deleteUsageLimit(usageLimitId: UUID!): Boolean!
@@ -3849,6 +3888,8 @@ type Mutation {
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
   installApplication(universalIdentifier: String!, version: String): Application!
+  triggerInstallApplicationJob(input: TriggerInstallApplicationJobInput!): TriggerInstallApplicationJobResult!
+  triggerUninstallApplicationJob(input: TriggerUninstallApplicationJobInput!): TriggerUninstallApplicationJobResult!
   updateApplication(id: UUID!, input: UpdateApplicationInput!): Application!
   uninstallApplication(universalIdentifier: String!): Boolean!
   syncMarketplaceCatalog: Boolean!
@@ -3875,6 +3916,7 @@ type Mutation {
   sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
   cancelMessageCampaign(input: CancelMessageCampaignInput!): CancelMessageCampaignOutputDTO!
   sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
+  duplicateMessageList(id: UUID!): DuplicatedMessageList!
   createMessageSuppression(input: CreateMessageSuppressionInput!): MessageSuppression!
   deleteMessageSuppression(id: UUID!): Boolean!
   createUnsubscribeTopic(input: CreateUnsubscribeTopicInput!): UnsubscribeTopic!
@@ -3898,6 +3940,7 @@ type Mutation {
   deleteAppKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): Boolean!
   enqueueJob(input: EnqueueJobInput!): EnqueueJobResult! @deprecated(reason: "Use enqueueJobs instead.")
   enqueueJobs(input: EnqueueJobsInput!): EnqueueJobsResult!
+  reportAppConnectionAuthFailure(input: ReportAppConnectionAuthFailureInput!): Boolean!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
   retryChatMessage(threadId: UUID!, modelId: String): SendChatMessageResult!
@@ -4626,6 +4669,7 @@ input CreateCommandMenuItemInput {
   availabilityType: CommandMenuItemAvailabilityType
   hotKeys: [String!]
   conditionalAvailabilityExpression: String
+  conditionalPinnedExpression: String
   availabilityObjectMetadataId: UUID
   payload: JSON
   navigationTargetObjectMetadataId: UUID
@@ -4744,6 +4788,14 @@ input UpdateApplicationRegistrationVariablePayload {
   description: String
 }
 
+input TriggerInstallApplicationJobInput {
+  universalIdentifier: String!
+}
+
+input TriggerUninstallApplicationJobInput {
+  universalIdentifier: String!
+}
+
 input UpdateApplicationInput {
   autoUpgrade: Boolean
 }
@@ -4765,6 +4817,7 @@ input CreateFieldInput {
   isUIReadOnly: Boolean
   isNullable: Boolean
   isUnique: Boolean
+  isSearchable: Boolean
   defaultValue: JSON
   options: JSON
   settings: JSON
@@ -4795,6 +4848,7 @@ input UpdateFieldInput {
   isUIReadOnly: Boolean
   isNullable: Boolean
   isUnique: Boolean
+  isSearchable: Boolean
   defaultValue: JSON
   options: JSON
   settings: JSON
@@ -5103,6 +5157,11 @@ input EnqueueJobsInput {
 input EnqueueJobItemInput {
   payload: JSON
   jobId: String
+}
+
+input ReportAppConnectionAuthFailureInput {
+  id: ID!
+  reason: String
 }
 
 input FileAttachmentInput {

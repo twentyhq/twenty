@@ -483,6 +483,11 @@ msgstr "{grantedCreditsDisplay} kredita"
 msgid "{headersCount} headers received"
 msgstr "Primljeno {headersCount} zaglavlja"
 
+#. js-lingui-id: 4xzh1W
+#: src/modules/object-record/record-list/components/RecordListRow.tsx
+msgid "{hiddenFieldCount, plural, one {# more populated field available} other {# more populated fields available}}"
+msgstr "{hiddenFieldCount, plural, one {Dostupno je još # popunjeno polje} few {Dostupna su još # popunjena polja} other {Dostupno je još # popunjenih polja}}"
+
 #. js-lingui-id: pEl0a0
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{hours, plural, one {{hours} hour} other {{hours} hours}}"
@@ -670,11 +675,11 @@ msgstr "{unitCount, plural, one {Nedelja} few {Nedelje} other {Nedelja}}"
 msgid "{unitCount, plural, one {Year} other {Years}}"
 msgstr "{unitCount, plural, one {Godina} few {Godine} other {Godina}}"
 
-#. js-lingui-id: ITVweg
+#. js-lingui-id: YdwR4T
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
-msgid "{visibleFieldsCount} shown"
-msgstr "Prikazano {visibleFieldsCount}"
+msgid "{visibleFieldsCount} selected"
+msgstr "{visibleFieldsCount} izabrano"
 
 #. js-lingui-id: WjjsAL
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
@@ -896,6 +901,11 @@ msgstr "Nacrt već postoji"
 #: src/modules/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton.tsx
 msgid "A draft already exists for this workflow. Are you sure you want to erase it?"
 msgstr "Nacrt već postoji za ovaj tok posla. Da li ste sigurni da želite da ga izbrišete?"
+
+#. js-lingui-id: K3NJnJ
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "A payment method is needed to keep your workspace active."
+msgstr "Potreban je način plaćanja da bi vaš radni prostor ostao aktivan."
 
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1172,6 +1182,11 @@ msgstr "Dodaj \"{trimmedName}\" u opcije"
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
 msgid "Add a {objectLabelSingular}"
 msgstr "Dodaj {objectLabelSingular}"
+
+#. js-lingui-id: rUVyfz
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Add a card below to update your billing details and retry your payment."
+msgstr "Dodajte karticu ispod da biste ažurirali podatke za naplatu i ponovo pokušali plaćanje."
 
 #. js-lingui-id: 7W8nJr
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationEditor.tsx
@@ -1485,6 +1500,11 @@ msgstr "Dodajte ili uklonite korisnike"
 msgid "Add Output Field"
 msgstr "Dodaj izlazno polje"
 
+#. js-lingui-id: lRpmgk
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Add payment method"
+msgstr "Dodajte način plaćanja"
+
 #. js-lingui-id: aYtHO6
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
@@ -1741,7 +1761,7 @@ msgid "Administrators"
 msgstr "Administratori"
 
 #. js-lingui-id: sxkWRg
-#: src/modules/navigation/components/SettingsNavigationDrawer.tsx
+#: src/modules/navigation/components/SettingsNavigationDrawerContent.tsx
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 msgid "Advanced"
 msgstr "Napredno"
@@ -3629,6 +3649,7 @@ msgstr "Ne možete da skenirate? Kopirajte"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/billing/components/AddCreditCardModal.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
@@ -6961,11 +6982,6 @@ msgstr "Domen"
 msgid "Domain already taken"
 msgstr "Domen je već zauzet"
 
-#. js-lingui-id: eNcdvk
-#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
-msgid "Domain links are stored as a bare domain name, so twenty.com and https://www.twenty.com are the same value"
-msgstr "Veze domena se čuvaju kao samo ime domena, tako da su twenty.com i https://www.twenty.com ista vrednost"
-
 #. js-lingui-id: XoBD/+
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
 msgid "Domain Setup"
@@ -9641,6 +9657,11 @@ msgstr "Globalna pretraga"
 msgid "Go back"
 msgstr "Nazad"
 
+#. js-lingui-id: y0SPQU
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+msgid "Go to billing"
+msgstr "Idite na naplatu"
+
 #. js-lingui-id: Hb4Cgz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -11381,11 +11402,6 @@ msgstr "Prezime"
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "Last name can not be empty"
 msgstr "Prezime ne može biti prazno"
-
-#. js-lingui-id: s0kiVA
-#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
-msgid "Last payment failed. Please contact your admin."
-msgstr "Poslednje plaćanje nije uspelo. Molimo vas kontaktirajte administratora."
 
 #. js-lingui-id: 3u/3zO
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
@@ -14963,6 +14979,21 @@ msgstr "Pauzirano"
 msgid "Payment issue"
 msgstr "Problem sa plaćanjem"
 
+#. js-lingui-id: twOnMk
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Payment method added."
+msgstr "Način plaćanja je dodat."
+
+#. js-lingui-id: uIMn/N
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Payment method added. Retrying your payment..."
+msgstr "Način plaćanja je dodat. Ponovni pokušaj plaćanja..."
+
+#. js-lingui-id: OvqmUS
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+msgid "Payment successful."
+msgstr "Plaćanje je uspešno."
+
 #. js-lingui-id: CcK+Ft
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "PDF"
@@ -18486,6 +18517,11 @@ msgstr "Zaustavi diktiranje"
 msgid "Stop impersonating"
 msgstr "Zaustavi impersonaciju"
 
+#. js-lingui-id: juzGVI
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
+msgid "Store the full URL or just the domain"
+msgstr "Sačuvajte ceo URL ili samo domen"
+
 #. js-lingui-id: GGiaAW
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "Strategy"
@@ -19323,6 +19359,11 @@ msgstr "Postoje obavezne kolone koje nisu uparene ili ignorisane. Da li želite 
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "There are still some rows that contain errors. Rows with errors will be ignored when submitting."
 msgstr "Još uvek postoje redovi koji sadrže greške. Redovi sa greškama će biti ignorisani prilikom podnošenja."
+
+#. js-lingui-id: PpLJq1
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "There is a billing issue. Please contact your admin."
+msgstr "Postoji problem sa naplatom. Obratite se svom administratoru."
 
 #. js-lingui-id: CA9PTn
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -20764,6 +20805,11 @@ msgstr "Ažurirajte prikaz"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
 msgstr "Ažurirajte konfiguraciju vašeg naloga. Podesite bilo koju kombinaciju IMAP, SMTP i CalDAV po potrebi."
+
+#. js-lingui-id: JlP83A
+#: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
+msgid "Update your payment method"
+msgstr "Ažurirajte svoj način plaćanja"
 
 #. js-lingui-id: x4Xp3c
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
@@ -22437,6 +22483,11 @@ msgstr "Vaš interval naplate će odmah biti prebačen na mesečni i vaš probni
 #: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "Your billing interval will switch to yearly immediately and your trial will continue. When it ends, you will be charged ${yearlyPrice} per user per year billed annually."
 msgstr "Vaš interval naplate će odmah biti prebačen na godišnji i vaš probni period će se nastaviti. Kada se završi, biće vam naplaćeno ${yearlyPrice} po korisniku godišnje, sa godišnjom naplatom."
+
+#. js-lingui-id: u1O1GV
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+msgid "Your card was saved, but the payment still needs attention."
+msgstr "Vaša kartica je sačuvana, ali plaćanje i dalje zahteva pažnju."
 
 #. js-lingui-id: mmGBWT
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx

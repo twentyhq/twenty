@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isString } from '@sniptt/guards';
 import { isDefined, resolveInput } from 'twenty-shared/utils';
-import { StepStatus, WorkflowRunStepInfo } from 'twenty-shared/workflow';
+import { WorkflowRunStepInfo } from 'twenty-shared/workflow';
 
 import { WorkflowAction as WorkflowActionInterface } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -12,6 +12,7 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+import { buildStepInfosReset } from 'src/modules/workflow/workflow-executor/utils/build-step-infos-reset.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/guards/is-workflow-iterator-action.guard';
 import { type WorkflowIteratorActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-action-settings.type';
@@ -143,27 +144,24 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
     let stepInfosToUpdate: Record<string, WorkflowRunStepInfo> = {};
 
     if (!hasProcessedAllItems) {
-      const subStepsInfos = await this.buildSubStepInfosReset({
+      const stepIdsInLoop = getAllStepIdsInLoop({
         iteratorStepId,
         initialLoopStepIds,
-        stepInfos,
         steps,
       });
 
       stepInfosToUpdate = {
         ...stepInfosToUpdate,
-        ...subStepsInfos,
+        ...buildStepInfosReset({ stepIds: stepIdsInLoop, stepInfos }),
       };
     }
 
-    const iteratorStepInfo = await this.buildIteratorStepInfoReset({
-      iteratorStepId,
-      iteratorStepInfo: stepInfos[iteratorStepId],
-    });
-
     stepInfosToUpdate = {
       ...stepInfosToUpdate,
-      ...iteratorStepInfo,
+      ...this.buildIteratorStepInfoReset({
+        iteratorStepId,
+        iteratorStepInfo: stepInfos[iteratorStepId],
+      }),
     };
 
     await this.workflowRunWorkspaceService.updateWorkflowRunStepInfos({
@@ -173,63 +171,28 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
     });
   }
 
-  private async buildSubStepInfosReset({
-    iteratorStepId,
-    initialLoopStepIds,
-    stepInfos,
-    steps,
-  }: {
-    iteratorStepId: string;
-    initialLoopStepIds: string[];
-    stepInfos: Record<string, WorkflowRunStepInfo>;
-    steps: WorkflowAction[];
-  }) {
-    const stepIdsToReset = getAllStepIdsInLoop({
-      iteratorStepId,
-      initialLoopStepIds,
-      steps,
-    });
-
-    return stepIdsToReset.reduce(
-      (acc, stepId) => {
-        acc[stepId] = {
-          status: StepStatus.NOT_STARTED,
-          result: undefined,
-          error: undefined,
-          history: [
-            ...(stepInfos[stepId]?.history ?? []),
-            {
-              result: stepInfos[stepId]?.result,
-              error: stepInfos[stepId]?.error,
-              status: stepInfos[stepId]?.status,
-            },
-          ],
-        };
-
-        return acc;
-      },
-      {} as Record<string, WorkflowRunStepInfo>,
-    );
-  }
-
-  private async buildIteratorStepInfoReset({
+  private buildIteratorStepInfoReset({
     iteratorStepId,
     iteratorStepInfo,
   }: {
     iteratorStepId: string;
-    iteratorStepInfo: WorkflowRunStepInfo;
-  }) {
+    iteratorStepInfo?: WorkflowRunStepInfo;
+  }): Record<string, WorkflowRunStepInfo> {
+    if (!isDefined(iteratorStepInfo)) {
+      return {};
+    }
+
     return {
       [iteratorStepId]: {
         ...iteratorStepInfo,
         result: undefined,
         error: undefined,
         history: [
-          ...(iteratorStepInfo?.history ?? []),
+          ...(iteratorStepInfo.history ?? []),
           {
-            result: iteratorStepInfo?.result,
-            error: iteratorStepInfo?.error,
-            status: iteratorStepInfo?.status,
+            result: iteratorStepInfo.result,
+            error: iteratorStepInfo.error,
+            status: iteratorStepInfo.status,
           },
         ],
       },

@@ -24,6 +24,8 @@ export const fromObjectMetadataEntityToObjectMetadataDto = (
   isUIReadOnly: !entity.isUIEditable,
   isSearchable: entity.isSearchable,
   openRecordIn: entity.openRecordIn,
+  readability: entity.readability,
+  writability: entity.writability,
   isLabelSyncedWithName: entity.isLabelSyncedWithName,
   workspaceId: entity.workspaceId,
   labelIdentifierFieldMetadataId:
