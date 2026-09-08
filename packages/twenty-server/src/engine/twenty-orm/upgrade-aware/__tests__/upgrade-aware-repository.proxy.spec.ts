@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import { Test } from '@nestjs/testing';
 import { getDataSourceToken } from '@nestjs/typeorm';
 
-import { type DataSource, type Repository } from 'typeorm';
+import { type DataSource, type Repository, type UpdateResult } from 'typeorm';
 import { type EntityMetadata } from 'typeorm/metadata/EntityMetadata';
 
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
@@ -105,6 +105,67 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
 
     expect(find).toHaveBeenCalledWith({
       select: ['id', 'unknownTypo'],
+    });
+  });
+
+  describe('update', () => {
+    const buildWrappedRepository = (hiddenColumnPropertyNames: string[]) => {
+      const update = jest.fn().mockResolvedValue({ affected: 1 });
+      const repository = {
+        update,
+        metadata: {
+          relations: [],
+          targetName: EntityWithHiddenColumn.name,
+        },
+      } as unknown as Repository<EntityWithHiddenColumn>;
+      const state = {
+        getHiddenColumnPropertyNames: jest
+          .fn()
+          .mockReturnValue(new Set(hiddenColumnPropertyNames)),
+        isEntityAvailable: jest.fn().mockReturnValue(true),
+      } as unknown as UpgradeAwareRepositoryState;
+
+      return {
+        update,
+        wrapped: wrapRepositoryWithUpgradeAwareProxy({
+          repository,
+          entityClass: EntityWithHiddenColumn,
+          state,
+        }) as unknown as {
+          update: (
+            criteria: unknown,
+            values: Record<string, unknown>,
+          ) => Promise<UpdateResult>;
+        },
+      };
+    };
+
+    it('strips hidden columns from the values so a lagging cursor cannot reject the write', async () => {
+      const { update, wrapped } = buildWrappedRepository(['introducedColumn']);
+
+      await wrapped.update({ id: 1 }, { name: 'app', introducedColumn: {} });
+
+      expect(update).toHaveBeenCalledWith({ id: 1 }, { name: 'app' });
+    });
+
+    it('skips the query when every value is a hidden column', async () => {
+      const { update, wrapped } = buildWrappedRepository(['introducedColumn']);
+
+      const result = await wrapped.update({ id: 1 }, { introducedColumn: {} });
+
+      expect(update).not.toHaveBeenCalled();
+      expect(result.generatedMaps).toEqual([]);
+    });
+
+    it('leaves the values untouched when no column is hidden', async () => {
+      const { update, wrapped } = buildWrappedRepository([]);
+
+      await wrapped.update({ id: 1 }, { name: 'app', introducedColumn: {} });
+
+      expect(update).toHaveBeenCalledWith(
+        { id: 1 },
+        { name: 'app', introducedColumn: {} },
+      );
     });
   });
 
