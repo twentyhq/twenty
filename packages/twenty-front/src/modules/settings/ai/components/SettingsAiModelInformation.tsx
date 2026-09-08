@@ -67,7 +67,7 @@ export const SettingsAiModelInformation = ({
           </StyledValue>
           <AppTooltip
             anchorSelect={`#${tooltipId}-server-location`}
-            content={t`Region where the model is hosted`}
+            title={t`Region where the model is hosted`}
           />
         </StyledRow>
       )}
@@ -85,7 +85,7 @@ export const SettingsAiModelInformation = ({
         </StyledValue>
         <AppTooltip
           anchorSelect={`#${tooltipId}-context`}
-          content={t`Maximum context size in tokens`}
+          title={t`Maximum context size in tokens`}
         />
       </StyledRow>
     </StyledSection>

@@ -432,7 +432,7 @@ export const SettingsAiModelHoverCard = ({
         {isDefined(item.description) && (
           <AppTooltip
             anchorSelect={`#${anchorId}`}
-            content={item.description}
+            title={item.description}
             place="top"
           />
         )}

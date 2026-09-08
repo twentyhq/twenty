@@ -402,11 +402,11 @@ export const Select = <Value extends SelectValue>({
                 <AppTooltip
                   anchorSelect={`#${activeHoverCardEntry.hoverCardAnchorId}`}
                   place="right-start"
-                  clickable
+                  interactive
                   noArrow
                   offset={8}
                   className={optionHoverCardTooltipClass}
-                  width="300px"
+                  maxWidth="300px"
                   isOpen={true}
                 >
                   <div
