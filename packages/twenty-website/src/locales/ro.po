@@ -8,7 +8,7 @@ msgstr ""
 "Language: ro\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-28 16:20\n"
+"PO-Revision-Date: 2026-09-08 16:21\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2);\n"
@@ -900,7 +900,7 @@ msgstr "Adaugă mai multe adrese de email pentru un singur contact"
 #. js-lingui-id: /01kre
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Add shared instructions, playbooks, and other rich text with the new Note widget. Insert widgets exactly where you want them, and unpin the first tab when your layout needs more room."
-msgstr ""
+msgstr "Adăugați instrucțiuni partajate, ghiduri și alt conținut text îmbogățit cu noul widget Note. Inserați widgeturi exact acolo unde le doriți și anulați fixarea primei file atunci când aspectul dvs. are nevoie de mai mult spațiu."
 
 #. js-lingui-id: hWkQMS
 #: src/sections/product-feature/TasksVisual/components/AddTaskButton.tsx
@@ -1295,7 +1295,7 @@ msgstr "Armenia 🇦🇲"
 #. js-lingui-id: hgvS2c
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Ask AI to attach files you upload in chat directly to records."
-msgstr ""
+msgstr "Solicitați AI să atașeze direct la înregistrări fișierele pe care le încărcați în chat."
 
 #. js-lingui-id: GYKCBW
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1325,7 +1325,7 @@ msgstr "Cel puțin o implementare Twenty livrată — pentru un client sau inter
 #. js-lingui-id: PbTDQ4
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Attach files to records with AI"
-msgstr ""
+msgstr "Atașați fișiere la înregistrări cu AI"
 
 #. js-lingui-id: awzjg/
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1592,7 +1592,7 @@ msgstr "Explorează *partenerii certificați*"
 #. js-lingui-id: pB7UCU
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Browse your records in a compact list, now available to everyone. Group records and see the fields that matter in a layout that adapts to desktop and mobile."
-msgstr ""
+msgstr "Răsfoiește înregistrările într-o listă compactă, acum disponibilă pentru toată lumea. Grupează înregistrările și vezi câmpurile importante într-un aspect care se adaptează la desktop și mobil."
 
 #. js-lingui-id: VX4eI/
 #: src/partner-application/data/partner-country-options.ts
@@ -2220,7 +2220,7 @@ msgstr "Creează aplicații pe Twenty"
 #. js-lingui-id: CA2rtv
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Create calendar events directly from a record’s timeline, with the current contact prefilled as a guest."
-msgstr ""
+msgstr "Creează evenimente în calendar direct din cronologia unei înregistrări, cu contactul curent precompletat ca invitat."
 
 #. js-lingui-id: yAL7FY
 #: src/sections/pricing-plans/plans-data.ts
@@ -2621,7 +2621,7 @@ msgstr "Câmp dată și oră"
 #. js-lingui-id: oLDLdM
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Day and week calendar views"
-msgstr ""
+msgstr "Vizualizări ale calendarului pe zi și săptămână"
 
 #. js-lingui-id: xqKvBR
 #: src/sections/product-feature/DashboardVisual/DashboardVisual.tsx
@@ -2715,7 +2715,7 @@ msgstr "Dezvoltatorii pot acum folosi webhooks pentru a sincroniza în timp real
 #. js-lingui-id: SxCLpb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Dictate prompts in supported browsers, and get suggested actions based on the page you are viewing."
-msgstr ""
+msgstr "Dictează instrucțiuni în browserele acceptate și primește acțiuni sugerate pe baza paginii pe care o vizualizezi."
 
 #. js-lingui-id: C39swB
 #: src/partners-marketplace/MarketplaceBriefPrompt.tsx
@@ -2766,7 +2766,7 @@ msgstr "Descoperă noutățile"
 #. js-lingui-id: EVc4nZ
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Display records two relationships away directly on a record page—for example, opportunities associated with a company’s contacts."
-msgstr ""
+msgstr "Afișează înregistrări aflate la două relații distanță direct pe pagina unei înregistrări — de exemplu, oportunități asociate cu contactele unei companii."
 
 #. js-lingui-id: /Gu7LB
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2939,7 +2939,7 @@ msgstr "Layout-uri mai ușoare"
 #. js-lingui-id: CgFsbd
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Easier workflow editing"
-msgstr ""
+msgstr "Editare mai ușoară a fluxurilor de lucru"
 
 #. js-lingui-id: hEtClO
 #: src/partner-application/data/partner-country-options.ts
@@ -4331,7 +4331,7 @@ msgstr "Previzualizări de imagini în linie"
 #. js-lingui-id: IWtI58
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Insert actions into existing branches and drag connections to a different step without losing your configuration. Find variables faster by searching fields across all workflow steps."
-msgstr ""
+msgstr "Inserează acțiuni în ramurile existente și trage conexiunile către un alt pas fără să-ți pierzi configurația. Găsește mai rapid variabile căutând câmpuri în toți pașii fluxului de lucru."
 
 #. js-lingui-id: /eL+82
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4368,7 +4368,7 @@ msgstr "Integrare"
 #. js-lingui-id: mQhHfc
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Interactive call recordings"
-msgstr ""
+msgstr "Înregistrări interactive ale apelurilor"
 
 #. js-lingui-id: OChKCc
 #: src/platform/routing/static-website-routes.ts
@@ -4804,7 +4804,7 @@ msgstr "Prețuri de listă de pe pagina publică de prețuri Salesforce, factura
 #. js-lingui-id: 5NZpX8
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "List view"
-msgstr ""
+msgstr "Vizualizare listă"
 
 #. js-lingui-id: 2WIZYd
 #: src/partner-application/data/partner-country-options.ts
@@ -5140,7 +5140,7 @@ msgstr "Mai multe tipuri de câmpuri, mai multă putere"
 #. js-lingui-id: qlt+dy
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "More flexible record pages"
-msgstr ""
+msgstr "Pagini de înregistrări mai flexibile"
 
 #. js-lingui-id: VqXuUv
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -5160,7 +5160,7 @@ msgstr "Vizualizări mai vizuale ale tablourilor de bord"
 #. js-lingui-id: QsVNSj
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "More ways to work with AI"
-msgstr ""
+msgstr "Mai multe modalități de a lucra cu IA"
 
 #. js-lingui-id: LAFO4Y
 #: src/partner-application/data/partner-country-options.ts
@@ -6667,7 +6667,7 @@ msgstr "Scalează fără să-ți strici operațiunile"
 #. js-lingui-id: e7Ajb1
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Schedule meetings from records"
-msgstr ""
+msgstr "Programează întâlniri din înregistrări"
 
 #. js-lingui-id: sQOyAb
 #: src/sections/product-feature/TasksVisual/data/tasks.ts
@@ -6733,7 +6733,7 @@ msgstr "Vezi mai multe funcționalități"
 #. js-lingui-id: zn1p6c
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "See related records across relationships"
-msgstr ""
+msgstr "Vezi înregistrările asociate prin relații"
 
 #. js-lingui-id: 8Zhz04
 #: src/sections/compare/ComparePage.tsx
@@ -6856,7 +6856,7 @@ msgstr "Trimite email"
 #. js-lingui-id: ig4Kg0
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Send email from aliases"
-msgstr ""
+msgstr "Trimite e-mailuri de la aliasuri"
 
 #. js-lingui-id: pi1oME
 #: src/app-preview/terminal/TerminalSendButton.tsx
@@ -6871,7 +6871,7 @@ msgstr "Trimite NDA"
 #. js-lingui-id: FK/sMg
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Send outbound emails using a verified alias on your connected account."
-msgstr ""
+msgstr "Trimite e-mailuri de ieșire folosind un alias verificat în contul tău conectat."
 
 #. js-lingui-id: uW79Hr
 #: src/sections/product-feature/TasksVisual/data/tasks.ts
@@ -7350,7 +7350,7 @@ msgstr "Suedeză"
 #. js-lingui-id: VRCum/
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Switch between day, week, and month views to explore your calendar. Day and week views are now available by default."
-msgstr ""
+msgstr "Comută între vizualizările pe zi, săptămână și lună pentru a explora calendarul. Vizualizările pe zi și săptămână sunt acum disponibile implicit."
 
 #. js-lingui-id: IImT5c
 #: src/partner-application/data/partner-country-options.ts
@@ -8495,7 +8495,7 @@ msgstr "Vrei să *oferi* servicii Twenty?"
 #. js-lingui-id: 9cL2b3
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Watch recordings alongside their transcripts. Click a transcript entry to jump to that moment, and follow along with highlighted words and automatic scrolling during playback."
-msgstr ""
+msgstr "Urmărește înregistrările alături de transcrierile lor. Fă clic pe o intrare din transcriere pentru a sări la acel moment și urmărește cuvintele evidențiate și derularea automată în timpul redării."
 
 #. js-lingui-id: k1Pevc
 #: src/platform/releases/ReleaseNotes.tsx

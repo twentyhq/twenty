@@ -21,5 +21,5 @@ export type ListItemProps = Omit<
   descriptionPlacement?: ListItemDescriptionPlacement;
   actions?: ReactNode;
   hotkeys?: string[];
-  submenu?: boolean;
+  hasSubmenu?: boolean;
 };

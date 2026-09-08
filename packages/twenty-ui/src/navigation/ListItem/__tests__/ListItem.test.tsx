@@ -56,7 +56,7 @@ describe('ListItem', () => {
 
     expect(container.querySelector('svg')).toBeNull();
 
-    rerender(<ListItem submenu>Item</ListItem>);
+    rerender(<ListItem hasSubmenu>Item</ListItem>);
 
     expect(container.querySelectorAll('svg')).toHaveLength(1);
   });
