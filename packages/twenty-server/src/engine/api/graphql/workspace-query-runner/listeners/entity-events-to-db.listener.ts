@@ -88,34 +88,24 @@ export class EntityEventsToDbListener {
         workspaceId: batchEvent.workspaceId,
       }));
 
-    const isWorkflowRunUpdate =
-      action === DatabaseEventAction.UPDATED &&
-      batchEvent.objectMetadata.universalIdentifier ===
-        STANDARD_OBJECTS.workflowRun.universalIdentifier;
+    const batchEventForWebhook = {
+      ...batchEvent,
+      objectMetadata: {
+        id: batchEvent.objectMetadata.id,
+        nameSingular: batchEvent.objectMetadata.nameSingular,
+      },
+    };
 
-    const promises: Promise<void | string | undefined>[] = [
+    const promises = [
       this.objectRecordEventPublisher.publish(batchEvent),
-    ];
-
-    if (!isWorkflowRunUpdate) {
-      const batchEventForWebhook = {
-        ...batchEvent,
-        objectMetadata: {
-          id: batchEvent.objectMetadata.id,
-          nameSingular: batchEvent.objectMetadata.nameSingular,
+      this.webhookQueueService.add<WorkspaceEventBatchForWebhook<T>>(
+        CallWebhookJobsJob.name,
+        batchEventForWebhook,
+        {
+          retryLimit: 3,
         },
-      };
-
-      promises.push(
-        this.webhookQueueService.add<WorkspaceEventBatchForWebhook<T>>(
-          CallWebhookJobsJob.name,
-          batchEventForWebhook,
-          {
-            retryLimit: 3,
-          },
-        ),
-      );
-    }
+      ),
+    ];
 
     promises.push(
       this.triggerQueueService.add<WorkspaceEventBatch<T>>(
