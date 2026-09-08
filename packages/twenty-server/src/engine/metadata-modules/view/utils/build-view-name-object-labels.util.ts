@@ -7,11 +7,12 @@ import {
 import { type ObjectMetadataOverrides } from 'src/engine/metadata-modules/object-metadata/types/object-metadata-overrides.type';
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
 
 type ViewNameObjectMetadata = {
   labelSingular: string;
   labelPlural: string;
-  overrides?: ObjectMetadataOverrides | null;
+  overrides?: AuthoredOverrides<ObjectMetadataOverrides> | null;
 };
 
 // Each placeholder resolved costs a catalog lookup, so only the ones the name

@@ -6,6 +6,7 @@ import {
 } from '@nestjs/graphql';
 import { AggregateOperations } from 'twenty-shared/types';
 
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { type ViewFieldOverrides } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 
@@ -68,5 +69,5 @@ export class ViewFieldDTO {
   isOverridden?: boolean;
 
   @HideField()
-  overrides?: ViewFieldOverrides | null;
+  overrides?: AuthoredOverrides<ViewFieldOverrides> | null;
 }

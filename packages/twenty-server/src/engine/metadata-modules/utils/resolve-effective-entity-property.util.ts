@@ -10,29 +10,39 @@ import {
   type MetadataEntityTranslatablePropertyName,
 } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
 import { ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-translatable-properties-by-metadata-name.constant';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
+import { listAuthoredOverrideEntries } from 'src/engine/metadata-modules/utils/list-authored-override-entries.util';
 import { type MetadataPresentationOverrides } from 'src/engine/metadata-modules/utils/metadata-presentation-overrides.type';
+import { type OverrideAuthorReadContext } from 'src/engine/metadata-modules/utils/override-author-context.type';
+import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/utils/read-authored-override-property.util';
 
-const readOverrideProperty = (overrides: unknown, property: string): unknown =>
-  isDefined(overrides) && typeof overrides === 'object'
-    ? (overrides as Record<string, unknown>)[property]
+const readEntryProperty = (entry: unknown, property: string): unknown =>
+  isDefined(entry) && typeof entry === 'object'
+    ? (entry as Record<string, unknown>)[property]
     : undefined;
 
 export const readOverrideTranslation = ({
   overrides,
   locale,
   property,
+  authorContext,
 }: {
   overrides: unknown;
   locale: string;
   property: string;
-}): string | undefined => {
-  const translations = readOverrideProperty(overrides, 'translations');
-  const translationsForLocale = readOverrideProperty(translations, locale);
-  const translation = readOverrideProperty(translationsForLocale, property);
-
-  return typeof translation === 'string' ? translation : undefined;
-};
+  authorContext: OverrideAuthorReadContext;
+}): string | undefined =>
+  listAuthoredOverrideEntries({ overrides, authorContext })
+    .map((entry) =>
+      readEntryProperty(
+        readEntryProperty(readEntryProperty(entry, 'translations'), locale),
+        property,
+      ),
+    )
+    .find(
+      (translation): translation is string => typeof translation === 'string',
+    );
 
 const resolveEffectiveProperty = ({
   metadataName,
@@ -52,7 +62,11 @@ const resolveEffectiveProperty = ({
 
   const isTranslatable = translatableProperties.includes(property);
 
-  const overrideValue = readOverrideProperty(overrides, property);
+  const overrideValue = readAuthoredOverrideProperty({
+    overrides,
+    property,
+    authorContext: i18nContext,
+  });
 
   const { locale, i18nInstance, isStandardApp, applicationCatalog } =
     i18nContext;
@@ -67,6 +81,7 @@ const resolveEffectiveProperty = ({
       overrides,
       locale: safeLocale,
       property,
+      authorContext: i18nContext,
     });
 
     if (isDefined(translation)) {
@@ -106,7 +121,10 @@ export const resolveEffectiveEntityProperty = <T extends AllMetadataName>({
 }: {
   metadataName: T;
   baseValue: string | null | undefined;
-  overrides: MetadataPresentationOverrides<T> | null | undefined;
+  overrides:
+    | AuthoredOverrides<MetadataPresentationOverrides<T>>
+    | null
+    | undefined;
   // A property is resolvable if it is overridable, translatable, or both:
   // navigationMenuItem.name is translated but never renamed, so keying this on
   // "overridable" alone would lock it out of the shared resolution path.

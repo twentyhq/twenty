@@ -1,3 +1,5 @@
+import { resetAuthoredOverrides } from 'src/engine/metadata-modules/utils/reset-authored-overrides.util';
+
 type EntityWithApplicationIdentifierAndOverrides = {
   applicationUniversalIdentifier: string;
   isActive: boolean;
@@ -17,14 +19,10 @@ export const splitEntitiesByResetStrategy = <
   now: string;
 }): {
   toHardDelete: T[];
-  toReset: (T & { isActive: true; overrides: null; updatedAt: string })[];
+  toReset: (T & { updatedAt: string })[];
 } => {
   const toHardDelete: T[] = [];
-  const toReset: (T & {
-    isActive: true;
-    overrides: null;
-    updatedAt: string;
-  })[] = [];
+  const toReset: (T & { updatedAt: string })[] = [];
 
   for (const entity of entities) {
     if (
@@ -35,10 +33,12 @@ export const splitEntitiesByResetStrategy = <
       toHardDelete.push(entity);
     } else {
       toReset.push({
-        ...entity,
-        isActive: true as const,
-        overrides: null,
-        ...('universalOverrides' in entity ? { universalOverrides: null } : {}),
+        ...resetAuthoredOverrides({
+          flatEntity: entity,
+          authorUniversalIdentifier:
+            workspaceCustomApplicationUniversalIdentifier,
+          workspaceCustomApplicationUniversalIdentifier,
+        }),
         updatedAt: now,
       });
     }

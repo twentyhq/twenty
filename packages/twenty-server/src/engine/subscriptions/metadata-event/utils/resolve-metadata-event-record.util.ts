@@ -5,14 +5,10 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 import { ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-overridable-properties-by-metadata-name.constant';
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
 import { resolveEffectiveEntityPropertyByName } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
-import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
+import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/utils/read-authored-override-property.util';
 import { isTranslatableMetadataName } from 'src/engine/subscriptions/metadata-event/utils/is-translatable-metadata-name.util';
 
 const TRANSLATIONS_OVERRIDE_KEY = 'translations';
-
-type OverridableEventRecord = Record<string, unknown> & {
-  overrides: Record<string, unknown> | null;
-};
 
 export const resolveMetadataEventRecord = ({
   metadataName,
@@ -25,7 +21,6 @@ export const resolveMetadataEventRecord = ({
 }): Record<string, unknown> => {
   const { overrides, ...baseRecord } = record;
 
-  const overrideRecord = (overrides ?? {}) as Record<string, unknown>;
   const translatable = isTranslatableMetadataName(metadataName);
   const translatableProperties = new Set<string>(
     translatable ? TRANSLATABLE_PROPERTIES_BY_METADATA_NAME[metadataName] : [],
@@ -34,11 +29,6 @@ export const resolveMetadataEventRecord = ({
     ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME[
       metadataName as AllMetadataName
     ] ?? [];
-
-  const entity: OverridableEventRecord = {
-    ...baseRecord,
-    overrides: overrideRecord,
-  };
 
   const resolved: Record<string, unknown> = { ...baseRecord };
 
@@ -53,10 +43,14 @@ export const resolveMetadataEventRecord = ({
       continue;
     }
 
-    const effectiveValue = resolveEffectiveFlatEntityProperty(entity, property);
+    const overrideValue = readAuthoredOverrideProperty({
+      overrides,
+      property,
+      authorContext: i18nContext,
+    });
 
-    if (effectiveValue !== undefined) {
-      resolved[property] = effectiveValue;
+    if (overrideValue !== undefined) {
+      resolved[property] = overrideValue;
     }
   }
 

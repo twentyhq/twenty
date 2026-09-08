@@ -5,11 +5,13 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
+import { mapAuthoredOverrideEntries } from 'src/engine/metadata-modules/utils/map-authored-override-entries.util';
 
 type UniversalCommandMenuItemOverrides =
   FormatRecordSerializedRelationProperties<CommandMenuItemOverrides>;
 
-export const fromUniversalOverridesToCommandMenuItemOverrides = ({
+const fromUniversalOverridesToCommandMenuItemOverridesEntry = ({
   universalOverrides,
   flatObjectMetadataMaps,
   flatPageLayoutMaps,
@@ -56,3 +58,20 @@ export const fromUniversalOverridesToCommandMenuItemOverrides = ({
 
   return overrides;
 };
+
+export const fromUniversalOverridesToCommandMenuItemOverrides = ({
+  universalOverrides,
+  flatObjectMetadataMaps,
+  flatPageLayoutMaps,
+}: {
+  universalOverrides: AuthoredOverrides<UniversalCommandMenuItemOverrides>;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatPageLayoutMaps: FlatEntityMaps<FlatPageLayout>;
+}): AuthoredOverrides<CommandMenuItemOverrides> =>
+  mapAuthoredOverrideEntries(universalOverrides, (entry) =>
+    fromUniversalOverridesToCommandMenuItemOverridesEntry({
+      universalOverrides: entry,
+      flatObjectMetadataMaps,
+      flatPageLayoutMaps,
+    }),
+  );

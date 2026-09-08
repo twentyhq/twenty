@@ -31,6 +31,8 @@ import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-c
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
+import { applyAuthoredIsActive } from 'src/engine/metadata-modules/utils/apply-authored-is-active.util';
+import { resetAuthoredOverrides } from 'src/engine/metadata-modules/utils/reset-authored-overrides.util';
 
 @Injectable()
 export class CommandMenuItemService {
@@ -284,10 +286,13 @@ export class CommandMenuItemService {
     }
 
     const flatCommandMenuItemToUpdate: FlatCommandMenuItem = {
-      ...existingFlatCommandMenuItem,
-      isActive: true,
-      overrides: null,
-      universalOverrides: null,
+      ...resetAuthoredOverrides({
+        flatEntity: existingFlatCommandMenuItem,
+        authorUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      }),
       updatedAt: new Date().toISOString(),
     };
 
@@ -362,8 +367,14 @@ export class CommandMenuItemService {
     });
 
     const deactivatedFlatCommandMenuItem = {
-      ...flatCommandMenuItemToDelete,
-      isActive: false,
+      ...applyAuthoredIsActive({
+        flatEntity: flatCommandMenuItemToDelete,
+        isActive: false,
+        authorUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      }),
       updatedAt: new Date().toISOString(),
     };
 

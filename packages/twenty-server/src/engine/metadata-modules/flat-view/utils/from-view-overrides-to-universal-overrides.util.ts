@@ -6,6 +6,8 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type ViewOverrides } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
+import { mapAuthoredOverrideEntries } from 'src/engine/metadata-modules/utils/map-authored-override-entries.util';
 
 type UniversalViewOverrides =
   FormatRecordSerializedRelationProperties<ViewOverrides>;
@@ -28,7 +30,7 @@ const toUniversalIdentifierProperty = (
     'UniversalIdentifier',
   ) as keyof UniversalViewOverrides;
 
-export const fromViewOverridesToUniversalOverrides = ({
+const fromViewOverridesToUniversalOverridesEntry = ({
   overrides,
   fieldMetadataUniversalIdentifierById,
   shouldThrowOnMissingIdentifier = true,
@@ -79,3 +81,20 @@ export const fromViewOverridesToUniversalOverrides = ({
     scalarOverrides,
   );
 };
+
+export const fromViewOverridesToUniversalOverrides = ({
+  overrides,
+  fieldMetadataUniversalIdentifierById,
+  shouldThrowOnMissingIdentifier,
+}: {
+  overrides: AuthoredOverrides<ViewOverrides>;
+  fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
+  shouldThrowOnMissingIdentifier?: boolean;
+}): AuthoredOverrides<UniversalViewOverrides> =>
+  mapAuthoredOverrideEntries(overrides, (entry) =>
+    fromViewOverridesToUniversalOverridesEntry({
+      overrides: entry,
+      fieldMetadataUniversalIdentifierById,
+      shouldThrowOnMissingIdentifier,
+    }),
+  );

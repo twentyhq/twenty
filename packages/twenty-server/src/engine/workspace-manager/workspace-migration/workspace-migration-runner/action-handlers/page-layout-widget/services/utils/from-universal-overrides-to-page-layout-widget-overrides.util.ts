@@ -5,11 +5,13 @@ import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { type PageLayoutWidgetOverrides } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
+import { mapAuthoredOverrideEntries } from 'src/engine/metadata-modules/utils/map-authored-override-entries.util';
 
 type UniversalPageLayoutWidgetOverrides =
   FormatRecordSerializedRelationProperties<PageLayoutWidgetOverrides>;
 
-export const fromUniversalOverridesToPageLayoutWidgetOverrides = ({
+const fromUniversalOverridesToPageLayoutWidgetOverridesEntry = ({
   universalOverrides,
   flatPageLayoutTabMaps,
 }: {
@@ -37,3 +39,17 @@ export const fromUniversalOverridesToPageLayoutWidgetOverrides = ({
       flatPageLayoutTab.id as PageLayoutWidgetOverrides['pageLayoutTabId'],
   };
 };
+
+export const fromUniversalOverridesToPageLayoutWidgetOverrides = ({
+  universalOverrides,
+  flatPageLayoutTabMaps,
+}: {
+  universalOverrides: AuthoredOverrides<UniversalPageLayoutWidgetOverrides>;
+  flatPageLayoutTabMaps: FlatPageLayoutTabMaps;
+}): AuthoredOverrides<PageLayoutWidgetOverrides> =>
+  mapAuthoredOverrideEntries(universalOverrides, (entry) =>
+    fromUniversalOverridesToPageLayoutWidgetOverridesEntry({
+      universalOverrides: entry,
+      flatPageLayoutTabMaps,
+    }),
+  );

@@ -76,6 +76,8 @@ export const fromUpdateTimelineActivityTypeInputToFlatTimelineActivityTypeToUpda
         existingFlatEntity: existingFlatTimelineActivityType,
         updatedEditableProperties: updates,
         shouldOverride,
+        callerApplicationUniversalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier,
       });
 
     return {
@@ -87,6 +89,12 @@ export const fromUpdateTimelineActivityTypeInputToFlatTimelineActivityTypeToUpda
       overrides: mergeTranslationsIntoOverrides<TimelineActivityTypeOverrides>({
         existingOverrides: overrides,
         translationEntries: translations,
+        authorUniversalIdentifier: callerApplicationUniversalIdentifier,
+        authorContext: {
+          workspaceCustomApplicationUniversalIdentifier,
+          ownerApplicationUniversalIdentifier:
+            existingFlatTimelineActivityType.applicationUniversalIdentifier,
+        },
       }),
       updatedAt: new Date().toISOString(),
     };

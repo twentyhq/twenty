@@ -43,6 +43,7 @@ import { ViewService } from 'src/engine/metadata-modules/view/services/view.serv
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { DashboardSyncService } from 'src/modules/dashboard-sync/services/dashboard-sync.service';
+import { applyAuthoredIsActive } from 'src/engine/metadata-modules/utils/apply-authored-is-active.util';
 
 type UpdatePageLayoutWithTabsParams = {
   id: string;
@@ -285,7 +286,9 @@ export class PageLayoutUpdateService {
       .filter(isDefined)
       .filter((tab) => tab.pageLayoutId === existingPageLayout.id);
 
-    const resolvedExistingTabs = existingTabs.map(resolveEffectiveFlatEntity);
+    const resolvedExistingTabs = existingTabs.map((tab) =>
+      resolveEffectiveFlatEntity(tab),
+    );
 
     const {
       toCreate: entitiesToCreate,
@@ -362,6 +365,9 @@ export class PageLayoutUpdateService {
             existingFlatEntity: existingTab,
             updatedEditableProperties: editableProperties,
             shouldOverride,
+            callerApplicationUniversalIdentifier:
+              workspaceCustomApplicationUniversalIdentifier,
+            workspaceCustomApplicationUniversalIdentifier,
           });
 
         return {
@@ -402,13 +408,23 @@ export class PageLayoutUpdateService {
             existingFlatEntity: existingTab,
             updatedEditableProperties: editableProperties,
             shouldOverride,
+            callerApplicationUniversalIdentifier:
+              workspaceCustomApplicationUniversalIdentifier,
+            workspaceCustomApplicationUniversalIdentifier,
           });
 
         return {
-          ...existingTab,
-          ...updatedEditableProperties,
-          overrides,
-          isActive: true,
+          ...applyAuthoredIsActive({
+            flatEntity: {
+              ...existingTab,
+              ...updatedEditableProperties,
+              overrides,
+            },
+            isActive: true,
+            authorUniversalIdentifier:
+              workspaceCustomApplicationUniversalIdentifier,
+            workspaceCustomApplicationUniversalIdentifier,
+          }),
           updatedAt: now.toISOString(),
         };
       });
@@ -561,8 +577,8 @@ export class PageLayoutUpdateService {
       flatPageLayoutWidgetMaps,
     });
 
-    const resolvedExistingWidgets = existingWidgets.map(
-      resolveEffectiveFlatEntity,
+    const resolvedExistingWidgets = existingWidgets.map((widget) =>
+      resolveEffectiveFlatEntity(widget),
     );
 
     const {
@@ -641,21 +657,26 @@ export class PageLayoutUpdateService {
     );
 
     const widgetsToRestoreAndUpdate: FlatPageLayoutWidget[] =
-      entitiesToRestoreAndUpdate.map((widgetInput) => ({
-        ...this.buildUpdatedFlatPageLayoutWidget({
-          widgetInput,
-          flatPageLayoutWidgetMaps,
-          flatPageLayoutTabMaps,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-          flatFrontComponentMaps,
-          flatViewFieldGroupMaps,
-          flatViewMaps,
+      entitiesToRestoreAndUpdate.map((widgetInput) =>
+        applyAuthoredIsActive({
+          flatEntity: this.buildUpdatedFlatPageLayoutWidget({
+            widgetInput,
+            flatPageLayoutWidgetMaps,
+            flatPageLayoutTabMaps,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            flatFrontComponentMaps,
+            flatViewFieldGroupMaps,
+            flatViewMaps,
+            workspaceCustomApplicationUniversalIdentifier,
+            now,
+          }),
+          isActive: true,
+          authorUniversalIdentifier:
+            workspaceCustomApplicationUniversalIdentifier,
           workspaceCustomApplicationUniversalIdentifier,
-          now,
         }),
-        isActive: true,
-      }));
+      );
 
     const widgetIdsToRemoveExcludingMovedToOtherTabs =
       this.excludeWidgetsMovedToOtherTabs({
@@ -755,6 +776,9 @@ export class PageLayoutUpdateService {
         existingFlatEntity: existingWidget,
         updatedEditableProperties: editableProperties,
         shouldOverride,
+        callerApplicationUniversalIdentifier:
+          workspaceCustomApplicationUniversalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier,
       });
 
     const updatedWidget: FlatPageLayoutWidget = {

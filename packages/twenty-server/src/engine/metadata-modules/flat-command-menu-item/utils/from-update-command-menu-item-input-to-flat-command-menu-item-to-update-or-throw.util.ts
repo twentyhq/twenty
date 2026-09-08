@@ -5,7 +5,6 @@ import {
   CommandMenuItemExceptionCode,
 } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.exception';
 import { type UpdateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/update-command-menu-item.input';
-import { type CommandMenuItemOverrides } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
@@ -62,6 +61,8 @@ export const fromUpdateCommandMenuItemInputToFlatCommandMenuItemToUpdateOrThrow 
         existingFlatEntity: existingFlatCommandMenuItem,
         updatedEditableProperties: updates,
         shouldOverride,
+        callerApplicationUniversalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier,
       });
 
     const mergedRecord = mergeUpdateInExistingRecord({
@@ -108,7 +109,7 @@ export const fromUpdateCommandMenuItemInputToFlatCommandMenuItemToUpdateOrThrow 
     if (isDefined(overrides)) {
       flatCommandMenuItemToUpdate.universalOverrides =
         fromCommandMenuItemOverridesToUniversalOverrides({
-          overrides: overrides as CommandMenuItemOverrides,
+          overrides,
           objectMetadataUniversalIdentifierById:
             flatObjectMetadataMaps.universalIdentifierById,
           pageLayoutUniversalIdentifierById:

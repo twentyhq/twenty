@@ -73,6 +73,8 @@ export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
       existingFlatEntity: existingFlatViewFieldToUpdate,
       updatedEditableProperties: editableProperties,
       shouldOverride,
+      callerApplicationUniversalIdentifier,
+      workspaceCustomApplicationUniversalIdentifier,
     });
 
   const mergedRecord = mergeUpdateInExistingRecord({

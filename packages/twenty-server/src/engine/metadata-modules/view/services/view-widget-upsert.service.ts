@@ -513,6 +513,10 @@ export class ViewWidgetUpsertService {
                 : {}),
             },
             shouldOverride,
+            callerApplicationUniversalIdentifier:
+              applicationUniversalIdentifier,
+            workspaceCustomApplicationUniversalIdentifier:
+              applicationUniversalIdentifier,
           });
 
         const updatedField: FlatViewField = {

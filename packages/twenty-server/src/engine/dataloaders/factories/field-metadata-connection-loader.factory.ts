@@ -13,7 +13,7 @@ import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadat
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-overridable-properties-by-metadata-name.constant';
+import { ALL_OVERRIDABLE_PRESENTATION_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-overridable-properties-by-metadata-name.constant';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
@@ -102,7 +102,7 @@ export class FieldMetadataConnectionLoaderFactory {
           const overrides = flatFieldMetadata.overrides ?? undefined;
           const i18nContext = getI18nContext(flatFieldMetadata.applicationId);
           const overriddenFlatFieldMetadata =
-            ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME.fieldMetadata.reduce(
+            ALL_OVERRIDABLE_PRESENTATION_PROPERTIES_BY_METADATA_NAME.fieldMetadata.reduce(
               (acc, property) => ({
                 ...acc,
                 [property]: resolveEffectiveEntityProperty({

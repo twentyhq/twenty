@@ -264,6 +264,10 @@ export class FieldsWidgetUpsertService {
               isVisible: inputGroup.isVisible,
             },
             shouldOverride,
+            callerApplicationUniversalIdentifier:
+              applicationUniversalIdentifier,
+            workspaceCustomApplicationUniversalIdentifier:
+              applicationUniversalIdentifier,
           });
 
         groupsToUpdate.push({
@@ -354,6 +358,9 @@ export class FieldsWidgetUpsertService {
             viewFieldGroupId: newViewFieldGroupId,
           },
           shouldOverride,
+          callerApplicationUniversalIdentifier: applicationUniversalIdentifier,
+          workspaceCustomApplicationUniversalIdentifier:
+            applicationUniversalIdentifier,
         });
 
       const updatedField: FlatViewField = {
@@ -441,6 +448,10 @@ export class FieldsWidgetUpsertService {
                 viewFieldGroupId: inputGroup.id,
               },
               shouldOverride,
+              callerApplicationUniversalIdentifier:
+                applicationUniversalIdentifier,
+              workspaceCustomApplicationUniversalIdentifier:
+                applicationUniversalIdentifier,
             });
 
           const updatedField: FlatViewField = {
@@ -640,6 +651,9 @@ export class FieldsWidgetUpsertService {
             viewFieldGroupId: null as string | null,
           },
           shouldOverride,
+          callerApplicationUniversalIdentifier: applicationUniversalIdentifier,
+          workspaceCustomApplicationUniversalIdentifier:
+            applicationUniversalIdentifier,
         });
 
       const updatedField: FlatViewField = {
@@ -700,6 +714,10 @@ export class FieldsWidgetUpsertService {
               viewFieldGroupId: null,
             },
             shouldOverride,
+            callerApplicationUniversalIdentifier:
+              applicationUniversalIdentifier,
+            workspaceCustomApplicationUniversalIdentifier:
+              applicationUniversalIdentifier,
           });
 
         const updatedField: FlatViewField = {

@@ -1,14 +1,16 @@
 import { generateMessageId } from 'twenty-shared/i18n';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { resolveEffectiveFieldDescription } from 'src/engine/core-modules/tool-provider/utils/resolve-effective-field-description.util';
+import { type FieldMetadataOverrides } from 'src/engine/metadata-modules/field-metadata/types/field-metadata-overrides.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type MessageIdTranslator } from 'src/engine/metadata-modules/utils/message-id-translator.type';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
-  'workspace-custom-application-universal-identifier';
+  '20202020-aaaa-4aaa-8aaa-000000000001';
 const BASE_DESCRIPTION = 'Task due date';
 const OVERRIDDEN_DESCRIPTION =
   'Stored in UTC; users dictate local time, convert before writing';
@@ -22,7 +24,7 @@ const buildTranslator = (
 const untranslated = buildTranslator();
 
 const getStandardFlatFieldMetadata = (
-  overrides?: Parameters<typeof getFlatFieldMetadataMock>[0]['overrides'],
+  workspaceOverridesEntry?: FieldMetadataOverrides,
 ) =>
   getFlatFieldMetadataMock({
     universalIdentifier: 'due-at-field',
@@ -32,7 +34,12 @@ const getStandardFlatFieldMetadata = (
     description: BASE_DESCRIPTION,
     applicationUniversalIdentifier:
       TWENTY_STANDARD_APPLICATION.universalIdentifier,
-    overrides,
+    overrides: isDefined(workspaceOverridesEntry)
+      ? {
+          [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]:
+            workspaceOverridesEntry,
+        }
+      : undefined,
   });
 
 describe('resolveEffectiveFieldDescription', () => {

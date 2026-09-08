@@ -4,6 +4,8 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type ViewOverrides } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
+import { mapAuthoredOverrideEntries } from 'src/engine/metadata-modules/utils/map-authored-override-entries.util';
 
 type UniversalViewOverrides =
   FormatRecordSerializedRelationProperties<ViewOverrides>;
@@ -26,7 +28,7 @@ const toForeignKeyProperty = (
     'Id',
   ) as keyof ViewOverrides;
 
-export const fromUniversalOverridesToViewOverrides = ({
+const fromUniversalOverridesToViewOverridesEntry = ({
   universalOverrides,
   flatFieldMetadataMaps,
 }: {
@@ -66,3 +68,17 @@ export const fromUniversalOverridesToViewOverrides = ({
     scalarOverrides,
   );
 };
+
+export const fromUniversalOverridesToViewOverrides = ({
+  universalOverrides,
+  flatFieldMetadataMaps,
+}: {
+  universalOverrides: AuthoredOverrides<UniversalViewOverrides>;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+}): AuthoredOverrides<ViewOverrides> =>
+  mapAuthoredOverrideEntries(universalOverrides, (entry) =>
+    fromUniversalOverridesToViewOverridesEntry({
+      universalOverrides: entry,
+      flatFieldMetadataMaps,
+    }),
+  );

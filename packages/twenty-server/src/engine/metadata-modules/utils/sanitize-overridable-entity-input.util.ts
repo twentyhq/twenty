@@ -1,29 +1,35 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
 import { ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-overridable-properties-by-metadata-name.constant';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
 import { computeMetadataOverridesBlob } from 'src/engine/metadata-modules/utils/compute-metadata-overrides-blob.util';
 
-type FlatEntityWithOverrides<TOverrides> = {
+type FlatEntityWithOverrides<TEntry> = {
   [key: string]: unknown;
-  overrides: TOverrides | null;
+  applicationUniversalIdentifier: string;
+  overrides: AuthoredOverrides<TEntry> | null;
 };
 
 export const sanitizeOverridableEntityInput = <
   T extends AllMetadataName,
   TProperties extends Record<string, unknown>,
-  TOverrides = Record<string, unknown>,
+  TEntry = Record<string, unknown>,
 >({
   metadataName,
   existingFlatEntity,
   updatedEditableProperties,
   shouldOverride,
+  callerApplicationUniversalIdentifier,
+  workspaceCustomApplicationUniversalIdentifier,
 }: {
   metadataName: T;
-  existingFlatEntity: FlatEntityWithOverrides<TOverrides>;
+  existingFlatEntity: FlatEntityWithOverrides<TEntry>;
   updatedEditableProperties: TProperties;
   shouldOverride: boolean;
+  callerApplicationUniversalIdentifier: string;
+  workspaceCustomApplicationUniversalIdentifier: string;
 }): {
-  overrides: TOverrides | null;
+  overrides: AuthoredOverrides<TEntry> | null;
   updatedEditableProperties: TProperties;
 } => {
   if (!shouldOverride) {
@@ -35,7 +41,7 @@ export const sanitizeOverridableEntityInput = <
 
   const { overrides, remainingProperties } = computeMetadataOverridesBlob<
     TProperties,
-    TOverrides
+    TEntry
   >({
     overridableProperties: ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME[
       metadataName
@@ -43,6 +49,12 @@ export const sanitizeOverridableEntityInput = <
     updatedProperties: updatedEditableProperties,
     existingEntity: existingFlatEntity,
     existingOverrides: existingFlatEntity.overrides,
+    authorUniversalIdentifier: callerApplicationUniversalIdentifier,
+    authorContext: {
+      workspaceCustomApplicationUniversalIdentifier,
+      ownerApplicationUniversalIdentifier:
+        existingFlatEntity.applicationUniversalIdentifier,
+    },
   });
 
   return { overrides, updatedEditableProperties: remainingProperties };

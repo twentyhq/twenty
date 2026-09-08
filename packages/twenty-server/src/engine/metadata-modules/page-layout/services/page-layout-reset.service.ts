@@ -43,6 +43,7 @@ import { ViewService } from 'src/engine/metadata-modules/view/services/view.serv
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { DashboardSyncService } from 'src/modules/dashboard-sync/services/dashboard-sync.service';
+import { resetAuthoredOverrides } from 'src/engine/metadata-modules/utils/reset-authored-overrides.util';
 
 @Injectable()
 export class PageLayoutResetService {
@@ -125,9 +126,13 @@ export class PageLayoutResetService {
     const now = new Date().toISOString();
 
     const widgetToUpdate: FlatPageLayoutWidget = {
-      ...widget,
-      overrides: null,
-      universalOverrides: null,
+      ...resetAuthoredOverrides({
+        flatEntity: widget,
+        authorUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      }),
       updatedAt: now,
     };
 
@@ -269,8 +274,13 @@ export class PageLayoutResetService {
     const now = new Date().toISOString();
 
     const tabToUpdate: FlatPageLayoutTab = {
-      ...tab,
-      overrides: null,
+      ...resetAuthoredOverrides({
+        flatEntity: tab,
+        authorUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      }),
       updatedAt: now,
     };
 
