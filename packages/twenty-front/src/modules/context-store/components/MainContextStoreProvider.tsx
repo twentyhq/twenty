@@ -1,4 +1,5 @@
 import { MainContextStoreProviderEffect } from '@/context-store/components/MainContextStoreProviderEffect';
+import { useEnsoViewerScope } from '@/enso/viewer-scope/hooks/useEnsoViewerScope';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
@@ -12,11 +13,18 @@ import { isDefined } from 'twenty-shared/utils';
 import { ViewKey, ViewType } from '~/generated-metadata/graphql';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
+// The one place that decides which view an object opens on.
+//
+// An explicit choice in the URL wins, then wherever this person was last, then
+// their ROLE's configured default, then the workspace INDEX view. The role
+// default is a starting point rather than a cage: it applies until the person
+// navigates somewhere themselves.
 const getViewId = (
   viewIdFromQueryParams: string | null,
   indexViewId?: string,
   lastVisitedViewId?: string,
   firstAvailableViewId?: string,
+  roleDefaultViewId?: string,
 ) => {
   if (isDefined(viewIdFromQueryParams)) {
     return viewIdFromQueryParams;
@@ -24,6 +32,10 @@ const getViewId = (
 
   if (isDefined(lastVisitedViewId)) {
     return lastVisitedViewId;
+  }
+
+  if (isDefined(roleDefaultViewId)) {
+    return roleDefaultViewId;
   }
 
   if (isDefined(indexViewId)) {
@@ -64,6 +76,7 @@ export const MainContextStoreProvider = () => {
   );
 
   const { getLastVisitedViewIdFromObjectNamePlural } = useLastVisitedView();
+  const { roleDefaultViewIdByObjectMetadataId } = useEnsoViewerScope();
 
   const viewIdQueryParamView = views.find(
     (view) => view.id === viewIdQueryParamRaw,
@@ -101,11 +114,23 @@ export const MainContextStoreProvider = () => {
       view.type !== ViewType.FIELDS_WIDGET,
   )?.id;
 
+  // A role default pointing at a view that no longer exists, or that this
+  // viewer cannot see, must not strand them — hence the lookup against `views`.
+  const roleDefaultViewIdRaw = isDefined(objectMetadataItem)
+    ? roleDefaultViewIdByObjectMetadataId[objectMetadataItem.id]
+    : undefined;
+
+  const roleDefaultViewId = views.find(
+    (view) =>
+      view.id === roleDefaultViewIdRaw && view.type !== ViewType.FIELDS_WIDGET,
+  )?.id;
+
   const viewId = getViewId(
     viewIdQueryParam,
     indexViewId,
     lastVisitedViewId,
     firstAvailableViewId,
+    roleDefaultViewId,
   );
 
   const shouldComputeContextStore =

@@ -8,6 +8,10 @@ export const ENSO_VIEWER_SCOPE = gql`
     ensoViewerScope {
       isRecordScoped
       hiddenNavigationObjectNameSingulars
+      defaultViews {
+        objectMetadataId
+        viewId
+      }
     }
   }
 `;

@@ -10,6 +10,29 @@ import { getEnsoScopedRoleIds } from 'src/modules/enso/record-visibility/utils/g
 export class EnsoViewerScopeService {
   constructor(private readonly userRoleService: UserRoleService) {}
 
+  // The viewer's role, or undefined when there is no user behind the request.
+  // Exposed because default views key off the role regardless of scoping.
+  async getViewerRoleId({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<string | undefined> {
+    if (!userWorkspaceId) {
+      return undefined;
+    }
+
+    try {
+      return await this.userRoleService.getRoleIdForUserWorkspace({
+        workspaceId,
+        userWorkspaceId,
+      });
+    } catch {
+      return undefined;
+    }
+  }
+
   async isViewerScoped({
     workspaceId,
     userWorkspaceId,
