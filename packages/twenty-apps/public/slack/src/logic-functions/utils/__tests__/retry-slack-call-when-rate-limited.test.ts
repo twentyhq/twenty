@@ -19,7 +19,7 @@ describe('retrySlackCallWhenRateLimited', () => {
   it('should return the result without retrying when the call succeeds', async () => {
     const call = vi.fn().mockResolvedValue({ ts: '1700000000.000100' });
 
-    const result = await retrySlackCallWhenRateLimited(call);
+    const result = await retrySlackCallWhenRateLimited({ call });
 
     expect(result).toEqual({ ts: '1700000000.000100' });
     expect(call).toHaveBeenCalledTimes(1);
@@ -33,7 +33,7 @@ describe('retrySlackCallWhenRateLimited', () => {
       .mockRejectedValueOnce(buildRateLimitedError(2))
       .mockResolvedValue({ ts: '1700000000.000100' });
 
-    const resultPromise = retrySlackCallWhenRateLimited(call);
+    const resultPromise = retrySlackCallWhenRateLimited({ call });
 
     await vi.advanceTimersByTimeAsync(2000);
 
@@ -44,7 +44,7 @@ describe('retrySlackCallWhenRateLimited', () => {
   it('should rethrow when Retry-After is longer than the retry budget', async () => {
     const call = vi.fn().mockRejectedValue(buildRateLimitedError(60));
 
-    await expect(retrySlackCallWhenRateLimited(call)).rejects.toThrow(
+    await expect(retrySlackCallWhenRateLimited({ call })).rejects.toThrow(
       'rate limited, retry in 60 seconds',
     );
     expect(call).toHaveBeenCalledTimes(1);
@@ -55,7 +55,7 @@ describe('retrySlackCallWhenRateLimited', () => {
 
     const call = vi.fn().mockRejectedValue(buildRateLimitedError(1));
 
-    const resultPromise = retrySlackCallWhenRateLimited(call);
+    const resultPromise = retrySlackCallWhenRateLimited({ call });
     const assertion = expect(resultPromise).rejects.toThrow(
       'rate limited, retry in 1 seconds',
     );
@@ -75,16 +75,35 @@ describe('retrySlackCallWhenRateLimited', () => {
       throw buildRateLimitedError(1);
     });
 
-    await expect(retrySlackCallWhenRateLimited(call)).rejects.toThrow(
+    await expect(retrySlackCallWhenRateLimited({ call })).rejects.toThrow(
       'rate limited, retry in 1 seconds',
     );
     expect(call).toHaveBeenCalledTimes(1);
   });
 
+  it('should wait out a long Retry-After when the caller has the budget for it', async () => {
+    vi.useFakeTimers();
+
+    const call = vi
+      .fn()
+      .mockRejectedValueOnce(buildRateLimitedError(60))
+      .mockResolvedValue({ members: [] });
+
+    const resultPromise = retrySlackCallWhenRateLimited({
+      call,
+      budgetMs: 90_000,
+    });
+
+    await vi.advanceTimersByTimeAsync(60_000);
+
+    expect(await resultPromise).toEqual({ members: [] });
+    expect(call).toHaveBeenCalledTimes(2);
+  });
+
   it('should not retry an error that is not a rate limit', async () => {
     const call = vi.fn().mockRejectedValue(new Error('channel_not_found'));
 
-    await expect(retrySlackCallWhenRateLimited(call)).rejects.toThrow(
+    await expect(retrySlackCallWhenRateLimited({ call })).rejects.toThrow(
       'channel_not_found',
     );
     expect(call).toHaveBeenCalledTimes(1);

@@ -35,19 +35,20 @@ export const sendSlackUserLinkConsentDm = async (
       };
     }
 
-    await retrySlackCallWhenRateLimited(async () =>
-      slackClient.chat.postMessage({
-        channel: channelId,
-        text: 'A Twenty admin asked to link your Slack account. Approve or decline it here.',
-        blocks: buildSlackUserLinkConsentBlocks({
-          memberName,
-          slackTeamId,
-          slackUserId,
-          workspaceMemberId,
-          slackUserLinkId,
+    await retrySlackCallWhenRateLimited({
+      call: async () =>
+        slackClient.chat.postMessage({
+          channel: channelId,
+          text: 'A Twenty admin asked to link your Slack account. Approve or decline it here.',
+          blocks: buildSlackUserLinkConsentBlocks({
+            memberName,
+            slackTeamId,
+            slackUserId,
+            workspaceMemberId,
+            slackUserLinkId,
+          }),
         }),
-      }),
-    );
+    });
 
     return { success: true };
   } catch (error) {

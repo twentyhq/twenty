@@ -34,20 +34,21 @@ export const postSlackMessage = async (
       failureMessage: 'Failed to post Slack message',
       sendMessage: async (bodyFields) => {
         try {
-          const data = await retrySlackCallWhenRateLimited(async () =>
-            client.chat.postMessage({
-              channel: parameters.slackChannelId,
-              thread_ts: parentTimestamp,
-              ...(isDefined(parameters.unfurlLinks)
-                ? { unfurl_links: parameters.unfurlLinks }
-                : {}),
-              ...(isDefined(parameters.unfurlMedia)
-                ? { unfurl_media: parameters.unfurlMedia }
-                : {}),
-              ...(entities.length > 0 ? { metadata: { entities } } : {}),
-              ...bodyFields,
-            }),
-          );
+          const data = await retrySlackCallWhenRateLimited({
+            call: async () =>
+              client.chat.postMessage({
+                channel: parameters.slackChannelId,
+                thread_ts: parentTimestamp,
+                ...(isDefined(parameters.unfurlLinks)
+                  ? { unfurl_links: parameters.unfurlLinks }
+                  : {}),
+                ...(isDefined(parameters.unfurlMedia)
+                  ? { unfurl_media: parameters.unfurlMedia }
+                  : {}),
+                ...(entities.length > 0 ? { metadata: { entities } } : {}),
+                ...bodyFields,
+              }),
+          });
 
           return {
             success: true,
