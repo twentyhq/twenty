@@ -11,10 +11,13 @@ export type BillingPeriodTransition = {
   nextPeriodStart: Date;
 };
 
-const subtractOneInterval = (
-  date: Date,
-  interval: SubscriptionInterval,
-): Date =>
+const subtractOneInterval = ({
+  date,
+  interval,
+}: {
+  date: Date;
+  interval: SubscriptionInterval;
+}): Date =>
   interval === SubscriptionInterval.Year
     ? subYears(date, 1)
     : subMonths(date, 1);
@@ -110,7 +113,10 @@ const resolveClosingPeriodStart = ({
   // differ in length, so a February renewal bills 28 days and subtracting
   // those from February 1 would place the closing period at January 4 and
   // drop three days of usage, which then reads as unspent allowance.
-  return subtractOneInterval(boundary, subscriptionInterval);
+  return subtractOneInterval({
+    date: boundary,
+    interval: subscriptionInterval,
+  });
 };
 
 export const deriveBillingPeriodTransition = ({

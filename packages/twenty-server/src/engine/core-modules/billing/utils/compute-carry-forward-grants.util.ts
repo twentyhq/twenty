@@ -33,7 +33,13 @@ type CreditBucket = {
 const isCappedType = (type: BillingCreditGrantType): boolean =>
   CAPPED_BILLING_CREDIT_GRANT_TYPES.includes(type);
 
-const hasLapsedBy = (expiresAt: Date | null, boundary: Date): boolean =>
+const hasLapsedBy = ({
+  expiresAt,
+  boundary,
+}: {
+  expiresAt: Date | null;
+  boundary: Date;
+}): boolean =>
   isDefined(expiresAt) && expiresAt.getTime() <= boundary.getTime();
 
 // Capped credits are spent first so that deliberately granted credits
@@ -127,7 +133,7 @@ export const computeCarryForwardGrants = ({
       (bucket) =>
         !isCappedType(bucket.type) &&
         bucket.amountMicro >= 1 &&
-        !hasLapsedBy(bucket.expiresAt, boundary),
+        !hasLapsedBy({ expiresAt: bucket.expiresAt, boundary }),
     )
     .map((bucket) => ({
       type: bucket.type,

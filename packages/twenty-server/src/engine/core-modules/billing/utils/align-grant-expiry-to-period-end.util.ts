@@ -31,8 +31,13 @@ const MAX_PERIODS_AHEAD = 24;
 // past a common-year one and buy a whole extra period, so the low reading is
 // the one worth keeping. Recovering the anchor this way avoids having to
 // persist Stripe's billing_cycle_anchor.
-const resolveAnchorDayOfMonth = (periodStart: Date, periodEnd: Date): number =>
-  Math.max(getDate(periodStart), getDate(periodEnd));
+const resolveAnchorDayOfMonth = ({
+  periodStart,
+  periodEnd,
+}: {
+  periodStart: Date;
+  periodEnd: Date;
+}): number => Math.max(getDate(periodStart), getDate(periodEnd));
 
 const projectPeriodEnd = ({
   periodStart,
@@ -85,10 +90,10 @@ export const alignGrantExpiryToPeriodEnd = ({
     return currentPeriodEnd;
   }
 
-  const anchorDayOfMonth = resolveAnchorDayOfMonth(
-    currentPeriodStart,
-    currentPeriodEnd,
-  );
+  const anchorDayOfMonth = resolveAnchorDayOfMonth({
+    periodStart: currentPeriodStart,
+    periodEnd: currentPeriodEnd,
+  });
 
   // Every later boundary is projected from the period start rather than by
   // stepping off the previous result, which would walk a month-end anchor down
