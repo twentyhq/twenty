@@ -39,7 +39,7 @@ type ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs = {
   allFlatEntityOperationByMetadataName: AllFlatEntityOperationByMetadataName;
   isSystemBuild?: boolean;
   applicationUniversalIdentifier: string;
-  workspaceCustomApplicationUniversalIdentifier?: string;
+  isWorkspaceCustomApplicationBuild?: boolean;
   dryRun?: boolean;
 };
 
@@ -48,7 +48,7 @@ type ValidateBuildAndRunWorkspaceMigrationFromRecordArgs = {
   allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName;
   isSystemBuild?: boolean;
   applicationUniversalIdentifier: string;
-  workspaceCustomApplicationUniversalIdentifier?: string;
+  isWorkspaceCustomApplicationBuild?: boolean;
   dryRun?: boolean;
 };
 
@@ -213,7 +213,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     workspaceId,
     isSystemBuild = false,
     applicationUniversalIdentifier,
-    workspaceCustomApplicationUniversalIdentifier,
+    isWorkspaceCustomApplicationBuild,
     dryRun,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
@@ -229,7 +229,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       workspaceId,
       isSystemBuild,
       applicationUniversalIdentifier,
-      workspaceCustomApplicationUniversalIdentifier,
+      isWorkspaceCustomApplicationBuild,
       dryRun,
     });
   }
@@ -285,7 +285,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     workspaceId,
     isSystemBuild = false,
     applicationUniversalIdentifier,
-    workspaceCustomApplicationUniversalIdentifier,
+    isWorkspaceCustomApplicationBuild,
     dryRun,
     skipSideEffectExpandEngine,
   }: ValidateBuildAndRunWorkspaceMigrationFromRecordInternalArgs): Promise<
@@ -322,7 +322,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
             buildOptions: {
               isSystemBuild,
               applicationUniversalIdentifier,
-              workspaceCustomApplicationUniversalIdentifier,
+              isWorkspaceCustomApplicationBuild,
             },
           },
         });

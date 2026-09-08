@@ -18,147 +18,147 @@ export type SeedOperations = {
 export type SeedOperationsByApplication = Map<string, SeedOperations>;
 
 export const computeSeedObjectDefaultViewOperationsByApplication = ({
-    flatObjectMetadataMaps,
-    flatViewMaps,
-    flatViewFieldMaps,
-    seededViewApplicationUniversalIdentifier,
-  }: Pick<
-    AllFlatEntityMaps,
-    'flatObjectMetadataMaps' | 'flatViewMaps' | 'flatViewFieldMaps'
-  > & {
-    seededViewApplicationUniversalIdentifier: string;
-  }): SeedOperationsByApplication => {
-    const seedOperationsByApplication: SeedOperationsByApplication = new Map();
+  flatObjectMetadataMaps,
+  flatViewMaps,
+  flatViewFieldMaps,
+  seededViewApplicationUniversalIdentifier,
+}: Pick<
+  AllFlatEntityMaps,
+  'flatObjectMetadataMaps' | 'flatViewMaps' | 'flatViewFieldMaps'
+> & {
+  seededViewApplicationUniversalIdentifier: string;
+}): SeedOperationsByApplication => {
+  const seedOperationsByApplication: SeedOperationsByApplication = new Map();
 
-    const getApplicationBucket = (applicationUniversalIdentifier: string) => {
-      const existingBucket = seedOperationsByApplication.get(
-        applicationUniversalIdentifier,
-      );
+  const getApplicationBucket = (applicationUniversalIdentifier: string) => {
+    const existingBucket = seedOperationsByApplication.get(
+      applicationUniversalIdentifier,
+    );
 
-      if (isDefined(existingBucket)) {
-        return existingBucket;
-      }
+    if (isDefined(existingBucket)) {
+      return existingBucket;
+    }
 
-      const newBucket: SeedOperations = {
-        viewsToCreate: [],
-        viewFieldsToCreate: [],
-      };
-
-      seedOperationsByApplication.set(
-        applicationUniversalIdentifier,
-        newBucket,
-      );
-
-      return newBucket;
+    const newBucket: SeedOperations = {
+      viewsToCreate: [],
+      viewFieldsToCreate: [],
     };
 
-    const flatIndexViewByObjectUniversalIdentifier = new Map<
-      string,
-      UniversalFlatView
-    >();
+    seedOperationsByApplication.set(
+      applicationUniversalIdentifier,
+      newBucket,
+    );
 
-    for (const flatView of Object.values(flatViewMaps.byUniversalIdentifier)) {
-      if (
-        isDefined(flatView) &&
-        flatView.key === ViewKey.INDEX &&
-        flatView.deletedAt === null
-      ) {
-        flatIndexViewByObjectUniversalIdentifier.set(
-          flatView.objectMetadataUniversalIdentifier,
-          flatView,
-        );
-      }
+    return newBucket;
+  };
+
+  const flatIndexViewByObjectUniversalIdentifier = new Map<
+    string,
+    UniversalFlatView
+  >();
+
+  for (const flatView of Object.values(flatViewMaps.byUniversalIdentifier)) {
+    if (
+      isDefined(flatView) &&
+      flatView.key === ViewKey.INDEX &&
+      flatView.deletedAt === null
+    ) {
+      flatIndexViewByObjectUniversalIdentifier.set(
+        flatView.objectMetadataUniversalIdentifier,
+        flatView,
+      );
+    }
+  }
+
+  for (const flatObjectMetadata of Object.values(
+    flatObjectMetadataMaps.byUniversalIdentifier,
+  )) {
+    if (!isDefined(flatObjectMetadata) || flatObjectMetadata.isRemote) {
+      continue;
     }
 
-    for (const flatObjectMetadata of Object.values(
-      flatObjectMetadataMaps.byUniversalIdentifier,
-    )) {
-      if (!isDefined(flatObjectMetadata) || flatObjectMetadata.isRemote) {
-        continue;
-      }
+    const flatIndexView = flatIndexViewByObjectUniversalIdentifier.get(
+      flatObjectMetadata.universalIdentifier,
+    );
 
-      const flatIndexView = flatIndexViewByObjectUniversalIdentifier.get(
-        flatObjectMetadata.universalIdentifier,
-      );
+    if (!isDefined(flatIndexView)) {
+      continue;
+    }
 
-      if (!isDefined(flatIndexView)) {
-        continue;
-      }
+    const seededViewUniversalIdentifier =
+      getSeededObjectViewUniversalIdentifier({
+        objectMetadataApplicationUniversalIdentifier:
+          seededViewApplicationUniversalIdentifier,
+        objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
+      });
 
-      const seededViewUniversalIdentifier =
-        getSeededObjectViewUniversalIdentifier({
-          objectMetadataApplicationUniversalIdentifier:
-            seededViewApplicationUniversalIdentifier,
-          objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
-        });
+    const existingSeededFlatView =
+      flatViewMaps.byUniversalIdentifier[seededViewUniversalIdentifier];
 
-      const existingSeededFlatView =
-        flatViewMaps.byUniversalIdentifier[seededViewUniversalIdentifier];
+    const existingSeededViewFieldUniversalIdentifiers = new Set(
+      existingSeededFlatView?.viewFieldUniversalIdentifiers ?? [],
+    );
 
-      const existingSeededViewFieldUniversalIdentifiers = new Set(
-        existingSeededFlatView?.viewFieldUniversalIdentifiers ?? [],
-      );
+    const applicationBucket = getApplicationBucket(
+      seededViewApplicationUniversalIdentifier,
+    );
 
-      const applicationBucket = getApplicationBucket(
-        seededViewApplicationUniversalIdentifier,
-      );
-
-      if (!isDefined(existingSeededFlatView)) {
-        applicationBucket.viewsToCreate.push(
-          computeSeededObjectViewToCreate({
-            objectMetadata: flatObjectMetadata,
-            applicationUniversalIdentifier:
-              seededViewApplicationUniversalIdentifier,
-          }),
-        );
-      }
-
-      for (const viewFieldUniversalIdentifier of flatIndexView.viewFieldUniversalIdentifiers) {
-        const flatViewField =
-          flatViewFieldMaps.byUniversalIdentifier[viewFieldUniversalIdentifier];
-
-        if (!isDefined(flatViewField)) {
-          continue;
-        }
-
-        const seededViewFieldUniversalIdentifier =
-          getViewFieldUniversalIdentifier({
-            applicationUniversalIdentifier:
-              seededViewApplicationUniversalIdentifier,
-            viewUniversalIdentifier: seededViewUniversalIdentifier,
-            fieldMetadataUniversalIdentifier:
-              flatViewField.fieldMetadataUniversalIdentifier,
-          });
-
-        if (
-          existingSeededViewFieldUniversalIdentifiers.has(
-            seededViewFieldUniversalIdentifier,
-          )
-        ) {
-          continue;
-        }
-
-        applicationBucket.viewFieldsToCreate.push({
-          fieldMetadataUniversalIdentifier:
-            flatViewField.fieldMetadataUniversalIdentifier,
-          viewUniversalIdentifier: seededViewUniversalIdentifier,
-          viewFieldGroupUniversalIdentifier: null,
-          createdAt: flatViewField.createdAt,
-          updatedAt: flatViewField.updatedAt,
-          deletedAt: null,
-          universalIdentifier: seededViewFieldUniversalIdentifier,
-          isVisible: flatViewField.isVisible,
-          size: flatViewField.size,
-          position: flatViewField.position,
-          aggregateOperation: flatViewField.aggregateOperation,
-          isActive: flatViewField.isActive,
-          isSystemSideEffect: false,
-          universalOverrides: null,
+    if (!isDefined(existingSeededFlatView)) {
+      applicationBucket.viewsToCreate.push(
+        computeSeededObjectViewToCreate({
+          objectMetadata: flatObjectMetadata,
           applicationUniversalIdentifier:
             seededViewApplicationUniversalIdentifier,
-        });
-      }
+        }),
+      );
     }
 
-    return seedOperationsByApplication;
+    for (const viewFieldUniversalIdentifier of flatIndexView.viewFieldUniversalIdentifiers) {
+      const flatViewField =
+        flatViewFieldMaps.byUniversalIdentifier[viewFieldUniversalIdentifier];
+
+      if (!isDefined(flatViewField)) {
+        continue;
+      }
+
+      const seededViewFieldUniversalIdentifier =
+        getViewFieldUniversalIdentifier({
+          applicationUniversalIdentifier:
+            seededViewApplicationUniversalIdentifier,
+          viewUniversalIdentifier: seededViewUniversalIdentifier,
+          fieldMetadataUniversalIdentifier:
+            flatViewField.fieldMetadataUniversalIdentifier,
+        });
+
+      if (
+        existingSeededViewFieldUniversalIdentifiers.has(
+          seededViewFieldUniversalIdentifier,
+        )
+      ) {
+        continue;
+      }
+
+      applicationBucket.viewFieldsToCreate.push({
+        fieldMetadataUniversalIdentifier:
+          flatViewField.fieldMetadataUniversalIdentifier,
+        viewUniversalIdentifier: seededViewUniversalIdentifier,
+        viewFieldGroupUniversalIdentifier: null,
+        createdAt: flatViewField.createdAt,
+        updatedAt: flatViewField.updatedAt,
+        deletedAt: null,
+        universalIdentifier: seededViewFieldUniversalIdentifier,
+        isVisible: flatViewField.isVisible,
+        size: flatViewField.size,
+        position: flatViewField.position,
+        aggregateOperation: flatViewField.aggregateOperation,
+        isActive: flatViewField.isActive,
+        isSystemSideEffect: false,
+        universalOverrides: null,
+        applicationUniversalIdentifier:
+          seededViewApplicationUniversalIdentifier,
+      });
+    }
+  }
+
+  return seedOperationsByApplication;
 };

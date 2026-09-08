@@ -2,7 +2,7 @@ import { getSeededObjectViewUniversalIdentifier } from 'twenty-shared/applicatio
 import { VIEW_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
 import { ViewType } from 'twenty-shared/types';
 
-import { buildBaseUniversalFlatView } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-view-to-create.util';
+import { buildBaseUniversalFlatView } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/build-base-universal-flat-view.util';
 import { SEEDED_OBJECT_VIEW_POSITION } from 'src/engine/metadata-modules/view/constants/seeded-object-view-position.constant';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';

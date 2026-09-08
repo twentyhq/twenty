@@ -4,5 +4,5 @@ export type WorkspaceMigrationBuilderOptions = {
   inferDeletionFromMissingEntities?: InferDeletionFromMissingEntities;
   isSystemBuild: boolean;
   applicationUniversalIdentifier: string;
-  workspaceCustomApplicationUniversalIdentifier?: string;
+  isWorkspaceCustomApplicationBuild?: boolean;
 };
