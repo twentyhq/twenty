@@ -35,7 +35,7 @@ export const MenuSubmenuTrigger = ({
         description={description}
         descriptionPlacement={descriptionPlacement}
         hotkeys={hotkeys}
-        submenu
+        hasSubmenu
       >
         {children}
       </ListItem>
