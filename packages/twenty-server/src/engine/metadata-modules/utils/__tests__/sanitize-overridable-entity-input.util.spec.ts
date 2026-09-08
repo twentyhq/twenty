@@ -157,7 +157,7 @@ describe('sanitizeOverridableEntityInput', () => {
       expect(result.updatedEditableProperties).not.toHaveProperty('position');
     });
 
-    it('should route isActive into the caller entry and materialize the column', () => {
+    it('should route isActive into the caller entry and recompute the column', () => {
       const result = sanitizeOverridableEntityInput({
         metadataName: 'pageLayoutTab',
         existingFlatEntity: { ...baseTab, isActive: true, overrides: null },

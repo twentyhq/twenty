@@ -8,8 +8,7 @@ type FlatEntityWithIsActive = {
 };
 
 // Deactivation and restoration by a non-owner are attributed to that author:
-// the entry records who did it and the column materializes the effective
-// value. The owner keeps writing the column, as for any of its properties.
+// the entry records who did it and the column takes the effective value. The owner keeps writing the column, as for any of its properties.
 // isActive carries no foreign key, so the universal twin of the blob takes
 // the same entry change without a converter.
 export const applyAuthoredIsActive = <T extends FlatEntityWithIsActive>({

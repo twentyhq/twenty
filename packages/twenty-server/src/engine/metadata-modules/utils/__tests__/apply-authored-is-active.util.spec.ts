@@ -58,7 +58,7 @@ describe('applyAuthoredIsActive', () => {
 });
 
 describe('resetAuthoredOverrides', () => {
-  it('drops the caller entry and materializes isActive from what remains', () => {
+  it('drops the caller entry and recomputes isActive from what remains', () => {
     expect(
       resetAuthoredOverrides({
         flatEntity: {

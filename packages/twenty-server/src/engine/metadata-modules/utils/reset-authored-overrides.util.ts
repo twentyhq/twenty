@@ -1,5 +1,5 @@
 import { removeAuthoredOverrideEntry } from 'src/engine/metadata-modules/utils/remove-authored-override-entry.util';
-import { resolveMaterializedIsActive } from 'src/engine/metadata-modules/utils/resolve-materialized-is-active.util';
+import { resolveEffectiveIsActive } from 'src/engine/metadata-modules/utils/resolve-effective-is-active.util';
 
 type FlatEntityWithOverrides = {
   applicationUniversalIdentifier: string;
@@ -37,7 +37,7 @@ export const resetAuthoredOverrides = <T extends FlatEntityWithOverrides>({
           }),
         }
       : {}),
-    isActive: resolveMaterializedIsActive({
+    isActive: resolveEffectiveIsActive({
       overrides,
       authorContext: {
         workspaceCustomApplicationUniversalIdentifier,
