@@ -1149,6 +1149,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "bouncedCount": {
         "universalIdentifier": "20d884a9-34dd-4667-8ecb-ceec224258e2",
       },
+      "clickedCount": {
+        "universalIdentifier": "9c8a97b3-bcbd-45a5-8387-e4aeb462ec32",
+      },
       "complainedCount": {
         "universalIdentifier": "82842cfa-f12a-4bab-bbde-b2cf587d0406",
       },
@@ -1238,6 +1241,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "bouncedCount": {
             "universalIdentifier": "3c273c7f-b577-5213-8597-198dac6fdae1",
           },
+          "clickedCount": {
+            "universalIdentifier": "9d3cc669-eaa5-5612-80f6-41a35bc15aa4",
+          },
           "complainedCount": {
             "universalIdentifier": "30317d2b-5212-56be-a5fe-0ab15722dde3",
           },
@@ -1289,6 +1295,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
         "viewFields": {
           "bouncedCount": {
             "universalIdentifier": "4c4caad8-5d4c-5584-b7ae-22766c382843",
+          },
+          "clickedCount": {
+            "universalIdentifier": "1e442c18-4b68-57a4-9611-f8094cd683be",
           },
           "complainedCount": {
             "universalIdentifier": "7188a9aa-4821-5ae6-adec-642a7aca271b",

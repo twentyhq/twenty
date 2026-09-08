@@ -58,7 +58,7 @@ export class DnsResolverService {
       return null;
     }
 
-    const { code } = error as Error & { code: unknown };
+    const { code } = error;
 
     return isNonEmptyString(code) ? code : null;
   }

@@ -27,6 +27,12 @@ describe('collectTrackableLinkUrls', () => {
     expect(collectTrackableLinkUrls(html)).toEqual([]);
   });
 
+  it('ignores links still holding a batch substitution tag', () => {
+    const html = `<a href="https://acme.com/{{v_u_0}}/welcome">Personalised</a>`;
+
+    expect(collectTrackableLinkUrls(html)).toEqual([]);
+  });
+
   it('decodes escaped ampersands so the stored url is the real destination', () => {
     const html = `<a href="https://acme.com/?a=1&amp;b=2">Link</a>`;
 

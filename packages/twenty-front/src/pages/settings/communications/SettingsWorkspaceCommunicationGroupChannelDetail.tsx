@@ -121,7 +121,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
   const isClickTrackingPending =
     isDefined(emailingDomain) &&
     emailingDomain.isClickTrackingEnabled &&
-    emailingDomain.clickTrackingHostnameStatus !== ManagedHostnameStatus.Active;
+    emailingDomain.clickTrackingHostnameStatus !== ManagedHostnameStatus.ACTIVE;
 
   const shouldShowDnsRecords = !isDomainVerified || isClickTrackingPending;
 

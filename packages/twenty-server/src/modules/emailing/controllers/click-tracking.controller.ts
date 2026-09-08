@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Header,
+  Logger,
   NotFoundException,
   Param,
   Redirect,
@@ -26,6 +27,8 @@ const FOUND_STATUS_CODE = 302;
 @Controller(`${ApiPath.Emailing}/c`)
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
 export class ClickTrackingController {
+  private readonly logger = new Logger(ClickTrackingController.name);
+
   constructor(
     private readonly clickTrackingTokenService: ClickTrackingTokenService,
     private readonly messageCampaignLinkService: MessageCampaignLinkService,
@@ -66,10 +69,16 @@ export class ClickTrackingController {
       messageId,
     });
 
-    await this.messageCampaignStatisticsService.scheduleRefresh({
-      workspaceId: link.workspaceId,
-      campaignId: link.messageCampaignId,
-    });
+    await this.messageCampaignStatisticsService
+      .scheduleRefresh({
+        workspaceId: link.workspaceId,
+        campaignId: link.messageCampaignId,
+      })
+      .catch((error) => {
+        this.logger.warn(
+          `Recorded click on link ${link.id} but could not schedule a statistics refresh: ${error}`,
+        );
+      });
   }
 
   private verifyTokenOrThrow(token: string) {

@@ -2,7 +2,7 @@ import { CHECK_EMAILING_DOMAIN_VERIFICATION_CRON_PATTERN } from 'src/engine/core
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { In, Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { NON_TERMINAL_EMAILING_DOMAIN_STATUSES } from 'src/engine/core-modules/emailing-domain/constants/non-terminal-emailing-domain-statuses.constant';
@@ -37,7 +37,7 @@ export class CheckEmailingDomainVerificationCronJob {
   )
   async handle(): Promise<void> {
     await this.refreshUnverifiedDomains();
-    await this.refreshPendingHostnames();
+    await this.reconcileHostnames();
     await this.reprovisionVerifiedWorkspaces();
   }
 
@@ -83,9 +83,9 @@ export class CheckEmailingDomainVerificationCronJob {
     }
   }
 
-  private async refreshPendingHostnames(): Promise<void> {
-    const verifiedDomainsWithPendingHostname =
-      await this.emailingDomainRepository.find({
+  private async reconcileHostnames(): Promise<void> {
+    const domainsNeedingHostnameWork = await this.emailingDomainRepository.find(
+      {
         where: [
           {
             status: EmailingDomainStatus.VERIFIED,
@@ -93,17 +93,27 @@ export class CheckEmailingDomainVerificationCronJob {
           },
           {
             status: EmailingDomainStatus.VERIFIED,
+            unsubscribeHostnameId: IsNull(),
+          },
+          {
+            status: EmailingDomainStatus.VERIFIED,
             clickTrackingHostnameStatus: ManagedHostnameStatus.PENDING,
+          },
+          {
+            status: EmailingDomainStatus.VERIFIED,
+            isClickTrackingEnabled: true,
+            clickTrackingHostnameId: IsNull(),
           },
         ],
         select: ['id', 'workspaceId'],
-      });
+      },
+    );
 
-    for (const emailingDomain of verifiedDomainsWithPendingHostname) {
+    for (const emailingDomain of domainsNeedingHostnameWork) {
       await this.emailingHostnamesService.sync({
         workspaceId: emailingDomain.workspaceId,
         emailingDomainId: emailingDomain.id,
-        provision: false,
+        provision: true,
       });
     }
   }
