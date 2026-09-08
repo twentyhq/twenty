@@ -3,7 +3,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { agendaSchema } from '../../shared/types';
 import { TwentyClient } from '../twenty-client';
 import { DesktopRecorderUnavailableError } from '../oauth';
-import { type SecureStore } from '../secure-store';
 
 const fetchMock = vi.fn();
 const credentials = {
@@ -17,7 +16,7 @@ const store = {
   readCredentials: vi.fn(),
   clearCredentials: vi.fn(),
   writeCredentials: vi.fn(),
-} as unknown as SecureStore;
+};
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
     status,

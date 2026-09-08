@@ -44,7 +44,12 @@ export class TwentyClient {
   private credentialWrite: Promise<void> = Promise.resolve();
   private connectionVersion = 0;
 
-  constructor(private store: SecureStore) {}
+  constructor(
+    private store: Pick<
+      SecureStore,
+      'readCredentials' | 'writeCredentials' | 'clearCredentials'
+    >,
+  ) {}
 
   resolveImageUrl(imageUrl?: string | null): string | null {
     return this.credentials
