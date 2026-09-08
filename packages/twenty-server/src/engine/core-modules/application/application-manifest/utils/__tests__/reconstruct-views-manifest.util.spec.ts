@@ -480,7 +480,7 @@ const statusOf = (
   coverage.find((entry) => entry.universalIdentifier === universalIdentifier);
 
 describe('reconstructViewsManifest', () => {
-  it('should nest the children of an application view and order every collection deterministically', () => {
+  it('should nest the children of an application view and order every collection by universal identifier', () => {
     const { views, viewFields, coverage } = reconstructViewsManifest({
       applicationAllFlatEntityMaps: buildMaps({
         objects: [petObject],
@@ -548,20 +548,20 @@ describe('reconstructViewsManifest', () => {
 
     expect(views).toEqual([
       OTHER_ALL_PETS_VIEW_MANIFEST,
+      ZOO_PETS_VIEW_MANIFEST,
       {
         ...ALL_PETS_VIEW_MANIFEST,
         fields: [
-          NAME_VIEW_FIELD_MANIFEST,
           AGE_VIEW_FIELD_MANIFEST,
+          NAME_VIEW_FIELD_MANIFEST,
           SPECIES_VIEW_FIELD_MANIFEST,
         ],
-        filters: [NAME_FILTER_MANIFEST, AGE_FILTER_MANIFEST],
+        filters: [AGE_FILTER_MANIFEST, NAME_FILTER_MANIFEST],
         filterGroups: [ROOT_FILTER_GROUP_MANIFEST],
         groups: [DOG_GROUP_MANIFEST],
         fieldGroups: [DETAILS_FIELD_GROUP_MANIFEST],
-        sorts: [NAME_SORT_MANIFEST, AGE_SORT_MANIFEST],
+        sorts: [AGE_SORT_MANIFEST, NAME_SORT_MANIFEST],
       },
-      ZOO_PETS_VIEW_MANIFEST,
     ]);
     expect(viewFields).toEqual([]);
     expect(coverage).toHaveLength(13);
@@ -1040,10 +1040,10 @@ describe('reconstructViewsManifest', () => {
       exportedObjectUniversalIdentifiers: EXPORTED_OBJECT_UNIVERSAL_IDENTIFIERS,
     });
 
-    expect(views.map(({ name }) => name)).toEqual(['All pets', 'Zoo pets']);
-    expect(views[0].fields).toEqual([
-      NAME_VIEW_FIELD_MANIFEST,
+    expect(views.map(({ name }) => name)).toEqual(['Zoo pets', 'All pets']);
+    expect(views[1].fields).toEqual([
       AGE_VIEW_FIELD_MANIFEST,
+      NAME_VIEW_FIELD_MANIFEST,
     ]);
     expect(statusOf(coverage, ALL_PETS_VIEW_UID)).toEqual({
       metadataName: 'view',
@@ -1070,7 +1070,7 @@ describe('reconstructViewsManifest', () => {
     });
   });
 
-  it('should order standalone view fields by view, then position, then universal identifier', () => {
+  it('should order standalone view fields by universal identifier', () => {
     const { viewFields } = reconstructViewsManifest({
       applicationAllFlatEntityMaps: buildMaps({
         viewFields: [
@@ -1115,10 +1115,10 @@ describe('reconstructViewsManifest', () => {
     expect(
       viewFields.map(({ universalIdentifier }) => universalIdentifier),
     ).toEqual([
+      'a-people-view-field',
+      'b-second-companies-view-field',
       'c-tied-companies-view-field',
       'z-tied-companies-view-field',
-      'b-second-companies-view-field',
-      'a-people-view-field',
     ]);
   });
 

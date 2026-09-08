@@ -18,9 +18,7 @@ import {
 } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-view-to-view-manifest.util';
 import { type ApplicationExportCoverageEntry } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
 import { buildExportedCoverageEntry } from 'src/engine/core-modules/application/application-manifest/utils/build-exported-coverage-entry.util';
-import { compareByCodePoint } from 'src/engine/core-modules/application/application-manifest/utils/compare-by-code-point.util';
-import { compareByKeyThenUniversalIdentifier } from 'src/engine/core-modules/application/application-manifest/utils/compare-by-key-then-universal-identifier.util';
-import { compareByPositionThenUniversalIdentifier } from 'src/engine/core-modules/application/application-manifest/utils/compare-by-position-then-universal-identifier.util';
+import { compareByUniversalIdentifier } from 'src/engine/core-modules/application/application-manifest/utils/compare-by-universal-identifier.util';
 import { type WorkspaceLocalStateProperties } from 'src/engine/core-modules/application/application-manifest/utils/get-workspace-local-state-reason.util';
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -76,11 +74,10 @@ const isNestedDeeperThanMaxDepth = (value: unknown): boolean => {
 
 const sortedFlatEntities = <TFlatEntity extends SyncableFlatEntity>(
   flatEntityMaps: UniversalFlatEntityMaps<TFlatEntity>,
-  compare: (left: TFlatEntity, right: TFlatEntity) => number,
 ): TFlatEntity[] =>
   Object.values(flatEntityMaps.byUniversalIdentifier)
     .filter(isDefined)
-    .sort(compare);
+    .sort(compareByUniversalIdentifier);
 
 const getUnsupportedViewReason = ({
   flatView,
@@ -156,7 +153,6 @@ export const reconstructViewsManifest = ({
 
   for (const flatView of sortedFlatEntities(
     applicationAllFlatEntityMaps.flatViewMaps,
-    compareByKeyThenUniversalIdentifier(({ name }) => name),
   )) {
     if (flatView.isSystemSideEffect) {
       coverage.push({
@@ -318,7 +314,6 @@ export const reconstructViewsManifest = ({
 
   for (const flatViewField of sortedFlatEntities(
     applicationAllFlatEntityMaps.flatViewFieldMaps,
-    compareByPositionThenUniversalIdentifier(({ position }) => position),
   )) {
     const decision = decideViewChild({
       metadataName: 'viewField',
@@ -349,7 +344,6 @@ export const reconstructViewsManifest = ({
 
   for (const flatViewFieldGroup of sortedFlatEntities(
     applicationAllFlatEntityMaps.flatViewFieldGroupMaps,
-    compareByPositionThenUniversalIdentifier(({ position }) => position),
   )) {
     if (
       decideViewChild({
@@ -366,9 +360,6 @@ export const reconstructViewsManifest = ({
 
   for (const flatViewFilterGroup of sortedFlatEntities(
     applicationAllFlatEntityMaps.flatViewFilterGroupMaps,
-    compareByPositionThenUniversalIdentifier(
-      ({ positionInViewFilterGroup }) => positionInViewFilterGroup,
-    ),
   )) {
     if (
       decideViewChild({
@@ -388,9 +379,6 @@ export const reconstructViewsManifest = ({
 
   for (const flatViewFilter of sortedFlatEntities(
     applicationAllFlatEntityMaps.flatViewFilterMaps,
-    compareByPositionThenUniversalIdentifier(
-      ({ positionInViewFilterGroup }) => positionInViewFilterGroup,
-    ),
   )) {
     const unsupportedReason = isNestedDeeperThanMaxDepth(flatViewFilter.value)
       ? `view filter with a value nested deeper than ${MAX_VIEW_FILTER_VALUE_DEPTH} levels`
@@ -415,7 +403,6 @@ export const reconstructViewsManifest = ({
 
   for (const flatViewGroup of sortedFlatEntities(
     applicationAllFlatEntityMaps.flatViewGroupMaps,
-    compareByPositionThenUniversalIdentifier(({ position }) => position),
   )) {
     if (
       decideViewChild({
@@ -431,10 +418,6 @@ export const reconstructViewsManifest = ({
 
   for (const flatViewSort of sortedFlatEntities(
     applicationAllFlatEntityMaps.flatViewSortMaps,
-    compareByKeyThenUniversalIdentifier(
-      ({ fieldMetadataUniversalIdentifier }) =>
-        fieldMetadataUniversalIdentifier,
-    ),
   )) {
     if (
       decideViewChild({
@@ -467,15 +450,7 @@ export const reconstructViewsManifest = ({
     });
   });
 
-  viewFields.sort(
-    (left, right) =>
-      compareByCodePoint(
-        left.viewUniversalIdentifier,
-        right.viewUniversalIdentifier,
-      ) ||
-      left.position - right.position ||
-      compareByCodePoint(left.universalIdentifier, right.universalIdentifier),
-  );
+  viewFields.sort(compareByUniversalIdentifier);
 
   return { views, viewFields, coverage };
 };
