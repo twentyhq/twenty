@@ -2,14 +2,14 @@ import { msg } from '@lingui/core/macro';
 import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { resolveShareWithPrincipal } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/resolve-share-with-principal.util';
-import {
-  CommonQueryRunnerException,
-  CommonQueryRunnerExceptionCode,
-} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { type ShareWithInput } from 'src/engine/api/common/types/share-with-input.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
+import {
+  RecordShareException,
+  RecordShareExceptionCode,
+} from 'src/engine/record-share/record-share.exception';
+import { type ShareWithInput } from 'src/engine/record-share/types/share-with-input.type';
+import { resolveShareWithPrincipal } from 'src/engine/record-share/utils/resolve-share-with-principal.util';
 
 export const validateShareWithPrincipalsOrThrow = ({
   shareWith,
@@ -31,9 +31,9 @@ export const validateShareWithPrincipalsOrThrow = ({
       (!isDefined(flatWorkspaceMember) ||
         isDefined(flatWorkspaceMember.deletedAt))
     ) {
-      throw new CommonQueryRunnerException(
+      throw new RecordShareException(
         `shareWith names a workspace member that does not belong to this workspace: ${principalId}`,
-        CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+        RecordShareExceptionCode.INVALID_SHARE_WITH,
         {
           userFriendlyMessage: msg`shareWith names a workspace member that does not belong to this workspace`,
         },
@@ -44,9 +44,9 @@ export const validateShareWithPrincipalsOrThrow = ({
       principalType === RecordSharePrincipalType.ROLE &&
       !isDefined(flatRoleMaps.universalIdentifierById[principalId])
     ) {
-      throw new CommonQueryRunnerException(
+      throw new RecordShareException(
         `shareWith names a role that does not belong to this workspace: ${principalId}`,
-        CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+        RecordShareExceptionCode.INVALID_SHARE_WITH,
         {
           userFriendlyMessage: msg`shareWith names a role that does not belong to this workspace`,
         },
