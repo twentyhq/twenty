@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { isAuditLoggableFieldType } from 'src/engine/metadata-modules/field-metadata/utils/is-audit-loggable-field-type.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 
 export const buildNonAuditLoggedFieldNamesByObjectMetadataId = (
@@ -14,12 +15,19 @@ export const buildNonAuditLoggedFieldNamesByObjectMetadataId = (
   for (const flatFieldMetadata of Object.values(
     flatFieldMetadataMaps.byUniversalIdentifier,
   )) {
+    if (!isDefined(flatFieldMetadata)) {
+      continue;
+    }
+
     // A projection cached before the column existed carries no value at all, so
-    // only an explicit false takes a field out of the timeline.
-    if (
-      !isDefined(flatFieldMetadata) ||
-      flatFieldMetadata.isAuditLogged !== false
-    ) {
+    // only an explicit false takes a field out of the timeline. The type check
+    // covers the position rows the backfill has not reached yet, since a slow
+    // instance command only runs when the upgrade is given --include-slow.
+    const isAuditLogged =
+      flatFieldMetadata.isAuditLogged !== false &&
+      isAuditLoggableFieldType(flatFieldMetadata.type);
+
+    if (isAuditLogged) {
       continue;
     }
 

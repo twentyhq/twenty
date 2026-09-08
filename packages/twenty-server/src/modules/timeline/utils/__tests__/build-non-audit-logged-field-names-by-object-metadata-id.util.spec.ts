@@ -88,6 +88,22 @@ describe('buildNonAuditLoggedFieldNamesByObjectMetadataId', () => {
     ).toBe(0);
   });
 
+  it('excludes a position field the backfill has not reached yet', () => {
+    expect(
+      buildNonAuditLoggedFieldNamesByObjectMetadataId(
+        buildMaps([
+          {
+            ...buildField({
+              universalIdentifier: 'position-field',
+              name: 'position',
+            }),
+            type: FieldMetadataType.POSITION,
+          },
+        ]),
+      ).get(COMPANY_OBJECT_METADATA_ID),
+    ).toEqual(new Set(['position']));
+  });
+
   it('leaves out objects whose fields are all audit logged', () => {
     expect(
       buildNonAuditLoggedFieldNamesByObjectMetadataId(
