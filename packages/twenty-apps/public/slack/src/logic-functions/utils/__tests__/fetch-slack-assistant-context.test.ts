@@ -112,6 +112,29 @@ describe('fetchSlackAssistantContext', () => {
     expect(context.threadMessages).toEqual([]);
   });
 
+  it('should share one deadline between acquiring the client and reading the thread', async () => {
+    vi.useFakeTimers();
+    getSlackClientMock.mockImplementation(
+      () =>
+        new Promise((resolve) =>
+          setTimeout(
+            () => resolve({ success: true, client: SLACK_CLIENT }),
+            SLACK_ASSISTANT_CONTEXT_TIMEOUT_MS * 0.6,
+          ),
+        ),
+    );
+    fetchSlackThreadMessagesMock.mockReturnValue(new Promise(() => undefined));
+
+    const contextPromise = fetchSlackAssistantContext(CONTEXT_ARGS);
+
+    await vi.advanceTimersByTimeAsync(SLACK_ASSISTANT_CONTEXT_TIMEOUT_MS);
+
+    const context = await contextPromise;
+
+    expect(context.slackClient).toBe(SLACK_CLIENT);
+    expect(context.threadMessages).toEqual([]);
+  });
+
   it('should return an unreachable context when Slack is not connected', async () => {
     getSlackClientMock.mockResolvedValue({
       success: false,

@@ -34,6 +34,57 @@ const UNREACHABLE_SLACK_CONTEXT: SlackAssistantContext = {
   isDirectMessage: false,
 };
 
+const readSlackThreadContext = async ({
+  client,
+  slackChannelId,
+  parentMessageTimestamp,
+  slackMessageTimestamp,
+  slackUserId,
+}: {
+  client: WebClient;
+  slackChannelId: string;
+  parentMessageTimestamp: string;
+  slackMessageTimestamp: string;
+  slackUserId: string | undefined;
+}): Promise<SlackAssistantContext> => {
+  const assistantBotUserId = await resolveSlackBotUserIdOrThrow().catch(
+    (error) => {
+      console.warn(
+        `[slack] failed to resolve the bot user id, past assistant replies are replayed as user turns: ${error instanceof Error ? error.message : String(error)}`,
+      );
+
+      return undefined;
+    },
+  );
+
+  const [{ tailMessages, requestMessage }, requesterIdentity, isDirectMessage] =
+    await Promise.all([
+      fetchSlackThreadMessages({
+        client,
+        slackChannelId,
+        parentMessageTimestamp,
+        requestMessageTimestamp: slackMessageTimestamp,
+      }),
+      fetchSlackUserIdentity({ client, slackUserId }),
+      isSlackDirectMessageChannel({ client, slackChannelId }),
+    ]);
+
+  return {
+    conversationMessages: buildSlackConversationMessages({
+      messages: tailMessages,
+      assistantBotUserId,
+      excludeMessageTimestamps: [slackMessageTimestamp],
+    }),
+    requesterName: requesterIdentity?.displayName,
+    requesterIdentity,
+    requestMessage,
+    threadMessages: tailMessages,
+    slackClient: client,
+    assistantBotUserId,
+    isDirectMessage,
+  };
+};
+
 export const fetchSlackAssistantContext = async ({
   slackChannelId,
   parentMessageTimestamp,
@@ -45,71 +96,45 @@ export const fetchSlackAssistantContext = async ({
   slackMessageTimestamp: string;
   slackUserId: string | undefined;
 }): Promise<SlackAssistantContext> => {
-  let acquiredClient: WebClient | undefined;
+  // the agent budget is already ticking: partial context beats a late answer
+  const contextDeadlineAtMs = Date.now() + SLACK_ASSISTANT_CONTEXT_TIMEOUT_MS;
 
-  const readContext = async (): Promise<SlackAssistantContext> => {
-    const slackClientResult = await getSlackClient();
-
-    if (!slackClientResult.success) {
-      return UNREACHABLE_SLACK_CONTEXT;
-    }
-
-    const { client } = slackClientResult;
-
-    acquiredClient = client;
-
-    const assistantBotUserId = await resolveSlackBotUserIdOrThrow().catch(
-      (error) => {
-        console.warn(
-          `[slack] failed to resolve the bot user id, past assistant replies are replayed as user turns: ${error instanceof Error ? error.message : String(error)}`,
-        );
-
-        return undefined;
-      },
-    );
-
-    const [
-      { tailMessages, requestMessage },
-      requesterIdentity,
-      isDirectMessage,
-    ] = await Promise.all([
-      fetchSlackThreadMessages({
-        client,
-        slackChannelId,
-        parentMessageTimestamp,
-        requestMessageTimestamp: slackMessageTimestamp,
-      }),
-      fetchSlackUserIdentity({ client, slackUserId }),
-      isSlackDirectMessageChannel({ client, slackChannelId }),
-    ]);
-
-    return {
-      conversationMessages: buildSlackConversationMessages({
-        messages: tailMessages,
-        assistantBotUserId,
-        excludeMessageTimestamps: [slackMessageTimestamp],
-      }),
-      requesterName: requesterIdentity?.displayName,
-      requesterIdentity,
-      requestMessage,
-      threadMessages: tailMessages,
-      slackClient: client,
-      assistantBotUserId,
-      isDirectMessage,
-    };
-  };
-
-  // the agent budget starts before this read, so a slow Slack cannot be allowed
-  // to spend it: answering without history beats answering after the deadline
-  return await runWithTimeout({
-    operation: readContext(),
+  const slackClientResult = await runWithTimeout({
+    operation: getSlackClient(),
     timeoutMs: SLACK_ASSISTANT_CONTEXT_TIMEOUT_MS,
+    buildTimeoutValue: () => {
+      console.warn(
+        `[slack] acquiring the Slack client exceeded ${SLACK_ASSISTANT_CONTEXT_TIMEOUT_MS}ms, answering without thread history`,
+      );
+
+      return {
+        success: false as const,
+        error: 'Timed out acquiring the Slack client',
+      };
+    },
+  });
+
+  if (!slackClientResult.success) {
+    return UNREACHABLE_SLACK_CONTEXT;
+  }
+
+  const { client } = slackClientResult;
+
+  return await runWithTimeout({
+    operation: readSlackThreadContext({
+      client,
+      slackChannelId,
+      parentMessageTimestamp,
+      slackMessageTimestamp,
+      slackUserId,
+    }),
+    timeoutMs: Math.max(contextDeadlineAtMs - Date.now(), 0),
     buildTimeoutValue: () => {
       console.warn(
         `[slack] assistant context read exceeded ${SLACK_ASSISTANT_CONTEXT_TIMEOUT_MS}ms, answering without thread history`,
       );
 
-      return { ...UNREACHABLE_SLACK_CONTEXT, slackClient: acquiredClient };
+      return { ...UNREACHABLE_SLACK_CONTEXT, slackClient: client };
     },
   });
 };
