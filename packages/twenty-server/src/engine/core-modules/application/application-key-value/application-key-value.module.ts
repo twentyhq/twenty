@@ -7,8 +7,11 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 
+import { KeyValuePairModule } from 'src/engine/core-modules/key-value-pair/key-value-pair.module';
+
 @Module({
   imports: [
+    KeyValuePairModule,
     TypeOrmModule.forFeature([
       KeyValuePairEntity,
       ApplicationEntity,

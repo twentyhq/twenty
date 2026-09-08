@@ -20,9 +20,12 @@ import {
   KeyValuePairType,
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 
+import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
+
 @Injectable()
 export class ApplicationKeyValueService {
   constructor(
+    private readonly keyValuePairService: KeyValuePairService,
     @InjectRepository(KeyValuePairEntity)
     private readonly keyValuePairRepository: Repository<KeyValuePairEntity>,
     @InjectRepository(ApplicationEntity)
@@ -115,23 +118,13 @@ export class ApplicationKeyValueService {
     key: string;
     value: unknown;
   }): Promise<boolean> {
-    // The application-key unique index arbitrates concurrent workers.
-    const result = await this.keyValuePairRepository
-      .createQueryBuilder()
-      .insert()
-      .values({
-        key,
-        value: value as KeyValuePairEntity['value'],
-        applicationId: application.id,
-        workspaceId,
-        userId: null,
-        type: KeyValuePairType.APPLICATION_VARIABLE,
-      })
-      .orIgnore()
-      .returning('id')
-      .execute();
-
-    return result.raw.length > 0;
+    return this.keyValuePairService.setIfNotExists({
+      key,
+      value: value as KeyValuePairEntity['value'],
+      applicationId: application.id,
+      workspaceId,
+      type: KeyValuePairType.APPLICATION_VARIABLE,
+    });
   }
 
   async delete({
