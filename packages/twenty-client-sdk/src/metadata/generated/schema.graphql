@@ -2358,6 +2358,10 @@ type Field {
   isNullable: Boolean
   isUnique: Boolean
   isSearchable: Boolean
+
+  """
+  Whether this field's changes appear in the record timeline. Defaults to true, except on POSITION fields. Unlike the object-level flag it does not affect event logs, which stay the complete audit trail.
+  """
   isAuditLogged: Boolean
   defaultValue: JSON
   options: JSON
@@ -4819,6 +4823,10 @@ input CreateFieldInput {
   isNullable: Boolean
   isUnique: Boolean
   isSearchable: Boolean
+
+  """
+  Whether this field's changes appear in the record timeline. Defaults to true, except on POSITION fields. Unlike the object-level flag it does not affect event logs, which stay the complete audit trail.
+  """
   isAuditLogged: Boolean
   defaultValue: JSON
   options: JSON
@@ -4851,6 +4859,10 @@ input UpdateFieldInput {
   isNullable: Boolean
   isUnique: Boolean
   isSearchable: Boolean
+
+  """
+  Whether this field's changes appear in the record timeline. Defaults to true, except on POSITION fields. Unlike the object-level flag it does not affect event logs, which stay the complete audit trail.
+  """
   isAuditLogged: Boolean
   defaultValue: JSON
   options: JSON
