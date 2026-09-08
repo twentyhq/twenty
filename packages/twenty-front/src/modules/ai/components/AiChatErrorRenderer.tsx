@@ -2,7 +2,11 @@ import { AiChatApiKeyNotConfiguredMessage } from '@/ai/components/AiChatApiKeyNo
 import { AiChatErrorMessage } from '@/ai/components/AiChatErrorMessage';
 import { type AiChatError } from '@/ai/types/AiChatError';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
+import { getAiChatQuotaExhaustedKind } from '@/ai/utils/getAiChatQuotaExhaustedKind';
+import { getAiChatQuotaHint } from '@/ai/utils/getAiChatQuotaHint';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 type AiChatErrorRendererProps = {
@@ -14,6 +18,8 @@ export const AiChatErrorRenderer = ({
   error,
   onRetry,
 }: AiChatErrorRendererProps) => {
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
+
   // Handled by AIChatNoMoreBillingCreditsBanner, which useHasReachedAiChatCreditsCap
   // keeps mounted for exactly this error so nothing is swallowed here
   if (isAiChatCreditsExhaustedError(error)) {
@@ -30,6 +36,16 @@ export const AiChatErrorRenderer = ({
 
   if (isGraphqlErrorOfType(error, AiChatErrorCode.CONNECTION_LOST)) {
     return <AiChatErrorMessage error={error} />;
+  }
+
+  // The quota is checked before persistence, so a retry repeats the same refusal
+  if (getAiChatQuotaExhaustedKind(error) === 'limit') {
+    return (
+      <AiChatErrorMessage
+        error={error}
+        hint={getAiChatQuotaHint({ error, localeCatalog })}
+      />
+    );
   }
 
   return <AiChatErrorMessage error={error} onRetry={onRetry} />;
