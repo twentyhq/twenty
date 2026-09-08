@@ -17,6 +17,8 @@ import { SettingsAiModelInformation } from '@/settings/ai/components/SettingsAiM
 import { type AiModelSummary } from '@/settings/ai/types/AiModelSummary';
 import { getModelComparisonColor } from '@/settings/ai/utils/getModelComparisonColor';
 import { formatNumber } from '~/utils/format/formatNumber';
+import { billingState } from '@/client-config/states/billingState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledHoverCardWrapper = styled.div`
   backdrop-filter: blur(${themeCssVariables.blur.strong});
@@ -221,6 +223,8 @@ export const SettingsAiModelHoverCard = ({
   model: requestedModel,
 }: SettingsAiModelHoverCardProps) => {
   const tooltipId = useId().replace(/:/g, '');
+  const billing = useAtomStateValue(billingState);
+  const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const availableModels = comparisonModels.filter(
     (entry) => !isAutoSelectModelId(entry.modelId) && !entry.isDeprecated,
   );
@@ -350,7 +354,7 @@ export const SettingsAiModelHoverCard = ({
           },
         ]
       : []),
-    ...(isDisplayableNumber(model.inputCostPerMillionTokens)
+    ...(isBillingEnabled && isDisplayableNumber(model.inputCostPerMillionTokens)
       ? [
           {
             comparisonLabel: t`Input pricing compared with available models`,
@@ -377,7 +381,8 @@ export const SettingsAiModelHoverCard = ({
           },
         ]
       : []),
-    ...(isDisplayableNumber(model.outputCostPerMillionTokens)
+    ...(isBillingEnabled &&
+    isDisplayableNumber(model.outputCostPerMillionTokens)
       ? [
           {
             comparisonLabel: t`Output pricing compared with available models`,

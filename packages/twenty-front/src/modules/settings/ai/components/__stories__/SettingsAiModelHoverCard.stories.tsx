@@ -1,6 +1,8 @@
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
+import { createStore, Provider } from 'jotai';
+import { billingState } from '@/client-config/states/billingState';
 import { isAutoSelectModelId } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -50,7 +52,24 @@ const comparisonModels = [
 const meta: Meta<typeof SettingsAiModelHoverCard> = {
   title: 'Settings/AI/ModelHoverCard',
   component: SettingsAiModelHoverCard,
-  decorators: [ComponentDecorator],
+  decorators: [
+    ComponentDecorator,
+    (Story, context) => {
+      const [store] = useState(() => {
+        const store = createStore();
+        store.set(billingState.atom, {
+          isBillingEnabled: context.parameters.isBillingEnabled ?? true,
+          trialPeriods: [],
+        });
+        return store;
+      });
+      return (
+        <Provider store={store}>
+          <Story />
+        </Provider>
+      );
+    },
+  ],
   args: { model, comparisonModels },
 };
 
@@ -58,6 +77,7 @@ export default meta;
 type Story = StoryObj<typeof SettingsAiModelHoverCard>;
 
 export const Default: Story = {};
+export const SelfHosted: Story = { parameters: { isBillingEnabled: false } };
 export const WithoutBenchmarks: Story = {
   args: { model: { ...model, benchmark: undefined } },
 };

@@ -1,4 +1,11 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import {
+  render as testingLibraryRender,
+  screen,
+  waitFor,
+} from '@testing-library/react';
+import { createStore, Provider } from 'jotai';
+import { type ReactElement } from 'react';
+import { billingState } from '@/client-config/states/billingState';
 import userEvent from '@testing-library/user-event';
 import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
 
@@ -15,7 +22,41 @@ const benchmark = {
   fetchedAt: '2026-09-08T12:00:00.000Z',
 };
 
+const render = (
+  element: ReactElement,
+  isBillingEnabled: boolean | null = true,
+) => {
+  const store = createStore();
+  store.set(
+    billingState.atom,
+    isBillingEnabled === null ? null : { isBillingEnabled, trialPeriods: [] },
+  );
+  return testingLibraryRender(<Provider store={store}>{element}</Provider>);
+};
+
 describe('SettingsAiModelHoverCard', () => {
+  it.each([false, null])(
+    'hides Twenty prices when billing is %s',
+    (isBillingEnabled) => {
+      render(
+        <SettingsAiModelHoverCard
+          model={{
+            modelId: 'openai/luna',
+            label: 'Luna',
+            benchmark,
+            inputCostPerMillionTokens: 0.2,
+            outputCostPerMillionTokens: 1.2,
+            contextWindowTokens: 1_000_000,
+          }}
+        />,
+        isBillingEnabled,
+      );
+      expect(screen.queryByText('Input cost')).not.toBeInTheDocument();
+      expect(screen.queryByText('Output cost')).not.toBeInTheDocument();
+      expect(screen.getByText('Intelligence')).toBeInTheDocument();
+      expect(screen.getByText('Context window')).toBeInTheDocument();
+    },
+  );
   it('shows Twenty costs and Artificial Analysis cost with attribution', async () => {
     const user = userEvent.setup();
     render(
