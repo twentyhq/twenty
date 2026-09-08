@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { In } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,6 +16,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import {
   WorkflowStatus,
   type WorkflowWorkspaceEntity,
@@ -25,6 +26,10 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 
 @Injectable()
 export class CoreWorkflowMutationWorkspaceService {
+  private readonly logger = new Logger(
+    CoreWorkflowMutationWorkspaceService.name,
+  );
+
   constructor(
     @InjectWorkspaceScopedRepository(WorkflowEntity)
     private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
@@ -115,11 +120,15 @@ export class CoreWorkflowMutationWorkspaceService {
         workspaceWorkflowId,
       );
     } catch (error) {
-      await this.rollbackCreatedWorkflow(
-        workspaceId,
-        coreWorkflow.id,
-        workspaceWorkflowId,
-      );
+      try {
+        await this.rollbackCreatedWorkflow(
+          workspaceId,
+          coreWorkflow.id,
+          workspaceWorkflowId,
+        );
+      } catch (rollbackError) {
+        this.logger.error(rollbackError);
+      }
 
       throw error;
     }
@@ -216,7 +225,22 @@ export class CoreWorkflowMutationWorkspaceService {
       return;
     }
 
+    await this.workflowVersionCoreSyncService.deleteCoreVersionsByWorkflowIds(
+      workspaceId,
+      [workspaceWorkflowId],
+    );
+
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowVersionRepository =
+        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+          'workflowVersion',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      await workflowVersionRepository.delete({
+        workflowId: workspaceWorkflowId,
+      });
+
       const workflowRepository =
         this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
           'workflow',
