@@ -100,15 +100,18 @@ const resolveFileBaseNames = (entities: PullEntity[]): Map<string, string> => {
         ? `${kebabCase(entity.parentName)}-${entity.fileBaseName}`
         : entity.fileBaseName,
     );
-    const hasUniqueQualifiedNames =
-      new Set(qualifiedNames).size === qualifiedNames.length;
 
     collidingEntities.forEach((entity, index) => {
+      const qualifiedName = qualifiedNames[index];
+      const isQualifiedNameUnique =
+        qualifiedNames.indexOf(qualifiedName) ===
+        qualifiedNames.lastIndexOf(qualifiedName);
+
       fileBaseNameByUniversalIdentifier.set(
         entity.universalIdentifier,
-        hasUniqueQualifiedNames
-          ? qualifiedNames[index]
-          : `${entity.universalIdentifier.slice(0, 8)}-${entity.fileBaseName}`,
+        isQualifiedNameUnique
+          ? qualifiedName
+          : `${entity.universalIdentifier.slice(0, 8)}-${qualifiedName}`,
       );
     });
   }

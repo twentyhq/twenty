@@ -21,6 +21,7 @@ const ALL_PETS_VIEW_UID = '88888888-8888-4888-8888-888888888888';
 const HEALTHY_PETS_VIEW_UID = '99999999-9999-4999-8999-999999999999';
 const OVERVIEW_VIEW_UID = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 const SECOND_OVERVIEW_VIEW_UID = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+const THIRD_OVERVIEW_VIEW_UID = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
 const HEALTHY_PETS_FILTER_UID = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
 const PET_NAME_VIEW_FIELD_UID = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
 const ROCKET_NAME_VIEW_FIELD_UID = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
@@ -543,8 +544,49 @@ describe('planPullWrites', () => {
         .map((write) => write.relativePath)
         .sort(),
     ).toEqual([
-      `src/views/${OVERVIEW_VIEW_UID.slice(0, 8)}-overview.view.ts`,
-      `src/views/${SECOND_OVERVIEW_VIEW_UID.slice(0, 8)}-overview.view.ts`,
+      `src/views/${OVERVIEW_VIEW_UID.slice(0, 8)}-pet-overview.view.ts`,
+      `src/views/${SECOND_OVERVIEW_VIEW_UID.slice(0, 8)}-pet-overview.view.ts`,
+    ]);
+  });
+
+  it('should prefix only the views whose qualified names still collide', () => {
+    const plan = planPullWrites({
+      manifest: {
+        ...buildManifest([
+          buildObject({
+            universalIdentifier: PET_UID,
+            nameSingular: 'pet',
+            labelIdentifierFieldMetadataUniversalIdentifier: NAME_FIELD_UID,
+          }),
+          buildObject({
+            universalIdentifier: ROCKET_UID,
+            nameSingular: 'rocket',
+            labelIdentifierFieldMetadataUniversalIdentifier:
+              ROCKET_NAME_FIELD_UID,
+          }),
+        ]),
+        views: [
+          buildView({ universalIdentifier: OVERVIEW_VIEW_UID }),
+          buildView({ universalIdentifier: SECOND_OVERVIEW_VIEW_UID }),
+          buildView({
+            universalIdentifier: THIRD_OVERVIEW_VIEW_UID,
+            objectUniversalIdentifier: ROCKET_UID,
+          }),
+        ],
+      },
+      baseManifest: null,
+      scannedFiles: [],
+    });
+
+    expect(
+      plan.writes
+        .filter((write) => write.kind === 'view')
+        .map((write) => write.relativePath)
+        .sort(),
+    ).toEqual([
+      `src/views/${OVERVIEW_VIEW_UID.slice(0, 8)}-pet-overview.view.ts`,
+      `src/views/${SECOND_OVERVIEW_VIEW_UID.slice(0, 8)}-pet-overview.view.ts`,
+      'src/views/rocket-overview.view.ts',
     ]);
   });
 
