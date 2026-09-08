@@ -93,10 +93,6 @@ export const useDeleteSelectedCoreWorkflows = () => {
         deletedRecordIds: deletedWorkspaceWorkflowIds,
       },
     });
-
-    await apolloCoreClient
-      .refetchQueries({ include: ['GetCoreWorkflows'] })
-      .catch(logError);
   };
 
   return { deleteSelectedCoreWorkflows, selectedCoreWorkflowIds };
