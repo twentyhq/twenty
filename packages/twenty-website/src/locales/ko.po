@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-28 16:20\n"
+"PO-Revision-Date: 2026-09-08 16:21\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -898,7 +898,7 @@ msgstr "하나의 연락처에 여러 이메일 추가"
 #. js-lingui-id: /01kre
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Add shared instructions, playbooks, and other rich text with the new Note widget. Insert widgets exactly where you want them, and unpin the first tab when your layout needs more room."
-msgstr ""
+msgstr "새 메모 위젯으로 공유 지침, 플레이북 및 기타 서식 있는 텍스트를 추가하세요. 원하는 위치에 정확히 위젯을 삽입하고, 레이아웃에 더 많은 공간이 필요할 때 첫 번째 탭을 고정 해제하세요."
 
 #. js-lingui-id: hWkQMS
 #: src/sections/product-feature/TasksVisual/components/AddTaskButton.tsx
@@ -1293,7 +1293,7 @@ msgstr "Armenia 🇦🇲"
 #. js-lingui-id: hgvS2c
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Ask AI to attach files you upload in chat directly to records."
-msgstr ""
+msgstr "AI에게 채팅에서 업로드한 파일을 레코드에 직접 첨부하도록 요청하세요."
 
 #. js-lingui-id: GYKCBW
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1323,7 +1323,7 @@ msgstr "작업 내용을 보여 주는 링크가 포함된, 고객용 또는 내
 #. js-lingui-id: PbTDQ4
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Attach files to records with AI"
-msgstr ""
+msgstr "AI로 레코드에 파일 첨부"
 
 #. js-lingui-id: awzjg/
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1590,7 +1590,7 @@ msgstr "*공인 파트너* 둘러보기"
 #. js-lingui-id: pB7UCU
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Browse your records in a compact list, now available to everyone. Group records and see the fields that matter in a layout that adapts to desktop and mobile."
-msgstr ""
+msgstr "이제 모든 사용자가 사용할 수 있는 간결한 목록에서 레코드를 찾아보세요. 레코드를 그룹화하고 데스크톱과 모바일에 맞게 조정되는 레이아웃에서 중요한 필드를 확인하세요."
 
 #. js-lingui-id: VX4eI/
 #: src/partner-application/data/partner-country-options.ts
@@ -2218,7 +2218,7 @@ msgstr "Twenty에서 앱 만들기"
 #. js-lingui-id: CA2rtv
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Create calendar events directly from a record’s timeline, with the current contact prefilled as a guest."
-msgstr ""
+msgstr "레코드의 타임라인에서 직접 캘린더 이벤트를 만들고, 현재 연락처를 게스트로 미리 입력하세요."
 
 #. js-lingui-id: yAL7FY
 #: src/sections/pricing-plans/plans-data.ts
@@ -2619,7 +2619,7 @@ msgstr "Datetime 필드"
 #. js-lingui-id: oLDLdM
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Day and week calendar views"
-msgstr ""
+msgstr "일별 및 주별 캘린더 보기"
 
 #. js-lingui-id: xqKvBR
 #: src/sections/product-feature/DashboardVisual/DashboardVisual.tsx
@@ -2713,7 +2713,7 @@ msgstr "개발자는 이제 웹훅을 사용해 애플리케이션 전반에서 
 #. js-lingui-id: SxCLpb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Dictate prompts in supported browsers, and get suggested actions based on the page you are viewing."
-msgstr ""
+msgstr "지원되는 브라우저에서 프롬프트를 음성으로 입력하고, 보고 있는 페이지를 기반으로 제안되는 작업을 받아보세요."
 
 #. js-lingui-id: C39swB
 #: src/partners-marketplace/MarketplaceBriefPrompt.tsx
@@ -2764,7 +2764,7 @@ msgstr "새로 나온 소식 살펴보기"
 #. js-lingui-id: EVc4nZ
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Display records two relationships away directly on a record page—for example, opportunities associated with a company’s contacts."
-msgstr ""
+msgstr "레코드 페이지에서 두 단계 떨어진 관계의 레코드를 직접 표시하세요. 예를 들어 회사 연락처와 연결된 영업 기회가 있습니다."
 
 #. js-lingui-id: /Gu7LB
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2937,7 +2937,7 @@ msgstr "더 쉬운 레이아웃 구성"
 #. js-lingui-id: CgFsbd
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Easier workflow editing"
-msgstr ""
+msgstr "더 쉬운 워크플로 편집"
 
 #. js-lingui-id: hEtClO
 #: src/partner-application/data/partner-country-options.ts
@@ -4329,7 +4329,7 @@ msgstr "인라인 이미지 미리보기"
 #. js-lingui-id: IWtI58
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Insert actions into existing branches and drag connections to a different step without losing your configuration. Find variables faster by searching fields across all workflow steps."
-msgstr ""
+msgstr "구성을 잃지 않고 기존 분기에 작업을 삽입하고 연결을 다른 단계로 드래그하세요. 모든 워크플로 단계에서 필드를 검색하여 변수를 더 빠르게 찾으세요."
 
 #. js-lingui-id: /eL+82
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4366,7 +4366,7 @@ msgstr "통합"
 #. js-lingui-id: mQhHfc
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Interactive call recordings"
-msgstr ""
+msgstr "대화형 통화 녹음"
 
 #. js-lingui-id: OChKCc
 #: src/platform/routing/static-website-routes.ts
@@ -4802,7 +4802,7 @@ msgstr "Salesforce 공개 요금 페이지의 정가로, 연 단위 청구이며
 #. js-lingui-id: 5NZpX8
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "List view"
-msgstr ""
+msgstr "목록 보기"
 
 #. js-lingui-id: 2WIZYd
 #: src/partner-application/data/partner-country-options.ts
@@ -5138,7 +5138,7 @@ msgstr "더 많은 필드 유형, 더 강력한 기능"
 #. js-lingui-id: qlt+dy
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "More flexible record pages"
-msgstr ""
+msgstr "더 유연한 레코드 페이지"
 
 #. js-lingui-id: VqXuUv
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -5158,7 +5158,7 @@ msgstr "더 시각적인 대시보드 보기"
 #. js-lingui-id: QsVNSj
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "More ways to work with AI"
-msgstr ""
+msgstr "AI로 작업하는 더 많은 방법"
 
 #. js-lingui-id: LAFO4Y
 #: src/partner-application/data/partner-country-options.ts
@@ -6665,7 +6665,7 @@ msgstr "운영을 망가뜨리지 않고 확장하기"
 #. js-lingui-id: e7Ajb1
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Schedule meetings from records"
-msgstr ""
+msgstr "레코드에서 회의 예약"
 
 #. js-lingui-id: sQOyAb
 #: src/sections/product-feature/TasksVisual/data/tasks.ts
@@ -6731,7 +6731,7 @@ msgstr "더 많은 기능 보기"
 #. js-lingui-id: zn1p6c
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "See related records across relationships"
-msgstr ""
+msgstr "관계 전반에서 관련 레코드 보기"
 
 #. js-lingui-id: 8Zhz04
 #: src/sections/compare/ComparePage.tsx
@@ -6854,7 +6854,7 @@ msgstr "이메일 보내기"
 #. js-lingui-id: ig4Kg0
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Send email from aliases"
-msgstr ""
+msgstr "별칭에서 이메일 보내기"
 
 #. js-lingui-id: pi1oME
 #: src/app-preview/terminal/TerminalSendButton.tsx
@@ -6869,7 +6869,7 @@ msgstr "NDA 보내기"
 #. js-lingui-id: FK/sMg
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Send outbound emails using a verified alias on your connected account."
-msgstr ""
+msgstr "연결된 계정에서 확인된 별칭을 사용하여 발신 이메일을 보내세요."
 
 #. js-lingui-id: uW79Hr
 #: src/sections/product-feature/TasksVisual/data/tasks.ts
@@ -7348,7 +7348,7 @@ msgstr "스웨덴어"
 #. js-lingui-id: VRCum/
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Switch between day, week, and month views to explore your calendar. Day and week views are now available by default."
-msgstr ""
+msgstr "일별, 주별, 월별 보기 간에 전환하여 캘린더를 살펴보세요. 이제 일별 및 주별 보기가 기본으로 제공됩니다."
 
 #. js-lingui-id: IImT5c
 #: src/partner-application/data/partner-country-options.ts
@@ -8493,7 +8493,7 @@ msgstr "Twenty 서비스를 *제공*하고 싶으신가요?"
 #. js-lingui-id: 9cL2b3
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Watch recordings alongside their transcripts. Click a transcript entry to jump to that moment, and follow along with highlighted words and automatic scrolling during playback."
-msgstr ""
+msgstr "녹음과 함께 녹취록을 확인하세요. 녹취록 항목을 클릭하여 해당 시점으로 이동하고, 재생 중에는 강조 표시되는 단어와 자동 스크롤을 따라가세요."
 
 #. js-lingui-id: k1Pevc
 #: src/platform/releases/ReleaseNotes.tsx

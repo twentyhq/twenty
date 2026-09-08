@@ -8,7 +8,7 @@ msgstr ""
 "Language: tr\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-28 16:20\n"
+"PO-Revision-Date: 2026-09-08 16:21\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -900,7 +900,7 @@ msgstr "Tek bir kişi için birden fazla e-posta ekleyin"
 #. js-lingui-id: /01kre
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Add shared instructions, playbooks, and other rich text with the new Note widget. Insert widgets exactly where you want them, and unpin the first tab when your layout needs more room."
-msgstr ""
+msgstr "Yeni Not pencere öğesiyle paylaşılan talimatlar, çalışma kitapları ve diğer zengin metinleri ekleyin. Pencere öğelerini tam istediğiniz yere ekleyin ve düzeniniz daha fazla alana ihtiyaç duyduğunda ilk sekmenin sabitlemesini kaldırın."
 
 #. js-lingui-id: hWkQMS
 #: src/sections/product-feature/TasksVisual/components/AddTaskButton.tsx
@@ -1295,7 +1295,7 @@ msgstr "Ermenistan 🇦🇲"
 #. js-lingui-id: hgvS2c
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Ask AI to attach files you upload in chat directly to records."
-msgstr ""
+msgstr "Sohbette yüklediğiniz dosyaları AI'dan doğrudan kayıtlara eklemesini isteyin."
 
 #. js-lingui-id: GYKCBW
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1325,7 +1325,7 @@ msgstr "Çalışmayı gösteren bir bağlantıyla birlikte, müşteri için veya
 #. js-lingui-id: PbTDQ4
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Attach files to records with AI"
-msgstr ""
+msgstr "AI ile dosyaları kayıtlara ekleyin"
 
 #. js-lingui-id: awzjg/
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1592,7 +1592,7 @@ msgstr "*Sertifikalı iş ortaklarına* göz atın"
 #. js-lingui-id: pB7UCU
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Browse your records in a compact list, now available to everyone. Group records and see the fields that matter in a layout that adapts to desktop and mobile."
-msgstr ""
+msgstr "Artık herkesin kullanımına sunulan kompakt bir listede kayıtlarınıza göz atın. Kayıtları gruplandırın ve masaüstü ile mobil cihazlara uyum sağlayan bir düzende önemli alanları görüntüleyin."
 
 #. js-lingui-id: VX4eI/
 #: src/partner-application/data/partner-country-options.ts
@@ -2220,7 +2220,7 @@ msgstr "Twenty üzerinde uygulamalar oluşturun"
 #. js-lingui-id: CA2rtv
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Create calendar events directly from a record’s timeline, with the current contact prefilled as a guest."
-msgstr ""
+msgstr "Mevcut kişi konuk olarak önceden doldurulmuş şekilde, doğrudan bir kaydın zaman çizelgesinden takvim etkinlikleri oluşturun."
 
 #. js-lingui-id: yAL7FY
 #: src/sections/pricing-plans/plans-data.ts
@@ -2621,7 +2621,7 @@ msgstr "Tarih-Saat Alanı"
 #. js-lingui-id: oLDLdM
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Day and week calendar views"
-msgstr ""
+msgstr "Gün ve hafta takvim görünümleri"
 
 #. js-lingui-id: xqKvBR
 #: src/sections/product-feature/DashboardVisual/DashboardVisual.tsx
@@ -2715,7 +2715,7 @@ msgstr "Geliştiriciler artık müşteri verisi güncellemelerini uygulamalar ar
 #. js-lingui-id: SxCLpb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Dictate prompts in supported browsers, and get suggested actions based on the page you are viewing."
-msgstr ""
+msgstr "Desteklenen tarayıcılarda istemleri sesli olarak girin ve görüntülediğiniz sayfaya göre önerilen eylemler alın."
 
 #. js-lingui-id: C39swB
 #: src/partners-marketplace/MarketplaceBriefPrompt.tsx
@@ -2766,7 +2766,7 @@ msgstr "Yenilikleri keşfedin"
 #. js-lingui-id: EVc4nZ
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Display records two relationships away directly on a record page—for example, opportunities associated with a company’s contacts."
-msgstr ""
+msgstr "Bir kayıt sayfasında iki ilişki uzaktaki kayıtları doğrudan görüntüleyin; örneğin, bir şirketin kişileriyle ilişkili fırsatları."
 
 #. js-lingui-id: /Gu7LB
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2939,7 +2939,7 @@ msgstr "Daha kolay düzenler"
 #. js-lingui-id: CgFsbd
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Easier workflow editing"
-msgstr ""
+msgstr "Daha kolay iş akışı düzenleme"
 
 #. js-lingui-id: hEtClO
 #: src/partner-application/data/partner-country-options.ts
@@ -4331,7 +4331,7 @@ msgstr "Satır içi görüntü önizlemeleri"
 #. js-lingui-id: IWtI58
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Insert actions into existing branches and drag connections to a different step without losing your configuration. Find variables faster by searching fields across all workflow steps."
-msgstr ""
+msgstr "Yapılandırmanızı kaybetmeden mevcut dallara eylemler ekleyin ve bağlantıları farklı bir adıma sürükleyin. Tüm iş akışı adımlarındaki alanlarda arama yaparak değişkenleri daha hızlı bulun."
 
 #. js-lingui-id: /eL+82
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4368,7 +4368,7 @@ msgstr "Entegrasyon"
 #. js-lingui-id: mQhHfc
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Interactive call recordings"
-msgstr ""
+msgstr "Etkileşimli çağrı kayıtları"
 
 #. js-lingui-id: OChKCc
 #: src/platform/routing/static-website-routes.ts
@@ -4804,7 +4804,7 @@ msgstr "Salesforce’un herkese açık fiyatlandırma sayfasındaki liste fiyatl
 #. js-lingui-id: 5NZpX8
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "List view"
-msgstr ""
+msgstr "Liste görünümü"
 
 #. js-lingui-id: 2WIZYd
 #: src/partner-application/data/partner-country-options.ts
@@ -5140,7 +5140,7 @@ msgstr "Daha Fazla Alan Türü, Daha Fazla Güç"
 #. js-lingui-id: qlt+dy
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "More flexible record pages"
-msgstr ""
+msgstr "Daha esnek kayıt sayfaları"
 
 #. js-lingui-id: VqXuUv
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -5160,7 +5160,7 @@ msgstr "Daha görsel pano görünümleri"
 #. js-lingui-id: QsVNSj
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "More ways to work with AI"
-msgstr ""
+msgstr "Yapay zekayla çalışmanın daha fazla yolu"
 
 #. js-lingui-id: LAFO4Y
 #: src/partner-application/data/partner-country-options.ts
@@ -6667,7 +6667,7 @@ msgstr "Operasyonları bozmadan ölçeklenin"
 #. js-lingui-id: e7Ajb1
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Schedule meetings from records"
-msgstr ""
+msgstr "Kayıtlardan toplantı planlayın"
 
 #. js-lingui-id: sQOyAb
 #: src/sections/product-feature/TasksVisual/data/tasks.ts
@@ -6733,7 +6733,7 @@ msgstr "Daha fazla özelliğe bakın"
 #. js-lingui-id: zn1p6c
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "See related records across relationships"
-msgstr ""
+msgstr "İlişkiler genelinde ilgili kayıtları görüntüleyin"
 
 #. js-lingui-id: 8Zhz04
 #: src/sections/compare/ComparePage.tsx
@@ -6856,7 +6856,7 @@ msgstr "E‑posta Gönder"
 #. js-lingui-id: ig4Kg0
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Send email from aliases"
-msgstr ""
+msgstr "Takma adlardan e-posta gönderin"
 
 #. js-lingui-id: pi1oME
 #: src/app-preview/terminal/TerminalSendButton.tsx
@@ -6871,7 +6871,7 @@ msgstr "Gizlilik sözleşmesi NDA gönder"
 #. js-lingui-id: FK/sMg
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Send outbound emails using a verified alias on your connected account."
-msgstr ""
+msgstr "Bağlı hesabınızdaki doğrulanmış bir takma adı kullanarak giden e-postalar gönderin."
 
 #. js-lingui-id: uW79Hr
 #: src/sections/product-feature/TasksVisual/data/tasks.ts
@@ -7350,7 +7350,7 @@ msgstr "İsveççe"
 #. js-lingui-id: VRCum/
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Switch between day, week, and month views to explore your calendar. Day and week views are now available by default."
-msgstr ""
+msgstr "Takviminizi keşfetmek için gün, hafta ve ay görünümleri arasında geçiş yapın. Gün ve hafta görünümleri artık varsayılan olarak kullanılabilir."
 
 #. js-lingui-id: IImT5c
 #: src/partner-application/data/partner-country-options.ts
@@ -8495,7 +8495,7 @@ msgstr "Twenty hizmetleri *sunmak* ister misiniz?"
 #. js-lingui-id: 9cL2b3
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Watch recordings alongside their transcripts. Click a transcript entry to jump to that moment, and follow along with highlighted words and automatic scrolling during playback."
-msgstr ""
+msgstr "Kayıtları transkriptleriyle birlikte izleyin. O ana atlamak için bir transkript girdisine tıklayın ve oynatma sırasında vurgulanan sözcükler ile otomatik kaydırmayı takip edin."
 
 #. js-lingui-id: k1Pevc
 #: src/platform/releases/ReleaseNotes.tsx
