@@ -113,11 +113,13 @@ describe('WorkerHealthIndicator', () => {
 
   it('should timeout after specified duration', async () => {
     jest.useFakeTimers();
+    // Must never resolve. checkWorkers() walks the queues sequentially and
+    // withHealthCheckTimeout only races it - the loop is abandoned, not
+    // cancelled. Letting this first call resolve unparks that loop, which then
+    // keeps calling getWorkers on the remaining queues after the test has ended
+    // and afterEach has run clearAllMocks, inflating the next test's call count.
     mockQueueInstance.getWorkers.mockImplementationOnce(
-      () =>
-        new Promise((resolve) =>
-          setTimeout(resolve, HEALTH_INDICATORS_TIMEOUT + 100),
-        ),
+      () => new Promise(() => {}),
     );
 
     const resultPromise = service.isHealthy();
