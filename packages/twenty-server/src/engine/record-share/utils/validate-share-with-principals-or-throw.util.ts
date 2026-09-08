@@ -9,7 +9,7 @@ import {
   RecordShareExceptionCode,
 } from 'src/engine/record-share/record-share.exception';
 import { type ShareWithInput } from 'src/engine/record-share/types/share-with-input.type';
-import { resolveShareWithPrincipal } from 'src/engine/record-share/utils/resolve-share-with-principal.util';
+import { resolveShareWithPrincipalOrThrow } from 'src/engine/record-share/utils/resolve-share-with-principal-or-throw.util';
 
 export const validateShareWithPrincipalsOrThrow = ({
   shareWith,
@@ -22,7 +22,7 @@ export const validateShareWithPrincipalsOrThrow = ({
 }): void => {
   for (const shareWithEntry of shareWith) {
     const { principalId, principalType } =
-      resolveShareWithPrincipal(shareWithEntry);
+      resolveShareWithPrincipalOrThrow(shareWithEntry);
 
     const flatWorkspaceMember = flatWorkspaceMemberMaps.byId[principalId];
 

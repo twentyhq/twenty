@@ -19,7 +19,7 @@ const buildSingleTargetException = () =>
     },
   );
 
-export const resolveShareWithPrincipal = (
+export const resolveShareWithPrincipalOrThrow = (
   shareWithEntry: ShareWithInput | null,
 ): Pick<RecordShareInput, 'principalId' | 'principalType' | 'accessLevel'> => {
   if (!isDefined(shareWithEntry)) {
