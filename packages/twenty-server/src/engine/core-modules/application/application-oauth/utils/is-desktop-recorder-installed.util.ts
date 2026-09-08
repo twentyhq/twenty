@@ -1,3 +1,6 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
+
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 
@@ -9,9 +12,9 @@ export const isDesktopRecorderInstalled = (
     'state' | 'sourcePath' | 'version'
   > | null,
 ): boolean =>
-  application !== null &&
+  isDefined(application) &&
   // The installer writes the version only after the first install finishes.
-  Boolean(application.version) &&
+  isNonEmptyString(application.version) &&
   application.sourcePath !== OAUTH_INSTALL_SOURCE_PATH &&
   // Older instances do not have the lifecycle state column yet.
   (application.state ?? ApplicationState.INSTALLED) ===
