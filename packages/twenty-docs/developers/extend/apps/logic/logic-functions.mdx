@@ -969,7 +969,7 @@ const { recordShares } = await metadataClient.query({
 });
 ```
 
-Each `shareWith` entry names exactly one target, `workspaceMemberId`, `roleId` or `everyone: true`, with an `accessLevel` of `READ`, `READ_WRITE` or `FULL`. Sharing the same principal again replaces its previous grant. `recordShares` returns the rows to a `FULL` holder only; a `READ` or `READ_WRITE` holder gets an empty list with their own `viewerAccessLevel`, and a caller without access is refused.
+Each `shareWith` entry names exactly one target, `workspaceMemberId`, `roleId` or `everyone: true`, with an `accessLevel` of `READ`, `READ_WRITE` or `FULL`. Sharing the same principal again replaces its previous grant. `recordShares` returns the rows to a `FULL` holder only; a `READ` or `READ_WRITE` holder gets an empty list with their own `viewerAccessLevel`, and a caller without access is refused. `rowCause` says where a row comes from: `OWNER` for the owner grant, `MANUAL` for a grant made through `shareWith` or `shareRecord`, `RULE` for a row written by a sharing rule, and `APPLICATION` for a grant made by an application.
 
 </Accordion>
 </AccordionGroup>
