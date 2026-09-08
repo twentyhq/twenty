@@ -99,11 +99,11 @@ describe('export coverage of the compared properties', () => {
       workspaceLocalProperties,
       knownGaps,
     }) => {
-      const { propertiesToCompare } =
+      const comparedProperties: readonly string[] =
         ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY[
           metadataName
-        ];
-      const unaccounted = (propertiesToCompare as readonly string[]).filter(
+        ].propertiesToCompare;
+      const unaccounted = comparedProperties.filter(
         (property) =>
           !emittedProperties.includes(
             renamedProperties[property] ?? property,
