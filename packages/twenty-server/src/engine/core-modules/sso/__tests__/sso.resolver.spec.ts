@@ -1,5 +1,6 @@
 /* @license Enterprise */
 
+import { type ExecutionContext } from '@nestjs/common';
 import { GUARDS_METADATA } from '@nestjs/common/constants';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
@@ -24,7 +25,7 @@ const NON_PERMISSION_GUARDS: unknown[] = [
 describe('SsoResolver', () => {
   let mockPermissionsService: jest.Mocked<PermissionsService>;
   let mockGqlContext: any;
-  let mockExecutionContext: any;
+  let mockExecutionContext: ExecutionContext;
 
   const buildGuardsFor = (methodName: keyof SsoResolver) => {
     const classGuards = Reflect.getMetadata(GUARDS_METADATA, SsoResolver) ?? [];
@@ -61,7 +62,7 @@ describe('SsoResolver', () => {
       },
     };
 
-    mockExecutionContext = {};
+    mockExecutionContext = {} as ExecutionContext;
 
     jest.spyOn(GqlExecutionContext, 'create').mockReturnValue({
       getContext: () => mockGqlContext,
@@ -77,10 +78,21 @@ describe('SsoResolver', () => {
     'createSAMLIdentityProvider',
     'editSSOIdentityProvider',
   ] as const)('%s', (methodName) => {
-    it('requires SECURITY permission', async () => {
-      const guards = buildGuardsFor(methodName);
+    it('rejects an actor who has IMPERSONATE but not SECURITY permission', async () => {
+      mockPermissionsService.userHasWorkspaceSettingPermission.mockImplementation(
+        ({ setting }) =>
+          Promise.resolve(setting === PermissionFlagType.IMPERSONATE),
+      );
 
-      expect(guards.length).toBeGreaterThan(0);
+      await expect(runGuardsFor(methodName)).rejects.toThrow(
+        PermissionsException,
+      );
+
+      expect(
+        mockPermissionsService.userHasWorkspaceSettingPermission,
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({ setting: PermissionFlagType.SECURITY }),
+      );
     });
 
     it('rejects an actor who has SECURITY but not IMPERSONATE permission', async () => {
@@ -121,6 +133,17 @@ describe('SsoResolver', () => {
   });
 
   describe('deleteSSOIdentityProvider', () => {
+    it('rejects an actor who has IMPERSONATE but not SECURITY permission', async () => {
+      mockPermissionsService.userHasWorkspaceSettingPermission.mockImplementation(
+        ({ setting }) =>
+          Promise.resolve(setting === PermissionFlagType.IMPERSONATE),
+      );
+
+      await expect(
+        runGuardsFor('deleteSSOIdentityProvider'),
+      ).rejects.toThrow(PermissionsException);
+    });
+
     it('only requires SECURITY permission (unchanged)', async () => {
       mockPermissionsService.userHasWorkspaceSettingPermission.mockImplementation(
         ({ setting }) =>
