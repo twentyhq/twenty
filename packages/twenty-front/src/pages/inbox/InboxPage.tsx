@@ -140,11 +140,13 @@ export const InboxPage = () => {
     error,
     hasMoreItems,
     loadMoreItems,
-  } = useInboxItems(
-    isDefined(inboxQueueSlug) ? InboxItemScope.INBOX : inboxSection.scope,
-    inboxQueueSlug,
-    isDefined(inboxQueueSlug) ? queueAssignment : undefined,
-  );
+  } = useInboxItems({
+    scope: isDefined(inboxQueueSlug)
+      ? InboxItemScope.INBOX
+      : inboxSection.scope,
+    queueSlug: inboxQueueSlug,
+    assignment: isDefined(inboxQueueSlug) ? queueAssignment : undefined,
+  });
   const { openInboxItem } = useOpenInboxItem(inboxListLocation);
   const shouldSplitByPriority =
     isDefined(inboxQueueSlug) || inboxSection.scope === InboxItemScope.INBOX;

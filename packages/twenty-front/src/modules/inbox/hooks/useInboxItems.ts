@@ -17,11 +17,17 @@ import {
 // Older items are reached by growing the page rather than by an offset cursor,
 // so the polling that keeps this list live cannot fight the pagination. One
 // extra item is requested to tell "exactly a full page" from "there is more".
-export const useInboxItems = (
-  scope?: InboxItemScope,
-  queueSlug?: string,
-  assignment?: InboxQueueAssignment,
-) => {
+type UseInboxItemsParams = {
+  scope?: InboxItemScope;
+  queueSlug?: string;
+  assignment?: InboxQueueAssignment;
+};
+
+export const useInboxItems = ({
+  scope,
+  queueSlug,
+  assignment,
+}: UseInboxItemsParams = {}) => {
   const apolloCoreClient = useApolloCoreClient();
   const isInboxEnabled = useIsInboxEnabled();
   // The grown page belongs to one view, so switching section, queue or
