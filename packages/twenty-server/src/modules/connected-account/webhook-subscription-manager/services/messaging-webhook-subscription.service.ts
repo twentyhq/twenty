@@ -291,10 +291,13 @@ export class MessagingWebhookSubscriptionService {
     }
   }
 
-  async revokeSubscription(
-    messageChannelId: string,
-    workspaceId: string,
-  ): Promise<void> {
+  async revokeSubscription({
+    messageChannelId,
+    workspaceId,
+  }: {
+    messageChannelId: string;
+    workspaceId: string;
+  }): Promise<void> {
     if (
       !(await this.workspaceActivationService.isWorkspaceSuspended(workspaceId))
     ) {

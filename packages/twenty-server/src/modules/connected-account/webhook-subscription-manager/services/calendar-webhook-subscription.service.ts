@@ -291,10 +291,13 @@ export class CalendarWebhookSubscriptionService {
     }
   }
 
-  async revokeSubscription(
-    calendarChannelId: string,
-    workspaceId: string,
-  ): Promise<void> {
+  async revokeSubscription({
+    calendarChannelId,
+    workspaceId,
+  }: {
+    calendarChannelId: string;
+    workspaceId: string;
+  }): Promise<void> {
     if (
       !(await this.workspaceActivationService.isWorkspaceSuspended(workspaceId))
     ) {
