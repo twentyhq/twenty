@@ -97,7 +97,7 @@ const runAsWorkspaceMember = ({
   workspaceMemberId,
 }: {
   token?: string;
-  workspaceMemberId: unknown;
+  workspaceMemberId: string;
 }) => {
   const httpRequest = request(global.app.getHttpServer())
     .post(RUN_AS_WORKSPACE_MEMBER_PATH)
