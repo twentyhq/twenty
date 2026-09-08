@@ -28,7 +28,7 @@ import {
   RecordShareRowCause,
 } from 'twenty-shared/types';
 
-import { type ShareWithInput } from 'src/engine/api/common/types/share-with-input.type';
+import { type ShareWithInput } from 'src/engine/record-share/types/share-with-input.type';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type RecordShareService } from 'src/engine/record-share/services/record-share.service';

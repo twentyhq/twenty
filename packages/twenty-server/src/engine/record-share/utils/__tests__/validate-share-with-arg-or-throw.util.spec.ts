@@ -1,6 +1,6 @@
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 
-import { validateShareWithArgOrThrow } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/validate-share-with-arg-or-throw.util';
+import { validateShareWithArgOrThrow } from 'src/engine/record-share/utils/validate-share-with-arg-or-throw.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 
 const userAuthContext = {
@@ -171,7 +171,7 @@ describe('validateShareWithArgOrThrow', () => {
           },
         ],
       }),
-    ).toThrow('Value "not-a-uuid" is not a valid UUID');
+    ).toThrow('shareWith principal "not-a-uuid" is not a valid UUID');
   });
 
   it('should reject an entry targeting two principals even for a user', () => {

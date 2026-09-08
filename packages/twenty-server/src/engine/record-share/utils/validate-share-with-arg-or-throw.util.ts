@@ -1,14 +1,14 @@
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
-import { resolveShareWithPrincipal } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/resolve-share-with-principal.util';
-import {
-  CommonQueryRunnerException,
-  CommonQueryRunnerExceptionCode,
-} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { type ShareWithInput } from 'src/engine/api/common/types/share-with-input.type';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import {
+  RecordShareException,
+  RecordShareExceptionCode,
+} from 'src/engine/record-share/record-share.exception';
+import { type ShareWithInput } from 'src/engine/record-share/types/share-with-input.type';
+import { resolveShareWithPrincipal } from 'src/engine/record-share/utils/resolve-share-with-principal.util';
 
 export const validateShareWithArgOrThrow = ({
   authContext,
@@ -24,9 +24,9 @@ export const validateShareWithArgOrThrow = ({
     !isUserAuthContext(authContext) &&
     !isNonEmptyArray(shareWith)
   ) {
-    throw new CommonQueryRunnerException(
+    throw new RecordShareException(
       'Creating a record of a private object requires the shareWith argument',
-      CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+      RecordShareExceptionCode.INVALID_SHARE_WITH,
       {
         userFriendlyMessage: msg`Creating a record of a private object requires the shareWith argument`,
       },
@@ -38,9 +38,9 @@ export const validateShareWithArgOrThrow = ({
   );
 
   if (new Set(principalIds).size !== principalIds.length) {
-    throw new CommonQueryRunnerException(
+    throw new RecordShareException(
       'shareWith names the same principal more than once',
-      CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+      RecordShareExceptionCode.INVALID_SHARE_WITH,
       {
         userFriendlyMessage: msg`shareWith names the same principal more than once`,
       },
