@@ -28,18 +28,18 @@ describe('subscription current period accessors', () => {
     expect(getSubscriptionCurrentPeriodEnd(subscription)).toBe(PERIOD_END);
   });
 
-  it('falls back to the legacy top-level bounds', () => {
+  it('ignores period bounds sitting on the subscription itself', () => {
     const subscription = subscriptionWith({
       items: { data: [] },
       current_period_start: PERIOD_START,
       current_period_end: PERIOD_END,
     });
 
-    expect(getSubscriptionCurrentPeriodStart(subscription)).toBe(PERIOD_START);
-    expect(getSubscriptionCurrentPeriodEnd(subscription)).toBe(PERIOD_END);
+    expect(getSubscriptionCurrentPeriodStart(subscription)).toBeNull();
+    expect(getSubscriptionCurrentPeriodEnd(subscription)).toBeNull();
   });
 
-  it('returns null when neither shape carries the bounds', () => {
+  it('returns null when the item carries no bounds', () => {
     const subscription = subscriptionWith({ items: { data: [{}] } });
 
     expect(getSubscriptionCurrentPeriodStart(subscription)).toBeNull();

@@ -64,9 +64,16 @@ type SubscriptionStatus = {
   graceExpiresAt: string | null;
 };
 
-const StyledStatusDot = styled.div<{ isActive: boolean }>`
-  background-color: ${({ isActive }) =>
-    isActive ? themeCssVariables.color.green : themeCssVariables.color.red};
+type StatusDotVariant = 'active' | 'warning' | 'inactive';
+
+const STATUS_DOT_COLOR: Record<StatusDotVariant, string> = {
+  active: themeCssVariables.color.green,
+  warning: themeCssVariables.color.orange,
+  inactive: themeCssVariables.color.red,
+};
+
+const StyledStatusDot = styled.div<{ variant: StatusDotVariant }>`
+  background-color: ${({ variant }) => STATUS_DOT_COLOR[variant]};
   border-radius: 50%;
   corner-shape: round;
   height: 8px;
@@ -698,7 +705,7 @@ export const SettingsEnterprise = ({
                 Icon={IconCheck}
                 currentValue={
                   <StyledStatusContainer>
-                    <StyledStatusDot isActive={true} />
+                    <StyledStatusDot variant="active" />
                     {stripeStatus === 'trialing' ? (
                       <Trans>Trial</Trans>
                     ) : (
@@ -758,7 +765,9 @@ export const SettingsEnterprise = ({
                 Icon={IconCheck}
                 currentValue={
                   <StyledStatusContainer>
-                    <StyledStatusDot isActive={!isCancelScheduled} />
+                    <StyledStatusDot
+                      variant={isCancelScheduled ? 'inactive' : 'active'}
+                    />
                     {isCancelScheduled ? (
                       <Trans>Cancelling</Trans>
                     ) : stripeStatus === 'trialing' ? (
@@ -835,7 +844,7 @@ export const SettingsEnterprise = ({
                 Icon={IconCheck}
                 currentValue={
                   <StyledStatusContainer>
-                    <StyledStatusDot isActive={false} />
+                    <StyledStatusDot variant="inactive" />
                     <Trans>Canceled</Trans>
                   </StyledStatusContainer>
                 }
@@ -880,7 +889,7 @@ export const SettingsEnterprise = ({
               description={
                 isInGracePeriod
                   ? t`A payment on your subscription failed. Your enterprise features stay active while we retry it.`
-                  : t`There is a payment issue with your subscription. Your enterprise features are disabled until it is resolved.`
+                  : t`There is a payment issue with your subscription. Your enterprise features are disabled. Settle the outstanding invoice to restore them, before the subscription is cancelled: a cancelled subscription cannot be reactivated and you would need to start a new one.`
               }
             />
             <SubscriptionInfoContainer>
@@ -889,7 +898,9 @@ export const SettingsEnterprise = ({
                 Icon={IconCheck}
                 currentValue={
                   <StyledStatusContainer>
-                    <StyledStatusDot isActive={isInGracePeriod} />
+                    <StyledStatusDot
+                      variant={isInGracePeriod ? 'warning' : 'inactive'}
+                    />
                     <Trans>Payment issue</Trans>
                   </StyledStatusContainer>
                 }
@@ -955,7 +966,7 @@ export const SettingsEnterprise = ({
                 Icon={IconCheck}
                 currentValue={
                   <StyledStatusContainer>
-                    <StyledStatusDot isActive={false} />
+                    <StyledStatusDot variant="inactive" />
                     <Trans>Incomplete</Trans>
                   </StyledStatusContainer>
                 }
