@@ -72,12 +72,13 @@ const promoteDelayedJobs = async (queueName: string): Promise<void> => {
   }
 
   const delayedJobs = await queue.getDelayed(0, DELAYED_JOB_PAGE_SIZE);
-
-  await Promise.all(
-    delayedJobs
-      .filter((job) => (job.delay ?? 0) <= MAX_PROMOTABLE_DELAY_MS)
-      .map((job) => job.promote().catch(() => undefined)),
+  const promotableJobs = delayedJobs.filter(
+    (job) => (job.delay ?? 0) <= MAX_PROMOTABLE_DELAY_MS,
   );
+
+  for (const promotableJob of promotableJobs) {
+    await promotableJob.promote().catch(() => undefined);
+  }
 };
 
 const getActiveJobsFingerprint = async (
@@ -125,7 +126,9 @@ export const waitForAllJobsToFinish = async (): Promise<void> => {
       }
 
       if (stalledQueueNames.length > 0) {
-        await Promise.all(stalledQueueNames.map(promoteDelayedJobs));
+        for (const stalledQueueName of stalledQueueNames) {
+          await promoteDelayedJobs(stalledQueueName);
+        }
         lastProgressAt = now;
         await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
         continue;
