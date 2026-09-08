@@ -6,14 +6,12 @@ import {
   WebhookSubscriptionStatus,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import {
@@ -23,6 +21,7 @@ import {
 import { WebhookSubscriptionDriverFactory } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-driver-factory.service';
 import { WebhookSubscriptionExceptionHandlerService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-exception-handler.service';
 import { WebhookSubscriptionStatusService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-status.service';
+import { WorkspaceActivationService } from 'src/modules/connected-account/webhook-subscription-manager/services/workspace-activation.service';
 import { type WebhookSubscriptionContext } from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type';
 
 @Injectable()
@@ -32,8 +31,7 @@ export class MessagingWebhookSubscriptionService {
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly workspaceActivationService: WorkspaceActivationService,
     private readonly webhookSubscriptionDriverFactory: WebhookSubscriptionDriverFactory,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly metricsService: MetricsService,
@@ -45,7 +43,9 @@ export class MessagingWebhookSubscriptionService {
     messageChannelId: string,
     workspaceId: string,
   ): Promise<void> {
-    if (!(await this.isWorkspaceActive(workspaceId))) {
+    if (
+      await this.workspaceActivationService.isWorkspaceDeactivated(workspaceId)
+    ) {
       return;
     }
 
@@ -168,6 +168,12 @@ export class MessagingWebhookSubscriptionService {
     messageChannelId: string;
     workspaceId: string;
   }): Promise<void> {
+    if (
+      await this.workspaceActivationService.isWorkspaceDeactivated(workspaceId)
+    ) {
+      return;
+    }
+
     const messageChannel = await this.messageChannelRepository.findOne({
       where: { id: messageChannelId, workspaceId },
       relations: ['connectedAccount'],
@@ -237,13 +243,13 @@ export class MessagingWebhookSubscriptionService {
   async deleteSubscription(
     messageChannelId: string,
     workspaceId: string,
-  ): Promise<void> {
+  ): Promise<boolean> {
     const messageChannel = await this.messageChannelRepository.findOne({
       where: { id: messageChannelId, workspaceId },
     });
 
     if (!isDefined(messageChannel)) {
-      return;
+      return true;
     }
 
     const connectedAccount = await this.connectedAccountRepository.findOne({
@@ -254,7 +260,7 @@ export class MessagingWebhookSubscriptionService {
     });
 
     if (!isDefined(connectedAccount)) {
-      return;
+      return true;
     }
 
     const driver = this.webhookSubscriptionDriverFactory.getDriver(
@@ -269,12 +275,14 @@ export class MessagingWebhookSubscriptionService {
         amount: 1,
         attributes: this.buildMetricAttributes(connectedAccount.provider),
       });
+
+      return true;
     } catch (error) {
       if (
         error instanceof WebhookSubscriptionDriverException &&
         error.code === WebhookSubscriptionDriverExceptionCode.NOT_FOUND
       ) {
-        return;
+        return true;
       }
 
       this.metricsService.incrementCounterBy({
@@ -286,6 +294,8 @@ export class MessagingWebhookSubscriptionService {
       this.exceptionHandlerService.captureExceptions([error], {
         workspace: { id: messageChannel.workspaceId },
       });
+
+      return false;
     }
   }
 
@@ -293,24 +303,27 @@ export class MessagingWebhookSubscriptionService {
     messageChannelId: string,
     workspaceId: string,
   ): Promise<void> {
-    await this.deleteSubscription(messageChannelId, workspaceId);
+    if (
+      !(await this.workspaceActivationService.isWorkspaceDeactivated(
+        workspaceId,
+      ))
+    ) {
+      return;
+    }
+
+    const hasDeletedSubscription = await this.deleteSubscription(
+      messageChannelId,
+      workspaceId,
+    );
+
+    if (!hasDeletedSubscription) {
+      return;
+    }
 
     await this.webhookSubscriptionStatusService.markAsExpired(
       WebhookSubscriptionChannelType.MESSAGING,
       messageChannelId,
     );
-  }
-
-  private async isWorkspaceActive(workspaceId: string): Promise<boolean> {
-    const workspace = await this.workspaceRepository.findOne({
-      where: {
-        id: workspaceId,
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-      },
-      select: { id: true },
-    });
-
-    return isDefined(workspace);
   }
 
   private buildMetricAttributes(provider: string) {

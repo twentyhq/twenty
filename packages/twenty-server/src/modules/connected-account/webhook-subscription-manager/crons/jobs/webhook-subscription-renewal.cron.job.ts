@@ -34,7 +34,7 @@ import { WEBHOOK_SUBSCRIPTION_RENEWAL_BUFFER_MS } from 'src/modules/connected-ac
 import { WEBHOOK_SUBSCRIPTION_RENEWAL_CRON_PATTERN } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-renewal-cron-pattern.constant';
 import { WEBHOOK_SUBSCRIPTION_RENEWAL_MAX_TOTAL_DELAY_MS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-renewal-max-total-delay-ms.constant';
 import { WEBHOOK_SUBSCRIPTION_RENEWAL_SPACING_MS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-renewal-spacing-ms.constant';
-import { WEBHOOK_SUBSCRIPTION_REVOKED_WORKSPACE_ACTIVATION_STATUSES } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-revoked-workspace-activation-statuses.constant';
+import { DEACTIVATED_WORKSPACE_ACTIVATION_STATUSES } from 'src/modules/connected-account/webhook-subscription-manager/constants/deactivated-workspace-activation-statuses.constant';
 import {
   RenewWebhookSubscriptionJob,
   type RenewWebhookSubscriptionJobData,
@@ -156,9 +156,7 @@ export class WebhookSubscriptionRenewalCronJob {
   private async revokeSubscriptionsOfDeactivatedWorkspaces(): Promise<void> {
     const deactivatedWorkspaces = await this.workspaceRepository.find({
       where: {
-        activationStatus: In(
-          WEBHOOK_SUBSCRIPTION_REVOKED_WORKSPACE_ACTIVATION_STATUSES,
-        ),
+        activationStatus: In(DEACTIVATED_WORKSPACE_ACTIVATION_STATUSES),
       },
       select: { id: true },
     });

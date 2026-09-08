@@ -19,6 +19,7 @@ import { CalendarWebhookSubscriptionService } from 'src/modules/connected-accoun
 import { MessagingWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service';
 import { WebhookSubscriptionExceptionHandlerService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-exception-handler.service';
 import { WebhookSubscriptionStatusService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-status.service';
+import { WorkspaceActivationService } from 'src/modules/connected-account/webhook-subscription-manager/services/workspace-activation.service';
 import { WebhookSubscriptionManagerModule } from 'src/modules/connected-account/webhook-subscription-manager/webhook-subscription-manager.module';
 
 @Module({
@@ -35,6 +36,7 @@ import { WebhookSubscriptionManagerModule } from 'src/modules/connected-account/
     ]),
   ],
   providers: [
+    WorkspaceActivationService,
     WebhookSubscriptionStatusService,
     WebhookSubscriptionExceptionHandlerService,
     MessagingWebhookSubscriptionService,
@@ -48,6 +50,7 @@ import { WebhookSubscriptionManagerModule } from 'src/modules/connected-account/
     CreateWebhookSubscriptionForConnectedAccountCommand,
   ],
   exports: [
+    WorkspaceActivationService,
     MessagingWebhookSubscriptionService,
     CalendarWebhookSubscriptionService,
     WebhookSubscriptionRenewalCronCommand,

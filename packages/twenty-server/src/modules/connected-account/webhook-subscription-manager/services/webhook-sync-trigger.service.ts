@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { MessageChannelSyncStage } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -12,8 +10,8 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { WorkspaceActivationService } from 'src/modules/connected-account/webhook-subscription-manager/services/workspace-activation.service';
 import {
   CalendarEventWebhookSyncJob,
   type CalendarEventWebhookSyncJobData,
@@ -37,15 +35,16 @@ export class WebhookSyncTriggerService {
     private readonly cacheStorage: CacheStorageService,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly workspaceActivationService: WorkspaceActivationService,
   ) {}
 
   async triggerMessagingSync(
     messageChannelId: string,
     workspaceId: string,
   ): Promise<void> {
-    if (!(await this.isWorkspaceActive(workspaceId))) {
+    if (
+      await this.workspaceActivationService.isWorkspaceDeactivated(workspaceId)
+    ) {
       return;
     }
 
@@ -95,12 +94,16 @@ export class WebhookSyncTriggerService {
     calendarChannelId: string,
     workspaceId: string,
   ): Promise<void> {
-    if (!(await this.isWorkspaceActive(workspaceId))) {
+    if (
+      await this.workspaceActivationService.isWorkspaceDeactivated(workspaceId)
+    ) {
       return;
     }
 
+    const debounceCacheKey = `calendar-event-webhook-sync-debounce:${workspaceId}:${calendarChannelId}`;
+
     const hasOpenedDebounceWindow = await this.cacheStorage.setIfAbsent(
-      `calendar-event-webhook-sync-debounce:${workspaceId}:${calendarChannelId}`,
+      debounceCacheKey,
       true,
       CALENDAR_EVENT_WEBHOOK_SYNC_DEBOUNCE_MS,
     );
@@ -109,30 +112,24 @@ export class WebhookSyncTriggerService {
       return;
     }
 
-    await this.connectedAccountSyncWebhookQueueService.add<CalendarEventWebhookSyncJobData>(
-      CalendarEventWebhookSyncJob.name,
-      { workspaceId, calendarChannelId },
-      {
-        delay: CALENDAR_EVENT_WEBHOOK_SYNC_DEBOUNCE_MS,
-        retryLimit: CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_LIMIT,
-        backoff: {
-          strategy: 'exponential',
-          initialDelayMilliseconds:
-            CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_INITIAL_DELAY_MS,
+    try {
+      await this.connectedAccountSyncWebhookQueueService.add<CalendarEventWebhookSyncJobData>(
+        CalendarEventWebhookSyncJob.name,
+        { workspaceId, calendarChannelId },
+        {
+          delay: CALENDAR_EVENT_WEBHOOK_SYNC_DEBOUNCE_MS,
+          retryLimit: CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_LIMIT,
+          backoff: {
+            strategy: 'exponential',
+            initialDelayMilliseconds:
+              CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_INITIAL_DELAY_MS,
+          },
         },
-      },
-    );
-  }
+      );
+    } catch (error) {
+      await this.cacheStorage.del(debounceCacheKey);
 
-  private async isWorkspaceActive(workspaceId: string): Promise<boolean> {
-    const workspace = await this.workspaceRepository.findOne({
-      where: {
-        id: workspaceId,
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-      },
-      select: { id: true },
-    });
-
-    return isDefined(workspace);
+      throw error;
+    }
   }
 }
