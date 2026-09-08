@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -102,6 +102,45 @@ describe('buildNonAuditLoggedFieldNamesByObjectMetadataId', () => {
         ]),
       ).get(COMPANY_OBJECT_METADATA_ID),
     ).toEqual(new Set(['position']));
+  });
+
+  it('excludes the declared join column of an owning relation', () => {
+    expect(
+      buildNonAuditLoggedFieldNamesByObjectMetadataId(
+        buildMaps([
+          {
+            ...buildField({
+              universalIdentifier: 'last-contact-item-field',
+              name: 'lastContactItem',
+              isAuditLogged: false,
+            }),
+            type: FieldMetadataType.RELATION,
+            settings: {
+              relationType: RelationType.MANY_TO_ONE,
+              joinColumnName: 'lastContactItemCustomId',
+            },
+          },
+        ]),
+      ).get(COMPANY_OBJECT_METADATA_ID),
+    ).toEqual(new Set(['lastContactItem', 'lastContactItemCustomId']));
+  });
+
+  it('does not invent a join column for the non owning side of a relation', () => {
+    expect(
+      buildNonAuditLoggedFieldNamesByObjectMetadataId(
+        buildMaps([
+          {
+            ...buildField({
+              universalIdentifier: 'people-field',
+              name: 'people',
+              isAuditLogged: false,
+            }),
+            type: FieldMetadataType.RELATION,
+            settings: { relationType: RelationType.ONE_TO_MANY },
+          },
+        ]),
+      ).get(COMPANY_OBJECT_METADATA_ID),
+    ).toEqual(new Set(['people']));
   });
 
   it('leaves out objects whose fields are all audit logged', () => {
