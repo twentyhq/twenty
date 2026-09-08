@@ -15,6 +15,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
 import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
 import { type WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/webhook/types/workspace-event-batch-for-webhook.type';
+import { computeWebhookOperationsToMatch } from 'src/engine/metadata-modules/webhook/utils/compute-webhook-operations-to-match.util';
 import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
@@ -44,12 +45,10 @@ export class CallWebhookJobsJob {
 
     const [nameSingular, operation] = workspaceEventBatch.name.split('.');
 
-    const operationsToMatch = [
-      `${nameSingular}.${operation}`,
-      `*.${operation}`,
-      `${nameSingular}.*`,
-      '*.*',
-    ];
+    const operationsToMatch = computeWebhookOperationsToMatch({
+      nameSingular,
+      operation,
+    });
 
     const { flatWebhookMaps, flatObjectMetadataMaps, featureFlagsMap } =
       await this.workspaceCacheService.getOrRecompute(

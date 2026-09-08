@@ -3,6 +3,7 @@ import {
   printTypescriptValue,
 } from '@/cli/utilities/pull/print-typescript-value';
 import {
+  AggregateOperations,
   DateDisplayFormat,
   FieldMetadataType,
   IndexType,
@@ -11,6 +12,13 @@ import {
   ObjectOpenRecordIn,
   RelationOnDeleteAction,
   RelationType,
+  ViewCalendarLayout,
+  ViewFilterGroupLogicalOperator,
+  ViewFilterOperand,
+  ViewOpenRecordIn,
+  ViewSortDirection,
+  ViewType,
+  ViewVisibility,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -73,6 +81,48 @@ export const OBJECT_ENUM_BINDINGS: EnumBinding[] = [
 
 export const INDEX_ENUM_BINDINGS: EnumBinding[] = [
   { path: ['indexType'], symbol: 'IndexType', members: IndexType },
+];
+
+const buildAggregateOperationBinding = (path: string[]): EnumBinding => ({
+  path,
+  symbol: 'AggregateOperations',
+  members: AggregateOperations,
+});
+
+export const VIEW_FIELD_ENUM_BINDINGS: EnumBinding[] = [
+  buildAggregateOperationBinding(['aggregateOperation']),
+];
+
+export const VIEW_ENUM_BINDINGS: EnumBinding[] = [
+  { path: ['type'], symbol: 'ViewType', members: ViewType },
+  { path: ['visibility'], symbol: 'ViewVisibility', members: ViewVisibility },
+  {
+    path: ['openRecordIn'],
+    symbol: 'ViewOpenRecordIn',
+    members: ViewOpenRecordIn,
+  },
+  buildAggregateOperationBinding(['kanbanAggregateOperation']),
+  {
+    path: ['calendarLayout'],
+    symbol: 'ViewCalendarLayout',
+    members: ViewCalendarLayout,
+  },
+  buildAggregateOperationBinding(['fields', '[]', 'aggregateOperation']),
+  {
+    path: ['filters', '[]', 'operand'],
+    symbol: 'ViewFilterOperand',
+    members: ViewFilterOperand,
+  },
+  {
+    path: ['filterGroups', '[]', 'logicalOperator'],
+    symbol: 'ViewFilterGroupLogicalOperator',
+    members: ViewFilterGroupLogicalOperator,
+  },
+  {
+    path: ['sorts', '[]', 'direction'],
+    symbol: 'ViewSortDirection',
+    members: ViewSortDirection,
+  },
 ];
 
 const isSamePath = (left: string[], right: string[]): boolean =>

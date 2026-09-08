@@ -35,7 +35,7 @@ const toCandidates = <T extends { universalIdentifier?: string }>(
       label: getLabel(entity),
     }));
 
-const MANIFEST_ENTITY_REGISTRY: Record<
+export const MANIFEST_ENTITY_REGISTRY: Record<
   AllMetadataName,
   ManifestEntityRegistryEntry
 > = {
