@@ -327,3 +327,39 @@ export const ENTRY_POINT_BY_ROISTAT_SCENARIO = parseEntryPointMap(
 // person who can verify the flow end to end.
 export const ANSWERED_OWNER_FALLBACK_EMAIL =
   process.env.ENSO_TELEPHONY_ANSWERED_OWNER_FALLBACK_EMAIL;
+
+// Call statuses that mean the caller reached us and we did not take the call —
+// i.e. a callback is owed. Deliberately excludes ABANDONED: with a 20 s ring on
+// the responsible manager, "caller hung up" is dominated by misdials and
+// two-second wrong numbers, and a task per one of those is noise a manager
+// learns to ignore. Add 'ABANDONED' here if the sales team wants those chased.
+export const CALLBACK_OWED_CALL_STATUSES = ['UNANSWERED', 'BUSY'];
+
+// stepKey on the auto-created callback task. Doubles as the idempotency key:
+// one OPEN task with this stepKey per deal at a time, so a redelivered PBX push
+// cannot duplicate it and a second missed call while the first is still
+// outstanding does not pile a second nudge on the same manager.
+export const MISSED_CALL_CALLBACK_STEP_KEY = 'call.missed.callback';
+
+// PBX groups that exist ONLY as a transfer fallback — where a call goes when the
+// responsible manager does not answer — and are NOT any number's department.
+//
+// This matters because the group named on a push is the STRONGEST project signal
+// we have (it beats the learned dial plan and the DID map) and is also what the
+// learned dial plan is built from. Left unfiltered, the first call that fell
+// through to a shared fallback group would rewrite that number's learned
+// department to the fallback, and every later call on the number would resolve
+// to no project and produce no deal. So a fallback group has to be excluded from
+// both, by name.
+//   ENSO_TELEPHONY_PBX_TRANSFER_FALLBACK_GROUPS=Callback,Обратный звонок
+const PBX_TRANSFER_FALLBACK_GROUPS = new Set(
+  (process.env.ENSO_TELEPHONY_PBX_TRANSFER_FALLBACK_GROUPS ?? '')
+    .split(',')
+    .map((name) => name.trim())
+    .filter((name) => name !== ''),
+);
+
+export const isPbxTransferFallbackGroup = (
+  groupName: string | undefined,
+): boolean =>
+  typeof groupName === 'string' && PBX_TRANSFER_FALLBACK_GROUPS.has(groupName);

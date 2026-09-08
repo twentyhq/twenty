@@ -16,6 +16,7 @@ import { NotifyManagerAssignmentJob } from 'src/modules/enso/lead-pipeline/jobs/
 import { CLAIM_WINDOW_MS } from 'src/modules/enso/lead-pipeline/lead-pipeline.constants';
 import { ManagerNotificationService } from 'src/modules/enso/lead-pipeline/services/manager-notification.service';
 import { OpportunityRoutingService } from 'src/modules/enso/lead-pipeline/services/opportunity-routing.service';
+import { CallFollowUpService } from 'src/modules/enso/telephony/services/call-follow-up.service';
 
 // Stage 2: assign a manager to an opportunity in ROUTING.
 //   - sticky owner → auto-claimed (LEAD_CLAIMED): notify, no claim window.
@@ -29,6 +30,7 @@ export class RouteOpportunityJob {
 
   constructor(
     private readonly opportunityRoutingService: OpportunityRoutingService,
+    private readonly callFollowUpService: CallFollowUpService,
     @InjectMessageQueue(MessageQueue.ensoLeadPipelineQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -79,6 +81,15 @@ export class RouteOpportunityJob {
 
     // Sticky auto-claim already moved the deal to LEAD_CLAIMED — no claim window.
     if (result.autoClaimed) {
+      // The deal just acquired the owner who was already responsible for this
+      // client. If what opened it was a call they did not pick up, that is an
+      // obligation on them personally, so it becomes their task rather than
+      // going back to the queue.
+      await this.callFollowUpService.createMissedCallCallbackTask(
+        workspaceId,
+        opportunityId,
+      );
+
       return;
     }
 

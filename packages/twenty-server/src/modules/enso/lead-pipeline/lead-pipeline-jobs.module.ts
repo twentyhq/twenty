@@ -15,6 +15,7 @@ import { OpportunityRoutingService } from 'src/modules/enso/lead-pipeline/servic
 import { ProjectNotificationService } from 'src/modules/enso/lead-pipeline/services/project-notification.service';
 import { PersonFirstTouchService } from 'src/modules/enso/lead-pipeline/services/person-first-touch.service';
 import { PersonTimelineService } from 'src/modules/enso/lead-pipeline/services/person-timeline.service';
+import { CallFollowUpService } from 'src/modules/enso/telephony/services/call-follow-up.service';
 import { ConsentEventService } from 'src/modules/enso/person-project-consent/services/consent-event.service';
 import { PersonProjectAssignmentNameService } from 'src/modules/enso/person-project-assignment/services/person-project-assignment-name.service';
 import { PersonProjectConsentNameService } from 'src/modules/enso/person-project-consent/services/person-project-consent-name.service';
@@ -34,6 +35,7 @@ import { PersonProjectConsentNameService } from 'src/modules/enso/person-project
 @Module({
   imports: [GoogleChatWebhookModule],
   providers: [
+    CallFollowUpService,
     OpportunityNameService,
     OpportunityResolutionService,
     // Needed by OpportunityResolutionService: an answered call opens its deal

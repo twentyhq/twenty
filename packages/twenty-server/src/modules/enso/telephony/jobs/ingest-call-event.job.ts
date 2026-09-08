@@ -15,6 +15,7 @@ import {
   deserializeCallEvent,
   type IngestCallEventJobData,
 } from 'src/modules/enso/telephony/jobs/telephony-job.types';
+import { CallFollowUpService } from 'src/modules/enso/telephony/services/call-follow-up.service';
 import { CallIdentityService } from 'src/modules/enso/telephony/services/call-identity.service';
 import { OutboundCallIngestService } from 'src/modules/enso/telephony/services/outbound-call-ingest.service';
 import { PbxNumberService } from 'src/modules/enso/telephony/services/pbx-number.service';
@@ -22,6 +23,7 @@ import {
   ANSWERED_CALL_STATUSES,
   ARCHIVE_RECORDINGS,
   CALL_OUTCOME_SETTLE_MS,
+  isPbxTransferFallbackGroup,
   RECORDING_INITIAL_DELAY_MS,
 } from 'src/modules/enso/telephony/telephony.constants';
 import { CallIngestService } from 'src/modules/enso/telephony/services/call-ingest.service';
@@ -40,6 +42,7 @@ export class IngestCallEventJob {
     private readonly outboundCallIngestService: OutboundCallIngestService,
     private readonly callIdentityService: CallIdentityService,
     private readonly pbxNumberService: PbxNumberService,
+    private readonly callFollowUpService: CallFollowUpService,
     @InjectMessageQueue(MessageQueue.ensoTelephonyQueue)
     private readonly telephonyQueueService: MessageQueueService,
   ) {}
@@ -86,13 +89,24 @@ export class IngestCallEventJob {
           )
         : undefined;
 
+    // A group that exists only to catch calls the responsible manager did not
+    // answer is not a number's department, and must not be read as one. The
+    // group on a push is the strongest project signal we have AND the source
+    // the dial plan is learned from, so left unfiltered the first fall-through
+    // would re-point the number at the fallback and every later call on it
+    // would resolve to no project. The activity still records where the call
+    // actually ended; only routing and learning ignore it.
+    const routableGroup = isPbxTransferFallbackGroup(event.answeredByGroup)
+      ? undefined
+      : event.answeredByGroup;
+
     // Teach the dial plan from this push. `event` carries both the dialled
     // number and the department, which is the only place the two appear
     // together — a `contact` push has the number but no department.
     await this.pbxNumberService.learn(
       workspaceId,
       event.calleeDid,
-      event.answeredByGroup,
+      routableGroup,
     );
 
     const resolved = await this.callIdentityService.resolveEntryPoint(
@@ -100,7 +114,7 @@ export class IngestCallEventJob {
       {
         roistatProjectCode: event.attribution?.projectCode,
         roistatScenario: event.roistatScenario,
-        pbxGroupName: event.answeredByGroup,
+        pbxGroupName: routableGroup,
         calleeDid: event.calleeDid,
       },
     );
@@ -219,6 +233,10 @@ export class IngestCallEventJob {
         )
       : undefined;
 
+    const answered =
+      isDefined(event.callStatus) &&
+      ANSWERED_CALL_STATUSES.includes(event.callStatus);
+
     await this.outboundCallIngestService.finalize(
       workspaceId,
       ingested.activityId,
@@ -227,11 +245,21 @@ export class IngestCallEventJob {
         ...(isDefined(person) ? { personId: person.id } : {}),
         ...(isDefined(performedById) ? { performedById } : {}),
         ...(isDefined(event.durationS) ? { durationS: event.durationS } : {}),
-        answered:
-          isDefined(event.callStatus) &&
-          ANSWERED_CALL_STATUSES.includes(event.callStatus),
+        answered,
       },
     );
+
+    // A manager who rang a claimed lead and was answered has made first
+    // contact, so the deal advances itself and the callback task that asked for
+    // the call closes. This is what CONNECTED is supposed to mean — and it is
+    // why a call nobody picked up must NOT be recorded as connected.
+    if (answered && isDefined(opportunityId)) {
+      await this.callFollowUpService.connectFromAnsweredOutboundCall(
+        workspaceId,
+        opportunityId,
+        ingested.activityId,
+      );
+    }
   }
 
   private async enqueueRecordingArchive(

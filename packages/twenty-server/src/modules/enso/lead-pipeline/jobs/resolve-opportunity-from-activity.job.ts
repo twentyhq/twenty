@@ -17,6 +17,7 @@ import { ConsentFromActivityService } from 'src/modules/enso/lead-pipeline/servi
 import { OpportunityResolutionService } from 'src/modules/enso/lead-pipeline/services/opportunity-resolution.service';
 import { PersonFirstTouchService } from 'src/modules/enso/lead-pipeline/services/person-first-touch.service';
 import { PersonTimelineService } from 'src/modules/enso/lead-pipeline/services/person-timeline.service';
+import { CallFollowUpService } from 'src/modules/enso/telephony/services/call-follow-up.service';
 
 // Stage 1 of the pipeline: an inbound activity was created. Resolve it to an
 // opportunity (dedup → attach or create). If a NEW deal was created it needs
@@ -31,6 +32,7 @@ export class ResolveOpportunityFromActivityJob {
     private readonly personFirstTouchService: PersonFirstTouchService,
     private readonly personTimelineService: PersonTimelineService,
     private readonly consentFromActivityService: ConsentFromActivityService,
+    private readonly callFollowUpService: CallFollowUpService,
     @InjectMessageQueue(MessageQueue.ensoLeadPipelineQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -65,7 +67,21 @@ export class ResolveOpportunityFromActivityJob {
       { alreadyConnected: data.alreadyConnected },
     );
 
-    if (!result || !result.created) {
+    if (!result) {
+      return;
+    }
+
+    // Attached to a deal that already exists — so it already has an owner if it
+    // is going to have one, and this is the moment to hand a missed call back to
+    // them. (A NEW deal has no owner yet; that case is picked up by the routing
+    // job the moment a sticky owner auto-claims it.)
+    if (!result.created) {
+      await this.callFollowUpService.createMissedCallCallbackTask(
+        workspaceId,
+        result.opportunityId,
+        activityId,
+      );
+
       return;
     }
 

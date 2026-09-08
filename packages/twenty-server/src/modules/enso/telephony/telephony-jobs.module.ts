@@ -6,6 +6,7 @@ import { InboundActivityNameService } from 'src/modules/enso/inbound-activity/se
 import { ArchiveCallRecordingJob } from 'src/modules/enso/telephony/jobs/archive-call-recording.job';
 import { DecideCallOutcomeJob } from 'src/modules/enso/telephony/jobs/decide-call-outcome.job';
 import { IngestCallEventJob } from 'src/modules/enso/telephony/jobs/ingest-call-event.job';
+import { CallFollowUpService } from 'src/modules/enso/telephony/services/call-follow-up.service';
 import { CallIdentityService } from 'src/modules/enso/telephony/services/call-identity.service';
 import { CallRecordingArchiveService } from 'src/modules/enso/telephony/services/call-recording-archive.service';
 import { OutboundCallIngestService } from 'src/modules/enso/telephony/services/outbound-call-ingest.service';
@@ -20,6 +21,7 @@ import { CallIngestService } from 'src/modules/enso/telephony/services/call-inge
 @Module({
   imports: [FileStorageModule, SecureHttpClientModule],
   providers: [
+    CallFollowUpService,
     CallIngestService,
     OutboundCallIngestService,
     PbxNumberService,
