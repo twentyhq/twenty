@@ -63,7 +63,12 @@ export const ResourceCreditPriceSelector = ({
   canCancelCreditPackSwitch?: boolean;
   onCancelCreditPackSwitch?: () => void;
 }) => {
-  const { currentResourceCreditBillingPrice } = useCurrentResourceCredit();
+  const {
+    currentResourceCreditBillingPrice,
+    currentResourceCreditSubscriptionItem,
+    currentResourceCreditUnitAmount,
+    currentResourceCreditAmount,
+  } = useCurrentResourceCredit();
   const { formatNumber } = useNumberFormat();
 
   const { applyCurrentWorkspaceBillingUpdate } =
@@ -73,6 +78,12 @@ export const ResourceCreditPriceSelector = ({
   const { getIntervalLabel } = useBillingWording();
 
   const currentResourceCreditPrice = currentResourceCreditBillingPrice;
+
+  // The catalog price is gone once the workspace's package is archived, so
+  // identity and the amount it pays both come from the subscription first.
+  const currentResourceCreditStripePriceId =
+    currentResourceCreditSubscriptionItem?.stripePriceId ??
+    currentResourceCreditPrice?.stripePriceId;
 
   const [selectedPriceId, setSelectedPriceId] = useState<string | undefined>();
 
@@ -90,24 +101,24 @@ export const ResourceCreditPriceSelector = ({
     [resourceCreditPrices],
   );
 
-  const currentPriceAmountCents = currentResourceCreditPrice?.unitAmount ?? 0;
+  const currentPriceAmountCents = currentResourceCreditUnitAmount ?? 0;
 
   const defaultResourceCreditPriceForPicker = useMemo(
     () =>
       sortedResourceCreditPrices.find(
         (price) =>
-          price.stripePriceId !== currentResourceCreditPrice?.stripePriceId &&
+          price.stripePriceId !== currentResourceCreditStripePriceId &&
           (price.unitAmount ?? 0) > currentPriceAmountCents,
       ) ??
       sortedResourceCreditPrices.find(
-        (price) =>
-          price.stripePriceId !== currentResourceCreditPrice?.stripePriceId,
+        (price) => price.stripePriceId !== currentResourceCreditStripePriceId,
       ) ??
       currentResourceCreditPrice ??
       sortedResourceCreditPrices[0],
     [
       currentPriceAmountCents,
       currentResourceCreditPrice,
+      currentResourceCreditStripePriceId,
       sortedResourceCreditPrices,
     ],
   );
@@ -129,7 +140,7 @@ export const ResourceCreditPriceSelector = ({
   const fixedResourceCreditPrices = useMemo(() => {
     const higherResourceCreditPrices = sortedResourceCreditPrices.filter(
       (price) =>
-        price.stripePriceId !== currentResourceCreditPrice?.stripePriceId &&
+        price.stripePriceId !== currentResourceCreditStripePriceId &&
         (price.unitAmount ?? 0) > currentPriceAmountCents,
     );
 
@@ -158,31 +169,28 @@ export const ResourceCreditPriceSelector = ({
     }).filter((price): price is BillingPriceLicensed => isDefined(price));
   }, [
     currentPriceAmountCents,
-    currentResourceCreditPrice?.stripePriceId,
+    currentResourceCreditStripePriceId,
     sortedResourceCreditPrices,
   ]);
 
   const isChanged =
     isDefined(selectedPrice) &&
-    selectedPrice.stripePriceId !== currentResourceCreditPrice?.stripePriceId;
+    selectedPrice.stripePriceId !== currentResourceCreditStripePriceId;
 
   const hasAlternativeResourceCreditPrice = sortedResourceCreditPrices.some(
-    (price) =>
-      price.stripePriceId !== currentResourceCreditPrice?.stripePriceId,
+    (price) => price.stripePriceId !== currentResourceCreditStripePriceId,
   );
 
+  // Compared against the subscription's own package: the catalog price is gone
+  // once it is archived, which would otherwise confirm every change as a
+  // downgrade.
   const isUpgrade = () => {
-    if (
-      !isChanged ||
-      !isDefined(selectedPrice) ||
-      !isDefined(currentResourceCreditPrice)
-    ) {
+    if (!isChanged || !isDefined(selectedPrice)) {
       return false;
     }
 
     return (
-      (selectedPrice.creditAmount ?? 0) >
-      (currentResourceCreditPrice.creditAmount ?? 0)
+      (selectedPrice.creditAmount ?? 0) > (currentResourceCreditAmount ?? 0)
     );
   };
 
@@ -204,10 +212,13 @@ export const ResourceCreditPriceSelector = ({
 
   const selectedPriceDisplay = formatPriceAmount(selectedPrice);
   const selectedCreditAmountDisplay = formatCreditAmount(selectedPrice);
-  const currentCreditAmountDisplay =
-    formatCreditAmount(currentResourceCreditPrice) ?? formatNumber(0);
-  const currentCreditPriceDisplay =
-    formatPriceAmount(currentResourceCreditPrice) ?? formatNumber(0);
+  const currentCreditAmountDisplay = formatNumber(
+    currentResourceCreditAmount ?? 0,
+    { abbreviate: true, decimals: 2 },
+  );
+  const currentCreditPriceDisplay = formatNumber(
+    (currentResourceCreditUnitAmount ?? 0) / 100,
+  );
 
   const selectedCreditUnitAmount = selectedPrice?.unitAmount;
   const selectedCreditAmount = selectedPrice?.creditAmount;
