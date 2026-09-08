@@ -75,7 +75,7 @@ const promoteDelayedJobs = async (queueName: string): Promise<void> => {
 
   await Promise.all(
     delayedJobs
-      .filter((job) => (job.opts.delay ?? 0) <= MAX_PROMOTABLE_DELAY_MS)
+      .filter((job) => (job.delay ?? 0) <= MAX_PROMOTABLE_DELAY_MS)
       .map((job) => job.promote().catch(() => undefined)),
   );
 };
