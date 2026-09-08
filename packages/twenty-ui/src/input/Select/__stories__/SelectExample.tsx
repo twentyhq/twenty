@@ -25,7 +25,7 @@ export const SelectExample = ({
   alignItemWithTrigger,
   ...props
 }: SelectExampleProps) => (
-  <Select.Root items={SELECT_ITEMS} {...props}>
+  <Select.Root {...props} items={SELECT_ITEMS}>
     <Select.Trigger size={size} aria-label="Fruit">
       <Select.Value placeholder="Choose a fruit" />
     </Select.Trigger>
