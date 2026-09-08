@@ -1,4 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { DESKTOP_RECORDER_UNIVERSAL_IDENTIFIER } from 'src/engine/core-modules/application/application-oauth/constants/desktop-recorder-oauth.constant';
+import { isDesktopRecorderInstalled } from 'src/engine/core-modules/application/application-oauth/utils/is-desktop-recorder-installed.util';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
@@ -202,11 +204,6 @@ export class OAuthService {
       );
     }
 
-    const application = await this.findOrInstallApplication(
-      applicationRegistration,
-      authCodeToken.workspaceId,
-    );
-
     const userWorkspace = await this.userWorkspaceRepository.findOne({
       where: {
         userId: authCodeToken.userId,
@@ -218,6 +215,18 @@ export class OAuthService {
       return this.errorResponse(
         'invalid_grant',
         'User no longer has access to this workspace',
+      );
+    }
+
+    const application = await this.findOrInstallApplication(
+      applicationRegistration,
+      authCodeToken.workspaceId,
+    );
+
+    if (!application) {
+      return this.errorResponse(
+        'application_not_installed',
+        'Install Desktop Recorder in Settings > Apps, then connect again.',
       );
     }
 
@@ -729,13 +738,22 @@ export class OAuthService {
   private async findOrInstallApplication(
     applicationRegistration: ApplicationRegistrationEntity,
     workspaceId: string,
-  ): Promise<ApplicationEntity> {
+  ): Promise<ApplicationEntity | null> {
     const existingApplication = await this.applicationRepository.findOne({
       where: {
         applicationRegistrationId: applicationRegistration.id,
         workspaceId,
       },
     });
+
+    if (
+      applicationRegistration.universalIdentifier ===
+      DESKTOP_RECORDER_UNIVERSAL_IDENTIFIER
+    ) {
+      return isDesktopRecorderInstalled(existingApplication)
+        ? existingApplication
+        : null;
+    }
 
     if (existingApplication) {
       return existingApplication;
