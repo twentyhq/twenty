@@ -347,7 +347,7 @@ p {
 .agenda-actions {
   display: flex;
   align-items: center;
-  gap: var(--t-spacing-2);
+  gap: var(--t-spacing-1);
   flex-shrink: 0;
 }
 .meeting-menu {
