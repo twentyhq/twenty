@@ -1,6 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import type { ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
 import {
   FeatureFlagKey,
   MetadataReadability,
@@ -97,7 +98,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
 
     recordShareService = {
       findByRecordIds: jest.fn().mockResolvedValue([]),
-    } as any;
+    } as unknown as jest.Mocked<RecordShareService>;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -360,7 +361,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       const applicationRoleId = 'application-role-id';
       const applicationId = 'twenty-standard-application-id';
 
-      const privatePayload: WorkspaceEventBatch<any> = {
+      const privatePayload: WorkspaceEventBatch<ObjectRecordUpdateEvent> = {
         ...mockPayload,
         objectMetadata: createMockFlatObjectMetadata({
           readability: MetadataReadability.PRIVATE,
