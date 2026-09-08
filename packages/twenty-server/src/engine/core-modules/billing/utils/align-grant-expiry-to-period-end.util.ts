@@ -1,15 +1,9 @@
 /* @license Enterprise */
 
-import {
-  addMonths,
-  addYears,
-  getDate,
-  getDaysInMonth,
-  setDate,
-} from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
+import { shiftUtcMonths } from 'src/engine/core-modules/billing/utils/shift-utc-months.util';
 
 // Bounds the walk so it cannot run away. Must stay above what the longest
 // accepted validity needs on the shortest interval: a year of monthly periods
@@ -37,7 +31,7 @@ const resolveAnchorDayOfMonth = ({
 }: {
   periodStart: Date;
   periodEnd: Date;
-}): number => Math.max(getDate(periodStart), getDate(periodEnd));
+}): number => Math.max(periodStart.getUTCDate(), periodEnd.getUTCDate());
 
 const projectPeriodEnd = ({
   periodStart,
@@ -50,14 +44,14 @@ const projectPeriodEnd = ({
   periodsAhead: number;
   interval: SubscriptionInterval;
 }): Date => {
-  const shifted =
-    interval === SubscriptionInterval.Year
-      ? addYears(periodStart, periodsAhead)
-      : addMonths(periodStart, periodsAhead);
+  const monthsAhead =
+    interval === SubscriptionInterval.Year ? periodsAhead * 12 : periodsAhead;
 
-  // Re-expands the anchor that addMonths clamped away, and clamps it again for
-  // the month actually landed on.
-  return setDate(shifted, Math.min(anchorDayOfMonth, getDaysInMonth(shifted)));
+  return shiftUtcMonths({
+    date: periodStart,
+    months: monthsAhead,
+    dayOfMonth: anchorDayOfMonth,
+  });
 };
 
 // A grant's expiry is always a period end. Both mechanisms that spend credits

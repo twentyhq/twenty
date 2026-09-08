@@ -133,4 +133,29 @@ describe('alignGrantExpiryToPeriodEnd', () => {
       new Date('2099-01-01T00:00:00.000Z').getTime(),
     );
   });
+
+  // Stripe's boundaries are UTC instants. Projecting them with local-time
+  // arithmetic moves each one by the server's offset, which lands the expiry
+  // inside the period it is meant to close: under Europe/Paris this case
+  // returned 2026-03-31T23:00:00Z.
+  describe.each(['Europe/Paris', 'Pacific/Kiritimati', 'America/Los_Angeles'])(
+    'with the server in %s',
+    (timeZone) => {
+      const originalTimeZone = process.env.TZ;
+
+      beforeAll(() => {
+        process.env.TZ = timeZone;
+      });
+
+      afterAll(() => {
+        process.env.TZ = originalTimeZone;
+      });
+
+      it('projects the boundary in UTC regardless', () => {
+        expect(alignFrom(new Date('2026-03-15T00:00:00.000Z'))).toEqual(
+          new Date('2026-04-01T00:00:00.000Z'),
+        );
+      });
+    },
+  );
 });

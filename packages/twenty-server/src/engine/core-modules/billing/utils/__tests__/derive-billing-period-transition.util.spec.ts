@@ -18,7 +18,7 @@ const deriveFrom = (
     subscriptionCurrentPeriodStart: JANUARY,
     subscriptionInterval: SubscriptionInterval.Month,
     trialStart: null,
-    isFirstPeriodAfterTrial: false,
+    trialEnd: null,
     subscriptionPreviousPeriodStart: null,
     ledgerPeriodStart: null,
     ...overrides,
@@ -111,6 +111,7 @@ describe('deriveBillingPeriodTransition', () => {
       closingPeriodStart: JANUARY,
       closingPeriodEnd: FEBRUARY,
       nextPeriodStart: FEBRUARY,
+      isFirstPeriodAfterTrial: false,
     });
   });
 
@@ -120,15 +121,42 @@ describe('deriveBillingPeriodTransition', () => {
     const result = deriveFrom({
       subscriptionCurrentPeriodStart: FEBRUARY,
       trialStart,
-      isFirstPeriodAfterTrial: true,
+      trialEnd: FEBRUARY,
     });
 
+    expect(result.isFirstPeriodAfterTrial).toBe(true);
     expect(result.closingPeriodStart).toEqual(trialStart);
   });
 
   it('falls back to the trial period start only when the trial actually ran', () => {
-    const result = deriveFrom({ isFirstPeriodAfterTrial: true });
+    const result = deriveFrom({ trialEnd: FEBRUARY });
 
+    expect(result.closingPeriodStart).toEqual(JANUARY);
+  });
+
+  // The whole point of resolving the boundary from the subscription is that the
+  // invoice's stamped period is unreliable. Classifying the trial off that same
+  // stamped period_start put an arrears-stamped first paid period on the paid
+  // tier allowance instead of the trial one.
+  it('reads the trial from the boundary, not from where the closing period began', () => {
+    const trialStart = new Date('2026-01-20T00:00:00.000Z');
+
+    const result = deriveFrom({
+      subscriptionCurrentPeriodStart: FEBRUARY,
+      trialStart,
+      trialEnd: new Date('2026-02-01T00:00:30.000Z'),
+    });
+
+    expect(result.isFirstPeriodAfterTrial).toBe(true);
+  });
+
+  it('does not read an unrelated renewal as the end of a trial', () => {
+    const result = deriveFrom({
+      trialStart: new Date('2025-12-20T00:00:00.000Z'),
+      trialEnd: JANUARY,
+    });
+
+    expect(result.isFirstPeriodAfterTrial).toBe(false);
     expect(result.closingPeriodStart).toEqual(JANUARY);
   });
 

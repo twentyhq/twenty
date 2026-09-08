@@ -2,7 +2,6 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 
-import { addDays } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -328,6 +327,11 @@ export class BillingCreditService {
   }
 }
 
+// Exact 24-hour days rather than calendar ones: the result is only ever
+// compared against UTC period boundaries, and local-time day arithmetic drifts
+// by an hour across a DST change.
+const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
+
 const buildRevocationAdjustmentKey = (grantId: string): string =>
   `revoke:${grantId}`;
 
@@ -362,7 +366,9 @@ const resolveGrantExpiry = ({
   }
 
   return alignGrantExpiryToPeriodEnd({
-    requestedExpiresAt: addDays(effectiveAt, expiresInDays),
+    requestedExpiresAt: new Date(
+      effectiveAt.getTime() + expiresInDays * MILLISECONDS_PER_DAY,
+    ),
     currentPeriodStart: subscription.currentPeriodStart,
     currentPeriodEnd: subscription.currentPeriodEnd,
     interval: subscription.interval,

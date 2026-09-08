@@ -70,12 +70,7 @@ export class BillingWebhookInvoiceService {
   private async processInvoiceFinalized(
     data: Stripe.InvoiceFinalizedEvent.Data,
   ) {
-    const {
-      billing_reason: billingReason,
-      customer,
-      period_start: periodStart,
-      period_end: periodEnd,
-    } = data.object;
+    const { billing_reason: billingReason, customer } = data.object;
 
     const stripeSubscriptionId = getSubscriptionIdFromInvoice(data.object);
     const stripeCustomerId = customer as string | undefined;
@@ -87,7 +82,7 @@ export class BillingWebhookInvoiceService {
       return;
     }
 
-    if (!isDefined(stripeCustomerId) || !periodEnd || !periodStart) {
+    if (!isDefined(stripeCustomerId)) {
       return;
     }
 
@@ -100,25 +95,13 @@ export class BillingWebhookInvoiceService {
       return;
     }
 
-    const trialEnd = isDefined(subscription.trialEnd)
-      ? Math.floor(subscription.trialEnd.getTime() / 1000)
-      : undefined;
-
-    const TRIAL_END_TOLERANCE_SECONDS = 60;
-
-    const isFirstPeriodAfterTrial =
-      isDefined(trialEnd) &&
-      Math.abs(periodStart - trialEnd) <= TRIAL_END_TOLERANCE_SECONDS;
-
-    await this.processRollover({ subscription, isFirstPeriodAfterTrial });
+    await this.processRollover({ subscription });
   }
 
   private async processRollover({
     subscription,
-    isFirstPeriodAfterTrial,
   }: {
     subscription: BillingSubscriptionEntity;
-    isFirstPeriodAfterTrial: boolean;
   }): Promise<void> {
     const workspaceExists = await this.workspaceRepository.exists({
       where: { id: subscription.workspaceId },
@@ -160,16 +143,20 @@ export class BillingWebhookInvoiceService {
         boundary,
       });
 
-    const { closingPeriodStart, closingPeriodEnd, nextPeriodStart } =
-      deriveBillingPeriodTransition({
-        boundary,
-        subscriptionCurrentPeriodStart: subscription.currentPeriodStart,
-        subscriptionInterval: subscription.interval,
-        trialStart: subscription.trialStart,
-        isFirstPeriodAfterTrial,
-        subscriptionPreviousPeriodStart: subscription.previousPeriodStart,
-        ledgerPeriodStart,
-      });
+    const {
+      closingPeriodStart,
+      closingPeriodEnd,
+      nextPeriodStart,
+      isFirstPeriodAfterTrial,
+    } = deriveBillingPeriodTransition({
+      boundary,
+      subscriptionCurrentPeriodStart: subscription.currentPeriodStart,
+      subscriptionInterval: subscription.interval,
+      trialStart: subscription.trialStart,
+      trialEnd: subscription.trialEnd,
+      subscriptionPreviousPeriodStart: subscription.previousPeriodStart,
+      ledgerPeriodStart,
+    });
 
     // Credits earned during the trial follow the workspace into its first paid
     // period, so the trial closes like any other period. Its allowance comes
