@@ -284,6 +284,47 @@ describe('createShareWithObjectRecordsPermissions', () => {
       ]);
     });
 
+    it('should drop the rows of a destroyed record whose id is reused', async () => {
+      const recordId = trackRecordId();
+
+      const firstResponse = await makeGraphqlAPIRequest(
+        createOneOperation({
+          data: { id: recordId, name: 'first record with this id' },
+          shareWith: [
+            { roleId: memberRoleId, accessLevel: RecordShareAccessLevel.READ },
+          ],
+        }),
+      );
+
+      expect(firstResponse.body.errors).toBeUndefined();
+      expect(await findRecordShares(recordId)).toHaveLength(2);
+
+      const destroyResponse = await makeGraphqlAPIRequest(
+        destroyManyOperationFactory({
+          objectMetadataSingularName: OBJECT_SINGULAR,
+          objectMetadataPluralName: OBJECT_PLURAL,
+          gqlFields: 'id',
+          filter: { id: { eq: recordId } },
+        }),
+      );
+
+      expect(destroyResponse.body.errors).toBeUndefined();
+      expect(await findRecordShares(recordId)).toHaveLength(2);
+
+      const secondResponse = await makeGraphqlAPIRequest(
+        createOneOperation({
+          data: { id: recordId, name: 'second record with this id' },
+        }),
+      );
+
+      expect(secondResponse.body.errors).toBeUndefined();
+      expect(await findRecordShares(recordId)).toEqual([
+        expect.objectContaining(
+          ownerRowFor(recordId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE),
+        ),
+      ]);
+    });
+
     it('should treat a null shareWith as omitted for a member', async () => {
       const recordId = trackRecordId();
 
