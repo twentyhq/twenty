@@ -10,7 +10,7 @@ import { type ShareWithInput } from 'src/engine/api/common/types/share-with-inpu
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 
-export const validateShareWithArg = ({
+export const validateShareWithArgOrThrow = ({
   authContext,
   isRecordSharingEnabled,
   shareWith,
