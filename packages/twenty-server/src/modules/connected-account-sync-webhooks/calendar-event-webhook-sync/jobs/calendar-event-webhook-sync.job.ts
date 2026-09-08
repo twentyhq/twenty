@@ -7,9 +7,9 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_JITTER } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-retry-jitter.constant';
 import { CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_INITIAL_DELAY_MS } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-retry-initial-delay-ms.constant';
-import { CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_LIMIT } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-retry-limit.constant';
+import { CALENDAR_EVENT_WEBHOOK_SYNC_BUSY_ATTEMPT_LIMIT } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-busy-attempt-limit.constant';
+import { CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_JOB_OPTIONS } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-retry-job-options.constant';
 import { CalendarEventWebhookSyncService } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/services/calendar-event-webhook-sync.service';
 
 export type CalendarEventWebhookSyncJobData = {
@@ -56,7 +56,7 @@ export class CalendarEventWebhookSyncJob {
     workspaceId,
     busyAttempt = 0,
   }: CalendarEventWebhookSyncJobData): Promise<void> {
-    if (busyAttempt >= CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_LIMIT) {
+    if (busyAttempt >= CALENDAR_EVENT_WEBHOOK_SYNC_BUSY_ATTEMPT_LIMIT) {
       this.logger.warn(
         `Calendar channel ${calendarChannelId} in workspace ${workspaceId} was still syncing after ${busyAttempt} webhook sync attempts, leaving it to the fallback cron`,
       );
@@ -70,13 +70,7 @@ export class CalendarEventWebhookSyncJob {
       {
         delay:
           CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_INITIAL_DELAY_MS * 2 ** busyAttempt,
-        retryLimit: CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_LIMIT,
-        backoff: {
-          strategy: 'exponential',
-          initialDelayMilliseconds:
-            CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_INITIAL_DELAY_MS,
-          jitter: CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_JITTER,
-        },
+        ...CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_JOB_OPTIONS,
       },
     );
   }
