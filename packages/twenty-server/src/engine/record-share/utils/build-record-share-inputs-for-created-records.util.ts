@@ -6,13 +6,13 @@ import {
 } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { resolveShareWithPrincipal } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/resolve-share-with-principal.util';
-import { type ShareWithInput } from 'src/engine/api/common/types/share-with-input.type';
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type RecordShareInput } from 'src/engine/record-share/types/record-share-input.type';
+import { type ShareWithInput } from 'src/engine/record-share/types/share-with-input.type';
+import { resolveShareWithPrincipal } from 'src/engine/record-share/utils/resolve-share-with-principal.util';
 
 type RecordShareInputForRecord = Omit<
   RecordShareInput,
