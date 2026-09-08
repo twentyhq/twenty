@@ -8,7 +8,7 @@ import {
   useRef,
 } from 'react';
 
-import { mergeFieldPartClassName } from '@ui/input/Field/internal/mergeFieldPartClassName';
+import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { formatInlineBlockSize } from './internal/formatInlineBlockSize';
@@ -79,7 +79,7 @@ export const Textarea = ({
       ref={mergedRef}
       render={render}
       value={value}
-      className={mergeFieldPartClassName(
+      className={mergeClassNames(
         clsx(styles.textarea, styles[size]),
         className,
       )}
