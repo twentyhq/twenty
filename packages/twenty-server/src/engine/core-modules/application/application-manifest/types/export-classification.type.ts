@@ -1,12 +1,12 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
-export type ParentViewStatus =
+export type ParentStatus =
   | 'exported'
   | 'engineDerived'
   | 'unsupported'
   | 'outside';
 
-export type ViewChildMetadataName = Extract<
+export type ChildMetadataName = Extract<
   AllMetadataName,
   | 'viewField'
   | 'viewFieldGroup'
@@ -14,4 +14,11 @@ export type ViewChildMetadataName = Extract<
   | 'viewFilterGroup'
   | 'viewGroup'
   | 'viewSort'
+  | 'pageLayoutTab'
+  | 'pageLayoutWidget'
+>;
+
+export type ParentMetadataName = Extract<
+  AllMetadataName,
+  'view' | 'pageLayout' | 'pageLayoutTab'
 >;
