@@ -449,17 +449,6 @@ export class WorkflowDatabaseEventTriggerListener {
       return null;
     }
 
-    const roleId =
-      standardApplication?.defaultRoleId ??
-      findFlatEntityByUniversalIdentifier({
-        flatEntityMaps: flatRoleMaps,
-        universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
-      })?.id;
-
-    if (!isDefined(roleId)) {
-      return null;
-    }
-
     switch (gateKind) {
       case 'deny':
         return DENY_ALL_RECORD_SHARE_GATE;
@@ -470,7 +459,14 @@ export class WorkflowDatabaseEventTriggerListener {
             objectMetadataId: payload.objectMetadata.id,
             recordIds: payload.events.map((event) => event.recordId),
           }),
-          principalIds: [EVERYONE_PRINCIPAL_ID, roleId],
+          principalIds: [
+            EVERYONE_PRINCIPAL_ID,
+            standardApplication?.defaultRoleId ??
+              findFlatEntityByUniversalIdentifier({
+                flatEntityMaps: flatRoleMaps,
+                universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
+              })?.id,
+          ].filter(isDefined),
         };
       default:
         assertUnreachable(gateKind);
