@@ -1,3 +1,7 @@
+import {
+  DESKTOP_RECORDER_UNIVERSAL_IDENTIFIER,
+  DESKTOP_RECORDER_PACKAGE,
+} from 'src/engine/core-modules/application/application-oauth/constants/desktop-recorder-oauth.constant';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
@@ -22,6 +26,7 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     findOne: jest.Mock;
     save: jest.Mock;
     create: jest.Mock;
+    update: jest.Mock;
     createQueryBuilder: jest.Mock;
   };
 
@@ -50,6 +55,7 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
       findOne: jest.fn(),
       save: jest.fn(),
       create: jest.fn((entity) => entity),
+      update: jest.fn(),
       createQueryBuilder: jest.fn(() => ({
         update: jest.fn().mockReturnThis(),
         set: jest.fn().mockReturnThis(),
@@ -173,6 +179,79 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
 
     expect(applicationRegistrationRepository.save).toHaveBeenCalledWith(
       expect.objectContaining({ isListed: true }),
+    );
+  });
+  it('rejects a workspace claiming the reserved desktop identity', async () => {
+    await expect(
+      service.create(
+        {
+          name: 'Impersonator',
+          universalIdentifier: DESKTOP_RECORDER_UNIVERSAL_IDENTIFIER,
+        },
+        'workspace',
+        'user',
+      ),
+    ).rejects.toThrow('official catalog package');
+    expect(applicationRegistrationRepository.save).not.toHaveBeenCalled();
+  });
+
+  it('rejects a catalog package impersonating Desktop Recorder', async () => {
+    await expect(
+      service.upsertFromCatalog({
+        ...catalogParams,
+        universalIdentifier: DESKTOP_RECORDER_UNIVERSAL_IDENTIFIER,
+      }),
+    ).rejects.toThrow('official catalog package');
+    expect(applicationRegistrationRepository.save).not.toHaveBeenCalled();
+  });
+
+  it('provisions the official package as a public client', async () => {
+    await service.upsertFromCatalog({
+      ...catalogParams,
+      universalIdentifier: DESKTOP_RECORDER_UNIVERSAL_IDENTIFIER,
+      sourcePackage: DESKTOP_RECORDER_PACKAGE,
+    });
+    expect(applicationRegistrationRepository.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        oAuthClientSecretHash: null,
+        oAuthRedirectUris: [],
+        oAuthScopes: ['api', 'profile'],
+      }),
+    );
+  });
+
+  it('does not rotate a secret for the desktop public client', async () => {
+    jest.spyOn(service, 'findOneById').mockResolvedValue(
+      buildExistingRegistration({
+        universalIdentifier: DESKTOP_RECORDER_UNIVERSAL_IDENTIFIER,
+      }),
+    );
+    await expect(
+      service.rotateClientSecret('registration-id', 'workspace'),
+    ).rejects.toThrow('public OAuth client');
+    expect(applicationRegistrationRepository.update).not.toHaveBeenCalled();
+  });
+
+  it('preserves public client fields when registration settings change', async () => {
+    jest.spyOn(service, 'findOneByIdGlobal').mockResolvedValue(
+      buildExistingRegistration({
+        universalIdentifier: DESKTOP_RECORDER_UNIVERSAL_IDENTIFIER,
+      }),
+    );
+    await service.updateGlobal({
+      id: 'registration-id',
+      update: {
+        oAuthScopes: ['profile'],
+        oAuthRedirectUris: ['https://example.com/callback'],
+      },
+    });
+    expect(applicationRegistrationRepository.update).toHaveBeenCalledWith(
+      'registration-id',
+      expect.objectContaining({
+        oAuthClientSecretHash: null,
+        oAuthRedirectUris: [],
+        oAuthScopes: ['api', 'profile'],
+      }),
     );
   });
 });

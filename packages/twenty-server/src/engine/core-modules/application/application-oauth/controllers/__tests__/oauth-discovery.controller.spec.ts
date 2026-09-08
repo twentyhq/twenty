@@ -9,6 +9,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 describe('OAuthDiscoveryController', () => {
   let controller: OAuthDiscoveryController;
+  const findRegistration = jest.fn();
 
   const buildMockRequest = (host: string, protocol = 'https') =>
     ({
@@ -18,6 +19,7 @@ describe('OAuthDiscoveryController', () => {
     }) as unknown as Request;
 
   beforeEach(async () => {
+    findRegistration.mockReset();
     const module: TestingModule = await Test.createTestingModule({
       controllers: [OAuthDiscoveryController],
       providers: [
@@ -37,7 +39,7 @@ describe('OAuthDiscoveryController', () => {
         },
         {
           provide: ApplicationRegistrationService,
-          useValue: { findOneByUniversalIdentifierGlobal: jest.fn() },
+          useValue: { findOneByUniversalIdentifierGlobal: findRegistration },
         },
       ],
     }).compile();
@@ -93,7 +95,7 @@ describe('OAuthDiscoveryController', () => {
           },
           {
             provide: ApplicationRegistrationService,
-            useValue: { findOneByUniversalIdentifierGlobal: jest.fn() },
+            useValue: { findOneByUniversalIdentifierGlobal: findRegistration },
           },
         ],
       }).compile();
@@ -134,4 +136,21 @@ describe('OAuthDiscoveryController', () => {
       });
     });
   });
+  it.each([{ redirects: [] }, { redirects: ['https://example.com/callback'] }])(
+    'advertises desktop sign-in only for loopback public clients (%j)',
+    async ({ redirects }) => {
+      findRegistration.mockResolvedValue({
+        oAuthClientId: 'desktop',
+        oAuthClientSecretHash: null,
+        oAuthScopes: ['api', 'profile'],
+        oAuthRedirectUris: redirects,
+      });
+      const metadata = await controller.getAuthorizationServerMetadata(
+        buildMockRequest('workspace.twenty.com'),
+      );
+      expect(metadata.desktop_client_id).toBe(
+        redirects.length === 0 ? 'desktop' : undefined,
+      );
+    },
+  );
 });

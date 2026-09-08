@@ -1,5 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { getDesktopRecorderOAuthFields } from 'src/engine/core-modules/application/application-oauth/constants/desktop-recorder-oauth.constant';
+import {
+  DESKTOP_RECORDER_UNIVERSAL_IDENTIFIER,
+  DESKTOP_RECORDER_PACKAGE,
+  getDesktopRecorderOAuthFields,
+} from 'src/engine/core-modules/application/application-oauth/constants/desktop-recorder-oauth.constant';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
@@ -500,6 +504,13 @@ export class ApplicationRegistrationService {
   }> {
     const universalIdentifier = input.universalIdentifier ?? v4();
 
+    if (universalIdentifier === DESKTOP_RECORDER_UNIVERSAL_IDENTIFIER) {
+      throw new ApplicationRegistrationException(
+        'Desktop Recorder must be installed from its official catalog package',
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const existingByUid =
       await this.findOneByUniversalIdentifierGlobal(universalIdentifier);
 
@@ -557,7 +568,7 @@ export class ApplicationRegistrationService {
 
     const existingRegistration = await this.findOneById(id, ownerWorkspaceId);
 
-    await this.applyUpdate(id, update);
+    await this.applyUpdate(existingRegistration, update);
 
     await this.broadcastApplicationRegistrationUpdatedById(
       id,
@@ -572,14 +583,14 @@ export class ApplicationRegistrationService {
   ): Promise<ApplicationRegistrationEntity> {
     const { id, update } = input;
 
-    await this.findOneByIdGlobal(id);
-    await this.applyUpdate(id, update);
+    const existingRegistration = await this.findOneByIdGlobal(id);
+    await this.applyUpdate(existingRegistration, update);
 
     return this.findOneByIdGlobal(id);
   }
 
   private async applyUpdate(
-    id: string,
+    registration: ApplicationRegistrationEntity,
     update: UpdateApplicationRegistrationPayload,
   ): Promise<void> {
     if (isDefined(update.oAuthRedirectUris)) {
@@ -606,7 +617,14 @@ export class ApplicationRegistrationService {
       return;
     }
 
-    await this.applicationRegistrationRepository.update(id, updateData);
+    Object.assign(
+      updateData,
+      getDesktopRecorderOAuthFields(registration.universalIdentifier),
+    );
+    await this.applicationRegistrationRepository.update(
+      registration.id,
+      updateData,
+    );
     await this.invalidateMarketplaceAppsCache();
   }
 
@@ -746,7 +764,15 @@ export class ApplicationRegistrationService {
     id: string,
     ownerWorkspaceId: string,
   ): Promise<string> {
-    await this.findOneById(id, ownerWorkspaceId);
+    const registration = await this.findOneById(id, ownerWorkspaceId);
+    if (
+      registration.universalIdentifier === DESKTOP_RECORDER_UNIVERSAL_IDENTIFIER
+    ) {
+      throw new ApplicationRegistrationException(
+        'Desktop Recorder is a public OAuth client and has no client secret',
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
 
     const { clientSecret, clientSecretHash } =
       await this.generateClientSecret();
@@ -782,6 +808,16 @@ export class ApplicationRegistrationService {
       | 'manifest'
     >,
   ): Promise<void> {
+    if (
+      params.universalIdentifier === DESKTOP_RECORDER_UNIVERSAL_IDENTIFIER &&
+      (params.sourceType !== ApplicationRegistrationSourceType.NPM ||
+        params.sourcePackage !== DESKTOP_RECORDER_PACKAGE)
+    ) {
+      throw new ApplicationRegistrationException(
+        'Desktop Recorder must be installed from its official catalog package',
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
     const existing = await this.findOneByUniversalIdentifierGlobal(
       params.universalIdentifier,
     );

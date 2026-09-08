@@ -1,3 +1,4 @@
+import { OAUTH_INSTALL_SOURCE_PATH } from 'src/engine/core-modules/application/application-oauth/utils/is-desktop-recorder-installed.util';
 import { createHash } from 'crypto';
 
 import { OAuthService } from 'src/engine/core-modules/application/application-oauth/oauth.service';
@@ -89,6 +90,7 @@ describe('Desktop Recorder sign-in', () => {
     findApplication.mockResolvedValue({
       id: 'app',
       state: ApplicationState.INSTALLED,
+      version: '0.1.0',
     });
     for (const name of ['alice', 'bob']) {
       userId = name;
@@ -111,6 +113,18 @@ describe('Desktop Recorder sign-in', () => {
     expect(create).not.toHaveBeenCalled();
   });
 
+  it('rejects an installed row before its first installation completes', async () => {
+    findApplication.mockResolvedValue({
+      id: 'app',
+      state: ApplicationState.INSTALLED,
+      version: null,
+    });
+    expect(await signIn()).toMatchObject({
+      error: 'application_not_installed',
+    });
+    expect(generateApplicationTokenPair).not.toHaveBeenCalled();
+  });
+
   it('requires PKCE for the desktop public client', async () => {
     expect(
       await service.exchangeAuthorizationCode({
@@ -123,15 +137,20 @@ describe('Desktop Recorder sign-in', () => {
   });
 
   it('accepts a packaged installation on an older instance without lifecycle state', async () => {
-    findApplication.mockResolvedValue({ id: 'app', sourcePath: 'tarball' });
+    findApplication.mockResolvedValue({
+      id: 'app',
+      sourcePath: 'tarball',
+      version: '0.1.0',
+    });
     expect(await signIn()).toMatchObject({ access_token: 'access' });
   });
 
   it('rejects a legacy OAuth-only entry even if marked installed', async () => {
     findApplication.mockResolvedValue({
       id: 'app',
-      sourcePath: 'oauth-install',
+      sourcePath: OAUTH_INSTALL_SOURCE_PATH,
       state: ApplicationState.INSTALLED,
+      version: '0.1.0',
     });
     expect(await signIn()).toMatchObject({
       error: 'application_not_installed',

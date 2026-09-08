@@ -1,6 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DESKTOP_RECORDER_UNIVERSAL_IDENTIFIER } from 'src/engine/core-modules/application/application-oauth/constants/desktop-recorder-oauth.constant';
-import { isDesktopRecorderInstalled } from 'src/engine/core-modules/application/application-oauth/utils/is-desktop-recorder-installed.util';
+import {
+  isDesktopRecorderInstalled,
+  OAUTH_INSTALL_SOURCE_PATH,
+} from 'src/engine/core-modules/application/application-oauth/utils/is-desktop-recorder-installed.util';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
@@ -791,7 +794,7 @@ export class OAuthService {
       name: applicationRegistration.name,
       description: `OAuth application registered as "${applicationRegistration.name}"`,
       version: applicationRegistration.latestAvailableVersion ?? '1.0.0',
-      sourcePath: 'oauth-install',
+      sourcePath: OAUTH_INSTALL_SOURCE_PATH,
       applicationRegistrationId: applicationRegistration.id,
       workspaceId,
     });

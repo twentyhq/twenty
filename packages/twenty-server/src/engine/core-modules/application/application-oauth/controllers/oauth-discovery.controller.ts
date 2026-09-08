@@ -76,6 +76,7 @@ export class OAuthDiscoveryController {
         : {}),
       ...(desktopRegistration &&
       !desktopRegistration.oAuthClientSecretHash &&
+      desktopRegistration.oAuthRedirectUris.length === 0 &&
       ['api', 'profile'].every((scope) =>
         desktopRegistration.oAuthScopes.includes(scope),
       )

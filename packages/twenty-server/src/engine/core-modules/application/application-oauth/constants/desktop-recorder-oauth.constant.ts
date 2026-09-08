@@ -11,3 +11,5 @@ export const getDesktopRecorderOAuthFields = (universalIdentifier: string) =>
         oAuthScopes: ['api', 'profile'],
       }
     : {};
+
+export const DESKTOP_RECORDER_PACKAGE = '@twentyhq/companion-app';
