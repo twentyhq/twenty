@@ -15,21 +15,18 @@ export const MenuPopup = ({
   sideOffset,
   alignOffset,
   anchor,
-  container,
   keepMounted,
   className,
   children,
   ...props
 }: MenuPopupProps) => {
   const themeContainer = useThemeContainer();
+  const { container = themeContainer ?? undefined, ...popupProps } = props;
   const nested = useContext(MenuNestingContext);
   const defaults = MENU_POPUP_POSITION_DEFAULTS[nested ? 'submenu' : 'root'];
 
   return (
-    <MenuPrimitive.Portal
-      container={container ?? themeContainer ?? undefined}
-      keepMounted={keepMounted}
-    >
+    <MenuPrimitive.Portal container={container} keepMounted={keepMounted}>
       <MenuPrimitive.Positioner
         side={side ?? defaults.side}
         align={align ?? defaults.align}
@@ -39,7 +36,7 @@ export const MenuPopup = ({
         className={styles.positioner}
       >
         <MenuPrimitive.Popup
-          {...props}
+          {...popupProps}
           className={mergeFieldPartClassName(styles.popup, className)}
         >
           {children}
