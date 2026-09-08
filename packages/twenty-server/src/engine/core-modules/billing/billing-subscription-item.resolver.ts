@@ -16,6 +16,7 @@ import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 
 @MetadataResolver(() => BillingSubscriptionItemDTO)
 @UsePipes(ResolverValidationPipe)
@@ -34,27 +35,14 @@ export class BillingSubscriptionItemResolver {
     private readonly billingPriceRepository: Repository<BillingPriceEntity>,
   ) {}
 
-  // The amount this item is actually charged, which is not the catalog amount for
-  // its plan once pricing changes: superseded prices keep billing the workspaces
-  // already on them.
+  // What this item is actually charged and grants, which is not what the plan
+  // catalog says once pricing changes: superseded prices keep billing the
+  // workspaces already on them, and are dropped from the catalog once archived.
   @ResolveField(() => Number, { nullable: true })
   async unitAmount(
     @Parent() billingSubscriptionItem: BillingSubscriptionItemEntity,
   ): Promise<number | null> {
-    // currentWorkspace loads the item's product with its prices, so the common
-    // path resolves in memory rather than one query per item on app boot. Other
-    // callers load the subscription without relations and still need the read.
-    const preloadedPrice =
-      billingSubscriptionItem.billingProduct?.billingPrices?.find(
-        (billingPrice) =>
-          billingPrice.stripePriceId === billingSubscriptionItem.stripePriceId,
-      );
-
-    const billingPrice =
-      preloadedPrice ??
-      (await this.billingPriceRepository.findOne({
-        where: { stripePriceId: billingSubscriptionItem.stripePriceId },
-      }));
+    const billingPrice = await this.findItemPrice(billingSubscriptionItem);
 
     if (!isDefined(billingPrice?.unitAmount)) {
       return null;
@@ -63,6 +51,43 @@ export class BillingSubscriptionItemResolver {
     const unitAmount = Number(billingPrice.unitAmount);
 
     return Number.isFinite(unitAmount) ? unitAmount : null;
+  }
+
+  @ResolveField(() => Number, { nullable: true })
+  async creditAmount(
+    @Parent() billingSubscriptionItem: BillingSubscriptionItemEntity,
+  ): Promise<number | null> {
+    const billingPrice = await this.findItemPrice(billingSubscriptionItem);
+
+    if (!isDefined(billingPrice?.metadata?.credit_amount)) {
+      return null;
+    }
+
+    const creditAmount =
+      Number(billingPrice.metadata.credit_amount) /
+      INTERNAL_CREDITS_PER_DISPLAY_CREDIT;
+
+    return Number.isFinite(creditAmount) ? creditAmount : null;
+  }
+
+  // currentWorkspace loads the item's product with its prices, so the common
+  // path resolves in memory rather than one query per item on app boot. Other
+  // callers load the subscription without relations and still need the read.
+  private async findItemPrice(
+    billingSubscriptionItem: BillingSubscriptionItemEntity,
+  ): Promise<BillingPriceEntity | null> {
+    const preloadedPrice =
+      billingSubscriptionItem.billingProduct?.billingPrices?.find(
+        (billingPrice) =>
+          billingPrice.stripePriceId === billingSubscriptionItem.stripePriceId,
+      );
+
+    return (
+      preloadedPrice ??
+      (await this.billingPriceRepository.findOne({
+        where: { stripePriceId: billingSubscriptionItem.stripePriceId },
+      }))
+    );
   }
 
   // Derived from the live credit balance instead of read from the stored

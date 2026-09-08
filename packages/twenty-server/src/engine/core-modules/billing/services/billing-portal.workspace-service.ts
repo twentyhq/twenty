@@ -26,6 +26,7 @@ import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/se
 import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
 import { type BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { findSellableBaseProductPriceOrThrow } from 'src/engine/core-modules/billing/utils/find-sellable-base-product-price-or-throw.util';
+import { isSellableCatalogPrice } from 'src/engine/core-modules/billing/utils/is-sellable-catalog-price.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -462,7 +463,9 @@ export class BillingPortalWorkspaceService {
     billingPricesPerPlan: BillingGetPricesPerPlanResult,
   ) {
     const resourceCreditPrices =
-      billingPricesPerPlan.resourceCreditProductPrices;
+      billingPricesPerPlan.resourceCreditProductPrices.filter(
+        isSellableCatalogPrice,
+      );
 
     if (!isDefined(resourceCreditPrices) || resourceCreditPrices.length === 0) {
       throw new BillingException(

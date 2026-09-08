@@ -13,6 +13,7 @@ export const mockBillingPlans = {
           images: [],
           metadata: {
             __typename: 'BillingProductMetadata',
+            isLegacy: null,
             productKey: 'BASE_PRODUCT',
             planKey: 'PRO',
             priceUsageBased: 'LICENSED',
@@ -48,6 +49,7 @@ export const mockBillingPlans = {
           images: [],
           metadata: {
             __typename: 'BillingProductMetadata',
+            isLegacy: null,
             productKey: 'RESOURCE_CREDIT',
             planKey: 'PRO',
             priceUsageBased: 'METERED',
@@ -308,6 +310,7 @@ export const mockBillingPlans = {
           images: [],
           metadata: {
             __typename: 'BillingProductMetadata',
+            isLegacy: null,
             productKey: 'BASE_PRODUCT',
             planKey: 'ENTERPRISE',
             priceUsageBased: 'LICENSED',
@@ -343,6 +346,7 @@ export const mockBillingPlans = {
           images: [],
           metadata: {
             __typename: 'BillingProductMetadata',
+            isLegacy: null,
             productKey: 'RESOURCE_CREDIT',
             planKey: 'ENTERPRISE',
             priceUsageBased: 'METERED',

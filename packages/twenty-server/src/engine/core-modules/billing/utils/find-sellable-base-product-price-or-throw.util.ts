@@ -5,8 +5,7 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
-import { isSellableBillingPrice } from 'src/engine/core-modules/billing/utils/is-sellable-billing-price.util';
-import { isSellableBillingProduct } from 'src/engine/core-modules/billing/utils/is-sellable-billing-product.util';
+import { isSellableCatalogPrice } from 'src/engine/core-modules/billing/utils/is-sellable-catalog-price.util';
 
 type SellableBaseProductPrice = {
   active: boolean;
@@ -29,9 +28,7 @@ export const findSellableBaseProductPriceOrThrow = <
   const sellableBasePrices = billingPrices.filter(
     (billingPrice) =>
       billingPrice.billingProduct?.metadata.productKey ===
-        BillingProductKey.BASE_PRODUCT &&
-      isSellableBillingProduct(billingPrice.billingProduct) &&
-      isSellableBillingPrice(billingPrice),
+        BillingProductKey.BASE_PRODUCT && isSellableCatalogPrice(billingPrice),
   );
 
   if (sellableBasePrices.length === 0) {

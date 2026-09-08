@@ -19,6 +19,7 @@ export const CURRENT_BILLING_SUBSCRIPTION_FRAGMENT = gql`
       quantity
       stripePriceId
       unitAmount
+      creditAmount
       billingProduct {
         name
         description
