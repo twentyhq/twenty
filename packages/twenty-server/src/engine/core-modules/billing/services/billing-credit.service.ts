@@ -80,16 +80,29 @@ export class BillingCreditService {
 
     const effectiveAt = params.effectiveAt ?? new Date();
 
-    const grant = await this.billingCreditGrantService.createGrant({
-      ...params,
-      effectiveAt,
-      expiresAt: resolveGrantExpiry({
-        effectiveAt,
-        expiresInDays: params.expiresInDays,
-        subscription,
-        workspaceId,
-      }),
-    });
+    const replayedGrant = isDefined(params.idempotencyKey)
+      ? await this.billingCreditGrantService.findGrantByIdempotencyKey(
+          workspaceId,
+          params.idempotencyKey,
+        )
+      : null;
+
+    // A replay answers with what the first attempt wrote, so the operator's
+    // intent is never re-derived: the subscription that anchored the original
+    // expiry may have been canceled since, and the insert would discard the
+    // answer anyway.
+    const grant = isDefined(replayedGrant)
+      ? null
+      : await this.billingCreditGrantService.createGrant({
+          ...params,
+          effectiveAt,
+          expiresAt: resolveGrantExpiry({
+            effectiveAt,
+            expiresInDays: params.expiresInDays,
+            subscription,
+            workspaceId,
+          }),
+        });
 
     if (!isDefined(grant)) {
       this.logger.log(
