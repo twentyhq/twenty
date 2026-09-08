@@ -95,8 +95,6 @@ const STANDARD_FIELD_LOCATION_BY_UNIVERSAL_IDENTIFIER = new Map<
 
 const MAX_FILE_BASE_NAME_LENGTH = 80;
 
-const WINDOWS_RESERVED_FILE_BASE_NAMES = new Set(['con', 'prn', 'aux', 'nul']);
-
 const toFileBaseName = ({
   segments,
   universalIdentifier,
@@ -104,7 +102,6 @@ const toFileBaseName = ({
   segments: (string | null)[];
   universalIdentifier: string;
 }): string => {
-  const identifierPrefix = universalIdentifier.slice(0, 8);
   const fileBaseName = segments
     .filter(isDefined)
     .map(kebabCase)
@@ -114,13 +111,9 @@ const toFileBaseName = ({
     .slice(0, MAX_FILE_BASE_NAME_LENGTH)
     .replace(/-+$/g, '');
 
-  if (!isNonEmptyString(fileBaseName)) {
-    return identifierPrefix;
-  }
-
-  return WINDOWS_RESERVED_FILE_BASE_NAMES.has(fileBaseName)
-    ? `${identifierPrefix}-${fileBaseName}`
-    : fileBaseName;
+  return isNonEmptyString(fileBaseName)
+    ? fileBaseName
+    : universalIdentifier.slice(0, 8);
 };
 
 const buildApplicationConfig = (

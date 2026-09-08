@@ -274,15 +274,6 @@ describe('buildPullEntities', () => {
     expect(view?.fileBaseName).toHaveLength(80);
   });
 
-  it('should prefix a view named after a Windows reserved device name with its identifier', () => {
-    const { entities } = buildPullEntities(
-      buildManifest({ views: [buildViewManifest({ name: 'Con' })] }),
-    );
-    const view = entities.find((entity) => entity.kind === 'view');
-
-    expect(view?.fileBaseName).toBe('88888888-con');
-  });
-
   it('should write a standalone view field into src/view-fields named after the manifest object and field it points to', () => {
     const viewFieldManifest = buildViewFieldManifest();
     const { entities, skipped } = buildPullEntities(
