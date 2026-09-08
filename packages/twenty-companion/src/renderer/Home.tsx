@@ -6,7 +6,6 @@ import { H2Title } from '@ui/typography/H2Title/H2Title';
 import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
 import { Card } from '@ui/surfaces/Card/Card';
 import { CalendarDayLabel } from './components/CalendarDayLabel/CalendarDayLabel';
-import { SearchInput } from '@ui/input/SearchInput/SearchInput';
 import { useState } from 'react';
 import {
   IconCalendarEvent,
@@ -134,7 +133,6 @@ const UpcomingMeetings = ({ state, isPending, command }: ActionProps) => {
 };
 
 export const Home = ({ state, command, isPending }: ActionProps) => {
-  const [recordingSearch, setRecordingSearch] = useState('');
   return (
     <>
       <UpcomingMeetings state={state} command={command} isPending={isPending} />
@@ -145,22 +143,16 @@ export const Home = ({ state, command, isPending }: ActionProps) => {
         <H2Title
           title={i18n._('Recordings')}
           adornment={
-            <div className="home-recordings-search">
-              <SearchInput
-                aria-label={i18n._('Search recordings')}
-                placeholder={i18n._('Search recordings…')}
-                value={recordingSearch}
-                onChange={setRecordingSearch}
-              />
-            </div>
+            <Button
+              variant="tertiary"
+              title={i18n._('View all in Twenty')}
+              Icon={IconArrowUpRight}
+              disabled={isPending('open-recordings')}
+              onClick={() => void command({ type: 'open-recordings' })}
+            />
           }
         />
-        <RecordingList
-          state={state}
-          isPending={isPending}
-          command={command}
-          search={recordingSearch}
-        />
+        <RecordingList state={state} isPending={isPending} command={command} />
       </section>
     </>
   );

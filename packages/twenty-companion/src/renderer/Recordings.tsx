@@ -6,19 +6,8 @@ import { type ActionProps, Empty, Status } from './components';
 import { RecordingAvatar } from './RecordingAvatar';
 import { formatDate } from './format';
 
-export const RecordingList = ({
-  state,
-  isPending,
-  command,
-  search = '',
-}: ActionProps & {
-  search?: string;
-}) => {
-  const recordings = state.recordings.filter((recording) =>
-    recording.title
-      .toLocaleLowerCase()
-      .includes(search.trim().toLocaleLowerCase()),
-  );
+export const RecordingList = ({ state, isPending, command }: ActionProps) => {
+  const recordings = state.recordings.slice(0, 5);
   return recordings.length ? (
     <Card
       className="recording-list"
@@ -70,19 +59,13 @@ export const RecordingList = ({
           stroke={THEME_COMMON.icon.stroke.sm}
         />
       }
-      animatedPlaceholderType={search ? undefined : 'noCallRecording'}
-      title={
-        search
-          ? i18n._('No matching recordings')
-          : i18n._('A place for every conversation')
-      }
+      animatedPlaceholderType="noCallRecording"
+      title={i18n._('A place for every conversation')}
     >
       <p>
-        {search
-          ? i18n._('Try another meeting title.')
-          : i18n._(
-              'Your recorded conversations will appear here and in your Twenty workspace.',
-            )}
+        {i18n._(
+          'Your recorded conversations will appear here and in your Twenty workspace.',
+        )}
       </p>
     </Empty>
   );

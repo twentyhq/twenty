@@ -238,6 +238,11 @@ export class Companion {
             `${this.client.workspaceUrl ?? this.state.serverUrl}/object/callRecording/${command.recordingId}`,
           );
           break;
+        case 'open-recordings':
+          await shell.openExternal(
+            `${this.client.workspaceUrl ?? this.state.serverUrl}/objects/callRecordings`,
+          );
+          break;
         case 'open-calendar-settings':
           await shell.openExternal(
             `${this.client.workspaceUrl ?? this.state.serverUrl}/settings/accounts`,

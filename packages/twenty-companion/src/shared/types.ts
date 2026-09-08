@@ -163,6 +163,7 @@ export const commandSchema = z.discriminatedUnion('type', [
     type: z.literal('open-recording'),
     recordingId: z.string().uuid(),
   }),
+  z.object({ type: z.literal('open-recordings') }),
   z.object({ type: z.literal('open-calendar-settings') }),
   z.object({
     type: z.literal('open-desktop-installation'),

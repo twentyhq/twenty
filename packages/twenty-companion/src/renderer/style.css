@@ -557,10 +557,6 @@ p {
   margin-top: var(--t-spacing-2);
 }
 
-.home-recordings-search {
-  width: 200px;
-  max-width: 50%;
-}
 .settings-link:disabled,
 .recording-row:disabled {
   color: var(--t-font-color-extra-light);

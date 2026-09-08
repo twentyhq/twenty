@@ -147,6 +147,13 @@ const allowPermissions = () => {
 };
 
 describe('desktop capture lifecycle', () => {
+  it('opens the recording library on the workspace frontend', async () => {
+    await companion.command({ type: 'open-recordings' });
+    expect(mocks.open).toHaveBeenCalledWith(
+      'https://acme.twenty.com/objects/callRecordings',
+    );
+  });
+
   it('brings Companion forward after authorization while the workspace finishes connecting', async () => {
     const authorization = createDeferred();
     const workspace = createDeferred<void>();

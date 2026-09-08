@@ -248,6 +248,13 @@ export const previewCommand = (
           'Preview only. This opens the recording in your Twenty workspace.',
       };
       break;
+    case 'open-recordings':
+      next.notice = {
+        type: 'preview',
+        message:
+          'Preview only. This opens all recordings in your Twenty workspace.',
+      };
+      break;
     case 'open-calendar-settings':
       next.notice = {
         type: 'preview',
