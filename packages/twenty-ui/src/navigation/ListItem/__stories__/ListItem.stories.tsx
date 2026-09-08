@@ -144,7 +144,7 @@ const LIST_ITEM_CATALOG_SLOT_PROPS: Record<
   endDescription: { description: '3 selected', descriptionPlacement: 'end' },
   hotkeys: { hotkeys: ['⌘', 'K'] },
   actions: { actions: ACTIONS },
-  submenu: { submenu: true },
+  submenu: { hasSubmenu: true },
 };
 
 export const SlotsCatalog: CatalogStory<Story, typeof ListItem> = {
