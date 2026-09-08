@@ -9,7 +9,7 @@ import {
   type PullWrite,
 } from '@/cli/utilities/pull/plan-pull-writes';
 import { lstat, mkdtemp, rm, writeFile } from 'node:fs/promises';
-import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
+import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 
 const PULL_WORK_DIRECTORY = '.twenty';
 
@@ -43,7 +43,8 @@ const assertPlanIsApplicable = async ({
 
     if (
       containedPath.length === 0 ||
-      containedPath.startsWith('..') ||
+      containedPath === '..' ||
+      containedPath.startsWith(`..${sep}`) ||
       isAbsolute(containedPath)
     ) {
       throw new Error(

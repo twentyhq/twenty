@@ -149,7 +149,9 @@ describe('applyPullWrites', () => {
     await expect(
       applyPullWrites({
         appPath,
-        writes: [buildWrite('../escape.ts', 'export default 1;')],
+        writes: [
+          buildWrite('my-dir/../../.../../../whatever.ts', 'export default 1;'),
+        ],
         deletions: [],
       }),
     ).rejects.toThrow('leaves the application directory');
@@ -162,6 +164,16 @@ describe('applyPullWrites', () => {
         ],
       }),
     ).rejects.toThrow('leaves the application directory');
+  });
+
+  it('should accept a folder whose name is only dots', async () => {
+    await applyPullWrites({
+      appPath,
+      writes: [buildWrite('.../kept.ts', 'export default 1;')],
+      deletions: [],
+    });
+
+    expect(await readAppFile('.../kept.ts')).toBe('export default 1;');
   });
 
   it('should refuse to delete a folder standing where a planned file goes', async () => {

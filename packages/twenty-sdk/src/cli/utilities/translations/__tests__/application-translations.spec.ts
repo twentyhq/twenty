@@ -266,4 +266,40 @@ describe('compileApplicationTranslations', () => {
       'fr-FR': { bbbbbb: 'kept' },
     });
   });
+
+  it('skips a locale file whose JSON is not an object', async () => {
+    const appPath = await mkdtemp(
+      join(tmpdir(), 'twenty-translations-not-object-'),
+    );
+    const localesDir = join(appPath, 'locales');
+    await mkdir(localesDir, { recursive: true });
+    await writeFile(join(localesDir, 'fr-FR.json'), JSON.stringify(''));
+    await writeFile(join(localesDir, 'de-DE.json'), JSON.stringify(['x']));
+    await writeFile(
+      join(localesDir, 'it-IT.json'),
+      JSON.stringify({ Company: 'Azienda' }),
+    );
+
+    expect(await compileApplicationTranslations(appPath)).toEqual({
+      'it-IT': { [generateMessageId('Company')]: 'Azienda' },
+    });
+  });
+
+  it('skips a locale file that cannot be parsed', async () => {
+    const appPath = await mkdtemp(
+      join(tmpdir(), 'twenty-translations-unparsable-'),
+    );
+    const localesDir = join(appPath, 'locales');
+    await mkdir(join(localesDir, 'compiled'), { recursive: true });
+    await writeFile(join(localesDir, 'fr-FR.json'), '');
+    await writeFile(join(localesDir, 'compiled', 'de-DE.json'), '{');
+    await writeFile(
+      join(localesDir, 'it-IT.json'),
+      JSON.stringify({ Company: 'Azienda' }),
+    );
+
+    expect(await compileApplicationTranslations(appPath)).toEqual({
+      'it-IT': { [generateMessageId('Company')]: 'Azienda' },
+    });
+  });
 });

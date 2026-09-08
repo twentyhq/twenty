@@ -10,6 +10,37 @@ import {
 import { isSupportedLocale } from '@/cli/utilities/translations/is-supported-locale';
 import { type TranslationsManifest } from 'twenty-shared/application';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { isDefined } from 'twenty-shared/utils';
+
+const readLocaleCatalogFile = async (
+  filePath: string,
+): Promise<Record<string, unknown> | null> => {
+  let parsed: unknown;
+
+  try {
+    parsed = await readJson<unknown>(filePath);
+  } catch {
+    console.warn(
+      `Skipping translation file "${path.basename(filePath)}": it is not valid JSON.`,
+    );
+
+    return null;
+  }
+
+  if (
+    !isDefined(parsed) ||
+    typeof parsed !== 'object' ||
+    Array.isArray(parsed)
+  ) {
+    console.warn(
+      `Skipping translation file "${path.basename(filePath)}": expected a JSON object.`,
+    );
+
+    return null;
+  }
+
+  return parsed as Record<string, unknown>;
+};
 
 const readCompiledCatalogs = async (
   appPath: string,
@@ -38,12 +69,16 @@ const readCompiledCatalogs = async (
       continue;
     }
 
+    const compiledCatalog = await readLocaleCatalogFile(
+      path.join(compiledDir, compiledFile),
+    );
+
+    if (compiledCatalog === null) {
+      continue;
+    }
+
     const messages = Object.fromEntries(
-      Object.entries(
-        (await readJson<Record<string, unknown>>(
-          path.join(compiledDir, compiledFile),
-        )) ?? {},
-      ).filter(
+      Object.entries(compiledCatalog).filter(
         (entry): entry is [string, string] =>
           typeof entry[1] === 'string' && entry[1].length > 0,
       ),
@@ -86,10 +121,13 @@ export const compileApplicationTranslations = async (
       continue;
     }
 
-    const sourceToTranslation =
-      (await readJson<Record<string, unknown>>(
-        path.join(localesDir, localeFile),
-      )) ?? {};
+    const sourceToTranslation = await readLocaleCatalogFile(
+      path.join(localesDir, localeFile),
+    );
+
+    if (sourceToTranslation === null) {
+      continue;
+    }
 
     const compiled = compileCatalogToMessageIds({
       catalog: sourceToTranslation,
