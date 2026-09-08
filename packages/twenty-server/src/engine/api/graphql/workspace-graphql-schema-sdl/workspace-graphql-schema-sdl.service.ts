@@ -43,7 +43,7 @@ export class WorkspaceGraphqlSchemaSDLService {
   async getOrComputeSchemaSDL(
     workspace: FlatWorkspace,
     applicationId?: string,
-    objectFieldIndexFlatEntityMaps?: ObjectFieldIndexFlatEntityMaps,
+    flatEntityMapsOverride?: ObjectFieldIndexFlatEntityMaps,
   ): Promise<WorkspaceGraphqlSchemaSDLResult | null> {
     if (!isNonEmptyString(workspace.databaseSchema)) {
       return null;
@@ -66,13 +66,13 @@ export class WorkspaceGraphqlSchemaSDLService {
       );
 
     const allFlatObjectMetadataMaps =
-      objectFieldIndexFlatEntityMaps?.flatObjectMetadataMaps ??
+      flatEntityMapsOverride?.flatObjectMetadataMaps ??
       cachedFlatObjectMetadataMaps;
     const allFlatFieldMetadataMaps =
-      objectFieldIndexFlatEntityMaps?.flatFieldMetadataMaps ??
+      flatEntityMapsOverride?.flatFieldMetadataMaps ??
       cachedFlatFieldMetadataMaps;
     const allFlatIndexMaps =
-      objectFieldIndexFlatEntityMaps?.flatIndexMaps ?? cachedFlatIndexMaps;
+      flatEntityMapsOverride?.flatIndexMaps ?? cachedFlatIndexMaps;
 
     if (!isDefined(allFlatObjectMetadataMaps)) {
       throw new FlatEntityMapsException(
@@ -132,7 +132,7 @@ export class WorkspaceGraphqlSchemaSDLService {
 
     // The stored SDL is keyed by the cache hashes, which do not describe
     // caller-provided maps, so those neither read nor write it.
-    const shouldUseStoredSdl = !isDefined(objectFieldIndexFlatEntityMaps);
+    const shouldUseStoredSdl = !isDefined(flatEntityMapsOverride);
 
     let sdl = shouldUseStoredSdl
       ? await this.workspaceCacheStorageService.getGraphQLTypeDefs(

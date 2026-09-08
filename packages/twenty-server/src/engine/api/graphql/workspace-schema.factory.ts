@@ -24,13 +24,13 @@ export class WorkspaceSchemaFactory {
   async createGraphQLSchema(
     workspace: FlatWorkspace,
     applicationId?: string,
-    objectFieldIndexFlatEntityMaps?: ObjectFieldIndexFlatEntityMaps,
+    flatEntityMapsOverride?: ObjectFieldIndexFlatEntityMaps,
   ): Promise<GraphQLSchema> {
     const schemaSDLResult =
       await this.workspaceGraphqlSchemaSDLService.getOrComputeSchemaSDL(
         workspace,
         applicationId,
-        objectFieldIndexFlatEntityMaps,
+        flatEntityMapsOverride,
       );
 
     if (!isDefined(schemaSDLResult)) {

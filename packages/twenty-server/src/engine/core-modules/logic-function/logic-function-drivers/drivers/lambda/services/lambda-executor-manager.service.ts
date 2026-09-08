@@ -51,7 +51,7 @@ type ExecutorBuildContext = {
   flatLogicFunction: FlatLogicFunction;
   flatApplication: FlatApplication;
   applicationUniversalIdentifier: string;
-  objectFieldIndexFlatEntityMaps?: ObjectFieldIndexFlatEntityMaps;
+  flatEntityMapsOverride?: ObjectFieldIndexFlatEntityMaps;
 };
 
 export class LambdaExecutorManagerService {
@@ -308,7 +308,7 @@ export class LambdaExecutorManagerService {
     flatLogicFunction,
     flatApplication,
     applicationUniversalIdentifier,
-    objectFieldIndexFlatEntityMaps,
+    flatEntityMapsOverride,
     lambdaExecutor,
   }: ExecutorBuildContext & {
     lambdaExecutor: GetFunctionCommandOutput | undefined;
@@ -345,7 +345,7 @@ export class LambdaExecutorManagerService {
       sdkLayerArn = await this.layerManager.ensureSdkLayer({
         flatApplication,
         applicationUniversalIdentifier,
-        objectFieldIndexFlatEntityMaps,
+        flatEntityMapsOverride,
       });
     } catch (error) {
       this.logger.error(

@@ -66,18 +66,18 @@ export class SdkClientArchiveService {
     workspaceId,
     applicationId,
     applicationUniversalIdentifier,
-    objectFieldIndexFlatEntityMaps,
+    flatEntityMapsOverride,
   }: {
     workspaceId: string;
     applicationId: string;
     applicationUniversalIdentifier: string;
-    objectFieldIndexFlatEntityMaps?: ObjectFieldIndexFlatEntityMaps;
+    flatEntityMapsOverride?: ObjectFieldIndexFlatEntityMaps;
   }): Promise<Buffer> {
     return this.downloadArchiveBufferOrGenerate({
       workspaceId,
       applicationId,
       applicationUniversalIdentifier,
-      objectFieldIndexFlatEntityMaps,
+      flatEntityMapsOverride,
     });
   }
 
@@ -138,12 +138,12 @@ export class SdkClientArchiveService {
     workspaceId,
     applicationId,
     applicationUniversalIdentifier,
-    objectFieldIndexFlatEntityMaps,
+    flatEntityMapsOverride,
   }: {
     workspaceId: string;
     applicationId: string;
     applicationUniversalIdentifier: string;
-    objectFieldIndexFlatEntityMaps?: ObjectFieldIndexFlatEntityMaps;
+    flatEntityMapsOverride?: ObjectFieldIndexFlatEntityMaps;
   }): Promise<Buffer> {
     try {
       const stream = await this.fileStorageService.readFile({
@@ -172,7 +172,7 @@ export class SdkClientArchiveService {
       applicationId,
       applicationUniversalIdentifier,
       trigger: 'missing-archive',
-      objectFieldIndexFlatEntityMaps,
+      flatEntityMapsOverride,
     });
   }
 }

@@ -36,7 +36,7 @@ export type LogicFunctionInstallPrebuiltBundleParams = {
   flatLogicFunction: FlatLogicFunction;
   flatApplication: FlatApplication;
   applicationUniversalIdentifier: string;
-  objectFieldIndexFlatEntityMaps?: ObjectFieldIndexFlatEntityMaps;
+  flatEntityMapsOverride?: ObjectFieldIndexFlatEntityMaps;
 };
 
 export type LogicFunctionTranspileParams = {

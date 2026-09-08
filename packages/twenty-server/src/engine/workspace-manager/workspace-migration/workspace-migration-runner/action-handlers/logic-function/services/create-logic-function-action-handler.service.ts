@@ -74,7 +74,7 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
           flatLogicFunction: logicFunction,
           flatApplication,
           applicationUniversalIdentifier: flatApplication.universalIdentifier,
-          objectFieldIndexFlatEntityMaps: {
+          flatEntityMapsOverride: {
             flatObjectMetadataMaps: allFlatEntityMaps.flatObjectMetadataMaps,
             flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
             flatIndexMaps: allFlatEntityMaps.flatIndexMaps,

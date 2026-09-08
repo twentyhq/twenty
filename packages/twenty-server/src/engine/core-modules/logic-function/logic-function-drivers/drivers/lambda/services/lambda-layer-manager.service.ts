@@ -32,7 +32,7 @@ import {
 type LayerAppContext = {
   flatApplication: FlatApplication;
   applicationUniversalIdentifier: string;
-  objectFieldIndexFlatEntityMaps?: ObjectFieldIndexFlatEntityMaps;
+  flatEntityMapsOverride?: ObjectFieldIndexFlatEntityMaps;
 };
 
 export class LambdaLayerManagerService {
@@ -78,7 +78,7 @@ export class LambdaLayerManagerService {
     const {
       flatApplication,
       applicationUniversalIdentifier,
-      objectFieldIndexFlatEntityMaps,
+      flatEntityMapsOverride,
     } = context;
     const layerName = getLambdaSdkLayerName({
       workspaceId: flatApplication.workspaceId,
@@ -100,7 +100,7 @@ export class LambdaLayerManagerService {
         workspaceId: flatApplication.workspaceId,
         applicationId: flatApplication.id,
         applicationUniversalIdentifier,
-        objectFieldIndexFlatEntityMaps,
+        flatEntityMapsOverride,
       });
 
     const zipBuffer = await reprefixLambdaZipEntries({

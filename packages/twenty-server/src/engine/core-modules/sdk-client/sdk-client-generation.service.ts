@@ -109,13 +109,13 @@ export class SdkClientGenerationService {
     applicationId,
     applicationUniversalIdentifier,
     trigger = 'unknown',
-    objectFieldIndexFlatEntityMaps,
+    flatEntityMapsOverride,
   }: {
     workspaceId: string;
     applicationId: string;
     applicationUniversalIdentifier: string;
     trigger?: SdkClientGenerationTrigger;
-    objectFieldIndexFlatEntityMaps?: ObjectFieldIndexFlatEntityMaps;
+    flatEntityMapsOverride?: ObjectFieldIndexFlatEntityMaps;
   }): Promise<Buffer> {
     const generationStart = performance.now();
 
@@ -128,7 +128,7 @@ export class SdkClientGenerationService {
         await this.workspaceSchemaFactory.createGraphQLSchema(
           fromWorkspaceEntityToFlat(workspaceEntity),
           applicationId,
-          objectFieldIndexFlatEntityMaps,
+          flatEntityMapsOverride,
         );
 
       const archiveBuffer = await this.generateAndStore({
