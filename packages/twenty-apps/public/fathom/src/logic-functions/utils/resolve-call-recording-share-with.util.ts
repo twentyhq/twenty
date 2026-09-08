@@ -5,8 +5,18 @@ import { type CallRecordingShareWith } from 'src/logic-functions/types/call-reco
 
 export const resolveCallRecordingShareWith = (
   connection: Pick<AppConnection, 'visibility' | 'workspaceMemberId'>,
-): CallRecordingShareWith[] =>
-  connection.visibility === 'user' &&
-  isNonEmptyString(connection.workspaceMemberId)
-    ? [{ workspaceMemberId: connection.workspaceMemberId, accessLevel: 'FULL' }]
-    : [{ everyone: true, accessLevel: 'READ' }];
+): CallRecordingShareWith[] => {
+  if (connection.visibility !== 'user') {
+    return [{ everyone: true, accessLevel: 'READ' }];
+  }
+
+  if (!isNonEmptyString(connection.workspaceMemberId)) {
+    throw new Error(
+      'This personal Fathom connection has no workspace member left to own its recordings; reconnect Fathom to resume the import',
+    );
+  }
+
+  return [
+    { workspaceMemberId: connection.workspaceMemberId, accessLevel: 'FULL' },
+  ];
+};
