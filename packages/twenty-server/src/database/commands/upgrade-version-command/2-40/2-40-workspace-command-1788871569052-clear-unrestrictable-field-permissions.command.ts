@@ -1,21 +1,16 @@
-import { InjectDataSource } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { DataSource } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { computeUnrestrictableFieldPermissionChanges } from 'src/database/commands/upgrade-version-command/2-40/utils/compute-unrestrictable-field-permission-changes.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-
-const NON_EDITABLE_SYSTEM_FIELD_NAMES = [
-  'createdAt',
-  'updatedAt',
-  'deletedAt',
-  'createdBy',
-];
 
 @RegisteredWorkspaceCommand('2.40.0', 1788871569052)
 @Command({
@@ -28,8 +23,9 @@ export class ClearUnrestrictableFieldPermissionsCommand extends ProvisionedWorks
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
+    @InjectRepository(FieldPermissionEntity)
+    private readonly fieldPermissionRepository: Repository<FieldPermissionEntity>,
   ) {
     super(workspaceIteratorService);
   }
@@ -43,89 +39,61 @@ export class ClearUnrestrictableFieldPermissionsCommand extends ProvisionedWorks
         { workspaceId },
       );
 
-    if (options.dryRun) {
-      const [{ count }] = await this.coreDataSource.query<[{ count: string }]>(
-        `SELECT count(*)::text AS count
-         FROM "core"."fieldPermission" AS "fieldPermission"
-         JOIN "core"."fieldMetadata" AS "fieldMetadata"
-           ON "fieldMetadata"."id" = "fieldPermission"."fieldMetadataId"
-         LEFT JOIN "core"."objectMetadata" AS "objectMetadata"
-           ON "objectMetadata"."id" = "fieldPermission"."objectMetadataId"
-         WHERE "fieldPermission"."workspaceId" = $1
-           AND "fieldPermission"."applicationId" = $2
-           AND (("fieldMetadata"."isUIEditable" = false
-             AND "fieldMetadata"."name" = ANY($3::text[]))
-             OR ("objectMetadata"."labelIdentifierFieldMetadataId" = "fieldPermission"."fieldMetadataId"
-               AND "fieldPermission"."canReadFieldValue" = false))`,
-        [
-          workspaceId,
-          workspaceCustomFlatApplication.id,
-          NON_EDITABLE_SYSTEM_FIELD_NAMES,
-        ],
-      );
+    const {
+      flatFieldPermissionMaps,
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatFieldPermissionMaps',
+      'flatFieldMetadataMaps',
+      'flatObjectMetadataMaps',
+    ]);
 
-      this.logger.log(
-        `[DRY RUN] Would clear ${count} unrestrictable field permission(s) for workspace ${workspaceId}`,
-      );
-
-      return;
-    }
-
-    const deletedOnNonEditableFields = await this.coreDataSource.query<
-      unknown[]
-    >(
-      `DELETE FROM "core"."fieldPermission" AS "fieldPermission"
-       USING "core"."fieldMetadata" AS "fieldMetadata"
-       WHERE "fieldMetadata"."id" = "fieldPermission"."fieldMetadataId"
-         AND "fieldPermission"."workspaceId" = $1
-         AND "fieldPermission"."applicationId" = $2
-         AND "fieldMetadata"."isUIEditable" = false
-         AND "fieldMetadata"."name" = ANY($3::text[])
-       RETURNING "fieldPermission"."id"`,
-      [
-        workspaceId,
-        workspaceCustomFlatApplication.id,
-        NON_EDITABLE_SYSTEM_FIELD_NAMES,
-      ],
-    );
-
-    const clearedOnLabelIdentifiers = await this.coreDataSource.query<
-      unknown[]
-    >(
-      `WITH "cleared" AS (
-         UPDATE "core"."fieldPermission" AS "fieldPermission"
-         SET "canReadFieldValue" = NULL, "updatedAt" = now()
-         FROM "core"."objectMetadata" AS "objectMetadata"
-         WHERE "objectMetadata"."id" = "fieldPermission"."objectMetadataId"
-           AND "objectMetadata"."labelIdentifierFieldMetadataId" = "fieldPermission"."fieldMetadataId"
-           AND "fieldPermission"."workspaceId" = $1
-           AND "fieldPermission"."applicationId" = $2
-           AND "fieldPermission"."canReadFieldValue" = false
-         RETURNING "fieldPermission"."id", "fieldPermission"."canUpdateFieldValue"
-       ), "deleted" AS (
-         DELETE FROM "core"."fieldPermission"
-         WHERE "id" IN (
-           SELECT "id" FROM "cleared" WHERE "canUpdateFieldValue" IS NULL
-         )
-       )
-       SELECT "id" FROM "cleared"`,
-      [workspaceId, workspaceCustomFlatApplication.id],
-    );
+    const { fieldPermissionIdsToDelete, fieldPermissionIdsToClearReadOn } =
+      computeUnrestrictableFieldPermissionChanges({
+        applicationId: workspaceCustomFlatApplication.id,
+        flatFieldPermissionMaps,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+      });
 
     if (
-      deletedOnNonEditableFields.length === 0 &&
-      clearedOnLabelIdentifiers.length === 0
+      fieldPermissionIdsToDelete.length === 0 &&
+      fieldPermissionIdsToClearReadOn.length === 0
     ) {
       return;
     }
+
+    this.logger.log(
+      `${options.dryRun ? '[DRY RUN] ' : ''}Deleting ${fieldPermissionIdsToDelete.length} field permission(s) on non-editable system fields and clearing read on ${fieldPermissionIdsToClearReadOn.length} label identifier(s) for workspace ${workspaceId}`,
+    );
+
+    if (options.dryRun) {
+      return;
+    }
+
+    await this.fieldPermissionRepository.manager.transaction(
+      async (entityManager) => {
+        if (fieldPermissionIdsToDelete.length > 0) {
+          await entityManager.delete(
+            FieldPermissionEntity,
+            fieldPermissionIdsToDelete,
+          );
+        }
+
+        if (fieldPermissionIdsToClearReadOn.length > 0) {
+          await entityManager.update(
+            FieldPermissionEntity,
+            fieldPermissionIdsToClearReadOn,
+            { canReadFieldValue: null },
+          );
+        }
+      },
+    );
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'flatFieldPermissionMaps',
       'rolesPermissions',
     ]);
-
-    this.logger.log(
-      `Deleted ${deletedOnNonEditableFields.length} field permission(s) on non-editable system fields and cleared read on ${clearedOnLabelIdentifiers.length} label identifier(s) for workspace ${workspaceId}`,
-    );
   }
 }
