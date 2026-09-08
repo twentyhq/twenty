@@ -93,7 +93,7 @@ export class EntityEventsToDbListener {
       batchEvent.objectMetadata.universalIdentifier ===
         STANDARD_OBJECTS.workflowRun.universalIdentifier;
 
-    const promises: Promise<unknown>[] = [
+    const promises: Promise<void | string | undefined>[] = [
       this.objectRecordEventPublisher.publish(batchEvent),
     ];
 
