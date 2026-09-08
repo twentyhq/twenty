@@ -12,9 +12,9 @@ export const RELEASE_NOTES: ReleaseNote[] = [
         title: msg`More flexible record pages`,
         description: (
           <Trans>
-            Add shared instructions, playbooks, and other rich text with the
-            new Note widget. Insert widgets exactly where you want them, and
-            unpin the first tab when your layout needs more room.
+            Add shared instructions, playbooks, and other rich text with the new
+            Note widget. Insert widgets exactly where you want them, and unpin
+            the first tab when your layout needs more room.
           </Trans>
         ),
       },
@@ -32,9 +32,9 @@ export const RELEASE_NOTES: ReleaseNote[] = [
         title: msg`List view`,
         description: (
           <Trans>
-            Browse your records in a compact list, now available to
-            everyone. Group records and see the fields that matter in a
-            layout that adapts to desktop and mobile.
+            Browse your records in a compact list, now available to everyone.
+            Group records and see the fields that matter in a layout that adapts
+            to desktop and mobile.
           </Trans>
         ),
       },
@@ -65,8 +65,8 @@ export const RELEASE_NOTES: ReleaseNote[] = [
         title: msg`Day and week calendar views`,
         description: (
           <Trans>
-            Switch between day, week, and month views to explore your
-            calendar. Day and week views are now available by default.
+            Switch between day, week, and month views to explore your calendar.
+            Day and week views are now available by default.
           </Trans>
         ),
       },
@@ -90,8 +90,8 @@ export const RELEASE_NOTES: ReleaseNote[] = [
         title: msg`Schedule meetings from records`,
         description: (
           <Trans>
-            Create calendar events directly from a record’s timeline, with
-            the current contact prefilled as a guest.
+            Create calendar events directly from a record’s timeline, with the
+            current contact prefilled as a guest.
           </Trans>
         ),
       },
@@ -114,9 +114,8 @@ export const RELEASE_NOTES: ReleaseNote[] = [
         title: msg`See related records across relationships`,
         description: (
           <Trans>
-            Display records two relationships away directly on a record
-            page—for example, opportunities associated with a company’s
-            contacts.
+            Display records two relationships away directly on a record page—for
+            example, opportunities associated with a company’s contacts.
           </Trans>
         ),
       },
