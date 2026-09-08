@@ -28,7 +28,7 @@ export const TabsList = ({
       return;
     }
 
-    focusNextEnabledTab(event, direction, loopFocus);
+    focusNextEnabledTab({ event, direction, loopFocus });
   };
 
   return (

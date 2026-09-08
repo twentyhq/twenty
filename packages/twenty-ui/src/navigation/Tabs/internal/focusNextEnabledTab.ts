@@ -4,11 +4,17 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type TabsListProps } from '../types/TabsListProps';
 
-export const focusNextEnabledTab = (
-  event: Parameters<NonNullable<TabsListProps['onKeyDown']>>[0],
-  direction: TextDirection,
-  loopFocus: boolean,
-) => {
+type FocusNextEnabledTabOptions = {
+  event: Parameters<NonNullable<TabsListProps['onKeyDown']>>[0];
+  direction: TextDirection;
+  loopFocus: boolean;
+};
+
+export const focusNextEnabledTab = ({
+  event,
+  direction,
+  loopFocus,
+}: FocusNextEnabledTabOptions) => {
   if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
     return;
   }
