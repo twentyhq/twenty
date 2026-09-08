@@ -2,23 +2,16 @@
 
 import type Stripe from 'stripe';
 
-import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { buildBillingEntitlementsFromLookupKeys } from 'src/engine/core-modules/billing/utils/build-billing-entitlements-from-lookup-keys.util';
 
 export const transformStripeEntitlementUpdatedEventToDatabaseEntitlement = (
   workspaceId: string,
   data: Stripe.EntitlementsActiveEntitlementSummaryUpdatedEvent.Data,
-) => {
-  const stripeCustomerId = data.object.customer;
-  const activeEntitlementsKeys = data.object.entitlements.data.map(
-    (entitlement) => entitlement.lookup_key,
-  );
-
-  return Object.values(BillingEntitlementKey).map((key) => {
-    return {
-      workspaceId,
-      key,
-      value: activeEntitlementsKeys.includes(key),
-      stripeCustomerId,
-    };
+) =>
+  buildBillingEntitlementsFromLookupKeys({
+    workspaceId,
+    stripeCustomerId: data.object.customer,
+    activeLookupKeys: data.object.entitlements.data.map(
+      (entitlement) => entitlement.lookup_key,
+    ),
   });
-};
