@@ -46,19 +46,20 @@ export class RoutingAvailabilityAuditService {
 
     const systemAuthContext = buildSystemAuthContext(workspaceId);
 
-    const member = await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const repository =
-          await this.globalWorkspaceOrmManager.getRepository<any>(
-            workspaceId,
-            'workspaceMember',
-            { shouldBypassPermissionChecks: true },
-          );
+    const member =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () => {
+          const repository =
+            await this.globalWorkspaceOrmManager.getRepository<any>(
+              workspaceId,
+              'workspaceMember',
+              { shouldBypassPermissionChecks: true },
+            );
 
-        return repository.findOne({ where: { id: workspaceMemberId } });
-      },
-      systemAuthContext,
-    );
+          return repository.findOne({ where: { id: workspaceMemberId } });
+        },
+        systemAuthContext,
+      );
 
     if (!isDefined(member)) {
       return;

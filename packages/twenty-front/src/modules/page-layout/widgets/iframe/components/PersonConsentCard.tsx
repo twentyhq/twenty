@@ -644,7 +644,8 @@ export const PersonConsentCard = () => {
           .map((consent) => ({
             consent,
             projectLabel:
-              ((consent.name as string) ?? '').split(' · ')[1] ?? t`this project`,
+              ((consent.name as string) ?? '').split(' · ')[1] ??
+              t`this project`,
             channels: notProvidedChannels(consent),
           }));
 
@@ -790,7 +791,10 @@ export const PersonConsentCard = () => {
               </option>
             ))}
           </StyledSelect>
-          <StyledAddButton onClick={openAddModal} disabled={addProjectId === ''}>
+          <StyledAddButton
+            onClick={openAddModal}
+            disabled={addProjectId === ''}
+          >
             {t`Add`}
           </StyledAddButton>
         </StyledAddRow>
@@ -869,7 +873,10 @@ export const PersonConsentCard = () => {
                     <StyledCheckLabel key={channel.key}>
                       <input
                         type="checkbox"
-                        checked={isChannelSelected(addModal.projectId, channel.key)}
+                        checked={isChannelSelected(
+                          addModal.projectId,
+                          channel.key,
+                        )}
                         onChange={() =>
                           toggleChannel(addModal.projectId, channel.key)
                         }

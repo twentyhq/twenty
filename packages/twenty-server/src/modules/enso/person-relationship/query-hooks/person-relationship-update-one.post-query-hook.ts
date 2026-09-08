@@ -13,9 +13,7 @@ import { PersonRelationshipMirrorService } from 'src/modules/enso/person-relatio
   key: `personRelationship.updateOne`,
   type: WorkspaceQueryHookType.POST_HOOK,
 })
-export class PersonRelationshipUpdateOnePostQueryHook
-  implements WorkspacePostQueryHookInstance
-{
+export class PersonRelationshipUpdateOnePostQueryHook implements WorkspacePostQueryHookInstance {
   constructor(
     private readonly mirrorService: PersonRelationshipMirrorService,
   ) {}

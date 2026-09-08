@@ -87,55 +87,58 @@ export class MarketingSyncJob {
     opportunityId: string,
     userId: string,
   ): Promise<Record<string, unknown>> {
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const opportunityRepository =
-        await this.globalWorkspaceOrmManager.getRepository<any>(
-          workspaceId,
-          'opportunity',
-          { shouldBypassPermissionChecks: true },
-        );
-
-      const opportunity = await opportunityRepository.findOne({
-        where: { id: opportunityId },
-      });
-
-      const projectId = opportunity?.projectId ?? null;
-      const amount = opportunity?.amount ?? null;
-
-      // The just-created deal is already persisted, so a count of 1 means it's
-      // the person's first.
-      const totalForPerson = await opportunityRepository.count({
-        where: { pointOfContactId: userId },
-      });
-      const isFirstDealForPerson = totalForPerson <= 1;
-
-      let projectName: string | null = null;
-      let projectCode: string | null = null;
-
-      if (isDefined(projectId)) {
-        const projectRepository =
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const opportunityRepository =
           await this.globalWorkspaceOrmManager.getRepository<any>(
             workspaceId,
-            'project',
+            'opportunity',
             { shouldBypassPermissionChecks: true },
           );
 
-        const project = await projectRepository.findOne({
-          where: { id: projectId },
+        const opportunity = await opportunityRepository.findOne({
+          where: { id: opportunityId },
         });
 
-        projectName = project?.name ?? null;
-        projectCode = project?.code ?? null;
-      }
+        const projectId = opportunity?.projectId ?? null;
+        const amount = opportunity?.amount ?? null;
 
-      return {
-        opportunityId,
-        projectId,
-        projectName,
-        projectCode,
-        amount,
-        isFirstDealForPerson,
-      };
-    }, buildSystemAuthContext(workspaceId));
+        // The just-created deal is already persisted, so a count of 1 means it's
+        // the person's first.
+        const totalForPerson = await opportunityRepository.count({
+          where: { pointOfContactId: userId },
+        });
+        const isFirstDealForPerson = totalForPerson <= 1;
+
+        let projectName: string | null = null;
+        let projectCode: string | null = null;
+
+        if (isDefined(projectId)) {
+          const projectRepository =
+            await this.globalWorkspaceOrmManager.getRepository<any>(
+              workspaceId,
+              'project',
+              { shouldBypassPermissionChecks: true },
+            );
+
+          const project = await projectRepository.findOne({
+            where: { id: projectId },
+          });
+
+          projectName = project?.name ?? null;
+          projectCode = project?.code ?? null;
+        }
+
+        return {
+          opportunityId,
+          projectId,
+          projectName,
+          projectCode,
+          amount,
+          isFirstDealForPerson,
+        };
+      },
+      buildSystemAuthContext(workspaceId),
+    );
   }
 }

@@ -81,7 +81,11 @@ const JOURNEY_DEFINITIONS: Record<
         label: 'What makes an ENSO home different',
         kind: 'email',
       },
-      { key: 'email_3_sent', label: 'Want to see it in person?', kind: 'email' },
+      {
+        key: 'email_3_sent',
+        label: 'Want to see it in person?',
+        kind: 'email',
+      },
       { key: 'finished', label: 'Completed', kind: 'journey-complete' },
     ],
   },
@@ -273,7 +277,11 @@ const StyledStepMeta = styled.span<{ $state: string }>`
 `;
 
 const statusBadgeState = (status: unknown): string =>
-  status === 'FINISHED' ? 'finished' : status === 'EXITED' ? 'exited' : 'active';
+  status === 'FINISHED'
+    ? 'finished'
+    : status === 'EXITED'
+      ? 'exited'
+      : 'active';
 
 // Icon colour: upcoming muted; current blue; done → green for healthy messages,
 // danger for bounced, muted for "exit" actions, and accent colours that set
@@ -341,9 +349,12 @@ export const MarketingJourneysWidget = () => {
       ? { Authorization: `Bearer ${token}` }
       : {};
 
-    fetch(`${REST_API_BASE_URL}/enso/marketing/deliveries?personId=${personId}`, {
-      headers,
-    })
+    fetch(
+      `${REST_API_BASE_URL}/enso/marketing/deliveries?personId=${personId}`,
+      {
+        headers,
+      },
+    )
       .then((response) => (response.ok ? response.json() : null))
       .then((data: { deliveries?: Delivery[] } | null) => {
         if (!cancelled && isDefined(data)) {

@@ -13,9 +13,7 @@ import { PersonRelationshipMirrorService } from 'src/modules/enso/person-relatio
   key: `personRelationship.createMany`,
   type: WorkspaceQueryHookType.POST_HOOK,
 })
-export class PersonRelationshipCreateManyPostQueryHook
-  implements WorkspacePostQueryHookInstance
-{
+export class PersonRelationshipCreateManyPostQueryHook implements WorkspacePostQueryHookInstance {
   constructor(
     private readonly mirrorService: PersonRelationshipMirrorService,
   ) {}

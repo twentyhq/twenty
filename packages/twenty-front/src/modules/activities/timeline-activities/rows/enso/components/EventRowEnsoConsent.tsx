@@ -41,7 +41,9 @@ const StyledRow = styled.div`
 // $granted: green for a grant, danger for a revoke.
 const StyledAction = styled.span<{ $granted: boolean }>`
   color: ${({ $granted }) =>
-    $granted ? themeCssVariables.color.green : themeCssVariables.font.color.danger};
+    $granted
+      ? themeCssVariables.color.green
+      : themeCssVariables.font.color.danger};
   font-weight: ${themeCssVariables.font.weight.medium};
 `;
 

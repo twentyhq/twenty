@@ -44,89 +44,95 @@ export class CompanyDuplicateFinderService {
 
     const systemAuthContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const companyRepository =
-        await this.globalWorkspaceOrmManager.getRepository<any>(
-          workspaceId,
-          'company',
-          { shouldBypassPermissionChecks: true },
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const companyRepository =
+          await this.globalWorkspaceOrmManager.getRepository<any>(
+            workspaceId,
+            'company',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        const me: CompanyRow | null = await companyRepository.findOne({
+          where: { id: companyId },
+        });
+
+        if (!me) {
+          return null;
+        }
+
+        const regNormalized = normalizeRegistrationNumber(
+          me.registrationNumber,
+        );
+        const regDigits = registrationDigitCore(me.registrationNumber);
+        const domain = me.domainName?.primaryLinkUrl
+          ? extractDomainFromLink(me.domainName.primaryLinkUrl)
+          : '';
+
+        const hasReg = regDigits.length >= MIN_REGISTRATION_DIGITS;
+
+        // No identity key to dedup on (e.g. a name-only manual company) → nothing
+        // to do until a registration number / domain is set.
+        if (!hasReg && !domain) {
+          return null;
+        }
+
+        const matchIds = new Set<string>();
+
+        if (hasReg) {
+          // Digit-core ILIKE is a formatting-agnostic prefilter; confirm full
+          // normalized equality in JS ("RO 12345678" vs "12345678" vs "RO12345678").
+          const byReg: CompanyRow[] = await companyRepository.find({
+            where: {
+              registrationNumber: ILike(`%${regDigits}%`),
+              id: Not(companyId),
+              deletedAt: IsNull(),
+            },
+          });
+
+          for (const candidate of byReg) {
+            if (
+              normalizeRegistrationNumber(candidate.registrationNumber) ===
+              regNormalized
+            ) {
+              matchIds.add(candidate.id);
+            }
+          }
+        }
+
+        if (domain) {
+          // ILIKE can over-match ("acme.ro" vs "notacme.rocks"); confirm the
+          // registrable domain matches exactly.
+          const byDomain: CompanyRow[] = await companyRepository.find({
+            where: {
+              domainName: { primaryLinkUrl: ILike(`%${domain}%`) },
+              id: Not(companyId),
+              deletedAt: IsNull(),
+            },
+          });
+
+          for (const candidate of byDomain) {
+            if (
+              isDefined(candidate.domainName?.primaryLinkUrl) &&
+              extractDomainFromLink(candidate.domainName.primaryLinkUrl) ===
+                domain
+            ) {
+              matchIds.add(candidate.id);
+            }
+          }
+        }
+
+        if (matchIds.size === 0) {
+          return null;
+        }
+
+        this.logger.log(
+          `Company ${companyId} has ${matchIds.size} registration/domain duplicate(s).`,
         );
 
-      const me: CompanyRow | null = await companyRepository.findOne({
-        where: { id: companyId },
-      });
-
-      if (!me) {
-        return null;
-      }
-
-      const regNormalized = normalizeRegistrationNumber(me.registrationNumber);
-      const regDigits = registrationDigitCore(me.registrationNumber);
-      const domain = me.domainName?.primaryLinkUrl
-        ? extractDomainFromLink(me.domainName.primaryLinkUrl)
-        : '';
-
-      const hasReg = regDigits.length >= MIN_REGISTRATION_DIGITS;
-
-      // No identity key to dedup on (e.g. a name-only manual company) → nothing
-      // to do until a registration number / domain is set.
-      if (!hasReg && !domain) {
-        return null;
-      }
-
-      const matchIds = new Set<string>();
-
-      if (hasReg) {
-        // Digit-core ILIKE is a formatting-agnostic prefilter; confirm full
-        // normalized equality in JS ("RO 12345678" vs "12345678" vs "RO12345678").
-        const byReg: CompanyRow[] = await companyRepository.find({
-          where: {
-            registrationNumber: ILike(`%${regDigits}%`),
-            id: Not(companyId),
-            deletedAt: IsNull(),
-          },
-        });
-
-        for (const candidate of byReg) {
-          if (
-            normalizeRegistrationNumber(candidate.registrationNumber) ===
-            regNormalized
-          ) {
-            matchIds.add(candidate.id);
-          }
-        }
-      }
-
-      if (domain) {
-        // ILIKE can over-match ("acme.ro" vs "notacme.rocks"); confirm the
-        // registrable domain matches exactly.
-        const byDomain: CompanyRow[] = await companyRepository.find({
-          where: {
-            domainName: { primaryLinkUrl: ILike(`%${domain}%`) },
-            id: Not(companyId),
-            deletedAt: IsNull(),
-          },
-        });
-
-        for (const candidate of byDomain) {
-          if (
-            isDefined(candidate.domainName?.primaryLinkUrl) &&
-            extractDomainFromLink(candidate.domainName.primaryLinkUrl) === domain
-          ) {
-            matchIds.add(candidate.id);
-          }
-        }
-      }
-
-      if (matchIds.size === 0) {
-        return null;
-      }
-
-      this.logger.log(
-        `Company ${companyId} has ${matchIds.size} registration/domain duplicate(s).`,
-      );
-
-      return [companyId, ...matchIds];
-    }, systemAuthContext);
+        return [companyId, ...matchIds];
+      },
+      systemAuthContext,
+    );
   }
 }

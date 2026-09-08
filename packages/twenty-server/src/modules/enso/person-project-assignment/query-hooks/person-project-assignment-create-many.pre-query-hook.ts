@@ -11,9 +11,7 @@ import { PersonProjectAssignmentNameService } from 'src/modules/enso/person-proj
 
 @Injectable()
 @WorkspaceQueryHook(`personProjectAssignment.createMany`)
-export class PersonProjectAssignmentCreateManyPreQueryHook
-  implements WorkspacePreQueryHookInstance
-{
+export class PersonProjectAssignmentCreateManyPreQueryHook implements WorkspacePreQueryHookInstance {
   constructor(
     private readonly personProjectAssignmentNameService: PersonProjectAssignmentNameService,
   ) {}

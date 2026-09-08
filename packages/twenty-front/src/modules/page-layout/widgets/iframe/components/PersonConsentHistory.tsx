@@ -11,7 +11,8 @@ import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingC
 // ENSO — read-only marketing-consent audit trail, surfaced on its own record-page
 // tab (next to Timeline/Calendar). Every grant/revoke for the person, newest
 // first, with who · how · why · when and a link to the triggering activity.
-export const ENSO_PERSON_CONSENT_HISTORY_MARKER = '__enso_person_consent_history';
+export const ENSO_PERSON_CONSENT_HISTORY_MARKER =
+  '__enso_person_consent_history';
 
 const SOURCE_LABELS: Record<string, string> = {
   FORM_WEBSITE: 'Website Form',

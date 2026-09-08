@@ -11,9 +11,7 @@ import { InboundActivityNameService } from 'src/modules/enso/inbound-activity/se
 
 @Injectable()
 @WorkspaceQueryHook(`inboundActivity.createMany`)
-export class InboundActivityCreateManyPreQueryHook
-  implements WorkspacePreQueryHookInstance
-{
+export class InboundActivityCreateManyPreQueryHook implements WorkspacePreQueryHookInstance {
   constructor(
     private readonly inboundActivityNameService: InboundActivityNameService,
   ) {}

@@ -18,9 +18,7 @@ import { enqueueCompanyDedup } from 'src/modules/enso/company-merge/query-hooks/
   key: `company.createMany`,
   type: WorkspaceQueryHookType.POST_HOOK,
 })
-export class CompanyMergeCompanyCreateManyPostQueryHook
-  implements WorkspacePostQueryHookInstance
-{
+export class CompanyMergeCompanyCreateManyPostQueryHook implements WorkspacePostQueryHookInstance {
   constructor(
     @InjectMessageQueue(MessageQueue.ensoCompanyMergeQueue)
     private readonly messageQueueService: MessageQueueService,

@@ -78,103 +78,182 @@ export type CompanyIndustry = (typeof COMPANY_INDUSTRY_OPTIONS)[number];
 // ("Information Technology & Services", "Real Estate", "SaaS", …); match on
 // lowercased substring against this table. First match wins, so order from
 // most-specific to most-generic where they could overlap.
-const INDUSTRY_KEYWORD_MAP: { keywords: string[]; industry: CompanyIndustry }[] =
-  [
-    { keywords: ['real estate', 'realty', 'property'], industry: 'REAL_ESTATE' },
-    {
-      keywords: ['construction', 'building', 'civil engineering', 'contractor'],
-      industry: 'CONSTRUCTION',
-    },
-    {
-      keywords: ['software', 'saas', 'information technology', 'it services', 'internet', 'computer', 'tech'],
-      industry: 'INFORMATION_TECHNOLOGY',
-    },
-    {
-      keywords: ['telecom', 'telecommunication', 'wireless', 'mobile network'],
-      industry: 'TELECOMMUNICATIONS',
-    },
-    {
-      keywords: ['pharma', 'pharmaceutical', 'biotech'],
-      industry: 'PHARMACEUTICALS',
-    },
-    {
-      keywords: ['health', 'medical', 'hospital', 'clinic', 'dental', 'wellness'],
-      industry: 'HEALTHCARE',
-    },
-    {
-      keywords: ['bank', 'finance', 'financial', 'insurance', 'fintech', 'investment', 'capital'],
-      industry: 'FINANCE_INSURANCE',
-    },
-    {
-      keywords: ['legal', 'law', 'attorney', 'notary'],
-      industry: 'LEGAL_SERVICES',
-    },
-    {
-      keywords: ['marketing', 'advertising', 'agency', 'pr ', 'public relations', 'media buying'],
-      industry: 'MARKETING_ADVERTISING',
-    },
-    {
-      keywords: ['media', 'entertainment', 'film', 'music', 'gaming', 'publishing', 'broadcast'],
-      industry: 'ENTERTAINMENT_MEDIA',
-    },
-    {
-      keywords: ['education', 'school', 'university', 'training', 'e-learning', 'edtech'],
-      industry: 'EDUCATION',
-    },
-    {
-      keywords: ['hospitality', 'hotel', 'tourism', 'travel', 'restaurant', 'horeca', 'catering'],
-      industry: 'HOSPITALITY_TOURISM',
-    },
-    {
-      keywords: ['food', 'beverage', 'drink', 'brewery', 'winery'],
-      industry: 'FOOD_BEVERAGE',
-    },
-    {
-      keywords: ['automotive', 'auto ', 'car ', 'vehicle', 'dealership'],
-      industry: 'AUTOMOTIVE',
-    },
-    {
-      keywords: ['agriculture', 'farming', 'agro', 'agritech'],
-      industry: 'AGRICULTURE',
-    },
-    {
-      keywords: ['energy', 'oil', 'gas', 'solar', 'renewable', 'power generation'],
-      industry: 'ENERGY',
-    },
-    { keywords: ['utility', 'utilities', 'water', 'electricity'], industry: 'UTILITIES' },
-    {
-      keywords: ['logistics', 'transport', 'shipping', 'freight', 'courier', 'delivery'],
-      industry: 'LOGISTICS_TRANSPORT',
-    },
-    {
-      keywords: ['manufacturing', 'industrial', 'factory', 'production'],
-      industry: 'MANUFACTURING',
-    },
-    {
-      keywords: ['wholesale', 'distribution', 'distributor', 'import', 'export'],
-      industry: 'WHOLESALE_DISTRIBUTION',
-    },
-    {
-      keywords: ['retail', 'e-commerce', 'ecommerce', 'shop', 'store', 'commerce'],
-      industry: 'RETAIL_ECOMMERCE',
-    },
-    {
-      keywords: ['consumer goods', 'fmcg', 'apparel', 'cosmetics', 'furniture'],
-      industry: 'CONSUMER_GOODS',
-    },
-    {
-      keywords: ['government', 'public sector', 'municipal', 'ministry'],
-      industry: 'GOVERNMENT',
-    },
-    {
-      keywords: ['non-profit', 'nonprofit', 'ngo', 'charity', 'foundation'],
-      industry: 'NON_PROFIT',
-    },
-    {
-      keywords: ['consulting', 'professional services', 'accounting', 'audit', 'hr ', 'recruiting'],
-      industry: 'PROFESSIONAL_SERVICES',
-    },
-  ];
+const INDUSTRY_KEYWORD_MAP: {
+  keywords: string[];
+  industry: CompanyIndustry;
+}[] = [
+  { keywords: ['real estate', 'realty', 'property'], industry: 'REAL_ESTATE' },
+  {
+    keywords: ['construction', 'building', 'civil engineering', 'contractor'],
+    industry: 'CONSTRUCTION',
+  },
+  {
+    keywords: [
+      'software',
+      'saas',
+      'information technology',
+      'it services',
+      'internet',
+      'computer',
+      'tech',
+    ],
+    industry: 'INFORMATION_TECHNOLOGY',
+  },
+  {
+    keywords: ['telecom', 'telecommunication', 'wireless', 'mobile network'],
+    industry: 'TELECOMMUNICATIONS',
+  },
+  {
+    keywords: ['pharma', 'pharmaceutical', 'biotech'],
+    industry: 'PHARMACEUTICALS',
+  },
+  {
+    keywords: ['health', 'medical', 'hospital', 'clinic', 'dental', 'wellness'],
+    industry: 'HEALTHCARE',
+  },
+  {
+    keywords: [
+      'bank',
+      'finance',
+      'financial',
+      'insurance',
+      'fintech',
+      'investment',
+      'capital',
+    ],
+    industry: 'FINANCE_INSURANCE',
+  },
+  {
+    keywords: ['legal', 'law', 'attorney', 'notary'],
+    industry: 'LEGAL_SERVICES',
+  },
+  {
+    keywords: [
+      'marketing',
+      'advertising',
+      'agency',
+      'pr ',
+      'public relations',
+      'media buying',
+    ],
+    industry: 'MARKETING_ADVERTISING',
+  },
+  {
+    keywords: [
+      'media',
+      'entertainment',
+      'film',
+      'music',
+      'gaming',
+      'publishing',
+      'broadcast',
+    ],
+    industry: 'ENTERTAINMENT_MEDIA',
+  },
+  {
+    keywords: [
+      'education',
+      'school',
+      'university',
+      'training',
+      'e-learning',
+      'edtech',
+    ],
+    industry: 'EDUCATION',
+  },
+  {
+    keywords: [
+      'hospitality',
+      'hotel',
+      'tourism',
+      'travel',
+      'restaurant',
+      'horeca',
+      'catering',
+    ],
+    industry: 'HOSPITALITY_TOURISM',
+  },
+  {
+    keywords: ['food', 'beverage', 'drink', 'brewery', 'winery'],
+    industry: 'FOOD_BEVERAGE',
+  },
+  {
+    keywords: ['automotive', 'auto ', 'car ', 'vehicle', 'dealership'],
+    industry: 'AUTOMOTIVE',
+  },
+  {
+    keywords: ['agriculture', 'farming', 'agro', 'agritech'],
+    industry: 'AGRICULTURE',
+  },
+  {
+    keywords: [
+      'energy',
+      'oil',
+      'gas',
+      'solar',
+      'renewable',
+      'power generation',
+    ],
+    industry: 'ENERGY',
+  },
+  {
+    keywords: ['utility', 'utilities', 'water', 'electricity'],
+    industry: 'UTILITIES',
+  },
+  {
+    keywords: [
+      'logistics',
+      'transport',
+      'shipping',
+      'freight',
+      'courier',
+      'delivery',
+    ],
+    industry: 'LOGISTICS_TRANSPORT',
+  },
+  {
+    keywords: ['manufacturing', 'industrial', 'factory', 'production'],
+    industry: 'MANUFACTURING',
+  },
+  {
+    keywords: ['wholesale', 'distribution', 'distributor', 'import', 'export'],
+    industry: 'WHOLESALE_DISTRIBUTION',
+  },
+  {
+    keywords: [
+      'retail',
+      'e-commerce',
+      'ecommerce',
+      'shop',
+      'store',
+      'commerce',
+    ],
+    industry: 'RETAIL_ECOMMERCE',
+  },
+  {
+    keywords: ['consumer goods', 'fmcg', 'apparel', 'cosmetics', 'furniture'],
+    industry: 'CONSUMER_GOODS',
+  },
+  {
+    keywords: ['government', 'public sector', 'municipal', 'ministry'],
+    industry: 'GOVERNMENT',
+  },
+  {
+    keywords: ['non-profit', 'nonprofit', 'ngo', 'charity', 'foundation'],
+    industry: 'NON_PROFIT',
+  },
+  {
+    keywords: [
+      'consulting',
+      'professional services',
+      'accounting',
+      'audit',
+      'hr ',
+      'recruiting',
+    ],
+    industry: 'PROFESSIONAL_SERVICES',
+  },
+];
 
 // Coerce a free-text provider industry to one of COMPANY_INDUSTRY_OPTIONS.
 // Returns null when the input is empty (so we don't overwrite with OTHER on a

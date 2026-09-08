@@ -12,9 +12,7 @@ import { PersonProjectConsentNameService } from 'src/modules/enso/person-project
 
 @Injectable()
 @WorkspaceQueryHook(`personProjectConsent.updateOne`)
-export class PersonProjectConsentUpdateOnePreQueryHook
-  implements WorkspacePreQueryHookInstance
-{
+export class PersonProjectConsentUpdateOnePreQueryHook implements WorkspacePreQueryHookInstance {
   constructor(
     private readonly personProjectConsentNameService: PersonProjectConsentNameService,
     private readonly personProjectConsentAuditService: PersonProjectConsentAuditService,

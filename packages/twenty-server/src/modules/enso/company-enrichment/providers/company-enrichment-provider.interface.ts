@@ -51,7 +51,9 @@ export interface CompanyEnrichmentProvider {
 
   // Returns found fields, or null when nothing was found / the lookup failed.
   // Implementations must never throw — the chain treats a throw as null.
-  enrich(input: CompanyEnrichmentInput): Promise<PartialCompanyEnrichment | null>;
+  enrich(
+    input: CompanyEnrichmentInput,
+  ): Promise<PartialCompanyEnrichment | null>;
 }
 
 // DI token for the ordered provider array. Order in the array == chain order.

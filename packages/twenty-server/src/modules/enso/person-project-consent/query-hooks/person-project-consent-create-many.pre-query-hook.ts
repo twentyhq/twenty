@@ -11,9 +11,7 @@ import { PersonProjectConsentNameService } from 'src/modules/enso/person-project
 
 @Injectable()
 @WorkspaceQueryHook(`personProjectConsent.createMany`)
-export class PersonProjectConsentCreateManyPreQueryHook
-  implements WorkspacePreQueryHookInstance
-{
+export class PersonProjectConsentCreateManyPreQueryHook implements WorkspacePreQueryHookInstance {
   constructor(
     private readonly personProjectConsentNameService: PersonProjectConsentNameService,
   ) {}

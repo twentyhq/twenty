@@ -53,7 +53,9 @@ export class MarketingSyncListener {
 
   @OnDatabaseBatchEvent('person', DatabaseEventAction.CREATED)
   async onPersonCreated(
-    payload: WorkspaceEventBatch<ObjectRecordCreateEvent<PersonWorkspaceEntity>>,
+    payload: WorkspaceEventBatch<
+      ObjectRecordCreateEvent<PersonWorkspaceEntity>
+    >,
   ): Promise<void> {
     for (const event of payload.events) {
       await this.enqueueIdentify(
@@ -66,7 +68,9 @@ export class MarketingSyncListener {
 
   @OnDatabaseBatchEvent('person', DatabaseEventAction.UPDATED)
   async onPersonUpdated(
-    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<PersonWorkspaceEntity>>,
+    payload: WorkspaceEventBatch<
+      ObjectRecordUpdateEvent<PersonWorkspaceEntity>
+    >,
   ): Promise<void> {
     for (const event of payload.events) {
       const changed = objectRecordChangedProperties(
@@ -219,7 +223,10 @@ export class MarketingSyncListener {
     >,
   ): Promise<void> {
     for (const event of payload.events) {
-      await this.enqueueConsentSync(payload.workspaceId, event.properties.after);
+      await this.enqueueConsentSync(
+        payload.workspaceId,
+        event.properties.after,
+      );
     }
   }
 
@@ -239,7 +246,10 @@ export class MarketingSyncListener {
         continue;
       }
 
-      await this.enqueueConsentSync(payload.workspaceId, event.properties.after);
+      await this.enqueueConsentSync(
+        payload.workspaceId,
+        event.properties.after,
+      );
     }
   }
 

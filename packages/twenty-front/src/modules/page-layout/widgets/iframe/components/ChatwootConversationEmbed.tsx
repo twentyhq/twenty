@@ -1021,7 +1021,9 @@ export const ChatwootConversationEmbed = () => {
               <StyledBubble $incoming={message.incoming}>
                 {message.content}
                 {message.attachments.map((attachment) =>
-                  !isDefined(attachment.dataUrl) ? null : attachment.external ? (
+                  !isDefined(
+                    attachment.dataUrl,
+                  ) ? null : attachment.external ? (
                     // External share (e.g. an Instagram reel/story) — the proxy
                     // can't serve it, so open the original URL in a new tab.
                     <StyledExternalLink

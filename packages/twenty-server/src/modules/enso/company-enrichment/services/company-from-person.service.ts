@@ -328,7 +328,10 @@ export class CompanyFromPersonService {
   // First work email wins (primary, then additional). Returns the registrable
   // domain ("acme.ro") or null when the person has only personal-provider emails.
   private extractWorkDomain(person: {
-    emails?: { primaryEmail?: string | null; additionalEmails?: string[] | null };
+    emails?: {
+      primaryEmail?: string | null;
+      additionalEmails?: string[] | null;
+    };
   }): string | null {
     const candidates = [
       person.emails?.primaryEmail,
@@ -380,7 +383,8 @@ export class CompanyFromPersonService {
       return { companyId: existing.id, created: false };
     }
 
-    const lastPosition = (await companyRepository.maximum('position', undefined)) ?? 0;
+    const lastPosition =
+      (await companyRepository.maximum('position', undefined)) ?? 0;
 
     const created = await companyRepository.save({
       name: getCompanyNameFromDomainName(domain),

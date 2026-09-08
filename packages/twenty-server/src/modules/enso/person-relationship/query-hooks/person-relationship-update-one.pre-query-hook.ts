@@ -11,9 +11,7 @@ import { PersonRelationshipNameService } from 'src/modules/enso/person-relations
 
 @Injectable()
 @WorkspaceQueryHook(`personRelationship.updateOne`)
-export class PersonRelationshipUpdateOnePreQueryHook
-  implements WorkspacePreQueryHookInstance
-{
+export class PersonRelationshipUpdateOnePreQueryHook implements WorkspacePreQueryHookInstance {
   constructor(
     private readonly personRelationshipNameService: PersonRelationshipNameService,
   ) {}

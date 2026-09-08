@@ -8,15 +8,17 @@
 // Relations whose company foreign key must be re-pointed from a merged-away
 // duplicate to the kept Company. Each reassignment is best-effort (try/catch) so a
 // unique-constraint clash on one junction never aborts the whole merge.
-export const COMPANY_RELATION_REASSIGNMENTS: { object: string; field: string }[] =
-  [
-    { object: 'person', field: 'companyId' },
-    { object: 'opportunity', field: 'companyId' },
-    { object: 'taskTarget', field: 'targetCompanyId' },
-    { object: 'noteTarget', field: 'targetCompanyId' },
-    { object: 'attachment', field: 'targetCompanyId' },
-    { object: 'timelineActivity', field: 'targetCompanyId' },
-  ];
+export const COMPANY_RELATION_REASSIGNMENTS: {
+  object: string;
+  field: string;
+}[] = [
+  { object: 'person', field: 'companyId' },
+  { object: 'opportunity', field: 'companyId' },
+  { object: 'taskTarget', field: 'targetCompanyId' },
+  { object: 'noteTarget', field: 'targetCompanyId' },
+  { object: 'attachment', field: 'targetCompanyId' },
+  { object: 'timelineActivity', field: 'targetCompanyId' },
+];
 
 // Scalar keeper fields backfilled from a duplicate when the keeper's is empty.
 // Composite fields (domainName, address, phones, links, currency) are handled

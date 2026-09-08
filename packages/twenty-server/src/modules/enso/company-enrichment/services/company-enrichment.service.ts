@@ -38,7 +38,10 @@ export class CompanyEnrichmentService {
   // Returns true when the company ends up with a registration number (VAT/CUI/
   // IDNO) — the caller uses that to trigger a registration-based dedup pass,
   // since the enrichment write below bypasses the company.* GraphQL hooks.
-  async enrichCompany(workspaceId: string, companyId: string): Promise<boolean> {
+  async enrichCompany(
+    workspaceId: string,
+    companyId: string,
+  ): Promise<boolean> {
     if (!isDefined(workspaceId) || !isDefined(companyId)) {
       return false;
     }
@@ -157,7 +160,8 @@ export class CompanyEnrichmentService {
         ...input,
         name: merged.name ?? input.name,
         legalName: merged.legalName ?? input.legalName,
-        registrationNumber: merged.registrationNumber ?? input.registrationNumber,
+        registrationNumber:
+          merged.registrationNumber ?? input.registrationNumber,
       };
     }
 
@@ -285,7 +289,9 @@ export class CompanyEnrichmentService {
 
   // ENRICHED when we got a "rich" firmographic; PARTIAL when only basics
   // (name/city) came back; FAILED when the chain produced nothing usable.
-  private deriveStatus(merged: PartialCompanyEnrichment): CompanyEnrichmentStatus {
+  private deriveStatus(
+    merged: PartialCompanyEnrichment,
+  ): CompanyEnrichmentStatus {
     const rich =
       isDefined(merged.legalName) ||
       isDefined(merged.industry) ||

@@ -109,7 +109,8 @@ export class ChatwootController {
   async realtime(@AuthUser() user: UserEntity) {
     const realtime = await this.messagingService.getRealtimeCredentials({
       email: user.email,
-      name: `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim() || user.email,
+      name:
+        `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim() || user.email,
     });
 
     return { realtime };

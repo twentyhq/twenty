@@ -16,9 +16,7 @@ import { RoutingAvailabilityAuditService } from 'src/modules/enso/routing-availa
 // write.
 @Injectable()
 @WorkspaceQueryHook(`workspaceMember.updateOne`)
-export class WorkspaceMemberUpdateOnePreQueryHook
-  implements WorkspacePreQueryHookInstance
-{
+export class WorkspaceMemberUpdateOnePreQueryHook implements WorkspacePreQueryHookInstance {
   constructor(
     private readonly routingAvailabilityAuditService: RoutingAvailabilityAuditService,
   ) {}

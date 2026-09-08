@@ -134,7 +134,11 @@ export class MarketingJourneyCallbackService {
             ? { opportunityId: params.sourceOpportunityId }
             : {}),
         },
-        segments: this.buildSegments(params.journey, params.step, params.status),
+        segments: this.buildSegments(
+          params.journey,
+          params.step,
+          params.status,
+        ),
         auto: true,
         happensAt: params.happenedAt,
       });

@@ -33,9 +33,7 @@ const DEFAULT_BASE_URL = 'https://www.data2b.md/api/v1';
 type Data2bCompany = Record<string, any>;
 
 @Injectable()
-export class MoldovaData2bEnrichmentProvider
-  implements CompanyEnrichmentProvider
-{
+export class MoldovaData2bEnrichmentProvider implements CompanyEnrichmentProvider {
   readonly providerName = 'moldova-data2b';
   private readonly logger = new Logger(MoldovaData2bEnrichmentProvider.name);
   private readonly httpClient: AxiosInstance;
@@ -134,9 +132,7 @@ export class MoldovaData2bEnrichmentProvider
   // set of candidate keys (EN + RO). On the first successful call the actual
   // keys are logged (debug) — finalize this mapping against a real response.
   private mapCompany(raw: Data2bCompany): PartialCompanyEnrichment | null {
-    this.logger.debug(
-      `data2b response keys: ${Object.keys(raw).join(', ')}`,
-    );
+    this.logger.debug(`data2b response keys: ${Object.keys(raw).join(', ')}`);
 
     const result: PartialCompanyEnrichment = {};
 
@@ -202,7 +198,13 @@ export class MoldovaData2bEnrichmentProvider
     }
 
     const revenue = this.parseNumber(
-      this.pick(raw, ['revenue', 'turnover', 'income', 'venit', 'cifra_afaceri']),
+      this.pick(raw, [
+        'revenue',
+        'turnover',
+        'income',
+        'venit',
+        'cifra_afaceri',
+      ]),
     );
 
     if (isDefined(revenue)) {
@@ -234,7 +236,12 @@ export class MoldovaData2bEnrichmentProvider
     }
 
     if (isDefined(address) && typeof address === 'object') {
-      const city = this.pick(address, ['city', 'locality', 'oras', 'localitate']);
+      const city = this.pick(address, [
+        'city',
+        'locality',
+        'oras',
+        'localitate',
+      ]);
       const street = this.pick(address, ['street', 'address', 'strada']);
 
       if (city) result.addressCity = city;
@@ -243,7 +250,10 @@ export class MoldovaData2bEnrichmentProvider
     }
   }
 
-  private pick(source: Record<string, any>, keys: string[]): string | undefined {
+  private pick(
+    source: Record<string, any>,
+    keys: string[],
+  ): string | undefined {
     for (const key of keys) {
       const value = source?.[key];
 

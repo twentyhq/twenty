@@ -9,15 +9,17 @@
 // try/catch) so a unique-constraint clash on one junction never aborts the whole
 // merge. (Core targets like taskTarget/noteTarget are deferred — leads rarely
 // carry those before a merge.)
-export const PERSON_RELATION_REASSIGNMENTS: { object: string; field: string }[] =
-  [
-    { object: 'opportunity', field: 'pointOfContactId' },
-    { object: 'inboundActivity', field: 'personId' },
-    { object: 'personProjectConsent', field: 'personId' },
-    { object: 'personProjectAssignment', field: 'personId' },
-    { object: 'personRelationship', field: 'personId' },
-    { object: 'personRelationship', field: 'relatedPersonId' },
-  ];
+export const PERSON_RELATION_REASSIGNMENTS: {
+  object: string;
+  field: string;
+}[] = [
+  { object: 'opportunity', field: 'pointOfContactId' },
+  { object: 'inboundActivity', field: 'personId' },
+  { object: 'personProjectConsent', field: 'personId' },
+  { object: 'personProjectAssignment', field: 'personId' },
+  { object: 'personRelationship', field: 'personId' },
+  { object: 'personRelationship', field: 'relatedPersonId' },
+];
 
 // Match phones on the last N national digits (formatting/calling-code agnostic),
 // matching the legacy normalization.

@@ -173,7 +173,10 @@ export class SequencingScannerCronJob {
 
           // Enroll only on an explicit live-sequence origin (never default to
           // social) — unknown/non-social origins are skipped.
-          if (!isDefined(channel) || !CHANNELS_WITH_LIVE_SEQUENCE.includes(channel)) {
+          if (
+            !isDefined(channel) ||
+            !CHANNELS_WITH_LIVE_SEQUENCE.includes(channel)
+          ) {
             continue;
           }
 
@@ -207,7 +210,9 @@ export class SequencingScannerCronJob {
             variant,
             assigneeId: opportunity.ownerId ?? null,
             dueAt: new Date(),
-            ...(firstTouchBody ? { bodyV2: this.richText(firstTouchBody) } : {}),
+            ...(firstTouchBody
+              ? { bodyV2: this.richText(firstTouchBody) }
+              : {}),
           });
 
           step = 'pin';
@@ -229,8 +234,11 @@ export class SequencingScannerCronJob {
       }
 
       // Re-fetch only if we enrolled, so the cadence pass sees the new runs.
-      const runsForCadence = enrolledCount > 0 ? await runRepository.find() : allRuns;
-      const openRuns = runsForCadence.filter((run) => !isDefined(run.endReason));
+      const runsForCadence =
+        enrolledCount > 0 ? await runRepository.find() : allRuns;
+      const openRuns = runsForCadence.filter(
+        (run) => !isDefined(run.endReason),
+      );
       this.logger.log(
         `scanner: workspace ${workspaceId} — enrolled ${enrolledCount}, ${openRuns.length} open run(s)`,
       );
@@ -375,7 +383,10 @@ export class SequencingScannerCronJob {
         // other channel, end the run (no cadence) until that sequence exists.
         const channel = this.resolveDealChannel(inboundActivities);
 
-        if (!isDefined(channel) || !CHANNELS_WITH_LIVE_SEQUENCE.includes(channel)) {
+        if (
+          !isDefined(channel) ||
+          !CHANNELS_WITH_LIVE_SEQUENCE.includes(channel)
+        ) {
           await runRepository.update(run.id, {
             endReason: SEQUENCE_RUN_END_REASON_SUPERSEDED,
             endedAt: new Date(),

@@ -493,7 +493,9 @@ export class OutboundEmailService {
         ...(isNonEmptyString(taskId) ? { taskId } : {}),
         ...(isNonEmptyString(opportunityId) ? { opportunityId } : {}),
         // The sending manager — so the touch is attributed to them, not "System".
-        ...(isNonEmptyString(workspaceMemberId) ? { performedById: workspaceMemberId } : {}),
+        ...(isNonEmptyString(workspaceMemberId)
+          ? { performedById: workspaceMemberId }
+          : {}),
         personId,
       });
 

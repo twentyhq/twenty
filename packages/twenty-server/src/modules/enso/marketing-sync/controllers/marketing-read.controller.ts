@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Get,
-  Query,
-  UseFilters,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Query, UseFilters, UseGuards } from '@nestjs/common';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';

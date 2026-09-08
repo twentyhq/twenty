@@ -15,9 +15,7 @@ import {
 // sometimes a logo/other firmographics. SSRF-safe via SecureHttpClientService.
 // Cheap and always enabled; it fills name + city the offline provider can't.
 @Injectable()
-export class TwentyCompaniesEnrichmentProvider
-  implements CompanyEnrichmentProvider
-{
+export class TwentyCompaniesEnrichmentProvider implements CompanyEnrichmentProvider {
   readonly providerName = 'twenty-companies';
   private readonly logger = new Logger(TwentyCompaniesEnrichmentProvider.name);
   private readonly httpClient: AxiosInstance;

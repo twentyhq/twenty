@@ -56,106 +56,109 @@ export class CompanyMergeExecutorService {
 
     const systemAuthContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const companyRepository =
-        await this.globalWorkspaceOrmManager.getRepository<any>(
-          workspaceId,
-          'company',
-          { shouldBypassPermissionChecks: true },
-        );
-
-      const companies: CompanyRow[] = await companyRepository.find({
-        where: { id: In(companyIds), deletedAt: IsNull() },
-        order: { createdAt: 'ASC' },
-      });
-
-      // Need at least two live records to merge.
-      if (companies.length < 2) {
-        return null;
-      }
-
-      const keeper = companies[0]; // oldest
-      const duplicates = companies.slice(1);
-      const duplicateIds = duplicates.map((duplicate) => duplicate.id);
-
-      // 1) Re-point every company-FK relation from the duplicates to the keeper.
-      // These FKs are flat columns on the related objects, not composites.
-      for (const { object, field } of COMPANY_RELATION_REASSIGNMENTS) {
-        try {
-          const repository =
-            await this.globalWorkspaceOrmManager.getRepository<any>(
-              workspaceId,
-              object,
-              { shouldBypassPermissionChecks: true },
-            );
-
-          await repository.update(
-            { [field]: In(duplicateIds) },
-            { [field]: keeper.id, updatedBy: SYSTEM_ACTOR },
-          );
-        } catch (error) {
-          this.logger.warn(
-            `Reassign ${object}.${field} → keeper ${keeper.id} failed: ${
-              (error as Error).message
-            }`,
-          );
-        }
-      }
-
-      // 2) Backfill the keeper's empty fields from a duplicate.
-      const patch = this.buildBackfillPatch(keeper, duplicates);
-
-      if (Object.keys(patch).length > 0) {
-        patch.updatedBy = SYSTEM_ACTOR;
-        await companyRepository.update({ id: keeper.id }, patch);
-      }
-
-      // 3) Soft-delete the merged-away duplicates.
-      for (const duplicate of duplicates) {
-        try {
-          await companyRepository.softDelete({ id: duplicate.id });
-        } catch (error) {
-          this.logger.warn(
-            `Soft-delete duplicate company ${duplicate.id} failed: ${
-              (error as Error).message
-            }`,
-          );
-        }
-      }
-
-      // 4) Surface the merge on the keeper's timeline (best-effort).
-      try {
-        const timelineRepository =
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const companyRepository =
           await this.globalWorkspaceOrmManager.getRepository<any>(
             workspaceId,
-            'timelineActivity',
+            'company',
             { shouldBypassPermissionChecks: true },
           );
 
-        await timelineRepository.insert(
-          buildMergeTimelineActivityInsert({
-            targetObject: 'company',
-            keeperId: keeper.id,
-            matchedOn: this.deriveMatchedOn(keeper, duplicates),
-            mergedLabels: duplicates.map((duplicate) =>
-              this.companyLabel(duplicate),
-            ),
-          }),
-        );
-      } catch (error) {
-        this.logger.warn(
-          `Merge timeline write failed for company ${keeper.id}: ${
-            (error as Error).message
-          }`,
-        );
-      }
+        const companies: CompanyRow[] = await companyRepository.find({
+          where: { id: In(companyIds), deletedAt: IsNull() },
+          order: { createdAt: 'ASC' },
+        });
 
-      this.logger.log(
-        `Merged ${duplicateIds.length} duplicate(s) into company ${keeper.id}.`,
-      );
+        // Need at least two live records to merge.
+        if (companies.length < 2) {
+          return null;
+        }
 
-      return { keeperId: keeper.id, mergedIds: duplicateIds };
-    }, systemAuthContext);
+        const keeper = companies[0]; // oldest
+        const duplicates = companies.slice(1);
+        const duplicateIds = duplicates.map((duplicate) => duplicate.id);
+
+        // 1) Re-point every company-FK relation from the duplicates to the keeper.
+        // These FKs are flat columns on the related objects, not composites.
+        for (const { object, field } of COMPANY_RELATION_REASSIGNMENTS) {
+          try {
+            const repository =
+              await this.globalWorkspaceOrmManager.getRepository<any>(
+                workspaceId,
+                object,
+                { shouldBypassPermissionChecks: true },
+              );
+
+            await repository.update(
+              { [field]: In(duplicateIds) },
+              { [field]: keeper.id, updatedBy: SYSTEM_ACTOR },
+            );
+          } catch (error) {
+            this.logger.warn(
+              `Reassign ${object}.${field} → keeper ${keeper.id} failed: ${
+                (error as Error).message
+              }`,
+            );
+          }
+        }
+
+        // 2) Backfill the keeper's empty fields from a duplicate.
+        const patch = this.buildBackfillPatch(keeper, duplicates);
+
+        if (Object.keys(patch).length > 0) {
+          patch.updatedBy = SYSTEM_ACTOR;
+          await companyRepository.update({ id: keeper.id }, patch);
+        }
+
+        // 3) Soft-delete the merged-away duplicates.
+        for (const duplicate of duplicates) {
+          try {
+            await companyRepository.softDelete({ id: duplicate.id });
+          } catch (error) {
+            this.logger.warn(
+              `Soft-delete duplicate company ${duplicate.id} failed: ${
+                (error as Error).message
+              }`,
+            );
+          }
+        }
+
+        // 4) Surface the merge on the keeper's timeline (best-effort).
+        try {
+          const timelineRepository =
+            await this.globalWorkspaceOrmManager.getRepository<any>(
+              workspaceId,
+              'timelineActivity',
+              { shouldBypassPermissionChecks: true },
+            );
+
+          await timelineRepository.insert(
+            buildMergeTimelineActivityInsert({
+              targetObject: 'company',
+              keeperId: keeper.id,
+              matchedOn: this.deriveMatchedOn(keeper, duplicates),
+              mergedLabels: duplicates.map((duplicate) =>
+                this.companyLabel(duplicate),
+              ),
+            }),
+          );
+        } catch (error) {
+          this.logger.warn(
+            `Merge timeline write failed for company ${keeper.id}: ${
+              (error as Error).message
+            }`,
+          );
+        }
+
+        this.logger.log(
+          `Merged ${duplicateIds.length} duplicate(s) into company ${keeper.id}.`,
+        );
+
+        return { keeperId: keeper.id, mergedIds: duplicateIds };
+      },
+      systemAuthContext,
+    );
   }
 
   private buildBackfillPatch(
@@ -216,7 +219,9 @@ export class CompanyMergeExecutorService {
     }
 
     if (!keeper.annualRecurringRevenue?.amountMicros) {
-      const donor = duplicates.find((d) => d.annualRecurringRevenue?.amountMicros);
+      const donor = duplicates.find(
+        (d) => d.annualRecurringRevenue?.amountMicros,
+      );
 
       if (donor) patch.annualRecurringRevenue = donor.annualRecurringRevenue;
     }
@@ -234,7 +239,10 @@ export class CompanyMergeExecutorService {
 
   // Best-effort: which identity key the duplicates shared with the keeper, for
   // the timeline summary. Falls back to the generic combined label.
-  private deriveMatchedOn(keeper: CompanyRow, duplicates: CompanyRow[]): string {
+  private deriveMatchedOn(
+    keeper: CompanyRow,
+    duplicates: CompanyRow[],
+  ): string {
     const keeperReg = normalizeRegistrationNumber(keeper.registrationNumber);
     const keeperDomain = this.companyDomain(keeper);
 

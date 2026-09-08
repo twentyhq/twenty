@@ -19,9 +19,7 @@ import { enqueueCompanyResolution } from 'src/modules/enso/company-enrichment/qu
   key: `person.createOne`,
   type: WorkspaceQueryHookType.POST_HOOK,
 })
-export class CompanyEnrichmentPersonCreateOnePostQueryHook
-  implements WorkspacePostQueryHookInstance
-{
+export class CompanyEnrichmentPersonCreateOnePostQueryHook implements WorkspacePostQueryHookInstance {
   constructor(
     @InjectMessageQueue(MessageQueue.ensoCompanyEnrichmentQueue)
     private readonly messageQueueService: MessageQueueService,

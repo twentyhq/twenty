@@ -22,9 +22,7 @@ import { extractRowRefs } from 'src/modules/enso/person-relationship/query-hooks
   key: `person.createOne`,
   type: WorkspaceQueryHookType.POST_HOOK,
 })
-export class PersonCreateOnePostQueryHook
-  implements WorkspacePostQueryHookInstance
-{
+export class PersonCreateOnePostQueryHook implements WorkspacePostQueryHookInstance {
   constructor(
     @InjectMessageQueue(MessageQueue.ensoPersonMergeQueue)
     private readonly messageQueueService: MessageQueueService,

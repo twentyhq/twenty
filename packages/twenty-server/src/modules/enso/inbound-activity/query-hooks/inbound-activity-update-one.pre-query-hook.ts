@@ -11,9 +11,7 @@ import { InboundActivityNameService } from 'src/modules/enso/inbound-activity/se
 
 @Injectable()
 @WorkspaceQueryHook(`inboundActivity.updateOne`)
-export class InboundActivityUpdateOnePreQueryHook
-  implements WorkspacePreQueryHookInstance
-{
+export class InboundActivityUpdateOnePreQueryHook implements WorkspacePreQueryHookInstance {
   constructor(
     private readonly inboundActivityNameService: InboundActivityNameService,
   ) {}
