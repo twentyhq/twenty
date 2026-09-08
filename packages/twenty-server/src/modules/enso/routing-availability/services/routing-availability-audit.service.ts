@@ -10,9 +10,8 @@ import { EnsoPostHogService } from 'src/modules/enso/routing-availability/servic
 const ROUTING_AVAILABILITY_EVENT = 'routing_availability_changed';
 
 // Captures a PostHog event whenever a manager's lead-routing presence
-// (`workspaceMember.isAvailableForRouting`) actually flips. Called from the
-// workspaceMember.updateOne pre-hook, it loads the prior value and only emits on
-// a real transition — no event on no-op writes or updates that leave the flag
+// (`workspaceMember.isAvailableForRouting`) actually flips. It loads the prior
+// value and only emits on a real transition — no event on no-op writes or updates that leave the flag
 // unchanged. The raw on/off stream powers the "how long / when do managers accept
 // leads" analytics in PostHog (durations + time-of-day derived there, not stored).
 @Injectable()
@@ -26,10 +25,22 @@ export class RoutingAvailabilityAuditService {
     authContext: WorkspaceAuthContext,
     workspaceMemberId: string,
     incomingValue: boolean,
+    // Pass this when the caller already applied the change and knows what the
+    // value was beforehand. Without it the previous value is read from the row,
+    // which is only correct BEFORE the write lands.
+    knownPreviousValue?: boolean,
   ): Promise<void> {
     const workspaceId = authContext.workspace?.id;
 
     if (!isDefined(workspaceId)) {
+      return;
+    }
+
+    // A missing id would turn the lookup below into an unfiltered findOne and
+    // attribute the event to whichever member came back first. That happened:
+    // a call with no member context logged a transition against a colleague
+    // who had done nothing.
+    if (!isDefined(workspaceMemberId)) {
       return;
     }
 
@@ -53,7 +64,9 @@ export class RoutingAvailabilityAuditService {
       return;
     }
 
-    const previousValue = member.isAvailableForRouting === true;
+    const previousValue = isDefined(knownPreviousValue)
+      ? knownPreviousValue
+      : member.isAvailableForRouting === true;
 
     // No real transition → nothing to log (e.g. toggled to the same value, or an
     // update that included the field without changing it).

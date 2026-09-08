@@ -1,6 +1,8 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -10,6 +12,10 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { EnsoRoutingAvailabilityDTO } from 'src/modules/enso/routing-availability/dtos/enso-routing-availability.dto';
+import {
+  RoutingAvailabilityException,
+  RoutingAvailabilityExceptionCode,
+} from 'src/modules/enso/routing-availability/routing-availability.exception';
 import { RoutingAvailabilitySelfService } from 'src/modules/enso/routing-availability/services/routing-availability-self.service';
 
 // Being a signed-in member is enough (NoPermissionGuard): the member whose
@@ -29,13 +35,26 @@ export class RoutingAvailabilityResolver {
     @Args('isAvailableForRouting', { type: () => Boolean })
     isAvailableForRouting: boolean,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
   ): Promise<EnsoRoutingAvailabilityDTO> {
-    const result = await this.routingAvailabilitySelfService.setOwnAvailability({
-      workspaceId: workspace.id,
-      workspaceMemberId,
-      isAvailableForRouting,
-    });
+    // AuthWorkspaceMemberId returns undefined rather than throwing when there
+    // is no member behind the request (API key, agent). Left unchecked that
+    // reached the repository as update(undefined, ...) and the audit as an
+    // unfiltered lookup, which attributed a transition to an unrelated member.
+    if (!isDefined(workspaceMemberId)) {
+      throw new RoutingAvailabilityException(
+        'ensoSetMyRoutingAvailability requires a user context; API keys are not supported.',
+        RoutingAvailabilityExceptionCode.NO_WORKSPACE_MEMBER_CONTEXT,
+      );
+    }
+
+    const result = await this.routingAvailabilitySelfService.setOwnAvailability(
+      {
+        workspaceId: workspace.id,
+        workspaceMemberId,
+        isAvailableForRouting,
+      },
+    );
 
     return { isAvailableForRouting: result };
   }

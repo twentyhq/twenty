@@ -1,10 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { RoutingAvailabilityAuditService } from 'src/modules/enso/routing-availability/services/routing-availability-audit.service';
+import {
+  RoutingAvailabilityException,
+  RoutingAvailabilityExceptionCode,
+} from 'src/modules/enso/routing-availability/routing-availability.exception';
 
-type WorkspaceMemberRow = { id: string; isAvailableForRouting?: boolean | null };
+type WorkspaceMemberRow = {
+  id: string;
+  isAvailableForRouting?: boolean | null;
+};
 
 // Lets a member flip their OWN lead-routing presence.
 //
@@ -34,26 +43,48 @@ export class RoutingAvailabilitySelfService {
     workspaceMemberId: string;
     isAvailableForRouting: boolean;
   }): Promise<boolean> {
-    // Audit first, while the previous value is still on the row — the service
-    // reads it to decide whether this is a real transition.
-    // recordTransition only reads workspace.id off the context and resolves the
-    // manager's identity from the row itself, so a system context is enough.
+    // Read, write, then audit — in that order, and only audit what actually
+    // landed. Auditing an intended change before it is applied is how the old
+    // pre-hook logged transitions for writes that permissions then rejected.
+    const previousValue =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () => {
+          const repository =
+            await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberRow>(
+              workspaceId,
+              'workspaceMember',
+              { shouldBypassPermissionChecks: true },
+            );
+
+          const member = await repository.findOne({
+            where: { id: workspaceMemberId },
+          });
+
+          if (!isDefined(member)) {
+            return null;
+          }
+
+          await repository.update(workspaceMemberId, { isAvailableForRouting });
+
+          return member.isAvailableForRouting === true;
+        },
+      );
+
+    if (!isDefined(previousValue)) {
+      throw new RoutingAvailabilityException(
+        'Your workspace member record could not be found.',
+        RoutingAvailabilityExceptionCode.WORKSPACE_MEMBER_NOT_FOUND,
+      );
+    }
+
+    // recordTransition only reads workspace.id off the context, so a system
+    // context is enough; identity comes from the member row.
     await this.routingAvailabilityAuditService.recordTransition(
       buildSystemAuthContext(workspaceId),
       workspaceMemberId,
       isAvailableForRouting,
+      previousValue,
     );
-
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const repository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberRow>(
-          workspaceId,
-          'workspaceMember',
-          { shouldBypassPermissionChecks: true },
-        );
-
-      await repository.update(workspaceMemberId, { isAvailableForRouting });
-    });
 
     this.logger.log(
       `routing availability set to ${isAvailableForRouting} by member ${workspaceMemberId}`,
