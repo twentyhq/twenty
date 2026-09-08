@@ -32,6 +32,18 @@ describe('InputGroup', () => {
     expect(screen.getByRole('textbox', { name: 'Amount' })).toBeInTheDocument();
   });
 
+  it('renders no wrapper for a boolean or empty adornment', () => {
+    render(
+      <InputGroup startElement={false} endElement="">
+        <Input aria-label="Amount" />
+      </InputGroup>,
+    );
+
+    expect(
+      screen.getByRole('textbox', { name: 'Amount' }).parentElement?.children,
+    ).toHaveLength(1);
+  });
+
   it('renders only the input when no element is given', () => {
     render(
       <InputGroup>
