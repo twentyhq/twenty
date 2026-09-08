@@ -23,7 +23,7 @@ import { buildRecordShareInputsForCreatedRecords } from 'src/engine/api/common/c
 import { buildWhereConditions } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/build-where-conditions.util';
 import { categorizeRecords } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/categorize-records.util';
 import { getConflictingFields } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-conflicting-fields.util';
-import { validateShareWithArg } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/validate-share-with-arg.util';
+import { validateShareWithArgOrThrow } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/validate-share-with-arg-or-throw.util';
 import { validateShareWithPrincipalsOrThrow } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/validate-share-with-principals-or-throw.util';
 import {
   CommonQueryRunnerException,
@@ -85,7 +85,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       MetadataReadability.PRIVATE;
 
     if (isPrivateObject) {
-      validateShareWithArg({
+      validateShareWithArgOrThrow({
         authContext: queryRunnerContext.authContext,
         isRecordSharingEnabled: this.isRecordSharingEnabled(queryRunnerContext),
         shareWith: args.shareWith,

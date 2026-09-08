@@ -6,10 +6,17 @@ import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/f
 
 const WORKSPACE_MEMBER_ID = '20202020-0000-4000-8000-000000000001';
 const ROLE_ID = '20202020-0000-4000-8000-000000000002';
+const DELETED_WORKSPACE_MEMBER_ID = '20202020-0000-4000-8000-000000000003';
 const UNKNOWN_ID = '20202020-0000-4000-8000-000000000009';
 
 const flatWorkspaceMemberMaps = {
-  byId: { [WORKSPACE_MEMBER_ID]: { id: WORKSPACE_MEMBER_ID } },
+  byId: {
+    [WORKSPACE_MEMBER_ID]: { id: WORKSPACE_MEMBER_ID },
+    [DELETED_WORKSPACE_MEMBER_ID]: {
+      id: DELETED_WORKSPACE_MEMBER_ID,
+      deletedAt: '2026-09-01T00:00:00.000Z',
+    },
+  },
   idByUserId: {},
 } as unknown as FlatWorkspaceMemberMaps;
 
@@ -41,6 +48,21 @@ describe('validateShareWithPrincipalsOrThrow', () => {
         shareWith: [
           {
             workspaceMemberId: UNKNOWN_ID,
+            accessLevel: RecordShareAccessLevel.READ,
+          },
+        ],
+        flatWorkspaceMemberMaps,
+        flatRoleMaps,
+      }),
+    ).toThrow('workspace member that does not belong to this workspace');
+  });
+
+  it('should reject a soft-deleted workspace member', () => {
+    expect(() =>
+      validateShareWithPrincipalsOrThrow({
+        shareWith: [
+          {
+            workspaceMemberId: DELETED_WORKSPACE_MEMBER_ID,
             accessLevel: RecordShareAccessLevel.READ,
           },
         ],
