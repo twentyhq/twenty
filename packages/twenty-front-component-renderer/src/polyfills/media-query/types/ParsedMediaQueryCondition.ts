@@ -13,9 +13,6 @@ export type ParsedMediaQueryCondition =
       source: MediaQueryNumericSource;
     }
   | {
-      kind: 'always-matching';
-    }
-  | {
       kind: 'keyword';
       featureName: string;
       value: string;

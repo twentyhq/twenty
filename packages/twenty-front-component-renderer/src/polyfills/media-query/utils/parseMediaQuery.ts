@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CSS_WHITESPACE_CHARACTER_CLASS } from '@/polyfills/media-query/constants/CssWhitespaceCharacterClass';
 import { MATCHING_MEDIA_TYPES } from '@/polyfills/media-query/constants/MatchingMediaTypes';
@@ -38,7 +38,17 @@ export const parseMediaQuery = (
     trimCssWhitespace(firstQueryPart),
   );
 
-  if (modifier === 'only' && remainingFirstPart.startsWith('(')) {
+  const startsWithCondition = remainingFirstPart.startsWith('(');
+
+  if (modifier === 'only' && startsWithCondition) {
+    return null;
+  }
+
+  if (
+    modifier === 'not' &&
+    startsWithCondition &&
+    isNonEmptyArray(followingQueryParts)
+  ) {
     return null;
   }
 

@@ -5,17 +5,17 @@ import { type MediaQueryNumericFeature } from '@/polyfills/media-query/types/Med
 import { type ParsedMediaQueryCondition } from '@/polyfills/media-query/types/ParsedMediaQueryCondition';
 import { trimCssWhitespace } from '@/polyfills/media-query/utils/trimCssWhitespace';
 
-type CreateMediaQueryRangeConditionInput = {
+type CreateMediaQueryNumericConditionInput = {
   feature: MediaQueryNumericFeature;
   operator: MediaQueryComparisonOperator;
   valueString: string;
 };
 
-export const createMediaQueryRangeCondition = ({
+export const createMediaQueryNumericCondition = ({
   feature,
   operator,
   valueString,
-}: CreateMediaQueryRangeConditionInput): ParsedMediaQueryCondition | null => {
+}: CreateMediaQueryNumericConditionInput): ParsedMediaQueryCondition | null => {
   const value = feature.parseValue(trimCssWhitespace(valueString));
 
   if (!isDefined(value)) {

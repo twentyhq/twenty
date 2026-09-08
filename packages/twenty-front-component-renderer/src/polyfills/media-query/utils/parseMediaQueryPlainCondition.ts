@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MEDIA_QUERY_KEYWORD_FEATURES } from '@/polyfills/media-query/constants/MediaQueryKeywordFeatures';
 import { type ParsedMediaQueryCondition } from '@/polyfills/media-query/types/ParsedMediaQueryCondition';
+import { createMediaQueryNumericCondition } from '@/polyfills/media-query/utils/createMediaQueryNumericCondition';
 import { parseMediaQueryNumericFeatureName } from '@/polyfills/media-query/utils/parseMediaQueryNumericFeatureName';
 
 type ParseMediaQueryPlainConditionInput = {
@@ -27,16 +28,9 @@ export const parseMediaQueryPlainCondition = ({
     return null;
   }
 
-  const value = numericFeatureName.feature.parseValue(featureValue);
-
-  if (!isDefined(value)) {
-    return null;
-  }
-
-  return {
-    kind: 'numeric',
-    source: numericFeatureName.feature.source,
+  return createMediaQueryNumericCondition({
+    feature: numericFeatureName.feature,
     operator: numericFeatureName.operator,
-    value,
-  };
+    valueString: featureValue,
+  });
 };
