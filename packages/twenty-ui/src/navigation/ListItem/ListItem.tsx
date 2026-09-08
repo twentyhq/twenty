@@ -35,6 +35,7 @@ export const ListItem = ({
 
   const handleClick = (event: MouseEvent<HTMLDivElement>) => {
     if (disabled) {
+      event.preventDefault();
       return;
     }
 

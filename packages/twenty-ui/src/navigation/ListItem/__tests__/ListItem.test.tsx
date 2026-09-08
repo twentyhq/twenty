@@ -96,6 +96,33 @@ describe('ListItem', () => {
     expect(item).toHaveAttribute('data-disabled');
   });
 
+  it('cancels the native action of a disabled polymorphic root', async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+    const onAncestorClick = vi.fn();
+
+    const { container } = render(
+      <ListItem
+        disabled
+        onClick={onClick}
+        render={<a href="#target" aria-label="Item link" />}
+      >
+        Item
+      </ListItem>,
+    );
+
+    container.addEventListener('click', onAncestorClick);
+
+    await user.click(screen.getByText('Item'));
+
+    expect(screen.getByText('Item').closest('a')).toHaveAttribute(
+      'href',
+      '#target',
+    );
+    expect(onClick).not.toHaveBeenCalled();
+    expect(onAncestorClick.mock.calls[0][0].defaultPrevented).toBe(true);
+  });
+
   it('exposes its state as data attributes', () => {
     const { rerender } = render(<ListItem data-testid="item">Item</ListItem>);
 
