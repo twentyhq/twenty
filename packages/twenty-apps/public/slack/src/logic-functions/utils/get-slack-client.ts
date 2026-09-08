@@ -5,7 +5,8 @@ import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connecti
 export const getSlackClient = async (
   options?: WebClientOptions,
 ): Promise<
-  { success: true; client: WebClient } | { success: false; error: string }
+  | { success: true; client: WebClient; connectionId: string }
+  | { success: false; error: string }
 > => {
   const connectionResult = await getSlackConnection();
 
@@ -16,5 +17,6 @@ export const getSlackClient = async (
   return {
     success: true,
     client: new WebClient(connectionResult.accessToken, options),
+    connectionId: connectionResult.connectionId,
   };
 };

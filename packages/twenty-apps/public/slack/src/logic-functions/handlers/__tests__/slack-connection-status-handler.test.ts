@@ -28,6 +28,7 @@ describe('slackConnectionStatusHandler', () => {
     vi.mocked(getSlackClient).mockResolvedValue({
       success: true,
       client: {} as WebClient,
+      connectionId: 'connected-account-1',
     });
     vi.mocked(resolveSlackConnectionHealth).mockResolvedValue({
       connectionHealth: 'ok',
