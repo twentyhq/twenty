@@ -1,5 +1,6 @@
 import { type WebClient } from '@slack/web-api';
 
+import { SLACK_ASSISTANT_CONTEXT_REQUEST_TIMEOUT_MS } from 'src/logic-functions/constants/slack-assistant-context-request-timeout-ms';
 import { SLACK_ASSISTANT_CONTEXT_TIMEOUT_MS } from 'src/logic-functions/constants/slack-assistant-context-timeout-ms';
 import { type SlackAssistantAgentMessage } from 'src/logic-functions/types/slack-assistant-agent-message.type';
 import { type SlackThreadMessage } from 'src/logic-functions/types/slack-thread-message.type';
@@ -100,7 +101,9 @@ export const fetchSlackAssistantContext = async ({
   const contextDeadlineAtMs = Date.now() + SLACK_ASSISTANT_CONTEXT_TIMEOUT_MS;
 
   const slackClientResult = await runWithTimeout({
-    operation: getSlackClient(),
+    operation: getSlackClient({
+      timeout: SLACK_ASSISTANT_CONTEXT_REQUEST_TIMEOUT_MS,
+    }),
     timeoutMs: SLACK_ASSISTANT_CONTEXT_TIMEOUT_MS,
     buildTimeoutValue: () => {
       console.warn(

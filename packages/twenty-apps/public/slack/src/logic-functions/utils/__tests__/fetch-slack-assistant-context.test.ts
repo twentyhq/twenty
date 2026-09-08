@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { SLACK_ASSISTANT_CONTEXT_REQUEST_TIMEOUT_MS } from 'src/logic-functions/constants/slack-assistant-context-request-timeout-ms';
 import { SLACK_ASSISTANT_CONTEXT_TIMEOUT_MS } from 'src/logic-functions/constants/slack-assistant-context-timeout-ms';
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
 
@@ -79,6 +80,14 @@ describe('fetchSlackAssistantContext', () => {
     expect(context.isDirectMessage).toBe(true);
     expect(context.slackClient).toBe(SLACK_CLIENT);
     expect(context.threadMessages).toHaveLength(1);
+  });
+
+  it('should give thread reads a request timeout that fits a full page of replies', async () => {
+    await fetchSlackAssistantContext(CONTEXT_ARGS);
+
+    expect(getSlackClientMock).toHaveBeenCalledWith({
+      timeout: SLACK_ASSISTANT_CONTEXT_REQUEST_TIMEOUT_MS,
+    });
   });
 
   it('should give up on a slow Slack read instead of spending the agent budget', async () => {
