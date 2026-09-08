@@ -6,6 +6,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 const POLL_INTERVAL_MS = 25;
 const REQUIRED_CONSECUTIVE_QUIET_CHECKS = 2;
 const STALL_TIMEOUT_MS = 15_000;
+const DELAYED_JOB_PAGE_SIZE = 50;
 const HARD_TIMEOUT_MS = 120_000;
 const PENDING_JOB_STATES = [
   'waiting',
@@ -14,6 +15,11 @@ const PENDING_JOB_STATES = [
   'waiting-children',
   'delayed',
 ] as const;
+
+type PendingJobCounts = {
+  pending: number;
+  delayed: number;
+};
 
 let redisConnection: IORedis | null = null;
 let queues: Queue[] | null = null;
@@ -35,7 +41,7 @@ const getQueues = (): Queue[] => {
 };
 
 const getPendingJobCountsByQueue = async (): Promise<
-  Record<string, number>
+  Record<string, PendingJobCounts>
 > => {
   const countsByQueue = await Promise.all(
     getQueues().map(async (queue) => {
@@ -45,12 +51,29 @@ const getPendingJobCountsByQueue = async (): Promise<
         0,
       );
 
-      return [queue.name, pendingCount] as const;
+      return [
+        queue.name,
+        { pending: pendingCount, delayed: jobCounts.delayed ?? 0 },
+      ] as const;
     }),
   );
 
   return Object.fromEntries(
-    countsByQueue.filter(([, pendingCount]) => pendingCount > 0),
+    countsByQueue.filter(([, { pending }]) => pending > 0),
+  );
+};
+
+const promoteDelayedJobs = async (busyQueueNames: string[]): Promise<void> => {
+  await Promise.all(
+    getQueues()
+      .filter((queue) => busyQueueNames.includes(queue.name))
+      .map(async (queue) => {
+        const delayedJobs = await queue.getDelayed(0, DELAYED_JOB_PAGE_SIZE);
+
+        await Promise.all(
+          delayedJobs.map((job) => job.promote().catch(() => undefined)),
+        );
+      }),
   );
 };
 
@@ -79,7 +102,11 @@ export const waitForAllJobsToFinish = async (): Promise<void> => {
   while (consecutiveQuietChecks < REQUIRED_CONSECUTIVE_QUIET_CHECKS) {
     const pendingJobCountsByQueue = await getPendingJobCountsByQueue();
     const pendingTotal = Object.values(pendingJobCountsByQueue).reduce(
-      (sum, count) => sum + count,
+      (sum, { pending }) => sum + pending,
+      0,
+    );
+    const delayedTotal = Object.values(pendingJobCountsByQueue).reduce(
+      (sum, { delayed }) => sum + delayed,
       0,
     );
 
@@ -88,6 +115,19 @@ export const waitForAllJobsToFinish = async (): Promise<void> => {
     } else {
       consecutiveQuietChecks = 0;
       const now = Date.now();
+
+      if (now - startedAt > HARD_TIMEOUT_MS) {
+        throw new Error(
+          `Message queues still busy after ${HARD_TIMEOUT_MS}ms, pending jobs: ${JSON.stringify(pendingJobCountsByQueue)}`,
+        );
+      }
+
+      if (pendingTotal === delayedTotal) {
+        await promoteDelayedJobs(Object.keys(pendingJobCountsByQueue));
+        lastProgressAt = now;
+        await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+        continue;
+      }
 
       const activeJobsFingerprint = await getActiveJobsFingerprint(
         Object.keys(pendingJobCountsByQueue),
@@ -102,12 +142,6 @@ export const waitForAllJobsToFinish = async (): Promise<void> => {
       if (now - lastProgressAt > STALL_TIMEOUT_MS) {
         throw new Error(
           `Message queues stalled, no progress for ${STALL_TIMEOUT_MS}ms, pending jobs: ${JSON.stringify(pendingJobCountsByQueue)}`,
-        );
-      }
-
-      if (now - startedAt > HARD_TIMEOUT_MS) {
-        throw new Error(
-          `Message queues still busy after ${HARD_TIMEOUT_MS}ms, pending jobs: ${JSON.stringify(pendingJobCountsByQueue)}`,
         );
       }
     }
