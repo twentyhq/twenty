@@ -138,6 +138,10 @@ export class InboxItemTypeService {
         label: standardType.label,
         icon: standardType.icon,
         defaultPriority: standardType.defaultPriority,
+        // A standard type that was soft deleted comes back on the next seed.
+        // Leaving deletedAt set would strand it: every read filters it out, so
+        // findByKey would re-seed and still find nothing, on every call.
+        deletedAt: null,
       })),
       { conflictPaths: ['workspaceId', 'universalIdentifier'] },
     );

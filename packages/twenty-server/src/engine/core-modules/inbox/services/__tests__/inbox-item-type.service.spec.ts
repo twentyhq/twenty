@@ -162,6 +162,24 @@ describe('InboxItemTypeService', () => {
       });
     });
 
+    // A standard type that was soft deleted is stranded without this: every read
+    // filters on deletedAt, so findByKey would re-seed and still find nothing
+    it('should clear deletedAt so a soft deleted standard type comes back', async () => {
+      await service.seedStandardTypes({ workspaceId: WORKSPACE_ID });
+
+      const [, upsertedTypes] = inboxItemTypeRepository.upsert.mock.calls[0];
+
+      expect(upsertedTypes).toEqual(
+        expect.arrayContaining([expect.objectContaining({ deletedAt: null })]),
+      );
+      expect(
+        upsertedTypes.every(
+          (upsertedType: { deletedAt: Date | null }) =>
+            upsertedType.deletedAt === null,
+        ),
+      ).toBe(true);
+    });
+
     it('should do nothing when the twenty standard application row is absent', async () => {
       applicationRepository.findOne.mockResolvedValue(null);
 
