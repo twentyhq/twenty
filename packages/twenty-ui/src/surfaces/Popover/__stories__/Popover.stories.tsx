@@ -9,6 +9,7 @@ import {
   type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
+import { ThemeProvider } from '@ui/theme-constants/ThemeProvider';
 
 import { Popover } from '../Popover';
 import { type PopoverPopupProps } from '../types/PopoverPopupProps';
@@ -16,13 +17,17 @@ import { type PopoverRootProps } from '../types/PopoverRootProps';
 import { type PopoverSide } from '../types/PopoverSide';
 
 type PopoverStoryProps = PopoverRootProps &
-  Pick<PopoverPopupProps, 'side' | 'align' | 'arrow' | 'keepMounted'>;
+  Pick<
+    PopoverPopupProps,
+    'side' | 'align' | 'arrow' | 'keepMounted' | 'container'
+  >;
 
 const PopoverStory = ({
   side,
   align,
   arrow,
   keepMounted,
+  container,
   ...props
 }: PopoverStoryProps) => (
   <>
@@ -37,6 +42,7 @@ const PopoverStory = ({
         align={align}
         arrow={arrow}
         keepMounted={keepMounted}
+        container={container}
       >
         <Popover.Title>Details</Popover.Title>
         <Popover.Description>More information</Popover.Description>
@@ -67,6 +73,26 @@ export const Default: Story = {
     const body = within(canvasElement.ownerDocument.body);
     const trigger = canvas.getByRole('button', { name: 'Open' });
 
+    await step('Render an initially open dialog in the body', async () => {
+      const dialog = await body.findByRole('dialog', {
+        name: 'Details',
+        description: 'More information',
+      });
+      expect(canvasElement.ownerDocument.body).toContainElement(dialog);
+      expect(canvasElement).not.toContainElement(dialog);
+      expect(trigger).toHaveAttribute('aria-expanded', 'true');
+      expect(trigger).toHaveAttribute('aria-controls', dialog.id);
+      expect(dialog).toHaveAttribute(
+        'aria-labelledby',
+        body.getByRole('heading', { name: 'Details' }).id,
+      );
+      expect(dialog).toHaveAttribute(
+        'aria-describedby',
+        body.getByText('More information').id,
+      );
+      expect(dialog.querySelectorAll(':scope > [data-side]')).toHaveLength(0);
+    });
+
     await step('Close with the close button', async () => {
       await userEvent.click(body.getByRole('button', { name: 'Close' }));
       await waitFor(() =>
@@ -95,10 +121,95 @@ export const Default: Story = {
     await waitFor(() => expect(body.getByRole('dialog')).toBeVisible());
   },
 };
+
+const ArrowPopoverStory = (props: PopoverStoryProps) => {
+  const [arrow, setArrow] = useState(true);
+
+  return (
+    <div style={{ paddingTop: 160, paddingInlineStart: 160 }}>
+      <PopoverStory {...props} open arrow={arrow} />
+      <button type="button" onClick={() => setArrow(!arrow)}>
+        Toggle arrow
+      </button>
+    </div>
+  );
+};
+
 export const WithArrow: Story = {
   ...Default,
-  args: { defaultOpen: true, arrow: true },
+  args: { side: 'top', align: 'end' },
+  parameters: { container: { width: 480, height: 400 } },
+  render: (args) => <ArrowPopoverStory {...args} />,
+  play: async ({ canvasElement }) => {
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole(
+      'dialog',
+    );
+    await waitFor(() => expect(dialog).toHaveAttribute('data-side', 'top'));
+    expect(dialog).toHaveAttribute('data-align', 'end');
+    expect(dialog.querySelectorAll(':scope > [data-side]')).toHaveLength(1);
+    const toggle = within(canvasElement).getByRole('button', {
+      name: 'Toggle arrow',
+    });
+    await userEvent.click(toggle);
+    expect(dialog.querySelectorAll(':scope > [data-side]')).toHaveLength(0);
+    await userEvent.click(toggle);
+    expect(dialog.querySelectorAll(':scope > [data-side]')).toHaveLength(1);
+  },
 };
+
+const ExplicitContainerPopoverStory = (props: PopoverStoryProps) => {
+  const [container, setContainer] = useState<HTMLDivElement | null>(null);
+
+  return (
+    <>
+      <PopoverStory {...props} container={container} />
+      <div ref={setContainer} role="region" aria-label="Popover portal" />
+    </>
+  );
+};
+
+export const ExplicitContainer: Story = {
+  ...Default,
+  args: { open: true },
+  render: (args) => <ExplicitContainerPopoverStory {...args} />,
+  play: async ({ canvasElement }) => {
+    const container = within(canvasElement).getByRole('region', {
+      name: 'Popover portal',
+    });
+    expect(
+      await within(container).findByRole('dialog', { name: 'Details' }),
+    ).toBeVisible();
+  },
+};
+
+export const ScopedTheme: Story = {
+  ...Default,
+  args: { open: true },
+  render: (args) => (
+    <section aria-label="Scoped dark theme">
+      <ThemeProvider colorScheme="dark" applyToRoot={false}>
+        <div
+          style={{
+            background: 'var(--t-background-primary)',
+            width: 240,
+            height: 200,
+          }}
+        >
+          <PopoverStory {...args} />
+        </div>
+      </ThemeProvider>
+    </section>
+  ),
+  play: async ({ canvasElement }) => {
+    const scope = within(canvasElement).getByRole('region', {
+      name: 'Scoped dark theme',
+    });
+    expect(
+      await within(scope).findByRole('dialog', { name: 'Details' }),
+    ).toBeVisible();
+  },
+};
+
 export const TrapFocus: Story = {
   ...Default,
   args: { modal: 'trap-focus' },
