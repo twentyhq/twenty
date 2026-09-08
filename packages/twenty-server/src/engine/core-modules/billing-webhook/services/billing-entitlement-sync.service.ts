@@ -79,11 +79,26 @@ export class BillingEntitlementSyncService {
     // first is the direction that fails closed: a failure here leaves rows
     // filtered by predicates that outlived the feature, not unfiltered.
     // Asked on every pass rather than on the revoke transition, so a failure
-    // is retried once the stored row already reads as revoked.
+    // is retried once the stored row already reads as revoked. Re-read rather
+    // than trust the snapshot this sync computed: a concurrent grant that
+    // committed after our upsert would otherwise have its predicates deleted
+    // here, which is the one direction that leaves the feature on with nothing
+    // to filter by.
     if (!isGranted(BillingEntitlementKey.RLS)) {
-      await this.rowLevelPermissionPredicateGroupService.deleteAllRowLevelPermissionPredicateGroups(
-        workspaceId,
+      const storedEntitlementsAfterUpsert =
+        await this.billingEntitlementRepository.find(workspaceId);
+
+      const isStillRevoked = !storedEntitlementsAfterUpsert.some(
+        (entitlement) =>
+          entitlement.key === BillingEntitlementKey.RLS &&
+          entitlement.value === true,
       );
+
+      if (isStillRevoked) {
+        await this.rowLevelPermissionPredicateGroupService.deleteAllRowLevelPermissionPredicateGroups(
+          workspaceId,
+        );
+      }
     }
 
     return billingEntitlements.map(({ key, value }) => ({ key, value }));
