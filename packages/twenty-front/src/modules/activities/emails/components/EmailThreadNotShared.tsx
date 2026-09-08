@@ -48,7 +48,7 @@ export const EmailThreadNotShared = ({
       {visibility === MessageChannelVisibility.SUBJECT && (
         <AppTooltip
           anchorSelect={`#${containerId}`}
-          content={t`Only the subject is shared`}
+          title={t`Only the subject is shared`}
           delay={TooltipDelay.mediumDelay}
           noArrow
           place="bottom"

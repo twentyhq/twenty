@@ -71,7 +71,7 @@ export const MenuPicker = ({
         <AppTooltip
           anchorSelect={`#${id}`}
           offset={tooltipOffset}
-          content={tooltipContent}
+          title={tooltipContent}
           place={TooltipPosition.Bottom}
           positionStrategy="fixed"
           delay={tooltipDelay}

@@ -98,7 +98,7 @@ A plan only previews **metadata** changes. It also works for an app that was nev
 ## Pulling an installed app back to source
 
 <Warning>
-`yarn twenty pull` is **experimental**. It covers only part of an application today, its output shape may change between releases, and it overwrites the files that define the entities it pulls. It does not restore translations yet, so pushing a pulled tree replaces the app's published translations with whatever your `locales/` folder holds. Commit your work before running it, and review the diff.
+`yarn twenty pull` is **experimental**. It covers only part of an application today, its output shape may change between releases, and it overwrites the files that define the entities it pulls. It restores published translations into `locales/`, keeping the entries whose source strings are not in your tree yet in `locales/compiled/` so that a push does not lose them. Commit your work before running it, and review the diff.
 </Warning>
 
 `yarn twenty pull` is the inverse of `apply`: it reads an application out of the workspace and writes it back as define files.
@@ -114,7 +114,8 @@ Pull needs an existing project — scaffold one with `npx create-twenty-app@late
 - the application config;
 - objects, with their fields inline;
 - fields your app added to objects it does not own;
-- authored indexes.
+- authored indexes;
+- published translations, as `locales/<locale>.json` for the strings pull can read back from the pulled metadata and source, and `locales/compiled/<locale>.json` for the rest.
 
 Each entity goes to the file that already defines it, so a second pull rewrites only what changed on the server. New entities are placed beside existing files of their kind, and a generated name that would land on an unrelated file is qualified rather than overwriting it.
 

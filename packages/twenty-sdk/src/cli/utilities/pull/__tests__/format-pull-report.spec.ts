@@ -143,4 +143,21 @@ describe('formatPullReport', () => {
     );
     expect(report).toContain('src/objects/unpushed.object.ts');
   });
+
+  it('should list the locales whose entries stayed in compiled form', () => {
+    const report = buildReport({
+      compiledTranslationEntryCountByLocale: { 'fr-FR': 3, en: 1 },
+    });
+
+    expect(report).toContain('locales/compiled/');
+    expect(report).toMatch(/^ {2}en {11}1 entry$/m);
+    expect(report).toMatch(/^ {2}fr-FR {8}3 entries$/m);
+  });
+
+  it('should stay silent about compiled translations when every entry was decoded', () => {
+    expect(buildReport()).not.toContain('compiled form');
+    expect(
+      buildReport({ compiledTranslationEntryCountByLocale: { 'fr-FR': 0 } }),
+    ).not.toContain('compiled form');
+  });
 });
