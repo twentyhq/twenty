@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
@@ -31,7 +31,7 @@ export const findMatchingCalendarEventOrThrow = async ({
     const connection = result.calendarChannelEventAssociations;
     if (
       isDefined(connection) &&
-      (connection.pageInfo.hasNextPage || connection.edges.length > 0)
+      (connection.pageInfo.hasNextPage || isNonEmptyArray(connection.edges))
     ) {
       return getUnambiguousCalendarEventIdFromConnection(connection);
     }
@@ -45,7 +45,7 @@ export const findMatchingCalendarEventOrThrow = async ({
   ];
   if (
     !isNonEmptyString(calendarEvent.scheduled_start_time) ||
-    inviteeEmails.length === 0
+    !isNonEmptyArray(inviteeEmails)
   ) {
     return undefined;
   }

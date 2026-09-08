@@ -1,5 +1,6 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
-import { isDefined } from 'twenty-sdk/utils';
+
+import { doesCallRecordingMatchFilterOrThrow } from 'src/logic-functions/utils/does-call-recording-match-filter-or-throw.util';
 
 export const doesCallRecordingExistOrThrow = async ({
   coreApiClient,
@@ -7,16 +8,8 @@ export const doesCallRecordingExistOrThrow = async ({
 }: {
   coreApiClient: Pick<CoreApiClient, 'query'>;
   callRecordingId: string;
-}): Promise<boolean> => {
-  const queryResult = await coreApiClient.query({
-    callRecordings: {
-      __args: {
-        filter: { id: { eq: callRecordingId } },
-        first: 1,
-      },
-      edges: { node: { id: true } },
-    },
+}): Promise<boolean> =>
+  doesCallRecordingMatchFilterOrThrow({
+    coreApiClient,
+    filter: { id: { eq: callRecordingId } },
   });
-
-  return isDefined(queryResult.callRecordings?.edges?.[0]?.node);
-};
