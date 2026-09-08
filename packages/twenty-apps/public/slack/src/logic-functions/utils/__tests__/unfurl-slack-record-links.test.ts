@@ -73,7 +73,7 @@ const RECORD_LINK = {
   recordId: '20202020-0000-0000-0000-000000000002',
 };
 
-const BODY = {} as SlackEventsRequestBody;
+const BODY: SlackEventsRequestBody = {};
 
 describe('unfurlSlackRecordLinks', () => {
   beforeEach(() => {

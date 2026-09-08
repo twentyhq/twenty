@@ -32,10 +32,7 @@ export class RunAsWorkspaceMemberTokenService {
     workspaceMemberId: string;
     isDelegatedToUser: boolean;
   }): Promise<AuthToken> {
-    // Permissions for an application acting as a member are the intersection of
-    // both roles, and resolveRoleIdsForUser falls back to the member's role
-    // alone when the application declares none, which would widen rather than
-    // narrow what the calling token reaches.
+    // resolveRoleIdsForUser falls back to the member's role alone when the application has none, which would widen the caller's reach.
     if (!isDefined(application.defaultRoleId)) {
       throw new AuthException(
         'An application without a default role cannot act as a workspace member.',
@@ -46,8 +43,7 @@ export class RunAsWorkspaceMemberTokenService {
       );
     }
 
-    // A token already issued for a user has nothing left to narrow, so the only
-    // thing this endpoint could give it is a fresh expiry on its own scope.
+    // A caller that already carries a user has nothing to narrow; granting it would only refresh its own expiry.
     if (isDelegatedToUser) {
       throw new AuthException(
         'An application token issued for a user cannot request a member-scoped token.',

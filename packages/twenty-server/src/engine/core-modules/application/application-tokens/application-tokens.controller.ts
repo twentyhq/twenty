@@ -29,9 +29,7 @@ import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-// Belt-and-suspenders on top of LogicFunctionExecutorService's execution
-// throttle: application-access tokens are JWTs usable outside the runtime, and
-// this route mints credentials.
+// Application access tokens are JWTs usable outside the runtime, so a credential-minting route gets its own throttle.
 const RUN_AS_WORKSPACE_MEMBER_THROTTLE_LIMIT = 1000;
 const RUN_AS_WORKSPACE_MEMBER_THROTTLE_TTL_MS = 60_000;
 
@@ -45,10 +43,6 @@ export class ApplicationTokensController {
     private readonly throttlerService: ThrottlerService,
   ) {}
 
-  // A webhook gives a logic function no user context, so a function acting on
-  // somebody's behalf otherwise reads with the app's own role. The returned
-  // token carries both the application and the member, whose permissions are
-  // the intersection of the two roles.
   @Post('run-as-workspace-member')
   @HttpCode(HttpStatus.OK)
   async runAsWorkspaceMember(

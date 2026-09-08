@@ -17,8 +17,7 @@ const ROLED_APP_UNIVERSAL_IDENTIFIER = randomUUID();
 const ROLED_APP_ROLE_UNIVERSAL_IDENTIFIER = randomUUID();
 const ROLELESS_APP_UNIVERSAL_IDENTIFIER = randomUUID();
 
-// APPLE_JANE_ADMIN_ACCESS_TOKEN is issued for Jane, so a token generated with
-// it is delegated to her.
+// A token generated with APPLE_JANE_ADMIN_ACCESS_TOKEN is delegated to Jane.
 const DELEGATED_WORKSPACE_MEMBER_ID = WORKSPACE_MEMBER_DATA_SEED_IDS.JANE;
 const OTHER_WORKSPACE_MEMBER_ID = WORKSPACE_MEMBER_DATA_SEED_IDS.JONY;
 
@@ -39,8 +38,7 @@ const buildRolelessManifest = (): Manifest => ({
   roles: [],
 });
 
-// The manifest type requires a default role identifier, so the roleless state
-// is produced on the row the endpoint actually reads.
+// The manifest type requires a default role, so the roleless state is produced on the row itself.
 const clearApplicationDefaultRole = async (applicationId: string) => {
   await globalThis.testDataSource.query(
     `UPDATE core."application" SET "defaultRoleId" = NULL WHERE id = $1`,
@@ -185,8 +183,7 @@ describe('POST /app/tokens/run-as-workspace-member', () => {
     expect(response.body.token.length).toBeGreaterThan(0);
   });
 
-  // Granting this would only reset the caller's own expiry, since a delegated
-  // token already reaches exactly what the issued one would.
+  // A delegated token already reaches what the issued one would; granting it would only reset its expiry.
   it('should refuse a delegated caller asking for its own member', async () => {
     const response = await runAsWorkspaceMember({
       token: delegatedToken,
@@ -207,8 +204,7 @@ describe('POST /app/tokens/run-as-workspace-member', () => {
     expect(response.body.token).toBeUndefined();
   });
 
-  // Without a role of its own the application would read with the member's
-  // full role instead of the intersection of both.
+  // Without a role of its own the application would read with the member's full role instead of the intersection.
   it('should refuse an application that declares no default role', async () => {
     const response = await runAsWorkspaceMember({
       token: rolelessApplicationOnlyToken,

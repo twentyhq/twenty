@@ -10,9 +10,7 @@ const RUN_AS_WORKSPACE_MEMBER_TOKEN_TIMEOUT_MS = 5_000;
 
 type RunAsWorkspaceMemberTokenResponse = { token?: string };
 
-// Reads with this client resolve to the intersection of the app role and the
-// member's own role. Returns undefined rather than falling back to the app
-// role, so a preview the member may not see is skipped instead of shown.
+// No fallback to the app role: a preview the member may not see is skipped rather than shown.
 export const createWorkspaceMemberCoreClient = async (
   workspaceMemberId: string,
 ): Promise<CoreApiClient | undefined> => {

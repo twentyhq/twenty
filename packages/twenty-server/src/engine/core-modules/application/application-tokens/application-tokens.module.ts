@@ -7,9 +7,7 @@ import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.mod
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
-// TokenModule + WorkspaceCacheStorageModule are pulled in for the controller's
-// JwtAuthGuard, on top of TokenModule's ApplicationTokenService doing the
-// signing.
+// TokenModule and WorkspaceCacheStorageModule resolve the controller's JwtAuthGuard.
 @Module({
   imports: [
     TokenModule,

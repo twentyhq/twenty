@@ -335,11 +335,11 @@ included, so the panel is likewise gated on the viewer mapping to a workspace
 member and read with that viewer's permissions, and everyone else gets a short
 notice instead.
 
-That token reads data on the member's behalf and nothing more: the server
-refuses it on everything bound to a person's own identity, such as their
+That token acts within the intersection of both roles and nothing more: the
+server refuses it on everything bound to a person's own identity, such as their
 account, their sessions and their two-factor settings.
 
-The member-scoped token needs Twenty 2.39.0 or newer. The app installs on 2.38.0
+The member-scoped token needs Twenty 2.40.0 or newer. The app installs on 2.38.0
 and everything else in it works there, but record link previews do not render
 until the server can issue that token, since reading with the app's own role
 instead is the thing this avoids.
