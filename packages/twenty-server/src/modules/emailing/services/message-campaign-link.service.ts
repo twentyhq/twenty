@@ -94,6 +94,30 @@ export class MessageCampaignLinkService {
     });
   }
 
+  async countUniqueClickedRecipients({
+    workspaceId,
+    messageCampaignId,
+  }: {
+    workspaceId: string;
+    messageCampaignId: string;
+  }): Promise<number> {
+    const countRow = await this.messageCampaignLinkClickRepository
+      .createQueryBuilder('click')
+      .select('COUNT(DISTINCT click."messageId")', 'uniqueClickedRecipients')
+      .innerJoin(
+        MessageCampaignLinkEntity,
+        'link',
+        'link.id = click."messageCampaignLinkId"',
+      )
+      .where('link."workspaceId" = :workspaceId', { workspaceId })
+      .andWhere('link."messageCampaignId" = :messageCampaignId', {
+        messageCampaignId,
+      })
+      .getRawOne<{ uniqueClickedRecipients: string }>();
+
+    return Number(countRow?.uniqueClickedRecipients ?? 0);
+  }
+
   private hashUrl(url: string): string {
     return createHash('sha256').update(url).digest('hex');
   }

@@ -25,6 +25,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { MessageCampaignLinkService } from 'src/modules/emailing/services/message-campaign-link.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 
 const RECONCILIATION_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
@@ -40,6 +41,7 @@ export class MessageCampaignStatisticsService {
     private readonly messageQueueService: MessageQueueService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleEmailing)
     private readonly cacheStorageService: CacheStorageService,
+    private readonly messageCampaignLinkService: MessageCampaignLinkService,
   ) {}
 
   async scheduleRefresh({
@@ -161,6 +163,12 @@ export class MessageCampaignStatisticsService {
     campaignId: string;
     counts: CampaignCounts;
   }): Promise<void> {
+    const clickedCount =
+      await this.messageCampaignLinkService.countUniqueClickedRecipients({
+        workspaceId,
+        messageCampaignId: campaignId,
+      });
+
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const campaignRepository = this.workspaceOrmManager.getRepository(
         MessageCampaignWorkspaceEntity,
@@ -177,6 +185,7 @@ export class MessageCampaignStatisticsService {
           skippedCount: true,
           bouncedCount: true,
           complainedCount: true,
+          clickedCount: true,
         },
       });
 
@@ -191,6 +200,7 @@ export class MessageCampaignStatisticsService {
         skippedCount: counts.skippedCount,
         bouncedCount: counts.bouncedCount,
         complainedCount: counts.complainedCount,
+        clickedCount,
       };
 
       const storedCounts = {
@@ -200,6 +210,7 @@ export class MessageCampaignStatisticsService {
         skippedCount: campaign.skippedCount,
         bouncedCount: campaign.bouncedCount,
         complainedCount: campaign.complainedCount,
+        clickedCount: campaign.clickedCount,
       };
 
       if (fastDeepEqual(storedCounts, nextCounts)) {

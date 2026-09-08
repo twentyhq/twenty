@@ -7,8 +7,13 @@ export const replaceTrackableLinkUrls = (
   html: string,
   trackedUrlByUrl: Map<string, string>,
 ): string =>
-  html.replaceAll(TRACKABLE_HREF_PATTERN, (href, quote, rawUrl) => {
-    const trackedUrl = trackedUrlByUrl.get(decodeHtmlAttributeUrl(rawUrl));
+  html.replace(
+    TRACKABLE_HREF_PATTERN,
+    (href: string, quote: string, rawUrl: string) => {
+      const trackedUrl = trackedUrlByUrl.get(decodeHtmlAttributeUrl(rawUrl));
 
-    return isDefined(trackedUrl) ? `href=${quote}${trackedUrl}${quote}` : href;
-  });
+      return isDefined(trackedUrl)
+        ? `href=${quote}${trackedUrl}${quote}`
+        : href;
+    },
+  );

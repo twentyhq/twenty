@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { AddMessageCampaignClickedCountCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788865945541-add-message-campaign-clicked-count.command';
 import { SyncRecordShareObjectCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788794677636-sync-record-share-object.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -17,6 +18,6 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     WorkspaceMigrationRunnerModule,
     WorkspaceSchemaMigrationRunnerActionHandlersModule,
   ],
-  providers: [SyncRecordShareObjectCommand],
+  providers: [SyncRecordShareObjectCommand, AddMessageCampaignClickedCountCommand],
 })
 export class V2_40_UpgradeVersionCommandModule {}

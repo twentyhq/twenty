@@ -576,6 +576,9 @@ export const STANDARD_OBJECT_FIELDS = {
     skippedCount: {
       universalIdentifier: 'a1f4c6d2-5e8b-4a37-9c60-31b7f0d2a984',
     },
+    clickedCount: {
+      universalIdentifier: '9c8a97b3-bcbd-45a5-8387-e4aeb462ec32',
+    },
     unsubscribeTopicId: {
       universalIdentifier: '0648e7ad-1769-4ff6-a4d5-72da79ef169c',
     },

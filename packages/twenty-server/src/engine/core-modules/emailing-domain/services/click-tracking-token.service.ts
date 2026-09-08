@@ -75,7 +75,7 @@ export class ClickTrackingTokenService {
   }
 
   private encodeUuid(uuid: string): Buffer {
-    return Buffer.from(uuid.replaceAll('-', ''), 'hex');
+    return Buffer.from(uuid.replace(/-/g, ''), 'hex');
   }
 
   private decodeUuid(buffer: Buffer): string {

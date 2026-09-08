@@ -176,6 +176,18 @@ export const computeStandardMessageCampaignViewFields = (
         size: 150,
       },
     }),
+    allMessageCampaignsClickedCount: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'messageCampaign',
+      context: {
+        viewName: 'allMessageCampaigns',
+        viewFieldName: 'clickedCount',
+        fieldName: 'clickedCount',
+        position: 14,
+        isVisible: true,
+        size: 100,
+      },
+    }),
 
     messageCampaignRecordPageFieldsStatus: createStandardViewFieldFlatMetadata({
       ...args,
@@ -284,6 +296,20 @@ export const computeStandardMessageCampaignViewFields = (
           position: 7,
           isVisible: true,
           size: 120,
+          viewFieldGroupName: 'stats',
+        },
+      }),
+    messageCampaignRecordPageFieldsClickedCount:
+      createStandardViewFieldFlatMetadata({
+        ...args,
+        objectName: 'messageCampaign',
+        context: {
+          viewName: 'messageCampaignRecordPageFields',
+          viewFieldName: 'clickedCount',
+          fieldName: 'clickedCount',
+          position: 8,
+          isVisible: true,
+          size: 100,
           viewFieldGroupName: 'stats',
         },
       }),
