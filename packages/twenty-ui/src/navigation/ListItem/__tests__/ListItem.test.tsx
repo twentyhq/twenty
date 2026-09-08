@@ -157,14 +157,18 @@ describe('ListItem', () => {
       <ListItem
         focused
         render={(props, state) => (
-          <div {...props} data-render-highlighted={state.highlighted} />
+          <div
+            {...props}
+            data-testid="item"
+            data-render-highlighted={state.highlighted}
+          />
         )}
       >
         Item
       </ListItem>,
     );
 
-    expect(screen.getByText('Item').closest('div')).toHaveAttribute(
+    expect(screen.getByTestId('item')).toHaveAttribute(
       'data-render-highlighted',
       'true',
     );
