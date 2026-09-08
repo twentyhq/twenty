@@ -15,7 +15,7 @@ describe('getSubscriptionPlanKey', () => {
       getSubscriptionPlanKey({
         billingSubscriptionItems: [
           subscriptionItem(
-            BillingProductKey.METERED_PRODUCT,
+            BillingProductKey.RESOURCE_CREDIT,
             BillingPlanKey.PRO,
           ),
           subscriptionItem(
