@@ -25,7 +25,7 @@ export class ObjectSeededViewOnCreateSideEffectHandlerService extends MetadataSi
     allFlatEntityOperationRecordByMetadataName,
     context,
   }: BuildSideEffectsArgs<'objectMetadata'>): MetadataSideEffectResult {
-    if (context.buildOptions.isWorkspaceCustomApplicationBuild !== true) {
+    if (!context.buildOptions.isWorkspaceCustomApplicationBuild) {
       return { status: 'success', operations: {} };
     }
 
