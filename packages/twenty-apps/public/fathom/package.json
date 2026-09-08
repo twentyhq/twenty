@@ -1,7 +1,7 @@
 {
   "name": "@twentyhq/fathom",
   "description": "Fathom connector for Twenty: syncs meeting recordings, transcripts, summaries and action items into Call Recordings.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
