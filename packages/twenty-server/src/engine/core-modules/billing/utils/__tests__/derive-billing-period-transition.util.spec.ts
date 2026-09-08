@@ -159,4 +159,28 @@ describe('deriveBillingPeriodTransition', () => {
       new Date('2024-02-01T00:00:00.000Z'),
     );
   });
+
+  // The column is nullable while its type says otherwise. Treating a missing
+  // interval as monthly would settle a yearly subscription against one month of
+  // usage and carry eleven months of allowance forward as unspent.
+  it('refuses to guess a period length when the subscription records no interval', () => {
+    expect(() =>
+      deriveFrom({
+        subscriptionCurrentPeriodStart: FEBRUARY,
+        subscriptionInterval: null,
+      }),
+    ).toThrow(/records no interval/);
+  });
+
+  // Only the calendar fallback needs the interval, so an exact source still
+  // settles correctly without one.
+  it('settles without an interval when the subscription recorded the period start', () => {
+    const result = deriveFrom({
+      subscriptionCurrentPeriodStart: FEBRUARY,
+      subscriptionInterval: null,
+      subscriptionPreviousPeriodStart: JANUARY,
+    });
+
+    expect(result.closingPeriodStart).toEqual(JANUARY);
+  });
 });

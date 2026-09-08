@@ -2,6 +2,11 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
+
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { shiftUtcMonths } from 'src/engine/core-modules/billing/utils/shift-utc-months.util';
 
@@ -41,7 +46,9 @@ const resolveClosingPeriodStart = ({
 }: {
   boundary: Date;
   subscriptionCurrentPeriodStart: Date;
-  subscriptionInterval: SubscriptionInterval;
+  // Nullable on the subscription despite its type. Only the calendar fallback
+  // below needs it, and that branch refuses rather than assuming a length.
+  subscriptionInterval: SubscriptionInterval | null | undefined;
   trialStart: Date | null | undefined;
   isFirstPeriodAfterTrial: boolean;
   subscriptionPreviousPeriodStart: Date | null;
@@ -82,6 +89,19 @@ const resolveClosingPeriodStart = ({
     return ledgerPeriodStart;
   }
 
+  // Nothing on record says where the closing period began, so the only way
+  // left is to step back one interval — and without one there is no honest
+  // guess. Treating a missing interval as monthly would settle a yearly
+  // subscription against a month of usage and roll eleven months of allowance
+  // forward as unspent. Throwing fails the webhook so Stripe redelivers it,
+  // and a settlement that is late beats one that is wrong.
+  if (!isDefined(subscriptionInterval)) {
+    throw new BillingException(
+      `Cannot settle the period closing at ${boundary.toISOString()}: the subscription records no interval and neither it nor the ledger says where the period began`,
+      BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID,
+    );
+  }
+
   // Calendar arithmetic, not the invoiced duration: consecutive periods
   // differ in length, so a February renewal bills 28 days and subtracting
   // those from February 1 would place the closing period at January 4 and
@@ -105,12 +125,14 @@ export const deriveBillingPeriodTransition = ({
   // read, since which period start the ledger is asked for depends on it.
   boundary: Date;
   subscriptionCurrentPeriodStart: Date;
-  subscriptionInterval: SubscriptionInterval;
+  // Nullable on the subscription despite its type. Only the calendar fallback
+  // needs it, and that branch refuses rather than assuming a length.
+  subscriptionInterval: SubscriptionInterval | null | undefined;
   trialStart: Date | null | undefined;
   // A trial ends at a period handover, so this transition closes the trial
-  // exactly when the boundary it settles is the trial end. Read off the
-  // invoice's stamped period instead, an arrears-stamped invoice reports the
-  // start of the window that just closed and never matches.
+  // exactly when the boundary it settles is the trial end. Compared against
+  // that resolved boundary and never against the invoice's stamped period,
+  // which on an arrears-stamped invoice reports the window that just closed.
   trialEnd: Date | null | undefined;
   // Where the subscription recorded the previous period starting, captured when
   // it advanced. Null for a subscription that has not transitioned since the

@@ -1,5 +1,7 @@
 /* @license Enterprise */
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { alignGrantExpiryToPeriodEnd } from 'src/engine/core-modules/billing/utils/align-grant-expiry-to-period-end.util';
 
@@ -148,7 +150,13 @@ describe('alignGrantExpiryToPeriodEnd', () => {
       });
 
       afterAll(() => {
-        process.env.TZ = originalTimeZone;
+        // Assigning undefined would leave the string 'undefined' behind, which
+        // is not the unset state the process started in.
+        if (isDefined(originalTimeZone)) {
+          process.env.TZ = originalTimeZone;
+        } else {
+          delete process.env.TZ;
+        }
       });
 
       it('projects the boundary in UTC regardless', () => {

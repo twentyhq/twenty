@@ -68,7 +68,11 @@ export class BillingWebhookInvoiceService {
   private async processInvoiceFinalized(
     data: Stripe.InvoiceFinalizedEvent.Data,
   ) {
-    const { billing_reason: billingReason, customer } = data.object;
+    const {
+      billing_reason: billingReason,
+      customer,
+      created: invoiceCreatedAtInSeconds,
+    } = data.object;
 
     const stripeSubscriptionId = getSubscriptionIdFromInvoice(data.object);
     const stripeCustomerId = customer as string | undefined;
@@ -93,13 +97,20 @@ export class BillingWebhookInvoiceService {
       return;
     }
 
-    await this.processRollover({ subscription });
+    await this.processRollover({
+      subscription,
+      // Stripe's own clock, so it can be compared to the subscription's
+      // boundaries without allowing for skew against ours.
+      invoiceCreatedAt: new Date(invoiceCreatedAtInSeconds * 1000),
+    });
   }
 
   private async processRollover({
     subscription,
+    invoiceCreatedAt,
   }: {
     subscription: BillingSubscriptionEntity;
+    invoiceCreatedAt: Date;
   }): Promise<void> {
     const workspaceExists = await this.workspaceRepository.exists({
       where: { id: subscription.workspaceId },
@@ -128,7 +139,7 @@ export class BillingWebhookInvoiceService {
     }
 
     const boundary = resolveBillingTransitionBoundary({
-      observedAt: new Date(),
+      invoiceCreatedAt,
       subscriptionCurrentPeriodStart: subscription.currentPeriodStart,
       subscriptionCurrentPeriodEnd: subscription.currentPeriodEnd,
     });
