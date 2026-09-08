@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { isFlatOverridesBlob } from 'src/engine/metadata-modules/utils/is-flat-overrides-blob.util';
-import { resolveMaterializedIsActive } from 'src/engine/metadata-modules/utils/resolve-materialized-is-active.util';
+import { resolveEffectiveIsActive } from 'src/engine/metadata-modules/utils/resolve-effective-is-active.util';
 
 type FlatEntityWithIsActive = {
   applicationUniversalIdentifier: string;
@@ -78,6 +78,6 @@ export const applyOwnerAuthoredIsActive = <T extends FlatEntityWithIsActive>({
       : {}),
     isActive: isLegacyFlatBlob
       ? isActive
-      : resolveMaterializedIsActive({ overrides, authorContext }),
+      : resolveEffectiveIsActive({ overrides, authorContext }),
   };
 };
