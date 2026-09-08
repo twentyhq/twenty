@@ -1,4 +1,3 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
@@ -8,7 +7,7 @@ import {
 
 const mutationMock = vi.fn();
 
-const client = { mutation: mutationMock } as unknown as CoreApiClient;
+const client = { mutation: mutationMock };
 
 describe('claimCallRecordingArtifactsImport', () => {
   beforeEach(() => {

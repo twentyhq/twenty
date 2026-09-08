@@ -8,7 +8,7 @@ const ARTIFACTS_IMPORT_CLAIM_TTL_MS = 10 * 60 * 1000;
 // lease is held, so exactly one of several concurrent webhook retries claims the
 // import and performs the provider-facing work.
 export const claimCallRecordingArtifactsImport = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'mutation'>,
   {
     callRecordingId,
     now,
@@ -41,7 +41,7 @@ export const claimCallRecordingArtifactsImport = async (
 };
 
 export const releaseCallRecordingArtifactsImportClaim = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'mutation'>,
   { callRecordingId, claimedAt }: { callRecordingId: string; claimedAt: Date },
 ): Promise<void> => {
   await client.mutation({

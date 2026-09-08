@@ -21,7 +21,7 @@ describe('findCallRecordingForSummary', () => {
     });
 
     const callRecording = await findCallRecordingForSummary(
-      { query } as never,
+      { query },
       { id: 'call-recording-1' },
     );
 

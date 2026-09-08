@@ -4,46 +4,57 @@ import { completeCallRecordingImport } from 'src/logic-functions/data/complete-c
 
 describe('completeCallRecordingImport', () => {
   it('guards the flip with non-terminal statuses and returns true when the row is claimed', async () => {
-    let capturedArgs: { filter: unknown; data: unknown } | undefined;
-    const mutation = vi.fn(
-      async (mutationArg: {
-        updateCallRecordings: { __args: { filter: unknown; data: unknown } };
-      }) => {
-        capturedArgs = mutationArg.updateCallRecordings.__args;
+    const mutation = vi
+      .fn()
+      .mockResolvedValue({
+        updateCallRecordings: [{ id: 'call-recording-1' }],
+      });
 
-        return { updateCallRecordings: [{ id: 'call-recording-1' }] };
+    const claimed = await completeCallRecordingImport(
+      { mutation },
+      {
+        id: 'call-recording-1',
       },
     );
 
-    const claimed = await completeCallRecordingImport({ mutation } as never, {
-      id: 'call-recording-1',
-    });
-
     expect(claimed).toBe(true);
     expect(mutation).toHaveBeenCalledTimes(1);
-    expect(capturedArgs?.filter).toEqual({
-      id: { eq: 'call-recording-1' },
-      status: { in: ['SCHEDULED', 'JOINING', 'RECORDING', 'PROCESSING'] },
+    expect(mutation).toHaveBeenCalledWith({
+      updateCallRecordings: {
+        __args: {
+          filter: {
+            id: { eq: 'call-recording-1' },
+            status: { in: ['SCHEDULED', 'JOINING', 'RECORDING', 'PROCESSING'] },
+          },
+          data: { status: 'COMPLETED' },
+        },
+        id: true,
+      },
     });
-    expect(capturedArgs?.data).toEqual({ status: 'COMPLETED' });
   });
 
   it('returns false when the row was already COMPLETED', async () => {
-    const mutation = vi.fn(async () => ({ updateCallRecordings: [] }));
+    const mutation = vi.fn().mockResolvedValue({ updateCallRecordings: [] });
 
-    const claimed = await completeCallRecordingImport({ mutation } as never, {
-      id: 'call-recording-1',
-    });
+    const claimed = await completeCallRecordingImport(
+      { mutation },
+      {
+        id: 'call-recording-1',
+      },
+    );
 
     expect(claimed).toBe(false);
   });
 
   it('returns false when the API omits the result list', async () => {
-    const mutation = vi.fn(async () => ({}));
+    const mutation = vi.fn().mockResolvedValue({});
 
-    const claimed = await completeCallRecordingImport({ mutation } as never, {
-      id: 'call-recording-1',
-    });
+    const claimed = await completeCallRecordingImport(
+      { mutation },
+      {
+        id: 'call-recording-1',
+      },
+    );
 
     expect(claimed).toBe(false);
   });

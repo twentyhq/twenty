@@ -11,7 +11,8 @@
     "typescript/no-unused-vars": [
       "warn",
       {
-        "argsIgnorePattern": "^_"
+        "argsIgnorePattern": "^_",
+        "ignoreRestSiblings": true
       }
     ],
     "typescript/no-explicit-any": "off"
