@@ -7,6 +7,8 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type MessageIdTranslator } from 'src/engine/metadata-modules/utils/message-id-translator.type';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
+const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
+  'workspace-custom-application-universal-identifier';
 const BASE_DESCRIPTION = 'Task due date';
 const OVERRIDDEN_DESCRIPTION =
   'Stored in UTC; users dictate local time, convert before writing';
@@ -41,6 +43,8 @@ describe('resolveEffectiveFieldDescription', () => {
       }),
       locale: SOURCE_LOCALE,
       i18nInstance: untranslated,
+      workspaceCustomApplicationUniversalIdentifier:
+        WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
     });
 
     expect(result).toBe(OVERRIDDEN_DESCRIPTION);
@@ -51,6 +55,8 @@ describe('resolveEffectiveFieldDescription', () => {
       flatFieldMetadata: getStandardFlatFieldMetadata({ description: null }),
       locale: SOURCE_LOCALE,
       i18nInstance: untranslated,
+      workspaceCustomApplicationUniversalIdentifier:
+        WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
     });
 
     expect(result).toBe(BASE_DESCRIPTION);
@@ -61,6 +67,8 @@ describe('resolveEffectiveFieldDescription', () => {
       flatFieldMetadata: getStandardFlatFieldMetadata(),
       locale: SOURCE_LOCALE,
       i18nInstance: untranslated,
+      workspaceCustomApplicationUniversalIdentifier:
+        WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
     });
 
     expect(result).toBe(BASE_DESCRIPTION);
@@ -74,6 +82,8 @@ describe('resolveEffectiveFieldDescription', () => {
         [generateMessageId(BASE_DESCRIPTION, 'fieldMetadata.description')]:
           "Date d'échéance",
       }),
+      workspaceCustomApplicationUniversalIdentifier:
+        WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
     });
 
     expect(result).toBe("Date d'échéance");
@@ -87,6 +97,8 @@ describe('resolveEffectiveFieldDescription', () => {
       }),
       locale: 'fr-FR',
       i18nInstance: untranslated,
+      workspaceCustomApplicationUniversalIdentifier:
+        WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
     });
 
     expect(result).toBe('Stocké en UTC');
@@ -103,6 +115,8 @@ describe('resolveEffectiveFieldDescription', () => {
       }),
       locale: SOURCE_LOCALE,
       i18nInstance: untranslated,
+      workspaceCustomApplicationUniversalIdentifier:
+        WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
     });
 
     expect(result).toBe('Our own custom text');

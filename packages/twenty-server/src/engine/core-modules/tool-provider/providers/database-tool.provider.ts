@@ -10,6 +10,7 @@ import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { getCrudToolLabels } from 'src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util';
 import { resolveEffectiveFieldDescription } from 'src/engine/core-modules/tool-provider/utils/resolve-effective-field-description.util';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { generateCreateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-many-record-input-schema.util';
@@ -44,6 +45,7 @@ export class DatabaseToolProvider implements ToolProvider {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly i18nService: I18nService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
   async isAvailable(_context: ToolProviderContext): Promise<boolean> {
@@ -131,6 +133,11 @@ export class DatabaseToolProvider implements ToolProvider {
       context.locale ?? SOURCE_LOCALE,
     );
 
+    const { workspaceCustomApplicationUniversalIdentifier } =
+      await this.applicationTranslationCatalogService.getApplicationAuthorIdentifiers(
+        { workspaceId: context.workspaceId },
+      );
+
     for (const flatObject of allFlatObjects) {
       const permission = objectPermissions[flatObject.id];
       const explicitPermission = explicitPermissionByObjectId.get(
@@ -174,6 +181,7 @@ export class DatabaseToolProvider implements ToolProvider {
               flatFieldMetadata,
               locale: context.locale,
               i18nInstance,
+              workspaceCustomApplicationUniversalIdentifier,
             }),
           }))
         : [];

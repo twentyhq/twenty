@@ -67,6 +67,10 @@ const buildStandardI18nContext = (): EffectiveEntityI18nContext => ({
   i18nInstance: mockI18nInstance,
   isStandardApp: true,
   applicationCatalog: undefined,
+  workspaceCustomApplicationUniversalIdentifier:
+    'workspace-custom-application-universal-identifier',
+  ownerApplicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION.universalIdentifier,
 });
 
 describe('interpolateNavigationCommandMenuItemEvent', () => {

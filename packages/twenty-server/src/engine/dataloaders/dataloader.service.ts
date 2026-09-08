@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import DataLoader from 'dataloader';
-import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -9,7 +9,6 @@ import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-m
 
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { FieldMetadataConnectionLoaderFactory } from 'src/engine/dataloaders/factories/field-metadata-connection-loader.factory';
 import { IndexMetadataConnectionLoaderFactory } from 'src/engine/dataloaders/factories/index-metadata-connection-loader.factory';
@@ -25,7 +24,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
-import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
+import { type ApplicationAuthorIdentifiers } from 'src/engine/metadata-modules/application-translation-catalog/types/application-author-identifiers.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { resolveMorphRelationsFromFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-morph-relations-from-flat-field-metadata.util';
 import { resolveRelationFromFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-relation-from-flat-field-metadata.util';
@@ -127,7 +126,7 @@ export type IsConfiguredLoaderPayload = {
   applicationRegistrationId: string;
 };
 
-export type StandardApplicationIdLoaderPayload = {
+export type ApplicationAuthorIdentifiersLoaderPayload = {
   workspaceId: string;
 };
 
@@ -140,7 +139,6 @@ export type ApplicationTranslationCatalogLoaderPayload = {
 @Injectable()
 export class DataloaderService {
   constructor(
-    private readonly i18nService: I18nService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
@@ -171,8 +169,8 @@ export class DataloaderService {
     const viewFilterGroupsByViewIdLoader =
       this.createViewFilterGroupsByViewIdLoader();
     const isConfiguredLoader = this.createIsConfiguredLoader();
-    const standardApplicationIdLoader =
-      this.createStandardApplicationIdLoader();
+    const applicationAuthorIdentifiersLoader =
+      this.createApplicationAuthorIdentifiersLoader();
     const applicationTranslationCatalogLoader =
       this.createApplicationTranslationCatalogLoader();
 
@@ -194,7 +192,7 @@ export class DataloaderService {
       viewGroupsByViewIdLoader,
       viewFilterGroupsByViewIdLoader,
       isConfiguredLoader,
-      standardApplicationIdLoader,
+      applicationAuthorIdentifiersLoader,
       applicationTranslationCatalogLoader,
     };
   }
@@ -367,8 +365,6 @@ export class DataloaderService {
     return new DataLoader<FieldMetadataLoaderPayload, FieldMetadataDTO[]>(
       async (dataLoaderParams: FieldMetadataLoaderPayload[]) => {
         const locale = dataLoaderParams[0].locale;
-        const safeLocale = locale ?? SOURCE_LOCALE;
-        const i18nInstance = this.i18nService.getI18nInstance(safeLocale);
         const workspaceId = dataLoaderParams[0].workspaceId;
         const objectMetadataIds = dataLoaderParams.map(
           (dataLoaderParam) => dataLoaderParam.objectMetadata.id,
@@ -397,31 +393,25 @@ export class DataloaderService {
           },
         );
 
-        const { catalogByApplicationId: applicationCatalogByApplicationId } =
-          await this.applicationTranslationCatalogService.getCatalogs({
-            applicationIds: objectFlatFieldMetadatasList
-              .flat()
-              .map((flatFieldMetadata) => flatFieldMetadata.applicationId),
-            locale: safeLocale,
-            workspaceId,
-          });
+        const getI18nContext =
+          await this.applicationTranslationCatalogService.getI18nContextByApplicationId(
+            {
+              applicationIds: objectFlatFieldMetadatasList
+                .flat()
+                .map((flatFieldMetadata) => flatFieldMetadata.applicationId),
+              locale,
+              workspaceId,
+            },
+          );
 
         const fieldMetadataCollection = objectFlatFieldMetadatasList.map(
           (objectFlatFieldMetadatas) => {
             const overriddenFieldMetadataEntities =
               objectFlatFieldMetadatas.map((flatFieldMetadata) => {
-                const applicationCatalog =
-                  applicationCatalogByApplicationId.get(
-                    flatFieldMetadata.applicationId,
-                  );
-
                 const overrides = flatFieldMetadata.overrides ?? undefined;
-                const i18nContext = {
-                  locale,
-                  i18nInstance,
-                  isStandardApp: belongsToTwentyStandardApp(flatFieldMetadata),
-                  applicationCatalog,
-                };
+                const i18nContext = getI18nContext(
+                  flatFieldMetadata.applicationId,
+                );
 
                 return ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME.fieldMetadata.reduce(
                   (acc, property) => ({
@@ -857,17 +847,18 @@ export class DataloaderService {
     );
   }
 
-  private createStandardApplicationIdLoader() {
-    return new DataLoader<StandardApplicationIdLoaderPayload, string>(
-      async (params: StandardApplicationIdLoaderPayload[]) => {
-        const standardApplicationId =
-          await this.applicationTranslationCatalogService.getStandardApplicationId(
-            { workspaceId: params[0].workspaceId },
-          );
+  private createApplicationAuthorIdentifiersLoader() {
+    return new DataLoader<
+      ApplicationAuthorIdentifiersLoaderPayload,
+      ApplicationAuthorIdentifiers
+    >(async (params: ApplicationAuthorIdentifiersLoaderPayload[]) => {
+      const applicationAuthorIdentifiers =
+        await this.applicationTranslationCatalogService.getApplicationAuthorIdentifiers(
+          { workspaceId: params[0].workspaceId },
+        );
 
-        return params.map(() => standardApplicationId);
-      },
-    );
+      return params.map(() => applicationAuthorIdentifiers);
+    });
   }
 
   private createApplicationTranslationCatalogLoader() {
