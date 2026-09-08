@@ -145,6 +145,7 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
 
       await wrapped.update({ id: 1 }, { name: 'app', introducedColumn: {} });
 
+      expect(update).toHaveBeenCalledTimes(1);
       expect(update).toHaveBeenCalledWith({ id: 1 }, { name: 'app' });
     });
 
@@ -162,6 +163,7 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
 
       await wrapped.update({ id: 1 }, { name: 'app', introducedColumn: {} });
 
+      expect(update).toHaveBeenCalledTimes(1);
       expect(update).toHaveBeenCalledWith(
         { id: 1 },
         { name: 'app', introducedColumn: {} },
