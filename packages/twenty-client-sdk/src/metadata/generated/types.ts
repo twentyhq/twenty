@@ -2780,6 +2780,9 @@ export default {
             "productKey": [
                 133
             ],
+            "isLegacy": [
+                1
+            ],
             "__typename": [
                 1
             ]
@@ -2802,6 +2805,9 @@ export default {
             ],
             "creditAmount": [
                 15
+            ],
+            "isSellable": [
+                8
             ],
             "__typename": [
                 1
@@ -2908,6 +2914,12 @@ export default {
             ],
             "stripePriceId": [
                 1
+            ],
+            "unitAmount": [
+                15
+            ],
+            "creditAmount": [
+                15
             ],
             "billingProduct": [
                 0
