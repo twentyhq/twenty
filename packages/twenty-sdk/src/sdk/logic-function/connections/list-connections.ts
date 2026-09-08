@@ -14,6 +14,7 @@ const LIST_APP_CONNECTIONS_QUERY = `
       accessToken
       scopes
       authFailedAt
+      authFailedReason
     }
   }
 `;
