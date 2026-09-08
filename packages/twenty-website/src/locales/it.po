@@ -8,7 +8,7 @@ msgstr ""
 "Language: it\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-28 16:20\n"
+"PO-Revision-Date: 2026-09-08 16:21\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -900,7 +900,7 @@ msgstr "Aggiungi più indirizzi email a un singolo contatto"
 #. js-lingui-id: /01kre
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Add shared instructions, playbooks, and other rich text with the new Note widget. Insert widgets exactly where you want them, and unpin the first tab when your layout needs more room."
-msgstr ""
+msgstr "Aggiungi istruzioni condivise, playbook e altri contenuti di testo avanzato con il nuovo widget Nota. Inserisci i widget esattamente dove desideri e sblocca la prima scheda quando il tuo layout necessita di più spazio."
 
 #. js-lingui-id: hWkQMS
 #: src/sections/product-feature/TasksVisual/components/AddTaskButton.tsx
@@ -1295,7 +1295,7 @@ msgstr "Armenia 🇦🇲"
 #. js-lingui-id: hgvS2c
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Ask AI to attach files you upload in chat directly to records."
-msgstr ""
+msgstr "Chiedi all'IA di allegare direttamente ai record i file che carichi nella chat."
 
 #. js-lingui-id: GYKCBW
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1325,7 +1325,7 @@ msgstr "Almeno un'implementazione di Twenty realizzata, per un cliente o interna
 #. js-lingui-id: PbTDQ4
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Attach files to records with AI"
-msgstr ""
+msgstr "Allega file ai record con l'IA"
 
 #. js-lingui-id: awzjg/
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1592,7 +1592,7 @@ msgstr "Esplora i *partner certificati*"
 #. js-lingui-id: pB7UCU
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Browse your records in a compact list, now available to everyone. Group records and see the fields that matter in a layout that adapts to desktop and mobile."
-msgstr ""
+msgstr "Esplora i tuoi record in un elenco compatto, ora disponibile per tutti. Raggruppa i record e visualizza i campi più importanti in un layout che si adatta a desktop e dispositivi mobili."
 
 #. js-lingui-id: VX4eI/
 #: src/partner-application/data/partner-country-options.ts
@@ -2220,7 +2220,7 @@ msgstr "Crea un'app su Twenty"
 #. js-lingui-id: CA2rtv
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Create calendar events directly from a record’s timeline, with the current contact prefilled as a guest."
-msgstr ""
+msgstr "Crea eventi del calendario direttamente dalla timeline di un record, con il contatto corrente precompilato come invitato."
 
 #. js-lingui-id: yAL7FY
 #: src/sections/pricing-plans/plans-data.ts
@@ -2621,7 +2621,7 @@ msgstr "Campo data-ora"
 #. js-lingui-id: oLDLdM
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Day and week calendar views"
-msgstr ""
+msgstr "Viste calendario giornaliera e settimanale"
 
 #. js-lingui-id: xqKvBR
 #: src/sections/product-feature/DashboardVisual/DashboardVisual.tsx
@@ -2715,7 +2715,7 @@ msgstr "Gli sviluppatori ora possono utilizzare i webhook per sincronizzare in t
 #. js-lingui-id: SxCLpb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Dictate prompts in supported browsers, and get suggested actions based on the page you are viewing."
-msgstr ""
+msgstr "Detta prompt nei browser supportati e ottieni azioni suggerite in base alla pagina che stai visualizzando."
 
 #. js-lingui-id: C39swB
 #: src/partners-marketplace/MarketplaceBriefPrompt.tsx
@@ -2766,7 +2766,7 @@ msgstr "Scopri le novità"
 #. js-lingui-id: EVc4nZ
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Display records two relationships away directly on a record page—for example, opportunities associated with a company’s contacts."
-msgstr ""
+msgstr "Visualizza i record a due relazioni di distanza direttamente nella pagina di un record, ad esempio le opportunità associate ai contatti di un'azienda."
 
 #. js-lingui-id: /Gu7LB
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2939,7 +2939,7 @@ msgstr "Layout più semplici"
 #. js-lingui-id: CgFsbd
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Easier workflow editing"
-msgstr ""
+msgstr "Modifica dei workflow più semplice"
 
 #. js-lingui-id: hEtClO
 #: src/partner-application/data/partner-country-options.ts
@@ -4329,7 +4329,7 @@ msgstr "Anteprime delle immagini in linea"
 #. js-lingui-id: IWtI58
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Insert actions into existing branches and drag connections to a different step without losing your configuration. Find variables faster by searching fields across all workflow steps."
-msgstr ""
+msgstr "Inserisci azioni nei rami esistenti e trascina le connessioni in un passaggio diverso senza perdere la configurazione. Trova più rapidamente le variabili cercando i campi in tutti i passaggi del workflow."
 
 #. js-lingui-id: /eL+82
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4366,7 +4366,7 @@ msgstr "Integrazione"
 #. js-lingui-id: mQhHfc
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Interactive call recordings"
-msgstr ""
+msgstr "Registrazioni delle chiamate interattive"
 
 #. js-lingui-id: OChKCc
 #: src/platform/routing/static-website-routes.ts
@@ -4802,7 +4802,7 @@ msgstr "Prezzi di listino dalla pagina pubblica dei prezzi di Salesforce, fattur
 #. js-lingui-id: 5NZpX8
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "List view"
-msgstr ""
+msgstr "Vista elenco"
 
 #. js-lingui-id: 2WIZYd
 #: src/partner-application/data/partner-country-options.ts
@@ -5138,7 +5138,7 @@ msgstr "Più tipi di campo, più potenza"
 #. js-lingui-id: qlt+dy
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "More flexible record pages"
-msgstr ""
+msgstr "Pagine dei record più flessibili"
 
 #. js-lingui-id: VqXuUv
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -5158,7 +5158,7 @@ msgstr "Viste delle dashboard più visive"
 #. js-lingui-id: QsVNSj
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "More ways to work with AI"
-msgstr ""
+msgstr "Più modi per lavorare con l'IA"
 
 #. js-lingui-id: LAFO4Y
 #: src/partner-application/data/partner-country-options.ts
@@ -6665,7 +6665,7 @@ msgstr "Scala senza rompere le operazioni"
 #. js-lingui-id: e7Ajb1
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Schedule meetings from records"
-msgstr ""
+msgstr "Pianifica riunioni dai record"
 
 #. js-lingui-id: sQOyAb
 #: src/sections/product-feature/TasksVisual/data/tasks.ts
@@ -6731,7 +6731,7 @@ msgstr "Vedi più funzionalità"
 #. js-lingui-id: zn1p6c
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "See related records across relationships"
-msgstr ""
+msgstr "Visualizza i record correlati tramite le relazioni"
 
 #. js-lingui-id: 8Zhz04
 #: src/sections/compare/ComparePage.tsx
@@ -6854,7 +6854,7 @@ msgstr "Invia email"
 #. js-lingui-id: ig4Kg0
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Send email from aliases"
-msgstr ""
+msgstr "Invia email dagli alias"
 
 #. js-lingui-id: pi1oME
 #: src/app-preview/terminal/TerminalSendButton.tsx
@@ -6869,7 +6869,7 @@ msgstr "Invia NDA"
 #. js-lingui-id: FK/sMg
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Send outbound emails using a verified alias on your connected account."
-msgstr ""
+msgstr "Invia email in uscita utilizzando un alias verificato sul tuo account connesso."
 
 #. js-lingui-id: uW79Hr
 #: src/sections/product-feature/TasksVisual/data/tasks.ts
@@ -7348,7 +7348,7 @@ msgstr "Svedese"
 #. js-lingui-id: VRCum/
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Switch between day, week, and month views to explore your calendar. Day and week views are now available by default."
-msgstr ""
+msgstr "Passa dalla vista giornaliera, settimanale e mensile per esplorare il tuo calendario. Le viste giornaliera e settimanale sono ora disponibili per impostazione predefinita."
 
 #. js-lingui-id: IImT5c
 #: src/partner-application/data/partner-country-options.ts
@@ -8493,7 +8493,7 @@ msgstr "Vuoi *offrire* servizi Twenty?"
 #. js-lingui-id: 9cL2b3
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Watch recordings alongside their transcripts. Click a transcript entry to jump to that moment, and follow along with highlighted words and automatic scrolling during playback."
-msgstr ""
+msgstr "Guarda le registrazioni insieme alle relative trascrizioni. Fai clic su una voce della trascrizione per passare a quel momento e segui la riproduzione con parole evidenziate e scorrimento automatico."
 
 #. js-lingui-id: k1Pevc
 #: src/platform/releases/ReleaseNotes.tsx
