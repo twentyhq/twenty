@@ -467,6 +467,11 @@ describe('reconstructPageLayoutsManifest', () => {
         pageLayoutWidgets: [
           buildFlatPageLayoutWidget({
             pageLayoutWidgetManifest:
+              buildNotesWidgetManifest('company-widget'),
+            pageLayoutTabUniversalIdentifier: COMPANY_TAB_UID,
+          }),
+          buildFlatPageLayoutWidget({
+            pageLayoutWidgetManifest:
               buildNotesWidgetManifest('foreign-widget'),
             pageLayoutTabUniversalIdentifier: 'foreign-tab',
           }),
@@ -481,6 +486,12 @@ describe('reconstructPageLayoutsManifest', () => {
     ).toEqual([COMPANY_TAB_UID]);
     expect(pageLayoutTabs[0].pageLayoutUniversalIdentifier).toBe(
       COMPANY_PAGE_UID,
+    );
+    expect(pageLayoutTabs[0].widgets).toEqual([
+      buildNotesWidgetManifest('company-widget'),
+    ]);
+    expect(statusOf(coverage, 'company-widget')?.status).toBe(
+      ApplicationExportCoverageStatus.EXPORTED,
     );
     expect(reasonOf(coverage, 'foreign-widget')).toBe(
       'page layout widget on a page layout tab outside the application',

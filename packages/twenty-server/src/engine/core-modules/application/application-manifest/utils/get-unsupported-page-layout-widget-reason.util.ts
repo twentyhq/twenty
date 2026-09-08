@@ -2,6 +2,7 @@ import { WidgetType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MANIFEST_ENTITY_REGISTRY } from 'src/engine/core-modules/application/application-manifest/utils/find-manifest-entity-descriptor-by-universal-identifier.util';
+import { getUnresolvableObjectReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unresolvable-object-reason.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
@@ -196,29 +197,17 @@ export const getUnsupportedPageLayoutWidgetReason = ({
     return 'page layout widget with a conditional availability expression';
   }
 
-  const objectUniversalIdentifier =
-    flatPageLayoutWidget.objectMetadataUniversalIdentifier;
+  const unresolvableObjectReason = getUnresolvableObjectReason({
+    metadataName: 'pageLayoutWidget',
+    objectUniversalIdentifier:
+      flatPageLayoutWidget.objectMetadataUniversalIdentifier,
+    applicationAllFlatEntityMaps,
+    allFlatEntityMaps,
+    exportedObjectUniversalIdentifiers,
+  });
 
-  if (isDefined(objectUniversalIdentifier)) {
-    if (
-      isDefined(
-        applicationAllFlatEntityMaps.flatObjectMetadataMaps
-          .byUniversalIdentifier[objectUniversalIdentifier],
-      ) &&
-      !exportedObjectUniversalIdentifiers.has(objectUniversalIdentifier)
-    ) {
-      return 'page layout widget on an unsupported object';
-    }
-
-    if (
-      !isDefined(
-        allFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
-          objectUniversalIdentifier
-        ],
-      )
-    ) {
-      return 'page layout widget on an object that does not exist';
-    }
+  if (isDefined(unresolvableObjectReason)) {
+    return unresolvableObjectReason;
   }
 
   return findUnresolvableReferenceReason({

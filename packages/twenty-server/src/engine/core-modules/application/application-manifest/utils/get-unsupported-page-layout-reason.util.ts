@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { getUnresolvableObjectReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unresolvable-object-reason.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 
@@ -19,29 +20,16 @@ export const getUnsupportedPageLayoutReason = ({
     return 'page layout without a name';
   }
 
-  const objectUniversalIdentifier =
-    flatPageLayout.objectMetadataUniversalIdentifier;
+  const unresolvableObjectReason = getUnresolvableObjectReason({
+    metadataName: 'pageLayout',
+    objectUniversalIdentifier: flatPageLayout.objectMetadataUniversalIdentifier,
+    applicationAllFlatEntityMaps,
+    allFlatEntityMaps,
+    exportedObjectUniversalIdentifiers,
+  });
 
-  if (isDefined(objectUniversalIdentifier)) {
-    if (
-      isDefined(
-        applicationAllFlatEntityMaps.flatObjectMetadataMaps
-          .byUniversalIdentifier[objectUniversalIdentifier],
-      ) &&
-      !exportedObjectUniversalIdentifiers.has(objectUniversalIdentifier)
-    ) {
-      return 'page layout on an unsupported object';
-    }
-
-    if (
-      !isDefined(
-        allFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
-          objectUniversalIdentifier
-        ],
-      )
-    ) {
-      return 'page layout on an object that does not exist';
-    }
+  if (isDefined(unresolvableObjectReason)) {
+    return unresolvableObjectReason;
   }
 
   const defaultTabUniversalIdentifier =
