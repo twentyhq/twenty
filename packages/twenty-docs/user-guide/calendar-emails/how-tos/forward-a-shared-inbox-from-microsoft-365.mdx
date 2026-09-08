@@ -5,7 +5,7 @@ description: Send mail from a Microsoft 365 shared mailbox into a Twenty email c
 
 An email channel gives your workspace a shared address, like `contact@yourcompany.com`. Mail sent to that address has to reach Twenty somehow. You do that by forwarding the mailbox to the private address Twenty gives you.
 
-The whole thing is two halves: create the channel in Twenty, then point Microsoft at it.
+Setup has two halves: create the channel in Twenty, then point Microsoft at it.
 
 ## Part 1: Create the channel in Twenty
 
@@ -87,11 +87,11 @@ Skip this part if `contact@yourcompany.com` already exists in Microsoft 365.
 
 Microsoft says changes can take up to 5 minutes to apply.
 
-## Part 4: Let Microsoft forward to the outside world
+## Part 4: Allow forwarding to external addresses
 
-This step is easy to miss, and without it nothing arrives.
+This step is easy to miss. Without it, no mail reaches Twenty.
 
-By default Microsoft 365 blocks automatic forwarding to addresses outside your organisation. The mail is rejected and the original sender gets a bounce that reads:
+By default, Microsoft 365 blocks automatic forwarding to addresses outside your organization. The mail is rejected and the original sender receives a bounce that reads:
 
 ```
 5.7.520 Access denied, Your organization does not allow external forwarding.
@@ -108,36 +108,36 @@ To allow it:
 
 <Warning>
   Turning this on for your whole tenant lets any compromised account forward
-  mail out. Create a policy scoped to just the shared mailboxes you are
-  connecting instead of editing the default one.
+  mail out. Create a policy scoped to only the shared mailboxes you are
+  connecting, rather than editing the default one.
 </Warning>
 
 ## Part 5: Test it
 
-Send an email from an outside address (a personal Gmail works) to `contact@yourcompany.com`. It should show up in Twenty within a minute or two.
+Send an email from an outside address (a personal Gmail works) to `contact@yourcompany.com`. It should appear in Twenty within a minute or two.
 
 ## Troubleshooting
 
 <Accordion title="Senders get a 5.7.520 bounce">
-  External forwarding is still blocked. Redo Part 4 and make sure the policy you
-  edited actually applies to this mailbox.
+  External forwarding is still blocked. Repeat Part 4 and confirm the policy you
+  edited applies to this mailbox.
 </Accordion>
 
-<Accordion title="Nothing arrives, and no bounce either">
-  Check the forwarding address in Exchange character for character against the
+<Accordion title="Nothing arrives, and there is no bounce either">
+  Compare the forwarding address in Exchange character for character with the
   one in Twenty. A single wrong character means the mail is delivered nowhere
   useful and silently dropped.
 </Accordion>
 
-<Accordion title="Mail disappeared from Outlook">
-  You left **Deliver message to both forwarding address and mailbox** unticked.
+<Accordion title="Mail no longer appears in Outlook">
+  **Deliver message to both forwarding address and mailbox** was left unticked.
   Tick it and save.
 </Accordion>
 
 <Accordion title="The channel receives mail but cannot send">
-  Receiving and sending are separate. Sending needs your domain verified under
-  the channel's **Sending domain** section, which means adding the DNS records
-  Twenty lists there.
+  Receiving and sending are separate. Sending requires your domain to be
+  verified under the channel's **Sending domain** section, which means adding
+  the DNS records Twenty lists there.
 </Accordion>
 
 Using a different provider? See [Google Workspace](/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-google-workspace) or [any other mail provider](/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-any-mail-provider).

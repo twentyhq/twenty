@@ -3,9 +3,9 @@ title: Forward a Shared Inbox from Any Email Provider
 description: Point a shared inbox at a Twenty email channel, whatever mail provider you use.
 ---
 
-Twenty picks up shared-inbox mail by having your provider send a copy of every incoming message to a private address that Twenty generates for you. Set that up once and the inbox flows into your workspace.
+Twenty receives shared inbox mail by having your provider send a copy of every incoming message to a private address that Twenty generates for you. Once that is in place, the inbox appears in your workspace.
 
-Microsoft 365 and Google Workspace have enough quirks to deserve their own walkthroughs:
+Microsoft 365 and Google Workspace each have their own guide:
 
 - [Microsoft 365](/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-microsoft-365)
 - [Google Workspace](/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-google-workspace)
@@ -43,27 +43,27 @@ This page covers every other provider.
   same one, or their mail will land in the same place.
 </Note>
 
-## Part 2: Pick the right kind of forwarding
+## Part 2: Choose the right kind of forwarding
 
-Most providers offer more than one way to send mail onwards, and only one of them works properly.
+Most providers offer more than one way to pass mail on, and only one of them works here.
 
-Twenty reads the `From` header of whatever arrives to work out who wrote the message. That is how a message gets linked to the right person and company.
+Twenty reads the `From` header of each message it receives to determine who wrote it. That is how a message is linked to the right person and company.
 
-- **Server-side forwarding or redirecting** leaves the original sender in place. Your customer stays the sender, the message lands on their record, and replies go back to them. Some providers call this **Redirect**, others just call it **Forwarding**. This is the one you want.
-- **Forwarding as an attachment**, or any rule that composes a brand new message, replaces the sender with your own address. Every conversation then looks like you wrote it, and nothing matches a contact.
+- **Automatic forwarding on the mail server** leaves the original sender in place. Your customer remains the sender, the message is linked to their record, and replies go back to them. Some providers call this **Redirect**, others call it **Forwarding**. This is the option to use.
+- **Forwarding as an attachment**, or any rule that composes a new message, replaces the sender with your own address. Every conversation then appears to come from you, and no message is matched to a contact.
 
-So: use the automatic forwarding setting in your mail account or server. Do not build a rule that wraps the message up and sends it on as something new.
+Use the automatic forwarding setting in your mail account or on your mail server. Do not use a rule that resends the message as a new email.
 
 <Warning>
   Also avoid rules that strip attachments or convert messages to plain text.
-  Twenty stores whatever it is handed.
+  Twenty stores each message exactly as it arrives.
 </Warning>
 
-Wherever you can, tick the option that **keeps a copy** in the original mailbox, so your team can still work the inbox normally.
+Where the option exists, choose the one that **keeps a copy** in the original mailbox, so your team can continue to use the inbox as before.
 
 ## Part 3: Find your provider
 
-Pick yours and follow their instructions, using the forwarding address you copied in Part 1 as the destination.
+Follow your provider's instructions, using the forwarding address you copied in Part 1 as the destination.
 
 | Provider               | Their guide                                                                                                                                                  |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -80,40 +80,39 @@ Pick yours and follow their instructions, using the forwarding address you copie
 | Rackspace              | [Set up Rackspace email forwarding](https://docs.rackspace.com/docs/set-up-rackspace-email-forwarding)                                                       |
 | Zoho Mail              | [Email forwarding](https://www.zoho.com/mail/help/email-forwarding.html)                                                                                     |
 
-Not on the list? You can almost certainly still connect it. In nearly every mail product the setting hides under a name like **Forwarding**, **Redirect**, **Forwarders**, **Aliases**, **Rules** or **Filters**, in either the mailbox settings or the domain settings.
+If your provider is not listed, you can still connect it. In almost every mail product the setting appears under a name such as **Forwarding**, **Redirect**, **Forwarders**, **Aliases**, **Rules** or **Filters**, in either the mailbox settings or the domain settings.
 
 ## Part 4: Test it
 
-Send an email from an outside address (a personal Gmail works) to `contact@yourcompany.com`. It should show up in Twenty within a minute or two.
+Send an email from an outside address (a personal Gmail works) to `contact@yourcompany.com`. It should appear in Twenty within a minute or two.
 
 ## Troubleshooting
 
 <Accordion title="Nothing arrives">
-  Check the forwarding address character for character against the one in
-  Twenty. A single wrong character means the mail goes nowhere and is silently
-  dropped.
+  Compare the forwarding address character for character with the one in Twenty.
+  A single wrong character means the mail goes nowhere and is silently dropped.
 </Accordion>
 
-<Accordion title="Mail arrives, but every message looks like it came from us">
-  The rule is rebuilding the message instead of passing it along, so your
+<Accordion title="Mail arrives, but every message shows your own address as the sender">
+  The rule is rebuilding the message rather than passing it along, so your
   address ends up in the `From` header. Switch to your provider's plain
-  forwarding or redirect setting, and turn off any "forward as attachment"
-  option.
+  forwarding or redirect setting, and turn off any option that forwards as an
+  attachment.
 </Accordion>
 
-<Accordion title="The sender gets a bounce about forwarding not being allowed">
+<Accordion title="The sender receives a bounce about forwarding not being allowed">
   Your provider blocks automatic forwarding to outside domains. Look for a
-  security or anti-spam setting that allows external forwarding, and allow it
+  security or anti-spam setting that allows external forwarding, and enable it
   for this mailbox only.
 </Accordion>
 
-<Accordion title="Mail disappeared from the original inbox">
-  The rule moves messages on instead of copying them. Change it to keep a copy,
+<Accordion title="Mail no longer appears in the original inbox">
+  The rule moves messages on rather than copying them. Change it to keep a copy,
   or add a second rule that delivers to the inbox.
 </Accordion>
 
 <Accordion title="The channel receives mail but cannot send">
-  Receiving and sending are separate. Sending needs your domain verified under
-  the channel's **Sending domain** section, which means adding the DNS records
-  Twenty lists there.
+  Receiving and sending are separate. Sending requires your domain to be
+  verified under the channel's **Sending domain** section, which means adding
+  the DNS records Twenty lists there.
 </Accordion>
