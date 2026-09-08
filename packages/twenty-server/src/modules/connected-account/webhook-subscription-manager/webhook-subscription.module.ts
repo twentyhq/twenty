@@ -22,7 +22,6 @@ import { WebhookSubscriptionStatusService } from 'src/modules/connected-account/
 import { WebhookSubscriptionRevocationService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-revocation.service';
 import { WorkspaceActivationService } from 'src/modules/connected-account/webhook-subscription-manager/services/workspace-activation.service';
 import { WebhookSubscriptionWorkspaceSuspendedListener } from 'src/modules/connected-account/webhook-subscription-manager/listeners/webhook-subscription-workspace-suspended.listener';
-import { RevokeWebhookSubscriptionsForSuspendedWorkspacesCommand } from 'src/modules/connected-account/webhook-subscription-manager/commands/revoke-webhook-subscriptions-for-suspended-workspaces.command';
 import { WebhookSubscriptionManagerModule } from 'src/modules/connected-account/webhook-subscription-manager/webhook-subscription-manager.module';
 
 @Module({
@@ -42,7 +41,6 @@ import { WebhookSubscriptionManagerModule } from 'src/modules/connected-account/
     WorkspaceActivationService,
     WebhookSubscriptionRevocationService,
     WebhookSubscriptionWorkspaceSuspendedListener,
-    RevokeWebhookSubscriptionsForSuspendedWorkspacesCommand,
     WebhookSubscriptionStatusService,
     WebhookSubscriptionExceptionHandlerService,
     MessagingWebhookSubscriptionService,
