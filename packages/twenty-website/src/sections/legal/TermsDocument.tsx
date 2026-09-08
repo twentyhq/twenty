@@ -402,10 +402,11 @@ export function TermsDocument() {
         AI agents to work with your workspace, whether they call our APIs or use
         the app in a browser as you would, and an agent may act for you,
         including when signing up, as long as it acts openly on behalf of an
-        identified customer. The rules in this section apply to automated use
-        exactly as they do to a person clicking in the app: creating accounts in
-        bulk, working around usage limits, and collecting data you are not
-        entitled to are not allowed, whoever or whatever does them.
+        identified person or organization. The rules in this section apply to
+        automated use exactly as they do to a person clicking in the app:
+        creating accounts in bulk, working around usage limits, and collecting
+        data you are not entitled to are not allowed, whoever or whatever does
+        them.
       </p>
       <p>
         Plans include usage limits, described on the pricing page or in your

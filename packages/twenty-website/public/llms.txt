@@ -8,7 +8,7 @@ Twenty is multi-tenant, so there is no single global API host: each workspace ha
 
 ## Signing up
 
-Agent-driven signup is allowed: an agent acting openly for an identified person may create an account, create a workspace, and complete onboarding for them, per section 10 of the [Terms of Service](https://twenty.com/terms). The account holder stays responsible for what the agent does under the account. Creating accounts in bulk, working around usage limits, and collecting data you are not entitled to are not allowed.
+Agent-driven signup is allowed: an agent acting openly for an identified person or organization may create an account, create a workspace, and complete onboarding for them, per section 10 of the [Terms of Service](https://twenty.com/terms). The account holder stays responsible for what the agent does under the account. Creating accounts in bulk, working around usage limits, and collecting data you are not entitled to are not allowed.
 
 Signup runs through the web app at `https://app.twenty.com`: account creation is CAPTCHA-protected, so a browser-driving agent completes it the way a person would, including email verification. Everything after that is available over the API, and an agent should move to its own API key or OAuth connection rather than keep using the account password.
 
