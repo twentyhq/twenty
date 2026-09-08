@@ -1,3 +1,4 @@
+import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { useState } from 'react';
 
 import { styled } from '@linaria/react';
@@ -20,7 +21,6 @@ import { AiChatDictationEffect } from '@/ai/dictation/components/AiChatDictation
 import { AiChatDictationHint } from '@/ai/dictation/components/AiChatDictationHint';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatEditorFocusEffect } from '@/ai/components/internal/AiChatEditorFocusEffect';
-import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useAiChatEditor } from '@/ai/hooks/useAiChatEditor';
@@ -41,7 +41,9 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SETTINGS_AI_TABS } from '~/pages/settings/ai/constants/SettingsAiTabs';
 
-const StyledInputArea = styled.div<{ isMobile: boolean }>`
+const StyledInputArea = styled(StyledAiChatContentContainer)<{
+  isMobile: boolean;
+}>`
   align-items: flex-end;
   background: ${themeCssVariables.background.primary};
   display: flex;
@@ -57,7 +59,9 @@ const StyledInputArea = styled.div<{ isMobile: boolean }>`
 const StyledInputBox = styled.div<{ isMobile: boolean }>`
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: calc(
+    ${themeCssVariables.border.radius.md} + ${themeCssVariables.spacing[1]}
+  );
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -195,7 +199,6 @@ export const AiChatEditorSection = () => {
       />
       <AiChatEmptyState isCentered={isComposerCentered} />
       <AiChatStandaloneError />
-      <AiChatSkeletonLoader />
 
       <StyledInputArea isMobile={isMobile}>
         <AgentChatContextPreview />
