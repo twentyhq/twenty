@@ -1,12 +1,13 @@
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Status, Tag } from 'twenty-ui/data-display';
-import { IconRefresh, IconTrash, IconUser, IconUsers } from 'twenty-ui/icon';
+import { IconRefresh, IconTrash, IconUsers } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -128,7 +129,7 @@ export const SettingsApplicationConnectionDetail = () => {
       ? connection.name
       : (connection?.handle ?? t`Connection`);
   const deleteModalId = `delete-application-connection-modal-${connectedAccountId}`;
-  const changeVisibilityModalId = `change-application-connection-visibility-modal-${connectedAccountId}`;
+  const shareWithWorkspaceModalId = `share-application-connection-with-workspace-modal-${connectedAccountId}`;
   const applicationSettingsPath = getSettingsPath(
     SettingsPath.ApplicationDetail,
     { applicationId },
@@ -154,7 +155,7 @@ export const SettingsApplicationConnectionDetail = () => {
     });
   };
 
-  const handleChangeVisibility = () => {
+  const handleShareWithWorkspace = () => {
     if (connection === undefined || provider === undefined) {
       return;
     }
@@ -162,7 +163,7 @@ export const SettingsApplicationConnectionDetail = () => {
     triggerAppOAuth({
       applicationId,
       providerName: provider.name,
-      visibility: connection.visibility === 'workspace' ? 'user' : 'workspace',
+      visibility: 'workspace',
       reconnectingConnectedAccountId: connection.id,
       redirectLocation: detailPath,
     });
@@ -259,6 +260,13 @@ export const SettingsApplicationConnectionDetail = () => {
         value: formatDateTime(connection.authFailedAt),
       },
       {
+        key: 'authFailedReason',
+        label: t`Auth failure reason`,
+        value: isNonEmptyString(connection.authFailedReason)
+          ? connection.authFailedReason
+          : '-',
+      },
+      {
         key: 'createdAt',
         label: t`Created`,
         value: formatDateTime(connection.createdAt),
@@ -322,19 +330,15 @@ export const SettingsApplicationConnectionDetail = () => {
                     onClick={handleReconnect}
                   />
                 )}
-                <Button
-                  title={
-                    connection.visibility === 'workspace'
-                      ? t`Make private`
-                      : t`Share with workspace`
-                  }
-                  Icon={
-                    connection.visibility === 'workspace' ? IconUser : IconUsers
-                  }
-                  variant="secondary"
-                  accent="default"
-                  onClick={() => openModal(changeVisibilityModalId)}
-                />
+                {connection.visibility !== 'workspace' && (
+                  <Button
+                    title={t`Share with workspace`}
+                    Icon={IconUsers}
+                    variant="secondary"
+                    accent="default"
+                    onClick={() => openModal(shareWithWorkspaceModalId)}
+                  />
+                )}
                 <Button
                   title={t`Disconnect`}
                   Icon={IconTrash}
@@ -384,16 +388,16 @@ export const SettingsApplicationConnectionDetail = () => {
               loading={isDeleting}
             />
             <ConfirmationModal
-              modalInstanceId={changeVisibilityModalId}
-              title={t`Change visibility?`}
+              modalInstanceId={shareWithWorkspaceModalId}
+              title={t`Share with workspace?`}
               subtitle={
                 <Trans>
-                  Changing visibility requires reconnecting this OAuth
-                  connection. You will be redirected to authorize it again.
+                  Sharing this connection with the workspace requires
+                  reconnecting it. You will be redirected to authorize it again.
                 </Trans>
               }
-              onConfirmClick={handleChangeVisibility}
-              confirmButtonText={t`Reconnect and change visibility`}
+              onConfirmClick={handleShareWithWorkspace}
+              confirmButtonText={t`Reconnect and share`}
               confirmButtonAccent="blue"
             />
           </>
