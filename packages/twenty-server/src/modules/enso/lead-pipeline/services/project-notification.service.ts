@@ -187,6 +187,15 @@ export class ProjectNotificationService {
             activity: {
               kind: activityRow?.kind ?? undefined,
               source: activityRow?.source ?? undefined,
+              // The platform names the room's channel (Instagram/Facebook) and
+              // the traffic type separates an organic DM from a paid ad click —
+              // both known at intake, so an untagged social lead can say which
+              // it is instead of reading as a lost campaign.
+              platform: activityRow?.platform ?? undefined,
+              trafficType:
+                activityRow?.trafficType ??
+                opportunity.firstTrafficType ??
+                undefined,
               callStatus: activityRow?.callStatus ?? undefined,
               durationS: activityRow?.durationS ?? undefined,
               calleeDid: activityRow?.calleeDid ?? undefined,

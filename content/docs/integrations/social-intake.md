@@ -128,8 +128,20 @@ parser/builder to persist `referral` (`ref`, `ad_id`, `ads_context_data`) into
 `conversation.additional_attributes`, so it then flows natively through the
 Chatwoot webhook to n8n — mirroring how form-intake gets PostHog data.
 
-To receive the referral on the `messages` event, the page must subscribe to both
-`messages` and **`messaging_referrals`** webhook fields.
+To receive the referral the channel must subscribe to the referral webhook field
+as well as `messages` — and Meta names it differently per object: the **page**
+object takes **`messaging_referrals`** (plural), the **instagram** object takes
+**`messaging_referral`** (singular). `messaging_referrals` fires when a contact
+returns to an *existing* thread from an ad or an `m.me?ref` link; a *new*
+ad-initiated thread instead carries the referral inside the first `messages`
+event (or a `messaging_postbacks` payload), which is why PATCH 1 reads both
+`messaging.referral` and `postback.referral`.
+
+⚠️ **This was missing until 2026-09-08.** Chatwoot's own `subscribe` calls never
+included either field, so the live channels asked Meta only for
+`messages, message_deliveries, message_echoes, message_reads, standby,
+messaging_handovers` (pages) and `messages, message_reactions, messaging_seen`
+(Instagram) — see the as-built note at the end of this page.
 
 ### The `ref` scheme (hand to the marketing team)
 
@@ -150,6 +162,36 @@ n8n resolution order for the project:
 UTMs from `ref` populate the `inboundActivity` attribution fields exactly like the
 form channel, and the pipeline freezes them onto the Opportunity's first-touch
 snapshot.
+
+### Attribution tiers when the ad forgets its `ref` (2026-09-08)
+
+An ad can reach us with an `ad_id` and no `ref` — a creative the marketing team
+built without the query string, which used to mean `trafficType=PAID` with five
+empty utm fields. The Social Intake workflow now degrades in three steps
+(`Needs ad lookup?` → `Read Ad` → `Ad Attribution`, between the idempotency check
+and the person lookup):
+
+| tier | source | fills |
+|---|---|---|
+| 1 | `referral.ref` | everything, exactly as before — always wins |
+| 2 | `GET /{ad_id}?fields=name,adset{name},campaign{name}` | `utm_campaign` = campaign name, `utm_content` = ad name, `utm_term` = adset name |
+| 3 | `referral.ads_context_data.ad_title` | `utm_content` = the ad's headline |
+
+Any tier that fires also sets `utm_source` = `instagram`/`facebook` from the
+platform and `utm_medium` = `paid_social`.
+
+⚠️ **Tier 2 is dark today.** It reuses the `Facebook Lead Ads system token`
+credential, which has no `ads_read` / `ads_management` scope on the ad account:
+the call returns `GraphMethodException` code 100 subcode 33 (*"cannot be loaded
+due to missing permissions"*), the node is `neverError` + `onError:
+continueRegularOutput`, and the flow drops to tier 3. Grant that scope (or point
+the credential at a system-user token that has it) and tier 2 starts working with
+no workflow change. The failure text is kept on the item as `adLookupError` for
+the execution log; it is never written to the CRM.
+
+Verified live with two synthetic conversations (both cleaned up): `ad_id` only →
+`PAID` + `instagram` / `paid_social` / ad title in `utm_content`; full `ref` →
+the `ref` values untouched.
 
 ## Identity resolution
 
@@ -276,7 +318,8 @@ Standard Access still applies. Requirements:
    `/super_admin/app_config?config=instagram`; webhook →
    `https://chat.enso.ro/webhooks/instagram`; redirect →
    `https://chat.enso.ro/instagram/callback`; subscribe `messages, messaging_seen,
-   message_reactions`; permissions `instagram_business_basic,
+   message_reactions, messaging_referral` *(singular on the instagram object —
+   this is the ad-attribution field)*; permissions `instagram_business_basic,
    instagram_business_manage_messages`.
 6. Set app **Live** (required for IG webhooks; only own/added assets connected).
 7. Create the FB + IG inboxes in Chatwoot via the Login flows; attach assets;
@@ -399,6 +442,114 @@ fields on `InboundActivityCreateInput`** (a create with them → `BAD_USER_INPUT
 which briefly broke intake during the build until reverted). The ad_id / raw ref
 are retained in `submittedPayload` (the raw Chatwoot payload) for the DWH; `utm*`
 are parsed from `ref` as before. Workflow backup at `/tmp/social-workflow-backup.json`.
+
+**⚠️ No referral had ever arrived — referral fields now subscribed (2026-09-08).**
+Triggered by a marketing-room post reading `no attribution — this lead arrived
+untagged`. Findings, all verified live:
+
+- **0 of 854** Chatwoot conversations have any `additional_attributes` at all, so
+  PATCH 1 has never had a referral to persist — even though the patch **is** in
+  the deployed image (`423af00` is an ancestor of the live SHA `6f6ab5c`).
+- The live `subscribed_apps` field lists carried **no referral field**: 5/5 FB
+  pages had `messages, message_deliveries, message_echoes, message_reads, standby,
+  messaging_handovers`; the IG accounts had `messages, message_reactions,
+  messaging_seen`. Fixed by hand via the Graph API — all 5 pages now also carry
+  `messaging_referrals`, and Artima + Vânzări IG carry `messaging_referral`
+  (verified by re-reading each channel). Persisted in the fork by
+  corporateready/chatwoot#1 so `after_create_commit :subscribe` cannot drop it on
+  the next re-authorization — **merged and deployed 2026-09-08**, live SHA
+  `f4102ca` (previous `6f6ab5c` is the rollback point). ~10 min build, and the
+  swap cost no observable downtime: `chat.enso.ro` answered 200 on every 20s poll
+  across the whole window. Verified after the deploy: both patched subscribe lists
+  are in the running image, CSP `frame-ancestors` (PATCH 2) intact, Chatwoot API
+  up, account webhook still `conversation_created` → the n8n intake path, and all
+  7 live channels still carry the referral field — a change to
+  subscribe-on-create cannot touch existing subscriptions.
+- **3 Instagram channels are dead**: ENSO Dev Moldova (inbox 6), Avram Iancu (9)
+  and ENSO Dev România (10) IG tokens expired 2026-08-02 (`Session has expired`),
+  so they could not be re-subscribed and are not delivering DMs either. Artima IG
+  expires 2026-09-21, Vânzări 2026-09-24 — **both need re-authorizing before those
+  dates or they go the same way silently.**
+
+  Re-auth is a human step in Chatwoot: **Settings → Inboxes → the inbox →
+  Reconnect**, which runs the Instagram Business Login OAuth
+  (`instagramClient.generateAuthorization` → `/instagram/callback`) and writes a
+  fresh token + `expires_at` onto `channel_instagram`. Whoever clicks it has to be
+  logged in to Meta with admin rights on that Instagram professional account.
+
+  ⚠️ **Chatwoot did not know they were dead.** `reauthorization_required` was
+  `false` on all ten social inboxes, because the flag is only set after
+  `AUTHORIZATION_ERROR_THRESHOLD` (2) *outbound* API failures — and nobody had
+  replied through those inboxes. So the UI showed no Reconnect button while the
+  channel was silently down. Set by hand on 2026-09-08 for inboxes 6/9/10 by
+  writing the Redis key directly
+  (`REAUTHORIZATION_REQUIRED:channel_instagram:{3,4,5}`) rather than calling
+  `prompt_reauthorization!`, which would also have emailed the account admins an
+  `instagram_disconnect` notice. `reauthorized!` clears both keys after a
+  successful reconnect.
+
+  Reconnecting the **same** Instagram account is safe and in-place:
+  `Instagram::CallbacksController#find_or_create_inbox` looks the channel up by
+  `instagram_id` and `update!`s the token + `expires_at` on it, keeping the inbox,
+  its conversations, its agents and our hand-added `messaging_referral`
+  subscription (`after_create_commit :subscribe` does not re-run on an update).
+  Only authorizing a *different* account creates a new channel + inbox — and that
+  one now subscribes with the referral field too, since
+  corporateready/chatwoot#1 is deployed. Note the reconnect renames the inbox to the
+  Instagram username; harmless, since n8n maps projects by inbox **id**.
+
+**Token-expiry monitor (live 2026-09-08).** n8n workflow **`Chatwoot Token Expiry
+Watch`** (`ZPlGI7PHrniWwxas`, daily 08:40, `errorWorkflow` = Intake Error Alerts)
+reads `channel_instagram.expires_at` and posts to the ops Google Chat space
+(`AAQA-eMmZDo`, same as the lead-ad watchdog) when a token has expired, expires
+within 14 days, or has no expiry recorded. Silent otherwise. First run against
+live data: 3 expired, 1 expiring in 13 days (Artima).
+
+It reads the Chatwoot DB through a **dedicated read-only role** rather than the
+superuser: `n8n_readonly`, `SELECT` on `channel_instagram`,
+`channel_facebook_pages`, `inboxes` only — verified it cannot read
+`conversations` or write anything. n8n credential *Chatwoot DB (read-only)*
+(`nv26IyiWGMaFgGtf`) over the public TCP proxy. Rollback: `drop role n8n_readonly`
+plus deleting that credential. FB page tokens carry no expiry column, so only
+Instagram is watched.
+
+### Granting `ads_read` for attribution tier 2
+
+The credential the `Read Ad` node reuses belongs to system user
+**`ENSOCRMENRICHMENT`** (`122133623625354657`) on app **ENSO Lead Ads**
+(`877859282026498`), and its granted scopes are exactly `pages_show_list`,
+`pages_read_engagement`, `leads_retrieval`, `public_profile` — no `ads_read`, no
+`business_management` (`/me/businesses` → *(#100) Missing Permission*). It manages
+6 pages: Artima, ENSO Development Moldova, ENSO Development România, Vânzări
+Imobiliare, Avram Iancu, READY.
+
+Adding the asset is not enough — **a system-user token's scopes are fixed when the
+token is generated**, so tier 2 needs a token minted *with* `ads_read`:
+
+1. Business Settings → Users → System users → the system user → **Add assets → Ad
+   accounts** → the ad accounts running those brands' campaigns → **View
+   performance** (that is `ads_read`).
+2. **Generate new token** against the ENSO Lead Ads app with `ads_read` included.
+3. Put it in an n8n credential and point `Read Ad` at it.
+
+⚠️ Prefer a **separate** system user / credential for this. Overwriting *Facebook
+Lead Ads system token* (`bMIbvMPFyVcJEUPV`) also re-tokens the live Lead Ad
+intake, and a regenerated token missing `leads_retrieval` or
+`pages_read_engagement` breaks lead fetching. To find which ad account to grant,
+look up ad id `120243558339980604` (a real one from a recent lead) in Ads Manager.
+- The subscription gap is **not proof** that paid social leads were mis-attributed:
+  an ads-initiated *first* message carries its referral inside the `messages` event
+  we already had. The likelier reason no referral has ever appeared is that no
+  click-to-Messenger / click-to-Direct ads have been running with a `ref` — paid
+  social spend currently goes through the Lead Ads channel, whose activities do
+  arrive `PAID` with full UTMs. **Open question for marketing.**
+- Also fixed CRM-side: the marketing-room post now names the platform
+  (`Instagram Social Message` — `platformPrefix` had been reading `source`, always
+  `CHATWOOT`, instead of `platform`) and distinguishes an organic DM from a lost
+  campaign (`no utm tags — organic Instagram DM, no ad click to attribute`)
+  instead of calling every untagged social touch `untagged`.
+- Still not covered: a referral that carries only `ad_id` and no `ref` yields
+  `trafficType=PAID` with empty `utm_*` — nothing maps `ad_id` → campaign.
 
 **Auto-resolve on window close (2026-06-05, live config).** Chatwoot account
 `settings.auto_resolve_after = 1440` (minutes = 24h; set via

@@ -22,6 +22,10 @@ const ACTIVITY_TYPE_LABEL: Record<string, string> = {
 export type ProjectDealActivityFacts = {
   kind?: string;
   source?: string;
+  // INSTAGRAM / FACEBOOK on the social channel. Separate from `source`, which is
+  // the system the touch came through (CHATWOOT) rather than the platform.
+  platform?: string;
+  trafficType?: string;
   callStatus?: string;
   durationS?: number;
   calleeDid?: string;
@@ -44,13 +48,22 @@ export type ProjectDealFacts = {
 };
 
 // "Instagram Lead Ad Form" / "Facebook Lead Ad Form" when we know the platform,
-// matching what these rooms already show; the plain kind otherwise.
-const platformPrefix = (source: string | undefined): string | undefined => {
-  if (!isNonEmptyString(source)) {
+// matching what these rooms already show; the plain kind otherwise. Reads
+// `platform` first and only then `source`: on the social channel `source` is
+// always CHATWOOT, so going by it alone lost the Instagram/Facebook the payload
+// had told us all along.
+const platformPrefix = (
+  activity: ProjectDealActivityFacts,
+): string | undefined => {
+  const candidate = isNonEmptyString(activity.platform)
+    ? activity.platform
+    : activity.source;
+
+  if (!isNonEmptyString(candidate)) {
     return undefined;
   }
 
-  const normalized = source.toLowerCase();
+  const normalized = candidate.toLowerCase();
 
   if (normalized.includes('instagram')) {
     return 'Instagram';
@@ -68,9 +81,32 @@ const activityType = (activity: ProjectDealActivityFacts): string => {
     ? (ACTIVITY_TYPE_LABEL[activity.kind] ?? activity.kind)
     : 'Lead';
 
-  const platform = platformPrefix(activity.source);
+  const platform = platformPrefix(activity);
 
   return isDefined(platform) ? `${platform} ${label}` : label;
+};
+
+// What to print in place of the utm_* block when the touch carried no tags.
+// "untagged" alone reads as a broken pipeline, so say which of the three it is:
+// an organic touch that never had a campaign, a paid one whose ad forgot its
+// ref, or a genuine blank where we know nothing at all.
+const noUtmLine = (activity: ProjectDealActivityFacts): string => {
+  const platform = platformPrefix(activity);
+  const channel = isDefined(platform) ? `${platform} DM` : 'social DM';
+
+  if (activity.trafficType === 'SOCIAL') {
+    return `no utm tags — organic ${channel}, no ad click to attribute`;
+  }
+
+  if (activity.trafficType === 'PAID') {
+    return 'no utm tags — paid ad click, but the ad carried no ref';
+  }
+
+  if (isNonEmptyString(activity.trafficType)) {
+    return `no utm tags — traffic type: ${activity.trafficType}`;
+  }
+
+  return 'no attribution — this lead arrived untagged';
 };
 
 export const formatProjectDealTimestamp = (
@@ -163,7 +199,7 @@ export const buildProjectDealMessage = (
   } else {
     // Said outright rather than left as five blank lines: an untagged lead is
     // exactly what marketing needs to see and chase.
-    lines.push('no attribution — this lead arrived untagged');
+    lines.push(noUtmLine(activity));
   }
 
   if (isDefined(recordUrl)) {

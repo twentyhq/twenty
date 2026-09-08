@@ -104,6 +104,61 @@ describe('buildProjectDealMessage', () => {
     expect(message).not.toContain('utm_source:');
   });
 
+  it('should name the platform from the social payload, not from CHATWOOT', () => {
+    const message = buildProjectDealMessage({
+      projectName: 'ARTIMA Business & Lifestyle',
+      fullName: 'Constantin Ceban',
+      activity: {
+        kind: 'SOCIAL_MESSAGE',
+        source: 'CHATWOOT',
+        platform: 'INSTAGRAM',
+        trafficType: 'SOCIAL',
+        occurredAt: new Date('2026-09-07T19:07:30.000Z'),
+      },
+    });
+
+    expect(message).toContain('Activity Type: Instagram Social Message');
+  });
+
+  it('should distinguish an organic DM from a lost campaign', () => {
+    const message = buildProjectDealMessage({
+      activity: {
+        kind: 'SOCIAL_MESSAGE',
+        source: 'CHATWOOT',
+        platform: 'INSTAGRAM',
+        trafficType: 'SOCIAL',
+      },
+    });
+
+    expect(message).toContain(
+      'no utm tags — organic Instagram DM, no ad click to attribute',
+    );
+    expect(message).not.toContain('untagged');
+  });
+
+  it('should call out a paid click whose ad carried no ref', () => {
+    const message = buildProjectDealMessage({
+      activity: {
+        kind: 'SOCIAL_MESSAGE',
+        source: 'CHATWOOT',
+        platform: 'FACEBOOK',
+        trafficType: 'PAID',
+      },
+    });
+
+    expect(message).toContain(
+      'no utm tags — paid ad click, but the ad carried no ref',
+    );
+  });
+
+  it('should print the traffic type when it is neither organic social nor paid', () => {
+    const message = buildProjectDealMessage({
+      activity: { kind: 'FORM_SUBMISSION', trafficType: 'REFERRAL' },
+    });
+
+    expect(message).toContain('no utm tags — traffic type: REFERRAL');
+  });
+
   it('should keep the separator exactly 37 underscores', () => {
     expect(BLOCK_SEPARATOR).toBe('_____________________________________');
     expect(BLOCK_SEPARATOR).toHaveLength(37);
