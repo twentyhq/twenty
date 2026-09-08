@@ -590,6 +590,47 @@ describe('planPullWrites', () => {
     ]);
   });
 
+  it('should keep a qualified file name within the length cap', () => {
+    const longName = 'x'.repeat(100);
+    const plan = planPullWrites({
+      manifest: {
+        ...buildManifest([
+          buildObject({
+            universalIdentifier: PET_UID,
+            nameSingular: 'pet',
+            labelIdentifierFieldMetadataUniversalIdentifier: NAME_FIELD_UID,
+          }),
+          buildObject({
+            universalIdentifier: ROCKET_UID,
+            nameSingular: 'rocket',
+            labelIdentifierFieldMetadataUniversalIdentifier:
+              ROCKET_NAME_FIELD_UID,
+          }),
+        ]),
+        views: [
+          buildView({ universalIdentifier: OVERVIEW_VIEW_UID, name: longName }),
+          buildView({
+            universalIdentifier: SECOND_OVERVIEW_VIEW_UID,
+            name: longName,
+            objectUniversalIdentifier: ROCKET_UID,
+          }),
+        ],
+      },
+      baseManifest: null,
+      scannedFiles: [],
+    });
+
+    expect(
+      plan.writes
+        .filter((write) => write.kind === 'view')
+        .map((write) => write.relativePath)
+        .sort(),
+    ).toEqual([
+      `src/views/pet-${'x'.repeat(76)}.view.ts`,
+      `src/views/rocket-${'x'.repeat(73)}.view.ts`,
+    ]);
+  });
+
   it('should leave an unchanged view untouched and regenerate the view whose filter changed on the server', () => {
     const scannedFiles: ScannedDefineFile[] = [
       {

@@ -4,6 +4,7 @@ import {
   type PullEntity,
   type PullEntityKind,
 } from '@/cli/utilities/pull/build-pull-entities';
+import { capFileBaseName } from '@/cli/utilities/pull/pull-file-base-name';
 import { type ScannedDefineFile } from '@/cli/utilities/pull/scan-project-define-files';
 import { writeDefineFile } from '@/cli/utilities/pull/write-define-file';
 import { kebabCase } from '@/cli/utilities/string/kebab-case';
@@ -97,7 +98,9 @@ const resolveFileBaseNames = (entities: PullEntity[]): Map<string, string> => {
 
     const qualifiedNames = collidingEntities.map((entity) =>
       isDefined(entity.parentName)
-        ? `${kebabCase(entity.parentName)}-${entity.fileBaseName}`
+        ? capFileBaseName(
+            `${kebabCase(entity.parentName)}-${entity.fileBaseName}`,
+          )
         : entity.fileBaseName,
     );
 
@@ -111,7 +114,9 @@ const resolveFileBaseNames = (entities: PullEntity[]): Map<string, string> => {
         entity.universalIdentifier,
         isQualifiedNameUnique
           ? qualifiedName
-          : `${entity.universalIdentifier.slice(0, 8)}-${qualifiedName}`,
+          : capFileBaseName(
+              `${entity.universalIdentifier.slice(0, 8)}-${qualifiedName}`,
+            ),
       );
     });
   }

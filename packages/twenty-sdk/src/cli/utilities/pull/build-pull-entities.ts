@@ -1,4 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import {
   FIELD_ENUM_BINDINGS,
   INDEX_ENUM_BINDINGS,
@@ -7,18 +6,18 @@ import {
   VIEW_FIELD_ENUM_BINDINGS,
   type EnumBinding,
 } from '@/cli/utilities/pull/write-define-file';
+import {
+  buildIndexFileBaseName,
+  buildViewFieldFileBaseName,
+  type FieldLocation,
+  toFileBaseName,
+} from '@/cli/utilities/pull/pull-file-base-name';
 import { kebabCase } from '@/cli/utilities/string/kebab-case';
 import {
   type ApplicationManifest,
-  type IndexManifest,
   type Manifest,
-  type StandaloneViewFieldManifest,
 } from 'twenty-shared/application';
-import {
-  STANDARD_OBJECT_FIELDS,
-  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-} from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 
 export const PULL_ENTITY_KINDS = [
   'application',
@@ -49,11 +48,6 @@ export type SkippedPullEntity = {
   reason: string;
 };
 
-type FieldLocation = {
-  objectName: string | null;
-  fieldName: string;
-};
-
 const APPLICATION_PROPERTIES_TO_STRIP = [
   'packageJsonChecksum',
   'yarnLockChecksum',
@@ -80,41 +74,6 @@ const STANDARD_OBJECT_NAME_BY_UNIVERSAL_IDENTIFIER = new Map<string, string>(
     ([name, universalIdentifier]) => [universalIdentifier, name] as const,
   ),
 );
-
-const STANDARD_FIELD_LOCATION_BY_UNIVERSAL_IDENTIFIER = new Map<
-  string,
-  FieldLocation
->(
-  Object.entries(STANDARD_OBJECT_FIELDS).flatMap(([objectName, fields]) =>
-    Object.entries(fields).map(
-      ([fieldName, { universalIdentifier }]) =>
-        [universalIdentifier, { objectName, fieldName }] as const,
-    ),
-  ),
-);
-
-const MAX_FILE_BASE_NAME_LENGTH = 80;
-
-const toFileBaseName = ({
-  segments,
-  universalIdentifier,
-}: {
-  segments: (string | null)[];
-  universalIdentifier: string;
-}): string => {
-  const fileBaseName = segments
-    .filter(isDefined)
-    .map(kebabCase)
-    .join('-')
-    .replace(/-{2,}/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, MAX_FILE_BASE_NAME_LENGTH)
-    .replace(/-+$/g, '');
-
-  return isNonEmptyString(fileBaseName)
-    ? fileBaseName
-    : universalIdentifier.slice(0, 8);
-};
 
 const buildApplicationConfig = (
   manifest: Manifest,
@@ -154,50 +113,6 @@ const getObjectName = ({
   )?.nameSingular ??
   STANDARD_OBJECT_NAME_BY_UNIVERSAL_IDENTIFIER.get(objectUniversalIdentifier) ??
   null;
-
-const buildIndexFileBaseName = ({
-  indexManifest,
-  objectName,
-  fieldLocationByUniversalIdentifier,
-}: {
-  indexManifest: IndexManifest;
-  objectName: string | null;
-  fieldLocationByUniversalIdentifier: Map<string, FieldLocation>;
-}): string =>
-  toFileBaseName({
-    segments: [
-      objectName,
-      ...indexManifest.fields.map(
-        ({ fieldUniversalIdentifier }) =>
-          fieldLocationByUniversalIdentifier.get(fieldUniversalIdentifier)
-            ?.fieldName ?? null,
-      ),
-    ],
-    universalIdentifier: indexManifest.universalIdentifier,
-  });
-
-const buildViewFieldFileBaseName = ({
-  viewFieldManifest,
-  fieldLocationByUniversalIdentifier,
-}: {
-  viewFieldManifest: StandaloneViewFieldManifest;
-  fieldLocationByUniversalIdentifier: Map<string, FieldLocation>;
-}): string => {
-  const fieldLocation =
-    fieldLocationByUniversalIdentifier.get(
-      viewFieldManifest.fieldMetadataUniversalIdentifier,
-    ) ??
-    STANDARD_FIELD_LOCATION_BY_UNIVERSAL_IDENTIFIER.get(
-      viewFieldManifest.fieldMetadataUniversalIdentifier,
-    );
-
-  return toFileBaseName({
-    segments: isDefined(fieldLocation)
-      ? [fieldLocation.objectName, fieldLocation.fieldName]
-      : [],
-    universalIdentifier: viewFieldManifest.universalIdentifier,
-  });
-};
 
 export const buildPullEntities = (
   manifest: Manifest,
