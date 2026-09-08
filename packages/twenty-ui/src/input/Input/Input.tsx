@@ -2,8 +2,8 @@ import { Input as InputPrimitive } from '@base-ui/react/input';
 import { clsx } from 'clsx';
 import { useContext } from 'react';
 
-import { mergeFieldPartClassName } from '@ui/input/Field/internal/mergeFieldPartClassName';
 import { InputGroupContext } from '@ui/input/InputGroup/internal/InputGroupContext';
+import { mergePartClassName } from '@ui/utilities/internal/mergePartClassName';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Input.module.scss';
@@ -16,7 +16,7 @@ export const Input = ({ size, className, ...props }: InputProps) => {
   return (
     <InputPrimitive
       {...props}
-      className={mergeFieldPartClassName(
+      className={mergePartClassName(
         clsx(styles.input, styles[resolvedSize]),
         className,
       )}

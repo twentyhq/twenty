@@ -1,7 +1,7 @@
 import { Popover as PopoverPrimitive } from '@base-ui/react/popover';
 
-import { mergeFieldPartClassName } from '@ui/input/Field/internal/mergeFieldPartClassName';
 import { useThemeContainer } from '@ui/theme-constants';
+import { mergePartClassName } from '@ui/utilities/internal/mergePartClassName';
 
 import styles from '../Popover.module.scss';
 import { type PopoverPopupProps } from '../types/PopoverPopupProps';
@@ -36,7 +36,7 @@ export const PopoverPopup = ({
       >
         <PopoverPrimitive.Popup
           {...props}
-          className={mergeFieldPartClassName(styles.popup, className)}
+          className={mergePartClassName(styles.popup, className)}
         >
           {arrow && <PopoverPrimitive.Arrow className={styles.arrow} />}
           {children}

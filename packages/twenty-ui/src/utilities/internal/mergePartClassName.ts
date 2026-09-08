@@ -1,7 +1,7 @@
 import { isFunction } from '@sniptt/guards';
 import { clsx } from 'clsx';
 
-export const mergeFieldPartClassName =
+export const mergePartClassName =
   <TState>(
     partClassName: string,
     className: string | ((state: TState) => string | undefined) | undefined,

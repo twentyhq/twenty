@@ -1,6 +1,6 @@
 import { Tabs as TabsPrimitive } from '@base-ui/react/tabs';
 
-import { mergeFieldPartClassName } from '@ui/input/Field/internal/mergeFieldPartClassName';
+import { mergePartClassName } from '@ui/utilities/internal/mergePartClassName';
 
 import styles from '../Tabs.module.scss';
 import { type TabsTabProps } from '../types/TabsTabProps';
@@ -16,7 +16,7 @@ export const TabsTab = ({
 }: TabsTabProps) => (
   <TabsPrimitive.Tab
     {...props}
-    className={mergeFieldPartClassName(styles.tab, className)}
+    className={mergePartClassName(styles.tab, className)}
     data-size={size}
   >
     <span className={styles.content}>

@@ -1,7 +1,7 @@
 import { useDirection } from '@base-ui/react/direction-provider';
 import { Tabs as TabsPrimitive } from '@base-ui/react/tabs';
 
-import { mergeFieldPartClassName } from '@ui/input/Field/internal/mergeFieldPartClassName';
+import { mergePartClassName } from '@ui/utilities/internal/mergePartClassName';
 
 import styles from '../Tabs.module.scss';
 import { type TabsListProps } from '../types/TabsListProps';
@@ -36,7 +36,7 @@ export const TabsList = ({
       {...props}
       loopFocus={loopFocus}
       onKeyDown={handleKeyDown}
-      className={mergeFieldPartClassName(styles.list, className)}
+      className={mergePartClassName(styles.list, className)}
     >
       {children}
       <TabsPrimitive.Indicator className={styles.indicator} />
