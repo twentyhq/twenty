@@ -107,6 +107,10 @@ export class ObjectRecordEventPublisher {
     const { permissionsContext, flatWorkspaceMemberMaps } =
       await this.fetchObjectRecordStreamContext(workspaceId);
 
+    const workspaceMemberIdByUserId = this.buildWorkspaceMemberIdByUserId(
+      flatWorkspaceMemberMaps,
+    );
+
     const recordShares = await this.fetchRecordShares({
       workspaceEventBatch: eventBatch,
       featureFlagsMap: permissionsContext.featureFlagsMap,
@@ -130,6 +134,7 @@ export class ObjectRecordEventPublisher {
         workspaceEventBatch: eventBatch,
         permissionsContext,
         flatWorkspaceMemberMaps,
+        workspaceMemberIdByUserId,
         recordShares,
       });
     }
@@ -180,6 +185,7 @@ export class ObjectRecordEventPublisher {
     workspaceEventBatch,
     permissionsContext,
     flatWorkspaceMemberMaps,
+    workspaceMemberIdByUserId,
     recordShares,
   }: {
     streamChannelId: string;
@@ -187,6 +193,7 @@ export class ObjectRecordEventPublisher {
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
     permissionsContext: StreamPermissionsContext;
     flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
+    workspaceMemberIdByUserId: Map<string, string>;
     recordShares: RecordShare[];
   }): Promise<void> {
     const roleIds = this.resolveStreamRoleIds(
@@ -225,7 +232,7 @@ export class ObjectRecordEventPublisher {
       ...streamData.authContext,
       workspaceMemberId: this.resolveSubscriberWorkspaceMemberId({
         subscriberAuthContext: streamData.authContext,
-        flatWorkspaceMemberMaps,
+        workspaceMemberIdByUserId,
       }),
     };
 
@@ -492,13 +499,38 @@ export class ObjectRecordEventPublisher {
     });
   }
 
+  private buildWorkspaceMemberIdByUserId(
+    flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps,
+  ): Map<string, string> {
+    const workspaceMemberIdByUserId = new Map<string, string>();
+
+    for (const flatWorkspaceMember of Object.values(
+      flatWorkspaceMemberMaps.byId,
+    )) {
+      if (
+        !isDefined(flatWorkspaceMember) ||
+        isDefined(flatWorkspaceMember.deletedAt) ||
+        !isDefined(flatWorkspaceMember.userId)
+      ) {
+        continue;
+      }
+
+      workspaceMemberIdByUserId.set(
+        flatWorkspaceMember.userId,
+        flatWorkspaceMember.id,
+      );
+    }
+
+    return workspaceMemberIdByUserId;
+  }
+
   // A stream created before the member id was stored only carries the user id
   private resolveSubscriberWorkspaceMemberId({
     subscriberAuthContext,
-    flatWorkspaceMemberMaps,
+    workspaceMemberIdByUserId,
   }: {
     subscriberAuthContext: SerializableAuthContext;
-    flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
+    workspaceMemberIdByUserId: Map<string, string>;
   }): string | undefined {
     if (isDefined(subscriberAuthContext.workspaceMemberId)) {
       return subscriberAuthContext.workspaceMemberId;
@@ -508,12 +540,7 @@ export class ObjectRecordEventPublisher {
       return undefined;
     }
 
-    return Object.values(flatWorkspaceMemberMaps.byId).find(
-      (flatWorkspaceMember) =>
-        isDefined(flatWorkspaceMember) &&
-        !isDefined(flatWorkspaceMember.deletedAt) &&
-        flatWorkspaceMember.userId === subscriberAuthContext.userId,
-    )?.id;
+    return workspaceMemberIdByUserId.get(subscriberAuthContext.userId);
   }
 
   private async buildSubscriberRecordShareGate({
