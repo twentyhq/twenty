@@ -2,31 +2,32 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationExportCoverageEntry } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
 import {
-  type ParentViewStatus,
-  type ViewChildMetadataName,
-} from 'src/engine/core-modules/application/application-manifest/types/view-export-classification.type';
+  type ChildMetadataName,
+  type ParentMetadataName,
+  type ParentStatus,
+} from 'src/engine/core-modules/application/application-manifest/types/export-classification.type';
 import { buildExportedCoverageEntry } from 'src/engine/core-modules/application/application-manifest/utils/build-exported-coverage-entry.util';
-import { getParentViewReason } from 'src/engine/core-modules/application/application-manifest/utils/get-parent-view-reason.util';
+import { getParentReason } from 'src/engine/core-modules/application/application-manifest/utils/get-parent-reason.util';
 import { type WorkspaceLocalStateProperties } from 'src/engine/core-modules/application/application-manifest/utils/get-workspace-local-state-reason.util';
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
 
-type FlatViewChild = {
+export type FlatChild = {
   universalIdentifier: string;
-  viewUniversalIdentifier: string;
 } & Partial<WorkspaceLocalStateProperties>;
 
-export type ViewChildDecision = 'nested' | 'standalone';
+export type ChildDecision = 'nested' | 'standalone';
 
-export const createViewChildDecider =
-  ({
+export const createChildDecider =
+  <TFlatChild extends FlatChild>({
     coverage,
-    parentViewStatusByUniversalIdentifier,
+    parentMetadataName,
+    parentStatusByUniversalIdentifier,
+    getParentUniversalIdentifier,
   }: {
     coverage: ApplicationExportCoverageEntry[];
-    parentViewStatusByUniversalIdentifier: ReadonlyMap<
-      string,
-      ParentViewStatus
-    >;
+    parentMetadataName: ParentMetadataName;
+    parentStatusByUniversalIdentifier: ReadonlyMap<string, ParentStatus>;
+    getParentUniversalIdentifier: (flatEntity: TFlatChild) => string;
   }) =>
   ({
     metadataName,
@@ -35,12 +36,12 @@ export const createViewChildDecider =
     unsupportedReason,
     canStandAlone = false,
   }: {
-    metadataName: ViewChildMetadataName;
-    flatEntity: FlatViewChild;
+    metadataName: ChildMetadataName;
+    flatEntity: TFlatChild;
     isEngineDerived?: boolean;
     unsupportedReason?: string;
     canStandAlone?: boolean;
-  }): ViewChildDecision | undefined => {
+  }): ChildDecision | undefined => {
     if (isEngineDerived) {
       coverage.push({
         metadataName,
@@ -51,20 +52,24 @@ export const createViewChildDecider =
       return undefined;
     }
 
-    const parentViewStatus =
-      parentViewStatusByUniversalIdentifier.get(
-        flatEntity.viewUniversalIdentifier,
+    const parentStatus =
+      parentStatusByUniversalIdentifier.get(
+        getParentUniversalIdentifier(flatEntity),
       ) ?? 'outside';
 
     if (
-      parentViewStatus !== 'exported' &&
-      (parentViewStatus === 'unsupported' || !canStandAlone)
+      parentStatus !== 'exported' &&
+      (parentStatus === 'unsupported' || !canStandAlone)
     ) {
       coverage.push({
         metadataName,
         universalIdentifier: flatEntity.universalIdentifier,
         status: ApplicationExportCoverageStatus.UNSUPPORTED,
-        reason: getParentViewReason({ metadataName, parentViewStatus }),
+        reason: getParentReason({
+          metadataName,
+          parentMetadataName,
+          parentStatus,
+        }),
       });
 
       return undefined;
@@ -83,5 +88,5 @@ export const createViewChildDecider =
 
     coverage.push(buildExportedCoverageEntry({ metadataName, flatEntity }));
 
-    return parentViewStatus === 'exported' ? 'nested' : 'standalone';
+    return parentStatus === 'exported' ? 'nested' : 'standalone';
   };
