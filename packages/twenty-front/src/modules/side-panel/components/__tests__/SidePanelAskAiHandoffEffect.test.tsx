@@ -1,4 +1,4 @@
-import { act, render } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
 
@@ -12,8 +12,9 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
+let defaultHomePagePath = '/objects/companies';
 jest.mock('@/navigation/hooks/useDefaultHomePagePath', () => ({
-  useDefaultHomePagePath: () => ({ defaultHomePagePath: '/objects/companies' }),
+  useDefaultHomePagePath: () => ({ defaultHomePagePath }),
 }));
 
 const openAskAiPageMock = jest.fn();
@@ -32,7 +33,12 @@ const ChatPageRoute = () => {
   navigateAwayFromChatPage = (pathname = '/objects/companies') =>
     navigate(pathname);
 
-  return <AiChatPageContinueInSidePanelEffect />;
+  return (
+    <>
+      <AiChatPageContinueInSidePanelEffect />
+      <div>Setup conversation</div>
+    </>
+  );
 };
 
 const RouterUnderTest = ({ initialPath }: { initialPath: string }) => (
@@ -45,7 +51,10 @@ const RouterUnderTest = ({ initialPath }: { initialPath: string }) => (
       />
       <Routes>
         <Route path="/chat/:threadId?" element={<ChatPageRoute />} />
-        <Route path="/objects/companies" element={<div />} />
+        <Route
+          path="/objects/companies"
+          element={<div>Companies homepage</div>}
+        />
         <Route path="/settings/*" element={<div />} />
       </Routes>
     </MemoryRouter>
@@ -58,6 +67,38 @@ describe('SidePanelAskAiHandoffEffect', () => {
     sessionStorage.clear();
     resetJotaiStore();
     navigateAwayFromChatPage = undefined;
+    defaultHomePagePath = '/objects/companies';
+  });
+
+  it('opens setup on the homepage after returning to settings', () => {
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    render(<RouterUnderTest initialPath="/settings/profile" />);
+    expect(screen.getByText('Companies homepage')).toBeInTheDocument();
+    expect(openAskAiPageMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('uses the chat page when no readable object homepage exists', () => {
+    defaultHomePagePath = '/settings/profile';
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    render(<RouterUnderTest initialPath="/settings/profile" />);
+    expect(screen.getByText('Setup conversation')).toBeInTheDocument();
+    expect(openAskAiPageMock).not.toHaveBeenCalled();
+    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
+      true,
+    );
+  });
+
+  it('preserves dismissal across remounts but opens again after an application reload', () => {
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    const first = render(<RouterUnderTest initialPath="/objects/companies" />);
+    first.unmount();
+    const second = render(<RouterUnderTest initialPath="/objects/companies" />);
+    expect(openAskAiPageMock).toHaveBeenCalledTimes(1);
+    second.unmount();
+    resetJotaiStore();
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    render(<RouterUnderTest initialPath="/objects/companies" />);
+    expect(openAskAiPageMock).toHaveBeenCalledTimes(2);
   });
 
   it('should continue the chat in the side panel on the navigation leaving the chat page', () => {

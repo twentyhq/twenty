@@ -5,6 +5,8 @@ import { hasOpenedWorkspaceSetupChatSidePanelState } from '@/onboarding/states/h
 import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { Navigate, useLocation } from 'react-router-dom';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
@@ -46,7 +48,16 @@ export const WorkspaceSetupChatSidePanelEffect = () => {
     !store.get(shouldContinueAiChatInSidePanelState.atom) &&
     isSettingsPath(pathname)
   ) {
-    return <Navigate to={defaultHomePagePath} replace />;
+    return (
+      <Navigate
+        to={
+          isSettingsPath(defaultHomePagePath)
+            ? getAppPath(AppPath.AiChat, { threadId: null })
+            : defaultHomePagePath
+        }
+        replace
+      />
+    );
   }
 
   return null;

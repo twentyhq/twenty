@@ -1,6 +1,8 @@
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
+import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
+import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 
@@ -19,7 +21,11 @@ const getWrapper =
   (pathname: string) =>
   ({ children }: { children: React.ReactNode }) => (
     <MemoryRouter initialEntries={[pathname]}>
-      <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
+      <JotaiProvider store={jotaiStore}>
+        <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.SIDE_PANEL}>
+          {children}
+        </AiChatSurfaceContext.Provider>
+      </JotaiProvider>
     </MemoryRouter>
   );
 
