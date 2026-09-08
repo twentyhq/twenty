@@ -69,6 +69,7 @@ export const syncCallRecording = async ({
         mediaImportUpdate,
         currentStatus: callRecording.status,
         pendingStatus: updateData.status,
+        transcriptFailureReason: updateData.companionFailureReason,
       }),
     };
   }
@@ -97,16 +98,18 @@ const resolveMediaImportUpdate = ({
   mediaImportUpdate,
   currentStatus,
   pendingStatus,
+  transcriptFailureReason,
 }: {
   mediaImportUpdate: CallRecordingUpdateFields;
   currentStatus: string | undefined;
   pendingStatus: string | undefined;
+  transcriptFailureReason: string | null | undefined;
 }): CallRecordingUpdateFields => {
   const hasNoRecording =
     isUnavailableCallRecordingStatus(currentStatus) ||
     isUnavailableCallRecordingStatus(pendingStatus);
 
-  if (!hasNoRecording) {
+  if (!hasNoRecording && !transcriptFailureReason) {
     return mediaImportUpdate;
   }
 

@@ -1,3 +1,4 @@
+import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { isUndefined } from '@sniptt/guards';
 
 import { retrieveRecallTranscript } from 'src/logic-functions/recall-api/retrieve-recall-transcript.util';
@@ -8,6 +9,7 @@ export type DownloadTranscriptResult =
   | { outcome: 'filled'; content: unknown }
   | { outcome: 'failed'; subCode: string | null }
   | { outcome: 'pending' }
+  | { outcome: 'deleted' }
   | { outcome: 'error'; errorMessage: string };
 
 export const downloadTranscript = async ({
@@ -22,6 +24,8 @@ export const downloadTranscript = async ({
   }
 
   const { downloadUrl, statusCode, statusSubCode } = retrieveResult.transcript;
+
+  if (statusCode === 'deleted') return { outcome: 'deleted' };
 
   if (!isUndefined(downloadUrl)) {
     return downloadTranscriptContent(downloadUrl);
@@ -53,7 +57,22 @@ const downloadTranscriptContent = async (
       };
     }
 
-    return { outcome: 'filled', content: await response.json() };
+    const content: unknown = await response.json();
+    if (
+      !Array.isArray(content) ||
+      !content.every((segment) => {
+        const words = asRecord(segment)?.words;
+        return (
+          Array.isArray(words) &&
+          words.every((word) => typeof asRecord(word)?.text === 'string')
+        );
+      })
+    )
+      return {
+        outcome: 'error',
+        errorMessage: 'Recall returned an invalid transcript',
+      };
+    return { outcome: 'filled', content };
   } catch (error) {
     console.warn(
       `[companion] transcript download failed: ${error instanceof Error ? error.message : String(error)}`,

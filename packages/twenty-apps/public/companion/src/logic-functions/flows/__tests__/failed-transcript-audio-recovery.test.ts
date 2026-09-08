@@ -17,10 +17,7 @@ vi.mock('src/logic-functions/recall-api/list-recall-transcripts.util', () => ({
 vi.mock('src/logic-functions/flows/import-call-recording-media.util', () => ({
   importCallRecordingMedia: importMedia,
 }));
-vi.mock(
-  'src/logic-functions/flows/charge-completed-call-recording.util',
-  () => ({ chargeCompletedCallRecording: charge }),
-);
+vi.mock('twenty-sdk/billing', () => ({ chargeCredits: charge }));
 
 it('keeps a failed transcript recoverable until audio import succeeds', async () => {
   const recording: SyncableCallRecording = {
@@ -75,11 +72,11 @@ it('keeps a failed transcript recoverable until audio import succeeds', async ()
   expect(charge).not.toHaveBeenCalled();
 
   await sync();
-  expect(recording.status).toBe('COMPLETED');
+  expect(recording.status).toBe('PROCESSING');
   expect(recording.audio).toEqual([
     { fileId: 'saved-audio', label: 'audio.mp3' },
   ]);
   expect(recording.transcript).toMatchObject({ status: 'FAILED' });
-  expect(listTranscripts).toHaveBeenCalledOnce();
-  expect(charge).toHaveBeenCalledOnce();
+  expect(listTranscripts).toHaveBeenCalledTimes(2);
+  expect(charge).not.toHaveBeenCalled();
 });

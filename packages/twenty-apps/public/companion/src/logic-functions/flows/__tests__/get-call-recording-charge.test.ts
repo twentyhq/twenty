@@ -1,6 +1,6 @@
 import { beforeEach, expect, it, vi } from 'vitest';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
-import { chargeCompletedCallRecording } from 'src/logic-functions/flows/charge-completed-call-recording.util';
+import { getCallRecordingCharge } from 'src/logic-functions/flows/get-call-recording-charge.util';
 
 const { charge, ownedUpload, provider } = vi.hoisted(() => ({
   charge: vi.fn(),
@@ -17,7 +17,7 @@ vi.mock('src/logic-functions/recall-api/get-recall-recording.util', () => ({
 const query = vi.fn();
 const client = { query } as unknown as CoreApiClient;
 const run = () =>
-  chargeCompletedCallRecording(client, { callRecordingId: 'recording-1' });
+  getCallRecordingCharge(client, { callRecordingId: 'recording-1' });
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -27,7 +27,7 @@ beforeEach(() => {
         {
           node: {
             id: 'recording-1',
-            status: 'COMPLETED',
+            status: 'PROCESSING',
             companionSession: { source: 'desktop', media: 'audio' },
             externalRecordingId: 'provider-1',
           },
@@ -49,20 +49,14 @@ beforeEach(() => {
   });
 });
 
-it('uses the existing SDK billing API with provider duration', async () => {
-  await run();
-  expect(charge).toHaveBeenCalledExactlyOnceWith({
+it('prepares the existing SDK charge using provider duration without charging', async () => {
+  expect(await run()).toEqual({
     creditsUsedMicro: 500_000,
     quantity: 30,
     operationType: 'CALL_RECORDING',
     resourceContext: 'recall',
   });
-});
-
-it('does not retry an ambiguous charge response', async () => {
-  charge.mockRejectedValue(new Error('offline'));
-  await expect(run()).rejects.toThrow('offline');
-  expect(charge).toHaveBeenCalledOnce();
+  expect(charge).not.toHaveBeenCalled();
 });
 
 it('does not bill an unknown provider duration', async () => {

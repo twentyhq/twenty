@@ -60,8 +60,9 @@ export const recoverRecordingSummaries = async (
   }
   // Advance independently of recording writes so older rows cannot starve recovery.
   const pageInfo = result.callRecordings?.pageInfo;
-  await kv.set(
-    SUMMARY_RECOVERY_CURSOR_KEY,
-    pageInfo?.hasNextPage ? (pageInfo.endCursor ?? null) : null,
-  );
+  if (pageInfo?.hasNextPage && pageInfo.endCursor) {
+    await kv.set(SUMMARY_RECOVERY_CURSOR_KEY, pageInfo.endCursor);
+  } else {
+    await kv.delete(SUMMARY_RECOVERY_CURSOR_KEY);
+  }
 };

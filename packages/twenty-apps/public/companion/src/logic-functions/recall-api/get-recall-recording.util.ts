@@ -27,5 +27,16 @@ export const getRecallRecording = async ({
     return result;
   }
 
-  return { ok: true, recording: result.data ?? {} };
+  if (
+    !result.data ||
+    typeof result.data !== 'object' ||
+    Array.isArray(result.data)
+  ) {
+    return {
+      ok: false,
+      status: result.status,
+      errorMessage: 'Recall API returned no recording payload',
+    };
+  }
+  return { ok: true, recording: result.data };
 };

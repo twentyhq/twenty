@@ -1,4 +1,4 @@
-import { isNull, isUndefined } from '@sniptt/guards';
+import { isUndefined } from '@sniptt/guards';
 
 import { buildFailedTranscriptMarker } from 'src/logic-functions/domain/build-failed-transcript-marker.util';
 import { buildPendingTranscriptMarker } from 'src/logic-functions/domain/build-pending-transcript-marker.util';
@@ -27,15 +27,7 @@ export const importCallRecordingTranscript = async ({
 }): Promise<ImportCallRecordingTranscriptResult> => {
   const existingTranscriptMarker = parseTranscriptMarker(transcript);
 
-  if (
-    !isNull(transcript) &&
-    !isUndefined(transcript) &&
-    isUndefined(existingTranscriptMarker)
-  ) {
-    return buildEmptyTranscriptArtifactResult();
-  }
-
-  if (existingTranscriptMarker?.status === 'FAILED') {
+  if (Array.isArray(transcript) && isUndefined(existingTranscriptMarker)) {
     return buildEmptyTranscriptArtifactResult();
   }
 
@@ -49,20 +41,25 @@ export const importCallRecordingTranscript = async ({
     return buildEmptyTranscriptArtifactResult();
   }
 
-  const transcriptArtifact = selectRecallTranscriptArtifact(
-    listResult.transcripts,
-  );
   const pendingTranscriptMarkerRecallTranscriptId =
-    existingTranscriptMarker?.status === 'PENDING'
-      ? (existingTranscriptMarker.recallTranscriptId ?? undefined)
-      : undefined;
+    existingTranscriptMarker?.recallTranscriptId ?? undefined;
+  const transcriptArtifact = pendingTranscriptMarkerRecallTranscriptId
+    ? listResult.transcripts.find(
+        (artifact) => artifact.id === pendingTranscriptMarkerRecallTranscriptId,
+      )
+    : selectRecallTranscriptArtifact(listResult.transcripts);
+  if (transcriptArtifact?.statusCode === 'deleted') {
+    return { updateData: { transcript: null }, requestedTranscript: false };
+  }
   const transcriptIdToDownload =
-    transcriptArtifact?.id ?? pendingTranscriptMarkerRecallTranscriptId;
+    pendingTranscriptMarkerRecallTranscriptId ?? transcriptArtifact?.id;
 
   if (
     isUndefined(transcriptArtifact) &&
     isUndefined(pendingTranscriptMarkerRecallTranscriptId)
   ) {
+    // An uncertain create response must not trigger another paid transcription.
+    if (existingTranscriptMarker) return buildEmptyTranscriptArtifactResult();
     const createResult = await createAsyncRecallTranscript({
       externalRecordingId,
     });
@@ -72,7 +69,15 @@ export const importCallRecordingTranscript = async ({
         `[companion] failed to request transcript for Recall recording ${externalRecordingId}: ${createResult.errorMessage}`,
       );
 
-      return buildEmptyTranscriptArtifactResult();
+      return {
+        updateData: {
+          transcript: buildPendingTranscriptMarker({
+            recallTranscriptId: null,
+            requestedAt,
+          }),
+        },
+        requestedTranscript: true,
+      };
     }
 
     return {
@@ -122,6 +127,10 @@ export const importCallRecordingTranscript = async ({
       },
       requestedTranscript: false,
     };
+  }
+
+  if (downloadResult.outcome === 'deleted') {
+    return { updateData: { transcript: null }, requestedTranscript: false };
   }
 
   if (downloadResult.outcome === 'failed') {

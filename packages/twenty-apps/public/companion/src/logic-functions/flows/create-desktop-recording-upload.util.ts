@@ -65,12 +65,12 @@ export const createDesktopRecordingUpload = async (
       Date.parse(meeting.startsAt) - 15 * 60_000 <= now &&
       Date.parse(meeting.endsAt) + 15 * 60_000 >= now,
   );
-  const matchingMeetings = currentMeetings.filter(
-    (meeting) =>
-      meeting.id === body.calendarEventId ||
-      (typeof body.meetingUrl === 'string' &&
+  const matchingMeetings = currentMeetings.filter((meeting) =>
+    body.calendarEventId !== undefined
+      ? meeting.id === body.calendarEventId
+      : typeof body.meetingUrl === 'string' &&
         meeting.url &&
-        keyForUrl(meeting.url) === keyForUrl(body.meetingUrl)),
+        keyForUrl(meeting.url) === keyForUrl(body.meetingUrl),
   );
   if (
     body.calendarEventId !== undefined &&
@@ -175,17 +175,15 @@ export const createDesktopRecordingUpload = async (
       'Recall could not prepare the recording. Please try again.',
     );
   }
-  await client.mutation({
-    updateCallRecording: {
-      __args: {
-        id: sessionId,
-        data: {
-          companionSession: { ...session, sdkUploadId: upload.data.id },
-        },
-      },
-      id: true,
-    },
+  const saved = await updateCallRecording(client, {
+    id: sessionId,
+    expectedStatuses: [CallRecordingStatus.JOINING],
+    data: { companionSession: { ...session, sdkUploadId: upload.data.id } },
   });
+  if (!saved)
+    throw new Error(
+      'This recording session is no longer active. Start a new recording.',
+    );
   return {
     callRecordingId: sessionId,
     uploadToken: upload.data.upload_token,

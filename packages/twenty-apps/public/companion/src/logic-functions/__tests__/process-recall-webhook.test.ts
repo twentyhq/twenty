@@ -172,7 +172,7 @@ describe('process-recall-webhook', () => {
     });
   });
 
-  it('marks processing failures as retryable so the platform redelivers the job', async () => {
+  it('preserves processing errors without inventing a retry classification', async () => {
     enqueueArtifactImportMock.mockRejectedValue(
       new Error('Service unavailable'),
     );
@@ -180,7 +180,8 @@ describe('process-recall-webhook', () => {
     await expect(
       processRecallWebhookHandler(buildRecordingDoneWebhookBody()),
     ).rejects.toMatchObject({
-      name: 'RetryableLogicFunctionError',
+      name: 'Error',
+      cause: expect.objectContaining({ message: 'Service unavailable' }),
       message: expect.stringContaining('Service unavailable'),
     });
   });

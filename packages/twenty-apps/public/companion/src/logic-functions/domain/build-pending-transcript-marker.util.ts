@@ -4,7 +4,7 @@ export const buildPendingTranscriptMarker = ({
   recallTranscriptId,
   requestedAt,
 }: {
-  recallTranscriptId: string;
+  recallTranscriptId: string | null;
   requestedAt: string;
 }): TranscriptMarker => ({
   recallTranscriptId,

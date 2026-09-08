@@ -18,9 +18,10 @@ export const buildStepFailure = (
   return { error: `${stepLabel} failed` };
 };
 
-// Only RetryableLogicFunctionError makes the job runner redeliver an enqueued job.
-export const buildRetryableStepFailure = (
-  stepLabel: string,
-  error: unknown,
-): RetryableLogicFunctionError =>
-  new RetryableLogicFunctionError(formatStepFailureMessage(stepLabel, error));
+// Preserve explicit retry decisions; permanent errors must not become retryable.
+export const buildStepError = (stepLabel: string, error: unknown): Error => {
+  if (error instanceof RetryableLogicFunctionError) return error;
+  return Object.assign(new Error(formatStepFailureMessage(stepLabel, error)), {
+    cause: error,
+  });
+};
