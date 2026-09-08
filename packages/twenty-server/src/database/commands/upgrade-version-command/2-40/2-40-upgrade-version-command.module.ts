@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { SyncRecordShareObjectCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788794677636-sync-record-share-object.command';
-import { MakeMessagingAndCalendarPrivateCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788801108042-make-messaging-and-calendar-private.command';
+import { MakeMessagingAndCalendarPrivateCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788894400000-make-messaging-and-calendar-private.command';
 import { BackfillChannelRecordSharesCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788894300000-backfill-channel-record-shares.command';
 import { MakeCallRecordingPrivateCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788894100000-make-call-recording-private.command';
 import { BackfillCallRecordingSharesCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788894100001-backfill-call-recording-shares.command';
