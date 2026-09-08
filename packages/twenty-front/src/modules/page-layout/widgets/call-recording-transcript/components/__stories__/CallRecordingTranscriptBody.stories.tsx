@@ -3,7 +3,7 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { getCallRecordingWidgetStoryDecorator } from '@/page-layout/widgets/call-recording/testing/getCallRecordingWidgetStoryDecorator';
 import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
-import { getCallRecordingVideoFileUrl } from '@/page-layout/widgets/call-recording/utils/getCallRecordingVideoFileUrl';
+import { getCallRecordingPlaybackMedia } from '@/page-layout/widgets/call-recording/utils/getCallRecordingPlaybackMedia';
 import { CallRecordingTranscriptBody } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody';
 import { CALL_RECORDING_TRANSCRIPT_CURRENT_SPOKEN_WORD_DATA_ATTRIBUTE } from '@/page-layout/widgets/call-recording-transcript/constants/CallRecordingTranscriptCurrentSpokenWordDataAttribute';
 import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
@@ -33,6 +33,7 @@ import {
 import { CallRecordingStatus } from '~/generated/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { MOCK_CALL_RECORDING_AUDIO_DATA_URI } from './mockCallRecordingAudio';
 import { MOCK_CALL_RECORDING_VIDEO_DATA_URI } from './mockCallRecordingVideo';
 
 const TRANSCRIPT_WIDGET_ID = 'transcript-widget';
@@ -247,6 +248,18 @@ const recordedCallRecording: WidgetCallRecordingCandidate = {
   ],
 };
 
+const audioCallRecording: WidgetCallRecordingCandidate = {
+  ...readableCallRecording,
+  audio: [
+    {
+      fileId: 'audio-file-id',
+      label: 'recording.wav',
+      extension: 'wav',
+      url: MOCK_CALL_RECORDING_AUDIO_DATA_URI,
+    },
+  ],
+};
+
 const unplayableRecordedCallRecording: WidgetCallRecordingCandidate = {
   ...recordedCallRecording,
   video: [
@@ -261,7 +274,7 @@ const unplayableRecordedCallRecording: WidgetCallRecordingCandidate = {
 
 type CallRecordingTranscriptBodyStoryProps = Omit<
   ComponentProps<typeof CallRecordingTranscriptBody>,
-  'transcriptEntries' | 'videoFileUrl'
+  'transcriptEntries' | 'playbackMedia'
 >;
 
 const CallRecordingTranscriptBodyStory = (
@@ -277,7 +290,7 @@ const CallRecordingTranscriptBodyStory = (
   const transcriptEntries = parseCallRecordingTranscriptEntries(
     callRecordingForDisplay?.transcript,
   );
-  const videoFileUrl = getCallRecordingVideoFileUrl(callRecordingForDisplay);
+  const playbackMedia = getCallRecordingPlaybackMedia(callRecordingForDisplay);
 
   return (
     <>
@@ -289,7 +302,7 @@ const CallRecordingTranscriptBodyStory = (
       <CallRecordingTranscriptBody
         {...args}
         transcriptEntries={transcriptEntries}
-        videoFileUrl={videoFileUrl}
+        playbackMedia={playbackMedia}
       />
     </>
   );
@@ -570,6 +583,196 @@ export const WithVideoInteractions: Story = {
         canvasElement.querySelector('[aria-current="true"]'),
       ).toHaveTextContent(
         'The first milestone is complete and ready for review.',
+      );
+    });
+  },
+};
+
+export const WithAudio: Story = {
+  args: {
+    callRecording: audioCallRecording,
+    loading: false,
+    error: undefined,
+    restriction: undefined,
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('CallRecordingIdForCalendarEvent', () =>
+          HttpResponse.json({
+            data: {
+              callRecordingIdForCalendarEvent: audioCallRecording.id,
+            },
+          }),
+        ),
+        graphql.query('FindOneCallRecording', () =>
+          HttpResponse.json({ data: { callRecording: audioCallRecording } }),
+        ),
+      ],
+    },
+  },
+  play: async ({ canvasElement, userEvent }) => {
+    const canvas = within(canvasElement);
+    const transcriptRegion = await canvas.findByRole('region', {
+      name: 'Transcript',
+    });
+    const audioElement = canvasElement.querySelector('audio');
+
+    if (!isDefined(audioElement)) {
+      throw new Error('Audio player was not rendered');
+    }
+
+    expect(canvasElement.querySelector('video')).not.toBeInTheDocument();
+    expect(
+      await canvas.findByRole('button', { name: 'Copy audio download link' }),
+    ).toBeVisible();
+    expect(
+      canvas.queryByRole('button', { name: 'Copy video download link' }),
+    ).not.toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(audioElement.duration).toBeCloseTo(59);
+      expect(audioElement.seekable.length).toBeGreaterThan(0);
+    });
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Seek recording to 0:46' }),
+    );
+
+    await waitFor(() => {
+      expect(audioElement.currentTime).toBeCloseTo(46);
+      expect(
+        canvasElement.querySelector('[aria-current="true"]'),
+      ).toHaveTextContent("Perfect, let's gather final feedback and wrap up.");
+      expect(
+        canvasElement.querySelector(
+          `[${CALL_RECORDING_TRANSCRIPT_CURRENT_SPOKEN_WORD_DATA_ATTRIBUTE}]`,
+        ),
+      ).toHaveTextContent('Perfect,');
+      expect(transcriptRegion.scrollTop).toBeGreaterThan(0);
+    });
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Seek recording to 0:06' }),
+    );
+
+    await waitFor(() => {
+      expect(canvasElement.querySelector('audio')).toBe(audioElement);
+      expect(audioElement.currentTime).toBeCloseTo(6);
+      expect(canvas.getByRole('slider', { name: 'Seek' })).toHaveValue('6');
+      expect(
+        canvasElement.querySelector('[aria-current="true"]'),
+      ).toHaveTextContent(
+        'The first milestone is complete and ready for review.',
+      );
+    });
+  },
+};
+
+export const AudioSeekInteractions: Story = {
+  ...WithAudio,
+  tags: ['!dev', '!autodocs'],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const audioElement = canvasElement.querySelector('audio');
+
+    if (!isDefined(audioElement)) {
+      throw new Error('Audio player was not rendered');
+    }
+
+    const seekSlider = await canvas.findByRole('slider', { name: 'Seek' });
+
+    await waitFor(() => expect(seekSlider).toBeEnabled());
+
+    audioElement.currentTime = 6;
+    fireEvent.timeUpdate(audioElement);
+
+    // Synthetic pointer events cannot acquire a native pointer capture.
+    const setPointerCapture = spyOn(
+      seekSlider,
+      'setPointerCapture',
+    ).mockImplementation(() => {});
+
+    fireEvent.pointerDown(seekSlider);
+    fireEvent.input(seekSlider, { target: { value: '22' } });
+    fireEvent.timeUpdate(audioElement);
+
+    expect(seekSlider).toHaveValue('22');
+    expect(audioElement.currentTime).toBeCloseTo(6);
+
+    fireEvent.pointerUp(seekSlider);
+    setPointerCapture.mockRestore();
+
+    await waitFor(() => expect(audioElement.currentTime).toBeCloseTo(22));
+
+    const { userEvent: browserUserEvent } = await import('vitest/browser');
+
+    seekSlider.focus();
+    await browserUserEvent.keyboard('{ArrowRight}');
+
+    await waitFor(() => expect(audioElement.currentTime).toBeGreaterThan(22));
+    expect(seekSlider).toHaveAttribute('aria-valuetext', expect.any(String));
+
+    await browserUserEvent.click(
+      canvas.getByRole('button', { name: 'Seek recording to 0:06' }),
+    );
+
+    await browserUserEvent.click(canvas.getByRole('button', { name: 'Play' }));
+    expect(await canvas.findByRole('button', { name: 'Pause' })).toBeVisible();
+
+    await waitFor(() => {
+      expect(audioElement.currentTime).toBeGreaterThan(6.5);
+      expect(
+        canvasElement.querySelector(
+          `[${CALL_RECORDING_TRANSCRIPT_CURRENT_SPOKEN_WORD_DATA_ATTRIBUTE}]`,
+        ),
+      ).not.toHaveTextContent(/^The$/);
+    });
+
+    await browserUserEvent.click(canvas.getByRole('button', { name: 'Pause' }));
+
+    expect(audioElement.paused).toBe(true);
+  },
+};
+
+export const AudioPlaybackError: Story = {
+  ...WithAudio,
+  args: {
+    ...WithAudio.args,
+    refetchCallRecording: fn(async () => {}),
+  },
+  play: async ({ args, canvasElement, userEvent }) => {
+    const canvas = within(canvasElement);
+    const audioElement = canvasElement.querySelector('audio');
+
+    if (!isDefined(audioElement)) {
+      throw new Error('Audio player was not rendered');
+    }
+
+    await waitFor(() => expect(audioElement.duration).toBeCloseTo(59));
+
+    const transcriptRegion = canvas.getByRole('region', { name: 'Transcript' });
+    const initialTranscriptTop = transcriptRegion.getBoundingClientRect().top;
+
+    fireEvent.error(audioElement);
+
+    expect(await canvas.findByText('Playback failed')).toBeVisible();
+    expect(transcriptRegion.getBoundingClientRect().top).toBe(
+      initialTranscriptTop,
+    );
+    expect(
+      canvas.queryByRole('slider', { name: 'Seek' }),
+    ).not.toBeInTheDocument();
+
+    await userEvent.click(canvas.getByRole('button', { name: /^Retry/ }));
+
+    expect(args.refetchCallRecording).toHaveBeenCalledTimes(1);
+
+    await waitFor(() => {
+      expect(canvas.queryByText('Playback failed')).not.toBeInTheDocument();
+      expect(canvas.getByRole('slider', { name: 'Seek' })).toBeEnabled();
+      expect(audioElement.readyState).toBeGreaterThanOrEqual(
+        HTMLMediaElement.HAVE_METADATA,
       );
     });
   },
