@@ -1,5 +1,5 @@
 export type TrackedBatchTemplate = {
   html: string;
-  clickTrackingHostname: string;
+  clickTrackingBaseUrl: string;
   messageCampaignLinkIds: string[];
 };

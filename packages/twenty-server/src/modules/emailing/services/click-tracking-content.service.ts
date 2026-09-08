@@ -1,14 +1,21 @@
 /* @license Enterprise */
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ManagedHostnameStatus } from 'src/engine/core-modules/dns-manager/types/managed-hostname-status.type';
+import { CLICK_TRACKING_HOSTNAME_PREFIX } from 'src/engine/core-modules/emailing-domain/constants/click-tracking-hostname-prefix.constant';
+import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { ClickTrackingTokenService } from 'src/engine/core-modules/emailing-domain/services/click-tracking-token.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { CLICK_TRACKING_TAG_PREFIX } from 'src/modules/emailing/constants/click-tracking-tag-prefix.constant';
 import { MessageCampaignLinkService } from 'src/modules/emailing/services/message-campaign-link.service';
@@ -29,6 +36,9 @@ export class ClickTrackingContentService {
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
     private readonly messageCampaignLinkService: MessageCampaignLinkService,
     private readonly clickTrackingTokenService: ClickTrackingTokenService,
+    private readonly twentyConfigService: TwentyConfigService,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   async applyTo({
@@ -41,12 +51,12 @@ export class ClickTrackingContentService {
     messageId: string;
     html: string;
   }): Promise<string> {
-    const clickTrackingHostname = await this.findServableHostname(
+    const clickTrackingBaseUrl = await this.findServableBaseUrl(
       workspaceId,
       emailingDomainId,
     );
 
-    if (!isDefined(clickTrackingHostname)) {
+    if (!isDefined(clickTrackingBaseUrl)) {
       return html;
     }
 
@@ -64,7 +74,7 @@ export class ClickTrackingContentService {
       [...linkIdByUrl].map(([url, messageCampaignLinkId]) => [
         url,
         this.buildTrackedUrl({
-          clickTrackingHostname,
+          clickTrackingBaseUrl,
           messageCampaignLinkId,
           messageId,
         }),
@@ -82,12 +92,12 @@ export class ClickTrackingContentService {
   }: CampaignSendReference & { html: string }): Promise<
     TrackedBatchTemplate | undefined
   > {
-    const clickTrackingHostname = await this.findServableHostname(
+    const clickTrackingBaseUrl = await this.findServableBaseUrl(
       workspaceId,
       emailingDomainId,
     );
 
-    if (!isDefined(clickTrackingHostname)) {
+    if (!isDefined(clickTrackingBaseUrl)) {
       return undefined;
     }
 
@@ -110,13 +120,13 @@ export class ClickTrackingContentService {
 
     return {
       html: replaceTrackableLinkUrls(html, tagByUrl),
-      clickTrackingHostname,
+      clickTrackingBaseUrl,
       messageCampaignLinkIds: [...linkIdByUrl.values()],
     };
   }
 
   buildBatchReplacements({
-    trackedBatchTemplate: { clickTrackingHostname, messageCampaignLinkIds },
+    trackedBatchTemplate: { clickTrackingBaseUrl, messageCampaignLinkIds },
     messageId,
   }: {
     trackedBatchTemplate: TrackedBatchTemplate;
@@ -126,7 +136,7 @@ export class ClickTrackingContentService {
       messageCampaignLinkIds.map((messageCampaignLinkId, index) => [
         `${CLICK_TRACKING_TAG_PREFIX}_${index}`,
         this.buildTrackedUrl({
-          clickTrackingHostname,
+          clickTrackingBaseUrl,
           messageCampaignLinkId,
           messageId,
         }),
@@ -156,7 +166,7 @@ export class ClickTrackingContentService {
     });
   }
 
-  private async findServableHostname(
+  private async findServableBaseUrl(
     workspaceId: string,
     emailingDomainId: string,
   ): Promise<string | undefined> {
@@ -165,9 +175,18 @@ export class ClickTrackingContentService {
       { where: { id: emailingDomainId } },
     );
 
+    if (!isDefined(emailingDomain) || !emailingDomain.clickTrackingEnabled) {
+      return undefined;
+    }
+
     if (
-      !isDefined(emailingDomain) ||
-      !emailingDomain.clickTrackingEnabled ||
+      this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
+      EmailingDomainDriver.LOG
+    ) {
+      return this.buildLocalBaseUrl(workspaceId);
+    }
+
+    if (
       emailingDomain.clickTrackingHostnameStatus !==
         ManagedHostnameStatus.ACTIVE ||
       !isNonEmptyString(emailingDomain.clickTrackingHostname)
@@ -175,15 +194,35 @@ export class ClickTrackingContentService {
       return undefined;
     }
 
-    return emailingDomain.clickTrackingHostname;
+    return `https://${emailingDomain.clickTrackingHostname}`;
+  }
+
+  private async buildLocalBaseUrl(
+    workspaceId: string,
+  ): Promise<string | undefined> {
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
+
+    if (!isNonEmptyString(workspace?.subdomain)) {
+      return undefined;
+    }
+
+    const baseUrl = new URL(this.twentyConfigService.get('SERVER_URL'));
+
+    baseUrl.hostname = this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')
+      ? `${CLICK_TRACKING_HOSTNAME_PREFIX}.${workspace.subdomain}.${baseUrl.hostname}`
+      : `${CLICK_TRACKING_HOSTNAME_PREFIX}.${baseUrl.hostname}`;
+
+    return baseUrl.origin;
   }
 
   private buildTrackedUrl({
-    clickTrackingHostname,
+    clickTrackingBaseUrl,
     messageCampaignLinkId,
     messageId,
   }: {
-    clickTrackingHostname: string;
+    clickTrackingBaseUrl: string;
     messageCampaignLinkId: string;
     messageId: string;
   }): string {
@@ -192,6 +231,6 @@ export class ClickTrackingContentService {
       messageId,
     });
 
-    return `https://${clickTrackingHostname}/${ApiPath.Emailing}/c/${token}`;
+    return `${clickTrackingBaseUrl}/${ApiPath.Emailing}/c/${token}`;
   }
 }
