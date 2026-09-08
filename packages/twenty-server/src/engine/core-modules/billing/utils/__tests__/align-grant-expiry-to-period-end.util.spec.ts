@@ -8,7 +8,7 @@ const CURRENT_PERIOD_END = new Date('2026-02-01T00:00:00.000Z');
 
 const alignFrom = (
   requestedExpiresAt: Date,
-  interval = SubscriptionInterval.Month,
+  interval: SubscriptionInterval | null = SubscriptionInterval.Month,
 ) =>
   alignGrantExpiryToPeriodEnd({
     requestedExpiresAt,
@@ -115,6 +115,15 @@ describe('alignGrantExpiryToPeriodEnd', () => {
     });
 
     expect(result).toEqual(new Date('2028-02-28T00:00:00.000Z'));
+  });
+
+  // The column is nullable, and the interval is only needed to project past the
+  // current period. Falling back to null expiry instead would read as "never
+  // expires" and hand out permanent credits for a time-boxed request.
+  it('stops at the current period end when the interval is unknown', () => {
+    expect(alignFrom(new Date('2026-06-15T00:00:00.000Z'), null)).toEqual(
+      CURRENT_PERIOD_END,
+    );
   });
 
   it('gives up rather than looping on an unreachable deadline', () => {

@@ -7,6 +7,7 @@ import {
   getDaysInMonth,
   setDate,
 } from 'date-fns';
+import { isDefined } from 'twenty-shared/utils';
 
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 
@@ -70,11 +71,17 @@ export const alignGrantExpiryToPeriodEnd = ({
   requestedExpiresAt: Date;
   currentPeriodStart: Date;
   currentPeriodEnd: Date;
-  interval: SubscriptionInterval;
+  // Nullable on the subscription, and only needed to project past the current
+  // period. Without it the current period end is the last boundary that can be
+  // named, which is short of what was asked for but still a real one.
+  interval: SubscriptionInterval | null | undefined;
 }): Date => {
   // Known exactly, and the only boundary that survives a period whose length
   // was changed by a plan switch rather than by the schedule.
-  if (currentPeriodEnd.getTime() >= requestedExpiresAt.getTime()) {
+  if (
+    currentPeriodEnd.getTime() >= requestedExpiresAt.getTime() ||
+    !isDefined(interval)
+  ) {
     return currentPeriodEnd;
   }
 

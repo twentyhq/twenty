@@ -5,6 +5,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { addDays } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
 import { type BillingCreditGrantEntity } from 'src/engine/core-modules/billing/entities/billing-credit-grant.entity';
 import { type BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { type BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
@@ -84,6 +88,7 @@ export class BillingCreditService {
         effectiveAt,
         expiresInDays: params.expiresInDays,
         subscription,
+        workspaceId,
       }),
     });
 
@@ -328,23 +333,32 @@ const buildRevocationAdjustmentKey = (grantId: string): string =>
 
 // Null unless the caller asked for a time-boxed grant, and then a period end
 // rather than the exact day, for the reasons alignGrantExpiryToPeriodEnd
-// documents. A workspace with no subscription has no period to align to and no
-// counter to mislead, so its grants simply do not expire.
+// documents.
+//
+// Refuses rather than falling back to null when there is no period to align to:
+// returning null there would read as "no expiry" and hand out credits that
+// never lapse, which is the opposite of what was asked for and cannot be
+// noticed from the result.
 const resolveGrantExpiry = ({
   effectiveAt,
   expiresInDays,
   subscription,
+  workspaceId,
 }: {
   effectiveAt: Date;
   expiresInDays: number | null | undefined;
   subscription: BillingSubscriptionEntity | undefined;
+  workspaceId: string;
 }): Date | null => {
-  if (
-    !isDefined(expiresInDays) ||
-    !isDefined(subscription) ||
-    !isDefined(subscription.interval)
-  ) {
+  if (!isDefined(expiresInDays)) {
     return null;
+  }
+
+  if (!isDefined(subscription)) {
+    throw new BillingException(
+      `Cannot grant credits to workspace ${workspaceId} expiring in ${expiresInDays} days: it has no subscription, so there is no billing period to expire them at`,
+      BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
+    );
   }
 
   return alignGrantExpiryToPeriodEnd({
