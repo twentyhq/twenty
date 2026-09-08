@@ -42,11 +42,13 @@ export class MessagingDeleteFolderMessagesService {
         const messageFolderAssociationRepository =
           this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
             'messageChannelMessageAssociationMessageFolder',
+            { shouldBypassPermissionChecks: true },
           );
 
         const messageChannelMessageAssociationRepository =
           this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
             'messageChannelMessageAssociation',
+            { shouldBypassPermissionChecks: true },
           );
 
         let hasMoreData = true;

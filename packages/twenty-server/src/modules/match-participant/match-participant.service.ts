@@ -78,6 +78,7 @@ export class MatchParticipantService<
         objectMetadataName,
         transactionScope,
         workspaceOrmManager: this.workspaceOrmManager,
+        rolePermissionConfig: { shouldBypassPermissionChecks: true },
       },
     );
   }

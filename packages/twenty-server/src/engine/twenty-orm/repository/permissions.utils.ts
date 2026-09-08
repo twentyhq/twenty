@@ -1,6 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import isEmpty from 'lodash.isempty';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   type ObjectsPermissions,
   type RestrictedFieldsPermissions,
@@ -20,9 +19,6 @@ import {
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { validateWritabilityOrThrow } from 'src/engine/twenty-orm/repository/validate-writability-or-throw.util';
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
-
-const WORKSPACE_MEMBER_OBJECT_UNIVERSAL_IDENTIFIER =
-  STANDARD_OBJECTS.workspaceMember.universalIdentifier;
 
 export type OperationType =
   | 'select'
@@ -91,16 +87,6 @@ export const validateOperationIsPermittedOrThrow = ({
     flatFieldMetadataMaps,
     authContext,
   });
-
-  const objectMetadataIsSystem = objectMetadata.isSystem === true;
-  const isWorkspaceMemberObject =
-    objectMetadata.universalIdentifier ===
-    WORKSPACE_MEMBER_OBJECT_UNIVERSAL_IDENTIFIER;
-
-  // TODO: this should be improved, we may have more complex permission configuration for is system objects
-  if (objectMetadataIsSystem && !isWorkspaceMemberObject) {
-    return;
-  }
 
   const permissionsForEntity = objectsPermissions[objectMetadataIdForEntity];
 

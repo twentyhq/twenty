@@ -56,6 +56,7 @@ export class BlocklistItemDeleteMessagesJob {
         const blocklistRepository =
           this.workspaceOrmManager.getRepository<BlocklistWorkspaceEntity>(
             'blocklist',
+            { shouldBypassPermissionChecks: true },
           );
 
         const blocklist = await blocklistRepository.find({
@@ -90,6 +91,7 @@ export class BlocklistItemDeleteMessagesJob {
         const messageChannelMessageAssociationRepository =
           this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
             'messageChannelMessageAssociation',
+            { shouldBypassPermissionChecks: true },
           );
 
         const workspaceMemberRepository =

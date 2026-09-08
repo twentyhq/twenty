@@ -39,6 +39,7 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
         const calendarChannelEventAssociationRepository =
           this.workspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
             'calendarChannelEventAssociation',
+            { shouldBypassPermissionChecks: true },
           );
 
         const calendarChannelCalendarEventsAssociations =

@@ -154,6 +154,7 @@ export class CalendarEventsImportService {
             const calendarChannelEventAssociationRepository =
               this.workspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
                 'calendarChannelEventAssociation',
+                { shouldBypassPermissionChecks: true },
               );
 
             const associationsToDelete =

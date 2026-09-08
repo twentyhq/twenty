@@ -34,6 +34,7 @@ export class CalendarSaveEventsService {
           const calendarChannelEventAssociationRepository =
             this.workspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
               'calendarChannelEventAssociation',
+              { shouldBypassPermissionChecks: true },
             );
 
           const existingAssociations =
@@ -79,11 +80,13 @@ export class CalendarSaveEventsService {
               const calendarEventRepository =
                 transactionScope.getRepository<CalendarEventWorkspaceEntity>(
                   'calendarEvent',
+                  { shouldBypassPermissionChecks: true },
                 );
 
               const associationRepository =
                 transactionScope.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
                   'calendarChannelEventAssociation',
+                  { shouldBypassPermissionChecks: true },
                 );
 
               if (saveOperations.calendarEventsToInsert.length > 0) {

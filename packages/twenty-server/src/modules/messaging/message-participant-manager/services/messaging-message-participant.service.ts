@@ -28,6 +28,7 @@ export class MessagingMessageParticipantService {
         const messageParticipantRepository =
           transactionScope.getRepository<MessageParticipantWorkspaceEntity>(
             'messageParticipant',
+            { shouldBypassPermissionChecks: true },
           );
 
         const existingParticipantsBasedOnMessageIds =

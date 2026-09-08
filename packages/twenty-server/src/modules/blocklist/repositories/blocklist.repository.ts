@@ -37,6 +37,9 @@ export class BlocklistRepository {
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const blockListRepository = this.workspaceOrmManager.getRepository(
         BlocklistWorkspaceEntity,
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
 
       return blockListRepository.find({
