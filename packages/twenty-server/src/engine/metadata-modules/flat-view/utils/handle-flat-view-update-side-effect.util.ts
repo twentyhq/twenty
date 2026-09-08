@@ -33,7 +33,17 @@ export const handleFlatViewUpdateSideEffect = ({
   const hasMainGroupByFieldMetadataIdChanged =
     fromFlatView.mainGroupByFieldMetadataId !== newMainGroupByFieldMetadataId;
 
-  if (!hasMainGroupByFieldMetadataIdChanged) {
+  // A grouped view with no group left renders nothing and cannot be repaired
+  // from the UI, since re-picking the same field is not a change. Rebuild its
+  // groups on any update so the view becomes usable again.
+  const isGroupedViewMissingItsViewGroups =
+    isDefined(newMainGroupByFieldMetadataId) &&
+    fromFlatView.viewGroupIds.length === 0;
+
+  if (
+    !hasMainGroupByFieldMetadataIdChanged &&
+    !isGroupedViewMissingItsViewGroups
+  ) {
     return sideEffectResult;
   }
 

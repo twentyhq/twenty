@@ -1,14 +1,8 @@
 import { VIEW_GROUP_VISIBLE_OPTIONS_MAX } from 'twenty-shared/constants';
 import { type EnumFieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import {
-  FlatEntityMapsException,
-  FlatEntityMapsExceptionCode,
-} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { compareTwoFlatFieldMetadataEnumOptions } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata-enum-options.util';
@@ -25,6 +19,13 @@ export type FlatViewGroupsToDeleteUpdateAndCreate = {
   flatViewGroupsToUpdate: FlatViewGroup[];
   flatViewGroupsToCreate: FlatViewGroup[];
 };
+
+const EMPTY_RECOMPUTE_RESULT: FlatViewGroupsToDeleteUpdateAndCreate = {
+  flatViewGroupsToCreate: [],
+  flatViewGroupsToDelete: [],
+  flatViewGroupsToUpdate: [],
+};
+
 export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
   flatViewMaps,
   flatViewGroupMaps,
@@ -46,20 +47,16 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
     flatEntityMaps: flatViewMaps,
   });
 
+  if (flatViewsAffected.length === 0) {
+    return structuredClone(EMPTY_RECOMPUTE_RESULT);
+  }
+
   const flatViewGroups = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
     flatEntityIds: flatViewsAffected.flatMap(
       (flatView) => flatView.viewGroupIds,
     ),
     flatEntityMaps: flatViewGroupMaps,
   });
-
-  if (flatViewGroups.length === 0) {
-    return {
-      flatViewGroupsToCreate: [],
-      flatViewGroupsToDelete: [],
-      flatViewGroupsToUpdate: [],
-    };
-  }
 
   const workspaceId = fromFlatFieldMetadata.workspaceId;
 
@@ -105,26 +102,20 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
       {},
     );
 
-  const viewUniversalIdentifiers = Object.keys(
-    viewGroupsByViewUniversalIdentifier.flatViewGroupRecordByViewUniversalIdentifier,
-  );
-
   const createdAt = new Date().toISOString();
+  // Creation is driven by the grouped views themselves, not by the groups that
+  // survived: a view whose every group was deleted still has to receive the new
+  // options, otherwise it is left with no column at all and no way back.
   const flatViewGroupsToCreate = createdFieldMetadataOptions.flatMap(
     (option, createdOptionIndex) =>
-      viewUniversalIdentifiers.map<FlatViewGroup>((viewUniversalIdentifier) => {
+      flatViewsAffected.map<FlatViewGroup>((flatView) => {
+        const viewUniversalIdentifier = flatView.universalIdentifier;
+
         const viewGroupHighestPosition =
           viewGroupsByViewUniversalIdentifier
             .highestViewGroupPositionByViewUniversalIdentifier[
             viewUniversalIdentifier
-          ];
-
-        if (!isDefined(viewGroupHighestPosition)) {
-          throw new FlatEntityMapsException(
-            'View universal identifier highest position not found, should never occur',
-            FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-          );
-        }
+          ] ?? -1;
 
         const currentVisibleCount =
           visibleViewGroupCountByViewUniversalIdentifier[
@@ -140,11 +131,6 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
         }
 
         const viewGroupId = v4();
-
-        const flatView = findFlatEntityByUniversalIdentifierOrThrow({
-          flatEntityMaps: flatViewMaps,
-          universalIdentifier: viewUniversalIdentifier,
-        });
 
         return {
           id: viewGroupId,
