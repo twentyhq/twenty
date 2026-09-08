@@ -1,5 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type ReactNode, useId, useState } from 'react';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import {
   IconArchive,
@@ -138,17 +139,77 @@ export const Default: Story = {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
     container: { width: 240, height: 320 },
   },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const menu = await body.findByRole('menu', { name: 'Options' });
+    expect(menu).toBeVisible();
+    expect(canvasElement).not.toContainElement(menu);
+    const item = within(menu).getByRole('menuitem', { name: /Duplicate/ });
+    await userEvent.hover(item);
+    await waitFor(() => expect(item).toHaveAttribute('data-highlighted'));
+  },
 };
 export const Selection: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 240, height: 320 } },
   args: { content: 'selection' },
+  play: async ({ canvasElement }) => {
+    const menu = await within(canvasElement.ownerDocument.body).findByRole(
+      'menu',
+    );
+    const notifications = within(menu).getByRole('menuitemcheckbox', {
+      name: 'Notifications',
+    });
+    expect(notifications).toHaveAttribute('aria-checked', 'true');
+    await userEvent.click(notifications);
+    expect(notifications).toHaveAttribute('aria-checked', 'false');
+    expect(notifications).not.toHaveAttribute('data-selected');
+    await userEvent.click(notifications);
+    expect(notifications).toHaveAttribute('data-selected');
+    const listView = within(menu).getByRole('menuitemradio', {
+      name: 'List view',
+    });
+    const boardView = within(menu).getByRole('menuitemradio', {
+      name: 'Board view',
+    });
+    await userEvent.click(boardView);
+    expect(listView).toHaveAttribute('aria-checked', 'false');
+    expect(boardView).toHaveAttribute('aria-checked', 'true');
+    expect(boardView).toHaveAttribute('data-selected');
+    expect(menu).toBeVisible();
+  },
 };
-export const Groups: Story = { ...Default, args: { content: 'groups' } };
+export const Groups: Story = {
+  ...Default,
+  args: { content: 'groups' },
+  play: async ({ canvasElement }) => {
+    const menu = await within(canvasElement.ownerDocument.body).findByRole(
+      'menu',
+    );
+    for (const label of ['Record', 'Manage']) {
+      expect(within(menu).getByRole('group', { name: label })).toHaveAttribute(
+        'aria-labelledby',
+        within(menu).getByText(label).id,
+      );
+    }
+    expect(within(menu).getByRole('separator')).toBeVisible();
+  },
+};
 export const Submenu: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 240, height: 320 } },
   args: { content: 'submenu' },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const submenu = await body.findByRole('menu', { name: 'Export' });
+    expect(
+      within(submenu).getByRole('menuitem', { name: 'CSV file' }),
+    ).toBeVisible();
+    expect(body.getByRole('menuitem', { name: 'Export' })).toHaveAttribute(
+      'aria-haspopup',
+      'menu',
+    );
+  },
 };
 
 const MenuCatalogCell = ({ content = 'basic' }: MenuStoryProps) => {
@@ -214,6 +275,15 @@ export const Catalog: CatalogStory<Story, typeof MenuStory> = {
       ],
       options: { elementContainer: { style: { width: 220, height: 230 } } },
     },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    for (const content of ['basic', 'selection', 'groups', 'submenu']) {
+      expect(
+        await canvas.findByRole('menu', { name: `${content} options` }),
+      ).toBeVisible();
+    }
+    expect(await canvas.findByRole('menu', { name: 'Export' })).toBeVisible();
   },
 };
 export const CatalogDark: CatalogStory<Story, typeof MenuStory> = {
