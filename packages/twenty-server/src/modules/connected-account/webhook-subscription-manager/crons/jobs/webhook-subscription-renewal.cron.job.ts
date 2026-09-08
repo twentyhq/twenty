@@ -203,7 +203,10 @@ export class WebhookSubscriptionRenewalCronJob {
           channelId: channel.id,
           workspaceId: channel.workspaceId,
         },
-        { retryLimit: WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT },
+        {
+          id: `${RevokeWebhookSubscriptionJob.name}-${channelType}-${channel.id}`,
+          retryLimit: WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT,
+        },
       );
     }
 
