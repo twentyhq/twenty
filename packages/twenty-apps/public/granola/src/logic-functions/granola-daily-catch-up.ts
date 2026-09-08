@@ -9,6 +9,7 @@ import { GRANOLA_DAILY_CATCH_UP_UNIVERSAL_IDENTIFIER } from 'src/constants/unive
 import { enqueueGranolaBackfillOrThrow } from 'src/logic-functions/utils/enqueue-granola-backfill-or-throw.util';
 import { enqueueGranolaInitialBackfillOrThrow } from 'src/logic-functions/utils/enqueue-granola-initial-backfill-or-throw.util';
 import { findGranolaRegistrationForCurrentKey } from 'src/logic-functions/utils/find-granola-registration-for-current-key.util';
+import { reconcileGranolaFolderSelectionOrThrow } from 'src/logic-functions/utils/reconcile-granola-folder-selection-or-throw.util';
 
 export const granolaDailyCatchUpHandler = async () => {
   const registration = await findGranolaRegistrationForCurrentKey();
@@ -17,6 +18,7 @@ export const granolaDailyCatchUpHandler = async () => {
     return { success: true, skipped: true };
   }
 
+  await reconcileGranolaFolderSelectionOrThrow();
   await enqueueGranolaInitialBackfillOrThrow(registration);
   const result = await enqueueGranolaBackfillOrThrow({
     updatedAfter: new Date(

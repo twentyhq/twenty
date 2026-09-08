@@ -6,6 +6,7 @@ import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
 import { currentUserCanManageGranolaOrThrow } from 'src/logic-functions/utils/current-user-can-manage-granola-or-throw.util';
 import { enqueueGranolaInitialBackfillOrThrow } from 'src/logic-functions/utils/enqueue-granola-initial-backfill-or-throw.util';
 import { ensureGranolaWebhookRegistrationOrThrow } from 'src/logic-functions/utils/ensure-granola-webhook-registration-or-throw.util';
+import { reconcileGranolaFolderSelectionOrThrow } from 'src/logic-functions/utils/reconcile-granola-folder-selection-or-throw.util';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 export const granolaRegisterWebhookHandler = async () => {
@@ -17,6 +18,7 @@ export const granolaRegisterWebhookHandler = async () => {
   }
   try {
     const registration = await ensureGranolaWebhookRegistrationOrThrow();
+    await reconcileGranolaFolderSelectionOrThrow();
     try {
       await enqueueGranolaInitialBackfillOrThrow(registration);
     } catch (error) {
