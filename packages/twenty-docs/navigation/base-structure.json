@@ -121,6 +121,9 @@
               "label": "How-Tos",
               "pages": [
                 "user-guide/calendar-emails/how-tos/connect-several-mailboxes-per-user",
+                "user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-microsoft-365",
+                "user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-google-workspace",
+                "user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-any-mail-provider",
                 "user-guide/calendar-emails/how-tos/limit-emails-imported",
                 "user-guide/calendar-emails/how-tos/can-i-track-email-activity-on-all-objects",
                 "user-guide/calendar-emails/how-tos/can-i-send-emails-from-twenty",

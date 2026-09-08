@@ -86,8 +86,8 @@ describe('Input', () => {
   });
 
   it('reflects the invalid and disabled state of its Field.Root', () => {
-    render(
-      <Field.Root invalid disabled>
+    const { rerender } = render(
+      <Field.Root invalid>
         <Input aria-label="Name" />
       </Field.Root>,
     );
@@ -95,6 +95,16 @@ describe('Input', () => {
     const input = screen.getByRole('textbox', { name: 'Name' });
 
     expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(input).toHaveAttribute('data-invalid');
+    expect(input).toBeEnabled();
+
+    rerender(
+      <Field.Root invalid disabled>
+        <Input aria-label="Name" />
+      </Field.Root>,
+    );
+
+    expect(input).not.toHaveAttribute('aria-invalid');
     expect(input).toHaveAttribute('data-invalid');
     expect(input).toBeDisabled();
   });
