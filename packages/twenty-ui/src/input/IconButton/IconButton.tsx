@@ -11,7 +11,7 @@ export type IconButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
 export type IconButtonVariant = 'primary' | 'secondary' | 'tertiary';
 export type IconButtonAccent = 'default' | 'blue' | 'danger';
 
-export type IconButtonProps = {
+export type IconButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   className?: string;
   Icon?: IconComponent;
   variant?: IconButtonVariant;
@@ -27,41 +27,49 @@ export type IconButtonProps = {
   children?: React.ReactNode;
 };
 
-export const IconButton = ({
-  className,
-  Icon,
-  variant = 'primary',
-  size = 'medium',
-  accent = 'default',
-  position = 'standalone',
-  disabled = false,
-  focus = false,
-  dataTestId,
-  ariaLabel,
-  onClick,
-  to,
-  children,
-}: IconButtonProps) => {
-  const theme = useTheme();
+export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
+  (
+    {
+      className,
+      Icon,
+      variant = 'primary',
+      size = 'medium',
+      accent = 'default',
+      position = 'standalone',
+      disabled = false,
+      focus = false,
+      dataTestId,
+      ariaLabel,
+      onClick,
+      to,
+      children,
+      ...buttonProps
+    },
+    ref,
+  ) => {
+    const theme = useTheme();
 
-  return (
-    <button
-      data-testid={dataTestId}
-      className={clsx(styles.button, styles[size], className)}
-      data-variant={variant}
-      data-accent={accent}
-      data-position={position}
-      data-disabled={disabled || undefined}
-      data-focus={focus || undefined}
-      disabled={disabled}
-      onClick={onClick}
-      aria-label={ariaLabel}
-      // The legacy Linaria button never navigated: `to` was simply forwarded
-      // to the DOM as an inert attribute. Keep forwarding it for DOM parity.
-      {...{ to }}
-    >
-      {Icon && <Icon size={theme.icon.size.md} aria-hidden={!!ariaLabel} />}
-      {children}
-    </button>
-  );
-};
+    return (
+      <button
+        {...buttonProps}
+        ref={ref}
+        data-testid={dataTestId}
+        className={clsx(styles.button, styles[size], className)}
+        data-variant={variant}
+        data-accent={accent}
+        data-position={position}
+        data-disabled={disabled || undefined}
+        data-focus={focus || undefined}
+        disabled={disabled}
+        onClick={onClick}
+        aria-label={ariaLabel}
+        // The legacy Linaria button never navigated: `to` was simply forwarded
+        // to the DOM as an inert attribute. Keep forwarding it for DOM parity.
+        {...{ to }}
+      >
+        {Icon && <Icon size={theme.icon.size.md} aria-hidden={!!ariaLabel} />}
+        {children}
+      </button>
+    );
+  },
+);
