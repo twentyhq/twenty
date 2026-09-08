@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { MessageChannelSyncStage } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -10,6 +12,7 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import {
   CalendarEventWebhookSyncJob,
@@ -34,12 +37,18 @@ export class WebhookSyncTriggerService {
     private readonly cacheStorage: CacheStorageService,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   async triggerMessagingSync(
     messageChannelId: string,
     workspaceId: string,
   ): Promise<void> {
+    if (!(await this.isWorkspaceActive(workspaceId))) {
+      return;
+    }
+
     const updateResult = await this.messageChannelRepository
       .createQueryBuilder()
       .update()
@@ -86,6 +95,10 @@ export class WebhookSyncTriggerService {
     calendarChannelId: string,
     workspaceId: string,
   ): Promise<void> {
+    if (!(await this.isWorkspaceActive(workspaceId))) {
+      return;
+    }
+
     const hasOpenedDebounceWindow = await this.cacheStorage.setIfAbsent(
       `calendar-event-webhook-sync-debounce:${workspaceId}:${calendarChannelId}`,
       true,
@@ -109,5 +122,17 @@ export class WebhookSyncTriggerService {
         },
       },
     );
+  }
+
+  private async isWorkspaceActive(workspaceId: string): Promise<boolean> {
+    const workspace = await this.workspaceRepository.findOne({
+      where: {
+        id: workspaceId,
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+      },
+      select: { id: true },
+    });
+
+    return isDefined(workspace);
   }
 }
