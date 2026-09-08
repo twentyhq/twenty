@@ -4,17 +4,27 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
-import { type BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
-import { type BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { isSellableBillingPrice } from 'src/engine/core-modules/billing/utils/is-sellable-billing-price.util';
 
+type SellableIntervalPrice = {
+  active: boolean;
+  stripePriceId: string;
+  interval?: SubscriptionInterval | null;
+  metadata?: { isLegacy?: string | null } | null;
+};
+
 // Product sellability is deliberately not checked: a workspace on superseded
 // packaging must be able to switch interval without being moved off its product.
-export const findSellablePriceForIntervalOrThrow = (
-  billingProduct: BillingProductEntity,
+export const findSellablePriceForIntervalOrThrow = <
+  TPrice extends SellableIntervalPrice,
+>(
+  billingProduct: {
+    stripeProductId: string;
+    billingPrices?: TPrice[] | null;
+  },
   interval: SubscriptionInterval,
-): BillingPriceEntity => {
+): TPrice => {
   const sellablePrices = (billingProduct.billingPrices ?? []).filter(
     (billingPrice) =>
       billingPrice.interval === interval &&

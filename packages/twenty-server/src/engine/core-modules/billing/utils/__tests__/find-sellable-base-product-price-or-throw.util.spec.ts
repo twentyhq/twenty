@@ -1,6 +1,4 @@
 import { BillingException } from 'src/engine/core-modules/billing/billing.exception';
-import { type BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
-import { type BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { findSellableBaseProductPriceOrThrow } from 'src/engine/core-modules/billing/utils/find-sellable-base-product-price-or-throw.util';
 
@@ -12,11 +10,10 @@ const buildProduct = ({
   productKey?: BillingProductKey;
   active?: boolean;
   isLegacy?: string;
-} = {}) =>
-  ({
-    active,
-    metadata: { productKey, ...(isLegacy ? { isLegacy } : {}) },
-  }) as unknown as BillingProductEntity;
+} = {}) => ({
+  active,
+  metadata: { productKey, ...(isLegacy ? { isLegacy } : {}) },
+});
 
 const buildPrice = ({
   stripePriceId,
@@ -27,14 +24,13 @@ const buildPrice = ({
   stripePriceId: string;
   active?: boolean;
   isLegacy?: string;
-  billingProduct?: BillingProductEntity;
-}) =>
-  ({
-    stripePriceId,
-    active,
-    metadata: isLegacy ? { isLegacy } : {},
-    billingProduct,
-  }) as unknown as BillingPriceEntity;
+  billingProduct?: ReturnType<typeof buildProduct>;
+}) => ({
+  stripePriceId,
+  active,
+  metadata: isLegacy ? { isLegacy } : {},
+  billingProduct,
+});
 
 describe('findSellableBaseProductPriceOrThrow', () => {
   it('returns the only sellable base product price', () => {

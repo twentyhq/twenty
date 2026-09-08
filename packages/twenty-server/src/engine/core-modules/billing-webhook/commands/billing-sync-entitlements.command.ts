@@ -11,10 +11,10 @@ import {
   type RunOnWorkspaceArgs,
   WorkspaceCommandRunner,
 } from 'src/database/commands/command-runners/workspace.command-runner';
+import { BillingEntitlementSyncService } from 'src/engine/core-modules/billing-webhook/services/billing-entitlement-sync.service';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { StripeEntitlementService } from 'src/engine/core-modules/billing/stripe/services/stripe-entitlement.service';
-import { buildBillingEntitlementsFromLookupKeys } from 'src/engine/core-modules/billing/utils/build-billing-entitlements-from-lookup-keys.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -30,11 +30,11 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 export class BillingSyncEntitlementsCommand extends WorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly stripeEntitlementService: StripeEntitlementService,
+    private readonly billingEntitlementSyncService: BillingEntitlementSyncService,
     @InjectWorkspaceScopedRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
-    @InjectWorkspaceScopedRepository(BillingEntitlementEntity)
-    private readonly billingEntitlementRepository: WorkspaceScopedRepository<BillingEntitlementEntity>,
   ) {
     super(workspaceIteratorService, [
       WorkspaceActivationStatus.ACTIVE,
@@ -45,7 +45,20 @@ export class BillingSyncEntitlementsCommand extends WorkspaceCommandRunner {
   override async runOnWorkspace({
     workspaceId,
     options,
+    index,
   }: RunOnWorkspaceArgs): Promise<void> {
+    // The Stripe client is only built when billing is enabled, so there is
+    // nothing to reconcile against on a self-hosted instance.
+    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+      if (index === 0) {
+        this.logger.log(
+          chalk.yellow('Billing is disabled, skipping entitlement sync'),
+        );
+      }
+
+      return;
+    }
+
     const billingCustomer = await this.billingCustomerRepository.findOne(
       workspaceId,
       { where: {} },
@@ -66,22 +79,22 @@ export class BillingSyncEntitlementsCommand extends WorkspaceCommandRunner {
         billingCustomer.stripeCustomerId,
       );
 
-    const billingEntitlements = buildBillingEntitlementsFromLookupKeys({
-      workspaceId,
-      stripeCustomerId: billingCustomer.stripeCustomerId,
-      activeLookupKeys,
-    });
-
-    if (!options.dryRun) {
-      await this.billingEntitlementRepository.upsert(
-        workspaceId,
-        billingEntitlements,
-        {
-          conflictPaths: ['workspaceId', 'key'],
-          skipUpdateIfNoValuesChanged: true,
-        },
+    if (options.dryRun) {
+      this.logger.log(
+        chalk.grey(
+          `Workspace ${workspaceId} active entitlements in Stripe: ${activeLookupKeys.join(', ') || 'none'}`,
+        ),
       );
+
+      return;
     }
+
+    const billingEntitlements =
+      await this.billingEntitlementSyncService.syncEntitlements({
+        workspaceId,
+        stripeCustomerId: billingCustomer.stripeCustomerId,
+        activeLookupKeys,
+      });
 
     if (options.verbose) {
       this.logger.log(

@@ -1,6 +1,4 @@
 import { BillingException } from 'src/engine/core-modules/billing/billing.exception';
-import { type BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
-import { type BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { findSellablePriceForIntervalOrThrow } from 'src/engine/core-modules/billing/utils/find-sellable-price-for-interval-or-throw.util';
 
@@ -14,24 +12,22 @@ const buildPrice = ({
   interval: SubscriptionInterval;
   active?: boolean;
   isLegacy?: string;
-}) =>
-  ({
-    stripePriceId,
-    interval,
-    active,
-    metadata: isLegacy ? { isLegacy } : {},
-  }) as unknown as BillingPriceEntity;
+}) => ({
+  stripePriceId,
+  interval,
+  active,
+  metadata: isLegacy ? { isLegacy } : {},
+});
 
 const buildProduct = (
-  billingPrices: BillingPriceEntity[],
+  billingPrices: ReturnType<typeof buildPrice>[],
   { isLegacy }: { isLegacy?: string } = {},
-) =>
-  ({
-    stripeProductId: 'prod_base',
-    active: true,
-    metadata: isLegacy ? { isLegacy } : {},
-    billingPrices,
-  }) as unknown as BillingProductEntity;
+) => ({
+  stripeProductId: 'prod_base',
+  active: true,
+  metadata: isLegacy ? { isLegacy } : {},
+  billingPrices,
+});
 
 describe('findSellablePriceForIntervalOrThrow', () => {
   it('returns the price matching the target interval', () => {

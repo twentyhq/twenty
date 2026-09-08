@@ -1,9 +1,12 @@
 /* @license Enterprise */
 
-import { type BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
+type SellableBillingProduct = {
+  active: boolean;
+  metadata: { isLegacy?: string | null };
+};
 
 export const isSellableBillingProduct = (
-  billingProduct: BillingProductEntity | undefined,
+  billingProduct: SellableBillingProduct | undefined | null,
 ): boolean =>
   billingProduct?.active === true &&
   billingProduct.metadata?.isLegacy !== 'true';

@@ -41,9 +41,20 @@ export class BillingSubscriptionItemResolver {
   async unitAmount(
     @Parent() billingSubscriptionItem: BillingSubscriptionItemEntity,
   ): Promise<number | null> {
-    const billingPrice = await this.billingPriceRepository.findOne({
-      where: { stripePriceId: billingSubscriptionItem.stripePriceId },
-    });
+    // currentWorkspace loads the item's product with its prices, so the common
+    // path resolves in memory rather than one query per item on app boot. Other
+    // callers load the subscription without relations and still need the read.
+    const preloadedPrice =
+      billingSubscriptionItem.billingProduct?.billingPrices?.find(
+        (billingPrice) =>
+          billingPrice.stripePriceId === billingSubscriptionItem.stripePriceId,
+      );
+
+    const billingPrice =
+      preloadedPrice ??
+      (await this.billingPriceRepository.findOne({
+        where: { stripePriceId: billingSubscriptionItem.stripePriceId },
+      }));
 
     if (!isDefined(billingPrice?.unitAmount)) {
       return null;

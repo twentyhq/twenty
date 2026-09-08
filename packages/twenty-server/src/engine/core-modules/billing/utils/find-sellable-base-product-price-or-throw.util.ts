@@ -4,17 +4,28 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
-import { type BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { isSellableBillingPrice } from 'src/engine/core-modules/billing/utils/is-sellable-billing-price.util';
 import { isSellableBillingProduct } from 'src/engine/core-modules/billing/utils/is-sellable-billing-product.util';
 
+type SellableBaseProductPrice = {
+  active: boolean;
+  stripePriceId: string;
+  metadata?: { isLegacy?: string | null } | null;
+  billingProduct?: {
+    active: boolean;
+    metadata: { productKey: BillingProductKey; isLegacy?: string | null };
+  } | null;
+};
+
 // Callers pass prices already narrowed to a single plan and interval, so more than
 // one match means two sellable packagings are live at once and the price we would
 // charge depends on row order. Refuse rather than pick.
-export const findSellableBaseProductPriceOrThrow = (
-  billingPrices: BillingPriceEntity[],
-): BillingPriceEntity => {
+export const findSellableBaseProductPriceOrThrow = <
+  TPrice extends SellableBaseProductPrice,
+>(
+  billingPrices: TPrice[],
+): TPrice => {
   const sellableBasePrices = billingPrices.filter(
     (billingPrice) =>
       billingPrice.billingProduct?.metadata.productKey ===
