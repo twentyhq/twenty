@@ -74,14 +74,13 @@ export class BillingEntitlementSyncService {
 
     // The opposite order to the reset above, because the unsafe direction is
     // reversed: predicates deleted while the row still grants RLS would leave
-    // row filtering on with nothing to filter by. Once the revoke is committed
-    // the predicates are inert, so a failure here is only stale rows. Only on
-    // revoke, so reconciling a fleet is not a predicate-table write for every
-    // workspace that never had the feature.
-    if (
-      wasGranted(BillingEntitlementKey.RLS) &&
-      !isGranted(BillingEntitlementKey.RLS)
-    ) {
+    // row filtering on with nothing to filter by. Query-time filtering reads
+    // the predicate cache and never the entitlement, so committing the revoke
+    // first is the direction that fails closed: a failure here leaves rows
+    // filtered by predicates that outlived the feature, not unfiltered.
+    // Asked on every pass rather than on the revoke transition, so a failure
+    // is retried once the stored row already reads as revoked.
+    if (!isGranted(BillingEntitlementKey.RLS)) {
       await this.rowLevelPermissionPredicateGroupService.deleteAllRowLevelPermissionPredicateGroups(
         workspaceId,
       );

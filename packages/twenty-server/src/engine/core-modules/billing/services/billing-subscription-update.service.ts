@@ -82,6 +82,24 @@ export class BillingSubscriptionUpdateService {
       await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
         { workspaceId },
       );
+
+    // Only this entry point takes a price id from the client, so a superseded
+    // package must be refused here rather than in the shared price computation,
+    // which is also reused to rewrite a scheduled phase and to cancel a pending
+    // switch back onto the package the workspace already pays for.
+    const newResourceCreditPrice =
+      await this.billingPriceRepository.findOneOrFail({
+        where: { stripePriceId: resourceCreditPriceId },
+        relations: ['billingProduct'],
+      });
+
+    if (!isSellableCatalogPrice(newResourceCreditPrice)) {
+      throw new BillingException(
+        `Resource credit price ${resourceCreditPriceId} is no longer sold`,
+        BillingExceptionCode.BILLING_PRICE_INVALID,
+      );
+    }
+
     const subscriptionUpdate = {
       type: SubscriptionUpdateType.RESOURCE_CREDIT_PRICE,
       newResourceCreditPriceId: resourceCreditPriceId,
@@ -691,23 +709,6 @@ export class BillingSubscriptionUpdateService {
     billingValidator.assertIsLicensedResourceCreditPrice(
       newResourceCreditPrice,
     );
-
-    // Reached from a client-supplied price id, so a superseded package would
-    // otherwise be sellable again through this mutation alone. Restoring the
-    // price the subscription already has is not a sale: cancelling a pending
-    // pack switch re-sends the current id through here.
-    const isRestoringCurrentPrice =
-      newResourceCreditPriceId === currentPrices.resourceCreditPriceId;
-
-    if (
-      !isRestoringCurrentPrice &&
-      !isSellableCatalogPrice(newResourceCreditPrice)
-    ) {
-      throw new BillingException(
-        `Resource credit price ${newResourceCreditPriceId} is no longer sold`,
-        BillingExceptionCode.BILLING_PRICE_INVALID,
-      );
-    }
 
     const newInterval = newResourceCreditPrice.interval;
     const newPlanKey = newResourceCreditPrice.billingProduct?.metadata.planKey;
