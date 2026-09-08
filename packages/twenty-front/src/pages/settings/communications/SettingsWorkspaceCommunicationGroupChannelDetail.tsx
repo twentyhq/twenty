@@ -12,6 +12,7 @@ import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTit
 import { getEmailChannelDomain } from '@/settings/accounts/utils/getEmailChannelDomain';
 import { SettingsDnsRecordsTable } from '@/settings/components/SettingsDnsRecordsTable';
 
+import { SettingsEmailingDomainClickTrackingToggle } from '@/settings/emailing-domains/components/SettingsEmailingDomainClickTrackingToggle';
 import { SettingsEmailingDomainVerifyButton } from '@/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
@@ -26,6 +27,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   EmailingDomainStatus,
   GetEmailingDomainsDocument,
+  ManagedHostnameStatus,
 } from '~/generated-metadata/graphql';
 import { Status } from 'twenty-ui/data-display';
 import { IconCopy, IconTrash } from 'twenty-ui/icon';
@@ -115,6 +117,12 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
   const domainStatus = emailingDomain?.status ?? EmailingDomainStatus.PENDING;
 
   const isDomainVerified = domainStatus === EmailingDomainStatus.VERIFIED;
+
+  const isClickTrackingPending =
+    emailingDomain?.clickTrackingEnabled === true &&
+    emailingDomain.clickTrackingHostnameStatus !== ManagedHostnameStatus.Active;
+
+  const shouldShowDnsRecords = !isDomainVerified || isClickTrackingPending;
 
   const displayName = channel.displayName ?? '';
 
@@ -263,9 +271,21 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
                 </StyledSendingDomainAdornment>
               }
             />
-            {!isDomainVerified && (
+            {shouldShowDnsRecords && (
               <SettingsDnsRecordsTable records={verificationRecords} />
             )}
+          </Section>
+        )}
+        {isDefined(emailingDomain) && isDomainVerified && (
+          <Section>
+            <H2Title
+              title={t`Link tracking`}
+              description={t`Count how many recipients click a link in your campaigns.`}
+            />
+            <SettingsEmailingDomainClickTrackingToggle
+              emailingDomainId={emailingDomain.id}
+              isClickTrackingEnabled={emailingDomain.clickTrackingEnabled}
+            />
           </Section>
         )}
       </SettingsPageContainer>

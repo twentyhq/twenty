@@ -85,6 +85,22 @@ export class EmailingDomainResolver {
     return emailingDomain;
   }
 
+  @Mutation(() => EmailingDomainDTO)
+  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
+  async setEmailingDomainClickTracking(
+    @Args('id') id: string,
+    @Args('isEnabled') isEnabled: boolean,
+    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
+  ): Promise<EmailingDomainDTO> {
+    this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
+
+    return this.emailingDomainService.setClickTracking({
+      workspaceId: currentWorkspace.id,
+      emailingDomainId: id,
+      isEnabled,
+    });
+  }
+
   @Query(() => [EmailingDomainDTO])
   @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
   async getEmailingDomains(

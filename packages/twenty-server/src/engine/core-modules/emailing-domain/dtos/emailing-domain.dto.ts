@@ -41,6 +41,15 @@ export class EmailingDomainDTO {
   @Field(() => ManagedHostnameStatus, { nullable: true })
   unsubscribeHostnameStatus: ManagedHostnameStatus | null;
 
+  @Field(() => Boolean)
+  clickTrackingEnabled: boolean;
+
+  @Field(() => String, { nullable: true })
+  clickTrackingHostname: string | null;
+
+  @Field(() => ManagedHostnameStatus, { nullable: true })
+  clickTrackingHostnameStatus: ManagedHostnameStatus | null;
+
   @Field(() => [VerificationRecordDTO], { nullable: true })
   verificationRecords: VerificationRecordDTO[] | null;
 

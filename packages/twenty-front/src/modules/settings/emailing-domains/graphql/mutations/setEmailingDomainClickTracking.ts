@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
-export const GET_ALL_EMAILING_DOMAINS = gql`
-  query GetEmailingDomains {
-    getEmailingDomains {
+export const SET_EMAILING_DOMAIN_CLICK_TRACKING = gql`
+  mutation SetEmailingDomainClickTracking($id: String!, $isEnabled: Boolean!) {
+    setEmailingDomainClickTracking(id: $id, isEnabled: $isEnabled) {
       id
       domain
       status
