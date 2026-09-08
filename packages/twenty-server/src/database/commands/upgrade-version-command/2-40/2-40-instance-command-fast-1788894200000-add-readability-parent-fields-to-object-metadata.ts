@@ -3,8 +3,10 @@ import { type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.40.0', 1788796950572)
-export class AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand implements FastInstanceCommand {
+@RegisteredInstanceCommand('2.40.0', 1788894200000)
+export class AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand
+  implements FastInstanceCommand
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       'ALTER TABLE "core"."objectMetadata" ADD "readabilityParentFieldUniversalIdentifiers" uuid array',
