@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, IsNull, Repository } from 'typeorm';
 
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
@@ -48,6 +49,36 @@ export class ConnectedAccountMetadataService {
   }): Promise<ConnectedAccountEntity[]> {
     return this.repository.find({
       where: { userWorkspaceId, workspaceId },
+    });
+  }
+
+  // Mirrors isConnectedAccountUsableByCaller: workspace-shared connections
+  // plus the caller's own personal ones.
+  async findApplicationConnectedAccountsUsableByCaller({
+    applicationId,
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+    userWorkspaceId: string;
+  }): Promise<ConnectedAccountEntity[]> {
+    return this.repository.find({
+      where: [
+        {
+          applicationId,
+          workspaceId,
+          provider: ConnectedAccountProvider.APP,
+          visibility: 'workspace',
+        },
+        {
+          applicationId,
+          workspaceId,
+          provider: ConnectedAccountProvider.APP,
+          userWorkspaceId,
+        },
+      ],
+      order: { createdAt: 'ASC' },
     });
   }
 

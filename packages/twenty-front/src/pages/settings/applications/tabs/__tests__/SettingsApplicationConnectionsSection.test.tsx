@@ -6,7 +6,7 @@ import { MemoryRouter } from 'react-router-dom';
 
 import { SettingsApplicationConnectionsSection } from '~/pages/settings/applications/tabs/SettingsApplicationConnectionsSection';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
-import { useMyAppConnectedAccounts } from '~/pages/settings/applications/hooks/useMyAppConnectedAccounts';
+import { useApplicationConnectedAccounts } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
 
 const mockTriggerAppOAuth = jest.fn();
 
@@ -18,9 +18,9 @@ jest.mock(
 );
 
 jest.mock(
-  '~/pages/settings/applications/hooks/useMyAppConnectedAccounts',
+  '~/pages/settings/applications/hooks/useApplicationConnectedAccounts',
   () => ({
-    useMyAppConnectedAccounts: jest.fn(),
+    useApplicationConnectedAccounts: jest.fn(),
   }),
 );
 
@@ -35,9 +35,9 @@ const mockedUseFindApplicationConnectionProviders =
     typeof useFindApplicationConnectionProviders
   >;
 
-const mockedUseMyAppConnectedAccounts =
-  useMyAppConnectedAccounts as jest.MockedFunction<
-    typeof useMyAppConnectedAccounts
+const mockedUseApplicationConnectedAccounts =
+  useApplicationConnectedAccounts as jest.MockedFunction<
+    typeof useApplicationConnectedAccounts
   >;
 
 describe('SettingsApplicationConnectionsSection', () => {
@@ -65,23 +65,22 @@ describe('SettingsApplicationConnectionsSection', () => {
       refetch: jest.fn(),
     });
 
-    mockedUseMyAppConnectedAccounts.mockReturnValue({
+    mockedUseApplicationConnectedAccounts.mockReturnValue({
       accounts: [
         {
-          __typename: 'ConnectedAccountPublicDTO',
+          __typename: 'ApplicationConnectedAccountDTO',
           id: 'account-1',
           handle: 'workspace@example.com',
           provider: 'app',
           authFailedAt: '2026-05-01T00:00:00.000Z',
           scopes: ['calendar.readonly'],
-          handleAliases: [],
           lastSignedInAt: null,
           userWorkspaceId: 'user-workspace-1',
           connectionProviderId: 'provider-1',
           name: 'Main connection',
           visibility: 'workspace',
+          isOwnedByCurrentUser: true,
           lastCredentialsRefreshedAt: null,
-          connectionParameters: null,
           createdAt: '2026-05-01T00:00:00.000Z',
           updatedAt: '2026-05-01T00:00:00.000Z',
         },
@@ -134,7 +133,7 @@ describe('SettingsApplicationConnectionsSection', () => {
       refetch: jest.fn(),
     });
 
-    mockedUseMyAppConnectedAccounts.mockReturnValue({
+    mockedUseApplicationConnectedAccounts.mockReturnValue({
       accounts: [],
       loading: false,
       refetch: jest.fn(),
