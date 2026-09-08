@@ -10,6 +10,9 @@ const buildI18nContext = (
   i18nInstance: { _: (messageId: string) => `translated:${messageId}` },
   isStandardApp: true,
   applicationCatalog: undefined,
+  workspaceCustomApplicationUniversalIdentifier:
+    'workspace-custom-application-universal-identifier',
+  ownerApplicationUniversalIdentifier: undefined,
   ...overrides,
 });
 

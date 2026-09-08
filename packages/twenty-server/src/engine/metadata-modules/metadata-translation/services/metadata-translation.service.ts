@@ -5,7 +5,6 @@ import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-translatable-properties-by-metadata-name.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -68,7 +67,6 @@ export class MetadataTranslationService {
   constructor(
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
-    private readonly i18nService: I18nService,
   ) {}
 
   async findMetadataTranslations({
@@ -97,13 +95,14 @@ export class MetadataTranslationService {
     const translations: MetadataTranslationDTO[] = [];
 
     for (const locale of locales) {
-      const { standardApplicationId, catalogByApplicationId } =
-        await this.applicationTranslationCatalogService.getCatalogs({
-          applicationIds: [applicationId],
-          locale,
-          workspaceId,
-        });
-      const i18nInstance = this.i18nService.getI18nInstance(locale);
+      const getI18nContext =
+        await this.applicationTranslationCatalogService.getI18nContextByApplicationId(
+          {
+            applicationIds: [applicationId],
+            locale,
+            workspaceId,
+          },
+        );
 
       for (const property of ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME[
         metadataName
@@ -125,14 +124,7 @@ export class MetadataTranslationService {
           baseValue: sourceValue,
           overrides,
           property,
-          i18nContext: {
-            locale,
-            i18nInstance,
-            isStandardApp: applicationId === standardApplicationId,
-            applicationCatalog: isDefined(applicationId)
-              ? catalogByApplicationId.get(applicationId)
-              : undefined,
-          },
+          i18nContext: getI18nContext(applicationId),
         });
 
         translations.push({

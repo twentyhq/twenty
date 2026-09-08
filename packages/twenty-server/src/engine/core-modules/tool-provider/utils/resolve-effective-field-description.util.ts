@@ -9,10 +9,12 @@ export const resolveEffectiveFieldDescription = ({
   flatFieldMetadata,
   locale,
   i18nInstance,
+  workspaceCustomApplicationUniversalIdentifier,
 }: {
   flatFieldMetadata: FlatFieldMetadata;
   locale: keyof typeof APP_LOCALES | undefined;
   i18nInstance: MessageIdTranslator;
+  workspaceCustomApplicationUniversalIdentifier: string;
 }): string =>
   resolveEffectiveEntityProperty({
     metadataName: 'fieldMetadata',
@@ -23,5 +25,8 @@ export const resolveEffectiveFieldDescription = ({
       locale,
       i18nInstance,
       isStandardApp: belongsToTwentyStandardApp(flatFieldMetadata),
+      workspaceCustomApplicationUniversalIdentifier,
+      ownerApplicationUniversalIdentifier:
+        flatFieldMetadata.applicationUniversalIdentifier,
     },
   });

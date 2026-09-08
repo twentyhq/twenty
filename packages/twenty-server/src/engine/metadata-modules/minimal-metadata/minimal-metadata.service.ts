@@ -9,6 +9,7 @@ import { ViewVisibility } from 'twenty-shared/types';
 import { isDefined, uncapitalize } from 'twenty-shared/utils';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type CollectionHashDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/collection-hash.dto';
@@ -38,6 +39,7 @@ export class MinimalMetadataService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly i18nService: I18nService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
   async getMinimalMetadata(
@@ -71,6 +73,10 @@ export class MinimalMetadataService {
 
     const safeLocale = (locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE;
     const i18nInstance = this.i18nService.getI18nInstance(safeLocale);
+    const { workspaceCustomApplicationUniversalIdentifier } =
+      await this.applicationTranslationCatalogService.getApplicationAuthorIdentifiers(
+        { workspaceId },
+      );
 
     const objectMetadataItems: MinimalObjectMetadataDTO[] = Object.values(
       flatObjectMetadataMaps.byUniversalIdentifier,
@@ -85,6 +91,9 @@ export class MinimalMetadataService {
           locale: safeLocale,
           i18nInstance,
           isStandardApp,
+          workspaceCustomApplicationUniversalIdentifier,
+          ownerApplicationUniversalIdentifier:
+            flatObjectMetadata.applicationUniversalIdentifier,
         };
 
         return {

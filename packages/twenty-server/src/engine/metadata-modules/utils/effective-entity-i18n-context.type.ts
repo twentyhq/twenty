@@ -7,4 +7,6 @@ export type EffectiveEntityI18nContext = {
   i18nInstance: MessageIdTranslator;
   isStandardApp: boolean;
   applicationCatalog?: Record<string, string>;
+  workspaceCustomApplicationUniversalIdentifier: string;
+  ownerApplicationUniversalIdentifier: string | undefined;
 };
