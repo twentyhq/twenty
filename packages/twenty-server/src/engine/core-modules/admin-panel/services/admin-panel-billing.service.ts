@@ -109,29 +109,17 @@ export class AdminPanelBillingService {
       grantedByUserId,
     });
 
-    if (isDefined(grant)) {
-      return this.toCreditGrantDTO(grant);
-    }
-
-    // A null grant is either a replay of this same operation, which must answer
-    // with the grant the first attempt wrote rather than hand out the credits
-    // again, or an instance without billing. The ledger table only exists in
-    // the first case, so it is only queried there.
-    const replayedGrant = this.twentyConfigService.get('IS_BILLING_ENABLED')
-      ? await this.billingCreditGrantService.findGrantByIdempotencyKey(
-          workspaceId,
-          idempotencyKey,
-        )
-      : null;
-
-    if (!isDefined(replayedGrant)) {
+    // Answered with the grant either way, whether this attempt wrote it or a
+    // previous one did, so nothing is left but the instance that has no ledger
+    // to write to at all.
+    if (!isDefined(grant)) {
       throw new BillingException(
         `Could not grant credits to workspace ${workspaceId}, billing is disabled on this instance`,
         BillingExceptionCode.BILLING_CUSTOMER_NOT_FOUND,
       );
     }
 
-    return this.toCreditGrantDTO(replayedGrant);
+    return this.toCreditGrantDTO(grant);
   }
 
   async revokeWorkspaceCreditGrant({

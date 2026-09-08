@@ -104,6 +104,8 @@ export class BillingCreditService {
           }),
         });
 
+    // Answers with the row the first attempt wrote rather than null, so a caller
+    // recovering from a lost response does not have to look it up again.
     if (!isDefined(grant)) {
       this.logger.log(
         `Replayed credit grant for workspace ${workspaceId} (idempotency key ${params.idempotencyKey}), repairing derived state`,
@@ -116,7 +118,7 @@ export class BillingCreditService {
         subscription,
       });
 
-      return null;
+      return replayedGrant;
     }
 
     await this.refreshWorkspaceCreditState({
