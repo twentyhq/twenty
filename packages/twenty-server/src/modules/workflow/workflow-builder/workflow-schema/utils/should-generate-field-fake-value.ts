@@ -3,11 +3,12 @@ import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
 
 const EXCLUDED_SYSTEM_FIELDS = ['searchVector', 'position'];
 
 const isActiveField = (field: FlatFieldMetadata) => {
-  return field.isActive;
+  return resolveEffectiveFlatEntityProperty(field, 'isActive');
 };
 
 const isExcludedSystemField = (field: FlatFieldMetadata) => {

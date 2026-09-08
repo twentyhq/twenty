@@ -566,7 +566,10 @@ export class DataloaderService {
           .filter(
             (flatViewFieldGroup) =>
               flatViewFieldGroup.deletedAt === null &&
-              flatViewFieldGroup.isActive,
+              resolveEffectiveFlatEntityProperty(
+                flatViewFieldGroup,
+                'isActive',
+              ),
           )
           .map(fromFlatViewFieldGroupToViewFieldGroupDto);
       });
@@ -599,7 +602,7 @@ export class DataloaderService {
         if (
           !isDefined(flatViewField) ||
           flatViewField.deletedAt !== null ||
-          !flatViewField.isActive
+          !resolveEffectiveFlatEntityProperty(flatViewField, 'isActive')
         ) {
           continue;
         }
@@ -668,7 +671,8 @@ export class DataloaderService {
         })
           .filter(
             (flatViewField) =>
-              flatViewField.deletedAt === null && flatViewField.isActive,
+              flatViewField.deletedAt === null &&
+              resolveEffectiveFlatEntityProperty(flatViewField, 'isActive'),
           )
           .map(fromFlatViewFieldToViewFieldDto);
       });
