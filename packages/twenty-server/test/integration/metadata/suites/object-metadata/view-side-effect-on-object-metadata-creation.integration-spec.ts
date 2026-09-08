@@ -109,7 +109,7 @@ describe('View side effect on object creation', () => {
     });
 
     const seededView = createdViews.find(
-      (view) => view.name === 'All Dishes I love',
+      (view) => view.name === 'All Dishes I love' && view.key === null,
     );
 
     if (!isDefined(seededView)) {
