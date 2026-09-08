@@ -189,6 +189,7 @@ export const DisabledActivation: Story = {
     await expect(disabledTab).toHaveAttribute('aria-disabled', 'true');
     await userEvent.click(disabledTab);
     disabledTab.focus();
+    await expect(disabledTab).toHaveFocus();
     await userEvent.keyboard('{Enter} ');
     await expect(args.onValueChange).not.toHaveBeenCalled();
     await expect(
@@ -262,17 +263,14 @@ export const KeptPanels: Story = {
       await expect(panel).toHaveAttribute('aria-labelledby', tab.id);
     }
     const panel = canvas.getByRole('tabpanel', { name: 'Overview' });
-    await userEvent.type(
-      canvas.getByRole('textbox', { name: 'Draft' }),
-      'Saved draft',
-    );
+    const draft = canvas.getByRole('textbox', { name: 'Draft' });
+    await userEvent.type(draft, 'Saved draft');
     await userEvent.click(canvas.getByRole('tab', { name: 'Activity' }));
     await waitFor(() => expect(panel).not.toBeVisible());
     await expect(panel).toHaveAttribute('inert');
     await expect(panel).toHaveAttribute('tabindex', '-1');
-    await expect(
-      canvas.queryByRole('textbox', { name: 'Draft' }),
-    ).not.toBeInTheDocument();
+    await expect(draft).toBeInTheDocument();
+    await expect(draft).not.toBeVisible();
     await userEvent.tab();
     await expect(
       canvas.getByRole('tabpanel', { name: 'Activity' }),
