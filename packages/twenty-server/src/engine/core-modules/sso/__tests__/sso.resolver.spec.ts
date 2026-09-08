@@ -9,7 +9,6 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { EnterpriseFeaturesEnabledGuard } from 'src/engine/core-modules/auth/guards/enterprise-features-enabled.guard';
 import { SsoResolver } from 'src/engine/core-modules/sso/sso.resolver';
-import { type SsoService } from 'src/engine/core-modules/sso/services/sso.service';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -139,9 +138,9 @@ describe('SsoResolver', () => {
           Promise.resolve(setting === PermissionFlagType.IMPERSONATE),
       );
 
-      await expect(
-        runGuardsFor('deleteSSOIdentityProvider'),
-      ).rejects.toThrow(PermissionsException);
+      await expect(runGuardsFor('deleteSSOIdentityProvider')).rejects.toThrow(
+        PermissionsException,
+      );
     });
 
     it('only requires SECURITY permission (unchanged)', async () => {
