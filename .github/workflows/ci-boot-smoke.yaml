@@ -1,0 +1,122 @@
+name: CI Boot Smoke
+
+# Does the server actually start?
+#
+# This exists because the failures that reach production here are not type
+# errors. They are NestJS wiring: a mixin guard whose dependencies cannot
+# resolve from the module declaring the resolver, a provider missing from a
+# module, a resolver in the wrong graph. Typecheck and lint pass cleanly for
+# every one of those, and the failure mode is a boot crash — so the deploy goes
+# CRASHED and takes the site with it.
+#
+# `server-validation` in ci-server.yaml already boots the server, but it also
+# runs a pending-migration check that regenerates and re-registers an instance
+# command on every run, so its diff is never clean and the job can never go
+# green. A gate that is permanently red carries no signal and gets ignored,
+# which is exactly what happened. This job does one thing, so a red here means
+# one thing.
+#
+# Deliberately NOT gated on changed-files: a boot crash can come from any
+# module wiring, and skipping the check is how it slips through.
+
+on:
+  pull_request:
+  merge_group:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  server-boot:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+    steps:
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 10
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+      - name: Build twenty-shared
+        run: npx nx build twenty-shared
+      - name: Server / Write .env
+        run: npx nx reset:env twenty-server
+      - name: Server / Build
+        run: npx nx build twenty-server
+      - name: Server / Create databases
+        run: |
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
+      # database:init:prod bootstraps the Nest app, so a broken module graph
+      # fails HERE rather than at the boot steps below — which is why its output
+      # is captured: without it the dependency error is attributed to "creating
+      # databases" and reads like a Postgres problem.
+      - name: Server / Init schema (boots the app)
+        run: |
+          set -o pipefail
+          npx nx run twenty-server:database:init:prod 2>&1 | tee /tmp/server-init.log
+      # The worker loads its own module graph, so a provider that resolves on
+      # the server can still be missing here. Staying up for 30s (timeout's
+      # exit 124) is the pass condition; any earlier exit is a crash.
+      - name: Worker / Boots and stays up
+        run: |
+          set +e
+          timeout 30s npx nx run twenty-server:worker
+          exit_code=$?
+          set -e
+          if [ $exit_code -eq 124 ]; then
+            echo "Worker stayed up for 30s."
+            exit 0
+          fi
+          echo "::error::Worker exited early (code $exit_code) — likely a module wiring failure."
+          exit 1
+      - name: Server / Start
+        run: npx nx start:ci twenty-server > /tmp/server-boot.log 2>&1 &
+      - name: Server / Answers /healthz
+        run: |
+          for i in $(seq 1 45); do
+            if curl -fsS http://localhost:3000/healthz > /dev/null 2>&1; then
+              echo "Server healthy after ${i} attempt(s)."
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "::error::Server never answered /healthz — see the boot log below."
+          exit 1
+      # Only on failure, and filtered: the raw log is a flood of Lingui
+      # warnings that buries the actual dependency error.
+      - name: Boot failure diagnosis
+        if: failure()
+        run: |
+          echo "=== dependency / bootstrap errors (any step that booted the app) ==="
+          grep -hE "UnknownDependenciesException|Nest can't resolve|is available in the|Cannot find module" \
+            /tmp/server-init.log /tmp/server-boot.log 2>/dev/null | sort -u | head -30 || true
+          echo
+          echo "A 'Nest can't resolve dependencies' line above means a module is"
+          echo "missing a provider or an import — commonly a mixin guard such as"
+          echo "SettingsPermissionGuard, whose dependencies must resolve from the"
+          echo "module that declares the resolver."
+          echo
+          echo "=== tail of the server boot log, if it got that far ==="
+          tail -60 /tmp/server-boot.log 2>/dev/null || echo "(server never started)"
