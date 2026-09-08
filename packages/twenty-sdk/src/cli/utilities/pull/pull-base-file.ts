@@ -24,6 +24,9 @@ const hasUniversalIdentifier = (value: unknown): boolean =>
   typeof (value as { universalIdentifier?: unknown }).universalIdentifier ===
     'string';
 
+const isEntityList = (value: unknown): boolean =>
+  Array.isArray(value) && value.every(hasUniversalIdentifier);
+
 const isEntityListWithFields = (value: unknown): boolean =>
   Array.isArray(value) &&
   value.every(
@@ -37,7 +40,7 @@ const isUsableBaseManifest = (manifest: unknown): manifest is Manifest => {
     return false;
   }
 
-  const { application, objects, fields, indexes } =
+  const { application, objects, fields, indexes, views, viewFields } =
     manifest as Partial<Manifest>;
 
   return (
@@ -45,7 +48,9 @@ const isUsableBaseManifest = (manifest: unknown): manifest is Manifest => {
     isEntityListWithFields(objects) &&
     Array.isArray(fields) &&
     fields.every(hasUniversalIdentifier) &&
-    (!isDefined(indexes) || isEntityListWithFields(indexes))
+    (!isDefined(indexes) || isEntityListWithFields(indexes)) &&
+    (!isDefined(views) || isEntityList(views)) &&
+    (!isDefined(viewFields) || isEntityList(viewFields))
   );
 };
 
