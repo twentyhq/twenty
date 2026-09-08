@@ -21,6 +21,12 @@
 // where invoice.created stays pinned to the handover however late we get to it.
 // It also cannot drift toward a period end that has not arrived, because the
 // nearer boundary to the handover is the handover.
+//
+// That last part rests on the caller passing only subscription_cycle invoices,
+// which Stripe raises at the handover. Given any other invoice, raised at an
+// arbitrary point inside the period, nearness would answer with whichever
+// boundary happened to be closer and could name a period end still to come.
+// Widening what reaches this, or dropping that filter, breaks the guarantee.
 export const resolveBillingTransitionBoundary = ({
   invoiceCreatedAt,
   subscriptionCurrentPeriodStart,
