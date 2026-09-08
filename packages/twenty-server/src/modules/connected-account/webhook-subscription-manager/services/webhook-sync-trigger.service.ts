@@ -16,9 +16,7 @@ import {
   type CalendarEventWebhookSyncJobData,
 } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/jobs/calendar-event-webhook-sync.job';
 import { CALENDAR_EVENT_WEBHOOK_SYNC_DEBOUNCE_MS } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-debounce-ms.constant';
-import { CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_JITTER } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-retry-jitter.constant';
-import { CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_INITIAL_DELAY_MS } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-retry-initial-delay-ms.constant';
-import { CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_LIMIT } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-retry-limit.constant';
+import { CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_JOB_OPTIONS } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-retry-job-options.constant';
 import {
   MessagingMessageListFetchJob,
   type MessagingMessageListFetchJobData,
@@ -105,13 +103,7 @@ export class WebhookSyncTriggerService {
         { workspaceId, calendarChannelId },
         {
           delay: CALENDAR_EVENT_WEBHOOK_SYNC_DEBOUNCE_MS,
-          retryLimit: CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_LIMIT,
-          backoff: {
-            strategy: 'exponential',
-            initialDelayMilliseconds:
-              CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_INITIAL_DELAY_MS,
-            jitter: CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_JITTER,
-          },
+          ...CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_JOB_OPTIONS,
         },
       );
     } catch (error) {
