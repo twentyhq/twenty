@@ -16,17 +16,17 @@ import { Request } from 'express';
 import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { RunAsWorkspaceMemberTokenDto } from 'src/engine/core-modules/application/application-tokens/dtos/run-as-workspace-member-token.dto';
+import { RunAsWorkspaceMemberTokenService } from 'src/engine/core-modules/application/application-tokens/services/run-as-workspace-member-token.service';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
-import { RunAsWorkspaceMemberTokenDto } from 'src/engine/core-modules/auth/dto/run-as-workspace-member-token.dto';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
-import { RunAsWorkspaceMemberTokenService } from 'src/engine/core-modules/auth/services/run-as-workspace-member-token.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 // Belt-and-suspenders on top of LogicFunctionExecutorService's execution
@@ -36,10 +36,10 @@ const RUN_AS_WORKSPACE_MEMBER_THROTTLE_LIMIT = 1000;
 const RUN_AS_WORKSPACE_MEMBER_THROTTLE_TTL_MS = 60_000;
 
 @Controller(`${ApiPath.App}/tokens`)
-@UseGuards(JwtAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
+@UseGuards(JwtAuthGuard, WorkspaceAuthGuard, CustomPermissionGuard)
 @UseFilters(AuthRestApiExceptionFilter)
 @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-export class AppTokensController {
+export class ApplicationTokensController {
   constructor(
     private readonly runAsWorkspaceMemberTokenService: RunAsWorkspaceMemberTokenService,
     private readonly throttlerService: ThrottlerService,

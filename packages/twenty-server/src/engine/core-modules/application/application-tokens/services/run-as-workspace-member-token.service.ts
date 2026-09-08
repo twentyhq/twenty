@@ -8,7 +8,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { RUN_AS_WORKSPACE_MEMBER_TOKEN_EXPIRES_IN } from 'src/engine/core-modules/auth/constants/run-as-workspace-member-token-expires-in.constant';
+import { RUN_AS_WORKSPACE_MEMBER_TOKEN_EXPIRES_IN } from 'src/engine/core-modules/application/application-tokens/constants/run-as-workspace-member-token-expires-in.constant';
 import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';

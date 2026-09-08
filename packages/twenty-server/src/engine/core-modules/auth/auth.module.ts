@@ -10,7 +10,6 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { ConnectionProviderOAuthController } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth.controller';
 import { ConnectionProviderModule } from 'src/engine/core-modules/application/connection-provider/connection-provider.module';
 import { ApplicationConnectionsModule } from 'src/engine/core-modules/application/connection-provider/connections/application-connections.module';
-import { AppTokensController } from 'src/engine/core-modules/auth/controllers/app-tokens.controller';
 import { GoogleAPIsAuthController } from 'src/engine/core-modules/auth/controllers/google-apis-auth.controller';
 import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/google-auth.controller';
 import { MicrosoftAPIsAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-apis-auth.controller';
@@ -27,7 +26,6 @@ import { GoogleApisServiceAvailabilityService } from 'src/engine/core-modules/au
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/microsoft-apis.service';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
-import { RunAsWorkspaceMemberTokenService } from 'src/engine/core-modules/auth/services/run-as-workspace-member-token.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { UpdateConnectedAccountOnReconnectService } from 'src/engine/core-modules/auth/services/update-connected-account-on-reconnect.service';
 import { SamlAuthStrategy } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
@@ -72,7 +70,6 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
-import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { EmailAliasManagerModule } from 'src/modules/connected-account/email-alias-manager/email-alias-manager.module';
@@ -131,8 +128,6 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     ConnectionProviderModule,
     ApplicationConnectionsModule,
     WorkspaceCacheModule,
-    // AppTokensController's JwtAuthGuard resolves through this module
-    WorkspaceCacheStorageModule,
     CoreEntityCacheModule,
     SecureHttpClientModule,
     EnterpriseModule,
@@ -143,7 +138,6 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     UserSessionModule,
   ],
   controllers: [
-    AppTokensController,
     GoogleAuthController,
     MicrosoftAuthController,
     GoogleAPIsAuthController,
@@ -166,7 +160,6 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     RefreshTokenService,
     LoginTokenService,
     ResetPasswordService,
-    RunAsWorkspaceMemberTokenService,
     // So far, it's not possible to have controllers in business modules
     // which forces us to have these services in the auth module
     // TODO: Move these calendar, message, and connected account services to the business modules once possible

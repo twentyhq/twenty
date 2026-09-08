@@ -12,6 +12,7 @@ import { FrontComponentSharedDependenciesModule } from 'src/engine/core-modules/
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
 import { ApplicationOAuthModule } from 'src/engine/core-modules/application/application-oauth/application-oauth.module';
+import { ApplicationTokensModule } from 'src/engine/core-modules/application/application-tokens/application-tokens.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -112,6 +113,7 @@ import { FileModule } from './file/file.module';
     ApplicationInstallModule,
     ApplicationUpgradeModule,
     ApplicationDevelopmentModule,
+    ApplicationTokensModule,
     FrontComponentSharedDependenciesModule,
     MarketplaceModule,
     TimelineMessagingModule,
