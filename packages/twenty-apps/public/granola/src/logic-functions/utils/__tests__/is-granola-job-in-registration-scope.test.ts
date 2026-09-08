@@ -3,23 +3,15 @@ import { describe, expect, it } from 'vitest';
 import { isGranolaJobInRegistrationScope } from 'src/logic-functions/utils/is-granola-job-in-registration-scope.util';
 
 const registration = {
-  isActive: true,
   registrationId: 'reg-1',
   folderIds: [] as string[],
 };
 
 describe('isGranolaJobInRegistrationScope', () => {
-  it('skips a job without a matching active registration', () => {
+  it('skips a job without a matching registration', () => {
     expect(
       isGranolaJobInRegistrationScope({
         registration: undefined,
-        registrationId: 'reg-1',
-        folderId: undefined,
-      }),
-    ).toBe(false);
-    expect(
-      isGranolaJobInRegistrationScope({
-        registration: { ...registration, isActive: false },
         registrationId: 'reg-1',
         folderId: undefined,
       }),

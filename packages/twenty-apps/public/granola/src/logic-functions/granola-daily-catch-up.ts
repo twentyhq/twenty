@@ -13,7 +13,7 @@ import { findGranolaRegistrationForCurrentKey } from 'src/logic-functions/utils/
 export const granolaDailyCatchUpHandler = async () => {
   const registration = await findGranolaRegistrationForCurrentKey();
 
-  if (!isDefined(registration) || !registration.isActive) {
+  if (!isDefined(registration)) {
     return { success: true, skipped: true };
   }
 

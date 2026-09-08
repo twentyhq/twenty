@@ -18,7 +18,7 @@ export const enqueueGranolaBackfillOrThrow = async ({
 }) => {
   const registration = await findGranolaRegistrationForCurrentKey();
 
-  if (!isDefined(registration) || !registration.isActive) {
+  if (!isDefined(registration)) {
     throw new Error('Set up live sync before importing notes.');
   }
 

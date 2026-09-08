@@ -44,13 +44,6 @@ export const granolaBackfillHandler = async (
     };
   }
 
-  if (!registration.isActive) {
-    return {
-      success: false,
-      error: 'Resume live sync before importing notes.',
-    };
-  }
-
   const result = await enqueueGranolaBackfillOrThrow({
     createdAfter: new Date(
       Date.now() - parsed.data.days * GRANOLA_MILLISECONDS_PER_DAY,

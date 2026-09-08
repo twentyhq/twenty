@@ -31,7 +31,9 @@ export const granolaBackfillBatchHandler = async (
 
     const coreApiClient = new CoreApiClient({ runAs: 'application' });
     const client = createGranolaClientOrThrow();
-    const results = [];
+    const results: Awaited<
+      ReturnType<typeof syncGranolaNoteToCallRecordingOrThrow>
+    >[] = [];
 
     for (const noteId of payload.noteIds) {
       try {

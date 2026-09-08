@@ -8,16 +8,12 @@ export const isGranolaJobInRegistrationScope = ({
   folderId,
 }: {
   registration:
-    | Pick<
-        GranolaWebhookRegistration,
-        'isActive' | 'registrationId' | 'folderIds'
-      >
+    | Pick<GranolaWebhookRegistration, 'registrationId' | 'folderIds'>
     | undefined;
   registrationId: string;
   folderId: string | undefined;
 }): boolean =>
   isDefined(registration) &&
-  registration.isActive &&
   registration.registrationId === registrationId &&
   (registration.folderIds.length === 0 ||
     (isDefined(folderId) && registration.folderIds.includes(folderId)));
