@@ -1,14 +1,15 @@
-import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
 import { type OverrideAuthorReadContext } from 'src/engine/metadata-modules/utils/override-author-context.type';
 import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/utils/read-authored-override-property.util';
 
-export type OverridableFlatEntity<TEntity> = {
+// Entries are typed on the entity column; here they stay opaque so entry
+// types that allow null or carry translations still fit.
+export type OverridableFlatEntity = {
   applicationUniversalIdentifier: string;
-  overrides?: AuthoredOverrides<Partial<TEntity>> | null;
+  overrides?: unknown;
 };
 
 export const resolveEffectiveFlatEntityProperty = <
-  TEntity extends OverridableFlatEntity<TEntity>,
+  TEntity extends OverridableFlatEntity,
   K extends string & keyof TEntity,
 >(
   flatEntity: TEntity,

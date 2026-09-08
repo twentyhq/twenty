@@ -5,8 +5,7 @@ import {
   resolveEffectiveFlatEntityProperty,
 } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
 
-type FlatEntityWithOverrides = Record<string, unknown> &
-  OverridableFlatEntity<Record<string, unknown>>;
+type FlatEntityWithOverrides = Record<string, unknown> & OverridableFlatEntity;
 
 export const resolveEffectiveFlatEntity = <T extends FlatEntityWithOverrides>(
   flatEntity: T,
