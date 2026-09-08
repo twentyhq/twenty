@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { UNSAFE_RouteContext } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Trans } from '@lingui/react/macro';
 
@@ -12,6 +13,15 @@ import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/conte
 import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
+
+// The panel is a sibling of the main Outlet. React Router shares one params
+// object across that branch, so useRoutes(location) can match a Company record
+// while useParams still carries objectNamePlural from the People index.
+const SIDE_PANEL_ROUTE_CONTEXT = {
+  outlet: null,
+  matches: [],
+  isDataRoute: false,
+};
 
 const SidePanelRouteErrorFallback = () => (
   <WorkspaceRouteUnavailable>
@@ -48,10 +58,12 @@ export const SidePanelRoutedPage = () => {
           resetOnLocationChange={false}
         >
           <SidePanelRouteNavigatorProvider>
-            <WorkspaceRoutes
-              location={location}
-              fallback={<WorkspaceRouteUnavailable />}
-            />
+            <UNSAFE_RouteContext.Provider value={SIDE_PANEL_ROUTE_CONTEXT}>
+              <WorkspaceRoutes
+                location={location}
+                fallback={<WorkspaceRouteUnavailable />}
+              />
+            </UNSAFE_RouteContext.Provider>
           </SidePanelRouteNavigatorProvider>
         </AppErrorBoundary>
       </ContextStoreComponentInstanceContext.Provider>
