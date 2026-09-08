@@ -1,6 +1,5 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
-import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { upsertCallRecordingOrThrow } from 'src/logic-functions/utils/upsert-call-recording-or-throw.util';
 
@@ -10,22 +9,14 @@ const EXISTING_RECORDINGS = {
   callRecordings: { edges: [{ node: { id: CALL_RECORDING_ID } }] },
 };
 
-const buildCoreApiClient = (): Pick<CoreApiClient, 'query'> => ({
+const buildCoreApiClient = (): Pick<CoreApiClient, 'query' | 'mutation'> => ({
   query: vi.fn().mockResolvedValue(EMPTY_RECORDINGS),
+  mutation: vi.fn().mockResolvedValue({}),
 });
 
 describe('upsertCallRecordingOrThrow', () => {
-  beforeEach(() => {
-    vi.spyOn(RestApiClient.prototype, 'post').mockResolvedValue({});
-    vi.spyOn(RestApiClient.prototype, 'patch').mockResolvedValue({});
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
   it.each([
-    new RestApiClientError('Duplicate recording', { status: 409 }),
+    new Error('Duplicate recording'),
     new Error('Response lost after the server committed the recording'),
   ])('recovers a newly visible record after $message', async (error) => {
     const coreApiClient = buildCoreApiClient();
@@ -34,7 +25,7 @@ describe('upsertCallRecordingOrThrow', () => {
       .mockResolvedValueOnce(EMPTY_RECORDINGS)
       .mockResolvedValueOnce(EMPTY_RECORDINGS)
       .mockResolvedValueOnce(EXISTING_RECORDINGS);
-    vi.mocked(RestApiClient.prototype.post).mockRejectedValueOnce(error);
+    vi.mocked(coreApiClient.mutation).mockRejectedValueOnce(error);
 
     await expect(
       upsertCallRecordingOrThrow({
@@ -43,44 +34,40 @@ describe('upsertCallRecordingOrThrow', () => {
         fields: { title: 'Customer call' },
       }),
     ).resolves.toEqual({ callRecordingId: CALL_RECORDING_ID, created: false });
-    expect(RestApiClient.prototype.patch).toHaveBeenCalledWith(
-      `/rest/callRecordings/${CALL_RECORDING_ID}`,
-      { title: 'Customer call' },
-    );
+    expect(coreApiClient.mutation).toHaveBeenNthCalledWith(2, {
+      updateCallRecording: {
+        __args: { id: CALL_RECORDING_ID, data: { title: 'Customer call' } },
+        id: true,
+      },
+    });
   });
 
-  it.each([400, 403, 409])(
-    'propagates HTTP %s when no record exists after the failed create',
-    async (status) => {
-      const error = new RestApiClientError('Create failed', { status });
-
-      vi.mocked(RestApiClient.prototype.post).mockRejectedValueOnce(error);
-
-      await expect(
-        upsertCallRecordingOrThrow({
-          coreApiClient: buildCoreApiClient(),
-          callRecordingId: CALL_RECORDING_ID,
-          fields: { title: 'Customer call' },
-        }),
-      ).rejects.toBe(error);
-      expect(RestApiClient.prototype.patch).not.toHaveBeenCalled();
-    },
-  );
+  it('propagates a failed create when no record exists', async () => {
+    const coreApiClient = buildCoreApiClient();
+    const error = new Error('Create failed');
+    vi.mocked(coreApiClient.mutation).mockRejectedValueOnce(error);
+    await expect(
+      upsertCallRecordingOrThrow({
+        coreApiClient,
+        callRecordingId: CALL_RECORDING_ID,
+        fields: { title: 'Customer call' },
+      }),
+    ).rejects.toBe(error);
+    expect(coreApiClient.mutation).toHaveBeenCalledTimes(1);
+  });
 
   it('propagates a failed recovery update instead of reporting success', async () => {
     const coreApiClient = buildCoreApiClient();
-    const updateError = new RestApiClientError('Invalid fields', {
-      status: 400,
-    });
+    const updateError = new Error('Invalid fields');
 
     vi.mocked(coreApiClient.query)
       .mockResolvedValueOnce(EMPTY_RECORDINGS)
       .mockResolvedValueOnce(EMPTY_RECORDINGS)
       .mockResolvedValueOnce(EXISTING_RECORDINGS);
-    vi.mocked(RestApiClient.prototype.post).mockRejectedValueOnce(
-      new RestApiClientError('Duplicate recording', { status: 409 }),
+    vi.mocked(coreApiClient.mutation).mockRejectedValueOnce(
+      new Error('Duplicate recording'),
     );
-    vi.mocked(RestApiClient.prototype.patch).mockRejectedValueOnce(updateError);
+    vi.mocked(coreApiClient.mutation).mockRejectedValueOnce(updateError);
 
     await expect(
       upsertCallRecordingOrThrow({
@@ -89,5 +76,55 @@ describe('upsertCallRecordingOrThrow', () => {
         fields: { title: 'Customer call' },
       }),
     ).rejects.toBe(updateError);
+  });
+
+  it.each([false, true])(
+    'preserves transcript arrays on writes (existing: %s)',
+    async (isExisting) => {
+      const coreApiClient = buildCoreApiClient();
+      const transcript = [{ participant: { name: 'Alice' }, words: [] }];
+      vi.mocked(coreApiClient.query)
+        .mockResolvedValueOnce(EMPTY_RECORDINGS)
+        .mockResolvedValueOnce(
+          isExisting ? EXISTING_RECORDINGS : EMPTY_RECORDINGS,
+        );
+      await expect(
+        upsertCallRecordingOrThrow({
+          coreApiClient,
+          callRecordingId: CALL_RECORDING_ID,
+          fields: { transcript },
+        }),
+      ).resolves.toEqual({
+        callRecordingId: CALL_RECORDING_ID,
+        created: !isExisting,
+      });
+      const mutationName = isExisting
+        ? 'updateCallRecording'
+        : 'createCallRecording';
+      const argumentsForMutation = isExisting
+        ? { id: CALL_RECORDING_ID, data: { transcript } }
+        : { data: { id: CALL_RECORDING_ID, transcript } };
+
+      expect(coreApiClient.mutation).toHaveBeenCalledExactlyOnceWith({
+        [mutationName]: { __args: argumentsForMutation, id: true },
+      });
+    },
+  );
+
+  it('skips a soft-deleted recording without writing', async () => {
+    const coreApiClient = buildCoreApiClient();
+    vi.mocked(coreApiClient.query).mockResolvedValueOnce(EXISTING_RECORDINGS);
+    await expect(
+      upsertCallRecordingOrThrow({
+        coreApiClient,
+        callRecordingId: CALL_RECORDING_ID,
+        fields: { title: 'Customer call' },
+      }),
+    ).resolves.toEqual({
+      callRecordingId: CALL_RECORDING_ID,
+      created: false,
+      skipped: true,
+    });
+    expect(coreApiClient.mutation).not.toHaveBeenCalled();
   });
 });

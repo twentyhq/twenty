@@ -1,18 +1,17 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
-import { RestApiClient } from 'twenty-client-sdk/rest';
 
 import { type CallRecordingSyncFields } from 'src/logic-functions/types/call-recording-sync-fields.type';
 import { doesCallRecordingExistOrThrow } from 'src/logic-functions/utils/does-call-recording-exist-or-throw.util';
 import { isCallRecordingSoftDeletedOrThrow } from 'src/logic-functions/utils/is-call-recording-soft-deleted-or-throw.util';
+import { toCallRecordingMutationFields } from 'src/logic-functions/utils/to-call-recording-mutation-fields.util';
 import { updateCallRecordingOrThrow } from 'src/logic-functions/utils/update-call-recording-or-throw.util';
 
-// REST accepts transcript arrays rejected by the generated JSON scalar type.
 export const upsertCallRecordingOrThrow = async ({
   coreApiClient,
   callRecordingId,
   fields,
 }: {
-  coreApiClient: Pick<CoreApiClient, 'query'>;
+  coreApiClient: Pick<CoreApiClient, 'query' | 'mutation'>;
   callRecordingId: string;
   fields: CallRecordingSyncFields;
 }): Promise<{
@@ -27,16 +26,27 @@ export const upsertCallRecordingOrThrow = async ({
   }
 
   if (await doesCallRecordingExistOrThrow({ coreApiClient, callRecordingId })) {
-    await updateCallRecordingOrThrow({ callRecordingId, fields });
+    await updateCallRecordingOrThrow({
+      coreApiClient,
+      callRecordingId,
+      fields,
+    });
 
     return { callRecordingId, created: false };
   }
 
   try {
-    await new RestApiClient({ runAs: 'application' }).post(
-      '/rest/callRecordings',
-      { id: callRecordingId, ...fields },
-    );
+    await coreApiClient.mutation({
+      createCallRecording: {
+        __args: {
+          data: {
+            id: callRecordingId,
+            ...toCallRecordingMutationFields(fields),
+          },
+        },
+        id: true,
+      },
+    });
 
     return { callRecordingId, created: true };
   } catch (error) {
@@ -46,7 +56,11 @@ export const upsertCallRecordingOrThrow = async ({
       throw error;
     }
 
-    await updateCallRecordingOrThrow({ callRecordingId, fields });
+    await updateCallRecordingOrThrow({
+      coreApiClient,
+      callRecordingId,
+      fields,
+    });
 
     return { callRecordingId, created: false };
   }
