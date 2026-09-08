@@ -1,5 +1,3 @@
-import { Logger } from '@nestjs/common';
-
 import { DataSource, QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
@@ -7,25 +5,19 @@ import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 
 // Position values render blank in the timeline. New position fields are created
 // non audit logged; the ones predating the column carry the true default.
+//
+// Shaped like the 2.20 isSystemSideEffect backfill on this table: one unbatched
+// UPDATE, no RETURNING. There is no index on "type", so the cost is a sequential
+// scan, but an UPDATE takes ROW EXCLUSIVE rather than ACCESS EXCLUSIVE, so it
+// never blocks readers; the matched set is one position field per object, and
+// "isAuditLogged" is unindexed so the row updates stay HOT.
 @RegisteredInstanceCommand('2.40.0', 1788885873411, { type: 'slow' })
 export class BackfillIsAuditLoggedOnPositionFieldMetadataSlowInstanceCommand
   implements SlowInstanceCommand
 {
-  private readonly logger = new Logger(
-    BackfillIsAuditLoggedOnPositionFieldMetadataSlowInstanceCommand.name,
-  );
-
   async runDataMigration(dataSource: DataSource): Promise<void> {
-    const updatedRows: { id: string }[] = await dataSource.query(
-      `UPDATE "core"."fieldMetadata"
-       SET "isAuditLogged" = false
-       WHERE "type" = 'POSITION'
-       AND "isAuditLogged" = true
-       RETURNING "id"`,
-    );
-
-    this.logger.log(
-      `core.fieldMetadata: backfilled isAuditLogged on ${updatedRows.length} position field(s)`,
+    await dataSource.query(
+      `UPDATE "core"."fieldMetadata" SET "isAuditLogged" = false WHERE "type" = 'POSITION' AND "isAuditLogged" = true`,
     );
   }
 
