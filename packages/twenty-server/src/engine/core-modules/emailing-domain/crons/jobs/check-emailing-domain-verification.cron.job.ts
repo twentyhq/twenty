@@ -16,6 +16,11 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
+const RETRYABLE_HOSTNAME_STATUSES = [
+  ManagedHostnameStatus.PENDING,
+  ManagedHostnameStatus.FAILED,
+];
+
 @Processor(MessageQueue.cronQueue)
 export class CheckEmailingDomainVerificationCronJob {
   private readonly logger = new Logger(
@@ -89,7 +94,7 @@ export class CheckEmailingDomainVerificationCronJob {
         where: [
           {
             status: EmailingDomainStatus.VERIFIED,
-            unsubscribeHostnameStatus: ManagedHostnameStatus.PENDING,
+            unsubscribeHostnameStatus: In(RETRYABLE_HOSTNAME_STATUSES),
           },
           {
             status: EmailingDomainStatus.VERIFIED,
@@ -97,7 +102,7 @@ export class CheckEmailingDomainVerificationCronJob {
           },
           {
             status: EmailingDomainStatus.VERIFIED,
-            clickTrackingHostnameStatus: ManagedHostnameStatus.PENDING,
+            clickTrackingHostnameStatus: In(RETRYABLE_HOSTNAME_STATUSES),
           },
           {
             status: EmailingDomainStatus.VERIFIED,

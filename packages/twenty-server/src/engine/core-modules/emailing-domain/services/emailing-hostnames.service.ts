@@ -171,7 +171,16 @@ export class EmailingHostnamesService {
       return;
     }
 
-    await this.managedHostnameService.release(hostname);
+    const isReleased = await this.managedHostnameService.release(hostname);
+
+    if (!isReleased) {
+      this.logger.warn(
+        `Failed to release ${provisioner.hostnameKind} hostname ${hostname} for emailing domain ${emailingDomain.id}, keeping it in database for retry`,
+      );
+
+      return;
+    }
+
     await provisioner.clearHostname(emailingDomain);
   }
 

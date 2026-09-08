@@ -37,11 +37,29 @@ export class ManagedHostnameService {
   }
 
   async resolveStatus(hostname: string): Promise<ManagedHostnameStatus> {
-    const isWorking = await this.dnsManagerService.isHostnameWorking(hostname);
+    const hostnameWithRecords =
+      await this.dnsManagerService.getHostnameWithRecords(hostname);
 
-    return isWorking
-      ? ManagedHostnameStatus.ACTIVE
-      : ManagedHostnameStatus.PENDING;
+    if (!isDefined(hostnameWithRecords)) {
+      return ManagedHostnameStatus.PENDING;
+    }
+
+    const redirectionStatus = hostnameWithRecords.records.find(
+      (record) => record.validationType === 'redirection',
+    )?.status;
+    const sslStatus = hostnameWithRecords.records.find(
+      (record) => record.validationType === 'ssl',
+    )?.status;
+
+    if (redirectionStatus === 'success' && sslStatus === 'success') {
+      return ManagedHostnameStatus.ACTIVE;
+    }
+
+    if (isNonEmptyString(sslStatus) && this.isTerminalSslFailure(sslStatus)) {
+      return ManagedHostnameStatus.FAILED;
+    }
+
+    return ManagedHostnameStatus.PENDING;
   }
 
   async getCnameRecords(hostname: string): Promise<ManagedHostnameRecord[]> {
@@ -66,12 +84,32 @@ export class ManagedHostnameService {
     }
   }
 
-  async release(hostname: string): Promise<void> {
+  async release(hostname: string): Promise<boolean> {
     if (!this.isConfigured()) {
-      return;
+      return true;
     }
 
-    await this.dnsManagerService.deleteHostnameSilently(hostname);
+    try {
+      const hostnameId = await this.dnsManagerService.getHostnameId(hostname);
+
+      if (isNonEmptyString(hostnameId)) {
+        await this.dnsManagerService.deleteHostname(hostnameId);
+      }
+
+      return true;
+    } catch (error) {
+      this.logger.warn(`Failed to release hostname ${hostname}: ${error}`);
+
+      return false;
+    }
+  }
+
+  private isTerminalSslFailure(sslStatus: string): boolean {
+    return (
+      sslStatus.endsWith('_timed_out') ||
+      sslStatus === 'expired' ||
+      sslStatus === 'inactive'
+    );
   }
 
   private async adoptAlreadyRegisteredHostname({
