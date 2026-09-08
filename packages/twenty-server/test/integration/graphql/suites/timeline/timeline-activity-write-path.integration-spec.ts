@@ -8,6 +8,9 @@ import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete
 import { gql } from 'graphql-tag';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import {
   type TimelineActivityAction,
@@ -166,6 +169,7 @@ const ATTACHMENT_UNIVERSAL_IDENTIFIER =
 
 const COMPANY_ID = '20202020-7171-4000-8000-000000000001';
 const POSITION_COMPANY_ID = '20202020-7171-4000-8000-000000000002';
+const NON_AUDIT_LOGGED_COMPANY_ID = '20202020-7171-4000-8000-000000000018';
 const NOTE_COMPANY_ID = '20202020-7171-4000-8000-000000000004';
 const NOTE_ID = '20202020-7171-4000-8000-000000000005';
 const NOTE_TARGET_ID = '20202020-7171-4000-8000-000000000006';
@@ -221,8 +225,15 @@ const CREATED_RECORD_IDS: { objectMetadataSingularName: string; id: string }[] =
       id: ORM_V2_COMPOSITE_COMPANY_ID,
     },
     { objectMetadataSingularName: 'company', id: POSITION_COMPANY_ID },
+    {
+      objectMetadataSingularName: 'company',
+      id: NON_AUDIT_LOGGED_COMPANY_ID,
+    },
     { objectMetadataSingularName: 'company', id: COMPANY_ID },
   ];
+
+const nonAuditLoggedFieldName = 'lastRollupAt';
+let nonAuditLoggedFieldMetadataId = '';
 
 describe('timeline activity write path (integration)', () => {
   beforeAll(async () => {
@@ -244,9 +255,52 @@ describe('timeline activity write path (integration)', () => {
         );
       }
     }
+
+    const companyObjectMetadataId = (
+      await makeMetadataAPIRequest({
+        query: gql`
+          query {
+            objects(paging: { first: 1000 }) {
+              edges {
+                node {
+                  id
+                  nameSingular
+                }
+              }
+            }
+          }
+        `,
+      })
+    ).body.data.objects.edges.find(
+      (edge: { node: { nameSingular: string } }) =>
+        edge.node.nameSingular === 'company',
+    ).node.id;
+
+    const { data } = await createOneFieldMetadata({
+      input: {
+        objectMetadataId: companyObjectMetadataId,
+        name: nonAuditLoggedFieldName,
+        label: 'Last rollup at',
+        type: FieldMetadataType.DATE_TIME,
+        isAuditLogged: false,
+      },
+      gqlFields: 'id isAuditLogged',
+      expectToFail: false,
+    });
+
+    expect(data.createOneField.isAuditLogged).toBe(false);
+
+    nonAuditLoggedFieldMetadataId = data.createOneField.id;
   });
 
   afterAll(async () => {
+    if (isDefined(nonAuditLoggedFieldMetadataId)) {
+      await deleteOneFieldMetadata({
+        input: { idToDelete: nonAuditLoggedFieldMetadataId },
+        expectToFail: false,
+      });
+    }
+
     for (const { objectMetadataSingularName, id } of CREATED_RECORD_IDS) {
       await makeGraphqlAPIRequest(
         destroyOneOperationFactory({
@@ -435,6 +489,56 @@ describe('timeline activity write path (integration)', () => {
       });
 
       expect(timelineActivities).toHaveLength(0);
+    });
+
+    it('should not write an entry for a non audit logged field only change', async () => {
+      await createRecord({
+        objectMetadataSingularName: 'company',
+        data: {
+          id: NON_AUDIT_LOGGED_COMPANY_ID,
+          name: 'Rollup Host',
+        },
+      });
+
+      await updateRecord({
+        objectMetadataSingularName: 'company',
+        recordId: NON_AUDIT_LOGGED_COMPANY_ID,
+        data: { [nonAuditLoggedFieldName]: '2026-09-06T02:00:00.000Z' },
+      });
+
+      const timelineActivities = await findTimelineActivities({
+        targetCompanyId: { eq: NON_AUDIT_LOGGED_COMPANY_ID },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow('updated'),
+        },
+      });
+
+      expect(timelineActivities).toHaveLength(0);
+    });
+
+    it('should keep the audit logged fields of a mixed change', async () => {
+      await updateRecord({
+        objectMetadataSingularName: 'company',
+        recordId: NON_AUDIT_LOGGED_COMPANY_ID,
+        data: {
+          name: 'Rollup Host Renamed',
+          [nonAuditLoggedFieldName]: '2026-09-07T02:00:00.000Z',
+        },
+      });
+
+      const timelineActivities = await findTimelineActivities({
+        targetCompanyId: { eq: NON_AUDIT_LOGGED_COMPANY_ID },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow('updated'),
+        },
+      });
+
+      expect(timelineActivities).toHaveLength(1);
+      expect(timelineActivities[0].properties).toEqual({
+        diff: {
+          name: { before: 'Rollup Host', after: 'Rollup Host Renamed' },
+        },
+      });
     });
   });
 

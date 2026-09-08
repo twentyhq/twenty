@@ -178,9 +178,12 @@ export class TimelineActivityService {
       await this.timelineActivityRepository.updateLinkedTimelineActivitiesHappensAt(
         {
           workspaceId,
+          // The unfiltered events on purpose: this keeps an already written
+          // row anchored to its source moment, so hiding the happensAt field
+          // from the timeline must not strand linked rows at a stale time.
           updates: buildLinkedTimelineActivityHappensAtSyncUpdates({
             rules: sourceRules,
-            events: auditLoggedEvents,
+            events,
             resolveTimelineActivityType,
           }),
         },
