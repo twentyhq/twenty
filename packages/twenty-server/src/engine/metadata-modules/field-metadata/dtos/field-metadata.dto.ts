@@ -123,11 +123,7 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
 
   @IsBoolean()
   @IsOptional()
-  @Field({
-    nullable: true,
-    description:
-      "Whether this field's changes appear in the record timeline. Defaults to true, except on POSITION fields. Unlike the object-level flag it does not affect event logs, which stay the complete audit trail.",
-  })
+  @Field({ nullable: true })
   isAuditLogged?: boolean;
 
   @IsOptional()
