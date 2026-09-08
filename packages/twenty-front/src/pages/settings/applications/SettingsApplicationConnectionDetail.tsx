@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Status, Tag } from 'twenty-ui/data-display';
-import { IconRefresh, IconTrash, IconUser, IconUsers } from 'twenty-ui/icon';
+import { IconRefresh, IconTrash, IconUsers } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -155,7 +155,7 @@ export const SettingsApplicationConnectionDetail = () => {
     });
   };
 
-  const handleChangeVisibility = () => {
+  const handleShareWithWorkspace = () => {
     if (connection === undefined || provider === undefined) {
       return;
     }
@@ -163,7 +163,7 @@ export const SettingsApplicationConnectionDetail = () => {
     triggerAppOAuth({
       applicationId,
       providerName: provider.name,
-      visibility: connection.visibility === 'workspace' ? 'user' : 'workspace',
+      visibility: 'workspace',
       reconnectingConnectedAccountId: connection.id,
       redirectLocation: detailPath,
     });
@@ -330,19 +330,15 @@ export const SettingsApplicationConnectionDetail = () => {
                     onClick={handleReconnect}
                   />
                 )}
-                <Button
-                  title={
-                    connection.visibility === 'workspace'
-                      ? t`Make private`
-                      : t`Share with workspace`
-                  }
-                  Icon={
-                    connection.visibility === 'workspace' ? IconUser : IconUsers
-                  }
-                  variant="secondary"
-                  accent="default"
-                  onClick={() => openModal(changeVisibilityModalId)}
-                />
+                {connection.visibility !== 'workspace' && (
+                  <Button
+                    title={t`Share with workspace`}
+                    Icon={IconUsers}
+                    variant="secondary"
+                    accent="default"
+                    onClick={() => openModal(changeVisibilityModalId)}
+                  />
+                )}
                 <Button
                   title={t`Disconnect`}
                   Icon={IconTrash}
@@ -396,11 +392,11 @@ export const SettingsApplicationConnectionDetail = () => {
               title={t`Change visibility?`}
               subtitle={
                 <Trans>
-                  Changing visibility requires reconnecting this OAuth
-                  connection. You will be redirected to authorize it again.
+                  Sharing this connection with the workspace requires
+                  reconnecting it. You will be redirected to authorize it again.
                 </Trans>
               }
-              onConfirmClick={handleChangeVisibility}
+              onConfirmClick={handleShareWithWorkspace}
               confirmButtonText={t`Reconnect and change visibility`}
               confirmButtonAccent="blue"
             />
