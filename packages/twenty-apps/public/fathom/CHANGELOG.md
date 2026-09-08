@@ -2,6 +2,11 @@
 
 All notable changes to this application are documented in this file.
 
+## 1.0.1
+
+- No change, fix npm deployment
+
+
 ## 1.0.0
 
 - Import available Fathom video, or audio for audio-only recordings, into the
