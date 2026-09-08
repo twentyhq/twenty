@@ -75,9 +75,20 @@ export class CallWebhookJobsJob {
       flatEntityMaps: flatObjectMetadataMaps,
     });
 
+    const isRecordSharingEnabled =
+      featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] ?? false;
+
+    // Without the readability the batch cannot be gated, so nothing may leave
+    if (isRecordSharingEnabled && !isDefined(flatObjectMetadata)) {
+      this.logger.warn(
+        `Object metadata ${workspaceEventBatch.objectMetadata.id} not found for workspace ${workspaceEventBatch.workspaceId}, dropping the webhook batch`,
+      );
+
+      return;
+    }
+
     const recordShares =
-      featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] &&
-      isDefined(flatObjectMetadata)
+      isRecordSharingEnabled && isDefined(flatObjectMetadata)
         ? await this.fetchRecordShares({
             workspaceEventBatch,
             readability: getEffectiveReadability(flatObjectMetadata),
