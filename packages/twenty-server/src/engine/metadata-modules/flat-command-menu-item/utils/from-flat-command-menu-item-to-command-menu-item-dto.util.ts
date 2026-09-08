@@ -1,14 +1,13 @@
 import { type CommandMenuItemDTO } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item.dto';
 import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
+import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity.util';
 
 export const fromFlatCommandMenuItemToCommandMenuItemDto = (
   flatCommandMenuItem: FlatCommandMenuItem,
 ): CommandMenuItemDTO => {
-  const effectiveFlatCommandMenuItem = {
-    ...flatCommandMenuItem,
-    ...(flatCommandMenuItem.overrides ?? {}),
-  };
+  const effectiveFlatCommandMenuItem =
+    resolveEffectiveFlatEntity(flatCommandMenuItem);
 
   return {
     id: effectiveFlatCommandMenuItem.id,

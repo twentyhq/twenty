@@ -42,6 +42,7 @@ import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadat
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type SearchFieldMetadataDTO } from 'src/engine/metadata-modules/search-field-metadata/dtos/search-field-metadata.dto';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
 
 export type RelationMetadataLoaderPayload = {
   workspaceId: string;
@@ -617,10 +618,10 @@ export class DataloaderService {
           continue;
         }
 
-        const resolvedGroupId =
-          flatViewField.overrides?.viewFieldGroupId !== undefined
-            ? flatViewField.overrides.viewFieldGroupId
-            : flatViewField.viewFieldGroupId;
+        const resolvedGroupId = resolveEffectiveFlatEntityProperty(
+          flatViewField,
+          'viewFieldGroupId',
+        );
 
         if (!isDefined(resolvedGroupId)) {
           continue;

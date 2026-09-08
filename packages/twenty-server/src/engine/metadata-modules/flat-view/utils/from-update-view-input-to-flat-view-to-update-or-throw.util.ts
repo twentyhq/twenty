@@ -25,6 +25,7 @@ import {
 import { type UniversalFlatViewGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-group.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
+import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity.util';
 
 export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
   updateViewInput: rawUpdateViewInput,
@@ -180,10 +181,10 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
     flatViewToUpdate.createdByUserWorkspaceId = userWorkspaceId;
   }
 
-  const effectiveFlatViewToUpdate = {
+  const effectiveFlatViewToUpdate = resolveEffectiveFlatEntity({
     ...mergedRecord,
-    ...((overrides as ViewOverrides | null) ?? {}),
-  };
+    overrides,
+  });
 
   const { flatViewGroupsToDelete, flatViewGroupsToCreate } =
     handleFlatViewUpdateSideEffect({
