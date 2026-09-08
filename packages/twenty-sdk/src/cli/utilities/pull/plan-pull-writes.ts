@@ -10,8 +10,10 @@ import { dirname, posix } from 'node:path';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
+export type PullWriteKind = PullEntityKind | 'translation';
+
 export type PullWrite = {
-  kind: PullEntityKind;
+  kind: PullWriteKind;
   universalIdentifier: string;
   relativePath: string;
   content: string;
