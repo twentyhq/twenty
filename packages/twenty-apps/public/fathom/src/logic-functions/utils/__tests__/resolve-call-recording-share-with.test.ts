@@ -23,12 +23,12 @@ describe('resolveCallRecordingShareWith', () => {
     ).toEqual([{ everyone: true, accessLevel: 'READ' }]);
   });
 
-  it('gives everyone read access when the connecting member has left the workspace', () => {
-    expect(
+  it('refuses a personal connection whose member has left the workspace instead of widening it to everyone', () => {
+    expect(() =>
       resolveCallRecordingShareWith({
         visibility: 'user',
         workspaceMemberId: null,
       }),
-    ).toEqual([{ everyone: true, accessLevel: 'READ' }]);
+    ).toThrow('reconnect Fathom');
   });
 });

@@ -10,11 +10,11 @@ import { updateManyOperationFactory } from 'test/integration/graphql/utils/updat
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { setObjectReadability } from 'test/integration/metadata/suites/object-metadata/utils/set-object-readability.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
   FeatureFlagKey,
@@ -26,7 +26,6 @@ import {
 } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
 import { isRecordSharedWithPrincipals } from 'src/engine/record-share/utils/is-record-shared-with-principals.util';
@@ -65,26 +64,6 @@ const findManyOperation = findManyOperationFactory({
   gqlFields: RECORD_GQL_FIELDS,
   filter: ALL_RECORDS_FILTER,
 });
-
-const setObjectReadability = async (
-  objectMetadataId: string,
-  readability: MetadataReadability,
-) => {
-  await getCoreRepository<ObjectMetadataEntity>(ObjectMetadataEntity).update(
-    objectMetadataId,
-    { readability },
-  );
-
-  const { errors } = await updateOneObjectMetadata({
-    expectToFail: false,
-    input: {
-      idToUpdate: objectMetadataId,
-      updatePayload: { description: `readability set to ${readability}` },
-    },
-  });
-
-  expect(errors).toBeUndefined();
-};
 
 const setRecordSharingEnabled = (value: boolean) =>
   updateFeatureFlag({
@@ -277,7 +256,17 @@ describe('recordShareTwinObjectRecordsPermissions', () => {
       await makeGraphqlAPIRequestWithMemberRole(findManyOperation);
 
     expect(response.body.errors).toBeUndefined();
-    expect(collectIds(response.body.data[OBJECT_PLURAL].edges)).toEqual(
+
+    const readRecordIds = collectIds(response.body.data[OBJECT_PLURAL].edges);
+
+    expect(readRecordIds).toEqual(
+      [
+        RECORD_IDS.SHARED_READ_WITH_JONY,
+        RECORD_IDS.SHARED_READ_WRITE_WITH_MEMBER_ROLE,
+        RECORD_IDS.SHARED_FULL_WITH_EVERYONE,
+      ].sort(),
+    );
+    expect(readRecordIds).toEqual(
       recordIdsSharedInMemory({
         principalIds: [
           EVERYONE_PRINCIPAL_ID,
@@ -313,7 +302,18 @@ describe('recordShareTwinObjectRecordsPermissions', () => {
     );
 
     expect(response.body.errors).toBeUndefined();
-    expect(collectRecordIds(response.body.data[UPDATE_RESPONSE_KEY])).toEqual(
+
+    const updatedRecordIds = collectRecordIds(
+      response.body.data[UPDATE_RESPONSE_KEY],
+    );
+
+    expect(updatedRecordIds).toEqual(
+      [
+        RECORD_IDS.SHARED_READ_WRITE_WITH_MEMBER_ROLE,
+        RECORD_IDS.SHARED_FULL_WITH_EVERYONE,
+      ].sort(),
+    );
+    expect(updatedRecordIds).toEqual(
       recordIdsSharedInMemory({
         principalIds: [
           EVERYONE_PRINCIPAL_ID,
