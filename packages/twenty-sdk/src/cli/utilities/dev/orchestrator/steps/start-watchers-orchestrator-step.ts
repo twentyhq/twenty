@@ -3,6 +3,7 @@ import {
   type EsbuildWatcher,
 } from '@/cli/utilities/build/common/esbuild-watcher';
 import { FileUploadWatcher } from '@/cli/utilities/build/common/file-upload-watcher';
+import { validateYarnLock } from '@/cli/utilities/build/manifest/utils/validate-yarn-lock';
 import { FrontComponentsWatcher } from '@/cli/utilities/build/common/front-component-build/front-components-watcher';
 import { TscWatcher } from '@/cli/utilities/build/common/tsc-watcher';
 import { type TypecheckError } from '@/cli/utilities/build/common/typecheck-plugin';
@@ -239,10 +240,31 @@ export class StartWatchersOrchestratorStep {
       appPath: this.state.appPath,
       fileFolder: FileFolder.Dependencies,
       watchPaths: ['package.json', 'yarn.lock'],
-      handleFileBuilt: this.handleFileBuilt.bind(this),
+      handleFileBuilt: (event) => {
+        void this.handleDependencyFileBuilt(event);
+      },
     });
 
     this.dependencyWatcher.start();
+  }
+
+  private async handleDependencyFileBuilt(
+    event: FileBuiltEvent,
+  ): Promise<void> {
+    const yarnLockErrors =
+      event.sourcePath === 'yarn.lock'
+        ? await validateYarnLock(this.state.appPath)
+        : [];
+
+    if (yarnLockErrors.length > 0) {
+      this.handleFileBuildError(
+        yarnLockErrors.map((error) => ({ error, location: null })),
+      );
+
+      return;
+    }
+
+    this.handleFileBuilt(event);
   }
 
   private async startTscWatcher(): Promise<void> {
