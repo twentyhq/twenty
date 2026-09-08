@@ -12,7 +12,7 @@ import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-a
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type RecordShareInput } from 'src/engine/record-share/types/record-share-input.type';
 import { type ShareWithInput } from 'src/engine/record-share/types/share-with-input.type';
-import { resolveShareWithPrincipal } from 'src/engine/record-share/utils/resolve-share-with-principal.util';
+import { resolveShareWithPrincipalOrThrow } from 'src/engine/record-share/utils/resolve-share-with-principal-or-throw.util';
 
 type RecordShareInputForRecord = Omit<
   RecordShareInput,
@@ -142,7 +142,7 @@ export const buildRecordShareInputsForCreatedRecords = ({
 
   const creatorRoleId = resolveCreatorRoleId({ authContext, apiKeyRoleMap });
   const shareWithPrincipals = shareWithEntries
-    .map(resolveShareWithPrincipal)
+    .map(resolveShareWithPrincipalOrThrow)
     .map((shareWithPrincipal) =>
       shareWithPrincipal.principalId === creatorRoleId
         ? { ...shareWithPrincipal, accessLevel: RecordShareAccessLevel.FULL }
