@@ -188,3 +188,48 @@ export const ConfirmButtonClick: Story = {
     });
   },
 };
+
+export const ResetsInputWhenReopened: Story = {
+  args: {
+    confirmationValue: 'yes',
+    confirmationPlaceholder: 'yes',
+    modalInstanceId: 'confirmation-modal',
+    title: 'Delete API key',
+    subtitle:
+      'Please type "yes" to confirm you want to delete this API Key. Be aware that any script using this key will stop working.',
+    confirmButtonText: 'Delete',
+    onConfirmClick: fn(),
+  },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const input = await body.findByTestId('confirmation-modal-input');
+    const confirmButton = await body.findByTestId(
+      'confirmation-modal-confirm-button',
+    );
+
+    expect(confirmButton).toBeDisabled();
+
+    await userEvent.type(input, 'yes');
+    await waitFor(() => {
+      expect(confirmButton).toBeEnabled();
+    });
+
+    await userEvent.click(
+      await body.findByTestId('confirmation-modal-cancel-button'),
+    );
+
+    jotaiStore.set(
+      isModalOpenedComponentState.atomFamily({
+        instanceId: 'confirmation-modal',
+      }),
+      true,
+    );
+
+    await waitFor(() => {
+      expect(
+        body.getByTestId('confirmation-modal-confirm-button'),
+      ).toBeDisabled();
+    });
+    expect(body.getByTestId('confirmation-modal-input')).toHaveValue('');
+  },
+};
