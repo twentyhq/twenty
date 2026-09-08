@@ -247,8 +247,15 @@ export const SettingsEnterprise = ({
     ? new Date(subscriptionStatus.graceExpiresAt)
     : null;
 
-  const graceExpiresAtDate = isDefined(graceExpiresAt)
-    ? graceExpiresAt.toLocaleDateString()
+  const effectiveGraceExpiresAt =
+    isDefined(graceExpiresAt) &&
+    isDefined(cancelAt) &&
+    cancelAt < graceExpiresAt
+      ? cancelAt
+      : graceExpiresAt;
+
+  const graceExpiresAtDate = isDefined(effectiveGraceExpiresAt)
+    ? effectiveGraceExpiresAt.toLocaleDateString()
     : '';
 
   const cancelAtDate =
@@ -905,7 +912,7 @@ export const SettingsEnterprise = ({
                   </StyledStatusContainer>
                 }
               />
-              {isInGracePeriod && isDefined(graceExpiresAt) && (
+              {isInGracePeriod && isDefined(effectiveGraceExpiresAt) && (
                 <SubscriptionInfoRowContainer
                   label={t`Features active until`}
                   Icon={IconCalendarRepeat}
@@ -925,7 +932,7 @@ export const SettingsEnterprise = ({
                 }
               />
             </SubscriptionInfoContainer>
-            {isInGracePeriod && (
+            {isInGracePeriod && isDefined(effectiveGraceExpiresAt) && (
               <StyledCancellationNotice>
                 {t`Update your payment method before ${graceExpiresAtDate} to avoid losing access.`}
               </StyledCancellationNotice>
