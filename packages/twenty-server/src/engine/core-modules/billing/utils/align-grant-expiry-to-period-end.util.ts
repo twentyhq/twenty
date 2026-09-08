@@ -20,8 +20,15 @@ const MAX_PERIODS_AHEAD = 24;
 // Stripe keeps the day a subscription was anchored on and clamps it to each
 // short month, so a subscription anchored on the 31st renews Jan 31, Feb 28,
 // Mar 31. Neither stored boundary is reliably the anchor once it has renewed
-// into a short month, but only one of an adjacent pair can be clamped, so the
-// later day of the two is the anchor. Recovering it this way avoids having to
+// into a short month, so take the later day of the two: for monthly periods
+// that is always the anchor, since no two consecutive months are short enough
+// to clamp the same one.
+//
+// Yearly periods have one case the two dates cannot settle, a Feb 29 anchor
+// read between leap years, where both say 28. Reading it as 28 leaves a
+// deadline a day short of a leap-year boundary; reading it as 29 would push it
+// past a common-year one and buy a whole extra period, so the low reading is
+// the one worth keeping. Recovering the anchor this way avoids having to
 // persist Stripe's billing_cycle_anchor.
 const resolveAnchorDayOfMonth = (periodStart: Date, periodEnd: Date): number =>
   Math.max(getDate(periodStart), getDate(periodEnd));

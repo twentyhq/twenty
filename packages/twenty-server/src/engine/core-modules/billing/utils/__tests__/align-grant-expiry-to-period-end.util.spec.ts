@@ -103,6 +103,20 @@ describe('alignGrantExpiryToPeriodEnd', () => {
     );
   });
 
+  // Between leap years a Feb 29 anchor is indistinguishable from a Feb 28 one:
+  // both boundaries read 28. Landing a day early costs the tail of one period,
+  // where landing a day late would carry the grant into the whole next one.
+  it('reads an anchor it cannot tell apart as the earlier day', () => {
+    const result = alignGrantExpiryToPeriodEnd({
+      requestedExpiresAt: new Date('2027-06-01T00:00:00.000Z'),
+      currentPeriodStart: new Date('2025-02-28T00:00:00.000Z'),
+      currentPeriodEnd: new Date('2026-02-28T00:00:00.000Z'),
+      interval: SubscriptionInterval.Year,
+    });
+
+    expect(result).toEqual(new Date('2028-02-28T00:00:00.000Z'));
+  });
+
   it('gives up rather than looping on an unreachable deadline', () => {
     const result = alignFrom(new Date('2099-01-01T00:00:00.000Z'));
 

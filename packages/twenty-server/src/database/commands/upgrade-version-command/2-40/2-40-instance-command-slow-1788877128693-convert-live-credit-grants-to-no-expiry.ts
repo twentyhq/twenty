@@ -1,15 +1,19 @@
 import { DataSource, QueryRunner } from 'typeorm';
 
-import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
+import { MakeBillingCreditGrantExpiresAtNullableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788871259040-make-billing-credit-grant-expires-at-nullable';
+import {
+  getRegisteredInstanceCommandMetadata,
+  RegisteredInstanceCommand,
+} from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
 // Converts the grants already on the ledger to the model the paired fast
 // command opened the column for. Under the old one a live grant carried the end
 // of its own period; the new settlement reads a deadline at or before the
 // boundary it is closing as already spent, drops the grant and carries nothing
-// forward. Every still-live grant therefore has to give up its deadline, or the
-// first period transition after this upgrade destroys the balances the change
-// exists to protect.
+// forward. Every still-live legacy grant therefore has to give up its deadline,
+// or the first period transition after this upgrade destroys the balances the
+// change exists to protect.
 //
 // Until this runs, a workspace whose transition lands first loses the unspent
 // part of its granted credits, so an upgrade that skips --include-slow should
@@ -23,10 +27,27 @@ export class ConvertLiveCreditGrantsToNoExpirySlowInstanceCommand implements Slo
       return;
     }
 
+    // Bounded by when the column became nullable, because a grant written after
+    // that came from the new code: its future deadline is an operator's
+    // time-boxed grant, not a period end the old model stamped, and clearing it
+    // would make those credits permanent. Falling back to now() when the fast
+    // command left no record converts those few too, which costs a grant that
+    // outlives its window rather than a workspace that loses paid-for credits.
     await dataSource.query(
       `UPDATE "core"."billingCreditGrant"
        SET "expiresAt" = NULL
-       WHERE "revokedAt" IS NULL AND "expiresAt" > now()`,
+       WHERE "revokedAt" IS NULL
+         AND "expiresAt" > now()
+         AND "createdAt" <= COALESCE(
+           (SELECT "createdAt" FROM "core"."upgradeMigration"
+             WHERE "workspaceId" IS NULL
+               AND name = $1
+               AND status = 'completed'
+             ORDER BY "createdAt" DESC
+             LIMIT 1),
+           now()
+         )`,
+      [buildColumnMadeNullableCommandName()],
     );
   }
 
@@ -40,6 +61,18 @@ export class ConvertLiveCreditGrantsToNoExpirySlowInstanceCommand implements Slo
     return;
   }
 }
+
+// Mirrors how the runner records a command it has run. Derived from the class
+// rather than written out, so renaming or re-timestamping the fast command
+// cannot silently turn the bound above into now().
+const buildColumnMadeNullableCommandName = (): string => {
+  const { name } = MakeBillingCreditGrantExpiresAtNullableFastInstanceCommand;
+  const metadata = getRegisteredInstanceCommandMetadata(
+    MakeBillingCreditGrantExpiresAtNullableFastInstanceCommand,
+  );
+
+  return `${metadata?.version}_${name}_${metadata?.timestamp}`;
+};
 
 // The table only exists where billing is enabled, and the upgrade has to run
 // on the instances where it does not.
