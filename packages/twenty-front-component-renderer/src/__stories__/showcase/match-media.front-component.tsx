@@ -2,9 +2,32 @@ import { defineFrontComponent } from 'twenty-sdk/define';
 import { useEffect, useState } from 'react';
 
 const DARK_COLOR_SCHEME_QUERY = '(prefers-color-scheme: dark)';
+const NON_ZERO_WIDTH_QUERY = '(min-width: 1px)';
+
+const readOwnBoxSize = () => ({
+  width: document.body.clientWidth,
+  height: document.body.clientHeight,
+});
 
 const MatchMediaComponent = () => {
   const [colorSchemeChangeCount, setColorSchemeChangeCount] = useState(0);
+  const [ownBoxSize, setOwnBoxSize] = useState(readOwnBoxSize);
+
+  useEffect(() => {
+    const nonZeroWidthMediaQueryList = window.matchMedia(NON_ZERO_WIDTH_QUERY);
+    const handleOwnWidthChange = () => {
+      setOwnBoxSize(readOwnBoxSize());
+    };
+
+    nonZeroWidthMediaQueryList.addEventListener('change', handleOwnWidthChange);
+
+    return () => {
+      nonZeroWidthMediaQueryList.removeEventListener(
+        'change',
+        handleOwnWidthChange,
+      );
+    };
+  }, []);
 
   useEffect(() => {
     const darkColorSchemeMediaQueryList = window.matchMedia(
@@ -27,8 +50,7 @@ const MatchMediaComponent = () => {
     };
   }, []);
 
-  const ownWidth = document.body.clientWidth;
-  const ownHeight = document.body.clientHeight;
+  const { width: ownWidth, height: ownHeight } = ownBoxSize;
 
   const ownWidthMatches = String(
     window.matchMedia(`(min-width: ${ownWidth}px)`).matches,
@@ -55,6 +77,7 @@ const MatchMediaComponent = () => {
       data-testid="match-media-component"
       style={{ fontFamily: 'system-ui, sans-serif', padding: 16 }}
     >
+      <p data-testid="match-media-own-width-value">own width: {ownWidth}</p>
       <p data-testid="match-media-own-width">
         own width matches: {ownWidthMatches}
       </p>

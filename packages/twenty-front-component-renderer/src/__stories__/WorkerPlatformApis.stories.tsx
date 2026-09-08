@@ -120,6 +120,9 @@ const createMatchMediaTest =
         expect(
           canvas.getByTestId('match-media-color-scheme'),
         ).toHaveTextContent(`color scheme: ${expectedColorScheme}`);
+        expect(
+          canvas.getByTestId('match-media-own-width-value'),
+        ).not.toHaveTextContent('own width: 0');
       },
       { timeout: MOUNT_TIMEOUT },
     );
