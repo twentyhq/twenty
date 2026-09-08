@@ -10,6 +10,7 @@ import {
   type NotificationEventKey,
 } from 'src/modules/enso/notifications/notifications.constants';
 import { GoogleChatWebhookService } from 'src/modules/enso/notifications/services/google-chat-webhook.service';
+import { readPersonPhoneE164 } from 'src/modules/enso/shared/utils/person-phone.util';
 
 type DealStateTransition = 'stalled' | 'deferred' | 'active' | 'stage';
 
@@ -886,7 +887,7 @@ export class ManagerNotificationService {
             `${person?.name?.firstName ?? ''} ${person?.name?.lastName ?? ''}`.trim();
 
           who = fullName || undefined;
-          phone = person?.phones?.primaryPhoneNumber ?? undefined;
+          phone = readPersonPhoneE164(person);
         }
 
         return {

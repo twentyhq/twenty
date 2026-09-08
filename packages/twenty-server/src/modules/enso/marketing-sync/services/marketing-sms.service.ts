@@ -5,12 +5,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { toE164 } from 'src/modules/enso/marketing-sync/marketing-sync.constants';
 import { type SendSmsInput } from 'src/modules/enso/marketing-sync/dtos/send-sms.input';
 import {
   isFinalSmsDeliveryStatus,
   SmsMdClientService,
 } from 'src/modules/enso/marketing-sync/services/sms-md-client.service';
+import { toE164 } from 'src/modules/enso/shared/utils/person-phone.util';
 import { buildEnsoTimelineInserts } from 'src/modules/enso/timeline/enso-timeline.util';
 
 // Relays a Dittofeed SMS journey step to sms.md and records a timeline event on

@@ -10,6 +10,7 @@ import {
   type ProjectDealFacts,
 } from 'src/modules/enso/lead-pipeline/utils/build-project-deal-message.util';
 import { ProjectChatWebhookService } from 'src/modules/enso/notifications/services/project-chat-webhook.service';
+import { readPersonPhoneE164 } from 'src/modules/enso/shared/utils/person-phone.util';
 
 // The MARKETING lane: one shared Google Chat space per development, posting
 // every new deal with the attribution that opened it.
@@ -156,7 +157,7 @@ export class ProjectNotificationService {
             `${person?.name?.firstName ?? ''} ${person?.name?.lastName ?? ''}`.trim();
 
           fullName = composed || undefined;
-          phone = person?.phones?.primaryPhoneNumber ?? undefined;
+          phone = readPersonPhoneE164(person);
           email = person?.emails?.primaryEmail ?? undefined;
         }
 

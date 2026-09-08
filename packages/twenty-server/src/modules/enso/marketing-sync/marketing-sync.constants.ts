@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { toE164 } from 'src/modules/enso/shared/utils/person-phone.util';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 // The Dittofeed userId is always the CRM person UUID — the universal key.
@@ -149,27 +150,6 @@ export const buildConsentSubscriptionChanges = (
   }
 
   return changes;
-};
-
-// Compose an E.164 number from Twenty's PHONES composite. Returns undefined
-// when there's no number. callingCode may or may not carry a leading '+'.
-export const toE164 = (
-  callingCode: string | null | undefined,
-  number: string | null | undefined,
-): string | undefined => {
-  if (!isNonEmptyString(number)) {
-    return undefined;
-  }
-
-  if (!isNonEmptyString(callingCode)) {
-    return number;
-  }
-
-  const normalizedCallingCode = callingCode.startsWith('+')
-    ? callingCode
-    : `+${callingCode}`;
-
-  return `${normalizedCallingCode}${number}`;
 };
 
 // Curated v1 trait set — only fields that currently exist on Person and that

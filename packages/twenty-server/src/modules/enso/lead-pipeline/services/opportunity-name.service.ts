@@ -5,6 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { readPersonPhoneE164 } from 'src/modules/enso/shared/utils/person-phone.util';
 
 // Opportunity.name is a plain scalar TEXT field, but for inbound-created deals we
 // want a meaningful label rather than "Untitled": "Deal | <phone or name> | <project>"
@@ -55,10 +56,10 @@ export class OpportunityNameService {
             where: { id: input.personId },
           });
 
-          // Phone OR name. primaryPhoneNumber defaults to '' (not null) for
-          // phone-less people (e.g. social contacts), so `??` would keep the empty
-          // string and drop the person — use isNonEmptyString to fall back to name.
-          const phone = person?.phones?.primaryPhoneNumber;
+          // Phone OR name. readPersonPhoneE164 returns undefined for
+          // phone-less people (e.g. social contacts) — primaryPhoneNumber
+          // defaults to '' rather than null there — so fall back to the name.
+          const phone = readPersonPhoneE164(person);
 
           who = isNonEmptyString(phone)
             ? phone
