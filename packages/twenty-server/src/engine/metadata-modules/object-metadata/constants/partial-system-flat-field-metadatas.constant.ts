@@ -226,7 +226,7 @@ const PARTIAL_POSITION_FIELD = {
   isNullable: false,
   isUnique: false,
   isSearchable: false,
-  isAuditLogged: true,
+  isAuditLogged: false,
   isActive: true,
   isSystem: true,
   isSystemSideEffect: true,

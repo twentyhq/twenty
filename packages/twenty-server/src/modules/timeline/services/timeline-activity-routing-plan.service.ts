@@ -21,10 +21,12 @@ import {
   type TimelineActivityTypeResolver,
 } from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
 
+const EMPTY_NON_AUDIT_LOGGED_FIELD_NAMES: ReadonlySet<string> = new Set();
+
 type TimelineActivityRulesForEventBatch = {
   sourceRules: TimelineActivityRule[];
   junctionRules: TimelineActivityRule[];
-  nonAuditLoggedFieldNames: Set<string>;
+  nonAuditLoggedFieldNames: ReadonlySet<string>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   resolveTimelineActivityType: TimelineActivityTypeResolver;
 };
@@ -33,7 +35,7 @@ type TimelineActivityRoutingPlan = {
   activeTimelineActivityTypes: ResolvableTimelineActivityType[];
   throughRules: TimelineActivityRule[];
   eligibleNonAuditedObjectMetadataIds: Set<string>;
-  nonAuditLoggedFieldNamesByObjectMetadataId: Map<string, Set<string>>;
+  nonAuditLoggedFieldNamesByObjectMetadataId: Map<string, ReadonlySet<string>>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   resolveTimelineActivityType: TimelineActivityTypeResolver;
 };
@@ -95,7 +97,7 @@ export class TimelineActivityRoutingPlanService {
       nonAuditLoggedFieldNames:
         routingPlan.nonAuditLoggedFieldNamesByObjectMetadataId.get(
           flatObjectMetadata.id,
-        ) ?? new Set(),
+        ) ?? EMPTY_NON_AUDIT_LOGGED_FIELD_NAMES,
       flatFieldMetadataMaps: routingPlan.flatFieldMetadataMaps,
       resolveTimelineActivityType: routingPlan.resolveTimelineActivityType,
     };
@@ -270,10 +272,7 @@ export class TimelineActivityRoutingPlanService {
       throughRules,
       eligibleNonAuditedObjectMetadataIds,
       nonAuditLoggedFieldNamesByObjectMetadataId:
-        buildNonAuditLoggedFieldNamesByObjectMetadataId({
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-        }),
+        buildNonAuditLoggedFieldNamesByObjectMetadataId(flatFieldMetadataMaps),
       flatFieldMetadataMaps,
       resolveTimelineActivityType,
     };

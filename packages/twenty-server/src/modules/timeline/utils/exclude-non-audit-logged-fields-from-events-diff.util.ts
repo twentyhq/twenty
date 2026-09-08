@@ -1,6 +1,18 @@
 import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
 import { isDefined } from 'twenty-shared/utils';
 
+const doesEventDiffCarryFieldNames = ({
+  event,
+  fieldNames,
+}: {
+  event: ObjectRecordBaseEvent;
+  fieldNames: ReadonlySet<string>;
+}): boolean =>
+  isDefined(event.properties.diff) &&
+  Object.keys(event.properties.diff).some((fieldName) =>
+    fieldNames.has(fieldName),
+  );
+
 // A diff emptied by this filter yields no timeline activity at all: the rules
 // downstream drop updates that have nothing left to show.
 export const excludeNonAuditLoggedFieldsFromEventsDiff = ({
@@ -8,9 +20,16 @@ export const excludeNonAuditLoggedFieldsFromEventsDiff = ({
   nonAuditLoggedFieldNames,
 }: {
   events: ObjectRecordBaseEvent[];
-  nonAuditLoggedFieldNames: Set<string>;
+  nonAuditLoggedFieldNames: ReadonlySet<string>;
 }): ObjectRecordBaseEvent[] => {
-  if (nonAuditLoggedFieldNames.size === 0) {
+  const isFilteringNeeded = events.some((event) =>
+    doesEventDiffCarryFieldNames({
+      event,
+      fieldNames: nonAuditLoggedFieldNames,
+    }),
+  );
+
+  if (!isFilteringNeeded) {
     return events;
   }
 
@@ -21,19 +40,15 @@ export const excludeNonAuditLoggedFieldsFromEventsDiff = ({
       return event;
     }
 
-    const auditLoggedDiffEntries = Object.entries(diff).filter(
-      ([fieldName]) => !nonAuditLoggedFieldNames.has(fieldName),
-    );
-
-    if (auditLoggedDiffEntries.length === Object.keys(diff).length) {
-      return event;
-    }
-
     return {
       ...event,
       properties: {
         ...event.properties,
-        diff: Object.fromEntries(auditLoggedDiffEntries),
+        diff: Object.fromEntries(
+          Object.entries(diff).filter(
+            ([fieldName]) => !nonAuditLoggedFieldNames.has(fieldName),
+          ),
+        ),
       },
     };
   });

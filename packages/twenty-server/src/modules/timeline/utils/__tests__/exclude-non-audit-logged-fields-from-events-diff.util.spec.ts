@@ -40,27 +40,37 @@ describe('excludeNonAuditLoggedFieldsFromEventsDiff', () => {
     expect(event.properties.diff).toEqual({});
   });
 
-  it('returns the same events when nothing is excluded', () => {
+  it('returns the very same events when no diff carries an excluded field', () => {
     const events = [
       buildEvent({ name: { before: 'Acme', after: 'Acme Inc' } }),
+      buildEvent(),
     ];
 
     expect(
       excludeNonAuditLoggedFieldsFromEventsDiff({
         events,
-        nonAuditLoggedFieldNames: new Set(),
+        nonAuditLoggedFieldNames: new Set(['lastContactAt']),
       }),
     ).toBe(events);
   });
 
-  it('leaves events without a diff untouched', () => {
-    const events = [buildEvent()];
+  it('leaves events without a diff untouched while filtering the others', () => {
+    const eventWithoutDiff = buildEvent();
 
-    expect(
-      excludeNonAuditLoggedFieldsFromEventsDiff({
-        events,
-        nonAuditLoggedFieldNames: new Set(['lastContactAt']),
-      })[0],
-    ).toBe(events[0]);
+    const [event, untouchedEvent] = excludeNonAuditLoggedFieldsFromEventsDiff({
+      events: [
+        buildEvent({
+          name: { before: 'Acme', after: 'Acme Inc' },
+          lastContactAt: { before: null, after: '2026-09-06T02:00:00.000Z' },
+        }),
+        eventWithoutDiff,
+      ],
+      nonAuditLoggedFieldNames: new Set(['lastContactAt']),
+    });
+
+    expect(event.properties.diff).toEqual({
+      name: { before: 'Acme', after: 'Acme Inc' },
+    });
+    expect(untouchedEvent).toBe(eventWithoutDiff);
   });
 });

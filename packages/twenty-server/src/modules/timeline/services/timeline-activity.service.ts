@@ -44,25 +44,17 @@ type BuildPayloadsForRuleArgs = {
   resolveTimelineActivityType: TimelineActivityTypeResolver;
 };
 
+const hasNonEmptyDiff = (
+  properties: ObjectRecordBaseEvent['properties'],
+): boolean =>
+  isDefined(properties.diff) && Object.keys(properties.diff).length > 0;
+
 // Only the diff is worth storing: the rest of an event payload is the record
 // itself, which the timeline reads live.
 const keepDiffOnly = (
   properties: ObjectRecordBaseEvent['properties'],
-): Pick<ObjectRecordBaseEvent['properties'], 'diff'> => {
-  const { diff } = properties;
-
-  return isDefined(diff) && Object.keys(diff).length > 0 ? { diff } : {};
-};
-
-// An update whose whole diff was filtered out has nothing left to show.
-const isEmptyUpdate = ({
-  ruleAction,
-  properties,
-}: {
-  ruleAction: TimelineActivityRuleAction;
-  properties: ObjectRecordBaseEvent['properties'];
-}): boolean =>
-  ruleAction === 'updated' && !isDefined(keepDiffOnly(properties).diff);
+): Pick<ObjectRecordBaseEvent['properties'], 'diff'> =>
+  hasNonEmptyDiff(properties) ? { diff: properties.diff } : {};
 
 const resolveEventRecordForRuleAction = ({
   event,
@@ -269,10 +261,9 @@ export class TimelineActivityService {
       return [];
     }
 
-    const matchingEvents = events
-      .filter(
-        (event) =>
-          rule.targetShape.kind !== 'DIRECT_RELATION' ||
+    const matchingEvents = events.filter(
+      (event) =>
+        (rule.targetShape.kind !== 'DIRECT_RELATION' ||
           action !== 'updated' ||
           ruleAction === 'updated' ||
           doesObjectRecordEventChangeFields({
@@ -280,12 +271,11 @@ export class TimelineActivityService {
             fieldNames: rule.targetShape.targetJoinColumns.map(
               ({ joinColumnName }) => joinColumnName,
             ),
-          }),
-      )
-      .filter((event) => this.ruleMatchesEvent({ rule, ruleAction, event }))
-      .filter(
-        (event) => !isEmptyUpdate({ ruleAction, properties: event.properties }),
-      );
+          })) &&
+        this.ruleMatchesEvent({ rule, ruleAction, event }) &&
+        // An update whose whole diff was excluded has nothing left to show
+        (ruleAction !== 'updated' || hasNonEmptyDiff(event.properties)),
+    );
 
     if (matchingEvents.length === 0) {
       return [];

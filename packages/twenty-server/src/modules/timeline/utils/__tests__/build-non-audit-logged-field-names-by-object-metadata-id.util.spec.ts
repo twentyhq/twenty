@@ -5,98 +5,82 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildNonAuditLoggedFieldNamesByObjectMetadataId } from 'src/modules/timeline/utils/build-non-audit-logged-field-names-by-object-metadata-id.util';
 
 const COMPANY_OBJECT_METADATA_ID = 'company-object-metadata-id';
+const PERSON_OBJECT_METADATA_ID = 'person-object-metadata-id';
 
 const buildField = ({
   universalIdentifier,
   name,
-  type = FieldMetadataType.TEXT,
+  objectMetadataId = COMPANY_OBJECT_METADATA_ID,
   isAuditLogged = true,
 }: {
   universalIdentifier: string;
   name: string;
-  type?: FieldMetadataType;
+  objectMetadataId?: string;
   isAuditLogged?: boolean;
 }) =>
   getFlatFieldMetadataMock({
     universalIdentifier,
-    objectMetadataId: COMPANY_OBJECT_METADATA_ID,
-    type,
+    objectMetadataId,
+    type: FieldMetadataType.TEXT,
     name,
     isAuditLogged,
   });
 
-const NAME_FIELD = buildField({
-  universalIdentifier: 'name-field',
-  name: 'name',
-});
-const LAST_CONTACT_AT_FIELD = buildField({
-  universalIdentifier: 'last-contact-at-field',
-  name: 'lastContactAt',
-  type: FieldMetadataType.DATE_TIME,
-  isAuditLogged: false,
-});
-const POSITION_FIELD = buildField({
-  universalIdentifier: 'position-field',
-  name: 'position',
-  type: FieldMetadataType.POSITION,
-});
-
-const COMPANY_OBJECT_METADATA = getFlatObjectMetadataMock({
-  universalIdentifier: 'company-object',
-  id: COMPANY_OBJECT_METADATA_ID,
-  nameSingular: 'company',
-  fieldIds: [NAME_FIELD.id, LAST_CONTACT_AT_FIELD.id, POSITION_FIELD.id],
-});
-
-const buildMaps = <TFlatEntity extends { universalIdentifier: string }>(
-  flatEntities: TFlatEntity[],
-) =>
-  flatEntities.reduce(
+const buildMaps = (flatFieldMetadatas: ReturnType<typeof buildField>[]) =>
+  flatFieldMetadatas.reduce(
     (flatEntityMaps, flatEntity) =>
       addFlatEntityToFlatEntityMapsOrThrow({
         flatEntity,
         flatEntityMaps,
       }),
     createEmptyFlatEntityMaps(),
-  );
+  ) as FlatEntityMaps<OrmFlatFieldMetadata>;
 
 describe('buildNonAuditLoggedFieldNamesByObjectMetadataId', () => {
-  it('collects the fields opted out of the audit log and the never audited types', () => {
+  it('groups the non audit logged field names by object', () => {
     const nonAuditLoggedFieldNamesByObjectMetadataId =
-      buildNonAuditLoggedFieldNamesByObjectMetadataId({
-        flatObjectMetadataMaps: buildMaps([
-          COMPANY_OBJECT_METADATA,
-        ]) as FlatEntityMaps<FlatObjectMetadata>,
-        flatFieldMetadataMaps: buildMaps([
-          NAME_FIELD,
-          LAST_CONTACT_AT_FIELD,
-          POSITION_FIELD,
-        ]) as FlatEntityMaps<OrmFlatFieldMetadata>,
-      });
+      buildNonAuditLoggedFieldNamesByObjectMetadataId(
+        buildMaps([
+          buildField({ universalIdentifier: 'name-field', name: 'name' }),
+          buildField({
+            universalIdentifier: 'last-contact-at-field',
+            name: 'lastContactAt',
+            isAuditLogged: false,
+          }),
+          buildField({
+            universalIdentifier: 'position-field',
+            name: 'position',
+            isAuditLogged: false,
+          }),
+          buildField({
+            universalIdentifier: 'person-last-contact-at-field',
+            name: 'lastContactAt',
+            objectMetadataId: PERSON_OBJECT_METADATA_ID,
+            isAuditLogged: false,
+          }),
+        ]),
+      );
 
     expect(
       nonAuditLoggedFieldNamesByObjectMetadataId.get(
         COMPANY_OBJECT_METADATA_ID,
       ),
     ).toEqual(new Set(['lastContactAt', 'position']));
+    expect(
+      nonAuditLoggedFieldNamesByObjectMetadataId.get(PERSON_OBJECT_METADATA_ID),
+    ).toEqual(new Set(['lastContactAt']));
   });
 
   it('leaves out objects whose fields are all audit logged', () => {
-    const nonAuditLoggedFieldNamesByObjectMetadataId =
-      buildNonAuditLoggedFieldNamesByObjectMetadataId({
-        flatObjectMetadataMaps: buildMaps([
-          { ...COMPANY_OBJECT_METADATA, fieldIds: [NAME_FIELD.id] },
-        ]) as FlatEntityMaps<FlatObjectMetadata>,
-        flatFieldMetadataMaps: buildMaps([
-          NAME_FIELD,
-        ]) as FlatEntityMaps<OrmFlatFieldMetadata>,
-      });
-
-    expect(nonAuditLoggedFieldNamesByObjectMetadataId.size).toBe(0);
+    expect(
+      buildNonAuditLoggedFieldNamesByObjectMetadataId(
+        buildMaps([
+          buildField({ universalIdentifier: 'name-field', name: 'name' }),
+        ]),
+      ).size,
+    ).toBe(0);
   });
 });
