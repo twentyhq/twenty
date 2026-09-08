@@ -272,13 +272,25 @@ export class WorkspaceMigrationRunnerService {
       getMetadataFlatEntityMapsKey,
     );
 
-    let allFlatEntityMaps =
+    const cachedAllFlatEntityMaps =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps<
         typeof allFlatEntityMapsKeys
       >({
         workspaceId,
         flatMapsKeys: allFlatEntityMapsKeys,
       });
+
+    // The cache hands out its own live objects and actions are applied to the
+    // maps through mutation, so the run works on a private copy: the shared
+    // cache must keep reflecting committed state until invalidation.
+    const cloneStart = performance.now();
+
+    let allFlatEntityMaps = structuredClone(cachedAllFlatEntityMaps);
+
+    this.logger.perf(
+      `[install-perf] Runner flat-maps clone took ${(performance.now() - cloneStart).toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
+      'Runner',
+    );
 
     this.logger.perfTimeEnd('Runner', 'Initial cache retrieval');
 
