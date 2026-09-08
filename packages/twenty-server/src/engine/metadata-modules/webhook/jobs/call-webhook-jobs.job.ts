@@ -12,6 +12,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
 import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
+import { computeWebhookOperationsToMatch } from 'src/engine/metadata-modules/webhook/utils/compute-webhook-operations-to-match.util';
 import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -38,12 +39,10 @@ export class CallWebhookJobsJob {
 
     const [nameSingular, operation] = workspaceEventBatch.name.split('.');
 
-    const operationsToMatch = [
-      `${nameSingular}.${operation}`,
-      `*.${operation}`,
-      `${nameSingular}.*`,
-      '*.*',
-    ];
+    const operationsToMatch = computeWebhookOperationsToMatch({
+      nameSingular,
+      operation,
+    });
 
     const { flatWebhookMaps } = await this.workspaceCacheService.getOrRecompute(
       workspaceEventBatch.workspaceId,
