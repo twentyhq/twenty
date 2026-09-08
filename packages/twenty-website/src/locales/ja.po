@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-28 16:20\n"
+"PO-Revision-Date: 2026-09-08 16:21\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -900,7 +900,7 @@ msgstr "複数のメールアドレスを1件のコンタクトに追加"
 #. js-lingui-id: /01kre
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Add shared instructions, playbooks, and other rich text with the new Note widget. Insert widgets exactly where you want them, and unpin the first tab when your layout needs more room."
-msgstr ""
+msgstr "新しいメモウィジェットで、共有の手順、プレイブック、その他のリッチテキストを追加できます。ウィジェットを必要な場所に正確に挿入し、レイアウトにさらに余裕が必要な場合は最初のタブの固定を解除できます。"
 
 #. js-lingui-id: hWkQMS
 #: src/sections/product-feature/TasksVisual/components/AddTaskButton.tsx
@@ -1295,7 +1295,7 @@ msgstr "Armenia 🇦🇲"
 #. js-lingui-id: hgvS2c
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Ask AI to attach files you upload in chat directly to records."
-msgstr ""
+msgstr "チャットでアップロードしたファイルを、AIに直接レコードへ添付させます。"
 
 #. js-lingui-id: GYKCBW
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1325,7 +1325,7 @@ msgstr "顧客向けまたは社内向けを問わず、公開済みのTwenty実
 #. js-lingui-id: PbTDQ4
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Attach files to records with AI"
-msgstr ""
+msgstr "AIでファイルをレコードに添付"
 
 #. js-lingui-id: awzjg/
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1592,7 +1592,7 @@ msgstr "*認定パートナー*を探す"
 #. js-lingui-id: pB7UCU
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Browse your records in a compact list, now available to everyone. Group records and see the fields that matter in a layout that adapts to desktop and mobile."
-msgstr ""
+msgstr "すべてのユーザーが利用できるようになったコンパクトなリストで、レコードを閲覧できます。レコードをグループ化し、デスクトップとモバイルに適応するレイアウトで重要なフィールドを表示できます。"
 
 #. js-lingui-id: VX4eI/
 #: src/partner-application/data/partner-country-options.ts
@@ -2220,7 +2220,7 @@ msgstr "Twenty上にアプリを作成"
 #. js-lingui-id: CA2rtv
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Create calendar events directly from a record’s timeline, with the current contact prefilled as a guest."
-msgstr ""
+msgstr "レコードのタイムラインから直接カレンダーイベントを作成し、現在の連絡先をゲストとして事前入力できます。"
 
 #. js-lingui-id: yAL7FY
 #: src/sections/pricing-plans/plans-data.ts
@@ -2621,7 +2621,7 @@ msgstr "Datetimeフィールド"
 #. js-lingui-id: oLDLdM
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Day and week calendar views"
-msgstr ""
+msgstr "日および週のカレンダービュー"
 
 #. js-lingui-id: xqKvBR
 #: src/sections/product-feature/DashboardVisual/DashboardVisual.tsx
@@ -2715,7 +2715,7 @@ msgstr "開発者は、Webhooksを利用して、顧客データの更新内容�
 #. js-lingui-id: SxCLpb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Dictate prompts in supported browsers, and get suggested actions based on the page you are viewing."
-msgstr ""
+msgstr "対応ブラウザーでプロンプトを音声入力し、表示中のページに基づく推奨アクションを取得できます。"
 
 #. js-lingui-id: C39swB
 #: src/partners-marketplace/MarketplaceBriefPrompt.tsx
@@ -2766,7 +2766,7 @@ msgstr "新着情報を見る"
 #. js-lingui-id: EVc4nZ
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Display records two relationships away directly on a record page—for example, opportunities associated with a company’s contacts."
-msgstr ""
+msgstr "レコードページに、2つ先のリレーションにあるレコードを直接表示できます。たとえば、会社の連絡先に関連付けられた商談を表示できます。"
 
 #. js-lingui-id: /Gu7LB
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2939,7 +2939,7 @@ msgstr "レイアウト作成がさらに簡単に"
 #. js-lingui-id: CgFsbd
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Easier workflow editing"
-msgstr ""
+msgstr "ワークフロー編集がさらに簡単に"
 
 #. js-lingui-id: hEtClO
 #: src/partner-application/data/partner-country-options.ts
@@ -4331,7 +4331,7 @@ msgstr "インライン画像プレビュー"
 #. js-lingui-id: IWtI58
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Insert actions into existing branches and drag connections to a different step without losing your configuration. Find variables faster by searching fields across all workflow steps."
-msgstr ""
+msgstr "設定を失うことなく、既存の分岐にアクションを挿入し、接続を別のステップへドラッグできます。すべてのワークフローステップにわたってフィールドを検索し、変数をよりすばやく見つけられます。"
 
 #. js-lingui-id: /eL+82
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4368,7 +4368,7 @@ msgstr "インテグレーション"
 #. js-lingui-id: mQhHfc
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Interactive call recordings"
-msgstr ""
+msgstr "インタラクティブな通話録音"
 
 #. js-lingui-id: OChKCc
 #: src/platform/routing/static-website-routes.ts
@@ -4804,7 +4804,7 @@ msgstr "Salesforce 公開料金ページのリスト価格（年間払い）。2
 #. js-lingui-id: 5NZpX8
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "List view"
-msgstr ""
+msgstr "リストビュー"
 
 #. js-lingui-id: 2WIZYd
 #: src/partner-application/data/partner-country-options.ts
@@ -5140,7 +5140,7 @@ msgstr "フィールドタイプが増えて、さらに強力に"
 #. js-lingui-id: qlt+dy
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "More flexible record pages"
-msgstr ""
+msgstr "より柔軟なレコードページ"
 
 #. js-lingui-id: VqXuUv
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -5160,7 +5160,7 @@ msgstr "より視覚的なダッシュボードビュー"
 #. js-lingui-id: QsVNSj
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "More ways to work with AI"
-msgstr ""
+msgstr "AIを活用する方法がさらに充実"
 
 #. js-lingui-id: LAFO4Y
 #: src/partner-application/data/partner-country-options.ts
@@ -6667,7 +6667,7 @@ msgstr "オペレーションを壊さずにスケール"
 #. js-lingui-id: e7Ajb1
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Schedule meetings from records"
-msgstr ""
+msgstr "レコードから会議をスケジュール"
 
 #. js-lingui-id: sQOyAb
 #: src/sections/product-feature/TasksVisual/data/tasks.ts
@@ -6733,7 +6733,7 @@ msgstr "さらに機能を見る"
 #. js-lingui-id: zn1p6c
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "See related records across relationships"
-msgstr ""
+msgstr "リレーションをまたいで関連レコードを表示"
 
 #. js-lingui-id: 8Zhz04
 #: src/sections/compare/ComparePage.tsx
@@ -6856,7 +6856,7 @@ msgstr "メールを送信"
 #. js-lingui-id: ig4Kg0
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Send email from aliases"
-msgstr ""
+msgstr "エイリアスからメールを送信"
 
 #. js-lingui-id: pi1oME
 #: src/app-preview/terminal/TerminalSendButton.tsx
@@ -6871,7 +6871,7 @@ msgstr "NDA を送付"
 #. js-lingui-id: FK/sMg
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Send outbound emails using a verified alias on your connected account."
-msgstr ""
+msgstr "接続したアカウントで検証済みのエイリアスを使用して、送信メールを送信できます。"
 
 #. js-lingui-id: uW79Hr
 #: src/sections/product-feature/TasksVisual/data/tasks.ts
@@ -7350,7 +7350,7 @@ msgstr "Swedish"
 #. js-lingui-id: VRCum/
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Switch between day, week, and month views to explore your calendar. Day and week views are now available by default."
-msgstr ""
+msgstr "日、週、月のビューを切り替えてカレンダーを確認できます。日ビューと週ビューがデフォルトで利用できるようになりました。"
 
 #. js-lingui-id: IImT5c
 #: src/partner-application/data/partner-country-options.ts
@@ -8495,7 +8495,7 @@ msgstr "Twentyサービスを*提供*したいですか？"
 #. js-lingui-id: 9cL2b3
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Watch recordings alongside their transcripts. Click a transcript entry to jump to that moment, and follow along with highlighted words and automatic scrolling during playback."
-msgstr ""
+msgstr "録音を文字起こしと並べて視聴できます。文字起こしの項目をクリックするとその時点に移動でき、再生中は強調表示される単語と自動スクロールに沿って内容を確認できます。"
 
 #. js-lingui-id: k1Pevc
 #: src/platform/releases/ReleaseNotes.tsx
