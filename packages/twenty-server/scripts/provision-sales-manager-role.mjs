@@ -33,7 +33,20 @@ if (!API_KEY) {
   process.exit(1);
 }
 
+// Their own records, deletable. Record scoping means "their own" is enforced
+// per row, so soft-delete here can only ever reach what they already see.
+// Destroy stays off everywhere: permanent deletion is an admin act.
 const FULL = {
+  canReadObjectRecords: true,
+  canUpdateObjectRecords: true,
+  canSoftDeleteObjectRecords: true,
+  canDestroyObjectRecords: false,
+};
+
+// Editable but not deletable. The project x contact assignment IS the ownership
+// record, and it has endedAt/endReason for ending one properly — deleting it
+// would silently drop the manager's own access instead.
+const EDITABLE_NOT_DELETABLE = {
   canReadObjectRecords: true,
   canUpdateObjectRecords: true,
   canSoftDeleteObjectRecords: false,
@@ -52,17 +65,22 @@ const HIDDEN = {
   canDestroyObjectRecords: false,
 };
 
-// Read + write, and record-scoped to what the manager owns.
+// Read + write + soft-delete, record-scoped to what the manager owns.
 const WORKED_OBJECTS = [
   'person',
   'opportunity',
   'task',
   'note',
   'outboundActivity',
-  'personProjectAssignment',
-  'companyProjectAssignment',
   'personRelationship',
+  // Consent governs whether they may contact their own client, so they have to
+  // be able to change it. The consent EVENT trail stays read-only below: it is
+  // an audit record and is written server-side.
+  'personProjectConsent',
 ];
+
+// Ownership records: editable, never deletable. See EDITABLE_NOT_DELETABLE.
+const OWNERSHIP_OBJECTS = ['personProjectAssignment', 'companyProjectAssignment'];
 
 // System objects (attachment, noteTarget, taskTarget, blocklist) reject object
 // permissions by design and inherit access from what they hang off. They are
@@ -73,7 +91,6 @@ const WORKED_OBJECTS = [
 const OBSERVED_OBJECTS = [
   'inboundActivity',
   'dealStateHistory',
-  'personProjectConsent',
   'personProjectConsentEvent',
   'sequenceRun',
   'marketingEnrollment',
@@ -96,6 +113,7 @@ const HIDDEN_OBJECTS = [
 
 const PLAN = [
   ...WORKED_OBJECTS.map((name) => [name, FULL]),
+  ...OWNERSHIP_OBJECTS.map((name) => [name, EDITABLE_NOT_DELETABLE]),
   ...OBSERVED_OBJECTS.map((name) => [name, READ_ONLY]),
   ...REFERENCE_OBJECTS.map((name) => [name, READ_ONLY]),
   ...HIDDEN_OBJECTS.map((name) => [name, HIDDEN]),
@@ -164,7 +182,9 @@ const main = async () => {
   }
 
   console.log(`Role "${role.label}" (${role.id})`);
-  console.log(`  ${WORKED_OBJECTS.length} worked, ${OBSERVED_OBJECTS.length} read-only scoped,`);
+  console.log(
+    `  ${WORKED_OBJECTS.length} worked (+soft-delete), ${OWNERSHIP_OBJECTS.length} ownership (no delete), ${OBSERVED_OBJECTS.length} read-only scoped,`,
+  );
   console.log(`  ${REFERENCE_OBJECTS.length} reference, ${HIDDEN_OBJECTS.length} hidden`);
   console.log(
     '  role defaults -> read/update/delete all object records: false (grants become explicit)',

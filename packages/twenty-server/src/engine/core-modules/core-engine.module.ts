@@ -78,6 +78,7 @@ import { SendEmailModule } from 'src/modules/messaging/message-outbound-manager/
 import { NotificationSettingsModule } from 'src/modules/enso/notifications/notification-settings.module';
 import { OutboundEmailModule } from 'src/modules/enso/outbound-email/outbound-email.module';
 import { EnsoLeadLookupModule } from 'src/modules/enso/record-lookup/enso-lead-lookup.module';
+import { EnsoRoutingAvailabilitySelfModule } from 'src/modules/enso/routing-availability/enso-routing-availability-self.module';
 import { EnsoViewerScopeModule } from 'src/modules/enso/record-visibility/enso-viewer-scope.module';
 import { TelephonyOutboundModule } from 'src/modules/enso/telephony/telephony-outbound.module';
 import { AuditModule } from './audit/audit.module';
@@ -137,6 +138,7 @@ import { FileModule } from './file/file.module';
     NotificationSettingsModule,
     OutboundEmailModule,
     EnsoLeadLookupModule,
+    EnsoRoutingAvailabilitySelfModule,
     EnsoViewerScopeModule,
     TelephonyOutboundModule,
     FileStorageModule.forRoot(),
