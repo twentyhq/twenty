@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import {
   DESKTOP_RECORDER_UNIVERSAL_IDENTIFIER,
+  DESKTOP_RECORDER_CATALOG_REQUIRED_MESSAGE,
   DESKTOP_RECORDER_PACKAGE,
   getDesktopRecorderOAuthFields,
 } from 'src/engine/core-modules/application/application-oauth/constants/desktop-recorder-oauth.constant';
@@ -506,7 +507,7 @@ export class ApplicationRegistrationService {
 
     if (universalIdentifier === DESKTOP_RECORDER_UNIVERSAL_IDENTIFIER) {
       throw new ApplicationRegistrationException(
-        'Desktop Recorder must be installed from its official catalog package',
+        DESKTOP_RECORDER_CATALOG_REQUIRED_MESSAGE,
         ApplicationRegistrationExceptionCode.INVALID_INPUT,
       );
     }
@@ -541,7 +542,6 @@ export class ApplicationRegistrationService {
         oAuthClientSecretHash: clientSecretHash,
         oAuthRedirectUris: input.oAuthRedirectUris ?? [],
         oAuthScopes: input.oAuthScopes ?? [],
-        ...getDesktopRecorderOAuthFields(universalIdentifier),
         createdByUserId,
         ownerWorkspaceId,
       });
@@ -590,7 +590,10 @@ export class ApplicationRegistrationService {
   }
 
   private async applyUpdate(
-    registration: ApplicationRegistrationEntity,
+    registration: Pick<
+      ApplicationRegistrationEntity,
+      'id' | 'universalIdentifier'
+    >,
     update: UpdateApplicationRegistrationPayload,
   ): Promise<void> {
     if (isDefined(update.oAuthRedirectUris)) {
@@ -814,7 +817,7 @@ export class ApplicationRegistrationService {
         params.sourcePackage !== DESKTOP_RECORDER_PACKAGE)
     ) {
       throw new ApplicationRegistrationException(
-        'Desktop Recorder must be installed from its official catalog package',
+        DESKTOP_RECORDER_CATALOG_REQUIRED_MESSAGE,
         ApplicationRegistrationExceptionCode.INVALID_INPUT,
       );
     }

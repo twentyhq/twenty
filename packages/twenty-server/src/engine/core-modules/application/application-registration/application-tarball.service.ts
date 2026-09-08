@@ -1,4 +1,7 @@
-import { DESKTOP_RECORDER_UNIVERSAL_IDENTIFIER } from 'src/engine/core-modules/application/application-oauth/constants/desktop-recorder-oauth.constant';
+import {
+  DESKTOP_RECORDER_UNIVERSAL_IDENTIFIER,
+  DESKTOP_RECORDER_CATALOG_REQUIRED_MESSAGE,
+} from 'src/engine/core-modules/application/application-oauth/constants/desktop-recorder-oauth.constant';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -71,7 +74,7 @@ export class ApplicationTarballService {
 
       if (universalIdentifier === DESKTOP_RECORDER_UNIVERSAL_IDENTIFIER) {
         throw new ApplicationRegistrationException(
-          'Desktop Recorder must be installed from its official catalog package',
+          DESKTOP_RECORDER_CATALOG_REQUIRED_MESSAGE,
           ApplicationRegistrationExceptionCode.INVALID_INPUT,
         );
       }

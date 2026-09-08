@@ -1,4 +1,7 @@
-import { DESKTOP_RECORDER_UNIVERSAL_IDENTIFIER } from 'src/engine/core-modules/application/application-oauth/constants/desktop-recorder-oauth.constant';
+import {
+  DESKTOP_RECORDER_UNIVERSAL_IDENTIFIER,
+  DESKTOP_RECORDER_OAUTH_FIELDS,
+} from 'src/engine/core-modules/application/application-oauth/constants/desktop-recorder-oauth.constant';
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 
 import { type Request } from 'express';
@@ -75,9 +78,11 @@ export class OAuthDiscoveryController {
         ? { cli_client_id: cliRegistration.oAuthClientId }
         : {}),
       ...(desktopRegistration &&
-      !desktopRegistration.oAuthClientSecretHash &&
-      desktopRegistration.oAuthRedirectUris.length === 0 &&
-      ['api', 'profile'].every((scope) =>
+      desktopRegistration.oAuthClientSecretHash ===
+        DESKTOP_RECORDER_OAUTH_FIELDS.oAuthClientSecretHash &&
+      desktopRegistration.oAuthRedirectUris.length ===
+        DESKTOP_RECORDER_OAUTH_FIELDS.oAuthRedirectUris.length &&
+      DESKTOP_RECORDER_OAUTH_FIELDS.oAuthScopes.every((scope) =>
         desktopRegistration.oAuthScopes.includes(scope),
       )
         ? { desktop_client_id: desktopRegistration.oAuthClientId }
