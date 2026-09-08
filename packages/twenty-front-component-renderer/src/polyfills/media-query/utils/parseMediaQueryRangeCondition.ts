@@ -1,16 +1,11 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { CSS_WHITESPACE_CHARACTER_CLASS } from '@/polyfills/media-query/constants/CssWhitespaceCharacterClass';
 import { type MediaQueryComparisonOperator } from '@/polyfills/media-query/types/MediaQueryComparisonOperator';
 import { type ParsedMediaQueryCondition } from '@/polyfills/media-query/types/ParsedMediaQueryCondition';
 import { createMediaQueryNumericCondition } from '@/polyfills/media-query/utils/createMediaQueryNumericCondition';
 import { isMediaQueryRangeOperator } from '@/polyfills/media-query/utils/isMediaQueryRangeOperator';
 import { parseMediaQueryBareNumericFeature } from '@/polyfills/media-query/utils/parseMediaQueryBareNumericFeature';
-import { trimCssWhitespace } from '@/polyfills/media-query/utils/trimCssWhitespace';
-
-const RANGE_CONDITION_PATTERN = new RegExp(
-  `^(.+?)${CSS_WHITESPACE_CHARACTER_CLASS}*(<=|>=|<|>|=)${CSS_WHITESPACE_CHARACTER_CLASS}*(.+?)(?:${CSS_WHITESPACE_CHARACTER_CLASS}*(<=|>=|<|>)${CSS_WHITESPACE_CHARACTER_CLASS}*(.+?))?$`,
-);
+import { parseMediaQueryRangeParts } from '@/polyfills/media-query/utils/parseMediaQueryRangeParts';
 
 const FLIPPED_COMPARISON_OPERATORS: Record<
   MediaQueryComparisonOperator,
@@ -29,28 +24,20 @@ const isLessThanOperator = (operator: MediaQueryComparisonOperator): boolean =>
 export const parseMediaQueryRangeCondition = (
   conditionContent: string,
 ): ParsedMediaQueryCondition[] | null => {
-  const rangeMatch = conditionContent.match(RANGE_CONDITION_PATTERN);
+  const rangeParts = parseMediaQueryRangeParts(conditionContent);
 
-  if (!isDefined(rangeMatch)) {
+  if (!isDefined(rangeParts)) {
     return null;
   }
 
-  const [
-    ,
-    leftOperand,
-    firstOperator,
-    middleOperand,
-    secondOperator,
-    rightOperand,
-  ] = rangeMatch;
+  const [leftOperand, middleOperand, rightOperand] = rangeParts.operands;
+  const [firstOperator, secondOperator] = rangeParts.operators;
 
   if (!isMediaQueryRangeOperator(firstOperator)) {
     return null;
   }
 
-  const leftFeature = parseMediaQueryBareNumericFeature(
-    trimCssWhitespace(leftOperand),
-  );
+  const leftFeature = parseMediaQueryBareNumericFeature(leftOperand);
 
   if (isDefined(leftFeature)) {
     if (isDefined(secondOperator)) {
@@ -66,9 +53,7 @@ export const parseMediaQueryRangeCondition = (
     return isDefined(condition) ? [condition] : null;
   }
 
-  const middleFeature = parseMediaQueryBareNumericFeature(
-    trimCssWhitespace(middleOperand),
-  );
+  const middleFeature = parseMediaQueryBareNumericFeature(middleOperand);
 
   if (!isDefined(middleFeature)) {
     return null;
@@ -91,6 +76,7 @@ export const parseMediaQueryRangeCondition = (
   if (
     firstOperator === '=' ||
     !isMediaQueryRangeOperator(secondOperator) ||
+    secondOperator === '=' ||
     isLessThanOperator(firstOperator) !== isLessThanOperator(secondOperator)
   ) {
     return null;
