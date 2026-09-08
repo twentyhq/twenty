@@ -16,7 +16,7 @@ import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
+import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 
 @MetadataResolver(() => BillingSubscriptionItemDTO)
 @UsePipes(ResolverValidationPipe)
@@ -63,9 +63,9 @@ export class BillingSubscriptionItemResolver {
       return null;
     }
 
-    const creditAmount =
-      Number(billingPrice.metadata.credit_amount) /
-      INTERNAL_CREDITS_PER_DISPLAY_CREDIT;
+    const creditAmount = toDisplayCredits(
+      Number(billingPrice.metadata.credit_amount),
+    );
 
     return Number.isFinite(creditAmount) ? creditAmount : null;
   }

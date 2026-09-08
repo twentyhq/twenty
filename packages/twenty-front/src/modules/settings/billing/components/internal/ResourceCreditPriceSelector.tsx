@@ -181,18 +181,16 @@ export const ResourceCreditPriceSelector = ({
     (price) => price.stripePriceId !== currentResourceCreditStripePriceId,
   );
 
+  // Compared against the subscription's own package: the catalog price is gone
+  // once it is archived, which would otherwise confirm every change as a
+  // downgrade.
   const isUpgrade = () => {
-    if (
-      !isChanged ||
-      !isDefined(selectedPrice) ||
-      !isDefined(currentResourceCreditPrice)
-    ) {
+    if (!isChanged || !isDefined(selectedPrice)) {
       return false;
     }
 
     return (
-      (selectedPrice.creditAmount ?? 0) >
-      (currentResourceCreditPrice.creditAmount ?? 0)
+      (selectedPrice.creditAmount ?? 0) > (currentResourceCreditAmount ?? 0)
     );
   };
 

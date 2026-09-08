@@ -693,8 +693,16 @@ export class BillingSubscriptionUpdateService {
     );
 
     // Reached from a client-supplied price id, so a superseded package would
-    // otherwise be sellable again through this mutation alone.
-    if (!isSellableCatalogPrice(newResourceCreditPrice)) {
+    // otherwise be sellable again through this mutation alone. Restoring the
+    // price the subscription already has is not a sale: cancelling a pending
+    // pack switch re-sends the current id through here.
+    const isRestoringCurrentPrice =
+      newResourceCreditPriceId === currentPrices.resourceCreditPriceId;
+
+    if (
+      !isRestoringCurrentPrice &&
+      !isSellableCatalogPrice(newResourceCreditPrice)
+    ) {
       throw new BillingException(
         `Resource credit price ${newResourceCreditPriceId} is no longer sold`,
         BillingExceptionCode.BILLING_PRICE_INVALID,
