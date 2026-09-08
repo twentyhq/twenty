@@ -105,8 +105,6 @@ describe('signValidityToken', () => {
     expect(claims.exp).toBe(cancelAt);
   });
 
-  // A grace token still says "valid" so instances on older versions keep their
-  // license through dunning without needing to understand a new status.
   it('signs a grace token with the standard valid status', () => {
     const claims = verifiedClaims(
       signValidityToken('sub_grace_status', {
