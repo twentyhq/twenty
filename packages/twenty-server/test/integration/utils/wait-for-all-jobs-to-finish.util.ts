@@ -64,11 +64,11 @@ const getPendingJobCountsByQueue = async (): Promise<
   );
 };
 
-const promoteDelayedJobs = async (queueName: string): Promise<void> => {
+const promoteDelayedJobs = async (queueName: string): Promise<number> => {
   const queue = getQueues().find(({ name }) => name === queueName);
 
   if (!queue) {
-    return;
+    return 0;
   }
 
   const delayedJobs = await queue.getDelayed(0, DELAYED_JOB_PAGE_SIZE);
@@ -79,6 +79,8 @@ const promoteDelayedJobs = async (queueName: string): Promise<void> => {
   for (const promotableJob of promotableJobs) {
     await promotableJob.promote().catch(() => undefined);
   }
+
+  return promotableJobs.length;
 };
 
 const getActiveJobsFingerprint = async (
@@ -125,10 +127,13 @@ export const waitForAllJobsToFinish = async (): Promise<void> => {
         );
       }
 
-      if (stalledQueueNames.length > 0) {
-        for (const stalledQueueName of stalledQueueNames) {
-          await promoteDelayedJobs(stalledQueueName);
-        }
+      let promotedJobCount = 0;
+
+      for (const stalledQueueName of stalledQueueNames) {
+        promotedJobCount += await promoteDelayedJobs(stalledQueueName);
+      }
+
+      if (promotedJobCount > 0) {
         lastProgressAt = now;
         await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
         continue;
