@@ -1,18 +1,19 @@
 import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
 
-import { excludeNonAuditLoggedFieldsFromEventsDiff } from 'src/modules/timeline/utils/exclude-non-audit-logged-fields-from-events-diff.util';
+import { excludeNonAuditLoggedFieldsFromEvents } from 'src/modules/timeline/utils/exclude-non-audit-logged-fields-from-events.util';
 
 const buildEvent = (
   diff?: Record<string, unknown>,
+  updatedFields?: string[],
 ): ObjectRecordBaseEvent<Record<string, unknown>> =>
   ({
     recordId: 'company-record-id',
-    properties: { diff },
+    properties: { diff, updatedFields },
   }) as ObjectRecordBaseEvent<Record<string, unknown>>;
 
-describe('excludeNonAuditLoggedFieldsFromEventsDiff', () => {
+describe('excludeNonAuditLoggedFieldsFromEvents', () => {
   it('drops the non audit logged fields from the diff', () => {
-    const [event] = excludeNonAuditLoggedFieldsFromEventsDiff({
+    const [event] = excludeNonAuditLoggedFieldsFromEvents({
       events: [
         buildEvent({
           name: { before: 'Acme', after: 'Acme Inc' },
@@ -28,7 +29,7 @@ describe('excludeNonAuditLoggedFieldsFromEventsDiff', () => {
   });
 
   it('empties a diff made only of non audit logged fields', () => {
-    const [event] = excludeNonAuditLoggedFieldsFromEventsDiff({
+    const [event] = excludeNonAuditLoggedFieldsFromEvents({
       events: [
         buildEvent({
           lastContactAt: { before: null, after: '2026-09-06T02:00:00.000Z' },
@@ -40,24 +41,24 @@ describe('excludeNonAuditLoggedFieldsFromEventsDiff', () => {
     expect(event.properties.diff).toEqual({});
   });
 
-  it('returns the very same events when no diff carries an excluded field', () => {
+  it('returns the very same events when none carries an excluded field', () => {
     const events = [
-      buildEvent({ name: { before: 'Acme', after: 'Acme Inc' } }),
+      buildEvent({ name: { before: 'Acme', after: 'Acme Inc' } }, ['name']),
       buildEvent(),
     ];
 
     expect(
-      excludeNonAuditLoggedFieldsFromEventsDiff({
+      excludeNonAuditLoggedFieldsFromEvents({
         events,
         nonAuditLoggedFieldNames: new Set(['lastContactAt']),
       }),
-    ).toBe(events);
+    ).toEqual(events);
   });
 
   it('leaves events without a diff untouched while filtering the others', () => {
     const eventWithoutDiff = buildEvent();
 
-    const [event, untouchedEvent] = excludeNonAuditLoggedFieldsFromEventsDiff({
+    const [event, untouchedEvent] = excludeNonAuditLoggedFieldsFromEvents({
       events: [
         buildEvent({
           name: { before: 'Acme', after: 'Acme Inc' },
@@ -72,5 +73,35 @@ describe('excludeNonAuditLoggedFieldsFromEventsDiff', () => {
       name: { before: 'Acme', after: 'Acme Inc' },
     });
     expect(untouchedEvent).toBe(eventWithoutDiff);
+  });
+
+  it('filters updatedFields alongside the diff so the two agree', () => {
+    const [event] = excludeNonAuditLoggedFieldsFromEvents({
+      events: [
+        buildEvent(
+          {
+            name: { before: 'Acme', after: 'Acme Inc' },
+            lastContactItemMessage: { before: null, after: { id: 'message' } },
+          },
+          ['name', 'lastContactItemMessage', 'lastContactItemMessageId'],
+        ),
+      ],
+      nonAuditLoggedFieldNames: new Set([
+        'lastContactItemMessage',
+        'lastContactItemMessageId',
+      ]),
+    });
+
+    expect(event.properties.updatedFields).toEqual(['name']);
+    expect(Object.keys(event.properties.diff ?? {})).toEqual(['name']);
+  });
+
+  it('filters an event whose only excluded field is in updatedFields', () => {
+    const [event] = excludeNonAuditLoggedFieldsFromEvents({
+      events: [buildEvent(undefined, ['position', 'positionId'])],
+      nonAuditLoggedFieldNames: new Set(['position']),
+    });
+
+    expect(event.properties.updatedFields).toEqual(['positionId']);
   });
 });

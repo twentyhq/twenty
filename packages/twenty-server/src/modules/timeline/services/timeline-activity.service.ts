@@ -32,7 +32,7 @@ import {
 } from 'src/modules/timeline/utils/resolve-timeline-activity-happens-at.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { doesObjectRecordEventChangeFields } from 'src/modules/timeline/utils/does-object-record-event-change-fields.util';
-import { excludeNonAuditLoggedFieldsFromEventsDiff } from 'src/modules/timeline/utils/exclude-non-audit-logged-fields-from-events-diff.util';
+import { excludeNonAuditLoggedFieldsFromEvents } from 'src/modules/timeline/utils/exclude-non-audit-logged-fields-from-events.util';
 import { resolveTimelineActivityRuleAction } from 'src/modules/timeline/utils/resolve-timeline-activity-rule-action.util';
 import { resolveTimelineActivityTypeForRule } from 'src/modules/timeline/utils/resolve-timeline-activity-type-for-rule.util';
 
@@ -138,7 +138,7 @@ export class TimelineActivityService {
       return;
     }
 
-    const auditLoggedEvents = excludeNonAuditLoggedFieldsFromEventsDiff({
+    const auditLoggedEvents = excludeNonAuditLoggedFieldsFromEvents({
       events,
       nonAuditLoggedFieldNames,
     });

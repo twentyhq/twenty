@@ -1,8 +1,10 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { isAuditLoggableFieldType } from 'src/engine/metadata-modules/field-metadata/utils/is-audit-loggable-field-type.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 
 export const buildNonAuditLoggedFieldNamesByObjectMetadataId = (
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
@@ -37,6 +39,17 @@ export const buildNonAuditLoggedFieldNamesByObjectMetadataId = (
       ) ?? new Set<string>();
 
     nonAuditLoggedFieldNames.add(flatFieldMetadata.name);
+
+    // A relation reaches updatedFields under its join column alias too, so both
+    // spellings have to be excluded for the rules reading it to stay in step
+    // with the filtered diff.
+    if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
+      nonAuditLoggedFieldNames.add(
+        computeMorphOrRelationFieldJoinColumnName({
+          name: flatFieldMetadata.name,
+        }),
+      );
+    }
     nonAuditLoggedFieldNamesByObjectMetadataId.set(
       flatFieldMetadata.objectMetadataId,
       nonAuditLoggedFieldNames,
