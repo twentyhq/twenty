@@ -35,6 +35,10 @@ type TimelineActivityRoutingPlan = {
   resolveTimelineActivityType: TimelineActivityTypeResolver;
 };
 
+// A routing plan holds that workspace's whole flat field metadata maps, so an
+// unbounded map grows with the number of workspaces a worker ever routes for.
+const MAX_CACHED_WORKSPACES = 128;
+
 @Injectable()
 export class TimelineActivityRoutingPlanService {
   private readonly routingPlanByWorkspaceId = new Map<
@@ -116,6 +120,8 @@ export class TimelineActivityRoutingPlanService {
     const cachedRoutingPlan = this.routingPlanByWorkspaceId.get(workspaceId);
 
     if (cachedRoutingPlan?.cacheKey === cacheKey) {
+      this.touchWorkspace(workspaceId, cachedRoutingPlan);
+
       return cachedRoutingPlan.routingPlan;
     }
 
@@ -125,8 +131,31 @@ export class TimelineActivityRoutingPlanService {
       cacheKey,
       routingPlan,
     });
+    this.evictLeastRecentlyUsedWorkspaces();
 
     return routingPlan;
+  }
+
+  private touchWorkspace(
+    workspaceId: string,
+    entry: { cacheKey: string; routingPlan: TimelineActivityRoutingPlan },
+  ): void {
+    this.routingPlanByWorkspaceId.delete(workspaceId);
+    this.routingPlanByWorkspaceId.set(workspaceId, entry);
+  }
+
+  private evictLeastRecentlyUsedWorkspaces(): void {
+    while (this.routingPlanByWorkspaceId.size > MAX_CACHED_WORKSPACES) {
+      const leastRecentlyUsedWorkspaceId = this.routingPlanByWorkspaceId
+        .keys()
+        .next().value;
+
+      if (!isDefined(leastRecentlyUsedWorkspaceId)) {
+        return;
+      }
+
+      this.routingPlanByWorkspaceId.delete(leastRecentlyUsedWorkspaceId);
+    }
   }
 
   private buildRoutingPlan({
