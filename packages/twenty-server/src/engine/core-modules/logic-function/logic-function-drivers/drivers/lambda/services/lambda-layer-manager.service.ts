@@ -11,7 +11,7 @@ import {
 import { Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type SchemaFlatEntityMapsOverride } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/types/schema-flat-entity-maps-override.type';
+import { type ObjectFieldIndexFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/object-field-index-flat-entity-maps.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { SDK_LAYER_PREFIX_IN_ZIP } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
@@ -32,7 +32,7 @@ import {
 type LayerAppContext = {
   flatApplication: FlatApplication;
   applicationUniversalIdentifier: string;
-  flatEntityMapsOverride?: SchemaFlatEntityMapsOverride;
+  objectFieldIndexFlatEntityMaps?: ObjectFieldIndexFlatEntityMaps;
 };
 
 export class LambdaLayerManagerService {
@@ -78,7 +78,7 @@ export class LambdaLayerManagerService {
     const {
       flatApplication,
       applicationUniversalIdentifier,
-      flatEntityMapsOverride,
+      objectFieldIndexFlatEntityMaps,
     } = context;
     const layerName = getLambdaSdkLayerName({
       workspaceId: flatApplication.workspaceId,
@@ -100,7 +100,7 @@ export class LambdaLayerManagerService {
         workspaceId: flatApplication.workspaceId,
         applicationId: flatApplication.id,
         applicationUniversalIdentifier,
-        flatEntityMapsOverride,
+        objectFieldIndexFlatEntityMaps,
       });
 
     const zipBuffer = await reprefixLambdaZipEntries({

@@ -6,7 +6,7 @@ import { gql } from 'graphql-tag';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ScalarsExplorerService } from 'src/engine/api/graphql/services/scalars-explorer.service';
-import { type SchemaFlatEntityMapsOverride } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/types/schema-flat-entity-maps-override.type';
+import { type ObjectFieldIndexFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/object-field-index-flat-entity-maps.type';
 import { WorkspaceGraphqlSchemaSDLService } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/workspace-graphql-schema-sdl.service';
 import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/factories/factories';
 import { WorkspaceResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver.factory';
@@ -24,13 +24,13 @@ export class WorkspaceSchemaFactory {
   async createGraphQLSchema(
     workspace: FlatWorkspace,
     applicationId?: string,
-    flatEntityMapsOverride?: SchemaFlatEntityMapsOverride,
+    objectFieldIndexFlatEntityMaps?: ObjectFieldIndexFlatEntityMaps,
   ): Promise<GraphQLSchema> {
     const schemaSDLResult =
       await this.workspaceGraphqlSchemaSDLService.getOrComputeSchemaSDL(
         workspace,
         applicationId,
-        flatEntityMapsOverride,
+        objectFieldIndexFlatEntityMaps,
       );
 
     if (!isDefined(schemaSDLResult)) {

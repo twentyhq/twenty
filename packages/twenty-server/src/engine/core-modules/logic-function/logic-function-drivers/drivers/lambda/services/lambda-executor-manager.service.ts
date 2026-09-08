@@ -16,7 +16,7 @@ import { Logger } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type SchemaFlatEntityMapsOverride } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/types/schema-flat-entity-maps-override.type';
+import { type ObjectFieldIndexFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/object-field-index-flat-entity-maps.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import {
@@ -51,7 +51,7 @@ type ExecutorBuildContext = {
   flatLogicFunction: FlatLogicFunction;
   flatApplication: FlatApplication;
   applicationUniversalIdentifier: string;
-  flatEntityMapsOverride?: SchemaFlatEntityMapsOverride;
+  objectFieldIndexFlatEntityMaps?: ObjectFieldIndexFlatEntityMaps;
 };
 
 export class LambdaExecutorManagerService {
@@ -308,7 +308,7 @@ export class LambdaExecutorManagerService {
     flatLogicFunction,
     flatApplication,
     applicationUniversalIdentifier,
-    flatEntityMapsOverride,
+    objectFieldIndexFlatEntityMaps,
     lambdaExecutor,
   }: ExecutorBuildContext & {
     lambdaExecutor: GetFunctionCommandOutput | undefined;
@@ -345,7 +345,7 @@ export class LambdaExecutorManagerService {
       sdkLayerArn = await this.layerManager.ensureSdkLayer({
         flatApplication,
         applicationUniversalIdentifier,
-        flatEntityMapsOverride,
+        objectFieldIndexFlatEntityMaps,
       });
     } catch (error) {
       this.logger.error(

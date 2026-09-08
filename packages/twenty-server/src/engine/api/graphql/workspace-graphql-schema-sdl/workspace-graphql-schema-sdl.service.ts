@@ -5,6 +5,8 @@ import { printSchema } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ScalarsExplorerService } from 'src/engine/api/graphql/services/scalars-explorer.service';
+import { SCHEMA_SDL_CACHE_DEPENDENCIES } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/constants/schema-sdl-cache-dependencies.constant';
+import { type ObjectFieldIndexFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/object-field-index-flat-entity-maps.type';
 import { WorkspaceGraphQLSchemaGenerator } from 'src/engine/api/graphql/workspace-schema-builder/workspace-graphql-schema.factory';
 import { FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import {
@@ -17,8 +19,6 @@ import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { SCHEMA_SDL_CACHE_DEPENDENCIES } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/constants/schema-sdl-cache-dependencies.constant';
-import { type SchemaFlatEntityMapsOverride } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/types/schema-flat-entity-maps-override.type';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cache-hashes.util';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
@@ -43,7 +43,7 @@ export class WorkspaceGraphqlSchemaSDLService {
   async getOrComputeSchemaSDL(
     workspace: FlatWorkspace,
     applicationId?: string,
-    flatEntityMapsOverride?: SchemaFlatEntityMapsOverride,
+    objectFieldIndexFlatEntityMaps?: ObjectFieldIndexFlatEntityMaps,
   ): Promise<WorkspaceGraphqlSchemaSDLResult | null> {
     if (!isNonEmptyString(workspace.databaseSchema)) {
       return null;
@@ -66,13 +66,13 @@ export class WorkspaceGraphqlSchemaSDLService {
       );
 
     const allFlatObjectMetadataMaps =
-      flatEntityMapsOverride?.flatObjectMetadataMaps ??
+      objectFieldIndexFlatEntityMaps?.flatObjectMetadataMaps ??
       cachedFlatObjectMetadataMaps;
     const allFlatFieldMetadataMaps =
-      flatEntityMapsOverride?.flatFieldMetadataMaps ??
+      objectFieldIndexFlatEntityMaps?.flatFieldMetadataMaps ??
       cachedFlatFieldMetadataMaps;
     const allFlatIndexMaps =
-      flatEntityMapsOverride?.flatIndexMaps ?? cachedFlatIndexMaps;
+      objectFieldIndexFlatEntityMaps?.flatIndexMaps ?? cachedFlatIndexMaps;
 
     if (!isDefined(allFlatObjectMetadataMaps)) {
       throw new FlatEntityMapsException(
@@ -131,8 +131,8 @@ export class WorkspaceGraphqlSchemaSDLService {
     );
 
     // The stored SDL is keyed by the cache hashes, which do not describe
-    // overridden maps, so an override neither reads nor writes it.
-    const shouldUseStoredSdl = !isDefined(flatEntityMapsOverride);
+    // caller-provided maps, so those neither read nor write it.
+    const shouldUseStoredSdl = !isDefined(objectFieldIndexFlatEntityMaps);
 
     let sdl = shouldUseStoredSdl
       ? await this.workspaceCacheStorageService.getGraphQLTypeDefs(

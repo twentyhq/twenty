@@ -6,7 +6,7 @@ import * as fs from 'fs/promises';
 import { FileFolder } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
-import { type SchemaFlatEntityMapsOverride } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/types/schema-flat-entity-maps-override.type';
+import { type ObjectFieldIndexFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/object-field-index-flat-entity-maps.type';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import {
@@ -66,18 +66,18 @@ export class SdkClientArchiveService {
     workspaceId,
     applicationId,
     applicationUniversalIdentifier,
-    flatEntityMapsOverride,
+    objectFieldIndexFlatEntityMaps,
   }: {
     workspaceId: string;
     applicationId: string;
     applicationUniversalIdentifier: string;
-    flatEntityMapsOverride?: SchemaFlatEntityMapsOverride;
+    objectFieldIndexFlatEntityMaps?: ObjectFieldIndexFlatEntityMaps;
   }): Promise<Buffer> {
     return this.downloadArchiveBufferOrGenerate({
       workspaceId,
       applicationId,
       applicationUniversalIdentifier,
-      flatEntityMapsOverride,
+      objectFieldIndexFlatEntityMaps,
     });
   }
 
@@ -138,12 +138,12 @@ export class SdkClientArchiveService {
     workspaceId,
     applicationId,
     applicationUniversalIdentifier,
-    flatEntityMapsOverride,
+    objectFieldIndexFlatEntityMaps,
   }: {
     workspaceId: string;
     applicationId: string;
     applicationUniversalIdentifier: string;
-    flatEntityMapsOverride?: SchemaFlatEntityMapsOverride;
+    objectFieldIndexFlatEntityMaps?: ObjectFieldIndexFlatEntityMaps;
   }): Promise<Buffer> {
     try {
       const stream = await this.fileStorageService.readFile({
@@ -172,7 +172,7 @@ export class SdkClientArchiveService {
       applicationId,
       applicationUniversalIdentifier,
       trigger: 'missing-archive',
-      flatEntityMapsOverride,
+      objectFieldIndexFlatEntityMaps,
     });
   }
 }

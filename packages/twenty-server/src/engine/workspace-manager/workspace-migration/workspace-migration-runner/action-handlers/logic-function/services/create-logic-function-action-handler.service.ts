@@ -70,15 +70,11 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
       const installStart = Date.now();
 
       try {
-        // The SDK schema is generated while this migration is still
-        // uncommitted, so it must be built from the migration's own maps:
-        // the shared cache holds neither the committed nor the migrated state
-        // at that point.
         await driver.installPrebuiltBundle({
           flatLogicFunction: logicFunction,
           flatApplication,
           applicationUniversalIdentifier: flatApplication.universalIdentifier,
-          flatEntityMapsOverride: {
+          objectFieldIndexFlatEntityMaps: {
             flatObjectMetadataMaps: allFlatEntityMaps.flatObjectMetadataMaps,
             flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
             flatIndexMaps: allFlatEntityMaps.flatIndexMaps,
