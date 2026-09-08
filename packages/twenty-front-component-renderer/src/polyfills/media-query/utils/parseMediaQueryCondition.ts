@@ -25,13 +25,10 @@ export const parseMediaQueryCondition = (
   const hasFeatureNameValueSeparator = colonIndex !== -1;
 
   if (!hasFeatureNameValueSeparator) {
-    const booleanCondition = parseMediaQueryBooleanCondition(conditionContent);
-
-    if (isDefined(booleanCondition)) {
-      return [booleanCondition];
-    }
-
-    return parseMediaQueryRangeCondition(conditionContent);
+    return (
+      parseMediaQueryBooleanCondition(conditionContent) ??
+      parseMediaQueryRangeCondition(conditionContent)
+    );
   }
 
   const featureName = trimCssWhitespace(conditionContent.slice(0, colonIndex));

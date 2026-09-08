@@ -26,10 +26,6 @@ export const evaluateParsedMediaQueryCondition = ({
   condition,
   environment,
 }: EvaluateParsedMediaQueryConditionInput): boolean => {
-  if (condition.kind === 'always-matching') {
-    return true;
-  }
-
   if (condition.kind === 'non-zero') {
     return environment[condition.source] !== 0;
   }

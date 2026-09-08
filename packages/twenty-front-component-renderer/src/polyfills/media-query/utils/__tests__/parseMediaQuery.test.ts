@@ -152,6 +152,24 @@ describe('parseMediaQuery', () => {
     });
   });
 
+  it('should reject not applied to a condition followed by and clauses', () => {
+    expect(
+      parseMediaQuery('not (min-width: 600px) and (max-width: 900px)'),
+    ).toBeNull();
+    expect(parseMediaQuery('not screen and (min-width: 600px)')).toEqual({
+      isNegated: true,
+      matchesMediaType: true,
+      conditions: [
+        {
+          kind: 'numeric',
+          source: 'componentWidth',
+          operator: '>=',
+          value: 600,
+        },
+      ],
+    });
+  });
+
   it('should reject webkit-prefixed features other than device pixel ratio', () => {
     expect(parseMediaQuery('(-webkit-min-width: 600px)')).toBeNull();
   });
@@ -292,12 +310,8 @@ describe('parseMediaQuery', () => {
     expect(parseMediaQuery('(width)')?.conditions).toEqual([
       { kind: 'non-zero', source: 'componentWidth' },
     ]);
-    expect(parseMediaQuery('(orientation)')?.conditions).toEqual([
-      { kind: 'always-matching' },
-    ]);
-    expect(parseMediaQuery('(prefers-color-scheme)')?.conditions).toEqual([
-      { kind: 'always-matching' },
-    ]);
+    expect(parseMediaQuery('(orientation)')?.conditions).toEqual([]);
+    expect(parseMediaQuery('(prefers-color-scheme)')?.conditions).toEqual([]);
     expect(parseMediaQuery('(-webkit-device-pixel-ratio)')?.conditions).toEqual(
       [{ kind: 'non-zero', source: 'devicePixelRatio' }],
     );

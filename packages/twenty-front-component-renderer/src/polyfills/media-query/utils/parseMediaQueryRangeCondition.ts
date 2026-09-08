@@ -3,9 +3,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { CSS_WHITESPACE_CHARACTER_CLASS } from '@/polyfills/media-query/constants/CssWhitespaceCharacterClass';
 import { type MediaQueryComparisonOperator } from '@/polyfills/media-query/types/MediaQueryComparisonOperator';
 import { type ParsedMediaQueryCondition } from '@/polyfills/media-query/types/ParsedMediaQueryCondition';
-import { createMediaQueryRangeCondition } from '@/polyfills/media-query/utils/createMediaQueryRangeCondition';
+import { createMediaQueryNumericCondition } from '@/polyfills/media-query/utils/createMediaQueryNumericCondition';
 import { isMediaQueryRangeOperator } from '@/polyfills/media-query/utils/isMediaQueryRangeOperator';
-import { parseMediaQueryNumericFeatureName } from '@/polyfills/media-query/utils/parseMediaQueryNumericFeatureName';
+import { parseMediaQueryBareNumericFeature } from '@/polyfills/media-query/utils/parseMediaQueryBareNumericFeature';
 import { trimCssWhitespace } from '@/polyfills/media-query/utils/trimCssWhitespace';
 
 const RANGE_CONDITION_PATTERN = new RegExp(
@@ -48,17 +48,17 @@ export const parseMediaQueryRangeCondition = (
     return null;
   }
 
-  const leftFeatureName = parseMediaQueryNumericFeatureName(
+  const leftFeature = parseMediaQueryBareNumericFeature(
     trimCssWhitespace(leftOperand),
   );
 
-  if (isDefined(leftFeatureName)) {
-    if (leftFeatureName.operator !== '=' || isDefined(secondOperator)) {
+  if (isDefined(leftFeature)) {
+    if (isDefined(secondOperator)) {
       return null;
     }
 
-    const condition = createMediaQueryRangeCondition({
-      feature: leftFeatureName.feature,
+    const condition = createMediaQueryNumericCondition({
+      feature: leftFeature,
       operator: firstOperator,
       valueString: middleOperand,
     });
@@ -66,16 +66,16 @@ export const parseMediaQueryRangeCondition = (
     return isDefined(condition) ? [condition] : null;
   }
 
-  const middleFeatureName = parseMediaQueryNumericFeatureName(
+  const middleFeature = parseMediaQueryBareNumericFeature(
     trimCssWhitespace(middleOperand),
   );
 
-  if (!isDefined(middleFeatureName) || middleFeatureName.operator !== '=') {
+  if (!isDefined(middleFeature)) {
     return null;
   }
 
-  const firstCondition = createMediaQueryRangeCondition({
-    feature: middleFeatureName.feature,
+  const firstCondition = createMediaQueryNumericCondition({
+    feature: middleFeature,
     operator: FLIPPED_COMPARISON_OPERATORS[firstOperator],
     valueString: leftOperand,
   });
@@ -96,8 +96,8 @@ export const parseMediaQueryRangeCondition = (
     return null;
   }
 
-  const secondCondition = createMediaQueryRangeCondition({
-    feature: middleFeatureName.feature,
+  const secondCondition = createMediaQueryNumericCondition({
+    feature: middleFeature,
     operator: secondOperator,
     valueString: rightOperand,
   });
