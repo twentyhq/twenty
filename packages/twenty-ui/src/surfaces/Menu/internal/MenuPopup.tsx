@@ -1,8 +1,8 @@
 import { Menu as MenuPrimitive } from '@base-ui/react/menu';
 import { useContext } from 'react';
 
-import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 import { useThemeContainer } from '@ui/theme-constants';
+import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
 import styles from '../Menu.module.scss';
 import { type MenuPopupProps } from '../types/MenuPopupProps';
