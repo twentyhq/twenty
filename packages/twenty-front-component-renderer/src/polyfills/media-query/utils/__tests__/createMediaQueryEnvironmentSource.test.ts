@@ -1,4 +1,5 @@
 import { createMediaQueryEnvironmentFixture } from '@/testing/createMediaQueryEnvironmentFixture';
+import { createSubscriptionStub } from '@/testing/createSubscriptionStub';
 import { createWorkerGeometryStoreStub } from '@/testing/createWorkerGeometryStoreStub';
 import { createViewportGeometrySnapshotFixture } from '@/testing/createViewportGeometrySnapshotFixture';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
@@ -8,30 +9,18 @@ const setupEnvironmentSource = () => {
   let viewportSnapshot: ViewportGeometrySnapshot | null = null;
   let colorScheme: 'light' | 'dark' = 'light';
 
-  const geometryUpdateListeners = new Set<() => void>();
-  const colorSchemeSourceListeners = new Set<() => void>();
+  const geometrySubscription = createSubscriptionStub();
+  const colorSchemeSubscription = createSubscriptionStub();
 
   const geometryStore = createWorkerGeometryStoreStub({
     getViewportSnapshot: jest.fn(() => viewportSnapshot),
-    subscribeToGeometryUpdates: jest.fn((listener: () => void) => {
-      geometryUpdateListeners.add(listener);
-
-      return () => {
-        geometryUpdateListeners.delete(listener);
-      };
-    }),
+    subscribeToGeometryUpdates: geometrySubscription.subscribe,
   });
 
   const environmentSource = createMediaQueryEnvironmentSource({
     geometryStore,
     getColorScheme: () => colorScheme,
-    subscribeToColorSchemeUpdates: (listener) => {
-      colorSchemeSourceListeners.add(listener);
-
-      return () => {
-        colorSchemeSourceListeners.delete(listener);
-      };
-    },
+    subscribeToColorSchemeUpdates: colorSchemeSubscription.subscribe,
   });
 
   const pushViewportSnapshot = (
@@ -42,16 +31,10 @@ const setupEnvironmentSource = () => {
       ...overrides,
     });
 
-    for (const geometryUpdateListener of geometryUpdateListeners) {
-      geometryUpdateListener();
-    }
+    geometrySubscription.notify();
   };
 
-  const notifyColorSchemeSource = () => {
-    for (const colorSchemeSourceListener of colorSchemeSourceListeners) {
-      colorSchemeSourceListener();
-    }
-  };
+  const notifyColorSchemeSource = colorSchemeSubscription.notify;
 
   const setColorScheme = (nextColorScheme: 'light' | 'dark') => {
     colorScheme = nextColorScheme;

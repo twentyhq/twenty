@@ -1,6 +1,7 @@
 import { type MediaQueryEnvironment } from '@/polyfills/media-query/types/MediaQueryEnvironment';
 import { type WorkerMediaQueryList } from '@/polyfills/media-query/types/WorkerMediaQueryList';
 import { createMediaQueryEnvironmentFixture } from '@/testing/createMediaQueryEnvironmentFixture';
+import { createSubscriptionStub } from '@/testing/createSubscriptionStub';
 import { installMatchMediaPolyfill } from '../installMatchMediaPolyfill';
 
 type MatchMediaFunction = (query: unknown) => WorkerMediaQueryList;
@@ -8,7 +9,7 @@ type MatchMediaFunction = (query: unknown) => WorkerMediaQueryList;
 const setupMatchMedia = () => {
   let environment = createMediaQueryEnvironmentFixture();
 
-  const environmentUpdateListeners = new Set<() => void>();
+  const environmentSubscription = createSubscriptionStub();
 
   const globalScope: Record<string, unknown> = {};
 
@@ -16,22 +17,14 @@ const setupMatchMedia = () => {
     globalScope,
     environmentSource: {
       readEnvironment: () => environment,
-      subscribeToEnvironmentUpdates: (listener) => {
-        environmentUpdateListeners.add(listener);
-
-        return () => {
-          environmentUpdateListeners.delete(listener);
-        };
-      },
+      subscribeToEnvironmentUpdates: environmentSubscription.subscribe,
     },
   });
 
   const setEnvironment = (overrides: Partial<MediaQueryEnvironment>) => {
     environment = { ...environment, ...overrides };
 
-    for (const environmentUpdateListener of environmentUpdateListeners) {
-      environmentUpdateListener();
-    }
+    environmentSubscription.notify();
   };
 
   return {
