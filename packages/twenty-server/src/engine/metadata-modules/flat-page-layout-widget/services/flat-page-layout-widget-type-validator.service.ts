@@ -65,6 +65,10 @@ export class FlatPageLayoutWidgetTypeValidatorService {
       TASKS: validateSimpleRecordPageWidgetForCreation(
         WidgetConfigurationType.TASKS,
       ),
+      // TASK_ACTIONS carries no type-specific configuration — the widget
+      // component ignores it — so there is nothing to check beyond the
+      // generic validation every widget already goes through.
+      TASK_ACTIONS: () => [],
       NOTES: validateSimpleRecordPageWidgetForCreation(
         WidgetConfigurationType.NOTES,
       ),
@@ -119,6 +123,10 @@ export class FlatPageLayoutWidgetTypeValidatorService {
       TASKS: validateSimpleRecordPageWidgetForUpdate(
         WidgetConfigurationType.TASKS,
       ),
+      // TASK_ACTIONS carries no type-specific configuration — the widget
+      // component ignores it — so there is nothing to check beyond the
+      // generic validation every widget already goes through.
+      TASK_ACTIONS: () => [],
       NOTES: validateSimpleRecordPageWidgetForUpdate(
         WidgetConfigurationType.NOTES,
       ),

@@ -97,8 +97,9 @@ export type RoistatCallWebhook = {
   caller?: string;
   // The tracking number that was dialled.
   callee?: string;
-  // Session id — null for static call tracking, set for dynamic.
-  visit_id?: string | null;
+  // Session id — null for static call tracking, set for dynamic. Roistat sends
+  // it unquoted, so it arrives as a number; the normalizer Strings() it.
+  visit_id?: string | number | null;
   marker?: string | null;
   order_id?: string | null;
   // "YYYY-MM-DD HH:mm:ss"

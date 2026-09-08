@@ -1,6 +1,8 @@
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
-export const MESSAGE_QUEUE_PRIORITY = {
+// Typed as a total Record so a queue added to the enum without a priority is a
+// compile error here rather than an undefined priority at enqueue time.
+export const MESSAGE_QUEUE_PRIORITY: Record<MessageQueue, number> = {
   [MessageQueue.billingQueue]: 1,
   [MessageQueue.entityEventsToDbQueue]: 1,
   [MessageQueue.emailQueue]: 1,
@@ -22,5 +24,6 @@ export const MESSAGE_QUEUE_PRIORITY = {
   [MessageQueue.ensoPersonMergeQueue]: 4,
   [MessageQueue.ensoCompanyEnrichmentQueue]: 4,
   [MessageQueue.ensoCompanyMergeQueue]: 4,
+  [MessageQueue.ensoMarketingSyncQueue]: 4,
   [MessageQueue.ensoTelephonyQueue]: 4,
 };

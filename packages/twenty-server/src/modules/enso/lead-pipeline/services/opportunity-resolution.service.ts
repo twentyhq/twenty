@@ -42,6 +42,15 @@ export type ResolutionResult = {
   created: boolean;
 };
 
+// What the workspace-context block hands back. Carries the re-engagement owner
+// out with the result rather than through a captured variable, so the notify
+// below sees it — an assignment made inside the callback is invisible to the
+// compiler's flow analysis out here.
+type ResolutionOutcome = ResolutionResult & {
+  // Owner to ping about a re-engagement, or null when there is nothing to ping.
+  reengagementManagerId: string | null;
+};
+
 // Minimal shape we read off the activity. The workspace ORM exposes MANY_TO_ONE
 // relations as flat `<name>Id` columns.
 type ActivityRow = {
@@ -95,13 +104,14 @@ export class OpportunityResolutionService {
 
     const systemAuthContext = buildSystemAuthContext(workspaceId);
 
-    // Set inside the attach branch when a re-engagement lands on an already-claimed
-    // deal; the owner is pinged AFTER the workspace-context block (best-effort).
-    let reengagementNotify: { managerId: string } | null = null;
-
-    const result =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    const outcome =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext<ResolutionOutcome | null>(
         async () => {
+          // Set in the attach branch when a re-engagement lands on an
+          // already-claimed deal; the owner is pinged AFTER this block
+          // (best-effort), so it travels out in the outcome.
+          let reengagementManagerId: string | null = null;
+
           const activityRepository =
             await this.globalWorkspaceOrmManager.getRepository<any>(
               workspaceId,
@@ -138,7 +148,11 @@ export class OpportunityResolutionService {
           }
 
           if (isDefined(activity.opportunityId)) {
-            return { opportunityId: activity.opportunityId, created: false };
+            return {
+              opportunityId: activity.opportunityId,
+              created: false,
+              reengagementManagerId,
+            };
           }
 
           const opportunityRepository =
@@ -246,14 +260,18 @@ export class OpportunityResolutionService {
             // Ping the owner only when the deal is already claimed (out of ROUTING
             // with an owner) — during ROUTING the routing flow already notifies.
             if (isDefined(existing.ownerId) && existing.stage !== 'ROUTING') {
-              reengagementNotify = { managerId: existing.ownerId };
+              reengagementManagerId = existing.ownerId;
             }
 
             this.logger.log(
               `Activity ${activityId} attached to existing opportunity ${existing.id} (${dedupByCompany ? 'B2B account' : 're-engagement'}).`,
             );
 
-            return { opportunityId: existing.id, created: false };
+            return {
+              opportunityId: existing.id,
+              created: false,
+              reengagementManagerId,
+            };
           }
 
           const source = mapOpportunitySource(activity.kind);
@@ -339,10 +357,14 @@ export class OpportunityResolutionService {
             `Created ${clientType} opportunity ${opportunityId} from activity ${activityId}.`,
           );
 
-          return { opportunityId, created: true };
+          return { opportunityId, created: true, reengagementManagerId };
         },
         systemAuthContext,
       );
+
+    const result: ResolutionResult | null = isDefined(outcome)
+      ? { opportunityId: outcome.opportunityId, created: outcome.created }
+      : null;
 
     // Sticky (person × project) ownership for a deal this pipeline opened
     // straight at CONNECTED — an answered call, where we already know who spoke
@@ -390,15 +412,15 @@ export class OpportunityResolutionService {
       }
     }
 
-    if (isDefined(reengagementNotify) && isDefined(result)) {
+    if (isDefined(outcome) && isDefined(outcome.reengagementManagerId)) {
       try {
         await this.managerNotificationService.notifyReengagement(authContext, {
-          opportunityId: result.opportunityId,
-          managerId: reengagementNotify.managerId,
+          opportunityId: outcome.opportunityId,
+          managerId: outcome.reengagementManagerId,
         });
       } catch (error) {
         this.logger.warn(
-          `Re-engagement notify failed for deal ${result.opportunityId}: ${(error as Error).message}`,
+          `Re-engagement notify failed for deal ${outcome.opportunityId}: ${(error as Error).message}`,
         );
       }
     }
