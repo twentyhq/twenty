@@ -6,6 +6,7 @@ import { OwnerFieldMetadataEventListener } from 'src/engine/record-share/listene
 import { SharingRuleMetadataEventListener } from 'src/engine/record-share/listeners/sharing-rule-metadata-event.listener';
 import { SharingRuleRecordEventListener } from 'src/engine/record-share/listeners/sharing-rule-record-event.listener';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
+import { ShareWithService } from 'src/engine/record-share/services/share-with.service';
 import { TwentyOrmModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -13,12 +14,13 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   imports: [TwentyOrmModule, WorkspaceCacheModule],
   providers: [
     RecordShareService,
+    ShareWithService,
     RecalculateSharingRuleRecordSharesJob,
     RebuildOwnerRecordSharesJob,
     OwnerFieldMetadataEventListener,
     SharingRuleMetadataEventListener,
     SharingRuleRecordEventListener,
   ],
-  exports: [RecordShareService],
+  exports: [RecordShareService, ShareWithService],
 })
 export class RecordShareModule {}

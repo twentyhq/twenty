@@ -10,7 +10,6 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { resolveShareWithPrincipal } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/resolve-share-with-principal.util';
 import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -26,6 +25,7 @@ import { type RecordSharesDTO } from 'src/engine/record-share/dtos/record-share.
 import { type ShareWithInput } from 'src/engine/record-share/dtos/share-with.input';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { type RecordShareInput } from 'src/engine/record-share/types/record-share-input.type';
+import { resolveShareWithPrincipal } from 'src/engine/record-share/utils/resolve-share-with-principal.util';
 import { findOwnerField } from 'src/engine/record-share/utils/find-owner-field.util';
 import { resolvePrincipalIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-principal-ids-from-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
