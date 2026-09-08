@@ -1,4 +1,5 @@
 import { collectTrackableLinkUrls } from 'src/modules/emailing/utils/collect-trackable-link-urls.util';
+import { decodeHtmlAttributeUrl } from 'src/modules/emailing/utils/decode-html-attribute-url.util';
 import { replaceTrackableLinkUrls } from 'src/modules/emailing/utils/replace-trackable-link-urls.util';
 
 describe('collectTrackableLinkUrls', () => {
@@ -40,6 +41,23 @@ describe('collectTrackableLinkUrls', () => {
       'https://acme.com/?a=1&b=2',
     ]);
   });
+
+  it('captures a url containing the other quote character', () => {
+    const html = `<a href="https://acme.com/it's-here">Link</a>`;
+
+    expect(collectTrackableLinkUrls(html)).toEqual([
+      "https://acme.com/it's-here",
+    ]);
+  });
+
+  it('ignores attributes that merely end with href', () => {
+    const html = `
+      <img data-href="https://acme.com/a">
+      <use xlink:href="https://acme.com/b"/>
+    `;
+
+    expect(collectTrackableLinkUrls(html)).toEqual([]);
+  });
 });
 
 describe('replaceTrackableLinkUrls', () => {
@@ -74,5 +92,28 @@ describe('replaceTrackableLinkUrls', () => {
     );
 
     expect(result).toBe(`<a href="https://lnk.acme.com/emailing/c/t">Link</a>`);
+  });
+
+  it('leaves attributes that merely end with href untouched', () => {
+    const html = `<img data-href="https://acme.com/a">`;
+
+    const result = replaceTrackableLinkUrls(
+      html,
+      new Map([['https://acme.com/a', 'https://lnk.acme.com/emailing/c/t']]),
+    );
+
+    expect(result).toBe(html);
+  });
+});
+
+describe('decodeHtmlAttributeUrl', () => {
+  it('decodes each entity in a single pass so a produced entity is not decoded again', () => {
+    expect(decodeHtmlAttributeUrl('&amp;#39;')).toBe('&#39;');
+  });
+
+  it('decodes every supported entity', () => {
+    expect(
+      decodeHtmlAttributeUrl('&amp;&#38;&#x26;&#39;&#x27;&quot;&#34;&#x22;'),
+    ).toBe(`&&&''"""`);
   });
 });

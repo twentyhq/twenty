@@ -27,21 +27,23 @@ export class DnsResolverService {
 
       return 'OCCUPIED';
     } catch (error) {
-      return this.classifyFailedQuery({ hostname, error });
+      return this.classifyFailedQuery({ hostname, error, resolver });
     }
   }
 
-  private classifyFailedQuery({
+  private async classifyFailedQuery({
     hostname,
     error,
+    resolver,
   }: {
     hostname: string;
     error: unknown;
-  }): HostnameAvailability {
+    resolver: Resolver;
+  }): Promise<HostnameAvailability> {
     switch (this.extractErrorCode(error)) {
       case 'ENOTFOUND':
       case 'NXDOMAIN':
-        return 'AVAILABLE';
+        return this.checkCnameAvailability({ hostname, resolver });
       case 'ENODATA':
         return 'OCCUPIED';
       default:
@@ -50,6 +52,33 @@ export class DnsResolverService {
         );
 
         return 'UNKNOWN';
+    }
+  }
+
+  private async checkCnameAvailability({
+    hostname,
+    resolver,
+  }: {
+    hostname: string;
+    resolver: Resolver;
+  }): Promise<HostnameAvailability> {
+    try {
+      await resolver.resolveCname(hostname);
+
+      return 'OCCUPIED';
+    } catch (error) {
+      switch (this.extractErrorCode(error)) {
+        case 'ENOTFOUND':
+        case 'NXDOMAIN':
+        case 'ENODATA':
+          break;
+        default:
+          this.logger.warn(
+            `DNS CNAME availability query for ${hostname} was inconclusive, assuming no CNAME record exists: ${error}`,
+          );
+      }
+
+      return 'AVAILABLE';
     }
   }
 

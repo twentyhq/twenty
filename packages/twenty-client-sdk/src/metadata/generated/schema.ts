@@ -2434,7 +2434,10 @@ export interface EmailingDomain {
     domain: Scalars['String']
     status: EmailingDomainStatus
     tenantStatus: EmailingDomainTenantStatus
-    unsubscribeHostnameStatus?: UnsubscribeHostnameStatus
+    unsubscribeHostnameStatus?: ManagedHostnameStatus
+    isClickTrackingEnabled: Scalars['Boolean']
+    clickTrackingHostname?: Scalars['String']
+    clickTrackingHostnameStatus?: ManagedHostnameStatus
     verificationRecords?: VerificationRecord[]
     verifiedAt?: Scalars['DateTime']
     __typename: 'EmailingDomain'
@@ -2444,7 +2447,7 @@ export type EmailingDomainStatus = 'PENDING' | 'VERIFIED' | 'FAILED' | 'TEMPORAR
 
 export type EmailingDomainTenantStatus = 'ACTIVE' | 'PAUSED' | 'SANDBOX'
 
-export type UnsubscribeHostnameStatus = 'PENDING' | 'ACTIVE' | 'FAILED'
+export type ManagedHostnameStatus = 'PENDING' | 'ACTIVE' | 'FAILED'
 
 export interface MessageChannel {
     id: Scalars['UUID']
@@ -3373,6 +3376,7 @@ export interface Mutation {
     createEmailingDomain: EmailingDomain
     deleteEmailingDomain: Scalars['Boolean']
     verifyEmailingDomain: EmailingDomain
+    setEmailingDomainClickTracking: EmailingDomain
     runAgent: RunAgentResult
     createWebhook: Webhook
     updateWebhook: Webhook
@@ -6022,6 +6026,9 @@ export interface EmailingDomainGenqlSelection{
     status?: boolean | number
     tenantStatus?: boolean | number
     unsubscribeHostnameStatus?: boolean | number
+    isClickTrackingEnabled?: boolean | number
+    clickTrackingHostname?: boolean | number
+    clickTrackingHostnameStatus?: boolean | number
     verificationRecords?: VerificationRecordGenqlSelection
     verifiedAt?: boolean | number
     __typename?: boolean | number
@@ -7020,6 +7027,7 @@ export interface MutationGenqlSelection{
     createEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {input: CreateEmailingDomainInput} })
     deleteEmailingDomain?: { __args: {id: Scalars['String']} }
     verifyEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {id: Scalars['String']} })
+    setEmailingDomainClickTracking?: (EmailingDomainGenqlSelection & { __args: {id: Scalars['String'], isEnabled: Scalars['Boolean']} })
     runAgent?: (RunAgentResultGenqlSelection & { __args: {input: RunAgentInput} })
     createWebhook?: (WebhookGenqlSelection & { __args: {input: CreateWebhookInput} })
     updateWebhook?: (WebhookGenqlSelection & { __args: {input: UpdateWebhookInput} })
@@ -10535,7 +10543,7 @@ export const enumEmailingDomainTenantStatus = {
    SANDBOX: 'SANDBOX' as const
 }
 
-export const enumUnsubscribeHostnameStatus = {
+export const enumManagedHostnameStatus = {
    PENDING: 'PENDING' as const,
    ACTIVE: 'ACTIVE' as const,
    FAILED: 'FAILED' as const

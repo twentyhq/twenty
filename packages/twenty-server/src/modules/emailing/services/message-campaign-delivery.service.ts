@@ -311,13 +311,21 @@ export class MessageCampaignDeliveryService {
       variables,
     });
 
-    const trackedHtml = await this.clickTrackingContentService.applyTo({
-      workspaceId,
-      emailingDomainId,
-      messageCampaignId: campaignId,
-      messageId,
-      html,
-    });
+    const trackedHtml = await this.clickTrackingContentService
+      .applyTo({
+        workspaceId,
+        emailingDomainId,
+        messageCampaignId: campaignId,
+        messageId,
+        html,
+      })
+      .catch((error) => {
+        this.logger.warn(
+          `Campaign ${campaignId} of workspace ${workspaceId} is sending message ${messageId} without click tracking: ${error}`,
+        );
+
+        return html;
+      });
 
     const result = await this.sendOrRecordFailure({
       messageId,

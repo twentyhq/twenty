@@ -2808,7 +2808,10 @@ type EmailingDomain {
   domain: String!
   status: EmailingDomainStatus!
   tenantStatus: EmailingDomainTenantStatus!
-  unsubscribeHostnameStatus: UnsubscribeHostnameStatus
+  unsubscribeHostnameStatus: ManagedHostnameStatus
+  isClickTrackingEnabled: Boolean!
+  clickTrackingHostname: String
+  clickTrackingHostnameStatus: ManagedHostnameStatus
   verificationRecords: [VerificationRecord!]
   verifiedAt: DateTime
 }
@@ -2826,7 +2829,7 @@ enum EmailingDomainTenantStatus {
   SANDBOX
 }
 
-enum UnsubscribeHostnameStatus {
+enum ManagedHostnameStatus {
   PENDING
   ACTIVE
   FAILED
@@ -3929,6 +3932,7 @@ type Mutation {
   createEmailingDomain(input: CreateEmailingDomainInput!): EmailingDomain!
   deleteEmailingDomain(id: String!): Boolean!
   verifyEmailingDomain(id: String!): EmailingDomain!
+  setEmailingDomainClickTracking(id: String!, isEnabled: Boolean!): EmailingDomain!
   runAgent(input: RunAgentInput!): RunAgentResult!
   createWebhook(input: CreateWebhookInput!): Webhook!
   updateWebhook(input: UpdateWebhookInput!): Webhook!

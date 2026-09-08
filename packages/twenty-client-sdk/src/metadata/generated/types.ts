@@ -5489,6 +5489,15 @@ export default {
             "unsubscribeHostnameStatus": [
                 308
             ],
+            "isClickTrackingEnabled": [
+                8
+            ],
+            "clickTrackingHostname": [
+                1
+            ],
+            "clickTrackingHostnameStatus": [
+                308
+            ],
             "verificationRecords": [
                 304
             ],
@@ -5501,7 +5510,7 @@ export default {
         },
         "EmailingDomainStatus": {},
         "EmailingDomainTenantStatus": {},
-        "UnsubscribeHostnameStatus": {},
+        "ManagedHostnameStatus": {},
         "MessageChannel": {
             "id": [
                 3
@@ -9507,6 +9516,19 @@ export default {
                     "id": [
                         1,
                         "String!"
+                    ]
+                }
+            ],
+            "setEmailingDomainClickTracking": [
+                305,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ],
+                    "isEnabled": [
+                        8,
+                        "Boolean!"
                     ]
                 }
             ],
