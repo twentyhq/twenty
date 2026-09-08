@@ -516,19 +516,16 @@ export class BillingUsageService {
   ): Promise<AvailableCreditsRead> {
     const [availableCredits, earliestExpiry] = await Promise.all([
       this.getAvailableCreditsFromClickHouse(params),
-      this.billingCreditGrantService.findEarliestUpcomingExpiry(
-        params.workspaceId,
-      ),
+      this.billingCreditGrantService.findEarliestExpiryBefore({
+        workspaceId: params.workspaceId,
+        boundary: params.currentPeriodEnd,
+      }),
     ]);
 
     // A time-boxed grant lapsing before the period ends has to shorten the
     // cache with it, otherwise the counter keeps handing out credits that
     // getActiveCreditsMicro no longer counts.
-    const cacheUntil =
-      isDefined(earliestExpiry) &&
-      earliestExpiry.getTime() < params.currentPeriodEnd.getTime()
-        ? earliestExpiry
-        : params.currentPeriodEnd;
+    const cacheUntil = earliestExpiry ?? params.currentPeriodEnd;
 
     await this.billingUsageCacheService.warmAvailableCredits(
       params.workspaceId,

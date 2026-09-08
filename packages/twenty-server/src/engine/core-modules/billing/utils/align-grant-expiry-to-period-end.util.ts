@@ -87,12 +87,14 @@ export const alignGrantExpiryToPeriodEnd = ({
   // stepping off the previous result, which would walk a month-end anchor down
   // to the 28th and stamp the grant with days the subscription never renews on,
   // putting the deadline back inside a period.
+  let periodEnd = currentPeriodEnd;
+
   for (
     let periodsAhead = 2;
     periodsAhead <= MAX_PERIODS_AHEAD;
     periodsAhead++
   ) {
-    const periodEnd = projectPeriodEnd({
+    periodEnd = projectPeriodEnd({
       periodStart: currentPeriodStart,
       anchorDayOfMonth,
       periodsAhead,
@@ -100,14 +102,9 @@ export const alignGrantExpiryToPeriodEnd = ({
     });
 
     if (periodEnd.getTime() >= requestedExpiresAt.getTime()) {
-      return periodEnd;
+      break;
     }
   }
 
-  return projectPeriodEnd({
-    periodStart: currentPeriodStart,
-    anchorDayOfMonth,
-    periodsAhead: MAX_PERIODS_AHEAD,
-    interval,
-  });
+  return periodEnd;
 };

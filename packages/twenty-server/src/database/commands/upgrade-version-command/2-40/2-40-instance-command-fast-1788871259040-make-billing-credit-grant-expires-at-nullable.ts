@@ -1,5 +1,6 @@
 import { QueryRunner } from 'typeorm';
 
+import { isCoreTablePresent } from 'src/database/commands/upgrade-version-command/2-38/utils/is-core-table-present.util';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
@@ -18,7 +19,7 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 @RegisteredInstanceCommand('2.40.0', 1788871259040)
 export class MakeBillingCreditGrantExpiresAtNullableFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    if (!(await isBillingCreditGrantPresent(queryRunner))) {
+    if (!(await isCoreTablePresent(queryRunner, 'billingCreditGrant'))) {
       return;
     }
 
@@ -28,7 +29,7 @@ export class MakeBillingCreditGrantExpiresAtNullableFastInstanceCommand implemen
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    if (!(await isBillingCreditGrantPresent(queryRunner))) {
+    if (!(await isCoreTablePresent(queryRunner, 'billingCreditGrant'))) {
       return;
     }
 
@@ -41,15 +42,3 @@ export class MakeBillingCreditGrantExpiresAtNullableFastInstanceCommand implemen
     );
   }
 }
-
-// The table only exists where billing is enabled, and the upgrade has to run
-// on the instances where it does not.
-const isBillingCreditGrantPresent = async (
-  queryRunner: QueryRunner,
-): Promise<boolean> => {
-  const rows = await queryRunner.query(
-    `SELECT 1 FROM pg_tables WHERE schemaname = 'core' AND tablename = 'billingCreditGrant'`,
-  );
-
-  return rows.length > 0;
-};

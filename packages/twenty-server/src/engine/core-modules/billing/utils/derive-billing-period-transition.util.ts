@@ -56,7 +56,6 @@ export const resolveBillingTransitionBoundary = ({
 
 const resolveClosingPeriodStart = ({
   boundary,
-  hasSubscriptionAdvanced,
   subscriptionCurrentPeriodStart,
   subscriptionInterval,
   trialStart,
@@ -65,7 +64,6 @@ const resolveClosingPeriodStart = ({
   ledgerPeriodStart,
 }: {
   boundary: Date;
-  hasSubscriptionAdvanced: boolean;
   subscriptionCurrentPeriodStart: Date;
   subscriptionInterval: SubscriptionInterval;
   trialStart: Date | null | undefined;
@@ -77,9 +75,12 @@ const resolveClosingPeriodStart = ({
     return trialStart;
   }
 
-  // The subscription has not moved off the closing period yet, so it still
-  // carries its exact start and nothing has to be reconstructed.
-  if (!hasSubscriptionAdvanced) {
+  // Stripe reports one window at a time, so at the instant a cycle invoice is
+  // raised the subscription either still holds the period that is closing or
+  // has already been moved on to the next one. In the first case it still
+  // carries the closing period's exact start and nothing has to be
+  // reconstructed.
+  if (boundary.getTime() !== subscriptionCurrentPeriodStart.getTime()) {
     return subscriptionCurrentPeriodStart;
   }
 
@@ -136,16 +137,8 @@ export const deriveBillingPeriodTransition = ({
   // subscription has no record of it.
   ledgerPeriodStart: Date | null;
 }): BillingPeriodTransition => {
-  // Stripe reports one window at a time, so at the instant a cycle invoice is
-  // raised the subscription either still holds the period that is closing or
-  // has already been moved on to the next one. Only in the first case does it
-  // still carry the closing period's exact start.
-  const hasSubscriptionAdvanced =
-    boundary.getTime() === subscriptionCurrentPeriodStart.getTime();
-
   const closingPeriodStart = resolveClosingPeriodStart({
     boundary,
-    hasSubscriptionAdvanced,
     subscriptionCurrentPeriodStart,
     subscriptionInterval,
     trialStart,

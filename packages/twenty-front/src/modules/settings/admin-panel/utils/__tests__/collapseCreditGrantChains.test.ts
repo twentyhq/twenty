@@ -19,7 +19,7 @@ describe('collapseCreditGrantChains', () => {
     const only = grant('a', 50);
 
     expect(collapseCreditGrantChains([only])).toEqual([
-      { id: 'a', current: only, origin: only, periodCount: 1 },
+      { id: 'a', current: only, origin: only },
     ]);
   });
 
@@ -32,7 +32,6 @@ describe('collapseCreditGrantChains', () => {
 
     expect(row.current).toBe(carried);
     expect(row.origin).toBe(origin);
-    expect(row.periodCount).toBe(3);
   });
 
   it('collapses each chain separately and keeps the server ordering', () => {
@@ -52,7 +51,7 @@ describe('collapseCreditGrantChains', () => {
     const orphan = grant('b', 20, 'missing');
 
     expect(collapseCreditGrantChains([orphan])).toEqual([
-      { id: 'b', current: orphan, origin: orphan, periodCount: 1 },
+      { id: 'b', current: orphan, origin: orphan },
     ]);
   });
 

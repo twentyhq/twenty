@@ -1,5 +1,6 @@
 import { DataSource, QueryRunner } from 'typeorm';
 
+import { isCoreTablePresent } from 'src/database/commands/upgrade-version-command/2-38/utils/is-core-table-present.util';
 import { MakeBillingCreditGrantExpiresAtNullableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788871259040-make-billing-credit-grant-expires-at-nullable';
 import {
   getRegisteredInstanceCommandMetadata,
@@ -23,7 +24,7 @@ import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 @RegisteredInstanceCommand('2.40.0', 1788877128693, { type: 'slow' })
 export class ConvertLiveCreditGrantsToNoExpirySlowInstanceCommand implements SlowInstanceCommand {
   async runDataMigration(dataSource: DataSource): Promise<void> {
-    if (!(await isBillingCreditGrantPresent(dataSource))) {
+    if (!(await isCoreTablePresent(dataSource, 'billingCreditGrant'))) {
       return;
     }
 
@@ -72,16 +73,4 @@ const buildColumnMadeNullableCommandName = (): string => {
   );
 
   return `${metadata?.version}_${name}_${metadata?.timestamp}`;
-};
-
-// The table only exists where billing is enabled, and the upgrade has to run
-// on the instances where it does not.
-const isBillingCreditGrantPresent = async (
-  dataSource: DataSource,
-): Promise<boolean> => {
-  const rows = await dataSource.query(
-    `SELECT 1 FROM pg_tables WHERE schemaname = 'core' AND tablename = 'billingCreditGrant'`,
-  );
-
-  return rows.length > 0;
 };

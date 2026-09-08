@@ -2,6 +2,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 
+import { addDays } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type BillingCreditGrantEntity } from 'src/engine/core-modules/billing/entities/billing-credit-grant.entity';
@@ -12,6 +13,7 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { alignGrantExpiryToPeriodEnd } from 'src/engine/core-modules/billing/utils/align-grant-expiry-to-period-end.util';
 import { buildBillingCreditStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-credit-state-lock-key.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
@@ -26,8 +28,10 @@ type GrantCreditsParams = {
   idempotencyKey?: string | null;
   effectiveAt?: Date;
   // Only set for a deliberately time-boxed grant. Left out, the credits stay
-  // spendable until a period transition settles them.
-  expiresAt?: Date | null;
+  // spendable until a period transition settles them. Taken as the operator's
+  // intent rather than a date so that the alignment onto a period end happens
+  // here, where the invariant belongs, whoever the caller is.
+  expiresInDays?: number | null;
   sourceGrantId?: string | null;
 };
 
@@ -71,10 +75,16 @@ export class BillingCreditService {
         workspaceId,
       });
 
+    const effectiveAt = params.effectiveAt ?? new Date();
+
     const grant = await this.billingCreditGrantService.createGrant({
       ...params,
-      effectiveAt: params.effectiveAt ?? new Date(),
-      expiresAt: params.expiresAt ?? null,
+      effectiveAt,
+      expiresAt: resolveGrantExpiry({
+        effectiveAt,
+        expiresInDays: params.expiresInDays,
+        subscription,
+      }),
     });
 
     if (!isDefined(grant)) {
@@ -207,10 +217,12 @@ export class BillingCreditService {
         // lapsing before the period ends would stay spendable through the
         // cache. Checked here rather than at each call site so that the
         // rollover, which carries deadlines forward too, cannot miss it.
-        mustRebuildCounter: await this.hasExpiryInsidePeriod({
-          workspaceId,
-          periodEnd: subscription.currentPeriodEnd,
-        }),
+        mustRebuildCounter: isDefined(
+          await this.billingCreditGrantService.findEarliestExpiryBefore({
+            workspaceId,
+            boundary: subscription.currentPeriodEnd,
+          }),
+        ),
       });
     }
 
@@ -223,24 +235,6 @@ export class BillingCreditService {
     if (!isPureReplay) {
       await this.usageLimitQuotaService.dropAllowanceCounter(workspaceId);
     }
-  }
-
-  private async hasExpiryInsidePeriod({
-    workspaceId,
-    periodEnd,
-  }: {
-    workspaceId: string;
-    periodEnd: Date;
-  }): Promise<boolean> {
-    const earliestExpiry =
-      await this.billingCreditGrantService.findEarliestUpcomingExpiry(
-        workspaceId,
-      );
-
-    return (
-      isDefined(earliestExpiry) &&
-      earliestExpiry.getTime() < periodEnd.getTime()
-    );
   }
 
   private async adjustAvailableCreditsCounter({
@@ -331,3 +325,32 @@ export class BillingCreditService {
 
 const buildRevocationAdjustmentKey = (grantId: string): string =>
   `revoke:${grantId}`;
+
+// Null unless the caller asked for a time-boxed grant, and then a period end
+// rather than the exact day, for the reasons alignGrantExpiryToPeriodEnd
+// documents. A workspace with no subscription has no period to align to and no
+// counter to mislead, so its grants simply do not expire.
+const resolveGrantExpiry = ({
+  effectiveAt,
+  expiresInDays,
+  subscription,
+}: {
+  effectiveAt: Date;
+  expiresInDays: number | null | undefined;
+  subscription: BillingSubscriptionEntity | undefined;
+}): Date | null => {
+  if (
+    !isDefined(expiresInDays) ||
+    !isDefined(subscription) ||
+    !isDefined(subscription.interval)
+  ) {
+    return null;
+  }
+
+  return alignGrantExpiryToPeriodEnd({
+    requestedExpiresAt: addDays(effectiveAt, expiresInDays),
+    currentPeriodStart: subscription.currentPeriodStart,
+    currentPeriodEnd: subscription.currentPeriodEnd,
+    interval: subscription.interval,
+  });
+};

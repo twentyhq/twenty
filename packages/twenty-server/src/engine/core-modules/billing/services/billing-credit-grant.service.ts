@@ -3,7 +3,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type EntityManager, IsNull, LessThan, MoreThan } from 'typeorm';
+import { And, type EntityManager, IsNull, LessThan, MoreThan } from 'typeorm';
 
 import {
   BillingException,
@@ -164,12 +164,22 @@ export class BillingCreditGrantService {
     });
   }
 
-  // Caps how long a computed credit balance may stay cached: an operator-set
-  // expiry falling inside a period would otherwise go unnoticed until the next
-  // one, and the workspace would keep spending credits that already lapsed.
-  async findEarliestUpcomingExpiry(workspaceId: string): Promise<Date | null> {
+  // The one place that says when a credit balance stops being trustworthy
+  // before the period is out: an operator-set expiry falling inside it would
+  // otherwise go unnoticed until the next one, and the workspace would keep
+  // spending credits that already lapsed.
+  async findEarliestExpiryBefore({
+    workspaceId,
+    boundary,
+  }: {
+    workspaceId: string;
+    boundary: Date;
+  }): Promise<Date | null> {
     const [row] = await this.billingCreditGrantRepository.find(workspaceId, {
-      where: { revokedAt: IsNull(), expiresAt: MoreThan(new Date()) },
+      where: {
+        revokedAt: IsNull(),
+        expiresAt: And(MoreThan(new Date()), LessThan(boundary)),
+      },
       order: { expiresAt: 'ASC' },
       take: 1,
     });
@@ -214,21 +224,20 @@ export class BillingCreditGrantService {
   ): Promise<void> {
     const repository = this.getRepository(entityManager);
 
-    // Two passes because a single criteria object cannot express the OR, and
-    // an operator-set expiry already inside the period must be left alone.
-    const liveExpiries = [IsNull(), MoreThan(periodEnd)];
-
-    for (const expiresAt of liveExpiries) {
-      await repository.update(
-        workspaceId,
-        {
-          revokedAt: IsNull(),
-          effectiveAt: LessThan(periodEnd),
-          expiresAt,
-        },
-        { expiresAt: periodEnd },
-      );
-    }
+    // The OR keeps an operator-set expiry already inside the period alone,
+    // which it has to stay: stamping it forward would hand back credits that
+    // had lapsed before the boundary.
+    await repository
+      .createQueryBuilder()
+      .update()
+      .set({ expiresAt: periodEnd })
+      .where('"workspaceId" = :workspaceId', { workspaceId })
+      .andWhere('"revokedAt" IS NULL')
+      .andWhere('"effectiveAt" < :periodEnd', { periodEnd })
+      .andWhere('("expiresAt" IS NULL OR "expiresAt" > :periodEnd)', {
+        periodEnd,
+      })
+      .execute();
   }
 
   async listGrants(workspaceId: string): Promise<BillingCreditGrantEntity[]> {

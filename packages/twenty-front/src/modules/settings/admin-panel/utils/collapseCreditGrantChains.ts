@@ -15,7 +15,6 @@ export type CollapsedCreditGrant<TGrant extends CreditGrantChainLink> = {
   // The row the operator actually created, which carries the reason they typed
   // and the date they handed the credits out.
   origin: TGrant;
-  periodCount: number;
 };
 
 // Every period transition settles a grant and writes its unspent part as a new
@@ -54,7 +53,7 @@ export const collapseCreditGrantChains = <TGrant extends CreditGrantChainLink>(
       collapsedIds.add(chainId);
     }
 
-    return { id: origin.id, current, origin, periodCount: chainIds.size };
+    return { id: origin.id, current, origin };
   };
 
   // A grant whose source is not in the list still reads as an origin, because
@@ -66,16 +65,15 @@ export const collapseCreditGrantChains = <TGrant extends CreditGrantChainLink>(
     )
     .map(collapseFrom);
 
+  if (collapsedIds.size === creditGrants.length) {
+    return rows;
+  }
+
   // Only reachable if the ledger ever held a cycle, which it should not. Rows
   // no walk touched are still shown on their own rather than disappearing.
   const orphanedRows = creditGrants
     .filter((grant) => !collapsedIds.has(grant.id))
-    .map((grant) => ({
-      id: grant.id,
-      current: grant,
-      origin: grant,
-      periodCount: 1,
-    }));
+    .map((grant) => ({ id: grant.id, current: grant, origin: grant }));
 
   return [...rows, ...orphanedRows];
 };

@@ -81,15 +81,11 @@ export class BillingCreditRolloverService {
     );
   }
 
-  private async carryGrantsForward({
-    workspaceId,
-    closingPeriodStart,
-    closingPeriodEnd,
-    closingAllowanceMicro,
-    nextPeriodStart,
-    nextAllowanceMicro,
-    usageMicro,
-  }: ProcessRolloverParams & { usageMicro: number }): Promise<void> {
+  private async carryGrantsForward(
+    params: ProcessRolloverParams & { usageMicro: number },
+  ): Promise<void> {
+    const { workspaceId, nextPeriodStart, nextAllowanceMicro } = params;
+
     const rolloverCapMultiplier = this.twentyConfigService.get(
       'BILLING_ROLLOVER_TOTAL_CAP_MULTIPLIER',
     );
@@ -100,13 +96,8 @@ export class BillingCreditRolloverService {
     const { carriedForwardMicro, hasReplayedGrant } =
       await this.dataSource.transaction(async (entityManager) =>
         this.settleGrants({
+          ...params,
           entityManager,
-          workspaceId,
-          closingPeriodStart,
-          closingPeriodEnd,
-          closingAllowanceMicro,
-          nextPeriodStart,
-          usageMicro,
           rolloverCapMicro: (rolloverCapMultiplier - 1) * nextAllowanceMicro,
         }),
       );
@@ -128,15 +119,10 @@ export class BillingCreditRolloverService {
     nextPeriodStart,
     usageMicro,
     rolloverCapMicro,
-  }: {
-    entityManager: EntityManager;
-    workspaceId: string;
-    closingPeriodStart: Date;
-    closingPeriodEnd: Date;
-    closingAllowanceMicro: number;
-    nextPeriodStart: Date;
+  }: ProcessRolloverParams & {
     usageMicro: number;
     rolloverCapMicro: number;
+    entityManager: EntityManager;
   }): Promise<{ carriedForwardMicro: number; hasReplayedGrant: boolean }> {
     const closingGrants =
       await this.billingCreditGrantService.findGrantsLiveDuringPeriod(

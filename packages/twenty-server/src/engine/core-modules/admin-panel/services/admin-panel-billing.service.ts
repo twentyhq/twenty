@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { addDays } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
@@ -23,7 +22,6 @@ import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-pl
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { alignGrantExpiryToPeriodEnd } from 'src/engine/core-modules/billing/utils/align-grant-expiry-to-period-end.util';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
@@ -106,7 +104,7 @@ export class AdminPanelBillingService {
       amountMicro,
       type,
       reason,
-      expiresAt: await this.resolveGrantExpiry({ workspaceId, expiresInDays }),
+      expiresInDays,
       idempotencyKey,
       grantedByUserId,
     });
@@ -134,38 +132,6 @@ export class AdminPanelBillingService {
     }
 
     return this.toCreditGrantDTO(replayedGrant);
-  }
-
-  // Null unless the operator asked for a time-boxed grant, and then a period
-  // end rather than the exact day, for the reasons alignGrantExpiryToPeriodEnd
-  // documents. A workspace with no subscription has no period to align to and
-  // no counter to mislead, so its grants simply do not expire.
-  private async resolveGrantExpiry({
-    workspaceId,
-    expiresInDays,
-  }: {
-    workspaceId: string;
-    expiresInDays: number | undefined;
-  }): Promise<Date | null> {
-    if (!isDefined(expiresInDays)) {
-      return null;
-    }
-
-    const subscription =
-      await this.billingSubscriptionService.getCurrentBillingSubscription({
-        workspaceId,
-      });
-
-    if (!isDefined(subscription) || !isDefined(subscription.interval)) {
-      return null;
-    }
-
-    return alignGrantExpiryToPeriodEnd({
-      requestedExpiresAt: addDays(new Date(), expiresInDays),
-      currentPeriodStart: subscription.currentPeriodStart,
-      currentPeriodEnd: subscription.currentPeriodEnd,
-      interval: subscription.interval,
-    });
   }
 
   async revokeWorkspaceCreditGrant({
