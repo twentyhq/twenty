@@ -14,7 +14,12 @@ export const buildNonAuditLoggedFieldNamesByObjectMetadataId = (
   for (const flatFieldMetadata of Object.values(
     flatFieldMetadataMaps.byUniversalIdentifier,
   )) {
-    if (!isDefined(flatFieldMetadata) || flatFieldMetadata.isAuditLogged) {
+    // A projection cached before the column existed carries no value at all, so
+    // only an explicit false takes a field out of the timeline.
+    if (
+      !isDefined(flatFieldMetadata) ||
+      flatFieldMetadata.isAuditLogged !== false
+    ) {
       continue;
     }
 

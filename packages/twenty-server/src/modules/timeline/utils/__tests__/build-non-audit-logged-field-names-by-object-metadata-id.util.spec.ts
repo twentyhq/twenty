@@ -74,6 +74,20 @@ describe('buildNonAuditLoggedFieldNamesByObjectMetadataId', () => {
     ).toEqual(new Set(['lastContactAt']));
   });
 
+  it('keeps auditing a field whose cached projection predates the flag', () => {
+    const { isAuditLogged: _isAuditLogged, ...fieldWithoutTheFlag } =
+      buildField({
+        universalIdentifier: 'name-field',
+        name: 'name',
+      });
+
+    expect(
+      buildNonAuditLoggedFieldNamesByObjectMetadataId(
+        buildMaps([fieldWithoutTheFlag as ReturnType<typeof buildField>]),
+      ).size,
+    ).toBe(0);
+  });
+
   it('leaves out objects whose fields are all audit logged', () => {
     expect(
       buildNonAuditLoggedFieldNamesByObjectMetadataId(
