@@ -22,9 +22,11 @@ export const buildNonAuditLoggedFieldNamesByObjectMetadataId = (
     }
 
     // A projection cached before the column existed carries no value at all, so
-    // only an explicit false takes a field out of the timeline. The type check
-    // covers the position rows the backfill has not reached yet, since a slow
-    // instance command only runs when the upgrade is given --include-slow.
+    // only an explicit false takes a field out of the timeline. The type rule
+    // is not a fallback and deliberately outranks the stored flag: a position
+    // diff renders blank whatever the row says, and every row predating the
+    // backfill says true, since a slow instance command only runs when the
+    // upgrade is given --include-slow.
     const isAuditLogged =
       flatFieldMetadata.isAuditLogged !== false &&
       isAuditLoggableFieldType(flatFieldMetadata.type);
