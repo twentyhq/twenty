@@ -1,4 +1,9 @@
-import { GraphQLBoolean, GraphQLInt, GraphQLString } from 'graphql';
+import {
+  GraphQLBoolean,
+  GraphQLInt,
+  GraphQLNonNull,
+  GraphQLString,
+} from 'graphql';
 
 import { type WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
@@ -37,7 +42,7 @@ describe('getResolverArgs', () => {
         type: GraphQLBoolean,
       },
       shareWith: {
-        type: ShareWithInputType,
+        type: new GraphQLNonNull(ShareWithInputType),
         isNullable: true,
         isArray: true,
       },
@@ -50,7 +55,7 @@ describe('getResolverArgs', () => {
         type: GraphQLBoolean,
       },
       shareWith: {
-        type: ShareWithInputType,
+        type: new GraphQLNonNull(ShareWithInputType),
         isNullable: true,
         isArray: true,
       },
