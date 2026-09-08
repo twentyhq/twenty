@@ -164,6 +164,7 @@ const MenuCatalogCell = ({ content = 'basic' }: MenuStoryProps) => {
   return (
     <div
       ref={setCellElement}
+      data-menu-catalog=""
       style={{ position: 'relative', width: 220, height: 230 }}
     >
       <Menu.Root open triggerId={triggerId} modal={false}>
@@ -182,7 +183,21 @@ export const Catalog: CatalogStory<Story, typeof MenuStory> = {
   render: (args) => <MenuCatalogCell {...args} />,
   decorators: [CatalogDecorator],
   parameters: {
-    a11y: A11Y_DEFER_COLOR_CONTRAST,
+    a11y: {
+      ...A11Y_DEFER_COLOR_CONTRAST,
+      config: {
+        rules: [
+          ...A11Y_DEFER_COLOR_CONTRAST.config.rules,
+          {
+            id: 'aria-hidden-focus',
+            // Simultaneously open non-modal menus keep Base UI's focus sentinels active.
+            // Limit this exception to catalog sentinels; menu content stays audited.
+            selector:
+              '[aria-hidden="true"]:not([data-menu-catalog] [data-base-ui-focus-guard])',
+          },
+        ],
+      },
+    },
     catalog: {
       dimensions: [
         { name: 'menu', values: ['menu'], labels: () => '', props: () => ({}) },
