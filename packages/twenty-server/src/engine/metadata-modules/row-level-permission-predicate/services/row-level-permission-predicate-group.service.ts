@@ -136,7 +136,7 @@ export class RowLevelPermissionPredicateGroupService {
     const hasRolePredicateGroups =
       (await this.rowLevelPermissionPredicateGroupRepository.count(
         workspaceId,
-        { roleId: Not(IsNull()) },
+        { where: { roleId: Not(IsNull()) } },
       )) > 0;
 
     if (!hasRolePredicateGroups) {
