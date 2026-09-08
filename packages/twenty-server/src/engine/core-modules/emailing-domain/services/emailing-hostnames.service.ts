@@ -132,6 +132,21 @@ export class EmailingHostnamesService {
 
     const hostnameId = await this.managedHostnameService.provision(hostname);
 
+    const currentEmailingDomain = await this.findEmailingDomainOrFail({
+      workspaceId: emailingDomain.workspaceId,
+      emailingDomainId: emailingDomain.id,
+    });
+
+    if (
+      !isNonEmptyString(
+        await provisioner.resolveDesiredHostname(currentEmailingDomain),
+      )
+    ) {
+      await this.managedHostnameService.release(hostname);
+
+      return;
+    }
+
     await provisioner.persistProvisionedHostname({
       emailingDomain,
       hostname,
