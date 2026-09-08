@@ -863,6 +863,76 @@ describe('reconstructViewsManifest', () => {
     });
   });
 
+  it('should refuse a view referencing a field that does not exist together with its children', () => {
+    const { views, viewFields, coverage } = reconstructViewsManifest({
+      applicationAllFlatEntityMaps: buildMaps({
+        objects: [petObject],
+        views: [
+          buildFlatView({
+            viewManifest: {
+              ...ALL_PETS_VIEW_MANIFEST,
+              mainGroupByFieldMetadataUniversalIdentifier: MISSING_FIELD_UID,
+            },
+          }),
+        ],
+        viewFields: [
+          buildFlatViewField({
+            viewFieldManifest: NAME_VIEW_FIELD_MANIFEST,
+            viewUniversalIdentifier: ALL_PETS_VIEW_UID,
+          }),
+        ],
+      }),
+      allFlatEntityMaps,
+      exportedObjectUniversalIdentifiers: EXPORTED_OBJECT_UNIVERSAL_IDENTIFIERS,
+    });
+
+    expect(views).toEqual([]);
+    expect(viewFields).toEqual([]);
+    expect(statusOf(coverage, ALL_PETS_VIEW_UID)).toEqual({
+      metadataName: 'view',
+      universalIdentifier: ALL_PETS_VIEW_UID,
+      status: ApplicationExportCoverageStatus.UNSUPPORTED,
+      reason: 'view referencing a field that does not exist',
+    });
+    expect(
+      statusOf(coverage, NAME_VIEW_FIELD_MANIFEST.universalIdentifier),
+    ).toEqual({
+      metadataName: 'viewField',
+      universalIdentifier: NAME_VIEW_FIELD_MANIFEST.universalIdentifier,
+      status: ApplicationExportCoverageStatus.UNSUPPORTED,
+      reason: 'view field of an unsupported view',
+    });
+  });
+
+  it('should refuse a view filter on a relation target field that does not exist', () => {
+    const { views, coverage } = reconstructViewsManifest({
+      applicationAllFlatEntityMaps: buildMaps({
+        objects: [petObject],
+        views: [buildFlatView({ viewManifest: ALL_PETS_VIEW_MANIFEST })],
+        viewFilters: [
+          buildFlatViewFilter({
+            viewFilterManifest: {
+              ...NAME_FILTER_MANIFEST,
+              universalIdentifier: 'dangling-relation-target-view-filter',
+              relationTargetFieldMetadataUniversalIdentifier: MISSING_FIELD_UID,
+            },
+            viewUniversalIdentifier: ALL_PETS_VIEW_UID,
+          }),
+        ],
+      }),
+      allFlatEntityMaps,
+      exportedObjectUniversalIdentifiers: EXPORTED_OBJECT_UNIVERSAL_IDENTIFIERS,
+    });
+
+    expect(views).toEqual([ALL_PETS_VIEW_MANIFEST]);
+    expect(statusOf(coverage, 'dangling-relation-target-view-filter')).toEqual({
+      metadataName: 'viewFilter',
+      universalIdentifier: 'dangling-relation-target-view-filter',
+      status: ApplicationExportCoverageStatus.UNSUPPORTED,
+      reason: 'view filter on a relation target field that does not exist',
+    });
+  });
+
   it('should refuse a view field placed in a field group that is not exported', () => {
     const { views, viewFields, coverage } = reconstructViewsManifest({
       applicationAllFlatEntityMaps: buildMaps({

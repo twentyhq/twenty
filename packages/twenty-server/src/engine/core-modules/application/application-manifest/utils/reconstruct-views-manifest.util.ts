@@ -1,4 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import {
   type StandaloneViewFieldManifest,
   type ViewManifest,
@@ -17,60 +16,21 @@ import {
   type ViewChildrenManifests,
 } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-view-to-view-manifest.util';
 import { type ApplicationExportCoverageEntry } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
+import { type ParentViewStatus } from 'src/engine/core-modules/application/application-manifest/types/view-export-classification.type';
 import { buildExportedCoverageEntry } from 'src/engine/core-modules/application/application-manifest/utils/build-exported-coverage-entry.util';
 import { compareByUniversalIdentifier } from 'src/engine/core-modules/application/application-manifest/utils/compare-by-universal-identifier.util';
-import { type WorkspaceLocalStateProperties } from 'src/engine/core-modules/application/application-manifest/utils/get-workspace-local-state-reason.util';
+import { createViewChildDecider } from 'src/engine/core-modules/application/application-manifest/utils/create-view-child-decider.util';
+import { getUnexportedViewFieldGroupReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unexported-view-field-group-reason.util';
+import { getUnresolvableFieldReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unresolvable-field-reason.util';
+import { getUnsupportedViewFilterReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unsupported-view-filter-reason.util';
+import { getUnsupportedViewReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unsupported-view-reason.util';
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 
-type ParentViewStatus =
-  | 'exported'
-  | 'engineDerived'
-  | 'unsupported'
-  | 'outside';
-
 type ViewChildren = Required<ViewChildrenManifests>;
-
-const VIEW_CHILD_LABEL_BY_METADATA_NAME = {
-  viewField: 'view field',
-  viewFieldGroup: 'view field group',
-  viewFilter: 'view filter',
-  viewFilterGroup: 'view filter group',
-  viewGroup: 'view group',
-  viewSort: 'view sort',
-} as const;
-
-type ViewChildMetadataName = keyof typeof VIEW_CHILD_LABEL_BY_METADATA_NAME;
-
-type FlatViewChild = {
-  universalIdentifier: string;
-  viewUniversalIdentifier: string;
-} & Partial<WorkspaceLocalStateProperties>;
-
-const MAX_VIEW_FILTER_VALUE_DEPTH = 8;
-
-const isNestedDeeperThanMaxDepth = (value: unknown): boolean => {
-  const pending = [{ value, depth: 0 }];
-
-  for (let next = pending.pop(); isDefined(next); next = pending.pop()) {
-    if (!isDefined(next.value) || typeof next.value !== 'object') {
-      continue;
-    }
-
-    if (next.depth >= MAX_VIEW_FILTER_VALUE_DEPTH) {
-      return true;
-    }
-
-    for (const child of Object.values(next.value)) {
-      pending.push({ value: child, depth: next.depth + 1 });
-    }
-  }
-
-  return false;
-};
 
 const sortedFlatEntities = <TFlatEntity extends SyncableFlatEntity>(
   flatEntityMaps: UniversalFlatEntityMaps<TFlatEntity>,
@@ -78,50 +38,6 @@ const sortedFlatEntities = <TFlatEntity extends SyncableFlatEntity>(
   Object.values(flatEntityMaps.byUniversalIdentifier)
     .filter(isDefined)
     .sort(compareByUniversalIdentifier);
-
-const getUnsupportedViewReason = ({
-  flatView,
-  applicationObjectUniversalIdentifiers,
-  exportedObjectUniversalIdentifiers,
-}: {
-  flatView: FlatView;
-  applicationObjectUniversalIdentifiers: Set<string>;
-  exportedObjectUniversalIdentifiers: Set<string>;
-}): string | undefined => {
-  if (!isNonEmptyString(flatView.name)) {
-    return 'view without a name';
-  }
-
-  const objectUniversalIdentifier = flatView.objectMetadataUniversalIdentifier;
-
-  if (
-    applicationObjectUniversalIdentifiers.has(objectUniversalIdentifier) &&
-    !exportedObjectUniversalIdentifiers.has(objectUniversalIdentifier)
-  ) {
-    return 'view on an unsupported object';
-  }
-
-  return undefined;
-};
-
-const getParentViewReason = ({
-  metadataName,
-  parentViewStatus,
-}: {
-  metadataName: ViewChildMetadataName;
-  parentViewStatus: Exclude<ParentViewStatus, 'exported'>;
-}): string => {
-  const label = VIEW_CHILD_LABEL_BY_METADATA_NAME[metadataName];
-
-  switch (parentViewStatus) {
-    case 'unsupported':
-      return `${label} of an unsupported view`;
-    case 'engineDerived':
-      return `${label} on an engine-derived view`;
-    case 'outside':
-      return `${label} on a view outside the application`;
-  }
-};
 
 export const reconstructViewsManifest = ({
   applicationAllFlatEntityMaps,
@@ -171,6 +87,7 @@ export const reconstructViewsManifest = ({
       flatView,
       applicationObjectUniversalIdentifiers,
       exportedObjectUniversalIdentifiers,
+      allFlatEntityMaps,
     });
 
     if (isDefined(unsupportedReason)) {
@@ -208,105 +125,10 @@ export const reconstructViewsManifest = ({
     ]),
   );
   const viewFields: StandaloneViewFieldManifest[] = [];
-
-  const getUnresolvableFieldReason = ({
-    metadataName,
-    fieldMetadataUniversalIdentifier,
-  }: {
-    metadataName: ViewChildMetadataName;
-    fieldMetadataUniversalIdentifier: string;
-  }): string | undefined =>
-    isDefined(
-      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
-        fieldMetadataUniversalIdentifier
-      ],
-    )
-      ? undefined
-      : `${VIEW_CHILD_LABEL_BY_METADATA_NAME[metadataName]} on a field that does not exist`;
-
-  const getUnexportedViewFieldGroupReason = (
-    viewFieldGroupUniversalIdentifier: string | null,
-  ): string | undefined => {
-    if (!isDefined(viewFieldGroupUniversalIdentifier)) {
-      return undefined;
-    }
-
-    const flatViewFieldGroup =
-      applicationAllFlatEntityMaps.flatViewFieldGroupMaps.byUniversalIdentifier[
-        viewFieldGroupUniversalIdentifier
-      ];
-
-    if (
-      !isDefined(flatViewFieldGroup) ||
-      flatViewFieldGroup.isSystemSideEffect ||
-      parentViewStatusByUniversalIdentifier.get(
-        flatViewFieldGroup.viewUniversalIdentifier,
-      ) === 'exported'
-    ) {
-      return undefined;
-    }
-
-    return 'view field in a view field group that is not exported';
-  };
-
-  const decideViewChild = ({
-    metadataName,
-    flatEntity,
-    isEngineDerived = false,
-    unsupportedReason,
-    canStandAlone = false,
-  }: {
-    metadataName: ViewChildMetadataName;
-    flatEntity: FlatViewChild;
-    isEngineDerived?: boolean;
-    unsupportedReason?: string;
-    canStandAlone?: boolean;
-  }): 'nested' | 'standalone' | undefined => {
-    if (isEngineDerived) {
-      coverage.push({
-        metadataName,
-        universalIdentifier: flatEntity.universalIdentifier,
-        status: ApplicationExportCoverageStatus.ENGINE_DERIVED,
-      });
-
-      return undefined;
-    }
-
-    const parentViewStatus =
-      parentViewStatusByUniversalIdentifier.get(
-        flatEntity.viewUniversalIdentifier,
-      ) ?? 'outside';
-
-    if (
-      parentViewStatus !== 'exported' &&
-      (parentViewStatus === 'unsupported' || !canStandAlone)
-    ) {
-      coverage.push({
-        metadataName,
-        universalIdentifier: flatEntity.universalIdentifier,
-        status: ApplicationExportCoverageStatus.UNSUPPORTED,
-        reason: getParentViewReason({ metadataName, parentViewStatus }),
-      });
-
-      return undefined;
-    }
-
-    if (isDefined(unsupportedReason)) {
-      coverage.push({
-        metadataName,
-        universalIdentifier: flatEntity.universalIdentifier,
-        status: ApplicationExportCoverageStatus.UNSUPPORTED,
-        reason: unsupportedReason,
-      });
-
-      return undefined;
-    }
-
-    coverage.push(buildExportedCoverageEntry({ metadataName, flatEntity }));
-
-    return parentViewStatus === 'exported' ? 'nested' : 'standalone';
-  };
-
+  const decideViewChild = createViewChildDecider({
+    coverage,
+    parentViewStatusByUniversalIdentifier,
+  });
   const childrenOf = (
     viewUniversalIdentifier: string,
   ): ViewChildren | undefined =>
@@ -320,13 +142,17 @@ export const reconstructViewsManifest = ({
       flatEntity: flatViewField,
       isEngineDerived: flatViewField.isSystemSideEffect,
       unsupportedReason:
-        getUnexportedViewFieldGroupReason(
-          flatViewField.viewFieldGroupUniversalIdentifier,
-        ) ??
+        getUnexportedViewFieldGroupReason({
+          viewFieldGroupUniversalIdentifier:
+            flatViewField.viewFieldGroupUniversalIdentifier,
+          applicationAllFlatEntityMaps,
+          parentViewStatusByUniversalIdentifier,
+        }) ??
         getUnresolvableFieldReason({
           metadataName: 'viewField',
           fieldMetadataUniversalIdentifier:
             flatViewField.fieldMetadataUniversalIdentifier,
+          allFlatEntityMaps,
         }),
       canStandAlone: true,
     });
@@ -380,19 +206,14 @@ export const reconstructViewsManifest = ({
   for (const flatViewFilter of sortedFlatEntities(
     applicationAllFlatEntityMaps.flatViewFilterMaps,
   )) {
-    const unsupportedReason = isNestedDeeperThanMaxDepth(flatViewFilter.value)
-      ? `view filter with a value nested deeper than ${MAX_VIEW_FILTER_VALUE_DEPTH} levels`
-      : getUnresolvableFieldReason({
-          metadataName: 'viewFilter',
-          fieldMetadataUniversalIdentifier:
-            flatViewFilter.fieldMetadataUniversalIdentifier,
-        });
-
     if (
       decideViewChild({
         metadataName: 'viewFilter',
         flatEntity: flatViewFilter,
-        unsupportedReason,
+        unsupportedReason: getUnsupportedViewFilterReason({
+          flatViewFilter,
+          allFlatEntityMaps,
+        }),
       }) === 'nested'
     ) {
       childrenOf(flatViewFilter.viewUniversalIdentifier)?.filters.push(
@@ -427,6 +248,7 @@ export const reconstructViewsManifest = ({
           metadataName: 'viewSort',
           fieldMetadataUniversalIdentifier:
             flatViewSort.fieldMetadataUniversalIdentifier,
+          allFlatEntityMaps,
         }),
       }) === 'nested'
     ) {
