@@ -50,6 +50,27 @@ describe('WorkspaceSetupChatSidePanelEffect', () => {
     expect(openAskAiPage).toHaveBeenCalledTimes(1);
   });
 
+  it('does not reopen a dismissed panel after the layout remounts', () => {
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    const { unmount } = renderEffect();
+    expect(
+      sessionStorage.getItem('hasOpenedWorkspaceSetupChatSidePanelState'),
+    ).toBe('true');
+    unmount();
+    renderEffect();
+
+    expect(openAskAiPage).toHaveBeenCalledTimes(1);
+  });
+
+  it('allows a subsequent onboarding session to open the panel', () => {
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    renderEffect();
+    act(() => jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, false));
+    act(() => jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true));
+
+    expect(openAskAiPage).toHaveBeenCalledTimes(2);
+  });
+
   it('opens when onboarding completes after the layout has mounted', () => {
     renderEffect();
     expect(openAskAiPage).not.toHaveBeenCalled();
