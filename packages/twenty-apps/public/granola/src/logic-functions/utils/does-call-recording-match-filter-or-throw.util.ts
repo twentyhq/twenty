@@ -1,4 +1,4 @@
-import { type CoreApiClient, type CoreSchema } from 'twenty-client-sdk/core';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 export const doesCallRecordingMatchFilterOrThrow = async ({
@@ -6,7 +6,10 @@ export const doesCallRecordingMatchFilterOrThrow = async ({
   filter,
 }: {
   coreApiClient: Pick<CoreApiClient, 'query'>;
-  filter: CoreSchema.CallRecordingFilterInput;
+  filter: {
+    id: { eq: string };
+    deletedAt?: { is: 'NOT_NULL' };
+  };
 }): Promise<boolean> => {
   const queryResult = await coreApiClient.query({
     callRecordings: {
