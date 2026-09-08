@@ -7,6 +7,7 @@ const POLL_INTERVAL_MS = 25;
 const REQUIRED_CONSECUTIVE_QUIET_CHECKS = 2;
 const STALL_TIMEOUT_MS = 15_000;
 const DELAYED_JOB_PAGE_SIZE = 50;
+const MAX_PROMOTABLE_DELAY_MS = 60_000;
 const HARD_TIMEOUT_MS = 120_000;
 const PENDING_JOB_STATES = [
   'waiting',
@@ -63,17 +64,19 @@ const getPendingJobCountsByQueue = async (): Promise<
   );
 };
 
-const promoteDelayedJobs = async (busyQueueNames: string[]): Promise<void> => {
-  await Promise.all(
-    getQueues()
-      .filter((queue) => busyQueueNames.includes(queue.name))
-      .map(async (queue) => {
-        const delayedJobs = await queue.getDelayed(0, DELAYED_JOB_PAGE_SIZE);
+const promoteDelayedJobs = async (queueName: string): Promise<void> => {
+  const queue = getQueues().find(({ name }) => name === queueName);
 
-        await Promise.all(
-          delayedJobs.map((job) => job.promote().catch(() => undefined)),
-        );
-      }),
+  if (!queue) {
+    return;
+  }
+
+  const delayedJobs = await queue.getDelayed(0, DELAYED_JOB_PAGE_SIZE);
+
+  await Promise.all(
+    delayedJobs
+      .filter((job) => (job.opts.delay ?? 0) <= MAX_PROMOTABLE_DELAY_MS)
+      .map((job) => job.promote().catch(() => undefined)),
   );
 };
 
@@ -105,10 +108,9 @@ export const waitForAllJobsToFinish = async (): Promise<void> => {
       (sum, { pending }) => sum + pending,
       0,
     );
-    const delayedTotal = Object.values(pendingJobCountsByQueue).reduce(
-      (sum, { delayed }) => sum + delayed,
-      0,
-    );
+    const stalledQueueNames = Object.entries(pendingJobCountsByQueue)
+      .filter(([, { pending, delayed }]) => pending === delayed)
+      .map(([queueName]) => queueName);
 
     if (pendingTotal === 0) {
       consecutiveQuietChecks += 1;
@@ -122,8 +124,8 @@ export const waitForAllJobsToFinish = async (): Promise<void> => {
         );
       }
 
-      if (pendingTotal === delayedTotal) {
-        await promoteDelayedJobs(Object.keys(pendingJobCountsByQueue));
+      if (stalledQueueNames.length > 0) {
+        await Promise.all(stalledQueueNames.map(promoteDelayedJobs));
         lastProgressAt = now;
         await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
         continue;
