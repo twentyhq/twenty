@@ -4,6 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MessageChannelSyncStage } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -12,6 +15,7 @@ import {
   CalendarEventWebhookSyncJob,
   type CalendarEventWebhookSyncJobData,
 } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/jobs/calendar-event-webhook-sync.job';
+import { CALENDAR_EVENT_WEBHOOK_SYNC_DEBOUNCE_MS } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-debounce-ms.constant';
 import { CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_INITIAL_DELAY_MS } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-retry-initial-delay-ms.constant';
 import { CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_LIMIT } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-retry-limit.constant';
 import {
@@ -26,6 +30,8 @@ export class WebhookSyncTriggerService {
     private readonly messagingQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.connectedAccountSyncWebhookQueue)
     private readonly connectedAccountSyncWebhookQueueService: MessageQueueService,
+    @InjectCacheStorage(CacheStorageNamespace.ModuleCalendar)
+    private readonly cacheStorage: CacheStorageService,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
   ) {}
@@ -80,11 +86,21 @@ export class WebhookSyncTriggerService {
     calendarChannelId: string,
     workspaceId: string,
   ): Promise<void> {
+    const hasOpenedDebounceWindow = await this.cacheStorage.setIfAbsent(
+      `calendar-event-webhook-sync-debounce:${workspaceId}:${calendarChannelId}`,
+      true,
+      CALENDAR_EVENT_WEBHOOK_SYNC_DEBOUNCE_MS,
+    );
+
+    if (!hasOpenedDebounceWindow) {
+      return;
+    }
+
     await this.connectedAccountSyncWebhookQueueService.add<CalendarEventWebhookSyncJobData>(
       CalendarEventWebhookSyncJob.name,
       { workspaceId, calendarChannelId },
       {
-        id: `${CalendarEventWebhookSyncJob.name}-${calendarChannelId}`,
+        delay: CALENDAR_EVENT_WEBHOOK_SYNC_DEBOUNCE_MS,
         retryLimit: CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_LIMIT,
         backoff: {
           strategy: 'exponential',

@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { CalendarChannelSyncStage } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -11,11 +11,12 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
 import { CalendarFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-fetch-events.service';
-import {
-  CalendarEventWebhookSyncException,
-  CalendarEventWebhookSyncExceptionCode,
-} from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/calendar-event-webhook-sync.exception';
 import { CALENDAR_EVENT_WEBHOOK_SYNC_INLINE_IMPORT_MAX_EVENTS } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-inline-import-max-events.constant';
+
+export type CalendarEventWebhookSyncOutcome =
+  | 'SYNC_COMPLETED'
+  | 'CHANNEL_BUSY'
+  | 'CHANNEL_NOT_SYNCABLE';
 
 @Injectable()
 export class CalendarEventWebhookSyncService {
@@ -36,7 +37,7 @@ export class CalendarEventWebhookSyncService {
   }: {
     calendarChannelId: string;
     workspaceId: string;
-  }): Promise<void> {
+  }): Promise<CalendarEventWebhookSyncOutcome> {
     const isCalendarChannelScheduled =
       await this.markCalendarChannelAsListFetchScheduledIfPending({
         calendarChannelId,
@@ -44,10 +45,10 @@ export class CalendarEventWebhookSyncService {
       });
 
     if (!isCalendarChannelScheduled) {
-      throw new CalendarEventWebhookSyncException(
-        `Calendar channel ${calendarChannelId} is not available for a webhook sync`,
-        CalendarEventWebhookSyncExceptionCode.CALENDAR_CHANNEL_SYNC_ALREADY_IN_PROGRESS,
-      );
+      return this.getUnclaimedCalendarChannelOutcome({
+        calendarChannelId,
+        workspaceId,
+      });
     }
 
     const calendarChannel = await this.findSyncEnabledCalendarChannel({
@@ -56,7 +57,7 @@ export class CalendarEventWebhookSyncService {
     });
 
     if (!isDefined(calendarChannel)) {
-      return;
+      return 'CHANNEL_NOT_SYNCABLE';
     }
 
     await this.calendarFetchEventsService.fetchCalendarEvents(
@@ -66,6 +67,40 @@ export class CalendarEventWebhookSyncService {
     );
 
     await this.importFetchedCalendarEvents({ calendarChannelId, workspaceId });
+
+    return 'SYNC_COMPLETED';
+  }
+
+  private async getUnclaimedCalendarChannelOutcome({
+    calendarChannelId,
+    workspaceId,
+  }: {
+    calendarChannelId: string;
+    workspaceId: string;
+  }): Promise<CalendarEventWebhookSyncOutcome> {
+    const calendarChannel = await this.findSyncEnabledCalendarChannel({
+      calendarChannelId,
+      workspaceId,
+    });
+
+    if (!isDefined(calendarChannel)) {
+      return 'CHANNEL_NOT_SYNCABLE';
+    }
+
+    switch (calendarChannel.syncStage) {
+      case CalendarChannelSyncStage.PENDING_CONFIGURATION:
+      case CalendarChannelSyncStage.FAILED:
+        return 'CHANNEL_NOT_SYNCABLE';
+      case CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING:
+      case CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED:
+      case CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_ONGOING:
+      case CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING:
+      case CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED:
+      case CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_ONGOING:
+        return 'CHANNEL_BUSY';
+      default:
+        return assertUnreachable(calendarChannel.syncStage);
+    }
   }
 
   private async markCalendarChannelAsListFetchScheduledIfPending({
