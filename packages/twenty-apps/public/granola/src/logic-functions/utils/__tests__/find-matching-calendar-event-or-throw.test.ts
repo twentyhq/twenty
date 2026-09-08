@@ -4,10 +4,13 @@ import { describe, expect, it, vi } from 'vitest';
 import { buildGranolaNote } from 'src/__tests__/utils/build-granola-note.util';
 import { findMatchingCalendarEventOrThrow } from 'src/logic-functions/utils/find-matching-calendar-event-or-throw.util';
 
-const buildConnection = (
-  calendarEventIds: (string | null)[],
+const buildConnection = ({
+  calendarEventIds,
   hasNextPage = false,
-) => ({
+}: {
+  calendarEventIds: (string | null)[];
+  hasNextPage?: boolean;
+}) => ({
   edges: calendarEventIds.map((calendarEventId) => ({
     node: { calendarEventId },
   })),
@@ -50,7 +53,9 @@ const buildNote = (
 describe('findMatchingCalendarEventOrThrow', () => {
   it('links by the provider event id without touching participants', async () => {
     const coreApiClient = buildCoreApiClient({
-      associations: buildConnection(['event-1', 'event-1']),
+      associations: buildConnection({
+        calendarEventIds: ['event-1', 'event-1'],
+      }),
     });
 
     await expect(
@@ -63,14 +68,20 @@ describe('findMatchingCalendarEventOrThrow', () => {
   });
 
   it.each([
-    ['ambiguous', buildConnection(['event-1', 'event-2'])],
-    ['paged-out', buildConnection(['event-1'], true)],
+    [
+      'ambiguous',
+      buildConnection({ calendarEventIds: ['event-1', 'event-2'] }),
+    ],
+    [
+      'paged-out',
+      buildConnection({ calendarEventIds: ['event-1'], hasNextPage: true }),
+    ],
   ])(
     'refuses a %s provider id match without falling back',
     async (_, associations) => {
       const coreApiClient = buildCoreApiClient({
         associations,
-        participants: buildConnection(['fallback-event']),
+        participants: buildConnection({ calendarEventIds: ['fallback-event'] }),
       });
 
       await expect(
@@ -85,8 +96,10 @@ describe('findMatchingCalendarEventOrThrow', () => {
 
   it('falls back to invitee emails at the scheduled start when no provider id matches', async () => {
     const coreApiClient = buildCoreApiClient({
-      associations: buildConnection([]),
-      participants: buildConnection(['event-7', null, 'event-7']),
+      associations: buildConnection({ calendarEventIds: [] }),
+      participants: buildConnection({
+        calendarEventIds: ['event-7', null, 'event-7'],
+      }),
     });
 
     await expect(
@@ -116,7 +129,7 @@ describe('findMatchingCalendarEventOrThrow', () => {
 
   it('escapes ilike wildcards in invitee emails', async () => {
     const coreApiClient = buildCoreApiClient({
-      participants: buildConnection([]),
+      participants: buildConnection({ calendarEventIds: [] }),
     });
 
     await findMatchingCalendarEventOrThrow({

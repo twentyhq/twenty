@@ -6,8 +6,7 @@ import { doesCallRecordingExistOrThrow } from 'src/logic-functions/utils/does-ca
 import { isCallRecordingSoftDeletedOrThrow } from 'src/logic-functions/utils/is-call-recording-soft-deleted-or-throw.util';
 import { updateCallRecordingOrThrow } from 'src/logic-functions/utils/update-call-recording-or-throw.util';
 
-// The generated core client types the transcript JSON scalar as an object, so
-// the array-valued fields go through the REST API instead of a typed mutation.
+// REST accepts transcript arrays rejected by the generated JSON scalar type.
 export const upsertCallRecordingOrThrow = async ({
   coreApiClient,
   callRecordingId,
