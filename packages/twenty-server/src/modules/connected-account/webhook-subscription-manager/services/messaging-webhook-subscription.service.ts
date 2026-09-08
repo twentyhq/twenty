@@ -9,7 +9,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -21,6 +20,7 @@ import {
 import { WebhookSubscriptionDriverFactory } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-driver-factory.service';
 import { WebhookSubscriptionExceptionHandlerService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-exception-handler.service';
 import { WebhookSubscriptionStatusService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-status.service';
+import { WorkspaceActivationService } from 'src/modules/connected-account/webhook-subscription-manager/services/workspace-activation.service';
 import { type WebhookSubscriptionContext } from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type';
 
 @Injectable()
@@ -30,8 +30,8 @@ export class MessagingWebhookSubscriptionService {
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
+    private readonly workspaceActivationService: WorkspaceActivationService,
     private readonly webhookSubscriptionDriverFactory: WebhookSubscriptionDriverFactory,
-    private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly metricsService: MetricsService,
     private readonly webhookSubscriptionStatusService: WebhookSubscriptionStatusService,
     private readonly webhookSubscriptionExceptionHandlerService: WebhookSubscriptionExceptionHandlerService,
@@ -41,6 +41,13 @@ export class MessagingWebhookSubscriptionService {
     messageChannelId: string,
     workspaceId: string,
   ): Promise<void> {
+    const isWorkspaceSuspended =
+      await this.workspaceActivationService.isWorkspaceSuspended(workspaceId);
+
+    if (isWorkspaceSuspended) {
+      return;
+    }
+
     const messageChannel = await this.messageChannelRepository.findOne({
       where: { id: messageChannelId, workspaceId },
       relations: ['connectedAccount'],
@@ -127,6 +134,13 @@ export class MessagingWebhookSubscriptionService {
         .deleteSubscription(previousSubscription)
         .catch(() => undefined);
     }
+
+    const hasBeenSuspendedDuringCreation =
+      await this.workspaceActivationService.isWorkspaceSuspended(workspaceId);
+
+    if (hasBeenSuspendedDuringCreation) {
+      await this.revokeSubscription({ messageChannelId, workspaceId });
+    }
   }
 
   async recreateSubscription({
@@ -160,6 +174,13 @@ export class MessagingWebhookSubscriptionService {
     messageChannelId: string;
     workspaceId: string;
   }): Promise<void> {
+    const isWorkspaceSuspended =
+      await this.workspaceActivationService.isWorkspaceSuspended(workspaceId);
+
+    if (isWorkspaceSuspended) {
+      return;
+    }
+
     const messageChannel = await this.messageChannelRepository.findOne({
       where: { id: messageChannelId, workspaceId },
       relations: ['connectedAccount'],
@@ -275,10 +296,30 @@ export class MessagingWebhookSubscriptionService {
         attributes: this.buildMetricAttributes(connectedAccount.provider),
       });
 
-      this.exceptionHandlerService.captureExceptions([error], {
-        workspace: { id: messageChannel.workspaceId },
-      });
+      throw error;
     }
+  }
+
+  async revokeSubscription({
+    messageChannelId,
+    workspaceId,
+  }: {
+    messageChannelId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const isWorkspaceSuspended =
+      await this.workspaceActivationService.isWorkspaceSuspended(workspaceId);
+
+    if (!isWorkspaceSuspended) {
+      return;
+    }
+
+    await this.deleteSubscription(messageChannelId, workspaceId);
+
+    await this.webhookSubscriptionStatusService.markAsExpired(
+      WebhookSubscriptionChannelType.MESSAGING,
+      messageChannelId,
+    );
   }
 
   private buildMetricAttributes(provider: string) {
