@@ -1884,6 +1884,7 @@ type ConnectedAccountPublicDTO {
   provider: String!
   lastCredentialsRefreshedAt: DateTime
   authFailedAt: DateTime
+  authFailedReason: String
   archivedAt: DateTime
   handleAliases: [String!]
   scopes: [String!]
@@ -1906,6 +1907,7 @@ type FeatureFlag {
 enum FeatureFlagKey {
   IS_APP_CLAIMING_ENABLED
   IS_UNIQUE_INDEXES_ENABLED
+  IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_JSON_FILTER_ENABLED
   IS_EMAIL_GROUP_ENABLED
   IS_JUNCTION_RELATIONS_ENABLED
@@ -1915,6 +1917,8 @@ enum FeatureFlagKey {
   IS_API_RATE_LIMIT_V2_ENABLED
   IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED
   IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED
+  IS_RECORD_CREATION_FORM_ENABLED
+  IS_RECORD_SHARING_ENABLED
 }
 
 type WorkspaceUrls {
@@ -2167,6 +2171,7 @@ type AppConnection {
   accessToken: String!
   scopes: [String!]!
   authFailedAt: String
+  authFailedReason: String
 }
 
 type ResendEmailVerificationToken {
@@ -2352,6 +2357,7 @@ type Field {
   isUIReadOnly: Boolean @deprecated(reason: "Use isUIEditable")
   isNullable: Boolean
   isUnique: Boolean
+  isSearchable: Boolean
   defaultValue: JSON
   options: JSON
   settings: JSON
@@ -3934,6 +3940,7 @@ type Mutation {
   deleteAppKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): Boolean!
   enqueueJob(input: EnqueueJobInput!): EnqueueJobResult! @deprecated(reason: "Use enqueueJobs instead.")
   enqueueJobs(input: EnqueueJobsInput!): EnqueueJobsResult!
+  reportAppConnectionAuthFailure(input: ReportAppConnectionAuthFailureInput!): Boolean!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
   retryChatMessage(threadId: UUID!, modelId: String): SendChatMessageResult!
@@ -4810,6 +4817,7 @@ input CreateFieldInput {
   isUIReadOnly: Boolean
   isNullable: Boolean
   isUnique: Boolean
+  isSearchable: Boolean
   defaultValue: JSON
   options: JSON
   settings: JSON
@@ -4840,6 +4848,7 @@ input UpdateFieldInput {
   isUIReadOnly: Boolean
   isNullable: Boolean
   isUnique: Boolean
+  isSearchable: Boolean
   defaultValue: JSON
   options: JSON
   settings: JSON
@@ -5148,6 +5157,11 @@ input EnqueueJobsInput {
 input EnqueueJobItemInput {
   payload: JSON
   jobId: String
+}
+
+input ReportAppConnectionAuthFailureInput {
+  id: ID!
+  reason: String
 }
 
 input FileAttachmentInput {

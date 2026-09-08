@@ -1,12 +1,15 @@
 import { buildManifest } from '@/cli/utilities/build/manifest/manifest-build';
 import { buildPullEntities } from '@/cli/utilities/pull/build-pull-entities';
+import { planTranslationWrites } from '@/cli/utilities/pull/plan-translation-writes';
+import { compileApplicationTranslations } from '@/cli/utilities/translations/compile-application-translations';
 import { writeDefineFile } from '@/cli/utilities/pull/write-define-file';
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import {
   getFieldUniversalIdentifier,
   type Manifest,
 } from 'twenty-shared/application';
+import { generateMessageId } from 'twenty-shared/i18n';
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
@@ -26,7 +29,15 @@ const JUNCTION_UID = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
 const JUNCTION_PET_FIELD_UID = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
 const PET_AGREEMENTS_FIELD_UID = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
 
+const EXPORTED_TRANSLATIONS = {
+  'fr-FR': {
+    [generateMessageId('Pet', 'objectMetadata.labelSingular')]: 'Animal',
+    zzzzzz: 'orphan',
+  },
+};
+
 const EXPORTED_MANIFEST = {
+  translations: EXPORTED_TRANSLATIONS,
   application: {
     universalIdentifier: APP_UID,
     displayName: 'Pet Care',
@@ -267,6 +278,20 @@ describe('pull round trip', () => {
       );
     }
 
+    const translationPlan = await planTranslationWrites({
+      appPath,
+      manifest: EXPORTED_MANIFEST,
+      baseManifest: null,
+      frontComponentSourcePaths: [],
+    });
+
+    for (const write of translationPlan.writes) {
+      const filePath = join(appPath, write.relativePath);
+
+      await mkdir(dirname(filePath), { recursive: true });
+      await writeFile(filePath, write.content);
+    }
+
     const buildResult = await buildManifest(appPath);
 
     builtManifest = buildResult.manifest;
@@ -275,6 +300,20 @@ describe('pull round trip', () => {
 
   afterAll(async () => {
     await rm(appPath, { recursive: true, force: true });
+  });
+
+  it('should rebuild the exported translations from the written locale files', async () => {
+    expect(
+      JSON.parse(await readFile(join(appPath, 'locales/fr-FR.json'), 'utf8')),
+    ).toEqual({ 'objectMetadata.labelSingular': { Pet: 'Animal' } });
+    expect(
+      JSON.parse(
+        await readFile(join(appPath, 'locales/compiled/fr-FR.json'), 'utf8'),
+      ),
+    ).toEqual({ zzzzzz: 'orphan' });
+    expect(await compileApplicationTranslations(appPath)).toEqual(
+      EXPORTED_TRANSLATIONS,
+    );
   });
 
   it('should build the written source without errors', () => {

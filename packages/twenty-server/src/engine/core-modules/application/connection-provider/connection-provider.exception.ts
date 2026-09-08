@@ -27,6 +27,8 @@ const getConnectionProviderExceptionUserFriendlyMessage = (
       return msg`The connection-provider manifest is missing required fields.`;
     case ConnectionProviderExceptionCode.CONNECTION_PROVIDER_NOT_FOUND:
       return msg`Connection provider not found.`;
+    case ConnectionProviderExceptionCode.CONNECTION_NOT_FOUND:
+      return msg`Connection not found.`;
     case ConnectionProviderExceptionCode.CONNECTION_PROVIDER_NAME_ALREADY_EXISTS:
       return msg`A connection provider with this name already exists for this application.`;
     case ConnectionProviderExceptionCode.ON_CONNECT_LOGIC_FUNCTION_NOT_FOUND:

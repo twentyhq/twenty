@@ -16,6 +16,7 @@ import {
   type PullDeletion,
   type PullWrite,
 } from '@/cli/utilities/pull/plan-pull-writes';
+import { planTranslationWrites } from '@/cli/utilities/pull/plan-translation-writes';
 import {
   readPullBaseManifest,
   writePullBaseManifest,
@@ -41,6 +42,7 @@ export type AppPullResult = {
   skipped: SkippedPullEntity[];
   coverage: ApplicationExportCoverageEntry[];
   unreadableRelativePaths: string[];
+  compiledTranslationEntryCountByLocale: Record<string, number>;
   hadBase: boolean;
 };
 
@@ -160,14 +162,23 @@ const innerAppPull = async (
   });
 
   const plan = planPullWrites({ manifest, baseManifest, scannedFiles });
+  const translationPlan = await planTranslationWrites({
+    appPath,
+    manifest,
+    baseManifest,
+    frontComponentSourcePaths: scannedFiles
+      .filter(
+        (scannedFile) =>
+          scannedFile.entityKey === ManifestEntityKey.FrontComponents,
+      )
+      .map((scannedFile) => join(appPath, scannedFile.relativePath)),
+  });
+  const writes = [...plan.writes, ...translationPlan.writes];
+  const deletions = [...plan.deletions, ...translationPlan.deletions];
 
   onProgress?.('Writing source files...');
 
-  await applyPullWrites({
-    appPath,
-    writes: plan.writes,
-    deletions: plan.deletions,
-  });
+  await applyPullWrites({ appPath, writes, deletions });
 
   await writePullBaseManifest({ appPath, manifest });
 
@@ -177,8 +188,8 @@ const innerAppPull = async (
       applicationDisplayName: applicationExport.application.displayName,
       applicationUniversalIdentifier:
         applicationExport.application.universalIdentifier,
-      writes: plan.writes,
-      deletions: plan.deletions,
+      writes,
+      deletions,
       unchangedCount: plan.unchanged.length,
       localOnlyRelativePaths: plan.localOnlyRelativePaths,
       skipped: plan.skipped,
@@ -186,6 +197,8 @@ const innerAppPull = async (
       unreadableRelativePaths: scannedFiles
         .filter((scannedFile) => !scannedFile.isReadable)
         .map((scannedFile) => scannedFile.relativePath),
+      compiledTranslationEntryCountByLocale:
+        translationPlan.compiledEntryCountByLocale,
       hadBase: isDefined(baseManifest),
     },
   };
