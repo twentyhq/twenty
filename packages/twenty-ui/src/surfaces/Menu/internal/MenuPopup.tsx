@@ -1,7 +1,7 @@
 import { Menu as MenuPrimitive } from '@base-ui/react/menu';
 import { useContext } from 'react';
 
-import { mergeFieldPartClassName } from '@ui/input/Field/internal/mergeFieldPartClassName';
+import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 import { useThemeContainer } from '@ui/theme-constants';
 
 import styles from '../Menu.module.scss';
@@ -37,7 +37,7 @@ export const MenuPopup = ({
       >
         <MenuPrimitive.Popup
           {...popupProps}
-          className={mergeFieldPartClassName(styles.popup, className)}
+          className={mergeClassNames(styles.popup, className)}
         >
           {children}
         </MenuPrimitive.Popup>
