@@ -93,6 +93,7 @@ export const MeetingRow = ({
                   }
                 >
                   <MenuItem
+                    disabled={isPending('skip', 'unskip')}
                     LeftIcon={skipped ? IconCalendarEvent : IconCalendarX}
                     text={
                       skipped

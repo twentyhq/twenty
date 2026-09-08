@@ -433,7 +433,7 @@ export class RecordingController {
       this.events.emit();
     });
     listen('network-status', ({ status }) => {
-      this.networkConnected = status === 'reconnected';
+      this.networkConnected = status !== 'disconnected';
       if (!this.networkConnected && this.state.activeRecording) {
         this.interruptedByNetwork = true;
         this.state.notice = { type: 'network-lost' };

@@ -21,6 +21,10 @@ describe('shortcut capture', () => {
     ],
     [{ ...key, altKey: true, code: 'Space', key: ' ' }, 'Alt+Space'],
     [{ ...key, ctrlKey: true, code: 'F12', key: 'F12' }, 'Control+F12'],
+    [
+      { ...key, ctrlKey: true, code: 'F12', key: 'Unidentified' },
+      'Control+F12',
+    ],
     [{ ...key, metaKey: true, key: 'q' }, 'Command+A'],
   ])('creates an Electron accelerator from %o', (event, expected) => {
     expect(shortcutFromKeyboardEvent(event)).toBe(expected);

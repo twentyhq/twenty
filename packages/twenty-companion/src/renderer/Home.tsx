@@ -80,10 +80,11 @@ const UpcomingMeetings = ({ state, isPending, command }: ActionProps) => {
             ))}
           </Card>
           {meetings.length > 3 && (
-            <div aria-expanded={showAllMeetings}>
+            <div>
               <Button
                 variant="tertiary"
                 className="see-more"
+                ariaExpanded={showAllMeetings}
                 onClick={() => setShowAllMeetings(!showAllMeetings)}
                 size="medium"
                 title={

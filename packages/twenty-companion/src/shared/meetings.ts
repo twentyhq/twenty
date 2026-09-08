@@ -15,7 +15,8 @@ export const normalizeMeetingUrl = (value: string): string | null => {
     for (const key of ['pwd', 'authuser', 'hs', 'pli', 'utm_source'])
       url.searchParams.delete(key);
     url.searchParams.sort();
-    return `${url.hostname.toLowerCase()}${url.pathname.replace(/\/$/, '')}${url.search}`;
+    if (url.hostname === 'www.zoom.us') url.hostname = 'zoom.us';
+    return `${url.host.toLowerCase()}${url.pathname.replace(/\/$/, '')}${url.search}`;
   } catch {
     return null;
   }
@@ -67,6 +68,7 @@ export const getDueMeetings = ({
   return meetings.filter(
     (meeting) =>
       meeting.url &&
+      normalizeMeetingUrl(meeting.url) !== null &&
       !handledIds.has(getMeetingOccurrenceKey(meeting)) &&
       !handledIds.has(meeting.id) &&
       Date.parse(meeting.startsAt) <= now &&

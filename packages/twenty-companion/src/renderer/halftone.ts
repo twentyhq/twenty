@@ -279,11 +279,17 @@ export const createHalftone = (
   observer.observe(canvas);
   document.addEventListener('visibilitychange', updateAnimation);
   reducedMotion.addEventListener('change', updateAnimation);
+  const themeObserver = new MutationObserver(updateAnimation);
+  themeObserver.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class'],
+  });
   resize();
 
   return () => {
     window.cancelAnimationFrame(animationFrame);
     observer.disconnect();
+    themeObserver.disconnect();
     document.removeEventListener('visibilitychange', updateAnimation);
     reducedMotion.removeEventListener('change', updateAnimation);
     disposeResources();

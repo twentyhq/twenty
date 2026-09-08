@@ -327,7 +327,8 @@ else {
         setImmediate(() => app.quit());
         return;
       }
-      if (!OPEN_IN_BACKGROUND) showApp();
+      if (!OPEN_IN_BACKGROUND && !app.getLoginItemSettings().wasOpenedAtLogin)
+        showApp();
     })
     .catch((error: unknown) => {
       if (SMOKE) {

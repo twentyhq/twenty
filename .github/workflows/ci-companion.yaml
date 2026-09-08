@@ -5,6 +5,8 @@ on:
     paths:
       - 'packages/twenty-companion/**'
       - 'packages/twenty-ui/**'
+      - 'packages/twenty-front/**'
+      - 'packages/twenty-shared/**'
       - 'package.json'
       - 'yarn.lock'
       - '.github/workflows/ci-companion.yaml'
@@ -13,6 +15,8 @@ on:
     paths:
       - 'packages/twenty-companion/**'
       - 'packages/twenty-ui/**'
+      - 'packages/twenty-front/**'
+      - 'packages/twenty-shared/**'
       - 'package.json'
       - 'yarn.lock'
       - '.github/workflows/ci-companion.yaml'

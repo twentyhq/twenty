@@ -74,14 +74,18 @@ export class Companion {
       this.fail(error);
     }
     nativeTheme.themeSource = this.state.settings.appearance;
-    this.handledIds = new Set(await this.store.readHandledMeetings());
+    try {
+      this.handledIds = new Set(await this.store.readHandledMeetings());
+    } catch (error) {
+      this.state.settings.autoJoin = false;
+      settingsError = error;
+    }
     try {
       const credentials = await this.client.restore();
       if (credentials) {
         this.state.serverUrl = credentials.serverUrl;
         this.state.connection = 'connected';
         await this.refresh();
-        await this.recording.initializeSdk();
       }
     } catch (error) {
       this.fail(error);
@@ -115,6 +119,7 @@ export class Companion {
           if (this.changingConnection || this.recording.isRecording) return;
           this.changingConnection = true;
           const previousConnection = this.state.connection;
+          let credentialsSaved = false;
           const connectionAbort = new AbortController();
           this.connectionAbort = connectionAbort;
           try {
@@ -130,16 +135,24 @@ export class Companion {
             this.openApp();
             if (process.platform === 'darwin') app.focus({ steal: true });
             await this.client.connect(credentials, connectionAbort.signal);
+            credentialsSaved = true;
             this.connectionVersion++;
             this.refreshing = false;
             await this.recording.resetSdk();
+            connectionAbort.signal.throwIfAborted();
             if (this.stopped) return;
             this.resetWorkspaceState();
             this.state.serverUrl = credentials.serverUrl;
             this.state.connection = 'connected';
             await this.refresh();
-            await this.recording.initializeSdk();
+            connectionAbort.signal.throwIfAborted();
           } catch (error) {
+            if (connectionAbort.signal.aborted && credentialsSaved) {
+              this.connectionVersion++;
+              await this.client.disconnect();
+              await this.recording.resetSdk();
+              this.resetWorkspaceState();
+            }
             if (this.state.connection === 'connecting')
               this.state.connection = previousConnection;
             if (!connectionAbort.signal.aborted) throw error;
@@ -304,7 +317,6 @@ export class Companion {
       if (settings.launchAtLogin !== this.state.settings.launchAtLogin)
         app.setLoginItemSettings({
           openAtLogin: settings.launchAtLogin,
-          args: ['--background'],
         });
       this.state.settings = settings;
       nativeTheme.themeSource = settings.appearance;
@@ -369,6 +381,7 @@ export class Companion {
       this.state.calendarConnected = agenda.calendarConnected;
       this.state.updatedAt = new Date().toISOString();
       this.state.error = null;
+      await this.recording.initializeSdk();
     } catch (error) {
       if (connectionVersion === this.connectionVersion && this.client.workspace)
         this.state.workspace = this.client.workspace;

@@ -35,6 +35,10 @@ export const HalftoneBackground = () => {
       .decode()
       .then(start)
       .catch((error: unknown) => {
+        if (image.complete && image.naturalWidth > 0) {
+          start();
+          return;
+        }
         if (!disposed)
           console.warn('Could not load the onboarding background.', error);
       });

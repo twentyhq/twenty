@@ -78,7 +78,8 @@ export const createTrayMenuTemplate = (
 ): MenuItemConstructorOptions[] => {
   const connected = state.connection === 'connected';
   const recording = state.activeRecording;
-  const ready = connected && !!state.updatedAt;
+  const age = now - Date.parse(state.updatedAt ?? '');
+  const ready = connected && age >= 0 && age <= 90_000;
   const menu: MenuItemConstructorOptions[] = [
     {
       label: text('Open app'),
@@ -205,15 +206,17 @@ export const createTrayMenuTemplate = (
                 actions.command({ type: 'join', meetingId: meeting.id }),
             },
             {
-              label: text(skipped ? 'Auto-join skipped' : 'Skip auto-join'),
+              label: text(skipped ? 'Restore auto-join' : 'Skip auto-join'),
               enabled:
                 ready &&
                 !!meeting.url &&
                 state.settings.autoJoin &&
-                !skipped &&
                 Date.parse(meeting.startsAt) > now,
               click: () =>
-                actions.command({ type: 'skip', meetingId: meeting.id }),
+                actions.command({
+                  type: skipped ? 'unskip' : 'skip',
+                  meetingId: meeting.id,
+                }),
             },
             { type: 'separator' },
             {

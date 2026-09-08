@@ -79,9 +79,7 @@ describe('native tray menu actions', () => {
     expect(
       getTrayTitle(
         state({
-          meetings: [
-            meeting({ startsAt: '2026-09-07T14:30:00Z' }),
-          ],
+          meetings: [meeting({ startsAt: '2026-09-07T14:30:00Z' })],
         }),
         NOW,
       ),
@@ -195,9 +193,14 @@ describe('native tray menu actions', () => {
       item.label?.includes(next.title),
     )?.submenu as MenuItemConstructorOptions[];
     expect(
-      skippedSubmenu.find((item) => item.label === 'Auto-join skipped')
+      skippedSubmenu.find((item) => item.label === 'Restore auto-join')
         ?.enabled,
-    ).toBe(false);
+    ).toBe(true);
+    select(skippedSubmenu, 'Restore auto-join');
+    expect(handlers.command).toHaveBeenLastCalledWith({
+      type: 'unskip',
+      meetingId: next.id,
+    });
   });
 
   it('updates individual preferences without overwriting the rest of the settings', () => {

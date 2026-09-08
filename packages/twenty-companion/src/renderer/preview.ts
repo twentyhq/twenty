@@ -154,8 +154,18 @@ export const previewCommand = (
       next.updatedAt = new Date().toISOString();
       break;
     case 'disconnect':
-      next.connection = 'disconnected';
-      next.settings.setupCompleted = false;
+      Object.assign(next, {
+        connection: 'disconnected',
+        workspace: null,
+        meetings: [],
+        recordings: [],
+        calendarConnected: false,
+        updatedAt: null,
+        detectedCalls: [],
+        permissionSetup: null,
+        skippedMeetingIds: [],
+        notice: null,
+      });
       break;
     case 'permission':
       next.permissions[command.permission] = 'granted';

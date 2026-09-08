@@ -12,7 +12,7 @@ export const shortcutFromKeyboardEvent = (
   if (event.code === 'Space') key = 'Space';
   else if (/^Key[A-Z]$/.test(event.code)) key = event.code.slice(3);
   else if (/^Digit[0-9]$/.test(event.code)) key = event.code.slice(5);
-  else if (/^F([1-9]|1[0-9]|2[0-4])$/.test(event.key)) key = event.key;
+  else if (/^F([1-9]|1[0-9]|2[0-4])$/.test(event.code)) key = event.code;
   else return null;
   return [
     event.metaKey && 'Command',

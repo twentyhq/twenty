@@ -12,7 +12,7 @@ import {
   AnimatedPlaceholder,
   type AnimatedPlaceholderType,
 } from '@ui/feedback/AnimatedPlaceholder/AnimatedPlaceholder';
-import { Status as StatusChip } from '@ui/data-display/Status/Status';
+import { Tag as StatusChip } from '@ui/data-display/Tag/Tag';
 import { IconButton } from '@ui/input/IconButton/IconButton';
 import { i18n } from '@lingui/core';
 import { type ReactNode } from 'react';

@@ -275,9 +275,10 @@ export class TwentyClient {
     if (!previous) return;
     const credentials = await refreshCredentials(previous);
     if (this.credentials !== previous) return;
-    this.credentials = credentials;
-    await this.persistCredentials(() =>
-      this.store.writeCredentials(credentials),
-    );
+    await this.persistCredentials(async () => {
+      if (this.credentials !== previous) return;
+      await this.store.writeCredentials(credentials);
+      if (this.credentials === previous) this.credentials = credentials;
+    });
   }
 }

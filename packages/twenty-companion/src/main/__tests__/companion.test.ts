@@ -92,8 +92,18 @@ vi.mock('../twenty-client', () => ({
 }));
 import { Companion } from '../companion';
 
+const originalPlatform = process.platform;
+const originalArch = process.arch;
 let companion: Companion;
 beforeEach(async () => {
+  Object.defineProperty(process, 'platform', {
+    value: 'darwin',
+    configurable: true,
+  });
+  Object.defineProperty(process, 'arch', {
+    value: 'arm64',
+    configurable: true,
+  });
   vi.clearAllMocks();
   vi.useFakeTimers();
   mocks.listeners.clear();
@@ -136,6 +146,8 @@ beforeEach(async () => {
 afterEach(async () => {
   await companion.shutdown();
   vi.useRealTimers();
+  Object.defineProperty(process, 'platform', { value: originalPlatform });
+  Object.defineProperty(process, 'arch', { value: originalArch });
 });
 const allowPermissions = () => {
   mocks.accessibilityTrusted.mockReturnValue(true);
@@ -287,7 +299,6 @@ describe('desktop capture lifecycle', () => {
     });
     expect(mocks.loginSettings).toHaveBeenCalledWith({
       openAtLogin: true,
-      args: ['--background'],
     });
   });
 

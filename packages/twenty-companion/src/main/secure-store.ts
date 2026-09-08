@@ -35,6 +35,8 @@ export class SettingsRecoveryError extends Error {
 }
 
 export class SecureStore {
+  private handledWrite: Promise<void> = Promise.resolve();
+
   constructor(private directory: string) {}
 
   async readCredentials(): Promise<Credentials | null> {
@@ -137,16 +139,22 @@ export class SecureStore {
             ),
           ),
         );
-    } catch {
-      return [];
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') return [];
+      throw new Error(
+        'Could not restore skipped meetings. Automatic joining is off. Review Settings before continuing.',
+        { cause: error },
+      );
     }
   }
 
   async writeHandledMeetings(ids: string[]): Promise<void> {
-    await this.writeAtomic(
-      'handled-meetings.json',
-      JSON.stringify(ids.slice(-500)),
+    const contents = JSON.stringify(ids.slice(-500));
+    const write = this.handledWrite.then(() =>
+      this.writeAtomic('handled-meetings.json', contents),
     );
+    this.handledWrite = write.catch(() => undefined);
+    await write;
   }
 
   private async writeAtomic(

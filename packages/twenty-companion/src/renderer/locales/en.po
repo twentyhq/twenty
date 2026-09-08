@@ -605,5 +605,3 @@ msgstr "Loading your calendar and conversations…"
 #. js-lingui-explicit-id
 #: src/renderer/Home.tsx:43
 #: src/renderer/Home.tsx:44
-#~ msgid "Coming up"
-#~ msgstr "Coming up"

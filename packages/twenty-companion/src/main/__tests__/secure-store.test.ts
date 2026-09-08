@@ -97,3 +97,20 @@ it('reports read failures instead of treating them as a new installation', async
     'Could not read your settings',
   );
 });
+
+it('does not forget skipped meetings when their file is corrupted', async () => {
+  await writeFile(join(directory, 'handled-meetings.json'), '{broken');
+  await expect(
+    new SecureStore(directory).readHandledMeetings(),
+  ).rejects.toThrow('Automatic joining is off');
+});
+
+it('preserves the newest skipped-meeting snapshot across concurrent writes', async () => {
+  const store = new SecureStore(directory);
+  await Promise.all([
+    store.writeHandledMeetings(['first']),
+    store.writeHandledMeetings(['first', 'second']),
+    store.writeHandledMeetings(['second']),
+  ]);
+  expect(await store.readHandledMeetings()).toEqual(['second']);
+});

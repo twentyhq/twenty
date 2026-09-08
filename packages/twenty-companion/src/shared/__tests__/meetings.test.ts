@@ -72,3 +72,22 @@ describe('meeting scheduling', () => {
       expect(() => getMeetingUrl(url)).toThrow();
   });
 });
+
+it('does not repeatedly auto-join meetings with unsupported links', () => {
+  expect(
+    getDueMeetings({
+      meetings: [{ ...MEETING, url: 'javascript:alert(1)' }],
+      handledIds: new Set(),
+      now: NOW,
+      lastSyncedAt: NOW,
+    }),
+  ).toEqual([]);
+});
+
+it('matches Zoom host aliases but keeps distinct ports separate', () => {
+  const zoom = { ...MEETING, url: 'https://www.zoom.us/j/123' };
+  expect(matchMeeting([zoom], 'https://zoom.us/j/123', NOW)?.id).toBe(zoom.id);
+  expect(
+    matchMeeting([zoom], 'https://zoom.us:8443/j/123', NOW),
+  ).toBeUndefined();
+});
