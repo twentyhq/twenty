@@ -1,3 +1,7 @@
+import { useContext } from 'react';
+import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
+import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { useReturnFromExpandedAiChat } from '@/ai/hooks/useReturnFromExpandedAiChat';
 import { processedToolExecutionPartIdsComponentState } from '@/ai/states/processedToolExecutionPartIdsComponentState';
@@ -12,6 +16,7 @@ import { getAppPath } from 'twenty-shared/utils';
 
 export const useProcessWorkspaceSetupCompletion = () => {
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
+  const aiChatSurface = useContext(AiChatSurfaceContext);
 
   const returnFromExpandedAiChat = useReturnFromExpandedAiChat({
     reopenSidePanel: true,
@@ -55,7 +60,11 @@ export const useProcessWorkspaceSetupCompletion = () => {
       return;
     }
 
-    returnFromExpandedAiChat();
+    if (aiChatSurface === AI_CHAT_SURFACE.PAGE) {
+      returnFromExpandedAiChat();
+    } else {
+      store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+    }
   };
 
   return {

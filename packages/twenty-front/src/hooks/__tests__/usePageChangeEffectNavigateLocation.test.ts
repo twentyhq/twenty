@@ -105,7 +105,6 @@ const setupMockState = (
   currentWorkspace: object | null = { id: 'mock-workspace-id' },
   isBillingEnabled: boolean = true,
   isMinimalMetadataReady: boolean = true,
-  shouldOpenAiChatAfterOnboarding: boolean = false,
   isOnboardingCheckoutPending: boolean = false,
 ) => {
   jest
@@ -116,7 +115,6 @@ const setupMockState = (
     .mockReturnValueOnce(isMinimalMetadataReady)
     .mockReturnValueOnce(verifyEmailRedirectPath)
     .mockReturnValueOnce(returnToPath ?? '')
-    .mockReturnValueOnce(shouldOpenAiChatAfterOnboarding)
     .mockReturnValueOnce(isOnboardingCheckoutPending);
 };
 
@@ -136,7 +134,6 @@ const testCases: {
   useQueryResult?: { data?: unknown; loading?: boolean };
   isBillingEnabled?: boolean;
   isMinimalMetadataReady?: boolean;
-  shouldOpenAiChatAfterOnboarding?: boolean;
   isOnboardingCheckoutPending?: boolean;
 }[] = [
   { loc: AppPath.Verify, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
@@ -452,10 +449,10 @@ const testCases: {
   { loc: AppPath.SignInUp, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, returnToPath: '/objects/tasks', res: '/objects/tasks' },
   { loc: AppPath.Index, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, returnToPath: '/settings/api-keys', res: '/settings/api-keys' },
 
-  { loc: AppPath.InviteTeam, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isBillingEnabled: false, shouldOpenAiChatAfterOnboarding: true, res: getAppPath(AppPath.AiChat, { threadId: null }) },
-  { loc: AppPath.InviteTeam, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isBillingEnabled: false, shouldOpenAiChatAfterOnboarding: false, res: defaultHomePagePath },
-  { loc: AppPath.PlanRequiredSuccess, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, shouldOpenAiChatAfterOnboarding: true, res: getAppPath(AppPath.AiChat, { threadId: null }) },
-  { loc: AppPath.SignInUp, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, shouldOpenAiChatAfterOnboarding: true, returnToPath: '/objects/tasks', res: '/objects/tasks' },
+  { loc: AppPath.InviteTeam, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isBillingEnabled: false, res: defaultHomePagePath },
+  { loc: AppPath.InviteTeam, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isBillingEnabled: false, res: defaultHomePagePath },
+  { loc: AppPath.PlanRequiredSuccess, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: defaultHomePagePath },
+  { loc: AppPath.SignInUp, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, returnToPath: '/objects/tasks', res: '/objects/tasks' },
 
   { loc: AppPath.PlanRequiredSuccess, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isOnboardingCheckoutPending: true, res: undefined },
   { loc: AppPath.Verify, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isOnboardingCheckoutPending: true, res: defaultHomePagePath },
@@ -482,7 +479,6 @@ describe('usePageChangeEffectNavigateLocation', () => {
       useQueryResult,
       isBillingEnabled,
       isMinimalMetadataReady,
-      shouldOpenAiChatAfterOnboarding,
       isOnboardingCheckoutPending,
       res,
     }) => {
@@ -501,7 +497,6 @@ describe('usePageChangeEffectNavigateLocation', () => {
         undefined,
         isBillingEnabled ?? true,
         isMinimalMetadataReady ?? true,
-        shouldOpenAiChatAfterOnboarding ?? false,
         isOnboardingCheckoutPending ?? false,
       );
 

@@ -7,12 +7,7 @@ import { AiChatPageHeader } from '@/ai/components/AiChatPageHeader';
 import { AiChatPageThreadUrlSyncEffect } from '@/ai/components/AiChatPageThreadUrlSyncEffect';
 import { AiChatTab } from '@/ai/components/AiChatTab';
 import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
-import { AiChatMessageListPreambleContext } from '@/ai/contexts/AiChatMessageListPreambleContext';
 import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
-import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSetupChatPreamble';
-import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const PANEL_CORNER_RADIUS_DERIVED_FROM_THEME_SCALE = `calc(${themeCssVariables.border.radius.md} + ${themeCssVariables.spacing[1]})`;
 
@@ -39,29 +34,16 @@ const StyledChatContainer = styled.div`
 `;
 
 export const AiChatPage = () => {
-  const shouldOpenAiChatAfterOnboarding = useAtomStateValue(
-    shouldOpenAiChatAfterOnboardingState,
-  );
-
   return (
     <StyledPanel>
       <AiChatPageThreadUrlSyncEffect />
       <AiChatPageCloseAskAiPanelEffect />
       <AiChatPageContinueInSidePanelEffect />
-      {shouldOpenAiChatAfterOnboarding && <WorkspaceSetupChatKickoffEffect />}
       <AiChatPageHeader />
       <StyledChatContainer>
-        <AiChatMessageListPreambleContext.Provider
-          value={
-            shouldOpenAiChatAfterOnboarding ? (
-              <WorkspaceSetupChatPreamble />
-            ) : null
-          }
-        >
-          <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.PAGE}>
-            <AiChatTab />
-          </AiChatSurfaceContext.Provider>
-        </AiChatMessageListPreambleContext.Provider>
+        <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.PAGE}>
+          <AiChatTab />
+        </AiChatSurfaceContext.Provider>
       </StyledChatContainer>
     </StyledPanel>
   );

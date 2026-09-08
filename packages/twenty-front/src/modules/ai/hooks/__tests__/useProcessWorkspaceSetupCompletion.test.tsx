@@ -1,3 +1,6 @@
+import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
+import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -43,7 +46,9 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
     <AgentChatComponentInstanceContext.Provider
       value={{ instanceId: INSTANCE_ID }}
     >
-      {children}
+      <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.PAGE}>
+        {children}
+      </AiChatSurfaceContext.Provider>
     </AgentChatComponentInstanceContext.Provider>
   </JotaiProvider>
 );
@@ -76,6 +81,32 @@ describe('useProcessWorkspaceSetupCompletion', () => {
     sessionStorage.clear();
     resetJotaiStore();
     isWorkspaceSetupChat = true;
+  });
+
+  it('keeps the current page and side panel open when setup finishes there', () => {
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    const { result } = renderHook(() => useProcessWorkspaceSetupCompletion(), {
+      wrapper: ({ children }) => (
+        <Wrapper>
+          <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.SIDE_PANEL}>
+            {children}
+          </AiChatSurfaceContext.Provider>
+        </Wrapper>
+      ),
+    });
+
+    act(() =>
+      result.current.processWorkspaceSetupCompletion(
+        buildCompletionMessage('side-panel-call'),
+      ),
+    );
+
+    expect(navigateMock).not.toHaveBeenCalled();
+    expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
+    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
+      false,
+    );
+    expect(getProcessedToolCallIds()).toEqual(['side-panel-call']);
   });
 
   it('should redirect to the companies view and move the chat to the side panel', () => {

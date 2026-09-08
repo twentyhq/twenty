@@ -72,13 +72,16 @@ describe('useAgentChatModelId', () => {
     resetJotaiStore();
   });
 
-  it('should request the workspace fast model during the onboarding chat', () => {
-    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+  it.each([onboardingChatPath, '/objects/companies'])(
+    'should request the workspace fast model during onboarding on %s',
+    (pathname) => {
+      jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
 
-    const result = renderHooks({ pathname: onboardingChatPath });
+      const result = renderHooks({ pathname });
 
-    expect(result.current.modelIdForRequest).toBe('openai/gpt-5-mini');
-  });
+      expect(result.current.modelIdForRequest).toBe('openai/gpt-5-mini');
+    },
+  );
 
   it('should request no model on a plain chat page', () => {
     const result = renderHooks({ pathname: onboardingChatPath });
