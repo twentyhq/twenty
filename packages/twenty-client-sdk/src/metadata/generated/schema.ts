@@ -1227,6 +1227,8 @@ export interface EnterpriseSubscriptionStatusDTO {
     cancelAt?: Scalars['DateTime']
     currentPeriodEnd?: Scalars['DateTime']
     isCancellationScheduled: Scalars['Boolean']
+    isInGracePeriod: Scalars['Boolean']
+    graceExpiresAt?: Scalars['DateTime']
     __typename: 'EnterpriseSubscriptionStatusDTO'
 }
 
@@ -4645,6 +4647,8 @@ export interface EnterpriseSubscriptionStatusDTOGenqlSelection{
     cancelAt?: boolean | number
     currentPeriodEnd?: boolean | number
     isCancellationScheduled?: boolean | number
+    isInGracePeriod?: boolean | number
+    graceExpiresAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
