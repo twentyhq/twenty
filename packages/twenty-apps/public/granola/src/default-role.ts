@@ -1,6 +1,7 @@
 import {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
   defineApplicationRole,
+  SystemPermissionFlag,
 } from 'twenty-sdk/define';
 
 import {
@@ -49,5 +50,5 @@ export default defineApplicationRole({
     },
   ],
   fieldPermissions: [],
-  permissionFlagUniversalIdentifiers: [],
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
 });
