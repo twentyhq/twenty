@@ -11,7 +11,7 @@ import { fromFlatIndexMetadataToIndexManifest } from 'src/engine/core-modules/ap
 import { fromFlatObjectMetadataToObjectManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-metadata-to-object-manifest.util';
 import { type ApplicationExportCoverageEntry } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
 import { buildExportedCoverageEntry } from 'src/engine/core-modules/application/application-manifest/utils/build-exported-coverage-entry.util';
-import { compareByUniversalIdentifier } from 'src/engine/core-modules/application/application-manifest/utils/compare-by-universal-identifier.util';
+import { sortFlatEntitiesByUniversalIdentifier } from 'src/engine/core-modules/application/application-manifest/utils/sort-flat-entities-by-universal-identifier.util';
 import { getUnsupportedRelationFieldReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unsupported-relation-field-reason.util';
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -90,11 +90,9 @@ export const reconstructDataModelManifest = ({
     applicationAllFlatEntityMaps;
   const coverage: ApplicationExportCoverageEntry[] = [];
 
-  const flatObjectMetadatas = Object.values(
-    flatObjectMetadataMaps.byUniversalIdentifier,
-  )
-    .filter(isDefined)
-    .sort(compareByUniversalIdentifier);
+  const flatObjectMetadatas = sortFlatEntitiesByUniversalIdentifier(
+    flatObjectMetadataMaps,
+  );
   const exportableObjects = flatObjectMetadatas.flatMap(
     (flatObjectMetadata) => {
       const labelIdentifierFieldMetadataUniversalIdentifier =
@@ -130,11 +128,9 @@ export const reconstructDataModelManifest = ({
 
   const fieldManifestByUniversalIdentifier = new Map<string, FieldManifest>();
 
-  for (const flatFieldMetadata of Object.values(
-    flatFieldMetadataMaps.byUniversalIdentifier,
-  )
-    .filter(isDefined)
-    .sort(compareByUniversalIdentifier)) {
+  for (const flatFieldMetadata of sortFlatEntitiesByUniversalIdentifier(
+    flatFieldMetadataMaps,
+  )) {
     const flatObjectMetadata =
       flatObjectMetadataMaps.byUniversalIdentifier[
         flatFieldMetadata.objectMetadataUniversalIdentifier
@@ -231,11 +227,9 @@ export const reconstructDataModelManifest = ({
 
   const indexes: IndexManifest[] = [];
 
-  for (const flatIndexMetadata of Object.values(
-    flatIndexMaps.byUniversalIdentifier,
-  )
-    .filter(isDefined)
-    .sort(compareByUniversalIdentifier)) {
+  for (const flatIndexMetadata of sortFlatEntitiesByUniversalIdentifier(
+    flatIndexMaps,
+  )) {
     if (flatIndexMetadata.isSystemSideEffect) {
       coverage.push({
         metadataName: 'index',
