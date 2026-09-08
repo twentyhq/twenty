@@ -3,6 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isToday } from 'date-fns';
 import { type ReactNode, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconCalendarEvent,
   IconChevronLeft,
@@ -82,7 +83,7 @@ export const InboxSnoozeDropdown = ({
     );
 
   const snoozeUntilPicked = (date: Temporal.ZonedDateTime | null) => {
-    if (date !== null) {
+    if (isDefined(date)) {
       void snoozeUntil(new Date(date.epochMilliseconds));
     }
   };
@@ -95,7 +96,7 @@ export const InboxSnoozeDropdown = ({
       onClose={() => setPickedDateTime(null)}
       dropdownComponents={
         <DropdownContent widthInPixels={SNOOZE_MENU_WIDTH}>
-          {pickedDateTime !== null ? (
+          {isDefined(pickedDateTime) ? (
             <>
               <DropdownMenuHeader
                 StartComponent={
