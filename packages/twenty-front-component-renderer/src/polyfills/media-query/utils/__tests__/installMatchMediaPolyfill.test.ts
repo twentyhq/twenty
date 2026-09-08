@@ -72,6 +72,40 @@ describe('installMatchMediaPolyfill', () => {
     expect(matchMedia('(min-resolution: 3dppx)').matches).toBe(false);
   });
 
+  it.each([
+    '(width: max(10px, screen, 20px))',
+    '(width: max(min(10px, 20px), screen, 30px))',
+    '(unknown: "), screen, (")',
+    '(unknown: "\\\r\n), screen, (")',
+    '(unknown: /* ), screen, ( */ value)',
+    '(unknown: [), screen, (])',
+    '(unknown: {), screen, (})',
+    '(width: max(10px, screen, 20px)',
+  ])('should not treat nested commas as query separators in %s', (query) => {
+    const { matchMedia } = setupMatchMedia();
+
+    expect(matchMedia(query).matches).toBe(false);
+  });
+
+  it('should preserve independent queries around an unsupported expression', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+    setEnvironment({ componentWidth: 1024 });
+
+    expect(
+      matchMedia('(width: max(10px, screen, 20px)), (min-width: 800px)')
+        .matches,
+    ).toBe(true);
+    expect(
+      matchMedia('(min-width: 800px), (width: max(10px, screen, 20px))')
+        .matches,
+    ).toBe(true);
+    expect(
+      matchMedia('(width: max(10px, screen, 20px)), (min-width: 1200px)')
+        .matches,
+    ).toBe(false);
+    expect(matchMedia('(unknown: "unterminated\n), all').matches).toBe(true);
+  });
+
   it('should evaluate range syntax against the environment', () => {
     const { matchMedia, setEnvironment } = setupMatchMedia();
     setEnvironment({ componentWidth: 700, componentHeight: 300 });
