@@ -1,6 +1,10 @@
+import { WorkspaceRouteObjectsContext } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
+import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
+import { getWorkspaceRouteObjectsForSurface } from '@/app/routing/utils/getWorkspaceRouteObjectsForSurface';
 import { RouteContextStoreProvider } from '@/context-store/components/RouteContextStoreProvider';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter, Outlet, Route, Routes } from 'react-router-dom';
+import { type ReactNode } from 'react';
+import { MemoryRouter, Outlet, useRoutes } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 
 jest.mock('@/navigation/hooks/useLastVisitedView', () => ({
@@ -30,6 +34,11 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
             id: 'person-object',
             namePlural: 'people',
             nameSingular: 'person',
+          },
+          {
+            id: 'new-object',
+            namePlural: 'new',
+            nameSingular: 'new',
           },
         ]
       : [
@@ -72,6 +81,39 @@ jest.mock('@/context-store/components/RouteContextStoreProviderEffect', () => ({
   ),
 }));
 
+const MAIN_AND_SIDE_PANEL = ['main', 'side-panel'] as const;
+
+const routeObjects: WorkspaceRouteObject[] = [
+  {
+    path: AppPath.RecordIndexPage,
+    element: null,
+    handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
+  },
+  {
+    path: AppPath.RecordShowPage,
+    element: null,
+    handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
+  },
+  {
+    path: `/${AppPath.Settings}`,
+    element: <Outlet />,
+    children: [
+      { path: SettingsPath.NewObject, element: null },
+      { path: SettingsPath.ObjectNewFieldSelect, element: null },
+    ],
+  },
+];
+
+const mainSurfaceRouteObjects = getWorkspaceRouteObjectsForSurface(
+  routeObjects,
+  'main',
+);
+
+const sidePanelRouteObjects = getWorkspaceRouteObjectsForSurface(
+  routeObjects,
+  'side-panel',
+);
+
 const MainSurfaceLayout = () => (
   <>
     <RouteContextStoreProvider />
@@ -79,35 +121,33 @@ const MainSurfaceLayout = () => (
   </>
 );
 
-const renderOnMainSurface = (initialEntry: string) =>
-  render(
-    <MemoryRouter initialEntries={[initialEntry]}>
-      <Routes>
-        <Route element={<MainSurfaceLayout />}>
-          <Route path={AppPath.RecordIndexPage} element={null} />
-          <Route path={AppPath.Settings}>
-            <Route path={SettingsPath.ObjectNewFieldSelect} element={null} />
-          </Route>
-        </Route>
-      </Routes>
-    </MemoryRouter>,
-  );
+const MainSurfaceRoutes = () =>
+  useRoutes([
+    { element: <MainSurfaceLayout />, children: mainSurfaceRouteObjects },
+  ]);
 
 const SidePanelHostLayout = () => (
   <>
     <Outlet />
-    <Routes location="/object/person/record-1">
-      <Route
-        path={AppPath.RecordShowPage}
-        element={<RouteContextStoreProvider />}
-      />
-    </Routes>
+    {useRoutes(sidePanelRouteObjects, '/object/person/record-1')}
   </>
 );
 
+const SidePanelHostRoutes = () =>
+  useRoutes([
+    { element: <SidePanelHostLayout />, children: mainSurfaceRouteObjects },
+  ]);
+
+const renderAt = (initialEntry: string, children: ReactNode) =>
+  render(
+    <WorkspaceRouteObjectsContext.Provider value={routeObjects}>
+      <MemoryRouter initialEntries={[initialEntry]}>{children}</MemoryRouter>
+    </WorkspaceRouteObjectsContext.Provider>,
+  );
+
 describe('RouteContextStoreProvider', () => {
   it('accepts a query-param view owned by the route object', () => {
-    renderOnMainSurface('/objects/companies?viewId=company-view');
+    renderAt('/objects/companies?viewId=company-view', <MainSurfaceRoutes />);
 
     expect(screen.getByTestId('route-context-store')).toHaveAttribute(
       'data-view-id',
@@ -116,7 +156,7 @@ describe('RouteContextStoreProvider', () => {
   });
 
   it('falls back when the query-param view belongs to another object', () => {
-    renderOnMainSurface('/objects/companies?viewId=person-view');
+    renderAt('/objects/companies?viewId=person-view', <MainSurfaceRoutes />);
 
     expect(screen.getByTestId('route-context-store')).toHaveAttribute(
       'data-view-id',
@@ -125,7 +165,10 @@ describe('RouteContextStoreProvider', () => {
   });
 
   it('resolves the object on settings object pages', () => {
-    renderOnMainSurface('/settings/objects/companies/new-field/select');
+    renderAt(
+      '/settings/objects/companies/new-field/select',
+      <MainSurfaceRoutes />,
+    );
 
     expect(screen.getByTestId('route-context-store')).toHaveAttribute(
       'data-object-metadata-id',
@@ -133,16 +176,16 @@ describe('RouteContextStoreProvider', () => {
     );
   });
 
-  it('resolves the side panel object from the panel location rather than the main surface route params', () => {
-    render(
-      <MemoryRouter initialEntries={['/objects/companies']}>
-        <Routes>
-          <Route element={<SidePanelHostLayout />}>
-            <Route path={AppPath.RecordIndexPage} element={null} />
-          </Route>
-        </Routes>
-      </MemoryRouter>,
+  it('does not read a static settings segment as an object name', () => {
+    renderAt('/settings/objects/new', <MainSurfaceRoutes />);
+
+    expect(screen.getByTestId('route-context-store')).not.toHaveAttribute(
+      'data-object-metadata-id',
     );
+  });
+
+  it('resolves the side panel object from the panel location rather than the main surface route params', () => {
+    renderAt('/objects/companies', <SidePanelHostRoutes />);
 
     expect(screen.getByTestId('route-context-store')).toHaveAttribute(
       'data-object-metadata-id',
