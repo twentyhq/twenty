@@ -12,12 +12,17 @@ import { CreateWebhookSubscriptionForConnectedAccountCommand } from 'src/modules
 import { WebhookSubscriptionRenewalCronCommand } from 'src/modules/connected-account/webhook-subscription-manager/crons/commands/webhook-subscription-renewal.cron.command';
 import { CreateWebhookSubscriptionJob } from 'src/modules/connected-account/webhook-subscription-manager/jobs/create-webhook-subscription.job';
 import { RenewWebhookSubscriptionJob } from 'src/modules/connected-account/webhook-subscription-manager/jobs/renew-webhook-subscription.job';
+import { RevokeWebhookSubscriptionJob } from 'src/modules/connected-account/webhook-subscription-manager/jobs/revoke-webhook-subscription.job';
+import { SyncWorkspaceWebhookSubscriptionsJob } from 'src/modules/connected-account/webhook-subscription-manager/jobs/sync-workspace-webhook-subscriptions.job';
 import { WebhookSubscriptionRenewalCronJob } from 'src/modules/connected-account/webhook-subscription-manager/crons/jobs/webhook-subscription-renewal.cron.job';
 import { WebhookSubscriptionChannelDeletedListener } from 'src/modules/connected-account/webhook-subscription-manager/listeners/webhook-subscription-channel-deleted.listener';
 import { CalendarWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service';
 import { MessagingWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service';
 import { WebhookSubscriptionExceptionHandlerService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-exception-handler.service';
 import { WebhookSubscriptionStatusService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-status.service';
+import { WorkspaceWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/workspace-webhook-subscription.service';
+import { WorkspaceActivationService } from 'src/modules/connected-account/webhook-subscription-manager/services/workspace-activation.service';
+import { WebhookSubscriptionWorkspaceActivationListener } from 'src/modules/connected-account/webhook-subscription-manager/listeners/webhook-subscription-workspace-activation.listener';
 import { WebhookSubscriptionManagerModule } from 'src/modules/connected-account/webhook-subscription-manager/webhook-subscription-manager.module';
 
 @Module({
@@ -34,6 +39,9 @@ import { WebhookSubscriptionManagerModule } from 'src/modules/connected-account/
     ]),
   ],
   providers: [
+    WorkspaceActivationService,
+    WorkspaceWebhookSubscriptionService,
+    WebhookSubscriptionWorkspaceActivationListener,
     WebhookSubscriptionStatusService,
     WebhookSubscriptionExceptionHandlerService,
     MessagingWebhookSubscriptionService,
@@ -43,9 +51,12 @@ import { WebhookSubscriptionManagerModule } from 'src/modules/connected-account/
     WebhookSubscriptionRenewalCronCommand,
     CreateWebhookSubscriptionJob,
     RenewWebhookSubscriptionJob,
+    RevokeWebhookSubscriptionJob,
+    SyncWorkspaceWebhookSubscriptionsJob,
     CreateWebhookSubscriptionForConnectedAccountCommand,
   ],
   exports: [
+    WorkspaceActivationService,
     MessagingWebhookSubscriptionService,
     CalendarWebhookSubscriptionService,
     WebhookSubscriptionRenewalCronCommand,

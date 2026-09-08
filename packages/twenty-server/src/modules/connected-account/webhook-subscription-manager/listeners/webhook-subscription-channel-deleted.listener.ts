@@ -7,6 +7,7 @@ import { CALENDAR_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/cale
 import { type CalendarChannelDeletedEvent } from 'src/engine/metadata-modules/calendar-channel/types/calendar-channel-deleted.type';
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
 import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
 import { CalendarWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service';
 import { MessagingWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service';
@@ -16,6 +17,7 @@ export class WebhookSubscriptionChannelDeletedListener {
   constructor(
     private readonly messagingWebhookSubscriptionService: MessagingWebhookSubscriptionService,
     private readonly calendarWebhookSubscriptionService: CalendarWebhookSubscriptionService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   @OnCustomBatchEvent(MESSAGE_CHANNEL_DELETED_EVENT)
@@ -29,10 +31,13 @@ export class WebhookSubscriptionChannelDeletedListener {
     }
 
     for (const event of batchEvent.events) {
-      await this.messagingWebhookSubscriptionService.deleteSubscription(
-        event.messageChannelId,
-        workspaceId,
-      );
+      await this.messagingWebhookSubscriptionService
+        .deleteSubscription(event.messageChannelId, workspaceId)
+        .catch((error) =>
+          this.exceptionHandlerService.captureExceptions([error], {
+            workspace: { id: workspaceId },
+          }),
+        );
     }
   }
 
@@ -47,10 +52,13 @@ export class WebhookSubscriptionChannelDeletedListener {
     }
 
     for (const event of batchEvent.events) {
-      await this.calendarWebhookSubscriptionService.deleteSubscription(
-        event.calendarChannelId,
-        workspaceId,
-      );
+      await this.calendarWebhookSubscriptionService
+        .deleteSubscription(event.calendarChannelId, workspaceId)
+        .catch((error) =>
+          this.exceptionHandlerService.captureExceptions([error], {
+            workspace: { id: workspaceId },
+          }),
+        );
     }
   }
 }

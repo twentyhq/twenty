@@ -11,6 +11,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { WorkspaceActivationService } from 'src/modules/connected-account/webhook-subscription-manager/services/workspace-activation.service';
 import {
   CalendarEventWebhookSyncJob,
   type CalendarEventWebhookSyncJobData,
@@ -33,12 +34,20 @@ export class WebhookSyncTriggerService {
     private readonly cacheStorage: CacheStorageService,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
+    private readonly workspaceActivationService: WorkspaceActivationService,
   ) {}
 
   async triggerMessagingSync(
     messageChannelId: string,
     workspaceId: string,
   ): Promise<void> {
+    const isWorkspaceSuspended =
+      await this.workspaceActivationService.isWorkspaceSuspended(workspaceId);
+
+    if (isWorkspaceSuspended) {
+      return;
+    }
+
     const updateResult = await this.messageChannelRepository
       .createQueryBuilder()
       .update()
@@ -85,6 +94,13 @@ export class WebhookSyncTriggerService {
     calendarChannelId: string,
     workspaceId: string,
   ): Promise<void> {
+    const isWorkspaceSuspended =
+      await this.workspaceActivationService.isWorkspaceSuspended(workspaceId);
+
+    if (isWorkspaceSuspended) {
+      return;
+    }
+
     const debounceCacheKey = `calendar-event-webhook-sync-debounce:${workspaceId}:${calendarChannelId}`;
 
     const hasOpenedDebounceWindow = await this.cacheStorage.setIfAbsent(
