@@ -95,7 +95,7 @@ describe('View side effect on object creation', () => {
     });
 
     expect(createdViews).toBeDefined();
-    expect(createdViews.length).toBe(2);
+    expect(createdViews.length).toBe(3);
 
     const indexView = createdViews.find((view) => view.key === 'INDEX');
 
@@ -108,6 +108,20 @@ describe('View side effect on object creation', () => {
       type: ViewType.TABLE,
     });
 
+    const seededView = createdViews.find(
+      (view) => view.name === 'All Dishes I love',
+    );
+
+    if (!isDefined(seededView)) {
+      throw new Error('expected a seeded user-owned view to be provisioned');
+    }
+
+    expect(seededView).toMatchObject<Partial<FlatView>>({
+      objectMetadataId: createdObjectMetadataId,
+      type: ViewType.TABLE,
+      key: null,
+    });
+
     const {
       data: { getViewFields: indexViewFields },
     } = await findViewFields({
@@ -116,6 +130,15 @@ describe('View side effect on object creation', () => {
     });
 
     expect(indexViewFields.length).toBe(5);
+
+    const {
+      data: { getViewFields: seededViewFields },
+    } = await findViewFields({
+      viewId: seededView.id,
+      expectToFail: false,
+    });
+
+    expect(seededViewFields.length).toBe(5);
   });
 
   it('should keep the same INDEX view when the object is renamed (lossless, deterministic identifier)', async () => {
