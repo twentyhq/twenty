@@ -11,11 +11,7 @@ import {
   type ObjectRecordUpsertEvent,
 } from 'twenty-shared/database-events';
 import { FeatureFlagKey, type ObjectRecord } from 'twenty-shared/types';
-import {
-  assertUnreachable,
-  isDefined,
-  isNonEmptyArray,
-} from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { In } from 'typeorm';
 
@@ -33,11 +29,10 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getEffectiveReadability } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-readability.util';
-import { DENY_ALL_RECORD_SHARE_GATE } from 'src/engine/record-share/constants/deny-all-record-share-gate.constant';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { type RecordShareGate } from 'src/engine/record-share/types/record-share-gate.type';
 import { isRecordSharedWithPrincipals } from 'src/engine/record-share/utils/is-record-shared-with-principals.util';
-import { resolveRecordShareGateKind } from 'src/engine/record-share/utils/resolve-record-share-gate-kind.util';
+import { buildRecordShareGate } from 'src/engine/record-share/utils/build-record-share-gate.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/twenty-orm/repository/resolve-required-record-share-access-levels.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -438,39 +433,26 @@ export class WorkflowDatabaseEventTriggerListener {
       TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     );
 
-    const gateKind = resolveRecordShareGateKind({
+    return buildRecordShareGate({
       readability: getEffectiveReadability(payload.objectMetadata),
       isOwningApplication:
         isDefined(standardApplication) &&
         payload.objectMetadata.applicationId === standardApplication.id,
+      principalIds: [
+        EVERYONE_PRINCIPAL_ID,
+        standardApplication?.defaultRoleId ??
+          findFlatEntityByUniversalIdentifier({
+            flatEntityMaps: flatRoleMaps,
+            universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
+          })?.id,
+      ],
+      fetchRecordShares: () =>
+        this.recordShareService.findByRecordIds({
+          workspaceId: payload.workspaceId,
+          objectMetadataId: payload.objectMetadata.id,
+          recordIds: payload.events.map((event) => event.recordId),
+        }),
     });
-
-    if (gateKind === 'open') {
-      return null;
-    }
-
-    switch (gateKind) {
-      case 'deny':
-        return DENY_ALL_RECORD_SHARE_GATE;
-      case 'private':
-        return {
-          recordShares: await this.recordShareService.findByRecordIds({
-            workspaceId: payload.workspaceId,
-            objectMetadataId: payload.objectMetadata.id,
-            recordIds: payload.events.map((event) => event.recordId),
-          }),
-          principalIds: [
-            EVERYONE_PRINCIPAL_ID,
-            standardApplication?.defaultRoleId ??
-              findFlatEntityByUniversalIdentifier({
-                flatEntityMaps: flatRoleMaps,
-                universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
-              })?.id,
-          ].filter(isDefined),
-        };
-      default:
-        assertUnreachable(gateKind);
-    }
   }
 
   private shouldTriggerJob({

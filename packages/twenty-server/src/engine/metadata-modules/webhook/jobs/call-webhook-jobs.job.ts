@@ -1,8 +1,9 @@
 import { Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
-import { FeatureFlagKey, type MetadataReadability } from 'twenty-shared/types';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
+import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
@@ -19,8 +20,7 @@ import { type WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/
 import { computeWebhookOperationsToMatch } from 'src/engine/metadata-modules/webhook/utils/compute-webhook-operations-to-match.util';
 import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
-import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
-import { resolveRecordShareGateKind } from 'src/engine/record-share/utils/resolve-record-share-gate-kind.util';
+import { buildRecordShareGate } from 'src/engine/record-share/utils/build-record-share-gate.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const WEBHOOK_JOBS_CHUNK_SIZE = 20;
@@ -86,18 +86,28 @@ export class CallWebhookJobsJob {
       return;
     }
 
-    const recordShares =
+    // A webhook carries no identity, so only a row granted to everyone lets an event out
+    const recordShareGate =
       isRecordSharingEnabled && isDefined(flatObjectMetadata)
-        ? await this.fetchRecordShares({
-            workspaceEventBatch,
+        ? await buildRecordShareGate({
             readability: getEffectiveReadability(flatObjectMetadata),
+            isOwningApplication: false,
+            principalIds: [EVERYONE_PRINCIPAL_ID],
+            fetchRecordShares: () =>
+              this.recordShareService.findByRecordIds({
+                workspaceId: workspaceEventBatch.workspaceId,
+                objectMetadataId: workspaceEventBatch.objectMetadata.id,
+                recordIds: workspaceEventBatch.events.map(
+                  (event) => event.recordId,
+                ),
+              }),
           })
-        : undefined;
+        : null;
 
     const webhookEvents = transformEventBatchToWebhookEvents({
       workspaceEventBatch,
       webhooks,
-      recordShares,
+      recordShareGate,
     });
 
     const webhookEventsChunks = chunk(webhookEvents, WEBHOOK_JOBS_CHUNK_SIZE);
@@ -108,34 +118,6 @@ export class CallWebhookJobsJob {
         webhookEventsChunk,
         { retryLimit: 3 },
       );
-    }
-  }
-
-  private async fetchRecordShares({
-    workspaceEventBatch,
-    readability,
-  }: {
-    workspaceEventBatch: WorkspaceEventBatchForWebhook<ObjectRecordEvent>;
-    readability: MetadataReadability;
-  }): Promise<RecordShare[] | undefined> {
-    const gateKind = resolveRecordShareGateKind({
-      readability,
-      isOwningApplication: false,
-    });
-
-    switch (gateKind) {
-      case 'open':
-        return undefined;
-      case 'deny':
-        return [];
-      case 'private':
-        return this.recordShareService.findByRecordIds({
-          workspaceId: workspaceEventBatch.workspaceId,
-          objectMetadataId: workspaceEventBatch.objectMetadata.id,
-          recordIds: workspaceEventBatch.events.map((event) => event.recordId),
-        });
-      default:
-        assertUnreachable(gateKind);
     }
   }
 }

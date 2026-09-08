@@ -25,7 +25,7 @@ import { type RecordSharesDTO } from 'src/engine/record-share/dtos/record-share.
 import { type ShareWithInput } from 'src/engine/record-share/dtos/share-with.input';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { type RecordShareInput } from 'src/engine/record-share/types/record-share-input.type';
-import { resolveShareWithPrincipal } from 'src/engine/record-share/utils/resolve-share-with-principal.util';
+import { resolveShareWithPrincipalOrThrow } from 'src/engine/record-share/utils/resolve-share-with-principal-or-throw.util';
 import { findOwnerField } from 'src/engine/record-share/utils/find-owner-field.util';
 import { resolvePrincipalIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-principal-ids-from-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -243,7 +243,7 @@ export class ManualRecordShareService {
       ]);
 
     return shareWith.map((shareWithEntry) => {
-      const principal = this.resolveShareWithPrincipal(shareWithEntry);
+      const principal = this.resolveShareWithPrincipalOrThrow(shareWithEntry);
 
       switch (principal.principalType) {
         case RecordSharePrincipalType.WORKSPACE_MEMBER:
@@ -274,7 +274,7 @@ export class ManualRecordShareService {
     });
   }
 
-  private resolveShareWithPrincipal(
+  private resolveShareWithPrincipalOrThrow(
     shareWithEntry: ShareWithInput,
   ): ShareWithPrincipal {
     if (
@@ -291,7 +291,7 @@ export class ManualRecordShareService {
     }
 
     try {
-      return resolveShareWithPrincipal(shareWithEntry);
+      return resolveShareWithPrincipalOrThrow(shareWithEntry);
     } catch (error) {
       if (error instanceof CommonQueryRunnerException) {
         throw new PermissionsException(
