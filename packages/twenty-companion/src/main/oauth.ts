@@ -194,7 +194,7 @@ export const connectOAuth = async (
   });
   await new Promise<void>((resolve, reject) => {
     server.once('error', reject);
-    server.listen(0, '127.0.0.1', resolve);
+    server.listen(0, 'localhost', resolve);
   });
   const timer = setTimeout(
     () => rejectCode(new Error('Connection timed out. Try connecting again.')),
@@ -207,7 +207,7 @@ export const connectOAuth = async (
     const address = server.address();
     if (!address || typeof address === 'string')
       throw new Error('Could not start the OAuth callback.');
-    const redirectUri = `http://127.0.0.1:${address.port}/callback`;
+    const redirectUri = `http://localhost:${address.port}/callback`;
     const authorizationUrl = authorizationEndpoint;
     const authorizationParameters = new URLSearchParams({
       client_id: clientId,
