@@ -9,6 +9,9 @@ import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 // ENSO — renders an aggregated consent change (grant/revoke) on the person's
 // main timeline. The cached name carries the channel list + project + how
 // (source/method); clicking it opens the underlying consent event record.
+
+type EventRowEnsoConsentProps = EventRowDynamicComponentProps;
+
 const StyledMainContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -61,7 +64,7 @@ export const EventRowEnsoConsent = ({
   event,
   linkedObjectMetadataItem,
   createdAt,
-}: EventRowDynamicComponentProps) => {
+}: EventRowEnsoConsentProps) => {
   const [, eventAction] = event.name.split('.');
   const granted = eventAction === 'granted';
 

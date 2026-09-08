@@ -6,6 +6,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { Fragment } from 'react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
+type EventRowEnsoEventProps = EventRowDynamicComponentProps;
+
 // Human-readable object-type tag shown just before each linked record, so a row
 // reads "Person Maximilian … is another contact at Company Globex …". Keyed by
 // the segment's objectNameSingular; unknown types render no tag.
@@ -94,7 +96,7 @@ export const EventRowEnsoEvent = ({
   authorFullName,
   event,
   createdAt,
-}: EventRowDynamicComponentProps) => {
+}: EventRowEnsoEventProps) => {
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const auto = event.properties?.auto === true;

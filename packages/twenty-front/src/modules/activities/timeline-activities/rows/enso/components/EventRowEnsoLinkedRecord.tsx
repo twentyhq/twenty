@@ -10,6 +10,9 @@ import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 // opportunity surfaced on the person's timeline). The default EventRowMainObject
 // would mislabel these with the MAIN record's name ("Elena was created"), so we
 // render the linked record's cached name instead.
+
+type EventRowEnsoLinkedRecordProps = EventRowDynamicComponentProps;
+
 const StyledMainContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -55,7 +58,7 @@ export const EventRowEnsoLinkedRecord = ({
   event,
   linkedObjectMetadataItem,
   createdAt,
-}: EventRowDynamicComponentProps) => {
+}: EventRowEnsoLinkedRecordProps) => {
   const [, eventAction] = event.name.split('.');
 
   // The linked object's human label ("Opportunity", "Inbound Activity") so the

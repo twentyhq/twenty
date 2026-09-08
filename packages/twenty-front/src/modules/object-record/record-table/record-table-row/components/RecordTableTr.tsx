@@ -33,6 +33,7 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
 
     const navigate = useNavigateApp();
 
+    // oxlint-disable-next-line twenty/no-state-useref
     const lastPrimaryClickTimestampRef = useRef<number | null>(null);
 
     const openRecordInFullPage = (event: React.MouseEvent<HTMLDivElement>) => {

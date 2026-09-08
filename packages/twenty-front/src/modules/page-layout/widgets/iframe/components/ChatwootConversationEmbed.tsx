@@ -711,8 +711,13 @@ export const ChatwootConversationEmbed = () => {
 
   // Keep the latest selection + loaders in refs so the socket handler can use
   // them without tearing down and reopening the socket on every change.
+  // Not render state — they are never read during render, only inside the socket
+  // handler, so writing them must not re-render (that would drop the socket).
+  // oxlint-disable-next-line twenty/no-state-useref
   const selectedIdRef = useRef<string | null>(null);
+  // oxlint-disable-next-line twenty/no-state-useref
   const loadMessagesRef = useRef(loadMessages);
+  // oxlint-disable-next-line twenty/no-state-useref
   const loadConversationsRef = useRef(loadConversations);
 
   useEffect(() => {

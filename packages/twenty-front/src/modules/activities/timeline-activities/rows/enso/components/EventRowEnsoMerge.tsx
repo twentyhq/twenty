@@ -9,6 +9,9 @@ import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 // company-merge). The merged-away record is soft-deleted, so there's no live
 // record to link to: the absorbed identifiers ride in linkedRecordCachedName and
 // the match key ("email", "VAT", "domain", …) in properties.matchedOn.
+
+type EventRowEnsoMergeProps = EventRowDynamicComponentProps;
+
 const StyledRowContainer = styled.div`
   align-items: center;
   display: flex;
@@ -42,7 +45,7 @@ export const EventRowEnsoMerge = ({
   authorFullName,
   event,
   createdAt,
-}: EventRowDynamicComponentProps) => {
+}: EventRowEnsoMergeProps) => {
   const mergedLabel = isNonEmptyString(event.linkedRecordCachedName)
     ? event.linkedRecordCachedName
     : t`a duplicate`;

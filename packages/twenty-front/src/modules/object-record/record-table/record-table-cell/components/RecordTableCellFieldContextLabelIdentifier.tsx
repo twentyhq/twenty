@@ -55,6 +55,7 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
     fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
   const navigate = useNavigateApp();
+  // oxlint-disable-next-line twenty/no-state-useref
   const lastChipClickTimestampRef = useRef<number | null>(null);
 
   // Double-click on the name opens the record in full page (a single click
