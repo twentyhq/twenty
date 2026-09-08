@@ -106,7 +106,7 @@ export class AdminPanelBillingService {
       amountMicro,
       type,
       reason,
-      expiresAt: await this.resolveGrantExpiry(workspaceId, expiresInDays),
+      expiresAt: await this.resolveGrantExpiry({ workspaceId, expiresInDays }),
       idempotencyKey,
       grantedByUserId,
     });
@@ -140,10 +140,13 @@ export class AdminPanelBillingService {
   // end rather than the exact day, for the reasons alignGrantExpiryToPeriodEnd
   // documents. A workspace with no subscription has no period to align to and
   // no counter to mislead, so its grants simply do not expire.
-  private async resolveGrantExpiry(
-    workspaceId: string,
-    expiresInDays: number | undefined,
-  ): Promise<Date | null> {
+  private async resolveGrantExpiry({
+    workspaceId,
+    expiresInDays,
+  }: {
+    workspaceId: string;
+    expiresInDays: number | undefined;
+  }): Promise<Date | null> {
     if (!isDefined(expiresInDays)) {
       return null;
     }

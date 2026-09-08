@@ -207,10 +207,10 @@ export class BillingCreditService {
         // lapsing before the period ends would stay spendable through the
         // cache. Checked here rather than at each call site so that the
         // rollover, which carries deadlines forward too, cannot miss it.
-        mustRebuildCounter: await this.hasExpiryInsidePeriod(
+        mustRebuildCounter: await this.hasExpiryInsidePeriod({
           workspaceId,
-          subscription.currentPeriodEnd,
-        ),
+          periodEnd: subscription.currentPeriodEnd,
+        }),
       });
     }
 
@@ -225,10 +225,13 @@ export class BillingCreditService {
     }
   }
 
-  private async hasExpiryInsidePeriod(
-    workspaceId: string,
-    periodEnd: Date,
-  ): Promise<boolean> {
+  private async hasExpiryInsidePeriod({
+    workspaceId,
+    periodEnd,
+  }: {
+    workspaceId: string;
+    periodEnd: Date;
+  }): Promise<boolean> {
     const earliestExpiry =
       await this.billingCreditGrantService.findEarliestUpcomingExpiry(
         workspaceId,
