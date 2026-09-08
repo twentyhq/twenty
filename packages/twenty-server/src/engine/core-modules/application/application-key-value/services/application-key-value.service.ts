@@ -104,6 +104,36 @@ export class ApplicationKeyValueService {
     return { key, value, scope };
   }
 
+  async setIfAbsent({
+    application,
+    workspaceId,
+    key,
+    value,
+  }: {
+    application: FlatApplication;
+    workspaceId: string;
+    key: string;
+    value: unknown;
+  }): Promise<boolean> {
+    // The application-key unique index arbitrates concurrent workers.
+    const result = await this.keyValuePairRepository
+      .createQueryBuilder()
+      .insert()
+      .values({
+        key,
+        value: value as KeyValuePairEntity['value'],
+        applicationId: application.id,
+        workspaceId,
+        userId: null,
+        type: KeyValuePairType.APPLICATION_VARIABLE,
+      })
+      .orIgnore()
+      .returning('id')
+      .execute();
+
+    return result.raw.length > 0;
+  }
+
   async delete({
     application,
     workspaceId,
