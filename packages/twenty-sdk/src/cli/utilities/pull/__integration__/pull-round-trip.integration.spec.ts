@@ -7,13 +7,17 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import {
   getFieldUniversalIdentifier,
+  getSystemRecordPageLayoutUniversalIdentifier,
   getSystemViewUniversalIdentifier,
   type Manifest,
   SYSTEM_VIEW_KEYS,
   TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
 } from 'twenty-shared/application';
 import { generateMessageId } from 'twenty-shared/i18n';
-import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
+import {
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-shared/metadata';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 const PACKAGE_ROOT = resolve(__dirname, '../../../../..');
@@ -40,6 +44,25 @@ const VIEW_SORT_UID = '16161616-1616-4161-8161-161616161616';
 const VIEW_GROUP_UID = '17171717-1717-4171-8171-171717171717';
 const VIEW_FIELD_GROUP_UID = '18181818-1818-4181-8181-181818181818';
 const COMPANY_INDEX_VIEW_FIELD_UID = '19191919-1919-4191-8191-191919191919';
+const PET_PAGE_LAYOUT_UID = '21212121-2121-4212-8212-212121212121';
+const PET_OVERVIEW_TAB_UID = '23232323-2323-4232-8232-232323232323';
+const PET_FIELDS_WIDGET_UID = '24242424-2424-4242-8242-242424242424';
+const DOCS_PAGE_LAYOUT_UID = '25252525-2525-4252-8252-252525252525';
+const DOCS_TAB_UID = '26262626-2626-4262-8262-262626262626';
+const DOCS_WIDGET_UID = '27272727-2727-4272-8272-272727272727';
+const DASHBOARD_PAGE_LAYOUT_UID = '28282828-2828-4282-8282-282828282828';
+const DASHBOARD_TAB_UID = '29292929-2929-4292-8292-292929292929';
+const AGE_CHART_WIDGET_UID = '30303030-3030-4303-8303-303030303030';
+const PET_RECORD_PAGE_EXTRA_TAB_UID = '31313131-3131-4313-8313-313131313131';
+const PET_EXTRA_NOTES_WIDGET_UID = '32323232-3232-4323-8323-323232323232';
+const COMPANY_TAGLINE_TAB_UID = '34343434-3434-4343-8343-343434343434';
+
+const PET_RECORD_PAGE_LAYOUT_UID = getSystemRecordPageLayoutUniversalIdentifier(
+  {
+    objectMetadataApplicationUniversalIdentifier: APP_UID,
+    objectUniversalIdentifier: PET_UID,
+  },
+);
 
 const COMPANY_INDEX_VIEW_UID = getSystemViewUniversalIdentifier({
   objectMetadataApplicationUniversalIdentifier:
@@ -311,6 +334,144 @@ const EXPORTED_MANIFEST = {
       position: 3,
     },
   ],
+  pageLayouts: [
+    {
+      universalIdentifier: PET_PAGE_LAYOUT_UID,
+      name: 'Pet page',
+      type: 'RECORD_PAGE',
+      objectUniversalIdentifier: PET_UID,
+      defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier:
+        PET_OVERVIEW_TAB_UID,
+      tabs: [
+        {
+          universalIdentifier: PET_OVERVIEW_TAB_UID,
+          title: 'Overview',
+          position: 0,
+          icon: 'IconHome',
+          layoutMode: 'VERTICAL_LIST',
+          widgets: [
+            {
+              universalIdentifier: PET_FIELDS_WIDGET_UID,
+              title: 'Fields',
+              type: 'FIELDS',
+              objectUniversalIdentifier: PET_UID,
+              position: { layoutMode: 'VERTICAL_LIST', index: 0 },
+              configuration: {
+                configurationType: 'FIELDS',
+                viewUniversalIdentifier: VIEW_UID,
+                newFieldDefaultVisibility: true,
+              },
+            },
+          ],
+        },
+      ],
+    },
+    {
+      universalIdentifier: DOCS_PAGE_LAYOUT_UID,
+      name: 'Pet docs',
+      type: 'STANDALONE_PAGE',
+      tabs: [
+        {
+          universalIdentifier: DOCS_TAB_UID,
+          title: 'Docs',
+          position: 0,
+          layoutMode: 'GRID',
+          widgets: [
+            {
+              universalIdentifier: DOCS_WIDGET_UID,
+              title: 'Docs',
+              type: 'IFRAME',
+              position: {
+                layoutMode: 'GRID',
+                row: 0,
+                column: 0,
+                rowSpan: 4,
+                columnSpan: 6,
+              },
+              configuration: {
+                configurationType: 'IFRAME',
+                url: 'https://example.com/pets',
+              },
+            },
+          ],
+        },
+      ],
+    },
+    {
+      universalIdentifier: DASHBOARD_PAGE_LAYOUT_UID,
+      name: 'Pet dashboard',
+      type: 'DASHBOARD',
+      tabs: [
+        {
+          universalIdentifier: DASHBOARD_TAB_UID,
+          title: 'Charts',
+          position: 0,
+          layoutMode: 'GRID',
+          widgets: [
+            {
+              universalIdentifier: AGE_CHART_WIDGET_UID,
+              title: 'Age by status',
+              type: 'GRAPH',
+              objectUniversalIdentifier: PET_UID,
+              position: {
+                layoutMode: 'GRID',
+                row: 0,
+                column: 0,
+                rowSpan: 6,
+                columnSpan: 12,
+              },
+              configuration: {
+                configurationType: 'BAR_CHART',
+                aggregateFieldMetadataUniversalIdentifier: PET_AGE_FIELD_UID,
+                aggregateOperation: 'AVG',
+                primaryAxisGroupByFieldMetadataUniversalIdentifier:
+                  PET_STATUS_FIELD_UID,
+                primaryAxisDateGranularity: 'MONTH',
+                secondaryAxisGroupByFieldMetadataUniversalIdentifier: null,
+                filter: {
+                  recordFilters: [
+                    {
+                      fieldMetadataUniversalIdentifier: PET_NAME_FIELD_UID,
+                      operand: 'contains',
+                      value: 'Rex',
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  pageLayoutTabs: [
+    {
+      universalIdentifier: PET_RECORD_PAGE_EXTRA_TAB_UID,
+      pageLayoutUniversalIdentifier: PET_RECORD_PAGE_LAYOUT_UID,
+      title: 'Extra',
+      position: 60,
+      layoutMode: 'VERTICAL_LIST',
+      widgets: [
+        {
+          universalIdentifier: PET_EXTRA_NOTES_WIDGET_UID,
+          title: 'Notes',
+          type: 'NOTES',
+          objectUniversalIdentifier: PET_UID,
+          position: { layoutMode: 'VERTICAL_LIST', index: 0 },
+          configuration: { configurationType: 'NOTES' },
+        },
+      ],
+    },
+    {
+      universalIdentifier: COMPANY_TAGLINE_TAB_UID,
+      pageLayoutUniversalIdentifier:
+        STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage
+          .universalIdentifier,
+      title: 'Tagline',
+      position: 60,
+      layoutMode: 'VERTICAL_LIST',
+    },
+  ],
 } as unknown as Manifest;
 
 const canonicalize = (value: unknown): unknown =>
@@ -462,6 +623,24 @@ describe('pull round trip', () => {
       canonicalize(sortByUniversalIdentifier(builtManifest?.viewFields ?? [])),
     ).toEqual(
       canonicalize(sortByUniversalIdentifier(EXPORTED_MANIFEST.viewFields)),
+    );
+  });
+
+  it('should rebuild the exported page layouts with their tabs and widgets in order', () => {
+    expect(
+      canonicalize(sortByUniversalIdentifier(builtManifest?.pageLayouts ?? [])),
+    ).toEqual(
+      canonicalize(sortByUniversalIdentifier(EXPORTED_MANIFEST.pageLayouts)),
+    );
+  });
+
+  it('should rebuild the standalone tabs on the pet record page and the company record page unchanged', () => {
+    expect(
+      canonicalize(
+        sortByUniversalIdentifier(builtManifest?.pageLayoutTabs ?? []),
+      ),
+    ).toEqual(
+      canonicalize(sortByUniversalIdentifier(EXPORTED_MANIFEST.pageLayoutTabs)),
     );
   });
 

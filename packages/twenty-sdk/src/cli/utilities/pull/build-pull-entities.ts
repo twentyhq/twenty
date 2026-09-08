@@ -2,6 +2,8 @@ import {
   FIELD_ENUM_BINDINGS,
   INDEX_ENUM_BINDINGS,
   OBJECT_ENUM_BINDINGS,
+  PAGE_LAYOUT_ENUM_BINDINGS,
+  PAGE_LAYOUT_TAB_ENUM_BINDINGS,
   VIEW_ENUM_BINDINGS,
   VIEW_FIELD_ENUM_BINDINGS,
   type EnumBinding,
@@ -15,9 +17,15 @@ import {
 import { kebabCase } from '@/cli/utilities/string/kebab-case';
 import {
   type ApplicationManifest,
+  getSystemRecordFormPageLayoutUniversalIdentifier,
+  getSystemRecordPageLayoutUniversalIdentifier,
   type Manifest,
 } from 'twenty-shared/application';
-import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
+import {
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 export const PULL_ENTITY_KINDS = [
   'application',
@@ -26,6 +34,8 @@ export const PULL_ENTITY_KINDS = [
   'index',
   'view',
   'viewField',
+  'pageLayout',
+  'pageLayoutTab',
 ] as const;
 
 export type PullEntityKind = (typeof PULL_ENTITY_KINDS)[number];
@@ -75,6 +85,15 @@ const STANDARD_OBJECT_NAME_BY_UNIVERSAL_IDENTIFIER = new Map<string, string>(
   ),
 );
 
+const STANDARD_PAGE_LAYOUT_NAME_BY_UNIVERSAL_IDENTIFIER = new Map<
+  string,
+  string
+>(
+  Object.entries(STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS).map(
+    ([name, { universalIdentifier }]) => [universalIdentifier, name] as const,
+  ),
+);
+
 const buildApplicationConfig = (
   manifest: Manifest,
 ): Partial<ApplicationManifest> => {
@@ -113,6 +132,60 @@ const getObjectName = ({
   )?.nameSingular ??
   STANDARD_OBJECT_NAME_BY_UNIVERSAL_IDENTIFIER.get(objectUniversalIdentifier) ??
   null;
+
+const getPageLayoutName = ({
+  pageLayoutUniversalIdentifier,
+  manifest,
+}: {
+  pageLayoutUniversalIdentifier: string;
+  manifest: Manifest;
+}): string | null => {
+  const pageLayoutManifest = manifest.pageLayouts?.find(
+    (candidate) =>
+      candidate.universalIdentifier === pageLayoutUniversalIdentifier,
+  );
+
+  if (isDefined(pageLayoutManifest)) {
+    return pageLayoutManifest.name;
+  }
+
+  const standardPageLayoutName =
+    STANDARD_PAGE_LAYOUT_NAME_BY_UNIVERSAL_IDENTIFIER.get(
+      pageLayoutUniversalIdentifier,
+    );
+
+  if (isDefined(standardPageLayoutName)) {
+    return standardPageLayoutName;
+  }
+
+  const objectMetadataApplicationUniversalIdentifier =
+    manifest.application.universalIdentifier;
+
+  for (const objectManifest of manifest.objects) {
+    const systemPageLayoutUniversalIdentifiers = {
+      objectMetadataApplicationUniversalIdentifier,
+      objectUniversalIdentifier: objectManifest.universalIdentifier,
+    };
+
+    if (
+      getSystemRecordPageLayoutUniversalIdentifier(
+        systemPageLayoutUniversalIdentifiers,
+      ) === pageLayoutUniversalIdentifier
+    ) {
+      return `${objectManifest.nameSingular}RecordPage`;
+    }
+
+    if (
+      getSystemRecordFormPageLayoutUniversalIdentifier(
+        systemPageLayoutUniversalIdentifiers,
+      ) === pageLayoutUniversalIdentifier
+    ) {
+      return `${objectManifest.nameSingular}RecordForm`;
+    }
+  }
+
+  return null;
+};
 
 export const buildPullEntities = (
   manifest: Manifest,
@@ -257,6 +330,60 @@ export const buildPullEntities = (
         fieldLocationByUniversalIdentifier,
       }),
       parentName: null,
+    });
+  }
+
+  for (const pageLayoutManifest of manifest.pageLayouts ?? []) {
+    entities.push({
+      kind: 'pageLayout',
+      universalIdentifier: pageLayoutManifest.universalIdentifier,
+      definer: 'definePageLayout',
+      config: pageLayoutManifest,
+      enumBindings: PAGE_LAYOUT_ENUM_BINDINGS,
+      defaultFolder: 'src/page-layouts',
+      fileSuffix: '.page-layout.ts',
+      fileBaseName: toFileBaseName({
+        segments: [pageLayoutManifest.name],
+        universalIdentifier: pageLayoutManifest.universalIdentifier,
+      }),
+      parentName: isDefined(pageLayoutManifest.objectUniversalIdentifier)
+        ? getObjectName({
+            objectUniversalIdentifier:
+              pageLayoutManifest.objectUniversalIdentifier,
+            manifest,
+          })
+        : null,
+    });
+  }
+
+  for (const pageLayoutTabManifest of manifest.pageLayoutTabs ?? []) {
+    const { pageLayoutUniversalIdentifier } = pageLayoutTabManifest;
+
+    if (!isDefined(pageLayoutUniversalIdentifier)) {
+      skipped.push({
+        kind: 'pageLayoutTab',
+        universalIdentifier: pageLayoutTabManifest.universalIdentifier,
+        reason: 'it does not name the page layout it belongs to',
+      });
+      continue;
+    }
+
+    entities.push({
+      kind: 'pageLayoutTab',
+      universalIdentifier: pageLayoutTabManifest.universalIdentifier,
+      definer: 'definePageLayoutTab',
+      config: pageLayoutTabManifest,
+      enumBindings: PAGE_LAYOUT_TAB_ENUM_BINDINGS,
+      defaultFolder: 'src/page-layout-tabs',
+      fileSuffix: '.page-layout-tab.ts',
+      fileBaseName: toFileBaseName({
+        segments: [pageLayoutTabManifest.title],
+        universalIdentifier: pageLayoutTabManifest.universalIdentifier,
+      }),
+      parentName: getPageLayoutName({
+        pageLayoutUniversalIdentifier,
+        manifest,
+      }),
     });
   }
 
