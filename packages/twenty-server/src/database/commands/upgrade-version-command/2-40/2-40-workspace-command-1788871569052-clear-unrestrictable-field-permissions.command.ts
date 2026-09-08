@@ -10,8 +10,6 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-// Every other non-editable field is left alone: dropping a restriction only
-// because a field is not editable would loosen permissions beyond the bug
 const NON_EDITABLE_SYSTEM_FIELD_NAMES = [
   'createdAt',
   'updatedAt',
