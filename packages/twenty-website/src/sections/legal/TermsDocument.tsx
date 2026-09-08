@@ -386,8 +386,8 @@ export function TermsDocument() {
           rate limits, or usage limits;
         </li>
         <li>
-          scrape or bulk-extract content from the Site, or data from workspaces
-          you are not authorized to access;
+          bulk-extract data from workspaces you are not authorized to access, or
+          scrape the Site in a way that burdens it;
         </li>
         <li>misrepresent who you are or your affiliation with anyone; or</li>
         <li>
