@@ -234,6 +234,24 @@ describe('Textarea', () => {
 
       expect(textarea.style.blockSize).toBe('80px');
     });
+
+    it('applies a block size changed in the same render that turns autoResize off', () => {
+      const { rerender } = render(
+        <Textarea aria-label="Notes" autoResize style={{ blockSize: 80 }} />,
+      );
+
+      rerender(
+        <Textarea
+          aria-label="Notes"
+          autoResize={false}
+          style={{ blockSize: 120 }}
+        />,
+      );
+
+      expect(
+        screen.getByRole('textbox', { name: 'Notes' }).style.blockSize,
+      ).toBe('120px');
+    });
   });
 
   it('is labelled and focused by Field.Label inside Field.Root', async () => {

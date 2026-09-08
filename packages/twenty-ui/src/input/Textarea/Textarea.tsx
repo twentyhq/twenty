@@ -41,15 +41,16 @@ export const Textarea = ({
   useLayoutEffect(() => {
     const textarea = textareaRef.current;
 
-    if (!autoResize || !isDefined(textarea)) {
+    if (!isDefined(textarea)) {
+      return;
+    }
+
+    if (!autoResize) {
+      textarea.style.blockSize = formatInlineBlockSize(consumerBlockSize);
       return;
     }
 
     resizeTextareaToContent(textarea);
-
-    return () => {
-      textarea.style.blockSize = formatInlineBlockSize(consumerBlockSize);
-    };
   }, [autoResize, value, maxRows, rows, consumerBlockSize]);
 
   const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
