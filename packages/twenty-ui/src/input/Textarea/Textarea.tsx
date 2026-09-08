@@ -8,6 +8,7 @@ import {
   useRef,
 } from 'react';
 
+import { mergeFieldPartClassName } from '@ui/input/Field/internal/mergeFieldPartClassName';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { mergeRefs } from './internal/mergeRefs';
@@ -27,22 +28,31 @@ export const Textarea = ({
   render = TEXTAREA_RENDER_ELEMENT,
   onChange,
   value,
+  rows,
   ...props
 }: TextareaProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   // Base UI re-forks a merged ref whenever its identity changes, which would detach and reattach it on every render.
   const mergedRef = useMemo(() => mergeRefs(ref, textareaRef), [ref]);
+  const isControlled = isDefined(value);
 
   useLayoutEffect(() => {
-    if (!autoResize || !isDefined(textareaRef.current)) {
+    const textarea = textareaRef.current;
+
+    if (!autoResize || !isDefined(textarea)) {
       return;
     }
 
-    resizeTextareaToContent(textareaRef.current);
-  }, [autoResize, value, maxRows]);
+    resizeTextareaToContent(textarea);
+
+    return () => {
+      textarea.style.blockSize = '';
+    };
+  }, [autoResize, value, maxRows, rows]);
 
   const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    if (autoResize) {
+    // A controlled parent may reject the edit, so the layout effect measures the committed value instead.
+    if (autoResize && !isControlled) {
       resizeTextareaToContent(event.currentTarget);
     }
 
@@ -56,6 +66,7 @@ export const Textarea = ({
   // Base UI types its control for <input> but only reads currentTarget.value, so rendering a textarea through it is safe.
   const primitiveProps = {
     ...props,
+    rows,
     onChange: handleChange,
   } as unknown as InputPrimitive.Props;
 
@@ -65,7 +76,10 @@ export const Textarea = ({
       ref={mergedRef}
       render={render}
       value={value}
-      className={clsx(styles.textarea, styles[size], className)}
+      className={mergeFieldPartClassName(
+        clsx(styles.textarea, styles[size]),
+        className,
+      )}
       style={resolvedStyle}
       data-auto-resize={autoResize || undefined}
     />

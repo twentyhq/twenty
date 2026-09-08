@@ -3,7 +3,11 @@ import { type useRender } from '@base-ui/react/use-render';
 
 import { type InputSize } from '@ui/input/types/InputSize';
 
-export type TextareaProps = useRender.ComponentProps<'textarea'> & {
+export type TextareaProps = Omit<
+  useRender.ComponentProps<'textarea'>,
+  'className'
+> & {
+  className?: string | ((state: InputPrimitive.State) => string | undefined);
   onValueChange?: (
     value: string,
     eventDetails: InputPrimitive.ChangeEventDetails,

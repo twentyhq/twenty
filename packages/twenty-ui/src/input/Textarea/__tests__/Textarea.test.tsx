@@ -66,6 +66,22 @@ describe('Textarea', () => {
     expect(textarea).toHaveClass(styles.sm);
   });
 
+  it('resolves a function className against the field state', () => {
+    render(
+      <Field.Root invalid>
+        <Textarea
+          aria-label="Notes"
+          className={(state) => (state.valid === false ? 'invalid' : 'valid')}
+        />
+      </Field.Root>,
+    );
+
+    const textarea = screen.getByRole('textbox', { name: 'Notes' });
+
+    expect(textarea).toHaveClass(styles.textarea, 'invalid');
+    expect(textarea).not.toHaveClass('valid');
+  });
+
   it('exposes maxRows as a custom property', () => {
     render(<Textarea aria-label="Notes" maxRows={4} />);
 
@@ -74,6 +90,24 @@ describe('Textarea', () => {
         .getByRole('textbox', { name: 'Notes' })
         .style.getPropertyValue('--tw-textarea-max-rows'),
     ).toBe('4');
+  });
+
+  it('runs the cleanup of a callback ref on unmount', () => {
+    const refCleanup = vi.fn();
+    const callbackRef = vi.fn(() => refCleanup);
+
+    const { unmount } = render(
+      <Textarea aria-label="Notes" ref={callbackRef} />,
+    );
+
+    expect(callbackRef).toHaveBeenCalledWith(
+      screen.getByRole('textbox', { name: 'Notes' }),
+    );
+
+    unmount();
+
+    expect(refCleanup).toHaveBeenCalledTimes(1);
+    expect(callbackRef).toHaveBeenCalledTimes(1);
   });
 
   describe('autoResize', () => {
@@ -131,6 +165,54 @@ describe('Textarea', () => {
       expect(
         screen.getByRole('textbox', { name: 'Notes' }).style.blockSize,
       ).toBe('72px');
+    });
+
+    it('keeps the height when a controlled parent rejects the edit', async () => {
+      const user = userEvent.setup();
+
+      render(
+        <Textarea
+          aria-label="Notes"
+          autoResize
+          value="a"
+          onValueChange={() => undefined}
+        />,
+      );
+
+      const textarea = screen.getByRole('textbox', { name: 'Notes' });
+
+      scrollHeightSpy.mockReturnValue(56);
+
+      await user.type(textarea, 'b');
+
+      expect(textarea).toHaveValue('a');
+      expect(textarea.style.blockSize).toBe('40px');
+    });
+
+    it('measures again when rows changes', () => {
+      const { rerender } = render(
+        <Textarea aria-label="Notes" autoResize rows={1} />,
+      );
+
+      scrollHeightSpy.mockReturnValue(56);
+
+      rerender(<Textarea aria-label="Notes" autoResize rows={3} />);
+
+      expect(
+        screen.getByRole('textbox', { name: 'Notes' }).style.blockSize,
+      ).toBe('56px');
+    });
+
+    it('clears the inline height when autoResize is turned off', () => {
+      const { rerender } = render(<Textarea aria-label="Notes" autoResize />);
+
+      const textarea = screen.getByRole('textbox', { name: 'Notes' });
+
+      expect(textarea.style.blockSize).toBe('40px');
+
+      rerender(<Textarea aria-label="Notes" autoResize={false} />);
+
+      expect(textarea.style.blockSize).toBe('');
     });
   });
 
