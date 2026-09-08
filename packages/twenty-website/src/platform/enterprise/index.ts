@@ -32,6 +32,12 @@ export {
 } from './evaluate-release-rate-limit';
 export { evaluateValidityTokenEmissionRateLimit } from './evaluate-validity-token-emission-rate-limit';
 export { normalizeServerId } from './normalize-server-id';
+export { isSearchableServerId } from './is-searchable-server-id';
+export { hasPriorSubscriptionForServer } from './has-prior-subscription-for-server';
+export {
+  resolveTrialPeriodDays,
+  type ResolveTrialPeriodDaysInput,
+} from './resolve-trial-period-days';
 export { isBillableSeatReporter } from './is-billable-seat-reporter';
 export { parseInstanceType } from './parse-instance-type';
 export {

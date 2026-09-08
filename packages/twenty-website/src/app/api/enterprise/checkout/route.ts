@@ -1,6 +1,13 @@
 import { NextResponse } from 'next/server';
 
-import { getEnterprisePriceId, getStripeClient } from '@/platform/enterprise';
+import {
+  getEnterprisePriceId,
+  getStripeClient,
+  hasPriorSubscriptionForServer,
+  resolveTrialPeriodDays,
+} from '@/platform/enterprise';
+
+const DEFAULT_TRIAL_PERIOD_DAYS = 30;
 
 export const dynamic = 'force-dynamic';
 
@@ -21,6 +28,7 @@ export async function POST(request: Request) {
       billingInterval?: unknown;
       seatCount?: unknown;
       successUrl?: unknown;
+      instanceMetadata?: { serverId?: unknown };
     };
 
     const billingInterval =
@@ -48,6 +56,14 @@ export async function POST(request: Request) {
         ? body.seatCount
         : 1;
 
+    const trialPeriodDays = resolveTrialPeriodDays({
+      defaultTrialPeriodDays: DEFAULT_TRIAL_PERIOD_DAYS,
+      hasPriorSubscription: await hasPriorSubscriptionForServer({
+        stripe,
+        serverId: body.instanceMetadata?.serverId,
+      }),
+    });
+
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       line_items: [
@@ -58,7 +74,9 @@ export async function POST(request: Request) {
       ],
       success_url: successUrl,
       subscription_data: {
-        trial_period_days: 30,
+        ...(trialPeriodDays === undefined
+          ? {}
+          : { trial_period_days: trialPeriodDays }),
         metadata: {
           source: 'enterprise-self-hosted',
         },

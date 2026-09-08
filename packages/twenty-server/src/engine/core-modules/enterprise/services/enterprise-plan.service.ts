@@ -573,10 +573,16 @@ export class EnterprisePlanService implements OnModuleInit {
     const checkoutUrl = `${apiUrl}/checkout`;
 
     try {
+      const serverId = await this.getOrCreateServerId();
+
       const response = await fetch(checkoutUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ billingInterval, seatCount }),
+        body: JSON.stringify({
+          billingInterval,
+          seatCount,
+          instanceMetadata: { serverId },
+        }),
       });
 
       if (!response.ok) {
