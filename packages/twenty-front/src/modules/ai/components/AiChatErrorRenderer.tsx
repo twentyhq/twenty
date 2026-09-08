@@ -2,6 +2,7 @@ import { AiChatApiKeyNotConfiguredMessage } from '@/ai/components/AiChatApiKeyNo
 import { AiChatErrorMessage } from '@/ai/components/AiChatErrorMessage';
 import { type AiChatError } from '@/ai/types/AiChatError';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
+import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 type AiChatErrorRendererProps = {
@@ -13,9 +14,9 @@ export const AiChatErrorRenderer = ({
   error,
   onRetry,
 }: AiChatErrorRendererProps) => {
-  if (isGraphqlErrorOfType(error, AiChatErrorCode.BILLING_CREDITS_EXHAUSTED)) {
-    // Handled by AIChatNoMoreBillingCreditsBanner, which useHasReachedAiChatCreditsCap
-    // keeps mounted for exactly this error so nothing is swallowed here
+  // Handled by AIChatNoMoreBillingCreditsBanner, which useHasReachedAiChatCreditsCap
+  // keeps mounted for exactly this error so nothing is swallowed here
+  if (isAiChatCreditsExhaustedError(error)) {
     return null;
   }
 

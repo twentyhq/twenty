@@ -16,6 +16,9 @@ import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMess
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
+import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { markWorkspaceCreditsExhausted } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
 import { markQuestionAnswered } from '@/ai/utils/markQuestionAnswered';
 import { markQuestionPending } from '@/ai/utils/markQuestionPending';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
@@ -101,6 +104,10 @@ export const useSubmitQuestionAnswer = () => {
           ...uploadedFiles,
           ...currentUploadedFiles,
         ]);
+
+        if (isAiChatCreditsExhaustedError(error)) {
+          store.set(currentWorkspaceState.atom, markWorkspaceCreditsExhausted);
+        }
 
         if (isGraphqlErrorOfType(error, AiChatErrorCode.QUESTION_NOT_PENDING)) {
           dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
