@@ -17,7 +17,7 @@ export const syncGranolaNoteToCallRecordingOrThrow = async ({
   client,
   noteId,
 }: {
-  coreApiClient: Pick<CoreApiClient, 'query'>;
+  coreApiClient: Pick<CoreApiClient, 'query' | 'mutation'>;
   client: Pick<
     ReturnType<typeof createGranolaClientOrThrow>,
     'getNote' | 'listTranscriptPage'
