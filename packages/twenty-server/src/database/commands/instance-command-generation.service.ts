@@ -20,12 +20,29 @@ export type GeneratedMigrationResult = {
   className: string;
 };
 
+export type PendingSchemaChange = {
+  query: string;
+  parameters?: unknown[];
+};
+
 @Injectable()
 export class InstanceCommandGenerationService {
   constructor(
     @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {}
+
+  // Read-only counterpart of generateInstanceCommand: the DDL TypeORM would
+  // have to run to bring the database in line with the entity metadata.
+  // Empty means every entity change is already covered by a migration or an
+  // instance command.
+  async getPendingSchemaChanges(): Promise<PendingSchemaChange[]> {
+    const sqlInMemory = await this.dataSource.driver
+      .createSchemaBuilder()
+      .log();
+
+    return sqlInMemory.upQueries;
+  }
 
   async generateInstanceCommand({
     migrationName,

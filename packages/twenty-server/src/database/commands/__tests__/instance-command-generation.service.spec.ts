@@ -38,6 +38,23 @@ describe('InstanceCommandGenerationService', () => {
     return module.get(InstanceCommandGenerationService);
   };
 
+  it('should report no pending schema change when the schema builder is silent', async () => {
+    const service = await buildService();
+
+    expect(await service.getPendingSchemaChanges()).toEqual([]);
+  });
+
+  it('should report the pending schema changes the database is missing', async () => {
+    const upQueries = [
+      { query: 'ALTER TABLE "core"."user" ADD "foo" character varying' },
+    ];
+    const service = await buildService(upQueries, [
+      { query: 'ALTER TABLE "core"."user" DROP COLUMN "foo"' },
+    ]);
+
+    expect(await service.getPendingSchemaChanges()).toEqual(upQueries);
+  });
+
   it('should return null when no schema changes are detected', async () => {
     const service = await buildService();
 

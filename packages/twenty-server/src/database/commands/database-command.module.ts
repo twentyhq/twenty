@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { CheckPendingInstanceCommandCommand } from 'src/database/commands/check-pending-instance-command.command';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { CronRegisterAllCommand } from 'src/database/commands/cron-register-all.command';
 import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
@@ -99,6 +100,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     ConfirmationQuestion,
     CronRegisterAllCommand,
     GenerateInstanceCommandCommand,
+    CheckPendingInstanceCommandCommand,
     InstanceCommandGenerationService,
     RunInstanceCommandsCommand,
     ListOrphanedWorkspaceEntitiesCommand,

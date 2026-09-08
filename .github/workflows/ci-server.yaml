@@ -222,19 +222,8 @@ jobs:
           exit 1
       - name: Server / Check for Pending Migrations
         run: |
-          npx nx database:migrate:generate twenty-server -- --name pending-migration-check || true
-
-          if ! git diff --quiet; then
-            echo "::error::Unexpected migration files were generated. Please run 'npx nx database:migrate:generate twenty-server -- --name <migration-name>' and commit the result."
-            echo ""
-            echo "The following migration changes were detected:"
-            echo "==================================================="
-            git diff
-            echo "==================================================="
-            echo ""
-
-            git checkout -- .
-
+          if ! npx nx database:migrate:check twenty-server; then
+            echo "::error::Entity metadata does not match the migrated database. Generate an instance command for the pending schema changes listed above with 'npx nx run twenty-server:database:migrate:generate --name <descriptive-name> --type <fast|slow>' and commit both the generated file and its entry in instance-commands.constant.ts."
             exit 1
           fi
       - name: Check for Pending Code Generation
