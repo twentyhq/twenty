@@ -15,9 +15,7 @@ export type SeedOperations = {
   viewFieldsToCreate: UniversalFlatViewField[];
 };
 
-export type SeedOperationsByApplication = Map<string, SeedOperations>;
-
-export const computeSeedObjectDefaultViewOperationsByApplication = ({
+export const computeSeedObjectDefaultViewOperations = ({
   flatObjectMetadataMaps,
   flatViewMaps,
   flatViewFieldMaps,
@@ -27,30 +25,13 @@ export const computeSeedObjectDefaultViewOperationsByApplication = ({
   'flatObjectMetadataMaps' | 'flatViewMaps' | 'flatViewFieldMaps'
 > & {
   seededViewApplicationUniversalIdentifier: string;
-}): SeedOperationsByApplication => {
-  const seedOperationsByApplication: SeedOperationsByApplication = new Map();
-
-  const getApplicationBucket = (applicationUniversalIdentifier: string) => {
-    const existingBucket = seedOperationsByApplication.get(
-      applicationUniversalIdentifier,
-    );
-
-    if (isDefined(existingBucket)) {
-      return existingBucket;
-    }
-
-    const newBucket: SeedOperations = {
-      viewsToCreate: [],
-      viewFieldsToCreate: [],
-    };
-
-    seedOperationsByApplication.set(
-      applicationUniversalIdentifier,
-      newBucket,
-    );
-
-    return newBucket;
+}): SeedOperations => {
+  const seedOperations: SeedOperations = {
+    viewsToCreate: [],
+    viewFieldsToCreate: [],
   };
+
+  const createdAt = new Date().toISOString();
 
   const flatIndexViewByObjectUniversalIdentifier = new Map<
     string,
@@ -99,12 +80,8 @@ export const computeSeedObjectDefaultViewOperationsByApplication = ({
       existingSeededFlatView?.viewFieldUniversalIdentifiers ?? [],
     );
 
-    const applicationBucket = getApplicationBucket(
-      seededViewApplicationUniversalIdentifier,
-    );
-
     if (!isDefined(existingSeededFlatView)) {
-      applicationBucket.viewsToCreate.push(
+      seedOperations.viewsToCreate.push(
         computeSeededObjectViewToCreate({
           objectMetadata: flatObjectMetadata,
           applicationUniversalIdentifier:
@@ -138,13 +115,13 @@ export const computeSeedObjectDefaultViewOperationsByApplication = ({
         continue;
       }
 
-      applicationBucket.viewFieldsToCreate.push({
+      seedOperations.viewFieldsToCreate.push({
         fieldMetadataUniversalIdentifier:
           flatViewField.fieldMetadataUniversalIdentifier,
         viewUniversalIdentifier: seededViewUniversalIdentifier,
         viewFieldGroupUniversalIdentifier: null,
-        createdAt: flatViewField.createdAt,
-        updatedAt: flatViewField.updatedAt,
+        createdAt,
+        updatedAt: createdAt,
         deletedAt: null,
         universalIdentifier: seededViewFieldUniversalIdentifier,
         isVisible: flatViewField.isVisible,
@@ -160,5 +137,5 @@ export const computeSeedObjectDefaultViewOperationsByApplication = ({
     }
   }
 
-  return seedOperationsByApplication;
+  return seedOperations;
 };

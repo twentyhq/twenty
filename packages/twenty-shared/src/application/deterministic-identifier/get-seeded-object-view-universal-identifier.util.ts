@@ -1,6 +1,6 @@
 import { computeDeterministicUuid } from '@/application/deterministic-identifier/compute-deterministic-uuid.util';
 
-export const SEEDED_OBJECT_VIEW_KEY = 'SEEDED_DEFAULT' as const;
+const SEEDED_OBJECT_VIEW_KEY = 'SEEDED_DEFAULT' as const;
 
 export const getSeededObjectViewUniversalIdentifier = ({
   objectMetadataApplicationUniversalIdentifier,

@@ -2,8 +2,8 @@ import { Command } from 'nest-commander';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import {
-  type SeedOperationsByApplication,
-  computeSeedObjectDefaultViewOperationsByApplication,
+  type SeedOperations,
+  computeSeedObjectDefaultViewOperations,
 } from 'src/database/commands/upgrade-version-command/2-40/utils/compute-seed-object-default-view-operations.util';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
@@ -47,7 +47,7 @@ export class SeedObjectDefaultViewCommand extends ProvisionedWorkspaceCommandRun
         { workspaceId },
       );
 
-    const seedOperationsByApplication = computeSeedObjectDefaultViewOperationsByApplication({
+    const seedOperations = computeSeedObjectDefaultViewOperations({
       flatObjectMetadataMaps,
       flatViewMaps,
       flatViewFieldMaps,
@@ -55,13 +55,9 @@ export class SeedObjectDefaultViewCommand extends ProvisionedWorkspaceCommandRun
         workspaceCustomFlatApplication.universalIdentifier,
     });
 
-    const totalCreateCount = [...seedOperationsByApplication.values()].reduce(
-      (count, operations) =>
-        count +
-        operations.viewsToCreate.length +
-        operations.viewFieldsToCreate.length,
-      0,
-    );
+    const totalCreateCount =
+      seedOperations.viewsToCreate.length +
+      seedOperations.viewFieldsToCreate.length;
 
     if (totalCreateCount === 0) {
       this.logger.log(
@@ -72,41 +68,41 @@ export class SeedObjectDefaultViewCommand extends ProvisionedWorkspaceCommandRun
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Seeding ${totalCreateCount} default-view entit(ies) for workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Seeding ${totalCreateCount} default-view entities for workspace ${workspaceId}`,
     );
 
     if (isDryRun) {
       return;
     }
 
-    await this.runSeedMigrations({ workspaceId, seedOperationsByApplication });
+    await this.runSeedMigrations({
+      workspaceId,
+      seedOperations,
+      applicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
+    });
 
     this.logger.log(
-      `Seeded ${totalCreateCount} default-view entit(ies) for workspace ${workspaceId}`,
+      `Seeded ${totalCreateCount} default-view entities for workspace ${workspaceId}`,
     );
   }
 
   private async runSeedMigrations({
     workspaceId,
-    seedOperationsByApplication,
+    seedOperations,
+    applicationUniversalIdentifier,
   }: {
     workspaceId: string;
-    seedOperationsByApplication: SeedOperationsByApplication;
+    seedOperations: SeedOperations;
+    applicationUniversalIdentifier: string;
   }): Promise<void> {
-    for (const [
-      applicationUniversalIdentifier,
-      { viewsToCreate },
-    ] of seedOperationsByApplication.entries()) {
-      if (viewsToCreate.length === 0) {
-        continue;
-      }
-
+    if (seedOperations.viewsToCreate.length > 0) {
       await this.runSeedMigration({
         workspaceId,
         applicationUniversalIdentifier,
         allFlatEntityOperationByMetadataName: {
           view: {
-            flatEntityToCreate: viewsToCreate,
+            flatEntityToCreate: seedOperations.viewsToCreate,
             flatEntityToDelete: [],
             flatEntityToUpdate: [],
           },
@@ -114,20 +110,13 @@ export class SeedObjectDefaultViewCommand extends ProvisionedWorkspaceCommandRun
       });
     }
 
-    for (const [
-      applicationUniversalIdentifier,
-      { viewFieldsToCreate },
-    ] of seedOperationsByApplication.entries()) {
-      if (viewFieldsToCreate.length === 0) {
-        continue;
-      }
-
+    if (seedOperations.viewFieldsToCreate.length > 0) {
       await this.runSeedMigration({
         workspaceId,
         applicationUniversalIdentifier,
         allFlatEntityOperationByMetadataName: {
           viewField: {
-            flatEntityToCreate: viewFieldsToCreate,
+            flatEntityToCreate: seedOperations.viewFieldsToCreate,
             flatEntityToDelete: [],
             flatEntityToUpdate: [],
           },
