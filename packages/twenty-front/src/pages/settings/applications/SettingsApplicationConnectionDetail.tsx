@@ -389,7 +389,7 @@ export const SettingsApplicationConnectionDetail = () => {
             />
             <ConfirmationModal
               modalInstanceId={changeVisibilityModalId}
-              title={t`Change visibility?`}
+              title={t`Share with workspace?`}
               subtitle={
                 <Trans>
                   Sharing this connection with the workspace requires
@@ -397,7 +397,7 @@ export const SettingsApplicationConnectionDetail = () => {
                 </Trans>
               }
               onConfirmClick={handleShareWithWorkspace}
-              confirmButtonText={t`Reconnect and change visibility`}
+              confirmButtonText={t`Reconnect and share`}
               confirmButtonAccent="blue"
             />
           </>

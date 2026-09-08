@@ -176,7 +176,7 @@ describe('SettingsApplicationConnectionDetail', () => {
 
     fireEvent.click(
       screen.getByRole('button', {
-        name: 'Reconnect and change visibility',
+        name: 'Reconnect and share',
       }),
     );
 
