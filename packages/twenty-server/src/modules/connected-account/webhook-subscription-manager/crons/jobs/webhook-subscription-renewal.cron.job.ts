@@ -195,20 +195,17 @@ export class WebhookSubscriptionRenewalCronJob {
       return;
     }
 
-    for (const { channelType, channel } of revocations) {
-      await this.webhookQueueService.add<RevokeWebhookSubscriptionJobData>(
-        RevokeWebhookSubscriptionJob.name,
-        {
+    await this.webhookQueueService.bulkAdd<RevokeWebhookSubscriptionJobData>(
+      RevokeWebhookSubscriptionJob.name,
+      revocations.map(({ channelType, channel }) => ({
+        data: {
           channelType,
           channelId: channel.id,
           workspaceId: channel.workspaceId,
         },
-        {
-          id: `${RevokeWebhookSubscriptionJob.name}-${channelType}-${channel.id}`,
-          retryLimit: WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT,
-        },
-      );
-    }
+      })),
+      { retryLimit: WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT },
+    );
 
     this.logger.log(
       `Enqueued ${revocations.length} webhook subscription revocations for workspaces that are no longer active`,
