@@ -15,10 +15,12 @@ import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CLICK_TRACKING_TOKEN_FORMAT } from 'src/engine/core-modules/emailing-domain/constants/click-tracking-token.constant';
+import { type MessageCampaignLinkEntity } from 'src/engine/core-modules/emailing-domain/message-campaign-link.entity';
 import { ClickTrackingTokenService } from 'src/engine/core-modules/emailing-domain/services/click-tracking-token.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { MessageCampaignLinkService } from 'src/modules/emailing/services/message-campaign-link.service';
+import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 
 const FOUND_STATUS_CODE = 302;
 
@@ -30,6 +32,7 @@ export class ClickTrackingController {
   constructor(
     private readonly clickTrackingTokenService: ClickTrackingTokenService,
     private readonly messageCampaignLinkService: MessageCampaignLinkService,
+    private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
   ) {}
 
   @Get(':token')
@@ -48,19 +51,29 @@ export class ClickTrackingController {
       throw new NotFoundException('Unknown tracked link');
     }
 
-    this.messageCampaignLinkService
-      .recordClick({
-        workspaceId: link.workspaceId,
-        messageCampaignLinkId: link.id,
-        messageId: payload.messageId,
-      })
-      .catch((error) => {
-        this.logger.error(
-          `Failed to record click on link ${link.id} of workspace ${link.workspaceId}: ${error}`,
-        );
-      });
+    this.recordClick(link, payload.messageId).catch((error) => {
+      this.logger.error(
+        `Failed to record click on link ${link.id} of workspace ${link.workspaceId}: ${error}`,
+      );
+    });
 
     return { url: link.url, statusCode: FOUND_STATUS_CODE };
+  }
+
+  private async recordClick(
+    link: MessageCampaignLinkEntity,
+    messageId: string,
+  ): Promise<void> {
+    await this.messageCampaignLinkService.recordClick({
+      workspaceId: link.workspaceId,
+      messageCampaignLinkId: link.id,
+      messageId,
+    });
+
+    await this.messageCampaignStatisticsService.scheduleRefresh({
+      workspaceId: link.workspaceId,
+      campaignId: link.messageCampaignId,
+    });
   }
 
   private verifyTokenOrThrow(token: string) {
