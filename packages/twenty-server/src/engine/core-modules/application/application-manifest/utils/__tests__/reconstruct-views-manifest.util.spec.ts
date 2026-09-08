@@ -1091,14 +1091,18 @@ describe('reconstructViewsManifest', () => {
           }),
           buildFlatView({
             viewManifest: ZOO_PETS_VIEW_MANIFEST,
-            overrides: { name: 'Zoo animals' },
+            overrides: {
+              '20202020-aaaa-4aaa-8aaa-000000000001': { name: 'Zoo animals' },
+            },
           }),
         ],
         viewFields: [
           buildFlatViewField({
             viewFieldManifest: NAME_VIEW_FIELD_MANIFEST,
             viewUniversalIdentifier: ALL_PETS_VIEW_UID,
-            overrides: { isVisible: false },
+            overrides: {
+              '20202020-aaaa-4aaa-8aaa-000000000001': { isVisible: false },
+            },
           }),
           buildFlatViewField({
             viewFieldManifest: AGE_VIEW_FIELD_MANIFEST,
