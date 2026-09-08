@@ -1,6 +1,7 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
 import {
+  FieldDisplayMode,
   PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
@@ -121,5 +122,76 @@ describe('filterVisibleWidgets', () => {
     });
 
     expect(widgets).toHaveLength(originalLength);
+  });
+
+  describe('hiddenFieldMetadataIdsOrNames', () => {
+    const createMockFieldWidget = (
+      id: string,
+      fieldMetadataId: string,
+    ): PageLayoutTab['widgets'][0] => ({
+      ...createMockWidget(id),
+      type: WidgetType.FIELD,
+      configuration: {
+        __typename: 'FieldConfiguration',
+        configurationType: WidgetConfigurationType.FIELD,
+        fieldMetadataId,
+        fieldDisplayMode: FieldDisplayMode.CARD,
+      },
+    });
+
+    it('should filter out a field widget referencing a hidden field by id', () => {
+      const result = filterVisibleWidgets({
+        widgets: [
+          createMockFieldWidget('widget-1', 'field-id-1'),
+          createMockFieldWidget('widget-2', 'field-id-2'),
+        ],
+        context: {
+          device: 'DESKTOP',
+          selectedRecords: [],
+          hiddenFieldMetadataIdsOrNames: ['field-id-1'],
+        },
+      });
+
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('widget-2');
+    });
+
+    it('should filter out a field widget referencing a hidden field by name', () => {
+      const result = filterVisibleWidgets({
+        widgets: [createMockFieldWidget('widget-1', 'workflow')],
+        context: {
+          device: 'DESKTOP',
+          selectedRecords: [],
+          hiddenFieldMetadataIdsOrNames: ['field-id-1', 'workflow'],
+        },
+      });
+
+      expect(result).toHaveLength(0);
+    });
+
+    it('should keep non-field widgets referencing a hidden name', () => {
+      const result = filterVisibleWidgets({
+        widgets: [createMockWidget('widget-1')],
+        context: {
+          device: 'DESKTOP',
+          selectedRecords: [],
+          hiddenFieldMetadataIdsOrNames: ['workflow'],
+        },
+      });
+
+      expect(result).toHaveLength(1);
+    });
+
+    it('should keep every field widget when nothing is hidden', () => {
+      const result = filterVisibleWidgets({
+        widgets: [
+          createMockFieldWidget('widget-1', 'field-id-1'),
+          createMockFieldWidget('widget-2', 'field-id-2'),
+        ],
+        context: { device: 'DESKTOP', selectedRecords: [] },
+      });
+
+      expect(result).toHaveLength(2);
+    });
   });
 });
