@@ -76,11 +76,20 @@ const promoteDelayedJobs = async (queueName: string): Promise<number> => {
     (job) => (job.delay ?? 0) <= MAX_PROMOTABLE_DELAY_MS,
   );
 
+  let promotedJobCount = 0;
+
   for (const promotableJob of promotableJobs) {
-    await promotableJob.promote().catch(() => undefined);
+    const hasBeenPromoted = await promotableJob
+      .promote()
+      .then(() => true)
+      .catch(() => false);
+
+    if (hasBeenPromoted) {
+      promotedJobCount += 1;
+    }
   }
 
-  return promotableJobs.length;
+  return promotedJobCount;
 };
 
 const getActiveJobsFingerprint = async (
