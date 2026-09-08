@@ -315,7 +315,10 @@ export class CalendarWebhookSubscriptionService {
     );
 
     if (!hasDeletedSubscription) {
-      return;
+      throw new WebhookSubscriptionDriverException(
+        `Failed to delete the calendar webhook subscription for channel ${calendarChannelId}`,
+        WebhookSubscriptionDriverExceptionCode.UNKNOWN,
+      );
     }
 
     await this.webhookSubscriptionStatusService.markAsExpired(

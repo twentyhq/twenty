@@ -315,7 +315,10 @@ export class MessagingWebhookSubscriptionService {
     );
 
     if (!hasDeletedSubscription) {
-      return;
+      throw new WebhookSubscriptionDriverException(
+        `Failed to delete the messaging webhook subscription for channel ${messageChannelId}`,
+        WebhookSubscriptionDriverExceptionCode.UNKNOWN,
+      );
     }
 
     await this.webhookSubscriptionStatusService.markAsExpired(

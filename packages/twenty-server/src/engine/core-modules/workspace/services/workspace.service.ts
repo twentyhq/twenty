@@ -531,11 +531,11 @@ export class WorkspaceService {
     const hasBeenSuspended = isDefined(affected) && affected > 0;
 
     if (hasBeenSuspended) {
-      await this.coreEntityCacheService.invalidate('workspaceEntity', id);
-
       this.eventEmitter.emit(WORKSPACE_SUSPENDED_EVENT, {
         workspaceId: id,
       } satisfies WorkspaceSuspendedEvent);
+
+      await this.coreEntityCacheService.invalidate('workspaceEntity', id);
     }
 
     return hasBeenSuspended;
@@ -560,11 +560,11 @@ export class WorkspaceService {
     const hasBeenReactivated = isDefined(affected) && affected > 0;
 
     if (hasBeenReactivated) {
-      await this.coreEntityCacheService.invalidate('workspaceEntity', id);
-
       this.eventEmitter.emit(WORKSPACE_REACTIVATED_EVENT, {
         workspaceId: id,
       } satisfies WorkspaceReactivatedEvent);
+
+      await this.coreEntityCacheService.invalidate('workspaceEntity', id);
     }
 
     return hasBeenReactivated;

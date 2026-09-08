@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { WORKSPACE_REACTIVATED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-reactivated-event.constant';
 import { WORKSPACE_SUSPENDED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-suspended-event.constant';
 import { type WorkspaceReactivatedEvent } from 'src/engine/core-modules/workspace/types/workspace-reactivated-event.type';
@@ -11,23 +12,30 @@ import { WorkspaceWebhookSubscriptionService } from 'src/modules/connected-accou
 export class WebhookSubscriptionWorkspaceActivationListener {
   constructor(
     private readonly workspaceWebhookSubscriptionService: WorkspaceWebhookSubscriptionService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   @OnEvent(WORKSPACE_SUSPENDED_EVENT)
   async handleWorkspaceSuspended({
     workspaceId,
   }: WorkspaceSuspendedEvent): Promise<void> {
-    await this.workspaceWebhookSubscriptionService.enqueueRevocations(
-      workspaceId,
-    );
+    await this.workspaceWebhookSubscriptionService
+      .enqueueRevocations(workspaceId)
+      .catch((error) => this.captureListenerFailure(error, workspaceId));
   }
 
   @OnEvent(WORKSPACE_REACTIVATED_EVENT)
   async handleWorkspaceReactivated({
     workspaceId,
   }: WorkspaceReactivatedEvent): Promise<void> {
-    await this.workspaceWebhookSubscriptionService.enqueueCreations(
-      workspaceId,
-    );
+    await this.workspaceWebhookSubscriptionService
+      .enqueueCreations(workspaceId)
+      .catch((error) => this.captureListenerFailure(error, workspaceId));
+  }
+
+  private captureListenerFailure(error: unknown, workspaceId: string): void {
+    this.exceptionHandlerService.captureExceptions([error], {
+      workspace: { id: workspaceId },
+    });
   }
 }

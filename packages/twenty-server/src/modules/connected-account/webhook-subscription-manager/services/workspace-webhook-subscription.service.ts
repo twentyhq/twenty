@@ -14,6 +14,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-creation-retry-limit.constant';
+import { WEBHOOK_SUBSCRIPTION_JOB_BATCH_SIZE } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-job-batch-size.constant';
 import {
   CreateWebhookSubscriptionJob,
   type CreateWebhookSubscriptionJobData,
@@ -41,20 +42,12 @@ export class WorkspaceWebhookSubscriptionService {
   ) {}
 
   async enqueueRevocations(workspaceId: string): Promise<void> {
-    const channels = await this.findChannelsByWebhookSubscriptionStatus(
+    const channels = await this.findChannels({
       workspaceId,
-      LIVE_WEBHOOK_SUBSCRIPTION_STATUSES,
-    );
+      webhookSubscriptionStatuses: LIVE_WEBHOOK_SUBSCRIPTION_STATUSES,
+    });
 
-    if (channels.length === 0) {
-      return;
-    }
-
-    await this.webhookQueueService.bulkAdd<RevokeWebhookSubscriptionJobData>(
-      RevokeWebhookSubscriptionJob.name,
-      channels.map((data) => ({ data })),
-      { retryLimit: WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT },
-    );
+    await this.enqueueInBatches(RevokeWebhookSubscriptionJob.name, channels);
   }
 
   async enqueueCreations(workspaceId: string): Promise<void> {
@@ -66,30 +59,28 @@ export class WorkspaceWebhookSubscriptionService {
       return;
     }
 
-    const channels = await this.findChannelsByWebhookSubscriptionStatus(
+    const channels = await this.findChannels({
       workspaceId,
-      [WebhookSubscriptionStatus.EXPIRED],
-    );
+      webhookSubscriptionStatuses: [WebhookSubscriptionStatus.EXPIRED],
+      syncEnabledOnly: true,
+    });
 
-    if (channels.length === 0) {
-      return;
-    }
-
-    await this.webhookQueueService.bulkAdd<CreateWebhookSubscriptionJobData>(
-      CreateWebhookSubscriptionJob.name,
-      channels.map((data) => ({ data })),
-      { retryLimit: WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT },
-    );
+    await this.enqueueInBatches(CreateWebhookSubscriptionJob.name, channels);
   }
 
-  private async findChannelsByWebhookSubscriptionStatus(
-    workspaceId: string,
-    webhookSubscriptionStatuses: WebhookSubscriptionStatus[],
-  ): Promise<RevokeWebhookSubscriptionJobData[]> {
+  private async findChannels({
+    workspaceId,
+    webhookSubscriptionStatuses,
+    syncEnabledOnly = false,
+  }: {
+    workspaceId: string;
+    webhookSubscriptionStatuses: WebhookSubscriptionStatus[];
+    syncEnabledOnly?: boolean;
+  }): Promise<RevokeWebhookSubscriptionJobData[]> {
     const where = {
       workspaceId,
-      isSyncEnabled: true,
       webhookSubscriptionStatus: In(webhookSubscriptionStatuses),
+      ...(syncEnabledOnly ? { isSyncEnabled: true } : {}),
     };
 
     const [messageChannels, calendarChannels] = await Promise.all([
@@ -109,5 +100,30 @@ export class WorkspaceWebhookSubscriptionService {
         workspaceId,
       })),
     ];
+  }
+
+  private async enqueueInBatches(
+    jobName: string,
+    channels: (
+      | RevokeWebhookSubscriptionJobData
+      | CreateWebhookSubscriptionJobData
+    )[],
+  ): Promise<void> {
+    for (
+      let batchStart = 0;
+      batchStart < channels.length;
+      batchStart += WEBHOOK_SUBSCRIPTION_JOB_BATCH_SIZE
+    ) {
+      const batch = channels.slice(
+        batchStart,
+        batchStart + WEBHOOK_SUBSCRIPTION_JOB_BATCH_SIZE,
+      );
+
+      await this.webhookQueueService.bulkAdd(
+        jobName,
+        batch.map((data) => ({ data })),
+        { retryLimit: WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT },
+      );
+    }
   }
 }
