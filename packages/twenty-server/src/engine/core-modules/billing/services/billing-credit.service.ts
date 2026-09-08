@@ -2,7 +2,6 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 
-import { addDays } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type BillingCreditGrantEntity } from 'src/engine/core-modules/billing/entities/billing-credit-grant.entity';
@@ -14,15 +13,9 @@ import { BillingUsageCacheService } from 'src/engine/core-modules/billing/servic
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { buildBillingCreditStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-credit-state-lock-key.util';
-import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-
-// Used when a workspace has no subscription yet, which happens for rewards
-// granted during signup. The next period transition re-emits the unspent part
-// aligned on the real billing period.
-const PROVISIONAL_GRANT_VALIDITY_IN_DAYS = 31;
 
 type GrantCreditsParams = {
   workspaceId: string;
@@ -32,7 +25,9 @@ type GrantCreditsParams = {
   grantedByUserId?: string | null;
   idempotencyKey?: string | null;
   effectiveAt?: Date;
-  expiresAt?: Date;
+  // Only set for a deliberately time-boxed grant. Left out, the credits stay
+  // spendable until a period transition settles them.
+  expiresAt?: Date | null;
   sourceGrantId?: string | null;
 };
 
@@ -76,15 +71,10 @@ export class BillingCreditService {
         workspaceId,
       });
 
-    const { effectiveAt, expiresAt } = computeGrantValidity(
-      params,
-      subscription,
-    );
-
     const grant = await this.billingCreditGrantService.createGrant({
       ...params,
-      effectiveAt,
-      expiresAt,
+      effectiveAt: params.effectiveAt ?? new Date(),
+      expiresAt: params.expiresAt ?? null,
     });
 
     if (!isDefined(grant)) {
@@ -163,7 +153,7 @@ export class BillingCreditService {
     const revokedAtMs = (grant.revokedAt ?? new Date()).getTime();
     const wasActiveWhenRevoked =
       grant.effectiveAt.getTime() <= revokedAtMs &&
-      grant.expiresAt.getTime() > revokedAtMs;
+      (!isDefined(grant.expiresAt) || grant.expiresAt.getTime() > revokedAtMs);
 
     await this.refreshWorkspaceCreditState({
       workspaceId,
@@ -312,31 +302,3 @@ export class BillingCreditService {
 
 const buildRevocationAdjustmentKey = (grantId: string): string =>
   `revoke:${grantId}`;
-
-const computeGrantValidity = (
-  params: GrantCreditsParams,
-  subscription: BillingSubscriptionEntity | undefined,
-): { effectiveAt: Date; expiresAt: Date } => {
-  const effectiveAt = params.effectiveAt ?? new Date();
-
-  if (isDefined(params.expiresAt)) {
-    return { effectiveAt, expiresAt: params.expiresAt };
-  }
-
-  // A lapsed subscription still carries the period that just ended, and that is
-  // exactly the workspace someone is most likely to be granting credits to.
-  // Falling back keeps the grant from expiring on creation.
-  const currentPeriodEnd = isDefined(subscription)
-    ? getBillingSubscriptionPeriod(subscription).periodEnd
-    : null;
-  const hasUsablePeriodEnd =
-    isDefined(currentPeriodEnd) &&
-    currentPeriodEnd.getTime() > effectiveAt.getTime();
-
-  return {
-    effectiveAt,
-    expiresAt: hasUsablePeriodEnd
-      ? currentPeriodEnd
-      : addDays(effectiveAt, PROVISIONAL_GRANT_VALIDITY_IN_DAYS),
-  };
-};

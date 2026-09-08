@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
-import { addMonths, startOfMonth } from 'date-fns';
+import { addMonths, differenceInCalendarDays, startOfMonth } from 'date-fns';
 import request from 'supertest';
 import {
   getBillingUsageCacheService,
@@ -28,6 +28,7 @@ const GRANT_MUTATION = `
     $amount: Float!
     $type: BillingCreditGrantType!
     $reason: String
+    $expiresInDays: Int
     $clientOperationId: UUID!
   ) {
     grantWorkspaceCredits(
@@ -35,12 +36,14 @@ const GRANT_MUTATION = `
       amount: $amount
       type: $type
       reason: $reason
+      expiresInDays: $expiresInDays
       clientOperationId: $clientOperationId
     ) {
       id
       amount
       type
       reason
+      expiresAt
       isActive
     }
   }
@@ -115,6 +118,56 @@ describe('Admin credit grant and revoke (integration)', () => {
       reason: 'Outage on the 3rd',
       revokedAt: null,
     });
+  });
+
+  it('leaves a granted amount without an expiry so no missed transition can drop it', async () => {
+    const response = await grantCredits({
+      workspaceId,
+      amount: 2,
+      type: BillingCreditGrantType.COMPENSATION,
+      reason: null,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.grantWorkspaceCredits.expiresAt).toBeNull();
+
+    const grants = await listCreditGrants(workspaceId);
+
+    expect(grants[0].expiresAt).toBeNull();
+  });
+
+  it('expires a time-boxed grant the requested number of days out', async () => {
+    const response = await grantCredits({
+      workspaceId,
+      amount: 2,
+      type: BillingCreditGrantType.SALES,
+      reason: 'Pilot credits',
+      expiresInDays: 30,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+
+    const [storedGrant] = await listCreditGrants(workspaceId);
+    const daysUntilExpiry = differenceInCalendarDays(
+      new Date(storedGrant.expiresAt as Date),
+      new Date(),
+    );
+
+    expect(daysUntilExpiry).toBe(30);
+    expect(response.body.data.grantWorkspaceCredits.isActive).toBe(true);
+  });
+
+  it('refuses an expiry beyond the accepted range', async () => {
+    const response = await grantCredits({
+      workspaceId,
+      amount: 2,
+      type: BillingCreditGrantType.COMPENSATION,
+      reason: null,
+      expiresInDays: 100_000,
+    });
+
+    expect(response.body.errors).toBeDefined();
+    expect(await listCreditGrants(workspaceId)).toHaveLength(0);
   });
 
   it('adds the granted amount to a warm available-credits counter', async () => {

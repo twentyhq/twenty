@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { addDays } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
@@ -58,6 +59,7 @@ export class AdminPanelBillingService {
     amount,
     type,
     reason,
+    expiresInDays,
     clientOperationId,
     grantedByUserId,
   }: {
@@ -65,6 +67,7 @@ export class AdminPanelBillingService {
     amount: number;
     type: BillingCreditGrantType;
     reason?: string;
+    expiresInDays?: number;
     clientOperationId: string;
     grantedByUserId: string;
   }): Promise<AdminPanelWorkspaceCreditGrantDTO> {
@@ -102,6 +105,9 @@ export class AdminPanelBillingService {
       amountMicro,
       type,
       reason,
+      expiresAt: isDefined(expiresInDays)
+        ? addDays(new Date(), expiresInDays)
+        : null,
       idempotencyKey,
       grantedByUserId,
     });
@@ -169,11 +175,12 @@ export class AdminPanelBillingService {
       effectiveAt: grant.effectiveAt,
       expiresAt: grant.expiresAt,
       revokedAt: grant.revokedAt,
+      sourceGrantId: grant.sourceGrantId,
       reason: grant.reason,
       isActive:
         !isDefined(grant.revokedAt) &&
         grant.effectiveAt.getTime() <= now &&
-        grant.expiresAt.getTime() > now,
+        (!isDefined(grant.expiresAt) || grant.expiresAt.getTime() > now),
       createdAt: grant.createdAt,
     };
   }

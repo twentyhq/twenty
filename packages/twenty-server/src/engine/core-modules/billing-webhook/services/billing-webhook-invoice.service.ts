@@ -23,7 +23,10 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { ResourceCreditService } from 'src/engine/core-modules/billing/services/resource-credit.service';
 import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/services/stripe-invoice.service';
-import { deriveBillingPeriodTransition } from 'src/engine/core-modules/billing/utils/derive-billing-period-transition.util';
+import {
+  deriveBillingPeriodTransition,
+  resolveBillingTransitionBoundary,
+} from 'src/engine/core-modules/billing/utils/derive-billing-period-transition.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const SUBSCRIPTION_CYCLE_BILLING_REASON = 'subscription_cycle';
@@ -107,23 +110,14 @@ export class BillingWebhookInvoiceService {
       isDefined(trialEnd) &&
       Math.abs(periodStart - trialEnd) <= TRIAL_END_TOLERANCE_SECONDS;
 
-    await this.processRollover({
-      subscription,
-      invoicePeriodStart: new Date(periodStart * 1000),
-      invoicePeriodEnd: new Date(periodEnd * 1000),
-      isFirstPeriodAfterTrial,
-    });
+    await this.processRollover({ subscription, isFirstPeriodAfterTrial });
   }
 
   private async processRollover({
     subscription,
-    invoicePeriodStart,
-    invoicePeriodEnd,
     isFirstPeriodAfterTrial,
   }: {
     subscription: BillingSubscriptionEntity;
-    invoicePeriodStart: Date;
-    invoicePeriodEnd: Date;
     isFirstPeriodAfterTrial: boolean;
   }): Promise<void> {
     const workspaceExists = await this.workspaceRepository.exists({
@@ -141,34 +135,41 @@ export class BillingWebhookInvoiceService {
         subscription.id,
       );
 
+    // Skipping the transition leaves every grant of this workspace to reach its
+    // expiry with nothing carrying the unspent part forward, so it is the one
+    // early return here that costs the workspace credits it was given.
     if (!isDefined(params)) {
+      this.logger.error(
+        `Skipping credit rollover for workspace ${subscription.workspaceId}: subscription ${subscription.id} carries no priced resource credit item`,
+      );
+
       return;
     }
+
+    const boundary = resolveBillingTransitionBoundary({
+      observedAt: new Date(),
+      subscriptionCurrentPeriodStart: subscription.currentPeriodStart,
+      subscriptionCurrentPeriodEnd: subscription.currentPeriodEnd,
+    });
 
     // Only needed while subscriptions that predate previousPeriodStart are
     // still transitioning for the first time.
     const ledgerPeriodStart =
       await this.billingCreditGrantService.findPeriodStartBefore({
         workspaceId: subscription.workspaceId,
-        boundary: invoicePeriodStart,
+        boundary,
       });
 
-    const {
-      closingPeriodStart,
-      closingPeriodEnd,
-      nextPeriodStart,
-      nextPeriodEnd,
-    } = deriveBillingPeriodTransition({
-      invoicePeriodStart,
-      invoicePeriodEnd,
-      subscriptionCurrentPeriodStart: subscription.currentPeriodStart,
-      subscriptionCurrentPeriodEnd: subscription.currentPeriodEnd,
-      subscriptionInterval: subscription.interval,
-      trialStart: subscription.trialStart,
-      isFirstPeriodAfterTrial,
-      subscriptionPreviousPeriodStart: subscription.previousPeriodStart,
-      ledgerPeriodStart,
-    });
+    const { closingPeriodStart, closingPeriodEnd, nextPeriodStart } =
+      deriveBillingPeriodTransition({
+        boundary,
+        subscriptionCurrentPeriodStart: subscription.currentPeriodStart,
+        subscriptionInterval: subscription.interval,
+        trialStart: subscription.trialStart,
+        isFirstPeriodAfterTrial,
+        subscriptionPreviousPeriodStart: subscription.previousPeriodStart,
+        ledgerPeriodStart,
+      });
 
     // Credits earned during the trial follow the workspace into its first paid
     // period, so the trial closes like any other period. Its allowance comes
@@ -183,7 +184,6 @@ export class BillingWebhookInvoiceService {
       closingPeriodEnd,
       closingAllowanceMicro,
       nextPeriodStart,
-      nextPeriodEnd,
       nextAllowanceMicro: params.tierQuantity,
     });
   }
