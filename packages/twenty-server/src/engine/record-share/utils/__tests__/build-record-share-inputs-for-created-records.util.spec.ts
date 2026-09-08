@@ -5,7 +5,7 @@ import {
   RecordShareRowCause,
 } from 'twenty-shared/types';
 
-import { buildRecordShareInputsForCreatedRecords } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/build-record-share-inputs-for-created-records.util';
+import { buildRecordShareInputsForCreatedRecords } from 'src/engine/record-share/utils/build-record-share-inputs-for-created-records.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 
 const OBJECT_METADATA_ID = 'object-metadata-1';
