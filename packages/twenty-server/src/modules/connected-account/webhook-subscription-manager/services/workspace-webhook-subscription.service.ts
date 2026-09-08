@@ -13,7 +13,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-creation-retry-limit.constant';
+import { WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-job-retry-limit.constant';
 import { WEBHOOK_SUBSCRIPTION_JOB_BATCH_SIZE } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-job-batch-size.constant';
 import {
   CreateWebhookSubscriptionJob,
@@ -122,7 +122,7 @@ export class WorkspaceWebhookSubscriptionService {
       await this.webhookQueueService.bulkAdd(
         jobName,
         batch.map((data) => ({ data })),
-        { retryLimit: WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT },
+        { retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT },
       );
     }
   }

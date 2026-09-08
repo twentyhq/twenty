@@ -13,6 +13,7 @@ import { WebhookSubscriptionRenewalCronCommand } from 'src/modules/connected-acc
 import { CreateWebhookSubscriptionJob } from 'src/modules/connected-account/webhook-subscription-manager/jobs/create-webhook-subscription.job';
 import { RenewWebhookSubscriptionJob } from 'src/modules/connected-account/webhook-subscription-manager/jobs/renew-webhook-subscription.job';
 import { RevokeWebhookSubscriptionJob } from 'src/modules/connected-account/webhook-subscription-manager/jobs/revoke-webhook-subscription.job';
+import { SyncWorkspaceWebhookSubscriptionsJob } from 'src/modules/connected-account/webhook-subscription-manager/jobs/sync-workspace-webhook-subscriptions.job';
 import { WebhookSubscriptionRenewalCronJob } from 'src/modules/connected-account/webhook-subscription-manager/crons/jobs/webhook-subscription-renewal.cron.job';
 import { WebhookSubscriptionChannelDeletedListener } from 'src/modules/connected-account/webhook-subscription-manager/listeners/webhook-subscription-channel-deleted.listener';
 import { CalendarWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service';
@@ -51,6 +52,7 @@ import { WebhookSubscriptionManagerModule } from 'src/modules/connected-account/
     CreateWebhookSubscriptionJob,
     RenewWebhookSubscriptionJob,
     RevokeWebhookSubscriptionJob,
+    SyncWorkspaceWebhookSubscriptionsJob,
     CreateWebhookSubscriptionForConnectedAccountCommand,
   ],
   exports: [

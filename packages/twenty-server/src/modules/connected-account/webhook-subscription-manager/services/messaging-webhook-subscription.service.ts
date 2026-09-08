@@ -9,7 +9,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -33,7 +32,6 @@ export class MessagingWebhookSubscriptionService {
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly workspaceActivationService: WorkspaceActivationService,
     private readonly webhookSubscriptionDriverFactory: WebhookSubscriptionDriverFactory,
-    private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly metricsService: MetricsService,
     private readonly webhookSubscriptionStatusService: WebhookSubscriptionStatusService,
     private readonly webhookSubscriptionExceptionHandlerService: WebhookSubscriptionExceptionHandlerService,
@@ -243,13 +241,13 @@ export class MessagingWebhookSubscriptionService {
   async deleteSubscription(
     messageChannelId: string,
     workspaceId: string,
-  ): Promise<boolean> {
+  ): Promise<void> {
     const messageChannel = await this.messageChannelRepository.findOne({
       where: { id: messageChannelId, workspaceId },
     });
 
     if (!isDefined(messageChannel)) {
-      return true;
+      return;
     }
 
     const connectedAccount = await this.connectedAccountRepository.findOne({
@@ -260,7 +258,7 @@ export class MessagingWebhookSubscriptionService {
     });
 
     if (!isDefined(connectedAccount)) {
-      return true;
+      return;
     }
 
     const driver = this.webhookSubscriptionDriverFactory.getDriver(
@@ -275,14 +273,12 @@ export class MessagingWebhookSubscriptionService {
         amount: 1,
         attributes: this.buildMetricAttributes(connectedAccount.provider),
       });
-
-      return true;
     } catch (error) {
       if (
         error instanceof WebhookSubscriptionDriverException &&
         error.code === WebhookSubscriptionDriverExceptionCode.NOT_FOUND
       ) {
-        return true;
+        return;
       }
 
       this.metricsService.incrementCounterBy({
@@ -291,11 +287,7 @@ export class MessagingWebhookSubscriptionService {
         attributes: this.buildMetricAttributes(connectedAccount.provider),
       });
 
-      this.exceptionHandlerService.captureExceptions([error], {
-        workspace: { id: messageChannel.workspaceId },
-      });
-
-      return false;
+      throw error;
     }
   }
 
@@ -309,17 +301,7 @@ export class MessagingWebhookSubscriptionService {
       return;
     }
 
-    const hasDeletedSubscription = await this.deleteSubscription(
-      messageChannelId,
-      workspaceId,
-    );
-
-    if (!hasDeletedSubscription) {
-      throw new WebhookSubscriptionDriverException(
-        `Failed to delete the messaging webhook subscription for channel ${messageChannelId}`,
-        WebhookSubscriptionDriverExceptionCode.UNKNOWN,
-      );
-    }
+    await this.deleteSubscription(messageChannelId, workspaceId);
 
     await this.webhookSubscriptionStatusService.markAsExpired(
       WebhookSubscriptionChannelType.MESSAGING,
