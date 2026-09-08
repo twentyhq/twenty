@@ -2,25 +2,21 @@ import { type CallRecordingPlaybackMedia } from '@/page-layout/widgets/call-reco
 import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
 import { isNonEmptyString } from '@sniptt/guards';
 
+const PLAYBACK_MEDIA_PRIORITY = ['video', 'audio'] as const;
+
 export const getCallRecordingPlaybackMedia = (
   callRecording:
     | Pick<WidgetCallRecordingCandidate, 'video' | 'audio'>
     | undefined,
 ): CallRecordingPlaybackMedia | undefined => {
-  const videoUrl = callRecording?.video?.find((videoFile) =>
-    isNonEmptyString(videoFile.url?.trim()),
-  )?.url;
+  for (const kind of PLAYBACK_MEDIA_PRIORITY) {
+    const url = callRecording?.[kind]?.find((file) =>
+      isNonEmptyString(file.url?.trim()),
+    )?.url;
 
-  if (isNonEmptyString(videoUrl)) {
-    return { url: videoUrl, kind: 'video' };
-  }
-
-  const audioUrl = callRecording?.audio?.find((audioFile) =>
-    isNonEmptyString(audioFile.url?.trim()),
-  )?.url;
-
-  if (isNonEmptyString(audioUrl)) {
-    return { url: audioUrl, kind: 'audio' };
+    if (isNonEmptyString(url)) {
+      return { url, kind };
+    }
   }
 
   return undefined;

@@ -588,7 +588,7 @@ export const WithVideoInteractions: Story = {
   },
 };
 
-export const WithAudio: Story = {
+const AUDIO_STORY_CONFIGURATION = {
   args: {
     callRecording: audioCallRecording,
     loading: false,
@@ -611,6 +611,10 @@ export const WithAudio: Story = {
       ],
     },
   },
+} satisfies Story;
+
+export const WithAudio: Story = {
+  ...AUDIO_STORY_CONFIGURATION,
   play: async ({ canvasElement, userEvent }) => {
     const canvas = within(canvasElement);
     const transcriptRegion = await canvas.findByRole('region', {
@@ -670,7 +674,7 @@ export const WithAudio: Story = {
 };
 
 export const AudioSeekInteractions: Story = {
-  ...WithAudio,
+  ...AUDIO_STORY_CONFIGURATION,
   tags: ['!dev', '!autodocs'],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -736,9 +740,9 @@ export const AudioSeekInteractions: Story = {
 };
 
 export const AudioPlaybackError: Story = {
-  ...WithAudio,
+  ...AUDIO_STORY_CONFIGURATION,
   args: {
-    ...WithAudio.args,
+    ...AUDIO_STORY_CONFIGURATION.args,
     refetchCallRecording: fn(async () => {}),
   },
   play: async ({ args, canvasElement, userEvent }) => {
