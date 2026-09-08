@@ -1,4 +1,7 @@
-import { validateYarnLock } from '@/cli/utilities/build/manifest/utils/validate-yarn-lock';
+import {
+  validateYarnLock,
+  validateYarnLockFile,
+} from '@/cli/utilities/build/manifest/utils/validate-yarn-lock';
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -23,6 +26,16 @@ describe('validateYarnLock', () => {
     await writeFile(join(appPath, 'yarn.lock'), '__metadata:\n  version: 8\n');
 
     expect(await validateYarnLock(appPath)).toEqual([]);
+  });
+
+  it('should check the file it is given rather than the project lockfile', async () => {
+    await writeFile(join(appPath, 'yarn.lock'), '__metadata:\n  version: 8\n');
+    await writeFile(join(appPath, 'copy.lock'), '');
+
+    expect(await validateYarnLock(appPath)).toEqual([]);
+    expect(await validateYarnLockFile(join(appPath, 'copy.lock'))).toHaveLength(
+      1,
+    );
   });
 
   it('should refuse an empty lockfile and say how to regenerate it', async () => {

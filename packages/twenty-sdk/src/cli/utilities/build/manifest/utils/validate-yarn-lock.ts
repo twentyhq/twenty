@@ -2,9 +2,9 @@ import { pathExists } from '@/cli/utilities/file/fs-utils';
 import { stat } from 'node:fs/promises';
 import path from 'path';
 
-export const validateYarnLock = async (appPath: string): Promise<string[]> => {
-  const yarnLockPath = path.join(appPath, 'yarn.lock');
-
+export const validateYarnLockFile = async (
+  yarnLockPath: string,
+): Promise<string[]> => {
   if (!(await pathExists(yarnLockPath))) {
     return [];
   }
@@ -15,3 +15,6 @@ export const validateYarnLock = async (appPath: string): Promise<string[]> => {
       ]
     : [];
 };
+
+export const validateYarnLock = (appPath: string): Promise<string[]> =>
+  validateYarnLockFile(path.join(appPath, 'yarn.lock'));

@@ -3,7 +3,7 @@ import {
   type EsbuildWatcher,
 } from '@/cli/utilities/build/common/esbuild-watcher';
 import { FileUploadWatcher } from '@/cli/utilities/build/common/file-upload-watcher';
-import { validateYarnLock } from '@/cli/utilities/build/manifest/utils/validate-yarn-lock';
+import { validateYarnLockFile } from '@/cli/utilities/build/manifest/utils/validate-yarn-lock';
 import { FrontComponentsWatcher } from '@/cli/utilities/build/common/front-component-build/front-components-watcher';
 import { TscWatcher } from '@/cli/utilities/build/common/tsc-watcher';
 import { type TypecheckError } from '@/cli/utilities/build/common/typecheck-plugin';
@@ -17,6 +17,7 @@ import {
   type FrontComponentSharedDependenciesManifest,
 } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
+import { join } from 'node:path';
 
 export type FileBuiltEvent = {
   fileFolder: FileFolder;
@@ -251,16 +252,12 @@ export class StartWatchersOrchestratorStep {
   private async handleDependencyFileBuilt(
     event: FileBuiltEvent,
   ): Promise<void> {
-    const yarnLockErrors =
-      event.sourcePath === 'yarn.lock'
-        ? await validateYarnLock(this.state.appPath)
-        : [];
+    const isEmptyLockfileCopy =
+      event.sourcePath === 'yarn.lock' &&
+      (await validateYarnLockFile(join(this.state.appPath, event.builtPath)))
+        .length > 0;
 
-    if (yarnLockErrors.length > 0) {
-      this.handleFileBuildError(
-        yarnLockErrors.map((error) => ({ error, location: null })),
-      );
-
+    if (isEmptyLockfileCopy) {
       return;
     }
 
