@@ -14,7 +14,7 @@ import {
   widgetTypeSchema,
 } from 'src/modules/dashboard/tools/schemas/widget.schema';
 import {
-  type DashboardToolContext,
+  type DashboardToolContextWithPermissions,
   type DashboardToolDependencies,
 } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
 import { type WidgetConfigurationInput } from 'src/modules/dashboard/tools/types/widget-configuration-input.type';
@@ -56,7 +56,7 @@ const createCompleteDashboardSchema = z.object({
 
 export const createCreateCompleteDashboardTool = (
   deps: DashboardToolDependencies,
-  context: DashboardToolContext,
+  context: DashboardToolContextWithPermissions,
 ) => ({
   name: 'create_complete_dashboard' as const,
   description: `Create a dashboard with layout, tab, and widgets.
@@ -232,7 +232,7 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
 
 const createDashboardRecord = async (
   deps: DashboardToolDependencies,
-  context: DashboardToolContext,
+  context: DashboardToolContextWithPermissions,
   title: string,
   pageLayoutId: string,
 ): Promise<string> => {
@@ -241,9 +241,7 @@ const createDashboardRecord = async (
   return deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
     const dashboardRepository = deps.workspaceOrmManager.getRepository(
       'dashboard',
-      {
-        shouldBypassPermissionChecks: true,
-      },
+      context.rolePermissionConfig,
     );
 
     const position = await deps.recordPositionService.buildRecordPosition({
