@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
+import { fromArrayToUniqueKeyRecord } from 'twenty-shared/utils';
 
 import { computeSeededObjectViewFieldsToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-seeded-object-view-fields-to-create.util';
 import { computeSeededObjectViewToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-seeded-object-view-to-create.util';
