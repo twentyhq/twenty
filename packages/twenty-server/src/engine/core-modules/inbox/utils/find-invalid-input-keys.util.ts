@@ -38,13 +38,13 @@ export const findInvalidInputKeys = (
       const value = input[field.key];
 
       if (!isDefined(value)) {
-        return field.isRequired === true;
+        return field.isRequired;
       }
 
       // A blank string is an absent text; for any other type it is a value of
       // the wrong kind.
       if (typeof value === 'string' && value.trim() === '') {
-        return field.isRequired === true || !isTextFieldType(field.type);
+        return field.isRequired || !isTextFieldType(field.type);
       }
 
       return !isValueOfFieldType(field.type, value);
