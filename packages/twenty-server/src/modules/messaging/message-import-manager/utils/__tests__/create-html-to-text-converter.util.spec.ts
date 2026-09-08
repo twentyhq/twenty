@@ -1,7 +1,7 @@
 import { createHtmlToTextConverter } from 'src/modules/messaging/message-import-manager/utils/create-html-to-text-converter.util';
 
 describe('createHtmlToTextConverter', () => {
-  const convertHtmlToText = createHtmlToTextConverter();
+  const { convert: convertHtmlToText } = createHtmlToTextConverter();
 
   it('should convert basic HTML to plain text', () => {
     expect(convertHtmlToText('<p>Hello world</p>')).toBe('Hello world');

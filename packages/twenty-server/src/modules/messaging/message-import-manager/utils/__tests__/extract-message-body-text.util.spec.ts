@@ -1,6 +1,9 @@
 import { type Email as ParsedMail } from 'postal-mime';
 
-import { extractMessageBodyText } from 'src/modules/messaging/message-import-manager/utils/extract-message-body-text.util';
+import {
+  extractMessageBodyText,
+  MAX_CONVERSIONS_PER_CONVERTER,
+} from 'src/modules/messaging/message-import-manager/utils/extract-message-body-text.util';
 
 describe('extractMessageBodyText', () => {
   it('should extract text from plain text emails with lot of reply quotations', () => {
@@ -347,5 +350,24 @@ Developer Support`);
     expect(result).toBe(
       'See https://example.com/path%2Fto%2Ffile and a 100%20 budget cut',
     );
+  });
+});
+
+describe('extractMessageBodyText converter recycling', () => {
+  it('should keep converting correctly across the recycle boundary', () => {
+    const iterations = MAX_CONVERSIONS_PER_CONVERTER * 2 + 5;
+
+    for (let i = 0; i < iterations; i++) {
+      expect(extractMessageBodyText({ html: `<p>Message ${i}</p>` })).toBe(
+        `Message ${i}`,
+      );
+    }
+  });
+
+  it('should not leak documents from one converted message into the next', () => {
+    extractMessageBodyText({ html: '<p id="first">First body</p>' });
+
+    expect(extractMessageBodyText({ html: '<p id="second">Second body</p>' }))
+      .toBe('Second body');
   });
 });

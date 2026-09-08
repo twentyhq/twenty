@@ -11,24 +11,32 @@ const CONVERT_OPTIONS = {
   preserveNewlines: true,
 } satisfies HtmlToTextOptions;
 
-export const createHtmlToTextConverter = (): ((html: string) => string) => {
+export type HtmlToTextConverter = {
+  convert: (html: string) => string;
+  close: () => void;
+};
+
+export const createHtmlToTextConverter = (): HtmlToTextConverter => {
   const jsdom = new JSDOM('');
   const purify = createDOMPurify(jsdom.window);
 
-  return (html: string): string => {
-    const sanitizedHtml = purify.sanitize(html);
+  return {
+    convert: (html: string): string => {
+      const sanitizedHtml = purify.sanitize(html);
 
-    const cleanedHtml = planer.extractFromHtml(
-      sanitizedHtml,
-      jsdom.window.document,
-    );
+      const cleanedHtml = planer.extractFromHtml(
+        sanitizedHtml,
+        jsdom.window.document,
+      );
 
-    const text = normalizeMessageText(convert(cleanedHtml, CONVERT_OPTIONS));
+      const text = normalizeMessageText(convert(cleanedHtml, CONVERT_OPTIONS));
 
-    // planer can strip an entirely-quoted (e.g. forwarded) body to nothing;
-    // fall back to the un-stripped sanitized html so the body is not lost.
-    return isNonEmptyString(text)
-      ? text
-      : normalizeMessageText(convert(sanitizedHtml, CONVERT_OPTIONS));
+      // planer can strip an entirely-quoted (e.g. forwarded) body to nothing;
+      // fall back to the un-stripped sanitized html so the body is not lost.
+      return isNonEmptyString(text)
+        ? text
+        : normalizeMessageText(convert(sanitizedHtml, CONVERT_OPTIONS));
+    },
+    close: () => jsdom.window.close(),
   };
 };
