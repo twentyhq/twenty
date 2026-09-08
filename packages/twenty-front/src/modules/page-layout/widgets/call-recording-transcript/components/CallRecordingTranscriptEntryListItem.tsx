@@ -77,7 +77,7 @@ const StyledText = styled.p<{ isUpcoming: boolean }>`
 type CallRecordingTranscriptEntryListItemProps = {
   entry: CallRecordingParsedTranscriptEntry;
   playbackPhase?: CallRecordingTranscriptEntryPlaybackPhase;
-  videoElement?: HTMLVideoElement;
+  mediaElement?: HTMLMediaElement;
   entryElementRef?: Ref<HTMLLIElement>;
   onSelect?: (entryStartSeconds: number) => void;
 };
@@ -85,7 +85,7 @@ type CallRecordingTranscriptEntryListItemProps = {
 export const CallRecordingTranscriptEntryListItem = ({
   entry,
   playbackPhase,
-  videoElement,
+  mediaElement,
   entryElementRef,
   onSelect,
 }: CallRecordingTranscriptEntryListItemProps) => {
@@ -95,7 +95,7 @@ export const CallRecordingTranscriptEntryListItem = ({
   const isActive = playbackPhase === 'speaking';
   const hasPlaybackControls = isDefined(playbackPhase) || isDefined(onSelect);
   const hasSpokenWordHighlight =
-    isActive && isDefined(videoElement) && isNonEmptyArray(entry.words);
+    isActive && isDefined(mediaElement) && isNonEmptyArray(entry.words);
   const formattedStartTimestamp = isDefined(entryStartSeconds)
     ? formatCallRecordingTranscriptTimestamp(entryStartSeconds)
     : undefined;
@@ -154,7 +154,7 @@ export const CallRecordingTranscriptEntryListItem = ({
         {hasSpokenWordHighlight ? (
           <CallRecordingTranscriptEntryWords
             words={entry.words}
-            videoElement={videoElement}
+            mediaElement={mediaElement}
           />
         ) : (
           entry.text

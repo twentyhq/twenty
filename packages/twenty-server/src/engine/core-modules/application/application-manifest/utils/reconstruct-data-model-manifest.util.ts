@@ -4,32 +4,20 @@ import {
   type ObjectFieldManifest,
   type ObjectManifest,
 } from 'twenty-shared/application';
-import { isDefined, isEmptyObject } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { fromFlatFieldMetadataToFieldManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-metadata-to-field-manifest.util';
 import { fromFlatIndexMetadataToIndexManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-index-metadata-to-index-manifest.util';
 import { fromFlatObjectMetadataToObjectManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-metadata-to-object-manifest.util';
 import { type ApplicationExportCoverageEntry } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
-import { compareByCodePoint } from 'src/engine/core-modules/application/application-manifest/utils/compare-by-code-point.util';
+import { buildExportedCoverageEntry } from 'src/engine/core-modules/application/application-manifest/utils/build-exported-coverage-entry.util';
+import { compareByUniversalIdentifier } from 'src/engine/core-modules/application/application-manifest/utils/compare-by-universal-identifier.util';
 import { getUnsupportedRelationFieldReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unsupported-relation-field-reason.util';
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-
-type WorkspaceLocalStateProperties = Pick<
-  FlatObjectMetadata | FlatFieldMetadata,
-  'universalIdentifier' | 'isActive' | 'overrides'
->;
-
-const compareByKeyThenUniversalIdentifier =
-  <TFlatEntity extends { universalIdentifier: string }>(
-    getKey: (flatEntity: TFlatEntity) => string,
-  ) =>
-  (left: TFlatEntity, right: TFlatEntity): number =>
-    compareByCodePoint(getKey(left), getKey(right)) ||
-    compareByCodePoint(left.universalIdentifier, right.universalIdentifier);
 
 const toObjectFieldManifest = ({
   objectUniversalIdentifier: _objectUniversalIdentifier,
@@ -47,37 +35,6 @@ const isKeptLabelIdentifierField = ({
   flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
     flatFieldMetadata.universalIdentifier &&
   !flatFieldMetadata.isSystem;
-
-const getWorkspaceLocalStateReason = ({
-  isActive,
-  overrides,
-}: WorkspaceLocalStateProperties): string | undefined => {
-  const reasons = [
-    ...(isActive ? [] : ['deactivated in this workspace, exported active']),
-    ...(isDefined(overrides) && !isEmptyObject(overrides)
-      ? ['workspace overrides not exported']
-      : []),
-  ];
-
-  return reasons.length > 0 ? reasons.join(', ') : undefined;
-};
-
-const buildExportedCoverageEntry = ({
-  metadataName,
-  flatEntity,
-}: {
-  metadataName: 'objectMetadata' | 'fieldMetadata';
-  flatEntity: WorkspaceLocalStateProperties;
-}): ApplicationExportCoverageEntry => {
-  const reason = getWorkspaceLocalStateReason(flatEntity);
-
-  return {
-    metadataName,
-    universalIdentifier: flatEntity.universalIdentifier,
-    status: ApplicationExportCoverageStatus.EXPORTED,
-    ...(isDefined(reason) ? { reason } : {}),
-  };
-};
 
 const getUnsupportedIndexReason = ({
   flatIndexMetadata,
@@ -137,9 +94,7 @@ export const reconstructDataModelManifest = ({
     flatObjectMetadataMaps.byUniversalIdentifier,
   )
     .filter(isDefined)
-    .sort(
-      compareByKeyThenUniversalIdentifier(({ nameSingular }) => nameSingular),
-    );
+    .sort(compareByUniversalIdentifier);
   const exportableObjects = flatObjectMetadatas.flatMap(
     (flatObjectMetadata) => {
       const labelIdentifierFieldMetadataUniversalIdentifier =
@@ -179,7 +134,7 @@ export const reconstructDataModelManifest = ({
     flatFieldMetadataMaps.byUniversalIdentifier,
   )
     .filter(isDefined)
-    .sort(compareByKeyThenUniversalIdentifier(({ name }) => name))) {
+    .sort(compareByUniversalIdentifier)) {
     const flatObjectMetadata =
       flatObjectMetadataMaps.byUniversalIdentifier[
         flatFieldMetadata.objectMetadataUniversalIdentifier
@@ -280,7 +235,7 @@ export const reconstructDataModelManifest = ({
     flatIndexMaps.byUniversalIdentifier,
   )
     .filter(isDefined)
-    .sort(compareByKeyThenUniversalIdentifier(({ name }) => name))) {
+    .sort(compareByUniversalIdentifier)) {
     if (flatIndexMetadata.isSystemSideEffect) {
       coverage.push({
         metadataName: 'index',

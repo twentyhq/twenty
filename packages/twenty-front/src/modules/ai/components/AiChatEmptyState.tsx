@@ -1,9 +1,10 @@
+import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { styled } from '@linaria/react';
 
 import { AiChatSuggestedPrompts } from '@/ai/components/suggested-prompts/AiChatSuggestedPrompts';
 import { useShouldShowAiChatEmptyState } from '@/ai/hooks/useShouldShowAiChatEmptyState';
 
-const StyledEmptyState = styled.div`
+const StyledEmptyState = styled(StyledAiChatContentContainer)`
   display: flex;
   flex: 1;
   flex-direction: column;

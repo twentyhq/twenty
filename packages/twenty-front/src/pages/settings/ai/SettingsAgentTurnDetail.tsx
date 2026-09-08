@@ -10,6 +10,7 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import Skeleton from 'react-loading-skeleton';
+import { Suspense } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -149,38 +150,41 @@ export const SettingsAgentTurnDetail = () => {
             })}
           />
           {turn.messages.length > 0 ? (
-            <StyledMessagesContainer>
-              {mapDBMessagesToUIMessages(
-                ([...turn.messages] as AgentMessage[])
-                  .filter((msg) => msg.parts.length > 0)
-                  .sort((a, b) => {
-                    if (a.role === 'user' && b.role === 'assistant') return -1;
-                    if (a.role === 'assistant' && b.role === 'user') return 1;
-                    return (
-                      new Date(a.createdAt).getTime() -
-                      new Date(b.createdAt).getTime()
-                    );
-                  }),
-              ).map((message) => {
-                const roleLabel =
-                  message.role === 'user'
-                    ? t`User`
-                    : message.role === 'system'
-                      ? t`System`
-                      : t`Assistant`;
-                return (
-                  <StyledMessageBubble key={message.id}>
-                    <StyledMessageRole>{roleLabel}</StyledMessageRole>
-                    <StyledMessageContent>
-                      <AiChatAssistantMessageRenderer
-                        messageParts={message.parts}
-                        isLastMessageStreaming={false}
-                      />
-                    </StyledMessageContent>
-                  </StyledMessageBubble>
-                );
-              })}
-            </StyledMessagesContainer>
+            <Suspense fallback={<Skeleton height={16} width={200} />}>
+              <StyledMessagesContainer>
+                {mapDBMessagesToUIMessages(
+                  ([...turn.messages] as AgentMessage[])
+                    .filter((msg) => msg.parts.length > 0)
+                    .sort((a, b) => {
+                      if (a.role === 'user' && b.role === 'assistant')
+                        return -1;
+                      if (a.role === 'assistant' && b.role === 'user') return 1;
+                      return (
+                        new Date(a.createdAt).getTime() -
+                        new Date(b.createdAt).getTime()
+                      );
+                    }),
+                ).map((message) => {
+                  const roleLabel =
+                    message.role === 'user'
+                      ? t`User`
+                      : message.role === 'system'
+                        ? t`System`
+                        : t`Assistant`;
+                  return (
+                    <StyledMessageBubble key={message.id}>
+                      <StyledMessageRole>{roleLabel}</StyledMessageRole>
+                      <StyledMessageContent>
+                        <AiChatAssistantMessageRenderer
+                          messageParts={message.parts}
+                          isLastMessageStreaming={false}
+                        />
+                      </StyledMessageContent>
+                    </StyledMessageBubble>
+                  );
+                })}
+              </StyledMessagesContainer>
+            </Suspense>
           ) : (
             <div>{t`No messages found for this turn`}</div>
           )}

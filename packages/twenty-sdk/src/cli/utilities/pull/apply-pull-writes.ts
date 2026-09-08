@@ -9,7 +9,7 @@ import {
   type PullWrite,
 } from '@/cli/utilities/pull/plan-pull-writes';
 import { lstat, mkdtemp, rm, writeFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 
 const PULL_WORK_DIRECTORY = '.twenty';
 
@@ -30,10 +30,28 @@ const assertPlanIsApplicable = async ({
     );
   }
 
+  const applicationRoot = resolve(appPath);
+
   for (const relativePath of [
     ...relativePaths,
     ...deletions.map((deletion) => deletion.relativePath),
   ]) {
+    const containedPath = relative(
+      applicationRoot,
+      resolve(applicationRoot, relativePath),
+    );
+
+    if (
+      containedPath.length === 0 ||
+      containedPath === '..' ||
+      containedPath.startsWith(`..${sep}`) ||
+      isAbsolute(containedPath)
+    ) {
+      throw new Error(
+        `Refusing to write: ${relativePath} leaves the application directory`,
+      );
+    }
+
     const destinationPath = join(appPath, relativePath);
 
     if (!(await pathExists(destinationPath))) {

@@ -1,6 +1,7 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 
 import { SettingsApplicationConnectionsSection } from '~/pages/settings/applications/tabs/SettingsApplicationConnectionsSection';
@@ -111,5 +112,52 @@ describe('SettingsApplicationConnectionsSection', () => {
     expect(
       screen.queryByRole('button', { name: 'Delete' }),
     ).not.toBeInTheDocument();
+  });
+
+  it('adds a workspace shared connection without asking for a visibility', async () => {
+    mockedUseFindApplicationConnectionProviders.mockReturnValue({
+      connectionProviders: [
+        {
+          id: 'provider-1',
+          applicationId: 'app-1',
+          type: 'oauth',
+          name: 'google-calendar',
+          displayName: 'Google Calendar',
+          logoUrl: null,
+          oauth: {
+            scopes: ['calendar.readonly'],
+            isClientCredentialsConfigured: true,
+          },
+        },
+      ],
+      loading: false,
+      refetch: jest.fn(),
+    });
+
+    mockedUseMyAppConnectedAccounts.mockReturnValue({
+      accounts: [],
+      loading: false,
+      refetch: jest.fn(),
+    });
+
+    render(
+      <I18nProvider i18n={i18n}>
+        <MemoryRouter>
+          <SettingsApplicationConnectionsSection applicationId="app-1" />
+        </MemoryRouter>
+      </I18nProvider>,
+    );
+
+    await userEvent.click(
+      screen.getByRole('button', { name: /Add connection/i }),
+    );
+
+    expect(screen.queryByText('Just for me')).not.toBeInTheDocument();
+    expect(mockTriggerAppOAuth).toHaveBeenCalledTimes(1);
+    expect(mockTriggerAppOAuth).toHaveBeenCalledWith({
+      applicationId: 'app-1',
+      providerName: 'google-calendar',
+      visibility: 'workspace',
+    });
   });
 });
