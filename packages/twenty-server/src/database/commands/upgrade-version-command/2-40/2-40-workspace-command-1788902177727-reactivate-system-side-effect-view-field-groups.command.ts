@@ -19,12 +19,6 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
 const RECONCILE_STANDARD_RECORD_PAGE_COMMAND_NAME =
   'upgrade:2-31:reconcile-standard-record-page';
 
-// A group updated no later than shortly after the 2-31 reconcile ran was
-// never touched again afterward: any deliberate deactivation through
-// upsertFieldsWidget (removing a section in the fields widget) bumps
-// updatedAt past this point, so it is excluded and left alone.
-const REACTIVATION_SAFETY_MARGIN_MS = 5 * 60 * 1000;
-
 const REACTIVATION_BATCH_SIZE = 200;
 
 @RegisteredWorkspaceCommand('2.40.0', 1788902177727)
@@ -74,9 +68,13 @@ export class ReactivateSystemSideEffectViewFieldGroupsCommand extends Provisione
       return;
     }
 
-    const reactivationCutoff = new Date(
-      reconcileRun.createdAt.getTime() + REACTIVATION_SAFETY_MARGIN_MS,
-    );
+    // recordUpgradeMigration only writes this row after runOnWorkspace's own
+    // transaction (applyRecordPageReownUpdates) has committed, so this
+    // timestamp is already guaranteed to be >= every row the reconcile
+    // itself touched - no extra margin needed, and none should be added:
+    // it would let a fields-widget removal made shortly after the reconcile
+    // slip through and get wrongly reactivated.
+    const reactivationCutoff = reconcileRun.createdAt;
 
     const { flatViewFieldGroupMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
