@@ -1,6 +1,6 @@
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 
-import { validateShareWithArg } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/validate-share-with-arg.util';
+import { validateShareWithArgOrThrow } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/validate-share-with-arg-or-throw.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 
 const userAuthContext = {
@@ -25,13 +25,13 @@ const ROLE_ID = '20202020-0000-4000-8000-000000000003';
 const SHARE_WITH_REQUIRED_MESSAGE =
   'Creating a record of a private object requires the shareWith argument';
 
-describe('validateShareWithArg', () => {
+describe('validateShareWithArgOrThrow', () => {
   describe('with record sharing enabled', () => {
     const isRecordSharingEnabled = true;
 
     it('should accept a user without shareWith', () => {
       expect(() =>
-        validateShareWithArg({
+        validateShareWithArgOrThrow({
           authContext: userAuthContext,
           isRecordSharingEnabled,
         }),
@@ -40,7 +40,7 @@ describe('validateShareWithArg', () => {
 
     it('should reject an api key without shareWith', () => {
       expect(() =>
-        validateShareWithArg({
+        validateShareWithArgOrThrow({
           authContext: apiKeyAuthContext,
           isRecordSharingEnabled,
         }),
@@ -49,7 +49,7 @@ describe('validateShareWithArg', () => {
 
     it('should reject an api key with an empty shareWith', () => {
       expect(() =>
-        validateShareWithArg({
+        validateShareWithArgOrThrow({
           authContext: apiKeyAuthContext,
           isRecordSharingEnabled,
           shareWith: [],
@@ -59,7 +59,7 @@ describe('validateShareWithArg', () => {
 
     it('should reject a system caller without shareWith', () => {
       expect(() =>
-        validateShareWithArg({
+        validateShareWithArgOrThrow({
           authContext: systemAuthContext,
           isRecordSharingEnabled,
         }),
@@ -68,7 +68,7 @@ describe('validateShareWithArg', () => {
 
     it('should accept an api key with one valid entry', () => {
       expect(() =>
-        validateShareWithArg({
+        validateShareWithArgOrThrow({
           authContext: apiKeyAuthContext,
           isRecordSharingEnabled,
           shareWith: [
@@ -84,7 +84,7 @@ describe('validateShareWithArg', () => {
 
     it('should accept an api key without shareWith', () => {
       expect(() =>
-        validateShareWithArg({
+        validateShareWithArgOrThrow({
           authContext: apiKeyAuthContext,
           isRecordSharingEnabled,
         }),
@@ -93,7 +93,7 @@ describe('validateShareWithArg', () => {
 
     it('should accept a system caller with an empty shareWith', () => {
       expect(() =>
-        validateShareWithArg({
+        validateShareWithArgOrThrow({
           authContext: systemAuthContext,
           isRecordSharingEnabled,
           shareWith: [],
@@ -103,7 +103,7 @@ describe('validateShareWithArg', () => {
 
     it('should still reject a malformed entry', () => {
       expect(() =>
-        validateShareWithArg({
+        validateShareWithArgOrThrow({
           authContext: apiKeyAuthContext,
           isRecordSharingEnabled,
           shareWith: [
@@ -118,7 +118,7 @@ describe('validateShareWithArg', () => {
 
   it('should treat a null shareWith as omitted for a user', () => {
     expect(() =>
-      validateShareWithArg({
+      validateShareWithArgOrThrow({
         authContext: userAuthContext,
         isRecordSharingEnabled: true,
         shareWith: null,
@@ -128,7 +128,7 @@ describe('validateShareWithArg', () => {
 
   it('should reject the same principal named twice', () => {
     expect(() =>
-      validateShareWithArg({
+      validateShareWithArgOrThrow({
         authContext: userAuthContext,
         isRecordSharingEnabled: true,
         shareWith: [
@@ -147,7 +147,7 @@ describe('validateShareWithArg', () => {
 
   it('should reject an entry targeting no principal', () => {
     expect(() =>
-      validateShareWithArg({
+      validateShareWithArgOrThrow({
         authContext: userAuthContext,
         isRecordSharingEnabled: true,
         shareWith: [
@@ -161,7 +161,7 @@ describe('validateShareWithArg', () => {
 
   it('should reject a workspaceMemberId that is not a uuid', () => {
     expect(() =>
-      validateShareWithArg({
+      validateShareWithArgOrThrow({
         authContext: userAuthContext,
         isRecordSharingEnabled: true,
         shareWith: [
@@ -176,7 +176,7 @@ describe('validateShareWithArg', () => {
 
   it('should reject an entry targeting two principals even for a user', () => {
     expect(() =>
-      validateShareWithArg({
+      validateShareWithArgOrThrow({
         authContext: userAuthContext,
         isRecordSharingEnabled: true,
         shareWith: [
