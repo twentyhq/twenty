@@ -3,6 +3,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import React, { useContext, useState } from 'react';
+import { CORE_PICTURE_MIME_TYPES } from 'twenty-shared/constants';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
 import { IconPhotoUp, IconTrash, IconUpload, IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
@@ -143,7 +144,7 @@ export const ImageInput = ({
           <StyledHiddenFileInput
             type="file"
             ref={hiddenFileInput}
-            accept="image/jpeg, image/png, image/gif" // to desired specification
+            accept={CORE_PICTURE_MIME_TYPES.join(',')}
             onChange={(event) => {
               if (isDefined(onUpload) && isDefined(event.target.files)) {
                 onUpload(event.target.files[0]);
@@ -176,7 +177,9 @@ export const ImageInput = ({
           />
         </StyledButtonContainer>
         <StyledText>
-          <Trans>We support your square PNGs, JPEGs and GIFs under 10MB</Trans>
+          <Trans>
+            We support your square PNGs, JPEGs, GIFs and WebPs under 10MB
+          </Trans>
         </StyledText>
         {errorMessage && <StyledErrorText>{errorMessage}</StyledErrorText>}
       </StyledContent>

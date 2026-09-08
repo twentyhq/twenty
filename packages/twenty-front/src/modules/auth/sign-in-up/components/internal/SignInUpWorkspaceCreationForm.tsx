@@ -14,6 +14,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
+import { CORE_PICTURE_MIME_TYPES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
 import { IconTrash, IconUpload } from 'twenty-ui/icon';
@@ -262,7 +263,7 @@ export const SignInUpWorkspaceCreationForm = () => {
             <StyledHiddenFileInput
               type="file"
               ref={hiddenFileInputRef}
-              accept="image/jpeg, image/png, image/gif"
+              accept={CORE_PICTURE_MIME_TYPES.join(',')}
               onChange={(event) => {
                 const file = event.target.files?.[0];
                 if (isDefined(file)) {

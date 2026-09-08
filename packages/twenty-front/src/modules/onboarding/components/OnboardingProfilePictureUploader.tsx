@@ -8,6 +8,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRef } from 'react';
+import { CORE_PICTURE_MIME_TYPES } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
 import { IconUserCircle } from 'twenty-ui/icon';
@@ -119,7 +120,7 @@ export const OnboardingProfilePictureUploader = ({
       <StyledHiddenFileInput
         type="file"
         ref={hiddenFileInputRef}
-        accept="image/jpeg, image/png, image/gif"
+        accept={CORE_PICTURE_MIME_TYPES.join(',')}
         onChange={(event) => {
           const file = event.target.files?.[0];
           event.target.value = '';

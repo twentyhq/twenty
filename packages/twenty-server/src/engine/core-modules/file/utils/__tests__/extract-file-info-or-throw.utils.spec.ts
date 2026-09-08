@@ -4,6 +4,10 @@ const pngBuffer = Buffer.from([
   0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d, 0x49,
   0x48, 0x44, 0x52,
 ]);
+const webpBuffer = Buffer.from([
+  0x52, 0x49, 0x46, 0x46, 0x1a, 0x00, 0x00, 0x00, 0x57, 0x45, 0x42, 0x50, 0x56,
+  0x50, 0x38, 0x20,
+]);
 const pdfBuffer = Buffer.from('%PDF-1.4\n', 'utf-8');
 const textBuffer = Buffer.from('Hello, world!', 'utf-8');
 const zipBuffer = Buffer.from([0x50, 0x4b, 0x03, 0x04]);
@@ -32,6 +36,13 @@ describe('extractFileInfoOrThrow', () => {
       filename: 'image.png',
       ext: 'png',
       mime: 'image/png',
+    },
+    {
+      name: 'WEBP',
+      buffer: webpBuffer,
+      filename: 'image.webp',
+      ext: 'webp',
+      mime: 'image/webp',
     },
     {
       name: 'PDF',
