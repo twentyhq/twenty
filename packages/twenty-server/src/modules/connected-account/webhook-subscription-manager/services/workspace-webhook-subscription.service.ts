@@ -83,10 +83,14 @@ export class WorkspaceWebhookSubscriptionService {
       ...(syncEnabledOnly ? { isSyncEnabled: true } : {}),
     };
 
-    const [messageChannels, calendarChannels] = await Promise.all([
-      this.messageChannelRepository.find({ where, select: { id: true } }),
-      this.calendarChannelRepository.find({ where, select: { id: true } }),
-    ]);
+    const messageChannels = await this.messageChannelRepository.find({
+      where,
+      select: { id: true },
+    });
+    const calendarChannels = await this.calendarChannelRepository.find({
+      where,
+      select: { id: true },
+    });
 
     return [
       ...messageChannels.map((channel) => ({

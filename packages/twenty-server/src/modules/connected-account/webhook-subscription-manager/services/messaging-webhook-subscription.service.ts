@@ -41,9 +41,10 @@ export class MessagingWebhookSubscriptionService {
     messageChannelId: string,
     workspaceId: string,
   ): Promise<void> {
-    if (
-      await this.workspaceActivationService.isWorkspaceSuspended(workspaceId)
-    ) {
+    const isWorkspaceSuspended =
+      await this.workspaceActivationService.isWorkspaceSuspended(workspaceId);
+
+    if (isWorkspaceSuspended) {
       return;
     }
 
@@ -166,9 +167,10 @@ export class MessagingWebhookSubscriptionService {
     messageChannelId: string;
     workspaceId: string;
   }): Promise<void> {
-    if (
-      await this.workspaceActivationService.isWorkspaceSuspended(workspaceId)
-    ) {
+    const isWorkspaceSuspended =
+      await this.workspaceActivationService.isWorkspaceSuspended(workspaceId);
+
+    if (isWorkspaceSuspended) {
       return;
     }
 
@@ -298,9 +300,10 @@ export class MessagingWebhookSubscriptionService {
     messageChannelId: string;
     workspaceId: string;
   }): Promise<void> {
-    if (
-      !(await this.workspaceActivationService.isWorkspaceSuspended(workspaceId))
-    ) {
+    const isWorkspaceSuspended =
+      await this.workspaceActivationService.isWorkspaceSuspended(workspaceId);
+
+    if (!isWorkspaceSuspended) {
       return;
     }
 
