@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
 import {
@@ -981,7 +982,7 @@ export const seedInbox = async ({
         const assigneeUserWorkspaceId = item.assignee
           ? people[item.assignee]
           : null;
-        const isCleared = clearedAt !== null;
+        const isCleared = isDefined(clearedAt);
 
         return {
           id: generateSeedId(workspaceId, `inbox-item-${item.seedName}`),
@@ -993,7 +994,7 @@ export const seedInbox = async ({
           lastEventAt,
           clearedAt,
           resurfaceAt:
-            isCleared && item.cleared?.resurfaceInHours !== undefined
+            isCleared && isDefined(item.cleared?.resurfaceInHours)
               ? new Date(
                   now.getTime() + item.cleared.resurfaceInHours * HOUR_IN_MS,
                 )

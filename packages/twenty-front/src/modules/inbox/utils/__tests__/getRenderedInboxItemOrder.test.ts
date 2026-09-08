@@ -1,8 +1,10 @@
 import { getRenderedInboxItemOrder } from '@/inbox/utils/getRenderedInboxItemOrder';
-import { type InboxItem, InboxItemPriority } from '~/generated/graphql';
+import { InboxItemPriority } from '~/generated/graphql';
 
-const buildInboxItem = (id: string, priority: InboxItemPriority) =>
-  ({ id, priority }) as InboxItem;
+const buildInboxItem = (id: string, priority: InboxItemPriority) => ({
+  id,
+  priority,
+});
 
 const needsActionItem = buildInboxItem(
   'needs-action',

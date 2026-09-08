@@ -4,13 +4,15 @@ import { type InboxItem } from '~/generated/graphql';
 // Paging has to follow what the list actually rendered. Sorting by lastEventAt
 // alone would disagree with the split view, where a needs-action item shows
 // above a newer one that does not need action.
-export const getRenderedInboxItemOrder = ({
+export const getRenderedInboxItemOrder = <
+  TInboxItem extends Pick<InboxItem, 'priority'>,
+>({
   inboxItems,
   shouldSplitByPriority,
 }: {
-  inboxItems: InboxItem[];
+  inboxItems: TInboxItem[];
   shouldSplitByPriority: boolean;
-}): InboxItem[] => {
+}): TInboxItem[] => {
   if (!shouldSplitByPriority) {
     return inboxItems;
   }
