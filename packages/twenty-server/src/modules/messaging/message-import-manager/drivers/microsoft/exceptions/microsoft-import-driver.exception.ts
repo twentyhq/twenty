@@ -1,3 +1,5 @@
+import { HttpStatus } from '@nestjs/common';
+
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
@@ -16,5 +18,6 @@ export class MicrosoftImportDriverException extends CustomException<string> {
         userFriendlyMessage ?? msg`An error occurred during messages import`,
     });
     this.statusCode = statusCode;
+    this.isExpected = statusCode < HttpStatus.INTERNAL_SERVER_ERROR;
   }
 }

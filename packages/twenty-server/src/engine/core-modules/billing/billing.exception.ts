@@ -1,8 +1,10 @@
 /* @license Enterprise */
 
+import { HttpStatus } from '@nestjs/common';
+
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { getBillingExceptionStatusCode } from 'src/engine/core-modules/billing/utils/get-billing-exception-status-code.util';
 import { CustomException } from 'src/utils/custom-exception';
@@ -133,5 +135,8 @@ export class BillingException extends CustomException<BillingExceptionCode> {
         userFriendlyMessage ?? getBillingExceptionUserFriendlyMessage(code),
     });
     this.statusCode = getBillingExceptionStatusCode(this);
+    this.isExpected =
+      isDefined(this.statusCode) &&
+      this.statusCode < HttpStatus.INTERNAL_SERVER_ERROR;
   }
 }

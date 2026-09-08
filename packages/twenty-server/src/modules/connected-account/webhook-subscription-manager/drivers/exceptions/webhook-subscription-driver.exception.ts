@@ -34,6 +34,12 @@ const getWebhookSubscriptionDriverExceptionUserFriendlyMessage = (
   }
 };
 
+const EXPECTED_WEBHOOK_SUBSCRIPTION_DRIVER_EXCEPTION_CODES: readonly WebhookSubscriptionDriverExceptionCode[] =
+  [
+    WebhookSubscriptionDriverExceptionCode.NOT_FOUND,
+    WebhookSubscriptionDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+  ];
+
 export class WebhookSubscriptionDriverException extends CustomException<WebhookSubscriptionDriverExceptionCode> {
   cause?: unknown;
 
@@ -49,6 +55,8 @@ export class WebhookSubscriptionDriverException extends CustomException<WebhookS
       userFriendlyMessage:
         userFriendlyMessage ??
         getWebhookSubscriptionDriverExceptionUserFriendlyMessage(code),
+      isExpected:
+        EXPECTED_WEBHOOK_SUBSCRIPTION_DRIVER_EXCEPTION_CODES.includes(code),
     });
 
     if (isDefined(cause)) {

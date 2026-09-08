@@ -70,11 +70,7 @@ export const shouldCaptureException = (
     return false;
   }
 
-  if (
-    exception instanceof CustomException &&
-    isDefined(exception.statusCode) &&
-    exception.statusCode < 500
-  ) {
+  if (exception instanceof CustomException && exception.isExpected) {
     return false;
   }
 

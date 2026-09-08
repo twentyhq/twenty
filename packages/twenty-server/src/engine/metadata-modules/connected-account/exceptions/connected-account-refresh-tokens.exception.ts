@@ -31,6 +31,12 @@ const getConnectedAccountRefreshAccessTokenExceptionUserFriendlyMessage = (
   }
 };
 
+const EXPECTED_CONNECTED_ACCOUNT_REFRESH_ACCESS_TOKEN_EXCEPTION_CODES: readonly ConnectedAccountRefreshAccessTokenExceptionCode[] =
+  [
+    ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND,
+    ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,
+  ];
+
 export class ConnectedAccountRefreshAccessTokenException extends CustomException<ConnectedAccountRefreshAccessTokenExceptionCode> {
   cause?: unknown;
 
@@ -46,6 +52,10 @@ export class ConnectedAccountRefreshAccessTokenException extends CustomException
       userFriendlyMessage:
         userFriendlyMessage ??
         getConnectedAccountRefreshAccessTokenExceptionUserFriendlyMessage(code),
+      isExpected:
+        EXPECTED_CONNECTED_ACCOUNT_REFRESH_ACCESS_TOKEN_EXCEPTION_CODES.includes(
+          code,
+        ),
     });
 
     if (isDefined(cause)) {

@@ -31,6 +31,7 @@ export class ThrottlerException extends CustomException<ThrottlerExceptionCode> 
       userFriendlyMessage:
         userFriendlyMessage ?? getThrottlerExceptionUserFriendlyMessage(code),
       statusCode: HttpStatus.TOO_MANY_REQUESTS,
+      isExpected: true,
     });
   }
 }

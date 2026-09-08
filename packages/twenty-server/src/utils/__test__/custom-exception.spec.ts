@@ -48,6 +48,23 @@ describe('CustomException', () => {
     expect(exception.statusCode).toBeUndefined();
   });
 
+  it('should treat an exception as unexpected unless it opts in', () => {
+    const exception = new UnknownException('Boom', 'INTERNAL_SERVER_ERROR', {
+      userFriendlyMessage: msg`Boom`,
+    });
+
+    expect(exception.isExpected).toBe(false);
+  });
+
+  it('should mark an exception as expected when the option is provided', () => {
+    const exception = new UnknownException('Reconnect', 'INVALID_TOKEN', {
+      userFriendlyMessage: msg`Reconnect`,
+      isExpected: true,
+    });
+
+    expect(exception.isExpected).toBe(true);
+  });
+
   class TestException extends CustomException<string> {
     constructor(
       message: string,

@@ -23,6 +23,7 @@ export abstract class CustomException<
   code: ExceptionCode;
   userFriendlyMessage: MessageDescriptor;
   statusCode?: number;
+  isExpected: boolean;
 
   constructor(
     message: ExceptionMessage,
@@ -30,12 +31,18 @@ export abstract class CustomException<
     {
       userFriendlyMessage,
       statusCode,
-    }: { userFriendlyMessage: MessageDescriptor; statusCode?: number },
+      isExpected = false,
+    }: {
+      userFriendlyMessage: MessageDescriptor;
+      statusCode?: number;
+      isExpected?: boolean;
+    },
   ) {
     super(message);
     this.code = code;
     this.userFriendlyMessage = userFriendlyMessage;
     this.statusCode = statusCode;
+    this.isExpected = isExpected;
   }
 }
 
