@@ -17,7 +17,6 @@ import {
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { DmarcRecordService } from 'src/engine/core-modules/emailing-domain/services/dmarc-record.service';
-import { ClickTrackingHostnameService } from 'src/engine/core-modules/emailing-domain/services/click-tracking-hostname.service';
 import { EmailingHostnamesService } from 'src/engine/core-modules/emailing-domain/services/emailing-hostnames.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -36,7 +35,6 @@ export class EmailingDomainService {
     private readonly globalEmailingDomainRepository: Repository<EmailingDomainEntity>,
     private readonly emailingDomainDriverFactory: EmailingDomainDriverFactory,
     private readonly emailingHostnamesService: EmailingHostnamesService,
-    private readonly clickTrackingHostnameService: ClickTrackingHostnameService,
     private readonly dmarcRecordService: DmarcRecordService,
   ) {}
 
@@ -90,7 +88,9 @@ export class EmailingDomainService {
         verifiedAt: isVerifiedOnCreation ? new Date() : null,
       });
 
-    await this.emailingHostnamesService.sync(workspaceId, emailingDomain.id, {
+    await this.emailingHostnamesService.sync({
+      workspaceId,
+      emailingDomainId: emailingDomain.id,
       provision: true,
     });
 
@@ -230,7 +230,9 @@ export class EmailingDomainService {
       },
     );
 
-    await this.emailingHostnamesService.sync(workspaceId, emailingDomain.id, {
+    await this.emailingHostnamesService.sync({
+      workspaceId,
+      emailingDomainId: emailingDomain.id,
       provision: true,
     });
 
@@ -255,22 +257,26 @@ export class EmailingDomainService {
       emailingDomainId,
     );
 
-    if (emailingDomain.clickTrackingEnabled === isEnabled) {
+    if (emailingDomain.isClickTrackingEnabled === isEnabled) {
       return this.withDnsRecords(emailingDomain);
     }
 
     await this.emailingDomainRepository.update(
       workspaceId,
       { id: emailingDomainId },
-      { clickTrackingEnabled: isEnabled },
+      { isClickTrackingEnabled: isEnabled },
     );
 
     if (isEnabled) {
-      await this.emailingHostnamesService.sync(workspaceId, emailingDomainId, {
+      await this.emailingHostnamesService.sync({
+        workspaceId,
+        emailingDomainId,
         provision: true,
       });
     } else {
-      await this.clickTrackingHostnameService.deprovision(emailingDomain);
+      await this.emailingHostnamesService.deprovisionClickTracking(
+        emailingDomain,
+      );
     }
 
     return this.withDnsRecords(

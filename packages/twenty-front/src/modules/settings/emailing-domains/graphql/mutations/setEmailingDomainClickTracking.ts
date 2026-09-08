@@ -7,7 +7,7 @@ export const SET_EMAILING_DOMAIN_CLICK_TRACKING = gql`
       domain
       status
       verifiedAt
-      clickTrackingEnabled
+      isClickTrackingEnabled
       clickTrackingHostname
       clickTrackingHostnameStatus
       verificationRecords {

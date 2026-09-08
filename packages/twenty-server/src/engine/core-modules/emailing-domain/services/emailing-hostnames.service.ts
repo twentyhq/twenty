@@ -1,6 +1,8 @@
 /* @license Enterprise */
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { ManagedHostnameService } from 'src/engine/core-modules/dns-manager/services/managed-hostname.service';
 import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
@@ -22,21 +24,43 @@ export class EmailingHostnamesService {
     private readonly clickTrackingHostnameService: ClickTrackingHostnameService,
   ) {}
 
-  async sync(
-    workspaceId: string,
-    emailingDomainId: string,
-    { provision }: { provision: boolean },
-  ): Promise<void> {
+  async sync({
+    workspaceId,
+    emailingDomainId,
+    provision,
+  }: {
+    workspaceId: string;
+    emailingDomainId: string;
+    provision: boolean;
+  }): Promise<void> {
     if (!this.managedHostnameService.isConfigured()) {
       return;
     }
 
     for (const provisioner of this.provisioners) {
-      await this.syncProvisioner(provisioner, {
-        workspaceId,
-        emailingDomainId,
-        provision,
-      });
+      try {
+        if (provision) {
+          await this.provision({
+            provisioner,
+            emailingDomain: await this.findEmailingDomainOrFail({
+              workspaceId,
+              emailingDomainId,
+            }),
+          });
+        }
+
+        await this.refreshStatus({
+          provisioner,
+          emailingDomain: await this.findEmailingDomainOrFail({
+            workspaceId,
+            emailingDomainId,
+          }),
+        });
+      } catch (error) {
+        this.logger.warn(
+          `Failed to sync ${provisioner.hostnameKind} hostname for emailing domain ${emailingDomainId}: ${error}`,
+        );
+      }
     }
   }
 
@@ -58,57 +82,122 @@ export class EmailingHostnamesService {
     };
   }
 
-  async deprovision(emailingDomain: EmailingDomainEntity): Promise<void> {
-    for (const provisioner of this.provisioners) {
-      await provisioner.deprovision(emailingDomain);
-    }
-  }
-
   async getDnsRecords(
     emailingDomain: EmailingDomainEntity,
   ): Promise<VerificationRecord[]> {
     const recordsPerProvisioner = await Promise.all(
       this.provisioners.map((provisioner) =>
-        provisioner.getDnsRecords(emailingDomain),
+        this.getProvisionerDnsRecords({ provisioner, emailingDomain }),
       ),
     );
 
     return recordsPerProvisioner.flat();
   }
 
+  async deprovision(emailingDomain: EmailingDomainEntity): Promise<void> {
+    for (const provisioner of this.provisioners) {
+      await this.release({ provisioner, emailingDomain });
+    }
+  }
+
+  async deprovisionClickTracking(
+    emailingDomain: EmailingDomainEntity,
+  ): Promise<void> {
+    await this.release({
+      provisioner: this.clickTrackingHostnameService,
+      emailingDomain,
+    });
+  }
+
   private get provisioners(): EmailingHostnameProvisioner[] {
     return [this.unsubscribeHostnameService, this.clickTrackingHostnameService];
   }
 
-  private async syncProvisioner(
-    provisioner: EmailingHostnameProvisioner,
-    {
-      workspaceId,
-      emailingDomainId,
-      provision,
-    }: { workspaceId: string; emailingDomainId: string; provision: boolean },
-  ): Promise<void> {
-    try {
-      if (provision) {
-        await provisioner.provision(
-          await this.findEmailingDomainOrFail(workspaceId, emailingDomainId),
-        );
-      }
-
-      await provisioner.refreshStatus(
-        await this.findEmailingDomainOrFail(workspaceId, emailingDomainId),
-      );
-    } catch (error) {
-      this.logger.warn(
-        `Failed to sync ${provisioner.hostnameKind} hostname for emailing domain ${emailingDomainId}: ${error}`,
-      );
+  private async provision({
+    provisioner,
+    emailingDomain,
+  }: {
+    provisioner: EmailingHostnameProvisioner;
+    emailingDomain: EmailingDomainEntity;
+  }): Promise<void> {
+    if (isNonEmptyString(provisioner.readHostnameId(emailingDomain))) {
+      return;
     }
+
+    const hostname = await provisioner.resolveDesiredHostname(emailingDomain);
+
+    if (!isNonEmptyString(hostname)) {
+      return;
+    }
+
+    const hostnameId = await this.managedHostnameService.provision(hostname);
+
+    await provisioner.persistProvisionedHostname({
+      emailingDomain,
+      hostname,
+      hostnameId,
+    });
   }
 
-  private async findEmailingDomainOrFail(
-    workspaceId: string,
-    emailingDomainId: string,
-  ): Promise<EmailingDomainEntity> {
+  private async refreshStatus({
+    provisioner,
+    emailingDomain,
+  }: {
+    provisioner: EmailingHostnameProvisioner;
+    emailingDomain: EmailingDomainEntity;
+  }): Promise<void> {
+    const hostname = provisioner.readHostname(emailingDomain);
+
+    if (!isNonEmptyString(hostname)) {
+      return;
+    }
+
+    await provisioner.persistStatus({
+      emailingDomain,
+      status: await this.managedHostnameService.resolveStatus(hostname),
+    });
+  }
+
+  private async release({
+    provisioner,
+    emailingDomain,
+  }: {
+    provisioner: EmailingHostnameProvisioner;
+    emailingDomain: EmailingDomainEntity;
+  }): Promise<void> {
+    const hostname = provisioner.readHostname(emailingDomain);
+
+    if (!isNonEmptyString(hostname)) {
+      return;
+    }
+
+    await this.managedHostnameService.release(hostname);
+    await provisioner.clearHostname(emailingDomain);
+  }
+
+  private async getProvisionerDnsRecords({
+    provisioner,
+    emailingDomain,
+  }: {
+    provisioner: EmailingHostnameProvisioner;
+    emailingDomain: EmailingDomainEntity;
+  }): Promise<VerificationRecord[]> {
+    const hostname = provisioner.readHostname(emailingDomain);
+
+    if (!isNonEmptyString(hostname)) {
+      return [];
+    }
+
+    return this.managedHostnameService.getCnameRecords(hostname);
+  }
+
+  private async findEmailingDomainOrFail({
+    workspaceId,
+    emailingDomainId,
+  }: {
+    workspaceId: string;
+    emailingDomainId: string;
+  }): Promise<EmailingDomainEntity> {
     return this.emailingDomainRepository.findOneOrFail(workspaceId, {
       where: { id: emailingDomainId },
     });

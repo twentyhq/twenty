@@ -38,7 +38,7 @@ describe('AvailableHostnameService', () => {
     respondWith({}, 'AVAILABLE');
 
     expect(
-      await service.findAvailableHostname({
+      await service.findAvailableHostnameOrThrow({
         preferredPrefix: 'lnk',
         domain: 'acme.com',
       }),
@@ -48,7 +48,7 @@ describe('AvailableHostnameService', () => {
   it('falls back to a suffixed hostname when the preferred one is taken', async () => {
     respondWith({ 'lnk.acme.com': 'OCCUPIED' }, 'AVAILABLE');
 
-    const hostname = await service.findAvailableHostname({
+    const hostname = await service.findAvailableHostnameOrThrow({
       preferredPrefix: 'lnk',
       domain: 'acme.com',
     });
@@ -61,7 +61,7 @@ describe('AvailableHostnameService', () => {
     respondWith({}, 'OCCUPIED');
 
     expect(
-      await service.findAvailableHostname({
+      await service.findAvailableHostnameOrThrow({
         preferredPrefix: 'lnk',
         domain: 'wildcard.com',
       }),
@@ -72,7 +72,7 @@ describe('AvailableHostnameService', () => {
     respondWith({}, 'UNKNOWN');
 
     expect(
-      await service.findAvailableHostname({
+      await service.findAvailableHostnameOrThrow({
         preferredPrefix: 'lnk',
         domain: 'acme.com',
       }),
@@ -85,7 +85,7 @@ describe('AvailableHostnameService', () => {
     );
 
     await expect(
-      service.findAvailableHostname({
+      service.findAvailableHostnameOrThrow({
         preferredPrefix: 'lnk',
         domain: 'acme.com',
       }),

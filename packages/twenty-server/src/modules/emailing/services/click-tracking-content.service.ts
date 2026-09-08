@@ -51,24 +51,18 @@ export class ClickTrackingContentService {
     messageId: string;
     html: string;
   }): Promise<string> {
-    const clickTrackingBaseUrl = await this.findServableBaseUrl(
+    const trackingContext = await this.resolveTrackingContext({
       workspaceId,
       emailingDomainId,
-    );
-
-    if (!isDefined(clickTrackingBaseUrl)) {
-      return html;
-    }
-
-    const linkIdByUrl = await this.resolveLinkIdsInHtml({
-      workspaceId,
       messageCampaignId,
       html,
     });
 
-    if (linkIdByUrl.size === 0) {
+    if (!isDefined(trackingContext)) {
       return html;
     }
+
+    const { clickTrackingBaseUrl, linkIdByUrl } = trackingContext;
 
     const trackedUrlByUrl = new Map(
       [...linkIdByUrl].map(([url, messageCampaignLinkId]) => [
@@ -92,24 +86,18 @@ export class ClickTrackingContentService {
   }: CampaignSendReference & { html: string }): Promise<
     TrackedBatchTemplate | undefined
   > {
-    const clickTrackingBaseUrl = await this.findServableBaseUrl(
+    const trackingContext = await this.resolveTrackingContext({
       workspaceId,
       emailingDomainId,
-    );
-
-    if (!isDefined(clickTrackingBaseUrl)) {
-      return undefined;
-    }
-
-    const linkIdByUrl = await this.resolveLinkIdsInHtml({
-      workspaceId,
       messageCampaignId,
       html,
     });
 
-    if (linkIdByUrl.size === 0) {
+    if (!isDefined(trackingContext)) {
       return undefined;
     }
+
+    const { clickTrackingBaseUrl, linkIdByUrl } = trackingContext;
 
     const tagByUrl = new Map(
       [...linkIdByUrl.keys()].map((url, index) => [
@@ -144,38 +132,57 @@ export class ClickTrackingContentService {
     );
   }
 
-  private async resolveLinkIdsInHtml({
+  private async resolveTrackingContext({
     workspaceId,
+    emailingDomainId,
     messageCampaignId,
     html,
-  }: {
-    workspaceId: string;
-    messageCampaignId: string;
-    html: string;
-  }): Promise<Map<string, string>> {
+  }: CampaignSendReference & { html: string }): Promise<
+    | { clickTrackingBaseUrl: string; linkIdByUrl: Map<string, string> }
+    | undefined
+  > {
+    const clickTrackingBaseUrl = await this.findServableBaseUrl({
+      workspaceId,
+      emailingDomainId,
+    });
+
+    if (!isDefined(clickTrackingBaseUrl)) {
+      return undefined;
+    }
+
     const urls = collectTrackableLinkUrls(html);
 
     if (urls.length === 0) {
-      return new Map();
+      return undefined;
     }
 
-    return this.messageCampaignLinkService.resolveLinkIdsByUrl({
-      workspaceId,
-      messageCampaignId,
-      urls,
-    });
+    const linkIdByUrl =
+      await this.messageCampaignLinkService.resolveLinkIdsByUrl({
+        workspaceId,
+        messageCampaignId,
+        urls,
+      });
+
+    if (linkIdByUrl.size === 0) {
+      return undefined;
+    }
+
+    return { clickTrackingBaseUrl, linkIdByUrl };
   }
 
-  private async findServableBaseUrl(
-    workspaceId: string,
-    emailingDomainId: string,
-  ): Promise<string | undefined> {
+  private async findServableBaseUrl({
+    workspaceId,
+    emailingDomainId,
+  }: {
+    workspaceId: string;
+    emailingDomainId: string;
+  }): Promise<string | undefined> {
     const emailingDomain = await this.emailingDomainRepository.findOne(
       workspaceId,
       { where: { id: emailingDomainId } },
     );
 
-    if (!isDefined(emailingDomain) || !emailingDomain.clickTrackingEnabled) {
+    if (!isDefined(emailingDomain) || !emailingDomain.isClickTrackingEnabled) {
       return undefined;
     }
 

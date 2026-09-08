@@ -29,7 +29,10 @@ export class ManagedHostnameService {
 
       return createdHostname.id;
     } catch (error) {
-      return this.adoptAlreadyRegisteredHostname(hostname, error);
+      return this.adoptAlreadyRegisteredHostname({
+        hostname,
+        registrationError: error,
+      });
     }
   }
 
@@ -71,10 +74,13 @@ export class ManagedHostnameService {
     await this.dnsManagerService.deleteHostnameSilently(hostname);
   }
 
-  private async adoptAlreadyRegisteredHostname(
-    hostname: string,
-    registrationError: unknown,
-  ): Promise<string> {
+  private async adoptAlreadyRegisteredHostname({
+    hostname,
+    registrationError,
+  }: {
+    hostname: string;
+    registrationError: unknown;
+  }): Promise<string> {
     const isAlreadyRegistered =
       registrationError instanceof DnsManagerException &&
       registrationError.code ===

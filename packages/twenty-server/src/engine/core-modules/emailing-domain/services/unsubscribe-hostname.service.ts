@@ -1,83 +1,79 @@
 /* @license Enterprise */
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
-
-import { ManagedHostnameService } from 'src/engine/core-modules/dns-manager/services/managed-hostname.service';
 import { ManagedHostnameStatus } from 'src/engine/core-modules/dns-manager/types/managed-hostname-status.type';
 import { UNSUBSCRIBE_HOSTNAME_PREFIX } from 'src/engine/core-modules/emailing-domain/constants/unsubscribe-hostname-prefix.constant';
-import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import { type EmailingHostnameProvisioner } from 'src/engine/core-modules/emailing-domain/types/emailing-hostname-provisioner.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
-export class UnsubscribeHostnameService {
+export class UnsubscribeHostnameService implements EmailingHostnameProvisioner {
   readonly hostnameKind = 'unsubscribe';
 
   constructor(
     @InjectWorkspaceScopedRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
-    private readonly managedHostnameService: ManagedHostnameService,
   ) {}
 
-  async provision(emailingDomain: EmailingDomainEntity): Promise<void> {
-    if (isNonEmptyString(emailingDomain.unsubscribeHostnameId)) {
-      return;
-    }
+  readHostname(emailingDomain: EmailingDomainEntity): string | null {
+    return emailingDomain.unsubscribeHostname;
+  }
 
-    const unsubscribeHostname = `${UNSUBSCRIBE_HOSTNAME_PREFIX}.${emailingDomain.domain}`;
+  readHostnameId(emailingDomain: EmailingDomainEntity): string | null {
+    return emailingDomain.unsubscribeHostnameId;
+  }
 
-    const unsubscribeHostnameId =
-      await this.managedHostnameService.provision(unsubscribeHostname);
+  async resolveDesiredHostname(
+    emailingDomain: EmailingDomainEntity,
+  ): Promise<string | null> {
+    return `${UNSUBSCRIBE_HOSTNAME_PREFIX}.${emailingDomain.domain}`;
+  }
 
+  async persistProvisionedHostname({
+    emailingDomain,
+    hostname,
+    hostnameId,
+  }: {
+    emailingDomain: EmailingDomainEntity;
+    hostname: string;
+    hostnameId: string;
+  }): Promise<void> {
     await this.emailingDomainRepository.update(
       emailingDomain.workspaceId,
       { id: emailingDomain.id },
       {
-        unsubscribeHostname,
-        unsubscribeHostnameId,
+        unsubscribeHostname: hostname,
+        unsubscribeHostnameId: hostnameId,
         unsubscribeHostnameStatus: ManagedHostnameStatus.PENDING,
       },
     );
   }
 
-  async refreshStatus(emailingDomain: EmailingDomainEntity): Promise<void> {
-    if (!isNonEmptyString(emailingDomain.unsubscribeHostname)) {
-      return;
-    }
-
-    const unsubscribeHostnameStatus =
-      await this.managedHostnameService.resolveStatus(
-        emailingDomain.unsubscribeHostname,
-      );
-
+  async persistStatus({
+    emailingDomain,
+    status,
+  }: {
+    emailingDomain: EmailingDomainEntity;
+    status: ManagedHostnameStatus;
+  }): Promise<void> {
     await this.emailingDomainRepository.update(
       emailingDomain.workspaceId,
       { id: emailingDomain.id },
-      { unsubscribeHostnameStatus },
+      { unsubscribeHostnameStatus: status },
     );
   }
 
-  async deprovision(emailingDomain: EmailingDomainEntity): Promise<void> {
-    if (!isNonEmptyString(emailingDomain.unsubscribeHostname)) {
-      return;
-    }
-
-    await this.managedHostnameService.release(
-      emailingDomain.unsubscribeHostname,
-    );
-  }
-
-  async getDnsRecords(
-    emailingDomain: EmailingDomainEntity,
-  ): Promise<VerificationRecord[]> {
-    if (!isNonEmptyString(emailingDomain.unsubscribeHostname)) {
-      return [];
-    }
-
-    return this.managedHostnameService.getCnameRecords(
-      emailingDomain.unsubscribeHostname,
+  async clearHostname(emailingDomain: EmailingDomainEntity): Promise<void> {
+    await this.emailingDomainRepository.update(
+      emailingDomain.workspaceId,
+      { id: emailingDomain.id },
+      {
+        unsubscribeHostname: null,
+        unsubscribeHostnameId: null,
+        unsubscribeHostnameStatus: null,
+      },
     );
   }
 }

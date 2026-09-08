@@ -3,7 +3,6 @@ import {
   Controller,
   Get,
   Header,
-  Logger,
   NotFoundException,
   Param,
   Redirect,
@@ -27,8 +26,6 @@ const FOUND_STATUS_CODE = 302;
 @Controller(`${ApiPath.Emailing}/c`)
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
 export class ClickTrackingController {
-  private readonly logger = new Logger(ClickTrackingController.name);
-
   constructor(
     private readonly clickTrackingTokenService: ClickTrackingTokenService,
     private readonly messageCampaignLinkService: MessageCampaignLinkService,
@@ -51,19 +48,18 @@ export class ClickTrackingController {
       throw new NotFoundException('Unknown tracked link');
     }
 
-    this.recordClick(link, payload.messageId).catch((error) => {
-      this.logger.error(
-        `Failed to record click on link ${link.id} of workspace ${link.workspaceId}: ${error}`,
-      );
-    });
+    await this.recordClick({ link, messageId: payload.messageId });
 
     return { url: link.url, statusCode: FOUND_STATUS_CODE };
   }
 
-  private async recordClick(
-    link: MessageCampaignLinkEntity,
-    messageId: string,
-  ): Promise<void> {
+  private async recordClick({
+    link,
+    messageId,
+  }: {
+    link: MessageCampaignLinkEntity;
+    messageId: string;
+  }): Promise<void> {
     await this.messageCampaignLinkService.recordClick({
       workspaceId: link.workspaceId,
       messageCampaignLinkId: link.id,

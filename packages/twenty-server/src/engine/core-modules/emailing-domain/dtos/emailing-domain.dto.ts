@@ -42,7 +42,7 @@ export class EmailingDomainDTO {
   unsubscribeHostnameStatus: ManagedHostnameStatus | null;
 
   @Field(() => Boolean)
-  clickTrackingEnabled: boolean;
+  isClickTrackingEnabled: boolean;
 
   @Field(() => String, { nullable: true })
   clickTrackingHostname: string | null;

@@ -119,7 +119,8 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
   const isDomainVerified = domainStatus === EmailingDomainStatus.VERIFIED;
 
   const isClickTrackingPending =
-    emailingDomain?.clickTrackingEnabled === true &&
+    isDefined(emailingDomain) &&
+    emailingDomain.isClickTrackingEnabled &&
     emailingDomain.clickTrackingHostnameStatus !== ManagedHostnameStatus.Active;
 
   const shouldShowDnsRecords = !isDomainVerified || isClickTrackingPending;
@@ -284,7 +285,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
             />
             <SettingsEmailingDomainClickTrackingToggle
               emailingDomainId={emailingDomain.id}
-              isClickTrackingEnabled={emailingDomain.clickTrackingEnabled}
+              isClickTrackingEnabled={emailingDomain.isClickTrackingEnabled}
             />
           </Section>
         )}

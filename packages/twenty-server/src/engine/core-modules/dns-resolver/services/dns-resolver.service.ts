@@ -27,14 +27,17 @@ export class DnsResolverService {
 
       return 'OCCUPIED';
     } catch (error) {
-      return this.classifyFailedQuery(hostname, error);
+      return this.classifyFailedQuery({ hostname, error });
     }
   }
 
-  private classifyFailedQuery(
-    hostname: string,
-    error: unknown,
-  ): HostnameAvailability {
+  private classifyFailedQuery({
+    hostname,
+    error,
+  }: {
+    hostname: string;
+    error: unknown;
+  }): HostnameAvailability {
     switch (this.extractErrorCode(error)) {
       case 'ENOTFOUND':
       case 'NXDOMAIN':

@@ -1,12 +1,21 @@
-import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record';
+import { type ManagedHostnameStatus } from 'src/engine/core-modules/dns-manager/types/managed-hostname-status.type';
 import { type EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 
 export type EmailingHostnameProvisioner = {
   readonly hostnameKind: string;
-  provision(emailingDomain: EmailingDomainEntity): Promise<void>;
-  refreshStatus(emailingDomain: EmailingDomainEntity): Promise<void>;
-  deprovision(emailingDomain: EmailingDomainEntity): Promise<void>;
-  getDnsRecords(
+  readHostname(emailingDomain: EmailingDomainEntity): string | null;
+  readHostnameId(emailingDomain: EmailingDomainEntity): string | null;
+  resolveDesiredHostname(
     emailingDomain: EmailingDomainEntity,
-  ): Promise<VerificationRecord[]>;
+  ): Promise<string | null>;
+  persistProvisionedHostname(args: {
+    emailingDomain: EmailingDomainEntity;
+    hostname: string;
+    hostnameId: string;
+  }): Promise<void>;
+  persistStatus(args: {
+    emailingDomain: EmailingDomainEntity;
+    status: ManagedHostnameStatus;
+  }): Promise<void>;
+  clearHostname(emailingDomain: EmailingDomainEntity): Promise<void>;
 };

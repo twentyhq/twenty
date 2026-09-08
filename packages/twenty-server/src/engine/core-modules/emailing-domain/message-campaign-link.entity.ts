@@ -28,7 +28,7 @@ export class MessageCampaignLinkEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'uuid', nullable: false })
   messageCampaignId: string;
 
-  @Column({ type: 'text', nullable: false })
+  @Column({ type: 'varchar', nullable: false })
   url: string;
 
   @Column({ type: 'char', length: 64, nullable: false })

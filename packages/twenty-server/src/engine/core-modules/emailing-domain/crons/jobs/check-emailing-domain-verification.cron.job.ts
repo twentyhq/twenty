@@ -100,11 +100,11 @@ export class CheckEmailingDomainVerificationCronJob {
       });
 
     for (const emailingDomain of verifiedDomainsWithPendingHostname) {
-      await this.emailingHostnamesService.sync(
-        emailingDomain.workspaceId,
-        emailingDomain.id,
-        { provision: false },
-      );
+      await this.emailingHostnamesService.sync({
+        workspaceId: emailingDomain.workspaceId,
+        emailingDomainId: emailingDomain.id,
+        provision: false,
+      });
     }
   }
 }

@@ -69,7 +69,7 @@ export class EmailingDomainEntity extends WorkspaceRelatedEntity {
   unsubscribeHostnameStatus: ManagedHostnameStatus | null;
 
   @Column({ type: 'boolean', nullable: false, default: false })
-  clickTrackingEnabled: boolean;
+  isClickTrackingEnabled: boolean;
 
   @Column({ type: 'varchar', nullable: true })
   clickTrackingHostname: string | null;

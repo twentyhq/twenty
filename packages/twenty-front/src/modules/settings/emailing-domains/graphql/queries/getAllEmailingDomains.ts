@@ -7,7 +7,7 @@ export const GET_ALL_EMAILING_DOMAINS = gql`
       domain
       status
       verifiedAt
-      clickTrackingEnabled
+      isClickTrackingEnabled
       clickTrackingHostname
       clickTrackingHostnameStatus
       verificationRecords {

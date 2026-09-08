@@ -14,7 +14,7 @@ export class AddCampaignClickTrackingFastInstanceCommand
 
     await queryRunner.query(
       `ALTER TABLE "core"."emailingDomain"
-         ADD "clickTrackingEnabled" boolean NOT NULL DEFAULT false,
+         ADD "isClickTrackingEnabled" boolean NOT NULL DEFAULT false,
          ADD "clickTrackingHostname" varchar,
          ADD "clickTrackingHostnameId" varchar,
          ADD "clickTrackingHostnameStatus" "core"."emailingDomain_clicktrackinghostnamestatus_enum"`,
@@ -30,10 +30,10 @@ export class AddCampaignClickTrackingFastInstanceCommand
          "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
          "workspaceId" uuid NOT NULL,
          "messageCampaignId" uuid NOT NULL,
-         "url" text NOT NULL,
+         "url" character varying NOT NULL,
          "urlHash" character(64) NOT NULL,
          CONSTRAINT "PK_messageCampaignLink_id" PRIMARY KEY ("id"),
-         CONSTRAINT "FK_messageCampaignLink_workspaceId" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE
+         CONSTRAINT "FK_1fe00f39ab54cc9f0c9cdd44aba" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION
        )`,
     );
 
@@ -56,8 +56,8 @@ export class AddCampaignClickTrackingFastInstanceCommand
          "clickCount" integer NOT NULL DEFAULT 1,
          "lastClickedAt" TIMESTAMP WITH TIME ZONE NOT NULL,
          CONSTRAINT "PK_messageCampaignLinkClick_id" PRIMARY KEY ("id"),
-         CONSTRAINT "FK_messageCampaignLinkClick_workspaceId" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE,
-         CONSTRAINT "FK_messageCampaignLinkClick_linkId" FOREIGN KEY ("messageCampaignLinkId") REFERENCES "core"."messageCampaignLink"("id") ON DELETE CASCADE
+         CONSTRAINT "FK_34cce18b64ac7a8561f75ba2ad6" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION,
+         CONSTRAINT "FK_f30b081ec6978a2772d56788b4a" FOREIGN KEY ("messageCampaignLinkId") REFERENCES "core"."messageCampaignLink"("id") ON DELETE CASCADE ON UPDATE NO ACTION
        )`,
     );
 
@@ -86,7 +86,7 @@ export class AddCampaignClickTrackingFastInstanceCommand
          DROP COLUMN "clickTrackingHostnameStatus",
          DROP COLUMN "clickTrackingHostnameId",
          DROP COLUMN "clickTrackingHostname",
-         DROP COLUMN "clickTrackingEnabled"`,
+         DROP COLUMN "isClickTrackingEnabled"`,
     );
 
     await queryRunner.query(

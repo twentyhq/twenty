@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
+
 import { randomInt } from 'node:crypto';
 
 import {
@@ -24,7 +26,7 @@ type FindAvailableHostnameArgs = {
 export class AvailableHostnameService {
   constructor(private readonly dnsResolverService: DnsResolverService) {}
 
-  async findAvailableHostname({
+  async findAvailableHostnameOrThrow({
     preferredPrefix,
     domain,
   }: FindAvailableHostnameArgs): Promise<string> {
@@ -46,6 +48,9 @@ export class AvailableHostnameService {
     throw new DnsResolverException(
       `Every candidate hostname for prefix ${preferredPrefix} on ${domain} is already in use`,
       DnsResolverExceptionCode.NO_AVAILABLE_HOSTNAME,
+      {
+        userFriendlyMessage: msg`No available subdomain could be found on ${domain}. Please contact support.`,
+      },
     );
   }
 
