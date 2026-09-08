@@ -16,8 +16,6 @@ import { filterMorphRelationDuplicateFields } from 'src/engine/dataloaders/utils
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { ALL_OVERRIDABLE_PRESENTATION_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-overridable-properties-by-metadata-name.constant';
-import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -43,6 +41,7 @@ import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/d
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type SearchFieldMetadataDTO } from 'src/engine/metadata-modules/search-field-metadata/dtos/search-field-metadata.dto';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
+import { resolveEffectiveFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-effective-flat-field-metadata.util';
 
 export type RelationMetadataLoaderPayload = {
   workspaceId: string;
@@ -408,26 +407,12 @@ export class DataloaderService {
         const fieldMetadataCollection = objectFlatFieldMetadatasList.map(
           (objectFlatFieldMetadatas) => {
             const overriddenFieldMetadataEntities =
-              objectFlatFieldMetadatas.map((flatFieldMetadata) => {
-                const overrides = flatFieldMetadata.overrides ?? undefined;
-                const i18nContext = getI18nContext(
-                  flatFieldMetadata.applicationId,
-                );
-
-                return ALL_OVERRIDABLE_PRESENTATION_PROPERTIES_BY_METADATA_NAME.fieldMetadata.reduce(
-                  (acc, property) => ({
-                    ...acc,
-                    [property]: resolveEffectiveEntityProperty({
-                      metadataName: 'fieldMetadata',
-                      baseValue: flatFieldMetadata[property],
-                      overrides,
-                      property,
-                      i18nContext,
-                    }),
-                  }),
+              objectFlatFieldMetadatas.map((flatFieldMetadata) =>
+                resolveEffectiveFlatFieldMetadata({
                   flatFieldMetadata,
-                );
-              });
+                  i18nContext: getI18nContext(flatFieldMetadata.applicationId),
+                }),
+              );
 
             const filteredFieldMetadataEntities =
               filterMorphRelationDuplicateFields(
