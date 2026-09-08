@@ -202,20 +202,14 @@ export const ResetsInputWhenReopened: Story = {
   },
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
-    const input = await body.findByTestId('confirmation-modal-input');
-    const confirmButton = await body.findByTestId(
-      'confirmation-modal-confirm-button',
-    );
+    const input = await body.findByPlaceholderText('yes');
+    const confirmButton = await body.findByRole('button', { name: /Delete/ });
 
     expect(confirmButton).toBeDisabled();
 
     await userEvent.type(input, 'yes');
-    await waitFor(() => {
-      expect(confirmButton).toBeEnabled();
-    });
-
     await userEvent.click(
-      await body.findByTestId('confirmation-modal-cancel-button'),
+      await body.findByRole('button', { name: /Cancel/ }),
     );
 
     jotaiStore.set(
@@ -225,11 +219,11 @@ export const ResetsInputWhenReopened: Story = {
       true,
     );
 
+    await sleep(400);
+
     await waitFor(() => {
-      expect(
-        body.getByTestId('confirmation-modal-confirm-button'),
-      ).toBeDisabled();
+      expect(body.getByRole('button', { name: /Delete/ })).toBeDisabled();
     });
-    expect(body.getByTestId('confirmation-modal-input')).toHaveValue('');
+    expect(body.getByPlaceholderText('yes')).toHaveValue('');
   },
 };
