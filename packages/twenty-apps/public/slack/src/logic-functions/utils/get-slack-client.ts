@@ -20,8 +20,7 @@ export const getSlackClient = async (
     client: new WebClient(connectionResult.accessToken, {
       timeout: SLACK_CLIENT_REQUEST_TIMEOUT_MS,
       retryConfig: SLACK_CLIENT_RETRY_CONFIG,
-      // without this a 429 sleeps for the whole Retry-After before the retry
-      // budget even applies, which no logic function here can afford
+      // otherwise a 429 sleeps the whole Retry-After before any retry budget
       rejectRateLimitedCalls: true,
       ...options,
     }),

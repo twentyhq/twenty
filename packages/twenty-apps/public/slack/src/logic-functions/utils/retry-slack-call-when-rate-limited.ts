@@ -1,8 +1,7 @@
 import { SLACK_RATE_LIMIT_RETRY_BUDGET_MS } from 'src/logic-functions/constants/slack-rate-limit-retry-budget-ms';
 import { isSlackRateLimitedError } from 'src/logic-functions/utils/is-slack-rate-limited-error';
 
-// the client rejects rate limited calls outright, which is right for reads but
-// loses the member their answer on a write, so wait out a short Retry-After
+// rejecting a rate limited write outright would cost the member the answer
 export const retrySlackCallWhenRateLimited = async <TResult>(
   call: () => Promise<TResult>,
 ): Promise<TResult> => {
