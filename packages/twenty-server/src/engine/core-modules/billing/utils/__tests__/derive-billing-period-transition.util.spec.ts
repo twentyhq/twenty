@@ -68,6 +68,41 @@ describe('resolveBillingTransitionBoundary', () => {
 
     expect(boundary).toEqual(FEBRUARY);
   });
+
+  // Taking the nearest boundary instead would pick March here, settling a
+  // period that has not closed on partial usage and reserving the idempotency
+  // key the real March transition then needs.
+  it('never settles a period that has not ended yet', () => {
+    const boundary = resolveBillingTransitionBoundary({
+      observedAt: new Date('2026-02-20T00:00:00.000Z'),
+      subscriptionCurrentPeriodStart: FEBRUARY,
+      subscriptionCurrentPeriodEnd: MARCH,
+    });
+
+    expect(boundary).toEqual(FEBRUARY);
+  });
+
+  it('takes the period end for a redelivery long after it closed', () => {
+    const boundary = resolveBillingTransitionBoundary({
+      observedAt: new Date('2026-02-20T00:00:00.000Z'),
+      subscriptionCurrentPeriodStart: JANUARY,
+      subscriptionCurrentPeriodEnd: FEBRUARY,
+    });
+
+    expect(boundary).toEqual(FEBRUARY);
+  });
+
+  // Stripe raises the invoice at the handover, so our clock can read a moment
+  // short of it.
+  it('accepts a boundary that has all but arrived', () => {
+    const boundary = resolveBillingTransitionBoundary({
+      observedAt: new Date('2026-01-31T23:59:30.000Z'),
+      subscriptionCurrentPeriodStart: JANUARY,
+      subscriptionCurrentPeriodEnd: FEBRUARY,
+    });
+
+    expect(boundary).toEqual(FEBRUARY);
+  });
 });
 
 describe('deriveBillingPeriodTransition', () => {

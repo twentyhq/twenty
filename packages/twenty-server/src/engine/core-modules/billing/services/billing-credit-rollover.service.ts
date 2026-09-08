@@ -155,9 +155,11 @@ export class BillingCreditRolloverService {
         type: grant.type,
         amountMicro: grant.amountMicro,
         createdAt: grant.createdAt,
+        expiresAt: grant.expiresAt,
       })),
       usageMicro,
       rolloverCapMicro,
+      boundary: closingPeriodEnd,
     });
 
     await this.billingCreditGrantService.closeGrantsAtPeriodEnd(
@@ -176,10 +178,11 @@ export class BillingCreditRolloverService {
           type: carryForwardGrant.type,
           sourceGrantId: carryForwardGrant.sourceGrantId,
           effectiveAt: nextPeriodStart,
-          // The next transition settles these in turn. Stamping the period end
-          // here instead would make the balance depend on that transition
-          // running, which is the failure this settlement exists to survive.
-          expiresAt: null,
+          // Null for everything but a time-boxed grant, whose deadline the
+          // successor inherits. Stamping the period end here instead would make
+          // every balance depend on the next transition running, which is the
+          // failure this settlement exists to survive.
+          expiresAt: carryForwardGrant.expiresAt,
           reason: `Carried over from the period starting ${closingPeriodStart.toISOString()}`,
           idempotencyKey: buildCarryForwardIdempotencyKey({
             workspaceId,

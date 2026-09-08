@@ -96,6 +96,11 @@ export class BillingCreditService {
       workspaceId,
       availableDeltaMicro: amountMicro,
       subscription,
+      // Incrementing a warm counter leaves its period-end lifetime in place, so
+      // a grant lapsing before then would keep being spendable through the
+      // cache. Rebuilding re-reads the ledger and shortens the counter to the
+      // new deadline.
+      mustRebuildCounter: expiresBeforePeriodEnd(grant.expiresAt, subscription),
     });
 
     return grant;
@@ -170,12 +175,14 @@ export class BillingCreditService {
     isReplay = false,
     adjustmentKey,
     subscription: knownSubscription,
+    mustRebuildCounter = false,
   }: {
     workspaceId: string;
     availableDeltaMicro: number;
     isReplay?: boolean;
     adjustmentKey?: string;
     subscription?: BillingSubscriptionEntity;
+    mustRebuildCounter?: boolean;
   }): Promise<void> {
     const subscription =
       knownSubscription ??
@@ -203,6 +210,7 @@ export class BillingCreditService {
         availableDeltaMicro,
         isReplay,
         adjustmentKey,
+        mustRebuildCounter,
       });
     }
 
@@ -224,6 +232,7 @@ export class BillingCreditService {
     availableDeltaMicro,
     isReplay,
     adjustmentKey,
+    mustRebuildCounter,
   }: {
     workspaceId: string;
     periodStart: Date;
@@ -231,14 +240,16 @@ export class BillingCreditService {
     availableDeltaMicro: number;
     isReplay: boolean;
     adjustmentKey?: string;
+    mustRebuildCounter: boolean;
   }): Promise<void> {
     const rebuildCounter =
-      isReplay &&
-      (!isDefined(adjustmentKey) ||
-        !(await this.billingUsageCacheService.hasCounterAdjustmentBeenApplied(
-          workspaceId,
-          adjustmentKey,
-        )));
+      mustRebuildCounter ||
+      (isReplay &&
+        (!isDefined(adjustmentKey) ||
+          !(await this.billingUsageCacheService.hasCounterAdjustmentBeenApplied(
+            workspaceId,
+            adjustmentKey,
+          ))));
 
     await this.applyCounterWrite({
       workspaceId,
@@ -302,3 +313,11 @@ export class BillingCreditService {
 
 const buildRevocationAdjustmentKey = (grantId: string): string =>
   `revoke:${grantId}`;
+
+const expiresBeforePeriodEnd = (
+  expiresAt: Date | null,
+  subscription: BillingSubscriptionEntity | undefined,
+): boolean =>
+  isDefined(expiresAt) &&
+  (!isDefined(subscription) ||
+    expiresAt.getTime() < subscription.currentPeriodEnd.getTime());

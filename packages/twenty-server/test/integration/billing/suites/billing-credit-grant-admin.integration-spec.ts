@@ -192,6 +192,31 @@ describe('Admin credit grant and revoke (integration)', () => {
     );
   });
 
+  // Incrementing would leave the counter's period-end lifetime in place, so the
+  // credits would stay spendable through the cache after they lapsed.
+  it('drops a warm available-credits counter when the grant expires before the period does', async () => {
+    const cache = getBillingUsageCacheService();
+
+    await cache.warmAvailableCredits(
+      workspaceId,
+      PERIOD_START,
+      PERIOD_END,
+      500_000,
+    );
+
+    await grantCredits({
+      workspaceId,
+      amount: 2,
+      type: BillingCreditGrantType.SALES,
+      reason: null,
+      expiresInDays: 1,
+    });
+
+    expect(
+      await cache.getAvailableCredits(workspaceId, PERIOD_START),
+    ).toBeUndefined();
+  });
+
   it('takes a revoked grant back off the ledger and the available-credits counter', async () => {
     const cache = getBillingUsageCacheService();
 
