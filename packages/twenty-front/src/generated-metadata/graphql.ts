@@ -180,6 +180,18 @@ export enum AggregateOperations {
   SUM = 'SUM'
 }
 
+export type AiModelBenchmarkDto = {
+  __typename?: 'AiModelBenchmarkDTO';
+  costPerTask?: Maybe<Scalars['Float']['output']>;
+  fetchedAt: Scalars['String']['output'];
+  intelligenceIndex?: Maybe<Scalars['Float']['output']>;
+  intelligenceIndexVersion: Scalars['Float']['output'];
+  modelId: Scalars['String']['output'];
+  modelName: Scalars['String']['output'];
+  modelSlug: Scalars['String']['output'];
+  outputTokensPerSecond?: Maybe<Scalars['Float']['output']>;
+};
+
 export type AiSystemPromptPreview = {
   __typename?: 'AiSystemPromptPreview';
   estimatedTokenCount: Scalars['Int']['output'];
@@ -1007,6 +1019,7 @@ export type ClaimableApplicationRegistration = {
 
 export type ClientAiModelConfig = {
   __typename?: 'ClientAiModelConfig';
+  benchmark?: Maybe<AiModelBenchmarkDto>;
   contextWindowTokens?: Maybe<Scalars['Float']['output']>;
   dataResidency?: Maybe<Scalars['String']['output']>;
   inputCostPerMillionTokens?: Maybe<Scalars['Float']['output']>;

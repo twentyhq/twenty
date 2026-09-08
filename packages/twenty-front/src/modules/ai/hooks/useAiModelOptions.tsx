@@ -6,6 +6,7 @@ import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
+import { SettingsAiModelHoverCard } from '@/settings/ai/components/SettingsAiModelHoverCard';
 import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -45,6 +46,12 @@ export const useAiModelOptions = ({
       value: model.modelId,
       label: model.label,
       Icon: getModelIcon(model.modelFamily, model.providerName),
+      hoverCardContent: (
+        <SettingsAiModelHoverCard
+          model={model}
+          comparisonModels={enabledModels}
+        />
+      ),
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
 
@@ -55,6 +62,12 @@ export const useAiModelOptions = ({
         Icon: getModelIcon(
           workspaceDefaultModel.modelFamily,
           workspaceDefaultModel.providerName,
+        ),
+        hoverCardContent: (
+          <SettingsAiModelHoverCard
+            model={workspaceDefaultModel}
+            comparisonModels={enabledModels}
+          />
         ),
         contextualText: t`default`,
       }

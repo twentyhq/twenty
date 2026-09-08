@@ -1,3 +1,4 @@
+import { AiModelBenchmarkDTO } from 'src/engine/core-modules/client-config/dtos/ai-model-benchmark.dto';
 import {
   Field,
   GraphQLISODateTime,
@@ -40,6 +41,9 @@ export class NativeModelCapabilities {
 
 @ObjectType()
 export class ClientAiModelConfig {
+  @Field(() => AiModelBenchmarkDTO, { nullable: true })
+  benchmark?: AiModelBenchmarkDTO;
+
   @Field(() => String)
   // Composite model id (`provider/modelName`) for this workspace; matches registry and admin APIs.
   modelId: ModelId;

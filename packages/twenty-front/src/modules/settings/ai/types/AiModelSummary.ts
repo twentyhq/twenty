@@ -1,6 +1,10 @@
-import { type ModelFamily } from '~/generated-metadata/graphql';
+import {
+  type AiModelBenchmarkDto,
+  type ModelFamily,
+} from '~/generated-metadata/graphql';
 
 export type AiModelSummary = {
+  benchmark?: AiModelBenchmarkDto | null;
   modelId: string;
   label: string;
   modelFamily?: ModelFamily | null;

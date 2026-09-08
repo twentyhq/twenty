@@ -15,7 +15,7 @@ const NAMESPACE_VALUES = Object.values(
 @Command({
   name: 'cache:flush',
   description:
-    'Flush cache Redis (REDIS_URL) for a namespace and pattern. Omit --namespace to flush all namespaces. Run: npx nx run twenty-server:command cache:flush',
+    'Flush cache Redis (REDIS_URL) for a namespace and pattern. Without --namespace, preserve AI benchmarks and their request budget. Run: npx nx run twenty-server:command cache:flush',
 })
 export class FlushCacheCommand extends CommandRunner {
   private readonly logger = new Logger(FlushCacheCommand.name);
@@ -37,7 +37,7 @@ export class FlushCacheCommand extends CommandRunner {
       this.logger.log(
         namespacesToFlush.length === 1
           ? `Flushing namespace ${namespacesToFlush[0]} for pattern: ${pattern}...`
-          : `Flushing all namespaces for pattern: ${pattern}...`,
+          : `Flushing cache namespaces for pattern: ${pattern}...`,
       );
 
       for (const namespace of namespacesToFlush) {
@@ -59,7 +59,11 @@ export class FlushCacheCommand extends CommandRunner {
     value: unknown,
   ): CacheStorageNamespace[] {
     if (!isDefined(value)) {
-      return NAMESPACE_VALUES;
+      // Deployment cache flushes must not reset the external API quota window.
+      return NAMESPACE_VALUES.filter(
+        (namespace) =>
+          namespace !== CacheStorageNamespace.EngineAiModelBenchmarks,
+      );
     }
 
     if (!isNonEmptyString(value)) {
@@ -83,7 +87,7 @@ export class FlushCacheCommand extends CommandRunner {
 
   @Option({
     flags: '-n, --namespace <namespace>',
-    description: `Cache namespace to flush. Omit to flush all. One of: ${NAMESPACE_VALUES.join(', ')}`,
+    description: `Cache namespace to flush. Omit to preserve AI benchmarks and their request budget. One of: ${NAMESPACE_VALUES.join(', ')}`,
   })
   parseNamespaceOption(val: string): string {
     return val;

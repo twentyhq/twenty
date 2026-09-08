@@ -1,3 +1,5 @@
+import { ArtificialAnalysisCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/artificial-analysis-catalog.service';
+import { findArtificialAnalysisModel } from 'src/engine/metadata-modules/ai/ai-models/utils/find-artificial-analysis-model.util';
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -34,6 +36,7 @@ export class ClientConfigService {
     private domainServerConfigService: DomainServerConfigService,
     private aiModelRegistryService: AiModelRegistryService,
     private maintenanceModeService: MaintenanceModeService,
+    private readonly artificialAnalysisCatalogService: ArtificialAnalysisCatalogService,
   ) {}
 
   private isCloudflareIntegrationEnabled(): boolean {
@@ -165,6 +168,38 @@ export class ClientConfigService {
           maxOutputTokens: defaultSpeedModelConfig?.maxOutputTokens,
         },
       );
+    }
+
+    const benchmarkCatalog =
+      await this.artificialAnalysisCatalogService.getCatalog();
+
+    if (isDefined(benchmarkCatalog)) {
+      for (const model of aiModels) {
+        const benchmark = findArtificialAnalysisModel(
+          benchmarkCatalog.models,
+          model.modelId,
+          model.label,
+        );
+
+        if (isDefined(benchmark)) {
+          model.benchmark = {
+            modelId: benchmark.id,
+            modelName: benchmark.name,
+            modelSlug: benchmark.slug,
+            outputTokensPerSecond:
+              benchmark.performance.median_output_tokens_per_second ??
+              undefined,
+            intelligenceIndex:
+              benchmark.evaluations.artificial_analysis_intelligence_index ??
+              undefined,
+            costPerTask:
+              benchmark.artificial_analysis_intelligence_index_cost
+                ?.cost_per_task?.total_cost ?? undefined,
+            intelligenceIndexVersion: benchmarkCatalog.intelligenceIndexVersion,
+            fetchedAt: benchmarkCatalog.fetchedAt,
+          };
+        }
+      }
     }
 
     const clientConfig: ClientConfig = {

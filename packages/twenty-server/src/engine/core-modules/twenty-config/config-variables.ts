@@ -1845,6 +1845,24 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
+    description: 'API key for Artificial Analysis model benchmarks',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  ARTIFICIAL_ANALYSIS_API_KEY?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'Refresh Artificial Analysis benchmarks in the background. Defaults to enabled in production and disabled in development and tests.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  ARTIFICIAL_ANALYSIS_SYNC_ENABLED?: boolean;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
     description: 'API key for OpenAI models (GPT, o-series)',
     type: ConfigVariableType.STRING,
   })
