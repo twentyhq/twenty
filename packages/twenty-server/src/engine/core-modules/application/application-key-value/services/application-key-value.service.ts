@@ -113,7 +113,7 @@ export class ApplicationKeyValueService {
     key,
     value,
   }: {
-    application: FlatApplication;
+    application: Pick<FlatApplication, 'id'>;
     workspaceId: string;
     key: string;
     value: unknown;

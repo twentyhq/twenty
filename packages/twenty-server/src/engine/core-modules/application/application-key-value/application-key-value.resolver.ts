@@ -1,4 +1,8 @@
-import { ForbiddenException, UseFilters, UseGuards } from '@nestjs/common';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { type AppKeyValue } from 'twenty-shared/application';
@@ -66,7 +70,10 @@ export class ApplicationKeyValueResolver {
     @Args('input') input: SetAppKeyValueInput,
   ): Promise<boolean> {
     if (input.scope === AppKeyValueScope.SERVER) {
-      throw new ForbiddenException('Atomic values are workspace scoped.');
+      throw new ApplicationException(
+        'Atomic values are workspace scoped.',
+        ApplicationExceptionCode.FORBIDDEN,
+      );
     }
 
     return this.applicationKeyValueService.setIfAbsent({
