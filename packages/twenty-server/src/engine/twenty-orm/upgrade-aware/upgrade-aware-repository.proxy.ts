@@ -164,6 +164,17 @@ const stripUnavailableSelect = (
   return options;
 };
 
+// A skipped update never reaches the driver, so the counts TypeORM would have
+// filled in have to be stated rather than left undefined: no rows matched.
+const buildSkippedUpdateResult = (): UpdateResult => {
+  const updateResult = new UpdateResult();
+
+  updateResult.raw = [];
+  updateResult.affected = 0;
+
+  return updateResult;
+};
+
 const stripUnavailableUpdateValues = (
   entityClass: Function,
   state: UpgradeAwareRepositoryState,
@@ -366,7 +377,7 @@ const handleRepositoryMethodCall = <Entity extends object>({
       updateValues !== args[1] &&
       Object.keys(updateValues as Record<string, unknown>).length === 0
     ) {
-      return Promise.resolve(new UpdateResult());
+      return Promise.resolve(buildSkippedUpdateResult());
     }
 
     return callRepositoryMethod({

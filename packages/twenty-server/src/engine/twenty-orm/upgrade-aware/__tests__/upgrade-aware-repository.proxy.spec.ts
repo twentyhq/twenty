@@ -155,6 +155,8 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
       const result = await wrapped.update({ id: 1 }, { introducedColumn: {} });
 
       expect(update).not.toHaveBeenCalled();
+      expect(result.affected).toBe(0);
+      expect(result.raw).toEqual([]);
       expect(result.generatedMaps).toEqual([]);
     });
 
