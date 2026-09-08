@@ -7,7 +7,11 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import {
   type FieldManifest,
+  getFieldUniversalIdentifier,
+  getIndexFieldUniversalIdentifier,
+  getSystemViewUniversalIdentifier,
   type ObjectManifest,
+  SYSTEM_VIEW_KEYS,
   type TranslationsManifest,
   TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
 } from 'twenty-shared/application';
@@ -18,20 +22,99 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { v4 as uuidv4 } from 'uuid';
 
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
 
-const TEST_APP_ID = uuidv4();
-const TEST_ROLE_ID = uuidv4();
-const TICKET_TITLE_FIELD_ID = uuidv4();
-const TICKET_PROJECT_FIELD_ID = uuidv4();
-const PROJECT_TICKETS_FIELD_ID = uuidv4();
-const COMPANY_TAGLINE_FIELD_ID = uuidv4();
-const INDEX_ID = uuidv4();
+const TEST_APP_ID = '7e3d1c2b-0000-4a7b-8c9d-0e1f2a3b4c5d';
+const TEST_ROLE_ID = '7e3d1c2b-0001-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_OBJECT_ID = '7e3d1c2b-0002-4a7b-8c9d-0e1f2a3b4c5d';
+const PROJECT_OBJECT_ID = '7e3d1c2b-0003-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_TITLE_FIELD_ID = '7e3d1c2b-0004-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_PROJECT_FIELD_ID = '7e3d1c2b-0005-4a7b-8c9d-0e1f2a3b4c5d';
+const PROJECT_TICKETS_FIELD_ID = '7e3d1c2b-0006-4a7b-8c9d-0e1f2a3b4c5d';
+const COMPANY_TAGLINE_FIELD_ID = '7e3d1c2b-0007-4a7b-8c9d-0e1f2a3b4c5d';
+const INDEX_ID = '7e3d1c2b-0008-4a7b-8c9d-0e1f2a3b4c5d';
+const INDEX_FIELD_ID = '7e3d1c2b-0009-4a7b-8c9d-0e1f2a3b4c5d';
+
+const ENGINE_DERIVED_FIELD_NAMES = [
+  'id',
+  'createdAt',
+  'updatedAt',
+  'deletedAt',
+  'createdBy',
+  'updatedBy',
+  'position',
+  'searchVector',
+];
+
+const buildIdentifierNames = (): Map<string, string> => {
+  const names = new Map<string, string>([
+    [TEST_APP_ID, 'TEST_APP'],
+    [TEST_ROLE_ID, 'TEST_ROLE'],
+    [TICKET_OBJECT_ID, 'TICKET_OBJECT'],
+    [PROJECT_OBJECT_ID, 'PROJECT_OBJECT'],
+    [TICKET_TITLE_FIELD_ID, 'TICKET_TITLE_FIELD'],
+    [TICKET_PROJECT_FIELD_ID, 'TICKET_PROJECT_FIELD'],
+    [PROJECT_TICKETS_FIELD_ID, 'PROJECT_TICKETS_FIELD'],
+    [COMPANY_TAGLINE_FIELD_ID, 'COMPANY_TAGLINE_FIELD'],
+    [INDEX_ID, 'TICKET_TITLE_INDEX'],
+    [INDEX_FIELD_ID, 'TICKET_TITLE_INDEX_FIELD'],
+    [
+      getIndexFieldUniversalIdentifier({
+        applicationUniversalIdentifier: TEST_APP_ID,
+        indexUniversalIdentifier: INDEX_ID,
+        fieldUniversalIdentifier: TICKET_TITLE_FIELD_ID,
+      }),
+      'TICKET_TITLE_INDEX_FIELD_ENGINE_DERIVED',
+    ],
+    [STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company, 'STANDARD_COMPANY_OBJECT'],
+  ]);
+
+  for (const [objectName, objectUniversalIdentifier] of [
+    ['TICKET', TICKET_OBJECT_ID],
+    ['PROJECT', PROJECT_OBJECT_ID],
+  ] as const) {
+    for (const fieldName of ENGINE_DERIVED_FIELD_NAMES) {
+      names.set(
+        getFieldUniversalIdentifier({
+          applicationUniversalIdentifier: TEST_APP_ID,
+          objectUniversalIdentifier,
+          name: fieldName,
+        }),
+        `${objectName}_${fieldName}_ENGINE_FIELD`,
+      );
+    }
+
+    for (const viewKey of Object.values(SYSTEM_VIEW_KEYS)) {
+      names.set(
+        getSystemViewUniversalIdentifier({
+          objectMetadataApplicationUniversalIdentifier: TEST_APP_ID,
+          objectUniversalIdentifier,
+          viewKey,
+        }),
+        `${objectName}_${viewKey}_ENGINE_VIEW`,
+      );
+    }
+  }
+
+  return names;
+};
+
+const IDENTIFIER_NAMES = buildIdentifierNames();
+
+const nameIdentifiers = <TValue>(value: TValue): TValue => {
+  let serialized = JSON.stringify(value);
+
+  for (const [universalIdentifier, name] of IDENTIFIER_NAMES) {
+    serialized = serialized.split(universalIdentifier).join(`<${name}>`);
+  }
+
+  return JSON.parse(serialized) as TValue;
+};
 
 const projectObject = buildDefaultObjectManifest({
+  universalIdentifier: PROJECT_OBJECT_ID,
   applicationUniversalIdentifier: TEST_APP_ID,
   nameSingular: 'exportProject',
   namePlural: 'exportProjects',
@@ -42,6 +125,7 @@ const projectObject = buildDefaultObjectManifest({
 
 const ticketObject: ObjectManifest = {
   ...buildDefaultObjectManifest({
+    universalIdentifier: TICKET_OBJECT_ID,
     applicationUniversalIdentifier: TEST_APP_ID,
     nameSingular: 'exportTicket',
     namePlural: 'exportTickets',
@@ -120,7 +204,7 @@ const manifest = buildBaseManifest({
         objectUniversalIdentifier: ticketObject.universalIdentifier,
         fields: [
           {
-            universalIdentifier: uuidv4(),
+            universalIdentifier: INDEX_FIELD_ID,
             fieldUniversalIdentifier: TICKET_TITLE_FIELD_ID,
           },
         ],
@@ -131,6 +215,9 @@ const manifest = buildBaseManifest({
 
 describe('Application export - data model', () => {
   beforeAll(async () => {
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier: TEST_APP_ID,
+    });
     await setupApplicationForSync({
       applicationUniversalIdentifier: TEST_APP_ID,
       name: 'Export Data Model Test Application',
@@ -147,7 +234,7 @@ describe('Application export - data model', () => {
     });
   });
 
-  it('exports the data model with its fidelity fields and classifies every row', async () => {
+  it('exports the whole application as a stable manifest and classifies every row', async () => {
     const { data, errors } = await exportApplication({
       universalIdentifier: TEST_APP_ID,
       expectToFail: false,
@@ -162,77 +249,83 @@ describe('Application export - data model', () => {
       displayName: 'Test Application',
       sourceType: 'LOCAL',
     });
-    expect(exported.manifest.translations).toEqual(FIXTURE_TRANSLATIONS);
-    expect(exported.manifest.application.defaultRoleUniversalIdentifier).toBe(
-      TEST_ROLE_ID,
+    expect(exported.files).toEqual([]);
+    expect(nameIdentifiers(exported.manifest)).toMatchSnapshot('manifest');
+
+    const namedCoverage = nameIdentifiers(
+      exported.coverage.filter(({ universalIdentifier }) =>
+        IDENTIFIER_NAMES.has(universalIdentifier),
+      ),
+    ).sort(
+      (left, right) =>
+        left.metadataName.localeCompare(right.metadataName) ||
+        left.universalIdentifier.localeCompare(right.universalIdentifier),
+    );
+    const unnamedCoverageCounts = Object.fromEntries(
+      Object.entries(
+        exported.coverage
+          .filter(
+            ({ universalIdentifier }) =>
+              !IDENTIFIER_NAMES.has(universalIdentifier),
+          )
+          .reduce<Record<string, number>>((counts, entry) => {
+            const key = `${entry.metadataName} ${entry.status}${isDefined(entry.reason) ? ` (${entry.reason})` : ''}`;
+
+            counts[key] = (counts[key] ?? 0) + 1;
+
+            return counts;
+          }, {}),
+      ).sort(([left], [right]) => left.localeCompare(right)),
     );
 
-    expect(
-      exported.manifest.objects.map(({ nameSingular }) => nameSingular),
-    ).toEqual(['exportProject', 'exportTicket']);
+    expect({
+      named: namedCoverage,
+      unnamedByKindAndStatus: unnamedCoverageCounts,
+    }).toMatchSnapshot('coverage');
+  }, 60000);
 
-    const exportedTicket = exported.manifest.objects[1];
-
-    expect(exportedTicket).toMatchObject({
-      color: 'blue',
-      isLabelSyncedWithName: true,
-      imageIdentifierFieldMetadataUniversalIdentifier: null,
-      labelIdentifierFieldMetadataUniversalIdentifier:
-        ticketObject.labelIdentifierFieldMetadataUniversalIdentifier,
+  it('keeps the engine-derived label identifier pointer and classifies the rows it cannot export', async () => {
+    const { data } = await exportApplication({
+      universalIdentifier: TEST_APP_ID,
+      expectToFail: false,
     });
-    expect(exportedTicket.fields.map(({ name }) => name)).toEqual([
-      'project',
-      'title',
-    ]);
-    expect(
-      exportedTicket.fields.find(({ name }) => name === 'project'),
-    ).toMatchObject({
-      type: FieldMetadataType.RELATION,
-      relationTargetFieldMetadataUniversalIdentifier: PROJECT_TICKETS_FIELD_ID,
-      universalSettings: {
-        relationType: RelationType.MANY_TO_ONE,
-        joinColumnName: 'projectId',
-        onDelete: RelationOnDeleteAction.SET_NULL,
-      },
-    });
-
-    expect(exported.manifest.fields).toMatchObject([
-      {
-        universalIdentifier: COMPANY_TAGLINE_FIELD_ID,
-        name: 'exportTagline',
-        objectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
-      },
-    ]);
-    expect(exported.manifest.indexes).toMatchObject([
-      {
-        universalIdentifier: INDEX_ID,
-        fields: [{ fieldUniversalIdentifier: TICKET_TITLE_FIELD_ID }],
-      },
-    ]);
-
+    const exported = data.exportApplication;
+    const exportedTicket = exported.manifest.objects.find(
+      ({ universalIdentifier }) => universalIdentifier === TICKET_OBJECT_ID,
+    );
     const statusOf = (universalIdentifier: string) =>
       exported.coverage.find(
         (entry) => entry.universalIdentifier === universalIdentifier,
       )?.status;
 
-    expect(statusOf(ticketObject.universalIdentifier)).toBe(
+    expect(
+      exportedTicket?.labelIdentifierFieldMetadataUniversalIdentifier,
+    ).toBe(
+      getFieldUniversalIdentifier({
+        applicationUniversalIdentifier: TEST_APP_ID,
+        objectUniversalIdentifier: TICKET_OBJECT_ID,
+        name: 'id',
+      }),
+    );
+    expect(exported.manifest.translations).toEqual(FIXTURE_TRANSLATIONS);
+    expect(statusOf(TICKET_OBJECT_ID)).toBe(
       ApplicationExportCoverageStatus.EXPORTED,
     );
-    expect(statusOf(TICKET_TITLE_FIELD_ID)).toBe(
+    expect(statusOf(COMPANY_TAGLINE_FIELD_ID)).toBe(
       ApplicationExportCoverageStatus.EXPORTED,
     );
-    expect(statusOf(INDEX_ID)).toBe(ApplicationExportCoverageStatus.EXPORTED);
     expect(statusOf(TEST_ROLE_ID)).toBe(
       ApplicationExportCoverageStatus.UNSUPPORTED,
     );
     expect(
-      exported.coverage.filter(
-        ({ metadataName, status }) =>
-          metadataName === 'fieldMetadata' &&
-          status === ApplicationExportCoverageStatus.ENGINE_DERIVED,
-      ).length,
-    ).toBeGreaterThan(0);
+      statusOf(
+        getSystemViewUniversalIdentifier({
+          objectMetadataApplicationUniversalIdentifier: TEST_APP_ID,
+          objectUniversalIdentifier: TICKET_OBJECT_ID,
+          viewKey: SYSTEM_VIEW_KEYS.INDEX,
+        }),
+      ),
+    ).toBe(ApplicationExportCoverageStatus.ENGINE_DERIVED);
   }, 60000);
 
   it('round-trips the raw export through an additive dry-run sync without any action', async () => {
