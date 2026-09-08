@@ -11,6 +11,7 @@ import {
 import { mergeFieldPartClassName } from '@ui/input/Field/internal/mergeFieldPartClassName';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
+import { formatInlineBlockSize } from './internal/formatInlineBlockSize';
 import { mergeRefs } from './internal/mergeRefs';
 import { resizeTextareaToContent } from './internal/resizeTextareaToContent';
 import styles from './Textarea.module.scss';
@@ -35,6 +36,7 @@ export const Textarea = ({
   // Base UI re-forks a merged ref whenever its identity changes, which would detach and reattach it on every render.
   const mergedRef = useMemo(() => mergeRefs(ref, textareaRef), [ref]);
   const isControlled = isDefined(value);
+  const consumerBlockSize = style?.blockSize;
 
   useLayoutEffect(() => {
     const textarea = textareaRef.current;
@@ -46,9 +48,9 @@ export const Textarea = ({
     resizeTextareaToContent(textarea);
 
     return () => {
-      textarea.style.blockSize = '';
+      textarea.style.blockSize = formatInlineBlockSize(consumerBlockSize);
     };
-  }, [autoResize, value, maxRows, rows]);
+  }, [autoResize, value, maxRows, rows, consumerBlockSize]);
 
   const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     // A controlled parent may reject the edit, so the layout effect measures the committed value instead.
