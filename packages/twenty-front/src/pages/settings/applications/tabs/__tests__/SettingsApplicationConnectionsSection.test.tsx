@@ -153,6 +153,7 @@ describe('SettingsApplicationConnectionsSection', () => {
     );
 
     expect(screen.queryByText('Just for me')).not.toBeInTheDocument();
+    expect(mockTriggerAppOAuth).toHaveBeenCalledTimes(1);
     expect(mockTriggerAppOAuth).toHaveBeenCalledWith({
       applicationId: 'app-1',
       providerName: 'google-calendar',
