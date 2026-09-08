@@ -63,17 +63,6 @@ export class BillingEntitlementSyncService {
       );
     }
 
-    // Only on revoke, so reconciling a fleet is not a predicate-table write for
-    // every workspace that never had the feature.
-    if (
-      wasGranted(BillingEntitlementKey.RLS) &&
-      !isGranted(BillingEntitlementKey.RLS)
-    ) {
-      await this.rowLevelPermissionPredicateGroupService.deleteAllRowLevelPermissionPredicateGroups(
-        workspaceId,
-      );
-    }
-
     await this.billingEntitlementRepository.upsert(
       workspaceId,
       billingEntitlements,
@@ -82,6 +71,21 @@ export class BillingEntitlementSyncService {
         skipUpdateIfNoValuesChanged: true,
       },
     );
+
+    // The opposite order to the reset above, because the unsafe direction is
+    // reversed: predicates deleted while the row still grants RLS would leave
+    // row filtering on with nothing to filter by. Once the revoke is committed
+    // the predicates are inert, so a failure here is only stale rows. Only on
+    // revoke, so reconciling a fleet is not a predicate-table write for every
+    // workspace that never had the feature.
+    if (
+      wasGranted(BillingEntitlementKey.RLS) &&
+      !isGranted(BillingEntitlementKey.RLS)
+    ) {
+      await this.rowLevelPermissionPredicateGroupService.deleteAllRowLevelPermissionPredicateGroups(
+        workspaceId,
+      );
+    }
 
     return billingEntitlements.map(({ key, value }) => ({ key, value }));
   }
