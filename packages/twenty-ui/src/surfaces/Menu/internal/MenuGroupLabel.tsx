@@ -1,6 +1,6 @@
 import { Menu as MenuPrimitive } from '@base-ui/react/menu';
 
-import { mergeFieldPartClassName } from '@ui/input/Field/internal/mergeFieldPartClassName';
+import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
 import styles from '../Menu.module.scss';
 import { type MenuGroupLabelProps } from '../types/MenuGroupLabelProps';
@@ -11,6 +11,6 @@ export const MenuGroupLabel = ({
 }: MenuGroupLabelProps) => (
   <MenuPrimitive.GroupLabel
     {...props}
-    className={mergeFieldPartClassName(styles.groupLabel, className)}
+    className={mergeClassNames(styles.groupLabel, className)}
   />
 );
