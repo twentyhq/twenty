@@ -36,6 +36,11 @@ export function TermsDocument() {
           terms.
         </li>
         <li>
+          You can automate your use of the Service and have AI agents act for
+          you, including when signing up. You stay responsible for what they do
+          under your account.
+        </li>
+        <li>
           Subscriptions renew automatically. You can cancel at any time,
           effective at the end of your current billing period.
         </li>
@@ -141,7 +146,11 @@ export function TermsDocument() {
         date, to keep your credentials confidential, and to notify us promptly
         at <a href="mailto:contact@twenty.com">contact@twenty.com</a> if you
         suspect unauthorized use of your account. You are responsible for
-        activity that occurs under your account.
+        activity that occurs under your account, including activity by software
+        or AI agents you authorize to act for you, whether they call our APIs or
+        use the app the way you would. For ongoing automated access, we
+        recommend giving an agent its own API key or OAuth connection, scoped to
+        a role with only the access it needs.
       </p>
       <p>
         Data in Twenty lives in workspaces. Workspace administrators control who
@@ -377,8 +386,8 @@ export function TermsDocument() {
           rate limits, or usage limits;
         </li>
         <li>
-          access the Cloud Service by automated means other than our documented
-          APIs;
+          scrape or bulk-extract content from the Site, or data from workspaces
+          you are not authorized to access;
         </li>
         <li>misrepresent who you are or your affiliation with anyone; or</li>
         <li>
@@ -388,6 +397,16 @@ export function TermsDocument() {
           give you, including hosting the software yourself.
         </li>
       </ol>
+      <p>
+        Automation is allowed. You may use our APIs, our MCP server, scripts, or
+        AI agents to work with your workspace, whether they call our APIs or use
+        the app in a browser as you would, and an agent may act for you,
+        including when signing up, as long as it acts openly on behalf of an
+        identified customer. The rules in this section apply to automated use
+        exactly as they do to a person clicking in the app: creating accounts in
+        bulk, working around usage limits, and collecting data you are not
+        entitled to are not allowed, whoever or whatever does them.
+      </p>
       <p>
         Plans include usage limits, described on the pricing page or in your
         order form, and the Service is subject to fair use so one
