@@ -629,10 +629,20 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       return;
     }
 
+    const recordIds = insertResult.generatedMaps.map((record) => record.id);
+
+    // A hard-destroyed record leaves its rows behind, and a client may reuse its id
+    await this.recordShareService.deleteByRecordIds({
+      workspaceId: authContext.workspace.id,
+      objectMetadataId: flatObjectMetadata.id,
+      recordIds,
+      transactionScope,
+    });
+
     await this.recordShareService.insertMany({
       workspaceId: authContext.workspace.id,
       recordShares: buildRecordShareInputsForCreatedRecords({
-        recordIds: insertResult.generatedMaps.map((record) => record.id),
+        recordIds,
         objectMetadataId: flatObjectMetadata.id,
         authContext,
         apiKeyRoleMap: repository.internalContext.apiKeyRoleMap,
