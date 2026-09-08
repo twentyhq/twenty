@@ -11,6 +11,7 @@ import { type FlatTimelineActivityTypeMaps } from 'src/engine/metadata-modules/f
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
 import { buildDirectRelationTargetShape } from 'src/modules/timeline/utils/build-direct-relation-target-shape.util';
 import { buildJunctionTargetShape } from 'src/modules/timeline/utils/build-junction-target-shape.util';
+import { buildNonAuditLoggedFieldNamesByObjectMetadataId } from 'src/modules/timeline/utils/build-non-audit-logged-field-names-by-object-metadata-id.util';
 import { buildTimelineActivitySelfRule } from 'src/modules/timeline/utils/build-timeline-activity-self-rule.util';
 import { resolveTimelineActivityTypeRouting } from 'src/modules/timeline/utils/resolve-timeline-activity-type-routing.util';
 import {
@@ -23,6 +24,7 @@ import {
 type TimelineActivityRulesForEventBatch = {
   sourceRules: TimelineActivityRule[];
   junctionRules: TimelineActivityRule[];
+  nonAuditLoggedFieldNames: Set<string>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   resolveTimelineActivityType: TimelineActivityTypeResolver;
 };
@@ -31,6 +33,7 @@ type TimelineActivityRoutingPlan = {
   activeTimelineActivityTypes: ResolvableTimelineActivityType[];
   throughRules: TimelineActivityRule[];
   eligibleNonAuditedObjectMetadataIds: Set<string>;
+  nonAuditLoggedFieldNamesByObjectMetadataId: Map<string, Set<string>>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   resolveTimelineActivityType: TimelineActivityTypeResolver;
 };
@@ -89,6 +92,10 @@ export class TimelineActivityRoutingPlanService {
           rule.targetShape.kind === 'JUNCTION' &&
           rule.targetShape.junctionObjectMetadataId === flatObjectMetadata.id,
       ),
+      nonAuditLoggedFieldNames:
+        routingPlan.nonAuditLoggedFieldNamesByObjectMetadataId.get(
+          flatObjectMetadata.id,
+        ) ?? new Set(),
       flatFieldMetadataMaps: routingPlan.flatFieldMetadataMaps,
       resolveTimelineActivityType: routingPlan.resolveTimelineActivityType,
     };
@@ -262,6 +269,11 @@ export class TimelineActivityRoutingPlanService {
       activeTimelineActivityTypes,
       throughRules,
       eligibleNonAuditedObjectMetadataIds,
+      nonAuditLoggedFieldNamesByObjectMetadataId:
+        buildNonAuditLoggedFieldNamesByObjectMetadataId({
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        }),
       flatFieldMetadataMaps,
       resolveTimelineActivityType,
     };

@@ -92,6 +92,7 @@ export const createStandardFieldFlatMetadata = <
     isNullable,
     isUnique,
     isSearchable: searchFields.some((searchField) => searchField.name === name),
+    isAuditLogged: true,
     isUIEditable,
     writability:
       name in PARTIAL_SYSTEM_FLAT_FIELD_METADATAS

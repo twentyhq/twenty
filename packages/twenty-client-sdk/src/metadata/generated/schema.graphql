@@ -2358,6 +2358,7 @@ type Field {
   isNullable: Boolean
   isUnique: Boolean
   isSearchable: Boolean
+  isAuditLogged: Boolean
   defaultValue: JSON
   options: JSON
   settings: JSON
@@ -4818,6 +4819,7 @@ input CreateFieldInput {
   isNullable: Boolean
   isUnique: Boolean
   isSearchable: Boolean
+  isAuditLogged: Boolean
   defaultValue: JSON
   options: JSON
   settings: JSON
@@ -4849,6 +4851,7 @@ input UpdateFieldInput {
   isNullable: Boolean
   isUnique: Boolean
   isSearchable: Boolean
+  isAuditLogged: Boolean
   defaultValue: JSON
   options: JSON
   settings: JSON

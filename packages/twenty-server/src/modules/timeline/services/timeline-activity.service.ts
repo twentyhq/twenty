@@ -1,16 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
-import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
+import { type ObjectRecord } from 'twenty-shared/types';
 import { isNonEmptyString } from '@sniptt/guards';
 import { fromArrayToValuesByKeyRecord, isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
-import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -34,6 +32,7 @@ import {
 } from 'src/modules/timeline/utils/resolve-timeline-activity-happens-at.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { doesObjectRecordEventChangeFields } from 'src/modules/timeline/utils/does-object-record-event-change-fields.util';
+import { excludeNonAuditLoggedFieldsFromEventsDiff } from 'src/modules/timeline/utils/exclude-non-audit-logged-fields-from-events-diff.util';
 import { resolveTimelineActivityRuleAction } from 'src/modules/timeline/utils/resolve-timeline-activity-rule-action.util';
 import { resolveTimelineActivityTypeForRule } from 'src/modules/timeline/utils/resolve-timeline-activity-type-for-rule.util';
 
@@ -54,6 +53,16 @@ const keepDiffOnly = (
 
   return isDefined(diff) && Object.keys(diff).length > 0 ? { diff } : {};
 };
+
+// An update whose whole diff was filtered out has nothing left to show.
+const isEmptyUpdate = ({
+  ruleAction,
+  properties,
+}: {
+  ruleAction: TimelineActivityRuleAction;
+  properties: ObjectRecordBaseEvent['properties'];
+}): boolean =>
+  ruleAction === 'updated' && !isDefined(keepDiffOnly(properties).diff);
 
 const resolveEventRecordForRuleAction = ({
   event,
@@ -125,6 +134,7 @@ export class TimelineActivityService {
     const {
       sourceRules,
       junctionRules,
+      nonAuditLoggedFieldNames,
       flatFieldMetadataMaps,
       resolveTimelineActivityType,
     } = await this.timelineActivityRoutingPlanService.getRulesForEventBatch({
@@ -136,10 +146,9 @@ export class TimelineActivityService {
       return;
     }
 
-    const eventsWithoutPositionDiff = this.excludePositionFieldsFromEventsDiff({
+    const auditLoggedEvents = excludeNonAuditLoggedFieldsFromEventsDiff({
       events,
-      objectMetadata,
-      flatFieldMetadataMaps,
+      nonAuditLoggedFieldNames,
     });
 
     const payloads = (
@@ -147,7 +156,7 @@ export class TimelineActivityService {
         // Resolved after the rule check so batches without rules, system
         // objects mostly, never pay the workspace member query.
         const enrichedEvents = await this.enrichEventsWithWorkspaceMemberId({
-          events: eventsWithoutPositionDiff,
+          events: auditLoggedEvents,
         });
 
         return Promise.all([
@@ -179,7 +188,7 @@ export class TimelineActivityService {
           workspaceId,
           updates: buildLinkedTimelineActivityHappensAtSyncUpdates({
             rules: sourceRules,
-            events: eventsWithoutPositionDiff,
+            events: auditLoggedEvents,
             resolveTimelineActivityType,
           }),
         },
@@ -273,7 +282,10 @@ export class TimelineActivityService {
             ),
           }),
       )
-      .filter((event) => this.ruleMatchesEvent({ rule, ruleAction, event }));
+      .filter((event) => this.ruleMatchesEvent({ rule, ruleAction, event }))
+      .filter(
+        (event) => !isEmptyUpdate({ ruleAction, properties: event.properties }),
+      );
 
     if (matchingEvents.length === 0) {
       return [];
@@ -282,26 +294,19 @@ export class TimelineActivityService {
     const { nameSingular } = rule.sourceFlatObjectMetadata;
 
     if (rule.targetShape.kind === 'SELF') {
-      return matchingEvents.flatMap((event) => {
+      return matchingEvents.map((event) => {
         const properties =
           ruleAction === 'updated' ? keepDiffOnly(event.properties) : {};
 
-        // An update whose whole diff was filtered out has nothing to show
-        if (ruleAction === 'updated' && !isDefined(properties.diff)) {
-          return [];
-        }
-
-        return [
-          {
-            timelineActivityTypeId: timelineActivityType.id,
-            timelineActivityTypeSnapshot: timelineActivityType.snapshot,
-            happensAt: resolveTimelineActivityHappensAt(event),
-            objectSingularName: nameSingular,
-            recordId: event.recordId,
-            workspaceMemberId: event.workspaceMemberId,
-            properties,
-          },
-        ];
+        return {
+          timelineActivityTypeId: timelineActivityType.id,
+          timelineActivityTypeSnapshot: timelineActivityType.snapshot,
+          happensAt: resolveTimelineActivityHappensAt(event),
+          objectSingularName: nameSingular,
+          recordId: event.recordId,
+          workspaceMemberId: event.workspaceMemberId,
+          properties,
+        };
       });
     }
 
@@ -519,55 +524,6 @@ export class TimelineActivityService {
       return isDefined(event.userId) && isDefined(workspaceMember)
         ? { ...event, workspaceMemberId: workspaceMember.id }
         : event;
-    });
-  }
-
-  // Position changes reach other consumers (SSE, webhooks, workflows) but render
-  // blank in the timeline, so exclude them to avoid empty activity rows.
-  private excludePositionFieldsFromEventsDiff({
-    events,
-    objectMetadata,
-    flatFieldMetadataMaps,
-  }: {
-    events: ObjectRecordBaseEvent[];
-    objectMetadata: FlatObjectMetadata;
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-  }): ObjectRecordBaseEvent[] {
-    const someEventHasDiff = events.some((event) =>
-      isDefined(event.properties.diff),
-    );
-
-    if (!someEventHasDiff) {
-      return events;
-    }
-
-    const positionFieldNames = new Set(
-      getFlatFieldsFromFlatObjectMetadata(objectMetadata, flatFieldMetadataMaps)
-        .filter((field) => field.type === FieldMetadataType.POSITION)
-        .map((field) => field.name),
-    );
-
-    if (positionFieldNames.size === 0) {
-      return events;
-    }
-
-    return events.map((event) => {
-      const diff = event.properties.diff;
-
-      if (!isDefined(diff)) {
-        return event;
-      }
-
-      const diffWithoutPositionFields = Object.fromEntries(
-        Object.entries(diff).filter(
-          ([fieldName]) => !positionFieldNames.has(fieldName),
-        ),
-      );
-
-      return {
-        ...event,
-        properties: { ...event.properties, diff: diffWithoutPositionFields },
-      };
     });
   }
 }

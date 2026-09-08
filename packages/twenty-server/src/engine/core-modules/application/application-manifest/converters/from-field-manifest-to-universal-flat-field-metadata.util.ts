@@ -126,6 +126,7 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
       objectLabelIdentifierFieldMetadataUniversalIdentifier,
       objectIsSearchable,
     }),
+    isAuditLogged: fieldManifest.isAuditLogged ?? true,
     isLabelSyncedWithName: fieldManifest.isLabelSyncedWithName ?? false,
     morphId:
       fieldManifest.type === FieldMetadataType.MORPH_RELATION

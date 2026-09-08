@@ -179,6 +179,7 @@ import { ReshapeUsageLimitPeriodFastInstanceCommand } from 'src/database/command
 import { AddLogoToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788542613404-add-logo-to-connection-provider';
 import { AddReadabilityToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788548844925-add-readability-to-object-metadata';
 import { AddAuthFailedReasonToConnectedAccountFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788781233982-add-auth-failed-reason-to-connected-account';
+import { AddIsAuditLoggedToFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788885873410-add-is-audit-logged-to-field-metadata';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -360,4 +361,5 @@ export const INSTANCE_COMMANDS = [
   AddCommandMenuItemConditionalPinnedExpressionFastInstanceCommand,
   AddCampaignDeliveryClaimTokenIndexFastInstanceCommand,
   AddAuthFailedReasonToConnectedAccountFastInstanceCommand,
+  AddIsAuditLoggedToFieldMetadataFastInstanceCommand,
 ];
