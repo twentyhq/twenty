@@ -32,6 +32,8 @@ import {
   SubscriptionUpdateType,
 } from 'src/engine/core-modules/billing/types/billing-subscription-update.type';
 import { computeSubscriptionUpdateOptions } from 'src/engine/core-modules/billing/utils/compute-subscription-update-options.util';
+import { findSellableBaseProductPriceOrThrow } from 'src/engine/core-modules/billing/utils/find-sellable-base-product-price-or-throw.util';
+import { findSellablePriceForIntervalOrThrow } from 'src/engine/core-modules/billing/utils/find-sellable-price-for-interval-or-throw.util';
 import { getBaseProductSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-base-product-subscription-item-or-throw.util';
 import { getCurrentLicensedBillingSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-licensed-billing-subscription-item-or-throw.util';
 import { getCurrentResourceCreditSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-resource-credit-subscription-item-or-throw.util';
@@ -736,10 +738,8 @@ export class BillingSubscriptionUpdateService {
         planKey: newPlan,
       });
 
-    const targetLicensedPrice = findOrThrow(
+    const targetLicensedPrice = findSellableBaseProductPriceOrThrow(
       billingPricesPerPlanAndIntervalArray,
-      ({ billingProduct }) =>
-        billingProduct?.metadata.productKey === BillingProductKey.BASE_PRODUCT,
     );
 
     const currentResourceCreditPrice =
@@ -775,29 +775,25 @@ export class BillingSubscriptionUpdateService {
     const currentLicensedPrice =
       await this.billingPriceRepository.findOneOrFail({
         where: { stripePriceId: currentPrices.licensedPriceId },
-        relations: ['billingProduct'],
+        relations: ['billingProduct', 'billingProduct.billingPrices'],
       });
 
     const currentInterval = currentLicensedPrice.interval;
-    const currentPlanKey =
-      currentLicensedPrice.billingProduct?.metadata.planKey;
+    const currentBillingProduct = currentLicensedPrice.billingProduct;
 
-    assertIsDefinedOrThrow(currentPlanKey);
+    assertIsDefinedOrThrow(currentBillingProduct);
+
+    const currentPlanKey = currentBillingProduct.metadata.planKey;
 
     if (currentInterval === newInterval) {
       return currentPrices;
     }
 
-    const billingPricesPerPlanAndIntervalArray =
-      await this.billingProductService.getProductPrices({
-        interval: newInterval,
-        planKey: currentPlanKey,
-      });
-
-    const targetLicensedPrice = findOrThrow(
-      billingPricesPerPlanAndIntervalArray,
-      ({ billingProduct }) =>
-        billingProduct?.metadata.productKey === BillingProductKey.BASE_PRODUCT,
+    // Switching interval is not a repackaging, so the subscription stays on the
+    // product it already sits on rather than being resolved from the catalog.
+    const targetLicensedPrice = findSellablePriceForIntervalOrThrow(
+      currentBillingProduct,
+      newInterval,
     );
 
     const currentResourceCreditPrice =

@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import {
   assertIsDefinedOrThrow,
-  findOrThrow,
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
@@ -19,7 +18,6 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
@@ -27,6 +25,7 @@ import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/se
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
 import { type BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
+import { findSellableBaseProductPriceOrThrow } from 'src/engine/core-modules/billing/utils/find-sellable-base-product-price-or-throw.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -488,15 +487,8 @@ export class BillingPortalWorkspaceService {
     billingPricesPerPlan: BillingGetPricesPerPlanResult;
     workspaceId: string;
   }): Stripe.Checkout.SessionCreateParams.LineItem[] {
-    const defaultBaseProductPrice = findOrThrow(
+    const defaultBaseProductPrice = findSellableBaseProductPriceOrThrow(
       billingPricesPerPlan.baseProductPrices,
-      (baseProductPrice) =>
-        baseProductPrice.billingProduct?.metadata.productKey ===
-        BillingProductKey.BASE_PRODUCT,
-      new BillingException(
-        `Base product not found`,
-        BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
-      ),
     );
 
     const defaultResourceCreditPrice =
