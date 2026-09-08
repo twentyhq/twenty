@@ -1,4 +1,4 @@
-import { type ShareWithInput } from 'src/engine/api/common/types/share-with-input.type';
+import { type ShareWithInput } from 'src/engine/record-share/types/share-with-input.type';
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { type ObjectRecordProperties } from './object-record-properties.type';

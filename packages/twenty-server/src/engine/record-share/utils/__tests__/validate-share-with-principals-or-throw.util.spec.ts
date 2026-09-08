@@ -1,6 +1,6 @@
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 
-import { validateShareWithPrincipalsOrThrow } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/validate-share-with-principals-or-throw.util';
+import { validateShareWithPrincipalsOrThrow } from 'src/engine/record-share/utils/validate-share-with-principals-or-throw.util';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 

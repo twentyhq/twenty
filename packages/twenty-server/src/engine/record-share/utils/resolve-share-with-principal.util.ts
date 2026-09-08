@@ -1,20 +1,19 @@
 import { msg } from '@lingui/core/macro';
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import { RecordSharePrincipalType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import {
-  CommonQueryRunnerException,
-  CommonQueryRunnerExceptionCode,
-} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { type ShareWithInput } from 'src/engine/api/common/types/share-with-input.type';
-import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
+  RecordShareException,
+  RecordShareExceptionCode,
+} from 'src/engine/record-share/record-share.exception';
 import { type RecordShareInput } from 'src/engine/record-share/types/record-share-input.type';
+import { type ShareWithInput } from 'src/engine/record-share/types/share-with-input.type';
 
 const buildSingleTargetException = () =>
-  new CommonQueryRunnerException(
+  new RecordShareException(
     'Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone',
-    CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+    RecordShareExceptionCode.INVALID_SHARE_WITH,
     {
       userFriendlyMessage: msg`Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone`,
     },
@@ -54,8 +53,15 @@ export const resolveShareWithPrincipal = (
 
   const [principal] = principals;
 
-  if (principal.principalType !== RecordSharePrincipalType.EVERYONE) {
-    assertIsValidUuid(principal.principalId);
+  if (
+    principal.principalType !== RecordSharePrincipalType.EVERYONE &&
+    !isValidUuid(principal.principalId)
+  ) {
+    throw new RecordShareException(
+      `shareWith principal "${principal.principalId}" is not a valid UUID`,
+      RecordShareExceptionCode.INVALID_SHARE_WITH,
+      { userFriendlyMessage: msg`Invalid UUID format.` },
+    );
   }
 
   return { ...principal, accessLevel: shareWithEntry.accessLevel };
