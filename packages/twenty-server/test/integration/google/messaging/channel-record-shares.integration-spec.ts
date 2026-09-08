@@ -11,7 +11,7 @@ import {
 } from 'twenty-shared/types';
 import { In } from 'typeorm';
 
-import { BackfillChannelRecordSharesCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788800583475-backfill-channel-record-shares.command';
+import { BackfillChannelRecordSharesCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788894300000-backfill-channel-record-shares.command';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { type RecordShareInput } from 'src/engine/record-share/types/record-share-input.type';
