@@ -826,6 +826,7 @@ exports[`Application export - data model exports the whole application as a stab
   "permissionFlags": [],
   "publicAssets": [],
   "roles": [],
+  "sharingRules": [],
   "skills": [],
   "timelineActivityTypes": [],
   "translations": {
