@@ -4,11 +4,21 @@ import {
 } from 'src/constants/granola-transcript.constant';
 
 export class GranolaTranscriptLimitError extends Error {
-  constructor({ reason }: { reason: 'page-limit' | 'time-limit' }) {
+  constructor(
+    options:
+      | { reason: 'page-limit' | 'time-limit' }
+      | {
+          reason: 'non-advancing-cursor';
+          noteId: string;
+          cursor: string | null;
+        },
+  ) {
     super(
-      reason === 'page-limit'
-        ? `Granola transcript exceeded the ${GRANOLA_TRANSCRIPT_MAX_PAGES.toLocaleString('en-US')}-page import limit.`
-        : `Granola transcript exceeded the ${GRANOLA_TRANSCRIPT_TIMEOUT_MILLISECONDS / 1_000}-second import limit.`,
+      options.reason === 'non-advancing-cursor'
+        ? `Granola transcript pagination did not advance for note ${options.noteId} at cursor ${options.cursor ?? 'none'}.`
+        : options.reason === 'page-limit'
+          ? `Granola transcript exceeded the ${GRANOLA_TRANSCRIPT_MAX_PAGES.toLocaleString('en-US')}-page import limit.`
+          : `Granola transcript exceeded the ${GRANOLA_TRANSCRIPT_TIMEOUT_MILLISECONDS / 1_000}-second import limit.`,
     );
     this.name = 'GranolaTranscriptLimitError';
   }

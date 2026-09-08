@@ -55,9 +55,11 @@ export const fetchGranolaNoteWithTranscriptOrThrow = async ({
     }
 
     if (!isDefined(page.cursor) || seenCursors.has(page.cursor)) {
-      throw new Error(
-        `Granola transcript pagination did not advance for note ${noteId} at cursor ${page.cursor ?? 'none'}.`,
-      );
+      throw new GranolaTranscriptLimitError({
+        reason: 'non-advancing-cursor',
+        noteId,
+        cursor: page.cursor,
+      });
     }
 
     seenCursors.add(page.cursor);

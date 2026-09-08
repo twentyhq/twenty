@@ -62,24 +62,26 @@ describe('findMatchingCalendarEventOrThrow', () => {
     expect(coreApiClient.query).toHaveBeenCalledTimes(1);
   });
 
-  it('refuses an ambiguous or paged-out provider id match', async () => {
-    await expect(
-      findMatchingCalendarEventOrThrow({
-        coreApiClient: buildCoreApiClient({
-          associations: buildConnection(['event-1', 'event-2']),
+  it.each([
+    ['ambiguous', buildConnection(['event-1', 'event-2'])],
+    ['paged-out', buildConnection(['event-1'], true)],
+  ])(
+    'refuses a %s provider id match without falling back',
+    async (_, associations) => {
+      const coreApiClient = buildCoreApiClient({
+        associations,
+        participants: buildConnection(['fallback-event']),
+      });
+
+      await expect(
+        findMatchingCalendarEventOrThrow({
+          coreApiClient,
+          note: buildNote({ calendar_event_id: 'google-123' }),
         }),
-        note: buildNote({ calendar_event_id: 'google-123' }),
-      }),
-    ).resolves.toBeUndefined();
-    await expect(
-      findMatchingCalendarEventOrThrow({
-        coreApiClient: buildCoreApiClient({
-          associations: buildConnection(['event-1'], true),
-        }),
-        note: buildNote({ calendar_event_id: 'google-123' }),
-      }),
-    ).resolves.toBeUndefined();
-  });
+      ).resolves.toBeUndefined();
+      expect(coreApiClient.query).toHaveBeenCalledTimes(1);
+    },
+  );
 
   it('falls back to invitee emails at the scheduled start when no provider id matches', async () => {
     const coreApiClient = buildCoreApiClient({
@@ -98,7 +100,10 @@ describe('findMatchingCalendarEventOrThrow', () => {
       calendarEventParticipants: {
         __args: {
           filter: {
-            calendarEvent: { startsAt: { eq: '2026-09-05T10:00:00Z' } },
+            calendarEvent: {
+              startsAt: { eq: '2026-09-05T10:00:00Z' },
+              isCanceled: { eq: false },
+            },
             or: [
               { handle: { ilike: 'Ada@Example.com' } },
               { handle: { ilike: 'bob@example.com' } },

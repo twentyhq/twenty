@@ -125,24 +125,32 @@ describe('fetchGranolaNoteWithTranscriptOrThrow', () => {
     );
   });
 
-  it('rejects repeated transcript cursors instead of importing a truncated transcript', async () => {
-    const mockedFetch = vi
-      .fn<typeof fetch>()
-      .mockResolvedValueOnce(new Response(null, { status: 413 }))
-      .mockResolvedValueOnce(Response.json(buildGranolaNote()))
-      .mockImplementation(async () =>
-        Response.json({ transcript: [], hasMore: true, cursor: 'loop' }),
-      );
-    vi.stubGlobal('fetch', mockedFetch);
+  it.each(['loop', null])(
+    'rejects a non-advancing cursor (%s) with a typed error',
+    async (cursor) => {
+      const mockedFetch = vi
+        .fn<typeof fetch>()
+        .mockResolvedValueOnce(new Response(null, { status: 413 }))
+        .mockResolvedValueOnce(Response.json(buildGranolaNote()))
+        .mockImplementation(async () =>
+          Response.json({ transcript: [], hasMore: true, cursor }),
+        );
+      vi.stubGlobal('fetch', mockedFetch);
 
-    await expect(
-      fetchGranolaNoteWithTranscriptOrThrow({
+      const pendingNote = fetchGranolaNoteWithTranscriptOrThrow({
         client: createGranolaClientOrThrow({ apiKey: 'grn_test' }),
         noteId: 'not_1d3tmYTlCICgjy',
-      }),
-    ).rejects.toThrow('did not advance');
-    expect(mockedFetch).toHaveBeenCalledTimes(4);
-  });
+      });
+
+      await expect(pendingNote).rejects.toBeInstanceOf(
+        GranolaTranscriptLimitError,
+      );
+      await expect(pendingNote).rejects.toThrow(
+        `did not advance for note not_1d3tmYTlCICgjy at cursor ${cursor ?? 'none'}`,
+      );
+      expect(mockedFetch).toHaveBeenCalledTimes(cursor === null ? 3 : 4);
+    },
+  );
 
   it('stops at the page limit when the transcript never reports completion', async () => {
     vi.useFakeTimers();
