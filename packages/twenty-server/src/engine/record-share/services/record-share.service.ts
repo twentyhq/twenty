@@ -40,6 +40,26 @@ export class RecordShareService {
     );
   }
 
+  async deleteByRecordIds({
+    workspaceId,
+    objectMetadataId,
+    recordIds,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    recordIds: string[];
+    transactionScope?: WorkspaceTransactionScope;
+  }): Promise<void> {
+    if (recordIds.length === 0) {
+      return;
+    }
+
+    await this.withRepository({ workspaceId, transactionScope }, (repository) =>
+      repository.delete({ objectMetadataId, recordId: In(recordIds) }),
+    );
+  }
+
   async deleteBySourceId({
     workspaceId,
     sourceId,
