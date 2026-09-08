@@ -57,7 +57,9 @@ export class WorkspaceGraphqlSchemaSDLService {
           workspaceId: workspace.id,
           flatMapsKeys: shouldUseStoredSdl
             ? [...SCHEMA_SDL_CACHE_DEPENDENCIES]
-            : ['flatApplicationMaps'],
+            : isDefined(flatEntityMapsOverride?.flatIndexMaps)
+              ? ['flatApplicationMaps']
+              : ['flatApplicationMaps', 'flatIndexMaps'],
         },
       );
 

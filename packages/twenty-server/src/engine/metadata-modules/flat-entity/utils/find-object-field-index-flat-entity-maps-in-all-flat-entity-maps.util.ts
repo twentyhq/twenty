@@ -9,11 +9,7 @@ export const findObjectFieldIndexFlatEntityMapsInAllFlatEntityMaps = (
   const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
     allFlatEntityMaps;
 
-  if (
-    !isDefined(flatObjectMetadataMaps) ||
-    !isDefined(flatFieldMetadataMaps) ||
-    !isDefined(flatIndexMaps)
-  ) {
+  if (!isDefined(flatObjectMetadataMaps) || !isDefined(flatFieldMetadataMaps)) {
     return undefined;
   }
 

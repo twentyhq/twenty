@@ -2,5 +2,6 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 
 export type ObjectFieldIndexFlatEntityMaps = Pick<
   AllFlatEntityMaps,
-  'flatObjectMetadataMaps' | 'flatFieldMetadataMaps' | 'flatIndexMaps'
->;
+  'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
+> &
+  Partial<Pick<AllFlatEntityMaps, 'flatIndexMaps'>>;
