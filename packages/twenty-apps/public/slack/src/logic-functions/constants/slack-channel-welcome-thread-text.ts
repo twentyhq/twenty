@@ -7,7 +7,7 @@ export const SLACK_CHANNEL_WELCOME_THREAD_TEXT = [
   ].join('\n'),
   '**How I work with your data**',
   [
-    "- I only act when you mention me, or in a thread I've already replied in. Channel threads stay open to me for 24 hours after my last reply, DM threads never expire",
+    "- I only act when you mention me, or in a thread I've already replied in. Channel threads stay open to me for 24 hours after my last reply. DM threads never expire",
     '- When you mention me I read recent messages in that thread for context',
     "- I can read, create, update and archive people, companies, opportunities, notes and tasks. I can't permanently delete anything and I can't change workspace settings",
     "- If your Slack email matches your Twenty account, I act as you and can't see or change anything you couldn't yourself. Otherwise I fall back to the shared **Slack Assistant** role",
