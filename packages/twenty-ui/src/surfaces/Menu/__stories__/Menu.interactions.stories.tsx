@@ -185,6 +185,10 @@ export const KeepOpenOnActivation: Story = {
     await userEvent.keyboard('{ArrowDown}');
     const item = await body.findByRole('menuitem', { name: 'Run' });
     await waitFor(() => expect(item).toHaveFocus());
+    await waitFor(() => {
+      expect(body.getByRole('menu')).toBeVisible();
+      expect(body.getByRole('menu')).toHaveStyle({ opacity: '1' });
+    });
     await userEvent.keyboard('{Enter}');
     expect(onActivate).toHaveBeenCalledTimes(1);
     expect(body.getByRole('menu')).toBeVisible();
