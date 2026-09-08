@@ -7,7 +7,7 @@ import {
   MetadataReadability,
   ObjectRecord,
 } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import {
   Brackets,
   FindOptionsRelations,
@@ -19,12 +19,9 @@ import {
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import { type ConflictingFieldGroup } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/conflicting-field-group.type';
 import { PartialObjectRecordWithId } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/partial-object-record-with-id.type';
-import { buildRecordShareInputsForCreatedRecords } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/build-record-share-inputs-for-created-records.util';
 import { buildWhereConditions } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/build-where-conditions.util';
 import { categorizeRecords } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/categorize-records.util';
 import { getConflictingFields } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-conflicting-fields.util';
-import { validateShareWithArgOrThrow } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/validate-share-with-arg-or-throw.util';
-import { validateShareWithPrincipalsOrThrow } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/validate-share-with-principals-or-throw.util';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -40,7 +37,6 @@ import {
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
-import { type ShareWithInput } from 'src/engine/api/common/types/share-with-input.type';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
@@ -54,7 +50,8 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
+import { ShareWithService } from 'src/engine/record-share/services/share-with.service';
+import { type ShareWithInput } from 'src/engine/record-share/types/share-with-input.type';
 import { findOwnerField } from 'src/engine/record-share/utils/find-owner-field.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
@@ -72,7 +69,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
   constructor(
     private readonly recordPositionService: RecordPositionService,
-    private readonly recordShareService: RecordShareService,
+    private readonly shareWithService: ShareWithService,
   ) {
     super();
   }
@@ -86,25 +83,11 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       MetadataReadability.PRIVATE;
 
     if (isPrivateObject) {
-      validateShareWithArgOrThrow({
+      await this.shareWithService.validateShareWithOrThrow({
         authContext: queryRunnerContext.authContext,
         isRecordSharingEnabled: this.isRecordSharingEnabled(queryRunnerContext),
         shareWith: args.shareWith,
       });
-
-      if (isNonEmptyArray(args.shareWith)) {
-        const { flatWorkspaceMemberMaps, flatRoleMaps } =
-          await this.workspaceCacheService.getOrRecompute(
-            queryRunnerContext.authContext.workspace.id,
-            ['flatWorkspaceMemberMaps', 'flatRoleMaps'],
-          );
-
-        validateShareWithPrincipalsOrThrow({
-          shareWith: args.shareWith,
-          flatWorkspaceMemberMaps,
-          flatRoleMaps,
-        });
-      }
     }
 
     if (
@@ -638,34 +621,22 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
     const ownerJoinColumnName =
       this.findOwnerJoinColumnName(queryRunnerContext);
-    const recordIds = insertResult.generatedMaps.map((record) => record.id);
 
-    // A hard-destroyed record leaves its rows behind, and a client may reuse its id
-    await this.recordShareService.deleteByRecordIds({
-      workspaceId: authContext.workspace.id,
+    await this.shareWithService.insertRecordSharesForCreatedRecords({
+      authContext,
       objectMetadataId: flatObjectMetadata.id,
-      recordIds,
-      transactionScope,
-    });
-
-    await this.recordShareService.insertMany({
-      workspaceId: authContext.workspace.id,
-      recordShares: buildRecordShareInputsForCreatedRecords({
-        recordIds,
-        objectMetadataId: flatObjectMetadata.id,
-        authContext,
-        apiKeyRoleMap: repository.internalContext.apiKeyRoleMap,
-        isRecordSharingEnabled: this.isRecordSharingEnabled(queryRunnerContext),
-        shareWith,
-        ownerWorkspaceMemberIdByRecordId: isDefined(ownerJoinColumnName)
-          ? Object.fromEntries(
-              insertResult.generatedMaps.map((record) => [
-                record.id,
-                record[ownerJoinColumnName],
-              ]),
-            )
-          : undefined,
-      }),
+      recordIds: insertResult.generatedMaps.map((record) => record.id),
+      apiKeyRoleMap: repository.internalContext.apiKeyRoleMap,
+      isRecordSharingEnabled: this.isRecordSharingEnabled(queryRunnerContext),
+      shareWith,
+      ownerWorkspaceMemberIdByRecordId: isDefined(ownerJoinColumnName)
+        ? Object.fromEntries(
+            insertResult.generatedMaps.map((record) => [
+              record.id,
+              record[ownerJoinColumnName],
+            ]),
+          )
+        : undefined,
       transactionScope,
     });
   }
