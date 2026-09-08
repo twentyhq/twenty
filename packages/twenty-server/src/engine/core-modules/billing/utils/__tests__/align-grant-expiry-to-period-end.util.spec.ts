@@ -70,6 +70,39 @@ describe('alignGrantExpiryToPeriodEnd', () => {
     );
   });
 
+  // The subscription has already renewed into a short month, so its stored
+  // start is the clamped February date and no boundary on record holds the
+  // anchor on its own. Projecting straight off that start would give Apr 28.
+  it('recovers a month-end anchor the stored period start no longer carries', () => {
+    const result = alignGrantExpiryToPeriodEnd({
+      requestedExpiresAt: new Date('2026-04-15T00:00:00.000Z'),
+      currentPeriodStart: new Date('2026-02-28T00:00:00.000Z'),
+      currentPeriodEnd: new Date('2026-03-31T00:00:00.000Z'),
+      interval: SubscriptionInterval.Month,
+    });
+
+    expect(result).toEqual(new Date('2026-04-30T00:00:00.000Z'));
+  });
+
+  // A leap-day yearly anchor clamps to the 28th in common years and re-expands
+  // to the 29th when it lands back on a leap one.
+  it('keeps a leap-day yearly anchor on the day each year actually has', () => {
+    const alignOnLeapDayAnchor = (requestedExpiresAt: Date) =>
+      alignGrantExpiryToPeriodEnd({
+        requestedExpiresAt,
+        currentPeriodStart: new Date('2024-02-29T00:00:00.000Z'),
+        currentPeriodEnd: new Date('2025-02-28T00:00:00.000Z'),
+        interval: SubscriptionInterval.Year,
+      });
+
+    expect(alignOnLeapDayAnchor(new Date('2026-06-01T00:00:00.000Z'))).toEqual(
+      new Date('2027-02-28T00:00:00.000Z'),
+    );
+    expect(alignOnLeapDayAnchor(new Date('2027-06-01T00:00:00.000Z'))).toEqual(
+      new Date('2028-02-29T00:00:00.000Z'),
+    );
+  });
+
   it('gives up rather than looping on an unreachable deadline', () => {
     const result = alignFrom(new Date('2099-01-01T00:00:00.000Z'));
 

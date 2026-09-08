@@ -1,6 +1,12 @@
 /* @license Enterprise */
 
-import { addMonths, addYears } from 'date-fns';
+import {
+  addMonths,
+  addYears,
+  getDate,
+  getDaysInMonth,
+  setDate,
+} from 'date-fns';
 
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 
@@ -11,14 +17,35 @@ import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/bill
 // move together.
 const MAX_PERIODS_AHEAD = 24;
 
-const addPeriods = (
-  anchor: Date,
-  periods: number,
-  interval: SubscriptionInterval,
-): Date =>
-  interval === SubscriptionInterval.Year
-    ? addYears(anchor, periods)
-    : addMonths(anchor, periods);
+// Stripe keeps the day a subscription was anchored on and clamps it to each
+// short month, so a subscription anchored on the 31st renews Jan 31, Feb 28,
+// Mar 31. Neither stored boundary is reliably the anchor once it has renewed
+// into a short month, but only one of an adjacent pair can be clamped, so the
+// later day of the two is the anchor. Recovering it this way avoids having to
+// persist Stripe's billing_cycle_anchor.
+const resolveAnchorDayOfMonth = (periodStart: Date, periodEnd: Date): number =>
+  Math.max(getDate(periodStart), getDate(periodEnd));
+
+const projectPeriodEnd = ({
+  periodStart,
+  anchorDayOfMonth,
+  periodsAhead,
+  interval,
+}: {
+  periodStart: Date;
+  anchorDayOfMonth: number;
+  periodsAhead: number;
+  interval: SubscriptionInterval;
+}): Date => {
+  const shifted =
+    interval === SubscriptionInterval.Year
+      ? addYears(periodStart, periodsAhead)
+      : addMonths(periodStart, periodsAhead);
+
+  // Re-expands the anchor that addMonths clamped away, and clamps it again for
+  // the month actually landed on.
+  return setDate(shifted, Math.min(anchorDayOfMonth, getDaysInMonth(shifted)));
+};
 
 // A grant's expiry is always a period end. Both mechanisms that spend credits
 // work a whole period at a time: the available credit count is cached until the
@@ -38,27 +65,42 @@ export const alignGrantExpiryToPeriodEnd = ({
   currentPeriodEnd: Date;
   interval: SubscriptionInterval;
 }): Date => {
+  // Known exactly, and the only boundary that survives a period whose length
+  // was changed by a plan switch rather than by the schedule.
   if (currentPeriodEnd.getTime() >= requestedExpiresAt.getTime()) {
     return currentPeriodEnd;
   }
 
+  const anchorDayOfMonth = resolveAnchorDayOfMonth(
+    currentPeriodStart,
+    currentPeriodEnd,
+  );
+
   // Every later boundary is projected from the period start rather than by
-  // stepping off the previous result. addMonths clamps January 31 to February
-  // 28, and feeding that back in walks the rest onto the 28th, so a grant would
-  // be stamped with dates the subscription never renews on and land mid-period
-  // after all. Stripe re-expands to the anchor instead, which is what
-  // projecting from a fixed start reproduces.
+  // stepping off the previous result, which would walk a month-end anchor down
+  // to the 28th and stamp the grant with days the subscription never renews on,
+  // putting the deadline back inside a period.
   for (
     let periodsAhead = 2;
     periodsAhead <= MAX_PERIODS_AHEAD;
     periodsAhead++
   ) {
-    const periodEnd = addPeriods(currentPeriodStart, periodsAhead, interval);
+    const periodEnd = projectPeriodEnd({
+      periodStart: currentPeriodStart,
+      anchorDayOfMonth,
+      periodsAhead,
+      interval,
+    });
 
     if (periodEnd.getTime() >= requestedExpiresAt.getTime()) {
       return periodEnd;
     }
   }
 
-  return addPeriods(currentPeriodStart, MAX_PERIODS_AHEAD, interval);
+  return projectPeriodEnd({
+    periodStart: currentPeriodStart,
+    anchorDayOfMonth,
+    periodsAhead: MAX_PERIODS_AHEAD,
+    interval,
+  });
 };
