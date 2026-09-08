@@ -19,7 +19,9 @@ export const useCoreWorkflowsSelection = <
 }: {
   coreWorkflows: TCoreWorkflow[];
 }) => {
-  const [selection, setSelection] = useAtomState(coreWorkflowsSelectionState);
+  const [coreWorkflowsSelection, setCoreWorkflowsSelection] = useAtomState(
+    coreWorkflowsSelectionState,
+  );
 
   const [deletedCoreWorkflowIds, setDeletedCoreWorkflowIds] = useState<
     string[]
@@ -30,17 +32,20 @@ export const useCoreWorkflowsSelection = <
   );
 
   useEffect(
-    () => () => setSelection(EMPTY_CORE_WORKFLOWS_SELECTION),
-    [setSelection],
+    () => () => setCoreWorkflowsSelection(EMPTY_CORE_WORKFLOWS_SELECTION),
+    [setCoreWorkflowsSelection],
   );
 
   const selectedRowIds = getSelectedCoreWorkflowRowIds({
-    selection,
+    selection: coreWorkflowsSelection,
     currentFilterSettings: coreWorkflowsFilterSettings,
   });
 
   const selectRows = (rowIds: string[]) =>
-    setSelection({ filterSettings: coreWorkflowsFilterSettings, rowIds });
+    setCoreWorkflowsSelection({
+      filterSettings: coreWorkflowsFilterSettings,
+      rowIds,
+    });
 
   const displayedCoreWorkflows = coreWorkflows.filter(
     (coreWorkflow) => !deletedCoreWorkflowIds.includes(coreWorkflow.id),

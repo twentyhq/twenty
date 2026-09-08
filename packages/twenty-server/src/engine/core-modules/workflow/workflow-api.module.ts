@@ -33,11 +33,7 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      WorkspaceEntity,
-      WorkflowVersionEntity,
-      WorkflowEntity,
-    ]),
+    TypeOrmModule.forFeature([WorkspaceEntity, WorkflowVersionEntity]),
     RecordPositionModule,
     WorkflowCoreModule,
     WorkflowTriggerModule,

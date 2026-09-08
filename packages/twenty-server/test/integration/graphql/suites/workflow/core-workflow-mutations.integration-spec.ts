@@ -131,7 +131,10 @@ describe('coreWorkflow mutations (e2e)', () => {
     const deleteResponse = await graphql(
       `
         mutation DeleteCoreWorkflows($input: DeleteCoreWorkflowsInput!) {
-          deleteCoreWorkflows(input: $input)
+          deleteCoreWorkflows(input: $input) {
+            id
+            workspaceWorkflowId
+          }
         }
       `,
       { input: { coreWorkflowIds: [coreWorkflowId] } },
@@ -139,7 +142,7 @@ describe('coreWorkflow mutations (e2e)', () => {
 
     expect(deleteResponse.body.errors).toBeUndefined();
     expect(deleteResponse.body.data.deleteCoreWorkflows).toEqual([
-      coreWorkflowId,
+      { id: coreWorkflowId, workspaceWorkflowId },
     ]);
 
     expect(await findListedCoreWorkflowById(coreWorkflowId)).toBeUndefined();
@@ -163,11 +166,66 @@ describe('coreWorkflow mutations (e2e)', () => {
     );
   });
 
+  it('should report nothing when deleting the same workflows again', async () => {
+    const deleteResponse = await graphql(
+      `
+        mutation DeleteCoreWorkflows($input: DeleteCoreWorkflowsInput!) {
+          deleteCoreWorkflows(input: $input) {
+            id
+            workspaceWorkflowId
+          }
+        }
+      `,
+      { input: { coreWorkflowIds: [coreWorkflowId] } },
+    );
+
+    expect(deleteResponse.body.errors).toBeUndefined();
+    expect(deleteResponse.body.data.deleteCoreWorkflows).toEqual([]);
+  });
+
+  it('should create a workflow from an empty input like the index does', async () => {
+    const createResponse = await graphql(`
+      mutation {
+        createCoreWorkflow(input: {}) {
+          id
+          name
+          statuses
+          workspaceWorkflowId
+        }
+      }
+    `);
+
+    expect(createResponse.body.errors).toBeUndefined();
+
+    const createdCoreWorkflow = createResponse.body.data.createCoreWorkflow;
+
+    expect(createdCoreWorkflow.name).toBeNull();
+    expect(createdCoreWorkflow.statuses).toEqual(['DRAFT']);
+
+    expect(
+      await findListedCoreWorkflowById(createdCoreWorkflow.id),
+    ).toBeDefined();
+
+    await graphql(
+      `
+        mutation DestroyWorkflow($id: UUID!) {
+          destroyWorkflow(id: $id) {
+            id
+          }
+        }
+      `,
+      { id: createdCoreWorkflow.workspaceWorkflowId },
+    );
+  });
+
   it('should delete nothing for unknown core workflow ids', async () => {
     const deleteResponse = await graphql(
       `
         mutation DeleteCoreWorkflows($input: DeleteCoreWorkflowsInput!) {
-          deleteCoreWorkflows(input: $input)
+          deleteCoreWorkflows(input: $input) {
+            id
+            workspaceWorkflowId
+          }
         }
       `,
       {
