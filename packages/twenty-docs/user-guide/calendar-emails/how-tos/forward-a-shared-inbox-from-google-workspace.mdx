@@ -1,0 +1,151 @@
+---
+title: Forward a Shared Inbox from Google Workspace
+description: Send mail from a Google Group into a Twenty email channel.
+---
+
+An email channel gives your workspace a shared address, like `sales@yourcompany.com`. Mail sent to that address has to reach Twenty somehow.
+
+On Google Workspace that address is almost always a **Google Group**. You connect it by adding Twenty's private forwarding address as a member of the group. Every message the group receives then gets copied to Twenty, and your team keeps getting it exactly as before.
+
+<Note>
+  This only works going forward. Twenty will not see mail the group received
+  before you set this up.
+</Note>
+
+## Before you start
+
+You need two things:
+
+- **Access**: you must own the group, or be a Super Admin or Groups Admin in Google Workspace.
+- **A group that allows outsiders**: Twenty's forwarding address is an external address, so the group has to accept external members and accept mail from outside your company. Part 2 covers both.
+
+## Part 1: Create the channel in Twenty
+
+1. Go to **Settings → Communication**.
+2. Click **Add email channel**.
+
+<img
+  src="/images/user-guide/emails/inbound-channels/03-twenty-add-email-channel.png"
+  style={{ width: '100%' }}
+/>
+
+3. In **Source Email Address**, type the group address, for example `sales@yourcompany.com`.
+4. In **Display Name**, type the name recipients see.
+5. Click **Save**.
+
+<img
+  src="/images/user-guide/emails/inbound-channels/04-twenty-new-channel-form.png"
+  style={{ width: '100%' }}
+/>
+
+6. Twenty now shows a **Forwarding address**. It looks like `ch_2cd282d193b5@inbound.twenty.com`. Click **Copy**.
+
+<img
+  src="/images/user-guide/emails/inbound-channels/05-twenty-forwarding-address.png"
+  style={{ width: '100%' }}
+/>
+
+<Note>
+  Each channel gets its own forwarding address. Never point two groups at the
+  same one, or their mail will land in the same place.
+</Note>
+
+## Part 2: Check the group's settings
+
+Two settings decide whether any of this works. Get them right first and the rest takes a minute.
+
+1. Open [Google Groups](https://groups.google.com) and click your group.
+2. Click **Group settings** in the left sidebar.
+3. Find **External members** and turn **Allow external members** on.
+
+<img
+  src="/images/user-guide/emails/inbound-channels/google-03-allow-external-members.png"
+  style={{ width: '100%' }}
+/>
+
+Google ships this turned off for the whole organisation by default, so expect it to be locked the first time. If you see the blue notice shown above, only a Workspace admin can unlock it, by allowing group owners to add external members org-wide. Ask them, then come back.
+
+4. Scroll down to **Who can post** and drag the slider all the way to the right, onto the globe. That is **Anyone on the web**.
+
+<img
+  src="/images/user-guide/emails/inbound-channels/google-04-who-can-post.png"
+  style={{ width: '100%' }}
+/>
+
+Without this, mail from outside your company never reaches the group, so it never reaches Twenty either. This one is also blocked org-wide by default, and again only an admin can open it up.
+
+5. Click **Save changes**.
+
+<Warning>
+  If the group carries Google's **Security** label, stop here. Google does not
+  allow non-Google accounts in a security group, and the label is permanent once
+  applied. Create a new group without it.
+</Warning>
+
+## Part 3: Add Twenty to the group
+
+1. Click **Members** in the left sidebar.
+2. Click **Add members**.
+
+<img
+  src="/images/user-guide/emails/inbound-channels/google-02-members-add-button.png"
+  style={{ width: '100%' }}
+/>
+
+3. Paste the forwarding address you copied from Twenty into **Group members**.
+4. Leave **Subscription** on **Each email**. This is what makes Google send every message through.
+5. Leave **Directly add members** ticked, so Google adds it instead of emailing an invitation nobody can accept.
+6. Click **Add members**.
+
+<img
+  src="/images/user-guide/emails/inbound-channels/google-05-add-forwarding-address.png"
+  style={{ width: '100%' }}
+/>
+
+That is the whole setup. Twenty is now just another member of the group.
+
+## No group yet?
+
+1. In [Google Groups](https://groups.google.com), click **Create group**.
+2. Fill in the **Group name** and the **Group email** prefix.
+
+<img
+  src="/images/user-guide/emails/inbound-channels/google-01-create-group.png"
+  style={{ width: '100%' }}
+/>
+
+3. Click **Next** twice, then **Create group**.
+4. Now do Part 2 and Part 3.
+
+## Part 4: Test it
+
+Send an email from an outside address (a personal Gmail works) to `sales@yourcompany.com`. It should show up in Twenty within a minute or two.
+
+## Troubleshooting
+
+<Accordion title="An error occurred: 1 user is outside of your organization">
+  The group does not accept external members. Go back to Part 2, step 3. If the
+  setting is locked, only a Workspace admin can unlock it.
+
+  <img
+    src="/images/user-guide/emails/inbound-channels/google-06-external-member-error.png"
+    style={{ width: '100%' }}
+  />
+</Accordion>
+
+<Accordion title="The group gets mail but Twenty does not">
+  Open the member in the group and check its subscription is **Each email**, not
+  **No email** or **Digest**.
+</Accordion>
+
+<Accordion title="Colleagues' emails arrive but customers' emails do not">
+  **Who can post** is not set to **Anyone on the web**. Part 2, step 4.
+</Accordion>
+
+<Accordion title="The channel receives mail but cannot send">
+  Receiving and sending are separate. Sending needs your domain verified under
+  the channel's **Sending domain** section, which means adding the DNS records
+  Twenty lists there.
+</Accordion>
+
+Using a different provider? See [Microsoft 365](/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-microsoft-365) or [any other mail provider](/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-any-mail-provider).

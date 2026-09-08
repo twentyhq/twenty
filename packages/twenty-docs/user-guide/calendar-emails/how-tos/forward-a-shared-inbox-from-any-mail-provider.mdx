@@ -1,0 +1,143 @@
+---
+title: Forward a Shared Inbox from Any Mail Provider
+description: Send mail from any IMAP or SMTP mailbox into a Twenty email channel.
+---
+
+An email channel gives your workspace a shared address, like `contact@yourcompany.com`. Mail sent to that address has to reach Twenty somehow. You do that by forwarding it to the private address Twenty gives you.
+
+This page covers everything that is not Microsoft 365 or Google Workspace: Zoho, Fastmail, Proton, cPanel hosting, your own Postfix server, and so on. The idea is identical everywhere. Only the menu names change.
+
+## Part 1: Create the channel in Twenty
+
+1. Go to **Settings → Communication**.
+2. Click **Add email channel**.
+
+<img
+  src="/images/user-guide/emails/inbound-channels/03-twenty-add-email-channel.png"
+  style={{ width: '100%' }}
+/>
+
+3. In **Source Email Address**, type the shared address you want to receive mail at, for example `contact@yourcompany.com`.
+4. In **Display Name**, type the name recipients see, for example `Twenty Contact`.
+5. Click **Save**.
+
+<img
+  src="/images/user-guide/emails/inbound-channels/04-twenty-new-channel-form.png"
+  style={{ width: '100%' }}
+/>
+
+6. Twenty now shows a **Forwarding address**. It looks like `ch_2cd282d193b5@inbound.twenty.com`. Click **Copy**.
+
+<img
+  src="/images/user-guide/emails/inbound-channels/05-twenty-forwarding-address.png"
+  style={{ width: '100%' }}
+/>
+
+<Note>
+  Each channel gets its own forwarding address. Never point two mailboxes at the
+  same one, or their mail will land in the same place.
+</Note>
+
+## Part 2: Find the forwarding setting
+
+Every provider has this feature. They just name it differently. Look for whichever of these you can find:
+
+- **Forwarding** or **Auto-forward**
+- **Redirect**
+- **Forwarders** (common in cPanel and other hosting panels)
+- **Aliases** or **Address routing**
+- **Filters** or **Rules**, with an action called _forward to_ or _redirect to_
+
+Once you find it, the job is the same everywhere:
+
+1. Add the forwarding address you copied from Twenty as the destination.
+2. Choose the option that **keeps a copy** in the original mailbox, so your team can still read the inbox normally.
+3. Save.
+
+Two things to get right:
+
+<Warning>
+  Forward, do not redirect-and-delete. Twenty needs the original message headers
+  to thread replies correctly, and your team still wants the mail in their own
+  inbox.
+</Warning>
+
+<Warning>
+  Do not forward through a rule that strips attachments or converts to plain
+  text. Twenty stores whatever it receives.
+</Warning>
+
+## Common setups
+
+### cPanel and similar hosting panels
+
+1. Open **Email → Forwarders**.
+2. Click **Add Forwarder**.
+3. Address to forward: `contact`, with your domain selected.
+4. Destination: **Forward to Email Address**, then paste the Twenty forwarding address.
+5. Click **Add Forwarder**.
+
+A cPanel forwarder on its own does not keep a copy. To keep one, add a second forwarder pointing back at a real mailbox, or use **Email → Filters** with a _Deliver to folder_ rule alongside the forward.
+
+### Servers that support Sieve (Dovecot, Zimbra, Migadu, and others)
+
+Add this rule to the mailbox. The `:copy` keeps the original in place.
+
+```
+require ["copy"];
+
+redirect :copy "ch_2cd282d193b5@inbound.twenty.com";
+```
+
+### Your own Postfix server
+
+Add a virtual alias that delivers to both the real mailbox and Twenty:
+
+```
+# /etc/postfix/virtual
+contact@yourcompany.com  contact@yourcompany.com, ch_2cd282d193b5@inbound.twenty.com
+```
+
+Then rebuild and reload:
+
+```bash
+postmap /etc/postfix/virtual
+systemctl reload postfix
+```
+
+Make sure `virtual_alias_maps = hash:/etc/postfix/virtual` is set in `main.cf`.
+
+### Providers that verify the destination first
+
+Some providers (Proton and a few others) email a confirmation link or code to the destination before forwarding starts. Twenty cannot show you that code, so those providers will not work through their own forwarding UI. Use a server-side rule instead, or move the address to a provider that lets an admin set forwarding directly.
+
+## Part 3: Test it
+
+Send an email from an outside address (a personal Gmail works) to `contact@yourcompany.com`. It should show up in Twenty within a minute or two.
+
+## Troubleshooting
+
+<Accordion title="Nothing arrives">
+  Check the forwarding address character for character against the one in
+  Twenty. A single wrong character means the mail goes nowhere and is silently
+  dropped.
+</Accordion>
+
+<Accordion title="The sender gets a bounce about forwarding not being allowed">
+  Your provider blocks automatic forwarding to outside domains. Look for a
+  security or anti-spam setting that allows external forwarding, and allow it
+  for this mailbox only.
+</Accordion>
+
+<Accordion title="Mail disappeared from the original inbox">
+  The rule redirects instead of copying. Change it to keep a copy, or add a
+  second rule that delivers to the inbox.
+</Accordion>
+
+<Accordion title="The channel receives mail but cannot send">
+  Receiving and sending are separate. Sending needs your domain verified under
+  the channel's **Sending domain** section, which means adding the DNS records
+  Twenty lists there.
+</Accordion>
+
+Using Microsoft or Google? See [Microsoft 365](/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-microsoft-365) or [Google Workspace](/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-google-workspace).
