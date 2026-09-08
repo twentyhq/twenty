@@ -1,14 +1,22 @@
 import type Stripe from 'stripe';
 
-type SubscriptionWithPeriodEnd = Stripe.Subscription & {
+type SubscriptionWithLegacyPeriodEnd = Stripe.Subscription & {
   current_period_end?: number;
 };
 
 export function getSubscriptionCurrentPeriodEnd(
   subscription: Stripe.Response<Stripe.Subscription>,
 ): number | null {
-  const extended = subscription as Stripe.Response<SubscriptionWithPeriodEnd>;
-  const end = extended.current_period_end;
+  const itemEnd = subscription.items?.data?.[0]?.current_period_end;
 
-  return typeof end === 'number' ? end : null;
+  if (typeof itemEnd === 'number') {
+    return itemEnd;
+  }
+
+  const legacy =
+    subscription as Stripe.Response<SubscriptionWithLegacyPeriodEnd>;
+
+  return typeof legacy.current_period_end === 'number'
+    ? legacy.current_period_end
+    : null;
 }

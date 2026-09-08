@@ -47,14 +47,15 @@ export function resolveSubscriptionLicenseState({
     };
   }
 
+  if (typeof currentPeriodStart !== 'number' || currentPeriodStart <= 0) {
+    return {
+      outcome: SUBSCRIPTION_LICENSE_OUTCOME.REJECTED,
+      graceExpiresAt: null,
+    };
+  }
+
   const nowSeconds = Math.floor(now.getTime() / 1000);
-
-  const graceAnchor =
-    typeof currentPeriodStart === 'number' && currentPeriodStart > 0
-      ? currentPeriodStart
-      : nowSeconds;
-
-  const graceExpiresAt = graceAnchor + gracePeriodDays * SECONDS_PER_DAY;
+  const graceExpiresAt = currentPeriodStart + gracePeriodDays * SECONDS_PER_DAY;
 
   if (graceExpiresAt <= nowSeconds) {
     return {

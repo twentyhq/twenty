@@ -50,11 +50,30 @@ describe('resolveSubscriptionLicenseState', () => {
     });
   });
 
-  it('anchors grace on now when Stripe does not expose a period start', () => {
+  it('refuses grace when no period start anchors the deadline', () => {
     expect(resolve('past_due', null)).toEqual({
-      outcome: 'grace',
-      graceExpiresAt: NOW_SECONDS + 14 * SECONDS_PER_DAY,
+      outcome: 'rejected',
+      graceExpiresAt: null,
     });
+  });
+
+  it('keeps the deadline fixed across repeated refreshes', () => {
+    const periodStart = NOW_SECONDS - 5 * SECONDS_PER_DAY;
+
+    const firstRefresh = resolveSubscriptionLicenseState({
+      status: 'past_due',
+      currentPeriodStart: periodStart,
+      gracePeriodDays: 14,
+      now: NOW,
+    });
+    const laterRefresh = resolveSubscriptionLicenseState({
+      status: 'past_due',
+      currentPeriodStart: periodStart,
+      gracePeriodDays: 14,
+      now: new Date(NOW.getTime() + 3 * 24 * 60 * 60 * 1000),
+    });
+
+    expect(laterRefresh.graceExpiresAt).toBe(firstRefresh.graceExpiresAt);
   });
 
   it('reproduces the enquanta outage: past_due on the day after a failed cycle invoice stays licensed', () => {
