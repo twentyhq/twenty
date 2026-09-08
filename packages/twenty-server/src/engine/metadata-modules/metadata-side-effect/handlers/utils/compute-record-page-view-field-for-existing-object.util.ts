@@ -6,6 +6,8 @@ import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-f
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
+import { resolveEffectiveUniversalFlatEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-universal-flat-entity-property.util';
 
 export const computeRecordPageViewFieldForExistingObject = ({
   sourceFlatFieldMetadata,
@@ -41,7 +43,7 @@ export const computeRecordPageViewFieldForExistingObject = ({
     .filter(isDefined)
     .find(
       (widget) =>
-        widget.isActive &&
+        resolveEffectiveUniversalFlatEntityProperty(widget, 'isActive') &&
         !isDefined(widget.deletedAt) &&
         widget.universalConfiguration?.configurationType ===
           WidgetConfigurationType.FIELDS &&
@@ -72,7 +74,11 @@ export const computeRecordPageViewFieldForExistingObject = ({
           ],
       )
       .filter(isDefined)
-      .filter((group) => group.isActive && !isDefined(group.deletedAt));
+      .filter(
+        (group) =>
+          resolveEffectiveFlatEntityProperty(group, 'isActive') &&
+          !isDefined(group.deletedAt),
+      );
 
   const lastFlatViewFieldGroup =
     activeFlatViewFieldGroups.length > 0
@@ -93,7 +99,10 @@ export const computeRecordPageViewFieldForExistingObject = ({
       .filter(isDefined)
       .filter(
         (flatViewField) =>
-          flatViewField.isActive &&
+          resolveEffectiveUniversalFlatEntityProperty(
+            flatViewField,
+            'isActive',
+          ) &&
           !isDefined(flatViewField.deletedAt) &&
           flatViewField.viewFieldGroupUniversalIdentifier ===
             targetSystemViewFieldGroupUniversalIdentifier,

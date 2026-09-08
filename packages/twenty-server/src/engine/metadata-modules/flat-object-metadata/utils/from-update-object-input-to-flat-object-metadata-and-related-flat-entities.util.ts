@@ -21,6 +21,7 @@ import {
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
 
 type FromUpdateObjectInputToFlatObjectMetadataArgs = {
   updateObjectInput: UpdateOneObjectInput;
@@ -104,7 +105,12 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
         );
       }
 
-      if (!imageIdentifierFlatFieldMetadata.isActive) {
+      if (
+        !resolveEffectiveFlatEntityProperty(
+          imageIdentifierFlatFieldMetadata,
+          'isActive',
+        )
+      ) {
         throw new ObjectMetadataException(
           'Field cannot be used as image identifier because it is deactivated',
           ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,

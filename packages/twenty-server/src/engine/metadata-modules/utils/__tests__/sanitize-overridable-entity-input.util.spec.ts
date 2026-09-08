@@ -157,7 +157,7 @@ describe('sanitizeOverridableEntityInput', () => {
       expect(result.updatedEditableProperties).not.toHaveProperty('position');
     });
 
-    it('should route isActive into the caller entry and recompute the column', () => {
+    it('should route isActive into the caller entry like any other property', () => {
       const result = sanitizeOverridableEntityInput({
         metadataName: 'pageLayoutTab',
         existingFlatEntity: { ...baseTab, isActive: true, overrides: null },
@@ -167,10 +167,27 @@ describe('sanitizeOverridableEntityInput', () => {
       });
 
       expect(result.overrides).toEqual({ [CALLER]: { isActive: false } });
-      expect(result.updatedEditableProperties).toEqual({ isActive: false });
+      expect(result.updatedEditableProperties).toEqual({});
     });
 
-    it('should drop the isActive attribution and reactivate the column on restore', () => {
+    it('should drop the isActive entry when the restore matches the column', () => {
+      const result = sanitizeOverridableEntityInput({
+        metadataName: 'pageLayoutTab',
+        existingFlatEntity: {
+          ...baseTab,
+          isActive: true,
+          overrides: { [CALLER]: { isActive: false } },
+        },
+        updatedEditableProperties: { isActive: true },
+        shouldOverride: true,
+        ...authorArgs,
+      });
+
+      expect(result.overrides).toBeNull();
+      expect(result.updatedEditableProperties).toEqual({});
+    });
+
+    it('should keep the isActive entry when the owner column disagrees', () => {
       const result = sanitizeOverridableEntityInput({
         metadataName: 'pageLayoutTab',
         existingFlatEntity: {
@@ -183,31 +200,8 @@ describe('sanitizeOverridableEntityInput', () => {
         ...authorArgs,
       });
 
-      expect(result.overrides).toBeNull();
-      expect(result.updatedEditableProperties).toEqual({ isActive: true });
-    });
-
-    it('should keep the column inactive while the owner still deactivates it', () => {
-      const result = sanitizeOverridableEntityInput({
-        metadataName: 'pageLayoutTab',
-        existingFlatEntity: {
-          ...baseTab,
-          isActive: false,
-          overrides: {
-            [OWNER]: { isActive: false },
-            [CALLER]: { isActive: false },
-          },
-        },
-        updatedEditableProperties: { isActive: true },
-        shouldOverride: true,
-        ...authorArgs,
-      });
-
-      expect(result.overrides).toEqual({
-        [OWNER]: { isActive: false },
-        [CALLER]: { isActive: true },
-      });
-      expect(result.updatedEditableProperties).toEqual({ isActive: true });
+      expect(result.overrides).toEqual({ [CALLER]: { isActive: true } });
+      expect(result.updatedEditableProperties).toEqual({});
     });
   });
 });

@@ -49,6 +49,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
 
 const EMPTY_FIELD_OPS = {
   fieldsToCreate: [] as FlatViewField[],
@@ -236,7 +237,11 @@ export class ViewWidgetUpsertService {
       flatViewFieldMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter((field) => field.isActive && field.viewId === viewId);
+      .filter(
+        (field) =>
+          resolveEffectiveFlatEntityProperty(field, 'isActive') &&
+          field.viewId === viewId,
+      );
 
     const existingViewFilters = Object.values(
       flatViewFilterMaps.byUniversalIdentifier,

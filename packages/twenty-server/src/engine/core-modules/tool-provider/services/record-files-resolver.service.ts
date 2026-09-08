@@ -16,6 +16,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
 
 export type RecordFilesResolution = {
   records: Record<string, unknown>[];
@@ -54,7 +55,7 @@ export class RecordFilesResolverService {
       (metadata): metadata is FlatObjectMetadata =>
         isDefined(metadata) &&
         metadata.nameSingular === objectNameSingular &&
-        metadata.isActive,
+        resolveEffectiveFlatEntityProperty(metadata, 'isActive'),
     );
 
     if (!isDefined(flatObjectMetadata)) {

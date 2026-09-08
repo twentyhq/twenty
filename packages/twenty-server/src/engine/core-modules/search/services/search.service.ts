@@ -57,6 +57,7 @@ import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
 
 type LastRanks = { tsRankCD: number; tsRank: number };
 
@@ -161,38 +162,38 @@ export class SearchService {
   }) {
     const hasExplicitInclusion = includedObjectNameSingulars.length > 0;
 
-    return flatObjectMetadatas.filter(
-      ({ nameSingular, isSearchable, isActive }) => {
-        if (!isActive) {
+    return flatObjectMetadatas.filter((flatObjectMetadata) => {
+      const { nameSingular, isSearchable } = flatObjectMetadata;
+
+      if (!resolveEffectiveFlatEntityProperty(flatObjectMetadata, 'isActive')) {
+        return false;
+      }
+
+      if (hasExplicitInclusion) {
+        if (
+          OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS.includes(
+            nameSingular as (typeof OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS)[number],
+          )
+        ) {
           return false;
         }
 
-        if (hasExplicitInclusion) {
-          if (
-            OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS.includes(
-              nameSingular as (typeof OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS)[number],
-            )
-          ) {
-            return false;
-          }
+        return (
+          includedObjectNameSingulars.includes(nameSingular) &&
+          !excludedObjectNameSingulars.includes(nameSingular)
+        );
+      }
 
-          return (
-            includedObjectNameSingulars.includes(nameSingular) &&
-            !excludedObjectNameSingulars.includes(nameSingular)
-          );
-        }
+      if (!isSearchable) {
+        return false;
+      }
 
-        if (!isSearchable) {
-          return false;
-        }
+      if (excludedObjectNameSingulars.includes(nameSingular)) {
+        return false;
+      }
 
-        if (excludedObjectNameSingulars.includes(nameSingular)) {
-          return false;
-        }
-
-        return true;
-      },
-    );
+      return true;
+    });
   }
 
   // Runs a fast tsvector query first (uses GIN index). If tsvector returns zero

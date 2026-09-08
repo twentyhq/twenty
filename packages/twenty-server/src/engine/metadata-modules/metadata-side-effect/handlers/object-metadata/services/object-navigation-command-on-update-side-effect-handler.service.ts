@@ -13,7 +13,7 @@ import {
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
-import { applyOwnerAuthoredIsActive } from 'src/engine/metadata-modules/utils/apply-owner-authored-is-active.util';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
 
 @Injectable()
 export class ObjectNavigationCommandOnUpdateSideEffectHandlerService extends MetadataSideEffectHandler(
@@ -52,9 +52,16 @@ export class ObjectNavigationCommandOnUpdateSideEffectHandlerService extends Met
       };
     }
 
+    const updatedIsActive = resolveEffectiveFlatEntityProperty(
+      updatedFlatObjectMetadata,
+      'isActive',
+    );
     const isActiveChanged =
-      updatedFlatObjectMetadata.isActive !==
-      existingFlatObjectMetadata.isActive;
+      updatedIsActive !==
+      resolveEffectiveFlatEntityProperty(
+        existingFlatObjectMetadata,
+        'isActive',
+      );
     const nameSingularChanged =
       updatedFlatObjectMetadata.nameSingular !==
       existingFlatObjectMetadata.nameSingular;
@@ -84,12 +91,8 @@ export class ObjectNavigationCommandOnUpdateSideEffectHandlerService extends Met
     }
 
     const navigationFlatCommandMenuItemToUpdate = {
-      ...(isActiveChanged
-        ? applyOwnerAuthoredIsActive({
-            flatEntity: existingNavigationFlatCommandMenuItem,
-            isActive: updatedFlatObjectMetadata.isActive,
-          })
-        : existingNavigationFlatCommandMenuItem),
+      ...existingNavigationFlatCommandMenuItem,
+      ...(isActiveChanged ? { isActive: updatedIsActive } : {}),
       ...(nameSingularChanged
         ? {
             conditionalAvailabilityExpression:
@@ -110,12 +113,7 @@ export class ObjectNavigationCommandOnUpdateSideEffectHandlerService extends Met
     };
 
     const hasChanges = (
-      [
-        'isActive',
-        'overrides',
-        'conditionalAvailabilityExpression',
-        'hotKeys',
-      ] as const
+      ['isActive', 'conditionalAvailabilityExpression', 'hotKeys'] as const
     ).some(
       (property) =>
         JSON.stringify(navigationFlatCommandMenuItemToUpdate[property]) !==

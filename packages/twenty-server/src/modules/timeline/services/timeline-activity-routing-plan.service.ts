@@ -19,6 +19,7 @@ import {
   type ResolvableTimelineActivityType,
   type TimelineActivityTypeResolver,
 } from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
 
 type TimelineActivityRulesForEventBatch = {
   sourceRules: TimelineActivityRule[];
@@ -146,7 +147,8 @@ export class TimelineActivityRoutingPlanService {
       });
 
     const activeTimelineActivityTypes = effectiveTimelineActivityTypes.filter(
-      (timelineActivityType) => timelineActivityType.isActive,
+      (timelineActivityType) =>
+        resolveEffectiveFlatEntityProperty(timelineActivityType, 'isActive'),
     );
     const throughRules = activeTimelineActivityTypes
       .map((timelineActivityType): TimelineActivityRule | undefined => {

@@ -12,6 +12,7 @@ import {
   type DashboardToolDependencies,
 } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
 import { buildResolvedGroupBy } from 'src/modules/dashboard/tools/utils/build-resolved-group-by.util';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
 
 const getDashboardSchema = z.object({
   dashboardId: z.string().uuid().describe('The UUID of the dashboard to fetch'),
@@ -42,7 +43,9 @@ export const createGetDashboardTool = (
         flatFieldMetadataMaps.byUniversalIdentifier,
       )
         .filter(isDefined)
-        .filter((field) => field.isActive);
+        .filter((field) =>
+          resolveEffectiveFlatEntityProperty(field, 'isActive'),
+        );
 
       const fieldsByObjectId = new Map<string, FlatFieldMetadata[]>();
 

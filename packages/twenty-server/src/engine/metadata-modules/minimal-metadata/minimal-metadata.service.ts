@@ -20,6 +20,7 @@ import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/be
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
 
 const flatMapsKeyToMetadataName = (
   flatMapsKey: string,
@@ -82,7 +83,12 @@ export class MinimalMetadataService {
       flatObjectMetadataMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter((flatObjectMetadata) => flatObjectMetadata.isActive === true)
+      .filter(
+        (flatObjectMetadata) =>
+          resolveEffectiveFlatEntityProperty(flatObjectMetadata, 'isActive', {
+            workspaceCustomApplicationUniversalIdentifier,
+          }) === true,
+      )
       .map((flatObjectMetadata) => {
         const isStandardApp = belongsToTwentyStandardApp(flatObjectMetadata);
 
@@ -115,7 +121,7 @@ export class MinimalMetadataService {
             i18nContext,
           }),
           icon: flatObjectMetadata.icon ?? undefined,
-          isActive: flatObjectMetadata.isActive,
+          isActive: true,
           isSystem: flatObjectMetadata.isSystem,
           isRemote: flatObjectMetadata.isRemote,
         };

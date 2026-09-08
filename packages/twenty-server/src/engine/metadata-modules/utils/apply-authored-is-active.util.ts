@@ -7,8 +7,8 @@ type FlatEntityWithIsActive = {
   universalOverrides?: unknown;
 };
 
-// Deactivation and restoration by a non-owner are attributed to that author:
-// the entry records who did it and the column takes the effective value. The owner keeps writing the column, as for any of its properties.
+// The owner writes the column, as for any of its properties; another author
+// writes its entry and readers resolve the effective value from there.
 // isActive carries no foreign key, so the universal twin of the blob takes
 // the same entry change without a converter.
 export const applyAuthoredIsActive = <T extends FlatEntityWithIsActive>({
@@ -44,21 +44,17 @@ export const applyAuthoredIsActive = <T extends FlatEntityWithIsActive>({
       existingOverrides,
       authorUniversalIdentifier,
       authorContext,
-    });
-
-  const { overrides, remainingProperties } = computeIsActiveBlob(
-    flatEntity.overrides,
-  );
+    }).overrides;
 
   return {
     ...flatEntity,
-    overrides,
+    overrides: computeIsActiveBlob(flatEntity.overrides),
     ...('universalOverrides' in flatEntity
       ? {
-          universalOverrides: computeIsActiveBlob(flatEntity.universalOverrides)
-            .overrides,
+          universalOverrides: computeIsActiveBlob(
+            flatEntity.universalOverrides,
+          ),
         }
       : {}),
-    isActive: remainingProperties.isActive,
   };
 };

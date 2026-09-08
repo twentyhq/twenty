@@ -202,7 +202,9 @@ export const buildTimelineActivityTypeResolution = (
     }
 
     if (!isDefined(objectUniversalIdentifier)) {
-      if (timelineActivityType.isActive) {
+      if (
+        resolveEffectiveFlatEntityProperty(timelineActivityType, 'isActive')
+      ) {
         typeByAction.set(
           action,
           toResolvedTimelineActivityType(timelineActivityType),
@@ -214,7 +216,7 @@ export const buildTimelineActivityTypeResolution = (
 
     const key = `${objectUniversalIdentifier}|${action}`;
 
-    if (timelineActivityType.isActive) {
+    if (resolveEffectiveFlatEntityProperty(timelineActivityType, 'isActive')) {
       typeByObjectAndAction.set(
         key,
         toResolvedTimelineActivityType(timelineActivityType),

@@ -57,7 +57,7 @@ describe('fromUpdateTimelineActivityTypeInputToFlatTimelineActivityTypeToUpdateO
     expect(result).toMatchObject({
       label: 'was created by',
       icon: 'IconPlus',
-      isActive: false,
+      isActive: true,
       overrides: {
         [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: {
           label: 'was added by',

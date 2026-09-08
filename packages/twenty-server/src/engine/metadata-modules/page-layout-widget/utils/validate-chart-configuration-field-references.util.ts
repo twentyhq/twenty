@@ -22,6 +22,7 @@ import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modul
 import { findActiveFlatFieldMetadataById } from 'src/engine/metadata-modules/page-layout-widget/utils/find-active-flat-field-metadata-by-id.util';
 import { isChartReferencingFieldInConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-referencing-field-in-configuration.util';
 import { validateGroupByFieldOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-group-by-field.util';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
 
 const buildChartFieldValidationException = (
   message: string,
@@ -126,7 +127,10 @@ export const validateChartConfigurationFieldReferencesOrThrow = ({
     flatEntityMaps: flatObjectMetadataMaps,
   });
 
-  if (!isDefined(objectMetadata) || !objectMetadata.isActive) {
+  if (
+    !isDefined(objectMetadata) ||
+    !resolveEffectiveFlatEntityProperty(objectMetadata, 'isActive')
+  ) {
     throw buildChartFieldValidationException(
       `objectMetadataId "${widgetObjectMetadataId}" not found.`,
       widgetTitle,
@@ -135,7 +139,7 @@ export const validateChartConfigurationFieldReferencesOrThrow = ({
 
   const allFields = Object.values(flatFieldMetadataMaps.byUniversalIdentifier)
     .filter(isDefined)
-    .filter((field) => field.isActive);
+    .filter((field) => resolveEffectiveFlatEntityProperty(field, 'isActive'));
 
   const fieldsByObjectId = new Map<string, FlatFieldMetadata[]>();
 

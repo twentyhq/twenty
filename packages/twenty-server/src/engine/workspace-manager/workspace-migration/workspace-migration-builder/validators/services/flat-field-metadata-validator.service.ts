@@ -21,6 +21,7 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
 
 @Injectable()
 export class FlatFieldMetadataValidatorService {
@@ -131,8 +132,12 @@ export class FlatFieldMetadataValidatorService {
     } else if (
       flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
         flatFieldMetadataToValidate.universalIdentifier &&
-      isDefined(flatEntityUpdate.isActive) &&
-      flatFieldMetadataToValidate.isActive === false
+      (isDefined(flatEntityUpdate.isActive) ||
+        isDefined(flatEntityUpdate.overrides)) &&
+      resolveEffectiveFlatEntityProperty(
+        flatFieldMetadataToValidate,
+        'isActive',
+      ) === false
     ) {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND,

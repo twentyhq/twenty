@@ -40,6 +40,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
 
 @Injectable()
 export class FieldsWidgetUpsertService {
@@ -144,13 +145,21 @@ export class FieldsWidgetUpsertService {
       flatViewFieldGroupMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter((group) => group.isActive && group.viewId === viewId);
+      .filter(
+        (group) =>
+          resolveEffectiveFlatEntityProperty(group, 'isActive') &&
+          group.viewId === viewId,
+      );
 
     const existingViewFields = Object.values(
       flatViewFieldMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter((field) => field.isActive && field.viewId === viewId);
+      .filter(
+        (field) =>
+          resolveEffectiveFlatEntityProperty(field, 'isActive') &&
+          field.viewId === viewId,
+      );
 
     if (hasGroups) {
       await this.upsertFieldsWidgetWithGroups({

@@ -44,6 +44,7 @@ import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { DashboardSyncService } from 'src/modules/dashboard-sync/services/dashboard-sync.service';
 import { applyAuthoredIsActive } from 'src/engine/metadata-modules/utils/apply-authored-is-active.util';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
 
 type UpdatePageLayoutWithTabsParams = {
   id: string;
@@ -934,13 +935,15 @@ export class PageLayoutUpdateService {
     }
 
     for (const widget of widgetsToUpdate) {
-      if (!widget.isActive) {
+      if (!resolveEffectiveFlatEntityProperty(widget, 'isActive')) {
         directlyRemovedWidgetIds.add(widget.id);
       }
     }
 
     const removedTabIds = new Set([
-      ...tabsToUpdate.filter((tab) => !tab.isActive).map((tab) => tab.id),
+      ...tabsToUpdate
+        .filter((tab) => !resolveEffectiveFlatEntityProperty(tab, 'isActive'))
+        .map((tab) => tab.id),
       ...tabsToDelete.map((tab) => tab.id),
     ]);
 
@@ -949,7 +952,10 @@ export class PageLayoutUpdateService {
     ).filter(isDefined);
 
     for (const widget of allExistingWidgets) {
-      if (widget.isActive && removedTabIds.has(widget.pageLayoutTabId)) {
+      if (
+        resolveEffectiveFlatEntityProperty(widget, 'isActive') &&
+        removedTabIds.has(widget.pageLayoutTabId)
+      ) {
         const viewId = this.getViewIdFromFieldsWidget(widget);
 
         if (isDefined(viewId)) {
@@ -960,7 +966,7 @@ export class PageLayoutUpdateService {
 
     for (const widget of allExistingWidgets) {
       if (
-        widget.isActive &&
+        resolveEffectiveFlatEntityProperty(widget, 'isActive') &&
         !directlyRemovedWidgetIds.has(widget.id) &&
         !removedTabIds.has(widget.pageLayoutTabId)
       ) {

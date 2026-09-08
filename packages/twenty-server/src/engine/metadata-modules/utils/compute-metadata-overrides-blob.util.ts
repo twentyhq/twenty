@@ -5,7 +5,6 @@ import { computeOverrideAuthorOrder } from 'src/engine/metadata-modules/utils/co
 import { normalizeAuthoredOverrides } from 'src/engine/metadata-modules/utils/normalize-authored-overrides.util';
 import { type OverrideAuthorContext } from 'src/engine/metadata-modules/utils/override-author-context.type';
 import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/utils/read-authored-override-property.util';
-import { resolveEffectiveIsActive } from 'src/engine/metadata-modules/utils/resolve-effective-is-active.util';
 
 type ComputeMetadataOverridesBlobArgs<TProperties extends object> = {
   overridableProperties: readonly string[];
@@ -22,8 +21,6 @@ const isEmptyRecord = (record: object): boolean =>
 // Writes only the author's entry. A value that equals what the author would
 // see without its entry (the entries beneath it, then the base column) is a
 // revert, so the property leaves the entry instead of being stored again.
-// isActive is the exception: the column is recomputed from the entries, so
-// beneath the last author sits "active", never the column.
 export const computeMetadataOverridesBlob = <
   TProperties extends object,
   TEntry = Record<string, unknown>,
@@ -70,7 +67,7 @@ export const computeMetadataOverridesBlob = <
       return beneathValue;
     }
 
-    return property === 'isActive' ? true : existingRecord[property];
+    return existingRecord[property];
   };
 
   const authorEntry = overridableProperties.reduce<Record<string, unknown>>(
@@ -102,16 +99,6 @@ export const computeMetadataOverridesBlob = <
   const overrides = isEmptyRecord(nextAuthoredOverrides)
     ? null
     : (nextAuthoredOverrides as AuthoredOverrides<TEntry>);
-
-  if (
-    overridableProperties.includes('isActive') &&
-    (updatedProperties as Record<string, unknown>).isActive !== undefined
-  ) {
-    remainingRecord.isActive = resolveEffectiveIsActive({
-      overrides,
-      authorContext,
-    });
-  }
 
   return {
     overrides,
