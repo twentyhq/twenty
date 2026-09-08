@@ -1,6 +1,6 @@
 import { DataSource, QueryRunner } from 'typeorm';
 
-import { isCoreTablePresent } from 'src/database/commands/upgrade-version-command/2-38/utils/is-core-table-present.util';
+import { isCoreTablePresent } from 'src/database/commands/upgrade-version-command/2-40/utils/is-core-table-present.util';
 import { MakeBillingCreditGrantExpiresAtNullableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788871259040-make-billing-credit-grant-expires-at-nullable';
 import {
   getRegisteredInstanceCommandMetadata,

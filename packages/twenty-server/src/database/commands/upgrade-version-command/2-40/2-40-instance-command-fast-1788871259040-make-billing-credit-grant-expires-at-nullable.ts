@@ -1,6 +1,6 @@
 import { QueryRunner } from 'typeorm';
 
-import { isCoreTablePresent } from 'src/database/commands/upgrade-version-command/2-38/utils/is-core-table-present.util';
+import { isCoreTablePresent } from 'src/database/commands/upgrade-version-command/2-40/utils/is-core-table-present.util';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
