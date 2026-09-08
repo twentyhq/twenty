@@ -227,13 +227,13 @@ export class ObjectRecordEventPublisher {
       flatWorkspaceMemberMaps,
     );
 
-    const subscriberRecordShareGate = this.buildSubscriberRecordShareGate(
-      streamData.authContext,
+    const subscriberRecordShareGate = this.buildSubscriberRecordShareGate({
+      subscriberAuthContext: streamData.authContext,
       roleIds,
-      workspaceEventBatch.objectMetadata,
-      permissionsContext.featureFlagsMap,
+      objectMetadata: workspaceEventBatch.objectMetadata,
+      featureFlagsMap: permissionsContext.featureFlagsMap,
       recordShares,
-    );
+    });
 
     const restrictedFields = objectPermissions.restrictedFields;
 
@@ -480,13 +480,19 @@ export class ObjectRecordEventPublisher {
     });
   }
 
-  private buildSubscriberRecordShareGate(
-    subscriberAuthContext: SerializableAuthContext,
-    roleIds: string[],
-    objectMetadata: FlatObjectMetadata,
-    featureFlagsMap: Record<FeatureFlagKey, boolean>,
-    recordShares: RecordShare[],
-  ): RecordShareGate | null {
+  private buildSubscriberRecordShareGate({
+    subscriberAuthContext,
+    roleIds,
+    objectMetadata,
+    featureFlagsMap,
+    recordShares,
+  }: {
+    subscriberAuthContext: SerializableAuthContext;
+    roleIds: string[];
+    objectMetadata: FlatObjectMetadata;
+    featureFlagsMap: Record<FeatureFlagKey, boolean>;
+    recordShares: RecordShare[];
+  }): RecordShareGate | null {
     if (!featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED]) {
       return null;
     }
