@@ -646,6 +646,7 @@ export class AdminPanelResolver {
       amount: input.amount,
       type: input.type,
       reason: input.reason,
+      expiresInDays: input.expiresInDays,
       clientOperationId: input.clientOperationId,
       grantedByUserId: actor.id,
     });
