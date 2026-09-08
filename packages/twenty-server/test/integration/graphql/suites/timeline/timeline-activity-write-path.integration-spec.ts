@@ -10,12 +10,14 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
+import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import {
   type TimelineActivityAction,
   type TimelineActivityTypeSnapshot,
 } from 'twenty-shared/timeline';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 const TIMELINE_ACTIVITY_GQL_FIELDS = `
@@ -294,7 +296,17 @@ describe('timeline activity write path (integration)', () => {
   });
 
   afterAll(async () => {
-    if (isDefined(nonAuditLoggedFieldMetadataId)) {
+    if (isNonEmptyString(nonAuditLoggedFieldMetadataId)) {
+      // A field has to be deactivated before it can be deleted, otherwise its
+      // name stays taken and the next run cannot recreate it.
+      await updateOneFieldMetadata({
+        input: {
+          idToUpdate: nonAuditLoggedFieldMetadataId,
+          updatePayload: { isActive: false },
+        },
+        expectToFail: false,
+      });
+
       await deleteOneFieldMetadata({
         input: { idToDelete: nonAuditLoggedFieldMetadataId },
         expectToFail: false,
