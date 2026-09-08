@@ -22,7 +22,7 @@ import { type CursorPagingInput } from 'src/engine/metadata-modules/pagination/d
 import { applyMetadataFilterToItems } from 'src/engine/metadata-modules/pagination/utils/apply-metadata-filter-to-items.util';
 import { findManyItemsWithCursorPagination } from 'src/engine/metadata-modules/pagination/utils/find-many-items-with-cursor-pagination.util';
 import { filterMorphRelationDuplicateFields } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
-import { resolveEffectiveFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-effective-flat-field-metadata.util';
+import { resolveEffectiveTranslatedFlatEntity } from 'src/engine/metadata-modules/utils/resolve-effective-translated-flat-entity.util';
 
 export type FieldMetadataConnectionLoaderPayload = {
   workspaceId: string;
@@ -98,12 +98,12 @@ export class FieldMetadataConnectionLoaderFactory {
         ...connection,
         edges: connection.edges.map((edge) => {
           const flatFieldMetadata = edge.node;
-          const overriddenFlatFieldMetadata = resolveEffectiveFlatFieldMetadata(
-            {
-              flatFieldMetadata,
+          const overriddenFlatFieldMetadata =
+            resolveEffectiveTranslatedFlatEntity({
+              metadataName: 'fieldMetadata',
+              flatEntity: flatFieldMetadata,
               i18nContext: getI18nContext(flatFieldMetadata.applicationId),
-            },
-          );
+            });
           let renamedFlatFieldMetadata = overriddenFlatFieldMetadata;
 
           if (

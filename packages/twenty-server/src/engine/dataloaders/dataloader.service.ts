@@ -41,7 +41,7 @@ import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/d
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type SearchFieldMetadataDTO } from 'src/engine/metadata-modules/search-field-metadata/dtos/search-field-metadata.dto';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
-import { resolveEffectiveFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-effective-flat-field-metadata.util';
+import { resolveEffectiveTranslatedFlatEntity } from 'src/engine/metadata-modules/utils/resolve-effective-translated-flat-entity.util';
 
 export type RelationMetadataLoaderPayload = {
   workspaceId: string;
@@ -408,8 +408,9 @@ export class DataloaderService {
           (objectFlatFieldMetadatas) => {
             const overriddenFieldMetadataEntities =
               objectFlatFieldMetadatas.map((flatFieldMetadata) =>
-                resolveEffectiveFlatFieldMetadata({
-                  flatFieldMetadata,
+                resolveEffectiveTranslatedFlatEntity({
+                  metadataName: 'fieldMetadata',
+                  flatEntity: flatFieldMetadata,
                   i18nContext: getI18nContext(flatFieldMetadata.applicationId),
                 }),
               );
