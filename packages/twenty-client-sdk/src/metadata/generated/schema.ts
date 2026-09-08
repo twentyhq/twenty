@@ -1516,6 +1516,7 @@ export interface ConnectedAccountPublicDTO {
     provider: Scalars['String']
     lastCredentialsRefreshedAt?: Scalars['DateTime']
     authFailedAt?: Scalars['DateTime']
+    authFailedReason?: Scalars['String']
     archivedAt?: Scalars['DateTime']
     handleAliases?: Scalars['String'][]
     scopes?: Scalars['String'][]
@@ -1795,6 +1796,7 @@ export interface AppConnection {
     accessToken: Scalars['String']
     scopes: Scalars['String'][]
     authFailedAt?: Scalars['String']
+    authFailedReason?: Scalars['String']
     __typename: 'AppConnection'
 }
 
@@ -3438,6 +3440,7 @@ export interface Mutation {
     /** @deprecated Use enqueueJobs instead. */
     enqueueJob: EnqueueJobResult
     enqueueJobs: EnqueueJobsResult
+    reportAppConnectionAuthFailure: Scalars['Boolean']
     createChatThread: AgentChatThread
     sendChatMessage: SendChatMessageResult
     retryChatMessage: SendChatMessageResult
@@ -5086,6 +5089,7 @@ export interface ConnectedAccountPublicDTOGenqlSelection{
     provider?: boolean | number
     lastCredentialsRefreshedAt?: boolean | number
     authFailedAt?: boolean | number
+    authFailedReason?: boolean | number
     archivedAt?: boolean | number
     handleAliases?: boolean | number
     scopes?: boolean | number
@@ -5380,6 +5384,7 @@ export interface AppConnectionGenqlSelection{
     accessToken?: boolean | number
     scopes?: boolean | number
     authFailedAt?: boolean | number
+    authFailedReason?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7132,6 +7137,7 @@ export interface MutationGenqlSelection{
     /** @deprecated Use enqueueJobs instead. */
     enqueueJob?: (EnqueueJobResultGenqlSelection & { __args: {input: EnqueueJobInput} })
     enqueueJobs?: (EnqueueJobsResultGenqlSelection & { __args: {input: EnqueueJobsInput} })
+    reportAppConnectionAuthFailure?: { __args: {input: ReportAppConnectionAuthFailureInput} }
     createChatThread?: AgentChatThreadGenqlSelection
     sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], text: Scalars['String'], messageId: Scalars['UUID'], browsingContext?: (Scalars['JSON'] | null), modelId?: (Scalars['String'] | null), fileAttachments?: (FileAttachmentInput[] | null)} })
     retryChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], modelId?: (Scalars['String'] | null)} })
@@ -7599,6 +7605,8 @@ export interface EnqueueJobInput {logicFunctionUniversalIdentifier: Scalars['Str
 export interface EnqueueJobsInput {logicFunctionUniversalIdentifier: Scalars['String'],payloads?: (Scalars['JSON'][] | null),jobs?: (EnqueueJobItemInput[] | null),retryLimit?: (Scalars['Int'] | null),delayMs?: (Scalars['Int'] | null)}
 
 export interface EnqueueJobItemInput {payload?: (Scalars['JSON'] | null),jobId?: (Scalars['String'] | null)}
+
+export interface ReportAppConnectionAuthFailureInput {id: Scalars['ID'],reason?: (Scalars['String'] | null)}
 
 export interface FileAttachmentInput {id: Scalars['UUID'],filename: Scalars['String']}
 

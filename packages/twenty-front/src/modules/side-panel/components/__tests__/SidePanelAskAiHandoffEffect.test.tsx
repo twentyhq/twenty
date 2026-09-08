@@ -19,12 +19,13 @@ jest.mock('@/side-panel/hooks/useOpenAskAiPageInSidePanel', () => ({
 
 const onContinueChatFromFullWidthMock = jest.fn();
 
-let navigateAwayFromChatPage: (() => void) | undefined;
+let navigateAwayFromChatPage: ((pathname?: string) => void) | undefined;
 
 const ChatPageRoute = () => {
   const navigate = useNavigate();
 
-  navigateAwayFromChatPage = () => navigate('/objects/companies');
+  navigateAwayFromChatPage = (pathname = '/objects/companies') =>
+    navigate(pathname);
 
   return <AiChatPageContinueInSidePanelEffect />;
 };
@@ -39,6 +40,7 @@ const RouterUnderTest = ({ initialPath }: { initialPath: string }) => (
       <Routes>
         <Route path="/chat/:threadId?" element={<ChatPageRoute />} />
         <Route path="/objects/companies" element={<div />} />
+        <Route path="/settings/*" element={<div />} />
       </Routes>
     </MemoryRouter>
   </JotaiProvider>
@@ -89,6 +91,31 @@ describe('SidePanelAskAiHandoffEffect', () => {
     expect(openAskAiPageMock).not.toHaveBeenCalled();
     expect(onContinueChatFromFullWidthMock).not.toHaveBeenCalled();
   });
+
+  it.each(['/chat', '/chat/existing-thread'])(
+    'does not move the chat from %s into the side panel when opening settings or leaving them',
+    (initialPath) => {
+      jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+
+      render(<RouterUnderTest initialPath={initialPath} />);
+
+      act(() => navigateAwayFromChatPage?.('/settings/profile'));
+
+      expect(openAskAiPageMock).not.toHaveBeenCalled();
+      expect(onContinueChatFromFullWidthMock).not.toHaveBeenCalled();
+      expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
+        false,
+      );
+      expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
+        false,
+      );
+
+      act(() => navigateAwayFromChatPage?.());
+
+      expect(openAskAiPageMock).not.toHaveBeenCalled();
+      expect(onContinueChatFromFullWidthMock).not.toHaveBeenCalled();
+    },
+  );
 
   it('should do nothing away from the chat page when the marker is not set', () => {
     render(<RouterUnderTest initialPath="/objects/companies" />);

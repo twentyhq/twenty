@@ -4,8 +4,6 @@ import {
   type PullDeletion,
   type PullWrite,
 } from '@/cli/utilities/pull/plan-pull-writes';
-import { type TranslationsManifest } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
 
 const MAX_LISTED_IDENTIFIERS = 20;
 
@@ -67,7 +65,7 @@ export const formatPullReport = ({
   coverage,
   localOnlyRelativePaths,
   unreadableRelativePaths = [],
-  translations = {},
+  compiledTranslationEntryCountByLocale = {},
   verbose = false,
 }: {
   writes: PullWrite[];
@@ -77,7 +75,7 @@ export const formatPullReport = ({
   coverage: ApplicationExportCoverageEntry[];
   localOnlyRelativePaths: string[];
   unreadableRelativePaths?: string[];
-  translations?: TranslationsManifest;
+  compiledTranslationEntryCountByLocale?: Record<string, number>;
   verbose?: boolean;
 }): string => {
   const lines: string[] = [
@@ -166,17 +164,18 @@ export const formatPullReport = ({
     }
   }
 
-  const publishedTranslationLocales = Object.entries(translations)
-    .filter(
-      ([, messages]) => isDefined(messages) && Object.keys(messages).length > 0,
-    )
-    .map(([locale]) => locale)
-    .sort();
+  const compiledLocales = Object.entries(compiledTranslationEntryCountByLocale)
+    .filter(([, count]) => count > 0)
+    .sort(([left], [right]) => left.localeCompare(right));
 
-  if (publishedTranslationLocales.length > 0) {
+  if (compiledLocales.length > 0) {
     lines.push(
       '',
-      `Published translations (${publishedTranslationLocales.join(', ')}) not written: pull cannot restore them yet, and pushing this tree replaces them with the contents of locales/.`,
+      'Translations kept in compiled form until their source strings are in this tree (see locales/compiled/):',
+      ...compiledLocales.map(
+        ([locale, count]) =>
+          `  ${locale.padEnd(13)}${count} ${count === 1 ? 'entry' : 'entries'}`,
+      ),
     );
   }
 
