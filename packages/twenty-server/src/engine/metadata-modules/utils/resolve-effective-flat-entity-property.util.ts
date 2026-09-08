@@ -1,4 +1,4 @@
-export const resolveOverridableEntityProperty = <
+export const resolveEffectiveFlatEntityProperty = <
   TEntity extends { overrides?: Partial<TEntity> | null },
   K extends string & keyof TEntity,
 >(

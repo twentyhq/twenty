@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { translateStandardLabel } from 'src/engine/core-modules/i18n/utils/translate-standard-label.util';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
-import { resolveEffectiveEntity } from 'src/engine/metadata-modules/utils/resolve-effective-entity.util';
+import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity.util';
 
 // Frozen reference implementations of the three resolvers that existed before
 // unification (resolve-object-metadata-standard-override,
@@ -281,7 +281,7 @@ describe('resolveEffectiveEntityProperty (parity with legacy resolvers)', () => 
   });
 });
 
-describe('resolveEffectiveEntity (parity with legacy flat spread)', () => {
+describe('resolveEffectiveFlatEntity (parity with legacy flat spread)', () => {
   it('matches the frozen flat spread across the corpus', () => {
     const flatCorpus: AnyOverrides[] = [
       { name: 'View', position: 1, overrides: undefined },
@@ -297,7 +297,7 @@ describe('resolveEffectiveEntity (parity with legacy flat spread)', () => {
     ];
 
     for (const flatEntity of flatCorpus) {
-      expect(resolveEffectiveEntity(flatEntity)).toEqual(
+      expect(resolveEffectiveFlatEntity(flatEntity)).toEqual(
         frozenResolveFlat(flatEntity),
       );
     }

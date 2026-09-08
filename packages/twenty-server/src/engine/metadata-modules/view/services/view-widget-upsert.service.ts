@@ -16,6 +16,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity.util';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { splitEntitiesByRemovalStrategy } from 'src/engine/metadata-modules/flat-entity/utils/split-entities-by-removal-strategy.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -474,26 +475,17 @@ export class ViewWidgetUpsertService {
         existingFieldByViewFieldId ?? existingFieldByFieldMetadataId;
 
       if (isDefined(existingField)) {
-        const resolvedIsVisible = isDefined(existingField.overrides?.isVisible)
-          ? existingField.overrides.isVisible
-          : existingField.isVisible;
-        const resolvedPosition = isDefined(existingField.overrides?.position)
-          ? existingField.overrides.position
-          : existingField.position;
-        const resolvedSize = isDefined(existingField.overrides?.size)
-          ? existingField.overrides.size
-          : existingField.size;
-        const resolvedAggregateOperation =
-          existingField.overrides?.aggregateOperation !== undefined
-            ? existingField.overrides.aggregateOperation
-            : existingField.aggregateOperation;
+        const effectiveExistingField =
+          resolveEffectiveFlatEntity(existingField);
 
         const hasChanged =
-          resolvedIsVisible !== inputField.isVisible ||
-          resolvedPosition !== inputField.position ||
-          (isDefined(inputField.size) && resolvedSize !== inputField.size) ||
+          effectiveExistingField.isVisible !== inputField.isVisible ||
+          effectiveExistingField.position !== inputField.position ||
+          (isDefined(inputField.size) &&
+            effectiveExistingField.size !== inputField.size) ||
           (inputField.aggregateOperation !== undefined &&
-            resolvedAggregateOperation !== inputField.aggregateOperation);
+            effectiveExistingField.aggregateOperation !==
+              inputField.aggregateOperation);
 
         if (!hasChanged) {
           continue;

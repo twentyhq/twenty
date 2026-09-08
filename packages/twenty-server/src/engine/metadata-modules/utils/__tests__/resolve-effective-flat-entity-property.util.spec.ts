@@ -1,4 +1,4 @@
-import { resolveOverridableEntityProperty } from 'src/engine/metadata-modules/utils/resolve-overridable-entity-property.util';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
 
 type TestEntity = {
   title: string;
@@ -7,7 +7,7 @@ type TestEntity = {
   overrides?: Partial<TestEntity> | null;
 };
 
-describe('resolveOverridableEntityProperty', () => {
+describe('resolveEffectiveFlatEntityProperty', () => {
   it('should return override value when override exists for the property', () => {
     const entity: TestEntity = {
       title: 'Base Title',
@@ -16,7 +16,7 @@ describe('resolveOverridableEntityProperty', () => {
       overrides: { title: 'Overridden Title' },
     };
 
-    expect(resolveOverridableEntityProperty(entity, 'title')).toBe(
+    expect(resolveEffectiveFlatEntityProperty(entity, 'title')).toBe(
       'Overridden Title',
     );
   });
@@ -29,7 +29,7 @@ describe('resolveOverridableEntityProperty', () => {
       overrides: null,
     };
 
-    expect(resolveOverridableEntityProperty(entity, 'title')).toBe(
+    expect(resolveEffectiveFlatEntityProperty(entity, 'title')).toBe(
       'Base Title',
     );
   });
@@ -42,7 +42,7 @@ describe('resolveOverridableEntityProperty', () => {
       overrides: { position: 5 },
     };
 
-    expect(resolveOverridableEntityProperty(entity, 'title')).toBe(
+    expect(resolveEffectiveFlatEntityProperty(entity, 'title')).toBe(
       'Base Title',
     );
   });
@@ -55,7 +55,7 @@ describe('resolveOverridableEntityProperty', () => {
       overrides: undefined,
     };
 
-    expect(resolveOverridableEntityProperty(entity, 'title')).toBe(
+    expect(resolveEffectiveFlatEntityProperty(entity, 'title')).toBe(
       'Base Title',
     );
   });
@@ -68,6 +68,6 @@ describe('resolveOverridableEntityProperty', () => {
       overrides: { icon: null },
     };
 
-    expect(resolveOverridableEntityProperty(entity, 'icon')).toBeNull();
+    expect(resolveEffectiveFlatEntityProperty(entity, 'icon')).toBeNull();
   });
 });

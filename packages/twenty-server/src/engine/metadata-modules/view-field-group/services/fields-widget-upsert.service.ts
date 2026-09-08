@@ -13,6 +13,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity.util';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { splitEntitiesByRemovalStrategy } from 'src/engine/metadata-modules/flat-entity/utils/split-entities-by-removal-strategy.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -311,22 +312,12 @@ export class FieldsWidgetUpsertService {
 
       const newViewFieldGroupId = inputGroup.id;
 
-      const resolvedIsVisible = isDefined(existingField.overrides?.isVisible)
-        ? existingField.overrides.isVisible
-        : existingField.isVisible;
-      const resolvedPosition = isDefined(existingField.overrides?.position)
-        ? existingField.overrides.position
-        : existingField.position;
-      // null is a valid override value (meaning "ungrouped"), so use !== undefined
-      const resolvedViewFieldGroupId =
-        existingField.overrides?.viewFieldGroupId !== undefined
-          ? existingField.overrides.viewFieldGroupId
-          : existingField.viewFieldGroupId;
+      const effectiveExistingField = resolveEffectiveFlatEntity(existingField);
 
       const hasChanged =
-        resolvedIsVisible !== inputField.isVisible ||
-        resolvedPosition !== inputField.position ||
-        resolvedViewFieldGroupId !== newViewFieldGroupId;
+        effectiveExistingField.isVisible !== inputField.isVisible ||
+        effectiveExistingField.position !== inputField.position ||
+        effectiveExistingField.viewFieldGroupId !== newViewFieldGroupId;
 
       if (!hasChanged) {
         return [];
@@ -619,21 +610,12 @@ export class FieldsWidgetUpsertService {
         return [];
       }
 
-      const resolvedIsVisible = isDefined(existingField.overrides?.isVisible)
-        ? existingField.overrides.isVisible
-        : existingField.isVisible;
-      const resolvedPosition = isDefined(existingField.overrides?.position)
-        ? existingField.overrides.position
-        : existingField.position;
-      const resolvedViewFieldGroupId =
-        existingField.overrides?.viewFieldGroupId !== undefined
-          ? existingField.overrides.viewFieldGroupId
-          : existingField.viewFieldGroupId;
+      const effectiveExistingField = resolveEffectiveFlatEntity(existingField);
 
       const hasChanged =
-        resolvedIsVisible !== inputField.isVisible ||
-        resolvedPosition !== inputField.position ||
-        resolvedViewFieldGroupId !== null;
+        effectiveExistingField.isVisible !== inputField.isVisible ||
+        effectiveExistingField.position !== inputField.position ||
+        effectiveExistingField.viewFieldGroupId !== null;
 
       if (!hasChanged) {
         return [];
@@ -890,20 +872,12 @@ export class FieldsWidgetUpsertService {
     existing: FlatViewFieldGroup,
     input: UpsertFieldsWidgetGroupInput,
   ): boolean {
-    const resolvedName = isDefined(existing.overrides?.name)
-      ? existing.overrides.name
-      : existing.name;
-    const resolvedPosition = isDefined(existing.overrides?.position)
-      ? existing.overrides.position
-      : existing.position;
-    const resolvedIsVisible = isDefined(existing.overrides?.isVisible)
-      ? existing.overrides.isVisible
-      : existing.isVisible;
+    const effectiveExisting = resolveEffectiveFlatEntity(existing);
 
     return (
-      resolvedName !== input.name ||
-      resolvedPosition !== input.position ||
-      resolvedIsVisible !== input.isVisible
+      effectiveExisting.name !== input.name ||
+      effectiveExisting.position !== input.position ||
+      effectiveExisting.isVisible !== input.isVisible
     );
   }
 }
