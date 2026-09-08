@@ -11,6 +11,7 @@ import {
   WidgetType,
 } from 'twenty-shared/types';
 
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { PageLayoutWidgetPositionUnion } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget-position.union';
 import { WidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/dtos/widget-configuration.interface';
@@ -97,5 +98,5 @@ export class PageLayoutWidgetDTO {
   isOverridden?: boolean;
 
   @HideField()
-  overrides?: PageLayoutWidgetOverrides | null;
+  overrides?: AuthoredOverrides<PageLayoutWidgetOverrides> | null;
 }

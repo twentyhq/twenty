@@ -23,6 +23,7 @@ import {
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { resolveEffectiveUniversalFlatEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-universal-flat-entity-property.util';
 
 @Injectable()
 export class FlatPageLayoutWidgetValidatorService {
@@ -235,12 +236,14 @@ export class FlatPageLayoutWidgetValidatorService {
   private getEffectivePageLayoutTabUniversalIdentifier(
     widget: Pick<
       UniversalFlatPageLayoutWidget,
-      'pageLayoutTabUniversalIdentifier' | 'universalOverrides'
+      | 'applicationUniversalIdentifier'
+      | 'pageLayoutTabUniversalIdentifier'
+      | 'universalOverrides'
     >,
   ): string {
-    return (
-      widget.universalOverrides?.pageLayoutTabUniversalIdentifier ??
-      widget.pageLayoutTabUniversalIdentifier
+    return resolveEffectiveUniversalFlatEntityProperty(
+      widget,
+      'pageLayoutTabUniversalIdentifier',
     );
   }
 

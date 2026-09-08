@@ -6,11 +6,12 @@ import {
 import { type ObjectMetadataOverrides } from 'src/engine/metadata-modules/object-metadata/types/object-metadata-overrides.type';
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
 
 export type NavigationPlaceholderObjectMetadata = {
   labelPlural: string;
   icon?: string | null;
-  overrides?: ObjectMetadataOverrides | null;
+  overrides?: AuthoredOverrides<ObjectMetadataOverrides> | null;
 };
 
 export const buildNavigationPlaceholderValues = ({

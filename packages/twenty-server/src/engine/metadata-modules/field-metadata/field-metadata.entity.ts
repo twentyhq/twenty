@@ -40,6 +40,7 @@ import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entiti
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
 import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 // This entity is used as a reference test case for type utilities in:
@@ -110,7 +111,7 @@ export class FieldMetadataEntity<
     upgradeCommandName: ADD_METADATA_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME,
   })
   @Column({ type: 'jsonb', nullable: true })
-  overrides: JsonbProperty<FieldMetadataOverrides> | null;
+  overrides: JsonbProperty<AuthoredOverrides<FieldMetadataOverrides>> | null;
 
   /**
    * @deprecated Please use `overrides` instead.

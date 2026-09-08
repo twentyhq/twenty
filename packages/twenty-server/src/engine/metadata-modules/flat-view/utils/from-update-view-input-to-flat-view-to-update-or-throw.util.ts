@@ -17,7 +17,6 @@ import { handleFlatViewUpdateSideEffect } from 'src/engine/metadata-modules/flat
 import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
 import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/utils/sanitize-overridable-entity-input.util';
 import { type UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
-import { type ViewOverrides } from 'src/engine/metadata-modules/view/entities/view.entity';
 import {
   ViewException,
   ViewExceptionCode,
@@ -85,6 +84,8 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
       existingFlatEntity: existingFlatViewToUpdate,
       updatedEditableProperties: editableProperties,
       shouldOverride,
+      callerApplicationUniversalIdentifier,
+      workspaceCustomApplicationUniversalIdentifier,
     });
 
   const mergedRecord = mergeUpdateInExistingRecord({
@@ -161,7 +162,7 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
   if (isDefined(overrides)) {
     flatViewToUpdate.universalOverrides = fromViewOverridesToUniversalOverrides(
       {
-        overrides: overrides as ViewOverrides,
+        overrides,
         fieldMetadataUniversalIdentifierById:
           flatFieldMetadataMaps.universalIdentifierById,
       },

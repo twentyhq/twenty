@@ -1,24 +1,38 @@
-import { isDefined } from 'twenty-shared/utils';
+import { listAuthoredOverrideEntries } from 'src/engine/metadata-modules/utils/list-authored-override-entries.util';
+import { type OverrideAuthorReadContext } from 'src/engine/metadata-modules/utils/override-author-context.type';
+import {
+  type OverridableFlatEntity,
+  resolveEffectiveFlatEntityProperty,
+} from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
 
-import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
-
-type FlatEntityWithOverrides = Record<string, unknown> & {
-  overrides: Record<string, unknown> | null;
-};
+type FlatEntityWithOverrides = Record<string, unknown> &
+  OverridableFlatEntity<Record<string, unknown>>;
 
 export const resolveEffectiveFlatEntity = <T extends FlatEntityWithOverrides>(
   flatEntity: T,
+  authorContext?: Pick<
+    OverrideAuthorReadContext,
+    'workspaceCustomApplicationUniversalIdentifier'
+  >,
 ): T => {
-  if (!isDefined(flatEntity.overrides)) {
-    return flatEntity;
-  }
+  const overriddenProperties = new Set(
+    listAuthoredOverrideEntries<Record<string, unknown>>({
+      overrides: flatEntity.overrides,
+      authorContext: {
+        ...authorContext,
+        ownerApplicationUniversalIdentifier:
+          flatEntity.applicationUniversalIdentifier,
+      },
+    }).flatMap(Object.keys),
+  );
 
-  return Object.keys(flatEntity.overrides).reduce<T>(
+  return [...overriddenProperties].reduce<T>(
     (effectiveEntity, property) => ({
       ...effectiveEntity,
       [property]: resolveEffectiveFlatEntityProperty(
         flatEntity as FlatEntityWithOverrides,
         property,
+        authorContext,
       ),
     }),
     flatEntity,

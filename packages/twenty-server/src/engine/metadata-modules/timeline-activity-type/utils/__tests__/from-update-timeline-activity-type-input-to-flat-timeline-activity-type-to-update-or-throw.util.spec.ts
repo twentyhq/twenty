@@ -58,7 +58,13 @@ describe('fromUpdateTimelineActivityTypeInputToFlatTimelineActivityTypeToUpdateO
       label: 'was created by',
       icon: 'IconPlus',
       isActive: false,
-      overrides: { label: 'was added by', icon: 'IconSparkles' },
+      overrides: {
+        [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: {
+          label: 'was added by',
+          icon: 'IconSparkles',
+          isActive: false,
+        },
+      },
     });
     expect(
       fromFlatTimelineActivityTypeToTimelineActivityTypeDto(result),
@@ -115,7 +121,9 @@ describe('fromUpdateTimelineActivityTypeInputToFlatTimelineActivityTypeToUpdateO
       );
 
     expect(result.overrides).toEqual({
-      translations: { 'fr-FR': { label: 'a été créé par' } },
+      [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: {
+        translations: { 'fr-FR': { label: 'a été créé par' } },
+      },
     });
   });
 

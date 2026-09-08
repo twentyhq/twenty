@@ -1,19 +1,27 @@
-import { isDefined } from 'twenty-shared/utils';
-
-import { type ObjectMetadataOverrides } from 'src/engine/metadata-modules/object-metadata/types/object-metadata-overrides.type';
+import { type OverrideAuthorReadContext } from 'src/engine/metadata-modules/utils/override-author-context.type';
+import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/utils/read-authored-override-property.util';
 
 type ImageIdentifierResolvableObjectMetadata = {
-  overrides?: ObjectMetadataOverrides | null;
+  overrides?: unknown;
   imageIdentifierFieldMetadataId?: string | null;
+  applicationUniversalIdentifier?: string;
 };
 
 export const getEffectiveImageIdentifierFieldMetadataId = (
   objectMetadata: ImageIdentifierResolvableObjectMetadata,
+  authorContext?: OverrideAuthorReadContext,
 ): string | null => {
-  const { overrides } = objectMetadata;
+  const overrideValue = readAuthoredOverrideProperty({
+    overrides: objectMetadata.overrides,
+    property: 'imageIdentifierFieldMetadataId',
+    authorContext: authorContext ?? {
+      ownerApplicationUniversalIdentifier:
+        objectMetadata.applicationUniversalIdentifier,
+    },
+  });
 
-  if (isDefined(overrides) && 'imageIdentifierFieldMetadataId' in overrides) {
-    return overrides.imageIdentifierFieldMetadataId ?? null;
+  if (overrideValue !== undefined) {
+    return (overrideValue as string | null) ?? null;
   }
 
   return objectMetadata.imageIdentifierFieldMetadataId ?? null;

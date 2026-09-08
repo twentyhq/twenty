@@ -16,12 +16,21 @@ import { mergeTranslationsIntoOverrides } from 'src/engine/metadata-modules/util
 type SanitizeRawUpdateObjectInputArgs = {
   rawUpdateObjectInput: UpdateOneObjectInput;
   existingFlatObjectMetadata: FlatObjectMetadata;
+  workspaceCustomApplicationUniversalIdentifier: string;
 };
 
+// Workspace edits of standard objects are authored by the workspace custom
+// application, whatever the caller: an application never overrides another's.
 export const sanitizeRawUpdateObjectInput = ({
   existingFlatObjectMetadata,
   rawUpdateObjectInput,
+  workspaceCustomApplicationUniversalIdentifier,
 }: SanitizeRawUpdateObjectInputArgs) => {
+  const authorContext = {
+    workspaceCustomApplicationUniversalIdentifier,
+    ownerApplicationUniversalIdentifier:
+      existingFlatObjectMetadata.applicationUniversalIdentifier,
+  };
   const isStandardObject = belongsToTwentyStandardApp(
     existingFlatObjectMetadata,
   );
@@ -53,6 +62,9 @@ export const sanitizeRawUpdateObjectInput = ({
       overrides: mergeTranslationsIntoOverrides({
         existingOverrides: existingFlatObjectMetadata.overrides,
         translationEntries,
+        authorUniversalIdentifier:
+          workspaceCustomApplicationUniversalIdentifier,
+        authorContext,
       }),
     };
   }
@@ -79,12 +91,16 @@ export const sanitizeRawUpdateObjectInput = ({
     updatedProperties: updatedEditableObjectProperties,
     existingEntity: existingFlatObjectMetadata,
     existingOverrides: existingFlatObjectMetadata.overrides,
+    authorUniversalIdentifier: workspaceCustomApplicationUniversalIdentifier,
+    authorContext,
   });
 
   return {
     overrides: mergeTranslationsIntoOverrides({
       existingOverrides: overrides,
       translationEntries,
+      authorUniversalIdentifier: workspaceCustomApplicationUniversalIdentifier,
+      authorContext,
     }),
     updatedEditableObjectProperties: remainingProperties,
   };

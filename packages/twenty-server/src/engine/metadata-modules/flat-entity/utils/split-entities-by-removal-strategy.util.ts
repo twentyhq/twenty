@@ -1,5 +1,9 @@
+import { applyAuthoredIsActive } from 'src/engine/metadata-modules/utils/apply-authored-is-active.util';
+
 type EntityWithApplicationIdentifier = {
   applicationUniversalIdentifier: string;
+  isActive?: boolean;
+  overrides?: unknown;
   isSystemSideEffect?: boolean;
 };
 
@@ -15,10 +19,10 @@ export const splitEntitiesByRemovalStrategy = <
   now: string;
 }): {
   toHardDelete: T[];
-  toDeactivate: (T & { isActive: false; updatedAt: string })[];
+  toDeactivate: (T & { updatedAt: string })[];
 } => {
   const toHardDelete: T[] = [];
-  const toDeactivate: (T & { isActive: false; updatedAt: string })[] = [];
+  const toDeactivate: (T & { updatedAt: string })[] = [];
 
   for (const entity of entitiesToRemove) {
     if (
@@ -29,8 +33,13 @@ export const splitEntitiesByRemovalStrategy = <
       toHardDelete.push(entity);
     } else {
       toDeactivate.push({
-        ...entity,
-        isActive: false as const,
+        ...applyAuthoredIsActive({
+          flatEntity: entity,
+          isActive: false,
+          authorUniversalIdentifier:
+            workspaceCustomApplicationUniversalIdentifier,
+          workspaceCustomApplicationUniversalIdentifier,
+        }),
         updatedAt: now,
       });
     }

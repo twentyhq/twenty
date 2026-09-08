@@ -34,6 +34,7 @@ type ComputeFlatFieldToUpdateAndRelatedFlatFieldToUpdateArgs = {
   fromFlatFieldMetadata: FlatFieldMetadata;
   flatObjectMetadata: FlatObjectMetadata;
   isSystemBuild: boolean;
+  workspaceCustomApplicationUniversalIdentifier: string;
 } & Pick<AllFlatEntityMaps, 'flatFieldMetadataMaps'>;
 // Note: Standard override is way too complex we should land a smoother implemenentation once we standardize
 // them across every flat entities
@@ -43,12 +44,14 @@ export const computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate = ({
   flatFieldMetadataMaps,
   flatObjectMetadata,
   isSystemBuild,
+  workspaceCustomApplicationUniversalIdentifier,
 }: ComputeFlatFieldToUpdateAndRelatedFlatFieldToUpdateArgs): ComputeFlatFieldToUpdateAndRelatedFlatFieldToUpdateReturnType => {
   const { overrides, updatedEditableFieldProperties } =
     sanitizeRawUpdateFieldInput({
       existingFlatFieldMetadata: fromFlatFieldMetadata,
       rawUpdateFieldInput,
       isSystemBuild,
+      workspaceCustomApplicationUniversalIdentifier,
     });
 
   const isStandardField = belongsToTwentyStandardApp(fromFlatFieldMetadata);

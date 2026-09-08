@@ -13,6 +13,7 @@ import {
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
+import { applyOwnerAuthoredIsActive } from 'src/engine/metadata-modules/utils/apply-owner-authored-is-active.util';
 
 @Injectable()
 export class ObjectNavigationCommandOnUpdateSideEffectHandlerService extends MetadataSideEffectHandler(
@@ -83,10 +84,12 @@ export class ObjectNavigationCommandOnUpdateSideEffectHandlerService extends Met
     }
 
     const navigationFlatCommandMenuItemToUpdate = {
-      ...existingNavigationFlatCommandMenuItem,
       ...(isActiveChanged
-        ? { isActive: updatedFlatObjectMetadata.isActive }
-        : {}),
+        ? applyOwnerAuthoredIsActive({
+            flatEntity: existingNavigationFlatCommandMenuItem,
+            isActive: updatedFlatObjectMetadata.isActive,
+          })
+        : existingNavigationFlatCommandMenuItem),
       ...(nameSingularChanged
         ? {
             conditionalAvailabilityExpression:
@@ -107,7 +110,12 @@ export class ObjectNavigationCommandOnUpdateSideEffectHandlerService extends Met
     };
 
     const hasChanges = (
-      ['isActive', 'conditionalAvailabilityExpression', 'hotKeys'] as const
+      [
+        'isActive',
+        'overrides',
+        'conditionalAvailabilityExpression',
+        'hotKeys',
+      ] as const
     ).some(
       (property) =>
         JSON.stringify(navigationFlatCommandMenuItemToUpdate[property]) !==

@@ -20,6 +20,7 @@ import {
   readOverrideTranslation,
   resolveEffectiveEntityPropertyByName,
 } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
+import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/utils/read-authored-override-property.util';
 
 type TranslatableFlatEntity = FlatObjectMetadata | FlatFieldMetadata;
 
@@ -108,9 +109,11 @@ export class MetadataTranslationService {
         metadataName
       ] ?? []) {
         const sourceValue = readStringProperty(entity, property);
-        const overrideValue = (overrides as Record<string, unknown> | null)?.[
-          property
-        ];
+        const overrideValue = readAuthoredOverrideProperty({
+          overrides,
+          property,
+          authorContext: getI18nContext(applicationId),
+        });
         const canonicalValue = isNonEmptyString(overrideValue)
           ? overrideValue
           : sourceValue;
@@ -141,6 +144,7 @@ export class MetadataTranslationService {
               overrides,
               locale,
               property,
+              authorContext: getI18nContext(applicationId),
             }),
             value,
             canonicalValue,

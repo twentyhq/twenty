@@ -6,6 +6,8 @@ import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
+import { mapAuthoredOverrideEntries } from 'src/engine/metadata-modules/utils/map-authored-override-entries.util';
 
 type UniversalCommandMenuItemOverrides =
   FormatRecordSerializedRelationProperties<CommandMenuItemOverrides>;
@@ -23,7 +25,7 @@ const COMMAND_MENU_ITEM_OVERRIDES_FOREIGN_KEYS = [
   },
 ] as const;
 
-export const fromCommandMenuItemOverridesToUniversalOverrides = ({
+const fromCommandMenuItemOverridesToUniversalOverridesEntry = ({
   overrides,
   objectMetadataUniversalIdentifierById,
   pageLayoutUniversalIdentifierById,
@@ -76,3 +78,23 @@ export const fromCommandMenuItemOverridesToUniversalOverrides = ({
     scalarOverrides,
   );
 };
+
+export const fromCommandMenuItemOverridesToUniversalOverrides = ({
+  overrides,
+  objectMetadataUniversalIdentifierById,
+  pageLayoutUniversalIdentifierById,
+  shouldThrowOnMissingIdentifier,
+}: {
+  overrides: AuthoredOverrides<CommandMenuItemOverrides>;
+  objectMetadataUniversalIdentifierById: Partial<Record<string, string>>;
+  pageLayoutUniversalIdentifierById: Partial<Record<string, string>>;
+  shouldThrowOnMissingIdentifier?: boolean;
+}): AuthoredOverrides<UniversalCommandMenuItemOverrides> =>
+  mapAuthoredOverrideEntries(overrides, (entry) =>
+    fromCommandMenuItemOverridesToUniversalOverridesEntry({
+      overrides: entry,
+      objectMetadataUniversalIdentifierById,
+      pageLayoutUniversalIdentifierById,
+      shouldThrowOnMissingIdentifier,
+    }),
+  );

@@ -35,6 +35,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { applyAuthoredIsActive } from 'src/engine/metadata-modules/utils/apply-authored-is-active.util';
 
 @Injectable()
 export class ViewService {
@@ -332,6 +333,17 @@ export class ViewService {
     });
 
     const now = new Date().toISOString();
+    const deactivatedFlatView = {
+      ...applyAuthoredIsActive({
+        flatEntity: existingFlatView,
+        isActive: false,
+        authorUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      }),
+      updatedAt: now,
+    };
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -342,9 +354,7 @@ export class ViewService {
               flatEntityToDelete: shouldDeactivate
                 ? []
                 : [flatViewFromDestroyInput],
-              flatEntityToUpdate: shouldDeactivate
-                ? [{ ...existingFlatView, isActive: false, updatedAt: now }]
-                : [],
+              flatEntityToUpdate: shouldDeactivate ? [deactivatedFlatView] : [],
             },
           },
           workspaceId,
@@ -362,11 +372,7 @@ export class ViewService {
     }
 
     if (shouldDeactivate) {
-      return fromFlatViewToViewDto({
-        ...existingFlatView,
-        isActive: false,
-        updatedAt: now,
-      });
+      return fromFlatViewToViewDto(deactivatedFlatView);
     }
 
     return fromFlatViewToViewDto({

@@ -99,6 +99,8 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
         existingFlatEntity: existingFlatPageLayoutWidgetToUpdate,
         updatedEditableProperties: editableProperties,
         shouldOverride,
+        callerApplicationUniversalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier,
       });
 
     const flatPageLayoutWidgetToUpdate = {

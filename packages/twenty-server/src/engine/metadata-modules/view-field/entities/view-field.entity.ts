@@ -23,6 +23,7 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
 
 export type ViewFieldOverrides = {
+  isActive?: boolean;
   isVisible?: boolean;
   size?: number;
   position?: number;
