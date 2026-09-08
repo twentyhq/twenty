@@ -22,8 +22,8 @@ export const MenuPopup = ({
 }: MenuPopupProps) => {
   const themeContainer = useThemeContainer();
   const { container = themeContainer ?? undefined, ...popupProps } = props;
-  const nested = useContext(MenuNestingContext);
-  const defaults = MENU_POPUP_POSITION_DEFAULTS[nested ? 'submenu' : 'root'];
+  const isNested = useContext(MenuNestingContext);
+  const defaults = MENU_POPUP_POSITION_DEFAULTS[isNested ? 'submenu' : 'root'];
 
   return (
     <MenuPrimitive.Portal container={container} keepMounted={keepMounted}>
