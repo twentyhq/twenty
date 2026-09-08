@@ -59,7 +59,9 @@ import {
   type WorkspaceDeletionApplicationUninstallJobData,
 } from 'src/engine/core-modules/workspace/jobs/workspace-deletion-application-uninstall.job';
 import { getWorkspaceApplicationUninstallLockName } from 'src/engine/core-modules/workspace/utils/get-workspace-application-uninstall-lock-name.util';
+import { WORKSPACE_REACTIVATED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-reactivated-event.constant';
 import { WORKSPACE_SUSPENDED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-suspended-event.constant';
+import { type WorkspaceReactivatedEvent } from 'src/engine/core-modules/workspace/types/workspace-reactivated-event.type';
 import { type WorkspaceSuspendedEvent } from 'src/engine/core-modules/workspace/types/workspace-suspended-event.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
@@ -559,6 +561,10 @@ export class WorkspaceService {
 
     if (hasBeenReactivated) {
       await this.coreEntityCacheService.invalidate('workspaceEntity', id);
+
+      this.eventEmitter.emit(WORKSPACE_REACTIVATED_EVENT, {
+        workspaceId: id,
+      } satisfies WorkspaceReactivatedEvent);
     }
 
     return hasBeenReactivated;

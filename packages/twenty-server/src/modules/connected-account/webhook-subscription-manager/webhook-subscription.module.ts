@@ -19,9 +19,9 @@ import { CalendarWebhookSubscriptionService } from 'src/modules/connected-accoun
 import { MessagingWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service';
 import { WebhookSubscriptionExceptionHandlerService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-exception-handler.service';
 import { WebhookSubscriptionStatusService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-status.service';
-import { WebhookSubscriptionRevocationService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-revocation.service';
+import { WorkspaceWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/workspace-webhook-subscription.service';
 import { WorkspaceActivationService } from 'src/modules/connected-account/webhook-subscription-manager/services/workspace-activation.service';
-import { WebhookSubscriptionWorkspaceSuspendedListener } from 'src/modules/connected-account/webhook-subscription-manager/listeners/webhook-subscription-workspace-suspended.listener';
+import { WebhookSubscriptionWorkspaceActivationListener } from 'src/modules/connected-account/webhook-subscription-manager/listeners/webhook-subscription-workspace-activation.listener';
 import { WebhookSubscriptionManagerModule } from 'src/modules/connected-account/webhook-subscription-manager/webhook-subscription-manager.module';
 
 @Module({
@@ -39,8 +39,8 @@ import { WebhookSubscriptionManagerModule } from 'src/modules/connected-account/
   ],
   providers: [
     WorkspaceActivationService,
-    WebhookSubscriptionRevocationService,
-    WebhookSubscriptionWorkspaceSuspendedListener,
+    WorkspaceWebhookSubscriptionService,
+    WebhookSubscriptionWorkspaceActivationListener,
     WebhookSubscriptionStatusService,
     WebhookSubscriptionExceptionHandlerService,
     MessagingWebhookSubscriptionService,
