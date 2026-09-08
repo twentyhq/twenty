@@ -14,6 +14,10 @@ export default defineApplication({
   logo: 'public/logo.png',
   author: 'Twenty',
   category: 'Productivity',
+  websiteUrl: 'https://docs.twenty.com/developers/extend/apps/getting-started',
+  termsUrl: 'https://www.twenty.com/terms',
+  emailSupport: 'contact@twenty.com',
+  issueReportUrl: 'https://github.com/twentyhq/twenty/issues',
   applicationVariables: {
     [GRANOLA_API_KEY_ENV_VAR_NAME]: {
       universalIdentifier: GRANOLA_API_KEY_VARIABLE_UNIVERSAL_IDENTIFIER,
