@@ -1,4 +1,8 @@
-import { type GraphQLInputObjectType, type GraphQLScalarType } from 'graphql';
+import {
+  type GraphQLInputObjectType,
+  type GraphQLNonNull,
+  type GraphQLScalarType,
+} from 'graphql';
 import {
   type FieldMetadataType,
   type FieldMetadataDefaultValue,
@@ -8,7 +12,10 @@ import { type GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspac
 
 export interface ArgMetadata {
   kind?: GqlInputTypeDefinitionKind;
-  type?: GraphQLScalarType | GraphQLInputObjectType;
+  type?:
+    | GraphQLScalarType
+    | GraphQLInputObjectType
+    | GraphQLNonNull<GraphQLInputObjectType>;
   isNullable?: boolean;
   isArray?: boolean;
   defaultValue?: FieldMetadataDefaultValue<FieldMetadataType>;
