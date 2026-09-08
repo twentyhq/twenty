@@ -3,19 +3,35 @@ import { type Ref, type RefCallback } from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
+const assignRef = <TElement>(
+  ref: Ref<TElement> | undefined,
+  node: TElement | null,
+) => {
+  if (!isDefined(ref)) {
+    return undefined;
+  }
+
+  if (isFunction(ref)) {
+    return ref(node);
+  }
+
+  ref.current = node;
+
+  return undefined;
+};
+
 export const mergeRefs =
   <TElement>(...refs: (Ref<TElement> | undefined)[]): RefCallback<TElement> =>
   (node) => {
-    for (const ref of refs) {
-      if (!isDefined(ref)) {
-        continue;
-      }
+    const cleanups = refs.map((ref) => {
+      const cleanup = assignRef(ref, node);
 
-      if (isFunction(ref)) {
-        ref(node);
-        continue;
-      }
+      return isFunction(cleanup) ? cleanup : () => assignRef(ref, null);
+    });
 
-      ref.current = node;
-    }
+    return () => {
+      for (const cleanup of cleanups) {
+        cleanup();
+      }
+    };
   };
