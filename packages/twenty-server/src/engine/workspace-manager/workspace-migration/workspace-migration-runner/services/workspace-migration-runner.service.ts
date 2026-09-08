@@ -138,6 +138,7 @@ export class WorkspaceMigrationRunnerService {
   }: {
     phase:
       | 'initial-cache-retrieval'
+      | 'flat-maps-clone'
       | 'action-execution'
       | 'commit'
       | 'cache-invalidation';
@@ -300,8 +301,16 @@ export class WorkspaceMigrationRunnerService {
 
     let allFlatEntityMaps = structuredClone(cachedAllFlatEntityMaps);
 
+    const cloneMs = performance.now() - cloneStart;
+
+    this.recordRunPhaseMetric({
+      phase: 'flat-maps-clone',
+      status: 'success',
+      value: cloneMs,
+    });
+
     this.logger.perf(
-      `[install-perf] Runner flat-maps clone took ${(performance.now() - cloneStart).toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
+      `[install-perf] Runner flat-maps clone took ${cloneMs.toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
       'Runner',
     );
 
