@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 
-import { type Repository } from 'typeorm';
+import { UpdateResult, type Repository } from 'typeorm';
 import { EntityNotFoundError } from 'typeorm/error/EntityNotFoundError';
 import { type EntityMetadata } from 'typeorm/metadata/EntityMetadata';
 import { isDefined } from 'twenty-shared/utils';
@@ -164,6 +164,56 @@ const stripUnavailableSelect = (
   return options;
 };
 
+// A skipped update never reaches the driver, so the counts TypeORM would have
+// filled in have to be stated rather than left undefined: no rows matched.
+const buildSkippedUpdateResult = (): UpdateResult => {
+  const updateResult = new UpdateResult();
+
+  updateResult.raw = [];
+  updateResult.affected = 0;
+
+  return updateResult;
+};
+
+const stripUnavailableUpdateValues = (
+  entityClass: Function,
+  state: UpgradeAwareRepositoryState,
+  values: unknown,
+): unknown => {
+  if (
+    !isDefined(values) ||
+    typeof values !== 'object' ||
+    Array.isArray(values)
+  ) {
+    return values;
+  }
+
+  const hiddenColumnPropertyNames =
+    state.getHiddenColumnPropertyNames(entityClass);
+
+  if (hiddenColumnPropertyNames.size === 0) {
+    return values;
+  }
+
+  const entries = Object.entries(values as Record<string, unknown>);
+  const keptEntries = entries.filter(
+    ([propertyName]) => !hiddenColumnPropertyNames.has(propertyName),
+  );
+
+  if (keptEntries.length === entries.length) {
+    return values;
+  }
+
+  logger.log(
+    `[upgrade-proxy] strip update values on ${entityClass.name}: ${entries
+      .filter(([propertyName]) => hiddenColumnPropertyNames.has(propertyName))
+      .map(([propertyName]) => propertyName)
+      .join(',')}`,
+  );
+
+  return Object.fromEntries(keptEntries);
+};
+
 const stripUnavailableRelations = (
   metadata: EntityMetadata,
   state: UpgradeAwareRepositoryState,
@@ -314,6 +364,29 @@ const handleRepositoryMethodCall = <Entity extends object>({
     return behavior.produceEmpty(entityClass);
   }
 
+  if (methodName === 'update' && args.length > 1) {
+    const updateValues = stripUnavailableUpdateValues(
+      entityClass,
+      state,
+      args[1],
+    );
+
+    // Nothing the caller asked to write exists at this cursor, and TypeORM
+    // rejects an empty value set, so report the no-op instead of running it.
+    if (
+      updateValues !== args[1] &&
+      Object.keys(updateValues as Record<string, unknown>).length === 0
+    ) {
+      return Promise.resolve(buildSkippedUpdateResult());
+    }
+
+    return callRepositoryMethod({
+      target,
+      methodName,
+      args: [args[0], updateValues, ...args.slice(2)],
+    });
+  }
+
   const rewrittenArgs =
     METHODS_THAT_ACCEPT_FIND_OPTIONS.has(methodName) && args.length > 0
       ? [
@@ -326,9 +399,20 @@ const handleRepositoryMethodCall = <Entity extends object>({
         ]
       : args;
 
-  return (
+  return callRepositoryMethod({ target, methodName, args: rewrittenArgs });
+};
+
+const callRepositoryMethod = <Entity extends object>({
+  target,
+  methodName,
+  args,
+}: {
+  target: Repository<Entity>;
+  methodName: string;
+  args: unknown[];
+}): unknown =>
+  (
     target[methodName as keyof Repository<Entity>] as unknown as (
       ...callArgs: unknown[]
     ) => unknown
-  ).apply(target, rewrittenArgs);
-};
+  ).apply(target, args);

@@ -11,7 +11,6 @@ import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThr
 import { agentChatFetchedMessagesComponentFamilyState } from '@/ai/states/agentChatFetchedMessagesComponentFamilyState';
 import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
 import { agentChatIsAwaitingPersistedRefetchComponentFamilyState } from '@/ai/states/agentChatIsAwaitingPersistedRefetchComponentFamilyState';
-import { agentChatIsInitialScrollPendingOnThreadChangeState } from '@/ai/states/agentChatIsInitialScrollPendingOnThreadChangeState';
 import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
 import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
@@ -82,10 +81,6 @@ export const AgentChatStreamSubscriptionEffect = () => {
     agentChatDisplayedThreadState,
   );
 
-  const setAgentChatIsInitialScrollPendingOnThreadChange = useSetAtomState(
-    agentChatIsInitialScrollPendingOnThreadChangeState,
-  );
-
   useEffect(() => {
     if (agentChatIsStreaming) {
       return;
@@ -101,9 +96,6 @@ export const AgentChatStreamSubscriptionEffect = () => {
     }
 
     if (isThreadSwitch && agentChatIsAwaitingFirstChunk) {
-      if (agentChatFetchedMessages.length > 0) {
-        setAgentChatIsInitialScrollPendingOnThreadChange(true);
-      }
       setAgentChatDisplayedThread(currentAiChatThread);
 
       return;
@@ -112,9 +104,6 @@ export const AgentChatStreamSubscriptionEffect = () => {
     setAgentChatMessages(agentChatFetchedMessages);
 
     if (isThreadSwitch) {
-      if (agentChatFetchedMessages.length > 0) {
-        setAgentChatIsInitialScrollPendingOnThreadChange(true);
-      }
       setAgentChatDisplayedThread(currentAiChatThread);
     }
   }, [
@@ -126,7 +115,6 @@ export const AgentChatStreamSubscriptionEffect = () => {
     currentAiChatThread,
     agentChatDisplayedThread,
     setAgentChatDisplayedThread,
-    setAgentChatIsInitialScrollPendingOnThreadChange,
   ]);
 
   const setAgentChatIsLoading = useSetAtomState(agentChatIsLoadingState);

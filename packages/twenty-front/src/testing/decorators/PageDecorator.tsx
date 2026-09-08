@@ -3,12 +3,9 @@ import { loadDevMessages } from '@apollo/client/dev';
 import { type Decorator } from '@storybook/react-vite';
 import { Provider as JotaiProvider } from 'jotai';
 import { HelmetProvider } from '@dr.pogodin/react-helmet';
-import {
-  createMemoryRouter,
-  createRoutesFromElements,
-  Route,
-  RouterProvider,
-} from 'react-router-dom';
+import { createMemoryRouter, RouterProvider } from 'react-router-dom';
+import { WorkspaceRouteObjectsProvider } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
+import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
 import { MinimalMetadataGate } from '@/metadata-store/components/MinimalMetadataGate';
 import { ApolloCoreClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloCoreClientMockedProvider';
@@ -141,24 +138,30 @@ const createRouter = ({
     pathname: string;
   }[];
   initialIndex?: number;
-}) =>
-  createMemoryRouter(
-    createRoutesFromElements(
-      <Route element={<Providers />}>
-        <Route element={<DefaultLayout />}>
-          <Route path={args.routePath} element={<Story />} />
-          {args.additionalRoutes?.map((route) => (
-            <Route
-              key={route}
-              path={route}
-              element={<div>Navigated to {route}</div>}
-            />
-          ))}
-        </Route>
-      </Route>,
-    ),
+}) => {
+  const routeObjects: WorkspaceRouteObject[] = [
+    { path: args.routePath, element: <Story /> },
+    ...(args.additionalRoutes ?? []).map((route) => ({
+      path: route,
+      element: <div>Navigated to {route}</div>,
+    })),
+  ];
+
+  return createMemoryRouter(
+    [
+      {
+        element: <WorkspaceRouteObjectsProvider routeObjects={routeObjects} />,
+        children: [
+          {
+            element: <Providers />,
+            children: [{ element: <DefaultLayout />, children: routeObjects }],
+          },
+        ],
+      },
+    ],
     { initialEntries, initialIndex },
   );
+};
 
 export const PageDecorator: Decorator<{
   routePath: string;

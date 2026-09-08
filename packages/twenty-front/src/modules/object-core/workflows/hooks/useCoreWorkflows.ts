@@ -1,8 +1,11 @@
 import { useState } from 'react';
 
+import { type ErrorLike } from '@apollo/client';
 import { useQuery } from '@apollo/client/react';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { logError } from '~/utils/logError';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import { buildCoreWorkflowFilterInput } from '@/object-core/workflows/utils/buildCoreWorkflowFilterInput';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
@@ -81,6 +84,8 @@ export const useCoreWorkflows = ({
   );
   const connection = (data ?? previousData)?.coreWorkflows;
 
+  const { enqueueErrorSnackBar } = useSnackBar();
+
   const fetchNextPage = async () => {
     if (connection?.pageInfo.hasNextPage !== true || isFetchingMore) {
       return;
@@ -88,21 +93,26 @@ export const useCoreWorkflows = ({
 
     setIsFetchingMore(true);
 
-    await fetchMore({
-      variables: { after: connection.pageInfo.endCursor },
-      updateQuery: (previousResult, { fetchMoreResult }) => ({
-        ...fetchMoreResult,
-        coreWorkflows: {
-          ...fetchMoreResult.coreWorkflows,
-          edges: [
-            ...previousResult.coreWorkflows.edges,
-            ...fetchMoreResult.coreWorkflows.edges,
-          ],
-        },
-      }),
-    }).finally(() => {
+    try {
+      await fetchMore({
+        variables: { after: connection.pageInfo.endCursor },
+        updateQuery: (previousResult, { fetchMoreResult }) => ({
+          ...fetchMoreResult,
+          coreWorkflows: {
+            ...fetchMoreResult.coreWorkflows,
+            edges: [
+              ...previousResult.coreWorkflows.edges,
+              ...fetchMoreResult.coreWorkflows.edges,
+            ],
+          },
+        }),
+      });
+    } catch (fetchMoreError) {
+      logError(`useCoreWorkflows fetchMore error : ${fetchMoreError}`);
+      enqueueErrorSnackBar({ apolloError: fetchMoreError as ErrorLike });
+    } finally {
       setIsFetchingMore(false);
-    });
+    }
   };
 
   return {
