@@ -176,7 +176,6 @@ export const Catalog: CatalogStory<Story, typeof SelectExample> = {
           {
             id: 'aria-hidden-focus',
             // Simultaneously open selects keep Base UI's focus sentinels active.
-            // Keep all other catalog content covered by this rule.
             selector:
               '[aria-hidden="true"]:not([data-select-catalog] [data-base-ui-focus-guard])',
           },
