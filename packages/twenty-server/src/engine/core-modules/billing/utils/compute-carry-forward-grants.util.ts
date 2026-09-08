@@ -117,9 +117,11 @@ export const computeCarryForwardGrants = ({
         ]
       : [];
 
-  // A grant that lapsed inside the closing period still absorbed usage while it
-  // was alive, which is why it stays in the waterfall above, but its remainder
-  // is gone: carrying it would hand back credits the deadline took away.
+  // A lapsed grant keeps its place in the waterfall above and only loses its
+  // remainder: carrying that would hand back credits the deadline took away.
+  // The waterfall spends a whole period at once with no event times, so this is
+  // only exact because every deadline is a period end, which is the invariant
+  // alignGrantExpiryToPeriodEnd holds at the point an expiry is set.
   const preservedGrants: CarryForwardGrantOutput[] = unspentBuckets
     .filter(
       (bucket) =>

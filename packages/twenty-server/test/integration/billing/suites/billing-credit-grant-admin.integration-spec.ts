@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
-import { addMonths, differenceInCalendarDays, startOfMonth } from 'date-fns';
+import { addDays, addMonths, startOfMonth } from 'date-fns';
 import request from 'supertest';
 import {
   getBillingUsageCacheService,
@@ -136,7 +136,10 @@ describe('Admin credit grant and revoke (integration)', () => {
     expect(grants[0].expiresAt).toBeNull();
   });
 
-  it('expires a time-boxed grant the requested number of days out', async () => {
+  // Rounded up to a period end rather than the exact day: credits are spent and
+  // settled a period at a time, so a deadline inside one would be invisible to
+  // both the cached counter and the carry-forward.
+  it('expires a time-boxed grant at the end of the period the requested day falls in', async () => {
     const response = await grantCredits({
       workspaceId,
       amount: 2,
@@ -146,15 +149,17 @@ describe('Admin credit grant and revoke (integration)', () => {
     });
 
     expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.grantWorkspaceCredits.isActive).toBe(true);
 
     const [storedGrant] = await listCreditGrants(workspaceId);
-    const daysUntilExpiry = differenceInCalendarDays(
-      new Date(storedGrant.expiresAt as Date),
-      new Date(),
-    );
+    const expiresAt = new Date(storedGrant.expiresAt as Date);
 
-    expect(daysUntilExpiry).toBe(30);
-    expect(response.body.data.grantWorkspaceCredits.isActive).toBe(true);
+    expect(expiresAt.getTime()).toBeGreaterThanOrEqual(
+      addDays(new Date(), 30).getTime(),
+    );
+    expect([PERIOD_END, addMonths(PERIOD_END, 1)].map(Number)).toContain(
+      expiresAt.getTime(),
+    );
   });
 
   it('refuses an expiry beyond the accepted range', async () => {
@@ -192,9 +197,9 @@ describe('Admin credit grant and revoke (integration)', () => {
     );
   });
 
-  // Incrementing would leave the counter's period-end lifetime in place, so the
-  // credits would stay spendable through the cache after they lapsed.
-  it('drops a warm available-credits counter when the grant expires before the period does', async () => {
+  // The aligned deadline lands on the period end the counter already expires
+  // with, so the cached balance stays valid and can simply be incremented.
+  it('keeps a warm available-credits counter usable for a time-boxed grant', async () => {
     const cache = getBillingUsageCacheService();
 
     await cache.warmAvailableCredits(
@@ -212,9 +217,9 @@ describe('Admin credit grant and revoke (integration)', () => {
       expiresInDays: 1,
     });
 
-    expect(
-      await cache.getAvailableCredits(workspaceId, PERIOD_START),
-    ).toBeUndefined();
+    expect(await cache.getAvailableCredits(workspaceId, PERIOD_START)).toBe(
+      500_000 + 2 * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
+    );
   });
 
   it('takes a revoked grant back off the ledger and the available-credits counter', async () => {

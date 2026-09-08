@@ -96,11 +96,6 @@ export class BillingCreditService {
       workspaceId,
       availableDeltaMicro: amountMicro,
       subscription,
-      // Incrementing a warm counter leaves its period-end lifetime in place, so
-      // a grant lapsing before then would keep being spendable through the
-      // cache. Rebuilding re-reads the ledger and shortens the counter to the
-      // new deadline.
-      mustRebuildCounter: expiresBeforePeriodEnd(grant.expiresAt, subscription),
     });
 
     return grant;
@@ -175,14 +170,12 @@ export class BillingCreditService {
     isReplay = false,
     adjustmentKey,
     subscription: knownSubscription,
-    mustRebuildCounter = false,
   }: {
     workspaceId: string;
     availableDeltaMicro: number;
     isReplay?: boolean;
     adjustmentKey?: string;
     subscription?: BillingSubscriptionEntity;
-    mustRebuildCounter?: boolean;
   }): Promise<void> {
     const subscription =
       knownSubscription ??
@@ -210,7 +203,14 @@ export class BillingCreditService {
         availableDeltaMicro,
         isReplay,
         adjustmentKey,
-        mustRebuildCounter,
+        // Incrementing a warm counter leaves its lifetime in place, so credits
+        // lapsing before the period ends would stay spendable through the
+        // cache. Checked here rather than at each call site so that the
+        // rollover, which carries deadlines forward too, cannot miss it.
+        mustRebuildCounter: await this.hasExpiryInsidePeriod(
+          workspaceId,
+          subscription.currentPeriodEnd,
+        ),
       });
     }
 
@@ -223,6 +223,21 @@ export class BillingCreditService {
     if (!isPureReplay) {
       await this.usageLimitQuotaService.dropAllowanceCounter(workspaceId);
     }
+  }
+
+  private async hasExpiryInsidePeriod(
+    workspaceId: string,
+    periodEnd: Date,
+  ): Promise<boolean> {
+    const earliestExpiry =
+      await this.billingCreditGrantService.findEarliestUpcomingExpiry(
+        workspaceId,
+      );
+
+    return (
+      isDefined(earliestExpiry) &&
+      earliestExpiry.getTime() < periodEnd.getTime()
+    );
   }
 
   private async adjustAvailableCreditsCounter({
@@ -313,11 +328,3 @@ export class BillingCreditService {
 
 const buildRevocationAdjustmentKey = (grantId: string): string =>
   `revoke:${grantId}`;
-
-const expiresBeforePeriodEnd = (
-  expiresAt: Date | null,
-  subscription: BillingSubscriptionEntity | undefined,
-): boolean =>
-  isDefined(expiresAt) &&
-  (!isDefined(subscription) ||
-    expiresAt.getTime() < subscription.currentPeriodEnd.getTime());
