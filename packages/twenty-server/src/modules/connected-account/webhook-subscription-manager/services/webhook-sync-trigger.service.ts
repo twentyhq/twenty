@@ -86,8 +86,10 @@ export class WebhookSyncTriggerService {
     calendarChannelId: string,
     workspaceId: string,
   ): Promise<void> {
+    const debounceCacheKey = `calendar-event-webhook-sync-debounce:${workspaceId}:${calendarChannelId}`;
+
     const hasOpenedDebounceWindow = await this.cacheStorage.setIfAbsent(
-      `calendar-event-webhook-sync-debounce:${workspaceId}:${calendarChannelId}`,
+      debounceCacheKey,
       true,
       CALENDAR_EVENT_WEBHOOK_SYNC_DEBOUNCE_MS,
     );
@@ -96,18 +98,24 @@ export class WebhookSyncTriggerService {
       return;
     }
 
-    await this.connectedAccountSyncWebhookQueueService.add<CalendarEventWebhookSyncJobData>(
-      CalendarEventWebhookSyncJob.name,
-      { workspaceId, calendarChannelId },
-      {
-        delay: CALENDAR_EVENT_WEBHOOK_SYNC_DEBOUNCE_MS,
-        retryLimit: CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_LIMIT,
-        backoff: {
-          strategy: 'exponential',
-          initialDelayMilliseconds:
-            CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_INITIAL_DELAY_MS,
+    try {
+      await this.connectedAccountSyncWebhookQueueService.add<CalendarEventWebhookSyncJobData>(
+        CalendarEventWebhookSyncJob.name,
+        { workspaceId, calendarChannelId },
+        {
+          delay: CALENDAR_EVENT_WEBHOOK_SYNC_DEBOUNCE_MS,
+          retryLimit: CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_LIMIT,
+          backoff: {
+            strategy: 'exponential',
+            initialDelayMilliseconds:
+              CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_INITIAL_DELAY_MS,
+          },
         },
-      },
-    );
+      );
+    } catch (error) {
+      await this.cacheStorage.del(debounceCacheKey);
+
+      throw error;
+    }
   }
 }

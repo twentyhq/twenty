@@ -57,7 +57,7 @@ export class CalendarEventWebhookSyncJob {
   }: CalendarEventWebhookSyncJobData): Promise<void> {
     if (busyAttempt >= CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_LIMIT) {
       this.logger.warn(
-        `Calendar channel ${calendarChannelId} was still syncing after ${busyAttempt} webhook sync attempts, leaving it to the fallback cron`,
+        `Calendar channel ${calendarChannelId} in workspace ${workspaceId} was still syncing after ${busyAttempt} webhook sync attempts, leaving it to the fallback cron`,
       );
 
       return;
@@ -69,6 +69,12 @@ export class CalendarEventWebhookSyncJob {
       {
         delay:
           CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_INITIAL_DELAY_MS * 2 ** busyAttempt,
+        retryLimit: CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_LIMIT,
+        backoff: {
+          strategy: 'exponential',
+          initialDelayMilliseconds:
+            CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_INITIAL_DELAY_MS,
+        },
       },
     );
   }
