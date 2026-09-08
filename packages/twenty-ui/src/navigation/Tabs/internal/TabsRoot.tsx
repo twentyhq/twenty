@@ -1,6 +1,6 @@
 import { Tabs as TabsPrimitive } from '@base-ui/react/tabs';
 
-import { mergePartClassName } from '@ui/utilities/internal/mergePartClassName';
+import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
 import styles from '../Tabs.module.scss';
 import { type TabsRootProps } from '../types/TabsRootProps';
@@ -8,6 +8,6 @@ import { type TabsRootProps } from '../types/TabsRootProps';
 export const TabsRoot = ({ className, ...props }: TabsRootProps) => (
   <TabsPrimitive.Root
     {...props}
-    className={mergePartClassName(styles.root, className)}
+    className={mergeClassNames(styles.root, className)}
   />
 );

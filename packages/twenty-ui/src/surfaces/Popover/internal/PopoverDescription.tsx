@@ -1,6 +1,6 @@
 import { Popover as PopoverPrimitive } from '@base-ui/react/popover';
 
-import { mergePartClassName } from '@ui/utilities/internal/mergePartClassName';
+import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
 import styles from '../Popover.module.scss';
 import { type PopoverDescriptionProps } from '../types/PopoverDescriptionProps';
@@ -11,6 +11,6 @@ export const PopoverDescription = ({
 }: PopoverDescriptionProps) => (
   <PopoverPrimitive.Description
     {...props}
-    className={mergePartClassName(styles.description, className)}
+    className={mergeClassNames(styles.description, className)}
   />
 );
