@@ -1,6 +1,15 @@
 // Job payloads for the lead pipeline. Every job carries workspaceId — jobs run
 // in the worker with a system auth context built from it.
 
+// What the activity establishes about the PERSON — first touch, timeline,
+// consent. Separate from deal resolution on purpose: it is true whether or not
+// the activity ever becomes a deal. Enqueue with a stable per-activity job id;
+// the timeline insert it drives has no dedup of its own.
+export type RecordActivityAttributionJobData = {
+  workspaceId: string;
+  activityId: string;
+};
+
 export type ResolveOpportunityFromActivityJobData = {
   workspaceId: string;
   activityId: string;

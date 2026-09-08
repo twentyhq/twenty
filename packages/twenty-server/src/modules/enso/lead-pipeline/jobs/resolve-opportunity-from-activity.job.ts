@@ -13,10 +13,7 @@ import {
   type RouteOpportunityJobData,
 } from 'src/modules/enso/lead-pipeline/jobs/lead-pipeline-job.types';
 import { RouteOpportunityJob } from 'src/modules/enso/lead-pipeline/jobs/route-opportunity.job';
-import { ConsentFromActivityService } from 'src/modules/enso/lead-pipeline/services/consent-from-activity.service';
 import { OpportunityResolutionService } from 'src/modules/enso/lead-pipeline/services/opportunity-resolution.service';
-import { PersonFirstTouchService } from 'src/modules/enso/lead-pipeline/services/person-first-touch.service';
-import { PersonTimelineService } from 'src/modules/enso/lead-pipeline/services/person-timeline.service';
 import { CallFollowUpService } from 'src/modules/enso/telephony/services/call-follow-up.service';
 
 // Stage 1 of the pipeline: an inbound activity was created. Resolve it to an
@@ -29,9 +26,6 @@ export class ResolveOpportunityFromActivityJob {
 
   constructor(
     private readonly opportunityResolutionService: OpportunityResolutionService,
-    private readonly personFirstTouchService: PersonFirstTouchService,
-    private readonly personTimelineService: PersonTimelineService,
-    private readonly consentFromActivityService: ConsentFromActivityService,
     private readonly callFollowUpService: CallFollowUpService,
     @InjectMessageQueue(MessageQueue.ensoLeadPipelineQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -43,24 +37,10 @@ export class ResolveOpportunityFromActivityJob {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    // Freeze the person's first-touch attribution from the earliest activity
-    // (runs for every activity, incl. organic/no-project; best-effort).
-    await this.personFirstTouchService.applyFromActivity(
-      authContext,
-      activityId,
-    );
-    // Surface the inbound activity on the person's timeline (best-effort).
-    await this.personTimelineService.recordInboundActivity(
-      workspaceId,
-      activityId,
-    );
-    // Establish per-project marketing consent from form-type inbounds
-    // (best-effort; social/calls grant no marketing consent).
-    await this.consentFromActivityService.applyFromActivity(
-      authContext,
-      activityId,
-    );
-
+    // First touch, timeline and consent used to run here. They are attribution:
+    // properties of the activity that hold whether or not it becomes a deal, so
+    // they now live in RecordActivityAttributionJob, which every inbound
+    // activity gets — including the ones that stop short of a deal.
     const result = await this.opportunityResolutionService.resolveFromActivity(
       authContext,
       activityId,

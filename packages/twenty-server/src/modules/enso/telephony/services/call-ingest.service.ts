@@ -223,6 +223,39 @@ export class CallIngestService {
     return isGroup ? undefined : login;
   }
 
+  // Records who took the call when their PBX login matches no workspace member.
+  //
+  // Those calls used to be parked on a stand-in owner, which made one manager
+  // look responsible for every call they never took. A project worked outside
+  // this CRM has no member who could legitimately own the deal, so the deal is
+  // left unowned and the answerer is named here instead — otherwise the only
+  // record of who spoke to the caller is buried in the raw push payload.
+  //
+  // Safe against `patchActivity` clearing this on an individual pickup: the
+  // decision job runs a settle delay after the call ends, by which point every
+  // push for it has landed.
+  async recordAnswererLogin(
+    workspaceId: string,
+    activityId: string,
+    answeredByLogin: string,
+  ): Promise<void> {
+    const systemAuthContext = buildSystemAuthContext(workspaceId);
+
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const repository =
+        await this.globalWorkspaceOrmManager.getRepository<InboundActivityRow>(
+          workspaceId,
+          'inboundActivity',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      await repository.update(
+        { id: activityId },
+        { nonSalesPickupBy: answeredByLogin, updatedBy: SYSTEM_ACTOR },
+      );
+    }, systemAuthContext);
+  }
+
   // Attaches the resolved person and project. Returns true when the row is now
   // complete enough for the lead pipeline AND has no opportunity yet — i.e. when
   // it is worth enqueueing opportunity resolution.

@@ -90,6 +90,23 @@ export class DecideCallOutcomeJob {
         }
       : undefined;
 
+    // An answered call whose PBX login is nobody in this CRM still has a known
+    // answerer. Name them on the activity rather than handing the deal to a
+    // stand-in owner: a project whose team works in another system has no
+    // member who could truthfully own it, and a wrong owner reads as a real
+    // assignment to everyone who sees it.
+    if (
+      answered &&
+      !isDefined(alreadyConnected?.ownerMemberId) &&
+      isDefined(settled.answeredByLogin)
+    ) {
+      await this.callIngestService.recordAnswererLogin(
+        workspaceId,
+        activityId,
+        settled.answeredByLogin,
+      );
+    }
+
     await this.leadPipelineQueueService.add<ResolveOpportunityFromActivityJobData>(
       ResolveOpportunityFromActivityJob.name,
       {

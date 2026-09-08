@@ -322,9 +322,15 @@ export const ENTRY_POINT_BY_ROISTAT_SCENARIO = parseEntryPointMap(
 );
 
 // Owner for an answered call whose PBX login matches no workspace member — the
-// login is unmapped, or the PBX reported a group. Without it such a deal would
-// sit in CONNECTED unowned; during rollout it usefully parks everything on one
-// person who can verify the flow end to end.
+// login is unmapped, or the PBX reported a group.
+//
+// LEAVE THIS UNSET outside of a rollout. It exists because during bring-up it
+// usefully parks every answered call on one person who can verify the flow end
+// to end. In steady state it does the opposite: projects whose team works in
+// another system have no member who could truthfully own their deals, so the
+// fallback silently files real conversations under a manager who never had
+// them. Unset, such a deal opens CONNECTED unowned and the PBX login of whoever
+// actually answered is recorded on the activity instead.
 export const ANSWERED_OWNER_FALLBACK_EMAIL =
   process.env.ENSO_TELEPHONY_ANSWERED_OWNER_FALLBACK_EMAIL;
 

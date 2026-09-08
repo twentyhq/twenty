@@ -11,8 +11,12 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { extractRowRefs } from 'src/modules/enso/person-relationship/query-hooks/extract-row-refs.util';
+import { RecordActivityAttributionJob } from 'src/modules/enso/lead-pipeline/jobs/record-activity-attribution.job';
 import { ResolveOpportunityFromActivityJob } from 'src/modules/enso/lead-pipeline/jobs/resolve-opportunity-from-activity.job';
-import { type ResolveOpportunityFromActivityJobData } from 'src/modules/enso/lead-pipeline/jobs/lead-pipeline-job.types';
+import {
+  type RecordActivityAttributionJobData,
+  type ResolveOpportunityFromActivityJobData,
+} from 'src/modules/enso/lead-pipeline/jobs/lead-pipeline-job.types';
 
 // Pipeline trigger: every inbound activity (regardless of channel) kicks off
 // opportunity resolution + routing. The hook is intentionally thin — it only
@@ -42,6 +46,15 @@ export class InboundActivityCreateOnePostQueryHook implements WorkspacePostQuery
     }
 
     for (const ref of extractRowRefs(payload)) {
+      // Attribution first, and unconditionally: what the activity says about
+      // the person holds whether or not it becomes a deal. The job id keys the
+      // enqueue to the activity — the timeline insert it drives has no dedup.
+      await this.messageQueueService.add<RecordActivityAttributionJobData>(
+        RecordActivityAttributionJob.name,
+        { workspaceId, activityId: ref.id },
+        { id: `enso-activity-attribution:${ref.id}` },
+      );
+
       await this.messageQueueService.add<ResolveOpportunityFromActivityJobData>(
         ResolveOpportunityFromActivityJob.name,
         { workspaceId, activityId: ref.id },

@@ -4,6 +4,7 @@ import { GoogleChatWebhookModule } from 'src/modules/enso/notifications/google-c
 import { ClaimCheckJob } from 'src/modules/enso/lead-pipeline/jobs/claim-check.job';
 import { ManagerNotifyJob } from 'src/modules/enso/lead-pipeline/jobs/manager-notify.job';
 import { NotifyManagerAssignmentJob } from 'src/modules/enso/lead-pipeline/jobs/notify-manager-assignment.job';
+import { RecordActivityAttributionJob } from 'src/modules/enso/lead-pipeline/jobs/record-activity-attribution.job';
 import { ResolveOpportunityFromActivityJob } from 'src/modules/enso/lead-pipeline/jobs/resolve-opportunity-from-activity.job';
 import { RouteOpportunityJob } from 'src/modules/enso/lead-pipeline/jobs/route-opportunity.job';
 import { ConsentFromActivityService } from 'src/modules/enso/lead-pipeline/services/consent-from-activity.service';
@@ -54,6 +55,7 @@ import { PersonProjectConsentNameService } from 'src/modules/enso/person-project
     // listed here: OpportunityResolutionService depends on it, and this graph
     // resolves independently of the server one.
     ProjectNotificationService,
+    RecordActivityAttributionJob,
     ResolveOpportunityFromActivityJob,
     RouteOpportunityJob,
     NotifyManagerAssignmentJob,
