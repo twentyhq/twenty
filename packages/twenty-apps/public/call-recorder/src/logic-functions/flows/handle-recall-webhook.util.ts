@@ -4,7 +4,10 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { enqueueCallRecordingArtifactsImport } from 'src/logic-functions/data/enqueue-call-recording-artifacts-import.util';
 import { findCallRecordingsByFilter } from 'src/logic-functions/data/find-call-recordings-by-filter.util';
-import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
+import {
+  isCallRecordingStatusDowngrade,
+  getAllowedPreviousCallRecordingStatuses,
+} from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isRecallRecordingDoneSignal } from 'src/logic-functions/domain/is-recall-recording-done-signal.util';
 import { mapRecallStatusCodeToCallRecordingStatus } from 'src/logic-functions/domain/map-recall-status-code-to-call-recording-status.util';
 import {
@@ -15,6 +18,7 @@ import {
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
+import { getRecallWebhookBotMetadata } from 'src/logic-functions/recall-api/get-recall-webhook-bot-metadata.util';
 
 type RecallWebhookHandlerResult =
   | {
@@ -41,6 +45,9 @@ export const handleRecallWebhook = async ({
   client: CoreApiClient;
   body: RecallWebhookBody;
 }): Promise<RecallWebhookHandlerResult> => {
+  if (getRecallWebhookBotMetadata(body)?.twentyRecordingSource === 'companion') {
+    return { status: 'skipped', event: null, reason: 'owned by Twenty Companion' };
+  }
   const webhookEvent = parseRecallWebhookEvent(body);
 
   if (isUndefined(webhookEvent)) {
@@ -127,10 +134,15 @@ const handleRecallStatusEvent = async ({
     ...buildRecordingTimestampsUpdate({ webhookEvent, callRecording }),
   };
 
-  await updateCallRecording(client, {
+  const updated = await updateCallRecording(client, {
     id: callRecording.id,
+    expectedStatuses:
+      getAllowedPreviousCallRecordingStatuses(callRecordingStatus),
     data: updateData,
   });
+
+  if (!updated)
+    return { status: 'skipped', event, reason: 'recording already advanced' };
 
   if (
     isRecallRecordingDoneSignal({
@@ -246,6 +258,12 @@ const mapRecallEventToCallRecordingStatus = ({
   statusCode: string | undefined;
   statusSubCode: string | undefined;
 }): CallRecordingStatus | undefined => {
+  if (event === 'sdk_upload.recording_started')
+    return CallRecordingStatus.RECORDING;
+  if (event === 'sdk_upload.failed') return CallRecordingStatus.FAILED;
+  if (event === 'sdk_upload.recording_ended' || event === 'sdk_upload.complete')
+    return CallRecordingStatus.PROCESSING;
+
   if (event === 'recording.done') {
     return CallRecordingStatus.PROCESSING;
   }
@@ -269,8 +287,11 @@ const buildRecordingTimestampsUpdate = ({
 }): { startedAt?: string; endedAt?: string } => {
   const { event, statusCode, statusTimestamp } = webhookEvent;
 
-  const impliesRecordingStarted = statusCode === 'in_call_recording';
+  const impliesRecordingStarted =
+    event === 'sdk_upload.recording_started' ||
+    statusCode === 'in_call_recording';
   const impliesRecordingEnded =
+    event === 'sdk_upload.recording_ended' ||
     event === 'recording.done' ||
     statusCode === 'call_ended' ||
     statusCode === 'done';

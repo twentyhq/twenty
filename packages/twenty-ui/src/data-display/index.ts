@@ -18,6 +18,8 @@ export type { AvatarGroupProps } from './AvatarGroup/AvatarGroup';
 export { AvatarGroup } from './AvatarGroup/AvatarGroup';
 export type { AvatarOrIconProps } from './AvatarOrIcon/AvatarOrIcon';
 export { AvatarOrIcon } from './AvatarOrIcon/AvatarOrIcon';
+export { CalendarDayLabel } from './CalendarDayLabel/CalendarDayLabel';
+export { CalendarEventIndicator } from './CalendarDayLabel/CalendarEventIndicator';
 export type { CheckmarkProps } from './Checkmark/Checkmark';
 export { Checkmark } from './Checkmark/Checkmark';
 export type { ChipProps } from './Chip/Chip';

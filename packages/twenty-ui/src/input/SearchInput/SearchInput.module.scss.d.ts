@@ -3,5 +3,8 @@ declare const classNames: {
   readonly inputContainer: 'inputContainer';
   readonly iconContainer: 'iconContainer';
   readonly input: 'input';
+  readonly field: 'field';
+  readonly placeholderSizer: 'placeholderSizer';
+  readonly valueSizer: 'valueSizer';
 };
 export default classNames;

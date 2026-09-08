@@ -1,3 +1,8 @@
+import { DESKTOP_RECORDER_UNIVERSAL_IDENTIFIER } from 'src/engine/core-modules/application/application-oauth/constants/desktop-recorder-oauth.constant';
+import { DesktopRecorderSetupDTO } from 'src/engine/core-modules/application/dtos/desktop-recorder-setup.dto';
+import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
+import { isDesktopRecorderInstalled } from 'src/engine/core-modules/application/application-oauth/utils/is-desktop-recorder-installed.util';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import {
   UseFilters,
   UseGuards,
@@ -47,7 +52,41 @@ export class ApplicationInstallResolver {
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly marketplaceQueryService: MarketplaceQueryService,
     private readonly metricsService: MetricsService,
+    private readonly applicationVariableService: ApplicationVariableEntityService,
   ) {}
+
+  // Members only receive setup information; application configuration and
+  // lifecycle mutations continue to require APPLICATIONS permission.
+  @Query(() => DesktopRecorderSetupDTO)
+  @UseGuards(NoPermissionGuard)
+  async desktopRecorderSetup(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<DesktopRecorderSetupDTO> {
+    const application = await this.applicationService.findOneApplication({
+      universalIdentifier: DESKTOP_RECORDER_UNIVERSAL_IDENTIFIER,
+      workspaceId,
+    });
+    const installed = isDesktopRecorderInstalled(application);
+    const variable = application?.applicationVariables?.find(
+      (entry) =>
+        entry.key === 'DESKTOP_DOWNLOAD_URL' &&
+        !entry.isSecret &&
+        !entry.isDeprecated,
+    );
+    const value =
+      installed && variable
+        ? this.applicationVariableService.getDisplayValue(variable)
+        : '';
+    let downloadUrl: string | null = null;
+    try {
+      const url = new URL(value);
+      if (url.protocol === 'https:' && !url.username && !url.password)
+        downloadUrl = url.href;
+    } catch {
+      // An unpublished or invalid release URL must not become a download link.
+    }
+    return { installed, downloadUrl };
+  }
 
   @Query(() => [ApplicationDTO])
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))

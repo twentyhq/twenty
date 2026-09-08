@@ -13,6 +13,10 @@ export { H3Title } from './H3Title/H3Title';
 export type { LabelVariant } from './Label/Label';
 export { Label } from './Label/Label';
 export { LinkifiedText } from './LinkifiedText/LinkifiedText';
+export {
+  OnboardingTitle,
+  OnboardingSubtitle,
+} from './OnboardingText/OnboardingText';
 export { SeparatorLineText } from './SeparatorLineText/SeparatorLineText';
 export {
   StyledTextContent,

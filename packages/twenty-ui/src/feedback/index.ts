@@ -34,6 +34,7 @@ export type { InfoAccent, InfoProps } from './Info/Info';
 export { Info } from './Info/Info';
 export { InlineBanner } from './InlineBanner/InlineBanner';
 export { Loader } from './Loader/Loader';
+export { Notification } from './Notification/Notification';
 export type { ProgressBarProps } from './ProgressBar/ProgressBar';
 export { ProgressBar } from './ProgressBar/ProgressBar';
 export type { SidePanelInformationBannerProps } from './SidePanelInformationBanner/SidePanelInformationBanner';

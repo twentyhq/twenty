@@ -1,3 +1,4 @@
+import { hydrateDesktopRecordingTimestamps } from 'src/logic-functions/flows/recover-desktop-recordings.util';
 import { isNull, isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
@@ -13,7 +14,7 @@ import {
 } from 'src/logic-functions/flows/sync-call-recording.util';
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import { type CallRecordingArtifactsImportRequest } from 'src/logic-functions/types/call-recording-artifacts-import-request.type';
-import { getString } from 'src/logic-functions/utils/get-string.util';
+import { getString } from '@twentyhq/recall-utils/utils/get-string.util';
 
 type CallRecordingForArtifactsImport = SyncableCallRecording & {
   externalBotId: string | undefined;
@@ -24,6 +25,7 @@ type CallRecordingForArtifactsImportNode = {
   status?: string | null;
   startedAt?: string | null;
   endedAt?: string | null;
+  desktopRecordingSession?: unknown;
   externalBotId?: string | null;
   externalRecordingId?: string | null;
   callRecorderFailureReason?: string | null;
@@ -84,6 +86,7 @@ export const importCallRecordingArtifacts = async ({
   }
 
   try {
+    await hydrateDesktopRecordingTimestamps(client, callRecording);
     const bot = await fetchRecallBotWhenRecordingIdMissing(callRecording);
     const syncResult = await syncCallRecording({
       client,
@@ -155,6 +158,7 @@ const findCallRecordingForArtifactsImport = async (
           status: true,
           startedAt: true,
           endedAt: true,
+          desktopRecordingSession: true,
           externalBotId: true,
           externalRecordingId: true,
           callRecorderFailureReason: true,
@@ -178,6 +182,7 @@ const findCallRecordingForArtifactsImport = async (
 
   return {
     id,
+    desktopRecordingSession: node.desktopRecordingSession,
     status: getString(node.status),
     startedAt: getString(node.startedAt),
     endedAt: getString(node.endedAt),

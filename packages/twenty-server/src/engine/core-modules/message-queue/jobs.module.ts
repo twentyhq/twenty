@@ -1,3 +1,7 @@
+import { ApplicationKeyValueModule } from 'src/engine/core-modules/application/application-key-value/application-key-value.module';
+import { ApplicationKeyValuePersistenceJob } from 'src/engine/core-modules/application/application-key-value/application-key-value-persistence.job';
+import { AppBillingChargeCronJob } from 'src/engine/core-modules/billing/app-billing/app-billing-charge.cron.job';
+import { AppBillingModule } from 'src/engine/core-modules/billing/app-billing/app-billing.module';
 import { Module } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -63,6 +67,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
 
 @Module({
   imports: [
+    ApplicationKeyValueModule,
     TypeOrmModule.forFeature([
       WorkspaceEntity,
       BillingSubscriptionEntity,
@@ -105,9 +110,12 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     PreInstalledAppsModule,
     OnboardingModule,
     BillingReminderModule,
+    AppBillingModule,
   ],
   providers: [
+    ApplicationKeyValuePersistenceJob,
     BillingReminderCronJob,
+    AppBillingChargeCronJob,
     CleanSuspendedWorkspacesJob,
     CleanOnboardingWorkspacesJob,
     EmailSenderJob,

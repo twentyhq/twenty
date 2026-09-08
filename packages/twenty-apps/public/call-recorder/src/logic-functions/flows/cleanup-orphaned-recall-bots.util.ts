@@ -8,7 +8,7 @@ import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-reco
 import { getClaimedWorkspaceId } from 'src/logic-functions/recall-api/get-claimed-workspace-id.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { isNonEmptyString } from '@twentyhq/recall-utils/utils/is-non-empty-string.util';
 import {
   listScheduledRecallBots,
   type RecallScheduledBot,

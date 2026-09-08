@@ -10,7 +10,7 @@ import { extractTwentyWorkspaceIdFromRecallWebhook } from 'src/logic-functions/r
 import { type RecallWebhookBody } from 'src/logic-functions/recall-api/parse-recall-webhook-event.util';
 import { verifyRecallWebhookSignature } from 'src/logic-functions/recall-api/verify-recall-webhook-signature.util';
 import { getApplicationVariableValue } from 'src/logic-functions/utils/get-application-variable-value.util';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { isNonEmptyString } from '@twentyhq/recall-utils/utils/is-non-empty-string.util';
 
 type RecallWebhookResolverResult = {
   workspaceId: string;

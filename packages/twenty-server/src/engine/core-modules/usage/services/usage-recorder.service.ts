@@ -63,16 +63,23 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
       return;
     }
 
-    const periodStart = await this.resolvePeriodStart(workspaceId);
-
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
       USAGE_RECORDED,
-      inputs.map((input) => ({
-        ...this.withDefaults(input),
-        periodStart,
-      })),
+      await this.prepareEvents(workspaceId, inputs),
       workspaceId,
     );
+  }
+
+  async prepareEvents(
+    workspaceId: string,
+    inputs: RecordUsageInput[],
+  ): Promise<UsageEvent[]> {
+    const periodStart = await this.resolvePeriodStart(workspaceId);
+
+    return inputs.map((input) => ({
+      ...this.withDefaults(input),
+      periodStart,
+    }));
   }
 
   accumulate(workspaceId: string, input: RecordUsageInput): void {

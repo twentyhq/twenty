@@ -6,6 +6,7 @@ import { findCallRecordingForSummary } from 'src/logic-functions/data/find-call-
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 import { buildCallRecordingSummaryPrompt } from 'src/logic-functions/domain/build-call-recording-summary-prompt.util';
 import { isCallRecordingCreatedByCallRecorder } from 'src/logic-functions/domain/is-call-recording-created-by-call-recorder.util';
+import { isDesktopAudioRecording } from 'src/logic-functions/domain/is-desktop-audio-recording.util';
 import { isRealTranscript } from 'src/logic-functions/domain/is-real-transcript.util';
 import { parseCallRecordingSummaryAgentResponse } from 'src/logic-functions/domain/parse-call-recording-summary-agent-response.util';
 import { type GenerateCallRecordingSummaryResult } from 'src/logic-functions/flows/generate-call-recording-summary-result.type';
@@ -42,7 +43,9 @@ export const generateCallRecordingSummary = async (
 
   if (
     requireCreatedByCallRecorder &&
-    !isCallRecordingCreatedByCallRecorder(callRecording.createdBy)
+    !isCallRecordingCreatedByCallRecorder(callRecording.createdBy) &&
+    // Desktop capture preserves the signed-in user's record attribution.
+    !isDesktopAudioRecording(callRecording.desktopRecordingSession)
   ) {
     return { outcome: 'not-app-recording' };
   }

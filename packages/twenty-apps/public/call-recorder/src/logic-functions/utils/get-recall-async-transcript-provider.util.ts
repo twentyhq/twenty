@@ -3,7 +3,7 @@ import { DEFAULT_CALL_RECORDER_TRANSCRIPT_PROVIDER } from 'src/logic-functions/c
 import { RECALL_ASYNC_TRANSCRIPT_PROVIDERS } from 'src/logic-functions/constants/recall-async-transcript-providers';
 import { type RecallAsyncTranscriptProvider } from 'src/logic-functions/types/recall-async-transcript-provider.type';
 import { getApplicationVariableValue } from 'src/logic-functions/utils/get-application-variable-value.util';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { isNonEmptyString } from '@twentyhq/recall-utils/utils/is-non-empty-string.util';
 
 const isRecallAsyncTranscriptProvider = (
   value: unknown,

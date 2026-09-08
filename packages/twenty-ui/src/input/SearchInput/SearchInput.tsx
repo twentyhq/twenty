@@ -14,6 +14,7 @@ export type SearchInputProps = {
   placeholder?: string;
   filterDropdown?: (filterButton: ReactNode) => ReactNode;
   autoFocus?: boolean;
+  autoSize?: boolean;
   disabled?: boolean;
   className?: string;
   id?: string;
@@ -28,6 +29,7 @@ export const SearchInput = ({
   placeholder,
   filterDropdown,
   autoFocus,
+  autoSize = false,
   disabled,
   className,
   id,
@@ -49,7 +51,10 @@ export const SearchInput = ({
   );
 
   return (
-    <div className={clsx(styles.wrapper, className)}>
+    <div
+      className={clsx(styles.wrapper, className)}
+      data-autosize={autoSize || undefined}
+    >
       <div className={styles.inputContainer}>
         <div
           className={styles.iconContainer}
@@ -58,19 +63,31 @@ export const SearchInput = ({
         >
           <IconSearch size={theme.icon.size.md} />
         </div>
-        <Input
-          id={inputId}
-          className={styles.input}
-          value={value}
-          onValueChange={(newValue) => onChange(newValue)}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          placeholder={placeholder}
-          autoFocus={autoFocus}
-          disabled={disabled}
-          aria-label={ariaLabelledby ? undefined : (ariaLabel ?? placeholder)}
-          aria-labelledby={ariaLabelledby}
-        />
+        <div className={styles.field}>
+          {autoSize && (
+            <>
+              <span className={styles.placeholderSizer} aria-hidden>
+                {placeholder}
+              </span>
+              <span className={styles.valueSizer} aria-hidden>
+                {value}
+              </span>
+            </>
+          )}
+          <Input
+            id={inputId}
+            className={styles.input}
+            value={value}
+            onValueChange={(newValue) => onChange(newValue)}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            placeholder={placeholder}
+            autoFocus={autoFocus}
+            disabled={disabled}
+            aria-label={ariaLabelledby ? undefined : (ariaLabel ?? placeholder)}
+            aria-labelledby={ariaLabelledby}
+          />
+        </div>
       </div>
       {filterDropdown && filterDropdown(filterButton)}
     </div>

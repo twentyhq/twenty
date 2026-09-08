@@ -30,3 +30,5 @@ export { ModalFooter } from './ModalFooter/ModalFooter';
 export type { ModalHeaderProps } from './ModalHeader/ModalHeader';
 export { ModalHeader } from './ModalHeader/ModalHeader';
 export { OverflowingTextWithTooltip } from './OverflowingTextWithTooltip/OverflowingTextWithTooltip';
+export { OverlayContainer } from './OverlayContainer/OverlayContainer';
+export { SettingsCardContent } from './SettingsCardContent/SettingsCardContent';

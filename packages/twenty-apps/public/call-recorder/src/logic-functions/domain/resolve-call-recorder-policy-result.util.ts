@@ -4,7 +4,7 @@ import { CallRecorderPreference } from 'src/constants/call-recorder-preference';
 import { computeUpcomingCalendarEventHorizonEnd } from 'src/logic-functions/domain/compute-upcoming-calendar-event-horizon-end.util';
 import { isSupportedMeetingPlatformUrl } from 'src/logic-functions/domain/is-supported-meeting-platform-url.util';
 import { type CallRecorderPolicyInput } from 'src/logic-functions/types/call-recorder-policy-input.type';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { isNonEmptyString } from '@twentyhq/recall-utils/utils/is-non-empty-string.util';
 import { type CallRecorderPolicyNotRequiredReason } from 'src/logic-functions/types/call-recorder-policy-not-required-reason.type';
 import { type CallRecorderPolicyRequiredReason } from 'src/logic-functions/types/call-recorder-policy-required-reason.type';
 import { type CallRecorderPolicyResult } from 'src/logic-functions/types/call-recorder-policy-result.type';

@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { getDesktopRecorderOAuthFields } from 'src/engine/core-modules/application/application-oauth/constants/desktop-recorder-oauth.constant';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
@@ -434,6 +435,7 @@ export class ApplicationRegistrationService {
         oAuthClientSecretHash: clientSecretHash,
         oAuthRedirectUris: input.oAuthRedirectUris ?? [],
         oAuthScopes: input.oAuthScopes ?? [],
+        ...getDesktopRecorderOAuthFields(universalIdentifier),
         createdByUserId,
         ownerWorkspaceId,
       });
@@ -574,6 +576,7 @@ export class ApplicationRegistrationService {
                   latestAvailableVersion,
                 }),
                 ...additionalFields,
+                ...getDesktopRecorderOAuthFields(existing.universalIdentifier),
               } as QueryDeepPartialEntity<ApplicationRegistrationEntity>);
 
             if (isDefined(manifest.application?.serverVariables)) {
@@ -723,6 +726,7 @@ export class ApplicationRegistrationService {
         isVetted,
         manifest: params.manifest,
         ...fromManifestApplicationToDisplayFields(params.manifest?.application),
+        ...getDesktopRecorderOAuthFields(params.universalIdentifier),
       });
 
       await this.invalidateMarketplaceAppsCache();
@@ -755,6 +759,7 @@ export class ApplicationRegistrationService {
       oAuthClientId: v4(),
       oAuthRedirectUris: [],
       oAuthScopes: [],
+      ...getDesktopRecorderOAuthFields(params.universalIdentifier),
       ownerWorkspaceId: null,
     });
 

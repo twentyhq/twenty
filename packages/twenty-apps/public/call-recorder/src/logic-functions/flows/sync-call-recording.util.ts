@@ -1,3 +1,4 @@
+import { isDesktopAudioRecording } from 'src/logic-functions/domain/is-desktop-audio-recording.util';
 import { isNonEmptyArray, isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
@@ -18,6 +19,7 @@ import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-r
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 
 export type SyncableCallRecording = {
+  desktopRecordingSession?: unknown;
   id: string;
   status: string | undefined;
   startedAt: string | undefined;
@@ -97,7 +99,9 @@ export const syncCallRecording = async ({
       callRecordingId: callRecording.id,
       externalRecordingId,
       hasAudio: isNonEmptyArray(callRecording.audio),
-      hasVideo: isNonEmptyArray(callRecording.video),
+      hasVideo:
+        isDesktopAudioRecording(callRecording.desktopRecordingSession) ||
+        isNonEmptyArray(callRecording.video),
     });
 
     updateData = {

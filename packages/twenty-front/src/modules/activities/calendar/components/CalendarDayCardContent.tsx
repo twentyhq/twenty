@@ -3,6 +3,7 @@ import { differenceInSeconds, endOfDay, format } from 'date-fns';
 
 import { CalendarEventRow } from '@/activities/calendar/components/CalendarEventRow';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
+import { CalendarDayLabel } from 'twenty-ui/data-display';
 import { CardContent } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type TimelineCalendarEvent } from '~/generated/graphql';
@@ -33,21 +34,6 @@ const StyledDayCardContent = styled(CardContent)`
     forwards;
 `;
 
-const StyledDayContainer = styled.div`
-  text-align: center;
-  width: ${themeCssVariables.spacing[6]};
-`;
-
-const StyledWeekDay = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.xxs};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-`;
-
-const StyledMonthDay = styled.div`
-  font-weight: ${themeCssVariables.font.weight.medium};
-`;
-
 const StyledEvents = styled.div`
   align-items: stretch;
   display: flex;
@@ -76,10 +62,7 @@ export const CalendarDayCardContent = ({
         divider={divider}
         style={{ animationDelay: `${Math.max(0, dayEndsIn)}s` }}
       >
-        <StyledDayContainer>
-          <StyledWeekDay>{weekDayLabel}</StyledWeekDay>
-          <StyledMonthDay>{monthDayLabel}</StyledMonthDay>
-        </StyledDayContainer>
+        <CalendarDayLabel weekday={weekDayLabel} day={monthDayLabel} />
         <StyledEvents>
           {calendarEvents.map((calendarEvent) => (
             <StyledEventRowContainer key={calendarEvent.id}>

@@ -2,7 +2,7 @@ import {
   AUDIO_FILE_TOO_LARGE_FAILURE_REASON,
   VIDEO_FILE_TOO_LARGE_FAILURE_REASON,
 } from 'src/logic-functions/constants/media-file-too-large-failure-reasons';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { isNonEmptyString } from '@twentyhq/recall-utils/utils/is-non-empty-string.util';
 
 export type MediaFileTooLargeMarkers = {
   audioFileTooLarge: boolean;

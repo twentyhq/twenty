@@ -1,12 +1,13 @@
 import { isNull, isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { getString } from 'src/logic-functions/utils/get-string.util';
+import { getString } from '@twentyhq/recall-utils/utils/get-string.util';
 
 type CallRecordingForSummary = {
   id: string;
   title: string | undefined;
   transcript: unknown;
+  desktopRecordingSession: unknown;
   summaryMarkdown: string | undefined;
   createdBy: { source: string | undefined; name: string | undefined };
 };
@@ -26,6 +27,7 @@ export const findCallRecordingForSummary = async (
           id: true,
           title: true,
           transcript: true,
+          desktopRecordingSession: true,
           summary: { markdown: true },
           createdBy: { source: true, name: true },
         },
@@ -43,6 +45,7 @@ export const findCallRecordingForSummary = async (
     id: node.id,
     title: getString(node.title),
     transcript: node.transcript ?? undefined,
+    desktopRecordingSession: node.desktopRecordingSession,
     // Blank summaries are not usable; normalize them as missing so generation
     // can repair blank summary records.
     summaryMarkdown: getString(node.summary?.markdown),

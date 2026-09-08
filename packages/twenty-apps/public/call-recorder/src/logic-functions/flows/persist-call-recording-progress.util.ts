@@ -1,3 +1,5 @@
+import { isUndefined } from '@sniptt/guards';
+import { getAllowedPreviousCallRecordingStatuses } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { completeAndChargeCallRecording } from 'src/logic-functions/flows/complete-and-charge-call-recording.util';
@@ -19,7 +21,17 @@ export const persistCallRecordingProgress = async (
   },
 ): Promise<void> => {
   if (!completesImport) {
-    await updateCallRecording(client, { id, data: updateData });
+    await updateCallRecording(client, {
+      id,
+      data: updateData,
+      ...(!isUndefined(updateData.status)
+        ? {
+            expectedStatuses: getAllowedPreviousCallRecordingStatuses(
+              updateData.status,
+            ),
+          }
+        : {}),
+    });
 
     return;
   }

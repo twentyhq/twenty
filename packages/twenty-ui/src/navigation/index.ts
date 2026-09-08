@@ -9,6 +9,8 @@
 
 export { ClickToActionLink } from './ClickToActionLink/ClickToActionLink';
 export { ContactLink } from './ContactLink/ContactLink';
+export { DropdownMenuItemsContainer } from './DropdownMenu/DropdownMenuItemsContainer';
+export { DropdownMenuSeparator } from './DropdownMenu/DropdownMenuSeparator';
 export { GithubVersionLink } from './GithubVersionLink/GithubVersionLink';
 export { CAL_LINK } from './Link/constants/Cal';
 export { GITHUB_LINK } from './Link/constants/GithubLink';
@@ -52,6 +54,7 @@ export type { MenuPickerProps } from './MenuPicker/MenuPicker';
 export { MenuPicker } from './MenuPicker/MenuPicker';
 export { NavigationBar } from './NavigationBar/NavigationBar';
 export { NavigationBarItem } from './NavigationBarItem/NavigationBarItem';
+export { NavigationModeSwitcher } from './NavigationModeSwitcher/NavigationModeSwitcher';
 export { RawLink } from './RawLink/RawLink';
 export { RoundedLink } from './RoundedLink/RoundedLink';
 export { LinkType } from './SocialLink/LinkType';
@@ -59,3 +62,4 @@ export { SocialLink } from './SocialLink/SocialLink';
 export type { SocialLinkProvider } from './SocialLink/socialLinkProviders';
 export { SOCIAL_LINK_PROVIDERS } from './SocialLink/socialLinkProviders';
 export { UndecoratedLink } from './UndecoratedLink/UndecoratedLink';
+export { WorkspaceDropdownTrigger } from './WorkspaceDropdownTrigger/WorkspaceDropdownTrigger';

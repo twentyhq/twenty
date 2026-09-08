@@ -12,7 +12,7 @@ import { RECALL_BOT_SILENCE_DETECTION_ACTIVATE_AFTER_SECONDS } from 'src/logic-f
 import { RECALL_BOT_SILENCE_DETECTION_TIMEOUT_SECONDS } from 'src/logic-functions/constants/recall-bot-silence-detection-timeout-seconds';
 import { getApplicationVariableValue } from 'src/logic-functions/utils/get-application-variable-value.util';
 import { getCallRecorderBotDetectionNameMatches } from 'src/logic-functions/utils/get-call-recorder-bot-detection-name-matches.util';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { isNonEmptyString } from '@twentyhq/recall-utils/utils/is-non-empty-string.util';
 
 type RecallBotDetection = {
   using_participant_names: {

@@ -1,5 +1,6 @@
 export enum SettingsPath {
   ProfilePage = 'profile',
+  DesktopApp = 'desktop-app',
   TwoFactorAuthenticationStrategyConfig = 'profile/two-factor-authentication/:twoFactorAuthenticationStrategy',
   Experience = 'experience',
   Accounts = 'accounts',

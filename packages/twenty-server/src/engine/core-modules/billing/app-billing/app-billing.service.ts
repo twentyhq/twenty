@@ -3,23 +3,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type ChargeDto } from 'src/engine/core-modules/billing/app-billing/dtos/charge.dto';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { USAGE_UNIT_BY_OPERATION_TYPE } from 'src/engine/core-modules/billing/app-billing/usage-unit-by-operation-type.constant';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
-
-// Each operation type has one canonical counting unit — matches how
-// `ai-billing.service.ts` emits native usage events.
-const USAGE_UNIT_BY_OPERATION_TYPE: Record<UsageOperationType, UsageUnit> = {
-  [UsageOperationType.AI_CHAT_TOKEN]: UsageUnit.TOKEN,
-  [UsageOperationType.AI_WORKFLOW_TOKEN]: UsageUnit.TOKEN,
-  [UsageOperationType.WORKFLOW_EXECUTION]: UsageUnit.INVOCATION,
-  [UsageOperationType.CODE_EXECUTION]: UsageUnit.INVOCATION,
-  [UsageOperationType.WEB_SEARCH]: UsageUnit.INVOCATION,
-  [UsageOperationType.CALL_RECORDING]: UsageUnit.MINUTE,
-  [UsageOperationType.EMAIL_SEND]: UsageUnit.INVOCATION,
-  [UsageOperationType.API_REQUEST]: UsageUnit.REQUEST,
-};
 
 // `workspaceId` + `applicationId` come from the application-access token,
 // never from the body — an app can't charge a different workspace or

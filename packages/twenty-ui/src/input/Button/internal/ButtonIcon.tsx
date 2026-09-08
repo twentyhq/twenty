@@ -1,5 +1,5 @@
 import { type IconComponent } from '@ui/icon';
-import { Loader } from '@ui/feedback';
+import { Loader } from '@ui/feedback/Loader/Loader';
 import { useTheme } from '@ui/theme-constants';
 
 import styles from './ButtonIcon.module.scss';

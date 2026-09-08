@@ -6,7 +6,7 @@ import {
 
 import { CANCEL_RECALL_BOT_ON_CALL_RECORDING_DELETE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { cancelOrEjectRecallBot } from 'src/logic-functions/recall-api/cancel-or-eject-recall-bot.util';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { isNonEmptyString } from '@twentyhq/recall-utils/utils/is-non-empty-string.util';
 
 const CALL_RECORDING_OBJECT_NAME = 'callRecording';
 

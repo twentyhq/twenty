@@ -1,3 +1,4 @@
+import { ApplicationVariableEntityModule } from 'src/engine/core-modules/application/application-variable/application-variable.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -28,6 +29,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       ApplicationRegistrationEntity,
     ]),
     ApplicationModule,
+    ApplicationVariableEntityModule,
     ApplicationRegistrationModule,
     ApplicationManifestModule,
     ApplicationPackageModule,

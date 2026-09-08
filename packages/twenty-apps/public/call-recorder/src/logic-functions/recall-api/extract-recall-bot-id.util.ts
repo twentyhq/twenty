@@ -1,4 +1,4 @@
-import { getString } from 'src/logic-functions/utils/get-string.util';
+import { getString } from '@twentyhq/recall-utils/utils/get-string.util';
 
 export type RecallBotResponse = {
   id?: unknown;

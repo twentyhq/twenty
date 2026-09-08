@@ -1,0 +1,1 @@
+export const RECALL_API_KEY_ENV_VAR_NAME = 'RECALL_API_KEY';

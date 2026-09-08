@@ -3,7 +3,7 @@ import { isUndefined } from '@sniptt/guards';
 import { ACTIVE_RECALL_BOT_STATUSES } from 'src/logic-functions/constants/active-recall-bot-statuses';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { listScheduledRecallBots } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { isNonEmptyString } from '@twentyhq/recall-utils/utils/is-non-empty-string.util';
 
 export type FindScheduledRecallBotIdsByCallRecordingIdResult =
   | { ok: true; externalBotIdByCallRecordingId: Map<string, string> }

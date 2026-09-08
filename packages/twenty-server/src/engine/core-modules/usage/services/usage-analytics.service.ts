@@ -65,7 +65,7 @@ export class UsageAnalyticsService {
       SELECT
         workspaceId AS key,
         sum(creditsUsedMicro) AS creditsUsedMicro
-      FROM usageEvent
+      FROM billableUsageEvent
       WHERE timestamp >= {periodStart:String}
         AND timestamp < {periodEnd:String}
         AND operationType IN ({operationTypes:Array(String)})
@@ -161,7 +161,7 @@ export class UsageAnalyticsService {
       SELECT
         ${groupByField} AS key,
         sum(creditsUsedMicro) AS creditsUsedMicro
-      FROM usageEvent
+      FROM billableUsageEvent
       WHERE workspaceId = {workspaceId:String}
         AND timestamp >= {periodStart:String}
         AND timestamp < {periodEnd:String}
@@ -208,7 +208,7 @@ export class UsageAnalyticsService {
       SELECT
         formatDateTime(timestamp, '%Y-%m-%d') AS date,
         sum(creditsUsedMicro) AS creditsUsedMicro
-      FROM usageEvent
+      FROM billableUsageEvent
       WHERE workspaceId = {workspaceId:String}
         AND timestamp >= {periodStart:String}
         AND timestamp < {periodEnd:String}

@@ -1,0 +1,22 @@
+.overlay {
+  align-items: center;
+  backdrop-filter: var(--t-blur-medium);
+  background: var(--t-background-transparent-primary);
+  border: 1px solid var(--t-border-color-medium);
+  border-radius: var(--t-border-radius-md);
+  box-shadow: var(--t-box-shadow-strong);
+  display: flex;
+  overflow: hidden;
+  z-index: 30;
+
+  &[popover]:not(:popover-open) {
+    display: none;
+  }
+
+  &[data-border-radius='sm'] {
+    border-radius: var(--t-border-radius-sm);
+  }
+  &[data-danger-border] {
+    border-color: var(--t-border-color-danger);
+  }
+}

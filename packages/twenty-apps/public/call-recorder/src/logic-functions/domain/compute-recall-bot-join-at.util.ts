@@ -2,7 +2,7 @@ import { DEFAULT_CALL_RECORDER_JOIN_EARLY_MINUTES } from 'src/logic-functions/co
 import { MILLISECONDS_PER_MINUTE } from 'src/logic-functions/constants/milliseconds-per-minute';
 import { CALL_RECORDER_JOIN_EARLY_MINUTES_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-join-early-minutes-env-var-name';
 import { getApplicationVariableValue } from 'src/logic-functions/utils/get-application-variable-value.util';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { isNonEmptyString } from '@twentyhq/recall-utils/utils/is-non-empty-string.util';
 
 export const computeRecallBotJoinAt = (meetingStartsAt: string): string => {
   const meetingStartTimeInMilliseconds = new Date(meetingStartsAt).getTime();

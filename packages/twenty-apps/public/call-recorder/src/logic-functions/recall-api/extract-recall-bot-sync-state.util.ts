@@ -2,7 +2,7 @@ import { isUndefined } from '@sniptt/guards';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { mapRecallStatusCodeToCallRecordingStatus } from 'src/logic-functions/domain/map-recall-status-code-to-call-recording-status.util';
-import { normalizeRecallTimestamp } from 'src/logic-functions/recall-api/normalize-recall-timestamp.util';
+import { normalizeRecallTimestamp } from '@twentyhq/recall-utils/recall-api/normalize-recall-timestamp.util';
 import {
   type RecallBotSnapshot,
   type RecallBotStatusChange,

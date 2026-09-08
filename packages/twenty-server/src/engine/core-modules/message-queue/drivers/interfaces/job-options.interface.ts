@@ -9,6 +9,7 @@ export interface QueueJobOptions {
   allowDuplicatedPrefixes?: boolean;
   priority?: number;
   retryLimit?: number;
+  retainOnFailure?: boolean;
   backoff?: QueueJobBackoffOptions;
   delay?: number;
 }

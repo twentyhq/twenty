@@ -1,3 +1,4 @@
+import { SettingsDesktopDownloadSection } from '~/pages/settings/applications/tabs/SettingsDesktopDownloadSection';
 import { isDefined } from 'twenty-shared/utils';
 import { type Application } from '~/generated-metadata/graphql';
 import { useUpdateOneApplicationVariable } from '~/pages/settings/applications/hooks/useUpdateOneApplicationVariable';
@@ -43,6 +44,10 @@ export const SettingsApplicationDetailSettingsTab = ({
 
   return (
     <>
+      {application?.universalIdentifier ===
+        '8bdaaa9f-dc53-4247-a89b-aa386c9b3244' && (
+        <SettingsDesktopDownloadSection />
+      )}
       {isUpgradable && application?.id && (
         <SettingsApplicationGeneralSection
           applicationId={application.id}

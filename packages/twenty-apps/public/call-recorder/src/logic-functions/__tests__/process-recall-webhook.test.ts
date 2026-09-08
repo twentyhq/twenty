@@ -66,7 +66,7 @@ describe('process-recall-webhook', () => {
     });
     mutationMock.mockReset();
     mutationMock.mockResolvedValue({
-      updateCallRecording: { id: 'call-recording-1' },
+      updateCallRecordings: [{ id: 'call-recording-1' }],
     });
     enqueueArtifactImportMock.mockReset();
     enqueueArtifactImportMock.mockResolvedValue(undefined);
@@ -103,9 +103,12 @@ describe('process-recall-webhook', () => {
     );
     expect(mutationMock).toHaveBeenCalledTimes(1);
     expect(mutationMock).toHaveBeenCalledWith({
-      updateCallRecording: {
+      updateCallRecordings: {
         __args: {
-          id: 'call-recording-1',
+          filter: {
+            id: { eq: 'call-recording-1' },
+            status: { in: ['SCHEDULED', 'JOINING', 'RECORDING', 'PROCESSING'] },
+          },
           data: {
             externalBotId: 'recall-bot-1',
             externalRecordingId: 'recall-recording-1',
@@ -138,4 +141,18 @@ describe('process-recall-webhook', () => {
       message: expect.stringContaining('Service unavailable'),
     });
   });
+});
+
+it('does not enqueue an import when a status update loses a race with completion', async () => {
+  queryMock.mockResolvedValue({
+    callRecordings: {
+      edges: [{ node: { id: 'call-recording-1', status: 'PROCESSING' } }],
+    },
+  });
+  mutationMock.mockResolvedValue({ updateCallRecordings: [] });
+  enqueueArtifactImportMock.mockClear();
+  expect(
+    await processRecallWebhookHandler(buildRecordingDoneWebhookBody()),
+  ).toMatchObject({ status: 'skipped', reason: 'recording already advanced' });
+  expect(enqueueArtifactImportMock).not.toHaveBeenCalled();
 });

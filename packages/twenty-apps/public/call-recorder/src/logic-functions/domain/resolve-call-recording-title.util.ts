@@ -1,5 +1,5 @@
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { isNonEmptyString } from '@twentyhq/recall-utils/utils/is-non-empty-string.util';
 
 const CALL_RECORDING_FALLBACK_TITLE = 'Call recording';
 

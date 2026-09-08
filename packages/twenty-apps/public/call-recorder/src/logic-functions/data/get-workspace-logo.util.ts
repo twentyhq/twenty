@@ -1,6 +1,6 @@
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { isNonEmptyString } from '@twentyhq/recall-utils/utils/is-non-empty-string.util';
 
 const LOGO_DOWNLOAD_TIMEOUT_MS = 30_000;
 

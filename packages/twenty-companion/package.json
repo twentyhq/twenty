@@ -1,0 +1,62 @@
+{
+  "name": "@twentyhq/companion",
+  "productName": "Twenty",
+  "version": "0.1.0",
+  "private": true,
+  "description": "See upcoming meetings, record calls, and open transcripts and summaries in your Twenty workspace.",
+  "license": "AGPL-3.0",
+  "type": "module",
+  "main": "dist/main.cjs",
+  "packageManager": "yarn@4.9.2",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "yarn lingui:compile && node scripts/dev.mjs",
+    "build": "yarn lingui:compile && node scripts/build.mjs",
+    "start": "electron .",
+    "preview": "yarn lingui:compile && vite --host 127.0.0.1 --port 4317",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "package": "yarn lingui:compile && node scripts/package.mjs",
+    "package:archive": "yarn lingui:compile && node scripts/archive.mjs",
+    "lingui:extract": "lingui extract",
+    "lingui:compile": "lingui compile"
+  },
+  "dependencies": {
+    "@lingui/core": "^5.9.0",
+    "@recallai/desktop-sdk": "2.0.29",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "@electron/packager": "^19.0.0",
+    "@lingui/cli": "^5.9.0",
+    "@lingui/conf": "^5.9.0",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^24.7.2",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "electron": "44.1.0",
+    "esbuild": "^0.28.1",
+    "jsdom": "^30.0.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.0",
+    "vite-plugin-svgr": "^4.3.0",
+    "vitest": "^4.1.0"
+  },
+  "dependenciesMeta": {
+    "@recallai/desktop-sdk": {
+      "built": true
+    },
+    "electron": {
+      "built": true
+    },
+    "esbuild": {
+      "built": true
+    }
+  }
+}

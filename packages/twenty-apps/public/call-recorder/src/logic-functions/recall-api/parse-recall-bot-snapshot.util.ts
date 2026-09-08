@@ -5,8 +5,8 @@ import {
   type RecallBotSnapshot,
   type RecallBotStatusChange,
 } from 'src/logic-functions/recall-api/recall-bot-snapshot.type';
-import { asRecord } from 'src/logic-functions/utils/as-record.util';
-import { getString } from 'src/logic-functions/utils/get-string.util';
+import { asRecord } from '@twentyhq/recall-utils/utils/as-record.util';
+import { getString } from '@twentyhq/recall-utils/utils/get-string.util';
 
 export const parseRecallBotSnapshot = (
   payload: Record<string, unknown>,

@@ -1,13 +1,11 @@
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import {
   type IconComponent,
   IconComment,
   IconHome,
   IconSettings,
 } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { NavigationModeSwitcher } from 'twenty-ui/navigation';
 
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
@@ -21,70 +19,6 @@ import {
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-const StyledSwitcher = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing['0.5']};
-`;
-
-const StyledMode = styled.button<{ isActive: boolean }>`
-  align-items: center;
-  background: ${({ isActive }) =>
-    isActive ? themeCssVariables.background.transparent.light : 'transparent'};
-  border: none;
-  border-radius: ${themeCssVariables.border.radius.smRound};
-  color: ${({ isActive }) =>
-    isActive
-      ? themeCssVariables.font.color.primary
-      : themeCssVariables.font.color.tertiary};
-  corner-shape: round;
-  cursor: pointer;
-  display: flex;
-  flex-shrink: 0;
-  font-family: inherit;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${({ isActive }) => (isActive ? themeCssVariables.spacing[1] : '0')};
-  height: ${themeCssVariables.spacing[7]};
-  padding: 0 ${themeCssVariables.spacing['1.5']};
-  transition:
-    background calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
-    color calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
-    gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
-
-  &:hover {
-    background: ${({ isActive }) =>
-      isActive
-        ? themeCssVariables.background.transparent.light
-        : themeCssVariables.background.transparent.lighter};
-    color: ${themeCssVariables.font.color.primary};
-  }
-`;
-
-const StyledModeIcon = styled.span`
-  align-items: center;
-  display: flex;
-  flex-shrink: 0;
-  height: ${themeCssVariables.spacing[4]};
-  justify-content: center;
-  width: ${themeCssVariables.spacing[4]};
-`;
-
-// The label of an inactive mode stays in the tree so the button keeps an
-// accessible name, and the collapsed track wipes it open on activation.
-const StyledModeLabel = styled.span<{ isActive: boolean }>`
-  display: grid;
-  grid-template-columns: ${({ isActive }) => (isActive ? '1fr' : '0fr')};
-  transition: grid-template-columns
-    calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
-`;
-
-const StyledModeLabelText = styled.span`
-  min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-`;
-
 type NavigationDrawerMode = {
   Icon: IconComponent;
   label: string;
@@ -93,7 +27,6 @@ type NavigationDrawerMode = {
 
 export const MainNavigationDrawerModeSwitcher = () => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
 
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const activeNavigationDrawerMode = useActiveNavigationDrawerMode();
@@ -134,28 +67,16 @@ export const MainNavigationDrawerModeSwitcher = () => {
 
   return (
     <NavigationDrawerAnimatedCollapseWrapper>
-      <StyledSwitcher role="group" aria-label={t`Navigation modes`}>
-        {modes.map(({ Icon, label, mode }) => {
-          const isActive = mode === activeNavigationDrawerMode;
-
-          return (
-            <StyledMode
-              key={mode}
-              type="button"
-              isActive={isActive}
-              aria-current={isActive}
-              onClick={() => switchNavigationDrawerMode(mode)}
-            >
-              <StyledModeIcon>
-                <Icon size={theme.icon.size.md} />
-              </StyledModeIcon>
-              <StyledModeLabel isActive={isActive}>
-                <StyledModeLabelText>{label}</StyledModeLabelText>
-              </StyledModeLabel>
-            </StyledMode>
-          );
-        })}
-      </StyledSwitcher>
+      <NavigationModeSwitcher
+        ariaLabel={t`Navigation modes`}
+        activeItemName={activeNavigationDrawerMode}
+        items={modes.map(({ Icon, label, mode }) => ({
+          Icon,
+          label,
+          name: mode,
+          onClick: () => switchNavigationDrawerMode(mode),
+        }))}
+      />
     </NavigationDrawerAnimatedCollapseWrapper>
   );
 };

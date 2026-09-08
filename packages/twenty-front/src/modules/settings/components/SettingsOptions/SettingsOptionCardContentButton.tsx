@@ -1,15 +1,7 @@
-import {
-  StyledSettingsCardContent,
-  StyledSettingsCardDescription,
-  StyledSettingsCardIcon,
-  StyledSettingsCardTextContainer,
-  StyledSettingsCardTitle,
-} from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
-import { styled } from '@linaria/react';
 import { type IconComponent } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { isDefined } from 'twenty-shared/utils';
+import { SettingsCardContent } from 'twenty-ui/surfaces';
 
 type SettingsOptionCardContentButtonProps = {
   Icon?: IconComponent;
@@ -19,36 +11,21 @@ type SettingsOptionCardContentButtonProps = {
   Button?: React.ReactNode;
 };
 
-const StyledButtonContainer = styled.div`
-  flex-shrink: 0;
-  margin-left: auto;
-`;
-
 export const SettingsOptionCardContentButton = ({
   Icon,
   title,
   description,
-  disabled = false,
   Button,
 }: SettingsOptionCardContentButtonProps) => {
   return (
-    <StyledSettingsCardContent disabled={disabled}>
-      {Icon && (
-        <StyledSettingsCardIcon>
-          <SettingsOptionIconCustomizer Icon={Icon} />
-        </StyledSettingsCardIcon>
-      )}
-      <StyledSettingsCardTextContainer>
-        <StyledSettingsCardTitle>{title}</StyledSettingsCardTitle>
-        {description && (
-          <StyledSettingsCardDescription>
-            <OverflowingTextWithTooltip text={description} />
-          </StyledSettingsCardDescription>
-        )}
-      </StyledSettingsCardTextContainer>
-      {isDefined(Button) && (
-        <StyledButtonContainer>{Button}</StyledButtonContainer>
-      )}
-    </StyledSettingsCardContent>
+    <SettingsCardContent
+      icon={Icon && <SettingsOptionIconCustomizer Icon={Icon} />}
+      title={title}
+      description={
+        description && <OverflowingTextWithTooltip text={description} />
+      }
+    >
+      {Button}
+    </SettingsCardContent>
   );
 };

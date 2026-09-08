@@ -4,6 +4,37 @@
   gap: var(--t-spacing-2);
   width: 100%;
 }
+.wrapper[data-autosize] {
+  width: fit-content;
+  max-width: 100%;
+}
+.wrapper[data-autosize] .input {
+  width: 0;
+  min-width: 100%;
+}
+.field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  flex: 1;
+  min-width: 0;
+}
+.field > * {
+  grid-area: 1 / 1;
+}
+.placeholderSizer,
+.valueSizer {
+  visibility: hidden;
+  white-space: pre;
+  font-family: var(--t-font-family);
+  font-size: var(--t-font-size-md);
+  padding-inline: 2px;
+}
+.placeholderSizer {
+  font-weight: var(--t-font-weight-medium);
+}
+.valueSizer {
+  font-weight: var(--t-font-weight-regular);
+}
 
 .inputContainer {
   align-items: center;
@@ -13,6 +44,7 @@
   box-sizing: border-box;
   display: flex;
   flex: 1;
+  min-width: 0;
   gap: var(--t-spacing-1);
   height: 32px;
   padding: 0 var(--t-spacing-2);
@@ -23,6 +55,7 @@
 }
 
 .iconContainer {
+  flex-shrink: 0;
   align-items: center;
   color: var(--t-font-color-light);
   display: flex;
@@ -34,6 +67,8 @@
 }
 
 .input {
+  box-sizing: border-box;
+  min-width: 0;
   background: transparent;
   border: none;
   color: var(--t-font-color-primary);

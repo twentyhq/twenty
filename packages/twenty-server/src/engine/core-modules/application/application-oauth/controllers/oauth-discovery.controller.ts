@@ -1,3 +1,4 @@
+import { DESKTOP_RECORDER_UNIVERSAL_IDENTIFIER } from 'src/engine/core-modules/application/application-oauth/constants/desktop-recorder-oauth.constant';
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 
 import { type Request } from 'express';
@@ -43,6 +44,11 @@ export class OAuthDiscoveryController {
         TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
       );
 
+    const desktopRegistration =
+      await this.applicationRegistrationService.findOneByUniversalIdentifier(
+        DESKTOP_RECORDER_UNIVERSAL_IDENTIFIER,
+      );
+
     return {
       issuer,
       authorization_endpoint: authorizationEndpoint,
@@ -67,6 +73,13 @@ export class OAuthDiscoveryController {
       authorization_response_iss_parameter_supported: true,
       ...(cliRegistration
         ? { cli_client_id: cliRegistration.oAuthClientId }
+        : {}),
+      ...(desktopRegistration &&
+      !desktopRegistration.oAuthClientSecretHash &&
+      ['api', 'profile'].every((scope) =>
+        desktopRegistration.oAuthScopes.includes(scope),
+      )
+        ? { desktop_client_id: desktopRegistration.oAuthClientId }
         : {}),
     };
   }

@@ -1,4 +1,8 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { ApplicationKeyValuePersistenceJob } from 'src/engine/core-modules/application/application-key-value/application-key-value-persistence.job';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { ForbiddenException, UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { type AppKeyValue } from 'twenty-shared/application';
@@ -22,6 +26,8 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 export class ApplicationKeyValueResolver {
   constructor(
     private readonly applicationKeyValueService: ApplicationKeyValueService,
+    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   @Query(() => AppKeyValueDto, { nullable: true })
@@ -56,6 +62,50 @@ export class ApplicationKeyValueResolver {
       key: input.key,
       value: input.value,
       scope: input.scope ?? AppKeyValueScope.WORKSPACE,
+    });
+  }
+
+  @Mutation(() => Boolean)
+  async enqueueAppKeyValue(
+    @AuthApplication() application: FlatApplication,
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Args('input') input: SetAppKeyValueInput,
+  ): Promise<boolean> {
+    if (input.scope === AppKeyValueScope.SERVER) {
+      throw new ForbiddenException('Queued values are workspace scoped.');
+    }
+    // Keep paid output in Redis while PostgreSQL is unavailable.
+    await this.messageQueueService.add(
+      ApplicationKeyValuePersistenceJob.name,
+      {
+        applicationId: application.id,
+        workspaceId: workspace.id,
+        key: input.key,
+        value: input.value ?? null,
+      },
+      {
+        retryLimit: 1440,
+        backoff: { strategy: 'fixed', initialDelayMilliseconds: 60_000 },
+        retainOnFailure: true,
+      },
+    );
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  async setAppKeyValueIfAbsent(
+    @AuthApplication() application: FlatApplication,
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Args('input') input: SetAppKeyValueInput,
+  ): Promise<boolean> {
+    if (input.scope === AppKeyValueScope.SERVER) {
+      throw new ForbiddenException('Atomic values are workspace scoped.');
+    }
+    return this.applicationKeyValueService.setIfAbsent({
+      application,
+      workspaceId: workspace.id,
+      key: input.key,
+      value: input.value,
     });
   }
 

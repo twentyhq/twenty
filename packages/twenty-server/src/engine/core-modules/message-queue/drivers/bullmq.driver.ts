@@ -353,10 +353,12 @@ export class BullMQDriver
         age: QUEUE_RETENTION.completedMaxAge,
         count: QUEUE_RETENTION.completedMaxCount,
       },
-      removeOnFail: {
-        age: QUEUE_RETENTION.failedMaxAge,
-        count: QUEUE_RETENTION.failedMaxCount,
-      },
+      removeOnFail: options?.retainOnFailure
+        ? false
+        : {
+            age: QUEUE_RETENTION.failedMaxAge,
+            count: QUEUE_RETENTION.failedMaxCount,
+          },
       delay: options?.delay,
     };
   }

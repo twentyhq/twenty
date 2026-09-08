@@ -1,4 +1,4 @@
-import { Pill } from '@ui/data-display';
+import { Pill } from '@ui/data-display/Pill/Pill';
 
 import styles from './ButtonSoon.module.scss';
 

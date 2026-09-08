@@ -1,3 +1,4 @@
+import { AppBillingModule } from 'src/engine/core-modules/billing/app-billing/app-billing.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -85,6 +86,7 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
     WorkspaceMigrationModule,
     TrashCleanupModule,
     BillingReminderModule,
+    AppBillingModule,
     CodeInterpreterSessionCleanupModule,
     PublicDomainModule,
     EventLogCleanupModule,

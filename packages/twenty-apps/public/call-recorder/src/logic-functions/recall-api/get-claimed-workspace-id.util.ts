@@ -1,5 +1,5 @@
 import { type RecallScheduledBot } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { isNonEmptyString } from '@twentyhq/recall-utils/utils/is-non-empty-string.util';
 
 export const getClaimedWorkspaceId = (
   bot: RecallScheduledBot,

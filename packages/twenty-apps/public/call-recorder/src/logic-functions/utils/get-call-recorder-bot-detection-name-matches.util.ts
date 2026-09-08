@@ -1,5 +1,5 @@
 import { RECALL_BOT_DETECTION_DEFAULT_NAME_MATCHES } from 'src/logic-functions/constants/recall-bot-detection-name-matches';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { isNonEmptyString } from '@twentyhq/recall-utils/utils/is-non-empty-string.util';
 
 export const getCallRecorderBotDetectionNameMatches = (
   botName?: string,

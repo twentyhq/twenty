@@ -19,6 +19,8 @@ import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AppBillingService } from 'src/engine/core-modules/billing/app-billing/app-billing.service';
+import { AppBillingChargeService } from 'src/engine/core-modules/billing/app-billing/app-billing-charge.service';
+import { IdempotentChargeDto } from 'src/engine/core-modules/billing/app-billing/dtos/idempotent-charge.dto';
 import { ChargeDto } from 'src/engine/core-modules/billing/app-billing/dtos/charge.dto';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -38,7 +40,39 @@ export class AppBillingController {
     private readonly appBillingService: AppBillingService,
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly appBillingChargeService: AppBillingChargeService,
   ) {}
+
+  @Post('charge-idempotent')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async chargeIdempotent(
+    @Req() request: Request,
+    @Body() charge: IdempotentChargeDto,
+  ): Promise<
+    { status: 'accepted'; receiptId: string } | { status: 'disabled' }
+  > {
+    if (!isDefined(request.application) || !isDefined(request.workspace)) {
+      throw new ForbiddenException(
+        'App billing endpoint requires an APPLICATION_ACCESS token.',
+      );
+    }
+    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+      return { status: 'disabled' };
+    }
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      `${request.workspace.id}-${request.application.id}-app-billing-charge`,
+      1,
+      APP_BILLING_CHARGE_THROTTLE_LIMIT,
+      APP_BILLING_CHARGE_THROTTLE_TTL_MS,
+    );
+    return this.appBillingChargeService.accept({
+      workspaceId: request.workspace.id,
+      applicationId: request.application.id,
+      userWorkspaceId: request.userWorkspaceId,
+      charge,
+    });
+  }
 
   @Post('charge')
   @HttpCode(HttpStatus.NO_CONTENT)

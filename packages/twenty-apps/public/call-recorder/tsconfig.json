@@ -4,7 +4,7 @@
     "sourceMap": true,
     "declaration": true,
     "outDir": "./dist",
-    "rootDir": ".",
+    "rootDir": "../..",
     "jsx": "react-jsx",
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
@@ -18,13 +18,24 @@
     "strictBindCallApply": false,
     "target": "es2018",
     "module": "esnext",
-    "lib": ["es2020", "es2022.intl", "dom"],
+    "lib": [
+      "es2020",
+      "es2022.intl",
+      "dom"
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "resolveJsonModule": true,
     "paths": {
-      "src/*": ["./src/*"],
-      "~/*": ["./*"]
+      "src/*": [
+        "./src/*"
+      ],
+      "~/*": [
+        "./*"
+      ],
+      "@twentyhq/recall-utils/*": [
+        "../../shared/recall-utils/src/*"
+      ]
     }
   },
   "exclude": [

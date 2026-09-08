@@ -1,7 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 
 import { type RecallBotOperationFailure } from 'src/logic-functions/types/recall-bot-operation-result.type';
-import { asRecord } from 'src/logic-functions/utils/as-record.util';
+import { asRecord } from '@twentyhq/recall-utils/utils/as-record.util';
 import {
   fetchRecallListPages,
   type RecallListResponse,

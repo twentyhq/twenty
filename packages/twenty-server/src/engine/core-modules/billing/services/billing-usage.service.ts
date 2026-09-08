@@ -436,7 +436,7 @@ export class BillingUsageService {
   ): Promise<number | null> {
     const rows = await this.clickHouseService.select<UsageSumRow>(
       `SELECT sum(creditsUsedMicro) AS total
-       FROM usageEvent
+       FROM billableUsageEvent
        WHERE workspaceId = {workspaceId:String}
          AND ${condition}`,
       params,

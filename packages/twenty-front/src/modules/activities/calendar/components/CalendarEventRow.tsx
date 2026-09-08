@@ -15,6 +15,7 @@ import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEv
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useOpenCalendarEventInSidePanel } from '@/side-panel/hooks/useOpenCalendarEventInSidePanel';
 import { useContext } from 'react';
+import { CalendarEventIndicator } from 'twenty-ui/data-display';
 import { IconArrowRight } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -30,16 +31,6 @@ const StyledContainer = styled.div<{ showTitle?: boolean }>`
   gap: ${themeCssVariables.spacing[3]};
   height: ${themeCssVariables.spacing[6]};
   position: relative;
-`;
-
-const StyledAttendanceIndicator = styled.div<{ active?: boolean }>`
-  background-color: ${({ active }) =>
-    active
-      ? themeCssVariables.tag.background.red
-      : themeCssVariables.tag.background.gray};
-  border-radius: ${themeCssVariables.border.radius.xs};
-  height: 100%;
-  width: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledLabels = styled.div`
@@ -106,7 +97,7 @@ export const CalendarEventRow = ({
           : undefined
       }
     >
-      <StyledAttendanceIndicator active={isCurrentWorkspaceMemberAttending} />
+      <CalendarEventIndicator active={isCurrentWorkspaceMemberAttending} />
       <StyledLabels>
         <StyledTime>
           {startTimeLabel}

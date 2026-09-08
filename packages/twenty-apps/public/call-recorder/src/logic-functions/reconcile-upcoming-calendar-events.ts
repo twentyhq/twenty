@@ -5,7 +5,7 @@ import { RECONCILE_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER 
 import { countReconciliationActions } from 'src/logic-functions/domain/count-reconciliation-actions.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
 import { type CallRecorderReconciliationActionCounts } from 'src/logic-functions/types/call-recorder-reconciliation-action-counts.type';
-import { asRecord } from 'src/logic-functions/utils/as-record.util';
+import { asRecord } from '@twentyhq/recall-utils/utils/as-record.util';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
 import { toIdList } from 'src/logic-functions/utils/to-id-list.util';
 

@@ -144,6 +144,29 @@ describe('generateCallRecordingSummary', () => {
     expect(mutationMock).toHaveBeenCalledTimes(1);
   });
 
+  it('automatically summarizes desktop captures attributed to the signed-in user', async () => {
+    seedCallRecording({
+      id: 'call-recording-1',
+      transcript: TRANSCRIPT,
+      createdBy: { source: 'MANUAL', name: 'Alex' },
+      desktopRecordingSession: {
+        source: 'desktop',
+        media: 'audio',
+        userWorkspaceId: 'user-workspace-1',
+        sdkUploadId: 'sdk-upload-1',
+      },
+    });
+
+    const result = await generateCallRecordingSummary(CLIENT, {
+      callRecordingId: 'call-recording-1',
+      requireCreatedByCallRecorder: true,
+    });
+
+    expect(result).toEqual({ outcome: 'generated' });
+    expect(runAgentMock).toHaveBeenCalledOnce();
+    expect(mutationMock).toHaveBeenCalledOnce();
+  });
+
   it('reports a save error without rethrowing when the summary write fails', async () => {
     mutationMock.mockRejectedValue(new Error('Write timed out'));
 

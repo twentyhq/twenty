@@ -1,5 +1,5 @@
 import { type RecallBotOperationFailure } from 'src/logic-functions/types/recall-bot-operation-result.type';
-import { asRecord } from 'src/logic-functions/utils/as-record.util';
+import { asRecord } from '@twentyhq/recall-utils/utils/as-record.util';
 import { getRecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
 import { parseRecallBotSnapshot } from 'src/logic-functions/recall-api/parse-recall-bot-snapshot.util';
 import { type RecallBotSnapshot } from 'src/logic-functions/recall-api/recall-bot-snapshot.type';

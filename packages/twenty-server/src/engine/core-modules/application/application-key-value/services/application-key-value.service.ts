@@ -85,11 +85,30 @@ export class ApplicationKeyValueService {
       return this.claimServerKey({ application, workspaceId, key });
     }
 
+    return this.setWorkspaceValue({
+      applicationId: application.id,
+      workspaceId,
+      key,
+      value,
+    });
+  }
+
+  async setWorkspaceValue({
+    applicationId,
+    workspaceId,
+    key,
+    value,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+    key: string;
+    value: unknown;
+  }): Promise<AppKeyValue> {
     await this.keyValuePairRepository.upsert(
       {
         key,
         value: value as KeyValuePairEntity['value'],
-        applicationId: application.id,
+        applicationId,
         workspaceId,
         userId: null,
         type: KeyValuePairType.APPLICATION_VARIABLE,
@@ -101,7 +120,37 @@ export class ApplicationKeyValueService {
       },
     );
 
-    return { key, value, scope };
+    return { key, value, scope: AppKeyValueScope.WORKSPACE };
+  }
+
+  async setIfAbsent({
+    application,
+    workspaceId,
+    key,
+    value,
+  }: {
+    application: FlatApplication;
+    workspaceId: string;
+    key: string;
+    value: unknown;
+  }): Promise<boolean> {
+    // The existing application-key unique index arbitrates concurrent workers.
+    const result = await this.keyValuePairRepository
+      .createQueryBuilder()
+      .insert()
+      .values({
+        key,
+        value: value as KeyValuePairEntity['value'],
+        applicationId: application.id,
+        workspaceId,
+        userId: null,
+        type: KeyValuePairType.APPLICATION_VARIABLE,
+      })
+      .orIgnore()
+      .returning('id')
+      .execute();
+
+    return result.raw.length > 0;
   }
 
   async delete({

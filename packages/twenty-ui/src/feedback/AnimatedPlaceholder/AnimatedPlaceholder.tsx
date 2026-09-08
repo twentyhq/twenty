@@ -17,9 +17,13 @@ export type AnimatedPlaceholderType =
 
 type AnimatedPlaceholderProps = {
   type: AnimatedPlaceholderType;
+  assetBasePath?: string;
 };
 
-export const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
+export const AnimatedPlaceholder = ({
+  type,
+  assetBasePath = '',
+}: AnimatedPlaceholderProps) => {
   const colorScheme = useThemeColorScheme();
   const movingImageRef = useRef<HTMLImageElement>(null);
 
@@ -68,7 +72,7 @@ export const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
   return (
     <div className={styles.container}>
       <img
-        src={colorScheme === 'dark' ? DARK_BACKGROUND[type] : BACKGROUND[type]}
+        src={`${assetBasePath}${colorScheme === 'dark' ? DARK_BACKGROUND[type] : BACKGROUND[type]}`}
         alt=""
         className={clsx(
           styles.backgroundImage,
@@ -78,7 +82,7 @@ export const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
       <img
         ref={movingImageRef}
         src={
-          colorScheme === 'dark' ? DARK_MOVING_IMAGE[type] : MOVING_IMAGE[type]
+          `${assetBasePath}${colorScheme === 'dark' ? DARK_MOVING_IMAGE[type] : MOVING_IMAGE[type]}`
         }
         alt=""
         className={clsx(styles.movingImage, isLarge && styles.movingImageLarge)}

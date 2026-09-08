@@ -1,3 +1,4 @@
+import { isDesktopAudioRecording } from 'src/logic-functions/domain/is-desktop-audio-recording.util';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import { computeCallRecordingCharge } from 'src/logic-functions/domain/compute-call-recording-charge.util';
@@ -10,6 +11,7 @@ export const shouldCompleteCallRecordingImport = ({
   updateData,
 }: {
   current: {
+    desktopRecordingSession?: unknown;
     status?: string;
     startedAt?: string;
     endedAt?: string;
@@ -28,6 +30,7 @@ export const shouldCompleteCallRecordingImport = ({
     endedAt: updateData.endedAt ?? current.endedAt,
   }) !== undefined &&
   isCallRecordingImportComplete({
+    requiresVideo: !isDesktopAudioRecording(current.desktopRecordingSession),
     transcript: updateData.transcript ?? current.transcript,
     audio: updateData.audio ?? current.audio,
     video: updateData.video ?? current.video,

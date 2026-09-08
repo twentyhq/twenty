@@ -6,6 +6,7 @@ import {
   type MouseEvent,
   type ReactElement,
   type ReactNode,
+  type ComponentPropsWithoutRef,
 } from 'react';
 
 import { MenuItemHotKeys } from '@ui/navigation/MenuItemHotKeys/MenuItemHotKeys';
@@ -43,7 +44,10 @@ export type MenuItemIconButton = {
   dataTestId?: string;
 };
 
-export type MenuItemProps = {
+export type MenuItemProps = Pick<
+  ComponentPropsWithoutRef<'div'>,
+  'role' | 'tabIndex' | 'onKeyDown' | 'aria-disabled'
+> & {
   accent?: MenuItemAccent;
   className?: string;
   withIconContainer?: boolean;
@@ -96,6 +100,10 @@ export const MenuItem = ({
   selected = false,
   hotKeys,
   isSubMenuOpened = false,
+  role,
+  tabIndex,
+  onKeyDown,
+  'aria-disabled': ariaDisabled,
 }: MenuItemProps) => {
   const theme = useTheme();
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
@@ -110,6 +118,10 @@ export const MenuItem = ({
 
   return (
     <StyledHoverableMenuItemBase
+      role={role}
+      tabIndex={tabIndex}
+      onKeyDown={onKeyDown}
+      aria-disabled={ariaDisabled}
       data-testid={testId ?? undefined}
       onClick={disabled ? undefined : handleMenuItemClick}
       disabled={disabled}

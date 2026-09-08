@@ -1,3 +1,4 @@
+import { AppBillingChargeCronCommand } from 'src/engine/core-modules/billing/app-billing/app-billing-charge.cron.command';
 import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner } from 'nest-commander';
@@ -80,6 +81,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly applicationVersionCheckCronCommand: ApplicationVersionCheckCronCommand,
     private readonly staleRegistrationCleanupCronCommand: StaleRegistrationCleanupCronCommand,
     private readonly pendingFileCleanupCronCommand: PendingFileCleanupCronCommand,
+    private readonly appBillingChargeCronCommand: AppBillingChargeCronCommand,
     private readonly billingReminderCronCommand: BillingReminderCronCommand,
     private readonly userSessionCleanupCronCommand: UserSessionCleanupCronCommand,
     private readonly twentyConfigService: TwentyConfigService,
@@ -101,6 +103,11 @@ export class CronRegisterAllCommand extends CommandRunner {
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
 
     const allCommands = [
+      {
+        name: 'AppBillingCharge',
+        command: this.appBillingChargeCronCommand,
+        isEnabled: isBillingEnabled,
+      },
       {
         name: 'MessagingMessagesImport',
         command: this.messagingMessagesImportCronCommand,

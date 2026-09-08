@@ -11,11 +11,11 @@ import {
   VIDEO_FILE_TOO_LARGE_FAILURE_REASON,
 } from 'src/logic-functions/constants/media-file-too-large-failure-reasons';
 import { putMediaDownloadBodyToUploadTarget } from 'src/logic-functions/flows/put-media-download-body-to-upload-target.util';
-import { extractRecallMediaUrls } from 'src/logic-functions/recall-api/extract-recall-media-urls.util';
+import { extractRecallMediaUrls } from '@twentyhq/recall-utils/recall-api/extract-recall-media-urls.util';
 import { getRecallRecording } from 'src/logic-functions/recall-api/get-recall-recording.util';
 import { type CallRecordingMediaFile } from 'src/logic-functions/types/call-recording-media-file.type';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { isNonEmptyString } from '@twentyhq/recall-utils/utils/is-non-empty-string.util';
 
 type CallRecordingMediaUpdateFields = Pick<
   CallRecordingUpdateFields,

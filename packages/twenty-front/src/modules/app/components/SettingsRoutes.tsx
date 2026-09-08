@@ -1,3 +1,4 @@
+import { SettingsDesktopApp } from '~/pages/settings/applications/SettingsDesktopApp';
 import { lazy, Suspense } from 'react';
 import {
   createRoutesFromElements,
@@ -1016,6 +1017,7 @@ const createSettingsRouteElements = ({
       />
     </Route>
 
+    <Route path={SettingsPath.DesktopApp} element={<SettingsDesktopApp />} />
     <Route
       element={
         <SettingsProtectedRouteWrapper

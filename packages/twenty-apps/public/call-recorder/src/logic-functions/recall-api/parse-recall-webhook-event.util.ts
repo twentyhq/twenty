@@ -1,10 +1,10 @@
 import { isUndefined } from '@sniptt/guards';
 
 import { getRecallWebhookBotMetadata } from 'src/logic-functions/recall-api/get-recall-webhook-bot-metadata.util';
-import { asRecord } from 'src/logic-functions/utils/as-record.util';
-import { getRecordAtPath } from 'src/logic-functions/utils/get-record-at-path.util';
-import { getString } from 'src/logic-functions/utils/get-string.util';
-import { normalizeRecallTimestamp } from 'src/logic-functions/recall-api/normalize-recall-timestamp.util';
+import { asRecord } from '@twentyhq/recall-utils/utils/as-record.util';
+import { getRecordAtPath } from '@twentyhq/recall-utils/utils/get-record-at-path.util';
+import { getString } from '@twentyhq/recall-utils/utils/get-string.util';
+import { normalizeRecallTimestamp } from '@twentyhq/recall-utils/recall-api/normalize-recall-timestamp.util';
 
 export type RecallWebhookBody = {
   event?: unknown;

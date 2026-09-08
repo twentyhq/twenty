@@ -7,7 +7,7 @@ import { useId } from 'react';
 
 export type IconButtonWithTooltipProps = Pick<
   IconButtonProps,
-  'Icon' | 'ariaLabel' | 'onClick' | 'size' | 'variant'
+  'Icon' | 'ariaLabel' | 'onClick' | 'size' | 'variant' | 'disabled'
 > & {
   tooltipContent: string;
   tooltipPlace?: TooltipPosition;
@@ -25,6 +25,7 @@ export const IconButtonWithTooltip = ({
   onClick,
   size,
   variant,
+  disabled,
 }: IconButtonWithTooltipProps) => {
   const tooltipId = useId();
 
@@ -37,6 +38,7 @@ export const IconButtonWithTooltip = ({
           onClick={onClick}
           size={size}
           variant={variant}
+          disabled={disabled}
         />
       </div>
       <AppTooltip

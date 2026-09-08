@@ -11,7 +11,7 @@ export type IconButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
 export type IconButtonVariant = 'primary' | 'secondary' | 'tertiary';
 export type IconButtonAccent = 'default' | 'blue' | 'danger';
 
-export type IconButtonProps = {
+export type IconButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   className?: string;
   Icon?: IconComponent;
   variant?: IconButtonVariant;
@@ -27,7 +27,7 @@ export type IconButtonProps = {
   children?: React.ReactNode;
 };
 
-export const IconButton = ({
+export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(({
   className,
   Icon,
   variant = 'primary',
@@ -41,11 +41,14 @@ export const IconButton = ({
   onClick,
   to,
   children,
-}: IconButtonProps) => {
+  ...buttonProps
+}, ref) => {
   const theme = useTheme();
 
   return (
     <button
+      {...buttonProps}
+      ref={ref}
       data-testid={dataTestId}
       className={clsx(styles.button, styles[size], className)}
       data-variant={variant}
@@ -64,4 +67,4 @@ export const IconButton = ({
       {children}
     </button>
   );
-};
+});

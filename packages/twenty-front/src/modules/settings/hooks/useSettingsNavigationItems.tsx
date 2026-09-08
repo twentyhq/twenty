@@ -91,6 +91,11 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           Icon: IconColorSwatch,
         },
         {
+          label: t`Desktop app`,
+          path: SettingsPath.DesktopApp,
+          Icon: IconAppWindow,
+        },
+        {
           label: t`Accounts`,
           path: SettingsPath.Accounts,
           Icon: IconAt,

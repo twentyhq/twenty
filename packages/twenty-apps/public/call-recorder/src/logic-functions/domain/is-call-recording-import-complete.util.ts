@@ -9,7 +9,9 @@ export const isCallRecordingImportComplete = ({
   audio,
   video,
   callRecorderFailureReason,
+  requiresVideo = true,
 }: {
+  requiresVideo?: boolean;
   transcript: unknown;
   audio: FilesFieldValue | undefined;
   video: FilesFieldValue | undefined;
@@ -23,6 +25,6 @@ export const isCallRecordingImportComplete = ({
     !isUndefined(transcript) &&
     isUndefined(parseTranscriptMarker(transcript)) &&
     (isNonEmptyArray(audio) || audioFileTooLarge) &&
-    (isNonEmptyArray(video) || videoFileTooLarge)
+    (!requiresVideo || isNonEmptyArray(video) || videoFileTooLarge)
   );
 };
