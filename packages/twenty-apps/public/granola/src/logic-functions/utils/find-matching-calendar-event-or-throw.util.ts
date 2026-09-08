@@ -4,7 +4,12 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { type GranolaNote } from 'src/logic-functions/types/granola-api.type';
 import { escapeIlikePattern } from 'src/logic-functions/utils/escape-ilike-pattern.util';
-import { getUnambiguousCalendarEventIdFromConnection } from 'src/logic-functions/utils/get-unambiguous-calendar-event-id-from-connection.util';
+import { getSingleDistinctCalendarEventId } from 'src/logic-functions/utils/get-single-distinct-calendar-event-id.util';
+
+type CalendarEventMatches = {
+  pageInfo: { hasNextPage: boolean };
+  edges: { node: { calendarEventId: string | null } }[];
+};
 
 export const findMatchingCalendarEventOrThrow = async ({
   coreApiClient,
@@ -13,48 +18,63 @@ export const findMatchingCalendarEventOrThrow = async ({
   coreApiClient: Pick<CoreApiClient, 'query'>;
   note: Pick<GranolaNote, 'calendar_event'>;
 }): Promise<string | undefined> => {
-  const calendarEvent = note.calendar_event;
-  if (!isDefined(calendarEvent)) {
+  const granolaCalendarEvent = note.calendar_event;
+
+  if (!isDefined(granolaCalendarEvent)) {
     return undefined;
   }
-  if (isNonEmptyString(calendarEvent.calendar_event_id)) {
+
+  if (isNonEmptyString(granolaCalendarEvent.calendar_event_id)) {
     const result = await coreApiClient.query({
       calendarChannelEventAssociations: {
         __args: {
-          filter: { eventExternalId: { eq: calendarEvent.calendar_event_id } },
+          filter: {
+            eventExternalId: { eq: granolaCalendarEvent.calendar_event_id },
+          },
           first: 100,
         },
         edges: { node: { calendarEventId: true } },
         pageInfo: { hasNextPage: true },
       },
     });
-    const connection = result.calendarChannelEventAssociations;
-    if (
-      isDefined(connection) &&
-      (connection.pageInfo.hasNextPage || isNonEmptyArray(connection.edges))
-    ) {
-      return getUnambiguousCalendarEventIdFromConnection(connection);
+    const calendarChannelEventAssociations: CalendarEventMatches | undefined =
+      result.calendarChannelEventAssociations;
+
+    if (calendarChannelEventAssociations?.pageInfo.hasNextPage) {
+      return undefined;
+    }
+
+    if (isNonEmptyArray(calendarChannelEventAssociations?.edges)) {
+      const matchingCalendarEventIds =
+        calendarChannelEventAssociations.edges.map(
+          ({ node }) => node.calendarEventId,
+        );
+
+      return getSingleDistinctCalendarEventId(matchingCalendarEventIds);
     }
   }
+
   const inviteeEmails = [
     ...new Set(
-      calendarEvent.invitees
+      granolaCalendarEvent.invitees
         .map(({ email }) => email.trim())
         .filter(isNonEmptyString),
     ),
   ];
+
   if (
-    !isNonEmptyString(calendarEvent.scheduled_start_time) ||
+    !isNonEmptyString(granolaCalendarEvent.scheduled_start_time) ||
     !isNonEmptyArray(inviteeEmails)
   ) {
     return undefined;
   }
+
   const result = await coreApiClient.query({
     calendarEventParticipants: {
       __args: {
         filter: {
           calendarEvent: {
-            startsAt: { eq: calendarEvent.scheduled_start_time },
+            startsAt: { eq: granolaCalendarEvent.scheduled_start_time },
             isCanceled: { eq: false },
           },
           or: inviteeEmails.map((email) => ({
@@ -67,7 +87,19 @@ export const findMatchingCalendarEventOrThrow = async ({
       pageInfo: { hasNextPage: true },
     },
   });
-  return getUnambiguousCalendarEventIdFromConnection(
-    result.calendarEventParticipants,
+  const calendarEventParticipants: CalendarEventMatches | undefined =
+    result.calendarEventParticipants;
+
+  if (
+    !isDefined(calendarEventParticipants) ||
+    calendarEventParticipants.pageInfo.hasNextPage
+  ) {
+    return undefined;
+  }
+
+  const matchingCalendarEventIds = calendarEventParticipants.edges.map(
+    ({ node }) => node.calendarEventId,
   );
+
+  return getSingleDistinctCalendarEventId(matchingCalendarEventIds);
 };
