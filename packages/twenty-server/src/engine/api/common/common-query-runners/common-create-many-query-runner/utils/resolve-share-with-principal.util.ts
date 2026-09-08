@@ -40,7 +40,7 @@ export const resolveShareWithPrincipal = (
           principalType: RecordSharePrincipalType.ROLE,
         }
       : undefined,
-    shareWithEntry.everyone === true
+    shareWithEntry.everyone
       ? {
           principalId: EVERYONE_PRINCIPAL_ID,
           principalType: RecordSharePrincipalType.EVERYONE,
