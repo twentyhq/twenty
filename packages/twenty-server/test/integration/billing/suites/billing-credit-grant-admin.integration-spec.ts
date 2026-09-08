@@ -154,20 +154,19 @@ describe('Admin credit grant and revoke (integration)', () => {
     expect(response.body.data.grantWorkspaceCredits.isActive).toBe(true);
 
     const [storedGrant] = await listCreditGrants(workspaceId);
-    const expiresAt = new Date(storedGrant.expiresAt as Date);
 
     // Which period the thirtieth day lands in depends on when the suite runs,
     // so the boundary is derived the same way the server derives it rather
     // than listed.
-    expect(expiresAt).toEqual(
-      alignGrantExpiryToPeriodEnd({
-        requestedExpiresAt: addDays(new Date(), 30),
-        currentPeriodStart: PERIOD_START,
-        currentPeriodEnd: PERIOD_END,
-        interval: SubscriptionInterval.Month,
-      }),
-    );
-    expect(expiresAt.getTime()).toBeGreaterThanOrEqual(
+    const expectedExpiresAt = alignGrantExpiryToPeriodEnd({
+      requestedExpiresAt: addDays(new Date(), 30),
+      currentPeriodStart: PERIOD_START,
+      currentPeriodEnd: PERIOD_END,
+      interval: SubscriptionInterval.Month,
+    });
+
+    expect(storedGrant.expiresAt).toEqual(expectedExpiresAt);
+    expect(expectedExpiresAt.getTime()).toBeGreaterThanOrEqual(
       addDays(new Date(), 30).getTime(),
     );
   });

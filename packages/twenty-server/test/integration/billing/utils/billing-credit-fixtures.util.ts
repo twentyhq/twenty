@@ -25,7 +25,7 @@ export type CreditGrantRow = {
   amountMicro: number;
   type: BillingCreditGrantType;
   effectiveAt: Date;
-  expiresAt: Date;
+  expiresAt: Date | null;
   revokedAt: Date | null;
   reason: string | null;
   idempotencyKey: string | null;
@@ -145,7 +145,7 @@ export const insertCreditGrant = async ({
   amountMicro: number;
   type: BillingCreditGrantType;
   effectiveAt: Date;
-  expiresAt: Date;
+  expiresAt: Date | null;
   idempotencyKey?: string | null;
 }): Promise<string> => {
   const [row] = await query<{ id: string }>(
